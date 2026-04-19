@@ -1,6 +1,6 @@
 # void --news — Gemini Voice & Editorial Intelligence
 
-**Version:** 3.0 | **Updated:** 2026-03-22
+**Version:** 4.1 | **Updated:** 2026-04-19
 
 ---
 
@@ -147,201 +147,102 @@ Op-eds (single-source, `content_type=opinion`) are **not** sent to Gemini. They 
 
 ---
 
-## 9. Audio Broadcast — Gemini 2.5 Flash TTS
+## 9. Audio Broadcast — edge-tts (Microsoft Neural, $0)
 
-### Architecture (v3.0)
+### Architecture (v4.1)
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    void --onair Audio Pipeline                  │
-├─────────────────────────────────────────────────────────────────┤
-│                                                                 │
-│  ┌──────────────┐     ┌──────────────────┐     ┌────────────┐  │
-│  │  Gemini 2.5   │     │  Gemini 2.5 Flash │     │   pydub    │  │
-│  │  Flash (text) │────▶│  TTS (audio)      │────▶│  assembly  │  │
-│  │              │     │                  │     │            │  │
-│  │ Script gen:  │     │ Native 2-speaker │     │ BBC pips + │  │
-│  │ TL;DR +      │     │ dialogue in ONE  │     │ countdown +│  │
-│  │ audio_script │     │ API call         │     │ dialogue + │  │
-│  │              │     │                  │     │ outro      │  │
-│  │ 3 calls/run  │     │ 1 call/edition   │     │            │  │
-│  └──────────────┘     └──────────────────┘     └─────┬──────┘  │
-│                                                       │         │
-│                                                       ▼         │
-│                                                 ┌──────────┐   │
-│                                                 │ MP3 128k │   │
-│                                                 │ mono     │   │
-│                                                 └─────┬────┘   │
-│                                                       │         │
-│                                                       ▼         │
-│                                               ┌────────────┐   │
-│                                               │  Supabase  │   │
-│                                               │  Storage   │   │
-│                                               │ audio-     │   │
-│                                               │ briefs/    │   │
-│                                               └────────────┘   │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-### Before vs After (v2 → v3)
+Gemini is used for **text only** (script generation). Audio synthesis uses **edge-tts** (Microsoft Neural voices, $0). Gemini TTS was used in v3 (2026-03-22) but permanently removed in v4 (2026-04-11) because it is NOT on the free tier (~$3.70/day, hit $40 billing cap on day 11 of April).
 
 ```
-v2 (DELETED):                              v3 (CURRENT):
-┌──────────────────────────┐               ┌──────────────────────────┐
-│ Gemini Flash → script    │               │ Gemini Flash → script    │
-│         │                │               │         │                │
-│         ▼                │               │         ▼                │
-│ Parse 20+ speaker turns  │               │ Convert A:/B: → Anchor:/ │
-│         │                │               │ Analyst: dialogue format │
-│         ▼                │               │         │                │
-│ For EACH turn:           │               │         ▼                │
-│   ├─ Clean text          │               │ ONE Gemini Flash TTS     │
-│   ├─ Inject disfluency   │               │ API call                 │
-│   ├─ Wrap SSML prosody   │               │         │                │
-│   ├─ edge-tts/GCloud TTS │               │         ▼                │
-│   ├─ Variable silence    │               │ PCM 24kHz → WAV →       │
-│   └─ Append to pydub     │               │ pydub (pips + outro) →  │
-│         │                │               │ MP3 128k mono            │
-│         ▼                │               │         │                │
-│ 20+ API calls            │               │         ▼                │
-│ 592 lines of code        │               │ Supabase upload          │
-│ Robotic turn-taking      │               │                          │
-│ Fixed silence gaps       │               │ 1 API call               │
-│ No contextual prosody    │               │ 231 lines of code        │
-└──────────────────────────┘               │ Natural turn-taking      │
-                                           │ LLM-native prosody       │
-                                           └──────────────────────────┘
+Gemini Flash (text) ──▶ edge-tts (per-turn synthesis) ──▶ pydub (sonic identity) ──▶ MP3 96k mono ──▶ Supabase Storage
+   3 calls/run              $0 Microsoft Neural              intro chord + chimes +
+   (TL;DR + opinion +                                        page-turn + outro +
+    audio_script)                                             subharmonic layer
 ```
 
-### Why LLM-Native TTS
+### Voice Configuration — 4 Multilingual Neural Voices
 
-Traditional TTS synthesizes each speaker turn in isolation — it has no idea what came before
-or what the other speaker just said. The result is mechanically stitched audio with fixed
-silence gaps. Even with SSML prosody hints and disfluency injection, it sounds robotic.
+As of 2026-04-19, all first-gen Neural voices (Aria, Jenny, Davis, Christopher, Nancy, Roger, Michelle, Sara) are retired. The system runs on **four** en-US Multilingual Neural voices only. Each news pair preserves male/female contrast across the 6 personas.
 
-Gemini 2.5 Flash TTS is fundamentally different: the **LLM generates both speakers in a
-single forward pass.** It understands the dialogue context — that "Right." after a dramatic
-fact should sound different than "Right." in a casual greeting. It handles turn-taking,
-emphasis, pacing, and conversational rhythm natively.
+**News host rotation (6 personas → 4 voices):**
 
-```
-Traditional TTS (edge-tts, Google Cloud):
-  "Right."  →  [synthesize in isolation]  →  same flat audio every time
+| Host Role | Gemini Name | edge-tts Voice | Character |
+|-----------|-------------|----------------|-----------|
+| Correspondent | Kore | en-US-EmmaMultilingualNeural | Authoritative female |
+| Structuralist | Charon | en-US-BrianMultilingualNeural | Conversational male |
+| Investigator | Orus | en-US-AndrewMultilingualNeural | Measured male |
+| Pragmatist | Gacrux | en-US-AvaMultilingualNeural | Smooth female |
+| Editor | Sadaltager | en-US-AndrewMultilingualNeural | Warm scholarly male |
+| Realist | Achernar | en-US-EmmaMultilingualNeural | Editorial-gravity female |
 
-Gemini Flash TTS:
-  "...14 outlets track this across the spectrum."
-  "Right. What stands out is the divergence."
-                                     ↑
-                   Model knows this follows a dramatic fact,
-                   so "Right." gets weight and emphasis
-```
+**History pair** (void --history companion audio):
+- Chronicler (Sadaltager) → `en-US-AndrewMultilingualNeural`
+- Witness (Achernar) → `en-US-EmmaMultilingualNeural`
 
-### Script Format Conversion
+**Opinion voices per edition** (fixed; all 4 Multilingual voices represented):
+- World (Sulafat) → `en-US-AvaMultilingualNeural`
+- US (Schedar) → `en-US-AndrewMultilingualNeural`
+- India (Despina) → `en-US-AvaMultilingualNeural`
+- UK (Rasalgethi) → `en-US-BrianMultilingualNeural`
+- Canada (Vindemiatrix) → `en-US-EmmaMultilingualNeural`
 
-The pipeline generates scripts with `A:`/`B:` speaker tags only (no `[MARKER]` segment
-labels — the prompt explicitly bans them). The audio producer converts to Gemini's
-`SpeakerName: text` format before synthesis, and defensively strips any `[MARKER]`
-tags if present in legacy or malformed output.
+Canonical mapping lives in `_GEMINI_TO_EDGE_VOICE` in `pipeline/briefing/audio_producer.py`. Defaults (`_DEFAULT_EDGE_VOICE_A/B`) are Andrew + Emma.
 
-```
-INPUT (from daily_brief_generator.py):        OUTPUT (to Gemini Flash TTS):
+### Sonic Identity (Post-Processing via pydub)
 
-A: Good evening. This is void                 Anchor: Good evening. This is void
-news, world edition.                          news, world edition.
-B: Good evening. Quite a day.                 Analyst: Good evening. Quite a day.
-A: Here are the headlines...           →      Anchor: Here are the headlines...
-B: Meanwhile, the ECB holds                   Analyst: Meanwhile, the ECB holds
-rates.                                        rates.
-...                                           ...
-```
-
-### Voice Configuration
-
-```
-┌─────────────────────────────────────────────────────┐
-│              Gemini Prebuilt Voice Pairs             │
-├──────────┬────────────────────┬──────────────────────┤
-│ Edition  │ Anchor (Host A)    │ Analyst (Host B)     │
-├──────────┼────────────────────┼──────────────────────┤
-│ world    │ Charon             │ Aoede                │
-│          │ deep, authoritative│ warm, conversational │
-├──────────┼────────────────────┼──────────────────────┤
-│ us       │ Enceladus          │ Kore                 │
-│          │ steady, clear      │ bright, analytical   │
-├──────────┼────────────────────┼──────────────────────┤
-│ india    │ Puck               │ Leda                 │
-│          │ measured, precise  │ warm, engaging        │
-└──────────┴────────────────────┴──────────────────────┘
-
-  Roles swap daily (UTC day-of-year parity).
-  30 prebuilt voices available for future tuning.
-```
-
-### Benchmark
-
-```
-┌──────────────────────────────────────────────────────┐
-│                  Performance (v3.0)                   │
-├──────────────────┬───────────────────────────────────┤
-│ Script input     │ 211 words (full broadcast)        │
-│ Audio output     │ 75.8 seconds (1.3 min)            │
-│ API latency      │ 42.2 seconds                      │
-│ Realtime factor  │ 1.8x                              │
-│ API calls        │ 1 (was 20+ in v2)                 │
-│ Output format    │ PCM 24kHz 16-bit → MP3 128k mono  │
-│ Cost per run     │ $0 (Gemini free tier)              │
-│ Code lines       │ 231 (was 592 in v2)               │
-│ Dependencies     │ google-genai, pydub (was +2 more) │
-└──────────────────┴───────────────────────────────────┘
-```
+| Element | Description |
+|---------|-------------|
+| Intro | ~2s D major 9th bloom chord (Glass & Gravity) |
+| Section breaks | Glass-bell chimes at detected silence gaps (>= 800ms at <= -45dB) |
+| News-to-opinion | Editorial page-turn transition |
+| Outro | ~1.8s resolving chord (intro bloom returning to root) |
+| Subharmonic | D2/D3/A3 presence layer at -34 to -42 dB |
+| Export | MP3 96k mono (voice-optimized) |
 
 ### Gemini API Budget (Combined)
 
 ```
-┌──────────────────────────────────────────────────────────────┐
-│              Daily Gemini Free Tier Usage (250 RPD)           │
-├────────────────────────┬──────────┬────────┬─────────────────┤
-│ Function               │ Model    │ RPD    │ % of 250 limit  │
-├────────────────────────┼──────────┼────────┼─────────────────┤
-│ Cluster summarization  │ flash    │ ~100   │ 40%             │
-│ Gemini reasoning (6c)  │ flash    │ ~100   │ 40%             │
-│ Editorial triage (7c)  │ flash    │ ~12    │ 5%              │
-│ Daily brief script (7d)│ flash    │ ~4     │ 2%              │
-│ Audio TTS (7d)         │ flash-tts│ ~4     │ 2%              │
-├────────────────────────┼──────────┼────────┼─────────────────┤
-│ TOTAL                  │          │ ~220   │ 88%             │
-│ Remaining headroom     │          │ ~30    │ 12%             │
-└────────────────────────┴──────────┴────────┴─────────────────┘
+Daily Gemini Free Tier Usage (250 RPD)
 
-  4 runs/day × 1 TTS call/run = 4 RPD for audio.
-  Well within free tier limits.
+Function                  Model     RPD     % of 250 limit
+Cluster summarization     flash     ~100    40%
+Gemini reasoning (6c)     flash     ~100    40%
+Editorial triage (7c)     flash     ~12     5%
+Daily brief script (7d)   flash     ~4      2%
+Audio TTS                 --        0       0% (edge-tts, $0)
+TOTAL                               ~216    86%
+Remaining headroom                   ~34    14%
 ```
+
+Audio uses edge-tts ($0, no Gemini RPD consumed).
 
 ### Decision Log
 
 | Date | Decision | Rationale |
 |------|----------|-----------|
-| 2026-03-22 | Replace edge-tts + Google Cloud TTS with Gemini Flash TTS | Single API call, LLM-native prosody, $0, -361 lines |
+| 2026-03-22 | Replace edge-tts + Google Cloud TTS with Gemini Flash TTS | Single API call, LLM-native prosody, $0 (at the time) |
 | 2026-03-22 | Delete SSML prosody, disfluency injection, per-turn stitching | Unnecessary with LLM-native dialogue synthesis |
-| 2026-03-22 | Remove edge-tts and google-cloud-texttospeech dependencies | No longer needed; Gemini Flash TTS uses existing google-genai SDK |
-| 2026-03-22 | Gemini prebuilt voices over Neural2/edge-tts voices | Consistent with single-vendor approach, 30 voice options |
+| 2026-04-11 | **Permanently revert to edge-tts, remove Gemini TTS** | Gemini TTS is NOT free tier -- $3.70/day, hit $40 billing cap. edge-tts is $0 with Microsoft Neural voices. Gemini text generation remains free tier. |
+| 2026-04-11 | Remove DISABLE_AUDIO gate from pipeline.yml | Audio runs on every scheduled pipeline run at $0 cost (world edition only) |
+| 2026-04-19 | **Consolidate to 4 Multilingual Neural voices (Andrew/Brian/Ava/Emma)** | First-gen Neural voices (Aria, Jenny, Davis, Christopher, Nancy, Roger, Michelle, Sara) retired. Multilingual Neural delivers noticeably warmer, more natural prosody at same $0 cost; every news pair still preserves male/female contrast across 6 personas. |
+| 2026-04-19 | **Script cache at `data/history/scripts/{slug}.txt` + `--voices-only` flag** | Decouples Gemini script generation from TTS synthesis. Voice sweeps (re-synthesize all 58 history events with a new voice) now cost $0 in Gemini quota and complete in ~6 min. `generate_audio.py --voices-only` reuses cached scripts; `generate-history-audio.yml` workflow accepts a `voices_only` dispatch input. |
 
 ### Files
 
 | File | Role |
 |------|------|
-| `pipeline/briefing/audio_producer.py` | Script→dialogue conversion, Gemini TTS call, PCM→WAV→MP3, Supabase upload |
-| `pipeline/briefing/voice_rotation.py` | Gemini prebuilt voice pairs per edition, daily role swap |
+| `pipeline/briefing/audio_producer.py` | Per-turn edge-tts synthesis via `_synthesize_edge_tts()`, pydub stitching + sonic identity, MP3 export, Supabase upload. Canonical `_GEMINI_TO_EDGE_VOICE` mapping (4 Multilingual voices). |
+| `pipeline/briefing/voice_rotation.py` | 6-host newsroom model, 3 pairs rotating across editions, opinion voice per edition |
 | `pipeline/briefing/daily_brief_generator.py` | Gemini script generation (TL;DR + audio_script), 3-call budget |
 | `pipeline/briefing/claude_brief_generator.py` | Optional Claude CLI premium script (manual 1x/day) |
+| `pipeline/history/audio_script_generator.py` | Gemini history-audio script generation; writes canonical scripts to `data/history/scripts/{slug}.txt`; `reuse_cached=True` skips Gemini entirely |
+| `pipeline/history/generate_audio.py` | Per-event synthesizer; `--voices-only` flag (implies `--force`) reuses cached scripts for zero-Gemini voice sweeps |
+| `data/history/scripts/{slug}.txt` | Canonical script store — generated once via Gemini, reused indefinitely for voice iteration |
 
 ### Limitations & Risks
 
 | Risk | Mitigation |
 |------|------------|
-| Preview model (`-preview-tts`) may change | Monitor for deprecation; model name is a single constant |
-| ~5 min audio cutoff reported on free tier | Briefs target 4-6 min; chunking at segment boundaries if needed |
-| Free tier rate limits could change | Currently using 2% of 250 RPD; large buffer |
-| No SSML control (LLM decides prosody) | Trade-off: less control but better natural results |
-| PCM output requires ffmpeg for MP3 export | Already in GitHub Actions (`apt-get install ffmpeg`) |
+| edge-tts depends on Microsoft service availability | Fallback: skip audio, text brief still generated |
+| Per-turn synthesis less natural than LLM-native | Sonic identity (chimes, subharmonic, bloom) adds cohesion |
+| ffmpeg required for MP3 export | Already in GitHub Actions (`apt-get install ffmpeg`) |

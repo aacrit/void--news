@@ -1,6 +1,6 @@
 # void --news Agent Team Structure
 
-Last updated: 2026-04-10 (rev 23)
+Last updated: 2026-04-19 (rev 25)
 
 ## Philosophy
 
@@ -22,7 +22,7 @@ COST BUDGET: $0.00 — ABSOLUTE CEILING
 
 Pipeline NLP:      Rule-based only (spaCy, NLTK, TextBlob) — $0
 Summarization:     Gemini Flash free tier (250 RPD budget, ~177 RPD used) — $0
-Audio TTS:         Gemini 2.5 Flash TTS free tier (same GEMINI_API_KEY) — $0
+Audio TTS:         edge-tts (Microsoft Neural voices) — $0
 Database:          Supabase free tier — $0
 Hosting:           GitHub Pages — $0
 CI/CD:             GitHub Actions free tier — $0
@@ -44,14 +44,27 @@ CEO (Aacrit)
   ├── History —————————— history-curator, perspective-analyst, historiographic-auditor, media-archaeologist, timeline-architect, narrative-engineer
   ├── History Visual ——— visual-historian, archive-cartographer
   ├── Audio ———————————— audio-engineer
+  ├── Games ———————————— game-content-writer
   ├── Security ————————— void-ciso
   ├── Product —————————— ceo-advisor
   └── Branding ————————— logo-designer
 ```
 
-**Total: 34 agents across 13 divisions**
+**Total: 35 agents across 14 divisions**
 
 Note: Cinematic Division agents (cinematographer, motion-director, vfx-artist) are also core History team members, integrated into `/history-publish` and `/cinematic-overhaul` workflows. Full history spec: `docs/HISTORY.md`.
+
+### Cycle Status (as of 2026-04-19)
+
+| Tier | Status | Notes |
+|------|--------|-------|
+| Tier 0 (foundation) | **Shipped** | Canvas unification (`--canvas-max`), scroll-compact masthead, lead photo clamp, Deep Dive double-defocus fix, mobile above-the-fold reclaim |
+| Tier 1 (polish) | **Shipped** | `anim-stagger` keyframe conversion (IO-replay safe), dead CSS sweep, 3/5-col `/ship` Kanban, hardcoded widths replaced with `var(--canvas-max)` |
+| Tier 2 (motion) | **Shipped** | Press states, card lift on hover, gesture inertia on horizontal strips, 496 bare easings migrated to tokens across 18 CSS files |
+| Tier 3 (cinematic depth) | Pending | |
+| Tier 4 (hero overhaul) | Pending | |
+
+Narrative-engineer pass landed: 25 YAML event files rewritten for Show-Don't-Tell + Arrive Late Leave Early (9 subtitles, 24 connection sentences). Voice remap (Cycle 4): 12 first-gen Neural voices retired, consolidated to 4 Multilingual (Andrew/Brian/Ava/Emma).
 
 ---
 
@@ -126,6 +139,12 @@ Note: Cinematic Division agents (cinematographer, motion-director, vfx-artist) a
 | Agent | Purpose | Write Access | Trigger |
 |-------|---------|-------------|---------|
 | `agent-architect` | Audits, optimizes, and designs all agents. Reviews definitions for best-in-class tooling, cost efficiency, prompt engineering. Builds new agents on CEO demand. | Yes (agent definitions only) | CEO request, post-major-change review, periodic fleet audit |
+
+### Games Division
+
+| Agent | Purpose | Write Access | Trigger |
+|-------|---------|-------------|---------|
+| `game-content-writer` | Game content authoring — word lists, puzzles, clue banks for void --games (THE WIRE, CIPHER, FRAME, VOID RUN, UNDERTOW) | Yes | New game content, puzzle generation |
 
 ### Security Division
 
@@ -249,6 +268,7 @@ narrative-engineer → historiographic-auditor → [cinematographer + motion-dir
 | Narrative polish, show-don't-tell, multi-perspective coherence | `narrative-engineer` | History |
 | Archival Cinema UI, Ken Burns effects, history page layouts | `visual-historian` | History Visual |
 | Geographic visualization, map layers, region/era spatial data | `archive-cartographer` | History Visual |
+| Game content — word lists, puzzles, clue banks for void --games | `game-content-writer` | Games |
 
 ---
 
@@ -266,9 +286,9 @@ narrative-engineer → historiographic-auditor → [cinematographer + motion-dir
 - 6-axis bias scoring model (political lean, sensationalism, opinion/fact, factual rigor, framing + confidence)
 - Supabase as single data layer
 - Static export (Next.js → GitHub Pages)
-- 1,013-source curated list (3 tiers: 43 us_major, 373 international, 597 independent); 7-point political lean spectrum; 158 countries
-- $0 operational cost constraint
-- Claude Max CLI for all agent work; Gemini Flash free tier only for pipeline summarization
+- 1,013-source curated list (3 tiers: 43 us_major, 373 international, 597 independent); 7-point lean spectrum; 158 countries
+- $0 operational cost constraint (edge-tts for audio, Gemini Flash free tier for text only)
+- Claude Max CLI for all agent work; Gemini Flash free tier only for pipeline text generation (summaries, scripts)
 
 ---
 
@@ -293,7 +313,7 @@ Note: `motion-physics-designer` was promoted to three active agents: `cinematogr
 | 2026-03-19 | First agent chain run: bias fixes, Gemini Voice arch, parallelization, favicon/OG, responsive |
 | 2026-03-20 | Ranking v3.3 (9 signals, bias-blind); Clustering v2 (entity-merge); multi-section editions |
 | 2026-03-21 | Ranking v5.1 (Gemini editorial); Deep Dive redesign; Daily Brief + audio pipeline; bias calibration (all 5 axes); validation framework (26 fixtures, 96.9%) |
-| 2026-03-22 | Gemini TTS migration (replaced edge-tts + GCloud); Vol I reset (370 sources, 4,839 articles, 108 min); perf optimizations |
+| 2026-03-22 | Audio pipeline migration (Gemini TTS trialed, later reverted to edge-tts in Apr); Vol I reset (370 sources, 4,839 articles, 108 min); perf optimizations |
 | 2026-03-29 | Cinematic Division added (cinematographer, motion-director, vfx-artist); 20→23 agents, 9→10 divisions; Cinematic Press v2 design tokens; source expansion 370→409 |
 | 2026-03-31 | Source review: 11 broken RSS feeds fixed, 13 right-spectrum sources added, L:R 1.82:1→1.54:1; 409→419 sources |
 | 2026-04-02 | Major source expansion: 419→951 sources (+532), 77→155 countries, L:R 1.54:1→1.16:1; India→South Asia rename; new Europe edition; 38 wire services, 10 fact-checkers; US regional metros + specialty/beat press added |
@@ -301,3 +321,4 @@ Note: `motion-physics-designer` was promoted to three active agents: `cinematogr
 | 2026-04-04 | void --history ("The Archive"): multi-perspective historical events platform, Archival Cinema design, 19 components, 5-lens historiographic framework, 25 events (100 perspectives, 218 media), migrations 039+043 (4 history tables), pipeline/history (content_loader, image_enricher, mirror_images, source_enricher), 8 new agents (history-curator, perspective-analyst, historiographic-auditor, media-archaeologist, timeline-architect, narrative-engineer, visual-historian, archive-cartographer), 6 history workflows; 32 agents, 13 divisions |
 | 2026-04-05 | color-grader + media-curator agents added to Cinematic Division; per-image CSS filter grading pipeline for external media (Weekly cover, History archival, Deep Dive); cinematic overhaul cycle updated; ranking v6.0 (10 signals, lean_diversity merged into perspective_diversity, divergence purified, edition_ranker.py extracted, holistic re-rank step 8c); 34 agents, 13 divisions |
 | 2026-04-10 | void --history museum redesign: 8-stage journey (hero, crack, record, context, perspectives, omissions, evidence, exit), museum vitrine perspectives, chisel-grain record block, omissions toggle, dossier cards with connection glyphs, HistoryAudioCue + ThreadsLanding components; 25→58 events, 20→22 components; DeepDiveSpectrum 3 toggleable views (Ink Ridge, Witness Line, Terrain Map); migration 045 (history audio); generate-history-audio workflow |
+| 2026-04-11 | edge-tts replaces Gemini TTS permanently ($3.70/day hit $40 cap); DISABLE_AUDIO gate removed from pipeline.yml; void --games added (5 games: THE WIRE, VOID RUN, CIPHER, FRAME, UNDERTOW); game-content-writer agent added; 35 agents, 14 divisions |

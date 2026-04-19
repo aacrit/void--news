@@ -1,6 +1,6 @@
 # void --news Pipeline Brain
 
-Last updated: 2026-04-09 (rev 2, summarization cap updated)
+Last updated: 2026-04-19 (rev 4, political_lean unscored flag, sensationalism baselines halved, history script cache)
 
 Complete reference for every intelligent system in the pipeline: bias analysis, clustering, ranking, summarization, editorial triage, memory, and audio generation.
 
@@ -177,8 +177,8 @@ Complete reference for every intelligent system in the pipeline: bias analysis, 
        |
        |  +---> TL;DR: 8-12 sentence editorial (150-220 words)
        |  +---> Opinion: 3-5 sentences, lean rotates daily (L/C/R)
-       |  +---> Audio: BBC two-host format, Gemini TTS, pydub post-processing
-       |        5 rotating host pairs, MP3 96k mono -> Supabase Storage
+       |  +---> Audio: BBC two-host format, edge-tts ($0), pydub sonic identity
+       |        6-host newsroom (3 pairs), MP3 96k mono -> Supabase Storage
        v
 
                             STORAGE
@@ -238,8 +238,8 @@ Every article gets scored 0-100 on 5 axes. All NLP, no LLM calls.
 
 | Axis | File | Key Techniques |
 |------|------|---------------|
-| Political Lean | `political_lean.py` | Keyword lexicons (left/right coded), entity sentiment via NER + TextBlob, framing phrases, length-adaptive + sparsity-weighted source baseline blending |
-| Sensationalism | `sensationalism.py` | Clickbait patterns, superlative density (word-boundary regex), TextBlob polarity extremity, partisan attack density (capped 30pts) |
+| Political Lean | `political_lean.py` | Keyword lexicons (left/right coded), entity sentiment via NER + TextBlob, framing phrases, length-adaptive + sparsity-weighted source baseline blending. `rationale.unscored` flag emitted when text has zero partisan signal against a 45-55 baseline — UI renders "unscored" instead of implying a center verdict (op-ed/wire safeguard). |
+| Sensationalism | `sensationalism.py` | Clickbait patterns, superlative density (word-boundary regex), TextBlob polarity extremity, partisan attack density (capped 30pts). Tier baselines halved 2026-04 (us_major 8, international 10, independent 12); curve inflection tightened from 25 → 15 to widen spread on legitimate tabloid copy. |
 | Opinion vs Fact | `opinion_detector.py` | First-person pronouns, TextBlob subjectivity, attribution density (24 investigative patterns), value judgments, rhetorical questions |
 | Factual Rigor | `factual_rigor.py` | Named sources (NER + attribution verbs), org citations, data patterns (numbers, dates, stats), quote density, vague-source penalty. LOW_CREDIBILITY baseline 35 |
 | Framing | `framing.py` | Charged synonym pairs (50+), cluster-aware omission detection, headline-body sentiment divergence, passive voice (capped 30) |
@@ -300,11 +300,12 @@ Produces per-edition ranks (rank_world, rank_us, rank_europe, rank_south_asia) s
 |-----------|------|--------|
 | TL;DR Generator | `daily_brief_generator.py` | 8-12 sentence editorial, 150-220 words |
 | Opinion Generator | `daily_brief_generator.py` | 3-5 sentences, lean rotates daily (L/C/R) |
-| Audio Producer | `audio_producer.py` | BBC two-host TTS, Gemini native multi-speaker |
+| Audio Producer | `audio_producer.py` | BBC two-host TTS, edge-tts per-turn synthesis (4 Multilingual voices), pydub sonic identity |
 | Voice Rotation | `voice_rotation.py` | 5 host pairs, daily rotation |
 | Podcast Feed | `podcast_feed_generator.py` | RSS XML for podcast apps |
 | Weekly Digest | `weekly_digest_generator.py` | 7-section magazine, Sunday 6AM CST |
 | Claude Premium | `claude_brief_generator.py` | Optional Claude CLI for TL;DR + opinion + audio |
+| History Audio | `history/audio_script_generator.py` + `history/generate_audio.py` | Two-host (Chronicler + Witness) edge-tts scripts per event. Canonical scripts cached at `data/history/scripts/{slug}.txt`; `--voices-only` flag reuses cache for zero-Gemini voice sweeps across all 58 events. |
 
 ### 8. Memory Engine
 
@@ -335,7 +336,7 @@ Produces per-edition ranks (rank_world, rank_us, rank_europe, rank_south_asia) s
 
 ## Key Design Decisions
 
-1. **$0 operational cost**: All bias analysis is rule-based NLP. Gemini Flash free tier for summaries/TTS.
+1. **$0 operational cost**: All bias analysis is rule-based NLP. Gemini Flash free tier for text (summaries/scripts). edge-tts for audio ($0).
 2. **Bias-blind ranking**: Never factor political lean into story selection.
 3. **Newspaper principle**: No personalization. Every reader sees the same stories in the same order.
 4. **Holistic ranking**: Every pipeline run re-scores ALL clusters, not just new ones.
