@@ -308,7 +308,7 @@
 
 .hist-main {
   flex: 1;
-  max-width: 1200px;
+  max-width: var(--canvas-max);
   width: 100%;
   margin: 0 auto;
   padding: 0 var(--space-5);
@@ -4850,10 +4850,6 @@ main:has(.hist-tl-wrapper) + .hist-footer {
 
 /* ── Wide Desktop (1440px+) ── */
 @media (min-width: 1440px) {
-  .hist-main {
-    max-width: 1320px;
-  }
-
   /* Card grid: 4 columns at very wide viewports */
   .hist-card-grid {
     grid-template-columns: repeat(4, 1fr);

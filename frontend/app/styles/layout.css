@@ -15,18 +15,12 @@
 
 .page-main {
   flex: 1;
-  max-width: 1400px;
+  max-width: var(--canvas-max);
   margin: 0 auto;
   /* Mobile-first: --space-5 (~16px) at 375px, promoted to --space-7 at 768px+ */
   padding: 0 var(--space-5);
   padding-bottom: var(--space-5);
   width: 100%;
-}
-
-@media (min-width: 1440px) {
-  .page-main {
-    max-width: min(92vw, 1600px);
-  }
 }
 
 @media (min-width: 768px) {
@@ -319,7 +313,7 @@
   margin-top: var(--space-6);
   /* Match page-main padding so footer border aligns with content canvas */
   padding: var(--space-5) var(--space-5);
-  max-width: min(92vw, 1600px);
+  max-width: var(--canvas-max);
   margin-left: auto;
   margin-right: auto;
   width: 100%;

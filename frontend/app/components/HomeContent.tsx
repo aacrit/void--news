@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef, Component, type ReactNode } from "react";
 import dynamic from "next/dynamic";
 import type { Edition, Category, Story, BiasScores, BiasSpread, ThreeLensData, OpinionLabel, SigilData, LeanChip } from "../lib/types";
-import { EDITIONS, _ALL_EDITIONS, LEAN_RANGES } from "../lib/types";
+import { EDITIONS, LEAN_RANGES } from "../lib/types";
 import { isUnscoredTilt } from "../lib/biasColors";
 import { supabase, supabaseError, fetchClusterLeadImage } from "../lib/supabase";
 import { cacheGet, cacheSet } from "../lib/feedCache";
@@ -51,7 +51,7 @@ import Footer from "./Footer";
 import { useDailyBrief } from "./DailyBrief";
 import SkyboxBanner from "./SkyboxBanner";
 const FloatingPlayer = dynamic(() => import("./FloatingPlayer"), { ssr: false });
-import { hapticConfirm, hapticLight, hapticMicro } from "../lib/haptics";
+import { hapticConfirm, hapticLight } from "../lib/haptics";
 const UnifiedOnboarding = dynamic(() => import("./UnifiedOnboarding"), { ssr: false });
 import { useStoryKeyboardNav } from "./KeyboardShortcuts";
 const KeyboardShortcutsOverlay = dynamic(() => import("./KeyboardShortcuts").then(m => ({ default: m.KeyboardShortcutsOverlay })), { ssr: false });
@@ -915,24 +915,6 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                     </button>
                   )}
                 </div>
-              </div>
-            )}
-
-            {/* Edition pills — mobile only, scrollable strip */}
-            {!isLoading && stories.length > 0 && isMobile && (
-              <div className="mobile-edition-pills" role="tablist" aria-label="Edition">
-                {_ALL_EDITIONS.map((meta) => (
-                  <button
-                    key={meta.slug}
-                    role="tab"
-                    aria-selected={activeEdition === meta.slug}
-                    data-active={activeEdition === meta.slug ? "true" : undefined}
-                    className="mobile-edition-pill"
-                    onClick={() => { hapticMicro(); setActiveEdition(meta.slug); }}
-                  >
-                    {meta.label}
-                  </button>
-                ))}
               </div>
             )}
 

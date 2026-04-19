@@ -1806,7 +1806,7 @@
 }
 
 .nav-inner {
-  max-width: 1280px;
+  max-width: var(--canvas-max);
   margin: 0 auto;
   /* Mobile-first: --space-5 (~16px) horizontal; promoted to --space-7 at 768px+.
      Vertical padding reduced from --space-3 to --space-2 for single-row compactness. */
@@ -2416,7 +2416,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  max-width: 1280px;
+  max-width: var(--canvas-max);
   margin: 0 auto;
   padding: var(--space-2) var(--space-7) var(--space-2);
   /* Inset shadow — recessed into the page, behind Row 1 chrome */

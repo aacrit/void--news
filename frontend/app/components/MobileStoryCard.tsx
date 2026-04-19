@@ -1,7 +1,6 @@
 "use client";
 
 import type { Story } from "../lib/types";
-import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
 import { useInView } from "../lib/sharedObserver";
@@ -60,15 +59,12 @@ export default function MobileStoryCard({
         }}
       />
 
-      {isHero && <span className="msc__badge">Top Story</span>}
-
       {isHero ? (
-        /* Hero layout: headline + inline Sigil + caret */
+        /* Hero layout: headline + inline Sigil */
         <>
           <h2 className="msc__headline msc__headline--hero">
             <span>{story.title}</span>
             <Sigil data={story.sigilData} size="lg" instant />
-            <CaretRight size={14} weight="bold" aria-hidden="true" className="msc__caret" />
           </h2>
           {story.summary?.trim() && <p className="msc__summary">{story.summary}</p>}
           {!story.summary?.trim() && (
@@ -82,7 +78,6 @@ export default function MobileStoryCard({
         <>
           <h3 className="msc__headline msc__headline--compact">
             <span>{story.title}</span>
-            <CaretRight size={12} weight="bold" aria-hidden="true" className="msc__caret" />
           </h3>
           <div className="msc__sigil-row">
             <span
@@ -92,7 +87,6 @@ export default function MobileStoryCard({
             />
             <span className="msc__lean-label">{story.sigilData.unscored ? "unscored" : tiltLabel(story.sigilData.politicalLean).toLowerCase().replace(" tilt", "")}</span>
             {story.category && <span className="msc__cat">{story.category}</span>}
-            <span className="msc__cat">{story.source.count} sources</span>
           </div>
           {story.summary?.trim() && <p className="msc__summary msc__summary--compact">{story.summary}</p>}
         </>
