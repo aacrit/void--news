@@ -1,7 +1,7 @@
 # void --news — Design System: "Cinematic Press" (Press & Precision v2)
 
-**Version:** 2.2
-**Last updated:** 2026-04-11 (rev 19)
+**Version:** 2.3
+**Last updated:** 2026-04-19 (rev 20)
 
 ---
 
@@ -224,6 +224,29 @@ BiasLens is void --news's signature visual element. Three distinctive micro-visu
 ---
 
 ## 5. Layout System
+
+### Canonical Canvas — `--canvas-max`
+
+All full-page routes (`/`, `/weekly`, `/history`, `/ship`, `/paper`, `/command-center`) share a single canvas-width token defined in `tokens.css`:
+
+```css
+--canvas-max: min(92vw, 1600px);
+```
+
+This replaces the previous mix of hard-coded 1200px/1400px/1600px `max-width` rules across `paper.css`, `history.css`, and ad-hoc inline styles. Any new top-level route **must** consume `var(--canvas-max)` for its outermost wrapper — no hardcoded pixel widths at the canvas level.
+
+### Scroll-Compact Masthead
+
+`NavBar.tsx` runs an rAF-throttled scroll listener and toggles a `data-scroll-compact` attribute on the root when `window.scrollY` crosses an 80px → 40px hysteresis band. Compact state:
+
+- Row 1 chrome collapses vertically (padding + logo shrink)
+- Row 2 (edition tabs + lens) remains fully readable
+- Transitions ride `var(--ease-cinematic)`
+- Both desktop and mobile breakpoints honor the attribute via `[data-scroll-compact]` selectors in `layout.css` / `mobile-nav.css`
+
+### Lead Photo Sizing
+
+Lead story photos use `clamp(360px, 48vh, 560px)` (was fixed 320px pre-Cycle 2). Shorter viewports crop gracefully; tall desktop displays earn a hero-sized image without busting the grid.
 
 ### Desktop — "Broadsheet Grid"
 
@@ -456,6 +479,12 @@ Adapted from DondeAI's "Ink & Momentum" motion system.
 | Cold open (skybox) | Page load | coldOpenDollyIn (scale 0.985→1, opacity 0→1) | 500ms, delay 200ms |
 | Edition switch | Click edition tab | Direction-aware whip pan: whipPanOutRight + whipPanInLeft (translateX 8%, blur 2px) | 350ms `--ease-whip` |
 | ScaleIcon idle | Continuous | Gentle beam tipping (rotate 0→2deg→-2deg→0) | 5s, `--ease-cinematic`, infinite |
+| Press states (Tier 2) | Active/pointerdown | `transform: scale(0.98)` on interactive cards/buttons | 80ms ease-out |
+| Card lift (Tier 2) | Hover (fine pointer only) | `translateY(-2px)` + elevation shadow bump | 180ms `var(--ease-cinematic)` |
+| Gesture inertia (Tier 2) | Horizontal strip flick | Momentum decay after release on touch/pointer drag | ~400ms, native scroll-snap |
+| Card entrance | IO reveal | `anim-stagger` @keyframes (migrated from transition — IO-replay safe) | 300ms, 40ms stagger |
+
+**Easing migration:** 496 bare cubic-bezier/ease values across 18 CSS files now route through `var(--ease-cinematic | rack | refold | unfold)` tokens. Never write a raw easing literal in new CSS — always reference a token.
 
 ### Reduced Motion
 
@@ -589,6 +618,17 @@ Active components in `frontend/app/components/`:
 | Favicon (`/public/icon.svg`) | Static SVG | void circle only (`none` equivalent) |
 
 Add `.si-hoverable` class to any ancestor to activate hover animation on `LogoIcon` / `ScaleIcon`.
+
+### Client Utilities (`frontend/app/lib/`)
+
+| File | Purpose |
+|------|---------|
+| `coverageClass.ts` | Derives a qualitative coverage tone from a `Story`'s signals — returns one of `consensus` / `split` / `skewed` / `divergent` / `neutral`. Drives the verdict pill under source counts. |
+| `rankRationale.ts` | Surfaces up to 3 human-readable signal phrases explaining why a story earned its top-feed placement (e.g. "14 outlets in 6 hours", "cross-spectrum coverage"). Used on the Lead Story + Deep Dive header. |
+| `biasColors.ts` | Canonical lean → color / label mapping |
+| `haptics.ts` | `hapticMicro` / `hapticConfirm` wrappers (vibrate API, reduced-motion guarded) |
+
+`Sigil.tsx` beam tilt uses a sigmoid taper that saturates at ±22°, so extreme lean scores never produce a vertical beam.
 
 ---
 

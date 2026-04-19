@@ -1,11 +1,13 @@
 # void --history — The Archive
 
-Last updated: 2026-04-11 (rev 5)
+Last updated: 2026-04-19 (rev 6)
 
 > Full spec for the multi-perspective historical events platform.
 > Only read when working on history-related files.
 
 **Thesis:** History is not what happened. History is who told the story.
+
+**Narrative pass (2026-04-19):** 25 of 58 YAML event files rewritten for Show-Don't-Tell + Arrive Late Leave Early — 9 subtitle rewrites, 24 connection-sentence rewrites. Benchmark: hiroshima-nagasaki subtitle — _"At 8:15 a.m. on August 6, a watch in Hiroshima stopped. It is still stopped."_ Companion audio (58 events) runs on the Chronicler + Witness pair (Andrew + Emma Multilingual); canonical scripts cached at `data/history/scripts/{slug}.txt` so voice sweeps cost $0 in Gemini quota.
 
 ## Architecture
 

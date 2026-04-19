@@ -1,6 +1,6 @@
 # void --news
 
-Last updated: 2026-04-10 (rev 35)
+Last updated: 2026-04-19 (rev 37)
 
 News aggregation platform with per-article, 6-axis rule-based NLP bias analysis. 1,013 curated sources across 158 countries. World edition (regional editions parked pre-launch).
 
@@ -13,7 +13,7 @@ News aggregation platform with per-article, 6-axis rule-based NLP bias analysis.
 | Agents, workflows, slash commands | `docs/AGENT-TEAM.md` |
 | void --history (The Archive) | `docs/HISTORY.md` |
 | Source curation, tiers, L:R balance | `docs/SOURCE-CURATION-REPORT-2026-04-02.md` |
-| Daily brief, audio, TTS, voice rotation | `docs/GEMINI-VOICE-PLAN.md` |
+| Daily brief, audio, edge-tts, voice rotation | `docs/GEMINI-VOICE-PLAN.md` |
 | Database schema, audits | `docs/DB-REVIEWER-GUIDE.md`, `docs/DB-AUDIT-FRAMEWORK.md` |
 | Performance benchmarks | `docs/PERF-REPORT-2026-03-22.md` |
 | Security posture | `docs/IP-COMPLIANCE.md` |
@@ -26,7 +26,7 @@ News aggregation platform with per-article, 6-axis rule-based NLP bias analysis.
 GitHub Actions (3x daily cron) → Python Pipeline → Supabase (PostgreSQL) ← Next.js Static Site (GitHub Pages)
 ```
 
-No backend server. **Tech**: Python/spaCy/NLTK/TextBlob (NLP), Gemini 2.5 Flash free tier (summaries + script gen only — NOT TTS), edge-tts (audio synthesis, $0), Supabase (PostgreSQL), Next.js 16/React 19/TypeScript, Motion One v11 (CDN), CSS custom properties. Fonts: Playfair Display / Inter / Barlow Condensed / IBM Plex Mono.
+No backend server. **Tech**: Python/spaCy/NLTK/TextBlob (NLP), Gemini 2.5 Flash free tier (summaries + script gen only — NOT TTS), edge-tts 4-voice Multilingual Neural roster (audio synthesis, $0), Supabase (PostgreSQL), Next.js 16/React 19/TypeScript, native CSS + Web Animations API, CSS custom properties. Fonts: Playfair Display / Inter / Barlow Condensed / IBM Plex Mono.
 
 ## Core Principles
 
@@ -46,7 +46,7 @@ Enter every scene at the last possible moment. Exit before the conclusion is spe
 
 Applies to: void --history event pages, daily briefs, CTAs, audio scripts. These two rules together create the cognitive gap where understanding happens. The user doesn't receive a conclusion. They arrive at one.
 
-- **Product Family Branding**: CLI-style naming: `void --news`, `void --tl;dr`, `void --onair`, `void --history`, `void --weekly`, `void --paper`, `void --sources`, `void --deep-dive`, `void --opinion`, `void --ship`.
+- **Product Family Branding**: CLI-style naming: `void --news`, `void --tl;dr`, `void --onair`, `void --history`, `void --weekly`, `void --paper`, `void --sources`, `void --deep-dive`, `void --opinion`, `void --ship`, `void --games`.
 - **No Personalization (LOCKED)**: Newspaper principle. Same stories, same order for everyone. No user accounts, no recommendation algorithms, no "for you" logic. Locked architectural decision.
 - **Zero Operational Cost**: $0. Rule-based NLP + Gemini Flash free tier (text only, ~250 RPD limit) + edge-tts ($0 audio) + GitHub Actions + Supabase + Pages all free tier. **Gemini TTS is NOT used — it costs ~$3/day and is not free tier.**
 - **Bias Analysis**: 6 axes (political lean, sensationalism, opinion vs. reporting, factual rigor, framing, per-topic EMA). All rule-based NLP, no LLM. See `docs/PIPELINE-BRAIN.md`.
@@ -54,7 +54,7 @@ Applies to: void --history event pages, daily briefs, CTAs, audio scripts. These
 
 ## Status
 
-**Complete**: Pipeline (all steps + cleanup + memory engine + holistic re-rank), 6-axis bias engine, ranking v6.0 + edition-unique, daily brief + audio + weekly digest, frontend MVP (feed + deep dive + sources + paper + weekly + about + command center + ship), void --history (58 events, 22 components, museum UX).
+**Complete**: Pipeline (all steps + cleanup + memory engine + holistic re-rank), 6-axis bias engine (political_lean `unscored` flag for center-baseline op-eds, sensationalism tier baselines halved + inflection tightened to 15), ranking v6.0 + edition-unique, daily brief + audio + weekly digest, frontend MVP (feed + deep dive + sources + paper + weekly + about + command center + ship + games — 5 titles: wire/run/cipher/frame/undertow), void --history (58 events, 22 components, museum UX, 25 events rewritten for Show-Don't-Tell + Arrive Late Leave Early), history companion audio (58 events, edge-tts + Gemini script cache at `data/history/scripts/` decoupling TTS from Gemini), voice consolidation to 4 Multilingual Neural voices (Andrew/Brian/Ava/Emma), unified canvas token `--canvas-max: min(92vw, 1600px)`, scroll-compact masthead, route-scoped CSS splits (globals.css trimmed ~11.7K lines).
 **In progress**: Deep Dive framing comparison, source credibility panels.
 **Pending**: GitHub Pages deploy, WCAG audit, Lighthouse 90+, cross-browser testing, launch.
 
@@ -109,14 +109,15 @@ void-news/
 │   │   ├── history/       # 22 history components + data/types/hooks
 │   │   ├── film/          # 7 cinematic scenes (prologue + manifesto)
 │   │   ├── lib/           # supabase, types, utils, haptics, biasColors
-│   │   ├── styles/        # 21 CSS files (tokens → verify)
+│   │   ├── styles/        # 22 CSS files (tokens → verify)
+│   │   ├── games/         # void --games (5 games: wire, run, cipher, frame, undertow)
 │   │   └── [routes]/      # sources, paper, weekly, about, ship, command-center, [edition]
 │   └── next.config.ts
 ├── data/sources.json      # 1,013 sources
 ├── data/history/events/   # 58 YAML event files
 ├── supabase/migrations/   # 001-045
 ├── .github/workflows/     # pipeline, deploy, migrate, validate-bias, auto-merge, audit-db, refresh-brief, weekly-digest, generate-history-audio
-├── .claude/agents/        # 34 agents across 13 divisions
+├── .claude/agents/        # 35 agents across 14 divisions
 ├── .claude/skills/        # 24 skills (workflows + tools)
 └── docs/                  # 23 documentation files
 ```
