@@ -971,6 +971,20 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None, do
     final_score = text_weight * text_score + baseline_weight * source_baseline
     score = max(0, min(100, int(round(final_score))))
 
+    # Unscored flag: zero text signal against a center-baseline source.
+    # An AP wire story with no partisan keywords, no framing shift, no entity
+    # sentiment, and a 45-55 baseline produces a 50 that is measurement noise,
+    # not a finding.  Flag it so the UI can render "unscored" instead of
+    # implying we analyzed the article and concluded center.
+    unscored = (
+        total_distinct == 0
+        and abs(framing_shift) < 1.0
+        and abs(entity_shift) < 1.0
+        and abs(sentence_direction) < 1.0
+        and 45 <= source_baseline <= 55
+        and not is_state_affiliated
+    )
+
     return {
         "score": score,
         "rationale": {
@@ -984,5 +998,6 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None, do
             "framing_phrases_found": framing_phrases,
             "entity_sentiments": entity_sentiments,
             "state_affiliated": is_state_affiliated,
+            "unscored": unscored,
         },
     }

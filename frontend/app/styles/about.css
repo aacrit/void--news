@@ -243,7 +243,7 @@
   letter-spacing: 0.02em;
   box-shadow:
     0 4px 16px color-mix(in srgb, var(--cinematic-shadow-tint, rgba(0,0,0,0.3)) 12%, transparent);
-  transition: transform 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
+  transition: transform 200ms var(--ease-cinematic), box-shadow 200ms var(--ease-cinematic);
 }
 /* .about-hero__play:hover lift/shadow removed — button color + cursor is enough */
 .about-hero__play:active { transform: scale(0.97); }
@@ -774,7 +774,7 @@
   letter-spacing: 0.04em;
   border-bottom: 1px solid currentColor;
   padding-bottom: 1px;
-  transition: color 200ms ease;
+  transition: color 200ms var(--ease-cinematic);
 }
 
 .about-cta__secondary:hover,

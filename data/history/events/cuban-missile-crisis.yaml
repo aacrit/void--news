@@ -632,15 +632,15 @@ media:
 connections:
 - target_slug: hiroshima-nagasaki
   connection_type: consequence
-  description: The weapons that destroyed Hiroshima and Nagasaki in 1945 were the same class of threat that brought the world
-    to the brink in 1962 — the crisis was the closest the planet came to a second nuclear use
+  description: Little Boy had a 15-kiloton yield. The warheads aboard the Soviet submarine B-59 off Cuba on October 27, 1962
+    carried 10 kilotons each. Vasili Arkhipov cast the one vote that kept them in their tubes
 - target_slug: fall-of-berlin-wall
   connection_type: parallel
-  description: The missile crisis and the fall of the Berlin Wall bookend the most dangerous phase of the Cold War — the 1962
-    near-catastrophe accelerated arms control that eventually made 1989 possible
+  description: The Moscow-Washington hotline was installed in 1963, nine months after the crisis. It was still running on November
+    9, 1989. Neither capital picked up the phone
 - target_slug: september-11-attacks
   connection_type: influenced
-  description: The national security apparatus expanded after the missile crisis shaped the institutional reflexes — threat
-    assessment, intelligence prioritization, executive authority — that defined the American response to 9/11
+  description: Kennedy created the President's Daily Brief in 1961 to prevent another Bay of Pigs. On the morning of August
+    6, 2001, Bush read a PDB titled 'Bin Laden Determined to Strike in US'
 hero_image_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/cuban-missile-crisis/wiki_0.jpg
 hero_image_attribution: Cecil Stoughton, White House photographer, 1962, public domain

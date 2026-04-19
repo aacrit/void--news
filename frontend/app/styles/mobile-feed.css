@@ -51,7 +51,7 @@
 .msc--hero {
   padding: var(--space-3) 0 var(--space-4);
   border-bottom: var(--rule-thin);
-  transition: transform 200ms var(--ease-out), opacity 200ms var(--ease-out);
+  transition: transform 200ms var(--ease-cinematic), opacity 200ms var(--ease-cinematic);
 }
 
 .msc--hero .msc__meta {
@@ -249,13 +249,13 @@
 /* Touch interaction — asymmetric press states (Spielberg hold-and-release)
    Fast attack (60ms), slow spring release (350ms spring-gentle). */
 .msc {
-  transition: transform 200ms var(--ease-out), opacity 200ms var(--ease-out);
+  transition: transform 200ms var(--ease-cinematic), opacity 200ms var(--ease-cinematic);
 }
 
 .msc:active {
   transform: scale(0.975) translateY(1px);
   opacity: 0.9;
-  transition: transform 60ms var(--ease-out), opacity 60ms var(--ease-out);
+  transition: transform 60ms var(--ease-cinematic), opacity 60ms var(--ease-cinematic);
 }
 
 .msc--hero:active {
@@ -276,7 +276,7 @@
 .msc.anim-stagger {
   opacity: 0;
   transform: translateY(8px);
-  animation: mscEnter 180ms var(--ease-out) both;
+  animation: mscEnter 180ms var(--ease-cinematic) both;
   animation-play-state: paused;
 }
 
@@ -351,7 +351,7 @@
   text-transform: uppercase;
   min-height: 44px;
   min-width: 44px;
-  transition: border-color 150ms var(--ease-out), color 150ms var(--ease-out);
+  transition: border-color 150ms var(--ease-cinematic), color 150ms var(--ease-cinematic);
 }
 
 .mbp--skybox .mbp__play:active {
@@ -419,7 +419,7 @@
   color: var(--fg-muted);
   flex-shrink: 0;
   margin-left: auto;
-  transition: transform 200ms var(--ease-out);
+  transition: transform 200ms var(--ease-cinematic);
 }
 
 .mbp__pill--open .mbp__pill-chevron {
@@ -575,7 +575,7 @@
   display: flex;
   align-items: center;
   -webkit-tap-highlight-color: transparent;
-  transition: color 150ms var(--ease-out);
+  transition: color 150ms var(--ease-cinematic);
 }
 
 .mbp__more:active {
@@ -608,7 +608,7 @@
   cursor: pointer;
   flex-shrink: 0;
   -webkit-tap-highlight-color: transparent;
-  transition: background 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
+  transition: background 200ms var(--ease-cinematic), box-shadow 200ms var(--ease-cinematic);
 }
 
 .mbp__onair-play:active {
@@ -692,7 +692,7 @@
 
 .mbp__pill-main:active {
   transform: scale(0.97);
-  transition: transform 50ms var(--ease-out);
+  transition: transform 50ms var(--ease-cinematic);
 }
 
 .mbp__pill-chevron-btn {
@@ -889,7 +889,7 @@
   font-size: var(--text-xxs);
   color: color-mix(in srgb, var(--fg-secondary) 60%, transparent);
   letter-spacing: 0.02em;
-  transition: color 150ms var(--ease-out);
+  transition: color 150ms var(--ease-cinematic);
 }
 
 .mbp__prev-toggle:active .mbp__prev-label {
@@ -899,7 +899,7 @@
 .mbp__prev-arrow {
   font-size: 10px;
   color: color-mix(in srgb, var(--fg-secondary) 40%, transparent);
-  transition: transform 200ms var(--ease-out);
+  transition: transform 200ms var(--ease-cinematic);
 }
 
 .mbp__prev-arrow--open {
@@ -927,7 +927,7 @@
   text-align: left;
   width: 100%;
   min-height: 44px;
-  transition: background 100ms var(--ease-out);
+  transition: background 100ms var(--ease-cinematic);
   -webkit-tap-highlight-color: transparent;
 }
 

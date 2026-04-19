@@ -113,7 +113,7 @@
 
 .cc-health-dot--green {
   background: var(--cc-green);
-  animation: cc-pulse-ring 2s ease-out infinite;
+  animation: cc-pulse-ring 2s var(--ease-cinematic) infinite;
 }
 
 .cc-health-dot--amber { background: var(--cc-amber); box-shadow: 0 0 6px var(--cc-amber); }

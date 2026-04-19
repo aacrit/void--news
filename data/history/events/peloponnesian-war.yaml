@@ -585,7 +585,8 @@ connections:
     recurred in the Terror.
 - target_slug: fall-of-berlin-wall
   connection_type: influenced
-  description: The Thucydides Trap — structural conflict between a ruling power and a rising power — frames the post-Cold War competition that the Wall's fall inaugurated, particularly the U.S.-China dynamic.
+  description: Graham Allison coined 'Thucydides Trap' in 2012, citing the twelve out of sixteen cases where a rising power
+    and a declining one went to war. Sparta and Athens were the first pair; Washington and Beijing are the current one.
 - target_slug: tiananmen-square
   connection_type: parallel
   description: 'The Melian Dialogue''s logic — ''the strong do what they can; the weak suffer what they must'' — describes the dynamic of June 4, 1989: an unarmed civilian population confronting state military

@@ -578,7 +578,7 @@
 /* hero only: 150ms fade, no delay, no scale or translateY */
 .hist-cold-open--hero {
   opacity: 0;
-  animation: histColdOpenFade 150ms ease both;
+  animation: histColdOpenFade 150ms var(--ease-cinematic) both;
 }
 
 /* ---------------------------------------------------------------------------
@@ -1459,7 +1459,7 @@
 .hist-timeline__dot--active .hist-timeline__dot-circle {
   background: var(--hist-brass);
   box-shadow: 0 0 0 3px var(--hist-brass);
-  animation: histDotBreathe 3s ease-in-out infinite;
+  animation: histDotBreathe 3s var(--ease-rack) infinite;
 }
 
 @keyframes histDotBreathe {
@@ -1883,7 +1883,7 @@
   font-size: var(--text-xs);
   color: var(--hist-ink-muted);
   letter-spacing: 0.06em;
-  animation: histBriefPulse 2.5s ease-in-out infinite;
+  animation: histBriefPulse 2.5s var(--ease-rack) infinite;
 }
 
 @keyframes histBriefPulse {
@@ -1976,7 +1976,7 @@
   transform: translateX(-50%);
   z-index: 3;
   opacity: calc(1 - max(var(--card-dist, 0) - 2, 0) * 0.1);
-  transition: opacity 300ms ease;
+  transition: opacity 300ms var(--ease-cinematic);
 }
 
 .hist-tl-full__station--focused {
@@ -1998,7 +1998,7 @@
   letter-spacing: 0.04em;
   color: var(--hist-brass);
   opacity: calc(0.6 - var(--card-dist, 0) * 0.08);
-  transition: opacity 300ms ease;
+  transition: opacity 300ms var(--ease-cinematic);
 }
 
 .hist-tl-full__year--focused {
@@ -2021,7 +2021,7 @@
   /* Easter egg: --dot-scale encodes death toll as % of world population */
   transform: translate(-50%, -50%) scale(var(--dot-scale, 1));
   z-index: 4;
-  transition: transform 200ms var(--ease-archive-snap), box-shadow 200ms ease;
+  transition: transform 200ms var(--ease-archive-snap), box-shadow 200ms var(--ease-cinematic);
 }
 
 .hist-tl-full__dot--catastrophic { background: #8B0000; }
@@ -2084,8 +2084,8 @@
 
   /* Hover animation */
   transition: transform 300ms var(--ease-archive-snap),
-              box-shadow 250ms ease,
-              filter 300ms ease;
+              box-shadow 250ms var(--ease-cinematic),
+              filter 300ms var(--ease-cinematic);
   z-index: 3;
 }
 
@@ -2147,7 +2147,7 @@
      when no inline overrides are present. The contrast/brightness are fixed
      from the history hero token; only sat/sepia vary per-card. */
   filter: contrast(1.08) saturate(var(--photo-sat, 0.70)) sepia(var(--photo-sepia, 0.18)) brightness(0.95);
-  transition: transform 3s linear, filter 500ms ease;
+  transition: transform 3s linear, filter 500ms var(--ease-cinematic);
 }
 
 /* Ken Burns on hover removed — photos sit still */
@@ -2221,8 +2221,8 @@
   overflow: hidden;
   padding: 0 10px;
   transition: max-height 350ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
-              opacity 200ms ease 100ms,
-              padding 350ms ease;
+              opacity 200ms var(--ease-cinematic) 100ms,
+              padding 350ms var(--ease-cinematic);
 }
 
 @media (min-width: 768px) {
@@ -2302,7 +2302,7 @@
   cursor: pointer;
   min-height: 44px;
   text-align: center;
-  transition: background 200ms ease, transform 100ms ease, filter 200ms ease;
+  transition: background 200ms var(--ease-cinematic), transform 100ms var(--ease-cinematic), filter 200ms var(--ease-cinematic);
   pointer-events: auto;
 }
 
@@ -2416,7 +2416,7 @@
   opacity: 0;
   transform: rotateY(90deg);
   transition:
-    opacity 0.35s ease,
+    opacity 0.35s var(--ease-cinematic),
     transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   pointer-events: none;
   z-index: 3;
@@ -2502,8 +2502,8 @@
   border: none;
   padding: 0;
   cursor: pointer;
-  transition: background 200ms ease, width 200ms ease, height 200ms ease,
-              box-shadow 200ms ease;
+  transition: background 200ms var(--ease-cinematic), width 200ms var(--ease-cinematic), height 200ms var(--ease-cinematic),
+              box-shadow 200ms var(--ease-cinematic);
   /* Touch target */
   min-width: 44px;
   min-height: 44px;
@@ -2518,8 +2518,8 @@
   height: 6px;
   border-radius: 50%;
   background: var(--hist-border);
-  transition: background 200ms ease, width 200ms ease, height 200ms ease,
-              box-shadow 200ms ease;
+  transition: background 200ms var(--ease-cinematic), width 200ms var(--ease-cinematic), height 200ms var(--ease-cinematic),
+              box-shadow 200ms var(--ease-cinematic);
   flex-shrink: 0;
 }
 
@@ -2553,7 +2553,7 @@
   white-space: nowrap;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 200ms ease;
+  transition: opacity 200ms var(--ease-cinematic);
 }
 
 .hist-tl-strip__dot--active .hist-tl-strip__year {
@@ -2602,12 +2602,12 @@
 /* L-cut: EventDetail content fades in during morph, slightly delayed */
 .hist-inline-story-wrap {
   opacity: 1;
-  transition: opacity 300ms ease;
+  transition: opacity 300ms var(--ease-cinematic);
 }
 
 .hist-inline-story-wrap--entering {
   opacity: 0;
-  animation: histLCutFadeIn 400ms ease 300ms forwards;
+  animation: histLCutFadeIn 400ms var(--ease-cinematic) 300ms forwards;
 }
 
 @keyframes histLCutFadeIn {
@@ -3026,7 +3026,7 @@
   color: var(--hist-paper-fixed, #F2EDE0);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  transition: background 250ms ease, border-color 250ms ease;
+  transition: background 250ms var(--ease-cinematic), border-color 250ms var(--ease-cinematic);
 }
 
 .hist-hero-listen:hover {
@@ -3074,7 +3074,7 @@
   height: 40px;
   background: var(--hist-paper-fixed, #F2EDE0);
   opacity: 0.4;
-  animation: histScrollPulse 2s ease-in-out infinite;
+  animation: histScrollPulse 2s var(--ease-rack) infinite;
 }
 
 @keyframes histScrollPulse {
@@ -3211,7 +3211,7 @@
   border: none;
   cursor: pointer;
   padding: var(--space-2) var(--space-3);
-  transition: opacity 200ms ease;
+  transition: opacity 200ms var(--ease-cinematic);
 }
 
 .hist-context__more-toggle:hover {
@@ -3339,8 +3339,8 @@ a.hist-figures__name:hover {
   box-shadow: var(--hist-doc-edge);
   border-radius: 2px;
   transition:
-    opacity 600ms ease,
-    transform 600ms ease;
+    opacity 600ms var(--ease-cinematic),
+    transform 600ms var(--ease-cinematic);
 }
 
 .hist-witness--left {
@@ -3496,7 +3496,7 @@ a.hist-figures__name:hover {
   padding: var(--space-1) 0;
   cursor: pointer;
   min-height: 44px;
-  transition: color 200ms ease;
+  transition: color 200ms var(--ease-cinematic);
 }
 
 .hist-witness__expand:hover {
@@ -3511,7 +3511,7 @@ a.hist-figures__name:hover {
 .hist-witness__expand-arrow {
   display: inline-block;
   font-size: 0.8em;
-  transition: transform 200ms ease;
+  transition: transform 200ms var(--ease-cinematic);
 }
 
 .hist-witness__expand-arrow--open {
@@ -3827,7 +3827,7 @@ a.hist-figures__name:hover {
   transform: translate(-50%, -50%);
   color: var(--hist-paper-fixed, #F2EDE0);
   opacity: 0.8;
-  transition: opacity 200ms ease, transform 200ms ease;
+  transition: opacity 200ms var(--ease-cinematic), transform 200ms var(--ease-cinematic);
   filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
 }
 
@@ -3926,7 +3926,7 @@ a.hist-figures__name:hover {
   cursor: pointer;
   min-height: 44px;
   text-decoration: none;
-  transition: background 200ms ease, transform 100ms ease;
+  transition: background 200ms var(--ease-cinematic), transform 100ms var(--ease-cinematic);
 }
 
 .hist-next__cta:hover {
@@ -4201,7 +4201,7 @@ a.hist-figures__name:hover {
   opacity: 0;
   transform: rotateY(90deg);
   transition:
-    opacity 0.35s ease,
+    opacity 0.35s var(--ease-cinematic),
     transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   pointer-events: none;
   z-index: 3;
@@ -4874,7 +4874,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
 /* Click press on classified tiles */
 .hist-classified-tile:active {
   transform: scale(0.97);
-  transition: transform 80ms ease-out;
+  transition: transform 80ms var(--ease-cinematic);
 }
 
 /* ---------------------------------------------------------------------------
@@ -4886,7 +4886,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
 /* Tab click: quick press */
 .hist-persp-tab:active {
   transform: scale(0.97);
-  transition: transform 60ms ease-out;
+  transition: transform 60ms var(--ease-cinematic);
 }
 
 /* Perspective view: simplified entrance (fadeIn + translateY, no 3D rotateY) */
@@ -4932,7 +4932,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
 /* Compare toggle: simple click feedback */
 .hist-compare-toggle:active {
   transform: scale(0.97);
-  transition: transform 60ms ease-out;
+  transition: transform 60ms var(--ease-cinematic);
 }
 
 /* Vocabulary highlights: instant, no stagger delay */
@@ -4963,7 +4963,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
 
 .hist-compact-timeline__link:active {
   transform: scale(0.97);
-  transition: transform 60ms ease-out;
+  transition: transform 60ms var(--ease-cinematic);
 }
 
 /* ---------------------------------------------------------------------------
@@ -5006,7 +5006,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
 
 .hist-era-drawer__header:active {
   transform: scale(0.99);
-  transition: transform 60ms ease-out;
+  transition: transform 60ms var(--ease-cinematic);
 }
 
 /* ---------------------------------------------------------------------------
@@ -5015,7 +5015,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
 
 .hist-event-card:active {
   transform: scale(0.97);
-  transition: transform 80ms ease-out;
+  transition: transform 80ms var(--ease-cinematic);
 }
 
 /* ---------------------------------------------------------------------------
@@ -5058,7 +5058,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
 
 .hist-timeline__dot:active {
   transform: scale(0.97);
-  transition: transform 60ms ease-out;
+  transition: transform 60ms var(--ease-cinematic);
 }
 
 /* ---------------------------------------------------------------------------
@@ -5422,7 +5422,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
   padding: var(--space-2) var(--space-4) var(--space-1);
   background: linear-gradient(180deg, var(--hist-bg) 60%, transparent);
   pointer-events: none;
-  transition: opacity 400ms ease;
+  transition: opacity 400ms var(--ease-cinematic);
 }
 
 .hist-tl-top-zone--hidden {
@@ -5491,7 +5491,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
   cursor: pointer;
   pointer-events: auto;
   padding: 2px 6px;
-  transition: opacity 300ms ease, filter 300ms ease, transform 300ms ease;
+  transition: opacity 300ms var(--ease-cinematic), filter 300ms var(--ease-cinematic), transform 300ms var(--ease-cinematic);
   /* Distance-based depth-of-field: --yr-dist 0=sharp, 1-4=progressively blurred */
   font-size: clamp(0.65rem, 0.55rem + 0.4vw, 0.85rem);
   color: var(--hist-ink-muted);
@@ -5539,7 +5539,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
   padding: 2px 8px;
   cursor: pointer;
   pointer-events: auto;
-  transition: color 200ms ease, border-color 200ms ease;
+  transition: color 200ms var(--ease-cinematic), border-color 200ms var(--ease-cinematic);
   white-space: nowrap;
   min-height: 28px;
 }
@@ -5606,7 +5606,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
     letter-spacing: 0.08em;
     text-transform: uppercase;
     cursor: pointer;
-    transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
+    transition: color 120ms var(--ease-cinematic), border-color 120ms var(--ease-cinematic), background 120ms var(--ease-cinematic);
     white-space: nowrap;
   }
 
@@ -5642,7 +5642,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
   background: color-mix(in srgb, var(--hist-bg) 92%, transparent);
   backdrop-filter: blur(4px);
   pointer-events: auto;
-  animation: histCartoFadeIn 300ms ease forwards;
+  animation: histCartoFadeIn 300ms var(--ease-cinematic) forwards;
 }
 
 @keyframes histCartoFadeIn {
@@ -5688,7 +5688,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
 }
 
 .hist-carto-strip__pin {
-  transition: r 300ms ease, opacity 300ms ease;
+  transition: r 300ms var(--ease-cinematic), opacity 300ms var(--ease-cinematic);
 }
 
 @keyframes histPinPulseStrip {
@@ -5734,7 +5734,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
   padding: 2px 6px;
   cursor: pointer;
   pointer-events: auto;
-  transition: color 200ms ease, border-color 200ms ease;
+  transition: color 200ms var(--ease-cinematic), border-color 200ms var(--ease-cinematic);
   white-space: nowrap;
   margin-top: 2px;
 }
@@ -5848,7 +5848,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
   opacity: 0.45;
   border: 1px solid var(--hist-bg);
   box-shadow: 0 0 8px color-mix(in srgb, var(--arc-color, #B44C00) 35%, transparent);
-  transition: transform 200ms var(--ease-archive-snap), opacity 200ms ease, box-shadow 200ms ease;
+  transition: transform 200ms var(--ease-archive-snap), opacity 200ms var(--ease-cinematic), box-shadow 200ms var(--ease-cinematic);
 }
 
 .hist-tl-arc-lane__node:hover .hist-tl-arc-lane__node-dot {
@@ -5896,8 +5896,8 @@ main:has(.hist-tl-wrapper) + .hist-footer {
   box-shadow: 2px 3px 12px rgba(0, 0, 0, 0.15);
   opacity: 0;
   transform: translateX(20px);
-  transition: opacity 400ms ease 1000ms, transform 400ms ease 1000ms,
-              background 200ms ease, box-shadow 200ms ease;
+  transition: opacity 400ms var(--ease-cinematic) 1000ms, transform 400ms var(--ease-cinematic) 1000ms,
+              background 200ms var(--ease-cinematic), box-shadow 200ms var(--ease-cinematic);
 }
 
 .hist-back-to-timeline--visible {
@@ -5963,7 +5963,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
 }
 
 .hist-tl-full--era-flash {
-  animation: histEraFlash 600ms ease;
+  animation: histEraFlash 600ms var(--ease-cinematic);
 }
 
 /* ---------------------------------------------------------------------------
@@ -6008,7 +6008,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
 }
 
 .hist-tl-full__station--anniversary .hist-tl-full__dot {
-  animation: histAnniversaryPulse 3s ease-in-out infinite;
+  animation: histAnniversaryPulse 3s var(--ease-rack) infinite;
 }
 
 /* ---------------------------------------------------------------------------
@@ -6021,7 +6021,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
 }
 
 .hist-tl-card--focused .hist-tl-card__photo-img {
-  animation: histKenBurnsFocused 6s ease-in-out forwards;
+  animation: histKenBurnsFocused 6s var(--ease-rack) forwards;
 }
 
 .hist-tl-card--focused {
@@ -6577,7 +6577,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
   color: var(--hist-ink-muted);
   text-decoration: none;
   border-bottom: 1px solid var(--hist-border-subtle);
-  transition: color 150ms ease;
+  transition: color 150ms var(--ease-cinematic);
 }
 
 .hist-dossier__chrono a:hover {
@@ -6668,7 +6668,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
 .hist-sidebar__disclosure {
   font-size: var(--text-xs);
   color: var(--hist-ink-muted);
-  transition: transform 200ms ease;
+  transition: transform 200ms var(--ease-cinematic);
 }
 
 .hist-sidebar__disclosure--open {
@@ -7299,7 +7299,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
   border-radius: 2px;
   z-index: 4;
   pointer-events: none;
-  transition: opacity 250ms ease;
+  transition: opacity 250ms var(--ease-cinematic);
 }
 
 .hist-tl-card__conn-icon {
@@ -7334,7 +7334,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
 }
 
 .hist-tl-card--conn-pulse {
-  animation: hist-conn-pulse 400ms ease-out 1 forwards;
+  animation: hist-conn-pulse 400ms var(--ease-cinematic) 1 forwards;
 }
 
 /* Thread bars flash brighter when their event is pulse-targeted */
@@ -7409,7 +7409,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
   border: none;
   cursor: pointer;
   min-height: 32px;
-  transition: background 150ms ease, color 150ms ease;
+  transition: background 150ms var(--ease-cinematic), color 150ms var(--ease-cinematic);
 }
 
 .hist-longview-toggle__btn--active {
@@ -7458,7 +7458,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
   /* Staggered entrance per chip */
   opacity: 0;
   animation: histLegendChipIn 350ms var(--ease-cinematic) both;
-  transition: border-color 150ms ease, color 150ms ease, opacity 150ms ease;
+  transition: border-color 150ms var(--ease-cinematic), color 150ms var(--ease-cinematic), opacity 150ms var(--ease-cinematic);
 }
 
 .hist-longview-legend__item:nth-child(1) { animation-delay: 80ms; }
@@ -7536,7 +7536,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
   flex-direction: column;
   gap: 0;
   padding: var(--space-5) var(--space-5) var(--space-8);
-  animation: hist-threads-in 320ms ease both;
+  animation: hist-threads-in 320ms var(--ease-cinematic) both;
 }
 
 @keyframes hist-threads-in {
@@ -7642,7 +7642,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
   text-decoration: none;
   color: inherit;
   scroll-snap-align: start;
-  transition: border-color 150ms ease, transform 150ms ease;
+  transition: border-color 150ms var(--ease-cinematic), transform 150ms var(--ease-cinematic);
   position: relative;
 }
 
@@ -7714,7 +7714,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
   font-size: 12px;
   color: var(--hist-brass);
   opacity: 0;
-  transition: opacity 150ms ease;
+  transition: opacity 150ms var(--ease-cinematic);
 }
 
 .hist-thread-tile:hover .hist-thread-tile__arrow {
@@ -7781,7 +7781,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
   text-decoration: none;
   border-bottom: 1px solid var(--hist-border-subtle);
   margin-left: auto;
-  transition: color 150ms ease;
+  transition: color 150ms var(--ease-cinematic);
 }
 
 .hist-longview-ledger-link:hover {
@@ -8221,7 +8221,7 @@ a.hist-record__figure-name:hover {
 /* Dossier cards — archivist sliding folders: 0.75 rest → 1.0 hover */
 .hist-dossier__card {
   opacity: 0.78;
-  transition: opacity 250ms ease, box-shadow 250ms ease, transform 250ms ease;
+  transition: opacity 250ms var(--ease-cinematic), box-shadow 250ms var(--ease-cinematic), transform 250ms var(--ease-cinematic);
 }
 
 .hist-dossier__card:hover,
@@ -8272,7 +8272,7 @@ a.hist-record__figure-name:hover {
   margin-top: 8px;
   margin-bottom: 0;
 
-  transition: border-color 0.3s ease;
+  transition: border-color 0.3s var(--ease-cinematic);
 }
 
 .hist-audio-cue[data-playing="true"] {
@@ -8293,7 +8293,7 @@ a.hist-record__figure-name:hover {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+  transition: background 0.2s var(--ease-cinematic), border-color 0.2s var(--ease-cinematic), transform 0.15s var(--ease-cinematic);
   padding: 0;
   line-height: 1;
 }
@@ -8323,7 +8323,7 @@ a.hist-record__figure-name:hover {
 }
 
 [data-playing="true"] .hist-audio-cue__play-ring {
-  animation: hist-ring-pulse 2.4s ease-in-out infinite;
+  animation: hist-ring-pulse 2.4s var(--ease-rack) infinite;
 }
 
 @keyframes hist-ring-pulse {
@@ -8530,7 +8530,7 @@ a.hist-record__figure-name:hover {
   align-items: center;
   justify-content: center;
   padding: 0;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition: background 0.15s var(--ease-cinematic), border-color 0.15s var(--ease-cinematic);
 }
 
 .hist-audio-bar__play:hover {
@@ -8595,7 +8595,7 @@ a.hist-record__figure-name:hover {
   height: 1px;
   background: var(--hist-brass);
   opacity: 0.5;
-  animation: hist-bar-glow 2s ease-in-out infinite;
+  animation: hist-bar-glow 2s var(--ease-rack) infinite;
 }
 
 @keyframes hist-bar-glow {

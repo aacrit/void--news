@@ -121,7 +121,11 @@ distinguish what happened today from prior developments.
 
 Paragraph 1 (2-3 sentences): The most recent newsworthy development — what just \
 happened, who, when, where. Lead with the latest event, then attribute. Include \
-the most significant number, name, or outcome from the freshest reporting.
+the most significant number, name, or outcome from the freshest reporting. \
+ARRIVE LATE: start inside the action. Do not open with "In a move that...", \
+"Following weeks of...", "As tensions grew..." — the reader does not need \
+runway. The first sentence should name a concrete action, actor, or figure \
+that happened in the last 24 hours.
 
 Paragraph 2 (3-4 sentences): Context and significance. Why this matters, what \
 preceded it, how it connects to broader developments. Attribute all background \

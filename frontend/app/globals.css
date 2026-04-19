@@ -3,7 +3,11 @@
    "Press & Precision" — newspaper heritage meets modern data density
    ========================================================================== */
 
-/* ---- CSS Cascade (load order matters) ---------------------------------- */
+/* ---- CSS Cascade (load order matters) ----------------------------------
+   Route-scoped stylesheets (games, weekly, ship, film, about, pipeline,
+   command-center) are imported from per-route layout.tsx files so they
+   ship only on the routes that use them.  Keeps the homepage CSS bundle
+   focused on feed + deep-dive surfaces. */
 @import url("./styles/tokens.css");
 @import url("./styles/layout.css");
 @import url("./styles/typography.css");
@@ -16,15 +20,7 @@
 @import url("./styles/floating-player.css");
 @import url("./styles/mobile-nav.css");
 @import url("./styles/responsive.css");
-@import url("./styles/command-center.css");
-@import url("./styles/weekly.css");
-@import url("./styles/film.css");
-@import url("./styles/about.css");
-@import url("./styles/ship.css");
-@import url("./styles/pipeline.css");
 @import url("./styles/verify.css");
-@import url("./styles/games.css");
-@import url("./styles/games-brand.css");
 
 /* --------------------------------------------------------------------------
    CSS Reset — Minimal, opinionated

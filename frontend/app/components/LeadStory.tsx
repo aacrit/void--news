@@ -5,6 +5,8 @@ import type { Story } from "../lib/types";
 import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
+import { classifyCoverage } from "../lib/coverageClass";
+import { deriveRankSignals } from "../lib/rankRationale";
 
 interface LeadStoryProps {
   story: Story;
@@ -29,6 +31,8 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, i
   const [imgError, setImgError] = useState(false);
 
   const showImage = rank === 0 && imageUrl && !imgError;
+  const verdict = classifyCoverage(story);
+  const rankSignals = rank === 0 ? deriveRankSignals(story) : [];
 
   return (
     <article
@@ -57,6 +61,11 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, i
         }}
       />
       {rank === 0 && <span className="lead-story__badge">Top Story</span>}
+      {rank === 0 && rankSignals.length > 0 && (
+        <p className="lead-story__why-top" aria-label={`Ranked top because: ${rankSignals.join(", ")}`}>
+          {rankSignals.join(" · ")}
+        </p>
+      )}
 
       {/* Front-page photograph — primary lead story only */}
       {showImage && (
@@ -67,6 +76,8 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, i
             alt=""
             className={`lead-story__image${imgLoaded ? " lead-story__image--loaded" : ""}`}
             loading="eager"
+            fetchPriority="high"
+            decoding="async"
             onLoad={() => setImgLoaded(true)}
             onError={() => setImgError(true)}
           />
@@ -94,7 +105,11 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, i
         </p>
       )}
 
-      {/* Consensus ratio now embedded in Sigil */}
+      {verdict && (
+        <p className={`coverage-verdict coverage-verdict--${verdict.tone} coverage-verdict--lead`} aria-label={`Coverage: ${verdict.label}`}>
+          {verdict.label}
+        </p>
+      )}
     </article>
   );
 }

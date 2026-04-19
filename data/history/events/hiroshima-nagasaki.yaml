@@ -1,6 +1,6 @@
 slug: hiroshima-nagasaki
 title: The Atomic Bombings of Hiroshima and Nagasaki
-subtitle: Two cities, three days, and the dawn of the nuclear age
+subtitle: At 8:15 a.m. on August 6, a watch in Hiroshima stopped. It is still stopped.
 date_display: August 6-9, 1945
 date_sort: 1945
 date_precision: day
@@ -586,7 +586,7 @@ media:
 connections:
 - target_slug: partition-of-india
   connection_type: parallel
-  description: Both occurred in the immediate postwar period of 1945-1947 as empires dissolved and new nations formed amid mass civilian casualties
+  description: Hirohito surrendered on August 15, 1945. Two years later on August 15, 1947, the Union Jack came down over Delhi. In between, 15 million civilians died across Asia
 - target_slug: rwandan-genocide
   connection_type: influenced
-  description: The post-Hiroshima 'never again' framework shaped international humanitarian law and the obligation to intervene — a framework that failed in Rwanda in 1994
+  description: The 1948 Genocide Convention was drafted three years after Hiroshima with the phrase 'never again.' In April 1994, the UN Security Council voted to withdraw its Rwanda mission from 2,500 troops to 270

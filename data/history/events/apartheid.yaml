@@ -629,15 +629,15 @@ media:
 connections:
 - target_slug: scramble-for-africa
   connection_type: consequence
-  description: European colonization of southern Africa created the racial hierarchies that apartheid codified into law —
-    the 1913 Natives Land Act predated the National Party by 35 years
+  description: The 1913 Natives Land Act confined black South Africans to 7% of the country's land. It passed 35 years before
+    the National Party took power — apartheid codified what the Berlin Conference had already partitioned
 - target_slug: civil-rights-movement
   connection_type: parallel
-  description: Both movements confronted institutionalized racial segregation through mass action, legal challenge, and international
-    pressure — leaders explicitly drew on each other''s strategies
+  description: Martin Luther King Jr. wrote to the ANC from Birmingham jail in 1962. Albert Luthuli had won the Nobel Peace
+    Prize the year before. Both movements read Gandhi; both faced fire hoses, dogs, and bullets
 - target_slug: rwandan-genocide
   connection_type: parallel
-  description: South Africa''s negotiated transition and TRC model stands in contrast to Rwanda''s post-genocide gacaca courts
-    — both attempted restorative justice under radically different conditions
+  description: South Africa's TRC heard 21,000 victims between 1996 and 1998. Rwanda's gacaca courts heard 1.9 million cases
+    between 2001 and 2012. Neither country held a Nuremberg-style trial
 hero_image_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/apartheid/wiki_0.jpg
 hero_image_attribution: Wikimedia Commons, public domain

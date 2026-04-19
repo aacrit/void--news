@@ -139,7 +139,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background 200ms var(--ease-out), box-shadow 200ms var(--ease-out);
+  transition: background 200ms var(--ease-cinematic), box-shadow 200ms var(--ease-cinematic);
   flex-shrink: 0;
 }
 
@@ -340,7 +340,7 @@
   padding: 2px 8px;
   min-height: 28px;
   cursor: pointer;
-  transition: border-color 150ms var(--ease-out);
+  transition: border-color 150ms var(--ease-cinematic);
   position: relative;
 }
 
@@ -360,7 +360,7 @@
   border-radius: 50%;
   color: color-mix(in srgb, var(--accent-warm) 50%, transparent);
   cursor: pointer;
-  transition: color 150ms var(--ease-out), background 150ms var(--ease-out);
+  transition: color 150ms var(--ease-cinematic), background 150ms var(--ease-cinematic);
   position: relative;
 }
 
@@ -395,7 +395,7 @@
   border-radius: 50%;
   color: color-mix(in srgb, var(--accent-warm) 50%, transparent);
   cursor: pointer;
-  transition: color 150ms var(--ease-out), background 150ms var(--ease-out);
+  transition: color 150ms var(--ease-cinematic), background 150ms var(--ease-cinematic);
   position: relative;
 }
 .fp__detach::after { content: ""; position: absolute; inset: -6px; }
@@ -525,7 +525,7 @@
    Disable CSS keyframe animation, use smooth transition for JS-driven values. */
 .fp__vu--live .fp__vu-bar {
   animation: none !important;
-  transition: height 80ms ease-out, opacity 80ms ease-out;
+  transition: height 80ms var(--ease-cinematic), opacity 80ms var(--ease-cinematic);
 }
 
 /* Hero — taller for broadcast pane */
@@ -558,7 +558,7 @@
   display: flex; align-items: center; justify-content: center;
   border-radius: 50%;
   cursor: pointer;
-  transition: color 150ms var(--ease-out);
+  transition: color 150ms var(--ease-cinematic);
   position: relative;
 }
 
@@ -574,7 +574,7 @@
   font-size: 18px;
   display: flex; align-items: center; justify-content: center;
   cursor: pointer;
-  transition: background 200ms var(--ease-out), box-shadow 300ms var(--ease-cinematic);
+  transition: background 200ms var(--ease-cinematic), box-shadow 300ms var(--ease-cinematic);
 }
 
 /* Play-lg button hover: keep bg shift (button affordance), kill glow */
@@ -612,7 +612,7 @@
   border-radius: 3px;
   min-height: 24px;
   cursor: pointer;
-  transition: color 150ms var(--ease-out), border-color 150ms var(--ease-out);
+  transition: color 150ms var(--ease-cinematic), border-color 150ms var(--ease-cinematic);
   position: relative;
 }
 
@@ -1137,7 +1137,7 @@
   letter-spacing: 0.06em;
   color: color-mix(in srgb, var(--accent-warm) 50%, transparent);
   list-style: none;
-  transition: color 150ms var(--ease-out);
+  transition: color 150ms var(--ease-cinematic);
 }
 
 .fp__bcast-summary::-webkit-details-marker { display: none; }
@@ -1149,7 +1149,7 @@
 
 .fp__bcast-summary-arrow {
   transform: rotate(90deg);
-  transition: transform 200ms var(--ease-out);
+  transition: transform 200ms var(--ease-cinematic);
 }
 
 .fp__bcast-details[open] .fp__bcast-summary-arrow {
@@ -1444,7 +1444,7 @@
   text-align: left;
   width: 100%;
   min-height: 44px;
-  transition: background 150ms var(--ease-out);
+  transition: background 150ms var(--ease-cinematic);
   position: relative;
 }
 

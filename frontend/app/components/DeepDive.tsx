@@ -1324,13 +1324,25 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             )}
           </section>
 
-          {/* ---- Progressive disclosure trigger ---- */}
+          {/* ---- Claim Consensus — cross-source verification (visible by default) ---- */}
+          {deepDive?.claimConsensus && (
+            <section
+              className={`anim-dd-section dd-cascade-3${contentVisible ? " anim-dd-section--visible" : ""}`}
+              style={{ marginBottom: "var(--space-5)" }}
+              aria-label="Claim Consensus verification"
+            >
+              <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
+              <ClaimConsensusSection consensus={deepDive.claimConsensus} />
+            </section>
+          )}
+
+          {/* ---- Progressive disclosure trigger (Source Perspectives + Six Lenses) ---- */}
           {(hasCrossLeanSources || (story.sigilData && !story.sigilData.pending)) && !analysisExpanded && (
             <button
               className={`dd-read-more dd-analysis-trigger anim-dd-section dd-cascade-trigger${contentVisible ? " anim-dd-section--visible" : ""}`}
               onClick={() => { hapticLight(); setAnalysisExpanded(true); }}
             >
-              Show full analysis
+              Show source breakdown
             </button>
           )}
 
@@ -1344,18 +1356,6 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
                 consensusPoints={deepDive?.consensus}
                 divergencePoints={deepDive?.divergence}
               />
-            </section>
-          )}
-
-          {/* ---- Claim Consensus — cross-source verification (collapsed by default) ---- */}
-          {analysisExpanded && deepDive?.claimConsensus && (
-            <section
-              className={`anim-dd-section dd-cascade-3${contentVisible ? " anim-dd-section--visible" : ""}`}
-              style={{ marginBottom: "var(--space-5)" }}
-              aria-label="Claim Consensus verification"
-            >
-              <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
-              <ClaimConsensusSection consensus={deepDive.claimConsensus} />
             </section>
           )}
 

@@ -1,6 +1,6 @@
 slug: rwandan-genocide
 title: The Rwandan Genocide
-subtitle: 100 days, 800,000 dead, and the world that looked away
+subtitle: A Belgian census card from 1933 told the killers which neighbors to kill
 date_display: April 7 - July 15, 1994
 date_sort: 1994
 date_precision: day
@@ -612,7 +612,7 @@ media:
 connections:
 - target_slug: partition-of-india
   connection_type: parallel
-  description: Both events demonstrated how colonial-era identity categories (Hindu/Muslim, Hutu/Tutsi) could be weaponized during rapid political transitions, producing mass displacement and communal killing
+  description: The Belgians issued Hutu/Tutsi identity cards in 1933. The British had issued Hindu/Muslim census categories in 1871. Forty-seven years after Indian partition, the Rwandan cards told the killers which houses to enter
 - target_slug: hiroshima-nagasaki
   connection_type: influenced
-  description: The post-Hiroshima 'never again' consensus — enshrined in the 1948 Genocide Convention — proved hollow in Rwanda; the UN's failure contributed directly to the Responsibility to Protect doctrine
+  description: The 1948 Genocide Convention was drafted three years after Hiroshima with the phrase 'never again.' In April 1994, the UN Security Council pulled 2,100 of its 2,500 peacekeepers out of Rwanda

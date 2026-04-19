@@ -42,7 +42,7 @@
   background: var(--bg-elevated);
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   opacity: 0; transform: translateX(-16px);
-  transition: opacity 300ms var(--ease-out), transform 400ms var(--spring-snappy, var(--spring));
+  transition: opacity 300ms var(--ease-cinematic), transform 400ms var(--spring-snappy, var(--spring));
 }
 .film-void__card--in { opacity: 1; transform: translateX(0); }
 .film-void__source { display: flex; align-items: center; gap: var(--space-2); }
@@ -219,7 +219,7 @@
   font-family: var(--font-data);
   font-size: var(--text-sm); font-weight: 600;
   color: var(--fg-muted);
-  transition: transform 600ms var(--ease-cinematic, cubic-bezier(0.22, 1, 0.36, 1)), color 400ms ease;
+  transition: transform 600ms var(--ease-cinematic, cubic-bezier(0.22, 1, 0.36, 1)), color 400ms var(--ease-cinematic);
 }
 .film-diff__comparison--morphed .film-diff__vs {
   color: var(--cin-amber, var(--accent-warm));
@@ -284,7 +284,7 @@
   background: var(--bg-elevated);
   text-decoration: none; color: inherit;
   opacity: 0; transform: translateY(12px) scale(0.95);
-  transition: opacity 350ms var(--ease-out), transform 450ms var(--spring-snappy, var(--spring));
+  transition: opacity 350ms var(--ease-cinematic), transform 450ms var(--spring-snappy, var(--spring));
 }
 .film-world--in { opacity: 1; transform: translateY(0) scale(1); }
 
@@ -369,7 +369,7 @@
   background: var(--bg-elevated);
   box-shadow: var(--shadow-e1);
   opacity: 0; transform: translateY(16px) scale(0.95);
-  transition: opacity 400ms var(--ease-out), transform 500ms var(--spring-snappy, var(--spring));
+  transition: opacity 400ms var(--ease-cinematic), transform 500ms var(--spring-snappy, var(--spring));
 }
 .film-verdict__row--in .film-verdict__card { opacity: 1; transform: translateY(0) scale(1); }
 .film-verdict__label {
@@ -387,7 +387,7 @@
   font-family: var(--font-data);
   font-size: var(--text-xs); color: var(--fg-muted);
   opacity: 0; transform: translateY(8px);
-  transition: opacity 300ms var(--ease-out), transform 400ms var(--spring-gentle, var(--spring));
+  transition: opacity 300ms var(--ease-cinematic), transform 400ms var(--spring-gentle, var(--spring));
 }
 .film-verdict__numbers--in .film-verdict__num { opacity: 1; transform: translateY(0); }
 .film-verdict__num-value {
@@ -399,7 +399,7 @@
   font-family: var(--font-data);
   font-size: var(--text-xs); color: var(--fg-muted);
   margin-top: var(--space-3);
-  opacity: 0; transition: opacity 400ms var(--ease-out) 800ms;
+  opacity: 0; transition: opacity 400ms var(--ease-cinematic) 800ms;
 }
 .film-verdict__sub-msg--in { opacity: 1; }
 
@@ -481,7 +481,7 @@
   border-left: 2px solid var(--border-strong);
   opacity: 0;
   transform: translateY(8px);
-  transition: opacity 500ms ease, transform 500ms ease;
+  transition: opacity 500ms var(--ease-cinematic), transform 500ms var(--ease-cinematic);
 }
 
 .film-archive-teaser--in .film-archive-teaser__witness {
@@ -529,7 +529,7 @@
   font-size: var(--text-xs);
   letter-spacing: 0.06em;
   opacity: 0;
-  transition: color 200ms ease, opacity 400ms ease 500ms;
+  transition: color 200ms var(--ease-cinematic), opacity 400ms var(--ease-cinematic) 500ms;
 }
 
 .film-archive-teaser--in .film-archive-teaser__cta {
@@ -544,7 +544,7 @@
 
 .film-archive-teaser__cta-arrow {
   display: inline-block;
-  transition: transform 200ms ease;
+  transition: transform 200ms var(--ease-cinematic);
 }
 
 .film-archive-teaser__cta:hover .film-archive-teaser__cta-arrow {

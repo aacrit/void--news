@@ -358,7 +358,7 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3);
-  transition: background-color var(--dur-fast) var(--ease-out);
+  transition: background-color var(--dur-fast) var(--ease-cinematic);
 }
 
 .source-row:nth-child(even) {

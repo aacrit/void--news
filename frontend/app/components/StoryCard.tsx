@@ -5,6 +5,7 @@ import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
 import { useInView } from "../lib/sharedObserver";
+import { classifyCoverage } from "../lib/coverageClass";
 
 interface StoryCardProps {
   story: Story;
@@ -25,6 +26,7 @@ interface StoryCardProps {
 
 export default function StoryCard({ story, index, onStoryClick, globalIndex, kbdFocused }: StoryCardProps) {
   const [cardRef, visible] = useInView<HTMLElement>();
+  const verdict = classifyCoverage(story);
 
   return (
     <article
@@ -74,7 +76,11 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
         </p>
       )}
 
-      {/* Consensus ratio now embedded in Sigil */}
+      {verdict && (
+        <p className={`coverage-verdict coverage-verdict--${verdict.tone}`} aria-label={`Coverage: ${verdict.label}`}>
+          {verdict.label}
+        </p>
+      )}
     </article>
   );
 }

@@ -120,7 +120,7 @@
   flex-direction: column;
   gap: var(--space-1);
   cursor: pointer;
-  transition: background-color 120ms var(--ease-out);
+  transition: background-color 120ms var(--ease-cinematic);
 }
 
 /* .skb__compact-col:hover bg removed — brief column, not a button */
@@ -262,7 +262,7 @@
   color: var(--accent-warm);
   opacity: 0.4;
   cursor: pointer;
-  transition: opacity 200ms var(--ease-out), transform 200ms var(--spring-snappy);
+  transition: opacity 200ms var(--ease-cinematic), transform 200ms var(--spring-snappy);
 }
 
 /* Rotate CaretRight to point down */
@@ -301,7 +301,7 @@
   opacity: 0.6;
   cursor: pointer;
   border-radius: 4px;
-  transition: opacity 200ms var(--ease-out), transform 200ms var(--spring-snappy);
+  transition: opacity 200ms var(--ease-cinematic), transform 200ms var(--spring-snappy);
 }
 
 /* Rotate CaretRight to point up */
@@ -367,7 +367,7 @@
   padding: var(--space-1) var(--space-3);
   min-height: 44px;
   cursor: pointer;
-  transition: border-color 200ms var(--ease-out), background 200ms var(--ease-out), color 200ms var(--ease-out);
+  transition: border-color 200ms var(--ease-cinematic), background 200ms var(--ease-cinematic), color 200ms var(--ease-cinematic);
 }
 
 /* Hover: color only, no glow */
@@ -412,7 +412,7 @@
   color: var(--accent-warm);
   font-size: var(--text-sm);
   cursor: pointer;
-  transition: border-color 200ms var(--ease-out), background 200ms var(--ease-out);
+  transition: border-color 200ms var(--ease-cinematic), background 200ms var(--ease-cinematic);
 }
 
 .skb__topbar-collapse:hover {
@@ -788,7 +788,7 @@
   padding: var(--space-1) var(--space-3);
   min-height: 44px;
   cursor: pointer;
-  transition: color 150ms var(--ease-out);
+  transition: color 150ms var(--ease-cinematic);
 }
 
 .skb__prev-link:hover {
@@ -800,7 +800,7 @@
   font-size: var(--text-xxs);
   color: color-mix(in srgb, var(--fg-secondary) 60%, transparent);
   letter-spacing: 0.02em;
-  transition: color 150ms var(--ease-out);
+  transition: color 150ms var(--ease-cinematic);
 }
 
 .skb__prev-link:hover .skb__prev-link-text {
@@ -828,7 +828,7 @@
   width: 100%;
   min-height: 44px;
   font-size: var(--text-xs);
-  transition: background 150ms var(--ease-out);
+  transition: background 150ms var(--ease-cinematic);
 }
 
 /* .skb__ep-row:hover removed — episode row, not a button */

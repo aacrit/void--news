@@ -555,11 +555,13 @@ media:
 connections:
 - target_slug: trail-of-tears
   connection_type: parallel
-  description: Both involved the systematic dispossession of Indigenous peoples through legal instruments — the Indian Removal Act (1830) and the New Zealand Settlements Act (1863) — backed by military
-    force
+  description: Jackson signed the Indian Removal Act in 1830. Hobson signed Waitangi in 1840. The New Zealand Settlements Act
+    followed in 1863. Māori lost 95% of their land by 1939; Cherokee had lost theirs by 1840
 - target_slug: scramble-for-africa
   connection_type: parallel
-  description: New Zealand was annexed during the same era of European colonial expansion — the treaty was one mechanism among many for imposing European sovereignty on non-European peoples
+  description: Britain annexed New Zealand in 1840. It took Lagos in 1861, the Gold Coast in 1874, Egypt in 1882. The same
+    Colonial Office moved its files from Auckland to Accra to Cairo
 - target_slug: opium-wars
   connection_type: parallel
-  description: Both demonstrate how unequal treaties imposed by European powers restructured sovereignty in non-European societies — China through gunboat diplomacy, New Zealand through mistranslation
+  description: The Treaty of Nanking was signed two years after Waitangi, in the same office at Whitehall. The English text
+    ceded Hong Kong. The Chinese text ceded Hong Kong. The translation worked. At Waitangi it did not
