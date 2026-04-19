@@ -130,7 +130,11 @@
     gap: var(--space-2);
     padding: var(--space-2) var(--space-5);
     overflow-x: auto;
-    scroll-snap-type: x proximity;
+    /* Tier 2 gesture inertia: mandatory snap + contained overscroll for
+       native iOS momentum. -webkit-overflow-scrolling retained as the
+       iOS < 13 fallback (modern WebKit ignores it harmlessly). */
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
   }
@@ -555,5 +559,12 @@
   .mmp__play:active {
     transform: none;
     transition: none;
+  }
+
+  /* Tier 2: disable snap/inertia for reduced-motion users — they get a
+     plain horizontal scroll with no carousel feel. */
+  .mobile-edition-pills {
+    scroll-snap-type: none;
+    overscroll-behavior-x: auto;
   }
 }
