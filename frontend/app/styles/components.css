@@ -692,7 +692,7 @@
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
-  max-height: 320px;
+  max-height: clamp(360px, 48vh, 560px);
   overflow: hidden;
   border-radius: 2px;
   margin-bottom: var(--space-4);
@@ -703,7 +703,7 @@
   display: block;
   width: 100%;
   height: auto;
-  max-height: 320px;
+  max-height: clamp(360px, 48vh, 560px);
   object-fit: cover;
   object-position: top center;
   opacity: 0;
@@ -7569,18 +7569,10 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   transition: filter 800ms var(--ease-cinematic);
 }
 
-/* Combined state: audio playing while Deep Dive is open.
-   CSS filter is NOT additive — the deep-dive-open rule in desktop-feed.css
-   would replace the audio warmth entirely. This combined selector merges
-   both filter chains so the sepia warmth persists beneath the defocus blur.
-   Without this, closing Deep Dive while audio plays creates a visible
-   filter flash as the audio warmth snaps back. */
-.page-main--audio-playing.page-main--deep-dive-open {
-  filter: var(--focus-modal) saturate(0.7) brightness(0.88) sepia(0.01);
-}
-.page-main--audio-playing.page-main--deep-dive-closing {
-  filter: blur(0px) saturate(1) brightness(1) sepia(0.01);
-}
+/* Deep Dive no longer applies a filter to .page-main — the backdrop-filter
+   on .deep-dive-backdrop handles defocus. The base .page-main--audio-playing
+   filter (sepia warmth) carries through DD open/close without conflict, so
+   no combined selector is needed. */
 
 /* ══ SCENE 7: Practical Light System — OnAir Warmth Propagation ══
    When audio is playing, the OnAir button becomes a "practical light"
