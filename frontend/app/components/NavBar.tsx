@@ -75,6 +75,40 @@ export default function NavBar({
   const dateline = mounted ? formatDateCompact() : "\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0";
   const timestamp = mounted ? getEditionTimestamp(activeEdition) : "\u00A0\u00A0\u00A0\u00A0\u00A0";
 
+  /* ── Scroll-compact masthead (NYT-style): wires --scroll-nav-compact-* tokens.
+     Adds data-scroll-compact="true" past 80px, removes at ≤40px (hysteresis
+     prevents jitter at threshold). rAF-throttled, passive listener.
+     Desktop-only behavior — mobile nav is a separate component (MobileNav).   */
+  const [scrollCompact, setScrollCompact] = useState(false);
+  useEffect(() => {
+    let ticking = false;
+    let compact = false;
+
+    const update = () => {
+      ticking = false;
+      const y = window.scrollY;
+      if (!compact && y > 80) {
+        compact = true;
+        setScrollCompact(true);
+      } else if (compact && y <= 40) {
+        compact = false;
+        setScrollCompact(false);
+      }
+    };
+
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(update);
+      }
+    };
+
+    // Prime initial state (e.g., page reload mid-scroll)
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   const handleEditionTap = (edition: Edition) => {
     hapticConfirm();
     onEditionChange?.(edition);
@@ -159,7 +193,10 @@ export default function NavBar({
   const hasFilters = !!onLeanChange;
 
   return (
-    <header className="nav-header anim-cold-open-nav">
+    <header
+      className="nav-header anim-cold-open-nav"
+      data-scroll-compact={scrollCompact ? "true" : undefined}
+    >
       {/* ── Row 1: Chrome — structural, about the app ── */}
       <nav className="nav-inner" aria-label="Main navigation">
         <div className="nav-left">

@@ -692,7 +692,7 @@
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
-  max-height: 320px;
+  max-height: clamp(360px, 48vh, 560px);
   overflow: hidden;
   border-radius: 2px;
   margin-bottom: var(--space-4);
@@ -703,7 +703,7 @@
   display: block;
   width: 100%;
   height: auto;
-  max-height: 320px;
+  max-height: clamp(360px, 48vh, 560px);
   object-fit: cover;
   object-position: top center;
   opacity: 0;
@@ -1803,6 +1803,57 @@
   -webkit-backdrop-filter: blur(12px) saturate(1.2);
   border-bottom: 1px solid var(--glass-border);
   transition: background-color var(--dur-morph) var(--ease-cinematic);
+}
+
+/* ── Scroll-compact masthead ───────────────────────────────────────────────
+   When the user scrolls past ~80px, NavBar.tsx toggles
+   [data-scroll-compact="true"] on .nav-header. That shrinks Row 1 padding,
+   scales the logo lockup down to --scroll-nav-compact-scale, fades the
+   dateline (tagline) toward hidden, and tightens the Row 2 inset band.
+   Tokens: --scroll-nav-compact-scale (0.98). Range (120px) is advisory;
+   the JS uses 80px-on / 40px-off hysteresis to prevent jitter. Desktop
+   only — mobile nav is a separate component.                             */
+.nav-header[data-scroll-compact="true"] .nav-inner {
+  padding-top: var(--space-1);
+  padding-bottom: var(--space-1);
+}
+.nav-header[data-scroll-compact="true"] .nav-logo {
+  transform: scale(var(--scroll-nav-compact-scale));
+  transform-origin: left center;
+}
+.nav-header[data-scroll-compact="true"] .nav-dateline-inline {
+  opacity: 0;
+  max-width: 0;
+  padding-left: 0;
+  padding-right: 0;
+  pointer-events: none;
+}
+.nav-header[data-scroll-compact="true"] .nav-lens {
+  padding-top: var(--space-1);
+  padding-bottom: var(--space-1);
+}
+
+/* Motion: settle on state swap using rack-focus ease.
+   --dur-settle is intentionally unset; fallback 240ms applies.            */
+.nav-inner,
+.nav-logo,
+.nav-dateline-inline,
+.nav-lens {
+  transition:
+    padding-top var(--dur-settle, 240ms) var(--ease-rack, ease-in-out),
+    padding-bottom var(--dur-settle, 240ms) var(--ease-rack, ease-in-out),
+    transform var(--dur-settle, 240ms) var(--ease-rack, ease-in-out),
+    opacity var(--dur-settle, 240ms) var(--ease-rack, ease-in-out),
+    max-width var(--dur-settle, 240ms) var(--ease-rack, ease-in-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-inner,
+  .nav-logo,
+  .nav-dateline-inline,
+  .nav-lens {
+    transition: none;
+  }
 }
 
 .nav-inner {
@@ -7569,18 +7620,10 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   transition: filter 800ms var(--ease-cinematic);
 }
 
-/* Combined state: audio playing while Deep Dive is open.
-   CSS filter is NOT additive — the deep-dive-open rule in desktop-feed.css
-   would replace the audio warmth entirely. This combined selector merges
-   both filter chains so the sepia warmth persists beneath the defocus blur.
-   Without this, closing Deep Dive while audio plays creates a visible
-   filter flash as the audio warmth snaps back. */
-.page-main--audio-playing.page-main--deep-dive-open {
-  filter: var(--focus-modal) saturate(0.7) brightness(0.88) sepia(0.01);
-}
-.page-main--audio-playing.page-main--deep-dive-closing {
-  filter: blur(0px) saturate(1) brightness(1) sepia(0.01);
-}
+/* Deep Dive no longer applies a filter to .page-main — the backdrop-filter
+   on .deep-dive-backdrop handles defocus. The base .page-main--audio-playing
+   filter (sepia warmth) carries through DD open/close without conflict, so
+   no combined selector is needed. */
 
 /* ══ SCENE 7: Practical Light System — OnAir Warmth Propagation ══
    When audio is playing, the OnAir button becomes a "practical light"

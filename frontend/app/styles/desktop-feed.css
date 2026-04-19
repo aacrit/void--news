@@ -576,10 +576,12 @@
 /* ---------------------------------------------------------------------------
    Feed Recession — depth effect when Deep Dive opens
    ---------------------------------------------------------------------------
-   When Deep Dive opens, the entire feed behind it defocuses — scale recession
-   plus a direct filter blur on .page-main. The backdrop-filter on the overlay
-   provides the darkening and color grading, while the direct filter creates
-   an unmistakable cinematic rack-out: the camera has left this plane.
+   When Deep Dive opens, the feed behind it recesses via a subtle scale
+   transform. The defocus blur is handled exclusively by the backdrop-filter
+   on .deep-dive-backdrop (see layout.css) — a direct filter: blur() on
+   .page-main was also in place previously, which compounded with the
+   backdrop-filter and caused GPU jank. The backdrop-filter alone is
+   sufficient for the cinematic rack-out and is GPU-accelerated.
 
    Kaminski, Schindler's List — the background crowd is never just dimmed,
    it is actively defocused, creating physical separation between subject
@@ -587,19 +589,13 @@
 
 .page-main--deep-dive-open {
   transform: scale(var(--dd-feed-scale, 0.997));
-  filter: var(--focus-modal) saturate(0.7) brightness(0.88);
   transform-origin: center top;
-  transition:
-    transform 200ms var(--ease-cinematic),
-    filter 250ms var(--ease-cinematic);
+  transition: transform 200ms var(--ease-cinematic);
 }
 
 .page-main--deep-dive-closing {
   transform: scale(1);
-  filter: blur(0px) saturate(1) brightness(1);
-  transition:
-    transform 150ms var(--ease-cinematic),
-    filter 120ms var(--ease-whip);
+  transition: transform 150ms var(--ease-cinematic);
 }
 
 /* ---------------------------------------------------------------------------
