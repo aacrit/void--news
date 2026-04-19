@@ -280,6 +280,44 @@
     min-width: 0;
   }
 
+  /* ── Scroll-compact masthead (mobile) ───────────────────────────────────
+     NavBar.tsx toggles [data-scroll-compact="true"] past 80px (40px off).
+     Mobile reclaims ~20-30px of persistent real estate for thumb-scrollers
+     by collapsing Row 1 padding + fading the mobile dateline. We do NOT
+     scale the logo on mobile — it's already 22px and scaling hurts
+     legibility. Transitions settle via rack-focus ease.                  */
+  .nav-header[data-scroll-compact="true"] .nav-inner {
+    padding-top: var(--space-1);
+    padding-bottom: var(--space-1);
+  }
+  .nav-header[data-scroll-compact="true"] .nav-dateline-mobile {
+    opacity: 0;
+    max-width: 0;
+    max-height: 0;
+    padding-left: 0;
+    padding-right: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .nav-header[data-scroll-compact="true"] .nav-lens {
+    padding-top: var(--space-1);
+    padding-bottom: var(--space-1);
+  }
+
+  .nav-dateline-mobile {
+    transition:
+      opacity var(--dur-settle, 240ms) var(--ease-rack, ease-in-out),
+      max-width var(--dur-settle, 240ms) var(--ease-rack, ease-in-out),
+      max-height var(--dur-settle, 240ms) var(--ease-rack, ease-in-out),
+      padding var(--dur-settle, 240ms) var(--ease-rack, ease-in-out);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-dateline-mobile {
+      transition: none;
+    }
+  }
+
   /* Filter toggle — full touch target on mobile */
   .filter-toggle {
     min-height: 44px;
