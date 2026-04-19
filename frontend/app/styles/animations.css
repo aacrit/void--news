@@ -144,21 +144,31 @@
   animation: fadeInUp var(--dur-normal) var(--ease-cinematic) both;
 }
 
-/* Staggered entrance — story cards with spring physics.
+/* Staggered entrance — story cards with cinematic unfold.
    Paused by default: IntersectionObserver adds .anim-stagger--visible
-   to play only when the card enters the viewport. Falls back to
-   animationDelay inline style for per-card stagger. */
+   to play only when the card enters the viewport. Per-card stagger is
+   driven by inline style animation-delay (--stagger-delay or direct).
+   Keyframe (not transition) so it plays reliably on every viewport entry. */
+@keyframes staggerUnfold {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .anim-stagger {
   opacity: 0;
-  transform: translateY(6px);
+  transform: translateY(12px);
+  animation: staggerUnfold 440ms var(--ease-unfold, cubic-bezier(0.25, 0.1, 0.25, 1)) both;
+  animation-play-state: paused;
 }
 
 .anim-stagger--visible {
-  opacity: 1;
-  transform: translateY(0);
-  transition:
-    opacity 120ms var(--ease-cinematic),
-    transform 200ms var(--ease-cinematic);
+  animation-play-state: running;
 }
 
 /* Filter-change card entrance — fires immediately (not paused).
@@ -794,16 +804,17 @@
     transform: none;
   }
 
-  /* Stagger entrance: skip transform, just fade in instantly */
+  /* Stagger entrance: skip animation entirely — static display */
   .anim-stagger {
-    opacity: 0;
+    animation: none !important;
+    opacity: 1;
     transform: none;
   }
 
   .anim-stagger--visible {
+    animation: none !important;
     opacity: 1;
     transform: none;
-    transition: opacity 0ms !important;
   }
 }
 
