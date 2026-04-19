@@ -605,23 +605,23 @@ media:
 connections:
 - target_slug: hiroshima-nagasaki
   connection_type: parallel
-  description: Both demonstrated American willingness to use overwhelming force with massive civilian casualties, justified
-    as necessary to end a larger threat
+  description: Little Boy killed 140,000 at Hiroshima. 2,977 died on September 11. The Iraq war that followed killed an estimated
+    300,000 Iraqi civilians by 2011
 - target_slug: the-crusades
   connection_type: influenced
-  description: Bush initially described the war on terror as a "crusade" before retracting the word; bin Laden and al-Qaeda
-    explicitly invoked crusader framing to recruit across the Muslim world
+  description: On September 16, 2001, Bush said 'this crusade, this war on terrorism, is going to take a while.' He retracted
+    the word within days. Bin Laden's 1998 fatwa had already invoked 'the Crusader-Zionist alliance'
 - target_slug: cambodian-genocide
   connection_type: parallel
-  description: American bombing and intervention in Cambodia destabilized the country and empowered the Khmer Rouge, paralleling
-    how the Iraq invasion created conditions for the Islamic State
+  description: The US dropped 2.7 million tons of bombs on Cambodia between 1969 and 1973. The Khmer Rouge took Phnom Penh
+    two years later. The US invaded Iraq in 2003. ISIS took Mosul eleven years later
 - target_slug: fall-of-berlin-wall
   connection_type: consequence
-  description: September 11 ended the post-Cold War unipolar moment that began with the fall of the Wall in 1989, replacing
-    optimism about liberal democratic expansion with indefinite war
+  description: The Wall came down on November 9, 1989. Fukuyama declared the end of history that summer. Twelve years later,
+    the Twin Towers came down on September 11
 - target_slug: creation-of-israel-nakba
   connection_type: influenced
-  description: US support for Israel was one of bin Laden's three stated grievances; the war on terror intensified American
-    alignment with Israel and reshaped Middle Eastern geopolitics
+  description: Bin Laden's November 2001 letter to America listed US support for Israel as grievance number two. Between 2001
+    and 2024, US aid to Israel totaled $158 billion
 hero_image_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/september-11-attacks/wiki_0.jpg
 hero_image_attribution: Robert J. Fisch, CC BY-SA 2.0

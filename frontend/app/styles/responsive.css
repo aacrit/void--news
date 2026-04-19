@@ -503,9 +503,9 @@
     background-color: var(--cin-ash-warm, var(--border-strong));
     margin: var(--space-2) auto var(--space-1);
     opacity: 0.8;
-    transition: width 150ms var(--ease-out), opacity 150ms var(--ease-out);
+    transition: width 150ms var(--ease-cinematic), opacity 150ms var(--ease-cinematic);
     /* Brief width-expansion entrance that draws attention to the handle */
-    animation: dragIndicatorReveal 200ms var(--ease-out) 100ms both;
+    animation: dragIndicatorReveal 200ms var(--ease-cinematic) 100ms both;
     box-shadow: 0 1px 2px color-mix(in srgb, var(--cinematic-shadow-tint) 4%, transparent);
   }
 
@@ -570,7 +570,7 @@
 
   /* Press expand: faster transition on mobile */
   .dd-press-expand {
-    transition: grid-template-rows 300ms var(--ease-out);
+    transition: grid-template-rows 300ms var(--ease-cinematic);
   }
 
   /* Perspectives: single column on mobile */
@@ -608,8 +608,8 @@
   .anim-dd-section {
     transform: translateY(8px);
     transition:
-      opacity 150ms var(--ease-out),
-      transform 250ms var(--ease-out);
+      opacity 150ms var(--ease-cinematic),
+      transform 250ms var(--ease-cinematic);
   }
 
   /* Static story counter — persistent mobile navigation affordance */
@@ -640,7 +640,7 @@
 
   /* Filter chips — pill-toggle feel with sliding indicator */
   .lean-bar__seg--active {
-    transition: transform 200ms var(--ease-out);
+    transition: transform 200ms var(--ease-cinematic);
   }
 
   /* Topic chips — tighter, more native pill feel */
@@ -652,32 +652,32 @@
   .story-card:active {
     transform: scale(0.985);
     opacity: 0.9;
-    transition: transform 60ms var(--ease-out), opacity 60ms var(--ease-out);
+    transition: transform 60ms var(--ease-cinematic), opacity 60ms var(--ease-cinematic);
     box-shadow: none;
   }
 
   .lead-story:active {
     transform: scale(0.985);
-    transition: transform 60ms var(--ease-out);
+    transition: transform 60ms var(--ease-cinematic);
     box-shadow: none;
   }
 
   /* Filter chip — press feedback only */
   .filter-chip:active {
     transform: scale(0.92);
-    transition: transform 50ms var(--ease-out);
+    transition: transform 50ms var(--ease-cinematic);
   }
 
   /* Lean bar segments — base hover already stripped, press feedback only */
   .lean-bar__seg:active {
     transform: scale(0.95);
-    transition: transform 50ms var(--ease-out);
+    transition: transform 50ms var(--ease-cinematic);
   }
 
   /* Topic chip — base hover already stripped, press feedback only */
   .topic-bar__chip:active {
     transform: scale(0.92);
-    transition: transform 50ms var(--ease-out);
+    transition: transform 50ms var(--ease-cinematic);
   }
 
   /* === PERFORMANCE — DISABLE PAINT-HEAVY EFFECTS === */
@@ -688,8 +688,8 @@
   .lead-story {
     box-shadow: none;
     transition:
-      transform 200ms var(--ease-out),
-      opacity 200ms var(--ease-out);
+      transform 200ms var(--ease-cinematic),
+      opacity 200ms var(--ease-cinematic);
   }
 
   /* === STAGGER ANIMATION — FASTER ON MOBILE === */
@@ -699,7 +699,7 @@
      animation-play-state paused/running contract is preserved. */
   .anim-stagger {
     animation-duration: 220ms;
-    animation-timing-function: var(--ease-out);
+    animation-timing-function: var(--ease-cinematic);
     animation-play-state: paused;
   }
 
@@ -986,10 +986,10 @@
   }
 
   ::view-transition-old(main-content) {
-    animation: vtSlideOut 200ms var(--ease-out) both;
+    animation: vtSlideOut 200ms var(--ease-cinematic) both;
   }
   ::view-transition-new(main-content) {
-    animation: vtSlideIn 200ms var(--ease-out) both;
+    animation: vtSlideIn 200ms var(--ease-cinematic) both;
   }
 
   /* Persistent chrome stays put during route change */

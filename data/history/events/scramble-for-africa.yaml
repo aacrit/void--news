@@ -636,7 +636,9 @@ connections:
   description: The Scramble followed the abolition of the slave trade but continued the extractive relationship with Africa — replacing the trade in people with forced labor for commodities
 - target_slug: opium-wars
   connection_type: parallel
-  description: Both used overwhelming military force to impose economic arrangements on non-European societies, establishing the 19th-century template for imperial expansion
+  description: Britain forced opium through the Treaty of Nanking in 1842. Forty-two years later, Bismarck's table in Berlin
+    partitioned a continent. The same gunboats; a different harbor
 - target_slug: trail-of-tears
   connection_type: parallel
-  description: Both involved the legal dispossession of indigenous peoples using instruments (treaties, conferences) that indigenous peoples had no meaningful power to reject
+  description: Bismarck chaired the Berlin Conference in 1884. Jackson signed the Indian Removal Act in 1830. No African attended
+    the first; no Cherokee was consulted on the second

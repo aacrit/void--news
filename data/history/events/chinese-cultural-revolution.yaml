@@ -632,8 +632,8 @@ connections:
     reforms that the post-Mao leadership acknowledged were needed but never fully implemented
 - target_slug: russian-revolution
   connection_type: parallel
-  description: Both revolutions demonstrated the pattern of revolutionary states consuming their own founders — Stalin's purges
-    and Mao's Cultural Revolution both targeted the Party's original cadres
+  description: Stalin purged 93 of 139 Central Committee members elected in 1934. Mao denounced seven of the ten Politburo
+    members who had founded the PRC in 1949. Revolutions eat their own — neither needed instruction from the other
 - target_slug: cambodian-genocide
   connection_type: influenced
   description: Pol Pot and the Khmer Rouge leadership studied in China during the Cultural Revolution; the Cambodian genocide's

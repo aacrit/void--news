@@ -603,7 +603,7 @@ connections:
     drove the search for enslaved labor in the Atlantic economy
 - target_slug: fall-of-rome
   connection_type: parallel
-  description: Both events represent civilizational disruptions that restructured European social hierarchies; the Plague
-    of Justinian (541-549) during Rome's decline foreshadowed the Black Death's demographic catastrophe
+  description: The Plague of Justinian killed 25-50 million between 541 and 549, inside a century of Rome's collapse. Eight
+    hundred years later, the same bacillus — Yersinia pestis — returned to the same coastlines
 hero_image_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/black-death/wiki_0.jpg
 hero_image_attribution: Pieter Bruegel the Elder, Museo del Prado, public domain

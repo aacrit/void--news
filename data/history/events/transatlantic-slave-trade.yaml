@@ -1,6 +1,6 @@
 slug: transatlantic-slave-trade
 title: The Transatlantic Slave Trade
-subtitle: 12.5 million people shipped across an ocean as cargo — the commerce that built the modern world
+subtitle: 12.5 million people crossed the Atlantic in chains. Lloyd's of London insured the ships. Barclays Bank financed the voyages.
 date_display: c. 1500-1870
 date_sort: 1500
 date_precision: decade
@@ -584,7 +584,9 @@ connections:
   description: The French Revolution's universalist language inspired the Haitian Revolution (1791-1804), the only successful slave revolution; France abolished slavery in 1794 and reinstated it in 1802
 - target_slug: trail-of-tears
   connection_type: parallel
-  description: Both operated within the same economic system — cotton slavery and indigenous dispossession were intertwined as removed Native lands became slave plantations
+  description: Cherokee land in Mississippi and Alabama became cotton country by 1840. Enslaved Africans planted it. Mississippi
+    shipped more bales to Liverpool than any port in the world
 - target_slug: scramble-for-africa
   connection_type: influenced
-  description: The abolition of the slave trade was replaced by colonial extraction — the Scramble continued the exploitative relationship between Europe and Africa through different mechanisms
+  description: Britain abolished the slave trade in 1807. Seventy-seven years later, Leopold took the Congo. The ships that
+    had carried people now carried rubber and copper from the same ports

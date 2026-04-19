@@ -567,8 +567,9 @@ media:
 connections:
 - target_slug: scramble-for-africa
   connection_type: parallel
-  description: Both were exercises in imperial power projection using overwhelming military force to extract economic concessions from non-European societies, establishing the template for 19th-century
-    colonialism
+  description: The Treaty of Nanking opened five Chinese ports to British trade in 1842. The Berlin Conference of 1884-1885
+    partitioned Africa at 14 European diplomats' table. Forty-two years apart, the same Maxim gun
 - target_slug: transatlantic-slave-trade
   connection_type: parallel
-  description: Both involved European powers profiting from the forced trade of commodities that devastated non-European populations — enslaved people in one case, narcotics in the other
+  description: By 1839 the British East India Company was shipping 40,000 chests of Bengali opium into Canton each year. Two
+    centuries earlier, the same company had helped move 3 million Africans across the Atlantic. Different cargo, same ledger

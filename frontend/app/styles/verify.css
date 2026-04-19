@@ -154,7 +154,7 @@
   box-shadow: 0 0 20px color-mix(in srgb, var(--cin-amber) 15%, transparent),
               var(--shadow-cinematic-dramatic);
   /* [V17] Spring physics approximation with overshoot */
-  animation: claimReveal 400ms ease-out both;
+  animation: claimReveal 400ms var(--ease-cinematic) both;
 }
 
 .claim-mark__label {
@@ -494,7 +494,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  transition: color 200ms var(--ease-out);
+  transition: color 200ms var(--ease-cinematic);
   min-height: 44px;
 }
 

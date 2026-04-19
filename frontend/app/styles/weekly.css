@@ -1069,7 +1069,7 @@
   width: 3rem;
   height: 2px;
   background: var(--wk-accent, var(--border-strong));
-  animation: wkPulse 1.2s ease-in-out infinite;
+  animation: wkPulse 1.2s var(--ease-rack) infinite;
 }
 
 @keyframes wkPulse {
@@ -1328,16 +1328,16 @@
   /* Timeline nodes: ease-out, no spring */
   .wk-timeline__node {
     transition:
-      opacity 300ms ease-out,
-      transform 300ms ease-out,
-      background 200ms ease-out;
+      opacity 300ms var(--ease-cinematic),
+      transform 300ms var(--ease-cinematic),
+      background 200ms var(--ease-cinematic);
   }
 
   /* Flourish bloom: ease-out, no spring */
   .wk-flourish {
     transition:
-      opacity 400ms ease-out,
-      transform 500ms ease-out;
+      opacity 400ms var(--ease-cinematic),
+      transform 500ms var(--ease-cinematic);
   }
 
   /* Disable text selection on interactive elements */

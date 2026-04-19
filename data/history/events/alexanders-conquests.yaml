@@ -612,7 +612,7 @@ connections:
     under Macedonian hegemony
 - target_slug: mongol-conquest-baghdad
   connection_type: parallel
-  description: Both Alexander and the Mongols destroyed the dominant Middle Eastern empire of their era, created vast but
-    short-lived empires, and left cultural transformations that outlasted political control
+  description: Alexander took Persepolis in 330 BCE and burned it. Hulagu took Baghdad 1,588 years later and burned it. The
+    Greek alphabet outlived Alexander's empire by 2,300 years; the Yassa code outlived the Mongols by 400
 hero_image_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/alexanders-conquests/wiki_0.jpg
 hero_image_attribution: Public domain, Naples National Archaeological Museum

@@ -572,7 +572,7 @@ media:
 connections:
 - target_slug: creation-of-israel-nakba
   connection_type: parallel
-  description: Both events involved British withdrawal and partition along religious/ethnic lines in 1947-48, with mass displacement and unresolved territorial disputes persisting decades later
+  description: Britain announced its Palestine withdrawal on February 14, 1947. Mountbatten announced the Indian partition on June 3. Both borders were drawn within five months; both conflicts are still unresolved in 2026
 - target_slug: rwandan-genocide
   connection_type: influenced
-  description: Partition demonstrated how colonial-era identity categories (Hindu/Muslim, Hutu/Tutsi) could be weaponized during rapid political transitions
+  description: The Belgians issued Hutu/Tutsi identity cards in 1933. The British issued Hindu/Muslim census categories in 1871. In both cases, the paperwork outlived the empire that invented it

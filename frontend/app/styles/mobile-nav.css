@@ -52,7 +52,7 @@
 
   .mtb__tab:active {
     transform: scale(0.92);
-    transition: transform 50ms var(--ease-out);
+    transition: transform 50ms var(--ease-cinematic);
   }
 
   .mtb__tab--active {
@@ -106,7 +106,7 @@
     padding: 3px 8px;
     border-radius: 4px;
     pointer-events: none;
-    animation: onairMsgIn 150ms ease-out forwards;
+    animation: onairMsgIn 150ms var(--ease-cinematic) forwards;
   }
 
   @keyframes onairMsgIn {
@@ -160,7 +160,7 @@
 
   .mobile-edition-pill:active {
     transform: scale(0.92);
-    transition: transform 50ms var(--ease-out);
+    transition: transform 50ms var(--ease-cinematic);
   }
 
   .mobile-edition-pill[data-active="true"] {
@@ -346,7 +346,7 @@
     min-height: 48px;
     text-decoration: none;
     border-left: 2px solid transparent;
-    transition: transform 80ms var(--ease-out);
+    transition: transform 80ms var(--ease-cinematic);
     -webkit-tap-highlight-color: transparent;
   }
 
@@ -371,7 +371,7 @@
     font-weight: 400;
     letter-spacing: 0.02em;
     color: var(--fg-primary);
-    transition: color 120ms var(--ease-out);
+    transition: color 120ms var(--ease-cinematic);
   }
 
   .msp__link-desc {
@@ -498,7 +498,7 @@
 
   .mmp__play:active {
     transform: scale(0.9);
-    transition: transform 50ms var(--ease-out);
+    transition: transform 50ms var(--ease-cinematic);
   }
 
   /* Progress bar — thin accent-warm strip at the bottom of the mini-player */

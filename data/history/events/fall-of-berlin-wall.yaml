@@ -1,6 +1,6 @@
 slug: fall-of-berlin-wall
 title: The Fall of the Berlin Wall
-subtitle: A press conference gaffe, a border guard's decision, and an empire's end
+subtitle: A spokesman read from a note card he had not been briefed on. By midnight, the crowd at Bornholmer Strasse was walking through.
 date_display: November 9, 1989
 date_sort: 1989
 date_precision: day
@@ -567,10 +567,10 @@ media:
 connections:
 - target_slug: hiroshima-nagasaki
   connection_type: influenced
-  description: The Cold War nuclear standoff — born from Hiroshima — defined the Berlin Wall's existence; the Wall's fall ended the superpower confrontation that the atomic age created
+  description: 380,000 Soviet troops and 5,000 tanks stood in East Germany on November 9, 1989. None of them moved. The weapons they defended the Wall against had been built after Hiroshima
 - target_slug: french-revolution
   connection_type: parallel
-  description: Both were revolutionary moments where popular mobilization overturned entrenched regimes; both raised questions about what replaces the old order
+  description: Paris crowds took the Bastille on July 14, 1789. Berlin crowds took the Bornholmer Strasse gate on November 9, 1989. Both regimes had a standing army that declined to fire
 - target_slug: creation-of-israel-nakba
   connection_type: parallel
-  description: Both were products of the post-WWII geopolitical settlement; the Wall's fall reshuffled alliances that had shaped the Middle East conflict since 1948
+  description: Four years after the Wall fell, Arafat and Rabin shook hands at the White House. Twenty-five years later, the second intifada had burned out the Oslo framework

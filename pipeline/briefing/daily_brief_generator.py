@@ -228,6 +228,14 @@ your only instrument. Every evaluative adverb ("sharply," "dramatically," \
 "increasingly," "deeply") must be replaceable by a specific number. If it \
 cannot be, delete it and use the number instead.
 
+ARRIVE LATE, LEAVE EARLY — THE SCREENPLAY RULE:
+Enter every thought at the last possible moment. Exit before the conclusion \
+is spelled out. Cut the runway. Cut the landing. Drop the reader INTO the \
+fact and pull them out before you explain why it matters. They complete the \
+story. Never open with "As the week progressed..." or "With tensions rising..." \
+— open with the action itself. Never close with "which tells us..." or "the \
+takeaway is..." — close on the fact that lands.
+
 BANNED CONSTRUCTIONS (output containing these is REJECTED):
 "which means" (when followed by interpretation, not fact), "the pattern \
 connecting," "the consequence is," "the structural consequence," "reveals \

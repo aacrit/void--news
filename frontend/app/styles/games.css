@@ -49,7 +49,7 @@
     rgba(148, 107, 21, 0.08) 0%,
     transparent 70%
   );
-  animation: hub-ambient-pulse 10s ease-in-out infinite;
+  animation: hub-ambient-pulse 10s var(--ease-rack) infinite;
   pointer-events: none;
   z-index: 1;
 }
@@ -229,7 +229,7 @@
 
 /* Core: heartbeat pulse — breathing amber */
 .vm-core {
-  animation: vm-core-pulse 1.8s ease-in-out infinite;
+  animation: vm-core-pulse 1.8s var(--ease-rack) infinite;
 }
 @keyframes vm-core-pulse {
   0%,  100% { transform: scale(1);   opacity: 0.65; }
@@ -430,13 +430,13 @@
 /* Sigil Animations — hover-activated per-game motion loops */
 .game-sigil {
   opacity: 0.5;
-  transition: opacity 300ms ease, transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 300ms var(--ease-cinematic), transform 300ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 .games-hub__card:hover .game-sigil { opacity: 1; }
-.games-hub__card:hover .game-sigil--undertow { animation: hub-sigil-wave 4s ease-in-out infinite; }
+.games-hub__card:hover .game-sigil--undertow { animation: hub-sigil-wave 4s var(--ease-rack) infinite; }
 .games-hub__card:hover .game-sigil--wire { animation: hub-sigil-pulse 2s linear infinite; }
-.games-hub__card:hover .game-sigil--frame { animation: hub-sigil-focus 3s ease-in-out infinite; }
-.games-hub__card:hover .game-sigil--run { animation: hub-sigil-dash 1.5s ease-in-out infinite; }
+.games-hub__card:hover .game-sigil--frame { animation: hub-sigil-focus 3s var(--ease-rack) infinite; }
+.games-hub__card:hover .game-sigil--run { animation: hub-sigil-dash 1.5s var(--ease-rack) infinite; }
 
 @keyframes hub-sigil-wave { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(3px); } }
 @keyframes hub-sigil-pulse { 0% { opacity: 0.4; filter: brightness(0.8); } 50% { opacity: 0.8; filter: brightness(1.4); } 100% { opacity: 0.4; filter: brightness(0.8); } }
@@ -814,7 +814,7 @@
     opacity 200ms var(--ease-cinematic),
     border-color 200ms var(--ease-cinematic),
     color 200ms var(--ease-cinematic),
-    transform 120ms var(--ease-out);
+    transform 120ms var(--ease-cinematic);
   min-height: 44px;
   min-width: 44px;
 }
@@ -832,7 +832,7 @@
 
 .frame-page__submit--ready:active {
   transform: scale(0.97);
-  transition: transform 60ms var(--ease-out);
+  transition: transform 60ms var(--ease-cinematic);
 }
 
 .frame-page__submit--ready:focus-visible {
@@ -1374,7 +1374,7 @@
   min-height: 44px;
   transition:
     background 200ms var(--ease-cinematic),
-    transform 120ms var(--ease-out);
+    transform 120ms var(--ease-cinematic);
 }
 
 .frame-share:hover {
@@ -1383,7 +1383,7 @@
 
 .frame-share:active {
   transform: scale(0.97);
-  transition: transform 60ms var(--ease-out);
+  transition: transform 60ms var(--ease-cinematic);
 }
 
 .frame-share:focus-visible {
@@ -1553,7 +1553,7 @@
   transition:
     background 200ms var(--ease-cinematic),
     opacity 200ms var(--ease-cinematic),
-    transform 120ms var(--ease-out);
+    transform 120ms var(--ease-cinematic);
 }
 
 .cipher-page__hint-btn:hover:not(:disabled) {
@@ -1562,7 +1562,7 @@
 
 .cipher-page__hint-btn:active:not(:disabled) {
   transform: scale(0.97);
-  transition: transform 60ms var(--ease-out);
+  transition: transform 60ms var(--ease-cinematic);
 }
 
 .cipher-page__hint-btn:disabled {
@@ -1887,7 +1887,7 @@
     transparent 70%
   );
   pointer-events: none;
-  animation: quoteGlow 4s ease-in-out infinite;
+  animation: quoteGlow 4s var(--ease-rack) infinite;
 }
 
 @keyframes quoteGlow {
@@ -1963,7 +1963,7 @@
   min-height: 44px;
   transition:
     background 200ms var(--ease-cinematic),
-    transform 120ms var(--ease-out);
+    transform 120ms var(--ease-cinematic);
 }
 
 .cipher-share:hover {
@@ -1972,7 +1972,7 @@
 
 .cipher-share:active {
   transform: scale(0.97);
-  transition: transform 60ms var(--ease-out);
+  transition: transform 60ms var(--ease-cinematic);
 }
 
 .cipher-share:focus-visible {
@@ -2159,7 +2159,7 @@
 /* Reveal state — page dims slightly */
 .undertow-page--revealed .undertow-page__bg-overlay {
   background: rgba(0, 0, 0, 0.80);
-  transition: background 300ms ease;
+  transition: background 300ms var(--ease-cinematic);
 }
 
 /* ---- Navigation ---- */
@@ -2197,7 +2197,7 @@
   margin-bottom: var(--space-4);
   opacity: 0;
   transform: translateY(8px);
-  transition: opacity 400ms ease, transform 400ms ease;
+  transition: opacity 400ms var(--ease-cinematic), transform 400ms var(--ease-cinematic);
 }
 
 .undertow-page--mounted .undertow-page__header {
@@ -2246,7 +2246,7 @@
   letter-spacing: 0.2em;
   text-transform: uppercase;
   opacity: 0;
-  transition: opacity 400ms ease, transform 400ms ease;
+  transition: opacity 400ms var(--ease-cinematic), transform 400ms var(--ease-cinematic);
 }
 
 .undertow-axis__pole--left {
@@ -2297,7 +2297,7 @@
   text-align: center;
   opacity: 0;
   transform: translateY(6px);
-  transition: opacity 400ms ease, transform 400ms ease;
+  transition: opacity 400ms var(--ease-cinematic), transform 400ms var(--ease-cinematic);
   transition-delay: 600ms;
 }
 
@@ -2370,7 +2370,7 @@
   /* Staggered entrance — cards wait for axis intro (700ms) */
   opacity: 0;
   transform: translateY(24px);
-  transition: opacity 500ms ease, transform 500ms ease;
+  transition: opacity 500ms var(--ease-cinematic), transform 500ms var(--ease-cinematic);
   transition-delay: 700ms;
 }
 
@@ -2724,7 +2724,7 @@
   text-decoration-color: rgba(201, 168, 76, 0);
   text-underline-offset: 3px;
   text-decoration-thickness: 1px;
-  transition: text-decoration-color 600ms ease;
+  transition: text-decoration-color 600ms var(--ease-cinematic);
   transition-delay: var(--hl-delay, 0ms);
 }
 
@@ -2779,7 +2779,7 @@
   padding: var(--space-2);
   min-height: 44px;
   cursor: pointer;
-  transition: all 200ms ease;
+  transition: all 200ms var(--ease-cinematic);
 }
 
 .undertow-card__slot-btn:hover {
@@ -3063,7 +3063,7 @@
 
   /* Simplified entrance animation — ease-out, no spring */
   .undertow-card--revealed {
-    animation-timing-function: ease-out;
+    animation-timing-function: var(--ease-cinematic);
   }
 }
 
@@ -3384,7 +3384,7 @@
 }
 
 .wire-hidden:not(.wire-hidden--solved):not(.wire-hidden--active):not(.wire-hidden--dormant) {
-  animation: wire-pulse 2s ease-in-out infinite;
+  animation: wire-pulse 2s var(--ease-rack) infinite;
 }
 
 @keyframes wire-pulse {
@@ -3518,11 +3518,11 @@
   cursor: pointer;
   min-height: 44px;
   min-width: 44px;
-  transition: background 200ms var(--ease-cinematic), border-color 200ms var(--ease-cinematic), color 200ms var(--ease-cinematic), transform 120ms var(--ease-out);
+  transition: background 200ms var(--ease-cinematic), border-color 200ms var(--ease-cinematic), color 200ms var(--ease-cinematic), transform 120ms var(--ease-cinematic);
 }
 
 .wire-input__submit:hover:not(:disabled) { background: rgba(201,168,76,0.08); border-color: rgba(201,168,76,0.6); color: rgba(201,168,76,1); }
-.wire-input__submit:active:not(:disabled) { transform: scale(0.97); transition: transform 60ms var(--ease-out); }
+.wire-input__submit:active:not(:disabled) { transform: scale(0.97); transition: transform 60ms var(--ease-cinematic); }
 .wire-input__submit:disabled { opacity: 0.3; cursor: not-allowed; }
 .wire-input__submit:focus-visible { outline: 2px solid rgba(201,168,76,0.6); outline-offset: 2px; }
 
@@ -3598,11 +3598,11 @@
   cursor: pointer;
   min-height: 44px;
   min-width: 44px;
-  transition: background 200ms var(--ease-cinematic), border-color 200ms var(--ease-cinematic), color 200ms var(--ease-cinematic), transform 120ms var(--ease-out);
+  transition: background 200ms var(--ease-cinematic), border-color 200ms var(--ease-cinematic), color 200ms var(--ease-cinematic), transform 120ms var(--ease-cinematic);
 }
 
 .wire-connection__submit:hover:not(:disabled) { background: rgba(201,168,76,0.08); border-color: rgba(201,168,76,0.6); color: rgba(201,168,76,1); }
-.wire-connection__submit:active:not(:disabled) { transform: scale(0.97); transition: transform 60ms var(--ease-out); }
+.wire-connection__submit:active:not(:disabled) { transform: scale(0.97); transition: transform 60ms var(--ease-cinematic); }
 .wire-connection__submit:disabled { opacity: 0.3; cursor: not-allowed; }
 .wire-connection__submit:focus-visible { outline: 2px solid rgba(201,168,76,0.6); outline-offset: 2px; }
 
@@ -3724,11 +3724,11 @@
   border-radius: 2px;
   cursor: pointer;
   min-height: 44px;
-  transition: background 200ms var(--ease-cinematic), border-color 200ms var(--ease-cinematic), color 200ms var(--ease-cinematic), transform 120ms var(--ease-out);
+  transition: background 200ms var(--ease-cinematic), border-color 200ms var(--ease-cinematic), color 200ms var(--ease-cinematic), transform 120ms var(--ease-cinematic);
 }
 
 .wire-reveal__share:hover { background: rgba(201,168,76,0.08); border-color: rgba(201,168,76,0.6); color: rgba(201,168,76,1); }
-.wire-reveal__share:active { transform: scale(0.97); transition: transform 60ms var(--ease-out); }
+.wire-reveal__share:active { transform: scale(0.97); transition: transform 60ms var(--ease-cinematic); }
 .wire-reveal__share:focus-visible { outline: 2px solid rgba(201,168,76,0.6); outline-offset: 2px; }
 .wire-reveal__share-icon { display: flex; align-items: center; }
 
@@ -4097,7 +4097,7 @@
   border-radius: 2px;
   padding: 0.3rem 0.75rem;
   cursor: pointer;
-  transition: color 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+  transition: color 150ms var(--ease-cinematic), border-color 150ms var(--ease-cinematic), box-shadow 150ms var(--ease-cinematic);
   min-height: 32px;
 }
 
@@ -4330,9 +4330,9 @@
   transition:
     transform 350ms var(--spring-games-snap),
     box-shadow 350ms var(--spring-games-snap),
-    border-color 300ms ease,
-    filter 300ms ease,
-    opacity 300ms ease;
+    border-color 300ms var(--ease-cinematic),
+    filter 300ms var(--ease-cinematic),
+    opacity 300ms var(--ease-cinematic);
   will-change: transform;
 }
 
@@ -4351,7 +4351,7 @@
 /* Sigil hover activation — paused by default, activates on card hover */
 .game-sigil {
   opacity: 0.5;
-  transition: opacity 300ms ease, transform 300ms var(--spring-games-micro);
+  transition: opacity 300ms var(--ease-cinematic), transform 300ms var(--spring-games-micro);
 }
 
 .games-hub__card:hover .game-sigil {
@@ -4369,7 +4369,7 @@
   transition:
     transform 350ms var(--spring-games-snap),
     box-shadow 350ms var(--spring-games-snap),
-    border-color 200ms ease;
+    border-color 200ms var(--ease-cinematic);
 }
 
 /* Hover — faster 250ms response, higher lift, slight scale */
@@ -4387,7 +4387,7 @@
 
 /* Wrong guess shake — includes rotation for physical realism */
 .undertow-card--wrong {
-  animation: ut-card-shake 400ms ease-out;
+  animation: ut-card-shake 400ms var(--ease-cinematic);
 }
 
 @keyframes ut-card-shake {
@@ -4474,7 +4474,7 @@
 }
 
 .wire-hidden--wrong {
-  animation: wire-shake 400ms ease-out;
+  animation: wire-shake 400ms var(--ease-cinematic);
 }
 
 /* Connection reveal: "CONNECTION ESTABLISHED" types across */

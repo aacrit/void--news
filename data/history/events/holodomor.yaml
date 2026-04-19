@@ -632,8 +632,8 @@ media:
 connections:
 - target_slug: rwandan-genocide
   connection_type: parallel
-  description: Both events involved state-directed mass killing, international bystander failure, and prolonged denial — the Soviet Union suppressed the Holodomor for 60 years; Rwanda exposed the limits
-    of the post-Holocaust 'never again' consensus
+  description: Moscow denied the Holodomor until Gorbachev admitted it in 1987. The UN pulled out of Rwanda in April 1994. Both
+    killings were filed under 'not our problem' — the Soviet file sealed for 55 years, the UN cable declassified in 1999
 - target_slug: fall-of-berlin-wall
   connection_type: influenced
   description: The Holodomor's legacy contributed to Ukrainian independence sentiment that accelerated Soviet dissolution — Ukraine's December 1991 independence referendum (92.3% yes) made the Soviet Union's

@@ -1,6 +1,6 @@
 slug: creation-of-israel-nakba
 title: The Creation of Israel and the Nakba
-subtitle: One people's independence, another people's catastrophe — the same day, the same land
+subtitle: Ben-Gurion read the declaration at 4 p.m. By morning, 700,000 Palestinians were on roads out of villages that no longer had names.
 date_display: '1948'
 date_sort: 1948
 date_precision: year
@@ -586,11 +586,10 @@ media:
 connections:
 - target_slug: partition-of-india
   connection_type: parallel
-  description: Both occurred in 1947-1948 under British decolonization, both involved partition along religious lines, both produced mass displacement and refugee populations, and both created unresolved
-    territorial disputes that persist decades later
+  description: Britain announced the Palestine withdrawal on February 14, 1947. Mountbatten announced the Indian partition on June 3. Radcliffe drew his line in five weeks; the UN's partition committee drew its in four months. Both lines are still contested in 2026
 - target_slug: hiroshima-nagasaki
   connection_type: influenced
-  description: The post-WWII geopolitical order — shaped by the atomic bombings, the Cold War, and the UN system — created the framework within which the Palestine question was decided
+  description: The UN charter was signed six weeks before Hiroshima. Three years later it handed Britain's mandate to a partition committee — the same institution that had watched the bombings now drew the map of Palestine
 - target_slug: fall-of-berlin-wall
   connection_type: parallel
-  description: The Cold War's end reshuffled the alliances and diplomatic frameworks that had shaped the conflict since 1948, leading to the Oslo Accords (1993)
+  description: Four years after the Wall fell, Arafat and Rabin shook hands on the White House lawn. Both frameworks collapsed before the decade ended

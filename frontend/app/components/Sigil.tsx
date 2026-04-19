@@ -97,7 +97,13 @@ function DataMark({ data, size, mounted }: {
 }) {
   const lean = data.politicalLean;
   const isUnscored = !!data.unscored;
-  const beamAngle = isUnscored ? 0 : (lean - 50) * 0.30; // ±15° range, level when unscored
+  // Sigmoid beam tilt — front-loads angular discrimination so subtle lean
+  // differences (±10 points) register at 40px the way saturated extremes do.
+  // Saturates at ±22° so crowded layouts don't collide.
+  const leanDelta = lean - 50;
+  const beamAngle = isUnscored
+    ? 0
+    : Math.sign(leanDelta) * (1 - Math.exp(-Math.abs(leanDelta) / 15)) * 22;
   const beamCol = isUnscored ? "var(--fg-tertiary)" : leanColor(lean);
 
   // Circle r=11 (was r=9) — larger mark, more room in lower semi-circle.

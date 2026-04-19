@@ -601,8 +601,9 @@ media:
 connections:
 - target_slug: transatlantic-slave-trade
   connection_type: parallel
-  description: Both operated within the same economic system — cotton slavery and indigenous dispossession were intertwined, as removed Native lands were converted to slave plantations across the Deep South
+  description: By 1840, the 25 million acres seized from the Five Tribes had been planted with cotton. Enslaved Africans picked
+    it. Mississippi produced more of the world's cotton than any other place on earth
 - target_slug: scramble-for-africa
   connection_type: parallel
-  description: Both involved the seizure of indigenous lands by colonial powers using legal instruments (treaties, acts of Congress, Berlin Conference) that indigenous peoples had no meaningful power to
-    refuse
+  description: The Indian Removal Act passed Congress in 1830 by a margin of five votes. The Berlin Conference opened 54 years
+    later. Neither the Cherokee nor any African delegation was invited to sign

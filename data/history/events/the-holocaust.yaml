@@ -668,11 +668,11 @@ connections:
     directly precipitating the 1947 UN Partition Plan and Israeli independence in 1948
 - target_slug: rwandan-genocide
   connection_type: influenced
-  description: The international community's failure to prevent the Rwandan genocide in 1994 — despite the post-Holocaust
-    pledge of "never again" — demonstrated the gap between commemorative rhetoric and political will
+  description: The 1948 Genocide Convention was written with Auschwitz in mind. Forty-six years later, Romeo Dallaire cabled
+    the UN on January 11, 1994 warning of Hutu extremist plans. New York ordered him to stand down
 - target_slug: cambodian-genocide
   connection_type: parallel
-  description: Both regimes used state infrastructure to systematically murder portions of their own populations, and both
-    were preceded by ideological dehumanization of victim groups
+  description: The Nazis kept index cards on 17 million people. Tuol Sleng photographed every one of its 14,000 prisoners before
+    killing them. Both archives were saved. The bureaucracies outlived the killers
 hero_image_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/the-holocaust/wiki_0.jpg
 hero_image_attribution: Wikimedia Commons, CC BY-SA 3.0
