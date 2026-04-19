@@ -19,7 +19,7 @@
 .ship-page {
   min-height: 100vh;
   padding: var(--space-6) var(--space-4);
-  max-width: 1440px;
+  max-width: var(--canvas-max);
   margin: 0 auto;
   background-image:
     linear-gradient(var(--ship-grid-color) 1px, transparent 1px),
@@ -680,7 +680,7 @@
    ========================================================================== */
 
 .ship-board-section {
-  max-width: 1440px;
+  max-width: var(--canvas-max);
   margin: 0 auto;
 }
 

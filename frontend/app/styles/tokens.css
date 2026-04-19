@@ -889,6 +889,12 @@
      Used by .section-header sticky top so it docks below the lean-bar and
      does not overlap it when both are simultaneously stuck. */
   --lean-bar-height: 46px;
+
+  /* Unified desktop canvas max-width — every route's outermost content
+     container aligns to the same edge so route transitions feel like
+     the same publication, not a different site. Clamps to 92vw so the
+     canvas never kisses the viewport edge on wide monitors. */
+  --canvas-max: min(92vw, 1600px);
 }
 
 /* --------------------------------------------------------------------------

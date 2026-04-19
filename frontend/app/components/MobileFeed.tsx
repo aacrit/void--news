@@ -4,7 +4,6 @@ import type { Story, EditionMeta } from "../lib/types";
 import type { DailyBriefState } from "./DailyBrief";
 import MobileStoryCard from "./MobileStoryCard";
 import MobileBriefPill from "./MobileBriefPill";
-import LogoWordmark from "./LogoWordmark";
 
 interface MobileFeedProps {
   stories: Story[];
@@ -73,15 +72,6 @@ export default function MobileFeed({
         </div>
       )}
 
-      {/* Edition footer */}
-      {stories.length > 0 && (
-        <div className="mf__footer">
-          <span className="edition-meta">
-            {stories.length} stories
-          </span>
-          <LogoWordmark height={12} />
-        </div>
-      )}
     </div>
   );
 }
