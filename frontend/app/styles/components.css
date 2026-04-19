@@ -7980,3 +7980,142 @@ a.footer-products__item:hover { color: var(--accent-warm); }
     max-height: min(420px, 60vh);
   }
 }
+
+/* ==========================================================================
+   Tier 2 Motion Physics — Press states, card lift, gesture inertia
+   Additive layer. Compositor-only (transform + opacity + box-shadow).
+   Fallback tokens so un-wired --dur-quick / --dur-settle still resolve
+   sensibly (120ms / 240ms).
+   ========================================================================== */
+
+/* ---- Tap-down press states (interactive primitives) -------------------- */
+/*
+ * Press feel: quick attack via --ease-rack (120ms default), long settle via
+ * --ease-cinematic (240ms default). The :not(:active) release state carries
+ * the settle timing; the :active end state uses the faster attack timing.
+ * Generic attribute selectors cover the btn/chip/pill BEM ecosystem without
+ * listing every variant. Named pills handled explicitly below.
+ */
+[class$="__btn"],
+[class*="__btn "],
+[class$="-btn"],
+[class*="-btn "],
+[class$="__chip"],
+[class*="__chip "],
+[class$="-chip"],
+[class*="-chip "],
+[class$="__pill"],
+[class*="__pill "],
+[class$="-pill"],
+[class*="-pill "],
+.sources-edition-chip,
+.skb__topbar-chip,
+.mbp__pill,
+.hist-tl-era-pill,
+.mobile-edition-pill {
+  transition:
+    transform var(--dur-settle, 240ms) var(--ease-cinematic),
+    opacity   var(--dur-settle, 240ms) var(--ease-cinematic);
+}
+
+[class$="__btn"]:active,
+[class*="__btn "]:active,
+[class$="-btn"]:active,
+[class*="-btn "]:active,
+[class$="__chip"]:active,
+[class*="__chip "]:active,
+[class$="-chip"]:active,
+[class*="-chip "]:active,
+[class$="__pill"]:active,
+[class*="__pill "]:active,
+[class$="-pill"]:active,
+[class*="-pill "]:active,
+.sources-edition-chip:active,
+.skb__topbar-chip:active,
+.mbp__pill:active,
+.hist-tl-era-pill:active {
+  transform: scale(0.98);
+  opacity: 0.95;
+  transition:
+    transform var(--dur-quick, 120ms) var(--ease-rack),
+    opacity   var(--dur-quick, 120ms) var(--ease-rack);
+}
+
+/* ---- Desktop card lift choreography (hover: hover only) ---------------- */
+/*
+ * Gentle 2px lift with shadow elevation. Compositor-only (transform +
+ * box-shadow). Mobile excluded via (hover: hover) (pointer: fine) — touch
+ * devices emit phantom hovers after tap that leave cards stuck aloft.
+ * The base .story-card transition already carries shadow-lag (30ms delay);
+ * we keep that physics on the hover rule too.
+ */
+@media (hover: hover) and (pointer: fine) {
+  .story-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-e2);
+    transition:
+      transform  200ms var(--ease-cinematic),
+      box-shadow 200ms 30ms var(--ease-cinematic);
+  }
+
+  .lead-story:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-e3);
+    transition:
+      transform  200ms var(--ease-cinematic),
+      box-shadow 200ms 30ms var(--ease-cinematic);
+  }
+}
+
+/* ---- Reduced motion — collapse all Tier 2 additions -------------------- */
+@media (prefers-reduced-motion: reduce) {
+  [class$="__btn"],
+  [class*="__btn "],
+  [class$="-btn"],
+  [class*="-btn "],
+  [class$="__chip"],
+  [class*="__chip "],
+  [class$="-chip"],
+  [class*="-chip "],
+  [class$="__pill"],
+  [class*="__pill "],
+  [class$="-pill"],
+  [class*="-pill "],
+  .sources-edition-chip,
+  .skb__topbar-chip,
+  .mbp__pill,
+  .hist-tl-era-pill,
+  .mobile-edition-pill {
+    transition: none;
+  }
+
+  [class$="__btn"]:active,
+  [class*="__btn "]:active,
+  [class$="-btn"]:active,
+  [class*="-btn "]:active,
+  [class$="__chip"]:active,
+  [class*="__chip "]:active,
+  [class$="-chip"]:active,
+  [class*="-chip "]:active,
+  [class$="__pill"]:active,
+  [class*="__pill "]:active,
+  [class$="-pill"]:active,
+  [class*="-pill "]:active,
+  .sources-edition-chip:active,
+  .skb__topbar-chip:active,
+  .mbp__pill:active,
+  .hist-tl-era-pill:active {
+    transform: none;
+    opacity: 1;
+    transition: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) and (hover: hover) and (pointer: fine) {
+  .story-card:hover,
+  .lead-story:hover {
+    transform: none;
+    box-shadow: none;
+    transition: none;
+  }
+}
