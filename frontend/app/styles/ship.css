@@ -1521,7 +1521,7 @@ a.ship-card__commit:hover {
    RESPONSIVE
    ========================================================================== */
 
-@media (max-width: 1279px) {
+@media (max-width: 1499px) {
   .ship-board {
     grid-template-columns: repeat(3, 1fr);
   }

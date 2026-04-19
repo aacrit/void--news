@@ -6773,7 +6773,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
    --------------------------------------------------------------------------- */
 
 .hist-threads {
-  max-width: 1200px;
+  max-width: var(--canvas-max);
   margin: 0 auto;
   padding: var(--space-5) var(--space-4) var(--space-7);
 }
