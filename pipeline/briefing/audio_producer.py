@@ -67,22 +67,23 @@ ASSETS_DIR = Path(__file__).parent / "assets"
 # ---------------------------------------------------------------------------
 
 _GEMINI_TO_EDGE_VOICE: dict[str, str] = {
-    # History pair — The Chronicler + The Witness
-    "Sadaltager":   "en-US-AndrewMultilingualNeural",  # deep, scholarly male
-    "Achernar":     "en-US-AriaNeural",                # clear, measured female
-    # News host rotation (6 voices)
-    "Kore":         "en-US-JennyNeural",               # firm, authoritative female
-    "Charon":       "en-US-DavisNeural",               # grounded male
-    "Gacrux":       "en-US-NancyNeural",               # mature, precise female
-    "Orus":         "en-US-ChristopherNeural",          # analytical male
-    # Opinion voices by edition
-    "Sulafat":      "en-US-MichelleNeural",            # warm female (world)
-    "Schedar":      "en-US-RogerNeural",               # even male (us)
+    # History pair — The Chronicler (Andrew) + The Witness (Emma)
+    "Sadaltager":   "en-US-AndrewMultilingualNeural",  # warm scholarly male
+    "Achernar":     "en-US-EmmaMultilingualNeural",    # editorial-gravity female
+    # News host rotation — 6 personas, 4 voices (pairs always gender-split)
+    "Kore":         "en-US-EmmaMultilingualNeural",    # correspondent — authoritative female
+    "Charon":       "en-US-BrianMultilingualNeural",   # structuralist — conversational male
+    "Orus":         "en-US-AndrewMultilingualNeural",  # investigator — measured male
+    "Gacrux":       "en-US-AvaMultilingualNeural",     # pragmatist — smooth female
+    # Opinion voices by edition — all 4 Multilingual voices represented
+    "Sulafat":      "en-US-AvaMultilingualNeural",     # warm female (world)
+    "Schedar":      "en-US-AndrewMultilingualNeural",  # even male (us)
     "Despina":      "en-US-AvaMultilingualNeural",     # smooth female (india)
-    "Vindemiatrix": "en-US-SaraNeural",                # gentle female (canada)
+    "Rasalgethi":   "en-US-BrianMultilingualNeural",   # informative male (uk)
+    "Vindemiatrix": "en-US-EmmaMultilingualNeural",    # gentle female (canada)
 }
 _DEFAULT_EDGE_VOICE_A = "en-US-AndrewMultilingualNeural"
-_DEFAULT_EDGE_VOICE_B = "en-US-AriaNeural"
+_DEFAULT_EDGE_VOICE_B = "en-US-EmmaMultilingualNeural"
 
 
 def _edge_voice(gemini_id: str) -> str:

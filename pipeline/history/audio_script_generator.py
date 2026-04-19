@@ -403,8 +403,14 @@ def _extract_divergence(
     persp_omitted = {}
     for p in perspectives:
         name = p.get("viewpoint", "")
-        persp_emphasized[name] = set(p.get("emphasized", []))
-        persp_omitted[name] = set(p.get("omitted", []))
+        persp_emphasized[name] = set(
+            item if isinstance(item, str) else str(item)
+            for item in p.get("emphasized", [])
+        )
+        persp_omitted[name] = set(
+            item if isinstance(item, str) else str(item)
+            for item in p.get("omitted", [])
+        )
 
     for p1_name, p1_emph in persp_emphasized.items():
         for p2_name, p2_omit in persp_omitted.items():
@@ -595,10 +601,29 @@ def build_history_audio_prompt(event_data: dict, hook: str) -> str:
 # Script generation (calls Gemini)
 # ---------------------------------------------------------------------------
 
+_SCRIPTS_DIR = Path(__file__).parent.parent.parent / "data" / "history" / "scripts"
+
+
+def _load_cached_script(slug: str) -> str | None:
+    path = _SCRIPTS_DIR / f"{slug}.txt"
+    if path.exists():
+        try:
+            return path.read_text(encoding="utf-8")
+        except Exception:
+            return None
+    return None
+
+
+def _save_cached_script(slug: str, script: str) -> None:
+    _SCRIPTS_DIR.mkdir(parents=True, exist_ok=True)
+    (_SCRIPTS_DIR / f"{slug}.txt").write_text(script, encoding="utf-8")
+
+
 def generate_history_audio_script(
     event_data: dict,
     hook: str,
     slug: str = "",
+    reuse_cached: bool = False,
 ) -> str | None:
     """Generate audio script for a single history event via Gemini.
 
@@ -606,10 +631,22 @@ def generate_history_audio_script(
         event_data: Parsed YAML event dict.
         hook: The arrive-late one-liner from hooks.ts.
         slug: Event slug for logging.
+        reuse_cached: If True and a cached script exists on disk,
+            return it without calling Gemini. Used for TTS-only
+            regeneration (voice sweeps).
 
     Returns:
         The audio_script string (A:/B: format), or None on failure.
     """
+    label = slug or event_data.get("slug", "unknown")
+
+    if reuse_cached:
+        cached = _load_cached_script(label)
+        if cached:
+            print(f"  [history-audio:{label}] Reusing cached script (skipping Gemini)")
+            return cached
+        print(f"  [history-audio:{label}] No cached script — generating fresh")
+
     try:
         from summarizer.gemini_client import generate_json
     except ImportError:
@@ -620,14 +657,13 @@ def generate_history_audio_script(
             return None
 
     prompt = build_history_audio_prompt(event_data, hook)
-    label = slug or event_data.get("slug", "unknown")
 
     print(f"  [history-audio:{label}] Generating script via Gemini...")
     result = generate_json(
         prompt,
         system_instruction=_HISTORY_SYSTEM_INSTRUCTION,
         count_call=False,
-        max_output_tokens=4096,
+        max_output_tokens=16384,
     )
 
     if not result or not isinstance(result, dict):
@@ -655,4 +691,5 @@ def generate_history_audio_script(
     word_count = len(script.split())
     print(f"  [history-audio:{label}] Script OK: {exchange_count} exchanges, {word_count} words")
 
+    _save_cached_script(label, script)
     return script

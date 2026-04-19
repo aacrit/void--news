@@ -187,12 +187,14 @@ def _all_slugs() -> list[str]:
 # Per-event processing
 # ---------------------------------------------------------------------------
 
-def process_event(slug: str, force: bool = False) -> bool:
+def process_event(slug: str, force: bool = False, voices_only: bool = False) -> bool:
     """Generate and upload audio for a single history event.
 
     Args:
         slug: Event slug (e.g. 'partition-of-india').
         force: If True, regenerate even if already in manifest.
+        voices_only: If True, reuse cached Gemini script on disk and
+            only regenerate TTS. Zero Gemini calls when cache is warm.
 
     Returns:
         True on success, False on failure.
@@ -221,8 +223,8 @@ def process_event(slug: str, force: bool = False) -> bool:
     print(f"  Perspectives: {len(event_data.get('perspectives', []))}")
     print(f"{'='*60}")
 
-    # Step 1: Generate script
-    script = generate_history_audio_script(event_data, hook, slug)
+    # Step 1: Generate (or reuse) script
+    script = generate_history_audio_script(event_data, hook, slug, reuse_cached=voices_only)
     if not script:
         print(f"  [FAIL] Script generation failed for {slug}")
         return False
@@ -276,6 +278,10 @@ def main():
         help="Regenerate even if already in manifest",
     )
     parser.add_argument(
+        "--voices-only", action="store_true",
+        help="Reuse cached Gemini script (zero Gemini calls); only re-run TTS. Implies --force for manifest overwrite.",
+    )
+    parser.add_argument(
         "--list", action="store_true",
         help="List all events and their manifest status, then exit",
     )
@@ -307,9 +313,11 @@ def main():
     success = 0
     failed = 0
 
+    # --voices-only implies force (reuses cached script, overwrites manifest)
+    effective_force = args.force or args.voices_only
+
     for i, slug in enumerate(target_slugs):
-        if i > 0:
-        ok = process_event(slug, force=args.force)
+        ok = process_event(slug, force=effective_force, voices_only=args.voices_only)
         if ok:
             success += 1
         else:
