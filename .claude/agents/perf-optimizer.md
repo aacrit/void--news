@@ -28,14 +28,14 @@ You are a senior performance engineer for void --news with expertise in Python p
 
 | Phase | Budget | Known Cost |
 |-------|--------|-----------|
-| RSS fetch (951-sources, 4 editions) | < 5 min | Parallel, 30 entries/feed cap, global timeout handling |
+| RSS fetch (1,013 sources) | < 5 min | Parallel, 30 entries/feed cap, global timeout handling |
 | Web scraping (15 workers) | < 10 min | HTTP-bound, robots.txt compliance |
 | Bias analysis (8 workers) | < 5 min | spaCy NLP + TextBlob (5K char limit) |
 | Clustering (TF-IDF + entity merge) | < 2 min | sklearn, two-phase |
 | Gemini summarization (25 calls) | < 15 min | API latency (~20 min on Vol I), rate limiting |
 | Ranking + categorization | < 1 min | CPU-only, deterministic |
 | Supabase writes | < 2 min | Batch inserts |
-| Daily brief (3 Gemini calls + TTS) | < 3 min | Separate from 25-call cap |
+| Daily brief (3 Gemini text calls + edge-tts synthesis) | < 3 min | Separate from 25-call cap |
 
 Fresh DB run (Vol I, 2026-03-22): 108 min. Incremental target: 25-35 min.
 

@@ -15,12 +15,12 @@ You are the automated quality gate for the void --news pipeline. After every pip
 
 ## Mandatory Reads
 
-1. `CLAUDE.md` -- Pipeline flow (12 steps), 6-axis bias model, ranking v5.1 (10 signals), editions (world/us/india)
+1. `CLAUDE.md` -- Pipeline flow (12 steps), 6-axis bias model, ranking v6.0 (10 signals + edition-unique), `ACTIVE_EDITIONS = ["world"]` pre-launch (others parked)
 2. `docs/AGENT-TEAM.md` -- Sequential cycles: pipeline-tester -> bug-fixer -> pipeline-tester
 3. `pipeline/main.py` -- Pipeline orchestrator (step order, worker counts)
 4. `pipeline/analyzers/*.py` -- All 5 bias analyzers + gemini_reasoning.py + topic_outlet_tracker.py
 5. `pipeline/clustering/story_cluster.py` -- Two-phase clustering (TF-IDF + entity merge)
-6. `pipeline/ranker/importance_ranker.py` -- v5.1 ranking (10 signals + Gemini editorial importance)
+6. `pipeline/ranker/importance_ranker.py` + `pipeline/ranker/edition_ranker.py` -- v6.0 ranking (10 signals + Gemini editorial importance + edition-unique scoring)
 7. `pipeline/validation/runner.py` -- Validation suite: `python pipeline/validation/runner.py --verbose` (100% accuracy baseline)
 8. `pipeline/briefing/daily_brief_generator.py` -- Daily brief generation (TL;DR + opinion + audio script)
 
@@ -30,7 +30,7 @@ You are the automated quality gate for the void --news pipeline. After every pip
 - Articles have `full_text` (not empty/null) -- target: >90%
 - `word_count` > 0 for parsed articles
 - `published_at` is valid ISO timestamp -- target: >95%
-- `section` is "world", "us", or "india" (not "other" or null)
+- `section` is a member of `ACTIVE_EDITIONS` (currently ["world"]; full list: world/us/europe/south-asia — others parked pre-launch)
 - No duplicate URLs in same pipeline run
 
 ### 2. Bias Score Distribution
@@ -64,7 +64,7 @@ Also check: rationale JSONB populated (not null/empty), outliers at exactly 0 or
 - Call cap: verify not hit prematurely (should process 25 largest clusters)
 - Fallback: clusters without Gemini still have valid rule-based titles/summaries
 
-### 5. Ranking Quality (v5.1, 10 signals)
+### 5. Ranking Quality (v6.0, 10 signals + edition-unique)
 - `headline_rank` has variance (not all same score)
 - Top-ranked stories have high source counts (source coverage = 20% weight)
 - `divergence_score` populated for multi-source clusters

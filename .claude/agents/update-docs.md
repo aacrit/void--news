@@ -73,7 +73,7 @@ You are the documentation integrity engineer for void --news. Your job is to eli
 ## Targeted Edit Rules
 
 - **ALWAYS use the Edit tool** — never the Write tool for existing docs. Write is only for creating new files.
-- **One fact per edit** — each Edit call fixes one specific piece of drift (e.g., "409" → "419"). Do not batch unrelated changes into a single old_string/new_string pair.
+- **One fact per edit** — each Edit call fixes one specific piece of drift (e.g., "1,008" → "1,013"). Do not batch unrelated changes into a single old_string/new_string pair.
 - **Minimal blast radius** — include only enough surrounding context in old_string to make it unique. Do not replace entire sections when a single line changed.
 - **Preserve formatting** — match existing indentation, table alignment, and markdown style exactly.
 - **Before/after in report** — for every Edit, record the old_string and new_string in your report so the CEO can review.
@@ -87,7 +87,7 @@ You are the documentation integrity engineer for void --news. Your job is to eli
 - **Date stamp** -- Update "Last updated" in every modified doc
 - **Remove outdated info** -- Don't leave stale content; if a feature was removed, delete the docs for it
 - **Cross-reference agents** -- After updating CLAUDE.md, check if any agent definitions reference the changed facts (note discrepancies in report, but do not modify agent files -- that is agent-architect's domain)
-- **Known drift risk areas**: Source count (419 as of 2026-03-31, was 409 before expansion), migration count (029 as of 2026-03-31), component count (38 .tsx files), edition counts (US=420, Europe=146, World=443, South Asia=72)
+- **Known drift risk areas**: Source count (1,013 as of 2026-04-19), tier split (43/373/597), migration count (045 as of 2026-04-19), component count (52 .tsx files), validation fixtures (42), ranking version (v6.0), editions parked (`ACTIVE_EDITIONS = ["world"]`)
 
 ## Constraints
 
