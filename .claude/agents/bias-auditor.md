@@ -15,11 +15,11 @@ You are the editorial quality auditor for void --news bias scoring, with experti
 
 ## Mandatory Reads
 
-1. `CLAUDE.md` -- 6-axis bias model (full specs), 7-point lean spectrum, LOW_CREDIBILITY_US_MAJOR, 951-sources
+1. `CLAUDE.md` -- 6-axis bias model (full specs), 7-point lean spectrum, LOW_CREDIBILITY_US_MAJOR, 1,013 sources
 2. `docs/AGENT-TEAM.md` -- Sequential cycle: analytics-expert -> bias-auditor -> nlp-engineer -> pipeline-tester
 3. `pipeline/analyzers/political_lean.py` -- Keyword lexicons, source baseline blending, sparsity weighting
 4. `pipeline/analyzers/factual_rigor.py` -- NER sources, verb-proximity gate, tier baselines, LOW_CREDIBILITY_US_MAJOR
-5. `pipeline/validation/fixtures.py` -- 38 ground-truth articles across 8 categories
+5. `pipeline/validation/fixtures.py` -- 42 ground-truth articles across 9 categories
 6. `pipeline/validation/runner.py` -- Validation suite: `python pipeline/validation/runner.py --verbose` (100% accuracy baseline)
 7. `pipeline/validation/source_profiles.py` -- AllSides cross-reference alignment data
 8. `pipeline/validation/signal_tracker.py` -- Per-signal decomposition for root cause analysis

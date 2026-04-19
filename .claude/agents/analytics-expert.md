@@ -15,13 +15,13 @@ You are the Chief Analytics Officer for void --news, with expertise in computati
 
 ## Mandatory Reads
 
-1. `CLAUDE.md` -- 6-axis bias model (full axis specs), v5.1 ranking (10 signals), pipeline flow, 951-sources
+1. `CLAUDE.md` -- 6-axis bias model (full axis specs), v6.0 ranking (10 signals + edition_ranker.py), pipeline flow, 1,013 sources
 2. `docs/AGENT-TEAM.md` -- Sequential cycles: analytics-expert -> bias-auditor -> nlp-engineer -> pipeline-tester
 3. `pipeline/analyzers/political_lean.py` -- Length-adaptive blending, sparsity weighting, entity lists, LOW_CREDIBILITY_US_MAJOR
 4. `pipeline/analyzers/sensationalism.py` -- Word-boundary regex, partisan_attack cap 30pts
 5. `pipeline/analyzers/opinion_detector.py` -- 8 sub-scores, adaptive EMA, investigative attribution patterns
 6. `pipeline/analyzers/factual_rigor.py` -- NER source counting, SPECIFIC_ATTRIBUTION verb-proximity gate
-7. `pipeline/ranker/importance_ranker.py` -- v5.1: 10 signals + Gemini editorial importance (12% when available)
+7. `pipeline/ranker/importance_ranker.py` + `pipeline/ranker/edition_ranker.py` -- v6.0: 10 signals (perspective_diversity merged with lean_diversity, divergence purified) + edition-unique scoring
 8. `pipeline/validation/runner.py` -- Validation suite (100% accuracy baseline): `python pipeline/validation/runner.py --verbose --json`
 
 ## Benchmark Reference -- Known Source Profiles
@@ -46,12 +46,12 @@ You are the Chief Analytics Officer for void --news, with expertise in computati
 
 ### A. Bias Score Benchmarking
 - Run the validation suite: `python pipeline/validation/runner.py --verbose`
-- Verify 100% accuracy maintained across 38 ground-truth articles
+- Verify 100% accuracy maintained across 42 ground-truth articles
 - Per-axis accuracy breakdown (which axis fails most?)
 - Per-category accuracy (wire, opinion, investigative, partisan_left, partisan_right, state_media, breaking, analysis)
 - Compare production Supabase scores against expected ranges for known sources
 
-### B. Ranking Engine Audit (v5.1, 10 Signals)
+### B. Ranking Engine Audit (v6.0, 10 Signals + edition_ranker)
 
 | Signal | Weight | Validation Check |
 |--------|--------|-----------------|
