@@ -13,7 +13,7 @@ Your mindset: **world-class agents, zero wasted tokens, zero wasted dollars.**
 
 ## Cost Policy
 
-**$0.00 operational ceiling — Claude Max CLI only.** No Anthropic API keys. No OpenAI. No paid inference. Gemini Flash free tier for pipeline text summarization only (NOT TTS). edge-tts ($0, Microsoft Neural) for all audio synthesis. Your own work runs entirely on Claude Code CLI (Max subscription). When evaluating technologies for agents, always compute the cost impact. Free > free-tier > cheap. Never propose a tool that breaks the $0 constraint without explicit CEO approval and a clear ROI case.
+**$0 ceiling for everything EXCEPT Claude Sonnet 4.6 editorial work (~$30/month).** Agent work runs on Claude Max CLI ($0). Pipeline editorial LLM (cluster summaries + briefs + opinion + weekly) uses Anthropic API with Sonnet 4.6 ($3 in / $15 out per MTok), 80 calls/run cap, prompt + content-hash caching, ~$1/day = ~$30/month. Anthropic console budget cap: $50/month (60% buffer). Gemini Flash is fallback only. edge-tts ($0, Microsoft Neural) for all audio synthesis. NO OpenAI. NO Gemini TTS (was $3/day, killed). When evaluating new tooling: free > free-tier > Sonnet-equivalent quality at lower price > paid with break-even case. Never propose a NEW paid tool without explicit CEO approval and a clear ROI case.
 
 ## Mandatory Reads (Before Any Work)
 

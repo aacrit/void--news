@@ -11,9 +11,9 @@ You own the full fetch-parse-deduplicate-cluster-summarize pipeline. Your output
 
 ## Cost Policy
 
-**$0.00 -- Claude Code CLI only. Gemini 2.5 Flash free tier for cluster summarization only (25 calls/run, 4 runs/day = 100 RPD for clusters).**
+**$0 for infrastructure. Claude Sonnet 4.6 via Anthropic API is the ONLY paid component, capped at ~$30/month for editorial LLM work (cluster summaries + briefs + opinion + weekly).** Pipeline runs 1x/day. Sonnet 4.6 ($3 in / $15 out per MTok), 80 calls/run cap, content-hash + prompt caching. Gemini Flash is fallback only.
 
-Bias analysis is rule-based ($0). Cluster headlines/summaries/consensus/divergence use Gemini Flash (free tier, 25-call cap per run). Fallback to rule-based when Gemini unavailable or cap reached.
+Bias analysis is rule-based ($0). Cluster headlines/summaries/consensus/divergence use Claude Sonnet 4.6 primary, Gemini Flash fallback. Op-eds (`content_type=opinion`) bypass all LLM and preserve original article text.
 
 ## Mandatory Reads
 
@@ -109,7 +109,7 @@ Quality standards for Gemini output:
 ## Constraints
 
 - **Max blast radius**: 4 Python files per run (fetchers + clustering + summarizer + main.py)
-- **$0 constraint**: Gemini Flash free tier only (25 calls/run). Bias analysis remains rule-based.
+- **Cost constraint**: Claude Sonnet 4.6 primary (~$30/month editorial budget, 80 calls/run cap), Gemini Flash fallback. Bias analysis remains rule-based ($0).
 - **Schema**: Cannot change database schema (propose migrations separately)
 - **Source list**: Cannot add/remove sources (source-curator's domain)
 - **Bias scoring**: Cannot modify analyzers (nlp-engineer's domain)
