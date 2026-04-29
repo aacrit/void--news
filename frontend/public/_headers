@@ -1,49 +1,31 @@
 # Cloudflare Pages — HTTP headers
 # https://developers.cloudflare.com/pages/configuration/headers/
 #
-# This file is read at deploy time by Cloudflare Pages and applied to
-# every request. GitHub Pages ignores this file, so leaving it in place
-# does not affect the parallel GH Pages deploy during the migration.
+# Cloudflare Pages ACCUMULATES headers from every matching rule. Putting
+# Cache-Control in both a path-specific rule and the global /* rule
+# produces a duplicate Cache-Control header value at request time, which
+# defeats the long-cache directive for hashed assets. So:
+#   - Global rule sets ONLY security headers.
+#   - Specific rules set Cache-Control without overlap.
+#   - HTML responses inherit Cloudflare Pages' default short cache.
+#
+# GitHub Pages ignores this file, so the parallel GH Pages deploy is
+# unaffected during the migration.
 
-# ── Hashed static assets — long-lived, immutable ─────────────────────────
-# Next.js writes /_next/static/* with content-hashed filenames, so a long
-# Cache-Control is safe and dramatically improves repeat-visit Lighthouse
-# Best Practices score (which GH Pages caps at max-age=600 globally).
-
-/_next/static/*
-  Cache-Control: public, max-age=31536000, immutable
-
-# Hashed CSS chunks live at the root in `next export` output
-/*.css
-  Cache-Control: public, max-age=31536000, immutable
-
-# Hashed JS chunks
-/*.js
-  Cache-Control: public, max-age=31536000, immutable
-
-# Fonts — preloaded woff2 files, content-hashed by next/font
-/*.woff2
-  Cache-Control: public, max-age=31536000, immutable
-
-# Images cached server-side by the pipeline (cluster og:images, history
-# event covers) — these come from Supabase Storage, not from the static
-# bundle, so the rule below covers any local images bundled with the app
-/*.webp
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.png
-  Cache-Control: public, max-age=31536000, immutable
-
-/*.svg
-  Cache-Control: public, max-age=31536000, immutable
-
-# ── HTML pages — short cache, must revalidate ────────────────────────────
-# Pages re-render after each pipeline run; readers should see fresh feeds
-# but tolerate a brief stale window for CDN performance.
-
+# ── Security headers — apply to every response ──────────────────────────
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), microphone=(), camera=()
-  Cache-Control: public, max-age=600, must-revalidate
+
+# ── Hashed static assets — long-lived, immutable ────────────────────────
+# Next.js writes /_next/static/* with content-hashed filenames; safe to
+# cache effectively forever. This is the rule GH Pages can't match
+# (its 600s cap costs ~4-8 Lighthouse Best Practices points).
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Hashed font files served by next/font
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable
