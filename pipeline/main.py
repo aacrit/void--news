@@ -2636,11 +2636,13 @@ def main():
 
     # Step 8e: Cache cluster images to Supabase Storage (bypasses CDN hotlink protection)
     # Downloads og:images server-side on GitHub Actions (neutral IP = no Referer block),
-    # re-serves from Supabase CDN. Top 10 clusters get guaranteed image availability.
+    # re-serves from Supabase CDN. Top 15 clusters get guaranteed image availability —
+    # buffer for the 50/50 lead split (rank 0) + headroom if rank 0 image fetch fails
+    # (rank 1 promotes seamlessly).
     if IMAGE_CACHER_AVAILABLE:
         print("\n[8e] Caching cluster images to Supabase Storage...")
         try:
-            cache_cluster_images(clusters, supabase, top_n=10)
+            cache_cluster_images(clusters, supabase, top_n=15)
         except Exception as e:
             print(f"  [warn] Image caching failed: {e}")
     else:

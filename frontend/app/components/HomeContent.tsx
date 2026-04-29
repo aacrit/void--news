@@ -953,14 +953,19 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                     </div>
                   )}
 
-                  {/* Unified grid — ranks 1-29, identical StoryCard */}
+                  {/* Unified grid — ranks 1-49.
+                      Variant drives newspaper typography hierarchy:
+                        ranks 1-9 = digest (22px Playfair)
+                        ranks 10+ = wire (14px Playfair)
+                      Both scales live in layout-zones.css. */}
                   {gridStories.length > 0 && (
                     <section key={`grid-${filterKey}`} aria-label="Stories" className={`feed-grid${isEditionSwitch ? " anim-content-arrive" : ""}`}>
                       {gridStories.map((story, idx) => {
                         const gi = 1 + idx;
+                        const variant: "digest" | "wire" = idx < 9 ? "digest" : "wire";
                         return (
                           <div key={story.id} className="feed-grid__item">
-                            <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} globalIndex={gi} kbdFocused={kbdFocusIndex === gi} />
+                            <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} globalIndex={gi} kbdFocused={kbdFocusIndex === gi} variant={variant} />
                           </div>
                         );
                       })}

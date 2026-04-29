@@ -34,14 +34,56 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, i
   const verdict = classifyCoverage(story);
   const rankSignals = rank === 0 ? deriveRankSignals(story) : [];
 
+  // 50/50 split layout when rank-0 has a cached image (desktop ≥1024px).
+  // Layout-zones.css owns the grid; mobile collapses to stacked image-then-text.
+  const useSplit = rank === 0 && showImage;
+
+  // Reusable text content block — same JSX in split mode and stacked mode.
+  const textContent = (
+    <div data-slot="text" className={useSplit ? "lead-split__text" : undefined}>
+      {rank === 0 && <span className="lead-story__badge">Top Story</span>}
+      {rank === 0 && rankSignals.length > 0 && (
+        <p className="lead-story__why-top" aria-label={`Ranked top because: ${rankSignals.join(", ")}`}>
+          {rankSignals.join(" · ")}
+        </p>
+      )}
+
+      <h2 className={useSplit ? "lead-headline" : "lead-story__headline"}>
+        <span className={useSplit ? undefined : "lead-story__headline-text"}>{story.title}</span>
+        <Sigil data={story.sigilData} size="xl" storyId={story.id} />
+        <CaretRight
+          size={16}
+          weight="bold"
+          aria-hidden="true"
+          className="story-card__headline-icon"
+        />
+      </h2>
+
+      {story.summary?.trim() && (
+        <p className={useSplit ? "lead-summary" : "lead-story__summary"}>{story.summary}</p>
+      )}
+      {!story.summary?.trim() && (
+        <p className={`${useSplit ? "lead-summary" : "lead-story__summary"} lead-story__summary--pending`}>
+          {story.source.count} source{story.source.count !== 1 ? 's' : ''} covering this story
+        </p>
+      )}
+
+      {verdict && (
+        <p className={`coverage-verdict coverage-verdict--${verdict.tone} coverage-verdict--lead`} aria-label={`Coverage: ${verdict.label}`}>
+          {verdict.label}
+        </p>
+      )}
+    </div>
+  );
+
   return (
     <article
       ref={cardRef}
       data-story-id={story.id}
-      className={`lead-story ${rank === 0 ? "anim-lead-primary" : "anim-lead-secondary"}${kbdFocused ? " story-card--kbd-focus" : ""}${showImage ? " lead-story--has-image" : ""}`}
+      data-no-image={useSplit ? undefined : "true"}
+      className={`lead-story${useSplit ? " lead-split" : ""} ${rank === 0 ? "anim-lead-primary" : "anim-lead-secondary"}${kbdFocused ? " story-card--kbd-focus" : ""}${showImage ? " lead-story--has-image" : ""}`}
     >
-      {/* Stretched link — the invisible button covers the entire article
-          while preserving <article> semantics for screen readers */}
+      {/* Stretched link — invisible button covers the article for click + a11y */}
       <button
         type="button"
         className="story-card__stretch-link"
@@ -60,16 +102,9 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, i
           }
         }}
       />
-      {rank === 0 && <span className="lead-story__badge">Top Story</span>}
-      {rank === 0 && rankSignals.length > 0 && (
-        <p className="lead-story__why-top" aria-label={`Ranked top because: ${rankSignals.join(", ")}`}>
-          {rankSignals.join(" · ")}
-        </p>
-      )}
 
-      {/* Front-page photograph — primary lead story only */}
-      {showImage && (
-        <div className="lead-story__image-wrap">
+      {useSplit && (
+        <div data-slot="image" className="lead-split__image-frame">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={imageUrl!}
@@ -85,31 +120,7 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, i
         </div>
       )}
 
-      {/* Hero headline + inline Sigil + caret */}
-      <h2 className="lead-story__headline">
-        <span className="lead-story__headline-text">{story.title}</span>
-        <Sigil data={story.sigilData} size="xl" storyId={story.id} />
-        <CaretRight
-          size={16}
-          weight="bold"
-          aria-hidden="true"
-          className="story-card__headline-icon"
-        />
-      </h2>
-
-      {/* Extended summary — hidden when empty (Gemini pending or failed) */}
-      {story.summary?.trim() && <p className="lead-story__summary">{story.summary}</p>}
-      {!story.summary?.trim() && (
-        <p className="lead-story__summary lead-story__summary--pending">
-          {story.source.count} source{story.source.count !== 1 ? 's' : ''} covering this story
-        </p>
-      )}
-
-      {verdict && (
-        <p className={`coverage-verdict coverage-verdict--${verdict.tone} coverage-verdict--lead`} aria-label={`Coverage: ${verdict.label}`}>
-          {verdict.label}
-        </p>
-      )}
+      {textContent}
     </article>
   );
 }
