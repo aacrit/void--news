@@ -2832,14 +2832,18 @@ def main():
     # to determine which stories dominated the week.
     try:
         cutoff = (datetime.now(timezone.utc) - timedelta(days=8)).isoformat()
-        for ed in ("world", "us", "europe", "uk", "south-asia", "canada"):
-            old = supabase.table("daily_briefs").select("id").eq(
-                "edition", ed
-            ).lt("created_at", cutoff).execute()
-            if old.data:
-                ids = [b["id"] for b in old.data]
-                supabase.table("daily_briefs").delete().in_("id", ids).execute()
-                print(f"  Cleaned {len(ids)} old briefs for {ed}")
+        editions_list = ["world", "us", "europe", "uk", "south-asia", "canada"]
+        old = supabase.table("daily_briefs").select("id, edition").in_(
+            "edition", editions_list
+        ).lt("created_at", cutoff).execute()
+        if old.data:
+            ids = [b["id"] for b in old.data]
+            supabase.table("daily_briefs").delete().in_("id", ids).execute()
+            per_ed: dict[str, int] = {}
+            for b in old.data:
+                per_ed[b["edition"]] = per_ed.get(b["edition"], 0) + 1
+            for ed, n in per_ed.items():
+                print(f"  Cleaned {n} old briefs for {ed}")
     except Exception as e:
         print(f"  [warn] Daily brief cleanup failed: {e}")
 
