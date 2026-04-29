@@ -13,6 +13,8 @@ from datetime import datetime, timedelta, timezone
 import feedparser
 import requests
 
+from pipeline.utils.safe_requests import safe_get
+
 
 # --- Junk content filters (applied before scraping to save time) ---
 
@@ -190,8 +192,10 @@ def _fetch_single_feed(source: dict) -> list[dict]:
         return []
 
     try:
-        # Fetch via requests first (handles redirects, auth, encoding better)
-        resp = requests.get(rss_url, headers=HEADERS, timeout=FEED_TIMEOUT, allow_redirects=True)
+        # Fetch via SSRF-hardened session (handles redirects, auth, encoding
+        # better than feedparser's raw fetch, and refuses to connect to
+        # private/loopback/link-local/cloud-metadata addresses on any hop).
+        resp = safe_get(rss_url, headers=HEADERS, timeout=FEED_TIMEOUT, allow_redirects=True)
         resp.raise_for_status()
 
         # Parse the fetched content

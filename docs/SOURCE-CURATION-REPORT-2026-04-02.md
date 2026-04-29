@@ -1,5 +1,7 @@
 # Source Curation Overhaul — CEO Report
 
+Last updated: 2026-04-02 (rev 1)
+
 **Date**: 2026-04-02
 **Author**: Claude (Source Curator + CEO Advisor + Feed Intelligence)
 **Result**: 419 → 409 sources (-36 removed, +26 added)

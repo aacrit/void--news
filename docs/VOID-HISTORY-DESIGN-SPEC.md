@@ -1,5 +1,7 @@
 # void --history — Design Specification
 
+Last updated: 2026-04-28 (rev 1)
+
 **Version:** 1.0 (Creative Brief)
 **Date:** 2026-04-04
 **Status:** DESIGN RESEARCH — no code yet

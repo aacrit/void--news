@@ -1,5 +1,7 @@
 # DB Reviewer Guide — Data Quality Auditor
 
+Last updated: 2026-04-28 (rev 1)
+
 ## Overview
 
 The **DB Reviewer** (`pipeline/db_reviewer.py`) is a comprehensive data quality auditing tool for the void --news database. It examines Supabase across 8 domains and produces a detailed report with actionable findings.
