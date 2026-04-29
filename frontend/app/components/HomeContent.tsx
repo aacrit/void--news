@@ -130,10 +130,10 @@ function deriveCoverageScore(sourceCount: number, factualRigor: number, confiden
    --------------------------------------------------------------------------- */
 
 /** Hard cap: maximum stories in the edition feed. No pagination, no load-more. */
-const EDITION_FEED_SIZE = 30;
+const EDITION_FEED_SIZE = 50;
 
-/** Maximum stories from any single category within the 30-story feed. */
-const CATEGORY_CAP = 8;
+/** Maximum stories from any single category within the edition feed. */
+const CATEGORY_CAP = 12;
 
 
 interface HomeContentProps {
@@ -476,7 +476,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
           .select(enrichedFields)
           .contains("sections", [activeEdition])
           .order(rankColumn, { ascending: false })
-          .limit(50);
+          .limit(80);
 
         // If enriched query failed (columns don't exist), fall back to base schema
         if (res.error) {
@@ -486,7 +486,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
             .select(baseFields)
             .contains("sections", [activeEdition])
             .order("first_published", { ascending: false })
-            .limit(50);
+            .limit(80);
         }
 
         if (controller.signal.aborted) return;

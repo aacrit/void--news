@@ -4,10 +4,9 @@ permissions: {}
 
 on:
   schedule:
-    # 2x daily, anchored to Chicago (CDT = UTC-5).
-    # 70 Gemini calls/run × 2 = 140 RPD + 9 (brief) × 2 = 18 RPD → 158 RPD total (63% of 250 limit).
+    # 1x daily, anchored to Chicago (CDT = UTC-5).
+    # ~50 Sonnet calls + 1 brief + 1 opinion = ~$1/day at Anthropic Sonnet 4.6 rates.
     - cron: '0 12 * * *'     # 12:00 UTC — 7 AM Chicago, 5:30 PM IST, 2 PM CET
-    - cron: '0 1 * * *'      # 01:00 UTC — 8 PM Chicago, 6:30 AM IST, 2 AM CET
   workflow_dispatch:
     inputs:
       editions:
@@ -78,7 +77,7 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          # ANTHROPIC_API_KEY disabled pre-launch to avoid costs
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           DISABLE_GEMINI_REASONING: "1"
           DISABLE_EDITORIAL_TRIAGE: "1"
         run: |
@@ -98,7 +97,7 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          # ANTHROPIC_API_KEY disabled pre-launch to avoid costs
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           DISABLE_GEMINI_REASONING: "1"
           DISABLE_EDITORIAL_TRIAGE: "1"
         run: |
