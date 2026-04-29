@@ -31,7 +31,7 @@ from urllib.parse import urlparse
 import requests
 from bs4 import BeautifulSoup
 
-from pipeline.utils.safe_requests import safe_get
+from utils.safe_requests import safe_get
 
 
 # ---------------------------------------------------------------------------
