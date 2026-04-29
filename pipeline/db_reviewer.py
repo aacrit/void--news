@@ -596,18 +596,31 @@ class DataQualityAuditor:
         """Check valid cluster/article refs, orphaned articles/bias scores."""
         print("[7/8] Auditing Referential Integrity...")
 
-        # Fetch all data
-        result = supabase.table("articles").select("id").execute()
-        articles = {a["id"] for a in (result.data or [])}
+        # Supabase caps single .select() at 1000 rows; paginate so all rows
+        # land in the comparison sets (otherwise truncation produces
+        # phantom orphans + phantom invalid refs at scale).
+        def _fetch_all(table: str, columns: str, page: int = 1000) -> list:
+            rows: list = []
+            start = 0
+            while True:
+                batch = (
+                    supabase.table(table)
+                    .select(columns)
+                    .range(start, start + page - 1)
+                    .execute()
+                    .data
+                    or []
+                )
+                rows.extend(batch)
+                if len(batch) < page:
+                    break
+                start += page
+            return rows
 
-        result = supabase.table("story_clusters").select("id").execute()
-        clusters = {c["id"] for c in (result.data or [])}
-
-        result = supabase.table("cluster_articles").select("cluster_id,article_id").execute()
-        cluster_articles = result.data or []
-
-        result = supabase.table("bias_scores").select("article_id").execute()
-        bias_scores = result.data or []
+        articles = {a["id"] for a in _fetch_all("articles", "id")}
+        clusters = {c["id"] for c in _fetch_all("story_clusters", "id")}
+        cluster_articles = _fetch_all("cluster_articles", "cluster_id,article_id")
+        bias_scores = _fetch_all("bias_scores", "article_id")
 
         score = 10
 
