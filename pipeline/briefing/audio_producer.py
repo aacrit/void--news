@@ -178,26 +178,37 @@ def _synthesize_edge_tts(
         print("  [warn][audio] edge-tts: no dialogue turns to synthesize")
         return None
 
+    # Pre-allocate one tempfile per turn so we can synthesize in parallel
+    # while preserving original turn order for downstream concatenation.
+    turn_specs: list[tuple[int, str, str, str]] = []  # (idx, speaker, text, tmp_path)
+    for idx, (speaker, text) in enumerate(turns):
+        voice = voice_a_edge if speaker == "One" else voice_b_edge
+        with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as tmp:
+            turn_specs.append((idx, voice, text, tmp.name))
+
+    async def _synth_one(voice: str, text: str, path: str) -> None:
+        comm = _edge_tts_module.Communicate(text, voice)
+        await comm.save(path)
+
+    async def _synth_all() -> list:
+        tasks = [_synth_one(v, t, p) for (_idx, v, t, p) in turn_specs]
+        return await asyncio.gather(*tasks, return_exceptions=True)
+
+    loop = asyncio.new_event_loop()
+    try:
+        synth_results = loop.run_until_complete(_synth_all())
+    finally:
+        loop.close()
+
+    # Decode results in original turn order
     segments: list["AudioSegment"] = []
     failed = 0
-
-    for speaker, text in turns:
-        voice = voice_a_edge if speaker == "One" else voice_b_edge
-
-        with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as tmp:
-            tmp_path = tmp.name
-
+    for (idx, voice, _text, tmp_path), result in zip(turn_specs, synth_results):
         try:
-            async def _synth(t: str = text, v: str = voice, p: str = tmp_path) -> None:
-                comm = _edge_tts_module.Communicate(t, v)
-                await comm.save(p)
-
-            loop = asyncio.new_event_loop()
-            try:
-                loop.run_until_complete(_synth())
-            finally:
-                loop.close()
-
+            if isinstance(result, BaseException):
+                print(f"  [warn][audio] edge-tts turn failed ({voice}): {result}")
+                failed += 1
+                continue
             seg = AudioSegment.from_mp3(tmp_path)
             # Normalise to 24 kHz mono 16-bit (same as Gemini TTS output)
             seg = seg.set_frame_rate(24000).set_channels(1).set_sample_width(2)
