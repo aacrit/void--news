@@ -20,7 +20,7 @@ defusedxml.defuse_stdlib()
 import feedparser
 import requests
 
-from pipeline.utils.safe_requests import safe_get
+from utils.safe_requests import safe_get
 
 
 # --- Junk content filters (applied before scraping to save time) ---
