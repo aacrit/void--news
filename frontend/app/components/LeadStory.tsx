@@ -6,7 +6,6 @@ import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
 import { classifyCoverage } from "../lib/coverageClass";
-import { deriveRankSignals } from "../lib/rankRationale";
 
 interface LeadStoryProps {
   story: Story;
@@ -32,7 +31,6 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, i
 
   const showImage = rank === 0 && imageUrl && !imgError;
   const verdict = classifyCoverage(story);
-  const rankSignals = rank === 0 ? deriveRankSignals(story) : [];
 
   // 50/50 split layout when rank-0 has a cached image (desktop ≥1024px).
   // Layout-zones.css owns the grid; mobile collapses to stacked image-then-text.
@@ -42,11 +40,6 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, i
   const textContent = (
     <div data-slot="text" className={useSplit ? "lead-split__text" : undefined}>
       {rank === 0 && <span className="lead-story__badge">Top Story</span>}
-      {rank === 0 && rankSignals.length > 0 && (
-        <p className="lead-story__why-top" aria-label={`Ranked top because: ${rankSignals.join(", ")}`}>
-          {rankSignals.join(" · ")}
-        </p>
-      )}
 
       <h2 className={useSplit ? "lead-headline" : "lead-story__headline"}>
         <span className={useSplit ? undefined : "lead-story__headline-text"}>{story.title}</span>

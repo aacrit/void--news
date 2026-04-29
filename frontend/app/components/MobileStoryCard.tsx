@@ -85,7 +85,12 @@ export default function MobileStoryCard({
               style={{ "--lean-dot-color": story.sigilData.unscored ? undefined : getLeanColor(story.sigilData.politicalLean) } as React.CSSProperties}
               aria-hidden="true"
             />
-            <span className="msc__lean-label">{story.sigilData.unscored ? "unscored" : tiltLabel(story.sigilData.politicalLean).toLowerCase().replace(" tilt", "")}</span>
+            {/* Lean text removed when scored — the dot color already encodes lean.
+                Only render the explicit label when unscored, where the absence
+                of color carries no signal. Per feedback_bias_indicator_priorities. */}
+            {story.sigilData.unscored && (
+              <span className="msc__lean-label">unscored</span>
+            )}
             {story.category && <span className="msc__cat">{story.category}</span>}
           </div>
           {story.summary?.trim() && <p className="msc__summary msc__summary--compact">{story.summary}</p>}
