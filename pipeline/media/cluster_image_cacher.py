@@ -85,19 +85,73 @@ def _download(url: str) -> tuple[bytes, str] | None:
         return None
 
 
+def _convert_to_webp(data: bytes, content_type: str) -> tuple[bytes, str] | None:
+    """
+    Convert raw image bytes to WebP at quality 82.
+
+    LCP candidate is the lead 4:5 portrait crop — typical 25-35% size
+    reduction vs JPEG, which buys 200-500ms LCP improvement on mobile 4G.
+    Returns (webp_bytes, "image/webp") on success, or None to fall back to
+    the original payload (e.g., when Pillow can't decode the source).
+    """
+    try:
+        from PIL import Image
+        import io
+        img = Image.open(io.BytesIO(data))
+        # Drop alpha for WebP photo encoding — flatten on white if RGBA/LA/P.
+        # Lead images are photographs; alpha is decoration we can lose.
+        if img.mode in ("RGBA", "LA", "P"):
+            background = Image.new("RGB", img.size, (255, 255, 255))
+            if img.mode == "P":
+                img = img.convert("RGBA")
+            background.paste(img, mask=img.split()[-1] if img.mode in ("RGBA", "LA") else None)
+            img = background
+        elif img.mode != "RGB":
+            img = img.convert("RGB")
+        out = io.BytesIO()
+        img.save(out, format="WEBP", quality=82, method=4)
+        webp_data = out.getvalue()
+        # Sanity floor: only accept when WebP is meaningfully smaller.
+        # If WebP is bigger than original (rare for tiny graphics), keep original.
+        if len(webp_data) >= len(data):
+            return None
+        return webp_data, "image/webp"
+    except Exception as e:
+        print(f"  [img-cache] WebP conversion failed ({e}); falling back to original")
+        return None
+
+
 def _upload(client, cluster_id: str, data: bytes, content_type: str) -> str | None:
-    """Upload to Supabase Storage, return public URL or None."""
+    """Upload to Supabase Storage, return public URL or None.
+
+    Converts JPEG/PNG sources to WebP at quality 82 before upload — typically
+    25-35% smaller for photographs, which directly improves LCP for the lead
+    image (the 50/50-split rank-0 photograph). Falls back to the original
+    payload when conversion fails or doesn't shrink the file.
+    """
     supabase_url = os.getenv("SUPABASE_URL", "").rstrip("/")
     if not supabase_url:
         return None
-    ext = "jpg" if "jpeg" in content_type or "jpg" in content_type else "jpg"
+
+    # Try WebP conversion first; keep original on failure.
+    webp_result = _convert_to_webp(data, content_type)
+    if webp_result is not None:
+        data, content_type = webp_result
+        ext = "webp"
+    elif "png" in content_type:
+        ext = "png"
+    else:
+        ext = "jpg"
+
     path = f"{cluster_id}.{ext}"
     try:
-        # Overwrite previous run's image (idempotent)
-        try:
-            client.storage.from_(_BUCKET).remove([path])
-        except Exception:
-            pass
+        # Overwrite previous run's image (idempotent). Remove any stale extension
+        # so a JPG → WebP migration doesn't leave the old JPG orphaned.
+        for stale_ext in ("jpg", "jpeg", "png", "webp"):
+            try:
+                client.storage.from_(_BUCKET).remove([f"{cluster_id}.{stale_ext}"])
+            except Exception:
+                pass
         client.storage.from_(_BUCKET).upload(path, data, {"content-type": content_type})
         return f"{supabase_url}/storage/v1/object/public/{_BUCKET}/{path}"
     except Exception as e:
