@@ -1,10 +1,10 @@
 # void --news Agent Team Structure
 
-Last updated: 2026-04-19 (rev 25)
+Last updated: 2026-04-29 (rev 26 — Sonnet 4.6 editorial LLM stack)
 
 ## Philosophy
 
-Adapted from DondeAI. Every principle is inherited and tailored for a news bias analysis platform.
+Adapted from DondeAI. Every principle inherited and tailored for a news bias analysis platform.
 
 ### Core Principles
 
@@ -12,22 +12,26 @@ Adapted from DondeAI. Every principle is inherited and tailored for a news bias 
 2. **Read-First Protocol** — Every agent reads CLAUDE.md + relevant docs before any work.
 3. **Execution Protocol** — Assess → Plan → Build → Verify → Report. No exceptions.
 4. **Max Blast Radius** — Max 4 CSS, 2 JS/TS, 3 Python files per run.
-5. **$0 Cost — Claude Max CLI Only** — All agent/dev work via Claude Code CLI. The only permitted external API call is Gemini Flash on its free tier. No paid inference anywhere.
+5. **Claude Max CLI for agent work; Sonnet 4.6 API for editorial LLM** — All agent/dev work via Claude Code CLI ($0). Pipeline editorial LLM (summaries, briefs, opinion, weekly) routes through Claude Sonnet 4.6 with smart-routed Gemini fallback (~$30/mo target). Rule-based NLP and edge-tts audio remain $0.
 6. **Parallel-Safe vs Sequential** — Read-only agents can run simultaneously. Write agents require sequencing.
 
 ### Cost Policy
 
 ```
-COST BUDGET: $0.00 — ABSOLUTE CEILING
+COST BUDGET: ~$30/month editorial LLM (Sonnet 4.6); rest is $0
 
-Pipeline NLP:      Rule-based only (spaCy, NLTK, TextBlob) — $0
-Summarization:     Gemini Flash free tier (250 RPD budget, ~177 RPD used) — $0
-Audio TTS:         edge-tts (Microsoft Neural voices) — $0
-Database:          Supabase free tier — $0
-Hosting:           GitHub Pages — $0
-CI/CD:             GitHub Actions free tier — $0
-Agent work:        Claude Code CLI (Max subscription) — $0
+Pipeline NLP:      Rule-based (spaCy, NLTK, TextBlob)              — $0
+Editorial LLM:     Claude Sonnet 4.6 primary (~57 calls/run × 1 run/day)
+                   $3 in / $15 out per MTok, ephemeral prompt cache — ~$30/mo
+LLM Fallback:      Gemini Flash free tier (~250 RPD legacy limit)  — $0
+Audio TTS:         edge-tts (Microsoft Neural)                     — $0
+Database:          Supabase free tier                              — $0
+Hosting:           GitHub Pages                                    — $0
+CI/CD:             GitHub Actions free tier                        — $0
+Agent work:        Claude Code CLI (Max subscription)              — $0
 ```
+
+Anthropic console budget cap recommended at $50/month (60% buffer over $30 target).
 
 ---
 
@@ -52,19 +56,19 @@ CEO (Aacrit)
 
 **Total: 35 agents across 14 divisions**
 
-Note: Cinematic Division agents (cinematographer, motion-director, vfx-artist) are also core History team members, integrated into `/history-publish` and `/cinematic-overhaul` workflows. Full history spec: `docs/HISTORY.md`.
+Cinematic Division agents (cinematographer, motion-director, vfx-artist) are also core History team members, integrated into `/history-publish` and `/cinematic-overhaul`. Full history spec: `docs/HISTORY.md`.
 
-### Cycle Status (as of 2026-04-19)
+### Cycle Status (2026-04-29)
 
 | Tier | Status | Notes |
-|------|--------|-------|
-| Tier 0 (foundation) | **Shipped** | Canvas unification (`--canvas-max`), scroll-compact masthead, lead photo clamp, Deep Dive double-defocus fix, mobile above-the-fold reclaim |
-| Tier 1 (polish) | **Shipped** | `anim-stagger` keyframe conversion (IO-replay safe), dead CSS sweep, 3/5-col `/ship` Kanban, hardcoded widths replaced with `var(--canvas-max)` |
-| Tier 2 (motion) | **Shipped** | Press states, card lift on hover, gesture inertia on horizontal strips, 496 bare easings migrated to tokens across 18 CSS files |
+|---|---|---|
+| Tier 0 (foundation) | **Shipped** | `--canvas-max`, scroll-compact masthead, lead photo clamp, Deep Dive double-defocus fix, mobile reclaim |
+| Tier 1 (polish) | **Shipped** | `anim-stagger` IO-replay safe, dead CSS sweep, 3/5-col `/ship` Kanban, hardcoded widths → `var(--canvas-max)` |
+| Tier 2 (motion) | **Shipped** | Press states, card lift on hover, gesture inertia, 496 bare easings → tokens across 18 CSS files |
 | Tier 3 (cinematic depth) | Pending | |
 | Tier 4 (hero overhaul) | Pending | |
 
-Narrative-engineer pass landed: 25 YAML event files rewritten for Show-Don't-Tell + Arrive Late Leave Early (9 subtitles, 24 connection sentences). Voice remap (Cycle 4): 12 first-gen Neural voices retired, consolidated to 4 Multilingual (Andrew/Brian/Ava/Emma).
+Narrative-engineer pass: 25 YAML event files rewritten Show-Don't-Tell + Arrive Late Leave Early. Voice remap (Cycle 4): 12 first-gen Neural voices retired, 4 Multilingual (Andrew/Brian/Ava/Emma).
 
 ---
 
@@ -72,203 +76,156 @@ Narrative-engineer pass landed: 25 YAML event files rewritten for Show-Don't-Tel
 
 ### Quality Division
 
-| Agent | Purpose | Write Access | Trigger |
-|-------|---------|-------------|---------|
-| `analytics-expert` | Bias engine benchmarking, ranking calibration | Yes | After algorithm changes |
+| Agent | Purpose | Write | Trigger |
+|---|---|---|---|
+| `analytics-expert` | Bias engine benchmarking, ranking calibration | Yes | Algorithm changes |
 | `bias-auditor` | Ground-truth validation against known outlet profiles | Yes | After scoring changes |
-| `bias-calibrator` | Validation suite execution, score regression detection, axis weight tuning, ground-truth corpus maintenance. Quantitative counterpart to bias-auditor (qualitative). CI gate: `validate-bias.yml` runs on every push to `claude/*` touching `pipeline/analyzers/`; blocks merge on CATASTROPHIC failures. | Yes | After analyzer changes, on regression alert |
-| `pipeline-tester` | Pipeline quality gate — parsing, clustering, scoring validation | No | After every pipeline change |
-| `bug-fixer` | Post-test bug remediation, surgical fixes | Yes | After test failures |
+| `bias-calibrator` | Validation suite, regression detection, axis weight tuning, ground-truth corpus. Quantitative counterpart to bias-auditor. CI gate: `validate-bias.yml` runs on every push to `claude/*` touching `pipeline/analyzers/`; blocks merge on CATASTROPHIC failures. | Yes | Analyzer changes, regression alerts |
+| `pipeline-tester` | Pipeline quality gate — parsing, clustering, scoring | No | Every pipeline change |
+| `bug-fixer` | Post-test surgical fixes | Yes | After test failures |
 
 ### Infrastructure Division
 
-| Agent | Purpose | Write Access | Trigger |
-|-------|---------|-------------|---------|
-| `perf-optimizer` | Pipeline runtime + frontend load time optimization | Yes | Performance issues |
-| `db-reviewer` | Supabase data quality — articles, bias scores, clusters | No | After pipeline runs |
-| `update-docs` | Sync CLAUDE.md and docs/*.md with current codebase | Yes | After significant changes |
+| Agent | Purpose | Write | Trigger |
+|---|---|---|---|
+| `perf-optimizer` | Pipeline runtime + frontend load time | Yes | Performance issues |
+| `db-reviewer` | Supabase data quality | No | After pipeline runs |
+| `update-docs` | Sync CLAUDE.md and docs/*.md with codebase | Yes | After significant changes |
 
 ### Frontend Division
 
-| Agent | Purpose | Write Access | Trigger |
-|-------|---------|-------------|---------|
-| `frontend-builder` | Component engineering — Press & Precision design system | Yes | Feature requests |
+| Agent | Purpose | Write | Trigger |
+|---|---|---|---|
+| `frontend-builder` | Press & Precision component engineering | Yes | Feature requests |
 | `frontend-fixer` | UI bug remediation — bias display, layout, animation, a11y | Yes | Bug reports |
-| `responsive-specialist` | Desktop/mobile layout, light/dark modes | Yes | New components, responsive bugs |
-| `uat-tester` | Browser testing — clicks, resizes, screenshots | No | After frontend changes |
+| `responsive-specialist` | Desktop/mobile, light/dark | Yes | New components, responsive bugs |
+| `uat-tester` | Browser testing, screenshots | No | After frontend changes |
 
 ### Pipeline Division
 
-| Agent | Purpose | Write Access | Trigger |
-|-------|---------|-------------|---------|
-| `feed-intelligence` | RSS health, collection strategy, deduplication, cluster summarization | Yes | Pipeline development |
-| `nlp-engineer` | spaCy/NLTK specialist — bias scoring algorithms, NER, sentiment | Yes | Bias engine development |
-| `source-curator` | Source credibility vetting, RSS/scrape config, 1,013-source list | Yes | Source list changes |
-| `linguist` | Media bias vocabulary research, lexicon expansion, linguistic gap analysis across all 5 bias analyzers | Yes | After bias calibration, lexicon gaps identified |
-| `media-curator` | Free-API image sourcing for weekly cover + history supplemental (Wikimedia, Unsplash, Pexels, Pixabay) | Yes | Weekly digest generation, history media enrichment |
+| Agent | Purpose | Write | Trigger |
+|---|---|---|---|
+| `feed-intelligence` | RSS health, collection, deduplication, cluster summarization | Yes | Pipeline development |
+| `nlp-engineer` | spaCy/NLTK — bias scoring algorithms, NER, sentiment | Yes | Bias engine development |
+| `source-curator` | Source vetting, RSS/scrape config, 1,013-source list | Yes | Source list changes |
+| `linguist` | Media bias vocabulary research, lexicon expansion across 5 analyzers | Yes | After bias calibration, lexicon gaps |
+| `media-curator` | Free-API image sourcing for weekly cover + history (Wikimedia, Unsplash, Pexels, Pixabay) | Yes | Weekly digest, history media |
 
 ### Cinematic Division
 
-| Agent | Purpose | Write Access | Trigger |
-|-------|---------|-------------|---------|
-| `cinematographer` | Camera language design — depth of field, rack focus, parallax, camera movements, scene compositions, cinematic design tokens | Yes | Cinematic overhaul, motion design tasks |
-| `vfx-artist` | Post-processing — film grain, color grading, vignettes, lens effects, atmospheric lighting, texture via CSS filters and SVG | Yes | After cinematographer, cinematic polish |
-| `motion-director` | Scroll-driven choreography — scene timelines, gesture physics, transition sequencing, L-cut/match-cut timing, scroll-timeline API | Yes | After cinematographer, interaction choreography |
-| `color-grader` | Per-image CSS color grading — external source normalization, page-specific filter pipelines (weekly magazine warmth, history archival sepia, feed cinematic amber), grain/vignette compositing on image containers | Yes | After media-curator + vfx-artist, image visual consistency |
+| Agent | Purpose | Write | Trigger |
+|---|---|---|---|
+| `cinematographer` | Camera language — DOF, rack focus, parallax, scene composition, cinematic tokens | Yes | Cinematic overhaul, motion design |
+| `vfx-artist` | Post-processing — grain, color grading, vignettes, lens, atmosphere via CSS filters + SVG | Yes | After cinematographer |
+| `motion-director` | Scroll-driven choreography — scene timelines, gesture physics, L-cut/match-cut, scroll-timeline API | Yes | After cinematographer |
+| `color-grader` | Per-image CSS grading — external source normalization, page-specific filters (weekly warmth, history sepia, feed amber), grain/vignette compositing | Yes | After media-curator + vfx-artist |
 
 ### History Division
 
-| Agent | Purpose | Write Access | Trigger |
-|-------|---------|-------------|---------|
-| `history-curator` | Event selection, research coordination, YAML content authoring, era/region taxonomy | Yes | New event onboarding, content expansion |
-| `perspective-analyst` | Multi-perspective balance, 5-lens historiographic framework (Geographic/National, Social Position, Temporal Frame, Causal Emphasis, Evidentiary Base), viewpoint gap analysis | Yes | After event draft, perspective audit |
-| `historiographic-auditor` | Accuracy validation, source verification, bias detection in historical narratives, visual bias checks | No | Before publishing, CEO spot-check |
-| `media-archaeologist` | Primary source discovery, historical media curation, rights verification, provenance tracking | Yes | Visual asset curation, new event media |
-| `timeline-architect` | Event connection mapping, chronological accuracy, timeline data structure, cross-event relationships | Yes | Timeline construction, connection discovery |
-| `narrative-engineer` | Prose polish, show-don't-tell enforcement, narrative flow, multi-perspective coherence | Yes | Final content polish before publish |
+| Agent | Purpose | Write | Trigger |
+|---|---|---|---|
+| `history-curator` | Event selection, YAML content, era/region taxonomy | Yes | New event onboarding |
+| `perspective-analyst` | 5-lens framework (Geographic/National, Social Position, Temporal Frame, Causal Emphasis, Evidentiary Base), viewpoint gaps | Yes | After event draft |
+| `historiographic-auditor` | Accuracy validation, source verification, narrative bias, visual bias | No | Before publishing |
+| `media-archaeologist` | Primary source discovery, historical media, rights/provenance | Yes | Visual asset curation |
+| `timeline-architect` | Event connections, chronological accuracy, cross-event relationships | Yes | Timeline construction |
+| `narrative-engineer` | Prose polish, show-don't-tell, multi-perspective coherence | Yes | Final content polish |
 
 ### History Visual Division
 
-| Agent | Purpose | Write Access | Trigger |
-|-------|---------|-------------|---------|
-| `visual-historian` | Archival Cinema design implementation, Ken Burns effects, page layouts, component styling | Yes | After cinematographer, UI implementation |
-| `archive-cartographer` | Geographic visualization, map layers, region/era spatial data, MapView component | Yes | Map features, geographic context |
+| Agent | Purpose | Write | Trigger |
+|---|---|---|---|
+| `visual-historian` | Archival Cinema implementation, Ken Burns, page layouts | Yes | After cinematographer |
+| `archive-cartographer` | Geographic visualization, map layers, region/era spatial data | Yes | Map features |
 
 ### Agent Engineering Division
 
-| Agent | Purpose | Write Access | Trigger |
-|-------|---------|-------------|---------|
-| `agent-architect` | Audits, optimizes, and designs all agents. Reviews definitions for best-in-class tooling, cost efficiency, prompt engineering. Builds new agents on CEO demand. | Yes (agent definitions only) | CEO request, post-major-change review, periodic fleet audit |
+| Agent | Purpose | Write | Trigger |
+|---|---|---|---|
+| `agent-architect` | Audits, optimizes, designs all agents. Reviews definitions for tooling, cost efficiency, prompt engineering. Builds new agents on CEO demand. | Yes (agent definitions only) | CEO request, post-major-change review |
 
 ### Games Division
 
-| Agent | Purpose | Write Access | Trigger |
-|-------|---------|-------------|---------|
-| `game-content-writer` | Game content authoring — word lists, puzzles, clue banks for void --games (THE WIRE, CIPHER, FRAME, VOID RUN, UNDERTOW) | Yes | New game content, puzzle generation |
+| Agent | Purpose | Write | Trigger |
+|---|---|---|---|
+| `game-content-writer` | Word lists, puzzles, clue banks for void --games (THE WIRE, CIPHER, FRAME, VOID RUN, UNDERTOW) | Yes | New game content |
 
 ### Security Division
 
-| Agent | Purpose | Write Access |
-|-------|---------|-------------|
+| Agent | Purpose | Write |
+|---|---|---|
 | `void-ciso` | Secrets, RLS, CORS, injection, OWASP, dependencies | No |
 
 ### Product Division
 
-| Agent | Purpose | Write Access |
-|-------|---------|-------------|
+| Agent | Purpose | Write |
+|---|---|---|
 | `ceo-advisor` | Strategic counsel — roadmap, competitive positioning | No |
 
 ### Branding Division
 
-| Agent | Purpose | Write Access |
-|-------|---------|-------------|
-| `logo-designer` | Brand identity — logo, favicon, SVG assets, cinematic palette, texture system | Yes |
+| Agent | Purpose | Write |
+|---|---|---|
+| `logo-designer` | Brand identity, favicon, SVG, cinematic palette, texture system | Yes |
 
 ---
 
 ## Sequential Cycles
 
-**Quality Cycle:**
-```
-pipeline-tester → bug-fixer → pipeline-tester (retest)
-```
-
-**Bias Audit Cycle:**
-```
-analytics-expert → bias-auditor → nlp-engineer → pipeline-tester
-```
-
-**Bias Calibration Cycle:**
-```
-nlp-engineer → bias-calibrator → bias-auditor → pipeline-tester
-```
-
-**Frontend Cycle:**
-```
-frontend-builder → responsive-specialist → uat-tester → frontend-fixer
-```
-
-**Audio Quality Cycle:**
-```
-audio-engineer → pipeline-tester → bug-fixer
-```
-
-**Cinematic Overhaul Cycle:**
-```
-[logo-designer + cinematographer] (parallel) → motion-director → vfx-artist → color-grader → frontend-builder → [responsive-specialist + perf-optimizer] (parallel) → uat-tester → frontend-fixer
-```
-
-**Full Pipeline Dev Cycle:**
-```
-feed-intelligence → nlp-engineer → pipeline-tester → bug-fixer → pipeline-tester
-```
-
-**Weekly Media Cycle:**
-```
-weekly_digest_generator (cover stories selected) → media-curator (source cover image) → frontend-builder (render in WeeklyDigest.tsx)
-```
-
-**History Media Cycle (updated):**
-```
-media-archaeologist (archival) → media-curator (modern supplemental) → historiographic-auditor (visual bias) → visual-historian (integration)
-```
-
-**History Research Cycle:**
-```
-history-curator → [perspective-analyst + media-archaeologist] (parallel) → historiographic-auditor → narrative-engineer
-```
-
-**History Publishing Cycle:**
-```
-narrative-engineer → historiographic-auditor → [cinematographer + motion-director + vfx-artist] (cinematic trio) → visual-historian → frontend-builder → uat-tester
-```
-
-**History QA Cycle:**
-```
-[historiographic-auditor + perspective-analyst] (parallel audit) → perspective-analyst (fixes) → historiographic-auditor (re-validate) → uat-tester
-```
+**Quality:** `pipeline-tester → bug-fixer → pipeline-tester`
+**Bias Audit:** `analytics-expert → bias-auditor → nlp-engineer → pipeline-tester`
+**Bias Calibration:** `nlp-engineer → bias-calibrator → bias-auditor → pipeline-tester`
+**Frontend:** `frontend-builder → responsive-specialist → uat-tester → frontend-fixer`
+**Audio Quality:** `audio-engineer → pipeline-tester → bug-fixer`
+**Cinematic Overhaul:** `[logo-designer + cinematographer] → motion-director → vfx-artist → color-grader → frontend-builder → [responsive-specialist + perf-optimizer] → uat-tester → frontend-fixer`
+**Pipeline Dev:** `feed-intelligence → nlp-engineer → pipeline-tester → bug-fixer → pipeline-tester`
+**Weekly Media:** `weekly_digest_generator → media-curator → frontend-builder`
+**History Media:** `media-archaeologist → media-curator → historiographic-auditor → visual-historian`
+**History Research:** `history-curator → [perspective-analyst + media-archaeologist] → historiographic-auditor → narrative-engineer`
+**History Publishing:** `narrative-engineer → historiographic-auditor → [cinematographer + motion-director + vfx-artist] → visual-historian → frontend-builder → uat-tester`
+**History QA:** `[historiographic-auditor + perspective-analyst] → perspective-analyst → historiographic-auditor → uat-tester`
 
 ---
 
 ## Agent Routing Rules
 
-| Task Pattern | Agent | Division |
+| Task | Agent | Division |
 |---|---|---|
-| RSS feed health, article collection, deduplication, cluster summaries, content quality | `feed-intelligence` | Pipeline |
+| RSS health, article collection, deduplication, cluster summaries | `feed-intelligence` | Pipeline |
 | Bias score accuracy, calibration, benchmarking | `analytics-expert` | Quality |
-| Ground-truth validation, known-outlet comparison | `bias-auditor` | Quality |
-| Bias score regression, validation suite, weight tuning | `bias-calibrator` | Quality |
+| Ground-truth validation | `bias-auditor` | Quality |
+| Bias regression, validation suite, weight tuning | `bias-calibrator` | Quality |
 | Pipeline output validation, clustering quality | `pipeline-tester` | Quality |
 | Post-test bug fixing | `bug-fixer` | Quality |
 | Pipeline runtime, frontend load, Lighthouse | `perf-optimizer` | Infrastructure |
 | Article/cluster data quality, NULL audits | `db-reviewer` | Infrastructure |
 | Sync docs with codebase | `update-docs` | Infrastructure |
 | Build UI components, new features | `frontend-builder` | Frontend |
-| Fix UI bugs, layout breaks, a11y gaps | `frontend-fixer` | Frontend |
-| Desktop/mobile layout, responsive issues | `responsive-specialist` | Frontend |
-| Browser testing, click-through QA | `uat-tester` | Frontend |
-| spaCy models, bias scoring algorithms, NER | `nlp-engineer` | Pipeline |
-| Source vetting, RSS config, credibility | `source-curator` | Pipeline |
-| Bias lexicon research, vocabulary gap analysis | `linguist` | Pipeline |
-| Broadcast audio, sonic branding, TTS voice, audio post-processing | `audio-engineer` | Audio |
+| Fix UI bugs, layout breaks, a11y | `frontend-fixer` | Frontend |
+| Desktop/mobile responsive | `responsive-specialist` | Frontend |
+| Browser testing, click QA | `uat-tester` | Frontend |
+| spaCy, bias algorithms, NER | `nlp-engineer` | Pipeline |
+| Source vetting, credibility | `source-curator` | Pipeline |
+| Bias lexicon research | `linguist` | Pipeline |
+| Broadcast audio, sonic branding, TTS, post-processing | `audio-engineer` | Audio |
 | Security audit, secrets scan, RLS, OWASP | `void-ciso` | Security |
-| Strategic advice, roadmap, priorities | `ceo-advisor` | Product |
-| Logo, favicon, brand identity, cinematic palette, texture system | `logo-designer` | Branding |
-| Camera movement, depth of field, parallax, cinematic scene composition | `cinematographer` | Cinematic |
-| Film grain, color grading, vignette, lens effects, atmospheric post-processing | `vfx-artist` | Cinematic |
-| Scroll-driven choreography, scene timelines, gesture physics, transition sequencing | `motion-director` | Cinematic |
-| Per-image color grading, CSS filter pipelines for external images, page-specific media grades | `color-grader` | Cinematic |
-| Agent audit, optimization, new agent design, prompt engineering | `agent-architect` | Agent Engineering |
-| Historical event research, YAML content, era/region taxonomy | `history-curator` | History |
-| Multi-perspective balance, historiographic framework, viewpoint gaps | `perspective-analyst` | History |
-| Historical accuracy validation, source verification, narrative bias | `historiographic-auditor` | History |
-| Primary source discovery, historical media, rights/provenance | `media-archaeologist` | History |
-| Free-API image sourcing for weekly/history (Wikimedia, Unsplash, Pexels) | `media-curator` | Pipeline |
-| Event connections, timeline data, chronological accuracy | `timeline-architect` | History |
-| Narrative polish, show-don't-tell, multi-perspective coherence | `narrative-engineer` | History |
-| Archival Cinema UI, Ken Burns effects, history page layouts | `visual-historian` | History Visual |
-| Geographic visualization, map layers, region/era spatial data | `archive-cartographer` | History Visual |
-| Game content — word lists, puzzles, clue banks for void --games | `game-content-writer` | Games |
+| Strategic advice, roadmap | `ceo-advisor` | Product |
+| Logo, favicon, brand identity, palette | `logo-designer` | Branding |
+| Camera, DOF, parallax, scene composition | `cinematographer` | Cinematic |
+| Grain, color grading, vignette, lens, atmosphere | `vfx-artist` | Cinematic |
+| Scroll choreography, scene timelines, gesture physics | `motion-director` | Cinematic |
+| Per-image CSS color grading, page filter pipelines | `color-grader` | Cinematic |
+| Agent audit, optimization, new agent design | `agent-architect` | Agent Engineering |
+| Historical event research, YAML content | `history-curator` | History |
+| Multi-perspective balance, viewpoint gaps | `perspective-analyst` | History |
+| Historical accuracy validation | `historiographic-auditor` | History |
+| Primary source discovery, rights/provenance | `media-archaeologist` | History |
+| Free-API image sourcing for weekly/history | `media-curator` | Pipeline |
+| Event connections, timeline data | `timeline-architect` | History |
+| Narrative polish, show-don't-tell | `narrative-engineer` | History |
+| Archival Cinema UI, Ken Burns, history layouts | `visual-historian` | History Visual |
+| Geographic visualization, map layers | `archive-cartographer` | History Visual |
+| Game content — words, puzzles, clue banks | `game-content-writer` | Games |
 
 ---
 
@@ -276,19 +233,20 @@ narrative-engineer → historiographic-auditor → [cinematographer + motion-dir
 
 **Can run simultaneously (read-only):** `pipeline-tester`, `db-reviewer`, `void-ciso`, `ceo-advisor`, `uat-tester`, `historiographic-auditor`
 
-**Never run simultaneously:** Two write agents on overlapping files; `bug-fixer` + `pipeline-tester`; `frontend-builder` + `frontend-fixer`.
+**Never simultaneous:** Two write agents on overlapping files; `bug-fixer` + `pipeline-tester`; `frontend-builder` + `frontend-fixer`.
 
 ---
 
-## Locked Decisions (Require CEO Approval)
+## Locked Decisions (CEO Approval)
 
 - Cinematic Press design system (4-voice type, BiasLens Three Lenses, newspaper grid + cinematic tokens)
-- 6-axis bias scoring model (political lean, sensationalism, opinion/fact, factual rigor, framing + confidence)
+- 6-axis bias scoring model
 - Supabase as single data layer
 - Static export (Next.js → GitHub Pages)
 - 1,013-source curated list (3 tiers: 43 us_major, 373 international, 597 independent); 7-point lean spectrum; 158 countries
-- $0 operational cost constraint (edge-tts for audio, Gemini Flash free tier for text only)
-- Claude Max CLI for all agent work; Gemini Flash free tier only for pipeline text generation (summaries, scripts)
+- ~$30/mo LLM cost target (Sonnet 4.6 primary, Gemini fallback); broken intentionally from prior $0 ceiling for editorial quality
+- 1x/day pipeline cadence; top-50 homepage feed
+- Claude Max CLI for all agent work
 
 ---
 
@@ -297,28 +255,29 @@ narrative-engineer → historiographic-auditor → [cinematographer + motion-dir
 R&I advisory agents (read-only, propose but don't implement):
 
 | Agent | Purpose |
-|-------|---------|
+|---|---|
 | `data-storytelling-designer` | Bias visualization, chart design |
 | `micro-interaction-designer` | Progressive disclosure, delight |
 | `accessibility-inclusivity-lead` | WCAG 2.1 AA compliance |
 
-Note: `motion-physics-designer` was promoted to three active agents: `cinematographer`, `motion-director`, `vfx-artist` (Cinematic Division, rev 12).
+`motion-physics-designer` was promoted to `cinematographer` + `motion-director` + `vfx-artist` (Cinematic Division, rev 12).
 
 ---
 
-## Session Log (Major Changes)
+## Session Log
 
 | Date | Key Changes |
-|------|-------------|
-| 2026-03-19 | First agent chain run: bias fixes, Gemini Voice arch, parallelization, favicon/OG, responsive |
+|---|---|
+| 2026-03-19 | First agent chain: bias fixes, Gemini Voice arch, parallelization, favicon/OG, responsive |
 | 2026-03-20 | Ranking v3.3 (9 signals, bias-blind); Clustering v2 (entity-merge); multi-section editions |
-| 2026-03-21 | Ranking v5.1 (Gemini editorial); Deep Dive redesign; Daily Brief + audio pipeline; bias calibration (all 5 axes); validation framework (26 fixtures, 96.9%) |
-| 2026-03-22 | Audio pipeline migration (Gemini TTS trialed, later reverted to edge-tts in Apr); Vol I reset (370 sources, 4,839 articles, 108 min); perf optimizations |
-| 2026-03-29 | Cinematic Division added (cinematographer, motion-director, vfx-artist); 20→23 agents, 9→10 divisions; Cinematic Press v2 design tokens; source expansion 370→409 |
-| 2026-03-31 | Source review: 11 broken RSS feeds fixed, 13 right-spectrum sources added, L:R 1.82:1→1.54:1; 409→419 sources |
-| 2026-04-02 | Major source expansion: 419→951 sources (+532), 77→155 countries, L:R 1.54:1→1.16:1; India→South Asia rename; new Europe edition; 38 wire services, 10 fact-checkers; US regional metros + specialty/beat press added |
-| 2026-04-03 | Source expansion 951→1,013 (EU +49, SA +27); ranking v5.7/v5.8 edition-unique (regional affinity 1.5x, local-priority, cross-edition demotion, thin-edition backfill); migrations 030-036; linguist agent added; weekly digest; Deep Dive FLIP morph animation; 24 agents, 11 divisions |
-| 2026-04-04 | void --history ("The Archive"): multi-perspective historical events platform, Archival Cinema design, 19 components, 5-lens historiographic framework, 25 events (100 perspectives, 218 media), migrations 039+043 (4 history tables), pipeline/history (content_loader, image_enricher, mirror_images, source_enricher), 8 new agents (history-curator, perspective-analyst, historiographic-auditor, media-archaeologist, timeline-architect, narrative-engineer, visual-historian, archive-cartographer), 6 history workflows; 32 agents, 13 divisions |
-| 2026-04-05 | color-grader + media-curator agents added to Cinematic Division; per-image CSS filter grading pipeline for external media (Weekly cover, History archival, Deep Dive); cinematic overhaul cycle updated; ranking v6.0 (10 signals, lean_diversity merged into perspective_diversity, divergence purified, edition_ranker.py extracted, holistic re-rank step 8c); 34 agents, 13 divisions |
-| 2026-04-10 | void --history museum redesign: 8-stage journey (hero, crack, record, context, perspectives, omissions, evidence, exit), museum vitrine perspectives, chisel-grain record block, omissions toggle, dossier cards with connection glyphs, HistoryAudioCue + ThreadsLanding components; 25→58 events, 20→22 components; DeepDiveSpectrum 3 toggleable views (Ink Ridge, Witness Line, Terrain Map); migration 045 (history audio); generate-history-audio workflow |
-| 2026-04-11 | edge-tts replaces Gemini TTS permanently ($3.70/day hit $40 cap); DISABLE_AUDIO gate removed from pipeline.yml; void --games added (5 games: THE WIRE, VOID RUN, CIPHER, FRAME, UNDERTOW); game-content-writer agent added; 35 agents, 14 divisions |
+| 2026-03-21 | Ranking v5.1 (Gemini editorial); Deep Dive redesign; Daily Brief + audio; bias calibration; validation framework (26 fixtures, 96.9%) |
+| 2026-03-22 | Audio migration (Gemini TTS trialed, reverted Apr); Vol I reset (370 sources, 4,839 articles, 108 min); perf optimizations |
+| 2026-03-29 | Cinematic Division added (cinematographer, motion-director, vfx-artist); 20→23 agents, 9→10 divisions; Cinematic Press v2; sources 370→409 |
+| 2026-03-31 | Source review: 11 RSS fixed, 13 right-spectrum added, L:R 1.82:1→1.54:1; 409→419 |
+| 2026-04-02 | Major source expansion 419→951 (+532), 77→155 countries, L:R 1.16:1; India→South Asia rename; Europe edition added |
+| 2026-04-03 | Sources 951→1,013 (EU +49, SA +27); ranking v5.7/v5.8 edition-unique; migrations 030-036; linguist agent; weekly digest; 24 agents, 11 divisions |
+| 2026-04-04 | void --history launch: 19 components, 5-lens framework, 25 events, migrations 039+043, 8 history agents; 32 agents, 13 divisions |
+| 2026-04-05 | color-grader + media-curator added; per-image CSS grading; ranking v6.0 (10 signals, holistic re-rank step 8c); 34 agents, 13 divisions |
+| 2026-04-10 | History museum redesign: 8-stage journey, 25→58 events, 20→22 components; DeepDiveSpectrum 3 toggleable views; migration 045; generate-history-audio workflow |
+| 2026-04-11 | edge-tts replaces Gemini TTS permanently; void --games added (5 games); game-content-writer; 35 agents, 14 divisions |
+| 2026-04-29 | **Editorial LLM stack moves to Claude Sonnet 4.6** (~$30/mo, was $0); pipeline cadence 2x/day → 1x/day; homepage feed 30 → 50; smart-routed Claude→Gemini; content-hash cache on top-50 post-rerank (migration 049); ephemeral prompt caching |
