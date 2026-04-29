@@ -82,11 +82,14 @@
   flex-shrink: 0;
 }
 
+/* The 7px lean text stacked under the Sigil ring is redundant with the
+   ring color itself — both encode the same political-lean signal. Hide
+   on mobile where viewport space is precious; the ring carries the
+   signal alone. Desktop renders Sigil at "lg" size where the inline
+   label has more readable proportions. */
 .msc__headline--hero .sigil__lean-label,
 .msc__headline--compact .sigil__lean-label {
-  font-size: 7px;
-  opacity: 0.5;
-  letter-spacing: 0.04em;
+  display: none;
 }
 
 .msc__summary {
