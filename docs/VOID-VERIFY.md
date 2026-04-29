@@ -1,5 +1,7 @@
 # void --verify — Claim Consensus
 
+Last updated: 2026-04-28 (rev 1)
+
 > *We don't tell you what's true. We show you who agrees.*
 
 Cross-source factual verification through NLP claim extraction, cluster-level corroboration scoring, and cinematic contradiction surfacing.

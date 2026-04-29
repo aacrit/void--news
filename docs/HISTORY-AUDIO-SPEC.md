@@ -1,5 +1,7 @@
 # void --history Audio Companion Spec
 
+Last updated: 2026-04-28 (rev 1)
+
 > Design doc. No implementation yet.
 
 ## 1. Format

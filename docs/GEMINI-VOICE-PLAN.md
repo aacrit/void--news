@@ -1,5 +1,7 @@
 # void --news — Gemini Voice & Editorial Intelligence
 
+Last updated: 2026-04-28 (rev 1)
+
 **Version:** 4.1 | **Updated:** 2026-04-19
 
 ---

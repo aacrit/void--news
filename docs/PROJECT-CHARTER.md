@@ -1,5 +1,7 @@
 # void --news — Project Charter
 
+Last updated: 2026-04-28 (rev 1)
+
 **Date:** 2026-04-03 (rev 7)
 **Project Owner:** Aacrit (CEO)
 **Status:** Phase 4 In Progress

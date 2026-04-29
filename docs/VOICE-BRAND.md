@@ -1,5 +1,7 @@
 # void --onair: Voice Brand Specification
 
+Last updated: 2026-04-28 (rev 1)
+
 > The broadcast voice of void --news. Every prompt, script, TTS preamble, and quality gate traces back to this document.
 
 ---

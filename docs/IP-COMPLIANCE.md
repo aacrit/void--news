@@ -1,5 +1,7 @@
 # IP & Legal Compliance Audit -- void --news
 
+Last updated: 2026-04-28 (rev 1)
+
 Date: 2026-03-18
 Auditor: Automated compliance review
 Scope: Content aggregation legality, competitor IP differentiation, trademark, open source licenses, data privacy

@@ -1,5 +1,7 @@
 # Database Quality Audit Framework
 
+Last updated: 2026-04-28 (rev 1)
+
 **Last Updated:** 2026-03-31
 **Status:** Read-Only Audit Framework
 

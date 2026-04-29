@@ -1,5 +1,7 @@
 # void --onair Musical Elements System
 
+Last updated: 2026-04-28 (rev 1)
+
 **Status:** SPECIFICATION -- awaiting CEO approval before implementation
 **Date:** 2026-03-28
 **Author:** audio-engineer
