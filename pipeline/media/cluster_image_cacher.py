@@ -144,7 +144,7 @@ def _best_article_image(cluster: dict) -> tuple[str, str]:
 def cache_cluster_images(
     clusters: list[dict],
     supabase_client,
-    top_n: int = 10,
+    top_n: int = 15,
 ) -> dict[str, str]:
     """
     Download og:images for the top-N clusters and re-serve from Supabase Storage.
@@ -152,7 +152,8 @@ def cache_cluster_images(
     Args:
         clusters: Full in-memory cluster list (with articles).
         supabase_client: Authenticated Supabase client.
-        top_n: Number of clusters to cache (default 10).
+        top_n: Number of clusters to cache (default 15 — buffer for the 50/50
+            lead split + future hero expansion without re-architecture).
 
     Returns:
         Dict mapping cluster_id → cached public URL for successfully cached clusters.

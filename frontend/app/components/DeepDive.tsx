@@ -16,6 +16,7 @@ import { findHistoryContext } from "../lib/historyContext";
 import Sigil from "./Sigil";
 import LogoIcon from "./LogoIcon";
 import DeepDiveSpectrum from "./DeepDiveSpectrum";
+import BiasSnapshot from "./BiasSnapshot";
 import type { DeepDiveSpectrumSource } from "./DeepDiveSpectrum";
 import ComparativeView from "./ComparativeView";
 import ClaimConsensusSection from "./ClaimConsensusSection";
@@ -1241,6 +1242,17 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             <span className="dot-separator" aria-hidden="true" />
             <span className="time-tag">{timeAgo(story.publishedAt)}</span>
           </div>
+
+          {/* Inline bias snapshot — keeps the moat above the fold by surfacing
+              the three primary axes (lean / rigor / opinion) immediately under
+              the headline, without claiming the sigil+spectrum's full block. */}
+          {story.sigilData && !story.sigilData.pending && (
+            <BiasSnapshot
+              data={story.sigilData}
+              sourceCount={sources.length > 0 ? sources.length : story.source.count}
+              variant="inline"
+            />
+          )}
         </header>
 
         {/* ---- Content (fades in after panel, fades out faster on close) ---- */}
