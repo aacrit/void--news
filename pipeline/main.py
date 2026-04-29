@@ -1347,6 +1347,40 @@ def main():
         # means coverage breadth and tier diversity signals are minimal).
         # Single-article clusters are only excluded for the lead gate (top-10
         # positions require 3+ sources, per the ranker's lead eligibility gate).
+        #
+        # An article is an orphan if it was passed into clustering but did not
+        # appear in any returned cluster. Causes: empty TF-IDF document
+        # (handled in story_cluster.py), AgglomerativeClustering edge cases,
+        # or a cluster_stories exception. Wrapping orphans here is the
+        # backstop that guarantees every reporting article reaches the
+        # frontend feed instead of becoming a database orphan with no
+        # cluster_articles row.
+        clustered_ids: set = set()
+        for c in clusters:
+            for aid in c.get("article_ids", []) or []:
+                if aid:
+                    clustered_ids.add(aid)
+        orphans = [
+            a for a in reporting_for_clustering
+            if a.get("id") and a["id"] not in clustered_ids
+        ]
+        for a in orphans:
+            article_id = a.get("id", "")
+            source_id = a.get("source_id", "")
+            singleton = {
+                "title": a.get("title") or "Developing Story",
+                "summary": a.get("summary", "") or (a.get("full_text", "") or "")[:500],
+                "article_ids": [article_id],
+                "source_ids": [source_id] if source_id else [],
+                "source_count": 1 if source_id else 0,
+                "section": a.get("section") or "world",
+                "first_published": a.get("published_at", "") or "",
+                "articles": [a],
+            }
+            clusters.append(singleton)
+        if orphans:
+            print(f"  Wrapped {len(orphans)} orphan articles into singleton clusters")
+
         single_source_count = sum(
             1 for c in clusters
             if c.get("source_count", len(c.get("article_ids", []))) < 2
