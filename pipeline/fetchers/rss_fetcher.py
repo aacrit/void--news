@@ -10,6 +10,13 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta, timezone
 
+import defusedxml
+# Harden Python's stdlib XML parsers (sax, etree, expat, pulldom, etc.) against
+# billion-laughs / external-entity attacks. feedparser falls back to several of
+# these when its preferred parser isn't available, so we route them through
+# defusedxml's safe replacements before any feed parsing happens.
+defusedxml.defuse_stdlib()
+
 import feedparser
 import requests
 
