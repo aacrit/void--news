@@ -210,10 +210,9 @@ def cleanup_old_memories(ttl_hours: int = 48) -> dict:
         ).execute()
         if old.data:
             old_ids = [r["id"] for r in old.data]
-            for mid in old_ids:
-                supabase.table("live_updates").delete().eq(
-                    "story_memory_id", mid
-                ).execute()
+            supabase.table("live_updates").delete().in_(
+                "story_memory_id", old_ids
+            ).execute()
             supabase.table("story_memory").delete().in_("id", old_ids).execute()
             deleted = len(old_ids)
     except Exception as e:
