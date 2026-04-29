@@ -1,5 +1,12 @@
-/** Base path for GitHub Pages deployment — must match next.config.ts basePath. */
-export const BASE_PATH = "/void--news";
+/**
+ * Base path for the deployed site — must match next.config.ts basePath.
+ *
+ * Defaults to /void--news (GitHub Pages project-repo path). Cloudflare
+ * Pages and custom-domain deployments set NEXT_PUBLIC_BASE_PATH="" in the
+ * build env, which Next.js inlines at compile time so the browser bundle
+ * sees the empty string at runtime.
+ */
+export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "/void--news";
 
 /**
  * Returns "Morning" or "Evening" based on the edition's regional time zone.
