@@ -1,7 +1,7 @@
 # void --news — Design System: "Cinematic Press" (Press & Precision v2)
 
-**Version:** 2.3
-**Last updated:** 2026-04-19 (rev 20)
+**Version:** 2.4
+**Last updated:** 2026-04-29 (rev 21 — $100B layout overhaul: LeadStorySplit, StoryCard variants, BiasSnapshot, layout-zones.css)
 
 ---
 
@@ -34,6 +34,18 @@ The newspaper earns trust through restraint. The data layer earns trust through 
 --text-lg:    clamp(1.0625rem, 0.95rem + 0.4vw, 1.3rem);         /* 17-21px: subheads */
 --text-xl:    clamp(1.25rem, 1.1rem + 0.6vw, 1.75rem);           /* 20-28px: headlines */
 --text-hero:  clamp(1.5rem, 1.3rem + 1.2vw, 3rem);               /* 24-48px: lead story */
+```
+
+### Newspaper Hierarchy Tokens (top-50 layout overhaul, 2026-04-29)
+
+Three-tier display scale separating LeadStory from digest (rank 1-9) and wire (rank 10+) cards. Lives in `tokens.css`; consumed via `data-variant` attribute on StoryCard.
+
+```css
+--type-lead-headline:    clamp(2.25rem, 1.5rem + 3vw, 4rem);   /* 36-64px: rank-0 hero */
+--type-digest-headline:  clamp(1.125rem, 1rem + 0.4vw, 1.375rem);/* 18-22px: rank 1-9 */
+--type-wire-headline:    0.875rem;                              /* 14px: rank 10+ */
+--type-lead-tracking:    -0.02em;
+--type-digest-tracking:  -0.01em;
 ```
 
 ### Tracking (letter-spacing)
@@ -247,6 +259,20 @@ This replaces the previous mix of hard-coded 1200px/1400px/1600px `max-width` ru
 ### Lead Photo Sizing
 
 Lead story photos use `clamp(360px, 48vh, 560px)` (was fixed 320px pre-Cycle 2). Shorter viewports crop gracefully; tall desktop displays earn a hero-sized image without busting the grid.
+
+### Layout Zones — `layout-zones.css` (Top-50 Scaffold)
+
+Single source of truth for the homepage feed grid + Deep Dive 2-col + image-text split. CSS Grid `grid-template-areas` instead of ad-hoc flex stacks.
+
+| Zone | Selector | Behavior |
+|---|---|---|
+| Lead split | `.lead-split` | 50/50 image-text grid (rank-0 with cached image). Single column at mobile. |
+| Feed grid | `.feed-grid` | `align-items: start; grid-auto-rows: max-content` — fixes ragged baselines when digest (22px) and wire (14px) cards share grid tracks at 1024-1279px. |
+| Wire grid | (in `desktop-feed.css`) | 5-col @ 1440+, 4-col @ 1024-1439 (was 5/4/3 — 5-col was too dense at 1024). |
+| Tablet step | `@media (768-1023px)` | Lead image cap `max-height: 480px`, flatten to 16:10 (was 4:5 only). |
+| BiasSnapshot inline | `.bias-snapshot--inline` | Horizontal strip in Deep Dive header: lean dot · rigor bar · opinion pill · source count. |
+| BiasSnapshot rail | `.bias-snapshot--rail` | Vertical compact column for Deep Dive right column (≥1280px). |
+| Deep Dive 2-col | `.dd-body--2col` | Body grid `1.7fr 1fr` @ 1280px, `1.6fr 1fr` @ 1440+. Single col below 1280px. (Was `2fr/1fr` — too tight on the rail.) |
 
 ### Desktop — "Broadsheet Grid"
 
@@ -562,9 +588,10 @@ Active components in `frontend/app/components/`:
 |-----------|---------|-------------------|
 | `BiasInspector` | "Press Analysis" 4-axis scorecard (Lean, Sensationalism, Factual Rigor, Framing). Three exports: `BiasInspectorInline` (rendered inline in Deep Dive, expanded via ▶ trigger — no dialog wrapper), `BiasInspectorTrigger` + `BiasInspectorPanel` (legacy pop-out, kept for backward compat). Each axis row is collapsible — expand for sub-scores + Gemini reasoning text. | Cluster-averaged across all sources |
 | `BiasLens` | Three Lenses bias visualization (Beam, Ring, Prism) | Primary -- used on all story cards and deep dive source list |
-| `StoryCard` | Standard story card with headline, summary, metadata, BiasLens | Inline BiasLens (sm) |
-| `LeadStory` | Hero story card, larger typography | Inline BiasLens (lg) |
-| `DeepDive` | Slide-in panel: FLIP morph open/close. "Read more" overflow detected via ResizeObserver; gradient overlay hidden when content fits (`dd-collapsible--fits`). `dd-analysis-row`: Sigil + `DeepDiveSpectrum` + "How was this scored?" trigger in one row on desktop, stacked on mobile. Press Analysis expands via `grid-template-rows 0fr→1fr`; expand panel max-height 60vh with overflow-y scroll. `ScoringMethodology` collapsible section ("How we score" — dl/dt/dd, 6 axes). Loading skeleton guard (sources.length === 0). Source Perspectives: 2-column Agreement\|Divergence grid (desktop), single column (mobile). Action buttons WCAG 44×44px. Open: `--spring-bouncy` 500ms (overshoot); Close: `--spring-snappy` 380ms (L-cut close 80ms). Content reveal 180ms desktop, 30ms mobile. Cinematic dramatic shadow, data-settled studio reflection. Backdrop blur 6px desktop, 2px mobile. iOS bottom-sheet. Panel `opacity:0` CSS safety + JS fallback 200ms opacity ramp. | Per-source BiasLens (sm) |
+| `StoryCard` | Standard story card with headline, summary, metadata, BiasLens. **`variant` prop (discriminated union: `"digest" \| "wire"`)** drives `data-variant` attribute → type scale (`--type-digest-headline` 18-22px / `--type-wire-headline` 14px). HomeContent assigns `digest` to ranks 1-9 and `wire` to rank 10+. | Inline BiasLens (sm) |
+| `LeadStory` | Hero story card, larger typography. **LeadStorySplit**: 50/50 image-text grid via `.lead-split` CSS classes when rank-0 has a cached image. Single column at mobile. Headline uses `--type-lead-headline` (36-64px clamp). | Inline BiasLens (lg) |
+| `BiasSnapshot` | Compact bias signal (added 2026-04-29). Two variants: **`inline`** — Deep Dive header strip (lean dot · rigor bar · opinion pill · source count), and **`rail`** — vertical compact column for Deep Dive right column at desktop ≥1280px. Reuses `getLeanColor` + `leanLabel` from `lib/biasColors.ts`. CSS in `layout-zones.css`. | Composite single-glance signal |
+| `DeepDive` | Slide-in panel: FLIP morph open/close. **BiasSnapshot inline strip below headline** (added 2026-04-29). **2-column body layout at desktop ≥1280px** via `.dd-body--2col` (1.7fr 1fr → 1.6fr 1fr at 1440+); single col below. "Read more" overflow detected via ResizeObserver; gradient overlay hidden when content fits (`dd-collapsible--fits`). `dd-analysis-row`: Sigil + `DeepDiveSpectrum` + "How was this scored?" trigger in one row on desktop, stacked on mobile. Press Analysis expands via `grid-template-rows 0fr→1fr`; expand panel max-height 60vh with overflow-y scroll. `ScoringMethodology` collapsible section ("How we score" — dl/dt/dd, 6 axes). Loading skeleton guard (sources.length === 0). Source Perspectives: 2-column Agreement\|Divergence grid (desktop), single column (mobile). Action buttons WCAG 44×44px. Open: `--spring-bouncy` 500ms (overshoot); Close: `--spring-snappy` 380ms (L-cut close 80ms). Content reveal 180ms desktop, 30ms mobile. Cinematic dramatic shadow, data-settled studio reflection. Backdrop blur 6px desktop, 2px mobile. iOS bottom-sheet. Panel `opacity:0` CSS safety + JS fallback 200ms opacity ramp. **Lazy-loads `verify.css`** (was global, ~50KB gzipped — now ships only with the dynamic-imported DeepDive chunk). | Per-source BiasLens (sm) + BiasSnapshot inline header strip |
 | `DeepDiveSpectrum` | Three toggleable lean visualization views (localStorage `void-spectrum-view`): **Ink Ridge** (KDE density curve SVG + positioned source logos), **Witness Line** (lean-positioned source dots on gradient track), **Terrain Map** (7-zone column layout). Logos positioned at exact `politicalLean` % (0-100). "+N more" expand button when >6 sources (COMPACT_LIMIT). Each logo is a link to the source article (opens in new tab). Tooltip on hover/focus: source name, lean label + colored dot, lean score, tier, "Click to read article". Spring-bouncy hover scale. Responsive: 26px logos desktop, 22px mobile. CSS: `dd-spectrum-*` classes in `spectrum.css`. | -- |
 | `HomeContent` | News feed container: edition switching (direction-aware whip pan via prevEditionRef tracking, URL sync via pushState), lean filter (LeanChip/LEAN_RANGES from types.ts), opinion mode, story grid | -- |
 | `OpEdPage` | Opinion/editorial feed view | -- |
@@ -602,7 +629,7 @@ Active components in `frontend/app/components/`:
 | `ShipBoard` | Feature request board for `/ship` page | -- |
 | `WeeklyDigest` | `/weekly` magazine page. No NavBar — own sticky topbar (`.wk-topbar`: back link + ThemeToggle, glass blur). Deep red palette (`--wk-accent: #B91C1C` light / `#EF5350` dark). Warmer paper (`#EDE4D0` light / `#1E1A16` dark). Film grain 3x, tighter vignette. Sections: red masthead, cover hero (drop cap, justified), timeline (horizontal desktop / vertical mobile), opinions (3-col lean grid, no card backgrounds), week in brief (2-col compact), inline audio, archive, footer. No MobileBottomNav. No collapsibles. | -- |
 
-**52 components total** (52 `.tsx` files). Added since last audit: `ClaimConsensusSection`, `ClaimMark`, `ConsensusBadge`, `CredibilityArc`, `FloatingPlayer`, `SearchOverlay`, `ShareCard`. Removed: `OnboardingSpotlight` (dead code, replaced by Film system), `AudioPlayer.tsx`, `BiasStamp.tsx`, `DotMatrix`, `BiasTooltip`, `UnifiedSummary`, `FilterBar.tsx` (lean chips moved to `types.ts`, dead CSS removed).
+**53 components total** (53 `.tsx` files). Added 2026-04-29: `BiasSnapshot` (inline+rail variants for Deep Dive). Earlier additions: `ClaimConsensusSection`, `ClaimMark`, `ConsensusBadge`, `CredibilityArc`, `FloatingPlayer`, `SearchOverlay`, `ShareCard`. Removed: `OnboardingSpotlight` (dead code, replaced by Film system), `AudioPlayer.tsx`, `BiasStamp.tsx`, `DotMatrix`, `BiasTooltip`, `UnifiedSummary`, `FilterBar.tsx` (lean chips moved to `types.ts`, dead CSS removed).
 
 ### Logo Animation Deployment
 
