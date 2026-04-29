@@ -128,10 +128,20 @@ export default function RootLayout({
         {/* Fonts loaded via next/font/google above — no additional font loads needed.
             Chomsky, IM Fell English, Old Standard TT, and Lora were removed:
             none are referenced in CSS. Saves 4 network requests. */}
-        {/* CSP: restrict script/connect/style/font/img sources */}
+        {/* CSP: restrict script/connect/style/font/img sources.
+            Note: frame-ancestors is ignored when delivered via <meta>
+            (CSP3 only honors it as a response header) — kept here for
+            documentation and for environments that proxy the directive
+            into a header. 'unsafe-inline' on script-src covers the inline
+            theme bootstrap below (lines ~155-169); upgrade to a sha256
+            hash if/when the inline body is frozen. connect-src includes
+            *.supabase.co — confirmed against frontend/app/lib/supabase.ts
+            (NEXT_PUBLIC_SUPABASE_URL is the *.supabase.co project URL,
+            no custom domain). cdn.jsdelivr.net intentionally NOT listed:
+            no scripts in this codebase load from jsdelivr. */}
         <meta
           httpEquiv="Content-Security-Policy"
-          content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co; media-src 'self' https://*.supabase.co; img-src 'self' data: https://*.google.com https://*.googleapis.com https://*.gstatic.com https://*.wikimedia.org https://*.supabase.co https://images.unsplash.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+          content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; font-src 'self' data:; connect-src 'self' https://*.supabase.co; media-src 'self' https://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
         />
         <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
         <meta httpEquiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
