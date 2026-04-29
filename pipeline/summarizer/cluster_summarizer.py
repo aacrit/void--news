@@ -1,16 +1,81 @@
 """
-Cluster-level headline and summary generation using Gemini Flash.
+Cluster-level headline and summary generation.
+
+Primary path: Claude Sonnet 4.6 via Anthropic API. Falls back to Gemini Flash
+if Anthropic is unavailable, then to rule-based generation.
 
 Minimizes API usage by only summarizing high-value clusters:
     - 3+ sources (2-source clusters use rule-based — sufficient quality)
     - Sorted by source_count descending (most-covered stories first)
     - Stops when the per-run call cap is reached
 
-Falls back to rule-based generation (existing pipeline behavior) when
-Gemini is unavailable, fails, or the cluster doesn't qualify.
+Content-hash caching: clusters whose article membership has not changed
+since their last Sonnet summary are skipped (no API call).
 """
 
-from .gemini_client import generate_json, is_available, calls_remaining
+import hashlib
+
+from .gemini_client import (
+    generate_json as gemini_generate_json,
+    is_available as gemini_is_available,
+    calls_remaining as gemini_calls_remaining,
+)
+from .claude_client import (
+    generate_json as claude_generate_json,
+    is_available as claude_is_available,
+    calls_remaining as claude_calls_remaining,
+)
+
+
+def _smart_generate_json(prompt: str,
+                          system_instruction: str | None = None,
+                          max_output_tokens: int = 8192,
+                          ) -> tuple[dict | None, str]:
+    """Try Claude first, fall back to Gemini. Returns (result, generator_label)."""
+    if claude_is_available():
+        result = claude_generate_json(
+            prompt,
+            system_instruction=system_instruction,
+            count_call=True,
+            max_output_tokens=max_output_tokens,
+        )
+        if result and isinstance(result, dict):
+            return result, "claude-sonnet"
+    if gemini_is_available():
+        result = gemini_generate_json(
+            prompt,
+            system_instruction=system_instruction,
+            count_call=True,
+            max_output_tokens=max_output_tokens,
+        )
+        if result and isinstance(result, dict):
+            return result, "gemini-flash"
+    return None, "none"
+
+
+def _content_hash(articles: list[dict]) -> str:
+    """
+    Hash of cluster's article membership. Used to skip re-summarization
+    when nothing has changed since the last successful Sonnet call.
+    """
+    ids = sorted(str(a.get("id") or a.get("article_id") or "") for a in articles if a)
+    return hashlib.sha256(("|".join(ids) + f"|{len(ids)}").encode("utf-8")).hexdigest()
+
+
+# Backwards-compatible aliases used by existing callsites in this module.
+# Existing code calls generate_json() / is_available() / calls_remaining()
+# without knowing which provider answered.
+def generate_json(prompt, system_instruction=None, max_retries=1, count_call=True, max_output_tokens=8192):
+    result, _ = _smart_generate_json(prompt, system_instruction=system_instruction, max_output_tokens=max_output_tokens)
+    return result
+
+def is_available():
+    return claude_is_available() or gemini_is_available()
+
+def calls_remaining():
+    if claude_is_available():
+        return claude_calls_remaining()
+    return gemini_calls_remaining()
 
 # Import shared prohibited terms — single canonical source.
 try:
@@ -815,3 +880,140 @@ def summarize_clusters_batch(clusters: list[dict],
     # Return only pool-1 indices that were attempted but failed — circuit-breaker
     # skipped indices are NOT cleared (their rule-based summaries stay as fallback).
     return results, attempted_pool1 - results.keys()
+
+
+def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 50) -> dict:
+    """
+    Single-pass post-rerank summarization for the final feed top N.
+
+    Reads the top-N clusters by rank_{edition} from Supabase, fetches their
+    article membership, and calls Claude (via _smart_generate_json) for any
+    cluster whose content_hash has changed since its last Sonnet summary.
+
+    Cache logic:
+        - hash matches stored summary_article_hash AND summary_tier='sonnet'
+          → skip (no API call)
+        - else → call LLM, write summary + consensus + divergence + hash + tier
+          back to story_clusters
+
+    Op-eds (_is_opinion=True equivalent: opinion_count check or content_type)
+    and clusters with <3 articles are skipped — both preserve original voice
+    or lack the source diversity for synthesis.
+
+    Returns metrics dict:
+        {summarized: int, cached: int, skipped: int, failed: int,
+         updated_ids: list[str], updated_summaries: dict[str, dict]}
+    """
+    rank_col = f"rank_{edition.replace('-', '_')}"
+
+    metrics = {
+        "summarized": 0,
+        "cached": 0,
+        "skipped": 0,
+        "failed": 0,
+        "updated_ids": [],
+        "updated_summaries": {},
+    }
+
+    try:
+        rank_res = (
+            supabase.table("story_clusters")
+            .select("id, content_type, source_count, summary_article_hash, summary_tier")
+            .contains("sections", [edition])
+            .order(rank_col, desc=True)
+            .limit(limit)
+            .execute()
+        )
+    except Exception as e:
+        print(f"  [warn] summarize_top50_after_rerank: top-{limit} fetch failed: {e}")
+        return metrics
+
+    rows = rank_res.data or []
+    if not rows:
+        return metrics
+
+    cluster_ids = [r["id"] for r in rows]
+    try:
+        link_res = (
+            supabase.table("cluster_articles")
+            .select("cluster_id, article_id")
+            .in_("cluster_id", cluster_ids)
+            .execute()
+        )
+    except Exception as e:
+        print(f"  [warn] summarize_top50_after_rerank: cluster_articles fetch failed: {e}")
+        return metrics
+
+    by_cluster: dict[str, list[str]] = {}
+    for link in (link_res.data or []):
+        by_cluster.setdefault(link["cluster_id"], []).append(link["article_id"])
+
+    all_article_ids = sorted({aid for ids in by_cluster.values() for aid in ids})
+    articles_by_id: dict[str, dict] = {}
+    for i in range(0, len(all_article_ids), 200):
+        batch = all_article_ids[i:i + 200]
+        try:
+            art_res = (
+                supabase.table("articles")
+                .select("id, title, summary, full_text, source_id, published_at, url")
+                .in_("id", batch)
+                .execute()
+            )
+            for art in (art_res.data or []):
+                articles_by_id[art["id"]] = art
+        except Exception as e:
+            print(f"  [warn] summarize_top50_after_rerank: articles fetch failed: {e}")
+            return metrics
+
+    for row in rows:
+        cid = row["id"]
+        article_ids = by_cluster.get(cid, [])
+        if len(article_ids) < 3:
+            metrics["skipped"] += 1
+            continue
+        if (row.get("content_type") or "").lower() == "opinion":
+            metrics["skipped"] += 1
+            continue
+
+        articles = [articles_by_id[aid] for aid in article_ids if aid in articles_by_id]
+        if len(articles) < 3:
+            metrics["skipped"] += 1
+            continue
+
+        h = _content_hash(articles)
+        if h == row.get("summary_article_hash") and row.get("summary_tier") == "sonnet":
+            metrics["cached"] += 1
+            continue
+
+        result = summarize_cluster(articles)
+        if not result:
+            metrics["failed"] += 1
+            continue
+
+        update_payload = {
+            "title": result["headline"],
+            "summary": result["summary"],
+            "summary_article_hash": h,
+            "summary_tier": "sonnet",
+        }
+        if result.get("consensus"):
+            update_payload["consensus_points"] = result["consensus"]
+        if result.get("divergence"):
+            update_payload["divergence_points"] = result["divergence"]
+        if result.get("editorial_importance") is not None:
+            update_payload["editorial_importance"] = result["editorial_importance"]
+        if result.get("story_type") is not None:
+            update_payload["story_type"] = result["story_type"]
+        if result.get("has_binding_consequences") is not None:
+            update_payload["has_binding_consequences"] = result["has_binding_consequences"]
+
+        try:
+            supabase.table("story_clusters").update(update_payload).eq("id", cid).execute()
+            metrics["summarized"] += 1
+            metrics["updated_ids"].append(cid)
+            metrics["updated_summaries"][cid] = result
+        except Exception as e:
+            print(f"  [warn] summarize_top50_after_rerank: DB update failed for {cid}: {e}")
+            metrics["failed"] += 1
+
+    return metrics
