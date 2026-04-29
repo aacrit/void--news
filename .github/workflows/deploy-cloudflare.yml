@@ -50,12 +50,21 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: cd frontend && npm run build
 
+      # wrangler 3.x in non-TTY mode does NOT auto-create Pages projects;
+      # `pages deploy` errors with code 8000007 if the project is missing.
+      # Pre-create it idempotently — `continue-on-error` swallows the
+      # "already exists" error on every run after the first.
+      - name: Ensure Cloudflare Pages project exists
+        continue-on-error: true
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages project create void-news --production-branch main
+
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          # `pages deploy` creates the project on first run if it doesn't
-          # exist. --branch=main is what Cloudflare Pages calls the
-          # production branch (separate from this workflow's git branch).
           command: pages deploy frontend/out --project-name=void-news --branch=main --commit-dirty=true
