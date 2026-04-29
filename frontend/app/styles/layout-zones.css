@@ -55,6 +55,16 @@
 .lead-split > [data-slot="image"] { grid-area: lead-image; }
 .lead-split > [data-slot="text"]  { grid-area: lead-text; }
 
+/* Tablet step (768-1023px): keep stacked image-then-text but cap the image
+   height — at 100vw a 4:5 portrait runs ~600-720px tall and steals the
+   entire fold. minmax via aspect-ratio + max-height bounds it. */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  .lead-split__image-frame {
+    max-height: 480px;
+    aspect-ratio: 16 / 10;  /* relax from 4:5 → 16:10 — flatter at tablet */
+  }
+}
+
 @media (min-width: 1024px) {
   .lead-split {
     grid-template-columns: minmax(380px, 430px) 1fr;
@@ -141,6 +151,15 @@
 
 /* No image in wire — give the headline a small breathing boost in line-height
    so the column reads as editorial, not as a wire ticker. */
+
+/* Feed grid — when ranks 1-9 (digest, 22px) and ranks 10+ (wire, 14px) share
+   the same grid tracks at 1024-1279px, mixed row heights cause uneven
+   baselines and ragged column tops. align row tops, let each card height
+   fit content. */
+.feed-grid {
+  align-items: start;
+  grid-auto-rows: max-content;
+}
 
 
 /* ==========================================================================
@@ -283,7 +302,10 @@
 @media (min-width: 1280px) {
   .deep-dive-panel__content {
     display: grid;
-    grid-template-columns: 2fr 1fr;
+    /* Relax to 1.7fr / 1fr at the entry breakpoint — at 1280px the panel
+       is ~1120px wide and a strict 2fr/1fr made the right rail ~370px,
+       which compressed the DeepDiveSpectrum source bars unreadably. */
+    grid-template-columns: 1.7fr 1fr;
     grid-template-areas:
       "main rail";
     gap: var(--space-6, 2rem);
@@ -313,6 +335,15 @@
   /* Tighten the analysis-block padding at desktop — it lives in a narrower rail */
   .dd-analysis-block {
     padding: var(--space-4, 1rem) 0;
+  }
+}
+
+@media (min-width: 1440px) {
+  .deep-dive-panel__content {
+    /* At 1440px+ we have headroom — push the rail wider (1.6fr / 1fr) so
+       the spectrum and sigil get more breathing room without starving
+       the summary column. */
+    grid-template-columns: 1.6fr 1fr;
   }
 }
 

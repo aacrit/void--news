@@ -1,5 +1,10 @@
 "use client";
 
+// Route-scoped CSS — bundled with Deep Dive chunk, ships only when this
+// component loads (lazily on the homepage). Removes ~50KB gzipped from
+// the initial homepage bundle.
+import "../styles/verify.css";
+
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   ArrowLeft,

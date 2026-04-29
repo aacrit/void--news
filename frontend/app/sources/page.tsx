@@ -1,5 +1,9 @@
 "use client";
 
+// Route-scoped CSS — sources page is the only consumer of spectrum.css.
+// Moving the import here removes ~80KB gzipped from globals/homepage bundle.
+import "../styles/spectrum.css";
+
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import Link from "next/link";
 import type { Edition } from "../lib/types";
