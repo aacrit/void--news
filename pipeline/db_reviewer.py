@@ -34,12 +34,17 @@ from utils.supabase_client import supabase
 SOURCES_PATH = Path(__file__).parent.parent / "data" / "sources.json"
 
 
-def _fetch_all(table: str, columns: str = "*", page: int = 1000) -> list:
+def _fetch_all(table: str, columns: str = "*", page: int = 500, order_by: str = "id") -> list:
     """Paginate Supabase fetches past the per-request row cap.
 
     PostgREST returns at most ~1000 rows per call (project-configurable),
     so a bare .execute() silently truncates large tables. Every audit that
     needs the full table must page through with .range().
+
+    Page size 500 keeps per-request runtime under Supabase's default 8-second
+    statement timeout even on the largest tables (articles, bias_scores).
+    The explicit order is required for correctness — without it PostgREST
+    can repeat or skip rows across .range() pages.
     """
     rows: list = []
     start = 0
@@ -47,6 +52,7 @@ def _fetch_all(table: str, columns: str = "*", page: int = 1000) -> list:
         batch = (
             supabase.table(table)
             .select(columns)
+            .order(order_by)
             .range(start, start + page - 1)
             .execute()
             .data
@@ -361,7 +367,7 @@ class DataQualityAuditor:
             return {}
 
         # Fetch cluster_articles junction + article→source map for distinct-source counts
-        cluster_articles = _fetch_all("cluster_articles", "cluster_id,article_id")
+        cluster_articles = _fetch_all("cluster_articles", "cluster_id,article_id", order_by="cluster_id")
         article_source_map = {a["id"]: a["source_id"] for a in _fetch_all("articles", "id,source_id")}
         articles_per_cluster = defaultdict(list)
         sources_per_cluster: dict = defaultdict(set)
@@ -626,7 +632,7 @@ class DataQualityAuditor:
 
         articles = {a["id"] for a in _fetch_all("articles", "id")}
         clusters = {c["id"] for c in _fetch_all("story_clusters", "id")}
-        cluster_articles = _fetch_all("cluster_articles", "cluster_id,article_id")
+        cluster_articles = _fetch_all("cluster_articles", "cluster_id,article_id", order_by="cluster_id")
         bias_scores = _fetch_all("bias_scores", "article_id")
 
         score = 10
