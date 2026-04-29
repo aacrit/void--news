@@ -1,6 +1,6 @@
 # void --news Agent Team Structure
 
-Last updated: 2026-04-29 (rev 26 — Sonnet 4.6 editorial LLM stack)
+Last updated: 2026-04-29 (rev 27 — Sonnet 4.6 editorial LLM stack + layout-zones.css scaffold under Frontend Division)
 
 ## Philosophy
 
@@ -65,6 +65,9 @@ Cinematic Division agents (cinematographer, motion-director, vfx-artist) are als
 | Tier 0 (foundation) | **Shipped** | `--canvas-max`, scroll-compact masthead, lead photo clamp, Deep Dive double-defocus fix, mobile reclaim |
 | Tier 1 (polish) | **Shipped** | `anim-stagger` IO-replay safe, dead CSS sweep, 3/5-col `/ship` Kanban, hardcoded widths → `var(--canvas-max)` |
 | Tier 2 (motion) | **Shipped** | Press states, card lift on hover, gesture inertia, 496 bare easings → tokens across 18 CSS files |
+| $100B Layout Overhaul (2026-04-29) | **Shipped** | LeadStorySplit 50/50, StoryCard `variant=digest\|wire`, BiasSnapshot inline+rail, Deep Dive 2-col body, `layout-zones.css` Grid scaffold, type scale tokens (lead/digest/wire) |
+| Lighthouse Polish (2026-04-29) | **Shipped** | WebP at upload (Pillow ~=11, q82, 25-35% LCP shrink), spectrum.css + verify.css route-scoped (~130KB gzipped off homepage), tablet/wire-grid/Deep-Dive-rail breakpoint surgical fixes |
+| Cloudflare Pages parallel deploy (2026-04-29) | **Scaffolded** | `_headers`, `deploy-cloudflare.yml`, `NEXT_PUBLIC_BASE_PATH` env contract. Awaits `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` secrets |
 | Tier 3 (cinematic depth) | Pending | |
 | Tier 4 (hero overhaul) | Pending | |
 
@@ -96,9 +99,9 @@ Narrative-engineer pass: 25 YAML event files rewritten Show-Don't-Tell + Arrive 
 
 | Agent | Purpose | Write | Trigger |
 |---|---|---|---|
-| `frontend-builder` | Press & Precision component engineering | Yes | Feature requests |
+| `frontend-builder` | Press & Precision component engineering. Owns `layout-zones.css` Grid scaffold (LeadStorySplit, BiasSnapshot inline+rail, Deep Dive 2-col body, feed-grid baseline rules). | Yes | Feature requests |
 | `frontend-fixer` | UI bug remediation — bias display, layout, animation, a11y | Yes | Bug reports |
-| `responsive-specialist` | Desktop/mobile, light/dark | Yes | New components, responsive bugs |
+| `responsive-specialist` | Desktop/mobile, light/dark. Co-owns `layout-zones.css` breakpoint surgical fixes (tablet 768-1023px lead image cap, wire grid 4↔5 cols, Deep Dive 2-col `1.7fr/1.6fr` ratios). | Yes | New components, responsive bugs |
 | `uat-tester` | Browser testing, screenshots | No | After frontend changes |
 
 ### Pipeline Division

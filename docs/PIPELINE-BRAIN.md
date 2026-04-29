@@ -1,6 +1,6 @@
 # void --news Pipeline Brain
 
-Last updated: 2026-04-29 (rev 5, all-Sonnet stack + post-rerank single-pass top-50 cache)
+Last updated: 2026-04-29 (rev 6, all-Sonnet stack + post-rerank single-pass top-50 cache + WebP image cache)
 
 Reference for every intelligent system in the pipeline: bias, clustering, ranking, summarization, editorial triage, memory, audio.
 
@@ -131,7 +131,14 @@ Reference for every intelligent system in the pipeline: bias, clustering, rankin
                                       Op-eds and clusters with <3 articles skipped.
                                       Syncs in-memory clusters with fresh summaries so brief regen
                                       reads post-rerank text.
-  [8e] CACHE CLUSTER IMAGES           Supabase Storage (bypasses CDN hotlink protection); top 10.
+  [8e] CACHE CLUSTER IMAGES           Supabase Storage (bypasses CDN hotlink protection); top_n=15
+                                      (was 10 — buffer for the 50/50 LeadStorySplit + early digest cards).
+                                      WebP conversion via Pillow ~=11 at quality 82 before upload
+                                      (Sprint B Lighthouse polish, 2026-04-29). Drops alpha to RGB
+                                      flatten on white when source is RGBA/LA/P. Falls back to original
+                                      payload when conversion fails or doesn't shrink the file.
+                                      Migration-safe: removes any stale .jpg/.jpeg/.png/.webp at the
+                                      same cluster_id slot. Typical 25-35% size reduction on photos.
 
 
                             ENRICHMENT
