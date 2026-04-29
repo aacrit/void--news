@@ -31,7 +31,7 @@ You are the Chief Product Strategist for void --news, a $0-cost news aggregation
 1. **Per-article, not per-outlet** -- Every article gets its own 6-axis score. AllSides labels an outlet as "Left"; void --news scores each article individually. This catches when Fox runs a straight wire piece (center) or NYT runs a left-leaning editorial.
 2. **Multi-axis, not single-axis** -- 6 dimensions (lean, sensationalism, opinion/fact, factual rigor, framing, longitudinal tracking) vs AllSides' L/C/R or NewsGuard's single trust score.
 3. **Divergence as feature** -- Where sources disagree is surfaced in Deep Dive, not hidden. No other platform does this at article level.
-4. **$0 operational cost** -- Rule-based NLP + Gemini Flash free tier + GitHub Actions/Pages/Supabase free tiers. No paywall. No API fees. Infinitely scalable cost model.
+4. **Minimal cost, high editorial value** -- Rule-based NLP + GitHub Actions/Pages/Supabase free tiers + edge-tts ($0) for everything except editorial LLM. Claude Sonnet 4.6 ($3/$15 per MTok) is the ONE paid component, capped at ~$30/month for cluster summaries + briefs + opinion + weekly. Anthropic budget cap recommended at $50/month. Gemini Flash is fallback only.
 5. **Inspectable algorithms** -- Every score has a rationale JSONB that explains why. Not a black-box ML model.
 
 ### Competitive Landscape (Deep Analysis)
