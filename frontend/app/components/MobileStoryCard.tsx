@@ -79,20 +79,25 @@ export default function MobileStoryCard({
           <h3 className="msc__headline msc__headline--compact">
             <span>{story.title}</span>
           </h3>
-          <div className="msc__sigil-row">
-            <span
-              className="msc__lean-dot"
-              style={{ "--lean-dot-color": story.sigilData.unscored ? undefined : getLeanColor(story.sigilData.politicalLean) } as React.CSSProperties}
-              aria-hidden="true"
-            />
-            {/* Lean text removed when scored — the dot color already encodes lean.
-                Only render the explicit label when unscored, where the absence
-                of color carries no signal. Per feedback_bias_indicator_priorities. */}
-            {story.sigilData.unscored && (
-              <span className="msc__lean-label">unscored</span>
-            )}
-            {story.category && <span className="msc__cat">{story.category}</span>}
-          </div>
+          {/* Skip the entire row when it would render as just an orphaned
+              8px dot (scored cluster with no category). With no companion
+              text/pill, the dot looks like a CSS bug. */}
+          {(story.sigilData.unscored || story.category) && (
+            <div className="msc__sigil-row">
+              <span
+                className="msc__lean-dot"
+                style={{ "--lean-dot-color": story.sigilData.unscored ? undefined : getLeanColor(story.sigilData.politicalLean) } as React.CSSProperties}
+                aria-hidden="true"
+              />
+              {/* Lean text removed when scored — the dot color already encodes lean.
+                  Only render the explicit label when unscored, where the absence
+                  of color carries no signal. Per feedback_bias_indicator_priorities. */}
+              {story.sigilData.unscored && (
+                <span className="msc__lean-label">unscored</span>
+              )}
+              {story.category && <span className="msc__cat">{story.category}</span>}
+            </div>
+          )}
           {story.summary?.trim() && <p className="msc__summary msc__summary--compact">{story.summary}</p>}
         </>
       )}

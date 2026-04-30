@@ -1218,21 +1218,12 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             </button>
           </div>
 
-          {/* Hero image — cinematic front-page photograph */}
-          {heroImageUrl && !heroImgError && (
-            <div className={`dd-hero-image${heroImgLoaded ? " dd-hero-image--loaded" : ""}`}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={heroImageUrl}
-                alt=""
-                className="dd-hero-image__img"
-                loading="eager"
-                onLoad={() => setHeroImgLoaded(true)}
-                onError={() => setHeroImgError(true)}
-              />
-              <div className="dd-hero-image__grade" aria-hidden="true" />
-            </div>
-          )}
+          {/* Hero image removed 2026-04-29: the user already saw it on the
+              homepage card before clicking through. In Deep Dive it stole top
+              fold from the actual moat (summary + bias breakdown) and added
+              no analytical value. Image fetch state retained but unused — the
+              fetch is cheap enough to leave in place for a possible future
+              "open photo on click" affordance. */}
 
           <h2 className="dd-headline">
             {story.title}
