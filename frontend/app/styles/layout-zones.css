@@ -178,16 +178,19 @@
 /* ---- Inline variant — horizontal strip ----------------------------- */
 
 .bias-snapshot--inline {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: var(--space-2);
   flex-wrap: wrap;
+  row-gap: var(--space-1);
   margin-top: var(--space-2);
   padding: var(--space-2) 0;
   border-top: 1px solid var(--border-subtle);
   border-bottom: 1px solid var(--border-subtle);
   width: 100%;
-  max-height: 64px;          /* "28px tall" target — caps to avoid wrap blowups */
+  /* No max-height — at 375px the strip wraps to 2 rows and the previous
+     64px cap silently clipped the last chip (Type pill + source count).
+     Tight row-gap keeps the wrapped strip compact without losing data. */
 }
 
 .bias-snapshot--inline .bias-snapshot__chip {
@@ -287,64 +290,21 @@
 
 
 /* ==========================================================================
-   Deep Dive — 2-column desktop layout
+   Deep Dive — single column flow
    ----------------------------------------------------------------------------
-   At desktop ≥1280px, restructure the deep-dive-panel__content into a
-   2/3-LEFT / 1/3-RIGHT grid. The summary (the moat) lands on the left where
-   the eye begins reading; the dd-analysis-block (sigil + spectrum) becomes
-   a sticky right rail so the bias visualization stays in view as the user
-   scrolls the long summary.
+   The 2-column "summary left, sigil+spectrum right rail" layout was reverted
+   2026-04-29: the right rail at 1280px was ~370px wide and forced the
+   DeepDiveSpectrum's horizontal source-bar chart + multi-color source list
+   to render compressed and overlapping with the summary text on the left.
 
-   Mobile + tablet (<1280px) keeps the existing single-column flow — no
-   visual change, minimum risk to mobile users.
+   New approach: keep a single-column flow at every viewport. Moat protection
+   comes from the BiasSnapshot inline strip directly under the headline (lean
+   dot · rigor bar · opinion pill · source count) — that gives the reader the
+   three primary axes at a glance above the fold without forcing the heavy
+   spectrum visualization into a narrow column where it can't render.
+
+   The full DeepDiveSpectrum and Six Lenses live below the summary at full
+   width where they have room to breathe.
    ========================================================================== */
-
-@media (min-width: 1280px) {
-  .deep-dive-panel__content {
-    display: grid;
-    /* Relax to 1.7fr / 1fr at the entry breakpoint — at 1280px the panel
-       is ~1120px wide and a strict 2fr/1fr made the right rail ~370px,
-       which compressed the DeepDiveSpectrum source bars unreadably. */
-    grid-template-columns: 1.7fr 1fr;
-    grid-template-areas:
-      "main rail";
-    gap: var(--space-6, 2rem);
-    align-items: start;
-  }
-
-  /* dd-analysis-block (sigil + spectrum) becomes the right rail */
-  .deep-dive-panel__content > .dd-analysis-block {
-    grid-area: rail;
-    grid-row: 1 / span 99;       /* stretches across all left-column rows */
-    align-self: start;
-    position: sticky;
-    top: var(--space-4, 1rem);
-    margin-bottom: 0;
-  }
-
-  /* Everything else flows in the left column under "main" */
-  .deep-dive-panel__content > :not(.dd-analysis-block) {
-    grid-column: main;
-  }
-
-  /* Loading skeleton spans full width while data fetches */
-  .deep-dive-panel__content > .dd-loading-skeleton {
-    grid-column: 1 / -1;
-  }
-
-  /* Tighten the analysis-block padding at desktop — it lives in a narrower rail */
-  .dd-analysis-block {
-    padding: var(--space-4, 1rem) 0;
-  }
-}
-
-@media (min-width: 1440px) {
-  .deep-dive-panel__content {
-    /* At 1440px+ we have headroom — push the rail wider (1.6fr / 1fr) so
-       the spectrum and sigil get more breathing room without starving
-       the summary column. */
-    grid-template-columns: 1.6fr 1fr;
-  }
-}
 
 
