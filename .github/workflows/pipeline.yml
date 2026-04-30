@@ -1,12 +1,15 @@
 name: News Pipeline
+
+permissions: {}
+
 on:
   schedule:
-    # 4x daily, every 6 hours — all editions each run.
-    # Covers morning + evening for US, India, and EU simultaneously.
-    - cron: '0 0 * * *'      # 00:00 UTC — US evening (7 PM ET), India morning (5:30 AM IST)
-    - cron: '0 6 * * *'      # 06:00 UTC — EU morning (7 AM CET), India midday (11:30 AM IST)
-    - cron: '0 12 * * *'     # 12:00 UTC — US morning (7 AM ET), India evening (5:30 PM IST)
-    - cron: '0 18 * * *'     # 18:00 UTC — US afternoon (1 PM ET), EU evening (7 PM CET)
+    # 1x daily, anchored to Chicago (CDT = UTC-5).
+    # 11:00 UTC = 6 AM Chicago — pipeline finishes by ~11:30 UTC (~25-35 min)
+    # so fresh feed lands by 6:30 AM CT. Captures overnight wire + UK/EU
+    # morning + AP/Reuters morning desk + US East Coast pre-market.
+    # ~50 Sonnet calls + 1 brief + 1 opinion = ~$1/day at Anthropic Sonnet 4.6 rates.
+    - cron: '0 11 * * *'     # 11:00 UTC — 6 AM Chicago, 4:30 PM IST, 1 PM CET, 12 PM London
   workflow_dispatch:
     inputs:
       editions:
@@ -55,28 +58,31 @@ jobs:
       - name: Download spaCy model
         if: ${{ !inputs.brief_only && steps.spacy-cache.outputs.cache-hit != 'true' }}
         run: python -m spacy download en_core_web_sm
+      - name: Validate editions input
+        if: ${{ inputs.editions != '' }}
+        run: |
+          if [[ ! "${{ inputs.editions }}" =~ ^[a-z,]+$ ]]; then
+            echo "::error::Invalid editions input. Only lowercase letters and commas allowed."
+            exit 1
+          fi
       - name: Determine editions from schedule
         id: editions
         run: |
           if [ -n "${{ inputs.editions }}" ]; then
             echo "filter=${{ inputs.editions }}" >> $GITHUB_OUTPUT
           else
-            # All editions run on every scheduled trigger (4x daily)
+            # All editions run on every scheduled trigger (2x daily)
             echo "filter=" >> $GITHUB_OUTPUT
           fi
-      - name: Setup Google Cloud TTS credentials
-        if: env.GOOGLE_CLOUD_TTS_KEY != ''
-        env:
-          GOOGLE_CLOUD_TTS_KEY: ${{ secrets.GOOGLE_CLOUD_TTS_KEY }}
-        run: |
-          echo "$GOOGLE_CLOUD_TTS_KEY" > /tmp/gcloud-tts-sa.json
-          echo "GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcloud-tts-sa.json" >> $GITHUB_ENV
       - name: Regenerate daily brief only
         if: ${{ inputs.brief_only }}
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          DISABLE_GEMINI_REASONING: "1"
+          DISABLE_EDITORIAL_TRIAGE: "1"
         run: |
           EDITIONS="${{ steps.editions.outputs.filter }}"
           ARGS=""
@@ -92,8 +98,11 @@ jobs:
         if: ${{ !inputs.brief_only }}
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          DISABLE_GEMINI_REASONING: "1"
+          DISABLE_EDITORIAL_TRIAGE: "1"
         run: |
           EDITIONS="${{ steps.editions.outputs.filter }}"
           if [ -n "$EDITIONS" ]; then

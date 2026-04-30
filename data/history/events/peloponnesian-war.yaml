@@ -1,0 +1,593 @@
+slug: peloponnesian-war
+title: The Peloponnesian War
+subtitle: Thucydides watched Athens destroy itself, and wrote both sides
+date_display: 431-404 BCE
+date_sort: -431
+date_precision: year
+era: ancient
+region: europe
+country: Greece
+category: war
+severity: major
+death_toll: No reliable aggregate figure; the Plague of Athens alone killed an estimated 75,000-100,000 (roughly one-quarter of the population); Melos lost its entire male population to execution; Sicily
+  expedition killed ~40,000 Athenians and allies
+affected_population: The entire Greek world — an estimated 2-4 million people across hundreds of poleis drawn into the conflict or affected by its economic disruption
+duration: 27 years (431-404 BCE), with an unstable peace (the Peace of Nicias, 421-415 BCE) dividing the war into two phases
+hero_image_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/peloponnesian-war/pexels_1.jpg
+hero_image_attribution: Marsyas, CC BY-SA 3.0, via Wikimedia Commons
+summary: 'In the summer of 431 BCE, a Theban force of 300 men entered the city of Plataea at night, invited by a faction within the walls. The Plataeans discovered them, barricaded the streets, and killed
+  or captured 180 of the intruders. Thebes was Sparta''s ally; Plataea was Athens''s. The attack triggered the general war that Thucydides, an Athenian general who would later be exiled for losing a battle,
+  spent the rest of his life recording.
+
+
+  The two sides were structurally mismatched. Athens controlled the sea. Its navy of 300 triremes, each requiring 170 oarsmen, dominated the Aegean and protected a maritime empire of roughly 150 tribute-paying
+  allies — the Delian League — that generated 600 talents of silver per year. Sparta controlled the land. Its army of 8,000-10,000 full Spartan citizens (Spartiates), trained from age seven in the agoge
+  system, was the most feared infantry force in Greece. Each side attacked where the other was weakest. Sparta invaded Attica and burned the crops. Athens withdrew behind the Long Walls — two parallel fortifications
+  connecting the city to its port at Piraeus, five miles away — and relied on imported grain shipped through the empire.
+
+
+  Pericles, Athens''s leading statesman, had calculated that the city could outlast Sparta''s annual invasions by avoiding a pitched land battle. The strategy collapsed not from military failure but from
+  disease. In 430 BCE, plague — possibly typhoid fever or smallpox, still debated — broke out in the overcrowded city. Over four years it killed an estimated one-quarter of the population, including Pericles
+  himself in 429 BCE. Thucydides, who contracted the plague and survived, recorded its symptoms with clinical precision: fever, vomiting, ulceration of the skin, "an intolerable burning" inside, memory
+  loss among survivors. His description remains the oldest detailed account of an epidemic in Western literature.
+
+
+  The war''s first phase ended with the Peace of Nicias in 421 BCE, but the treaty was never fully honored. In 416 BCE, Athens demanded that the island of Melos — a Spartan colony that had remained neutral
+  — submit to Athenian rule. The Melians refused. Athens besieged the island, executed all adult men, enslaved the women and children, and colonized the site. Thucydides recorded the negotiation as a dialogue
+  — the Melian Dialogue — in which the Athenian envoys told the Melians: "The strong do what they can; the weak suffer what they must." No appeal to justice or the gods would change the calculus of power.
+
+
+  One year later, Athens launched the Sicily expedition — the largest military operation in Greek history to that point. 134 triremes and roughly 30,000 men sailed west to conquer Syracuse. The campaign
+  was championed by Alcibiades, the brilliant and reckless protege of Socrates, who was recalled from the expedition to face charges of sacrilege and defected to Sparta instead. Without Alcibiades, the
+  campaign stalled. Syracuse, reinforced by Spartan general Gylippus, destroyed the Athenian fleet in the Great Harbor and annihilated the retreating army at the Assinarus River in September 413 BCE. Of
+  the 40,000 Athenians and allies who had sailed to Sicily, fewer than a few thousand returned. The survivors were imprisoned in the limestone quarries of Syracuse, where most died of disease and exposure.
+
+
+  Athens fought on for nine more years, rebuilding its fleet twice, but the strategic balance had shifted. Sparta secured Persian gold — the empire Athens had once united Greece to fight — in exchange for
+  surrendering Greek cities in Ionia to Persian control. Lysander, Sparta''s most effective admiral, destroyed the last Athenian fleet at Aegospotami in 405 BCE. Athens surrendered in 404 BCE. Sparta dismantled
+  the Long Walls, dissolved the empire, and installed the Thirty Tyrants, an oligarchic regime that executed 1,500 Athenians in eight months before being overthrown.
+
+  '
+significance: 'The Peloponnesian War ended Athenian dominance in Greece and weakened the entire Greek world to the point where it was conquered by Macedon within 66 years of the war''s end. Thucydides''s
+  account — deliberately written "as a possession for all time, not a prize composition to be heard for the moment" — became the foundational text of Western historiography, international relations theory,
+  and strategic studies. The Melian Dialogue remains required reading at military academies, foreign ministries, and political science departments worldwide. "The strong do what they can; the weak suffer
+  what they must" is the most-cited sentence in international relations scholarship. The war''s pattern — a democracy overreaching through imperial ambition, making a catastrophic expeditionary gamble,
+  and losing its system of government as a consequence — has been applied as analogy by strategists from the Roman Senate to the Pentagon. Graham Allison''s "Thucydides Trap" thesis (2017) frames U.S.-China
+  competition in the same terms Thucydides used for Athens and Sparta: a rising power threatening a ruling power makes war structurally likely.
+
+  '
+key_figures:
+- name: Pericles
+  role: Athenian statesman and strategos; architect of Athens's defensive strategy; died in the plague of 429 BCE
+  wikidata: Q80398
+  born: 494
+  died: 429
+  wikipedia: https://en.wikipedia.org/wiki/Pericles
+- name: Thucydides
+  role: Athenian general turned historian; exiled for losing Amphipolis in 424 BCE; wrote the History of the Peloponnesian War, the foundational text of Western historiography
+  wikidata: Q41683
+  born: 460
+  died: 395
+  wikipedia: https://en.wikipedia.org/wiki/Thucydides
+- name: Alcibiades
+  role: Athenian statesman who championed the Sicily expedition, defected to Sparta, then to Persia, then returned to Athens; embodied the democratic system's instability
+  wikidata: Q187982
+  born: 450
+  died: 404
+  wikipedia: https://en.wikipedia.org/wiki/Alcibiades
+- name: Lysander
+  role: Spartan navarch who secured Persian funding, destroyed the Athenian fleet at Aegospotami (405 BCE), and imposed the Thirty Tyrants
+  wikidata: Q143559
+  born: 401
+  died: 395
+  wikipedia: https://en.wikipedia.org/wiki/Lysander
+- name: Brasidas
+  role: Spartan general who broke the mold of cautious Spartan strategy by campaigning aggressively in Thrace; killed at Amphipolis in 422 BCE
+  wikidata: Q311742
+  born: 500
+  died: 422
+  wikipedia: https://en.wikipedia.org/wiki/Brasidas
+- name: Aspasia of Miletus
+  role: Companion of Pericles, intellectual whose influence on Athenian politics Aristophanes satirized and Plato honored
+  wikidata: Q171421
+  born: -470
+  died: -400
+  wikipedia: https://en.wikipedia.org/wiki/Aspasia
+legacy_points:
+- Thucydides's History became the foundational text of Western historiography and international relations theory
+- The Melian Dialogue remains the canonical text on power politics — 'the strong do what they can; the weak suffer what they must'
+- The Sicily expedition (415-413 BCE) is studied as the archetype of imperial overreach — a democracy voting for a war that destroyed it
+- The 'Thucydides Trap' — the structural danger when a rising power threatens a ruling power — frames contemporary U.S.-China competition
+- Athens recovered democracy within a year of the Thirty Tyrants but never recovered imperial power; the polis system itself declined within two generations
+primary_source_excerpts:
+- text: The strong do what they can; the weak suffer what they must.
+  author: Thucydides (attributed to the Athenian envoys)
+  work: History of the Peloponnesian War, Book 5 — the Melian Dialogue
+  date: Written c. 400 BCE, describing events of 416 BCE
+  doi: 10.1093/oseo/instance.00266005
+- text: It is a possession for all time, not a prize composition to be heard for the moment.
+  author: Thucydides
+  work: History of the Peloponnesian War, Book 1.22
+  date: c. 400 BCE
+  doi: 10.1093/oseo/instance.00266005
+- text: The whole earth is the tomb of famous men; not only are they commemorated by columns and inscriptions in their own country, but in foreign lands there dwells also an unwritten memorial of them,
+    graven not on stone but in the hearts of men.
+  author: Thucydides (attributed to Pericles)
+  work: History of the Peloponnesian War, Book 2.43 — Pericles's Funeral Oration
+  date: Written c. 400 BCE, describing events of 431 BCE
+- text: The city was full of dead bodies lying where they died, one upon another, and half-dead creatures reeling about the streets and gathering round all the fountains in their longing for water.
+  author: Thucydides
+  work: History of the Peloponnesian War, Book 2.52 — description of the Plague of Athens
+  date: c. 400 BCE
+coordinates:
+  lat: 37.9715
+  lng: 23.7267
+related_event_slugs:
+- french-revolution
+- fall-of-berlin-wall
+perspectives:
+- viewpoint: Athenian / Democratic-Imperial
+  viewpoint_type: vanquished
+  region_origin: europe
+  narrative: 'The Athenian perspective, as Thucydides reconstructed it, was defined by the tension between democratic ideals and imperial necessity. Pericles articulated this tension in the Funeral Oration
+    of 431 BCE — a speech delivered over the bodies of the first year''s war dead. The oration is the most famous defense of democracy in ancient literature. "Our constitution does not copy the laws of
+    neighbouring states," Pericles declared. "We are rather a pattern to others than imitators ourselves." Athens was open where Sparta was closed; democratic where Sparta was oligarchic; cosmopolitan where
+    Sparta was xenophobic. Athenian culture — the tragedies of Sophocles, the philosophy of Socrates, the architecture of the Parthenon — was produced by a system that gave citizens voice. The oration''s
+    closing line to the widows in attendance defined the boundary of that voice: "the greatest glory of a woman is to be least talked about by men, whether they are praising you or criticizing you." Democracy
+    extended to adult male citizens. Women, slaves, and metics — together the majority of Attica''s population — were excluded.
+
+
+    But Pericles also told the Athenians a harder truth. "Your empire is now like a tyranny," he said in a later speech. "It may have been wrong to take it; it is certainly dangerous to let it go." The
+    Delian League had begun in 478 BCE as a voluntary alliance against Persia. By the 440s, it was an empire. Athens moved the League treasury from Delos to the Acropolis in 454 BCE and used the tribute
+    — 600 talents annually from roughly 150 allied cities — to build the Parthenon. Members who tried to leave were crushed: Naxos in 470 BCE, Thasos in 465 BCE, Samos in 440 BCE. The empire funded the
+    democracy. The rowing crews of the trireme fleet — free citizens of the lower class, the thetes — were paid from imperial revenue. Remove the empire, and the economic basis of democratic participation
+    collapsed.
+
+
+    The Sicily expedition revealed the democracy''s structural weakness: the assembly could vote for war on a wave of enthusiasm, without the institutional checks that might restrain ambition. Thucydides
+    recorded that the Athenians voted overwhelmingly for the expedition with "a passionate desire to sail" (eros), and that most had no idea how large Sicily was or how many peoples inhabited it. Nicias,
+    the reluctant general assigned to lead the expedition, tried to discourage the assembly by demanding an absurdly large force — and the assembly voted to give him everything he asked for. The democracy''s
+    very responsiveness to popular desire became the mechanism of its destruction.
+
+
+    After the catastrophe in Sicily, Athens survived nine more years through extraordinary resilience — rebuilding its fleet, winning victories at Cyzicus (410) and Arginusae (406), and fighting with a
+    fraction of its former resources. During the Plague of Athens (430-426 BCE), Thucydides recorded that women who nursed the sick died disproportionately (2.51). By 411 BCE, war-weariness had grown severe
+    enough that Aristophanes staged Lysistrata — a comedy in which Athenian and Spartan women seize the Acropolis treasury and withhold sex to force their husbands to negotiate peace. The play was comedy,
+    not politics, but it drew on real conditions: women managed household economies that were collapsing under twenty years of war. The end came not from a single defeat but from exhaustion. Lysander''s
+    destruction of the fleet at Aegospotami cut off the grain supply from the Black Sea. Athens surrendered under siege in 404 BCE. The Long Walls were torn down to the sound of flute music. The Thirty
+    Tyrants ruled for eight months before Thrasybulus led a democratic restoration — Athens was the only Greek city to restore democracy after oligarchic overthrow. But the empire was gone, and with it
+    the economic foundation that had supported the golden age.
+
+    '
+  key_arguments:
+  - Athenian democracy and Athenian empire were inseparable — imperial revenue funded democratic participation
+  - Pericles's defensive strategy was sound; the plague, not strategic error, undermined the first phase
+  - The Sicily expedition demonstrated the danger of democratic decision-making in matters of war — popular enthusiasm overwhelmed strategic judgment
+  - Athens's resilience after Sicily — rebuilding the fleet twice, winning battles, surviving nine more years — is as remarkable as the defeat itself
+  sources:
+  - title: The Outbreak of the Peloponnesian War
+    author: Donald Kagan
+    year: '2003'
+    type: book
+    doi: 10.7591/9780801467219
+    openlibrary: OL3358095M
+    archive_url: https://archive.org/details/isbn_9780801405013
+  - title: Pericles of Athens and the Birth of Democracy
+    author: Donald Kagan
+    year: '1991'
+    type: book
+    doi: 10.2307/494256
+    openlibrary: OL1882449M
+    archive_url: https://archive.org/details/periclesofathens0000kaga
+  - title: History of the Peloponnesian War
+    author: Thucydides, translated by Rex Warner
+    year: 1954 (original c. 400 BCE)
+    type: book
+    doi: 10.1093/oseo/instance.00266021
+    openlibrary: OL7127065M
+    archive_url: https://archive.org/details/historyofpelopon0000thuc
+  notable_quotes:
+  - text: Our constitution does not copy the laws of neighbouring states; we are rather a pattern to others than imitators ourselves.
+    speaker: Pericles (as rendered by Thucydides)
+    context: Funeral Oration, winter of 431/430 BCE
+  - text: 'Your empire is now like a tyranny: it may have been wrong to take it; it is certainly dangerous to let it go.'
+    speaker: Pericles (as rendered by Thucydides)
+    context: Speech to the Athenian assembly, 430 BCE
+  emphasized:
+  - Athens's democratic culture as the war's moral context
+  - Strategic rationality of Pericles's defensive plan
+  - The plague as contingent catastrophe, not strategic failure
+  - Democratic resilience — Athens restored its own democracy after the Thirty Tyrants
+  omitted:
+  - Athenian brutality toward subject allies — Melos, Mytilene, Scione
+  - The empire's coercive foundation — allied cities that tried to leave were crushed
+  - 'Reliance on slave labor: Athens''s silver mines at Laurion depended on 20,000-30,000 enslaved workers'
+  - Women's exclusion from democratic participation — Pericles's Funeral Oration explicitly defined female virtue as silence
+- viewpoint: Spartan / Peloponnesian League
+  viewpoint_type: victor
+  region_origin: europe
+  narrative: 'Sparta fought the Peloponnesian War as a war of liberation — or so its declared war aim stated. The Spartan assembly voted for war in 432 BCE after allies, particularly Corinth and Megara,
+    complained that Athens was strangling their commerce and violating the terms of the Thirty Years'' Peace (446 BCE). King Archidamus II warned that the war would last longer than anyone expected and
+    that Sparta''s advantage in land warfare meant nothing against a maritime empire. He was overruled by the ephor Sthenelaidas, who cut the debate short with a single argument: Athens had become too powerful,
+    and the balance of power in Greece had to be restored. Thucydides identified this as the war''s "truest cause": "the growth of Athenian power and the fear which this caused in Sparta."
+
+
+    Sparta''s military superiority on land was absolute. The Spartan hoplite, trained from age seven, was the product of the most extreme social engineering in the ancient world. Boys entered the agoge
+    at seven, were grouped into herds (agelai), slept on reed mats, ate black broth, and were flogged at the altar of Artemis Orthia as a test of endurance. At twenty, they joined a mess group (syssition)
+    and lived in barracks until age thirty. They trained full-time for war while a subject population — the helots of Messenia and Laconia, enslaved by Sparta centuries earlier — worked the land. The ratio
+    of helots to Spartiates may have been as high as 7:1. This demographic reality shaped Spartan strategy: the army could not campaign far from home for long, because a helot revolt was an ever-present
+    danger. The great helot uprising of 464 BCE, which took ten years to suppress, was within living memory.
+
+
+    The war forced Sparta into unfamiliar territory. Brasidas, the most innovative Spartan commander, broke the strategic stalemate by campaigning in Thrace in 424-422 BCE, threatening Athens''s grain supply
+    and peeling away allies. He was killed at Amphipolis in 422 BCE — along with the Athenian demagogue Cleon, who died in the same battle — and was honored with a hero cult by the people he had liberated
+    from Athens. Brasidas demonstrated what a Spartan commander could achieve outside the Peloponnese, but his initiative alarmed Sparta''s own conservative leadership, which distrusted individual ambition.
+
+
+    Sparta''s victory in 404 BCE was achieved through a devil''s bargain. Lysander secured Persian gold — subsidies from Cyrus the Younger, a Persian prince — to build the fleet that destroyed Athens at
+    Aegospotami. The price was the abandonment of the Greek cities of Ionia, the same cities that Sparta and Athens had united to liberate from Persia in 480-479 BCE. Sparta won the war by allying with
+    the old enemy and selling out the cities whose freedom had justified the Greek resistance to Persia a lifetime earlier.
+
+
+    Victory exposed Sparta''s limitations. The Thirty Tyrants it installed in Athens were overthrown within eight months. Spartan garrisons across Greece provoked resentment, not gratitude. Lysander''s
+    personal ambition threatened the dual-kingship system. Within a decade, Sparta''s former allies — Corinth, Thebes, Argos — formed a coalition against it in the Corinthian War (395-387 BCE). Within three
+    decades, Thebes under Epaminondas defeated Sparta at Leuctra (371 BCE), invaded the Peloponnese, and liberated the Messenian helots — destroying the economic foundation of the Spartan system forever.
+    Sparta won the war and lost the peace.
+
+    '
+  key_arguments:
+  - Sparta fought to restore the balance of power in Greece — Athenian imperial expansion threatened the independence of all Greek states
+  - Spartan military superiority was the product of the most rigorous training system in the ancient world, sustained by helot labor
+  - Victory required Persian gold and the abandonment of Ionian Greeks — a moral compromise that undermined the war's stated purpose
+  - Sparta won the war but proved unable to manage the peace; its hegemony collapsed within 33 years
+  sources:
+  - title: 'Sparta and Lakonia: A Regional History 1300-362 BC'
+    author: Paul Cartledge
+    year: '2002'
+    type: book
+    doi: 10.2307/1087343
+    openlibrary: OL22304992M
+    archive_url: https://archive.org/details/spartalakoniareg0000cart
+  - title: 'The Spartans: The World of the Warrior-Heroes of Ancient Greece'
+    author: Paul Cartledge
+    year: '2003'
+    type: book
+    archive_url: https://archive.org/details/spartansworldofw00cart
+  - title: 'A War Like No Other: How the Athenians and Spartans Fought the Peloponnesian War'
+    author: Victor Davis Hanson
+    year: '2005'
+    type: book
+  notable_quotes:
+  - text: The growth of Athenian power and the fear which this caused in Sparta made war inevitable.
+    speaker: Thucydides
+    context: History of the Peloponnesian War, Book 1.23 — the 'truest cause' of the war
+  - text: The Spartans do not ask how many the enemy are, but where they are.
+    speaker: Agis II (attributed)
+    context: Spartan king during the war, apocryphal remark reflecting Spartan military culture
+  emphasized:
+  - Liberation of Greek states from Athenian imperial control as the war's purpose
+  - Spartan military discipline and sacrifice as civic virtue
+  - Brasidas's innovative campaigning as proof of Spartan capability beyond the Peloponnese
+  omitted:
+  - The helot system — Sparta's own subject population, enslaved and terrorized through the krypteia (secret police)
+  - 'The Melian precedent in reverse: Sparta punished disloyal allies as harshly as Athens did'
+  - Persian alliance as betrayal of pan-Hellenic ideals
+- viewpoint: Subject Peoples / The Melian Position
+  viewpoint_type: vanquished
+  region_origin: europe
+  narrative: 'The Peloponnesian War, as Thucydides recorded it, was overwhelmingly a story told by the two great powers. The roughly 750 independent poleis of the Greek world — most with populations under
+    5,000 — had no Thucydides to record their experience. The Melian Dialogue, the most famous passage in Thucydides''s History, survives precisely because Thucydides chose to record the voice of a small
+    state being destroyed — and because the Athenian response articulated the logic of power that small states have faced in every century since.
+
+
+    In 416 BCE, Athens sent 38 ships, 3,000 hoplites, and 300 archers to Melos, a small island in the southern Aegean with a population of perhaps 1,500 citizens. Melos was a Spartan colony that had maintained
+    neutrality throughout the war. Athens demanded submission and tribute. The Melians argued that they had harmed no one, that neutrality was their right, that the gods would protect the just, and that
+    Sparta would come to their aid. The Athenian envoys dismissed every argument. Justice, they said, "is only in question between equals in power." The gods, if they existed, followed the same law as men:
+    "of the gods we believe, and of men we know, that by a necessary law of their nature they rule wherever they can." Sparta would not come. The Melians refused to submit. Athens besieged the island for
+    six months, then executed every adult male and enslaved the women and children.
+
+
+    After the siege, Athens executed every adult male on Melos and sold the women and children into slavery (Thucydides 5.116). The fates diverged by sex: men were killed; women and children became property,
+    dispersed across Aegean slave markets with no record of where they were sent.
+
+
+    Melos was not unique. Mytilene, a member of the Delian League on the island of Lesbos, revolted in 428 BCE. After its recapture, the Athenian assembly voted to execute all adult males and enslave the
+    rest. The next day, they reconsidered — barely. A second ship was sent to countermand the order, arriving hours before the first decree would have been carried out. But 1,000 men identified as ringleaders
+    were still executed. Scione, a city in Chalcidice, revolted in 423 BCE; when Athens recaptured it in 421 BCE, all adult males were killed and women and children enslaved. Thucydides recorded the Scione
+    decree with the same clinical detachment he applied to the plague.
+
+
+    Sparta''s record was no better. After capturing Plataea in 427 BCE — the same city whose attack had started the war — the Spartans put the surviving garrison on trial. Each man was asked one question:
+    "Have you done anything to help the Spartans or their allies in the present war?" When the answer was no — as it inevitably was, since Plataea had been under siege — the man was executed. Two hundred
+    Plataeans and 25 Athenians were killed. The women were enslaved. Thebes demolished the city.
+
+
+    The war''s impact on the non-combatant Greek world was devastating in ways that Thucydides documented but did not foreground. Civil wars (stasis) broke out across the Greek world as democratic and oligarchic
+    factions within cities aligned with Athens and Sparta respectively. In Corcyra (427 BCE), the stasis killed hundreds as neighbors settled scores under the cover of ideological alignment. Thucydides
+    described the Corcyrean revolution as the prototype of a pattern that spread across Greece: "Words changed their ordinary meaning. Reckless audacity was held to be loyal courage; prudent hesitation
+    was the excuse of a coward; moderation was a cloak for weakness; frantic violence became the attribute of manliness." The passage has been cited by observers of civil wars from the French Revolution
+    to Syria.
+
+
+    For the small states, the lesson of the Peloponnesian War was that neither great power respected the independence of the weak. Athens crushed neutrals who refused tribute. Sparta abandoned allies who
+    became inconvenient. Persia bankrolled whichever side offered the better deal. The Greek world that emerged from the war was exhausted, depopulated, and demoralized — incapable of resisting the Macedonian
+    conquest that came within two generations.
+
+    '
+  key_arguments:
+  - The Melian Dialogue is the foundational text on the powerlessness of small states in a system dominated by great powers
+  - Neither Athens nor Sparta respected the sovereignty of smaller poleis — both used ideology (democracy, liberation) as cover for coercion
+  - Civil war (stasis) within cities, driven by great-power intervention, killed as many Greeks as the battles themselves
+  - The war destroyed the independence of the Greek polis system, preparing the way for Macedonian conquest
+  sources:
+  - title: 'The Melian Dialogue: Thucydides, Book 5.84-116'
+    author: Thucydides
+    year: c. 400 BCE
+    type: primary-source
+  - title: Thucydides and the Idea of History
+    author: Neville Morley
+    year: '2014'
+    type: book
+    doi: 10.5040/9780755610716
+  - title: War and Society in the Ancient and Medieval Worlds. Asia, the Mediterranean, Europe, and Mesoamerica
+    author: Kurt Raaflaub and Nathan Rosenstein (editors)
+    year: '1999'
+    type: book
+    doi: 10.2307/1192487
+    openlibrary: OL33670M
+    archive_url: https://archive.org/details/warsocietyinanci0000unse
+  - title: 'Goddesses, Whores, Wives, and Slaves: Women in Classical Antiquity'
+    author: Sarah B. Pomeroy
+    year: '1975'
+    type: book
+    doi: 10.2307/1088026
+    archive_url: https://archive.org/details/goddesseswhoresw1975pome
+  notable_quotes:
+  - text: The strong do what they can; the weak suffer what they must.
+    speaker: Athenian envoys to the Melians (as rendered by Thucydides)
+    context: The Melian Dialogue, 416 BCE — Thucydides, History, Book 5.89
+  - text: Of the gods we believe, and of men we know, that by a necessary law of their nature they rule wherever they can.
+    speaker: Athenian envoys (as rendered by Thucydides)
+    context: The Melian Dialogue, 416 BCE — Thucydides, History, Book 5.105
+  emphasized:
+  - The fate of women and children after conquest — enslavement at Melos, Scione, and Plataea
+  - The systematic destruction of neutral and allied small states by both great powers
+  - Civil war (stasis) as the internal mechanism of great-power interference
+  - The Melian precedent as a permanent feature of international relations
+  omitted:
+  - Cases where great-power intervention benefited small states — Brasidas's liberation of Amphipolis, for instance
+  - The agency of small states in forming alliances and playing great powers against each other
+  - The degree to which Thucydides shaped the Melian Dialogue as a literary construction rather than a factual transcript
+- viewpoint: Modern Realist / International Relations Theory
+  viewpoint_type: academic
+  region_origin: americas
+  narrative: 'Thucydides did not merely record the Peloponnesian War. He invented a way of analyzing political conflict that international relations scholars have used for 2,400 years. His History is the
+    foundational text of realism — the school of thought that holds that states operate in an anarchic system where power, not justice, determines outcomes. Every generation of strategists has read Thucydides
+    and found its own wars reflected in his pages.
+
+
+    The concept of the "Thucydides Trap" entered mainstream discourse through Graham Allison''s 2017 book Destined for War: Can America and China Escape Thucydides''s Trap? Allison argued that in 16 cases
+    over the past 500 years where a rising power challenged a ruling power, war resulted in 12. The pattern — structural pressure toward conflict between an established hegemon and a rising challenger —
+    mirrors Thucydides''s diagnosis of the "truest cause" of the Peloponnesian War: "the growth of Athenian power and the fear which this caused in Sparta." Allison''s framing made Thucydides the most-cited
+    ancient author in Pentagon briefings and National Security Council memos of the 2010s and 2020s.
+
+
+    The realist reading of the Peloponnesian War emphasizes structural forces over individual agency. It was not Pericles''s death, or Alcibiades''s treason, or the plague that determined the outcome —
+    it was the distribution of power in a bipolar system. Robert Gilpin''s War and Change in World Politics (1981) used the Athenian case to argue that hegemonic powers expand until the costs of maintaining
+    their empire exceed the benefits, at which point the system becomes unstable. Athens''s reach exceeded its grasp in Sicily; the system corrected. Hans Morgenthau, the founding figure of American realism,
+    drew on Thucydides to argue that the pursuit of power is a constant in human affairs — that democratic Athens was no less imperial than autocratic Sparta, because the imperatives of security in an anarchic
+    world override domestic political form.
+
+
+    The Melian Dialogue is the realist proof text. Morgenthau, Kenneth Waltz, John Mearsheimer, and their students all cite it. The Athenians'' argument — that justice exists only between equals in power,
+    and that the strong rule where they can — is the distilled axiom of realist theory. What makes the Dialogue effective as a teaching text is that Thucydides did not editorialize. He presented the Melian
+    argument (justice, the gods, Spartan aid) and the Athenian argument (power, necessity, the irrelevance of morality) and let the reader judge. The Melians were destroyed. The passage functions as a case
+    study in which the reader discovers, through the Melians'' destruction, whether moral arguments constrain great powers. The answer, for realists, is no.
+
+
+    But the realist reading has its own blind spots. Thucydides wrote as a participant, not an objective observer. He was an Athenian general, exiled for losing a battle. His sympathies, while controlled,
+    were not absent. The speeches he attributed to Pericles are more eloquent than those given to any Spartan; the Funeral Oration has no Spartan equivalent. His analysis foregrounded interstate competition
+    and minimized economic factors, class conflict, and the experience of non-citizens — women, slaves, metics (resident aliens) — who constituted the majority of Athens''s population. The realist appropriation
+    of Thucydides takes his framework as universal truth rather than as the perspective of a displaced Athenian aristocrat writing in exile, shaped by his own losses.
+
+
+    Sarah Pomeroy''s Goddesses, Whores, Wives, and Slaves (1975) opened a line of inquiry that Thucydides''s realist inheritors have largely ignored: the war''s impact on the majority of Athens''s population
+    who could not vote, speak in the assembly, or hold command. Thucydides mentions women exactly twice in the Funeral Oration — once to praise the mothers of the dead, once to instruct the widows to be
+    silent. The plague narrative (2.51) notes women dying as caregivers but assigns them no agency. Aristophanes'' Lysistrata (411 BCE) and Assemblywomen (392 BCE) satirize women seizing political and economic
+    power, which means women''s exclusion from both was visible enough to be comic material. The realist tradition built on Thucydides inherits his silences along with his insights.
+
+
+    The deepest irony is methodological. Thucydides invented multi-perspective history. He put speeches in the mouths of both sides — Pericles AND the Corinthians, the Athenians AND the Melians, the hawks
+    AND the doves. He did this not because he believed all positions were equally valid, but because he believed that understanding conflict required hearing how each side justified itself. void --history
+    operates on the same principle, 2,400 years later. The method is Thucydidean. The difference is that Thucydides was one man selecting which perspectives to present; void --history makes the selection
+    transparent and the perspectives independently sourced.
+
+    '
+  key_arguments:
+  - Thucydides identified the structural cause of great-power conflict — the rising power / ruling power dynamic — that remains the dominant framework in international relations
+  - The 'Thucydides Trap' is applied to contemporary U.S.-China competition, making a 2,400-year-old text directly policy-relevant
+  - The Melian Dialogue is the foundational text of political realism — power, not justice, determines outcomes in the international system
+  - 'Thucydides invented multi-perspective history: he presented both sides'' arguments and let the reader judge'
+  sources:
+  - title: 'Destined for War: Can America and China Escape Thucydides''s Trap?'
+    author: Graham Allison
+    year: '2017'
+    type: book
+    openlibrary: OL26810920M
+    archive_url: https://archive.org/details/destinedforwarca0000alli_p4c4
+  - title: War and Change in World Politics
+    author: Robert Gilpin
+    year: '1981'
+    type: book
+    doi: 10.1017/cbo9780511664267
+    openlibrary: OL4257408M
+  - title: 'Thucydides: An Introduction for the Common Reader'
+    author: Perez Zagorin
+    year: '2005'
+    type: book
+    archive_url: https://archive.org/details/thucydidesintrod0000zago
+  - title: 'Goddesses, Whores, Wives, and Slaves: Women in Classical Antiquity'
+    author: Sarah B. Pomeroy
+    year: '1975'
+    type: book
+  notable_quotes:
+  - text: It was the rise of Athens and the fear that this inspired in Sparta that made war inevitable.
+    speaker: Thucydides (paraphrased by Graham Allison)
+    context: Destined for War, 2017 — framing the 'Thucydides Trap'
+  - text: My work is not a piece of writing designed to meet the taste of an immediate public, but was done to last for ever.
+    speaker: Thucydides
+    context: History of the Peloponnesian War, Book 1.22
+  emphasized:
+  - 'Structural analysis: power distribution, not individual leadership, drives outcomes'
+  - The Thucydides Trap as an enduring pattern in great-power competition
+  - Thucydides as the inventor of the multi-perspective method that void --history continues
+  omitted:
+  - Thucydides's own biases — he was an exiled Athenian aristocrat, not an impartial observer
+  - Economic, class, and gender dimensions that Thucydides minimized and realists inherit — women appear in his text as victims (plague), property (Melos), or as subjects of instruction to be silent (Funeral
+    Oration)
+  - Non-Western traditions of historical analysis that developed independently of Thucydides
+- viewpoint: Non-Athenian Greek Cities / Subject Allies
+  viewpoint_type: vanquished
+  region_origin: europe
+  narrative: 'The envoys from Athens arrived at Melos in the summer of 416 BCE. Their message was simple: join the Athenian empire or be destroyed. The Melians were a small island community, a Spartan colony
+    that had maintained neutrality throughout the war. They had attacked no one. They asked only to be left alone. The Athenian envoys dismissed every argument — justice, gods, tradition. "The strong do
+    what they can," they told the Melians. "The weak suffer what they must." The Melians refused to submit. Athens besieged the island for the winter. In the spring of 415, the Melians surrendered. Athens
+    executed every adult male and sold every woman and child into slavery. Then it colonized the empty island with 500 Athenian settlers.
+
+
+    Melos was not an exception. It was the logic of the Delian League stripped of pretense. The League had been founded in 478 BCE as a voluntary alliance against Persia. By the 450s, it was an empire.
+    Athens moved the common treasury from Delos to the Acropolis in 454, using allied tribute — 600 talents annually from roughly 150 cities — to build the Parthenon. The monument that symbolizes democracy
+    was financed by imperial extraction. When Naxos attempted to leave the League around 470 BCE, Athens besieged it and forced it back. Thasos revolted in 465; Athens crushed it and confiscated its gold
+    mines. Samos rebelled in 440; Pericles personally commanded the nine-month siege that brought it to heel.
+
+
+    The allies paid, rowed, and died. Athenian triremes required 170 oarsmen each; the allied cities supplied both ships and crews. Allied soldiers fought in Athenian campaigns from Egypt to Sicily. The
+    tribute lists, carved on stone stelae on the Acropolis and partially surviving, record payments from Aegina, Lesbos, Chios, Byzantium, and dozens of smaller communities. The tribute was assessed by
+    Athens, collected by Athenian officials, and spent by the Athenian assembly. The allies had no vote in the assembly that decided how their money was used.
+
+
+    Mytilene on Lesbos revolted in 428 BCE. Athens suppressed the revolt and debated the punishment. Cleon, the demagogue, persuaded the assembly to execute all adult men and enslave the women and children.
+    A trireme was dispatched with the order. The next day, the assembly reconsidered. Diodotus argued not for mercy but for pragmatism: killing the population would destroy a valuable asset and encourage
+    other allies to fight to the death rather than surrender. A second trireme was sent, rowing through the night to arrive before the execution order could be carried out. It arrived just in time. The
+    thousand ringleaders were executed instead. The reprieve was not clemency — it was accounting.
+
+
+    Scione, a small city on the Pallene peninsula, revolted during a truce between Athens and Sparta in 423 BCE. Cleon again proposed the execution of all men and enslavement of all women and children.
+    This time, there was no second vote. When Athens captured Scione in 421, the sentence was carried out. The women and children were sold. The land was given to Plataean refugees — themselves victims
+    of Spartan brutality, now beneficiaries of Athenian brutality against others.
+
+
+    Thucydides recorded these events because he understood their meaning: Athens, the champion of liberty against Persia, had become the thing it claimed to oppose. The war was experienced by the smaller
+    cities of the Greek world not as a contest between rival systems but as a catastrophe inflicted by both. Spartan armies burned their fields; Athenian fleets demanded their tribute and their obedience.
+    Neutrality was not permitted. Independence was punished. The Peloponnesian War was not two powers fighting each other. It was two powers grinding the smaller cities between them.
+
+    '
+  key_arguments:
+  - The Delian League began as a voluntary alliance against Persia and became an Athenian empire by the 450s
+  - Melos, Scione, and Mytilene demonstrate that Athens punished neutrality and revolt with massacre and enslavement
+  - Allied cities paid tribute, supplied crews, and fought in Athens's wars without any voice in Athenian decision-making
+  - The war was experienced by smaller cities as imperial violence from both sides — neither Athens nor Sparta offered freedom
+  sources:
+  - title: History of the Peloponnesian War
+    author: Thucydides, translated by Rex Warner
+    year: 1954 (original c. 400 BCE)
+    type: book
+    doi: 10.1093/oseo/instance.00266021
+    openlibrary: OL7127065M
+    archive_url: https://archive.org/details/historyofpelopon0000thuc
+  - title: The Athenian Empire
+    author: Russell Meiggs
+    year: '1972'
+    type: book
+    doi: 10.1093/acprof:oso/9780198142348.001.0001
+    openlibrary: OL5094785M
+  - title: 'Thucydides and the Idea of History: Between Science and Literature'
+    author: Neville Morley
+    year: '2014'
+    type: book
+    doi: 10.5040/9781472511539
+  notable_quotes:
+  - text: The strong do what they can; the weak suffer what they must.
+    speaker: Athenian envoys to Melos (as rendered by Thucydides)
+    context: The Melian Dialogue, 416 BCE — spoken to a neutral city before its destruction
+  - text: The Athenians took the city, put to death all the grown men whom they took, and sold the women and children for slaves. They then colonized Melos with five hundred settlers of their own.
+    speaker: Thucydides
+    context: History of the Peloponnesian War, 5.116 — the sentence on Melos, 415 BCE
+  emphasized:
+  - The transformation of the Delian League from voluntary alliance to coercive empire
+  - Melos as the paradigmatic case — neutrality punished by annihilation
+  - Allied cities as subjects without political voice in the empire that taxed and conscripted them
+  - Both Athens and Sparta destroyed smaller cities that fell between them
+  omitted:
+  - Athenian democratic culture and intellectual achievement that the empire funded
+  - The genuine Persian threat that originally justified the alliance
+  - Periods of genuine cooperation and benefit within the League
+  - Some allies who preferred Athenian hegemony to the alternatives — Sparta's allies also suffered under its control
+media:
+- media_type: map
+  title: Alliances at the start of the Peloponnesian War, 431 BCE
+  description: Map showing the Delian League (Athens and allies) and the Peloponnesian League (Sparta and allies) at the outbreak of war. Athens controlled the Aegean sea lanes and roughly 150 tribute-paying
+    cities; Sparta dominated the Peloponnese and central Greece.
+  source_url: https://commons.wikimedia.org/wiki/File:Peloponnesian_war_alliances_431_BC.png
+  attribution: Marsyas, CC BY-SA 3.0, via Wikimedia Commons
+  license: cc-by-sa
+  creator: Marsyas
+  creation_date: '2006'
+  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/peloponnesian-war/wiki_0.jpg
+- media_type: photograph
+  title: The Parthenon, Athens
+  description: The Parthenon, completed in 432 BCE — one year before the war began — was financed by tribute from the Delian League. Pericles redirected allied funds intended for defense against Persia
+    to glorify Athens. The building itself embodies the tension between democratic achievement and imperial extraction.
+  source_url: https://commons.wikimedia.org/wiki/File:Parthenon_from_west.jpg
+  attribution: Steve Swayne, CC BY 2.0, via Wikimedia Commons
+  license: cc-by
+  creator: Steve Swayne
+  creation_date: '2007'
+  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/peloponnesian-war/wiki_1.jpg
+- media_type: artwork
+  title: Pericles's Funeral Oration, painting by Philipp Foltz (1852)
+  description: Nineteenth-century depiction of Pericles delivering the Funeral Oration in the winter of 431/430 BCE, as recorded by Thucydides. The speech — the most famous defense of democracy in ancient
+    literature — was delivered over the bodies of Athens's first war dead.
+  source_url: https://commons.wikimedia.org/wiki/File:Discurso_funebre_pericles.PNG
+  attribution: Philipp Foltz, 1852, public domain via Wikimedia Commons
+  license: public-domain
+  creator: Philipp Foltz
+  creation_date: '1852'
+  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/peloponnesian-war/wiki_2.jpg
+- media_type: photograph
+  title: The iconic Parthenon temple bathed in warm light at the Acropolis of Athens, Greece.
+  description: Landscape orientation, 6240x4159px
+  source_url: https://www.pexels.com/photo/historic-parthenon-temple-at-acropolis-athens-33590031/
+  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/peloponnesian-war/pexels_1.jpg
+  attribution: Photo by Irina Nesterenko on Pexels
+  license: pexels-license
+  creator: Irina Nesterenko
+- media_type: photograph
+  title: Close-up of ancient temple ruins in the Acropolis of Athens under a clear sky.
+  description: Landscape orientation, 6960x4640px
+  source_url: https://www.pexels.com/photo/ancient-greek-architecture-at-the-acropolis-28511693/
+  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/peloponnesian-war/pexels_2.jpg
+  attribution: Photo by Efrem  Efre on Pexels
+  license: pexels-license
+  creator: Efrem  Efre
+- media_type: photograph
+  title: Explore the historic stone ruins with towering columns, showcasing the remnants of ancient architect
+  description: Landscape orientation, 2880x1920px
+  source_url: https://www.pexels.com/photo/ancient-ruins-with-stone-columns-under-clear-skies-34491544/
+  supabase_url: https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/history-media/peloponnesian-war/pexels_3.jpg
+  attribution: Photo by Ali Akdemir on Pexels
+  license: pexels-license
+  creator: Ali Akdemir
+connections:
+- target_slug: french-revolution
+  connection_type: influenced
+  description: French revolutionaries looked to Athenian democracy and Spartan civic virtue as models; the tension between democratic ideals and authoritarian efficiency that defined the Peloponnesian War
+    recurred in the Terror.
+- target_slug: fall-of-berlin-wall
+  connection_type: influenced
+  description: Graham Allison coined 'Thucydides Trap' in 2012, citing the twelve out of sixteen cases where a rising power
+    and a declining one went to war. Sparta and Athens were the first pair; Washington and Beijing are the current one.
+- target_slug: tiananmen-square
+  connection_type: parallel
+  description: 'The Melian Dialogue''s logic — ''the strong do what they can; the weak suffer what they must'' — describes the dynamic of June 4, 1989: an unarmed civilian population confronting state military
+    power with moral arguments that did not constrain the outcome.'

@@ -2,13 +2,13 @@
 Gemini API client for the void --news pipeline.
 
 Uses the google-genai SDK (not the deprecated google-generativeai).
-Aggressive free-tier protection:
+Free-tier protection:
     - Rate limited to ~14 RPM (4.2s between calls)
-    - Hard cap of 25 calls per pipeline run (summarization budget)
-    - Separate 5-call budget for editorial triage
+    - Hard cap of 50 calls per pipeline run (summarization budget)
     - 1 retry max on transient failures
 
-At 2 pipeline runs/day: max 50 RPD (summarization) + 10 RPD (triage) = 3.3% of the 1500 RPD free limit.
+At 3 pipeline runs/day: 50 calls/run × 3 = 150 RPD (summarization) + ~27 RPD (briefs)
+= ~177 RPD total (71% of the 250 RPD free limit). ~73 RPD safety buffer.
 
 Environment:
     GEMINI_API_KEY — required. Get one free at https://aistudio.google.com/apikey
@@ -32,10 +32,17 @@ _MODEL = "gemini-2.5-flash"
 _last_call_time: float = 0.0
 _MIN_INTERVAL: float = 4.2  # 60s / 14 calls = ~4.3s (stay under 15 RPM)
 
-# Per-run call cap — hard limit to stay within free tier (1500 RPD).
-# Pipeline runs 2x/day, so 25 calls/run × 2 runs = 50 RPD (3.3% of limit).
-_MAX_CALLS_PER_RUN: int = 25
+# Per-run call cap — hard limit to stay within free tier (250 RPD).
+# Pipeline runs 2x/day: 70 (summarization step-7b + step-8d) × 2 = 140 RPD
+# + 9 (brief) × 2 = 18 RPD → 158 RPD total.
+# 92 RPD safety buffer against the 250 RPD free-tier limit.
+# Step 7b uses up to 50 slots; step 8d uses up to 20 of the remaining 20.
+_MAX_CALLS_PER_RUN: int = 70
 _call_count: int = 0
+
+# Persistent failure flag — set on billing/spending-cap errors to skip all
+# subsequent calls in the same run (avoids wasting minutes on doomed retries).
+_persistent_failure: bool = False
 
 _client: object = None
 
@@ -74,6 +81,7 @@ def generate_json(
     system_instruction: str | None = None,
     max_retries: int = 1,
     count_call: bool = True,
+    max_output_tokens: int = 8192,
 ) -> dict | None:
     """
     Send a prompt to Gemini Flash and parse the JSON response.
@@ -88,11 +96,17 @@ def generate_json(
             and enforces the 25-call summarization budget cap. When False,
             both the cap check and the increment are skipped — use for
             editorial triage calls that have their own separate budget.
+        max_output_tokens: Maximum output tokens including thinking tokens.
+            Default 8192 for cluster summaries. Use 65536 for briefs which
+            produce TL;DR + audio script (~1200 words of output).
 
     Returns parsed JSON dict, or None on failure (caller falls back
     to rule-based generation).
     """
-    global _call_count
+    global _call_count, _persistent_failure
+
+    if _persistent_failure:
+        return None
 
     client = _get_client()
     if client is None:
@@ -105,15 +119,18 @@ def generate_json(
     config = types.GenerateContentConfig(
         response_mime_type="application/json",
         temperature=0.2,
-        max_output_tokens=8192,  # Gemini 2.5 Flash uses thinking tokens internally
+        max_output_tokens=max_output_tokens,
         system_instruction=system_instruction,  # None = no system turn (backward-compatible)
     )
+
+    # Increment call count ONCE before the retry loop — failed retries should
+    # not burn additional budget.
+    if count_call:
+        _call_count += 1
 
     for attempt in range(max_retries + 1):
         try:
             _rate_limit()
-            if count_call:
-                _call_count += 1
             response = client.models.generate_content(
                 model=_MODEL,
                 contents=prompt,
@@ -121,6 +138,7 @@ def generate_json(
             )
 
             if not response.text:
+                print(f"  [warn] Gemini returned empty response (attempt {attempt + 1})")
                 continue
 
             text = response.text.strip()
@@ -133,24 +151,43 @@ def generate_json(
 
             return json.loads(text)
 
-        except json.JSONDecodeError:
+        except json.JSONDecodeError as je:
+            # Log what Gemini actually returned so we can diagnose format issues
+            snippet = (text[:200] + "...") if len(text) > 200 else text
+            print(f"  [warn] Gemini JSON parse failed (attempt {attempt + 1}): "
+                  f"{je} — response starts with: {snippet!r}")
             if attempt < max_retries:
                 continue
             return None
         except Exception as e:
             error_str = str(e).lower()
+            # Detect persistent billing/spending-cap errors — no point retrying
+            if "spending cap" in error_str or "credit" in error_str or "billing" in error_str:
+                _persistent_failure = True
+                print(f"  [error] Gemini persistent billing failure — disabling for this run: {e}")
+                return None
             if "429" in error_str or "quota" in error_str or "rate" in error_str:
+                print(f"  [warn] Gemini rate limit (attempt {attempt + 1}): {e}")
                 if attempt < max_retries:
                     time.sleep(15)
                     continue
-            print(f"  [warn] Gemini API error: {e}")
+            elif "503" in error_str or "unavailable" in error_str or "overloaded" in error_str or "high demand" in error_str:
+                # 503 = transient server overload — wait longer before retry
+                print(f"  [warn] Gemini API error (attempt {attempt + 1}): {e}")
+                if attempt < max_retries:
+                    time.sleep(30)
+                    continue
+            else:
+                print(f"  [warn] Gemini API error (attempt {attempt + 1}): {e}")
             return None
 
     return None
 
 
 def is_available() -> bool:
-    """Check if Gemini is configured and the SDK is installed."""
+    """Check if Gemini is configured, the SDK is installed, and no persistent failure."""
+    if _persistent_failure:
+        return False
     if not GEMINI_AVAILABLE:
         return False
     api_key = os.environ.get("GEMINI_API_KEY", "").strip()

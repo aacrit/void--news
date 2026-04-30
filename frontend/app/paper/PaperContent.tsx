@@ -12,7 +12,7 @@ import type {
   OpinionLabel,
   SigilData,
 } from "../lib/types";
-import { supabase } from "../lib/supabase";
+import { supabase, fetchClusterLeadImage } from "../lib/supabase";
 import {
   type ArticleTier,
   type FillerItem,
@@ -159,12 +159,15 @@ function buildStory(cluster: any, usingEnriched: boolean): Story {
   const rawConsensus = usingEnriched ? cluster.consensus_points : null;
   const rawDivergence = usingEnriched ? cluster.divergence_points : null;
 
+  const safeTitle = typeof cluster.title === "string" ? cluster.title : String(cluster.title ?? "");
+  const safeSummary = typeof cluster.summary === "string" ? cluster.summary : String(cluster.summary ?? "");
+
   return {
     id: cluster.id,
-    title: cluster.title,
-    summary: cluster.summary || "",
+    title: safeTitle,
+    summary: safeSummary,
     source: { name: "Multiple Sources", count: sourceCount },
-    category: capitalize(cluster.category || "politics") as Category,
+    category: capitalize(typeof cluster.category === "string" ? cluster.category : "politics") as Category,
     publishedAt:
       cluster.first_published ||
       cluster.last_updated ||
@@ -175,16 +178,16 @@ function buildStory(cluster: any, usingEnriched: boolean): Story {
     sigilData,
     section: (cluster.section || "world") as Edition,
     sections: (cluster.sections || [cluster.section || "world"]) as Edition[],
-    importance: cluster.headline_rank || cluster.importance_score || 50,
+    importance: cluster.rank_world || cluster.rank_us || cluster.rank_europe || cluster.rank_south_asia || cluster.headline_rank || cluster.importance_score || 50,
     divergenceScore: cluster.divergence_score || 0,
-    headlineRank: cluster.headline_rank || cluster.importance_score || 50,
+    headlineRank: cluster.rank_world || cluster.rank_us || cluster.rank_europe || cluster.rank_south_asia || cluster.headline_rank || cluster.importance_score || 50,
     coverageVelocity: cluster.coverage_velocity || 0,
     deepDive:
       (Array.isArray(rawConsensus) && rawConsensus.length > 0) ||
       (Array.isArray(rawDivergence) && rawDivergence.length > 0)
         ? {
-            consensus: Array.isArray(rawConsensus) ? rawConsensus : [],
-            divergence: Array.isArray(rawDivergence) ? rawDivergence : [],
+            consensus: Array.isArray(rawConsensus) ? rawConsensus.map((p: unknown) => typeof p === "string" ? p : String(p ?? "")) : [],
+            divergence: Array.isArray(rawDivergence) ? rawDivergence.map((p: unknown) => typeof p === "string" ? p : String(p ?? "")) : [],
             sources: [],
           }
         : undefined,
@@ -208,16 +211,14 @@ function articleByline(
   return `From multiple outlets \u2014 ${sourceCount} sources`;
 }
 
-// --- Lean label from 0-100 score ---
+// --- Tilt label from 0-100 score (story-level, data-driven boundaries) ---
 
 function leanLabel(score: number): string {
-  if (score <= 15) return "Far Left";
-  if (score <= 30) return "Left";
-  if (score <= 42) return "Center-Left";
-  if (score <= 58) return "Center";
-  if (score <= 70) return "Center-Right";
-  if (score <= 85) return "Right";
-  return "Far Right";
+  if (score <= 29) return "Far Left Tilt";
+  if (score <= 46) return "Left Tilt";
+  if (score <= 53) return "Balanced";
+  if (score <= 72) return "Right Tilt";
+  return "Far Right Tilt";
 }
 
 // ===== COMPONENTS =====
@@ -231,23 +232,27 @@ function Masthead({
   lastUpdated: string | null;
   edition: Edition;
 }) {
-  const now = new Date();
+  // Use a stable default for SSG, then update on client mount to avoid
+  // hydration mismatch (#310). Date-dependent values differ at build vs load.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
-  const dateStr = now
-    .toLocaleDateString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    })
-    .toUpperCase();
+  const now = mounted ? new Date() : new Date("2026-01-01T00:00:00Z");
+
+  const dateStr = mounted
+    ? now.toLocaleDateString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      }).toUpperCase()
+    : "";
 
   const epoch = new Date("2026-03-01T00:00:00Z");
-  const issueNo = Math.max(
-    1,
-    Math.floor((now.getTime() - epoch.getTime()) / 86400000),
-  );
-  const year = now.getFullYear();
+  const issueNo = mounted
+    ? Math.max(1, Math.floor((now.getTime() - epoch.getTime()) / 86400000))
+    : 1;
+  const year = mounted ? now.getFullYear() : 2026;
 
   const pressTime = lastUpdated
     ? new Date(lastUpdated).toLocaleString("en-US", {
@@ -302,20 +307,6 @@ function Masthead({
         >
           World Edition
         </a>
-        {" \u00B7 "}
-        <a
-          href={`${basePath}/us`}
-          className={edition === "us" ? "np-edition-nav__active" : ""}
-        >
-          United States
-        </a>
-        {" \u00B7 "}
-        <a
-          href={`${basePath}/india`}
-          className={edition === "india" ? "np-edition-nav__active" : ""}
-        >
-          India
-        </a>
       </nav>
     </header>
   );
@@ -339,13 +330,19 @@ function Article({
   story,
   tier,
   edition,
+  imageUrl,
 }: {
   story: Story;
   tier: ArticleTier;
   edition: Edition;
+  imageUrl?: string | null;
 }) {
   const dateline = getDateline(story, edition);
   const decks = generateDecks(story.summary, tier);
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [imgError, setImgError] = useState(false);
+
+  const showImage = tier === "banner" && imageUrl && !imgError;
 
   // Extract remaining summary after decks for body text
   let bodyText = truncateSummary(story.summary, tier);
@@ -361,7 +358,22 @@ function Article({
   }
 
   return (
-    <article className={`np-article np-article--${tier}`}>
+    <article className={`np-article np-article--${tier}${showImage ? " np-article--has-image" : ""}`}>
+      {/* B&W front-page photograph — banner stories only */}
+      {showImage && (
+        <div className="np-article__image-wrap">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={imageUrl!}
+            alt=""
+            className={`np-article__image${imgLoaded ? " np-article__image--loaded" : ""}`}
+            loading="eager"
+            onLoad={() => setImgLoaded(true)}
+            onError={() => setImgError(true)}
+          />
+        </div>
+      )}
+
       {/* Headline + Decks */}
       {decks.length > 0 ? (
         <div className="np-headline-deck">
@@ -464,18 +476,18 @@ function Classifieds({
 // --- Colophon ---
 
 function Colophon({ edition }: { edition: string }) {
-  const now = new Date();
-  const dateStr = now.toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
+  const [dateStr, setDateStr] = useState("");
+  useEffect(() => {
+    setDateStr(new Date().toLocaleDateString("en-US", {
+      month: "long", day: "numeric", year: "numeric",
+    }));
+  }, []);
 
   return (
     <footer className="np-colophon">
       <hr className="np-colophon__rule" />
-      <p>
-        Void News &middot; The {edition} Edition &middot; {dateStr}
+      <p suppressHydrationWarning>
+        Void News &middot; The {edition} Edition{dateStr ? ` \u00b7 ${dateStr}` : ""}
       </p>
       <p>
         <Link href="/void--news/" className="np-colophon__link">
@@ -510,22 +522,30 @@ export default function PaperContent({ edition }: { edition: Edition }) {
   const [lastUpdated, setLastUpdated] = useState<string | null>(null);
   const [tldr, setTldr] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [bannerImageUrl, setBannerImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
     async function load() {
+      if (!supabase) { setIsLoading(false); return; }
       try {
-        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points`;
+        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points,rank_world,rank_us,rank_europe,rank_south_asia`;
 
+        const rankCol = `rank_${edition}` as "rank_world" | "rank_us" | "rank_europe" | "rank_south_asia";
         const { data: clusters } = await supabase
           .from("story_clusters")
           .select(enrichedFields)
           .contains("sections", [edition])
-          .order("headline_rank", { ascending: false })
+          .order(rankCol, { ascending: false })
           .limit(150);
 
         const stories = (clusters || []).map((c) => buildStory(c, true));
         stories.sort((a, b) => b.headlineRank - a.headlineRank);
         setAllStories(stories);
+
+        // Fetch B&W front-page photograph for the banner story
+        if (stories.length > 0) {
+          fetchClusterLeadImage(stories[0].id).then((url) => setBannerImageUrl(url));
+        }
       } catch (err) {
         console.error("Paper page load failed:", err);
       } finally {
@@ -563,15 +583,14 @@ export default function PaperContent({ edition }: { edition: Edition }) {
   const layout = distributeStories(allStories, edition);
   const sectionConfig = getSectionConfig(edition);
 
-  const hour = new Date().getUTCHours();
   const editionDisplayName =
     edition === "us"
       ? "United States"
-      : edition === "india"
-        ? "India"
-        : hour < 17
-          ? "Morning"
-          : "Evening";
+      : edition === "south-asia"
+        ? "South Asia"
+        : edition === "europe"
+          ? "Europe"
+          : "World";
 
   return (
     <div className="np-root" id="main-content" role="main">
@@ -579,7 +598,7 @@ export default function PaperContent({ edition }: { edition: Edition }) {
 
       {isLoading && (
         <p className="np-loading">
-          Setting type &mdash; your edition is being prepared&hellip;
+          Setting type. Your edition is being prepared&hellip;
         </p>
       )}
 
@@ -615,7 +634,7 @@ export default function PaperContent({ edition }: { edition: Edition }) {
                 story={story}
                 tier={i === 0 ? "banner" : "standard"}
                 edition={edition}
-
+                imageUrl={i === 0 ? bannerImageUrl : undefined}
               />
             ))}
           </div>

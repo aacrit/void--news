@@ -1,5 +1,10 @@
 "use client";
 
+// Route-scoped CSS — bundled with Deep Dive chunk, ships only when this
+// component loads (lazily on the homepage). Removes ~50KB gzipped from
+// the initial homepage bundle.
+import "../styles/verify.css";
+
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   ArrowLeft,
@@ -7,25 +12,30 @@ import {
   CaretRight,
   X,
 } from "@phosphor-icons/react";
-import type { Story, StorySource, DeepDiveData, ThreeLensData, OpinionLabel } from "../lib/types";
+import type { Story, StorySource, DeepDiveData, ThreeLensData, OpinionLabel, SigilData, DisputedClaim } from "../lib/types";
 import { fetchDeepDiveData } from "../lib/supabase";
-import { timeAgo } from "../lib/utils";
-import { hapticMedium, hapticLight } from "../lib/haptics";
+import { timeAgo, BASE_PATH } from "../lib/utils";
+import { hapticMedium, hapticLight, hapticMicro } from "../lib/haptics";
+import { generateShareCardImage, generateSquareCardImage, generateStoryCardImage } from "../lib/shareCardRenderer";
+import { findHistoryContext } from "../lib/historyContext";
 import Sigil from "./Sigil";
 import LogoIcon from "./LogoIcon";
-import { BiasInspectorInline } from "./BiasInspector";
 import DeepDiveSpectrum from "./DeepDiveSpectrum";
+import BiasSnapshot from "./BiasSnapshot";
 import type { DeepDiveSpectrumSource } from "./DeepDiveSpectrum";
 import ComparativeView from "./ComparativeView";
+import ClaimConsensusSection from "./ClaimConsensusSection";
+import ClaimMark from "./ClaimMark";
 
 /* ---------------------------------------------------------------------------
-   DeepDive — Slide-in panel showing unified summary of a story cluster.
-   Desktop (1024px+): 50% width panel sliding from the right.
+   DeepDive — Centered popup overlay showing unified summary of a story cluster.
+   Desktop (1024px+): centered modal (75vw, max-width 920px–1080px, 80vh) with
+   cinematic shadow and backdrop blur.
    Mobile: full-screen modal sliding up from the bottom.
    --------------------------------------------------------------------------- */
 
 // Press Analysis arrow bounce plays once per session — after the user has seen
-// it, repeating the animation on every panel open is visual noise.
+// it, repeating the animation on every popup open is visual noise.
 let hasSeenPressHint = false;
 
 interface DeepDiveProps {
@@ -41,6 +51,183 @@ interface DeepDiveProps {
   totalStories?: number;
 }
 
+/* --- Six Lenses — ink-stamp 6-axis bias scores --------------------------- */
+
+const SIX_AXES: { id: string; name: string; key: keyof SigilData }[] = [
+  { id: "lean",           name: "Political Lean",  key: "politicalLean" },
+  { id: "sensationalism", name: "Sensationalism",   key: "sensationalism" },
+  { id: "opinion",        name: "Opinion",           key: "opinionFact" },
+  { id: "rigor",          name: "Factual Rigor",     key: "factualRigor" },
+  { id: "framing",        name: "Framing",           key: "framing" },
+  { id: "tracking",       name: "Agreement",         key: "agreement" },
+];
+
+function SixLenses({ sigilData, visible }: { sigilData: SigilData; visible: boolean }) {
+  const [activeAxis, setActiveAxis] = useState<string | null>(null);
+  const [isMobileLens, setIsMobileLens] = useState(false);
+  const [showSecondary, setShowSecondary] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    setIsMobileLens(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobileLens(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  /* Priority order per memory rule: lean is hero, rigor second, opinion third */
+  const PRIMARY_IDS = new Set(["lean", "rigor", "opinion"]);
+  const primaryAxes = SIX_AXES.filter(a => PRIMARY_IDS.has(a.id));
+  const secondaryAxes = SIX_AXES.filter(a => !PRIMARY_IDS.has(a.id));
+
+  const renderAxis = (axis: typeof SIX_AXES[0], i: number) => {
+    const score = sigilData[axis.key] as number;
+    const dotCount = Math.max(1, Math.round((score / 100) * 5));
+    const isActive = activeAxis === axis.id;
+    return (
+      <button
+        key={axis.id}
+        className={`dd-lens${isActive ? " dd-lens--active" : ""}${visible ? " dd-lens--visible" : ""}`}
+        style={{ "--lens-delay": `${450 + i * 50}ms` } as React.CSSProperties}
+        onClick={() => { hapticMicro(); setActiveAxis(isActive ? null : axis.id); }}
+        aria-expanded={isActive}
+        aria-label={`${axis.name}: ${score} out of 100`}
+      >
+        <span className="dd-lens__score">{score}</span>
+        <span className="dd-lens__dots" aria-hidden="true">
+          {Array.from({ length: 5 }, (_, di) => (
+            <span key={di} className={`dd-lens__pip${di < dotCount ? " dd-lens__pip--filled" : ""}`} />
+          ))}
+        </span>
+        <span className="dd-lens__name">{axis.name}</span>
+      </button>
+    );
+  };
+
+  return (
+    <div className="dd-lenses">
+      <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>Six Lenses</h3>
+      {isMobileLens ? (
+        <>
+          <div className={`dd-lenses__grid${activeAxis ? " dd-lenses__grid--has-active" : ""}`}>
+            {primaryAxes.map((axis, i) => renderAxis(axis, i))}
+          </div>
+          <div
+            className="dd-lenses__secondary"
+            style={{
+              maxHeight: showSecondary ? "300px" : "0",
+              overflow: "hidden",
+              transition: "max-height 300ms var(--ease-out)",
+            }}
+          >
+            <div className={`dd-lenses__grid${activeAxis ? " dd-lenses__grid--has-active" : ""}`}>
+              {secondaryAxes.map((axis, i) => renderAxis(axis, i + 3))}
+            </div>
+          </div>
+          <button
+            className="dd-lenses__expand text-meta"
+            onClick={() => { hapticMicro(); setShowSecondary(!showSecondary); }}
+            aria-expanded={showSecondary}
+          >
+            {showSecondary ? "Show less" : `${secondaryAxes.length} more axes`}
+          </button>
+        </>
+      ) : (
+        <div className={`dd-lenses__grid${activeAxis ? " dd-lenses__grid--has-active" : ""}`}>
+          {SIX_AXES.map((axis, i) => renderAxis(axis, i))}
+        </div>
+      )}
+      <a href={`${BASE_PATH}/sources/#methodology`} className="dd-lenses__link text-meta">
+        How we score
+      </a>
+    </div>
+  );
+}
+
+/* --- History Context Link — subtle archival cross-link -------------------- */
+
+function HistoryContextLink({ title, summary, visible }: { title: string; summary: string; visible: boolean }) {
+  const match = findHistoryContext(title, summary);
+  if (!match) return null;
+
+  const perspText = match.perspectiveCount > 0
+    ? `See how this event is told from ${match.perspectiveCount} perspectives`
+    : "Explore this event in the archive";
+
+  return (
+    <div className={`dd-history-context anim-dd-section dd-cascade-5${visible ? " anim-dd-section--visible" : ""}`}>
+      <hr className="ink-rule" style={{ margin: "0 0 var(--space-3) 0" }} aria-hidden="true" />
+      <span className="dd-history-context__label text-meta" aria-hidden="true">Historical Context</span>
+      <a
+        href={match.href}
+        className="dd-history-context__link"
+        aria-label={`Historical context: ${match.title}`}
+      >
+        <span className="dd-history-context__arrow" aria-hidden="true">&rarr;</span>
+        <span className="dd-history-context__title">{match.title}</span>
+        <span className="dd-history-context__desc">{perspText}</span>
+      </a>
+    </div>
+  );
+}
+
+/* --- Inline contradiction highlight helper -------------------------------- */
+
+function renderSummaryWithContradictions(
+  summary: string,
+  disputedDetails?: DisputedClaim[],
+): React.ReactNode {
+  if (!disputedDetails?.length || !summary) return summary;
+
+  const targets: { phrase: string; dispute: DisputedClaim }[] = [];
+  for (const d of disputedDetails) {
+    for (const version of [d.version_a, d.version_b]) {
+      if (!version) continue;
+      const phrases = version.split(/[.!?]+/).map((s) => s.trim()).filter((s) => s.length >= 12);
+      for (const phrase of phrases) {
+        if (summary.toLowerCase().includes(phrase.toLowerCase())) {
+          targets.push({ phrase, dispute: d });
+        }
+      }
+    }
+    if (d.topic && d.topic.length >= 8 && summary.toLowerCase().includes(d.topic.toLowerCase())) {
+      if (!targets.some((t) => t.dispute === d)) {
+        targets.push({ phrase: d.topic, dispute: d });
+      }
+    }
+  }
+
+  if (targets.length === 0) return summary;
+
+  const matches: { start: number; end: number; dispute: DisputedClaim; text: string }[] = [];
+  const lower = summary.toLowerCase();
+  for (const { phrase, dispute } of targets) {
+    const idx = lower.indexOf(phrase.toLowerCase());
+    if (idx >= 0) {
+      const overlaps = matches.some(
+        (m) => (idx >= m.start && idx < m.end) || (idx + phrase.length > m.start && idx + phrase.length <= m.end),
+      );
+      if (!overlaps) {
+        matches.push({ start: idx, end: idx + phrase.length, dispute, text: summary.slice(idx, idx + phrase.length) });
+      }
+    }
+  }
+
+  if (matches.length === 0) return summary;
+  matches.sort((a, b) => a.start - b.start);
+
+  const nodes: React.ReactNode[] = [];
+  let cursor = 0;
+  for (let i = 0; i < matches.length; i++) {
+    const m = matches[i];
+    if (cursor < m.start) nodes.push(summary.slice(cursor, m.start));
+    nodes.push(<ClaimMark key={`cm-${i}`} text={m.text} disputed={m.dispute} />);
+    cursor = m.end;
+  }
+  if (cursor < summary.length) nodes.push(summary.slice(cursor));
+  return <>{nodes}</>;
+}
+
 /* --- Main DeepDive component --------------------------------------------- */
 
 export default function DeepDive({ story, onClose, originRect, onNavigate, storyIndex = -1, totalStories = 0 }: DeepDiveProps) {
@@ -48,13 +235,16 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
   const [contentVisible, setContentVisible] = useState(false);
   const [liveData, setLiveData] = useState<DeepDiveData | null>(null);
   const [isLoadingData, setIsLoadingData] = useState(false);
+  const [fetchError, setFetchError] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
-  const [summaryExpanded, setSummaryExpanded] = useState(false);
+  const [summaryExpanded, setSummaryExpanded] = useState(() => {
+    if (typeof window !== "undefined" && window.innerWidth < 1024) return true;
+    return false;
+  });
+  const [analysisExpanded, setAnalysisExpanded] = useState(false);
   const [summaryOverflows, setSummaryOverflows] = useState(false);
   const summaryInnerRef = useRef<HTMLDivElement>(null);
-  const [pressAnalysisOpen, setPressAnalysisOpen] = useState(false);
-  const [comparativeOpen, setComparativeOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<"summary" | "allsides" | "scoring">("summary");
+  // Tabs removed — Deep Dive is now a single continuous scroll view
   /** Null = normal slide-in style (isVisible-driven). Object = FLIP morph phase. */
   const [morphStyle, setMorphStyle] = useState<React.CSSProperties | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -68,7 +258,20 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [isDismissing, setIsDismissing] = useState(false);
-  const touchStartRef = useRef<{ x: number; y: number; time: number; scrollTop: number; direction: "none" | "vertical" | "horizontal" } | null>(null);
+  const touchStartRef = useRef<{ x: number; y: number; time: number; scrollTop: number; direction: "none" | "vertical" | "horizontal"; hapticFired: boolean } | null>(null);
+
+  /** Cross-fade opacity for horizontal story swipe navigation */
+  const [swipeNavOpacity, setSwipeNavOpacity] = useState(1);
+
+  /* ---- Hero image state -------------------------------------------------- */
+  const [heroImageUrl, setHeroImageUrl] = useState<string | null>(null);
+  const [heroImgLoaded, setHeroImgLoaded] = useState(false);
+  const [heroImgError, setHeroImgError] = useState(false);
+
+  /* ---- Share button state ------------------------------------------------ */
+  const [shareCopied, setShareCopied] = useState(false);
+  const [shareToastText, setShareToastText] = useState("Link copied");
+  const shareCopiedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   /* Reset swipe gesture state when the parent navigates to a different story
      without unmounting this component (handleDeepDiveNav changes story prop). */
@@ -76,10 +279,36 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
     setIsDismissing(false);
     setIsDragging(false);
     setDragOffset(0);
+    setShareCopied(false);
+    setHeroImageUrl(null);
+    setHeroImgLoaded(false);
+    setHeroImgError(false);
     touchStartRef.current = null;
+    if (shareCopiedTimer.current) clearTimeout(shareCopiedTimer.current);
   }, [story.id]);
-  /** Cross-fade opacity for horizontal story swipe navigation */
-  const [swipeNavOpacity, setSwipeNavOpacity] = useState(1);
+
+  /* ---- One-time swipe hint (mobile only) -------------------------------- */
+  const [showSwipeHint, setShowSwipeHint] = useState(false);
+
+  useEffect(() => {
+    if (isDesktop || !isVisible || !onNavigate || totalStories <= 1) return;
+    try {
+      if (sessionStorage.getItem("dd-swipe-hint-seen")) return;
+    } catch { return; }
+
+    let hideTimer: ReturnType<typeof setTimeout> | null = null;
+    const showTimer = setTimeout(() => {
+      setShowSwipeHint(true);
+      hideTimer = setTimeout(() => {
+        setShowSwipeHint(false);
+        try { sessionStorage.setItem("dd-swipe-hint-seen", "1"); } catch { /* ignore */ }
+      }, 4000);
+    }, 500);
+    return () => {
+      clearTimeout(showTimer);
+      if (hideTimer) clearTimeout(hideTimer);
+    };
+  }, [isDesktop, isVisible, onNavigate, totalStories]);
 
   const deepDive: DeepDiveData | undefined = liveData ?? story.deepDive;
 
@@ -126,7 +355,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
 
   /* ---- Detect desktop vs mobile for animation choreography ------------- */
   useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px)");
+    const mq = window.matchMedia("(min-width: 1024px)");
     setIsDesktop(mq.matches);
 
     function handleChange(e: MediaQueryListEvent) {
@@ -137,12 +366,16 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
     return () => mq.removeEventListener("change", handleChange);
   }, []);
 
+  /* ---- Retry counter — incrementing triggers re-fetch ------------------- */
+  const [retryCount, setRetryCount] = useState(0);
+
   /* ---- Fetch live data from Supabase ----------------------------------- */
   useEffect(() => {
     let cancelled = false;
 
     async function loadClusterData() {
       setIsLoadingData(true);
+      setFetchError(false);
       try {
         const raw = await fetchDeepDiveData(story.id);
         if (cancelled || !raw || raw.length === 0) {
@@ -290,6 +523,27 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           });
         }
 
+        // Extract best hero image from cluster articles (prefer highest-tier source)
+        {
+          const tierRank: Record<string, number> = { us_major: 3, international: 2, independent: 1 };
+          let bestImg: { url: string; rank: number } | null = null;
+          for (const row of raw!) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const a = row.article as any;
+            if (!a?.image_url) continue;
+            const url = a.image_url as string;
+            if (url.startsWith('data:') || url.length < 20 || /logo|icon|favicon|pixel|spacer|tracker|1x1|blank|placeholder|default-og|brand/i.test(url)) continue;
+            const tier = (a.source?.tier as string) ?? "independent";
+            const rank = tierRank[tier] ?? 0;
+            if (!bestImg || rank > bestImg.rank) bestImg = { url, rank };
+          }
+          if (!cancelled) {
+            setHeroImageUrl(bestImg?.url ?? null);
+            setHeroImgLoaded(false);
+            setHeroImgError(false);
+          }
+        }
+
         // Deduplicate: keep only the first article per source name.
         // Multiple articles from the same outlet in a cluster would otherwise
         // produce duplicate entries in the spectrum and source count display.
@@ -317,10 +571,11 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             consensus,
             divergence: divergenceData,
             sources: dedupedSourceList,
+            claimConsensus: story.deepDive?.claimConsensus,
           });
         }
       } catch {
-        /* Silently fall back to mock deepDive data */
+        if (!cancelled) setFetchError(true);
       } finally {
         if (!cancelled) setIsLoadingData(false);
       }
@@ -328,7 +583,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
 
     loadClusterData();
     return () => { cancelled = true; };
-  }, [story.id, story.deepDive]);
+  }, [story.id, story.deepDive, retryCount]);
 
   /* ---- Open animation — FLIP morph or slide-in fallback ----------------- */
   useEffect(() => {
@@ -347,29 +602,49 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
     document.body.style.width = "100%";
     document.body.style.top = `-${scrollY}px`;
 
+    // Global state: allows CSS to disable expensive backdrop-filters on
+    // elements hidden behind the Deep Dive overlay (mobile GPU budget).
+    document.documentElement.classList.add('deep-dive-active');
+
+    // Feed recession: page-main scales down 0.3%, creating physical depth
+    // — the feed recedes as the Deep Dive approaches the viewer.
+    const pageMain = document.querySelector('.page-main');
+    pageMain?.classList.remove('page-main--deep-dive-closing');
+    pageMain?.classList.add('page-main--deep-dive-open');
+
     hapticMedium();
-    const hasMorph = originRect && originRect.width > 0 && panelRef.current;
+    const isDesktopForMorph = window.innerWidth >= 1024;
+    const hasMorph = originRect && originRect.width > 0 && panelRef.current && isDesktopForMorph;
 
     if (hasMorph) {
-      /* ═══ FLIP MORPH: card expands into panel ═══
-         Choreography:
-         1. Backdrop blur fades in (feed goes soft behind the card)
-         2. Panel appears at the card's exact rect
-         3. Panel morphs from card → final panel rect (spring physics)
-         4. Content cascades in after morph settles
+      /* ═══ SCENE 4: MATCH CUT — Card expands into Deep Dive panel ═══
+         Cinematic reference: Kubrick match cuts (2001 bone → satellite).
+         The headline maintains visual continuity from its card position
+         to its panel position — the viewer's eye never loses the subject.
 
-         The panel is position:fixed with opacity:0 in CSS. We need to
-         measure its final rect. We briefly make it visible but off-screen
-         via the morphStyle override, then compute the inverse transform. */
+         Choreography (L-cut timing — content begins before morph settles):
+         1. Backdrop blur fades in → feed goes shallow DoF (Deakins chiaroscuro)
+         2. Panel snaps to card's exact rect (first frame of the match cut)
+         3. Panel morphs card → final rect via spring-bouncy (500ms)
+            - Shadow depth increases during morph (dolly in: approaching)
+            - Border-radius transitions (card edge → panel edge)
+            - Box-shadow ramps from e0 → cinematic-dramatic
+         4. Content cascades in at ~40% morph completion (L-cut: new scene
+            audio starts before old scene visual completes)
+         5. Studio reflection ::before fades in after panel settles
 
-      const isDesktopNow = window.innerWidth >= 768;
+         The L-cut offset (content at 180ms into a 500ms morph = 36%) is
+         motivated: the viewer needs to see the content "behind" the panel
+         before the panel finishes its physical movement. This creates the
+         sensation that the Deep Dive was always there — the camera merely
+         revealed it. */
+
+      const isDesktopNow = window.innerWidth >= 1024;
 
       // Step 1: Backdrop blur starts immediately
       setIsVisible(true);
 
       // Step 2: Measure the panel's final position
-      // The panel is already in the DOM at its final CSS position (inset:0 or
-      // right:0 on desktop). We read that rect, then position it at the card.
       requestAnimationFrame(() => {
         const panel = panelRef.current;
         if (!panel) return;
@@ -388,13 +663,12 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
         }
 
         // Compute inverse transform: final → card origin
-        // On desktop, offsets are relative to the centered position (translate(-50%,-50%))
-        const scaleX = originRect.width / finalRect.width;
-        const scaleY = originRect.height / finalRect.height;
+        const MORPH_SCALE_MIN = 0.15;
+        const scaleX = Math.max(MORPH_SCALE_MIN, originRect.width / finalRect.width);
+        const scaleY = Math.max(MORPH_SCALE_MIN, originRect.height / finalRect.height);
         const dx = (originRect.left + originRect.width / 2) - (finalRect.left + finalRect.width / 2);
         const dy = (originRect.top + originRect.height / 2) - (finalRect.top + finalRect.height / 2);
 
-        // Desktop: offsets are additive to the centering transform
         const snapTransform = isDesktopNow
           ? `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${scaleX}, ${scaleY})`
           : `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`;
@@ -411,35 +685,45 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           transition: "none",
         });
 
-        // Step 4: Animate from card → final with spring physics.
-        // setTimeout(0) guarantees the snap frame paints before the
-        // transition begins — more reliable than nested rAF on 90/120Hz.
-        setTimeout(() => {
+        // Step 4: Match cut morph — card position → final panel position.
+        // Double rAF guarantees the browser paints the snap frame before
+        // the transition begins. The first rAF commits the snap to the DOM,
+        // the browser paints it, then the second rAF starts the spring.
+        // This is more reliable than setTimeout(0) which can fire before
+        // the browser paints, collapsing snap + transition into one frame.
+        requestAnimationFrame(() => {
           setMorphStyle({
             transform: finalTransform,
             borderRadius: isDesktopNow ? "16px" : "16px 16px 0 0",
             opacity: 1,
-            boxShadow: "var(--shadow-e3)",
+            boxShadow: "var(--shadow-cinematic-lifted)",
             transition: [
-              "transform 500ms var(--spring-bouncy)",
-              "border-radius 350ms var(--spring-bouncy)",
-              "box-shadow 400ms cubic-bezier(0.16, 1, 0.3, 1) 60ms",
+              "transform 200ms var(--spring-bouncy)",
+              "border-radius 120ms cubic-bezier(0.16, 1, 0.3, 1)",
+              "opacity 200ms cubic-bezier(0.16, 1, 0.3, 1)",
+              "box-shadow 150ms cubic-bezier(0.16, 1, 0.3, 1)",
             ].join(", "),
           });
 
-          // Content layers in as the panel settles (~50% through spring)
-          setTimeout(() => setContentVisible(true), isDesktopNow ? 180 : 120);
+          // L-cut: content cascades in while morph is still settling.
+          setTimeout(() => setContentVisible(true), isDesktopNow ? 80 : 50);
 
-          // Clear morph style after spring fully settles
-          setTimeout(() => setMorphStyle(null), 550);
-        }, 0);
+          // Clear morph style after transition settles
+          setTimeout(() => {
+            setMorphStyle(null);
+            panelRef.current?.setAttribute('data-settled', '');
+          }, 220);
+        });
       });
     } else {
       /* ═══ FALLBACK: directional slide-in (keyboard nav, no rect) ═══ */
       requestAnimationFrame(() => {
         setIsVisible(true);
         const delay = window.innerWidth >= 768 ? 200 : 120;
-        setTimeout(() => setContentVisible(true), delay);
+        setTimeout(() => {
+          setContentVisible(true);
+          panelRef.current?.setAttribute('data-settled', '');
+        }, delay);
       });
     }
 
@@ -450,6 +734,10 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
       document.body.style.top = originalTop;
       // Restore scroll position that was frozen by position:fixed
       window.scrollTo(0, scrollY);
+      // Remove feed recession + global state classes
+      document.documentElement.classList.remove('deep-dive-active');
+      const pm = document.querySelector('.page-main');
+      pm?.classList.remove('page-main--deep-dive-open', 'page-main--deep-dive-closing');
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -512,70 +800,177 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
     return () => ro.disconnect();
   }, [summaryExpanded, story.summary, contentVisible]);
 
+  /* ---- Share handler ------------------------------------------------------ */
+  const handleShare = useCallback(async () => {
+    hapticLight();
+    const url = typeof window !== "undefined" ? window.location.href : "";
+
+    /** Show a transient toast under the share button. */
+    const showToast = (msg: string) => {
+      setShareToastText(msg);
+      setShareCopied(true);
+      if (shareCopiedTimer.current) clearTimeout(shareCopiedTimer.current);
+      shareCopiedTimer.current = setTimeout(() => setShareCopied(false), 2400);
+    };
+
+    /* 1. Generate Evidence Card — 9:16 story card (primary), fallback to square/OG */
+    const isMobileShare = typeof window !== "undefined" && window.innerWidth < 768;
+    const deepDiveSources = (liveData?.sources ?? story.deepDive?.sources) || [];
+    let blob: Blob | null = null;
+    try {
+      blob = await generateStoryCardImage(story, deepDiveSources, url);
+    } catch {
+      // 9:16 card failed — fall back to legacy formats
+      try {
+        blob = isMobileShare
+          ? await generateSquareCardImage(story)
+          : await generateShareCardImage(story);
+      } catch {
+        // Canvas rendering failed — fall back to URL-only sharing below
+      }
+    }
+
+    /* 2a. Mobile with file-sharing support: share card image + URL */
+    if (blob && typeof navigator !== "undefined" && navigator.share && navigator.canShare) {
+      const file = new File([blob], "void-news-evidence-card.png", { type: "image/png" });
+      const shareData = { files: [file], title: story.title, url };
+      try {
+        if (navigator.canShare(shareData)) {
+          await navigator.share(shareData);
+          return; // OS share sheet handled feedback
+        }
+      } catch {
+        // User cancelled or share failed — fall through to download
+      }
+    }
+
+    /* 2b. Mobile without file support: share URL via native sheet */
+    if (!blob && typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({ url, title: story.title });
+        return;
+      } catch {
+        // User cancelled — fall through
+      }
+    }
+
+    /* 3. Desktop (or file-share not supported): download the PNG */
+    if (blob) {
+      try {
+        const blobUrl = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = blobUrl;
+        a.download = "void-news-evidence-card.png";
+        a.style.display = "none";
+        document.body.appendChild(a);
+        a.click();
+        // Cleanup after a tick so the download starts
+        setTimeout(() => {
+          document.body.removeChild(a);
+          URL.revokeObjectURL(blobUrl);
+        }, 100);
+        // Also copy URL to clipboard for easy pasting
+        try { await navigator.clipboard.writeText(url); } catch { /* ok */ }
+        showToast("Card saved");
+        return;
+      } catch {
+        // Download failed — fall through to clipboard-only
+      }
+    }
+
+    /* 4. Last resort: copy URL to clipboard */
+    try {
+      await navigator.clipboard.writeText(url);
+      showToast("Link copied");
+    } catch {
+      // Clipboard API not available — silent fail
+    }
+  }, [story]);
+
   /* ---- Close — reverse FLIP morph (panel shrinks back into the card) ---- */
   const handleClose = useCallback(() => {
     hapticLight();
+    // Remove settled state — hides studio reflection ::before immediately
+    panelRef.current?.removeAttribute('data-settled');
     // Phase 1: Content fades out quickly
     setContentVisible(false);
 
-    if (originRect && originRect.width > 0 && panelRef.current) {
-      /* ═══ REVERSE MORPH: panel collapses back into the card ═══
-         Choreography:
-         1. Content fades out (100ms)
-         2. Panel morphs from current rect → card origin (500ms spring)
-         3. Panel fades to transparent as it nears the card
-         4. Backdrop blur fades out — article becomes clear again
-         5. onClose fires, DOM unmounts */
+    // Feed recession: swap open → closing (scale returns with snappy spring)
+    const pageMain = document.querySelector('.page-main');
+    pageMain?.classList.remove('page-main--deep-dive-open');
+    pageMain?.classList.add('page-main--deep-dive-closing');
+
+    // Backdrop rack-out: blur clears (feed refocuses) via CSS animation
+    const backdrop = document.querySelector('.deep-dive-backdrop');
+    backdrop?.classList.add('deep-dive-backdrop--closing');
+
+    /* ═══ SCENE 5: REVERSE SHOT — Panel collapses back into its card ═══
+       Find the actual card in the DOM at close time rather than relying on
+       the stale originRect from open time. This handles arrow-key navigation
+       between stories (story changes but originRect still pointed at the
+       original card) and any layout shifts.
+
+       The panel stays fully opaque until the final 80ms — the viewer's eye
+       tracks the panel all the way back into the card, then it vanishes
+       into the card surface like a match cut in reverse. */
+
+    // Fresh rect: query the DOM for the current story's card element.
+    // Falls back to originRect (still valid when body is position:fixed),
+    // then to null (graceful center-close fallback).
+    const cardEl = document.querySelector(`[data-story-id="${story.id}"]`);
+    const targetRect = cardEl ? cardEl.getBoundingClientRect() : (originRect?.width ? originRect : null);
+
+    if (targetRect && targetRect.width > 0 && panelRef.current) {
+      const panel = panelRef.current;
+      if (!panel) { previousFocusRef.current?.focus(); onClose(); return; }
+
+      const currentRect = panel.getBoundingClientRect();
+      const MORPH_SCALE_MIN = 0.15;
+      const scaleX = Math.max(MORPH_SCALE_MIN, targetRect.width / currentRect.width);
+      const scaleY = Math.max(MORPH_SCALE_MIN, targetRect.height / currentRect.height);
+      const dx = (targetRect.left + targetRect.width / 2) - (currentRect.left + currentRect.width / 2);
+      const dy = (targetRect.top + targetRect.height / 2) - (currentRect.top + currentRect.height / 2);
+
+      const isDesktopNow = window.innerWidth >= 1024;
+      const closeTransform = isDesktopNow
+        ? `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${scaleX}, ${scaleY})`
+        : `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`;
+
+      // Reverse match cut — panel physically returns to the card.
+      // 320ms with smooth deceleration: fast departure, gentle arrival.
+      // Opacity holds for first 220ms then fades in final 100ms.
+      setMorphStyle({
+        transform: closeTransform,
+        borderRadius: "8px",
+        opacity: 0,
+        boxShadow: "var(--shadow-e0)",
+        transition: [
+          "transform 150ms cubic-bezier(0.32, 0.72, 0, 1)",
+          "border-radius 100ms cubic-bezier(0.32, 0.72, 0, 1)",
+          "opacity 80ms cubic-bezier(0.16, 1, 0.3, 1) 70ms",
+          "box-shadow 100ms cubic-bezier(0.32, 0.72, 0, 1)",
+        ].join(", "),
+      });
+
+      // L-cut — backdrop fades early so feed sharpens while panel mid-flight
+      setTimeout(() => setIsVisible(false), 50);
+
+      // Cleanup — after panel has visually merged with the card
       setTimeout(() => {
-        const panel = panelRef.current;
-        if (!panel) { previousFocusRef.current?.focus(); onClose(); return; }
-
-        const currentRect = panel.getBoundingClientRect();
-        const scaleX = originRect.width / currentRect.width;
-        const scaleY = originRect.height / currentRect.height;
-        const dx = (originRect.left + originRect.width / 2) - (currentRect.left + currentRect.width / 2);
-        const dy = (originRect.top + originRect.height / 2) - (currentRect.top + currentRect.height / 2);
-
-        // Desktop: offsets are relative to the centering transform
-        const isDesktopNow = window.innerWidth >= 768;
-        const closeTransform = isDesktopNow
-          ? `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${scaleX}, ${scaleY})`
-          : `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`;
-
-        // Phase 2: Panel morphs back to card rect — fast, decisive close
-        setMorphStyle({
-          transform: closeTransform,
-          borderRadius: "8px",
-          opacity: 0,
-          boxShadow: "none",
-          transition: [
-            "transform 380ms var(--spring-snappy)",
-            "border-radius 250ms var(--spring-snappy)",
-            "opacity 200ms cubic-bezier(0.16, 1, 0.3, 1) 150ms",
-            "box-shadow 150ms cubic-bezier(0.16, 1, 0.3, 1)",
-          ].join(", "),
-        });
-
-        // Phase 3: Backdrop fades as panel shrinks
-        setTimeout(() => setIsVisible(false), 150);
-
-        // Phase 4: Cleanup — fast dismissal
-        setTimeout(() => {
-          previousFocusRef.current?.focus();
-          onClose();
-        }, 400);
-      }, 100); // Content fades 100ms, then morph begins immediately
+        pageMain?.classList.remove('page-main--deep-dive-closing');
+        previousFocusRef.current?.focus();
+        onClose();
+      }, 180);
     } else {
       /* ═══ FALLBACK: fast slide-out ═══ */
+      setIsVisible(false);
       setTimeout(() => {
-        setIsVisible(false);
-        setTimeout(() => {
-          previousFocusRef.current?.focus();
-          onClose();
-        }, 400);
-      }, 100);
+        pageMain?.classList.remove('page-main--deep-dive-closing');
+        previousFocusRef.current?.focus();
+        onClose();
+      }, 300);
     }
-  }, [onClose, originRect]);
+  }, [onClose, originRect, story.id]);
 
   /* ---- Swipe-to-dismiss touch handlers (mobile only) -------------------- */
 
@@ -593,6 +988,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
       time: Date.now(),
       scrollTop,
       direction: "none",
+      hapticFired: false,
     };
   }, [isDesktop]);
 
@@ -605,14 +1001,18 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
     const absX = Math.abs(deltaX);
     const absY = Math.abs(deltaY);
 
-    // Determine direction on first significant movement
-    if (touchStartRef.current.direction === "none" && (absX > 10 || absY > 10)) {
-      touchStartRef.current.direction = absX > absY * 1.2 ? "horizontal" : "vertical";
+    // Determine direction on first significant movement (20px dead zone)
+    if (touchStartRef.current.direction === "none" && (absX > 20 || absY > 20)) {
+      touchStartRef.current.direction = absX > absY * 2 ? "horizontal" : "vertical";
     }
 
     // --- Horizontal swipe (story navigation) ---
     if (touchStartRef.current.direction === "horizontal" && onNavigateRef.current) {
-      // Don't interfere with vertical scroll
+      // Haptic detent at threshold crossing (once per gesture)
+      if (absX > 60 && !touchStartRef.current.hapticFired) {
+        hapticMicro();
+        touchStartRef.current.hapticFired = true;
+      }
       return;
     }
 
@@ -713,24 +1113,26 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
         onTouchEnd={handleTouchEnd}
         style={morphStyle ?? {
           /* Default open/close when no FLIP morph is active.
-             Desktop: spring scale + translateY from center.
-             Mobile: spring slide from bottom — bottom sheet. */
+             Desktop: subtle appear in place. Mobile: slide from bottom.
+             Close animation (spring-snappy 350ms) is kept as-is. */
           transform: isVisible
             ? isDesktop
               ? "translate(-50%, -50%) scale(1)"
               : `translateY(${dragOffset}px)`
             : isDesktop
-              ? "translate(-50%, -50%) scale(0.95) translateY(12px)"
+              ? "translate(-50%, -50%) scale(0.98)"
               : "translateY(100%)",
           opacity: isVisible ? 1 : 0,
-          boxShadow: isVisible ? "var(--shadow-e3)" : "none",
+          boxShadow: isVisible ? "var(--shadow-cinematic-dramatic)" : "none",
           transition: isDragging
             ? "none"
             : isDismissing
               ? "transform 280ms cubic-bezier(0.2, 1, 0.3, 1)"
-              : isVisible
-                ? "transform 520ms var(--spring-bouncy), opacity 180ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 450ms cubic-bezier(0.16, 1, 0.3, 1) 60ms"
-                : "transform 350ms var(--spring-snappy), opacity 180ms cubic-bezier(0.16, 1, 0.3, 1) 150ms, box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1)",
+              : !isVisible
+                ? "transform 350ms var(--spring-snappy), opacity 180ms cubic-bezier(0.16, 1, 0.3, 1) 150ms, box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1)"
+                : contentVisible
+                  ? "none"
+                  : "transform 220ms ease-out, opacity 180ms ease-out, box-shadow 220ms ease-out",
         }}
       >
         {/* Mobile drag indicator — pill handle at top of bottom sheet */}
@@ -767,13 +1169,61 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
                 >
                   <CaretRight size={14} weight="bold" />
                 </button>
+                {/* One-time swipe hint for mobile users */}
+                {showSwipeHint && (
+                  <span
+                    className="dd-swipe-hint"
+                    style={{
+                      opacity: showSwipeHint ? 1 : 0,
+                      transition: "opacity 300ms ease-out",
+                    }}
+                    aria-hidden="true"
+                  >
+                    swipe for next story
+                  </span>
+                )}
               </div>
             )}
+            {/* Static story counter — mobile only, replaces swipe hint as persistent affordance */}
+            {!isDesktop && totalStories > 1 && (
+              <span className="dd-story-counter" aria-label={`Story ${storyIndex + 1} of ${totalStories}`}>
+                {storyIndex + 1} / {totalStories}
+              </span>
+            )}
+
+            {/* Share button */}
+            <button onClick={handleShare} aria-label="Share this story" className="deep-dive-share">
+              {shareCopied ? (
+                /* Checkmark icon — confirms clipboard copy */
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                  <path d="M4 9.5L7.5 13L14 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              ) : (
+                /* Share icon — arrow up from box */
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                  <path d="M6 7L9 4L12 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <path d="M9 4V12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  <path d="M4 11V14H14V11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              )}
+              {shareCopied && <span className="dd-share-toast">{shareToastText}</span>}
+            </button>
+            {/* Accessible announcement for screen readers */}
+            <div aria-live="polite" className="sr-only">
+              {shareCopied ? shareToastText : ""}
+            </div>
 
             <button onClick={handleClose} aria-label="Close deep dive" className="deep-dive-close">
               <X size={20} weight="regular" aria-hidden="true" />
             </button>
           </div>
+
+          {/* Hero image removed 2026-04-29: the user already saw it on the
+              homepage card before clicking through. In Deep Dive it stole top
+              fold from the actual moat (summary + bias breakdown) and added
+              no analytical value. Image fetch state retained but unused — the
+              fetch is cheap enough to leave in place for a possible future
+              "open photo on click" affordance. */}
 
           <h2 className="dd-headline">
             {story.title}
@@ -787,24 +1237,18 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             </span>
             <span className="dot-separator" aria-hidden="true" />
             <span className="time-tag">{timeAgo(story.publishedAt)}</span>
-
-            {/* Analysis depth — subtle dots showing exploration progress.
-                Fills as user opens analysis layers: spectrum (auto), all sides, scoring.
-                Rewards curiosity without demanding attention. */}
-            {spectrumSources.length > 0 && (
-              <>
-                <span className="dot-separator" aria-hidden="true" />
-                <span
-                  className="dd-depth"
-                  aria-label={`${[spectrumSources.length > 0, comparativeOpen, pressAnalysisOpen].filter(Boolean).length} of 3 analysis layers explored`}
-                >
-                  <span className={`dd-depth__dot${spectrumSources.length > 0 ? " dd-depth__dot--filled" : ""}`} />
-                  <span className={`dd-depth__dot${comparativeOpen ? " dd-depth__dot--filled" : ""}`} />
-                  <span className={`dd-depth__dot${pressAnalysisOpen ? " dd-depth__dot--filled" : ""}`} />
-                </span>
-              </>
-            )}
           </div>
+
+          {/* Inline bias snapshot — keeps the moat above the fold by surfacing
+              the three primary axes (lean / rigor / opinion) immediately under
+              the headline, without claiming the sigil+spectrum's full block. */}
+          {story.sigilData && !story.sigilData.pending && (
+            <BiasSnapshot
+              data={story.sigilData}
+              sourceCount={sources.length > 0 ? sources.length : story.source.count}
+              variant="inline"
+            />
+          )}
         </header>
 
         {/* ---- Content (fades in after panel, fades out faster on close) ---- */}
@@ -815,36 +1259,52 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             transition: `opacity ${swipeNavOpacity < 1 ? 120 : contentVisible ? 450 : 150}ms cubic-bezier(0.16, 1, 0.3, 1)`,
           }}
         >
-          {/* Loading indicator — analyzing animation while fetching deep dive data */}
-          {isLoadingData && !deepDive && (
-            <div style={{ padding: "var(--space-5) 0", display: "flex", flexDirection: "column", alignItems: "center", gap: "var(--space-3)" }}>
-              <LogoIcon size={32} animation="analyzing" />
-              <span className="text-data" style={{ color: "var(--fg-tertiary)" }}>
-                Analyzing coverage...
+          {/* Loading skeleton — structured placeholders while Supabase fetches data.
+               Check sources.length rather than !deepDive because the homepage query
+               populates deepDive with an empty sources array. */}
+          {isLoadingData && sources.length === 0 && (
+            <div className="dd-loading-skeleton" role="status" aria-label="Loading analysis">
+              <span className="dd-loading-skeleton__status text-meta" style={{ color: "var(--fg-muted)" }}>
+                Loading analysis...
               </span>
-            </div>
-          )}
 
-          {/* ---- Skeleton Spectrum — shown while loading, if story has bias data ---- */}
-          {isLoadingData && !deepDive && story.biasScores && (
-            <div className="dd-skeleton-spectrum" aria-hidden="true">
-              <div className="dd-skeleton-spectrum__bar" />
-              <div className="dd-skeleton-spectrum__indicator"
-                style={{ left: `${Math.max(4, Math.min(96, story.biasScores.politicalLean))}%` }}
-              />
-              <p className="dd-skeleton-spectrum__label text-data">Loading source data...</p>
+              {/* Spectrum bar placeholder */}
+              <div className="dd-loading-skeleton__section">
+                <div className="shimmer-line dd-loading-skeleton__bar" />
+              </div>
+
+              {/* Source perspective placeholders */}
+              <div className="dd-loading-skeleton__section">
+                <div className="shimmer-line dd-loading-skeleton__line dd-loading-skeleton__line--short" />
+                <div className="dd-loading-skeleton__perspectives">
+                  <div className="shimmer-line dd-loading-skeleton__perspective-card" />
+                  <div className="shimmer-line dd-loading-skeleton__perspective-card" />
+                  <div className="shimmer-line dd-loading-skeleton__perspective-card" />
+                </div>
+              </div>
+
+              {/* Bias inspector score placeholders */}
+              <div className="dd-loading-skeleton__section">
+                <div className="shimmer-line dd-loading-skeleton__line dd-loading-skeleton__line--short" />
+                <div className="dd-loading-skeleton__scores">
+                  <div className="shimmer-line dd-loading-skeleton__score" />
+                  <div className="shimmer-line dd-loading-skeleton__score" />
+                  <div className="shimmer-line dd-loading-skeleton__score" />
+                  <div className="shimmer-line dd-loading-skeleton__score" />
+                </div>
+              </div>
             </div>
           )}
 
           {/* ---- Sigil (stacked: icon above, lean+underline below) + full-width Spectrum ---- */}
           {(story.sigilData || spectrumSources.length > 0) && (
             <div
-              className={`dd-analysis-block anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`}
-              style={{ marginBottom: "var(--space-4)", transitionDelay: "30ms" }}
+              className={`dd-analysis-block anim-dd-section dd-cascade-1${contentVisible ? " anim-dd-section--visible" : ""}`}
+              style={{ marginBottom: "var(--space-6)" }}
             >
               {story.sigilData && (
                 <div className="dd-analysis-block__sigil">
-                  <Sigil data={story.sigilData} size="xl" />
+                  <Sigil data={story.sigilData} size="xl" storyId={story.id} />
                 </div>
               )}
               {spectrumSources.length > 0 && (
@@ -855,61 +1315,50 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             </div>
           )}
 
-          {/* ---- Tab bar ---- */}
-          <nav
-            className={`dd-tabs anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`}
-            role="tablist"
-            aria-label="Deep dive sections"
-            style={{ transitionDelay: "20ms" }}
-          >
-            <button
-              role="tab"
-              aria-selected={activeTab === "summary"}
-              className={`dd-tab${activeTab === "summary" ? " dd-tab--active" : ""}`}
-              onClick={() => { hapticLight(); setActiveTab("summary"); }}
-            >
-              Summary
-            </button>
-            {hasCrossLeanSources && (
-              <button
-                role="tab"
-                aria-selected={activeTab === "allsides"}
-                className={`dd-tab${activeTab === "allsides" ? " dd-tab--active" : ""}`}
-                onClick={() => { hapticLight(); setActiveTab("allsides"); }}
-              >
-                All Sides
-              </button>
-            )}
-            {spectrumSources.length > 0 && (
-              <button
-                role="tab"
-                aria-selected={activeTab === "scoring"}
-                className={`dd-tab${activeTab === "scoring" ? " dd-tab--active" : ""}`}
-                onClick={() => { hapticLight(); setActiveTab("scoring"); }}
-              >
-                Scoring
-              </button>
-            )}
-          </nav>
+          <hr className="ink-rule" style={{ margin: "0 0 var(--space-4) 0" }} aria-hidden="true" />
 
-          {/* ---- Tab panels ---- */}
-          {activeTab === "summary" && (
-            <section role="tabpanel" aria-label="Story summary" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "40ms" }}>
-              <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}${!summaryOverflows && !summaryExpanded ? " dd-collapsible--fits" : ""}`}>
-                <div className="dd-collapsible__inner" ref={summaryInnerRef}>
-                  <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
-                    {story.summary}
-                  </p>
-                </div>
+          {/* ---- Summary ---- */}
+          <section className={`anim-dd-section dd-cascade-2${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)" }}>
+            <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-2)" }}>The Story</h3>
+            <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}${!summaryOverflows && !summaryExpanded ? " dd-collapsible--fits" : ""}`}>
+              <div className="dd-collapsible__inner" ref={summaryInnerRef}>
+                <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
+                  {renderSummaryWithContradictions(story.summary, deepDive?.claimConsensus?.disputed_details)}
+                </p>
               </div>
-              {summaryOverflows && !summaryExpanded && (
-                <button className="dd-read-more" onClick={() => { hapticLight(); setSummaryExpanded(true); }}>Read more</button>
-              )}
+            </div>
+            {summaryOverflows && !summaryExpanded && (
+              <button className="dd-read-more" onClick={() => { hapticLight(); setSummaryExpanded(true); }}>Read more</button>
+            )}
+          </section>
+
+          {/* ---- Claim Consensus — cross-source verification (visible by default) ---- */}
+          {deepDive?.claimConsensus && (
+            <section
+              className={`anim-dd-section dd-cascade-3${contentVisible ? " anim-dd-section--visible" : ""}`}
+              style={{ marginBottom: "var(--space-5)" }}
+              aria-label="Claim Consensus verification"
+            >
+              <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
+              <ClaimConsensusSection consensus={deepDive.claimConsensus} />
             </section>
           )}
 
-          {activeTab === "allsides" && hasCrossLeanSources && (
-            <section role="tabpanel" aria-label="All Sides comparison" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "40ms" }}>
+          {/* ---- Progressive disclosure trigger (Source Perspectives + Six Lenses) ---- */}
+          {(hasCrossLeanSources || (story.sigilData && !story.sigilData.pending)) && !analysisExpanded && (
+            <button
+              className={`dd-read-more dd-analysis-trigger anim-dd-section dd-cascade-trigger${contentVisible ? " anim-dd-section--visible" : ""}`}
+              onClick={() => { hapticLight(); setAnalysisExpanded(true); }}
+            >
+              Show source breakdown
+            </button>
+          )}
+
+          {/* ---- Source Perspectives (collapsed by default) ---- */}
+          {analysisExpanded && hasCrossLeanSources && (
+            <section id="dd-panel-perspectives" aria-label="Source Perspectives" className={`anim-dd-section dd-cascade-3${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)" }}>
+              <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
+              <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>Source Perspectives</h3>
               <ComparativeView
                 sources={sources}
                 consensusPoints={deepDive?.consensus}
@@ -918,22 +1367,65 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             </section>
           )}
 
-          {activeTab === "scoring" && spectrumSources.length > 0 && (
-            <section role="tabpanel" aria-label="Scoring breakdown" className={`anim-dd-section${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)", transitionDelay: "40ms" }}>
-              <BiasInspectorInline sources={sources} />
+          {/* ---- Six Lenses — ink stamp bias scores (collapsed by default) ---- */}
+          {analysisExpanded && story.sigilData && !story.sigilData.pending && (
+            <section
+              className={`anim-dd-section dd-cascade-4${contentVisible ? " anim-dd-section--visible" : ""}`}
+              style={{ marginBottom: "var(--space-4)" }}
+              aria-label="Six Lenses bias analysis"
+            >
+              <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
+              <SixLenses sigilData={story.sigilData} visible={contentVisible} />
             </section>
           )}
 
-          {/* No deep dive data at all */}
-          {!deepDive && !isLoadingData && (
-            <div style={{ padding: "var(--space-6) 0", textAlign: "center" }}>
-              <p className="text-base" style={{ color: "var(--fg-tertiary)", lineHeight: 1.6 }}>
+          {/* ---- Historical Context cross-link (only when keyword matches) ---- */}
+          <HistoryContextLink title={story.title} summary={story.summary} visible={contentVisible} />
+
+          {/* Fetch error — retry UI */}
+          {fetchError && !isLoadingData && sources.length === 0 && (
+            <div className="dd-fetch-error">
+              <p className="text-base empty-state__body" style={{ color: "var(--fg-muted)", lineHeight: 1.6 }}>
+                Failed to load analysis.
+              </p>
+              <button
+                className="dd-read-more"
+                onClick={() => setRetryCount((c) => c + 1)}
+              >
+                Retry
+              </button>
+            </div>
+          )}
+
+          {/* No deep dive data at all (no error) */}
+          {sources.length === 0 && !isLoadingData && !fetchError && (
+            <div className="dd-empty-data">
+              <p className="text-base empty-state__body--no-margin" style={{ lineHeight: 1.6 }}>
                 Detailed coverage data is not yet available for this story.
                 Check back after the next pipeline run.
               </p>
             </div>
           )}
         </div>
+
+        {/* Mobile sticky footer — "Read All Sides" CTA */}
+        {!isDesktop && sources.length > 0 && hasCrossLeanSources && (
+          <div className="dd-cta-footer">
+            <button
+              className="dd-read-more dd-cta-footer__btn"
+              onClick={() => {
+                hapticLight();
+                if (!analysisExpanded) setAnalysisExpanded(true);
+                const perspectives = document.getElementById("dd-panel-perspectives");
+                if (perspectives) {
+                  perspectives.scrollIntoView({ behavior: "smooth", block: "start" });
+                }
+              }}
+            >
+              Read All Sides &mdash; {sources.length} sources
+            </button>
+          </div>
+        )}
       </div>
     </>
   );

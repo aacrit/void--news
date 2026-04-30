@@ -1,18 +1,18 @@
-# void --news — Design System: "Press & Precision"
+# void --news — Design System: "Cinematic Press" (Press & Precision v2)
 
-**Version:** 1.9
-**Last updated:** 2026-03-23 (rev 8)
+**Version:** 2.4
+**Last updated:** 2026-04-29 (rev 21 — $100B layout overhaul: LeadStorySplit, StoryCard variants, BiasSnapshot, layout-zones.css)
 
 ---
 
 ## 1. Design Philosophy
 
-**"Press & Precision"** — A modern newspaper that respects the printing press tradition while embracing the data density of modern interfaces.
+**"Cinematic Press"** — Same editorial authority as Press & Precision, now with cinematic depth, light, focus, and atmosphere. A modern newspaper shot through a cinema lens.
 
-**On arrival:** The quiet authority of a broadsheet. Clean, editorial, unhurried.
-**On interaction:** The precision of a data terminal. Rich, layered, immediate.
+**On arrival:** The quiet authority of a broadsheet — warm amber light, subtle film grain, shallow depth of field.
+**On interaction:** The precision of a data terminal with rack focus, atmospheric haze, and cinematic shadows.
 
-This duality is the soul of void --news. The newspaper earns trust through restraint. The data layer earns trust through transparency.
+The newspaper earns trust through restraint. The data layer earns trust through transparency. The cinematic layer earns emotion through light and texture.
 
 ---
 
@@ -20,10 +20,10 @@ This duality is the soul of void --news. The newspaper earns trust through restr
 
 | Voice | Font | Weight | Use |
 |-------|------|--------|-----|
-| **Editorial** | Playfair Display | 400, 700 | Headlines, story titles, section headers, pull quotes |
-| **Structural** | Inter | 400, 500, 600 | Body text, navigation, labels, buttons, UI chrome |
+| **Editorial** | Playfair Display | 400, 700 | Headlines, story titles, section headers, pull quotes, nav edition tabs (Row 2), weekly link (Row 1) |
+| **Structural** | Inter | 400, 500, 600 | Body text, nav page links (Row 1), labels, buttons, UI chrome |
 | **Meta** | Barlow Condensed | 400, 500, 600 | Category tags, source counts, timestamps, edition metadata; condensed grotesque in Franklin Gothic / News Gothic newspaper tradition; `--font-meta` CSS variable |
-| **Data** | IBM Plex Mono | 400, 500 | Bias scores, numeric data, BiasLens data labels; humanist monospace with institutional warmth (not a coding font) |
+| **Data** | IBM Plex Mono | 400, 500 | Bias scores, numeric data, BiasLens data labels, nav filter lens (Row 2 bracket notation); humanist monospace with institutional warmth (not a coding font) |
 
 ### Type Scale (Fluid)
 
@@ -36,12 +36,35 @@ This duality is the soul of void --news. The newspaper earns trust through restr
 --text-hero:  clamp(1.5rem, 1.3rem + 1.2vw, 3rem);               /* 24-48px: lead story */
 ```
 
+### Newspaper Hierarchy Tokens (top-50 layout overhaul, 2026-04-29)
+
+Three-tier display scale separating LeadStory from digest (rank 1-9) and wire (rank 10+) cards. Lives in `tokens.css`; consumed via `data-variant` attribute on StoryCard.
+
+```css
+--type-lead-headline:    clamp(2.25rem, 1.5rem + 3vw, 4rem);   /* 36-64px: rank-0 hero */
+--type-digest-headline:  clamp(1.125rem, 1rem + 0.4vw, 1.375rem);/* 18-22px: rank 1-9 */
+--type-wire-headline:    0.875rem;                              /* 14px: rank 10+ */
+--type-lead-tracking:    -0.02em;
+--type-digest-tracking:  -0.01em;
+```
+
+### Tracking (letter-spacing)
+
+| Class | Tracking | Purpose |
+|-------|----------|---------|
+| `.text-hero` | -0.03em | Tighten display headlines |
+| `.text-xl` | -0.015em | Tighten section headlines |
+| `.text-lg` | -0.005em | Subtle tightening for subheads |
+| `.text-label` | 0.08em | Open spacing for uppercase labels |
+| `.category-tag` | 0.04em | Open spacing for meta wayfinding |
+| `.text-data` | — | line-height 1.3, tabular-nums |
+
 ### Editorial Rules
 
 - Headlines: Playfair Display 700, sentence case
 - Body: Inter 400, 1.6 line height, max 65ch measure
-- Meta labels: Barlow Condensed 500, all-caps for category tags, condensed letter-spacing
-- Data labels: IBM Plex Mono 400, all-caps for axis labels, tabular-nums
+- Meta labels: Barlow Condensed 500 (`.category-tag`: 400), all-caps for category tags, condensed letter-spacing
+- Data labels: IBM Plex Mono 400, all-caps for axis labels, tabular-nums, line-height 1.3
 - Never mix voices within a single element
 - Headline hierarchy: hero > xl > lg (max 3 levels visible at once)
 
@@ -63,9 +86,9 @@ Warm paper tones. Think aged broadsheet under morning light, not sterile white.
 
   /* Text */
   --fg-primary:    #1A1A1A;   /* Near-black ink */
-  --fg-secondary:  #4A4A4A;   /* Secondary text */
-  --fg-tertiary:   #7A7A7A;   /* Captions, metadata */
-  --fg-muted:      #A0A0A0;   /* Disabled, placeholder */
+  --fg-secondary:  #4A4540;   /* Secondary text */
+  --fg-tertiary:   #686260;   /* Captions, metadata */
+  --fg-muted:      #5A5550;   /* Disabled, placeholder (WCAG AA 5.0:1) */
 
   /* Borders & Dividers */
   --border-subtle: #E8E2DB;   /* Light warm rule */
@@ -89,8 +112,8 @@ Dark walnut warmth. Retains newspaper character — not terminal black, not pure
   /* Text */
   --fg-primary:    #EDE8E0;   /* Warm cream text */
   --fg-secondary:  #B8B0A5;   /* Secondary */
-  --fg-tertiary:   #8A8278;   /* Tertiary */
-  --fg-muted:      #5A5550;   /* Disabled */
+  --fg-tertiary:   #A09890;   /* Tertiary (WCAG AA on #1C1A17) */
+  --fg-muted:      #8A847B;   /* Disabled */
 
   /* Borders & Dividers */
   --border-subtle: #3A3530;   /* Subtle warm rule */
@@ -143,6 +166,31 @@ Source `political_lean_baseline` values: `far-left`, `left`, `center-left`, `cen
 --rigor-low:     #EF4444;   /* Red — unsourced claims */
 ```
 
+### Cinematic Palette & Post-Processing (v2)
+
+Cinematic tokens live in `tokens.css` under `:root` (light) and `[data-mode="dark"]` blocks.
+
+| Token Group | Tokens | Purpose |
+|-------------|--------|---------|
+| Amber palette | `--cin-amber`, `--cin-amber-bright`, `--cin-amber-dim`, `--cin-amber-ghost`, `--cin-amber-glow` | Warm cinematic accent — highlights, rim light, hover states |
+| Ash palette | `--cin-ash`, `--cin-ash-warm`, `--cin-ash-cool` | Neutral cinematic tones — shadows, secondary UI |
+| Paper tones | `--cin-paper-highlight`, `--cin-paper-shadow` | Subtle paper texture shifts |
+| Semantics | `--cinematic-accent`, `--cinematic-shadow-tint`, `--cinematic-rim-light` | Mapped aliases for component use |
+| Easings | `--ease-cinematic` (0.22,1,0.36,1), `--ease-whip` (0.25,0,0,1), `--ease-rack` (0.4,0,0.2,1) | Camera-language timing curves |
+| Rack focus | `--rack-focus-dur` (600ms), `--rack-focus-ease` | Selective focus transitions |
+| Shadows | `--shadow-cinematic-contact`, `--shadow-cinematic-ambient`, `--shadow-cinematic-dramatic` | Three-tier depth via `color-mix` |
+| Backdrop | `--cin-backdrop-bg`, `--cin-backdrop-blur` | DeepDive overlay backdrop (blur + desaturate + dim) |
+| Practical warmth | `--cin-practical-warmth` | `color-mix(in srgb, amber 4%, bg-primary)` — OnAir warmth spread via `:has()` |
+| Cold open timing | `--cold-open-nav` (80ms), `--cold-open-skybox` (200ms), `--cold-open-lead` (320ms), `--cold-open-feed` (480ms), `--cold-open-dur` (500ms) | Staggered page entrance sequence |
+| Whip pan | `--whip-pan-dur` (350ms) | Direction-aware edition switch transition |
+| Film grain | `--cin-grain-opacity` (0.035 light / 0.025 dark) | SVG noise overlay (numOctaves=4, baseFrequency=0.75, fractalNoise). Light: overlay blend. Dark: soft-light blend. Warm feColorMatrix (R-biased). |
+| Vignette | `--cin-vignette-color` | Edge darkening — subtle light, stronger dark. Z-index: `calc(--z-cinematic + 1)` — above film grain |
+| Color grade | `--cin-grade` | CSS filter chain: contrast + saturation + sepia. Applied to `.page-main` + `.nav-header` (not `.page-container` — filter creates containing block that breaks position:fixed children). Per-edition overrides (US: warmer sepia, South Asia: boosted saturation, Europe: cooler grade). |
+| Atmospheric haze | `--cin-haze-far` | Depth-of-field fade on distant elements |
+| Z-index | `--z-cinematic` (45) | Film grain layer; vignette at `+1` (above grain) |
+
+All cinematic tokens adapt between light/dark modes. Dark mode: boosted amber brightness, stronger vignette, lower grain, cooler grade.
+
 ---
 
 ## 4. BiasLens — "Three Lenses" (The Core Visual Language)
@@ -161,14 +209,14 @@ BiasLens is void --news's signature visual element. Three distinctive micro-visu
 
 | Lens | Name | Visual | Encoding |
 |------|------|--------|----------|
-| 1 (N) | **The Needle** | Tilting line with pivot dot | Political lean: rotates -30 to +30 degrees from center. Color from lean spectrum (blue left, gray center, red right). |
+| 1 (B) | **The Beam** | Horizontal tilting beam with center post | Political lean: tilts ±15° from center (formula: `(lean - 50) * 0.30`). Color from lean spectrum (blue left, gray center, red right). Matches the Sigil DataMark beam. |
 | 2 (R) | **The Signal Ring** | SVG ring (Harvey ball) with source count | Coverage/confidence composite: ring fill 0-100%. Source count displayed in center. Color: green (strong) / yellow (moderate) / red (weak). |
 | 3 (P) | **The Prism** | Morphing shape (square to circle) | Opinion vs. reporting: square = factual reporting, circle = opinion. Color: blue (reporting) / purple (analysis) / orange (opinion). |
 
 ### Sizes
 
-- **sm** (story cards): Needle 18px, Ring 18px, Prism 14px. Gap 6px.
-- **lg** (lead story, deep dive header): Needle 28px, Ring 28px, Prism 22px. Gap 10px.
+- **sm** (story cards): Beam 18px, Ring 18px, Prism 14px. Gap 6px.
+- **lg** (lead story, deep dive header): Beam 28px, Ring 28px, Prism 22px. Gap 10px.
 
 ### Interaction
 
@@ -182,18 +230,56 @@ BiasLens is void --news's signature visual element. Three distinctive micro-visu
 - Each lens has `role="img"` with descriptive `aria-label` (e.g., "Political lean: Center-Left, score 42").
 - Popups use `role="tooltip"` with `aria-describedby` linking.
 - Keyboard accessible: Tab to focus, Enter/Space to toggle popup, Escape to close.
-- Color is never the sole differentiator -- shape (needle angle, ring fill, square-to-circle morph) encodes the data independently.
+- Color is never the sole differentiator -- shape (beam tilt angle, ring fill, square-to-circle morph) encodes the data independently.
 - Min 4.5:1 contrast on both light and dark backgrounds.
 
 ---
 
 ## 5. Layout System
 
+### Canonical Canvas — `--canvas-max`
+
+All full-page routes (`/`, `/weekly`, `/history`, `/ship`, `/paper`, `/command-center`) share a single canvas-width token defined in `tokens.css`:
+
+```css
+--canvas-max: min(92vw, 1600px);
+```
+
+This replaces the previous mix of hard-coded 1200px/1400px/1600px `max-width` rules across `paper.css`, `history.css`, and ad-hoc inline styles. Any new top-level route **must** consume `var(--canvas-max)` for its outermost wrapper — no hardcoded pixel widths at the canvas level.
+
+### Scroll-Compact Masthead
+
+`NavBar.tsx` runs an rAF-throttled scroll listener and toggles a `data-scroll-compact` attribute on the root when `window.scrollY` crosses an 80px → 40px hysteresis band. Compact state:
+
+- Row 1 chrome collapses vertically (padding + logo shrink)
+- Row 2 (edition tabs + lens) remains fully readable
+- Transitions ride `var(--ease-cinematic)`
+- Both desktop and mobile breakpoints honor the attribute via `[data-scroll-compact]` selectors in `layout.css` / `mobile-nav.css`
+
+### Lead Photo Sizing
+
+Lead story photos use `clamp(360px, 48vh, 560px)` (was fixed 320px pre-Cycle 2). Shorter viewports crop gracefully; tall desktop displays earn a hero-sized image without busting the grid.
+
+### Layout Zones — `layout-zones.css` (Top-50 Scaffold)
+
+Single source of truth for the homepage feed grid + Deep Dive 2-col + image-text split. CSS Grid `grid-template-areas` instead of ad-hoc flex stacks.
+
+| Zone | Selector | Behavior |
+|---|---|---|
+| Lead split | `.lead-split` | 50/50 image-text grid (rank-0 with cached image). Single column at mobile. |
+| Feed grid | `.feed-grid` | `align-items: start; grid-auto-rows: max-content` — fixes ragged baselines when digest (22px) and wire (14px) cards share grid tracks at 1024-1279px. |
+| Wire grid | (in `desktop-feed.css`) | 5-col @ 1440+, 4-col @ 1024-1439 (was 5/4/3 — 5-col was too dense at 1024). |
+| Tablet step | `@media (768-1023px)` | Lead image cap `max-height: 480px`, flatten to 16:10 (was 4:5 only). |
+| BiasSnapshot inline | `.bias-snapshot--inline` | Horizontal strip in Deep Dive header: lean dot · rigor bar · opinion pill · source count. |
+| BiasSnapshot rail | `.bias-snapshot--rail` | Vertical compact column for Deep Dive right column (≥1280px). |
+| Deep Dive 2-col | `.dd-body--2col` | Body grid `1.7fr 1fr` @ 1280px, `1.6fr 1fr` @ 1440+. Single col below 1280px. (Was `2fr/1fr` — too tight on the rail.) |
+
 ### Desktop — "Broadsheet Grid"
 
 ```
 ┌──────────────────────────────────────────────────────┐
-│  void --news              [World] [US]    [◐ Dark]   │ ← Top nav
+│  void --news  [dateline] Sources Ship About [Weekly] ☀ │ ← Row 1 (Chrome)
+│  World  US  Europe  South-Asia  [topics] [·L·C·R] [🔍] │ ← Row 2 (Lens)
 ├──────────────────────────────────────────────────────┤
 │                                                      │
 │  ┌─────────────────────────┐ ┌──────────────────┐   │
@@ -257,7 +343,7 @@ BiasLens is void --news's signature visual element. Three distinctive micro-visu
 ### Deep Dive — Desktop
 
 ```
-┌──────────────────────────────────────────────────────┐  ← 55% width, min 560px
+┌──────────────────────────────────────────────────────┐  ← 75vw centered, max-width 920px (1080px at 1280px+), 80vh
 │  ← Back          Story headline [BiasLens]            │
 ├──────────────────────────────────────────────────────┤
 │                                                      │
@@ -289,7 +375,7 @@ BiasLens is void --news's signature visual element. Three distinctive micro-visu
 └──────────────────────────────────────────────────────┘
 ```
 
-Desktop: 55% width side panel (min-width 560px, no max-width cap); main feed blurred (6px backdrop blur) when open. Analysis row (`dd-analysis-row`) places Sigil + Spectrum + Press Analysis ▶ trigger in a single flex row. Press Analysis expands inline via `grid-template-rows 0fr→1fr`. Source Perspectives shows Agreement | Divergence in a 2-column grid. Progressive disclosure: press analysis collapsed behind ▶ trigger by default.
+Desktop: 75vw centered modal (max-width 920px, 1080px at 1280px+, 80vh); main feed blurred (6px backdrop blur) when open. FLIP morph animation: card expands into panel via double-rAF (open 500ms bouncy, close 420ms smooth), `data-story-id` attributes on StoryCard/LeadStory/MobileStoryCard enable DOM-based rect lookup for reverse morph on close. Analysis row (`dd-analysis-row`) places Sigil + Spectrum + Press Analysis ▶ trigger in a single flex row. Press Analysis expands inline via `grid-template-rows 0fr→1fr`. Source Perspectives shows Agreement | Divergence in a 2-column grid. Progressive disclosure: press analysis collapsed behind ▶ trigger by default.
 
 ### Deep Dive — Mobile
 
@@ -311,7 +397,7 @@ Desktop: 55% width side panel (min-width 560px, no max-width cap); main feed blu
 | `.page-main`, `.nav-inner`, `.site-footer` | padding: `--space-5` (~16px) | Recovers 32px content width vs desktop `--space-7` |
 | `.lead-story__headline`, `.lead-story__summary` | `max-width` constraints removed | Container constrains width; `ch` limits are redundant and wasteful on mobile |
 | `.story-card__headline`, `.lead-story__headline` | `overflow-wrap: break-word` (global) | Prevents long words from causing horizontal overflow |
-| `.section-header` | `flex-wrap: wrap` | RefreshButton timestamp wraps instead of overflowing |
+| `.section-header` | `flex-wrap: wrap` | Timestamp wraps instead of overflowing |
 | Deep Dive source rows | `flex-wrap: wrap` | Source metadata wraps on narrow viewports |
 
 ---
@@ -356,7 +442,7 @@ Desktop: 55% width side panel (min-width 560px, no max-width cap); main feed blu
 - Hero typography (--text-hero for headline)
 - 3-4 line summary
 - Source count badge prominent
-- BiasLens (lg) — larger Needle (28px), Ring (28px), Prism (22px)
+- BiasLens (lg) — larger Beam (28px), Ring (28px), Prism (22px)
 
 ---
 
@@ -367,20 +453,28 @@ Adapted from DondeAI's "Ink & Momentum" motion system.
 ### Principles
 
 1. **Purposeful** — every animation communicates state change, never decorative
-2. **Asymmetric for panels** — Deep Dive open uses `--spring-bouncy` (500ms, genuine overshoot); close uses `--spring-snappy` (380ms, tight). Micro-interactions (chips, toggles) remain symmetric.
+2. **Asymmetric for panels** — Deep Dive open uses FLIP morph with `--spring-bouncy` (500ms, genuine overshoot from card origin); close uses reverse morph (420ms smooth deceleration back to card). Micro-interactions (chips, toggles) remain symmetric.
 3. **Accessible** — all → 0ms under `prefers-reduced-motion: reduce`
 4. **Performant** — only animate transform and opacity (GPU composite)
 5. **Interruptible** — no animation locks
-6. **High-refresh ready** — rAF snap via `setTimeout(0)` for 90/120Hz reliability
+6. **High-refresh ready** — double-rAF snap (first rAF commits snap to DOM, browser paints, second rAF starts transition) for 90/120Hz reliability
 
 ### Spring Presets
 
 | Preset | Stiffness | Damping | Mass | Use |
 |--------|-----------|---------|------|-----|
-| snappy | 600 | 35 | 1 | Buttons, filter chips, toggles; Deep Dive close (380ms) |
+| snappy | 600 | 35 | 1 | Buttons, filter chips, toggles |
 | smooth | 280 | 22 | 1 | Card expansion, panel slides |
 | gentle | 150 | 12 | 1.2 | View transitions (feed ↔ deep dive) |
-| bouncy | — | — | — | Deep Dive open (500ms, genuine overshoot); `--spring-bouncy` CSS token |
+| bouncy | — | — | — | Deep Dive FLIP morph open (500ms, genuine overshoot from card origin); `--spring-bouncy` CSS token. Close uses 420ms smooth reverse morph. |
+
+### Cinematic Easings
+
+| Token | Curve | Use |
+|-------|-------|-----|
+| `--ease-cinematic` | cubic-bezier(0.22, 1, 0.36, 1) | Primary cinematic ease — smooth deceleration with authority |
+| `--ease-whip` | cubic-bezier(0.25, 0, 0, 1) | Fast whip-pan transitions — aggressive deceleration |
+| `--ease-rack` | cubic-bezier(0.4, 0, 0.2, 1) | Rack focus transitions — measured pull between focal planes |
 
 ### Duration Tokens
 
@@ -392,6 +486,7 @@ Adapted from DondeAI's "Ink & Momentum" motion system.
 | --dur-morph | 400ms | View transitions |
 | --dur-step | 450ms | Step-by-step reveals, stagger sequences |
 | --dur-slow | 600ms | Page-level animations |
+| --rack-focus-dur | 600ms | Rack focus selective blur transitions |
 
 ### Key Animations
 
@@ -404,9 +499,18 @@ Adapted from DondeAI's "Ink & Momentum" motion system.
 | Deep Dive content sections | Panel open | Cascade: translateY 12px→0; desktop: content reveal 180ms; mobile: opacity 150ms + transform 250ms ease-out (no spring) | Desktop reveal delay 120ms, mobile 30ms |
 | Press Analysis expand | Click ▶ trigger | grid-template-rows 0fr→1fr | var(--dur-morph) ease-out desktop; 300ms ease-out mobile |
 | Filter chips | Select | Scale 1→0.97→1, fill color wipe | 200ms spring |
-| Refresh confirm | Tap refresh | Modal scale from 0.95, backdrop fade | 300ms ease-out |
-| Dark mode toggle | Tap | Cross-fade colors, 0 layout shift | 400ms ease-out |
+| Dark mode toggle | Tap | Cross-fade colors + cinGoldenHourPulse on `.page-main` (warmth swell: contrast/saturation/sepia peak at 40% then return), 0 layout shift | 400ms ease-out + 700ms pulse |
 | Source list expand | Tap "12 sources" | Height auto with spring, items stagger | 300ms, 30ms stagger |
+| Cold open (nav) | Page load | coldOpenSettle (translateY -6px→0, opacity 0→1) | 500ms, delay 80ms |
+| Cold open (skybox) | Page load | coldOpenDollyIn (scale 0.985→1, opacity 0→1) | 500ms, delay 200ms |
+| Edition switch | Click edition tab | Direction-aware whip pan: whipPanOutRight + whipPanInLeft (translateX 8%, blur 2px) | 350ms `--ease-whip` |
+| ScaleIcon idle | Continuous | Gentle beam tipping (rotate 0→2deg→-2deg→0) | 5s, `--ease-cinematic`, infinite |
+| Press states (Tier 2) | Active/pointerdown | `transform: scale(0.98)` on interactive cards/buttons | 80ms ease-out |
+| Card lift (Tier 2) | Hover (fine pointer only) | `translateY(-2px)` + elevation shadow bump | 180ms `var(--ease-cinematic)` |
+| Gesture inertia (Tier 2) | Horizontal strip flick | Momentum decay after release on touch/pointer drag | ~400ms, native scroll-snap |
+| Card entrance | IO reveal | `anim-stagger` @keyframes (migrated from transition — IO-replay safe) | 300ms, 40ms stagger |
+
+**Easing migration:** 496 bare cubic-bezier/ease values across 18 CSS files now route through `var(--ease-cinematic | rack | refold | unfold)` tokens. Never write a raw easing literal in new CSS — always reference a token.
 
 ### Reduced Motion
 
@@ -414,10 +518,65 @@ Adapted from DondeAI's "Ink & Momentum" motion system.
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0ms !important;
+    animation-delay: 0ms !important;
     transition-duration: 0ms !important;
+    transition-delay: 0ms !important;
   }
 }
 ```
+
+---
+
+## 7b. Film System — Shared Cinematic Scenes
+
+**Directory:** `frontend/app/film/`
+
+Unified component library powering both the onboarding prologue (`OnboardingCarousel`) and the about manifesto (`/about`). Single source of truth for all demo/educational content. Change once, both surfaces update.
+
+### Architecture
+
+| File | Purpose |
+|------|---------|
+| `data.ts` | Canonical content constants: `CHAPTERS` (6 chapters), `DIVERGENT_HEADLINES`, `SIX_AXES`, `FIRST_PRINCIPLES`, `PRODUCT_FAMILY`, `RANKING_SIGNALS`, `NUMBERS`, `LANDSCAPE`, `COMPARISON_SCORES`, `SIGIL_PARTS`, `SWEEP_POSITIONS` |
+| `constants.ts` | SVG paths (organic hand-drawn brand mark coordinates matching ScaleIcon/Sigil), stroke-dasharray lengths, spring easings (`SPRING`, `SPRING_BOUNCY`, `SPRING_GENTLE`), draw stagger timing (`DRAW_TIMING`), breakdown stage durations (`BREAKDOWN_TIMING`), exploded view transforms (`EXPLODE_TRANSFORMS`) |
+| `useReducedMotion.ts` | Shared hook — checks `prefers-reduced-motion` once on mount |
+| `scenes/*.tsx` | 7 scene components (see below) |
+
+### Scene Components
+
+Each scene accepts `mode: "prologue" | "manifesto"` and `active: boolean`.
+
+| Scene | Chapter | Description |
+|-------|---------|-------------|
+| `DivergentHeadlines` | I: The Void | 5 outlets, same event, different headlines. Cards stagger in with spring physics. |
+| `SigilBreakdown` | II: The Instrument | **Centerpiece.** 6-stage animated exploded Sigil view: (0) draw — stroke-dashoffset reveals parts, (1) separate — components translate apart, (2) label — labels fade in beside each part, (3) reassemble — spring back to center, (4) activate — beam sweeps spectrum + ring fills, (5) hold — settled state. Prologue: auto-advance via setTimeout. Manifesto: IO-triggered + six-axis accordion. |
+| `SourceEngine` | III: The Engine | 1,013 sources, 158 countries, 10 ranking signals visualization. |
+| `ArticleDifference` | IV: The Difference | Per-article vs. per-outlet scoring comparison morph. |
+| `ProductWorlds` | V: The Worlds | Product family showcase (6 products with CLI names + descriptions). |
+| `ArchiveTeaser` | (between V-VI) | void --history teaser: two witnesses, same day, opposing quotes. Shows what The Archive does without explaining it. |
+| `TheVerdict` | VI: Read with clarity | Key numbers counter + closing statement. |
+
+### Modes
+
+| Mode | Surface | Behavior |
+|------|---------|----------|
+| `prologue` | `OnboardingCarousel.tsx` | Auto-advance (~90s total), modal overlay, keyboard nav, progress dots, skip/complete callbacks |
+| `manifesto` | `/about` page | Scroll-driven, IntersectionObserver one-shot reveals, extended content (manifestoLead, SIX_AXES details, FIRST_PRINCIPLES, LANDSCAPE comparisons), no forced dark mode |
+
+### Styles
+
+`film.css` in `frontend/app/styles/`. `.film-*` namespace. Mode-specific overrides via `.film-*--prologue` and `.film-*--manifesto` suffixes. Keyframes: `filmDraw` (stroke reveal), `filmFadeInUp`, `filmSpectrumGrow`.
+
+### 6 Chapters
+
+| # | ID | Headline | Prologue Duration |
+|---|-----|----------|-------------------|
+| I | `the-void` | The Void | 15s |
+| II | `the-instrument` | The Instrument | 20s |
+| III | `the-engine` | The Engine | 15s |
+| IV | `the-difference` | The Difference | 15s |
+| V | `the-worlds` | The Worlds | 15s |
+| VI | `the-verdict` | Read with clarity. | 10s |
 
 ---
 
@@ -428,30 +587,49 @@ Active components in `frontend/app/components/`:
 | Component | Purpose | Bias Visualization |
 |-----------|---------|-------------------|
 | `BiasInspector` | "Press Analysis" 4-axis scorecard (Lean, Sensationalism, Factual Rigor, Framing). Three exports: `BiasInspectorInline` (rendered inline in Deep Dive, expanded via ▶ trigger — no dialog wrapper), `BiasInspectorTrigger` + `BiasInspectorPanel` (legacy pop-out, kept for backward compat). Each axis row is collapsible — expand for sub-scores + Gemini reasoning text. | Cluster-averaged across all sources |
-| `BiasLens` | Three Lenses bias visualization (Needle, Ring, Prism) | Primary -- used on all story cards and deep dive source list |
-| `StoryCard` | Standard story card with headline, summary, metadata, BiasLens | Inline BiasLens (sm) |
-| `LeadStory` | Hero story card, larger typography | Inline BiasLens (lg) |
-| `DeepDive` | Slide-in panel: FLIP morph open/close. "Read more" overflow detected via ResizeObserver; gradient overlay hidden when content fits (`dd-collapsible--fits`). `dd-analysis-row`: Sigil + `DeepDiveSpectrum` + "How was this scored?" trigger in one row on desktop, stacked on mobile. Press Analysis expands via `grid-template-rows 0fr→1fr`; expand panel max-height 60vh with overflow-y scroll. Source Perspectives: 2-column Agreement\|Divergence grid (desktop), single column (mobile). Action buttons WCAG 44×44px. Open: `--spring-bouncy` 500ms (overshoot); Close: `--spring-snappy` 380ms. Content reveal 180ms desktop, 30ms mobile. Backdrop blur 6px desktop, 2px mobile. iOS bottom-sheet. Panel `opacity:0` CSS safety + JS fallback 200ms opacity ramp. | Per-source BiasLens (sm) |
-| `DeepDiveSpectrum` | Continuous lean spectrum for Deep Dive panel. 7-zone gradient bar (Far Left → Far Right) with full zone labels (smaller font on mobile). Logos positioned at exact `politicalLean` % (0–100) on a relative track — not bucketed into columns. No max-height cap. 3-row algorithm for dense source clustering. "+N more" expand button when >6 sources (COMPACT_LIMIT). Each logo is a link to the source article (opens in new tab). Tooltip on hover/focus: source name, lean label + colored dot, lean score, tier, "Click to read article". Spring-bouncy hover scale. Responsive: 26px logos desktop, 22px mobile. CSS: `dd-spectrum-*` classes in `spectrum.css`. | -- |
-| `HomeContent` | News feed container: edition switching, lean filter, opinion mode, story grid | -- |
+| `BiasLens` | Three Lenses bias visualization (Beam, Ring, Prism) | Primary -- used on all story cards and deep dive source list |
+| `StoryCard` | Standard story card with headline, summary, metadata, BiasLens. **`variant` prop (discriminated union: `"digest" \| "wire"`)** drives `data-variant` attribute → type scale (`--type-digest-headline` 18-22px / `--type-wire-headline` 14px). HomeContent assigns `digest` to ranks 1-9 and `wire` to rank 10+. | Inline BiasLens (sm) |
+| `LeadStory` | Hero story card, larger typography. **LeadStorySplit**: 50/50 image-text grid via `.lead-split` CSS classes when rank-0 has a cached image. Single column at mobile. Headline uses `--type-lead-headline` (36-64px clamp). | Inline BiasLens (lg) |
+| `BiasSnapshot` | Compact bias signal (added 2026-04-29). Two variants: **`inline`** — Deep Dive header strip (lean dot · rigor bar · opinion pill · source count), and **`rail`** — vertical compact column for Deep Dive right column at desktop ≥1280px. Reuses `getLeanColor` + `leanLabel` from `lib/biasColors.ts`. CSS in `layout-zones.css`. | Composite single-glance signal |
+| `DeepDive` | Slide-in panel: FLIP morph open/close. **BiasSnapshot inline strip below headline** (added 2026-04-29). **2-column body layout at desktop ≥1280px** via `.dd-body--2col` (1.7fr 1fr → 1.6fr 1fr at 1440+); single col below. "Read more" overflow detected via ResizeObserver; gradient overlay hidden when content fits (`dd-collapsible--fits`). `dd-analysis-row`: Sigil + `DeepDiveSpectrum` + "How was this scored?" trigger in one row on desktop, stacked on mobile. Press Analysis expands via `grid-template-rows 0fr→1fr`; expand panel max-height 60vh with overflow-y scroll. `ScoringMethodology` collapsible section ("How we score" — dl/dt/dd, 6 axes). Loading skeleton guard (sources.length === 0). Source Perspectives: 2-column Agreement\|Divergence grid (desktop), single column (mobile). Action buttons WCAG 44×44px. Open: `--spring-bouncy` 500ms (overshoot); Close: `--spring-snappy` 380ms (L-cut close 80ms). Content reveal 180ms desktop, 30ms mobile. Cinematic dramatic shadow, data-settled studio reflection. Backdrop blur 6px desktop, 2px mobile. iOS bottom-sheet. Panel `opacity:0` CSS safety + JS fallback 200ms opacity ramp. **Lazy-loads `verify.css`** (was global, ~50KB gzipped — now ships only with the dynamic-imported DeepDive chunk). | Per-source BiasLens (sm) + BiasSnapshot inline header strip |
+| `DeepDiveSpectrum` | Three toggleable lean visualization views (localStorage `void-spectrum-view`): **Ink Ridge** (KDE density curve SVG + positioned source logos), **Witness Line** (lean-positioned source dots on gradient track), **Terrain Map** (7-zone column layout). Logos positioned at exact `politicalLean` % (0-100). "+N more" expand button when >6 sources (COMPACT_LIMIT). Each logo is a link to the source article (opens in new tab). Tooltip on hover/focus: source name, lean label + colored dot, lean score, tier, "Click to read article". Spring-bouncy hover scale. Responsive: 26px logos desktop, 22px mobile. CSS: `dd-spectrum-*` classes in `spectrum.css`. | -- |
+| `HomeContent` | News feed container: edition switching (direction-aware whip pan via prevEditionRef tracking, URL sync via pushState), lean filter (LeanChip/LEAN_RANGES from types.ts), opinion mode, story grid | -- |
 | `OpEdPage` | Opinion/editorial feed view | -- |
 | `OpinionCard` | Op-ed story card | -- |
-| `FilterBar` | Category filter chips | -- |
-| `NavBar` | Section navigation (World/US/India) with logo and theme toggle. Desktop: dateline row below masthead with compact edition badge pills (`nav-dateline-row__badge`), time-of-day badge (Morning/Evening auto-detected from edition timezone), "Edition" label, full date, and regional timestamp (`getEditionTimestamp()`: US → "9 AM ET", World → "HH:MM UTC", India → "HH:MM IST"). India edition uses Ashoka Chakra SVG icon (circle + 12 spokes, stroke-only, `IndiaIcon` component). Mobile: dateline row hidden, bottom nav bar with edition icons. | -- |
-| `RefreshButton` | Refresh with "last updated" timestamp | -- |
-| `ThemeToggle` | Light/dark mode toggle | -- |
+| `NavBar` | "Depth of Field" CTA hierarchy (v2), two-row structure. Cold open animation class (`anim-cold-open-nav`). **Row 1 (Chrome)**: Logo, dateline + timestamp (`getEditionTimestamp()`), page links (`.nav-pages`, `.nav-page`) — Inter uppercase, departure arrow `→` on hover (Sources, Ship, About), **Weekly** (`.nav-weekly`) — Playfair italic, deep red accent (`#B91C1C`/`#EF5350`), spine rule glow + unfold physics on hover, ThemeToggle. **Row 2 (Lens)**: Edition tabs (`.nav-lens__editions`, `.nav-ed`) — Playfair Display, warm `--cin-amber` underline, `hapticConfirm`, hidden on mobile. Filter Lens (`.nav-lens__*`) — IBM Plex Mono bracket notation `[ topics ]` `[ ·left ·center ·right ]`, dotted underline, `--ease-rack`, `hapticMicro`, hidden on mobile. Search bar (`.nav-lens__search`) — expandable 160px to 280px on focus, `Cmd+K` kbd hint. Row 2 has inset shadow texture. Nav onair button removed (floating player is single audio entry point). Mobile: bottom nav handles editions/filters. | -- |
+| `ThemeToggle` | Light/dark mode toggle. Golden hour pulse on toggle (700ms cinGoldenHourPulse targeting `.page-main`, reduced-motion guarded). | -- |
 | `LoadingSkeleton` | Animated skeleton loading state | -- |
 | `ErrorBoundary` | Error boundary wrapper | -- |
 | `Footer` | Page footer with last-updated info | -- |
 | `LogoFull` | Combination mark: void circle + scale beam icon + "void --news" wordmark as single SVG. Use in NavBar (desktop), Footer, error pages. Direction 5 "Negative Space O" — hollow O in "void", monospace "--news". | -- |
 | `LogoIcon` | Icon-only wrapper around `ScaleIcon`. Use in mobile nav, loading indicators, compact contexts. `animation="none"` shows void circle only (favicon mark). | -- |
 | `LogoWordmark` | Text-only "void --news" SVG — no icon mark. Hollow-O treatment. Use for edition lines, attribution, compact footers, print contexts. | -- |
-| `ScaleIcon` | "Void Circle + Scale Beam" hybrid brand icon. Hollow ring as primary mark with scale beam passing through as fulcrum, weight ticks at beam ends, post + base below. 8 animation states: `idle` (gentle tipping), `loading` (dramatic tipping), `hover` (snappy tip), `analyzing` (deliberate read), `balanced` (spring settle), `pulse` (scale pulse), `draw` (stroke reveal on mount), `none` (void circle only — favicon mark). All animations respect `prefers-reduced-motion`. | -- |
-| `PageToggle` | Switches between Feed and Sources views. | -- |
+| `ScaleIcon` | "Void Circle + Scale Beam" hybrid brand icon. Hollow ring as primary mark with scale beam passing through as fulcrum, weight ticks at beam ends, post + base below. 8 animation states: `idle` (gentle tipping — 5s period, 2-degree amplitude, `--ease-cinematic`), `loading` (dramatic tipping — 8-degree), `hover` (snappy tip), `analyzing` (deliberate read), `balanced` (spring settle), `pulse` (scale pulse), `draw` (stroke reveal on mount), `none` (void circle only — favicon mark). All animations respect `prefers-reduced-motion`. | -- |
+| `PageToggle` | Row 1 text link toggling Feed/Sources. No pills, no icons — plain `.nav-page` link with departure arrow on hover. | -- |
 | `SpectrumChart` | `/sources` political lean spectrum. Gradient bar on top; all sources below in 7 lean zone columns (mixed tiers, no tier split). Logos overlap at −3px margin, fan out to 2px on zone hover. Zone counts shown below each column. Collapsed to ~4 rows by default; single "Show all N" expand button reveals all. Each zone scrollable at 60vh cap when expanded. Tooltip shows name, lean, tier, country, credibility notes. | -- |
-| `Sigil` | Compact bias sigil using `SigilData` type. Inline bias indicator variant. | -- |
+| `Sigil` | Compact bias sigil using `SigilData` type. Inline bias indicator variant. Simplified at sm size (no InkUnderline, compact popup); full detail at lg/xl. | -- |
+| `DailyBrief` | "void --onair" daily brief: TL;DR + opinion + audio player | -- |
+| `SkyboxBanner` | Top-of-page daily brief skybox with TL;DR, opinion, and OnAir sections. Cold open animation class (`anim-cold-open-skybox`). OnAir practical light warmth spread via `:has()` selector. | -- |
+| `MobileBriefPill` | Mobile daily brief pill trigger | -- |
+| `DesktopFeed` | Desktop multi-column newspaper grid layout | -- |
+| `MobileFeed` | Mobile single-column feed layout | -- |
+| `MobileStoryCard` | Mobile-optimized story card | -- |
+| `MobileBottomNav` | Bottom navigation bar for mobile | -- |
+| `DigestRow` | Compact digest-style story row | -- |
+| `WireCard` | Wire-service-style compact card | -- |
+| `StoryMeta` | Shared story metadata display (sources, time, category) | -- |
+| `CommandCenter` | KPI monitoring dashboard with sparklines and health score | -- |
+| `ComparativeView` | Side-by-side source comparison view | -- |
+| `DivergenceAlerts` | Highlights divergent coverage across sources | -- |
+| `EditionIcon` | Edition-specific icon (US flag, South Asia Ashoka Chakra, Europe stars, etc.) | -- |
+| `OnboardingCarousel` | Thin wrapper for "The Film: Prologue" — imports `film/scenes` with `mode="prologue"`. 6 chapters, ~90s auto-advance. Handles modal overlay, keyboard nav, body scroll lock, focus trap, progress dots. | -- |
+| `UnifiedOnboarding` | Unified onboarding wrapper | -- |
+| `KeyboardShortcuts` | Keyboard shortcut handler and help overlay | -- |
+| `InstallPrompt` | PWA install prompt | -- |
+| `ShipBoard` | Feature request board for `/ship` page | -- |
+| `WeeklyDigest` | `/weekly` magazine page. No NavBar — own sticky topbar (`.wk-topbar`: back link + ThemeToggle, glass blur). Deep red palette (`--wk-accent: #B91C1C` light / `#EF5350` dark). Warmer paper (`#EDE4D0` light / `#1E1A16` dark). Film grain 3x, tighter vignette. Sections: red masthead, cover hero (drop cap, justified), timeline (horizontal desktop / vertical mobile), opinions (3-col lean grid, no card backgrounds), week in brief (2-col compact), inline audio, archive, footer. No MobileBottomNav. No collapsibles. | -- |
 
-**Removed components:** `BiasStamp.tsx` (517 lines, superseded by BiasLens), `DotMatrix`, `BiasTooltip`, `UnifiedSummary` (consensus/divergence is now inline in DeepDive).
+**53 components total** (53 `.tsx` files). Added 2026-04-29: `BiasSnapshot` (inline+rail variants for Deep Dive). Earlier additions: `ClaimConsensusSection`, `ClaimMark`, `ConsensusBadge`, `CredibilityArc`, `FloatingPlayer`, `SearchOverlay`, `ShareCard`. Removed: `OnboardingSpotlight` (dead code, replaced by Film system), `AudioPlayer.tsx`, `BiasStamp.tsx`, `DotMatrix`, `BiasTooltip`, `UnifiedSummary`, `FilterBar.tsx` (lean chips moved to `types.ts`, dead CSS removed).
 
 ### Logo Animation Deployment
 
@@ -463,12 +641,21 @@ Active components in `frontend/app/components/`:
 | ErrorBoundary | `LogoIcon` | `balanced` |
 | DeepDive panel header | `LogoIcon` | `analyzing` |
 | Empty state | `LogoIcon` | `analyzing` |
-| RefreshButton (idle) | `LogoIcon` | `idle` |
-| RefreshButton (refreshing) | `LogoIcon` | `loading` |
 | Footer | `LogoIcon` | `idle` |
 | Favicon (`/public/icon.svg`) | Static SVG | void circle only (`none` equivalent) |
 
 Add `.si-hoverable` class to any ancestor to activate hover animation on `LogoIcon` / `ScaleIcon`.
+
+### Client Utilities (`frontend/app/lib/`)
+
+| File | Purpose |
+|------|---------|
+| `coverageClass.ts` | Derives a qualitative coverage tone from a `Story`'s signals — returns one of `consensus` / `split` / `skewed` / `divergent` / `neutral`. Drives the verdict pill under source counts. |
+| `rankRationale.ts` | Surfaces up to 3 human-readable signal phrases explaining why a story earned its top-feed placement (e.g. "14 outlets in 6 hours", "cross-spectrum coverage"). Used on the Lead Story + Deep Dive header. |
+| `biasColors.ts` | Canonical lean → color / label mapping |
+| `haptics.ts` | `hapticMicro` / `hapticConfirm` wrappers (vibrate API, reduced-motion guarded) |
+
+`Sigil.tsx` beam tilt uses a sigmoid taper that saturates at ±22°, so extreme lean scores never produce a vertical beam.
 
 ---
 
@@ -507,7 +694,7 @@ Minimal. Line-style icons only. No filled icons except for active/selected state
 
 - **Category icons**: Minimal line illustrations (politics gavel, economy chart, health cross, etc.)
 - **Navigation**: Standard line icons (home, search, settings, back)
-- **Bias**: BiasLens Three Lenses (Needle, Ring, Prism) — no traditional icons needed
+- **Bias**: BiasLens Three Lenses (Beam, Ring, Prism) — no traditional icons needed
 - **Actions**: Minimal line (refresh, external link, expand, collapse)
 
 ---
@@ -523,14 +710,14 @@ Minimal. Line-style icons only. No filled icons except for active/selected state
 - **Reduced motion**: All animations instant under `prefers-reduced-motion`
 - **Touch targets**: ≥ 44×44px on mobile
 - **Zoom**: Content readable at 200% zoom, no horizontal scroll
-- **Color independence**: BiasLens uses shape + angle + fill + morph (never color alone) — Needle angle, Ring fill percentage, and Prism square-to-circle morph all encode data independently of color.
+- **Color independence**: BiasLens uses shape + angle + fill + morph (never color alone) — Beam tilt angle, Ring fill percentage, and Prism square-to-circle morph all encode data independently of color.
 
 ### BiasLens Screen Reader Pattern
 
 ```html
 <!-- Each lens has role="img" with descriptive aria-label -->
 <div class="bias-lens" role="group" aria-label="Bias analysis for this article">
-  <div class="bias-lens__needle" role="img" aria-label="Political lean: Center-Left, score 42"></div>
+  <div class="bias-lens__beam" role="img" aria-label="Political lean: Center-Left, score 42"></div>
   <div class="bias-lens__ring" role="img" aria-label="Coverage confidence: 67%, 8 sources"></div>
   <div class="bias-lens__prism" role="img" aria-label="Article type: Reporting (factual)"></div>
 </div>
@@ -551,6 +738,51 @@ All values via CSS custom properties. No hardcoded values in components.
 | Typography | `--text-` | `--text-hero`, `--text-base` |
 | Spacing | `--space-` | `--space-3`, `--space-6` |
 | Animation | `--dur-`, `--spring`, `--ease-` | `--dur-normal`, `--ease-out` |
+| Cinematic | `--cin-`, `--cinematic-`, `--ease-cinematic/whip/rack` | `--cin-amber`, `--cin-grade`, `--cin-grain-opacity` |
+| Cinematic shadows | `--shadow-cinematic-` | `--shadow-cinematic-contact`, `--shadow-cinematic-dramatic` |
 | Borders | `--border-` | `--border-subtle`, `--divider` |
 | Elevation | `--blur-`, `--shadow-` | `--blur-e2`, `--shadow-e1` |
-| Z-index | `--z-` | `--z-base(1)`, `--z-modal(100)` |
+| Z-index | `--z-` | `--z-base(1)`, `--z-cinematic(45)`, `--z-modal(100)` |
+
+---
+
+## 14. void --history — "Archival Cinema" Design
+
+Full spec in `docs/HISTORY.md`. Key design elements integrated into the Cinematic Press system:
+
+### Museum UX Model
+
+EventDetail uses an interactive museum journey metaphor. 8 stages flow without didactic section labels (Show Don't Tell applied to all headers). The user walks through exhibits: Hero (cinematic entry) -> Crack (inscribed one-liner) -> Record (aged artifact) -> Context (full story) -> Perspectives (museum vitrine) -> Omissions (toggle) -> Evidence (archival gallery) -> Exit (dossier or cliffhanger).
+
+### Record Block (Aged Artifact)
+
+Merged Key Facts + Key Figures into a single `dl` ledger with chisel-grain SVG texture overlay. All facts rendered as equal-weight ruled rows (no pull stats tier). Texture uses `feTurbulence fractalNoise` with horizontal bias (`baseFrequency: 0.01 0.65`, 2 octaves) and `mix-blend-mode: multiply` at 7% opacity. Dark mode inverts to `screen` blend. Key Figures separated by a mid-rule divider, names link to Wikipedia.
+
+### Perspective Vitrine Model
+
+Each witness shows ONE lead argument visible. Remaining arguments, primary sources, narrative, and disputed claims behind an expand button showing count + directional arrow glyph. This mirrors museum vitrine glass -- lean in to see more.
+
+### Omissions Toggle
+
+Mobile: toggle button group (`stressed` / `ignored`) with `aria-pressed`. Desktop: both panels visible side by side. Per-perspective color-coded. Omitted items use struck styling.
+
+### Connection Type Glyphs
+
+Directional glyphs replace text labels for connection types: `caused` = `down-arrow`, `consequence`/`response-to` = `up-arrow`, `influenced`/`parallel` = `centered-dot`. Show Don't Tell -- the glyph communicates direction without explaining it.
+
+### Animation Performance
+
+| Animation | Duration | Notes |
+|-----------|----------|-------|
+| Hero cold open | 150ms fade | Content visible immediately, no stagger delays |
+| Scroll reveal | 300ms | `translateY(12px) -> 0`, `--ease-cinematic` |
+| Card entrance | 300ms | Filter + transform, no scale |
+| Dossier cards | staggered 120ms | Scroll-triggered via IntersectionObserver |
+
+### Palette
+
+Inherits main Cinematic Press tokens plus `--hist-*` namespace: `--hist-accent` (burnt umber), `--hist-brass` (aged brass), `--hist-paper` (foxed vellum), `--hist-ink` (iron gall), `--hist-persp-{a-e}` (5 perspective identity colors).
+
+### Stylesheet
+
+`history.css` (~8,575 lines, `.hist-page` namespace). Full implementation of all museum UX elements.

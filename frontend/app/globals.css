@@ -3,14 +3,27 @@
    "Press & Precision" — newspaper heritage meets modern data density
    ========================================================================== */
 
-/* ---- CSS Cascade (load order matters) ---------------------------------- */
+/* ---- CSS Cascade (load order matters) ----------------------------------
+   Route-scoped stylesheets (games, weekly, ship, film, about, pipeline,
+   command-center) are imported from per-route layout.tsx files so they
+   ship only on the routes that use them.  Keeps the homepage CSS bundle
+   focused on feed + deep-dive surfaces. */
 @import url("./styles/tokens.css");
 @import url("./styles/layout.css");
 @import url("./styles/typography.css");
 @import url("./styles/components.css");
 @import url("./styles/animations.css");
-@import url("./styles/spectrum.css");
+@import url("./styles/mobile-feed.css");
+@import url("./styles/desktop-feed.css");
+@import url("./styles/layout-zones.css");
+@import url("./styles/skybox-banner.css");
+@import url("./styles/floating-player.css");
+@import url("./styles/mobile-nav.css");
 @import url("./styles/responsive.css");
+/* spectrum.css → moved to /sources/page.tsx (only consumer)
+   verify.css → moved to DeepDive.tsx (lazy-loads with Deep Dive chunk)
+   Removes ~3,690 lines (~250KB raw / ~50KB gzipped) from the homepage
+   bundle — neither stylesheet is used on the feed grid cards. */
 
 /* --------------------------------------------------------------------------
    CSS Reset — Minimal, opinionated
@@ -46,6 +59,10 @@ canvas,
 svg {
   display: block;
   max-width: 100%;
+}
+
+audio {
+  display: none;
 }
 
 input,
@@ -194,6 +211,15 @@ h1, h2, h3 {
   transition:
     color var(--dur-morph) var(--ease-out),
     background-color var(--dur-morph) var(--ease-out);
+}
+
+/* --------------------------------------------------------------------------
+   Reduced Motion — Strip theme transition for users who prefer less motion
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  body {
+    transition: none;
+  }
 }
 
 /* --------------------------------------------------------------------------

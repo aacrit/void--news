@@ -4,123 +4,92 @@
    375px → 768px → 1024px → 1280px → 1440px
    ========================================================================== */
 
+/* ---- Prevent layout flash — hide wrong layout before React hydration ---- */
+[data-viewport="mobile"] .skybox,
+[data-viewport="mobile"] .hero-slot,
+[data-viewport="mobile"] .feed-grid,
+[data-viewport="mobile"] .edition-line {
+  display: none;
+}
+[data-viewport="desktop"] .mf,
+[data-viewport="desktop"] .mob-nav--inline {
+  display: none;
+}
+
 /* ---- Tablet (768px+) --------------------------------------------------- */
 
 @media (min-width: 768px) {
-  .grid-medium {
+  .feed-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 0 var(--space-5);
   }
 
-  .grid-medium__item {
+  .feed-grid__item {
     border-right: var(--rule-thin);
     padding-right: var(--space-5);
   }
 
-  .grid-medium__item:nth-child(2n) {
+  .feed-grid__item:nth-child(2n) {
     border-right: none;
     padding-right: 0;
   }
 
-  .grid-compact {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0 var(--space-5);
+  /* F01: 4-line clamp on 2-col grid — more room for long headlines */
+  .story-card__headline-text {
+    -webkit-line-clamp: 4;
   }
+}
 
-  .grid-compact__item {
-    border-right: var(--rule-thin);
-    padding-right: var(--space-5);
+/* ---- Tablet film grain: half-rate drift (16s vs desktop 8s) ----------- */
+/* Per VFX artist spec: tablet gets drift at reduced frequency to save GPU.
+   Desktop (1024px+) uses the base rule from components.css (8s full-rate). */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .page-container::after {
+    animation:
+      cinGrainEntrance 500ms var(--ease-cinematic) 700ms both,
+      cin-grain-drift 16s steps(2, end) 1200ms infinite;
   }
+}
 
-  .grid-compact__item:nth-child(2n) {
-    border-right: none;
-    padding-right: 0;
+/* ---- Justified text guard: left-align on narrow 2-col (768-1023px) ---- */
+@media (max-width: 1023px) {
+  .story-card__summary,
+  .lead-story__summary {
+    text-align: left;
   }
-
-  /* Daily Brief: no special tablet overrides needed — pills handle everything */
 }
 
 /* ---- Desktop (1024px+) ------------------------------------------------- */
 
 @media (min-width: 1024px) {
-  /* Two equal lead stories side by side */
-  .lead-section {
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-  }
-
-  .lead-section__col:not(:last-child) {
-    border-bottom: none;
-    border-right: var(--rule-thin);
-    padding-right: var(--space-5);
-  }
-
-  .lead-section__col:last-child {
-    padding-left: var(--space-5);
-  }
-
-  .grid-medium {
+  .feed-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 0 var(--space-5);
   }
 
-  .grid-medium__item {
+  .feed-grid__item {
     border-right: var(--rule-thin);
     padding-right: var(--space-5);
     padding-left: var(--space-5);
   }
 
-  .grid-medium__item:first-child {
+  .feed-grid__item:nth-child(3n+1) {
     padding-left: 0;
   }
 
-  .grid-medium__item:nth-child(2n) {
-    border-right: var(--rule-thin);
-    padding-right: var(--space-5);
-  }
-
-  .grid-medium__item:nth-child(3n) {
-    border-right: none;
-    padding-right: 0;
-  }
-
-  .grid-medium__item:last-child {
-    border-right: none;
-  }
-
-  .grid-compact {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0 var(--space-5);
-  }
-
-  .grid-compact__item {
-    border-right: var(--rule-thin);
-    padding-right: var(--space-5);
-  }
-
   /* Reset 2-col rule from 768px breakpoint so the 3-col layout takes over */
-  .grid-compact__item:nth-child(2n) {
+  .feed-grid__item:nth-child(2n) {
     border-right: var(--rule-thin);
     padding-right: var(--space-5);
   }
 
-  .grid-compact__item:nth-child(3n) {
+  .feed-grid__item:nth-child(3n) {
     border-right: none;
     padding-right: 0;
   }
 
-  .grid-compact__item:last-child {
+  .feed-grid__item:last-child {
     border-right: none;
-  }
-
-  /* Compact headlines: slightly smaller */
-  .grid-compact .story-card__headline {
-    font-size: var(--text-lg);
-  }
-
-  /* Compact summaries: 4 lines */
-  .grid-compact .story-card__summary {
-    -webkit-line-clamp: 4;
   }
 
   /* Deep Dive: centered overlay covering 75% of viewport.
@@ -131,25 +100,29 @@
     top: 50%;
     right: auto;
     bottom: auto;
+    transform: translate(-50%, -50%);
     width: 75vw;
     max-width: 920px;
     height: 80vh;
     max-height: 80vh;
     min-height: 0;
-    border-radius: 16px;
+    border-radius: 6px;
     border: 1px solid var(--border-subtle);
 
     /* Solid opaque — content demands full attention, not transparency */
     background-color: var(--bg-primary);
 
-    /* Cinematic depth: layered shadows create floating-card illusion.
-       Four rings: ambient → mid → close → inner edge highlight */
+    /* Cinematic depth: layered shadows using brand-warm tint.
+       Four rings: ambient → mid → close → inner rim light.
+       Uses --cinematic-shadow-tint for warm walnut shadows instead of
+       neutral black. The rim light uses --cinematic-rim-light for
+       brand-consistent edge catch. */
     box-shadow:
-      0 50px 140px rgba(0, 0, 0, 0.5),
-      0 20px 60px rgba(0, 0, 0, 0.28),
-      0 6px 16px rgba(0, 0, 0, 0.18),
-      0 1px 3px rgba(0, 0, 0, 0.12),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      0 50px 140px color-mix(in srgb, var(--cinematic-shadow-tint) 50%, transparent),
+      0 20px 60px color-mix(in srgb, var(--cinematic-shadow-tint) 28%, transparent),
+      0 6px 16px color-mix(in srgb, var(--cinematic-shadow-tint) 18%, transparent),
+      0 1px 3px color-mix(in srgb, var(--cinematic-shadow-tint) 12%, transparent),
+      inset 0 1px 0 color-mix(in srgb, var(--cinematic-rim-light) 40%, transparent);
   }
 
   /* Studio light — refined top-edge catch. Higher opacity + wider gradient
@@ -174,29 +147,41 @@
     max-width: 1080px;
   }
 
-  .grid-compact {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0 var(--space-5);
-  }
-
-  .grid-compact__item:nth-child(3n) {
-    border-right: var(--rule-thin);
-    padding-right: var(--space-5);
-  }
-
-  .grid-compact__item:nth-child(4n) {
-    border-right: none;
-    padding-right: 0;
-  }
-
-  .grid-compact__item:last-child {
-    border-right: none;
-  }
+  /* 1280: keep 3-col compact — enough room for footer without overflow */
 }
 
 /* ---- Very Wide (1440px+) ----------------------------------------------- */
 
-/* Deep dive panel width is capped at 680px regardless of viewport width */
+@media (min-width: 1440px) {
+  /* Ultra-wide: 4-column unified grid — balances density with readability */
+  .feed-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0 var(--space-5);
+  }
+
+  .feed-grid__item:nth-child(3n) {
+    border-right: var(--rule-thin);
+    padding-right: var(--space-5);
+  }
+
+  .feed-grid__item:nth-child(4n+1) {
+    padding-left: 0;
+  }
+
+  .feed-grid__item:nth-child(4n) {
+    border-right: none;
+    padding-right: 0;
+  }
+
+  .feed-grid__item:last-child {
+    border-right: none;
+  }
+
+  /* Deep Dive: wider on ultra-wide for more reading comfort */
+  .deep-dive-panel {
+    max-width: 1120px;
+  }
+}
 
 /* ---- Mobile (max-width: 767px) ----------------------------------------- */
 
@@ -210,8 +195,19 @@
     -webkit-overflow-scrolling: touch;
   }
 
+  /* Prevent elastic bounce pull-through — screams "this is a website" */
+  body {
+    overscroll-behavior-y: none;
+  }
+
   .page-main {
     -webkit-overflow-scrolling: touch;
+  }
+
+  .mf,
+  .deep-dive-panel__content,
+  .msp {
+    overscroll-behavior: contain;
   }
 
   /* Filter bar horizontal scroll — proximity snap keeps chips reachable
@@ -245,6 +241,11 @@
     display: none;
   }
 
+  /* Dateline row: hidden on mobile */
+  .nav-dateline-row {
+    display: none;
+  }
+
   /* Mobile dateline: compact date only */
   .nav-dateline-mobile {
     display: block;
@@ -253,8 +254,21 @@
     padding: 0 var(--space-2);
   }
 
-  /* Tighter vertical padding + explicit gap — horizontal is already --space-5
-     in the base rule (components.css), so only override what changes on mobile */
+  /* Dateline: show medium variant, hide full */
+  .nav-dateline__full {
+    display: none;
+  }
+
+  .nav-dateline__medium {
+    display: inline;
+  }
+
+  .nav-dateline {
+    border-left: none;
+    padding-left: 0;
+  }
+
+  /* Tighter vertical padding + explicit gap */
   .nav-inner {
     padding-top: var(--space-2);
     padding-bottom: var(--space-2);
@@ -264,6 +278,44 @@
   .nav-left {
     gap: var(--space-3);
     min-width: 0;
+  }
+
+  /* ── Scroll-compact masthead (mobile) ───────────────────────────────────
+     NavBar.tsx toggles [data-scroll-compact="true"] past 80px (40px off).
+     Mobile reclaims ~20-30px of persistent real estate for thumb-scrollers
+     by collapsing Row 1 padding + fading the mobile dateline. We do NOT
+     scale the logo on mobile — it's already 22px and scaling hurts
+     legibility. Transitions settle via rack-focus ease.                  */
+  .nav-header[data-scroll-compact="true"] .nav-inner {
+    padding-top: var(--space-1);
+    padding-bottom: var(--space-1);
+  }
+  .nav-header[data-scroll-compact="true"] .nav-dateline-mobile {
+    opacity: 0;
+    max-width: 0;
+    max-height: 0;
+    padding-left: 0;
+    padding-right: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .nav-header[data-scroll-compact="true"] .nav-lens {
+    padding-top: var(--space-1);
+    padding-bottom: var(--space-1);
+  }
+
+  .nav-dateline-mobile {
+    transition:
+      opacity var(--dur-settle, 240ms) var(--ease-rack, ease-in-out),
+      max-width var(--dur-settle, 240ms) var(--ease-rack, ease-in-out),
+      max-height var(--dur-settle, 240ms) var(--ease-rack, ease-in-out),
+      padding var(--dur-settle, 240ms) var(--ease-rack, ease-in-out);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-dateline-mobile {
+      transition: none;
+    }
   }
 
   /* Filter toggle — full touch target on mobile */
@@ -276,10 +328,9 @@
   /* === LAYOUT === */
 
   /* page-main: shorthand overrides the base rule's padding: 0 var(--space-7)
-     on all sides. No bottom nav — just safe area padding. */
+     on all sides. Bottom padding overridden later (line ~769) by tab bar clearance. */
   .page-main {
     padding: 0 var(--space-5);
-    padding-bottom: calc(var(--space-7) + env(safe-area-inset-bottom, 0px));
   }
 
   .site-footer {
@@ -295,28 +346,38 @@
     -webkit-backdrop-filter: blur(8px);
   }
 
+  /* Mobile page defocus: halved blur (3px vs 6px desktop) for GPU budget.
+     Mobile renders full-screen bottom sheet — the defocus is less critical
+     because the Deep Dive covers most of the viewport anyway. */
+  .page-main--deep-dive-open {
+    filter: blur(3px) saturate(0.8) brightness(0.9);
+  }
+
+  /* Mobile GPU budget: disable backdrop-filters on elements hidden behind
+     the Deep Dive overlay (z-50). These elements already have solid background
+     fallbacks — the backdrop-filter is pure enhancement, invisible when
+     occluded. Drops simultaneous backdrop-filter count from 4 to 1 (DD only). */
+  .deep-dive-active .mob-nav__bar {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .deep-dive-active .nav-page,
+  .deep-dive-active .nav-weekly {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
   /* Disable expensive GPU compositing hint on mobile — reduces VRAM pressure
      on low-end devices. Fixed paper texture doesn't scroll on mobile anyway. */
   body::before {
     will-change: auto;
   }
 
-  /* Section header — allow RefreshButton timestamp to wrap */
+  /* Section header — allow items to wrap on narrow screens */
   .section-header {
     flex-wrap: wrap;
     gap: var(--space-2);
     align-items: flex-start;
-  }
-
-  /* [ENHANCEMENT-4] RefreshButton — hide timestamp text on mobile,
-     keep icons only. Timestamp is in aria-label for accessibility. */
-  .refresh-btn__text {
-    display: none;
-  }
-
-  .refresh-btn {
-    min-width: auto;
-    padding: var(--space-2);
   }
 
   /* === STORY CARDS === */
@@ -349,12 +410,6 @@
     line-height: 1.45;
   }
 
-  /* [CRITICAL-5] Reserve space for Sigil to prevent layout shift */
-  .story-card__footer {
-    min-height: 32px;
-    margin-top: var(--space-1);
-  }
-
   /* === SECTION HEADERS === */
 
   /* Native iOS section header pattern: sticky, frosted, edge-to-edge.
@@ -362,14 +417,14 @@
      to the viewport edge — mirrors UITableView section header behaviour.
      backdrop-filter adds the frosted-glass frost as the feed scrolls beneath.
      z-index: var(--z-sticky) keeps it above cards but below nav (--z-nav).
-     top calc accounts for the fixed nav-header height AND the sticky lean-bar
-     (--lean-bar-height) so the section header docks below both without overlap. */
+     On mobile the lean-bar lives in MobileBottomNav (not top of page),
+     so section headers dock directly below the fixed nav-header. */
   .section-header {
     position: sticky;
-    top: calc(var(--nav-height) + var(--lean-bar-height));
+    top: var(--nav-height);
     z-index: var(--z-sticky);
-    backdrop-filter: blur(8px) saturate(1.1);
-    -webkit-backdrop-filter: blur(8px) saturate(1.1);
+    /* Solid bg instead of backdrop-filter — sticky elements with blur during
+       scroll force recompositing on every frame on mobile GPUs. */
     background-color: var(--bg-primary);
     margin-left: calc(-1 * var(--space-5));
     margin-right: calc(-1 * var(--space-5));
@@ -411,11 +466,6 @@
     line-height: 1.5;
   }
 
-  .lead-section__col:not(:last-child) {
-    border-bottom: var(--rule-thin);
-    padding-bottom: var(--space-3);
-  }
-
   /* === DEEP DIVE === */
 
   /* iOS bottom-sheet: full screen from bottom, rounded top corners, momentum scroll */
@@ -433,10 +483,11 @@
     background: var(--bg-primary);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
-    /* Layered upward shadow — bottom sheet lifts off the feed */
+    /* Layered upward shadow — bottom sheet lifts off the feed.
+       Warm tint from cinematic shadow system. */
     box-shadow:
-      0 -8px 40px rgba(0, 0, 0, 0.25),
-      0 -2px 12px rgba(0, 0, 0, 0.12);
+      0 -8px 40px color-mix(in srgb, var(--cinematic-shadow-tint) 25%, transparent),
+      0 -2px 12px color-mix(in srgb, var(--cinematic-shadow-tint) 12%, transparent);
     scrollbar-width: none;
     -ms-overflow-style: none;
     -webkit-overflow-scrolling: touch;
@@ -444,6 +495,20 @@
 
   .deep-dive-panel::before {
     opacity: 0;
+  }
+
+  /* Override cinematic settled shadow — bottom sheet keeps upward shadow, no inset vignette */
+  .deep-dive-panel[data-settled] {
+    box-shadow:
+      0 -8px 40px color-mix(in srgb, var(--cinematic-shadow-tint) 25%, transparent),
+      0 -2px 12px color-mix(in srgb, var(--cinematic-shadow-tint) 12%, transparent);
+  }
+
+  /* Suppress DD breathing on mobile — 0.05% scale is imperceptible on small viewports */
+  .deep-dive-panel[data-settled] .deep-dive-panel__content {
+    animation: none;
+    /* Disable editorial color grade filter — forces recomposite on scroll */
+    filter: none;
   }
 
   .deep-dive-panel::-webkit-scrollbar {
@@ -456,29 +521,35 @@
     padding-top: max(var(--space-3), env(safe-area-inset-top, 0px));
   }
 
+  /* Deep Dive headline: fills mobile reading width with editorial authority */
+  .dd-headline {
+    font-size: clamp(1.25rem, 5vw, 1.5rem);
+  }
+
   /* Deep Dive content: tighter padding, clears bottom home indicator */
   .deep-dive-panel__content {
     padding: var(--space-3) var(--space-4);
     padding-bottom: calc(var(--space-5) + env(safe-area-inset-bottom, 0px));
   }
 
-  /* Drag indicator pill — iOS bottom sheet handle */
+  /* Drag indicator pill — iOS bottom sheet handle, cinematic palette */
   .dd-drag-indicator {
     display: block;
-    width: 36px;
-    height: 4px;
+    width: 56px;
+    height: 6px;
     border-radius: 2px;
-    background-color: var(--border-subtle);
+    background-color: var(--cin-ash-warm, var(--border-strong));
     margin: var(--space-2) auto var(--space-1);
-    opacity: 0.6;
-    transition: width 150ms var(--ease-out), opacity 150ms var(--ease-out);
+    opacity: 0.8;
+    transition: width 150ms var(--ease-cinematic), opacity 150ms var(--ease-cinematic);
     /* Brief width-expansion entrance that draws attention to the handle */
-    animation: dragIndicatorReveal 500ms var(--ease-out) 300ms both;
+    animation: dragIndicatorReveal 200ms var(--ease-cinematic) 100ms both;
+    box-shadow: 0 1px 2px color-mix(in srgb, var(--cinematic-shadow-tint) 4%, transparent);
   }
 
   /* Grabbed state: wider pill + full opacity — confirms the handle is active */
   .dd-drag-indicator--grabbed {
-    width: 48px;
+    width: 72px;
     opacity: 1;
   }
 
@@ -491,9 +562,33 @@
     will-change: transform;
   }
 
-  /* Hide "Back to feed" text, keep arrow */
+  /* Hide "Back to feed" text, keep arrow visible with adequate touch target */
   .deep-dive-back-label {
     display: none;
+  }
+
+  /* Ensure back button arrow is always visible and tappable on mobile.
+     The drag indicator remains as secondary close affordance. */
+  .deep-dive-back {
+    display: inline-flex;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Deep Dive: sticky "Read All Sides" footer on mobile */
+  .dd-cta-footer {
+    position: sticky;
+    bottom: 0;
+    background: linear-gradient(to top, var(--bg-primary) 80%, transparent);
+    padding: var(--space-4) var(--space-5) calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+    margin-top: auto;
+    z-index: 2;
+  }
+  .dd-cta-footer__btn {
+    width: 100%;
+    text-align: center;
+    padding: var(--space-3) var(--space-4);
+    font-weight: 600;
   }
 
   /* Analysis section: tighter padding and gap on mobile */
@@ -513,12 +608,28 @@
 
   /* Press expand: faster transition on mobile */
   .dd-press-expand {
-    transition: grid-template-rows 300ms var(--ease-out);
+    transition: grid-template-rows 300ms var(--ease-cinematic);
   }
 
   /* Perspectives: single column on mobile */
   .dd-perspectives-grid {
     grid-template-columns: 1fr;
+  }
+
+  /* Convergence/divergence — horizontal scroll-snap tabs on mobile */
+  .comp-view__insights-content {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 0;
+  }
+  .comp-view__insights-content::-webkit-scrollbar { display: none; }
+  .comp-view__insight-item {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    min-width: 0;
   }
 
   /* [ENHANCEMENT-5] Source rows — better stacking on narrow screens */
@@ -535,9 +646,24 @@
   .anim-dd-section {
     transform: translateY(8px);
     transition:
-      opacity 150ms var(--ease-out),
-      transform 250ms var(--ease-out);
+      opacity 150ms var(--ease-cinematic),
+      transform 250ms var(--ease-cinematic);
   }
+
+  /* Static story counter — persistent mobile navigation affordance */
+  .dd-story-counter {
+    font-family: var(--font-data);
+    font-size: var(--text-xxs);
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    opacity: 0.7;
+  }
+
+  /* Compress DD cascade for mobile — desktop timing too slow on phone */
+  .dd-cascade-1 { transition-delay: 50ms; }
+  .dd-cascade-2 { transition-delay: 150ms; }
+  .dd-cascade-3 { transition-delay: 250ms; }
+  .dd-cascade-4 { transition-delay: 350ms; }
 
   /* === EMPTY STATE === */
 
@@ -546,25 +672,13 @@
     padding: var(--space-4) var(--space-5);
   }
 
-  /* === FEED CONTINUATION — INFINITE SCROLL === */
-
-  /* Hide editorial link on mobile — infinite scroll handles loading */
-  .feed-continuation__link {
-    display: none;
-  }
-
-  /* Sentinel: minimal height, just enough for IntersectionObserver */
-  .feed-continuation {
-    padding: var(--space-2) 0;
-  }
-
   /* === NATIVE APP TOUCH FEEDBACK === */
 
   /* Bottom nav removed — filters are in the nav-header now */
 
   /* Filter chips — pill-toggle feel with sliding indicator */
   .lean-bar__seg--active {
-    transition: background-color 200ms var(--ease-out), color 200ms var(--ease-out), transform 200ms var(--ease-out);
+    transition: transform 200ms var(--ease-cinematic);
   }
 
   /* Topic chips — tighter, more native pill feel */
@@ -572,89 +686,36 @@
     font-weight: 600;
   }
 
-  /* Story card — no hover lift on mobile (no pointer hover), use active press */
-  .story-card:hover {
-    background-color: transparent;
-    box-shadow: none;
-    transform: none;
-  }
-
+  /* Story card — active press only, no hover state */
   .story-card:active {
-    transform: scale(0.975);
+    transform: scale(0.985);
     opacity: 0.9;
-    transition: transform 60ms var(--ease-out), opacity 60ms var(--ease-out);
+    transition: transform 60ms var(--ease-cinematic), opacity 60ms var(--ease-cinematic);
     box-shadow: none;
-  }
-
-  /* Lead story — same native-press treatment at slightly larger scale */
-  .lead-story:hover {
-    background-color: transparent;
-    box-shadow: none;
-    transform: none;
   }
 
   .lead-story:active {
     transform: scale(0.985);
-    transition: transform 60ms var(--ease-out);
+    transition: transform 60ms var(--ease-cinematic);
     box-shadow: none;
   }
 
-  /* Filter chip — aggressive press for snappy tap feel */
-  .filter-chip:hover {
-    color: var(--fg-tertiary);
-    background-color: transparent;
-    border-color: var(--border-subtle);
-    transform: none;
-    box-shadow: none;
-  }
-
+  /* Filter chip — press feedback only */
   .filter-chip:active {
-    transform: scale(0.88);
-    transition: transform 50ms var(--ease-out);
+    transform: scale(0.92);
+    transition: transform 50ms var(--ease-cinematic);
   }
 
-  /* Lean bar segments — disable hover lift, use press feedback */
-  .lean-bar__seg:hover {
-    background-color: transparent;
-    color: var(--fg-tertiary);
-  }
-
+  /* Lean bar segments — base hover already stripped, press feedback only */
   .lean-bar__seg:active {
     transform: scale(0.95);
-    transition: transform 50ms var(--ease-out);
+    transition: transform 50ms var(--ease-cinematic);
   }
 
-  /* Keep active segment color on mobile even without hover */
-  .lean-bar__seg--active:hover {
-    color: var(--fg-primary);
-  }
-
-  .lean-bar__seg--active.lean-bar__seg--left:hover {
-    background-color: color-mix(in srgb, var(--bias-left) 14%, transparent);
-  }
-
-  .lean-bar__seg--active.lean-bar__seg--center:hover {
-    background-color: color-mix(in srgb, var(--bias-center) 14%, transparent);
-  }
-
-  .lean-bar__seg--active.lean-bar__seg--right:hover {
-    background-color: color-mix(in srgb, var(--bias-right) 14%, transparent);
-  }
-
-  /* Topic chip — native press feel */
-  .topic-bar__chip:hover {
-    color: var(--fg-tertiary);
-    border-color: transparent;
-  }
-
+  /* Topic chip — base hover already stripped, press feedback only */
   .topic-bar__chip:active {
-    transform: scale(0.88);
-    transition: transform 50ms var(--ease-out);
-  }
-
-  .topic-bar__chip--active:hover {
-    color: var(--fg-primary);
-    border-color: var(--border-strong);
+    transform: scale(0.92);
+    transition: transform 50ms var(--ease-cinematic);
   }
 
   /* === PERFORMANCE — DISABLE PAINT-HEAVY EFFECTS === */
@@ -665,9 +726,8 @@
   .lead-story {
     box-shadow: none;
     transition:
-      background-color 200ms var(--ease-out),
-      transform 200ms var(--ease-out),
-      opacity 200ms var(--ease-out);
+      transform 200ms var(--ease-cinematic),
+      opacity 200ms var(--ease-cinematic);
   }
 
   /* === STAGGER ANIMATION — FASTER ON MOBILE === */
@@ -677,7 +737,7 @@
      animation-play-state paused/running contract is preserved. */
   .anim-stagger {
     animation-duration: 220ms;
-    animation-timing-function: var(--ease-out);
+    animation-timing-function: var(--ease-cinematic);
     animation-play-state: paused;
   }
 
@@ -688,14 +748,18 @@
   /* === TOUCH TARGETS — WCAG 44×44px MINIMUM === */
 
   /* These elements already meet WCAG in most cases; this rule is the safety net */
-  .nav-filters__ed,
-  .nav-filters__lean,
+  .nav-ed,
+  .nav-lens__lean,
+  .nav-lens__trigger,
+  .nav-lens__search,
+  .nav-page,
+  .nav-weekly,
   .filter-chip,
   .lean-bar__seg,
   .topic-bar__chip,
-  .page-toggle,
   .theme-toggle,
-  .deep-dive-close {
+  .deep-dive-close,
+  .skb-overlay__close {
     min-height: 44px;
     min-width: 44px;
   }
@@ -714,17 +778,28 @@
     min-width: 44px;
   }
 
+  /* Story nav prev/next — base rule is 32×32px; bump to WCAG minimum.
+     Padding expands the tap area to 44px while the border-box keeps the
+     visual circle at 32px. The ::before pseudo-element approach is avoided
+     here since these are interactive buttons that already render an icon. */
+  .dd-story-nav__btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
   /* === TEXT SELECTION — DISABLE ON INTERACTIVE ELEMENTS === */
 
   /* Native apps don't allow text selection on buttons / cards */
-  .nav-filters__ed,
-  .nav-filters__lean,
+  .nav-ed,
+  .nav-lens__lean,
+  .nav-lens__search,
   .filter-chip,
   .lean-bar__seg,
   .topic-bar__chip,
   .story-card,
   .lead-story,
-  .page-toggle,
+  .nav-page,
+  .nav-weekly,
   .theme-toggle {
     -webkit-user-select: none;
     user-select: none;
@@ -732,12 +807,7 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* === PAGE TOGGLE — GLASS PILL === */
-
-  .page-toggle {
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-  }
+  /* === PAGE NAVIGATION — no glass on mobile (hidden anyway) === */
 
   /* === ACCESSIBILITY === */
 
@@ -747,48 +817,31 @@
     outline-offset: 2px;
   }
 
-  /* === FILTERBAR — hide edition pills on mobile (already in bottom nav) === */
+  /* .ubar__* rules removed — FilterBar deprecated; NavBar owns all filtering */
 
-  .ubar__editions {
+  /* === NAV LENS — hide entire Row 2 on mobile (MobileBottomNav handles these) === */
+  .nav-lens {
     display: none;
   }
 
-  /* Hide the separator after edition pills — no longer needed */
-  .ubar__editions + .ubar__sep {
-    display: none;
+  /* === PAGE MAIN — clear MobileTabBar + MobileMiniPlayer === */
+  /* MobileTabBar: 52px. MobileMiniPlayer (above tab bar, optional): 44px.
+     Default: tab bar only. Mini-player padding added via data-audio-active
+     when audio has been started — avoids wasting 44px for users who never play. */
+  .page-main {
+    padding-bottom: calc(52px + var(--space-5) + env(safe-area-inset-bottom, 0px));
   }
 
-  /* === DAILY BRIEF — mobile pill layout === */
-
-  /* Stack pills vertically on narrow screens */
-  .daily-brief__pills {
-    gap: var(--space-1);
+  body[data-audio-active="true"] .page-main {
+    padding-bottom: calc(52px + 44px + var(--space-5) + env(safe-area-inset-bottom, 0px));
   }
 
-  /* Hide time readout in pill on mobile to save space */
-  .db-pill__time {
-    display: none;
+  .site-footer {
+    margin-bottom: calc(52px + var(--space-5) + env(safe-area-inset-bottom, 0px));
   }
 
-  /* TL;DR body: clamp to 4 lines on mobile with "Read more" affordance */
-  .daily-brief__body {
-    display: -webkit-box;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-align-last: left;
-  }
-
-  /* When TL;DR panel is expanded, remove the clamp */
-  .db-panel--open .daily-brief__body {
-    display: block;
-    -webkit-line-clamp: unset;
-    overflow: visible;
-  }
-
-  /* Hide subtitles on mobile to reduce pill clutter */
-  .db-pill__subtitle {
-    display: none;
+  body[data-audio-active="true"] .site-footer {
+    margin-bottom: calc(52px + 44px + var(--space-5) + env(safe-area-inset-bottom, 0px));
   }
 
   /* === META TAGS — bump readability on mobile === */
@@ -812,10 +865,14 @@
     display: none;
   }
 
-  /* Spectrum: tighter zone labels on mobile */
-  .dd-spectrum__zone-label {
-    font-size: 6px;
-    letter-spacing: 0;
+  /* Spectrum: fulcrum hidden on mobile (too tight) */
+  .ink-line__fulcrum {
+    display: none;
+  }
+
+  /* Footer keyboard shortcut hint — not useful on mobile (no physical keyboard) */
+  .footer-kbd-hint {
+    display: none;
   }
 }
 
@@ -830,18 +887,40 @@
     top: var(--nav-height);
     z-index: var(--z-sticky);
     background-color: var(--bg-primary);
-    backdrop-filter: blur(8px) saturate(1.1);
-    -webkit-backdrop-filter: blur(8px) saturate(1.1);
   }
 
-  /* DivergenceAlerts: tighter vertical spacing on mobile */
-  .div-alerts {
-    margin: var(--space-3) 0;
-  }
+  /* DivergenceAlerts removed from homepage — CSS kept for reference */
+}
 
-  /* Blind spot banner: full-width stack on narrow screens */
-  .div-alerts__blind-spot {
-    padding: var(--space-3);
+/* ---- Cinematic Mobile Degradation --------------------------------------
+   Mobile devices: battery + GPU budget is limited. Cinematic layers are
+   either disabled or reduced to static, low-opacity versions.
+
+   Layer 1 (Grain):     Static (no drift animation), nearly invisible (0.02)
+   Layer 2 (Grade):     Disabled (filter: none on .page-main + .nav-header)
+   Layer 3 (Vignette):  Reduced to 50% opacity (still frames content subtly)
+   Layer 4 (Haze):      Disabled (no per-card filter)
+   Layer 5 (Chromatic): Disabled (no text-shadow on lead headline)
+   Layer 6 (Light):     Unchanged (practical light is CSS box-shadow, cheap) */
+
+@media (max-width: 767px) {
+  /* Color grade: DISABLED on mobile — forces recomposite of entire scrollable
+     content on every scroll frame. The micro-adjustments (contrast 1.05, saturate
+     0.90, sepia 0.04) are imperceptible on 5-6" screens. Biggest single scroll
+     jank source identified in perf audit 2026-04-02. */
+  .page-main,
+  .nav-header {
+    filter: none;
+  }
+  /* Film grain: STATIC on mobile — drift disabled to save GPU budget.
+     Only the entrance animation plays; no perpetual drift translate.
+     Half-rate drift (16s) is allowed on tablet (768px+) via separate rule. */
+  .page-container::after {
+    animation: cinGrainEntrance 500ms var(--ease-cinematic) 700ms both;
+  }
+  /* Vignette: 50% reduced — subtle framing preserved */
+  .page-container::before {
+    opacity: 0.5;
   }
 }
 
@@ -865,11 +944,11 @@
     height: 6px;
   }
 
-  /* Topic chips — compact on ultra-narrow */
+  /* Topic chips — compact but WCAG 44px touch target */
   .topic-bar__chip {
     padding: 3px 6px;
     font-size: clamp(0.5rem, 0.45rem + 0.2vw, 0.5625rem);
-    min-height: 32px;
+    min-height: 44px;
   }
 
   /* Legacy filter-chip — tighter on ultra-narrow */
@@ -886,4 +965,84 @@
     font-size: clamp(0.5rem, 0.45rem + 0.2vw, 0.5625rem);
     padding: var(--space-2);
   }
+
 }
+
+/* ---- Standalone PWA (installed to home screen) -------------------------- */
+
+@media (display-mode: standalone) {
+  /* Prevent pull-to-refresh conflicts with in-app scroll */
+  html { overscroll-behavior-y: contain; }
+
+  /* Hide install prompts when already installed */
+  .install-prompt { display: none; }
+}
+
+/* ---- PWA back nav — mobile sub-page back-to-feed affordance ------------ */
+
+.pwa-back {
+  display: none; /* hidden on desktop — nav-pages provides this */
+}
+
+@media (max-width: 767px) {
+  .pwa-back {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-4);
+    font-family: var(--font-structural);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--fg-tertiary);
+    text-decoration: none;
+    border-bottom: var(--rule-thin);
+    min-height: 44px;
+    transition: none;
+  }
+
+  .pwa-back:active {
+    color: var(--fg-primary);
+  }
+}
+
+/* ---- View Transitions — applied via JS only during navigation ------------
+   DO NOT set view-transition-name statically in CSS — permanently-named
+   elements are promoted to their own GPU compositing layers, which creates
+   visible seam lines (horizontal strips) between layers during scroll.
+   view-transition-name is set/removed by ViewTransitionLink component. */
+
+/* Cross-fade with subtle slide — mobile route transitions */
+@media (prefers-reduced-motion: no-preference) {
+  html.is-transitioning .page-main {
+    view-transition-name: main-content;
+  }
+  html.is-transitioning .nav-header {
+    view-transition-name: nav-header;
+  }
+  html.is-transitioning .mtb {
+    view-transition-name: tab-bar;
+  }
+
+  ::view-transition-old(main-content) {
+    animation: vtSlideOut 200ms var(--ease-cinematic) both;
+  }
+  ::view-transition-new(main-content) {
+    animation: vtSlideIn 200ms var(--ease-cinematic) both;
+  }
+
+  /* Persistent chrome stays put during route change */
+  ::view-transition-old(nav-header),
+  ::view-transition-new(nav-header),
+  ::view-transition-old(tab-bar),
+  ::view-transition-new(tab-bar) {
+    animation: none;
+  }
+}
+
+@keyframes vtSlideOut {
+  to { opacity: 0; transform: translateX(-8px); }
+}
+@keyframes vtSlideIn {
+  from { opacity: 0; transform: translateX(8px); }
+}
+

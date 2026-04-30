@@ -18,17 +18,25 @@
   --thumb-border:        #fff;
   --indicator-broadcast: #c0392b;
 
+  /* ── Voice Accent — scoped to always-dark radio console only ──
+     The radio panel (#1A1816) is always dark regardless of theme.
+     This fixed value ensures 6.71:1 contrast on that surface. */
+  --voice-accent:       #4DAFA0;
+  --voice-accent-dim:   #3D9A8C;
+  --voice-accent-ghost: rgba(77, 175, 160, 0.08);
+  --voice-accent-glow:  rgba(77, 175, 160, 0.15);
+
   /* Surfaces — warm newsprint tones */
   --bg-primary:    #F0EBDD;
   --bg-secondary:  #E8E2D4;
   --bg-card:       #F5F0E4;
   --bg-elevated:   #F5F0E4;
 
-  /* Text */
+  /* Text — all pass WCAG AA 4.5:1 on --bg-primary (#F0EBDD) */
   --fg-primary:    #1A1A1A;
-  --fg-secondary:  #4A4A4A;
-  --fg-tertiary:   #7A7A7A;
-  --fg-muted:      #A0A0A0;
+  --fg-secondary:  #4A4540;
+  --fg-tertiary:   #686260;
+  --fg-muted:      #52504A;  /* 4.5:1 on #F0EBDD — WCAG AA compliant */
 
   /* Borders & Dividers */
   --border-subtle: #E8E2DB;
@@ -54,14 +62,443 @@
   --accent: #1A1A1A;
   --accent-hover: #333333;
 
-  /* Warm accent — focus indicators, accessibility outlines */
-  --accent-warm: #C8956C;
+  /* Warm accent — focus indicators, accessibility outlines.
+     Deep ochre-gold: aged brass under a desk lamp. ~4.9:1 on #F0EBDD.
+     Deepened from #C8956C (2.2:1 — failed WCAG AA) to pass 4.5:1. */
+  --accent-warm: #946B15;
+
+  /* Foreground accent — warm editorial accent for badges, active states */
+  --fg-accent: #946B15;
+
+  /* Hover surface — subtle tint for interactive rows */
+  --bg-hover: rgba(0, 0, 0, 0.04);
 
   /* Overlay backdrop */
   --overlay-backdrop: rgba(28, 26, 23, 0.15);
 
   /* Paper texture — grain overlay (light mode: warm sepia, opacity 0.08) */
   --paper-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.08'/%3E%3C/svg%3E");
+
+  /* ── Cinematic Palette ── */
+  --cin-amber: #946B15;
+  --cin-amber-bright: #AD7E1E;
+  --cin-amber-dim: #775610;
+  --cin-amber-ghost: rgba(148, 107, 21, 0.08);
+  --cin-amber-glow: rgba(148, 107, 21, 0.15);
+  --cin-ash: #6B7280;
+  --cin-ash-warm: #78716C;
+  --cin-ash-cool: #64748B;
+  --cin-paper-highlight: #F5EFE0;
+  --cin-paper-shadow: #E4DDD0;
+
+  --cin-amber-muted: #B08A40;
+
+  /* ── Counter-temperature: Slate (Deakins/Sicario — cool foil to warm amber) ── */
+  --cin-slate:             #5C6B7A;
+  --cin-slate-light:       #8A96A3;
+  --cin-slate-ghost:       rgba(92, 107, 122, 0.08);
+
+  /* ── Grain refinement (cotton rag newsprint character) ── */
+  --cin-grain-frequency:   0.55;
+  --cin-grain-octaves:     4;
+  --cin-grain-blend-light: overlay;
+  --cin-grain-blend-dark:  soft-light;
+
+  /* ── Typography refinements ── */
+  --cin-tracking-meta:     0.10em;
+  --cin-weight-pullquote:  400;
+
+  /* ── Scene 3: Rack Focus — Neighbor Defocus (Zsigmond, Close Encounters) ──
+     Defocus is fast (420ms) — decisive focus pull.
+     Refocus is slow (600ms) — gradual plane resolution. */
+  --cin-rack-dim-neighbor:    0.75;
+  --cin-rack-blur-neighbor:   0.5px;
+  --cin-rack-recede-neighbor: 0.999;
+  --cin-rack-blur-return-dur: 150ms;
+  --cin-rack-dim-return-dur:  180ms;
+  --cin-card-glow:            0 0 0 1px color-mix(in srgb, var(--cinematic-rim-light, rgba(148,107,21,0.08)) 60%, transparent);
+
+  /* ── Product World Palette — accent colors for product family previews ── */
+  --palette-weekly: #B91C1C;
+  --palette-weekly-paper: #EDE4D0;
+  --palette-onair-surface: #1A1816;
+
+  /* ── Audio Console — adapts to light/dark mode ──
+     Light: warm parchment tones, organic with the newspaper page.
+     Dark: walnut broadcast surface (overridden in [data-mode="dark"]). */
+  --console-bg: #EBE5D6;
+  --console-bg-deep: #E3DDD0;
+  --console-fg: #2A2520;
+  --console-shadow: rgba(42, 37, 32, 0.08);
+  --console-shadow-strong: rgba(42, 37, 32, 0.12);
+
+  /* ── Cinematic Palette Bridge ── */
+  --cinematic-accent: var(--cin-amber);
+  --cinematic-shadow-tint: rgba(42, 32, 18, 0.82);
+  --cinematic-rim-light: var(--cin-amber-glow);
+  --cinematic-rim-cool: rgba(100, 116, 139, 0.10);
+
+  /* ── Cinematic Easings ──
+     Named for the camera language they emulate. Each curve is motivated
+     by a real cinematographic technique.
+
+     Deakins (cinematic): smooth deceleration — a dolly easing to rest
+       on a locked-off composition. Fast initial response, long graceful
+       settle. The default "good taste" curve.
+     Lubezki (whip): near-instant attack, abrupt deceleration — the whip
+       pan that stops dead on target. For edition switching and fast
+       directional transitions.
+     Rack: standard material ease — the lens barrel rotating to pull
+       focus from one depth plane to another. Symmetric, mechanical,
+       measured. For blur/opacity shifts between depth planes.
+     Dramatic: significant overshoot — Spielberg crash zoom energy.
+       Reserved for first-ever Deep Dive open, breaking news, smash cut.
+     Steadicam: minimal overshoot, long settle — Kubrick Steadicam
+       gliding through the Overlook. For scroll-driven transitions that
+       must feel weightless and inevitable. */
+  --ease-cinematic: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-whip: cubic-bezier(0.25, 0, 0, 1);
+  --ease-rack: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-dramatic: cubic-bezier(0.68, -0.6, 0.32, 1.6);
+  --ease-steadicam: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ── Broadsheet Paper Physics ──
+     Organic paper transitions for the Skybox banner.
+     Not springs (digital), not slides (mechanical) — paper. */
+  --ease-unfold: cubic-bezier(0.14, 0.8, 0.26, 1);
+  --ease-refold: cubic-bezier(0.32, 0, 0.15, 1);
+
+
+  /* ── Focus/Blur Levels ──
+     Named depth-of-field stops, like a cinematographer's T-stop markings
+     on a lens barrel. Sharp is T1.4 (everything pin-sharp), soft is T2.8
+     (gentle environmental defocus), ambient is T4 (clear subject
+     isolation), bokeh is T5.6 (deep background wash), deep is T8
+     (maximum separation). Each level used for a specific interaction:
+
+     sharp:   active element (hovered card, focused Deep Dive)
+     soft:    neighboring elements during rack focus (cards near hover)
+     ambient: background feed when Deep Dive is open
+     bokeh:   deep backdrop behind modal overlays
+     deep:    maximum defocus for overlay backdrops */
+  --focus-sharp:   blur(0);
+  --focus-soft:    blur(1.5px);
+  --focus-ambient: blur(4px);
+  --focus-modal:   blur(6px);     /* T5.6 — modal-depth defocus (Deep Dive, Inspector) */
+  --focus-bokeh:   blur(8px);
+  --focus-deep:    blur(12px);
+
+  /* ── Cinematic Depth Planes ──
+     z-index layering that maps to physical depth in a film frame.
+     Each plane has a corresponding blur level and scroll rate.
+
+     bg-texture:  The paper grain/noise texture (fixed, behind everything)
+     content:     Primary feed content (articles, cards, sections)
+     float:       Sticky nav, filter bar (foreground interest)
+     modal:       Deep Dive panel (rack-focused subject)
+     tooltip:     Popovers, tooltips (extreme foreground) */
+  --z-depth-bg:      var(--z-base);
+  --z-depth-content: var(--z-card);
+  --z-depth-float:   var(--z-sticky);
+  --z-depth-modal:   var(--z-modal);
+  --z-depth-tooltip: var(--z-popup);
+
+  /* ── Parallax Scroll Rates ──
+     Differential scroll speeds create the Steadicam depth illusion.
+     Background scrolls slower (recedes), foreground scrolls normal
+     (anchored to viewport), floating elements scroll slightly faster
+     (pop forward). These are multipliers applied to scroll position.
+     CSS scroll-driven animations use these as keyframe percentages. */
+  --parallax-bg:    0.3;
+  --parallax-mid:   0.7;
+  --parallax-fg:    1.0;
+  --parallax-float: 1.08;
+
+  /* ── Cinematic Shadows ──
+     All shadows cast from a consistent key light position: top-left.
+     This is the Deakins approach — one dominant light source creating
+     directional shadows that reveal form and depth. The negative X offset
+     (-1px, -2px, -4px) is the key light directionality.
+
+     Three tiers mirror a cinematographer's shadow vocabulary:
+     contact:  Card resting on surface (close shadow, tight radius)
+     ambient:  Card lifted slightly (hover state, medium spread)
+     dramatic: Card floating high (Deep Dive panel, maximum depth)
+
+     Shadow tint comes from --cinematic-shadow-tint which references the
+     logo-designer's palette for brand-consistent warm shadows. */
+  --shadow-cinematic-contact:
+    -1px 2px 4px color-mix(in srgb, var(--cinematic-shadow-tint) 6%, transparent),
+    0 1px 2px color-mix(in srgb, var(--cinematic-shadow-tint) 4%, transparent);
+  --shadow-cinematic-ambient:
+    -2px 4px 12px color-mix(in srgb, var(--cinematic-shadow-tint) 8%, transparent),
+    0 2px 4px color-mix(in srgb, var(--cinematic-shadow-tint) 5%, transparent);
+  --shadow-cinematic-dramatic:
+    -4px 8px 24px color-mix(in srgb, var(--cinematic-shadow-tint) 12%, transparent),
+    -1px 2px 6px color-mix(in srgb, var(--cinematic-shadow-tint) 6%, transparent);
+  /* Lifted dramatic — Deep Dive panel at maximum elevation.
+     Four shadow rings: ambient base, mid-depth, close contact, inner
+     rim light. The inner rim uses --cinematic-rim-light for brand warmth. */
+  --shadow-cinematic-lifted:
+    -6px 12px 40px color-mix(in srgb, var(--cinematic-shadow-tint) 16%, transparent),
+    -3px 6px 16px color-mix(in srgb, var(--cinematic-shadow-tint) 10%, transparent),
+    -1px 2px 4px color-mix(in srgb, var(--cinematic-shadow-tint) 6%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--cinematic-rim-light) 40%, transparent);
+
+  /* ── Vignette ── */
+  --cin-vignette-color: rgba(28, 26, 23, 0.06);
+
+  /* ── Film Grain ── */
+  --cin-grain-opacity: 0.035;
+
+  /* ── Color Grade ── */
+  --cin-grade: contrast(1.05) saturate(0.90) sepia(0.04);
+
+  --cin-warmth-near: sepia(0.02) saturate(1.02);
+
+  /* ── Cold Open — staged reveal timing (cinematographer: snap tier) ── */
+  --cold-open-nav:       0ms;
+  --cold-open-skybox:   40ms;
+  --cold-open-lead:     80ms;
+  --cold-open-feed:    120ms;
+  --cold-open-dur:     180ms;
+
+  /* ── Deep Dive Backdrop — cinematic chiaroscuro ──
+     Blur reduced from 20px to 14px: at 14px, headline shapes behind the
+     panel remain vaguely recognizable (the viewer knows there is content
+     behind), but detail is suppressed enough for full subject isolation.
+     This is the Kaminski crowd-behind-the-subject look (Schindler's List). */
+  --cin-backdrop-bg: rgba(28, 26, 23, 0.45);
+  --cin-backdrop-blur: blur(14px) saturate(0.65) brightness(0.72);
+  --cin-backdrop-ramp-dur: 200ms;
+  --cin-backdrop-rack-out-dur: 120ms;
+
+  /* ── Deep Dive Backdrop — chiaroscuro layers ──
+     The backdrop is not a flat wash. Real cinema uses:
+     1. Color separation: background cools as foreground warms (Deakins)
+     2. Light falloff: edges darker than center (practical light from panel)
+     3. Vignette intensification: frame tightens when attention narrows
+
+     backdrop-vignette:  radial darkening on the backdrop layer itself
+     backdrop-grade:     separate color grade for the blurred world behind
+     vignette-dd-open:   page vignette opacity multiplier when DD is open
+     light-adaptation:   brightness normalization on DD close (eye adjust) */
+  --cin-backdrop-vignette: radial-gradient(
+    ellipse 65% 60% at 50% 45%,
+    transparent 30%,
+    rgba(28, 26, 23, 0.12) 100%
+  );
+  --cin-backdrop-grade: saturate(0.55) brightness(0.68) sepia(0.06);
+  --cin-vignette-dd-open: 1.4;
+  --cin-light-adapt-dur: 250ms;
+
+  /* ── Whip Pan — edition switch (cinematographer: snap tier) ── */
+  --whip-pan-dur: 180ms;
+  --ease-whip-out: cubic-bezier(0.55, 0, 1, 0.45);
+
+  /* ── Scene Durations ──
+     Each interaction is a "scene" with motivated timing derived from
+     film editing rhythms. These are not arbitrary — they map to the
+     pacing of different shot types.
+
+     cold-open:    Opening shot — medium pace, establishing the world
+     rack-focus:   Lens pull between depth planes — mechanical, 600ms
+     match-cut:    Card-to-DeepDive morph — spring-driven, 500ms open
+     reverse-shot: DeepDive-to-feed — decisive cut-back, 380ms
+     whip-pan:     Edition switch — fast directional, 350ms
+     dissolve:     Theme toggle — cross-fade, 500ms with 700ms warmth
+     dolly-in:     Card hover approach — quick, responsive, 320ms
+     l-cut:        Overlapping transition (content starts before panel
+                   settles) — offset by ~40% of main duration */
+  --scene-cold-open:    180ms;
+  --scene-rack-focus:   120ms;
+  --scene-match-cut:    200ms;
+  --scene-reverse-shot: 150ms;
+  --scene-whip-pan:     180ms;
+  --scene-dissolve:     300ms;
+  --scene-dolly-in:     120ms;
+  --scene-l-cut-offset: 0.4;
+
+  /* ── Deep Dive — cascade timing ──
+     L-cut choreography: content sections cascade in while the panel
+     morph is still settling. Gap between sections creates a "focus pull"
+     rhythm — each section arriving is a new focal plane sharpening. */
+  --dd-cascade-gap: 70ms;
+  --dd-content-scale-from: 0.99;
+  --dd-feed-scale: 0.997;
+
+  /* ── Scroll-Driven Animation ──
+     Ranges and rates for CSS animation-timeline: scroll()/view()
+     progressive enhancement. These tokens parameterize the scroll-driven
+     keyframes defined in animations.css so they can be tuned from one
+     place. The parallax range (300vh) means the background texture
+     displacement plays out over 3 viewport heights of scrolling. */
+  --scroll-parallax-range: 300vh;
+  --scroll-vignette-range: 200vh;
+
+  /* ── Lens Breathing — REMOVED (motion director) ──
+     Imperceptible scale pulse on scroll direction change was not worth
+     the GPU cost. Tokens preserved as comments for archaeology. */
+  /* --lens-breathe-scale: 1.003; REMOVED */
+  /* --lens-breathe-dur: 600ms; REMOVED */
+
+  /* ── Practical Light — OnAir ambient warmth ──
+     In cinematography, a "practical" is a visible light source within
+     the frame (a lamp, a candle, a screen). The OnAir indicator is our
+     practical — when audio is playing, it emits warm amber light that
+     subtly affects surrounding elements.
+
+     This creates motivated lighting: the warmth has a SOURCE (the player),
+     not a decoration. The glow radiates outward with inverse-square
+     falloff (strongest near the player, imperceptible beyond 2 sections).
+
+     radius:  how far the practical's glow extends (CSS radial-gradient)
+     pulse:   breathing period (human respiratory rhythm, 4s)
+     warmth:  the background-color tint applied to elements "lit" by it
+     glow-near: strong warmth for elements adjacent to the player
+     glow-far:  subtle warmth for elements further from the player */
+  --cin-practical-radius: 40px;
+  --cin-practical-pulse: 4s;
+  --cin-practical-warmth: color-mix(in srgb, var(--cin-amber) 4%, var(--bg-primary));
+  --cin-practical-glow-near: color-mix(in srgb, var(--cin-amber) 6%, transparent);
+  --cin-practical-glow-far: color-mix(in srgb, var(--cin-amber) 2%, transparent);
+
+  /* ── Cinematic rim-top highlight for elevated surfaces ── */
+  --cinematic-rim-top: rgba(148, 107, 21, 0.08);
+
+  /* ── Accent isolation for bias-adjacent elements ── */
+  --cinematic-accent-near-bias: rgba(148, 107, 21, 0.04);
+  --cinematic-accent-far-bias: rgba(148, 107, 21, 0.12);
+
+  /* ── Methodology Scoring Stage ── */
+  --meth-bar-track: var(--bg-secondary);
+  --meth-mark-opacity: 0.12;
+  --meth-mark-focus-opacity: 0.85;
+
+  /* ── Category Colors ── */
+  --cat-politics:    #6366F1;  /* indigo — distinct from --bias-left blue */
+  --cat-conflict:    #E53E3E;  /* distinct from --indicator-broadcast (#c0392b) */
+  --cat-science:     #2980B9;
+  --cat-health:      #27AE60;
+  --cat-environment: #16A085;
+  --cat-culture:     #8E44AD;
+
+  /* ── Cinematic Palette Additions (logo-designer) ── */
+  --cinematic-accent-warm-hover: #A8781C;
+  --cinematic-accent-focus: rgba(148, 107, 21, 0.22);
+  --cinematic-accent-active: #775610;
+  --cinematic-rim-edge: rgba(148, 107, 21, 0.06);
+  --cin-grade-editorial: contrast(1.04) saturate(0.88) sepia(0.06);
+  --cin-vignette-warm: rgba(42, 32, 18, 0.03);
+  --cin-grain-seed-editorial: 13;
+  --line-height-editorial: 1.65;
+
+  /* ── Laid Paper Texture — Editorial Territory (logo-designer) ──
+     Vergé paper: visible laid lines + chain lines from the papermaking mold.
+     Reference: Crane's Lettra 110lb, Mohawk Via Vellum — the cotton rag stock
+     used for government bonds, formal correspondence, and editorial stationery.
+
+     The page canvas is coated matte (smooth fractalNoise grain).
+     The Daily Brief is laid paper — same color, different weave/finish.
+     Two SVG patterns layered:
+       1. Laid lines — fine horizontal lines (wire mesh), 3px period
+       2. Chain lines — wider vertical lines (support wires), 28px period
+     Plus a linen micro-weave (crosshatch at ~45deg) for cotton fiber texture. */
+  --laid-line-opacity-light: 0.055;
+  --laid-chain-opacity-light: 0.035;
+  --laid-linen-opacity-light: 0.03;
+  --laid-line-color-light: rgba(28, 26, 23, 1);
+  --laid-chain-color-light: rgba(28, 26, 23, 1);
+
+  /* ── Dissolve Timing (cinematographer — theme toggle, dissolve tier) ── */
+  --dissolve-shadow-dur: 200ms;
+  --dissolve-surface-dur: 300ms;
+  --dissolve-ink-dur: 200ms;
+  --dissolve-border-dur: 250ms;
+  --dissolve-filter-dur: 200ms;
+
+  /* ── Asymmetric Rack Focus (cinematographer — snap tier) ── */
+  --rack-defocus-dur: 120ms;
+  --rack-refocus-dur: 180ms;
+
+  /* ── Match Cut Safety (cinematographer) ── */
+  --morph-scale-min: 0.15;
+  --morph-scale-max: 1.0;
+
+  /* ── Scroll Vignette (cinematographer) ── */
+  --vignette-scroll-min: 0.5;
+  --vignette-scroll-max: 1.0;
+
+  /* ── Shadow Lag (cinematographer — formalizes existing 30ms) ── */
+  --shadow-lag: 30ms;
+
+  /* ── Deep Dive Breathing (cinematographer) ── */
+  --dd-breathe-scale: 1.0005;
+  --dd-breathe-dur: 6s;
+
+  /* ── Per-Image Color Grades (color-grader) ──
+     Context-specific filter chains for <img> elements. Each grade normalizes
+     external og:image sources (Unsplash vivid, Pexels variable, social cards)
+     toward the void warm-paper identity. Values are tuned to compound with
+     ancestor-level grades (--cin-grade on .page-main, --cin-grade-editorial
+     on .wk-main / .deep-dive-panel__content) without exceeding safe bounds.
+
+     Compound bounds: contrast 1.04-1.12, saturation 0.70-0.90, sepia 0.06-0.16.
+
+     Parameters:
+       contrast  — slightly elevated (1.03-1.08) to compensate for desat flatness
+       saturate  — always < 1.0, pulls digital oversaturation toward editorial print
+       sepia     — warm shift, ties images to paper palette; higher = more archival
+       brightness — only where needed (dark mode compensation, dramatic darkening) */
+
+  --img-grade-feed:            contrast(1.03) saturate(0.95) sepia(0.02);
+  --img-grade-deepdive:        contrast(1.02) saturate(0.88) sepia(0.01);
+  --img-grade-weekly:          contrast(1.05) saturate(0.92) sepia(0.04);
+  --img-grade-epaper:          contrast(1.15) saturate(0) brightness(1.02);
+
+  /* ── History Image Grades — Archival Footage (color-grader) ──
+     History pages use .hist-grade on the page container (contrast 1.02,
+     sat 0.88, sepia 0.06) instead of --cin-grade. Image grades compound
+     with that ancestor filter. Heavier sepia + desat = archival photograph.
+
+     Compound bounds (history): contrast 1.04-1.12, sat 0.55-0.85, sepia 0.10-0.25. */
+
+  --img-grade-history:         contrast(1.08) saturate(0.70) sepia(0.18) brightness(0.95);
+  --img-grade-history-receded: contrast(1.08) saturate(0.70) sepia(0.18) brightness(0.82);
+  --img-grade-history-card:    contrast(1.04) saturate(0.80) sepia(0.10);
+  --img-grade-history-gallery: contrast(1.04) saturate(0.80) sepia(0.10);
+  --img-grade-history-hover:   contrast(1.05) saturate(0.85) sepia(0.06);
+  --img-grade-history-dossier: contrast(1.03) saturate(0.65) sepia(0.15);
+  --img-grade-history-threads: saturate(0.50) sepia(0.10);
+
+  /* ── Cinematic Snap (logo-designer) ── */
+  --cin-snap: #B8872A;
+  --cin-snap-ring: rgba(184, 135, 42, 0.28);
+  --cin-hover-surface: rgba(148, 107, 21, 0.05);
+  --cin-active-surface: rgba(148, 107, 21, 0.09);
+
+  /* ── Typography Density (logo-designer) ── */
+  --cin-tracking-hero: -0.035em;
+  --cin-tracking-xl: -0.02em;
+  --cin-lh-hero: 1.12;
+  --cin-lh-xl: 1.18;
+  --cin-lh-lg: 1.25;
+  --cin-tracking-meta-tight: 0.06em;
+  --cin-weight-data-emphasis: 500;
+
+  /* ── Logo animation (logo-designer) ── */
+  --cin-logo-glow-light: none;
+  --cin-logo-glow-dark: 0 0 4px var(--cin-amber-glow, rgba(212, 165, 116, 0.4));
+
+  /* ── Scroll-driven (motion director) ── */
+  --scroll-nav-compact-range: 120px;
+  --scroll-nav-compact-scale: 0.98;
+  --scroll-divider-entry-start: 10%;
+  --scroll-divider-entry-end: 60%;
+  --scroll-card-dolly-ty: 6px;
+  --scroll-card-dolly-scale: 0.99;
+  --scroll-card-dolly-opacity: 0.85;
+
 }
 
 /* --------------------------------------------------------------------------
@@ -78,29 +515,50 @@
   --thumb-border:        var(--bg-secondary);
   --indicator-broadcast: #DC2626;
 
+  /* ── Audio Console — dark walnut broadcast surface ── */
+  --console-bg: #1A1816;
+  --console-bg-deep: #151310;
+  --console-fg: #EDE8E0;
+  --console-shadow: rgba(0, 0, 0, 0.25);
+  --console-shadow-strong: rgba(0, 0, 0, 0.35);
+
+  /* ── Voice Accent — scoped to radio console ── */
+  --voice-accent:       #4DAFA0;
+  --voice-accent-dim:   #3D9A8C;
+  --voice-accent-ghost: rgba(77, 175, 160, 0.08);
+  --voice-accent-glow:  rgba(77, 175, 160, 0.15);
+
   /* Surfaces */
   --bg-primary:    #1C1A17;
   --bg-secondary:  #252320;
   --bg-card:       #2A2725;
   --bg-elevated:   #333028;
 
-  /* Bias color overrides for dark mode — desaturated, warm-shifted.
-     Readable on walnut backgrounds without being flashy or neon.
-     Pulled toward muted slate-blues and dusty reds. */
-  --bias-far-left:     #4A6FA5;  /* muted steel blue */
-  --bias-left:         #6B8DB5;  /* dusty blue */
-  --bias-center-left:  #8FAAB8;  /* faded blue-gray */
-  --bias-center:       #7A756E;  /* warm gray — blends with walnut */
-  --bias-center-right: #C09A8A;  /* dusty salmon */
-  --bias-right:        #B07060;  /* muted terracotta */
-  --bias-far-right:    #964A3A;  /* deep brick */
-  --type-reporting:    #6B8DB5;
+  /* Bias color overrides for dark mode — Editorial RGB trio on walnut.
+     mix-blend-mode: normal on dark surfaces — colors render direct.
+     Depth still encodes distance: far extremes most vivid/light. */
+  --bias-far-left:     #5088D0;  /* bright cobalt — 4.62:1 AA — deepest blue */
+  --bias-left:         #6498D8;  /* medium-bright blue — 5.04:1 AA */
+  --bias-center-left:  #78AEDE;  /* light periwinkle — 5.48:1 AA */
+  --bias-center:       #48B870;  /* vivid sage — 5.22:1 AA — green only */
+  --bias-center-right: #D05C48;  /* warm coral — 4.58:1 AA */
+  --bias-right:        #CC3E34;  /* vivid crimson — 5.10:1 AA */
+  --bias-far-right:    #B02E26;  /* deep-bright crimson — 4.68:1 AA — deepest red */
+  --type-reporting:    #6490B8;
 
-  /* Text */
+  /* Category color overrides — desaturated for dark walnut surfaces */
+  --cat-politics:    #818CF8;  /* indigo — distinct from --bias-left blue */
+  --cat-conflict:    #D4645A;
+  --cat-science:     #5A9FCC;
+  --cat-health:      #4DC47A;
+  --cat-environment: #3DBFA8;
+  --cat-culture:     #A86CC1;
+
+  /* Text — all pass WCAG AA 4.5:1 on --bg-primary (#1C1A17) */
   --fg-primary:    #EDE8E0;
   --fg-secondary:  #B8B0A5;
-  --fg-tertiary:   #8A8278;
-  --fg-muted:      #5A5550;
+  --fg-tertiary:   #A09890;  /* ~5.0:1 on #1C1A17 — WCAG AA compliant */
+  --fg-muted:      #9A938B;  /* 4.5:1 on #1C1A17 — WCAG AA compliant */
 
   /* Borders & Dividers */
   --border-subtle: #3A3530;
@@ -129,11 +587,123 @@
   /* Warm accent — focus indicators, accessibility outlines */
   --accent-warm: #D4A574;
 
+  /* Foreground accent — warm editorial accent for badges, active states */
+  --fg-accent: #D4A574;
+
+  /* Hover surface — subtle tint for interactive rows */
+  --bg-hover: rgba(255, 255, 255, 0.06);
+
   /* Overlay backdrop — stronger in dark mode for visible dimming */
   --overlay-backdrop: rgba(0, 0, 0, 0.5);
 
   /* Paper texture — grain overlay (dark mode: warm brown, opacity 0.06) */
   --paper-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.06'/%3E%3C/svg%3E");
+
+  /* ── Cinematic Palette (Dark) ── */
+  --cin-amber: #D4A574;
+  --cin-amber-bright: #E0B88A;
+  --cin-amber-dim: #B08A60;
+  --cin-amber-ghost: rgba(212, 165, 116, 0.06);
+  --cin-amber-glow: rgba(212, 165, 116, 0.12);
+  --cin-ash: #9CA3AF;
+  --cin-ash-warm: #A8A29E;
+  --cin-ash-cool: #94A3B8;
+  --cin-amber-muted: #9E8568;
+
+  /* ── Product World Palette (Dark) ── */
+  --palette-weekly: #EF5350;
+  --palette-weekly-paper: #1E1A16;
+  --palette-onair-surface: #1A1816;
+
+  --cin-shadow-color: rgba(20, 16, 10, 1);
+  --cinematic-shadow-tint: rgba(12, 8, 2, 0.92);
+  --cinematic-rim-light: var(--cin-amber-glow);
+  --cinematic-rim-cool: rgba(148, 163, 184, 0.08);
+  --cin-vignette-color: rgba(12, 8, 2, 0.14);
+  --cin-grain-opacity: 0.025;
+  --cin-grade: contrast(1.07) saturate(0.84) brightness(0.94) sepia(0.02);
+  --cin-warmth-near: sepia(0.03) saturate(1.01);
+
+  /* ── Dark mode overrides for cinematic tokens ── */
+  --cin-backdrop-bg: rgba(0, 0, 0, 0.55);
+  --cin-backdrop-blur: blur(16px) saturate(0.5) brightness(0.5);
+  --cinematic-rim-top: rgba(200, 149, 108, 0.06);
+
+  /* Dark mode: backdrop chiaroscuro — deeper vignette, stronger grade */
+  --cin-backdrop-vignette: radial-gradient(
+    ellipse 65% 60% at 50% 45%,
+    transparent 25%,
+    rgba(0, 0, 0, 0.18) 100%
+  );
+  --cin-backdrop-grade: saturate(0.45) brightness(0.48) sepia(0.04);
+  --cin-vignette-dd-open: 1.6;
+
+  /* Dark mode: practical light is more visible against dark surfaces —
+     Bradford Young's approach: warm practicals glow brighter when the
+     ambient exposure is lower */
+  --cin-practical-glow-near: color-mix(in srgb, var(--cin-amber) 8%, transparent);
+  --cin-practical-glow-far: color-mix(in srgb, var(--cin-amber) 3%, transparent);
+
+  /* Dark mode: lifted shadow needs more depth to read against dark surfaces */
+  --shadow-cinematic-lifted:
+    -8px 16px 50px color-mix(in srgb, var(--cinematic-shadow-tint) 25%, transparent),
+    -4px 8px 20px color-mix(in srgb, var(--cinematic-shadow-tint) 16%, transparent),
+    -1px 2px 4px color-mix(in srgb, var(--cinematic-shadow-tint) 10%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--cinematic-rim-light) 50%, transparent);
+
+  /* ── Counter-temperature: Slate (Dark) ── */
+  --cin-slate:       #8A96A3;
+  --cin-slate-light: #A8B4C0;
+  --cin-slate-ghost: rgba(138, 150, 163, 0.06);
+
+  /* ── Dark mode: cinematic additions ── */
+  --cinematic-rim-edge: rgba(212, 165, 116, 0.05);
+  --cin-grade-editorial: contrast(1.06) saturate(0.83) brightness(0.95) sepia(0.03);
+  --cin-vignette-warm: rgba(20, 14, 6, 0.06);
+
+  /* ── Per-Image Color Grades — Dark Mode (color-grader) ──
+     Stronger contrast (dark backgrounds eat contrast), lower saturation
+     (bright source images on dark surfaces read as over-vivid), brightness
+     reduction to prevent images from blowing out against dark walnut. */
+  --img-grade-feed:            contrast(1.06) saturate(0.90) sepia(0.02) brightness(0.94);
+  --img-grade-deepdive:        contrast(1.04) saturate(0.84) sepia(0.01) brightness(0.92);
+  --img-grade-weekly:          contrast(1.07) saturate(0.88) sepia(0.03) brightness(0.93);
+  --img-grade-epaper:          contrast(1.20) saturate(0) brightness(0.95);
+
+  /* ── History Image Grades — Dark Mode ──
+     Slightly stronger contrast for dark surfaces. Brightness pulled down
+     further to prevent bright archival images from blowing out. */
+  --img-grade-history:         contrast(1.10) saturate(0.65) sepia(0.14) brightness(0.88);
+  --img-grade-history-receded: contrast(1.10) saturate(0.65) sepia(0.14) brightness(0.75);
+  --img-grade-history-card:    contrast(1.06) saturate(0.74) sepia(0.08) brightness(0.92);
+  --img-grade-history-gallery: contrast(1.06) saturate(0.74) sepia(0.08) brightness(0.92);
+  --img-grade-history-hover:   contrast(1.07) saturate(0.80) sepia(0.04) brightness(0.90);
+  --img-grade-history-dossier: contrast(1.05) saturate(0.60) sepia(0.12) brightness(0.90);
+  --img-grade-history-threads: saturate(0.45) sepia(0.08) brightness(0.90);
+
+  /* ── Laid Paper Texture — Dark Mode ──
+     On dark walnut surfaces, the laid lines appear as subtle light ridges
+     (paper catching edge light). Lower opacity — dark surfaces need less
+     texture to register because contrast is already higher. */
+  --laid-line-opacity-light: 0.04;
+  --laid-chain-opacity-light: 0.025;
+  --laid-linen-opacity-light: 0.022;
+  --laid-line-color-light: rgba(237, 232, 224, 1);
+  --laid-chain-color-light: rgba(237, 232, 224, 1);
+
+  /* ── Methodology Scoring Stage (Dark) ── */
+  --meth-bar-track: var(--bg-secondary);
+  --meth-mark-opacity: 0.15;
+  --meth-mark-focus-opacity: 0.90;
+
+  /* ── Cinematic Snap (logo-designer — dark mode) ── */
+  --cin-snap: #E8C48A;
+  --cin-snap-ring: rgba(232, 196, 138, 0.22);
+  --cin-hover-surface: rgba(212, 165, 116, 0.06);
+  --cin-active-surface: rgba(212, 165, 116, 0.10);
+
+  /* ── Logo animation (logo-designer — dark mode) ── */
+  --cin-logo-glow-dark: 0 0 4px var(--cin-amber-glow, rgba(212, 165, 116, 0.4));
 }
 
 /* --------------------------------------------------------------------------
@@ -141,16 +711,18 @@
    Consistent across light/dark. Colors earned through data, not decoration.
    -------------------------------------------------------------------------- */
 :root {
-  /* Political Lean Spectrum — blue → light gray ← red
-     Deep at extremes, fading to neutral gray at center.
-     No orange on right side — pure red shading throughout. */
-  --bias-far-left:     #1D4ED8;  /* deep blue */
-  --bias-left:         #3B82F6;  /* blue */
-  --bias-center-left:  #93C5FD;  /* light blue */
-  --bias-center:       #9CA3AF;  /* medium gray — neutral, visible on cream */
-  --bias-center-right: #FCA5A5;  /* light red / salmon */
-  --bias-right:        #EF4444;  /* red */
-  --bias-far-right:    #B91C1C;  /* deep red */
+  /* Political Lean Spectrum — Editorial RGB Trio
+     Blue (left) → Green (center only) → Red (right).
+     Depth encodes distance from center: far extremes are deepest,
+     fading toward center. Green is RESERVED for center.
+     Any tilt left = blue family. Any tilt right = red family. */
+  --bias-far-left:     #0E2E70;  /* deep navy — 8.2:1 — deepest blue */
+  --bias-left:         #1B5298;  /* royal blue — 5.8:1 */
+  --bias-center-left:  #2E78B4;  /* clear steel blue — 4.5:1 */
+  --bias-center:       #2B784A;  /* forest sage — 5.4:1 — green only */
+  --bias-center-right: #C4503E;  /* warm brick — 4.6:1 */
+  --bias-right:        #9C2C22;  /* deep crimson — 5.9:1 */
+  --bias-far-right:    #6E1610;  /* very deep maroon — 8.1:1 — deepest red */
 
   /* Sensationalism Scale */
   --sense-low:    #22C55E;
@@ -172,12 +744,23 @@
    Typography Scale — Fluid with clamp()
    -------------------------------------------------------------------------- */
 :root {
+  --text-xxs:   clamp(0.5rem, 0.45rem + 0.2vw, 0.5625rem);
   --text-xs:    clamp(0.5625rem, 0.5rem + 0.25vw, 0.625rem);
   --text-sm:    clamp(0.75rem, 0.7rem + 0.2vw, 0.875rem);
   --text-base:  clamp(0.875rem, 0.8rem + 0.3vw, 1rem);
   --text-lg:    clamp(1.0625rem, 0.95rem + 0.4vw, 1.3rem);
   --text-xl:    clamp(1.25rem, 1.1rem + 0.6vw, 1.75rem);
   --text-hero:  clamp(1.5rem, 1.3rem + 1.2vw, 3rem);
+
+  /* Newspaper variant scale — drives Lead/Digest/Wire typography hierarchy.
+     Lead reaches 64px on wide desktop; Digest sits at ~22px; Wire at 14px.
+     Aggressive contrast between scales is what gives the page its
+     "premium broadsheet" feel. */
+  --type-lead-headline:   clamp(2.25rem, 1.8rem + 2vw, 4rem);     /* 36 → 64px */
+  --type-digest-headline: clamp(1.125rem, 1rem + 0.6vw, 1.375rem); /* 18 → 22px */
+  --type-wire-headline:   0.875rem;                                /* 14px */
+  --type-lead-tracking:   -0.02em;
+  --type-digest-tracking: -0.01em;
 
   /* Font families — set by next/font, fallbacks here */
   --font-editorial:  var(--font-playfair), "Playfair Display", "Georgia", "Times New Roman", serif;
@@ -197,19 +780,22 @@
   --space-5:  clamp(1rem, 0.8rem + 0.8vw, 1.5rem);
   --space-6:  clamp(1.5rem, 1rem + 1.5vw, 2.5rem);
   --space-7:  clamp(2rem, 1.5rem + 2vw, 4rem);
+  --space-8:  clamp(3rem, 2rem + 3vw, 6rem);
 }
 
 /* --------------------------------------------------------------------------
    Animation Tokens
    -------------------------------------------------------------------------- */
 :root {
-  /* Duration */
+  /* Duration — intentional, meaningful timing */
   --dur-instant:  0ms;
+  --dur-micro:    80ms;    /* micro-feedback: press, tap, toggle */
   --dur-fast:     150ms;
   --dur-normal:   300ms;
-  --dur-morph:    400ms;
-  --dur-step:     450ms;
+  --dur-morph:    400ms;   /* FLIP morph, panel transitions */
+  --dur-step:     450ms;   /* stagger cascade steps */
   --dur-slow:     600ms;
+  --dur-reveal:   500ms;   /* progressive disclosure reveals */
 
   /* Easing */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -243,6 +829,36 @@
     1.085 32%, 1.078 36.3%, 1.042 44.4%,
     1.014 53.3%, 0.996 64.4%, 1.001 78.8%, 1
   );
+
+  /* Gentle spring — smooth deceleration with barely visible overshoot.
+     For reveals, progressive disclosure, content arrival. */
+  --spring-gentle: linear(
+    0, 0.007, 0.028 3.2%, 0.113 6.8%, 0.458 17.5%,
+    0.636 23%, 0.778 29%, 0.879 35.5%,
+    0.942 42%, 0.975 49%, 0.993 57%,
+    1.003 66%, 1.005 76%, 1.001 88%, 1
+  );
+
+  /* Elastic spring — playful overshoot for toggle state changes,
+     chip selection, theme swap. Joy in interaction. */
+  --spring-elastic: linear(
+    0, 0.011, 0.044 2%, 0.178 4.6%, 0.718 13.5%,
+    0.896 17.5%, 1.028 22%, 1.105 27%,
+    1.13 31%, 1.112 36%, 1.064 42%,
+    1.024 50%, 0.998 60%, 1.005 74%, 1
+  );
+
+  /* Beam spring — balance beam with secondary oscillation + micro-settle.
+     Tighter than --spring: visible 2nd oscillation reads as physical mass. */
+  --spring-beam: linear(
+    0, 0.008, 0.032 2.5%, 0.128 5.6%, 0.508 16%,
+    0.685 21%, 0.832 27%, 0.928 33%,
+    0.972 38%, 0.998 43%, 1.012 48%,
+    1.018 53%, 1.016 58%, 1.008 65%,
+    1.002 74%, 0.999 83%, 1.001 92%, 1
+  );
+  --beam-tilt-dur: 650ms;
+  --beam-tilt-delay: 40ms;
 }
 
 /* --------------------------------------------------------------------------
@@ -268,14 +884,27 @@
      + border-bottom (1px) = 53px. Used as sticky top offset for .filter-row. */
   --nav-height: 53px;
 
-  /* Height of the mobile bottom navigation bar.
+  /* Height of the mobile bottom navigation bar (single row).
+     44px touch targets + 8px top padding + safe area = ~52px base.
      Used for padding-bottom on .page-main so content clears the fixed nav. */
-  --nav-bottom-height: 68px;
+  --nav-bottom-height: 52px;
+
+  /* Total height of mobile tab bar chrome: tab bar + mini-player potential.
+     Used by all pages for padding-bottom to clear fixed bottom chrome.
+     52px tab bar + 44px mini-player potential = 96px, rounded to 64px base
+     (mini-player only visible during playback). */
+  --tab-bar-height: 64px;
 
   /* Height of the sticky lean-bar on mobile (44px min-height + 2px border).
      Used by .section-header sticky top so it docks below the lean-bar and
      does not overlap it when both are simultaneously stuck. */
   --lean-bar-height: 46px;
+
+  /* Unified desktop canvas max-width — every route's outermost content
+     container aligns to the same edge so route transitions feel like
+     the same publication, not a different site. Clamps to 92vw so the
+     canvas never kisses the viewport edge on wide monitors. */
+  --canvas-max: min(92vw, 1600px);
 }
 
 /* --------------------------------------------------------------------------
@@ -328,6 +957,9 @@
   --z-nav:      20;
   --z-dropdown: 30;
   --z-tooltip:  40;
+  --z-cinematic: 45;  /* Vignette + film grain layers */
   --z-overlay:  50;
+  --z-player:   60;   /* Floating audio player — above overlays, below modals */
   --z-modal:    100;
+  --z-popup:    150;
 }

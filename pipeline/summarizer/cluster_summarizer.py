@@ -1,16 +1,88 @@
 """
-Cluster-level headline and summary generation using Gemini Flash.
+Cluster-level headline and summary generation.
+
+Primary path: Claude Sonnet 4.6 via Anthropic API. Falls back to Gemini Flash
+if Anthropic is unavailable, then to rule-based generation.
 
 Minimizes API usage by only summarizing high-value clusters:
     - 3+ sources (2-source clusters use rule-based — sufficient quality)
     - Sorted by source_count descending (most-covered stories first)
     - Stops when the per-run call cap is reached
 
-Falls back to rule-based generation (existing pipeline behavior) when
-Gemini is unavailable, fails, or the cluster doesn't qualify.
+Content-hash caching: clusters whose article membership has not changed
+since their last Sonnet summary are skipped (no API call).
 """
 
-from .gemini_client import generate_json, is_available, calls_remaining
+import hashlib
+
+from .gemini_client import (
+    generate_json as gemini_generate_json,
+    is_available as gemini_is_available,
+    calls_remaining as gemini_calls_remaining,
+)
+from .claude_client import (
+    generate_json as claude_generate_json,
+    is_available as claude_is_available,
+    calls_remaining as claude_calls_remaining,
+)
+
+
+def _smart_generate_json(prompt: str,
+                          system_instruction: str | None = None,
+                          max_output_tokens: int = 8192,
+                          ) -> tuple[dict | None, str]:
+    """Try Claude first, fall back to Gemini. Returns (result, generator_label)."""
+    if claude_is_available():
+        result = claude_generate_json(
+            prompt,
+            system_instruction=system_instruction,
+            count_call=True,
+            max_output_tokens=max_output_tokens,
+        )
+        if result and isinstance(result, dict):
+            return result, "claude-sonnet"
+    if gemini_is_available():
+        result = gemini_generate_json(
+            prompt,
+            system_instruction=system_instruction,
+            count_call=True,
+            max_output_tokens=max_output_tokens,
+        )
+        if result and isinstance(result, dict):
+            return result, "gemini-flash"
+    return None, "none"
+
+
+def _content_hash(articles: list[dict]) -> str:
+    """
+    Hash of cluster's article membership. Used to skip re-summarization
+    when nothing has changed since the last successful Sonnet call.
+    """
+    ids = sorted(str(a.get("id") or a.get("article_id") or "") for a in articles if a)
+    return hashlib.sha256(("|".join(ids) + f"|{len(ids)}").encode("utf-8")).hexdigest()
+
+
+# Backwards-compatible aliases used by existing callsites in this module.
+# Existing code calls generate_json() / is_available() / calls_remaining()
+# without knowing which provider answered.
+def generate_json(prompt, system_instruction=None, max_retries=1, count_call=True, max_output_tokens=8192):
+    result, _ = _smart_generate_json(prompt, system_instruction=system_instruction, max_output_tokens=max_output_tokens)
+    return result
+
+def is_available():
+    return claude_is_available() or gemini_is_available()
+
+def calls_remaining():
+    if claude_is_available():
+        return claude_calls_remaining()
+    return gemini_calls_remaining()
+
+# Import shared prohibited terms — single canonical source.
+try:
+    from utils.prohibited_terms import PROHIBITED_TERMS as _SHARED_PROHIBITED, check_prohibited_terms as _shared_check
+    _USE_SHARED_PROHIBITED = True
+except ImportError:
+    _USE_SHARED_PROHIBITED = False
 
 
 # ---------------------------------------------------------------------------
@@ -22,6 +94,17 @@ You are a senior correspondent and copy editor at void --news, a neutral news \
 intelligence service. Your role is to synthesize news coverage from multiple \
 sources into factual briefings. You have no political perspective. You describe \
 what sources report; you do not editorialize.
+
+GROUNDING RULE: Every fact, figure, name, quote, date, and claim in your output \
+MUST appear in the provided articles. Do not supplement with prior knowledge, \
+background context you recall, or facts not present in the text above. If the \
+articles don't say it, you don't write it. You are a summarizer, not a reporter.
+
+Cardinal rule: SHOW, DON'T TELL. Place facts next to each other and let the \
+reader see the pattern. "The central bank cut rates Tuesday. The last time it \
+moved this fast, three lenders collapsed within six months." — significance \
+emerges from evidence, never from adjectives. Never assert significance — show \
+the evidence that makes it self-evident.
 
 Core standards that apply to all output:
 - Active voice. Present tense for current and recent events.
@@ -43,6 +126,10 @@ statement.
 empirical questions with clear factual consensus.
 - Precise language: name individuals when known, state exact figures, specify \
 locations when central.
+- KILL SCAFFOLDING: Never use templatic transitions that announce what you're \
+about to say. "This isn't just...", "Here's the thing...", "The bigger \
+picture...", "What makes this...", "The reality is..." — these are filler. Cut \
+them. Start the sentence with the fact itself.
 - When attribution is needed, use actual outlet names (e.g., "Reuters reported," \
 "according to The Washington Post"). Do not use generic labels like "a US major \
 source" or "an international outlet." Only attribute when it adds value — not \
@@ -99,7 +186,11 @@ distinguish what happened today from prior developments.
 
 Paragraph 1 (2-3 sentences): The most recent newsworthy development — what just \
 happened, who, when, where. Lead with the latest event, then attribute. Include \
-the most significant number, name, or outcome from the freshest reporting.
+the most significant number, name, or outcome from the freshest reporting. \
+ARRIVE LATE: start inside the action. Do not open with "In a move that...", \
+"Following weeks of...", "As tensions grew..." — the reader does not need \
+runway. The first sentence should name a concrete action, actor, or figure \
+that happened in the last 24 hours.
 
 Paragraph 2 (3-4 sentences): Context and significance. Why this matters, what \
 preceded it, how it connects to broader developments. Attribute all background \
@@ -214,22 +305,26 @@ Return JSON only. No markdown fences. No text outside the JSON object.
 # ---------------------------------------------------------------------------
 # Quality gate — prohibited terms scanned after generation.
 # Warnings are logged but results are never discarded (zero extra API calls).
+# Uses shared module when available; falls back to local list for resilience.
 # ---------------------------------------------------------------------------
-_PROHIBITED_TERMS = frozenset({
-    "shocking", "stunned", "stunning", "explosive", "bombshell", "devastating",
-    "chaos", "chaotic", "firestorm", "crackdown", "slams", "blasts",
-    "doubles down", "war of words", "sparking outrage", "raising questions",
-    "raises concerns", "casts doubt", "throws into question",
-    "in an unprecedented", "unprecedented", "in a stunning", "the world watched",
-    "experts say", "analysts believe", "experts believe", "analysts say",
-    "it was widely reported", "it is widely understood",
-    "controversial", "divisive", "landmark", "historic",
-    "radical", "extreme", "common-sense",
-    "could signal", "may mark", "might reshape",
-    "most significant", "most important development", "key moment",
-    "downplayed", "failed to mention", "chose not to report",
-    "a us major source", "an international outlet", "a major source",
-})
+if _USE_SHARED_PROHIBITED:
+    _PROHIBITED_TERMS = _SHARED_PROHIBITED
+else:
+    _PROHIBITED_TERMS = frozenset({
+        "shocking", "stunned", "stunning", "explosive", "bombshell", "devastating",
+        "chaos", "chaotic", "firestorm", "crackdown", "slams", "blasts",
+        "doubles down", "war of words", "sparking outrage", "raising questions",
+        "raises concerns", "casts doubt", "throws into question",
+        "in an unprecedented", "unprecedented", "in a stunning", "the world watched",
+        "experts say", "analysts believe", "experts believe", "analysts say",
+        "it was widely reported", "it is widely understood",
+        "controversial", "divisive", "landmark", "historic",
+        "radical", "extreme", "common-sense",
+        "could signal", "may mark", "might reshape",
+        "most significant", "most important development", "key moment",
+        "downplayed", "failed to mention", "chose not to report",
+        "a us major source", "an international outlet", "a major source",
+    })
 
 # Minimum sources for a cluster to qualify for Gemini summarization.
 # 2-source clusters don't benefit much from LLM synthesis — the rule-based
@@ -414,7 +509,73 @@ def _build_articles_block(articles: list[dict], max_articles: int = 10) -> str:
     return "\n".join(lines)
 
 
-def summarize_cluster(articles: list[dict]) -> dict | None:
+def _build_claims_block(claims_consensus) -> str:
+    """
+    Format NLP-extracted claims for the Gemini prompt.
+
+    Produces a readable list with unicode status markers.
+    """
+    if claims_consensus is None:
+        return ""
+
+    lines = ["", "CLAIM EXTRACTION (NLP — void --verify):"]
+    claims = getattr(claims_consensus, "claims", [])
+    if not claims:
+        return ""
+
+    for vc in claims[:20]:  # Cap at 20 to stay within token limits
+        status = getattr(vc, "status", "unverified")
+        text = getattr(vc, "claim_text", "")
+        count = getattr(vc, "source_count", 1)
+        sources = getattr(vc, "source_names", [])
+        total = getattr(claims_consensus, "total_claims", 0) or len(claims)
+
+        if status == "corroborated":
+            src_str = ", ".join(sources[:5]) if sources else ""
+            lines.append(f"✓ CORROBORATED ({count}/{total} sources): \"{text}\"")
+        elif status == "disputed":
+            lines.append(f"⚠ DISPUTED: \"{text}\"")
+        elif status == "single_source":
+            src = sources[0] if sources else "unknown"
+            lines.append(f"○ SINGLE SOURCE (only: {src}): \"{text}\"")
+
+    # Add disputed details
+    disputed_details = getattr(claims_consensus, "disputed_details", [])
+    for dd in disputed_details[:5]:
+        va = getattr(dd, "version_a", "")
+        vb = getattr(dd, "version_b", "")
+        va_src = ", ".join(getattr(dd, "version_a_sources", []))
+        vb_src = ", ".join(getattr(dd, "version_b_sources", []))
+        lines.append(f"  → \"{va}\" ({va_src}) vs \"{vb}\" ({vb_src})")
+
+    return "\n".join(lines) + "\n"
+
+
+# Claims deduplication task template (appended when claims data is available)
+_CLAIMS_TASK_TEMPLATE = """
+---
+
+TASK 8 — claims (array of objects), consensus_ratio (float), consensus_summary (string)
+You are given NLP-extracted factual claims from articles in this cluster with their verification status.
+
+Your job:
+1. Deduplicate semantically equivalent claims (NLP may extract "GDP grew 3.2%"
+   and "the economy expanded by 3.2%" as separate claims — merge them)
+2. Write a canonical version of each unique claim (clear, concise)
+3. Preserve source counts and contradiction details
+4. Select the 3-5 most newsworthy claims to highlight
+5. For disputed claims, write both versions clearly
+6. Write a one-sentence consensus_summary describing overall source agreement
+
+Output these three additional fields in the JSON:
+"claims": [{"text": "...", "status": "corroborated|single_source|disputed", "source_count": N, "sources": ["..."], "highlight": true, "disputed_versions": [{"text": "...", "sources": ["..."]}]}],
+"consensus_ratio": 0.0-1.0,
+"consensus_summary": "One sentence describing overall source agreement"
+"""
+
+
+def summarize_cluster(articles: list[dict],
+                      claims_consensus=None) -> dict | None:
     """
     Generate headline, summary, consensus, and divergence for a cluster.
 
@@ -429,11 +590,40 @@ def summarize_cluster(articles: list[dict]) -> dict | None:
     context_line = _build_context_line(articles)
     source_names_line = _build_source_names_line(articles)
     articles_block = _build_articles_block(articles)
+
+    # Build claims context if available
+    claims_block = _build_claims_block(claims_consensus) if claims_consensus else ""
+
     prompt = _USER_PROMPT_TEMPLATE.format(
         context_line=context_line,
         source_names_line=source_names_line,
         articles_block=articles_block,
     )
+
+    # Inject claims task before the final "Return JSON only" line
+    if claims_block:
+        # Replace field count and add claims task
+        prompt = prompt.replace(
+            "exactly seven \\\nfields: headline, summary, consensus, divergence, "
+            "editorial_importance, story_type, has_binding_consequences.",
+            "exactly ten \\\nfields: headline, summary, consensus, divergence, "
+            "editorial_importance, story_type, has_binding_consequences, "
+            "claims, consensus_ratio, consensus_summary.",
+        )
+        # Insert claims block and task before "Return JSON only"
+        prompt = prompt.replace(
+            "Return JSON only. No markdown fences.",
+            claims_block + _CLAIMS_TASK_TEMPLATE
+            + "\n---\n\nReturn JSON only. No markdown fences.",
+        )
+        # Update the JSON example at the end
+        prompt = prompt.replace(
+            '"has_binding_consequences": true/false}',
+            '"has_binding_consequences": true/false, '
+            '"claims": [...], "consensus_ratio": 0.0, '
+            '"consensus_summary": "..."}',
+        )
+
     result = generate_json(prompt, system_instruction=_SYSTEM_INSTRUCTION)
 
     if not result:
@@ -475,6 +665,23 @@ def summarize_cluster(articles: list[dict]) -> dict | None:
     has_binding = result.get("has_binding_consequences")
     has_binding_consequences = bool(has_binding) if isinstance(has_binding, bool) else None
 
+    # void --verify: extract claim deduplication results
+    claims = result.get("claims")
+    if isinstance(claims, list):
+        claims = [c for c in claims if isinstance(c, dict) and c.get("text")]
+    else:
+        claims = None
+
+    consensus_ratio_val = result.get("consensus_ratio")
+    if isinstance(consensus_ratio_val, (int, float)):
+        consensus_ratio_val = max(0.0, min(1.0, float(consensus_ratio_val)))
+    else:
+        consensus_ratio_val = None
+
+    consensus_summary_val = result.get("consensus_summary")
+    if not isinstance(consensus_summary_val, str) or not consensus_summary_val.strip():
+        consensus_summary_val = None
+
     validated = {
         "headline": headline.strip()[:500],
         "summary": summary.strip(),
@@ -483,6 +690,9 @@ def summarize_cluster(articles: list[dict]) -> dict | None:
         "editorial_importance": editorial_importance,
         "story_type": story_type,
         "has_binding_consequences": has_binding_consequences,
+        "claims": claims,
+        "consensus_ratio": consensus_ratio_val,
+        "consensus_summary": consensus_summary_val,
     }
 
     # Quality gate: log warnings for out-of-spec output (no discards).
@@ -492,58 +702,167 @@ def summarize_cluster(articles: list[dict]) -> dict | None:
     return validated
 
 
-def summarize_clusters_batch(clusters: list[dict]) -> dict[int, dict]:
+def summarize_clusters_batch(clusters: list[dict],
+                             cluster_consensus: dict | None = None,
+                             top_n: int = 30,
+                             regional_fill: int = 10,
+                             topic_fill: int = 10,
+                             ) -> tuple[dict[int, dict], set[int]]:
     """
-    Summarize only high-value clusters, returning results keyed by index.
+    Summarize up to 50 clusters using three non-overlapping priority pools.
 
-    Selection criteria (to minimize API calls):
-        1. Must have 3+ sources (2-source clusters use rule-based)
-        2. Processed in descending source_count order (biggest stories first)
-        3. Stops when per-run call cap is reached
+    Pool 1 — Top 30 global (headline_rank DESC): ensures the most important
+      stories always get Gemini-quality summaries.
+    Pool 2 — Regional fill (up to 10): round-robin across editions
+      (world/us/europe/south-asia) to guarantee each region has representation
+      even when Pool 1 is dominated by one region.
+    Pool 3 — Topic fill (up to 10): 1 per category desk first, then fills
+      remaining slots with the best remaining clusters.
+
+    Each cluster is summarized at most once. Pool 1 failures have their
+    rule-based summaries cleared by the caller (no fallback for premium slots).
+    Pool 2/3 failures keep their rule-based summaries as acceptable fallback.
 
     Args:
-        clusters: List of cluster dicts, each with "articles" and
-            "source_count" keys.
+        clusters: List of cluster dicts with "articles" and "source_count".
+        cluster_consensus: Optional dict of cluster_index_str -> ClusterConsensus.
+        top_n: Pool 1 size (top global clusters). Defaults to 30.
+        regional_fill: Pool 2 max size. Defaults to 10.
+        topic_fill: Pool 3 max size. Defaults to 10.
 
     Returns:
-        Dict mapping cluster index -> summarize_cluster result.
-        Missing indices = use rule-based fallback.
+        Tuple of:
+          - Dict mapping cluster index -> summarize_cluster result.
+          - Set of Pool 1 cluster indices that Gemini failed on — callers
+            should clear their rule-based summaries so no fallback text
+            reaches the frontend for these premium positions.
     """
     if not is_available():
-        return {}
+        return {}, set()
 
-    # Build list of (original_index, source_count) for qualifying clusters.
-    # Opinion clusters are always skipped — they use original article text.
-    candidates = []
-    for i, cluster in enumerate(clusters):
+    # ── Helper: check if a cluster qualifies for Gemini summarization ──
+    def _qualifies(cluster: dict) -> bool:
         if cluster.get("_is_opinion"):
-            continue
-        source_count = cluster.get("source_count", 0) or len(cluster.get("articles", []))
-        if source_count >= _MIN_SOURCES:
-            candidates.append((i, source_count))
+            return False
+        sc = cluster.get("source_count", 0) or len(cluster.get("articles", []))
+        return sc >= _MIN_SOURCES
 
-    # Process highest-source-count clusters first (most value per API call)
-    candidates.sort(key=lambda x: x[1], reverse=True)
+    def _rank_key(i: int) -> tuple:
+        return (clusters[i].get("headline_rank") or 0,
+                clusters[i].get("source_count", 0))
+
+    # All qualifying indices sorted by headline_rank DESC
+    all_qualifying = sorted(
+        (i for i, c in enumerate(clusters) if _qualifies(c)),
+        key=_rank_key,
+        reverse=True,
+    )
+
+    # ── Pool 1: Top N global ──────────────────────────────────────────────────
+    pool1: list[int] = all_qualifying[:top_n]
+    selected: set[int] = set(pool1)
+
+    # ── Pool 2: Regional round-robin ──────────────────────────────────────────
+    _EDITIONS = ["world", "us", "europe", "south-asia"]
+
+    # Per-edition sorted candidate queue (excluding pool1)
+    edition_queues: dict[str, list[int]] = {ed: [] for ed in _EDITIONS}
+    for i in all_qualifying:
+        if i in selected:
+            continue
+        sections = clusters[i].get("sections") or [clusters[i].get("section", "world")]
+        for ed in _EDITIONS:
+            if ed in sections:
+                edition_queues[ed].append(i)
+    # Queues are already in headline_rank order since all_qualifying is sorted
+
+    pool2: list[int] = []
+    edition_ptrs = {ed: 0 for ed in _EDITIONS}
+    while len(pool2) < regional_fill:
+        advanced = False
+        for ed in _EDITIONS:
+            if len(pool2) >= regional_fill:
+                break
+            ptr = edition_ptrs[ed]
+            queue = edition_queues[ed]
+            while ptr < len(queue):
+                candidate = queue[ptr]
+                ptr += 1
+                if candidate not in selected:
+                    pool2.append(candidate)
+                    selected.add(candidate)
+                    advanced = True
+                    break
+            edition_ptrs[ed] = ptr
+        if not advanced:
+            break  # All edition queues exhausted
+
+    # ── Pool 3: Topic (category desk) fill ───────────────────────────────────
+    _CATEGORIES = ["politics", "conflict", "economy",
+                   "science", "health", "environment", "culture"]
+
+    pool3: list[int] = []
+
+    # First pass: 1 per category (breadth)
+    seen_cats: set[str] = set()
+    for i in all_qualifying:
+        if len(pool3) >= topic_fill:
+            break
+        if i in selected:
+            continue
+        cat = (clusters[i].get("category") or "").lower()
+        if cat in _CATEGORIES and cat not in seen_cats:
+            pool3.append(i)
+            selected.add(i)
+            seen_cats.add(cat)
+
+    # Second pass: fill remaining slots with best unselected clusters
+    if len(pool3) < topic_fill:
+        for i in all_qualifying:
+            if len(pool3) >= topic_fill:
+                break
+            if i not in selected:
+                pool3.append(i)
+                selected.add(i)
+
+    # ── Summarize: pool1 → pool2 → pool3 ─────────────────────────────────────
+    all_candidates = pool1 + pool2 + pool3
+    pool1_set = set(pool1)
+    pool2_set = set(pool2)
 
     results: dict[int, dict] = {}
-    processed = 0
+    p1_ok = p2_ok = p3_ok = 0
+    consecutive_failures = 0
+    _CIRCUIT_BREAKER_THRESHOLD = 5  # bail if 5 clusters fail in a row (API down)
+    attempted_pool1: set[int] = set()  # track which pool-1 indices were actually tried
 
-    for idx, _count in candidates:
-        if calls_remaining() <= 0:
-            remaining = len(candidates) - processed
-            print(f"  Call cap reached after {processed} clusters "
-                  f"({remaining} remaining will use rule-based)")
+    for idx in all_candidates:
+        if consecutive_failures >= _CIRCUIT_BREAKER_THRESHOLD:
+            print(f"  [warn] Circuit breaker triggered after {consecutive_failures} consecutive failures — Gemini overloaded, aborting batch")
             break
-
+        if idx in pool1_set:
+            attempted_pool1.add(idx)
         articles = clusters[idx].get("articles", [])
-        result = summarize_cluster(articles)
+        cc = cluster_consensus.get(str(idx)) if cluster_consensus else None
+        result = summarize_cluster(articles, claims_consensus=cc)
         if result:
             results[idx] = result
-            processed += 1
+            consecutive_failures = 0  # reset on success
+            if idx in pool1_set:
+                p1_ok += 1
+            elif idx in pool2_set:
+                p2_ok += 1
+            else:
+                p3_ok += 1
+        else:
+            consecutive_failures += 1
 
-    skipped = len(clusters) - processed
-    print(f"  Gemini: {processed} clusters summarized, "
-          f"{skipped} using rule-based (cap: {calls_remaining()} calls left)")
+    total_ok = p1_ok + p2_ok + p3_ok
+    total_att = len(all_candidates)
+    print(f"  Gemini: {total_ok}/{total_att} clusters summarized "
+          f"({p1_ok} top-30 / {p2_ok} regional / {p3_ok} topic)")
+    if total_ok < total_att:
+        print(f"  {total_att - total_ok} failed (pool-1 failures will have summaries cleared)")
 
     # Per-run aggregate quality instrumentation
     if results:
@@ -558,4 +877,143 @@ def summarize_clusters_batch(clusters: list[dict]) -> dict[int, dict]:
         print(f"  Summary avg {avg_s:.1f} words, "
               f"{out_of_range_s}/{len(summary_lens)} out of 250-350 range")
 
-    return results
+    # Return only pool-1 indices that were attempted but failed — circuit-breaker
+    # skipped indices are NOT cleared (their rule-based summaries stay as fallback).
+    return results, attempted_pool1 - results.keys()
+
+
+def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 50) -> dict:
+    """
+    Single-pass post-rerank summarization for the final feed top N.
+
+    Reads the top-N clusters by rank_{edition} from Supabase, fetches their
+    article membership, and calls Claude (via _smart_generate_json) for any
+    cluster whose content_hash has changed since its last Sonnet summary.
+
+    Cache logic:
+        - hash matches stored summary_article_hash AND summary_tier='sonnet'
+          → skip (no API call)
+        - else → call LLM, write summary + consensus + divergence + hash + tier
+          back to story_clusters
+
+    Op-eds (_is_opinion=True equivalent: opinion_count check or content_type)
+    and clusters with <3 articles are skipped — both preserve original voice
+    or lack the source diversity for synthesis.
+
+    Returns metrics dict:
+        {summarized: int, cached: int, skipped: int, failed: int,
+         updated_ids: list[str], updated_summaries: dict[str, dict]}
+    """
+    rank_col = f"rank_{edition.replace('-', '_')}"
+
+    metrics = {
+        "summarized": 0,
+        "cached": 0,
+        "skipped": 0,
+        "failed": 0,
+        "updated_ids": [],
+        "updated_summaries": {},
+    }
+
+    try:
+        rank_res = (
+            supabase.table("story_clusters")
+            .select("id, content_type, source_count, summary_article_hash, summary_tier")
+            .contains("sections", [edition])
+            .order(rank_col, desc=True)
+            .limit(limit)
+            .execute()
+        )
+    except Exception as e:
+        print(f"  [warn] summarize_top50_after_rerank: top-{limit} fetch failed: {e}")
+        return metrics
+
+    rows = rank_res.data or []
+    if not rows:
+        return metrics
+
+    cluster_ids = [r["id"] for r in rows]
+    try:
+        link_res = (
+            supabase.table("cluster_articles")
+            .select("cluster_id, article_id")
+            .in_("cluster_id", cluster_ids)
+            .execute()
+        )
+    except Exception as e:
+        print(f"  [warn] summarize_top50_after_rerank: cluster_articles fetch failed: {e}")
+        return metrics
+
+    by_cluster: dict[str, list[str]] = {}
+    for link in (link_res.data or []):
+        by_cluster.setdefault(link["cluster_id"], []).append(link["article_id"])
+
+    all_article_ids = sorted({aid for ids in by_cluster.values() for aid in ids})
+    articles_by_id: dict[str, dict] = {}
+    for i in range(0, len(all_article_ids), 200):
+        batch = all_article_ids[i:i + 200]
+        try:
+            art_res = (
+                supabase.table("articles")
+                .select("id, title, summary, full_text, source_id, published_at, url")
+                .in_("id", batch)
+                .execute()
+            )
+            for art in (art_res.data or []):
+                articles_by_id[art["id"]] = art
+        except Exception as e:
+            print(f"  [warn] summarize_top50_after_rerank: articles fetch failed: {e}")
+            return metrics
+
+    for row in rows:
+        cid = row["id"]
+        article_ids = by_cluster.get(cid, [])
+        if len(article_ids) < 3:
+            metrics["skipped"] += 1
+            continue
+        if (row.get("content_type") or "").lower() == "opinion":
+            metrics["skipped"] += 1
+            continue
+
+        articles = [articles_by_id[aid] for aid in article_ids if aid in articles_by_id]
+        if len(articles) < 3:
+            metrics["skipped"] += 1
+            continue
+
+        h = _content_hash(articles)
+        if h == row.get("summary_article_hash") and row.get("summary_tier") == "sonnet":
+            metrics["cached"] += 1
+            continue
+
+        result = summarize_cluster(articles)
+        if not result:
+            metrics["failed"] += 1
+            continue
+
+        update_payload = {
+            "title": result["headline"],
+            "summary": result["summary"],
+            "summary_article_hash": h,
+            "summary_tier": "sonnet",
+        }
+        if result.get("consensus"):
+            update_payload["consensus_points"] = result["consensus"]
+        if result.get("divergence"):
+            update_payload["divergence_points"] = result["divergence"]
+        if result.get("editorial_importance") is not None:
+            update_payload["editorial_importance"] = result["editorial_importance"]
+        if result.get("story_type") is not None:
+            update_payload["story_type"] = result["story_type"]
+        if result.get("has_binding_consequences") is not None:
+            update_payload["has_binding_consequences"] = result["has_binding_consequences"]
+
+        try:
+            supabase.table("story_clusters").update(update_payload).eq("id", cid).execute()
+            metrics["summarized"] += 1
+            metrics["updated_ids"].append(cid)
+            metrics["updated_summaries"][cid] = result
+        except Exception as e:
+            print(f"  [warn] summarize_top50_after_rerank: DB update failed for {cid}: {e}")
+            metrics["failed"] += 1
+
+    return metrics

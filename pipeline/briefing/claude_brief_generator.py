@@ -25,27 +25,79 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from utils.supabase_client import supabase
 from briefing.daily_brief_generator import (
     _SYSTEM_INSTRUCTION,
-    _USER_PROMPT_TEMPLATE,
+    _EDITION_FOCUS,
     _build_stories_block,
     _check_quality,
+    _get_today_lean,
 )
 from briefing.audio_producer import produce_audio
 from briefing.voice_rotation import get_voices_for_today
 
-# Claude-specific craft — Vox-style explanatory energy
+# Claude-specific craft — enhanced prosody and voice personality
 _CLAUDE_SYSTEM_ADDENDUM = """
 
 ADDITIONAL CRAFT RULES (Claude-generated scripts):
-- Think Vox "Today Explained" energy. You're curious about this material. Show it.
-- Voice B is the audience proxy — asks "so what does that actually mean?",
-  reframes headlines, explains WHY not just WHAT.
-- Use concrete analogies to make abstract policy real.
-- Pacing variation is critical. Short punchy sentences next to longer unpacking.
-- Self-correction allowed: "roughly $1.4 trillion — depending on the estimate."
-- Still banned (hollow filler): "Mm.", "Right.", "Indeed.", "Good point."
-- Substantive reactions encouraged: "But that contradicts..." "So basically..."
-- Direct address: "Here's what you need to know." "Think about it this way."
-- The close: direct editorial take. What does today actually mean?
+- Both hosts are co-anchors — senior journalists briefing each other, not performing.
+  A leads Story 1, B leads Story 2. Non-lead adds second dimension, not reaction.
+- Make abstract policy concrete through specifics: name the affected population, \
+cite the dollar amount, state the timeline.
+- Cite ranges when numbers are uncertain: "$1.3 to $1.5 trillion, depending on \
+the CBO or OMB estimate."
+- Pacing: use [short pause] for breath beats. Em dashes (—) for pivots. Vary sentence length.
+- Ellipses (...) for deliberation. Tight turns — 2-3 sentences each.
+- Second dimensions, not reactions: "But that contradicts the Q3 numbers." / \
+  "The vote is Thursday — three days after the tariffs take effect."
+- BANNED (zero tolerance): "Mm.", "Right.", "Indeed.", "Good point.", "Exactly.",
+  "Here's what you need to know.", "Think of it this way.", "Here's the thing...",
+  "This isn't just...", "The bigger picture...", "So here's what's happening."
+- The close: the last fact that reframes the day, then "This was void news." \
+with finality.
+"""
+
+# Claude-specific prompt — generates TL;DR, audio script, AND opinion in one call.
+# The daily_brief_generator.py _USER_PROMPT_TEMPLATE explicitly excludes opinion
+# (it generates opinion in a separate Gemini call). For Claude CLI, we combine
+# everything into a single call to avoid spawning a second Claude process.
+_CLAUDE_PROMPT_TEMPLATE = """\
+Generate the daily brief for the {EDITION} edition of void --news.
+Date: {DATE}
+
+EDITION FOCUS: {EDITION_FOCUS}
+
+OPINION LEAN: Today's editorial lens is {LEAN_UPPER} ({LEAN_LABEL}).
+
+Below are today's top {N} stories for this edition, ranked by importance.
+
+STORIES:
+{stories_block}
+
+Return JSON with exactly five fields:
+1. "tldr_text" — 8-12 sentences as a flowing editorial paragraph, separated by \\n. \
+   180-240 words. Hook → Stakes → Sweep → Pattern structure.
+2. "audio_script" — two-voice newsroom broadcast (A: and B: speaker tags, one per line). \
+   4-5 minutes (800-1000 words). Open: "A: From void news, [date]." \
+   Structure: Headlines (3-sentence rundown) → A leads Story 1, B leads Story 2, \
+   Story 3 briefer → Close with "This was void news." \
+   No segment markers, no formatting. Just the dialogue.
+3. "opinion_headline" — 6-12 word editorial headline. Not a news headline. \
+   A declarative statement of the editorial thesis. Concrete nouns and active verbs. \
+   Example: "Europe's energy bet just got called" or "The court ruling nobody wanted to write."
+4. "opinion_text" — 80-120 words. 3-5 sentences. First-person plural editorial judgment \
+   from "The Board." Genuinely opinionated. Where the TL;DR says what happened, this \
+   says what we think about it. Use "we" voice. Pick the single most opinion-worthy \
+   story from today's clusters. From the {LEAN_UPPER} lens.
+5. "opinion_audio_script" — A single-voice editorial monologue for TTS. 500-700 words. \
+   One speaker only — no A:/B: tags. Just flowing text. \
+   Someone at the editorial desk who has spent the day with this story and has something \
+   to say. Not reading — TELLING. \
+   Open EXACTLY with: \
+   First line: "Now, void opinion." \
+   Second line: State the opinion_headline as a spoken title. \
+   Then dive straight into the argument. No preamble, no lens announcement. \
+   Use ellipses (...) for genuine deliberation (2-3 max). Em dashes for mid-thought pivots. \
+   Use paragraph breaks for silence beats — 3-4 per piece. At least one single-sentence \
+   paragraph standing alone as a verdict. Steady pace throughout — never rush. Each \
+   sentence of evidence adds weight. End with: "This was void opinion." No summary.\
 """
 
 
@@ -161,9 +213,16 @@ def generate_claude_brief(
     # 2. Generate script via Claude CLI
     print(f"\n[2/4] Generating script via Claude {model}...")
     date_str = datetime.now(timezone.utc).strftime("%A, %d %B %Y")
-    prompt = _USER_PROMPT_TEMPLATE.format(
-        EDITION=edition.upper(),
+    today_lean = _get_today_lean()
+    lean_label = {"left": "progressive", "center": "pragmatic", "right": "conservative"}[today_lean]
+    edition_key = edition.upper()
+    edition_focus = _EDITION_FOCUS.get(edition_key, _EDITION_FOCUS["WORLD"])
+    prompt = _CLAUDE_PROMPT_TEMPLATE.format(
+        EDITION=edition_key,
+        EDITION_FOCUS=edition_focus,
         DATE=date_str,
+        LEAN_UPPER=today_lean.upper(),
+        LEAN_LABEL=lean_label,
         N=len(top_clusters),
         stories_block=stories_block,
     )
@@ -183,9 +242,15 @@ def generate_claude_brief(
     print(f"  Opinion: {'yes' if opinion else 'no'}")
     print(f"  Script: {'yes' if script else 'no'} ({len(script or '')} chars)")
 
+    opinion_headline = result.get("opinion_headline", "")
+    opinion_audio = result.get("opinion_audio_script", "")
+
     brief = {
         "tldr_text": tldr,
         "opinion_text": opinion if opinion else None,
+        "opinion_headline": opinion_headline if opinion_headline else None,
+        "opinion_audio_script": opinion_audio if opinion_audio else None,
+        "opinion_lean": today_lean,
         "audio_script": script,
         "top_cluster_ids": [c.get("_db_id", "") for c in top_clusters if c.get("_db_id")],
         "generator": f"claude-{model}",
@@ -195,13 +260,20 @@ def generate_claude_brief(
     if synthesize and script:
         print(f"\n[3/4] Synthesizing audio...")
         voices = get_voices_for_today(edition)
-        audio_result = produce_audio(script, voices, edition)
+        audio_result = produce_audio(
+            script, voices, edition,
+            opinion_audio_script=brief.get("opinion_audio_script"),
+            opinion_lean=brief.get("opinion_lean"),
+        )
 
         if audio_result:
             brief["audio_url"] = audio_result["audio_url"]
             brief["audio_duration_seconds"] = audio_result["duration_seconds"]
             brief["audio_file_size"] = audio_result["file_size"]
-            brief["audio_voice"] = f"{voices['host_a']['id']}+{voices['host_b']['id']}"
+            has_opinion = bool(brief.get("opinion_audio_script"))
+            brief["audio_voice"] = f"{voices['host_a']['id']}+{voices['host_b']['id']}" + (
+                f"+{voices['opinion']['id']}" if has_opinion else ""
+            )
         else:
             print("  Audio synthesis failed — brief will be text-only")
     else:
@@ -213,6 +285,8 @@ def generate_claude_brief(
         "edition": edition,
         "tldr_text": brief["tldr_text"],
         "opinion_text": brief.get("opinion_text"),
+        "opinion_headline": brief.get("opinion_headline"),
+        "opinion_lean": brief.get("opinion_lean"),
         "audio_script": brief.get("audio_script"),
         "top_cluster_ids": brief.get("top_cluster_ids", []),
     }
@@ -221,12 +295,21 @@ def generate_claude_brief(
         brief_row["audio_duration_seconds"] = brief.get("audio_duration_seconds")
         brief_row["audio_file_size"] = brief.get("audio_file_size")
         brief_row["audio_voice"] = brief.get("audio_voice")
-        brief_row["audio_voice_label"] = "Two hosts"
+        brief_row["audio_voice_label"] = "Three voices" if brief.get("opinion_audio_script") else "Two hosts"
 
     try:
-        # Delete existing briefs for this edition, insert new
-        supabase.table("daily_briefs").delete().eq("edition", edition).execute()
+        # Upsert: insert new brief, then delete older ones for this edition.
+        # Order matters — insert first so the frontend always has a record.
         supabase.table("daily_briefs").insert(brief_row).execute()
+        # Clean up older briefs for this edition (keep only the latest)
+        latest = supabase.table("daily_briefs").select("id").eq(
+            "edition", edition
+        ).order("created_at", desc=True).limit(1).execute()
+        if latest.data:
+            keep_id = latest.data[0]["id"]
+            supabase.table("daily_briefs").delete().eq(
+                "edition", edition
+            ).neq("id", keep_id).execute()
         print(f"  Stored successfully")
     except Exception as e:
         print(f"  DB update failed: {e}")

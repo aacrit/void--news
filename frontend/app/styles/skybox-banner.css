@@ -1,0 +1,933 @@
+/* ===========================================================================
+   Skybox Banner — Compact 2-row brief bar + expandable sections
+   Row 1: TL;DR | Opinion (side-by-side columns with preview)
+   Row 2: On Air strip
+   Expand: section goes full-width, on air moves to top-left
+   =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   Root container
+   --------------------------------------------------------------------------- */
+
+/* ── Laid Paper Territory ──
+   Same --bg-primary as the page canvas. Differentiation is TEXTURE only —
+   the Daily Brief sits on vergé (laid) paper while the rest of the page
+   is coated matte stock. Three texture layers compose the laid paper feel:
+
+   ::before — Laid lines + chain lines (SVG pattern, repeating)
+     Laid lines: horizontal, 3px period, 0.5px stroke (the wire mesh)
+     Chain lines: vertical, 28px period, 0.5px stroke (the support wires)
+
+   ::after — Linen micro-weave (SVG crosshatch, repeating)
+     45-degree lines at 6px spacing — cotton fiber texture.
+
+   Both layers use the foreground color at very low opacity.
+   The page-level film grain (page-container::after at z-index --z-cinematic)
+   composites ON TOP, adding the Kodak 500T emulation naturally.
+
+   Reference: Crane's Lettra 110lb cotton, Strathmore Writing Laid,
+   Mohawk Via Vellum. The tactile feel of editorial stationery —
+   formal, authoritative, textured under the fingertip. */
+
+.skb {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-primary);
+}
+
+/* Layer 1: Laid lines (horizontal) + Chain lines (vertical)
+   SVG tile 28x12: laid lines repeat at 3px, chain lines at 28px center. */
+.skb::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='12'%3E%3Cdefs%3E%3Cpattern id='laid' patternUnits='userSpaceOnUse' width='28' height='3'%3E%3Cline x1='0' y1='2.5' x2='28' y2='2.5' stroke='%231c1a17' stroke-width='0.5' stroke-opacity='1'/%3E%3C/pattern%3E%3Cpattern id='chain' patternUnits='userSpaceOnUse' width='28' height='12'%3E%3Cline x1='14' y1='0' x2='14' y2='12' stroke='%231c1a17' stroke-width='0.5' stroke-opacity='1'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='28' height='12' fill='url(%23laid)'/%3E%3Crect width='28' height='12' fill='url(%23chain)'/%3E%3C/svg%3E");
+  opacity: var(--laid-line-opacity-light);
+  mix-blend-mode: multiply;
+}
+
+/* Layer 2: Linen micro-weave crosshatch — 6x6 tile, 45-degree strokes */
+.skb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Cpath d='M0,0 L6,6 M6,0 L0,6' stroke='%231c1a17' stroke-width='0.3' stroke-opacity='1' fill='none'/%3E%3C/svg%3E");
+  opacity: var(--laid-linen-opacity-light);
+  mix-blend-mode: multiply;
+}
+
+/* Dark mode: light stroke color, soft-light blend (matches page grain) */
+:root[data-mode="dark"] .skb::before {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='12'%3E%3Cdefs%3E%3Cpattern id='laid' patternUnits='userSpaceOnUse' width='28' height='3'%3E%3Cline x1='0' y1='2.5' x2='28' y2='2.5' stroke='%23ede8e0' stroke-width='0.5' stroke-opacity='1'/%3E%3C/pattern%3E%3Cpattern id='chain' patternUnits='userSpaceOnUse' width='28' height='12'%3E%3Cline x1='14' y1='0' x2='14' y2='12' stroke='%23ede8e0' stroke-width='0.5' stroke-opacity='1'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='28' height='12' fill='url(%23laid)'/%3E%3Crect width='28' height='12' fill='url(%23chain)'/%3E%3C/svg%3E");
+  mix-blend-mode: soft-light;
+}
+
+:root[data-mode="dark"] .skb::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Cpath d='M0,0 L6,6 M6,0 L0,6' stroke='%23ede8e0' stroke-width='0.3' stroke-opacity='1' fill='none'/%3E%3C/svg%3E");
+  mix-blend-mode: soft-light;
+}
+
+/* ---------------------------------------------------------------------------
+   COMPACT MODE — 2-row preview bar
+   --------------------------------------------------------------------------- */
+
+.skb__compact {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+
+/* Columns */
+.skb__compact-cols {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+  flex: 1;
+  min-width: 0;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .skb__compact-cols {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* F13: Single column when no opinion text */
+.skb__compact-cols--single {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 768px) {
+  .skb__compact-cols--single {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Column is a div[role=button] — full-area clickability without
+   <button> nesting restrictions (h3/p inside button breaks hydration) */
+.skb__compact-col {
+  position: relative;
+  padding: var(--space-3) var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  cursor: pointer;
+  transition: background-color 120ms var(--ease-cinematic);
+}
+
+/* .skb__compact-col:hover bg removed — brief column, not a button */
+
+.skb__compact-col:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: -2px;
+}
+
+/* Divider between columns */
+.skb__compact-col--tldr {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+@media (min-width: 768px) {
+  .skb__compact-col--tldr {
+    border-bottom: none;
+    border-right: 1px solid var(--border-subtle);
+    padding-right: var(--space-5);
+  }
+
+  .skb__compact-col--opinion {
+    padding-left: var(--space-5);
+  }
+}
+
+/* Label row: Logo + Human label + CLI command */
+.skb__compact-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.skb__compact-logo {
+  flex-shrink: 0;
+}
+
+.skb__compact-human {
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--accent-warm);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.skb__compact-cmd {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: var(--fg-muted);
+  letter-spacing: 0.02em;
+  opacity: 0.7;
+}
+
+.skb__compact-time {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: var(--fg-muted);
+}
+
+.skb__compact-loading {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--fg-muted);
+  opacity: 0.4;
+}
+
+/* Headlines — compact but readable */
+.skb__compact-hl {
+  margin: 0;
+  line-height: 1.3;
+}
+
+.skb__compact-hl--tldr {
+  font-family: var(--font-editorial);
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--fg-primary);
+  letter-spacing: -0.01em;
+}
+
+.skb__compact-hl--opinion {
+  font-family: var(--font-editorial);
+  font-size: var(--text-base);
+  font-weight: 700;
+  font-style: italic;
+  color: var(--fg-primary);
+  letter-spacing: 0.005em;
+}
+
+/* Preview text — 2-3 lines, small */
+.skb__compact-preview {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 0;
+  padding-right: var(--space-6);
+}
+
+.skb__compact-preview--tldr {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--fg-secondary);
+}
+
+.skb__compact-preview--opinion {
+  font-family: var(--font-editorial);
+  font-size: var(--text-sm);
+  font-style: italic;
+  line-height: 1.55;
+  color: var(--fg-secondary);
+}
+
+/* F09: More preview lines on wider viewports */
+@media (min-width: 768px) {
+  .skb__compact-preview { -webkit-line-clamp: 4; }
+}
+
+/* Down chevron — ghosted at rest, revealed on hover/focus.
+   44px touch target maintained. The chevron is a wayfinding hint,
+   not a call-to-action — it should defer to the headline and preview. */
+.skb__compact-expand {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  width: 36px;
+  height: 36px;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  color: var(--accent-warm);
+  opacity: 0.4;
+  cursor: pointer;
+  transition: opacity 200ms var(--ease-cinematic), transform 200ms var(--spring-snappy);
+}
+
+/* Rotate CaretRight to point down */
+.skb__compact-expand svg {
+  transform: rotate(90deg);
+}
+
+/* Accent caret reveals on hover — matches story card arrow pattern */
+.skb__compact-col:hover .skb__compact-expand,
+.skb__compact-col:focus-visible .skb__compact-expand {
+  opacity: 0.7;
+  transform: translateY(1px);
+}
+
+/* ---------------------------------------------------------------------------
+   EXPANDED MODE — topbar + section content
+   --------------------------------------------------------------------------- */
+
+.skb--section-open {
+  padding: 0;
+}
+
+/* Inline collapse button — sits in the label row, ghosted */
+.skb__collapse-inline {
+  margin-left: auto;
+  width: 28px;
+  height: 28px;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--accent-warm);
+  opacity: 0.6;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: opacity 200ms var(--ease-cinematic), transform 200ms var(--spring-snappy);
+}
+
+/* Rotate CaretRight to point up */
+.skb__collapse-inline svg {
+  transform: rotate(-90deg);
+}
+
+.skb__collapse-inline:hover {
+  opacity: 0.7;
+  transform: translateY(-1px);
+}
+.skb__collapse-inline:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+/* Top bar: OnAir pill (left) + section chip + collapse (right) */
+.skb__topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-4);
+  border-bottom: none;
+  position: relative;
+  z-index: 1;
+  /* F12: No animation on topbar — it persists across section switches.
+     Only section content animates via skbSectionIn. */
+}
+.skb__topbar::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: var(--space-4);
+  right: var(--space-4);
+  height: 1px;
+  background: color-mix(in srgb, var(--accent-warm) 20%, transparent);
+}
+
+.skb__topbar-left {
+  flex: 0 0 auto;
+}
+
+.skb__topbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* Section chip — clickable chip for the other section. F04: 44px touch target */
+.skb__topbar-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--fg-secondary);
+  background: color-mix(in srgb, var(--accent-warm) 4%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-warm) 15%, transparent);
+  border-radius: 6px;
+  padding: var(--space-1) var(--space-3);
+  min-height: 44px;
+  cursor: pointer;
+  transition: border-color 200ms var(--ease-cinematic), background 200ms var(--ease-cinematic), color 200ms var(--ease-cinematic);
+}
+
+/* Hover: color only, no glow */
+.skb__topbar-chip:hover {
+  color: var(--accent-warm);
+}
+
+.skb__topbar-chip-logo {
+  flex-shrink: 0;
+}
+
+.skb__topbar-chip-human {
+  font-family: var(--font-meta);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.skb__topbar-chip-cmd {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  letter-spacing: 0.02em;
+  color: var(--fg-muted);
+}
+
+.skb__topbar-chip-caret {
+  font-size: var(--text-xxs);
+  opacity: 0.6;
+}
+
+/* Collapse button — F04: 36px visual, 44px min touch target */
+.skb__topbar-collapse {
+  width: 36px;
+  height: 36px;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: 1.5px solid color-mix(in srgb, var(--accent-warm) 40%, transparent);
+  background: color-mix(in srgb, var(--accent-warm) 6%, transparent);
+  color: var(--accent-warm);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: border-color 200ms var(--ease-cinematic), background 200ms var(--ease-cinematic);
+}
+
+.skb__topbar-collapse:hover {
+  border-color: color-mix(in srgb, var(--accent-warm) 50%, transparent);
+  background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
+}
+
+/* ---------------------------------------------------------------------------
+   Expanded section content
+   --------------------------------------------------------------------------- */
+
+.skb__section-content {
+  padding: var(--space-3) var(--space-4) var(--space-4);
+  /* No max-height cap — panel grows to full content height, no internal scroll */
+  position: relative;
+  z-index: 1;
+}
+
+/* Section content appears instantly — no loading animation on expand.
+   Content is already loaded, just reveal it. */
+
+@keyframes skbSwapFromRight {
+  from { opacity: 0; transform: translateX(8px) scale(0.985); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+@keyframes skbSwapFromLeft {
+  from { opacity: 0; transform: translateX(-8px) scale(0.985); }
+  to   { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+/* No cascade animation — content appears instantly on expand */
+
+@keyframes skbMarkActivate {
+  0%   { opacity: 0.4; transform: scale(0.85); }
+  60%  { opacity: 1;   transform: scale(1.04); }
+  100% { opacity: 1;   transform: scale(1); }
+}
+
+@keyframes skbHeadlineRack {
+  from { opacity: 0; transform: translateY(4px); filter: blur(0.5px); }
+  to   { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+@keyframes skbElementIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.skb__section-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.skb__section-label-human {
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--fg-secondary);
+  letter-spacing: 0.02em;
+}
+
+.skb__section-label-cmd {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  letter-spacing: 0.02em;
+}
+
+.skb__section-label-time {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+}
+
+/* Expanded headlines — large, legible */
+.skb__section-hl {
+  margin: 0 0 var(--space-2);
+  line-height: 1.25;
+}
+
+.skb__section-hl--tldr {
+  font-family: var(--font-editorial);
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--accent-warm);
+  letter-spacing: -0.01em;
+}
+
+.skb__section-hl--opinion {
+  font-family: var(--font-editorial);
+  font-size: var(--text-base);
+  font-weight: 700;
+  font-style: italic;
+  color: var(--fg-primary);
+  letter-spacing: 0.005em;
+}
+
+/* Expanded body text — legible reading size */
+.skb__section-body--tldr {
+  font-family: var(--font-structural);
+  font-size: clamp(0.9375rem, 0.85rem + 0.35vw, 1.0625rem);
+  line-height: 1.75;
+  color: var(--fg-secondary);
+  text-align: justify;
+  text-align-last: left;
+}
+
+.skb__section-body--tldr p + p {
+  margin-top: var(--space-3);
+}
+
+.skb__section-body--opinion {
+  font-family: var(--font-editorial);
+  font-size: clamp(1rem, 0.9rem + 0.4vw, 1.125rem);
+  font-style: italic;
+  line-height: 1.7;
+  letter-spacing: 0.005em;
+  color: var(--fg-tertiary);
+  text-align: justify;
+  text-align-last: left;
+}
+
+.skb__section-body--opinion p + p {
+  margin-top: var(--space-3);
+}
+
+/* ---------------------------------------------------------------------------
+   Cinematic Uplift — ink washes, drop cap, lean badges, firewall rule
+   --------------------------------------------------------------------------- */
+
+/* A. Drop cap on TL;DR first paragraph */
+.skb__section-body--tldr p:first-child::first-letter {
+  font-family: var(--font-editorial);
+  font-size: clamp(2.5rem, 2rem + 1.5vw, 3.5rem);
+  font-weight: 700;
+  float: left;
+  line-height: 0.8;
+  margin-right: var(--space-2);
+  margin-top: var(--space-1);
+  color: var(--accent-warm);
+}
+
+/* B. Ink wash background for TL;DR — reduced to near-invisible.
+   The laid paper texture now carries the territory signal; the ink
+   wash is vestigial warmth, not a background color shift. */
+.skb__section--tldr {
+  position: relative;
+}
+.skb__section--tldr::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 90% 80% at 50% 30%,
+    color-mix(in srgb, var(--cin-amber, #946B15) 3%, transparent) 0%,
+    transparent 70%
+  );
+  opacity: 0.4;
+  z-index: 0;
+}
+
+/* C. Lean-colored ink wash for Opinion — reduced for texture-first approach */
+.skb__section--opinion {
+  position: relative;
+}
+.skb__section--opinion::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.4;
+  z-index: 0;
+}
+.skb__section--opinion.skb-lean--left::before {
+  background: radial-gradient(ellipse 90% 80% at 50% 30%, color-mix(in srgb, var(--bias-left) 4%, transparent) 0%, transparent 70%);
+}
+.skb__section--opinion.skb-lean--center::before {
+  background: radial-gradient(ellipse 90% 80% at 50% 30%, color-mix(in srgb, var(--bias-center) 4%, transparent) 0%, transparent 70%);
+}
+.skb__section--opinion.skb-lean--right::before {
+  background: radial-gradient(ellipse 90% 80% at 50% 30%, color-mix(in srgb, var(--bias-right) 4%, transparent) 0%, transparent 70%);
+}
+
+/* D. Lean badge styling */
+.skb__lean-badge {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 1px 8px;
+  border-radius: 2px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+.skb__lean-badge.skb-lean--left {
+  color: var(--bias-left);
+  border-color: color-mix(in srgb, var(--bias-left) 30%, transparent);
+  background: color-mix(in srgb, var(--bias-left) 6%, transparent);
+}
+.skb__lean-badge.skb-lean--center {
+  color: var(--bias-center);
+  border-color: color-mix(in srgb, var(--bias-center) 30%, transparent);
+  background: color-mix(in srgb, var(--bias-center) 6%, transparent);
+}
+.skb__lean-badge.skb-lean--right {
+  color: var(--bias-right);
+  border-color: color-mix(in srgb, var(--bias-right) 30%, transparent);
+  background: color-mix(in srgb, var(--bias-right) 6%, transparent);
+}
+
+/* E. Headline hairline rule (amber accent under expanded headlines) */
+.skb__section-hl--tldr::after,
+.skb__section-hl--opinion::after {
+  content: "";
+  display: block;
+  width: clamp(40px, 8vw, 80px);
+  height: 1.5px;
+  background: var(--accent-warm);
+  opacity: 0.3;
+  margin-top: var(--space-2);
+}
+
+/* G. Organic firewall rule SVG (hand-drawn wobble between compact columns) */
+.skb__firewall {
+  overflow: visible;
+  margin: 0;
+  padding: 0;
+}
+.skb__firewall path {
+  stroke: var(--accent-warm);
+  stroke-width: 1;
+  stroke-opacity: 0.25;
+  fill: none;
+  stroke-linecap: round;
+}
+/* Mobile: hidden (border-bottom on tldr col handles separator) */
+.skb__firewall--vertical {
+  display: none;
+}
+/* Desktop: vertical firewall positioned at the center of the 2-col grid */
+@media (min-width: 768px) {
+  .skb__firewall--vertical {
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: var(--space-3);
+    bottom: var(--space-3);
+    width: 4px;
+    height: auto;
+    transform: translateX(-50%);
+    z-index: 1;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Cinematic Motion Choreography
+   --------------------------------------------------------------------------- */
+
+/* ── Cold open: broadsheet unfolding — columns spread from center ── */
+.anim-cold-open-skybox .skb__compact-col--tldr {
+  animation: skbColSlideLeft 400ms var(--ease-unfold, var(--ease-cinematic)) 280ms both;
+}
+.anim-cold-open-skybox .skb__compact-col--opinion {
+  animation: skbColSlideRight 400ms var(--ease-unfold, var(--ease-cinematic)) 360ms both;
+}
+
+@keyframes skbColSlideLeft {
+  from { opacity: 0; transform: translateX(-4px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes skbColSlideRight {
+  from { opacity: 0; transform: translateX(4px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+/* OnAir cold open removed — trigger is now in NavBar */
+
+@keyframes skbFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Topbar entrance — slides down when expanding from compact ── */
+.skb--section-open .skb__topbar {
+  animation: skbTopbarIn 300ms var(--ease-cinematic) both;
+}
+
+@keyframes skbTopbarIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Compact restore — newspaper refolded, tucked under arm ── */
+.skb--compact .skb__compact {
+  animation: skbCompactRestore 280ms var(--ease-refold, var(--ease-cinematic)) both;
+}
+/* Cold open takes precedence — prevent double animation on first load */
+.anim-cold-open-skybox.skb--compact .skb__compact {
+  animation: none;
+}
+
+@keyframes skbCompactRestore {
+  from { opacity: 0; transform: scale(0.995); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── Radio collapse: content fades before height shrinks (prevents guillotine edge) ── */
+.skb__radio[inert] .skb__radio-inner {
+  opacity: 0;
+  transition: opacity 180ms var(--ease-whip);
+}
+
+/* ── Radio panel internal L-cut cascade ── */
+.skb__radio-inner .skb__radio-header {
+  animation: skbElementIn 250ms var(--ease-cinematic) 80ms both;
+}
+.skb__radio-inner .skb__waveform {
+  animation: skbElementIn 300ms var(--ease-cinematic) 140ms both;
+}
+.skb__radio-inner .skb__transport {
+  animation: skbElementIn 250ms var(--ease-cinematic) 200ms both;
+}
+.skb__radio-inner .skb__dial {
+  animation: skbElementIn 300ms var(--ease-cinematic) 260ms both;
+}
+
+/* ── Mobile: compress cascade delays ── */
+@media (max-width: 767px) {
+  .skb__section-content .skb__section-label { animation-delay: 60ms; }
+  .skb__section-content .skb__section-hl { animation-delay: 100ms; }
+  .skb__section-content .skb__section-body--tldr,
+  .skb__section-content .skb__section-body--opinion { animation-delay: 150ms; }
+
+  /* Directional swap → simple vertical fade on mobile */
+  .skb--show-opinion .skb__section-content,
+  .skb--show-tldr .skb__section-content {
+    animation-name: skbElementIn;
+    animation-duration: 300ms;
+  }
+
+}
+
+/* ---------------------------------------------------------------------------
+   Reduced motion
+   --------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .skb__section-content,
+  .skb--show-opinion .skb__section-content,
+  .skb--show-tldr .skb__section-content,
+  .skb__section-content .skb__section-label,
+  .skb__section-content .skb__section-hl,
+  .skb__section-content .skb__section-body--tldr,
+  .skb__section-content .skb__section-body--opinion,
+  .skb--section-open .skb__topbar,
+  .skb--compact .skb__compact,
+  .anim-cold-open-skybox .skb__compact-col--tldr,
+  .anim-cold-open-skybox .skb__compact-col--opinion,
+  .skb__section-label svg { animation: none; }
+}
+
+/* ---------------------------------------------------------------------------
+   Previous Episodes — compact link + expanded list
+   --------------------------------------------------------------------------- */
+
+.skb__prev-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-3);
+  min-height: 44px;
+  cursor: pointer;
+  transition: color 150ms var(--ease-cinematic);
+}
+
+.skb__prev-link:hover {
+  color: var(--accent-warm);
+}
+
+.skb__prev-link-text {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: color-mix(in srgb, var(--fg-secondary) 60%, transparent);
+  letter-spacing: 0.02em;
+  transition: color 150ms var(--ease-cinematic);
+}
+
+.skb__prev-link:hover .skb__prev-link-text {
+  color: var(--accent-warm);
+}
+
+/* Episodes section expanded */
+.skb__episodes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.skb__ep-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-1);
+  border-radius: 4px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  color: inherit;
+  text-align: left;
+  width: 100%;
+  min-height: 44px;
+  font-size: var(--text-xs);
+  transition: background 150ms var(--ease-cinematic);
+}
+
+/* .skb__ep-row:hover removed — episode row, not a button */
+
+.skb__ep-row--current {
+  background: color-mix(in srgb, var(--accent-warm) 4%, transparent);
+  cursor: default;
+}
+
+.skb__ep-day {
+  font-family: var(--font-meta);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: color-mix(in srgb, var(--accent-warm) 50%, transparent);
+  flex-shrink: 0;
+  width: 64px;
+}
+
+.skb__ep-time {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: color-mix(in srgb, var(--fg-secondary) 50%, transparent);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  width: 56px;
+}
+
+.skb__ep-hl {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  line-height: 1.3;
+  color: var(--fg-primary);
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.skb__ep-row--current .skb__ep-hl {
+  font-weight: 600;
+  color: var(--accent-warm);
+}
+
+.skb__ep-lean {
+  font-family: var(--font-data);
+  font-size: 8px;
+  font-weight: 700;
+  width: 14px;
+  height: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.skb__ep-lean--left {
+  color: var(--lean-left, #3b82f6);
+  background: color-mix(in srgb, var(--lean-left, #3b82f6) 10%, transparent);
+}
+.skb__ep-lean--center {
+  color: var(--lean-center, #a3a3a3);
+  background: color-mix(in srgb, var(--lean-center, #a3a3a3) 10%, transparent);
+}
+.skb__ep-lean--right {
+  color: var(--lean-right, #ef4444);
+  background: color-mix(in srgb, var(--lean-right, #ef4444) 10%, transparent);
+}
+
+.skb__ep-dur {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: color-mix(in srgb, var(--fg-secondary) 40%, transparent);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+
+.skb__ep-badge {
+  font-family: var(--font-meta);
+  font-size: 7px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--accent-warm);
+  padding: 1px 4px;
+  border: 1px solid color-mix(in srgb, var(--accent-warm) 25%, transparent);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* ---------------------------------------------------------------------------
+   Touch device guards
+   --------------------------------------------------------------------------- */
+
+@media (hover: none) {
+  .skb__compact-col:hover .skb__compact-expand { opacity: 0.5; color: var(--fg-muted); border-color: transparent; background: transparent; }
+  .skb__topbar-chip:hover { color: var(--fg-secondary); }
+  .skb__topbar-collapse:hover { border-color: color-mix(in srgb, var(--accent-warm) 20%, transparent); background: var(--cin-amber-ghost); }
+}

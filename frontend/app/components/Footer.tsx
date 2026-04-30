@@ -7,7 +7,7 @@ import LogoWordmark from "./LogoWordmark";
 /* ---------------------------------------------------------------------------
    Footer — Newspaper-style footer
    Uses LogoIcon (idle animation) + LogoWordmark for branding.
-   Shows "200 curated sources" with last pipeline run time.
+   Shows source count with last pipeline run time.
    --------------------------------------------------------------------------- */
 
 interface FooterProps {
@@ -23,7 +23,7 @@ export default function Footer({ lastUpdated }: FooterProps) {
           <LogoIcon size={22} animation="idle" />
           <LogoWordmark height={16} />
         </div>
-        <p className="footer-tagline">370 sources. Six axes. Zero mystery.</p>
+        <p className="footer-tagline">See through the void.</p>
 
         {/* Product family */}
         <div className="footer-products">
@@ -35,10 +35,17 @@ export default function Footer({ lastUpdated }: FooterProps) {
           <span className="footer-products__sep" aria-hidden="true">&middot;</span>
           <Link href="/sources" className="footer-products__item" title="Source Spectrum">void --sources</Link>
           <span className="footer-products__sep" aria-hidden="true">&middot;</span>
-          <Link href="/void--news/paper" className="footer-products__item" title="Broadsheet Edition">void --paper</Link>
+          <Link href="/weekly" className="footer-products__item" title="Weekly Digest">void --weekly</Link>
+          <span className="footer-products__sep" aria-hidden="true">&middot;</span>
+          <Link href="/ship" className="footer-products__item" title="Feature Requests">void --ship</Link>
+          <span className="footer-products__sep" aria-hidden="true">&middot;</span>
+          <Link href="/about" className="footer-products__item" title="About">void --about</Link>
         </div>
 
         <p className="footer-built">&copy; 2026 void --news. All rights reserved.</p>
+        <p className="footer-kbd-hint" aria-label="Press question mark for keyboard shortcuts">
+          <kbd className="footer-kbd-hint__key">?</kbd> shortcuts
+        </p>
       </div>
     </footer>
   );

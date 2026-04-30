@@ -1,0 +1,1481 @@
+/* ===========================================================================
+   void --weekly — Deep Red Magazine Layout
+   Dense broadsheet: 2-col / 3-col grids, no collapsibles, full visibility.
+   Deep red palette scoped to .wk-page for dramatic visual departure.
+   =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   Page Container — deep red palette + cinematic grade + vignette + film grain
+   --------------------------------------------------------------------------- */
+.wk-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow-x: hidden;
+
+  /* ── Magazine Red — Economist/TIME inspired ── */
+  --wk-accent: var(--palette-weekly);
+  --wk-accent-bright: #D41920;
+  --wk-accent-light: #E4252C;
+  --wk-accent-dim: #991717;
+  --wk-accent-ghost: rgba(185, 28, 28, 0.06);
+  --wk-accent-glow: rgba(185, 28, 28, 0.12);
+  --wk-accent-ink: rgba(185, 28, 28, 0.20);
+  --wk-cream: #F8F3E8;
+  --wk-cream-deep: #EDE5D4;
+  --wk-white: #FFFFFF;
+
+  /* Warmer, thicker-feeling paper — visually distinct from main feed.
+     Main page: #F0EBDD. Weekly: warmer, more matte, like heavy stock. */
+  background-color: #EDE4D0;
+  color: var(--fg-primary);
+}
+
+:root[data-mode="dark"] .wk-page {
+  --wk-accent: var(--palette-weekly);
+  --wk-accent-bright: #F87171;
+  --wk-accent-light: #FCA5A5;
+  --wk-accent-dim: #DC2626;
+  --wk-accent-ghost: rgba(239, 83, 80, 0.08);
+  --wk-accent-glow: rgba(239, 83, 80, 0.15);
+  --wk-accent-ink: rgba(239, 83, 80, 0.22);
+  --wk-cream: #2A2420;
+  --wk-cream-deep: #221E1A;
+
+  /* Dark mode: warmer charcoal than main feed (#151310 → #1E1A16) */
+  background-color: #1E1A16;
+}
+
+/* Film grain overlay */
+.wk-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: var(--paper-texture);
+  opacity: calc(var(--cin-grain-opacity, 0.04) * 3);
+  pointer-events: none;
+  z-index: 4;
+  mix-blend-mode: multiply;
+}
+
+/* Vignette */
+.wk-page::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 70% 65% at 50% 45%,
+    transparent 30%,
+    var(--cin-vignette-color) 100%
+  );
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* Top bar — back link + theme toggle, sticky */
+.wk-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-4);
+  background-color: color-mix(in srgb, #EDE4D0 85%, transparent);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+:root[data-mode="dark"] .wk-topbar {
+  background-color: color-mix(in srgb, #1E1A16 85%, transparent);
+}
+
+@media (min-width: 768px) {
+  .wk-topbar {
+    padding: var(--space-2) var(--space-6);
+  }
+}
+
+/* Back link — arrow + real void logo */
+.wk-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-decoration: none;
+  color: var(--fg-secondary);
+  transition: color 200ms var(--ease-cinematic), transform 200ms var(--ease-cinematic);
+}
+
+.wk-back:hover {
+  color: var(--wk-accent);
+  transform: translateX(-2px);
+}
+
+.wk-back__arrow {
+  font-size: var(--text-base);
+  line-height: 1;
+}
+
+.wk-back__logo {
+  color: var(--fg-secondary);
+  transition: color 200ms var(--ease-cinematic);
+}
+
+.wk-back:hover .wk-back__logo {
+  color: var(--fg-primary);
+}
+
+.wk-main {
+  flex: 1;
+  max-width: var(--canvas-max);
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+  padding-bottom: var(--space-5);
+  filter: var(--cin-grade-editorial, var(--cin-grade));
+}
+
+@media (min-width: 768px) {
+  .wk-main {
+    padding: 0 var(--space-6);
+    padding-bottom: var(--space-6);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Organic Ink SVG Components — shared inline patterns
+   --------------------------------------------------------------------------- */
+.wk-ink-rule {
+  display: block;
+  width: 100%;
+  height: 4px;
+  color: var(--wk-accent);
+  opacity: 0.4;
+}
+
+.wk-ink-rule--strong {
+  color: var(--wk-accent);
+  opacity: 0.7;
+}
+
+/* ---------------------------------------------------------------------------
+   Section Label — Barlow Condensed, editorial wayfinding
+   --------------------------------------------------------------------------- */
+.wk-section-label {
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--wk-accent);
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+  position: relative;
+}
+
+.wk-section-label[data-prefix]::before {
+  content: attr(data-prefix) " ";
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  opacity: 0.35;
+  letter-spacing: 0.02em;
+}
+
+.wk-section-label::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23991B1B' stroke-width='1.2' fill='none' opacity='0.35'/%3E%3C/svg%3E");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+:root[data-mode="dark"] .wk-section-label::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23EF5350' stroke-width='1.2' fill='none' opacity='0.35'/%3E%3C/svg%3E");
+}
+
+/* ---------------------------------------------------------------------------
+   Divider — organic ink stroke
+   --------------------------------------------------------------------------- */
+.wk-divider {
+  border: none;
+  height: 4px;
+  margin: var(--space-3) 0;
+  background: transparent;
+}
+
+/* ===========================================================================
+   Cold Open Stagger Sequence
+   =========================================================================== */
+
+@keyframes wkColdOpenFade {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes wkColdOpenScale {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.wk-cold-open--masthead {
+  opacity: 0;
+  animation: wkColdOpenScale 800ms var(--ease-cinematic) 100ms both;
+}
+
+.wk-cold-open--hero {
+  opacity: 0;
+  animation: wkColdOpenFade 800ms var(--ease-cinematic) 200ms both;
+}
+
+.wk-cold-open--headline {
+  opacity: 0;
+  animation: wkColdOpenFade 700ms var(--ease-cinematic) 300ms both;
+}
+
+.wk-cold-open--numbers {
+  opacity: 0;
+  animation: wkColdOpenFade 600ms var(--ease-cinematic) 500ms both;
+}
+
+.wk-cold-open--body {
+  opacity: 0;
+  animation: wkColdOpenFade 600ms var(--ease-cinematic) 700ms both;
+}
+
+.wk-cold-open--section {
+  opacity: 0;
+  animation: wkColdOpenFade 600ms var(--ease-cinematic) 900ms both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wk-cold-open--masthead,
+  .wk-cold-open--hero,
+  .wk-cold-open--headline,
+  .wk-cold-open--numbers,
+  .wk-cold-open--body,
+  .wk-cold-open--section {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ===========================================================================
+   Scroll-Reveal System
+   =========================================================================== */
+
+.wk-reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 700ms var(--ease-cinematic),
+    transform 700ms var(--ease-cinematic);
+}
+
+.wk-reveal--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.wk-reveal--visible .wk-reveal-child {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.wk-reveal-child {
+  opacity: 0;
+  transform: translateY(12px);
+  transition:
+    opacity 500ms var(--ease-cinematic),
+    transform 500ms var(--ease-cinematic);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wk-reveal,
+  .wk-reveal-child {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ===========================================================================
+   A. MASTHEAD — compact deep red banner
+   =========================================================================== */
+.wk-masthead {
+  text-align: center;
+  padding: var(--space-3) var(--space-4);
+  background: var(--wk-accent);
+  position: relative;
+  overflow: hidden;
+}
+
+.wk-masthead::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+  pointer-events: none;
+  mix-blend-mode: soft-light;
+}
+
+.wk-masthead__home {
+  text-decoration: none;
+  display: block;
+}
+
+.wk-masthead__brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: var(--space-2) 0 var(--space-1);
+  position: relative;
+  z-index: 1;
+}
+
+.wk-masthead__logo {
+  height: 32px;
+  width: auto;
+  max-width: min(280px, 80vw);
+  display: block;
+  color: var(--wk-cream);
+}
+
+@media (min-width: 768px) {
+  .wk-masthead__logo {
+    height: 36px;
+  }
+}
+
+.wk-masthead__meta {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: var(--wk-white, #FFFFFF);
+  margin-bottom: 0;
+  opacity: 0.9;
+  position: relative;
+  z-index: 1;
+}
+
+.wk-masthead__sep {
+  margin: 0 var(--space-2);
+  opacity: 0.5;
+}
+
+.wk-masthead__edition {
+  font-weight: 600;
+  color: var(--wk-cream);
+  opacity: 1;
+}
+
+/* ===========================================================================
+   B. COVER HERO BANNER — typographic treatment (image future-ready)
+   =========================================================================== */
+/* Cover Hero — headline as red accent on page background.
+   Only the masthead gets filled red. Cover story is editorial typography. */
+.wk-cover-hero {
+  position: relative;
+  padding: var(--space-5) 0;
+  overflow: hidden;
+}
+
+/* Headline + meta — the visual centerpiece */
+.wk-cover-hero__content {
+  position: relative;
+  z-index: 1;
+}
+
+.wk-cover-hero__headline {
+  font-family: var(--font-editorial);
+  font-size: clamp(1.75rem, 5vw, 3rem);
+  font-weight: 700;
+  color: var(--wk-accent);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0 0 var(--space-3);
+  max-width: 50ch;
+}
+
+.wk-cover-hero__rule {
+  width: 60px;
+  height: 3px;
+  margin-top: var(--space-3);
+  overflow: hidden;
+}
+
+.wk-cover-hero__rule svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: var(--wk-accent);
+  opacity: 0.5;
+}
+
+/* Cover Hero Image — cinematic magazine cover with void color grade */
+.wk-cover-hero--has-image {
+  padding: 0;
+  min-height: 320px;
+}
+
+.wk-cover-hero__image-wrap {
+  position: relative;
+  width: 100%;
+  max-height: 420px;
+  overflow: hidden;
+  background: var(--cin-ash-900, #1a1a1a);
+}
+
+.wk-cover-hero__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  max-height: 420px;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.6s var(--ease-cinematic, ease-out);
+  /* Magazine warmth: punchy, warm, authoritative. The Economist/TIME cover stock.
+     Compounds with .wk-main --cin-grade-editorial (contrast 1.04, sat 0.88, sepia 0.06).
+     Effective compound (light): contrast ~1.09, sat ~0.81, sepia ~0.10.
+     Within bounds: contrast 1.04-1.12, sat 0.70-0.90, sepia 0.06-0.16. */
+  filter: var(--img-grade-weekly, contrast(1.05) saturate(0.92) sepia(0.04));
+}
+
+.wk-cover-hero__image--loaded {
+  opacity: 1;
+}
+
+/* Cinematic warm gradient overlay — matches amber palette */
+.wk-cover-hero__image-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--cin-amber-ghost, rgba(148, 107, 21, 0.08)) 50%, transparent) 0%,
+    transparent 30%,
+    color-mix(in srgb, var(--bg-primary, #1a1a1a) 20%, transparent) 70%,
+    color-mix(in srgb, var(--bg-primary, #1a1a1a) 50%, transparent) 100%
+  );
+  pointer-events: none;
+}
+
+/* Film grain on hero image (matches page grain at 3x for magazine density) */
+.wk-cover-hero__image-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: calc(var(--cin-grain-opacity, 0.04) * 3);
+  pointer-events: none;
+  mix-blend-mode: overlay;
+  filter: url(#void-grain);
+  z-index: 1;
+}
+
+/* Vignette on image — tighter than page vignette for magazine feel */
+.wk-cover-hero__image-wrap::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 80% 70% at center,
+    transparent 50%,
+    color-mix(in srgb, var(--bg-primary, #1a1a1a) 30%, transparent) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+.wk-cover-hero__image-credit {
+  position: absolute;
+  bottom: var(--space-2, 8px);
+  right: var(--space-3, 12px);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.625rem;
+  color: rgba(255, 255, 255, 0.55);
+  z-index: 2;
+  letter-spacing: 0.03em;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+/* When image present, add padding below for headline */
+.wk-cover-hero--has-image .wk-cover-hero__content {
+  padding: var(--space-4) 0;
+}
+
+/* ===========================================================================
+   C. COVER BODY — 2-column: text + numbers sidebar
+   =========================================================================== */
+.wk-cover-body {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  padding: var(--space-4) 0;
+}
+
+/* Single column — full width for cover stories. No sidebar grid. */
+
+.wk-cover-body__subhead {
+  font-family: var(--font-editorial);
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+  font-weight: 700;
+  color: var(--wk-accent);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  margin: var(--space-4) 0 var(--space-3);
+}
+
+.wk-cover-body__text {
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  font-weight: 400;
+  line-height: var(--line-height-editorial, 1.65);
+  color: var(--fg-primary);
+  text-align: justify;
+  hyphens: auto;
+}
+
+/* Drop cap on first paragraph */
+.wk-cover-body__text p:first-child::first-letter {
+  font-family: var(--font-editorial);
+  font-size: 2.8em;
+  font-weight: 900;
+  color: var(--wk-accent);
+  float: left;
+  line-height: 0.8;
+  margin-right: 0.08em;
+  margin-top: 0.06em;
+  initial-letter: 3;
+}
+
+.wk-cover-body__text p {
+  margin-bottom: var(--space-3);
+}
+
+.wk-cover-body__text p:last-child {
+  margin-bottom: 0;
+}
+
+/* ===========================================================================
+   D. TIMELINE — horizontal compact
+   =========================================================================== */
+.wk-timeline-section {
+  padding: var(--space-3) 0;
+}
+
+.wk-timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding-left: var(--space-5);
+  margin-left: var(--space-2);
+}
+
+.wk-timeline__ink-track {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  pointer-events: none;
+}
+
+.wk-timeline__node {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2) 0;
+  cursor: pointer;
+  border: none;
+  background: none;
+  text-align: left;
+  min-height: 44px;
+  transition: background 200ms var(--ease-cinematic);
+}
+
+/* .wk-timeline__node:hover bg removed — node is not a button */
+
+.wk-timeline__node:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+.wk-timeline__dot {
+  position: absolute;
+  left: calc(-1 * var(--space-5) + var(--space-2));
+  top: calc(var(--space-2) + 4px);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--fg-tertiary);
+  border: 2px solid var(--bg-primary);
+  z-index: 2;
+  transition:
+    background 300ms var(--ease-cinematic),
+    box-shadow 300ms var(--ease-cinematic);
+}
+
+.wk-timeline__node--expanded .wk-timeline__dot {
+  background: var(--wk-accent);
+}
+
+/* .wk-timeline__node:hover dot glow removed — expanded state is the signal */
+
+.wk-timeline__day {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fg-tertiary);
+  transition: color 200ms var(--ease-cinematic);
+}
+
+.wk-timeline__node--expanded .wk-timeline__day {
+  color: var(--wk-accent);
+}
+
+.wk-timeline__note {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-secondary);
+  line-height: 1.5;
+}
+
+/* Expanded detail text */
+.wk-timeline__detail {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 400ms var(--ease-cinematic);
+  overflow: hidden;
+}
+
+.wk-timeline__node--expanded .wk-timeline__detail {
+  grid-template-rows: 1fr;
+}
+
+.wk-timeline__detail-inner {
+  overflow: hidden;
+}
+
+.wk-timeline__detail-text {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-secondary);
+  line-height: 1.5;
+  padding-top: var(--space-1);
+  border-top: 1px dotted var(--wk-accent-ink);
+  margin-top: var(--space-1);
+  opacity: 0.85;
+}
+
+.wk-timeline__expand-hint {
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-tertiary);
+  opacity: 0;
+  transition: opacity 200ms var(--ease-cinematic);
+}
+
+/* .wk-timeline__node:hover expand-hint removed — expand hint shown on expanded state */
+
+.wk-timeline__node--expanded .wk-timeline__expand-hint {
+  opacity: 0.8;
+}
+
+/* Desktop: horizontal timeline */
+@media (min-width: 768px) {
+  .wk-timeline {
+    flex-direction: row;
+    gap: 0;
+    padding-left: 0;
+    padding-top: var(--space-5);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-left: 0;
+  }
+
+  .wk-timeline__ink-track {
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: auto;
+    width: auto;
+    height: 4px;
+  }
+
+  .wk-timeline__node {
+    min-width: 9rem;
+    flex: 1;
+    padding: var(--space-2) var(--space-2) 0;
+  }
+
+  .wk-timeline__dot {
+    left: var(--space-2);
+    top: calc(-1 * var(--space-5) + var(--space-2));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wk-timeline__dot {
+    transition: none;
+  }
+
+  .wk-timeline__detail {
+    transition: none;
+  }
+}
+
+/* ===========================================================================
+   E. OPINIONS — 3-column grid, compact cards, always visible
+   =========================================================================== */
+
+.wk-opinions-section {
+  padding: var(--space-4) 0;
+}
+
+.wk-opinions__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+}
+
+@media (min-width: 768px) {
+  .wk-opinions__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .wk-opinions__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.wk-opinion {
+  background: none;
+  border: none;
+  border-left: 4px solid var(--lean-color, var(--wk-accent));
+  padding: var(--space-3) var(--space-4);
+  position: relative;
+  transition:
+    box-shadow 320ms var(--ease-cinematic),
+    transform 320ms var(--spring-snappy);
+}
+
+/* .wk-opinion:hover lift/shadow removed — opinion cards sit still */
+
+.wk-opinion__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.wk-opinion__badge {
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2px var(--space-2);
+  background: var(--wk-accent);
+  border: none;
+  color: #FFFFFF;
+  white-space: nowrap;
+}
+
+.wk-opinion__topic {
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 400;
+  color: var(--fg-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.wk-opinion__headline {
+  font-family: var(--font-editorial);
+  font-size: var(--text-base);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--fg-primary);
+  margin-bottom: var(--space-2);
+  letter-spacing: -0.01em;
+}
+
+.wk-opinion__text {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.65;
+  color: var(--fg-secondary);
+  text-align: justify;
+  hyphens: auto;
+}
+
+.wk-opinion__text p {
+  margin-bottom: var(--space-2);
+}
+
+.wk-opinion__text p:last-child {
+  margin-bottom: 0;
+}
+
+/* ===========================================================================
+   F. WEEK IN BRIEF — compact 2-column list
+   =========================================================================== */
+.wk-brief-section {
+  padding: var(--space-4) 0;
+}
+
+.wk-brief__list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+
+@media (min-width: 768px) {
+  .wk-brief__list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0 var(--space-5);
+  }
+}
+
+.wk-brief__item {
+  padding: var(--space-3) 0;
+  position: relative;
+}
+
+/* Organic ink bottom border on brief items */
+.wk-brief__item::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23991B1B' stroke-width='0.8' fill='none' opacity='0.18'/%3E%3C/svg%3E");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+:root[data-mode="dark"] .wk-brief__item::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 4' preserveAspectRatio='none'%3E%3Cpath d='M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2' stroke='%23EF5350' stroke-width='0.8' fill='none' opacity='0.14'/%3E%3C/svg%3E");
+}
+
+/* Hide bottom border on last row — single-col: last item, 2-col: last 2 items */
+.wk-brief__item:last-child::after {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .wk-brief__item:nth-last-child(-n+2)::after {
+    display: none;
+  }
+}
+
+.wk-brief__headline {
+  font-family: var(--font-editorial);
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--fg-primary);
+  line-height: 1.2;
+  margin-bottom: var(--space-1);
+  letter-spacing: -0.01em;
+}
+
+.wk-brief__summary {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--fg-secondary);
+  line-height: 1.6;
+}
+
+/* ===========================================================================
+   G. AUDIO PLAYER — simple inline bar
+   =========================================================================== */
+.wk-audio-section {
+  padding: var(--space-3) 0;
+}
+
+.wk-audio__player {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  background: var(--bg-secondary);
+  border: none;
+  border-top: 2px dashed var(--wk-accent-ink);
+  padding: var(--space-3) var(--space-4);
+}
+
+.wk-audio__play {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed var(--wk-accent-ink);
+  border-radius: 50%;
+  background: var(--bg-card);
+  color: var(--fg-primary);
+  cursor: pointer;
+  transition:
+    background 200ms var(--ease-cinematic),
+    color 200ms var(--ease-cinematic);
+}
+
+.wk-audio__play:hover {
+  background: var(--fg-primary);
+  color: var(--bg-primary);
+}
+
+.wk-audio__play:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+.wk-audio__play--active {
+  background: var(--fg-primary);
+  color: var(--bg-primary);
+}
+
+.wk-audio__play--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.wk-audio__controls {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.wk-audio__scrubber {
+  width: 100%;
+  height: 4px;
+  appearance: none;
+  background: var(--border-subtle);
+  cursor: pointer;
+  outline: none;
+}
+
+.wk-audio__scrubber::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--fg-primary);
+  cursor: pointer;
+}
+
+.wk-audio__scrubber::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--fg-primary);
+  border: none;
+  cursor: pointer;
+}
+
+.wk-audio__time {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: var(--fg-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.wk-audio__error {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ===========================================================================
+   I. ISSUE ARCHIVE — horizontal compact row
+   =========================================================================== */
+.wk-archive {
+  padding: var(--space-3) 0;
+}
+
+.wk-archive__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.wk-archive__item {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  background: var(--bg-secondary);
+  border: none;
+  border-left: 2px dashed var(--wk-accent-ink);
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  color: var(--fg-secondary);
+}
+
+.wk-archive__item--current {
+  border-left-color: var(--wk-accent);
+  border-left-width: 3px;
+  color: var(--fg-primary);
+  background: var(--wk-accent-ghost);
+}
+
+.wk-archive__issue {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.wk-archive__range {
+  font-weight: 400;
+  color: var(--fg-tertiary);
+  white-space: nowrap;
+}
+
+/* ===========================================================================
+   LOADING & EMPTY STATES
+   =========================================================================== */
+.wk-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  gap: var(--space-4);
+}
+
+.wk-loading__bar {
+  width: 3rem;
+  height: 2px;
+  background: var(--wk-accent, var(--border-strong));
+  animation: wkPulse 1.2s var(--ease-rack) infinite;
+}
+
+@keyframes wkPulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+.wk-loading__text {
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fg-tertiary);
+}
+
+.wk-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 40vh;
+  gap: var(--space-4);
+  text-align: center;
+}
+
+.wk-empty__text {
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  color: var(--fg-secondary);
+}
+
+.wk-empty__link {
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--fg-tertiary);
+  border-bottom: 1px dashed var(--wk-accent-ink);
+  padding-bottom: 2px;
+  transition: color 200ms var(--ease-cinematic);
+}
+
+.wk-empty__link:hover {
+  color: var(--wk-accent);
+}
+
+/* ===========================================================================
+   SECTION DIVIDER FLOURISH
+   =========================================================================== */
+.wk-flourish {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: var(--space-3) 0;
+  gap: var(--space-3);
+}
+
+.wk-flourish__ornament {
+  width: 16px;
+  height: 16px;
+  color: var(--wk-accent);
+  opacity: 0.5;
+}
+
+.wk-flourish__line {
+  flex: 1;
+  max-width: 60px;
+  height: 2px;
+  color: var(--wk-accent);
+  opacity: 0.25;
+}
+
+/* ===========================================================================
+   RESPONSIVE — MOBILE
+   =========================================================================== */
+@media (max-width: 767px) {
+  .wk-main {
+    padding: 0 var(--space-3);
+    padding-bottom: var(--space-5);
+  }
+
+  .wk-masthead {
+    padding: var(--space-3) var(--space-3);
+  }
+
+  .wk-masthead__brand {
+    gap: var(--space-2);
+  }
+
+  .wk-masthead__wordmark {
+    height: 22px;
+  }
+
+  /* Masthead meta: wrap gracefully on narrow screens */
+  .wk-masthead__meta {
+    line-height: 1.6;
+  }
+
+  .wk-cover-hero {
+    margin-left: calc(-1 * var(--space-3));
+    margin-right: calc(-1 * var(--space-3));
+  }
+
+  .wk-cover-hero__headline {
+    font-size: clamp(1.25rem, 5vw, 1.75rem);
+  }
+
+  .wk-cover-hero__content {
+    padding: var(--space-4) var(--space-3);
+  }
+
+  /* Mobile: text first, numbers below (natural reading order) */
+  .wk-cover-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-3) 0;
+  }
+
+  /* Left-align body text on mobile to avoid rivers from justification */
+  .wk-cover-body__text {
+    text-align: left;
+  }
+
+  /* Vertical timeline on mobile */
+  .wk-timeline {
+    padding-left: var(--space-4);
+  }
+
+  .wk-timeline__dot {
+    left: calc(-1 * var(--space-4) + var(--space-2));
+  }
+
+  /* Timeline nodes: ensure touch target + simpler transition */
+  .wk-timeline__node {
+    min-height: 44px;
+    padding: var(--space-2) 0 var(--space-2) 0;
+  }
+
+  /* Expand hint visible on touch (hover-only is useless) */
+  .wk-timeline__expand-hint {
+    opacity: 0.5;
+  }
+
+  /* Disable hover transforms on touch */
+  /* .wk-opinion:hover already stripped from base — no override needed */
+
+  /* Opinion cards: tighter padding */
+  .wk-opinion {
+    padding: var(--space-3);
+  }
+
+  /* Section labels: slightly tighter */
+  .wk-section-label {
+    margin-bottom: var(--space-2);
+  }
+
+  /* Brief items: tighter vertical spacing */
+  .wk-brief__item {
+    padding: var(--space-2) 0;
+  }
+
+  /* Audio player: full-width layout, tighter padding */
+  .wk-audio__player {
+    padding: var(--space-3);
+    gap: var(--space-2);
+  }
+
+  /* Audio scrubber: 44px touch target, visual track stays thin */
+  .wk-audio__scrubber {
+    height: 44px;
+    padding: 18px 0;
+  }
+
+  .wk-audio__scrubber::-webkit-slider-thumb {
+    width: 22px;
+    height: 22px;
+  }
+
+  .wk-audio__scrubber::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+  }
+
+  /* Archive items: 44px touch targets */
+  .wk-archive__item {
+    min-height: 44px;
+    align-items: center;
+    padding: var(--space-2) var(--space-3);
+  }
+
+  /* Tighter flourish spacing on mobile */
+  .wk-flourish {
+    margin: var(--space-2) 0;
+  }
+
+  /* Tighter section padding on mobile */
+  .wk-opinions-section,
+  .wk-brief-section,
+  .wk-audio-section,
+  .wk-archive {
+    padding: var(--space-3) 0;
+  }
+
+  .wk-divider {
+    margin: var(--space-2) 0;
+  }
+
+  /* === PERFORMANCE — DISABLE AMBIENT ANIMATIONS ON MOBILE ===
+     GPU budget: wkInkShimmer runs infinite transforms on mobile.
+     Imperceptible on 5-6" screens, measurable GPU cost. Disable. */
+  .wk-flourish svg {
+    animation: none;
+  }
+
+  /* Film grain: reduce opacity on mobile (0.04 vs desktop 0.08) */
+  .wk-page::before {
+    opacity: var(--cin-grain-opacity, 0.04);
+  }
+
+  /* Vignette: reduce to 50% on mobile */
+  .wk-page::after {
+    opacity: 0.5;
+  }
+
+  /* Cold open: simpler ease-out instead of spring on mobile */
+  .wk-cold-open--masthead {
+    animation-duration: 500ms;
+    animation-timing-function: var(--ease-cinematic);
+  }
+
+  .wk-cold-open--hero,
+  .wk-cold-open--headline,
+  .wk-cold-open--numbers,
+  .wk-cold-open--body,
+  .wk-cold-open--section {
+    animation-timing-function: var(--ease-cinematic);
+  }
+
+  /* Scroll reveal: simpler, faster on mobile */
+  .wk-reveal {
+    transform: translateY(12px);
+    transition:
+      opacity 500ms var(--ease-cinematic),
+      transform 500ms var(--ease-cinematic);
+  }
+
+  .wk-reveal-child {
+    transform: translateY(8px);
+    transition:
+      opacity 350ms var(--ease-cinematic),
+      transform 350ms var(--ease-cinematic);
+  }
+
+  /* Timeline nodes: ease-out, no spring */
+  .wk-timeline__node {
+    transition:
+      opacity 300ms var(--ease-cinematic),
+      transform 300ms var(--ease-cinematic),
+      background 200ms var(--ease-cinematic);
+  }
+
+  /* Flourish bloom: ease-out, no spring */
+  .wk-flourish {
+    transition:
+      opacity 400ms var(--ease-cinematic),
+      transform 500ms var(--ease-cinematic);
+  }
+
+  /* Disable text selection on interactive elements */
+  .wk-timeline__node,
+  .wk-audio__play,
+  .wk-archive__item {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Break long words in headlines to prevent overflow */
+  .wk-cover-hero__headline,
+  .wk-opinion__headline,
+  .wk-brief__headline {
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  /* Cinematic grade: disabled on mobile (scroll performance) */
+  .wk-main {
+    filter: none;
+  }
+}
+
+/* ===========================================================================
+   ACCESSIBILITY
+   =========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .wk-page::before,
+  .wk-page::after {
+    animation: none;
+  }
+
+  .wk-opinion,
+  .wk-archive__item {
+    transition: none;
+    transform: none;
+  }
+
+  /* .wk-opinion:hover already stripped from base — no override needed */
+
+  .wk-timeline__node--expanded .wk-timeline__dot {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .wk-flourish {
+    animation: none;
+  }
+}
+
+/* ===========================================================================
+   CINEMATIC LIFE LAYER — subtle ambient motion
+   =========================================================================== */
+
+@keyframes wkInkShimmer {
+  0%, 100% { opacity: 0.35; }
+  50%      { opacity: 0.55; }
+}
+
+.wk-flourish svg {
+  animation: wkInkShimmer 6s var(--ease-cinematic) infinite;
+}
+
+/* Staggered scroll reveals */
+.wk-opinions__grid > .wk-reveal-child:nth-child(1) { transition-delay: 0ms; }
+.wk-opinions__grid > .wk-reveal-child:nth-child(2) { transition-delay: 100ms; }
+.wk-opinions__grid > .wk-reveal-child:nth-child(3) { transition-delay: 200ms; }
+.wk-opinions__grid > .wk-reveal-child:nth-child(4) { transition-delay: 300ms; }
+.wk-opinions__grid > .wk-reveal-child:nth-child(5) { transition-delay: 400ms; }
+.wk-opinions__grid > .wk-reveal-child:nth-child(6) { transition-delay: 500ms; }
+
+.wk-timeline__node {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 400ms var(--ease-cinematic),
+    transform 400ms var(--spring-snappy, var(--ease-cinematic)),
+    background 200ms var(--ease-cinematic);
+  transition-delay: var(--node-delay, 0ms);
+}
+
+.wk-reveal--visible .wk-timeline__node {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Numbers: spring scale-up */
+.wk-cover-body__number-item {
+  opacity: 0;
+  transform: scale(0.85);
+  transition:
+    opacity 500ms var(--ease-cinematic),
+    transform 500ms var(--spring-bouncy, var(--ease-dramatic));
+}
+
+.wk-reveal--visible .wk-cover-body__number-item:nth-child(1) { transition-delay: 0ms; }
+.wk-reveal--visible .wk-cover-body__number-item:nth-child(2) { transition-delay: 100ms; }
+.wk-reveal--visible .wk-cover-body__number-item:nth-child(3) { transition-delay: 200ms; }
+.wk-reveal--visible .wk-cover-body__number-item:nth-child(4) { transition-delay: 300ms; }
+.wk-reveal--visible .wk-cover-body__number-item:nth-child(5) { transition-delay: 400ms; }
+
+.wk-reveal--visible .wk-cover-body__number-item {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Bias stat cards: fly-in */
+.wk-bias__stat {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 500ms var(--ease-cinematic),
+    transform 500ms var(--spring-bouncy, var(--ease-dramatic));
+}
+
+.wk-reveal--visible .wk-bias__stat:nth-child(1) { transition-delay: 0ms; }
+.wk-reveal--visible .wk-bias__stat:nth-child(2) { transition-delay: 80ms; }
+.wk-reveal--visible .wk-bias__stat:nth-child(3) { transition-delay: 160ms; }
+.wk-reveal--visible .wk-bias__stat:nth-child(4) { transition-delay: 240ms; }
+
+.wk-reveal--visible .wk-bias__stat {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Flourish: bloom from center */
+.wk-flourish {
+  opacity: 0;
+  transform: scaleX(0.3);
+  transition:
+    opacity 600ms var(--ease-cinematic),
+    transform 800ms var(--spring-bouncy, var(--ease-dramatic));
+}
+
+.wk-reveal--visible .wk-flourish,
+.wk-flourish.wk-reveal--visible {
+  opacity: 1;
+  transform: scaleX(1);
+}
