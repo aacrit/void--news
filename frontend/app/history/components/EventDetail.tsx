@@ -57,8 +57,10 @@ interface EventDetailProps {
 
 export default function EventDetail({ event, allEvents, onNavigateToEvent, onClose }: EventDetailProps) {
   const contentRef = useRef<HTMLDivElement>(null);
-  const [storyExpanded, setStoryExpanded] = useState(false);
-  const [omissionsView, setOmissionsView] = useState<"stressed" | "ignored">("stressed");
+  // storyExpanded + omissionsView state removed 2026-04-29 — Context paragraphs
+  // and both omissions panels now render inline by default. The "click-tax to
+  // moat" was 7 taps before this change; product promise is multi-perspective
+  // visibility, not progressive disclosure of every section.
 
   /* Determine next event for Stage 6 navigation */
   const nextEvent = useMemo(() => {
@@ -359,10 +361,8 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
                 )}
 
                 {extra.length > 0 && (
-                  <>
-                    {storyExpanded && (
-                      <div className="hist-context__extra">
-                        {extra.map((para, i) => (
+                  <div className="hist-context__extra">
+                    {extra.map((para, i) => (
                           <p key={i + 2}>{para}</p>
                         ))}
                         {/* Legacy points — surfaced in expanded section */}
@@ -373,17 +373,7 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
                             ))}
                           </ul>
                         )}
-                      </div>
-                    )}
-                    <button
-                      type="button"
-                      className="hist-context__more-toggle"
-                      onClick={() => setStoryExpanded((prev) => !prev)}
-                      aria-expanded={storyExpanded}
-                    >
-                      {storyExpanded ? "\u25B4" : "\u25BE"}
-                    </button>
-                  </>
+                  </div>
                 )}
               </>
             );
@@ -423,30 +413,9 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
 
       {/* ── OMISSIONS — stressed vs ignored, mobile toggle ── */}
       <section className="hist-stage hist-stage--omissions">
-        {/* Mobile toggle — flip the card */}
-        <div className="hist-omissions__toggle-bar" role="group" aria-label="Omissions view">
-          <button
-            type="button"
-            className={`hist-omissions__toggle-btn${omissionsView === "stressed" ? " hist-omissions__toggle-btn--active" : ""}`}
-            onClick={() => setOmissionsView("stressed")}
-            aria-pressed={omissionsView === "stressed"}
-          >
-            stressed
-          </button>
-          <span className="hist-omissions__toggle-sep" aria-hidden="true">·</span>
-          <button
-            type="button"
-            className={`hist-omissions__toggle-btn${omissionsView === "ignored" ? " hist-omissions__toggle-btn--active" : ""}`}
-            onClick={() => setOmissionsView("ignored")}
-            aria-pressed={omissionsView === "ignored"}
-          >
-            ignored
-          </button>
-        </div>
-
         <div className="hist-omissions-split">
           <div
-            className={`hist-omissions-split__panel hist-omissions-split__panel--emphasized hist-reveal${omissionsView === "stressed" ? " hist-omissions-split__panel--mobile-visible" : ""}`}
+            className={`hist-omissions-split__panel hist-omissions-split__panel--emphasized hist-reveal`}
           >
             {event.perspectives.map((p) => (
               <div key={p.id} className="hist-omissions-split__group">
@@ -478,7 +447,7 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
           )}
 
           <div
-            className={`hist-omissions-split__panel hist-omissions-split__panel--omitted hist-reveal${omissionsView === "ignored" ? " hist-omissions-split__panel--mobile-visible" : ""}`}
+            className={`hist-omissions-split__panel hist-omissions-split__panel--omitted hist-reveal`}
           >
             {event.perspectives.filter((p) => p.omissions.length > 0).map((p) => (
               <div key={p.id} className="hist-omissions-split__group">
@@ -641,7 +610,12 @@ function WitnessBlock({
   index: number;
 }) {
   const side = index % 2 === 0 ? "left" : "right";
-  const [expanded, setExpanded] = useState(false);
+  // Default-expanded 2026-04-29: the multi-perspective comparison IS the
+  // moat. Hiding secondary arguments + primary sources behind a chevron
+  // forced 1 click per witness × N witnesses just to reach the page's
+  // value prop. Toggle stays so a reader who wants to compact one
+  // witness can collapse it (e.g. while comparing two others).
+  const [expanded, setExpanded] = useState(true);
   const toggleExpand = useCallback(() => setExpanded((prev) => !prev), []);
   const perspColor = PERSP_COLORS[perspective.color] || PERSP_COLORS.a;
 
@@ -742,7 +716,11 @@ function SidebarElsewhere({
   connections: EventConnection[];
   allEvents: HistoricalEvent[];
 }) {
-  const [mobileOpen, setMobileOpen] = useState(false);
+  // mobileOpen state retained but defaulted to true so the "Elsewhere,
+  // Meanwhile" sidebar renders inline on mobile. The accordion trigger is
+  // unused at default state; entries are short and the click-tax wasn't
+  // earning anything.
+  const [mobileOpen, setMobileOpen] = useState(true);
 
   const entries = connections.map((conn) => {
     const linked = allEvents.find((e) => e.slug === conn.targetSlug);
