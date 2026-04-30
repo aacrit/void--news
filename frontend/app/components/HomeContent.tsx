@@ -938,6 +938,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   filterKey={filterKey}
                   kbdFocusIndex={kbdFocusIndex}
                   editionMeta={editionMeta}
+                  leadImageUrl={leadImageUrl}
                   transitionClass={editionTransition === "out" ? "anim-edition-out" : editionTransition === "in" ? "anim-edition-in" : undefined}
                 />
               ) : (

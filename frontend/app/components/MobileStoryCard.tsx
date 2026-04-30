@@ -1,10 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import type { Story } from "../lib/types";
 import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
 import { useInView } from "../lib/sharedObserver";
-import { getLeanColor, tiltLabel } from "../lib/biasColors";
+import { getLeanColor } from "../lib/biasColors";
 
 interface MobileStoryCardProps {
   story: Story;
@@ -14,6 +15,8 @@ interface MobileStoryCardProps {
   kbdFocused?: boolean;
   /** "hero" = lead story with summary; "compact" = headline + inline Sigil only */
   variant?: "hero" | "compact";
+  /** og:image for the rank-0 hero — full-bleed 4:5 above headline. Hero only. */
+  imageUrl?: string | null;
 }
 
 /* ---------------------------------------------------------------------------
@@ -25,11 +28,14 @@ interface MobileStoryCardProps {
    --------------------------------------------------------------------------- */
 
 export default function MobileStoryCard({
-  story, index, onStoryClick, globalIndex, kbdFocused, variant = "compact",
+  story, index, onStoryClick, globalIndex, kbdFocused, variant = "compact", imageUrl,
 }: MobileStoryCardProps) {
   const [cardRef, visible] = useInView<HTMLElement>();
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   const isHero = variant === "hero";
+  const showImage = isHero && imageUrl && !imgError;
 
   return (
     <article
@@ -60,8 +66,26 @@ export default function MobileStoryCard({
       />
 
       {isHero ? (
-        /* Hero layout: headline + inline Sigil */
+        /* Hero layout: full-bleed 4:5 image + headline + Sigil + summary.
+           Image is the cinematic anchor that flips perception from
+           "RSS feed" to "premium newspaper". Per CEO scope lock 2026-04-29:
+           lead-only imagery on mobile (ranks 1+ stay text-only). */
         <>
+          {showImage && (
+            <div className={`msc__hero-image${imgLoaded ? " msc__hero-image--loaded" : ""}`}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={imageUrl!}
+                alt=""
+                className="msc__hero-image__img"
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
+                onLoad={() => setImgLoaded(true)}
+                onError={() => setImgError(true)}
+              />
+            </div>
+          )}
           <h2 className="msc__headline msc__headline--hero">
             <span>{story.title}</span>
             <Sigil data={story.sigilData} size="lg" instant />

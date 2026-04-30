@@ -114,17 +114,25 @@ export default function MobileBottomNav({
         {/* Tilt selector: [ ·left ·balanced ·right ] */}
         <div className="mob-nav__lens" role="toolbar" aria-label="Coverage tilt">
           <span className="mob-nav__bracket" aria-hidden="true">[</span>
-          {(["Left", "Balanced", "Right"] as LeanChip[]).map((lean) => (
-            <button
-              key={lean}
-              aria-pressed={activeLean === lean}
-              onClick={() => handleLeanTap(lean)}
-              className={`mob-nav__lean mob-nav__lean--${lean.toLowerCase()}${activeLean === lean ? " mob-nav__lean--active" : ""}`}
-            >
-              <span className="mob-nav__dot" aria-hidden="true" />
-              {lean.toLowerCase()}
-            </button>
-          ))}
+          {(["Left", "Balanced", "Right"] as LeanChip[]).map((lean) => {
+            const isActive = activeLean === lean;
+            return (
+              <button
+                key={lean}
+                aria-pressed={isActive}
+                aria-label={isActive ? `${lean} filter active — tap to clear` : `Filter to ${lean}`}
+                title={isActive ? "Tap to clear filter" : undefined}
+                onClick={() => handleLeanTap(lean)}
+                className={`mob-nav__lean mob-nav__lean--${lean.toLowerCase()}${isActive ? " mob-nav__lean--active" : ""}`}
+              >
+                <span className="mob-nav__dot" aria-hidden="true" />
+                {lean.toLowerCase()}
+                {/* Active state shows a × glyph as the explicit "tap to clear"
+                    affordance — without it, re-tap deselect was undiscoverable. */}
+                {isActive && <span className="mob-nav__clear-glyph" aria-hidden="true">×</span>}
+              </button>
+            );
+          })}
           <span className="mob-nav__bracket" aria-hidden="true">]</span>
         </div>
 
