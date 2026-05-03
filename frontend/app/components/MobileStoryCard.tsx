@@ -5,7 +5,6 @@ import type { Story } from "../lib/types";
 import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
 import { useInView } from "../lib/sharedObserver";
-import { getLeanColor } from "../lib/biasColors";
 
 interface MobileStoryCardProps {
   story: Story;
@@ -22,9 +21,9 @@ interface MobileStoryCardProps {
 /* ---------------------------------------------------------------------------
    MobileStoryCard — Space-efficient mobile card
 
-   Hero: meta + headline (Playfair) + 2-line summary + Sigil footer (~140px)
-   Compact: meta row + headline with inline Sigil (~72px)
-   Saves ~60px per card vs desktop StoryCard by eliminating summary + footer.
+   Hero: full-bleed 4:5 image + headline (Playfair) + xl Sigil (72px) + summary
+   Compact: headline + inline sm Sigil (40px) + (optional) category row
+   Phase 3 redesign: Sigil promoted as primary bias indicator (mixed hierarchy).
    --------------------------------------------------------------------------- */
 
 export default function MobileStoryCard({
@@ -66,7 +65,7 @@ export default function MobileStoryCard({
       />
 
       {isHero ? (
-        /* Hero layout: full-bleed 4:5 image + headline + Sigil + summary.
+        /* Hero layout: full-bleed 4:5 image + headline + xl Sigil (72px, Phase 3) + summary.
            Image is the cinematic anchor that flips perception from
            "RSS feed" to "premium newspaper". Per CEO scope lock 2026-04-29:
            lead-only imagery on mobile (ranks 1+ stay text-only). */
@@ -88,7 +87,7 @@ export default function MobileStoryCard({
           )}
           <h2 className="msc__headline msc__headline--hero">
             <span>{story.title}</span>
-            <Sigil data={story.sigilData} size="lg" instant />
+            <Sigil data={story.sigilData} size="xl" instant />
           </h2>
           {story.summary?.trim() && <p className="msc__summary">{story.summary}</p>}
           {!story.summary?.trim() && (
@@ -98,26 +97,28 @@ export default function MobileStoryCard({
           )}
         </>
       ) : (
-        /* Compact layout: headline + lean dot row beneath */
+        /* Compact layout: headline + inline sm Sigil (40px) + (optional) category row.
+           Phase 3: Sigil now sits inline with the headline as the primary
+           bias signal. The lean-dot row only renders when needed:
+             - story.sigilData.unscored (need explicit "unscored" label since
+               the Sigil renders gray and the absence of color carries no signal)
+             - story.category present (so the row has companion content) */
         <>
           <h3 className="msc__headline msc__headline--compact">
             <span>{story.title}</span>
+            <Sigil data={story.sigilData} size="sm" instant />
           </h3>
-          {/* Skip the entire row when it would render as just an orphaned
-              8px dot (scored cluster with no category). With no companion
-              text/pill, the dot looks like a CSS bug. */}
           {(story.sigilData.unscored || story.category) && (
             <div className="msc__sigil-row">
-              <span
-                className="msc__lean-dot"
-                style={{ "--lean-dot-color": story.sigilData.unscored ? undefined : getLeanColor(story.sigilData.politicalLean) } as React.CSSProperties}
-                aria-hidden="true"
-              />
-              {/* Lean text removed when scored — the dot color already encodes lean.
-                  Only render the explicit label when unscored, where the absence
-                  of color carries no signal. Per feedback_bias_indicator_priorities. */}
               {story.sigilData.unscored && (
-                <span className="msc__lean-label">unscored</span>
+                <>
+                  <span
+                    className="msc__lean-dot"
+                    style={{ "--lean-dot-color": undefined } as React.CSSProperties}
+                    aria-hidden="true"
+                  />
+                  <span className="msc__lean-label">unscored</span>
+                </>
               )}
               {story.category && <span className="msc__cat">{story.category}</span>}
             </div>
