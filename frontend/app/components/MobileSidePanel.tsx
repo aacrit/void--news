@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import ScaleIcon from "./ScaleIcon";
-import ThemeToggle from "./ThemeToggle";
 import { hapticLight } from "../lib/haptics";
 
 /* ---------------------------------------------------------------------------
@@ -181,14 +180,11 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
           </Link>
         </nav>
 
-        {/* Theme toggle row */}
-        <div className="msp__theme-row" data-msp-cascade="5">
-          <span className="msp__theme-label">Theme</span>
-          <ThemeToggle />
-        </div>
+        {/* Theme toggle removed per Kill List — theme auto-detects from prefers-color-scheme.
+             Does not deserve prime real estate in side panel. */}
 
         {/* Footer — dateline, tagline, colophon mark */}
-        <div className="msp__footer" data-msp-cascade="6">
+        <div className="msp__footer" data-msp-cascade="5">
           <time className="msp__dateline" suppressHydrationWarning>
             {mounted
               ? new Date().toLocaleDateString("en-US", {

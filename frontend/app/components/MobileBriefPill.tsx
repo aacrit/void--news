@@ -49,7 +49,6 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
   // Phase 2 redesign: Always expanded on mobile (no collapsed pill state)
   const [isExpanded, setIsExpanded] = useState(true);
   const [tldrExpanded, setTldrExpanded] = useState(false);
-  const [opinionExpanded, setOpinionExpanded] = useState(false);
   const [episodesExpanded, setEpisodesExpanded] = useState(false);
 
   if (!brief) return (
@@ -73,16 +72,6 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
   const tldrPreview = tldrSentences.slice(0, 2).join(" ");
   const tldrRest = tldrSentences.slice(2).join(" ");
   const tldrHasMore = tldrRest.length > 0;
-
-  const opinionSentences = brief.opinion_text ? String(brief.opinion_text).split(/(?<=[.!?])\s+/).filter(Boolean) : [];
-  const opinionPreview = opinionSentences.slice(0, 2).join(" ");
-  const opinionRest = opinionSentences.slice(2).join(" ");
-  const opinionHasMore = opinionRest.length > 0;
-
-  const leanLabel = brief.opinion_lean === "left" ? "Progressive"
-    : brief.opinion_lean === "right" ? "Conservative" : "Pragmatic";
-  const leanMod = brief.opinion_lean === "left" ? "skb-lean--left"
-    : brief.opinion_lean === "right" ? "skb-lean--right" : "skb-lean--center";
 
   const handleOnairClick = () => {
     hapticConfirm();
@@ -155,30 +144,12 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
           type="button" aria-expanded={tldrExpanded}>{tldrExpanded ? "Less" : "Read more"}</button>
       )}
 
-      {/* Opinion — behind dotted firewall */}
-      {brief.opinion_text && <hr className="mbp__rule" />}
-
-      {brief.opinion_text && (
-        <section className="mbp__section" aria-label="void --opinion">
-          <div className="mbp__label">
-            <LogoIcon size={14} animation="idle" />
-            <span className="mbp__label-human">Editorial</span>
-            <span className="mbp__cmd">void --opinion</span>
-            {brief.opinion_lean && <span className={`skb__lean-badge ${leanMod}`}>{leanLabel}</span>}
-          </div>
-          {brief.opinion_headline && <h3 className="mbp__hl mbp__hl--opinion">{brief.opinion_headline}</h3>}
-          <p className="mbp__preview mbp__preview--opinion">{opinionPreview}</p>
-          <div className={`mbp__expand${opinionExpanded ? " mbp__expand--open" : ""}`}>
-            <div className="mbp__expand-inner">
-              <p className="mbp__expand-text mbp__expand-text--opinion">{opinionRest}</p>
-            </div>
-          </div>
-          {opinionHasMore && (
-            <button className="mbp__more" onClick={() => { hapticLight(); setOpinionExpanded((v) => !v); }}
-              type="button" aria-expanded={opinionExpanded}>{opinionExpanded ? "Less" : "Read more"}</button>
-          )}
-        </section>
-      )}
+      {/* Opinion removed from Brief per Kill List.
+           Opinion deserves its own surface (/opinion route).
+           Reduces Brief cognitive load by ~30%. Users can navigate to /opinion
+           via MobileBottomNav or desktop NavBar for full editorial coverage.
+           Pipeline still generates opinion_text + opinion_headline + opinion_lean;
+           they're just not rendered here. */}
 
       {/* Previous episodes — starts collapsed; tap "Episodes" to reveal.
            Progressive disclosure: OnAir content hidden by default to reduce

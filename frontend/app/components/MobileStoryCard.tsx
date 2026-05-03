@@ -3,7 +3,8 @@
 import { useState } from "react";
 import type { Story } from "../lib/types";
 import Sigil from "./Sigil";
-import { hapticLight } from "../lib/haptics";
+import MobilePerspectivePeek from "./MobilePerspectivePeek";
+import { hapticLight, hapticMedium } from "../lib/haptics";
 import { useInView } from "../lib/sharedObserver";
 
 interface MobileStoryCardProps {
@@ -32,9 +33,26 @@ export default function MobileStoryCard({
   const [cardRef, visible] = useInView<HTMLElement>();
   const [imgLoaded, setImgLoaded] = useState(false);
   const [imgError, setImgError] = useState(false);
+  const [showPerspectivePeek, setShowPerspectivePeek] = useState(false);
+  const [longPressTimerRef, setLongPressTimerRef] = useState<NodeJS.Timeout | null>(null);
 
   const isHero = variant === "hero";
   const showImage = isHero && imageUrl && !imgError;
+
+  const handleSigilPointerDown = () => {
+    const timer = setTimeout(() => {
+      hapticMedium();
+      setShowPerspectivePeek(true);
+    }, 500);
+    setLongPressTimerRef(timer);
+  };
+
+  const handleSigilPointerUp = () => {
+    if (longPressTimerRef) {
+      clearTimeout(longPressTimerRef);
+      setLongPressTimerRef(null);
+    }
+  };
 
   return (
     <article
@@ -87,7 +105,14 @@ export default function MobileStoryCard({
           )}
           <h2 className="msc__headline msc__headline--hero">
             <span>{story.title}</span>
-            <Sigil data={story.sigilData} size="xl" instant />
+            <div
+              className="msc__sigil-wrapper"
+              onPointerDown={handleSigilPointerDown}
+              onPointerUp={handleSigilPointerUp}
+              onPointerLeave={handleSigilPointerUp}
+            >
+              <Sigil data={story.sigilData} size="xl" instant />
+            </div>
           </h2>
           {story.summary?.trim() && <p className="msc__summary">{story.summary}</p>}
           {!story.summary?.trim() && (
@@ -106,7 +131,14 @@ export default function MobileStoryCard({
         <>
           <h3 className="msc__headline msc__headline--compact">
             <span>{story.title}</span>
-            <Sigil data={story.sigilData} size="sm" instant />
+            <div
+              className="msc__sigil-wrapper"
+              onPointerDown={handleSigilPointerDown}
+              onPointerUp={handleSigilPointerUp}
+              onPointerLeave={handleSigilPointerUp}
+            >
+              <Sigil data={story.sigilData} size="sm" instant />
+            </div>
           </h3>
           {(story.sigilData.unscored || story.category) && (
             <div className="msc__sigil-row">
@@ -120,11 +152,30 @@ export default function MobileStoryCard({
                   <span className="msc__lean-label">unscored</span>
                 </>
               )}
-              {story.category && <span className="msc__cat">{story.category}</span>}
+              {/* Category removed: cut from compact cards per Kill List.
+                 Category filter already in MobileBottomNav. Pure metadata noise here. */}
             </div>
           )}
           {story.summary?.trim() && <p className="msc__summary msc__summary--compact">{story.summary}</p>}
         </>
+      )}
+
+      {/* Long-press Sigil → Perspective Peek Modal (mobile only) */}
+      {showPerspectivePeek && (
+        <div className="msc__modal-backdrop" onClick={() => setShowPerspectivePeek(false)}>
+          <div className="msc__modal-content">
+            <MobilePerspectivePeek
+              story={story}
+              onClose={() => setShowPerspectivePeek(false)}
+              onOpenDeepDive={() => {
+                setShowPerspectivePeek(false);
+                if (cardRef.current && onStoryClick) {
+                  onStoryClick(story, cardRef.current.getBoundingClientRect());
+                }
+              }}
+            />
+          </div>
+        </div>
       )}
     </article>
   );
