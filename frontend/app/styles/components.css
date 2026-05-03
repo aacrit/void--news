@@ -5374,6 +5374,81 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   margin-top: var(--space-2);
 }
 
+/* ──────────────────────────────────────────────────────────────────────────
+   Phase 2 Redesign — Bias Analysis Toggle (Mobile)
+   All Six Lenses hidden by default behind a single button. Reduces visual
+   clutter on Deep Dive by aligning with "less attention grabbers" goal.
+   ────────────────────────────────────────────────────────────────────────── */
+
+.dd-bias-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  margin-bottom: var(--space-3);
+  background: none;
+  border: 1px solid var(--divider);
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  letter-spacing: var(--cin-tracking-meta-tight, 0.06em);
+  text-transform: uppercase;
+  color: var(--fg-secondary);
+  min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    border-color 150ms var(--ease-cinematic),
+    color 150ms var(--ease-cinematic),
+    background-color 150ms var(--ease-cinematic);
+}
+
+.dd-bias-toggle:hover {
+  border-color: var(--accent-warm);
+  color: var(--fg-primary);
+}
+
+.dd-bias-toggle:active {
+  background-color: var(--bg-hover);
+  transform: scale(0.98);
+}
+
+.dd-bias-toggle--open {
+  border-color: var(--accent-warm);
+  color: var(--fg-primary);
+  background-color: color-mix(in srgb, var(--accent-warm) 4%, transparent);
+}
+
+.dd-bias-toggle__caret {
+  display: inline-block;
+  font-size: 0.75em;
+  opacity: 0.7;
+  transition: transform 200ms var(--ease-cinematic);
+}
+
+.dd-bias-toggle--open .dd-bias-toggle__caret {
+  opacity: 1;
+}
+
+/* Collapsible container — smooth max-height + opacity for soft reveal */
+.dd-lenses__collapsible {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition:
+    max-height 320ms var(--ease-cinematic),
+    opacity 200ms var(--ease-cinematic);
+}
+
+.dd-lenses__collapsible--open {
+  max-height: 600px;
+  opacity: 1;
+}
+
+.dd-lenses__collapsible-label {
+  margin-bottom: var(--space-3);
+}
+
 /* Expand button for mobile compact mode */
 .dd-lenses__expand {
   display: block;

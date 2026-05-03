@@ -105,36 +105,25 @@ function SixLenses({ sigilData, visible }: { sigilData: SigilData; visible: bool
         <>
           {/* Phase 2 redesign: All lenses hidden behind single "Bias Analysis" button */}
           <button
-            className="dd-lenses__toggle text-meta"
+            className={`dd-bias-toggle text-meta${showAllLenses ? " dd-bias-toggle--open" : ""}`}
             onClick={() => { hapticLight(); setShowAllLenses(!showAllLenses); }}
             aria-expanded={showAllLenses}
-            style={{
-              display: "inline-block",
-              padding: "var(--space-2) var(--space-3)",
-              marginBottom: "var(--space-3)",
-              border: "1px solid var(--divider)",
-              borderRadius: "4px",
-              background: "none",
-              cursor: "pointer",
-              fontSize: "var(--text-sm)",
-              color: "var(--fg-secondary)",
-            }}
+            aria-controls="dd-lenses-collapsible"
           >
-            {showAllLenses ? "Hide analysis" : "Bias Analysis"}
-            <span style={{ marginLeft: "var(--space-1)" }}>
+            <span className="dd-bias-toggle__label">
+              {showAllLenses ? "Hide analysis" : "Bias Analysis"}
+            </span>
+            <span className="dd-bias-toggle__caret" aria-hidden="true">
               {showAllLenses ? "▾" : "▸"}
             </span>
           </button>
 
-          {/* Six-axis grid visible when toggle is expanded */}
           <div
-            style={{
-              maxHeight: showAllLenses ? "400px" : "0",
-              overflow: "hidden",
-              transition: "max-height 300ms var(--ease-out)",
-            }}
+            id="dd-lenses-collapsible"
+            className={`dd-lenses__collapsible${showAllLenses ? " dd-lenses__collapsible--open" : ""}`}
+            aria-hidden={!showAllLenses}
           >
-            <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>Six Lenses</h3>
+            <h3 className="dd-section-label text-meta dd-lenses__collapsible-label">Six Lenses</h3>
             <div className={`dd-lenses__grid${activeAxis ? " dd-lenses__grid--has-active" : ""}`}>
               {SIX_AXES.map((axis, i) => renderAxis(axis, i))}
             </div>

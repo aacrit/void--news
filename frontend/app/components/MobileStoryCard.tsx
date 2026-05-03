@@ -4,7 +4,6 @@ import type { Story } from "../lib/types";
 import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
 import { useInView } from "../lib/sharedObserver";
-import { getLeanColor, tiltLabel } from "../lib/biasColors";
 
 interface MobileStoryCardProps {
   story: Story;
@@ -60,11 +59,11 @@ export default function MobileStoryCard({
       />
 
       {isHero ? (
-        /* Hero layout: headline + inline Sigil */
+        /* Hero layout: headline + inline xl Sigil (72px) — Phase 3 redesign */
         <>
           <h2 className="msc__headline msc__headline--hero">
             <span>{story.title}</span>
-            <Sigil data={story.sigilData} size="lg" instant />
+            <Sigil data={story.sigilData} size="xl" instant />
           </h2>
           {story.summary?.trim() && <p className="msc__summary">{story.summary}</p>}
           {!story.summary?.trim() && (
@@ -74,20 +73,18 @@ export default function MobileStoryCard({
           )}
         </>
       ) : (
-        /* Compact layout: headline + lean dot row beneath */
+        /* Compact layout: headline + inline Sigil + category (Phase 3 — Sigil
+           replaces the redundant lean-dot row; lean is now encoded only by Sigil). */
         <>
           <h3 className="msc__headline msc__headline--compact">
             <span>{story.title}</span>
+            <Sigil data={story.sigilData} size="sm" instant />
           </h3>
-          <div className="msc__sigil-row">
-            <span
-              className="msc__lean-dot"
-              style={{ "--lean-dot-color": story.sigilData.unscored ? undefined : getLeanColor(story.sigilData.politicalLean) } as React.CSSProperties}
-              aria-hidden="true"
-            />
-            <span className="msc__lean-label">{story.sigilData.unscored ? "unscored" : tiltLabel(story.sigilData.politicalLean).toLowerCase().replace(" tilt", "")}</span>
-            {story.category && <span className="msc__cat">{story.category}</span>}
-          </div>
+          {story.category && (
+            <div className="msc__sigil-row">
+              <span className="msc__cat">{story.category}</span>
+            </div>
+          )}
           {story.summary?.trim() && <p className="msc__summary msc__summary--compact">{story.summary}</p>}
         </>
       )}
