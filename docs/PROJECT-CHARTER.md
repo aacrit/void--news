@@ -1,10 +1,10 @@
 # void --news — Project Charter
 
-Last updated: 2026-04-28 (rev 1)
+Last updated: 2026-05-03 (rev 2 — native app distribution capability added)
 
 **Date:** 2026-04-03 (rev 7)
 **Project Owner:** Aacrit (CEO)
-**Status:** Phase 4 In Progress
+**Status:** Phase 4 Complete; Phase 5 In Progress (PWA installable; iOS/Android shells initialized, awaiting signing)
 
 ---
 
@@ -35,13 +35,18 @@ A free, transparent news aggregation platform delivering World, US, Europe, and 
 - Responsive web app (desktop + mobile)
 - Static site on GitHub Pages, data in Supabase
 
+### Distribution Channels (added 2026-05-03)
+- **PWA** — installable Progressive Web App via `frontend/public/manifest.json` + `sw.js` service worker. Offline reading, network-first HTML/API, cache-first hashed assets, `offline.html` fallback. Live now on GH Pages; CF Pages on cutover.
+- **iOS native app** — Capacitor shell at `frontend/ios/` (`appId: void.news`, `webDir: out`). Awaiting Apple Developer account ($99/yr) signing + App Store submission.
+- **Android native app** — Capacitor shell at `frontend/android/`. Awaiting keystore + Google Play Console ($25 one-time) submission, or sideload APK distribution. Build steps: `docs/APP-BUILD-GUIDE.md`.
+
 ### Out of Scope (MVP)
 - User accounts, authentication, personalization
-- Mobile native apps (iOS/Android)
+- ~~Mobile native apps (iOS/Android)~~ — moved to Phase 5 In-Scope as Capacitor wrappers around the static export (no separate native codebase)
 - Real-time/streaming updates
 - Social features (comments, sharing, bookmarks)
 - Paid features or subscriptions
-- Paid AI/LLM inference
+- Paid AI/LLM inference (now ~$30/mo Sonnet 4.6 budget — see CLAUDE.md)
 
 ## 4. Success Criteria
 
@@ -109,9 +114,9 @@ GitHub Actions (4x daily) → Python Pipeline → Supabase (PostgreSQL) ← Next
 |-------|--------|-------------|
 | Phase 1 — Foundation | COMPLETE | Pipeline, source list, Supabase schema, fetchers, GitHub Actions |
 | Phase 2 — Analysis Engine | COMPLETE | 6-axis bias engine, clustering, ranking v6.0, Gemini integration |
-| Phase 3 — Frontend MVP | COMPLETE | Desktop + mobile layouts, news feed, BiasLens, deploy pending |
-| Phase 4 — Deep Dive | IN PROGRESS | Dashboard, source comparison, bias viz, framing analysis |
-| Phase 5 — Polish & Launch | PENDING | Accessibility, performance, animation polish, cross-browser |
+| Phase 3 — Frontend MVP | COMPLETE | Desktop + mobile layouts, news feed, BiasLens, GH Pages deploy live |
+| Phase 4 — Deep Dive + Mobile UX | COMPLETE | Dashboard, source comparison, bias viz, mobile layout redesign Phase 1-4, mobile UX pass (long-press peek, KDE on mobile, axis label overlap, safe-area), PWA installable, Capacitor iOS/Android shells |
+| Phase 5 — Polish, App Submission & Launch | IN PROGRESS | Accessibility (WCAG 2.1 AA), Lighthouse 90+, animation polish, cross-browser, CF Pages cutover, iOS App Store + Google Play submission (signing pending) |
 
 ## 10. Budget
 

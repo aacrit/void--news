@@ -1,6 +1,6 @@
 # void --news Agent Team Structure
 
-Last updated: 2026-04-29 (rev 27 — Sonnet 4.6 editorial LLM stack + layout-zones.css scaffold under Frontend Division)
+Last updated: 2026-05-03 (rev 28 — frontend-builder completed mobile UX pass + PWA service worker + Capacitor iOS/Android shell init)
 
 ## Philosophy
 
@@ -68,6 +68,7 @@ Cinematic Division agents (cinematographer, motion-director, vfx-artist) are als
 | $100B Layout Overhaul (2026-04-29) | **Shipped** | LeadStorySplit 50/50, StoryCard `variant=digest\|wire`, BiasSnapshot inline+rail, Deep Dive 2-col body, `layout-zones.css` Grid scaffold, type scale tokens (lead/digest/wire) |
 | Lighthouse Polish (2026-04-29) | **Shipped** | WebP at upload (Pillow ~=11, q82, 25-35% LCP shrink), spectrum.css + verify.css route-scoped (~130KB gzipped off homepage), tablet/wire-grid/Deep-Dive-rail breakpoint surgical fixes |
 | Cloudflare Pages parallel deploy (2026-04-29) | **Scaffolded** | `_headers`, `deploy-cloudflare.yml`, `NEXT_PUBLIC_BASE_PATH` env contract. Awaits `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID` secrets |
+| Mobile UX + App Distribution (2026-05-03) | **Shipped** | frontend-builder: long-press Sigil → MobilePerspectivePeek with empty-state fallback, KDE bell curve enabled on mobile DeepDiveSpectrum, spectrum axis label overlap fixed, safe-area compliance. PWA service worker (`frontend/public/sw.js`, network-first HTML/API, cache-first hashed assets) + manifest standalone + offline.html. Capacitor shells (`frontend/ios/`, `frontend/android/`, `appId: void.news`, `webDir: out`) initialized — see `docs/APP-BUILD-GUIDE.md` |
 | Tier 3 (cinematic depth) | Pending | |
 | Tier 4 (hero overhaul) | Pending | |
 
@@ -99,7 +100,7 @@ Narrative-engineer pass: 25 YAML event files rewritten Show-Don't-Tell + Arrive 
 
 | Agent | Purpose | Write | Trigger |
 |---|---|---|---|
-| `frontend-builder` | Press & Precision component engineering. Owns `layout-zones.css` Grid scaffold (LeadStorySplit, BiasSnapshot inline+rail, Deep Dive 2-col body, feed-grid baseline rules). | Yes | Feature requests |
+| `frontend-builder` | Press & Precision component engineering. Owns `layout-zones.css` Grid scaffold (LeadStorySplit, BiasSnapshot inline+rail, Deep Dive 2-col body, feed-grid baseline rules). Owns PWA shell (`frontend/public/sw.js`, `manifest.json`, `offline.html`) and Capacitor iOS/Android scaffolds (`frontend/ios/`, `frontend/android/`, `capacitor.config.ts`). | Yes | Feature requests |
 | `frontend-fixer` | UI bug remediation — bias display, layout, animation, a11y | Yes | Bug reports |
 | `responsive-specialist` | Desktop/mobile, light/dark. Co-owns `layout-zones.css` breakpoint surgical fixes (tablet 768-1023px lead image cap, wire grid 4↔5 cols, Deep Dive 2-col `1.7fr/1.6fr` ratios). | Yes | New components, responsive bugs |
 | `uat-tester` | Browser testing, screenshots | No | After frontend changes |
@@ -284,3 +285,4 @@ R&I advisory agents (read-only, propose but don't implement):
 | 2026-04-10 | History museum redesign: 8-stage journey, 25→58 events, 20→22 components; DeepDiveSpectrum 3 toggleable views; migration 045; generate-history-audio workflow |
 | 2026-04-11 | edge-tts replaces Gemini TTS permanently; void --games added (5 games); game-content-writer; 35 agents, 14 divisions |
 | 2026-04-29 | **Editorial LLM stack moves to Claude Sonnet 4.6** (~$30/mo, was $0); pipeline cadence 2x/day → 1x/day; homepage feed 30 → 50; smart-routed Claude→Gemini; content-hash cache on top-50 post-rerank (migration 049); ephemeral prompt caching |
+| 2026-05-03 | **Mobile UX pass + App Distribution shipped** by frontend-builder: MobilePerspectivePeek long-press modal with empty-state fallback, KDE bell curve enabled on mobile DeepDiveSpectrum, spectrum axis label overlap fixed via media query, safe-area compliance. PWA service worker + manifest + offline.html. Capacitor iOS/Android shells initialized (`appId: void.news`); see `docs/APP-BUILD-GUIDE.md`. PROJECT-CHARTER scope expanded: native iOS/Android moved from Out-of-Scope to In-Scope (Phase 5) |
