@@ -2734,6 +2734,22 @@
     font-size: 12px;
     opacity: 0.6;
   }
+
+  /* Fix spectrum axis label overlap on mobile */
+  .dd-sv__axis-labels {
+    gap: var(--space-2);
+    padding: 0 var(--space-2);
+  }
+
+  .dd-sv__axis-label {
+    font-size: 10px;
+    letter-spacing: 0.03em;
+    flex: 1;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 /* ==========================================================================
