@@ -34,6 +34,37 @@ from utils.supabase_client import supabase
 SOURCES_PATH = Path(__file__).parent.parent / "data" / "sources.json"
 
 
+def _fetch_all(table: str, columns: str = "*", page: int = 500, order_by: str = "id") -> list:
+    """Paginate Supabase fetches past the per-request row cap.
+
+    PostgREST returns at most ~1000 rows per call (project-configurable),
+    so a bare .execute() silently truncates large tables. Every audit that
+    needs the full table must page through with .range().
+
+    Page size 500 keeps per-request runtime under Supabase's default 8-second
+    statement timeout even on the largest tables (articles, bias_scores).
+    The explicit order is required for correctness — without it PostgREST
+    can repeat or skip rows across .range() pages.
+    """
+    rows: list = []
+    start = 0
+    while True:
+        batch = (
+            supabase.table(table)
+            .select(columns)
+            .order(order_by)
+            .range(start, start + page - 1)
+            .execute()
+            .data
+            or []
+        )
+        rows.extend(batch)
+        if len(batch) < page:
+            break
+        start += page
+    return rows
+
+
 class DataQualityAuditor:
     def __init__(self, verbose: bool = False):
         self.verbose = verbose
@@ -60,8 +91,7 @@ class DataQualityAuditor:
         expected_by_slug = {s["id"]: s for s in expected_sources}
 
         # Fetch all DB sources
-        result = supabase.table("sources").select("*").execute()
-        db_sources = result.data or []
+        db_sources = _fetch_all("sources", "*")
         db_by_slug = {s["slug"]: s for s in db_sources}
 
         db_active = [s for s in db_sources if s.get("is_active", True)]
@@ -132,8 +162,7 @@ class DataQualityAuditor:
         """Check NULL rates, word count distribution, duplicates."""
         print("[2/8] Auditing Article Quality...")
 
-        result = supabase.table("articles").select("id,full_text,published_at,word_count,url,section").execute()
-        articles = result.data or []
+        articles = _fetch_all("articles", "id,full_text,published_at,word_count,url,section")
 
         if not articles:
             self.findings["critical"].append("No articles in database")
@@ -217,14 +246,13 @@ class DataQualityAuditor:
         print("[3/8] Auditing Bias Score Quality...")
 
         # Fetch bias scores
-        result = supabase.table("bias_scores").select(
-            "article_id,political_lean,sensationalism,opinion_fact,factual_rigor,framing,confidence"
-        ).execute()
-        bias_scores = result.data or []
+        bias_scores = _fetch_all(
+            "bias_scores",
+            "article_id,political_lean,sensationalism,opinion_fact,factual_rigor,framing,confidence",
+        )
 
         # Fetch article count
-        result_articles = supabase.table("articles").select("id").execute()
-        articles = result_articles.data or []
+        articles = _fetch_all("articles", "id")
         article_count = len(articles)
 
         score = 10
@@ -326,8 +354,10 @@ class DataQualityAuditor:
         print("[4/8] Auditing Cluster Quality...")
 
         # Fetch clusters with sections array support
-        result = supabase.table("story_clusters").select("id,title,summary,consensus_points,divergence_points,source_count,sections").execute()
-        clusters = result.data or []
+        clusters = _fetch_all(
+            "story_clusters",
+            "id,title,summary,consensus_points,divergence_points,source_count,sections",
+        )
 
         score = 10
 
@@ -336,12 +366,16 @@ class DataQualityAuditor:
             self.scores["cluster_quality"] = 0
             return {}
 
-        # Fetch cluster_articles junction
-        result_ca = supabase.table("cluster_articles").select("cluster_id,article_id").execute()
-        cluster_articles = result_ca.data or []
+        # Fetch cluster_articles junction + article→source map for distinct-source counts
+        cluster_articles = _fetch_all("cluster_articles", "cluster_id,article_id", order_by="cluster_id")
+        article_source_map = {a["id"]: a["source_id"] for a in _fetch_all("articles", "id,source_id")}
         articles_per_cluster = defaultdict(list)
+        sources_per_cluster: dict = defaultdict(set)
         for ca in cluster_articles:
             articles_per_cluster[ca["cluster_id"]].append(ca["article_id"])
+            src = article_source_map.get(ca["article_id"])
+            if src is not None:
+                sources_per_cluster[ca["cluster_id"]].add(src)
 
         # Metrics
         single_article = sum(1 for cid in articles_per_cluster if len(articles_per_cluster[cid]) == 1)
@@ -368,11 +402,12 @@ class DataQualityAuditor:
             score -= 1
             self.findings["nice_to_have"].append(f"Untitled clusters: {untitled}")
 
-        # Check source_count accuracy
+        # Check source_count accuracy.
+        # `source_count` stores COUNT(DISTINCT articles.source_id), not article count.
         count_mismatches = 0
         for c in clusters:
             cid = c["id"]
-            actual_count = len(articles_per_cluster.get(cid, []))
+            actual_count = len(sources_per_cluster.get(cid, set()))
             stated_count = c.get("source_count", 0)
             if actual_count != stated_count:
                 count_mismatches += 1
@@ -433,10 +468,10 @@ class DataQualityAuditor:
         """Check bias_diversity, divergence_score, headline_rank, coverage_velocity."""
         print("[5/8] Auditing Enrichment Quality...")
 
-        result = supabase.table("story_clusters").select(
-            "id,bias_diversity,divergence_score,headline_rank,coverage_velocity"
-        ).execute()
-        clusters = result.data or []
+        clusters = _fetch_all(
+            "story_clusters",
+            "id,bias_diversity,divergence_score,headline_rank,coverage_velocity",
+        )
 
         score = 10
 
@@ -521,8 +556,7 @@ class DataQualityAuditor:
         most_recent_run = result.data[0]["completed_at"] if result.data else None
 
         # Age distribution
-        result = supabase.table("articles").select("published_at").execute()
-        articles = result.data or []
+        articles = _fetch_all("articles", "published_at")
 
         now = datetime.now(timezone.utc)
         one_week_ago = now - timedelta(days=7)
@@ -596,18 +630,10 @@ class DataQualityAuditor:
         """Check valid cluster/article refs, orphaned articles/bias scores."""
         print("[7/8] Auditing Referential Integrity...")
 
-        # Fetch all data
-        result = supabase.table("articles").select("id").execute()
-        articles = {a["id"] for a in (result.data or [])}
-
-        result = supabase.table("story_clusters").select("id").execute()
-        clusters = {c["id"] for c in (result.data or [])}
-
-        result = supabase.table("cluster_articles").select("cluster_id,article_id").execute()
-        cluster_articles = result.data or []
-
-        result = supabase.table("bias_scores").select("article_id").execute()
-        bias_scores = result.data or []
+        articles = {a["id"] for a in _fetch_all("articles", "id")}
+        clusters = {c["id"] for c in _fetch_all("story_clusters", "id")}
+        cluster_articles = _fetch_all("cluster_articles", "cluster_id,article_id", order_by="cluster_id")
+        bias_scores = _fetch_all("bias_scores", "article_id")
 
         score = 10
 
@@ -666,18 +692,18 @@ class DataQualityAuditor:
         print("[8/8] Auditing Cross-Field Consistency...")
 
         # Fetch sources with lean baseline
-        result = supabase.table("sources").select("id,slug,political_lean_baseline,tier").execute()
-        sources = {s["id"]: s for s in (result.data or [])}
+        sources = {s["id"]: s for s in _fetch_all("sources", "id,slug,political_lean_baseline,tier")}
 
         # Fetch articles with source_id
-        result = supabase.table("articles").select("id,source_id").execute()
         articles_by_source = defaultdict(list)
-        for a in (result.data or []):
+        for a in _fetch_all("articles", "id,source_id"):
             articles_by_source[a["source_id"]].append(a["id"])
 
         # Fetch all bias scores
-        result = supabase.table("bias_scores").select("article_id,political_lean").execute()
-        bias_by_article = {bs["article_id"]: bs.get("political_lean") for bs in (result.data or [])}
+        bias_by_article = {
+            bs["article_id"]: bs.get("political_lean")
+            for bs in _fetch_all("bias_scores", "article_id,political_lean")
+        }
 
         score = 10
         consistency_issues = 0

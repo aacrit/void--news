@@ -130,10 +130,10 @@ function deriveCoverageScore(sourceCount: number, factualRigor: number, confiden
    --------------------------------------------------------------------------- */
 
 /** Hard cap: maximum stories in the edition feed. No pagination, no load-more. */
-const EDITION_FEED_SIZE = 30;
+const EDITION_FEED_SIZE = 50;
 
-/** Maximum stories from any single category within the 30-story feed. */
-const CATEGORY_CAP = 8;
+/** Maximum stories from any single category within the edition feed. */
+const CATEGORY_CAP = 12;
 
 
 interface HomeContentProps {
@@ -476,7 +476,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
           .select(enrichedFields)
           .contains("sections", [activeEdition])
           .order(rankColumn, { ascending: false })
-          .limit(50);
+          .limit(80);
 
         // If enriched query failed (columns don't exist), fall back to base schema
         if (res.error) {
@@ -486,7 +486,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
             .select(baseFields)
             .contains("sections", [activeEdition])
             .order("first_published", { ascending: false })
-            .limit(50);
+            .limit(80);
         }
 
         if (controller.signal.aborted) return;
@@ -938,6 +938,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   filterKey={filterKey}
                   kbdFocusIndex={kbdFocusIndex}
                   editionMeta={editionMeta}
+                  leadImageUrl={leadImageUrl}
                   transitionClass={editionTransition === "out" ? "anim-edition-out" : editionTransition === "in" ? "anim-edition-in" : undefined}
                 />
               ) : (
@@ -953,14 +954,19 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                     </div>
                   )}
 
-                  {/* Unified grid — ranks 1-29, identical StoryCard */}
+                  {/* Unified grid — ranks 1-49.
+                      Variant drives newspaper typography hierarchy:
+                        ranks 1-9 = digest (22px Playfair)
+                        ranks 10+ = wire (14px Playfair)
+                      Both scales live in layout-zones.css. */}
                   {gridStories.length > 0 && (
                     <section key={`grid-${filterKey}`} aria-label="Stories" className={`feed-grid${isEditionSwitch ? " anim-content-arrive" : ""}`}>
                       {gridStories.map((story, idx) => {
                         const gi = 1 + idx;
+                        const variant: "digest" | "wire" = idx < 9 ? "digest" : "wire";
                         return (
                           <div key={story.id} className="feed-grid__item">
-                            <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} globalIndex={gi} kbdFocused={kbdFocusIndex === gi} />
+                            <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} globalIndex={gi} kbdFocused={kbdFocusIndex === gi} variant={variant} />
                           </div>
                         );
                       })}

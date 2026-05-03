@@ -1,12 +1,16 @@
-# void --news — Gemini Voice & Editorial Intelligence
+# void --news — Editorial LLM & Voice Plan
 
-**Version:** 4.1 | **Updated:** 2026-04-19
+Last updated: 2026-04-29 (rev 2 — Sonnet 4.6 primary)
+
+**Version:** 5.0
+
+LLM voice covers summarization, daily brief, opinion, weekly digest. Audio synthesis is separate (edge-tts, $0).
 
 ---
 
 ## 1. Editorial Voice Definition
 
-All Gemini output must follow these standards. The system instruction in `cluster_summarizer.py` enforces them.
+All LLM output (Claude Sonnet primary, Gemini Flash fallback) follows these standards. The system instruction in `cluster_summarizer.py` and `daily_brief_generator.py` enforces them.
 
 **Precision over flourish.** Orwell's rule: shorter, plainer word wins. "The bill passed" not "the legislation successfully navigated its passage."
 
@@ -40,17 +44,19 @@ language, no value judgments, no predictions without attribution, neutral framin
 precise language (names, figures, locations).
 ```
 
+For Claude calls, the system block is wrapped with `cache_control: {"type":"ephemeral"}` (5-min TTL, 1024-token minimum) via `claude_client._build_system_block()`.
+
 ### User Prompt (`_USER_PROMPT_TEMPLATE`) — 7 Tasks
 
-| Task | Field | Format | Key Constraints |
-|------|-------|--------|-----------------|
-| 1 | `headline` | string, 8-12 words | Title Case, active voice, present tense, no loaded words |
-| 2 | `summary` | string, 250-350 words | Inverted pyramid (P1: event, P2: context, P3: specifics, P4: next steps) |
-| 3 | `consensus` | array, 3-5 strings | Specific verified facts (names, numbers, dates), not generic observations |
-| 4 | `divergence` | array, 2-4 strings | Observable coverage patterns, neutral verbs only, no outlet credibility judgments |
-| 5 | `editorial_importance` | integer, 1-10 | "Would a senior NYT editor front-page this?" (10=once-in-decade, 1=trivial) |
-| 6 | `story_type` | string enum | breaking_crisis, policy_action, investigation, ongoing_crisis, incremental_update, human_interest, ceremonial, entertainment |
-| 7 | `has_binding_consequences` | boolean | Changes legal/military/economic status quo? True for action, false for speculation |
+| Task | Field | Format | Constraints |
+|---|---|---|---|
+| 1 | `headline` | string, 8-12 words | Title Case, active voice, present tense |
+| 2 | `summary` | string, 250-350 words | Inverted pyramid (P1 event, P2 context, P3 specifics, P4 next) |
+| 3 | `consensus` | array, 3-5 strings | Specific verified facts (names, numbers, dates) |
+| 4 | `divergence` | array, 2-4 strings | Observable coverage patterns, neutral verbs only |
+| 5 | `editorial_importance` | int 1-10 | "Would a senior NYT editor front-page this?" |
+| 6 | `story_type` | enum | breaking_crisis, policy_action, investigation, ongoing_crisis, incremental_update, human_interest, ceremonial, entertainment |
+| 7 | `has_binding_consequences` | bool | Changes legal/military/economic status quo? |
 
 ### JSON Return Shape
 ```json
@@ -64,110 +70,132 @@ precise language (names, figures, locations).
 
 ---
 
-## 3. Editorial Triage (v5.0)
+## 3. Smart Routing & Cache
 
-Separate from summarization. 3 calls/run (1 per section), own budget (`_MAX_TRIAGE_CALLS=5`).
+`cluster_summarizer._smart_generate_json()`:
+1. If `claude_is_available()` (ANTHROPIC_API_KEY set + SDK importable + within 80-call cap), call Sonnet 4.6.
+2. On Claude failure or unavailability, fall back to `gemini_client.generate_json()`.
+3. On both failures, return None — caller uses rule-based lead extraction.
 
-**System instruction:** Senior front-page editor role. Selection by consequence scale, novelty, institutional authority, global scope, source consensus. Bias-blind.
+`_content_hash(articles)` = sha256(sorted article_ids + "|" + count). Used by step 8d (`summarize_top50_after_rerank`) to skip clusters with unchanged membership since last Sonnet summary. Stored on `story_clusters.summary_article_hash` + `summary_tier='sonnet'` (migration 049).
+
+---
+
+## 4. Editorial Triage (v5.0)
+
+Separate from summarization. 3 calls/run (1 per section), own budget (`_MAX_TRIAGE_CALLS=5`). Gemini-driven (not yet Sonnet-routed).
+
+**System:** Senior front-page editor. Selection by consequence scale, novelty, institutional authority, global scope, source consensus. Bias-blind.
 
 **Input:** Top 30 cluster titles+summaries per section.
 
 **Output:**
 ```json
 {
-  "ranked_ids": ["id1", "id2", ...],        // top 10 in editorial order
-  "duplicate_flags": [["idA", "idB"], ...],  // potential same-event clusters
-  "incremental_flags": ["id3", ...]          // incremental updates
+  "ranked_ids": ["id1", "id2", ...],
+  "duplicate_flags": [["idA", "idB"], ...],
+  "incremental_flags": ["id3", ...]
 }
 ```
 
-**Budget:** ~6 RPD (0.4% of 1500 free limit). Falls back to deterministic ranking if unavailable.
+Falls back to deterministic ranking if API unavailable.
 
 ---
 
-## 4. Anti-Bias Guardrails
+## 5. Anti-Bias Guardrails
 
 | Guardrail | Problem | Technique |
-|-----------|---------|-----------|
+|---|---|---|
 | Political lean leakage | Framing follows majority-lean sources | Prohibited value judgments + outlet-type labels (not names) |
 | Sensationalist framing | Imports loaded source headline language | Explicit prohibited word list + "no imported language" rule |
-| False balance | Treats fringe position as co-equal | "No false balance on empirical questions" principle |
+| False balance | Treats fringe as co-equal | "No false balance on empirical questions" principle |
 | Attribution-free claims | "Experts say" without named expert | Must attribute to specific source |
 | Credibility judgments in divergence | "Fringe outlets promoted conspiracies" | Neutral verb list + no outlet character descriptions |
 
 ---
 
-## 5. Quality Metrics
+## 6. Quality Metrics
 
 | # | Metric | Target | Method |
-|---|--------|--------|--------|
-| 1 | Inverted pyramid compliance | >1.7/2.0 | First-sentence test: does it contain core event? |
-| 2 | Attribution density | >0.7 ratio | Attributed claims / total factual claims |
-| 3 | Loaded language frequency | 0 per run | Keyword scan against prohibited list |
+|---|---|---|---|
+| 1 | Inverted pyramid compliance | >1.7/2.0 | First-sentence test |
+| 2 | Attribution density | >0.7 ratio | Attributed / total factual claims |
+| 3 | Loaded language frequency | 0/run | Keyword scan against prohibited list |
 | 4 | Headline length | 100% in 8-12 words | Whitespace token count |
-| 5 | Consensus specificity | >1.5/2.0 | Names/numbers/dates present per point |
+| 5 | Consensus specificity | >1.5/2.0 | Names/numbers/dates per point |
 | 6 | Divergence neutrality | 0 flags | Scan for "bias," "ignore," "spin," credibility language |
 | 7 | Summary length | 90% in 250-350 words | Word count before truncation |
 
-Validation runs in `_check_quality()` post-generation. Warnings logged, results never discarded (zero API waste).
+`_check_quality()` runs post-generation. Warnings logged, results never discarded (zero API waste).
 
 ---
 
-## 6. Source Handling
+## 7. Source Handling
 
 - Article text truncated to 400 chars in prompt context
 - Max 10 articles per cluster in prompt
-- **Use real outlet names** in articles block (not tier labels) — per user feedback
+- Real outlet names in articles block (not tier labels)
 - Attribution uses outlet names inline, not bracketed citations
 - Context line describes cluster size + tier distribution
 
 ---
 
-## 7. Op-Ed Handling
+## 8. Op-Ed Handling
 
-Op-eds (single-source, `content_type=opinion`) are **not** sent to Gemini. They use original article text directly. No clustering, no summarization. Author/publication attribution shown when available.
+Op-eds (single-source, `content_type=opinion`) bypass all LLM rewriting. Original article text preserved. No clustering, no summarization. Author/publication shown when available.
 
 ---
 
-## 8. Files
+## 9. Files
 
 | File | Role |
-|------|------|
-| `pipeline/summarizer/cluster_summarizer.py` | Prompt templates, field extraction, quality validation |
-| `pipeline/summarizer/gemini_client.py` | API client, rate limiting, call caps, `editorial_triage()` |
+|---|---|
+| `pipeline/summarizer/claude_client.py` | Anthropic SDK client, `_MODEL = "claude-sonnet-4-6"`, ephemeral prompt caching, 80 calls/run cap |
+| `pipeline/summarizer/gemini_client.py` | Gemini Flash client, fallback role, `editorial_triage()` |
+| `pipeline/summarizer/cluster_summarizer.py` | Prompt templates, `_smart_generate_json()`, `_content_hash()`, `summarize_top50_after_rerank()`, quality validation |
+| `pipeline/briefing/daily_brief_generator.py` | TL;DR + opinion generation, Claude primary / Gemini fallback |
+| `pipeline/briefing/weekly_digest_generator.py` | Weekly magazine, Claude primary |
+| `pipeline/briefing/claude_brief_generator.py` | Manual standalone Claude CLI brief regen |
 
 ### API Configuration
+
+**Claude (primary)**
+- Model: `claude-sonnet-4-6`
+- Pricing: $3/MTok in, $15/MTok out
+- Per-call avg: ~3500 in × 800 out → ~$0.0225/call
+- Cap: 80 calls/run (`_MAX_CALLS_PER_RUN`)
+- Prompt caching: 5-min ephemeral, 1024-token minimum on system block
+
+**Gemini (fallback + triage)**
 - Model: `gemini-2.5-flash`
-- Temperature: 0.2
-- max_output_tokens: 8192
-- Summarization cap: 25 calls/run (`_MAX_CALLS_PER_RUN`)
-- Triage cap: 5 calls/run (`_MAX_TRIAGE_CALLS`)
-- Rate limit: 4.2s between calls (~14 RPM)
-- Total budget: ~156 RPD (10.4% of 1500 free limit)
+- Temperature: 0.2, max_output_tokens: 8192
+- Summarization cap: 70/run, triage cap: 5/run, 4.2s rate limit (~14 RPM)
+
+**Daily LLM cost**: ~$1/day (Sonnet primary, ~57 calls × 1 run/day). Anthropic budget cap recommended at $50/mo (60% buffer over $30 target).
 
 ---
 
-## 9. Audio Broadcast — edge-tts (Microsoft Neural, $0)
+## 10. Audio Broadcast — edge-tts (Microsoft Neural, $0)
 
-### Architecture (v4.1)
-
-Gemini is used for **text only** (script generation). Audio synthesis uses **edge-tts** (Microsoft Neural voices, $0). Gemini TTS was used in v3 (2026-03-22) but permanently removed in v4 (2026-04-11) because it is NOT on the free tier (~$3.70/day, hit $40 billing cap on day 11 of April).
+Audio synthesis is **fully decoupled** from editorial LLM choice. Same edge-tts stack regardless of whether scripts came from Claude or Gemini.
 
 ```
-Gemini Flash (text) ──▶ edge-tts (per-turn synthesis) ──▶ pydub (sonic identity) ──▶ MP3 96k mono ──▶ Supabase Storage
-   3 calls/run              $0 Microsoft Neural              intro chord + chimes +
-   (TL;DR + opinion +                                        page-turn + outro +
-    audio_script)                                             subharmonic layer
+LLM (Claude/Gemini, text) → edge-tts (per-turn synthesis) → pydub (sonic identity) → MP3 96k mono → Supabase Storage
+   3 calls/run                 $0 Microsoft Neural             intro chord + chimes +
+   (TL;DR + opinion +                                          page-turn + outro +
+    audio_script)                                              subharmonic layer
 ```
+
+Gemini TTS was used in v3 (2026-03-22) but permanently removed in v4 (2026-04-11) — NOT free tier (~$3.70/day, hit $40 cap).
 
 ### Voice Configuration — 4 Multilingual Neural Voices
 
-As of 2026-04-19, all first-gen Neural voices (Aria, Jenny, Davis, Christopher, Nancy, Roger, Michelle, Sara) are retired. The system runs on **four** en-US Multilingual Neural voices only. Each news pair preserves male/female contrast across the 6 personas.
+As of 2026-04-19, all first-gen Neural voices retired. Four en-US Multilingual Neural voices only. Each news pair preserves male/female contrast across 6 personas.
 
 **News host rotation (6 personas → 4 voices):**
 
-| Host Role | Gemini Name | edge-tts Voice | Character |
-|-----------|-------------|----------------|-----------|
+| Host Role | Persona Name | edge-tts Voice | Character |
+|---|---|---|---|
 | Correspondent | Kore | en-US-EmmaMultilingualNeural | Authoritative female |
 | Structuralist | Charon | en-US-BrianMultilingualNeural | Conversational male |
 | Investigator | Orus | en-US-AndrewMultilingualNeural | Measured male |
@@ -186,63 +214,46 @@ As of 2026-04-19, all first-gen Neural voices (Aria, Jenny, Davis, Christopher, 
 - UK (Rasalgethi) → `en-US-BrianMultilingualNeural`
 - Canada (Vindemiatrix) → `en-US-EmmaMultilingualNeural`
 
-Canonical mapping lives in `_GEMINI_TO_EDGE_VOICE` in `pipeline/briefing/audio_producer.py`. Defaults (`_DEFAULT_EDGE_VOICE_A/B`) are Andrew + Emma.
+Canonical mapping in `_GEMINI_TO_EDGE_VOICE` in `audio_producer.py`. Defaults (`_DEFAULT_EDGE_VOICE_A/B`) Andrew + Emma.
 
-### Sonic Identity (Post-Processing via pydub)
+### Sonic Identity (pydub Post-Processing)
 
 | Element | Description |
-|---------|-------------|
+|---|---|
 | Intro | ~2s D major 9th bloom chord (Glass & Gravity) |
-| Section breaks | Glass-bell chimes at detected silence gaps (>= 800ms at <= -45dB) |
-| News-to-opinion | Editorial page-turn transition |
-| Outro | ~1.8s resolving chord (intro bloom returning to root) |
-| Subharmonic | D2/D3/A3 presence layer at -34 to -42 dB |
+| Section breaks | Glass-bell chimes at silence gaps (≥800ms at ≤−45dB) |
+| News→opinion | Editorial page-turn transition |
+| Outro | ~1.8s resolving chord (intro bloom → root) |
+| Subharmonic | D2/D3/A3 presence layer at −34 to −42 dB |
 | Export | MP3 96k mono (voice-optimized) |
 
-### Gemini API Budget (Combined)
+### Audio Files
 
-```
-Daily Gemini Free Tier Usage (250 RPD)
-
-Function                  Model     RPD     % of 250 limit
-Cluster summarization     flash     ~100    40%
-Gemini reasoning (6c)     flash     ~100    40%
-Editorial triage (7c)     flash     ~12     5%
-Daily brief script (7d)   flash     ~4      2%
-Audio TTS                 --        0       0% (edge-tts, $0)
-TOTAL                               ~216    86%
-Remaining headroom                   ~34    14%
-```
-
-Audio uses edge-tts ($0, no Gemini RPD consumed).
+| File | Role |
+|---|---|
+| `pipeline/briefing/audio_producer.py` | Per-turn edge-tts via `_synthesize_edge_tts()`, pydub stitching + sonic identity, MP3 export, Supabase upload. Canonical 4-voice mapping. |
+| `pipeline/briefing/voice_rotation.py` | 6-host newsroom, 3 pairs rotating across editions, opinion voice per edition |
+| `pipeline/history/audio_script_generator.py` | Gemini history-audio scripts; writes canonical to `data/history/scripts/{slug}.txt`; `reuse_cached=True` skips Gemini |
+| `pipeline/history/generate_audio.py` | Per-event synthesizer; `--voices-only` (implies `--force`) reuses cached scripts |
+| `data/history/scripts/{slug}.txt` | Canonical script store — generate once, reuse indefinitely for voice iteration |
 
 ### Decision Log
 
 | Date | Decision | Rationale |
-|------|----------|-----------|
+|---|---|---|
 | 2026-03-22 | Replace edge-tts + Google Cloud TTS with Gemini Flash TTS | Single API call, LLM-native prosody, $0 (at the time) |
-| 2026-03-22 | Delete SSML prosody, disfluency injection, per-turn stitching | Unnecessary with LLM-native dialogue synthesis |
-| 2026-04-11 | **Permanently revert to edge-tts, remove Gemini TTS** | Gemini TTS is NOT free tier -- $3.70/day, hit $40 billing cap. edge-tts is $0 with Microsoft Neural voices. Gemini text generation remains free tier. |
-| 2026-04-11 | Remove DISABLE_AUDIO gate from pipeline.yml | Audio runs on every scheduled pipeline run at $0 cost (world edition only) |
-| 2026-04-19 | **Consolidate to 4 Multilingual Neural voices (Andrew/Brian/Ava/Emma)** | First-gen Neural voices (Aria, Jenny, Davis, Christopher, Nancy, Roger, Michelle, Sara) retired. Multilingual Neural delivers noticeably warmer, more natural prosody at same $0 cost; every news pair still preserves male/female contrast across 6 personas. |
-| 2026-04-19 | **Script cache at `data/history/scripts/{slug}.txt` + `--voices-only` flag** | Decouples Gemini script generation from TTS synthesis. Voice sweeps (re-synthesize all 58 history events with a new voice) now cost $0 in Gemini quota and complete in ~6 min. `generate_audio.py --voices-only` reuses cached scripts; `generate-history-audio.yml` workflow accepts a `voices_only` dispatch input. |
-
-### Files
-
-| File | Role |
-|------|------|
-| `pipeline/briefing/audio_producer.py` | Per-turn edge-tts synthesis via `_synthesize_edge_tts()`, pydub stitching + sonic identity, MP3 export, Supabase upload. Canonical `_GEMINI_TO_EDGE_VOICE` mapping (4 Multilingual voices). |
-| `pipeline/briefing/voice_rotation.py` | 6-host newsroom model, 3 pairs rotating across editions, opinion voice per edition |
-| `pipeline/briefing/daily_brief_generator.py` | Gemini script generation (TL;DR + audio_script), 3-call budget |
-| `pipeline/briefing/claude_brief_generator.py` | Optional Claude CLI premium script (manual 1x/day) |
-| `pipeline/history/audio_script_generator.py` | Gemini history-audio script generation; writes canonical scripts to `data/history/scripts/{slug}.txt`; `reuse_cached=True` skips Gemini entirely |
-| `pipeline/history/generate_audio.py` | Per-event synthesizer; `--voices-only` flag (implies `--force`) reuses cached scripts for zero-Gemini voice sweeps |
-| `data/history/scripts/{slug}.txt` | Canonical script store — generated once via Gemini, reused indefinitely for voice iteration |
+| 2026-03-22 | Delete SSML prosody, disfluency, per-turn stitching | Unnecessary with LLM-native dialogue synthesis |
+| 2026-04-11 | **Permanently revert to edge-tts, remove Gemini TTS** | Not free tier — $3.70/day, hit $40 cap. edge-tts is $0 with Microsoft Neural. Gemini text remains free. |
+| 2026-04-11 | Remove DISABLE_AUDIO gate from pipeline.yml | Audio runs every scheduled pipeline run at $0 (world only) |
+| 2026-04-19 | **Consolidate to 4 Multilingual Neural voices** | Multilingual delivers warmer, more natural prosody at same $0 cost; news pairs preserve male/female contrast |
+| 2026-04-19 | **Script cache + `--voices-only` flag** | Decouples Gemini script gen from TTS. Voice sweeps for all 58 history events cost $0 in Gemini quota, complete in ~6 min. |
+| 2026-04-29 | **Editorial LLM stack moves to Claude Sonnet 4.6 (~$30/mo)** | Sonnet quality justifies broken $0 ceiling. Smart-routed Claude→Gemini, content-hash cache on top-50 post-rerank, ephemeral prompt caching. Pipeline cadence drops to 1x/day. Audio stack unchanged ($0). |
 
 ### Limitations & Risks
 
 | Risk | Mitigation |
-|------|------------|
-| edge-tts depends on Microsoft service availability | Fallback: skip audio, text brief still generated |
+|---|---|
+| edge-tts depends on Microsoft availability | Skip audio, text brief still generated |
 | Per-turn synthesis less natural than LLM-native | Sonic identity (chimes, subharmonic, bloom) adds cohesion |
 | ffmpeg required for MP3 export | Already in GitHub Actions (`apt-get install ffmpeg`) |
+| Anthropic API outage breaks editorial LLM | Smart-routed fallback to Gemini Flash; rule-based summary if both down |

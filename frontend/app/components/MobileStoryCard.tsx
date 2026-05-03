@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import type { Story } from "../lib/types";
 import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
@@ -13,22 +14,27 @@ interface MobileStoryCardProps {
   kbdFocused?: boolean;
   /** "hero" = lead story with summary; "compact" = headline + inline Sigil only */
   variant?: "hero" | "compact";
+  /** og:image for the rank-0 hero — full-bleed 4:5 above headline. Hero only. */
+  imageUrl?: string | null;
 }
 
 /* ---------------------------------------------------------------------------
    MobileStoryCard — Space-efficient mobile card
 
-   Hero: meta + headline (Playfair) + 2-line summary + Sigil footer (~140px)
-   Compact: meta row + headline with inline Sigil (~72px)
-   Saves ~60px per card vs desktop StoryCard by eliminating summary + footer.
+   Hero: full-bleed 4:5 image + headline (Playfair) + xl Sigil (72px) + summary
+   Compact: headline + inline sm Sigil (40px) + (optional) category row
+   Phase 3 redesign: Sigil promoted as primary bias indicator (mixed hierarchy).
    --------------------------------------------------------------------------- */
 
 export default function MobileStoryCard({
-  story, index, onStoryClick, globalIndex, kbdFocused, variant = "compact",
+  story, index, onStoryClick, globalIndex, kbdFocused, variant = "compact", imageUrl,
 }: MobileStoryCardProps) {
   const [cardRef, visible] = useInView<HTMLElement>();
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   const isHero = variant === "hero";
+  const showImage = isHero && imageUrl && !imgError;
 
   return (
     <article
@@ -59,8 +65,26 @@ export default function MobileStoryCard({
       />
 
       {isHero ? (
-        /* Hero layout: headline + inline xl Sigil (72px) — Phase 3 redesign */
+        /* Hero layout: full-bleed 4:5 image + headline + xl Sigil (72px, Phase 3) + summary.
+           Image is the cinematic anchor that flips perception from
+           "RSS feed" to "premium newspaper". Per CEO scope lock 2026-04-29:
+           lead-only imagery on mobile (ranks 1+ stay text-only). */
         <>
+          {showImage && (
+            <div className={`msc__hero-image${imgLoaded ? " msc__hero-image--loaded" : ""}`}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={imageUrl!}
+                alt=""
+                className="msc__hero-image__img"
+                loading="eager"
+                fetchPriority="high"
+                decoding="async"
+                onLoad={() => setImgLoaded(true)}
+                onError={() => setImgError(true)}
+              />
+            </div>
+          )}
           <h2 className="msc__headline msc__headline--hero">
             <span>{story.title}</span>
             <Sigil data={story.sigilData} size="xl" instant />
@@ -73,16 +97,30 @@ export default function MobileStoryCard({
           )}
         </>
       ) : (
-        /* Compact layout: headline + inline Sigil + category (Phase 3 — Sigil
-           replaces the redundant lean-dot row; lean is now encoded only by Sigil). */
+        /* Compact layout: headline + inline sm Sigil (40px) + (optional) category row.
+           Phase 3: Sigil now sits inline with the headline as the primary
+           bias signal. The lean-dot row only renders when needed:
+             - story.sigilData.unscored (need explicit "unscored" label since
+               the Sigil renders gray and the absence of color carries no signal)
+             - story.category present (so the row has companion content) */
         <>
           <h3 className="msc__headline msc__headline--compact">
             <span>{story.title}</span>
             <Sigil data={story.sigilData} size="sm" instant />
           </h3>
-          {story.category && (
+          {(story.sigilData.unscored || story.category) && (
             <div className="msc__sigil-row">
-              <span className="msc__cat">{story.category}</span>
+              {story.sigilData.unscored && (
+                <>
+                  <span
+                    className="msc__lean-dot"
+                    style={{ "--lean-dot-color": undefined } as React.CSSProperties}
+                    aria-hidden="true"
+                  />
+                  <span className="msc__lean-label">unscored</span>
+                </>
+              )}
+              {story.category && <span className="msc__cat">{story.category}</span>}
             </div>
           )}
           {story.summary?.trim() && <p className="msc__summary msc__summary--compact">{story.summary}</p>}

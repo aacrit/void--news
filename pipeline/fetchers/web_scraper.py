@@ -31,6 +31,8 @@ from urllib.parse import urlparse
 import requests
 from bs4 import BeautifulSoup
 
+from utils.safe_requests import safe_get
+
 
 # ---------------------------------------------------------------------------
 # Image credit / photo caption stripping (UAT-006)
@@ -226,8 +228,9 @@ def _check_robots_txt(url: str) -> bool:
         rp = urllib.robotparser.RobotFileParser()
         robots_url = f"{domain}/robots.txt"
         try:
-            # Use requests with timeout instead of urllib (which has no timeout)
-            resp = requests.get(robots_url, timeout=5, headers={"User-Agent": USER_AGENT})
+            # Use the SSRF-hardened session (refuses private/loopback IPs on
+            # any redirect hop). Timeout still set to 5s — robots.txt is small.
+            resp = safe_get(robots_url, timeout=5, headers={"User-Agent": USER_AGENT})
             if resp.status_code == 200:
                 rp.parse(resp.text.splitlines())
             else:
@@ -512,7 +515,7 @@ def _fetch_page(url: str) -> requests.Response | None:
     last_exc = None
     for attempt in range(1 + MAX_RETRIES):
         try:
-            response = requests.get(
+            response = safe_get(
                 url,
                 headers=headers,
                 timeout=REQUEST_TIMEOUT,

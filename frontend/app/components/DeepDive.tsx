@@ -1,5 +1,10 @@
 "use client";
 
+// Route-scoped CSS — bundled with Deep Dive chunk, ships only when this
+// component loads (lazily on the homepage). Removes ~50KB gzipped from
+// the initial homepage bundle.
+import "../styles/verify.css";
+
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   ArrowLeft,
@@ -16,6 +21,7 @@ import { findHistoryContext } from "../lib/historyContext";
 import Sigil from "./Sigil";
 import LogoIcon from "./LogoIcon";
 import DeepDiveSpectrum from "./DeepDiveSpectrum";
+import BiasSnapshot from "./BiasSnapshot";
 import type { DeepDiveSpectrumSource } from "./DeepDiveSpectrum";
 import ComparativeView from "./ComparativeView";
 import ClaimConsensusSection from "./ClaimConsensusSection";
@@ -1219,21 +1225,12 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             </button>
           </div>
 
-          {/* Hero image — cinematic front-page photograph */}
-          {heroImageUrl && !heroImgError && (
-            <div className={`dd-hero-image${heroImgLoaded ? " dd-hero-image--loaded" : ""}`}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={heroImageUrl}
-                alt=""
-                className="dd-hero-image__img"
-                loading="eager"
-                onLoad={() => setHeroImgLoaded(true)}
-                onError={() => setHeroImgError(true)}
-              />
-              <div className="dd-hero-image__grade" aria-hidden="true" />
-            </div>
-          )}
+          {/* Hero image removed 2026-04-29: the user already saw it on the
+              homepage card before clicking through. In Deep Dive it stole top
+              fold from the actual moat (summary + bias breakdown) and added
+              no analytical value. Image fetch state retained but unused — the
+              fetch is cheap enough to leave in place for a possible future
+              "open photo on click" affordance. */}
 
           <h2 className="dd-headline">
             {story.title}
@@ -1248,6 +1245,17 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             <span className="dot-separator" aria-hidden="true" />
             <span className="time-tag">{timeAgo(story.publishedAt)}</span>
           </div>
+
+          {/* Inline bias snapshot — keeps the moat above the fold by surfacing
+              the three primary axes (lean / rigor / opinion) immediately under
+              the headline, without claiming the sigil+spectrum's full block. */}
+          {story.sigilData && !story.sigilData.pending && (
+            <BiasSnapshot
+              data={story.sigilData}
+              sourceCount={sources.length > 0 ? sources.length : story.source.count}
+              variant="inline"
+            />
+          )}
         </header>
 
         {/* ---- Content (fades in after panel, fades out faster on close) ---- */}

@@ -1,5 +1,7 @@
 # News Memory Engine — Strategic Proposal
 
+Last updated: 2026-04-28 (rev 1)
+
 **Status:** Strategic Concept (Ready for Implementation)
 **Date:** 2026-03-24
 **Cost Impact:** $0 (stays within existing Gemini free tier)

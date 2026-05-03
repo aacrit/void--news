@@ -54,6 +54,30 @@
   border-bottom: var(--rule-thin);
 }
 
+/* Hero image — full-bleed 4:5 portrait above headline. Aspect-ratio
+   reserves CLS-safe space; fade-in on load avoids the pop-in flash. */
+.msc__hero-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  margin: 0 calc(-1 * var(--canvas-pad-x, 1rem)) var(--space-3);
+  background: var(--bg-secondary);
+}
+
+.msc__hero-image__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0;
+  transition: opacity 320ms ease-out;
+}
+
+.msc__hero-image--loaded .msc__hero-image__img {
+  opacity: 1;
+}
+
 .msc__headline--hero {
   font-family: var(--font-editorial);
   font-size: clamp(1.375rem, 4.5vw, 1.625rem);
@@ -84,11 +108,14 @@
   filter: saturate(var(--sigil-saturation-boost, 1));
 }
 
+/* The 7px lean text stacked under the Sigil ring is redundant with the
+   ring color itself — both encode the same political-lean signal. Hide
+   on mobile where viewport space is precious; the ring carries the
+   signal alone. Desktop renders Sigil at "lg" size where the inline
+   label has more readable proportions. */
 .msc__headline--hero .sigil__lean-label,
 .msc__headline--compact .sigil__lean-label {
-  font-size: 7px;
-  opacity: 0.5;
-  letter-spacing: 0.04em;
+  display: none;
 }
 
 .msc__summary {
@@ -355,6 +382,11 @@
   overflow: hidden;
   white-space: normal;
   min-width: 0;
+  /* Reserve 2-line height even while "Loading…" so hydration into the
+     real headline doesn't shift the pill. text-sm × line-height 1.4
+     × 2 lines ≈ 2.45rem; clamp keeps it tight on small screens. */
+  min-height: calc(var(--text-sm) * 1.4 * 2);
+  line-height: 1.4;
 }
 
 .mbp__pill-label--loading {

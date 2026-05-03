@@ -749,10 +749,31 @@ def cluster_stories(
     # Build TF-IDF vectors
     documents = [_build_document(a) for a in articles]
 
-    # Filter out empty documents
+    # Partition into vectorizable vs. empty-document articles.
+    # Empty-document articles (both title and full_text blank/whitespace) cannot
+    # be TF-IDF vectorized, but dropping them silently turns them into DB
+    # orphans (no cluster_articles row, never reach the frontend feed).
+    # Instead, emit each empty-document article as a singleton cluster so it
+    # still flows downstream.
     valid_indices = [i for i, d in enumerate(documents) if d.strip()]
+    empty_indices = [i for i, d in enumerate(documents) if not d.strip()]
+
+    empty_singletons: list[dict] = []
+    for i in empty_indices:
+        a = articles[i]
+        empty_singletons.append({
+            "title": a.get("title") or "Developing Story",
+            "summary": a.get("summary", "") or (a.get("full_text", "") or "")[:500],
+            "article_ids": [a.get("id", "")],
+            "source_ids": [a.get("source_id", "")] if a.get("source_id") else [],
+            "source_count": 1 if a.get("source_id") else 0,
+            "section": _determine_section([a]),
+            "first_published": a.get("published_at", "") or "",
+            "articles": [a],
+        })
+
     if not valid_indices:
-        return []
+        return empty_singletons
 
     valid_docs = [documents[i] for i in valid_indices]
     valid_articles = [articles[i] for i in valid_indices]
@@ -768,7 +789,7 @@ def cluster_stories(
             "section": _determine_section([article]),
             "first_published": article.get("published_at", ""),
             "articles": [article],
-        }]
+        }] + empty_singletons
 
     # TF-IDF vectorization
     vectorizer = TfidfVectorizer(
@@ -923,5 +944,11 @@ def cluster_stories(
         actual_sources = {a.get("source_id", "") for a in c.get("articles", []) if a.get("source_id")}
         c["source_ids"] = list(actual_sources)
         c["source_count"] = len(actual_sources)
+
+    # Append empty-document singletons so they flow downstream and reach the
+    # frontend feed rather than becoming silent DB orphans. They bypass the
+    # merge passes (no document to compare against) and are appended here.
+    if empty_singletons:
+        clusters.extend(empty_singletons)
 
     return clusters

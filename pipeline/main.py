@@ -60,8 +60,18 @@ except ImportError as e:
 # Gemini summarizer — optional (requires google-generativeai + API key)
 SUMMARIZER_AVAILABLE = False
 try:
-    from summarizer.cluster_summarizer import summarize_clusters_batch, summarize_cluster
-    from summarizer.gemini_client import is_available as gemini_is_available, calls_remaining
+    from summarizer.cluster_summarizer import (
+        summarize_clusters_batch,
+        summarize_cluster,
+        summarize_top50_after_rerank,
+        _content_hash,
+    )
+    from summarizer.cluster_summarizer import is_available as llm_is_available
+    from summarizer.cluster_summarizer import calls_remaining
+    from summarizer.gemini_client import is_available as gemini_is_available
+    from summarizer.gemini_client import get_call_count as gemini_get_call_count
+    from summarizer.claude_client import is_available as claude_is_available
+    from summarizer.claude_client import get_call_count as claude_get_call_count
     SUMMARIZER_AVAILABLE = True
 except ImportError:
     pass
@@ -1347,6 +1357,40 @@ def main():
         # means coverage breadth and tier diversity signals are minimal).
         # Single-article clusters are only excluded for the lead gate (top-10
         # positions require 3+ sources, per the ranker's lead eligibility gate).
+        #
+        # An article is an orphan if it was passed into clustering but did not
+        # appear in any returned cluster. Causes: empty TF-IDF document
+        # (handled in story_cluster.py), AgglomerativeClustering edge cases,
+        # or a cluster_stories exception. Wrapping orphans here is the
+        # backstop that guarantees every reporting article reaches the
+        # frontend feed instead of becoming a database orphan with no
+        # cluster_articles row.
+        clustered_ids: set = set()
+        for c in clusters:
+            for aid in c.get("article_ids", []) or []:
+                if aid:
+                    clustered_ids.add(aid)
+        orphans = [
+            a for a in reporting_for_clustering
+            if a.get("id") and a["id"] not in clustered_ids
+        ]
+        for a in orphans:
+            article_id = a.get("id", "")
+            source_id = a.get("source_id", "")
+            singleton = {
+                "title": a.get("title") or "Developing Story",
+                "summary": a.get("summary", "") or (a.get("full_text", "") or "")[:500],
+                "article_ids": [article_id],
+                "source_ids": [source_id] if source_id else [],
+                "source_count": 1 if source_id else 0,
+                "section": a.get("section") or "world",
+                "first_published": a.get("published_at", "") or "",
+                "articles": [a],
+            }
+            clusters.append(singleton)
+        if orphans:
+            print(f"  Wrapped {len(orphans)} orphan articles into singleton clusters")
+
         single_source_count = sum(
             1 for c in clusters
             if c.get("source_count", len(c.get("article_ids", []))) < 2
@@ -1876,8 +1920,13 @@ def main():
         # Clusters that fail Gemini get their rule-based summary cleared so
         # no fallback text reaches the frontend.
         gemini_results: dict[int, dict] = {}
-        if SUMMARIZER_AVAILABLE and gemini_is_available():
-            print("\n[7b] Summarizing up to 50 clusters (top-30 + regional + topic)...")
+        # Tier label persisted to DB cache. Claude is primary; Gemini fallback
+        # only when ANTHROPIC_API_KEY is unset or Claude has a persistent fault.
+        _summary_tier_used = "sonnet" if claude_is_available() else (
+            "flash" if gemini_is_available() else None
+        )
+        if SUMMARIZER_AVAILABLE and llm_is_available():
+            print(f"\n[7b] Summarizing up to 50 clusters (tier={_summary_tier_used})...")
             try:
                 gemini_results, gemini_failed = summarize_clusters_batch(
                     clusters, cluster_consensus=cluster_consensus,
@@ -1888,30 +1937,32 @@ def main():
                     clusters[idx]["consensus_points"] = result["consensus"]
                     clusters[idx]["divergence_points"] = result["divergence"]
                     clusters[idx]["_gemini_enriched"] = True
-                    # v5.0: editorial intelligence fields
+                    # Cache fields persisted at step 8 cluster insert so the
+                    # post-rerank top-50 pass can skip unchanged clusters.
+                    clusters[idx]["summary_article_hash"] = _content_hash(
+                        clusters[idx].get("articles", [])
+                    )
+                    clusters[idx]["summary_tier"] = _summary_tier_used
                     if result.get("editorial_importance") is not None:
                         clusters[idx]["editorial_importance"] = result["editorial_importance"]
                     if result.get("story_type") is not None:
                         clusters[idx]["story_type"] = result["story_type"]
                     if result.get("has_binding_consequences") is not None:
                         clusters[idx]["has_binding_consequences"] = result["has_binding_consequences"]
-                    # void --verify: Gemini-deduplicated claims
                     if result.get("claims"):
                         clusters[idx]["_gemini_claims"] = result["claims"]
                     if result.get("consensus_ratio") is not None:
                         clusters[idx]["_gemini_consensus_ratio"] = result["consensus_ratio"]
                     if result.get("consensus_summary"):
                         clusters[idx]["_gemini_consensus_summary"] = result["consensus_summary"]
-                # Log pool-1 failures (rule-based summary kept as fallback —
-                # empty card is worse than imperfect text when Gemini is down).
                 if gemini_failed:
-                    print(f"  [info] {len(gemini_failed)} pool-1 cluster(s) keeping rule-based summary (Gemini failed)")
+                    print(f"  [info] {len(gemini_failed)} pool-1 cluster(s) keeping rule-based summary (LLM failed)")
             except Exception as e:
-                print(f"  [warn] Gemini summarization failed: {e}")
+                print(f"  [warn] LLM summarization failed: {e}")
         elif SUMMARIZER_AVAILABLE:
-            print("\n[7b] Skipping Gemini summarization (GEMINI_API_KEY not set)")
+            print("\n[7b] Skipping LLM summarization (no API key set)")
         else:
-            print("\n[7b] Skipping Gemini summarization (google-generativeai not installed)")
+            print("\n[7b] Skipping LLM summarization (SDKs not installed)")
 
         # Topic diversity re-ranking: prevent any single category from
         # dominating the top of the feed. Within each section pool,
@@ -2239,6 +2290,14 @@ def main():
                 cluster_row["consensus_points"] = cluster.get("consensus_points", [])
                 cluster_row["divergence_points"] = cluster.get("divergence_points", [])
 
+            # Summary cache fields — populated by step 7b for clusters that
+            # received an LLM summary; consumed by step 8d (post-rerank pass)
+            # to skip clusters whose article membership hasn't changed.
+            if cluster.get("summary_article_hash"):
+                cluster_row["summary_article_hash"] = cluster["summary_article_hash"]
+            if cluster.get("summary_tier"):
+                cluster_row["summary_tier"] = cluster["summary_tier"]
+
             # void --verify: claim_consensus JSONB
             # Prefer Gemini-deduplicated claims; fall back to NLP-only
             ci_key = str(ci)
@@ -2539,81 +2598,51 @@ def main():
             print(f"  [warn] Holistic re-rank failed: {e}")
             traceback.print_exc()
 
-    # Step 8d: Post-rerank Gemini top-up — summarize clusters promoted into top-50
-    # by the holistic re-ranker that didn't receive Gemini summaries in step 7b.
-    # This ensures the stories the frontend actually shows always have Gemini quality.
-    if SUMMARIZER_AVAILABLE and gemini_is_available() and calls_remaining() > 0:
-        print("\n[8d] Gemini top-up for post-rerank top-50...")
+    # Step 8d: Post-rerank single-pass top-50 Sonnet summarization with cache.
+    # Reads final top-50 by rank_world from DB. For each cluster:
+    #   - hash its current article membership
+    #   - if hash matches stored summary_article_hash AND tier='sonnet' → skip
+    #   - else → call Claude (Gemini fallback), write summary + hash + tier
+    # Op-eds (content_type='opinion') and clusters with <3 articles skipped.
+    # Updates the in-memory `clusters` list so the daily brief regen below
+    # reads fresh top-15 summaries.
+    summary_metrics = {"summarized": 0, "cached": 0, "skipped": 0, "failed": 0}
+    if SUMMARIZER_AVAILABLE and llm_is_available() and calls_remaining() > 0:
+        print("\n[8d] Post-rerank top-50 summarization (single-pass, cached)...")
         try:
-            # Fetch current top-50 by rank_world from DB (post-rerank order)
-            rank_res = supabase.table("story_clusters").select("id").contains("sections", ["world"]).order("rank_world", desc=True).limit(50).execute()
-            top50_ids = [row["id"] for row in (rank_res.data or [])]
-
-            # Build lookup: cluster_id → in-memory cluster index
+            summary_metrics = summarize_top50_after_rerank(supabase, edition="world", limit=50)
+            print(
+                f"  Top-50: {summary_metrics['summarized']} summarized, "
+                f"{summary_metrics['cached']} cache hits, "
+                f"{summary_metrics['skipped']} skipped (op-ed / <3 sources), "
+                f"{summary_metrics['failed']} failed"
+            )
+            # Sync in-memory clusters with the freshly written summaries so any
+            # downstream consumer (brief regen, audio) sees the post-rerank text.
             id_to_idx = {c.get("id"): i for i, c in enumerate(clusters) if c.get("id")}
-
-            # Find clusters in final top-50 that don't have Gemini summaries
-            needs_summary: list[tuple[str, int]] = []
-            for cid in top50_ids:
+            for cid, result in summary_metrics.get("updated_summaries", {}).items():
                 idx = id_to_idx.get(cid)
                 if idx is None:
                     continue
-                c = clusters[idx]
-                if c.get("_gemini_enriched"):
-                    continue  # already summarized in step 7b
-                if c.get("_is_opinion"):
-                    continue
-                if len(c.get("articles", [])) < 3:
-                    continue
-                needs_summary.append((cid, idx))
-
-            print(f"  {len(needs_summary)} top-50 clusters need Gemini summaries (not covered by step 7b)")
-
-            ok = 0
-            consecutive = 0
-            for cid, idx in needs_summary:
-                if calls_remaining() <= 0:
-                    print("  [warn] Gemini budget exhausted, stopping top-up")
-                    break
-                if consecutive >= 5:
-                    print(f"  [warn] Circuit breaker triggered after {consecutive} consecutive failures")
-                    break
-                result = summarize_cluster(clusters[idx].get("articles", []))
-                if result:
-                    clusters[idx]["title"] = result["headline"]
-                    clusters[idx]["summary"] = result["summary"]
-                    clusters[idx]["_gemini_enriched"] = True
-                    consecutive = 0
-                    ok += 1
-                    # Targeted DB update for just this cluster's summary fields
-                    try:
-                        update_payload = {
-                            "title": result["headline"],
-                            "summary": result["summary"],
-                        }
-                        if result.get("consensus"):
-                            update_payload["consensus_points"] = result["consensus"]
-                        if result.get("divergence"):
-                            update_payload["divergence_points"] = result["divergence"]
-                        if result.get("editorial_importance") is not None:
-                            update_payload["editorial_importance"] = result["editorial_importance"]
-                        supabase.table("story_clusters").update(update_payload).eq("id", cid).execute()
-                    except Exception as ue:
-                        print(f"  [warn] DB update failed for cluster {cid}: {ue}")
-                else:
-                    consecutive += 1
-
-            print(f"  Top-up: {ok}/{len(needs_summary)} clusters enriched with Gemini")
+                clusters[idx]["title"] = result["headline"]
+                clusters[idx]["summary"] = result["summary"]
+                if result.get("consensus"):
+                    clusters[idx]["consensus_points"] = result["consensus"]
+                if result.get("divergence"):
+                    clusters[idx]["divergence_points"] = result["divergence"]
+                clusters[idx]["_gemini_enriched"] = True
         except Exception as e:
-            print(f"  [warn] Post-rerank Gemini top-up failed: {e}")
+            print(f"  [warn] Post-rerank summarization failed: {e}")
 
     # Step 8e: Cache cluster images to Supabase Storage (bypasses CDN hotlink protection)
     # Downloads og:images server-side on GitHub Actions (neutral IP = no Referer block),
-    # re-serves from Supabase CDN. Top 10 clusters get guaranteed image availability.
+    # re-serves from Supabase CDN. Top 15 clusters get guaranteed image availability —
+    # buffer for the 50/50 lead split (rank 0) + headroom if rank 0 image fetch fails
+    # (rank 1 promotes seamlessly).
     if IMAGE_CACHER_AVAILABLE:
         print("\n[8e] Caching cluster images to Supabase Storage...")
         try:
-            cache_cluster_images(clusters, supabase, top_n=10)
+            cache_cluster_images(clusters, supabase, top_n=15)
         except Exception as e:
             print(f"  [warn] Image caching failed: {e}")
     else:
@@ -2832,14 +2861,18 @@ def main():
     # to determine which stories dominated the week.
     try:
         cutoff = (datetime.now(timezone.utc) - timedelta(days=8)).isoformat()
-        for ed in ("world", "us", "europe", "uk", "south-asia", "canada"):
-            old = supabase.table("daily_briefs").select("id").eq(
-                "edition", ed
-            ).lt("created_at", cutoff).execute()
-            if old.data:
-                ids = [b["id"] for b in old.data]
-                supabase.table("daily_briefs").delete().in_("id", ids).execute()
-                print(f"  Cleaned {len(ids)} old briefs for {ed}")
+        editions_list = ["world", "us", "europe", "uk", "south-asia", "canada"]
+        old = supabase.table("daily_briefs").select("id, edition").in_(
+            "edition", editions_list
+        ).lt("created_at", cutoff).execute()
+        if old.data:
+            ids = [b["id"] for b in old.data]
+            supabase.table("daily_briefs").delete().in_("id", ids).execute()
+            per_ed: dict[str, int] = {}
+            for b in old.data:
+                per_ed[b["edition"]] = per_ed.get(b["edition"], 0) + 1
+            for ed, n in per_ed.items():
+                print(f"  Cleaned {n} old briefs for {ed}")
     except Exception as e:
         print(f"  [warn] Daily brief cleanup failed: {e}")
 
@@ -2947,6 +2980,43 @@ def main():
 
     # Finalize
     duration = time.time() - start_time
+
+    # LLM telemetry — written to pipeline_runs.llm_metrics for ops visibility.
+    # Cost estimate uses Sonnet 4.6 list price ($3 in / $15 out per MTok) with
+    # rough avg token counts per call type. Treats every Claude call as Sonnet
+    # since this build does not split tiers. Gemini fallback calls priced at $0.
+    try:
+        _claude_calls = claude_get_call_count()
+    except Exception:
+        _claude_calls = 0
+    try:
+        _gemini_calls = gemini_get_call_count()
+    except Exception:
+        _gemini_calls = 0
+    _AVG_TOKENS_PER_CALL_USD = 0.0225  # ~3500 in × $3/M + 800 out × $15/M
+    estimated_cost_usd = round(_claude_calls * _AVG_TOKENS_PER_CALL_USD, 4)
+    cache_hit_rate = 0.0
+    if summary_metrics["summarized"] + summary_metrics["cached"] > 0:
+        cache_hit_rate = round(
+            summary_metrics["cached"]
+            / (summary_metrics["summarized"] + summary_metrics["cached"]),
+            3,
+        )
+    llm_metrics = {
+        "summaries_total": summary_metrics["summarized"],
+        "cached_skips": summary_metrics["cached"],
+        "skipped_other": summary_metrics["skipped"],
+        "summary_failures": summary_metrics["failed"],
+        "cache_hit_rate": cache_hit_rate,
+        "llm_calls_claude": _claude_calls,
+        "llm_calls_gemini": _gemini_calls,
+        "llm_calls_total": _claude_calls + _gemini_calls,
+        "estimated_cost_usd": estimated_cost_usd,
+        "top50_coverage_pct": round(
+            100 * (summary_metrics["summarized"] + summary_metrics["cached"]) / 50, 1
+        ),
+    }
+
     if run_id:
         update_pipeline_run(
             run_id=run_id,
@@ -2956,6 +3026,7 @@ def main():
             clusters_created=clusters_created,
             errors=fetch_errors[:50],
             duration_seconds=round(duration, 2),
+            llm_metrics=llm_metrics,
         )
 
     print("\n" + "=" * 60)
@@ -2963,6 +3034,13 @@ def main():
     print(f"  Duration: {duration:.1f}s")
     print(f"  Sources: {len(sources)} | Articles: {len(stored_articles)} "
           f"| Analyzed: {articles_analyzed} | Clusters: {clusters_created}")
+    print(
+        f"  LLM: {llm_metrics['llm_calls_total']} calls "
+        f"(claude={_claude_calls}, gemini={_gemini_calls}) | "
+        f"top50: {llm_metrics['top50_coverage_pct']}% covered "
+        f"({llm_metrics['summaries_total']} new, {llm_metrics['cached_skips']} cached) | "
+        f"~${estimated_cost_usd:.2f}"
+    )
     print(f"  Errors: {len(fetch_errors)}")
     print("=" * 60)
 

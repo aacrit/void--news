@@ -1,5 +1,7 @@
 # void --history — Unified Strategic Proposal
 
+Last updated: 2026-04-28 (rev 1)
+
 **Date:** 2026-04-04
 **Status:** CEO REVIEW — awaiting greenlight
 **Process:** 4 advisory agents (CEO Advisor, Agent Architect, Tech Planner, Frontend Builder) + 4 targeted debate rounds (Data Layer, Palette, Framework, MVP Scope)

@@ -15,6 +15,10 @@ interface StoryCardProps {
   globalIndex?: number;
   /** True when this card is focused via keyboard (J/K) navigation */
   kbdFocused?: boolean;
+  /** Newspaper variant — drives type scale via layout-zones.css.
+      digest = ranks 1-9 (22px Playfair); wire = ranks 10+ (14px Playfair).
+      Omit for default StoryCard scale. */
+  variant?: "digest" | "wire";
 }
 
 /* ---------------------------------------------------------------------------
@@ -24,7 +28,7 @@ interface StoryCardProps {
    the card enters the viewport — below-fold cards don't waste their entrance.
    --------------------------------------------------------------------------- */
 
-export default function StoryCard({ story, index, onStoryClick, globalIndex, kbdFocused }: StoryCardProps) {
+export default function StoryCard({ story, index, onStoryClick, globalIndex, kbdFocused, variant }: StoryCardProps) {
   const [cardRef, visible] = useInView<HTMLElement>();
   const verdict = classifyCoverage(story);
 
@@ -33,6 +37,7 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
       ref={cardRef}
       data-story-index={globalIndex}
       data-story-id={story.id}
+      data-variant={variant}
       className={`story-card anim-stagger${visible ? " anim-stagger--visible" : ""}${kbdFocused ? " story-card--kbd-focus" : ""}`}
       style={{ animationDelay: `${Math.round(40 * Math.log2(index + 2))}ms` }}
     >

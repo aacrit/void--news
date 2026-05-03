@@ -1,0 +1,70 @@
+name: Deploy to Cloudflare Pages
+
+# Parallel deploy alongside the existing GitHub Pages workflow. Both run on
+# every push to main and after auto-merge. The GH Pages deploy stays as a
+# safety net during the migration; once the *.pages.dev URL is verified,
+# the GH workflow can be disabled or removed in a follow-up.
+on:
+  push:
+    branches: [main]
+  workflow_run:
+    workflows: ["Auto-merge Claude branches"]
+    types: [completed]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: write
+
+concurrency:
+  group: cloudflare-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'push' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        run: cd frontend && npm ci
+
+      - name: Build (Cloudflare target — no basePath)
+        env:
+          # Empty basePath = root deploy (e.g. void-news.pages.dev/ instead
+          # of /void--news/). Read by next.config.ts and lib/utils.ts.
+          NEXT_PUBLIC_BASE_PATH: ""
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: cd frontend && npm run build
+
+      # wrangler 3.x in non-TTY mode does NOT auto-create Pages projects;
+      # `pages deploy` errors with code 8000007 if the project is missing.
+      # Pre-create it idempotently — `continue-on-error` swallows the
+      # "already exists" error on every run after the first.
+      - name: Ensure Cloudflare Pages project exists
+        continue-on-error: true
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages project create void-news --production-branch main
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy frontend/out --project-name=void-news --branch=main --commit-dirty=true

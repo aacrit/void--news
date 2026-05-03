@@ -454,13 +454,13 @@
 
 @media (min-width: 1024px) {
   .df-wire {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
 @media (min-width: 1440px) {
   .df-wire {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 

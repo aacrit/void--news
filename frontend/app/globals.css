@@ -13,14 +13,17 @@
 @import url("./styles/typography.css");
 @import url("./styles/components.css");
 @import url("./styles/animations.css");
-@import url("./styles/spectrum.css");
 @import url("./styles/mobile-feed.css");
 @import url("./styles/desktop-feed.css");
+@import url("./styles/layout-zones.css");
 @import url("./styles/skybox-banner.css");
 @import url("./styles/floating-player.css");
 @import url("./styles/mobile-nav.css");
 @import url("./styles/responsive.css");
-@import url("./styles/verify.css");
+/* spectrum.css → moved to /sources/page.tsx (only consumer)
+   verify.css → moved to DeepDive.tsx (lazy-loads with Deep Dive chunk)
+   Removes ~3,690 lines (~250KB raw / ~50KB gzipped) from the homepage
+   bundle — neither stylesheet is used on the feed grid cards. */
 
 /* --------------------------------------------------------------------------
    CSS Reset — Minimal, opinionated

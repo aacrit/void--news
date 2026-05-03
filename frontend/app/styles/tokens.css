@@ -752,6 +752,16 @@
   --text-xl:    clamp(1.25rem, 1.1rem + 0.6vw, 1.75rem);
   --text-hero:  clamp(1.5rem, 1.3rem + 1.2vw, 3rem);
 
+  /* Newspaper variant scale — drives Lead/Digest/Wire typography hierarchy.
+     Lead reaches 64px on wide desktop; Digest sits at ~22px; Wire at 14px.
+     Aggressive contrast between scales is what gives the page its
+     "premium broadsheet" feel. */
+  --type-lead-headline:   clamp(2.25rem, 1.8rem + 2vw, 4rem);     /* 36 → 64px */
+  --type-digest-headline: clamp(1.125rem, 1rem + 0.6vw, 1.375rem); /* 18 → 22px */
+  --type-wire-headline:   0.875rem;                                /* 14px */
+  --type-lead-tracking:   -0.02em;
+  --type-digest-tracking: -0.01em;
+
   /* Font families — set by next/font, fallbacks here */
   --font-editorial:  var(--font-playfair), "Playfair Display", "Georgia", "Times New Roman", serif;
   --font-structural: var(--font-inter), "Inter", "Helvetica Neue", "Arial", sans-serif;
