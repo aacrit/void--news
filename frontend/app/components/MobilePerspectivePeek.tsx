@@ -14,14 +14,12 @@ export default function MobilePerspectivePeek({
   onClose,
   onOpenDeepDive,
 }: MobilePerspectivePeekProps) {
-  if (!story.deepDive || !story.deepDive.sources || story.deepDive.sources.length === 0) {
-    return null;
-  }
-
-  // Show top 3 sources by coverage
-  const topSources = [...story.deepDive.sources]
-    .sort((a, b) => (b.coverage ?? 0) - (a.coverage ?? 0))
-    .slice(0, 3);
+  const hasSources = story.deepDive?.sources && story.deepDive.sources.length > 0;
+  const topSources = hasSources
+    ? [...story.deepDive.sources]
+        .sort((a, b) => (b.coverage ?? 0) - (a.coverage ?? 0))
+        .slice(0, 3)
+    : [];
 
   return (
     <div className="mpp" onClick={(e) => e.stopPropagation()}>
@@ -39,24 +37,30 @@ export default function MobilePerspectivePeek({
       </div>
 
       {/* Sources grid */}
-      <div className="mpp__sources">
-        {topSources.map((source) => (
-          <a
-            key={source.id}
-            href={source.articleUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mpp__source-card"
-          >
-            <div className="mpp__source-sigil">
-              {/* Re-use source-level Sigil if available, else use story Sigil */}
-              <Sigil data={source.sigilData || story.sigilData} size="sm" instant />
-            </div>
-            <h4 className="mpp__source-headline">{source.headline || story.title}</h4>
-            <p className="mpp__source-outlet">{source.name}</p>
-          </a>
-        ))}
-      </div>
+      {hasSources ? (
+        <div className="mpp__sources">
+          {topSources.map((source) => (
+            <a
+              key={source.id}
+              href={source.articleUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mpp__source-card"
+            >
+              <div className="mpp__source-sigil">
+                {/* Re-use source-level Sigil if available, else use story Sigil */}
+                <Sigil data={source.sigilData || story.sigilData} size="sm" instant />
+              </div>
+              <h4 className="mpp__source-headline">{source.headline || story.title}</h4>
+              <p className="mpp__source-outlet">{source.name}</p>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div className="mpp__empty">
+          <p className="mpp__empty-text">Deep dive data loading...</p>
+        </div>
+      )}
 
       {/* Divergence indicator */}
       {story.deepDive.divergenceScore !== undefined && (

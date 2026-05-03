@@ -426,8 +426,8 @@ function SpectrumView({ sources, isMobile = false }: { sources: DeepDiveSpectrum
   const mean = weightedMeanLean(sources);
 
   const W = 400;
-  const svgH = isMobile ? 40 : 60;  // Reduce height on mobile for more compact view
-  const isFlat = n <= 3 || isMobile;  // dot strip — no KDE on mobile
+  const svgH = isMobile ? 52 : 60;  // Slightly reduced on mobile to fit safe area
+  const isFlat = n <= 3;  // dot strip — only for ≤3 sources
   const isLow = n >= 4 && n <= 7; // tight bandwidth + source dots overlay
   const peakH = isFlat ? 0 : isLow ? 26 : 48;
 

@@ -901,6 +901,19 @@
   margin: 0;
 }
 
+/* Empty state — when sources loading */
+.mpp__empty {
+  padding: var(--space-4);
+  text-align: center;
+  color: var(--fg-secondary);
+}
+
+.mpp__empty-text {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  margin: 0;
+}
+
 /* Divergence indicator */
 .mpp__divergence {
   padding: var(--space-2) var(--space-4);
