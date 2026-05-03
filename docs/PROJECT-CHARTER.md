@@ -1,10 +1,10 @@
 # void --news — Project Charter
 
-Last updated: 2026-04-28 (rev 1)
+Last updated: 2026-05-03 (rev 2 — native app distribution capability added)
 
 **Date:** 2026-04-03 (rev 7)
 **Project Owner:** Aacrit (CEO)
-**Status:** Phase 4 In Progress
+**Status:** Phase 4 Complete; Phase 5 In Progress (PWA installable; iOS/Android shells initialized, awaiting signing)
 
 ---
 
@@ -35,13 +35,18 @@ A free, transparent news aggregation platform delivering World, US, Europe, and 
 - Responsive web app (desktop + mobile)
 - Static site on GitHub Pages, data in Supabase
 
+### Distribution Channels (added 2026-05-03)
+- **PWA** — installable Progressive Web App via `frontend/public/manifest.json` + `sw.js` service worker. Offline reading, network-first HTML/API, cache-first hashed assets, `offline.html` fallback. Live now on GH Pages; CF Pages on cutover.
+- **iOS native app** — Capacitor shell at `frontend/ios/` (`appId: void.news`, `webDir: out`). Awaiting Apple Developer account ($99/yr) signing + App Store submission.
+- **Android native app** — Capacitor shell at `frontend/android/`. Awaiting keystore + Google Play Console ($25 one-time) submission, or sideload APK distribution. Build steps: `docs/APP-BUILD-GUIDE.md`.
+
 ### Out of Scope (MVP)
 - User accounts, authentication, personalization
-- Mobile native apps (iOS/Android)
+- ~~Mobile native apps (iOS/Android)~~ — moved to Phase 5 In-Scope as Capacitor wrappers around the static export (no separate native codebase)
 - Real-time/streaming updates
 - Social features (comments, sharing, bookmarks)
 - Paid features or subscriptions
-- Paid AI/LLM inference
+- Paid AI/LLM inference (now ~$30/mo Sonnet 4.6 budget — see CLAUDE.md)
 
 ## 4. Success Criteria
 

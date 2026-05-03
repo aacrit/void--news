@@ -1,6 +1,6 @@
 # void --news Deployment Runbook
 
-**Last updated**: 2026-05-03 (rev 2)
+**Last updated**: 2026-05-03 (rev 3 — added PWA + Capacitor sections)
 **Status**: Dual deploy in flight — GH Pages live, Cloudflare Pages scaffolded. PWA installable now via service worker + manifest. Capacitor iOS/Android shells initialized; awaiting signing.
 
 ---
@@ -97,3 +97,73 @@ If GH Pages is disabled and we need to roll back:
 Pipeline runs **1x/day at 11:00 UTC** (`pipeline.yml`). The `_headers` HTML rule (`max-age=600 must-revalidate`) means CF Pages visitors see fresh feeds within ~10 min of the workflow finishing. GH Pages enforces `max-age=600` globally, so the same freshness applies there.
 
 Daily Brief refresh runs separately via `refresh-brief.yml`.
+
+---
+
+## PWA Distribution (Active)
+
+void --news ships as an installable Progressive Web App. No separate build step — every static export emits the PWA assets alongside the regular HTML.
+
+| Asset | Path | Purpose |
+|---|---|---|
+| Manifest | `frontend/public/manifest.json` | `display: standalone`, `start_url`/`scope` honor `/void--news/` basePath, 4 edition shortcuts (World/US/EU/SA), `share_target` POST handler, `launch_handler.client_mode: focus-existing` |
+| Service worker | `frontend/public/sw.js` | Caches `void-news-v1` (core), `void-news-assets-v1` (JS/CSS/fonts/images), `void-news-api-v1` (Supabase). Network-first for HTML + API; cache-first for hashed assets |
+| Offline page | `frontend/public/offline.html` | Self-contained dark-mode HTML fallback (no external CSS) served when network + cache both miss |
+| Splash screens | `frontend/public/splash-*.png` | iOS launch images at 7 viewport sizes (375x667 → 430x932) |
+| Icons | `frontend/public/icon-{192,512}.{png,svg}`, `apple-touch-icon.{png,svg}` | Manifest + iOS home-screen icons |
+
+**Install flow:**
+- iOS Safari → Share → Add to Home Screen → launches in standalone (no browser chrome)
+- Android Chrome → menu → Install app → standalone PWA, appears in app drawer
+- Desktop Chrome/Edge → omnibox install icon → opens as windowed app
+
+**Cache strategy (network-first for fresh content):**
+1. HTML and `/api/*` requests: try network, fall back to cache, fall back to `offline.html`
+2. Hashed `_next/static/*`, fonts, WebP images: cache-first with `immutable` semantics
+3. New service worker activates on next page load; old caches purged on `activate`
+
+**Cache invalidation:** bump `CACHE_NAME` constants in `frontend/public/sw.js` (currently `void-news-v1`) before any breaking change to cached asset shape. Existing clients pull the new SW within 24h or on next visit, whichever is sooner.
+
+PWA is fully compatible with both GH Pages and CF Pages deploys. The basePath `/void--news/` is baked into the manifest because that is the live GH Pages path; CF Pages root deploys serve the manifest unchanged but the install will scope to `/void--news/` (planned: emit a basePath-aware manifest at build time once CF cutover is committed).
+
+---
+
+## Capacitor Native Apps (Initialized, Awaiting Signing)
+
+iOS and Android shells live in the repo and wrap the same `frontend/out` static export served by the web. They are not yet signed or submitted.
+
+| Path | Purpose |
+|---|---|
+| `frontend/capacitor.config.ts` | `appId: 'void.news'`, `appName: 'void--news'`, `webDir: 'out'` |
+| `frontend/ios/` | Xcode project, ready for Signing & Capabilities + archive |
+| `frontend/android/` | Gradle project, ready for keystore + AAB build |
+
+**Build loop after web changes:**
+
+```bash
+cd frontend
+npm run build          # static export → frontend/out
+npx cap sync           # copies out/ into ios/ and android/
+npx cap open ios       # → Xcode: Archive → App Store Connect
+npx cap open android   # → Android Studio: Generate Signed Bundle (AAB) or APK
+```
+
+**One-time setup before first store submission:**
+
+| Platform | Account | Cost | Action |
+|---|---|---|---|
+| iOS | Apple Developer | $99 / year | Create App ID in Apple Developer portal; configure Team + Bundle Identifier in Xcode → Signing & Capabilities |
+| Android | Google Play Console | $25 one-time | Generate keystore (keep offline backup; required for every future update); create app listing |
+
+**Direct APK distribution (Android, optional):**
+
+```bash
+npx cap build android --release
+# → frontend/android/app/build/outputs/apk/release/app-release.apk
+```
+
+Users sideload after enabling "Install from unknown sources." Useful for beta cohorts before Play Store review.
+
+**Full step-by-step (provisioning, store metadata, troubleshooting, version management, CI/CD example) lives in `docs/APP-BUILD-GUIDE.md`.** This runbook only covers the deployment-pipeline shape; the App Build Guide covers the manual signing flow.
+
+**Sync cadence:** native apps are not on the daily pipeline cron — they re-sync on demand only. The web tier (GH Pages + CF Pages) updates 1x/day; native shells pick up new content automatically because they load the live Supabase data, but new UI/JS requires a `npx cap sync` + store re-submission.
