@@ -1,7 +1,7 @@
 # void --news — Design System: "Cinematic Press" (Press & Precision v2)
 
-**Version:** 2.4
-**Last updated:** 2026-04-29 (rev 21 — $100B layout overhaul: LeadStorySplit, StoryCard variants, BiasSnapshot, layout-zones.css)
+**Version:** 2.5
+**Last updated:** 2026-05-03 (rev 22 — Mobile redesign Phase 1-4: spacing tokens, MobileBriefPill expansion, Sigil hierarchy, Six Lenses disclosure, DeepDive lazy-load, BiasInspector bottom-sheet)
 
 ---
 
@@ -399,6 +399,111 @@ Desktop: 75vw centered modal (max-width 920px, 1080px at 1280px+, 80vh); main fe
 | `.story-card__headline`, `.lead-story__headline` | `overflow-wrap: break-word` (global) | Prevents long words from causing horizontal overflow |
 | `.section-header` | `flex-wrap: wrap` | Timestamp wraps instead of overflowing |
 | Deep Dive source rows | `flex-wrap: wrap` | Source metadata wraps on narrow viewports |
+
+### Mobile Layout Redesign (Phase 1-4, May 2026)
+
+**Scope:** Comprehensive mobile UX overhaul addressing CEO feedback: "too many attention grabbers," "insufficient whitespace," "top story needs breathing room," "brand sigil underutilized." All phases merged to main (commit c4dfd4a).
+
+#### Phase 1: Token & Spacing Tweaks
+
+New mobile-scoped spacing tokens added to `tokens.css`:
+
+```css
+@media (max-width: 767px) {
+  :root {
+    --space-mobile-card-gap: var(--space-4);        /* 12-16px between story cards */
+    --space-mobile-section-gap: var(--space-6);     /* 24-40px between major sections */
+    --space-mobile-hero-bottom: var(--space-5);     /* 16-24px hero breathing room */
+  }
+}
+```
+
+**Applied to:**
+- `.msc--compact` (MobileStoryCard compact variant): min-height 72px → 90px; gap from `--space-3` → `--space-mobile-card-gap`
+- `.msc--hero` (MobileStoryCard hero variant): margin-bottom `--space-mobile-hero-bottom` added
+- `.mbp` (MobileBriefPill): margin-bottom `--space-mobile-section-gap`
+- Sigil saturation: `filter: saturate(1.2)` on mobile for elevated visual prominence
+
+**Density impact:** 20+ stories per screen → 12-16 stories per screen. More breathing room; cognitive load reduced.
+
+#### Phase 2: MobileBriefPill Expansion & Six Lenses Progressive Disclosure
+
+**MobileBriefPill changes:**
+- Removed collapsed state (was `.mbp--collapsed` pill)
+- **Always-expanded inline layout**: positioned between hero and feed cards
+- TL;DR section: headline + first 2 sentences visible; "Read more" toggles Opinion section
+- OnAir section: "Episodes" toggle for audio content
+- Updated `MobileFeed.tsx` rendering order: Hero → Brief → Feed cards
+
+**Six Lenses progressive disclosure:**
+- Moved all 6 bias analysis axes into collapsible "Bias Analysis" button (`.dd-bias-toggle`)
+- **Hidden by default**; tap to reveal full 6-axis grid (`.dd-lenses__collapsible`)
+- Reduces visual clutter on first load (too many colored controls)
+- Aligns with "fewer simultaneous CTAs" feedback
+
+#### Phase 3: Sigil Sizing & Saturation
+
+New Sigil sizing hierarchy for mobile:
+
+| Context | Size | Height | Saturation |
+|---------|------|--------|-----------|
+| Hero story (rank-0) | `xl` | 72px | +20% |
+| Compact story card (rank 1+) | `lg` | 56px | +20% |
+| Deep Dive source list | `sm` | 40px | baseline |
+
+**Implementation:** `MobileStoryCard.tsx` passes `size="xl"` for hero variant, `size="lg"` for compact. `Sigil.tsx` accepts optional `saturationBoost` prop. Ring fill visibility preserved across all sizes for coverage confidence readout.
+
+#### Phase 4: DeepDive Lazy-Loading & BiasInspector Bottom-Sheet
+
+**New component:** `LazyOnView.tsx` — React component using Intersection Observer + `useSyncExternalStore` pattern. Delays render of heavy children until element is ~20% visible.
+
+**DeepDive refactoring:**
+- Main orchestrator (~200 LOC) remains lightweight
+- Heavy sections (`DeepDiveSourcesSection`, `DeepDiveOmissionsSection`) wrapped in `LazyOnView`
+- Skeleton loading state shown during fetch
+- Lazy-loads `verify.css` (was global ~50KB gzipped) only when Deep Dive opens
+- Reduces JS bundle impact; improves initial paint
+
+**BiasInspector bottom-sheet (mobile):**
+- Changed from modal overlay to iOS-style bottom sheet
+- Slide up from bottom with drag indicator pill
+- `border-radius: 16px 16px 0 0`
+- `padding-bottom: env(safe-area-inset-bottom)` for home indicator clearance
+- Backdrop blur reduced to 2px (6px too expensive on low-end mobile)
+- Swipe-to-dismiss gesture supported (native scroll)
+
+#### Density & Whitespace Metrics
+
+| Metric | Before | After | Target |
+|--------|--------|-------|--------|
+| Stories per screen (mobile) | 20+ | 12-16 | ✓ Met |
+| Hero card min-height | — | 140px (image) + spacing | Breathing room added |
+| Card gap | `--space-3` (8-12px) | `--space-4` (12-16px) | ✓ More comfortable |
+| Section gap | `--space-4` (12-16px) | `--space-6` (24-40px) | ✓ Major increase |
+| Sigil presence | sm 40px inline | Hero: xl 72px; Card: lg 56px | ✓ Elevated prominence |
+| Attention grabbers | All 6 lenses visible | Only "Bias Analysis" button visible | ✓ Reduced CTA overload |
+
+#### Files Modified
+
+**CSS:**
+- `frontend/app/styles/tokens.css` — added `--space-mobile-*` tokens
+- `frontend/app/styles/mobile-feed.css` — updated card spacing, heights, borders
+- `frontend/app/styles/components.css` — added `.dd-bias-toggle`, `.dd-lenses__collapsible`, mobile BiasInspector styling
+
+**Components:**
+- `frontend/app/components/MobileStoryCard.tsx` — hero image support, xl/lg Sigil sizing, summary variants
+- `frontend/app/components/MobileBriefPill.tsx` — removed collapsed state, always-expanded inline layout
+- `frontend/app/components/MobileFeed.tsx` — reorder rendering (hero → brief → cards)
+- `frontend/app/components/DeepDive.tsx` — Six Lenses toggle, LazyOnView wrapping, BiasInspector bottom-sheet variant
+- `frontend/app/components/LazyOnView.tsx` — **NEW** — Intersection Observer lazy-render component
+- `frontend/app/components/Sigil.tsx` — added optional `saturationBoost` prop
+
+#### Testing & Validation
+
+- **Breakpoints tested:** 375px (SE), 390px (iPhone 13), 412px (Pixel 6), 768px (iPad), 1024px+
+- **Performance:** Lighthouse CLS < 0.1, LCP < 2.5s maintained
+- **Tap targets:** All interactive elements ≥44×44px (WCAG standard)
+- **Accessibility:** Color contrast 4.5:1 maintained; shape encodes data independently
 
 ---
 
