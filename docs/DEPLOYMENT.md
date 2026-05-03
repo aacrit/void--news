@@ -1,7 +1,7 @@
 # void --news Deployment Runbook
 
-**Last updated**: 2026-04-29 (rev 1)
-**Status**: Dual deploy in flight — GH Pages live, Cloudflare Pages scaffolded.
+**Last updated**: 2026-05-03 (rev 2)
+**Status**: Dual deploy in flight — GH Pages live, Cloudflare Pages scaffolded. PWA installable now via service worker + manifest. Capacitor iOS/Android shells initialized; awaiting signing.
 
 ---
 
