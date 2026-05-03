@@ -114,9 +114,9 @@ GitHub Actions (4x daily) → Python Pipeline → Supabase (PostgreSQL) ← Next
 |-------|--------|-------------|
 | Phase 1 — Foundation | COMPLETE | Pipeline, source list, Supabase schema, fetchers, GitHub Actions |
 | Phase 2 — Analysis Engine | COMPLETE | 6-axis bias engine, clustering, ranking v6.0, Gemini integration |
-| Phase 3 — Frontend MVP | COMPLETE | Desktop + mobile layouts, news feed, BiasLens, deploy pending |
-| Phase 4 — Deep Dive | IN PROGRESS | Dashboard, source comparison, bias viz, framing analysis |
-| Phase 5 — Polish & Launch | PENDING | Accessibility, performance, animation polish, cross-browser |
+| Phase 3 — Frontend MVP | COMPLETE | Desktop + mobile layouts, news feed, BiasLens, GH Pages deploy live |
+| Phase 4 — Deep Dive + Mobile UX | COMPLETE | Dashboard, source comparison, bias viz, mobile layout redesign Phase 1-4, mobile UX pass (long-press peek, KDE on mobile, axis label overlap, safe-area), PWA installable, Capacitor iOS/Android shells |
+| Phase 5 — Polish, App Submission & Launch | IN PROGRESS | Accessibility (WCAG 2.1 AA), Lighthouse 90+, animation polish, cross-browser, CF Pages cutover, iOS App Store + Google Play submission (signing pending) |
 
 ## 10. Budget
 
