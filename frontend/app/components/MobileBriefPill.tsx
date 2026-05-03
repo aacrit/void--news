@@ -46,7 +46,8 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
     previousEpisodes, loadEpisode,
   } = state;
 
-  const [isExpanded, setIsExpanded] = useState(false);
+  // Phase 2 redesign: Always expanded on mobile (no collapsed pill state)
+  const [isExpanded, setIsExpanded] = useState(true);
   const [tldrExpanded, setTldrExpanded] = useState(false);
   const [opinionExpanded, setOpinionExpanded] = useState(false);
   const [episodesExpanded, setEpisodesExpanded] = useState(false);
