@@ -180,7 +180,9 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
         </section>
       )}
 
-      {/* Previous episodes — compact expandable */}
+      {/* Previous episodes — starts collapsed; tap "Episodes" to reveal.
+           Progressive disclosure: OnAir content hidden by default to reduce
+           initial cognitive load. Users tap to explore past broadcasts. */}
       {previousEpisodes.length > 1 && (
         <>
           <hr className="mbp__rule" />
@@ -189,8 +191,9 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
             onClick={() => { hapticLight(); setEpisodesExpanded(v => !v); }}
             type="button"
             aria-expanded={episodesExpanded}
+            aria-label={episodesExpanded ? "Hide episodes" : "Show episodes"}
           >
-            <span className="mbp__prev-label">Previous episodes ({previousEpisodes.length - 1})</span>
+            <span className="mbp__prev-label">Episodes ({previousEpisodes.length - 1})</span>
             <span className={`mbp__prev-arrow${episodesExpanded ? " mbp__prev-arrow--open" : ""}`}>&#9656;</span>
           </button>
           <div className={`mbp__expand${episodesExpanded ? " mbp__expand--open" : ""}`}>

@@ -223,12 +223,37 @@ function SourceFaviconRow({
     return () => mq.removeEventListener("change", handler);
   }, []);
 
-  const avatarSize = isMobile ? 16 : 20;
+  const avatarSize = isMobile ? 14 : 20;
   const rowH = avatarSize + 4; // 4px gap between rows
 
-  // Sort by lean, assign row via 2-row collision detection
-  const placed = useMemo(() => {
-    const sorted = [...sources].sort((a, b) => a.politicalLean - b.politicalLean);
+  // Mobile: limit to top 5 sources by confidence; single-row layout.
+  // Desktop: show all sources with 2-row collision detection.
+  const visibleSources = isMobile
+    ? sources.sort((a, b) => (b.confidence ?? 0) - (a.confidence ?? 0)).slice(0, 5)
+    : sources;
+
+  // Sort by lean, assign row
+  const placed: Array<{ source: DeepDiveSpectrumSource; leftPct: number; row: 0 | 1 }> = useMemo(() => {
+    const sorted = [...visibleSources].sort((a, b) => a.politicalLean - b.politicalLean);
+
+    // Mobile: single-row layout with larger minimum gap
+    if (isMobile) {
+      const MIN_GAP_MOBILE = 8; // 8% gap to fit fewer icons
+      const lastRight = [-Infinity];
+      return sorted
+        .map((s) => {
+          const leftPct = 2 + (s.politicalLean / 100) * 96;
+          // Force single row; skip icons that overlap
+          if (leftPct - lastRight[0] < MIN_GAP_MOBILE) {
+            return null; // Skip overlapping icons on mobile
+          }
+          lastRight[0] = leftPct;
+          return { source: s, leftPct, row: 0 as const };
+        })
+        .filter((x): x is { source: DeepDiveSpectrumSource; leftPct: number; row: 0 } => x !== null);
+    }
+
+    // Desktop: 2-row collision detection
     const lastRight: [number, number] = [-Infinity, -Infinity];
     return sorted.map((s) => {
       const leftPct = 2 + (s.politicalLean / 100) * 96;
@@ -238,33 +263,43 @@ function SourceFaviconRow({
       } else if (leftPct - lastRight[1] >= MIN_GAP_PCT) {
         row = 1;
       } else {
-        row = 1; // overlap row 1 as last resort
+        row = 1;
       }
       lastRight[row] = leftPct;
       return { source: s, leftPct, row };
     });
-  }, [sources]);
+  }, [visibleSources, isMobile]);
+
+  // Show "+N more" indicator on mobile if sources were filtered
+  const hiddenCount = isMobile ? Math.max(0, sources.length - visibleSources.length) : 0;
 
   return (
-    <div className="dd-sv-sources" style={{ height: rowH * 2 }}>
-      {placed.map(({ source, leftPct, row }, i) => (
-        <a
-          key={`pin-${i}`}
-          href={source.articleUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="dd-sv-sources__pin"
-          style={{ left: `${leftPct}%`, top: `${row * rowH}px` }}
-          onPointerEnter={(e) => {
-            const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-            setTooltip({ source, x: rect.left + rect.width / 2, y: rect.top });
-          }}
-          onPointerLeave={() => setTooltip(null)}
-        >
-          <FaviconAvatar source={source} size={avatarSize} />
-        </a>
-      ))}
-    </div>
+    <>
+      <div className="dd-sv-sources" style={{ height: isMobile ? rowH : rowH * 2 }}>
+        {placed.map(({ source, leftPct, row }, i) => (
+          <a
+            key={`pin-${i}`}
+            href={source.articleUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="dd-sv-sources__pin"
+            style={{ left: `${leftPct}%`, top: `${row * rowH}px` }}
+            onPointerEnter={(e) => {
+              const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+              setTooltip({ source, x: rect.left + rect.width / 2, y: rect.top });
+            }}
+            onPointerLeave={() => setTooltip(null)}
+          >
+            <FaviconAvatar source={source} size={avatarSize} />
+          </a>
+        ))}
+      </div>
+      {hiddenCount > 0 && (
+        <div className="dd-sv-sources-more" style={{ fontSize: "11px", color: "var(--fg-tertiary)", marginTop: "4px" }}>
+          +{hiddenCount} more source{hiddenCount !== 1 ? 's' : ''}
+        </div>
+      )}
+    </>
   );
 }
 
@@ -379,7 +414,7 @@ function detectDeadZones(
    Expand toggle: source pins on curve + label strip + scrub line.
    ═══════════════════════════════════════════════════════════════════════ */
 
-function SpectrumView({ sources }: { sources: DeepDiveSpectrumSource[] }) {
+function SpectrumView({ sources, isMobile = false }: { sources: DeepDiveSpectrumSource[]; isMobile?: boolean }) {
   const fillRef = useRef<SVGPathElement>(null);
   const strokeRef = useRef<SVGPathElement>(null);
   const riseRafRef = useRef<number>(0);
@@ -391,8 +426,8 @@ function SpectrumView({ sources }: { sources: DeepDiveSpectrumSource[] }) {
   const mean = weightedMeanLean(sources);
 
   const W = 400;
-  const svgH = 60;
-  const isFlat = n <= 3;  // dot strip — no KDE
+  const svgH = isMobile ? 40 : 60;  // Reduce height on mobile for more compact view
+  const isFlat = n <= 3 || isMobile;  // dot strip — no KDE on mobile
   const isLow = n >= 4 && n <= 7; // tight bandwidth + source dots overlay
   const peakH = isFlat ? 0 : isLow ? 26 : 48;
 
@@ -726,7 +761,16 @@ interface DeepDiveSpectrumProps {
 
 export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
   const [tooltip, setTooltip] = useState<TooltipData | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
   const mean = useMemo(() => weightedMeanLean(sources), [sources]);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
   if (sources.length === 0) {
     return (
@@ -738,8 +782,10 @@ export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
 
   return (
     <div className="dd-sv" role="img" aria-label="Source political lean spectrum">
-      <SpectrumView sources={sources} />
-      <TiltRow mean={mean} />
+      <SpectrumView sources={sources} isMobile={isMobile} />
+      {/* Mobile: hide TiltRow (mean needle + label) to reduce clutter.
+          Desktop: show weighted mean needle and label for additional context. */}
+      {!isMobile && <TiltRow mean={mean} />}
       <SpectrumAxis />
       <SourceFaviconRow sources={sources} setTooltip={setTooltip} />
       {tooltip && <SpectrumTooltip data={tooltip} />}
