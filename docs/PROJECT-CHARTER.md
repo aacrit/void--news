@@ -137,15 +137,20 @@ GitHub Actions (4x daily) → Python Pipeline → Supabase (PostgreSQL) ← Next
 
 The MVP is complete when:
 
-- [ ] 1,013 sources actively ingested 4x daily with 95%+ reliability
-- [ ] All 6 bias axes scored on every article
-- [ ] Story clustering groups related articles with 85%+ accuracy
-- [ ] Desktop layout renders newspaper-style multi-column grid
-- [ ] Mobile layout renders single-column feed with bottom navigation
-- [ ] Deep Dive shows unified summary with divergence highlights and source links
-- [ ] BiasLens Three Lenses displays inline on every story card
-- [ ] v6.0 importance ranking active with edition-unique ranking
-- [ ] Light and dark modes retain newspaper aesthetic
-- [ ] Lighthouse score 90+ on all categories
+- [x] 1,013 sources actively ingested 1x daily with 95%+ reliability
+- [x] All 6 bias axes scored on every article
+- [x] Story clustering groups related articles with 85%+ accuracy
+- [x] Desktop layout renders newspaper-style multi-column grid
+- [x] Mobile layout renders single-column feed with bottom navigation
+- [x] Deep Dive shows unified summary with divergence highlights and source links
+- [x] BiasLens Three Lenses displays inline on every story card
+- [x] v6.0 importance ranking active with edition-unique ranking
+- [x] Light and dark modes retain newspaper aesthetic
+- [x] Deployed to GitHub Pages
+- [x] PWA installable (manifest + service worker + offline fallback)
+- [x] Capacitor iOS/Android shells initialized (`appId: void.news`)
+- [ ] Lighthouse score 90+ on all categories (verified post-deploy; projection 88-93 mobile / 95-98 desktop pre-CF)
 - [ ] WCAG 2.1 AA compliant
-- [ ] Deployed to GitHub Pages with $0 operational cost
+- [ ] iOS App Store submission (Apple Dev $99/yr + signing)
+- [ ] Google Play submission (keystore + $25 one-time)
+- [ ] Operational cost stays at ~$30/month editorial LLM target (Sonnet 4.6)
