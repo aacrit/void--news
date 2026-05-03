@@ -55,10 +55,13 @@
 }
 
 /* Hero image — full-bleed 4:5 portrait above headline. Aspect-ratio
-   reserves CLS-safe space; fade-in on load avoids the pop-in flash. */
+   reserves CLS-safe space; fade-in on load avoids the pop-in flash.
+   Max-height clamp() reduces viewport waste: 100px minimum (SE), scales
+   to 25vh (responsive), caps at 120px to keep headline above fold. */
 .msc__hero-image {
   position: relative;
   width: 100%;
+  max-height: clamp(100px, 25vh, 120px);
   aspect-ratio: 4 / 5;
   overflow: hidden;
   margin: 0 calc(-1 * var(--canvas-pad-x, 1rem)) var(--space-3);
@@ -133,11 +136,10 @@
 }
 
 .msc__summary--compact {
-  -webkit-line-clamp: 2;
-  font-size: var(--text-xs);
-  margin-bottom: 0;
-  margin-top: var(--space-1);
-  color: var(--fg-tertiary);
+  /* Redundant with MobileBriefPill TL;DR section — removed from feed cards
+     to reduce vertical space. Brief is primary summary source; cards focus
+     on headline + Sigil bias signal. Saves ~20-30px per card. */
+  display: none;
 }
 
 .msc__summary--pending {
