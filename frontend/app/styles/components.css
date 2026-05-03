@@ -4505,6 +4505,15 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   backdrop-filter: var(--focus-modal) saturate(0.8);
 }
 
+/* Phase 4: Reduce backdrop blur on mobile (GPU budget) — solid bg + light blur */
+@media (max-width: 767px) {
+  .bi-panel__backdrop {
+    -webkit-backdrop-filter: blur(3px) saturate(0.85);
+    backdrop-filter: blur(3px) saturate(0.85);
+    background-color: color-mix(in srgb, var(--overlay-backdrop) 80%, var(--bg-primary));
+  }
+}
+
 /* ---- Pop-out panel: drawer ---------------------------------------------- */
 /*
   Desktop (≥1024px): slides in from the left edge of the Deep Dive panel.
@@ -4538,12 +4547,13 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 .bi-panel__drawer::before {
   content: "";
   display: block;
-  width: 36px;
-  height: 4px;
+  width: 56px;
+  height: 5px;
   background-color: var(--border-strong);
-  border-radius: 2px;
+  border-radius: 3px;
   margin: var(--space-3) auto var(--space-2);
   flex-shrink: 0;
+  opacity: 0.7;
 }
 
 /* Desktop: overlays the Deep Dive panel from the right.

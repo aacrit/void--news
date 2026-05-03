@@ -20,6 +20,7 @@ import type { DeepDiveSpectrumSource } from "./DeepDiveSpectrum";
 import ComparativeView from "./ComparativeView";
 import ClaimConsensusSection from "./ClaimConsensusSection";
 import ClaimMark from "./ClaimMark";
+import LazyOnView from "./LazyOnView";
 
 /* ---------------------------------------------------------------------------
    DeepDive — Centered popup overlay showing unified summary of a story cluster.
@@ -1330,7 +1331,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             )}
           </section>
 
-          {/* ---- Claim Consensus — cross-source verification (visible by default) ---- */}
+          {/* ---- Claim Consensus — cross-source verification (lazy-rendered) ---- */}
           {deepDive?.claimConsensus && (
             <section
               className={`anim-dd-section dd-cascade-3${contentVisible ? " anim-dd-section--visible" : ""}`}
@@ -1338,7 +1339,9 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
               aria-label="Claim Consensus verification"
             >
               <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
-              <ClaimConsensusSection consensus={deepDive.claimConsensus} />
+              <LazyOnView rootMargin="300px 0px" minHeight={120}>
+                <ClaimConsensusSection consensus={deepDive.claimConsensus} />
+              </LazyOnView>
             </section>
           )}
 
@@ -1352,20 +1355,22 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             </button>
           )}
 
-          {/* ---- Source Perspectives (collapsed by default) ---- */}
+          {/* ---- Source Perspectives (collapsed by default, lazy-rendered) ---- */}
           {analysisExpanded && hasCrossLeanSources && (
             <section id="dd-panel-perspectives" aria-label="Source Perspectives" className={`anim-dd-section dd-cascade-3${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)" }}>
               <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
               <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>Source Perspectives</h3>
-              <ComparativeView
-                sources={sources}
-                consensusPoints={deepDive?.consensus}
-                divergencePoints={deepDive?.divergence}
-              />
+              <LazyOnView rootMargin="400px 0px" minHeight={200}>
+                <ComparativeView
+                  sources={sources}
+                  consensusPoints={deepDive?.consensus}
+                  divergencePoints={deepDive?.divergence}
+                />
+              </LazyOnView>
             </section>
           )}
 
-          {/* ---- Six Lenses — ink stamp bias scores (collapsed by default) ---- */}
+          {/* ---- Six Lenses — ink stamp bias scores (collapsed by default, lazy-rendered) ---- */}
           {analysisExpanded && story.sigilData && !story.sigilData.pending && (
             <section
               className={`anim-dd-section dd-cascade-4${contentVisible ? " anim-dd-section--visible" : ""}`}
@@ -1373,7 +1378,9 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
               aria-label="Six Lenses bias analysis"
             >
               <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
-              <SixLenses sigilData={story.sigilData} visible={contentVisible} />
+              <LazyOnView rootMargin="300px 0px" minHeight={150}>
+                <SixLenses sigilData={story.sigilData} visible={contentVisible} />
+              </LazyOnView>
             </section>
           )}
 
