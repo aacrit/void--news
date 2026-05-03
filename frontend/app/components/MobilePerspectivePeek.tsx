@@ -14,10 +14,12 @@ export default function MobilePerspectivePeek({
   onClose,
   onOpenDeepDive,
 }: MobilePerspectivePeekProps) {
-  const hasSources = story.deepDive?.sources && story.deepDive.sources.length > 0;
+  const deepDive = story.deepDive;
+  const sources = deepDive?.sources || [];
+  const hasSources = sources.length > 0;
   const topSources = hasSources
-    ? [...story.deepDive.sources]
-        .sort((a, b) => (b.coverage ?? 0) - (a.coverage ?? 0))
+    ? [...sources]
+        .sort((a, b) => (b.confidence ?? 0) - (a.confidence ?? 0))
         .slice(0, 3)
     : [];
 
@@ -41,17 +43,17 @@ export default function MobilePerspectivePeek({
         <div className="mpp__sources">
           {topSources.map((source) => (
             <a
-              key={source.id}
-              href={source.articleUrl}
+              key={source.name}
+              href={source.url}
               target="_blank"
               rel="noopener noreferrer"
               className="mpp__source-card"
             >
               <div className="mpp__source-sigil">
-                {/* Re-use source-level Sigil if available, else use story Sigil */}
-                <Sigil data={source.sigilData || story.sigilData} size="sm" instant />
+                {/* Use story Sigil — sources don't have individual sigilData */}
+                <Sigil data={story.sigilData} size="sm" instant />
               </div>
-              <h4 className="mpp__source-headline">{source.headline || story.title}</h4>
+              <h4 className="mpp__source-headline">{source.articleTitle || story.title}</h4>
               <p className="mpp__source-outlet">{source.name}</p>
             </a>
           ))}
@@ -62,14 +64,14 @@ export default function MobilePerspectivePeek({
         </div>
       )}
 
-      {/* Divergence indicator */}
-      {story.deepDive.divergenceScore !== undefined && (
+      {/* Consensus/Divergence summary */}
+      {deepDive && (deepDive.divergence.length > 0 || deepDive.consensus.length > 0) && (
         <div className="mpp__divergence">
-          {story.deepDive.divergenceScore > 0.6 ? (
+          {deepDive.divergence.length > deepDive.consensus.length ? (
             <span className="mpp__divergence-label mpp__divergence-label--split">
               Divergent coverage
             </span>
-          ) : story.deepDive.divergenceScore > 0.4 ? (
+          ) : deepDive.divergence.length > 0 ? (
             <span className="mpp__divergence-label mpp__divergence-label--mixed">
               Mixed perspectives
             </span>
