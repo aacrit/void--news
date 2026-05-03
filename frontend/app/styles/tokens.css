@@ -784,6 +784,26 @@
 }
 
 /* --------------------------------------------------------------------------
+   Mobile-Scoped Spacing (Phase 1: Redesign)
+   Increased breathing room on mobile: 12-16px between cards, 24-40px sections
+   -------------------------------------------------------------------------- */
+@media (max-width: 767px) {
+  :root {
+    /* Inter-card gap: increased from --space-3 (8-12px) to --space-4 (12-16px) */
+    --space-mobile-card-gap: var(--space-4);
+
+    /* Section separator gap: increased from --space-4 (12-16px) to --space-6 (24-40px) */
+    --space-mobile-section-gap: var(--space-6);
+
+    /* Hero story bottom margin: breathing room before Brief */
+    --space-mobile-hero-bottom: var(--space-5);
+
+    /* Sigil saturation boost on mobile (+20%) for visual prominence */
+    --sigil-saturation-boost: 1.2;
+  }
+}
+
+/* --------------------------------------------------------------------------
    Animation Tokens
    -------------------------------------------------------------------------- */
 :root {

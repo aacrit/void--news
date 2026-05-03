@@ -50,6 +50,7 @@
 
 .msc--hero {
   padding: var(--space-3) 0 var(--space-4);
+  margin-bottom: var(--space-mobile-hero-bottom, var(--space-5));
   border-bottom: var(--rule-thin);
 }
 
@@ -104,6 +105,7 @@
   gap: 2px;
   min-height: auto;
   flex-shrink: 0;
+  filter: saturate(var(--sigil-saturation-boost, 1));
 }
 
 /* The 7px lean text stacked under the Sigil ring is redundant with the
@@ -131,10 +133,10 @@
 }
 
 .msc__summary--compact {
-  -webkit-line-clamp: 1;
+  -webkit-line-clamp: 2;
   font-size: var(--text-xs);
   margin-bottom: 0;
-  margin-top: 2px;
+  margin-top: var(--space-1);
   color: var(--fg-tertiary);
 }
 
@@ -150,8 +152,10 @@
    --------------------------------------------------------------------------- */
 
 .msc--compact {
-  padding: var(--space-3) 0;
-  border-bottom: 0.5px solid var(--divider);
+  padding: var(--space-mobile-card-gap, var(--space-4)) 0;
+  gap: var(--space-mobile-card-gap, var(--space-4));
+  border-bottom: 1px solid var(--divider);
+  min-height: 90px;
 }
 
 .msc__cat {
@@ -281,6 +285,7 @@
   border-top: 2px solid var(--accent-warm);
   border-bottom: 1px solid var(--border-subtle);
   background: color-mix(in srgb, var(--accent-warm) 3%, var(--bg-primary));
+  margin-bottom: var(--space-mobile-section-gap, var(--space-6));
 }
 
 /* ── Skybox variant — brief visible above hero, not collapsed ── */

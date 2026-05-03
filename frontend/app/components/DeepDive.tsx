@@ -65,7 +65,8 @@ const SIX_AXES: { id: string; name: string; key: keyof SigilData }[] = [
 function SixLenses({ sigilData, visible }: { sigilData: SigilData; visible: boolean }) {
   const [activeAxis, setActiveAxis] = useState<string | null>(null);
   const [isMobileLens, setIsMobileLens] = useState(false);
-  const [showSecondary, setShowSecondary] = useState(false);
+  // Phase 2 redesign: All lenses hidden by default on mobile behind single button
+  const [showAllLenses, setShowAllLenses] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 767px)");
@@ -106,36 +107,52 @@ function SixLenses({ sigilData, visible }: { sigilData: SigilData; visible: bool
 
   return (
     <div className="dd-lenses">
-      <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>Six Lenses</h3>
       {isMobileLens ? (
         <>
-          <div className={`dd-lenses__grid${activeAxis ? " dd-lenses__grid--has-active" : ""}`}>
-            {primaryAxes.map((axis, i) => renderAxis(axis, i))}
-          </div>
-          <div
-            className="dd-lenses__secondary"
+          {/* Phase 2 redesign: All lenses hidden behind single "Bias Analysis" button */}
+          <button
+            className="dd-lenses__toggle text-meta"
+            onClick={() => { hapticLight(); setShowAllLenses(!showAllLenses); }}
+            aria-expanded={showAllLenses}
             style={{
-              maxHeight: showSecondary ? "300px" : "0",
+              display: "inline-block",
+              padding: "var(--space-2) var(--space-3)",
+              marginBottom: "var(--space-3)",
+              border: "1px solid var(--divider)",
+              borderRadius: "4px",
+              background: "none",
+              cursor: "pointer",
+              fontSize: "var(--text-sm)",
+              color: "var(--fg-secondary)",
+            }}
+          >
+            {showAllLenses ? "Hide analysis" : "Bias Analysis"}
+            <span style={{ marginLeft: "var(--space-1)" }}>
+              {showAllLenses ? "▾" : "▸"}
+            </span>
+          </button>
+
+          {/* Six-axis grid visible when toggle is expanded */}
+          <div
+            style={{
+              maxHeight: showAllLenses ? "400px" : "0",
               overflow: "hidden",
               transition: "max-height 300ms var(--ease-out)",
             }}
           >
+            <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>Six Lenses</h3>
             <div className={`dd-lenses__grid${activeAxis ? " dd-lenses__grid--has-active" : ""}`}>
-              {secondaryAxes.map((axis, i) => renderAxis(axis, i + 3))}
+              {SIX_AXES.map((axis, i) => renderAxis(axis, i))}
             </div>
           </div>
-          <button
-            className="dd-lenses__expand text-meta"
-            onClick={() => { hapticMicro(); setShowSecondary(!showSecondary); }}
-            aria-expanded={showSecondary}
-          >
-            {showSecondary ? "Show less" : `${secondaryAxes.length} more axes`}
-          </button>
         </>
       ) : (
-        <div className={`dd-lenses__grid${activeAxis ? " dd-lenses__grid--has-active" : ""}`}>
-          {SIX_AXES.map((axis, i) => renderAxis(axis, i))}
-        </div>
+        <>
+          <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>Six Lenses</h3>
+          <div className={`dd-lenses__grid${activeAxis ? " dd-lenses__grid--has-active" : ""}`}>
+            {SIX_AXES.map((axis, i) => renderAxis(axis, i))}
+          </div>
+        </>
       )}
       <a href={`${BASE_PATH}/sources/#methodology`} className="dd-lenses__link text-meta">
         How we score
