@@ -10,8 +10,17 @@ import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timedelta, timezone
 
+import defusedxml
+# Harden Python's stdlib XML parsers (sax, etree, expat, pulldom, etc.) against
+# billion-laughs / external-entity attacks. feedparser falls back to several of
+# these when its preferred parser isn't available, so we route them through
+# defusedxml's safe replacements before any feed parsing happens.
+defusedxml.defuse_stdlib()
+
 import feedparser
 import requests
+
+from utils.safe_requests import safe_get
 
 
 # --- Junk content filters (applied before scraping to save time) ---
@@ -102,8 +111,8 @@ def _clean_summary(summary: str) -> str:
 
 
 # Maximum number of parallel feed fetches
-# RSS fetching is pure I/O — 20 workers for 97 sources keeps throughput high
-MAX_WORKERS = 20
+# RSS fetching is pure I/O — 50 workers for 419 sources keeps throughput high
+MAX_WORKERS = 50
 
 # Timeout per feed in seconds
 # Most healthy feeds respond in <5s; 15s catches slow CDNs without blocking
@@ -190,8 +199,10 @@ def _fetch_single_feed(source: dict) -> list[dict]:
         return []
 
     try:
-        # Fetch via requests first (handles redirects, auth, encoding better)
-        resp = requests.get(rss_url, headers=HEADERS, timeout=FEED_TIMEOUT, allow_redirects=True)
+        # Fetch via SSRF-hardened session (handles redirects, auth, encoding
+        # better than feedparser's raw fetch, and refuses to connect to
+        # private/loopback/link-local/cloud-metadata addresses on any hop).
+        resp = safe_get(rss_url, headers=HEADERS, timeout=FEED_TIMEOUT, allow_redirects=True)
         resp.raise_for_status()
 
         # Parse the fetched content

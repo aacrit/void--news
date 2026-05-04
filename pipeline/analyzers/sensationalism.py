@@ -76,8 +76,13 @@ CLICKBAIT_PATTERNS: list[tuple[re.Pattern, float]] = [
     # Previous regex used "(need|should) to know" — "should to know" is ungrammatical
     # and unreachable in real text. Fixed to capture both grammatical constructions.
     (re.compile(r"what (you|we) (need to know|should know)", re.I), 5.0),
-    # BREAKING / EXCLUSIVE / URGENT prefix patterns
-    (re.compile(r"^(BREAKING|EXCLUSIVE|URGENT|ALERT)\s*[:\-\u2014]", re.I), 7.0),
+    # BREAKING / URGENT / ALERT prefix patterns (genuinely sensational)
+    (re.compile(r"^(BREAKING|URGENT|ALERT)\s*[:\-\u2014]", re.I), 7.0),
+    # EXCLUSIVE prefix: reduced from 7.0 to 2.0.  "Exclusive:" is standard
+    # journalistic practice at Reuters, AP, Bloomberg, and investigative outlets
+    # to signal original sourcing, not clickbait.  It should contribute a mild
+    # signal (2.0) rather than the full 7.0 that BREAKING/URGENT carry.
+    (re.compile(r"^EXCLUSIVE\s*[:\-\u2014]", re.I), 2.0),
     (re.compile(r"\.\.\.\s*$"), 5.0),
     # NOTE: bare \b[A-Z]{3,}\b removed — replaced by _caps_score() which
     # excludes COMMON_ACRONYMS (CIA, FBI, NATO, GOP, etc.) to avoid false
@@ -200,7 +205,19 @@ HYPERBOLIC_MODIFIERS: list[str] = [
     "insanely", "wildly", "breathtakingly", "overwhelmingly",
     "horrifically", "frighteningly", "alarmingly", "disturbingly",
     "shockingly", "stunningly", "astoundingly", "unimaginably",
+    # Additional hyperbolic modifiers (revive dead signal — 0.95% contribution)
+    "jaw-dropping", "mind-blowing", "earth-shattering", "ground-breaking",
+    "monumental", "colossal", "explosive", "seismic",
 ]
+
+# Compiled word-boundary pattern for HYPERBOLIC_MODIFIERS.
+# Using regex prevents substring false positives: "radically" in
+# "radicalization", "massive" in "massively" (both forms are listed so
+# this prevents double-count rather than missed detection).
+_HYPERBOLIC_PATTERN: re.Pattern = re.compile(
+    r'\b(' + '|'.join(re.escape(m) for m in HYPERBOLIC_MODIFIERS) + r')\b',
+    re.IGNORECASE,
+)
 
 # ---------------------------------------------------------------------------
 # Partisan attack / demonization language
@@ -366,6 +383,22 @@ def _headline_score(title: str) -> float:
     title_lower = title.lower()
     score += len(_SUPERLATIVE_PATTERN.findall(title_lower)) * 3.0
 
+    # Urgency and hyperbolic modifiers in headlines.
+    # Previously only checked in _body_score(), leaving headlines like
+    # "We Must Ban Assault Weapons Now" (urgency: "now" is not in
+    # URGENCY_WORDS, but "crisis" and "emergency" are) and "Big Oil's
+    # Climate Genocide Is Killing Frontline Communities" scoring 0.
+    # Adding these checks widens the sensationalism range for articles
+    # with urgent/hyperbolic headlines that lack traditional clickbait
+    # patterns.  Weight per-hit is lower than body (2.0 vs 8.0) because
+    # a single urgency word in a headline is a weaker signal than
+    # sustained urgency throughout body text.
+    # (nlp-engineer — sensationalism distribution spread)
+    for phrase in URGENCY_WORDS:
+        if phrase in title_lower:
+            score += 2.0
+    score += len(_HYPERBOLIC_PATTERN.findall(title_lower)) * 2.0
+
     # Very short headlines (< 5 words) can be sensational
     if 0 < len(words) < 5:
         score += 3.0
@@ -397,7 +430,13 @@ def _body_score(text: str) -> float:
     polarity_extremity = abs(blob.sentiment.polarity)
     subjectivity = blob.sentiment.subjectivity
     score += polarity_extremity * 20.0  # up to 20 pts
-    score += subjectivity * 15.0  # up to 15 pts
+    # Subjectivity multiplier increased from 15 to 20 to widen the dynamic
+    # range.  Wire articles (subjectivity ~0.20-0.30) get +4-6 pts; opinion
+    # pieces (subjectivity ~0.45-0.60) get +9-12 pts.  The 5-point increase
+    # creates more separation between neutral reporting and subjective
+    # editorial content, helping break the low-range clustering.
+    # (nlp-engineer — sensationalism distribution spread)
+    score += subjectivity * 20.0  # up to 20 pts (was 15.0)
 
     # --- Urgency language density ---
     urgency_count = 0
@@ -414,9 +453,9 @@ def _body_score(text: str) -> float:
     score += min(sup_density * 5.0, 20.0)
 
     # --- Hyperbolic modifier density ---
-    hyp_count = 0
-    for mod in HYPERBOLIC_MODIFIERS:
-        hyp_count += text_lower.count(mod)
+    # Use word-boundary regex (like SUPERLATIVES) to prevent substring false
+    # positives and double-counting between base/adverb forms.
+    hyp_count = len(_HYPERBOLIC_PATTERN.findall(text_lower))
     hyp_density = hyp_count / max(word_count / 100, 1)
     score += min(hyp_density * 5.0, 15.0)
 
@@ -464,12 +503,23 @@ def _body_score(text: str) -> float:
     return max(0.0, min(100.0, score))
 
 
-def analyze_sensationalism(article: dict) -> dict:
+SENSATIONALISM_TIER_BASELINES: dict[str, float] = {
+    "us_major": 8.0,
+    "international": 10.0,
+    "independent": 12.0,
+}
+_SENSATIONALISM_DEFAULT_BASELINE = 10.0
+
+
+def analyze_sensationalism(article: dict, source: dict | None = None) -> dict:
     """
     Score the sensationalism level of an article.
 
     Args:
         article: Dict with keys: full_text, title, summary.
+        source:  Optional source dict with "tier" field.  Used for
+                 tier-baseline blending on short-text articles so that
+                 scores are not all compressed to 5-10.
 
     Returns:
         Dict with "score" (int 0-100) and "rationale" (dict with sub-scores).
@@ -477,10 +527,6 @@ def analyze_sensationalism(article: dict) -> dict:
     title = article.get("title", "") or ""
     full_text = article.get("full_text", "") or ""
 
-    # If no text at all, return low default.
-    # Score 5 (below the content floor of 8) to reflect that no-text articles carry
-    # less signal than real-text articles, not more. Previously this returned 10,
-    # which was paradoxically higher than the 8-floor for articles with actual content.
     if not title.strip() and not full_text.strip():
         return {
             "score": 5,
@@ -495,40 +541,46 @@ def analyze_sensationalism(article: dict) -> dict:
     h_score = _headline_score(title)
     b_score = _body_score(full_text)
 
-    # Weighted combination: 50% headline, 50% body
-    # Headline is the strongest discriminator between wire copy and tabloid
     combined = 0.5 * h_score + 0.5 * b_score
 
-    # Apply a mild floor-stretch to spread the compressed 4-7 range wider.
-    # Stretch the 0-30 raw range into 0-50 and preserve 30-100 into 50-100.
-    # This makes AP wire copy score ~10-20 and tabloid headlines score 50-80.
-    if combined <= 30:
-        stretched = combined * (50.0 / 30.0)
+    # Inflection moved 25 → 15.  The prior curve compressed 70% of articles
+    # into 0-50, leaving almost no resolution between "measured" and "mildly
+    # sensational" — everything read as calm.  Widening the lower segment
+    # (×3.33 through the first 15 points) spreads ordinary news copy across
+    # 0-50 and reserves the upper half for genuinely activated headlines.
+    if combined <= 15:
+        stretched = combined * (50.0 / 15.0)
     else:
-        stretched = 50.0 + (combined - 30.0) * (50.0 / 70.0)
+        stretched = 50.0 + (combined - 15.0) * (50.0 / 85.0)
 
-    # Minimum floor for articles with actual text content.
-    # Heavy attribution-language in wire copy pushes body_score to 0 via the
-    # measured_density inverse signal, which correctly reduces the body score
-    # but can produce a combined=0 → stretched=0 → score=0 outcome.  A score
-    # of 0 is unreachable by any real journalism — even the most neutral wire
-    # story carries some baseline subjectivity.  Floor of 8 preserves the
-    # intent (AP ≈ 10-20, tabloid ≈ 50-80) without clamping genuine low-end
-    # reporting to zero. (Priority H2 fix — sensationalism floor for real text)
     has_content = bool(title.strip() or full_text.strip())
-    floor = 8 if has_content else 0
-    score = max(floor, min(100, int(round(stretched))))
+    floor = 3 if has_content else 0
+    raw_score = max(floor, min(100.0, stretched))
 
-    # Compute sub-signal rationale
+    # Tier-baseline blending: lifts near-zero scores on short stubs using
+    # source reputation.  Uses max() so the baseline acts as a FLOOR, never
+    # pulling down legitimately high sensationalism scores.
+    word_count = len((full_text or "").split())
+    if source:
+        tier = (source.get("tier") or "").lower()
+        tier_baseline = SENSATIONALISM_TIER_BASELINES.get(
+            tier, _SENSATIONALISM_DEFAULT_BASELINE
+        )
+        text_weight = min(1.0, word_count / 500.0)
+        blended = text_weight * raw_score + (1.0 - text_weight) * tier_baseline
+        raw_score = max(raw_score, blended)
+
+    score = max(0, min(100, int(round(raw_score))))
+
     text_lower = (full_text or "").lower()
     words = text_lower.split()
-    word_count = len(words)
-    per_100 = max(word_count / 100, 1)
+    word_count_body = len(words)
+    per_100 = max(word_count_body / 100, 1)
 
     clickbait_signals = sum(1 for p, _ in CLICKBAIT_PATTERNS if p.search(title))
     sup_count = len(_SUPERLATIVE_PATTERN.findall(text_lower))
     urg_count = sum(text_lower.count(p) for p in URGENCY_WORDS)
-    hyp_count = sum(text_lower.count(m) for m in HYPERBOLIC_MODIFIERS)
+    hyp_count = len(_HYPERBOLIC_PATTERN.findall(text_lower))
     meas_count = sum(text_lower.count(p) for p in MEASURED_PHRASES)
     partisan_attack_count = sum(text_lower.count(p) for p in PARTISAN_ATTACK_PHRASES)
 

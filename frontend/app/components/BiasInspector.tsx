@@ -10,6 +10,15 @@ import type {
   FramingRationale,
   GeminiReasoning,
 } from "../lib/types";
+import {
+  getLeanColor,
+  getSenseColor,
+  getRigorColor,
+  getFramingColor,
+  tiltLabel,
+  senseLabel,
+  rigorLabel,
+} from "../lib/biasColors";
 
 /* ---------------------------------------------------------------------------
    BiasInspector — "Press Analysis" pop-out panel
@@ -25,118 +34,6 @@ import type {
      BiasInspectorTrigger — the trigger button rendered inside Deep Dive
      BiasInspectorPanel   — the pop-out drawer (conditionally rendered)
    --------------------------------------------------------------------------- */
-
-/* ── Color helpers — reads CSS variables for dark mode awareness ────────── */
-
-let biColorCache: Record<string, string> | null = null;
-const BI_SSR: Record<string, string> = {
-  "--bias-far-left": "#1D4ED8",
-  "--bias-left": "#3B82F6",
-  "--bias-center-left": "#93C5FD",
-  "--bias-center": "#9CA3AF",
-  "--bias-center-right": "#FCA5A5",
-  "--bias-right": "#EF4444",
-  "--bias-far-right": "#B91C1C",
-  "--sense-low": "#22C55E",
-  "--sense-medium": "#EAB308",
-  "--sense-high": "#EF4444",
-  "--rigor-high": "#22C55E",
-  "--rigor-medium": "#EAB308",
-  "--rigor-low": "#EF4444",
-};
-
-function biVars(): Record<string, string> {
-  if (biColorCache) return biColorCache;
-  if (typeof document === "undefined") return BI_SSR;
-  const s = getComputedStyle(document.documentElement);
-  biColorCache = {};
-  for (const v of Object.keys(BI_SSR))
-    biColorCache[v] = s.getPropertyValue(v).trim() || BI_SSR[v];
-  return biColorCache;
-}
-
-if (typeof window !== "undefined") {
-  new MutationObserver((ms) => {
-    for (const m of ms)
-      if (m.type === "attributes" && m.attributeName === "data-mode")
-        biColorCache = null;
-  }).observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ["data-mode"],
-  });
-}
-
-function lerpHex(a: string, b: string, t: number): string {
-  const ah = parseInt(a.replace("#", ""), 16);
-  const bh = parseInt(b.replace("#", ""), 16);
-  const ar = (ah >> 16) & 0xff,
-    ag = (ah >> 8) & 0xff,
-    ab = ah & 0xff;
-  const br = (bh >> 16) & 0xff,
-    bg = (bh >> 8) & 0xff,
-    bb = bh & 0xff;
-  const r = Math.round(ar + (br - ar) * t);
-  const g = Math.round(ag + (bg - ag) * t);
-  const bl = Math.round(ab + (bb - ab) * t);
-  return `#${((r << 16) | (g << 8) | bl).toString(16).padStart(6, "0")}`;
-}
-
-function getLeanColor(v: number): string {
-  const c = biVars();
-  if (v <= 14) return c["--bias-far-left"];
-  if (v <= 20) return lerpHex(c["--bias-far-left"], c["--bias-left"], (v - 14) / 6);
-  if (v <= 35) return lerpHex(c["--bias-left"], c["--bias-center-left"], (v - 20) / 15);
-  if (v <= 45) return c["--bias-center-left"];
-  if (v <= 55) return c["--bias-center"];
-  if (v <= 65) return c["--bias-center-right"];
-  if (v <= 80) return lerpHex(c["--bias-center-right"], c["--bias-right"], (v - 65) / 15);
-  if (v <= 86) return lerpHex(c["--bias-right"], c["--bias-far-right"], (v - 80) / 6);
-  return c["--bias-far-right"];
-}
-
-function getSenseColor(v: number): string {
-  const c = biVars();
-  if (v <= 50) return lerpHex(c["--sense-low"], c["--sense-medium"], v / 50);
-  return lerpHex(c["--sense-medium"], c["--sense-high"], (v - 50) / 50);
-}
-
-function getRigorColor(v: number): string {
-  const c = biVars();
-  if (v <= 50) return lerpHex(c["--rigor-low"], c["--rigor-medium"], v / 50);
-  return lerpHex(c["--rigor-medium"], c["--rigor-high"], (v - 50) / 50);
-}
-
-function getFramingColor(v: number): string {
-  return getSenseColor(v);
-}
-
-
-
-/* ── Label helpers ──────────────────────────────────────────────────────── */
-
-function leanLabel(v: number): string {
-  if (v <= 20) return "Far Left";
-  if (v <= 35) return "Left";
-  if (v <= 45) return "Center-Left";
-  if (v <= 55) return "Center";
-  if (v <= 65) return "Center-Right";
-  if (v <= 80) return "Right";
-  return "Far Right";
-}
-
-function senseLabel(v: number): string {
-  if (v <= 25) return "Measured";
-  if (v <= 50) return "Moderate";
-  if (v <= 75) return "Elevated";
-  return "Inflammatory";
-}
-
-function rigorLabel(v: number): string {
-  if (v >= 75) return "High rigor";
-  if (v >= 50) return "Good rigor";
-  if (v >= 25) return "Moderate rigor";
-  return "Low rigor";
-}
 
 function framingLabel(v: number): string {
   if (v <= 25) return "Neutral";
@@ -339,51 +236,6 @@ function DotScale({ value, max = 100 }: { value: number; max?: number }) {
   );
 }
 
-/* ── Sub-factor grid — 2-column compact layout ──────────────────────────── */
-
-function SubFactorGrid({
-  items,
-}: {
-  items: { label: string; value: number; max?: number }[];
-}) {
-  return (
-    <div className="bi-subfactors">
-      {items.slice(0, 3).map(({ label, value, max }) => (
-        <div key={label} className="bi-subfactors__item">
-          <span className="bi-subfactors__label">{label}</span>
-          <DotScale value={value} max={max} />
-        </div>
-      ))}
-    </div>
-  );
-}
-
-/* ── Progressive disclosure — summary first, details on demand ──────────── */
-
-function AxisDetails({ children }: { children: React.ReactNode }) {
-  const [showDetails, setShowDetails] = useState(false);
-  return (
-    <div className="bi-axis-details">
-      <button
-        type="button"
-        className={`bi-axis-details__toggle${showDetails ? " bi-axis-details__toggle--open" : ""}`}
-        onClick={() => setShowDetails(!showDetails)}
-        aria-expanded={showDetails}
-      >
-        {showDetails ? "Hide details" : "Show details"}
-        <svg width="8" height="8" viewBox="0 0 8 8" fill="none" aria-hidden="true"
-          className={`bi-axis-details__caret${showDetails ? " bi-axis-details__caret--open" : ""}`}>
-          <path d="M1.5 3L4 5.5L6.5 3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
-      </button>
-      <div className={`bi-axis-details__content${showDetails ? " bi-axis-details__content--open" : ""}`}
-        aria-hidden={!showDetails}>
-        {children}
-      </div>
-    </div>
-  );
-}
-
 /* ── Gradient bar for Tier 1 axis summary ───────────────────────────────── */
 
 interface GradientBarProps {
@@ -426,8 +278,8 @@ interface AxisRowProps {
   /** Stagger index for entrance animation delay */
   staggerIndex: number;
   contentVisible: boolean;
-  /** When true: monochrome gradient bar, fg-secondary score, muted badge */
-  monochrome?: boolean;
+  /** Compact mode: single flat row with dots instead of gradient bar */
+  compact?: boolean;
 }
 
 function AxisRow({
@@ -443,7 +295,7 @@ function AxisRow({
   hasRationale,
   staggerIndex,
   contentVisible,
-  monochrome = false,
+  compact = false,
 }: AxisRowProps) {
   const headingId = `${axisId}-heading`;
   const contentId = `${axisId}-content`;
@@ -451,7 +303,7 @@ function AxisRow({
 
   return (
     <div
-      className={`bi-axis bi-panel__axis-stagger${contentVisible ? " bi-panel__axis-stagger--visible" : ""}`}
+      className={`bi-axis${compact ? " bi-axis--compact" : ""} bi-panel__axis-stagger${contentVisible ? " bi-panel__axis-stagger--visible" : ""}`}
       style={{ transitionDelay: contentVisible ? `${staggerDelay}ms` : "0ms" }}
       role="region"
       aria-labelledby={headingId}
@@ -464,56 +316,71 @@ function AxisRow({
         disabled={!hasRationale}
         id={headingId}
       >
-        {/* Left: axis name + gradient bar */}
-        <div className="bi-axis__left">
-          <span className="bi-axis__name">{label}</span>
-          <GradientBar
-            value={score}
-            gradient={
-              monochrome
-                ? "linear-gradient(to right, var(--border-subtle), var(--fg-tertiary))"
-                : gradient
-            }
-            color={monochrome ? "var(--fg-secondary)" : color}
-          />
-        </div>
-
-        {/* Right: score number + label + caret */}
-        <div className="bi-axis__score-row">
-          <span
-            className="bi-axis__score"
-            style={{ color: monochrome ? "var(--fg-secondary)" : color }}
-          >
-            {score}
-          </span>
-          <span
-            className="bi-axis__badge"
-            style={{
-              color,
-              opacity: monochrome ? 0.7 : undefined,
-            }}
-          >
-            {scoreLabel}
-          </span>
-          {hasRationale && (
-            <svg
-              className={`bi-axis__caret${isExpanded ? " bi-axis__caret--open" : ""}`}
-              width="12"
-              height="12"
-              viewBox="0 0 12 12"
-              fill="none"
-              aria-hidden="true"
-            >
-              <path
-                d="M2 4L6 8L10 4"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          )}
-        </div>
+        {compact ? (
+          /* Compact: flat row — name · dots · score · label · caret */
+          <>
+            <span className="bi-axis__name">{label}</span>
+            <DotScale value={score} />
+            <span className="bi-axis__score" style={{ color: "var(--fg-secondary)" }}>
+              {score}
+            </span>
+            <span className="bi-axis__badge" style={{ color: "var(--fg-tertiary)" }}>
+              {scoreLabel}
+            </span>
+            {hasRationale && (
+              <svg
+                className={`bi-axis__caret${isExpanded ? " bi-axis__caret--open" : ""}`}
+                width="12"
+                height="12"
+                viewBox="0 0 12 12"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M2 4L6 8L10 4"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            )}
+          </>
+        ) : (
+          /* Full: stacked — name + gradient bar | score + label + caret */
+          <>
+            <div className="bi-axis__left">
+              <span className="bi-axis__name">{label}</span>
+              <GradientBar value={score} gradient={gradient} color={color} />
+            </div>
+            <div className="bi-axis__score-row">
+              <span className="bi-axis__score" style={{ color }}>
+                {score}
+              </span>
+              <span className="bi-axis__badge" style={{ color }}>
+                {scoreLabel}
+              </span>
+              {hasRationale && (
+                <svg
+                  className={`bi-axis__caret${isExpanded ? " bi-axis__caret--open" : ""}`}
+                  width="12"
+                  height="12"
+                  viewBox="0 0 12 12"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M2 4L6 8L10 4"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
+            </div>
+          </>
+        )}
       </button>
 
       {hasRationale && (
@@ -557,10 +424,10 @@ function LeanAxis({
   return (
     <AxisRow
       axisId={axisId}
-      label="Political Lean"
+      label="Coverage Tilt"
       score={score}
       color={color}
-      scoreLabel={leanLabel(score)}
+      scoreLabel={tiltLabel(score)}
       gradient={gradient}
       isExpanded={isExpanded}
       onToggle={onToggle}
@@ -568,7 +435,7 @@ function LeanAxis({
       staggerIndex={staggerIndex}
       contentVisible={contentVisible}
     >
-      {/* Layer 1: Summary — Gemini reasoning or auto-generated 1-liner */}
+      {/* Summary — Gemini reasoning or auto-generated 1-liner */}
       {geminiText && (
         <p className="bi-gemini-reasoning">
           <span className="bi-gemini-label">AI Analysis</span>
@@ -586,87 +453,58 @@ function LeanAxis({
         </p>
       )}
 
-      {/* Layer 2: Details — subfactors, keywords, entity sentiments behind toggle */}
-      {rationale && (
-        <AxisDetails>
-          <SubFactorGrid
-            items={[
-              { label: "Partisan language", value: rationale.keywordScore },
-              { label: "Outlet pattern", value: rationale.sourceBaseline },
-            ]}
-          />
-          {(rationale.topLeftKeywords?.length > 0 ||
-            rationale.topRightKeywords?.length > 0) && (
-            <div className="bi-keyword-signals">
-              {rationale.topLeftKeywords?.length > 0 && (
-                <p className="bi-keyword-signals__line">
-                  <span
-                    className="bi-keyword-signals__dir"
-                    style={{ color: "var(--bias-left)" }}
-                  >
-                    Left signals:
-                  </span>{" "}
-                  {rationale.topLeftKeywords.slice(0, 5).join(", ")}
-                </p>
-              )}
-              {rationale.topRightKeywords?.length > 0 && (
-                <p className="bi-keyword-signals__line">
-                  <span
-                    className="bi-keyword-signals__dir"
-                    style={{ color: "var(--bias-right)" }}
-                  >
-                    Right signals:
-                  </span>{" "}
-                  {rationale.topRightKeywords.slice(0, 5).join(", ")}
-                </p>
-              )}
-            </div>
+      {/* Keywords — the concrete evidence, shown directly (no toggle) */}
+      {rationale && (rationale.topLeftKeywords?.length > 0 ||
+        rationale.topRightKeywords?.length > 0) && (
+        <div className="bi-keyword-signals">
+          {rationale.topLeftKeywords?.length > 0 && (
+            <p className="bi-keyword-signals__line">
+              <span className="bi-keyword-signals__dir" style={{ color: "var(--bias-left)" }}>
+                Left signals:
+              </span>{" "}
+              {rationale.topLeftKeywords.slice(0, 5).join(", ")}
+            </p>
           )}
+          {rationale.topRightKeywords?.length > 0 && (
+            <p className="bi-keyword-signals__line">
+              <span className="bi-keyword-signals__dir" style={{ color: "var(--bias-right)" }}>
+                Right signals:
+              </span>{" "}
+              {rationale.topRightKeywords.slice(0, 5).join(", ")}
+            </p>
+          )}
+        </div>
+      )}
 
-          {/* Framing phrases — computed but previously never rendered.
-              These are the actual editorial phrases that reveal framing intent. */}
-          {rationale.framingPhrasesFound && rationale.framingPhrasesFound.length > 0 && (
-            <div className="bi-keyword-signals">
-              <p className="bi-keyword-signals__line">
-                <span className="bi-keyword-signals__dir" style={{ color: "var(--fg-tertiary)" }}>
-                  Framing phrases:
-                </span>{" "}
-                {rationale.framingPhrasesFound.slice(0, 4).join(", ")}
-              </p>
-            </div>
-          )}
-
-          {/* Entity sentiments — plain language instead of opaque ±floats */}
-          {rationale.entitySentiments && Object.keys(rationale.entitySentiments).length > 0 && (
-            <div className="bi-entity-sentiments">
-              <p className="bi-entity-sentiments__title">Key figures mentioned</p>
-              {Object.entries(rationale.entitySentiments)
-                .slice(0, 5)
-                .map(([entity, sentiment]) => {
-                  const tone = Math.abs(sentiment) < 0.1 ? "Neutral" : sentiment > 0 ? "Favorable" : "Critical";
-                  const toneClass = Math.abs(sentiment) < 0.1 ? "" : sentiment > 0 ? " bi-entity-row__tone--pos" : " bi-entity-row__tone--neg";
-                  return (
-                    <div key={entity} className="bi-entity-row">
-                      <span className="bi-entity-row__name">{entity}</span>
-                      <span className="bi-entity-row__bar">
-                        <span className="bi-entity-row__center" />
-                        <span
-                          className={`bi-entity-row__fill${sentiment >= 0 ? " bi-entity-row__fill--pos" : " bi-entity-row__fill--neg"}`}
-                          style={{
-                            width: `${Math.min(50, Math.abs(sentiment) * 50)}%`,
-                            [sentiment >= 0 ? "left" : "right"]: "50%",
-                          }}
-                        />
-                      </span>
-                      <span className={`bi-entity-row__tone${toneClass}`}>
-                        {tone}
-                      </span>
-                    </div>
-                  );
-                })}
-            </div>
-          )}
-        </AxisDetails>
+      {/* Entity sentiments — shown directly when available */}
+      {rationale?.entitySentiments && Object.keys(rationale.entitySentiments).length > 0 && (
+        <div className="bi-entity-sentiments">
+          <p className="bi-entity-sentiments__title">Key figures mentioned</p>
+          {Object.entries(rationale.entitySentiments)
+            .slice(0, 4)
+            .map(([entity, sentiment]) => {
+              const tone = Math.abs(sentiment) < 0.1 ? "Neutral" : sentiment > 0 ? "Favorable" : "Critical";
+              const toneClass = Math.abs(sentiment) < 0.1 ? "" : sentiment > 0 ? " bi-entity-row__tone--pos" : " bi-entity-row__tone--neg";
+              return (
+                <div key={entity} className="bi-entity-row">
+                  <span className="bi-entity-row__name">{entity}</span>
+                  <span className="bi-entity-row__bar">
+                    <span className="bi-entity-row__center" />
+                    <span
+                      className={`bi-entity-row__fill${sentiment >= 0 ? " bi-entity-row__fill--pos" : " bi-entity-row__fill--neg"}`}
+                      style={{
+                        width: `${Math.min(50, Math.abs(sentiment) * 50)}%`,
+                        [sentiment >= 0 ? "left" : "right"]: "50%",
+                      }}
+                    />
+                  </span>
+                  <span className={`bi-entity-row__tone${toneClass}`}>
+                    {tone}
+                  </span>
+                </div>
+              );
+            })}
+        </div>
       )}
     </AxisRow>
   );
@@ -710,9 +548,8 @@ function SensationalismAxis({
       hasRationale={!!(rationale || geminiText)}
       staggerIndex={staggerIndex}
       contentVisible={contentVisible}
-      monochrome
+      compact
     >
-      {/* Layer 1: Summary */}
       {geminiText && (
         <p className="bi-gemini-reasoning">
           <span className="bi-gemini-label">AI Analysis</span>
@@ -726,19 +563,8 @@ function SensationalismAxis({
             : score > 60
               ? "Elevated sensationalism across headline and body."
               : "Measured tone overall."}
+          {rationale.clickbaitSignals > 3 && ` ${rationale.clickbaitSignals} clickbait patterns detected.`}
         </p>
-      )}
-      {/* Layer 2: Details */}
-      {rationale && (
-        <AxisDetails>
-          <SubFactorGrid
-            items={[
-              { label: "Headline tone", value: rationale.headlineScore },
-              { label: "Body tone", value: rationale.bodyScore },
-              { label: "Clickbait patterns", value: rationale.clickbaitSignals, max: 10 },
-            ]}
-          />
-        </AxisDetails>
       )}
     </AxisRow>
   );
@@ -783,9 +609,8 @@ function RigorAxis({
       hasRationale={!!(rationale || geminiText)}
       staggerIndex={staggerIndex}
       contentVisible={contentVisible}
-      monochrome
+      compact
     >
-      {/* Layer 1: Summary */}
       {geminiText && (
         <p className="bi-gemini-reasoning">
           <span className="bi-gemini-label">AI Analysis</span>
@@ -795,31 +620,12 @@ function RigorAxis({
       {!geminiText && rationale && (
         <p className="bi-axis-summary">
           {rationale.namedSourcesCount >= 5
-            ? `Well-sourced: ${rationale.namedSourcesCount} named sources, ${rationale.directQuotesCount} direct quotes.`
+            ? `${rationale.namedSourcesCount} named sources, ${rationale.directQuotesCount} direct quotes, ${rationale.dataPointsCount} data points.`
             : rationale.namedSourcesCount >= 2
-              ? `Moderately sourced: ${rationale.namedSourcesCount} named sources.`
-              : "Lightly sourced. Few named sources or direct quotes."}
+              ? `${rationale.namedSourcesCount} named sources, ${rationale.directQuotesCount} direct quotes.`
+              : "Few named sources or direct quotes."}
+          {rationale.vagueSourcesCount > 2 && ` ${rationale.vagueSourcesCount} vague attributions.`}
         </p>
-      )}
-      {/* Layer 2: Details */}
-      {rationale && (
-        <AxisDetails>
-          <SubFactorGrid
-            items={[
-              { label: "Named sources", value: rationale.namedSourcesCount, max: 10 },
-              { label: "Direct quotes", value: rationale.directQuotesCount, max: 10 },
-              { label: "Data & statistics", value: rationale.dataPointsCount, max: 10 },
-            ]}
-          />
-          {/* Vague sources — computed but previously never rendered.
-              A high vague count with low named sources is a key journalistic red flag. */}
-          {rationale.vagueSourcesCount > 0 && (
-            <p className="bi-axis-summary" style={{ marginTop: "var(--space-2)" }}>
-              {rationale.vagueSourcesCount} vague source{rationale.vagueSourcesCount !== 1 ? "s" : ""} detected
-              {rationale.vagueSourcesCount > 2 ? " — relies on anonymous or unverifiable attribution." : "."}
-            </p>
-          )}
-        </AxisDetails>
       )}
     </AxisRow>
   );
@@ -853,7 +659,7 @@ function FramingAxis({
   return (
     <AxisRow
       axisId={axisId}
-      label="Framing Analysis"
+      label="Framing"
       score={score}
       color={color}
       scoreLabel={framingLabel(score)}
@@ -863,9 +669,8 @@ function FramingAxis({
       hasRationale={!!(rationale || geminiText)}
       staggerIndex={staggerIndex}
       contentVisible={contentVisible}
-      monochrome
+      compact
     >
-      {/* Layer 1: Summary */}
       {geminiText && (
         <p className="bi-gemini-reasoning">
           <span className="bi-gemini-label">AI Analysis</span>
@@ -880,18 +685,6 @@ function FramingAxis({
           {rationale.omissionScore > 40 && " One-sided sourcing detected."}
           {rationale.headlineBodyDivergence > 40 && " Headline doesn\u2019t match body tone."}
         </p>
-      )}
-      {/* Layer 2: Details */}
-      {rationale && (
-        <AxisDetails>
-          <SubFactorGrid
-            items={[
-              { label: "Loaded language", value: rationale.connotationScore },
-              { label: "One-sided sourcing", value: rationale.omissionScore },
-              { label: "Headline mismatch", value: rationale.headlineBodyDivergence },
-            ]}
-          />
-        </AxisDetails>
       )}
     </AxisRow>
   );
@@ -1246,6 +1039,7 @@ export interface BiasInspectorInlineProps {
 
 export function BiasInspectorInline({ sources }: BiasInspectorInlineProps) {
   const [expandedAxes, setExpandedAxes] = useState<Set<string>>(new Set());
+  const [showSecondaryAxes, setShowSecondaryAxes] = useState(false);
   const headingId = useId();
 
   function toggleAxis(key: string) {
@@ -1260,63 +1054,103 @@ export function BiasInspectorInline({ sources }: BiasInspectorInlineProps) {
   if (sources.length === 0) return null;
 
   const averages = computeClusterAverages(sources);
+  const confPct = Math.round(averages.confidence * 100);
+  const confTier = confPct >= 70 ? "strong" : confPct >= 40 ? "moderate" : "pending";
+  const confLabels = { strong: "Strong", moderate: "Moderate", pending: "Limited" };
 
   return (
-    <div className="bi-inline" role="region" aria-label="Press analysis">
-      <div className="bi-inline__header">
-        <span className="bi-inline__title" id={headingId}>Press Analysis</span>
-        <span className="bi-inline__subtitle">
-          Cluster avg · {sources.length} {sources.length === 1 ? "source" : "sources"}
-        </span>
-      </div>
+    <div className="bi-inline" role="region" aria-label="Bias scores">
       <div
         className="bi-scorecard"
         role="region"
-        aria-labelledby={headingId}
         aria-label="Cluster bias scores"
       >
-        <LeanAxis
-          axisId={`${headingId}-lean`}
-          score={averages.lean}
-          rationale={averages.leanRationale}
-          geminiText={averages.geminiReasoning?.political_lean}
-          isExpanded={expandedAxes.has("lean")}
-          onToggle={() => toggleAxis("lean")}
-          staggerIndex={0}
-          contentVisible={true}
-        />
-        <SensationalismAxis
-          axisId={`${headingId}-sense`}
-          score={averages.sensationalism}
-          rationale={averages.sensationalismRationale}
-          geminiText={averages.geminiReasoning?.sensationalism}
-          isExpanded={expandedAxes.has("sense")}
-          onToggle={() => toggleAxis("sense")}
-          staggerIndex={1}
-          contentVisible={true}
-        />
-        <RigorAxis
-          axisId={`${headingId}-rigor`}
-          score={averages.factualRigor}
-          rationale={averages.coverageRationale}
-          geminiText={averages.geminiReasoning?.factual_rigor}
-          isExpanded={expandedAxes.has("rigor")}
-          onToggle={() => toggleAxis("rigor")}
-          staggerIndex={2}
-          contentVisible={true}
-        />
-        <FramingAxis
-          axisId={`${headingId}-framing`}
-          score={averages.framing}
-          rationale={averages.framingRationale}
-          geminiText={averages.geminiReasoning?.framing}
-          isExpanded={expandedAxes.has("framing")}
-          onToggle={() => toggleAxis("framing")}
-          staggerIndex={3}
-          contentVisible={true}
-        />
+        {/* Hero: Coverage Tilt with inline confidence badge */}
+        <div className="bi-lean-hero">
+          <LeanAxis
+            axisId={`${headingId}-lean`}
+            score={averages.lean}
+            rationale={averages.leanRationale}
+            geminiText={averages.geminiReasoning?.political_lean}
+            isExpanded={expandedAxes.has("lean")}
+            onToggle={() => toggleAxis("lean")}
+            staggerIndex={0}
+            contentVisible={true}
+          />
+          <span className={`bi-confidence-inline bi-confidence-inline--${confTier}`} aria-label={`${confLabels[confTier]} analysis`}>
+            {confTier === "strong" && (
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                <circle cx="5" cy="5" r="4" stroke="currentColor" strokeWidth="1.2" fill="none" />
+                <path d="M3 5L4.5 6.5L7 3.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            )}
+            {confTier === "moderate" && (
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                <circle cx="5" cy="5" r="4" stroke="currentColor" strokeWidth="1.2" fill="none" />
+                <line x1="3.5" y1="5" x2="6.5" y2="5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+              </svg>
+            )}
+            {confTier === "pending" && (
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                <circle cx="5" cy="5" r="4" stroke="currentColor" strokeWidth="1.2" fill="none" />
+              </svg>
+            )}
+            <span>{confLabels[confTier]}</span>
+          </span>
+        </div>
+
+        {/* Secondary axes — collapsed behind disclosure */}
+        <div className="bi-secondary-disclosure">
+          <button
+            className="bi-secondary-trigger"
+            onClick={() => setShowSecondaryAxes((prev) => !prev)}
+            aria-expanded={showSecondaryAxes}
+            type="button"
+          >
+            <span className="bi-secondary-trigger__dots" aria-hidden="true">
+              <ScoreDot color={getSenseColor(averages.sensationalism)} />
+              <ScoreDot color={getRigorColor(averages.factualRigor)} />
+              <ScoreDot color={getFramingColor(averages.framing)} />
+            </span>
+            <span>Sensationalism, Rigor, Framing</span>
+            <span>{showSecondaryAxes ? "\u25BE" : "\u25B8"}</span>
+          </button>
+          {showSecondaryAxes && (
+            <div className="bi-secondary-axes">
+              <SensationalismAxis
+                axisId={`${headingId}-sense`}
+                score={averages.sensationalism}
+                rationale={averages.sensationalismRationale}
+                geminiText={averages.geminiReasoning?.sensationalism}
+                isExpanded={expandedAxes.has("sense")}
+                onToggle={() => toggleAxis("sense")}
+                staggerIndex={0}
+                contentVisible={true}
+              />
+              <RigorAxis
+                axisId={`${headingId}-rigor`}
+                score={averages.factualRigor}
+                rationale={averages.coverageRationale}
+                geminiText={averages.geminiReasoning?.factual_rigor}
+                isExpanded={expandedAxes.has("rigor")}
+                onToggle={() => toggleAxis("rigor")}
+                staggerIndex={1}
+                contentVisible={true}
+              />
+              <FramingAxis
+                axisId={`${headingId}-framing`}
+                score={averages.framing}
+                rationale={averages.framingRationale}
+                geminiText={averages.geminiReasoning?.framing}
+                isExpanded={expandedAxes.has("framing")}
+                onToggle={() => toggleAxis("framing")}
+                staggerIndex={2}
+                contentVisible={true}
+              />
+            </div>
+          )}
+        </div>
       </div>
-      <ConfidenceBadge confidence={averages.confidence} contentVisible={true} />
     </div>
   );
 }

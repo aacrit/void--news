@@ -46,7 +46,7 @@ SYNONYM_PAIRS: list[tuple[str, str, int]] = [
     ("dictator", "leader", 3),
     ("puppet", "ally", 3),
     ("thug", "suspect", 3),
-    ("mob", "crowd", 2),
+    ("mob", "crowd", 1),  # reduced 2→1: compound forms ("democrat mob") in PARTISAN_ATTACK_PHRASES
     ("riot", "protest", 2),
     ("looting", "property damage", 2),
     # NOTE: intensity reduced 3→1. "Invasion" is the factually correct AP/Reuters/UN
@@ -92,7 +92,7 @@ SYNONYM_PAIRS: list[tuple[str, str, int]] = [
     ("death tax", "estate tax", 3),                    # added: charged vs neutral
     ("job creators", "wealthy", 2),                    # added: right economic framing
     # Social
-    ("radical", "progressive", 2),
+    ("radical", "progressive", 1),  # reduced 2→1: compound forms ("radical left") in PARTISAN_ATTACK_PHRASES
     ("extremist", "activist", 3),
     ("woke", "socially conscious", 3),
     ("cancel culture", "public accountability", 3),
@@ -127,12 +127,12 @@ SYNONYM_PAIRS: list[tuple[str, str, int]] = [
     ("russophobia", "anti-russia sentiment", 2),
     ("western hegemony", "western influence", 2),
     ("proxy war", "conflict", 2),                      # used by RT/Sputnik for Ukraine
-    ("puppet regime", "government", 3),                # state-media delegitimization
+    ("puppet regime", "government", 2),                # reduced 3→2: compound form in PARTISAN_ATTACK_PHRASES
     ("neo-nazis", "ukrainian forces", 3),              # Kremlin framing of Ukraine
     ("denazification", "military campaign", 3),        # Kremlin justification phrase
     ("bioweapons labs", "research facilities", 3),     # RT/Sputnik disinformation frame
     ("nato expansion", "nato enlargement", 2),         # charged vs neutral formulation
-    ("collective west", "western countries", 2),       # RT/Sputnik us-vs-them framing
+    ("collective west", "western countries", 1),       # reduced 2→1: compound forms in PARTISAN_ATTACK_PHRASES
     ("reunification", "annexation", 3),                # CCP framing of Taiwan/territories
     ("separatists", "independence movement", 2),       # state framing of dissent
     ("anti-china forces", "critics of china", 3),      # CGTN/Global Times frame
@@ -142,6 +142,46 @@ SYNONYM_PAIRS: list[tuple[str, str, int]] = [
     ("hostile forces", "opposition groups", 2),        # CCP/state media catch-all
     ("western smear", "western criticism", 3),         # CGTN dismissive framing
     ("genocide allegations", "human rights abuses", 2),    # state denial framing
+    # -------------------------------------------------------------------
+    # Everyday editorial verb/noun choices — UF journalism framing research,
+    # Recasens et al. 2013 "one-sided terms", NPR Public Editor guidance.
+    # These are common editorial verb substitutions that carry connotative
+    # loading compared to neutral wire-service alternatives. Intensity 1-2
+    # because they appear in professional journalism (not just tabloids).
+    # Each term passed the AP/Reuters false-positive gate.
+    # Evidence: B (frequency-differential), C (MBFC methodology)
+    # (computational-linguist expansion 2026-04-03)
+    # -------------------------------------------------------------------
+    # Economic/fiscal verbs — editorial intensification
+    ("slashed", "reduced", 2),             # B — editorial drama vs neutral
+    ("axed", "eliminated", 2),             # B — editorial drama vs neutral
+    ("gutted", "reduced significantly", 2),# B — editorial drama vs neutral
+    ("soared", "increased", 1),            # B — common in headlines, mild charge
+    ("plunged", "declined", 1),            # B — common in financial headlines
+    ("surged", "increased sharply", 1),    # B — financial headline register
+    ("plummeted", "dropped", 2),           # B — editorial drama vs neutral
+    ("skyrocketed", "rose sharply", 2),    # B — editorial drama vs neutral
+    # Action/conflict verbs — editorial intensification
+    ("sparked", "caused", 1),              # B — UF journalism study: fire/destruction metaphor
+    ("ignited", "started", 1),             # B — UF journalism study: fire metaphor
+    ("fueled", "contributed to", 1),       # B — UF journalism study: fire metaphor
+    ("erupted", "began", 1),               # B — UF journalism study: fire metaphor
+    ("unleashed", "released", 2),          # B — editorial drama vs neutral
+    ("rattled", "concerned", 1),           # B — financial headline register
+    ("rocked", "affected", 2),             # B — editorial drama vs neutral
+    # Political/institutional verbs — editorial intensification
+    ("unveiled", "announced", 1),          # B — editorial drama vs neutral
+    ("crackdown", "enforcement action", 2),# C — MBFC: loaded noun choice
+    ("backlash", "opposition", 1),         # B — editorial register vs neutral
+    ("uproar", "controversy", 2),          # B — editorial drama vs neutral
+    ("firestorm", "controversy", 2),       # B — editorial drama metaphor
+    ("outcry", "criticism", 1),            # B — editorial register vs neutral
+    ("embattled", "facing criticism", 2),  # C — editorial characterization
+    ("beleaguered", "struggling", 2),      # C — editorial characterization
+    # Factive/presuppositional verbs (Recasens et al. 2013) — intensity 1
+    # because the bias is subtle presupposition, not overt charge
+    ("exposed", "reported on", 1),         # A — Recasens: factive presupposition
+    ("revealed", "reported", 1),           # A — Recasens: factive presupposition
 ]
 
 # ---------------------------------------------------------------------------
@@ -182,6 +222,18 @@ EVASIVE_PASSIVE: list[str] = [
     "concerns were raised", "questions were raised",
     "steps were taken", "actions were taken",
     "measures were implemented",
+    # Agency-erasing constructions common in political/diplomatic framing
+    "it has been noted", "it was noted",
+    "it was reported", "it has been reported",
+    "it was announced", "it has been announced",
+    "it is believed", "it was believed",
+    "it is understood", "it was understood",
+    "it is expected", "it was expected",
+    "sanctions were imposed", "charges were filed",
+    "arrests were made", "warnings were issued",
+    "promises were broken", "commitments were made",
+    "allegations were made", "claims were made",
+    "reforms were introduced", "changes were made",
 ]
 
 
@@ -200,7 +252,13 @@ def _connotation_score(text: str, doc=None) -> float:
     entities = [ent for ent in doc.ents if ent.label_ in key_labels]
 
     if not entities:
-        return 10.0  # no entities to frame
+        # No entities to frame — reduced from 5.0 to 2.0 to widen the gap
+        # between entity-free articles and articles with neutral entity
+        # sentiment (avg_abs_polarity ~0.05-0.10 → score 12-25).  At 2.0
+        # the baseline gap is 10-23 pts, spreading the distribution further
+        # and eliminating floor compression in the [5-19] band.
+        # (bias-audit 2026-04-01 — framing distribution spread)
+        return 2.0
 
     # Collect sentiment of sentences containing entities
     total_abs_polarity = 0.0
@@ -214,11 +272,45 @@ def _connotation_score(text: str, doc=None) -> float:
             entity_sentences += 1
 
     if entity_sentences == 0:
-        return 10.0
+        return 2.0  # reduced from 5.0 (same rationale as no-entities case)
 
     avg_abs_polarity = total_abs_polarity / entity_sentences
-    # avg_abs_polarity ranges 0-1; 0 = neutral, 0.5+ = heavily framed
-    return min(100.0, avg_abs_polarity * 200.0)
+    # avg_abs_polarity ranges 0-1; 0 = neutral, 0.5+ = heavily framed.
+    # Multiplier increased from 200 to 250 to widen the dynamic range:
+    # articles with moderate entity sentiment (0.10-0.20) now score 25-50
+    # instead of 20-40, creating more separation from neutral articles.
+    # (nlp-engineer — framing distribution spread)
+    return min(100.0, avg_abs_polarity * 250.0)
+
+
+# ---------------------------------------------------------------------------
+# Quote/attribution context detection for framing synonym pairs (Option A).
+# Charged synonyms inside reported speech carry less framing signal than the
+# author's own word choice. Discount quoted/attributed hits to 0.5x intensity.
+# ---------------------------------------------------------------------------
+_FRAMING_ATTRIBUTION_VERBS: tuple[str, ...] = (
+    "said", "says", "stated", "told", "according to", "announced",
+    "declared", "wrote", "tweeted", "posted", "argued", "claimed",
+    "testified", "explained", "noted", "added", "responded",
+)
+
+_FRAMING_QUOTE_PATTERN = re.compile(
+    r'["\u201c](.*?)["\u201d]|[\'\u2018](.*?)[\'\u2019]',
+    re.DOTALL,
+)
+
+
+def _framing_context_discount(text_lower: str, match_start: int, match_end: int) -> float:
+    """Return 0.5 if match is inside quotes or near attribution, else 1.0."""
+    for m in _FRAMING_QUOTE_PATTERN.finditer(text_lower):
+        if match_start >= m.start() and match_end <= m.end():
+            return 0.5
+    ctx_start = max(0, match_start - 120)
+    ctx_end = min(len(text_lower), match_start + 120)
+    context = text_lower[ctx_start:ctx_end]
+    if any(verb in context for verb in _FRAMING_ATTRIBUTION_VERBS):
+        return 0.5
+    return 1.0
 
 
 def _keyword_emphasis_score(text: str) -> float:
@@ -226,32 +318,31 @@ def _keyword_emphasis_score(text: str) -> float:
     Check for emotionally charged synonyms vs neutral alternatives.
     Returns 0-100.
 
-    Uses word-boundary regex for single-word terms to prevent substring
-    false positives: "killed" in "unskilled", "mob" in "mobilize",
-    "riot" in "patriot", "slam" in "Islam", "radical" in "radicalization".
-    Multi-word phrases use str.count() (cannot be substrings by construction).
+    Quote-aware (Option A): charged terms inside quotation marks or near
+    attribution verbs are discounted to 0.5x intensity. The author's word
+    choice carries full framing signal; reported speech carries half.
     """
     text_lower = text.lower()
     word_count = len(text_lower.split())
     if word_count == 0:
         return 0.0
 
-    charged_score = 0
+    charged_score = 0.0
     total_pairs_found = 0
 
     for pat, charged, neutral, intensity in _SYNONYM_PATTERNS:
         if pat is not None:
-            # Single-word: use word-boundary regex to avoid substring matches
-            charged_count = len(pat.findall(text_lower))
+            matches = list(pat.finditer(text_lower))
         else:
-            # Multi-word phrase: substring search is safe
-            charged_count = text_lower.count(charged)
-        if charged_count > 0:
-            charged_score += charged_count * intensity
-            total_pairs_found += charged_count
+            matches = list(re.finditer(re.escape(charged), text_lower))
+        if matches:
+            for m in matches:
+                discount = _framing_context_discount(text_lower, m.start(), m.end())
+                charged_score += intensity * discount
+                total_pairs_found += 1
 
     if total_pairs_found == 0:
-        return 5.0  # baseline low framing
+        return 0.0
 
     # Normalize by article length
     density = charged_score / max(word_count / 100, 1)
@@ -350,9 +441,15 @@ def _headline_body_divergence(title: str, body: str) -> float:
     # Subjectivity divergence
     subj_diff = abs(title_blob.sentiment.subjectivity - body_blob.sentiment.subjectivity)
 
-    # Combined divergence: both range 0-2, so combined max ~4
+    # Combined divergence: both range 0-2, so combined max ~4.
+    # Multiplier increased from 50 to 65 to make headline-body divergence
+    # a stronger discriminator.  Headlines that editorialize beyond the
+    # body content (e.g. "BREAKING: Crime Wave Hits Record" over a
+    # measured AP story) now produce larger framing scores, widening the
+    # gap between neutral and framed articles.
+    # (nlp-engineer — framing distribution spread)
     divergence = polarity_diff + subj_diff
-    return min(100.0, divergence * 50.0)
+    return min(100.0, divergence * 65.0)
 
 
 def _passive_voice_score(text: str, doc=None) -> float:
@@ -401,11 +498,20 @@ def _passive_voice_score(text: str, doc=None) -> float:
     return min(100.0, evasive_score + ratio_score)
 
 
+FRAMING_TIER_BASELINES: dict[str, float] = {
+    "us_major": 18.0,
+    "international": 20.0,
+    "independent": 25.0,
+}
+_FRAMING_DEFAULT_BASELINE = 20.0
+
+
 def analyze_framing(
     article: dict,
     cluster_articles: list[dict] | None = None,
     doc=None,
     cluster_entity_cache: set[str] | None = None,
+    source: dict | None = None,
 ) -> dict:
     """
     Score the framing bias of an article.
@@ -418,6 +524,8 @@ def analyze_framing(
             when called from step 6b re-framing).
         cluster_entity_cache: Pre-computed entity set from all cluster articles
             (avoids O(N*M) spaCy calls during step 6b).
+        source: Optional source dict with "tier" field.  Used for
+                tier-baseline blending on short-text articles.
 
     Returns:
         Dict with "score" (int 0-100) and "rationale" (dict with sub-scores).
@@ -458,22 +566,48 @@ def analyze_framing(
     # sub-score that makes up the other 25%.  In these cases we shift 10 pts
     # of weight from connotation to kw_emphasis to reflect that keyword
     # detection is the more reliable signal for state-media geopolitical framing.
+    #
+    # Weight redistribution (nlp-engineer P1 fix): passive_voice contributes
+    # <1% mean signal (92% of articles at zero). Shifted 5% from passive (0.15
+    # -> 0.10) to keyword_emphasis (0.25->0.30 / 0.35->0.40) to widen the
+    # dynamic range for articles with charged synonyms.
+    #
+    # Weight swap (nlp-engineer — framing distribution spread): headline_div
+    # raised from 0.15 to 0.20, omission lowered from 0.20 to 0.15.
+    # Headline-body divergence has the widest variation across articles (0-65)
+    # while omission clusters at 10.0 (the default for no pro/anti sourcing).
+    # Giving headline_div more weight spreads the distribution wider.
+    # Weights still sum to 1.0.
     if keyword_emp > 60:
         w_connotation = 0.15
-        w_keyword_emp = 0.35
+        w_keyword_emp = 0.40
     else:
         w_connotation = 0.25
-        w_keyword_emp = 0.25
+        w_keyword_emp = 0.30
 
     weighted = (
         connotation * w_connotation
         + keyword_emp * w_keyword_emp
-        + omission * 0.20
-        + headline_div * 0.15
-        + passive * 0.15
+        + omission * 0.15
+        + headline_div * 0.20
+        + passive * 0.10
     )
 
-    score = max(0, min(100, int(round(weighted))))
+    raw_score = max(0.0, min(100.0, weighted))
+
+    # Tier-baseline blending: lifts near-zero scores on short stubs using
+    # source reputation.  Uses max() so the baseline acts as a FLOOR, never
+    # pulling down legitimately high framing scores (e.g. state-media
+    # articles with strong charged-synonym signals despite short text).
+    word_count = len((full_text or "").split())
+    if source:
+        tier = (source.get("tier") or "").lower()
+        tier_baseline = FRAMING_TIER_BASELINES.get(tier, _FRAMING_DEFAULT_BASELINE)
+        text_weight = min(1.0, word_count / 500.0)
+        blended = text_weight * raw_score + (1.0 - text_weight) * tier_baseline
+        raw_score = max(raw_score, blended)
+
+    score = max(0, min(100, int(round(raw_score))))
 
     return {
         "score": score,

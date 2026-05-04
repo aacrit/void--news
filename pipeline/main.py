@@ -52,6 +52,7 @@ try:
     from clustering.story_cluster import cluster_stories
     from categorizer.auto_categorize import categorize_article, map_to_desk
     from ranker.importance_ranker import rank_importance, compute_coverage_velocity
+    from ranker.edition_ranker import apply_edition_ranking
     ANALYSIS_AVAILABLE = True
 except ImportError as e:
     print(f"[warn] Analysis modules not available ({e}). Running fetch-only mode.")
@@ -59,9 +60,27 @@ except ImportError as e:
 # Gemini summarizer — optional (requires google-generativeai + API key)
 SUMMARIZER_AVAILABLE = False
 try:
-    from summarizer.cluster_summarizer import summarize_clusters_batch
+    from summarizer.cluster_summarizer import (
+        summarize_clusters_batch,
+        summarize_cluster,
+        summarize_top50_after_rerank,
+        _content_hash,
+    )
+    from summarizer.cluster_summarizer import is_available as llm_is_available
+    from summarizer.cluster_summarizer import calls_remaining
     from summarizer.gemini_client import is_available as gemini_is_available
+    from summarizer.gemini_client import get_call_count as gemini_get_call_count
+    from summarizer.claude_client import is_available as claude_is_available
+    from summarizer.claude_client import get_call_count as claude_get_call_count
     SUMMARIZER_AVAILABLE = True
+except ImportError:
+    pass
+
+# Cluster image cacher — downloads og:images and re-serves from Supabase Storage
+IMAGE_CACHER_AVAILABLE = False
+try:
+    from media.cluster_image_cacher import cache_cluster_images
+    IMAGE_CACHER_AVAILABLE = True
 except ImportError:
     pass
 
@@ -96,6 +115,36 @@ try:
 except ImportError:
     pass
 
+# void --verify: Claim Consensus engine — adhoc only (set VOID_VERIFY=1 to enable)
+# Historical claims don't change, so extraction runs on-demand, not every pipeline run.
+CLAIMS_AVAILABLE = False
+if os.environ.get("VOID_VERIFY", "").strip() in ("1", "true", "yes"):
+    try:
+        from analyzers.claim_extractor import extract_claims_batch
+        from analyzers.claim_verifier import verify_all_clusters
+        CLAIMS_AVAILABLE = True
+        print("[verify] Claim extraction ENABLED (VOID_VERIFY=1)")
+    except ImportError as e:
+        print(f"[warn] Claim extraction not available ({e}). Skipping void --verify.")
+
+# void --verify Phase 2: Source track record — adhoc only (same gate)
+TRACK_RECORD_AVAILABLE = False
+if os.environ.get("VOID_VERIFY", "").strip() in ("1", "true", "yes"):
+    try:
+        from analyzers.source_track_record import update_source_track_record
+        TRACK_RECORD_AVAILABLE = True
+    except ImportError:
+        pass
+
+
+# ---------------------------------------------------------------------------
+# Active editions — controls which editions get briefs, ranking, and DB writes.
+# Set to ["world"] to disable regional editions and save API calls.
+# Set to None or list all to enable all editions.
+# Parking Lot: regional editions (us, europe, south-asia) disabled pre-launch.
+# ---------------------------------------------------------------------------
+ACTIVE_EDITIONS: list[str] = ["world"]
+_ALL_EDITIONS = ["world", "us", "europe", "south-asia"]
 
 SOURCES_PATH = Path(__file__).parent.parent / "data" / "sources.json"
 
@@ -135,10 +184,26 @@ _US_DOMESTIC_PATTERN = re.compile(
 # ---------------------------------------------------------------------------
 _COUNTRY_EDITION_MAP: dict[str, str] = {
     "US": "us",
-    "IN": "india",
-    "GB": "uk",
-    "UK": "uk",  # Non-standard code in some sources; normalize to GB
-    "CA": "canada",
+    # South Asia edition — India + Pakistan + Bangladesh + Sri Lanka + Nepal + Afghanistan + Maldives + Bhutan
+    "IN": "south-asia", "PK": "south-asia", "BD": "south-asia",
+    "LK": "south-asia", "NP": "south-asia", "AF": "south-asia",
+    "MV": "south-asia", "BT": "south-asia",
+    # Europe edition — UK + EU + EEA + Balkans + Caucasus + Ukraine
+    "GB": "europe", "UK": "europe",
+    "FR": "europe", "DE": "europe", "ES": "europe", "IT": "europe",
+    "NL": "europe", "BE": "europe", "PT": "europe", "AT": "europe",
+    "CH": "europe", "IE": "europe", "SE": "europe", "DK": "europe",
+    "NO": "europe", "FI": "europe", "IS": "europe",
+    "PL": "europe", "CZ": "europe", "RO": "europe", "BG": "europe",
+    "HR": "europe", "RS": "europe", "GR": "europe", "HU": "europe",
+    "EE": "europe", "LV": "europe", "LT": "europe",
+    "UA": "europe", "GE": "europe",
+    "TR": "europe", "XK": "europe",  # Turkey (NATO/EU candidate), Kosovo
+    "AL": "europe", "BA": "europe", "ME": "europe", "MK": "europe",  # Western Balkans
+    "SK": "europe", "SI": "europe", "LU": "europe",  # EU members
+    "CY": "europe", "MT": "europe", "MD": "europe",  # EU/candidate states
+    # Canada routes to world — no dedicated Canada edition.
+    # Previously "CA": "canada" made Canadian stories invisible to all editions.
 }
 
 
@@ -158,7 +223,7 @@ def load_sources(editions: list[str] | None = None) -> list[dict]:
     """Load the curated source list from data/sources.json.
 
     Args:
-        editions: Optional list of edition slugs to filter by (e.g., ["india"]).
+        editions: Optional list of edition slugs to filter by (e.g., ["south-asia"]).
                   If None or empty, loads all sources.
     """
     if not SOURCES_PATH.exists():
@@ -276,8 +341,38 @@ def run_bias_analysis(
     }
     rationale = {}
 
+    # v6.0.1: Word-count gate — articles with < 150 words of text are
+    # scrape failures (stubs, paywalls, redirects). Scoring them produces
+    # garbage (3/5 axes compress to floor). Return baseline scores with
+    # low confidence so they get minimal weight in cluster aggregation.
+    full_text_raw = article.get("full_text", "") or ""
+    word_count = len(full_text_raw.split())
+    if word_count < 150:
+        # Use source baseline for political_lean if available
+        baseline = str(source.get("political_lean_baseline", "center")).lower()
+        lean_map = {"far-left": 15, "left": 25, "center-left": 38,
+                    "center": 50, "center-right": 62, "right": 75,
+                    "far-right": 85, "varies": 50}
+        scores["political_lean"] = lean_map.get(baseline, 50)
+        scores["confidence"] = max(0.15, word_count / 500.0)
+        return scores
+
+    # Pre-parse spaCy doc once and share across analyzers that need NER.
+    # Saves 2 redundant parses per article (~200-400ms each).
+    full_text = article.get("full_text", "") or ""
+    title = article.get("title", "") or ""
+    combined = f"{title} {full_text}"
+    doc = None
+    if combined.strip():
+        try:
+            from utils.nlp_shared import get_nlp
+            nlp = get_nlp()
+            doc = nlp(combined[:15000])
+        except Exception:
+            pass  # analyzers fall back to their own parsing
+
     try:
-        result = analyze_political_lean(article, source, topic_lean_data=topic_lean_data)
+        result = analyze_political_lean(article, source, topic_lean_data=topic_lean_data, doc=doc)
         if isinstance(result, dict):
             scores["political_lean"] = result["score"]
             rationale["lean"] = result["rationale"]
@@ -287,7 +382,7 @@ def run_bias_analysis(
         print(f"    [warn] Political lean failed: {e}")
 
     try:
-        result = analyze_sensationalism(article)
+        result = analyze_sensationalism(article, source)
         if isinstance(result, dict):
             scores["sensationalism"] = result["score"]
             rationale["sensationalism"] = result["rationale"]
@@ -297,7 +392,7 @@ def run_bias_analysis(
         print(f"    [warn] Sensationalism failed: {e}")
 
     try:
-        result = analyze_opinion(article)
+        result = analyze_opinion(article, source)
         if isinstance(result, dict):
             scores["opinion_fact"] = result["score"]
             rationale["opinion"] = result["rationale"]
@@ -307,7 +402,7 @@ def run_bias_analysis(
         print(f"    [warn] Opinion detection failed: {e}")
 
     try:
-        result = analyze_factual_rigor(article, source)
+        result = analyze_factual_rigor(article, source, doc=doc)
         if isinstance(result, dict):
             scores["factual_rigor"] = result["score"]
             rationale["coverage"] = result["rationale"]
@@ -317,7 +412,7 @@ def run_bias_analysis(
         print(f"    [warn] Factual rigor failed: {e}")
 
     try:
-        result = analyze_framing(article, cluster_articles=cluster_articles)
+        result = analyze_framing(article, cluster_articles=cluster_articles, doc=doc, source=source)
         if isinstance(result, dict):
             scores["framing"] = result["score"]
             rationale["framing"] = result["rationale"]
@@ -775,8 +870,15 @@ def _scrape_single(article_data, source_map):
     url = article_data.get("url", "")
     if not url:
         return None
+
+    title = article_data.get("title", "") or ""
+    rss_summary = article_data.get("summary", "") or ""
+
     try:
-        scraped = scrape_article(url)
+        # Pass title + RSS summary to scraper for quality gates and fallback.
+        # The scraper uses title for echo detection (redirect captures) and
+        # rss_summary as Tier 3 fallback when scrape produces garbage.
+        scraped = scrape_article(url, title=title, rss_summary=rss_summary)
         article_data["full_text"] = scraped.get("full_text", "")
         article_data["word_count"] = scraped.get("word_count", 0)
         article_data["image_url"] = scraped.get("image_url")
@@ -790,13 +892,12 @@ def _scrape_single(article_data, source_map):
     except Exception:
         pass  # Article proceeds with empty full_text
 
-    # RSS summary fallback: if scraper got no text, use the RSS summary
-    # A 200-word summary is far better than empty for NLP analysis
+    # Final RSS summary fallback: if scraper still got no text (e.g., exception
+    # path above), use the RSS summary. A 100-word summary is far better than
+    # empty for NLP analysis.
     if not article_data.get("full_text"):
-        summary = article_data.get("summary", "") or ""
-        title = article_data.get("title", "") or ""
-        if summary and len(summary) > 50:
-            article_data["full_text"] = f"{title}\n\n{summary}"
+        if rss_summary and len(rss_summary) > 50:
+            article_data["full_text"] = f"{title}\n\n{rss_summary}" if title else rss_summary
             article_data["word_count"] = len(article_data["full_text"].split())
 
     # Determine section (edition) — route by source country first,
@@ -806,7 +907,7 @@ def _scrape_single(article_data, source_map):
     source_country = source_info.get("country", "")
 
     if source_country in _COUNTRY_EDITION_MAP:
-        # Country-specific edition: US, India
+        # Country-specific edition: US, South Asia, Europe
         article_data["section"] = _COUNTRY_EDITION_MAP[source_country]
     elif _has_us_domestic_signal(article_data):
         # Content-based override: international sources covering clearly
@@ -826,7 +927,7 @@ def main():
         "--editions",
         type=str,
         default="",
-        help="Comma-separated edition slugs to process (e.g., 'india'). "
+        help="Comma-separated edition slugs to process (e.g., 'south-asia'). "
              "Empty = all sources.",
     )
     args = parser.parse_args()
@@ -1256,6 +1357,40 @@ def main():
         # means coverage breadth and tier diversity signals are minimal).
         # Single-article clusters are only excluded for the lead gate (top-10
         # positions require 3+ sources, per the ranker's lead eligibility gate).
+        #
+        # An article is an orphan if it was passed into clustering but did not
+        # appear in any returned cluster. Causes: empty TF-IDF document
+        # (handled in story_cluster.py), AgglomerativeClustering edge cases,
+        # or a cluster_stories exception. Wrapping orphans here is the
+        # backstop that guarantees every reporting article reaches the
+        # frontend feed instead of becoming a database orphan with no
+        # cluster_articles row.
+        clustered_ids: set = set()
+        for c in clusters:
+            for aid in c.get("article_ids", []) or []:
+                if aid:
+                    clustered_ids.add(aid)
+        orphans = [
+            a for a in reporting_for_clustering
+            if a.get("id") and a["id"] not in clustered_ids
+        ]
+        for a in orphans:
+            article_id = a.get("id", "")
+            source_id = a.get("source_id", "")
+            singleton = {
+                "title": a.get("title") or "Developing Story",
+                "summary": a.get("summary", "") or (a.get("full_text", "") or "")[:500],
+                "article_ids": [article_id],
+                "source_ids": [source_id] if source_id else [],
+                "source_count": 1 if source_id else 0,
+                "section": a.get("section") or "world",
+                "first_published": a.get("published_at", "") or "",
+                "articles": [a],
+            }
+            clusters.append(singleton)
+        if orphans:
+            print(f"  Wrapped {len(orphans)} orphan articles into singleton clusters")
+
         single_source_count = sum(
             1 for c in clusters
             if c.get("source_count", len(c.get("article_ids", []))) < 2
@@ -1369,11 +1504,21 @@ def main():
                     if art_id in article_bias_map:
                         article_bias_map[art_id]["framing"] = new_framing
 
-                    # Build update row for batch
-                    update_data: dict = {"article_id": art_id, "framing": new_framing}
+                    # Build update row for batch — include ALL bias axes so the
+                    # upsert does not null-out columns that aren't in the dict.
+                    # (Fix F7: partial upsert was setting 4/5 axes to NULL)
+                    existing = article_bias_map.get(art_id, {})
+                    update_data: dict = {
+                        "article_id": art_id,
+                        "political_lean": existing.get("political_lean", 50),
+                        "sensationalism": existing.get("sensationalism", 10),
+                        "opinion_fact": existing.get("opinion_fact", 25),
+                        "factual_rigor": existing.get("factual_rigor", 50),
+                        "framing": new_framing,
+                        "confidence": existing.get("confidence", 0.7),
+                    }
                     # Merge new framing rationale into existing rationale
                     if new_rationale:
-                        existing = article_bias_map.get(art_id, {})
                         existing_rationale_str = existing.get("rationale")
                         if existing_rationale_str and isinstance(existing_rationale_str, str):
                             try:
@@ -1403,13 +1548,72 @@ def main():
         else:
             print(f"  Framing re-scored: {framing_updated} articles in multi-article clusters")
 
+        # Step 6a: Extract claims (void --verify)
+        # Uses spaCy dependency parsing to extract factual claims (SVO triples
+        # anchored by named entities or quantitative data patterns).
+        all_article_claims: dict[str, list] = {}
+        cluster_consensus: dict[str, object] = {}
+        if CLAIMS_AVAILABLE and clusters:
+            print("\n[6a] Extracting claims (void --verify)...")
+            start_6a = time.time()
+            try:
+                all_article_claims = extract_claims_batch(stored_articles)
+                elapsed_6a = time.time() - start_6a
+                total_claims = sum(len(v) for v in all_article_claims.values())
+                print(f"  Claims: {total_claims} from {len(all_article_claims)} articles ({elapsed_6a:.1f}s)")
+            except Exception as e:
+                print(f"  [warn] Claim extraction failed: {e}")
+
+            # Step 6a-ii: Verify claims across sources
+            # Groups claims by cluster, then uses TF-IDF cosine similarity
+            # to find corroborated, single-source, and disputed claims.
+            if all_article_claims:
+                print("\n[6a-ii] Verifying claims across sources...")
+                start_6a2 = time.time()
+                try:
+                    # Build article_id -> cluster_index mapping
+                    article_to_cluster: dict[str, int] = {}
+                    for ci, cluster in enumerate(clusters):
+                        for art_id in cluster.get("article_ids", []):
+                            article_to_cluster[art_id] = ci
+
+                    # Group claims by cluster index
+                    claims_by_cluster: dict[str, dict[str, list]] = {}
+                    for art_id, claims in all_article_claims.items():
+                        ci = article_to_cluster.get(art_id)
+                        if ci is not None:
+                            ckey = str(ci)
+                            claims_by_cluster.setdefault(ckey, {})[art_id] = claims
+
+                    # Build source name lookup
+                    source_name_map = {
+                        s.get("id", ""): s.get("name", "")
+                        for s in source_map.values()
+                    }
+
+                    cluster_consensus = verify_all_clusters(
+                        claims_by_cluster, source_info=source_name_map
+                    )
+                    elapsed_6a2 = time.time() - start_6a2
+                    total_corr = sum(c.corroborated for c in cluster_consensus.values())
+                    total_disp = sum(c.disputed for c in cluster_consensus.values())
+                    print(f"  Verified {len(cluster_consensus)} clusters: "
+                          f"{total_corr} corroborated, {total_disp} disputed ({elapsed_6a2:.1f}s)")
+                except Exception as e:
+                    print(f"  [warn] Claim verification failed: {e}")
+        elif CLAIMS_AVAILABLE:
+            print("\n[6a] Skipping claim extraction (no clusters)")
+        else:
+            print("\n[6a] Skipping claim extraction (modules not available)")
+
         # Step 6c: Gemini bias reasoning (contextual score adjustments)
         # Uses a separate call budget (_MAX_REASONING_CALLS = 25) that does
         # not draw from the summarization cap. Prioritises low-confidence,
         # large, and high-divergence clusters. Mutates article_bias_map in
         # place; downstream steps (ranking, storage) pick up the adjustments
         # automatically since they reference the same dict.
-        if GEMINI_REASONING_AVAILABLE and gemini_is_available():
+        _skip_reasoning = os.environ.get("DISABLE_GEMINI_REASONING", "").strip() in ("1", "true", "yes")
+        if GEMINI_REASONING_AVAILABLE and gemini_is_available() and not _skip_reasoning:
             print("\n[6c] Running Gemini bias reasoning...")
             start_6c = time.time()
             try:
@@ -1426,39 +1630,12 @@ def main():
                 )
             except Exception as e:
                 print(f"  [warn] Gemini reasoning failed: {e}")
+        elif _skip_reasoning:
+            print("\n[6c] Skipping Gemini bias reasoning (DISABLE_GEMINI_REASONING=1)")
         elif GEMINI_REASONING_AVAILABLE:
             print("\n[6c] Skipping Gemini bias reasoning (GEMINI_API_KEY not set)")
         else:
             print("\n[6c] Skipping Gemini bias reasoning (module not available)")
-
-        # Step 7b: Summarize clusters with Gemini Flash
-        # Generates polished headlines, summaries, and consensus/divergence.
-        # Falls back to rule-based generation (already set by cluster_stories)
-        # when Gemini is unavailable or fails for a given cluster.
-        gemini_results: dict[int, dict] = {}
-        if SUMMARIZER_AVAILABLE and gemini_is_available():
-            print("\n[7b] Summarizing clusters with Gemini Flash...")
-            try:
-                gemini_results = summarize_clusters_batch(clusters)
-                for idx, result in gemini_results.items():
-                    clusters[idx]["title"] = result["headline"]
-                    clusters[idx]["summary"] = result["summary"]
-                    clusters[idx]["consensus_points"] = result["consensus"]
-                    clusters[idx]["divergence_points"] = result["divergence"]
-                    clusters[idx]["_gemini_enriched"] = True
-                    # v5.0: editorial intelligence fields
-                    if result.get("editorial_importance") is not None:
-                        clusters[idx]["editorial_importance"] = result["editorial_importance"]
-                    if result.get("story_type") is not None:
-                        clusters[idx]["story_type"] = result["story_type"]
-                    if result.get("has_binding_consequences") is not None:
-                        clusters[idx]["has_binding_consequences"] = result["has_binding_consequences"]
-            except Exception as e:
-                print(f"  [warn] Gemini summarization failed: {e}")
-        elif SUMMARIZER_AVAILABLE:
-            print("\n[7b] Skipping Gemini summarization (GEMINI_API_KEY not set)")
-        else:
-            print("\n[7b] Skipping Gemini summarization (google-generativeai not installed)")
 
         # Step 7: Categorize and rank with v2 engine
         print("\n[7/9] Categorizing and ranking clusters (v2 engine)...")
@@ -1610,7 +1787,10 @@ def main():
         # Step 7c: Editorial triage (Gemini) — reorder top 10 per section
         # Uses 1 API call per section (3 total). Falls back to deterministic
         # ranking if Gemini is unavailable.
-        if SUMMARIZER_AVAILABLE and gemini_is_available():
+        _skip_triage = os.environ.get("DISABLE_EDITORIAL_TRIAGE", "").strip() in ("1", "true", "yes")
+        if _skip_triage:
+            print("\n[7c] Skipping editorial triage (DISABLE_EDITORIAL_TRIAGE=1)")
+        elif SUMMARIZER_AVAILABLE and gemini_is_available():
             try:
                 from summarizer.gemini_client import editorial_triage
                 print("\n[7c] Running editorial triage (Gemini)...")
@@ -1699,18 +1879,90 @@ def main():
                     if event:
                         event_counts[event] = event_counts.get(event, 0) + 1
             if event_deferred:
-                # Replace pool in-place for this section
+                # Build per-event floors from the lowest-ranked promoted cluster
+                # of each event. Deferred clusters rank at 75% of their event's
+                # last promoted cluster — not at the absolute pool bottom (old bug
+                # crushed 15-source clusters from ~50 to ~8 points).
+                event_last_promoted: dict[str, float] = {}
+                for c in event_promoted:
+                    t = (c.get("title", "") or "").lower()
+                    for ek, kws in _EVENT_KEYWORDS.items():
+                        if any(kw in t for kw in kws):
+                            # Overwritten per cluster; last = lowest-ranked
+                            event_last_promoted[ek] = c.get("headline_rank", 0)
+                            break
+
                 for c in event_deferred:
                     idx = clusters.index(c)
-                    # Nudge headline_rank down so it sorts below promoted
-                    if event_promoted:
-                        floor = event_promoted[-1].get("headline_rank", 0) - 0.1
-                        clusters[idx]["headline_rank"] = round(min(c.get("headline_rank", 0), floor), 2)
+                    t = (c.get("title", "") or "").lower()
+                    event = None
+                    for ek, kws in _EVENT_KEYWORDS.items():
+                        if any(kw in t for kw in kws):
+                            event = ek
+                            break
+                    if event and event in event_last_promoted:
+                        floor = event_last_promoted[event] * 0.75
+                    elif event_promoted:
+                        floor = event_promoted[-1].get("headline_rank", 0) * 0.75
+                    else:
+                        continue
+                    clusters[idx]["headline_rank"] = round(min(c.get("headline_rank", 0), floor), 2)
 
             clusters.sort(
                 key=lambda c: (c.get("headline_rank", 0), c.get("source_count", 0), c.get("_db_id", str(id(c)))),
                 reverse=True,
             )
+
+        # Step 7b: Summarize clusters with Gemini Flash (runs after ranking so
+        # Gemini calls are spent on the clusters that will actually appear on the
+        # frontend, not merely the ones with the most raw sources).
+        # Gemini generates headlines + summaries for the top 30 clusters only.
+        # Clusters that fail Gemini get their rule-based summary cleared so
+        # no fallback text reaches the frontend.
+        gemini_results: dict[int, dict] = {}
+        # Tier label persisted to DB cache. Claude is primary; Gemini fallback
+        # only when ANTHROPIC_API_KEY is unset or Claude has a persistent fault.
+        _summary_tier_used = "sonnet" if claude_is_available() else (
+            "flash" if gemini_is_available() else None
+        )
+        if SUMMARIZER_AVAILABLE and llm_is_available():
+            print(f"\n[7b] Summarizing up to 50 clusters (tier={_summary_tier_used})...")
+            try:
+                gemini_results, gemini_failed = summarize_clusters_batch(
+                    clusters, cluster_consensus=cluster_consensus,
+                )
+                for idx, result in gemini_results.items():
+                    clusters[idx]["title"] = result["headline"]
+                    clusters[idx]["summary"] = result["summary"]
+                    clusters[idx]["consensus_points"] = result["consensus"]
+                    clusters[idx]["divergence_points"] = result["divergence"]
+                    clusters[idx]["_gemini_enriched"] = True
+                    # Cache fields persisted at step 8 cluster insert so the
+                    # post-rerank top-50 pass can skip unchanged clusters.
+                    clusters[idx]["summary_article_hash"] = _content_hash(
+                        clusters[idx].get("articles", [])
+                    )
+                    clusters[idx]["summary_tier"] = _summary_tier_used
+                    if result.get("editorial_importance") is not None:
+                        clusters[idx]["editorial_importance"] = result["editorial_importance"]
+                    if result.get("story_type") is not None:
+                        clusters[idx]["story_type"] = result["story_type"]
+                    if result.get("has_binding_consequences") is not None:
+                        clusters[idx]["has_binding_consequences"] = result["has_binding_consequences"]
+                    if result.get("claims"):
+                        clusters[idx]["_gemini_claims"] = result["claims"]
+                    if result.get("consensus_ratio") is not None:
+                        clusters[idx]["_gemini_consensus_ratio"] = result["consensus_ratio"]
+                    if result.get("consensus_summary"):
+                        clusters[idx]["_gemini_consensus_summary"] = result["consensus_summary"]
+                if gemini_failed:
+                    print(f"  [info] {len(gemini_failed)} pool-1 cluster(s) keeping rule-based summary (LLM failed)")
+            except Exception as e:
+                print(f"  [warn] LLM summarization failed: {e}")
+        elif SUMMARIZER_AVAILABLE:
+            print("\n[7b] Skipping LLM summarization (no API key set)")
+        else:
+            print("\n[7b] Skipping LLM summarization (SDKs not installed)")
 
         # Topic diversity re-ranking: prevent any single category from
         # dominating the top of the feed. Within each section pool,
@@ -1748,14 +2000,14 @@ def main():
                 promoted.append(deferred.pop(0))
 
             # Write back headline_rank to reflect diversity-adjusted order.
-            # Preserve raw scores but ensure monotonic ordering so DB sort
-            # matches our diversity-adjusted order.
+            # Use 0.1pt spacing: enough to avoid false ties without
+            # distorting ranks (0.01 tied 4 stories, 0.5 was too aggressive).
             final_order = promoted + deferred
             if final_order and len(promoted) >= 2:
                 for j in range(1, len(promoted)):
                     if promoted[j].get("headline_rank", 0) >= promoted[j-1].get("headline_rank", 0):
                         promoted[j]["headline_rank"] = round(
-                            promoted[j-1].get("headline_rank", 0) - 0.01, 2
+                            promoted[j-1].get("headline_rank", 0) - 0.1, 2
                         )
 
         # Recency gate for top-10: ensure the front page shows today's news.
@@ -1790,6 +2042,25 @@ def main():
                     c["headline_rank"] = round(min(c.get("headline_rank", 0), floor_rank - 0.01), 2)
                 print(f"  [{section_val}] Recency gate: demoted {len(demoted)} stale stories from top 10")
 
+        # ── Per-edition rank computation (v6.0 — shared edition_ranker) ──
+        # Normalized cluster IDs: edition_ranker uses c["id"] for identity.
+        for c in clusters:
+            if "id" not in c:
+                c["id"] = c.get("_db_id", "") or str(id(c))
+        apply_edition_ranking(
+            clusters, sources, get_article_edition="section"
+        )
+
+        # Print top 10 per edition for diagnostics
+        _RANK_EDITIONS = ACTIVE_EDITIONS
+        for ed in _RANK_EDITIONS:
+            pool = [c for c in clusters if ed in (c.get("sections") or [c.get("section", "world")])]
+            pool.sort(key=lambda c: c.get(f"rank_{ed}", 0), reverse=True)
+            print(f"\n  --- Top 10 {ed.upper()} by rank_{ed} ---")
+            for j, c in enumerate(pool[:10]):
+                title = (c.get("title", "") or "")[:55]
+                print(f"  {j+1:2}. [{c.get(f'rank_{ed}', 0):5.1f}] {c.get('source_count', 0):2}src {title}")
+
         # ── Step 7d: Generate Daily Brief (TL;DR + audio broadcast) ──
         if BRIEFING_AVAILABLE:
             print("\n[7d] Generating Daily Briefs...")
@@ -1797,13 +2068,14 @@ def main():
             try:
                 brief_results = generate_daily_briefs(
                     clusters, source_map,
-                    edition_sections=["world", "us", "india"],
+                    edition_sections=ACTIVE_EDITIONS,
                 )
 
                 for edition, brief in brief_results.items():
                     brief_row = {
                         "edition": edition,
                         "pipeline_run_id": run_id,
+                        "tldr_headline": brief.get("tldr_headline"),
                         "tldr_text": brief["tldr_text"],
                         "opinion_text": brief.get("opinion_text"),
                         "opinion_headline": brief.get("opinion_headline"),
@@ -1812,6 +2084,7 @@ def main():
                         "opinion_audio_script": brief.get("opinion_audio_script"),
                         "audio_script": brief.get("audio_script"),
                         "top_cluster_ids": brief.get("top_cluster_ids", []),
+                        "generator": brief.get("generator"),
                     }
 
                     # Fallback: if this run produced an empty/placeholder brief,
@@ -1824,15 +2097,16 @@ def main():
                     if is_empty_brief:
                         try:
                             prev = supabase.table("daily_briefs").select(
-                                "tldr_text,opinion_text,opinion_headline,opinion_lean,opinion_cluster_id,"
+                                "tldr_headline,tldr_text,opinion_text,opinion_headline,opinion_lean,opinion_cluster_id,"
                                 "audio_script,audio_url,audio_duration_seconds,"
                                 "audio_voice_label,audio_voice,audio_file_size,"
-                                "opinion_audio_script,top_cluster_ids"
+                                "opinion_audio_script,top_cluster_ids,opinion_start_seconds"
                             ).eq("edition", edition).order(
                                 "created_at", desc=True
                             ).limit(1).execute()
                             if prev.data and prev.data[0].get("tldr_text"):
                                 p = prev.data[0]
+                                brief_row["tldr_headline"] = p.get("tldr_headline")
                                 brief_row["tldr_text"] = p["tldr_text"]
                                 brief_row["opinion_text"] = p.get("opinion_text")
                                 brief_row["opinion_headline"] = p.get("opinion_headline")
@@ -1844,6 +2118,7 @@ def main():
                                 brief_row["audio_voice_label"] = p.get("audio_voice_label")
                                 brief_row["audio_voice"] = p.get("audio_voice")
                                 brief_row["audio_file_size"] = p.get("audio_file_size")
+                                brief_row["opinion_start_seconds"] = p.get("opinion_start_seconds")
                                 brief_row["top_cluster_ids"] = p.get("top_cluster_ids", [])
                                 print(f"  [brief:{edition}] Empty brief — carried forward previous brief")
                         except Exception as e:
@@ -1856,19 +2131,24 @@ def main():
                             audio_result = produce_audio(
                                 brief["audio_script"], voices, edition,
                                 opinion_audio_script=brief.get("opinion_audio_script"),
+                                opinion_lean=brief.get("opinion_lean"),
                             )
                             if audio_result:
                                 brief_row["audio_url"] = audio_result["audio_url"]
                                 brief_row["audio_duration_seconds"] = audio_result["duration_seconds"]
                                 brief_row["audio_file_size"] = audio_result["file_size"]
-                                brief_row["audio_voice"] = f"{voices['host_a']['id']}+{voices['host_b']['id']}"
-                                brief_row["audio_voice_label"] = "Two voices"
+                                brief_row["opinion_start_seconds"] = audio_result.get("opinion_start_seconds")
+                                has_opinion = bool(brief.get("opinion_audio_script"))
+                                brief_row["audio_voice"] = f"{voices['host_a']['id']}+{voices['host_b']['id']}" + (
+                                    f"+{voices['opinion']['id']}" if has_opinion else ""
+                                )
+                                brief_row["audio_voice_label"] = "Three voices" if has_opinion else "Two voices"
                             else:
                                 # TTS failed — carry forward previous audio so
                                 # frontend always has something to play.
                                 try:
                                     prev = supabase.table("daily_briefs").select(
-                                        "audio_url,audio_duration_seconds,audio_voice_label,audio_voice,audio_file_size"
+                                        "audio_url,audio_duration_seconds,audio_voice_label,audio_voice,audio_file_size,opinion_start_seconds"
                                     ).eq("edition", edition).order(
                                         "created_at", desc=True
                                     ).limit(1).execute()
@@ -1879,6 +2159,7 @@ def main():
                                         brief_row["audio_voice_label"] = p.get("audio_voice_label")
                                         brief_row["audio_voice"] = p.get("audio_voice")
                                         brief_row["audio_file_size"] = p.get("audio_file_size")
+                                        brief_row["opinion_start_seconds"] = p.get("opinion_start_seconds")
                                         print(f"  [brief:{edition}] TTS failed — carried forward previous audio")
                                 except Exception as e:
                                     print(f"  [warn] Could not fetch previous audio for {edition}: {e}")
@@ -1887,7 +2168,7 @@ def main():
                             # previous audio so frontend always has audio available.
                             try:
                                 prev = supabase.table("daily_briefs").select(
-                                    "audio_url,audio_duration_seconds,audio_voice_label,audio_script,audio_voice,audio_file_size"
+                                    "audio_url,audio_duration_seconds,audio_voice_label,audio_script,audio_voice,audio_file_size,opinion_start_seconds"
                                 ).eq("edition", edition).order(
                                     "created_at", desc=True
                                 ).limit(1).execute()
@@ -1898,6 +2179,7 @@ def main():
                                     brief_row["audio_voice_label"] = p.get("audio_voice_label")
                                     brief_row["audio_voice"] = p.get("audio_voice")
                                     brief_row["audio_file_size"] = p.get("audio_file_size")
+                                    brief_row["opinion_start_seconds"] = p.get("opinion_start_seconds")
                                     if not brief_row.get("audio_script"):
                                         brief_row["audio_script"] = p.get("audio_script")
                                     print(f"  [brief:{edition}] No audio script — carried forward previous audio")
@@ -1909,10 +2191,35 @@ def main():
                             brief_row, on_conflict="edition,pipeline_run_id"
                         ).execute()
                     except Exception as e:
-                        print(f"  [warn] Failed to store brief for {edition}: {e}")
+                        # If the error is a missing column (e.g. opinion_start_seconds
+                        # before migration 028), strip the unknown column and retry.
+                        err_msg = str(e)
+                        if "PGRST204" in err_msg or "does not exist" in err_msg.lower() or "schema cache" in err_msg.lower():
+                            # Extract column name from error if possible, or strip known optional cols
+                            for optional_col in ("opinion_start_seconds",):
+                                brief_row.pop(optional_col, None)
+                            try:
+                                supabase.table("daily_briefs").upsert(
+                                    brief_row, on_conflict="edition,pipeline_run_id"
+                                ).execute()
+                                print(f"  [brief:{edition}] Stored (stripped missing column)")
+                            except Exception as e2:
+                                print(f"  [warn] Failed to store brief for {edition} (retry): {e2}")
+                        else:
+                            print(f"  [warn] Failed to store brief for {edition}: {e}")
 
                 elapsed_7d = time.time() - start_7d
                 print(f"  Daily briefs: {len(brief_results)} editions (with audio, {elapsed_7d:.1f}s)")
+
+                # Generate podcast RSS feeds (only when audio is enabled)
+                if not os.environ.get("DISABLE_AUDIO", "").strip() in ("1", "true", "yes"):
+                    try:
+                        from briefing.podcast_feed_generator import generate_podcast_feeds
+                        feed_results = generate_podcast_feeds(ACTIVE_EDITIONS)
+                        if feed_results:
+                            print(f"  Podcast feeds: {', '.join(feed_results.keys())}")
+                    except Exception as e:
+                        print(f"  [warn] Podcast feed generation failed: {e}")
             except Exception as e:
                 print(f"  [warn] Daily brief generation failed: {e}")
         else:
@@ -1930,7 +2237,7 @@ def main():
             # Determine cluster section (edition) from its articles.
             # Strategy: majority vote — whichever edition has the most
             # articles in this cluster determines the cluster's edition.
-            # This works fairly across all 3 editions (world/us/india).
+            # This works fairly across all editions (world/us/europe/south-asia).
             section_counts: dict[str, int] = {}
             for art in cluster_articles_list:
                 sec = art.get("section", "world")
@@ -1939,7 +2246,7 @@ def main():
 
             # Multi-section: list ALL editions that have articles in this cluster.
             # This allows cross-listing — e.g., a global Iran war cluster with
-            # 3 India-source articles appears in both "world" and "india" feeds.
+            # 3 India-source articles appears in both "world" and "south-asia" feeds.
             all_sections = sorted(section_counts.keys()) if section_counts else ["world"]
 
             # Use pre-generated summary from clustering or Gemini step
@@ -1962,6 +2269,11 @@ def main():
                 "divergence_score": round(cluster.get("divergence_score", 0.0), 2),
                 "headline_rank": round(cluster.get("headline_rank", 0.0), 2),
                 "coverage_velocity": cluster.get("coverage_velocity", 0),
+                "rank_world": round(cluster.get("rank_world", cluster.get("headline_rank", 0.0)), 2),
+                "rank_us": round(cluster.get("rank_us", cluster.get("headline_rank", 0.0)), 2),
+                "rank_europe": round(cluster.get("rank_europe", cluster.get("headline_rank", 0.0)), 2),
+                # Edition name "south-asia" (hyphen) → DB column "rank_south_asia" (underscore)
+                "rank_south_asia": round(cluster.get("rank_south-asia", cluster.get("headline_rank", 0.0)), 2),
             }
 
             # v5.0: editorial intelligence columns (nullable — NULL = no Gemini)
@@ -1977,6 +2289,67 @@ def main():
             if has_gemini:
                 cluster_row["consensus_points"] = cluster.get("consensus_points", [])
                 cluster_row["divergence_points"] = cluster.get("divergence_points", [])
+
+            # Summary cache fields — populated by step 7b for clusters that
+            # received an LLM summary; consumed by step 8d (post-rerank pass)
+            # to skip clusters whose article membership hasn't changed.
+            if cluster.get("summary_article_hash"):
+                cluster_row["summary_article_hash"] = cluster["summary_article_hash"]
+            if cluster.get("summary_tier"):
+                cluster_row["summary_tier"] = cluster["summary_tier"]
+
+            # void --verify: claim_consensus JSONB
+            # Prefer Gemini-deduplicated claims; fall back to NLP-only
+            ci_key = str(ci)
+            nlp_consensus = cluster_consensus.get(ci_key)
+            if cluster.get("_gemini_claims") or nlp_consensus:
+                cc_data: dict = {}
+                if nlp_consensus:
+                    cc_data = {
+                        "total_claims": nlp_consensus.total_claims,
+                        "corroborated": nlp_consensus.corroborated,
+                        "single_source": nlp_consensus.single_source,
+                        "disputed": nlp_consensus.disputed,
+                        "consensus_ratio": nlp_consensus.consensus_ratio,
+                    }
+                # Overlay Gemini deduplication if available
+                if cluster.get("_gemini_claims"):
+                    cc_data["highlighted_claims"] = cluster["_gemini_claims"]
+                elif nlp_consensus and nlp_consensus.claims:
+                    cc_data["highlighted_claims"] = [
+                        {
+                            "text": vc.claim_text,
+                            "status": vc.status,
+                            "source_count": vc.source_count,
+                            "sources": vc.source_names,
+                            "highlight": vc.highlight,
+                        }
+                        for vc in nlp_consensus.claims
+                        if vc.highlight or vc.status == "disputed"
+                    ][:10]
+                if cluster.get("_gemini_consensus_ratio") is not None:
+                    cc_data["consensus_ratio"] = cluster["_gemini_consensus_ratio"]
+                if cluster.get("_gemini_consensus_summary"):
+                    cc_data["consensus_summary"] = cluster["_gemini_consensus_summary"]
+                elif nlp_consensus and nlp_consensus.disputed_details:
+                    cc_data["consensus_summary"] = (
+                        f"{nlp_consensus.corroborated} claims corroborated, "
+                        f"{nlp_consensus.disputed} disputed across sources"
+                    )
+                if nlp_consensus and nlp_consensus.disputed_details:
+                    cc_data["disputed_details"] = [
+                        {
+                            "topic": dd.topic,
+                            "version_a": dd.version_a,
+                            "version_a_sources": dd.version_a_sources,
+                            "version_b": dd.version_b,
+                            "version_b_sources": dd.version_b_sources,
+                            "contradiction_type": dd.contradiction_type,
+                        }
+                        for dd in nlp_consensus.disputed_details
+                    ][:5]
+                if cc_data:
+                    cluster_row["claim_consensus"] = cc_data
 
             result = insert_cluster(cluster_row)
             if result:
@@ -2000,67 +2373,58 @@ def main():
                 on_conflict="cluster_id,article_id",
             )
 
-        # Step 8b: Deduplicate clusters — delete old clusters superseded by this run.
-        # Each pipeline run re-clusters the last 48h of articles from scratch, so
-        # previous runs' clusters covering the same articles are stale duplicates.
-        # Strategy: for each new cluster, find older clusters sharing >50% of
-        # their articles (Jaccard overlap). Delete the old ones — the new run has
-        # fresher summaries, updated bias scores, and any new articles.
-        new_cluster_ids = set(cluster_ids_to_enrich)
-        if new_cluster_ids:
-            print(f"\n[8b] Deduplicating clusters (removing old duplicates)...")
-            # Build article→new_cluster map from the links we just inserted
-            new_cluster_articles: dict[str, set[str]] = {}
-            for link in all_cluster_article_links:
-                cid = link["cluster_id"]
-                aid = link["article_id"]
-                new_cluster_articles.setdefault(cid, set()).add(aid)
+        # void --verify: Batch-insert article_claims to Supabase
+        if CLAIMS_AVAILABLE and all_article_claims and cluster_ids_to_enrich:
+            print("  Storing article claims (void --verify)...")
+            try:
+                # Build cluster_id mapping: cluster index -> DB cluster_id
+                ci_to_db_id: dict[int, str] = {}
+                for ci_idx, cid in enumerate(cluster_ids_to_enrich):
+                    ci_to_db_id[ci_idx] = cid
 
-            # Collect all article IDs from this run's clusters
-            all_new_article_ids = set()
-            for aids in new_cluster_articles.values():
-                all_new_article_ids.update(aids)
+                article_to_ci: dict[str, int] = {}
+                for ci_idx, cluster in enumerate(clusters):
+                    if ci_idx < len(cluster_ids_to_enrich):
+                        for art_id in cluster.get("article_ids", []):
+                            article_to_ci[art_id] = ci_idx
 
-            # Find old clusters that share articles with our new clusters.
-            # Query cluster_articles for our article IDs, excluding new cluster IDs.
-            old_cluster_articles: dict[str, set[str]] = {}
-            all_new_article_list = list(all_new_article_ids)
-            for i in range(0, len(all_new_article_list), 500):
-                batch = all_new_article_list[i:i + 500]
-                try:
-                    res = supabase.table("cluster_articles").select(
-                        "cluster_id,article_id"
-                    ).in_("article_id", batch).execute()
-                    if res.data:
-                        for row in res.data:
-                            cid = row["cluster_id"]
-                            if cid not in new_cluster_ids:
-                                old_cluster_articles.setdefault(cid, set()).add(
-                                    row["article_id"]
-                                )
-                except Exception as e:
-                    print(f"  [warn] dedup query failed: {e}")
+                claim_rows: list[dict] = []
+                for art_id, claims in all_article_claims.items():
+                    ci_idx = article_to_ci.get(art_id)
+                    db_cluster_id = ci_to_db_id.get(ci_idx) if ci_idx is not None else None
 
-            # Any article overlap means the old cluster is superseded by the
-            # new run (which re-clusters the same 48h article window with
-            # fresher summaries and scores). Delete the old one.
-            stale_ids: list[str] = list(old_cluster_articles.keys())
+                    # Get verification status from cluster_consensus
+                    ci_key = str(ci_idx) if ci_idx is not None else None
+                    nlp_cons = cluster_consensus.get(ci_key) if ci_key else None
+                    verified_statuses: dict[str, str] = {}
+                    if nlp_cons:
+                        for vc in nlp_cons.claims:
+                            verified_statuses[vc.claim_text] = vc.status
 
-            if stale_ids:
-                for i in range(0, len(stale_ids), 100):
-                    batch = stale_ids[i:i + 100]
-                    try:
-                        supabase.table("cluster_articles").delete().in_(
-                            "cluster_id", batch
-                        ).execute()
-                        supabase.table("story_clusters").delete().in_(
-                            "id", batch
-                        ).execute()
-                    except Exception as e:
-                        print(f"  [warn] dedup delete failed: {e}")
-                print(f"  Deduplicated: removed {len(stale_ids)} old clusters superseded by this run")
-            else:
-                print(f"  No duplicate clusters found")
+                    for claim in claims:
+                        status = verified_statuses.get(claim.claim_text, "unverified")
+                        claim_rows.append({
+                            "article_id": art_id,
+                            "cluster_id": db_cluster_id,
+                            "claim_text": claim.claim_text[:2000],
+                            "source_sentence": (claim.source_sentence or "")[:2000],
+                            "subject_entity": claim.subject_entity or None,
+                            "subject_entity_type": claim.subject_entity_type or None,
+                            "claim_type": claim.claim_type,
+                            "has_quantitative": claim.has_quantitative,
+                            "status": status,
+                            "corroboration_count": 0,
+                            "corroborating_sources": [claim.source_slug] if claim.source_slug else [],
+                        })
+
+                if claim_rows:
+                    inserted = _batch_upsert(
+                        "article_claims", claim_rows, chunk_size=200,
+                        on_conflict="id",
+                    )
+                    print(f"  Article claims stored: {inserted}")
+            except Exception as e:
+                print(f"  [warn] Article claims storage failed: {e}")
 
         # Enrich clusters with aggregated bias data (Step 9)
         # For Gemini-enriched clusters, only run numeric aggregation (RPC),
@@ -2087,6 +2451,202 @@ def main():
                         print(f"  [warn] Enrichment failed for {cid}: {enrich_err}")
 
     print(f"  Clusters stored: {clusters_created}/{len(clusters) if ANALYSIS_AVAILABLE else 0}")
+
+    # Step 8b (deferred): Deduplicate clusters — runs AFTER enrichment so old
+    # clusters remain visible to the frontend until new ones are fully ready.
+    # This prevents the "Presses Are Warming Up" empty state during pipeline runs.
+    new_cluster_ids = set(cluster_ids_to_enrich)
+    if new_cluster_ids:
+        print(f"\n[8b] Deduplicating clusters (deferred — new clusters already enriched)...")
+        new_cluster_articles: dict[str, set[str]] = {}
+        for link in all_cluster_article_links:
+            cid = link["cluster_id"]
+            aid = link["article_id"]
+            new_cluster_articles.setdefault(cid, set()).add(aid)
+
+        all_new_article_ids = set()
+        for aids in new_cluster_articles.values():
+            all_new_article_ids.update(aids)
+
+        old_cluster_articles: dict[str, set[str]] = {}
+        all_new_article_list = list(all_new_article_ids)
+        for i in range(0, len(all_new_article_list), 500):
+            batch = all_new_article_list[i:i + 500]
+            try:
+                res = supabase.table("cluster_articles").select(
+                    "cluster_id,article_id"
+                ).in_("article_id", batch).execute()
+                if res.data:
+                    for row in res.data:
+                        cid = row["cluster_id"]
+                        if cid not in new_cluster_ids:
+                            old_cluster_articles.setdefault(cid, set()).add(
+                                row["article_id"]
+                            )
+            except Exception as e:
+                print(f"  [warn] dedup query failed: {e}")
+
+        # Only delete old clusters with >30% article overlap with a new cluster.
+        # This prevents aggressive deletion of clusters that share only 1-2 articles.
+        stale_ids: list[str] = []
+        for old_cid, old_aids in old_cluster_articles.items():
+            # Check overlap with ANY new cluster
+            for new_cid, new_aids in new_cluster_articles.items():
+                overlap = len(old_aids & new_aids)
+                if len(old_aids) > 0 and overlap / len(old_aids) > 0.3:
+                    stale_ids.append(old_cid)
+                    break
+
+        if stale_ids:
+            for i in range(0, len(stale_ids), 100):
+                batch = stale_ids[i:i + 100]
+                try:
+                    supabase.table("cluster_articles").delete().in_(
+                        "cluster_id", batch
+                    ).execute()
+                    supabase.table("story_clusters").delete().in_(
+                        "id", batch
+                    ).execute()
+                except Exception as e:
+                    print(f"  [warn] dedup delete failed: {e}")
+            print(f"  Deduplicated: removed {len(stale_ids)} old clusters (>30% article overlap)")
+        else:
+            print(f"  No duplicate clusters found")
+
+        # Title-based cross-run dedup: catch old clusters covering the same
+        # story as new clusters but with ZERO article overlap (different RSS
+        # fetch batches). The article-overlap check above misses these entirely.
+        try:
+            from clustering.story_cluster import _title_words
+            # Fetch titles of old clusters in DB (recent 48h).
+            # Paginated to avoid payload size limits on large cluster sets.
+            cutoff = (datetime.now(timezone.utc) - timedelta(hours=48)).isoformat()
+            old_titles: dict[str, tuple[set[str], int]] = {}
+            _page_size = 500
+            _offset = 0
+            while True:
+                old_res = supabase.table("story_clusters").select(
+                    "id,title,source_count"
+                ).gte("created_at", cutoff).range(
+                    _offset, _offset + _page_size - 1
+                ).execute()
+                if not old_res.data:
+                    break
+                for r in old_res.data:
+                    rid = r.get("id", "")
+                    if rid and rid not in new_cluster_ids and r.get("title"):
+                        old_titles[rid] = (_title_words(r["title"]), r.get("source_count", 0))
+                if len(old_res.data) < _page_size:
+                    break
+                _offset += _page_size
+
+            # Build title word sets for new clusters
+            new_titles: dict[str, set[str]] = {}
+            for cid in new_cluster_ids:
+                # Find title from the stored clusters
+                for c in all_clusters:
+                    db_id = c.get("_db_id", "")
+                    if db_id == cid:
+                        new_titles[cid] = _title_words(c.get("title", ""))
+                        break
+
+            title_stale: list[str] = []
+            for old_cid, (old_words, old_src) in old_titles.items():
+                if old_cid in stale_ids or not old_words:
+                    continue
+                for new_cid, new_words in new_titles.items():
+                    if not new_words:
+                        continue
+                    intersection = len(old_words & new_words)
+                    union = len(old_words | new_words)
+                    if union > 0 and intersection / union >= 0.40:
+                        title_stale.append(old_cid)
+                        break
+
+            if title_stale:
+                for i in range(0, len(title_stale), 100):
+                    batch = title_stale[i:i + 100]
+                    try:
+                        supabase.table("cluster_articles").delete().in_(
+                            "cluster_id", batch
+                        ).execute()
+                        supabase.table("story_clusters").delete().in_(
+                            "id", batch
+                        ).execute()
+                    except Exception as e:
+                        print(f"  [warn] title dedup delete failed: {e}")
+                print(f"  Title dedup: removed {len(title_stale)} old clusters (>=40% title overlap with new)")
+        except Exception as e:
+            print(f"  [warn] Title-based dedup failed: {e}")
+
+    # Step 8c: Holistic re-rank — re-score ALL clusters in DB with the
+    # current ranking engine so old and new clusters compete on equal footing.
+    # Without this, old clusters keep stale scores from previous pipeline runs
+    # while new clusters are scored with the current engine, causing rank drift.
+    if ANALYSIS_AVAILABLE:
+        print("\n[8c] Holistic re-rank (all clusters, v6.0 engine)...")
+        try:
+            import sys as _sys
+            from pathlib import Path as _Path
+            _pipeline_dir = str(_Path(__file__).parent)
+            if _pipeline_dir not in _sys.path:
+                _sys.path.insert(0, _pipeline_dir)
+            from rerank import rerank_all_clusters
+            rerank_all_clusters(sources)
+        except Exception as e:
+            import traceback
+            print(f"  [warn] Holistic re-rank failed: {e}")
+            traceback.print_exc()
+
+    # Step 8d: Post-rerank single-pass top-50 Sonnet summarization with cache.
+    # Reads final top-50 by rank_world from DB. For each cluster:
+    #   - hash its current article membership
+    #   - if hash matches stored summary_article_hash AND tier='sonnet' → skip
+    #   - else → call Claude (Gemini fallback), write summary + hash + tier
+    # Op-eds (content_type='opinion') and clusters with <3 articles skipped.
+    # Updates the in-memory `clusters` list so the daily brief regen below
+    # reads fresh top-15 summaries.
+    summary_metrics = {"summarized": 0, "cached": 0, "skipped": 0, "failed": 0}
+    if SUMMARIZER_AVAILABLE and llm_is_available() and calls_remaining() > 0:
+        print("\n[8d] Post-rerank top-50 summarization (single-pass, cached)...")
+        try:
+            summary_metrics = summarize_top50_after_rerank(supabase, edition="world", limit=50)
+            print(
+                f"  Top-50: {summary_metrics['summarized']} summarized, "
+                f"{summary_metrics['cached']} cache hits, "
+                f"{summary_metrics['skipped']} skipped (op-ed / <3 sources), "
+                f"{summary_metrics['failed']} failed"
+            )
+            # Sync in-memory clusters with the freshly written summaries so any
+            # downstream consumer (brief regen, audio) sees the post-rerank text.
+            id_to_idx = {c.get("id"): i for i, c in enumerate(clusters) if c.get("id")}
+            for cid, result in summary_metrics.get("updated_summaries", {}).items():
+                idx = id_to_idx.get(cid)
+                if idx is None:
+                    continue
+                clusters[idx]["title"] = result["headline"]
+                clusters[idx]["summary"] = result["summary"]
+                if result.get("consensus"):
+                    clusters[idx]["consensus_points"] = result["consensus"]
+                if result.get("divergence"):
+                    clusters[idx]["divergence_points"] = result["divergence"]
+                clusters[idx]["_gemini_enriched"] = True
+        except Exception as e:
+            print(f"  [warn] Post-rerank summarization failed: {e}")
+
+    # Step 8e: Cache cluster images to Supabase Storage (bypasses CDN hotlink protection)
+    # Downloads og:images server-side on GitHub Actions (neutral IP = no Referer block),
+    # re-serves from Supabase CDN. Top 15 clusters get guaranteed image availability —
+    # buffer for the 50/50 lead split (rank 0) + headroom if rank 0 image fetch fails
+    # (rank 1 promotes seamlessly).
+    if IMAGE_CACHER_AVAILABLE:
+        print("\n[8e] Caching cluster images to Supabase Storage...")
+        try:
+            cache_cluster_images(clusters, supabase, top_n=15)
+        except Exception as e:
+            print(f"  [warn] Image caching failed: {e}")
+    else:
+        print("\n[8e] Skipping image cache (cluster_image_cacher not available)")
 
     # Step 9a: Update memory engine with new top story
     if MEMORY_AVAILABLE and cluster_ids_to_enrich and ANALYSIS_AVAILABLE:
@@ -2183,6 +2743,19 @@ def main():
                 print("  No articles with scores + categories to track")
         except Exception as e:
             print(f"  [warn] Source-topic tracking failed: {e}")
+
+    # Step 9d: Update source track record (void --verify Phase 2)
+    # Longitudinal tracking: how often a source's single-source claims get
+    # confirmed or contradicted by other sources in subsequent runs.
+    if TRACK_RECORD_AVAILABLE:
+        print("\n[9d] Updating source track record (void --verify)...")
+        try:
+            track_stats = update_source_track_record(supabase)
+            print(f"  Track record: {track_stats}")
+        except Exception as e:
+            print(f"  [warn] Source track record update failed: {e}")
+    else:
+        print("\n[9d] Skipping source track record (module not available)")
 
     # Step 10: Truncate full_text for IP compliance
     # Full article text is used only for NLP analysis (transformative use).
@@ -2283,24 +2856,29 @@ def main():
     except Exception as e:
         print(f"  [warn] cleanup_stuck_pipeline_runs failed: {e}")
 
-    # Clean old daily briefs (keep only latest per edition)
+    # Clean old daily briefs — keep 8 days for weekly digest signal
+    # The weekly generator uses daily TL;DR headlines and top_cluster_ids
+    # to determine which stories dominated the week.
     try:
-        cutoff = (datetime.now(timezone.utc) - timedelta(days=1)).isoformat()
-        for ed in ("world", "us", "uk", "india", "canada"):
-            old = supabase.table("daily_briefs").select("id").eq(
-                "edition", ed
-            ).lt("created_at", cutoff).execute()
-            if old.data:
-                ids = [b["id"] for b in old.data]
-                supabase.table("daily_briefs").delete().in_("id", ids).execute()
-                print(f"  Cleaned {len(ids)} old briefs for {ed}")
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=8)).isoformat()
+        editions_list = ["world", "us", "europe", "uk", "south-asia", "canada"]
+        old = supabase.table("daily_briefs").select("id, edition").in_(
+            "edition", editions_list
+        ).lt("created_at", cutoff).execute()
+        if old.data:
+            ids = [b["id"] for b in old.data]
+            supabase.table("daily_briefs").delete().in_("id", ids).execute()
+            per_ed: dict[str, int] = {}
+            for b in old.data:
+                per_ed[b["edition"]] = per_ed.get(b["edition"], 0) + 1
+            for ed, n in per_ed.items():
+                print(f"  Cleaned {n} old briefs for {ed}")
     except Exception as e:
         print(f"  [warn] Daily brief cleanup failed: {e}")
 
-    # Retention: archive then delete clusters older than 2 days.
-    # Articles >36h are rejected at ingestion, so clusters >2d are frozen.
-    # Articles + bias_scores persist (not deleted) for historical analysis.
-    # Only cluster shells + links are pruned to keep the DB lean.
+    # Retention: archive then delete clusters older than 2 days,
+    # delete orphaned articles older than 7 days (CASCADE cleans
+    # bias_scores + article_categories), prune archive after 30 days.
     try:
         cutoff = (datetime.now(timezone.utc) - timedelta(days=2)).isoformat()
         # Paginate to get all old cluster IDs
@@ -2346,11 +2924,99 @@ def main():
             print(f"  Retention: archived + removed {len(old_ids)} clusters older than 2 days")
         else:
             print(f"  Retention: no clusters older than 2 days")
+
+        # Delete empty clusters (no articles linked)
+        empty = supabase.rpc("cleanup_stale_clusters").execute()
+
+        # Fix NULL first_published clusters (never caught by retention)
+        supabase.table("story_clusters").update(
+            {"first_published": datetime.now(timezone.utc).isoformat()}
+        ).is_("first_published", "null").execute()
+
     except Exception as e:
-        print(f"  [warn] retention cleanup failed: {e}")
+        print(f"  [warn] cluster retention failed: {e}")
+
+    # Article retention: delete articles older than 8 days.
+    # 8 days ensures 7 full days of data exist for weekly digest generation
+    # (runs every Sunday). ON DELETE CASCADE removes bias_scores,
+    # cluster_articles, and article_categories. Daily briefs are PERMANENT.
+    try:
+        article_cutoff = (datetime.now(timezone.utc) - timedelta(days=8)).isoformat()
+        old_article_ids: list[str] = []
+        offset = 0
+        while True:
+            page = supabase.table("articles").select("id").lt(
+                "published_at", article_cutoff
+            ).range(offset, offset + 999).execute()
+            if not page.data:
+                break
+            old_article_ids.extend(a["id"] for a in page.data)
+            if len(page.data) < 1000:
+                break
+            offset += 1000
+
+        if old_article_ids:
+            for i in range(0, len(old_article_ids), 100):
+                batch = old_article_ids[i:i + 100]
+                supabase.table("articles").delete().in_("id", batch).execute()
+            print(f"  Retention: removed {len(old_article_ids)} articles older than 7 days"
+                  f" (+ cascaded bias_scores, article_categories)")
+        else:
+            print(f"  Retention: no articles older than 7 days")
+    except Exception as e:
+        print(f"  [warn] article retention failed: {e}")
+
+    # Archive retention: prune entries older than 10 days (buffer past Sunday weekly digest)
+    try:
+        archive_cutoff = (datetime.now(timezone.utc) - timedelta(days=10)).isoformat()
+        result = supabase.table("cluster_archive").delete().lt(
+            "first_published", archive_cutoff
+        ).execute()
+        pruned = len(result.data) if result.data else 0
+        if pruned:
+            print(f"  Retention: pruned {pruned} archive entries older than 30 days")
+    except Exception as e:
+        print(f"  [warn] archive retention failed: {e}")
 
     # Finalize
     duration = time.time() - start_time
+
+    # LLM telemetry — written to pipeline_runs.llm_metrics for ops visibility.
+    # Cost estimate uses Sonnet 4.6 list price ($3 in / $15 out per MTok) with
+    # rough avg token counts per call type. Treats every Claude call as Sonnet
+    # since this build does not split tiers. Gemini fallback calls priced at $0.
+    try:
+        _claude_calls = claude_get_call_count()
+    except Exception:
+        _claude_calls = 0
+    try:
+        _gemini_calls = gemini_get_call_count()
+    except Exception:
+        _gemini_calls = 0
+    _AVG_TOKENS_PER_CALL_USD = 0.0225  # ~3500 in × $3/M + 800 out × $15/M
+    estimated_cost_usd = round(_claude_calls * _AVG_TOKENS_PER_CALL_USD, 4)
+    cache_hit_rate = 0.0
+    if summary_metrics["summarized"] + summary_metrics["cached"] > 0:
+        cache_hit_rate = round(
+            summary_metrics["cached"]
+            / (summary_metrics["summarized"] + summary_metrics["cached"]),
+            3,
+        )
+    llm_metrics = {
+        "summaries_total": summary_metrics["summarized"],
+        "cached_skips": summary_metrics["cached"],
+        "skipped_other": summary_metrics["skipped"],
+        "summary_failures": summary_metrics["failed"],
+        "cache_hit_rate": cache_hit_rate,
+        "llm_calls_claude": _claude_calls,
+        "llm_calls_gemini": _gemini_calls,
+        "llm_calls_total": _claude_calls + _gemini_calls,
+        "estimated_cost_usd": estimated_cost_usd,
+        "top50_coverage_pct": round(
+            100 * (summary_metrics["summarized"] + summary_metrics["cached"]) / 50, 1
+        ),
+    }
+
     if run_id:
         update_pipeline_run(
             run_id=run_id,
@@ -2360,6 +3026,7 @@ def main():
             clusters_created=clusters_created,
             errors=fetch_errors[:50],
             duration_seconds=round(duration, 2),
+            llm_metrics=llm_metrics,
         )
 
     print("\n" + "=" * 60)
@@ -2367,6 +3034,13 @@ def main():
     print(f"  Duration: {duration:.1f}s")
     print(f"  Sources: {len(sources)} | Articles: {len(stored_articles)} "
           f"| Analyzed: {articles_analyzed} | Clusters: {clusters_created}")
+    print(
+        f"  LLM: {llm_metrics['llm_calls_total']} calls "
+        f"(claude={_claude_calls}, gemini={_gemini_calls}) | "
+        f"top50: {llm_metrics['top50_coverage_pct']}% covered "
+        f"({llm_metrics['summaries_total']} new, {llm_metrics['cached_skips']} cached) | "
+        f"~${estimated_cost_usd:.2f}"
+    )
     print(f"  Errors: {len(fetch_errors)}")
     print("=" * 60)
 

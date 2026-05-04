@@ -6,6 +6,8 @@ import {
   Barlow_Condensed,
 } from "next/font/google";
 import "./globals.css";
+import AudioProvider from "./components/AudioProvider";
+import MobileNav from "./components/MobileNav";
 
 /* ---------------------------------------------------------------------------
    Four Voices of Type
@@ -41,16 +43,16 @@ const barlowCondensed = Barlow_Condensed({
 
 const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: ["400"],
   variable: "--font-ibm-mono",
   display: "swap",
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://aacrit.github.io"),
-  title: "void --news — See every side of the story",
+  title: "void --news — See through the void.",
   description:
-    "Free news aggregation with per-article bias analysis across 200 curated sources. See political lean, sensationalism, factual rigor, and framing for every story.",
+    "Free per-article bias analysis across 1,013 sources. Six axes. No paywall. No algorithm. Just the news, dissected.",
   keywords: [
     "news",
     "bias analysis",
@@ -62,9 +64,9 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "void --news" }],
   openGraph: {
-    title: "void --news — See every side of the story",
+    title: "void --news — See through the void.",
     description:
-      "Free news aggregation with per-article bias analysis across 200 curated sources. See political lean, sensationalism, factual rigor, and framing for every story.",
+      "Free per-article bias analysis across 1,013 sources. Six axes. No paywall. No algorithm. Just the news, dissected.",
     type: "website",
     siteName: "void --news",
     images: [
@@ -79,9 +81,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "void --news — See every side of the story",
+    title: "void --news — See through the void.",
     description:
-      "Free news aggregation with per-article bias analysis across 200 curated sources.",
+      "Free per-article bias analysis across 1,013 sources. Six axes. No paywall. No algorithm.",
     images: ["/void--news/twitter-card.svg"],
   },
   icons: {
@@ -101,7 +103,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#FAF8F5" },
+    { media: "(prefers-color-scheme: light)", color: "#F0EBDD" },
     { media: "(prefers-color-scheme: dark)", color: "#1C1A17" },
   ],
 };
@@ -126,11 +128,40 @@ export default function RootLayout({
         {/* Fonts loaded via next/font/google above — no additional font loads needed.
             Chomsky, IM Fell English, Old Standard TT, and Lora were removed:
             none are referenced in CSS. Saves 4 network requests. */}
+        {/* CSP: restrict script/connect/style/font/img sources.
+            Note: frame-ancestors is ignored when delivered via <meta>
+            (CSP3 only honors it as a response header) — kept here for
+            documentation and for environments that proxy the directive
+            into a header. 'unsafe-inline' on script-src covers the inline
+            theme bootstrap below (lines ~155-169); upgrade to a sha256
+            hash if/when the inline body is frozen. connect-src includes
+            *.supabase.co — confirmed against frontend/app/lib/supabase.ts
+            (NEXT_PUBLIC_SUPABASE_URL is the *.supabase.co project URL,
+            no custom domain). cdn.jsdelivr.net intentionally NOT listed:
+            no scripts in this codebase load from jsdelivr. */}
+        <meta
+          httpEquiv="Content-Security-Policy"
+          content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; font-src 'self' data:; connect-src 'self' https://*.supabase.co; media-src 'self' https://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+        />
+        <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
+        <meta httpEquiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
         {/* PWA: iOS standalone mode + Android install support */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="void --news" />
         <meta name="mobile-web-app-capable" content="yes" />
-        {/* Inline script to set theme before first paint — avoids flash */}
+        {/* iOS splash screens — solid #1C1A17, icon from manifest */}
+        <link rel="apple-touch-startup-image" href="/void--news/splash-430x932.png" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+        <link rel="apple-touch-startup-image" href="/void--news/splash-393x852.png" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+        <link rel="apple-touch-startup-image" href="/void--news/splash-390x844.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+        <link rel="apple-touch-startup-image" href="/void--news/splash-428x926.png" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+        <link rel="apple-touch-startup-image" href="/void--news/splash-414x896.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
+        <link rel="apple-touch-startup-image" href="/void--news/splash-375x812.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+        <link rel="apple-touch-startup-image" href="/void--news/splash-375x667.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
+        {/* Status bar integration — matches app chrome to warm paper tones */}
+        <meta name="theme-color" content="#1C1A17" media="(prefers-color-scheme: dark)" />
+        <meta name="theme-color" content="#F0EBDD" media="(prefers-color-scheme: light)" />
+        {/* Inline script to set theme + viewport before first paint — avoids flash */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -139,8 +170,12 @@ export default function RootLayout({
                   var stored = localStorage.getItem('void-news-theme');
                   if (stored === 'light') {
                     document.documentElement.setAttribute('data-mode', 'light');
+                  } else if (!stored && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-mode', 'light');
                   }
                 } catch(e) {}
+                var m = window.matchMedia('(max-width: 767px)').matches;
+                document.documentElement.setAttribute('data-viewport', m ? 'mobile' : 'desktop');
               })();
               if ('serviceWorker' in navigator) {
                 navigator.serviceWorker.register('/void--news/sw.js').catch(function() {});
@@ -161,7 +196,10 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        {children}
+        <AudioProvider>
+          {children}
+          <MobileNav />
+        </AudioProvider>
       </body>
     </html>
   );

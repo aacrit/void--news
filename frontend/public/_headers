@@ -1,0 +1,31 @@
+# Cloudflare Pages — HTTP headers
+# https://developers.cloudflare.com/pages/configuration/headers/
+#
+# Cloudflare Pages ACCUMULATES headers from every matching rule. Putting
+# Cache-Control in both a path-specific rule and the global /* rule
+# produces a duplicate Cache-Control header value at request time, which
+# defeats the long-cache directive for hashed assets. So:
+#   - Global rule sets ONLY security headers.
+#   - Specific rules set Cache-Control without overlap.
+#   - HTML responses inherit Cloudflare Pages' default short cache.
+#
+# GitHub Pages ignores this file, so the parallel GH Pages deploy is
+# unaffected during the migration.
+
+# ── Security headers — apply to every response ──────────────────────────
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+
+# ── Hashed static assets — long-lived, immutable ────────────────────────
+# Next.js writes /_next/static/* with content-hashed filenames; safe to
+# cache effectively forever. This is the rule GH Pages can't match
+# (its 600s cap costs ~4-8 Lighthouse Best Practices points).
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Hashed font files served by next/font
+/*.woff2
+  Cache-Control: public, max-age=31536000, immutable

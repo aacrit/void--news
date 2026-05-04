@@ -1,0 +1,310 @@
+/* ==========================================================================
+   void --news — Layout Zones
+   Cross-route zone scaffold using CSS Grid grid-template-areas.
+   Single source of truth for zone positioning; mobile redefines areas
+   in one media query block instead of duplicating positioning rules
+   across desktop-feed.css and mobile-feed.css.
+
+   Zone semantics:
+     lead   — Zone A (rank 0): LeadStorySplit at desktop, full-bleed at mobile
+     digest — Zone B (ranks 1-9): headline-focused, no images
+     wire   — Zone C (ranks 10-49): compact grid, no images, +1 step Playfair
+   ========================================================================== */
+
+/* ---- Home feed scaffold ----------------------------------------------- */
+
+.home-feed-zones {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "lead"
+    "digest"
+    "wire";
+  gap: clamp(1.5rem, 2vw, 2.5rem);
+  width: 100%;
+}
+
+.home-feed-zones > [data-zone="lead"]   { grid-area: lead; }
+.home-feed-zones > [data-zone="digest"] { grid-area: digest; }
+.home-feed-zones > [data-zone="wire"]   { grid-area: wire; }
+
+/* Zones span the full canvas. Internal grids (digest 2-col, wire 3/4-col)
+   live inside each zone container, owned by desktop-feed.css. */
+
+@media (min-width: 1024px) {
+  .home-feed-zones {
+    grid-template-areas:
+      "lead"
+      "digest"
+      "wire";
+  }
+}
+
+/* ---- Lead 50/50 split (desktop only) ---------------------------------- */
+
+.lead-split {
+  display: grid;
+  grid-template-columns: 1fr;        /* mobile: stacked */
+  grid-template-areas:
+    "lead-image"
+    "lead-text";
+  gap: clamp(1rem, 2vw, 1.75rem);
+  align-items: start;
+}
+
+.lead-split > [data-slot="image"] { grid-area: lead-image; }
+.lead-split > [data-slot="text"]  { grid-area: lead-text; }
+
+/* Tablet step (768-1023px): keep stacked image-then-text but cap the image
+   height — at 100vw a 4:5 portrait runs ~600-720px tall and steals the
+   entire fold. minmax via aspect-ratio + max-height bounds it. */
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  .lead-split__image-frame {
+    max-height: 480px;
+    aspect-ratio: 16 / 10;  /* relax from 4:5 → 16:10 — flatter at tablet */
+  }
+}
+
+@media (min-width: 1024px) {
+  .lead-split {
+    grid-template-columns: minmax(380px, 430px) 1fr;
+    grid-template-areas: "lead-image lead-text";
+    gap: clamp(2rem, 3vw, 3rem);
+    align-items: stretch;
+  }
+}
+
+/* Lead image container — 4:5 portrait crop, fills allocated column */
+.lead-split__image-frame {
+  aspect-ratio: 4 / 5;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.lead-split__image-frame img,
+.lead-split__image-frame picture > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Text column — headline at lead scale, summary above the fold */
+.lead-split__text {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-width: 0;  /* allow text wrapping inside grid */
+}
+
+.lead-split__text .lead-headline {
+  font-family: var(--font-editorial);
+  font-size: var(--type-lead-headline);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: var(--type-lead-tracking);
+  margin: 0 0 var(--space-3);
+}
+
+.lead-split__text .lead-summary {
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  color: var(--fg-secondary);
+  margin: 0 0 var(--space-4);
+}
+
+/* When the lead has no cached image, collapse to single-column text-only.
+   Frontend sets data-no-image="true" on .lead-split for this state. */
+.lead-split[data-no-image="true"] {
+  grid-template-columns: 1fr;
+  grid-template-areas: "lead-text";
+}
+.lead-split[data-no-image="true"] > [data-slot="image"] {
+  display: none;
+}
+
+/* ---- Digest variant (Zone B internal) — typography only --------------- */
+/* Layout grid lives in desktop-feed.css (.df-digest); we only set the
+   variant headline scale here so the broadsheet typographic contrast is
+   declared in one place. */
+
+.story-card[data-variant="digest"] .story-card__headline {
+  font-family: var(--font-editorial);
+  font-size: var(--type-digest-headline);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: var(--type-digest-tracking);
+}
+
+/* ---- Wire variant (Zone C internal) — typography only ----------------- */
+
+.story-card[data-variant="wire"] .story-card__headline {
+  font-family: var(--font-editorial);
+  font-size: var(--type-wire-headline);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+/* No image in wire — give the headline a small breathing boost in line-height
+   so the column reads as editorial, not as a wire ticker. */
+
+/* Feed grid — when ranks 1-9 (digest, 22px) and ranks 10+ (wire, 14px) share
+   the same grid tracks at 1024-1279px, mixed row heights cause uneven
+   baselines and ragged column tops. align row tops, let each card height
+   fit content. */
+.feed-grid {
+  align-items: start;
+  grid-auto-rows: max-content;
+}
+
+
+/* ==========================================================================
+   BiasSnapshot — compact bias signal
+   Two variants: inline strip (Deep Dive header) + vertical rail (DD right col)
+   ========================================================================== */
+
+.bias-snapshot {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-secondary);
+}
+
+/* ---- Inline variant — horizontal strip ----------------------------- */
+
+.bias-snapshot--inline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  row-gap: var(--space-1);
+  margin-top: var(--space-2);
+  padding: var(--space-2) 0;
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  width: 100%;
+  /* No max-height — at 375px the strip wraps to 2 rows and the previous
+     64px cap silently clipped the last chip (Type pill + source count).
+     Tight row-gap keeps the wrapped strip compact without losing data. */
+}
+
+.bias-snapshot--inline .bias-snapshot__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.bias-snapshot__dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1px solid color-mix(in srgb, var(--fg-primary) 15%, transparent);
+}
+
+.bias-snapshot__bar {
+  display: inline-block;
+  width: 32px;
+  height: 4px;
+  background: var(--border-subtle);
+  border-radius: 2px;
+  overflow: hidden;
+  vertical-align: middle;
+}
+.bias-snapshot__bar--inline {
+  width: 28px;
+}
+
+.bias-snapshot__bar-fill {
+  display: block;
+  height: 100%;
+  background: var(--fg-primary);
+}
+
+.bias-snapshot__pill {
+  display: inline-block;
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  color: var(--fg-secondary);
+}
+
+.bias-snapshot__sep {
+  color: var(--fg-tertiary);
+}
+
+.bias-snapshot__value {
+  color: var(--fg-primary);
+  font-weight: 500;
+}
+
+.bias-snapshot__sources {
+  font-family: var(--font-data);
+  color: var(--fg-secondary);
+}
+
+/* ---- Rail variant — Deep Dive right column ------------------------- */
+
+.bias-snapshot--rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  border-radius: 4px;
+}
+
+.bias-snapshot--rail .bias-snapshot__row {
+  display: grid;
+  grid-template-columns: 60px auto 1fr;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+}
+
+.bias-snapshot--rail .bias-snapshot__label {
+  color: var(--fg-tertiary);
+  font-family: var(--font-meta);
+}
+
+.bias-snapshot--rail .bias-snapshot__bar {
+  width: 60px;
+}
+
+.bias-snapshot--rail .bias-snapshot__row--sources .bias-snapshot__value--strong {
+  font-family: var(--font-editorial);
+  font-size: var(--text-base);
+  color: var(--fg-primary);
+}
+
+
+/* ==========================================================================
+   Deep Dive — single column flow
+   ----------------------------------------------------------------------------
+   The 2-column "summary left, sigil+spectrum right rail" layout was reverted
+   2026-04-29: the right rail at 1280px was ~370px wide and forced the
+   DeepDiveSpectrum's horizontal source-bar chart + multi-color source list
+   to render compressed and overlapping with the summary text on the left.
+
+   New approach: keep a single-column flow at every viewport. Moat protection
+   comes from the BiasSnapshot inline strip directly under the headline (lean
+   dot · rigor bar · opinion pill · source count) — that gives the reader the
+   three primary axes at a glance above the fold without forcing the heavy
+   spectrum visualization into a narrow column where it can't render.
+
+   The full DeepDiveSpectrum and Six Lenses live below the summary at full
+   width where they have room to breathe.
+   ========================================================================== */
+
+

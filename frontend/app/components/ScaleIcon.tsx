@@ -31,6 +31,7 @@ export type ScaleAnimation =
   | "balanced"
   | "pulse"
   | "draw"
+  | "broadcast"
   | "none";
 
 export interface ScaleIconProps {
@@ -41,12 +42,12 @@ export interface ScaleIconProps {
 }
 
 /* ---- Approximate stroke-dasharray lengths for draw animation ---- */
-// Void circle:      circumference ~= 2 * PI * 9 ~= 57
-// Beam:             ~22 (from x1=5 to x2=27)
+// Void circle:      organic path length ~57
+// Beam:             ~27 (organic S-curve from M3 to 29)
 // Left tick:        ~4
 // Right tick:       ~4
 // Center post:      ~14 (from y1=19 to y2=27)
-// Base:             ~8
+// Base:             ~9 (organic curve)
 
 const STYLES = `
 /* === ScaleIcon keyframes === */
@@ -54,8 +55,8 @@ const STYLES = `
 /* idle — gentle tipping */
 @keyframes si-idle {
   0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(2.5deg); }
-  75% { transform: rotate(-2.5deg); }
+  25% { transform: rotate(1.5deg); }
+  75% { transform: rotate(-1.5deg); }
 }
 
 /* loading — dramatic tipping */
@@ -69,7 +70,7 @@ const STYLES = `
 @keyframes si-hover {
   0% { transform: rotate(0deg); }
   35% { transform: rotate(-5deg); }
-  65% { transform: rotate(1.5deg); }
+  65% { transform: rotate(1deg); }
   100% { transform: rotate(0deg); }
 }
 
@@ -91,6 +92,15 @@ const STYLES = `
   65% { transform: rotate(0.8deg); }
   85% { transform: rotate(-0.3deg); }
   100% { transform: rotate(0deg); }
+}
+
+/* broadcast — VU meter needle oscillation, asymmetric amplitude */
+@keyframes si-broadcast {
+  0%, 100% { transform: rotate(0deg); }
+  15% { transform: rotate(4deg); }
+  35% { transform: rotate(-3deg); }
+  55% { transform: rotate(3.5deg); }
+  75% { transform: rotate(-2deg); }
 }
 
 /* pulse — whole-icon scale pulse */
@@ -120,7 +130,7 @@ const STYLES = `
 
 .si-beam--idle {
   transform-origin: 16px 13px;
-  animation: si-idle 4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  animation: si-idle 5.5s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .si-beam--loading {
@@ -143,6 +153,11 @@ const STYLES = `
   animation: si-balanced 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+.si-beam--broadcast {
+  transform-origin: 16px 13px;
+  animation: si-broadcast 3s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+}
+
 .si-root--pulse {
   animation: si-pulse 300ms linear(0, 0.006, 0.025 2.8%, 0.101 6.1%, 0.539 18.9%, 0.721 25.3%, 0.849 31.5%, 0.937 38.1%, 0.968 41.8%, 0.991 45.7%, 1.006 50.1%, 1.015 55%, 1.017 63.9%, 1.001 85.6%, 1) forwards;
 }
@@ -151,11 +166,11 @@ const STYLES = `
 .si-void { transform-origin: 16px 13px; }
 
 .si-hoverable:hover .si-beam--idle {
-  animation: si-hover 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: si-hover 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .si-hoverable:hover .si-void {
-  animation: si-void-pulse 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: si-void-pulse 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* === Draw animation — staggered per element === */
@@ -168,9 +183,9 @@ const STYLES = `
 }
 
 .si-draw-beam {
-  --si-len: 22;
-  stroke-dasharray: 22;
-  stroke-dashoffset: 22;
+  --si-len: 27;
+  stroke-dasharray: 27;
+  stroke-dashoffset: 27;
   animation: si-draw 180ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-delay: 280ms;
 }
@@ -200,9 +215,9 @@ const STYLES = `
 }
 
 .si-draw-base {
-  --si-len: 8;
-  stroke-dasharray: 8;
-  stroke-dashoffset: 8;
+  --si-len: 9;
+  stroke-dasharray: 9;
+  stroke-dashoffset: 9;
   animation: si-draw 150ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-delay: 600ms;
 }
@@ -214,6 +229,7 @@ const STYLES = `
   .si-beam--hover,
   .si-beam--analyzing,
   .si-beam--balanced,
+  .si-beam--broadcast,
   .si-root--pulse,
   .si-void,
   .si-draw-void,
@@ -274,7 +290,9 @@ export function ScaleIcon({
             ? "si-beam--analyzing"
             : animation === "balanced"
               ? "si-beam--balanced"
-              : undefined;
+              : animation === "broadcast"
+                ? "si-beam--broadcast"
+                : undefined;
 
   const rootClass = animation === "pulse" ? "si-root--pulse" : undefined;
   const isDraw = animation === "draw";
@@ -304,11 +322,11 @@ export function ScaleIcon({
         ...style,
       }}
     >
-      {/* Void circle — the primary mark, the analytical lens, the void.
-          Centered at (16, 13), radius 9. Hollow ring, no fill.
+      {/* Void circle — organic hand-drawn path, the analytical lens, the void.
+          Approximately centered at (16, 13), radius ~9. Hollow ring, no fill.
           This is what you see at favicon size (animation="none"). */}
-      <circle
-        cx="16" cy="13" r="9"
+      <path
+        d="M16 4 C24 3.5 25.5 7.5 25 13 C24.5 18.5 22.5 22 16 22 C9.5 22 7.5 18.5 7 13 C6.5 7.5 8 3.5 16 4"
         className={isDraw ? "si-draw-void" : "si-void"}
       />
 
@@ -317,9 +335,9 @@ export function ScaleIcon({
           {/* Beam group — horizontal beam through the circle + weight ticks.
               The circle is the fulcrum. Pivots around (16, 13). */}
           <g className={beamClass}>
-            {/* Beam — extends beyond circle edges */}
-            <line
-              x1="3" y1="13" x2="29" y2="13"
+            {/* Beam — organic S-curve extending beyond circle edges */}
+            <path
+              d="M3 13 C10 12.2 22 13.8 29 13"
               className={isDraw ? "si-draw-beam" : undefined}
             />
             {/* Left weight tick */}
@@ -340,9 +358,9 @@ export function ScaleIcon({
             className={isDraw ? "si-draw-post" : undefined}
           />
 
-          {/* Base */}
-          <line
-            x1="12" y1="29" x2="20" y2="29"
+          {/* Base — organic subtle curve */}
+          <path
+            d="M12 29 C14 28.7 18 29.3 20 29"
             className={isDraw ? "si-draw-base" : undefined}
           />
         </>

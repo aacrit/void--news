@@ -1,180 +1,106 @@
-/* void --news — Service Worker
-   Cache strategy:
-   - Navigation: network-first, fallback to cache
-   - Static assets (CSS/JS/fonts/images): cache-first, fallback to network
-   - Supabase API (*.supabase.co): network-first with 5s timeout, fallback to cache
-   - Audio files: never cached (too large)
-*/
+// void --news Service Worker
+// Enables offline reading, asset caching, and background sync
 
-const CACHE_VERSION = 'void-news-v2';
+const CACHE_NAME = 'void-news-v1';
+const ASSET_CACHE = 'void-news-assets-v1';
+const API_CACHE = 'void-news-api-v1';
 
-const APP_SHELL = [
+const PRECACHE_ASSETS = [
   '/void--news/',
-  '/void--news/index.html',
-  '/',
+  '/void--news/manifest.json',
+  '/void--news/icon-192.png',
+  '/void--news/icon-512.png',
 ];
 
-/* ---- Install: precache app shell ---------------------------------------- */
-
-self.addEventListener('install', function(event) {
+// Install event: precache core assets
+self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_VERSION).then(function(cache) {
-      return cache.addAll(APP_SHELL).catch(function() {
-        // Partial failure is acceptable — the shell may not all be available
-        // at install time on first deploy. Continue install regardless.
-      });
-    }).then(function() {
-      return self.skipWaiting();
-    })
+    caches.open(CACHE_NAME).then((cache) => {
+      console.log('Service Worker: precaching core assets');
+      return cache.addAll(PRECACHE_ASSETS);
+    }).then(() => self.skipWaiting())
   );
 });
 
-/* ---- Activate: clean up old cache versions ------------------------------ */
-
-self.addEventListener('activate', function(event) {
+// Activate event: clean up old cache versions
+self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then(function(cacheNames) {
+    caches.keys().then((cacheNames) => {
       return Promise.all(
-        cacheNames
-          .filter(function(name) { return name !== CACHE_VERSION; })
-          .map(function(name) { return caches.delete(name); })
+        cacheNames.map((name) => {
+          if (name !== CACHE_NAME && name !== ASSET_CACHE && name !== API_CACHE) {
+            console.log(`Service Worker: deleting old cache ${name}`);
+            return caches.delete(name);
+          }
+        })
       );
-    }).then(function() {
-      return self.clients.claim();
-    })
+    }).then(() => self.clients.claim())
   );
 });
 
-/* ---- Fetch: routing strategy -------------------------------------------- */
+// Fetch event: serve from cache, fallback to network
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  const url = new URL(request.url);
 
-self.addEventListener('fetch', function(event) {
-  var url = new URL(event.request.url);
-
-  // Never cache audio files — too large, streaming is handled by the browser
-  if (isAudioRequest(url)) {
-    return; // fall through to native network fetch
-  }
-
-  // Supabase API requests — network-first with 5s timeout, fallback to cache
-  if (isSupabaseRequest(url)) {
-    event.respondWith(networkFirstWithTimeout(event.request, 5000));
+  // Skip non-GET, non-same-origin, external APIs
+  if (request.method !== 'GET' || url.origin !== self.location.origin) {
     return;
   }
 
-  // Navigation requests — network-first, fallback to cached app shell
-  if (event.request.mode === 'navigate') {
-    event.respondWith(networkFirstNavigation(event.request));
+  // API calls: network-first, fallback to cache
+  if (url.pathname.includes('/api/') || url.pathname.includes('supabase')) {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          if (response.ok) {
+            caches.open(API_CACHE).then((cache) => cache.put(request, response.clone()));
+          }
+          return response;
+        })
+        .catch(() => caches.match(request))
+    );
     return;
   }
 
-  // Static assets — cache-first, fallback to network
-  if (isStaticAsset(url)) {
-    event.respondWith(cacheFirst(event.request));
+  // Static assets (JS, CSS, fonts, images): cache-first
+  if (
+    url.pathname.includes('/_next/') ||
+    url.pathname.endsWith('.js') ||
+    url.pathname.endsWith('.css') ||
+    url.pathname.endsWith('.woff2') ||
+    url.pathname.endsWith('.png') ||
+    url.pathname.endsWith('.svg')
+  ) {
+    event.respondWith(
+      caches.match(request)
+        .then((cached) => cached || fetch(request))
+        .then((response) => {
+          if (response.ok) {
+            caches.open(ASSET_CACHE).then((cache) => cache.put(request, response.clone()));
+          }
+          return response;
+        })
+        .catch(() => {
+          // Fallback offline response for assets
+          if (request.destination === 'image') {
+            return new Response('<svg></svg>', { headers: { 'Content-Type': 'image/svg+xml' } });
+          }
+          return new Response('Offline', { status: 503 });
+        })
+    );
     return;
   }
 
-  // All other requests — network only (no caching)
-});
-
-/* ---- Strategy helpers --------------------------------------------------- */
-
-function isAudioRequest(url) {
-  return (
-    url.pathname.endsWith('.mp3') ||
-    url.pathname.endsWith('.wav') ||
-    url.pathname.endsWith('.ogg') ||
-    url.pathname.endsWith('.aac') ||
-    url.hostname.includes('storage.googleapis.com') && url.pathname.includes('audio')
-  );
-}
-
-function isSupabaseRequest(url) {
-  return url.hostname.endsWith('.supabase.co');
-}
-
-function isStaticAsset(url) {
-  var ext = url.pathname.split('.').pop().toLowerCase();
-  return (
-    ['css', 'js', 'woff', 'woff2', 'ttf', 'otf', 'png', 'jpg', 'jpeg', 'svg', 'ico', 'webp', 'gif'].indexOf(ext) !== -1 ||
-    url.pathname.startsWith('/_next/static/')
-  );
-}
-
-/* Cache-first: serve from cache, fetch and cache on miss */
-function cacheFirst(request) {
-  return caches.open(CACHE_VERSION).then(function(cache) {
-    return cache.match(request).then(function(cached) {
-      if (cached) return cached;
-      return fetch(request).then(function(response) {
-        if (response && response.status === 200 && response.type !== 'opaque') {
-          cache.put(request, response.clone());
+  // HTML pages: network-first, fallback to cache
+  event.respondWith(
+    fetch(request)
+      .then((response) => {
+        if (response.ok) {
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, response.clone()));
         }
         return response;
-      });
-    });
-  });
-}
-
-/* Network-first for navigation: try network, fall back to cached shell */
-function networkFirstNavigation(request) {
-  return fetch(request).then(function(response) {
-    return caches.open(CACHE_VERSION).then(function(cache) {
-      if (response && response.status === 200) {
-        cache.put(request, response.clone());
-      }
-      return response;
-    });
-  }).catch(function() {
-    return caches.open(CACHE_VERSION).then(function(cache) {
-      // Try the exact URL first, then the app shell root
-      return cache.match(request).then(function(cached) {
-        if (cached) return cached;
-        return cache.match('/void--news/') || cache.match('/');
-      });
-    });
-  });
-}
-
-/* Network-first with timeout: race network against a timeout,
-   fall back to cache if the network is slow or unavailable */
-function networkFirstWithTimeout(request, timeoutMs) {
-  return new Promise(function(resolve, reject) {
-    var didTimeout = false;
-    var timeoutId = setTimeout(function() {
-      didTimeout = true;
-      caches.open(CACHE_VERSION).then(function(cache) {
-        return cache.match(request);
-      }).then(function(cached) {
-        if (cached) {
-          resolve(cached);
-        } else {
-          // No cache — let the in-flight request resolve even if slow
-          // (reject is never called here; the fetch promise wins)
-        }
-      });
-    }, timeoutMs);
-
-    fetch(request).then(function(response) {
-      clearTimeout(timeoutId);
-      if (!didTimeout) {
-        caches.open(CACHE_VERSION).then(function(cache) {
-          if (response && response.status === 200) {
-            cache.put(request, response.clone());
-          }
-        });
-        resolve(response);
-      }
-    }).catch(function() {
-      clearTimeout(timeoutId);
-      caches.open(CACHE_VERSION).then(function(cache) {
-        return cache.match(request);
-      }).then(function(cached) {
-        if (cached) {
-          resolve(cached);
-        } else {
-          reject(new Error('Network unavailable and no cache for: ' + request.url));
-        }
-      });
-    });
-  });
-}
+      })
+      .catch(() => caches.match(request))
+  );
+});

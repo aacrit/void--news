@@ -1,103 +1,64 @@
 "use client";
 
-import { useState, useEffect, useMemo, useCallback, useRef } from "react";
-import type { Edition, Category, Story, BiasScores, BiasSpread, ThreeLensData, OpinionLabel, SigilData } from "../lib/types";
-import { EDITIONS } from "../lib/types";
-import { supabase, supabaseError } from "../lib/supabase";
-import LogoWordmark from "./LogoWordmark";
+import React, { useState, useEffect, useMemo, useCallback, useRef, Component, type ReactNode } from "react";
+import dynamic from "next/dynamic";
+import type { Edition, Category, Story, BiasScores, BiasSpread, ThreeLensData, OpinionLabel, SigilData, LeanChip } from "../lib/types";
+import { EDITIONS, LEAN_RANGES } from "../lib/types";
+import { isUnscoredTilt } from "../lib/biasColors";
+import { supabase, supabaseError, fetchClusterLeadImage } from "../lib/supabase";
+import { cacheGet, cacheSet } from "../lib/feedCache";
+import { BASE_PATH } from "../lib/utils";
 import LogoIcon from "./LogoIcon";
+import LogoWordmark from "./LogoWordmark";
 import NavBar from "./NavBar";
-import { type LeanChip, LEAN_RANGES } from "./FilterBar";
 import LeadStory from "./LeadStory";
 import StoryCard from "./StoryCard";
-import DeepDive from "./DeepDive";
+const DeepDive = dynamic(() => import("./DeepDive"), { ssr: false });
 import ErrorBoundary from "./ErrorBoundary";
 
-/* ---------------------------------------------------------------------------
-   VisibleCard — defers anim-filter-card until the element enters the viewport.
-
-   Uses a pooled IntersectionObserver (shared across all VisibleCards) to avoid
-   creating 100+ observers on long feeds. The observer is created once and
-   elements register/unregister via a WeakMap callback.
-   --------------------------------------------------------------------------- */
-
-// Pooled observer — single instance shared by all VisibleCard components
-const observerCallbacks = new WeakMap<Element, () => void>();
-let sharedObserver: IntersectionObserver | null = null;
-
-function getSharedObserver(): IntersectionObserver {
-  if (sharedObserver) return sharedObserver;
-  sharedObserver = new IntersectionObserver(
-    (entries) => {
-      for (const entry of entries) {
-        if (entry.isIntersecting) {
-          const cb = observerCallbacks.get(entry.target);
-          if (cb) {
-            cb();
-            observerCallbacks.delete(entry.target);
-            sharedObserver?.unobserve(entry.target);
-          }
-        }
-      }
-    },
-    { rootMargin: "100px" },
-  );
-  return sharedObserver;
-}
-
-interface VisibleCardProps {
-  className?: string;
-  style?: React.CSSProperties;
-  children: React.ReactNode;
-}
-
-function VisibleCard({ className = "", style, children }: VisibleCardProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(false);
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    // If already in the viewport on mount (e.g. filter re-render), mark
-    // immediately without waiting for the observer callback.
-    const rect = el.getBoundingClientRect();
-    if (rect.top < window.innerHeight + 100) {
-      setInView(true);
-      return;
+/* DeepDive-specific ErrorBoundary — shows dismissible error in the panel
+   instead of crashing the entire feed. */
+class DeepDiveErrorBoundary extends Component<
+  { children: ReactNode; onClose: () => void },
+  { hasError: boolean }
+> {
+  constructor(props: { children: ReactNode; onClose: () => void }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError(): { hasError: boolean } {
+    return { hasError: true };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="deep-dive dd-error-boundary" role="dialog" aria-label="Error">
+          <div className="dd-error-boundary__inner">
+            <p className="text-base empty-state__body">
+              Unable to load analysis for this story.
+            </p>
+            <button className="btn-primary" onClick={this.props.onClose}>Close</button>
+          </div>
+        </div>
+      );
     }
-    // Guard against state updates after unmount — the shared observer's
-    // callback may fire between cleanup starting and the observer removing
-    // the element from its observation list.
-    let unmounted = false;
-    const observer = getSharedObserver();
-    observerCallbacks.set(el, () => { if (!unmounted) setInView(true); });
-    observer.observe(el);
-    return () => {
-      unmounted = true;
-      observerCallbacks.delete(el);
-      observer.unobserve(el);
-    };
-  }, []);
-
-  return (
-    <div
-      ref={ref}
-      className={`${className}${inView ? " anim-filter-card" : ""}`}
-      style={style}
-    >
-      {children}
-    </div>
-  );
+    return this.props.children;
+  }
 }
 
-import LiveUpdatesSection, { type LiveUpdatesSectionHandle } from "./LiveUpdatesSection";
 import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
-import { useDailyBrief, DailyBriefText } from "./DailyBrief";
-import { hapticConfirm, hapticScrollEdge, hapticMedium, hapticLight, hapticMicro } from "../lib/haptics";
-import BiasLensOnboarding from "./BiasLensOnboarding";
-import { KeyboardShortcutsOverlay, useStoryKeyboardNav } from "./KeyboardShortcuts";
+import { useDailyBrief } from "./DailyBrief";
+import SkyboxBanner from "./SkyboxBanner";
+const FloatingPlayer = dynamic(() => import("./FloatingPlayer"), { ssr: false });
+import { hapticConfirm, hapticLight } from "../lib/haptics";
+const UnifiedOnboarding = dynamic(() => import("./UnifiedOnboarding"), { ssr: false });
+import { useStoryKeyboardNav } from "./KeyboardShortcuts";
+const KeyboardShortcutsOverlay = dynamic(() => import("./KeyboardShortcuts").then(m => ({ default: m.KeyboardShortcutsOverlay })), { ssr: false });
 import InstallPrompt from "./InstallPrompt";
+import MobileBottomNav from "./MobileBottomNav";
+import MobileFeed from "./MobileFeed";
+const SearchOverlay = dynamic(() => import("./SearchOverlay"), { ssr: false });
 
 /** Map pipeline category slugs (both fine-grained and desk) to display names.
  *  Fine-grained slugs from old pipeline runs are merged to their desk names. */
@@ -105,11 +66,11 @@ function capitalize(s: string): string {
   if (!s) return s;
   const map: Record<string, string> = {
     // Desk slugs (current pipeline output)
-    politics: "Politics", economy: "Economy", science: "Science",
-    health: "Health", culture: "Culture",
-    // Legacy fine-grained slugs (old data in DB) → merged desk names
-    conflict: "Politics", tech: "Science", technology: "Science",
-    environment: "Health", sports: "Culture",
+    politics: "Politics", conflict: "Conflict", economy: "Economy",
+    science: "Science", health: "Health", environment: "Environment",
+    culture: "Culture",
+    // Legacy fine-grained slugs (old data in DB) → desk names
+    tech: "Science", technology: "Science", sports: "Culture",
   };
   return map[s.toLowerCase()] || s.charAt(0).toUpperCase() + s.slice(1);
 }
@@ -164,6 +125,17 @@ function deriveCoverageScore(sourceCount: number, factualRigor: number, confiden
   return Math.round((sourceNorm * 0.35 + 0.2 + confNorm * 0.20 + rigorNorm * 0.25) * 100);
 }
 
+/* ---------------------------------------------------------------------------
+   Editorial feed constants — newspaper-principle (same feed for all readers)
+   --------------------------------------------------------------------------- */
+
+/** Hard cap: maximum stories in the edition feed. No pagination, no load-more. */
+const EDITION_FEED_SIZE = 50;
+
+/** Maximum stories from any single category within the edition feed. */
+const CATEGORY_CAP = 12;
+
+
 interface HomeContentProps {
   initialEdition?: Edition;
 }
@@ -175,9 +147,37 @@ interface HomeContentProps {
    Edition is URL-driven: each edition has its own route.
    --------------------------------------------------------------------------- */
 
+const EDITION_STORAGE_KEY = "void-news-edition";
+const VALID_EDITIONS: Edition[] = ["world"];
+
 function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
-  const activeEdition: Edition = initialEdition;
-  const liveUpdatesRef = useRef<LiveUpdatesSectionHandle>(null);
+  // Edition state: URL-driven routes (/us, /india) pass the correct edition.
+  // At root URL (/), initialEdition is always "world" — check localStorage for
+  // a saved preference so returning visitors see their last-used edition.
+  const [activeEdition, setActiveEdition] = useState<Edition>(() => {
+    if (typeof window === "undefined") return initialEdition;
+    // Only apply localStorage override at root URL — explicit /us or /india
+    // routes should always honor their URL-specified edition.
+    const p = window.location.pathname.replace(/\/+$/, "");
+    const isRootUrl = p === "" || p === BASE_PATH;
+    if (isRootUrl && initialEdition === "world") {
+      try {
+        const saved = localStorage.getItem(EDITION_STORAGE_KEY);
+        if (saved && VALID_EDITIONS.includes(saved as Edition)) {
+          return saved as Edition;
+        }
+      } catch {
+        // localStorage unavailable (private browsing, etc.) — fall through
+      }
+    }
+    return initialEdition;
+  });
+
+  // When navigating between edition routes (e.g. /us → /), the component is
+  // reused and useState doesn't re-initialize. Sync state to the prop.
+  useEffect(() => {
+    setActiveEdition(initialEdition);
+  }, [initialEdition]);
 
   const [stories, setStories] = useState<Story[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -200,18 +200,34 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     if (typeof window === "undefined") return "All";
     const params = new URLSearchParams(window.location.search);
     const lean = params.get("lean");
-    if (lean && ["Left", "Center", "Right"].includes(lean)) return lean as LeanChip;
+    if (lean && ["Left", "Balanced", "Right"].includes(lean)) return lean as LeanChip;
     return "All";
   });
 
-  // Batch reveal for compact stories — no hard cap, progressive loading
-  const BATCH_SIZE = 8;
-  const [visibleCount, setVisibleCount] = useState(BATCH_SIZE);
-  const sentinelRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof document !== "undefined") {
+      return document.documentElement.getAttribute("data-viewport") === "mobile";
+    }
+    return false;
+  });
+
+  // Search overlay state
+  const [searchOpen, setSearchOpen] = useState(false);
 
   // Scroll position before DeepDive opened — restored on close (F06)
   const scrollBeforeDeepDive = useRef<number>(0);
+
+  // Whip pan direction — track previous edition index for direction-aware animation.
+  // isEditionSwitch tracks whether the current content remount is from an edition
+  // change (whip pan) vs a filter change (no whip pan, just card reshuffling).
+  const EDITION_ORDER: Edition[] = ["world"];
+  const prevEditionRef = useRef<Edition>(activeEdition);
+  const [whipDirection, setWhipDirection] = useState<"right" | "left">("right");
+  const [isEditionSwitch, setIsEditionSwitch] = useState(false);
+
+  // Mobile edition switch transition — cross-fade out/in
+  const [editionTransition, setEditionTransition] = useState<"out" | "in" | null>(null);
+  const editionTransitionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // --- Pull-to-Refresh (mobile only) ---
   const [pullOffset, setPullOffset] = useState(0);
@@ -235,8 +251,8 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     if (pullStartRef.current.scrollY > 5 && window.scrollY > 5) return;
     const deltaY = e.touches[0].clientY - pullStartRef.current.y;
     if (deltaY <= 0) { setPullOffset(0); return; }
-    // Rubber-band resistance
-    const offset = Math.min(deltaY * 0.4, 100);
+    // Rubber-band resistance — progressive (native iOS feel)
+    const offset = Math.min(Math.pow(deltaY, 0.7), 100);
     setPullOffset(offset);
     if (!isPulling && offset > 10) setIsPulling(true);
   }, [isRefreshing, isPulling]);
@@ -266,11 +282,11 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     pullStartRef.current = null;
   }, [isPulling, pullOffset]);
 
-  // Cleanup pull-to-refresh reset timer on unmount to prevent state updates
-  // on an unmounted component if the user navigates away mid-refresh.
+  // Cleanup timers on unmount to prevent state updates on unmounted component.
   useEffect(() => {
     return () => {
       if (pullResetTimerRef.current !== null) clearTimeout(pullResetTimerRef.current);
+      if (editionTransitionTimerRef.current !== null) clearTimeout(editionTransitionTimerRef.current);
     };
   }, []);
 
@@ -292,28 +308,149 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     window.scrollTo(0, scrollBeforeDeepDive.current);
   }, []);
 
-  // Detect mobile for infinite scroll vs editorial link
+  // Detect mobile for feed layout — responsive to viewport changes
   useEffect(() => {
-    setIsMobile(window.matchMedia("(max-width: 767px)").matches);
+    const mql = window.matchMedia("(max-width: 767px)");
+    setIsMobile(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
+  }, []);
+
+  // Cmd+K / Ctrl+K to open search
+  useEffect(() => {
+    function handleCmdK(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        setSearchOpen((v) => !v);
+      }
+    }
+    document.addEventListener("keydown", handleCmdK);
+    return () => document.removeEventListener("keydown", handleCmdK);
   }, []);
 
   // Reset category filter, close DeepDive, and scroll to top when edition changes.
   // Lean filter is intentionally preserved — it's a universal preference
   // that persists until the user explicitly toggles it off.
+  // Whip pan direction: content exits left when navigating "right" in edition order.
+  // Mobile edition cross-fade: out (200ms) -> in (300ms) -> clear.
   useEffect(() => {
-    hapticConfirm();
+    // Only fire haptic on actual user-initiated edition switches, not on mount
+    const prevIdx = EDITION_ORDER.indexOf(prevEditionRef.current);
+    const nextIdx = EDITION_ORDER.indexOf(activeEdition);
+    if (prevIdx !== nextIdx) hapticConfirm();
+
     setSelectedStory(null);
     setOriginRect(null);
     setActiveCategory("All");
-    setVisibleCount(BATCH_SIZE);
+
+    // Mobile edition cross-fade — trigger out/in sequence before scroll
+    if (prevIdx !== nextIdx && isMobile) {
+      // Clear any pending timer from a rapid edition switch
+      if (editionTransitionTimerRef.current) clearTimeout(editionTransitionTimerRef.current);
+      setEditionTransition("out");
+      // L-cut overlap: new content starts entering at 50% of 180ms whip pan
+      editionTransitionTimerRef.current = setTimeout(() => {
+        setEditionTransition("in");
+        editionTransitionTimerRef.current = setTimeout(() => {
+          setEditionTransition(null);
+          editionTransitionTimerRef.current = null;
+        }, 150);
+      }, 90);
+    }
+
     window.scrollTo({ top: 0, behavior: "smooth" });
+
+    // Compute whip pan direction based on edition order.
+    // Mark isEditionSwitch so the desktop whip pan animation applies to
+    // all grid sections. Cleared after whip pan duration (180ms + buffer).
+    if (prevIdx !== nextIdx) {
+      setWhipDirection(nextIdx > prevIdx ? "right" : "left");
+      setIsEditionSwitch(true);
+      setTimeout(() => setIsEditionSwitch(false), 280);
+    }
+    prevEditionRef.current = activeEdition;
   }, [activeEdition]);
+
+  // Persist edition preference to localStorage — returning visitors who land
+  // on the root URL (/) will see their last-used edition instead of "world".
+  // Also sync the URL so it always reflects the active edition.
+  // Set data-edition on <html> so CSS edition color grades activate.
+  useEffect(() => {
+    try {
+      localStorage.setItem(EDITION_STORAGE_KEY, activeEdition);
+    } catch {
+      // localStorage unavailable — no-op
+    }
+    // Sync URL without triggering a full page reload
+    const path = activeEdition === "world" ? `${BASE_PATH}/` : `${BASE_PATH}/${activeEdition}/`;
+    if (window.location.pathname !== path) {
+      window.history.pushState({}, "", path);
+    }
+    // Set data-edition on <html> — enables per-edition cinematic color grades
+    // (e.g., warmer sepia for India, cooler contrast for US) defined in CSS.
+    document.documentElement.setAttribute("data-edition", activeEdition);
+  }, [activeEdition]);
+
+  // Scene 7: Practical light warmth propagation — when audio is playing,
+  // the page-main receives a subtle warm sepia tint (motivated by the
+  // OnAir "practical" light source). The CSS rule .page-main--audio-playing
+  // applies sepia(0.01) layered on top of the existing color grade.
+  useEffect(() => {
+    const el = document.querySelector('.page-main');
+    if (!el) return;
+    if (dailyBriefState.isPlaying) {
+      el.classList.add('page-main--audio-playing');
+    } else {
+      el.classList.remove('page-main--audio-playing');
+    }
+  }, [dailyBriefState.isPlaying]);
+
+  // Coerce cached Story fields to strings — localStorage may contain stale
+  // data from before JSONB coercion was added, triggering React #310.
+  function sanitizeStory(s: Story): Story {
+    return {
+      ...s,
+      title: typeof s.title === "string" ? s.title : String(s.title ?? ""),
+      summary: typeof s.summary === "string" ? s.summary : String(s.summary ?? ""),
+      category: (typeof s.category === "string" ? s.category : "Politics") as Category,
+      deepDive: s.deepDive ? {
+        ...s.deepDive,
+        consensus: Array.isArray(s.deepDive.consensus)
+          ? s.deepDive.consensus.map((p: unknown) => typeof p === "string" ? p : String(p ?? ""))
+          : [],
+        divergence: Array.isArray(s.deepDive.divergence)
+          ? s.deepDive.divergence.map((p: unknown) => typeof p === "string" ? p : String(p ?? ""))
+          : [],
+      } : undefined,
+    };
+  }
 
   useEffect(() => {
     const controller = new AbortController();
 
+    // Stale-while-revalidate via IndexedDB: show cached stories instantly
+    // on repeat visits (no loading skeleton), then fetch fresh data in
+    // background and silently swap when ready.
+    let hasCachedData = false;
+
+    async function loadCachedStories() {
+      const cacheKey = `feed-${activeEdition}`;
+      const cached = await cacheGet<Story[]>(cacheKey);
+      if (cached && cached.data.length > 0 && !controller.signal.aborted) {
+        setStories(cached.data.map(sanitizeStory));
+        setIsLoading(false);
+        hasCachedData = true;
+      }
+    }
+
     async function loadFromSupabase() {
-      setIsLoading(true);
+      // Only show loading skeleton when there is no cached data to display.
+      // On repeat visits, cached stories are already rendered — skeleton would
+      // flash over visible content.
+      if (!hasCachedData) {
+        setIsLoading(true);
+      }
       setError(null);
 
       // Guard: if Supabase client is unavailable, surface a user-friendly error
@@ -325,8 +462,11 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       }
 
       try {
-        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points,is_top_story,live_update_count,last_live_update_at,story_memory_id`;
+        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points,rank_world,rank_us,rank_europe,rank_south_asia,claim_consensus,cached_image_url`;
         const baseFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated`;
+
+        // Use per-edition rank column for ordering (cross-edition differentiation)
+        const rankColumn = `rank_${activeEdition}` as "rank_world" | "rank_us" | "rank_europe" | "rank_south_asia";
 
         let res;
         let usingEnriched = true;
@@ -335,8 +475,8 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
           .from("story_clusters")
           .select(enrichedFields)
           .contains("sections", [activeEdition])
-          .order("headline_rank", { ascending: false })
-          .limit(500);
+          .order(rankColumn, { ascending: false })
+          .limit(80);
 
         // If enriched query failed (columns don't exist), fall back to base schema
         if (res.error) {
@@ -346,7 +486,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
             .select(baseFields)
             .contains("sections", [activeEdition])
             .order("first_published", { ascending: false })
-            .limit(500);
+            .limit(80);
         }
 
         if (controller.signal.aborted) return;
@@ -354,7 +494,18 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
         const clusters = res.data || [];
 
         if (clusters.length === 0) {
-          setStories([]);
+          // When Supabase returns empty (pipeline mid-run, transient DB gap),
+          // keep showing any cached data already on screen rather than blanking.
+          if (!hasCachedData) {
+            // Last resort: try IndexedDB for any previously cached feed
+            const cached = await cacheGet<Story[]>(`feed-${activeEdition}`);
+            if (cached && cached.data.length > 0) {
+              setStories(cached.data.map(sanitizeStory));
+              setIsLoading(false);
+              return;
+            }
+            setStories([]);
+          }
           setIsLoading(false);
           return;
         }
@@ -362,7 +513,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
         if (controller.signal.aborted) return;
 
         /* eslint-disable @typescript-eslint/no-explicit-any */
-        const liveStories: Story[] = clusters.map(
+        const mappedStories: Story[] = clusters.map(
           (cluster: any) => {
             // M002: Runtime-validate bias_diversity JSONB before any property access.
             // parseBiasDiversity returns null for strings, arrays, or non-plain-objects.
@@ -413,6 +564,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               opinionLabel,
               pending: !hasBiasData,
             };
+            const claimCon = cluster.claim_consensus;
             const sigilData: SigilData = {
               politicalLean: biasScores.politicalLean,
               sensationalism: biasScores.sensationalism,
@@ -424,27 +576,41 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               tierBreakdown: bd ? safeTierBreakdown(bd) : undefined,
               biasSpread,
               pending: !hasBiasData,
+              unscored: hasBiasData && isUnscoredTilt(
+                biasScores.politicalLean,
+                sourceCount,
+                biasSpread?.leanSpread ?? 0,
+                biasSpread?.leanRange ?? 0,
+                biasSpread?.aggregateConfidence ?? 0,
+              ),
               opinionLabel,
+              consensusCorroborated: claimCon?.corroborated,
+              consensusTotal: claimCon?.total_claims,
             };
 
             const rawConsensus = usingEnriched ? cluster.consensus_points : null;
             const rawDivergence = usingEnriched ? cluster.divergence_points : null;
             const consensusPoints: string[] = Array.isArray(rawConsensus)
-              ? rawConsensus
+              ? rawConsensus.map((p: unknown) => typeof p === "string" ? p : String(p ?? ""))
               : [];
             const divergencePoints: string[] = Array.isArray(rawDivergence)
-              ? rawDivergence
+              ? rawDivergence.map((p: unknown) => typeof p === "string" ? p : String(p ?? ""))
               : [];
+
+            // Defensive: coerce title/summary to string — JSONB fields or
+            // corrupted data can return objects, crashing React (#310).
+            const safeTitle = typeof cluster.title === "string" ? cluster.title : String(cluster.title ?? "");
+            const safeSummary = typeof cluster.summary === "string" ? cluster.summary : String(cluster.summary ?? "");
 
             return {
               id: cluster.id,
-              title: cluster.title,
-              summary: cluster.summary || "",
+              title: safeTitle,
+              summary: safeSummary,
               source: {
                 name: "Multiple Sources",
                 count: sourceCount,
               },
-              category: capitalize(cluster.category || "politics") as Category,
+              category: capitalize(typeof cluster.category === "string" ? cluster.category : "politics") as Category,
               publishedAt:
                 cluster.first_published ||
                 cluster.last_updated ||
@@ -455,34 +621,32 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               sigilData,
               section: (cluster.section || "world") as Edition,
               sections: (cluster.sections || [cluster.section || "world"]) as Edition[],
-              importance: cluster.headline_rank || cluster.importance_score || 50,
+              importance: cluster[`rank_${activeEdition}`] || cluster.headline_rank || cluster.importance_score || 50,
               divergenceScore: cluster.divergence_score || 0,
-              headlineRank: cluster.headline_rank || cluster.importance_score || 50,
+              headlineRank: cluster[`rank_${activeEdition}`] || cluster.headline_rank || cluster.importance_score || 50,
               coverageVelocity: cluster.coverage_velocity || 0,
-              deepDive: consensusPoints.length > 0 || divergencePoints.length > 0
+              deepDive: consensusPoints.length > 0 || divergencePoints.length > 0 || cluster.claim_consensus
                 ? {
                     consensus: consensusPoints,
                     divergence: divergencePoints,
                     sources: [],
+                    claimConsensus: cluster.claim_consensus || undefined,
                   }
                 : undefined,
-              isTopStory: cluster.is_top_story || false,
-              liveUpdateCount: cluster.live_update_count || 0,
-              lastLiveUpdateAt: cluster.last_live_update_at || undefined,
-              storyMemoryId: cluster.story_memory_id || undefined,
+              cachedImageUrl: cluster.cached_image_url ?? null,
             };
           }
         );
 
         // Compute divergence percentiles (p10/p90) and flag top/bottom 10%
-        const divScores = liveStories
+        const divScores = mappedStories
           .map((s) => s.divergenceScore)
           .filter((d) => d > 0)
           .sort((a, b) => a - b);
         if (divScores.length >= 5) {
           const p10 = divScores[Math.floor(divScores.length * 0.1)];
           const p90 = divScores[Math.floor(divScores.length * 0.9)];
-          for (const s of liveStories) {
+          for (const s of mappedStories) {
             if (s.divergenceScore > 0) {
               if (s.divergenceScore >= p90) {
                 s.sigilData.divergenceFlag = "divergent";
@@ -493,8 +657,11 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
           }
         }
 
-        setStories(liveStories);
+        setStories(mappedStories);
         setIsLoading(false);
+
+        // Persist to IndexedDB for instant render on next visit
+        cacheSet(`feed-${activeEdition}`, mappedStories.slice(0, 50), activeEdition);
 
         const { data: run } = await supabase
           .from("pipeline_runs")
@@ -515,7 +682,10 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       }
     }
 
-    loadFromSupabase();
+    // Load cached data first (instant), then revalidate from Supabase.
+    // Sequential: cache read must complete before Supabase fetch starts
+    // so we know whether to show the loading skeleton.
+    loadCachedStories().then(() => loadFromSupabase());
     return () => controller.abort();
   }, [activeEdition, retryKey]);
 
@@ -533,47 +703,64 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   }, [activeLean, activeCategory]);
 
   const filteredStories = useMemo(() => {
-    let filtered = stories;
+    // Quality floor: hide clusters with fewer than 3 sources.
+    // Single-source wire regurgitations and 2-source duds are low-signal.
+    // Three sources = minimum 2 independent editorial decisions to cover a story.
+    let filtered = stories.filter((s) => (s.sigilData?.sourceCount ?? 0) >= 3);
     if (activeCategory !== "All") {
       filtered = filtered.filter((s) => s.category === activeCategory);
     }
-    // Lean chip filter — uses lensData.lean (cluster-level average political lean)
+    // Tilt chip filter — uses lensData.lean (cluster-level average political lean).
+    // "Balanced" excludes unscored stories UNLESS they have genuine importance
+    // (5+ sources = real coverage even without lean signal).
     const leanRange = LEAN_RANGES[activeLean];
     if (leanRange) {
-      filtered = filtered.filter(
-        (s) => s.lensData.lean >= leanRange.min && s.lensData.lean <= leanRange.max,
-      );
+      filtered = filtered.filter((s) => {
+        const inRange = s.lensData.lean >= leanRange.min && s.lensData.lean <= leanRange.max;
+        if (!inRange) return false;
+        if (activeLean === "Balanced" && s.sigilData?.unscored && s.sigilData.sourceCount < 5) return false;
+        return true;
+      });
     }
-    return filtered.sort((a, b) => b.headlineRank - a.headlineRank);
+
+    // Sort by editorial importance (headline rank from pipeline)
+    const sorted = filtered.sort((a, b) => b.headlineRank - a.headlineRank);
+
+    // Topic diversity cap — no single category dominates the 30-story feed
+    const diversified: typeof sorted = [];
+    const categoryCounts: Record<string, number> = {};
+    for (const story of sorted) {
+      const cat = story.category || "uncategorized";
+      const count = categoryCounts[cat] ?? 0;
+      if (count >= CATEGORY_CAP) continue;
+      categoryCounts[cat] = count + 1;
+      diversified.push(story);
+      if (diversified.length >= EDITION_FEED_SIZE) break;
+    }
+
+    return diversified.slice(0, EDITION_FEED_SIZE);
   }, [stories, activeCategory, activeLean]);
 
-  const leadStories = filteredStories.slice(0, 2);
-  const mediumStories = filteredStories.slice(2, 5);
-  const compactStories = filteredStories.slice(5);
+  // Unified feed — hero at rank 0, identical StoryCard for ranks 1-29
+  const heroStory = filteredStories[0] ?? null;
+  const gridStories = filteredStories.slice(1);
 
-  // Progressive batch reveal — no hard cap
-  const visibleCompact = compactStories.slice(0, visibleCount);
-  const remainingCount = compactStories.length - visibleCount;
-  const hasMore = remainingCount > 0;
-
-  const loadMoreStories = useCallback(() => {
-    hapticScrollEdge();
-    setVisibleCount(prev => Math.min(prev + BATCH_SIZE, compactStories.length));
-  }, [compactStories.length]);
-
-  // Mobile: infinite scroll via IntersectionObserver on sentinel
+  // Fetch lead image for primary story (rank 0 only — one front-page photograph).
+  // If cached_image_url is already on the story (pipeline step 8e), use it directly —
+  // no extra Supabase round-trip needed. Fallback to og:image-from-articles via
+  // fetchClusterLeadImage for clusters without a cached image.
+  const [leadImageUrl, setLeadImageUrl] = useState<string | null>(null);
+  const leadStoryId = heroStory?.id;
+  const leadCachedUrl = heroStory?.cachedImageUrl ?? null;
   useEffect(() => {
-    if (!isMobile) return;
-    const sentinel = sentinelRef.current;
-    if (!sentinel || !hasMore) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) loadMoreStories(); },
-      { rootMargin: "200px" },
-    );
-    observer.observe(sentinel);
-    return () => observer.disconnect();
-  }, [isMobile, hasMore, loadMoreStories]);
+    if (!leadStoryId) { setLeadImageUrl(null); return; }
+    if (leadCachedUrl) { setLeadImageUrl(leadCachedUrl); return; }
+    let cancelled = false;
+    fetchClusterLeadImage(leadStoryId).then((url) => {
+      if (!cancelled) setLeadImageUrl(url);
+    });
+    return () => { cancelled = true; };
+  }, [leadStoryId, leadCachedUrl]);
 
   // Stable key that changes whenever the active filter changes.
   // Keying the <section> elements on this value causes React to unmount+remount
@@ -605,16 +792,30 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     }
   }, [selectedStory, filteredStories]);
 
+  // Search: when a result is selected, open its Deep Dive
+  const handleSearchSelect = useCallback((story: Story) => {
+    setSearchOpen(false);
+    handleStoryClick(story, new DOMRect());
+  }, [handleStoryClick]);
+
   const editionMeta = EDITIONS.find((e) => e.slug === activeEdition) ?? EDITIONS[0];
 
   return (
-    <div className="page-container">
+    <div className="page-container" data-whip={whipDirection === "left" ? "left" : undefined}>
       <NavBar
         activeEdition={activeEdition}
+        onEditionChange={(edition) => { setActiveEdition(edition); }}
         activeCategory={activeCategory}
-        onCategoryChange={(cat) => { setActiveCategory(cat); setVisibleCount(BATCH_SIZE); }}
+        onCategoryChange={(cat) => { setActiveCategory(cat); }}
         activeLean={activeLean}
-        onLeanChange={(lean) => { setActiveLean(lean); setVisibleCount(BATCH_SIZE); }}
+        onLeanChange={(lean) => { setActiveLean(lean); }}
+        onSearchClick={() => setSearchOpen(true)}
+        hasAudio={!!dailyBriefState.brief?.audio_url}
+        isAudioPlaying={dailyBriefState.isPlaying}
+        onOnairClick={() => {
+          dailyBriefState.setPlayerVisible(true);
+          if (!dailyBriefState.isPlaying) dailyBriefState.handlePlayPause();
+        }}
       />
 
       <main
@@ -631,21 +832,12 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
             style={{
               height: `${pullOffset}px`,
               opacity: Math.min(1, pullOffset / PULL_THRESHOLD),
-              transition: isPulling ? "none" : "height 300ms cubic-bezier(0.2, 1, 0.3, 1), opacity 300ms ease-out",
+              transition: isPulling ? "none" : "height 300ms var(--spring-snappy), opacity 300ms ease-out",
             }}
           >
-            <div
-              className={`pull-to-refresh__spinner ${isRefreshing ? "pull-to-refresh__spinner--active" : ""}`}
-              style={{
-                transform: `rotate(${pullOffset * 3}deg)`,
-                transition: isPulling ? "none" : "transform 300ms ease-out",
-              }}
-            >
-              {isRefreshing ? "↻" : "↓"}
+            <div className="pull-to-refresh__spinner">
+              <LogoIcon size={24} animation={isRefreshing ? "analyzing" : "idle"} />
             </div>
-            <span className="pull-to-refresh__text">
-              {isRefreshing ? "Updating…" : pullOffset >= PULL_THRESHOLD ? "Release to refresh" : "Pull to refresh"}
-            </span>
           </div>
         )}
 
@@ -656,7 +848,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
             {/* Live region for screen readers — announces filter changes and story count */}
             <div aria-live="polite" className="sr-only">
               {!isLoading && filteredStories.length > 0 &&
-                `${filteredStories.length} stories loaded for ${activeEdition} edition${activeCategory !== "All" ? `, filtered by ${activeCategory}` : ""}${activeLean !== "All" ? `, ${activeLean} perspective` : ""}. Press ? for keyboard shortcuts.`}
+                `${filteredStories.length} stories loaded for ${activeEdition} edition${activeCategory !== "All" ? `, filtered by ${activeCategory}` : ""}${activeLean !== "All" ? `, ${activeLean.toLowerCase()} tilt` : ""}. Press ? for keyboard shortcuts.`}
               {!isLoading && stories.length > 0 && filteredStories.length === 0 &&
                 "No stories match the current filter. Try clearing your filters."}
             </div>
@@ -690,12 +882,11 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   The Presses Are Warming Up
                 </h2>
                 <p className="text-base" style={{ color: "var(--fg-tertiary)", lineHeight: 1.6, marginBottom: "var(--space-4)" }}>
-                  No stories yet for the {editionMeta.label} edition &mdash; the pipeline is still
-                  collecting and analyzing {editionMeta.sourceCount}.
-                  The {new Date().getUTCHours() < 17 ? "morning" : "evening"} edition will appear shortly.
+                  No stories yet. The pipeline is still collecting and analyzing
+                  sources. The next update will appear shortly.
                 </p>
                 <p className="edition-meta">
-                  Morning edition: 11:00 AM UTC &middot; Evening edition: 11:00 PM UTC
+                  Editions: 7 AM &middot; 2 PM &middot; 8 PM Chicago
                 </p>
               </div>
             )}
@@ -727,103 +918,71 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               </div>
             )}
 
-            {/* 1. Daily Brief — editorial anchor, above lead headlines.
-                The board's voice sets context before readers dive into stories. */}
+            {/* Inline filter bar — mobile only, feed-only, bracket notation */}
+            {!isLoading && stories.length > 0 && isMobile && (
+              <MobileBottomNav
+                activeLean={activeLean}
+                onLeanChange={(lean) => { setActiveLean(lean); }}
+                activeCategory={activeCategory}
+                onCategoryChange={(cat) => { setActiveCategory(cat); }}
+              />
+            )}
+
+            {/* News feed — mobile gets MobileFeed, desktop keeps broadsheet */}
             {!isLoading && stories.length > 0 && (
-              <DailyBriefText state={dailyBriefState} />
-            )}
-
-            {/* 2. Lead section — two primary headlines side by side on desktop */}
-            {!isLoading && leadStories.length > 0 && (
-              <section key={filterKey} aria-label="Lead stories" className="lead-section anim-content-arrive">
-                {leadStories.map((story, i) => (
-                  <VisibleCard
-                    key={story.id}
-                    className="lead-section__col"
-                    style={{ animationDelay: `${Math.round(50 * Math.log2(i + 2))}ms` }}
-                  >
-                    <div data-story-index={i}>
-                      <LeadStory story={story} rank={i} onStoryClick={handleStoryClick} kbdFocused={kbdFocusIndex === i} onLiveBadgeClick={i === 0 && story.storyMemoryId ? () => liveUpdatesRef.current?.expand() : undefined} />
-                    </div>
-                  </VisibleCard>
-                ))}
-              </section>
-            )}
-
-            {/* 2b. Live Updates — articles discovered between pipeline runs for the top story */}
-            {!isLoading && leadStories.length > 0 && leadStories[0].storyMemoryId && (
-              <LiveUpdatesSection ref={liveUpdatesRef} storyMemoryId={leadStories[0].storyMemoryId} />
-            )}
-
-            {/* Medium stories — broadsheet grid on desktop */}
-            {!isLoading && mediumStories.length > 0 && (
-              <section key={`med-${filterKey}`} aria-label="Top stories" className="grid-medium">
-                {mediumStories.map((story, idx) => {
-                  const gi = leadStories.length + idx;
-                  return (
-                    <VisibleCard
-                      key={story.id}
-                      className="grid-medium__item"
-                      style={{ animationDelay: `${Math.round(50 * Math.log2(idx + 2))}ms` }}
-                    >
-                      <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} globalIndex={gi} kbdFocused={kbdFocusIndex === gi} />
-                    </VisibleCard>
-                  );
-                })}
-              </section>
-            )}
-
-            {/* Compact stories — progressive batch reveal, no hard cap */}
-            {!isLoading && compactStories.length > 0 && (
-              <>
-                <section key={`cmp-${filterKey}`} aria-label="More stories" className="grid-compact">
-                  {visibleCompact.map((story, idx) => {
-                    const gi = leadStories.length + mediumStories.length + idx;
-                    return (
-                      <VisibleCard
-                        key={story.id}
-                        className="grid-compact__item"
-                        style={{ animationDelay: `${Math.round(50 * Math.log2((idx % BATCH_SIZE) + 2))}ms` }}
-                      >
-                        <StoryCard
-                          story={story}
-                          index={idx + mediumStories.length + 1}
-                          onStoryClick={handleStoryClick}
-                          globalIndex={gi}
-                          kbdFocused={kbdFocusIndex === gi}
-                        />
-                      </VisibleCard>
-                    );
-                  })}
-                </section>
-
-                {/* Feed continuation — gradient fade + editorial link (desktop) / sentinel (mobile) */}
-                {hasMore && (
-                  <div className="feed-continuation" ref={sentinelRef}>
-                    <div className="feed-continuation__fade" aria-hidden="true" />
-                    {!isMobile && (
-                      <button
-                        className="feed-continuation__link"
-                        onClick={loadMoreStories}
-                        aria-label="Show more stories"
-                      >
-                        Continue reading
-                      </button>
-                    )}
+              isMobile ? (
+                <MobileFeed
+                  stories={filteredStories}
+                  dailyBriefState={dailyBriefState}
+                  onStoryClick={handleStoryClick}
+                  filterKey={filterKey}
+                  kbdFocusIndex={kbdFocusIndex}
+                  editionMeta={editionMeta}
+                  leadImageUrl={leadImageUrl}
+                  transitionClass={editionTransition === "out" ? "anim-edition-out" : editionTransition === "in" ? "anim-edition-in" : undefined}
+                />
+              ) : (
+                <>
+                  <div className="skybox">
+                    <SkyboxBanner state={dailyBriefState} />
                   </div>
-                )}
-              </>
-            )}
 
-            {/* Edition line — newspaper tradition */}
-            {!isLoading && filteredStories.length > 0 && (
-              <div className="edition-line">
-                <span className="edition-meta">
-                  {editionMeta.label} Edition /{" "}
-                  {filteredStories.length} stories
-                </span>
-                <LogoWordmark height={14} />
-              </div>
+                  {/* Hero — rank 0, front-page image treatment */}
+                  {heroStory && (
+                    <div key={filterKey} className={`hero-slot${isEditionSwitch ? " anim-content-arrive" : ""}`}>
+                      <LeadStory story={heroStory} rank={0} onStoryClick={handleStoryClick} kbdFocused={kbdFocusIndex === 0} imageUrl={leadImageUrl} />
+                    </div>
+                  )}
+
+                  {/* Unified grid — ranks 1-49.
+                      Variant drives newspaper typography hierarchy:
+                        ranks 1-9 = digest (22px Playfair)
+                        ranks 10+ = wire (14px Playfair)
+                      Both scales live in layout-zones.css. */}
+                  {gridStories.length > 0 && (
+                    <section key={`grid-${filterKey}`} aria-label="Stories" className={`feed-grid${isEditionSwitch ? " anim-content-arrive" : ""}`}>
+                      {gridStories.map((story, idx) => {
+                        const gi = 1 + idx;
+                        const variant: "digest" | "wire" = idx < 9 ? "digest" : "wire";
+                        return (
+                          <div key={story.id} className="feed-grid__item">
+                            <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} globalIndex={gi} kbdFocused={kbdFocusIndex === gi} variant={variant} />
+                          </div>
+                        );
+                      })}
+                    </section>
+                  )}
+
+                  {filteredStories.length > 0 && (
+                    <div className="edition-line">
+                      <span className="edition-meta">
+                        {filteredStories.length} stories
+                      </span>
+                      <LogoWordmark height={14} />
+                    </div>
+                  )}
+                </>
+              )
             )}
         </>
       </main>
@@ -831,20 +990,31 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       {/* Footer */}
       {!isLoading && <Footer lastUpdated={lastUpdated} />}
 
-      {/* Deep Dive panel */}
+      {/* Deep Dive panel — wrapped in its own ErrorBoundary so one bad
+           cluster doesn't crash the entire feed */}
       {selectedStory && (
-        <DeepDive
-          story={selectedStory}
-          onClose={handleDeepDiveClose}
-          originRect={originRect}
-          onNavigate={handleDeepDiveNav}
-          storyIndex={filteredStories.findIndex((s) => s.id === selectedStory.id)}
-          totalStories={filteredStories.length}
-        />
+        <DeepDiveErrorBoundary onClose={handleDeepDiveClose}>
+          <DeepDive
+            story={selectedStory}
+            onClose={handleDeepDiveClose}
+            originRect={originRect}
+            onNavigate={handleDeepDiveNav}
+            storyIndex={filteredStories.findIndex((s) => s.id === selectedStory.id)}
+            totalStories={filteredStories.length}
+          />
+        </DeepDiveErrorBoundary>
       )}
 
-      {/* BiasLens onboarding — first-visit 3-slide carousel */}
-      <BiasLensOnboarding />
+      {/* Search overlay — Cmd+K */}
+      <SearchOverlay
+        stories={filteredStories}
+        onStorySelect={handleSearchSelect}
+        isOpen={searchOpen}
+        onClose={() => setSearchOpen(false)}
+      />
+
+      {/* Unified onboarding — carousel (concepts) then spotlight tour (real UI) */}
+      <UnifiedOnboarding active={!isLoading && stories.length > 0} />
 
       {/* Keyboard shortcuts overlay — press ? to toggle */}
       <KeyboardShortcutsOverlay />
@@ -852,7 +1022,9 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       {/* PWA install prompt — 2nd+ visit, above bottom nav */}
       <InstallPrompt />
 
-      {/* Lean chips now integrated into NavBar — no separate mobile lean bar */}
+      {/* Floating audio player — persistent, above all content.
+           Audio element now lives in AudioProvider (layout.tsx). */}
+      <FloatingPlayer state={dailyBriefState} />
     </div>
   );
 }

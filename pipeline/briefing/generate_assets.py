@@ -13,12 +13,16 @@ slightly nostalgic. Intervals are chosen for their natural beating patterns
 when detuned by 1-2 Hz, creating organic shimmer without effects processing.
 
 Assets:
-  - ident.wav:      ~2.0s — harmonic bloom, D major 9th chord building
-                     from a single root. Feels like tuning in.
-  - transition.wav:  0.6s — soft breath: a glass-bell dyad that swells
-                     and vanishes. Marks a page turn.
-  - outro.wav:      ~1.8s — the bloom chord returns and resolves downward
-                     to a low D with decaying harmonics. The lens closing.
+  - ident.wav:           ~2.0s — harmonic bloom, D major 9th chord building
+                          from a single root. Feels like tuning in.
+  - transition.wav:       1.5s — rhythmic pulse phrase (legacy, kept for compat).
+  - section_break.wav:    0.9s — glass-bell chime between stories. Light,
+                          unobtrusive. Overlaid at silence gaps in speech.
+  - news_to_opinion.wav:  1.3s — editorial page-turn. Weighted, deliberate.
+                          Replaces transition.wav at the news→opinion boundary.
+  - headline_sting.wav:   0.4s — full chord stab. Punctuation after headlines.
+  - outro.wav:           ~1.8s — the bloom chord returns and resolves downward
+                          to a low D with decaying harmonics. The lens closing.
 """
 
 from pathlib import Path
@@ -26,6 +30,10 @@ from pydub import AudioSegment
 from pydub.generators import Sine
 
 ASSETS_DIR = Path(__file__).parent / "assets"
+
+# Match Gemini TTS native output rate (24kHz 16-bit mono).
+# Assets at the same sample rate avoid implicit resampling during assembly.
+SAMPLE_RATE = 24000
 
 
 # ---------------------------------------------------------------------------
@@ -40,7 +48,7 @@ def _bell(freq_hz: float, duration_ms: int, gain_db: float = -6) -> AudioSegment
     electronic beep.
     """
     seg = (
-        Sine(freq_hz)
+        Sine(freq_hz, sample_rate=SAMPLE_RATE)
         .to_audio_segment(duration=duration_ms)
         .apply_gain(gain_db)
         .fade_in(5)
@@ -59,7 +67,7 @@ def _pad(freq_hz: float, duration_ms: int, gain_db: float = -10) -> AudioSegment
     attack = int(duration_ms * 0.4)
     release = int(duration_ms * 0.5)
     seg = (
-        Sine(freq_hz)
+        Sine(freq_hz, sample_rate=SAMPLE_RATE)
         .to_audio_segment(duration=duration_ms)
         .apply_gain(gain_db)
         .fade_in(attack)
@@ -189,6 +197,9 @@ def generate_transition():
 
     This plays between stories. It gives the listener a breath, signals
     "next topic," and keeps the energy moving without rushing.
+
+    LEGACY: kept for backward compatibility. New assemblies use
+    section_break.wav (intra-story) and news_to_opinion.wav (editorial shift).
     """
     canvas = AudioSegment.silent(duration=1500)
 
@@ -218,7 +229,290 @@ def generate_transition():
     canvas = canvas.apply_gain(-4)
 
     canvas.export(ASSETS_DIR / "transition.wav", format="wav")
-    print(f"  transition.wav ({len(canvas)}ms) — rhythmic pulse phrase")
+    print(f"  transition.wav ({len(canvas)}ms) — rhythmic pulse phrase [legacy]")
+
+
+# ---------------------------------------------------------------------------
+# Section Break: "The Bell" — between stories within the news dialogue
+# ---------------------------------------------------------------------------
+
+def generate_section_break():
+    """Section break: a crisp two-note stinger. ~1.2s.
+
+    Inspired by The Economist's Intelligence podcast: their section
+    breaks are short, bright, unmistakable. They ANNOUNCE "next story"
+    rather than whispering it. The listener should think "oh, new topic"
+    without effort.
+
+    Design: a rising two-note motif (fifth → octave) with a shimmer tail.
+    The rising interval creates forward momentum — "we're moving on."
+    Louder than background, quieter than ident. This is a proper stinger,
+    not ambient texture.
+
+    Comparable to: Economist section break (~1-2s synth phrase),
+    NPR Up First story divider (~1s bright sting).
+    """
+    canvas = AudioSegment.silent(duration=1200)
+
+    # Beat 1: Fifth (A3) — the launch note, crisp bell
+    note1 = _bell(_CHORD["fifth"], 350, -8)
+    canvas = canvas.overlay(note1, position=50)
+
+    # Beat 2: Octave (D4) — arrives 300ms later, rising interval
+    note2 = _bell(_CHORD["octave"], 400, -8)
+    canvas = canvas.overlay(note2, position=350)
+
+    # Shimmer tail: A4 + detuned pair — sparkle after the notes land
+    tail = _shimmer_pair(_CHORD["hi_fifth"], 1.5, 500, -16)
+    canvas = canvas.overlay(tail, position=500)
+
+    # Root anchor: D3 pad underneath — connects to the chord palette
+    anchor = _pad(_CHORD["root"], 600, -18)
+    canvas = canvas.overlay(anchor, position=100)
+
+    # Ninth color: E4 ghost at the end — the "news" interval
+    color = _pad(_CHORD["ninth"], 300, -20)
+    canvas = canvas.overlay(color, position=600)
+
+    # Shape: instant attack, natural ring-out
+    canvas = canvas.fade_in(5).fade_out(400)
+
+    # Master gain: audible and crisp — a proper stinger, not ambient
+    canvas = canvas.apply_gain(-4)
+
+    canvas.export(ASSETS_DIR / "section_break.wav", format="wav")
+    print(f"  section_break.wav ({len(canvas)}ms) — glass bell between stories")
+
+
+# ---------------------------------------------------------------------------
+# News-to-Opinion: "The Page Turn" — editorial shift marker
+# ---------------------------------------------------------------------------
+
+def generate_news_to_opinion():
+    """News-to-opinion transition: a 2.5s three-phase editorial page turn.
+
+    The most important structural moment in the broadcast — the shift from
+    two-voice reporting to single-voice editorial.
+
+    Phase 1 — The Resolve (0-800ms):
+      The news section closes. Low D3 pad swells, the fifth (A3) arrives
+      as a bell. The feeling is "settling."
+
+    Phase 2 — The Breath (800-1600ms):
+      Literal silence. 800ms of nothing. The ear resets. The contrast
+      between Phase 1's harmonics and Phase 2's silence creates the
+      "page turn" — the brain registers a structural shift.
+
+    Phase 3 — The Arrival (1600-2500ms):
+      The opinion voice's territory. F#4 bell rings alone, then E4 ghosts
+      in underneath with A4 shimmer. A compressed intro bloom starting
+      from the chord's middle, not the root.
+    """
+    canvas = AudioSegment.silent(duration=2500)
+
+    # --- Phase 1: The Resolve (0-800ms) ---
+    # Root D3 pad — gravity, authority
+    root_open = _pad(_CHORD["root"], 800, -8)
+    canvas = canvas.overlay(root_open, position=0)
+
+    # Root detune — warmth, beating
+    root_detune = _pad(_CHORD["root"] + 0.8, 700, -16)
+    canvas = canvas.overlay(root_detune, position=50)
+
+    # Fifth A3 bell — short, settling
+    fifth = _bell(_CHORD["fifth"], 400, -14)
+    canvas = canvas.overlay(fifth, position=200)
+
+    # Sub-bass D2 — felt in the chest
+    sub = _pad(73.4, 600, -20)
+    canvas = canvas.overlay(sub, position=100)
+
+    # --- Phase 2: The Breath (800-1600ms) ---
+    # Silence. The canvas is already silent here. Nothing to add.
+
+    # --- Phase 3: The Arrival (1600-2500ms) ---
+    # F#4 bell — the warmth note, alone first
+    third_bell = _bell(_CHORD["third"], 500, -12)
+    canvas = canvas.overlay(third_bell, position=1600)
+
+    # E4 pad — the ninth ghosts in underneath
+    ninth_pad = _pad(_CHORD["ninth"], 400, -18)
+    canvas = canvas.overlay(ninth_pad, position=1700)
+
+    # A4 + 441.5 Hz shimmer pair — high crystalline shimmer
+    hi_shimmer = _shimmer_pair(_CHORD["hi_fifth"], 1.5, 350, -22)
+    canvas = canvas.overlay(hi_shimmer, position=1750)
+
+    # Shape: Phase 1 attack, Phase 3 decay
+    canvas = canvas.fade_in(60).fade_out(400)
+
+    # Master gain: more present than section break, less than ident
+    canvas = canvas.apply_gain(-4)
+
+    canvas.export(ASSETS_DIR / "news_to_opinion.wav", format="wav")
+    print(f"  news_to_opinion.wav ({len(canvas)}ms) — three-phase editorial page turn")
+
+
+# ---------------------------------------------------------------------------
+# Headline Underscore: "The Arrival" — rhythmic bed under opening headlines
+# ---------------------------------------------------------------------------
+
+def generate_headline_underscore(duration_ms: int) -> "AudioSegment":
+    """Generate a rhythmic underscore bed for the headlines section.
+
+    Dynamically generated at assembly time (not saved to disk) because its
+    duration must match the estimated headlines length.
+
+    Three layers from the D major 9th palette:
+      - D3 bell pulses every 800ms (75 BPM) — forward momentum
+      - A3 shimmer pair (1.5 Hz detune) — harmonic warmth that breathes
+      - Single E4 bell accent at 60% mark — the ninth waking up
+
+    Args:
+        duration_ms: Target duration, typically 12-20 seconds.
+
+    Returns:
+        AudioSegment at SAMPLE_RATE (24000 Hz), with fade-in and fade-out applied.
+    """
+    canvas = AudioSegment.silent(duration=duration_ms)
+
+    # Layer 1: Rhythmic root pulse — D3 bell every 800ms (75 BPM)
+    # Louder than before: these pulses should be felt as momentum
+    pulse_interval = 800
+    pulse_pos = 0
+    while pulse_pos + 200 <= duration_ms:
+        pulse = _bell(_CHORD["root"], 200, -14)
+        canvas = canvas.overlay(pulse, position=pulse_pos)
+        pulse_pos += pulse_interval
+
+    # Layer 2: Shimmer swell — A3 + A3+1.5 Hz pad pair
+    shimmer = _shimmer_pair(_CHORD["fifth"], 1.5, duration_ms, -18)
+    canvas = canvas.overlay(shimmer, position=0)
+
+    # Layer 3: Color accents — E4 bell at 40% and 80% marks
+    for pct in (0.4, 0.8):
+        accent_pos = int(duration_ms * pct)
+        if accent_pos + 300 <= duration_ms:
+            accent = _bell(_CHORD["ninth"], 300, -20)
+            canvas = canvas.overlay(accent, position=accent_pos)
+
+    # Layer 4: F#4 bell at 60% — the warmth note, once
+    warmth_pos = int(duration_ms * 0.6)
+    if warmth_pos + 250 <= duration_ms:
+        warmth = _bell(_CHORD["third"], 250, -22)
+        canvas = canvas.overlay(warmth, position=warmth_pos)
+
+    # Gain curve: 600ms fade-in, 2500ms fade-out (longer dissolve)
+    fade_in_ms = min(600, duration_ms // 3)
+    fade_out_ms = min(2500, duration_ms // 2)
+    canvas = canvas.fade_in(fade_in_ms).fade_out(fade_out_ms)
+
+    # Master gain: present — the headlines should feel energized
+    canvas = canvas.apply_gain(-10)
+
+    return canvas
+
+
+# ---------------------------------------------------------------------------
+# Headline Sting: "The Stamp" — quick punctuation after headlines
+# ---------------------------------------------------------------------------
+
+def generate_headline_sting():
+    """Headline sting: a 0.4s chord stab. Punctuation, not melody.
+
+    Used after the opening headlines rundown — a quick "full stop" that
+    marks the end of the summary and the beginning of the deep coverage.
+
+    The sound is a compressed version of the full D major 9th chord,
+    all tones arriving simultaneously and decaying fast. Think: a gavel
+    tap, but musical. Or a newspaper being snapped open to the front page.
+
+    Design choices:
+    - All chord tones at once (no staggered bloom — that is the intro's job)
+    - Very fast decay (300ms bell envelopes)
+    - The ninth (E4) and third (F#4) are slightly louder — they carry
+      the "identity" of the chord in this compressed form
+    - Root D3 provides just enough weight to feel authoritative
+    """
+    canvas = AudioSegment.silent(duration=400)
+
+    # All tones arrive together — simultaneous, not layered
+    root = _bell(_CHORD["root"], 300, -14)
+    canvas = canvas.overlay(root, position=10)
+
+    fifth = _bell(_CHORD["fifth"], 280, -16)
+    canvas = canvas.overlay(fifth, position=10)
+
+    octave = _bell(_CHORD["octave"], 260, -18)
+    canvas = canvas.overlay(octave, position=10)
+
+    # Identity tones — slightly more present
+    ninth = _bell(_CHORD["ninth"], 300, -12)
+    canvas = canvas.overlay(ninth, position=10)
+
+    third = _bell(_CHORD["third"], 300, -12)
+    canvas = canvas.overlay(third, position=10)
+
+    # High fifth — crystalline top
+    hi = _bell(_CHORD["hi_fifth"], 250, -16)
+    canvas = canvas.overlay(hi, position=10)
+
+    # Shape: instant attack, fast out
+    canvas = canvas.fade_in(5).fade_out(200)
+
+    # Master gain: crisp but not aggressive
+    canvas = canvas.apply_gain(-6)
+
+    canvas.export(ASSETS_DIR / "headline_sting.wav", format="wav")
+    print(f"  headline_sting.wav ({len(canvas)}ms) — chord stab punctuation")
+
+
+# ---------------------------------------------------------------------------
+# Opinion Kicker: "The Landing" — chord stab after editorial
+# ---------------------------------------------------------------------------
+
+def generate_opinion_kicker():
+    """Opinion kicker: a 0.6s chord stab. The period at the end of the editorial.
+
+    A compressed version of the outro's resolving motion, but faster and
+    heavier. Where the outro breathes over 1.8s, the kicker drops and lands
+    in 0.6s. Think: the last chord of a piano piece, played forte then
+    allowed to ring.
+
+    All tones arrive nearly simultaneously (within 20ms) — a chord stab,
+    not a bloom. The root is louder than in the headline sting (-6 vs. -14 dB),
+    giving it more gravity. The sub-bass provides physical weight.
+    """
+    canvas = AudioSegment.silent(duration=600)
+
+    # Root D3 bell — heavy, authoritative
+    root = _bell(_CHORD["root"], 500, -6)
+    canvas = canvas.overlay(root, position=0)
+
+    # Fifth A3 bell — arrives 10ms later
+    fifth = _bell(_CHORD["fifth"], 450, -10)
+    canvas = canvas.overlay(fifth, position=10)
+
+    # Third F#4 bell — warmth, same time as fifth
+    third = _bell(_CHORD["third"], 400, -10)
+    canvas = canvas.overlay(third, position=10)
+
+    # Ninth E4 bell — arrives 20ms later
+    ninth = _bell(_CHORD["ninth"], 350, -14)
+    canvas = canvas.overlay(ninth, position=20)
+
+    # Sub-bass D2 pad — physical weight, starts with root
+    sub = _pad(73.4, 400, -18)
+    canvas = canvas.overlay(sub, position=0)
+
+    # Shape: instant attack (5ms), ring and decay (350ms)
+    canvas = canvas.fade_in(5).fade_out(350)
+
+    # Master gain: present, comparable to the ident
+    canvas = canvas.apply_gain(-4)
+
+    canvas.export(ASSETS_DIR / "opinion_kicker.wav", format="wav")
+    print(f"  opinion_kicker.wav ({len(canvas)}ms) — chord stab after editorial")
 
 
 # ---------------------------------------------------------------------------
@@ -279,6 +573,53 @@ def generate_outro():
 
 
 # ---------------------------------------------------------------------------
+# Background Bed: "The Presence Layer" — felt, not heard
+# ---------------------------------------------------------------------------
+
+def generate_background_bed():
+    """Background bed: a 10s loopable subharmonic warmth layer.
+
+    This sits BELOW the speech frequency band (200-4000 Hz) so it never
+    competes with voices. No ducking needed. The listener won't consciously
+    hear it, but removing it would make the broadcast feel thinner.
+
+    Three layers, all subharmonic:
+      - D2 (73.4 Hz) at -34 dB — root presence, felt in headphones
+      - D3 (147 Hz) at -38 dB — harmonic warmth, octave reinforcement
+      - A3 (220 Hz) shimmer pair at -42 dB — 1.2 Hz beating for life
+
+    The bed is tileable: identical fade-in/fade-out shapes at start/end
+    allow seamless looping when tiled in the assembly pipeline.
+
+    Industry standard: background music 20-26 dB below speech (W3C, BBC).
+    These levels (-34 to -42 dB individual, ~-30 dB combined) exceed that
+    margin against TTS output at ~-6 to -12 dBFS.
+    """
+    duration = 10000  # 10 seconds, tileable
+
+    canvas = AudioSegment.silent(duration=duration)
+
+    # Layer 1: Root presence — D2, felt in the chest
+    root = _pad(73.4, duration, -34)
+    canvas = canvas.overlay(root)
+
+    # Layer 2: Harmonic warmth — D3, octave above root
+    warmth = _pad(_CHORD["root"], duration, -38)
+    canvas = canvas.overlay(warmth)
+
+    # Layer 3: Shimmer ghost — A3 detuned pair, 1.2 Hz beating
+    # Creates imperceptible pulse that makes the bed feel alive
+    shimmer = _shimmer_pair(_CHORD["fifth"], 1.2, duration, -42)
+    canvas = canvas.overlay(shimmer)
+
+    # Tileable crossfade: gentle ramps at both ends
+    canvas = canvas.fade_in(500).fade_out(500)
+
+    canvas.export(ASSETS_DIR / "background_bed.wav", format="wav")
+    print(f"  background_bed.wav ({len(canvas)}ms) — subharmonic presence layer")
+
+
+# ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
 
@@ -287,5 +628,10 @@ if __name__ == "__main__":
     print("Generating void --news sonic identity (Glass & Gravity):")
     generate_ident()
     generate_transition()
+    generate_section_break()
+    generate_news_to_opinion()
+    generate_headline_sting()
+    generate_opinion_kicker()
     generate_outro()
+    generate_background_bed()
     print("Done.")

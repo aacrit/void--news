@@ -66,7 +66,7 @@
   }
 }
 
-/* RefreshButton spring press */
+/* Generic spring press — reusable for any interactive element */
 @keyframes springBtnPress {
   0%   { transform: scale(1); }
   35%  { transform: scale(0.97); }
@@ -95,7 +95,7 @@
     var(--bg-secondary) 75%
   );
   background-size: 200% 100%;
-  animation: shimmer 1.5s ease-in-out infinite;
+  animation: shimmer 1.5s var(--ease-rack) infinite;
   border-radius: var(--radius-md);
 }
 
@@ -125,7 +125,7 @@
     rgba(255, 255, 255, 0.06) 50%,
     transparent 100%
   );
-  animation: shimmerSweep 1.5s ease-in-out infinite;
+  animation: shimmerSweep 1.5s var(--ease-rack) infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -137,28 +137,38 @@
 /* ---- Animation Utilities ----------------------------------------------- */
 
 .anim-fade-in {
-  animation: fadeIn var(--dur-normal) var(--ease-out);
+  animation: fadeIn var(--dur-normal) var(--ease-cinematic);
 }
 
 .anim-fade-in-up {
-  animation: fadeInUp var(--dur-normal) var(--ease-out) both;
+  animation: fadeInUp var(--dur-normal) var(--ease-cinematic) both;
 }
 
-/* Staggered entrance — story cards with spring physics.
+/* Staggered entrance — story cards with cinematic unfold.
    Paused by default: IntersectionObserver adds .anim-stagger--visible
-   to play only when the card enters the viewport. Falls back to
-   animationDelay inline style for per-card stagger. */
+   to play only when the card enters the viewport. Per-card stagger is
+   driven by inline style animation-delay (--stagger-delay or direct).
+   Keyframe (not transition) so it plays reliably on every viewport entry. */
+@keyframes staggerUnfold {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .anim-stagger {
   opacity: 0;
   transform: translateY(12px);
+  animation: staggerUnfold 440ms var(--ease-unfold, cubic-bezier(0.25, 0.1, 0.25, 1)) both;
+  animation-play-state: paused;
 }
 
 .anim-stagger--visible {
-  opacity: 1;
-  transform: translateY(0);
-  transition:
-    opacity 120ms var(--ease-out),
-    transform 300ms var(--spring-bouncy);
+  animation-play-state: running;
 }
 
 /* Filter-change card entrance — fires immediately (not paused).
@@ -169,28 +179,34 @@
   animation: springEntranceCard var(--dur-step) var(--spring) both;
 }
 
-/* Lead story stagger — primary lead fades in first, secondary 120ms later */
+/* Lead story stagger — primary lead fades in first, secondary 120ms later.
+   Uses --ease-cinematic (Deakins dolly settle) not --ease-out for reveals. */
 .anim-lead-primary {
-  animation: fadeInUp var(--dur-morph) var(--ease-out) both;
+  animation: fadeInUp var(--dur-morph) var(--ease-cinematic) both;
 }
 
 .anim-lead-secondary {
-  animation: fadeInUp var(--dur-morph) var(--ease-out) 120ms both;
+  animation: fadeInUp var(--dur-morph) var(--ease-cinematic) 120ms both;
 }
 
-/* Content arrival — subtle fade when data loads after edition switch or retry.
-   Applied to the content wrapper, not individual cards (cards have their own stagger). */
+/* Content arrival — whip pan when edition switches, subtle fade otherwise.
+   Applied to the content wrapper, not individual cards (cards have their own stagger).
+   Direction-aware: [data-whip="left"] on page-container reverses the pan direction. */
 .anim-content-arrive {
-  animation: fadeIn var(--dur-normal) var(--ease-out) both;
+  animation: whipPanIn var(--whip-pan-dur) var(--ease-whip) both;
+}
+
+[data-whip="left"] .anim-content-arrive {
+  animation: whipPanInLeft var(--whip-pan-dur) var(--ease-whip) both;
 }
 
 /* Skeleton → content crossfade: skeleton fades out as content arrives */
 .anim-crossfade-in {
-  animation: fadeIn var(--dur-normal) var(--ease-out) both;
+  animation: fadeIn var(--dur-normal) var(--ease-cinematic) both;
 }
 
 .anim-crossfade-out {
-  animation: fadeOut var(--dur-fast) var(--ease-out) both;
+  animation: fadeOut var(--dur-fast) var(--ease-cinematic) both;
 }
 
 @keyframes fadeOut {
@@ -198,25 +214,45 @@
   to { opacity: 0; }
 }
 
-/* Deep Dive content section stagger — cinematic cascade reveal.
-   Opacity leads (instant presence), transform follows with spring (physical pop).
-   Slightly larger travel (14px) + longer spring (360ms) feels more deliberate. */
+/* ══ SCENE 4/5: Deep Dive Content Cascade (L-cut) ══
+   When the Deep Dive panel opens, content sections cascade in while
+   the panel morph is still settling — an L-cut where the new scene's
+   audio (content) begins before the previous scene's visual (morph)
+   completes.
+
+   Each section is a new focal plane sharpening:
+   Section 1 (headline/summary): sharpens first — the subject
+   Section 2 (analysis/spectrum): sharpens second — the context
+   Section 3 (sources/methodology): sharpens last — the supporting detail
+
+   The stagger gap (--dd-cascade-gap: 120ms) creates rhythmic reveal
+   that feels like sequential focus pulls, not simultaneous pop-in.
+
+   The scale shift (0.97->1) is the dolly-in micro-movement — each
+   section approaches the viewer as it sharpens. */
 .anim-dd-section {
   opacity: 0;
-  transform: translateY(14px);
+  transform: translateY(8px) scale(var(--dd-content-scale-from, 0.99));
   transition:
-    opacity 120ms var(--ease-out),
-    transform 360ms var(--spring-bouncy);
+    opacity 150ms var(--ease-cinematic),
+    transform 200ms var(--ease-cinematic);
 }
 
 .anim-dd-section--visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
 }
 
-/* Filter chip active spring press feedback */
+/* Deep Dive cascade sections — staggered reveal delays (snap tier) */
+.dd-cascade-1 { transition-delay: 50ms; }
+.dd-cascade-2 { transition-delay: 120ms; }
+.dd-cascade-3 { transition-delay: 190ms; }
+.dd-cascade-4 { transition-delay: 260ms; }
+.dd-cascade-trigger { transition-delay: 160ms; }
+
+/* Filter chip active spring press feedback — elastic for snappy toggle feel */
 .filter-chip--active {
-  animation: springChipPress var(--dur-normal) var(--spring);
+  animation: springChipPress var(--dur-normal) var(--spring-elastic, var(--spring));
 }
 
 /* DeepDive panel entrance/exit is driven by JS inline transform + transition
@@ -225,14 +261,35 @@
    with the JS-controlled state. The springSlideInRight / springSlideInUp
    keyframes are kept above for potential future use. */
 
-/* RefreshButton spring press — activated by .refresh-btn:active */
-.refresh-btn:active:not([disabled]) {
-  animation: springBtnPress var(--dur-normal) var(--spring);
+
+/* Theme toggle spring entrance on icon swap — elastic for joy */
+.theme-toggle__icon:not(.theme-toggle__icon--hidden) {
+  animation: springToggleSpin var(--dur-morph) var(--spring-elastic, var(--spring)) both;
 }
 
-/* Theme toggle spring entrance on icon swap */
-.theme-toggle__icon:not(.theme-toggle__icon--hidden) {
-  animation: springToggleSpin var(--dur-normal) var(--spring) both;
+/* ---- Cold Open Utility Classes ----------------------------------------- */
+/* Each class corresponds to an element in the opening shot stagger.
+   The delays create the sensation of a camera settling and finding
+   its composition — nav frames the world, skybox establishes context,
+   lead story sharpens into focus, feed fills with content. */
+
+.anim-cold-open-nav {
+  animation: coldOpenSettle var(--cold-open-dur) var(--ease-cinematic) var(--cold-open-nav) both;
+}
+.anim-cold-open-skybox {
+  animation: coldOpenDollyIn var(--cold-open-dur) var(--ease-cinematic) var(--cold-open-skybox) both;
+}
+.anim-cold-open-lead {
+  animation: coldOpenRackIn var(--cold-open-dur) var(--ease-cinematic) var(--cold-open-lead) both;
+}
+.anim-cold-open-feed {
+  animation: coldOpenFeedRise var(--cold-open-dur) var(--spring-gentle) var(--cold-open-feed) both;
+}
+
+/* ---- Golden Hour Utility Class ----------------------------------------- */
+
+.cin-golden-hour {
+  animation: cinGoldenHourPulse 700ms var(--ease-cinematic) both;
 }
 
 /* ---- Lean Filter -------------------------------------------------------- */
@@ -280,11 +337,43 @@
   }
 }
 
-/* Legacy fallback — hidden, replaced by inline SVG */
+/* ---- Tilt system motion (cinematographer) ----------------------------- */
+
+/* Unscored beam idle: instrument awaiting signal.
+   Slow opacity pulse (6s period) — "not reading" vs "reads zero."
+   Amplitude 0.3→0.5, matches resting respiration. */
+@keyframes beamUnscoredIdle {
+  0%, 100% { opacity: 0.3; }
+  50%      { opacity: 0.5; }
+}
+
+/* Tilt label ink stamp: editorial label arrives like a rubber press.
+   Micro-scale from 1.06 → 1.0 with spring settle. Delay synced to
+   beam spring primary oscillation (~400ms into 800ms settle). */
+@keyframes tiltLabelStamp {
+  from { opacity: 0; transform: scale(1.06) translateY(-1px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Lean dot activation pulse: practical light flare on filter chip select */
+@keyframes leanDotPulse {
+  0%   { transform: scale(1);   opacity: 0.7; }
+  35%  { transform: scale(1.6); opacity: 1; }
+  70%  { transform: scale(1.1); opacity: 1; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sigil--unscored .sigil__beam-group { animation: none !important; opacity: 0.35; }
+  .sigil__lean-label { animation: none !important; }
+  .nav-lens__lean--active .nav-lens__dot,
+  .mob-nav__lean--active .mob-nav__dot { animation: none !important; }
+}
+
+/* Divergence/consensus conveyed by InkUnderline on lean label — no box needed */
 .sigil--divergent::after,
 .sigil--consensus::after {
   content: none;
-  line-height: 1;
 }
 
 /* Sigil popup entrance — subtle scale + translate */
@@ -300,12 +389,12 @@
 }
 
 /* ---- Deep Dive: Drag indicator entrance (mobile bottom-sheet) ---------- */
-/* Width expands from 16px → 40px with a slight overshoot, then settles at 36px.
+/* GPU-safe: scaleX from narrow to overshoot to settle. Base width is 36px.
    Plays once, 300ms after the panel arrives. */
 @keyframes dragIndicatorReveal {
-  0%   { width: 16px; opacity: 0; }
-  60%  { width: 40px; opacity: 0.7; }
-  100% { width: 36px; opacity: 0.6; }
+  0%   { transform: scaleX(0.44); opacity: 0; }
+  60%  { transform: scaleX(1.11); opacity: 0.7; }
+  100% { transform: scaleX(1);    opacity: 0.6; }
 }
 
 /* ---- Deep Dive: Press Analysis arrow attention bounce ------------------ */
@@ -360,11 +449,284 @@
 /* ---- Feature 5b: Lean bar first-load pulse ----------------------------- */
 /* Single one-time warm amber glow to draw attention on first visit */
 
+/* Border-weight swell — printer pressing harder on that line.
+   Uses box-shadow spread instead of border-bottom-width to avoid
+   layout recalculation (GPU-only compositing). */
 @keyframes leanBarPulse {
-  0%   { box-shadow: none; }
-  30%  { box-shadow: 0 0 0 3px color-mix(in srgb, var(--sense-medium) 35%, transparent); }
-  60%  { box-shadow: 0 0 0 6px color-mix(in srgb, var(--sense-medium) 18%, transparent); }
-  100% { box-shadow: none; }
+  0%   { box-shadow: 0 1px 0 0 var(--cin-amber, var(--accent-warm)); }
+  30%  { box-shadow: 0 3px 0 0 var(--cin-amber, var(--accent-warm)); }
+  60%  { box-shadow: 0 2px 0 0 var(--cin-amber, var(--accent-warm)); }
+  100% { box-shadow: 0 1px 0 0 transparent; }
+}
+
+/* ---- Cinematic Keyframes ----------------------------------------------- */
+
+/* ══ SCENE 1: Cold Open ══
+   The film's opening shot. Each element arrives with purpose — not random
+   pop-ins but a choreographed establishing shot. The camera starts slightly
+   pulled back (Malick crane opening) and settles into the composition.
+
+   Stagger order:
+   1. Nav descends from above (crane down) — establishes the frame
+   2. Skybox dolly-in (scale 0.985->1) — the camera pushes into the content
+   3. Lead story racks into focus (blur 2px->0 + scale) — subject sharpens
+   4. Feed fades in with upward drift — content fills the frame
+
+   The cold open plays exactly once per page load. It is the viewer's first
+   impression — the equivalent of a film's opening frame. */
+
+@keyframes coldOpenSettle {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes coldOpenDollyIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes coldOpenRackIn {
+  from { opacity: 0; transform: scale(1.005); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes coldOpenFeedRise {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ── Film Grain Drift ──
+   Subtle sub-pixel translation that creates "living grain" — the slight
+   inter-frame registration error of a film print. 4 positions over 8s
+   = 0.5fps effective gate rate (matches 500T at native speed).
+   Drift stays under 0.5px to avoid conscious perception. */
+@keyframes cin-grain-drift {
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(0.3px, -0.4px); }
+  50%  { transform: translate(-0.35px, 0.25px); }
+  75%  { transform: translate(0.2px, 0.35px); }
+  100% { transform: translate(0, 0); }
+}
+
+/* ── Anamorphic Flare ── */
+@keyframes cin-flare-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ══ SCENE 6: Whip Pan (Edition Switch) ══
+   Directional momentum with motion blur — the camera whips to track
+   a moving subject. Content exits in the direction of the new edition,
+   enters from the opposite side.
+
+   The scaleX(1.01) at 30% simulates the horizontal stretch artifact
+   from a real whip pan (motion blur elongates horizontal elements).
+   The filter: blur(1.5px) during the fastest movement phase creates
+   true motion blur — everything is sharp at rest, blurred in transit.
+
+   Choreography:
+   1. Old content exits (whipPanOut): accelerate -> blur peak -> gone
+   2. New content enters (whipPanIn): arrive blurred -> decelerate -> sharp
+
+   The overlap is an L-cut: new content begins entering before old content
+   fully exits, creating the sensation of continuous camera movement
+   rather than cut-insert-cut. */
+
+@keyframes whipPanOut {
+  0%   { transform: translateX(0) scaleX(1); opacity: 1; }
+  35%  { transform: translateX(-4%) scaleX(1.008); opacity: 0.7; }
+  100% { transform: translateX(-10%) scaleX(1); opacity: 0; }
+}
+
+@keyframes whipPanIn {
+  0%   { transform: translateX(10%) scaleX(1); opacity: 0; }
+  35%  { transform: translateX(4%) scaleX(1.008); opacity: 0.3; }
+  100% { transform: translateX(0) scaleX(1); opacity: 1; }
+}
+
+/* Direction-aware: rightward exit (switching to an earlier edition) */
+@keyframes whipPanOutRight {
+  0%   { transform: translateX(0) scaleX(1); opacity: 1; }
+  35%  { transform: translateX(4%) scaleX(1.008); opacity: 0.7; }
+  100% { transform: translateX(10%) scaleX(1); opacity: 0; }
+}
+
+@keyframes whipPanInLeft {
+  0%   { transform: translateX(-10%) scaleX(1); opacity: 0; }
+  35%  { transform: translateX(-4%) scaleX(1.008); opacity: 0.3; }
+  100% { transform: translateX(0) scaleX(1); opacity: 1; }
+}
+
+/* ══ SCENE 8: Golden Hour Pulse — Theme Toggle Dissolve ══
+   When the theme toggles, there is a brief "golden hour" moment —
+   the warmth peak that occurs during the cross-dissolve between
+   day and night exposure. This mimics the brief warming of
+   a film negative during a lab dissolve — the two exposures overlap,
+   and the composite is momentarily warmer and more saturated than
+   either individual frame.
+
+   Bradford Young's "Arrival" uses this exact technique: the flash-forward
+   sequences shift through a warm golden intermediate before resolving
+   into the scene's actual color temperature.
+
+   Timing: warmth peaks at 40% (not 50%) — fast attack, slow release.
+   This asymmetry mirrors the photochemical reality of film dissolves. */
+@keyframes cinGoldenHourPulse {
+  0%   { filter: var(--cin-grade); }
+  40%  { filter: contrast(1.04) saturate(1.18) sepia(0.14) brightness(1.04); }
+  100% { filter: var(--cin-grade); }
+}
+
+/* ── Cold Open: Film grain entrance at 700ms ──
+   Grain fades in 700ms after page load, after the lead story has
+   racked into focus. This ensures the grain does not compete with
+   the establishing shot — it arrives as texture, not distraction. */
+@keyframes cinGrainEntrance {
+  from { opacity: 0; }
+  to { opacity: var(--cin-grain-opacity); }
+}
+
+/* ── Cold Open: Vignette entrance at 600ms ──
+   Vignette fades in slightly before the grain, framing the viewport
+   as the camera settles into its composition. */
+@keyframes cinVignetteEntrance {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ── Cold Open: Mobile vignette entrance (50% opacity) ──
+   On mobile, the vignette is halved to preserve readability on
+   smaller screens where the radial gradient covers more content area. */
+@keyframes cinVignetteEntranceMobile {
+  from { opacity: 0; }
+  to { opacity: 0.5; }
+}
+
+/* ddBreathe removed — 0.05% scale over 6s is imperceptible on any display.
+   GPU cost for zero visual effect. Deep Dive editorial grade + vignette
+   provides the reading surface distinction. */
+
+/* ══ SCENE 7: Practical Light — OnAir Breathing Pulse ══
+   When audio is playing, the OnAir indicator becomes a "practical light"
+   — a visible light source in the frame. Its glow pulses at human
+   respiratory rhythm (4s period, matching --cin-practical-pulse).
+
+   This is not decorative animation — it is motivated by the metaphor
+   of a broadcast being alive, breathing. The pulse communicates state
+   (playing vs paused) through peripheral vision — the user does not
+   need to look directly at the indicator to know audio is active.
+
+   The amber glow uses box-shadow (GPU-composited) rather than
+   background-color to avoid layout recalculation. */
+@keyframes practicalPulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.7; }
+}
+
+/* Practical light warmth radiation — applied to elements near the
+   audio player when it is active. Subtle warm tint that fades in
+   and breathes with the pulse cycle. */
+@keyframes practicalWarmth {
+  0%, 100% {
+    box-shadow: 0 0 0 0 transparent;
+  }
+  50% {
+    box-shadow: 0 0 var(--cin-practical-radius) var(--cin-practical-glow-near);
+  }
+}
+
+/* ── Dolly In on scroll — element approaches as user scrolls to it ── */
+@keyframes scrollDollyIn {
+  from {
+    transform: scale(0.98);
+    opacity: 0.8;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ── Dolly out — element recedes as it leaves focus ── */
+@keyframes scrollDollyOut {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.985);
+    opacity: 0.6;
+  }
+}
+
+/* ── Mobile Cold Open ──
+   Adapted for vertical single-column flow: hero→pill→cards.
+   Tighter delays, no blur/scale on hero (text content avoids repaint). */
+
+@keyframes mobileHeroEnter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes mobilePillSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* mobileNavRise removed — bottom nav appears instantly on mobile (persistent chrome) */
+
+/* ── Mobile Edition Switch: Vertical Dissolve ──
+   Replaces horizontal whip pan for bottom-nav gesture context. */
+
+@keyframes mobileEditionOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.99);
+  }
+}
+
+@keyframes mobileEditionIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ── Scroll Divider Reveal — section dividers wipe in on scroll ── */
+@keyframes scrollDividerReveal {
+  from { opacity: 0; transform: scaleX(0.3); }
+  to { opacity: 1; transform: scaleX(1); }
+}
+
+@supports (animation-timeline: view()) {
+  @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+    .feed-grid__section-divider {
+      animation: scrollDividerReveal auto linear;
+      animation-timeline: view();
+      animation-range: entry var(--scroll-divider-entry-start, 10%) entry var(--scroll-divider-entry-end, 60%);
+      transform-origin: left center;
+    }
+  }
 }
 
 /* ---- Reduced Motion ---------------------------------------------------- */
@@ -411,11 +773,17 @@
   .filter-chip,
   .nav-tab,
   .nav-tab::after,
-  .page-toggle,
+  .nav-page,
+  .nav-weekly,
   .theme-toggle,
   .theme-toggle__icon,
   .category-tag {
     transition: none !important;
+  }
+
+  /* Deep Dive breathing: suppress imperceptible scale pulse */
+  .deep-dive-panel[data-settled] .deep-dive-panel__content {
+    animation: none;
   }
 
   /* Suppress hover transforms — keep visual hover feedback via color only */
@@ -428,7 +796,7 @@
     transform: none;
   }
 
-  .page-toggle:hover {
+  .nav-page:hover {
     transform: none;
   }
 
@@ -436,16 +804,17 @@
     transform: none;
   }
 
-  /* Stagger entrance: skip transform, just fade in instantly */
+  /* Stagger entrance: skip animation entirely — static display */
   .anim-stagger {
-    opacity: 0;
+    animation: none !important;
+    opacity: 1;
     transform: none;
   }
 
   .anim-stagger--visible {
+    animation: none !important;
     opacity: 1;
     transform: none;
-    transition: opacity 0ms !important;
   }
 }
 
@@ -487,5 +856,502 @@
 @media (prefers-reduced-motion: reduce) {
   .pull-to-refresh__spinner--active {
     animation: none;
+  }
+}
+
+/* ==========================================================================
+   MOTION DIRECTOR — Scene Choreography
+   Sequencing cinematographer camera language into frame-precise timelines.
+   Walter Murch editing principle: the cut happens on the blink.
+   ==========================================================================
+
+   SCENE MAP — 8 scenes, each with entrance / hold / exit:
+
+   Scene 1: Cold Open (Page Load)
+     Frame    0ms: Skeleton freeze frame visible (no animation)
+     Frame   80ms: Nav settles from above (coldOpenSettle, 500ms ease-cinematic)
+                   [L-CUT] Nav is still mid-settle when skybox begins
+     Frame  200ms: Skybox dolly-in (coldOpenDollyIn, 500ms ease-cinematic)
+                   scale(0.985->1) — camera pushes into content
+     Frame  320ms: Lead story racks into focus (coldOpenRackIn, 500ms ease-cinematic)
+                   blur(2px->0) + scale(0.97->1) — subject sharpens from heat haze
+                   [L-CUT] Lead is still de-blurring when feed begins
+     Frame  480ms: Feed rises (coldOpenFeedRise, 500ms spring-gentle)
+                   translateY(16px->0) — content fills the frame
+                   Cards stagger via IntersectionObserver (IO triggers anim-stagger--visible)
+     Frame  700ms: Film grain fades in (cin-grain-drift, infinite)
+     Frame 1000ms: All animations settled. Scene complete.
+
+     L-cut overlap: each element starts ~120ms before the previous settles.
+     This creates continuous camera movement, not sequential pop-in.
+     The cold-open tokens (--cold-open-nav: 80ms through --cold-open-feed: 480ms)
+     encode this stagger in the design system.
+
+   Scene 2: Feed Scroll (Scrolling)
+     Scroll 0-200px: Background paper texture drifts at --parallax-bg (0.3x)
+                     Nav height contracts slightly (future scroll-timeline)
+     Scroll entry:   Cards entering viewport:
+                       1. Atmospheric haze (--cin-haze-far) already applied
+                       2. IO triggers anim-stagger--visible
+                       3. Haze clears (600ms ease-steadicam) — Steadicam approach
+                       4. Card translates + fades (400ms spring-gentle)
+     Scroll exit:    Cards above fold — no change (avoid layout thrashing)
+                     Cards way below — still hazy until scrolled to
+
+     IntersectionObserver config (sharedObserver.ts):
+       Single shared observer, rootMargin: 100px
+       One-shot (unobserve on first intersection)
+       ~50 elements pooled, not 50 separate observers
+
+   Scene 3: Card Hover — Rack Focus (Desktop)
+     Frame    0ms: Card begins dolly-in (translateY -2px, scale 1.005)
+                   Duration: --scene-dolly-in (320ms) at --spring-snappy
+     Frame   30ms: Shadow deepens + spreads (300ms ease-out, 30ms DELAY)
+                   Shadow lag = physical light physics
+     Frame    0ms: Card glow ::before fades in (200ms ease-out)
+     Frame    0ms: Neighboring cards soften:
+                     opacity -> --rack-dim-neighbor (0.62)
+                     filter -> --rack-blur-neighbor (blur 1.5px)
+                     transform -> --rack-recede-neighbor (scale 0.997)
+                     Duration: --rack-focus-dur (600ms) at --rack-focus-ease
+                   This is the full rack focus — slower than hover, mechanical
+     Frame  320ms: Card fully elevated, neighbors softened
+     Frame  600ms: Rack focus fully settled (depth of field established)
+
+     Exit is snappier by default — spring-snappy deceleration.
+     CSS :has() handles this zero-JS via GPU-composited properties.
+
+   Scene 4: Feed -> Deep Dive (Match Cut)
+     Frame    0ms: Capture card DOMRect (JS: getBoundingClientRect)
+     Frame    0ms: Backdrop fades in (300ms ease-out)
+                   backdrop-filter: blur(20px) saturate(0.65) brightness(0.72)
+     Frame    0ms: Panel snaps to card rect (FLIP: no transition)
+     Frame   ~16ms: Panel morphs to final rect:
+                     transform: 500ms spring-bouncy
+                     border-radius: 350ms spring-bouncy
+                     box-shadow: 400ms ease-out + 60ms DELAY (shadow lags matter)
+     Frame   80ms: [L-CUT] Feed begins defocusing (blur 0->ambient via backdrop)
+     Frame  180ms: [L-CUT] Content cascade begins WHILE morph is at 36%
+                   Section 1 (headline/summary): +0ms
+                   Section 2 (spectrum/analysis): +120ms (--dd-cascade-gap)
+                   Section 3 (sources/methodology): +240ms
+                   Each: translateY(16px->0) + scale(0.97->1), 500ms spring-gentle
+     Frame  500ms: Panel morph settled
+     Frame  550ms: Studio reflection ::before fades in (data-settled attribute)
+     Frame  700ms: All content visible. Scene complete.
+
+     Asymmetry: OPEN = 500ms bouncy (exploratory, dramatic)
+
+   Scene 5: Deep Dive -> Feed (Reverse Shot)
+     Frame    0ms: Content fades out (set contentVisible=false)
+     Frame  100ms: [J-CUT] Content exits 100ms before morph begins
+                   Panel reverse-morphs: 380ms spring-snappy (24% faster than open)
+                   opacity: 200ms ease-out + 150ms delay (fades as it recedes)
+                   box-shadow: collapses to none (150ms)
+     Frame   80ms: [L-CUT] Backdrop fades early — feed already sharp before
+                   panel reaches card position
+     Frame  400ms: Panel offscreen. DOM unmounts.
+
+     Asymmetry: CLOSE = 380ms snappy (decisive, editorial efficiency)
+     The viewer already absorbed the content; the close is a confident cut-back.
+
+   Scene 6: Edition Switch (Whip Pan)
+     Frame    0ms: Old content exits:
+                   whipPanOut or whipPanOutRight (direction-aware)
+                   350ms --ease-whip
+                   scaleX(1.012) at 35% = motion blur horizontal stretch
+                   blur(1.5px) at peak velocity
+     Frame  100ms: [L-CUT] New content begins entering before old fully exits
+                   whipPanIn or whipPanInLeft
+                   350ms --ease-whip
+     Frame  200ms: Cards stagger with compressed timing (10ms gap via log scale)
+     Frame  600ms: Scene settled in new edition.
+
+     Direction: World->US->India = rightward (positive translateX exit)
+                India->US->World = leftward (negative translateX exit)
+     data-whip="left" attribute on .page-container reverses direction.
+
+   Scene 7: Audio Playback (Practical Light)
+     Frame    0ms: OnAir button glow intensifies (cin-flare-in, 800ms ease-out)
+                   Anamorphic flare ::before appears — horizontal light streak
+     Frame    0ms: Rec pulse begins (infinite, --cin-practical-pulse: 4s)
+     Frame  800ms: [L-CUT] Skybox banner warms (background-color, 800ms ease-cinematic)
+                   :has(.skb__onair-pill--active) propagates warmth
+     Ambient:      practicalPulse on glow elements (4s breathing cycle)
+                   practicalWarmth box-shadow breathing
+
+     Pause: animation-play-state: paused on ambient loops
+            Glow reduces (300ms ease-out)
+            Warmth fades (800ms ease-cinematic reverse)
+
+   Scene 8: Theme Toggle (Golden Hour Dissolve)
+     Frame    0ms: .cin-golden-hour class applied to .page-main
+                   cinGoldenHourPulse fires (700ms ease-cinematic)
+                   Warmth peaks at 40% (fast attack, slow release = film dissolve)
+     Frame    0ms: All surfaces begin color transition:
+                   background-color: 500ms (paper = slow exposure shift)
+                   color: 400ms (ink adapts faster than paper)
+                   border-color: 450ms (structural lines follow paper)
+                   box-shadow: 500ms (shadow depth shifts with exposure)
+                   filter: 400ms (color grade post-processing)
+     Frame  280ms: Golden hour warmth peak (40% of 700ms)
+     Frame  500ms: Theme colors fully transitioned
+     Frame  700ms: Golden hour pulse complete. Scene settled.
+
+   ========================================================================== */
+
+/* ==========================================================================
+   SCROLL-DRIVEN ANIMATION — Progressive Enhancement
+
+   Strategy: CSS scroll-driven animations where supported (Chrome 115+,
+   Firefox 110+). Fallback: the existing IntersectionObserver system in
+   sharedObserver.ts already handles card entrance stagger.
+
+   Scroll-driven rules are additive enhancements — they layer parallax
+   depth and scroll-linked effects ON TOP of the IO-based system.
+   If @supports fails, the existing IO animations still fire.
+   ========================================================================== */
+
+/* ── Parallax Background Drift ──
+   The paper texture layer scrolls at 0.3x the viewport rate, creating
+   the Steadicam depth illusion. Content at 1x, texture recedes.
+   Only on desktop (mobile: parallax disabled for performance).
+
+   NOTE: This cannot target .page-container::before or ::after —
+   those are the vignette and film grain layers (position: fixed overlays).
+   Applying parallax transform to a fixed overlay would break its viewport
+   anchoring. Instead, parallax is applied to the .page-container background
+   via background-attachment/position on the element itself, which does not
+   interfere with fixed pseudo-elements.
+
+   If CSS scroll-driven parallax is desired in the future, a dedicated
+   .parallax-bg child element should be added to the DOM rather than
+   reusing the pseudo-elements. For now, the static paper texture on
+   .page-container's background provides the depth layer. */
+@keyframes scrollParallaxBg {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-20vh); }
+}
+
+/* ── Scroll Dolly — Cards approach as they enter viewport ──
+   Cards scale from 0.98 to 1 as they scroll into view,
+   simulating the camera dollying in to meet the content.
+   This layers on top of the IO-based fade-in. */
+@keyframes scrollCardDolly {
+  from {
+    transform: scale(var(--scroll-card-dolly-scale, 0.99)) translateY(var(--scroll-card-dolly-ty, 6px));
+    opacity: var(--scroll-card-dolly-opacity, 0.85);
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+    /* Exclude :hover — scroll-driven animation values override normal
+       declarations, which would suppress the rack focus dolly-in transform
+       (translateY + scale) on hovered cards. The :not(:hover) ensures the
+       scroll dolly applies only to cards at rest, yielding to the rack
+       focus system on hover. */
+    .story-card.anim-stagger--visible:not(:hover),
+    .lead-story:not(:hover) {
+      animation: scrollCardDolly linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 100%;
+    }
+  }
+}
+
+/* ── Scroll Skybox Recession ──
+   As the SkyboxBanner exits the viewport upward, it fades and recedes —
+   a set piece losing prominence as the camera tracks past it.
+   Malick, The New World: foreground elements gently lose prominence. */
+@keyframes scrollSkyboxRecede {
+  0%   { opacity: 1; transform: scale(1); }
+  100% { opacity: 0.7; transform: scale(0.995); }
+}
+
+@supports (animation-timeline: view()) {
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    .skb {
+      animation: scrollSkyboxRecede linear both;
+      animation-timeline: view();
+      animation-range: exit 0% exit 100%;
+    }
+  }
+}
+
+/* ── Scroll Vignette Intensification ──
+   As the user scrolls deeper into the feed, the vignette darkens slightly
+   creating a natural tunnel-vision focus on the content being read.
+
+   IMPORTANT: Targets .page-container::before (the VIGNETTE layer), not
+   ::after (the film grain layer). The grain layer has its own animation
+   (cin-grain-drift) and applying a second animation property via scroll-
+   timeline would overwrite it (CSS animation property is not additive).
+
+   Opacity ramps from 1 to 1.4 (capped — beyond 1.5 becomes perceptible
+   as a filter, violating the subliminal constraint). */
+@keyframes scrollVignetteDeepen {
+  from { opacity: 1; }
+  to   { opacity: 1.4; }
+}
+
+@supports (animation-timeline: scroll()) {
+  @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+    .page-container::before {
+      animation: scrollVignetteDeepen linear both;
+      animation-timeline: scroll();
+      animation-range: 0vh 200vh;
+    }
+  }
+}
+
+/* ==========================================================================
+   STAGGER CHOREOGRAPHY — The Rhythm Map
+
+   Stagger gaps create editorial rhythm. Different groups stagger at
+   different rates to create contrast between "fast-cut" action sequences
+   and "long-take" contemplation.
+
+   Feed cards:    40ms base * log2(index+2) = logarithmic deceleration
+                  First cards arrive fast, later cards ease in slower.
+                  This mimics a newspaper being unfolded — lead story
+                  visible immediately, below-fold stories revealed gradually.
+
+   Deep Dive:    120ms fixed gap (--dd-cascade-gap)
+                  Sequential focus pulls — each section is a new focal
+                  plane sharpening. The rhythm is mechanical (lens barrel
+                  rotation speed), not organic.
+
+   Filter change: 50ms base * log2(index+2) = snappy reshuffling
+                  Faster than initial load — the user expects responsiveness.
+                  The tighter gap creates a "quick cut" editing rhythm.
+
+   Edition switch: 10ms effective gap (compressed during whip pan)
+                  Near-simultaneous — the whip pan motion blur covers
+                  the stagger, so cards appear in rapid succession.
+
+   STAGGER CEILING: Maximum 20 staggered elements per cascade.
+   Beyond 20, elements arrive simultaneously (batch reveal).
+   This prevents the feed from feeling like a slot machine.
+   ========================================================================== */
+
+/* ── Edition switch compressed stagger ──
+   During whip pan, cards stagger at 10ms instead of 40ms.
+   Applied via anim-content-arrive on the section wrapper. */
+.anim-content-arrive .anim-filter-card {
+  --stagger-base: 10ms;
+}
+
+/* ==========================================================================
+   GESTURE PHYSICS — Touch-driven Interaction Curves
+
+   Deep Dive bottom sheet swipe-to-dismiss:
+     Touch start: Record Y position + scrollTop + timestamp
+     Touch move:  If scrollTop <= 5 AND deltaY > 0:
+                    offset = deltaY * 0.6 (rubber-band resistance curve)
+                    Panel translates with finger (no transition during drag)
+     Touch end:   Calculate velocity = offset / elapsed
+                    velocity > 0.5 px/ms OR offset > 120px: DISMISS
+                      -> Panel snaps to translateY(100vh), 280ms ease-out
+                      -> Backdrop opacity lerps to 0 with drag: Math.max(0, 1 - offset/400)
+                    else: RUBBER-BAND BACK
+                      -> Panel springs to translateY(0), implicit spring via transition
+
+   Horizontal swipe (story navigation in Deep Dive):
+     deltaX > 60px OR velocity > 0.3: Navigate prev/next
+     Cross-fade: opacity 0->1 over 150ms during story swap
+     Direction lock: first 10px of movement determines axis
+                     absX > absY * 1.2 = horizontal (navigate)
+                     else = vertical (dismiss)
+
+   Feed pull-to-refresh (mobile):
+     offset = deltaY * 0.4 (heavier resistance than Deep Dive)
+     PULL_THRESHOLD = 60px visual displacement
+     Release above threshold: haptic confirm + refresh
+     Release below: spring back with 300ms cubic-bezier(0.2,1,0.3,1)
+
+   All gesture physics use direct DOM style manipulation (no transition
+   during active drag). Transition only applied on release.
+   ========================================================================== */
+
+/* ==========================================================================
+   TEMPORAL RHYTHM — The Editing Language
+
+   Meaningful pauses (beats):
+     Between cold open stages: 120ms (the L-cut overlap creates anticipation)
+     Between Deep Dive sections: 120ms (focus pull rhythm)
+     Between edition switch exit/enter: ~100ms overlap (whip pan continuity)
+     Theme toggle golden hour peak: 280ms into 700ms (40% = fast attack)
+
+   Fast-cut sequences (action):
+     Filter change card reshuffling: 50ms * log2 gaps
+     Edition switch compressed stagger: 10ms effective
+     Deep Dive close: 380ms total (decisive)
+     Card press: 60ms compression (instant tactile)
+
+   Long-take contemplation (hold):
+     Rack focus settle: 600ms (lens barrel speed)
+     Cold open total: 1000ms (establishing shot patience)
+     Deep Dive open: 700ms to full settle (exploratory)
+     Practical light breathing: 4000ms cycle (human respiratory)
+
+   The rhythm alternates: action sequences are followed by contemplative
+   holds. The Deep Dive open (700ms) is followed by the content cascade
+   (sustained reveal). The edition switch whip pan (350ms action) is
+   followed by feed scroll (sustained long take). This creates the
+   cinematic breathing pattern that distinguishes void --news from
+   a standard web application.
+   ========================================================================== */
+
+/* ── Deep Dive feed defocus ──
+   Canonical definition lives in desktop-feed.css (loaded later in cascade).
+   Removed duplicate declaration here to avoid conflicting timing/easing values.
+   See desktop-feed.css .page-main--deep-dive-open for the active rule. */
+
+/* ── Backdrop Rack Focus ──
+   The Deep Dive backdrop-filter ramps from no blur to full blur (rack-in)
+   simulating the depth of field deepening as the camera acquires focus on
+   the subject (the Deep Dive panel). On close, the blur clears (rack-out)
+   — the feed "refocuses" — and the viewer sees the world sharpening.
+   Lubezki, The Revenant — progressive depth-of-field shift. */
+@keyframes backdropRackIn {
+  from {
+    backdrop-filter: blur(0px) saturate(1) brightness(1);
+    -webkit-backdrop-filter: blur(0px) saturate(1) brightness(1);
+  }
+  to {
+    backdrop-filter: var(--cin-backdrop-blur);
+    -webkit-backdrop-filter: var(--cin-backdrop-blur);
+  }
+}
+
+@keyframes backdropRackOut {
+  from {
+    backdrop-filter: var(--cin-backdrop-blur);
+    -webkit-backdrop-filter: var(--cin-backdrop-blur);
+  }
+  to {
+    backdrop-filter: blur(0px) saturate(1) brightness(1);
+    -webkit-backdrop-filter: blur(0px) saturate(1) brightness(1);
+  }
+}
+
+/* ── Whip Pan Motion Blur ──
+   During edition switch, the feed receives a blur pulse that simulates
+   motion blur from a real whip pan. The blur holds at 3px during the
+   fastest movement phase (30-70%) and resolves at both ends. */
+@keyframes whipPanBlurPulse {
+  0%   { filter: blur(0); }
+  30%  { filter: blur(2px); }
+  70%  { filter: blur(2px); }
+  100% { filter: blur(0); }
+}
+
+/* ── Scroll direction lens breathing ──
+   When scroll direction reverses, content micro-pulses scale
+   to simulate a camera refocusing. Applied via JS class toggle. */
+@keyframes lensBreathing {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.003); }
+  100% { transform: scale(1); }
+}
+
+.anim-lens-breathe {
+  animation: lensBreathing 600ms var(--ease-cinematic) both;
+}
+
+/* ── Section boundary divider ──
+   When crossing importance tiers (lead->medium->compact), a subtle
+   horizontal rule fades in as a scene divider. */
+.anim-scene-divider {
+  opacity: 0;
+  transition: opacity 400ms var(--ease-cinematic);
+}
+
+.anim-scene-divider--visible {
+  opacity: 1;
+}
+
+/* ── Deep Dive backdrop drag-linked opacity ──
+   During swipe-to-dismiss, the backdrop opacity is directly
+   proportional to the drag offset: Math.max(0, 1 - dragOffset/400).
+   This creates a physical connection between gesture and visual
+   response — the harder you pull, the more the world behind clears.
+   Handled in DeepDive.tsx via inline style during isDragging. */
+
+/* ── Mobile touch feedback ──
+   Immediate scale compression on touch, spring bounce-back on release.
+   More aggressive than desktop hover — mobile interaction is binary
+   (touching or not), desktop is analog (approaching or not). */
+@media (hover: none) and (prefers-reduced-motion: no-preference) {
+  .story-card:active,
+  .mf-card:active {
+    transform: scale(0.985);
+    opacity: 0.92;
+    transition: transform 80ms var(--spring-snappy), opacity 80ms var(--ease-cinematic);
+  }
+}
+
+/* ── Cinematic Reduced Motion Overrides --------------------------------
+   All MOTION is suppressed; color/texture effects remain.
+   Grain: static (no drift), opacity unchanged (it is texture, not motion)
+   Vignette: static (no scroll-driven deepening), opacity unchanged
+   Color grade: instant swap (0ms transition), filter values unchanged
+   Haze: transition disabled (cards appear at final state immediately) */
+
+@media (prefers-reduced-motion: reduce) {
+  /* Film grain: static texture, no drift animation.
+     Explicit opacity required — base rule relies on cinGrainEntrance fill-mode
+     to set final opacity. Without it, grain would render at opacity: 1. */
+  .page-container::after {
+    animation: none;
+    opacity: var(--cin-grain-opacity);
+  }
+  /* Vignette: static (no scroll-driven deepening), visible immediately */
+  .page-container::before {
+    animation: none;
+    opacity: 1;
+  }
+  /* Color grade filter lives on .page-main and .nav-header — instant swap */
+  .page-main,
+  .nav-header {
+    transition: filter 0ms;
+  }
+  .skb__onair-pill--active::before {
+    animation: none;
+    opacity: 1;
+  }
+  .anim-cold-open-nav,
+  .anim-cold-open-lead,
+  .anim-cold-open-skybox,
+  .anim-cold-open-feed {
+    animation: none;
+    opacity: 1;
+  }
+  .skb__onair-pill--active {
+    animation: none;
+  }
+  /* Scroll-driven animations + Deep Dive defocus: all disabled */
+  .page-main--deep-dive-open,
+  .page-main--deep-dive-closing {
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+  /* Backdrop rack animations: instant state, no ramp */
+  .deep-dive-backdrop,
+  .deep-dive-backdrop--closing {
+    animation: none;
+  }
+  .anim-lens-breathe {
+    animation: none;
+  }
+  .anim-scene-divider {
+    opacity: 1;
+    transition: none;
   }
 }

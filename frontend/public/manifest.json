@@ -1,13 +1,52 @@
 {
   "name": "void --news",
   "short_name": "void--news",
-  "description": "Free news aggregation with per-article bias analysis across 200 curated sources.",
+  "description": "Free per-article bias analysis across 1,013 sources. Six axes. No paywall. No algorithm.",
+  "id": "/void--news/",
   "start_url": "/void--news/",
+  "scope": "/void--news/",
   "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone"],
   "orientation": "portrait",
   "background_color": "#1C1A17",
   "theme_color": "#1C1A17",
   "categories": ["news", "education"],
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "shortcuts": [
+    {
+      "name": "World Edition",
+      "short_name": "World",
+      "url": "/void--news/",
+      "icons": [{ "src": "/void--news/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "US Edition",
+      "short_name": "US",
+      "url": "/void--news/us/",
+      "icons": [{ "src": "/void--news/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Europe Edition",
+      "short_name": "Europe",
+      "url": "/void--news/europe/",
+      "icons": [{ "src": "/void--news/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "South Asia Edition",
+      "short_name": "S. Asia",
+      "url": "/void--news/south-asia/",
+      "icons": [{ "src": "/void--news/icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "share_target": {
+    "action": "/void--news/",
+    "method": "GET",
+    "params": {
+      "url": "shared_url"
+    }
+  },
   "icons": [
     {
       "src": "/void--news/icon.svg",

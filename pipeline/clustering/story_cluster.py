@@ -9,6 +9,7 @@ Uses rule-based NLP (no LLM API calls):
     - Cosine similarity via sklearn
     - Agglomerative clustering with distance threshold (0.3)
     - Entity-overlap merge pass (Phase 2) to consolidate evolving-story fragments
+    - Title-similarity merge pass (Phase 3) to catch near-duplicate split clusters
     - Cluster title generation from most common named entities (spaCy NER)
 """
 
@@ -281,7 +282,9 @@ def _determine_section(articles: list[dict], cluster_title: str = "",
         return "world"
 
     top_section = sections.most_common(1)[0][0]
-    # Map to standard sections
+    # Pass through standard edition names directly
+    if top_section in ("europe", "south-asia"):
+        return top_section
     if any(kw in top_section for kw in ("us", "domestic", "nation", "national", "america")):
         return "us"
     return "world"
@@ -294,10 +297,33 @@ _OVERLY_COMMON_ENTITIES = frozenset({
     "us", "u.s.", "united states", "america", "american",
     "trump", "donald trump", "president trump",
     "biden", "joe biden", "president biden",
-    "china", "russia", "iran", "israel",
-    "congress", "senate", "pentagon", "white house",
+    "china", "russia",
+    "congress", "senate", "white house",
     "the united states", "the us", "washington",
     "republicans", "democrats", "gop",
+    # v5.6: Added to prevent false merges at lower entity threshold (3→2).
+    # These GPEs/ORGs appear across many unrelated stories.
+    "new york", "california", "texas", "florida",
+    "london", "paris", "beijing", "moscow",
+    "european union", "eu", "united nations",
+    # v5.7: Geopolitical hotspots that act as transitive merge bridges
+    # between unrelated stories (e.g., Iran links BJP politics to
+    # Australian athletics to US diplomacy via ceasefire/israel chains).
+    "iran", "iranian", "iran's",
+    "israel", "israeli", "israel's",
+    "india", "indian", "india's",
+    "pakistan", "pakistani", "pakistan's",
+    "ceasefire", "cease-fire",
+    "gaza", "west bank", "palestine", "palestinian",
+    "hezbollah", "hamas",
+    "modi", "narendra modi",
+    "nato", "pentagon",
+    "australia", "australian",
+    "germany", "german",
+    "france", "french",
+    "japan", "japanese",
+    "south korea", "north korea",
+    "middle east",
 })
 
 
@@ -332,8 +358,9 @@ def _extract_cluster_entities(articles: list[dict]) -> set[str]:
 
 def merge_related_clusters(
     clusters: list[dict],
-    min_shared_entities: int = 3,
+    min_shared_entities: int = 2,
     max_age_spread_hours: float = 48.0,
+    max_cluster_articles: int = 30,
 ) -> list[dict]:
     """
     Post-clustering merge pass: consolidate micro-clusters that belong to the
@@ -358,11 +385,17 @@ def merge_related_clusters(
         min_shared_entities: How many entities two clusters must share to
             trigger a merge (default 2 — requires two matching actors/places,
             preventing false merges on single common words like "Trump").
+            v5.6: Lowered from 3 to 2 to catch cases like duplicate Supreme
+            Court conversion therapy clusters ("supreme court" + "colorado").
+            _OVERLY_COMMON_ENTITIES filter expanded to prevent false merges.
         max_age_spread_hours: Maximum time between the earliest articles of
             two clusters for them to be eligible for merging. Prevents
             cross-month merges (e.g., "Iran nuclear deal 2015" with
-            "Iran-Israel war 2026"). Default 72h covers evolving stories
+            "Iran-Israel war 2026"). Default 48h covers evolving stories
             that span 2-3 pipeline runs.
+        max_cluster_articles: Maximum articles in a merged cluster. Prevents
+            runaway transitive merges where Union-Find chains unrelated
+            sub-events (e.g., 224-article Iran mega-cluster). Default 50.
 
     Returns:
         Reduced list of cluster dicts with merged source counts and article
@@ -388,9 +421,10 @@ def merge_related_clusters(
         _extract_cluster_entities(c.get("articles", [])) for c in clusters
     ]
 
-    # Union-Find for transitive merge closure
+    # Union-Find for transitive merge closure with size tracking
     n = len(clusters)
     parent = list(range(n))
+    group_size = [len(c.get("articles", [])) for c in clusters]
 
     def find(x: int) -> int:
         while parent[x] != x:
@@ -402,6 +436,7 @@ def merge_related_clusters(
         ra, rb = find(a), find(b)
         if ra != rb:
             parent[ra] = rb
+            group_size[rb] += group_size[ra]
 
     timestamps = [_parse_first_pub(c) for c in clusters]
 
@@ -420,6 +455,21 @@ def merge_related_clusters(
                 spread_hours = abs((ti - tj).total_seconds()) / 3600.0
                 if spread_hours > max_age_spread_hours:
                     continue
+
+            # Size gate: prevent runaway mega-clusters from transitive merges.
+            # Relaxed for high-source cluster pairs (both 10+ sources) — these
+            # are major stories that SHOULD merge (e.g., Iran F-15 fragments).
+            combined_size = group_size[find(i)] + group_size[find(j)]
+            src_i = len(set(a.get("source_id", "") for a in clusters[i].get("articles", [])))
+            src_j = len(set(a.get("source_id", "") for a in clusters[j].get("articles", [])))
+            if src_i >= 10 and src_j >= 10:
+                size_cap = 50
+            elif src_i >= 5 and src_j >= 5:
+                size_cap = 35
+            else:
+                size_cap = max_cluster_articles
+            if combined_size > size_cap:
+                continue
 
             union(i, j)
 
@@ -486,6 +536,165 @@ def merge_related_clusters(
     return merged_clusters
 
 
+# --- Stopwords for title Jaccard comparison ---
+_TITLE_STOPWORDS = frozenset({
+    "a", "an", "the", "and", "or", "but", "in", "on", "at", "to", "for",
+    "of", "with", "by", "from", "is", "are", "was", "were", "be", "been",
+    "has", "have", "had", "its", "it", "as", "after", "over", "up", "that",
+    "this", "not", "no", "says", "said", "new", "amid", "more", "than",
+    "about", "how", "what", "why", "who", "when", "where", "which",
+    "will", "would", "could", "should", "may", "might", "can",
+    "reports", "report", "sources", "according", "also", "first",
+    "two", "one", "three", "us", "announces", "amid", "while",
+})
+
+
+def _title_words(title: str) -> set[str]:
+    """Extract lowercased content words from a title, stripping punctuation."""
+    words = re.findall(r"[a-z0-9](?:[a-z0-9'-]*[a-z0-9])?", title.lower())
+    return {w for w in words if w not in _TITLE_STOPWORDS and len(w) >= 2}
+
+
+def merge_duplicate_title_clusters(
+    clusters: list[dict],
+    jaccard_threshold: float = 0.45,
+    max_merged_articles: int = 100,
+) -> list[dict]:
+    """
+    Final merge pass: consolidate clusters with near-identical headlines.
+
+    Catches the oversized-split problem where a 76-article story about one
+    event (e.g., "US Fighter Jet Shot Down Over Iran") gets split by the
+    50-article cap into 2-3 sub-clusters with nearly identical titles that
+    the entity merge can't re-merge (due to entity blacklist + size cap).
+
+    Title Jaccard similarity is a much stronger same-story signal than entity
+    overlap — if two clusters have ≥55% title-word overlap, they are almost
+    certainly the same story.
+
+    Args:
+        clusters: List of cluster dicts.
+        jaccard_threshold: Minimum Jaccard similarity of title word-sets
+            to trigger a merge (default 0.55).
+        max_merged_articles: Maximum articles in a merged cluster. Higher
+            than the entity merge cap (50) because title-match is a
+            stronger signal — these are definitively the same story.
+    """
+    if len(clusters) <= 1:
+        return clusters
+
+    n = len(clusters)
+    title_words = [_title_words(c.get("title", "")) for c in clusters]
+
+    # Union-Find
+    parent = list(range(n))
+    group_size = [len(c.get("articles", [])) for c in clusters]
+
+    def find(x: int) -> int:
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    def union(a: int, b: int) -> None:
+        ra, rb = find(a), find(b)
+        if ra != rb:
+            parent[ra] = rb
+            group_size[rb] += group_size[ra]
+
+    for i in range(n):
+        if not title_words[i]:
+            continue
+        for j in range(i + 1, n):
+            if find(i) == find(j):
+                continue
+            if not title_words[j]:
+                continue
+
+            intersection = len(title_words[i] & title_words[j])
+            union_size = len(title_words[i] | title_words[j])
+            if union_size == 0:
+                continue
+            jaccard = intersection / union_size
+
+            # Relaxed threshold for high-source cluster pairs: both 10+ sources
+            # are almost certainly sub-events of the same mega-story.
+            # "Iran Air Defense System" + "US F-15 Shot Down Over Iran" share
+            # only "iran" in title words (Jaccard ~0.15) but are the same story.
+            src_i = clusters[i].get("source_count", 0)
+            src_j = clusters[j].get("source_count", 0)
+            # Relaxed for quality pairs: both 5+ sources are likely sub-events
+            # of the same story. 10+ src pairs get even more relaxed threshold.
+            if src_i >= 10 and src_j >= 10:
+                effective_threshold = 0.40
+            elif src_i >= 5 and src_j >= 5:
+                effective_threshold = 0.42
+            else:
+                effective_threshold = jaccard_threshold
+
+            if jaccard < effective_threshold:
+                continue
+
+            # Size gate
+            if group_size[find(i)] + group_size[find(j)] > max_merged_articles:
+                continue
+
+            union(i, j)
+
+    # Group and merge (same pattern as merge_related_clusters)
+    groups: dict[int, list[int]] = {}
+    for i in range(n):
+        groups.setdefault(find(i), []).append(i)
+
+    merged = []
+    for root, members in groups.items():
+        if len(members) == 1:
+            merged.append(clusters[root])
+            continue
+
+        all_articles: list[dict] = []
+        all_article_ids: list[str] = []
+        all_source_ids: set[str] = set()
+        all_pub_dates: list[str] = []
+
+        for idx in members:
+            c = clusters[idx]
+            all_articles.extend(c.get("articles", []))
+            all_article_ids.extend(c.get("article_ids", []))
+            all_source_ids.update(c.get("source_ids", []))
+            fp = c.get("first_published", "")
+            if fp:
+                all_pub_dates.append(fp)
+
+        anchor = max(members, key=lambda idx: clusters[idx].get("source_count", 0))
+        anchor_cluster = clusters[anchor]
+        first_published = min(all_pub_dates) if all_pub_dates else ""
+
+        merged_title = _generate_cluster_title(all_articles)
+        merged_summary = _generate_cluster_summary(all_articles)
+        merged_section = _determine_section(
+            all_articles, merged_title, merged_summary
+        )
+
+        merged.append({
+            "title": merged_title,
+            "summary": merged_summary,
+            "article_ids": all_article_ids,
+            "source_ids": list(all_source_ids),
+            "source_count": len(all_source_ids),
+            "section": merged_section,
+            "first_published": first_published,
+            "articles": all_articles,
+            **{
+                k: v for k, v in anchor_cluster.items()
+                if k not in ("title", "summary", "article_ids", "source_ids",
+                             "source_count", "section", "first_published", "articles")
+            },
+        })
+
+    return merged
+
+
 def cluster_stories(
     articles: list[dict],
     similarity_threshold: float = 0.2,
@@ -540,10 +749,31 @@ def cluster_stories(
     # Build TF-IDF vectors
     documents = [_build_document(a) for a in articles]
 
-    # Filter out empty documents
+    # Partition into vectorizable vs. empty-document articles.
+    # Empty-document articles (both title and full_text blank/whitespace) cannot
+    # be TF-IDF vectorized, but dropping them silently turns them into DB
+    # orphans (no cluster_articles row, never reach the frontend feed).
+    # Instead, emit each empty-document article as a singleton cluster so it
+    # still flows downstream.
     valid_indices = [i for i, d in enumerate(documents) if d.strip()]
+    empty_indices = [i for i, d in enumerate(documents) if not d.strip()]
+
+    empty_singletons: list[dict] = []
+    for i in empty_indices:
+        a = articles[i]
+        empty_singletons.append({
+            "title": a.get("title") or "Developing Story",
+            "summary": a.get("summary", "") or (a.get("full_text", "") or "")[:500],
+            "article_ids": [a.get("id", "")],
+            "source_ids": [a.get("source_id", "")] if a.get("source_id") else [],
+            "source_count": 1 if a.get("source_id") else 0,
+            "section": _determine_section([a]),
+            "first_published": a.get("published_at", "") or "",
+            "articles": [a],
+        })
+
     if not valid_indices:
-        return []
+        return empty_singletons
 
     valid_docs = [documents[i] for i in valid_indices]
     valid_articles = [articles[i] for i in valid_indices]
@@ -559,7 +789,7 @@ def cluster_stories(
             "section": _determine_section([article]),
             "first_published": article.get("published_at", ""),
             "articles": [article],
-        }]
+        }] + empty_singletons
 
     # TF-IDF vectorization
     vectorizer = TfidfVectorizer(
@@ -622,10 +852,103 @@ def cluster_stories(
             "articles": cluster_articles,
         })
 
+    # Cluster purity check: eject articles that don't belong.
+    # If an article's max similarity to any other article in the cluster
+    # is below 0.08, it was merged by shared stopwords or source proximity,
+    # not content. Eject it into a singleton cluster.
+    purified: list[dict] = []
+    ejected_articles: list[dict] = []
+    for c in clusters:
+        arts = c.get("articles", [])
+        if len(arts) <= 5:
+            purified.append(c)
+            continue
+        # Re-vectorize this cluster's articles
+        docs = [_build_document(a) for a in arts]
+        try:
+            vec = TfidfVectorizer(max_features=3000, stop_words="english", min_df=1, max_df=0.95)
+            mat = vec.fit_transform(docs)
+            sims = cosine_similarity(mat)
+            keep_idx = []
+            eject_idx = []
+            for i in range(len(arts)):
+                # Max similarity to any OTHER article in the cluster
+                row = sims[i].copy()
+                row[i] = 0.0  # exclude self
+                max_sim = row.max()
+                if max_sim < 0.08:
+                    eject_idx.append(i)
+                else:
+                    keep_idx.append(i)
+            if eject_idx and keep_idx:
+                # Rebuild the cluster without outliers
+                kept = [arts[i] for i in keep_idx]
+                c["articles"] = kept
+                c["article_ids"] = [a.get("id", "") for a in kept]
+                c["source_ids"] = list({a.get("source_id", "") for a in kept})
+                c["source_count"] = len(c["source_ids"])
+                ejected_articles.extend(arts[i] for i in eject_idx)
+            purified.append(c)
+        except Exception:
+            purified.append(c)  # on any error, keep the original
+    clusters = purified
+    # Ejected articles become singleton clusters (they'll be filtered out
+    # by the 2+ source requirement downstream, or form their own micro-clusters).
+    for a in ejected_articles:
+        clusters.append({
+            "title": a.get("title") or "Developing Story",
+            "summary": a.get("summary", ""),
+            "article_ids": [a.get("id", "")],
+            "source_ids": [a.get("source_id", "")],
+            "source_count": 1,
+            "section": _determine_section([a]),
+            "first_published": a.get("published_at", ""),
+            "articles": [a],
+        })
+
+    # Split oversized clusters: re-cluster with a tighter threshold.
+    # Prevents 100+ article mega-clusters from TF-IDF over-merging on
+    # shared political vocabulary (e.g., "Trump", "war", "Iran").
+    MAX_CLUSTER_SIZE = 80
+    split_clusters: list[dict] = []
+    for c in clusters:
+        if len(c.get("articles", [])) > MAX_CLUSTER_SIZE:
+            sub = cluster_stories(
+                c["articles"],
+                similarity_threshold=similarity_threshold * 0.6,
+                run_merge_pass=False,
+            )
+            split_clusters.extend(sub)
+        else:
+            split_clusters.append(c)
+    clusters = split_clusters
+
     # Phase 2: entity-overlap merge pass
     # Consolidates micro-clusters that represent sub-events of the same
     # ongoing story (e.g., 20 Iran-war fragments → 3-5 mega-clusters).
     if run_merge_pass and len(clusters) > 1:
         clusters = merge_related_clusters(clusters)
+
+    # Phase 3: title-similarity merge pass
+    # Catches near-duplicate clusters that survived the 50-article split and
+    # entity merge (e.g., 3 clusters all titled "US Fighter Jet Shot Down
+    # Over Iran" with 25/30/21 sources each). Title Jaccard is a stronger
+    # same-story signal than entity overlap, so it uses a higher size cap.
+    if run_merge_pass and len(clusters) > 1:
+        clusters = merge_duplicate_title_clusters(clusters)
+
+    # Final pass: recount source_count from actual articles.
+    # Merges can leave stale counts when source_ids lists are concatenated
+    # but not deduped, or when articles are ejected by the purity check.
+    for c in clusters:
+        actual_sources = {a.get("source_id", "") for a in c.get("articles", []) if a.get("source_id")}
+        c["source_ids"] = list(actual_sources)
+        c["source_count"] = len(actual_sources)
+
+    # Append empty-document singletons so they flow downstream and reach the
+    # frontend feed rather than becoming silent DB orphans. They bypass the
+    # merge passes (no document to compare against) and are appended here.
+    if empty_singletons:
+        clusters.extend(empty_singletons)
 
     return clusters
