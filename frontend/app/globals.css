@@ -20,10 +20,14 @@
 @import url("./styles/floating-player.css");
 @import url("./styles/mobile-nav.css");
 @import url("./styles/responsive.css");
-/* spectrum.css → moved to /sources/page.tsx (only consumer)
-   verify.css → moved to DeepDive.tsx (lazy-loads with Deep Dive chunk)
-   Removes ~3,690 lines (~250KB raw / ~50KB gzipped) from the homepage
-   bundle — neither stylesheet is used on the feed grid cards. */
+/* spectrum.css → imported by /sources/page.tsx AND
+                  components/DeepDiveSpectrum.tsx (Deep Dive routes).
+                  Stays out of globals.css so it doesn't ship on the
+                  homepage feed bundle.
+   verify.css   → imported by components/DeepDive.tsx (lazy-loads with
+                  Deep Dive chunk).
+   Together these keep ~3,690 lines (~250KB raw / ~50KB gzipped) off the
+   homepage feed bundle while ensuring every consumer route loads them. */
 
 /* --------------------------------------------------------------------------
    CSS Reset — Minimal, opinionated
