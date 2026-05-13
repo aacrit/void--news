@@ -58,6 +58,41 @@ function tierLabel(tier: string): string {
   return "Independent";
 }
 
+/* ── Hover fan-out clustering ─────────────────────────────────────────────
+   Groups source pins whose x-coordinates are within `threshold` SVG units
+   of each other, so a hover-expand can fan overlapping circles into a
+   readable arc and each one can be clicked through to its article. */
+function clusterPinsByX<T extends { x: number }>(pins: T[], threshold = 8): T[][] {
+  if (pins.length === 0) return [];
+  const sorted = pins
+    .map((p, i) => ({ p, i }))
+    .sort((a, b) => a.p.x - b.p.x);
+  const groups: T[][] = [[sorted[0].p]];
+  for (let k = 1; k < sorted.length; k++) {
+    const last = groups[groups.length - 1];
+    if (sorted[k].p.x - last[last.length - 1].x <= threshold) {
+      last.push(sorted[k].p);
+    } else {
+      groups.push([sorted[k].p]);
+    }
+  }
+  return groups;
+}
+
+/* Pre-compute each pin's hover-translate offset so we can drive the fan-out
+   purely with a CSS transition (no React state per hover). Pins are
+   distributed along a 140° upward arc centered above their cluster. */
+function fanOffsets(count: number, radius = 22): { dx: number; dy: number }[] {
+  if (count <= 1) return [{ dx: 0, dy: 0 }];
+  const span = Math.PI * 0.78; // ~140°
+  const start = -Math.PI / 2 - span / 2;
+  return Array.from({ length: count }, (_, i) => {
+    const t = i / (count - 1);
+    const angle = start + t * span;
+    return { dx: Math.cos(angle) * radius, dy: Math.sin(angle) * radius };
+  });
+}
+
 function computeTrustScore(source: DeepDiveSpectrumSource): number {
   const tierScore = source.tier === "us_major" ? 60 : source.tier === "international" ? 50 : 40;
   const rigor = source.factualRigor ?? 50;
@@ -606,25 +641,64 @@ function SpectrumView({ sources, isMobile = false }: { sources: DeepDiveSpectrum
             )}
           </defs>
 
-          {/* Dot strip — ≤3 sources: honest dots, no KDE curve */}
+          {/* Dot strip — ≤3 sources: honest dots, no KDE curve.
+              Clustered so overlapping circles fan out + become clickable on hover. */}
           {isFlat && (
             <>
               <line
                 x1="10" y1={svgH - 8} x2={W - 10} y2={svgH - 8}
                 stroke="url(#sv-lean-stroke-grad)" strokeWidth="0.75" opacity="0.4"
               />
-              {sources.map((s, i) => (
-                <circle
-                  key={`dot-${i}`}
-                  cx={(s.politicalLean / 100) * W}
-                  cy={svgH - 8}
-                  r="5"
-                  fill="none"
-                  strokeWidth="1.5"
-                  className="dd-sv-view__dot"
-                  data-lean={leanToBucket(s.politicalLean)}
-                />
-              ))}
+              {clusterPinsByX(
+                sources.map((s) => ({
+                  source: s,
+                  x: (s.politicalLean / 100) * W,
+                  y: svgH - 8,
+                  leanBucket: leanToBucket(s.politicalLean),
+                })),
+                10
+              ).map((cluster, ci) => {
+                const offsets = fanOffsets(cluster.length, 18);
+                const overlap = cluster.length > 1;
+                return (
+                  <g
+                    key={`flat-cluster-${ci}`}
+                    className={`dd-sv-view__cluster${overlap ? " dd-sv-view__cluster--overlap" : ""}`}
+                  >
+                    {cluster.map((pin, i) => (
+                      <g
+                        key={`flat-pin-${ci}-${i}`}
+                        className="dd-sv-view__pin"
+                        style={{
+                          ["--fan-dx" as string]: `${offsets[i].dx}px`,
+                          ["--fan-dy" as string]: `${offsets[i].dy}px`,
+                          transformBox: "fill-box",
+                          transformOrigin: "center",
+                        }}
+                      >
+                        <a
+                          href={pin.source.articleUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="dd-sv-view__pin-anchor"
+                          aria-label={`${pin.source.name} — open article`}
+                        >
+                          <circle
+                            cx={pin.x}
+                            cy={pin.y}
+                            r="5"
+                            fill="none"
+                            strokeWidth="1.5"
+                            className="dd-sv-view__dot"
+                            data-lean={pin.leanBucket}
+                          />
+                          <title>{pin.source.name}</title>
+                        </a>
+                      </g>
+                    ))}
+                  </g>
+                );
+              })}
             </>
           )}
 
@@ -666,19 +740,51 @@ function SpectrumView({ sources, isMobile = false }: { sources: DeepDiveSpectrum
             />
           )}
 
-          {/* Source dots overlay — n=4-7 only */}
-          {isLow && densities && sourcePins.map((pin, i) => (
-            <circle
-              key={`src-dot-${i}`}
-              cx={pin.x}
-              cy={pin.y}
-              r="2.5"
-              fill="none"
-              strokeWidth="1.5"
-              className="dd-sv-view__src-dot"
-              data-lean={pin.leanBucket}
-            />
-          ))}
+          {/* Source dots overlay — n=4-7 only.
+              Clustered + fan-out on hover so overlapping pins become readable
+              and each one resolves to its article on click. */}
+          {isLow && densities && clusterPinsByX(sourcePins, 8).map((cluster, ci) => {
+            const offsets = fanOffsets(cluster.length, 22);
+            const overlap = cluster.length > 1;
+            return (
+              <g
+                key={`pin-cluster-${ci}`}
+                className={`dd-sv-view__cluster${overlap ? " dd-sv-view__cluster--overlap" : ""}`}
+              >
+                {cluster.map((pin, i) => (
+                  <g
+                    key={`pin-${ci}-${i}`}
+                    className="dd-sv-view__pin"
+                    style={{
+                      ["--fan-dx" as string]: `${offsets[i].dx}px`,
+                      ["--fan-dy" as string]: `${offsets[i].dy}px`,
+                      transformBox: "fill-box",
+                      transformOrigin: "center",
+                    }}
+                  >
+                    <a
+                      href={pin.source.articleUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="dd-sv-view__pin-anchor"
+                      aria-label={`${pin.source.name} — open article`}
+                    >
+                      <circle
+                        cx={pin.x}
+                        cy={pin.y}
+                        r="2.5"
+                        fill="none"
+                        strokeWidth="1.5"
+                        className="dd-sv-view__src-dot"
+                        data-lean={pin.leanBucket}
+                      />
+                      <title>{pin.source.name}</title>
+                    </a>
+                  </g>
+                ))}
+              </g>
+            );
+          })}
 
           {/* Beat 4 (400ms): Amber plumb line — weighted mean */}
           {!isFlat && (
@@ -734,20 +840,9 @@ function SpectrumView({ sources, isMobile = false }: { sources: DeepDiveSpectrum
         </svg>
       </div>
 
-      {/* 4-state coverage banner — consensus is silent (no banner) */}
-      {coverage !== "consensus" && (
-        <div
-          className={`dd-sv-view__banner dd-sv-view__banner--${coverage}`}
-          aria-live="polite"
-        >
-          <span className="dd-sv-view__banner-icon" aria-hidden="true">
-            {coverage === "split" ? "◈" : coverage === "divergent" ? "◐" : "◑"}
-          </span>
-          {coverage === "split"    && "Left-right split — sources diverge"}
-          {coverage === "divergent" && "Wide spectrum — no consensus"}
-          {coverage === "leaning"  && `Leaning ${mean < 50 ? "left" : "right"}`}
-        </div>
-      )}
+      {/* Coverage banner removed per CEO 2026-05-13 — the visualization itself
+          already shows whether coverage is split / divergent / leaning; the
+          redundant text label was visually misplaced and added no signal. */}
     </div>
   );
 }
