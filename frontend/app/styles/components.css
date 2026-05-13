@@ -164,6 +164,17 @@
 .sigil--lg  { gap: 10px; }
 .sigil--xl  { gap: 14px; }
 
+/* Tap-area extension on touch devices — keeps small-sigil visual size compact
+   but extends the actionable region to WCAG 2.5.5 minimum 44x44 via padding +
+   negative margin so neighboring layout doesn't shift. */
+@media (hover: none) and (pointer: coarse) {
+  .sigil--sm {
+    min-width: 44px;
+    padding: 4px 6px;
+    margin: -4px -6px;
+  }
+}
+
 /* Sigil tilt label — tilt vocabulary for story-level lean.
    Stamp entrance: beam settles → label appears (L-cut timing). */
 .sigil__lean-label {
@@ -2074,9 +2085,19 @@
   padding: var(--space-1) var(--space-3);
   border-bottom: 2px solid transparent;
   white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
   transition:
     color 200ms var(--ease-cinematic),
     border-color 250ms var(--ease-cinematic);
+}
+
+/* Touch-device tap-target promotion — iPad-class devices use this same nav. */
+@media (hover: none) and (pointer: coarse) {
+  .nav-lens__content-link,
+  .nav-lens__trigger {
+    min-height: 44px;
+  }
 }
 
 .nav-lens__content-link:hover {
@@ -2371,7 +2392,10 @@
 .nav-logo {
   display: flex;
   align-items: center;
+  justify-content: center;
   flex-shrink: 0;
+  min-width: 44px;
+  min-height: 44px;
 }
 
 /* Hidden by default, shown on mobile via responsive.css */
@@ -7473,6 +7497,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   .mob-nav__lean {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 4px;
     font-family: var(--font-data);
     font-size: var(--text-xs);
@@ -7482,8 +7507,9 @@ a.footer-products__item:hover { color: var(--accent-warm); }
     color: var(--fg-tertiary);
     background: none;
     border: none;
-    padding: var(--space-2) var(--space-1);
+    padding: var(--space-2) var(--space-2);
     min-height: 44px;
+    min-width: 44px;  /* WCAG 2.5.5 — pills are narrow text ("left"/"right") so width was <44 */
     cursor: pointer;
     transition: color 120ms var(--ease-rack);
   }
@@ -8293,5 +8319,22 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   .dd-lens-index {
     padding: var(--space-1) var(--space-3);
     margin: 0 calc(-1 * var(--space-3));
+  }
+}
+
+/* ==========================================================================
+   Touch-device tap-target promotion (WCAG 2.5.5)
+   Applied at the bottom to win cascade order over earlier base rules that
+   set min-height: 32px on these surfaces. Scoped to coarse pointers so the
+   desktop hover-density layout is unaffected.
+   ========================================================================== */
+@media (hover: none) and (pointer: coarse) {
+  .nav-lens__trigger,
+  .nav-lens__lean,
+  .nav-lens__lean--left,
+  .nav-lens__lean--balanced,
+  .nav-lens__lean--right {
+    min-height: 44px;
+    min-width: 44px;
   }
 }
