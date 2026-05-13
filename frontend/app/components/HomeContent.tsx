@@ -918,8 +918,12 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               </div>
             )}
 
-            {/* Inline filter bar — mobile only, feed-only, bracket notation */}
-            {!isLoading && stories.length > 0 && isMobile && (
+            {/* Inline filter bar — mobile only. UAT 2026-05-13 P0-8: was
+                previously gated on `!isLoading && stories.length > 0`, so it
+                disappeared during initial load / empty states. Render as
+                soon as we know we're on mobile; the filter still makes sense
+                even with zero stories (it's an empty-state navigation cue). */}
+            {isMobile && (
               <MobileBottomNav
                 activeLean={activeLean}
                 onLeanChange={(lean) => { setActiveLean(lean); }}

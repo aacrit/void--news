@@ -103,17 +103,34 @@ export default function MobileStoryCard({
               />
             </div>
           )}
-          <h2 className="msc__headline msc__headline--hero">
-            <span>{story.title}</span>
-            <div
-              className="msc__sigil-wrapper"
-              onPointerDown={handleSigilPointerDown}
-              onPointerUp={handleSigilPointerUp}
-              onPointerLeave={handleSigilPointerUp}
-            >
-              <Sigil data={story.sigilData} size="xl" instant />
-            </div>
-          </h2>
+          {/* Hero headline is page <h1> when this card is rank 0 (the
+              feed's top story on mobile). Falls back to <h2> for any other
+              "hero" usage. UAT 2026-05-13 P0-5 — zero-<h1> page outline. */}
+          {globalIndex === 0 ? (
+            <h1 className="msc__headline msc__headline--hero">
+              <span>{story.title}</span>
+              <div
+                className="msc__sigil-wrapper"
+                onPointerDown={handleSigilPointerDown}
+                onPointerUp={handleSigilPointerUp}
+                onPointerLeave={handleSigilPointerUp}
+              >
+                <Sigil data={story.sigilData} size="xl" instant />
+              </div>
+            </h1>
+          ) : (
+            <h2 className="msc__headline msc__headline--hero">
+              <span>{story.title}</span>
+              <div
+                className="msc__sigil-wrapper"
+                onPointerDown={handleSigilPointerDown}
+                onPointerUp={handleSigilPointerUp}
+                onPointerLeave={handleSigilPointerUp}
+              >
+                <Sigil data={story.sigilData} size="xl" instant />
+              </div>
+            </h2>
+          )}
           {story.summary?.trim() && <p className="msc__summary">{story.summary}</p>}
           {!story.summary?.trim() && (
             <p className="msc__summary msc__summary--pending">

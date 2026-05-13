@@ -37,11 +37,14 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, i
   const useSplit = rank === 0 && showImage;
 
   // Reusable text content block — same JSX in split mode and stacked mode.
+  // Headline is <h1> for rank 0 (page's primary headline — accessibility/SEO),
+  // <h2> otherwise. Avoids the zero-<h1> page outline flagged by UAT 2026-05-13.
+  const HeadingTag: "h1" | "h2" = rank === 0 ? "h1" : "h2";
   const textContent = (
     <div data-slot="text" className={useSplit ? "lead-split__text" : undefined}>
       {rank === 0 && <span className="lead-story__badge">Top Story</span>}
 
-      <h2 className={useSplit ? "lead-headline" : "lead-story__headline"}>
+      <HeadingTag className={useSplit ? "lead-headline" : "lead-story__headline"}>
         <span className={useSplit ? undefined : "lead-story__headline-text"}>{story.title}</span>
         <Sigil data={story.sigilData} size="xl" storyId={story.id} />
         <CaretRight
@@ -50,7 +53,7 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, i
           aria-hidden="true"
           className="story-card__headline-icon"
         />
-      </h2>
+      </HeadingTag>
 
       {story.summary?.trim() && (
         <p className={useSplit ? "lead-summary" : "lead-story__summary"}>{story.summary}</p>

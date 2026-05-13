@@ -245,11 +245,17 @@ export default function UndertowGame() {
     return assignedSlot === correctSlot ? "correct" : "wrong";
   }, [phase, confidencePick, assignmentMap, challenge.correct_order]);
 
-  // Format date
-  const dateStr = new Date(challenge.date + "T00:00:00").toLocaleDateString(
-    "en-US",
-    { month: "long", day: "numeric", year: "numeric" }
-  );
+  // Format date — gated on `mounted` so server and first-client renders
+  // produce identical output. toLocaleDateString varies by environment locale
+  // (Node SSR vs browser), which trips React #418 (hydration mismatch) in
+  // production minified builds. UAT 2026-05-13 P0-9.
+  const dateStr = mounted
+    ? new Date(challenge.date + "T00:00:00").toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      })
+    : " ";
 
   const attemptsRemaining = MAX_ATTEMPTS - attempt + 1;
 

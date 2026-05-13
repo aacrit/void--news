@@ -1250,13 +1250,33 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
               the three primary axes (lean / rigor / opinion) immediately under
               the headline, without claiming the sigil+spectrum's full block. */}
           {story.sigilData && !story.sigilData.pending && (
-            <BiasSnapshot
-              data={story.sigilData}
-              sourceCount={sources.length > 0 ? sources.length : story.source.count}
-              variant="inline"
-            />
+            <div id="dd-panel-press">
+              <BiasSnapshot
+                data={story.sigilData}
+                sourceCount={sources.length > 0 ? sources.length : story.source.count}
+                variant="inline"
+              />
+            </div>
           )}
         </header>
+
+        {/* ---- Six Lenses index — sticky in-panel navigation for the six
+             Deep Dive sections. UAT 2026-05-13 P1-9: progressive disclosure
+             needed a visible index so readers can see (and jump to) the six
+             lenses even when they are collapsed. Anchor links target the
+             matching `<section id="dd-panel-*">` further down. Each section
+             also keeps its own <h3> heading so screen-readers can navigate
+             by level-2 outline. */}
+        <nav className="dd-lens-index" aria-label="Deep Dive sections">
+          <ol className="dd-lens-index__list">
+            <li><a href="#dd-panel-story" className="dd-lens-index__link">Story</a></li>
+            <li><a href="#dd-panel-spectrum" className="dd-lens-index__link">Spectrum</a></li>
+            <li><a href="#dd-panel-press" className="dd-lens-index__link">Press</a></li>
+            <li><a href="#dd-panel-perspectives" className="dd-lens-index__link">Sources</a></li>
+            <li><a href="#dd-panel-claims" className="dd-lens-index__link">Claims</a></li>
+            <li><a href="#dd-panel-reasoning" className="dd-lens-index__link">Reasoning</a></li>
+          </ol>
+        </nav>
 
         {/* ---- Content (fades in after panel, fades out faster on close) ---- */}
         <div
@@ -1306,6 +1326,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           {/* ---- Sigil (stacked: icon above, lean+underline below) + full-width Spectrum ---- */}
           {(story.sigilData || spectrumSources.length > 0) && (
             <div
+              id="dd-panel-spectrum"
               className={`dd-analysis-block anim-dd-section dd-cascade-1${contentVisible ? " anim-dd-section--visible" : ""}`}
               style={{ marginBottom: "var(--space-6)" }}
             >
@@ -1325,7 +1346,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           <hr className="ink-rule" style={{ margin: "0 0 var(--space-4) 0" }} aria-hidden="true" />
 
           {/* ---- Summary ---- */}
-          <section className={`anim-dd-section dd-cascade-2${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)" }}>
+          <section id="dd-panel-story" className={`anim-dd-section dd-cascade-2${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)" }}>
             <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-2)" }}>The Story</h3>
             <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}${!summaryOverflows && !summaryExpanded ? " dd-collapsible--fits" : ""}`}>
               <div className="dd-collapsible__inner" ref={summaryInnerRef}>
@@ -1342,6 +1363,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           {/* ---- Claim Consensus — cross-source verification (lazy-rendered) ---- */}
           {deepDive?.claimConsensus && (
             <section
+              id="dd-panel-claims"
               className={`anim-dd-section dd-cascade-3${contentVisible ? " anim-dd-section--visible" : ""}`}
               style={{ marginBottom: "var(--space-5)" }}
               aria-label="Claim Consensus verification"
@@ -1381,6 +1403,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           {/* ---- Six Lenses — ink stamp bias scores (collapsed by default, lazy-rendered) ---- */}
           {analysisExpanded && story.sigilData && !story.sigilData.pending && (
             <section
+              id="dd-panel-reasoning"
               className={`anim-dd-section dd-cascade-4${contentVisible ? " anim-dd-section--visible" : ""}`}
               style={{ marginBottom: "var(--space-4)" }}
               aria-label="Six Lenses bias analysis"

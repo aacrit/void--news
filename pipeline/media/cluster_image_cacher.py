@@ -152,8 +152,13 @@ def _upload(client, cluster_id: str, data: bytes, content_type: str) -> str | No
                 client.storage.from_(_BUCKET).remove([f"{cluster_id}.{stale_ext}"])
             except Exception:
                 pass
-        client.storage.from_(_BUCKET).upload(path, data, {"content-type": content_type})
-        return f"{supabase_url}/storage/v1/object/public/{_BUCKET}/{path}"
+        upload_resp = client.storage.from_(_BUCKET).upload(path, data, {"content-type": content_type})
+        public_url = f"{supabase_url}/storage/v1/object/public/{_BUCKET}/{path}"
+        # UAT 2026-05-13: cached_image_url was 0% populated. Log the upload
+        # result + final public URL so we can audit which step is silently
+        # returning success without writing the URL.
+        print(f"  [img-cache] upload OK {cluster_id[:8]} → {path} ({len(data)} bytes, resp={type(upload_resp).__name__})")
+        return public_url
     except Exception as e:
         print(f"  [img-cache] upload failed {cluster_id[:8]}: {e}")
         return None
@@ -284,10 +289,18 @@ def cache_cluster_images(
 
         # Persist to DB
         try:
-            supabase_client.table("story_clusters").update({
+            update_resp = supabase_client.table("story_clusters").update({
                 "cached_image_url": public_url,
                 "cached_image_attribution": attribution,
             }).eq("id", cluster_id).execute()
+            # UAT 2026-05-13: log returned row count so we catch the case where
+            # the update SQL runs but silently matches zero rows (e.g., the
+            # in-memory cluster_id doesn't exist in story_clusters yet).
+            row_count = len(update_resp.data) if (update_resp and update_resp.data) else 0
+            if row_count == 0:
+                print(f"  [img-cache] DB update {cluster_id[:8]}: ZERO ROWS MATCHED (cluster not yet persisted?)")
+            else:
+                print(f"  [img-cache] DB update {cluster_id[:8]}: {row_count} row(s) → cached_image_url set")
         except Exception as e:
             print(f"  [img-cache] DB update failed {cluster_id[:8]}: {e}")
             continue

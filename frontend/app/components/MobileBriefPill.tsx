@@ -69,8 +69,10 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
   const hasAudio = !!brief.audio_url;
 
   const tldrSentences = String(brief.tldr_text).split(/(?<=[.!?])\s+/).filter(Boolean);
-  const tldrPreview = tldrSentences.slice(0, 2).join(" ");
-  const tldrRest = tldrSentences.slice(2).join(" ");
+  // UAT 2026-05-13 P1-11: show 3 sentences instead of 2 so the TL;DR
+  // delivers a full thought before the "read more" hand-off.
+  const tldrPreview = tldrSentences.slice(0, 3).join(" ");
+  const tldrRest = tldrSentences.slice(3).join(" ");
   const tldrHasMore = tldrRest.length > 0;
 
   const handleOnairClick = () => {

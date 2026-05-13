@@ -128,22 +128,25 @@ export default function RootLayout({
         {/* Fonts loaded via next/font/google above — no additional font loads needed.
             Chomsky, IM Fell English, Old Standard TT, and Lora were removed:
             none are referenced in CSS. Saves 4 network requests. */}
-        {/* CSP: restrict script/connect/style/font/img sources.
-            Note: frame-ancestors is ignored when delivered via <meta>
-            (CSP3 only honors it as a response header) — kept here for
-            documentation and for environments that proxy the directive
-            into a header. 'unsafe-inline' on script-src covers the inline
-            theme bootstrap below (lines ~155-169); upgrade to a sha256
-            hash if/when the inline body is frozen. connect-src includes
-            *.supabase.co — confirmed against frontend/app/lib/supabase.ts
-            (NEXT_PUBLIC_SUPABASE_URL is the *.supabase.co project URL,
-            no custom domain). cdn.jsdelivr.net intentionally NOT listed:
-            no scripts in this codebase load from jsdelivr. */}
+        {/* CSP — UAT 2026-05-13 P1-2/P1-3:
+            • frame-ancestors removed from <meta> (CSP3 ignores it via meta —
+              must be sent as a response header). It now lives in
+              `frontend/public/_headers` as `Content-Security-Policy:
+              frame-ancestors 'none'`, which Cloudflare Pages honors.
+            • connect-src now includes `wss://*.supabase.co` so Supabase
+              Realtime websockets (used by /ship board) are not blocked.
+            • 'unsafe-inline' on script-src covers the inline theme bootstrap
+              below; upgrade to a sha256 hash if/when the inline body is frozen.
+            • X-Frame-Options retained as a belt-and-suspenders click-jacking
+              guard while CSP frame-ancestors propagates via headers.
+            No backend exists; the meta-CSP is the GH Pages fallback. CF Pages
+            also gets the header from _headers (accumulates). */}
         <meta
           httpEquiv="Content-Security-Policy"
-          content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; font-src 'self' data:; connect-src 'self' https://*.supabase.co; media-src 'self' https://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self';"
+          content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; media-src 'self' https://*.supabase.co; base-uri 'self'; form-action 'self';"
         />
         <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
+        <meta httpEquiv="X-Frame-Options" content="DENY" />
         <meta httpEquiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
         {/* PWA: iOS standalone mode + Android install support */}
         <meta name="apple-mobile-web-app-capable" content="yes" />

@@ -35,9 +35,77 @@ _MIN_INTERVAL: float = 1.0
 _MAX_CALLS_PER_RUN: int = 80
 _call_count: int = 0
 
-_persistent_failure: bool = False
+# Three-strike consecutive-failure counter. A single billing blip or transient
+# 500 must NOT kill Claude for the entire run (P0 from UAT 2026-05-13 — one
+# transient billing error caused only 1/65 calls to reach Claude). Hard-latch
+# only on signals that are definitely terminal: credit/balance/billing/auth.
+_consecutive_failures: int = 0
+_MAX_CONSECUTIVE_FAILURES: int = 3
+_persistent_failure: bool = False           # set when 3 in a row, OR billing dead
+_billing_dead: bool = False                 # latches immediately on credit/auth
 
 _client: object = None
+
+
+def _record_failure(error_str: str, run_id: str | None = None) -> None:
+    """Record a Claude failure. Latches _billing_dead immediately on terminal
+    signals; otherwise increments a 3-strike consecutive counter."""
+    global _consecutive_failures, _persistent_failure, _billing_dead
+    err_l = error_str.lower()
+    terminal = any(k in err_l for k in (
+        "credit", "balance", "billing",
+        "invalid_api_key", "invalid api key",
+        "authentication", "unauthorized",
+    ))
+    if terminal:
+        _billing_dead = True
+        _persistent_failure = True
+        print(f"  [error] Claude TERMINAL failure (billing/auth) — disabling for this run: {error_str}")
+        _report_failure_to_run("claude_billing_dead", error_str, run_id)
+        return
+
+    _consecutive_failures += 1
+    print(f"  [warn] Claude failure {_consecutive_failures}/{_MAX_CONSECUTIVE_FAILURES}: {error_str}")
+    if _consecutive_failures >= _MAX_CONSECUTIVE_FAILURES:
+        _persistent_failure = True
+        print(f"  [error] Claude tripped {_MAX_CONSECUTIVE_FAILURES}-strike consecutive-failure latch — disabling for this run")
+        _report_failure_to_run("claude_3strike_latch", error_str, run_id)
+
+
+def _record_success() -> None:
+    """Reset consecutive-failure counter on any successful Claude call."""
+    global _consecutive_failures
+    if _consecutive_failures > 0:
+        _consecutive_failures = 0
+
+
+def _report_failure_to_run(code: str, detail: str, run_id: str | None) -> None:
+    """Best-effort push of a Claude failure marker into pipeline_runs.errors.
+    Silent on failure — we never let observability code break the pipeline."""
+    try:
+        from utils.supabase_client import supabase
+        # run_id may be None — fall back to most recent running row
+        if not run_id:
+            r = supabase.table("pipeline_runs").select("id,errors").eq(
+                "status", "running"
+            ).order("started_at", desc=True).limit(1).execute()
+            if not (r.data and len(r.data) > 0):
+                return
+            run_id = r.data[0]["id"]
+            existing = r.data[0].get("errors") or []
+        else:
+            r = supabase.table("pipeline_runs").select("errors").eq("id", run_id).execute()
+            existing = (r.data[0].get("errors") or []) if (r.data and len(r.data) > 0) else []
+        from datetime import datetime, timezone
+        existing.append({
+            "source": "claude_client",
+            "code": code,
+            "error": detail[:500],
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        })
+        supabase.table("pipeline_runs").update({"errors": existing}).eq("id", run_id).execute()
+    except Exception:
+        pass
 
 
 def _get_client():
@@ -143,14 +211,18 @@ def generate_json(
                 text = text.strip()
 
             try:
-                return json.loads(text)
+                parsed = json.loads(text)
+                _record_success()
+                return parsed
             except json.JSONDecodeError:
                 pass
 
             brace_start = text.find("{")
             brace_end = text.rfind("}")
             if brace_start >= 0 and brace_end > brace_start:
-                return json.loads(text[brace_start:brace_end + 1])
+                parsed = json.loads(text[brace_start:brace_end + 1])
+                _record_success()
+                return parsed
 
             snippet = (text[:200] + "...") if len(text) > 200 else text
             print(f"  [warn] Claude JSON parse failed (attempt {attempt + 1}): "
@@ -165,18 +237,25 @@ def generate_json(
                 continue
             return None
         except Exception as e:
-            error_str = str(e).lower()
-            if "credit" in error_str or "balance" in error_str or "billing" in error_str:
-                _persistent_failure = True
-                print(f"  [error] Claude persistent billing failure — disabling for this run: {e}")
+            error_str_lower = str(e).lower()
+            # Terminal signals: latch immediately
+            if any(k in error_str_lower for k in (
+                "credit", "balance", "billing",
+                "invalid_api_key", "invalid api key",
+                "authentication", "unauthorized",
+            )):
+                _record_failure(str(e))
                 return None
-            if "429" in error_str or "rate" in error_str:
+            if "429" in error_str_lower or "rate" in error_str_lower:
                 print(f"  [warn] Claude rate limit (attempt {attempt + 1}): {e}")
                 if attempt < max_retries:
                     time.sleep(15)
                     continue
+                # Exhausted retries on rate-limit -- count as a strike
+                _record_failure(str(e))
             else:
-                print(f"  [warn] Claude API error (attempt {attempt + 1}): {e}")
+                # Generic transient error — count as a strike (3 in a row latches)
+                _record_failure(str(e))
             return None
 
     return None

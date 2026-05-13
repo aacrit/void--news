@@ -323,7 +323,9 @@ function CoverHero({
         </div>
       )}
       <div className="wk-cover-hero__content">
-        <h2 className="wk-cover-hero__headline">{headline}</h2>
+        {/* Cover hero is the page's primary headline — <h1> for SR + SEO.
+            UAT 2026-05-13 P0-5: /weekly had no <h1>. */}
+        <h1 className="wk-cover-hero__headline">{headline}</h1>
         <div className="wk-cover-hero__rule" aria-hidden="true">
           <svg viewBox="0 0 80 4" preserveAspectRatio="none">
             <path
@@ -361,7 +363,7 @@ function CoverBody({
       {stories.slice(0, 2).map((story, si) => (
         <div key={si} className="wk-cover-body wk-cold-open--body">
           {si > 0 && <InkRule className="wk-ink-rule--strong" />}
-          {si > 0 && <h3 className="wk-cover-body__subhead">{story.headline}</h3>}
+          {si > 0 && story.headline?.trim() && <h3 className="wk-cover-body__subhead">{story.headline}</h3>}
           <div className="wk-cover-body__text">
             {(story.text || "").split("\n\n").filter(Boolean).map((para, j) => (
               <p key={`${si}-${j}`}>{para}</p>
@@ -470,7 +472,7 @@ function OpinionCard({ op }: { op: WeeklyOpinion }) {
           <span className="wk-opinion__topic">{op.topic}</span>
         )}
       </div>
-      <h3 className="wk-opinion__headline">{op.headline}</h3>
+      {op.headline?.trim() && <h3 className="wk-opinion__headline">{op.headline}</h3>}
       <div className="wk-opinion__text">
         {(op.text || "").split("\n\n").filter(Boolean).map((para, j) => (
           <p key={j}>{para}</p>
@@ -529,7 +531,7 @@ function BriefList({ stories }: { stories: WeeklyRecapStory[] }) {
       <div className="wk-brief__list">
         {stories.map((story, i) => (
           <article key={i} className="wk-brief__item">
-            <h3 className="wk-brief__headline">{story.headline}</h3>
+            {story.headline?.trim() && <h3 className="wk-brief__headline">{story.headline}</h3>}
             <p className="wk-brief__summary">{story.summary}</p>
           </article>
         ))}
@@ -564,7 +566,7 @@ function ContestedSection({ stories }: { stories: WeeklyContestedStory[] }) {
           <article key={story.id} className="wk-contested__item">
             <span className="wk-contested__mark" aria-hidden="true">&#x26A1;</span>
             <div className="wk-contested__body">
-              <h3 className="wk-contested__headline">{story.title}</h3>
+              {story.title?.trim() && <h3 className="wk-contested__headline">{story.title}</h3>}
               <p className="wk-contested__stat">
                 Sources agreed: {story.claim_consensus.corroborated}/{story.claim_consensus.total_claims}
                 {" "}({Math.round(story.claim_consensus.consensus_ratio * 100)}%)

@@ -74,6 +74,18 @@ def _build_document(article: dict) -> str:
     500 words (up from 200) gives TF-IDF a richer vocabulary, capturing
     supporting context — actor names, locations, policy references — that
     bridges sub-event articles belonging to the same evolving story.
+
+    NOTE (UAT 2026-05-13, P1-9 stub-words):
+    Roughly 47% of fetched articles have word_count < 100 because RSS feeds
+    publish stub bodies without a full-text scrape fallback. trafilatura was
+    NOT added to requirements.txt in this fix (would have been the cleanest
+    remediation), so these short articles still enter clustering. They do NOT
+    distort the TF-IDF math (low-content rows simply contribute little signal
+    via their title), but they DO inflate single-source cluster counts. If a
+    future fix wires trafilatura into the fetchers, this comment can be
+    removed. Until then: short articles are tolerated, not filtered. The
+    word_count column is already populated by `_compute_word_count()` so any
+    downstream filter only needs `article.get('word_count', 0) >= 100`.
     """
     title = article.get("title", "") or ""
     full_text = article.get("full_text", "") or ""

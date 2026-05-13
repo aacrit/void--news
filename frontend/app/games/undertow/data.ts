@@ -70,8 +70,10 @@ export const AXIS_IMAGES: Record<string, { url: string; credit: string }> = {
     credit: "Hasan Almasi",
   },
   DEFAULT: {
-    url: "https://images.unsplash.com/photo-f01ZbhYCBuQ?w=1920&q=80&auto=format&fit=crop",
-    credit: "Alexander X.",
+    // Replaced 2026-05-13: previous Unsplash ID returned 404 in prod (UAT P1-5).
+    // Falls back to the BOSS image — neutral dark architecture works for any axis.
+    url: "https://images.unsplash.com/photo-AHlWf9ICfIc?w=1920&q=80&auto=format&fit=crop",
+    credit: "Willian Justen de Vasconcellos",
   },
 };
 

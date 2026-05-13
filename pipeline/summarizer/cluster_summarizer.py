@@ -332,6 +332,29 @@ else:
 _MIN_SOURCES = 3
 
 
+# Show-don't-tell violations: phrases that ASSERT significance rather than
+# letting concrete facts demonstrate it.  See CLAUDE.md Cardinal Rule.
+# Compiled once at module load.  Re-used in summarize_cluster retry path.
+import re as _re
+_SHOW_DONT_TELL_PATTERN = _re.compile(
+    r"\b(notable|notably|significant(ly)?|crucial(ly)?|interesting(ly)?|"
+    r"it should be noted|it is worth noting|worth noting|"
+    r"importantly|remarkably|strikingly)\b",
+    _re.IGNORECASE,
+)
+
+
+def _detect_show_dont_tell_violations(result: dict) -> list[str]:
+    """Return list of violation phrases found across headline/summary/consensus/divergence."""
+    text = " ".join([
+        result.get("headline", "") or "",
+        result.get("summary", "") or "",
+        *(result.get("consensus") or []),
+        *(result.get("divergence") or []),
+    ])
+    return list({m.group(0).lower() for m in _SHOW_DONT_TELL_PATTERN.finditer(text)})
+
+
 def _check_quality(result: dict, cluster_id: str | int = "") -> None:
     """
     Log quality warnings for out-of-spec generated content.
@@ -628,6 +651,39 @@ def summarize_cluster(articles: list[dict],
 
     if not result:
         return None
+
+    # Show-don't-tell post-check: assertions of significance ("notable",
+    # "significantly", "crucially", etc.) violate the Cardinal Rule (see
+    # CLAUDE.md).  One retry with a stricter system reminder; on second
+    # failure log and keep the result so the pipeline doesn't stall.
+    violations = _detect_show_dont_tell_violations(result)
+    if violations:
+        stricter = (
+            (_SYSTEM_INSTRUCTION or "")
+            + "\n\nFORBIDDEN WORDS (Cardinal Rule — show, don't tell): "
+            + "do NOT use any form of notable, notably, significant, significantly, "
+            + "crucial, crucially, interesting, interestingly, importantly, remarkably, "
+            + "strikingly, 'it should be noted', 'it is worth noting', 'worth noting'.  "
+            + "If a fact matters, present the specific number/name/date — let the reader "
+            + "draw the conclusion."
+        )
+        retry = generate_json(prompt, system_instruction=stricter)
+        if retry:
+            retry_violations = _detect_show_dont_tell_violations(retry)
+            if not retry_violations:
+                result = retry
+            else:
+                # Keep retry (often better) but log persistent violation.
+                print(
+                    f"  [show-dont-tell] persistent violations after retry: "
+                    f"{retry_violations}"
+                )
+                result = retry
+        else:
+            print(
+                f"  [show-dont-tell] retry failed; keeping original with violations: "
+                f"{violations}"
+            )
 
     # Validate response shape
     headline = result.get("headline", "")

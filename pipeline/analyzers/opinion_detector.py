@@ -533,9 +533,22 @@ def _value_judgment_score(text: str) -> float:
 OPINION_TIER_BASELINES: dict[str, float] = {
     "us_major": 15.0,
     "international": 18.0,
-    "independent": 22.0,
+    "independent": 28.0,  # was 22; lifted because independents skew opinion/advocacy
 }
 _OPINION_DEFAULT_BASELINE = 18.0
+
+# Source-type baselines (applied as MAX with tier baseline).  Magazines and
+# investigative/independent types publish predominantly analysis or commentary —
+# their floor should sit in Analysis territory (~35-45) so that short stubs and
+# even moderate-length pieces register above the Reporting threshold without
+# a URL/section marker.
+OPINION_SOURCE_TYPE_BASELINES: dict[str, float] = {
+    "magazine": 38.0,       # The Atlantic, Mother Jones, Jacobin, The Economist
+    "tabloid": 32.0,        # Daily Mail, NY Post — heavy framing, light attribution
+    "independent": 30.0,    # commentary-heavy independents
+    "investigative": 22.0,  # ProPublica, Bellingcat — analytical but sourced
+    "nonprofit": 22.0,      # NPR, PBS — explanatory voice
+}
 
 
 def analyze_opinion(article: dict, source: dict | None = None) -> dict:
@@ -626,13 +639,25 @@ def analyze_opinion(article: dict, source: dict | None = None) -> dict:
     # source reputation.  Uses max() so the baseline acts as a FLOOR, never
     # pulling down legitimately high opinion scores (e.g. opinion pieces with
     # metadata floors from URL/section markers).
+    #
+    # Source-type baseline (2026-05-13): production sample showed only 0.9% of
+    # articles scoring ≥60 on opinion_fact despite the source list containing
+    # ~88 magazines + ~24 commentary-heavy independents + many partisan outlets.
+    # The URL/section metadata gate misses most op-eds because RSS feeds don't
+    # preserve `/opinion/` markers reliably.  Use source.type as a secondary
+    # signal — magazines and independents publish predominantly analysis voice,
+    # so their floor lives in Analysis territory.
     full_text = article.get("full_text", "") or ""
     word_count = len((full_text or "").split())
     if source:
         tier = (source.get("tier") or "").lower()
         tier_baseline = OPINION_TIER_BASELINES.get(tier, _OPINION_DEFAULT_BASELINE)
+        src_type = (source.get("type") or "").lower()
+        type_baseline = OPINION_SOURCE_TYPE_BASELINES.get(src_type, 0.0)
+        # Use the higher of tier vs source-type baseline (additive lift, not double-apply).
+        effective_baseline = max(tier_baseline, type_baseline)
         text_weight = min(1.0, word_count / 500.0)
-        blended = text_weight * raw_score + (1.0 - text_weight) * tier_baseline
+        blended = text_weight * raw_score + (1.0 - text_weight) * effective_baseline
         raw_score = max(raw_score, blended)
 
     score = max(0, min(100, int(round(raw_score))))

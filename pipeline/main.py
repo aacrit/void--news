@@ -268,40 +268,47 @@ def compute_confidence(article: dict, scores: dict) -> float:
     and signal strength.
 
     Factors:
-        - Word count: short articles have less signal (30%)
-        - Signal variance: scores near defaults = low confidence (40%)
-        - Text availability: no full text = very low confidence (30%)
+        - Word count saturation at 800 (25%)
+        - Text availability saturation at 1600 chars (25%)
+        - Signal magnitude: continuous distance from defaults (50%)
+
+    Recalibration (2026-05-13): production sample (1,984 articles / 24h) showed
+    median confidence stuck at 0.70 — almost no variance.  Two causes:
+      1. length_conf and text_conf both saturated at 1.0 for any article > 500
+         words / 1000 chars, leaving only signal_conf to vary.
+      2. signal_conf used a binary >5 threshold per axis, producing only 6
+         discrete values (0..5 deviations).
+
+    Fix: raise saturation points (500→800 words, 1000→1600 chars) so typical
+    news copy varies through the 0.50-0.85 band; replace the binary threshold
+    with a continuous per-axis distance metric.  Floor lowered 0.30→0.20 so
+    weak-signal articles land in the 0.40-0.55 band as intended.
     """
     word_count = article.get("word_count", 0) or 0
     full_text = article.get("full_text", "") or ""
 
-    # Length confidence: articles under 500 words have less reliable analysis
-    # 100 words = 0.2, 300 = 0.6, 500+ = 1.0
-    length_conf = min(1.0, word_count / 500.0) if word_count > 0 else 0.1
+    # Length: 100 words = 0.125, 400 = 0.50, 800+ = 1.0
+    length_conf = min(1.0, word_count / 800.0) if word_count > 0 else 0.05
 
-    # Text availability: smooth ramp instead of a binary cliff.
-    # Old formula (1.0 / 0.5 / 0.1) created a confidence step-function that
-    # undervalued 201-999-char articles and overvalued 200-char ones equally.
-    # New formula: confidence scales linearly from 0.1 (no text) to 1.0 at
-    # 1000+ chars, giving proportional credit to summaries and partial text.
-    # (Priority 5 fix)
-    text_conf = min(1.0, max(0.1, len(full_text) / 1000.0)) if full_text else 0.1
+    # Text availability: 200 chars = 0.125, 800 = 0.50, 1600+ = 1.0
+    text_conf = min(1.0, max(0.05, len(full_text) / 1600.0)) if full_text else 0.05
 
-    # Signal strength: how many axes deviated from defaults
+    # Signal magnitude: continuous per-axis distance from defaults.
     defaults = {
         "political_lean": 50, "sensationalism": 10,
         "opinion_fact": 25, "factual_rigor": 50, "framing": 15,
     }
-    deviations = 0
+    total_distance = 0.0
     for key, default_val in defaults.items():
         actual = scores.get(key, default_val)
-        if abs(actual - default_val) > 5:
-            deviations += 1
-    # 0 deviations = 0.3 (all defaults), 5 deviations = 1.0 (all fired)
-    signal_conf = 0.3 + (deviations / 5.0) * 0.7
+        # Per-axis contribution clamped at 25-point deviation.
+        per_axis = min(1.0, abs(actual - default_val) / 25.0)
+        total_distance += per_axis
+    # 0 axes off-default = 0.20 (floor); all 5 maxed = 1.0.
+    signal_conf = 0.20 + (total_distance / 5.0) * 0.80
 
-    confidence = (length_conf * 0.30) + (text_conf * 0.30) + (signal_conf * 0.40)
-    return round(max(0.1, min(1.0, confidence)), 2)
+    confidence = (length_conf * 0.25) + (text_conf * 0.25) + (signal_conf * 0.50)
+    return round(max(0.05, min(1.0, confidence)), 2)
 
 
 def run_bias_analysis(
@@ -970,10 +977,19 @@ def main():
         # Map slugs to DB UUIDs
         if result.data:
             slug_to_uuid = {r["slug"]: r["id"] for r in result.data}
+            # Health columns (migration 051) — used by rss_fetcher to skip
+            # sources past the dead-feed quarantine threshold. Silent on
+            # missing column (older environments without migration 051).
+            slug_to_cff = {
+                r["slug"]: (r.get("consecutive_fetch_failures") or 0)
+                for r in result.data
+            }
             for s in sources:
                 slug = s.get("id", "")
                 if slug in slug_to_uuid:
                     s["db_id"] = slug_to_uuid[slug]
+                if slug in slug_to_cff:
+                    s["consecutive_fetch_failures"] = slug_to_cff[slug]
     except Exception as e:
         print(f"  [warn] Batch source upsert failed, falling back to individual sync: {e}")
         # Fallback: individual source sync
@@ -2222,6 +2238,33 @@ def main():
                         print(f"  [warn] Podcast feed generation failed: {e}")
             except Exception as e:
                 print(f"  [warn] Daily brief generation failed: {e}")
+                # P0 fix (UAT 2026-05-13): on total generator failure we MUST
+                # still write a stub row per edition so the homepage doesn't
+                # serve yesterday's audio indefinitely. tldr_text is a safe
+                # placeholder; frontend already handles null audio_url.
+                for edition in ACTIVE_EDITIONS:
+                    try:
+                        stub_row = {
+                            "edition": edition,
+                            "pipeline_run_id": run_id,
+                            "tldr_headline": None,
+                            "tldr_text": "Daily brief unavailable — see top stories.",
+                            "opinion_text": None,
+                            "opinion_headline": None,
+                            "opinion_lean": None,
+                            "opinion_cluster_id": None,
+                            "opinion_audio_script": None,
+                            "audio_script": None,
+                            "audio_url": None,
+                            "top_cluster_ids": [],
+                            "generator": f"stub-on-failure:{type(e).__name__}",
+                        }
+                        supabase.table("daily_briefs").upsert(
+                            stub_row, on_conflict="edition,pipeline_run_id"
+                        ).execute()
+                        print(f"  [brief:{edition}] >>> WROTE STUB ROW (generator crash) <<<")
+                    except Exception as e2:
+                        print(f"  [warn] Failed to write stub brief for {edition}: {e2}")
         else:
             print("\n[7d] Skipping daily briefs (modules not installed)")
 
@@ -2936,7 +2979,23 @@ def main():
     except Exception as e:
         print(f"  [warn] cluster retention failed: {e}")
 
-    # Article retention: delete articles older than 8 days.
+    # Article retention via RPC (migration 050). Atomic, indexed, cascades
+    # through FKs from migration 046. Falls back to the legacy paginated
+    # SELECT/DELETE block below if the RPC is missing (e.g., migration 050
+    # not yet applied to this environment).
+    try:
+        result = supabase.rpc('cleanup_stale_articles', {'days': 8}).execute()
+        pruned = result.data if (result and result.data is not None) else 0
+        print(f"  Article retention RPC: pruned {pruned} stale articles (>8 days)")
+    except Exception as e:
+        err_msg = str(e).lower()
+        if "does not exist" in err_msg or "function" in err_msg and "not" in err_msg:
+            print(f"  [info] cleanup_stale_articles RPC not yet applied — using legacy path")
+        else:
+            print(f"  [warn] cleanup_stale_articles RPC failed: {e} — using legacy path")
+
+    # Legacy article retention: delete articles older than 8 days (kept as
+    # a defensive fallback in case the RPC above is missing or partial).
     # 8 days ensures 7 full days of data exist for weekly digest generation
     # (runs every Sunday). ON DELETE CASCADE removes bias_scores,
     # cluster_articles, and article_categories. Daily briefs are PERMANENT.

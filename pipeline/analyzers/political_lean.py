@@ -971,17 +971,21 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None, do
     final_score = text_weight * text_score + baseline_weight * source_baseline
     score = max(0, min(100, int(round(final_score))))
 
-    # Unscored flag: zero text signal against a center-baseline source.
-    # An AP wire story with no partisan keywords, no framing shift, no entity
-    # sentiment, and a 45-55 baseline produces a 50 that is measurement noise,
+    # Unscored flag: minimal text signal against a center-baseline source.
+    # An AP wire story with ~no partisan keywords, ~no framing shift, ~no entity
+    # sentiment, and a 40-60 baseline produces a 50 that is measurement noise,
     # not a finding.  Flag it so the UI can render "unscored" instead of
     # implying we analyzed the article and concluded center.
+    #
+    # Gate widened (2026-05-13): production sample (1,984 articles / 24h) showed
+    # zero firings — the all-zero gate was unreachable.  Allow up to 2 incidental
+    # keyword hits, shifts under 2.0 points each, and 40-60 baseline range.
     unscored = (
-        total_distinct == 0
-        and abs(framing_shift) < 1.0
-        and abs(entity_shift) < 1.0
-        and abs(sentence_direction) < 1.0
-        and 45 <= source_baseline <= 55
+        total_distinct <= 2
+        and abs(framing_shift) < 2.0
+        and abs(entity_shift) < 2.0
+        and abs(sentence_direction) < 2.0
+        and 40 <= source_baseline <= 60
         and not is_state_affiliated
     )
 

@@ -40,48 +40,55 @@
   }
 }
 
-/* ---- Lead 50/50 split (desktop only) ---------------------------------- */
-
+/* ---- Lead hero: full-canvas 21:9 banner above headline ----------------
+   UAT 2026-05-13 P0-10 (CEO direction): the previous 50/50 desktop split
+   cropped portrait-ish og:images unnaturally and pushed the lead headline
+   off the top of the fold on tall viewports. New layout is a stacked
+   banner-above-text composition at every breakpoint:
+     row 1 — full-width 21:9 banner image (matches most og:image aspect
+             ratios, so object-fit: cover stays gentle).
+     row 2 — headline + summary + verdict, capped to a comfortable
+             reading measure so the canvas's full width doesn't stretch
+             body text past ~72ch.
+   No more side-by-side split. `useSplit` from <LeadStory> now means
+   "stacked banner". */
 .lead-split {
   display: grid;
-  grid-template-columns: 1fr;        /* mobile: stacked */
+  grid-template-columns: 1fr;
   grid-template-areas:
     "lead-image"
     "lead-text";
-  gap: clamp(1rem, 2vw, 1.75rem);
+  gap: clamp(1.25rem, 2vw, 2rem);
   align-items: start;
+  width: 100%;
 }
 
 .lead-split > [data-slot="image"] { grid-area: lead-image; }
 .lead-split > [data-slot="text"]  { grid-area: lead-text; }
 
-/* Tablet step (768-1023px): keep stacked image-then-text but cap the image
-   height — at 100vw a 4:5 portrait runs ~600-720px tall and steals the
-   entire fold. minmax via aspect-ratio + max-height bounds it. */
-@media (min-width: 768px) and (max-width: 1023.98px) {
-  .lead-split__image-frame {
-    max-height: 480px;
-    aspect-ratio: 16 / 10;  /* relax from 4:5 → 16:10 — flatter at tablet */
-  }
-}
-
-@media (min-width: 1024px) {
-  .lead-split {
-    grid-template-columns: minmax(380px, 430px) 1fr;
-    grid-template-areas: "lead-image lead-text";
-    gap: clamp(2rem, 3vw, 3rem);
-    align-items: stretch;
-  }
-}
-
-/* Lead image container — 4:5 portrait crop, fills allocated column */
+/* Lead image container — full-canvas 21:9 banner crop. Same aspect at
+   every breakpoint; max-height keeps it from dominating the fold on
+   tall desktops. */
 .lead-split__image-frame {
-  aspect-ratio: 4 / 5;
+  aspect-ratio: 21 / 9;
   width: 100%;
+  max-height: 560px;
   overflow: hidden;
   position: relative;
   background: var(--bg-secondary);
   border: 1px solid var(--border-subtle);
+}
+
+@media (max-width: 767px) {
+  .lead-split__image-frame {
+    max-height: 320px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023.98px) {
+  .lead-split__image-frame {
+    max-height: 420px;
+  }
 }
 
 .lead-split__image-frame img,
@@ -92,12 +99,14 @@
   display: block;
 }
 
-/* Text column — headline at lead scale, summary above the fold */
+/* Text column — headline at lead scale, summary capped to a readable
+   measure so the body copy doesn't run across the full 1600px canvas. */
 .lead-split__text {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  min-width: 0;  /* allow text wrapping inside grid */
+  min-width: 0;
+  max-width: 72ch;
 }
 
 .lead-split__text .lead-headline {
