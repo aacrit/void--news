@@ -22,6 +22,11 @@ import requests
 
 from utils.safe_requests import safe_get
 
+# Dead-feed quarantine (migration 051). Sources with >=5 consecutive failures
+# are skipped this run; we never auto-resurrect — only a successful fetch
+# (which won't happen if we skip) OR a manual /sources reset clears them.
+QUARANTINE_THRESHOLD = 5
+
 
 # --- Junk content filters (applied before scraping to save time) ---
 
@@ -184,7 +189,7 @@ def _parse_entry(entry: dict, source: dict) -> dict:
     }
 
 
-def _fetch_single_feed(source: dict) -> list[dict]:
+def _fetch_single_feed(source: dict) -> tuple[list[dict], str]:
     """
     Fetch and parse a single RSS feed.
 
@@ -192,11 +197,15 @@ def _fetch_single_feed(source: dict) -> list[dict]:
         source: Source dict with at least 'id', 'rss_url', 'name'.
 
     Returns:
-        List of parsed article dicts.
+        Tuple of (articles, status):
+            articles: List of parsed article dicts (empty on failure).
+            status: One of: 'ok' | 'timeout' | 'http_4xx' | 'http_5xx'
+                    | 'parse_error' | 'other' — used to update
+                    sources.last_fetch_status and consecutive_fetch_failures.
     """
     rss_url = source.get("rss_url")
     if not rss_url:
-        return []
+        return [], "other"
 
     try:
         # Fetch via SSRF-hardened session (handles redirects, auth, encoding
@@ -214,7 +223,7 @@ def _fetch_single_feed(source: dict) -> list[dict]:
 
         if not feed.entries:
             print(f"  [warn] No entries in feed for {source.get('name', 'unknown')} ({rss_url})")
-            return []
+            return [], "parse_error"
 
         articles = []
         skipped = 0
@@ -261,17 +270,18 @@ def _fetch_single_feed(source: dict) -> list[dict]:
         if skipped:
             print(f"  [filter] {source.get('name', 'unknown')}: skipped {skipped} junk/stale entries")
 
-        return articles
+        return articles, "ok"
 
     except requests.exceptions.Timeout:
         print(f"  [timeout] {source.get('name', 'unknown')}: timed out after {FEED_TIMEOUT}s")
-        return []
+        return [], "timeout"
     except requests.exceptions.HTTPError as e:
-        print(f"  [http] {source.get('name', 'unknown')}: {e.response.status_code}")
-        return []
+        status = getattr(e.response, "status_code", 0) or 0
+        print(f"  [http] {source.get('name', 'unknown')}: {status}")
+        return [], ("http_4xx" if 400 <= status < 500 else "http_5xx" if status >= 500 else "other")
     except Exception as e:
         print(f"  [error] {source.get('name', 'unknown')}: {e}")
-        return []
+        return [], "other"
 
 
 def fetch_from_rss(sources: list[dict]) -> tuple[list[dict], list[dict]]:
@@ -294,12 +304,35 @@ def fetch_from_rss(sources: list[dict]) -> tuple[list[dict], list[dict]]:
     errors = []
     sources_with_rss = [s for s in sources if s.get("rss_url")]
 
-    print(f"Fetching RSS from {len(sources_with_rss)} sources ({MAX_WORKERS} workers)...")
+    # Dead-feed quarantine: skip sources with >=QUARANTINE_THRESHOLD consecutive
+    # failures. We never auto-resurrect; quarantined feeds need a manual
+    # /sources admin reset (out of scope for this fix).
+    quarantined: list[str] = []
+    eligible: list[dict] = []
+    for s in sources_with_rss:
+        cff = s.get("consecutive_fetch_failures", 0) or 0
+        if cff >= QUARANTINE_THRESHOLD:
+            quarantined.append(f"{s.get('name', '?')} ({cff} consecutive failures)")
+            continue
+        eligible.append(s)
+
+    if quarantined:
+        print(f"  [quarantine] Skipping {len(quarantined)} dead feed(s):")
+        for q in quarantined[:20]:  # cap log noise
+            print(f"     quarantined: {q}")
+        if len(quarantined) > 20:
+            print(f"     ... and {len(quarantined) - 20} more")
+
+    print(f"Fetching RSS from {len(eligible)} sources ({MAX_WORKERS} workers)...")
+
+    # Collect per-source status to flush back to sources table in one batch
+    # at the end. Maps source-id → 'ok' | failure-status string.
+    status_by_source_id: dict[str, str] = {}
 
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         future_to_source = {
             executor.submit(_fetch_single_feed, source): source
-            for source in sources_with_rss
+            for source in eligible
         }
 
         # as_completed raises TimeoutError during iteration if any futures
@@ -308,13 +341,19 @@ def fetch_from_rss(sources: list[dict]) -> tuple[list[dict], list[dict]]:
         try:
             for future in as_completed(future_to_source, timeout=FEED_TIMEOUT * 2):
                 source = future_to_source[future]
+                source_id = source.get("db_id") or source.get("id")
                 try:
-                    articles = future.result(timeout=FEED_TIMEOUT)
+                    articles, status = future.result(timeout=FEED_TIMEOUT)
                     all_articles.extend(articles)
-                    print(f"  [ok] {source.get('name', 'unknown')}: {len(articles)} articles")
+                    if source_id:
+                        status_by_source_id[source_id] = status
+                    if status == "ok":
+                        print(f"  [ok] {source.get('name', 'unknown')}: {len(articles)} articles")
                 except TimeoutError:
                     error_msg = f"Timeout after {FEED_TIMEOUT}s"
                     print(f"  [timeout] {source.get('name', 'unknown')}: {error_msg}")
+                    if source_id:
+                        status_by_source_id[source_id] = "timeout"
                     errors.append({
                         "source": source.get("name", "unknown"),
                         "error": error_msg,
@@ -323,6 +362,8 @@ def fetch_from_rss(sources: list[dict]) -> tuple[list[dict], list[dict]]:
                 except Exception as e:
                     error_msg = str(e)
                     print(f"  [error] {source.get('name', 'unknown')}: {error_msg}")
+                    if source_id:
+                        status_by_source_id[source_id] = "other"
                     errors.append({
                         "source": source.get("name", "unknown"),
                         "error": error_msg,
@@ -331,14 +372,83 @@ def fetch_from_rss(sources: list[dict]) -> tuple[list[dict], list[dict]]:
         except TimeoutError:
             # Some futures still pending after global timeout — log and continue
             # with whatever articles we collected so far.
-            pending = [s.get("name", "?") for f, s in future_to_source.items() if not f.done()]
+            pending = [(s.get("db_id") or s.get("id"), s.get("name", "?"))
+                       for f, s in future_to_source.items() if not f.done()]
             print(f"  [warn] Global timeout: {len(pending)} feeds still pending, continuing with {len(all_articles)} articles")
-            for name in pending:
+            for sid, name in pending:
+                if sid:
+                    status_by_source_id[sid] = "timeout"
                 errors.append({
                     "source": name,
                     "error": "Global fetch timeout — feed still pending",
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                 })
 
-    print(f"RSS fetch complete: {len(all_articles)} articles from {len(sources_with_rss)} sources")
+    # Persist health counters. One UPDATE per source; small N relative to fetch
+    # time. Silent on missing column (migration 051 not yet applied).
+    _update_source_health(status_by_source_id)
+
+    print(f"RSS fetch complete: {len(all_articles)} articles from {len(eligible)} sources"
+          f" ({len(quarantined)} quarantined)")
     return all_articles, errors
+
+
+def _update_source_health(status_by_source_id: dict[str, str]) -> None:
+    """Persist consecutive_fetch_failures + last_fetch_status to the sources
+    table. On a successful fetch the counter resets to 0; on any failure it
+    increments. Silent + best-effort — never blocks pipeline progress.
+
+    Requires migration 051 (source health columns). On a fresh environment
+    without 051 the UPDATE will fail PGRST204 and we just skip.
+    """
+    if not status_by_source_id:
+        return
+    try:
+        from utils.supabase_client import supabase
+    except Exception:
+        return
+
+    now_iso = datetime.now(timezone.utc).isoformat()
+    ok_ids = [sid for sid, st in status_by_source_id.items() if st == "ok"]
+    fail_items = [(sid, st) for sid, st in status_by_source_id.items() if st != "ok"]
+
+    # Reset successful sources in one batch UPDATE
+    if ok_ids:
+        try:
+            supabase.table("sources").update({
+                "consecutive_fetch_failures": 0,
+                "last_fetch_at": now_iso,
+                "last_fetch_status": "ok",
+            }).in_("id", ok_ids).execute()
+        except Exception as e:
+            err_l = str(e).lower()
+            if "does not exist" in err_l or "schema cache" in err_l or "pgrst204" in err_l:
+                return  # migration 051 not yet applied — silent skip
+            print(f"  [warn] source-health update (ok batch) failed: {e}")
+            return
+
+    # Failures need per-row read-modify-write to increment the counter
+    if fail_items:
+        try:
+            existing = supabase.table("sources").select(
+                "id,consecutive_fetch_failures"
+            ).in_("id", [s for s, _ in fail_items]).execute()
+            cff_map = {r["id"]: (r.get("consecutive_fetch_failures") or 0)
+                       for r in (existing.data or [])}
+            for sid, st in fail_items:
+                new_cff = cff_map.get(sid, 0) + 1
+                try:
+                    supabase.table("sources").update({
+                        "consecutive_fetch_failures": new_cff,
+                        "last_fetch_at": now_iso,
+                        "last_fetch_status": st,
+                    }).eq("id", sid).execute()
+                    if new_cff == QUARANTINE_THRESHOLD:
+                        print(f"  [quarantine] source {sid[:8]} hit threshold ({new_cff} consecutive failures) — will be skipped next run")
+                except Exception:
+                    pass
+        except Exception as e:
+            err_l = str(e).lower()
+            if "does not exist" in err_l or "schema cache" in err_l or "pgrst204" in err_l:
+                return  # migration 051 not yet applied
+            print(f"  [warn] source-health update (fail batch) failed: {e}")

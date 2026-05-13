@@ -56,7 +56,8 @@ def _smart_generate_json(
         if result and isinstance(result, dict):
             print(f"  [brief:{edition}] Claude Sonnet OK")
             return result, "claude-sonnet"
-        print(f"  [brief:{edition}] Claude failed — falling back to Gemini")
+        # Highlighted single-line log — easy to grep in run output
+        print(f"  [brief:{edition}] >>> SONNET FAILED, FALLING BACK TO GEMINI <<<")
 
     if gemini_is_available():
         result = gemini_generate_json(
@@ -67,6 +68,7 @@ def _smart_generate_json(
         )
         if result and isinstance(result, dict):
             return result, "gemini-flash"
+        print(f"  [brief:{edition}] >>> GEMINI ALSO FAILED — no LLM brief this run <<<")
 
     return None, "none"
 
@@ -1361,6 +1363,23 @@ def _build_opinion_retry_suffix(found_terms: list[str]) -> str:
         "- Opinion audio MUST close with: This was void opinion.",
     ]
     return "\n".join(parts)
+
+
+def _build_stub_brief(top_ids: list[str], reason: str = "generator_failure") -> dict:
+    """Stub brief row written when the generator fails completely.
+    Frontend already handles null audio_url; tldr_text is the safety net."""
+    return {
+        "tldr_headline": None,
+        "tldr_text": "Daily brief unavailable — see top stories.",
+        "opinion_text": None,
+        "opinion_headline": None,
+        "opinion_lean": None,
+        "opinion_cluster_id": None,
+        "audio_script": None,
+        "top_cluster_ids": top_ids,
+        "generator": f"stub-on-failure:{reason}",
+        "quality_report": None,
+    }
 
 
 def generate_daily_briefs(
