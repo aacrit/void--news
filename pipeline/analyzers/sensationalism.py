@@ -504,11 +504,11 @@ def _body_score(text: str) -> float:
 
 
 SENSATIONALISM_TIER_BASELINES: dict[str, float] = {
-    "us_major": 8.0,
-    "international": 10.0,
-    "independent": 12.0,
+    "us_major": 15.0,
+    "international": 18.0,
+    "independent": 22.0,
 }
-_SENSATIONALISM_DEFAULT_BASELINE = 10.0
+_SENSATIONALISM_DEFAULT_BASELINE = 18.0
 
 
 def analyze_sensationalism(article: dict, source: dict | None = None) -> dict:
@@ -543,15 +543,16 @@ def analyze_sensationalism(article: dict, source: dict | None = None) -> dict:
 
     combined = 0.5 * h_score + 0.5 * b_score
 
-    # Inflection moved 25 → 15.  The prior curve compressed 70% of articles
-    # into 0-50, leaving almost no resolution between "measured" and "mildly
-    # sensational" — everything read as calm.  Widening the lower segment
-    # (×3.33 through the first 15 points) spreads ordinary news copy across
-    # 0-50 and reserves the upper half for genuinely activated headlines.
-    if combined <= 15:
-        stretched = combined * (50.0 / 15.0)
+    # Inflection at 22 (was 15, originally 25).  At 15 the curve over-stretched
+    # near-zero scores: in production (1,984 articles / 24h) the median landed at
+    # 10 and p95 at 21 — compressed away from the target mean 20-40.  At 22 the
+    # lower segment still stretches ordinary news copy through 0-50 with enough
+    # resolution between "measured" and "mildly sensational" without inflating
+    # quiet wire copy.
+    if combined <= 22:
+        stretched = combined * (50.0 / 22.0)
     else:
-        stretched = 50.0 + (combined - 15.0) * (50.0 / 85.0)
+        stretched = 50.0 + (combined - 22.0) * (50.0 / 78.0)
 
     has_content = bool(title.strip() or full_text.strip())
     floor = 3 if has_content else 0
