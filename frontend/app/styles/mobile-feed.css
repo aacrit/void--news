@@ -127,7 +127,9 @@
   line-height: 1.5;
   color: var(--fg-secondary);
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  /* UAT 2026-05-13 P1-11: bumped 2→3 lines to stop mid-sentence truncation
+     on the mobile hero card. Wire variants (compact) remain hidden. */
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-align: justify;
@@ -484,7 +486,8 @@
   line-height: 1.55;
   color: var(--fg-tertiary);
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  /* UAT 2026-05-13 P1-11: 2→3 lines so a 3-sentence TL;DR doesn't clip mid-thought. */
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
