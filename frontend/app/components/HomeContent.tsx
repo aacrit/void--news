@@ -204,12 +204,13 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     return "All";
   });
 
-  const [isMobile, setIsMobile] = useState(() => {
-    if (typeof document !== "undefined") {
-      return document.documentElement.getAttribute("data-viewport") === "mobile";
-    }
-    return false;
-  });
+  // Initial value MUST be false (matches SSR) — the matchMedia useEffect below
+  // promotes it to true on mobile after mount. Reading data-viewport synchronously
+  // here caused React #418 hydration mismatch on every iPhone-width route because
+  // the layout.tsx inline script set data-viewport='mobile' before hydration, but
+  // SSR rendered with isMobile=false. 1-frame flash on mobile is unavoidable for
+  // SSG; the useEffect runs in the first paint commit cycle.
+  const [isMobile, setIsMobile] = useState(false);
 
   // Search overlay state
   const [searchOpen, setSearchOpen] = useState(false);

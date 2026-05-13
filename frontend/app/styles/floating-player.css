@@ -378,6 +378,16 @@
 .fp__minimize { font-size: 12px; }
 .fp__dismiss { font-size: 18px; font-weight: 300; }
 
+/* Touch-device tap-target promotion — bump player controls to 44x44 directly
+   on coarse pointers. The ::after inset:-8px overlay above keeps the hit area
+   correct on hover devices but bounding-box-based a11y tooling counts the
+   visible element. WCAG 2.5.5. */
+@media (hover: none) and (pointer: coarse) {
+  .fp__minimize, .fp__dismiss { width: 44px; height: 44px; }
+  .fp__speed { min-height: 44px; min-width: 44px; padding: 6px 12px; }
+  .fp__seek-sec { min-height: 44px; min-width: 44px; }
+}
+
 /* CaretRight arrows — rotated to match SkyboxBanner pattern */
 .fp__caret {
   display: block;
@@ -740,7 +750,7 @@
   }
 
   .fp__skip { min-width: 44px; min-height: 44px; }
-  .fp__seek-sec { min-height: 32px; }
+  .fp__seek-sec { min-height: 44px; min-width: 44px; }  /* WCAG 2.5.5 — was 32px */
 
   /* Practical light breathing pulse — 4s respiratory rhythm (Bradford Young) */
   .fp--playing .fp__pill {
