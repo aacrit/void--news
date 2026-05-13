@@ -99,14 +99,17 @@
   display: block;
 }
 
-/* Text column — headline at lead scale, summary capped to a readable
-   measure so the body copy doesn't run across the full 1600px canvas. */
+/* Text column — headline spans full canvas (newspaper-front-page lead);
+   only the body summary is capped to a readable measure. Previous behavior
+   capped the whole text column to 72ch, leaving the right half of the
+   canvas visually dead under the wide 21:9 banner. CEO 2026-05-13. */
 .lead-split__text {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  align-items: flex-start;  /* children shrink to their content width */
   min-width: 0;
-  max-width: 72ch;
+  width: 100%;
 }
 
 .lead-split__text .lead-headline {
@@ -116,6 +119,8 @@
   line-height: 1.05;
   letter-spacing: var(--type-lead-tracking);
   margin: 0 0 var(--space-3);
+  width: 100%;
+  max-width: none;
 }
 
 .lead-split__text .lead-summary {
@@ -124,6 +129,8 @@
   line-height: 1.6;
   color: var(--fg-secondary);
   margin: 0 0 var(--space-4);
+  /* Readable measure only on the body copy, not the headline. */
+  max-width: 72ch;
 }
 
 /* When the lead has no cached image, collapse to single-column text-only.
