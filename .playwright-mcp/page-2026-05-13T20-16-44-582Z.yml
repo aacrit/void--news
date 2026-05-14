@@ -1,0 +1,48 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - navigation "Main navigation" [ref=e5]:
+        - link "void --news — home" [ref=e7] [cursor=pointer]:
+          - /url: /void--news/
+          - img [ref=e9]
+        - generic [ref=e27]:
+          - link "Go to News Feed" [ref=e28] [cursor=pointer]:
+            - /url: /void--news/
+            - text: News Feed →
+          - button "Toggle theme" [ref=e29] [cursor=pointer]:
+            - img [ref=e31]
+    - main [ref=e33]:
+      - heading "0 Sources" [level=1] [ref=e36]
+      - generic "Loading sources" [ref=e37]
+    - contentinfo [ref=e52]:
+      - generic [ref=e53]:
+        - generic [ref=e54]:
+          - img [ref=e55]
+          - img [ref=e60]
+        - paragraph [ref=e73]: See through the void.
+        - generic [ref=e74]:
+          - generic "The Daily Brief" [ref=e75]: void --tl;dr
+          - generic [ref=e76]: ·
+          - generic "Audio Broadcast" [ref=e77]: void --onair
+          - generic [ref=e78]: ·
+          - generic "The Board" [ref=e79]: void --opinion
+          - generic [ref=e80]: ·
+          - link "void --sources" [ref=e81] [cursor=pointer]:
+            - /url: /void--news/sources/
+          - generic [ref=e82]: ·
+          - link "void --weekly" [ref=e83] [cursor=pointer]:
+            - /url: /void--news/weekly/
+          - generic [ref=e84]: ·
+          - link "void --ship" [ref=e85] [cursor=pointer]:
+            - /url: /void--news/ship/
+          - generic [ref=e86]: ·
+          - link "void --about" [ref=e87] [cursor=pointer]:
+            - /url: /void--news/about/
+        - paragraph [ref=e88]: © 2026 void --news. All rights reserved.
+        - paragraph [ref=e89]:
+          - generic [ref=e90]: "?"
+          - text: shortcuts
+  - button "Open Next.js Dev Tools" [ref=e96] [cursor=pointer]:
+    - img [ref=e97]

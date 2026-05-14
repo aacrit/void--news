@@ -130,6 +130,11 @@ locations when central.
 about to say. "This isn't just...", "Here's the thing...", "The bigger \
 picture...", "What makes this...", "The reality is..." — these are filler. Cut \
 them. Start the sentence with the fact itself.
+- NO EM DASHES (—) OR EN DASHES (–) IN OUTPUT. They are an AI tell in written \
+prose. Use periods, commas, semicolons, colons, or parentheses instead. Two \
+short sentences beat one long sentence with an em dash. Hyphens in compound \
+words ("twenty-four-hour," "fact-check") are fine — em dashes (—) and en \
+dashes (–) are not.
 - When attribution is needed, use actual outlet names (e.g., "Reuters reported," \
 "according to The Washington Post"). Do not use generic labels like "a US major \
 source" or "an international outlet." Only attribute when it adds value — not \
@@ -223,6 +228,8 @@ Prohibited constructions:
 - Any adjective that expresses editorial judgment rather than factual description
 - Bracketed citations or reference numbers like [1], [2,5], [Source 3], (1). \
 This is a news article, not a research paper. Use natural inline attribution.
+- Em dashes (—) and en dashes (–). Banned in summary output. They are an AI \
+tell. Rewrite as two sentences, or use a comma, semicolon, or parentheses.
 
 ---
 

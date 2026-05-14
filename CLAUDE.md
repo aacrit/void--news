@@ -48,6 +48,14 @@ Enter scenes at the last possible moment. Exit before the conclusion is spelled 
 
 Applies to: void --history events, daily briefs, CTAs, audio scripts. Together these create the cognitive gap where understanding happens.
 
+### No Em Dashes — AI Slop Rule
+Em dashes (`—`) and en dashes (`–`) are banned in all written editorial output: cluster summaries, headlines, TL;DR, opinion text, weekly digest, history copy, CTAs, frontend microcopy. They are an AI tell. Rewrite as two short sentences, or use a comma, semicolon, colon, or parentheses. Hyphens in compound words ("fact-check," "twenty-four-hour") are fine. **Exception**: audio scripts (`audio_script`, `opinion_audio_script`) keep em dashes because they function as TTS prosody / breath marks for the spoken broadcast — void --onair is parked, but the rule is preserved for re-enable.
+
+**BAD:** "The central bank cut rates Tuesday — the third move this quarter."
+**GOOD:** "The central bank cut rates Tuesday. Third move this quarter."
+
+Applies to: `cluster_summarizer.py` (summary, headline), `daily_brief_generator.py` (tldr_text, tldr_headline, opinion_text, opinion_headline), `claude_brief_generator.py`, `weekly_digest_generator.py`, void --history YAML copy, all frontend strings.
+
 - **Product Family**: `void --news`, `void --tl;dr`, `void --onair`, `void --history`, `void --weekly`, `void --paper`, `void --sources`, `void --deep-dive`, `void --opinion`, `void --ship`, `void --games`.
 - **No Personalization (LOCKED)**: Newspaper principle. Same stories, same order for everyone. No accounts, no recommendation algorithms.
 - **Minimal Cost, High Editorial Value**: ~$30/month total LLM spend. Sonnet 4.6 ($3 in / $15 out per MTok) at ~57 calls/run × 1 run/day ≈ $1/day. Anthropic budget cap recommended at $50/mo (60% buffer). Rule-based NLP, edge-tts audio, Supabase, GitHub Actions/Pages remain $0. **Gemini TTS NOT used — was $3/day, not free tier.**
