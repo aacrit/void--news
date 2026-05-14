@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import type { Story } from "../lib/types";
 import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
@@ -14,31 +14,26 @@ interface LeadStoryProps {
   onStoryClick?: (story: Story, rect: DOMRect) => void;
   /** True when this card is focused via keyboard (J/K) navigation */
   kbdFocused?: boolean;
-  /** og:image URL for the lead story — primary (rank 0) only */
-  imageUrl?: string | null;
 }
 
 /* ---------------------------------------------------------------------------
-   LeadStory — Hero treatment for the most important story
-   Larger typography, more prominent layout, bigger bias stamp.
-   Primary (rank 0) includes a cinematic front-page photograph.
+   LeadStory — Hero treatment for the most important story.
+   Text-only newspaper-front-page composition: badge → headline → summary.
+   Per CEO 2026-05-13: hero image removed. The visualization (Sigil) and
+   typography carry the editorial moment; no photograph.
    --------------------------------------------------------------------------- */
 
-export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, imageUrl }: LeadStoryProps) {
+export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused }: LeadStoryProps) {
   const cardRef = useRef<HTMLElement>(null);
-  const [imgLoaded, setImgLoaded] = useState(false);
-  const [imgError, setImgError] = useState(false);
 
-  const showImage = rank === 0 && imageUrl && !imgError;
+  // Use the .lead-split full-canvas stacked layout for rank 0.
+  // No image — text-only composition. .lead-split typography spans the
+  // full canvas; .lead-summary internally caps to a 72ch reading measure.
+  const useSplit = rank === 0;
   const verdict = classifyCoverage(story);
 
-  // 50/50 split layout when rank-0 has a cached image (desktop ≥1024px).
-  // Layout-zones.css owns the grid; mobile collapses to stacked image-then-text.
-  const useSplit = rank === 0 && showImage;
-
-  // Reusable text content block — same JSX in split mode and stacked mode.
   // Headline is <h1> for rank 0 (page's primary headline — accessibility/SEO),
-  // <h2> otherwise. Avoids the zero-<h1> page outline flagged by UAT 2026-05-13.
+  // <h2> otherwise.
   const HeadingTag: "h1" | "h2" = rank === 0 ? "h1" : "h2";
   const textContent = (
     <div data-slot="text" className={useSplit ? "lead-split__text" : undefined}>
@@ -76,8 +71,7 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, i
     <article
       ref={cardRef}
       data-story-id={story.id}
-      data-no-image={useSplit ? undefined : "true"}
-      className={`lead-story${useSplit ? " lead-split" : ""} ${rank === 0 ? "anim-lead-primary" : "anim-lead-secondary"}${kbdFocused ? " story-card--kbd-focus" : ""}${showImage ? " lead-story--has-image" : ""}`}
+      className={`lead-story${useSplit ? " lead-split" : ""} ${rank === 0 ? "anim-lead-primary" : "anim-lead-secondary"}${kbdFocused ? " story-card--kbd-focus" : ""}`}
     >
       {/* Stretched link — invisible button covers the article for click + a11y */}
       <button
@@ -98,23 +92,6 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, i
           }
         }}
       />
-
-      {useSplit && (
-        <div data-slot="image" className="lead-split__image-frame">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={imageUrl!}
-            alt=""
-            className={`lead-story__image${imgLoaded ? " lead-story__image--loaded" : ""}`}
-            loading="eager"
-            fetchPriority="high"
-            decoding="async"
-            onLoad={() => setImgLoaded(true)}
-            onError={() => setImgError(true)}
-          />
-          <div className="lead-story__image-grade" aria-hidden="true" />
-        </div>
-      )}
 
       {textContent}
     </article>

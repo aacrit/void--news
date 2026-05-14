@@ -12,8 +12,6 @@ interface MobileFeedProps {
   filterKey: string;
   kbdFocusIndex: number;
   editionMeta: EditionMeta;
-  /** og:image URL for the rank-0 hero — null while loading or unavailable */
-  leadImageUrl?: string | null;
   /** CSS class for edition switch cross-fade animation */
   transitionClass?: string;
 }
@@ -32,7 +30,6 @@ export default function MobileFeed({
   filterKey,
   kbdFocusIndex,
   editionMeta,
-  leadImageUrl,
   transitionClass,
 }: MobileFeedProps) {
   const hero = stories[0];
@@ -49,7 +46,6 @@ export default function MobileFeed({
           onStoryClick={onStoryClick}
           globalIndex={0}
           kbdFocused={kbdFocusIndex === 0}
-          imageUrl={leadImageUrl}
         />
       )}
 

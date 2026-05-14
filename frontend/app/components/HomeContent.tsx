@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import type { Edition, Category, Story, BiasScores, BiasSpread, ThreeLensData, OpinionLabel, SigilData, LeanChip } from "../lib/types";
 import { EDITIONS, LEAN_RANGES } from "../lib/types";
 import { isUnscoredTilt } from "../lib/biasColors";
-import { supabase, supabaseError, fetchClusterLeadImage } from "../lib/supabase";
+import { supabase, supabaseError } from "../lib/supabase";
 import { cacheGet, cacheSet } from "../lib/feedCache";
 import { BASE_PATH } from "../lib/utils";
 import LogoIcon from "./LogoIcon";
@@ -746,22 +746,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const heroStory = filteredStories[0] ?? null;
   const gridStories = filteredStories.slice(1);
 
-  // Fetch lead image for primary story (rank 0 only — one front-page photograph).
-  // If cached_image_url is already on the story (pipeline step 8e), use it directly —
-  // no extra Supabase round-trip needed. Fallback to og:image-from-articles via
-  // fetchClusterLeadImage for clusters without a cached image.
-  const [leadImageUrl, setLeadImageUrl] = useState<string | null>(null);
-  const leadStoryId = heroStory?.id;
-  const leadCachedUrl = heroStory?.cachedImageUrl ?? null;
-  useEffect(() => {
-    if (!leadStoryId) { setLeadImageUrl(null); return; }
-    if (leadCachedUrl) { setLeadImageUrl(leadCachedUrl); return; }
-    let cancelled = false;
-    fetchClusterLeadImage(leadStoryId).then((url) => {
-      if (!cancelled) setLeadImageUrl(url);
-    });
-    return () => { cancelled = true; };
-  }, [leadStoryId, leadCachedUrl]);
+  // Lead hero image removed 2026-05-13 — text-only newspaper composition.
 
   // Stable key that changes whenever the active filter changes.
   // Keying the <section> elements on this value causes React to unmount+remount
@@ -943,7 +928,6 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   filterKey={filterKey}
                   kbdFocusIndex={kbdFocusIndex}
                   editionMeta={editionMeta}
-                  leadImageUrl={leadImageUrl}
                   transitionClass={editionTransition === "out" ? "anim-edition-out" : editionTransition === "in" ? "anim-edition-in" : undefined}
                 />
               ) : (
@@ -955,7 +939,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   {/* Hero — rank 0, front-page image treatment */}
                   {heroStory && (
                     <div key={filterKey} className={`hero-slot${isEditionSwitch ? " anim-content-arrive" : ""}`}>
-                      <LeadStory story={heroStory} rank={0} onStoryClick={handleStoryClick} kbdFocused={kbdFocusIndex === 0} imageUrl={leadImageUrl} />
+                      <LeadStory story={heroStory} rank={0} onStoryClick={handleStoryClick} kbdFocused={kbdFocusIndex === 0} />
                     </div>
                   )}
 
