@@ -158,6 +158,10 @@
   .legend-dot.automated::before { background: var(--fg-accent); }
   .legend-dot.verify::before    { background: var(--burnt-umber); }
   .legend-dot.wait::before      { background: var(--fg-muted); }
+  .legend-dot.decision::before  { background: var(--fg-primary); }
+  .legend-dot.handle::before    { background: var(--ember); border: 1px dashed rgba(0, 0, 0, 0.3); }
+  .legend-dot.domain::before    { background: var(--fg-accent); border: 1px dashed rgba(0, 0, 0, 0.3); }
+  .legend-dot.milestone::before { background: var(--burnt-umber); border: 1px dashed rgba(0, 0, 0, 0.3); }
 
   .toolbar__buttons {
     display: flex;
@@ -440,20 +444,143 @@
   @media print {
     header.hdr { background: white; color: black; }
     header.hdr::after { display: none; }
-    .progress-shell, .toolbar__buttons { display: none; }
+    .progress-shell, .toolbar__buttons, .page-nav { display: none; }
     .phase__body { display: block !important; }
     .phase__chevron { display: none; }
     body { background: white; }
     .step__body pre { background: #F0EBDD; color: black; }
+    .page { display: block !important; }
+    .page:not(.active) { page-break-before: always; }
+  }
+
+  /* ─── Page tabs ─────────────────────────────────────────────────────── */
+  .page-nav {
+    display: flex;
+    gap: 32px;
+    padding: 0 32px;
+    margin-top: 24px;
+    border-bottom: 1px solid rgba(244, 237, 224, 0.15);
+    position: relative;
+    z-index: 3;
+  }
+  .page-nav button {
+    background: transparent;
+    border: 0;
+    padding: 14px 0;
+    color: rgba(244, 237, 224, 0.55);
+    font-family: var(--font-meta);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 160ms, border-color 160ms;
+  }
+  .page-nav button:hover {
+    color: rgba(244, 237, 224, 0.85);
+  }
+  .page-nav button[aria-current="true"] {
+    color: #F4EDE0;
+    border-bottom-color: var(--ember);
+  }
+  .page-nav__count {
+    margin-left: 8px;
+    font-family: var(--font-data);
+    font-size: 11px;
+    opacity: 0.7;
+  }
+
+  /* ─── Pages ─────────────────────────────────────────────────────────── */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ─── Brand strategy: decision log grid ──────────────────────────────── */
+  .decision-log {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    padding: 24px 28px;
+    margin-bottom: 40px;
+  }
+  .decision-log__title {
+    font-family: var(--font-meta);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    color: var(--fg-accent);
+    margin: 0 0 16px;
+  }
+  .decision-log__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px 32px;
+  }
+  .decision-log__cell h3 {
+    font-family: var(--font-data);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--fg-tertiary);
+    margin: 0 0 4px;
+  }
+  .decision-log__cell p {
+    font-family: var(--font-editorial);
+    font-size: 17px;
+    line-height: 1.35;
+    color: var(--fg-primary);
+    margin: 0;
+  }
+
+  /* ─── Brand chapter intro tables ──────────────────────────────────────── */
+  .brand-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-family: var(--font-structural);
+    font-size: 14px;
+  }
+  .brand-table th, .brand-table td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-subtle);
+    vertical-align: top;
+  }
+  .brand-table th {
+    font-family: var(--font-data);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--fg-tertiary);
+    background: var(--bg-secondary);
+  }
+  .brand-table tr:last-child td { border-bottom: none; }
+
+  /* ─── Brand badges ────────────────────────────────────────────────────── */
+  .step__badge.decision  { background: rgba(43, 31, 18, 0.08); color: var(--fg-primary); border: 1px solid var(--border-strong); }
+  .step__badge.handle    { background: rgba(200, 71, 45, 0.10); color: var(--ember); border: 1px solid rgba(200, 71, 45, 0.4); }
+  .step__badge.domain    { background: rgba(148, 107, 21, 0.12); color: var(--fg-accent); border: 1px solid rgba(148, 107, 21, 0.4); }
+  .step__badge.milestone { background: rgba(107, 68, 35, 0.10); color: var(--burnt-umber); border: 1px solid rgba(107, 68, 35, 0.4); }
+
+  @media (max-width: 640px) {
+    .page-nav { gap: 20px; padding: 0 20px; }
+    .decision-log__grid { grid-template-columns: 1fr; }
   }
 </style>
 </head>
 <body>
 
 <header class="hdr">
-  <p class="eyebrow">void --news / launch</p>
+  <p class="eyebrow">void / launch hub</p>
   <h1 class="title">Take @void.news fully live.</h1>
   <p class="subtitle">A linear checklist from a blank Instagram handle to a publishing cron that ships approved posts twice a week. Every step is marked manual or automated. Progress saves in your browser.</p>
+  <nav class="page-nav" role="tablist">
+    <button type="button" role="tab" data-target="checklist" aria-current="true">
+      IG launch <span class="page-nav__count" data-count="checklist">0 / 0</span>
+    </button>
+    <button type="button" role="tab" data-target="brand" aria-current="false">
+      Brand strategy <span class="page-nav__count" data-count="brand">0 / 0</span>
+    </button>
+  </nav>
 </header>
 
 <div class="progress-shell">
@@ -473,6 +600,10 @@
       <span class="legend-dot automated">automated</span>
       <span class="legend-dot verify">verify</span>
       <span class="legend-dot wait">wait</span>
+      <span class="legend-dot decision">decision</span>
+      <span class="legend-dot handle">handle</span>
+      <span class="legend-dot domain">domain</span>
+      <span class="legend-dot milestone">milestone</span>
     </div>
     <div class="toolbar__buttons">
       <button type="button" id="expand-all">expand all</button>
@@ -481,6 +612,7 @@
     </div>
   </div>
 
+  <div class="page active" data-page="checklist">
   <div class="done-banner">
     @void.news is live. Same stories. Same order. For everyone.
     <div class="done-banner__sub">All phases complete. Open <code>/admin/ig</code> tomorrow at 12:00 UTC for the next draft.</div>
@@ -1368,10 +1500,784 @@ media</pre>
       </div>
     </div>
   </section>
-</main>
+  </div><!-- /.page[checklist] -->
+
+  <!-- ═══════════════════════════════════════════════════════════════════════
+       PAGE 2 — BRAND STRATEGY (executable checklist)
+       ═══════════════════════════════════════════════════════════════════════ -->
+  <div class="page" data-page="brand">
+
+  <section class="decision-log">
+    <h2 class="decision-log__title">Locked decisions — ratify each in Phase B1</h2>
+    <div class="decision-log__grid">
+      <div class="decision-log__cell">
+        <h3>Brand</h3>
+        <p>Branded house. <strong>void</strong> is the master brand. Every product is <code>void --X</code>.</p>
+      </div>
+      <div class="decision-log__cell">
+        <h3>Instagram</h3>
+        <p>One account: <strong>@void.news</strong>. Multi-pillar feed (news, history, vision drops).</p>
+      </div>
+      <div class="decision-log__cell">
+        <h3>YouTube</h3>
+        <p><strong>@void.vision</strong>. One channel for first 12 episodes; let engagement decide if it splits.</p>
+      </div>
+      <div class="decision-log__cell">
+        <h3>Web</h3>
+        <p>Single domain with subroutes. Consider migrating from <code>void-news.pages.dev</code> to <code>void.media</code> long-term.</p>
+      </div>
+      <div class="decision-log__cell">
+        <h3>void --history</h3>
+        <p>Stays inside <code>void --news</code>. Different timescale, same DNA. <strong>No split.</strong></p>
+      </div>
+      <div class="decision-log__cell">
+        <h3>void --vision</h3>
+        <p>Same DNA, different medium. Cross-promoted on @void.news as Reels. Not split.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PHASE B1: Ratify the strategy ════════════════════════════════════ -->
+  <section class="phase" data-phase="b1">
+    <div class="phase__header">
+      <span class="phase__num">PHASE B1</span>
+      <h2 class="phase__title">Ratify the strategy</h2>
+      <span class="phase__count"></span>
+      <span class="phase__chevron">▼</span>
+    </div>
+    <div class="phase__body">
+      <p class="phase__intro">Tick each decision once you've thought it through. These become locked CEO decisions — every later step assumes them.</p>
+
+      <div class="step" data-step="b1-1">
+        <input type="checkbox" id="s-b1-1" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b1-1" class="step__title">Adopt branded-house architecture</label>
+            <span class="step__badge decision">decision</span>
+          </div>
+          <div class="step__body">
+            <p>void is the master brand. <code>void --news</code>, <code>void --history</code>, <code>void --vision</code> are products under it — never standalone identities. Splitting into separate brands ("Void Vision Inc.") is off the table.</p>
+            <p><em>Why:</em> the CLI metaphor already encodes this. Cross-brand brand-impression compounding outperforms three separate identities at any followers-per-account level under 100k.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b1-2">
+        <input type="checkbox" id="s-b1-2" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b1-2" class="step__title">One Instagram account: @void.news as the unified hub</label>
+            <span class="step__badge decision">decision</span>
+          </div>
+          <div class="step__body">
+            <p>Multi-pillar feed: news receipts, history vignettes, methodology carousels, void --vision Reels. The 4 / 2 / 2 / 2 rotation already in <code>ig_generator.py</code> accommodates all of them.</p>
+            <p><em>Why:</em> ~80% audience overlap across pillars. Three accounts would leak ~70% of cross-pillar reach.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b1-3">
+        <input type="checkbox" id="s-b1-3" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b1-3" class="step__title">void --history stays inside void --news</label>
+            <span class="step__badge decision">decision</span>
+          </div>
+          <div class="step__body">
+            <p>History is a route within the void --news site, not a separate product. <code>/history</code> keeps its burnt-umber palette for visual differentiation.</p>
+            <p><em>Why:</em> identical editorial DNA at different timescales. Splitting domains = splitting compound interest on the master brand.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b1-4">
+        <input type="checkbox" id="s-b1-4" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b1-4" class="step__title">void --vision is YouTube-primary, IG-secondary</label>
+            <span class="step__badge decision">decision</span>
+          </div>
+          <div class="step__body">
+            <p>Primary surface: <code>@void.vision</code> YouTube channel. Each video drop becomes a 30-sec Reel on @void.news. No separate IG account.</p>
+            <p><em>Why:</em> video is YouTube-native; IG users prefer short-form. Cross-promotion grows both audiences faster than parallel accounts.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b1-5">
+        <input type="checkbox" id="s-b1-5" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b1-5" class="step__title">Single web domain with subroutes</label>
+            <span class="step__badge decision">decision</span>
+          </div>
+          <div class="step__body">
+            <p>Current: <code>void-news.pages.dev</code> hosting <code>/</code>, <code>/history</code>, future <code>/vision</code>. Migration option: <code>void.media</code> as a parent if available.</p>
+            <p><em>Why:</em> two domains + two CI pipelines is a real ops cost (per CLAUDE.md). Bad trade for marginal SEO benefit.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PHASE B2: Handle defense ════════════════════════════════════════ -->
+  <section class="phase" data-phase="b2">
+    <div class="phase__header">
+      <span class="phase__num">PHASE B2</span>
+      <h2 class="phase__title">Handle defense — reserve every void handle</h2>
+      <span class="phase__count"></span>
+      <span class="phase__chevron">▼</span>
+    </div>
+    <div class="phase__body">
+      <p class="phase__intro">~45 minutes one-time. Even handles you never use block impersonation. Sign up, set the void wordmark as profile photo, leave bio empty or "Reserved for void --news. Find us at @void.news."</p>
+
+      <h3 style="font-family: var(--font-meta); text-transform: uppercase; letter-spacing: 0.18em; font-size: 12px; color: var(--fg-tertiary); margin: 24px 0 12px;">Instagram</h3>
+
+      <div class="step" data-step="b2-1">
+        <input type="checkbox" id="s-b2-1" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b2-1" class="step__title">@void.news — confirm in use</label>
+            <span class="step__badge handle">handle</span>
+          </div>
+          <div class="step__body">
+            <p>Should already be done via Phase 0 of the IG launch. Check this once verified.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b2-2">
+        <input type="checkbox" id="s-b2-2" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b2-2" class="step__title">@void.history — reserve</label>
+            <span class="step__badge handle">handle</span>
+          </div>
+          <div class="step__body">
+            <p>If taken: <code>@voidhistory</code>, <code>@void.archive</code>, <code>@thevoid.history</code>.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b2-3">
+        <input type="checkbox" id="s-b2-3" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b2-3" class="step__title">@void.vision — reserve</label>
+            <span class="step__badge handle">handle</span>
+          </div>
+          <div class="step__body">
+            <p>If taken: <code>@voidvision</code>, <code>@void.studio.vision</code>.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b2-4">
+        <input type="checkbox" id="s-b2-4" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b2-4" class="step__title">@void.weekly — reserve</label>
+            <span class="step__badge handle">handle</span>
+          </div>
+          <div class="step__body">
+            <p>For the Sunday digest if/when it gets its own IG cross-post.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b2-5">
+        <input type="checkbox" id="s-b2-5" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b2-5" class="step__title">@voidstudio — reserve</label>
+            <span class="step__badge handle">handle</span>
+          </div>
+          <div class="step__body">
+            <p>The master-brand identity. Reserve even if it stays empty for years.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="font-family: var(--font-meta); text-transform: uppercase; letter-spacing: 0.18em; font-size: 12px; color: var(--fg-tertiary); margin: 24px 0 12px;">YouTube</h3>
+
+      <div class="step" data-step="b2-6">
+        <input type="checkbox" id="s-b2-6" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b2-6" class="step__title">@void.vision — primary channel</label>
+            <span class="step__badge handle">handle</span>
+          </div>
+          <div class="step__body">
+            <p>This becomes the primary surface for video. Reserve with brand mark + "Coming soon" hero. YouTube custom URLs require 100 subs + 30 days; until then it's <code>youtube.com/channel/UCxxxx</code>.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b2-7">
+        <input type="checkbox" id="s-b2-7" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b2-7" class="step__title">@void.news — defensive YouTube channel</label>
+            <span class="step__badge handle">handle</span>
+          </div>
+          <div class="step__body">
+            <p>Empty. Points to <code>@void.vision</code> in the "About" section.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b2-8">
+        <input type="checkbox" id="s-b2-8" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b2-8" class="step__title">@voidstudio — defensive YouTube channel</label>
+            <span class="step__badge handle">handle</span>
+          </div>
+          <div class="step__body">
+            <p>Master-brand placeholder.</p>
+          </div>
+        </div>
+      </div>
+
+      <h3 style="font-family: var(--font-meta); text-transform: uppercase; letter-spacing: 0.18em; font-size: 12px; color: var(--fg-tertiary); margin: 24px 0 12px;">Bluesky</h3>
+
+      <div class="step" data-step="b2-9">
+        <input type="checkbox" id="s-b2-9" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b2-9" class="step__title">void.news (or void.news.bsky.social) — confirm in use</label>
+            <span class="step__badge handle">handle</span>
+          </div>
+          <div class="step__body">
+            <p>Bluesky supports custom-domain handles. If you own <code>void.media</code> from Phase B3, set the handle to <code>news.void.media</code>.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b2-10">
+        <input type="checkbox" id="s-b2-10" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b2-10" class="step__title">void.history — reserve</label>
+            <span class="step__badge handle">handle</span>
+          </div>
+          <div class="step__body"></div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b2-11">
+        <input type="checkbox" id="s-b2-11" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b2-11" class="step__title">void.vision — reserve</label>
+            <span class="step__badge handle">handle</span>
+          </div>
+          <div class="step__body"></div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b2-12">
+        <input type="checkbox" id="s-b2-12" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b2-12" class="step__title">voidstudio — reserve</label>
+            <span class="step__badge handle">handle</span>
+          </div>
+          <div class="step__body"></div>
+        </div>
+      </div>
+
+      <h3 style="font-family: var(--font-meta); text-transform: uppercase; letter-spacing: 0.18em; font-size: 12px; color: var(--fg-tertiary); margin: 24px 0 12px;">X / Threads / TikTok</h3>
+
+      <div class="step" data-step="b2-13">
+        <input type="checkbox" id="s-b2-13" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b2-13" class="step__title">@voidnews — X / Threads (defensive)</label>
+            <span class="step__badge handle">handle</span>
+          </div>
+          <div class="step__body">
+            <p>Threads inherits from IG automatically — likely already done.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b2-14">
+        <input type="checkbox" id="s-b2-14" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b2-14" class="step__title">@voidhistory and @voidvision — X / Threads</label>
+            <span class="step__badge handle">handle</span>
+          </div>
+          <div class="step__body"></div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b2-15">
+        <input type="checkbox" id="s-b2-15" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b2-15" class="step__title">@void.news and @void.vision — TikTok (defensive only)</label>
+            <span class="step__badge handle">handle</span>
+          </div>
+          <div class="step__body">
+            <p>Park the handles. Do not activate posting. TikTok cadence is incompatible with the credibility play.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PHASE B3: Domain acquisition ═════════════════════════════════════ -->
+  <section class="phase" data-phase="b3">
+    <div class="phase__header">
+      <span class="phase__num">PHASE B3</span>
+      <h2 class="phase__title">Domain acquisition</h2>
+      <span class="phase__count"></span>
+      <span class="phase__chevron">▼</span>
+    </div>
+    <div class="phase__body">
+      <p class="phase__intro">~10 minutes, ~$15-30/year. The current <code>void-news.pages.dev</code> stays as primary. New domains park or redirect for now; the migration is a separate project.</p>
+
+      <div class="step" data-step="b3-1">
+        <input type="checkbox" id="s-b3-1" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b3-1" class="step__title">Buy void.media (preferred) or fallback</label>
+            <span class="step__badge domain">domain</span>
+          </div>
+          <div class="step__body">
+            <p>Check availability at <a href="https://www.namecheap.com/domains/registration/results/?domain=void.media" target="_blank" rel="noopener">namecheap</a> or <a href="https://domains.cloudflare.com/?domain=void.media" target="_blank" rel="noopener">cloudflare registrar</a>. Fallbacks: <code>void.studio</code>, <code>voidlab.io</code>, <code>void.fm</code>, <code>thevoid.media</code>.</p>
+            <p>Avoid hyphenated alternatives — they lose the wordmark.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b3-2">
+        <input type="checkbox" id="s-b3-2" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b3-2" class="step__title">Buy 1-2 defensive domains</label>
+            <span class="step__badge domain">domain</span>
+          </div>
+          <div class="step__body">
+            <p>Pick from the unused fallbacks above. Even at $15/yr each, ~$45/yr total to defend the master brand is cheap insurance against squatters.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b3-3">
+        <input type="checkbox" id="s-b3-3" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b3-3" class="step__title">Configure DNS — redirect new domains to void-news.pages.dev</label>
+            <span class="step__badge domain">domain</span>
+          </div>
+          <div class="step__body">
+            <p>Cloudflare dashboard → DNS → 301 redirect rule. Doesn't change the deployed site; just lets <code>void.media</code> resolve.</p>
+          </div>
+          <div class="step__verify"><code>curl -I https://void.media</code> returns 301 to <code>void-news.pages.dev</code>.</div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b3-4">
+        <input type="checkbox" id="s-b3-4" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b3-4" class="step__title">Use new domain for Bluesky handle (optional but classy)</label>
+            <span class="step__badge domain">domain</span>
+          </div>
+          <div class="step__body">
+            <p>If you bought <code>void.media</code>: set the Bluesky handle to <code>news.void.media</code> via the verification flow at <a href="https://bsky.app/settings" target="_blank" rel="noopener">bsky.app/settings</a>. Adds free brand reinforcement everywhere your @ appears.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PHASE B4: Visual identity ═══════════════════════════════════════ -->
+  <section class="phase" data-phase="b4">
+    <div class="phase__header">
+      <span class="phase__num">PHASE B4</span>
+      <h2 class="phase__title">Visual identity — extend the system to vision</h2>
+      <span class="phase__count"></span>
+      <span class="phase__chevron">▼</span>
+    </div>
+    <div class="phase__body">
+      <p class="phase__intro">The design system already encodes brand cohesion via type + wordmark, variation via palette. Adding void --vision is a 30-min code change.</p>
+
+      <table class="brand-table">
+        <thead>
+          <tr><th>Element</th><th>news</th><th>history</th><th>vision (new)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Accent</td><td>Ember <code>#C8472D</code></td><td>Burnt umber <code>#6B4423</code></td><td><strong>Cinematic teal <code>#3D7A8B</code></strong></td></tr>
+          <tr><td>Surface</td><td>Ivory <code>#F0EBDD</code></td><td>Aged paper <code>#E8DCC0</code></td><td>Deep ink <code>#0E0B08</code> (dark)</td></tr>
+          <tr><td>Texture</td><td>Newsprint grain</td><td>Aged paper</td><td>Filmic grain + scan lines</td></tr>
+          <tr><td>Type emphasis</td><td>Playfair + Mono scores</td><td>Playfair + Barlow datelines</td><td>Playfair + Mono for runtime</td></tr>
+        </tbody>
+      </table>
+
+      <div class="step" data-step="b4-1">
+        <input type="checkbox" id="s-b4-1" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b4-1" class="step__title">Add vision palette tokens to tokens.css</label>
+            <span class="step__badge automated">automated</span>
+          </div>
+          <div class="step__body">
+            <pre>--vision-accent: #3D7A8B;       /* cinematic teal */
+--vision-accent-bright: #4D90A3;
+--vision-accent-dim: #2A5A6B;
+--vision-surface: #0E0B08;</pre>
+            <p>Append under the existing palette block in <code>frontend/app/styles/tokens.css</code>. Both light and dark mode use the same values (vision UI is dark in both).</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b4-2">
+        <input type="checkbox" id="s-b4-2" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b4-2" class="step__title">Add void --vision to PRODUCT_FAMILY in film/data.ts</label>
+            <span class="step__badge automated">automated</span>
+          </div>
+          <div class="step__body">
+            <pre>{ cli: "void --vision", name: "The Cinema",
+  desc: "Long-form video. Same DNA.",
+  href: "/vision", palette: "vision" },</pre>
+            <p>Inserts vision into the product family grid that appears on /about (chapter V) and elsewhere.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b4-3">
+        <input type="checkbox" id="s-b4-3" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b4-3" class="step__title">Build the /vision placeholder route</label>
+            <span class="step__badge automated">automated</span>
+          </div>
+          <div class="step__body">
+            <p>Single page at <code>frontend/app/vision/page.tsx</code>. Headline: "void --vision". Subhead: "Long-form video. Coming soon." Link to the YouTube channel. Same dark filmic aesthetic.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b4-4">
+        <input type="checkbox" id="s-b4-4" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b4-4" class="step__title">Export brand-mark profile photo for new channels</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>Three exports needed (320×320 PNG):</p>
+            <ul>
+              <li>Ember on ivory — for IG / Threads / Bluesky reserved handles</li>
+              <li>Teal on dark — for YouTube @void.vision</li>
+              <li>Burnt umber on aged paper — for any future @void.history</li>
+            </ul>
+            <p>Use <code>frontend/app/components/LogoIcon.tsx</code> as source. Render in browser, screenshot, export.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PHASE B5: Naming convention ══════════════════════════════════════ -->
+  <section class="phase" data-phase="b5">
+    <div class="phase__header">
+      <span class="phase__num">PHASE B5</span>
+      <h2 class="phase__title">Lock the naming convention</h2>
+      <span class="phase__count"></span>
+      <span class="phase__chevron">▼</span>
+    </div>
+    <div class="phase__body">
+      <p class="phase__intro">One acknowledgement. Adopt these rules; future <code>void --xxxx</code> additions follow them.</p>
+
+      <div class="step" data-step="b5-1">
+        <input type="checkbox" id="s-b5-1" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b5-1" class="step__title">Naming rules locked</label>
+            <span class="step__badge decision">decision</span>
+          </div>
+          <div class="step__body">
+            <ol>
+              <li><strong>Single word after <code>--</code>.</strong> <code>void --news</code>, not <code>void --news-brief</code>.</li>
+              <li><strong>Noun, not verb.</strong> <code>void --paper</code>, not <code>void --read</code>.</li>
+              <li><strong>Pronounceable in a sentence.</strong> "I saw it on void --news" must sound natural.</li>
+              <li><strong>No abbreviations.</strong> <code>void --vision</code>, not <code>void --vid</code>.</li>
+              <li><strong>English-only for now.</strong></li>
+            </ol>
+            <p>Existing roster passes: <code>news, weekly, paper, sources, onair, history, ship, games, opinion</code>. <code>deep-dive</code> is a hyphenated grandfathered exception. Do not add new hyphenated commands.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b5-2">
+        <input type="checkbox" id="s-b5-2" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b5-2" class="step__title">Add naming rules to CLAUDE.md</label>
+            <span class="step__badge automated">automated</span>
+          </div>
+          <div class="step__body">
+            <p>One paragraph under "Core Principles" so every future spec checks against the rules.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PHASE B6: void --vision channel launch ═══════════════════════════ -->
+  <section class="phase" data-phase="b6">
+    <div class="phase__header">
+      <span class="phase__num">PHASE B6</span>
+      <h2 class="phase__title">void --vision channel — park, then publish</h2>
+      <span class="phase__count"></span>
+      <span class="phase__chevron">▼</span>
+    </div>
+    <div class="phase__body">
+      <p class="phase__intro">YouTube wants topical consistency. Decide the first format before episode 1; let the next 11 episodes test that hypothesis. The IG hub does the heavy promotional lifting.</p>
+
+      <div class="step" data-step="b6-1">
+        <input type="checkbox" id="s-b6-1" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b6-1" class="step__title">Park the YouTube channel with brand mark + about copy</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>Channel name: <code>void --vision</code>. Description:</p>
+            <pre>Long-form video from void.
+Same DNA: show-don't-tell, multiple perspectives, no manufactured outrage.
+News commentary, methodology essays, historical mini-docs.
+
+Daily news + bias analysis: void-news.pages.dev
+Instagram: instagram.com/void.news</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b6-2">
+        <input type="checkbox" id="s-b6-2" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b6-2" class="step__title">Upload "coming soon" trailer (60s)</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>One static frame with the brand mark, the line "Same stories. Same order. For everyone." in Playfair, audio track of a single tone fade. Sets the visual + audio identity before episode 1.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b6-3">
+        <input type="checkbox" id="s-b6-3" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b6-3" class="step__title">Pick the first-12 format hypothesis</label>
+            <span class="step__badge decision">decision</span>
+          </div>
+          <div class="step__body">
+            <p>One format for the first 12 episodes. Choose:</p>
+            <ul>
+              <li><strong>Bias-analysis essays</strong> (10-15 min): one news story per episode, side-by-side outlet framing, real-time void scoring</li>
+              <li><strong>Historical mini-docs</strong> (15-25 min): one event from void --history, multi-perspective</li>
+              <li><strong>Media-criticism case studies</strong> (12-18 min): pick a media moment, deconstruct the framing economy around it</li>
+            </ul>
+            <p>YouTube's algorithm rewards a consistent format. Episode 13 onwards: pivot allowed based on data.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b6-4">
+        <input type="checkbox" id="s-b6-4" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b6-4" class="step__title">Cross-link the YouTube channel from /about and /press</label>
+            <span class="step__badge automated">automated</span>
+          </div>
+          <div class="step__body">
+            <p>Update <code>frontend/app/film/data.ts</code> PRODUCT_FAMILY with the new <code>void --vision</code> entry (Phase B4-2). Add YouTube URL to /press contact section.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b6-5">
+        <input type="checkbox" id="s-b6-5" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b6-5" class="step__title">Ship void --vision episode 0 (5-min teaser)</label>
+            <span class="step__badge milestone">milestone</span>
+          </div>
+          <div class="step__body">
+            <p>Manifesto in video form. 5 minutes. Tells viewers what to expect from the next 12 episodes. Cross-posted to @void.news as a 30-sec Reel.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PHASE B7: 6-month roadmap ════════════════════════════════════════ -->
+  <section class="phase" data-phase="b7">
+    <div class="phase__header">
+      <span class="phase__num">PHASE B7</span>
+      <h2 class="phase__title">6-month roadmap — checkpoints</h2>
+      <span class="phase__count"></span>
+      <span class="phase__chevron">▼</span>
+    </div>
+    <div class="phase__body">
+      <p class="phase__intro">Quarterly checkpoints. Each is a strategic re-evaluation, not just a task. Tick when the milestone arrives <em>and</em> the decision it implies has been ratified.</p>
+
+      <div class="step" data-step="b7-1">
+        <input type="checkbox" id="s-b7-1" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b7-1" class="step__title">M0 — IG hub launched, all defensive handles + 1 domain reserved</label>
+            <span class="step__badge milestone">milestone</span>
+          </div>
+          <div class="step__body">
+            <p>Phases 0-10 of the IG launch checklist complete. Phases B1-B5 of this brand checklist complete. <code>@void.vision</code> YouTube channel parked.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b7-2">
+        <input type="checkbox" id="s-b7-2" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b7-2" class="step__title">M1 — void --vision episode 0 shipped, cross-posted as Reel</label>
+            <span class="step__badge milestone">milestone</span>
+          </div>
+          <div class="step__body">
+            <p>The teaser drops on YouTube. The 30-sec Reel cross-post lands on @void.news the same day. /vision route on the website links to the channel.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b7-3">
+        <input type="checkbox" id="s-b7-3" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b7-3" class="step__title">M2 — weekly vision drops begin; cross-engagement measured</label>
+            <span class="step__badge milestone">milestone</span>
+          </div>
+          <div class="step__body">
+            <p><strong>Decision point:</strong> do @void.news followers engage with vision content at ≥50% the rate they engage with news content? If yes: keep cross-promoting on IG. If no: stop the IG Reels for vision and grow YouTube on its own merits.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b7-4">
+        <input type="checkbox" id="s-b7-4" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b7-4" class="step__title">M3 — history saves-rate vs news saves-rate</label>
+            <span class="step__badge milestone">milestone</span>
+          </div>
+          <div class="step__body">
+            <p><strong>Decision point:</strong> is history saves-rate consistently &gt;1.5× news saves-rate over 30 days? If yes: history is the stronger draw — consider a dedicated @void.history IG. Otherwise stay unified.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b7-5">
+        <input type="checkbox" id="s-b7-5" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b7-5" class="step__title">M6 — brand audit (3 questions)</label>
+            <span class="step__badge milestone">milestone</span>
+          </div>
+          <div class="step__body">
+            <p>Answer all three:</p>
+            <ol>
+              <li>Does "void" come to mind first when followers describe what they follow? (Or do they say "the news-bias account"?)</li>
+              <li>Is the wordmark <code>void --</code> still doing brand work, or has it faded into pattern?</li>
+              <li>Do the per-product palettes feel like a family or feel disconnected?</li>
+            </ol>
+            <p>Adjust visual system, posting cadence, or product roster based on answers.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PHASE B8: Future trigger conditions ═════════════════════════════ -->
+  <section class="phase" data-phase="b8">
+    <div class="phase__header">
+      <span class="phase__num">PHASE B8</span>
+      <h2 class="phase__title">When to break out — trigger conditions</h2>
+      <span class="phase__count"></span>
+      <span class="phase__chevron">▼</span>
+    </div>
+    <div class="phase__body">
+      <p class="phase__intro">Reserve handles now. Only activate independent identities when one of these triggers fires. Acknowledge each so you don't forget the criteria.</p>
+
+      <div class="step" data-step="b8-1">
+        <input type="checkbox" id="s-b8-1" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b8-1" class="step__title">Trigger 1: Audience divergence</label>
+            <span class="step__badge decision">decision</span>
+          </div>
+          <div class="step__body">
+            <p><strong>Signal:</strong> &lt;20% engagement overlap between content pillars after 60 days. Followers of pillar A do not interact with pillar B at meaningful rate.</p>
+            <p><strong>Response:</strong> consider giving the higher-performing pillar a dedicated IG.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b8-2">
+        <input type="checkbox" id="s-b8-2" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b8-2" class="step__title">Trigger 2: Operational scale</label>
+            <span class="step__badge decision">decision</span>
+          </div>
+          <div class="step__body">
+            <p><strong>Signal:</strong> a second full-time editorial contributor joins, dedicated to one product line.</p>
+            <p><strong>Response:</strong> give them their own account/channel. One person → one account; two people → at most two accounts.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b8-3">
+        <input type="checkbox" id="s-b8-3" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b8-3" class="step__title">Trigger 3: Mission divergence</label>
+            <span class="step__badge decision">decision</span>
+          </div>
+          <div class="step__body">
+            <p><strong>Signal:</strong> a product develops a fundamentally different editorial promise. (Hasn't happened to any void --X yet.)</p>
+            <p><strong>Response:</strong> spin it out into its own brand. The void wordmark stays as an endorsement — "from void."</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="b8-4">
+        <input type="checkbox" id="s-b8-4" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-b8-4" class="step__title">Trigger 4: B2B pivot</label>
+            <span class="step__badge decision">decision</span>
+          </div>
+          <div class="step__body">
+            <p><strong>Signal:</strong> a product spins into a paid offering (e.g., <code>void --sources</code> as a bias-data API).</p>
+            <p><strong>Response:</strong> dedicated domain, dedicated handle, dedicated docs site. Master brand stays in the header.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  </div><!-- /.page[brand] -->
 
 <footer>
-  void --news / IG launch checklist · saves to localStorage <code>void-ig-checklist-v1</code> · plan: <code>.claude/plans/i-want-to-build-tingly-cloud.md</code>
+  void / launch hub · 2 pages, ~90 steps · saves to localStorage <code>void-ig-checklist-v1</code> · plan: <code>.claude/plans/i-want-to-build-tingly-cloud.md</code>
 </footer>
 
 <script>
@@ -1437,9 +2343,17 @@ media</pre>
     });
   });
 
-  // ─── Per-phase progress count ──────────────────────────────────────────
+  // ─── Per-phase + per-page progress counts ─────────────────────────────
+  // Each phase belongs to a "page" — find the closest .page ancestor of the
+  // phase, look at its data-page attribute, sum by page for the tab labels.
+  function pageOf(phaseEl) {
+    var p = phaseEl.closest('.page');
+    return p ? p.dataset.page : 'checklist';
+  }
+
   function updateProgress() {
     var totalDone = 0, total = 0;
+    var pageStats = { checklist: { done: 0, total: 0 }, brand: { done: 0, total: 0 } };
     phases.forEach(function(phaseEl) {
       var steps = phaseEl.querySelectorAll('.step');
       var done = 0;
@@ -1450,13 +2364,48 @@ media</pre>
       totalDone += done;
       phaseEl.querySelector('.phase__count').textContent = done + ' / ' + steps.length;
       phaseEl.dataset.complete = (done === steps.length && steps.length > 0) ? 'true' : 'false';
+
+      var pg = pageOf(phaseEl);
+      if (!pageStats[pg]) pageStats[pg] = { done: 0, total: 0 };
+      pageStats[pg].done += done;
+      pageStats[pg].total += steps.length;
     });
     var pct = total === 0 ? 0 : Math.round((totalDone / total) * 100);
     document.getElementById('pbar').style.width = pct + '%';
     document.getElementById('pct').textContent = pct + '%';
     document.getElementById('ratio').textContent = totalDone + ' / ' + total;
     document.body.dataset.allDone = (totalDone === total && total > 0) ? 'true' : 'false';
+
+    // Update tab counts.
+    document.querySelectorAll('[data-count]').forEach(function(el) {
+      var key = el.dataset.count;
+      var s = pageStats[key] || { done: 0, total: 0 };
+      el.textContent = s.done + ' / ' + s.total;
+    });
   }
+
+  // ─── Page tab switching ───────────────────────────────────────────────
+  var currentPage = state._current_page || 'checklist';
+  function showPage(target) {
+    document.querySelectorAll('.page').forEach(function(p) {
+      p.classList.toggle('active', p.dataset.page === target);
+    });
+    document.querySelectorAll('.page-nav button').forEach(function(btn) {
+      btn.setAttribute('aria-current', btn.dataset.target === target ? 'true' : 'false');
+    });
+    state._current_page = target;
+    saveState();
+    // Scroll to top of new page for orientation.
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  document.querySelectorAll('.page-nav button').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      showPage(btn.dataset.target);
+    });
+  });
+
+  showPage(currentPage);
 
   // ─── Toolbar buttons ──────────────────────────────────────────────────
   document.getElementById('expand-all').addEventListener('click', function() {
