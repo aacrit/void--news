@@ -1,0 +1,1491 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>void --news / IG launch checklist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-primary:    #F0EBDD;
+    --bg-card:       #F5F0E4;
+    --bg-secondary:  #E8E2D4;
+    --fg-primary:    #1A1A1A;
+    --fg-secondary:  #4A4540;
+    --fg-tertiary:   #686260;
+    --fg-muted:      #8A8278;
+    --fg-accent:     #946B15;
+    --ember:         #C8472D;
+    --border-subtle: #D4CCC2;
+    --border-strong: #B8B0A5;
+    --burnt-umber:   #6B4423;
+    --font-editorial: "Playfair Display", Georgia, serif;
+    --font-structural: "Inter", "Helvetica Neue", sans-serif;
+    --font-meta: "Barlow Condensed", "Franklin Gothic", sans-serif;
+    --font-data: "IBM Plex Mono", Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg-primary);
+    color: var(--fg-primary);
+    font-family: var(--font-structural);
+    line-height: 1.55;
+    padding-bottom: 120px;
+  }
+
+  /* ─── Header ─────────────────────────────────────────────────────────── */
+
+  header.hdr {
+    background: #0E0B08;
+    color: #F4EDE0;
+    padding: 48px 32px 32px;
+    position: relative;
+  }
+  header.hdr::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E");
+    pointer-events: none;
+    mix-blend-mode: screen;
+    opacity: 0.5;
+  }
+  header.hdr > * { position: relative; z-index: 2; }
+
+  .eyebrow {
+    font-family: var(--font-data);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    color: rgba(244, 237, 224, 0.65);
+    margin: 0 0 12px;
+  }
+  .title {
+    font-family: var(--font-editorial);
+    font-size: 48px;
+    line-height: 1.04;
+    font-weight: 700;
+    margin: 0;
+    max-width: 24ch;
+  }
+  .subtitle {
+    font-family: var(--font-editorial);
+    font-style: italic;
+    font-size: 20px;
+    line-height: 1.4;
+    color: rgba(244, 237, 224, 0.7);
+    max-width: 56ch;
+    margin: 16px 0 0;
+  }
+
+  /* ─── Progress bar ────────────────────────────────────────────────────── */
+
+  .progress-shell {
+    background: #0E0B08;
+    padding: 0 32px 32px;
+  }
+  .progress-bar {
+    position: relative;
+    height: 28px;
+    background: rgba(244, 237, 224, 0.06);
+    border: 1px solid rgba(244, 237, 224, 0.15);
+    overflow: hidden;
+  }
+  .progress-fill {
+    position: absolute;
+    inset: 0;
+    width: 0%;
+    background: linear-gradient(90deg, var(--fg-accent) 0%, var(--ember) 100%);
+    transition: width 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .progress-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    font-family: var(--font-data);
+    font-size: 13px;
+    color: rgba(244, 237, 224, 0.95);
+    letter-spacing: 0.04em;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+    z-index: 2;
+  }
+
+  /* ─── Main container ──────────────────────────────────────────────────── */
+
+  main {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 48px 32px 0;
+  }
+
+  /* ─── Toolbar ─────────────────────────────────────────────────────────── */
+
+  .toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .toolbar__legend {
+    display: flex;
+    gap: 12px;
+    font-family: var(--font-data);
+    font-size: 12px;
+    color: var(--fg-tertiary);
+  }
+  .legend-dot {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .legend-dot::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .legend-dot.manual::before    { background: var(--ember); }
+  .legend-dot.automated::before { background: var(--fg-accent); }
+  .legend-dot.verify::before    { background: var(--burnt-umber); }
+  .legend-dot.wait::before      { background: var(--fg-muted); }
+
+  .toolbar__buttons {
+    display: flex;
+    gap: 8px;
+  }
+  .toolbar button {
+    font-family: var(--font-data);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    background: transparent;
+    border: 1px solid var(--border-strong);
+    color: var(--fg-secondary);
+    cursor: pointer;
+    transition: background 120ms;
+  }
+  .toolbar button:hover {
+    background: var(--bg-card);
+    color: var(--fg-primary);
+  }
+  .toolbar button.danger:hover {
+    background: rgba(200, 71, 45, 0.08);
+    border-color: var(--ember);
+    color: var(--ember);
+  }
+
+  /* ─── Phase ───────────────────────────────────────────────────────────── */
+
+  .phase {
+    margin-bottom: 40px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-card);
+  }
+  .phase__header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+    cursor: pointer;
+    user-select: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 120ms;
+  }
+  .phase[data-open="true"] .phase__header {
+    border-bottom-color: var(--border-subtle);
+  }
+  .phase__num {
+    font-family: var(--font-data);
+    font-size: 13px;
+    color: var(--fg-accent);
+    letter-spacing: 0.12em;
+    flex-shrink: 0;
+    width: 64px;
+  }
+  .phase__title {
+    font-family: var(--font-editorial);
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0;
+    flex: 1;
+  }
+  .phase__count {
+    font-family: var(--font-data);
+    font-size: 12px;
+    color: var(--fg-tertiary);
+    padding: 4px 10px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
+  }
+  .phase[data-complete="true"] .phase__count {
+    background: rgba(148, 107, 21, 0.12);
+    color: var(--fg-accent);
+    border-color: var(--fg-accent);
+  }
+  .phase__chevron {
+    font-family: var(--font-data);
+    color: var(--fg-tertiary);
+    width: 16px;
+    text-align: center;
+    transition: transform 200ms;
+  }
+  .phase[data-open="true"] .phase__chevron {
+    transform: rotate(180deg);
+  }
+
+  .phase__body {
+    padding: 16px 24px 24px;
+    display: none;
+  }
+  .phase[data-open="true"] .phase__body {
+    display: block;
+  }
+
+  .phase__intro {
+    font-family: var(--font-editorial);
+    font-style: italic;
+    font-size: 17px;
+    color: var(--fg-secondary);
+    margin: 0 0 24px;
+    padding-left: 16px;
+    border-left: 2px solid var(--fg-accent);
+  }
+
+  /* ─── Step ────────────────────────────────────────────────────────────── */
+
+  .step {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 16px;
+    padding: 16px 0;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .step:first-of-type { border-top: none; }
+  .step[data-done="true"] .step__title { color: var(--fg-tertiary); text-decoration: line-through; }
+  .step[data-done="true"] .step__body { opacity: 0.55; }
+
+  .step input[type="checkbox"] {
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--border-strong);
+    background: var(--bg-primary);
+    cursor: pointer;
+    margin-top: 2px;
+    flex-shrink: 0;
+    position: relative;
+    transition: background 100ms, border-color 100ms;
+  }
+  .step input[type="checkbox"]:hover {
+    border-color: var(--fg-accent);
+  }
+  .step input[type="checkbox"]:checked {
+    background: var(--fg-primary);
+    border-color: var(--fg-primary);
+  }
+  .step input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 1px;
+    width: 6px;
+    height: 12px;
+    border: solid var(--bg-primary);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  .step__main { min-width: 0; }
+  .step__header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .step__title {
+    font-family: var(--font-structural);
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    color: var(--fg-primary);
+  }
+  .step__badge {
+    font-family: var(--font-data);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 2px 8px;
+    border-radius: 0;
+    flex-shrink: 0;
+  }
+  .step__badge.manual    { background: rgba(200, 71, 45, 0.12); color: var(--ember); border: 1px solid rgba(200, 71, 45, 0.4); }
+  .step__badge.automated { background: rgba(148, 107, 21, 0.12); color: var(--fg-accent); border: 1px solid rgba(148, 107, 21, 0.4); }
+  .step__badge.verify    { background: rgba(107, 68, 35, 0.12); color: var(--burnt-umber); border: 1px solid rgba(107, 68, 35, 0.4); }
+  .step__badge.wait      { background: rgba(105, 98, 96, 0.12); color: var(--fg-tertiary); border: 1px solid var(--border-strong); }
+
+  .step__body {
+    font-family: var(--font-structural);
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--fg-secondary);
+    margin: 8px 0 0;
+  }
+  .step__body p { margin: 0 0 8px; }
+  .step__body p:last-child { margin-bottom: 0; }
+  .step__body code, .step__body pre {
+    font-family: var(--font-data);
+    font-size: 13px;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 2px 6px;
+    border-radius: 2px;
+    color: var(--fg-primary);
+  }
+  .step__body pre {
+    display: block;
+    padding: 12px 16px;
+    overflow-x: auto;
+    margin: 8px 0;
+    background: #0E0B08;
+    color: #F4EDE0;
+    line-height: 1.5;
+  }
+  .step__body a {
+    color: var(--fg-accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  .step__verify {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: rgba(107, 68, 35, 0.06);
+    border-left: 2px solid var(--burnt-umber);
+    font-size: 13.5px;
+    color: var(--fg-secondary);
+    font-family: var(--font-structural);
+  }
+  .step__verify::before {
+    content: "verify · ";
+    font-family: var(--font-data);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--burnt-umber);
+  }
+
+  /* ─── Footer ──────────────────────────────────────────────────────────── */
+
+  footer {
+    margin-top: 64px;
+    padding: 32px 32px 48px;
+    border-top: 1px solid var(--border-subtle);
+    max-width: 920px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    color: var(--fg-tertiary);
+    font-family: var(--font-data);
+    font-size: 12px;
+    line-height: 1.7;
+  }
+
+  /* ─── Confetti when complete ──────────────────────────────────────────── */
+
+  .done-banner {
+    display: none;
+    margin-bottom: 32px;
+    padding: 24px;
+    background: linear-gradient(135deg, var(--fg-accent) 0%, var(--ember) 100%);
+    color: #F4EDE0;
+    font-family: var(--font-editorial);
+    font-size: 24px;
+    line-height: 1.3;
+  }
+  .done-banner__sub {
+    font-family: var(--font-structural);
+    font-style: italic;
+    font-size: 15px;
+    margin-top: 8px;
+    opacity: 0.9;
+  }
+  body[data-all-done="true"] .done-banner { display: block; }
+
+  /* ─── Mobile ──────────────────────────────────────────────────────────── */
+
+  @media (max-width: 640px) {
+    header.hdr { padding: 32px 20px 20px; }
+    .progress-shell { padding: 0 20px 20px; }
+    .title { font-size: 36px; }
+    main { padding: 32px 20px 0; }
+    .phase__header { padding: 16px; }
+    .phase__num { width: auto; }
+    .phase__body { padding: 12px 16px 16px; }
+    .toolbar { flex-direction: column; gap: 16px; align-items: stretch; }
+    .step { grid-template-columns: 28px 1fr; gap: 12px; }
+  }
+
+  /* ─── Print ───────────────────────────────────────────────────────────── */
+
+  @media print {
+    header.hdr { background: white; color: black; }
+    header.hdr::after { display: none; }
+    .progress-shell, .toolbar__buttons { display: none; }
+    .phase__body { display: block !important; }
+    .phase__chevron { display: none; }
+    body { background: white; }
+    .step__body pre { background: #F0EBDD; color: black; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <p class="eyebrow">void --news / launch</p>
+  <h1 class="title">Take @void.news fully live.</h1>
+  <p class="subtitle">A linear checklist from a blank Instagram handle to a publishing cron that ships approved posts twice a week. Every step is marked manual or automated. Progress saves in your browser.</p>
+</header>
+
+<div class="progress-shell">
+  <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+    <div class="progress-fill" id="pbar"></div>
+    <div class="progress-label">
+      <span id="pct">0%</span>
+      <span id="ratio">0 / 0</span>
+    </div>
+  </div>
+</div>
+
+<main>
+  <div class="toolbar">
+    <div class="toolbar__legend">
+      <span class="legend-dot manual">manual</span>
+      <span class="legend-dot automated">automated</span>
+      <span class="legend-dot verify">verify</span>
+      <span class="legend-dot wait">wait</span>
+    </div>
+    <div class="toolbar__buttons">
+      <button type="button" id="expand-all">expand all</button>
+      <button type="button" id="collapse-done">collapse done</button>
+      <button type="button" id="reset" class="danger">reset progress</button>
+    </div>
+  </div>
+
+  <div class="done-banner">
+    @void.news is live. Same stories. Same order. For everyone.
+    <div class="done-banner__sub">All phases complete. Open <code>/admin/ig</code> tomorrow at 12:00 UTC for the next draft.</div>
+  </div>
+
+  <!-- ═══ PHASE 0 ════════════════════════════════════════════════════════ -->
+  <section class="phase" data-phase="0">
+    <div class="phase__header">
+      <span class="phase__num">PHASE 0</span>
+      <h2 class="phase__title">Reserve the account, set up Meta</h2>
+      <span class="phase__count"></span>
+      <span class="phase__chevron">▼</span>
+    </div>
+    <div class="phase__body">
+      <p class="phase__intro">~60 minutes. Has to happen in this order: handle reserved, account switched to Creator/Business, Facebook Page created, IG linked to Page, Meta developer app + tokens.</p>
+
+      <div class="step" data-step="0-1">
+        <input type="checkbox" id="s-0-1" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-0-1" class="step__title">Reserve <code>@void.news</code> on Instagram</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>Install the Instagram app or use <a href="https://www.instagram.com/accounts/emailsignup/" target="_blank" rel="noopener">instagram.com/accounts/emailsignup</a>. Use a personal phone number for SMS verification; Meta detects and bans virtual-number signups. Pick a password and save it to your password manager.</p>
+            <p>If <code>void.news</code> is taken, fall back to <code>voidnews</code> or <code>void_news</code>. The double-dash from the wordmark is impossible — Instagram blocks hyphens.</p>
+          </div>
+          <div class="step__verify">You can sign in and the profile is empty. Note your handle for later steps.</div>
+        </div>
+      </div>
+
+      <div class="step" data-step="0-2">
+        <input type="checkbox" id="s-0-2" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-0-2" class="step__title">Defend the handle on Threads, Bluesky, X</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>Threads picks up the IG handle automatically once the account exists. Visit Bluesky at <a href="https://bsky.app" target="_blank" rel="noopener">bsky.app</a> and sign up with the matching handle. Same for X at <a href="https://twitter.com" target="_blank" rel="noopener">twitter.com</a>. Even unused, the reservation blocks impersonation.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="0-3">
+        <input type="checkbox" id="s-0-3" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-0-3" class="step__title">Switch IG to Creator account</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>In the IG mobile app: Settings → Account → Switch to Professional Account → choose <strong>Creator</strong> (not Business — same API access, simpler taxonomy). No Graph API endpoint exists for this; it's an in-app flow.</p>
+          </div>
+          <div class="step__verify">Profile shows the "Professional dashboard" entry under your bio.</div>
+        </div>
+      </div>
+
+      <div class="step" data-step="0-4">
+        <input type="checkbox" id="s-0-4" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-0-4" class="step__title">Set bio + profile photo</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>Bio (149 chars):</p>
+            <pre>Same stories. Same order. For everyone.
+6-axis bias on every article, not every outlet.
+No signup. No tracking. Free forever.</pre>
+            <p>Link: <code>void-news.pages.dev</code>. Profile photo: export the brand mark at 320×320 from <code>frontend/app/components/LogoIcon.tsx</code> (ink on ivory <code>#F4EDE0</code>).</p>
+            <p>Graph API doesn't expose bio or profile photo editing — these stay manual forever.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="0-5">
+        <input type="checkbox" id="s-0-5" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-0-5" class="step__title">Create a Facebook Page</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>Meta requires every Business asset to have a real-person admin via Facebook. From your personal FB account, visit <a href="https://www.facebook.com/pages/create" target="_blank" rel="noopener">facebook.com/pages/create</a>. Page name "void --news", category "News &amp; Media Website".</p>
+            <p>If you don't have a personal FB account, create one. There is no path around this requirement.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="0-6">
+        <input type="checkbox" id="s-0-6" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-0-6" class="step__title">Link IG account to the FB Page</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>In Instagram → Settings → Account → Linked Accounts → Facebook → choose the page you just created. No API for this; click-through only.</p>
+          </div>
+          <div class="step__verify">In Meta Business Suite at <a href="https://business.facebook.com" target="_blank" rel="noopener">business.facebook.com</a>, both assets appear under the same Page.</div>
+        </div>
+      </div>
+
+      <div class="step" data-step="0-7">
+        <input type="checkbox" id="s-0-7" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-0-7" class="step__title">Sign up as a Meta developer</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>Visit <a href="https://developers.facebook.com" target="_blank" rel="noopener">developers.facebook.com</a>, click "Get Started", complete the developer agreement. Free.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="0-8">
+        <input type="checkbox" id="s-0-8" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-0-8" class="step__title">Create a new Meta app</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>App type: <strong>Business</strong>. App name: "void --news IG automation". Note the App ID and App Secret — they go into GitHub secrets in phase 1.</p>
+            <p>In the app dashboard → Add Product → add <strong>Instagram Graph API</strong> and <strong>Instagram Messaging</strong>.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="0-9">
+        <input type="checkbox" id="s-0-9" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-0-9" class="step__title">Generate the long-lived access token</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>Use the Graph API Explorer at <a href="https://developers.facebook.com/tools/explorer" target="_blank" rel="noopener">developers.facebook.com/tools/explorer</a>. Select your app, then your linked IG account. Request these permissions:</p>
+            <pre>instagram_basic
+instagram_content_publish
+instagram_manage_comments
+instagram_manage_messages
+instagram_manage_insights
+pages_show_list
+pages_read_engagement</pre>
+            <p>Generate a short-lived token, then exchange it for a 60-day long-lived token:</p>
+            <pre>curl "https://graph.facebook.com/v21.0/oauth/access_token" \
+  --data-urlencode "grant_type=fb_exchange_token" \
+  --data-urlencode "client_id=$META_APP_ID" \
+  --data-urlencode "client_secret=$META_APP_SECRET" \
+  --data-urlencode "fb_exchange_token=$SHORT_LIVED_TOKEN"</pre>
+            <p>Save the long-lived <code>access_token</code> — this is <code>INSTAGRAM_GRAPH_TOKEN</code>. From now on the weekly cron at <code>ig-token-refresh.yml</code> rotates it automatically.</p>
+          </div>
+          <div class="step__verify">Test the token: <code>curl "https://graph.facebook.com/v21.0/me?access_token=$TOKEN"</code> returns your IG user object.</div>
+        </div>
+      </div>
+
+      <div class="step" data-step="0-10">
+        <input type="checkbox" id="s-0-10" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-0-10" class="step__title">Find INSTAGRAM_USER_ID</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <pre>curl "https://graph.facebook.com/v21.0/me/accounts?access_token=$TOKEN"
+# Find your Page id, then:
+curl "https://graph.facebook.com/v21.0/$PAGE_ID?fields=instagram_business_account&access_token=$TOKEN"</pre>
+            <p>The numeric <code>instagram_business_account.id</code> is your <code>INSTAGRAM_USER_ID</code>.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="0-11">
+        <input type="checkbox" id="s-0-11" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-0-11" class="step__title">Generate the Bluesky app password</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>Sign in to <a href="https://bsky.app" target="_blank" rel="noopener">bsky.app</a> as the void.news account. Settings → Privacy and Security → App Passwords → Add App Password → name "void-news-cross-post". Save the generated password — this is <code>BLUESKY_APP_PASSWORD</code>. Your <code>BLUESKY_HANDLE</code> is the full handle (e.g. <code>void.news.bsky.social</code>).</p>
+            <p>Do not use your main account password. App passwords scope access to specific actions and can be revoked.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="0-12">
+        <input type="checkbox" id="s-0-12" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-0-12" class="step__title">Pick the webhook verify token + admin password</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>Two values you invent, then never type by hand again:</p>
+            <ul>
+              <li><code>META_WEBHOOK_VERIFY_TOKEN</code> — any 32+ char random string. Used during Meta webhook handshake.</li>
+              <li><code>IG_ADMIN_PASSWORD</code> — basic-auth password for <code>/admin/ig</code>. Make it strong; this is your only gate on the approval surface.</li>
+            </ul>
+            <p>Generate both with: <code>python -c "import secrets; print(secrets.token_urlsafe(32))"</code>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PHASE 1 ════════════════════════════════════════════════════════ -->
+  <section class="phase" data-phase="1">
+    <div class="phase__header">
+      <span class="phase__num">PHASE 1</span>
+      <h2 class="phase__title">Secrets and environment</h2>
+      <span class="phase__count"></span>
+      <span class="phase__chevron">▼</span>
+    </div>
+    <div class="phase__body">
+      <p class="phase__intro">Plant every credential exactly where the workflows expect to find it. Once this phase is done, no secret ever travels outside the platforms that hold them.</p>
+
+      <div class="step" data-step="1-1">
+        <input type="checkbox" id="s-1-1" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-1-1" class="step__title">Add all IG-related GitHub Actions secrets</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>Visit <a href="https://github.com/aacrit/void--news/settings/secrets/actions" target="_blank" rel="noopener">github.com/aacrit/void--news/settings/secrets/actions</a> and add:</p>
+            <pre>INSTAGRAM_GRAPH_TOKEN     # from step 0-9
+INSTAGRAM_USER_ID         # from step 0-10
+META_APP_ID               # from step 0-8
+META_APP_SECRET           # from step 0-8
+BLUESKY_HANDLE            # from step 0-11
+BLUESKY_APP_PASSWORD      # from step 0-11
+IG_SECRET_WRITE_TOKEN     # a fine-grained PAT, see body
+IG_ADMIN_USER             # any username (e.g. "aacrit")
+IG_ADMIN_PASSWORD         # from step 0-12</pre>
+            <p><code>IG_SECRET_WRITE_TOKEN</code> is a fine-grained Personal Access Token used by <code>ig-token-refresh.yml</code> to write the rotated long-lived token back into Actions secrets. Create at <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a> scoped only to this repo with <strong>Secrets: Read &amp; Write</strong>.</p>
+          </div>
+          <div class="step__verify">All 9 secrets appear in the Actions secrets list (their values are hidden).</div>
+        </div>
+      </div>
+
+      <div class="step" data-step="1-2">
+        <input type="checkbox" id="s-1-2" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-1-2" class="step__title">Add CF Pages env vars for the webhook function</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>The webhook lives at <code>/api/ig/webhook</code> as a Cloudflare Pages Function. Set its environment variables in the CF dashboard → Pages → void-news project → Settings → Environment variables (Production):</p>
+            <pre>META_APP_SECRET              # from step 0-8 (used to verify HMAC sig)
+META_WEBHOOK_VERIFY_TOKEN    # from step 0-12
+SUPABASE_URL                 # existing
+SUPABASE_SERVICE_ROLE_KEY    # existing — service-role, NOT anon</pre>
+            <p>After setting, redeploy by pushing any commit to <code>main</code> — CF Pages doesn't pick up env changes without a new deployment.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="1-3">
+        <input type="checkbox" id="s-1-3" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-1-3" class="step__title">Create local <code>.env</code> from <code>.env.example</code></label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <pre>cp .env.example .env
+# Edit and fill in every value.</pre>
+            <p>You will run the admin page (<code>/admin/ig</code>) locally during launch week, so the <code>.env</code> must have <code>IG_ADMIN_USER</code>, <code>IG_ADMIN_PASSWORD</code>, <code>SUPABASE_SERVICE_ROLE_KEY</code>, and <code>NEXT_PUBLIC_SUPABASE_*</code> populated.</p>
+          </div>
+          <div class="step__verify">From <code>frontend/</code>, run <code>npm run dev</code>; visit <code>http://localhost:3000/admin/ig</code>; browser prompts for basic auth and accepts your IG_ADMIN_* values.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PHASE 2 ════════════════════════════════════════════════════════ -->
+  <section class="phase" data-phase="2">
+    <div class="phase__header">
+      <span class="phase__num">PHASE 2</span>
+      <h2 class="phase__title">Database migrations</h2>
+      <span class="phase__count"></span>
+      <span class="phase__chevron">▼</span>
+    </div>
+    <div class="phase__body">
+      <p class="phase__intro">Two SQL files. They create the <code>ig_posts</code> state machine, the engagement tables (comments/DMs/mentions/hashtags), and the public <code>ig-renders</code> bucket. RLS denies anon access; the service role bypasses.</p>
+
+      <div class="step" data-step="2-1">
+        <input type="checkbox" id="s-2-1" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-2-1" class="step__title">Apply migration 052_ig_posts.sql</label>
+            <span class="step__badge automated">automated</span>
+          </div>
+          <div class="step__body">
+            <p>The repo's existing migration workflow handles this — push the branch and the auto-merge runs migrations. Or apply directly via the Supabase MCP / dashboard:</p>
+            <pre>supabase db push                              # if using local CLI
+# OR paste the SQL into the Supabase SQL editor</pre>
+          </div>
+          <div class="step__verify">In Supabase Studio → Tables, <code>ig_posts</code> appears with the 6 indexes from the migration.</div>
+        </div>
+      </div>
+
+      <div class="step" data-step="2-2">
+        <input type="checkbox" id="s-2-2" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-2-2" class="step__title">Apply migration 053_ig_engagement.sql</label>
+            <span class="step__badge automated">automated</span>
+          </div>
+          <div class="step__body">
+            <p>Same flow as 052. Creates <code>ig_comments</code>, <code>ig_dms</code>, <code>ig_mentions</code>, <code>ig_hashtag_candidates</code>.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="2-3">
+        <input type="checkbox" id="s-2-3" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-2-3" class="step__title">Confirm the <code>ig-renders</code> storage bucket is public</label>
+            <span class="step__badge verify">verify</span>
+          </div>
+          <div class="step__body">
+            <p>Supabase Studio → Storage → buckets. <code>ig-renders</code> should appear as Public with an 8MB file size limit. The Graph API fetches images by URL, so private buckets won't work.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PHASE 3 ════════════════════════════════════════════════════════ -->
+  <section class="phase" data-phase="3">
+    <div class="phase__header">
+      <span class="phase__num">PHASE 3</span>
+      <h2 class="phase__title">Privacy + press pages deployed</h2>
+      <span class="phase__count"></span>
+      <span class="phase__chevron">▼</span>
+    </div>
+    <div class="phase__body">
+      <p class="phase__intro">App Review requires a public privacy policy URL and a business contact. Both pages exist in this branch and deploy via the existing CF Pages workflow.</p>
+
+      <div class="step" data-step="3-1">
+        <input type="checkbox" id="s-3-1" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-3-1" class="step__title">Merge the IG branch to main</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>The auto-merge workflow handles claude/* branches, but the repo policy requires the human-in-the-loop merge for a feature this large. Open the PR:</p>
+            <pre>gh pr create --base main --head claude/ig-automation-stack \
+  --title "feat(ig): full Instagram automation stack"</pre>
+            <p>Review the diff. Approve. Merge.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="3-2">
+        <input type="checkbox" id="s-3-2" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-3-2" class="step__title">Wait for CF Pages deploy</label>
+            <span class="step__badge wait">wait</span>
+          </div>
+          <div class="step__body">
+            <p>Watch the deploy at <a href="https://github.com/aacrit/void--news/actions" target="_blank" rel="noopener">github.com/aacrit/void--news/actions</a>. Usually 2–3 min after merge.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="3-3">
+        <input type="checkbox" id="s-3-3" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-3-3" class="step__title">Confirm /privacy and /press are live</label>
+            <span class="step__badge verify">verify</span>
+          </div>
+          <div class="step__body">
+            <ul>
+              <li><a href="https://void-news.pages.dev/privacy" target="_blank" rel="noopener">void-news.pages.dev/privacy</a> — full policy renders, no 404</li>
+              <li><a href="https://void-news.pages.dev/press" target="_blank" rel="noopener">void-news.pages.dev/press</a> — full kit renders</li>
+              <li><a href="https://void-news.pages.dev/api/ig/webhook?hub.mode=subscribe&hub.verify_token=BAD&hub.challenge=hello" target="_blank" rel="noopener">void-news.pages.dev/api/ig/webhook?hub.mode=subscribe&hub.verify_token=BAD&hub.challenge=hello</a> — returns 403 (bad verify token) — proves the webhook function deployed</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PHASE 4 ════════════════════════════════════════════════════════ -->
+  <section class="phase" data-phase="4">
+    <div class="phase__header">
+      <span class="phase__num">PHASE 4</span>
+      <h2 class="phase__title">Meta App Review</h2>
+      <span class="phase__count"></span>
+      <span class="phase__chevron">▼</span>
+    </div>
+    <div class="phase__body">
+      <p class="phase__intro">1–7 business days. The longest gate. Submit early, then build the seed list while you wait.</p>
+
+      <div class="step" data-step="4-1">
+        <input type="checkbox" id="s-4-1" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-4-1" class="step__title">Verify the domain in Meta Business Manager</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>Visit <a href="https://business.facebook.com/settings/owned-domains" target="_blank" rel="noopener">business.facebook.com/settings/owned-domains</a>. Add <code>void-news.pages.dev</code>. Choose the DNS TXT verification method. Add the TXT record at your DNS provider (or via Cloudflare dashboard if you point through CF DNS). Wait 5–30 min for propagation, then click Verify.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="4-2">
+        <input type="checkbox" id="s-4-2" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-4-2" class="step__title">Record a 60–90 second screencast</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>Meta reviewers need to see your integration in motion. Record (Loom, OBS, QuickTime):</p>
+            <ol>
+              <li>Show the IG admin page <code>/admin/ig</code> with a draft post.</li>
+              <li>Show the slides + caption.</li>
+              <li>Click Approve.</li>
+              <li>Trigger publisher (you can do a dry-run for the recording).</li>
+              <li>Switch to Instagram and show the post live.</li>
+            </ol>
+            <p>Upload as unlisted YouTube or a public link.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="4-3">
+        <input type="checkbox" id="s-4-3" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-4-3" class="step__title">Submit App Review</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>Meta developer dashboard → your app → App Review → Permissions and Features. Request:</p>
+            <pre>instagram_content_publish
+instagram_manage_comments
+instagram_manage_messages
+instagram_manage_insights</pre>
+            <p>For each, attach the screencast and write a one-paragraph use case. Mention the privacy URL <code>https://void-news.pages.dev/privacy</code> and link to the press page.</p>
+            <p>Sample use-case text for <code>instagram_content_publish</code>: <em>"void --news is an automated news commentary product. The Graph API publishes bias-analysis posts (image carousels with 6-axis scores) to our own @void.news account. Every post is reviewed and approved by a human in our internal admin before publication. We do not publish to or on behalf of any other account."</em></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="4-4">
+        <input type="checkbox" id="s-4-4" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-4-4" class="step__title">Respond to business verification if asked</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>Meta may request business documents (DBA, EIN, or equivalent national ID). If you're operating as an individual, attach a government ID and a utility bill / bank statement under your name + address. Usually resolves within 24h.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="4-5">
+        <input type="checkbox" id="s-4-5" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-4-5" class="step__title">Wait for review approval</label>
+            <span class="step__badge wait">wait</span>
+          </div>
+          <div class="step__body">
+            <p>1–7 business days typically. You'll get a dashboard notification + email. Until approved, the long-lived token can only access <strong>your own</strong> account (in Development mode), which is enough for the first publish test.</p>
+            <p>While waiting: Phase 7 (seed follow + personal post) can begin.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PHASE 5 ════════════════════════════════════════════════════════ -->
+  <section class="phase" data-phase="5">
+    <div class="phase__header">
+      <span class="phase__num">PHASE 5</span>
+      <h2 class="phase__title">Webhooks for real-time inbound</h2>
+      <span class="phase__count"></span>
+      <span class="phase__chevron">▼</span>
+    </div>
+    <div class="phase__body">
+      <p class="phase__intro">Without webhooks, comments and DMs would have to be polled. With webhooks, Meta pushes events to <code>/api/ig/webhook</code> the moment they happen. One-time subscription.</p>
+
+      <div class="step" data-step="5-1">
+        <input type="checkbox" id="s-5-1" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-5-1" class="step__title">Subscribe webhooks in the Meta dashboard</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>App dashboard → Webhooks → Instagram → Subscribe. Callback URL:</p>
+            <pre>https://void-news.pages.dev/api/ig/webhook</pre>
+            <p>Verify Token: paste your <code>META_WEBHOOK_VERIFY_TOKEN</code> from step 0-12. Meta sends a verification GET; the function echoes <code>hub.challenge</code> back. Then subscribe to these event fields:</p>
+            <pre>comments
+mentions
+messages
+message_reactions
+media</pre>
+          </div>
+          <div class="step__verify">The Meta dashboard shows "Subscribed" next to each event field. No red banners.</div>
+        </div>
+      </div>
+
+      <div class="step" data-step="5-2">
+        <input type="checkbox" id="s-5-2" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-5-2" class="step__title">Test the webhook handshake</label>
+            <span class="step__badge verify">verify</span>
+          </div>
+          <div class="step__body">
+            <pre>curl "https://void-news.pages.dev/api/ig/webhook?hub.mode=subscribe&hub.verify_token=$YOUR_TOKEN&hub.challenge=hello-meta"
+# expect: hello-meta</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PHASE 6 ════════════════════════════════════════════════════════ -->
+  <section class="phase" data-phase="6">
+    <div class="phase__header">
+      <span class="phase__num">PHASE 6</span>
+      <h2 class="phase__title">Seed the 10 launch posts</h2>
+      <span class="phase__count"></span>
+      <span class="phase__chevron">▼</span>
+    </div>
+    <div class="phase__body">
+      <p class="phase__intro">A single workflow run generates rows 1–10, renders all slides, writes captions, and parks them in <code>state='draft'</code> waiting for your approval. Total wall-clock: ~10 minutes.</p>
+
+      <div class="step" data-step="6-1">
+        <input type="checkbox" id="s-6-1" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-6-1" class="step__title">Trigger seed-launch workflow</label>
+            <span class="step__badge automated">automated</span>
+          </div>
+          <div class="step__body">
+            <pre>gh workflow run ig-pipeline.yml -f mode=seed-launch</pre>
+            <p>Or via GitHub UI: Actions → IG Pipeline → Run workflow → mode = <code>seed-launch</code>.</p>
+          </div>
+          <div class="step__verify">Watch logs. Should see <code>[generator] launch slot N → &lt;uuid&gt;</code> 10 times, then capture logs for ~50 slides, then 10 caption successes.</div>
+        </div>
+      </div>
+
+      <div class="step" data-step="6-2">
+        <input type="checkbox" id="s-6-2" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-6-2" class="step__title">Open /admin/ig locally</label>
+            <span class="step__badge verify">verify</span>
+          </div>
+          <div class="step__body">
+            <pre>cd frontend && npm run dev
+# visit http://localhost:3000/admin/ig
+# basic-auth with IG_ADMIN_USER / IG_ADMIN_PASSWORD</pre>
+            <p>You should see 10 pending rows tagged <code>launch #1</code>..<code>launch #10</code>.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="6-3">
+        <input type="checkbox" id="s-6-3" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-6-3" class="step__title">Review Post 1 (manifesto opener)</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>Scrub all 3 slides. Read the caption carefully — no em dashes, no "notable/significant/interestingly", numbers do the work. Edit inline if needed. When happy, click <strong>save caption</strong> then <strong>approve</strong>.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="6-4">
+        <input type="checkbox" id="s-6-4" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-6-4" class="step__title">Dry-run publish</label>
+            <span class="step__badge automated">automated</span>
+          </div>
+          <div class="step__body">
+            <pre>gh workflow run ig-pipeline.yml -f mode=dry-run-publish</pre>
+            <p>This calls the Graph API construction code without actually publishing — you'll see <code>[dry-run] POST {url} params=...</code> for each step. Confirms tokens, URLs, and shapes are right.</p>
+          </div>
+          <div class="step__verify">Workflow exits 0. Logs show would-be POSTs to <code>/media</code> and <code>/media_publish</code>. No errors, no 401s.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PHASE 7 ════════════════════════════════════════════════════════ -->
+  <section class="phase" data-phase="7">
+    <div class="phase__header">
+      <span class="phase__num">PHASE 7</span>
+      <h2 class="phase__title">First real publish + personal post</h2>
+      <span class="phase__count"></span>
+      <span class="phase__chevron">▼</span>
+    </div>
+    <div class="phase__body">
+      <p class="phase__intro">The point of no return. Once Post 1 ships, your network sees the manifesto opener. Coordinate with the personal-account post the same morning.</p>
+
+      <div class="step" data-step="7-1">
+        <input type="checkbox" id="s-7-1" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-7-1" class="step__title">Pick the personal-post version</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>From the plan, §7. Three versions: A (tech network), B (media network), C (general — recommended default). Open <code>.claude/plans/i-want-to-build-tingly-cloud.md</code> and copy the chosen version. Take a screenshot of the void homepage cropped tight on the masthead as the image.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="7-2">
+        <input type="checkbox" id="s-7-2" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-7-2" class="step__title">Ship Post 1 from your personal account</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>Post from <strong>your personal Instagram account</strong> (not @void.news). Same morning as the brand opener. This is the "something I'm working on, tell me what's bad" warm-launch within your network.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="7-3">
+        <input type="checkbox" id="s-7-3" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-7-3" class="step__title">Trigger real publish of @void.news Post 1</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <pre>gh workflow run ig-pipeline.yml -f mode=publish</pre>
+            <p>The publisher only ships rows in <code>state='approved'</code>. If only Post 1 is approved, only Post 1 publishes. Posts 2–10 sit safely in draft until you approve each on its scheduled day.</p>
+          </div>
+          <div class="step__verify">Workflow logs end with <code>[publisher] posted &lt;uuid&gt; → &lt;ig-media-id&gt;</code> and <code>[publisher] done. 1 post(s) published.</code>.</div>
+        </div>
+      </div>
+
+      <div class="step" data-step="7-4">
+        <input type="checkbox" id="s-7-4" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-7-4" class="step__title">Verify the post on Instagram</label>
+            <span class="step__badge verify">verify</span>
+          </div>
+          <div class="step__body">
+            <p>Open <code>instagram.com/void.news</code> on mobile. Post should appear within 60 seconds of publish. Check: image quality at 100% zoom, font fidelity (Playfair on the manifesto headline must NOT be a Times fallback), caption renders with no em dashes, hashtags are on their own line.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="7-5">
+        <input type="checkbox" id="s-7-5" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-7-5" class="step__title">Verify Bluesky cross-post</label>
+            <span class="step__badge verify">verify</span>
+          </div>
+          <div class="step__body">
+            <p>Open <code>bsky.app/profile/{your-handle}</code>. Same image, abridged caption, max 2 hashtags. The <code>ig_posts.bluesky_uri</code> row in Supabase should be populated.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PHASE 8 ════════════════════════════════════════════════════════ -->
+  <section class="phase" data-phase="8">
+    <div class="phase__header">
+      <span class="phase__num">PHASE 8</span>
+      <h2 class="phase__title">Cron activation</h2>
+      <span class="phase__count"></span>
+      <span class="phase__chevron">▼</span>
+    </div>
+    <div class="phase__body">
+      <p class="phase__intro">From here forward the system runs itself. Crons live in <code>.github/workflows/ig-pipeline.yml</code>, <code>ig-token-refresh.yml</code>, <code>ig-metrics.yml</code>.</p>
+
+      <div class="step" data-step="8-1">
+        <input type="checkbox" id="s-8-1" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-8-1" class="step__title">Confirm cron schedules in GitHub</label>
+            <span class="step__badge verify">verify</span>
+          </div>
+          <div class="step__body">
+            <p>Actions → IG Pipeline → click each cron entry under "Schedule". Confirm:</p>
+            <ul>
+              <li><code>0 12 * * *</code> — daily draft generation</li>
+              <li><code>30 13 * * 1,4</code> — Mon + Thu 13:30 UTC publish</li>
+              <li><code>0 14 * * *</code> — daily metrics pull</li>
+              <li><code>0 4 * * 0</code> — weekly token refresh</li>
+            </ul>
+            <p>If any are missing, GitHub disabled the workflow because the repo has no recent activity. Re-enable manually.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="8-2">
+        <input type="checkbox" id="s-8-2" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-8-2" class="step__title">Tomorrow 12:00 UTC — first auto-draft</label>
+            <span class="step__badge wait">wait</span>
+          </div>
+          <div class="step__body">
+            <p>Don't watch the clock. Tomorrow morning, open <code>/admin/ig</code>. There should be a new draft for the next Mon or Thu, picked by the rotation algorithm (4 receipt / 2 method / 2 history / 2 brief per 8 posts).</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="8-3">
+        <input type="checkbox" id="s-8-3" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-8-3" class="step__title">Next Mon or Thu 13:30 UTC — first auto-publish</label>
+            <span class="step__badge wait">wait</span>
+          </div>
+          <div class="step__body">
+            <p>The publisher will read any row in <code>state='approved'</code> where <code>scheduled_for &lt;= now() + 30 min</code> and ship it. If you haven't approved anything, nothing publishes. Approval is the architectural safety gate.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PHASE 9 ════════════════════════════════════════════════════════ -->
+  <section class="phase" data-phase="9">
+    <div class="phase__header">
+      <span class="phase__num">PHASE 9</span>
+      <h2 class="phase__title">Build the press list</h2>
+      <span class="phase__count"></span>
+      <span class="phase__chevron">▼</span>
+    </div>
+    <div class="phase__body">
+      <p class="phase__intro">The credibility play (the entire goal of this account) depends on this phase. Without the seed list and the first-hour engagement window, the cron is just shouting into a void of its own.</p>
+
+      <div class="step" data-step="9-1">
+        <input type="checkbox" id="s-9-1" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-9-1" class="step__title">Follow the 50 seed accounts</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>From the plan, §8.2 — three buckets:</p>
+            <ul>
+              <li><strong>Media critics + researchers (20):</strong> Margaret Sullivan, PressThink, Nieman Lab, CJR, Reuters Institute, Poynter, Pew Research, Knight Foundation, Tow Center, Press Watch.</li>
+              <li><strong>Bias-rating peers (15):</strong> AllSides, Ground News, NewsGuard, MBFC, Tangle News, The Factual, Straight Arrow News. Engage substantively. Never publicly fight.</li>
+              <li><strong>Data / explainer / newsroom-tech (15):</strong> NYT Graphics, Reuters Graphics, Bloomberg Graphics, FT Graphics, Vox graphics, OurWorldInData, Pudding, Datawrapper, Flowing Data, Source (OpenNews).</li>
+            </ul>
+            <p>All 50 in one sitting. Manual — auto-follow is a TOS violation and gets accounts shadowbanned.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="9-2">
+        <input type="checkbox" id="s-9-2" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-9-2" class="step__title">First-hour engagement window after each publish</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>For 60 minutes after each Mon/Thu publish, reply to every comment from a media-adjacent account. Instagram boosts early engagement disproportionately — this 60-min discipline is the single highest-ROI manual habit.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="9-3">
+        <input type="checkbox" id="s-9-3" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-9-3" class="step__title">DM outreach: 5 journalists / week</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>Find five journalists who wrote about media bias, algorithm accountability, or press freedom in the last 30 days. Short personalized DM, lead with one bias-receipt observation as a gift, not a pitch.</p>
+            <p>Track in Notion. The /admin/ig/inbox queue will surface press DMs that come back to you with the press first-touch template auto-sent.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ PHASE 10 ═══════════════════════════════════════════════════════ -->
+  <section class="phase" data-phase="10">
+    <div class="phase__header">
+      <span class="phase__num">PHASE 10</span>
+      <h2 class="phase__title">Daily / weekly operations</h2>
+      <span class="phase__count"></span>
+      <span class="phase__chevron">▼</span>
+    </div>
+    <div class="phase__body">
+      <p class="phase__intro">The recurring rituals. Tick these as you complete each cycle — they reset, but the rhythm is what keeps the credibility loop tight.</p>
+
+      <div class="step" data-step="10-1">
+        <input type="checkbox" id="s-10-1" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-10-1" class="step__title">Daily: review /admin/ig at 09:00 ET</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>Cron runs at 12:00 UTC = 08:00 ET. By 09:00 ET there's a fresh draft (most days). Open the admin, scrub the slides, approve or edit + approve. ~5 minutes.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="10-2">
+        <input type="checkbox" id="s-10-2" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-10-2" class="step__title">Daily: review /admin/ig/inbox</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>Triage press DMs (priority queue), reply to high-value comments, follow up on engagement opportunities surfaced by the hashtag listener. ~10 minutes.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="10-3">
+        <input type="checkbox" id="s-10-3" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-10-3" class="step__title">Weekly Sunday: metrics review</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>Open the Posted section of /admin/ig. Note saves rate on Methodology posts (target >3%), shares on Receipts (target >2%), profile→link clicks (target 8% of profile visits). Update the Notion tracker. <strong>Do not optimize for raw followers or likes.</strong></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="10-4">
+        <input type="checkbox" id="s-10-4" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-10-4" class="step__title">Monthly: one Reel</label>
+            <span class="step__badge manual">manual</span>
+          </div>
+          <div class="step__body">
+            <p>30-second walkthrough of a bias receipt. One take. Voiceover. Captioned. Reels still get a reach boost on IG. Manual production — auto-generated Reels look auto-generated.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="10-5">
+        <input type="checkbox" id="s-10-5" />
+        <div class="step__main">
+          <div class="step__header">
+            <label for="s-10-5" class="step__title">Day 30 / 60 / 90 check-ins</label>
+            <span class="step__badge verify">verify</span>
+          </div>
+          <div class="step__body">
+            <p>Targets from the plan §10:</p>
+            <ul>
+              <li><strong>Day 30:</strong> 10 posts shipped. 5+ named-audience follows. ≥1 organic DM.</li>
+              <li><strong>Day 60:</strong> A Methodology carousel saved &gt;30 times. A Receipt reshared by someone on the seed list.</li>
+              <li><strong>Day 90:</strong> Press list ≥20 named contacts. Repeat-share accounts ≥10. The line "Same stories. Same order. For everyone." appears in someone else's caption or newsletter without prompting.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  void --news / IG launch checklist · saves to localStorage <code>void-ig-checklist-v1</code> · plan: <code>.claude/plans/i-want-to-build-tingly-cloud.md</code>
+</footer>
+
+<script>
+(function() {
+  'use strict';
+
+  var STORAGE_KEY = 'void-ig-checklist-v1';
+  var state = loadState();
+
+  function loadState() {
+    try {
+      var raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return {};
+      return JSON.parse(raw);
+    } catch (e) { return {}; }
+  }
+
+  function saveState() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+    catch (e) { /* private mode etc — silently degrade */ }
+  }
+
+  // ─── Wire checkboxes ───────────────────────────────────────────────────
+  var allSteps = document.querySelectorAll('.step');
+  allSteps.forEach(function(stepEl) {
+    var id = stepEl.dataset.step;
+    var cb = stepEl.querySelector('input[type="checkbox"]');
+    if (state[id]) {
+      cb.checked = true;
+      stepEl.dataset.done = 'true';
+    }
+    cb.addEventListener('change', function() {
+      state[id] = cb.checked;
+      stepEl.dataset.done = cb.checked ? 'true' : 'false';
+      saveState();
+      updateProgress();
+    });
+  });
+
+  // ─── Phase open/close ──────────────────────────────────────────────────
+  var phases = document.querySelectorAll('.phase');
+  phases.forEach(function(phaseEl, idx) {
+    var openKey = '_open_' + phaseEl.dataset.phase;
+    var isOpen = (openKey in state) ? state[openKey] : (idx === 0);  // first phase open by default
+    phaseEl.dataset.open = isOpen ? 'true' : 'false';
+    var hdr = phaseEl.querySelector('.phase__header');
+    hdr.setAttribute('role', 'button');
+    hdr.setAttribute('tabindex', '0');
+    hdr.setAttribute('aria-expanded', String(isOpen));
+    function toggle() {
+      var open = phaseEl.dataset.open !== 'true';
+      phaseEl.dataset.open = open ? 'true' : 'false';
+      hdr.setAttribute('aria-expanded', String(open));
+      state[openKey] = open;
+      saveState();
+    }
+    hdr.addEventListener('click', toggle);
+    hdr.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggle();
+      }
+    });
+  });
+
+  // ─── Per-phase progress count ──────────────────────────────────────────
+  function updateProgress() {
+    var totalDone = 0, total = 0;
+    phases.forEach(function(phaseEl) {
+      var steps = phaseEl.querySelectorAll('.step');
+      var done = 0;
+      steps.forEach(function(s) {
+        if (s.querySelector('input[type="checkbox"]').checked) done++;
+      });
+      total += steps.length;
+      totalDone += done;
+      phaseEl.querySelector('.phase__count').textContent = done + ' / ' + steps.length;
+      phaseEl.dataset.complete = (done === steps.length && steps.length > 0) ? 'true' : 'false';
+    });
+    var pct = total === 0 ? 0 : Math.round((totalDone / total) * 100);
+    document.getElementById('pbar').style.width = pct + '%';
+    document.getElementById('pct').textContent = pct + '%';
+    document.getElementById('ratio').textContent = totalDone + ' / ' + total;
+    document.body.dataset.allDone = (totalDone === total && total > 0) ? 'true' : 'false';
+  }
+
+  // ─── Toolbar buttons ──────────────────────────────────────────────────
+  document.getElementById('expand-all').addEventListener('click', function() {
+    phases.forEach(function(p) {
+      p.dataset.open = 'true';
+      state['_open_' + p.dataset.phase] = true;
+    });
+    saveState();
+  });
+
+  document.getElementById('collapse-done').addEventListener('click', function() {
+    phases.forEach(function(p) {
+      if (p.dataset.complete === 'true') {
+        p.dataset.open = 'false';
+        state['_open_' + p.dataset.phase] = false;
+      }
+    });
+    saveState();
+  });
+
+  document.getElementById('reset').addEventListener('click', function() {
+    if (!confirm('Reset all progress? This clears every checkbox.')) return;
+    state = {};
+    saveState();
+    location.reload();
+  });
+
+  updateProgress();
+})();
+</script>
+</body>
+</html>
