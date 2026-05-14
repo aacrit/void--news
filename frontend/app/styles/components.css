@@ -522,11 +522,11 @@
   opacity: 0.5;
 }
 
-/* Caret icon: dolly-in approach indicator (translateX 2px + opacity lift). */
+/* Caret icon hover — subtle opacity lift only. No translate (the eye reads
+   motion as "something happened"; the user should feel it, not see it). */
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
   .story-card:hover .story-card__headline-icon {
-    transform: translateX(2px);
-    opacity: 0.8;
+    opacity: 0.65;
   }
 }
 
@@ -8118,27 +8118,21 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 
 /* ---- Desktop card lift choreography (hover: hover only) ---------------- */
 /*
- * Gentle 2px lift with shadow elevation. Compositor-only (transform +
- * box-shadow). Mobile excluded via (hover: hover) (pointer: fine) — touch
- * devices emit phantom hovers after tap that leave cards stuck aloft.
- * The base .story-card transition already carries shadow-lag (30ms delay);
- * we keep that physics on the hover rule too.
+ * CEO 2026-05-13: microinteractions should be subconscious. The previous
+ * 2px translateY lift + shadow elevation read as "card popping" and made
+ * surrounding text feel like it was shifting. Replaced with a single
+ * hairline background tint that the user feels rather than sees.
+ * No transform, no shadow, no underline, no caret movement.
  */
 @media (hover: hover) and (pointer: fine) {
   .story-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-e2);
-    transition:
-      transform  200ms var(--ease-cinematic),
-      box-shadow 200ms 30ms var(--ease-cinematic);
+    background-color: color-mix(in srgb, var(--accent-warm) 2.5%, transparent);
+    transition: background-color 160ms var(--ease-cinematic);
   }
 
   .lead-story:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-e3);
-    transition:
-      transform  200ms var(--ease-cinematic),
-      box-shadow 200ms 30ms var(--ease-cinematic);
+    background-color: color-mix(in srgb, var(--accent-warm) 3%, transparent);
+    transition: background-color 160ms var(--ease-cinematic);
   }
 }
 
@@ -8249,10 +8243,14 @@ a.footer-products__item:hover { color: var(--accent-warm); }
     background-color 150ms var(--ease-cinematic);
 }
 
-.dd-lens-index__link:hover,
+/* Hover: subtle color lift only — no fill, no underline. Keyboard focus
+   keeps the dotted underline so a11y is preserved without making the
+   pointer interaction visually loud. */
+.dd-lens-index__link:hover {
+  color: var(--fg-primary);
+}
 .dd-lens-index__link:focus-visible {
   color: var(--fg-primary);
-  background: color-mix(in srgb, var(--accent-warm) 8%, transparent);
   text-decoration: underline;
   text-decoration-style: dotted;
   text-underline-offset: 3px;
