@@ -78,8 +78,28 @@
   line-height: 1.6;
   color: var(--fg-secondary);
   margin: 0 0 var(--space-4);
-  /* Readable measure only on the body copy, not the headline. */
-  max-width: 72ch;
+  /* Summary spans the full canvas. Beyond 1100px we flow into multi-column
+     newspaper body so the reading measure stays inside the 60-90ch zone
+     while still using the whole horizontal space. CEO 2026-05-13. */
+  width: 100%;
+  max-width: none;
+  column-gap: clamp(2rem, 3vw, 3rem);
+  column-rule: 1px solid var(--border-subtle);
+}
+
+/* Tablet+ → 2 columns; wide desktop → 3 columns. column-fill: balance keeps
+   the body block compact rather than running far down the page. */
+@media (min-width: 1100px) {
+  .lead-split__text .lead-summary {
+    column-count: 2;
+    column-fill: balance;
+  }
+}
+
+@media (min-width: 1600px) {
+  .lead-split__text .lead-summary {
+    column-count: 3;
+  }
 }
 .lead-split[data-no-image="true"] > [data-slot="image"] {
   display: none;
