@@ -15,29 +15,25 @@ interface MobileStoryCardProps {
   kbdFocused?: boolean;
   /** "hero" = lead story with summary; "compact" = headline + inline Sigil only */
   variant?: "hero" | "compact";
-  /** og:image for the rank-0 hero — full-bleed 4:5 above headline. Hero only. */
-  imageUrl?: string | null;
 }
 
 /* ---------------------------------------------------------------------------
    MobileStoryCard — Space-efficient mobile card
 
-   Hero: full-bleed 4:5 image + headline (Playfair) + xl Sigil (72px) + summary
+   Hero: headline (Playfair) + xl Sigil (72px) + summary (text-only — image
+         removed per CEO 2026-05-13).
    Compact: headline + inline sm Sigil (40px) + (optional) category row
    Phase 3 redesign: Sigil promoted as primary bias indicator (mixed hierarchy).
    --------------------------------------------------------------------------- */
 
 export default function MobileStoryCard({
-  story, index, onStoryClick, globalIndex, kbdFocused, variant = "compact", imageUrl,
+  story, index, onStoryClick, globalIndex, kbdFocused, variant = "compact",
 }: MobileStoryCardProps) {
   const [cardRef, visible] = useInView<HTMLElement>();
-  const [imgLoaded, setImgLoaded] = useState(false);
-  const [imgError, setImgError] = useState(false);
   const [showPerspectivePeek, setShowPerspectivePeek] = useState(false);
   const [longPressTimerRef, setLongPressTimerRef] = useState<NodeJS.Timeout | null>(null);
 
   const isHero = variant === "hero";
-  const showImage = isHero && imageUrl && !imgError;
 
   const handleSigilPointerDown = () => {
     const timer = setTimeout(() => {
@@ -83,26 +79,10 @@ export default function MobileStoryCard({
       />
 
       {isHero ? (
-        /* Hero layout: full-bleed 4:5 image + headline + xl Sigil (72px, Phase 3) + summary.
-           Image is the cinematic anchor that flips perception from
-           "RSS feed" to "premium newspaper". Per CEO scope lock 2026-04-29:
-           lead-only imagery on mobile (ranks 1+ stay text-only). */
+        /* Hero layout: headline + xl Sigil (72px, Phase 3) + summary.
+           Text-only per CEO 2026-05-13 — no photograph. The Sigil + Playfair
+           headline carry the editorial moment. */
         <>
-          {showImage && (
-            <div className={`msc__hero-image${imgLoaded ? " msc__hero-image--loaded" : ""}`}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={imageUrl!}
-                alt=""
-                className="msc__hero-image__img"
-                loading="eager"
-                fetchPriority="high"
-                decoding="async"
-                onLoad={() => setImgLoaded(true)}
-                onError={() => setImgError(true)}
-              />
-            </div>
-          )}
           {/* Hero headline is page <h1> when this card is rank 0 (the
               feed's top story on mobile). Falls back to <h2> for any other
               "hero" usage. UAT 2026-05-13 P0-5 — zero-<h1> page outline. */}

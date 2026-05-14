@@ -40,69 +40,18 @@
   }
 }
 
-/* ---- Lead hero: full-canvas 21:9 banner above headline ----------------
-   UAT 2026-05-13 P0-10 (CEO direction): the previous 50/50 desktop split
-   cropped portrait-ish og:images unnaturally and pushed the lead headline
-   off the top of the fold on tall viewports. New layout is a stacked
-   banner-above-text composition at every breakpoint:
-     row 1 — full-width 21:9 banner image (matches most og:image aspect
-             ratios, so object-fit: cover stays gentle).
-     row 2 — headline + summary + verdict, capped to a comfortable
-             reading measure so the canvas's full width doesn't stretch
-             body text past ~72ch.
-   No more side-by-side split. `useSplit` from <LeadStory> now means
-   "stacked banner". */
+/* ---- Lead hero: text-only newspaper-front-page composition -------------
+   CEO 2026-05-13: hero image removed. The lead is now a typographic moment
+   — badge → headline → summary → coverage verdict — spanning the full
+   canvas. Only the body summary is constrained to a 72ch reading measure.
+   The previous 21:9 banner / 50/50 split layouts have been retired. */
 .lead-split {
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-areas:
-    "lead-image"
-    "lead-text";
+  display: flex;
+  flex-direction: column;
   gap: clamp(1.25rem, 2vw, 2rem);
-  align-items: start;
   width: 100%;
 }
 
-.lead-split > [data-slot="image"] { grid-area: lead-image; }
-.lead-split > [data-slot="text"]  { grid-area: lead-text; }
-
-/* Lead image container — full-canvas 21:9 banner crop. Same aspect at
-   every breakpoint; max-height keeps it from dominating the fold on
-   tall desktops. */
-.lead-split__image-frame {
-  aspect-ratio: 21 / 9;
-  width: 100%;
-  max-height: 560px;
-  overflow: hidden;
-  position: relative;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-subtle);
-}
-
-@media (max-width: 767px) {
-  .lead-split__image-frame {
-    max-height: 320px;
-  }
-}
-
-@media (min-width: 768px) and (max-width: 1023.98px) {
-  .lead-split__image-frame {
-    max-height: 420px;
-  }
-}
-
-.lead-split__image-frame img,
-.lead-split__image-frame picture > img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-/* Text column — headline spans full canvas (newspaper-front-page lead);
-   only the body summary is capped to a readable measure. Previous behavior
-   capped the whole text column to 72ch, leaving the right half of the
-   canvas visually dead under the wide 21:9 banner. CEO 2026-05-13. */
 .lead-split__text {
   display: flex;
   flex-direction: column;
@@ -131,13 +80,6 @@
   margin: 0 0 var(--space-4);
   /* Readable measure only on the body copy, not the headline. */
   max-width: 72ch;
-}
-
-/* When the lead has no cached image, collapse to single-column text-only.
-   Frontend sets data-no-image="true" on .lead-split for this state. */
-.lead-split[data-no-image="true"] {
-  grid-template-columns: 1fr;
-  grid-template-areas: "lead-text";
 }
 .lead-split[data-no-image="true"] > [data-slot="image"] {
   display: none;
