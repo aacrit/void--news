@@ -85,30 +85,20 @@
   display: none;
 }
 
-/* ---- Digest variant (Zone B internal) — typography only --------------- */
-/* Layout grid lives in desktop-feed.css (.df-digest); we only set the
-   variant headline scale here so the broadsheet typographic contrast is
-   declared in one place. */
+/* ---- Card headlines (ranks 1+) — unified typography ------------------
+   Digest (ranks 1-9) and wire (ranks 10+) share one type scale so the feed
+   reads as a single editorial surface below the lead, not two separate
+   tiers. CEO 2026-05-13. Layout grids still differ (.df-digest 2-col vs
+   .df-wire 3/4-col) — only the headline rhythm is unified. */
 
-.story-card[data-variant="digest"] .story-card__headline {
-  font-family: var(--font-editorial);
-  font-size: var(--type-digest-headline);
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: var(--type-digest-tracking);
-}
-
-/* ---- Wire variant (Zone C internal) — typography only ----------------- */
-
+.story-card[data-variant="digest"] .story-card__headline,
 .story-card[data-variant="wire"] .story-card__headline {
   font-family: var(--font-editorial);
-  font-size: var(--type-wire-headline);
+  font-size: var(--type-card-headline);
   font-weight: 600;
-  line-height: 1.3;
+  line-height: 1.25;
+  letter-spacing: var(--type-card-tracking);
 }
-
-/* No image in wire — give the headline a small breathing boost in line-height
-   so the column reads as editorial, not as a wire ticker. */
 
 /* Feed grid — when ranks 1-9 (digest, 22px) and ranks 10+ (wire, 14px) share
    the same grid tracks at 1024-1279px, mixed row heights cause uneven
