@@ -351,16 +351,23 @@
   padding: var(--space-2) var(--space-3);
   border-left: 4px solid var(--border-strong);
   cursor: pointer;
-  transition: background-color 150ms var(--ease-cinematic);
 }
 
 .dg-row:not(:last-child) {
   border-bottom: 1px solid var(--divider);
 }
 
-/* Hover: background tint only — no paper lift */
-.dg-row:hover {
-  background-color: var(--bg-secondary);
+/* Hover: page-catch on the headline only — 2px slide, 280ms ease.
+   See .story-card__headline-text for the rationale. No background tint
+   (the previous --bg-secondary shade read as a glow the CEO disliked). */
+.dg-row__headline {
+  transition: transform 280ms var(--ease-cinematic);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .dg-row:hover .dg-row__headline {
+    transform: translateX(2px);
+  }
 }
 
 /* Focus-visible: box-shadow instead of outline to avoid clipping by overflow:hidden */
@@ -517,6 +524,9 @@
   color: var(--fg-primary);
   display: inline;
   position: relative;
+  /* Page-catch hover — see .story-card__headline-text. Inline element,
+     so the slide affects only the wire headline text, not its layout. */
+  transition: transform 280ms var(--ease-cinematic);
 }
 
 .wire-card__summary {
@@ -531,20 +541,13 @@
   overflow: hidden;
 }
 
-/* Hover: underline draws left→right */
-.wire-card__headline::after {
-  content: "";
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  width: 0;
-  height: 1px;
-  background: var(--fg-secondary);
-  transition: width 200ms var(--ease-cinematic);
-}
-
-.wire-card:hover .wire-card__headline::after {
-  width: 100%;
+/* Hover: page-catch on wire headline. Underline-draw effect removed
+   2026-05-14 — appearing underlines read as "something happened,"
+   which the subconscious-microinteractions rule explicitly disallows. */
+@media (hover: hover) and (pointer: fine) {
+  .wire-card:hover .wire-card__headline {
+    transform: translateX(2px);
+  }
 }
 
 /* Active press */
@@ -623,8 +626,16 @@
     transition: none;
   }
 
-  .dg-row:hover {
-    background-color: var(--bg-secondary);
+  /* Page-catch hover suppressed under reduced motion — see
+     components.css :hover block. Cursor change is the only feedback. */
+  .dg-row__headline,
+  .wire-card__headline {
+    transition: none;
+  }
+
+  .dg-row:hover .dg-row__headline,
+  .wire-card:hover .wire-card__headline {
+    transform: none;
   }
 
   .dg-row:active,
