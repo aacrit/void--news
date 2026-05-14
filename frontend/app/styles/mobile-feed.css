@@ -1151,6 +1151,97 @@
   margin-bottom: var(--space-3);
 }
 
+/* ── Collapsed teaser variant (CEO 2026-05-14) ─────────────────────────────
+   Replaces the headline-only `.mbp--stacked` pill. Shows a few lines of
+   TL;DR + an Opinion teaser; tap to expand into the full skybox brief. */
+
+.mbp--teaser {
+  padding: 0;
+  margin-bottom: var(--space-3);
+}
+
+.mbp__teaser {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "tldr chev"
+    "opin chev";
+  gap: var(--space-3) var(--space-2);
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+  font: inherit;
+  color: inherit;
+}
+
+.mbp__teaser-tldr   { grid-area: tldr; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.mbp__teaser-opinion { grid-area: opin; display: flex; flex-direction: column; gap: 4px; min-width: 0; padding-left: var(--space-3); border-left: 2px solid var(--border-subtle); }
+
+.mbp__teaser-cmd {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--accent-warm);
+  text-transform: lowercase;
+}
+
+.mbp__teaser-cmd--opinion {
+  color: var(--fg-tertiary);
+}
+
+.mbp__teaser-hl {
+  font-family: var(--font-editorial);
+  font-size: var(--text-base);
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--fg-primary);
+  /* Allow up to 2 lines so headlines breathe; ellipsize beyond. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.mbp__teaser-hl--opinion {
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.mbp__teaser-preview {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--fg-secondary);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.mbp__teaser-preview--opinion {
+  -webkit-line-clamp: 2;
+  color: var(--fg-tertiary);
+  font-size: var(--text-xs);
+}
+
+.mbp__teaser-chevron {
+  grid-area: chev;
+  align-self: end;
+  font-size: 10px;
+  color: var(--fg-tertiary);
+  padding: var(--space-1);
+  line-height: 1;
+}
+
+.mbp__teaser-opinion--left   { border-left-color: var(--bias-left); }
+.mbp__teaser-opinion--center { border-left-color: var(--bias-center); }
+.mbp__teaser-opinion--right  { border-left-color: var(--bias-right); }
+
 .mbp__stack {
   display: flex;
   align-items: center;

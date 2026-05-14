@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect } from "react";
 import type { Category, LeanChip } from "../lib/types";
 import { hapticMicro, hapticLight } from "../lib/haptics";
 
@@ -15,20 +15,22 @@ const ALL_CATEGORIES: ("All" | Category)[] = [
   "All", "Politics", "Conflict", "Economy", "Science", "Health", "Environment", "Culture",
 ];
 
+const LEANS: LeanChip[] = ["Left", "Balanced", "Right"];
+
 /* ---------------------------------------------------------------------------
-   MobileBottomNav — Now an INLINE bracket-notation filter bar (feed-only).
-   Renders in the content flow below edition tabs, above the feed.
-   No longer fixed-bottom. MobileTabBar handles global navigation.
+   MobileBottomNav — Unified filter trigger (mobile only).
 
-   Matches desktop nav-lens design language exactly:
-   - IBM Plex Mono, lowercase, bracket notation
-   - Colored dots for lean (6px, same as desktop)
-   - Dotted underline active state
-   - Topic dropdown with caret
+   CEO 2026-05-14: lean filter was eating a full row above the feed. Buried it
+   inside the topics panel as a "tilt" section so the bar is a single trigger.
+   The space freed lets MobileBriefPill render a TL;DR + Opinion teaser in its
+   collapsed state.
 
-   [ ·left  ·center  ·right ]   [ topics ▾ ]
+   [ filters ▾ ]   — trigger
+       ↓
+   [ tilt:   ·left   ·balanced   ·right ]
+   [ topics: all  politics  conflict  …  ]
 
-   Hidden on desktop via CSS (display: none above 768px).
+   Hidden on desktop via CSS.
    --------------------------------------------------------------------------- */
 
 export default function MobileBottomNav({
@@ -37,41 +39,38 @@ export default function MobileBottomNav({
   activeCategory,
   onCategoryChange,
 }: MobileBottomNavProps) {
-  const [topicOpen, setTopicOpen] = useState(false);
+  const [panelOpen, setPanelOpen] = useState(false);
   const navRef = useRef<HTMLElement>(null);
-  const topicPanelRef = useRef<HTMLDivElement>(null);
-  const topicTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
 
-  // Close on outside tap
   useEffect(() => {
-    if (!topicOpen) return;
+    if (!panelOpen) return;
     const close = (e: MouseEvent) => {
       if (navRef.current && !navRef.current.contains(e.target as Node)) {
-        setTopicOpen(false);
+        setPanelOpen(false);
       }
     };
     document.addEventListener("mousedown", close);
     return () => document.removeEventListener("mousedown", close);
-  }, [topicOpen]);
+  }, [panelOpen]);
 
-  // Close on Escape
   useEffect(() => {
-    if (!topicOpen) return;
+    if (!panelOpen) return;
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape") { e.preventDefault(); setTopicOpen(false); topicTriggerRef.current?.focus(); }
+      if (e.key === "Escape") { e.preventDefault(); setPanelOpen(false); triggerRef.current?.focus(); }
     };
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
-  }, [topicOpen]);
+  }, [panelOpen]);
 
-  // Focus management
   useEffect(() => {
-    if (topicOpen && topicPanelRef.current) {
+    if (panelOpen && panelRef.current) {
       requestAnimationFrame(() => {
-        topicPanelRef.current?.querySelector<HTMLElement>("button")?.focus();
+        panelRef.current?.querySelector<HTMLElement>("button")?.focus();
       });
     }
-  }, [topicOpen]);
+  }, [panelOpen]);
 
   const handleLeanTap = (lean: LeanChip) => {
     hapticMicro();
@@ -81,77 +80,87 @@ export default function MobileBottomNav({
   const handleTopicTap = (cat: "All" | Category) => {
     hapticMicro();
     onCategoryChange(cat);
-    setTopicOpen(false);
-    topicTriggerRef.current?.focus();
   };
+
+  const hasActiveFilter = activeLean !== "All" || activeCategory !== "All";
+  const leanLabel = activeLean !== "All" ? activeLean.toLowerCase() : null;
+  const topicLabel = activeCategory !== "All" ? activeCategory.toLowerCase() : null;
+  // Trigger label collapses to "filters" by default; reveals active values when set.
+  const triggerLabel = leanLabel && topicLabel
+    ? `${leanLabel} · ${topicLabel}`
+    : leanLabel || topicLabel || "filters";
 
   return (
     <nav className="mob-nav mob-nav--inline" aria-label="Feed filters" ref={navRef}>
-      {/* Topic dropdown panel — slides up */}
-      {topicOpen && (
+      {panelOpen && (
         <div
-          ref={topicPanelRef}
-          className="mob-nav__topic-panel"
+          ref={panelRef}
+          className="mob-nav__panel"
           role="menu"
-          aria-label="Topics"
+          aria-label="Filters"
         >
-          {ALL_CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              role="menuitem"
-              aria-current={activeCategory === cat ? "true" : undefined}
-              className={`mob-nav__topic-opt${activeCategory === cat ? " mob-nav__topic-opt--active" : ""}`}
-              onClick={() => handleTopicTap(cat)}
-            >
-              {cat === "All" ? "all topics" : cat.toLowerCase()}
-            </button>
-          ))}
+          <div className="mob-nav__panel-section">
+            <span className="mob-nav__panel-label">tilt</span>
+            <div className="mob-nav__panel-row" role="group" aria-label="Coverage tilt">
+              {LEANS.map((lean) => {
+                const isActive = activeLean === lean;
+                return (
+                  <button
+                    key={lean}
+                    role="menuitemradio"
+                    aria-checked={isActive}
+                    aria-label={isActive ? `${lean} filter active — tap to clear` : `Filter to ${lean}`}
+                    onClick={() => handleLeanTap(lean)}
+                    className={`mob-nav__lean mob-nav__lean--${lean.toLowerCase()}${isActive ? " mob-nav__lean--active" : ""}`}
+                  >
+                    <span className="mob-nav__dot" aria-hidden="true" />
+                    {lean.toLowerCase()}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="mob-nav__panel-section">
+            <span className="mob-nav__panel-label">topics</span>
+            <div className="mob-nav__panel-row mob-nav__panel-row--wrap" role="group" aria-label="Topics">
+              {ALL_CATEGORIES.map((cat) => (
+                <button
+                  key={cat}
+                  role="menuitemradio"
+                  aria-checked={activeCategory === cat}
+                  className={`mob-nav__topic-opt${activeCategory === cat ? " mob-nav__topic-opt--active" : ""}`}
+                  onClick={() => handleTopicTap(cat)}
+                >
+                  {cat === "All" ? "all" : cat.toLowerCase()}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Filter bar — bracket notation matching desktop nav-lens */}
       <div className="mob-nav__bar">
-        {/* Tilt selector: [ ·left ·balanced ·right ] */}
-        <div className="mob-nav__lens" role="toolbar" aria-label="Coverage tilt">
+        <button
+          ref={triggerRef}
+          type="button"
+          className={`mob-nav__trigger${hasActiveFilter ? " mob-nav__trigger--active" : ""}`}
+          onClick={() => { hapticLight(); setPanelOpen((v) => !v); }}
+          aria-expanded={panelOpen}
+          aria-haspopup="menu"
+          aria-label={hasActiveFilter ? `Filters active: ${triggerLabel}` : "Open filters"}
+        >
           <span className="mob-nav__bracket" aria-hidden="true">[</span>
-          {(["Left", "Balanced", "Right"] as LeanChip[]).map((lean) => {
-            const isActive = activeLean === lean;
-            return (
-              <button
-                key={lean}
-                aria-pressed={isActive}
-                aria-label={isActive ? `${lean} filter active — tap to clear` : `Filter to ${lean}`}
-                title={isActive ? "Tap to clear filter" : undefined}
-                onClick={() => handleLeanTap(lean)}
-                className={`mob-nav__lean mob-nav__lean--${lean.toLowerCase()}${isActive ? " mob-nav__lean--active" : ""}`}
-              >
-                <span className="mob-nav__dot" aria-hidden="true" />
-                {lean.toLowerCase()}
-                {/* Active state shows a × glyph as the explicit "tap to clear"
-                    affordance — without it, re-tap deselect was undiscoverable. */}
-                {isActive && <span className="mob-nav__clear-glyph" aria-hidden="true">×</span>}
-              </button>
-            );
-          })}
+          {leanLabel && (
+            <span
+              className={`mob-nav__trigger-dot mob-nav__trigger-dot--${activeLean.toLowerCase()}`}
+              aria-hidden="true"
+            />
+          )}
+          <span className="mob-nav__trigger-label">{triggerLabel}</span>
+          <span className={`mob-nav__caret${panelOpen ? " mob-nav__caret--open" : ""}`} aria-hidden="true">&#9662;</span>
           <span className="mob-nav__bracket" aria-hidden="true">]</span>
-        </div>
-
-        {/* Topic dropdown: [ topics ▾ ] */}
-        <div className="mob-nav__topics">
-          <button
-            ref={topicTriggerRef}
-            className="mob-nav__topic-trigger"
-            onClick={() => { hapticLight(); setTopicOpen((v) => !v); }}
-            aria-expanded={topicOpen}
-            aria-haspopup="menu"
-            aria-label="Filter by topic"
-          >
-            <span className="mob-nav__bracket" aria-hidden="true">[</span>
-            {activeCategory === "All" ? "topics" : activeCategory.toLowerCase()}
-            <span className={`mob-nav__caret${topicOpen ? " mob-nav__caret--open" : ""}`} aria-hidden="true">&#9662;</span>
-            <span className="mob-nav__bracket" aria-hidden="true">]</span>
-          </button>
-        </div>
+        </button>
       </div>
     </nav>
   );

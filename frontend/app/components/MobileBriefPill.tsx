@@ -87,33 +87,43 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
   const pillHeadline = brief.tldr_headline || tldrSentences[0] || "Daily Brief";
   const opinionHeadline = brief.opinion_headline || (brief.opinion_text || "").split(/(?<=[.!?])\s+/)[0] || null;
   const hasOpinion = !!(brief.opinion_text && opinionHeadline);
+  // First sentence of the opinion body becomes the collapsed teaser. If the
+  // opinion_headline IS the first sentence, fall back to the second to avoid
+  // duplicating the headline.
+  const opinionSentences = String(brief.opinion_text || "").split(/(?<=[.!?])\s+/).filter(Boolean);
+  const firstOpinionSentence = opinionSentences[0] || "";
+  const opinionTeaser = firstOpinionSentence && firstOpinionSentence !== opinionHeadline
+    ? firstOpinionSentence
+    : (opinionSentences[1] || "");
 
-  /* Collapsed pill — stacks TL;DR + Opinion headlines with a single chevron. */
+  /* Collapsed pill — TL;DR teaser (headline + preview) + Opinion teaser.
+     CEO 2026-05-14: filter buried inside topics dropdown, freeing room for
+     a richer brief teaser. Tap anywhere to expand into full skybox brief. */
   if (!isExpanded) {
     return (
-      <div className={`mbp mbp--stacked${className ? ` ${className}` : ""}`} role="complementary" aria-label="Daily Brief">
+      <div className={`mbp mbp--teaser${className ? ` ${className}` : ""}`} role="complementary" aria-label="Daily Brief">
         <button
-          className="mbp__stack"
+          className="mbp__teaser"
           type="button"
           onClick={() => { hapticLight(); setIsExpanded(true); }}
           aria-expanded={false}
-          aria-label="Expand TL;DR and Opinion"
+          aria-label="Expand daily brief"
         >
-          <div className="mbp__stack-rows">
-            <span className="mbp__pill-row">
-              <span className="mbp__pill-cmd">void --tl;dr</span>
-              <span className="mbp__pill-sep" aria-hidden="true">/</span>
-              <span className="mbp__pill-label">{pillHeadline}</span>
-            </span>
-            {hasOpinion && (
-              <span className={`mbp__pill-row mbp__pill-row--opinion${brief.opinion_lean ? ` mbp__pill-row--${brief.opinion_lean}` : ""}`}>
-                <span className="mbp__pill-cmd">void --opinion</span>
-                <span className="mbp__pill-sep" aria-hidden="true">/</span>
-                <span className="mbp__pill-label">{opinionHeadline}</span>
-              </span>
-            )}
+          <div className="mbp__teaser-tldr">
+            <span className="mbp__teaser-cmd">void --tl;dr</span>
+            <span className="mbp__teaser-hl">{pillHeadline}</span>
+            <span className="mbp__teaser-preview">{tldrPreview}</span>
           </div>
-          <span className="mbp__pill-chevron" aria-hidden="true">&#9662;</span>
+
+          {hasOpinion && (
+            <div className={`mbp__teaser-opinion${brief.opinion_lean ? ` mbp__teaser-opinion--${brief.opinion_lean}` : ""}`}>
+              <span className="mbp__teaser-cmd mbp__teaser-cmd--opinion">void --opinion</span>
+              <span className="mbp__teaser-hl mbp__teaser-hl--opinion">{opinionHeadline}</span>
+              {opinionTeaser && <span className="mbp__teaser-preview mbp__teaser-preview--opinion">{opinionTeaser}</span>}
+            </div>
+          )}
+
+          <span className="mbp__teaser-chevron" aria-hidden="true">&#9662;</span>
         </button>
       </div>
     );
