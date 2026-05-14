@@ -1,0 +1,38 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - main [ref=e3]:
+    - navigation [ref=e4]:
+      - link "Back to void --news" [ref=e5] [cursor=pointer]:
+        - /url: /void--news/
+        - text: ← void --news
+      - button "Toggle theme" [ref=e6] [cursor=pointer]:
+        - img [ref=e8]
+    - generic [ref=e10]:
+      - generic [ref=e11]:
+        - link "void --news home" [ref=e12] [cursor=pointer]:
+          - /url: /void--news/
+          - img [ref=e13]
+        - generic [ref=e31]: "--ship"
+      - heading "Request, vote, watch it deploy." [level=1] [ref=e32]
+      - paragraph [ref=e33]: Submit bugs and features. The ones you vote for get built — often within hours.
+    - region "Submit a request" [ref=e34]:
+      - generic [ref=e35]:
+        - text: Website
+        - textbox
+        - radiogroup "Request type" [ref=e36]:
+          - radio "Bug" [ref=e37] [cursor=pointer]
+          - radio "Feature" [checked] [ref=e38] [cursor=pointer]
+        - generic [ref=e39]:
+          - textbox "Request title" [ref=e40]:
+            - /placeholder: Title your request
+          - generic [ref=e42]: 0/120
+        - generic [ref=e43]:
+          - textbox "Request description" [ref=e44]:
+            - /placeholder: Describe the feature...
+          - generic [ref=e46]: 0/2000
+        - button "Submit Request" [disabled] [ref=e47]
+    - img [ref=e49]
+    - img [ref=e51]
+  - button "Open Next.js Dev Tools" [ref=e59] [cursor=pointer]:
+    - img [ref=e60]

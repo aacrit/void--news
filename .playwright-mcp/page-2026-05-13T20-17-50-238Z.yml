@@ -1,0 +1,10 @@
+- generic [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e5]:
+    - generic [ref=e6]: Command Center
+    - generic [ref=e7]: void --news
+    - textbox "Password" [active] [ref=e8]
+    - button "Enter" [ref=e9] [cursor=pointer]
+  - button "Open Next.js Dev Tools" [ref=e15] [cursor=pointer]:
+    - img [ref=e16]

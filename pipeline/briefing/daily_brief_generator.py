@@ -247,6 +247,13 @@ Also: "amid," "significant," "notable," "unprecedented," "robust," \
 "comprehensive," "pivotal," "nuanced," "landscape," "delve," "the bigger \
 picture," "the takeaway."
 
+NO EM DASHES (—) OR EN DASHES (–) IN TL;DR OUTPUT. Em dashes are an AI \
+tell in written prose. Use periods, commas, semicolons, colons, or \
+parentheses. Two short sentences beat one long sentence stitched with an \
+em dash. Hyphens in compound words are fine. This rule applies to \
+"tldr_text" and "tldr_headline" only — the audio_script is exempt because \
+em dashes function as TTS prosody marks there.
+
 ---
 
 AUDIO SCRIPT INSTRUCTIONS (return as "audio_script"):
@@ -956,6 +963,11 @@ Also banned — slop adjectives that assert instead of showing: \
 "pivotal", "nuanced", "comprehensive", "robust", "landscape", "navigate", \
 "navigating", "underscores", "multifaceted", "delve", "delves into", \
 "breaking", "historic", "controversial", "divisive."
+NO EM DASHES (—) OR EN DASHES (–) IN "opinion_text" OR "opinion_headline." \
+Em dashes are an AI tell in written editorial prose. Rewrite as two \
+sentences, use a comma, semicolon, colon, or parentheses. Hyphens in \
+compound words are fine. (The opinion_audio_script field is exempt — em \
+dashes function as TTS prosody marks for the spoken monologue.)
 Never reference outlet names, "coverage," "sources," or "reporting patterns." \
 Synthesize the facts — do not cite where they came from. \
 Start every sentence with the FACT or the ARGUMENT. If the sentence works \

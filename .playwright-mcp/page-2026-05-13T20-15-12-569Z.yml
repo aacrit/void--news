@@ -1,0 +1,28 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - navigation "Main navigation" [ref=e5]:
+        - link "void --news — home" [ref=e7] [cursor=pointer]:
+          - /url: /void--news/
+          - img [ref=e9]
+        - generic: → → → →
+    - main [ref=e28]
+  - navigation "Mobile navigation" [ref=e30]:
+    - link "feed" [ref=e31] [cursor=pointer]:
+      - /url: /void--news/
+      - img [ref=e32]
+      - generic [ref=e34]: feed
+    - link "history" [ref=e35] [cursor=pointer]:
+      - /url: /void--news/history/
+      - img [ref=e36]
+      - generic [ref=e40]: history
+    - button "Play audio brief" [ref=e41] [cursor=pointer]:
+      - img [ref=e43]
+      - generic [ref=e46]: onair
+    - button "More options" [ref=e47] [cursor=pointer]:
+      - img [ref=e48]
+      - generic [ref=e49]: more
+  - button "Open Next.js Dev Tools" [ref=e55] [cursor=pointer]:
+    - img [ref=e56]
