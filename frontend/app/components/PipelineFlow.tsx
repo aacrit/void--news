@@ -236,9 +236,9 @@ const PHASES: Phase[] = [
       },
       {
         num: "7d",
-        title: "Daily Brief (void --onair)",
+        title: "Daily Brief (void --tl;dr)",
         detail:
-          "TL;DR (150\u2013220 words) + Opinion (lean rotates L/C/R daily) + BBC two-host audio broadcast \u00b7 5 rotating host pairs \u00b7 MP3 96k mono \u2192 Supabase Storage",
+          "TL;DR (150\u2013220 words) + Opinion (lean rotates L/C/R daily). Audio broadcast (void --onair) is currently parked.",
         file: "daily_brief_generator.py",
         badge: "9 calls/run",
         badgeActive: true,

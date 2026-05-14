@@ -3,6 +3,7 @@
 import Link from "next/link";
 import LogoIcon from "./LogoIcon";
 import LogoWordmark from "./LogoWordmark";
+import { AUDIO_ENABLED } from "../lib/audioGate";
 
 /* ---------------------------------------------------------------------------
    Footer — Newspaper-style footer
@@ -25,12 +26,16 @@ export default function Footer({ lastUpdated }: FooterProps) {
         </div>
         <p className="footer-tagline">See through the void.</p>
 
-        {/* Product family */}
+        {/* Product family — void --onair gated by AUDIO_ENABLED flag. */}
         <div className="footer-products">
           <span className="footer-products__item" title="The Daily Brief">void --tl;dr</span>
           <span className="footer-products__sep" aria-hidden="true">&middot;</span>
-          <span className="footer-products__item" title="Audio Broadcast">void --onair</span>
-          <span className="footer-products__sep" aria-hidden="true">&middot;</span>
+          {AUDIO_ENABLED && (
+            <>
+              <span className="footer-products__item" title="Audio Broadcast">void --onair</span>
+              <span className="footer-products__sep" aria-hidden="true">&middot;</span>
+            </>
+          )}
           <span className="footer-products__item" title="The Board">void --opinion</span>
           <span className="footer-products__sep" aria-hidden="true">&middot;</span>
           <Link href="/sources" className="footer-products__item" title="Source Spectrum">void --sources</Link>

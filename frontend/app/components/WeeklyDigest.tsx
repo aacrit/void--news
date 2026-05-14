@@ -13,6 +13,7 @@ import type {
 import { EDITIONS } from "../lib/types";
 import { fetchWeeklyDigest, fetchWeeklyArchive } from "../lib/supabase";
 import { getLeanColor } from "../lib/biasColors";
+import { AUDIO_ENABLED } from "../lib/audioGate";
 import Footer from "./Footer";
 import ThemeToggle from "./ThemeToggle";
 import LogoFull from "./LogoFull";
@@ -850,8 +851,8 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
               </>
             )}
 
-            {/* G. Audio */}
-            {digest.audio_url && (
+            {/* G. Audio — gated by AUDIO_ENABLED (void --onair parking lot). */}
+            {AUDIO_ENABLED && digest.audio_url && (
               <>
                 <InkRule />
                 <AudioBar

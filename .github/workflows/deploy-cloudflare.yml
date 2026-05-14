@@ -48,6 +48,9 @@ jobs:
           NEXT_PUBLIC_BASE_PATH: ""
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          # void --onair parking lot — see CLAUDE.md. Mirrors pipeline.yml
+          # DISABLE_AUDIO=1. Set both to "0" together to re-enable.
+          NEXT_PUBLIC_DISABLE_AUDIO: "1"
         run: cd frontend && npm run build
 
       # wrangler 3.x in non-TTY mode does NOT auto-create Pages projects;
