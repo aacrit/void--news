@@ -19,8 +19,10 @@ interface MobileFeedProps {
 /* ---------------------------------------------------------------------------
    MobileFeed — Mobile-native news feed layout (30-story cap, no pagination)
 
-   Renders: Hero (story #1) → Brief → all remaining stories as compact cards
-   All 30 stories render immediately. No infinite scroll, no sentinel.
+   Order (CEO 2026-05-13): Brief (collapsed pill — TL;DR + Opinion with single
+   chevron) → Hero (top story, text-only) → compact cards. The brief sits
+   above the hero so TL;DR, Opinion, and Top Story all land above the fold
+   on every mobile resolution.
    --------------------------------------------------------------------------- */
 
 export default function MobileFeed({
@@ -37,7 +39,10 @@ export default function MobileFeed({
 
   return (
     <div className={["mf", transitionClass].filter(Boolean).join(" ")} key={filterKey}>
-      {/* Hero story — Scanner sees headlines first */}
+      {/* Brief on top — TL;DR + Opinion collapsed pill. Tap chevron to expand. */}
+      <MobileBriefPill state={dailyBriefState} className="anim-cold-open-pill" />
+
+      {/* Hero story — second slot, below brief but above the wire */}
       {hero && (
         <MobileStoryCard
           story={hero}
@@ -48,9 +53,6 @@ export default function MobileFeed({
           kbdFocused={kbdFocusIndex === 0}
         />
       )}
-
-      {/* Brief — below hero, first 2 sentences visible */}
-      <MobileBriefPill state={dailyBriefState} className="anim-cold-open-pill" />
 
       {/* Feed cards — identical compact treatment for all ranks 1-29 */}
       {feedCards.length > 0 && (

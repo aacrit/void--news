@@ -813,6 +813,14 @@ def produce_audio(
             preamble entirely. Used by weekly broadcast for magazine-pace
             direction that differs from the daily bulletin style.
     """
+    # CEO 2026-05-13 — void --onair parked. Single env gate disables every
+    # audio code path (TTS calls, Supabase upload, podcast feed). Frontend
+    # has NEXT_PUBLIC_DISABLE_AUDIO mirror. Flip to re-enable: see CLAUDE.md
+    # Parking Lot.
+    if os.environ.get("DISABLE_AUDIO", "").strip() in ("1", "true", "yes"):
+        print("  [audio] DISABLE_AUDIO=1 — skipping TTS")
+        return None
+
     if not EDGE_TTS_AVAILABLE:
         print("  [audio] edge-tts not installed — skipping")
         return None

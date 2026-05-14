@@ -83,6 +83,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           DISABLE_GEMINI_REASONING: "1"
           DISABLE_EDITORIAL_TRIAGE: "1"
+          DISABLE_AUDIO: "1"
         run: |
           EDITIONS="${{ steps.editions.outputs.filter }}"
           ARGS=""
@@ -103,6 +104,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           DISABLE_GEMINI_REASONING: "1"
           DISABLE_EDITORIAL_TRIAGE: "1"
+          DISABLE_AUDIO: "1"
         run: |
           EDITIONS="${{ steps.editions.outputs.filter }}"
           if [ -n "$EDITIONS" ]; then

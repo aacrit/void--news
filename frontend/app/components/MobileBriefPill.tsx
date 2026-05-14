@@ -7,6 +7,7 @@ import { ScaleIcon } from "./ScaleIcon";
 import LogoIcon from "./LogoIcon";
 import { hapticLight, hapticConfirm } from "../lib/haptics";
 import { timeAgo } from "../lib/utils";
+import { AUDIO_ENABLED } from "../lib/audioGate";
 
 const PlayIcon = () => (
   <svg width="11" height="13" viewBox="0 0 11 13" fill="currentColor" aria-hidden="true">
@@ -46,8 +47,10 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
     previousEpisodes, loadEpisode,
   } = state;
 
-  // Phase 2 redesign: Always expanded on mobile (no collapsed pill state)
-  const [isExpanded, setIsExpanded] = useState(true);
+  // CEO 2026-05-13: mobile brief starts collapsed so TL;DR pill + Opinion
+  // pill + Top Story all fit above the fold on any mobile resolution.
+  // Tap the chevron (or any pill row) to expand.
+  const [isExpanded, setIsExpanded] = useState(false);
   const [tldrExpanded, setTldrExpanded] = useState(false);
   const [episodesExpanded, setEpisodesExpanded] = useState(false);
 
@@ -82,21 +85,34 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
   };
 
   const pillHeadline = brief.tldr_headline || tldrSentences[0] || "Daily Brief";
+  const opinionHeadline = brief.opinion_headline || (brief.opinion_text || "").split(/(?<=[.!?])\s+/)[0] || null;
+  const hasOpinion = !!(brief.opinion_text && opinionHeadline);
 
-  /* Collapsed pill — tap to expand */
+  /* Collapsed pill — stacks TL;DR + Opinion headlines with a single chevron. */
   if (!isExpanded) {
     return (
-      <div className={`mbp${className ? ` ${className}` : ""}`} role="complementary" aria-label="Daily Brief">
+      <div className={`mbp mbp--stacked${className ? ` ${className}` : ""}`} role="complementary" aria-label="Daily Brief">
         <button
-          className="mbp__pill"
+          className="mbp__stack"
           type="button"
           onClick={() => { hapticLight(); setIsExpanded(true); }}
           aria-expanded={false}
-          aria-label="Expand daily brief"
+          aria-label="Expand TL;DR and Opinion"
         >
-          <span className="mbp__pill-cmd">void --tl;dr</span>
-          <span className="mbp__pill-sep" aria-hidden="true">/</span>
-          <span className="mbp__pill-label">{pillHeadline}</span>
+          <div className="mbp__stack-rows">
+            <span className="mbp__pill-row">
+              <span className="mbp__pill-cmd">void --tl;dr</span>
+              <span className="mbp__pill-sep" aria-hidden="true">/</span>
+              <span className="mbp__pill-label">{pillHeadline}</span>
+            </span>
+            {hasOpinion && (
+              <span className={`mbp__pill-row mbp__pill-row--opinion${brief.opinion_lean ? ` mbp__pill-row--${brief.opinion_lean}` : ""}`}>
+                <span className="mbp__pill-cmd">void --opinion</span>
+                <span className="mbp__pill-sep" aria-hidden="true">/</span>
+                <span className="mbp__pill-label">{opinionHeadline}</span>
+              </span>
+            )}
+          </div>
           <span className="mbp__pill-chevron" aria-hidden="true">&#9662;</span>
         </button>
       </div>
@@ -119,7 +135,7 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
           >
             <span className="mbp__pill-chevron mbp__pill--open" aria-hidden="true">&#9662;</span>
           </button>
-          {hasAudio && (
+          {AUDIO_ENABLED && hasAudio && (
             <button
               className={`mbp__play${isPlaying ? " mbp__play--active" : ""}`}
               onClick={handleOnairClick}
@@ -146,17 +162,25 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
           type="button" aria-expanded={tldrExpanded}>{tldrExpanded ? "Less" : "Read more"}</button>
       )}
 
-      {/* Opinion removed from Brief per Kill List.
-           Opinion deserves its own surface (/opinion route).
-           Reduces Brief cognitive load by ~30%. Users can navigate to /opinion
-           via MobileBottomNav or desktop NavBar for full editorial coverage.
-           Pipeline still generates opinion_text + opinion_headline + opinion_lean;
-           they're just not rendered here. */}
+      {/* Opinion — re-introduced for mobile expanded brief (CEO 2026-05-13).
+          User can collapse the whole brief; in expanded state TL;DR + Opinion
+          both appear so the editorial moment is one tap away. /opinion route
+          still exists for the deeper read. */}
+      {hasOpinion && (
+        <>
+          <hr className="mbp__rule" />
+          <div className={`mbp__opinion${brief.opinion_lean ? ` mbp__opinion--${brief.opinion_lean}` : ""}`}>
+            <span className="mbp__cmd mbp__cmd--opinion">void --opinion</span>
+            {opinionHeadline && <h3 className="mbp__hl mbp__hl--opinion">{opinionHeadline}</h3>}
+            <p className="mbp__preview mbp__preview--opinion">{brief.opinion_text}</p>
+          </div>
+        </>
+      )}
 
       {/* Previous episodes — starts collapsed; tap "Episodes" to reveal.
            Progressive disclosure: OnAir content hidden by default to reduce
            initial cognitive load. Users tap to explore past broadcasts. */}
-      {previousEpisodes.length > 1 && (
+      {AUDIO_ENABLED && previousEpisodes.length > 1 && (
         <>
           <hr className="mbp__rule" />
           <button

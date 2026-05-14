@@ -68,8 +68,7 @@ Applies to: void --history events, daily briefs, CTAs, audio scripts. Together t
 | Gemini bias reasoning | `DISABLE_GEMINI_REASONING=1` in `pipeline.yml` | Remove env var |
 | Editorial triage | `DISABLE_EDITORIAL_TRIAGE=1` in `pipeline.yml` | Remove env var |
 | Weekly digest cron | Cron commented in `weekly-digest.yml` | Uncomment |
-
-Audio (void --onair) is **enabled** — edge-tts $0. No DISABLE_AUDIO gate.
+| **Audio (void --onair)** | `DISABLE_AUDIO=1` in `pipeline.yml` (pipeline TTS + podcast feed) **AND** `NEXT_PUBLIC_DISABLE_AUDIO=1` (frontend — gated via `app/lib/audioGate.ts`; hides FloatingPlayer, MobileMiniPlayer, MobileTabBar onair entry, MobileBriefPill Listen button, WeeklyDigest AudioBar, Footer `void --onair` pill, PipelineFlow step-7d label) | Remove both env vars together. `produce_audio()` early-returns on the pipeline flag; the frontend imports `AUDIO_ENABLED` from `audioGate.ts` to short-circuit each surface |
 
 **LLM budget**: Anthropic Sonnet 4.6 primary, ~$1/day at 1 run × ~57 calls. Sonnet cap: 80 calls/run. Gemini Flash fallback when Anthropic unavailable; legacy free-tier limit ~250 RPD. Op-eds bypass all LLM — original article text preserved (`content_type=opinion`).
 

@@ -1137,3 +1137,109 @@
   outline: 2px solid var(--accent-warm);
   outline-offset: 2px;
 }
+
+/* ==========================================================================
+   CEO 2026-05-13 — Mobile brief: TL;DR + Opinion collapsed pill on top.
+   Stacked rows inside one button so both headlines preview at a glance, one
+   chevron expands the full brief. Compact enough that the pill + the hero
+   headline both fit above the fold on the smallest mobile viewport (360x800).
+   ========================================================================== */
+
+.mbp--stacked {
+  padding: var(--space-2) 0;
+  /* override the default .mbp section gap so the pill hugs the hero below */
+  margin-bottom: var(--space-3);
+}
+
+.mbp__stack {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2) var(--space-4);
+  background: none;
+  border: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  text-align: left;
+  min-height: 44px;
+}
+
+.mbp__stack-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.mbp__pill-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.mbp__pill-row .mbp__pill-label {
+  /* Each row is single-line in collapsed state — let the headline ellipsize
+     instead of wrapping so the pill stays compact. */
+  display: block;
+  -webkit-line-clamp: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: 0;
+  flex: 1;
+}
+
+.mbp__pill-row--opinion .mbp__pill-cmd {
+  /* Tone shift so opinion command reads as a sibling, not a duplicate. */
+  color: var(--fg-tertiary);
+}
+
+/* Opinion-lean accent strip on the opinion row (left/center/right tinted). */
+.mbp__pill-row--left   { box-shadow: inset 2px 0 0 var(--bias-left); padding-left: 6px; }
+.mbp__pill-row--center { box-shadow: inset 2px 0 0 var(--bias-center); padding-left: 6px; }
+.mbp__pill-row--right  { box-shadow: inset 2px 0 0 var(--bias-right); padding-left: 6px; }
+
+/* ── Opinion block inside the expanded brief ────────────────────────────── */
+
+.mbp__opinion {
+  padding: var(--space-3) 0;
+}
+
+.mbp__cmd--opinion {
+  display: inline-block;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--accent-warm);
+  letter-spacing: 0.02em;
+  margin-bottom: var(--space-1);
+}
+
+.mbp__hl--opinion {
+  font-family: var(--font-editorial);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  line-height: 1.2;
+  margin: var(--space-1) 0 var(--space-2);
+  color: var(--fg-primary);
+}
+
+.mbp__preview--opinion {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--fg-secondary);
+  /* Cap to 3 lines collapsed; the brief itself is the gate (chevron) so we
+     don't want an inner "read more" too. */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.mbp__opinion--left   { border-left: 2px solid var(--bias-left); padding-left: var(--space-3); }
+.mbp__opinion--center { border-left: 2px solid var(--bias-center); padding-left: var(--space-3); }
+.mbp__opinion--right  { border-left: 2px solid var(--bias-right); padding-left: var(--space-3); }

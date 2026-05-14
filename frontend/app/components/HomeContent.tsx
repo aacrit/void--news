@@ -8,6 +8,7 @@ import { isUnscoredTilt } from "../lib/biasColors";
 import { supabase, supabaseError } from "../lib/supabase";
 import { cacheGet, cacheSet } from "../lib/feedCache";
 import { BASE_PATH } from "../lib/utils";
+import { AUDIO_ENABLED } from "../lib/audioGate";
 import LogoIcon from "./LogoIcon";
 import LogoWordmark from "./LogoWordmark";
 import NavBar from "./NavBar";
@@ -1011,9 +1012,10 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       {/* PWA install prompt — 2nd+ visit, above bottom nav */}
       <InstallPrompt />
 
-      {/* Floating audio player — persistent, above all content.
-           Audio element now lives in AudioProvider (layout.tsx). */}
-      <FloatingPlayer state={dailyBriefState} />
+      {/* Floating audio player — gated by AUDIO_DISABLED flag (void --onair
+          parking lot). When flipped on, AudioProvider in layout.tsx owns
+          the underlying audio element. */}
+      {AUDIO_ENABLED && <FloatingPlayer state={dailyBriefState} />}
     </div>
   );
 }

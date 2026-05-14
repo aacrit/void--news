@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import dynamic from "next/dynamic";
 import MobileTabBar from "./MobileTabBar";
 import MobileMiniPlayer from "./MobileMiniPlayer";
+import { AUDIO_ENABLED } from "../lib/audioGate";
 
 const MobileSidePanel = dynamic(() => import("./MobileSidePanel"), { ssr: false });
 
@@ -26,7 +27,7 @@ export default function MobileNav() {
 
   return (
     <>
-      <MobileMiniPlayer />
+      {AUDIO_ENABLED && <MobileMiniPlayer />}
       <MobileTabBar onMoreTap={handleMoreTap} moreOpen={sidePanelOpen} />
       <MobileSidePanel open={sidePanelOpen} onClose={handleSidePanelClose} />
     </>

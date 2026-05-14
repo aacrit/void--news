@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { hapticMicro } from "../lib/haptics";
 import { useAudio } from "./AudioProvider";
 import { BASE_PATH } from "../lib/utils";
+import { AUDIO_ENABLED } from "../lib/audioGate";
 
 /* ---------------------------------------------------------------------------
    MobileTabBar — Persistent bottom tab bar (mobile only, <768px).
@@ -71,10 +72,14 @@ type TabDef = {
   action?: "onair";
 };
 
+// onair tab gated by AUDIO_ENABLED — when audio is parked, the bottom nav
+// drops the entry entirely (no empty slot, no broken action).
 const TABS: TabDef[] = [
   { key: "feed", label: "feed", Icon: FeedIcon, href: "/" },
   { key: "history", label: "history", Icon: HistoryIcon, href: "/history" },
-  { key: "onair", label: "onair", Icon: OnAirIcon, href: null, action: "onair" },
+  ...(AUDIO_ENABLED
+    ? [{ key: "onair", label: "onair", Icon: OnAirIcon, href: null, action: "onair" as const }]
+    : []),
   { key: "more", label: "more", Icon: MoreIcon, href: null },
 ];
 
