@@ -14,6 +14,11 @@ interface LeadStoryProps {
   onStoryClick?: (story: Story, rect: DOMRect) => void;
   /** True when this card is focused via keyboard (J/K) navigation */
   kbdFocused?: boolean;
+  /** v3 (2026-05-14): when true, this lead is rendered in a side-by-side
+      twin layout sharing the hero canvas with another lead. Headline scales
+      down one notch (--type-twin-headline) and the card wears a modifier
+      class so layout-zones.css can apply twin-only styles. */
+  twin?: boolean;
 }
 
 /* ---------------------------------------------------------------------------
@@ -23,25 +28,30 @@ interface LeadStoryProps {
    typography carry the editorial moment; no photograph.
    --------------------------------------------------------------------------- */
 
-export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused }: LeadStoryProps) {
+export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, twin = false }: LeadStoryProps) {
   const cardRef = useRef<HTMLElement>(null);
 
-  // Use the .lead-split full-canvas stacked layout for rank 0.
-  // No image — text-only composition. .lead-split typography spans the
-  // full canvas; .lead-summary internally caps to a 72ch reading measure.
-  const useSplit = rank === 0;
+  // Twin and solo top-story rank-0 layouts both use the full-canvas .lead-split
+  // text composition. Twin reduces the headline scale via .lead-story--twin.
+  // For rank 1+ (legacy secondary leads — currently unused but kept for safety)
+  // we fall back to the smaller .lead-story__headline scale.
+  const useSplit = rank === 0 || twin;
   const verdict = classifyCoverage(story);
 
-  // Headline is <h1> for rank 0 (page's primary headline — accessibility/SEO),
-  // <h2> otherwise.
+  // Twin leads are co-equal Top Stories: both wear the badge. Solo rank-0
+  // also wears it. Secondary (rank 1+ in non-twin mode) does not.
+  const showBadge = rank === 0 || twin;
+
+  // Headline is <h1> for the primary lead (rank 0 OR first twin) to satisfy
+  // SEO/a11y "one h1 per page." A second twin lead uses <h2>.
   const HeadingTag: "h1" | "h2" = rank === 0 ? "h1" : "h2";
   const textContent = (
     <div data-slot="text" className={useSplit ? "lead-split__text" : undefined}>
-      {rank === 0 && <span className="lead-story__badge">Top Story</span>}
+      {showBadge && <span className="lead-story__badge">Top Story</span>}
 
       <HeadingTag className={useSplit ? "lead-headline" : "lead-story__headline"}>
         <span className={useSplit ? undefined : "lead-story__headline-text"}>{story.title}</span>
-        <Sigil data={story.sigilData} size="xl" storyId={story.id} />
+        <Sigil data={story.sigilData} size={twin ? "lg" : "xl"} storyId={story.id} />
         <CaretRight
           size={16}
           weight="bold"
@@ -71,7 +81,7 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused }:
     <article
       ref={cardRef}
       data-story-id={story.id}
-      className={`lead-story${useSplit ? " lead-split" : ""} ${rank === 0 ? "anim-lead-primary" : "anim-lead-secondary"}${kbdFocused ? " story-card--kbd-focus" : ""}`}
+      className={`lead-story${useSplit ? " lead-split" : ""}${twin ? " lead-story--twin" : ""} ${rank === 0 ? "anim-lead-primary" : "anim-lead-secondary"}${kbdFocused ? " story-card--kbd-focus" : ""}`}
     >
       {/* Stretched link — invisible button covers the article for click + a11y */}
       <button

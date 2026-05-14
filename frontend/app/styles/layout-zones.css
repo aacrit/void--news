@@ -90,6 +90,58 @@
   display: none;
 }
 
+/* ---- Twin lead container (v3, 2026-05-14) ----------------------------------
+   When ranks 0 and 1 share the hero canvas as co-equal Top Stories, they
+   render inside `.lead-twin` — a 2-col grid with a hairline divider between
+   the two leads. Below 1024px the grid collapses to a vertical stack so the
+   two stories still read as twins, just one above the other.
+
+   The vertical divider is a single border on the first child (the divider
+   "belongs" to the left lead's right edge). gap supplies the breathing room
+   on either side. */
+.lead-twin {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1.5rem, 2.5vw, 2.5rem);
+  align-items: start;
+  width: 100%;
+  margin-bottom: clamp(1.5rem, 2.5vw, 2.5rem);
+}
+
+.lead-twin > .lead-story:first-child {
+  /* Hairline divider sits midway in the gap by attaching to the right edge
+     of the left lead, plus half the gap as padding so it visually centers. */
+  border-right: 1px solid var(--border-subtle);
+  padding-right: clamp(0.75rem, 1.25vw, 1.25rem);
+}
+
+/* Twin headline scale (smaller than solo --type-lead-headline since the
+   column is half the canvas width). */
+.lead-story--twin .lead-headline {
+  font-size: var(--type-twin-headline);
+}
+
+/* Below 1024px the twin collapses to a vertical stack — both still marked
+   "Top Story", just one above the other. The divider becomes a horizontal
+   hairline along the bottom of the first lead. */
+@media (max-width: 1023px) {
+  .lead-twin {
+    grid-template-columns: 1fr;
+    gap: clamp(1rem, 3vw, 2rem);
+  }
+  .lead-twin > .lead-story:first-child {
+    border-right: none;
+    padding-right: 0;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: clamp(1rem, 2vw, 1.5rem);
+  }
+  /* On narrower viewports the twin headline can climb back toward the
+     solo-lead scale since each lead now spans full width. */
+  .lead-story--twin .lead-headline {
+    font-size: clamp(1.875rem, 1.5rem + 1.5vw, 2.75rem);
+  }
+}
+
 /* ---- Card headlines (ranks 1+) — unified typography ------------------
    Digest (ranks 1-9) and wire (ranks 10+) share one type scale so the feed
    reads as a single editorial surface below the lead, not two separate

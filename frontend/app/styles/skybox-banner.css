@@ -523,15 +523,21 @@
 
 .skb__section-hl--tldr {
   font-family: var(--font-editorial);
-  font-size: var(--text-base);
+  /* v3 (2026-05-14): expanded headline scales up from --text-base to the
+     magazine-subhead register so editorial mode reads distinctly from the
+     collapsed pill preview. Collapsed pill headline (.skb__compact-hl--tldr)
+     stays at --text-base. */
+  font-size: var(--type-brief-headline-expanded);
+  line-height: 1.15;
   font-weight: 700;
   color: var(--accent-warm);
-  letter-spacing: -0.01em;
+  letter-spacing: -0.015em;
 }
 
 .skb__section-hl--opinion {
   font-family: var(--font-editorial);
-  font-size: var(--text-base);
+  font-size: var(--type-brief-headline-expanded);
+  line-height: 1.15;
   font-weight: 700;
   font-style: italic;
   color: var(--fg-primary);

@@ -18,6 +18,34 @@
   flex-direction: column;
 }
 
+/* v3 (2026-05-14): twin top stories on mobile — both heroes stacked
+   vertically, both wearing the "Top Story" badge. A hairline divider sits
+   between them via the bottom border of the first twin hero. */
+.mf__twin-leads {
+  display: flex;
+  flex-direction: column;
+}
+
+.mf__twin-leads > .msc--hero:not(:last-child) {
+  margin-bottom: var(--space-3);
+  /* Border-bottom is already on .msc--hero; just tighten the spacing so the
+     twins read as a paired unit rather than two unrelated stories. */
+}
+
+/* Mobile badge — same visual language as the desktop .lead-story__badge,
+   scaled down slightly for the mobile hero context. */
+.msc__badge {
+  display: inline-block;
+  align-self: flex-start;
+  margin-bottom: var(--space-1);
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-warm);
+}
+
 .mf__sentinel {
   position: relative;
   height: 60px;
