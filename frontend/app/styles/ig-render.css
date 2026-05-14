@@ -1,0 +1,576 @@
+/* ===========================================================================
+   ig-render.css — fixed-size canvases for Playwright screenshots
+   1080 × 1350 portrait (Instagram Feed maximum).
+   No responsive rules. No motion.
+   ===========================================================================
+*/
+
+/* Hide chrome from root layout so Playwright captures a clean frame. */
+:where(.ig-root) ~ .mob-nav,
+:where(.ig-root) ~ .floating-player,
+:where(.ig-root) ~ .floating-player-shell,
+:where(.ig-root) ~ .skip-to-content,
+.mob-nav:has(~ .ig-root),
+.floating-player:has(~ .ig-root) {
+  display: none !important;
+}
+
+/* Sibling-selector fallback fails when nav is rendered above; force-hide. */
+body:has(.ig-canvas) .mob-nav,
+body:has(.ig-canvas) .floating-player,
+body:has(.ig-canvas) .floating-player-shell,
+body:has(.ig-canvas) .skip-to-content {
+  display: none !important;
+}
+
+body:has(.ig-canvas) {
+  background: transparent !important;
+  overflow: hidden;
+  margin: 0;
+}
+
+/* --- 1080×1350 canvas frame ------------------------------------------------- */
+
+.ig-canvas {
+  width: 1080px;
+  height: 1350px;
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-structural);
+  isolation: isolate;
+}
+
+.ig-canvas * {
+  box-sizing: border-box;
+}
+
+/* Subtle paper grain reused across pillars that use ivory. */
+.ig-canvas[data-pillar="receipt"]::before,
+.ig-canvas[data-pillar="brief"]::before,
+.ig-canvas[data-pillar="heatmap"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--paper-texture);
+  background-size: 600px;
+  opacity: 0.4;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  z-index: 1;
+}
+
+/* --- Shared brand wordmark --------------------------------------------------- */
+
+.ig-mark {
+  position: absolute;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-data);
+  font-size: 22px;
+  letter-spacing: 0.04em;
+}
+
+.ig-mark--tl { top: 64px; left: 64px; }
+.ig-mark--br { bottom: 64px; right: 64px; }
+.ig-mark__sigil {
+  width: 28px;
+  height: 28px;
+}
+
+/* --- Pillar: Receipt -------------------------------------------------------- */
+
+.ig-canvas[data-pillar="receipt"] {
+  background: var(--bg-primary, #F0EBDD);
+  color: var(--fg-primary, #1A1A1A);
+}
+
+.receipt {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 96px 80px 96px;
+}
+
+.receipt__topic {
+  font-family: var(--font-meta);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 18px;
+  color: var(--fg-accent);
+  margin-bottom: 16px;
+  margin-top: 56px;
+}
+
+.receipt__headline {
+  font-family: var(--font-editorial);
+  font-size: 52px;
+  line-height: 1.08;
+  font-weight: 700;
+  color: var(--fg-primary);
+  margin-bottom: 56px;
+  max-width: 18ch;
+}
+
+.receipt__rows {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  border-top: 2px solid var(--fg-primary);
+  padding-top: 32px;
+}
+
+.receipt__row {
+  display: grid;
+  grid-template-columns: 200px 1fr 96px;
+  align-items: baseline;
+  gap: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--divider, #D4CCC2);
+}
+
+.receipt__row:last-child { border-bottom: none; }
+
+.receipt__outlet {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-data);
+  font-size: 18px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-secondary);
+}
+
+.receipt__lean-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.receipt__quote {
+  font-family: var(--font-editorial);
+  font-size: 26px;
+  line-height: 1.28;
+  font-weight: 400;
+  color: var(--fg-primary);
+}
+
+.receipt__score {
+  font-family: var(--font-data);
+  font-size: 32px;
+  font-weight: 400;
+  text-align: right;
+  color: var(--fg-primary);
+  font-feature-settings: "tnum" 1;
+}
+
+.receipt__footer {
+  margin-top: auto;
+  font-family: var(--font-data);
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  color: var(--fg-tertiary);
+  text-transform: uppercase;
+}
+
+/* --- Pillar: Method (dark grain) ------------------------------------------- */
+
+.ig-canvas[data-pillar="method"] {
+  background: #0E0B08;
+  color: #F4EDE0;
+}
+
+.ig-canvas[data-pillar="method"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--paper-texture);
+  background-size: 600px;
+  opacity: 0.18;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  z-index: 1;
+}
+
+.method {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  padding: 96px 80px;
+  display: flex;
+  flex-direction: column;
+}
+
+.method__axis-num {
+  font-family: var(--font-data);
+  font-size: 18px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--cin-amber-bright, #AD7E1E);
+  margin-top: 56px;
+  margin-bottom: 24px;
+}
+
+.method__name {
+  font-family: var(--font-editorial);
+  font-size: 80px;
+  line-height: 1.0;
+  font-weight: 700;
+  color: #F4EDE0;
+  margin-bottom: 16px;
+}
+
+.method__brief {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: 32px;
+  line-height: 1.32;
+  color: rgba(244, 237, 224, 0.7);
+  margin-bottom: 56px;
+  max-width: 22ch;
+}
+
+.method__sample-label {
+  font-family: var(--font-meta);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 14px;
+  color: var(--cin-amber-bright, #AD7E1E);
+  margin-bottom: 16px;
+}
+
+.method__sample {
+  font-family: var(--font-data);
+  font-size: 28px;
+  line-height: 1.5;
+  color: #F4EDE0;
+  padding: 32px;
+  border: 1px solid rgba(244, 237, 224, 0.18);
+  background: rgba(244, 237, 224, 0.02);
+  margin-bottom: 40px;
+}
+
+.method__sample mark {
+  background: rgba(200, 71, 45, 0.32);
+  color: #F4EDE0;
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+.method__principle {
+  margin-top: auto;
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: 24px;
+  line-height: 1.4;
+  color: rgba(244, 237, 224, 0.6);
+  border-top: 1px solid rgba(244, 237, 224, 0.18);
+  padding-top: 32px;
+}
+
+.ig-canvas[data-pillar="method"] .ig-mark {
+  color: var(--cin-amber-bright, #AD7E1E);
+}
+
+/* --- Pillar: History (burnt umber) ----------------------------------------- */
+
+.ig-canvas[data-pillar="history"] {
+  background: #E8DCC0;
+  color: #2B1F12;
+}
+
+.ig-canvas[data-pillar="history"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(107, 68, 35, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 80%, rgba(43, 31, 18, 0.10) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.ig-canvas[data-pillar="history"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--paper-texture);
+  background-size: 800px;
+  opacity: 0.5;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  z-index: 1;
+}
+
+.history {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  padding: 96px 80px;
+  display: flex;
+  flex-direction: column;
+}
+
+.history__dateline {
+  font-family: var(--font-meta);
+  font-size: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.32em;
+  color: rgba(43, 31, 18, 0.65);
+  margin-top: 56px;
+  margin-bottom: 32px;
+  border-top: 1px solid #6B4423;
+  border-bottom: 1px solid #6B4423;
+  padding: 16px 0;
+  text-align: center;
+}
+
+.history__lead-fact {
+  font-family: var(--font-editorial);
+  font-size: 56px;
+  line-height: 1.1;
+  font-weight: 400;
+  color: #2B1F12;
+  margin-bottom: 48px;
+}
+
+.history__perspective-lens {
+  font-family: var(--font-meta);
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #6B4423;
+  margin-bottom: 12px;
+}
+
+.history__voice {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: 28px;
+  line-height: 1.4;
+  color: #2B1F12;
+  border-left: 3px solid #6B4423;
+  padding-left: 24px;
+}
+
+.history__cta {
+  margin-top: auto;
+  font-family: var(--font-data);
+  font-size: 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(43, 31, 18, 0.65);
+}
+
+.ig-canvas[data-pillar="history"] .ig-mark {
+  color: #6B4423;
+}
+
+/* --- Pillar: Brief (pull-quote / manifesto / BTS) -------------------------- */
+
+.ig-canvas[data-pillar="brief"] {
+  background: var(--bg-primary, #F0EBDD);
+  color: var(--fg-primary, #1A1A1A);
+}
+
+.brief {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  padding: 96px 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.brief--manifesto {
+  background: #0E0B08;
+  color: #F4EDE0;
+}
+
+.brief__variant {
+  font-family: var(--font-meta);
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-accent);
+  margin-bottom: 32px;
+}
+
+.brief__pullquote {
+  font-family: var(--font-editorial);
+  font-size: 72px;
+  line-height: 1.08;
+  font-weight: 400;
+  color: inherit;
+  position: relative;
+}
+
+.brief__pullquote::before {
+  content: "\201C";
+  font-family: var(--font-editorial);
+  font-size: 220px;
+  line-height: 0.6;
+  position: absolute;
+  left: -48px;
+  top: 16px;
+  color: var(--fg-accent);
+  opacity: 0.35;
+}
+
+.brief__attribution {
+  font-family: var(--font-data);
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  margin-top: 56px;
+  color: var(--fg-tertiary);
+}
+
+.brief__attribution::before {
+  content: "— ";
+  margin-right: 4px;
+}
+
+.brief__manifesto-headline {
+  font-family: var(--font-editorial);
+  font-size: 112px;
+  line-height: 0.98;
+  font-weight: 700;
+  color: #F4EDE0;
+  letter-spacing: -0.01em;
+}
+
+.brief__manifesto-sub {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: 36px;
+  line-height: 1.32;
+  color: rgba(244, 237, 224, 0.7);
+  margin-top: 56px;
+  max-width: 24ch;
+}
+
+.brief--bts {
+  background: var(--bg-primary, #F0EBDD);
+}
+
+.brief__bts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-top: 32px;
+}
+
+.brief__bts-stat-label {
+  font-family: var(--font-meta);
+  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-tertiary);
+  margin-bottom: 8px;
+}
+
+.brief__bts-stat-value {
+  font-family: var(--font-data);
+  font-size: 56px;
+  font-weight: 400;
+  color: var(--fg-primary);
+  font-feature-settings: "tnum" 1;
+}
+
+.ig-canvas[data-pillar="brief"][data-variant="manifesto"] .ig-mark {
+  color: var(--cin-amber-bright, #AD7E1E);
+}
+
+/* --- Pillar: Heatmap (placeholder simple data viz) ------------------------- */
+
+.ig-canvas[data-pillar="heatmap"] {
+  background: var(--bg-primary, #F0EBDD);
+  color: var(--fg-primary, #1A1A1A);
+}
+
+.heatmap {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  padding: 96px 80px;
+  display: flex;
+  flex-direction: column;
+}
+
+.heatmap__title {
+  font-family: var(--font-editorial);
+  font-size: 56px;
+  line-height: 1.08;
+  font-weight: 700;
+  color: var(--fg-primary);
+  margin-top: 56px;
+  margin-bottom: 48px;
+  max-width: 16ch;
+}
+
+.heatmap__bars {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-bottom: 48px;
+}
+
+.heatmap__bar-row {
+  display: grid;
+  grid-template-columns: 180px 1fr 80px;
+  align-items: center;
+  gap: 16px;
+  font-family: var(--font-data);
+  font-size: 16px;
+}
+
+.heatmap__bar-country {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fg-secondary);
+}
+
+.heatmap__bar-track {
+  height: 14px;
+  background: rgba(28, 26, 23, 0.08);
+  position: relative;
+}
+
+.heatmap__bar-fill {
+  position: absolute;
+  inset: 0;
+  background: currentColor;
+}
+
+.heatmap__bar-count {
+  font-feature-settings: "tnum" 1;
+  text-align: right;
+  color: var(--fg-tertiary);
+}
+
+.heatmap__footer {
+  margin-top: auto;
+  font-family: var(--font-data);
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  color: var(--fg-tertiary);
+  text-transform: uppercase;
+}
+
+/* --- Admin styling override (re-show chrome inside /admin/ig) -------------- */
+
+.ig-root[data-admin="true"] ~ .mob-nav,
+.ig-root[data-admin="true"] ~ .floating-player,
+.ig-root[data-admin="true"] ~ .skip-to-content,
+body:has(.ig-root[data-admin="true"]) .mob-nav,
+body:has(.ig-root[data-admin="true"]) .floating-player,
+body:has(.ig-root[data-admin="true"]) .skip-to-content {
+  display: revert !important;
+}
