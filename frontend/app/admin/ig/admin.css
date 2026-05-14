@@ -1,0 +1,287 @@
+/* /admin/ig — internal review surface. Not a public page; no design fuss. */
+
+.ig-admin {
+  padding: 32px;
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: var(--font-structural);
+  color: var(--fg-primary);
+  background: var(--bg-primary);
+  min-height: 100vh;
+}
+
+.ig-admin-unauth {
+  padding: 48px;
+  max-width: 600px;
+  margin: 80px auto;
+  font-family: var(--font-structural);
+}
+
+.ig-admin__hdr h1 {
+  font-family: var(--font-editorial);
+  font-size: 36px;
+  margin: 0;
+}
+
+.ig-admin__meta {
+  font-family: var(--font-data);
+  font-size: 14px;
+  color: var(--fg-tertiary);
+  margin: 4px 0 32px;
+}
+
+.ig-admin__section {
+  margin-top: 48px;
+}
+
+.ig-admin__section h2 {
+  font-family: var(--font-meta);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-accent);
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--divider);
+  padding-bottom: 8px;
+}
+
+.ig-admin__empty {
+  color: var(--fg-tertiary);
+  font-style: italic;
+}
+
+/* --- Review card -------------------------------------------------------- */
+
+.ig-review {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 32px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.ig-review__preview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ig-review__img {
+  width: 100%;
+  aspect-ratio: 1080 / 1350;
+  object-fit: contain;
+  background: #000;
+  display: block;
+}
+
+.ig-review__pending {
+  width: 100%;
+  aspect-ratio: 1080 / 1350;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: var(--bg-secondary);
+  color: var(--fg-tertiary);
+  font-family: var(--font-data);
+  font-size: 14px;
+}
+
+.ig-review__link {
+  color: var(--fg-accent);
+  text-decoration: underline;
+}
+
+.ig-review__slide-strip {
+  display: flex;
+  gap: 4px;
+}
+
+.ig-review__slide-dot {
+  flex: 1;
+  padding: 6px 0;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+  color: var(--fg-secondary);
+  font-family: var(--font-data);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.ig-review__slide-dot[aria-current="true"] {
+  background: var(--fg-accent);
+  color: var(--bg-primary);
+  border-color: var(--fg-accent);
+}
+
+.ig-review__body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ig-review__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.ig-review__pill {
+  font-family: var(--font-data);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 4px 8px;
+  background: var(--bg-secondary);
+  color: var(--fg-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.ig-review__pill[data-pillar="receipt"] { color: var(--bias-center-right); }
+.ig-review__pill[data-pillar="method"] { color: var(--cin-amber); }
+.ig-review__pill[data-pillar="history"] { background: rgba(107, 68, 35, 0.12); color: #6B4423; }
+.ig-review__pill[data-pillar="brief"] { color: var(--fg-primary); }
+.ig-review__pill[data-state="caption_review"] { background: rgba(204, 62, 52, 0.12); color: var(--bias-right); }
+.ig-review__pill[data-state="render_failed"] { background: rgba(204, 62, 52, 0.18); color: var(--bias-right); }
+.ig-review__pill[data-launch="true"] { background: rgba(148, 107, 21, 0.12); color: var(--cin-amber); }
+
+.ig-review__when {
+  font-family: var(--font-data);
+  font-size: 12px;
+  color: var(--fg-tertiary);
+}
+
+.ig-review__label {
+  font-family: var(--font-meta);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-tertiary);
+  margin-top: 8px;
+}
+
+.ig-review__meta-inline {
+  font-family: var(--font-data);
+  font-size: 11px;
+  color: var(--fg-tertiary);
+  text-transform: none;
+  letter-spacing: 0;
+  margin-left: 8px;
+}
+
+.ig-review__caption,
+.ig-review__hashtags {
+  width: 100%;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-strong);
+  padding: 12px;
+  font-family: var(--font-structural);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--fg-primary);
+}
+
+.ig-review__hashtags {
+  font-family: var(--font-data);
+  font-size: 14px;
+}
+
+.ig-review__error {
+  font-family: var(--font-data);
+  font-size: 13px;
+  color: var(--bias-right);
+  background: rgba(204, 62, 52, 0.06);
+  padding: 8px 12px;
+  margin: 0;
+}
+
+.ig-review__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.ig-review__actions button {
+  padding: 10px 16px;
+  font-family: var(--font-data);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  background: var(--fg-primary);
+  color: var(--bg-primary);
+  border: none;
+  cursor: pointer;
+}
+
+.ig-review__actions button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ig-review__danger {
+  background: var(--bias-right) !important;
+}
+
+.ig-review__msg {
+  margin: 0;
+  font-family: var(--font-data);
+  font-size: 13px;
+  color: var(--fg-tertiary);
+}
+
+/* --- Posted row -------------------------------------------------------- */
+
+.ig-posted {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 16px;
+  padding: 12px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.ig-posted__thumb img {
+  width: 96px;
+  height: 120px;
+  object-fit: cover;
+  background: var(--bg-secondary);
+  display: block;
+}
+
+.ig-posted__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ig-posted__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  font-family: var(--font-data);
+  font-size: 12px;
+}
+
+.ig-posted__when {
+  color: var(--fg-tertiary);
+}
+
+.ig-posted__caption {
+  font-family: var(--font-structural);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--fg-secondary);
+  margin: 0;
+}
+
+.ig-posted__metrics {
+  display: flex;
+  gap: 16px;
+  font-family: var(--font-data);
+  font-size: 12px;
+  color: var(--fg-tertiary);
+}
