@@ -121,6 +121,34 @@
   font-size: var(--type-twin-headline);
 }
 
+/* v6.2 (2026-05-15): compress twin lead vertically so cards 3-6 (first row
+   of the digest grid) clear the fold on 1366×768 / 1440×900 laptop screens.
+   The summary clamps to 3 lines; the lead-split column gap tightens; and
+   the bottom margin shrinks. Resolution-aware: when the viewport is tall
+   enough (>= 1024px height) we relax the clamp so power-users on tall
+   monitors still get the longer summary. */
+.lead-story--twin .lead-summary {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: var(--space-2);
+}
+
+.lead-story--twin.lead-split {
+  gap: var(--space-3);
+}
+
+.lead-story--twin .lead-headline {
+  margin-bottom: var(--space-2);
+}
+
+@media (min-height: 1024px) {
+  .lead-story--twin .lead-summary {
+    -webkit-line-clamp: 5;
+  }
+}
+
 /* Below 1024px the twin collapses to a vertical stack — both still marked
    "Top Story", just one above the other. The divider becomes a horizontal
    hairline along the bottom of the first lead. */

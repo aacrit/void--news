@@ -451,13 +451,12 @@ def _source_coverage_score(
         if max_tier_pct > 0.70 and num_tiers < 3:
             weighted_count *= 0.85
 
-    # v6.1: US-wire pile-on penalty. >70% US sources AND <2 distinct foreign
-    # country mentions in article NER → insular US-domestic story. Applied
-    # unconditionally (world is the only shipping edition). Foreign-country
-    # mentions in cluster_countries (computed from titles via NER upstream)
-    # act as the exemption gate — globally-relevant US-origin stories (Fed
-    # chair, US strikes on Iran, NATO summit) all carry foreign GPEs and
-    # escape this penalty.
+    # v6.2 (2026-05-15): US-wire pile-on penalty, two-tier severity.
+    # The original 0.80× penalty (v6.1) wasn't enough to expel Mamdani-class
+    # stories — 14 US sources × 0.80 still beat 7-source genuine global news.
+    # The 2026-05-15 audit recommended ratcheting to 0.60× when the cluster
+    # is *entirely* US sources AND carries *zero* foreign GPE mentions; keep
+    # 0.80× for the partial case (>70% US OR a single foreign mention).
     if raw_count >= 6 and country_counts.get("US", 0) / raw_count > 0.70:
         foreign_mentions = 0
         if cluster_countries:
@@ -465,7 +464,11 @@ def _source_coverage_score(
                 c_norm = c.lower().strip()
                 if c_norm and c_norm not in _US_TOKENS:
                     foreign_mentions += 1
-        if foreign_mentions < 2:
+        if foreign_mentions == 0 and country_counts.get("US", 0) == raw_count:
+            # Pure US-domestic insular story: harder penalty.
+            weighted_count *= 0.60
+        elif foreign_mentions < 2:
+            # Partial US-dominant: keep the v6.1 tone.
             weighted_count *= 0.80
 
     # Diminishing returns with extended dynamic range: 100 * (1 - e^(-x/10))

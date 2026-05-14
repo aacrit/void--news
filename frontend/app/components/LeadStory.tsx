@@ -47,10 +47,13 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, t
   const HeadingTag: "h1" | "h2" = rank === 0 ? "h1" : "h2";
   const textContent = (
     <div data-slot="text" className={useSplit ? "lead-split__text" : undefined}>
-      {showBadge && <span className="lead-story__badge">Top Story</span>}
-
       <HeadingTag className={useSplit ? "lead-headline" : "lead-story__headline"}>
         <span className={useSplit ? undefined : "lead-story__headline-text"}>{story.title}</span>
+        {/* Badge moved inline with the Sigil (v6.2, 2026-05-15) — sits in the
+            same row as the source-count Sigil to reclaim the ~24px vertical
+            real estate it used to occupy above the headline. Both leads in a
+            twin layout wear it; solo rank-0 also wears it. */}
+        {showBadge && <span className="lead-story__badge lead-story__badge--inline">Top Story</span>}
         <Sigil data={story.sigilData} size={twin ? "lg" : "xl"} storyId={story.id} />
         <CaretRight
           size={16}
