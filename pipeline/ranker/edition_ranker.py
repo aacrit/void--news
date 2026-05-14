@@ -123,6 +123,24 @@ REGIONAL_KEYWORDS: dict[str, set[str]] = {
 # Same-event keyword groups (will go stale — TODO: dynamic extraction)
 # ---------------------------------------------------------------------------
 EVENT_KEYWORDS: dict[str, set[str]] = {
+    # v6.1: summit_diplomacy is checked FIRST (Python dict insertion order)
+    # so a "Trump and Xi agree on Hormuz" cluster classifies as a summit
+    # event, not an "iran" event. This lets the MAX_SAME_EVENT=2 cap
+    # actually fire across all sub-angles of a single diplomatic summit
+    # (Beijing summit consumed 4-6 top-34 slots in 2026-05-14 audit).
+    "summit_diplomacy": {
+        "beijing summit", "white house summit", "kremlin summit",
+        "trump-xi", "xi-trump", "trump and xi", "xi and trump",
+        "trump-putin", "putin-trump", "trump and putin", "putin and trump",
+        "trump-modi", "modi-trump", "biden-xi", "xi-biden",
+        "g7 summit", "g20 summit", "g-7 summit", "g-20 summit",
+        "brics summit", "shanghai cooperation summit", "sco summit",
+        "trump arrives in", "xi arrives in", "putin arrives in",
+        "trump meets", "xi meets", "putin meets", "modi meets",
+        "trump invites", "xi invites",
+        "joint statement", "bilateral talks", "trilateral talks",
+        "trump-xi summit", "xi-trump summit",
+    },
     "iran": {
         "iran", "iranian", "tehran", "hormuz", "persian gulf", "irgc",
         "hegseth", "isfahan", "f-15", "f-35", "warplane", "fighter jet",

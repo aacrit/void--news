@@ -390,9 +390,16 @@ def _parse_timestamps(cluster_articles: list[dict]) -> list[datetime]:
     return timestamps
 
 
+_US_TOKENS = frozenset({
+    "us", "u.s.", "u.s.a.", "usa", "united states", "america", "american",
+    "washington", "washington d.c.", "d.c.",
+})
+
+
 def _source_coverage_score(
     cluster_articles: list[dict],
     source_map: dict[str, dict],
+    cluster_countries: set[str] | None = None,
 ) -> float:
     """
     Score based on number of unique sources with diminishing returns.
@@ -400,6 +407,13 @@ def _source_coverage_score(
     international 1.2x, us_major 1.0x. This reduces inflation from
     wire service roundups (10 AP republications ≠ 10 independent reports).
     Going from 1→5 sources matters more than 15→20.
+    v6.1 (2026-05-14): US-wire pile-on penalty. When >70% of unique
+    sources are US-based AND fewer than 2 distinct non-US countries
+    appear in article-level NER, apply 0.80x. Targets domestic US
+    procedural stories (SC redistricting, NYC budget) that accumulate
+    25+ US sources but have zero global relevance for world-edition
+    readers. Genuinely global US-origin stories (Fed chair, US strikes
+    on Iran) carry foreign country mentions and escape the penalty.
     Returns 0-100.
     """
     if not cluster_articles:
@@ -410,6 +424,7 @@ def _source_coverage_score(
 
     seen_sources: set[str] = set()
     tier_counts: dict[str, int] = {}
+    country_counts: dict[str, int] = {}
     weighted_count = 0.0
     for a in cluster_articles:
         sid = a.get("source_id", "")
@@ -417,8 +432,11 @@ def _source_coverage_score(
             seen_sources.add(sid)
             src = source_map.get(sid, {})
             tier = src.get("tier", "us_major")
+            country = (src.get("country") or "").upper()
             weighted_count += tier_weights.get(tier, 1.0)
             tier_counts[tier] = tier_counts.get(tier, 0) + 1
+            if country:
+                country_counts[country] = country_counts.get(country, 0) + 1
 
     raw_count = len(seen_sources)
 
@@ -432,6 +450,23 @@ def _source_coverage_score(
         num_tiers = len(tier_counts)
         if max_tier_pct > 0.70 and num_tiers < 3:
             weighted_count *= 0.85
+
+    # v6.1: US-wire pile-on penalty. >70% US sources AND <2 distinct foreign
+    # country mentions in article NER → insular US-domestic story. Applied
+    # unconditionally (world is the only shipping edition). Foreign-country
+    # mentions in cluster_countries (computed from titles via NER upstream)
+    # act as the exemption gate — globally-relevant US-origin stories (Fed
+    # chair, US strikes on Iran, NATO summit) all carry foreign GPEs and
+    # escape this penalty.
+    if raw_count >= 6 and country_counts.get("US", 0) / raw_count > 0.70:
+        foreign_mentions = 0
+        if cluster_countries:
+            for c in cluster_countries:
+                c_norm = c.lower().strip()
+                if c_norm and c_norm not in _US_TOKENS:
+                    foreign_mentions += 1
+        if foreign_mentions < 2:
+            weighted_count *= 0.80
 
     # Diminishing returns with extended dynamic range: 100 * (1 - e^(-x/10))
     # Old curve (/5) flattened at 15 sources — a 40-source story scored only
@@ -627,14 +662,21 @@ def _factual_density_score(
     return sum(rigor_values) / len(rigor_values)
 
 
-def _geographic_impact_score(cluster_articles: list[dict]) -> float:
+def _geographic_impact_score(
+    cluster_articles: list[dict],
+    return_countries: bool = False,
+):
     """
     Score based on geographic scope via NER.
     v4.0: geopolitically weighted — G20/P5 nations score 3x, mid-tier 2x,
     others 1x. Prevents "5 small countries" beating "US + China".
     v3.1: runs NER on titles first (fast). Only processes full text
     if title-only NER finds fewer than 2 GPEs.
-    Returns 0-100.
+    v6.1: when return_countries=True, returns (score, countries_set) so
+    the caller can reuse the NER work (e.g., for US-wire pile-on detection
+    in _source_coverage_score). Backward-compatible: default returns score
+    only.
+    Returns 0-100, or (0-100, set[str]) when return_countries=True.
     """
     nlp = get_nlp()
 
@@ -680,7 +722,10 @@ def _geographic_impact_score(cluster_articles: list[dict]) -> float:
     geo_score = min(60.0, geo_weighted * 10.0)
     keyword_bonus = min(40.0, global_keyword_count * 5.0)
 
-    return min(100.0, geo_score + keyword_bonus)
+    score = min(100.0, geo_score + keyword_bonus)
+    if return_countries:
+        return score, countries_mentioned
+    return score
 
 
 def _tier_diversity_score(
@@ -1102,11 +1147,14 @@ def rank_importance(
     source_count = len({a.get("source_id", "") for a in cluster_articles})
 
     # Compute all sub-scores (shared source_map + timestamps)
-    coverage = _source_coverage_score(cluster_articles, source_map)
+    # v6.1: geographic + cluster_countries computed together to avoid double NER work.
+    geographic, cluster_countries = _geographic_impact_score(
+        cluster_articles, return_countries=True
+    )
+    coverage = _source_coverage_score(cluster_articles, source_map, cluster_countries)
     spectrum = _perspective_diversity_score(cluster_articles, source_map, bias_scores)
     divergence = _divergence_score(bias_scores)
     factual = _factual_density_score(bias_scores)
-    geographic = _geographic_impact_score(cluster_articles)
     tier_div = _tier_diversity_score(cluster_articles, source_map)
     velocity, velocity_raw = _coverage_velocity_score(
         cluster_articles, timestamps

@@ -387,6 +387,28 @@ def categorize_article(article: dict) -> list[str]:
     # "boxing odds" → sports (not environment), "F-15 shot down" → conflict.
     import re
     _tl = title_lower
+
+    # v6.1 (2026-05-14) — Mass-casualty pre-override. A title carrying a hard
+    # death-toll number ("storm kills 100", "bombing kills 9") belongs in
+    # `conflict` under the current 10-category taxonomy, not `science` or
+    # `environment` where storm/island keywords pull it. Skip when title
+    # carries retrospective markers (study/report/model) so genuine analytical
+    # pieces about historical death tolls stay in their subject category.
+    _mass_casualty_skip = any(
+        w in _tl
+        for w in ("study", "report finds", "report shows", "research finds",
+                  "estimates", "estimated", "model", "modeled", "modeling",
+                  "estimate that", "found that")
+    )
+    if not _mass_casualty_skip:
+        _cas = re.search(
+            r"\b(?:killed|kills|dead|deaths|fatalities)\s+"
+            r"(?:at\s+least\s+)?(\d{1,4})\b",
+            _tl,
+        )
+        if _cas and int(_cas.group(1)) >= 5:
+            if result[0] != "conflict":
+                result = ["conflict"] + [c for c in result if c != "conflict"]
     _TITLE_OVERRIDES = [
         # Sports: league names, match-ups, odds, scores
         (r"\b(nba|nfl|mlb|nhl|mls|ufc|mma|premier league|la liga|bundesliga|serie a)\b", "sports"),
@@ -400,6 +422,12 @@ def categorize_article(article: dict) -> list[str]:
         # Conflict: military hardware, combat actions
         (r"\b(f-15|f-35|f-16|b-52|warplane|fighter jet|warship|submarine)\b", "conflict"),
         (r"\b(shot down|downed|airstrike|shelling|bombardment|missile strike)\b", "conflict"),
+        # v6.1: military arrests / infiltration / bombing — strong conflict
+        # markers that incidental environment/science keywords ("island",
+        # "storm") can otherwise hijack.
+        (r"\b(drone strike|car bomb|suicide bomb|bazaar bombing|market bombing)\b", "conflict"),
+        (r"\b(irgc\s+(?:arrests?|members?|infiltration)|infiltrators?\s+(?:detained|arrested))\b", "conflict"),
+        (r"\b(narco-terrorist|narco terror|terror plot|terror attack)\b", "conflict"),
         # Politics: appointments, firings, executive actions
         (r"\b(fires|fired|ousts|ousted|appoints|appointed|nominates|sworn in)\b", "politics"),
         (r"\b(attorney general|secretary of|chief of staff|executive order)\b", "politics"),
