@@ -553,6 +553,10 @@
   text-align-last: left;
   hyphens: auto;
   -webkit-hyphens: auto;
+  /* Page-catch hover — see .story-card__headline-text. Box translates
+     by 2px; the justify algorithm sees an unchanged container width,
+     so the text doesn't re-justify or reflow. */
+  transition: transform 280ms var(--ease-cinematic);
 }
 
 .story-card__summary--pending {
@@ -742,6 +746,8 @@
   text-align-last: left;
   hyphens: auto;
   -webkit-hyphens: auto;
+  /* Page-catch hover — see .story-card__headline-text. */
+  transition: transform 280ms var(--ease-cinematic);
 }
 
 .lead-story__summary--pending {
@@ -8185,8 +8191,15 @@ a.footer-products__item:hover { color: var(--accent-warm); }
  * No background tint. No shadow. No card transform.
  */
 @media (hover: hover) and (pointer: fine) {
+  /* Page-catch — headline + summary translate together as one editorial
+     block. Lead-split (rank 0 top story) uses .lead-headline + .lead-summary
+     class names instead of __ variants — covered here too. */
   .story-card:hover .story-card__headline-text,
-  .lead-story:hover .lead-story__headline-text {
+  .story-card:hover .story-card__summary,
+  .lead-story:hover .lead-story__headline-text,
+  .lead-story:hover .lead-story__summary,
+  .lead-story:hover .lead-headline,
+  .lead-story:hover .lead-summary {
     transform: translateX(2px);
   }
 }
@@ -8243,9 +8256,13 @@ a.footer-products__item:hover { color: var(--accent-warm); }
     transition: none;
   }
   /* v6.2 page-catch suppressed under reduced motion — users who opt out
-     of motion get no headline shift on hover. The cursor is enough. */
+     of motion get no shift on hover. The cursor is enough. */
   .story-card:hover .story-card__headline-text,
-  .lead-story:hover .lead-story__headline-text {
+  .story-card:hover .story-card__summary,
+  .lead-story:hover .lead-story__headline-text,
+  .lead-story:hover .lead-story__summary,
+  .lead-story:hover .lead-headline,
+  .lead-story:hover .lead-summary {
     transform: none;
     transition: none;
   }
