@@ -401,9 +401,18 @@ def categorize_article(article: dict) -> list[str]:
                   "estimate that", "found that")
     )
     if not _mass_casualty_skip:
+        # v6.2 (2026-05-15): expanded verb set to catch all conjugations.
+        # The original regex used a small explicit list (killed|kills|dead...)
+        # which missed "Storm Kills Over 100" (UP storm — title-case "Kills"
+        # tokenises fine, but the audit revealed other present-tense forms
+        # like "Floods Killing 50" and "Bombing Killed dozens" weren't catching
+        # because the connector word between verb and number varied.
+        # New rule: any "kill*" word stem + optional connector ("over",
+        # "at least", "about", "nearly") + number ≥ 5.
         _cas = re.search(
-            r"\b(?:killed|kills|dead|deaths|fatalities)\s+"
-            r"(?:at\s+least\s+)?(\d{1,4})\b",
+            r"\b(?:kill\w*|dead|deaths|fatalit\w*|dies|died)\s+"
+            r"(?:(?:over|at\s+least|about|nearly|more\s+than|some)\s+)?"
+            r"(\d{1,4})\b",
             _tl,
         )
         if _cas and int(_cas.group(1)) >= 5:
