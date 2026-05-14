@@ -658,7 +658,8 @@ function SpectrumView({ sources, isMobile = false }: { sources: DeepDiveSpectrum
                 })),
                 10
               ).map((cluster, ci) => {
-                const offsets = fanOffsets(cluster.length, 18);
+                // Subtle fan radius — user feels the resolve, doesn't see the move.
+                const offsets = fanOffsets(cluster.length, 10);
                 const overlap = cluster.length > 1;
                 return (
                   <g
@@ -744,7 +745,9 @@ function SpectrumView({ sources, isMobile = false }: { sources: DeepDiveSpectrum
               Clustered + fan-out on hover so overlapping pins become readable
               and each one resolves to its article on click. */}
           {isLow && densities && clusterPinsByX(sourcePins, 8).map((cluster, ci) => {
-            const offsets = fanOffsets(cluster.length, 22);
+            // Subtle fan radius — half of the original 22px arc so the
+            // movement reads as "barely shifting" rather than "popping out".
+            const offsets = fanOffsets(cluster.length, 12);
             const overlap = cluster.length > 1;
             return (
               <g

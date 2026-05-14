@@ -2290,15 +2290,16 @@
 }
 
 /* ---- Cluster fan-out + click affordance ---------------------------------
-   When 2+ source pins land within ~8px on the lean axis we wrap them in a
-   cluster <g> and hand each pin a pre-computed radial offset (--fan-dx,
-   --fan-dy). On cluster hover/focus the pins translate to their offsets
-   in a 320ms cubic-bezier(0.4,0,0.2,1) arc, and each pin enlarges so the
-   underlying anchor is comfortably clickable. Single-pin clusters skip
-   the translate but still grow on hover for visual feedback.
+   CEO 2026-05-13: subtle microinteractions only — user feels them
+   subconsciously, doesn't see them happen. Single-pin clusters: barely
+   any size change, just a soft opacity bump. Overlap clusters: pins
+   translate to pre-computed radial offsets so they can be clicked
+   individually, but the radius growth is minimal (≤25%) and the fan
+   arc is half the radius of the previous design. 240ms ease-out feels
+   weightless rather than springy.
    --------------------------------------------------------------------- */
 .dd-sv-view__cluster .dd-sv-view__pin {
-  transition: transform 320ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 240ms var(--ease-cinematic);
 }
 .dd-sv-view__pin-anchor {
   cursor: pointer;
@@ -2307,25 +2308,29 @@
 .dd-sv-view__cluster:hover .dd-sv-view__dot,
 .dd-sv-view__cluster:focus-within .dd-sv-view__dot {
   opacity: 1;
-  r: 7;
-  stroke-width: 2;
 }
 .dd-sv-view__cluster:hover .dd-sv-view__src-dot,
 .dd-sv-view__cluster:focus-within .dd-sv-view__src-dot {
   opacity: 1;
-  r: 4.5;
-  stroke-width: 2;
 }
-/* Fan-out: only overlap clusters translate their members outward. */
+/* Overlap clusters: fan out + tiny radius bump so individual pins are
+   resolvable. Non-overlap clusters get no size change at all. */
 .dd-sv-view__cluster--overlap:hover .dd-sv-view__pin,
 .dd-sv-view__cluster--overlap:focus-within .dd-sv-view__pin {
   transform: translate(var(--fan-dx, 0), var(--fan-dy, 0));
 }
+.dd-sv-view__cluster--overlap:hover .dd-sv-view__dot,
+.dd-sv-view__cluster--overlap:focus-within .dd-sv-view__dot {
+  r: 6;
+}
+.dd-sv-view__cluster--overlap:hover .dd-sv-view__src-dot,
+.dd-sv-view__cluster--overlap:focus-within .dd-sv-view__src-dot {
+  r: 3;
+}
 /* Keyboard focus ring on the anchor itself (SVG-native focus). */
 .dd-sv-view__pin-anchor:focus-visible > .dd-sv-view__dot,
 .dd-sv-view__pin-anchor:focus-visible > .dd-sv-view__src-dot {
-  stroke-width: 2.5;
-  filter: drop-shadow(0 0 2px var(--accent-warm));
+  stroke-width: 2;
 }
 
 @media (prefers-reduced-motion: reduce) {
