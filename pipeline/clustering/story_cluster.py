@@ -305,6 +305,71 @@ def _determine_section(articles: list[dict], cluster_title: str = "",
 # Entities too broad to be useful merge signals — they appear across many
 # unrelated stories and cause transitive over-merging (Iran+Trump connects
 # gas field strikes to NATO to Hegseth to oil prices to Hormuz).
+# v6.1 (2026-05-14): Head-of-state pairings that act as legitimate event
+# anchors when paired with summit/meeting tokens. The Trump-Xi summit's
+# four sub-angles ("Taiwan warning", "Hormuz agreement", "WH invite",
+# "China arrival") share only common-filtered entities (Trump, China,
+# Iran, US) — the entity-overlap merge never fires, leaving 4 clusters
+# of the same event in the top 50. This list, paired with summit tokens,
+# unblocks legitimate same-event merges without admitting general
+# transitive bridges. Substring-matched against title+summary; case-insens.
+# TODO: review quarterly — Sunak/Starmer, Trudeau/Carney, etc. drift.
+_HEAD_OF_STATE_NAMES = frozenset({
+    "xi jinping", "vladimir putin", "putin",
+    "narendra modi", "modi",
+    "recep tayyip erdogan", "erdogan", "erdoğan",
+    "luiz inácio lula", "lula",
+    "keir starmer", "starmer",
+    "emmanuel macron", "macron",
+    "friedrich merz", "olaf scholz", "scholz",
+    "mark carney", "justin trudeau", "carney", "trudeau",
+    "benjamin netanyahu", "netanyahu",
+    "mohammed bin salman", "mbs",
+    "volodymyr zelenskyy", "volodymyr zelensky", "zelenskyy", "zelensky",
+    "kim jong un", "kim jong-un",
+    "anthony albanese", "albanese",
+    "shigeru ishiba", "ishiba",
+    "yoon suk yeol", "lee jae-myung",
+    "claudia sheinbaum", "sheinbaum",
+    "javier milei", "milei",
+    "giorgia meloni", "meloni",
+    "donald tusk", "tusk",
+    "shehbaz sharif", "asim munir",
+    "pope leo", "pope francis",
+})
+
+# Event-context tokens. A pairing of head-of-state + summit token in
+# title/summary of two clusters strongly suggests the same diplomatic event.
+_SUMMIT_TOKENS = frozenset({
+    "summit", "meeting", "talks", "accord", "communique", "communiqué",
+    "treaty", "bilateral", "trilateral", "agreement", "diplomatic",
+    "white house", "kremlin", "g20", "g7", "brics", "shanghai cooperation",
+    "phone call", "press conference", "joint statement",
+})
+
+
+def _extract_head_of_state_hits(articles: list[dict]) -> tuple[set[str], set[str]]:
+    """Return (heads_of_state_seen, summit_tokens_seen) from up to 10 articles'
+    titles + summaries. Substring match, lowercase. Used by
+    merge_related_clusters to detect same-summit cross-cluster fragments.
+    """
+    heads: set[str] = set()
+    tokens: set[str] = set()
+    for article in articles[:10]:
+        title = (article.get("title", "") or "").lower()
+        summary = (article.get("summary", "") or "").lower()
+        text = f"{title} {summary}"
+        if not text.strip():
+            continue
+        for name in _HEAD_OF_STATE_NAMES:
+            if name in text:
+                heads.add(name)
+        for tok in _SUMMIT_TOKENS:
+            if tok in text:
+                tokens.add(tok)
+    return heads, tokens
+
+
 _OVERLY_COMMON_ENTITIES = frozenset({
     "us", "u.s.", "united states", "america", "american",
     "trump", "donald trump", "president trump",
@@ -432,6 +497,11 @@ def merge_related_clusters(
     cluster_entities: list[set[str]] = [
         _extract_cluster_entities(c.get("articles", [])) for c in clusters
     ]
+    # v6.1: head-of-state + summit-token hits for same-event merge exception.
+    # Cheap substring scan; reuses article titles+summaries (no spaCy).
+    cluster_hos: list[tuple[set[str], set[str]]] = [
+        _extract_head_of_state_hits(c.get("articles", [])) for c in clusters
+    ]
 
     # Union-Find for transitive merge closure with size tracking
     n = len(clusters)
@@ -459,7 +529,21 @@ def merge_related_clusters(
 
             shared = cluster_entities[i] & cluster_entities[j]
             if len(shared) < min_shared_entities:
-                continue
+                # v6.1: Head-of-state pairing exception. Trump-Xi summit
+                # sub-angles share only common-filtered entities — bypass
+                # the normal threshold when both clusters mention the same
+                # head-of-state AND a summit/meeting token. The HoS list is
+                # narrow and the summit-token requirement blocks generic
+                # transitive bridges (a "Modi domestic" cluster won't carry
+                # summit tokens, so it won't merge with "Modi-Trump summit").
+                hos_i, tok_i = cluster_hos[i]
+                hos_j, tok_j = cluster_hos[j]
+                shared_hos = hos_i & hos_j
+                shared_tok = tok_i & tok_j
+                if not (shared_hos and shared_tok):
+                    continue
+                # Heads-of-state pairing matched — fall through into the
+                # time + size gates below, which still apply.
 
             # Time spread gate: don't merge stories far apart in time
             ti, tj = timestamps[i], timestamps[j]
@@ -707,6 +791,147 @@ def merge_duplicate_title_clusters(
     return merged
 
 
+def split_disjoint_country_clusters(clusters: list[dict]) -> list[dict]:
+    """
+    v6.1 (2026-05-14): post-Phase-3 split pass.
+
+    Phase 1 TF-IDF agglomerative at threshold 0.2 sometimes fuses two
+    genuinely unrelated stories that share generic regional vocabulary
+    (e.g., Estonia conscript-language law + Germany scraps heating
+    mandate — both "EU" + "law" + "policy"). The entity-merge (Phase 2)
+    and title-Jaccard merge (Phase 3) only merge; nothing splits.
+
+    Algorithm:
+        1. For each cluster of ≥3 articles, extract per-article country
+           GPEs from titles via title-only NER (cheap).
+        2. Build union-find over "typed" articles (those with a non-empty
+           country set). Two articles unite when their country sets
+           intersect.
+        3. If exactly two groups emerge, both ≥2 articles, and the union
+           of their country sets is disjoint pairwise, split the cluster
+           along that partition.
+        4. "Empty country" articles (op-eds, abstract commentary) and
+           singleton typed articles join the LARGER group (safer default).
+
+    Conservative by design — only handles the 2-group case. 3-way splits
+    are rare in practice and would risk over-splitting NATO/G20-style
+    multi-country clusters.
+
+    Returns: same list when no split criteria met; expanded list when
+    splits occur.
+    """
+    nlp = get_nlp()
+    out: list[dict] = []
+
+    for c in clusters:
+        articles = c.get("articles", [])
+        if len(articles) < 3:
+            out.append(c)
+            continue
+
+        country_sets: list[set[str]] = []
+        for a in articles:
+            title = (a.get("title", "") or "")[:200]
+            cs: set[str] = set()
+            if title.strip():
+                doc = nlp(title)
+                for ent in doc.ents:
+                    if ent.label_ == "GPE":
+                        cs.add(ent.text.lower().strip())
+            country_sets.append(cs)
+
+        typed = [i for i, cs in enumerate(country_sets) if cs]
+        empty = [i for i, cs in enumerate(country_sets) if not cs]
+
+        if len(typed) < 4:  # need at least 2+2 typed to split
+            out.append(c)
+            continue
+
+        # Union-Find on typed articles by country-set overlap
+        parent = {i: i for i in typed}
+
+        def find(x: int) -> int:
+            while parent[x] != x:
+                parent[x] = parent[parent[x]]
+                x = parent[x]
+            return x
+
+        for i_idx, i in enumerate(typed):
+            for j in typed[i_idx + 1:]:
+                if country_sets[i] & country_sets[j]:
+                    ri, rj = find(i), find(j)
+                    if ri != rj:
+                        parent[ri] = rj
+
+        groups_map: dict[int, list[int]] = {}
+        for i in typed:
+            groups_map.setdefault(find(i), []).append(i)
+
+        sized = sorted(
+            [g for g in groups_map.values() if len(g) >= 2],
+            key=len,
+            reverse=True,
+        )
+        if len(sized) != 2:
+            out.append(c)
+            continue
+
+        # Verify pairwise country-disjoint
+        gA_countries: set[str] = set()
+        gB_countries: set[str] = set()
+        for i in sized[0]:
+            gA_countries |= country_sets[i]
+        for i in sized[1]:
+            gB_countries |= country_sets[i]
+        if gA_countries & gB_countries:
+            out.append(c)
+            continue
+
+        # Singletons typed → larger group (sized[0]); empties → larger group
+        leftover_typed = [
+            i for i in typed
+            if i not in set(sized[0]) and i not in set(sized[1])
+        ]
+        group_A = list(sized[0]) + leftover_typed + empty
+        group_B = list(sized[1])
+
+        # Build two new clusters
+        def _build(article_indices: list[int]) -> dict:
+            grp_articles = [articles[i] for i in article_indices]
+            grp_article_ids = [
+                c["article_ids"][i] for i in article_indices
+                if i < len(c.get("article_ids", []))
+            ] if c.get("article_ids") else [a.get("id", "") for a in grp_articles]
+            grp_source_ids = list({
+                a.get("source_id", "") for a in grp_articles if a.get("source_id")
+            })
+            pub_dates = [a.get("published_at", "") for a in grp_articles if a.get("published_at")]
+            first_pub = min(pub_dates) if pub_dates else c.get("first_published", "")
+            new_title = _generate_cluster_title(grp_articles)
+            new_summary = _generate_cluster_summary(grp_articles)
+            new_section = _determine_section(grp_articles, new_title, new_summary)
+            return {
+                "title": new_title,
+                "summary": new_summary,
+                "article_ids": grp_article_ids,
+                "source_ids": grp_source_ids,
+                "source_count": len(grp_source_ids),
+                "section": new_section,
+                "first_published": first_pub,
+                "articles": grp_articles,
+                **{
+                    k: v for k, v in c.items()
+                    if k not in ("title", "summary", "article_ids", "source_ids",
+                                 "source_count", "section", "first_published", "articles")
+                },
+            }
+
+        out.append(_build(group_A))
+        out.append(_build(group_B))
+
+    return out
+
+
 def cluster_stories(
     articles: list[dict],
     similarity_threshold: float = 0.2,
@@ -948,6 +1173,13 @@ def cluster_stories(
     # same-story signal than entity overlap, so it uses a higher size cap.
     if run_merge_pass and len(clusters) > 1:
         clusters = merge_duplicate_title_clusters(clusters)
+
+    # Phase 4: country-disjoint split pass (v6.1, 2026-05-14)
+    # Splits clusters that fused two unrelated regional stories on shared
+    # generic vocabulary (e.g., Estonia conscript law + Germany heating
+    # mandate). Conservative: only the 2-group disjoint case triggers.
+    if run_merge_pass and len(clusters) > 1:
+        clusters = split_disjoint_country_clusters(clusters)
 
     # Final pass: recount source_count from actual articles.
     # Merges can leave stale counts when source_ids lists are concatenated
