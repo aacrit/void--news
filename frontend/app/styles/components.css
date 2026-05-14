@@ -511,7 +511,13 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  transition: text-shadow 300ms var(--ease-cinematic);
+  /* v6.2 (2026-05-14): subtle page-catch on hover — the headline gently
+     slides 2px right when the cursor is over the card, like a broadsheet
+     headline catching against a reading hand. 280ms ease so the motion
+     is felt, not seen — the eye registers responsiveness without any
+     conscious "thing moved" sensation. Returns at the same cadence so
+     hover-out doesn't snap. */
+  transition: transform 280ms var(--ease-cinematic);
 }
 
 .story-card__headline-icon {
@@ -719,7 +725,8 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   overflow-wrap: break-word;
-  transition: text-shadow 300ms var(--ease-cinematic);
+  /* Same page-catch behavior as .story-card__headline-text. See comment there. */
+  transition: transform 280ms var(--ease-cinematic);
 }
 
 .lead-story__summary {
@@ -8164,23 +8171,23 @@ a.footer-products__item:hover { color: var(--accent-warm); }
     opacity   var(--dur-quick, 120ms) var(--ease-rack);
 }
 
-/* ---- Desktop card lift choreography (hover: hover only) ---------------- */
+/* ---- Desktop card hover (hover: hover only) ---------------------------- */
 /*
- * CEO 2026-05-13: microinteractions should be subconscious. The previous
- * 2px translateY lift + shadow elevation read as "card popping" and made
- * surrounding text feel like it was shifting. Replaced with a single
- * hairline background tint that the user feels rather than sees.
- * No transform, no shadow, no underline, no caret movement.
+ * CEO 2026-05-14: replaced the 2.5% background tint (felt like a glow) with
+ * a subtle "page catch" on the headline text — a 2px rightward slide that
+ * the eye registers as responsiveness without reading as motion. Body /
+ * summary stays still (it's justified text — shifting it would distort the
+ * right edge). The shift is intentionally below the conscious-perception
+ * threshold; the user feels the page respond without seeing anything
+ * announce itself. Returns at the same 280ms cadence so hover-out is
+ * a gentle release, not a snap.
+ *
+ * No background tint. No shadow. No card transform.
  */
 @media (hover: hover) and (pointer: fine) {
-  .story-card:hover {
-    background-color: color-mix(in srgb, var(--accent-warm) 2.5%, transparent);
-    transition: background-color 160ms var(--ease-cinematic);
-  }
-
-  .lead-story:hover {
-    background-color: color-mix(in srgb, var(--accent-warm) 3%, transparent);
-    transition: background-color 160ms var(--ease-cinematic);
+  .story-card:hover .story-card__headline-text,
+  .lead-story:hover .lead-story__headline-text {
+    transform: translateX(2px);
   }
 }
 
@@ -8233,6 +8240,13 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   .lead-story:hover {
     transform: none;
     box-shadow: none;
+    transition: none;
+  }
+  /* v6.2 page-catch suppressed under reduced motion — users who opt out
+     of motion get no headline shift on hover. The cursor is enough. */
+  .story-card:hover .story-card__headline-text,
+  .lead-story:hover .lead-story__headline-text {
+    transform: none;
     transition: none;
   }
 }
