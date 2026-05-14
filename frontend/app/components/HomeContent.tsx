@@ -743,9 +743,12 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     return diversified.slice(0, EDITION_FEED_SIZE);
   }, [stories, activeCategory, activeLean]);
 
-  // Unified feed — hero at rank 0, identical StoryCard for ranks 1-29
-  const heroStory = filteredStories[0] ?? null;
-  const gridStories = filteredStories.slice(1);
+  // v3 (2026-05-14): twin top stories — ranks 0 and 1 share the hero canvas
+  // as co-equal "Top Story" leads. Grid below holds ranks 2-49 (digest at
+  // ranks 2-9, wire at ranks 10-49). Math closes at exactly 50 cards with no
+  // orphan rows: 2 twin + 8 digest + 40 wire = 50.
+  const twinLeads = filteredStories.slice(0, 2);
+  const gridStories = filteredStories.slice(2);
 
   // Lead hero image removed 2026-05-13 — text-only newspaper composition.
 
@@ -937,26 +940,35 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                     <SkyboxBanner state={dailyBriefState} />
                   </div>
 
-                  {/* Hero — rank 0, front-page image treatment */}
-                  {heroStory && (
-                    <div key={filterKey} className={`hero-slot${isEditionSwitch ? " anim-content-arrive" : ""}`}>
-                      <LeadStory story={heroStory} rank={0} onStoryClick={handleStoryClick} kbdFocused={kbdFocusIndex === 0} />
+                  {/* Twin top stories — ranks 0 and 1, co-equal "Top Story"
+                      leads side-by-side in a 50/50 split (vertical stack on
+                      <1024px). Both wear the badge. v3 2026-05-14. */}
+                  {twinLeads.length > 0 && (
+                    <div key={filterKey} className={`lead-twin hero-slot${isEditionSwitch ? " anim-content-arrive" : ""}`}>
+                      {twinLeads.map((story, idx) => (
+                        <LeadStory
+                          key={story.id}
+                          story={story}
+                          rank={idx}
+                          twin={twinLeads.length === 2}
+                          onStoryClick={handleStoryClick}
+                          kbdFocused={kbdFocusIndex === idx}
+                        />
+                      ))}
                     </div>
                   )}
 
-                  {/* Unified grid — ranks 1-49.
-                      Variant drives newspaper typography hierarchy:
-                        ranks 1-9 = digest (22px Playfair)
-                        ranks 10+ = wire (14px Playfair)
-                      Both scales live in layout-zones.css. */}
+                  {/* Grid below twin leads — ranks 2-49 (digest at 2-9, wire
+                      at 10-49). Slot math: 8 digest + 40 wire = 48 grid cards,
+                      plus 2 twin leads above = 50 total. */}
                   {gridStories.length > 0 && (
                     <section key={`grid-${filterKey}`} aria-label="Stories" className={`feed-grid${isEditionSwitch ? " anim-content-arrive" : ""}`}>
                       {gridStories.map((story, idx) => {
-                        const gi = 1 + idx;
-                        const variant: "digest" | "wire" = idx < 9 ? "digest" : "wire";
+                        const gi = 2 + idx;
+                        const variant: "digest" | "wire" = idx < 8 ? "digest" : "wire";
                         return (
                           <div key={story.id} className="feed-grid__item">
-                            <StoryCard story={story} index={idx + 1} onStoryClick={handleStoryClick} globalIndex={gi} kbdFocused={kbdFocusIndex === gi} variant={variant} />
+                            <StoryCard story={story} index={idx + 2} onStoryClick={handleStoryClick} globalIndex={gi} kbdFocused={kbdFocusIndex === gi} variant={variant} />
                           </div>
                         );
                       })}
