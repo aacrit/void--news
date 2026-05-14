@@ -27,8 +27,12 @@ from utils.nlp_shared import get_nlp
 
 # --- Title cleanup patterns ---
 # Wire service prefixes: (LEAD), (URGENT), BREAKING:, etc.
+# v6.2 (2026-05-15): added Yonhap-style "(3rd LD)" / "(2nd LD)" lead-development
+# prefixes that were bleeding through to world top 50 titles (audit found
+# "(3rd LD) Seoul official..." at rank #25).
 _WIRE_PREFIX_RE = re.compile(
-    r'^\s*(?:\((?:LEAD|URGENT|CORRECTED|UPDATE(?:\s*\d*)?|RECASTS?|ADDS?|WRAPUP|NEWSALERT)\)\s*)'
+    r'^\s*(?:\((?:LEAD|URGENT|CORRECTED|UPDATE(?:\s*\d*)?|RECASTS?|ADDS?|WRAPUP|NEWSALERT'
+    r'|\d+(?:st|nd|rd|th)\s+LD)\)\s*)'
     r'|^\s*(?:WATCH\s*LIVE\s*:|WATCH\s*:|BREAKING\s*:|UPDATE\s*:|EXCLUSIVE\s*:)\s*',
     re.IGNORECASE,
 )

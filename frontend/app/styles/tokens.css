@@ -760,12 +760,21 @@
      Aggressive contrast between scales is what gives the page its
      "premium broadsheet" feel. */
   --type-lead-headline:   clamp(2.25rem, 1.8rem + 2vw, 4rem);     /* 36 → 64px */
+  /* Twin lead headline scale (v3, 2026-05-14): when two top stories share
+     the hero canvas in a 50/50 split, each headline scales down one notch
+     from full lead — half the width means smaller type so lines don't break
+     into single words. */
+  --type-twin-headline:   clamp(1.75rem, 1.3rem + 1.5vw, 2.75rem); /* 28 → 44px */
   /* Unified card-headline scale for ranks 1+ (digest and wire variants).
      CEO 2026-05-13: feed should read as a single editorial surface, not
      two tiered scales. Layout grids still differ; type does not. */
   --type-card-headline:   clamp(1.125rem, 1rem + 0.6vw, 1.375rem); /* 18 → 22px */
   --type-card-tracking:   -0.01em;
   --type-lead-tracking:   -0.02em;
+  /* Brief headline scale when TL;DR / Opinion pill expands. The collapsed
+     pill keeps --text-base (~16px); on expand the headline climbs to the
+     magazine-subhead register so the editorial mode reads distinctly. */
+  --type-brief-headline-expanded: clamp(1.5rem, 1.2rem + 0.8vw, 2.125rem); /* 24 → 34px */
   /* Legacy aliases — kept so any stray reference outside layout-zones.css
      still resolves. Remove once the codebase is fully migrated. */
   --type-digest-headline: var(--type-card-headline);

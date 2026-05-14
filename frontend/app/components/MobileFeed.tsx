@@ -34,31 +34,41 @@ export default function MobileFeed({
   editionMeta,
   transitionClass,
 }: MobileFeedProps) {
-  const hero = stories[0];
-  const feedCards = stories.slice(1);
+  // v3 (2026-05-14): twin top stories on mobile. Ranks 0 and 1 are both
+  // rendered as hero cards, stacked vertically. Both wear the "Top Story"
+  // badge — they're co-equal leads. Compact feed cards (ranks 2+) follow.
+  const twinLeads = stories.slice(0, 2);
+  const feedCards = stories.slice(2);
 
   return (
     <div className={["mf", transitionClass].filter(Boolean).join(" ")} key={filterKey}>
       {/* Brief on top — TL;DR + Opinion collapsed pill. Tap chevron to expand. */}
       <MobileBriefPill state={dailyBriefState} className="anim-cold-open-pill" />
 
-      {/* Hero story — second slot, below brief but above the wire */}
-      {hero && (
-        <MobileStoryCard
-          story={hero}
-          index={0}
-          variant="hero"
-          onStoryClick={onStoryClick}
-          globalIndex={0}
-          kbdFocused={kbdFocusIndex === 0}
-        />
+      {/* Twin top stories — both labeled Top Story, stacked vertically.
+          A hairline divider between them in mf__twin-divider styles. */}
+      {twinLeads.length > 0 && (
+        <div className="mf__twin-leads">
+          {twinLeads.map((story, idx) => (
+            <MobileStoryCard
+              key={story.id}
+              story={story}
+              index={idx}
+              variant="hero"
+              twin={twinLeads.length === 2}
+              onStoryClick={onStoryClick}
+              globalIndex={idx}
+              kbdFocused={kbdFocusIndex === idx}
+            />
+          ))}
+        </div>
       )}
 
-      {/* Feed cards — identical compact treatment for all ranks 1-29 */}
+      {/* Feed cards — compact treatment for ranks 2+ */}
       {feedCards.length > 0 && (
         <div className="mf__cards" aria-label="Stories">
           {feedCards.map((story, idx) => {
-            const gi = idx + 1;
+            const gi = idx + 2;
             return (
               <MobileStoryCard
                 key={story.id}

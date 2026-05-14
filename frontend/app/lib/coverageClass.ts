@@ -8,17 +8,17 @@ export interface CoverageVerdict {
 /**
  * Returns the source-count line for a story card.
  *
- * Used to be a 5-bucket editorial classifier ("left-right split",
- * "center-weighted", "in agreement"…) appended to the count. Removed
- * 2026-04-29: the Sigil already encodes lean (color), divergence (ring
- * class), and consensus visually — adding text classification on the
- * card violated `feedback_bias_indicator_priorities.md` (Sigil is the
- * brand mark; secondary axes belong in Deep Dive). The full breakdown
- * remains available in DeepDive's SixLenses + ComparativeView.
+ * v3 (2026-05-14): the multi-source "N sources" label is removed. The
+ * Sigil already visualizes source count (ring + central number), so
+ * repeating "23 sources" below each card was redundant noise that the
+ * CEO flagged as cluttering the card meta row.
  *
- * Returns just `"N sources"` (or `"single report"` for 1-source clusters
- * since "1 source" is editorially meaningful — flags op-eds and
- * unverified reporting).
+ * The "single report" flag is preserved — a 1-source cluster is
+ * editorially meaningful (op-eds, unverified breaking stories) and not
+ * derivable from the Sigil's ring alone. This is the only state that
+ * still returns a verdict.
+ *
+ * Multi-source (count >= 2): return null. The Sigil carries the signal.
  */
 export function classifyCoverage(story: Story): CoverageVerdict | null {
   const count = story.source.count ?? 0;
@@ -28,6 +28,5 @@ export function classifyCoverage(story: Story): CoverageVerdict | null {
     return { label: "single report", tone: "single" };
   }
 
-  const noun = count === 1 ? "source" : "sources";
-  return { label: `${count} ${noun}`, tone: "neutral" };
+  return null;
 }

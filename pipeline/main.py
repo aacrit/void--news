@@ -2292,6 +2292,19 @@ def main():
             # 3 India-source articles appears in both "world" and "south-asia" feeds.
             all_sections = sorted(section_counts.keys()) if section_counts else ["world"]
 
+            # v6.2 (2026-05-15): force-add `world` tag when the cluster crosses
+            # an importance threshold OR spans 2+ regional editions. Built-from-
+            # union logic above silently filtered the highest-rank-world clusters
+            # out of the world feed (Warsh Fed-chair, US wholesale prices,
+            # Murdaugh, Medicare freeze) whenever all source articles came from
+            # regional-edition sources. With this rule, the world feed surfaces
+            # any cluster the importance ranker has identified as globally
+            # significant, regardless of where the contributing sources live.
+            _rank_world = cluster.get("rank_world", cluster.get("headline_rank", 0.0))
+            if "world" not in all_sections and (len(all_sections) >= 2 or _rank_world >= 50.0):
+                all_sections.append("world")
+                all_sections.sort()
+
             # Use pre-generated summary from clustering or Gemini step
             cluster_summary = cluster.get("summary", "") or ""
             if not cluster_summary and cluster_articles_list:

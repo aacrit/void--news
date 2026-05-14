@@ -664,6 +664,24 @@
   margin: 0 0 var(--space-2);
 }
 
+/* v6.2 (2026-05-15): inline badge variant — sits alongside the Sigil in
+   the headline row instead of taking its own block above the headline.
+   Saves ~24px of vertical real estate per twin lead, helping cards 3-6
+   stay above the fold on common laptop resolutions. */
+.lead-story__badge--inline {
+  align-self: center;          /* center against headline baseline-ish */
+  margin: 0;                   /* no block margin — sits in the flex row */
+  padding: 2px var(--space-3); /* tighter horizontal padding */
+  font-size: var(--text-xxs);
+  white-space: nowrap;
+  flex-shrink: 0;
+  order: 2;                    /* after headline-text, before Sigil */
+}
+.lead-story__badge--inline::before {
+  /* Tighten the ink-oval to fit the smaller padding. */
+  inset: -2px -6px;
+}
+
 /* Ink stamp circle behind badge text */
 .lead-story__badge::before {
   content: "";

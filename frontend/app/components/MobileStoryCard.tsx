@@ -15,6 +15,10 @@ interface MobileStoryCardProps {
   kbdFocused?: boolean;
   /** "hero" = lead story with summary; "compact" = headline + inline Sigil only */
   variant?: "hero" | "compact";
+  /** v3 (2026-05-14): when true, this hero is one of a co-equal twin pair —
+      shows the "Top Story" badge above the headline. Solo heroes (legacy
+      single-lead pages) skip the badge to keep the visual quieter. */
+  twin?: boolean;
 }
 
 /* ---------------------------------------------------------------------------
@@ -27,7 +31,7 @@ interface MobileStoryCardProps {
    --------------------------------------------------------------------------- */
 
 export default function MobileStoryCard({
-  story, index, onStoryClick, globalIndex, kbdFocused, variant = "compact",
+  story, index, onStoryClick, globalIndex, kbdFocused, variant = "compact", twin = false,
 }: MobileStoryCardProps) {
   const [cardRef, visible] = useInView<HTMLElement>();
   const [showPerspectivePeek, setShowPerspectivePeek] = useState(false);
@@ -55,7 +59,7 @@ export default function MobileStoryCard({
       ref={cardRef}
       data-story-index={globalIndex}
       data-story-id={story.id}
-      className={`msc msc--${variant}${isHero ? " anim-cold-open-hero" : " anim-stagger"}${!isHero && visible ? " anim-stagger--visible" : ""}${kbdFocused ? " story-card--kbd-focus" : ""}`}
+      className={`msc msc--${variant}${twin ? " msc--twin" : ""}${isHero ? " anim-cold-open-hero" : " anim-stagger"}${!isHero && visible ? " anim-stagger--visible" : ""}${kbdFocused ? " story-card--kbd-focus" : ""}`}
       style={{ animationDelay: isHero ? "0ms" : `${Math.min(index * 40, 200)}ms` }}
     >
       {/* Stretched link covers entire card */}
@@ -83,6 +87,8 @@ export default function MobileStoryCard({
            Text-only per CEO 2026-05-13 — no photograph. The Sigil + Playfair
            headline carry the editorial moment. */
         <>
+          {/* "Top Story" badge — both twin leads wear it. Solo hero skips. */}
+          {twin && <span className="lead-story__badge msc__badge">Top Story</span>}
           {/* Hero headline is page <h1> when this card is rank 0 (the
               feed's top story on mobile). Falls back to <h2> for any other
               "hero" usage. UAT 2026-05-13 P0-5 — zero-<h1> page outline. */}
