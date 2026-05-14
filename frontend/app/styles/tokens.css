@@ -760,10 +760,17 @@
      Aggressive contrast between scales is what gives the page its
      "premium broadsheet" feel. */
   --type-lead-headline:   clamp(2.25rem, 1.8rem + 2vw, 4rem);     /* 36 → 64px */
-  --type-digest-headline: clamp(1.125rem, 1rem + 0.6vw, 1.375rem); /* 18 → 22px */
-  --type-wire-headline:   0.875rem;                                /* 14px */
+  /* Unified card-headline scale for ranks 1+ (digest and wire variants).
+     CEO 2026-05-13: feed should read as a single editorial surface, not
+     two tiered scales. Layout grids still differ; type does not. */
+  --type-card-headline:   clamp(1.125rem, 1rem + 0.6vw, 1.375rem); /* 18 → 22px */
+  --type-card-tracking:   -0.01em;
   --type-lead-tracking:   -0.02em;
-  --type-digest-tracking: -0.01em;
+  /* Legacy aliases — kept so any stray reference outside layout-zones.css
+     still resolves. Remove once the codebase is fully migrated. */
+  --type-digest-headline: var(--type-card-headline);
+  --type-wire-headline:   var(--type-card-headline);
+  --type-digest-tracking: var(--type-card-tracking);
 
   /* Font families — set by next/font, fallbacks here */
   --font-editorial:  var(--font-playfair), "Playfair Display", "Georgia", "Times New Roman", serif;
