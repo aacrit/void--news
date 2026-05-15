@@ -156,25 +156,31 @@ export interface ProductWorld {
   palette: string;
 }
 
+// Production-available products only. Weekly + Paper + OnAir + Games are
+// hidden from launch nav (per CEO 2026-05-15) — not production-ready —
+// and therefore omitted here so About + onboarding don't promise what
+// the user can't yet use. Routes still resolve at /weekly /paper /games
+// for direct URLs; re-add to this array when each goes prod-ready.
 export const PRODUCT_FAMILY: ProductWorld[] = [
-  { cli: "void --news", name: "The Feed", desc: "Importance-ranked, bias-analyzed", href: "/", palette: "feed" },
-  { cli: "void --weekly", name: "The Magazine", desc: "Economist-style weekly digest", href: "/weekly", palette: "weekly" },
-  { cli: "void --paper", name: "The Broadsheet", desc: "E-paper front page", href: "/paper", palette: "paper" },
+  { cli: "void --news", name: "The Feed", desc: "US-primary newspaper. World as inline section.", href: "/", palette: "feed" },
+  { cli: "void --world", name: "The World Section", desc: "International overflow — stories not on the homepage", href: "/world", palette: "feed" },
   { cli: "void --sources", name: "The Spectrum", desc: "1,013 sources on one axis", href: "/sources", palette: "sources" },
-  { cli: "void --onair", name: "The Studio", desc: "Two-host audio broadcast", href: "/", palette: "onair" },
-  { cli: "void --ship", name: "The Forge", desc: "Feature request board", href: "/ship", palette: "ship" },
   { cli: "void --history", name: "The Archive", desc: "Multi-perspective historical events", href: "/history", palette: "archive" },
+  { cli: "void --ship", name: "The Forge", desc: "Feature request board", href: "/ship", palette: "ship" },
 ];
 
 /* ── Key Numbers — Scene VI: "The Verdict" ── */
 
+// Numbers updated 2026-05-15 to reflect current production state:
+// editions removed (the whole product is now ONE US-primary newspaper);
+// pipeline cadence is 1\u00D7/day (was 4\u00D7 during multi-edition era).
 export const NUMBERS = [
   { value: "1,013", label: "sources" },
-  { value: "6", label: "axes" },
-  { value: "4", label: "editions" },
-  { value: "$0", label: "cost" },
-  { value: "4\u00D7", label: "daily" },
+  { value: "158", label: "countries" },
+  { value: "6", label: "bias axes" },
+  { value: "$0", label: "to read" },
   { value: "0", label: "accounts required" },
+  { value: "0", label: "tracking" },
 ];
 
 /* ── First Principles (manifesto extension after Scene I) ── */
@@ -255,8 +261,8 @@ export const CHAPTERS: Chapter[] = [
     id: "the-worlds",
     roman: "V",
     headline: "The Worlds",
-    subtitle: "One platform, six experiences",
-    prologueBody: "Each built for a different way of reading the news.",
+    subtitle: "One newspaper, a few surfaces",
+    prologueBody: "A US-primary feed. A World section below it. A Spectrum of every source we read. An Archive that holds what the news forgets. A public Forge for what comes next.",
     duration: 15_000,
   },
   {
