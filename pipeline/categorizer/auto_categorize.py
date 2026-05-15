@@ -437,6 +437,17 @@ def categorize_article(article: dict) -> list[str]:
         (r"\b(drone strike|car bomb|suicide bomb|bazaar bombing|market bombing)\b", "conflict"),
         (r"\b(irgc\s+(?:arrests?|members?|infiltration)|infiltrators?\s+(?:detained|arrested))\b", "conflict"),
         (r"\b(narco-terrorist|narco terror|terror plot|terror attack)\b", "conflict"),
+        # v6.3 (2026-05-15): bilateral/diplomatic summit titles — strong
+        # politics override. Production audit caught a Trump-Xi Iran
+        # summit cluster mis-tagged as `category=science, section=us`
+        # because wire-desk briefings were dense in "research / launch /
+        # discovery" vocabulary that pulled the score toward science.
+        # Title-level summit + pair-name signal forces politics.
+        (r"\b(?:trump|biden|xi|putin|modi|netanyahu|starmer|zelensky|macron)[-\s]+"
+         r"(?:trump|biden|xi|putin|modi|netanyahu|starmer|zelensky|macron)\b", "politics"),
+        (r"\b(?:bilateral|trilateral|g[-\s]?7|g[-\s]?20|brics)\s+(?:summit|talks|meeting)\b", "politics"),
+        (r"\b(?:summit|talks|meeting)\s+(?:on|over|about)\s+(?:iran|china|russia|nuclear|trade|sanctions|tariffs)\b", "politics"),
+        (r"\b(?:state|presidential|prime\s+minister'?s?)\s+visit\s+to\b", "politics"),
         # Politics: appointments, firings, executive actions
         (r"\b(fires|fired|ousts|ousted|appoints|appointed|nominates|sworn in)\b", "politics"),
         (r"\b(attorney general|secretary of|chief of staff|executive order)\b", "politics"),
