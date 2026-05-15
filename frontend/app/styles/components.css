@@ -77,13 +77,20 @@
 }
 
 /* Sigil sits above the stretch-link so hover/tap targets the Sigil popup,
-   not the deep-dive navigation. Applies in all card contexts. */
+   not the deep-dive navigation. Applies in all card contexts.
+   `isolation: isolate` forces a fresh stacking context on the Sigil itself
+   so its layer wins regardless of parent flex/filter/transform shenanigans
+   (the lead-story article carries `filter: sepia/saturate` color-grade and
+   a `transform` left over from the fadeInUp animation — both create
+   stacking contexts that previously trapped the sigil under stretch-link). */
 .story-card .sigil,
 .lead-story .sigil,
 .dg-row .sigil,
 .wire-card .sigil {
   position: relative;
-  z-index: 3;
+  z-index: 10;
+  isolation: isolate;
+  pointer-events: auto;
 }
 
 /* Mobile interactivity hint removed per CEO — lean label is sufficient */
