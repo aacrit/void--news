@@ -1,0 +1,116 @@
+id: russia-kyiv-strikes-2026-05
+name: "Russia overnight strikes on Kyiv (drones + air defense — must merge)"
+failure_date: "2026-05-15"
+failure_kind: fragmentation
+articles:
+  - id: kyiv-1
+    title: "Russia drone strikes hit Kyiv, 12 killed in residential districts"
+    summary: "Twelve people were killed and 47 wounded after Russian drone strikes hit residential districts of Kyiv overnight, Ukrainian officials said."
+    full_text: >
+      Twelve people were killed and 47 wounded after Russian drone strikes hit residential
+      districts of Kyiv overnight, Ukrainian officials said Wednesday morning. The strikes
+      hit a nine-storey apartment block in the Solomianskyi district and damaged a
+      kindergarten in Sviatoshynskyi. Mayor Vitali Klitschko said the casualty count was
+      likely to rise as rescuers worked through rubble. Ukraine's air force said it shot
+      down 41 of 56 incoming Shahed drones; 15 reached their targets. President Volodymyr
+      Zelensky called the strikes "deliberate terror against civilians" and demanded faster
+      delivery of pledged Patriot interceptors. The European Council scheduled an emergency
+      session for Thursday afternoon. The strikes were the deadliest attack on Kyiv in
+      eleven months. Children were among the dead.
+    source: { slug: bbc, country: GB, tier: international }
+    published_at: "2026-05-14T07:00Z"
+  - id: kyiv-2
+    title: "Russian drones strike Kyiv overnight: 12 dead, dozens injured"
+    summary: "At least 12 people died and dozens were injured in overnight Russian drone strikes on Kyiv, Ukrainian emergency services reported."
+    full_text: >
+      At least 12 people died and dozens were injured in overnight Russian drone strikes
+      on the Ukrainian capital Kyiv, the State Emergency Service reported Wednesday. The
+      attack used at least 56 Iranian-designed Shahed drones, of which Ukrainian air
+      defense intercepted 41. Major fires broke out in three districts of the city. The
+      Ukrainian foreign ministry said it would summon ambassadors of allied nations for an
+      urgent briefing. Reuters witnesses saw extensive damage to a 1970s-era apartment
+      block; a rescue operation was still underway by mid-morning. President Vladimir
+      Putin had not commented by midday Moscow time. The Kremlin spokesman last week said
+      strikes target "military infrastructure," a claim Ukrainian and Western officials
+      reject. The mayor of Kyiv put the citywide damage estimate above 30 million dollars.
+    source: { slug: reuters, country: GB, tier: wire }
+    published_at: "2026-05-14T07:30Z"
+  - id: kyiv-3
+    title: "Kyiv apartment block hit by Russian drone, civilians killed"
+    summary: "A Kyiv apartment block was hit by a Russian drone overnight, killing civilians in the deadliest attack on the capital in nearly a year."
+    full_text: >
+      A nine-story Kyiv apartment block was hit by a Russian drone overnight, killing at
+      least twelve civilians in the deadliest attack on the Ukrainian capital in nearly a
+      year. The Associated Press counted at least four bodies recovered from the
+      Solomianskyi district by 8 a.m. local time. Survivors described being thrown from
+      their beds by the explosion. "I thought it was the end of the world," said Mariia
+      Khomenko, 64, who lives on the eighth floor of the damaged building. The Pentagon
+      announced an additional 200 million dollars in interceptor missiles and an
+      acceleration of Patriot battery deliveries. The European Union's foreign-policy
+      chief said member states "must close the air-defense gap immediately." The strikes
+      come a week before a planned Trump-Zelensky meeting in Brussels.
+    source: { slug: ap-news, country: US, tier: wire }
+    published_at: "2026-05-14T08:00Z"
+  - id: kyiv-4
+    title: "Ukraine air defense shoots down 41 of 56 drones over Kyiv"
+    summary: "Ukrainian air defense shot down 41 of 56 incoming Russian drones over Kyiv overnight, the air force said, but the strikes that got through killed 12."
+    full_text: >
+      Ukrainian air defense shot down 41 of 56 incoming Russian drones over Kyiv overnight,
+      the air force said Wednesday morning. Despite the high interception rate, the 15
+      drones that penetrated the defensive screen killed 12 civilians and wounded 47 more
+      in residential districts of the capital. Air force commander Mykola Oleshchuk said
+      the night demonstrated "both the strength and the desperate need for more Patriot
+      systems." Reuters confirmed two intact drone-fragments recovered in Sviatoshynskyi
+      bore manufacturing markings consistent with the Iranian-designed Shahed-136. NATO
+      Secretary General Mark Rutte said the alliance would convene an extraordinary
+      ambassadors' meeting at the Brussels headquarters. Ukrainian officials renewed calls
+      for Western fighters to be allowed to strike launching sites in Russia.
+    source: { slug: kyiv-independent, country: UA, tier: domestic }
+    published_at: "2026-05-14T08:30Z"
+  - id: kyiv-5
+    title: "Kyiv overnight: air defense ravaged by Russian Shahed barrage"
+    summary: "Russia launched a barrage of Iranian-designed Shahed drones at Kyiv overnight, with 15 penetrating air defense and killing civilians."
+    full_text: >
+      Russia launched a barrage of Iranian-designed Shahed drones at Kyiv overnight, with
+      15 of 56 penetrating Ukrainian air defense and killing at least twelve civilians in
+      residential districts, the air force confirmed. CNN's reporters in the Sviatoshynskyi
+      district saw rescuers pulling survivors from a damaged kindergarten. Russian
+      President Vladimir Putin had not commented at the time of publication. Ukrainian
+      President Volodymyr Zelensky called for Western allies to "stop hesitating" on
+      delivery of additional Patriot batteries. The European Union's foreign affairs
+      council was scheduled to meet Thursday in emergency session. President Trump said
+      from Mar-a-Lago that he would "look into it." Pentagon press secretary Sabrina
+      Singh said additional munitions packages were under review.
+    source: { slug: cnn, country: US, tier: international }
+    published_at: "2026-05-14T09:00Z"
+  - id: kyiv-6
+    title: "Civilian deaths in Kyiv after overnight Russian air attack"
+    summary: "Russian overnight air attacks on Kyiv killed at least twelve civilians and damaged residential buildings, Ukrainian officials said."
+    full_text: >
+      Russian overnight air attacks on the Ukrainian capital Kyiv killed at least twelve
+      civilians and damaged multiple residential buildings, Ukrainian officials said
+      Wednesday. The Guardian's Kyiv correspondent reported drone fragments scattered
+      across at least four city districts. Mayor Vitali Klitschko declared a day of
+      mourning and called for European partners to "fast-track every air-defense system
+      they can spare." The German government said it would announce a new Patriot delivery
+      package within 48 hours. The Ukrainian general staff confirmed military targets in
+      Kyiv Oblast were not hit. Russian foreign ministry spokeswoman Maria Zakharova
+      called Ukrainian casualty figures "Western propaganda." A French foreign ministry
+      readout described the attack as "morally indefensible."
+    source: { slug: guardian, country: GB, tier: international }
+    published_at: "2026-05-14T09:30Z"
+expectation:
+  type: should_merge
+  expected_member_ids: [kyiv-1, kyiv-2, kyiv-3, kyiv-4, kyiv-5, kyiv-6]
+  min_clusters: 1
+  max_clusters: 1
+  min_source_count: 5
+rationale: |
+  Same-event fragmentation. All six describe the same overnight Russian
+  drone barrage on Kyiv. Three articles emphasize "drone strikes" and
+  three emphasize "air defense", causing the TF-IDF Phase-1 to split them
+  on near-disjoint vocabularies. Production buried this story at rank
+  #20 with two clusters of 3 articles each on 2026-05-15. The Phase-2
+  entity merge should fire (Russia + Kyiv + Ukraine + Putin + Zelensky
+  appear in both halves) but doesn't because Russia and Iran are
+  blacklisted in _OVERLY_COMMON_ENTITIES.

@@ -1,0 +1,86 @@
+id: trump-xi-vs-trump-modi-good-split-2026-04
+name: "Trump-Xi summit vs Trump-Modi summit (must split — different events)"
+failure_date: "2026-04-19"
+failure_kind: known-good-split
+articles:
+  # ---- Trump-Xi (Beijing September) ----
+  - id: txm-xi-1
+    title: "Trump-Xi September Beijing summit announced; Iran sanctions on agenda"
+    summary: "President Trump and Chinese President Xi Jinping will hold a September summit in Beijing, with Iran sanctions on the agenda."
+    full_text: >
+      President Trump and Chinese President Xi Jinping will hold a September summit in
+      Beijing, the White House announced Friday. The agenda will include Iran sanctions
+      enforcement, Taiwan policy, and the rollback of Biden-era export controls on
+      semiconductor manufacturing equipment. Trump will travel via Tokyo, holding a
+      bilateral with Japanese PM Ishiba on the way. Treasury Secretary Bessent will
+      accompany him.
+    source: { slug: ap-news, country: US, tier: wire }
+    published_at: "2026-04-18T15:00Z"
+  - id: txm-xi-2
+    title: "White House confirms September Trump-Xi summit in Beijing"
+    summary: "The White House confirmed Friday a September Trump-Xi summit in Beijing, focused on trade, Taiwan and Iran."
+    full_text: >
+      The White House confirmed Friday a September Trump-Xi summit in Beijing, focused on
+      trade, Taiwan and Iran sanctions. Reuters reports the meeting follows a Tuesday
+      phone call between the two leaders. Senate leadership briefed on the agenda, with
+      Senate Majority Leader Thune endorsing the visit and Senate Minority Whip Durbin
+      cautioning against Taiwan-related concessions.
+    source: { slug: reuters, country: US, tier: wire }
+    published_at: "2026-04-18T16:00Z"
+  - id: txm-xi-3
+    title: "Beijing September summit: Trump and Xi on Iran"
+    summary: "The Beijing September summit between Trump and Xi will discuss Iran sanctions enforcement and Chinese state-bank compliance."
+    full_text: >
+      The Beijing September summit between Trump and Xi will discuss Iran sanctions
+      enforcement and Chinese state-bank compliance with US Treasury secondary
+      sanctions, the WSJ reports. The visit was finalized on Tuesday. Trump's traveling
+      delegation will include US Trade Representative Greer.
+    source: { slug: wsj, country: US, tier: international }
+    published_at: "2026-04-18T17:30Z"
+  # ---- Trump-Modi (New Delhi June) ----
+  - id: txm-modi-1
+    title: "Trump-Modi June New Delhi summit: defense pact on the table"
+    summary: "President Trump and Indian PM Narendra Modi will hold a June summit in New Delhi, with a major defense-industrial pact on the table."
+    full_text: >
+      President Trump and Indian Prime Minister Narendra Modi will hold a June summit in
+      New Delhi, with a major defense-industrial pact on the table, the State Department
+      confirmed Friday. The pact would extend US co-production rights for Indian
+      manufacture of GE F414 jet engines and Stryker armored vehicles. The visit will be
+      Trump's first to India as president and is expected to last three days.
+    source: { slug: hindustan-times, country: IN, tier: domestic }
+    published_at: "2026-04-18T15:30Z"
+  - id: txm-modi-2
+    title: "Trump heads to New Delhi in June for Modi summit"
+    summary: "Trump heads to New Delhi in June for a summit with PM Modi, focused on defense and counter-China cooperation."
+    full_text: >
+      Trump heads to New Delhi in June for a summit with Prime Minister Modi, focused on
+      defense cooperation and counter-China alignment in the Indo-Pacific, the AP
+      reports. Indian foreign secretary Vikram Misri said preparations were "well
+      advanced" and that the joint communique was being drafted by sherpas in
+      Washington and New Delhi. Defense Secretary Hegseth will join the delegation.
+    source: { slug: ap-news, country: US, tier: wire }
+    published_at: "2026-04-18T18:00Z"
+  - id: txm-modi-3
+    title: "Modi to host Trump in June; defense, semiconductors top agenda"
+    summary: "Indian PM Modi will host President Trump in June, with defense, semiconductors and Quad cooperation topping the agenda."
+    full_text: >
+      Indian Prime Minister Narendra Modi will host President Trump in June, with
+      defense, semiconductors and Quad cooperation topping the agenda, the Indian
+      Express reports. The visit follows Modi's October 2025 trip to Washington and is
+      seen as a continuation of the personal relationship between the two leaders.
+      Modi's office said the visit would include a state banquet at Rashtrapati Bhavan.
+    source: { slug: indian-express, country: IN, tier: domestic }
+    published_at: "2026-04-18T19:00Z"
+expectation:
+  type: should_split
+  member_ids: [txm-xi-1, txm-xi-2, txm-xi-3, txm-modi-1, txm-modi-2, txm-modi-3]
+  min_clusters: 2
+rationale: |
+  Known-good split. Two distinct summit events (Trump-Xi in Beijing
+  September; Trump-Modi in New Delhi June) share the head-of-state token
+  "trump" and the summit token "summit", which would trigger the v6.1
+  Phase-2 head-of-state pairing exception — but the OTHER head-of-state
+  differs (Xi vs Modi), so the shared_hos intersection is empty (Trump
+  is not in _HEAD_OF_STATE_NAMES). Plus Phase-1 TF-IDF separates them
+  cleanly on Beijing/Iran vs New Delhi/defense vocabulary. Regression
+  fixture: this must remain split into 2 clusters.

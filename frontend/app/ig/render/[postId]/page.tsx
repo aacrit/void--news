@@ -27,6 +27,11 @@ export function generateStaticParams() {
   return [];
 }
 
+// Required by Next.js 16 + output:"export" when generateStaticParams returns
+// an empty list — tells the static exporter that no params are valid,
+// otherwise the build rejects the route as missing static params.
+export const dynamicParams = false;
+
 interface PageProps {
   params: Promise<{ postId: string }>;
   searchParams: Promise<{ slide?: string }>;

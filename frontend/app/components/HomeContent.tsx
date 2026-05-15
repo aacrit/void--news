@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, useMemo, useCallback, useRef, Component, type ReactNode } from "react";
 import dynamic from "next/dynamic";
-import type { Edition, Category, Story, BiasScores, BiasSpread, ThreeLensData, OpinionLabel, SigilData, LeanChip } from "../lib/types";
-import { EDITIONS, LEAN_RANGES } from "../lib/types";
+import type { Edition, Category, Story, BiasScores, BiasSpread, ThreeLensData, OpinionLabel, SigilData } from "../lib/types";
+import { EDITIONS } from "../lib/types";
 import { isUnscoredTilt } from "../lib/biasColors";
 import { supabase, supabaseError } from "../lib/supabase";
 import { cacheGet, cacheSet } from "../lib/feedCache";
@@ -57,8 +57,8 @@ const UnifiedOnboarding = dynamic(() => import("./UnifiedOnboarding"), { ssr: fa
 import { useStoryKeyboardNav } from "./KeyboardShortcuts";
 const KeyboardShortcutsOverlay = dynamic(() => import("./KeyboardShortcuts").then(m => ({ default: m.KeyboardShortcutsOverlay })), { ssr: false });
 import InstallPrompt from "./InstallPrompt";
-import MobileBottomNav from "./MobileBottomNav";
 import MobileFeed from "./MobileFeed";
+import WorldDivider from "./WorldDivider";
 const SearchOverlay = dynamic(() => import("./SearchOverlay"), { ssr: false });
 
 /** Map pipeline category slugs (both fine-grained and desk) to display names.
@@ -130,11 +130,15 @@ function deriveCoverageScore(sourceCount: number, factualRigor: number, confiden
    Editorial feed constants — newspaper-principle (same feed for all readers)
    --------------------------------------------------------------------------- */
 
-/** Hard cap: maximum stories in the edition feed. No pagination, no load-more. */
+/** Hard cap: maximum stories in the main edition feed. No pagination, no load-more. */
 const EDITION_FEED_SIZE = 50;
 
-/** Maximum stories from any single category within the edition feed. */
-const CATEGORY_CAP = 12;
+/** Maximum World overflow stories appended after the main feed. */
+const WORLD_OVERFLOW_SIZE = 30;
+
+/** Total fetched from Supabase — main feed + headroom for overflow + buffer for
+ *  the ≥3-source quality floor. Server-side ranker enforces topic diversity. */
+const FETCH_LIMIT = 100;
 
 
 interface HomeContentProps {
@@ -187,23 +191,8 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   // retryKey: incrementing triggers the data-fetch useEffect without a full
   // page reload — gives users a clean retry path from the error state.
   const [retryKey, setRetryKey] = useState(0);
-  // Read initial filter state from URL params (bookmarkable/shareable)
-  const [activeCategory, setActiveCategory] = useState<"All" | Category>(() => {
-    if (typeof window === "undefined") return "All";
-    const params = new URLSearchParams(window.location.search);
-    const cat = params.get("cat");
-    if (cat && ["Politics", "Economy", "Science", "Health", "Culture"].includes(cat)) return cat as Category;
-    return "All";
-  });
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
   const [originRect, setOriginRect] = useState<DOMRect | null>(null);
-  const [activeLean, setActiveLean] = useState<LeanChip>(() => {
-    if (typeof window === "undefined") return "All";
-    const params = new URLSearchParams(window.location.search);
-    const lean = params.get("lean");
-    if (lean && ["Left", "Balanced", "Right"].includes(lean)) return lean as LeanChip;
-    return "All";
-  });
 
   // Initial value MUST be false (matches SSR) — the matchMedia useEffect below
   // promotes it to true on mobile after mount. Reading data-viewport synchronously
@@ -331,9 +320,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     return () => document.removeEventListener("keydown", handleCmdK);
   }, []);
 
-  // Reset category filter, close DeepDive, and scroll to top when edition changes.
-  // Lean filter is intentionally preserved — it's a universal preference
-  // that persists until the user explicitly toggles it off.
+  // Close DeepDive and scroll to top when edition changes.
   // Whip pan direction: content exits left when navigating "right" in edition order.
   // Mobile edition cross-fade: out (200ms) -> in (300ms) -> clear.
   useEffect(() => {
@@ -344,7 +331,6 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
     setSelectedStory(null);
     setOriginRect(null);
-    setActiveCategory("All");
 
     // Mobile edition cross-fade — trigger out/in sequence before scroll
     if (prevIdx !== nextIdx && isMobile) {
@@ -464,7 +450,11 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       }
 
       try {
-        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points,rank_world,rank_us,rank_europe,rank_south_asia,claim_consensus,cached_image_url`;
+        // is_international is added by the 2026-05-15 pipeline upgrade. Older
+        // schemas don't have the column — the enriched-fields select will fail
+        // and we fall back to base, which silently treats every story as
+        // non-international (no World overflow rendered).
+        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points,rank_world,rank_us,rank_europe,rank_south_asia,claim_consensus,cached_image_url,is_international`;
         const baseFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated`;
 
         // Use per-edition rank column for ordering (cross-edition differentiation)
@@ -478,9 +468,19 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
           .select(enrichedFields)
           .contains("sections", [activeEdition])
           .order(rankColumn, { ascending: false })
-          .limit(80);
+          .limit(FETCH_LIMIT);
 
-        // If enriched query failed (columns don't exist), fall back to base schema
+        // If enriched query failed (columns don't exist — e.g. is_international
+        // missing on older schema), retry with the smaller enriched set minus
+        // is_international before bottoming out at base.
+        if (res.error) {
+          res = await supabase
+            .from("story_clusters")
+            .select(enrichedFields.replace(",is_international", ""))
+            .contains("sections", [activeEdition])
+            .order(rankColumn, { ascending: false })
+            .limit(FETCH_LIMIT);
+        }
         if (res.error) {
           usingEnriched = false;
           res = await supabase
@@ -488,7 +488,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
             .select(baseFields)
             .contains("sections", [activeEdition])
             .order("first_published", { ascending: false })
-            .limit(80);
+            .limit(FETCH_LIMIT);
         }
 
         if (controller.signal.aborted) return;
@@ -636,7 +636,12 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   }
                 : undefined,
               cachedImageUrl: cluster.cached_image_url ?? null,
-            };
+              // is_international flag: true when the story belongs to the World
+              // overflow section. Defensive Boolean cast — older schemas without
+              // the column return undefined → falsy, no overflow rendered.
+              // Cast through unknown to bypass Story interface (extra field).
+              is_international: Boolean(cluster.is_international),
+            } as unknown as Story;
           }
         );
 
@@ -662,8 +667,9 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
         setStories(mappedStories);
         setIsLoading(false);
 
-        // Persist to IndexedDB for instant render on next visit
-        cacheSet(`feed-${activeEdition}`, mappedStories.slice(0, 50), activeEdition);
+        // Persist to IndexedDB for instant render on next visit. Cache the
+        // full fetched set so the World overflow renders instantly too.
+        cacheSet(`feed-${activeEdition}`, mappedStories.slice(0, FETCH_LIMIT), activeEdition);
 
         const { data: run } = await supabase
           .from("pipeline_runs")
@@ -691,96 +697,95 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     return () => controller.abort();
   }, [activeEdition, retryKey]);
 
-  // Sync filter state to URL params for bookmarkability
+  // Defensive strip of legacy ?lean=&cat= params from old shareable links.
+  // Filters were removed in 2026-05-15 redesign — these params no longer
+  // do anything, so clean them out of the URL on mount.
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const params = new URLSearchParams(window.location.search);
-    if (activeLean !== "All") params.set("lean", activeLean);
-    else params.delete("lean");
-    if (activeCategory !== "All") params.set("cat", activeCategory);
-    else params.delete("cat");
-    const qs = params.toString();
-    const url = qs ? `${window.location.pathname}?${qs}` : window.location.pathname;
-    window.history.replaceState(null, "", url);
-  }, [activeLean, activeCategory]);
+    const url = new URL(window.location.href);
+    let changed = false;
+    for (const key of ["lean", "cat"]) {
+      if (url.searchParams.has(key)) {
+        url.searchParams.delete(key);
+        changed = true;
+      }
+    }
+    if (changed) window.history.replaceState({}, "", url.toString());
+  }, []);
 
   const filteredStories = useMemo(() => {
     // Quality floor: hide clusters with fewer than 3 sources.
     // Single-source wire regurgitations and 2-source duds are low-signal.
     // Three sources = minimum 2 independent editorial decisions to cover a story.
-    let filtered = stories.filter((s) => (s.sigilData?.sourceCount ?? 0) >= 3);
-    if (activeCategory !== "All") {
-      filtered = filtered.filter((s) => s.category === activeCategory);
-    }
-    // Tilt chip filter — uses lensData.lean (cluster-level average political lean).
-    // "Balanced" excludes unscored stories UNLESS they have genuine importance
-    // (5+ sources = real coverage even without lean signal).
-    const leanRange = LEAN_RANGES[activeLean];
-    if (leanRange) {
-      filtered = filtered.filter((s) => {
-        const inRange = s.lensData.lean >= leanRange.min && s.lensData.lean <= leanRange.max;
-        if (!inRange) return false;
-        if (activeLean === "Balanced" && s.sigilData?.unscored && s.sigilData.sourceCount < 5) return false;
-        return true;
-      });
-    }
+    // Server-side ranker enforces topic diversity and rank order — no
+    // client-side filtering or category cap. Pure curation.
+    return stories.filter((s) => (s.sigilData?.sourceCount ?? s.source?.count ?? 0) >= 3);
+  }, [stories]);
 
-    // Sort by editorial importance (headline rank from pipeline)
-    const sorted = filtered.sort((a, b) => b.headlineRank - a.headlineRank);
-
-    // Topic diversity cap — no single category dominates the 30-story feed
-    const diversified: typeof sorted = [];
-    const categoryCounts: Record<string, number> = {};
-    for (const story of sorted) {
-      const cat = story.category || "uncategorized";
-      const count = categoryCounts[cat] ?? 0;
-      if (count >= CATEGORY_CAP) continue;
-      categoryCounts[cat] = count + 1;
-      diversified.push(story);
-      if (diversified.length >= EDITION_FEED_SIZE) break;
-    }
-
-    return diversified.slice(0, EDITION_FEED_SIZE);
-  }, [stories, activeCategory, activeLean]);
+  // Main feed = top 50 by rank. World overflow = remaining international
+  // stories not already in the main feed, capped at 30. Defensive Boolean
+  // cast on is_international handles missing-column case (older schemas
+  // produce no overflow, page renders cleanly without the divider).
+  const mainStories = useMemo(
+    () => filteredStories.slice(0, EDITION_FEED_SIZE),
+    [filteredStories],
+  );
+  const mainIds = useMemo(
+    () => new Set(mainStories.map((s) => s.id)),
+    [mainStories],
+  );
+  const worldOverflow = useMemo(
+    () =>
+      filteredStories
+        .filter((s) => !mainIds.has(s.id) && Boolean((s as Story & { is_international?: boolean }).is_international))
+        .slice(0, WORLD_OVERFLOW_SIZE),
+    [filteredStories, mainIds],
+  );
 
   // v3 (2026-05-14): twin top stories — ranks 0 and 1 share the hero canvas
   // as co-equal "Top Story" leads. Grid below holds ranks 2-49 (digest at
   // ranks 2-9, wire at ranks 10-49). Math closes at exactly 50 cards with no
   // orphan rows: 2 twin + 8 digest + 40 wire = 50.
-  const twinLeads = filteredStories.slice(0, 2);
-  const gridStories = filteredStories.slice(2);
+  const twinLeads = mainStories.slice(0, 2);
+  const gridStories = mainStories.slice(2);
 
   // Lead hero image removed 2026-05-13 — text-only newspaper composition.
 
-  // Stable key that changes whenever the active filter changes.
-  // Keying the <section> elements on this value causes React to unmount+remount
-  // them, which replays the .anim-filter-card entrance animation on every filter
-  // change — giving a "reshuffling" feel with no JS animation library.
-  const filterKey = `${activeLean}-${activeCategory}`;
+  // Continuous-scroll set: main feed + World overflow. Keyboard nav (J/K) and
+  // Deep Dive prev/next traverse this combined order so the divider doesn't
+  // interrupt navigation. Search also operates on this set.
+  const visibleStories = useMemo(
+    () => [...mainStories, ...worldOverflow],
+    [mainStories, worldOverflow],
+  );
+
+  // Stable key per edition — when activeEdition changes the grid replays its
+  // entrance animation. Filters are gone, so the key only varies by edition.
+  const filterKey = activeEdition;
 
   // Keyboard navigation — J/K to move through stories, Enter to open Deep Dive
   const kbdSelectStory = useCallback((index: number) => {
-    if (index >= 0 && index < filteredStories.length) {
-      handleStoryClick(filteredStories[index], new DOMRect());
+    if (index >= 0 && index < visibleStories.length) {
+      handleStoryClick(visibleStories[index], new DOMRect());
     }
-  }, [filteredStories, handleStoryClick]);
+  }, [visibleStories, handleStoryClick]);
 
   const kbdFocusIndex = useStoryKeyboardNav(
-    filteredStories,
+    visibleStories,
     kbdSelectStory,
     !!selectedStory,
   );
 
-  // Inter-story navigation within Deep Dive
+  // Inter-story navigation within Deep Dive — traverses main + overflow.
   const handleDeepDiveNav = useCallback((direction: "prev" | "next") => {
     if (!selectedStory) return;
-    const idx = filteredStories.findIndex((s) => s.id === selectedStory.id);
+    const idx = visibleStories.findIndex((s) => s.id === selectedStory.id);
     if (idx < 0) return;
     const newIdx = direction === "prev" ? idx - 1 : idx + 1;
-    if (newIdx >= 0 && newIdx < filteredStories.length) {
-      setSelectedStory(filteredStories[newIdx]);
+    if (newIdx >= 0 && newIdx < visibleStories.length) {
+      setSelectedStory(visibleStories[newIdx]);
     }
-  }, [selectedStory, filteredStories]);
+  }, [selectedStory, visibleStories]);
 
   // Search: when a result is selected, open its Deep Dive
   const handleSearchSelect = useCallback((story: Story) => {
@@ -795,10 +800,6 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
       <NavBar
         activeEdition={activeEdition}
         onEditionChange={(edition) => { setActiveEdition(edition); }}
-        activeCategory={activeCategory}
-        onCategoryChange={(cat) => { setActiveCategory(cat); }}
-        activeLean={activeLean}
-        onLeanChange={(lean) => { setActiveLean(lean); }}
         onSearchClick={() => setSearchOpen(true)}
         hasAudio={!!dailyBriefState.brief?.audio_url}
         isAudioPlaying={dailyBriefState.isPlaying}
@@ -835,12 +836,10 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
 
         {/* Live region, loading, error, empty states, story grids */}
         <>
-            {/* Live region for screen readers — announces filter changes and story count */}
+            {/* Live region for screen readers — announces story count + World section */}
             <div aria-live="polite" className="sr-only">
-              {!isLoading && filteredStories.length > 0 &&
-                `${filteredStories.length} stories loaded for ${activeEdition} edition${activeCategory !== "All" ? `, filtered by ${activeCategory}` : ""}${activeLean !== "All" ? `, ${activeLean.toLowerCase()} tilt` : ""}. Press ? for keyboard shortcuts.`}
-              {!isLoading && stories.length > 0 && filteredStories.length === 0 &&
-                "No stories match the current filter. Try clearing your filters."}
+              {!isLoading && mainStories.length > 0 &&
+                `${mainStories.length} stories loaded.${worldOverflow.length > 0 ? ` World section follows with ${worldOverflow.length} international stories.` : ""} Press ? for keyboard shortcuts.`}
             </div>
 
             {/* Loading skeleton */}
@@ -881,59 +880,37 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
               </div>
             )}
 
-            {/* No stories in selected filter(s) */}
-            {!isLoading && !error && stories.length > 0 && filteredStories.length === 0 && (
-              <div className="lean-filter-empty">
-                <p className="lean-filter-empty__text">
-                  No stories match this filter.
-                </p>
-                <div style={{ display: "flex", gap: "var(--space-4)", flexWrap: "wrap", justifyContent: "center" }}>
-                  {activeLean !== "All" && (
-                    <button
-                      className="lean-filter-empty__action"
-                      onClick={() => setActiveLean("All")}
-                    >
-                      Clear lean filter
-                    </button>
-                  )}
-                  {activeCategory !== "All" && (
-                    <button
-                      className="lean-filter-empty__action"
-                      onClick={() => setActiveCategory("All")}
-                    >
-                      View all categories
-                    </button>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Inline filter bar — mobile only. UAT 2026-05-13 P0-8: was
-                previously gated on `!isLoading && stories.length > 0`, so it
-                disappeared during initial load / empty states. Render as
-                soon as we know we're on mobile; the filter still makes sense
-                even with zero stories (it's an empty-state navigation cue). */}
-            {isMobile && (
-              <MobileBottomNav
-                activeLean={activeLean}
-                onLeanChange={(lean) => { setActiveLean(lean); }}
-                activeCategory={activeCategory}
-                onCategoryChange={(cat) => { setActiveCategory(cat); }}
-              />
-            )}
-
             {/* News feed — mobile gets MobileFeed, desktop keeps broadsheet */}
             {!isLoading && stories.length > 0 && (
               isMobile ? (
-                <MobileFeed
-                  stories={filteredStories}
-                  dailyBriefState={dailyBriefState}
-                  onStoryClick={handleStoryClick}
-                  filterKey={filterKey}
-                  kbdFocusIndex={kbdFocusIndex}
-                  editionMeta={editionMeta}
-                  transitionClass={editionTransition === "out" ? "anim-edition-out" : editionTransition === "in" ? "anim-edition-in" : undefined}
-                />
+                <>
+                  <MobileFeed
+                    stories={mainStories}
+                    dailyBriefState={dailyBriefState}
+                    onStoryClick={handleStoryClick}
+                    filterKey={filterKey}
+                    kbdFocusIndex={kbdFocusIndex}
+                    editionMeta={editionMeta}
+                    transitionClass={editionTransition === "out" ? "anim-edition-out" : editionTransition === "in" ? "anim-edition-in" : undefined}
+                  />
+
+                  {/* World overflow — international stories that didn't make
+                      the homepage cut. Rendered inline as one continuous scroll
+                      below the main feed; kbdFocusIndex offset by mainStories.length. */}
+                  {worldOverflow.length > 0 && (
+                    <section aria-label="World — international stories" className="world-section">
+                      <WorldDivider count={worldOverflow.length} />
+                      <MobileFeed
+                        stories={worldOverflow}
+                        dailyBriefState={dailyBriefState}
+                        onStoryClick={handleStoryClick}
+                        filterKey={`world-${filterKey}`}
+                        kbdFocusIndex={kbdFocusIndex - mainStories.length}
+                        editionMeta={editionMeta}
+                      />
+                    </section>
+                  )}
+                </>
               ) : (
                 <>
                   <div className="skybox">
@@ -975,10 +952,37 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                     </section>
                   )}
 
-                  {filteredStories.length > 0 && (
+                  {/* World overflow — international stories that didn't make
+                      the homepage cut. Rendered as one continuous scroll
+                      below the main feed in a wire grid. The divider is
+                      the section signal — no per-card chrome. */}
+                  {worldOverflow.length > 0 && (
+                    <section aria-label="World — international stories" className="world-section">
+                      <WorldDivider count={worldOverflow.length} />
+                      <div className="feed-grid world-section__grid">
+                        {worldOverflow.map((story, idx) => {
+                          const gi = mainStories.length + idx;
+                          return (
+                            <div key={story.id} className="feed-grid__item">
+                              <StoryCard
+                                story={story}
+                                index={gi}
+                                onStoryClick={handleStoryClick}
+                                globalIndex={gi}
+                                kbdFocused={kbdFocusIndex === gi}
+                                variant="wire"
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </section>
+                  )}
+
+                  {visibleStories.length > 0 && (
                     <div className="edition-line">
                       <span className="edition-meta">
-                        {filteredStories.length} stories
+                        {mainStories.length} stories{worldOverflow.length > 0 ? ` + ${worldOverflow.length} world overflow` : ""}
                       </span>
                       <LogoWordmark height={14} />
                     </div>
@@ -1001,15 +1005,15 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
             onClose={handleDeepDiveClose}
             originRect={originRect}
             onNavigate={handleDeepDiveNav}
-            storyIndex={filteredStories.findIndex((s) => s.id === selectedStory.id)}
-            totalStories={filteredStories.length}
+            storyIndex={visibleStories.findIndex((s) => s.id === selectedStory.id)}
+            totalStories={visibleStories.length}
           />
         </DeepDiveErrorBoundary>
       )}
 
-      {/* Search overlay — Cmd+K */}
+      {/* Search overlay — Cmd+K. Search across main feed + World overflow. */}
       <SearchOverlay
-        stories={filteredStories}
+        stories={visibleStories}
         onStorySelect={handleSearchSelect}
         isOpen={searchOpen}
         onClose={() => setSearchOpen(false)}
