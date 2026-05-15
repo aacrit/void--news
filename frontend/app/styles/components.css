@@ -607,9 +607,16 @@
     transform  320ms var(--spring-snappy);
 }
 
+/* Direct children of .lead-story stay position:relative for layout, but
+   intentionally do NOT set z-index. An explicit z-index here would create
+   a new stacking context that traps nested elements (notably the Sigil
+   inside the headline) BELOW the stretch-link's z-index:2 — breaking
+   sigil hover on top stories. Without z-index, the headline text falls
+   under the stretch-link by default (clicks open deep dive ✓) and the
+   Sigil's own z-index:3 escapes correctly (hover popup fires ✓), exactly
+   like the regular StoryCard pattern. */
 .lead-story > *:not(.story-card__stretch-link) {
   position: relative;
-  z-index: 1;
 }
 
 /* Hero press — slightly more give than story card (0.99 vs 0.995)
@@ -7648,6 +7655,55 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 /* Touch-device tap-target promotion block deleted 2026-05-15 — the
    .nav-lens__trigger / .nav-lens__lean selectors it targeted were removed
    with the Row 2 lens. .nav-search-btn carries its own 44px hitbox. */
+
+/* ==========================================================================
+   Feed expand affordance — the bridge between the default 30-story window
+   and the full 50-story feed, sitting just above the World section.
+   Quiet button: italic Inter caption + chevron, fits the editorial voice
+   without competing with the "WORLD" divider that follows.
+   ========================================================================== */
+
+.feed-expand {
+  display: flex;
+  justify-content: center;
+  margin: 32px 0 8px;
+}
+
+.feed-expand__btn {
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  padding: 10px 22px;
+  min-height: 44px;
+  font-family: var(--font-text, "Inter"), sans-serif;
+  font-size: 13px;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  color: var(--fg-secondary);
+  cursor: pointer;
+  transition: color 200ms var(--ease-cinematic), border-color 200ms var(--ease-cinematic);
+}
+
+.feed-expand__btn:hover {
+  color: var(--fg-primary);
+  border-color: var(--accent-warm, var(--fg-secondary));
+}
+
+.feed-expand__btn:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 3px;
+}
+
+@media (max-width: 768px) {
+  .feed-expand {
+    margin: 24px 0 4px;
+  }
+  .feed-expand__btn {
+    font-size: 12px;
+    padding: 9px 18px;
+  }
+}
 
 /* ==========================================================================
    WorldDivider — section break between US-primary feed and World overflow.

@@ -130,8 +130,12 @@ function deriveCoverageScore(sourceCount: number, factualRigor: number, confiden
    Editorial feed constants — newspaper-principle (same feed for all readers)
    --------------------------------------------------------------------------- */
 
-/** Hard cap: maximum stories in the main edition feed. No pagination, no load-more. */
+/** Hard cap: maximum stories in the main edition feed when fully expanded. */
 const EDITION_FEED_SIZE = 50;
+
+/** Default visible window before the reader expands the feed. After 30 the
+ *  page invites a one-click reveal of stories 31..50, then the World section. */
+const EDITION_FEED_DEFAULT = 30;
 
 /** Maximum World overflow stories appended after the main feed. */
 const WORLD_OVERFLOW_SIZE = 30;
@@ -726,13 +730,31 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   // stories not already in the main feed, capped at 30. Defensive Boolean
   // cast on is_international handles missing-column case (older schemas
   // produce no overflow, page renders cleanly without the divider).
-  const mainStories = useMemo(
+  // Full main pool (capped at 50). Visible window starts at 30 and expands
+  // to 50 on reader request. Server-side ranker is the editorial source of
+  // truth; no client-side reordering.
+  const mainPool = useMemo(
     () => filteredStories.slice(0, EDITION_FEED_SIZE),
     [filteredStories],
   );
+
+  // Reader-controlled disclosure: default to 30, click "Show 20 more" to
+  // reveal 31..50 BEFORE the World section. Pure curation principle —
+  // editor sorts; reader paces. Resets to collapsed on edition switch.
+  const [feedExpanded, setFeedExpanded] = useState(false);
+  useEffect(() => {
+    setFeedExpanded(false);
+  }, [activeEdition]);
+
+  const mainStories = useMemo(
+    () => mainPool.slice(0, feedExpanded ? EDITION_FEED_SIZE : EDITION_FEED_DEFAULT),
+    [mainPool, feedExpanded],
+  );
+  const hiddenMainCount = mainPool.length - mainStories.length;
+
   const mainIds = useMemo(
-    () => new Set(mainStories.map((s) => s.id)),
-    [mainStories],
+    () => new Set(mainPool.map((s) => s.id)),
+    [mainPool],
   );
   const worldOverflow = useMemo(
     () =>
@@ -743,9 +765,8 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   );
 
   // v3 (2026-05-14): twin top stories — ranks 0 and 1 share the hero canvas
-  // as co-equal "Top Story" leads. Grid below holds ranks 2-49 (digest at
-  // ranks 2-9, wire at ranks 10-49). Math closes at exactly 50 cards with no
-  // orphan rows: 2 twin + 8 digest + 40 wire = 50.
+  // as co-equal "Top Story" leads. Grid below holds ranks 2..N where N is
+  // the visible-window size (30 or 50).
   const twinLeads = mainStories.slice(0, 2);
   const gridStories = mainStories.slice(2);
 
@@ -950,6 +971,27 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                         );
                       })}
                     </section>
+                  )}
+
+                  {/* Expand-to-50 affordance — sits between the default
+                      30-story window and the World section. Reader-controlled
+                      disclosure of the remaining curated stories before the
+                      international overflow. Hidden when already expanded
+                      or when there's nothing more to reveal. */}
+                  {!feedExpanded && hiddenMainCount > 0 && (
+                    <div className="feed-expand">
+                      <button
+                        type="button"
+                        className="feed-expand__btn"
+                        onClick={() => {
+                          hapticLight();
+                          setFeedExpanded(true);
+                        }}
+                        aria-label={`Show ${hiddenMainCount} more stories`}
+                      >
+                        Show {hiddenMainCount} more
+                      </button>
+                    </div>
                   )}
 
                   {/* World overflow — international stories that didn't make
