@@ -122,37 +122,27 @@ export default function NavBar({
           {dateline}
         </span>
 
-        {/* Spinoff links — only shown when multi-edition (otherwise they live in nav-pages) */}
-        {MULTI_EDITION && (
-          <nav className="nav-spinoffs" aria-label="Spinoff editions">
-            <Link href="/weekly" className="nav-weekly" aria-label="Go to Weekly digest" title="void --weekly">
-              <span className="nav-weekly__rule" aria-hidden="true" />
-              <span className="nav-weekly__label">Weekly</span>
-            </Link>
-            <Link href="/history" className="nav-history" aria-label="Go to History archive" title="void --history">
-              <span className="nav-history__rule" aria-hidden="true" />
-              <span className="nav-history__label">History</span>
-            </Link>
-          </nav>
-        )}
+        {/* Spinoff product links — Weekly + History are standalone products
+            under the void --news umbrella, treated with italic accents
+            (warm rule + label) regardless of edition mode. Per CEO 2026-05-15:
+            their dedicated styling must persist; they are NOT generic nav-pages. */}
+        <nav className="nav-spinoffs" aria-label="Spinoff editions">
+          <Link href="/weekly" className="nav-weekly" aria-label="Go to Weekly digest" title="void --weekly">
+            <span className="nav-weekly__rule" aria-hidden="true" />
+            <span className="nav-weekly__label">Weekly</span>
+          </Link>
+          <Link href="/history" className="nav-history" aria-label="Go to History archive" title="void --history">
+            <span className="nav-history__rule" aria-hidden="true" />
+            <span className="nav-history__label">History</span>
+          </Link>
+        </nav>
 
         <div className="nav-right">
-          {/* Page navigation — destinations */}
+          {/* Page navigation — destinations.
+              Games + Paper hidden from production nav (not ready). Routes
+              still resolve at /games and /paper for direct URL access. */}
           <nav className="nav-pages" aria-label="Pages">
             <PageToggle activePage="feed" />
-            {!MULTI_EDITION && (
-              <>
-                <Link href="/history" className="nav-page" aria-label="void --history" title="void --history">
-                  History
-                </Link>
-                <Link href="/weekly" className="nav-page" aria-label="void --weekly" title="void --weekly">
-                  Weekly
-                </Link>
-              </>
-            )}
-            <Link href="/games" className="nav-page" aria-label="void --games" title="void --games">
-              Games
-            </Link>
             <Link href="/ship" className="nav-page" aria-label="void --ship" title="void --ship">
               Ship
             </Link>
