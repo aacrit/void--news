@@ -1779,12 +1779,12 @@
     "id": "the-kyiv-independent",
     "name": "The Kyiv Independent",
     "url": "https://kyivindependent.com",
-    "rss_url": "https://kyivindependent.com/feed/",
+    "rss_url": "https://news.google.com/rss/search?q=site:kyivindependent.com+when:24h&ceid=US:en&hl=en-US&gl=US",
     "tier": "international",
     "country": "UA",
     "type": "digital",
     "political_lean_baseline": "center",
-    "credibility_notes": "Ukrainian English-language digital news outlet, founded 2021 after journalists left the Kyiv Post over editorial independence concerns. Primary English-language source for Ukrainian war coverage. Pro-Ukraine perspective (as expected from within Ukraine)."
+    "credibility_notes": "Ukrainian English-language digital news outlet, founded 2021 after journalists left the Kyiv Post over editorial independence concerns. Primary English-language source for Ukrainian war coverage. Pro-Ukraine perspective (as expected from within Ukraine). RSS via Google News filter (native /feed/ returned 404 in 2026 after Next.js redesign; Google News mirror returns 87 items in 24h, verified 2026-05-15)."
   },
   {
     "id": "the-moscow-times",
@@ -3748,6 +3748,39 @@
     "type": "digital",
     "political_lean_baseline": "center",
     "credibility_notes": "Global development news. Foreign aid, UN, World Bank. Founded 2000."
+  },
+  {
+    "id": "un-news-health",
+    "name": "UN News (Health)",
+    "url": "https://news.un.org",
+    "rss_url": "https://news.un.org/feed/subscribe/en/news/topic/health/feed/rss.xml",
+    "tier": "independent",
+    "country": "US",
+    "type": "wire",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Official United Nations news service, health topic feed. Primary source for WHO statements, outbreak declarations (Ebola, Marburg, hantavirus), and global health agency reporting. Verified 2026-05-15: 30 items in current feed."
+  },
+  {
+    "id": "health-policy-watch",
+    "name": "Health Policy Watch",
+    "url": "https://healthpolicy-watch.news",
+    "rss_url": "https://healthpolicy-watch.news/feed/",
+    "tier": "independent",
+    "country": "CH",
+    "type": "digital",
+    "political_lean_baseline": "center",
+    "credibility_notes": "Independent global health policy news from Geneva, Switzerland. Editorially independent reporting on WHO, GAVI, vaccine equity, outbreak response. Founded 2018 as Geneva Solutions spinoff. Verified 2026-05-15."
+  },
+  {
+    "id": "reliefweb",
+    "name": "ReliefWeb",
+    "url": "https://reliefweb.int",
+    "rss_url": "https://reliefweb.int/updates/rss.xml",
+    "tier": "independent",
+    "country": "US",
+    "type": "wire",
+    "political_lean_baseline": "center",
+    "credibility_notes": "UN OCHA humanitarian information service. Aggregates situation reports and updates from UN agencies, NGOs, and governments. Primary source for outbreak situation reports (Ebola, cholera) and conflict-zone humanitarian crises (DR Congo, Sudan, Syria, Ukraine). Verified 2026-05-15."
   },
   {
     "id": "the-root",
