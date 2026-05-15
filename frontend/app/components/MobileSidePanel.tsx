@@ -144,12 +144,9 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
             <span className="msp__link-cmd">void --world</span>
             <span className="msp__link-desc">International overflow</span>
           </Link>
-          <Link href="/weekly" className="msp__link" data-msp-cascade="2" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">void --weekly</span>
-            <span className="msp__link-desc">Weekly digest</span>
-          </Link>
-          {/* /paper hidden from nav per CEO 2026-05-15 — not production-ready.
-              Route still resolves at /paper for direct URL access. */}
+          {/* /weekly + /paper hidden from nav per CEO 2026-05-15 — not
+              production-ready. Routes still resolve at /weekly and /paper
+              for direct URL access. */}
 
           {/* Organic ink divider */}
           <svg className="msp__divider" data-msp-cascade="3" viewBox="0 0 200 4" preserveAspectRatio="none" aria-hidden="true">
