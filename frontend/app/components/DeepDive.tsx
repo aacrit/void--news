@@ -1253,23 +1253,12 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           )}
         </header>
 
-        {/* ---- Six Lenses index — sticky in-panel navigation for the six
-             Deep Dive sections. UAT 2026-05-13 P1-9: progressive disclosure
-             needed a visible index so readers can see (and jump to) the six
-             lenses even when they are collapsed. Anchor links target the
-             matching `<section id="dd-panel-*">` further down. Each section
-             also keeps its own <h3> heading so screen-readers can navigate
-             by level-2 outline. */}
-        <nav className="dd-lens-index" aria-label="Deep Dive sections">
-          <ol className="dd-lens-index__list">
-            <li><a href="#dd-panel-story" className="dd-lens-index__link">Story</a></li>
-            <li><a href="#dd-panel-spectrum" className="dd-lens-index__link">Spectrum</a></li>
-            <li><a href="#dd-panel-press" className="dd-lens-index__link">Press</a></li>
-            <li><a href="#dd-panel-perspectives" className="dd-lens-index__link">Sources</a></li>
-            <li><a href="#dd-panel-claims" className="dd-lens-index__link">Claims</a></li>
-            <li><a href="#dd-panel-reasoning" className="dd-lens-index__link">Reasoning</a></li>
-          </ol>
-        </nav>
+        {/* Six-Lenses meta-nav row removed per CEO 2026-05-15 — the labels
+            (Story / Spectrum / Press / Sources / Claims / Reasoning) blurred
+            together (Press vs Sources; Spectrum vs Press) and the row added
+            interior chrome inside an already-modal-like panel. Section IDs
+            below remain (`dd-panel-*`) for direct deep-link anchors and the
+            screen-reader outline; readers scroll the panel naturally. */}
 
         {/* ---- Content (fades in after panel, fades out faster on close) ---- */}
         <div

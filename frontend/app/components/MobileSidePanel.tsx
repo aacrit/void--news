@@ -148,10 +148,8 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
             <span className="msp__link-cmd">void --weekly</span>
             <span className="msp__link-desc">Weekly digest</span>
           </Link>
-          <Link href="/paper" className="msp__link" data-msp-cascade="2" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">void --paper</span>
-            <span className="msp__link-desc">E-paper broadsheet</span>
-          </Link>
+          {/* /paper hidden from nav per CEO 2026-05-15 — not production-ready.
+              Route still resolves at /paper for direct URL access. */}
 
           {/* Organic ink divider */}
           <svg className="msp__divider" data-msp-cascade="3" viewBox="0 0 200 4" preserveAspectRatio="none" aria-hidden="true">
@@ -163,10 +161,8 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
             <span className="msp__link-cmd">void --sources</span>
             <span className="msp__link-desc">1,013 curated sources</span>
           </Link>
-          <Link href="/games" className="msp__link" data-msp-cascade="3" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">void --games</span>
-            <span className="msp__link-desc">Media literacy puzzles</span>
-          </Link>
+          {/* /games hidden from nav per CEO 2026-05-15 — not production-ready.
+              Route still resolves at /games for direct URL access. */}
           <Link href="/about" className="msp__link" data-msp-cascade="3" onClick={handleLinkClick}>
             <span className="msp__link-cmd">void --about</span>
             <span className="msp__link-desc">See through the void</span>
