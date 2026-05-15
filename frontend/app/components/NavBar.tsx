@@ -122,15 +122,11 @@ export default function NavBar({
           {dateline}
         </span>
 
-        {/* Spinoff product links — Weekly + History are standalone products
-            under the void --news umbrella, treated with italic accents
-            (warm rule + label) regardless of edition mode. Per CEO 2026-05-15:
-            their dedicated styling must persist; they are NOT generic nav-pages. */}
+        {/* Spinoff product links — standalone products under the void --news
+            umbrella, treated with italic accents (warm rule + label).
+            History only for now; Weekly hidden per CEO 2026-05-15
+            (not production-ready). Route still resolves at /weekly. */}
         <nav className="nav-spinoffs" aria-label="Spinoff editions">
-          <Link href="/weekly" className="nav-weekly" aria-label="Go to Weekly digest" title="void --weekly">
-            <span className="nav-weekly__rule" aria-hidden="true" />
-            <span className="nav-weekly__label">Weekly</span>
-          </Link>
           <Link href="/history" className="nav-history" aria-label="Go to History archive" title="void --history">
             <span className="nav-history__rule" aria-hidden="true" />
             <span className="nav-history__label">History</span>
