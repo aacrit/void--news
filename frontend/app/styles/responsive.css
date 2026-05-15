@@ -356,11 +356,8 @@
   /* Mobile GPU budget: disable backdrop-filters on elements hidden behind
      the Deep Dive overlay (z-50). These elements already have solid background
      fallbacks — the backdrop-filter is pure enhancement, invisible when
-     occluded. Drops simultaneous backdrop-filter count from 4 to 1 (DD only). */
-  .deep-dive-active .mob-nav__bar {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
+     occluded. 2026-05-15: MobileBottomNav removed, so we no longer need
+     the .mob-nav__bar selector here; only nav-page / nav-weekly remain. */
   .deep-dive-active .nav-page,
   .deep-dive-active .nav-weekly {
     backdrop-filter: none;
@@ -417,8 +414,8 @@
      to the viewport edge — mirrors UITableView section header behaviour.
      backdrop-filter adds the frosted-glass frost as the feed scrolls beneath.
      z-index: var(--z-sticky) keeps it above cards but below nav (--z-nav).
-     On mobile the lean-bar lives in MobileBottomNav (not top of page),
-     so section headers dock directly below the fixed nav-header. */
+     2026-05-15: lean-bar / MobileBottomNav removed, so section headers dock
+     directly below the fixed nav-header. */
   .section-header {
     position: sticky;
     top: var(--nav-height);
@@ -747,11 +744,11 @@
 
   /* === TOUCH TARGETS — WCAG 44×44px MINIMUM === */
 
-  /* These elements already meet WCAG in most cases; this rule is the safety net */
+  /* These elements already meet WCAG in most cases; this rule is the safety net.
+     2026-05-15: nav-lens__lean / nav-lens__trigger / nav-lens__search removed
+     with the Row 2 lens; nav-search-btn now ships its own 44px hitbox. */
   .nav-ed,
-  .nav-lens__lean,
-  .nav-lens__trigger,
-  .nav-lens__search,
+  .nav-search-btn,
   .nav-page,
   .nav-weekly,
   .filter-chip,
@@ -764,11 +761,7 @@
     min-width: 44px;
   }
 
-  /* Active lean badge dismiss — base rule is 32px; bump to WCAG minimum */
-  .lean-active-badge__dismiss {
-    min-width: 44px;
-    min-height: 44px;
-  }
+  /* lean-active-badge__dismiss removed 2026-05-15 — filter UI deleted. */
 
   /* Deep Dive: interactive targets — WCAG 44×44px minimum */
   .dd-press-trigger,
@@ -791,8 +784,7 @@
 
   /* Native apps don't allow text selection on buttons / cards */
   .nav-ed,
-  .nav-lens__lean,
-  .nav-lens__search,
+  .nav-search-btn,
   .filter-chip,
   .lean-bar__seg,
   .topic-bar__chip,
@@ -819,15 +811,13 @@
 
   /* .ubar__* rules removed — FilterBar deprecated; NavBar owns all filtering */
 
-  /* === NAV LENS — hide entire Row 2 on mobile (MobileBottomNav handles these) === */
-  .nav-lens {
-    display: none;
-  }
+  /* nav-lens mobile hide removed 2026-05-15 — Row 2 lens is gone in source. */
 
-  /* === PAGE MAIN — clear MobileTabBar + MobileMiniPlayer === */
-  /* MobileTabBar: 52px. MobileMiniPlayer (above tab bar, optional): 44px.
-     Default: tab bar only. Mini-player padding added via data-audio-active
-     when audio has been started — avoids wasting 44px for users who never play. */
+  /* === PAGE MAIN — clear MobileTabBar + MobileMiniPlayer ===
+     MobileTabBar: 52px. MobileMiniPlayer (above tab bar, optional): 44px.
+     2026-05-15: MobileBottomNav (filter trigger) was removed, so the prior
+     padding stack of {52 + 44 (mini-player) + 44 (filter pill)} simplifies
+     back to {52 + 44 (mini-player)}. Default: tab bar only. */
   .page-main {
     padding-bottom: calc(52px + var(--space-5) + env(safe-area-inset-bottom, 0px));
   }

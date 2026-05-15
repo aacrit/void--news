@@ -1077,7 +1077,8 @@
 
 /*
  * LEGACY: These .filter-row rules are retained but no longer actively used.
- * Filtering is now handled by NavBar (desktop) and MobileBottomNav (mobile).
+ * Client-side filtering (NavBar Row 2 + MobileBottomNav) was removed in the
+ * 2026-05-15 redesign — server-side ranker is authoritative on diversity.
  */
 .filter-row {
   display: flex;
@@ -1710,42 +1711,7 @@
   outline-offset: 2px;
 }
 
-/* ---- "No stories" empty state message ---- */
-.lean-filter-empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-6) var(--space-5);
-  text-align: center;
-}
-
-.lean-filter-empty__text {
-  font-family: var(--font-structural);
-  font-size: var(--text-lg);
-  color: var(--fg-tertiary);
-}
-
-.lean-filter-empty__hint {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  color: var(--fg-muted);
-  letter-spacing: 0.02em;
-}
-
-.lean-filter-empty__action {
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  color: var(--fg-secondary);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  cursor: pointer;
-  transition: color var(--dur-fast) var(--ease-cinematic);
-}
-
-.lean-filter-empty__action:hover {
-  color: var(--fg-primary);
-}
+/* .lean-filter-empty block deleted 2026-05-15 — no client-side filtering, no "no matches" state. */
 
 /* ---- Mobile: full-width layout ---- */
 @media (max-width: 767px) {
@@ -1816,17 +1782,11 @@
   padding-right: 0;
   pointer-events: none;
 }
-.nav-header[data-scroll-compact="true"] .nav-lens {
-  padding-top: var(--space-1);
-  padding-bottom: var(--space-1);
-}
-
 /* Motion: settle on state swap using rack-focus ease.
    --dur-settle is intentionally unset; fallback 240ms applies.            */
 .nav-inner,
 .nav-logo,
-.nav-dateline-inline,
-.nav-lens {
+.nav-dateline-inline {
   transition:
     padding-top var(--dur-settle, 240ms) var(--ease-rack, ease-in-out),
     padding-bottom var(--dur-settle, 240ms) var(--ease-rack, ease-in-out),
@@ -1838,8 +1798,7 @@
 @media (prefers-reduced-motion: reduce) {
   .nav-inner,
   .nav-logo,
-  .nav-dateline-inline,
-  .nav-lens {
+  .nav-dateline-inline {
     transition: none;
   }
 }
@@ -2038,76 +1997,10 @@
   outline-offset: 2px;
 }
 
-/* ── Row 2: Edition Tabs — Playfair, warm underline ── */
-
-.nav-lens__editions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-}
-
-/* Content navigation — replaces edition tabs when single-edition */
-.nav-lens__content {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-}
-
-.nav-lens__content-link {
-  font-family: var(--font-editorial);
-  font-size: var(--text-sm);
-  font-weight: 400;
-  color: var(--fg-tertiary);
-  text-decoration: none;
-  padding: var(--space-1) var(--space-3);
-  border-bottom: 2px solid transparent;
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  transition:
-    color 200ms var(--ease-cinematic),
-    border-color 250ms var(--ease-cinematic);
-}
-
-/* Touch-device tap-target promotion — iPad-class devices use this same nav. */
-@media (hover: none) and (pointer: coarse) {
-  .nav-lens__content-link,
-  .nav-lens__trigger {
-    min-height: 44px;
-  }
-}
-
-.nav-lens__content-link:hover {
-  color: var(--fg-secondary);
-  border-color: color-mix(in srgb, var(--cin-amber) 30%, transparent);
-}
-
-.nav-lens__content-link--weekly {
-  font-style: italic;
-  color: var(--palette-weekly, #B91C1C);
-}
-
-.nav-lens__content-link--weekly:hover {
-  color: #D41920;
-  border-color: color-mix(in srgb, var(--palette-weekly, #B91C1C) 40%, transparent);
-}
-
-.nav-lens__content-link--history {
-  color: #5C4033;
-}
-
-.nav-lens__content-link--history:hover {
-  color: #7A5B47;
-  border-color: color-mix(in srgb, #5C4033 40%, transparent);
-}
-
-:root[data-mode="dark"] .nav-lens__content-link--weekly {
-  color: #EF5350;
-}
-
-:root[data-mode="dark"] .nav-lens__content-link--history {
-  color: #A37A66;
-}
+/* nav-lens__editions / nav-lens__content blocks deleted 2026-05-15 — Row 2
+   was removed in redesign (filters + content shortcuts moved to nav-pages
+   in Row 1). nav-ed remains for the optional mobile edition tabs that
+   still render when MULTI_EDITION is true. */
 
 .nav-ed {
   display: inline-flex;
@@ -2291,79 +2184,48 @@
   }
 }
 
-/* ── Row 2: Separator — thin vertical rule between zones ── */
+/* nav-lens__sep / nav-lens__search blocks deleted 2026-05-15 — Row 2 lens
+   removed in redesign. Search now lives as an icon-only button (.nav-search-btn)
+   in Row 1; the expandable bar pattern was retired. */
 
-.nav-lens__sep {
-  width: 1px;
-  height: 18px;
-  background-color: var(--border-subtle);
-  opacity: 0.4;
-  flex-shrink: 0;
-}
-
-/* ── Row 2: Search Bar — expandable, right-anchored ── */
-
-.nav-lens__search {
-  display: flex;
+/* ── Row 1: Search button — icon-only, opens SearchOverlay (Cmd+K) ── */
+.nav-search-btn {
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
-  margin-left: auto; /* push to right edge */
-  padding: var(--space-1) var(--space-3);
-  min-height: 30px;
-  width: 160px;
-  background-color: color-mix(in srgb, var(--fg-primary) 3%, transparent);
-  border: 1px solid var(--border-subtle);
-  border-radius: 100px;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: none;
+  border: none;
+  color: var(--fg-tertiary);
   cursor: pointer;
+  border-radius: var(--radius-sm);
   transition:
-    width 250ms var(--ease-cinematic),
-    border-color 150ms var(--ease-cinematic),
+    color 150ms var(--ease-cinematic),
     background-color 150ms var(--ease-cinematic);
 }
 
-.nav-lens__search:hover {
-  border-color: var(--border-strong);
-  background-color: color-mix(in srgb, var(--fg-primary) 5%, transparent);
+.nav-search-btn:hover {
+  color: var(--fg-primary);
+  background-color: color-mix(in srgb, var(--fg-primary) 4%, transparent);
 }
 
-.nav-lens__search--focused {
-  width: 280px;
-  border-color: var(--cin-amber);
+.nav-search-btn:active {
+  transform: scale(0.96);
+  transition: transform 80ms var(--ease-cinematic);
 }
 
-.nav-lens__search-icon {
-  flex-shrink: 0;
-  color: var(--fg-tertiary);
+.nav-search-btn:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
 }
 
-.nav-lens__search-input {
-  flex: 1;
-  background: none;
-  border: none;
-  outline: none;
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  letter-spacing: 0.03em;
-  color: var(--fg-tertiary);
-  cursor: pointer;
-  min-width: 0;
-}
-
-.nav-lens__search-input::placeholder {
-  color: var(--fg-tertiary);
-  opacity: 0.6;
-}
-
-.nav-lens__search-kbd {
-  font-family: var(--font-data);
-  font-size: 10px;
-  color: var(--fg-tertiary);
-  opacity: 0.4;
-  border: 1px solid var(--border-subtle);
-  border-radius: 3px;
-  padding: 1px 4px;
-  line-height: 1.2;
-  flex-shrink: 0;
+@media (max-width: 767px) {
+  /* Mobile: search button is the only chrome left of theme toggle on Row 1 */
+  .nav-search-btn {
+    width: 40px;
+    height: 40px;
+  }
 }
 
 .nav-logo {
@@ -2438,7 +2300,8 @@
   opacity: 0.4;
 }
 
-/* nav-search-btn replaced by .nav-lens__search (expandable bar in Row 2) */
+/* nav-search-btn restored to Row 1 as icon-only button (2026-05-15 redesign);
+   .nav-lens__search expandable bar was retired with the rest of Row 2. */
 /* nav-onair removed — floating player is the single audio entry point */
 @keyframes recPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
@@ -2462,209 +2325,10 @@
   gap: var(--space-1);
 }
 
-/* ==========================================================================
-   Row 2 — Content Lens (inset texture)
-   All content-shaping controls in one row. Editions (Playfair) + Weekly
-   (italic) + Filters (Mono brackets) + Search (expandable). The recessed
-   toolbar — camera lens barrel, adjustable, content-shaping.
-   ========================================================================== */
-
-.nav-lens {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  max-width: var(--canvas-max);
-  margin: 0 auto;
-  padding: var(--space-2) var(--space-7) var(--space-2);
-  /* Inset shadow — recessed into the page, behind Row 1 chrome */
-  box-shadow: inset 0 1px 3px color-mix(in srgb, var(--cinematic-shadow-tint) 8%, transparent);
-  border-top: 1px solid color-mix(in srgb, var(--border-subtle) 50%, transparent);
-}
-
-.nav-lens__bracket {
-  font-family: var(--font-data);
-  font-size: var(--text-sm);
-  color: var(--fg-tertiary);
-  opacity: 0.35;
-  user-select: none;
-  line-height: 1;
-}
-
-/* ── Topic dropdown ── */
-.nav-lens__topics {
-  position: relative;
-}
-
-.nav-lens__trigger {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  font-weight: 400;
-  letter-spacing: 0.04em;
-  color: var(--fg-tertiary);
-  text-transform: lowercase;
-  background: none;
-  border: none;
-  padding: var(--space-1) var(--space-1);
-  min-height: 32px;
-  cursor: pointer;
-  transition: color 120ms var(--ease-rack);
-}
-
-.nav-lens__trigger:hover {
-  color: var(--fg-secondary);
-}
-
-.nav-lens__caret {
-  font-size: 8px;
-  transition: transform 150ms var(--ease-rack);
-  opacity: 0.5;
-}
-
-.nav-lens__caret--open {
-  transform: rotate(180deg);
-}
-
-.nav-lens__panel {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  z-index: 50;
-  background-color: var(--bg-elevated);
-  border: 1px solid var(--border-subtle);
-  box-shadow: var(--shadow-e2);
-  padding: var(--space-1);
-  min-width: 120px;
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-  animation: fadeIn 120ms var(--ease-cinematic);
-}
-
-.nav-lens__opt {
-  display: block;
-  width: 100%;
-  text-align: left;
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  font-weight: 400;
-  letter-spacing: 0.03em;
-  text-transform: lowercase;
-  color: var(--fg-secondary);
-  background: none;
-  border: none;
-  padding: var(--space-1) var(--space-3);
-  cursor: pointer;
-  transition: background-color 80ms var(--ease-cinematic);
-}
-
-.nav-lens__opt:hover { background-color: var(--bg-secondary); }
-.nav-lens__opt--active {
-  color: var(--fg-primary);
-  text-decoration: underline;
-  text-decoration-style: dotted;
-  text-underline-offset: 3px;
-}
-
-/* ── Lean selector — instrument dials ── */
-.nav-lens__group {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-}
-
-.nav-lens__lean {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  font-weight: 400;
-  letter-spacing: 0.04em;
-  text-transform: lowercase;
-  color: var(--fg-tertiary);
-  background: none;
-  border: none;
-  padding: var(--space-1) var(--space-2);
-  min-height: 32px;
-  cursor: pointer;
-  transition: color 120ms var(--ease-rack);
-}
-
-/* .nav-lens__lean:hover removed — minimal value, cursor: pointer is enough */
-
-.nav-lens__lean:active {
-  transform: scale(0.96);
-  transition: transform 80ms var(--ease-cinematic);
-}
-
-.nav-lens__lean--active {
-  color: var(--fg-primary);
-  text-decoration: underline;
-  text-decoration-style: dotted;
-  text-underline-offset: 3px;
-  text-decoration-color: var(--lean-dot-color, var(--fg-tertiary));
-}
-
-.nav-lens__dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  flex-shrink: 0;
-  opacity: 0.7;
-  transition: opacity 120ms var(--ease-rack), transform 200ms var(--ease-cinematic);
-}
-
-.nav-lens__lean--active .nav-lens__dot {
-  animation: leanDotPulse 350ms var(--spring-snappy) both;
-}
-
-.nav-lens__lean--left   { --lean-dot-color: var(--bias-left); }
-.nav-lens__lean--center,
-.nav-lens__lean--balanced { --lean-dot-color: var(--bias-center); }
-.nav-lens__lean--right  { --lean-dot-color: var(--bias-right); }
-
-.nav-lens__lean--left .nav-lens__dot { background-color: var(--bias-left); }
-.nav-lens__lean--center .nav-lens__dot,
-.nav-lens__lean--balanced .nav-lens__dot { background-color: var(--bias-center); }
-.nav-lens__lean--right .nav-lens__dot { background-color: var(--bias-right); }
-
-/* ── Active lean badge ── */
-.nav-lens__badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  font-weight: 400;
-  letter-spacing: 0.04em;
-  text-transform: lowercase;
-  color: var(--fg-tertiary);
-  padding: 1px 5px 1px 7px;
-  border: 1px dotted var(--border-subtle);
-}
-
-.nav-lens__badge-x {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 14px;
-  height: 14px;
-  color: var(--fg-muted);
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: var(--text-xs);
-  border-radius: 50%;
-  transition: color 80ms var(--ease-cinematic), background-color 80ms var(--ease-cinematic);
-}
-
-.nav-lens__badge-x:hover {
-  color: var(--fg-primary);
-  background-color: var(--bg-secondary);
-}
+/* Row 2 / nav-lens block deleted 2026-05-15 — filter UI removed in redesign.
+   The masthead is single-row chrome only (Logo + dateline + spinoffs + pages
+   + search button + theme toggle). Filtering responsibility moved to the
+   server-side ranker. */
 
 /* ── Mobile edition tabs — horizontal scroll strip below logo ── */
 .nav-mob-editions {
@@ -2715,13 +2379,6 @@
     height: 2px;
     background: var(--accent-warm, var(--cin-amber));
     border-radius: 1px;
-  }
-}
-
-/* ── Mobile: lens hidden (MobileBottomNav handles filters) ── */
-@media (max-width: 767px) {
-  .nav-lens {
-    display: none;
   }
 }
 
@@ -6885,54 +6542,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
    LEGACY: Feature 4 (CSS): FilterBar — Lean Active Badge + Lean Bar Pulse
    ========================================================================== */
 
-/* ---- Active filter badge pill ---- */
-/* Shown when activeLean !== "All". Persistent reminder + dismiss button. */
-.lean-active-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-1) var(--space-3);
-  background-color: var(--bg-secondary);
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius-md);
-  align-self: flex-start;
-  animation: fadeIn var(--dur-fast) var(--ease-cinematic) both;
-}
-
-.lean-active-badge__text {
-  font-size: var(--text-xs);
-  color: var(--fg-secondary);
-  font-weight: 500;
-  font-feature-settings: "tnum" 1;
-  white-space: nowrap;
-}
-
-.lean-active-badge__dismiss {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16px;
-  height: 16px;
-  min-width: 32px;
-  min-height: 32px;
-  margin: -4px -8px -4px 0;
-  font-size: var(--text-xs);
-  color: var(--fg-muted);
-  background: none;
-  border: none;
-  cursor: pointer;
-  border-radius: var(--radius-sm);
-  transition: color var(--dur-fast) var(--ease-cinematic);
-}
-
-.lean-active-badge__dismiss:hover {
-  color: var(--fg-secondary);
-}
-
-.lean-active-badge__dismiss:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: 2px;
-}
+/* .lean-active-badge block deleted 2026-05-15 — filter UI removed in redesign. */
 
 /* ---- Lean bar first-load pulse (Feature 5b) ---- */
 /* One-time amber glow on the lean bar. Applied via JS, removed after 3s. */
@@ -7334,337 +6944,10 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 }
 
 
-/* ===================================================================
-   MobileBottomNav — Bracket-notation filter bar (mobile only)
-
-   Mirrors desktop nav-lens design language exactly:
-   IBM Plex Mono, lowercase, colored dots, bracket notation,
-   dotted underline active state.
-
-   [ ·left  ·center  ·right ]   [ topics ▾ ]
-   ▶ ━━━━━━━━ onair ━━━━━━━━
-
-   Hidden on desktop via display: none.
-   =================================================================== */
-
-.mob-nav {
-  display: none;
-}
-
-@media (max-width: 767px) {
-  .mob-nav {
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: var(--z-nav);
-  }
-
-  /* ── Filter panel — opens beneath the trigger ── */
-  .mob-nav__panel {
-    background: var(--bg-primary);
-    border-top: 1px solid var(--border-subtle);
-    padding: var(--space-3) var(--space-4);
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-    box-shadow: 0 -8px 24px color-mix(in srgb, var(--cinematic-shadow-tint) 10%, transparent);
-    z-index: var(--z-dropdown);
-  }
-
-  .mob-nav__panel-section {
-    display: flex;
-    align-items: baseline;
-    gap: var(--space-3);
-  }
-
-  .mob-nav__panel-label {
-    font-family: var(--font-data);
-    font-size: var(--text-xxs);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--fg-muted);
-    flex-shrink: 0;
-    min-width: 44px;
-  }
-
-  .mob-nav__panel-row {
-    display: flex;
-    align-items: center;
-    gap: var(--space-1);
-    flex: 1;
-    min-width: 0;
-  }
-
-  .mob-nav__panel-row--wrap {
-    flex-wrap: wrap;
-  }
-
-  .mob-nav__topic-opt {
-    font-family: var(--font-data);
-    font-size: var(--text-xs);
-    font-weight: 400;
-    letter-spacing: 0.04em;
-    color: var(--fg-tertiary);
-    background: none;
-    border: none;
-    padding: var(--space-2) var(--space-3);
-    min-height: 44px;
-    cursor: pointer;
-    transition: color 120ms var(--ease-rack);
-  }
-
-  .mob-nav__topic-opt:active {
-    color: var(--fg-primary);
-  }
-
-  .mob-nav__topic-opt--active {
-    color: var(--fg-primary);
-    text-decoration: underline;
-    text-decoration-style: dotted;
-    text-underline-offset: 3px;
-  }
-
-  /* ── OnAir mini-progress — persistent strip above filter bar ── */
-  .mob-nav__onair {
-    display: flex;
-    align-items: center;
-    gap: var(--space-2);
-    width: 100%;
-    padding: var(--space-2) var(--space-4);
-    background: none;
-    border: none;
-    border-bottom: var(--rule-thin);
-    cursor: pointer;
-    min-height: 44px;
-  }
-
-  .mob-nav__onair-label {
-    font-family: var(--font-data);
-    font-size: var(--text-xxs);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--fg-tertiary);
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-
-  .mob-nav__onair--playing .mob-nav__onair-label {
-    color: var(--accent-warm, var(--cin-amber));
-  }
-
-  .mob-nav__onair-bar {
-    flex: 1;
-    height: 2px;
-    background: var(--border-subtle);
-    border-radius: 1px;
-    overflow: hidden;
-  }
-
-  .mob-nav__onair-fill {
-    height: 100%;
-    background: var(--accent-warm, var(--cin-amber));
-    border-radius: 1px;
-    transition: width 300ms linear;
-  }
-
-  /* ── Filter bar — bracket notation matching desktop nav-lens ── */
-  .mob-nav__bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--bg-primary);
-    border-top: var(--rule-thin);
-    padding: 0 var(--space-3);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
-    box-shadow: 0 -2px 8px color-mix(in srgb, var(--cinematic-shadow-tint) 8%, transparent);
-    min-height: 44px;
-  }
-
-  /* Lean selector group: [ ·left ·center ·right ] */
-  .mob-nav__lens {
-    display: flex;
-    align-items: center;
-    gap: var(--space-1);
-  }
-
-  .mob-nav__bracket {
-    font-family: var(--font-data);
-    font-size: var(--text-xs);
-    color: var(--fg-muted);
-    user-select: none;
-    opacity: 0.5;
-  }
-
-  .mob-nav__lean {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-    font-family: var(--font-data);
-    font-size: var(--text-xs);
-    font-weight: 400;
-    letter-spacing: 0.04em;
-    text-transform: lowercase;
-    color: var(--fg-tertiary);
-    background: none;
-    border: none;
-    padding: var(--space-2) var(--space-2);
-    min-height: 44px;
-    min-width: 44px;  /* WCAG 2.5.5 — pills are narrow text ("left"/"right") so width was <44 */
-    cursor: pointer;
-    transition: color 120ms var(--ease-rack);
-  }
-
-  .mob-nav__lean:active {
-    color: var(--fg-secondary);
-  }
-
-  .mob-nav__lean--active {
-    color: var(--fg-primary);
-    text-decoration: underline;
-    text-decoration-style: dotted;
-    text-decoration-color: var(--lean-dot-color, var(--fg-tertiary));
-    text-underline-offset: 3px;
-  }
-
-  /* Colored dots — identical to desktop nav-lens__dot */
-  .mob-nav__dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    opacity: 0.7;
-    transition: opacity 120ms var(--ease-rack);
-  }
-
-  .mob-nav__lean--active .mob-nav__dot {
-    animation: leanDotPulse 350ms var(--spring-snappy) both;
-  }
-
-  /* "Tap to clear" affordance — only visible while the chip is active.
-     Without it, re-tap toggling to "All" was undiscoverable. */
-  .mob-nav__clear-glyph {
-    margin-left: 4px;
-    font-size: var(--text-xs);
-    color: var(--fg-tertiary);
-    line-height: 1;
-    opacity: 0.7;
-  }
-  .mob-nav__lean--active:hover .mob-nav__clear-glyph {
-    opacity: 1;
-    color: var(--fg-primary);
-  }
-
-  .mob-nav__lean--left   { --lean-dot-color: var(--bias-left); }
-  .mob-nav__lean--center,
-  .mob-nav__lean--balanced { --lean-dot-color: var(--bias-center); }
-  .mob-nav__lean--right  { --lean-dot-color: var(--bias-right); }
-
-  .mob-nav__lean--left .mob-nav__dot { background-color: var(--bias-left); }
-  .mob-nav__lean--center .mob-nav__dot,
-  .mob-nav__lean--balanced .mob-nav__dot { background-color: var(--bias-center); }
-  .mob-nav__lean--right .mob-nav__dot { background-color: var(--bias-right); }
-
-  /* Unified filter trigger: [ filters ▾ ] (also shows active values + colored dot) */
-  .mob-nav__trigger {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-family: var(--font-data);
-    font-size: var(--text-xs);
-    font-weight: 400;
-    letter-spacing: 0.04em;
-    text-transform: lowercase;
-    color: var(--fg-tertiary);
-    background: none;
-    border: none;
-    padding: var(--space-2) 0;
-    min-height: 44px;
-    min-width: 44px;
-    cursor: pointer;
-    transition: color 120ms var(--ease-rack);
-  }
-
-  .mob-nav__trigger:active {
-    color: var(--fg-secondary);
-  }
-
-  .mob-nav__trigger--active {
-    color: var(--fg-primary);
-  }
-
-  .mob-nav__trigger-label {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 60vw;
-  }
-
-  .mob-nav__trigger-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    opacity: 0.8;
-  }
-
-  .mob-nav__trigger-dot--left     { background-color: var(--bias-left); }
-  .mob-nav__trigger-dot--balanced,
-  .mob-nav__trigger-dot--center   { background-color: var(--bias-center); }
-  .mob-nav__trigger-dot--right    { background-color: var(--bias-right); }
-
-  .mob-nav__caret {
-    font-size: 8px;
-    margin-left: 2px;
-    transition: transform 200ms var(--ease-rack);
-  }
-
-  .mob-nav__caret--open {
-    transform: rotate(180deg);
-  }
-
-  /* ── Inline variant — used in feed content flow, NOT fixed-bottom ── */
-  .mob-nav--inline {
-    position: sticky;
-    top: var(--nav-height);
-    z-index: var(--z-sticky);
-    background-color: var(--bg-primary);
-  }
-
-  .mob-nav--inline .mob-nav__bar {
-    box-shadow: none;
-    border-top: none;
-    border-bottom: var(--rule-thin);
-    padding-bottom: var(--space-1);
-  }
-
-  .mob-nav--inline .mob-nav__panel {
-    /* Opens downward when bar is sticky at top — not upward into the navbar */
-    position: absolute;
-    top: 100%;
-    bottom: auto;
-    left: 0;
-    right: 0;
-    z-index: var(--z-dropdown);
-    border-top: none;
-    border-bottom: var(--rule-thin);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  }
-
-  @keyframes mob-nav-up {
-    from {
-      opacity: 0;
-      transform: translateY(8px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-}
+/* MobileBottomNav block deleted 2026-05-15 — filter UI removed in redesign.
+   Server-side ranker is authoritative on topic diversity; client-side
+   filters (lean chips + topics) were eliminated. The mobile feed scrolls
+   continuously: hero → cards → World divider → world overflow. */
 
 /* ══════════════════════════════════════════════
    CINEMATIC LAYER — Post-processing & Camera
@@ -8362,19 +7645,95 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   }
 }
 
+/* Touch-device tap-target promotion block deleted 2026-05-15 — the
+   .nav-lens__trigger / .nav-lens__lean selectors it targeted were removed
+   with the Row 2 lens. .nav-search-btn carries its own 44px hitbox. */
+
 /* ==========================================================================
-   Touch-device tap-target promotion (WCAG 2.5.5)
-   Applied at the bottom to win cascade order over earlier base rules that
-   set min-height: 32px on these surfaces. Scoped to coarse pointers so the
-   desktop hover-density layout is unaffected.
+   WorldDivider — section break between US-primary feed and World overflow.
+   The divider IS the signal: Playfair "WORLD" in the center, hairline
+   either side, italic caption. No globe glyph, no badge, no decoration.
+   Used inline on the homepage and standalone on /world.
    ========================================================================== */
-@media (hover: none) and (pointer: coarse) {
-  .nav-lens__trigger,
-  .nav-lens__lean,
-  .nav-lens__lean--left,
-  .nav-lens__lean--balanced,
-  .nav-lens__lean--right {
-    min-height: 44px;
-    min-width: 44px;
+
+.world-divider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin: 64px 0 32px;
+}
+
+.world-divider__rule {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  width: min(640px, 100%);
+}
+
+.world-divider__rule::before,
+.world-divider__rule::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border-subtle, currentColor);
+  opacity: 0.4;
+}
+
+.world-divider__type {
+  font-family: var(--font-editorial), "Playfair Display", serif;
+  font-size: clamp(20px, 2vw, 24px);
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin: 0;
+  color: var(--fg-primary);
+  white-space: nowrap;
+}
+
+.world-divider__caption {
+  font-family: var(--font-structural), "Inter", sans-serif;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--fg-tertiary);
+  opacity: 0.7;
+  text-align: center;
+  margin: 0;
+  max-width: 60ch;
+}
+
+/* Standalone /world variant — give a little more vertical breathing room
+   since the divider is the whole page header (no main feed above it). */
+.world-section--standalone .world-divider {
+  margin-top: clamp(2rem, 6vw, 5rem);
+}
+
+/* Inline overflow grid wrapper — same .feed-grid layout as the main feed,
+   just scoped under .world-section so we can tweak gaps if needed without
+   touching the main grid rules. */
+.world-section__grid {
+  /* All wire variant cards — uses the existing .feed-grid grid template
+     from layout.css + responsive.css, plus the wire-only headline scale
+     from layout-zones.css. No additional rules needed at desktop scale. */
+}
+
+/* Mobile responsive */
+@media (max-width: 767px) {
+  .world-divider {
+    margin: 48px 0 24px;
+    gap: 10px;
+  }
+  .world-divider__rule {
+    width: 100%;
+    gap: 14px;
+  }
+  .world-divider__type {
+    font-size: 18px;
+    letter-spacing: 0.16em;
+  }
+  .world-divider__caption {
+    font-size: 12px;
+    padding: 0 16px;
   }
 }

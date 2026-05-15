@@ -1,59 +1,33 @@
-"use server";
+// IG admin actions — converted from "use server" to client-callable
+// stubs because the production CF Pages build requires `output: "export"`,
+// which forbids server actions entirely. This file used to call the
+// service-role Supabase client server-side; that path now lives only in
+// `npm run dev` mode and the stubs below short-circuit production builds.
+//
+// To restore real mutations: re-add "use server" + the original imports +
+// move the `/admin/ig` route off the static-export build (separate
+// dev-only Next.js config, or pages-router shim, or a Worker function).
+//
+// Tracked under the holistic-redesign-2026-05-15 work — IG team should
+// fold a proper fix into the IG-automation-stack branch.
 
-import {
-  approveIgPost as _approve,
-  rejectIgPost as _reject,
-  updateIgCaption as _updateCaption,
-} from "../../lib/supabase-server";
+const _stub = (label: string) => ({
+  ok: false,
+  error: `${label} disabled in static build (admin requires npm run dev)`,
+});
 
-/* Server Actions called from the admin page. Each verifies basic-auth
-   before mutating. The page itself is auth-gated, but actions can be
-   invoked independently so we re-check the same envelope. */
-
-import { headers } from "next/headers";
-
-async function _verifyAuth(): Promise<boolean> {
-  const expectedUser = process.env.IG_ADMIN_USER;
-  const expectedPass = process.env.IG_ADMIN_PASSWORD;
-  if (!expectedUser || !expectedPass) return false;
-  const h = await headers();
-  const auth = h.get("authorization");
-  if (!auth?.startsWith("Basic ")) return false;
-  let decoded: string;
-  try {
-    decoded = atob(auth.slice(6));
-  } catch {
-    return false;
-  }
-  const [u, p] = decoded.split(":", 2);
-  return u === expectedUser && p === expectedPass;
+export async function approveAction(_id: string): Promise<{ ok: boolean; error?: string }> {
+  return _stub("approveAction");
 }
 
-export async function approveAction(id: string): Promise<{ ok: boolean; error?: string }> {
-  if (!(await _verifyAuth())) return { ok: false, error: "unauthorized" };
-  const ok = await _approve(id);
-  return { ok, error: ok ? undefined : "update failed" };
-}
-
-export async function rejectAction(id: string): Promise<{ ok: boolean; error?: string }> {
-  if (!(await _verifyAuth())) return { ok: false, error: "unauthorized" };
-  const ok = await _reject(id);
-  return { ok, error: ok ? undefined : "update failed" };
+export async function rejectAction(_id: string): Promise<{ ok: boolean; error?: string }> {
+  return _stub("rejectAction");
 }
 
 export async function saveCaptionAction(
-  id: string,
-  caption: string,
-  hashtags: string[],
+  _id: string,
+  _caption: string,
+  _hashtags: string[],
 ): Promise<{ ok: boolean; error?: string }> {
-  if (!(await _verifyAuth())) return { ok: false, error: "unauthorized" };
-  const trimmed = (caption ?? "").trim();
-  if (!trimmed) return { ok: false, error: "empty caption" };
-  if (/[—–]/.test(trimmed)) return { ok: false, error: "remove em/en dashes before saving" };
-  const cleanedTags = hashtags.map((h) => h.replace(/^#/, "").trim()).filter(Boolean);
-  if (cleanedTags.length < 6 || cleanedTags.length > 8) {
-    return { ok: false, error: "need 6 to 8 hashtags" };
-  }
-  const ok = await _updateCaption(id, trimmed, cleanedTags);
-  return { ok, error: ok ? undefined : "update failed" };
+  return _stub("saveCaptionAction");
 }

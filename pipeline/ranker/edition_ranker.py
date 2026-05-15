@@ -57,6 +57,12 @@ EVENT_DECAY = 0.80
 MAX_SAME_CAT_DEFAULT = 2
 MAX_SAME_CAT_SOFT = 1
 TOP_N = 10
+# Server-side feed category cap (positions TOP_N..FEED_CAP_END).
+# Was previously enforced client-side in HomeContent.tsx as belt-and-suspenders;
+# moved server-side so it's the single source of truth now that filters are
+# deleted (reader can no longer over-ride the diversity guarantee).
+FEED_CATEGORY_CAP = 12
+FEED_CAP_END = 50
 
 # Low-affinity demotion threshold
 LOW_AFFINITY_THRESHOLD = 0.10
@@ -395,7 +401,28 @@ def apply_edition_ranking(
             while len(promoted) < TOP_N and deferred:
                 promoted.append(deferred.pop(0))
 
-            final_order = promoted + deferred
+            # Extend topic diversity past TOP_N: cap each category at
+            # FEED_CATEGORY_CAP across positions TOP_N..FEED_CAP_END.
+            # Without this, deleting the client-side category filter would
+            # let a single category dominate ranks 10..50 if the upstream
+            # importance ranker happened to score them tightly.
+            mid_promoted: list[dict] = []
+            mid_deferred: list[dict] = []
+            mid_cat_counts: dict[str, int] = dict(cat_counts)  # carry top-10 counts
+            slots_remaining = max(0, FEED_CAP_END - TOP_N)
+
+            for c in deferred:
+                cat = c.get("category", "general")
+                if (
+                    len(mid_promoted) < slots_remaining
+                    and mid_cat_counts.get(cat, 0) < FEED_CATEGORY_CAP
+                ):
+                    mid_promoted.append(c)
+                    mid_cat_counts[cat] = mid_cat_counts.get(cat, 0) + 1
+                else:
+                    mid_deferred.append(c)
+
+            final_order = promoted + mid_promoted + mid_deferred
             # 0.1pt spacing to prevent ties
             if final_order and len(promoted) >= 2:
                 for j in range(1, len(promoted)):

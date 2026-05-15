@@ -1208,29 +1208,38 @@ def main():
 
     print(f"  Articles stored: {len(stored_articles)}/{len(new_article_rows)} new ({len(existing_urls)} existing skipped)")
 
-    # Step 4b: Content-based deduplication
-    # Removes near-duplicate articles (syndicated/wire content with different URLs)
-    # before analysis to avoid wasting compute on duplicate text.
-    print(f"\n[4b] Content-based deduplication on {len(stored_articles)} articles...")
+    # Step 4b: Wire-aware fingerprinting (Phase 0)
+    # Tags syndicated wire copies in place so downstream clustering can
+    # collapse them to a single "voice" for source_count math. Articles
+    # are NOT removed; the list returned is the same length as the input.
+    print(f"\n[4b] Wire-aware fingerprinting on {len(stored_articles)} articles...")
     try:
         from clustering.deduplicator import deduplicate_articles
 
-        # Enrich articles with tier info so deduplicator can prefer higher-tier sources
+        # Enrich articles with tier info so the wire-origin picker can
+        # prefer canonical wire sources (tier == "wire") when assigning
+        # the wire_origin_publisher_id.
         for art in stored_articles:
             src_slug = art.get("source_slug", "") or art.get("source_id", "")
             src_info = source_map.get(src_slug, {})
             art["tier"] = src_info.get("tier", "")
             art["source_name"] = src_info.get("name", "")
 
-        articles_before_dedup = len(stored_articles)
-        stored_articles = deduplicate_articles(stored_articles)
-        articles_after_dedup = len(stored_articles)
-        print(f"  Deduplication: {articles_before_dedup} -> {articles_after_dedup} "
-              f"({articles_before_dedup - articles_after_dedup} duplicates removed)")
+        deduplicate_articles(stored_articles)
+        wire_copies = sum(1 for a in stored_articles if a.get("is_wire_copy"))
+        wire_groups = len({
+            a.get("wire_group_id") for a in stored_articles
+            if a.get("wire_group_id")
+        })
+        print(
+            f"  Wire fingerprint: {wire_copies} wire copies tagged across "
+            f"{wire_groups} syndicate group(s); "
+            f"{len(stored_articles)} articles preserved."
+        )
     except ImportError:
-        print("  [skip] Deduplicator not available (sklearn not installed)")
+        print("  [skip] Wire-fingerprint module unavailable (sklearn not installed)")
     except Exception as e:
-        print(f"  [warn] Deduplication failed, continuing with all articles: {e}")
+        print(f"  [warn] Wire-fingerprint pass failed, continuing untagged: {e}")
 
     # Step 5: Run bias analysis on each article
     articles_analyzed = 0
@@ -2288,22 +2297,26 @@ def main():
             cluster_section = max(section_counts, key=section_counts.get) if section_counts else "world"
 
             # Multi-section: list ALL editions that have articles in this cluster.
-            # This allows cross-listing — e.g., a global Iran war cluster with
-            # 3 India-source articles appears in both "world" and "south-asia" feeds.
+            # The cross-listing semantics under the US-primary + World-as-section
+            # model (2026-05-15): the `sections` array is informational only.
+            # Frontend slicing uses `is_international` + headline_rank, NOT
+            # sections membership, to populate /world. A cluster appears in
+            # exactly one place (homepage if rank<=50, /world if rank>50 and
+            # is_international); the v6.2 force-add of "world" tag is removed
+            # because cross-listing is no longer needed.
             all_sections = sorted(section_counts.keys()) if section_counts else ["world"]
 
-            # v6.2 (2026-05-15): force-add `world` tag when the cluster crosses
-            # an importance threshold OR spans 2+ regional editions. Built-from-
-            # union logic above silently filtered the highest-rank-world clusters
-            # out of the world feed (Warsh Fed-chair, US wholesale prices,
-            # Murdaugh, Medicare freeze) whenever all source articles came from
-            # regional-edition sources. With this rule, the world feed surfaces
-            # any cluster the importance ranker has identified as globally
-            # significant, regardless of where the contributing sources live.
-            _rank_world = cluster.get("rank_world", cluster.get("headline_rank", 0.0))
-            if "world" not in all_sections and (len(all_sections) >= 2 or _rank_world >= 50.0):
-                all_sections.append("world")
-                all_sections.sort()
+            # is_international flag drives the /world overflow filter.
+            # True iff: cluster's primary section is NOT 'us' AND
+            #           non-US-source-count >= US-source-count.
+            # Both gates required so a US-domestic story with one Reuters
+            # byline isn't mis-classified as international.
+            if cluster_section == "us":
+                _is_international = False
+            else:
+                _us_count = section_counts.get("us", 0)
+                _non_us_count = sum(section_counts.values()) - _us_count
+                _is_international = _non_us_count >= _us_count
 
             # Use pre-generated summary from clustering or Gemini step
             cluster_summary = cluster.get("summary", "") or ""
@@ -2330,6 +2343,7 @@ def main():
                 "rank_europe": round(cluster.get("rank_europe", cluster.get("headline_rank", 0.0)), 2),
                 # Edition name "south-asia" (hyphen) → DB column "rank_south_asia" (underscore)
                 "rank_south_asia": round(cluster.get("rank_south-asia", cluster.get("headline_rank", 0.0)), 2),
+                "is_international": _is_international,
             }
 
             # v5.0: editorial intelligence columns (nullable — NULL = no Gemini)

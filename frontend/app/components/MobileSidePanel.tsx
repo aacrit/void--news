@@ -140,6 +140,10 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
             <span className="msp__link-cmd">void --history</span>
             <span className="msp__link-desc">The archive</span>
           </Link>
+          <Link href="/world" className="msp__link" data-msp-cascade="2" onClick={handleLinkClick}>
+            <span className="msp__link-cmd">void --world</span>
+            <span className="msp__link-desc">International overflow</span>
+          </Link>
           <Link href="/weekly" className="msp__link" data-msp-cascade="2" onClick={handleLinkClick}>
             <span className="msp__link-cmd">void --weekly</span>
             <span className="msp__link-desc">Weekly digest</span>

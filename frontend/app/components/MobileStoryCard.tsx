@@ -156,7 +156,8 @@ export default function MobileStoryCard({
                 </>
               )}
               {/* Category removed: cut from compact cards per Kill List.
-                 Category filter already in MobileBottomNav. Pure metadata noise here. */}
+                 Pure metadata noise on a compact card. (Filter UI was also
+                 removed in 2026-05-15 redesign — no client-side filtering.) */}
             </div>
           )}
           {story.summary?.trim() && <p className="msc__summary msc__summary--compact">{story.summary}</p>}
