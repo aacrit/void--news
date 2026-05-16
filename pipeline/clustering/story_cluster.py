@@ -1,7 +1,7 @@
 """
 Story clustering engine for the void --news pipeline.
 
-Five rule-based phases (no tier-conditional caps, no special-case
+Seven rule-based phases (no tier-conditional caps, no special-case
 blacklists outside the explicit editorial pair-list):
 
     Phase 1:   TF-IDF + agglomerative clustering on (title + first 500 words)
@@ -13,6 +13,15 @@ blacklists outside the explicit editorial pair-list):
                co-occurrence pairs (Trump+Xi, Starmer+Streeting, etc).
                Pure surface-form match; bypasses IDF dilution that
                occurs when both names appear in many unrelated stories.
+    Phase 2.55:Synonym-pair merge — geographic + name aliases (DRC↔Congo,
+               UK↔Britain, etc) that the canonical pair list cannot
+               enumerate. Requires both surface-pair + stemmed-title-
+               Jaccard floor as safety against same-name-different-place
+               collisions (DR Congo vs Republic of Congo).
+    Phase 2.6: Anchor-entity merge — high-IDF rare proper nouns
+               (Siliņa, Ouagadougou) that two clusters share are strong
+               evidence of same-story even when IDF sum doesn't cross.
+               Requires stemmed-title-Jaccard floor against false merges.
     Phase 3:   Stem-aware title Jaccard merge — Porter-stemmed title-word
                sets that cross TITLE_JACCARD_THRESHOLD merge.
     Phase 4:   Garbage-title force-split — when the title-generator
@@ -385,6 +394,85 @@ _SUMMIT_PAIRS = frozenset({
     frozenset({"zelensky", "putin"}),
 })
 
+
+# ---------------------------------------------------------------------------
+# Phase 2.55: Synonym-pair merge (DRC↔Congo, UK↔Britain, etc.)
+# ---------------------------------------------------------------------------
+# Geographic + name aliases that must collapse to one cluster when both
+# surface forms reference the same place / person. Each tuple is a
+# symmetric pair: if cluster A's surface set contains entity X AND cluster
+# B's set contains entity Y AND (X, Y) in SYNONYM_PAIRS, the clusters
+# reference the same underlying entity.
+#
+# Production failures motivating this list (audit 2026-05-15):
+#   - "Africa CDC Confirms Ebola Outbreak in DRC" (9 src) NOT merged with
+#     "Africa CDC Confirms Ebola Outbreak in Congo" (7 src) — same event.
+#
+# A safety guard (stemmed-title Jaccard ≥ SYNONYM_TITLE_JACCARD_FLOOR)
+# is applied alongside the surface match so that two unrelated stories
+# both mentioning {DRC, Congo} with no other story-similarity (e.g.,
+# "DRC mining sector" vs "Congo Brazzaville politics") stay split.
+SYNONYM_PAIRS = frozenset({
+    # Country / region aliases
+    ("drc", "congo"), ("drc", "democratic republic of congo"),
+    ("myanmar", "burma"),
+    ("uk", "britain"), ("uk", "united kingdom"),
+    ("us", "america"), ("us", "united states"),
+    ("uae", "emirates"),
+    ("north korea", "dprk"),
+    ("south korea", "rok"),
+    # Common name variants
+    ("biden", "joe biden"),
+    ("trump", "donald trump"),
+    ("putin", "vladimir putin"),
+    ("xi", "xi jinping"),
+})
+SYNONYM_TITLE_JACCARD_FLOOR = 0.20
+
+
+# ---------------------------------------------------------------------------
+# Phase 2.6: Anchor-entity merge (high-IDF rare proper nouns)
+# ---------------------------------------------------------------------------
+# A high-IDF rare proper noun (e.g., "Evika Siliņa", "Ouagadougou", a
+# specific MP name) shared across two clusters within the merge time
+# window is strong enough merge evidence on its own — even when the
+# canonical/synonym pair lists don't enumerate the entity and the IDF
+# sum doesn't cross ENTITY_MERGE_IDF_THRESHOLD.
+#
+# Production failure motivating this pass (audit 2026-05-15):
+#   - Latvian PM resignation (30+ LSM articles) fragmented into 5
+#     single-source clusters, none cracking top 50. All clusters share
+#     the rare entity "Siliņa" — this pass collapses them.
+#
+# Tunables:
+#   ANCHOR_IDF_FRACTION_OF_MAX  — entity must score ≥ this fraction of
+#                                 the corpus max IDF to qualify as anchor.
+#                                 0.60 picks up entities that appear in 5-10
+#                                 clusters out of 200 in production (Silina
+#                                 case) while still excluding common bridges.
+#   ANCHOR_MAX_DOC_FREQ_FLOOR   — absolute df cap (≤3 clusters always
+#                                 qualifies regardless of corpus size).
+#   ANCHOR_MAX_DOC_FREQ_PCT     — relative df cap (≤ this fraction of
+#                                 corpus). The OR of the two caps is the
+#                                 effective gate, so small corpora use the
+#                                 absolute floor and large corpora use the
+#                                 percentage gate.
+#   ANCHOR_MIN_SHARED           — minimum number of shared anchor entities
+#                                 required to fire the merge. ≥2 blocks
+#                                 single-bridge merges (e.g. Warsh+Trump-Xi
+#                                 sharing only "Bessent") while still
+#                                 surfacing Silina (which shares both
+#                                 "silina" and "latvian"/"riga"/"saeima").
+#   ANCHOR_TITLE_JACCARD_FLOOR  — stemmed-title Jaccard floor on the
+#                                 candidate pair (safety vs. accidental
+#                                 entity collisions like "Boryspil"-the-
+#                                 airport vs "Boryspil"-the-football-match)
+ANCHOR_IDF_FRACTION_OF_MAX = 0.60
+ANCHOR_MAX_DOC_FREQ_FLOOR = 3
+ANCHOR_MAX_DOC_FREQ_PCT = 0.05  # ≤ 5% of corpus
+ANCHOR_MIN_SHARED = 2            # require ≥2 shared anchors to merge
+ANCHOR_TITLE_JACCARD_FLOOR = 0.15
+
 # Garbage cluster-title signatures (Fix 2 — over-merge force-split).
 # When the title-generator emits one of these, the cluster has aggregated
 # unrelated sub-events sharing a single GPE or NORP, and we must split it.
@@ -408,7 +496,56 @@ _GARBAGE_TITLE_PATTERNS = [
     # "News Cluster Spans" / "Coverage Spans Multiple"
     re.compile(r"\b(?:News\s+)?Cluster\s+Spans\b", re.IGNORECASE),
     re.compile(r"\bCoverage\s+Spans\s+(?:Multiple|Many|Several)\b", re.IGNORECASE),
+    # New 2026-05-15 production-audit signatures:
+    # "Three Unrelated Crime Stories Span UK, Canada, Cambodia"
+    # — explicit self-admission of garbage.
+    re.compile(r"\b(?:Two|Three|Four|Five|\d+)\s+Unrelated\b", re.IGNORECASE),
+    # Title joined by semicolon — two clauses describing different events.
+    # Safety: split is force-discarded if stricter re-cluster collapses to 1
+    # (already handled by _force_split_cluster's final guard).
+    re.compile(r"^[^;]{20,}\s*;\s*[A-Z][^;]{20,}$"),
+    # "Stories Span" / "Reports Span" / "Events Span" — variant of "Spans X"
+    re.compile(
+        r"\b(?:Stories|Reports|Events|News|Cases|Incidents)\s+Span\b",
+        re.IGNORECASE,
+    ),
+    # Mega-cluster signatures from "AI Deployment Expands Across Industries
+    # Amid Legal and Reliability Debates" (267-source bucket, 2026-05-15
+    # CEO-spotted at homepage #2).
+    # "Expands Across Industries" / "Spreads Across Continents"
+    re.compile(
+        r"\b(?:Expands|Spreads)\s+Across\s+"
+        r"(?:Industries|Sectors|Continents|Regions|Borders)\b",
+        re.IGNORECASE,
+    ),
+    # "Amid Legal and Reliability Debates" / "Amid Political and Economic Concerns"
+    re.compile(
+        r"\bAmid\s+(?:Legal|Regulatory|Political|Economic)\s+and\s+\w+\s+"
+        r"(?:Debates|Concerns|Tensions|Questions)\b",
+        re.IGNORECASE,
+    ),
 ]
+
+
+# ---------------------------------------------------------------------------
+# Phase 5: Mega-cluster soft cap (force-split + display cap)
+# ---------------------------------------------------------------------------
+# A cluster with source_count above MEGA_CLUSTER_THRESHOLD is suspect
+# regardless of title. At production N=200+, "AI" / "Trump" / "Russia"
+# have near-zero IDF and Phase 2 can bundle every tangentially-related
+# story into one mega-bucket (267-source "AI Deployment Expands Across
+# Industries..." 2026-05-15).
+#
+# Two-step response:
+#   1. Force-split at AGGRESSIVE thresholds (1.8x baseline TFIDF, 2.0x
+#      baseline IDF) — strictly more cautious than Phase 4's force-split.
+#   2. If the stricter pass still produces 1 sub-cluster (genuine
+#      breaking news mega-event), KEEP it but cap the displayed
+#      source_count at MEGA_CLUSTER_THRESHOLD and stamp
+#      `mega_cluster_capped=True` so the ranker can deprioritize.
+MEGA_CLUSTER_THRESHOLD = 75
+MEGA_SPLIT_TFIDF = 0.32   # 1.78x baseline (STORY_TFIDF_THRESHOLD = 0.18)
+MEGA_SPLIT_IDF = 4.0      # 2.0x baseline (ENTITY_MERGE_IDF_THRESHOLD = 2.0)
 
 
 _ENTITY_QUALIFIER_PREFIXES = (
@@ -651,12 +788,17 @@ def _cluster_entity_surface_set(cluster: dict) -> set[str]:
     Splits on whitespace, hyphens, slashes, parentheses, and most punctuation
     so that headlines like "Trump-Xi summit" yield {trump, xi}, not
     {trump-xi}. Two-letter surnames (Xi) are intentionally allowed.
+
+    Body cap: 3000 chars per article (loosened from 1500 on 2026-05-15 after
+    Trump-Xi-Iran summit fragmented because "Xi" appeared after the lead in
+    "Trump Warns Iran of Annihilation as Xi Raises Taiwan in Beijing Talks").
+    Cheap regex tokenisation; no NER cost on the wider window.
     """
     surfaces: set[str] = set()
     for art in (cluster.get("articles") or [])[:10]:
         title = art.get("title", "") or ""
         summary = art.get("summary", "") or ""
-        body = (art.get("full_text", "") or "")[:1500]
+        body = (art.get("full_text", "") or "")[:3000]
         text = f"{title} {summary} {body}".lower()
         # Split on any non-letter character (covers hyphens, slashes, dots,
         # quotes, punctuation, whitespace). Keep apostrophes inside words
@@ -665,6 +807,38 @@ def _cluster_entity_surface_set(cluster: dict) -> set[str]:
             if 2 <= len(tok) <= 20:
                 surfaces.add(tok)
     return surfaces
+
+
+def _cluster_surface_phrases(cluster: dict) -> set[str]:
+    """Multi-word surface phrases from title + summary + body (first 3000 chars).
+
+    Companion to `_cluster_entity_surface_set` for the synonym-pair pass:
+    pair entries like ("democratic republic of congo", "drc") need a way
+    to detect the full multi-word form. We scan up to 4-word lowercase
+    phrases (joined on whitespace, punctuation-stripped) so that
+    "Democratic Republic of Congo" yields the phrase
+    "democratic republic of congo".
+    """
+    phrases: set[str] = set()
+    for art in (cluster.get("articles") or [])[:10]:
+        title = art.get("title", "") or ""
+        summary = art.get("summary", "") or ""
+        body = (art.get("full_text", "") or "")[:3000]
+        text = f"{title} {summary} {body}".lower()
+        # Strip non-letter/space, then split into tokens
+        cleaned = re.sub(r"[^a-z\s]+", " ", text)
+        toks = cleaned.split()
+        n = len(toks)
+        # Single token + 2-4-word windows
+        for i, t in enumerate(toks):
+            if 2 <= len(t) <= 20:
+                phrases.add(t)
+            for k in (2, 3, 4):
+                if i + k <= n:
+                    phr = " ".join(toks[i:i + k])
+                    if 5 <= len(phr) <= 40:
+                        phrases.add(phr)
+    return phrases
 
 
 def merge_canonical_pairs(
@@ -727,6 +901,302 @@ def merge_canonical_pairs(
 
 
 # ---------------------------------------------------------------------------
+# Phase 2.55: Synonym-pair merge (geographic + name aliases)
+# ---------------------------------------------------------------------------
+
+def _stemmed_title_jaccard(title_a: str, title_b: str) -> float:
+    """Stemmed-title Jaccard. Used by Phase 2.55 + 2.6 as a safety guard.
+
+    Reuses the Phase-3 _title_word_stems() so the same stopword + Porter-stem
+    pipeline is applied. Returns 0.0 on either-side-empty.
+    """
+    a = _title_word_stems(title_a)
+    b = _title_word_stems(title_b)
+    if not a or not b:
+        return 0.0
+    inter = len(a & b)
+    uni = len(a | b)
+    return (inter / uni) if uni > 0 else 0.0
+
+
+def merge_synonym_pairs(
+    clusters: list[dict],
+    pair_set: frozenset = SYNONYM_PAIRS,
+    title_jaccard_floor: float = SYNONYM_TITLE_JACCARD_FLOOR,
+    max_age_spread_hours: float = MAX_AGE_SPREAD_HOURS,
+) -> list[dict]:
+    """Phase 2.55: synonym-pair (alias) merge.
+
+    Differs from Phase 2.5 (canonical pairs):
+      - Phase 2.5 wants BOTH names from a pair in BOTH clusters
+        (e.g., {trump, xi} ⊆ A and {trump, xi} ⊆ B).
+      - Phase 2.55 wants ONE alias from a pair in cluster A and the OTHER
+        alias in cluster B (e.g., "drc" ∈ A, "congo" ∈ B). The two
+        clusters reference the SAME entity via different surface forms.
+
+    Safety guard: stemmed-title Jaccard ≥ title_jaccard_floor (default
+    0.20) ensures the two clusters genuinely share story content. Without
+    this guard, "DRC mining sector unrest" + "Congo Brazzaville politics"
+    would merge purely on the alias hit. With it, the pair must also pass
+    a content-similarity floor.
+
+    Pair entries can be single-word ("drc"/"congo") or multi-word
+    ("democratic republic of congo"). Multi-word matching uses the
+    `_cluster_surface_phrases` helper (2-4-word windows).
+    """
+    if len(clusters) <= 1 or not pair_set:
+        return clusters
+
+    n = len(clusters)
+    # Collect both single tokens AND multi-word phrases per cluster
+    surface_sets = [_cluster_entity_surface_set(c) for c in clusters]
+    # Lazy multi-word phrase set: only build when at least one pair entry
+    # contains a space (cost-saver for runs where all aliases are single-word)
+    needs_phrases = any(" " in a or " " in b for a, b in pair_set)
+    phrase_sets: list[set[str]] = (
+        [_cluster_surface_phrases(c) for c in clusters]
+        if needs_phrases else [set()] * n
+    )
+    timestamps = [_parse_first_pub(c) for c in clusters]
+    titles = [c.get("title", "") or "" for c in clusters]
+
+    parent = list(range(n))
+
+    def find(x: int) -> int:
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    def union(a: int, b: int) -> None:
+        ra, rb = find(a), find(b)
+        if ra != rb:
+            parent[ra] = rb
+
+    def cluster_has(idx: int, term: str) -> bool:
+        """True if cluster idx contains term in surface set or phrase set."""
+        if " " in term:
+            return term in phrase_sets[idx]
+        return term in surface_sets[idx]
+
+    for i in range(n):
+        if not surface_sets[i] and not phrase_sets[i]:
+            continue
+        for j in range(i + 1, n):
+            if find(i) == find(j):
+                continue
+            if not surface_sets[j] and not phrase_sets[j]:
+                continue
+
+            # Time gate
+            ti, tj = timestamps[i], timestamps[j]
+            if ti is not None and tj is not None:
+                spread = abs((ti - tj).total_seconds()) / 3600.0
+                if spread > max_age_spread_hours:
+                    continue
+
+            # Look for ANY (a, b) pair where a ∈ A and b ∈ B (or vice versa)
+            alias_hit = False
+            for a, b in pair_set:
+                if (cluster_has(i, a) and cluster_has(j, b)) or \
+                   (cluster_has(i, b) and cluster_has(j, a)):
+                    alias_hit = True
+                    break
+            if not alias_hit:
+                continue
+
+            # Safety: title-stem Jaccard floor
+            if _stemmed_title_jaccard(titles[i], titles[j]) < title_jaccard_floor:
+                continue
+
+            union(i, j)
+
+    return _rebuild_merged(clusters, parent, find)
+
+
+# ---------------------------------------------------------------------------
+# Phase 2.6: Anchor-entity merge (high-IDF rare proper nouns)
+# ---------------------------------------------------------------------------
+
+def _expand_entities_with_tokens(entity_counts: dict[str, int]) -> dict[str, int]:
+    """Expand a {entity: count} dict with single-token sub-entities.
+
+    spaCy's en_core_web_sm is small and produces inconsistent NER chunks
+    across re-writes of the same story. "Evika Silina" might emerge as
+    one entity in cluster A and "silina cabinet wraps final session"
+    in cluster B (with the chunk boundary mis-set). Both should
+    contribute "silina" as a normalized rare-anchor candidate.
+
+    For each multi-word entity, we also record each constituent token
+    that's alphabetic, ≥4 chars, and not in the entity stop set as a
+    standalone candidate. The token's count carries through.
+
+    NB: We deliberately do NOT explode every entity (too noisy). This
+    function is called only by the anchor-entity pass to widen the
+    overlap surface. The base IDF math in Phase 2 is unchanged.
+    """
+    expanded = dict(entity_counts)
+    for ent, cnt in list(entity_counts.items()):
+        if " " not in ent:
+            continue
+        for tok in ent.split():
+            tok = tok.strip(" '\"‘’“”.,;:!?-")
+            if not tok.isalpha() or len(tok) < 4:
+                continue
+            if tok in _ENTITY_STOP_TOKENS:
+                continue
+            if tok in _LOW_SPECIFICITY_ENTITIES:
+                continue
+            # Add but don't overwrite if the token already had a higher count
+            expanded[tok] = max(expanded.get(tok, 0), cnt)
+    return expanded
+
+
+def merge_anchor_entities(
+    clusters: list[dict],
+    idf_fraction_of_max: float = ANCHOR_IDF_FRACTION_OF_MAX,
+    max_doc_freq_floor: int = ANCHOR_MAX_DOC_FREQ_FLOOR,
+    max_doc_freq_pct: float = ANCHOR_MAX_DOC_FREQ_PCT,
+    min_shared: int = ANCHOR_MIN_SHARED,
+    title_jaccard_floor: float = ANCHOR_TITLE_JACCARD_FLOOR,
+    max_age_spread_hours: float = MAX_AGE_SPREAD_HOURS,
+) -> list[dict]:
+    """Phase 2.6: shared rare-anchor-entity merge.
+
+    Algorithm:
+      1. Re-extract per-cluster entity sets (Phase 2's data was discarded
+         on rebuild). Expand each entity with its constituent tokens to
+         work around spaCy's inconsistent NER-chunk boundaries (so that
+         "Evika Silina" in cluster A and "silina cabinet" in cluster B
+         both register "silina" as a shared anchor candidate).
+      2. Compute global IDF over the post-Phase-2.55 cluster population.
+      3. Identify "anchor" entities: those whose IDF ≥ idf_fraction_of_max
+         × global_max_idf AND that appear in ≤ max_doc_freq clusters total.
+         These are rare, distinguishing proper nouns (e.g., specific
+         minister names, small-town place names, less-covered organisations).
+      4. For each cluster pair within the time window:
+         - If they share at least one anchor entity AND
+         - stemmed-title Jaccard ≥ title_jaccard_floor: union.
+
+    The Jaccard floor is the safety: even if two unrelated stories happen
+    to share a rare entity (e.g., the same surname referring to two
+    different MPs in different countries), the title overlap requirement
+    prevents a spurious merge.
+
+    This is the lever that surfaces under-covered international stories
+    (Latvian PM Siliņa, Burkinabé politician, regional disasters) where
+    each cluster only has 1-3 sources but they all anchor on the same
+    rare proper noun.
+    """
+    if len(clusters) <= 1:
+        return clusters
+
+    n = len(clusters)
+    # Re-extract entities AFTER Phase 2 + 2.5 + 2.55 merges. The IDF map
+    # over the smaller post-merge cluster set is more discriminating than
+    # the pre-Phase-2 IDF map (df is now over coalesced stories).
+    cluster_entities_raw: list[dict[str, int]] = [
+        _extract_cluster_entities(c.get("articles", [])) for c in clusters
+    ]
+    if not any(cluster_entities_raw):
+        return clusters
+
+    # Expand with single-token sub-entities to work around inconsistent
+    # NER chunk boundaries (Silina vs Evika Silina vs Silina Cabinet).
+    cluster_entities = [_expand_entities_with_tokens(e) for e in cluster_entities_raw]
+
+    idf = _compute_global_idf(cluster_entities)
+    if not idf:
+        return clusters
+
+    # Doc-frequency for the rare-entity gate
+    df: Counter = Counter()
+    for ents in cluster_entities:
+        for e in ents:
+            df[e] += 1
+
+    max_idf = max(idf.values())
+    idf_floor = idf_fraction_of_max * max_idf
+    # Adaptive doc-freq cap: take the LARGER of the absolute floor (≤3
+    # clusters always qualifies — picks up rare entities in small corpora)
+    # and the percentage cap (≤5% of corpus — picks up entities in 5-10
+    # clusters out of 200 in production).
+    max_doc_freq = max(max_doc_freq_floor, int(n * max_doc_freq_pct))
+
+    # Anchor set: rare AND high-IDF, NOT in the low-specificity blacklist
+    # (which contains entities like "trump" / "iran" / "white house" that
+    # appear in many unrelated stories — never anchors no matter the IDF).
+    anchor_entities = {
+        e for e, score in idf.items()
+        if score >= idf_floor
+        and df[e] <= max_doc_freq
+        and e not in _LOW_SPECIFICITY_ENTITIES
+        and e not in _ENTITY_STOP_TOKENS
+        and len(e) >= 4   # avoid 2-3-letter spaCy noise like "ai"/"un"
+    }
+
+    if not anchor_entities:
+        return clusters
+
+    timestamps = [_parse_first_pub(c) for c in clusters]
+    titles = [c.get("title", "") or "" for c in clusters]
+
+    # Pre-compute per-cluster anchor-entity intersection (cheap: just
+    # restrict the entity dict to anchor_entities)
+    cluster_anchors: list[set[str]] = [
+        set(ents.keys()) & anchor_entities for ents in cluster_entities
+    ]
+
+    parent = list(range(n))
+
+    def find(x: int) -> int:
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    def union(a: int, b: int) -> None:
+        ra, rb = find(a), find(b)
+        if ra != rb:
+            parent[ra] = rb
+
+    for i in range(n):
+        if not cluster_anchors[i]:
+            continue
+        for j in range(i + 1, n):
+            if find(i) == find(j):
+                continue
+            if not cluster_anchors[j]:
+                continue
+
+            # Time gate
+            ti, tj = timestamps[i], timestamps[j]
+            if ti is not None and tj is not None:
+                spread = abs((ti - tj).total_seconds()) / 3600.0
+                if spread > max_age_spread_hours:
+                    continue
+
+            # Must share ≥ min_shared anchor entities (default 2). The
+            # 1-anchor case caused over-merge in 2026-05-15 audit:
+            # Warsh + Trump-Xi share only "Bessent" but their stories
+            # are unrelated. Two-anchor requirement excludes single-bridge
+            # cases while still firing on truly fragmented stories where
+            # the anchor entity appears across multiple distinct
+            # surface forms (Silina + Latvian + Riga + Saeima).
+            shared = cluster_anchors[i] & cluster_anchors[j]
+            if len(shared) < min_shared:
+                continue
+
+            # Safety: title-stem Jaccard floor
+            if _stemmed_title_jaccard(titles[i], titles[j]) < title_jaccard_floor:
+                continue
+
+            union(i, j)
+
+    return _rebuild_merged(clusters, parent, find)
+
+
+# ---------------------------------------------------------------------------
 # Phase 4: "Spans X" garbage-title force-split
 # ---------------------------------------------------------------------------
 
@@ -735,6 +1205,26 @@ def _title_is_garbage(title: str) -> bool:
     if not title:
         return False
     return any(p.search(title) for p in _GARBAGE_TITLE_PATTERNS)
+
+
+def _cluster_carries_garbage(cluster: dict) -> bool:
+    """Return True if the cluster's chosen title OR any source-article title
+    matches a garbage signature.
+
+    Phase 2.6 anchor-entity merge can pull in a "Three Unrelated Stories
+    Span..." aggregator article whose title is the smoking gun, but the
+    title-generator picks the longest non-garbage real title and the
+    aggregator's signature gets buried. This helper widens the check to
+    all article titles so the aggregator-driven over-merge still trips
+    Phase 4's force-split.
+    """
+    if _title_is_garbage(cluster.get("title", "") or ""):
+        return True
+    for art in (cluster.get("articles") or [])[:30]:
+        t = (art.get("title", "") or "").strip()
+        if t and _title_is_garbage(t):
+            return True
+    return False
 
 
 def _force_split_cluster(
@@ -748,19 +1238,38 @@ def _force_split_cluster(
     the garbage-title force-split pass when the title-generator emits a
     "Spans X, Y, and Z" signature that proves the cluster has aggregated
     unrelated sub-events under a single shared entity (usually a GPE).
+
+    Pre-step: aggregator/garbage-titled articles are EXCLUDED from the
+    re-cluster. They contain content from multiple unrelated stories
+    (high TF-IDF similarity to all of them), so leaving them in re-merges
+    everything back together. Each garbage article emerges as its own
+    singleton sub-cluster.
     """
     articles = cluster.get("articles") or []
     if len(articles) < 2:
         return [cluster]
 
-    # Mini Phase 1: stricter TF-IDF cosine
-    documents = [_build_document(a) for a in articles]
+    # Separate garbage-titled articles from real ones
+    garbage_articles: list[dict] = []
+    real_articles: list[dict] = []
+    for a in articles:
+        if _title_is_garbage(a.get("title", "") or ""):
+            garbage_articles.append(a)
+        else:
+            real_articles.append(a)
+
+    # If after removing garbage we have <2 real articles, keep cluster as-is
+    if len(real_articles) < 2:
+        return [cluster]
+
+    # Mini Phase 1: stricter TF-IDF cosine on the REAL articles only
+    documents = [_build_document(a) for a in real_articles]
     valid_indices = [i for i, d in enumerate(documents) if d.strip()]
     if len(valid_indices) < 2:
         return [cluster]
 
     valid_docs = [documents[i] for i in valid_indices]
-    valid_articles = [articles[i] for i in valid_indices]
+    valid_articles = [real_articles[i] for i in valid_indices]
 
     try:
         vectorizer = TfidfVectorizer(
@@ -822,9 +1331,26 @@ def _force_split_cluster(
         )
 
     # Final guard: if the stricter pass collapsed everything back to 1
-    # (real same-story content), keep the original anchor cluster unchanged.
-    if len(sub_clusters) == 1:
+    # (real same-story content) AND we had no garbage articles to peel
+    # off, keep the original anchor cluster unchanged.
+    if len(sub_clusters) == 1 and not garbage_articles:
         return [cluster]
+
+    # Re-attach the garbage articles as singleton sub-clusters so they
+    # don't disappear entirely. Each becomes its own one-article cluster
+    # (they're aggregator/rollup articles by definition; keeping them
+    # separate prevents them from re-poisoning a real story cluster).
+    for ga in garbage_articles:
+        sub_clusters.append({
+            "title": (ga.get("title", "") or "Aggregator Story")[:200],
+            "summary": (ga.get("summary", "") or "")[:1000],
+            "article_ids": [ga.get("id", "")],
+            "source_ids": [ga.get("source_id", "")] if ga.get("source_id") else [],
+            "source_count": 1 if ga.get("source_id") else 0,
+            "section": _determine_section([ga], ga.get("title", ""), ga.get("summary", "")),
+            "first_published": ga.get("published_at", "") or "",
+            "articles": [ga],
+        })
 
     return sub_clusters
 
@@ -837,17 +1363,94 @@ def split_garbage_clusters(clusters: list[dict]) -> list[dict]:
     mash-up because no single headline covers the cluster's articles —
     proof of over-merge. Re-cluster those articles at a stricter
     threshold and replace the original with the resulting sub-clusters.
+
+    Checks ALL article titles in the cluster, not just the chosen
+    representative title. Phase 2.6 anchor-entity merge can pull in an
+    aggregator article whose "Three Unrelated Stories Span..." title is
+    the smoking gun, but the title-generator hides it by picking the
+    longest non-garbage real title. The widened scan catches both cases.
     """
     if not clusters:
         return clusters
 
     out: list[dict] = []
     for c in clusters:
-        title = c.get("title", "") or ""
-        if _title_is_garbage(title):
+        if _cluster_carries_garbage(c):
             sub = _force_split_cluster(c)
             out.extend(sub)
         else:
+            out.append(c)
+    return out
+
+
+# ---------------------------------------------------------------------------
+# Phase 5: Mega-cluster soft cap
+# ---------------------------------------------------------------------------
+
+def split_mega_clusters(
+    clusters: list[dict],
+    threshold: int = MEGA_CLUSTER_THRESHOLD,
+    split_tfidf: float = MEGA_SPLIT_TFIDF,
+    split_idf: float = MEGA_SPLIT_IDF,
+    verbose: bool = True,
+) -> list[dict]:
+    """Phase 5: detect mega-clusters and force-split or display-cap.
+
+    A cluster with source_count >= threshold is suspect (267-source "AI
+    Deployment" mega-cluster motivated this pass). Two responses:
+
+      1. Re-cluster at AGGRESSIVE thresholds (split_tfidf, split_idf
+         strictly tighter than the baseline). If we get >=2 sub-clusters,
+         use them — the over-merge has been broken apart.
+      2. If still 1 sub-cluster, this is likely a genuine breaking-news
+         mega-event (e.g., a presidential inauguration, a 9/11-scale
+         disaster). Keep the cluster intact but CAP `source_count` at
+         `threshold` for display purposes and stamp
+         `mega_cluster_capped=True` so the ranker can sense the cap.
+
+    The cap prevents the eye-rolling "267 sources" badge while preserving
+    the original article membership — downstream consumers can still
+    reach the full article list via `articles` if needed. The original
+    pre-cap source count is preserved as `_mega_cluster_original_count`.
+
+    Logs each mega-cluster decision when verbose=True.
+    """
+    if not clusters:
+        return clusters
+
+    out: list[dict] = []
+    for c in clusters:
+        sc = c.get("source_count", 0)
+        if sc < threshold:
+            out.append(c)
+            continue
+
+        # Step 1: try to force-split at aggressive thresholds
+        sub = _force_split_cluster(
+            c,
+            tighter_threshold=split_tfidf,
+            tighter_idf_threshold=split_idf,
+        )
+
+        if len(sub) >= 2:
+            if verbose:
+                print(
+                    f"  [Phase5/mega-split] '{c.get('title', '')[:60]!r}' "
+                    f"(src={sc}) split into {len(sub)} sub-clusters"
+                )
+            out.extend(sub)
+        else:
+            # Step 2: keep but cap. Likely a genuine mega-event.
+            original_count = sc
+            c["_mega_cluster_original_count"] = original_count
+            c["source_count"] = min(sc, threshold)
+            c["mega_cluster_capped"] = True
+            if verbose:
+                print(
+                    f"  [Phase5/mega-cap] '{c.get('title', '')[:60]!r}' "
+                    f"(src={original_count}) kept whole, source_count "
+                    f"capped at {threshold}"
+                )
             out.append(c)
     return out
 
@@ -1084,18 +1687,31 @@ def cluster_stories(
     """Group articles into story clusters.
 
     Pipeline:
-        Phase 1   — TF-IDF + agglomerative clustering at
-                    `similarity_threshold` (default STORY_TFIDF_THRESHOLD).
-        Phase 2   — IDF-weighted entity-overlap merge
-                    (merge_related_clusters).
-        Phase 2.5 — Canonical-pair merge (merge_canonical_pairs):
-                    editorial override for known co-occurrence pairs
-                    that IDF systematically under-weights.
-        Phase 3   — Stem-aware title-Jaccard merge
-                    (merge_duplicate_title_clusters).
-        Phase 4   — Garbage-title force-split (split_garbage_clusters):
-                    re-clusters at stricter gates when the title-generator
-                    produces a "Spans X, Y, and Z" mash-up signature.
+        Phase 1    — TF-IDF + agglomerative clustering at
+                     `similarity_threshold` (default STORY_TFIDF_THRESHOLD).
+        Phase 2    — IDF-weighted entity-overlap merge
+                     (merge_related_clusters).
+        Phase 2.5  — Canonical-pair merge (merge_canonical_pairs):
+                     editorial override for known co-occurrence pairs
+                     that IDF systematically under-weights.
+        Phase 2.55 — Synonym-pair (alias) merge (merge_synonym_pairs):
+                     DRC↔Congo, UK↔Britain, Trump↔Donald Trump. Same
+                     entity referenced by different surface forms.
+                     Stemmed-title Jaccard ≥ 0.20 safety guard.
+        Phase 2.6  — Anchor-entity merge (merge_anchor_entities):
+                     high-IDF rare proper nouns (Siliņa, Ouagadougou)
+                     shared across two clusters with title Jaccard ≥ 0.15
+                     are strong same-story evidence. Surfaces under-
+                     covered international stories the IDF sum misses.
+        Phase 3    — Stem-aware title-Jaccard merge
+                     (merge_duplicate_title_clusters).
+        Phase 4    — Garbage-title force-split (split_garbage_clusters):
+                     re-clusters at stricter gates when the title-generator
+                     produces a "Spans X, Y, and Z" mash-up signature.
+        Phase 5    — Mega-cluster soft cap (split_mega_clusters):
+                     clusters with source_count >= 75 are force-split at
+                     aggressive thresholds; if still uncuttable, kept
+                     intact but source_count capped at 75 for display.
 
     Wire-amplification: if articles arrive carrying `is_wire_copy` /
     `wire_origin_publisher_id` (set by deduplicator.deduplicate_articles),
@@ -1222,12 +1838,18 @@ def cluster_stories(
             "articles": carts,
         })
 
-    # Phases 2 + 2.5 + 3 + 4
+    # Phases 2 + 2.5 + 2.55 + 2.6 + 3 + 4
     if run_merge_pass and len(clusters) > 1:
         clusters = merge_related_clusters(clusters)
     # Phase 2.5 — editorial canonical-pair merge (Trump-Xi, Starmer-Streeting)
     if run_merge_pass and len(clusters) > 1:
         clusters = merge_canonical_pairs(clusters)
+    # Phase 2.55 — synonym/alias merge (DRC↔Congo, UK↔Britain, ...)
+    if run_merge_pass and len(clusters) > 1:
+        clusters = merge_synonym_pairs(clusters)
+    # Phase 2.6 — anchor-entity merge (high-IDF rare proper nouns)
+    if run_merge_pass and len(clusters) > 1:
+        clusters = merge_anchor_entities(clusters)
     if run_merge_pass and len(clusters) > 1:
         clusters = merge_duplicate_title_clusters(clusters)
     # Phase 4 — garbage-title force-split (over-merge detector)
@@ -1241,7 +1863,21 @@ def cluster_stories(
 
     # Final pass: recompute source_count using the wire-aware voice
     # collapse, and stamp wire_amplification on every cluster.
+    # NB: must run BEFORE Phase 5 because Phase 5's mega-threshold check
+    # uses source_count after wire-collapse (one publisher = one voice).
     for c in clusters:
         _apply_wire_aware_source_count(c)
+
+    # Phase 5 — mega-cluster soft cap (267-source "AI Deployment" mega
+    # bucket motivated this pass). Force-split if possible; otherwise
+    # keep whole but cap source_count at MEGA_CLUSTER_THRESHOLD.
+    if run_merge_pass and clusters:
+        clusters = split_mega_clusters(clusters)
+        # If Phase 5 produced new sub-clusters from a force-split, recompute
+        # the wire-aware source_count for them. Capped clusters already
+        # have their source_count rewritten by Phase 5 itself.
+        for c in clusters:
+            if not c.get("mega_cluster_capped"):
+                _apply_wire_aware_source_count(c)
 
     return clusters
