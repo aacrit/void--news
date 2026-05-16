@@ -14,6 +14,11 @@ interface MobileFeedProps {
   editionMeta: EditionMeta;
   /** CSS class for edition switch cross-fade animation */
   transitionClass?: string;
+  /** "main" = full layout (Brief Pill + twin heroes + compact cards).
+   *  "overflow" = compact-only (no Brief Pill duplicate, no hero treatment).
+   *  Used by the inline World section so it doesn't re-render the daily-brief
+   *  pill or treat the first two World stories as "Top Story" leads. */
+  variant?: "main" | "overflow";
 }
 
 /* ---------------------------------------------------------------------------
@@ -23,6 +28,10 @@ interface MobileFeedProps {
    chevron) → Hero (top story, text-only) → compact cards. The brief sits
    above the hero so TL;DR, Opinion, and Top Story all land above the fold
    on every mobile resolution.
+
+   variant="overflow" (CEO 2026-05-15): when MobileFeed is reused below the
+   World divider, skip Brief Pill + skip hero treatment. World stories are
+   compact cards only — they're overflow, not leads.
    --------------------------------------------------------------------------- */
 
 export default function MobileFeed({
@@ -33,20 +42,23 @@ export default function MobileFeed({
   kbdFocusIndex,
   editionMeta,
   transitionClass,
+  variant = "main",
 }: MobileFeedProps) {
-  // v3 (2026-05-14): twin top stories on mobile. Ranks 0 and 1 are both
-  // rendered as hero cards, stacked vertically. Both wear the "Top Story"
-  // badge — they're co-equal leads. Compact feed cards (ranks 2+) follow.
-  const twinLeads = stories.slice(0, 2);
-  const feedCards = stories.slice(2);
+  const isOverflow = variant === "overflow";
+  // v3 (2026-05-14): twin top stories on mobile (main only). Overflow renders
+  // ALL stories as compact cards — no leads, no hero scale.
+  const twinLeads = isOverflow ? [] : stories.slice(0, 2);
+  const feedCards = isOverflow ? stories : stories.slice(2);
 
   return (
-    <div className={["mf", transitionClass].filter(Boolean).join(" ")} key={filterKey}>
-      {/* Brief on top — TL;DR + Opinion collapsed pill. Tap chevron to expand. */}
-      <MobileBriefPill state={dailyBriefState} className="anim-cold-open-pill" />
+    <div className={["mf", isOverflow ? "mf--overflow" : null, transitionClass].filter(Boolean).join(" ")} key={filterKey}>
+      {/* Brief Pill — main feed only. Skipped on overflow so we don't duplicate
+          the daily-brief teaser inside the inline World section. */}
+      {!isOverflow && (
+        <MobileBriefPill state={dailyBriefState} className="anim-cold-open-pill" />
+      )}
 
-      {/* Twin top stories — both labeled Top Story, stacked vertically.
-          A hairline divider between them in mf__twin-divider styles. */}
+      {/* Twin top stories — main feed only. Overflow has no leads. */}
       {twinLeads.length > 0 && (
         <div className="mf__twin-leads">
           {twinLeads.map((story, idx) => (
