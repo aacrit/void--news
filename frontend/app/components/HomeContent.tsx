@@ -928,6 +928,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                         filterKey={`world-${filterKey}`}
                         kbdFocusIndex={kbdFocusIndex - mainStories.length}
                         editionMeta={editionMeta}
+                        variant="overflow"
                       />
                     </section>
                   )}

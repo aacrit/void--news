@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import "../styles/spectrum.css";
 import {
   getLeanColor,
@@ -135,7 +136,14 @@ interface TooltipData {
 }
 
 function SpectrumTooltip({ data }: { data: TooltipData }) {
-  return (
+  // Portal to document.body so the tooltip's `position: fixed` is viewport-
+  // anchored. Without this, the tooltip inherits the deep-dive-panel's
+  // transform-induced containing block (panel uses `translate(-50%, -50%)`)
+  // — `position: fixed` then resolves against the panel, not the viewport,
+  // and `data.x/y` (viewport coords from getBoundingClientRect on hover)
+  // land in the wrong place. Per CEO 2026-05-15: tooltip "in random place."
+  if (typeof document === "undefined") return null;
+  return createPortal(
     <div
       className="dd-sv__tooltip"
       style={{ left: `${data.x}px`, top: `${data.y}px` }}
@@ -170,7 +178,8 @@ function SpectrumTooltip({ data }: { data: TooltipData }) {
           &#x2197; Open article
         </a>
       </p>
-    </div>
+    </div>,
+    document.body,
   );
 }
 
