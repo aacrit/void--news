@@ -1432,7 +1432,17 @@ def split_mega_clusters(
             tighter_idf_threshold=split_idf,
         )
 
-        if len(sub) >= 2:
+        # Sanity guard: if the force-split shatters the cluster into
+        # singletons or near-singletons (more sub-clusters than ~half the
+        # original source count), the aggressive thresholds destroyed
+        # genuine signal rather than recovering it. Today's regression:
+        # a 166-source soccer mega-cluster split into 222 sub-clusters,
+        # each 0-1 articles → every story dropped below the frontend's
+        # ≥3-source floor and the WHOLE feed collapsed to 4 cards. Fall
+        # through to the cap path in that case (treat as genuine mega-
+        # event rather than over-merge).
+        max_sane_sub = max(2, sc // 2)
+        if len(sub) >= 2 and len(sub) <= max_sane_sub:
             if verbose:
                 print(
                     f"  [Phase5/mega-split] '{c.get('title', '')[:60]!r}' "
@@ -1440,16 +1450,24 @@ def split_mega_clusters(
                 )
             out.extend(sub)
         else:
-            # Step 2: keep but cap. Likely a genuine mega-event.
+            # Step 2: keep but cap. Either truly a single mega-event, OR
+            # the strict re-cluster shattered into too many sub-clusters
+            # (sanity guard above) — both paths converge on "keep whole +
+            # display-cap source_count" rather than ship broken splits.
             original_count = sc
             c["_mega_cluster_original_count"] = original_count
             c["source_count"] = min(sc, threshold)
             c["mega_cluster_capped"] = True
             if verbose:
+                tag = (
+                    "mega-cap-shattered" if len(sub) > max_sane_sub
+                    else "mega-cap"
+                )
                 print(
-                    f"  [Phase5/mega-cap] '{c.get('title', '')[:60]!r}' "
+                    f"  [Phase5/{tag}] '{c.get('title', '')[:60]!r}' "
                     f"(src={original_count}) kept whole, source_count "
-                    f"capped at {threshold}"
+                    f"capped at {threshold} "
+                    f"(strict re-split yielded {len(sub)} sub-clusters)"
                 )
             out.append(c)
     return out
