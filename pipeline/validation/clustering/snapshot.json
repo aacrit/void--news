@@ -116,12 +116,179 @@
           "kind": "overflow-classification"
         }
       ]
+    },
+    {
+      "timestamp": "2026-05-16T04:26:43+00:00",
+      "fixtures": 31,
+      "summary": {
+        "CORRECT": 27,
+        "ACCEPTABLE": 1,
+        "WRONG": 3,
+        "CATASTROPHIC": 0
+      },
+      "per_fixture": [
+        {
+          "id": "italy-spans-4-continents-2026-05",
+          "grade": "CORRECT",
+          "kind": "over-merge"
+        },
+        {
+          "id": "streeting-resigns-2026-05",
+          "grade": "CORRECT",
+          "kind": "fragmentation"
+        },
+        {
+          "id": "warsh-fed-chair-2026-05",
+          "grade": "CORRECT",
+          "kind": "fragmentation"
+        },
+        {
+          "id": "hantavirus-cruise-2026-05",
+          "grade": "WRONG",
+          "kind": "wire-amplification"
+        },
+        {
+          "id": "russia-kyiv-strikes-2026-05",
+          "grade": "CORRECT",
+          "kind": "fragmentation"
+        },
+        {
+          "id": "scotus-mifepristone-2026-05",
+          "grade": "CORRECT",
+          "kind": "missing"
+        },
+        {
+          "id": "ebola-drc-2026-05",
+          "grade": "CORRECT",
+          "kind": "missing"
+        },
+        {
+          "id": "latvian-pm-resigns-2026-05",
+          "grade": "CORRECT",
+          "kind": "missing"
+        },
+        {
+          "id": "trump-xi-iran-summit-2026-05",
+          "grade": "CORRECT",
+          "kind": "mis-tagged"
+        },
+        {
+          "id": "bias-diversity-cohort-2026-05",
+          "grade": "CORRECT",
+          "kind": "dead-signal"
+        },
+        {
+          "id": "g7-summit-good-merge-2026-04",
+          "grade": "CORRECT",
+          "kind": "known-good-merge"
+        },
+        {
+          "id": "india-state-election-good-merge-2026-04",
+          "grade": "CORRECT",
+          "kind": "known-good-merge"
+        },
+        {
+          "id": "typhoon-philippines-good-merge-2026-04",
+          "grade": "CORRECT",
+          "kind": "known-good-merge"
+        },
+        {
+          "id": "apple-q2-earnings-good-merge-2026-04",
+          "grade": "CORRECT",
+          "kind": "known-good-merge"
+        },
+        {
+          "id": "super-bowl-good-merge-2026-02",
+          "grade": "CORRECT",
+          "kind": "known-good-merge"
+        },
+        {
+          "id": "trump-xi-vs-trump-modi-good-split-2026-04",
+          "grade": "CORRECT",
+          "kind": "known-good-split"
+        },
+        {
+          "id": "iran-nuclear-vs-sports-good-split-2026-04",
+          "grade": "CORRECT",
+          "kind": "known-good-split"
+        },
+        {
+          "id": "uk-general-vs-byelection-good-split-2026-04",
+          "grade": "CORRECT",
+          "kind": "known-good-split"
+        },
+        {
+          "id": "brazil-deforestation-vs-football-good-split-2026-04",
+          "grade": "CORRECT",
+          "kind": "known-good-split"
+        },
+        {
+          "id": "california-wildfire-vs-ballot-good-split-2026-04",
+          "grade": "CORRECT",
+          "kind": "known-good-split"
+        },
+        {
+          "id": "overflow-classification-2026-05",
+          "grade": "WRONG",
+          "kind": "overflow-classification"
+        },
+        {
+          "id": "ebola-drc-congo-synonym-merge-2026-05-15",
+          "grade": "CORRECT",
+          "kind": "synonym-fragmentation"
+        },
+        {
+          "id": "trump-xi-loose-window-2026-05-15",
+          "grade": "CORRECT",
+          "kind": "loose-cooccurrence"
+        },
+        {
+          "id": "latvia-silina-anchor-entity-2026-05-15",
+          "grade": "CORRECT",
+          "kind": "anchor-entity-fragmentation"
+        },
+        {
+          "id": "norovirus-bokoharam-semicolon-2026-05-15",
+          "grade": "ACCEPTABLE",
+          "kind": "garbage-aggregation"
+        },
+        {
+          "id": "three-unrelated-stories-span-2026-05-15",
+          "grade": "WRONG",
+          "kind": "garbage-aggregation"
+        },
+        {
+          "id": "ap-syndication-headline-rewrite-2026-05-15",
+          "grade": "CORRECT",
+          "kind": "wire-syndication-fragmentation"
+        },
+        {
+          "id": "uk-britain-synonym-2026-05-15",
+          "grade": "CORRECT",
+          "kind": "synonym-fragmentation"
+        },
+        {
+          "id": "myanmar-burma-synonym-2026-05-15",
+          "grade": "CORRECT",
+          "kind": "synonym-fragmentation"
+        },
+        {
+          "id": "cross-country-rare-name-anchor-2026-05-15",
+          "grade": "CORRECT",
+          "kind": "anchor-entity-fragmentation"
+        },
+        {
+          "id": "republic-of-congo-vs-drc-2026-05-15",
+          "grade": "CORRECT",
+          "kind": "synonym-over-fire"
+        }
+      ]
     }
   ],
   "current_summary": {
-    "CORRECT": 19,
+    "CORRECT": 27,
     "ACCEPTABLE": 1,
-    "WRONG": 1,
+    "WRONG": 3,
     "CATASTROPHIC": 0
   }
 }
