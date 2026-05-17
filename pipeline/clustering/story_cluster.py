@@ -467,11 +467,21 @@ SYNONYM_TITLE_JACCARD_FLOOR = 0.20
 #                                 candidate pair (safety vs. accidental
 #                                 entity collisions like "Boryspil"-the-
 #                                 airport vs "Boryspil"-the-football-match)
-ANCHOR_IDF_FRACTION_OF_MAX = 0.60
+# 2026-05-17 retune for production scale (N≈200 clusters/day). The
+# original constants were validated against the 21-fixture synthetic
+# suite (N≤6 per fixture). At production scale, `df ≤ max(3, 0.05·N)
+# = 10` was too permissive: any entity appearing in 10 of 200 clusters
+# (e.g. "regulation", "policy", "AI deployment") qualified as a rare
+# anchor and bridged unrelated stories via union-find transitive closure.
+# Result: 217-source AI-deployment mega-cluster. New constants tighten:
+#   • require stronger IDF (0.70 of corpus max, was 0.60)
+#   • require rarer entity (≤2.5% of corpus, was 5%)
+#   • require stronger title agreement (Jaccard 0.22, was 0.15)
+ANCHOR_IDF_FRACTION_OF_MAX = 0.70
 ANCHOR_MAX_DOC_FREQ_FLOOR = 3
-ANCHOR_MAX_DOC_FREQ_PCT = 0.05  # ≤ 5% of corpus
+ANCHOR_MAX_DOC_FREQ_PCT = 0.025  # ≤ 2.5% of corpus (5 clusters at N=200)
 ANCHOR_MIN_SHARED = 2            # require ≥2 shared anchors to merge
-ANCHOR_TITLE_JACCARD_FLOOR = 0.15
+ANCHOR_TITLE_JACCARD_FLOOR = 0.22
 
 # Garbage cluster-title signatures (Fix 2 — over-merge force-split).
 # When the title-generator emits one of these, the cluster has aggregated
