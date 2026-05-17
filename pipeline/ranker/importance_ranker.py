@@ -1086,6 +1086,7 @@ def rank_importance(
     category: str | None = None,
     editorial_importance: int | None = None,
     sections: list[str] | None = None,
+    mega_capped: bool = False,
 ) -> dict:
     """
     Score the importance of a story cluster for feed ranking.
@@ -1126,6 +1127,10 @@ def rank_importance(
         sections: Optional list of edition strings this cluster belongs to
             (e.g., ["us"] or ["us", "world"]). Used for US-only divergence
             damper. Defaults to None (no damper applied).
+        mega_capped: When True, clustering's Phase 5 stamped this cluster
+            as a likely over-merge that couldn't be cleanly re-split.
+            Apply a 0.65x multiplier so the cluster competes on actual
+            signal rather than inflated coverage.
 
     Returns:
         Dict with:
@@ -1265,6 +1270,16 @@ def rank_importance(
     if source_count >= 15 and factual > 40:
         conf_mult = max(conf_mult, 0.85)
     headline_rank *= conf_mult
+
+    # v6.2.1: Mega-cluster cap penalty. Clustering's Phase 5 stamps
+    # mega_cluster_capped=True on clusters that hit the 75-source soft cap
+    # and could not be cleanly re-split (likely over-merges, not genuine
+    # mega-events). Without this penalty the cluster still maxes out
+    # coverage + maturity and locks into the homepage top. The 0.65x
+    # multiplier sinks it ~10-20 positions so it competes on actual
+    # signal rather than inflated source count.
+    if mega_capped:
+        headline_rank *= 0.65
 
     # v5.3: Longevity penalty — old stories decay to prevent "consensus noise"
     # from drowning out breaking news. Applied after confidence but before gates.

@@ -1751,6 +1751,7 @@ def main():
                     category=cluster.get("category"),
                     editorial_importance=cluster.get("editorial_importance"),
                     sections=_rank_sections,
+                    mega_capped=bool(cluster.get("mega_cluster_capped", False)),
                 )
                 cluster["importance_score"] = rank_result["importance_score"]
                 cluster["divergence_score"] = rank_result["divergence_score"]
@@ -2344,6 +2345,7 @@ def main():
                 # Edition name "south-asia" (hyphen) → DB column "rank_south_asia" (underscore)
                 "rank_south_asia": round(cluster.get("rank_south-asia", cluster.get("headline_rank", 0.0)), 2),
                 "is_international": _is_international,
+                "mega_cluster_capped": bool(cluster.get("mega_cluster_capped", False)),
             }
 
             # v5.0: editorial intelligence columns (nullable — NULL = no Gemini)

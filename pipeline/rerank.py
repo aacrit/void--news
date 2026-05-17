@@ -83,12 +83,18 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
     try:
         clusters_res = supabase.table("story_clusters").select(
             "id,title,category,section,sections,content_type,headline_rank,source_count,"
-            "editorial_importance,story_type"
+            "editorial_importance,story_type,mega_cluster_capped"
         ).execute()
     except Exception:
-        clusters_res = supabase.table("story_clusters").select(
-            "id,title,category,section,sections,content_type,headline_rank,source_count"
-        ).execute()
+        try:
+            clusters_res = supabase.table("story_clusters").select(
+                "id,title,category,section,sections,content_type,headline_rank,source_count,"
+                "mega_cluster_capped"
+            ).execute()
+        except Exception:
+            clusters_res = supabase.table("story_clusters").select(
+                "id,title,category,section,sections,content_type,headline_rank,source_count"
+            ).execute()
     clusters = clusters_res.data or []
     print(f"  {len(clusters)} clusters found")
 
@@ -205,6 +211,7 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
 
         # Run v5.1 ranker — pass sections for US-only divergence damper
         cluster_sections = cluster.get("sections") or [cluster.get("section", "world")]
+        mega_capped = bool(cluster.get("mega_cluster_capped", False))
         try:
             result = rank_importance(
                 articles, sources, bias_scores,
@@ -212,6 +219,7 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
                 category=category,
                 editorial_importance=editorial_importance,
                 sections=cluster_sections,
+                mega_capped=mega_capped,
             )
         except Exception as e:
             errors += 1
