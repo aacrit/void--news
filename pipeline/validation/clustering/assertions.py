@@ -616,6 +616,62 @@ def should_tag_each(
 
 
 # ---------------------------------------------------------------------------
+# Size-distribution predicates
+# ---------------------------------------------------------------------------
+
+def should_have_capped_source_count(
+    clusters: list[dict],
+    max_allowed: int = 75,
+    **_: Any,
+) -> tuple[str, str]:
+    """No cluster's stored source_count exceeds max_allowed.
+
+    This is the post-mortem guard for the 217-source mega-cluster
+    regression. Phase 5's soft cap is supposed to bring stored
+    source_count down to MEGA_CLUSTER_THRESHOLD (75) when a force-split
+    can't cleanly recover an over-merge. If any cluster's source_count
+    is above max_allowed, the cap was bypassed (rerank overwrite, missing
+    flag, etc.) OR a merge phase pushed past it without Phase 5 catching.
+
+    CORRECT      — all clusters at or below max_allowed
+    ACCEPTABLE   — at most one cluster is over by <=5
+    WRONG        — one cluster over by >5, OR two clusters over
+    CATASTROPHIC — one cluster over by >max_allowed (e.g. 150 when cap=75)
+    """
+    if not clusters:
+        return "CORRECT", "no clusters in output"
+
+    over = [
+        (c.get("title", "")[:60], c.get("source_count", 0))
+        for c in clusters
+        if (c.get("source_count", 0) or 0) > max_allowed
+    ]
+    if not over:
+        return "CORRECT", (
+            f"all {len(clusters)} clusters at or below "
+            f"max_allowed={max_allowed}"
+        )
+
+    worst = max(sc for _, sc in over)
+    gap = worst - max_allowed
+    examples = ", ".join(f"{t!r}={sc}" for t, sc in over[:3])
+
+    if gap > max_allowed:
+        grade = "CATASTROPHIC"
+    elif len(over) == 1 and gap <= 5:
+        grade = "ACCEPTABLE"
+    elif len(over) == 1:
+        grade = "WRONG"
+    else:
+        grade = "WRONG"
+
+    return grade, (
+        f"{len(over)} cluster(s) above max_allowed={max_allowed} "
+        f"(worst={worst}, gap={gap}): {examples}"
+    )
+
+
+# ---------------------------------------------------------------------------
 # Predicate dispatch
 # ---------------------------------------------------------------------------
 
@@ -627,6 +683,7 @@ PREDICATES = {
     "should_tag": should_tag,
     "should_tag_each": should_tag_each,
     "should_have_signal": should_have_signal,
+    "should_have_capped_source_count": should_have_capped_source_count,
 }
 
 
