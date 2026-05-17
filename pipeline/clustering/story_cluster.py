@@ -557,6 +557,33 @@ MEGA_CLUSTER_THRESHOLD = 75
 MEGA_SPLIT_TFIDF = 0.32   # 1.78x baseline (STORY_TFIDF_THRESHOLD = 0.18)
 MEGA_SPLIT_IDF = 4.0      # 2.0x baseline (ENTITY_MERGE_IDF_THRESHOLD = 2.0)
 
+# Hard merge ceiling — refuse any merge that would produce a cluster
+# larger than this. Phase 5 can still cap legitimate breaking-news
+# mega-events that arrive large from Phase 1, but no merge phase
+# should ever ADD to a 100-source cluster. Set above MEGA_CLUSTER_THRESHOLD
+# so we don't fight Phase 5; below the 200+ pathology we're preventing.
+MERGE_HARD_CEILING = 120
+
+
+def _would_exceed_ceiling(a: dict, b: dict) -> bool:
+    """Return True if merging clusters a and b would produce a cluster
+    with combined source_count above MERGE_HARD_CEILING.
+
+    Source_count may be stale during early merge phases (before
+    `_apply_wire_aware_source_count` runs), so we use the larger of
+    the stored count and the unique source_ids in articles as a
+    conservative estimate. This is intentionally pessimistic — we'd
+    rather miss a few legitimate merges than create a mega-cluster.
+    """
+    def _safe_count(c: dict) -> int:
+        stored = int(c.get("source_count", 0) or 0)
+        arts = c.get("articles", []) or []
+        # Cheap upper bound on unique sources without rebuilding the set:
+        # use stored count if available, fall back to article count.
+        return max(stored, len(arts))
+
+    return (_safe_count(a) + _safe_count(b)) > MERGE_HARD_CEILING
+
 
 _ENTITY_QUALIFIER_PREFIXES = (
     "the ", "a ", "an ",
@@ -779,6 +806,11 @@ def merge_related_clusters(
                     should_merge = True
 
             if should_merge:
+                # Hard ceiling: refuse merges that would create mega-clusters.
+                # Walk to the root of each component so the size check sees
+                # the current accumulated size, not just the pair members.
+                if _would_exceed_ceiling(clusters[find(i)], clusters[find(j)]):
+                    continue
                 union(i, j)
 
     return _rebuild_merged(clusters, parent, find)
@@ -904,6 +936,9 @@ def merge_canonical_pairs(
             for pair in pair_set:
                 # pair is a frozenset of two names
                 if pair.issubset(surface_sets[i]) and pair.issubset(surface_sets[j]):
+                    # Hard ceiling — refuse merges that produce mega-clusters
+                    if _would_exceed_ceiling(clusters[find(i)], clusters[find(j)]):
+                        break
                     union(i, j)
                     break
 
@@ -1017,6 +1052,10 @@ def merge_synonym_pairs(
 
             # Safety: title-stem Jaccard floor
             if _stemmed_title_jaccard(titles[i], titles[j]) < title_jaccard_floor:
+                continue
+
+            # Hard ceiling — refuse merges that produce mega-clusters
+            if _would_exceed_ceiling(clusters[find(i)], clusters[find(j)]):
                 continue
 
             union(i, j)
@@ -1199,6 +1238,11 @@ def merge_anchor_entities(
 
             # Safety: title-stem Jaccard floor
             if _stemmed_title_jaccard(titles[i], titles[j]) < title_jaccard_floor:
+                continue
+
+            # Hard ceiling — Phase 2.6 is the most aggressive merger;
+            # it must be the most conservative about creating mega-clusters.
+            if _would_exceed_ceiling(clusters[find(i)], clusters[find(j)]):
                 continue
 
             union(i, j)
@@ -1618,6 +1662,10 @@ def merge_duplicate_title_clusters(
                 spread = abs((ti - tj).total_seconds()) / 3600.0
                 if spread > max_age_spread_hours:
                     continue
+
+            # Hard ceiling — refuse merges that produce mega-clusters
+            if _would_exceed_ceiling(clusters[find(i)], clusters[find(j)]):
+                continue
 
             union(i, j)
 
