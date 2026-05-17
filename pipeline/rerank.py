@@ -83,12 +83,18 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
     try:
         clusters_res = supabase.table("story_clusters").select(
             "id,title,category,section,sections,content_type,headline_rank,source_count,"
-            "editorial_importance,story_type"
+            "editorial_importance,story_type,mega_cluster_capped"
         ).execute()
     except Exception:
-        clusters_res = supabase.table("story_clusters").select(
-            "id,title,category,section,sections,content_type,headline_rank,source_count"
-        ).execute()
+        try:
+            clusters_res = supabase.table("story_clusters").select(
+                "id,title,category,section,sections,content_type,headline_rank,source_count,"
+                "mega_cluster_capped"
+            ).execute()
+        except Exception:
+            clusters_res = supabase.table("story_clusters").select(
+                "id,title,category,section,sections,content_type,headline_rank,source_count"
+            ).execute()
     clusters = clusters_res.data or []
     print(f"  {len(clusters)} clusters found")
 
@@ -205,6 +211,7 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
 
         # Run v5.1 ranker — pass sections for US-only divergence damper
         cluster_sections = cluster.get("sections") or [cluster.get("section", "world")]
+        mega_capped = bool(cluster.get("mega_cluster_capped", False))
         try:
             result = rank_importance(
                 articles, sources, bias_scores,
@@ -212,6 +219,7 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
                 category=category,
                 editorial_importance=editorial_importance,
                 sections=cluster_sections,
+                mega_capped=mega_capped,
             )
         except Exception as e:
             errors += 1
@@ -230,7 +238,13 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
         old_rank = cluster.get("headline_rank") or 0
         new_rank = result["headline_rank"]
 
-        source_count = len({a["source_id"] for a in articles if a.get("source_id")})
+        # `source_count` is OWNED BY CLUSTERING (Phase 5 cap +
+        # wire-aware voice collapse). Recomputing it here from raw
+        # cluster_articles rows bypasses both — wire fields aren't even
+        # persisted on the articles table. Keep DB-stored value; expose
+        # the raw count locally only for the diagnostic print below.
+        raw_source_count = len({a["source_id"] for a in articles if a.get("source_id")})
+        db_source_count = cluster.get("source_count", raw_source_count)
         updates.append({
             "id": cid,
             "headline_rank": new_rank,
@@ -239,7 +253,7 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
             "coverage_velocity": result["coverage_velocity"],
             "content_type": content_type,
             "category": category,
-            "source_count": source_count,
+            "source_count": db_source_count,  # for diagnostic print only; NOT written back
             "_articles": articles,
             "_bias_scores": bias_scores,
         })
@@ -296,6 +310,9 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
 
     # 4. Write back to Supabase in batches (16 concurrent workers).
     print(f"\n[4/4] Writing {len(updates)} updates to Supabase (batched, 16 workers)...")
+    # source_count is intentionally omitted — owned by clustering
+    # (Phase 5 cap + wire-aware voice collapse). Writing it from rerank
+    # overwrites both, producing the 217-source mega-cluster regression.
     write_rows = [
         {
             "id": u["id"],
@@ -305,7 +322,6 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
             "coverage_velocity": u["coverage_velocity"],
             "content_type": u["content_type"],
             "category": u["category"],
-            "source_count": u["source_count"],
             "rank_world": u.get("rank_world", u["headline_rank"]),
             "rank_us": u.get("rank_us", u["headline_rank"]),
             "rank_europe": u.get("rank_europe", u["headline_rank"]),

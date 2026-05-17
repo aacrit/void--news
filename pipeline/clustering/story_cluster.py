@@ -467,11 +467,21 @@ SYNONYM_TITLE_JACCARD_FLOOR = 0.20
 #                                 candidate pair (safety vs. accidental
 #                                 entity collisions like "Boryspil"-the-
 #                                 airport vs "Boryspil"-the-football-match)
-ANCHOR_IDF_FRACTION_OF_MAX = 0.60
+# 2026-05-17 retune for production scale (N≈200 clusters/day). The
+# original constants were validated against the 21-fixture synthetic
+# suite (N≤6 per fixture). At production scale, `df ≤ max(3, 0.05·N)
+# = 10` was too permissive: any entity appearing in 10 of 200 clusters
+# (e.g. "regulation", "policy", "AI deployment") qualified as a rare
+# anchor and bridged unrelated stories via union-find transitive closure.
+# Result: 217-source AI-deployment mega-cluster. New constants tighten:
+#   • require stronger IDF (0.70 of corpus max, was 0.60)
+#   • require rarer entity (≤2.5% of corpus, was 5%)
+#   • require stronger title agreement (Jaccard 0.22, was 0.15)
+ANCHOR_IDF_FRACTION_OF_MAX = 0.70
 ANCHOR_MAX_DOC_FREQ_FLOOR = 3
-ANCHOR_MAX_DOC_FREQ_PCT = 0.05  # ≤ 5% of corpus
+ANCHOR_MAX_DOC_FREQ_PCT = 0.025  # ≤ 2.5% of corpus (5 clusters at N=200)
 ANCHOR_MIN_SHARED = 2            # require ≥2 shared anchors to merge
-ANCHOR_TITLE_JACCARD_FLOOR = 0.15
+ANCHOR_TITLE_JACCARD_FLOOR = 0.22
 
 # Garbage cluster-title signatures (Fix 2 — over-merge force-split).
 # When the title-generator emits one of these, the cluster has aggregated
@@ -546,6 +556,33 @@ _GARBAGE_TITLE_PATTERNS = [
 MEGA_CLUSTER_THRESHOLD = 75
 MEGA_SPLIT_TFIDF = 0.32   # 1.78x baseline (STORY_TFIDF_THRESHOLD = 0.18)
 MEGA_SPLIT_IDF = 4.0      # 2.0x baseline (ENTITY_MERGE_IDF_THRESHOLD = 2.0)
+
+# Hard merge ceiling — refuse any merge that would produce a cluster
+# larger than this. Phase 5 can still cap legitimate breaking-news
+# mega-events that arrive large from Phase 1, but no merge phase
+# should ever ADD to a 100-source cluster. Set above MEGA_CLUSTER_THRESHOLD
+# so we don't fight Phase 5; below the 200+ pathology we're preventing.
+MERGE_HARD_CEILING = 120
+
+
+def _would_exceed_ceiling(a: dict, b: dict) -> bool:
+    """Return True if merging clusters a and b would produce a cluster
+    with combined source_count above MERGE_HARD_CEILING.
+
+    Source_count may be stale during early merge phases (before
+    `_apply_wire_aware_source_count` runs), so we use the larger of
+    the stored count and the unique source_ids in articles as a
+    conservative estimate. This is intentionally pessimistic — we'd
+    rather miss a few legitimate merges than create a mega-cluster.
+    """
+    def _safe_count(c: dict) -> int:
+        stored = int(c.get("source_count", 0) or 0)
+        arts = c.get("articles", []) or []
+        # Cheap upper bound on unique sources without rebuilding the set:
+        # use stored count if available, fall back to article count.
+        return max(stored, len(arts))
+
+    return (_safe_count(a) + _safe_count(b)) > MERGE_HARD_CEILING
 
 
 _ENTITY_QUALIFIER_PREFIXES = (
@@ -769,6 +806,11 @@ def merge_related_clusters(
                     should_merge = True
 
             if should_merge:
+                # Hard ceiling: refuse merges that would create mega-clusters.
+                # Walk to the root of each component so the size check sees
+                # the current accumulated size, not just the pair members.
+                if _would_exceed_ceiling(clusters[find(i)], clusters[find(j)]):
+                    continue
                 union(i, j)
 
     return _rebuild_merged(clusters, parent, find)
@@ -894,6 +936,9 @@ def merge_canonical_pairs(
             for pair in pair_set:
                 # pair is a frozenset of two names
                 if pair.issubset(surface_sets[i]) and pair.issubset(surface_sets[j]):
+                    # Hard ceiling — refuse merges that produce mega-clusters
+                    if _would_exceed_ceiling(clusters[find(i)], clusters[find(j)]):
+                        break
                     union(i, j)
                     break
 
@@ -1007,6 +1052,10 @@ def merge_synonym_pairs(
 
             # Safety: title-stem Jaccard floor
             if _stemmed_title_jaccard(titles[i], titles[j]) < title_jaccard_floor:
+                continue
+
+            # Hard ceiling — refuse merges that produce mega-clusters
+            if _would_exceed_ceiling(clusters[find(i)], clusters[find(j)]):
                 continue
 
             union(i, j)
@@ -1189,6 +1238,11 @@ def merge_anchor_entities(
 
             # Safety: title-stem Jaccard floor
             if _stemmed_title_jaccard(titles[i], titles[j]) < title_jaccard_floor:
+                continue
+
+            # Hard ceiling — Phase 2.6 is the most aggressive merger;
+            # it must be the most conservative about creating mega-clusters.
+            if _would_exceed_ceiling(clusters[find(i)], clusters[find(j)]):
                 continue
 
             union(i, j)
@@ -1432,27 +1486,39 @@ def split_mega_clusters(
             tighter_idf_threshold=split_idf,
         )
 
-        # Sanity guard: if the force-split shatters the cluster into
-        # singletons or near-singletons (more sub-clusters than ~half the
-        # original source count), the aggressive thresholds destroyed
-        # genuine signal rather than recovering it. Today's regression:
-        # a 166-source soccer mega-cluster split into 222 sub-clusters,
-        # each 0-1 articles → every story dropped below the frontend's
-        # ≥3-source floor and the WHOLE feed collapsed to 4 cards. Fall
-        # through to the cap path in that case (treat as genuine mega-
-        # event rather than over-merge).
-        max_sane_sub = max(2, sc // 2)
-        if len(sub) >= 2 and len(sub) <= max_sane_sub:
+        # Sanity guard v2 (2026-05-17): measure split health by average
+        # articles per sub-cluster, not by sub-cluster count.
+        #
+        # The original heuristic (max_sane_sub = max(2, sc // 2)) treated
+        # any split with > sc/2 sub-clusters as "shattered" and shipped
+        # the over-merge. But the middle range — 10-50 sub-clusters from
+        # a 200-source over-merge — is exactly where genuine over-merges
+        # live, and that band was wrongly classified as shattered.
+        #
+        # The right signal: a healthy re-split has ≥1.5 articles per
+        # sub-cluster on average. The 166-source soccer regression
+        # produced 222 sub-clusters of 0-1 articles each (avg ≈ 0.7 →
+        # shattered, correct fallback to cap). A 217-source over-merge
+        # produces ~50 sub-clusters of 4-5 articles each (avg ≈ 4.3 →
+        # accept the split, mega-cluster dissolves).
+        total_sub_articles = sum(len(s.get("articles", [])) for s in sub)
+        avg_articles_per_sub = (
+            total_sub_articles / len(sub) if sub else 0.0
+        )
+        shattered = (avg_articles_per_sub < 1.5)
+
+        if len(sub) >= 2 and not shattered:
             if verbose:
                 print(
                     f"  [Phase5/mega-split] '{c.get('title', '')[:60]!r}' "
-                    f"(src={sc}) split into {len(sub)} sub-clusters"
+                    f"(src={sc}) split into {len(sub)} sub-clusters "
+                    f"(avg {avg_articles_per_sub:.1f} articles/sub)"
                 )
             out.extend(sub)
         else:
             # Step 2: keep but cap. Either truly a single mega-event, OR
-            # the strict re-cluster shattered into too many sub-clusters
-            # (sanity guard above) — both paths converge on "keep whole +
+            # the strict re-cluster shattered into singletons (sanity
+            # guard above) — both paths converge on "keep whole +
             # display-cap source_count" rather than ship broken splits.
             original_count = sc
             c["_mega_cluster_original_count"] = original_count
@@ -1460,14 +1526,15 @@ def split_mega_clusters(
             c["mega_cluster_capped"] = True
             if verbose:
                 tag = (
-                    "mega-cap-shattered" if len(sub) > max_sane_sub
+                    "mega-cap-shattered" if shattered and len(sub) >= 2
                     else "mega-cap"
                 )
                 print(
                     f"  [Phase5/{tag}] '{c.get('title', '')[:60]!r}' "
                     f"(src={original_count}) kept whole, source_count "
-                    f"capped at {threshold} "
-                    f"(strict re-split yielded {len(sub)} sub-clusters)"
+                    f"capped at {threshold} (strict re-split yielded "
+                    f"{len(sub)} sub-clusters, avg "
+                    f"{avg_articles_per_sub:.1f} articles/sub)"
                 )
             out.append(c)
     return out
@@ -1595,6 +1662,10 @@ def merge_duplicate_title_clusters(
                 spread = abs((ti - tj).total_seconds()) / 3600.0
                 if spread > max_age_spread_hours:
                     continue
+
+            # Hard ceiling — refuse merges that produce mega-clusters
+            if _would_exceed_ceiling(clusters[find(i)], clusters[find(j)]):
+                continue
 
             union(i, j)
 
