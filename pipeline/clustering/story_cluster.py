@@ -1432,27 +1432,39 @@ def split_mega_clusters(
             tighter_idf_threshold=split_idf,
         )
 
-        # Sanity guard: if the force-split shatters the cluster into
-        # singletons or near-singletons (more sub-clusters than ~half the
-        # original source count), the aggressive thresholds destroyed
-        # genuine signal rather than recovering it. Today's regression:
-        # a 166-source soccer mega-cluster split into 222 sub-clusters,
-        # each 0-1 articles → every story dropped below the frontend's
-        # ≥3-source floor and the WHOLE feed collapsed to 4 cards. Fall
-        # through to the cap path in that case (treat as genuine mega-
-        # event rather than over-merge).
-        max_sane_sub = max(2, sc // 2)
-        if len(sub) >= 2 and len(sub) <= max_sane_sub:
+        # Sanity guard v2 (2026-05-17): measure split health by average
+        # articles per sub-cluster, not by sub-cluster count.
+        #
+        # The original heuristic (max_sane_sub = max(2, sc // 2)) treated
+        # any split with > sc/2 sub-clusters as "shattered" and shipped
+        # the over-merge. But the middle range — 10-50 sub-clusters from
+        # a 200-source over-merge — is exactly where genuine over-merges
+        # live, and that band was wrongly classified as shattered.
+        #
+        # The right signal: a healthy re-split has ≥1.5 articles per
+        # sub-cluster on average. The 166-source soccer regression
+        # produced 222 sub-clusters of 0-1 articles each (avg ≈ 0.7 →
+        # shattered, correct fallback to cap). A 217-source over-merge
+        # produces ~50 sub-clusters of 4-5 articles each (avg ≈ 4.3 →
+        # accept the split, mega-cluster dissolves).
+        total_sub_articles = sum(len(s.get("articles", [])) for s in sub)
+        avg_articles_per_sub = (
+            total_sub_articles / len(sub) if sub else 0.0
+        )
+        shattered = (avg_articles_per_sub < 1.5)
+
+        if len(sub) >= 2 and not shattered:
             if verbose:
                 print(
                     f"  [Phase5/mega-split] '{c.get('title', '')[:60]!r}' "
-                    f"(src={sc}) split into {len(sub)} sub-clusters"
+                    f"(src={sc}) split into {len(sub)} sub-clusters "
+                    f"(avg {avg_articles_per_sub:.1f} articles/sub)"
                 )
             out.extend(sub)
         else:
             # Step 2: keep but cap. Either truly a single mega-event, OR
-            # the strict re-cluster shattered into too many sub-clusters
-            # (sanity guard above) — both paths converge on "keep whole +
+            # the strict re-cluster shattered into singletons (sanity
+            # guard above) — both paths converge on "keep whole +
             # display-cap source_count" rather than ship broken splits.
             original_count = sc
             c["_mega_cluster_original_count"] = original_count
@@ -1460,14 +1472,15 @@ def split_mega_clusters(
             c["mega_cluster_capped"] = True
             if verbose:
                 tag = (
-                    "mega-cap-shattered" if len(sub) > max_sane_sub
+                    "mega-cap-shattered" if shattered and len(sub) >= 2
                     else "mega-cap"
                 )
                 print(
                     f"  [Phase5/{tag}] '{c.get('title', '')[:60]!r}' "
                     f"(src={original_count}) kept whole, source_count "
-                    f"capped at {threshold} "
-                    f"(strict re-split yielded {len(sub)} sub-clusters)"
+                    f"capped at {threshold} (strict re-split yielded "
+                    f"{len(sub)} sub-clusters, avg "
+                    f"{avg_articles_per_sub:.1f} articles/sub)"
                 )
             out.append(c)
     return out
