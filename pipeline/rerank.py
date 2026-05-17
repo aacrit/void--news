@@ -230,7 +230,13 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
         old_rank = cluster.get("headline_rank") or 0
         new_rank = result["headline_rank"]
 
-        source_count = len({a["source_id"] for a in articles if a.get("source_id")})
+        # `source_count` is OWNED BY CLUSTERING (Phase 5 cap +
+        # wire-aware voice collapse). Recomputing it here from raw
+        # cluster_articles rows bypasses both — wire fields aren't even
+        # persisted on the articles table. Keep DB-stored value; expose
+        # the raw count locally only for the diagnostic print below.
+        raw_source_count = len({a["source_id"] for a in articles if a.get("source_id")})
+        db_source_count = cluster.get("source_count", raw_source_count)
         updates.append({
             "id": cid,
             "headline_rank": new_rank,
@@ -239,7 +245,7 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
             "coverage_velocity": result["coverage_velocity"],
             "content_type": content_type,
             "category": category,
-            "source_count": source_count,
+            "source_count": db_source_count,  # for diagnostic print only; NOT written back
             "_articles": articles,
             "_bias_scores": bias_scores,
         })
@@ -296,6 +302,9 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
 
     # 4. Write back to Supabase in batches (16 concurrent workers).
     print(f"\n[4/4] Writing {len(updates)} updates to Supabase (batched, 16 workers)...")
+    # source_count is intentionally omitted — owned by clustering
+    # (Phase 5 cap + wire-aware voice collapse). Writing it from rerank
+    # overwrites both, producing the 217-source mega-cluster regression.
     write_rows = [
         {
             "id": u["id"],
@@ -305,7 +314,6 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
             "coverage_velocity": u["coverage_velocity"],
             "content_type": u["content_type"],
             "category": u["category"],
-            "source_count": u["source_count"],
             "rank_world": u.get("rank_world", u["headline_rank"]),
             "rank_us": u.get("rank_us", u["headline_rank"]),
             "rank_europe": u.get("rank_europe", u["headline_rank"]),
