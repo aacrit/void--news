@@ -50,7 +50,7 @@ export default function PrivacyPage() {
       <section>
         <h2>From article sources: public content only.</h2>
         <p>
-          The pipeline reads RSS feeds and public article URLs from the 1,013
+          The pipeline reads RSS feeds and public article URLs from the 1,016
           sources listed at <Link href="/sources">/sources</Link>. We store
           article text, publish timestamps, the source name, and our
           rule-based bias scores. We do not scrape paywalled content. We do

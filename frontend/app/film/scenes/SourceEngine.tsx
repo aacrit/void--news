@@ -47,7 +47,7 @@ export default function SourceEngine({ mode, active }: Props) {
           }}
         />
         <p className="film-engine__spectrum-stats">
-          1,013 sources &middot; 158 countries &middot; 43 US major &middot;
+          1,016 sources &middot; 158 countries &middot; 43 US major &middot;
           373 international &middot; 597 independent
         </p>
       </div>

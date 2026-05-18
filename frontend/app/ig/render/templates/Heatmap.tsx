@@ -51,7 +51,7 @@ export function HeatmapTemplate({ spec }: Props) {
           ))}
         </div>
         <p className="heatmap__footer">
-          void --news · 1,013 sources · 158 countries · per-article bias
+          void --news · 1,016 sources · 158 countries · per-article bias
         </p>
       </div>
     </>

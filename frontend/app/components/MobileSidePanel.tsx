@@ -156,7 +156,7 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
           <span className="msp__section-label" data-msp-cascade="3">Explore</span>
           <Link href="/sources" className="msp__link" data-msp-cascade="3" onClick={handleLinkClick}>
             <span className="msp__link-cmd">void --sources</span>
-            <span className="msp__link-desc">1,013 curated sources</span>
+            <span className="msp__link-desc">1,016 curated sources</span>
           </Link>
           {/* /games hidden from nav per CEO 2026-05-15 — not production-ready.
               Route still resolves at /games for direct URL access. */}
