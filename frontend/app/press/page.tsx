@@ -30,7 +30,7 @@ export default function PressPage() {
         <p>
           void --news is a news aggregator that scores every individual
           article on six bias axes using rule-based NLP (no machine learning
-          black box), reads 1,013 sources across 158 countries, and presents
+          black box), reads 1,016 sources across 158 countries, and presents
           one importance-ranked feed to every reader. No accounts, no
           tracking, no personalization, free forever. The product was built
           to invert what personalization did to the news: same stories, same

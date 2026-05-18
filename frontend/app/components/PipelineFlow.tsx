@@ -51,13 +51,13 @@ const PHASES: Phase[] = [
     label: "INGESTION",
     icon: "\u2193",
     color: "#C47A2A",
-    desc: "Fetch articles from 1,013 sources",
+    desc: "Fetch articles from 1,016 sources",
     steps: [
       {
         num: "1",
         title: "Load Sources",
         detail:
-          "1,013 sources \u00b7 3 tiers (us_major / international / independent) \u00b7 158 countries",
+          "1,016 sources \u00b7 3 tiers (us_major / international / independent) \u00b7 158 countries",
         file: "sources.json",
       },
       {

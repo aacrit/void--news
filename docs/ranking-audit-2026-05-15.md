@@ -1,5 +1,7 @@
 # void --news Ranking Audit — 2026-05-15 (post-fix)
 
+> **Resolved 2026-05-18.** The 217-source badge regression and the over-merge symptoms documented below were fully addressed by the 9-commit clustering-hardening series on branch `claude/fix-clustering-regression-UzWY1`. Phase 5 sanity guard rewritten to `avg_articles_per_sub < 1.5`, Phase 2.6 anchor thresholds retuned (IDF 0.60→0.70, doc-freq 5%→2.5%, title-Jaccard 0.15→0.22), `MERGE_HARD_CEILING = 120` enforced across all 5 merge passes, ranker honors `mega_cluster_capped` with a 0.65x penalty, and `rerank.py` no longer writes `source_count` back to the DB (clustering owns it via Phase 5 cap + Phase 6 wire-aware collapse). Migrations 054 + 055 applied. Clustering validation suite expanded 31 → 33 fixtures (90.3% → 97.0%); new `validate-clustering.yml` CI gate blocks merge on CATASTROPHIC or WRONG-count regression. See `docs/PIPELINE-BRAIN.md` rev 7 and `CLAUDE.md` rev 44.
+
 Read-only audit of the **first end-to-end pipeline run after c86883d**
 (GitHub Actions run **25875159357 success**, completed ~19:30 UTC 2026-05-14).
 Source: live `story_clusters` rows for the world edition, ordered by

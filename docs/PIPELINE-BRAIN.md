@@ -1,6 +1,6 @@
 # void --news Pipeline Brain
 
-Last updated: 2026-04-29 (rev 6, all-Sonnet stack + post-rerank single-pass top-50 cache + WebP image cache)
+Last updated: 2026-05-18 (rev 7, 7-phase clustering hardened against production-scale over-merges: Phase 2.6 anchor thresholds retuned for N≈200, `MERGE_HARD_CEILING = 120` blocks all merge passes, Phase 5 sanity guard uses `avg_articles_per_sub < 1.5`, ranker applies 0.65x penalty on `mega_cluster_capped`, rerank no longer writes `source_count`)
 
 Reference for every intelligent system in the pipeline: bias, clustering, ranking, summarization, editorial triage, memory, audio.
 
@@ -12,7 +12,7 @@ Reference for every intelligent system in the pipeline: bias, clustering, rankin
                             INGESTION
   ============================================================
 
-  [1] LOAD SOURCES                    1,013 sources, 3 tiers, 158 countries
+  [1] LOAD SOURCES                    1,016 sources, 3 tiers, 158 countries
                                       data/sources.json
   [2] PIPELINE RUN                    Create run record in Supabase
   [3] FETCH RSS                       30 articles/feed cap, parallel
@@ -40,8 +40,34 @@ Reference for every intelligent system in the pipeline: bias, clustering, rankin
                             CLUSTERING
   ============================================================
 
-  [6] CLUSTER ARTICLES                TF-IDF cosine (titles + first 500 words) + agglomerative +
-                                      entity-overlap merge (story_cluster.py)
+  [6] CLUSTER ARTICLES                7-phase agglomerative pipeline (story_cluster.py).
+                                      MERGE_HARD_CEILING = 120 articles; every merge pass
+                                      consults `_would_exceed_ceiling()` and skips merges
+                                      that would breach it.
+       Phase 1  TF-IDF + COSINE       Titles + first 500 words vectorized, cosine similarity
+                                      threshold 0.45, agglomerative linkage.
+       Phase 2  ENTITY-OVERLAP MERGE  Post-cluster pass merges sub-clusters sharing 2+ named
+                                      entities (NER union).
+       Phase 2.6 ANCHOR-TERM REJECT   Production N≈200 retune: IDF-fraction floor 0.70 (was
+                                      0.60), doc-frequency cap 2.5% (was 5%), title-Jaccard
+                                      floor 0.22 (was 0.15). Blocks "Trump"-style anchor
+                                      tokens from collapsing unrelated stories.
+       Phase 3  HEAD-OF-STATE + SUMMIT Substring match on head-of-state + summit tokens in
+                                      `merge_related_clusters` (Trump-Xi anti-split).
+       Phase 4  DISJOINT-COUNTRY SPLIT split_disjoint_country_clusters: title-only NER
+                                      union-find. Splits a cluster when exactly 2 groups of
+                                      ≥2 articles emerge with pairwise-disjoint country sets
+                                      (Estonia+Germany, Poland+Georgia+US).
+       Phase 5  SANITY GUARD          `avg_articles_per_sub < 1.5` heuristic (replaces the old
+                                      `max_sane_sub = max(2, sc // 2)` which rejected legit
+                                      200+ source splits). Caps mega-clusters; flips
+                                      `mega_cluster_capped = TRUE` on the cluster row when the
+                                      cap fires.
+       Phase 6  WIRE-AWARE COLLAPSE   Collapses near-duplicate wire copy via
+                                      `is_wire_copy` + `wire_origin_publisher_id` (migration
+                                      055) so 30 reprints of one AP brief don't inflate
+                                      source_count.
+       Phase 7  TITLE DEDUP           Word-overlap detection for cross-run dedup.
   [6 post] ORPHAN WRAPPING            Single articles wrapped as 1-source clusters
   [6b] RE-FRAME                       Re-run framing WITH cluster context (omission detection
                                       needs to know what other cluster articles covered)
@@ -79,6 +105,8 @@ Reference for every intelligent system in the pipeline: bias, clustering, rankin
          no-consequentiality 0.82x | soft-news 0.78x | tabloid 0.75x
          high-sensationalism 0.80x/0.90x | low-rigor (<30) 0.88x
          single-source 0.65x (0.75x if high rigor)
+         mega_cluster_capped 0.65x (set by clustering Phase 5 when sanity guard fires;
+                                    wired through main.py:1754 and rerank.py:209)
 
        OUTPUT: headline_rank (0-100)
 
@@ -118,9 +146,12 @@ Reference for every intelligent system in the pipeline: bias, clustering, rankin
                                       Writes summary_article_hash + summary_tier (from step 7b).
   [8b] DEDUPLICATE                    Article-overlap (>30%) + title-overlap (>40%);
                                       removes old clusters superseded by new ones.
-  [8c] HOLISTIC RE-RANK               rerank_all_clusters() — re-score ALL clusters in DB
+  [8c] HOLISTIC RE-RANK               rerank_all_clusters() re-scores ALL clusters in DB
                                       with v6.0 (rank_importance + apply_edition_ranking),
-                                      writes back to Supabase.
+                                      writes ranks back to Supabase. Does NOT write
+                                      source_count (clustering owns it via Phase 5 cap +
+                                      Phase 6 wire-aware collapse; killed the user-visible
+                                      "217 sources" badge regression).
   [8d] POST-RERANK TOP-50 SUMMARIZE   summarize_top50_after_rerank() — single-pass, cached.
                                       Reads top-50 by rank_world from DB. Per cluster:
                                         - hash article membership (sha256 of sorted ids + count)
@@ -181,12 +212,23 @@ Every article scored 0-100 on 5 axes. All NLP, no LLM.
 
 ### 2. Clustering Engine
 
-| Component | File | Technique |
+7 phases in `story_cluster.py`, all subject to `MERGE_HARD_CEILING = 120` (every merge pass calls `_would_exceed_ceiling()` and skips merges that would breach it).
+
+| Phase | File | Technique |
 |---|---|---|
-| TF-IDF Clustering | `story_cluster.py` | Titles + first 500 words vectorized, cosine similarity, agglomerative |
-| Entity Merge | `story_cluster.py` | Post-clustering: merges clusters sharing named entities |
-| Title Dedup | `story_cluster.py` | Word-overlap detection for cross-run dedup |
+| 1. TF-IDF + Cosine | `story_cluster.py` | Titles + first 500 words vectorized, cosine threshold 0.45, agglomerative linkage |
+| 2. Entity-Overlap Merge | `story_cluster.py` | Post-clustering: merges sub-clusters sharing 2+ named entities |
+| 2.6 Anchor-Term Reject | `story_cluster.py` | Production N≈200 retune: IDF-fraction floor 0.70 (was 0.60), doc-frequency cap 2.5% (was 5%), title-Jaccard floor 0.22 (was 0.15). Blocks "Trump"-style anchor tokens from collapsing unrelated stories. |
+| 3. Head-of-State + Summit | `story_cluster.py` | Substring match in `merge_related_clusters` (Trump-Xi anti-split) |
+| 4. Disjoint-Country Split | `story_cluster.py` | `split_disjoint_country_clusters`: title-only NER union-find. Splits cluster when exactly 2 groups of ≥2 articles emerge with pairwise-disjoint country sets |
+| 5. Sanity Guard | `story_cluster.py` | `avg_articles_per_sub < 1.5` heuristic (replaces `max_sane_sub = max(2, sc // 2)` which rejected legitimate 200+ source splits). Flips `mega_cluster_capped = TRUE` on the cluster row when the cap fires; ranker applies 0.65x penalty downstream |
+| 6. Wire-Aware Collapse | `story_cluster.py` | Collapses near-duplicate wire copy via `is_wire_copy` + `wire_origin_publisher_id` (migration 055) so 30 reprints of one AP brief don't inflate source_count |
+| 7. Title Dedup | `story_cluster.py` | Word-overlap detection for cross-run dedup |
 | Content Dedup | `deduplicator.py` | Fuzzy matching to prevent duplicate articles entering system |
+
+**Schema support**: Migration 054 added `mega_cluster_capped BOOLEAN` + sparse partial index on `story_clusters`. Migration 055 added `is_wire_copy BOOLEAN` + `wire_origin_publisher_id TEXT` on `articles` with sparse index.
+
+**Validation**: 33-fixture clustering suite (31 CORRECT / 1 ACCEPTABLE / 1 WRONG, 97.0%). New fixtures `032-anchor-overreach-rejection.yaml` + `033-size-cap-property.yaml` added during the 2026-05-18 hardening pass. `validate-clustering.yml` CI gate mirrors `validate-bias.yml`, blocks merge on CATASTROPHIC or WRONG-count regression.
 
 ### 3. Importance Ranking Engine (v6.0, bias-blind)
 
@@ -194,7 +236,7 @@ Ranking is **BIAS-BLIND**. Bias analysis belongs in display layer (BiasLens, Sig
 
 - 10 weighted signals summing to 1.00
 - Additive: cross-spectrum bonus, Gemini editorial
-- 7 multiplicative gates: confidence, longevity, consequentiality, soft-news, tabloid, sensationalism, factual rigor, single-source
+- 8 multiplicative gates: confidence, longevity, consequentiality, soft-news, tabloid, sensationalism, factual rigor, single-source, mega_cluster_capped (0.65x when clustering Phase 5 sanity guard fires)
 - Direction-blind but diversity-sensitive (~12% of ranking influenced by political lean *spread*, not direction)
 
 ### 4. Edition Ranking Engine (v6.0)
@@ -261,6 +303,7 @@ Ranking is **BIAS-BLIND**. Bias analysis belongs in display layer (BiasLens, Sig
 | System | Method | Location |
 |---|---|---|
 | Bias Engine | 42 ground-truth articles, 100% accuracy, CI gate | `pipeline/validation/` |
+| Clustering | 33 fixtures (31 CORRECT / 1 ACCEPTABLE / 1 WRONG, 97.0%), CI gate via `validate-clustering.yml`; blocks merge on CATASTROPHIC or WRONG-count regression | `pipeline/validation/clustering/` |
 | Ranking | Analytics benchmarks, edge case detection | `/rank-optimize` workflow |
 | Cross-axis | Correlation gate (r < 0.70) | `pipeline/validation/runner.py` |
 | Source profiles | AllSides alignment check (92.9%) | `pipeline/validation/source_profiles.py` |

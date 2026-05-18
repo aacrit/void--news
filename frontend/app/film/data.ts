@@ -164,7 +164,7 @@ export interface ProductWorld {
 export const PRODUCT_FAMILY: ProductWorld[] = [
   { cli: "void --news", name: "The Feed", desc: "US-primary newspaper. World as inline section.", href: "/", palette: "feed" },
   { cli: "void --world", name: "The World Section", desc: "International overflow — stories not on the homepage", href: "/world", palette: "feed" },
-  { cli: "void --sources", name: "The Spectrum", desc: "1,013 sources on one axis", href: "/sources", palette: "sources" },
+  { cli: "void --sources", name: "The Spectrum", desc: "1,016 sources on one axis", href: "/sources", palette: "sources" },
   { cli: "void --history", name: "The Archive", desc: "Multi-perspective historical events", href: "/history", palette: "archive" },
   { cli: "void --ship", name: "The Forge", desc: "Feature request board", href: "/ship", palette: "ship" },
 ];
@@ -175,7 +175,7 @@ export const PRODUCT_FAMILY: ProductWorld[] = [
 // editions removed (the whole product is now ONE US-primary newspaper);
 // pipeline cadence is 1\u00D7/day (was 4\u00D7 during multi-edition era).
 export const NUMBERS = [
-  { value: "1,013", label: "sources" },
+  { value: "1,016", label: "sources" },
   { value: "158", label: "countries" },
   { value: "6", label: "bias axes" },
   { value: "$0", label: "to read" },
@@ -246,7 +246,7 @@ export const CHAPTERS: Chapter[] = [
     roman: "III",
     headline: "The Engine",
     subtitle: "Importance, not popularity",
-    prologueBody: "1,013 sources. 158 countries. 10 ranking signals. Zero engagement metrics. The algorithm decides what matters \u2014 not what gets clicked.",
+    prologueBody: "1,016 sources. 158 countries. 10 ranking signals. Zero engagement metrics. The algorithm decides what matters \u2014 not what gets clicked.",
     duration: 15_000,
   },
   {
