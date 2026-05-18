@@ -9,9 +9,9 @@
 
 ## Phase 1 — Foundation -- COMPLETE
 
-**Deliverable:** Pipeline runs 4x daily via GitHub Actions, fetching articles from 1,013 sources into Supabase. Raw articles stored with metadata.
+**Deliverable:** Pipeline runs 4x daily via GitHub Actions, fetching articles from 1,016 sources into Supabase. Raw articles stored with metadata.
 
-**What was built:** Git scaffolding, 1,013-source list (`data/sources.json`, 7-point lean spectrum, 3 tiers, 158 countries), Supabase schema (migrations 001-036), RSS fetcher (feedparser), web scraper (BeautifulSoup), Supabase client utility, pipeline orchestrator (`main.py`), GitHub Actions cron.
+**What was built:** Git scaffolding, 1,016-source list (`data/sources.json`, 7-point lean spectrum, 3 tiers, 158 countries), Supabase schema (migrations 001-036), RSS fetcher (feedparser), web scraper (BeautifulSoup), Supabase client utility, pipeline orchestrator (`main.py`), GitHub Actions cron.
 
 ---
 

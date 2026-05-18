@@ -1,6 +1,6 @@
 # DB Reviewer Guide — Data Quality Auditor
 
-Last updated: 2026-04-28 (rev 1)
+Last updated: 2026-05-18 (rev 2 — added mega_cluster_capped diagnostic query for the 2026-05-18 clustering regression fix)
 
 ## Overview
 
@@ -113,6 +113,24 @@ Examines story cluster formation and enrichment.
 - Entity-overlap merge pass not catching related stories
 - Gemini API cap reached (only first 25 clusters summarized)
 - Generic prompt output in early pipeline runs
+
+### 4a. Mega-Cluster Capping (post-2026-05-18)
+
+After the 2026-05-18 clustering hardening pass, `story_clusters.mega_cluster_capped BOOLEAN` (migration 054) flags rows where Phase 5 sanity guard fired (`avg_articles_per_sub < 1.5`). The ranker applies a 0.65x penalty on this flag. Pair the flag with `source_count` and `headline_rank` to spot any cluster the cap missed or any cap that mis-fired on a legitimate fast-moving story.
+
+**Diagnostic SQL:**
+
+```sql
+SELECT id, title, source_count, mega_cluster_capped, headline_rank
+FROM story_clusters
+ORDER BY source_count DESC
+LIMIT 20;
+```
+
+**What to look for:**
+- `source_count > 100` rows where `mega_cluster_capped = FALSE`: a mega-cluster slipped past Phase 5. Check `avg_articles_per_sub` in clustering logs.
+- `mega_cluster_capped = TRUE` rows with `headline_rank > 70`: the 0.65x penalty did not bite hard enough; legitimate top story or a ranking-gate bug.
+- `source_count` matching the user-visible badge: clustering owns the count post-2026-05-18 (rerank.py no longer writes it).
 
 ### 5. Enrichment Quality (10 pts)
 Validates cluster-level computed fields.

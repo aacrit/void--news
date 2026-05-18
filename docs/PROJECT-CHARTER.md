@@ -1,6 +1,6 @@
 # void --news — Project Charter
 
-Last updated: 2026-05-03 (rev 2 — native app distribution capability added)
+Last updated: 2026-05-18 (rev 3 — source count synced to 1,016 after 2026-05-13/14 additions)
 
 **Date:** 2026-04-03 (rev 7)
 **Project Owner:** Aacrit (CEO)
@@ -20,14 +20,14 @@ A free, transparent news aggregation platform delivering World, US, Europe, and 
 |---------|---------------------|---------------------|
 | Bias is per-outlet, not per-article | Tools label an entire outlet "left" or "right" | Multi-axis NLP on every individual article |
 | Bias features are paywalled | Full insights require subscriptions | All bias data free and central |
-| Aggregators include untrusted sources | Low-credibility outlets mixed in | 1,013 curated, vetted sources only |
+| Aggregators include untrusted sources | Low-credibility outlets mixed in | 1,016 curated, vetted sources only |
 | Left/right is too simplistic | Single-axis spectrum | 6-axis analysis + 7-point lean spectrum (far-left → far-right) |
 
 ## 3. Scope
 
 ### In Scope (MVP)
 - World, US, Europe, and South Asia editions (4 editions)
-- 1,013 curated sources across 3 tiers (43 us_major, 373 international, 597 independent); 7-point political lean spectrum; 158 countries
+- 1,016 curated sources across 3 tiers (43 us_major, 373 international, 597 independent); 7-point political lean spectrum; 158 countries
 - 4x daily automated pipeline (GitHub Actions)
 - Rule-based NLP bias engine (6 axes, $0 cost)
 - Gemini Flash: cluster summarization + editorial importance + reasoning (~116 RPD, free tier)
@@ -52,7 +52,7 @@ A free, transparent news aggregation platform delivering World, US, Europe, and 
 
 | Metric | Target |
 |--------|--------|
-| Sources at launch | 1,013 (43 us_major + 373 international + 597 independent) |
+| Sources at launch | 1,016 (43 us_major + 373 international + 597 independent) |
 | Pipeline reliability | 95%+ successful runs |
 | Pipeline completion time | < 6 minutes per run |
 | Bias scoring coverage | 100% of articles scored on all 6 axes |
@@ -76,7 +76,7 @@ GitHub Actions (4x daily) → Python Pipeline → Supabase (PostgreSQL) ← Next
 | # | Decision | Choice |
 |---|----------|--------|
 | 1 | Bias model | Per-article, 6-axis, rule-based NLP |
-| 2 | Source strategy | 1,013 curated (158 countries); 7-point lean spectrum |
+| 2 | Source strategy | 1,016 curated (158 countries); 7-point lean spectrum |
 | 3 | Pipeline frequency | 4x daily (every 6h, all editions each run) |
 | 4 | Frontend | Next.js 16 (static export) + React 19 + TypeScript |
 | 5 | Responsive | One project, two layouts (desktop/mobile) |
@@ -137,7 +137,7 @@ GitHub Actions (4x daily) → Python Pipeline → Supabase (PostgreSQL) ← Next
 
 The MVP is complete when:
 
-- [x] 1,013 sources actively ingested 1x daily with 95%+ reliability
+- [x] 1,016 sources actively ingested 1x daily with 95%+ reliability
 - [x] All 6 bias axes scored on every article
 - [x] Story clustering groups related articles with 85%+ accuracy
 - [x] Desktop layout renders newspaper-style multi-column grid
