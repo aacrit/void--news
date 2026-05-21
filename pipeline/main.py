@@ -2298,14 +2298,26 @@ def main():
             cluster_section = max(section_counts, key=section_counts.get) if section_counts else "world"
 
             # Multi-section: list ALL editions that have articles in this cluster.
-            # The cross-listing semantics under the US-primary + World-as-section
-            # model (2026-05-15): the `sections` array is informational only.
-            # Frontend slicing uses `is_international` + headline_rank, NOT
-            # sections membership, to populate /world. A cluster appears in
-            # exactly one place (homepage if rank<=50, /world if rank>50 and
-            # is_international); the v6.2 force-add of "world" tag is removed
-            # because cross-listing is no longer needed.
+            #
+            # 2026-05-21 (Issue A from 2026-05-15 audit, REVERTED in a later refactor):
+            # the frontend at HomeContent.tsx:474 filters by
+            #   .contains("sections", [activeEdition])
+            # BEFORE applying per-edition rank ordering. So a cluster with
+            # sections=['us'] but rank_world=65.76 is invisible on /world even
+            # though it's the #1-by-rank story globally. The 2026-05-15 audit
+            # surfaced this as the Warsh-Fed-chair case; the original force-add
+            # fix was reverted assuming is_international + rank handled it, but
+            # the frontend never actually used that path.
+            #
+            # Restored cross-listing: a cluster is added to 'world' when
+            # (a) it already spans 2+ editions (genuinely multi-regional) OR
+            # (b) its rank_world is feed-eligible (>= 50, ranks top-50 globally).
             all_sections = sorted(section_counts.keys()) if section_counts else ["world"]
+            _rank_world_val = float(cluster.get("rank_world") or cluster.get("headline_rank") or 0)
+            if "world" not in all_sections and (
+                len(all_sections) >= 2 or _rank_world_val >= 50.0
+            ):
+                all_sections = sorted(set(all_sections) | {"world"})
 
             # is_international flag drives the /world overflow filter.
             # True iff: cluster's primary section is NOT 'us' AND
