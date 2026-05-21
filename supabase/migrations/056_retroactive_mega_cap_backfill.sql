@@ -20,10 +20,19 @@
 --   • Caps source_count at 75 (MEGA_CLUSTER_THRESHOLD)
 --   • Sets mega_cluster_capped = TRUE so the ranker demotes these rows
 --
--- Reversible:
+-- Reversible (full two-statement form per pipeline-tester 2026-05-20):
 --   UPDATE story_clusters
---   SET source_count = mega_cluster_original_count
+--   SET source_count        = mega_cluster_original_count,
+--       mega_cluster_capped = FALSE
 --   WHERE mega_cluster_original_count IS NOT NULL;
+--   UPDATE story_clusters
+--   SET mega_cluster_original_count = NULL
+--   WHERE mega_cluster_original_count IS NOT NULL;
+-- Note: the single-statement form documented in the original header
+-- (restore source_count only) leaves mega_cluster_capped=TRUE, which
+-- means the ranker would continue to apply the 0.65-0.85x mega_capped
+-- multiplier on those rows. Use the two-statement form above for
+-- complete rollback.
 -- ============================================================================
 
 -- 1. Sparse diagnostic column. NULL means "never capped" (the common case);
