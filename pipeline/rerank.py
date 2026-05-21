@@ -141,9 +141,13 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
         cluster_article_map.setdefault(row["cluster_id"], []).append(row["article_id"])
     print(f"  cluster_articles: {len(ca_rows)} rows covering {len(cluster_article_map)} clusters")
 
-    # 3b. Fetch all articles
+    # 3b. Fetch all articles. Wire fields (is_wire_copy, wire_origin_publisher_id)
+    # are required so the ranker's _coverage_score collapses wire-syndicated
+    # copies to a single voice. Without these the ranker over-counts AP/Reuters
+    # echo (e.g. 10 wire copies of one story scored as 10-source coverage).
     art_rows = _paginated_fetch("articles",
-        "id,source_id,title,summary,full_text,published_at,word_count")
+        "id,source_id,title,summary,full_text,published_at,word_count,"
+        "is_wire_copy,wire_origin_publisher_id")
     articles_by_id: dict[str, dict] = {r["id"]: r for r in art_rows}
     print(f"  articles: {len(articles_by_id)} rows fetched")
 
