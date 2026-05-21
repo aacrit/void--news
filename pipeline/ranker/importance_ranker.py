@@ -331,6 +331,19 @@ _AUTHORITY_TIER2: list[str] = [
     "senate voted", "house voted", "congress passed",
     "parliament voted", "parliament passed",
     "bundestag", "lok sabha", "rajya sabha", "diet voted",
+    # NGOs with primary-source authority (NewsGuard explicitly cites these
+    # as high-credibility institutional sources). Pre-2026-05-20, NGO
+    # reports scored zero on authority — Amnesty's "global executions"
+    # annual report ranked behind tier-2 stories despite multi-country
+    # G20-weighted scope. Recurring blindspot, 30-50 reports/year.
+    "amnesty international",
+    "human rights watch",
+    "doctors without borders", "médecins sans frontières", "msf ",
+    "international committee of the red cross", "icrc ",
+    "international crisis group",
+    "reporters without borders", "rsf ",
+    "transparency international",
+    "human rights council", "unhcr ", "ohchr ",
 ]
 
 _AUTHORITY_TIER1_PATTERN: re.Pattern = re.compile(
@@ -1203,6 +1216,13 @@ def rank_importance(
     # so the 0.82x gate doesn't fire and the 10% signal contributes.
     if authority >= 80.0 and consequentiality < 5.0:
         consequentiality = 30.0
+    # v6.3 (2026-05-20): Same pattern for tier-2 NGO reports. Amnesty's
+    # "global executions" annual report is statistical (zero action verbs)
+    # but represents a major institutional finding. Softer floor of 18
+    # (vs tier-1's 30) keeps the 0.82x conseq gate from firing without
+    # equating an NGO report with a Fed rate decision.
+    elif authority >= 50.0 and consequentiality < 5.0:
+        consequentiality = 18.0
 
     # Gemini editorial importance: normalize 1-10 to 0-100
     editorial_signal = ((editorial_importance - 1) * (100.0 / 9.0)
