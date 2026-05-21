@@ -1965,4 +1965,65 @@ FIXTURES: list[dict] = [
             "allsides": "right",
         },
     },
+
+    # ==========================================================================
+    # CATEGORY 9: ANALYSIS / SOURCED DIPLOMATIC SPECULATION (2026-05-20)
+    # Added per bias-auditor 2026-05-20 audit: sourced-diplomatic-speculation
+    # is a recurring shape on the void --news feed (Xi-Putin-Trump, Iran
+    # ceasefire, Israel-Hezbollah) that the opinion_detector mis-classifies
+    # as Reporting because heavy "according to / said / told" attribution
+    # markers neutralize the analysis signal. This fixture LOCKS that
+    # behavior in the snapshot so a future opinion_detector tightening
+    # is caught at calibration time rather than at production deploy.
+    # ==========================================================================
+
+    {
+        "id": "wapo-xi-putin-speculation-2026",
+        "name": "Washington Post Analysis - Xi-Putin diplomatic speculation",
+        "category": "analysis",
+        "article": {
+            "title": "Analysis: Xi told Trump Putin may regret invading Ukraine",
+            "full_text": (
+                "Chinese President Xi Jinping privately told U.S. President Donald Trump "
+                "that Russian President Vladimir Putin may come to regret invading Ukraine, "
+                "according to two people familiar with the conversation who spoke on "
+                "condition of anonymity. The senior administration official said Xi's "
+                "assessment was conveyed at the close of a 90-minute call last week. "
+                "Beijing has not publicly distanced itself from Moscow, but Xi's private "
+                "framing suggests calibration, the senior official said. A second person "
+                "familiar with the readout said Xi did not propose specific steps. "
+                "The Kremlin declined to comment. The Chinese embassy in Washington said "
+                "it had no information to share. National Security Adviser Mike Waltz told "
+                "reporters Tuesday that the administration would not characterize private "
+                "conversations between heads of state. According to a transcript of the "
+                "call obtained by The Washington Post, Trump and Xi spoke for 92 minutes. "
+                "Three former senior officials, speaking in interviews this week, said the "
+                "framing aligns with Xi's pattern of preserving optionality. Analysts at "
+                "the Center for Strategic and International Studies told The Post that the "
+                "remark, if accurately characterized, marks a meaningful shift. Putin "
+                "arrived in Beijing on Monday for a four-day state visit."
+            ),
+            "summary": "",
+            "url": "https://washingtonpost.com/world/2026/05/20/xi-trump-putin-ukraine-analysis",
+            "section": "analysis",
+        },
+        "source": {
+            "political_lean_baseline": "center-left",
+            "slug": "washington-post",
+            "tier": "us_major",
+            "name": "The Washington Post",
+            "state_affiliated": False,
+        },
+        "expected": {
+            "lean":    {"range": [20, 55],  "rationale": "WaPo center-left baseline (~35); no partisan vocabulary; neutral diplomatic terms (assessment, calibration, optionality, framing); wide band accommodates sparsity guard anchoring to source baseline"},
+            "sens":    {"range": [0, 40],   "rationale": "Measured diplomatic language; 'meaningful shift' is the strongest descriptor; no superlatives or urgency words; attribution-heavy construction reduces sensational feel"},
+            "opinion": {"range": [5, 45],   "rationale": "KNOWN ENGINE LIMITATION (bias-auditor 2026-05-20): article is editorially 'Analysis' but heavy attribution density ('told', 'according to', 'said', 'speaking in interviews', 5+ sourcing verbs) drives the attribution_score to ~0 and the opinion engine reads as Reporting. Wide range accepts current engine output (~15-25) and future fix (~35-45) without false-failing."},
+            "rigor":   {"range": [50, 100], "rationale": "5+ named sources (Xi, Putin, Trump, Waltz, two anonymous officials), 3+ direct attribution markers, named institutions (Kremlin, Chinese embassy, CSIS, Washington Post transcript), specific data (92-minute call, four-day visit)"},
+            "framing": {"range": [5, 50],   "rationale": "Neutral synonym choices ('marks a meaningful shift' is descriptive not charged); no loaded comparisons; the 'invading Ukraine' phrasing is the conventional wire-service framing, not a Russian-perspective rewrite"},
+        },
+        "cross_ref": {
+            "allsides": "center",
+            "notes": "WaPo Analysis section equivalent to NYT Upshot or FT Long Read. Future opinion_detector improvement: detect 'Analysis:' title prefix + WaPo /analysis URL path and bump opinion floor by ~15-20 pts. Track as known limitation; recurring on Xi-Putin / Iran ceasefire / Israel-Hezbollah cycles.",
+        },
+    },
 ]
