@@ -1,6 +1,7 @@
 "use client";
 
 import type { Story } from "../lib/types";
+import type { FamilyInfo } from "../lib/storyFamilies";
 import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
@@ -19,6 +20,11 @@ interface StoryCardProps {
       digest = ranks 1-9 (22px Playfair); wire = ranks 10+ (14px Playfair).
       Omit for default StoryCard scale. */
   variant?: "digest" | "wire";
+  /** Same-story family info — when present, the card is one of N angles
+      on the same event. Renders a "Related: N angles" chip above the
+      headline so readers see the connection rather than reading the
+      duplicates as a clustering failure. */
+  family?: FamilyInfo;
 }
 
 /* ---------------------------------------------------------------------------
@@ -28,7 +34,7 @@ interface StoryCardProps {
    the card enters the viewport — below-fold cards don't waste their entrance.
    --------------------------------------------------------------------------- */
 
-export default function StoryCard({ story, index, onStoryClick, globalIndex, kbdFocused, variant }: StoryCardProps) {
+export default function StoryCard({ story, index, onStoryClick, globalIndex, kbdFocused, variant, family }: StoryCardProps) {
   const [cardRef, visible] = useInView<HTMLElement>();
   const verdict = classifyCoverage(story);
 
@@ -38,7 +44,8 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
       data-story-index={globalIndex}
       data-story-id={story.id}
       data-variant={variant}
-      className={`story-card anim-stagger${visible ? " anim-stagger--visible" : ""}${kbdFocused ? " story-card--kbd-focus" : ""}`}
+      data-family-id={family?.familyId}
+      className={`story-card anim-stagger${visible ? " anim-stagger--visible" : ""}${kbdFocused ? " story-card--kbd-focus" : ""}${family ? " story-card--family-member" : ""}`}
       style={{ animationDelay: `${Math.round(40 * Math.log2(index + 2))}ms` }}
     >
       {/* Stretched link — invisible button covers the entire article
@@ -61,6 +68,19 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
           }
         }}
       />
+      {/* Family relationship chip — visible only when this card shares
+          a stemmed-title-Jaccard family with another top-10 card. Tells
+          the reader "this is one of N angles on the same event" rather
+          than letting duplicates read as a clustering failure. */}
+      {family && (
+        <p className="story-card__family" aria-label={`Part of a family of ${family.size} angles on this event`}>
+          <span className="story-card__family-dot" aria-hidden="true" />
+          <span className="story-card__family-label">
+            {family.size} angles · {family.label}
+          </span>
+        </p>
+      )}
+
       {/* Headline + inline Sigil + caret */}
       <h3 className="story-card__headline">
         <span className="story-card__headline-text">{story.title}</span>

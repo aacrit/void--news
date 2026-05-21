@@ -14,6 +14,7 @@ import LogoWordmark from "./LogoWordmark";
 import NavBar from "./NavBar";
 import LeadStory from "./LeadStory";
 import StoryCard from "./StoryCard";
+import { computeStoryFamilies } from "../lib/storyFamilies";
 const DeepDive = dynamic(() => import("./DeepDive"), { ssr: false });
 import ErrorBoundary from "./ErrorBoundary";
 
@@ -750,6 +751,17 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     () => mainPool.slice(0, feedExpanded ? EDITION_FEED_SIZE : EDITION_FEED_DEFAULT),
     [mainPool, feedExpanded],
   );
+
+  /* Same-Story Cluster Family detection. When two or more top-10 cards
+     are angles on the same event (Beijing summit, Iran ceasefire collapse),
+     compute the family relationship from stemmed-title Jaccard and pass
+     it down so StoryCard can render a "Related: N angles" chip. Catches
+     the rare cases where the hardened clustering engine (rev 44) keeps
+     legitimately-related sub-stories apart. */
+  const storyFamilies = useMemo(
+    () => computeStoryFamilies(mainStories, { topN: 10, jaccardFloor: 0.30 }),
+    [mainStories],
+  );
   const hiddenMainCount = mainPool.length - mainStories.length;
 
   const mainIds = useMemo(
@@ -965,9 +977,10 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                       {gridStories.map((story, idx) => {
                         const gi = 2 + idx;
                         const variant: "digest" | "wire" = idx < 8 ? "digest" : "wire";
+                        const family = storyFamilies.get(story.id);
                         return (
                           <div key={story.id} className="feed-grid__item">
-                            <StoryCard story={story} index={idx + 2} onStoryClick={handleStoryClick} globalIndex={gi} kbdFocused={kbdFocusIndex === gi} variant={variant} />
+                            <StoryCard story={story} index={idx + 2} onStoryClick={handleStoryClick} globalIndex={gi} kbdFocused={kbdFocusIndex === gi} variant={variant} family={family} />
                           </div>
                         );
                       })}
