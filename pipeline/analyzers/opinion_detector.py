@@ -574,7 +574,7 @@ def analyze_opinion(article: dict, source: dict | None = None) -> dict:
             "rationale": {
                 "pronoun_score": 0, "subjectivity_score": 0, "modal_score": 0,
                 "hedging_score": 0, "attribution_score": 50, "metadata_score": 0,
-                "rhetorical_score": 0, "value_judgment_score": 0,
+                "value_judgment_score": 0,
                 "absolutist_assertion_score": 0,
                 "classification": "Reporting", "dominant_signals": [],
             },
@@ -587,7 +587,6 @@ def analyze_opinion(article: dict, source: dict | None = None) -> dict:
     hedging = _hedging_score(combined)
     attribution = _attribution_score(combined)
     metadata = _metadata_score(article)
-    rhetorical = _rhetorical_question_score(combined)
     value_judg = _value_judgment_score(combined)
     absolutist = _absolutist_assertion_score(combined)
 
@@ -606,16 +605,24 @@ def analyze_opinion(article: dict, source: dict | None = None) -> dict:
     # absolutist_assertion at 0.13 captures state-media and ideological op-ed
     # voice ("historical inevitability", "firmly opposes", "no force can
     # prevent") that TextBlob subjectivity misses on declarative assertions.
+    # 2026-05-21 nlp-engineer dead-signal removal:
+    #   • rhetorical removed: naive ?-counter; 0.61% mean contribution per
+    #     bias-auditor data. The 2026-05-13 weight bump (0.04→0.06) didn't
+    #     move the needle. Op-eds that use rhetorical questions already
+    #     score high on absolutist + pronoun, so the signal is fully
+    #     redundant. Weight redistributed to absolutist (captures the same
+    #     editorial intent — categorical assertion — with higher precision).
+    #   • Weights still sum to 1.00: 0.12 + 0.18 + 0.12 + 0.06 + 0.15 +
+    #     0.12 + 0.06 + 0.19 = 1.00.
     weighted = (
         pronoun * 0.12
         + subjectivity * 0.18
         + modal * 0.12
-        + hedging * 0.06    # reduced 0.08→0.06: freed weight to rhetorical questions
+        + hedging * 0.06
         + attribution * 0.15
         + metadata * 0.12
-        + rhetorical * 0.06  # increased 0.04→0.06: was dead signal at 0% contribution
         + value_judg * 0.06
-        + absolutist * 0.13
+        + absolutist * 0.19  # absorbed 0.06 from removed rhetorical
     )
 
     # Metadata override: when URL/section explicitly marks content as
@@ -682,7 +689,6 @@ def analyze_opinion(article: dict, source: dict | None = None) -> dict:
         ("metadata", metadata * 0.12),
         ("hedging", hedging * 0.06),
         ("value_judgments", value_judg * 0.06),
-        ("rhetorical_questions", rhetorical * 0.06),
     ]
     signal_contributions.sort(key=lambda x: x[1], reverse=True)
     dominant = [s[0] for s in signal_contributions[:3] if s[1] > 0]
@@ -696,7 +702,6 @@ def analyze_opinion(article: dict, source: dict | None = None) -> dict:
             "hedging_score": round(hedging, 1),
             "attribution_score": round(attribution, 1),
             "metadata_score": round(metadata, 1),
-            "rhetorical_score": round(rhetorical, 1),
             "value_judgment_score": round(value_judg, 1),
             "absolutist_assertion_score": round(absolutist, 1),
             "classification": classification,

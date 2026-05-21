@@ -539,7 +539,7 @@ def analyze_framing(
             "rationale": {
                 "connotation_score": 0, "keyword_emphasis_score": 0,
                 "omission_score": 0, "headline_body_divergence": 0,
-                "passive_voice_score": 0, "has_cluster_context": False,
+                "has_cluster_context": False,
             },
         }
 
@@ -556,7 +556,10 @@ def analyze_framing(
         cluster_entity_cache=cluster_entity_cache,
     )  # 0-100
     headline_div = _headline_body_divergence(title, full_text)  # 0-100
-    passive = _passive_voice_score(full_text, doc=doc)     # 0-100
+    # 2026-05-21 nlp-engineer dead-signal removal: passive removed.
+    # 92% of articles scored zero (per author's own comment at L571);
+    # translated text from DW/NHK/Xinhua produces idiomatic passive that
+    # isn't framing. Weight redistributed to keyword_emphasis + headline_div.
 
     # Weighted combination.
     # When geopolitical synonym pairs fire strongly (kw_emphasis > 60), the
@@ -578,19 +581,20 @@ def analyze_framing(
     # while omission clusters at 10.0 (the default for no pro/anti sourcing).
     # Giving headline_div more weight spreads the distribution wider.
     # Weights still sum to 1.0.
+    # Weights without passive (was 0.10). Redistributed: +0.05 to
+    # keyword_emp, +0.05 to headline_div. Sums still = 1.00.
     if keyword_emp > 60:
         w_connotation = 0.15
-        w_keyword_emp = 0.40
+        w_keyword_emp = 0.45  # was 0.40, +0.05 from passive
     else:
         w_connotation = 0.25
-        w_keyword_emp = 0.30
+        w_keyword_emp = 0.35  # was 0.30, +0.05 from passive
 
     weighted = (
         connotation * w_connotation
         + keyword_emp * w_keyword_emp
         + omission * 0.15
-        + headline_div * 0.20
-        + passive * 0.10
+        + headline_div * 0.25  # was 0.20, +0.05 from passive
     )
 
     raw_score = max(0.0, min(100.0, weighted))
@@ -616,7 +620,6 @@ def analyze_framing(
             "keyword_emphasis_score": round(keyword_emp, 1),
             "omission_score": round(omission, 1),
             "headline_body_divergence": round(headline_div, 1),
-            "passive_voice_score": round(passive, 1),
             "has_cluster_context": cluster_articles is not None and len(cluster_articles or []) >= 2,
         },
     }
