@@ -1427,9 +1427,19 @@ def rank_importance(
     # "Rapper kidnapped" that pass the soft-news and tabloid keyword gates
     # because kidnapping is semantically conflict, not entertainment.
     # The bias engine already scores sensationalism — use it.
+    #
+    # v6.3 (2026-05-20): Factual-rigor exemption. Real war/casualty
+    # reporting hits TextBlob negative polarity hard ("drone strike",
+    # "killed", "ceasefire collapse"), so well-sourced breaking news
+    # (Beirut airstrikes, Ukraine drone strike, Iran ceasefire) lands
+    # in the 40-60 sensationalism band. The gate cannot tell tabloid
+    # inflammation from accurate violent-event lexicon. Factual rigor
+    # is the proxy: above 55 indicates AP/Reuters-grade sourcing and
+    # the sensationalism reading is the event itself, not editorial
+    # priming. Tabloid stubs (factual ~30-40 + sens ~70) still demote.
     if bias_scores:
         sens_vals = [bs.get("sensationalism", 0) for bs in bias_scores if bs.get("sensationalism") is not None]
-        if sens_vals:
+        if sens_vals and factual <= 55:
             avg_sens = sum(sens_vals) / len(sens_vals)
             if avg_sens > 65:
                 headline_rank *= 0.80
