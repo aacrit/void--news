@@ -1333,11 +1333,47 @@ def rank_importance(
     # mega_cluster_capped=True on clusters that hit the 75-source soft cap
     # and could not be cleanly re-split (likely over-merges, not genuine
     # mega-events). Without this penalty the cluster still maxes out
-    # coverage + maturity and locks into the homepage top. The 0.65x
-    # multiplier sinks it ~10-20 positions so it competes on actual
-    # signal rather than inflated source count.
+    # coverage + maturity and locks into the homepage top.
+    #
+    # v6.3 (2026-05-20): Replaced flat 0.65x with conditional 0.70-0.85x
+    # based on two over-merge signals computed from the cluster's own
+    # articles + source map. The flat penalty correctly buried the
+    # 217-source AI-deployment over-merge but would also crush a
+    # legitimate Xi-Putin-scale mega-event if it tripped Phase 5.
+    #
+    # Signals:
+    #   wire_amplification = total_articles / unique_voices. A ratio of
+    #     2.5+ means heavy syndication (one Reuters story republished
+    #     widely), characteristic of over-merge or wire-roundup pollution.
+    #   country_concentration = max country share of articles. 0.80+
+    #     means a "local event" framed as global (80% US sources on a
+    #     domestic primary). Genuine global mega-events span 4+ countries.
     if mega_capped:
-        headline_rank *= 0.65
+        # Default: gentle penalty for any flagged cluster.
+        penalty = 0.85
+        # Compute wire amplification from articles.
+        total_articles = len(cluster_articles)
+        voices = {_voice_id(a) for a in cluster_articles if _voice_id(a)}
+        wire_amp = total_articles / max(len(voices), 1)
+        # Compute source-country concentration from source_map.
+        src_country_counts: dict[str, int] = {}
+        for a in cluster_articles:
+            sid = _voice_id(a)
+            src = source_map.get(sid, {})
+            country = (src.get("country") or "").upper()
+            if country:
+                src_country_counts[country] = src_country_counts.get(country, 0) + 1
+        total_country_articles = sum(src_country_counts.values()) or 1
+        country_concentration = (
+            max(src_country_counts.values()) / total_country_articles
+            if src_country_counts else 0.0
+        )
+        # Sharpen penalty when either signal indicates over-merge.
+        if wire_amp >= 2.5:
+            penalty = 0.70  # heavy syndication-driven inflation
+        if country_concentration > 0.80:
+            penalty = min(penalty, 0.72)  # geographically insular "mega"
+        headline_rank *= penalty
 
     # v5.3: Longevity penalty — old stories decay to prevent "consensus noise"
     # from drowning out breaking news. Applied after confidence but before gates.
