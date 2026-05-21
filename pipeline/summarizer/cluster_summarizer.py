@@ -136,6 +136,13 @@ from source headlines.
 - No value judgments. Prohibited adjectives: controversial, divisive, landmark, \
 historic, shocking, stunning, explosive, devastating, unprecedented (as rhetorical \
 emphasis), radical, extreme, common-sense.
+- FORBIDDEN SIGNIFICANCE-ASSERTIONS (Cardinal Rule enforcement). Do not use \
+any form of: notable, notably, significant, significantly, crucial, crucially, \
+interesting, interestingly, importantly, remarkably, strikingly, "it should be \
+noted", "it is worth noting", "worth noting". If a fact matters, present the \
+specific number/name/date — let the reader draw the conclusion. Assertions of \
+significance are AI-slop tells; replace them with the concrete evidence that \
+would have made them feel necessary in the first place.
 - No unattributed predictions or expert opinions. "Experts say" without a named \
 or described expert is not attribution.
 - In headlines, state what happened — not what might happen. Headlines use \
@@ -680,37 +687,21 @@ def summarize_cluster(articles: list[dict],
         return None
 
     # Show-don't-tell post-check: assertions of significance ("notable",
-    # "significantly", "crucially", etc.) violate the Cardinal Rule (see
-    # CLAUDE.md).  One retry with a stricter system reminder; on second
-    # failure log and keep the result so the pipeline doesn't stall.
+    # "significantly", "crucially", etc.) violate the Cardinal Rule.
+    #
+    # 2026-05-21 nlp-engineer cost-cut: the forbidden-word list is now
+    # encoded directly in _SYSTEM_INSTRUCTION (FORBIDDEN SIGNIFICANCE-
+    # ASSERTIONS section). Sonnet 4.6 follows it without needing a retry
+    # call on every violation. The retry burned ~5-10 calls/day; with the
+    # constraint baked into the prompt-cached system instruction, that
+    # cost drops to zero. We keep the post-check as a warning log only so
+    # we can detect drift if the model starts ignoring the constraint.
     violations = _detect_show_dont_tell_violations(result)
     if violations:
-        stricter = (
-            (_SYSTEM_INSTRUCTION or "")
-            + "\n\nFORBIDDEN WORDS (Cardinal Rule — show, don't tell): "
-            + "do NOT use any form of notable, notably, significant, significantly, "
-            + "crucial, crucially, interesting, interestingly, importantly, remarkably, "
-            + "strikingly, 'it should be noted', 'it is worth noting', 'worth noting'.  "
-            + "If a fact matters, present the specific number/name/date — let the reader "
-            + "draw the conclusion."
+        print(
+            f"  [show-dont-tell] violations detected (warning only, no retry): "
+            f"{violations}"
         )
-        retry = generate_json(prompt, system_instruction=stricter)
-        if retry:
-            retry_violations = _detect_show_dont_tell_violations(retry)
-            if not retry_violations:
-                result = retry
-            else:
-                # Keep retry (often better) but log persistent violation.
-                print(
-                    f"  [show-dont-tell] persistent violations after retry: "
-                    f"{retry_violations}"
-                )
-                result = retry
-        else:
-            print(
-                f"  [show-dont-tell] retry failed; keeping original with violations: "
-                f"{violations}"
-            )
 
     # Validate response shape
     headline = result.get("headline", "")
