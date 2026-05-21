@@ -6,6 +6,18 @@ on:
         description: 'Migration file (e.g., 007_expand_lean_spectrum.sql) or "all" to run all pending'
         required: true
         default: 'all'
+  # Auto-apply pending migrations when a new .sql file lands on a claude
+  # branch. The migrate script tracks applied migrations in the
+  # _migrations table (CREATE TABLE IF NOT EXISTS) and uses
+  # `CREATE ... IF NOT EXISTS` / `ADD COLUMN IF NOT EXISTS` patterns,
+  # so re-running an already-applied migration is a no-op. This trigger
+  # closes the "I committed a migration but forgot to click the dispatch
+  # button" gap without changing existing security posture (same secrets,
+  # same script, same idempotency guarantees).
+  push:
+    branches: ['claude/**', 'main']
+    paths:
+      - 'supabase/migrations/*.sql'
 
 permissions: {}
 
@@ -23,14 +35,16 @@ jobs:
         env:
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
           SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
-          MIGRATION_INPUT: ${{ inputs.migration }}
+          MIGRATION_INPUT: ${{ inputs.migration || 'all' }}
         run: |
           python3 << 'PYEOF'
           import psycopg2, os, glob, re, pathlib
 
           ref = os.environ['SUPABASE_PROJECT_REF']
           pw = os.environ['SUPABASE_DB_PASSWORD']
-          migration_input = os.environ.get('MIGRATION_INPUT', 'all')
+          # Empty string on push events (inputs.migration is unset);
+          # fall through to 'all' so the run-all-pending path executes.
+          migration_input = os.environ.get('MIGRATION_INPUT', 'all') or 'all'
 
           conn = psycopg2.connect(
               f'postgresql://postgres.{ref}:{pw}@aws-0-us-west-2.pooler.supabase.com:5432/postgres?sslmode=require'
