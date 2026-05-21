@@ -200,7 +200,10 @@ _CONSEQUENTIALITY_TERMS: list[str] = [
     # (the verb forms and past tenses cover actual events).
     "protests", "protested", "protest",
     "rally", "rallied", "rallies",
-    "marched", "march",
+    # NB: bare "march" deliberately omitted — collides with month name
+    # "March" on time-anchored stories ("killed since March", "elections
+    # in March"). Use "marched" / "marches" (verb forms) only.
+    "marched", "marches",
     "demonstration", "demonstrations",
     "shutdown", "shut down",
     "riot", "rioted", "riots",
@@ -304,6 +307,14 @@ _AUTHORITY_TIER1: list[str] = [
     # UN top-level bodies
     "un security council", "united nations security council",
     "un general assembly", "international court of justice",
+    # Global health authority: WHO PHEIC declarations are tier-1 institutional
+    # events. Only 7 PHEIC declarations have ever been made (H1N1 2009, polio
+    # 2014, Ebola 2014, Zika 2016, Ebola 2019, COVID 2020, Mpox 2022/2024).
+    # Today's DRC Ebola declaration would rank #3 instead of #2 without this.
+    "world health organization",
+    "director-general of the who", "director general of the who",
+    "who declares", "who declared",
+    "public health emergency of international concern", "pheic",
     # Constitutional / sovereignty events
     "constitution", "constitutional amendment", "impeachment",
     "declaration of independence", "sovereignty",
