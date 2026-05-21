@@ -1,5 +1,7 @@
 # CEO Agent Playbook — void --news
 
+Last updated: 2026-04-28 (rev 1)
+
 **17 agents. 7 divisions. All via Claude Code CLI.**
 
 ---

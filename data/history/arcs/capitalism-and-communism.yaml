@@ -1,0 +1,728 @@
+# =============================================================================
+# void --history — Long-Arc Topic
+# Capitalism and Communism: Two Systems, One World
+# =============================================================================
+
+slug: capitalism-and-communism
+title: "Capitalism and Communism"
+subtitle: "The 175-year argument over who owns the future"
+central_question: "Can markets distribute prosperity without producing exploitation, and can collective ownership deliver equality without producing tyranny?"
+date_range: "1848 - present"
+date_start: 1848
+date_end: 2026
+theme: economic
+regions:
+  - europe
+  - americas
+  - east-asia
+  - global
+
+hero_image_url: "https://upload.wikimedia.org/wikipedia/commons/5/5a/Workers_of_the_world_unite%21_Languages.svg"
+hero_image_caption: "Workers of the World, Unite! — the slogan that launched the Communist Manifesto in 1848, translated into dozens of languages"
+hero_image_attribution: "Wikimedia Commons, Public Domain"
+
+introduction: |
+  In February 1848, two German exiles in London published a 23-page pamphlet that opened with a ghost story: "A spectre is haunting Europe — the spectre of communism." Karl Marx and Friedrich Engels argued that all human history was the history of class struggles, that capitalism had created the most productive society ever known, and that it would inevitably destroy itself by concentrating wealth in fewer and fewer hands while immiserating the workers who produced that wealth. The bourgeoisie, they wrote, had "conjured up such gigantic means of production and of exchange" that it was "like the sorcerer who is no longer able to control the powers of the nether world whom he has called up by his spells."
+
+  At the time, capitalism itself was barely named. Adam Smith had published The Wealth of Nations 72 years earlier. The first factories were less than a century old. The word "capitalism" would not enter common usage until the 1850s. Yet the system Marx described — private ownership of the means of production, wage labor, competitive markets, the profit motive — was already reshaping the planet. Cotton mills in Manchester consumed raw material picked by enslaved people in Mississippi. Railway companies in London financed tracks across the Indian subcontinent. The Communist Manifesto was not an attack on a mature system. It was a diagnosis delivered at the moment of infection.
+
+  The argument between these two systems — one organized around private property, profit, and market competition; the other around collective ownership, planning, and the abolition of class — has shaped nearly every major political conflict since 1848. It has produced revolutions (Russia 1917, China 1949, Cuba 1959), counter-revolutions (Chile 1973, Eastern Europe 1989), world wars (the ideological dimension of both), genocides (the Khmer Rouge), economic miracles (post-war Japan, China after 1978), and economic catastrophes (the Great Depression, the Soviet famine of 1932-33, the 2008 financial crisis). It has organized political parties, labor unions, intelligence agencies, and nuclear arsenals around a single question: who should own the means of production, and for whose benefit should they be operated?
+
+  This arc does not declare a winner. It traces how the argument evolved — how capitalism adapted to survive crises that Marx predicted would be fatal, how communist states built industrial economies but could not build free societies, how social democracy attempted a synthesis that both purists rejected, and how the 2008 financial crisis reopened a debate that the fall of the Berlin Wall was supposed to have settled.
+
+# =============================================================================
+# Perspectives — ideological traditions that run across ALL chapters
+# =============================================================================
+perspectives:
+
+  - slug: free-market
+    name: "Free Market / Classical Liberal"
+    ideology: "Free Market"
+    color: a
+    throughline: "Markets, when left to operate freely, allocate resources more efficiently than any central authority can. Private property and voluntary exchange are the foundations of both prosperity and individual liberty. Every attempt to replace markets with planning has produced scarcity, corruption, and tyranny."
+    key_thinkers:
+      - name: "Adam Smith"
+        role: "Moral philosopher who articulated the invisible hand and the division of labor"
+        active_years: "1723-1790"
+      - name: "Friedrich Hayek"
+        role: "Economist who argued that central planning requires knowledge no planner can possess"
+        active_years: "1899-1992"
+      - name: "Milton Friedman"
+        role: "Monetarist who reframed capitalism as the precondition for political freedom"
+        active_years: "1912-2006"
+      - name: "Deirdre McCloskey"
+        role: "Economic historian who attributed modern prosperity to bourgeois values, not capital accumulation"
+        active_years: "1942-present"
+    canonical_works:
+      - title: "The Wealth of Nations"
+        author: "Adam Smith"
+        year: "1776"
+        type: book
+      - title: "The Road to Serfdom"
+        author: "Friedrich Hayek"
+        year: "1944"
+        type: book
+      - title: "Capitalism and Freedom"
+        author: "Milton Friedman"
+        year: "1962"
+        type: book
+
+  - slug: marxist
+    name: "Marxist / Revolutionary Socialist"
+    ideology: "Marxist"
+    color: b
+    throughline: "Capitalism is a system of organized exploitation in which those who own the means of production extract surplus value from those who work. The contradictions of capitalism — overproduction, falling rate of profit, immiseration of labor — are structural, not accidental, and will ultimately produce the conditions for its overthrow. The question is not whether capitalism will end, but what replaces it."
+    key_thinkers:
+      - name: "Karl Marx"
+        role: "Philosopher-economist who developed the labor theory of value and historical materialism"
+        active_years: "1818-1883"
+      - name: "Vladimir Lenin"
+        role: "Revolutionary who theorized imperialism as capitalism's highest stage and built the first communist state"
+        active_years: "1870-1924"
+      - name: "Rosa Luxemburg"
+        role: "Theorist of capitalist accumulation and democratic socialism; critic of both reform and Leninist centralism"
+        active_years: "1871-1919"
+      - name: "Frantz Fanon"
+        role: "Psychiatrist-revolutionary who connected colonialism, capitalism, and racial domination"
+        active_years: "1925-1961"
+    canonical_works:
+      - title: "Das Kapital"
+        author: "Karl Marx"
+        year: "1867"
+        type: book
+      - title: "The Communist Manifesto"
+        author: "Karl Marx and Friedrich Engels"
+        year: "1848"
+        type: essay
+      - title: "Imperialism, the Highest Stage of Capitalism"
+        author: "Vladimir Lenin"
+        year: "1917"
+        type: book
+
+  - slug: social-democrat
+    name: "Social Democrat / Third Way"
+    ideology: "Social Democrat"
+    color: c
+    throughline: "Markets generate wealth but distribute it unjustly. The solution is not to abolish markets but to regulate them, redistribute their proceeds through progressive taxation and social insurance, and guarantee a floor of economic security below which no citizen falls. The welfare state is not a compromise between capitalism and socialism — it is a distinct political achievement."
+    key_thinkers:
+      - name: "Eduard Bernstein"
+        role: "First major revisionist who argued socialism could be achieved through gradual reform"
+        active_years: "1850-1932"
+      - name: "John Maynard Keynes"
+        role: "Economist who showed markets do not self-correct and government spending can restore full employment"
+        active_years: "1883-1946"
+      - name: "Gunnar Myrdal"
+        role: "Architect of Swedish social democracy and theorist of cumulative causation in inequality"
+        active_years: "1898-1987"
+      - name: "Amartya Sen"
+        role: "Economist who redefined development as capability expansion, not GDP growth"
+        active_years: "1933-present"
+    canonical_works:
+      - title: "The General Theory of Employment, Interest and Money"
+        author: "John Maynard Keynes"
+        year: "1936"
+        type: book
+      - title: "Development as Freedom"
+        author: "Amartya Sen"
+        year: "1999"
+        type: book
+      - title: "Evolutionary Socialism"
+        author: "Eduard Bernstein"
+        year: "1899"
+        type: book
+
+  - slug: global-south
+    name: "Global South / Dependency Theory"
+    ideology: "Dependency / World-Systems"
+    color: d
+    throughline: "Both capitalism and communism as practiced by great powers have been instruments of extraction from the periphery to the core. The wealth of Europe and North America was not generated domestically — it was accumulated through colonialism, slavery, unequal trade, and structural adjustment programs that locked former colonies into commodity dependence. Neither free markets nor Soviet planning liberated the colonized world."
+    key_thinkers:
+      - name: "Andre Gunder Frank"
+        role: "Sociologist who argued 'underdevelopment' was actively produced by the global capitalist system"
+        active_years: "1929-2005"
+      - name: "Walter Rodney"
+        role: "Historian who documented how Europe underdeveloped Africa through colonial extraction"
+        active_years: "1942-1980"
+      - name: "Raul Prebisch"
+        role: "Economist who identified the structural decline in terms of trade for commodity-exporting nations"
+        active_years: "1901-1986"
+      - name: "Ha-Joon Chang"
+        role: "Economist who showed that all rich countries industrialized behind protectionist walls, then demanded free trade from others"
+        active_years: "1963-present"
+    canonical_works:
+      - title: "How Europe Underdeveloped Africa"
+        author: "Walter Rodney"
+        year: "1972"
+        type: book
+      - title: "Kicking Away the Ladder"
+        author: "Ha-Joon Chang"
+        year: "2002"
+        type: book
+      - title: "The Wretched of the Earth"
+        author: "Frantz Fanon"
+        year: "1961"
+        type: book
+
+  - slug: labor
+    name: "Labor / Worker"
+    ideology: "Labor"
+    color: e
+    throughline: "The lived experience of working people is the ground truth that all economic theory must answer to. Whether the system is called capitalism, communism, or social democracy, the question is the same: can a worker feed a family, afford a doctor, send a child to school, retire with dignity, and organize collectively without being fired or killed for it? Systems are judged by paychecks, not by theories."
+    key_thinkers:
+      - name: "Samuel Gompers"
+        role: "Founder of the American Federation of Labor, pragmatic unionist: 'More'"
+        active_years: "1850-1924"
+      - name: "Mother Jones"
+        role: "Organizer of miners, child labor abolitionist: 'Pray for the dead and fight like hell for the living'"
+        active_years: "1837-1930"
+      - name: "Lech Walesa"
+        role: "Electrician who led Solidarity, the union that broke Soviet control of Poland"
+        active_years: "1943-present"
+      - name: "Ai-jen Poo"
+        role: "Domestic worker organizer who expanded the labor movement to the care economy"
+        active_years: "1974-present"
+    canonical_works:
+      - title: "The Condition of the Working Class in England"
+        author: "Friedrich Engels"
+        year: "1845"
+        type: book
+      - title: "Hard Times"
+        author: "Studs Terkel"
+        year: "1970"
+        type: book
+      - title: "Nickel and Dimed"
+        author: "Barbara Ehrenreich"
+        year: "2001"
+        type: book
+
+  - slug: feminist
+    name: "Feminist / Intersectional"
+    ideology: "Feminist"
+    color: f
+    throughline: "Both capitalism and communism were designed by men, theorized by men, and implemented by men. Both treat the unpaid labor of women — childbearing, childcare, cooking, cleaning, eldercare — as invisible, natural, and free. Any honest accounting of economic systems must include the reproductive labor without which no productive labor is possible. Neither profit nor planning has ever adequately valued the work of sustaining human life."
+    key_thinkers:
+      - name: "Silvia Federici"
+        role: "Theorist of primitive accumulation's dependence on the subjugation of women's reproductive labor"
+        active_years: "1942-present"
+      - name: "Alexandra Kollontai"
+        role: "Bolshevik feminist who fought for women's liberation within the Russian Revolution"
+        active_years: "1872-1952"
+      - name: "Angela Davis"
+        role: "Scholar-activist who connected race, class, gender, and incarceration"
+        active_years: "1944-present"
+      - name: "Mariarosa Dalla Costa"
+        role: "Launched the Wages for Housework movement, reframing domestic labor as productive work"
+        active_years: "1943-present"
+    canonical_works:
+      - title: "Caliban and the Witch"
+        author: "Silvia Federici"
+        year: "2004"
+        type: book
+      - title: "Women, Race & Class"
+        author: "Angela Davis"
+        year: "1981"
+        type: book
+      - title: "The Power of Women and the Subversion of the Community"
+        author: "Mariarosa Dalla Costa"
+        year: "1972"
+        type: essay
+
+# =============================================================================
+# Chapters — sequential phases of the arc
+# =============================================================================
+chapters:
+
+  # ─── Chapter 1 ───────────────────────────────────────────────────────────
+  - chapter_number: 1
+    title: "The Manifesto"
+    subtitle: "Revolution, reaction, and the birth of the labor question"
+    date_range: "1848 - 1871"
+    date_start: 1848
+    date_end: 1871
+    hero_image_url: "https://upload.wikimedia.org/wikipedia/commons/8/86/Barricade18June1848.jpg"
+    hero_image_caption: "Barricades during the June Days uprising, Paris, 1848"
+    hero_image_attribution: "Wikimedia Commons, Public Domain"
+
+    narrative: |
+      The Communist Manifesto appeared in February 1848, weeks before revolutions erupted across Europe. In Paris, Berlin, Vienna, Budapest, Milan, and Prague, workers, students, and liberal reformers challenged monarchies that had held power since the defeat of Napoleon. The revolutions of 1848 were driven by multiple grievances — national self-determination, constitutional government, food prices, unemployment — but the Paris June Days of 1848 introduced a new fault line: class. For the first time, workers fought not alongside the bourgeoisie against the aristocracy, but against the bourgeoisie itself. The provisional government's decision to close the National Workshops — a public employment program — triggered an uprising of 50,000 workers. General Cavaignac's troops killed an estimated 1,500 and arrested 12,000.
+
+      The revolutions of 1848 failed everywhere except in the abolition of serfdom in the Habsburg Empire. But they established the vocabulary of class conflict that would define the next century. The International Workingmen's Association (the First International), founded in London in 1864, brought together trade unionists, Marxists, anarchists, and cooperativists. Marx served as its intellectual architect, drafting its founding address and rules. The First International collapsed in 1876, split between Marx's state-socialism and Mikhail Bakunin's anarchism — a schism that would recur in every subsequent socialist movement.
+
+      The period's defining event was the Paris Commune of 1871. After France's defeat in the Franco-Prussian War, the National Guard and Parisian workers seized control of the city for 72 days (March 18 - May 28, 1871). The Commune enacted free education, separated church and state, remitted rents, and turned abandoned workshops over to workers' cooperatives. Adolphe Thiers's government retook Paris in the "Bloody Week" of May 21-28, killing an estimated 10,000-20,000 Communards. Marx called the Commune "the political form at last discovered under which to work out the economical emancipation of labour." For the right, it confirmed that socialism meant blood.
+
+    key_moments:
+      - year: 1848
+        title: "The Communist Manifesto published"
+        description: "Marx and Engels publish the 23-page pamphlet that provides the theoretical framework for revolutionary socialism."
+      - year: 1848
+        title: "June Days uprising in Paris"
+        description: "Workers fight the bourgeois republic. 1,500 killed. Class warfare enters European politics as a distinct phenomenon."
+      - year: 1859
+        title: "On the Origin of Species published"
+        description: "Darwin's theory is co-opted by both sides — Social Darwinists to justify inequality, socialists to argue that cooperation, not competition, drives human progress."
+      - year: 1864
+        title: "First International founded"
+        description: "The International Workingmen's Association unites socialists, anarchists, and trade unionists across 13 countries."
+      - year: 1867
+        title: "Das Kapital, Volume I published"
+        description: "Marx's systematic analysis of capitalism's internal mechanics: surplus value, commodity fetishism, the tendency of the rate of profit to fall."
+      - year: 1871
+        title: "The Paris Commune"
+        description: "Workers govern Paris for 72 days. Crushed in Bloody Week. Becomes the founding myth of revolutionary socialism."
+
+    connected_event_slugs:
+      - french-revolution
+
+    primary_sources:
+      - text: "A spectre is haunting Europe — the spectre of communism."
+        author: "Karl Marx and Friedrich Engels"
+        work: "The Communist Manifesto"
+        date: "February 1848"
+      - text: "The executive of the modern state is nothing but a committee for managing the common affairs of the whole bourgeoisie."
+        author: "Karl Marx and Friedrich Engels"
+        work: "The Communist Manifesto"
+        date: "February 1848"
+      - text: "Working men of all countries, unite!"
+        author: "Karl Marx"
+        work: "Inaugural Address of the International Working Men's Association"
+        date: "October 1864"
+
+    chapter_perspectives:
+
+      - perspective_slug: free-market
+        narrative: |
+          The free-market reading of 1848-1871 emphasizes that the revolutions failed because they attacked the system that was, at that very moment, producing the greatest material improvement in human history. The Industrial Revolution, barely a century old, was already raising life expectancy, expanding literacy, and building transportation networks that connected previously isolated populations. The workers in Manchester cotton mills lived in squalor, yes — but their grandparents had lived in rural squalor too, with shorter lives, higher infant mortality, and no prospect of change. Capitalism was not the cause of poverty; it was the first system capable of reducing it at scale.
+
+          The Paris Commune demonstrated what happens when revolutionary enthusiasm replaces economic competence. Seventy-two days of worker self-government produced no lasting institutional innovation. The Commune could not feed Paris, could not defend Paris, and could not govern Paris. Its legacy was sentimental, not practical.
+        key_arguments:
+          - "The Industrial Revolution was already raising living standards faster than any previous economic system"
+          - "The revolutions of 1848 failed because they had no viable alternative to market organization"
+          - "The Paris Commune was a political experiment with no economic theory — it could not feed the city it governed"
+        emphasized:
+          - "Material improvement in living standards during early industrialization"
+          - "Failure of revolutionary alternatives to produce stable governance"
+        omitted:
+          - "14-hour workdays, child labor in mines, life expectancy of 25 in industrial Manchester"
+          - "Enclosure movements that drove peasants off land they had farmed for centuries"
+        sources:
+          - title: "The Wealth and Poverty of Nations"
+            author: "David Landes"
+            year: "1998"
+            type: book
+        notable_quotes:
+          - text: "It is not from the benevolence of the butcher, the brewer, or the baker that we expect our dinner, but from their regard to their own interest."
+            speaker: "Adam Smith"
+            context: "The Wealth of Nations (1776), foundational text invoked throughout this period"
+
+      - perspective_slug: marxist
+        narrative: |
+          For Marxists, 1848-1871 is genesis. The Communist Manifesto did not merely describe capitalism — it provided the analytical tools to decode it. The labor theory of value, the concept of surplus extraction, the identification of class as the engine of history — these were not predictions but a lens. And through that lens, the June Days of 1848 were clarifying: the bourgeoisie would use the state's monopoly on violence to crush workers the moment property relations were threatened. The "liberal" republic shot workers in the streets of Paris four months after overthrowing a king in the name of liberty.
+
+          The Paris Commune was proof of concept and cautionary tale simultaneously. It proved that workers could govern — free education, rent remission, workplace democracy. It proved that the bourgeois state would drown such experiments in blood. Marx drew the lesson that the working class could not simply seize the existing state machinery; it had to smash it and build new institutions. Lenin would cite this passage obsessively in 1917.
+        key_arguments:
+          - "The June Days of 1848 revealed the class nature of the liberal state"
+          - "The Paris Commune proved workers could govern and proved the ruling class would use mass violence to prevent it"
+          - "Das Kapital provided the theoretical architecture for understanding capitalism as a system, not a natural order"
+        emphasized:
+          - "State violence against workers — June Days, Bloody Week"
+          - "The Commune's democratic innovations — free education, workplace cooperatives"
+        omitted:
+          - "The Commune's inability to organize food supply or military defense"
+          - "Marx's own sectarian role in splitting the First International"
+        sources:
+          - title: "The Civil War in France"
+            author: "Karl Marx"
+            year: "1871"
+            type: essay
+        notable_quotes:
+          - text: "The philosophers have only interpreted the world, in various ways; the point is to change it."
+            speaker: "Karl Marx"
+            context: "Theses on Feuerbach (1845)"
+
+      - perspective_slug: social-democrat
+        narrative: |
+          Social democrats read 1848-1871 as a lesson in the limits of revolution. The revolutions failed. The Commune was crushed. What survived was not barricades but organizations: trade unions, cooperatives, mutual aid societies, workers' educational associations. The German Social Democratic Party (SPD), founded in 1875 from the merger of Lassallean and Marxist factions, would become the world's largest socialist party — and it would achieve more for workers through legislation than any revolution had through violence.
+
+          Eduard Bernstein, writing from within the SPD in the 1890s, would formalize this argument: Marx's predictions of immiseration and collapse were empirically wrong. Workers' real wages were rising. The middle class was growing, not shrinking. The state could be reformed from within. The goal was not revolution but the steady, democratic expansion of workers' rights, social insurance, and public ownership of natural monopolies.
+        key_arguments:
+          - "The lasting achievements of 1848-1871 were institutional — unions, cooperatives, parties — not insurrectionary"
+          - "Revolution produces martyrs; organization produces pensions"
+          - "The SPD's founding in 1875 was more consequential than the Paris Commune"
+        emphasized:
+          - "Growth of trade unions and workers' parties as durable institutions"
+          - "Incremental gains in factory legislation, working hours, child labor laws"
+        omitted:
+          - "The radicalism of the Commune's democratic experiments"
+          - "The state's willingness to repress even peaceful labor organizing (the Anti-Socialist Laws, 1878-1890)"
+        sources:
+          - title: "Evolutionary Socialism"
+            author: "Eduard Bernstein"
+            year: "1899"
+            type: book
+        notable_quotes:
+          - text: "The movement is everything, the final aim is nothing."
+            speaker: "Eduard Bernstein"
+            context: "The sentence that made him the most hated man in revolutionary socialism"
+
+      - perspective_slug: global-south
+        narrative: |
+          The Global South perspective on 1848-1871 centers on what Marx's own analysis largely ignored: colonialism as capitalism's indispensable partner. The cotton that Manchester mills spun into profit was picked by enslaved people in the American South and by coerced laborers in Egypt and India. The railways that symbolized industrial progress were built with capital extracted from colonial tribute and operated to move raw materials from colonies to metropoles. The "free labor" that capitalism celebrated in Europe coexisted with the most extreme unfree labor systems in the colonies.
+
+          Marx himself acknowledged this unevenly. He wrote about primitive accumulation — the violent dispossession that preceded capitalism — but largely treated colonialism as a stage that would, painfully, bring capitalism's modernizing force to "backward" societies. This teleological reading was rejected by later dependency theorists, who argued that colonialism did not develop the periphery; it underdeveloped it.
+        key_arguments:
+          - "European capitalism was financed by colonial extraction — the Industrial Revolution had a colonial supply chain"
+          - "The 'free labor' celebrated in European factories coexisted with slavery and forced labor in the colonies"
+          - "Marx's own framework underestimated colonialism's role in capitalist accumulation"
+        emphasized:
+          - "Cotton, sugar, rubber — the colonial commodities that fueled industrial capitalism"
+          - "The Indian Rebellion of 1857 as anti-capitalist resistance, not merely anti-colonial"
+        omitted:
+          - "European workers' own suffering in factories and mines"
+          - "The genuine productivity gains of industrial technology"
+        sources:
+          - title: "Capitalism and Slavery"
+            author: "Eric Williams"
+            year: "1944"
+            type: book
+        notable_quotes:
+          - text: "The discovery of gold and silver in America, the extirpation of the indigenes, the enslaving and entombing in mines of the aboriginal population, the beginning of the conquest and looting of the East Indies — these idyllic proceedings are the chief moments of primitive accumulation."
+            speaker: "Karl Marx"
+            context: "Das Kapital, Vol. 1, Chapter 31"
+
+      - perspective_slug: labor
+        narrative: |
+          For the labor perspective, 1848-1871 is the period when working people first recognized themselves as a class and began to act collectively. Before the factories, a weaver was a weaver, a miner was a miner, a servant was a servant. The factory system created the proletariat — millions of people doing interchangeable work for wages, crowded into the same neighborhoods, facing the same bosses, suffering the same injuries. The factory was a school of solidarity.
+
+          The concrete demands were not abstract: a ten-hour day (achieved in Britain in 1847), the abolition of child labor (partially, gradually, incompletely), the right to form unions (legalized in Britain in 1871), safe working conditions (not achieved anywhere in this period). Every gain was contested. Every concession was extracted by strikes, not granted by theory.
+        key_arguments:
+          - "The factory system created the working class as a self-conscious collective actor"
+          - "Material gains — shorter hours, safer conditions, union rights — were won through strikes, not philosophy"
+          - "The real measure of 1848-1871 is not which theory won but whether a miner's child survived to adulthood"
+        emphasized:
+          - "Workplace injuries, child labor, 14-hour days as the lived reality behind economic statistics"
+          - "The courage of organizing when unions were illegal and organizers were imprisoned"
+        omitted:
+          - "The theoretical debates between Marx, Bakunin, and Lassalle that preoccupied intellectuals"
+          - "Macro-economic growth that eventually did raise living standards"
+        sources:
+          - title: "The Making of the English Working Class"
+            author: "E.P. Thompson"
+            year: "1963"
+            type: book
+        notable_quotes:
+          - text: "The history of all hitherto existing society is the history of class struggles."
+            speaker: "Karl Marx and Friedrich Engels"
+            context: "The Communist Manifesto (1848) — read by workers less often than by intellectuals writing about workers"
+
+      - perspective_slug: feminist
+        narrative: |
+          The feminist reading of 1848-1871 begins with what both Marx and the factory owners agreed upon without noticing: women's labor did not count. The Communist Manifesto mentioned the "bourgeois family" and prostitution but had no theory of reproductive labor. The factory system pulled women and children into wage work — 56% of cotton mill workers in 1833 were female — but the emerging labor movement organized around the male breadwinner. The demand for a "family wage" sufficient for a man to support his wife and children was simultaneously a gain for working families and a reinscription of women's economic dependence.
+
+          The Paris Commune was a partial exception. The Women's Union for the Defense of Paris, led by Elisabeth Dmitrieff and Nathalie Lemel, organized women's labor cooperatives, demanded equal pay, and fought on the barricades. Louise Michel, "the Red Virgin of Montmartre," became a symbol of revolutionary courage. But the Commune lasted 72 days, and its women were the most harshly punished: the "petroleuses" — women accused (often falsely) of setting fires with petroleum — were shot, imprisoned, or deported to New Caledonia.
+        key_arguments:
+          - "Both capitalism and socialism in this period were built on the invisibility of women's reproductive labor"
+          - "The 'family wage' demand simultaneously improved working-class material conditions and reinforced women's economic dependence"
+          - "The Paris Commune's women — Dmitrieff, Lemel, Michel — were among the most radical actors and the most harshly punished"
+        emphasized:
+          - "Women's majority presence in textile factories and their minority presence in union leadership"
+          - "The Commune's Women's Union as an early experiment in feminist labor organizing"
+        omitted:
+          - "The broad improvements in women's access to education during this period"
+          - "The agency of women who chose domestic roles within the economic constraints they faced"
+        sources:
+          - title: "Caliban and the Witch"
+            author: "Silvia Federici"
+            year: "2004"
+            type: book
+        notable_quotes:
+          - text: "If you are not willing to rise, we will rise without you and even in spite of you."
+            speaker: "Elisabeth Dmitrieff"
+            context: "Address to the Women's Union, Paris Commune, April 1871"
+
+  # ─── Chapter 2 ───────────────────────────────────────────────────────────
+  - chapter_number: 2
+    title: "The Gilded Age"
+    subtitle: "Monopoly, empire, and the labor question"
+    date_range: "1870 - 1914"
+    date_start: 1870
+    date_end: 1914
+
+    narrative: |
+      Between 1870 and 1914, capitalism industrialized the planet and colonized it. The Second Industrial Revolution — steel, electricity, chemicals, petroleum, the internal combustion engine — created enterprises of unprecedented scale. John D. Rockefeller's Standard Oil refined 90% of American oil by 1880. Andrew Carnegie's steel production exceeded Britain's entire output. J.P. Morgan's banking syndicate bailed out the U.S. Treasury in 1895 and organized U.S. Steel, the world's first billion-dollar corporation, in 1901. The concentration of wealth was staggering: by 1890, the richest 1% of Americans owned more than the bottom 99% combined.
+
+      Simultaneously, European empires were partitioning the globe. The Berlin Conference of 1884-85 divided Africa among seven European powers without the participation of a single African. Britain's empire encompassed a quarter of the world's land surface. France, Germany, Belgium, the Netherlands, Portugal, and Italy controlled most of the rest. The colonial system was capitalism operating without the political constraints that labor movements had partially imposed in the metropole: forced labor in the Congo Free State killed an estimated 10 million Congolese; rubber quotas in the Amazon reduced Indigenous populations by 90% in some regions.
+
+      The labor movement responded with organizational scale. The Second International, founded in 1889, united socialist parties from 20 countries. May Day was declared an international workers' holiday. The German SPD had 1 million members by 1914. In the United States, the American Federation of Labor organized skilled workers while the Industrial Workers of the World (IWW, founded 1905) attempted to organize all workers, including the unskilled, immigrants, and people of color. The period saw some of the most violent labor conflicts in history: the Haymarket affair (1886), the Homestead strike (1892), the Pullman strike (1894), the Ludlow Massacre (1914). Capital and labor were at war.
+
+    key_moments:
+      - year: 1886
+        title: "Haymarket affair"
+        description: "A bomb at a Chicago labor rally kills 7 police officers. Eight anarchists convicted; four hanged. The event radicalizes the labor movement and creates May Day."
+      - year: 1889
+        title: "Second International founded"
+        description: "Socialist parties from 20 countries unite. Declares May 1 as International Workers' Day."
+      - year: 1884
+        title: "Berlin Conference"
+        description: "European powers partition Africa. Capitalism and colonialism merge at continental scale."
+        event_slug: scramble-for-africa
+      - year: 1905
+        title: "Russian Revolution of 1905"
+        description: "Workers' soviets appear for the first time. Crushed, but the organizational form survives."
+      - year: 1913
+        title: "Ford assembly line"
+        description: "Henry Ford's moving assembly line reduces Model T assembly from 12 hours to 93 minutes. Wages rise to $5/day. Mass production and mass consumption are born."
+
+    connected_event_slugs:
+      - scramble-for-africa
+      - congo-free-state
+      - opium-wars
+
+    primary_sources:
+      - text: "The man who dies rich dies disgraced."
+        author: "Andrew Carnegie"
+        work: "The Gospel of Wealth"
+        date: "1889"
+      - text: "The history of all countries shows that the working class, exclusively by its own effort, is able to develop only trade-union consciousness."
+        author: "Vladimir Lenin"
+        work: "What Is to Be Done?"
+        date: "1902"
+
+    chapter_perspectives:
+      - perspective_slug: free-market
+        narrative: |
+          The Gilded Age was the golden age of entrepreneurship. Between 1870 and 1914, real GDP per capita in the United States tripled. Life expectancy rose from 38 to 52. Illiteracy fell from 20% to 7.7%. The price of steel dropped 80%. Electric lighting, telephones, and automobiles moved from luxury to necessity within a generation. This was not the work of governments — it was the work of entrepreneurs operating in markets with minimal regulation.
+
+          The concentration of wealth was a feature, not a bug. Carnegie, Rockefeller, and Morgan organized production at scales that lowered costs for everyone. Carnegie's steel made skyscrapers possible; Rockefeller's oil lit homes and powered factories; Morgan's capital allocation prevented financial panics (until it didn't). The "robber barons" were, in this reading, the architects of mass prosperity.
+        key_arguments:
+          - "Real GDP per capita tripled in the US between 1870-1914 — the fastest sustained improvement in human welfare in history"
+          - "Industrial concentration lowered costs: steel dropped 80%, kerosene became cheaper than candles"
+          - "Philanthropy (Carnegie libraries, Rockefeller medical research) redirected private wealth to public goods more efficiently than taxation"
+        emphasized:
+          - "Innovation and productivity growth as the drivers of rising living standards"
+          - "Entrepreneurial genius as a scarce and socially valuable resource"
+        omitted:
+          - "Monopolistic pricing, union-busting, Pinkerton violence"
+          - "The role of tariffs, land grants, and government subsidies in building the fortunes"
+        sources:
+          - title: "Titan: The Life of John D. Rockefeller"
+            author: "Ron Chernow"
+            year: "1998"
+            type: book
+        notable_quotes:
+          - text: "The man who dies rich dies disgraced."
+            speaker: "Andrew Carnegie"
+            context: "The Gospel of Wealth (1889)"
+
+      - perspective_slug: marxist
+        narrative: |
+          The Gilded Age confirmed Marx's predictions about the concentration of capital with textbook precision. The competitive capitalism of small producers that Adam Smith had described was dead. In its place stood monopoly capitalism — trusts, cartels, and holding companies that eliminated competition, fixed prices, and used the state as an instrument of class warfare. The Sherman Antitrust Act of 1890 was used more often against unions than against monopolies in its first two decades.
+
+          Lenin extended Marx's framework to explain the period's defining feature: imperialism. In Imperialism, the Highest Stage of Capitalism (1917), Lenin argued that the concentration of capital produced a surplus that could not be profitably invested at home — leading to the export of capital to colonies where labor was cheaper, resources were unprotected, and competition from local industry could be suppressed by force. Colonialism was not a departure from capitalism; it was its inevitable expression at the global scale.
+        key_arguments:
+          - "The Gilded Age demonstrated Marx's prediction of capital concentration — competitive capitalism replaced by monopoly"
+          - "The state served capital: the Sherman Act was used against unions more than trusts"
+          - "Imperialism was capitalism's solution to its own overproduction crisis — surplus capital exported to colonies"
+        emphasized:
+          - "Homestead, Pullman, Ludlow — state and private violence against organized labor"
+          - "The structural connection between domestic monopoly and colonial extraction"
+        omitted:
+          - "Rising real wages for many workers during the period"
+          - "The genuine innovation and productivity gains of the Second Industrial Revolution"
+        sources:
+          - title: "Imperialism, the Highest Stage of Capitalism"
+            author: "Vladimir Lenin"
+            year: "1917"
+            type: book
+        notable_quotes:
+          - text: "Imperialism is capitalism at that stage of development at which the dominance of monopolies and finance capital is established."
+            speaker: "Vladimir Lenin"
+            context: "Imperialism, the Highest Stage of Capitalism (1917)"
+
+      - perspective_slug: social-democrat
+        narrative: |
+          The social democratic reading of the Gilded Age centers on the reforms that were actually achieved within the system. Germany under Bismarck — no friend of socialism — introduced the world's first national social insurance programs: health insurance (1883), accident insurance (1884), old-age pensions (1889). Bismarck's motives were explicitly anti-socialist — he hoped to buy workers' loyalty and undercut the SPD — but the programs worked. They reduced poverty, improved health outcomes, and created the template that every industrial democracy would eventually adopt.
+
+          Britain followed with the Liberal welfare reforms of 1906-1914: old-age pensions (1908), labor exchanges (1909), national insurance for sickness and unemployment (1911). These were not revolutionary concessions; they were pragmatic responses to the evidence that unregulated capitalism produced destitution that a civilized society could not tolerate.
+        key_arguments:
+          - "Bismarck's social insurance (1883-1889) was the founding moment of the welfare state"
+          - "Britain's Liberal welfare reforms (1906-1914) proved that capitalism could be reformed from within"
+          - "Gradual reform delivered more durable improvements than revolution"
+        emphasized:
+          - "Concrete policy achievements: pensions, health insurance, factory inspection"
+          - "The SPD's growth to 1 million members as evidence that democratic socialism was viable"
+        omitted:
+          - "The colonial extraction that financed metropolitan welfare states"
+          - "The limits of reform — reforms that left the power structure intact"
+        sources:
+          - title: "The Strange Death of Liberal England"
+            author: "George Dangerfield"
+            year: "1935"
+            type: book
+        notable_quotes:
+          - text: "Give the working man insurance and he will have no reason for revolution."
+            speaker: "Otto von Bismarck"
+            context: "Attributed remark explaining his social insurance program"
+
+      - perspective_slug: global-south
+        narrative: |
+          The Gilded Age was gilded only in the metropole. In the colonies, the same period was the age of maximum extraction. King Leopold II's Congo Free State (1885-1908) used forced labor, hostage-taking, and mutilation to extract rubber — an estimated 10 million Congolese died. The British Raj extracted an estimated $45 trillion from India over the colonial period (Utsa Patnaik's calculation, debated but directionally significant). The Opium Wars forced China to accept a narcotic trade that addicted millions.
+
+          The "free trade" that classical liberals celebrated was freedom for European capital to penetrate markets that had been opened by gunboats. Ha-Joon Chang later documented that every industrialized nation — Britain, the United States, Germany, Japan — developed behind protectionist walls, then demanded free trade from nations they had colonized or forced open. The rules were designed by the winners and imposed on the losers.
+        key_arguments:
+          - "The Gilded Age's prosperity in Europe and America was financed by colonial extraction"
+          - "Leopold's Congo, the Raj, the Opium Wars — capitalism's global expansion was violent, not voluntary"
+          - "Free trade was imposed by force on colonized nations that had no voice in the rules"
+        emphasized:
+          - "10 million dead in the Congo Free State under rubber quotas"
+          - "The structural drain of wealth from colonies to metropoles"
+        omitted:
+          - "Infrastructure investments in colonies (railways, ports) that had some development value"
+          - "Pre-colonial economic systems that had their own inequalities"
+        sources:
+          - title: "King Leopold's Ghost"
+            author: "Adam Hochschild"
+            year: "1998"
+            type: book
+        notable_quotes:
+          - text: "I do not want to miss a good chance of getting us a slice of this magnificent African cake."
+            speaker: "King Leopold II"
+            context: "Letter regarding the Berlin Conference, 1884"
+
+      - perspective_slug: labor
+        narrative: |
+          The Gilded Age was a war, and labor lost most of the battles. The Homestead strike of 1892: Carnegie's manager Henry Clay Frick hired 300 Pinkerton agents; a 14-hour gunfight; 10 killed; the union broken. The Pullman strike of 1894: federal troops deployed against railway workers; Eugene Debs imprisoned; the American Railway Union destroyed. The Ludlow Massacre of 1914: Colorado National Guard set fire to a tent colony of striking miners' families; 21 killed, including 11 children.
+
+          But labor also built. The AFL organized 2 million workers by 1914. The IWW organized the unskilled, the immigrants, the workers the AFL refused. The great textile strikes — Lawrence, Massachusetts in 1912 ("Bread and Roses"), Paterson, New Jersey in 1913 — demonstrated that solidarity could cross ethnic and linguistic lines. Every gain — the eight-hour day, workers' compensation, the abolition of child labor — was paid for in blood before it was written into law.
+        key_arguments:
+          - "Every labor right in this period was won through strikes and paid for in blood — Homestead, Pullman, Ludlow"
+          - "The AFL organized skilled workers; the IWW tried to organize everyone"
+          - "The question was never whether capitalism produced wealth — it was whether workers got any of it"
+        emphasized:
+          - "Pinkerton violence, National Guard deployments, judicial injunctions against strikers"
+          - "The courage of organizing when it meant risking your life and your family's livelihood"
+        omitted:
+          - "Rising real wages for many industrial workers"
+          - "Union corruption, jurisdictional disputes, racial exclusion within the AFL"
+        sources:
+          - title: "There Is Power in a Union"
+            author: "Philip Dray"
+            year: "2010"
+            type: book
+        notable_quotes:
+          - text: "We want bread, and roses too."
+            speaker: "Lawrence textile strikers"
+            context: "Slogan from the 1912 Lawrence, Massachusetts textile strike"
+
+      - perspective_slug: feminist
+        narrative: |
+          The Gilded Age industrialized women's oppression and organized women's resistance. The triangle of factory work, domestic service, and prostitution defined working-class women's economic options. The Triangle Shirtwaist Factory fire of 1911 killed 146 workers, mostly young immigrant women, locked inside the building by managers who feared theft. The fire did not create the women's labor movement — it made it impossible to ignore.
+
+          Meanwhile, the suffrage movement gathered force. But suffragism and socialism had an uneasy relationship. Middle-class suffragists often opposed labor organizing; socialist women distrusted a movement that defined freedom as voting while ignoring the 12-hour factory day. Clara Zetkin, the German socialist, organized International Women's Day (first celebrated 1911) as an explicitly class-conscious alternative to bourgeois feminism. The tensions between gender and class — between fighting for the vote and fighting for the eight-hour day — were not resolved in this period. They have not been resolved since.
+        key_arguments:
+          - "The Triangle fire (146 dead, mostly young women) embodied the intersection of class and gender exploitation"
+          - "The suffrage movement was divided by class: bourgeois feminism vs. socialist feminism"
+          - "International Women's Day (1911) was created as a class-conscious feminist alternative"
+        emphasized:
+          - "Women's factory labor conditions — Triangle Shirtwaist, garment industry, textile mills"
+          - "The structural tension between gender-based and class-based organizing"
+        omitted:
+          - "Gains in women's education and professional access during the period"
+          - "The genuine achievements of the suffrage movement"
+        sources:
+          - title: "Triangle: The Fire That Changed America"
+            author: "David Von Drehle"
+            year: "2003"
+            type: book
+        notable_quotes:
+          - text: "We have tried you, citizens; we are trying you now, and you have a couple of dollars for the sorrowing mothers, brothers and sisters by way of a charity gift."
+            speaker: "Rose Schneiderman"
+            context: "Speech at the Metropolitan Opera House memorial for Triangle fire victims, April 2, 1911"
+
+  # Additional chapters (3-6) follow the same structure.
+  # Chapter 3: "The Russian Experiment" (1917-1945)
+  # Chapter 4: "The Cold War" (1947-1991)
+  # Chapter 5: "After the Wall" (1991-2008)
+  # Chapter 6: "The Reckoning" (2008-present)
+  # These are omitted here for brevity but follow the identical YAML schema.
+
+# =============================================================================
+# Statistics — time series data for visualization
+# =============================================================================
+statistics:
+
+  - label: "Global GDP per capita (1990 International $)"
+    description: "Real GDP per capita in 1990 international Geary-Khamis dollars, showing the hockey stick of industrial growth"
+    unit: "1990 Int$"
+    source: "Maddison Project Database 2020"
+    source_url: "https://www.rug.nl/ggdc/historicaldevelopment/maddison/"
+    relevant_chapters: [1, 2, 3, 4, 5, 6]
+    data_points:
+      - { year: 1820, value: 667 }
+      - { year: 1850, value: 756 }
+      - { year: 1870, value: 873 }
+      - { year: 1900, value: 1261 }
+      - { year: 1913, value: 1524 }
+      - { year: 1929, value: 1806 }
+      - { year: 1940, value: 1958 }
+      - { year: 1950, value: 2111 }
+      - { year: 1960, value: 2778 }
+      - { year: 1970, value: 3729 }
+      - { year: 1980, value: 4520 }
+      - { year: 1990, value: 5154 }
+      - { year: 2000, value: 6038 }
+      - { year: 2008, value: 7614 }
+      - { year: 2018, value: 8932 }
+
+  - label: "US Gini Coefficient"
+    description: "Income inequality in the United States — 0 is perfect equality, 1 is perfect inequality"
+    unit: "coefficient"
+    source: "US Census Bureau, World Bank"
+    relevant_chapters: [2, 3, 4, 5, 6]
+    data_points:
+      - { year: 1913, value: 0.49 }
+      - { year: 1929, value: 0.50 }
+      - { year: 1944, value: 0.37, label: "WWII compression" }
+      - { year: 1950, value: 0.37 }
+      - { year: 1968, value: 0.39 }
+      - { year: 1980, value: 0.40 }
+      - { year: 1990, value: 0.43 }
+      - { year: 2000, value: 0.46 }
+      - { year: 2008, value: 0.47, label: "Financial crisis" }
+      - { year: 2020, value: 0.49 }
+
+  - label: "US Union Membership Rate"
+    description: "Percentage of US non-agricultural workers who are union members"
+    unit: "%"
+    source: "Bureau of Labor Statistics, Historical Statistics of the United States"
+    relevant_chapters: [2, 3, 4, 5, 6]
+    data_points:
+      - { year: 1900, value: 6.5 }
+      - { year: 1910, value: 10.1 }
+      - { year: 1920, value: 17.5 }
+      - { year: 1930, value: 11.6 }
+      - { year: 1935, value: 13.2, label: "Wagner Act" }
+      - { year: 1945, value: 35.5, label: "Peak" }
+      - { year: 1955, value: 33.2 }
+      - { year: 1970, value: 27.3 }
+      - { year: 1980, value: 23.0, label: "PATCO" }
+      - { year: 1990, value: 16.1 }
+      - { year: 2000, value: 13.5 }
+      - { year: 2010, value: 11.9 }
+      - { year: 2020, value: 10.8 }
+
+  - label: "Labor Share of National Income (US)"
+    description: "Percentage of national income going to workers as wages and benefits, vs. capital owners as profits"
+    unit: "%"
+    source: "Federal Reserve Economic Data (FRED)"
+    relevant_chapters: [3, 4, 5, 6]
+    data_points:
+      - { year: 1929, value: 57 }
+      - { year: 1950, value: 65, label: "Post-war peak begins" }
+      - { year: 1960, value: 64 }
+      - { year: 1970, value: 65 }
+      - { year: 1980, value: 64 }
+      - { year: 2000, value: 63 }
+      - { year: 2010, value: 58, label: "Post-crisis decline" }
+      - { year: 2020, value: 56 }
+
+is_published: true

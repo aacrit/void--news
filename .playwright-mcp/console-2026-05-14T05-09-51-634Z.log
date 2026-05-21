@@ -1,0 +1,24 @@
+[   12613ms] [WARNING] Manifest: Enctype should be set to either application/x-www-form-urlencoded or multipart/form-data. It currently defaults to application/x-www-form-urlencoded @ http://localhost:3300/void--news/manifest.json:0
+[   44383ms] [ERROR] X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>. @ http://localhost:3300/void--news/:0
+[   56428ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ http://localhost:3300/void--news/_next/static/chunks/%5Broot-of-the-server%5D__01n.c1l._.css:0
+[   56431ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ http://localhost:3300/void--news/_next/static/chunks/%5Bturbopack%5D_browser_dev_hmr-client_hmr-client_ts_10z625~._.js:0
+[   56433ms] [WARNING] Manifest: Enctype should be set to either application/x-www-form-urlencoded or multipart/form-data. It currently defaults to application/x-www-form-urlencoded @ http://localhost:3300/void--news/manifest.json:0
+[   56435ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ http://localhost:3300/void--news/_next/static/chunks/node_modules_next_dist_compiled_next-devtools_index_0553esy.js:0
+[   56437ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ http://localhost:3300/void--news/_next/static/chunks/node_modules_next_dist_compiled_react-dom_058-ah~._.js:0
+[   56437ms] [WARNING] Error while trying to use the following icon from the Manifest: http://localhost:3300/void--news/icon.svg (Download error or resource isn't a valid image) @ http://localhost:3300/void--news/:0
+[   56440ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ http://localhost:3300/void--news/_next/static/chunks/node_modules_next_dist_compiled_react-server-dom-turbopack_0p3wegg._.js:0
+[   56440ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ http://localhost:3300/void--news/_next/static/chunks/node_modules_next_dist_compiled_0rpq4pf._.js:0
+[   56443ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ http://localhost:3300/void--news/_next/static/chunks/node_modules_next_dist_client_0fhqo1d._.js:0
+[   56443ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ http://localhost:3300/void--news/_next/static/chunks/node_modules_next_dist_115brz8._.js:0
+[   56446ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ http://localhost:3300/void--news/_next/static/chunks/node_modules_%40swc_helpers_cjs_0-4ujiy._.js:0
+[   56447ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ http://localhost:3300/void--news/_next/static/chunks/_0rqeker._.js:0
+[   56451ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ http://localhost:3300/void--news/_next/static/chunks/turbopack-_0p4v840._.js:0
+[   56451ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ http://localhost:3300/void--news/_next/static/chunks/app_components_MobileSidePanel_tsx_0tha-xx._.js:0
+[   56455ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ http://localhost:3300/void--news/_next/static/chunks/app_0xkoxfp._.js:0
+[   56455ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ http://localhost:3300/void--news/_next/static/chunks/node_modules_0uxvuqm._.js:0
+[   56458ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ http://localhost:3300/void--news/_next/static/chunks/app_layout_tsx_004glpo._.js:0
+[   56459ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ http://localhost:3300/void--news/_next/static/chunks/app_components_0nqktja._.js:0
+[   56462ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ http://localhost:3300/void--news/_next/static/chunks/app_0li37wo._.js:0
+[   56462ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ http://localhost:3300/void--news/_next/static/chunks/node_modules_%40phosphor-icons_react_dist_0l66w0z._.js:0
+[   56466ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ http://localhost:3300/void--news/_next/static/chunks/app_page_tsx_07k-x2q._.js:0
+[   56466ms] [ERROR] Failed to load resource: the server responded with a status of 503 () @ http://localhost:3300/void--news/_next/static/chunks/node_modules_next_dist_client_components_builtin_global-error_07k-x2q.js:0

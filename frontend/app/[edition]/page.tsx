@@ -5,7 +5,7 @@ import HomeContent from "../components/HomeContent";
 export function generateStaticParams() {
   // Return all edition slugs for static generation.
   // The root page.tsx (/) also handles "world" to provide a canonical / route.
-  // This route supports both /world and /us, /india, etc. for direct access.
+  // This route supports /world, /us, /europe, /south-asia for direct access.
   return EDITIONS.map((e) => ({ edition: e.slug }));
 }
 

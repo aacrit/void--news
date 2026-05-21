@@ -1,0 +1,343 @@
+/* ==========================================================================
+   void --news — Layout Zones
+   Cross-route zone scaffold using CSS Grid grid-template-areas.
+   Single source of truth for zone positioning; mobile redefines areas
+   in one media query block instead of duplicating positioning rules
+   across desktop-feed.css and mobile-feed.css.
+
+   Zone semantics:
+     lead   — Zone A (rank 0): LeadStorySplit at desktop, full-bleed at mobile
+     digest — Zone B (ranks 1-9): headline-focused, no images
+     wire   — Zone C (ranks 10-49): compact grid, no images, +1 step Playfair
+   ========================================================================== */
+
+/* ---- Home feed scaffold ----------------------------------------------- */
+
+.home-feed-zones {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "lead"
+    "digest"
+    "wire";
+  gap: clamp(1.5rem, 2vw, 2.5rem);
+  width: 100%;
+}
+
+.home-feed-zones > [data-zone="lead"]   { grid-area: lead; }
+.home-feed-zones > [data-zone="digest"] { grid-area: digest; }
+.home-feed-zones > [data-zone="wire"]   { grid-area: wire; }
+
+/* Zones span the full canvas. Internal grids (digest 2-col, wire 3/4-col)
+   live inside each zone container, owned by desktop-feed.css. */
+
+@media (min-width: 1024px) {
+  .home-feed-zones {
+    grid-template-areas:
+      "lead"
+      "digest"
+      "wire";
+  }
+}
+
+/* ---- Lead hero: text-only newspaper-front-page composition -------------
+   CEO 2026-05-13: hero image removed. The lead is now a typographic moment
+   — badge → headline → summary → coverage verdict — spanning the full
+   canvas. Only the body summary is constrained to a 72ch reading measure.
+   The previous 21:9 banner / 50/50 split layouts have been retired. */
+.lead-split {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.25rem, 2vw, 2rem);
+  width: 100%;
+}
+
+.lead-split__text {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;  /* children shrink to their content width */
+  min-width: 0;
+  width: 100%;
+}
+
+.lead-split__text .lead-headline {
+  font-family: var(--font-editorial);
+  font-size: var(--type-lead-headline);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: var(--type-lead-tracking);
+  margin: 0 0 var(--space-3);
+  width: 100%;
+  max-width: none;
+  /* Page-catch hover (handled in components.css :hover rule). */
+  transition: transform 280ms var(--ease-cinematic);
+}
+
+.lead-split__text .lead-summary {
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  color: var(--fg-secondary);
+  margin: 0 0 var(--space-4);
+  /* Single column spanning the full canvas. CEO 2026-05-13. */
+  width: 100%;
+  max-width: none;
+  /* Page-catch hover (handled in components.css :hover rule). */
+  transition: transform 280ms var(--ease-cinematic);
+}
+.lead-split[data-no-image="true"] > [data-slot="image"] {
+  display: none;
+}
+
+/* ---- Twin lead container (v3, 2026-05-14) ----------------------------------
+   When ranks 0 and 1 share the hero canvas as co-equal Top Stories, they
+   render inside `.lead-twin` — a 2-col grid with a hairline divider between
+   the two leads. Below 1024px the grid collapses to a vertical stack so the
+   two stories still read as twins, just one above the other.
+
+   The vertical divider is a single border on the first child (the divider
+   "belongs" to the left lead's right edge). gap supplies the breathing room
+   on either side. */
+.lead-twin {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(1.5rem, 2.5vw, 2.5rem);
+  align-items: start;
+  width: 100%;
+  margin-bottom: clamp(1.5rem, 2.5vw, 2.5rem);
+}
+
+.lead-twin > .lead-story:first-child {
+  /* Hairline divider sits midway in the gap by attaching to the right edge
+     of the left lead, plus half the gap as padding so it visually centers. */
+  border-right: 1px solid var(--border-subtle);
+  padding-right: clamp(0.75rem, 1.25vw, 1.25rem);
+}
+
+/* Twin headline scale (smaller than solo --type-lead-headline since the
+   column is half the canvas width). */
+.lead-story--twin .lead-headline {
+  font-size: var(--type-twin-headline);
+}
+
+/* v6.2 (2026-05-15): compress twin lead vertically so cards 3-6 (first row
+   of the digest grid) clear the fold on 1366×768 / 1440×900 laptop screens.
+   The summary clamps to 3 lines; the lead-split column gap tightens; and
+   the bottom margin shrinks. Resolution-aware: when the viewport is tall
+   enough (>= 1024px height) we relax the clamp so power-users on tall
+   monitors still get the longer summary. */
+.lead-story--twin .lead-summary {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: var(--space-2);
+}
+
+.lead-story--twin.lead-split {
+  gap: var(--space-3);
+}
+
+.lead-story--twin .lead-headline {
+  margin-bottom: var(--space-2);
+}
+
+@media (min-height: 1024px) {
+  .lead-story--twin .lead-summary {
+    -webkit-line-clamp: 5;
+  }
+}
+
+/* Below 1024px the twin collapses to a vertical stack — both still marked
+   "Top Story", just one above the other. The divider becomes a horizontal
+   hairline along the bottom of the first lead. */
+@media (max-width: 1023px) {
+  .lead-twin {
+    grid-template-columns: 1fr;
+    gap: clamp(1rem, 3vw, 2rem);
+  }
+  .lead-twin > .lead-story:first-child {
+    border-right: none;
+    padding-right: 0;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: clamp(1rem, 2vw, 1.5rem);
+  }
+  /* On narrower viewports the twin headline can climb back toward the
+     solo-lead scale since each lead now spans full width. */
+  .lead-story--twin .lead-headline {
+    font-size: clamp(1.875rem, 1.5rem + 1.5vw, 2.75rem);
+  }
+}
+
+/* ---- Card headlines (ranks 1+) — unified typography ------------------
+   Digest (ranks 1-9) and wire (ranks 10+) share one type scale so the feed
+   reads as a single editorial surface below the lead, not two separate
+   tiers. CEO 2026-05-13. Layout grids still differ (.df-digest 2-col vs
+   .df-wire 3/4-col) — only the headline rhythm is unified. */
+
+.story-card[data-variant="digest"] .story-card__headline,
+.story-card[data-variant="wire"] .story-card__headline {
+  font-family: var(--font-editorial);
+  font-size: var(--type-card-headline);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: var(--type-card-tracking);
+}
+
+/* Feed grid — when ranks 1-9 (digest, 22px) and ranks 10+ (wire, 14px) share
+   the same grid tracks at 1024-1279px, mixed row heights cause uneven
+   baselines and ragged column tops. align row tops, let each card height
+   fit content. */
+.feed-grid {
+  align-items: start;
+  grid-auto-rows: max-content;
+}
+
+
+/* ==========================================================================
+   BiasSnapshot — compact bias signal
+   Two variants: inline strip (Deep Dive header) + vertical rail (DD right col)
+   ========================================================================== */
+
+.bias-snapshot {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-secondary);
+}
+
+/* ---- Inline variant — horizontal strip ----------------------------- */
+
+.bias-snapshot--inline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  row-gap: var(--space-1);
+  margin-top: var(--space-2);
+  padding: var(--space-2) 0;
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  width: 100%;
+  /* No max-height — at 375px the strip wraps to 2 rows and the previous
+     64px cap silently clipped the last chip (Type pill + source count).
+     Tight row-gap keeps the wrapped strip compact without losing data. */
+}
+
+.bias-snapshot--inline .bias-snapshot__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.bias-snapshot__dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  border: 1px solid color-mix(in srgb, var(--fg-primary) 15%, transparent);
+}
+
+.bias-snapshot__bar {
+  display: inline-block;
+  width: 32px;
+  height: 4px;
+  background: var(--border-subtle);
+  border-radius: 2px;
+  overflow: hidden;
+  vertical-align: middle;
+}
+.bias-snapshot__bar--inline {
+  width: 28px;
+}
+
+.bias-snapshot__bar-fill {
+  display: block;
+  height: 100%;
+  background: var(--fg-primary);
+}
+
+.bias-snapshot__pill {
+  display: inline-block;
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  color: var(--fg-secondary);
+}
+
+.bias-snapshot__sep {
+  color: var(--fg-tertiary);
+}
+
+.bias-snapshot__value {
+  color: var(--fg-primary);
+  font-weight: 500;
+}
+
+.bias-snapshot__sources {
+  font-family: var(--font-data);
+  color: var(--fg-secondary);
+}
+
+/* ---- Rail variant — Deep Dive right column ------------------------- */
+
+.bias-snapshot--rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  border-radius: 4px;
+}
+
+.bias-snapshot--rail .bias-snapshot__row {
+  display: grid;
+  grid-template-columns: 60px auto 1fr;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+}
+
+.bias-snapshot--rail .bias-snapshot__label {
+  color: var(--fg-tertiary);
+  font-family: var(--font-meta);
+}
+
+.bias-snapshot--rail .bias-snapshot__bar {
+  width: 60px;
+}
+
+.bias-snapshot--rail .bias-snapshot__row--sources .bias-snapshot__value--strong {
+  font-family: var(--font-editorial);
+  font-size: var(--text-base);
+  color: var(--fg-primary);
+}
+
+
+/* ==========================================================================
+   Deep Dive — single column flow
+   ----------------------------------------------------------------------------
+   The 2-column "summary left, sigil+spectrum right rail" layout was reverted
+   2026-04-29: the right rail at 1280px was ~370px wide and forced the
+   DeepDiveSpectrum's horizontal source-bar chart + multi-color source list
+   to render compressed and overlapping with the summary text on the left.
+
+   New approach: keep a single-column flow at every viewport. Moat protection
+   comes from the BiasSnapshot inline strip directly under the headline (lean
+   dot · rigor bar · opinion pill · source count) — that gives the reader the
+   three primary axes at a glance above the fold without forcing the heavy
+   spectrum visualization into a narrow column where it can't render.
+
+   The full DeepDiveSpectrum and Six Lenses live below the summary at full
+   width where they have room to breathe.
+   ========================================================================== */
+
+

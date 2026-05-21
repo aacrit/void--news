@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 48" fill="none" role="img" aria-label="void --games">
+  <!--
+    void --games — Full Wordmark SVG
+    Family member of void --news brand identity.
+
+    "void" — bold serif vector letterforms, hollow O (the void).
+    Signal mark — rotated square / diamond, amber accent, the frequency.
+    "--games" — monospace letterforms, the CLI flag.
+
+    Uses CSS media query for automatic light/dark mode adaptation.
+    Designed to sit on near-black backgrounds (dark-first).
+  -->
+  <style>
+    .wm-ink { fill: #EDE8E0; }
+    .wm-void-o { fill: none; stroke: #EDE8E0; stroke-width: 2.2; }
+    .wm-dash { fill: #c9a84c; }
+    .wm-signal { fill: #c9a84c; }
+    .wm-mono { fill: #EDE8E0; opacity: 0.85; }
+    @media (prefers-color-scheme: light) {
+      .wm-ink { fill: #1A1A1A; }
+      .wm-void-o { stroke: #1A1A1A; }
+      .wm-dash { fill: #946B15; }
+      .wm-signal { fill: #946B15; }
+      .wm-mono { fill: #1A1A1A; opacity: 0.85; }
+    }
+  </style>
+
+  <g transform="translate(0,4)">
+    <!-- "v" — bold serif -->
+    <polygon class="wm-ink" points="0,4 5.5,4 14,28 22.5,4 28,4 16.5,36 11.5,36" />
+
+    <!-- "o" — THE VOID: hollow outline -->
+    <path class="wm-void-o"
+      d="M48 3.5 C61 3 62 10 61.5 20 C61 30 58 37 48 36.5 C38 37 35 30 34.5 20 C34 10 35 3 48 3.5" />
+
+    <!-- "i" — serif -->
+    <rect class="wm-ink" x="69" y="2" width="5" height="5" rx="0.8" />
+    <rect class="wm-ink" x="69.5" y="11" width="4" height="25" rx="0.5" />
+
+    <!-- "d" — serif -->
+    <path class="wm-ink" d="M82,20C82,10.5 87,3 94,3C97,3 100,4.5 102,7.5L102,0L107,0L107,36L102,36L102,32.5C100,35.5 97,37 94,37C87,37 82,29.5 82,20ZM88,20C88,27.5 90.8,32 95,32C98,32 100.5,29.5 102,26L102,14C100.5,10.5 98,8 95,8C90.8,8 88,12.5 88,20Z" />
+
+    <!-- Signal diamond — the frequency marker -->
+    <rect class="wm-signal" x="120" y="13" width="10" height="10" rx="1.2" transform="rotate(45 125 18)" />
+
+    <!-- "--" dashes — amber accent (the CLI flag) -->
+    <rect class="wm-dash" x="148" y="17.5" width="10" height="3" rx="0.5" />
+    <rect class="wm-dash" x="161" y="17.5" width="10" height="3" rx="0.5" />
+
+    <!-- "g" — monospace -->
+    <path class="wm-mono" d="M184,23.5C184,17.5 187,11.5 192.5,11.5C195.5,11.5 197.5,13 199,15L199,12L202.2,12L202.2,33C202.2,38 199,42 193.5,42C189.5,42 186.5,40 185,37.5L187.2,35.8C188.5,38 190.5,39.5 193.5,39.5C197,39.5 199,37 199,33.5L199,31.5C197.5,34 195.5,35.5 192.5,35.5C187,35.5 184,29.5 184,23.5ZM187.5,23.5C187.5,28.5 189.5,33 193,33C196,33 198,30.5 199,28L199,19C198,16.5 196,14 193,14C189.5,14 187.5,18.5 187.5,23.5Z" />
+
+    <!-- "a" — monospace -->
+    <path class="wm-mono" d="M212,28C212,24.5 214,22.5 217,21.5L221,20C223.5,19 224.5,17.8 224.5,16C224.5,13.8 222.5,12 219.5,12C217,12 215,13.5 214,15.5L211.5,14C213,11.5 216,9.5 219.5,9.5C224.5,9.5 228,12.5 228,16.5C228,19.5 226,21.5 223,22.5L218.5,24C216,25 215,26.5 215,28.5L228,28.5L228,31L212,31L212,28Z" />
+
+    <!-- "m" — monospace -->
+    <path class="wm-mono" d="M236,12L239.2,12L239.2,16C241,13 243,11 246,11C249,11 250.5,12.5 251.5,15C253.5,12.5 255.5,11 258.5,11C262,11 264,13 264,17L264,36L260.8,36L260.8,18C260.8,15 259.5,13.5 257.5,13.5C255.5,13.5 253.5,15 252.5,17.5L252.5,36L249.3,36L249.3,18C249.3,15 248,13.5 246,13.5C244,13.5 242,15 241,17.5L241,36L236,36Z" />
+
+    <!-- "e" — monospace -->
+    <path class="wm-mono" d="M274,23.5C274,17.5 277.5,11 284,11C290.5,11 293.5,17 293.5,23L293.5,24.5L277.5,24.5C277.8,29 280.5,33 284.5,33C287.5,33 289.5,31 290.8,29L293,30.5C291,33.5 288,36 284,36C278,36 274,30 274,23.5ZM277.5,22L290,22C289.5,17.5 287.5,14 284,14C280.5,14 278.2,17.5 277.5,22Z" />
+
+    <!-- "s" — monospace -->
+    <path class="wm-mono" d="M302,28C302,24.5 304,22.5 307,21.5L311.5,20C314,19 315,17.8 315,16C315,13.8 313,12 310,12C307,12 305,13.5 304,15.5L301.5,14C303,11.5 306,9.5 310,9.5C315,9.5 318.5,12.5 318.5,16.5C318.5,19.5 316.5,21.5 313.5,22.5L309,24C306.5,25 305.5,26.5 305.5,28.5C305.5,31 307.5,33 310.5,33C313,33 315,31.5 316,29.5L318.2,31C316.5,34 313.5,36 310,36C305.5,36 302,32.5 302,28Z" />
+  </g>
+</svg>

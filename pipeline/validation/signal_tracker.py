@@ -18,10 +18,10 @@ OPINION_WEIGHTS: dict[str, float] = {
     "pronoun":     0.12,
     "subjectivity": 0.18,
     "modal":       0.12,
-    "hedging":     0.08,
+    "hedging":     0.06,
     "attribution": 0.15,
     "metadata":    0.12,
-    "rhetorical":  0.04,
+    "rhetorical":  0.06,
     "value_judg":  0.06,
     "absolutist":  0.13,
 }
@@ -42,17 +42,17 @@ RIGOR_REF_BONUS_MAX = 8.0
 # framing.py weights (dynamic: kw_emphasis > 60 shifts weights)
 FRAMING_WEIGHTS_NORMAL: dict[str, float] = {
     "connotation": 0.25,
-    "keyword_emp": 0.25,
-    "omission":    0.20,
-    "headline_div": 0.15,
-    "passive":     0.15,
+    "keyword_emp": 0.30,
+    "omission":    0.15,
+    "headline_div": 0.20,
+    "passive":     0.10,
 }
 FRAMING_WEIGHTS_HIGH_KW: dict[str, float] = {
     "connotation": 0.15,
-    "keyword_emp": 0.35,
-    "omission":    0.20,
-    "headline_div": 0.15,
-    "passive":     0.15,
+    "keyword_emp": 0.40,
+    "omission":    0.15,
+    "headline_div": 0.20,
+    "passive":     0.10,
 }
 
 
@@ -229,8 +229,8 @@ def decompose_sensationalism(rationale: dict, final_score: int) -> dict:
 def decompose_opinion(rationale: dict, final_score: int) -> dict:
     """
     Decompose opinion score using known weights:
-    pronoun(0.12) + subjectivity(0.18) + modal(0.12) + hedging(0.08)
-    + attribution(0.15) + metadata(0.12) + rhetorical(0.04)
+    pronoun(0.12) + subjectivity(0.18) + modal(0.12) + hedging(0.06)
+    + attribution(0.15) + metadata(0.12) + rhetorical(0.06)
     + value_judg(0.06) + absolutist(0.13) = 1.00
 
     Maps rationale keys to canonical signal names and computes weighted
