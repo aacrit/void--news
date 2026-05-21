@@ -353,6 +353,25 @@ _SOFT_NEWS_CATEGORIES: frozenset[str] = frozenset({
 })
 
 
+def _voice_id(article: dict) -> str:
+    """Voice-collapsed identity for cluster math.
+
+    Wire copies fold to their origin publisher so that 10 AP republications
+    of one story count as a single voice. Falls back to source_id when the
+    wire fields are absent (backward-compat: older clusters fetched before
+    migration 055 won't carry is_wire_copy / wire_origin_publisher_id).
+
+    Mirrors the helper at story_cluster.py:1670 so the ranker's coverage
+    math matches the cluster's display source_count.
+    """
+    if article.get("is_wire_copy"):
+        return (
+            article.get("wire_origin_publisher_id")
+            or article.get("source_id", "")
+        )
+    return article.get("source_id", "")
+
+
 def _build_source_map(sources: list[dict]) -> dict[str, dict]:
     """
     Build a source lookup keyed by BOTH db_id (UUID) and slug.
@@ -427,7 +446,10 @@ def _source_coverage_score(
     country_counts: dict[str, int] = {}
     weighted_count = 0.0
     for a in cluster_articles:
-        sid = a.get("source_id", "")
+        # Voice-collapse wire syndicates: 10 AP republications = 1 voice,
+        # not 10. Without this the ranker over-counts wire-heavy stories
+        # (Ukraine drone strike, Iran ceasefire, Meta layoffs).
+        sid = _voice_id(a)
         if sid and sid not in seen_sources:
             seen_sources.add(sid)
             src = source_map.get(sid, {})
@@ -511,7 +533,7 @@ def _perspective_diversity_score(
     # Fall back to source baselines
     if not lean_values:
         for article in cluster_articles:
-            sid = article.get("source_id", "")
+            sid = _voice_id(article)
             src = source_map.get(sid, {})
             baseline = str(src.get("political_lean_baseline", "center")).lower()
             lean_values.append(float(LEAN_NUMERIC.get(baseline, 50)))
@@ -758,7 +780,7 @@ def _tier_diversity_score(
     """
     tiers_covered: set[str] = set()
     for article in cluster_articles:
-        sid = article.get("source_id", "")
+        sid = _voice_id(article)
         src = source_map.get(sid, {})
         tier = src.get("tier", "")
         if tier:
@@ -825,7 +847,7 @@ def _coverage_velocity_score(
             if ts_dt.tzinfo is None:
                 ts_dt = ts_dt.replace(tzinfo=timezone.utc)
             if (now - ts_dt).total_seconds() / 3600.0 <= window_hours:
-                recent_sources.add(article.get("source_id", ""))
+                recent_sources.add(_voice_id(article))
         except (ValueError, TypeError):
             continue
 
@@ -981,7 +1003,7 @@ def compute_coverage_velocity(
                 ts_dt = ts_dt.replace(tzinfo=timezone.utc)
             hours_ago = (now - ts_dt).total_seconds() / 3600.0
             if hours_ago <= window_hours:
-                recent_sources.add(article.get("source_id", ""))
+                recent_sources.add(_voice_id(article))
         except (ValueError, TypeError):
             continue
 
@@ -1152,7 +1174,10 @@ def rank_importance(
     # Build shared lookups once
     source_map = _build_source_map(sources)
     timestamps = _parse_timestamps(cluster_articles)
-    source_count = len({a.get("source_id", "") for a in cluster_articles})
+    # Voice-collapse: wire copies fold to origin publisher. Without this,
+    # a story with 10 AP republications is counted as 10 sources and
+    # inflates maturity/longevity/coverage math.
+    source_count = len({_voice_id(a) for a in cluster_articles if _voice_id(a)})
 
     # Compute all sub-scores (shared source_map + timestamps)
     # v6.1: geographic + cluster_countries computed together to avoid double NER work.
