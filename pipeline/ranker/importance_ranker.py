@@ -1262,7 +1262,20 @@ def rank_importance(
             # Iran cluster missed bonus with min_lean=36, one point above cutoff)
             has_left = any(v < 38.0 for v in lean_vals)
             has_right = any(v > 62.0 for v in lean_vals)
-            if has_left and has_right:
+            # v6.3 (2026-05-20): Tightened guard. Predictable partisan
+            # reactions to identical AP wire facts (Al Jazeera lean ~30 +
+            # Fox News lean ~75) were getting the "genuine contestation"
+            # bonus that AllSides reserves for stories actively contested
+            # across the spectrum. Require:
+            #   (a) at least one CENTER article (45 ≤ lean ≤ 55) —
+            #       wire-service / Reuters / AP grounding, not just
+            #       opposing-team reactions; AND
+            #   (b) ≥3 articles actually outside the 40-60 neutral band —
+            #       a single Mother Jones piece in a Reuters-heavy
+            #       cluster should not unlock +4.0.
+            has_center = any(45.0 <= v <= 55.0 for v in lean_vals)
+            partisan_count = sum(1 for v in lean_vals if v < 40.0 or v > 60.0)
+            if has_left and has_right and has_center and partisan_count >= 3:
                 # Scale bonus by how far apart the extremes are (0-4.0 pts)
                 lean_spread = max(lean_vals) - min(lean_vals)
                 headline_rank += min(4.0, lean_spread * 0.04)
