@@ -50,7 +50,7 @@ try:
     from analyzers.factual_rigor import analyze_factual_rigor
     from analyzers.framing import analyze_framing
     from clustering.story_cluster import cluster_stories
-    from categorizer.auto_categorize import categorize_article, map_to_desk
+    from categorizer.auto_categorize import categorize_article, categorize_early, map_to_desk
     from ranker.importance_ranker import rank_importance, compute_coverage_velocity
     from ranker.edition_ranker import apply_edition_ranking
     ANALYSIS_AVAILABLE = True
@@ -1264,10 +1264,16 @@ def main():
 
         # Fix 20 (Axis 6 wire-in): Fetch source_topic_lean EMA data so the
         # political lean analyzer can blend in longitudinal per-source-per-topic
-        # baselines. Keyed by (source_id, category). Note: article categories
-        # are assigned at step 7, so topic_lean_data will be None for all
-        # articles in this run's first pass. The parameter wiring is in place
-        # for when categorization is moved earlier in a future refactor.
+        # baselines. Keyed by (source_id, category).
+        #
+        # 2026-05-21 — Axis 6 was wired but DORMANT for the entire production
+        # lifetime: article["category"] was empty at step 5 because the full
+        # categorizer runs at step 7. Now categorize_early() (URL+section
+        # regex, ~5µs) assigns a best-guess category before bias analysis,
+        # populating topic_lean_data for the ~60-70% of articles whose URL
+        # path or section metadata is unambiguous. The remaining articles
+        # match the prior None behavior. Step 7 still runs the full NLP
+        # categorizer to refine and store the final cluster category.
         topic_lean_map: dict[tuple, dict] = {}
         try:
             topic_lean_result = supabase.table("source_topic_lean").select(
@@ -1283,11 +1289,13 @@ def main():
             source_slug = article.get("source_slug", "") or article.get("source_id", "")
             source = source_map.get(source_slug, {"political_lean_baseline": "center"})
             # Axis 6: look up topic lean for this article's source + category.
-            # Category is not yet assigned at step 5 (assigned at step 7), so
-            # this will resolve to None until categorization is moved earlier.
+            # Early-categorize via URL+section; stash on the article so step 7
+            # can use it as a hint (or override with full NLP categorization).
             source_id = source.get("db_id", "")
-            category = article.get("category", "")
-            topic_lean_data = topic_lean_map.get((source_id, category)) if source_id else None
+            category = article.get("category") or categorize_early(article)
+            if category:
+                article["category"] = category  # persist for step 7
+            topic_lean_data = topic_lean_map.get((source_id, category)) if source_id and category else None
             bias_scores = run_bias_analysis(article, source, topic_lean_data=topic_lean_data)
             bias_scores["article_id"] = article.get("id", "")
             with _analysis_lock:
