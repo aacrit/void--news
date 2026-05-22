@@ -143,8 +143,10 @@ if os.environ.get("VOID_VERIFY", "").strip() in ("1", "true", "yes"):
 # Set to None or list all to enable all editions.
 # Parking Lot: regional editions (us, europe, south-asia) disabled pre-launch.
 # ---------------------------------------------------------------------------
-ACTIVE_EDITIONS: list[str] = ["world"]
-_ALL_EDITIONS = ["world", "us", "europe", "south-asia"]
+# ACTIVE_EDITIONS is the single source of truth defined in
+# pipeline.utils.editions so worker modules (cluster_summarizer Pool 2,
+# edition_ranker, etc.) can import it without depending on main.py.
+from utils.editions import ACTIVE_EDITIONS, ALL_EDITIONS as _ALL_EDITIONS  # noqa: F401,E402
 
 SOURCES_PATH = Path(__file__).parent.parent / "data" / "sources.json"
 
