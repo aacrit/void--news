@@ -212,29 +212,6 @@ ANTI_INDICATORS = re.compile(
     re.IGNORECASE,
 )
 
-# ---------------------------------------------------------------------------
-# Evasive passive patterns
-EVASIVE_PASSIVE: list[str] = [
-    "mistakes were made", "errors were committed",
-    "it was decided", "it was determined",
-    "shots were fired", "damage was done",
-    "lives were lost", "jobs were lost",
-    "concerns were raised", "questions were raised",
-    "steps were taken", "actions were taken",
-    "measures were implemented",
-    # Agency-erasing constructions common in political/diplomatic framing
-    "it has been noted", "it was noted",
-    "it was reported", "it has been reported",
-    "it was announced", "it has been announced",
-    "it is believed", "it was believed",
-    "it is understood", "it was understood",
-    "it is expected", "it was expected",
-    "sanctions were imposed", "charges were filed",
-    "arrests were made", "warnings were issued",
-    "promises were broken", "commitments were made",
-    "allegations were made", "claims were made",
-    "reforms were introduced", "changes were made",
-]
 
 
 def _connotation_score(text: str, doc=None) -> float:
@@ -451,51 +428,6 @@ def _headline_body_divergence(title: str, body: str) -> float:
     divergence = polarity_diff + subj_diff
     return min(100.0, divergence * 65.0)
 
-
-def _passive_voice_score(text: str, doc=None) -> float:
-    """
-    Check for evasive passive voice constructions.
-    Returns 0-100.
-    """
-    text_lower = text.lower()
-    word_count = len(text_lower.split())
-    if word_count == 0:
-        return 0.0
-
-    # Check for evasive passive patterns
-    evasive_count = 0
-    for phrase in EVASIVE_PASSIVE:
-        evasive_count += text_lower.count(phrase)
-
-    # General passive voice density using spaCy
-    if doc is None:
-        nlp = get_nlp()
-        doc = nlp(text[:15000])
-
-    passive_count = 0
-    active_count = 0
-    for token in doc:
-        if token.dep_ == "nsubjpass":
-            passive_count += 1
-        elif token.dep_ == "nsubj":
-            active_count += 1
-
-    total_subj = passive_count + active_count
-    if total_subj == 0:
-        passive_ratio = 0.0
-    else:
-        passive_ratio = passive_count / total_subj
-
-    # Evasive patterns are more heavily weighted
-    evasive_score = min(evasive_count * 15.0, 40.0)
-
-    # General passive ratio: > 0.3 is notable, > 0.5 is heavy.
-    # Cap at 30 to prevent translated text (DW, NHK, Xinhua) and scientific
-    # articles from over-scoring on idiomatic passive voice. Evasive-phrase
-    # detection above carries full weight for genuinely evasive constructions.
-    ratio_score = min(30.0, max(0.0, (passive_ratio - 0.2)) * 100.0)
-
-    return min(100.0, evasive_score + ratio_score)
 
 
 FRAMING_TIER_BASELINES: dict[str, float] = {

@@ -680,10 +680,12 @@ def analyze_opinion(article: dict, source: dict | None = None) -> dict:
         classification = "Editorial"
 
     # Identify dominant signals (top 3 by weighted contribution)
+    # Weights here MUST mirror the `weighted` formula above. The 0.19
+    # absolutist weight absorbed the removed rhetorical 0.06.
     signal_contributions = [
         ("subjectivity", subjectivity * 0.18),
+        ("absolutist_assertions", absolutist * 0.19),
         ("attribution_gaps", attribution * 0.15),
-        ("absolutist_assertions", absolutist * 0.13),
         ("pronouns", pronoun * 0.12),
         ("modal_language", modal * 0.12),
         ("metadata", metadata * 0.12),

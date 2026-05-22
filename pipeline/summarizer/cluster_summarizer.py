@@ -838,12 +838,19 @@ def summarize_clusters_batch(clusters: list[dict],
 
     # ── Pool 2: Regional round-robin ──────────────────────────────────────────
     # 2026-05-21 nlp-engineer cost-cut: intersect with ACTIVE_EDITIONS from
-    # main.py. The us/europe/south-asia editions are parked (ACTIVE_EDITIONS
-    # = ["world"]); summarizing clusters for those editions burns ~10 Sonnet
-    # calls/day with no UI consumer. When only 'world' is active, Pool 2
-    # collapses to additional global candidates beyond Pool 1.
+    # the shared utils.editions module. The us/europe/south-asia editions
+    # are parked (ACTIVE_EDITIONS = ["world"]); summarizing clusters for
+    # those editions burns ~10 Sonnet calls/day with no UI consumer. When
+    # only 'world' is active, Pool 2 collapses to additional global
+    # candidates beyond Pool 1.
+    #
+    # 2026-05-22 hardened: was `from main import ACTIVE_EDITIONS`; pipeline-
+    # tester flagged this as fragile under multiprocessing fork contexts
+    # where the orchestrator entry point isn't on sys.path. The shared
+    # module utils.editions has no upstream dependencies and is safe to
+    # import from any worker.
     try:
-        from main import ACTIVE_EDITIONS as _ACTIVE_EDITIONS  # noqa: WPS433
+        from utils.editions import ACTIVE_EDITIONS as _ACTIVE_EDITIONS
     except ImportError:
         _ACTIVE_EDITIONS = ["world", "us", "europe", "south-asia"]
     _EDITIONS = [e for e in ["world", "us", "europe", "south-asia"] if e in _ACTIVE_EDITIONS]
