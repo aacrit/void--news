@@ -982,14 +982,19 @@ def main():
     engine_only = bool(getattr(args, "engine_only", False)) or recluster_only
     if engine_only:
         # Hard-disable every LLM call site for this process. The DISABLE_*
-        # vars are read by claude_client.is_available(), gemini_client,
-        # editorial triage, and audio. --engine-only is the umbrella.
+        # vars are read by claude_client.is_available(),
+        # gemini_client.is_available(), gemini_reasoning, editorial
+        # triage, and audio. --engine-only is the umbrella. 2026-05-24
+        # added DISABLE_GEMINI for the cluster_summarizer + daily_brief
+        # Gemini Flash fallback paths.
         import os as _os
         _os.environ["DISABLE_ANTHROPIC"] = "1"
+        _os.environ["DISABLE_GEMINI"] = "1"
         _os.environ["DISABLE_GEMINI_REASONING"] = "1"
         _os.environ["DISABLE_EDITORIAL_TRIAGE"] = "1"
         _os.environ["DISABLE_AUDIO"] = "1"
-        print("  [engine-only] All LLM call sites disabled for this run.")
+        print("  [engine-only] All LLM call sites disabled for this run "
+              "(DISABLE_ANTHROPIC + DISABLE_GEMINI + reasoning + triage + audio).")
     if recluster_only:
         print(f"  [recluster-only] Skipping fetch/scrape/bias. "
               f"Reusing existing articles in last {args.recluster_window_hours}h.")

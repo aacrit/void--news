@@ -186,6 +186,14 @@ def generate_json(
 
 def is_available() -> bool:
     """Check if Gemini is configured, the SDK is installed, and no persistent failure."""
+    # 2026-05-24 — mirror DISABLE_ANTHROPIC kill switch. When set, every
+    # Gemini call short-circuits to None. cluster_summarizer falls back
+    # to rule-based summary; daily_brief writes a stub. Costs → $0
+    # immediately. Required for the CEO's "strictly no LLM" iteration
+    # mode where clustering + ranking are tuned against deterministic
+    # rule-based output only.
+    if os.environ.get("DISABLE_GEMINI", "").strip().lower() in ("1", "true", "yes"):
+        return False
     if _persistent_failure:
         return False
     if not GEMINI_AVAILABLE:
