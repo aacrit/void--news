@@ -1,0 +1,1054 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>void --news / diagnostic lab</title>
+<meta name="description" content="Interactive engine diagnostic for void --news. Trace every step from RSS fetch to homepage. Pull live DB examples. Tune knobs. Re-run the rule-based engine at zero cost.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   void --news / diagnostic lab — Press & Precision aesthetic
+   Sepia parchment base, ink-black cards, three-voice typography.
+   ============================================================ */
+:root {
+  --paper:        #F4EFE6;
+  --paper-deep:   #ECE6DA;
+  --ink:          #161413;
+  --ink-soft:     #2A2724;
+  --rule:         #C9BEAB;
+  --rule-soft:    rgba(22, 20, 19, 0.08);
+  --accent-warm:  #946B15;
+  --accent-deep:  #5E4209;
+
+  /* Step-type palette (void Press & Precision, ink-on-parchment) */
+  --c-fetch:      #161413;     /* ink */
+  --c-parse:      #4A4642;     /* graphite */
+  --c-cluster:    #2E5339;     /* forest green */
+  --c-analyze:    #2E4359;     /* slate blue */
+  --c-categorize: #94492A;     /* terracotta */
+  --c-rank:       #8C6A1A;     /* brass */
+  --c-rerank:     #7A2233;     /* claret — warning warm */
+  --c-summarize:  #B81F33;     /* crimson — LLM */
+  --c-cache:      #6B6B6B;     /* silver */
+  --c-output:     #6F4A1F;     /* bronze */
+
+  --font-editorial:  "Playfair Display", "Georgia", serif;
+  --font-structural: "Inter", "Helvetica Neue", sans-serif;
+  --font-meta:       "IBM Plex Mono", "Menlo", monospace;
+
+  --paper-texture: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body {
+  background: var(--paper);
+  background-image: var(--paper-texture);
+  color: var(--ink);
+  font-family: var(--font-structural);
+  font-size: 15px;
+  line-height: 1.55;
+  min-height: 100vh;
+}
+a { color: var(--accent-deep); text-decoration: none; border-bottom: 1px solid rgba(94,66,9,0.3); }
+a:hover { border-bottom-color: var(--accent-deep); }
+code, pre { font-family: var(--font-meta); font-size: 13px; }
+
+/* ---------- Masthead ---------- */
+.masthead {
+  border-bottom: 2px solid var(--ink);
+  padding: 18px 28px 14px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 24px;
+}
+.masthead h1 {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.masthead h1 small {
+  font-family: var(--font-meta);
+  font-size: 11px;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ink-soft);
+  display: block;
+  margin-bottom: 4px;
+}
+.masthead .dateline {
+  font-family: var(--font-meta);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-soft);
+  text-align: right;
+}
+.masthead .dateline strong { color: var(--ink); font-weight: 500; }
+
+/* ---------- Layout grid ---------- */
+.shell {
+  display: grid;
+  grid-template-columns: 230px 1fr 290px;
+  gap: 24px;
+  padding: 20px 28px 80px;
+  max-width: 1640px;
+  margin: 0 auto;
+}
+@media (max-width: 1100px) {
+  .shell { grid-template-columns: 1fr; }
+  .rail { position: static !important; max-height: none !important; }
+}
+
+/* ---------- Rails (side panels) ---------- */
+.rail {
+  position: sticky;
+  top: 16px;
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  padding-right: 6px;
+}
+.rail h2 {
+  font-family: var(--font-editorial);
+  font-weight: 600;
+  font-size: 14px;
+  margin: 18px 0 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--rule);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+}
+.rail h2:first-child { margin-top: 0; }
+
+/* ---------- TOC ---------- */
+.toc-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-meta);
+  font-size: 11px;
+  padding: 4px 0;
+  cursor: pointer;
+  color: var(--ink-soft);
+  border-bottom: 1px solid var(--rule-soft);
+}
+.toc-item:hover { color: var(--ink); }
+.toc-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  flex-shrink: 0;
+}
+.toc-num { font-weight: 500; min-width: 22px; }
+.toc-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.toc-health {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #2E5339;
+  flex-shrink: 0;
+}
+.toc-health.warn { background: #B8841F; }
+.toc-health.fail { background: #B81F33; }
+
+/* ---------- Side-panel widgets ---------- */
+.panel {
+  background: rgba(22, 20, 19, 0.03);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 12px;
+  margin-bottom: 12px;
+}
+.panel h3 {
+  font-family: var(--font-editorial);
+  font-weight: 600;
+  font-size: 12px;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+}
+.panel-metric {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-family: var(--font-meta);
+  font-size: 12px;
+  padding: 3px 0;
+  border-bottom: 1px dotted var(--rule);
+}
+.panel-metric:last-child { border: none; }
+.panel-metric .v { font-weight: 500; color: var(--ink); }
+.panel-metric .v.ok { color: var(--c-cluster); }
+.panel-metric .v.warn { color: var(--c-rank); }
+.panel-metric .v.fail { color: var(--c-summarize); }
+.btn {
+  display: inline-block;
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px 12px;
+  background: var(--ink);
+  color: var(--paper);
+  border: none;
+  font-family: var(--font-meta);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  border-radius: 1px;
+}
+.btn.danger { background: var(--c-summarize); }
+.btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+.btn:hover { opacity: 0.9; }
+.input {
+  width: 100%;
+  padding: 6px 8px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  font-family: var(--font-meta);
+  font-size: 12px;
+  color: var(--ink);
+  border-radius: 1px;
+}
+select.input { cursor: pointer; }
+
+/* ---------- Step cards (main column) ---------- */
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.intro {
+  border-left: 3px solid var(--ink);
+  padding: 12px 16px;
+  background: rgba(22,20,19,0.02);
+  margin-bottom: 8px;
+  font-family: var(--font-editorial);
+  font-size: 14px;
+  font-style: italic;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+.step-card {
+  background: var(--paper-deep);
+  border: 1px solid var(--rule);
+  border-left: 4px solid var(--ink);
+  padding: 14px 18px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.step-card:hover { background: rgba(236,230,218,0.7); }
+.step-head {
+  display: grid;
+  grid-template-columns: 38px 1fr auto;
+  gap: 12px;
+  align-items: center;
+}
+.step-num {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--ink);
+  line-height: 1;
+}
+.step-name {
+  font-family: var(--font-editorial);
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--ink);
+  line-height: 1.25;
+}
+.step-name .file {
+  display: block;
+  font-family: var(--font-meta);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--ink-soft);
+  margin-top: 2px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.step-type {
+  font-family: var(--font-meta);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  padding: 3px 8px;
+  background: var(--ink);
+  color: var(--paper);
+  border-radius: 1px;
+  white-space: nowrap;
+}
+.step-card .step-purpose {
+  margin-top: 6px;
+  font-size: 13px;
+  color: var(--ink-soft);
+  font-style: italic;
+}
+.step-detail {
+  display: none;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule);
+  font-size: 13.5px;
+  line-height: 1.65;
+}
+.step-card.open .step-detail { display: block; }
+.step-card.open { background: rgba(236,230,218,0.85); }
+.step-detail h4 {
+  font-family: var(--font-meta);
+  font-size: 10px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-soft);
+  margin: 10px 0 4px;
+}
+.step-detail p { margin-bottom: 6px; }
+.step-detail ul { margin: 4px 0 6px 18px; }
+.step-detail li { margin-bottom: 3px; }
+.step-detail code {
+  background: rgba(22,20,19,0.05);
+  padding: 1px 4px;
+  border-radius: 1px;
+}
+.gotcha {
+  background: rgba(184,31,51,0.06);
+  border-left: 3px solid var(--c-summarize);
+  padding: 6px 10px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+/* Step-type colors applied via [data-type=...] */
+.step-card[data-type="FETCH"]      { border-left-color: var(--c-fetch); }
+.step-card[data-type="FETCH"]      .step-type { background: var(--c-fetch); }
+.step-card[data-type="PARSE"]      { border-left-color: var(--c-parse); }
+.step-card[data-type="PARSE"]      .step-type { background: var(--c-parse); }
+.step-card[data-type="CLUSTER"]    { border-left-color: var(--c-cluster); }
+.step-card[data-type="CLUSTER"]    .step-type { background: var(--c-cluster); }
+.step-card[data-type="ANALYZE"]    { border-left-color: var(--c-analyze); }
+.step-card[data-type="ANALYZE"]    .step-type { background: var(--c-analyze); }
+.step-card[data-type="CATEGORIZE"] { border-left-color: var(--c-categorize); }
+.step-card[data-type="CATEGORIZE"] .step-type { background: var(--c-categorize); }
+.step-card[data-type="RANK"]       { border-left-color: var(--c-rank); }
+.step-card[data-type="RANK"]       .step-type { background: var(--c-rank); }
+.step-card[data-type="RERANK"]     { border-left-color: var(--c-rerank); }
+.step-card[data-type="RERANK"]     .step-type { background: var(--c-rerank); }
+.step-card[data-type="SUMMARIZE"]  { border-left-color: var(--c-summarize); }
+.step-card[data-type="SUMMARIZE"]  .step-type { background: var(--c-summarize); }
+.step-card[data-type="CACHE"]      { border-left-color: var(--c-cache); }
+.step-card[data-type="CACHE"]      .step-type { background: var(--c-cache); }
+.step-card[data-type="OUTPUT"]     { border-left-color: var(--c-output); }
+.step-card[data-type="OUTPUT"]     .step-type { background: var(--c-output); }
+
+/* TOC dot colors mirror */
+.toc-dot[data-type="FETCH"]      { background: var(--c-fetch); }
+.toc-dot[data-type="PARSE"]      { background: var(--c-parse); }
+.toc-dot[data-type="CLUSTER"]    { background: var(--c-cluster); }
+.toc-dot[data-type="ANALYZE"]    { background: var(--c-analyze); }
+.toc-dot[data-type="CATEGORIZE"] { background: var(--c-categorize); }
+.toc-dot[data-type="RANK"]       { background: var(--c-rank); }
+.toc-dot[data-type="RERANK"]     { background: var(--c-rerank); }
+.toc-dot[data-type="SUMMARIZE"]  { background: var(--c-summarize); }
+.toc-dot[data-type="CACHE"]      { background: var(--c-cache); }
+.toc-dot[data-type="OUTPUT"]     { background: var(--c-output); }
+
+/* ---------- Live DB example renderer ---------- */
+.dbex {
+  margin-top: 12px;
+  background: var(--paper);
+  border: 1px dashed var(--rule);
+  padding: 10px 12px;
+  font-family: var(--font-meta);
+  font-size: 12px;
+  overflow-x: auto;
+  max-height: 360px;
+  overflow-y: auto;
+}
+.dbex .row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+  padding: 6px 0;
+  border-bottom: 1px dotted var(--rule);
+}
+.dbex .row:last-child { border: none; }
+.dbex .k { color: var(--ink-soft); }
+.dbex .v { color: var(--ink); font-weight: 500; }
+.dbex.err { border-color: var(--c-summarize); color: var(--c-summarize); }
+
+/* ---------- Knob drawer ---------- */
+.knob-group { margin-bottom: 14px; }
+.knob-row {
+  display: grid;
+  grid-template-columns: 1fr 70px;
+  gap: 8px;
+  align-items: center;
+  padding: 4px 0;
+  border-bottom: 1px dotted var(--rule-soft);
+}
+.knob-row label {
+  font-family: var(--font-meta);
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+.knob-row input {
+  padding: 3px 6px;
+  font-family: var(--font-meta);
+  font-size: 11px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  text-align: right;
+}
+.knob-row input.changed { background: rgba(184,31,51,0.06); border-color: var(--c-summarize); }
+
+/* ---------- Toast ---------- */
+.toast {
+  position: fixed;
+  bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: var(--ink);
+  color: var(--paper);
+  padding: 10px 18px;
+  font-family: var(--font-meta);
+  font-size: 12px;
+  border-radius: 1px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 1000;
+}
+.toast.show { opacity: 1; }
+
+/* ---------- Footer dateline ---------- */
+.endpiece {
+  text-align: center;
+  font-family: var(--font-meta);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--ink-soft);
+  margin-top: 36px;
+  padding-top: 18px;
+  border-top: 1px solid var(--rule);
+}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div>
+    <h1><small>The Diagnostic Edition</small>void <em>— news</em> / engine lab</h1>
+  </div>
+  <div class="dateline">
+    <div>Run <strong id="run-label">loading…</strong></div>
+    <div>Snapshot <strong id="snapshot-label">—</strong></div>
+  </div>
+</header>
+
+<div class="shell">
+
+  <!-- LEFT RAIL: Run picker + Step TOC + Health badges -->
+  <aside class="rail">
+    <div class="panel">
+      <h3>Run picker</h3>
+      <select id="run-picker" class="input"></select>
+      <div style="height:6px"></div>
+      <label style="font-family:var(--font-meta);font-size:10px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.1em">Compare to</label>
+      <select id="run-picker-compare" class="input"><option value="">— none —</option></select>
+    </div>
+    <h2>Pipeline steps</h2>
+    <div id="toc"></div>
+  </aside>
+
+  <!-- MAIN COLUMN: 32 step cards -->
+  <main>
+    <p class="intro">
+      Every numbered card below is one step the engine performs each day at 11:00 UTC.
+      Click any card to read its rationale, inputs, gates, and known gotchas.
+      Double-click to pull a live example from the database.
+      The crimson cards (<strong>SUMMARIZE</strong>) are the only LLM-bearing steps; everything else is rule-based and free.
+    </p>
+    <div class="steps" id="steps"></div>
+    <div class="endpiece">— 30 —</div>
+  </main>
+
+  <!-- RIGHT RAIL: Kill switch + Cluster trace + Knob drawer + Re-run -->
+  <aside class="rail">
+    <div class="panel">
+      <h3>Claude cost panel</h3>
+      <div class="panel-metric"><span>Today's Sonnet calls</span><span class="v" id="cost-calls">—</span></div>
+      <div class="panel-metric"><span>7-day avg</span><span class="v" id="cost-avg">—</span></div>
+      <div class="panel-metric"><span>$ today</span><span class="v" id="cost-dollars">—</span></div>
+      <div class="panel-metric"><span>DISABLE_ANTHROPIC</span><span class="v" id="cost-killed">—</span></div>
+      <button class="btn danger" id="kill-btn">Copy kill-switch command</button>
+    </div>
+
+    <div class="panel">
+      <h3>Cluster trace</h3>
+      <input id="trace-input" class="input" placeholder="cluster_id or headline…">
+      <button class="btn" id="trace-btn">Trace through engine</button>
+      <div id="trace-out" style="margin-top:8px;font-family:var(--font-meta);font-size:11px;color:var(--ink-soft)"></div>
+    </div>
+
+    <div class="panel">
+      <h3>Knob drawer</h3>
+      <div class="knob-group">
+        <details>
+          <summary style="cursor:pointer;font-family:var(--font-meta);font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-soft);margin-bottom:6px">Clustering</summary>
+          <div id="knobs-clustering"></div>
+        </details>
+        <details>
+          <summary style="cursor:pointer;font-family:var(--font-meta);font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:var(--ink-soft);margin:8px 0 6px">Ranker</summary>
+          <div id="knobs-ranker"></div>
+        </details>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Re-run engine ($0)</h3>
+      <button class="btn" id="rerun-sidecar">Sidecar (fastest)</button>
+      <button class="btn ghost" id="rerun-cli" style="margin-top:6px">Copy CLI</button>
+      <button class="btn ghost" id="rerun-actions" style="margin-top:6px">GitHub Actions</button>
+      <div id="rerun-status" style="margin-top:8px;font-family:var(--font-meta);font-size:11px;color:var(--ink-soft)"></div>
+    </div>
+  </aside>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+// ============================================================
+// Supabase client (browser, anon key — RLS enforces safety)
+// ============================================================
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+
+const SUPABASE_URL = window.localStorage.getItem("VOID_SUPABASE_URL")
+  || prompt("Paste NEXT_PUBLIC_SUPABASE_URL (will be saved to localStorage):");
+const SUPABASE_ANON_KEY = window.localStorage.getItem("VOID_SUPABASE_ANON_KEY")
+  || prompt("Paste NEXT_PUBLIC_SUPABASE_ANON_KEY (will be saved to localStorage):");
+if (SUPABASE_URL) window.localStorage.setItem("VOID_SUPABASE_URL", SUPABASE_URL);
+if (SUPABASE_ANON_KEY) window.localStorage.setItem("VOID_SUPABASE_ANON_KEY", SUPABASE_ANON_KEY);
+
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const toast = (msg, ms = 2400) => {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toast._tid);
+  toast._tid = setTimeout(() => t.classList.remove("show"), ms);
+};
+const copy = async (text) => {
+  await navigator.clipboard.writeText(text);
+  toast("Copied to clipboard");
+};
+
+// ============================================================
+// STEP INVENTORY — 32 ordered steps mirroring the pipeline
+// ============================================================
+const STEPS = [
+  { n: 1,  name: "Load Sources", type: "FETCH", file: "main.py · load_sources()",
+    purpose: "Bootstrap 1,016 curated sources with tiers, countries, lean baselines from data/sources.json.",
+    inputs: "data/sources.json", outputs: "sources[] in memory",
+    gates: "—editions filter (world only on launch)",
+    fail: "Skip pipeline (0 sources = error exit)",
+    example_query: { table: "sources", select: "id,name,tier,country,political_lean_baseline", order: ["name", false], limit: 5 } },
+  { n: 2,  name: "Sync Sources to DB", type: "OUTPUT", file: "main.py:960-1012",
+    purpose: "Upsert all sources to Supabase; map slugs → UUIDs for downstream references.",
+    inputs: "sources[] (memory) + sources table", outputs: "sources upserted, slug→UUID map",
+    gates: "Batch upsert with individual fallback on rejection",
+    fail: "Log warning, continue with partial map",
+    example_query: { table: "sources", select: "id,name,tier,active,consecutive_fetch_failures", order: ["consecutive_fetch_failures", true], limit: 5 } },
+  { n: 3,  name: "Create Pipeline Run", type: "OUTPUT", file: "supabase_client.py · create_pipeline_run()",
+    purpose: "Insert run record to track execution context (start time, run_id for audit trail).",
+    inputs: "none", outputs: "pipeline_runs row, run_id",
+    gates: "None",
+    fail: "Continue without run_id (audit trail incomplete)",
+    example_query: { table: "pipeline_runs", select: "id,started_at,ended_at,status,llm_metrics", order: ["started_at", false], limit: 5 } },
+  { n: 4,  name: "Fetch RSS Feeds", type: "FETCH", file: "fetchers/rss_fetcher.py",
+    purpose: "Parallel fetch 1,016 RSS feeds across 30 workers; parse entries to extract title, summary, URL, pub date.",
+    inputs: "sources[] + RSS feed URLs", outputs: "articles_raw[] (700-1,200 new)",
+    gates: "Source health quarantine — consecutive_fetch_failures ≥ threshold skips dead feeds",
+    fail: "Per-source failure logged to fetch_errors[], pipeline continues",
+    example_query: { table: "articles", select: "id,title,source_id,published_at,word_count", order: ["published_at", false], limit: 10 } },
+  { n: 5,  name: "Filter Known URLs", type: "PARSE", file: "main.py:1029-1078",
+    purpose: "Query articles table (48h window) to avoid re-scraping URLs from prior runs.",
+    inputs: "articles_raw[] + articles table", outputs: "articles_to_scrape[] (filtered)",
+    gates: "Connection-drop fallback: if query fails, scrape all (slight redundancy)",
+    fail: "Log warning, proceed without dedup",
+    example_query: { table: "articles", select: "id,url,published_at", order: ["published_at", false], limit: 8 } },
+  { n: 6,  name: "Scrape Article Text", type: "FETCH", file: "fetchers/web_scraper.py · scrape_article()",
+    purpose: "Fetch full text, extract canonical URL, detect image_url, measure word_count. 30 workers, ~25-35ms/article.",
+    inputs: "articles_to_scrape[] (URLs) + source map",
+    outputs: "articles_scraped[] (full_text, word_count, image_url, canonical_url, section)",
+    gates: "Word-count gate: <150 words → stub rejection. Section assignment via country signals or US-domestic content pattern.",
+    fail: "Per-article failure → full_text empty; RSS summary fallback if >50 chars",
+    example_query: { table: "articles", select: "id,title,word_count,section,canonical_url", order: ["published_at", false], limit: 5 } },
+  { n: 7,  name: "Batch Insert Articles", type: "OUTPUT", file: "main.py:1080-1211",
+    purpose: "Insert unique new articles to Supabase; dedup URLs within batch and vs DB.",
+    inputs: "articles_scraped[]", outputs: "articles table (+rows), stored_articles[] with DB IDs",
+    gates: "URL dedup intra-batch + vs DB. Missing source_id/url/title → filtered.",
+    fail: "Batch insert fails → fall back to individual inserts per chunk",
+    example_query: { table: "articles", select: "id,title,published_at,url", order: ["published_at", false], limit: 10 } },
+  { n: 8,  name: "Wire-Aware Dedup", type: "PARSE", file: "clustering/deduplicator.py · deduplicate_articles()",
+    purpose: "Tag syndicated wire copies (AP, Reuters, AFP) with is_wire_copy=True so clustering collapses them to a single voice.",
+    inputs: "stored_articles[] + source tier map", outputs: "articles[] mutated with wire fields",
+    gates: "Wire hash gate: 800-byte fingerprint cosine ≥ 0.92 confirms wire copy",
+    fail: "sklearn missing → log skip, continue untagged (inflates source_count downstream)",
+    example_query: { table: "articles", select: "id,title,is_wire_copy,wire_origin_publisher_id", filter: { col: "is_wire_copy", op: "eq", val: true }, limit: 8 } },
+  { n: 9,  name: "Bias Axis 1 — Political Lean", type: "ANALYZE", file: "analyzers/political_lean.py",
+    purpose: "Rule-based 0-100 lean score with widened unscored gate (±2.0 shifts) and per-source-per-topic EMA blend.",
+    inputs: "article text + source baseline + topic_lean_data", outputs: "political_lean + confidence + rationale",
+    gates: "Confidence floor 0.15 on <150-word articles. Unscored when total_distinct ≤ 2.",
+    fail: "Analyzer exception → fallback to source baseline",
+    example_query: { table: "article_bias_scores", select: "article_id,political_lean,confidence", order: ["created_at", false], limit: 10 } },
+  { n: 10, name: "Bias Axis 2 — Sensationalism", type: "ANALYZE", file: "analyzers/sensationalism.py",
+    purpose: "Sigmoid-inflected sensational language detection; inflection raised 15→22 in 2026-05-13 recalibration.",
+    inputs: "article text", outputs: "sensationalism 0-100 + rationale",
+    gates: "Tier baselines un-halved post-recalibration",
+    fail: "Default 30.0 on analyzer error",
+    example_query: { table: "article_bias_scores", select: "article_id,sensationalism", order: ["sensationalism", false], limit: 10 } },
+  { n: 11, name: "Bias Axis 3 — Opinion vs Reporting", type: "ANALYZE", file: "analyzers/opinion_detector.py",
+    purpose: "8-signal weighted blend: subjectivity 0.18 + absolutist 0.19 + attribution 0.15 + pronoun 0.12 + modal 0.12 + metadata 0.12 + hedging 0.06 + value_judg 0.06 = 1.00.",
+    inputs: "article text + URL metadata", outputs: "opinion_fact 0-100 + dominant_signals",
+    gates: "Source-type baseline floor (magazine/tabloid/independent/investigative/nonprofit)",
+    fail: "Defaults on missing fields",
+    example_query: { table: "article_bias_scores", select: "article_id,opinion_fact,bias_metadata", order: ["opinion_fact", false], limit: 5 } },
+  { n: 12, name: "Bias Axis 4 — Factual Rigor", type: "ANALYZE", file: "analyzers/factual_rigor.py",
+    purpose: "Weighted sum of named-source, org-citation, data-stats, quotes, specificity; ref_bonus capped at 8.0 flat.",
+    inputs: "article text + NER", outputs: "factual_rigor 0-100",
+    gates: "—", fail: "Defaults to 50.0",
+    example_query: { table: "article_bias_scores", select: "article_id,factual_rigor", order: ["factual_rigor", false], limit: 10 } },
+  { n: 13, name: "Bias Axis 5 — Framing", type: "ANALYZE", file: "analyzers/framing.py",
+    purpose: "Connotation + keyword emphasis + omission + headline-body divergence. Dynamic weight shift when kw_emp > 60 (state-media case).",
+    inputs: "article text + cluster context", outputs: "framing 0-100",
+    gates: "Cluster size ≥2 enables re-score at step 23",
+    fail: "Defaults to 30.0",
+    example_query: { table: "article_bias_scores", select: "article_id,framing,bias_metadata", order: ["framing", false], limit: 5 } },
+  { n: 14, name: "Bias Axis 6 — Topic EMA", type: "ANALYZE", file: "political_lean.py + topic_lean_data",
+    purpose: "Per-source-per-topic exponential moving average blend at 30% weight. Unblocked 2026-05-21 via categorize_early() URL/section pre-categorizer.",
+    inputs: "source_topic_lean table (long-run EMA)", outputs: "political_lean adjusted by topic baseline",
+    gates: "Requires article.category populated at step 5 (was empty pre-fix). Now hits 60-70% of articles.",
+    fail: "topic_lean_data=None → no blend (axis dormant)",
+    example_query: { table: "source_topic_lean", select: "source_id,category,avg_lean,sample_size", order: ["sample_size", false], limit: 10 } },
+  { n: 15, name: "Cluster Phase 1 — TF-IDF", type: "CLUSTER", file: "clustering/story_cluster.py:1785-1845",
+    purpose: "Build TF-IDF on (title + first 500 words); agglomerative clustering at distance 1−STORY_TFIDF_THRESHOLD (0.18).",
+    inputs: "reporting articles + spaCy NLP", outputs: "clusters_p1[] (from agglomerative labels)",
+    gates: "Threshold 0.18 tuned 2026-05-15 on 21-fixture suite. 48h time window.",
+    fail: "Empty TF-IDF doc skipped by vectorizer" },
+  { n: 16, name: "Cluster Phase 2 — IDF Entity Merge", type: "CLUSTER", file: "clustering/story_cluster.py:605-850",
+    purpose: "Named entities (PERSON/ORG/GPE) weighted by IDF; merge clusters sharing entity sum ≥ 2.0.",
+    inputs: "clusters_p1 + spaCy NER", outputs: "clusters_p2 (union-find merged)",
+    gates: "MERGE_HARD_CEILING=120 blocks any merge >120 sources",
+    fail: "False merge caught by downstream Phase 3 Jaccard floor" },
+  { n: 17, name: "Cluster Phase 2.5 — Canonical Pair", type: "CLUSTER", file: "clustering/story_cluster.py:860-920",
+    purpose: "Editorial override: hand-curated co-occurrence pairs (Trump+Xi, etc.) merge without IDF gate.",
+    inputs: "clusters_p2 + _CANONICAL_PAIRS dict", outputs: "clusters_p2_5",
+    gates: "Exact surface-form match only",
+    fail: "Pair not in list → missed merge; added ad-hoc post-audit" },
+  { n: 18, name: "Cluster Phase 2.55 — Synonym Pair", type: "CLUSTER", file: "clustering/story_cluster.py:921-1000",
+    purpose: "Geographic + name aliases (DRC ↔ Congo, UK ↔ Britain). Requires BOTH alias match AND stemmed-title-Jaccard ≥ 0.27.",
+    inputs: "clusters_p2_5 + _SYNONYM_ALIASES + Porter stemmer", outputs: "clusters_p3_pre",
+    gates: "Jaccard floor 0.27 prevents same-name-different-place collisions",
+    fail: "Without Jaccard floor → false merges on location ambiguities" },
+  { n: 19, name: "Cluster Phase 2.6 — Anchor Entity", type: "CLUSTER", file: "clustering/story_cluster.py:1104-1275",
+    purpose: "High-IDF rare proper nouns (Siliņa, Ouagadougou): if IDF ≥ 70% of corpus max + shared ≥2 anchors → merge.",
+    inputs: "clusters_p3_pre + IDF dict + NER", outputs: "clusters_p3",
+    gates: "IDF fraction 0.70 (was 0.60), doc-freq cap 2.5% (was 5%), title-Jaccard ≥ 0.22 (was 0.15). Requires ≥2 shared anchors.",
+    fail: "No anchors → no merges. Tuned 2026-05-18 to prevent single-bridge Blinken false merges.",
+    gotcha: "If the 13-source pin is caused by anchor false-merge, drop ANCHOR_DOC_FREQ_FRACTION 2.5% → 1.5% via the knob drawer." },
+  { n: 20, name: "Cluster Phase 3 — Stem Jaccard", type: "CLUSTER", file: "clustering/story_cluster.py:1276-1380",
+    purpose: "Porter-stemmed title-word sets; merge if Jaccard ≥ 0.27.",
+    inputs: "clusters_p3 + stemmer", outputs: "clusters_p4_pre",
+    gates: "Conservative threshold avoids false merges on common words",
+    fail: "Stay singleton" },
+  { n: 21, name: "Cluster Phase 4 — Garbage-Title Split", type: "CLUSTER", file: "clustering/story_cluster.py:1381-1440",
+    purpose: "Regex detects titles like 'X Spans Y, Z, W' (forced mash-ups); re-clusters those articles at stricter gates.",
+    inputs: "clusters_p4_pre", outputs: "clusters_p4 (possibly split)",
+    gates: "Re-cluster at TF-IDF 0.25 + IDF 3.0 (vs normal 0.18 + 2.0)",
+    fail: "Pattern not matched → no split" },
+  { n: 22, name: "Cluster Phase 5 — Mega-Cluster Cap", type: "CLUSTER", file: "clustering/story_cluster.py:1441-1540",
+    purpose: "Detect clusters >200 articles via avg_articles_per_sub < 1.5 sanity guard. If re-split fails, cap instead: mega_cluster_capped=True + 0.65x rank penalty.",
+    inputs: "clusters_p4", outputs: "clusters_p5 (split or capped)",
+    gates: "MERGE_HARD_CEILING=120 prevents merges from reaching 200+ in earlier phases",
+    fail: "True mega-event marked capped; ranker still demotes via 0.65x penalty",
+    gotcha: "Sanity guard rewritten 2026-05-18; old gate misfired on 200+ legitimate splits." },
+  { n: 23, name: "Re-Score Framing (cluster context)", type: "ANALYZE", file: "main.py:1470-1584",
+    purpose: "Framing analyzer benefits from knowing other cluster articles; re-run on multi-article clusters using cluster-entity cache.",
+    inputs: "clusters[] + bias_scores table", outputs: "framing column updated",
+    gates: "Cluster size ≥ 2 required. Top-10 articles per cluster parsed (performance).",
+    fail: "Single-article clusters skipped; framing scores unchanged",
+    example_query: { table: "article_bias_scores", select: "article_id,framing,bias_metadata", order: ["framing", false], limit: 5 } },
+  { n: 24, name: "Categorize", type: "CATEGORIZE", file: "categorizer/auto_categorize.py",
+    purpose: "URL + section regex + keyword density + NER entity boosting. Returns fine-grained slug; map_to_desk() folds to display desks.",
+    inputs: "article text + URL + section", outputs: "category[] per article",
+    gates: "categorize_early() (URL+section only, ~5µs) called at step 5 for Axis 6 EMA wire-in",
+    fail: "Returns ['general'] for empty articles",
+    example_query: { table: "articles", select: "id,category,section,url", order: ["published_at", false], limit: 12 } },
+  { n: 25, name: "Rank — 10-Signal Importance", type: "RANK", file: "ranker/importance_ranker.py · rank_importance()",
+    purpose: "10 weighted signals: coverage_breadth 20% + story_maturity 16% + tier_diversity 13% + consequentiality 10% + institutional_authority 8% + factual_density 8% + divergence 7% + perspective_diversity 6% + geographic_impact 6%. Soft-news gate ×0.78.",
+    inputs: "cluster articles + bias scores + source meta", outputs: "importance_score, headline_rank",
+    gates: "Cross-spectrum lean bonus +20% if min ≥38 and max ≤62. High-authority floor: institutional_authority ≥80 + conseq <5 → floor 30.",
+    fail: "Returns 20.0 on any exception",
+    example_query: { table: "story_clusters", select: "id,title,headline_rank,importance_score,source_count", order: ["headline_rank", false], limit: 10 } },
+  { n: 26, name: "Rerank — Holistic top-50", type: "RERANK", file: "rerank.py · rerank_all_clusters()",
+    purpose: "Re-run v6.0 ranker + edition_ranker on ALL clusters (not just new); write back headline_rank + per-edition ranks. NEVER writes source_count.",
+    inputs: "story_clusters (all) + cluster_articles + bias_scores", outputs: "headline_rank, rank_world, rank_us, rank_europe, rank_south_asia",
+    gates: "source_count intentionally omitted (owned by clustering Phase 5). Dry-run gate via --dry-run.",
+    fail: "Per-row retry with 0.5s backoff; failed cluster_ids printed at end-of-run",
+    gotcha: "Pre-2026-05-22 had bare `except: continue` swallowing every error + no last_updated bump → 13-source pin regression.",
+    example_query: { table: "story_clusters", select: "id,title,headline_rank,last_updated", order: ["last_updated", false], limit: 10 } },
+  { n: 27, name: "Diversity + Event Cap", type: "RERANK", file: "main.py:1885-2048",
+    purpose: "Max 3 same-event clusters in top-10 per section (Iran/Ukraine/Israel/China). Max 2 same-category (1 for soft-news). Deferred → 75% of event's last promoted.",
+    inputs: "clusters[] sorted by headline_rank", outputs: "headline_rank further adjusted",
+    gates: "Event keyword match + soft-category cap (culture/sports 1, others 2)",
+    fail: "Keywords not matched → no deference" },
+  { n: 28, name: "Recency Gate (24h)", type: "RERANK", file: "main.py:2049-2079",
+    purpose: "Demote clusters >24h old below position 10 per section. Floor = pool[10].headline_rank − 0.01.",
+    inputs: "clusters[] + published_at + 24h cutoff", outputs: "stale clusters demoted",
+    gates: "Age gate strictly 24h",
+    fail: "Very old (2+ days) drops from top-10 visibility" },
+  { n: 29, name: "Summarize Clusters (LLM)", type: "SUMMARIZE", file: "summarizer/cluster_summarizer.py",
+    purpose: "Top 50 clusters: generate headlines + summaries + consensus/divergence via Claude Sonnet 4.6 (primary) or Gemini Flash (fallback).",
+    inputs: "top_50_clusters + cluster_consensus", outputs: "cluster.headline, summary, consensus_points, divergence_points",
+    gates: "DISABLE_ANTHROPIC=1 → fallback to Gemini Flash. Pool=top 50. Content-hash cache (top-10 newest articles) skips unchanged clusters.",
+    fail: "LLM fails → cluster keeps rule-based summary",
+    gotcha: "$1-2/run when Sonnet active. DISABLE_ANTHROPIC shipped 2026-05-22 → $0/day.",
+    example_query: { table: "story_clusters", select: "id,title,summary,headline_rank", order: ["headline_rank", false], limit: 5 } },
+  { n: 30, name: "Cache Cluster Images", type: "CACHE", file: "media/cluster_image_cacher.py",
+    purpose: "Download og:image URLs from top 15 clusters; convert to WebP q82; upload to Supabase Storage; persist image_url pointers.",
+    inputs: "story_clusters (top 15) + og:image URLs", outputs: "image_url → Supabase CDN path",
+    gates: "Top-N gate 15. WebP q82 conversion. Skip if already optimal.",
+    fail: "Image download fails → fallback to original og:image URL",
+    example_query: { table: "story_clusters", select: "id,title,cached_image_url", filter: { col: "cached_image_url", op: "not.is", val: null }, limit: 8 } },
+  { n: 31, name: "Store Clusters + Reconcile World Tag", type: "OUTPUT", file: "main.py:2250-2460 + 8c.5",
+    purpose: "Insert cluster rows + cluster_articles junction + is_international flag. NEW step 8c.5 (2026-05-22) reconciles 'world' in sections[] using FRESH rank_world from DB.",
+    inputs: "clusters[] + articles[] + junction pairs", outputs: "story_clusters (+rows), cluster_articles (+rows)",
+    gates: "World-tag reconciliation: add if rank_world ≥ 50, remove if < 50 AND no natural world signal. Idempotent.",
+    fail: "Insert fails → fallback to individual inserts per chunk",
+    gotcha: "Previously force-added 'world' with STALE rank_world from step 7 (pre-rerank). Caused 13-source pin to persist on /world.",
+    example_query: { table: "story_clusters", select: "id,title,sections,rank_world,headline_rank", order: ["last_updated", false], limit: 10 } },
+  { n: 32, name: "Daily Brief (LLM)", type: "SUMMARIZE", file: "briefing/daily_brief_generator.py",
+    purpose: "Generate TL;DR + Opinion (Sonnet primary, Gemini fallback). Audio via edge-tts if DISABLE_AUDIO != 1.",
+    inputs: "top-15 clusters + show-don't-tell prompt", outputs: "daily_briefs row (tldr_text, opinion_text, audio_url)",
+    gates: "DISABLE_ANTHROPIC=1 → Gemini Flash. Prohibited-term check post-generation.",
+    fail: "Both LLMs fail → stub-on-failure writer so homepage never serves stale audio",
+    example_query: { table: "daily_briefs", select: "id,tldr_text,opinion_text,created_at", order: ["created_at", false], limit: 3 } },
+];
+
+// ============================================================
+// Knob defaults — synced to production constants
+// ============================================================
+const KNOBS = {
+  clustering: {
+    STORY_TFIDF_THRESHOLD:      0.18,
+    ENTITY_MERGE_IDF_THRESHOLD: 2.0,
+    ANCHOR_IDF_FRACTION:        0.70,
+    ANCHOR_DOC_FREQ_FRACTION:   0.025,
+    TITLE_JACCARD_THRESHOLD:    0.27,
+    ANCHOR_TITLE_JACCARD_FLOOR: 0.22,
+    MEGA_AVG_ARTICLES_GUARD:    1.5,
+    MERGE_HARD_CEILING:         120,
+  },
+  ranker: {
+    coverage_breadth_weight:       0.20,
+    story_maturity_weight:         0.16,
+    tier_diversity_weight:         0.13,
+    consequentiality_weight:       0.10,
+    institutional_authority_weight: 0.08,
+    factual_density_weight:        0.08,
+    divergence_weight:             0.07,
+    perspective_diversity_weight:  0.06,
+    geographic_impact_weight:      0.06,
+    mega_cluster_penalty:          0.65,
+    soft_news_multiplier:          0.78,
+    recency_half_life_hours:       24,
+  },
+};
+
+// ============================================================
+// Render steps + TOC
+// ============================================================
+const stepsRoot = document.getElementById("steps");
+const tocRoot = document.getElementById("toc");
+
+STEPS.forEach((s) => {
+  const card = document.createElement("article");
+  card.className = "step-card";
+  card.dataset.type = s.type;
+  card.dataset.num = s.n;
+  card.id = `step-${s.n}`;
+  card.innerHTML = `
+    <div class="step-head">
+      <div class="step-num">${s.n}</div>
+      <div>
+        <div class="step-name">${s.name}<span class="file">${s.file}</span></div>
+        <div class="step-purpose">${s.purpose}</div>
+      </div>
+      <div class="step-type">${s.type}</div>
+    </div>
+    <div class="step-detail">
+      <h4>Inputs</h4><p>${s.inputs || "—"}</p>
+      <h4>Outputs</h4><p>${s.outputs || "—"}</p>
+      <h4>Gates</h4><p>${s.gates || "—"}</p>
+      <h4>Failure mode</h4><p>${s.fail || "—"}</p>
+      ${s.gotcha ? `<div class="gotcha"><strong>Gotcha:</strong> ${s.gotcha}</div>` : ""}
+      <div class="dbex" data-loaded="0" style="display:none"></div>
+      <div style="margin-top:8px;font-family:var(--font-meta);font-size:11px;color:var(--ink-soft)">
+        Single click ▸ toggle this detail · <strong>Double click</strong> ▸ pull live example
+      </div>
+    </div>`;
+  card.addEventListener("click", (e) => {
+    if (e.detail === 1) {
+      // Wait briefly to disambiguate from double-click
+      clearTimeout(card._t);
+      card._t = setTimeout(() => card.classList.toggle("open"), 200);
+    }
+  });
+  card.addEventListener("dblclick", async () => {
+    clearTimeout(card._t);
+    card.classList.add("open");
+    await loadExample(s, card.querySelector(".dbex"));
+  });
+  stepsRoot.appendChild(card);
+
+  const toc = document.createElement("div");
+  toc.className = "toc-item";
+  toc.innerHTML = `
+    <span class="toc-dot" data-type="${s.type}"></span>
+    <span class="toc-num">${s.n}.</span>
+    <span class="toc-name">${s.name}</span>
+    <span class="toc-health" data-step="${s.n}"></span>`;
+  toc.addEventListener("click", () => {
+    document.getElementById(`step-${s.n}`).scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+  tocRoot.appendChild(toc);
+});
+
+// ============================================================
+// Live DB example loader
+// ============================================================
+async function loadExample(step, el) {
+  if (!step.example_query) {
+    el.style.display = "block";
+    el.innerHTML = `<div class="row"><span class="k">No example query wired for this step yet.</span></div>`;
+    return;
+  }
+  el.style.display = "block";
+  el.innerHTML = `<div class="row"><span class="k">Loading live example…</span></div>`;
+  const q = step.example_query;
+  let req = sb.from(q.table).select(q.select || "*");
+  if (q.filter) {
+    const f = q.filter;
+    if (f.op === "eq") req = req.eq(f.col, f.val);
+    else if (f.op === "gte") req = req.gte(f.col, f.val);
+    else if (f.op === "not.is") req = req.not(f.col, "is", f.val);
+  }
+  if (q.order) req = req.order(q.order[0], { ascending: q.order[1] });
+  if (q.limit) req = req.limit(q.limit);
+  const { data, error } = await req;
+  if (error) {
+    el.classList.add("err");
+    el.innerHTML = `<div class="row"><span class="k">Query failed:</span><span class="v">${error.message}</span></div>`;
+    return;
+  }
+  if (!data || !data.length) {
+    el.innerHTML = `<div class="row"><span class="k">No rows match the query (yet).</span></div>`;
+    return;
+  }
+  el.classList.remove("err");
+  el.innerHTML = data.map((row) =>
+    `<div class="row">` +
+    Object.entries(row).map(([k, v]) => {
+      let display = v;
+      if (typeof v === "object" && v !== null) display = JSON.stringify(v).slice(0, 180);
+      if (typeof v === "string" && v.length > 200) display = v.slice(0, 200) + "…";
+      return `<div><span class="k">${k}:</span> <span class="v">${display ?? "—"}</span></div>`;
+    }).join("") +
+    `</div>`
+  ).join("");
+}
+
+// ============================================================
+// Knob drawer renderer
+// ============================================================
+function renderKnobs(category) {
+  const root = document.getElementById(`knobs-${category}`);
+  if (!root) return;
+  const defaults = KNOBS[category];
+  root.innerHTML = "";
+  Object.entries(defaults).forEach(([key, val]) => {
+    const row = document.createElement("div");
+    row.className = "knob-row";
+    row.innerHTML = `
+      <label title="${key}">${key.replace(/_/g, " ").toLowerCase()}</label>
+      <input type="number" step="0.001" value="${val}" data-cat="${category}" data-key="${key}" data-default="${val}">`;
+    root.appendChild(row);
+    const input = row.querySelector("input");
+    input.addEventListener("input", () => {
+      const def = parseFloat(input.dataset.default);
+      input.classList.toggle("changed", parseFloat(input.value) !== def);
+    });
+  });
+}
+renderKnobs("clustering");
+renderKnobs("ranker");
+
+function collectOverrides() {
+  const overrides = {};
+  document.querySelectorAll(".knob-row input").forEach((inp) => {
+    const def = parseFloat(inp.dataset.default);
+    const cur = parseFloat(inp.value);
+    if (cur !== def && !Number.isNaN(cur)) {
+      const cat = inp.dataset.cat;
+      overrides[cat] = overrides[cat] || {};
+      overrides[cat][inp.dataset.key] = cur;
+    }
+  });
+  return overrides;
+}
+
+// ============================================================
+// Run picker
+// ============================================================
+async function loadRuns() {
+  const { data, error } = await sb.from("engine_runs")
+    .select("id,source,cluster_count,article_count,sonnet_calls,created_at")
+    .order("created_at", { ascending: false })
+    .limit(14);
+  const picker = document.getElementById("run-picker");
+  const compare = document.getElementById("run-picker-compare");
+  if (error || !data) {
+    picker.innerHTML = `<option>— engine_runs unavailable —</option>`;
+    return;
+  }
+  if (!data.length) {
+    picker.innerHTML = `<option>— no runs yet (migration 057 pending?) —</option>`;
+    return;
+  }
+  picker.innerHTML = data.map((r) =>
+    `<option value="${r.id}">${r.source} · ${new Date(r.created_at).toLocaleString()} · ${r.cluster_count}c/${r.article_count}a</option>`
+  ).join("");
+  compare.innerHTML = `<option value="">— none —</option>` + data.map((r) =>
+    `<option value="${r.id}">${new Date(r.created_at).toLocaleString()}</option>`
+  ).join("");
+  document.getElementById("run-label").textContent = new Date(data[0].created_at).toLocaleDateString();
+}
+
+// ============================================================
+// Cost / kill-switch panel
+// ============================================================
+async function loadCostPanel() {
+  try {
+    const today = new Date(); today.setUTCHours(0,0,0,0);
+    const { data } = await sb.from("pipeline_runs")
+      .select("llm_metrics,started_at,status")
+      .gte("started_at", today.toISOString())
+      .order("started_at", { ascending: false })
+      .limit(1);
+    let calls = 0;
+    if (data && data[0] && data[0].llm_metrics) {
+      calls = data[0].llm_metrics.sonnet_calls || 0;
+    }
+    document.getElementById("cost-calls").textContent = calls;
+    document.getElementById("cost-dollars").textContent = `$${(calls * 0.018).toFixed(2)}`;
+    document.getElementById("cost-calls").className = "v " + (calls === 0 ? "ok" : calls < 40 ? "warn" : "fail");
+
+    const week = new Date(); week.setDate(week.getDate() - 7);
+    const { data: hist } = await sb.from("pipeline_runs")
+      .select("llm_metrics")
+      .gte("started_at", week.toISOString());
+    let avg = 0;
+    if (hist && hist.length) {
+      const total = hist.reduce((s, r) => s + ((r.llm_metrics && r.llm_metrics.sonnet_calls) || 0), 0);
+      avg = Math.round(total / hist.length);
+    }
+    document.getElementById("cost-avg").textContent = avg;
+    document.getElementById("cost-killed").textContent = calls === 0 ? "ACTIVE" : "off";
+    document.getElementById("cost-killed").className = "v " + (calls === 0 ? "ok" : "warn");
+  } catch (e) {
+    document.getElementById("cost-calls").textContent = "—";
+  }
+}
+document.getElementById("kill-btn").addEventListener("click", () => {
+  copy("gh secret set DISABLE_ANTHROPIC --body 1 --repo aacrit/void--news");
+});
+
+// ============================================================
+// Re-run triggers
+// ============================================================
+const rerunStatus = document.getElementById("rerun-status");
+
+document.getElementById("rerun-sidecar").addEventListener("click", async () => {
+  const overrides = collectOverrides();
+  rerunStatus.textContent = "Calling localhost:8888/replay…";
+  try {
+    const r = await fetch("http://127.0.0.1:8888/replay", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ overrides }),
+    });
+    const data = await r.json();
+    rerunStatus.innerHTML = `Replay <strong>${data.status}</strong> in ${data.duration_ms}ms. top-50 overlap with baseline: ${data.top_50_overlap || "—"}.`;
+    if (data.sandbox_run_id) {
+      rerunStatus.innerHTML += `<br>sandbox_run_id: <code>${data.sandbox_run_id.slice(0,8)}</code>`;
+    }
+  } catch (e) {
+    rerunStatus.innerHTML = `<span style="color:var(--c-summarize)">Sidecar not running. Start it: <code>python -m pipeline.sandbox_server</code></span>`;
+  }
+});
+
+document.getElementById("rerun-cli").addEventListener("click", () => {
+  const overrides = collectOverrides();
+  const cmd = `python -m pipeline.sandbox_replay --params '${JSON.stringify(overrides)}'`;
+  copy(cmd);
+});
+
+document.getElementById("rerun-actions").addEventListener("click", () => {
+  const overrides = collectOverrides();
+  const url = `https://github.com/aacrit/void--news/actions/workflows/sandbox.yml`;
+  copy(JSON.stringify(overrides));
+  rerunStatus.innerHTML = `Overrides JSON copied. <a href="${url}" target="_blank">Open Actions ▸ Run workflow</a> · paste overrides into the input.`;
+});
+
+// ============================================================
+// Cluster trace (MVP — substring lookup)
+// ============================================================
+document.getElementById("trace-btn").addEventListener("click", async () => {
+  const query = document.getElementById("trace-input").value.trim();
+  const out = document.getElementById("trace-out");
+  if (!query) { out.textContent = "Paste a cluster_id or headline keyword."; return; }
+  out.textContent = "Searching…";
+  let req = sb.from("story_clusters").select("id,title,headline_rank,source_count,sections,rank_world,mega_cluster_capped,last_updated");
+  if (query.length === 36 && query.includes("-")) {
+    req = req.eq("id", query);
+  } else {
+    req = req.ilike("title", `%${query}%`).limit(5);
+  }
+  const { data, error } = await req;
+  if (error) { out.textContent = `Error: ${error.message}`; return; }
+  if (!data || !data.length) { out.textContent = "No match."; return; }
+  out.innerHTML = data.map((c) => `
+    <div style="padding:6px 0;border-bottom:1px dotted var(--rule)">
+      <div><strong>${c.title?.slice(0, 80) || c.id.slice(0, 8)}</strong></div>
+      <div>rank=${c.headline_rank?.toFixed(1)} · sources=${c.source_count} · rank_world=${c.rank_world?.toFixed(1)}</div>
+      <div>sections=[${(c.sections || []).join(", ")}]${c.mega_cluster_capped ? " · <span style='color:var(--c-summarize)'>MEGA-CAPPED</span>" : ""}</div>
+      <div style="color:var(--ink-soft);font-size:10px">updated ${new Date(c.last_updated).toLocaleString()}</div>
+    </div>`).join("");
+});
+
+// ============================================================
+// Bootstrap
+// ============================================================
+loadRuns();
+loadCostPanel();
+setInterval(loadCostPanel, 30000);
+</script>
+
+</body>
+</html>
