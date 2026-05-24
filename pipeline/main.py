@@ -1556,6 +1556,49 @@ def main():
         # Opinion/op-ed content (opinion_fact > 50) is wrapped as single-article
         # clusters later so each piece stands alone rather than being merged with
         # news coverage of the same topic.
+        # 2026-05-24 iter 7 — garbage-title + tiny-body filter.
+        # The scraper sometimes returns login walls / subscribe redirects /
+        # paywall stubs whose .title field looks like "- subscribe.foo.com",
+        # "- links.bar.com", or just the bare domain. These cluster together
+        # by accident (no real content overlap) and the title generator
+        # picks a misleading representative. Observed today: a 26-source
+        # "Novinite.com - Sofia News Agency" cluster of 15 garbage-title
+        # login pages from Wilmington Star, Inc. Magazine, Morning Brew etc.
+        #
+        # Drop article when ANY of:
+        #   - title is empty / starts with "- " / is just the domain
+        #   - title is < 12 chars and word_count < 80
+        #   - title contains 'subscribe.', 'login.', 'paywall', 'access.'
+        import re as _re_garbage
+        _GARBAGE_TITLE_RE = _re_garbage.compile(
+            r"^\s*(?:[-_]\s*)?(?:https?://)?[a-z0-9.-]+\.(?:com|net|org|io|co|me|uk)\b",
+            _re_garbage.IGNORECASE,
+        )
+        _GARBAGE_URL_TOKENS = ("subscribe.", "login.", "/paywall", "access.",
+                               "/sso/", "/auth/", "?return=", "links.morningbrew.")
+        def _is_garbage_article(a: dict) -> bool:
+            t = (a.get("title") or "").strip()
+            wc = int(a.get("word_count") or 0)
+            url = (a.get("url") or "").lower()
+            if not t or len(t) < 6:
+                return True
+            if _GARBAGE_TITLE_RE.match(t):
+                return True
+            if any(tok in url for tok in _GARBAGE_URL_TOKENS):
+                return True
+            # short title + tiny body = almost certainly a stub
+            if len(t) < 18 and wc < 80:
+                return True
+            return False
+        _pre_garbage_filter = len(all_articles_for_clustering)
+        all_articles_for_clustering = [
+            a for a in all_articles_for_clustering if not _is_garbage_article(a)
+        ]
+        _dropped = _pre_garbage_filter - len(all_articles_for_clustering)
+        if _dropped:
+            print(f"  Garbage-title filter: dropped {_dropped} login/stub articles "
+                  f"({len(all_articles_for_clustering)} remain for clustering).")
+
         opinion_article_ids = {
             aid for aid, scores in article_bias_map.items()
             if scores.get("opinion_fact", 0) > 50

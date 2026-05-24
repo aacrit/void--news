@@ -1552,7 +1552,7 @@ def rank_importance(
         (src_count >= 5 and len(tiers_present) >= 2)
         or src_count >= 8
     )
-    rank_ok = headline_rank >= 40.0
+    rank_ok = headline_rank >= 45.0  # 2026-05-24 iter 7: 40 → 45 (cut borderlines)
     authority_or_spectrum_bonus = authority >= 60.0 or cross_spectrum_fired
 
     # Source-count saturating curve — Hill-curve, plateaus at ~100.
@@ -1584,7 +1584,7 @@ def rank_importance(
     #   Gunman 34s/r62 → 35 + 0.25*tier + 15 + bonus_pts → typically 60-75
     is_headline = bool(
         coverage_ok and rank_ok and not mega_capped
-        and headline_confidence >= 55.0
+        and headline_confidence >= 60.0  # 2026-05-24 iter 7: 55 → 60 (cut conf=56 borderlines)
     )
 
     return {
