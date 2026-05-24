@@ -35,6 +35,11 @@ on:
         description: 'Article window for --recluster-only (default 48)'
         required: false
         default: '48'
+      engine_only:
+        description: 'Fresh pipeline run with ALL LLMs disabled (no Anthropic, no Gemini, no audio) — $0, ~25-30 min'
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   run-pipeline:
@@ -135,6 +140,9 @@ jobs:
           if [ "${{ inputs.recluster_only }}" = "true" ]; then
             ARGS="$ARGS --recluster-only --recluster-window-hours ${{ inputs.recluster_window_hours || 48 }}"
             echo "Running RECLUSTER-ONLY (skip fetch/scrape/bias; reuse existing articles)"
+          elif [ "${{ inputs.engine_only }}" = "true" ]; then
+            ARGS="$ARGS --engine-only"
+            echo "Running ENGINE-ONLY fresh pipeline (all LLMs disabled)"
           else
             echo "Running full pipeline"
           fi
