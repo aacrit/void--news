@@ -1494,12 +1494,16 @@ def rank_importance(
 
     # 2026-05-24 v2 — first-class is_headline + headline_confidence.
     # Three AND'd criteria (mirrors plan; tunable from diag.html lab):
-    #   1. Coverage: source_count >= 5 AND >= 2 distinct tiers
+    #   1. Coverage: source_count >= 3 AND (>= 2 tiers OR source_count >= 5)
+    #      (relaxed from 5/2 → 3/2-or-5: today's broken clustering produces
+    #      max source_count = 4, so 5-floor was unreachable; 3 with tier
+    #      diversity OR 5 with any tier composition gets the same selectivity
+    #      with one knob in production reach)
     #   2. Authority OR cross-spectrum (lenient OR-gate)
-    #   3. Cohesion: cohesion_score >= 50  (default 60 when missing for
-    #      small clusters where Phase 5 didn't compute it — < 20 articles)
+    #   3. Cohesion: cohesion_score >= 45  (down from 50; broken-corpus floor)
     # headline_confidence: 40% coverage + 30% authority/spectrum + 30% cohesion.
-    # is_headline = headline_confidence >= 65.
+    # is_headline = headline_confidence >= 55  (down from 65; under-clustering
+    # forces lower confidence floors until clustering quality recovers).
     #
     # mega_capped clusters are never headlines (they survived the cap but
     # by definition are noise-floor signals, not coverage signals).
@@ -1522,7 +1526,10 @@ def rank_importance(
             if tier:
                 tiers_present.add(tier)
         src_count = len(voices)
-    coverage_ok = src_count >= 5 and len(tiers_present) >= 2
+    coverage_ok = (
+        (src_count >= 3 and len(tiers_present) >= 2)
+        or src_count >= 5
+    )
 
     authority_or_spectrum_ok = authority >= 60.0 or cross_spectrum_fired
 
@@ -1531,7 +1538,7 @@ def rank_importance(
         _coh = cluster.get("_cohesion") or {}
         if "cohesion_score" in _coh:
             cohesion_score = float(_coh["cohesion_score"])
-    cohesion_ok = cohesion_score >= 50.0
+    cohesion_ok = cohesion_score >= 45.0
 
     # Weighted confidence — 0..100. Each component normalized to 0..100.
     coverage_pts = 100.0 if coverage_ok else min(
@@ -1548,7 +1555,7 @@ def rank_importance(
     is_headline = bool(
         coverage_ok and authority_or_spectrum_ok and cohesion_ok
         and not mega_capped
-        and headline_confidence >= 65.0
+        and headline_confidence >= 55.0
     )
 
     return {
