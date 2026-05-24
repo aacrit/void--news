@@ -26,6 +26,15 @@ on:
         type: boolean
         required: false
         default: false
+      recluster_only:
+        description: 'Skip fetch+scrape+bias. Recluster + rerank existing articles only ($0, ~5-10 min)'
+        type: boolean
+        required: false
+        default: false
+      recluster_window_hours:
+        description: 'Article window for --recluster-only (default 48)'
+        required: false
+        default: '48'
 
 jobs:
   run-pipeline:
@@ -119,10 +128,14 @@ jobs:
           DISABLE_ANTHROPIC: "1"
         run: |
           EDITIONS="${{ steps.editions.outputs.filter }}"
+          ARGS=""
           if [ -n "$EDITIONS" ]; then
-            echo "Running pipeline for editions: $EDITIONS"
-            python pipeline/main.py --editions "$EDITIONS"
-          else
-            echo "Running full pipeline (all editions)"
-            python pipeline/main.py
+            ARGS="--editions $EDITIONS"
           fi
+          if [ "${{ inputs.recluster_only }}" = "true" ]; then
+            ARGS="$ARGS --recluster-only --recluster-window-hours ${{ inputs.recluster_window_hours || 48 }}"
+            echo "Running RECLUSTER-ONLY (skip fetch/scrape/bias; reuse existing articles)"
+          else
+            echo "Running full pipeline"
+          fi
+          python pipeline/main.py $ARGS

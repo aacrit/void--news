@@ -304,6 +304,10 @@ def _determine_section(articles: list[dict], cluster_title: str = "",
 # the IDF math is the primary defence against generic-entity over-merging.
 # Anything that survives both this stop-set AND a meaningful IDF score is
 # considered a strong signal.
+# Tokens spaCy emits as entities that carry no merge signal. Kept tight —
+# the IDF math is the primary defence against generic-entity over-merging.
+# Anything that survives both this stop-set AND a meaningful IDF score is
+# considered a strong signal.
 _ENTITY_STOP_TOKENS = frozenset({
     "us", "u.s.", "u.s",
     "the", "an", "a",
@@ -311,6 +315,27 @@ _ENTITY_STOP_TOKENS = frozenset({
     "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday",
     "january", "february", "march", "april", "may", "june", "july",
     "august", "september", "october", "november", "december",
+    # 2026-05-24 production audit — publisher-name token bridge bug.
+    # Cluster a61aa38d ("News Outlets Cover Local Business...") merged
+    # 80 articles from 7 sources (Oman Observer, Samoa Observer, Raleigh
+    # News & Observer, Kashmir Observer, Charlotte Observer, Fayetteville
+    # Observer) because spaCy NER picked up "Observer" from article bylines
+    # / breadcrumb URLs / footer copyright lines and treated it as a high-
+    # IDF anchor entity. The token appears in 30+ publisher names across
+    # data/sources.json. Same risk: "Times", "Post", "Herald", "Tribune",
+    # "Journal", "Gazette", "Telegraph", "Chronicle", "Mail", "Express",
+    # "Daily", "Sun", "Globe", "Monitor", "Bulletin", "Register", "News".
+    # Excluding these from anchor entity candidacy kills the 80-article
+    # false-merge without affecting genuine event names (Hagibis, Silina,
+    # Ouagadougou, etc. — those are PERSON / GPE proper nouns spaCy still
+    # extracts cleanly).
+    "observer", "times", "post", "herald", "tribune", "journal", "gazette",
+    "telegraph", "chronicle", "mail", "express", "daily", "sun", "globe",
+    "monitor", "bulletin", "register", "news", "media", "broadcasting",
+    "wire", "newswire", "press", "report", "review", "weekly", "today",
+    "online", "digital", "edition", "network", "channel",
+    # Often-occurring source-byline / copyright phrases
+    "staff", "writer", "correspondent", "reporter", "editor",
 })
 
 # Entities that appear in such a high baseline rate across world-news
@@ -534,6 +559,47 @@ _GARBAGE_TITLE_PATTERNS = [
         r"(?:Debates|Concerns|Tensions|Questions)\b",
         re.IGNORECASE,
     ),
+    # 2026-05-24 production audit — broadened from semicolon-only to
+    # catch additional self-admitting "this is a mash-up" patterns that
+    # the Gemini fallback title-generator produces when handed an over-
+    # merged cluster.
+    #
+    # Today's top-10 false-merge titles that the existing patterns missed:
+    #   - "Multiple Car Crashes Across Regions Cause Injuries and One Fatality"
+    #   - "Arms Recovered in Chhattisgarh; Wildlife Smugglers Arrested; Oregon Police Kill Bear"
+    #   - "News Outlets Cover Local Business, Sports, Weather, and Diplomacy"
+    #   - "The Spectator Publishes Diverse Commentary on Politics, Culture, and Society"
+    #   - "HuffPost Publishes Lifestyle Advice; Economist Critiques Western Statue"
+    re.compile(
+        r"^(?:Multiple|Various|Several|Numerous|Different)\s+\w+\s+"
+        r"(?:Across|Reported|Cause|Strike|Hit|Occur|Reveal|Show|Spread)",
+        re.IGNORECASE,
+    ),
+    re.compile(r"\bAcross\s+(?:Regions|Continents|Borders|Countries|Sectors)\b", re.IGNORECASE),
+    re.compile(
+        r"\bNews\s+Outlets?\s+(?:Cover|Report|Publish|Discuss|Address|Examine)\b",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"\b(?:Publishes|Covers|Reports|Discusses)\s+"
+        r"(?:Diverse|Various|Multiple|Wide-Ranging)\s+\w+",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"\bCommentary\s+on\s+\w+,\s*\w+,?\s*(?:and\s+)?\w+\b",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"\b(?:Lifestyle\s+Advice|Lifestyle\s+Tips|Various\s+Topics)\b",
+        re.IGNORECASE,
+    ),
+    # Three-clause titles joined by commas where the clauses describe
+    # unrelated topics. Conservative: requires 4+ comma-separated capitalized
+    # phrases. "Politics, Culture, and Society" / "Business, Sports, Weather,
+    # and Diplomacy". Matches "X, Y, Z, [and] W" capitalized list patterns.
+    re.compile(
+        r"\b([A-Z][a-z]+,\s+){2,}(?:and\s+)?[A-Z][a-z]+\b",
+    ),
 ]
 
 
@@ -556,6 +622,23 @@ _GARBAGE_TITLE_PATTERNS = [
 MEGA_CLUSTER_THRESHOLD = 75
 MEGA_SPLIT_TFIDF = 0.32   # 1.78x baseline (STORY_TFIDF_THRESHOLD = 0.18)
 MEGA_SPLIT_IDF = 4.0      # 2.0x baseline (ENTITY_MERGE_IDF_THRESHOLD = 2.0)
+
+# 2026-05-24 production audit — article-count cap.
+# The source_count cap above misses the failure mode where wire-aware
+# collapse correctly reduces N articles → K voices but the underlying K
+# voices were never the same story to begin with. Observed today:
+#   - Cluster a61aa38d: 7 sources, 80 articles, false-merge (Observer bridge)
+#   - Cluster c6053cda: 3 sources, 55 articles, false-merge (sports + Tigers)
+#   - Cluster a9a9317e: 3 sources, 42 articles, false-merge (Erdoğan + Trump)
+# None of these tripped MEGA_CLUSTER_THRESHOLD (source_count below 75).
+# Trip Phase 5 force-split when article_count >> source_count, i.e. when
+# wire-aware collapse compressed a large article pile into a few voices —
+# a strong signal of multi-story over-merge inside a single publisher's
+# vertical slate. Threshold tuned to catch the production cases without
+# hitting genuine breaking-news clusters (which have similar art:src ratios
+# but tend to have higher absolute source_count).
+MEGA_ARTICLE_TO_SOURCE_RATIO = 4   # trip if articles > 4 × sources
+MEGA_ARTICLE_COUNT_MIN = 20        # AND total articles ≥ 20
 
 # Hard merge ceiling — refuse any merge that would produce a cluster
 # larger than this. Phase 5 can still cap legitimate breaking-news
@@ -1475,9 +1558,23 @@ def split_mega_clusters(
     out: list[dict] = []
     for c in clusters:
         sc = c.get("source_count", 0)
-        if sc < threshold:
+        ac = len(c.get("articles", []) or [])
+        # 2026-05-24 — trip on EITHER source_count >= threshold (legacy gate)
+        # OR articles >> sources (article-pile bridge). The second gate
+        # catches false-merges where wire collapse hides the real damage.
+        ratio_trip = (
+            ac >= MEGA_ARTICLE_COUNT_MIN
+            and sc > 0
+            and ac > MEGA_ARTICLE_TO_SOURCE_RATIO * sc
+        )
+        if sc < threshold and not ratio_trip:
             out.append(c)
             continue
+        if ratio_trip and verbose:
+            print(
+                f"  [Phase5/ratio-trip] '{c.get('title', '')[:60]!r}' "
+                f"src={sc} arts={ac} (ratio {ac/max(sc,1):.1f}x) → force-split"
+            )
 
         # Step 1: try to force-split at aggressive thresholds
         sub = _force_split_cluster(
