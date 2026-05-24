@@ -1,6 +1,10 @@
 # Diagnostic Lab — `/diag.html`
 
-Standalone single-file diagnostic UI for the void --news pipeline. Lives at `frontend/public/diag.html`; deploys with the rest of the static site to `void-news.pages.dev/diag.html`. Press & Precision aesthetic — sepia parchment + ink cards + Playfair / Inter / Plex Mono.
+Standalone single-file diagnostic UI for the void --news pipeline. Lives at `frontend/public/diag.html`; deploys with the rest of the static site to `void-news.pages.dev/diag.html`.
+
+**Dark premium theme** — warm-black ink + gold accent + terminal-grade typography (Playfair Display / Inter / IBM Plex Mono). 39 pipeline steps mapped, color-coded by type, with live DB examples and a $0 sandbox.
+
+**Mobile-optimized layout** — below 768px, the page switches from 3-column desktop to a single-column app with sticky top bar (logo + cost chip + settings) and bottom tab bar (Steps · Trace · Tune · Run). Not a responsive squash — a separate optimized view with bigger tap targets and bottom-sheet panels.
 
 ## What it does
 
@@ -13,24 +17,49 @@ Standalone single-file diagnostic UI for the void --news pipeline. Lives at `fro
 
 ## First-time setup
 
-1. **Apply migrations 057 + 058** to your Supabase project — they create `engine_runs`, `engine_snapshots`, `sandbox_runs` plus RLS policies.
-2. **Trigger one production pipeline run** so `engine_snapshots` has at least one row to baseline against.
-3. Open `frontend/public/diag.html` — either locally (`file://...`) or hosted at `void-news.pages.dev/diag.html`. The first load prompts for your Supabase URL + anon key; both are saved to localStorage thereafter.
+1. Open `frontend/public/diag.html` — either locally (`file://...`) or hosted at `void-news.pages.dev/diag.html`.
+2. **Settings modal opens automatically** on first load. Paste your Supabase project URL + the anon key (NEVER the service role). Both come from your project's `.env`. Hit **Test connection** to confirm before saving.
+3. Saved credentials live in `localStorage` only. Nothing leaves your device. The anon key is meant to be public — RLS policies enforce access control server-side.
+4. The connection diagnostic banner under the masthead tells you what works:
+   - **Red** — no creds or auth failed. Click "Configure".
+   - **Yellow** — connected, but migrations 057 + 058 aren't applied yet. Step examples still work; sandbox + run picker are limited.
+   - **Green** — everything live.
+5. To unlock the sandbox: apply `supabase/migrations/057_engine_snapshots.sql` + `058_sandbox_rls.sql` (creates `engine_runs`, `engine_snapshots`, `sandbox_runs` with RLS) and trigger one production pipeline run so `engine_snapshots` has a baseline.
 
 ## Anatomy
 
+**Desktop (≥768px)**
 ```
 +----------------------------------------------------------+
-| Masthead — title, run timestamp, snapshot id            |
+| Masthead — title, run, snapshot, settings gear           |
++----------------------------------------------------------+
+| Connection diagnostic banner (red/yellow/green)          |
 +--------------+-----------------------+-------------------+
 | Left rail    | Main column           | Right rail        |
-| Run picker   | 32 numbered step      | Claude cost panel |
+| Run picker   | 39 numbered step      | Claude cost panel |
 | Step TOC     |   cards (vertical     | Cluster trace     |
-|   w/ health  |   newspaper layout)   | Knob drawer       |
-|   dots       |   click=expand        | Re-run triggers   |
+|   w/ dots    |   newspaper layout)   | Knob drawer       |
+|   + health   |   click=expand        | Re-run triggers   |
 |              |   dblclick=DB pull    |                   |
 +--------------+-----------------------+-------------------+
 ```
+
+**Mobile (<768px)**
+```
++----------------------------------+
+| Top bar — brand + cost + gear   |
+| Banner strip (1-line status)    |
++----------------------------------+
+|                                  |
+|  Active tab content              |
+|  (Steps · Trace · Tune · Run)    |
+|                                  |
++----------------------------------+
+| Bottom tab bar (4 tabs)         |
++----------------------------------+
+```
+
+Keyboard shortcuts (desktop): <kbd>S</kbd> open settings · <kbd>/</kbd> or <kbd>T</kbd> focus trace input · <kbd>Esc</kbd> close modal.
 
 ## Step type colors
 
