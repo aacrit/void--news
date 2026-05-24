@@ -9,6 +9,7 @@ News aggregation, 6-axis rule-based NLP bias analysis. 1,016 sources / 158 count
 | Working on... | Read |
 |---|---|
 | Frontend, components, CSS, animation | `docs/DESIGN-SYSTEM.md` |
+| **Diagnostic lab — engine flow, kill switch, knob tuning, $0 replay** | `docs/DIAGNOSTIC-LAB.md` (UI at `/diag.html`) |
 | Pipeline flow, ranker v6.0, bias axes, summarization | `docs/PIPELINE-BRAIN.md` |
 | Agents, workflows, slash commands | `docs/AGENT-TEAM.md` |
 | void --history | `docs/HISTORY.md` |
