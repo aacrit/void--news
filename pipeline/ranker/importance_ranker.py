@@ -1133,6 +1133,7 @@ def rank_importance(
     editorial_importance: int | None = None,
     sections: list[str] | None = None,
     mega_capped: bool = False,
+    cluster: dict | None = None,
 ) -> dict:
     """
     Score the importance of a story cluster for feed ranking.
@@ -1306,10 +1307,17 @@ def rank_importance(
             #       cluster should not unlock +4.0.
             has_center = any(45.0 <= v <= 55.0 for v in lean_vals)
             partisan_count = sum(1 for v in lean_vals if v < 40.0 or v > 60.0)
-            if has_left and has_right and has_center and partisan_count >= 3:
+            cross_spectrum_fired = (
+                has_left and has_right and has_center and partisan_count >= 3
+            )
+            if cross_spectrum_fired:
                 # Scale bonus by how far apart the extremes are (0-4.0 pts)
                 lean_spread = max(lean_vals) - min(lean_vals)
                 headline_rank += min(4.0, lean_spread * 0.04)
+        else:
+            cross_spectrum_fired = False
+    else:
+        cross_spectrum_fired = False
 
     # v5.0: Gemini editorial adjustment (additive, not scaling)
     # When editorial_importance is available, apply a ±10% adjustment
@@ -1484,11 +1492,72 @@ def rank_importance(
 
     headline_rank = round(max(0.0, min(100.0, headline_rank)), 2)
 
+    # 2026-05-24 v2 — first-class is_headline + headline_confidence.
+    # Three AND'd criteria (mirrors plan; tunable from diag.html lab):
+    #   1. Coverage: source_count >= 5 AND >= 2 distinct tiers
+    #   2. Authority OR cross-spectrum (lenient OR-gate)
+    #   3. Cohesion: cohesion_score >= 50  (default 60 when missing for
+    #      small clusters where Phase 5 didn't compute it — < 20 articles)
+    # headline_confidence: 40% coverage + 30% authority/spectrum + 30% cohesion.
+    # is_headline = headline_confidence >= 65.
+    #
+    # mega_capped clusters are never headlines (they survived the cap but
+    # by definition are noise-floor signals, not coverage signals).
+    src_count = 0
+    tiers_present = set()
+    if cluster_articles and sources:
+        _src_by_id = {s.get("id"): s for s in sources}
+        _src_by_slug = {s.get("slug"): s for s in sources}
+        voices = set()
+        for a in cluster_articles:
+            src = (
+                _src_by_id.get(a.get("source_id"))
+                or _src_by_slug.get(a.get("source_slug"))
+                or {}
+            )
+            sid = src.get("id") or a.get("source_id")
+            if sid:
+                voices.add(sid)
+            tier = src.get("tier")
+            if tier:
+                tiers_present.add(tier)
+        src_count = len(voices)
+    coverage_ok = src_count >= 5 and len(tiers_present) >= 2
+
+    authority_or_spectrum_ok = authority >= 60.0 or cross_spectrum_fired
+
+    cohesion_score = 60.0  # default for small clusters Phase 5 didn't score
+    if cluster is not None:
+        _coh = cluster.get("_cohesion") or {}
+        if "cohesion_score" in _coh:
+            cohesion_score = float(_coh["cohesion_score"])
+    cohesion_ok = cohesion_score >= 50.0
+
+    # Weighted confidence — 0..100. Each component normalized to 0..100.
+    coverage_pts = 100.0 if coverage_ok else min(
+        100.0, 20.0 * src_count + 10.0 * len(tiers_present)
+    )
+    spectrum_pts = (
+        100.0 if authority_or_spectrum_ok
+        else max(0.0, min(100.0, authority * 0.5 + spectrum * 0.5))
+    )
+    cohesion_pts = max(0.0, min(100.0, cohesion_score))
+    headline_confidence = round(
+        0.40 * coverage_pts + 0.30 * spectrum_pts + 0.30 * cohesion_pts, 1
+    )
+    is_headline = bool(
+        coverage_ok and authority_or_spectrum_ok and cohesion_ok
+        and not mega_capped
+        and headline_confidence >= 65.0
+    )
+
     return {
         "importance_score": headline_rank,
         "divergence_score": round(divergence, 2),
         "coverage_velocity": velocity_raw,
         "headline_rank": headline_rank,
+        "is_headline": is_headline,
+        "headline_confidence": int(round(headline_confidence)),
         "component_scores": {
             "coverage": round(coverage, 2),
             "maturity": round(maturity, 2),
@@ -1501,5 +1570,9 @@ def rank_importance(
             "consequentiality": round(consequentiality, 2),
             "authority": round(authority, 2),
             "longevity_mult": round(longevity_mult, 2),
+            "is_headline_src_count": src_count,
+            "is_headline_tiers": len(tiers_present),
+            "is_headline_cohesion": round(cohesion_score, 1),
+            "is_headline_cross_spectrum": cross_spectrum_fired,
         },
     }

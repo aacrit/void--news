@@ -1530,7 +1530,7 @@ def main():
 
         clusters = []
         try:
-            clusters = cluster_stories(reporting_for_clustering)
+            clusters = cluster_stories(reporting_for_clustering, source_map=source_map)
             print(f"  Clusters formed: {len(clusters)}")
         except Exception as e:
             print(f"  [error] Clustering failed: {e}")
@@ -1912,11 +1912,15 @@ def main():
                     editorial_importance=cluster.get("editorial_importance"),
                     sections=_rank_sections,
                     mega_capped=bool(cluster.get("mega_cluster_capped", False)),
+                    cluster=cluster,  # 2026-05-24 v2 — pass cluster so ranker
+                                      # can read _cohesion stashed by Phase 5
                 )
                 cluster["importance_score"] = rank_result["importance_score"]
                 cluster["divergence_score"] = rank_result["divergence_score"]
                 cluster["coverage_velocity"] = rank_result["coverage_velocity"]
                 cluster["headline_rank"] = rank_result["headline_rank"]
+                cluster["is_headline"] = bool(rank_result.get("is_headline", False))
+                cluster["headline_confidence"] = int(rank_result.get("headline_confidence", 0))
             except Exception as e:
                 print(f"  [warn] Ranking failed: {e}")
                 cluster["importance_score"] = 20.0
@@ -2522,6 +2526,9 @@ def main():
                 "rank_south_asia": round(cluster.get("rank_south-asia", cluster.get("headline_rank", 0.0)), 2),
                 "is_international": _is_international,
                 "mega_cluster_capped": bool(cluster.get("mega_cluster_capped", False)),
+                # 2026-05-24 v2 — first-class headline signal (migration 059)
+                "is_headline": bool(cluster.get("is_headline", False)),
+                "headline_confidence": int(cluster.get("headline_confidence", 0)),
             }
 
             # v5.0: editorial intelligence columns (nullable — NULL = no Gemini)

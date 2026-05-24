@@ -459,7 +459,9 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
         // schemas don't have the column — the enriched-fields select will fail
         // and we fall back to base, which silently treats every story as
         // non-international (no World overflow rendered).
-        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points,rank_world,rank_us,rank_europe,rank_south_asia,claim_consensus,cached_image_url,is_international`;
+        // 2026-05-24 v2 — added is_headline + headline_confidence (migration 059).
+        // Used to render the HEADLINE badge and to prioritize sort on /world.
+        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points,rank_world,rank_us,rank_europe,rank_south_asia,claim_consensus,cached_image_url,is_international,is_headline,headline_confidence`;
         const baseFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated`;
 
         // Use per-edition rank column for ordering (cross-edition differentiation)
