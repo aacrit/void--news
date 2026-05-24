@@ -26,6 +26,26 @@ Standalone single-file diagnostic UI for the void --news pipeline. Lives at `fro
    - **Green** — everything live.
 5. To unlock the sandbox: apply `supabase/migrations/057_engine_snapshots.sql` + `058_sandbox_rls.sql` (creates `engine_runs`, `engine_snapshots`, `sandbox_runs` with RLS) and trigger one production pipeline run so `engine_snapshots` has a baseline.
 
+## Stage groups — 9 stages, 39 steps
+
+The pipeline runs 39 distinct steps; the lab groups them into 9 collapsible stages so you can scan the engine without scrolling through every signal. Click a stage header to expand its steps; click a step for detail; double-click for live data.
+
+| # | Stage | Steps | Purpose |
+|---|---|---|---|
+| **I** | Bootstrap | 1–3 | Load sources, sync to DB, open today's pipeline_run audit record |
+| **II** | Ingest | 4–8 | Fetch RSS, dedup vs 48h, scrape full text, tag wire copies |
+| **III** | Analyze | 9–14 | Six bias axes — political lean, sensationalism, opinion vs reporting, factual rigor, framing, topic EMA |
+| **IV** | **Cluster** | 15–22 | Eight-phase rule-based clustering engine. Where the 13-source pin lived |
+| **V** | Refine | 23–24 | Re-score framing with cluster context, assign categories |
+| **VI** | **Rank & Rerank** | 25–28 | 10-signal importance, holistic rerank, diversity / event cap, recency gate. Today's regression patch lives here |
+| **VII** | Persist | 30–31 | Cache top-15 images to WebP, store cluster rows, reconcile world-tag |
+| **VIII** | **Editorial · LLM** | 29, 32–36 | The only stage that spends LLM money. Cluster summaries, daily brief TL;DR + opinion + audio, weekly digest, IG caption. Gated by `DISABLE_ANTHROPIC` |
+| **IX** | Wrap | 37–39 | Cleanup stale articles, source-health quarantine, finalize pipeline_run |
+
+**Defaults**: Cluster (IV) and Rank (VI) are expanded by default because today's regressions live there; everything else collapses. Use the **Expand all** / **Collapse all** buttons in the stage toolbar.
+
+The stage color bar under each header is one swatch per step in that stage, colored by step type. Cluster shows 8 forest-green bars; Editorial shows 6 crimson bars; Wrap shows 3 bronze bars. Visual at-a-glance "what is this stage doing?"
+
 ## Anatomy
 
 **Desktop (≥768px)**

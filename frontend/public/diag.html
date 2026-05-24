@@ -802,6 +802,191 @@ details.knob-group[open] summary::after { transform: rotate(180deg); }
 .test-result.fail { display: block; background: rgba(232,75,95,0.06); border: 1px solid rgba(232,75,95,0.32); color: var(--c-fail); }
 
 /* ============================================================
+   STAGE GROUPS — collapse 39 steps into 9 meaningful chunks
+   ============================================================ */
+.stage-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 10px 14px;
+  background: var(--bg-elev-1);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-2);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ink-mute);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+.stage-toolbar .left { display: flex; gap: 14px; align-items: center; }
+.stage-toolbar .actions { display: flex; gap: 6px; }
+.stage-toolbar button {
+  background: transparent;
+  color: var(--ink-soft);
+  border: 1px solid var(--rule);
+  padding: 6px 12px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  border-radius: var(--r-1);
+  transition: all .15s var(--ease);
+}
+.stage-toolbar button:hover {
+  color: var(--gold);
+  border-color: var(--rule-warm);
+}
+.stages { display: flex; flex-direction: column; gap: 14px; }
+.stage { position: relative; }
+.stage-head {
+  cursor: pointer;
+  display: grid;
+  grid-template-columns: 56px 1fr 18px;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 22px;
+  background: var(--bg-elev-1);
+  border: 1px solid var(--rule);
+  border-radius: var(--r-2);
+  transition: all .2s var(--ease);
+  overflow: hidden;
+  position: relative;
+}
+.stage-head::before {
+  content: "";
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, var(--bg-elev-1) 0%, var(--bg-elev-2) 100%);
+  opacity: 0;
+  transition: opacity .2s var(--ease);
+  pointer-events: none;
+}
+.stage-head:hover::before { opacity: 1; }
+.stage-head > * { position: relative; z-index: 1; }
+.stage.open .stage-head {
+  border-color: var(--rule-warm);
+  background: var(--bg-elev-2);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom-color: transparent;
+}
+.stage-head:hover { border-color: var(--rule-strong); }
+.stage-num {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: 28px;
+  color: var(--gold);
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-align: center;
+  opacity: 0.9;
+}
+.stage.open .stage-num { opacity: 1; }
+.stage-title { min-width: 0; }
+.stage-name {
+  font-family: var(--font-editorial);
+  font-weight: 600;
+  font-size: 19px;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  margin-bottom: 4px;
+  display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+}
+.stage-name .count {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ink-mute);
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.stage-name .badge-llm {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--c-summarize);
+  background: rgba(232,75,95,0.08);
+  border: 1px solid rgba(232,75,95,0.32);
+  padding: 2px 7px;
+  border-radius: 3px;
+  letter-spacing: 0.18em;
+  font-weight: 500;
+}
+.stage-purpose {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.55;
+  margin-bottom: 8px;
+}
+.stage-colorbar {
+  display: flex;
+  gap: 2px;
+}
+.stage-colorbar span {
+  height: 3px;
+  flex: 1;
+  border-radius: 1px;
+  opacity: 0.7;
+}
+.stage-chevron {
+  width: 9px; height: 9px;
+  border-right: 1.5px solid var(--ink-mute);
+  border-bottom: 1.5px solid var(--ink-mute);
+  transform: rotate(45deg) translate(-2px, -2px);
+  transition: transform .2s var(--ease), border-color .2s var(--ease);
+  justify-self: center;
+}
+.stage.open .stage-chevron {
+  transform: rotate(-135deg) translate(-2px, -2px);
+  border-color: var(--gold);
+}
+.stage-body {
+  display: none;
+  border: 1px solid var(--rule-warm);
+  border-top: none;
+  border-radius: 0 0 var(--r-2) var(--r-2);
+  padding: 14px;
+  background: var(--bg);
+}
+.stage.open .stage-body { display: block; }
+.stage-body .steps { gap: 8px; }
+.stage-body .step-card { padding: 14px 18px; }
+.stage-body .step-num { font-size: 22px; }
+.stage-body .step-name { font-size: 15px; }
+
+/* Stage focus animation — when expanded, scroll into view */
+.stage.open .stage-head { box-shadow: var(--shadow-glow); }
+
+/* TOC stages */
+.toc-stage {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--gold);
+  padding: 12px 6px 4px;
+  display: flex; justify-content: space-between; align-items: baseline;
+  border-top: 1px solid var(--rule);
+  margin-top: 6px;
+}
+.toc-stage:first-child { border-top: none; margin-top: 0; padding-top: 4px; }
+.toc-stage .ts-count { color: var(--ink-mute); font-size: 9px; }
+
+@media (max-width: 767px) {
+  .stage-head { grid-template-columns: 44px 1fr 18px; gap: 12px; padding: 16px 18px; min-height: 64px; }
+  .stage-num { font-size: 24px; }
+  .stage-name { font-size: 17px; }
+  .stage-purpose { font-size: 12.5px; }
+  .stage-body { padding: 10px; }
+  .stage-body .step-card { padding: 12px 14px; }
+  .stage-toolbar { padding: 8px 12px; font-size: 10px; }
+  .stage-toolbar .left { gap: 10px; }
+  .stage-toolbar button { padding: 5px 9px; min-height: 32px; }
+}
+
+/* ============================================================
    TOAST
    ============================================================ */
 .toast {
@@ -1019,20 +1204,29 @@ details.knob-group[open] summary::after { transform: rotate(180deg); }
       <label style="font-family:var(--font-mono);font-size:10px;color:var(--ink-mute);text-transform:uppercase;letter-spacing:0.14em">Compare to</label>
       <select id="run-picker-compare" class="input"><option value="">— none —</option></select>
     </div>
-    <h2>Pipeline · 39 steps</h2>
+    <h2>Pipeline · 9 stages</h2>
     <div id="toc"></div>
   </aside>
 
   <!-- MAIN COLUMN: Step cards -->
   <main class="tab-content" id="tab-steps">
     <p class="main-intro">
-      Every numbered card below is a step the engine performs each day at 11:00 UTC.
-      <strong>Click</strong> any card to read its rationale, gates, and gotchas.
-      <strong>Double-click</strong> to pull a live example from the database.
-      Crimson cards are LLM-bearing; the rest are rule-based and free.
+      The 11:00 UTC pipeline runs in <strong>nine stages</strong>, 39 steps total. Each stage is one purpose — ingest, analyze, cluster, rank, persist, edit, wrap.
+      <strong>Click a stage</strong> to expand its steps. <strong>Click a step</strong> for its rationale and gates. <strong>Double-click</strong> to pull a live example from the database.
+      The crimson Editorial stage is the only place LLM money is spent.
     </p>
     <div class="legend" id="legend"></div>
-    <div class="steps" id="steps"></div>
+    <div class="stage-toolbar">
+      <div class="left">
+        <span><strong style="color:var(--gold);font-weight:500">9 stages · 39 steps</strong></span>
+        <span class="desktop-only">Click a stage to expand its steps · click a step for detail · dbl-click for live data</span>
+      </div>
+      <div class="actions">
+        <button id="expand-all">Expand all</button>
+        <button id="collapse-all">Collapse all</button>
+      </div>
+    </div>
+    <div class="stages" id="stages"></div>
     <div class="endpiece">— end of pipeline —</div>
   </main>
 
@@ -1499,6 +1693,46 @@ const TYPE_NAMES = {
 };
 
 // ===========================================================================
+// STAGES — 9 meaningful groupings of the 39 steps. The grouping is
+// conceptual (by purpose) rather than strict execution order, so
+// "all LLM-bearing steps live in EDITORIAL" even though Step 29
+// (cluster summarization) physically runs between RANK and PERSIST
+// in main.py. This makes the diagnostic answer "where is money
+// being spent?" with one glance at Stage VIII.
+// ===========================================================================
+const STAGES = [
+  { id: "bootstrap", n: "I", name: "Bootstrap", steps: [1, 2, 3],
+    purpose: "Load 1,016 curated sources, sync to Supabase, open today's pipeline_run audit record.",
+    open: false },
+  { id: "ingest",    n: "II", name: "Ingest", steps: [4, 5, 6, 7, 8],
+    purpose: "Fetch RSS feeds, dedup against the last 48 hours, scrape full text, tag syndicated wire copies.",
+    open: false },
+  { id: "analyze",   n: "III", name: "Analyze", steps: [9, 10, 11, 12, 13, 14],
+    purpose: "Six bias axes per article. Rule-based NLP, no LLM, $0. Recalibrated 2026-05-13; dead signals removed 2026-05-22.",
+    open: false },
+  { id: "cluster",   n: "IV", name: "Cluster", steps: [15, 16, 17, 18, 19, 20, 21, 22],
+    purpose: "Eight-phase rule-based clustering engine. Each phase merges or splits based on increasingly specific signals. Where the 13-source pin lived.",
+    open: true },
+  { id: "refine",    n: "V", name: "Refine", steps: [23, 24],
+    purpose: "Re-score framing now that each article knows its cluster siblings. Assign categories.",
+    open: false },
+  { id: "rank",      n: "VI", name: "Rank & Rerank", steps: [25, 26, 27, 28],
+    purpose: "Ten-signal importance score, holistic rerank over all clusters, diversity / event cap, 24-hour recency gate. Today's regression patch lives here.",
+    open: true },
+  { id: "persist",   n: "VII", name: "Persist", steps: [30, 31],
+    purpose: "Cache top-15 cluster images to WebP, store the final cluster rows, reconcile the 'world' section tag using fresh rank_world.",
+    open: false },
+  { id: "editorial", n: "VIII", name: "Editorial · LLM", steps: [29, 32, 33, 34, 35, 36],
+    purpose: "Every LLM-bearing step lives here. Gated by DISABLE_ANTHROPIC — currently set, so all six fall back to Gemini Flash or rule-based stubs.",
+    open: false, llm: true },
+  { id: "wrap",      n: "IX", name: "Wrap", steps: [37, 38, 39],
+    purpose: "Prune stale articles, bump source-health failure counters, finalize the pipeline_run row (status=completed).",
+    open: false },
+];
+
+const STEP_BY_NUM = Object.fromEntries(STEPS.map((s) => [s.n, s]));
+
+// ===========================================================================
 // RENDER — Steps + TOC + Legend
 // ===========================================================================
 function renderLegend() {
@@ -1508,65 +1742,138 @@ function renderLegend() {
   ).join("");
 }
 
-function renderSteps() {
-  const stepsRoot = document.getElementById("steps");
+function renderStepCard(s) {
+  const card = document.createElement("article");
+  card.className = "step-card";
+  card.dataset.type = s.type;
+  card.dataset.num = s.n;
+  card.id = `step-${s.n}`;
+  card.innerHTML = `
+    <div class="step-head">
+      <div class="step-num">${String(s.n).padStart(2, "0")}</div>
+      <div>
+        <div class="step-name">${s.name}<span class="file">${s.file}</span></div>
+        <div class="step-purpose">${s.purpose}</div>
+      </div>
+      <div class="step-type">${s.type}</div>
+    </div>
+    <div class="step-detail">
+      <h4>Inputs</h4><p>${s.inputs || "—"}</p>
+      <h4>Outputs</h4><p>${s.outputs || "—"}</p>
+      <h4>Gates &amp; thresholds</h4><p>${s.gates || "—"}</p>
+      <h4>Failure mode</h4><p>${s.fail || "—"}</p>
+      ${s.gotcha ? `<div class="gotcha"><strong>Gotcha</strong>${s.gotcha}</div>` : ""}
+      <div class="dbex" data-loaded="0" style="display:none"></div>
+      <div class="step-hint">
+        <span><kbd>click</kbd> toggle detail</span>
+        <span><kbd>dbl-click</kbd> live example</span>
+        ${s.example_query ? `<span style="color:var(--gold)">↳ query: ${s.example_query.table}</span>` : ""}
+      </div>
+    </div>`;
+  card.addEventListener("click", (e) => {
+    e.stopPropagation();  // don't bubble up to stage header
+    clearTimeout(card._t);
+    card._t = setTimeout(() => card.classList.toggle("open"), 200);
+  });
+  card.addEventListener("dblclick", async (e) => {
+    e.preventDefault(); e.stopPropagation();
+    clearTimeout(card._t);
+    card.classList.add("open");
+    await loadExample(s, card.querySelector(".dbex"));
+  });
+  return card;
+}
+
+function renderStages() {
+  const root = document.getElementById("stages");
   const tocRoot = document.getElementById("toc");
-  stepsRoot.innerHTML = "";
+  root.innerHTML = "";
   tocRoot.innerHTML = "";
 
-  STEPS.forEach((s) => {
-    const card = document.createElement("article");
-    card.className = "step-card";
-    card.dataset.type = s.type;
-    card.dataset.num = s.n;
-    card.id = `step-${s.n}`;
-    card.innerHTML = `
-      <div class="step-head">
-        <div class="step-num">${String(s.n).padStart(2, "0")}</div>
-        <div>
-          <div class="step-name">${s.name}<span class="file">${s.file}</span></div>
-          <div class="step-purpose">${s.purpose}</div>
-        </div>
-        <div class="step-type">${s.type}</div>
-      </div>
-      <div class="step-detail">
-        <h4>Inputs</h4><p>${s.inputs || "—"}</p>
-        <h4>Outputs</h4><p>${s.outputs || "—"}</p>
-        <h4>Gates &amp; thresholds</h4><p>${s.gates || "—"}</p>
-        <h4>Failure mode</h4><p>${s.fail || "—"}</p>
-        ${s.gotcha ? `<div class="gotcha"><strong>Gotcha</strong>${s.gotcha}</div>` : ""}
-        <div class="dbex" data-loaded="0" style="display:none"></div>
-        <div class="step-hint">
-          <span><kbd>click</kbd> toggle detail</span>
-          <span><kbd>dbl-click</kbd> live example</span>
-          ${s.example_query ? `<span style="color:var(--gold)">↳ query: ${s.example_query.table}</span>` : ""}
-        </div>
-      </div>`;
-    card.addEventListener("click", (e) => {
-      clearTimeout(card._t);
-      card._t = setTimeout(() => card.classList.toggle("open"), 200);
-    });
-    card.addEventListener("dblclick", async (e) => {
-      e.preventDefault();
-      clearTimeout(card._t);
-      card.classList.add("open");
-      await loadExample(s, card.querySelector(".dbex"));
-    });
-    stepsRoot.appendChild(card);
+  STAGES.forEach((stage) => {
+    const stepObjs = stage.steps.map((n) => STEP_BY_NUM[n]).filter(Boolean);
 
-    const toc = document.createElement("div");
-    toc.className = "toc-item";
-    toc.dataset.num = s.n;
-    toc.innerHTML = `
-      <span class="toc-dot" data-type="${s.type}"></span>
-      <span class="toc-num">${String(s.n).padStart(2, "0")}</span>
-      <span class="toc-name">${s.name}</span>
-      <span class="toc-health" data-step="${s.n}"></span>`;
-    toc.addEventListener("click", () => {
-      document.getElementById(`step-${s.n}`).scrollIntoView({ behavior: "smooth", block: "center" });
+    // Stage card
+    const stageEl = document.createElement("section");
+    stageEl.className = "stage";
+    stageEl.dataset.id = stage.id;
+    if (stage.open) stageEl.classList.add("open");
+    stageEl.id = `stage-${stage.id}`;
+
+    // Color bar — one swatch per step in the stage, colored by type
+    const colorBar = stepObjs.map((s) =>
+      `<span style="background:var(--c-${s.type.toLowerCase()})"></span>`
+    ).join("");
+
+    const llmBadge = stage.llm ? `<span class="badge-llm">LLM · costly</span>` : "";
+    const stepRange = stage.steps.length === 1
+      ? `Step ${String(stage.steps[0]).padStart(2,"0")}`
+      : `Steps ${String(stage.steps[0]).padStart(2,"0")}–${String(stage.steps[stage.steps.length-1]).padStart(2,"0")}`;
+
+    stageEl.innerHTML = `
+      <header class="stage-head">
+        <div class="stage-num">${stage.n}</div>
+        <div class="stage-title">
+          <div class="stage-name">
+            <span>${stage.name}</span>
+            <span class="count">${stepRange} · ${stage.steps.length} step${stage.steps.length === 1 ? "" : "s"}</span>
+            ${llmBadge}
+          </div>
+          <div class="stage-purpose">${stage.purpose}</div>
+          <div class="stage-colorbar">${colorBar}</div>
+        </div>
+        <div class="stage-chevron"></div>
+      </header>
+      <div class="stage-body">
+        <div class="steps" id="steps-${stage.id}"></div>
+      </div>`;
+
+    stageEl.querySelector(".stage-head").addEventListener("click", () => {
+      stageEl.classList.toggle("open");
     });
-    tocRoot.appendChild(toc);
+
+    const stepsContainer = stageEl.querySelector(`#steps-${stage.id}`);
+    stepObjs.forEach((s) => stepsContainer.appendChild(renderStepCard(s)));
+
+    root.appendChild(stageEl);
+
+    // TOC stage header
+    const tocStage = document.createElement("div");
+    tocStage.className = "toc-stage";
+    tocStage.innerHTML = `<span>${stage.n}. ${stage.name}</span><span class="ts-count">${stage.steps.length}</span>`;
+    tocStage.addEventListener("click", () => {
+      stageEl.classList.add("open");
+      document.getElementById(`stage-${stage.id}`).scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    tocRoot.appendChild(tocStage);
+
+    stepObjs.forEach((s) => {
+      const toc = document.createElement("div");
+      toc.className = "toc-item";
+      toc.dataset.num = s.n;
+      toc.innerHTML = `
+        <span class="toc-dot" data-type="${s.type}"></span>
+        <span class="toc-num">${String(s.n).padStart(2, "0")}</span>
+        <span class="toc-name">${s.name}</span>
+        <span class="toc-health" data-step="${s.n}"></span>`;
+      toc.addEventListener("click", () => {
+        stageEl.classList.add("open");
+        // give the body a tick to expand before scrolling so the step is in-view
+        setTimeout(() => {
+          document.getElementById(`step-${s.n}`).scrollIntoView({ behavior: "smooth", block: "center" });
+        }, 50);
+      });
+      tocRoot.appendChild(toc);
+    });
   });
+
+  // Expand-all / collapse-all
+  document.getElementById("expand-all").onclick = () => {
+    document.querySelectorAll(".stage").forEach((s) => s.classList.add("open"));
+  };
+  document.getElementById("collapse-all").onclick = () => {
+    document.querySelectorAll(".stage").forEach((s) => s.classList.remove("open"));
+  };
 }
 
 // ===========================================================================
@@ -2016,7 +2323,7 @@ document.addEventListener("keydown", (e) => {
 // ===========================================================================
 async function boot() {
   renderLegend();
-  renderSteps();
+  renderStages();
   renderKnobs();
 
   const ok = await runDiagnostic();
