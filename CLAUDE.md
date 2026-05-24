@@ -75,6 +75,7 @@ Applies to: `cluster_summarizer.py` (summary, headline), `daily_brief_generator.
 | Regional editions | `ACTIVE_EDITIONS = ["world"]` in `main.py` | Add editions back |
 | Gemini bias reasoning | `DISABLE_GEMINI_REASONING=1` in `pipeline.yml` | Remove env var |
 | Editorial triage | `DISABLE_EDITORIAL_TRIAGE=1` in `pipeline.yml` | Remove env var |
+| **All Claude API calls (cost-emergency kill switch, 2026-05-22)** | `DISABLE_ANTHROPIC=1` in `pipeline.yml` env block. Guard at `claude_client.py:264 is_available()`. Cascades to all 4 callers: cluster_summarizer (rule-based fallback), daily_brief_generator (Gemini Flash fallback), weekly_digest_generator (Gemini fallback), ig_caption (Gemini fallback). Costs → $0/day immediately. Pipeline keeps running. | Remove env var to re-enable Sonnet 4.6 once balance is replenished |
 | Weekly digest cron | Cron commented in `weekly-digest.yml` | Uncomment |
 | **Audio (void --onair)** | `DISABLE_AUDIO=1` in `pipeline.yml` (pipeline TTS + podcast feed) **AND** `NEXT_PUBLIC_DISABLE_AUDIO=1` (frontend — gated via `app/lib/audioGate.ts`; hides FloatingPlayer, MobileMiniPlayer, MobileTabBar onair entry, MobileBriefPill Listen button, WeeklyDigest AudioBar, Footer `void --onair` pill, PipelineFlow step-7d label) | Remove both env vars together. `produce_audio()` early-returns on the pipeline flag; the frontend imports `AUDIO_ENABLED` from `audioGate.ts` to short-circuit each surface |
 
