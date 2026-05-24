@@ -1585,7 +1585,8 @@ def rank_importance(
             "longevity_mult": round(longevity_mult, 2),
             "is_headline_src_count": src_count,
             "is_headline_tiers": len(tiers_present),
-            "is_headline_cohesion": round(cohesion_score, 1),
             "is_headline_cross_spectrum": cross_spectrum_fired,
+            "is_headline_src_pts": round(src_pts, 1),
+            "is_headline_bonus_pts": round(bonus_pts, 1),
         },
     }
