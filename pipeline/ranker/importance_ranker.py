@@ -1539,13 +1539,14 @@ def rank_importance(
     rank_ok = headline_rank >= 40.0
     authority_or_spectrum_bonus = authority >= 60.0 or cross_spectrum_fired
 
-    # Source-count saturating curve — log-like, plateaus at 100.
-    # 1 src → 0, 3 → 30, 5 → 50, 8 → 70, 12 → 85, 20 → 95, 30+ → 100.
-    if src_count <= 1:
-        src_pts = 0.0
-    else:
-        import math as _m
-        src_pts = min(100.0, 35.0 * _m.log10(max(src_count, 1.5)))
+    # Source-count saturating curve — Hill-curve, plateaus at ~100.
+    # Formula: 100 * n / (n + 5). Reality table:
+    #   1 src → 17, 3 → 38, 5 → 50, 8 → 62, 12 → 71, 20 → 80,
+    #   30 → 86, 50 → 91, 100 → 95, 174 → 97.
+    # The prior log10 curve was too flat (30 sources → 52 only). For
+    # production news, "this is being covered widely" should saturate
+    # by 20-30 voices, not 1000.
+    src_pts = 100.0 * src_count / (src_count + 5.0) if src_count > 0 else 0.0
 
     # Tier diversity is already 0..100 from the existing scorer.
     tier_pts = max(0.0, min(100.0, tier_div))
@@ -1559,9 +1560,15 @@ def rank_importance(
         + 0.10 * bonus_pts,
         1,
     )
+    # Threshold relaxed 60 → 55 after iter 4 data showed even healthy
+    # 174-source Iran cluster only hit conf=48 with the old src_pts curve.
+    # With the new Hill curve, real top stories should comfortably clear 55:
+    #   Iran 174s/r52 → 39 + 0.25*tier + 13 + bonus_pts → typically 65-80
+    #   Ebola 33s/r64 → 34 + 0.25*tier + 16 + bonus_pts → typically 60-75
+    #   Gunman 34s/r62 → 35 + 0.25*tier + 15 + bonus_pts → typically 60-75
     is_headline = bool(
         coverage_ok and rank_ok and not mega_capped
-        and headline_confidence >= 60.0
+        and headline_confidence >= 55.0
     )
 
     return {
