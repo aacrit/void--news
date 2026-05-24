@@ -84,6 +84,12 @@ jobs:
           DISABLE_GEMINI_REASONING: "1"
           DISABLE_EDITORIAL_TRIAGE: "1"
           DISABLE_AUDIO: "1"
+          # 2026-05-22 cost-emergency kill switch: pauses every Claude call
+          # (cluster_summarizer + daily_brief + weekly + ig_caption) via
+          # claude_client.is_available() guard. Gemini Flash takes over the
+          # daily brief; summaries fall back to rule-based. Remove this line
+          # to re-enable Sonnet 4.6 once balance is replenished.
+          DISABLE_ANTHROPIC: "1"
         run: |
           EDITIONS="${{ steps.editions.outputs.filter }}"
           ARGS=""
@@ -105,6 +111,12 @@ jobs:
           DISABLE_GEMINI_REASONING: "1"
           DISABLE_EDITORIAL_TRIAGE: "1"
           DISABLE_AUDIO: "1"
+          # 2026-05-22 cost-emergency kill switch: pauses every Claude call
+          # (cluster_summarizer + daily_brief + weekly + ig_caption) via
+          # claude_client.is_available() guard. Gemini Flash takes over the
+          # daily brief; summaries fall back to rule-based. Remove this line
+          # to re-enable Sonnet 4.6 once balance is replenished.
+          DISABLE_ANTHROPIC: "1"
         run: |
           EDITIONS="${{ steps.editions.outputs.filter }}"
           if [ -n "$EDITIONS" ]; then

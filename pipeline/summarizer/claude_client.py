@@ -262,6 +262,13 @@ def generate_json(
 
 
 def is_available() -> bool:
+    # Emergency kill-switch: pause every Claude call in the pipeline with one
+    # env var. Set `DISABLE_ANTHROPIC=1` in pipeline.yml (or any local shell)
+    # and all four downstream callers — cluster_summarizer, daily_brief,
+    # weekly_digest, ig_caption — fall back to Gemini Flash or rule-based
+    # stubs. Costs drop to $0/day immediately; pipeline keeps running.
+    if os.environ.get("DISABLE_ANTHROPIC", "").strip().lower() in ("1", "true", "yes"):
+        return False
     if _persistent_failure:
         return False
     if not CLAUDE_AVAILABLE:
