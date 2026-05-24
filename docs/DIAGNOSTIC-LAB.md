@@ -17,14 +17,15 @@ Standalone single-file diagnostic UI for the void --news pipeline. Lives at `fro
 
 ## First-time setup
 
+**Zero setup for the default project.** The void --news Supabase URL + anon key are baked into `diag.html` (anon keys are designed to be public — RLS enforces access control server-side, same as the production frontend does). Open the file, the connection banner turns green, you're done.
+
 1. Open `frontend/public/diag.html` — either locally (`file://...`) or hosted at `void-news.pages.dev/diag.html`.
-2. **Settings modal opens automatically** on first load. Paste your Supabase project URL + the anon key (NEVER the service role). Both come from your project's `.env`. Hit **Test connection** to confirm before saving.
-3. Saved credentials live in `localStorage` only. Nothing leaves your device. The anon key is meant to be public — RLS policies enforce access control server-side.
-4. The connection diagnostic banner under the masthead tells you what works:
-   - **Red** — no creds or auth failed. Click "Configure".
-   - **Yellow** — connected, but migrations 057 + 058 aren't applied yet. Step examples still work; sandbox + run picker are limited.
-   - **Green** — everything live.
-5. To unlock the sandbox: apply `supabase/migrations/057_engine_snapshots.sql` + `058_sandbox_rls.sql` (creates `engine_runs`, `engine_snapshots`, `sandbox_runs` with RLS) and trigger one production pipeline run so `engine_snapshots` has a baseline.
+2. The connection diagnostic banner under the masthead tells you what works:
+   - **Green** — built-in creds are live, everything works.
+   - **Yellow** — connected but migrations 057 + 058 aren't applied yet. Step examples still work; sandbox + run picker are limited.
+   - **Red** — only if you manually cleared localStorage with bad values. Click "Reset to defaults".
+3. **Override for a fork** — gear icon top-right opens the Settings modal. Paste your own Supabase URL + anon key + click **Test** + **Save & reload**. Saved to `localStorage` only.
+4. To unlock the sandbox (run picker, knob replays): apply `supabase/migrations/057_engine_snapshots.sql` + `058_sandbox_rls.sql` in your project's SQL Editor.
 
 ## Stage groups — 9 stages, 39 steps
 

@@ -1372,15 +1372,22 @@ details.knob-group[open] summary::after { transform: rotate(180deg); }
 
 <script type="module">
 // ===========================================================================
-// CREDENTIALS — settings modal first, prompt fallback never
+// CREDENTIALS — settings modal first, prompt fallback never.
+// Built-in defaults point at the production void --news project so /diag.html
+// works the moment you open it. The settings modal (gear icon) overrides these
+// per-browser via localStorage if you ever fork the project or need a sandbox
+// instance. Anon keys are designed to be public — RLS enforces server-side.
 // ===========================================================================
+const BUILTIN_URL = "https://xryzskhgfuafyotrcdvj.supabase.co";
+const BUILTIN_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyeXpza2hnZnVhZnlvdHJjZHZqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4MTI4NTYsImV4cCI6MjA4OTM4ODg1Nn0._AnBvpTBUa7sqyU_T49bPGi-YOKDkiSptVPGn6YHpRE";
+
 const LS_URL_KEY = "VOID_SUPABASE_URL";
 const LS_ANON_KEY = "VOID_SUPABASE_ANON_KEY";
 
 function getCreds() {
   return {
-    url: localStorage.getItem(LS_URL_KEY) || "",
-    key: localStorage.getItem(LS_ANON_KEY) || "",
+    url: localStorage.getItem(LS_URL_KEY) || BUILTIN_URL,
+    key: localStorage.getItem(LS_ANON_KEY) || BUILTIN_KEY,
   };
 }
 function setCreds(url, key) {
@@ -2008,7 +2015,7 @@ async function runDiagnostic() {
 
   const { url, key } = getCreds();
   if (!url || !key) {
-    set("fail", "<strong>Not connected.</strong> Paste your Supabase credentials to load live data.", "Configure", openSettings);
+    set("fail", "<strong>Credentials cleared.</strong> Built-in defaults missing or overridden with empty values.", "Reset to defaults", () => { localStorage.removeItem(LS_URL_KEY); localStorage.removeItem(LS_ANON_KEY); location.reload(); });
     return false;
   }
 
@@ -2331,10 +2338,9 @@ async function boot() {
     loadRuns();
     loadCostPanel();
     setInterval(loadCostPanel, 30000);
-  } else {
-    // First-load with no creds → open settings automatically
-    if (!getCreds().url) setTimeout(openSettings, 400);
   }
+  // No first-load settings prompt — built-in defaults handle the common case.
+  // Settings modal only opens manually (gear icon) when overriding for a fork.
 }
 boot();
 </script>
