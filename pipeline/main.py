@@ -2999,8 +2999,12 @@ def main():
             "rank_south_asia,first_published,last_updated"
         ).gte("last_updated", _from_iso).execute()
         _snap_clusters = _snap_clusters_resp.data or []
+        # 2026-05-24 iter 6 fix — removed `category` from SELECT; articles
+        # table doesn't have that column (categories live on story_clusters
+        # only). The prior version threw a 42703 error that caused engine
+        # snapshot to silently fail.
         _snap_articles_resp = supabase.table("articles").select(
-            "id,title,url,source_id,section,published_at,category,is_wire_copy"
+            "id,title,url,source_id,section,published_at,is_wire_copy"
         ).gte("published_at", _from_iso).limit(5000).execute()
         _snap_articles = _snap_articles_resp.data or []
         _snap_rankings = {
@@ -3030,6 +3034,24 @@ def main():
     # sandbox replays use this path to re-run the rule-based engine at $0.
     if engine_only:
         elapsed = time.time() - start_time
+        # 2026-05-24 iter 6 fix — finalize pipeline_runs BEFORE the early
+        # return. Previously engine_only/recluster_only runs left the run
+        # row at status="running" + clusters_created=0 forever, breaking
+        # downstream monitoring (the diag.html cost panel, the engine_runs
+        # snapshot, the "did the pipeline succeed?" question).
+        if run_id:
+            try:
+                update_pipeline_run(
+                    run_id=run_id,
+                    status="completed",
+                    articles_fetched=len(stored_articles),
+                    articles_analyzed=len(article_bias_map) if recluster_only else articles_analyzed,
+                    clusters_created=clusters_created,
+                    errors=(fetch_errors or [])[:50],
+                    duration_seconds=round(elapsed, 2),
+                )
+            except Exception as _fin_e:
+                print(f"  [warn] finalize pipeline_run failed: {_fin_e}")
         print(f"\n[engine-only] Done in {elapsed/60:.1f} minutes. "
               f"Skipping LLM editorial steps (8d, brief, weekly).")
         return
