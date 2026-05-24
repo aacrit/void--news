@@ -1513,25 +1513,41 @@ def rank_importance(
     #   25% headline_rank (clamped 0..100)
     #   10% (authority OR cross-spectrum) bonus pts
     # is_headline = confidence >= 60 AND coverage_ok AND rank_ok AND not capped.
+    # 2026-05-24 iter 6 fix — use the CLUSTER's wire-collapsed source_count
+    # (maintained by clustering Phase 5 + deduplicator), NOT a re-count from
+    # cluster_articles. For wire-syndicated stories, many articles share one
+    # source_id, so re-counting gave src_count=1 even on a 31-source Ebola
+    # cluster — completely breaking is_headline.
     src_count = 0
     tiers_present = set()
+    if cluster is not None:
+        try:
+            src_count = int(cluster.get("source_count", 0) or 0)
+        except (TypeError, ValueError):
+            src_count = 0
     if cluster_articles and sources:
+        # Build a source lookup that works for BOTH the main-pipeline path
+        # (sources have db_id = UUID + id = slug) and the rerank path
+        # (same shape). Articles have source_id (UUID).
+        _src_by_db_id = {
+            s.get("db_id"): s for s in sources if s.get("db_id")
+        }
         _src_by_id = {s.get("id"): s for s in sources}
-        _src_by_slug = {s.get("slug"): s for s in sources}
-        voices = set()
         for a in cluster_articles:
+            sid = a.get("source_id")
             src = (
-                _src_by_id.get(a.get("source_id"))
-                or _src_by_slug.get(a.get("source_slug"))
+                _src_by_db_id.get(sid)
+                or _src_by_id.get(sid)
+                or _src_by_id.get(a.get("source_slug", ""))
                 or {}
             )
-            sid = src.get("id") or a.get("source_id")
-            if sid:
-                voices.add(sid)
             tier = src.get("tier")
             if tier:
                 tiers_present.add(tier)
-        src_count = len(voices)
+        # Fallback if cluster.source_count was 0/missing: use unique
+        # article-level source_id as a floor.
+        if src_count == 0:
+            src_count = len({a.get("source_id") for a in cluster_articles if a.get("source_id")})
     coverage_ok = (
         (src_count >= 5 and len(tiers_present) >= 2)
         or src_count >= 8
