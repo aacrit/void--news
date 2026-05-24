@@ -1090,16 +1090,32 @@ def main():
         cutoff_iso = (
             datetime.now(timezone.utc) - timedelta(hours=args.recluster_window_hours)
         ).isoformat()
-        # Pull articles
+        # Pull articles WITH PAGINATION — Supabase REST defaults to 1000 rows
+        # per request and silently truncates. Today's 48h window has 6,800+
+        # articles; without pagination, ~5,800 articles never enter
+        # clustering (the orphan bug observed 2026-05-24 recluster).
+        _PAGE = 1000
+        _offset = 0
         try:
-            arts_resp = supabase.table("articles").select(
-                "id,source_id,url,title,summary,full_text,author,published_at,"
-                "section,word_count,is_wire_copy,wire_origin_publisher_id"
-            ).gte("published_at", cutoff_iso).execute()
-            stored_articles = arts_resp.data or []
+            while True:
+                arts_resp = supabase.table("articles").select(
+                    "id,source_id,url,title,summary,full_text,author,published_at,"
+                    "section,word_count,is_wire_copy,wire_origin_publisher_id"
+                ).gte("published_at", cutoff_iso).order(
+                    "published_at", desc=True
+                ).range(_offset, _offset + _PAGE - 1).execute()
+                page = arts_resp.data or []
+                if not page:
+                    break
+                stored_articles.extend(page)
+                if len(page) < _PAGE:
+                    break
+                _offset += _PAGE
+                if _offset > 50000:  # safety cap; should never hit in practice
+                    print(f"  [warn] preload halted at {len(stored_articles)} articles (cap)")
+                    break
         except Exception as _arts_err:
             print(f"  [error] failed to load articles for recluster: {_arts_err}")
-            stored_articles = []
         # Attach source_slug + section fallback so analyzers downstream behave
         # as if these came from the live fetcher.
         _src_by_id = {s.get("db_id"): s for s in sources if s.get("db_id")}
@@ -1493,9 +1509,30 @@ def main():
         try:
             cutoff = (datetime.now(timezone.utc) - timedelta(hours=36)).isoformat()
             current_ids = {a.get("id", "") for a in stored_articles}
-            recent_res = supabase.table("articles").select(
-                "id,title,summary,full_text,source_id,published_at,fetched_at,word_count,section"
-            ).gte("published_at", cutoff).limit(1500).execute()
+            # 2026-05-24 — paginate 36h lookback (was capped at 1500;
+            # under-loaded the corpus for clustering on busy days).
+            _recent_PAGE = 1000
+            _recent_offset = 0
+            _recent_collected: list[dict] = []
+            while True:
+                recent_res = supabase.table("articles").select(
+                    "id,title,summary,full_text,source_id,published_at,fetched_at,word_count,section"
+                ).gte("published_at", cutoff).order(
+                    "published_at", desc=True
+                ).range(_recent_offset, _recent_offset + _recent_PAGE - 1).execute()
+                _page = recent_res.data or []
+                if not _page:
+                    break
+                _recent_collected.extend(_page)
+                if len(_page) < _recent_PAGE:
+                    break
+                _recent_offset += _recent_PAGE
+                if _recent_offset > 20000:
+                    break
+            # Build a shim object with .data for backward compatibility below.
+            class _R: pass
+            recent_res = _R()
+            recent_res.data = _recent_collected
             # Only add articles NOT in the current batch (avoid duplicates)
             # Also enrich with tier/source_name so Gemini prompts can attribute correctly
             db_id_to_source = {s.get("db_id"): s for s in source_map.values() if s.get("db_id")}
