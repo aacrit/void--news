@@ -1,0 +1,56 @@
+name: Sandbox Replay
+
+# Triggered by the diagnostic UI at /diag.html via workflow_dispatch
+# (the third re-run path; the others are local FastAPI sidecar and a
+# CLI command copy-paste). Runs the rule-based engine on a snapshot
+# with parameter overrides at $0.
+
+on:
+  workflow_dispatch:
+    inputs:
+      snapshot_id:
+        description: 'engine_snapshots.id to replay (blank = latest production)'
+        required: false
+        type: string
+      overrides:
+        description: 'JSON overrides, e.g. {"clustering":{"ANCHOR_IDF_FRACTION":0.65}}'
+        required: false
+        default: '{}'
+        type: string
+      sandbox_run_id:
+        description: 'sandbox_runs.id row to update (created by UI before dispatch)'
+        required: false
+        type: string
+
+jobs:
+  replay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      - name: Install pipeline dependencies
+        run: |
+          pip install -r requirements.txt
+      - name: Run sandbox replay
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          # Hard-disable every LLM call site; replay is rule-based only.
+          DISABLE_ANTHROPIC: '1'
+          DISABLE_GEMINI_REASONING: '1'
+          DISABLE_EDITORIAL_TRIAGE: '1'
+          DISABLE_AUDIO: '1'
+        run: |
+          cd pipeline
+          ARGS=""
+          if [ -n "${{ github.event.inputs.snapshot_id }}" ]; then
+            ARGS="--snapshot ${{ github.event.inputs.snapshot_id }}"
+          fi
+          if [ -n "${{ github.event.inputs.sandbox_run_id }}" ]; then
+            ARGS="$ARGS --sandbox-run-id ${{ github.event.inputs.sandbox_run_id }}"
+          fi
+          python -m sandbox_replay $ARGS --params '${{ github.event.inputs.overrides }}'
