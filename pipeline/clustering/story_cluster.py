@@ -623,22 +623,10 @@ MEGA_CLUSTER_THRESHOLD = 75
 MEGA_SPLIT_TFIDF = 0.32   # 1.78x baseline (STORY_TFIDF_THRESHOLD = 0.18)
 MEGA_SPLIT_IDF = 4.0      # 2.0x baseline (ENTITY_MERGE_IDF_THRESHOLD = 2.0)
 
-# 2026-05-24 production audit — article-count cap.
-# The source_count cap above misses the failure mode where wire-aware
-# collapse correctly reduces N articles → K voices but the underlying K
-# voices were never the same story to begin with. Observed today:
-#   - Cluster a61aa38d: 7 sources, 80 articles, false-merge (Observer bridge)
-#   - Cluster c6053cda: 3 sources, 55 articles, false-merge (sports + Tigers)
-#   - Cluster a9a9317e: 3 sources, 42 articles, false-merge (Erdoğan + Trump)
-# None of these tripped MEGA_CLUSTER_THRESHOLD (source_count below 75).
-# Trip Phase 5 force-split when article_count >> source_count, i.e. when
-# wire-aware collapse compressed a large article pile into a few voices —
-# a strong signal of multi-story over-merge inside a single publisher's
-# vertical slate. Threshold tuned to catch the production cases without
-# hitting genuine breaking-news clusters (which have similar art:src ratios
-# but tend to have higher absolute source_count).
-MEGA_ARTICLE_TO_SOURCE_RATIO = 4   # trip if articles > 4 × sources
-MEGA_ARTICLE_COUNT_MIN = 20        # AND total articles ≥ 20
+# 2026-05-24 v2 — article-count cap REPLACED by cohesion-gated Phase 5.
+# Constants live near the cohesion scorer (search MEGA_COHESION_FLOOR).
+# The legacy MEGA_CLUSTER_THRESHOLD (source_count >= 75) remains as a
+# hard ceiling for the rare 200+ source breaking-news case.
 
 # Hard merge ceiling — refuse any merge that would produce a cluster
 # larger than this. Phase 5 can still cap legitimate breaking-news
@@ -1559,21 +1547,31 @@ def split_mega_clusters(
     for c in clusters:
         sc = c.get("source_count", 0)
         ac = len(c.get("articles", []) or [])
-        # 2026-05-24 — trip on EITHER source_count >= threshold (legacy gate)
-        # OR articles >> sources (article-pile bridge). The second gate
-        # catches false-merges where wire collapse hides the real damage.
-        ratio_trip = (
-            ac >= MEGA_ARTICLE_COUNT_MIN
-            and sc > 0
-            and ac > MEGA_ARTICLE_TO_SOURCE_RATIO * sc
-        )
-        if sc < threshold and not ratio_trip:
+        # 2026-05-24 v2 — cohesion-gated trip (replaces the article-ratio
+        # band-aid). A real 50-article top story scores cohesion ~ 70 and
+        # passes through here untouched. A false-merge pile (Observer
+        # bridge, "Multiple Car Crashes" mash-up) scores < 30 and gets
+        # force-split. The legacy source_count >= threshold gate remains
+        # as a hard ceiling for the 200+ rare mega-event case.
+        cohesion = None
+        cohesion_trip = False
+        if ac >= MEGA_COHESION_MIN_ARTICLES:
+            # Source map is needed for tier-concentration; clustering
+            # callers attach it to the cluster dict when available.
+            sm = c.get("_source_map") or {}
+            cohesion = _cluster_cohesion(c, source_map=sm)
+            c["_cohesion"] = cohesion  # stash for downstream ranker use
+            if cohesion["cohesion_score"] < MEGA_COHESION_FLOOR:
+                cohesion_trip = True
+        if sc < threshold and not cohesion_trip:
             out.append(c)
             continue
-        if ratio_trip and verbose:
+        if cohesion_trip and verbose:
+            cs = cohesion["cohesion_score"] if cohesion else "?"
+            jc = cohesion["avg_title_jaccard"] if cohesion else "?"
             print(
-                f"  [Phase5/ratio-trip] '{c.get('title', '')[:60]!r}' "
-                f"src={sc} arts={ac} (ratio {ac/max(sc,1):.1f}x) → force-split"
+                f"  [Phase5/cohesion-trip] '{c.get('title', '')[:60]!r}' "
+                f"src={sc} arts={ac} cohesion={cs} title_jaccard={jc} → split"
             )
 
         # Step 1: try to force-split at aggressive thresholds
@@ -1700,6 +1698,170 @@ def _title_word_stems(title: str) -> set[str]:
             continue
         out.add(_stem_word(w))
     return out
+
+
+# ---------------------------------------------------------------------------
+# Cluster cohesion scorer — distinguish real big stories from false-merges
+# ---------------------------------------------------------------------------
+# 2026-05-24 — replaces the band-aid article-count cap. A true top story
+# with 30+ articles across 20+ sources, 3 tiers, and cross-spectrum lean
+# scores ~70-90 here and passes through Phase 5 untouched. A false-merge
+# (80 articles bridged by one common token like "Observer", single tier,
+# single political lean, titles all over the map) scores < 20 and gets
+# force-split.
+#
+# Weighted components, each 0..1:
+#   avg_title_jaccard        — pairwise stemmed-title overlap, sample-capped.
+#                              Real stories share entities + verbs;
+#                              false-merges share generic nouns at best.
+#   entity_convergence       — fraction of articles containing the top-3
+#                              most-common entities. Real stories have one
+#                              dominant set; bridge-merges have unique
+#                              entity sets per article.
+#   inv_wire_amp             — 1 / (1 + amp_ratio - 1). Penalises clusters
+#                              where article_count >> source_count. Real
+#                              wire stories: amp_ratio ~ 2-4 → score ~0.5.
+#                              Bridge piles: amp_ratio > 8 → score < 0.2.
+#   inv_tier_concentration   — 1 - (dominant_tier_share). Penalises
+#                              single-tier piles. Multi-tier stories
+#                              score 0.5-0.7.
+#   inv_publisher_concentration — 1 - (dominant_publisher_share).
+#                              Penalises one-publisher verticals.
+#
+# Weights chosen so a healthy mid-coverage story (4 sources, 2 tiers,
+# moderate Jaccard) lands around 50, leaving room for genuine top
+# stories (8+ sources, 3 tiers, high Jaccard) to clear 65 for headline
+# eligibility AND for false-merges (<30) to be force-split.
+COHESION_WEIGHT_TITLE_JACCARD = 0.30
+COHESION_WEIGHT_ENTITY_CONVERGENCE = 0.25
+COHESION_WEIGHT_WIRE_AMP = 0.15
+COHESION_WEIGHT_TIER_CONCENTRATION = 0.15
+COHESION_WEIGHT_PUBLISHER_CONCENTRATION = 0.15
+# Phase 5 cohesion gate. Articles >= MIN_ARTICLES AND cohesion < FLOOR → split.
+MEGA_COHESION_FLOOR = 30          # cohesion below this trips force-split
+MEGA_COHESION_MIN_ARTICLES = 20   # only check cohesion for article piles
+
+
+def _cluster_cohesion(
+    cluster: dict,
+    source_map: dict[str, dict] | None = None,
+    sample_cap: int = 30,
+) -> dict:
+    """Score how internally coherent a cluster's articles are.
+
+    Used by Phase 5 to gate the force-split decision AND by the ranker
+    to compute is_headline. Rule-based, deterministic, ~5-10ms per
+    cluster at sample_cap=30.
+
+    Returns a dict with:
+      avg_title_jaccard       0..1
+      entity_convergence      0..1
+      wire_amp_ratio          float (articles / max(sources, 1))
+      tier_concentration      0..1
+      dominant_publisher_share 0..1
+      cohesion_score          0..100 — weighted blend, the headline gate
+    """
+    articles = (cluster.get("articles") or [])[:sample_cap]
+    n = len(articles)
+    if n == 0:
+        return {
+            "avg_title_jaccard": 0.0, "entity_convergence": 0.0,
+            "wire_amp_ratio": 0.0, "tier_concentration": 1.0,
+            "dominant_publisher_share": 1.0, "cohesion_score": 0.0,
+        }
+
+    # ── title-Jaccard: average pairwise stemmed-word-set overlap ─────────
+    stems = [_title_word_stems(a.get("title", "") or "") for a in articles]
+    if n == 1:
+        jaccard = 1.0  # singletons are trivially cohesive
+    else:
+        # Cap pairs at ~150 (matches sample_cap=30 → 435 pairs worst case
+        # → cheap; faster than O(n^2) text similarity)
+        pairs = 0
+        total = 0.0
+        for i in range(n):
+            si = stems[i]
+            if not si:
+                continue
+            for j in range(i + 1, n):
+                sj = stems[j]
+                if not sj:
+                    continue
+                union = si | sj
+                if not union:
+                    continue
+                total += len(si & sj) / len(union)
+                pairs += 1
+        jaccard = (total / pairs) if pairs else 0.0
+
+    # ── entity-convergence: share of articles containing top-3 entities ──
+    # Reuses _extract_cluster_entities (already capped at 10 articles
+    # internally for cost), then computes a separate per-article entity
+    # set on the same sample.
+    cluster_entities = _extract_cluster_entities(articles)
+    if not cluster_entities:
+        entity_conv = 0.0
+    else:
+        top3 = sorted(cluster_entities.items(), key=lambda kv: -kv[1])[:3]
+        top3_keys = {k for k, _ in top3}
+        # Per-article entity sets via the SAME normalisation as cluster ents
+        per_art_hits = 0
+        for art in articles:
+            ents = _extract_cluster_entities([art])
+            if any(k in ents for k in top3_keys):
+                per_art_hits += 1
+        entity_conv = per_art_hits / n
+
+    # ── wire-amp ratio: articles / unique source voices ─────────────────
+    sc = int(cluster.get("source_count", 0) or 0)
+    if sc == 0:
+        # Fall back to counting unique source_ids on the article dicts
+        sc = len({a.get("source_id") for a in articles if a.get("source_id")})
+    amp_ratio = n / max(sc, 1)
+    inv_wire_amp = 1.0 / (1.0 + max(0.0, amp_ratio - 1.0))
+
+    # ── tier concentration: dominant tier's share of articles ───────────
+    tier_concentration = 0.0
+    if source_map:
+        tier_counts: dict[str, int] = {}
+        for a in articles:
+            slug = a.get("source_slug") or a.get("source_id", "")
+            src = source_map.get(slug, {})
+            tier = src.get("tier", "")
+            if tier:
+                tier_counts[tier] = tier_counts.get(tier, 0) + 1
+        if tier_counts:
+            tier_concentration = max(tier_counts.values()) / n
+        else:
+            tier_concentration = 1.0  # unknown tiers → treat as concentrated
+    else:
+        tier_concentration = 1.0  # no map → can't measure → conservative
+
+    # ── publisher concentration: dominant publisher's share ─────────────
+    pub_counts: dict[str, int] = {}
+    for a in articles:
+        slug = a.get("source_slug") or a.get("source_id", "")
+        if slug:
+            pub_counts[slug] = pub_counts.get(slug, 0) + 1
+    dom_pub_share = (max(pub_counts.values()) / n) if pub_counts else 1.0
+
+    # ── weighted blend ─────────────────────────────────────────────────
+    score_unit = (
+        COHESION_WEIGHT_TITLE_JACCARD * jaccard
+        + COHESION_WEIGHT_ENTITY_CONVERGENCE * entity_conv
+        + COHESION_WEIGHT_WIRE_AMP * inv_wire_amp
+        + COHESION_WEIGHT_TIER_CONCENTRATION * (1.0 - tier_concentration)
+        + COHESION_WEIGHT_PUBLISHER_CONCENTRATION * (1.0 - dom_pub_share)
+    )
+
+    return {
+        "avg_title_jaccard": round(jaccard, 3),
+        "entity_convergence": round(entity_conv, 3),
+        "wire_amp_ratio": round(amp_ratio, 2),
+        "tier_concentration": round(tier_concentration, 3),
+        "dominant_publisher_share": round(dom_pub_share, 3),
+        "cohesion_score": round(score_unit * 100.0, 1),
+    }
 
 
 def merge_duplicate_title_clusters(
@@ -1869,6 +2031,7 @@ def cluster_stories(
     articles: list[dict],
     similarity_threshold: float = STORY_TFIDF_THRESHOLD,
     run_merge_pass: bool = True,
+    source_map: dict[str, dict] | None = None,
 ) -> list[dict]:
     """Group articles into story clusters.
 
@@ -2058,7 +2221,15 @@ def cluster_stories(
     # bucket motivated this pass). Force-split if possible; otherwise
     # keep whole but cap source_count at MEGA_CLUSTER_THRESHOLD.
     if run_merge_pass and clusters:
+        # 2026-05-24 v2 — attach source_map to each cluster so the new
+        # cohesion-gated Phase 5 can read tier info per article.
+        if source_map:
+            for _c in clusters:
+                _c["_source_map"] = source_map
         clusters = split_mega_clusters(clusters)
+        # Clean up the temporary stash so it doesn't get persisted.
+        for _c in clusters:
+            _c.pop("_source_map", None)
         # If Phase 5 produced new sub-clusters from a force-split, recompute
         # the wire-aware source_count for them. Capped clusters already
         # have their source_count rewritten by Phase 5 itself.

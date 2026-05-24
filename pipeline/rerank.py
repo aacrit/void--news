@@ -218,6 +218,13 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
         cluster_sections = cluster.get("sections") or [cluster.get("section", "world")]
         mega_capped = bool(cluster.get("mega_cluster_capped", False))
         try:
+            # 2026-05-24 v2 — pass cluster dict so ranker can read _cohesion
+            # stashed by Phase 5 (only present on >=20-article clusters).
+            # For rerank, _cohesion is absent (we didn't re-run clustering),
+            # so ranker falls back to the default 60 for cohesion_score.
+            # is_headline + headline_confidence still get a correct value
+            # because the coverage + authority/spectrum gates are computed
+            # fresh from the rerank-time data.
             result = rank_importance(
                 articles, sources, bias_scores,
                 cluster_confidence=cluster_confidence,
@@ -225,6 +232,7 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
                 editorial_importance=editorial_importance,
                 sections=cluster_sections,
                 mega_capped=mega_capped,
+                cluster=cluster,
             )
         except Exception as e:
             errors += 1
@@ -261,6 +269,8 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
             "source_count": db_source_count,  # for diagnostic print only; NOT written back
             "_articles": articles,
             "_bias_scores": bias_scores,
+            "is_headline": result.get("is_headline", False),
+            "headline_confidence": result.get("headline_confidence", 0),
         })
 
         # Progress
@@ -340,6 +350,9 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
             # Edition name "south-asia" (hyphen) → DB column "rank_south_asia" (underscore)
             "rank_south_asia": u.get("rank_south-asia", u["headline_rank"]),
             "last_updated": _now_iso,
+            # 2026-05-24 v2 — headline signal (migration 059)
+            "is_headline": bool(u.get("is_headline", False)),
+            "headline_confidence": int(u.get("headline_confidence", 0)),
         }
         for u in updates
     ]
