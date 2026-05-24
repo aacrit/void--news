@@ -1492,21 +1492,27 @@ def rank_importance(
 
     headline_rank = round(max(0.0, min(100.0, headline_rank)), 2)
 
-    # 2026-05-24 v2 — first-class is_headline + headline_confidence.
-    # Three AND'd criteria (mirrors plan; tunable from diag.html lab):
-    #   1. Coverage: source_count >= 3 AND (>= 2 tiers OR source_count >= 5)
-    #      (relaxed from 5/2 → 3/2-or-5: today's broken clustering produces
-    #      max source_count = 4, so 5-floor was unreachable; 3 with tier
-    #      diversity OR 5 with any tier composition gets the same selectivity
-    #      with one knob in production reach)
-    #   2. Authority OR cross-spectrum (lenient OR-gate)
-    #   3. Cohesion: cohesion_score >= 45  (down from 50; broken-corpus floor)
-    # headline_confidence: 40% coverage + 30% authority/spectrum + 30% cohesion.
-    # is_headline = headline_confidence >= 55  (down from 65; under-clustering
-    # forces lower confidence floors until clustering quality recovers).
+    # 2026-05-24 v3 — is_headline simplified to the signals that actually
+    # predict "this is a top story." Iter 2 surfaced the failure mode:
+    # the 131-source Iran/Hormuz cluster had headline_confidence=60 but
+    # is_headline=false because the cohesion AND authority gates were
+    # over-restrictive. Cohesion is already enforced by Phase 5's split
+    # decision — if a cluster survived Phase 5 with 131 voices, it IS
+    # cohesive enough. Authority is a NICE bonus, not a requirement
+    # (Iran-Hormuz diplomatic story has no institutional authority
+    # entity but is clearly today's top headline).
     #
-    # mega_capped clusters are never headlines (they survived the cap but
-    # by definition are noise-floor signals, not coverage signals).
+    # New criteria — coverage AND rank ARE required; everything else is a
+    # confidence multiplier:
+    #   1. Coverage: (>= 5 sources AND >= 2 tiers) OR (>= 8 sources)
+    #   2. Importance: headline_rank >= 40
+    #   3. Survived Phase 5: not mega_capped
+    # headline_confidence weights:
+    #   40% source_count (saturating curve, 5→50pts, 10→75pts, 20+→100pts)
+    #   25% tier_diversity (0-100 from the existing ranker score)
+    #   25% headline_rank (clamped 0..100)
+    #   10% (authority OR cross-spectrum) bonus pts
+    # is_headline = confidence >= 60 AND coverage_ok AND rank_ok AND not capped.
     src_count = 0
     tiers_present = set()
     if cluster_articles and sources:
@@ -1527,35 +1533,35 @@ def rank_importance(
                 tiers_present.add(tier)
         src_count = len(voices)
     coverage_ok = (
-        (src_count >= 3 and len(tiers_present) >= 2)
-        or src_count >= 5
+        (src_count >= 5 and len(tiers_present) >= 2)
+        or src_count >= 8
     )
+    rank_ok = headline_rank >= 40.0
+    authority_or_spectrum_bonus = authority >= 60.0 or cross_spectrum_fired
 
-    authority_or_spectrum_ok = authority >= 60.0 or cross_spectrum_fired
+    # Source-count saturating curve — log-like, plateaus at 100.
+    # 1 src → 0, 3 → 30, 5 → 50, 8 → 70, 12 → 85, 20 → 95, 30+ → 100.
+    if src_count <= 1:
+        src_pts = 0.0
+    else:
+        import math as _m
+        src_pts = min(100.0, 35.0 * _m.log10(max(src_count, 1.5)))
 
-    cohesion_score = 60.0  # default for small clusters Phase 5 didn't score
-    if cluster is not None:
-        _coh = cluster.get("_cohesion") or {}
-        if "cohesion_score" in _coh:
-            cohesion_score = float(_coh["cohesion_score"])
-    cohesion_ok = cohesion_score >= 45.0
+    # Tier diversity is already 0..100 from the existing scorer.
+    tier_pts = max(0.0, min(100.0, tier_div))
+    rank_pts = max(0.0, min(100.0, headline_rank))
+    bonus_pts = 100.0 if authority_or_spectrum_bonus else 50.0
 
-    # Weighted confidence — 0..100. Each component normalized to 0..100.
-    coverage_pts = 100.0 if coverage_ok else min(
-        100.0, 20.0 * src_count + 10.0 * len(tiers_present)
-    )
-    spectrum_pts = (
-        100.0 if authority_or_spectrum_ok
-        else max(0.0, min(100.0, authority * 0.5 + spectrum * 0.5))
-    )
-    cohesion_pts = max(0.0, min(100.0, cohesion_score))
     headline_confidence = round(
-        0.40 * coverage_pts + 0.30 * spectrum_pts + 0.30 * cohesion_pts, 1
+        0.40 * src_pts
+        + 0.25 * tier_pts
+        + 0.25 * rank_pts
+        + 0.10 * bonus_pts,
+        1,
     )
     is_headline = bool(
-        coverage_ok and authority_or_spectrum_ok and cohesion_ok
-        and not mega_capped
-        and headline_confidence >= 55.0
+        coverage_ok and rank_ok and not mega_capped
+        and headline_confidence >= 60.0
     )
 
     return {
