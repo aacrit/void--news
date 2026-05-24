@@ -939,9 +939,29 @@ def main():
         help="Comma-separated edition slugs to process (e.g., 'south-asia'). "
              "Empty = all sources.",
     )
+    parser.add_argument(
+        "--engine-only",
+        action="store_true",
+        help="Run only the rule-based engine stage (fetch, cluster, bias, "
+             "categorize, rank, rerank). Skip every LLM-bearing editorial "
+             "step (cluster summarization, daily brief, weekly digest, "
+             "Instagram captions). Writes engine_snapshot at end. Used by "
+             "the diagnostic sandbox for $0 re-runs.",
+    )
     args = parser.parse_args()
 
     editions = [e.strip() for e in args.editions.split(",") if e.strip()] if args.editions else None
+    engine_only = bool(getattr(args, "engine_only", False))
+    if engine_only:
+        # Hard-disable every LLM call site for this process. The DISABLE_*
+        # vars are read by claude_client.is_available(), gemini_client,
+        # editorial triage, and audio. --engine-only is the umbrella.
+        import os as _os
+        _os.environ["DISABLE_ANTHROPIC"] = "1"
+        _os.environ["DISABLE_GEMINI_REASONING"] = "1"
+        _os.environ["DISABLE_EDITORIAL_TRIAGE"] = "1"
+        _os.environ["DISABLE_AUDIO"] = "1"
+        print("  [engine-only] All LLM call sites disabled for this run.")
 
     start_time = time.time()
     print("=" * 60)
@@ -2739,6 +2759,59 @@ def main():
         import traceback
         print(f"  [warn] World-tag reconciliation failed: {e}")
         traceback.print_exc()
+
+    # Step 8c.6 — Engine snapshot. Freeze the rule-based output as the
+    # contract for Stage B (editorial) and as the baseline for sandbox
+    # replays. Writes engine_runs + engine_snapshots rows (migration 057).
+    # Failure is non-fatal: pipeline continues even if snapshot write
+    # fails (tables may not exist yet on a stale DB).
+    try:
+        print("\n[8c.6] Engine snapshot — freezing rule-based output...")
+        from engine_snapshot import build_payload as _build_payload
+        from engine_snapshot import write_snapshot as _write_snapshot
+        # Pull final state from DB (post-rerank, post-reconciliation).
+        _from_iso = (_dt.now(_tz.utc) - _td(hours=48)).isoformat()
+        _snap_clusters_resp = supabase.table("story_clusters").select(
+            "id,title,summary,headline_rank,importance_score,divergence_score,"
+            "coverage_velocity,source_count,sections,section,category,content_type,"
+            "is_international,mega_cluster_capped,rank_world,rank_us,rank_europe,"
+            "rank_south_asia,first_published,last_updated"
+        ).gte("last_updated", _from_iso).execute()
+        _snap_clusters = _snap_clusters_resp.data or []
+        _snap_articles_resp = supabase.table("articles").select(
+            "id,title,url,source_id,section,published_at,category,is_wire_copy"
+        ).gte("published_at", _from_iso).limit(5000).execute()
+        _snap_articles = _snap_articles_resp.data or []
+        _snap_rankings = {
+            "top_50_world": [c["id"] for c in sorted(
+                _snap_clusters, key=lambda x: x.get("rank_world") or 0, reverse=True
+            )[:50]],
+        }
+        _snap_payload = _build_payload(
+            articles=_snap_articles,
+            clusters=_snap_clusters,
+            rankings=_snap_rankings,
+            phase_traces={},
+        )
+        _engine_run_id, _snapshot_id = _write_snapshot(
+            payload=_snap_payload,
+            pipeline_run_id=str(run_id) if run_id else None,
+            source="sandbox" if engine_only else "production",
+            params={"editions": editions or [], "engine_only": engine_only},
+        )
+    except Exception as e:
+        import traceback
+        print(f"  [warn] Engine snapshot write failed: {e}")
+        traceback.print_exc()
+
+    # --engine-only short-circuit: snapshot is written; skip every LLM-
+    # bearing step (summarization, daily brief, weekly, IG). Diagnostic
+    # sandbox replays use this path to re-run the rule-based engine at $0.
+    if engine_only:
+        elapsed = time.time() - start_time
+        print(f"\n[engine-only] Done in {elapsed/60:.1f} minutes. "
+              f"Skipping LLM editorial steps (8d, brief, weekly).")
+        return
 
     # Step 8d: Post-rerank single-pass top-50 Sonnet summarization with cache.
     # Reads final top-50 by rank_world from DB. For each cluster:
