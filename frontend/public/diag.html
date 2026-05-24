@@ -1213,7 +1213,8 @@ details.knob-group[open] summary::after { transform: rotate(180deg); }
     <p class="main-intro">
       The 11:00 UTC pipeline runs in <strong>nine stages</strong>, 39 steps total. Each stage is one purpose — ingest, analyze, cluster, rank, persist, edit, wrap.
       <strong>Click a stage</strong> to expand its steps. <strong>Click a step</strong> for its rationale and gates. <strong>Double-click</strong> to pull a live example from the database.
-      The crimson Editorial stage is the only place LLM money is spent.
+      The crimson Editorial stage is the only place LLM money is spent — currently paused via <code>DISABLE_ANTHROPIC=1</code>.
+      Stages II–III (ingest + analyze) are skipped when GitHub Actions runs the pipeline with <code>recluster_only: true</code> — fast-path that re-runs clustering + ranking on existing articles in 5-10 min for $0.
     </p>
     <div class="legend" id="legend"></div>
     <div class="stage-toolbar">
@@ -1384,11 +1385,38 @@ const BUILTIN_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const LS_URL_KEY = "VOID_SUPABASE_URL";
 const LS_ANON_KEY = "VOID_SUPABASE_ANON_KEY";
 
+// URL must look like https://<ref>.supabase.co (case-insensitive, optional
+// trailing slash). Anything else (empty, whitespace-only, http://, garbage)
+// → fall back to BUILTIN_URL silently. Prevents "stale localStorage from old
+// prompt() flow" from bricking the lab.
+const _SUPABASE_URL_RE = /^https:\/\/[a-z0-9-]+\.supabase\.co\/?$/i;
+function _isValidSupabaseUrl(u) {
+  return typeof u === "string" && _SUPABASE_URL_RE.test(u.trim());
+}
+function _isPlausibleAnonKey(k) {
+  if (typeof k !== "string") return false;
+  const t = k.trim();
+  // Either JWT-format (eyJ... three dot-separated base64 chunks) or new
+  // publishable format (sb_publishable_...). Both are >= 40 chars.
+  return t.length >= 40 && (t.startsWith("eyJ") || t.startsWith("sb_publishable_") || t.startsWith("sb_"));
+}
+
 function getCreds() {
-  return {
-    url: localStorage.getItem(LS_URL_KEY) || BUILTIN_URL,
-    key: localStorage.getItem(LS_ANON_KEY) || BUILTIN_KEY,
-  };
+  const storedUrl = (localStorage.getItem(LS_URL_KEY) || "").trim();
+  const storedKey = (localStorage.getItem(LS_ANON_KEY) || "").trim();
+  // Use stored values only if both pass format validation; otherwise
+  // fall back to built-ins. Heals the "user pasted garbage in prompt()"
+  // failure mode without forcing them to dig into devtools.
+  if (_isValidSupabaseUrl(storedUrl) && _isPlausibleAnonKey(storedKey)) {
+    return { url: storedUrl.replace(/\/$/, ""), key: storedKey };
+  }
+  // Auto-heal: if localStorage has bad values, scrub them now so the
+  // next page-load is clean.
+  if (storedUrl || storedKey) {
+    localStorage.removeItem(LS_URL_KEY);
+    localStorage.removeItem(LS_ANON_KEY);
+  }
+  return { url: BUILTIN_URL, key: BUILTIN_KEY };
 }
 function setCreds(url, key) {
   if (url) localStorage.setItem(LS_URL_KEY, url.trim());
@@ -1450,10 +1478,11 @@ const STEPS = [
     fail: "Continue without run_id (audit trail incomplete)",
     example_query: { table: "pipeline_runs", select: "id,started_at,status,clusters_created,articles_analyzed", order: ["started_at", false], limit: 5 } },
   { n: 4,  name: "Fetch RSS Feeds", type: "FETCH", file: "fetchers/rss_fetcher.py",
-    purpose: "Parallel fetch 1,016 RSS feeds across 30 workers; parse entries to extract title, summary, URL, pub date.",
+    purpose: "Parallel fetch 1,062 RSS feeds across 30 workers; parse entries to extract title, summary, URL, pub date.",
     inputs: "sources[] + RSS feed URLs", outputs: "articles_raw[] (700-1,200 new per run)",
     gates: "Source health quarantine — consecutive_fetch_failures ≥ threshold skips dead feeds",
     fail: "Per-source failure logged, pipeline continues",
+    gotcha: "2026-05-24 audit: 496 of 1,062 sources sat quarantined (avg 212h dead). Mass un-quarantine ran via Management API (UPDATE consecutive_fetch_failures = 0). All 1,062 back in rotation; genuinely dead feeds will re-quarantine within 3 runs. SKIPPED entirely when --recluster-only is set.",
     example_query: { table: "articles", select: "id,title,source_id,published_at,word_count", order: ["published_at", false], limit: 10 } },
   { n: 5,  name: "Filter Known URLs", type: "PARSE", file: "main.py · 1029-1078",
     purpose: "Query articles table (48h window) to skip URLs already scraped on prior runs.",
@@ -1538,25 +1567,26 @@ const STEPS = [
   { n: 19, name: "Cluster Phase 2.6 — Anchor Entity", type: "CLUSTER", file: "clustering/story_cluster.py · 1104-1275",
     purpose: "High-IDF rare proper nouns (Siliņa, Ouagadougou): if IDF ≥ 70% of corpus max + shared ≥ 2 anchors → merge.",
     inputs: "clusters_p3_pre + IDF dict + NER", outputs: "clusters_p3",
-    gates: "IDF fraction 0.70 (was 0.60), doc-freq cap 2.5% (was 5%), title-Jaccard ≥ 0.22 (was 0.15). Requires ≥ 2 shared anchors.",
-    fail: "No anchors → no merges. Tuned 2026-05-18 to prevent single-bridge Blinken false merges.",
-    gotcha: "If the 13-source pin is a false-merge, drop ANCHOR_DOC_FREQ_FRACTION 2.5% → 1.5% via the knob drawer and re-run." },
+    gates: "IDF fraction 0.70, doc-freq cap 2.5%, title-Jaccard ≥ 0.22. Requires ≥ 2 shared anchors. Publisher-name tokens (Observer, Times, Post, Herald, etc.) blacklisted from anchor candidacy.",
+    fail: "No anchors → no merges. Tuned 2026-05-18 + 2026-05-24.",
+    gotcha: "2026-05-24 audit: cluster a61aa38d merged 80 articles from 7 sources because spaCy picked up 'Observer' from bylines and treated it as a high-IDF anchor. Same risk for Times/Post/Herald/Tribune/Journal/Gazette/Chronicle/Mail/Express/Daily/Sun/Globe etc. — all now in _ENTITY_STOP_TOKENS." },
   { n: 20, name: "Cluster Phase 3 — Stem Jaccard", type: "CLUSTER", file: "clustering/story_cluster.py · 1276-1380",
     purpose: "Porter-stemmed title-word sets; merge if Jaccard ≥ 0.27.",
     inputs: "clusters_p3 + stemmer", outputs: "clusters_p4_pre",
     gates: "Conservative threshold avoids false merges on common words",
     fail: "Stay singleton" },
   { n: 21, name: "Cluster Phase 4 — Garbage-Title Split", type: "CLUSTER", file: "clustering/story_cluster.py · 1381-1440",
-    purpose: "Regex detects titles like \"X Spans Y, Z, W\" (forced mash-ups); re-clusters those articles at stricter gates.",
+    purpose: "Regex detects auto-generated mash-up titles (\"X Spans Y, Z, W\" / \"News Outlets Cover…\" / \"Multiple X Across Regions\" / capitalized 4-item lists); re-clusters those articles at stricter gates.",
     inputs: "clusters_p4_pre", outputs: "clusters_p4 (possibly split)",
     gates: "Re-cluster at TF-IDF 0.25 + IDF 3.0 (vs normal 0.18 + 2.0)",
-    fail: "Pattern not matched → no split" },
+    fail: "Pattern not matched → no split",
+    gotcha: "2026-05-24 broadened from semicolon-only to 6 new patterns: leading Multiple/Various/Several/Numerous nouns; News Outlets Cover/Report/Publish; Publishes Diverse Commentary on…; Across Regions/Continents/Borders/Countries/Sectors; Commentary on X, Y, Z lists; 4+ comma-separated capitalized phrases." },
   { n: 22, name: "Cluster Phase 5 — Mega-Cluster Cap", type: "CLUSTER", file: "clustering/story_cluster.py · 1441-1540",
-    purpose: "Detect clusters > 200 articles via avg_articles_per_sub < 1.5 sanity guard. If re-split fails, cap instead: mega_cluster_capped=True + 0.65x rank penalty.",
+    purpose: "Two trip gates: (1) source_count ≥ 75 (legacy), (2) articles ≥ 20 AND articles > 4× sources (NEW 2026-05-24, catches false-merge piles wire-collapse hides). Force-split at AGGRESSIVE thresholds. If re-split fails, cap: mega_cluster_capped=True + 0.65× rank penalty.",
     inputs: "clusters_p4", outputs: "clusters_p5 (split or capped)",
-    gates: "MERGE_HARD_CEILING=120 prevents merges from reaching 200+ in earlier phases",
+    gates: "MERGE_HARD_CEILING=120 prevents merges from reaching 200+ in earlier phases. avg_articles_per_sub < 1.5 sanity guard distinguishes legit splits from shattered ones.",
     fail: "True mega-event marked capped; ranker still demotes via 0.65x penalty",
-    gotcha: "Sanity guard rewritten 2026-05-18; old gate misfired on 200+ legitimate splits.",
+    gotcha: "2026-05-24 article-ratio cap added. Today's 15 false-merge clusters all matched the new signal (e.g., 'News Outlets Cover…': 7 sources / 80 articles, ratio 11×). source_count alone missed every one of them.",
     example_query: { table: "story_clusters", select: "id,title,source_count,mega_cluster_capped", filter: { col: "mega_cluster_capped", op: "eq", val: true }, order: ["source_count", false], limit: 8 } },
   { n: 23, name: "Re-Score Framing (cluster context)", type: "ANALYZE", file: "main.py · 1470-1584",
     purpose: "Framing analyzer benefits from knowing other cluster articles; re-run on multi-article clusters using cluster-entity cache.",
@@ -1606,12 +1636,12 @@ const STEPS = [
     gates: "Top-N gate 15. WebP q82 conversion. Skip if already optimal.",
     fail: "Image download fails → fallback to original og:image URL",
     example_query: { table: "story_clusters", select: "id,title,cached_image_url", filter: { col: "cached_image_url", op: "not.is", val: null }, order: ["last_updated", false], limit: 8 } },
-  { n: 31, name: "Store Clusters + Reconcile World Tag", type: "OUTPUT", file: "main.py · 2250-2460 + step 8c.5",
-    purpose: "Insert cluster rows + cluster_articles junction + is_international flag. NEW step 8c.5 (2026-05-22) reconciles 'world' in sections[] using FRESH rank_world from DB.",
+  { n: 31, name: "Store Clusters + Reconcile World Tag", type: "OUTPUT", file: "main.py · 2300-2520 + step 8c.5",
+    purpose: "Insert cluster rows + cluster_articles junction + is_international flag. Step 8c.5 reconciles 'world' in sections[] using FRESH rank_world from DB (post-rerank).",
     inputs: "clusters[] + articles[] + junction pairs", outputs: "story_clusters (+rows), cluster_articles (+rows)",
     gates: "World-tag reconciliation: add if rank_world ≥ 50, remove if < 50 AND no natural world signal. Idempotent.",
-    fail: "Insert fails → fallback to individual inserts per chunk",
-    gotcha: "Pre-fix force-added 'world' with STALE rank_world from step 7 (pre-rerank). Caused 13-source pin to persist on /world.",
+    fail: "Per-row try/except now tracks cluster_insert_failures + sample error → emitted in CI logs AND written to pipeline_runs.errors.",
+    gotcha: "2026-05-24 visibility fix: insert_cluster() returned None on exception with only a print line. If one bad row tripped every insert (May 18-20 mystery: 7000+ articles analyzed, 0 clusters created, 0 errors logged), the failure was invisible. Now every failure surfaces.",
     example_query: { table: "story_clusters", select: "id,title,sections,rank_world,headline_rank", order: ["last_updated", false], limit: 10 } },
   { n: 32, name: "Daily Brief — TL;DR (LLM)", type: "SUMMARIZE", file: "briefing/daily_brief_generator.py",
     purpose: "Generate TL;DR from top-15 clusters via Sonnet 4.6 (primary) or Gemini Flash (fallback).",
@@ -1675,6 +1705,8 @@ const KNOBS = {
     TITLE_JACCARD_THRESHOLD:    0.27,
     ANCHOR_TITLE_JACCARD_FLOOR: 0.22,
     MEGA_AVG_ARTICLES_GUARD:    1.5,
+    MEGA_ARTICLE_TO_SOURCE_RATIO: 4,
+    MEGA_ARTICLE_COUNT_MIN:     20,
     MERGE_HARD_CEILING:         120,
   },
   ranker: {
@@ -2013,15 +2045,25 @@ async function runDiagnostic() {
     }
   };
 
+  const resetBtn = () => {
+    localStorage.removeItem(LS_URL_KEY);
+    localStorage.removeItem(LS_ANON_KEY);
+    location.reload();
+  };
+
   const { url, key } = getCreds();
   if (!url || !key) {
-    set("fail", "<strong>Credentials cleared.</strong> Built-in defaults missing or overridden with empty values.", "Reset to defaults", () => { localStorage.removeItem(LS_URL_KEY); localStorage.removeItem(LS_ANON_KEY); location.reload(); });
+    set("fail", "<strong>No credentials available.</strong> Built-in defaults missing AND localStorage empty.", "Reset & reload", resetBtn);
+    return false;
+  }
+  if (!_isValidSupabaseUrl(url)) {
+    set("fail", `<strong>Bad Supabase URL:</strong> <code style="color:var(--c-fail)">${url.slice(0, 60)}</code>. Expected https://&lt;ref&gt;.supabase.co`, "Reset to defaults", resetBtn);
     return false;
   }
 
   if (!sb) await initSupabase();
   if (!sb) {
-    set("fail", "<strong>Supabase client failed to initialize.</strong> Check the URL format.", "Reconfigure", openSettings);
+    set("fail", `<strong>Supabase client failed to initialize.</strong> URL: <code>${url.slice(0, 50)}</code>`, "Reset to defaults", resetBtn);
     return false;
   }
 
@@ -2029,7 +2071,7 @@ async function runDiagnostic() {
   try {
     const { data, error } = await sb.from("sources").select("id").limit(1);
     if (error) {
-      set("fail", `<strong>Auth error.</strong> ${error.message}`, "Reconfigure", openSettings);
+      set("fail", `<strong>Auth or RLS error:</strong> ${error.message}`, "Reset to defaults", resetBtn);
       return false;
     }
     // Check if engine_runs exists (migration 057 applied?)
@@ -2038,10 +2080,10 @@ async function runDiagnostic() {
       set("warn", `<strong>Connected, but migration 057 isn't applied yet.</strong> Sandbox + run picker will be limited. Step examples still work.`, "How to apply", () => copy(`-- Run in your Supabase SQL Editor:\n-- 1. paste contents of supabase/migrations/057_engine_snapshots.sql\n-- 2. paste contents of supabase/migrations/058_sandbox_rls.sql`));
       return true;
     }
-    set("ok", `<strong>Connected.</strong> Live data ready · double-click any step for an example.`);
+    set("ok", `<strong>Connected · ${url.replace(/^https:\/\//, "").split(".")[0]}.</strong> Live data ready · double-click any step for an example.`);
     return true;
   } catch (e) {
-    set("fail", `<strong>Connection failed.</strong> ${e.message || e}`, "Reconfigure", openSettings);
+    set("fail", `<strong>Network or fetch error:</strong> ${e.message || e}`, "Reset to defaults", resetBtn);
     return false;
   }
 }
