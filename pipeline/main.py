@@ -928,6 +928,16 @@ def _scrape_single(article_data, source_map):
     return article_data
 
 
+class _ReclusterSkip(Exception):
+    """Internal control-flow marker used by --recluster-only fast path.
+
+    Raised from inside try-blocks that wrap fetch/scrape/filter logic so
+    the existing except handlers can no-op cleanly when articles came
+    from the DB pre-load instead of from RSS.
+    """
+    pass
+
+
 def main():
     """Run the full news ingestion + analysis pipeline."""
     import argparse
@@ -948,10 +958,28 @@ def main():
              "Instagram captions). Writes engine_snapshot at end. Used by "
              "the diagnostic sandbox for $0 re-runs.",
     )
+    parser.add_argument(
+        "--recluster-only",
+        action="store_true",
+        help="Skip fetch + scrape + bias (which already ran). Load existing "
+             "articles + bias_scores from DB, then run THE SAME clustering, "
+             "ranking, rerank, persist code paths as a fresh production run. "
+             "5-10 minutes vs 25-35 for a full pipeline. Use this when a "
+             "code change to clustering/ranking needs to take effect today "
+             "without re-fetching the corpus. Implies --engine-only.",
+    )
+    parser.add_argument(
+        "--recluster-window-hours",
+        type=int,
+        default=48,
+        help="Article freshness window when --recluster-only is set. Default 48h.",
+    )
     args = parser.parse_args()
 
     editions = [e.strip() for e in args.editions.split(",") if e.strip()] if args.editions else None
-    engine_only = bool(getattr(args, "engine_only", False))
+    recluster_only = bool(getattr(args, "recluster_only", False))
+    # --recluster-only implies --engine-only (no LLM, no fetch)
+    engine_only = bool(getattr(args, "engine_only", False)) or recluster_only
     if engine_only:
         # Hard-disable every LLM call site for this process. The DISABLE_*
         # vars are read by claude_client.is_available(), gemini_client,
@@ -962,6 +990,9 @@ def main():
         _os.environ["DISABLE_EDITORIAL_TRIAGE"] = "1"
         _os.environ["DISABLE_AUDIO"] = "1"
         print("  [engine-only] All LLM call sites disabled for this run.")
+    if recluster_only:
+        print(f"  [recluster-only] Skipping fetch/scrape/bias. "
+              f"Reusing existing articles in last {args.recluster_window_hours}h.")
 
     start_time = time.time()
     print("=" * 60)
@@ -1040,11 +1071,83 @@ def main():
     else:
         print("  [warn] Could not create pipeline run record.")
 
-    # Step 3: Fetch articles via RSS
-    print("\n[3/9] Fetching RSS feeds...")
-    articles_raw, fetch_errors = fetch_from_rss(sources)
-    print(f"  Total raw articles: {len(articles_raw)}")
-    print(f"  Fetch errors: {len(fetch_errors)}")
+    # 2026-05-24 — --recluster-only fast path. Skip fetch + scrape + bias
+    # by loading existing articles and bias_scores from the DB. Pipeline
+    # continues into step 6 (clustering) with the SAME data structures as
+    # a fresh run, so no parallel rerank flow exists to drift from production.
+    stored_articles: list[dict] = []
+    article_bias_map: dict[str, dict] = {}
+    articles_to_scrape: list[dict] = []
+    fetch_errors: list = []
+    if recluster_only:
+        print(f"\n[recluster] Loading articles + bias_scores from DB "
+              f"(window: last {args.recluster_window_hours}h)...")
+        cutoff_iso = (
+            datetime.now(timezone.utc) - timedelta(hours=args.recluster_window_hours)
+        ).isoformat()
+        # Pull articles
+        try:
+            arts_resp = supabase.table("articles").select(
+                "id,source_id,url,title,summary,full_text,author,published_at,"
+                "section,word_count,is_wire_copy,wire_origin_publisher_id"
+            ).gte("published_at", cutoff_iso).execute()
+            stored_articles = arts_resp.data or []
+        except Exception as _arts_err:
+            print(f"  [error] failed to load articles for recluster: {_arts_err}")
+            stored_articles = []
+        # Attach source_slug + section fallback so analyzers downstream behave
+        # as if these came from the live fetcher.
+        _src_by_id = {s.get("db_id"): s for s in sources if s.get("db_id")}
+        for art in stored_articles:
+            src = _src_by_id.get(art.get("source_id"))
+            if src:
+                art["source_slug"] = src.get("slug", "")
+                if not art.get("section"):
+                    art["section"] = src.get("section", "world")
+        # Pull bias_scores in chunks (URL length limit on IN clause)
+        article_ids = [a["id"] for a in stored_articles if a.get("id")]
+        bias_chunk = 200
+        for i in range(0, len(article_ids), bias_chunk):
+            ids_slice = article_ids[i:i + bias_chunk]
+            try:
+                bs_resp = supabase.table("bias_scores").select("*").in_(
+                    "article_id", ids_slice
+                ).execute()
+                for row in (bs_resp.data or []):
+                    art_id = row.pop("article_id", None)
+                    if art_id:
+                        # Drop DB-only fields that aren't in production map
+                        row.pop("id", None)
+                        row.pop("created_at", None)
+                        row.pop("updated_at", None)
+                        article_bias_map[art_id] = row
+            except Exception as _bs_err:
+                print(f"  [warn] bias_scores chunk {i} failed: {_bs_err}")
+        print(f"  Pre-loaded {len(stored_articles)} articles, "
+              f"{len(article_bias_map)} bias score rows.")
+        # Also: nuke prior clusters so the new run replaces them cleanly.
+        # cluster_articles cascade-deletes via FK (verified in Q32 today).
+        # 2026-05-24 production diagnostic: today's clusters are full of
+        # false-merges from the publisher-name bridge + ratio-blind cap.
+        # Replacing them with a fresh recluster is the whole point of this run.
+        try:
+            print("  Wiping prior clusters before re-cluster...")
+            _del_resp = supabase.table("story_clusters").delete().gte(
+                "first_published", cutoff_iso
+            ).execute()
+            print(f"  Deleted {len(_del_resp.data or [])} prior clusters in window.")
+        except Exception as _del_err:
+            print(f"  [warn] prior cluster wipe failed: {_del_err}")
+
+    # Step 3: Fetch articles via RSS  [skipped if --recluster-only]
+    if recluster_only:
+        print("\n[3/9] Fetching RSS feeds... SKIPPED (--recluster-only)")
+        articles_raw = []
+    else:
+        print("\n[3/9] Fetching RSS feeds...")
+        articles_raw, fetch_errors = fetch_from_rss(sources)
+        print(f"  Total raw articles: {len(articles_raw)}")
+        print(f"  Fetch errors: {len(fetch_errors)}")
 
     # Step 3b: Filter out URLs already in the database
     # This avoids scraping ~3,800+ articles that already exist, reducing
@@ -1052,8 +1155,13 @@ def main():
     print("\n[3b] Filtering known URLs...")
     total_rss_urls = len(articles_raw)
     articles_to_scrape = articles_raw  # default: scrape everything (first run / error fallback)
+    if recluster_only:
+        articles_to_scrape = []
+        print("  [recluster-only] skipped.")
 
     try:
+        if recluster_only:
+            raise _ReclusterSkip()
         rss_urls = {a["url"] for a in articles_raw if a.get("url")}
 
         if rss_urls:
@@ -1093,13 +1201,18 @@ def main():
             print(f"  New to scrape: {new_count}")
         else:
             print(f"  URLs from RSS: {total_rss_urls} (none valid)")
+    except _ReclusterSkip:
+        pass  # --recluster-only fast-path: no URL filtering needed.
     except Exception as e:
         print(f"  [warn] URL filter query failed ({e}), scraping all {total_rss_urls} articles")
         articles_to_scrape = articles_raw
 
     # Step 4: Scrape full text (parallel), then batch-insert articles
-    print(f"\n[4/9] Scraping article text (parallel, 30 workers)...")
     scraped_articles = []
+    if recluster_only:
+        print(f"\n[4/9] Scraping article text... SKIPPED (--recluster-only)")
+    else:
+        print(f"\n[4/9] Scraping article text (parallel, 30 workers)...")
 
     with ThreadPoolExecutor(max_workers=30) as executor:
         futures = {
@@ -1266,8 +1379,10 @@ def main():
     # Step 5: Run bias analysis on each article
     articles_analyzed = 0
     clusters_created = 0
-    # Collect per-article bias scores keyed by article_id for ranking
-    article_bias_map: dict[str, dict] = {}
+    # Collect per-article bias scores keyed by article_id for ranking.
+    # 2026-05-24 — preserve preloaded map when --recluster-only is set.
+    if not recluster_only:
+        article_bias_map: dict[str, dict] = {}
     # Collect article-to-categories mapping for junction table
     article_categories_map: dict[str, list[str]] = {}
 
@@ -1279,76 +1394,91 @@ def main():
         # parsing, so concurrent threads provide real throughput gains.
         # 4 workers balances CPU throughput against memory (each thread holds a
         # full spaCy parse + 5 analyzer passes per article).
-        print(f"\n[5/9] Running bias analysis on {len(stored_articles)} articles (8 workers)...")
+        # 2026-05-24 — when --recluster-only is set, skip the analysis (the
+        # article_bias_map was preloaded from DB at the top of main()) and
+        # proceed directly into step 6 clustering with the existing scores.
         bias_rows_to_insert: list[dict] = []
-        _analysis_lock = __import__("threading").Lock()
-        _analyzed_count = [0]
+        if recluster_only:
+            print(f"\n[5/9] Bias analysis SKIPPED (--recluster-only) — "
+                  f"using {len(article_bias_map)} preloaded score rows.")
+        else:
+            print(f"\n[5/9] Running bias analysis on {len(stored_articles)} articles (8 workers)...")
+        # 2026-05-24 — recluster-only fast path: bias analysis body is
+        # bypassed via a single-iteration loop guarded by recluster_only.
+        # `break` jumps past the body without re-indenting the existing
+        # ~70 lines of code. Equivalent to "if not recluster_only: ...".
+        for _ in range(1):
+            if recluster_only:
+                articles_analyzed = len(article_bias_map)
+                break
+            _analysis_lock = __import__("threading").Lock()
+            _analyzed_count = [0]
 
-        # Fix 20 (Axis 6 wire-in): Fetch source_topic_lean EMA data so the
-        # political lean analyzer can blend in longitudinal per-source-per-topic
-        # baselines. Keyed by (source_id, category).
-        #
-        # 2026-05-21 — Axis 6 was wired but DORMANT for the entire production
-        # lifetime: article["category"] was empty at step 5 because the full
-        # categorizer runs at step 7. Now categorize_early() (URL+section
-        # regex, ~5µs) assigns a best-guess category before bias analysis,
-        # populating topic_lean_data for the ~60-70% of articles whose URL
-        # path or section metadata is unambiguous. The remaining articles
-        # match the prior None behavior. Step 7 still runs the full NLP
-        # categorizer to refine and store the final cluster category.
-        topic_lean_map: dict[tuple, dict] = {}
-        try:
-            topic_lean_result = supabase.table("source_topic_lean").select(
-                "source_id,category,avg_lean"
-            ).execute()
-            for row in (topic_lean_result.data or []):
-                key = (row["source_id"], row.get("category", ""))
-                topic_lean_map[key] = {"avg_lean": row["avg_lean"]}
-        except Exception as _tl_err:
-            print(f"    [warn] Could not fetch source_topic_lean: {_tl_err}")
+            # Fix 20 (Axis 6 wire-in): Fetch source_topic_lean EMA data so the
+            # political lean analyzer can blend in longitudinal per-source-per-topic
+            # baselines. Keyed by (source_id, category).
+            #
+            # 2026-05-21 — Axis 6 was wired but DORMANT for the entire production
+            # lifetime: article["category"] was empty at step 5 because the full
+            # categorizer runs at step 7. Now categorize_early() (URL+section
+            # regex, ~5µs) assigns a best-guess category before bias analysis,
+            # populating topic_lean_data for the ~60-70% of articles whose URL
+            # path or section metadata is unambiguous. The remaining articles
+            # match the prior None behavior. Step 7 still runs the full NLP
+            # categorizer to refine and store the final cluster category.
+            topic_lean_map: dict[tuple, dict] = {}
+            try:
+                topic_lean_result = supabase.table("source_topic_lean").select(
+                    "source_id,category,avg_lean"
+                ).execute()
+                for row in (topic_lean_result.data or []):
+                    key = (row["source_id"], row.get("category", ""))
+                    topic_lean_map[key] = {"avg_lean": row["avg_lean"]}
+            except Exception as _tl_err:
+                print(f"    [warn] Could not fetch source_topic_lean: {_tl_err}")
 
-        def _analyze_one(article: dict) -> dict:
-            source_slug = article.get("source_slug", "") or article.get("source_id", "")
-            source = source_map.get(source_slug, {"political_lean_baseline": "center"})
-            # Axis 6: look up topic lean for this article's source + category.
-            # Early-categorize via URL+section; stash on the article so step 7
-            # can use it as a hint (or override with full NLP categorization).
-            source_id = source.get("db_id", "")
-            category = article.get("category") or categorize_early(article)
-            if category:
-                article["category"] = category  # persist for step 7
-            topic_lean_data = topic_lean_map.get((source_id, category)) if source_id and category else None
-            bias_scores = run_bias_analysis(article, source, topic_lean_data=topic_lean_data)
-            bias_scores["article_id"] = article.get("id", "")
-            with _analysis_lock:
-                _analyzed_count[0] += 1
-                if _analyzed_count[0] % 50 == 0 or _analyzed_count[0] == 1:
-                    print(f"  Analyzed {_analyzed_count[0]}/{len(stored_articles)}...")
-            return bias_scores
+            def _analyze_one(article: dict) -> dict:
+                source_slug = article.get("source_slug", "") or article.get("source_id", "")
+                source = source_map.get(source_slug, {"political_lean_baseline": "center"})
+                # Axis 6: look up topic lean for this article's source + category.
+                # Early-categorize via URL+section; stash on the article so step 7
+                # can use it as a hint (or override with full NLP categorization).
+                source_id = source.get("db_id", "")
+                category = article.get("category") or categorize_early(article)
+                if category:
+                    article["category"] = category  # persist for step 7
+                topic_lean_data = topic_lean_map.get((source_id, category)) if source_id and category else None
+                bias_scores = run_bias_analysis(article, source, topic_lean_data=topic_lean_data)
+                bias_scores["article_id"] = article.get("id", "")
+                with _analysis_lock:
+                    _analyzed_count[0] += 1
+                    if _analyzed_count[0] % 50 == 0 or _analyzed_count[0] == 1:
+                        print(f"  Analyzed {_analyzed_count[0]}/{len(stored_articles)}...")
+                return bias_scores
 
-        with ThreadPoolExecutor(max_workers=8) as analysis_executor:
-            analysis_futures = {
-                analysis_executor.submit(_analyze_one, article): article
-                for article in stored_articles
-            }
-            for future in as_completed(analysis_futures):
-                try:
-                    bias_scores = future.result()
-                    art_id = bias_scores.get("article_id", "")
-                    article_bias_map[art_id] = {
-                        k: v for k, v in bias_scores.items() if k != "article_id"
-                    }
-                    bias_rows_to_insert.append(bias_scores)
-                except Exception as e:
-                    print(f"  [warn] Bias analysis task failed: {e}")
+            with ThreadPoolExecutor(max_workers=8) as analysis_executor:
+                analysis_futures = {
+                    analysis_executor.submit(_analyze_one, article): article
+                    for article in stored_articles
+                }
+                for future in as_completed(analysis_futures):
+                    try:
+                        bias_scores = future.result()
+                        art_id = bias_scores.get("article_id", "")
+                        article_bias_map[art_id] = {
+                            k: v for k, v in bias_scores.items() if k != "article_id"
+                        }
+                        bias_rows_to_insert.append(bias_scores)
+                    except Exception as e:
+                        print(f"  [warn] Bias analysis task failed: {e}")
 
-        # Batch-insert bias scores (200 per chunk vs N individual HTTP calls)
-        print(f"  Batch-inserting {len(bias_rows_to_insert)} bias score rows...")
-        articles_analyzed = _batch_upsert(
-            "bias_scores", bias_rows_to_insert, chunk_size=200,
-            on_conflict="article_id",
-        )
-        print(f"  Articles analyzed: {articles_analyzed}/{len(stored_articles)}")
+            # Batch-insert bias scores (200 per chunk vs N individual HTTP calls)
+            print(f"  Batch-inserting {len(bias_rows_to_insert)} bias score rows...")
+            articles_analyzed = _batch_upsert(
+                "bias_scores", bias_rows_to_insert, chunk_size=200,
+                on_conflict="article_id",
+            )
+            print(f"  Articles analyzed: {articles_analyzed}/{len(stored_articles)}")
 
         # Step 6: Cluster articles
         # Include recent articles from the last 36h so stories that span
@@ -2313,6 +2443,15 @@ def main():
         all_cluster_article_links: list[dict] = []  # batch insert
         cluster_ids_to_enrich: list[str] = []
         gemini_enriched_ids: set[str] = set()  # clusters with Gemini text
+        # 2026-05-24 fix 5 — surface aggregate insert failures.
+        # Previously insert_cluster() returned None on exception with only
+        # a print line. If schema drift caused every row to fail, the loop
+        # silently produced clusters_created=0 (May 18-20 mystery: 7000+
+        # articles analyzed, 0 clusters persisted, 0 errors logged). Now
+        # we track the count + sample message so it shows up in summary
+        # and gets attached to pipeline_runs.errors at finalize.
+        cluster_insert_failures = 0
+        cluster_insert_sample_err: str = ""
 
         for ci, cluster in enumerate(clusters):
             cluster_articles_list = cluster.get("articles", [])
@@ -2460,7 +2599,13 @@ def main():
                 if cc_data:
                     cluster_row["claim_consensus"] = cc_data
 
-            result = insert_cluster(cluster_row)
+            try:
+                result = insert_cluster(cluster_row)
+            except Exception as _ins_e:
+                cluster_insert_failures += 1
+                if not cluster_insert_sample_err:
+                    cluster_insert_sample_err = f"{type(_ins_e).__name__}: {str(_ins_e)[:200]}"
+                continue
             if result:
                 clusters_created += 1
                 cluster_id = result.get("id", "")
@@ -2473,6 +2618,33 @@ def main():
                             "cluster_id": cluster_id,
                             "article_id": article_id,
                         })
+            else:
+                cluster_insert_failures += 1
+                if not cluster_insert_sample_err:
+                    cluster_insert_sample_err = "insert returned None (see prior insert error logs)"
+
+        # 2026-05-24 fix 5 — emit aggregate summary so silent regressions
+        # (May 18-20 clusters_created=0 mystery) surface in CI logs.
+        if cluster_insert_failures:
+            print(
+                f"  [warn] cluster_insert_failures={cluster_insert_failures} "
+                f"clusters_created={clusters_created} — sample: "
+                f"{cluster_insert_sample_err}"
+            )
+            try:
+                # Attach to pipeline_runs.errors so monitoring can alarm.
+                supabase.table("pipeline_runs").update({
+                    "errors": [{
+                        "error": (
+                            f"cluster_insert_failures={cluster_insert_failures}, "
+                            f"sample={cluster_insert_sample_err}"
+                        ),
+                        "source": "step_8_store_clusters",
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                    }]
+                }).eq("id", run_id).execute()
+            except Exception:
+                pass
 
         # Batch-insert cluster_articles links (instead of one per article)
         if all_cluster_article_links:
