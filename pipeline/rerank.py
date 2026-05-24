@@ -14,6 +14,7 @@ import json
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime, timezone
 from pathlib import Path
 
 # Add pipeline root to path
@@ -317,6 +318,13 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
     # source_count is intentionally omitted — owned by clustering
     # (Phase 5 cap + wire-aware voice collapse). Writing it from rerank
     # overwrites both, producing the 217-source mega-cluster regression.
+    #
+    # 2026-05-22 — last_updated MUST be explicitly set. Previously omitted;
+    # if a write failed silently (see below), the frontend freshness filter
+    # still favored the stale story because last_updated hadn't advanced.
+    # Caused the 13-source #1-pin regression: yesterday's headline_rank
+    # stayed in place AND the cluster appeared fresh.
+    _now_iso = datetime.now(timezone.utc).isoformat()
     write_rows = [
         {
             "id": u["id"],
@@ -331,6 +339,7 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
             "rank_europe": u.get("rank_europe", u["headline_rank"]),
             # Edition name "south-asia" (hyphen) → DB column "rank_south_asia" (underscore)
             "rank_south_asia": u.get("rank_south-asia", u["headline_rank"]),
+            "last_updated": _now_iso,
         }
         for u in updates
     ]
@@ -343,19 +352,33 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
 
     written = 0
     write_errors = 0
+    failed_ids: list[str] = []
 
     def _write_chunk(chunk: list[dict]) -> int:
+        # 2026-05-22 — single retry with exponential backoff on transient
+        # errors. Was: bare `except: continue` silently swallowed every
+        # failure → 13-source cluster never got today's rerank value
+        # written back → stayed at yesterday's headline_rank.
         ok = 0
         for row in chunk:
             rid = row.pop("id")
-            try:
-                supabase.table("story_clusters").update(row).eq("id", rid).execute()
-                ok += 1
-            except Exception as e:
-                if ok == 0:  # only log first error per chunk to avoid spam
-                    print(f"  [err] Write failed for {rid[:8]}: {e}")
-            finally:
-                row["id"] = rid  # restore for any retry logic
+            last_err: Exception | None = None
+            for attempt in range(2):
+                try:
+                    supabase.table("story_clusters").update(row).eq("id", rid).execute()
+                    ok += 1
+                    last_err = None
+                    break
+                except Exception as e:
+                    last_err = e
+                    if attempt == 0:
+                        time.sleep(0.5 + (attempt * 0.5))  # 0.5s then give up
+            if last_err is not None:
+                # Per-row logging so we can grep failures in CI; capture id
+                # in failed_ids so we can surface a summary at the end.
+                print(f"  [err] Write failed for {rid[:8]} after retry: {last_err}")
+                failed_ids.append(rid)
+            row["id"] = rid  # restore for caller debugging
         return ok
 
     with ThreadPoolExecutor(max_workers=16) as write_exec:
@@ -367,8 +390,21 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
                 write_errors += WRITE_CHUNK
 
     elapsed = time.time() - start
+    # Per-row failures aggregated separately from chunk-level failures
+    # (chunk-level fires only if the whole worker raised, which is rare
+    # under the retry-aware _write_chunk above).
+    per_row_failures = len(failed_ids)
     print(f"\n  Done. {written} clusters re-ranked in {elapsed:.1f}s"
-          + (f" ({write_errors} write errors)" if write_errors else ""))
+          + (f" ({write_errors} chunk failures, {per_row_failures} row failures)"
+             if (write_errors or per_row_failures) else ""))
+    if per_row_failures:
+        print(f"  [warn] {per_row_failures} cluster ids failed to update after retry:")
+        # Cap printed list at 20 to avoid log flood; full list is in failed_ids
+        # if the orchestrator wants to retry them in a follow-up pass.
+        for fid in failed_ids[:20]:
+            print(f"    - {fid}")
+        if per_row_failures > 20:
+            print(f"    ... and {per_row_failures - 20} more")
     return written
 
 

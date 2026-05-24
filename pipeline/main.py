@@ -2309,24 +2309,19 @@ def main():
 
             # Multi-section: list ALL editions that have articles in this cluster.
             #
-            # 2026-05-21 (Issue A from 2026-05-15 audit, REVERTED in a later refactor):
-            # the frontend at HomeContent.tsx:474 filters by
-            #   .contains("sections", [activeEdition])
-            # BEFORE applying per-edition rank ordering. So a cluster with
-            # sections=['us'] but rank_world=65.76 is invisible on /world even
-            # though it's the #1-by-rank story globally. The 2026-05-15 audit
-            # surfaced this as the Warsh-Fed-chair case; the original force-add
-            # fix was reverted assuming is_international + rank handled it, but
-            # the frontend never actually used that path.
-            #
-            # Restored cross-listing: a cluster is added to 'world' when
-            # (a) it already spans 2+ editions (genuinely multi-regional) OR
-            # (b) its rank_world is feed-eligible (>= 50, ranks top-50 globally).
+            # 2026-05-22 — world-tag force-add DEFERRED to post-rerank step 8c.5.
+            # Previously this block read `cluster.get("rank_world")` from step
+            # 7's ranker output (pre-holistic-rerank), which is STALE by the
+            # time clusters are persisted. The 13-source pin regression was
+            # partly caused by yesterday's rank_world (95) triggering force-
+            # add even though today's rerank dropped it to 35. Step 8 now
+            # only persists the natural multi-section signal from articles;
+            # the post-rerank step uses fresh DB rank_world to add/remove
+            # 'world' from sections[]. Multi-section ≥2 still triggers
+            # cross-listing here because it's a genuine article-level signal
+            # that doesn't depend on rank.
             all_sections = sorted(section_counts.keys()) if section_counts else ["world"]
-            _rank_world_val = float(cluster.get("rank_world") or cluster.get("headline_rank") or 0)
-            if "world" not in all_sections and (
-                len(all_sections) >= 2 or _rank_world_val >= 50.0
-            ):
+            if "world" not in all_sections and len(all_sections) >= 2:
                 all_sections = sorted(set(all_sections) | {"world"})
 
             # is_international flag drives the /world overflow filter.
@@ -2691,6 +2686,59 @@ def main():
             import traceback
             print(f"  [warn] Holistic re-rank failed: {e}")
             traceback.print_exc()
+
+    # Step 8c.5 — post-rerank world-tag reconciliation.
+    # Uses FRESH rank_world from DB (just written by step 8c). For each
+    # cluster: add 'world' to sections[] iff rank_world >= 50, remove iff
+    # rank_world < 50 AND no natural 'world' signal (i.e. it was previously
+    # force-added). Natural 'world' (≥2 sections or cluster_section='world')
+    # is preserved unconditionally. Idempotent: same input → same output.
+    #
+    # Fixes the 13-source pin regression: yesterday's #1 with rank_world=95
+    # was persisted with 'world' in sections at step 8. Today rerank drops
+    # it to rank_world=35 → this step removes 'world' from sections →
+    # frontend's .contains("sections", ["world"]) filter no longer surfaces
+    # it on /world. Real top stories make it through.
+    try:
+        print("\n[8c.5] Post-rerank world-tag reconciliation...")
+        # Read clusters touched recently (last 48h) with their fresh rank_world.
+        from datetime import datetime as _dt, timedelta as _td, timezone as _tz
+        _since = (_dt.now(_tz.utc) - _td(hours=48)).isoformat()
+        _resp = supabase.table("story_clusters").select(
+            "id,sections,rank_world,section"
+        ).gte("last_updated", _since).execute()
+        _to_check = _resp.data or []
+        _add_count = 0
+        _remove_count = 0
+        for _row in _to_check:
+            _sections = list(_row.get("sections") or [])
+            _rank_world = float(_row.get("rank_world") or 0)
+            _primary = _row.get("section") or ""
+            _has_world_naturally = (
+                _primary == "world" or
+                len([s for s in _sections if s and s != "world"]) >= 2
+            )
+            _world_in_sections = "world" in _sections
+            _new_sections = _sections[:]
+            if _rank_world >= 50.0 and not _world_in_sections:
+                _new_sections = sorted(set(_new_sections) | {"world"})
+                _add_count += 1
+            elif _rank_world < 50.0 and _world_in_sections and not _has_world_naturally:
+                _new_sections = sorted([s for s in _new_sections if s != "world"])
+                _remove_count += 1
+            if _new_sections != _sections:
+                try:
+                    supabase.table("story_clusters").update(
+                        {"sections": _new_sections}
+                    ).eq("id", _row["id"]).execute()
+                except Exception as _ue:
+                    print(f"  [warn] sections update failed for {_row['id'][:8]}: {_ue}")
+        print(f"  Reconciled: +{_add_count} world-added, -{_remove_count} world-removed "
+              f"across {len(_to_check)} recent clusters.")
+    except Exception as e:
+        import traceback
+        print(f"  [warn] World-tag reconciliation failed: {e}")
+        traceback.print_exc()
 
     # Step 8d: Post-rerank single-pass top-50 Sonnet summarization with cache.
     # Reads final top-50 by rank_world from DB. For each cluster:
