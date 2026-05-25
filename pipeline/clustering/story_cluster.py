@@ -506,7 +506,15 @@ ANCHOR_IDF_FRACTION_OF_MAX = 0.70
 ANCHOR_MAX_DOC_FREQ_FLOOR = 3
 ANCHOR_MAX_DOC_FREQ_PCT = 0.025  # ≤ 2.5% of corpus (5 clusters at N=200)
 ANCHOR_MIN_SHARED = 2            # require ≥2 shared anchors to merge
-ANCHOR_TITLE_JACCARD_FLOOR = 0.22
+ANCHOR_TITLE_JACCARD_FLOOR = 0.18  # 2026-05-25: 0.22 → 0.18.
+# Today's 5-way scatter on the Pakistan/Quetta/Balochistan/BLA train bombing
+# cleared the 0.18 floor on all pairs but failed at 0.22 because wire-style
+# headlines deliberately vary phrasing ("Blast targeting train", "Deadly
+# suicide blast", "BLA claims responsibility") even when shared anchor
+# entities (Quetta, Balochistan, BLA) are unambiguous. The 0.18 floor still
+# blocks the Blinken-bridge-style single-token over-merges that motivated
+# the original 0.22 — but it lets through legitimate breaking-news scatter
+# where the same event has many distinct headlines.
 
 # Garbage cluster-title signatures (Fix 2 — over-merge force-split).
 # When the title-generator emits one of these, the cluster has aggregated

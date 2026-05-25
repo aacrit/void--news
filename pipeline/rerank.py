@@ -233,6 +233,7 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
                 sections=cluster_sections,
                 mega_capped=mega_capped,
                 cluster=cluster,
+                corpus_size=len(articles_by_id),  # 2026-05-25 adaptive is_headline
             )
         except Exception as e:
             errors += 1
