@@ -506,15 +506,17 @@ ANCHOR_IDF_FRACTION_OF_MAX = 0.70
 ANCHOR_MAX_DOC_FREQ_FLOOR = 3
 ANCHOR_MAX_DOC_FREQ_PCT = 0.025  # ≤ 2.5% of corpus (5 clusters at N=200)
 ANCHOR_MIN_SHARED = 2            # require ≥2 shared anchors to merge
-ANCHOR_TITLE_JACCARD_FLOOR = 0.18  # 2026-05-25: 0.22 → 0.18.
-# Today's 5-way scatter on the Pakistan/Quetta/Balochistan/BLA train bombing
-# cleared the 0.18 floor on all pairs but failed at 0.22 because wire-style
-# headlines deliberately vary phrasing ("Blast targeting train", "Deadly
-# suicide blast", "BLA claims responsibility") even when shared anchor
-# entities (Quetta, Balochistan, BLA) are unambiguous. The 0.18 floor still
-# blocks the Blinken-bridge-style single-token over-merges that motivated
-# the original 0.22 — but it lets through legitimate breaking-news scatter
-# where the same event has many distinct headlines.
+ANCHOR_TITLE_JACCARD_FLOOR = 0.22
+# 2026-05-25 — DO NOT lower this without a compensating gate. Lowering
+# to 0.18 chained transitively across unrelated stories: a 362-source
+# / 3,217-article cluster bundled Nigeria politics + Spain courts +
+# Scottish level crossings + Pakistan + Israel + Senegal PM + Ebola +
+# Toronto biz + Delhi exams + Smithfield Times into one bucket because
+# the lower floor allowed Phase 2.6 anchor matches with weak title
+# overlap, then transitive closure across many such hops aggregated
+# entire continents of news. The 0.22 floor is the floor — if you need
+# to merge a wire-style scatter (e.g., Pakistan train bombing in 5
+# clusters), add it to _CANONICAL_PAIRS / _SYNONYM_ALIASES instead.
 
 # Garbage cluster-title signatures (Fix 2 — over-merge force-split).
 # When the title-generator emits one of these, the cluster has aggregated
@@ -1617,7 +1619,30 @@ def split_mega_clusters(
                     f"(src={sc}) split into {len(sub)} sub-clusters "
                     f"(avg {avg_articles_per_sub:.1f} articles/sub)"
                 )
-            out.extend(sub)
+            # 2026-05-25 — recursively cap any sub-cluster that still
+            # exceeds threshold or trips cohesion. Without this, the
+            # 0.18-Jaccard regression that bridged 3,217 articles into
+            # one cluster surfaced a SUB-cluster of 362 sources that
+            # bypassed the cap because Phase 5 didn't recurse. Belt-and-
+            # suspenders even after the Jaccard revert.
+            sm_for_recurse = c.get("_source_map") or {}
+            for s in sub:
+                s_sc = s.get("source_count", 0)
+                s_ac = len(s.get("articles", []) or [])
+                if s_sc < threshold and s_ac < MEGA_COHESION_MIN_ARTICLES:
+                    out.append(s)
+                    continue
+                # Sub-cluster still too big — cap it directly without
+                # another force-split pass (avoid infinite recursion).
+                s["_mega_cluster_original_count"] = s_sc
+                s["source_count"] = min(s_sc, threshold)
+                s["mega_cluster_capped"] = True
+                if verbose:
+                    print(
+                        f"  [Phase5/sub-cap] sub-cluster '{s.get('title','')[:50]!r}' "
+                        f"(src={s_sc}, arts={s_ac}) capped at {threshold}"
+                    )
+                out.append(s)
         else:
             # Step 2: keep but cap. Either truly a single mega-event, OR
             # the strict re-cluster shattered into singletons (sanity
