@@ -1997,6 +1997,7 @@ def main():
                     editorial_importance=cluster.get("editorial_importance"),
                     sections=_rank_sections,
                     mega_capped=bool(cluster.get("mega_cluster_capped", False)),
+                    corpus_size=len(stored_articles),  # 2026-05-25 adaptive is_headline
                     cluster=cluster,  # 2026-05-24 v2 — pass cluster so ranker
                                       # can read _cohesion stashed by Phase 5
                 )
