@@ -1619,28 +1619,34 @@ def split_mega_clusters(
                     f"(src={sc}) split into {len(sub)} sub-clusters "
                     f"(avg {avg_articles_per_sub:.1f} articles/sub)"
                 )
-            # 2026-05-25 — recursively cap any sub-cluster that still
-            # exceeds threshold or trips cohesion. Without this, the
-            # 0.18-Jaccard regression that bridged 3,217 articles into
-            # one cluster surfaced a SUB-cluster of 362 sources that
-            # bypassed the cap because Phase 5 didn't recurse. Belt-and-
-            # suspenders even after the Jaccard revert.
+            # 2026-05-25 — recursive sub-cap (tightened): only cap a
+            # surviving sub-cluster when it ITSELF would have tripped
+            # Phase 5's primary gate, i.e. source_count >= threshold (the
+            # 362-source chain-merge survivor that motivated this fix).
+            # An earlier version also tripped on articles >= 20 alone,
+            # which over-capped legitimate 29-source / 50-article real
+            # top stories (today's Trump-Iran-deal cluster). Article-count
+            # without a cohesion check is too coarse — Phase 5's primary
+            # gate already uses cohesion_score to distinguish noise from
+            # real coverage, and that gate was applied to the PARENT
+            # cluster before splitting, so surviving sub-clusters with
+            # smaller source_count are by construction healthier slices
+            # of whatever the parent contained.
             sm_for_recurse = c.get("_source_map") or {}
             for s in sub:
-                s_sc = s.get("source_count", 0)
-                s_ac = len(s.get("articles", []) or [])
-                if s_sc < threshold and s_ac < MEGA_COHESION_MIN_ARTICLES:
+                s_sc = int(s.get("source_count", 0) or 0)
+                if s_sc < threshold:
                     out.append(s)
                     continue
-                # Sub-cluster still too big — cap it directly without
-                # another force-split pass (avoid infinite recursion).
+                # Sub-cluster STILL above threshold — cap it directly
+                # without another force-split pass (avoid infinite recursion).
                 s["_mega_cluster_original_count"] = s_sc
                 s["source_count"] = min(s_sc, threshold)
                 s["mega_cluster_capped"] = True
                 if verbose:
                     print(
                         f"  [Phase5/sub-cap] sub-cluster '{s.get('title','')[:50]!r}' "
-                        f"(src={s_sc}, arts={s_ac}) capped at {threshold}"
+                        f"(src={s_sc}) capped at {threshold}"
                     )
                 out.append(s)
         else:
