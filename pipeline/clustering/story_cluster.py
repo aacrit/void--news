@@ -1650,19 +1650,19 @@ def split_mega_clusters(
                     )
                 out.append(s)
         else:
-            # 2026-05-26 — when the cluster is shattered (force-split made
-            # mostly singletons) AND the parent's cohesion is critically
-            # low, the parent IS the chain-merge garbage we wanted to
-            # destroy. Ship the singletons rather than keep the parent
-            # whole — better 700 singletons than one 1,112-article cluster
-            # bridging tennis + Ebola + Pope AI + FIFA + Mexican governors
-            # via shared "Israel" / "Iran" / "Trump" references.
-            #
-            # Threshold: cohesion < 20 = clear chain-merge signal. Above
-            # that, default to the original "keep whole + cap" path
-            # (genuine breaking-news mega-events that didn't split cleanly).
+            # 2026-05-26 iter D — chain-merge dissolve threshold raised
+            # 20 → 35. Iter C inspection found 75-source capped clusters
+            # like "Mexico to host Iran World Cup" and "Trump Saudi
+            # Pakistan Muslim nations" that contain Sonny Rollins jazz +
+            # Belgium school bus crash + Pope AI + tennis + Ebola but
+            # scored cohesion ~30 — above the 20 floor. Math says
+            # chain-merges with weak title overlap + moderate entity
+            # convergence land in the 25-40 cohesion range, so 35 is
+            # the right inflection. Real breaking-news mega-events like
+            # Sunday's Netanyahu story score 50+ on cohesion (every
+            # article actually about Netanyahu/Israel/Trump diplomacy).
             _coh_score = (cohesion or {}).get("cohesion_score", 100.0)
-            if shattered and len(sub) >= 2 and _coh_score < 20.0:
+            if shattered and len(sub) >= 2 and _coh_score < 35.0:
                 if verbose:
                     print(
                         f"  [Phase5/chain-merge-dissolve] '{c.get('title','')[:60]!r}' "
@@ -2281,8 +2281,14 @@ def cluster_stories(
     if run_merge_pass and len(clusters) > 1:
         clusters = merge_synonym_pairs(clusters)
     # Phase 2.6 — anchor-entity merge (high-IDF rare proper nouns)
+    # 2026-05-26 iter D — tighten anchor IDF fraction on low-volume days.
+    # Low corpus inflates IDFs of generic entities; the 0.70 fraction-of-
+    # max becomes a low bar that chain-bridges via "Iran" / "Trump" /
+    # "Israel". 0.80 forces the anchor to be in the truly rare top-20%.
     if run_merge_pass and len(clusters) > 1:
-        clusters = merge_anchor_entities(clusters)
+        _ac_hint = sum(len(c.get("articles", []) or []) for c in clusters)
+        _anchor_frac = 0.80 if _ac_hint < 8000 else ANCHOR_IDF_FRACTION_OF_MAX
+        clusters = merge_anchor_entities(clusters, idf_fraction_of_max=_anchor_frac)
     if run_merge_pass and len(clusters) > 1:
         clusters = merge_duplicate_title_clusters(clusters)
     # Phase 4 — garbage-title force-split (over-merge detector)
