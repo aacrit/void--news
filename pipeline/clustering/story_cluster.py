@@ -1650,10 +1650,41 @@ def split_mega_clusters(
                     )
                 out.append(s)
         else:
-            # Step 2: keep but cap. Either truly a single mega-event, OR
-            # the strict re-cluster shattered into singletons (sanity
-            # guard above) — both paths converge on "keep whole +
-            # display-cap source_count" rather than ship broken splits.
+            # 2026-05-26 — when the cluster is shattered (force-split made
+            # mostly singletons) AND the parent's cohesion is critically
+            # low, the parent IS the chain-merge garbage we wanted to
+            # destroy. Ship the singletons rather than keep the parent
+            # whole — better 700 singletons than one 1,112-article cluster
+            # bridging tennis + Ebola + Pope AI + FIFA + Mexican governors
+            # via shared "Israel" / "Iran" / "Trump" references.
+            #
+            # Threshold: cohesion < 20 = clear chain-merge signal. Above
+            # that, default to the original "keep whole + cap" path
+            # (genuine breaking-news mega-events that didn't split cleanly).
+            _coh_score = (cohesion or {}).get("cohesion_score", 100.0)
+            if shattered and len(sub) >= 2 and _coh_score < 20.0:
+                if verbose:
+                    print(
+                        f"  [Phase5/chain-merge-dissolve] '{c.get('title','')[:60]!r}' "
+                        f"(src={sc} arts={ac} cohesion={_coh_score}) shipping "
+                        f"{len(sub)} singleton/small subs instead of capping the chain-merge"
+                    )
+                # Same recursive sub-cap as the healthy-split branch
+                # above — any sub that's STILL above threshold gets capped.
+                for s in sub:
+                    s_sc = int(s.get("source_count", 0) or 0)
+                    if s_sc < threshold:
+                        out.append(s)
+                        continue
+                    s["_mega_cluster_original_count"] = s_sc
+                    s["source_count"] = min(s_sc, threshold)
+                    s["mega_cluster_capped"] = True
+                    out.append(s)
+                continue
+
+            # Step 2 (original): keep but cap. Genuine single mega-event
+            # OR shattered with healthy cohesion (rare but possible) —
+            # both paths converge on "keep whole + display-cap source_count".
             original_count = sc
             c["_mega_cluster_original_count"] = original_count
             c["source_count"] = min(sc, threshold)
@@ -2228,7 +2259,21 @@ def cluster_stories(
 
     # Phases 2 + 2.5 + 2.55 + 2.6 + 3 + 4
     if run_merge_pass and len(clusters) > 1:
-        clusters = merge_related_clusters(clusters)
+        # 2026-05-26 — adaptive Phase 2 IDF threshold for low-volume corpus.
+        # On Memorial Day / Tuesday slow days (4-5K articles), the IDF
+        # distribution shifts: generic entities like "Israel", "Iran",
+        # "Trump" become MORE distinguishing (lower df → higher IDF) than
+        # on busy days, so the static 2.0 threshold lets unrelated clusters
+        # chain-merge via shared generic-entity overlap. Today produced a
+        # 1,112-article / 233-source cluster containing tennis + Ebola +
+        # NFL + Pope AI + Mexican governors all bridged via shared
+        # references to Israel/Iran/Trump. Bumping the threshold to 3.0 on
+        # low-volume days forces stronger entity overlap before merging,
+        # preserving the chain-merge defense without affecting busy-day
+        # clustering (Sunday's 9,500-article corpus stays at 2.0).
+        _article_count_hint = sum(len(c.get("articles", []) or []) for c in clusters)
+        _entity_threshold = 3.0 if _article_count_hint < 8000 else ENTITY_MERGE_IDF_THRESHOLD
+        clusters = merge_related_clusters(clusters, idf_threshold=_entity_threshold)
     # Phase 2.5 — editorial canonical-pair merge (Trump-Xi, Starmer-Streeting)
     if run_merge_pass and len(clusters) > 1:
         clusters = merge_canonical_pairs(clusters)
