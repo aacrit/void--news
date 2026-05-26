@@ -1392,6 +1392,41 @@ def main():
             f"{wire_groups} syndicate group(s); "
             f"{len(stored_articles)} articles preserved."
         )
+
+        # 2026-05-26 — persist wire flags back to DB. Without this, the
+        # in-memory mutations from deduplicate_articles() are lost the
+        # moment the pipeline exits: clusters built from the in-memory
+        # tags work, but the next recluster preloads from DB where every
+        # article shows is_wire_copy=false. Confirmed: zero
+        # is_wire_copy=true rows for May 22-26 (4 days of silent
+        # persistence failure). Wire-aware source-count collapse has
+        # been non-functional across the entire iteration cycle.
+        if wire_copies > 0:
+            wire_updates = [
+                {
+                    "id": a["id"],
+                    "is_wire_copy": True,
+                    "wire_origin_publisher_id": a.get("wire_origin_publisher_id"),
+                }
+                for a in stored_articles
+                if a.get("is_wire_copy") and a.get("id")
+            ]
+            _wire_updated = 0
+            _wire_errors = 0
+            for u in wire_updates:
+                rid = u.pop("id")
+                try:
+                    supabase.table("articles").update(u).eq("id", rid).execute()
+                    _wire_updated += 1
+                except Exception as _wu_err:
+                    _wire_errors += 1
+                    if _wire_errors <= 3:
+                        print(f"  [warn] wire-flag update failed for {rid[:8]}: {_wu_err}")
+                u["id"] = rid
+            print(
+                f"  Wire flags persisted to DB: {_wire_updated} updated, "
+                f"{_wire_errors} errors."
+            )
     except ImportError:
         print("  [skip] Wire-fingerprint module unavailable (sklearn not installed)")
     except Exception as e:
