@@ -1553,23 +1553,30 @@ def rank_importance(
         (src_count >= 5 and len(tiers_present) >= 2)
         or src_count >= 8
     )
-    # 2026-05-26 — re-tuned for the multi-day low-volume pattern.
-    # Today (Tuesday post-Memorial-Day) corpus is 4,751 articles, BUT
-    # articles_analyzed = 6,736 (includes 36h cross-run lookback so
-    # corpus_size > 6,000 cutoff would have fired busy-day mode despite
-    # today actually being low-volume. Raised cutoff 6,000 → 8,000 so
-    # corpus drops below 8K → low-volume kicks in.
+    # 2026-05-26 iter E — three-tier scaling for corpus volume.
+    # The 48h recluster window always contains 10-15K articles even on
+    # slow days (today's actual 4.7K + yesterday's 7K + 36h lookback),
+    # so corpus_size > 8K fired busy mode at the wrong time. Today's
+    # iter D produced REAL top stories (Pope Leo XIV AI warfare 66 srcs
+    # conf 82, BP chairman 20 srcs, North Korea 18 srcs) all at
+    # headline_rank 39-42 — below the 45 busy floor.
     #
-    # Also lowered low-volume floors. Today's max real-news cluster is
-    # 12 sources (Memorial Day baseball game!) with max rank 32. The
-    # Hezbollah drone attack (major story, 12 articles in DB) only got
-    # 3 sources / rank ~30 in cluster. The 35/45 floors I set yesterday
-    # were still unreachable. Lowered to 25/35 to let today's real
-    # signal-bearing clusters through while keeping busy-day path
-    # (≥ 8K articles) at the calibrated 45/60.
-    _is_low_volume = (corpus_size is not None and corpus_size < 8000)
-    _rank_floor = 25.0 if _is_low_volume else 45.0
-    _conf_floor = 35.0 if _is_low_volume else 60.0
+    # Three bands:
+    #   < 6K   (true holiday): rank 22, conf 30 — maximally permissive
+    #   < 12K  (slow weekday or recluster on slow day): rank 35, conf 50
+    #   ≥ 12K  (busy day with real coverage): rank 45, conf 60
+    #
+    # Sunday's full pipeline had articles_analyzed=11643 — between low
+    # and high. With recluster lookback it'd hit 15K+ → busy. Today's
+    # recluster has ~10K → middle band. Headlines fire with reasonable
+    # thresholds for the actual data quality.
+    _cs = corpus_size if corpus_size is not None else 12000
+    if _cs < 6000:
+        _rank_floor, _conf_floor = 22.0, 30.0
+    elif _cs < 12000:
+        _rank_floor, _conf_floor = 35.0, 50.0
+    else:
+        _rank_floor, _conf_floor = 45.0, 60.0
     rank_ok = headline_rank >= _rank_floor
     authority_or_spectrum_bonus = authority >= 60.0 or cross_spectrum_fired
 
