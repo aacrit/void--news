@@ -1553,16 +1553,23 @@ def rank_importance(
         (src_count >= 5 and len(tiers_present) >= 2)
         or src_count >= 8
     )
-    # 2026-05-25 — adaptive thresholds for holiday / low-volume days.
-    # Today (Memorial Day) the corpus dropped from 9,506 → 5,017 articles
-    # and the max real-news cluster shrank from 87 to 5 sources. The 45/60
-    # floors calibrated for busy days produced 0 headlines despite real
-    # breaking news (Pakistan train bombing, Iran talks, Russia attack)
-    # being present. Below 6,000 articles the engine should accept smaller
-    # signals as headlines because there's just less coverage to compete.
-    _is_low_volume = (corpus_size is not None and corpus_size < 6000)
-    _rank_floor = 35.0 if _is_low_volume else 45.0
-    _conf_floor = 45.0 if _is_low_volume else 60.0
+    # 2026-05-26 — re-tuned for the multi-day low-volume pattern.
+    # Today (Tuesday post-Memorial-Day) corpus is 4,751 articles, BUT
+    # articles_analyzed = 6,736 (includes 36h cross-run lookback so
+    # corpus_size > 6,000 cutoff would have fired busy-day mode despite
+    # today actually being low-volume. Raised cutoff 6,000 → 8,000 so
+    # corpus drops below 8K → low-volume kicks in.
+    #
+    # Also lowered low-volume floors. Today's max real-news cluster is
+    # 12 sources (Memorial Day baseball game!) with max rank 32. The
+    # Hezbollah drone attack (major story, 12 articles in DB) only got
+    # 3 sources / rank ~30 in cluster. The 35/45 floors I set yesterday
+    # were still unreachable. Lowered to 25/35 to let today's real
+    # signal-bearing clusters through while keeping busy-day path
+    # (≥ 8K articles) at the calibrated 45/60.
+    _is_low_volume = (corpus_size is not None and corpus_size < 8000)
+    _rank_floor = 25.0 if _is_low_volume else 45.0
+    _conf_floor = 35.0 if _is_low_volume else 60.0
     rank_ok = headline_rank >= _rank_floor
     authority_or_spectrum_bonus = authority >= 60.0 or cross_spectrum_fired
 
