@@ -1435,10 +1435,28 @@ def rank_importance(
         "scandal", "affair", "cheating", "divorce", "pregnant",
         "wardrobe malfunction", "bikini", "shirtless",
     }
-    cluster_titles = " ".join(
+    # 2026-05-28 — word-boundary tokenisation instead of `in` substring.
+    # The old substring scan false-positived on 'alien'→'alienation',
+    # 'affair'→'laissez-faire', 'scandal'→'scandalize',
+    # 'divorce'→'divorced (from reality)', etc., penalising legitimate
+    # political vocabulary by 0.75x and pushing real top stories below
+    # the is_headline rank_floor.
+    _cluster_titles_lower = " ".join(
         (a.get("title", "") or "") for a in cluster_articles
     ).lower()
-    tabloid_hits = sum(1 for kw in _TABLOID_KEYWORDS if kw in cluster_titles)
+    _cluster_tokens = set(re.findall(r"[a-z]+", _cluster_titles_lower))
+    tabloid_hits = 0
+    for kw in _TABLOID_KEYWORDS:
+        if " " in kw:
+            # Multi-word phrases — substring scan is fine (kw already
+            # contains its own word boundaries).
+            if kw in _cluster_titles_lower:
+                tabloid_hits += 1
+        else:
+            # Single tokens — strict tokenset match prevents
+            # 'alien' from hitting 'alienation'.
+            if kw in _cluster_tokens:
+                tabloid_hits += 1
     if tabloid_hits >= 1:
         headline_rank *= 0.75
 

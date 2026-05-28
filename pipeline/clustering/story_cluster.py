@@ -1571,7 +1571,16 @@ def split_mega_clusters(
             sm = c.get("_source_map") or {}
             cohesion = _cluster_cohesion(c, source_map=sm)
             c["_cohesion"] = cohesion  # stash for downstream ranker use
-            if cohesion["cohesion_score"] < MEGA_COHESION_FLOOR:
+            # 2026-05-28 fix — cohesion-trip MUST require a meaningful
+            # source-count floor. The original intent was catching
+            # publisher-bridge false-merges (>= 40 sources piled in via
+            # a junk anchor entity). Firing on sc=12, ac=22 medium
+            # clusters with naturally low title-Jaccard catastrophically
+            # over-shatters slow-day breaking news.
+            if (
+                sc >= MEGA_COHESION_MIN_SOURCES
+                and cohesion["cohesion_score"] < MEGA_COHESION_FLOOR
+            ):
                 cohesion_trip = True
         if sc < threshold and not cohesion_trip:
             out.append(c)
@@ -1634,6 +1643,16 @@ def split_mega_clusters(
             # of whatever the parent contained.
             sm_for_recurse = c.get("_source_map") or {}
             for s in sub:
+                # 2026-05-28 — _force_split_cluster writes RAW source_count
+                # (article-level source_id count, NOT wire-aware). A
+                # sub-cluster of 80 AP wire copies across 10 publishers
+                # arrives here with source_count=80 and falsely trips the
+                # >= threshold cap. The wire-aware fixup at line ~2326
+                # then SKIPS this sub because it sees mega_cluster_capped.
+                # Apply wire-collapse BEFORE the comparison so genuine
+                # 10-voice wire-syndicated sub-clusters don't get
+                # permanently demoted.
+                _apply_wire_aware_source_count(s)
                 s_sc = int(s.get("source_count", 0) or 0)
                 if s_sc < threshold:
                     out.append(s)
@@ -1671,7 +1690,10 @@ def split_mega_clusters(
                     )
                 # Same recursive sub-cap as the healthy-split branch
                 # above — any sub that's STILL above threshold gets capped.
+                # 2026-05-28 — apply wire-aware collapse first; see comment
+                # in the healthy-split branch above.
                 for s in sub:
+                    _apply_wire_aware_source_count(s)
                     s_sc = int(s.get("source_count", 0) or 0)
                     if s_sc < threshold:
                         out.append(s)
@@ -1807,9 +1829,19 @@ COHESION_WEIGHT_ENTITY_CONVERGENCE = 0.25
 COHESION_WEIGHT_WIRE_AMP = 0.15
 COHESION_WEIGHT_TIER_CONCENTRATION = 0.15
 COHESION_WEIGHT_PUBLISHER_CONCENTRATION = 0.15
-# Phase 5 cohesion gate. Articles >= MIN_ARTICLES AND cohesion < FLOOR → split.
+# Phase 5 cohesion gate. The cohesion-trip path was originally written to
+# catch publisher-bridge false-merges (80 articles named "* Observer" piled
+# into one cluster). It must ONLY apply to clusters that are actually
+# suspiciously large — never to legitimate 12-25-source breaking news that
+# happens to have multi-desk title diversity. Today's regression: a slow
+# day produced 22-article real clusters with cohesion ~28 that got
+# force-split into singletons because there was no source-count floor.
 MEGA_COHESION_FLOOR = 30          # cohesion below this trips force-split
 MEGA_COHESION_MIN_ARTICLES = 20   # only check cohesion for article piles
+MEGA_COHESION_MIN_SOURCES = 40    # AND require source_count >= this so
+                                  # cohesion-trip never fires on healthy
+                                  # medium clusters (e.g. 12-source breaking
+                                  # news with 22 multi-desk articles)
 
 
 def _cluster_cohesion(
@@ -2258,22 +2290,18 @@ def cluster_stories(
         })
 
     # Phases 2 + 2.5 + 2.55 + 2.6 + 3 + 4
+    # 2026-05-28 — reverted the adaptive entity / anchor thresholds added on
+    # 2026-05-26. They were meant to compensate for chain-merge bridges on
+    # low-volume days, but in practice they starved merging across EVERY
+    # slow day (e.g. 4,395-article corpus → entity threshold 3.0 + anchor
+    # fraction 0.80 → Phase 2 + Phase 2.6 both effectively no-ops → real
+    # top stories stay fragmented as 2-3-source siblings, never clearing
+    # the coverage_ok gate (src>=5 AND tiers>=2) in the ranker. Restore the
+    # static baselines that worked. The MERGE_HARD_CEILING already prevents
+    # transitive mega-merges; IDF smoothing in _ent_idf_sum (n_eff = max(n,30),
+    # df_eff = df + ceil(N/4)) already stabilises IDF across corpus sizes.
     if run_merge_pass and len(clusters) > 1:
-        # 2026-05-26 — adaptive Phase 2 IDF threshold for low-volume corpus.
-        # On Memorial Day / Tuesday slow days (4-5K articles), the IDF
-        # distribution shifts: generic entities like "Israel", "Iran",
-        # "Trump" become MORE distinguishing (lower df → higher IDF) than
-        # on busy days, so the static 2.0 threshold lets unrelated clusters
-        # chain-merge via shared generic-entity overlap. Today produced a
-        # 1,112-article / 233-source cluster containing tennis + Ebola +
-        # NFL + Pope AI + Mexican governors all bridged via shared
-        # references to Israel/Iran/Trump. Bumping the threshold to 3.0 on
-        # low-volume days forces stronger entity overlap before merging,
-        # preserving the chain-merge defense without affecting busy-day
-        # clustering (Sunday's 9,500-article corpus stays at 2.0).
-        _article_count_hint = sum(len(c.get("articles", []) or []) for c in clusters)
-        _entity_threshold = 3.0 if _article_count_hint < 8000 else ENTITY_MERGE_IDF_THRESHOLD
-        clusters = merge_related_clusters(clusters, idf_threshold=_entity_threshold)
+        clusters = merge_related_clusters(clusters, idf_threshold=ENTITY_MERGE_IDF_THRESHOLD)
     # Phase 2.5 — editorial canonical-pair merge (Trump-Xi, Starmer-Streeting)
     if run_merge_pass and len(clusters) > 1:
         clusters = merge_canonical_pairs(clusters)
@@ -2281,14 +2309,8 @@ def cluster_stories(
     if run_merge_pass and len(clusters) > 1:
         clusters = merge_synonym_pairs(clusters)
     # Phase 2.6 — anchor-entity merge (high-IDF rare proper nouns)
-    # 2026-05-26 iter D — tighten anchor IDF fraction on low-volume days.
-    # Low corpus inflates IDFs of generic entities; the 0.70 fraction-of-
-    # max becomes a low bar that chain-bridges via "Iran" / "Trump" /
-    # "Israel". 0.80 forces the anchor to be in the truly rare top-20%.
     if run_merge_pass and len(clusters) > 1:
-        _ac_hint = sum(len(c.get("articles", []) or []) for c in clusters)
-        _anchor_frac = 0.80 if _ac_hint < 8000 else ANCHOR_IDF_FRACTION_OF_MAX
-        clusters = merge_anchor_entities(clusters, idf_fraction_of_max=_anchor_frac)
+        clusters = merge_anchor_entities(clusters, idf_fraction_of_max=ANCHOR_IDF_FRACTION_OF_MAX)
     if run_merge_pass and len(clusters) > 1:
         clusters = merge_duplicate_title_clusters(clusters)
     # Phase 4 — garbage-title force-split (over-merge detector)

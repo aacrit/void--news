@@ -163,6 +163,20 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
     updates = []
     errors = 0
 
+    # 2026-05-28 — corpus-size proxy for the adaptive is_headline band must
+    # reflect THIS RUN's recent corpus, not the all-time articles_by_id snapshot
+    # (8-day retention × 5K/day = 40K+ → always lands in busy-mode, killing
+    # slow-day headlines). Use the count of articles published in the last 48h
+    # as a stable, window-relative proxy. Matches main.py's len(stored_articles).
+    from datetime import datetime, timezone, timedelta
+    _cutoff = (datetime.now(timezone.utc) - timedelta(hours=48)).isoformat()
+    corpus_articles_window = sum(
+        1 for r in articles_by_id.values()
+        if (r.get("published_at") or "") >= _cutoff
+    )
+    print(f"  Corpus window (last 48h): {corpus_articles_window} articles "
+          f"(of {len(articles_by_id)} total in DB)")
+
     for i, cluster in enumerate(clusters):
         cid = cluster["id"]
 
@@ -233,7 +247,17 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
                 sections=cluster_sections,
                 mega_capped=mega_capped,
                 cluster=cluster,
-                corpus_size=len(articles_by_id),  # 2026-05-25 adaptive is_headline
+                # 2026-05-28 fix — `articles_by_id` is the all-time DB
+                # article snapshot (often 40K+), which forced the
+                # is_headline adaptive band to ALWAYS pick busy-mode
+                # thresholds (rank>=45, conf>=60) regardless of how
+                # quiet the actual news day was. That silently
+                # OVERWROTE is_headline=true with is_headline=false on
+                # every cluster main.py just marked, producing the
+                # "0 headlines" homepage. Use the same window-relative
+                # count main.py uses: the unique published_at-recent
+                # articles touching THIS run's clusters.
+                corpus_size=corpus_articles_window,
             )
         except Exception as e:
             errors += 1
