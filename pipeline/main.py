@@ -1335,8 +1335,13 @@ def main():
         print(f"  Filtered existing URLs: {len(unique_article_rows)} -> {len(new_article_rows)} new articles")
 
     # Batch-insert only NEW articles to Supabase (200 per chunk)
-    print(f"  Batch-inserting {len(new_article_rows)} new articles...")
-    stored_articles = []
+    # 2026-05-28 — `stored_articles = []` and the insert loop are SKIPPED on
+    # --recluster-only. Without this guard, the reset wipes the DB preload
+    # populated at lines 1100-1116, causing every recluster run to process
+    # zero articles (clustering on empty input → 0 stories).
+    if not recluster_only:
+        print(f"  Batch-inserting {len(new_article_rows)} new articles...")
+        stored_articles = []
     for i in range(0, len(new_article_rows), 200):
         chunk_pairs = new_article_rows[i:i + 200]
         chunk_rows = [row for row, _ in chunk_pairs]
@@ -1362,7 +1367,8 @@ def main():
                 except Exception:
                     pass  # skip duplicates/errors silently
 
-    print(f"  Articles stored: {len(stored_articles)}/{len(new_article_rows)} new ({len(existing_urls)} existing skipped)")
+    if not recluster_only:
+        print(f"  Articles stored: {len(stored_articles)}/{len(new_article_rows)} new ({len(existing_urls)} existing skipped)")
 
     # Step 4b: Wire-aware fingerprinting (Phase 0)
     # Tags syndicated wire copies in place so downstream clustering can
