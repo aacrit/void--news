@@ -1134,7 +1134,7 @@ def rank_importance(
     sections: list[str] | None = None,
     mega_capped: bool = False,
     cluster: dict | None = None,
-    corpus_size: int | None = None,
+    corpus_size: int | None = None,  # ACCEPTED for backwards compat, IGNORED
 ) -> dict:
     """
     Score the importance of a story cluster for feed ranking.
@@ -1511,124 +1511,43 @@ def rank_importance(
 
     headline_rank = round(max(0.0, min(100.0, headline_rank)), 2)
 
-    # 2026-05-24 v3 — is_headline simplified to the signals that actually
-    # predict "this is a top story." Iter 2 surfaced the failure mode:
-    # the 131-source Iran/Hormuz cluster had headline_confidence=60 but
-    # is_headline=false because the cohesion AND authority gates were
-    # over-restrictive. Cohesion is already enforced by Phase 5's split
-    # decision — if a cluster survived Phase 5 with 131 voices, it IS
-    # cohesive enough. Authority is a NICE bonus, not a requirement
-    # (Iran-Hormuz diplomatic story has no institutional authority
-    # entity but is clearly today's top headline).
+    # 2026-05-31 simplification — is_headline rebuilt around 3 signals.
+    # The Era 7 elaborations (three-tier corpus-volume scaling, Hill-curve
+    # saturating src_pts, authority-or-spectrum bonus, headline_confidence
+    # blend) tried to encode "is this important enough" via many gates.
+    # Production data showed they over-fitted to the test corpus while
+    # missing real top stories.
     #
-    # New criteria — coverage AND rank ARE required; everything else is a
-    # confidence multiplier:
-    #   1. Coverage: (>= 5 sources AND >= 2 tiers) OR (>= 8 sources)
-    #   2. Importance: headline_rank >= 40
-    #   3. Survived Phase 5: not mega_capped
-    # headline_confidence weights:
-    #   40% source_count (saturating curve, 5→50pts, 10→75pts, 20+→100pts)
-    #   25% tier_diversity (0-100 from the existing ranker score)
-    #   25% headline_rank (clamped 0..100)
-    #   10% (authority OR cross-spectrum) bonus pts
-    # is_headline = confidence >= 60 AND coverage_ok AND rank_ok AND not capped.
-    # 2026-05-24 iter 6 fix — use the CLUSTER's wire-collapsed source_count
-    # (maintained by clustering Phase 5 + deduplicator), NOT a re-count from
-    # cluster_articles. For wire-syndicated stories, many articles share one
-    # source_id, so re-counting gave src_count=1 even on a 31-source Ebola
-    # cluster — completely breaking is_headline.
+    # New formula:
+    #   is_headline = (source_count >= 8)
+    #                 AND (headline_rank >= 40)
+    #                 AND (not mega_cluster_capped)
+    #
+    # headline_confidence is a derived display signal — not used to gate
+    # is_headline. Linear blend so the frontend can render badge intensity.
     src_count = 0
-    tiers_present = set()
     if cluster is not None:
         try:
             src_count = int(cluster.get("source_count", 0) or 0)
         except (TypeError, ValueError):
             src_count = 0
-    if cluster_articles and sources:
-        # Build a source lookup that works for BOTH the main-pipeline path
-        # (sources have db_id = UUID + id = slug) and the rerank path
-        # (same shape). Articles have source_id (UUID).
-        _src_by_db_id = {
-            s.get("db_id"): s for s in sources if s.get("db_id")
-        }
-        _src_by_id = {s.get("id"): s for s in sources}
-        for a in cluster_articles:
-            sid = a.get("source_id")
-            src = (
-                _src_by_db_id.get(sid)
-                or _src_by_id.get(sid)
-                or _src_by_id.get(a.get("source_slug", ""))
-                or {}
-            )
-            tier = src.get("tier")
-            if tier:
-                tiers_present.add(tier)
-        # Fallback if cluster.source_count was 0/missing: use unique
-        # article-level source_id as a floor.
-        if src_count == 0:
-            src_count = len({a.get("source_id") for a in cluster_articles if a.get("source_id")})
-    coverage_ok = (
-        (src_count >= 5 and len(tiers_present) >= 2)
-        or src_count >= 8
-    )
-    # 2026-05-26 iter E — three-tier scaling for corpus volume.
-    # The 48h recluster window always contains 10-15K articles even on
-    # slow days (today's actual 4.7K + yesterday's 7K + 36h lookback),
-    # so corpus_size > 8K fired busy mode at the wrong time. Today's
-    # iter D produced REAL top stories (Pope Leo XIV AI warfare 66 srcs
-    # conf 82, BP chairman 20 srcs, North Korea 18 srcs) all at
-    # headline_rank 39-42 — below the 45 busy floor.
-    #
-    # Three bands:
-    #   < 6K   (true holiday): rank 22, conf 30 — maximally permissive
-    #   < 12K  (slow weekday or recluster on slow day): rank 35, conf 50
-    #   ≥ 12K  (busy day with real coverage): rank 45, conf 60
-    #
-    # Sunday's full pipeline had articles_analyzed=11643 — between low
-    # and high. With recluster lookback it'd hit 15K+ → busy. Today's
-    # recluster has ~10K → middle band. Headlines fire with reasonable
-    # thresholds for the actual data quality.
-    _cs = corpus_size if corpus_size is not None else 12000
-    if _cs < 6000:
-        _rank_floor, _conf_floor = 22.0, 30.0
-    elif _cs < 12000:
-        _rank_floor, _conf_floor = 35.0, 50.0
-    else:
-        _rank_floor, _conf_floor = 45.0, 60.0
-    rank_ok = headline_rank >= _rank_floor
-    authority_or_spectrum_bonus = authority >= 60.0 or cross_spectrum_fired
+    if src_count == 0 and cluster_articles:
+        # Fallback to unique article-level source_id when cluster.source_count
+        # is 0/missing. Wire-syndicated stories still benefit from the
+        # cluster-side wire-collapsed count when it's set upstream.
+        src_count = len({a.get("source_id") for a in cluster_articles if a.get("source_id")})
 
-    # Source-count saturating curve — Hill-curve, plateaus at ~100.
-    # Formula: 100 * n / (n + 5). Reality table:
-    #   1 src → 17, 3 → 38, 5 → 50, 8 → 62, 12 → 71, 20 → 80,
-    #   30 → 86, 50 → 91, 100 → 95, 174 → 97.
-    # The prior log10 curve was too flat (30 sources → 52 only). For
-    # production news, "this is being covered widely" should saturate
-    # by 20-30 voices, not 1000.
-    src_pts = 100.0 * src_count / (src_count + 5.0) if src_count > 0 else 0.0
-
-    # Tier diversity is already 0..100 from the existing scorer.
-    tier_pts = max(0.0, min(100.0, tier_div))
-    rank_pts = max(0.0, min(100.0, headline_rank))
-    bonus_pts = 100.0 if authority_or_spectrum_bonus else 50.0
-
-    headline_confidence = round(
-        0.40 * src_pts
-        + 0.25 * tier_pts
-        + 0.25 * rank_pts
-        + 0.10 * bonus_pts,
-        1,
-    )
-    # Threshold relaxed 60 → 55 after iter 4 data showed even healthy
-    # 174-source Iran cluster only hit conf=48 with the old src_pts curve.
-    # With the new Hill curve, real top stories should comfortably clear 55:
-    #   Iran 174s/r52 → 39 + 0.25*tier + 13 + bonus_pts → typically 65-80
-    #   Ebola 33s/r64 → 34 + 0.25*tier + 16 + bonus_pts → typically 60-75
-    #   Gunman 34s/r62 → 35 + 0.25*tier + 15 + bonus_pts → typically 60-75
     is_headline = bool(
-        coverage_ok and rank_ok and not mega_capped
-        and headline_confidence >= _conf_floor  # adaptive: 60 busy / 45 low-volume
+        src_count >= 8
+        and headline_rank >= 40
+        and not mega_capped
     )
+
+    # Display-only confidence (0..100) — 50% source_count saturating
+    # at sc=20, 50% headline_rank clamped 0..100.
+    src_pts = 100.0 * min(src_count, 20) / 20.0 if src_count > 0 else 0.0
+    rank_pts = max(0.0, min(100.0, headline_rank))
+    headline_confidence = round(0.5 * src_pts + 0.5 * rank_pts, 1)
 
     return {
         "importance_score": headline_rank,
@@ -1650,9 +1569,7 @@ def rank_importance(
             "authority": round(authority, 2),
             "longevity_mult": round(longevity_mult, 2),
             "is_headline_src_count": src_count,
-            "is_headline_tiers": len(tiers_present),
-            "is_headline_cross_spectrum": cross_spectrum_fired,
             "is_headline_src_pts": round(src_pts, 1),
-            "is_headline_bonus_pts": round(bonus_pts, 1),
+            "is_headline_rank_pts": round(rank_pts, 1),
         },
     }

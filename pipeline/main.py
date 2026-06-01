@@ -3066,53 +3066,15 @@ def main():
         print(f"  [warn] World-tag reconciliation failed: {e}")
         traceback.print_exc()
 
-    # Step 8c.6 — Engine snapshot. Freeze the rule-based output as the
-    # contract for Stage B (editorial) and as the baseline for sandbox
-    # replays. Writes engine_runs + engine_snapshots rows (migration 057).
-    # Failure is non-fatal: pipeline continues even if snapshot write
-    # fails (tables may not exist yet on a stale DB).
-    try:
-        print("\n[8c.6] Engine snapshot — freezing rule-based output...")
-        from engine_snapshot import build_payload as _build_payload
-        from engine_snapshot import write_snapshot as _write_snapshot
-        # Pull final state from DB (post-rerank, post-reconciliation).
-        _from_iso = (_dt.now(_tz.utc) - _td(hours=48)).isoformat()
-        _snap_clusters_resp = supabase.table("story_clusters").select(
-            "id,title,summary,headline_rank,importance_score,divergence_score,"
-            "coverage_velocity,source_count,sections,section,category,content_type,"
-            "is_international,mega_cluster_capped,rank_world,rank_us,rank_europe,"
-            "rank_south_asia,first_published,last_updated"
-        ).gte("last_updated", _from_iso).execute()
-        _snap_clusters = _snap_clusters_resp.data or []
-        # 2026-05-24 iter 6 fix — removed `category` from SELECT; articles
-        # table doesn't have that column (categories live on story_clusters
-        # only). The prior version threw a 42703 error that caused engine
-        # snapshot to silently fail.
-        _snap_articles_resp = supabase.table("articles").select(
-            "id,title,url,source_id,section,published_at,is_wire_copy"
-        ).gte("published_at", _from_iso).limit(5000).execute()
-        _snap_articles = _snap_articles_resp.data or []
-        _snap_rankings = {
-            "top_50_world": [c["id"] for c in sorted(
-                _snap_clusters, key=lambda x: x.get("rank_world") or 0, reverse=True
-            )[:50]],
-        }
-        _snap_payload = _build_payload(
-            articles=_snap_articles,
-            clusters=_snap_clusters,
-            rankings=_snap_rankings,
-            phase_traces={},
-        )
-        _engine_run_id, _snapshot_id = _write_snapshot(
-            payload=_snap_payload,
-            pipeline_run_id=str(run_id) if run_id else None,
-            source="sandbox" if engine_only else "production",
-            params={"editions": editions or [], "engine_only": engine_only},
-        )
-    except Exception as e:
-        import traceback
-        print(f"  [warn] Engine snapshot write failed: {e}")
-        traceback.print_exc()
+    # Step 8c.6 — Engine snapshot DISABLED (2026-05-31 simplification).
+    # The 5-7 MB JSONB writer fired on every cron run for the diagnostic
+    # sandbox at /diag.html. With the lab marked deprecated, paying the
+    # serialisation cost on every production run is not worth it. The
+    # writer module (pipeline/engine_snapshot.py) and the engine_runs /
+    # engine_snapshots tables (migrations 057-058) stay in place for
+    # opt-in sandbox replays via pipeline/sandbox_replay.py. To re-enable
+    # production snapshots, restore this block from git history.
+    pass
 
     # --engine-only short-circuit: snapshot is written; skip every LLM-
     # bearing step (summarization, daily brief, weekly, IG). Diagnostic

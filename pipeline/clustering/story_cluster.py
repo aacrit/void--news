@@ -61,8 +61,13 @@ from utils.nlp_shared import get_nlp
 # sensitivity. Tuned 2026-05-15 against the 21-fixture clustering suite.
 # ---------------------------------------------------------------------------
 STORY_TFIDF_THRESHOLD       = 0.18   # Phase 1 agglomerative cosine cut
-ENTITY_MERGE_IDF_THRESHOLD  = 2.0    # Phase 2: sum-of-IDF over shared entities
-TITLE_JACCARD_THRESHOLD     = 0.27   # Phase 3: stemmed title Jaccard
+ENTITY_MERGE_IDF_THRESHOLD  = 2.0    # legacy — unused after 2026-05-31 simplification
+TITLE_JACCARD_THRESHOLD     = 0.22   # Phase 3: stemmed title Jaccard
+                                     # 0.27 → 0.22 on 2026-05-31 to align with
+                                     # ANCHOR_TITLE_JACCARD_FLOOR + rescue
+                                     # multi-desk title diversity cases like
+                                     # Trump-Iran where each desk picks a
+                                     # different secondary detail.
 MAX_AGE_SPREAD_HOURS        = 48.0   # Time gate (kept for both merge passes)
 WIRE_HASH_FINGERPRINT_BYTES = 800    # Phase 0 (in deduplicator): chars hashed
 WIRE_LEAD_COSINE            = 0.92   # Phase 0 (in deduplicator): confirm threshold
@@ -107,12 +112,52 @@ def _clean_title(title: str) -> str:
 
 
 def _build_document(article: dict) -> str:
-    """Build a TF-IDF document from title + first 500 words of full_text."""
+    """Build a TF-IDF document from title + first 500 words of full_text.
+
+    2026-05-31 — synonym aliases (DRC↔Congo, UK↔Britain, "Donald Trump"↔Trump)
+    are normalised here, before TF-IDF vectorisation. This subsumes the
+    old Phase 2.55 merge pass: TF-IDF cosine similarity between a "DRC"
+    article and a "Congo" article rises automatically because both
+    documents now share the same canonical token.
+    """
     title = article.get("title", "") or ""
     full_text = article.get("full_text", "") or ""
     words = full_text.split()[:500]
     body_snippet = " ".join(words)
-    return f"{title} {body_snippet}".strip()
+    doc = f"{title} {body_snippet}".strip().lower()
+    # Apply synonym normalisation in the order longest-first so that
+    # multi-word phrases ("democratic republic of congo") match before
+    # their single-token aliases ("congo").
+    for surface, canonical in _SYNONYM_NORMALISATION:
+        doc = doc.replace(surface, canonical)
+    return doc
+
+
+# Canonical-form mapping derived from the old Phase 2.55 SYNONYM_PAIRS list.
+# Tuples are (surface, canonical) and applied in document order via simple
+# substring replacement on the lowercased document text. Order matters:
+# longer surface forms must be listed BEFORE their shorter aliases so a
+# multi-word match doesn't get fragmented by an earlier single-token rule.
+_SYNONYM_NORMALISATION: list[tuple[str, str]] = [
+    # Multi-word geographic / political phrases (must come first)
+    ("democratic republic of congo", "drc"),
+    ("united kingdom", "uk"),
+    ("united states", "us"),
+    ("north korea", "north-korea"),
+    ("south korea", "south-korea"),
+    # Single-token aliases
+    ("congo", "drc"),
+    ("burma", "myanmar"),
+    ("britain", "uk"),
+    ("emirates", "uae"),
+    ("dprk", "north-korea"),
+    ("rok", "south-korea"),
+    # Name variants — full name → surname so TF-IDF tokenisation aligns
+    ("donald trump", "trump"),
+    ("joe biden", "biden"),
+    ("vladimir putin", "putin"),
+    ("xi jinping", "xi"),
+]
 
 
 # ---------------------------------------------------------------------------
@@ -336,6 +381,31 @@ _ENTITY_STOP_TOKENS = frozenset({
     "online", "digital", "edition", "network", "channel",
     # Often-occurring source-byline / copyright phrases
     "staff", "writer", "correspondent", "reporter", "editor",
+    # 2026-05-31 simplification — moved here from _LOW_SPECIFICITY_ENTITIES
+    # (which was deleted with the Phase 2 revert). Generic government
+    # VENUES and AGENCIES appear in many unrelated political stories and
+    # would over-merge under the simple set-intersection rule:
+    # us-1a (Trump rally) shares {White House, Treasury, Bessent} with
+    # us-3a (Fed Chair Warsh) and us-5a (NYC mayor budget) even though
+    # those are three unrelated stories. Stop-list these venues so they
+    # never count toward the 3-entity gate. Country names and politician
+    # names are NOT stop-listed — they ARE distinguishing when shared
+    # across multi-desk coverage of one event (Trump-Iran consolidation).
+    "white house", "kremlin", "downing street", "elysee",
+    "congress", "senate", "house", "parliament", "supreme court",
+    "treasury", "us treasury", "pentagon", "state department",
+    "fbi", "cia", "doj", "justice department",
+    "fed", "federal reserve", "wall street",
+    "european commission", "european council", "european union",
+    "nato", "un", "united nations",
+    # Wire-service names — appear as bylines / "Reuters reported" stubs
+    # across many unrelated stories. Filtering as stop tokens prevents
+    # cross-story bridges via shared wire attribution.
+    "reuters", "ap", "associated press", "bloomberg", "afp", "dpa",
+    "bbc", "cnn", "fox news", "wall street journal", "nytimes",
+    "the new york times", "washington post", "guardian",
+    # Generic stub words
+    "newsmax",
 })
 
 # Entities that appear in such a high baseline rate across world-news
@@ -780,33 +850,48 @@ def _parse_first_pub(cluster: dict) -> datetime | None:
 
 def merge_related_clusters(
     clusters: list[dict],
-    idf_threshold: float = ENTITY_MERGE_IDF_THRESHOLD,
+    min_shared_entities: int = 3,
     max_age_spread_hours: float = MAX_AGE_SPREAD_HOURS,
+    max_cluster_articles: int = 50,
 ) -> list[dict]:
-    """Phase 2: IDF-weighted entity-overlap merge.
+    """Phase 2: entity-overlap merge — simple set-intersection.
+
+    REVERTED 2026-05-31 to the 2026-03-28 design (commit 5402f7d). The
+    May 15 rewrite layered IDF-weighting, _LOW_SPECIFICITY_ENTITIES
+    downweighting, and a distinguishing_shared >= 1 gate on top of the
+    simple set-intersection. Those gates correctly prevent the 233-source
+    AI-deployment chain merge but incorrectly prevent every legitimate
+    Trump-X / Iran-X / China-X consolidation where the shared entities
+    happen to be geopolitical hot-spots. The May 30 production case:
+    Trump-Iran deal story fragmented across 5 sibling clusters of
+    sc=6/4/4/3/2.
+
+    The structural defence against chain-merges is the size cap
+    `max_cluster_articles=50` on union-find, with proper size tracking
+    via `group_size[rb] += group_size[ra]` on every union. That defence
+    blocks the 233-source AI mega-cluster before transitive closure can
+    form it, and it does so without sacrificing legitimate consolidations.
 
     Algorithm:
-      1. For each cluster, extract its weighted entity set.
-      2. Compute global IDF over the run (N = number of clusters).
-      3. For each pair (i, j) of clusters with first_published within
-         max_age_spread_hours, score = sum(idf(e) for e in shared entities).
-      4. Union-find merge when score >= idf_threshold.
-
-    No tier-conditional caps. No size cap. No head-of-state exception.
-    The IDF math itself does the right thing for both highly-distinctive
-    entity overlaps and broad cross-story common-entity bleed.
+      1. For each cluster, extract its named-entity set.
+      2. For each pair (i, j): if they share >= min_shared_entities AND
+         their first_published timestamps are within max_age_spread_hours
+         AND their accumulated group size would stay under
+         max_cluster_articles, union them.
+      3. Repeat over all pairs (deterministic order). Return merged.
     """
     if len(clusters) <= 1:
         return clusters
 
-    cluster_entities: list[dict[str, int]] = [
-        _extract_cluster_entities(c.get("articles", [])) for c in clusters
+    cluster_entities: list[set[str]] = [
+        set(_extract_cluster_entities(c.get("articles", [])).keys())
+        for c in clusters
     ]
-    idf = _compute_global_idf(cluster_entities)
     timestamps = [_parse_first_pub(c) for c in clusters]
 
     n = len(clusters)
     parent = list(range(n))
+    group_size = [len(c.get("articles", []) or []) for c in clusters]
 
     def find(x: int) -> int:
         while parent[x] != x:
@@ -818,6 +903,7 @@ def merge_related_clusters(
         ra, rb = find(a), find(b)
         if ra != rb:
             parent[ra] = rb
+            group_size[rb] += group_size[ra]
 
     for i in range(n):
         ents_i = cluster_entities[i]
@@ -830,69 +916,27 @@ def merge_related_clusters(
             if not ents_j:
                 continue
 
-            # Time gate
+            # Entity-overlap gate
+            shared = ents_i & ents_j
+            if len(shared) < min_shared_entities:
+                continue
+
+            # Time gate — don't merge stories far apart in time.
             ti, tj = timestamps[i], timestamps[j]
             if ti is not None and tj is not None:
                 spread = abs((ti - tj).total_seconds()) / 3600.0
                 if spread > max_age_spread_hours:
                     continue
 
-            shared = set(ents_i.keys()) & set(ents_j.keys())
-            if not shared:
+            # Size gate — the structural defence against transitive
+            # chain-merges. Reads accumulated group_size at each root
+            # so the check sees the CURRENT merged size, not just the
+            # pair members. union() maintains the invariant via
+            # group_size[rb] += group_size[ra].
+            if group_size[find(i)] + group_size[find(j)] > max_cluster_articles:
                 continue
-            # Per-entity IDF, downweighted for entities in the low-
-            # specificity set (Trump, white house, treasury, etc.) that
-            # appear across many unrelated clusters in any news cycle.
-            score = 0.0
-            distinguishing_shared = 0
-            for e in shared:
-                w = _LOW_SPECIFICITY_WEIGHT if e in _LOW_SPECIFICITY_ENTITIES else 1.0
-                score += idf.get(e, 0.0) * w
-                if e not in _LOW_SPECIFICITY_ENTITIES:
-                    distinguishing_shared += 1
 
-            # Primary merge: weighted sum-of-IDF crosses threshold AND
-            # the pair shares at least 3 entities, of which at least 1 is
-            # NOT in the low-specificity set. This blocks pure-government-
-            # bridge merges (4 shared entities, all from {trump, white
-            # house, treasury, senate}, score arithmetically ~3.0 but
-            # carrying no actual story-similarity signal).
-            should_merge = (
-                score >= idf_threshold
-                and len(shared) >= 3
-                and distinguishing_shared >= 1
-            )
-
-            # Fallback merge: high-Jaccard, moderate-shared-count pairs
-            # rescue same-story pairs whose entities are individually too
-            # common to score on raw IDF (e.g. India election clusters all
-            # mention BJP + Modi + Maharashtra + Fadnavis but each entity
-            # has df ≈ N so IDF -> 0; Apple earnings clusters share Apple
-            # + China + Vision Pro). Requires BOTH:
-            #   (a) >= 3 shared distinct entities
-            #   (b) Jaccard over entity sets >= 0.27
-            # Jaccard 0.27 is the calibrated knee — Brazil deforestation/
-            # football pair (jacc = 0.04, shared = 0) stays split, while
-            # the Apple/India/Typhoon merge pairs (jacc 0.27-0.50) all
-            # cross. Higher jaccard floors miss legitimate merges; lower
-            # floors over-merge in cohort fixtures (overflow C2<->C12 at
-            # jacc 0.25 sits exactly on the line).
-            if not should_merge:
-                union_size = len(set(ents_i.keys()) | set(ents_j.keys()))
-                if (
-                    len(shared) >= 3
-                    and union_size > 0
-                    and (len(shared) / union_size) >= 0.27
-                ):
-                    should_merge = True
-
-            if should_merge:
-                # Hard ceiling: refuse merges that would create mega-clusters.
-                # Walk to the root of each component so the size check sees
-                # the current accumulated size, not just the pair members.
-                if _would_exceed_ceiling(clusters[find(i)], clusters[find(j)]):
-                    continue
-                union(i, j)
+            union(i, j)
 
     return _rebuild_merged(clusters, parent, find)
 
@@ -1458,11 +1502,13 @@ def _force_split_cluster(
             "articles": carts,
         })
 
-    # Mini Phase 2: stricter IDF entity merge so we don't immediately re-merge
+    # Mini Phase 2: stricter merge so we don't immediately re-merge.
+    # Uses set-intersection like main Phase 2 but with a tighter
+    # min_shared_entities (5 instead of 3) for sub-cluster confidence.
     if len(sub_clusters) > 1:
         sub_clusters = merge_related_clusters(
             sub_clusters,
-            idf_threshold=tighter_idf_threshold,
+            min_shared_entities=5,
         )
 
     # Final guard: if the stricter pass collapsed everything back to 1
@@ -1525,205 +1571,37 @@ def split_garbage_clusters(clusters: list[dict]) -> list[dict]:
 def split_mega_clusters(
     clusters: list[dict],
     threshold: int = MEGA_CLUSTER_THRESHOLD,
-    split_tfidf: float = MEGA_SPLIT_TFIDF,
-    split_idf: float = MEGA_SPLIT_IDF,
     verbose: bool = True,
 ) -> list[dict]:
-    """Phase 5: detect mega-clusters and force-split or display-cap.
+    """Phase 5: soft-cap clusters whose source_count exceeds the threshold.
 
-    A cluster with source_count >= threshold is suspect (267-source "AI
-    Deployment" mega-cluster motivated this pass). Two responses:
+    REVERTED 2026-05-31 to the simple soft-cap branch. The Phase 2
+    50-article hard cap (in union-find via group_size accumulation)
+    already prevents the chain-merge mega-clusters that motivated the
+    Era 6/7 elaborations (cohesion-gated trip, force-split, recursive
+    sub-cap, chain-merge-dissolve). Phase 5 now only fires on the rare
+    genuine mega-event (a presidential inauguration, a 9/11-scale
+    disaster). In that case we keep the cluster whole but cap
+    source_count for display — no force-split, no cohesion gate.
 
-      1. Re-cluster at AGGRESSIVE thresholds (split_tfidf, split_idf
-         strictly tighter than the baseline). If we get >=2 sub-clusters,
-         use them — the over-merge has been broken apart.
-      2. If still 1 sub-cluster, this is likely a genuine breaking-news
-         mega-event (e.g., a presidential inauguration, a 9/11-scale
-         disaster). Keep the cluster intact but CAP `source_count` at
-         `threshold` for display purposes and stamp
-         `mega_cluster_capped=True` so the ranker can sense the cap.
-
-    The cap prevents the eye-rolling "267 sources" badge while preserving
-    the original article membership — downstream consumers can still
-    reach the full article list via `articles` if needed. The original
-    pre-cap source count is preserved as `_mega_cluster_original_count`.
-
-    Logs each mega-cluster decision when verbose=True.
+    Logs each cap decision when verbose=True.
     """
     if not clusters:
         return clusters
 
     out: list[dict] = []
     for c in clusters:
-        sc = c.get("source_count", 0)
-        ac = len(c.get("articles", []) or [])
-        # 2026-05-24 v2 — cohesion-gated trip (replaces the article-ratio
-        # band-aid). A real 50-article top story scores cohesion ~ 70 and
-        # passes through here untouched. A false-merge pile (Observer
-        # bridge, "Multiple Car Crashes" mash-up) scores < 30 and gets
-        # force-split. The legacy source_count >= threshold gate remains
-        # as a hard ceiling for the 200+ rare mega-event case.
-        cohesion = None
-        cohesion_trip = False
-        if ac >= MEGA_COHESION_MIN_ARTICLES:
-            # Source map is needed for tier-concentration; clustering
-            # callers attach it to the cluster dict when available.
-            sm = c.get("_source_map") or {}
-            cohesion = _cluster_cohesion(c, source_map=sm)
-            c["_cohesion"] = cohesion  # stash for downstream ranker use
-            # 2026-05-28 fix — cohesion-trip MUST require a meaningful
-            # source-count floor. The original intent was catching
-            # publisher-bridge false-merges (>= 40 sources piled in via
-            # a junk anchor entity). Firing on sc=12, ac=22 medium
-            # clusters with naturally low title-Jaccard catastrophically
-            # over-shatters slow-day breaking news.
-            if (
-                sc >= MEGA_COHESION_MIN_SOURCES
-                and cohesion["cohesion_score"] < MEGA_COHESION_FLOOR
-            ):
-                cohesion_trip = True
-        if sc < threshold and not cohesion_trip:
-            out.append(c)
-            continue
-        if cohesion_trip and verbose:
-            cs = cohesion["cohesion_score"] if cohesion else "?"
-            jc = cohesion["avg_title_jaccard"] if cohesion else "?"
-            print(
-                f"  [Phase5/cohesion-trip] '{c.get('title', '')[:60]!r}' "
-                f"src={sc} arts={ac} cohesion={cs} title_jaccard={jc} → split"
-            )
-
-        # Step 1: try to force-split at aggressive thresholds
-        sub = _force_split_cluster(
-            c,
-            tighter_threshold=split_tfidf,
-            tighter_idf_threshold=split_idf,
-        )
-
-        # Sanity guard v2 (2026-05-17): measure split health by average
-        # articles per sub-cluster, not by sub-cluster count.
-        #
-        # The original heuristic (max_sane_sub = max(2, sc // 2)) treated
-        # any split with > sc/2 sub-clusters as "shattered" and shipped
-        # the over-merge. But the middle range — 10-50 sub-clusters from
-        # a 200-source over-merge — is exactly where genuine over-merges
-        # live, and that band was wrongly classified as shattered.
-        #
-        # The right signal: a healthy re-split has ≥1.5 articles per
-        # sub-cluster on average. The 166-source soccer regression
-        # produced 222 sub-clusters of 0-1 articles each (avg ≈ 0.7 →
-        # shattered, correct fallback to cap). A 217-source over-merge
-        # produces ~50 sub-clusters of 4-5 articles each (avg ≈ 4.3 →
-        # accept the split, mega-cluster dissolves).
-        total_sub_articles = sum(len(s.get("articles", [])) for s in sub)
-        avg_articles_per_sub = (
-            total_sub_articles / len(sub) if sub else 0.0
-        )
-        shattered = (avg_articles_per_sub < 1.5)
-
-        if len(sub) >= 2 and not shattered:
-            if verbose:
-                print(
-                    f"  [Phase5/mega-split] '{c.get('title', '')[:60]!r}' "
-                    f"(src={sc}) split into {len(sub)} sub-clusters "
-                    f"(avg {avg_articles_per_sub:.1f} articles/sub)"
-                )
-            # 2026-05-25 — recursive sub-cap (tightened): only cap a
-            # surviving sub-cluster when it ITSELF would have tripped
-            # Phase 5's primary gate, i.e. source_count >= threshold (the
-            # 362-source chain-merge survivor that motivated this fix).
-            # An earlier version also tripped on articles >= 20 alone,
-            # which over-capped legitimate 29-source / 50-article real
-            # top stories (today's Trump-Iran-deal cluster). Article-count
-            # without a cohesion check is too coarse — Phase 5's primary
-            # gate already uses cohesion_score to distinguish noise from
-            # real coverage, and that gate was applied to the PARENT
-            # cluster before splitting, so surviving sub-clusters with
-            # smaller source_count are by construction healthier slices
-            # of whatever the parent contained.
-            sm_for_recurse = c.get("_source_map") or {}
-            for s in sub:
-                # 2026-05-28 — _force_split_cluster writes RAW source_count
-                # (article-level source_id count, NOT wire-aware). A
-                # sub-cluster of 80 AP wire copies across 10 publishers
-                # arrives here with source_count=80 and falsely trips the
-                # >= threshold cap. The wire-aware fixup at line ~2326
-                # then SKIPS this sub because it sees mega_cluster_capped.
-                # Apply wire-collapse BEFORE the comparison so genuine
-                # 10-voice wire-syndicated sub-clusters don't get
-                # permanently demoted.
-                _apply_wire_aware_source_count(s)
-                s_sc = int(s.get("source_count", 0) or 0)
-                if s_sc < threshold:
-                    out.append(s)
-                    continue
-                # Sub-cluster STILL above threshold — cap it directly
-                # without another force-split pass (avoid infinite recursion).
-                s["_mega_cluster_original_count"] = s_sc
-                s["source_count"] = min(s_sc, threshold)
-                s["mega_cluster_capped"] = True
-                if verbose:
-                    print(
-                        f"  [Phase5/sub-cap] sub-cluster '{s.get('title','')[:50]!r}' "
-                        f"(src={s_sc}) capped at {threshold}"
-                    )
-                out.append(s)
-        else:
-            # 2026-05-26 iter D — chain-merge dissolve threshold raised
-            # 20 → 35. Iter C inspection found 75-source capped clusters
-            # like "Mexico to host Iran World Cup" and "Trump Saudi
-            # Pakistan Muslim nations" that contain Sonny Rollins jazz +
-            # Belgium school bus crash + Pope AI + tennis + Ebola but
-            # scored cohesion ~30 — above the 20 floor. Math says
-            # chain-merges with weak title overlap + moderate entity
-            # convergence land in the 25-40 cohesion range, so 35 is
-            # the right inflection. Real breaking-news mega-events like
-            # Sunday's Netanyahu story score 50+ on cohesion (every
-            # article actually about Netanyahu/Israel/Trump diplomacy).
-            _coh_score = (cohesion or {}).get("cohesion_score", 100.0)
-            if shattered and len(sub) >= 2 and _coh_score < 35.0:
-                if verbose:
-                    print(
-                        f"  [Phase5/chain-merge-dissolve] '{c.get('title','')[:60]!r}' "
-                        f"(src={sc} arts={ac} cohesion={_coh_score}) shipping "
-                        f"{len(sub)} singleton/small subs instead of capping the chain-merge"
-                    )
-                # Same recursive sub-cap as the healthy-split branch
-                # above — any sub that's STILL above threshold gets capped.
-                # 2026-05-28 — apply wire-aware collapse first; see comment
-                # in the healthy-split branch above.
-                for s in sub:
-                    _apply_wire_aware_source_count(s)
-                    s_sc = int(s.get("source_count", 0) or 0)
-                    if s_sc < threshold:
-                        out.append(s)
-                        continue
-                    s["_mega_cluster_original_count"] = s_sc
-                    s["source_count"] = min(s_sc, threshold)
-                    s["mega_cluster_capped"] = True
-                    out.append(s)
-                continue
-
-            # Step 2 (original): keep but cap. Genuine single mega-event
-            # OR shattered with healthy cohesion (rare but possible) —
-            # both paths converge on "keep whole + display-cap source_count".
-            original_count = sc
-            c["_mega_cluster_original_count"] = original_count
-            c["source_count"] = min(sc, threshold)
+        sc = int(c.get("source_count", 0) or 0)
+        if sc >= threshold:
+            c["_mega_cluster_original_count"] = sc
+            c["source_count"] = threshold
             c["mega_cluster_capped"] = True
             if verbose:
-                tag = (
-                    "mega-cap-shattered" if shattered and len(sub) >= 2
-                    else "mega-cap"
-                )
                 print(
-                    f"  [Phase5/{tag}] '{c.get('title', '')[:60]!r}' "
-                    f"(src={original_count}) kept whole, source_count "
-                    f"capped at {threshold} (strict re-split yielded "
-                    f"{len(sub)} sub-clusters, avg "
-                    f"{avg_articles_per_sub:.1f} articles/sub)"
+                    f"  [Phase5/mega-cap] '{c.get('title','')[:60]!r}' "
+                    f"(src={sc}) kept whole, source_count capped at {threshold}"
                 )
-            out.append(c)
+        out.append(c)
     return out
 
 
@@ -2134,6 +2012,7 @@ def cluster_stories(
     similarity_threshold: float = STORY_TFIDF_THRESHOLD,
     run_merge_pass: bool = True,
     source_map: dict[str, dict] | None = None,
+    enable_anchor_merge: bool = False,
 ) -> list[dict]:
     """Group articles into story clusters.
 
@@ -2300,16 +2179,14 @@ def cluster_stories(
     # static baselines that worked. The MERGE_HARD_CEILING already prevents
     # transitive mega-merges; IDF smoothing in _ent_idf_sum (n_eff = max(n,30),
     # df_eff = df + ceil(N/4)) already stabilises IDF across corpus sizes.
+    # 2026-05-31 simplification — Phase 2 uses set-intersection + 50-article
+    # cap, restored from the 2026-03-28 design. Phases 2.5 (canonical pairs)
+    # and 2.55 (synonyms) deleted; synonyms now normalised inside Phase 1
+    # _build_document(). Phase 2.6 (anchor merge) survives behind an
+    # opt-in flag for diagnostic runs only — production cron leaves it OFF.
     if run_merge_pass and len(clusters) > 1:
-        clusters = merge_related_clusters(clusters, idf_threshold=ENTITY_MERGE_IDF_THRESHOLD)
-    # Phase 2.5 — editorial canonical-pair merge (Trump-Xi, Starmer-Streeting)
-    if run_merge_pass and len(clusters) > 1:
-        clusters = merge_canonical_pairs(clusters)
-    # Phase 2.55 — synonym/alias merge (DRC↔Congo, UK↔Britain, ...)
-    if run_merge_pass and len(clusters) > 1:
-        clusters = merge_synonym_pairs(clusters)
-    # Phase 2.6 — anchor-entity merge (high-IDF rare proper nouns)
-    if run_merge_pass and len(clusters) > 1:
+        clusters = merge_related_clusters(clusters)
+    if run_merge_pass and len(clusters) > 1 and enable_anchor_merge:
         clusters = merge_anchor_entities(clusters, idf_fraction_of_max=ANCHOR_IDF_FRACTION_OF_MAX)
     if run_merge_pass and len(clusters) > 1:
         clusters = merge_duplicate_title_clusters(clusters)
