@@ -3456,6 +3456,43 @@ def main():
         else:
             print(f"  [warn] cleanup_stale_articles RPC failed: {e} — using legacy path")
 
+    # Diagnostic-table retention via cleanup_diagnostic_tables RPC (migration 060).
+    # Prunes engine_snapshots (3 days), engine_runs (14 days), sandbox_runs
+    # (7 days) in one call. Critical for Free-Plan projects with a 0.5 GB cap.
+    # The 2026-06-01 outage was caused by engine_snapshots accumulating ~100 MB
+    # of JSONB payloads with no retention policy. Non-fatal: pipeline continues
+    # if the RPC is missing (migration 060 not yet applied).
+    try:
+        diag_result = supabase.rpc('cleanup_diagnostic_tables', {}).execute()
+        d = diag_result.data if (diag_result and diag_result.data is not None) else {}
+        if isinstance(d, dict):
+            _snap = d.get('engine_snapshots_pruned', 0)
+            _runs = d.get('engine_runs_pruned', 0)
+            _sand = d.get('sandbox_runs_pruned', 0)
+            _size = d.get('db_size_mb', 0)
+            print(
+                f"  Diagnostic retention RPC: pruned {_snap} snapshot(s), "
+                f"{_runs} engine run(s), {_sand} sandbox run(s); "
+                f"DB size now {_size} MB"
+            )
+            # Warn at 80% of Free-Plan cap (500 MB).
+            try:
+                if float(_size) > 400.0:
+                    print(
+                        f"  [WARN] DB size {_size} MB is above 80% of the 500 MB "
+                        f"Free-Plan cap. Either upgrade to Pro or tighten retention."
+                    )
+            except (TypeError, ValueError):
+                pass
+        else:
+            print(f"  Diagnostic retention RPC returned: {d}")
+    except Exception as e:
+        err_msg = str(e).lower()
+        if "does not exist" in err_msg or ("function" in err_msg and "not" in err_msg):
+            print(f"  [info] cleanup_diagnostic_tables RPC not yet applied (migration 060)")
+        else:
+            print(f"  [warn] cleanup_diagnostic_tables RPC failed: {e}")
+
     # Legacy article retention: delete articles older than 8 days (kept as
     # a defensive fallback in case the RPC above is missing or partial).
     # 8 days ensures 7 full days of data exist for weekly digest generation
