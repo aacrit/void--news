@@ -1149,6 +1149,11 @@ details.knob-group[open] summary::after { transform: rotate(180deg); }
 </head>
 <body>
 
+<div style="background:#3a2818;border-bottom:2px solid #d9a455;padding:14px 28px;color:#f5e3b8;font-family:'JetBrains Mono','SF Mono',monospace;font-size:13px;line-height:1.55;text-align:center">
+  <strong style="color:#d9a455">DEPRECATED 2026-05-31.</strong>
+  This lab documents the pre-simplification (Era 7) engine. Constants like <code>MEGA_COHESION_FLOOR</code>, the three-tier corpus-volume <code>is_headline</code> bands, and the adaptive entity / anchor IDF overrides no longer exist. The current engine runs Phase 1 (TF-IDF with synonym normalisation) → Phase 2 (set-intersection + 50-article cap) → Phase 3 (title-Jaccard 0.22) → Phase 4 (garbage split) → Phase 5 (soft cap at 75 sources). See <a href="/engine-plan.html" style="color:#d9a455">/engine-plan.html</a> and <a href="/engineering.html" style="color:#d9a455">/engineering.html</a> for the current architecture.
+</div>
+
 <!-- ============================================================
      DESKTOP MASTHEAD
      ============================================================ -->
