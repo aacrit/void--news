@@ -38,16 +38,27 @@ DELETE FROM sandbox_runs  WHERE created_at < NOW() - INTERVAL '7 days';
 DELETE FROM articles
 WHERE published_at < NOW() - INTERVAL '7 days';
 
--- ---- Step 5: VACUUM FULL to reclaim physical disk space --------------------
--- VACUUM FULL takes an exclusive lock. On a near-empty table (engine_snapshots
--- after the delete) this is fast. The articles table is bigger and may take
--- 10-30 seconds — that's fine.
-VACUUM FULL engine_snapshots;
-VACUUM FULL engine_runs;
-VACUUM FULL sandbox_runs;
-VACUUM FULL articles;
--- bias_scores cascade-deleted when articles were pruned. VACUUM it too.
-VACUUM FULL bias_scores;
+-- ---- Step 5: VACUUM (optional, see note) ------------------------------------
+-- IMPORTANT — Supabase dashboard SQL editor wraps queries in a transaction,
+-- and VACUUM cannot run inside a transaction (error 25001). Three options:
+--
+--   A. SKIP entirely. Supabase autovacuum will reclaim space within minutes.
+--      Confirmed working 2026-06-01: DELETE alone dropped 0.55 GB → 469 MB.
+--
+--   B. Run each VACUUM FULL statement INDIVIDUALLY in the SQL editor —
+--      open a new query tab, paste ONE line, click Run, repeat:
+--          VACUUM FULL engine_snapshots;
+--          VACUUM FULL engine_runs;
+--          VACUUM FULL sandbox_runs;
+--          VACUUM FULL articles;
+--          VACUUM FULL bias_scores;
+--
+--   C. Use psql / a direct DB connection (not the dashboard) where
+--      autocommit is default. Connection string in project settings.
+--
+-- VACUUM FULL takes an exclusive lock on the target table. On engine_snapshots
+-- (now empty) it's instant. articles can take 10-30s and briefly blocks
+-- writes — fine during off-hours.
 
 -- ---- Step 6: audit after ---------------------------------------------------
 SELECT
