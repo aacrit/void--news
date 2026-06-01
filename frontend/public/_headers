@@ -33,3 +33,35 @@
 # Hashed font files served by next/font
 /*.woff2
   Cache-Control: public, max-age=31536000, immutable
+
+# ── HTML routes — short browser cache + stale-while-revalidate ──────────
+# 2026-06-01 egress fix: HomeContent.tsx fetches Supabase JSON on every
+# page load. Browser caching the HTML response means repeated visits
+# (same tab, multi-page browsing, F5 refreshes) hit the browser cache
+# instead of triggering a fresh React mount + Supabase query.
+#
+# max-age=120: re-validate every 2 minutes — fresh enough that pipeline
+# updates (1×/day) are still visible quickly.
+# stale-while-revalidate=600: serve stale up to 10 minutes while a
+# background refresh fetches the new HTML.
+#
+# Apply to all HTML routes EXCEPT static assets (those have their own
+# longer cache above).
+/
+  Cache-Control: public, max-age=120, stale-while-revalidate=600
+/world
+  Cache-Control: public, max-age=120, stale-while-revalidate=600
+/paper
+  Cache-Control: public, max-age=120, stale-while-revalidate=600
+/weekly
+  Cache-Control: public, max-age=300, stale-while-revalidate=900
+/sources
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+/about
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+/engineering.html
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+/engine-plan.html
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+/engine-evolution.html
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400

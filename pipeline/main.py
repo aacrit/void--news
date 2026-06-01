@@ -955,8 +955,7 @@ def main():
         help="Run only the rule-based engine stage (fetch, cluster, bias, "
              "categorize, rank, rerank). Skip every LLM-bearing editorial "
              "step (cluster summarization, daily brief, weekly digest, "
-             "Instagram captions). Writes engine_snapshot at end. Used by "
-             "the diagnostic sandbox for $0 re-runs.",
+             "Instagram captions). $0 fresh-run mode for engine testing.",
     )
     parser.add_argument(
         "--recluster-only",
@@ -3066,19 +3065,16 @@ def main():
         print(f"  [warn] World-tag reconciliation failed: {e}")
         traceback.print_exc()
 
-    # Step 8c.6 — Engine snapshot DISABLED (2026-05-31 simplification).
-    # The 5-7 MB JSONB writer fired on every cron run for the diagnostic
-    # sandbox at /diag.html. With the lab marked deprecated, paying the
-    # serialisation cost on every production run is not worth it. The
-    # writer module (pipeline/engine_snapshot.py) and the engine_runs /
-    # engine_snapshots tables (migrations 057-058) stay in place for
-    # opt-in sandbox replays via pipeline/sandbox_replay.py. To re-enable
-    # production snapshots, restore this block from git history.
-    pass
+    # Step 8c.6 — Engine snapshot writer REMOVED (2026-06-01 egress fix).
+    # The diagnostic lab at /diag.html and the supporting sandbox stack
+    # (engine_snapshot.py, sandbox_replay.py, sandbox_server.py,
+    # sandbox.yml) were deleted to stop multi-MB JSONB payloads from
+    # contributing to Supabase egress. The engine_runs / engine_snapshots /
+    # sandbox_runs tables (migrations 057-058) remain in the schema —
+    # cleanup_diagnostic_tables RPC prunes them on every run.
 
-    # --engine-only short-circuit: snapshot is written; skip every LLM-
-    # bearing step (summarization, daily brief, weekly, IG). Diagnostic
-    # sandbox replays use this path to re-run the rule-based engine at $0.
+    # --engine-only short-circuit: skip every LLM-bearing step
+    # (summarization, daily brief, weekly, IG). $0 fresh-run mode.
     if engine_only:
         elapsed = time.time() - start_time
         # 2026-05-24 iter 6 fix — finalize pipeline_runs BEFORE the early
@@ -3446,9 +3442,13 @@ def main():
     # SELECT/DELETE block below if the RPC is missing (e.g., migration 050
     # not yet applied to this environment).
     try:
-        result = supabase.rpc('cleanup_stale_articles', {'days': 8}).execute()
+        # 2026-06-01 egress fix — tightened 8 → 7 days. Weekly digest needs
+        # exactly 7 full days of articles to compute its picks; 8 was a
+        # one-day buffer that no longer earns its keep given the Free-Plan
+        # cap pressure.
+        result = supabase.rpc('cleanup_stale_articles', {'days': 7}).execute()
         pruned = result.data if (result and result.data is not None) else 0
-        print(f"  Article retention RPC: pruned {pruned} stale articles (>8 days)")
+        print(f"  Article retention RPC: pruned {pruned} stale articles (>7 days)")
     except Exception as e:
         err_msg = str(e).lower()
         if "does not exist" in err_msg or "function" in err_msg and "not" in err_msg:
@@ -3493,13 +3493,13 @@ def main():
         else:
             print(f"  [warn] cleanup_diagnostic_tables RPC failed: {e}")
 
-    # Legacy article retention: delete articles older than 8 days (kept as
+    # Legacy article retention: delete articles older than 7 days (kept as
     # a defensive fallback in case the RPC above is missing or partial).
-    # 8 days ensures 7 full days of data exist for weekly digest generation
-    # (runs every Sunday). ON DELETE CASCADE removes bias_scores,
-    # cluster_articles, and article_categories. Daily briefs are PERMANENT.
+    # 7 days ensures the weekly digest's Sunday run has the full week of
+    # data. ON DELETE CASCADE removes bias_scores, cluster_articles, and
+    # article_categories. Daily briefs are PERMANENT.
     try:
-        article_cutoff = (datetime.now(timezone.utc) - timedelta(days=8)).isoformat()
+        article_cutoff = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
         old_article_ids: list[str] = []
         offset = 0
         while True:

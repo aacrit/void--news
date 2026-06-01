@@ -23,7 +23,7 @@ on:
       article_days:
         description: 'articles retention (days)'
         required: false
-        default: '8'
+        default: '7'
 
 jobs:
   cleanup:
@@ -40,7 +40,7 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           SNAPSHOT_DAYS: ${{ inputs.snapshot_days || '3' }}
-          ARTICLE_DAYS: ${{ inputs.article_days || '8' }}
+          ARTICLE_DAYS: ${{ inputs.article_days || '7' }}
         run: |
           python <<'PY'
           import os

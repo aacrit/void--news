@@ -108,16 +108,68 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
     # Now: 3 paginated bulk fetches + in-memory dicts = ~30 HTTP calls total.
     print("\n[3/4] Bulk-fetching cluster data...")
 
-    def _paginated_fetch(table: str, select: str, page_size: int = 500) -> list[dict]:
-        """Fetch all rows with pagination and retry on connection drops."""
+    def _paginated_fetch(
+        table: str,
+        select: str,
+        page_size: int = 500,
+        gte_column: str | None = None,
+        gte_value: str | None = None,
+        in_column: str | None = None,
+        in_values: list[str] | None = None,
+    ) -> list[dict]:
+        """Fetch all rows with pagination and retry on connection drops.
+
+        Optional column filters:
+          gte_column / gte_value — server-side WHERE column >= value
+          in_column / in_values  — server-side WHERE column IN (...)
+                                   (auto-chunked into IN-batches of 200)
+
+        Both filters reduce egress: the server filters before sending bytes
+        across the wire, instead of us paginating the whole table.
+        """
         all_rows: list[dict] = []
+
+        if in_column and in_values is not None:
+            # IN-list filter: chunk in batches of 200 to stay under PostgREST URL
+            # length limits. Pagination within each chunk is identical to the
+            # no-filter case.
+            chunk_size = 200
+            for i in range(0, len(in_values), chunk_size):
+                chunk = in_values[i:i + chunk_size]
+                offset = 0
+                retries = 0
+                while True:
+                    try:
+                        q = supabase.table(table).select(select).in_(in_column, chunk)
+                        if gte_column and gte_value:
+                            q = q.gte(gte_column, gte_value)
+                        res = q.range(offset, offset + page_size - 1).execute()
+                        retries = 0
+                    except Exception as e:
+                        retries += 1
+                        if retries <= 3:
+                            print(f"  [retry {retries}/3] {table} chunk {i} offset {offset}: {type(e).__name__}")
+                            time.sleep(2)
+                            continue
+                        print(f"  [err] {table} failed after 3 retries at chunk {i} offset {offset}")
+                        break
+                    if not res.data:
+                        break
+                    all_rows.extend(res.data)
+                    if len(res.data) < page_size:
+                        break
+                    offset += page_size
+            return all_rows
+
+        # No IN-list filter: simple paginated fetch (with optional GTE).
         offset = 0
         retries = 0
         while True:
             try:
-                res = supabase.table(table).select(select).range(
-                    offset, offset + page_size - 1
-                ).execute()
+                q = supabase.table(table).select(select)
+                if gte_column and gte_value:
+                    q = q.gte(gte_column, gte_value)
+                res = q.range(offset, offset + page_size - 1).execute()
                 retries = 0
             except Exception as e:
                 retries += 1
@@ -135,26 +187,58 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
             offset += page_size
         return all_rows
 
-    # 3a. Fetch all cluster_articles rows
-    ca_rows = _paginated_fetch("cluster_articles", "cluster_id,article_id")
+    # 2026-06-01 egress fix — rerank previously paginated through ALL articles
+    # in the table (8 days × 4K/day = 32K rows × ~5 KB = ~150 MB per run).
+    # The rerank only needs articles that BELONG to currently-loaded clusters,
+    # which themselves are filtered by clusters.last_updated being recent.
+    # We compute the article-id whitelist from cluster_articles and pass it as
+    # an IN-list filter, plus a 48h published_at floor as defence in depth.
+    from datetime import datetime, timezone, timedelta
+    _window_cutoff_iso = (datetime.now(timezone.utc) - timedelta(hours=48)).isoformat()
+
+    # 3a. Fetch cluster_articles for the clusters we care about. cluster_ids
+    # come from the caller via `clusters` and is a small list (<5K), so we
+    # use an IN-list filter on cluster_id to skip unrelated cluster_articles
+    # rows (which could be 50K+ if the table accumulated history).
+    _cluster_ids = [c["id"] for c in clusters if c.get("id")]
+    ca_rows = _paginated_fetch(
+        "cluster_articles", "cluster_id,article_id",
+        in_column="cluster_id", in_values=_cluster_ids,
+    )
     cluster_article_map: dict[str, list[str]] = {}
     for row in ca_rows:
         cluster_article_map.setdefault(row["cluster_id"], []).append(row["article_id"])
     print(f"  cluster_articles: {len(ca_rows)} rows covering {len(cluster_article_map)} clusters")
 
-    # 3b. Fetch all articles. Wire fields (is_wire_copy, wire_origin_publisher_id)
-    # are required so the ranker's _coverage_score collapses wire-syndicated
-    # copies to a single voice. Without these the ranker over-counts AP/Reuters
-    # echo (e.g. 10 wire copies of one story scored as 10-source coverage).
-    art_rows = _paginated_fetch("articles",
+    # 3b. Build the article-id whitelist from cluster_articles, then fetch
+    # only those articles (server-side IN filter). Adds a published_at >=
+    # 48h floor as defence in depth so we never pull anything older.
+    # Wire fields (is_wire_copy, wire_origin_publisher_id) are required for
+    # the ranker's wire-syndication voice collapse.
+    _needed_article_ids = list({row["article_id"] for row in ca_rows})
+    art_rows = _paginated_fetch(
+        "articles",
         "id,source_id,title,summary,full_text,published_at,word_count,"
-        "is_wire_copy,wire_origin_publisher_id")
+        "is_wire_copy,wire_origin_publisher_id",
+        gte_column="published_at", gte_value=_window_cutoff_iso,
+        in_column="id", in_values=_needed_article_ids,
+    )
     articles_by_id: dict[str, dict] = {r["id"]: r for r in art_rows}
-    print(f"  articles: {len(articles_by_id)} rows fetched")
+    print(
+        f"  articles: {len(articles_by_id)} rows fetched "
+        f"(from {len(_needed_article_ids)} cluster-linked ids, 48h window)"
+    )
 
-    # 3c. Fetch all bias_scores
-    bs_rows = _paginated_fetch("bias_scores",
-        "article_id,political_lean,sensationalism,opinion_fact,factual_rigor,framing,confidence")
+    # 3c. Fetch bias_scores ONLY for the articles we loaded. Same IN-list
+    # pattern. Saves the no-longer-needed bias rows for articles outside
+    # the 48h window. Bias scores cascade-delete with articles (migration
+    # 046), so 8-day retention means at most 4× this set in the table —
+    # filtering down to the current 48h subset cuts ~75% of the rows.
+    bs_rows = _paginated_fetch(
+        "bias_scores",
+        "article_id,political_lean,sensationalism,opinion_fact,factual_rigor,framing,confidence",
+        in_column="article_id", in_values=list(articles_by_id.keys()),
+    )
     bias_by_article_id: dict[str, dict] = {r["article_id"]: r for r in bs_rows}
     print(f"  bias_scores: {len(bias_by_article_id)} rows fetched")
 
