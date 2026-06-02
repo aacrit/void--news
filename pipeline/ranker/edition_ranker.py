@@ -28,7 +28,15 @@ from __future__ import annotations
 # ---------------------------------------------------------------------------
 # Configuration — single source of truth
 # ---------------------------------------------------------------------------
-EDITIONS = ["us", "europe", "south-asia", "world"]  # regional first!
+EDITIONS = ["world", "us", "europe", "south-asia"]  # world primary 2026-06-02
+# 2026-06-02 — reordered so world iterates FIRST in cross_edition_demotion.
+# Previously regional editions ran first, claiming top stories, then world
+# inherited a 0.88× demotion on those exact same stories. With world as the
+# only ACTIVE edition (per CLAUDE.md ACTIVE_EDITIONS=["world"]), that buried
+# the day's biggest international stories (Kenya sc=63 hrank 70.2 became
+# rank_world=61.77). Now world claims first; regional editions remain
+# defined for future re-activation but their demotion only affects their
+# own ranks, not world's.
 
 CROSS_EDITION_TOP = 8
 CROSS_DEMOTION = 0.70
