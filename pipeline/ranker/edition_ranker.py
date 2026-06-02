@@ -308,15 +308,17 @@ def apply_edition_ranking(
                 current = c.get(f"rank_{ed}", 0)
                 c[f"rank_{ed}"] = round(current * 1.15, 2)
 
-    # --- World multi-edition boost ---
-    for c in clusters:
-        c_sections = c.get("sections") or [c.get("section", "world")]
-        if "world" in c_sections:
-            edition_count = sum(1 for ed in EDITIONS if ed in c_sections)
-            if edition_count >= 3:
-                c["rank_world"] = round(
-                    c["rank_world"] * WORLD_MULTI_ED_BOOST, 2
-                )
+    # --- World multi-edition boost — REMOVED 2026-06-02 ---
+    # Previously: clusters tagged in 3+ editions got a 12% rank_world boost.
+    # Intent was "more international = more world prominence." Outcome was
+    # the opposite: a regional sc=34 "South African water" cluster cross-listed
+    # into us+europe+south-asia+world overtook a world-only sc=69 Lebanon
+    # crisis cluster (×1.12 vs ×1.0). Live homepage put a third-tier story
+    # at #1 and buried the actual top international news at #6.
+    #
+    # rank_world now equals headline_rank (post story-type gates) directly.
+    # If we want to re-introduce multi-edition prominence in the future,
+    # do it as a tie-breaker among equal-rank stories, not as a multiplier.
 
     # --- Cross-edition demotion + lead gate + backfill ---
     claimed_ids: set[str] = set()
