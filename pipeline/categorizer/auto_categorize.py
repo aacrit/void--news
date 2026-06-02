@@ -332,7 +332,6 @@ _SECTION_CATEGORY_MAP: dict[str, str] = {
     "sports": "sports", "culture": "culture", "entertainment": "culture",
     "arts": "culture", "opinion": "opinion", "editorial": "opinion",
     "lifestyle": "lifestyle", "crime": "crime", "education": "education",
-    "us": "politics",  # most US-section content is political
 }
 
 

@@ -282,62 +282,14 @@ INTL_MARKERS = {
 
 def _determine_section(articles: list[dict], cluster_title: str = "",
                        cluster_summary: str = "") -> str:
-    """Resolve cluster section via content markers + source-country vote.
+    """Always return "world" (2026-06-02 collapse-editions).
 
-    Priority order:
-      1. Content markers — strict one-sided wins (us_count >= 4 and
-         intl_count == 0  OR  intl_count >= 3 and us_count == 0).
-      2. Article-section vote (when fixtures supply pre-tagged sections).
-      3. Source-country vote — when most articles come from US-located
-         outlets AND content has at least one US marker, classify as US.
-         Without the US-marker guard, an AP wire reposted to a UK outlet
-         could mis-classify as world for a US-domestic story.
-      4. Default to "world" — newsroom safe default for ambiguous content.
+    void --news ships a single daily feed. The section field is preserved
+    as a constant string for downstream defensive code that still reads
+    `cluster.section` or filters `sections @> ['world']`, but it no longer
+    has discriminative meaning. The args are accepted to keep the existing
+    call-site signatures stable.
     """
-    text = f"{cluster_title} {cluster_summary}".lower()
-    us_count = sum(1 for m in US_MARKERS if m in text)
-    intl_count = sum(1 for m in INTL_MARKERS if m in text)
-    if us_count >= 4 and intl_count == 0:
-        return "us"
-    if intl_count >= 3 and us_count == 0:
-        return "world"
-
-    # Source-section vote (when articles carry a `section` field)
-    sections: Counter = Counter()
-    for article in articles:
-        sec = article.get("section", "") or ""
-        if sec:
-            sections[sec.lower()] += 1
-    if sections:
-        top = sections.most_common(1)[0][0]
-        if top in ("europe", "south-asia"):
-            return top
-        if any(kw in top for kw in (
-                "us", "domestic", "nation", "national", "america")):
-            return "us"
-        return "world"
-
-    # Source-country fallback: when content markers are inconclusive
-    # (no clear one-sided win), defer to source country with two paths:
-    #   (a) Any US marker in content + majority-US sources -> us
-    #       Catches Trump-led foreign-policy stories that mention Beijing.
-    #   (b) ALL sources US-located + zero international markers -> us
-    #       Catches NYC city council / SCOTUS / state legislative stories
-    #       whose title+summary doesn't hit any US_MARKERS keyword
-    #       (Eric Adams / John Roberts / Greg Abbott aren't in the set).
-    countries = Counter(
-        (a.get("source_country") or a.get("country") or "").upper()
-        for a in articles
-        if (a.get("source_country") or a.get("country"))
-    )
-    if countries:
-        total = sum(countries.values())
-        us_share = countries.get("US", 0) / max(total, 1)
-        if us_count >= 1 and us_share >= 0.5:
-            return "us"
-        if us_share == 1.0 and intl_count == 0:
-            return "us"
-
     return "world"
 
 

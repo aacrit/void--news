@@ -49,8 +49,6 @@
 # longer cache above).
 /
   Cache-Control: public, max-age=120, stale-while-revalidate=600
-/world
-  Cache-Control: public, max-age=120, stale-while-revalidate=600
 /paper
   Cache-Control: public, max-age=120, stale-while-revalidate=600
 /weekly

@@ -329,7 +329,7 @@ export default function AboutPage() {
             </div>
             <p className="about-cta__tagline">See through the void.</p>
             <Link href="/" className="about-cta__button">
-              Read today&rsquo;s edition
+              Read today&rsquo;s feed
             </Link>
             <p className="about-cta__sub">
               No signup. No paywall. No tracking.

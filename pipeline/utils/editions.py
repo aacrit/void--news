@@ -1,17 +1,12 @@
-"""
-Edition configuration — single source of truth.
+"""Single-feed constants.
 
-ACTIVE_EDITIONS used to live in pipeline/main.py. Worker contexts that
-need to introspect which editions are live (e.g. cluster_summarizer's
-Pool 2 round-robin) had to do `from main import ACTIVE_EDITIONS`, which
-is fragile under multiprocessing/forking and creates an import cycle
-risk. Now declared here so any module can import it without traversing
-the orchestrator entry point.
-
-Parking Lot: regional editions (us, europe, south-asia) disabled
-pre-launch. To re-enable, change ACTIVE_EDITIONS and remove the parking
-lot row in CLAUDE.md.
+2026-06-02 — void --news collapsed to a single daily feed. The legacy
+multi-edition data plane (us, europe, south-asia) is gone. The two
+constants below are kept as singletons so any worker still importing
+ACTIVE_EDITIONS / ALL_EDITIONS continues to work; they both resolve to
+["world"]. Callers should treat the values as opaque — equality is the
+only meaningful operation.
 """
 
 ACTIVE_EDITIONS: list[str] = ["world"]
-ALL_EDITIONS: list[str] = ["world", "us", "europe", "south-asia"]
+ALL_EDITIONS: list[str] = ["world"]
