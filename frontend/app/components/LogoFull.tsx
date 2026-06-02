@@ -41,18 +41,18 @@ export default function LogoFull({ height = 28, className }: LogoFullProps) {
         strokeLinecap="round"
         strokeLinejoin="round"
       >
-        {/* Void circle — the primary mark */}
-        <circle cx="16" cy="13" r="9" className="si-void" />
+        {/* Void circle — organic hand-drawn path */}
+        <path d="M16 4 C24 3.5 25.5 7.5 25 13 C24.5 18.5 22.5 22 16 22 C9.5 22 7.5 18.5 7 13 C6.5 7.5 8 3.5 16 4" className="si-void" />
         {/* Beam group — idle tipping animation */}
         <g className="si-beam--idle">
-          <line x1="3" y1="13" x2="29" y2="13" />
+          <path d="M3 13 C10 12.2 22 13.8 29 13" />
           <line x1="5" y1="11" x2="5" y2="15" />
           <line x1="27" y1="11" x2="27" y2="15" />
         </g>
         {/* Post */}
         <line x1="16" y1="22" x2="16" y2="29" />
-        {/* Base */}
-        <line x1="12" y1="29" x2="20" y2="29" />
+        {/* Base — organic subtle curve */}
+        <path d="M12 29 C14 28.7 18 29.3 20 29" />
       </g>
 
       {/* ── Wordmark ──────────────────────────────────────────────── */}
@@ -63,11 +63,10 @@ export default function LogoFull({ height = 28, className }: LogoFullProps) {
         />
 
         {/* "o" — THE VOID: hollow outline only, no fill.
-            A precise ellipse with thin stroke, empty interior.
+            An organic hand-drawn oval, empty interior.
             The void at the heart of the word. */}
-        <ellipse
-          cx="48" cy="20"
-          rx="13" ry="16.5"
+        <path
+          d="M48 3.5 C61 3 62 10 61.5 20 C61 30 58 37 48 36.5 C38 37 35 30 34.5 20 C34 10 35 3 48 3.5"
           fill="none"
           stroke="currentColor"
           strokeWidth="2.2"

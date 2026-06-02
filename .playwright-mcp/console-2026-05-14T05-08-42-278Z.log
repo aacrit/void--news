@@ -1,0 +1,2 @@
+[   34409ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3300/void--news/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
+[   48247ms] [ERROR] X-Frame-Options may only be set via an HTTP header sent along with a document. It may not be set inside <meta>. @ http://localhost:3300/void--news/:0

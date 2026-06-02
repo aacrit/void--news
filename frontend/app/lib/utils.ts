@@ -1,72 +1,26 @@
 /**
- * Returns "Morning" or "Evening" based on the edition's regional time zone.
- * US → America/New_York, India → Asia/Kolkata, World → UTC.
+ * Base path for the deployed site — must match next.config.ts basePath.
+ *
+ * Defaults to /void--news (GitHub Pages project-repo path). Cloudflare
+ * Pages and custom-domain deployments set NEXT_PUBLIC_BASE_PATH="" in the
+ * build env, which Next.js inlines at compile time so the browser bundle
+ * sees the empty string at runtime.
  */
-export function getEditionTimeOfDay(edition: string): "Morning" | "Evening" {
-  const now = new Date();
-  let hour: number;
+export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "/void--news";
 
-  const editionTimezones: Record<string, string> = {
-    us: "America/New_York",
-    india: "Asia/Kolkata",
-    uk: "Europe/London",
-    canada: "America/Toronto",
-  };
-
-  const tz = editionTimezones[edition];
-  if (tz) {
-    hour = parseInt(
-      now.toLocaleString("en-US", {
-        hour: "numeric",
-        hour12: false,
-        timeZone: tz,
-      }),
-      10,
-    );
-  } else {
-    // World edition — UTC
-    hour = now.getUTCHours();
-  }
-
-  return hour < 12 ? "Morning" : "Evening";
+/**
+ * 2026-06-02 single-feed — Morning/Evening shorthand from UTC.
+ * Edition-specific timezone branches removed.
+ */
+export function getEditionTimeOfDay(): "Morning" | "Evening" {
+  return new Date().getUTCHours() < 12 ? "Morning" : "Evening";
 }
 
 /**
- * Returns a compact regional timestamp string for the dateline.
- * US: "9 AM ET"  World: "14:05 UTC"  India: "19:35 IST"
+ * Compact UTC dateline timestamp ("14:05 UTC"). Single-feed mode.
  */
-export function getEditionTimestamp(edition: string): string {
+export function getEditionTimestamp(): string {
   const now = new Date();
-
-  const editionFormats: Record<string, { tz: string; label: string; h12: boolean }> = {
-    us: { tz: "America/New_York", label: "ET", h12: true },
-    india: { tz: "Asia/Kolkata", label: "IST", h12: false },
-    uk: { tz: "Europe/London", label: "GMT", h12: false },
-    canada: { tz: "America/Toronto", label: "ET", h12: true },
-  };
-
-  const fmt = editionFormats[edition];
-  if (fmt) {
-    if (fmt.h12) {
-      const ts = now
-        .toLocaleString("en-US", {
-          hour: "numeric",
-          hour12: true,
-          timeZone: fmt.tz,
-        })
-        .replace(" AM", " AM")
-        .replace(" PM", " PM");
-      return `${ts} ${fmt.label}`;
-    }
-    const ts = now.toLocaleString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: false,
-      timeZone: fmt.tz,
-    });
-    return `${ts} ${fmt.label}`;
-  }
-
   const h = String(now.getUTCHours()).padStart(2, "0");
   const m = String(now.getUTCMinutes()).padStart(2, "0");
   return `${h}:${m} UTC`;

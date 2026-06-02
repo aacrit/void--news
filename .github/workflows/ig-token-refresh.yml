@@ -1,0 +1,61 @@
+name: IG Token Refresh
+
+permissions:
+  contents: read
+
+on:
+  schedule:
+    # Every Sunday 04:00 UTC. Long-lived tokens last 60 days; this refreshes
+    # them at most once per week so we never come within 14 days of expiry.
+    - cron: '0 4 * * 0'
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Refresh Instagram long-lived token
+        env:
+          META_GRAPH_API_VERSION: v21.0
+          INSTAGRAM_GRAPH_TOKEN: ${{ secrets.INSTAGRAM_GRAPH_TOKEN }}
+          # PAT scoped to repo:secrets only — used by gh secret set below.
+          # Create at github.com/settings/personal-access-tokens with
+          # "Secrets" → Read & Write on this repo only.
+          GH_TOKEN: ${{ secrets.IG_SECRET_WRITE_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "$INSTAGRAM_GRAPH_TOKEN" ]; then
+            echo "::error::INSTAGRAM_GRAPH_TOKEN not set"; exit 1
+          fi
+
+          # Hit the Graph API to refresh the long-lived token.
+          # https://developers.facebook.com/docs/instagram-platform/instagram-api-with-instagram-login/business-login
+          RESP=$(curl -sS "https://graph.facebook.com/${META_GRAPH_API_VERSION}/oauth/access_token" \
+            --data-urlencode "grant_type=fb_exchange_token" \
+            --data-urlencode "client_id=${{ secrets.META_APP_ID }}" \
+            --data-urlencode "client_secret=${{ secrets.META_APP_SECRET }}" \
+            --data-urlencode "fb_exchange_token=$INSTAGRAM_GRAPH_TOKEN")
+
+          echo "$RESP" | python -c "
+          import json, sys
+          d = json.loads(sys.stdin.read())
+          if 'error' in d:
+              print('::error::token refresh failed: ' + json.dumps(d['error']))
+              sys.exit(1)
+          tok = d.get('access_token')
+          if not tok:
+              print('::error::no access_token in response')
+              sys.exit(1)
+          # Mask it from logs.
+          print(f'::add-mask::{tok}')
+          print(f'NEW_TOKEN_LENGTH={len(tok)}')
+          with open('/tmp/new_token', 'w') as f:
+              f.write(tok)
+          "
+
+          NEW_TOKEN=$(cat /tmp/new_token)
+          # gh secret set masks the value automatically.
+          echo -n "$NEW_TOKEN" | gh secret set INSTAGRAM_GRAPH_TOKEN \
+            --repo "$GITHUB_REPOSITORY" \
+            --body -
+          echo "✓ token refreshed (length ${#NEW_TOKEN})"

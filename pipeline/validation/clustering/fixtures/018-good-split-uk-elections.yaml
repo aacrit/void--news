@@ -1,0 +1,85 @@
+id: uk-general-vs-byelection-good-split-2026-04
+name: "UK general election speculation vs Rochdale by-election (must split)"
+failure_date: "2026-04-11"
+failure_kind: known-good-split
+articles:
+  # ---- General-election speculation ----
+  - id: uk-gen-1
+    title: "Starmer hints at autumn 2027 general election in conference speech"
+    summary: "PM Keir Starmer hinted at an autumn 2027 general election in his Labour conference speech in Brighton Sunday."
+    full_text: >
+      Prime Minister Keir Starmer hinted at an autumn 2027 general election in his
+      Labour conference speech in Brighton on Sunday, framing the timing as "when our
+      programme of national renewal is ready to be judged." The speech triggered
+      immediate Conservative pushback. Shadow chancellor Mel Stride called the framing
+      "an admission Labour has not delivered." The BBC's political editor noted that an
+      autumn 2027 election would give Labour roughly 18 more months in office.
+    source: { slug: bbc, country: GB, tier: international }
+    published_at: "2026-04-10T16:00Z"
+  - id: uk-gen-2
+    title: "PM Starmer signals autumn 2027 election timeline"
+    summary: "PM Starmer signaled an autumn 2027 election timeline at the Labour conference, the Guardian reports."
+    full_text: >
+      Prime Minister Starmer signaled an autumn 2027 election timeline at the Labour
+      conference in Brighton, the Guardian reports. The signal followed weeks of cabinet
+      debate over whether to call a late-spring 2026 snap vote. Treasury Secretary
+      Rachel Reeves was understood to have preferred autumn 2027 to allow more time for
+      her growth strategy. Cabinet Office Minister Pat McFadden briefed party officers.
+    source: { slug: guardian, country: GB, tier: international }
+    published_at: "2026-04-10T17:30Z"
+  - id: uk-gen-3
+    title: "Labour conference: autumn 2027 election eyed, says Starmer"
+    summary: "Labour conference: autumn 2027 election eyed, says PM Starmer in Brighton speech Sunday afternoon."
+    full_text: >
+      Labour conference: autumn 2027 election eyed, says PM Keir Starmer in a Brighton
+      speech Sunday afternoon. Reuters reports the prime minister stopped short of
+      naming a specific date but framed his programme as "running through autumn
+      2027." The Times noted the speech was unusually direct on electoral timing for a
+      sitting prime minister.
+    source: { slug: reuters, country: GB, tier: wire }
+    published_at: "2026-04-10T18:30Z"
+  # ---- Rochdale by-election ----
+  - id: uk-by-1
+    title: "Rochdale by-election: Reform UK takes seat from Labour"
+    summary: "Reform UK took Rochdale from Labour in Thursday's by-election, the first parliamentary loss for the Starmer government."
+    full_text: >
+      Reform UK took the Rochdale parliamentary seat from Labour in Thursday's by-
+      election, the first parliamentary loss for the Starmer government and a fresh
+      indicator of voter discontent with NHS waiting times and migration policy. Reform
+      candidate Nathan Gill won 41 percent of the vote, narrowly defeating Labour's
+      incumbent successor Will Newman on a 18-percent swing.
+    source: { slug: bbc, country: GB, tier: international }
+    published_at: "2026-04-11T03:00Z"
+  - id: uk-by-2
+    title: "Reform shock at Rochdale: Labour loses safe seat"
+    summary: "A Reform shock at Rochdale by-election saw Labour lose a safe seat, the Telegraph reports."
+    full_text: >
+      A Reform shock at Rochdale by-election saw Labour lose what was considered a safe
+      seat, the Telegraph reports. The 18-point swing to Reform was the third largest
+      by-election swing in modern history. Reform leader Richard Tice called the result
+      "a hinge moment for British politics." Labour campaign chief Pat McFadden said the
+      party "must listen to the people of Rochdale on NHS and migration."
+    source: { slug: telegraph, country: GB, tier: international }
+    published_at: "2026-04-11T04:00Z"
+  - id: uk-by-3
+    title: "Nathan Gill wins Rochdale for Reform UK in by-election upset"
+    summary: "Reform UK's Nathan Gill won Rochdale in a by-election upset, defeating Labour by 4 percentage points."
+    full_text: >
+      Reform UK's Nathan Gill won Rochdale in a by-election upset, defeating Labour by
+      4 percentage points and ending decades of red-rosette dominance in the
+      constituency. The Sky News election desk reports turnout was 41 percent. Gill, a
+      former Welsh Assembly member, said his first priority would be to "rebuild
+      Rochdale's NHS dental access." Labour deputy leader Angela Rayner said the result
+      "must be a wake-up call." Reform now holds 8 parliamentary seats.
+    source: { slug: sky-news, country: GB, tier: international }
+    published_at: "2026-04-11T05:00Z"
+expectation:
+  type: should_split
+  member_ids: [uk-gen-1, uk-gen-2, uk-gen-3, uk-by-1, uk-by-2, uk-by-3]
+  min_clusters: 2
+rationale: |
+  Known-good split. Two distinct UK political stories sharing GPE "UK" /
+  "Britain" and the entity "Labour" — but referring to entirely
+  different events (general-election speculation vs Rochdale by-
+  election). Phase-1 TF-IDF should separate them on Brighton/conference/
+  Starmer/2027 vs Rochdale/Reform/Gill/by-election. Regression fixture.

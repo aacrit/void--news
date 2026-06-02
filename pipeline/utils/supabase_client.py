@@ -136,6 +136,7 @@ def update_pipeline_run(
     clusters_created: int = 0,
     errors: list | None = None,
     duration_seconds: float | None = None,
+    llm_metrics: dict | None = None,
 ) -> dict | None:
     """
     Update a pipeline run record with final results.
@@ -148,6 +149,8 @@ def update_pipeline_run(
         clusters_created: Total story clusters formed.
         errors: List of error dicts [{source, error, timestamp}].
         duration_seconds: Total pipeline duration.
+        llm_metrics: Optional dict with per-run LLM telemetry (call counts,
+            cache hits, cost estimate). Persisted to pipeline_runs.llm_metrics.
 
     Returns:
         The updated row as a dict, or None on failure.
@@ -162,6 +165,8 @@ def update_pipeline_run(
     }
     if duration_seconds is not None:
         update_data["duration_seconds"] = duration_seconds
+    if llm_metrics is not None:
+        update_data["llm_metrics"] = llm_metrics
 
     try:
         result = (

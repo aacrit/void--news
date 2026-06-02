@@ -1,0 +1,65 @@
+id: latvian-pm-resigns-2026-05
+name: "Latvian PM resigns over Ukrainian-drone scandal (must be present in top 50)"
+failure_date: "2026-05-15"
+failure_kind: missing
+articles:
+  - id: latv-1
+    title: "Latvian PM Evika Silina resigns over Ukrainian drone-purchase scandal"
+    summary: "Latvian Prime Minister Evika Silina resigned Wednesday after a parliamentary inquiry concluded her office mismanaged a Ukrainian drone-purchase contract."
+    full_text: >
+      Latvian Prime Minister Evika Silina resigned on Wednesday after a parliamentary
+      inquiry concluded her office mismanaged a 47-million-euro contract to supply
+      Ukrainian-built first-person-view drones to NATO partners. Silina, of the centrist
+      New Unity party, said in a televised statement she would step down "to allow
+      Latvia's next chapter to begin without distraction." The investigation found that
+      contract terms had been altered after the bidding process closed. President Edgars
+      Rinkevics asked Saeima Speaker Daiga Mierina to begin coalition consultations
+      immediately. Defense Minister Ineta Kalnina is widely tipped as the interim PM. The
+      scandal has dominated Latvian politics since February. Reuters could not
+      independently verify whether any Ukrainian state entity was implicated.
+    source: { slug: reuters, country: LV, tier: wire }
+    published_at: "2026-05-14T12:00Z"
+  - id: latv-2
+    title: "Riga: PM Silina steps down after drone-procurement scandal"
+    summary: "Latvian PM Evika Silina stepped down Wednesday after a drone-procurement scandal involving Ukrainian suppliers triggered a parliamentary inquiry."
+    full_text: >
+      Latvian Prime Minister Evika Silina stepped down on Wednesday after a drone-
+      procurement scandal involving Ukrainian suppliers triggered a parliamentary
+      inquiry that concluded that contract changes occurred after bid-close. The DELFI
+      newsroom in Riga reports Silina personally signed a memo authorizing the post-
+      submission amendment, despite a permanent-secretary objection. Silina denies any
+      personal financial interest. The Latvian president has 14 days to consult coalition
+      partners on a successor. Estonia's foreign minister Margus Tsahkna said the matter
+      was "regrettable but a sign of healthy parliamentary oversight." Lithuanian PM
+      Inga Ruginiene called for an EU-wide procurement framework. Latvia's defense budget
+      is among the largest in Europe by GDP share.
+    source: { slug: delfi, country: LV, tier: domestic }
+    published_at: "2026-05-14T13:30Z"
+  - id: latv-3
+    title: "Latvia loses prime minister to Ukrainian-drone-contract scandal"
+    summary: "Latvia lost Prime Minister Evika Silina on Wednesday to a Ukrainian-drone-contract scandal, plunging the Baltic state's coalition into crisis."
+    full_text: >
+      Latvia lost Prime Minister Evika Silina on Wednesday to a Ukrainian-drone-contract
+      scandal, plunging the Baltic state's coalition into crisis less than a year before
+      scheduled elections. The Financial Times reports that the New Unity party will
+      attempt to nominate a successor by Friday or face a snap-election trigger. The
+      European Commission declined to comment on what it called "a domestic political
+      matter." NATO Secretary General Mark Rutte praised Silina's "principled decision"
+      and said the alliance had full confidence in Latvia's institutions. Latvia's
+      defense procurement, which has surged 73 percent since 2022, will be reviewed by an
+      independent panel. The scandal originally surfaced in a February investigation by
+      the Re:Baltica nonprofit newsroom.
+    source: { slug: ft, country: GB, tier: international }
+    published_at: "2026-05-14T16:00Z"
+expectation:
+  type: should_be_present
+  key_phrase: "Latvian Prime Minister Silina resigns"
+  in_top_n: 50
+  min_overlap: 0.5
+rationale: |
+  Missing-story failure. A NATO-member head of government resigning over
+  a defense-procurement scandal involving Ukrainian suppliers is a major
+  European story, but the cluster did not appear in production top 50 on
+  2026-05-15. Likely cause: only three sources reach the cluster, all
+  written in different framings ("steps down" / "loses prime minister" /
+  "resigns"), none reach the importance ranker's promotion floor.

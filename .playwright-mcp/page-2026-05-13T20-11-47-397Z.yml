@@ -1,0 +1,51 @@
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - navigation "Main navigation" [ref=e5]:
+        - link "void --news — home" [ref=e7] [cursor=pointer]:
+          - /url: /void--news/
+          - img [ref=e9]
+        - generic [ref=e27]: ·
+        - generic [ref=e28]:
+          - navigation "Pages" [ref=e29]:
+            - link "Go to Sources" [ref=e30] [cursor=pointer]:
+              - /url: /void--news/sources/
+              - text: Sources →
+            - link "void --games" [ref=e31] [cursor=pointer]:
+              - /url: /void--news/games/
+              - text: Games →
+            - link "void --ship" [ref=e32] [cursor=pointer]:
+              - /url: /void--news/ship/
+              - text: Ship →
+            - link "About void --news" [ref=e33] [cursor=pointer]:
+              - /url: /void--news/about/
+              - text: About →
+          - button "Toggle theme" [ref=e34] [cursor=pointer]:
+            - img [ref=e36]
+      - generic [ref=e38]:
+        - navigation "Content sections" [ref=e39]:
+          - link "History" [ref=e40] [cursor=pointer]:
+            - /url: /void--news/history/
+          - link "Weekly" [ref=e41] [cursor=pointer]:
+            - /url: /void--news/weekly/
+        - button "Filter by topic" [ref=e43] [cursor=pointer]:
+          - generic [ref=e44]: "["
+          - text: topics
+          - generic [ref=e45]: ▾
+          - generic [ref=e46]: "]"
+        - toolbar "Coverage tilt" [ref=e47]:
+          - generic [ref=e48]: "["
+          - button "left" [ref=e49] [cursor=pointer]: left
+          - button "balanced" [ref=e51] [cursor=pointer]: balanced
+          - button "right" [ref=e53] [cursor=pointer]: right
+          - generic [ref=e55]: "]"
+        - search [ref=e56] [cursor=pointer]:
+          - img [ref=e57]
+          - textbox "Search stories (Ctrl+K)" [ref=e59]:
+            - /placeholder: Search stories...
+          - generic [ref=e60]: ⌘K
+    - main [ref=e61]
+  - button "Open Next.js Dev Tools" [ref=e68] [cursor=pointer]:
+    - img [ref=e69]

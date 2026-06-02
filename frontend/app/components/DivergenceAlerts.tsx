@@ -1,9 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { Story } from "../lib/types";
-import type { LeanChip } from "./FilterBar";
-import { LEAN_RANGES } from "./FilterBar";
+import type { Story, LeanChip } from "../lib/types";
+import { LEAN_RANGES } from "../lib/types";
 import { timeAgo } from "../lib/utils";
 
 /* ---------------------------------------------------------------------------
@@ -74,9 +73,10 @@ export default function DivergenceAlerts({
 
           <div className="div-alerts__row" role="list">
             {alertStories.map((story) => {
-              const insight = Array.isArray(story.deepDive?.divergence) && story.deepDive.divergence.length > 0
+              const rawInsight = Array.isArray(story.deepDive?.divergence) && story.deepDive.divergence.length > 0
                 ? story.deepDive.divergence[0]
                 : "Sources differ significantly on framing";
+              const insight = typeof rawInsight === "string" ? rawInsight : String(rawInsight);
 
               return (
                 <article
