@@ -4,10 +4,6 @@ permissions: {}
 on:
   workflow_dispatch:
     inputs:
-      editions:
-        description: 'Editions (comma-separated: world,us,india,uk,canada)'
-        required: false
-        default: 'world'
       mode:
         description: 'Mode: full (TL;DR + opinion + audio), text (TL;DR + opinion, no audio), tldr (TL;DR only), opinion (opinion only)'
         required: false
@@ -44,20 +40,19 @@ jobs:
           DISABLE_AUDIO: "1"
         run: |
           MODE="${{ inputs.mode }}"
-          EDITIONS="${{ inputs.editions }}"
-          echo "Mode: ${MODE} | Editions: ${EDITIONS}"
+          echo "Mode: ${MODE}"
 
           case "${MODE}" in
             full)
-              python pipeline/refresh_brief.py --editions "${EDITIONS}"
+              python pipeline/refresh_brief.py
               ;;
             text)
-              python pipeline/refresh_brief.py --editions "${EDITIONS}" --no-audio
+              python pipeline/refresh_brief.py --no-audio
               ;;
             tldr)
-              python pipeline/refresh_brief.py --editions "${EDITIONS}" --tldr-only --no-audio
+              python pipeline/refresh_brief.py --tldr-only --no-audio
               ;;
             opinion)
-              python pipeline/refresh_brief.py --editions "${EDITIONS}" --opinion-only
+              python pipeline/refresh_brief.py --opinion-only
               ;;
           esac

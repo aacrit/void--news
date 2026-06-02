@@ -16,7 +16,7 @@ import {
 import SpectrumChart, { type SpectrumSource, normalizeLean } from "../components/SpectrumChart";
 import ThemeToggle from "../components/ThemeToggle";
 import PageToggle from "../components/PageToggle";
-import EditionIcon from "../components/EditionIcon";
+// EditionIcon import removed 2026-06-02 single-feed
 import LogoFull from "../components/LogoFull";
 import LogoIcon from "../components/LogoIcon";
 import Footer from "../components/Footer";

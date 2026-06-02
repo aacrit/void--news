@@ -12,10 +12,6 @@ on:
     - cron: '0 11 * * *'     # 11:00 UTC — 6 AM Chicago, 4:30 PM IST, 1 PM CET, 12 PM London
   workflow_dispatch:
     inputs:
-      editions:
-        description: 'Edition filter (comma-separated: us,india,world). Empty = all.'
-        required: false
-        default: ''
       brief_only:
         description: 'Regenerate daily brief only (skip full pipeline)'
         type: boolean
@@ -72,22 +68,6 @@ jobs:
       - name: Download spaCy model
         if: ${{ !inputs.brief_only && steps.spacy-cache.outputs.cache-hit != 'true' }}
         run: python -m spacy download en_core_web_sm
-      - name: Validate editions input
-        if: ${{ inputs.editions != '' }}
-        run: |
-          if [[ ! "${{ inputs.editions }}" =~ ^[a-z,]+$ ]]; then
-            echo "::error::Invalid editions input. Only lowercase letters and commas allowed."
-            exit 1
-          fi
-      - name: Determine editions from schedule
-        id: editions
-        run: |
-          if [ -n "${{ inputs.editions }}" ]; then
-            echo "filter=${{ inputs.editions }}" >> $GITHUB_OUTPUT
-          else
-            # All editions run on every scheduled trigger (2x daily)
-            echo "filter=" >> $GITHUB_OUTPUT
-          fi
       - name: Regenerate daily brief only
         if: ${{ inputs.brief_only }}
         env:
@@ -105,11 +85,7 @@ jobs:
           # to re-enable Sonnet 4.6 once balance is replenished.
           DISABLE_ANTHROPIC: "1"
         run: |
-          EDITIONS="${{ steps.editions.outputs.filter }}"
           ARGS=""
-          if [ -n "$EDITIONS" ]; then
-            ARGS="--editions $EDITIONS"
-          fi
           if [ "${{ inputs.no_audio }}" = "true" ]; then
             ARGS="$ARGS --no-audio"
           fi
@@ -132,11 +108,7 @@ jobs:
           # to re-enable Sonnet 4.6 once balance is replenished.
           DISABLE_ANTHROPIC: "1"
         run: |
-          EDITIONS="${{ steps.editions.outputs.filter }}"
           ARGS=""
-          if [ -n "$EDITIONS" ]; then
-            ARGS="--editions $EDITIONS"
-          fi
           if [ "${{ inputs.recluster_only }}" = "true" ]; then
             ARGS="$ARGS --recluster-only --recluster-window-hours ${{ inputs.recluster_window_hours || 48 }}"
             echo "Running RECLUSTER-ONLY (skip fetch/scrape/bias; reuse existing articles)"

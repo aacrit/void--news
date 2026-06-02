@@ -22,22 +22,11 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from utils.supabase_client import supabase
 from ranker.importance_ranker import rank_importance
-from ranker.edition_ranker import apply_edition_ranking, EDITIONS
+from ranker.feed_ranker import apply_feed_ordering
 from categorizer.auto_categorize import categorize_article, map_to_desk
 
 SOURCES_PATH = Path(__file__).parent.parent / "data" / "sources.json"
 DRY_RUN = "--dry-run" in sys.argv
-
-
-def _cluster_in_section(cluster_id: str, clusters: list[dict], section: str) -> bool:
-    """Check if a cluster belongs to a section via sections[] array.
-    This matches the frontend query logic (.contains("sections", [section]))
-    so that ranking pools see the same stories the user sees."""
-    for c in clusters:
-        if c["id"] == cluster_id:
-            sections = c.get("sections") or [c.get("section", "world")]
-            return section in sections
-    return section == "world"
 
 
 def load_sources() -> list[dict]:
@@ -62,7 +51,7 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
     Re-rank ALL clusters in Supabase with the current ranking engine.
 
     Fetches all clusters, articles, and bias scores from DB, runs
-    rank_importance() + apply_edition_ranking() on each, and writes
+    rank_importance() + apply_feed_ordering() on each, and writes
     back updated scores. This ensures all clusters compete on equal
     footing with the same engine version.
 
@@ -408,25 +397,21 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
             else:
                 u["sections"] = ["world"]
 
-    apply_edition_ranking(
-        updates, sources, get_article_edition="source_lookup"
-    )
+    apply_feed_ordering(updates, sources)
 
-    # REMOVED: old per-section lead gate, same-event cap, topic diversity,
-    # edition ranking (v5.7), freshness decay, source depth bonus.
-    # All now handled by edition_ranker.py (single source of truth).
-    #
-    # Dummy block to satisfy the remaining code flow:
-    # Print top 15 per edition
-    for ed in EDITIONS:
-        pool = [u for u in updates if _cluster_in_section(u["id"], clusters, ed)]
-        pool.sort(key=lambda u: u.get(f"rank_{ed}", 0), reverse=True)
-        print(f"\n  --- Top 15 {ed.upper()} by rank_{ed} ---")
-        for j, u in enumerate(pool[:15]):
-            title = next(
-                (c["title"] for c in clusters if c["id"] == u["id"]), "?"
-            )[:60]
-            print(f"  {j+1:2}. [{u.get(f'rank_{ed}', 0):5.1f}] {u['source_count']:2}src {u.get('category',''):12} {title}")
+    # Diagnostic: top 15 of the single feed.
+    sorted_updates = sorted(
+        updates, key=lambda u: u.get("rank_world", 0), reverse=True
+    )
+    print("\n  --- Top 15 by rank_world ---")
+    for j, u in enumerate(sorted_updates[:15]):
+        title = next(
+            (c["title"] for c in clusters if c["id"] == u["id"]), "?"
+        )[:60]
+        print(
+            f"  {j+1:2}. [{u.get('rank_world', 0):5.1f}] "
+            f"{u['source_count']:2}src {u.get('category',''):12} {title}"
+        )
 
     if dry_run:
         print(f"\n  DRY RUN — no writes. Re-run without --dry-run to apply.")
@@ -454,10 +439,6 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
             "content_type": u["content_type"],
             "category": u["category"],
             "rank_world": u.get("rank_world", u["headline_rank"]),
-            "rank_us": u.get("rank_us", u["headline_rank"]),
-            "rank_europe": u.get("rank_europe", u["headline_rank"]),
-            # Edition name "south-asia" (hyphen) → DB column "rank_south_asia" (underscore)
-            "rank_south_asia": u.get("rank_south-asia", u["headline_rank"]),
             "last_updated": _now_iso,
             # 2026-05-24 v2 — headline signal (migration 059)
             "is_headline": bool(u.get("is_headline", False)),

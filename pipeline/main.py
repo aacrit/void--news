@@ -52,7 +52,7 @@ try:
     from clustering.story_cluster import cluster_stories
     from categorizer.auto_categorize import categorize_article, categorize_early, map_to_desk
     from ranker.importance_ranker import rank_importance, compute_coverage_velocity
-    from ranker.edition_ranker import apply_edition_ranking
+    from ranker.feed_ranker import apply_feed_ordering
     ANALYSIS_AVAILABLE = True
 except ImportError as e:
     print(f"[warn] Analysis modules not available ({e}). Running fetch-only mode.")
@@ -909,21 +909,10 @@ def _scrape_single(article_data, source_map):
             article_data["full_text"] = f"{title}\n\n{rss_summary}" if title else rss_summary
             article_data["word_count"] = len(article_data["full_text"].split())
 
-    # Determine section (edition) — route by source country first,
-    # then fall back to content-based detection for US stories.
-    source_slug = article_data.get("source_slug", "") or article_data.get("source_id", "")
-    source_info = source_map.get(source_slug, {})
-    source_country = source_info.get("country", "")
-
-    if source_country in _COUNTRY_EDITION_MAP:
-        # Country-specific edition: US, South Asia, Europe
-        article_data["section"] = _COUNTRY_EDITION_MAP[source_country]
-    elif _has_us_domestic_signal(article_data):
-        # Content-based override: international sources covering clearly
-        # US domestic stories should appear in the US edition.
-        article_data["section"] = "us"
-    else:
-        article_data["section"] = "world"
+    # Section is always "world" (2026-06-02 collapse-editions).
+    # The field is kept on the row for defensive frontend / downstream
+    # consumers that still filter by section / sections @> ['world'].
+    article_data["section"] = "world"
 
     return article_data
 
@@ -942,13 +931,6 @@ def main():
     """Run the full news ingestion + analysis pipeline."""
     import argparse
     parser = argparse.ArgumentParser(description="void --news pipeline")
-    parser.add_argument(
-        "--editions",
-        type=str,
-        default="",
-        help="Comma-separated edition slugs to process (e.g., 'south-asia'). "
-             "Empty = all sources.",
-    )
     parser.add_argument(
         "--engine-only",
         action="store_true",
@@ -975,7 +957,7 @@ def main():
     )
     args = parser.parse_args()
 
-    editions = [e.strip() for e in args.editions.split(",") if e.strip()] if args.editions else None
+    editions = None  # 2026-06-02 single-feed — `editions` filter removed; load_sources call sites keep arg for back-compat.
     recluster_only = bool(getattr(args, "recluster_only", False))
     # --recluster-only implies --engine-only (no LLM, no fetch)
     engine_only = bool(getattr(args, "engine_only", False)) or recluster_only
@@ -2014,21 +1996,10 @@ def main():
                     p25_idx = max(0, len(conf_values) // 4)
                     cluster_confidence = conf_values[p25_idx]
 
-            # Rank with v5.1 engine (10 signals + Gemini editorial + gates)
-            # Pre-compute sections so the US-only divergence damper and
-            # cross-spectrum bonus can be applied correctly at scoring time.
-            # (The authoritative sections[] written to DB is computed in step 8;
-            # this early read gives the same result since both use article.section.)
-            _rank_sections = sorted(
-                {a.get("section", "world") for a in cluster_articles_list}
-            ) or ["world"]
-            # Store sections on cluster dict early so steps 7c/7d can filter
+            # 2026-06-02 single-feed — sections is always ["world"].
+            _rank_sections = ["world"]
             cluster["sections"] = _rank_sections
-            cluster["section"] = max(
-                {a.get("section", "world") for a in cluster_articles_list},
-                key=lambda s: sum(1 for a in cluster_articles_list if a.get("section") == s),
-                default="world",
-            )
+            cluster["section"] = "world"
             try:
                 rank_result = rank_importance(
                     cluster_articles_list, sources, cluster_bias_scores,
@@ -2110,50 +2081,39 @@ def main():
             try:
                 from summarizer.gemini_client import editorial_triage
                 print("\n[7c] Running editorial triage (Gemini)...")
-                _all_editions = sorted({s for c in clusters for s in (c.get("sections") or ["world"])})
-                for section_val in _all_editions:
-                    pool = [c for c in clusters
-                            if section_val in (c.get("sections") or [c.get("section", "world")])]
-                    pool.sort(
-                        key=lambda c: (c.get("headline_rank", 0), c.get("source_count", 0), c.get("_db_id", str(id(c)))),
-                        reverse=True,
-                    )
-                    top_30 = pool[:30]
-                    if len(top_30) < 5:
-                        continue
-
-                    # Build candidate list with IDs
-                    triage_candidates = []
-                    for c in top_30:
-                        triage_candidates.append({
+                # 2026-06-02 single-feed — one pass on the whole pool.
+                pool = sorted(
+                    clusters,
+                    key=lambda c: (c.get("headline_rank", 0), c.get("source_count", 0), c.get("_db_id", str(id(c)))),
+                    reverse=True,
+                )
+                top_30 = pool[:30]
+                if len(top_30) >= 5:
+                    triage_candidates = [
+                        {
                             "id": c.get("_db_id", "") or str(id(c)),
                             "title": c.get("title", ""),
                             "summary": c.get("summary", ""),
                             "source_count": c.get("source_count", 0),
-                        })
-
-                    triage_result = editorial_triage(triage_candidates, section_val)
-                    if not triage_result:
-                        print(f"  [{section_val}] Triage unavailable, using deterministic ranking")
-                        continue
-
-                    # Flag incremental updates
-                    incr_flags = set(triage_result.get("incremental_flags", []))
-                    for cid in incr_flags:
-                        for c in top_30:
-                            if (c.get("_db_id", "") or str(id(c))) == cid:
-                                c["story_type"] = c.get("story_type") or "incremental_update"
-                                c["headline_rank"] = round(c.get("headline_rank", 0) * 0.75, 2)
-                    if incr_flags:
-                        print(f"  [{section_val}] Incremental updates flagged: {len(incr_flags)}")
-
-                    # Log duplicate flags
-                    dupe_flags = triage_result.get("duplicate_flags", [])
-                    if dupe_flags:
-                        print(f"  [{section_val}] Potential duplicate clusters: {dupe_flags[:3]}")
-
-                    applied = len(incr_flags)
-                    print(f"  [{section_val}] Editorial triage applied ({applied} stories adjusted)")
+                        }
+                        for c in top_30
+                    ]
+                    triage_result = editorial_triage(triage_candidates, "world")
+                    if triage_result:
+                        incr_flags = set(triage_result.get("incremental_flags", []))
+                        for cid in incr_flags:
+                            for c in top_30:
+                                if (c.get("_db_id", "") or str(id(c))) == cid:
+                                    c["story_type"] = c.get("story_type") or "incremental_update"
+                                    c["headline_rank"] = round(c.get("headline_rank", 0) * 0.75, 2)
+                        if incr_flags:
+                            print(f"  Incremental updates flagged: {len(incr_flags)}")
+                        dupe_flags = triage_result.get("duplicate_flags", [])
+                        if dupe_flags:
+                            print(f"  Potential duplicate clusters: {dupe_flags[:3]}")
+                        print(f"  Editorial triage applied ({len(incr_flags)} stories adjusted)")
+                    else:
+                        print("  Triage unavailable, using deterministic ranking")
             except Exception as e:
                 print(f"  [warn] Editorial triage failed, using deterministic ranking: {e}")
 
@@ -2172,16 +2132,12 @@ def main():
         }
         MAX_SAME_EVENT = 3
 
-        _cap_editions = sorted({s for c in clusters for s in (c.get("sections") or ["world"])})
-        for section_val in _cap_editions:
-            pool = [c for c in clusters if section_val in (c.get("sections") or [c.get("section", "world")])]
-            if len(pool) <= 10:
-                continue
-
+        # 2026-06-02 single-feed — same-event cap runs once on whole pool.
+        if len(clusters) > 10:
             event_counts: dict[str, int] = {}
             event_promoted: list[dict] = []
             event_deferred: list[dict] = []
-            for c in pool:
+            for c in clusters:
                 title_lower = (c.get("title", "") or "").lower()
                 event = None
                 for ek, kws in _EVENT_KEYWORDS.items():
@@ -2195,19 +2151,13 @@ def main():
                     if event:
                         event_counts[event] = event_counts.get(event, 0) + 1
             if event_deferred:
-                # Build per-event floors from the lowest-ranked promoted cluster
-                # of each event. Deferred clusters rank at 75% of their event's
-                # last promoted cluster — not at the absolute pool bottom (old bug
-                # crushed 15-source clusters from ~50 to ~8 points).
                 event_last_promoted: dict[str, float] = {}
                 for c in event_promoted:
                     t = (c.get("title", "") or "").lower()
                     for ek, kws in _EVENT_KEYWORDS.items():
                         if any(kw in t for kw in kws):
-                            # Overwritten per cluster; last = lowest-ranked
                             event_last_promoted[ek] = c.get("headline_rank", 0)
                             break
-
                 for c in event_deferred:
                     idx = clusters.index(c)
                     t = (c.get("title", "") or "").lower()
@@ -2222,8 +2172,9 @@ def main():
                         floor = event_promoted[-1].get("headline_rank", 0) * 0.75
                     else:
                         continue
-                    clusters[idx]["headline_rank"] = round(min(c.get("headline_rank", 0), floor), 2)
-
+                    clusters[idx]["headline_rank"] = round(
+                        min(c.get("headline_rank", 0), floor), 2
+                    )
             clusters.sort(
                 key=lambda c: (c.get("headline_rank", 0), c.get("source_count", 0), c.get("_db_id", str(id(c)))),
                 reverse=True,
@@ -2280,16 +2231,8 @@ def main():
         else:
             print("\n[7b] Skipping LLM summarization (SDKs not installed)")
 
-        # Topic diversity re-ranking: prevent any single category from
-        # dominating the top of the feed. Within each section pool,
-        # demote stories that would put >2 of the same category in the top 10.
-        _div_editions = sorted({s for c in clusters for s in (c.get("sections") or ["world"])})
-        for section_val in _div_editions:
-            pool = [c for c in clusters if section_val in (c.get("sections") or [c.get("section", "world")])]
-            if len(pool) <= 10:
-                continue
-            # v4.0: soft-news desk "culture" (merges culture+sports) gets
-            # MAX_SAME_CAT=1 (max 1 slot in top 10). All other desks get 2.
+        # Topic diversity — single pass over whole pool (2026-06-02).
+        if len(clusters) > 10:
             _SOFT_CATS = {"culture"}
             MAX_SAME_CAT_DEFAULT = 2
             MAX_SAME_CAT_SOFT = 1
@@ -2297,8 +2240,7 @@ def main():
             promoted: list[dict] = []
             deferred: list[dict] = []
             cat_counts: dict[str, int] = {}
-
-            for c in pool:
+            for c in clusters:
                 if len(promoted) >= TOP_N:
                     deferred.append(c)
                     continue
@@ -2309,73 +2251,59 @@ def main():
                     cat_counts[cat] = cat_counts.get(cat, 0) + 1
                 else:
                     deferred.append(c)
-
-            # If we couldn't fill TOP_N due to all categories being capped,
-            # pull from deferred in original rank order.
             while len(promoted) < TOP_N and deferred:
                 promoted.append(deferred.pop(0))
-
-            # Write back headline_rank to reflect diversity-adjusted order.
-            # Use 0.1pt spacing: enough to avoid false ties without
-            # distorting ranks (0.01 tied 4 stories, 0.5 was too aggressive).
-            final_order = promoted + deferred
-            if final_order and len(promoted) >= 2:
+            if len(promoted) >= 2:
                 for j in range(1, len(promoted)):
                     if promoted[j].get("headline_rank", 0) >= promoted[j-1].get("headline_rank", 0):
                         promoted[j]["headline_rank"] = round(
                             promoted[j-1].get("headline_rank", 0) - 0.1, 2
                         )
 
-        # Recency gate for top-10: ensure the front page shows today's news.
-        # After topic diversity re-rank, demote any cluster whose most recent
-        # article is older than 24h below position 10 within each section pool.
+        # Recency gate for top-10 — single pool (2026-06-02).
         recency_cutoff = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
-        _rec_editions = sorted({s for c in clusters for s in (c.get("sections") or ["world"])})
-        for section_val in _rec_editions:
-            pool = [c for c in clusters if section_val in (c.get("sections") or [c.get("section", "world")])]
-            pool.sort(key=lambda c: (c.get("headline_rank", 0), c.get("source_count", 0)), reverse=True)
-
-            top_10 = pool[:10]
-            demoted = []
-            kept = []
-            for c in top_10:
-                # Determine the most recent article timestamp in this cluster
-                cluster_arts = c.get("articles", [])
-                most_recent = c.get("first_published", "")
-                for art in cluster_arts:
-                    pub = art.get("published_at", "")
-                    if pub and pub > most_recent:
-                        most_recent = pub
-
-                if most_recent and most_recent < recency_cutoff:
-                    demoted.append(c)
-                else:
-                    kept.append(c)
-
-            if demoted:
-                floor_rank = pool[10].get("headline_rank", 0) if len(pool) > 10 else 0
-                for c in demoted:
-                    c["headline_rank"] = round(min(c.get("headline_rank", 0), floor_rank - 0.01), 2)
+        sorted_pool = sorted(
+            clusters,
+            key=lambda c: (c.get("headline_rank", 0), c.get("source_count", 0)),
+            reverse=True,
+        )
+        top_10 = sorted_pool[:10]
+        demoted = []
+        for c in top_10:
+            cluster_arts = c.get("articles", [])
+            most_recent = c.get("first_published", "")
+            for art in cluster_arts:
+                pub = art.get("published_at", "")
+                if pub and pub > most_recent:
+                    most_recent = pub
+            if most_recent and most_recent < recency_cutoff:
+                demoted.append(c)
+        if demoted:
+            floor_rank = sorted_pool[10].get("headline_rank", 0) if len(sorted_pool) > 10 else 0
+            for c in demoted:
+                c["headline_rank"] = round(
+                    min(c.get("headline_rank", 0), floor_rank - 0.01), 2
+                )
                 print(f"  [{section_val}] Recency gate: demoted {len(demoted)} stale stories from top 10")
 
-        # ── Per-edition rank computation (v6.0 — shared edition_ranker) ──
-        # Normalized cluster IDs: edition_ranker uses c["id"] for identity.
+        # ── Feed ordering (2026-06-02 single-edition) ──────────────────────
+        # Normalized cluster IDs: feed_ranker uses c["id"] for identity.
         for c in clusters:
             if "id" not in c:
                 c["id"] = c.get("_db_id", "") or str(id(c))
-        apply_edition_ranking(
-            clusters, sources, get_article_edition="section"
-        )
+        apply_feed_ordering(clusters, sources)
 
-        # Print top 10 per edition for diagnostics
-        _RANK_EDITIONS = ACTIVE_EDITIONS
-        for ed in _RANK_EDITIONS:
-            pool = [c for c in clusters if ed in (c.get("sections") or [c.get("section", "world")])]
-            pool.sort(key=lambda c: c.get(f"rank_{ed}", 0), reverse=True)
-            print(f"\n  --- Top 10 {ed.upper()} by rank_{ed} ---")
-            for j, c in enumerate(pool[:10]):
-                title = (c.get("title", "") or "")[:55]
-                print(f"  {j+1:2}. [{c.get(f'rank_{ed}', 0):5.1f}] {c.get('source_count', 0):2}src {title}")
+        # Top 10 of the single feed for diagnostics.
+        pool_sorted = sorted(
+            clusters, key=lambda c: c.get("rank_world", 0), reverse=True
+        )
+        print("\n  --- Top 10 by rank_world ---")
+        for j, c in enumerate(pool_sorted[:10]):
+            title = (c.get("title", "") or "")[:55]
+            print(
+                f"  {j+1:2}. [{c.get('rank_world', 0):5.1f}] "
+                f"{c.get('source_count', 0):2}src {title}"
+            )
 
         # ── Step 7d: Generate Daily Brief (TL;DR + audio broadcast) ──
         if BRIEFING_AVAILABLE:
@@ -2588,42 +2516,10 @@ def main():
 
             # Determine cluster section (edition) from its articles.
             # Strategy: majority vote — whichever edition has the most
-            # articles in this cluster determines the cluster's edition.
-            # This works fairly across all editions (world/us/europe/south-asia).
-            section_counts: dict[str, int] = {}
-            for art in cluster_articles_list:
-                sec = art.get("section", "world")
-                section_counts[sec] = section_counts.get(sec, 0) + 1
-            cluster_section = max(section_counts, key=section_counts.get) if section_counts else "world"
-
-            # Multi-section: list ALL editions that have articles in this cluster.
-            #
-            # 2026-05-22 — world-tag force-add DEFERRED to post-rerank step 8c.5.
-            # Previously this block read `cluster.get("rank_world")` from step
-            # 7's ranker output (pre-holistic-rerank), which is STALE by the
-            # time clusters are persisted. The 13-source pin regression was
-            # partly caused by yesterday's rank_world (95) triggering force-
-            # add even though today's rerank dropped it to 35. Step 8 now
-            # only persists the natural multi-section signal from articles;
-            # the post-rerank step uses fresh DB rank_world to add/remove
-            # 'world' from sections[]. Multi-section ≥2 still triggers
-            # cross-listing here because it's a genuine article-level signal
-            # that doesn't depend on rank.
-            all_sections = sorted(section_counts.keys()) if section_counts else ["world"]
-            if "world" not in all_sections and len(all_sections) >= 2:
-                all_sections = sorted(set(all_sections) | {"world"})
-
-            # is_international flag drives the /world overflow filter.
-            # True iff: cluster's primary section is NOT 'us' AND
-            #           non-US-source-count >= US-source-count.
-            # Both gates required so a US-domestic story with one Reuters
-            # byline isn't mis-classified as international.
-            if cluster_section == "us":
-                _is_international = False
-            else:
-                _us_count = section_counts.get("us", 0)
-                _non_us_count = sum(section_counts.values()) - _us_count
-                _is_international = _non_us_count >= _us_count
+            # 2026-06-02 single-feed — section / sections frozen to world.
+            cluster_section = "world"
+            all_sections = ["world"]
+            _is_international = True  # kept for legacy column; no longer used for routing
 
             # Use pre-generated summary from clustering or Gemini step
             cluster_summary = cluster.get("summary", "") or ""
@@ -2646,10 +2542,6 @@ def main():
                 "headline_rank": round(cluster.get("headline_rank", 0.0), 2),
                 "coverage_velocity": cluster.get("coverage_velocity", 0),
                 "rank_world": round(cluster.get("rank_world", cluster.get("headline_rank", 0.0)), 2),
-                "rank_us": round(cluster.get("rank_us", cluster.get("headline_rank", 0.0)), 2),
-                "rank_europe": round(cluster.get("rank_europe", cluster.get("headline_rank", 0.0)), 2),
-                # Edition name "south-asia" (hyphen) → DB column "rank_south_asia" (underscore)
-                "rank_south_asia": round(cluster.get("rank_south-asia", cluster.get("headline_rank", 0.0)), 2),
                 "is_international": _is_international,
                 "mega_cluster_capped": bool(cluster.get("mega_cluster_capped", False)),
                 # 2026-05-24 v2 — first-class headline signal (migration 059)
@@ -3012,58 +2904,11 @@ def main():
             print(f"  [warn] Holistic re-rank failed: {e}")
             traceback.print_exc()
 
-    # Step 8c.5 — post-rerank world-tag reconciliation.
-    # Uses FRESH rank_world from DB (just written by step 8c). For each
-    # cluster: add 'world' to sections[] iff rank_world >= 50, remove iff
-    # rank_world < 50 AND no natural 'world' signal (i.e. it was previously
-    # force-added). Natural 'world' (≥2 sections or cluster_section='world')
-    # is preserved unconditionally. Idempotent: same input → same output.
-    #
-    # Fixes the 13-source pin regression: yesterday's #1 with rank_world=95
-    # was persisted with 'world' in sections at step 8. Today rerank drops
-    # it to rank_world=35 → this step removes 'world' from sections →
-    # frontend's .contains("sections", ["world"]) filter no longer surfaces
-    # it on /world. Real top stories make it through.
-    try:
-        print("\n[8c.5] Post-rerank world-tag reconciliation...")
-        # Read clusters touched recently (last 48h) with their fresh rank_world.
-        from datetime import datetime as _dt, timedelta as _td, timezone as _tz
-        _since = (_dt.now(_tz.utc) - _td(hours=48)).isoformat()
-        _resp = supabase.table("story_clusters").select(
-            "id,sections,rank_world,section"
-        ).gte("last_updated", _since).execute()
-        _to_check = _resp.data or []
-        _add_count = 0
-        _remove_count = 0
-        for _row in _to_check:
-            _sections = list(_row.get("sections") or [])
-            _rank_world = float(_row.get("rank_world") or 0)
-            _primary = _row.get("section") or ""
-            _has_world_naturally = (
-                _primary == "world" or
-                len([s for s in _sections if s and s != "world"]) >= 2
-            )
-            _world_in_sections = "world" in _sections
-            _new_sections = _sections[:]
-            if _rank_world >= 50.0 and not _world_in_sections:
-                _new_sections = sorted(set(_new_sections) | {"world"})
-                _add_count += 1
-            elif _rank_world < 50.0 and _world_in_sections and not _has_world_naturally:
-                _new_sections = sorted([s for s in _new_sections if s != "world"])
-                _remove_count += 1
-            if _new_sections != _sections:
-                try:
-                    supabase.table("story_clusters").update(
-                        {"sections": _new_sections}
-                    ).eq("id", _row["id"]).execute()
-                except Exception as _ue:
-                    print(f"  [warn] sections update failed for {_row['id'][:8]}: {_ue}")
-        print(f"  Reconciled: +{_add_count} world-added, -{_remove_count} world-removed "
-              f"across {len(_to_check)} recent clusters.")
-    except Exception as e:
-        import traceback
-        print(f"  [warn] World-tag reconciliation failed: {e}")
-        traceback.print_exc()
+    # Step 8c.5 REMOVED (2026-06-02 collapse-editions). World-tag
+    # reconciliation was only needed when /world was a separate overflow
+    # surface filtered by `sections @> ['world']`. With the single feed
+    # all clusters carry sections=['world'] at write time, so no post-rerank
+    # reconciliation is required.
 
     # Step 8c.6 — Engine snapshot writer REMOVED (2026-06-01 egress fix).
     # The diagnostic lab at /diag.html and the supporting sandbox stack

@@ -3,21 +3,12 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { MagnifyingGlass } from "@phosphor-icons/react";
-import type { Edition } from "../lib/types";
-import { EDITIONS } from "../lib/types";
 import ThemeToggle from "./ThemeToggle";
 import PageToggle from "./PageToggle";
 import LogoFull from "./LogoFull";
 import { getEditionTimestamp } from "../lib/utils";
-import { hapticConfirm } from "../lib/haptics";
-
-/** When only one edition exists, edition UI is hidden. World becomes an inline
- *  section of the homepage instead of a switchable edition. */
-const MULTI_EDITION = EDITIONS.length > 1;
 
 interface NavBarProps {
-  activeEdition: Edition;
-  onEditionChange?: (edition: Edition) => void;
   onSearchClick?: () => void;
   hasAudio?: boolean;
   isAudioPlaying?: boolean;
@@ -44,8 +35,6 @@ function formatDateCompact(): string {
 }
 
 export default function NavBar({
-  activeEdition,
-  onEditionChange,
   onSearchClick,
 }: NavBarProps) {
   const [mounted, setMounted] = useState(false);
@@ -54,7 +43,7 @@ export default function NavBar({
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setMounted(true); }, []);
   const dateline = mounted ? formatDateCompact() : "            ";
-  const timestamp = mounted ? getEditionTimestamp(activeEdition) : "     ";
+  const timestamp = mounted ? getEditionTimestamp() : "     ";
 
   /* ── Scroll-compact masthead (NYT-style): wires --scroll-nav-compact-* tokens.
      Adds data-scroll-compact="true" past 80px, removes at ≤40px (hysteresis
@@ -89,11 +78,6 @@ export default function NavBar({
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  const handleEditionTap = (edition: Edition) => {
-    hapticConfirm();
-    onEditionChange?.(edition);
-  };
 
   return (
     <header
@@ -165,22 +149,7 @@ export default function NavBar({
         </div>
       </nav>
 
-      {/* ── Mobile edition tabs — only when multi-edition ── */}
-      {MULTI_EDITION && onEditionChange && (
-        <nav className="nav-mob-editions" aria-label="Edition">
-          {EDITIONS.map((ed) => (
-            <button
-              key={ed.slug}
-              type="button"
-              aria-current={activeEdition === ed.slug ? "page" : undefined}
-              className={`nav-mob-ed${activeEdition === ed.slug ? " nav-mob-ed--active" : ""}`}
-              onClick={() => handleEditionTap(ed.slug)}
-            >
-              {ed.label}
-            </button>
-          ))}
-        </nav>
-      )}
+      {/* Mobile edition tabs removed 2026-06-02 single-feed. */}
     </header>
   );
 }

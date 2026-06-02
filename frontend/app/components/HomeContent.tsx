@@ -59,7 +59,7 @@ import { useStoryKeyboardNav } from "./KeyboardShortcuts";
 const KeyboardShortcutsOverlay = dynamic(() => import("./KeyboardShortcuts").then(m => ({ default: m.KeyboardShortcutsOverlay })), { ssr: false });
 import InstallPrompt from "./InstallPrompt";
 import MobileFeed from "./MobileFeed";
-import WorldDivider from "./WorldDivider";
+// WorldDivider removed 2026-06-02 — no overflow split in single-feed mode.
 const SearchOverlay = dynamic(() => import("./SearchOverlay"), { ssr: false });
 
 /** Map pipeline category slugs (both fine-grained and desk) to display names.
@@ -157,37 +157,13 @@ interface HomeContentProps {
    Edition is URL-driven: each edition has its own route.
    --------------------------------------------------------------------------- */
 
-const EDITION_STORAGE_KEY = "void-news-edition";
-const VALID_EDITIONS: Edition[] = ["world"];
+// 2026-06-02 single-feed — activeEdition collapsed to a constant.
+// initialEdition prop kept for back-compat with /[edition]/page.tsx routes
+// (which now redirect to /), but unused — the feed is always "world".
+const activeEdition = "world" as const;
 
-function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
-  // Edition state: URL-driven routes (/us, /india) pass the correct edition.
-  // At root URL (/), initialEdition is always "world" — check localStorage for
-  // a saved preference so returning visitors see their last-used edition.
-  const [activeEdition, setActiveEdition] = useState<Edition>(() => {
-    if (typeof window === "undefined") return initialEdition;
-    // Only apply localStorage override at root URL — explicit /us or /india
-    // routes should always honor their URL-specified edition.
-    const p = window.location.pathname.replace(/\/+$/, "");
-    const isRootUrl = p === "" || p === BASE_PATH;
-    if (isRootUrl && initialEdition === "world") {
-      try {
-        const saved = localStorage.getItem(EDITION_STORAGE_KEY);
-        if (saved && VALID_EDITIONS.includes(saved as Edition)) {
-          return saved as Edition;
-        }
-      } catch {
-        // localStorage unavailable (private browsing, etc.) — fall through
-      }
-    }
-    return initialEdition;
-  });
-
-  // When navigating between edition routes (e.g. /us → /), the component is
-  // reused and useState doesn't re-initialize. Sync state to the prop.
-  useEffect(() => {
-    setActiveEdition(initialEdition);
-  }, [initialEdition]);
+function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeContentProps) {
+  void _initialEdition;
 
   const [stories, setStories] = useState<Story[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -213,17 +189,11 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   // Scroll position before DeepDive opened — restored on close (F06)
   const scrollBeforeDeepDive = useRef<number>(0);
 
-  // Whip pan direction — track previous edition index for direction-aware animation.
-  // isEditionSwitch tracks whether the current content remount is from an edition
-  // change (whip pan) vs a filter change (no whip pan, just card reshuffling).
-  const EDITION_ORDER: Edition[] = ["world"];
-  const prevEditionRef = useRef<Edition>(activeEdition);
-  const [whipDirection, setWhipDirection] = useState<"right" | "left">("right");
-  const [isEditionSwitch, setIsEditionSwitch] = useState(false);
-
-  // Mobile edition switch transition — cross-fade out/in
-  const [editionTransition, setEditionTransition] = useState<"out" | "in" | null>(null);
-  const editionTransitionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // 2026-06-02 single-feed — edition transition / whip-pan state removed.
+  // Constants kept so existing render paths compile without rewiring.
+  const whipDirection = "right" as const;
+  const isEditionSwitch = false;
+  const editionTransition: null = null;
 
   // --- Pull-to-Refresh (mobile only) ---
   const [pullOffset, setPullOffset] = useState(0);
@@ -282,7 +252,6 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   useEffect(() => {
     return () => {
       if (pullResetTimerRef.current !== null) clearTimeout(pullResetTimerRef.current);
-      if (editionTransitionTimerRef.current !== null) clearTimeout(editionTransitionTimerRef.current);
     };
   }, []);
 
@@ -325,65 +294,12 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     return () => document.removeEventListener("keydown", handleCmdK);
   }, []);
 
-  // Close DeepDive and scroll to top when edition changes.
-  // Whip pan direction: content exits left when navigating "right" in edition order.
-  // Mobile edition cross-fade: out (200ms) -> in (300ms) -> clear.
+  // 2026-06-02 single-feed — edition switch effects removed (was whip pan,
+  // cross-fade, localStorage, URL push, data-edition attribute). The page
+  // is always "world" and the URL never changes from /.
   useEffect(() => {
-    // Only fire haptic on actual user-initiated edition switches, not on mount
-    const prevIdx = EDITION_ORDER.indexOf(prevEditionRef.current);
-    const nextIdx = EDITION_ORDER.indexOf(activeEdition);
-    if (prevIdx !== nextIdx) hapticConfirm();
-
-    setSelectedStory(null);
-    setOriginRect(null);
-
-    // Mobile edition cross-fade — trigger out/in sequence before scroll
-    if (prevIdx !== nextIdx && isMobile) {
-      // Clear any pending timer from a rapid edition switch
-      if (editionTransitionTimerRef.current) clearTimeout(editionTransitionTimerRef.current);
-      setEditionTransition("out");
-      // L-cut overlap: new content starts entering at 50% of 180ms whip pan
-      editionTransitionTimerRef.current = setTimeout(() => {
-        setEditionTransition("in");
-        editionTransitionTimerRef.current = setTimeout(() => {
-          setEditionTransition(null);
-          editionTransitionTimerRef.current = null;
-        }, 150);
-      }, 90);
-    }
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
-
-    // Compute whip pan direction based on edition order.
-    // Mark isEditionSwitch so the desktop whip pan animation applies to
-    // all grid sections. Cleared after whip pan duration (180ms + buffer).
-    if (prevIdx !== nextIdx) {
-      setWhipDirection(nextIdx > prevIdx ? "right" : "left");
-      setIsEditionSwitch(true);
-      setTimeout(() => setIsEditionSwitch(false), 280);
-    }
-    prevEditionRef.current = activeEdition;
-  }, [activeEdition]);
-
-  // Persist edition preference to localStorage — returning visitors who land
-  // on the root URL (/) will see their last-used edition instead of "world".
-  // Also sync the URL so it always reflects the active edition.
-  // Set data-edition on <html> so CSS edition color grades activate.
-  useEffect(() => {
-    try {
-      localStorage.setItem(EDITION_STORAGE_KEY, activeEdition);
-    } catch {
-      // localStorage unavailable — no-op
-    }
-    // Sync URL without triggering a full page reload
-    const path = activeEdition === "world" ? `${BASE_PATH}/` : `${BASE_PATH}/${activeEdition}/`;
-    if (window.location.pathname !== path) {
-      window.history.pushState({}, "", path);
-    }
-    // Set data-edition on <html> — enables per-edition cinematic color grades
-    // (e.g., warmer sepia for India, cooler contrast for US) defined in CSS.
-    document.documentElement.setAttribute("data-edition", activeEdition);
-  }, [activeEdition]);
+    document.documentElement.setAttribute("data-edition", "world");
+  }, []);
 
   // Scene 7: Practical light warmth propagation — when audio is playing,
   // the page-main receives a subtle warm sepia tint (motivated by the
@@ -461,7 +377,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
         // non-international (no World overflow rendered).
         // 2026-05-24 v2 — added is_headline + headline_confidence (migration 059).
         // Used to render the HEADLINE badge and to prioritize sort on /world.
-        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points,rank_world,rank_us,rank_europe,rank_south_asia,claim_consensus,cached_image_url,is_international,is_headline,headline_confidence`;
+        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points,rank_world,claim_consensus,cached_image_url,is_international,is_headline,headline_confidence`;
         const baseFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated`;
 
         // Use per-edition rank column for ordering (cross-edition differentiation)
@@ -770,13 +686,13 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
     () => new Set(mainPool.map((s) => s.id)),
     [mainPool],
   );
-  const worldOverflow = useMemo(
-    () =>
-      filteredStories
-        .filter((s) => !mainIds.has(s.id) && Boolean((s as Story & { is_international?: boolean }).is_international))
-        .slice(0, WORLD_OVERFLOW_SIZE),
-    [filteredStories, mainIds],
-  );
+  // 2026-06-02 single-feed — worldOverflow collapsed to an empty array.
+  // The /world overflow split is gone; the homepage now shows a single
+  // 50-story flow. Variable kept so downstream consumers (visibleStories,
+  // aria announcements) don't need rewiring.
+  const worldOverflow: Story[] = useMemo(() => [], []);
+  void mainIds;
+  void WORLD_OVERFLOW_SIZE;
 
   // v3 (2026-05-14): twin top stories — ranks 0 and 1 share the hero canvas
   // as co-equal "Top Story" leads. Grid below holds ranks 2..N where N is
@@ -831,10 +747,8 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
   const editionMeta = EDITIONS.find((e) => e.slug === activeEdition) ?? EDITIONS[0];
 
   return (
-    <div className="page-container" data-whip={whipDirection === "left" ? "left" : undefined}>
+    <div className="page-container">
       <NavBar
-        activeEdition={activeEdition}
-        onEditionChange={(edition) => { setActiveEdition(edition); }}
         onSearchClick={() => setSearchOpen(true)}
         hasAudio={!!dailyBriefState.brief?.audio_url}
         isAudioPlaying={dailyBriefState.isPlaying}
@@ -932,20 +846,7 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                   {/* World overflow — international stories that didn't make
                       the homepage cut. Rendered inline as one continuous scroll
                       below the main feed; kbdFocusIndex offset by mainStories.length. */}
-                  {worldOverflow.length > 0 && (
-                    <section aria-label="World — international stories" className="world-section">
-                      <WorldDivider count={worldOverflow.length} />
-                      <MobileFeed
-                        stories={worldOverflow}
-                        dailyBriefState={dailyBriefState}
-                        onStoryClick={handleStoryClick}
-                        filterKey={`world-${filterKey}`}
-                        kbdFocusIndex={kbdFocusIndex - mainStories.length}
-                        editionMeta={editionMeta}
-                        variant="overflow"
-                      />
-                    </section>
-                  )}
+                  {/* World overflow removed 2026-06-02 single-feed. */}
                 </>
               ) : (
                 <>
@@ -1010,37 +911,12 @@ function HomeContentInner({ initialEdition = "world" }: HomeContentProps) {
                     </div>
                   )}
 
-                  {/* World overflow — international stories that didn't make
-                      the homepage cut. Rendered as one continuous scroll
-                      below the main feed in a wire grid. The divider is
-                      the section signal — no per-card chrome. */}
-                  {worldOverflow.length > 0 && (
-                    <section aria-label="World — international stories" className="world-section">
-                      <WorldDivider count={worldOverflow.length} />
-                      <div className="feed-grid world-section__grid">
-                        {worldOverflow.map((story, idx) => {
-                          const gi = mainStories.length + idx;
-                          return (
-                            <div key={story.id} className="feed-grid__item">
-                              <StoryCard
-                                story={story}
-                                index={gi}
-                                onStoryClick={handleStoryClick}
-                                globalIndex={gi}
-                                kbdFocused={kbdFocusIndex === gi}
-                                variant="wire"
-                              />
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </section>
-                  )}
+                  {/* World overflow removed 2026-06-02 single-feed. */}
 
                   {visibleStories.length > 0 && (
                     <div className="edition-line">
                       <span className="edition-meta">
-                        {mainStories.length} stories{worldOverflow.length > 0 ? ` + ${worldOverflow.length} world overflow` : ""}
+                        {mainStories.length} stories
                       </span>
                       <LogoWordmark height={14} />
                     </div>
