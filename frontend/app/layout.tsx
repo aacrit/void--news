@@ -8,6 +8,7 @@ import {
 import "./globals.css";
 import AudioProvider from "./components/AudioProvider";
 import MobileNav from "./components/MobileNav";
+import { BASE_PATH } from "./lib/utils";
 
 /* ---------------------------------------------------------------------------
    Four Voices of Type
@@ -49,7 +50,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://aacrit.github.io"),
+  metadataBase: new URL("https://void-news.pages.dev"),
   title: "void --news — See through the void.",
   description:
     "Free per-article bias analysis across 1,016 sources. Six axes. No paywall. No algorithm. Just the news, dissected.",
@@ -71,7 +72,7 @@ export const metadata: Metadata = {
     siteName: "void --news",
     images: [
       {
-        url: "/void--news/og-image.svg",
+        url: `${BASE_PATH}/og-image.svg`,
         width: 1200,
         height: 630,
         alt: "void --news — News aggregation with multi-axis bias analysis",
@@ -84,18 +85,18 @@ export const metadata: Metadata = {
     title: "void --news — See through the void.",
     description:
       "Free per-article bias analysis across 1,016 sources. Six axes. No paywall. No algorithm.",
-    images: ["/void--news/twitter-card.svg"],
+    images: [`${BASE_PATH}/twitter-card.svg`],
   },
   icons: {
     icon: [
-      { url: "/void--news/icon.svg", type: "image/svg+xml" },
-      { url: "/void--news/favicon.ico", sizes: "32x32" },
+      { url: `${BASE_PATH}/icon.svg`, type: "image/svg+xml" },
+      { url: `${BASE_PATH}/favicon.ico`, sizes: "32x32" },
     ],
     apple: [
-      { url: "/void--news/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+      { url: `${BASE_PATH}/apple-touch-icon.png`, sizes: "180x180", type: "image/png" },
     ],
   },
-  manifest: "/void--news/manifest.json",
+  manifest: `${BASE_PATH}/manifest.json`,
 };
 
 export const viewport: Viewport = {
@@ -154,13 +155,13 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="void --news" />
         <meta name="mobile-web-app-capable" content="yes" />
         {/* iOS splash screens — solid #1C1A17, icon from manifest */}
-        <link rel="apple-touch-startup-image" href="/void--news/splash-430x932.png" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
-        <link rel="apple-touch-startup-image" href="/void--news/splash-393x852.png" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
-        <link rel="apple-touch-startup-image" href="/void--news/splash-390x844.png" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
-        <link rel="apple-touch-startup-image" href="/void--news/splash-428x926.png" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
-        <link rel="apple-touch-startup-image" href="/void--news/splash-414x896.png" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
-        <link rel="apple-touch-startup-image" href="/void--news/splash-375x812.png" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
-        <link rel="apple-touch-startup-image" href="/void--news/splash-375x667.png" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
+        <link rel="apple-touch-startup-image" href={`${BASE_PATH}/splash-430x932.png`} media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+        <link rel="apple-touch-startup-image" href={`${BASE_PATH}/splash-393x852.png`} media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+        <link rel="apple-touch-startup-image" href={`${BASE_PATH}/splash-390x844.png`} media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+        <link rel="apple-touch-startup-image" href={`${BASE_PATH}/splash-428x926.png`} media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+        <link rel="apple-touch-startup-image" href={`${BASE_PATH}/splash-414x896.png`} media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
+        <link rel="apple-touch-startup-image" href={`${BASE_PATH}/splash-375x812.png`} media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+        <link rel="apple-touch-startup-image" href={`${BASE_PATH}/splash-375x667.png`} media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
         {/* Status bar integration — matches app chrome to warm paper tones */}
         <meta name="theme-color" content="#1C1A17" media="(prefers-color-scheme: dark)" />
         <meta name="theme-color" content="#F0EBDD" media="(prefers-color-scheme: light)" />
@@ -181,7 +182,7 @@ export default function RootLayout({
                 document.documentElement.setAttribute('data-viewport', m ? 'mobile' : 'desktop');
               })();
               if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/void--news/sw.js').catch(function() {});
+                navigator.serviceWorker.register('${BASE_PATH}/sw.js').catch(function() {});
               }
             `,
           }}

@@ -10,3 +10,8 @@
 /europe/*   /  301
 /south-asia /  301
 /south-asia/*  /  301
+
+# Legacy GitHub Pages project-path. CF Pages serves at root, so 301 any
+# stray /void--news/* deep link to the equivalent root path. Placed last:
+# first match wins, so the specific edition rules above take precedence.
+/void--news/*  /:splat  301

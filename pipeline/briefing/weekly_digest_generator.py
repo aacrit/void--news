@@ -61,7 +61,10 @@ from briefing.audio_producer import produce_audio
 from media.image_search import find_cover_image_for_cluster
 
 # ---------------------------------------------------------------------------
-EDITIONS = ["world", "us", "europe", "south-asia"]
+# Single-feed mode (rev 46 collapse-editions): the regional editions were
+# deleted; only "world" has clusters, so iterating the old list burned three
+# fetch-0-and-skip passes per weekly run.
+EDITIONS = ["world"]
 WEEK_RECAP_COUNT = 10
 OPINION_COUNT = 6
 COVER_STORIES = 2
@@ -407,7 +410,7 @@ def _fetch_brief_signals(edition, week_start, week_end):
     """Fetch daily TL;DR briefs for the week as story selection signal."""
     try:
         result = supabase.table("daily_briefs").select(
-            "tldr_headline,created_at"
+            "tldr_headline,created_at,top_cluster_ids"
         ).eq("edition", edition).gte(
             "created_at", week_start.isoformat()
         ).lte(
@@ -461,13 +464,16 @@ def _generate_cover_stories(threads, edition):
             covers.append(result)
             print(f"    Cover {i+1}: {result.get('headline', '?')[:60]}... ({len(result.get('text','').split())} words)")
         else:
-            # Fallback
+            # Fallback — degrade to the thread's lead cluster verbatim.
+            # (Was `cluster.get(...)`, an undefined name: the kill-switch
+            # path crashed the whole weekly run with a NameError exactly
+            # when both LLMs were unavailable.)
             covers.append({
-                "headline": cluster.get("title", ""),
-                "text": cluster.get("summary", ""),
+                "headline": lead.get("title", ""),
+                "text": lead.get("summary", ""),
                 "timeline": [],
                 "numbers": [],
-                "cluster_id": cluster.get("id"),
+                "cluster_id": lead.get("id"),
             })
         time.sleep(3)
 

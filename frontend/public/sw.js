@@ -1,15 +1,18 @@
 // void --news Service Worker
 // Enables offline reading, asset caching, and background sync
 
-const CACHE_NAME = 'void-news-v1';
-const ASSET_CACHE = 'void-news-assets-v1';
-const API_CACHE = 'void-news-api-v1';
+const CACHE_NAME = 'void-news-v2';
+const ASSET_CACHE = 'void-news-assets-v2';
+const API_CACHE = 'void-news-api-v2';
+
+const OFFLINE_URL = '/offline.html';
 
 const PRECACHE_ASSETS = [
-  '/void--news/',
-  '/void--news/manifest.json',
-  '/void--news/icon-192.png',
-  '/void--news/icon-512.png',
+  '/',
+  '/manifest.json',
+  '/icon-192.png',
+  '/icon-512.png',
+  OFFLINE_URL,
 ];
 
 // Install event: precache core assets
@@ -92,7 +95,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // HTML pages: network-first, fallback to cache
+  // Navigation requests (HTML pages): network-first, fall back to cached page,
+  // then to the offline shell when both network and cache miss.
+  const isNavigation =
+    request.mode === 'navigate' || request.destination === 'document';
+
   event.respondWith(
     fetch(request)
       .then((response) => {
@@ -101,6 +108,14 @@ self.addEventListener('fetch', (event) => {
         }
         return response;
       })
-      .catch(() => caches.match(request))
+      .catch(async () => {
+        const cached = await caches.match(request);
+        if (cached) return cached;
+        if (isNavigation) {
+          const offline = await caches.match(OFFLINE_URL);
+          if (offline) return offline;
+        }
+        return new Response('Offline', { status: 503 });
+      })
   );
 });

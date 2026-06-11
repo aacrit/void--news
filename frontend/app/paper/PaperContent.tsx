@@ -13,6 +13,7 @@ import type {
   SigilData,
 } from "../lib/types";
 import { supabase, fetchClusterLeadImage } from "../lib/supabase";
+import { BASE_PATH } from "../lib/utils";
 import {
   type ArticleTier,
   type FillerItem,
@@ -178,9 +179,9 @@ function buildStory(cluster: any, usingEnriched: boolean): Story {
     sigilData,
     section: (cluster.section || "world") as Edition,
     sections: (cluster.sections || [cluster.section || "world"]) as Edition[],
-    importance: cluster.rank_world || cluster.rank_us || cluster.rank_europe || cluster.rank_south_asia || cluster.headline_rank || cluster.importance_score || 50,
+    importance: cluster.rank_world || cluster.headline_rank || cluster.importance_score || 50,
     divergenceScore: cluster.divergence_score || 0,
-    headlineRank: cluster.rank_world || cluster.rank_us || cluster.rank_europe || cluster.rank_south_asia || cluster.headline_rank || cluster.importance_score || 50,
+    headlineRank: cluster.rank_world || cluster.headline_rank || cluster.importance_score || 50,
     coverageVelocity: cluster.coverage_velocity || 0,
     deepDive:
       (Array.isArray(rawConsensus) && rawConsensus.length > 0) ||
@@ -263,7 +264,7 @@ function Masthead({
     : null;
 
   const subtitle = editionSubtitle(edition);
-  const basePath = "/void--news/paper";
+  const paperHref = `${BASE_PATH}/paper`;
 
   return (
     <header className="np-masthead">
@@ -302,7 +303,7 @@ function Masthead({
 
       <nav className="np-edition-nav" aria-label="Edition">
         <a
-          href={basePath}
+          href={paperHref}
           className={edition === "world" ? "np-edition-nav__active" : ""}
         >
           World Edition
@@ -490,7 +491,7 @@ function Colophon({ edition }: { edition: string }) {
         Void News &middot; The {edition} Edition{dateStr ? ` \u00b7 ${dateStr}` : ""}
       </p>
       <p>
-        <Link href="/void--news/" className="np-colophon__link">
+        <Link href="/" className="np-colophon__link">
           Return to the Digital Edition
         </Link>
       </p>
@@ -528,17 +529,36 @@ export default function PaperContent({ edition }: { edition: Edition }) {
     async function load() {
       if (!supabase) { setIsLoading(false); return; }
       try {
-        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points,rank_world,rank_us,rank_europe,rank_south_asia`;
+        // Per-edition rank columns were dropped by migration 061 (single daily
+        // feed). rank_world is now the sole per-feed rank column.
+        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points,rank_world`;
+        const baseFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated`;
 
-        const rankCol = `rank_${edition}` as "rank_world" | "rank_us" | "rank_europe" | "rank_south_asia";
-        const { data: clusters } = await supabase
+        const enriched = await supabase
           .from("story_clusters")
           .select(enrichedFields)
           .contains("sections", [edition])
-          .order(rankCol, { ascending: false })
+          .order("rank_world", { ascending: false })
           .limit(150);
 
-        const stories = (clusters || []).map((c) => buildStory(c, true));
+        // If the enriched select fails (e.g. older schema missing a column),
+        // fall back to the base field set ordered by recency so the page still
+        // renders stories rather than blanking.
+        let usingEnriched = true;
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        let rows: any[] = enriched.data || [];
+        if (enriched.error) {
+          usingEnriched = false;
+          const base = await supabase
+            .from("story_clusters")
+            .select(baseFields)
+            .contains("sections", [edition])
+            .order("first_published", { ascending: false })
+            .limit(150);
+          rows = base.data || [];
+        }
+
+        const stories = rows.map((c) => buildStory(c, usingEnriched));
         stories.sort((a, b) => b.headlineRank - a.headlineRank);
         setAllStories(stories);
 

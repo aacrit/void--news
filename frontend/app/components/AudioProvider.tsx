@@ -12,6 +12,7 @@ import {
 import type { DailyBriefData, Edition } from "../lib/types";
 import { fetchDailyBrief, fetchPreviousEpisodes } from "../lib/supabase";
 import { hapticLight, hapticTick } from "../lib/haptics";
+import { AUDIO_ENABLED } from "../lib/audioGate";
 
 /* ---------------------------------------------------------------------------
    AudioProvider — Global audio context for void --onair.
@@ -111,6 +112,12 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
 
   /* ---- Fetch brief when edition changes ---- */
   useEffect(() => {
+    // Audio kill switch (void --onair parked): skip all audio fetch/setup.
+    // No daily-brief request, no previous-episode request, no <audio> mount.
+    // The provider stays mounted with safe defaults so non-audio consumers
+    // (and the gated audio UI surfaces) don't crash.
+    if (!AUDIO_ENABLED) return;
+
     let cancelled = false;
 
     // Pause and detach audio before switching briefs
@@ -450,8 +457,10 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
   return (
     <AudioContext.Provider value={value}>
       {children}
-      {/* Global <audio> element — survives page navigation */}
-      {brief?.audio_url && (
+      {/* Global <audio> element — survives page navigation.
+          Gated by the audio kill switch (void --onair parked): when audio is
+          disabled the element is never rendered and no .mp3 is requested. */}
+      {AUDIO_ENABLED && brief?.audio_url && (
         <audio
           ref={audioCallbackRef}
           src={brief.audio_url}

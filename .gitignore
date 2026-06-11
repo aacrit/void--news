@@ -64,3 +64,4 @@ UAT_*.txt
 UAT_*.md
 IMPLEMENTATION_GUIDE_*.md
 audit_output.txt
+.playwright-mcp/

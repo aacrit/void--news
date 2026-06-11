@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { createPortal } from "react-dom";
+import Link from "next/link";
 import { CHAPTERS } from "../film/data";
 import { useReducedMotion } from "../film/useReducedMotion";
 import DivergentHeadlines from "../film/scenes/DivergentHeadlines";
@@ -221,9 +222,9 @@ export default function OnboardingCarousel({ visible, onComplete, onSkip }: Prop
               <button className="intro__btn intro__btn--primary" onClick={handleComplete} autoFocus>
                 Start reading
               </button>
-              <a href="/void--news/about" className="intro__manifesto-link" onClick={() => dismiss(onComplete)}>
+              <Link href="/about" className="intro__manifesto-link" onClick={() => dismiss(onComplete)}>
                 Read the manifesto
-              </a>
+              </Link>
             </>
           )}
         </div>

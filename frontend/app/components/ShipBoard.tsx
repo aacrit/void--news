@@ -417,11 +417,12 @@ export default function ShipBoard() {
   const handleVote = useCallback(async (requestId: string) => {
     if (votedIds.has(requestId)) return;
     const fp = fingerprintRef.current;
-    const success = await voteOnShipRequest(requestId, fp);
-    if (success) {
+    const newCount = await voteOnShipRequest(requestId, fp);
+    if (newCount !== null) {
       recordVote(requestId);
       setVotedIds(prev => new Set([...prev, requestId]));
-      setRequests(prev => prev.map(r => r.id === requestId ? { ...r, votes: r.votes + 1 } : r));
+      // Use the authoritative server count returned by sync_ship_votes.
+      setRequests(prev => prev.map(r => r.id === requestId ? { ...r, votes: newCount } : r));
     }
   }, [votedIds]);
 

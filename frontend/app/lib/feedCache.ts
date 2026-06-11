@@ -13,7 +13,7 @@ const DB_NAME = "void-feed-cache";
 const STORE = "cache";
 const VERSION = 1;
 
-/** 35 minutes — pipeline runs 3x daily (~8h apart), brief staleness is acceptable */
+/** 35 minutes — pipeline runs 1x daily, brief staleness is acceptable */
 const TTL_MS = 35 * 60 * 1000;
 
 export interface CacheEntry<T> {

@@ -380,8 +380,9 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
         const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points,rank_world,claim_consensus,cached_image_url,is_international,is_headline,headline_confidence`;
         const baseFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated`;
 
-        // Use per-edition rank column for ordering (cross-edition differentiation)
-        const rankColumn = `rank_${activeEdition}` as "rank_world" | "rank_us" | "rank_europe" | "rank_south_asia";
+        // Single daily feed — rank_world is the sole rank column (the other
+        // per-edition rank columns were dropped by migration 061).
+        const rankColumn = "rank_world" as const;
 
         let res;
         let usingEnriched = true;
@@ -546,9 +547,9 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
               sigilData,
               section: (cluster.section || "world") as Edition,
               sections: (cluster.sections || [cluster.section || "world"]) as Edition[],
-              importance: cluster[`rank_${activeEdition}`] || cluster.headline_rank || cluster.importance_score || 50,
+              importance: cluster.rank_world || cluster.headline_rank || cluster.importance_score || 50,
               divergenceScore: cluster.divergence_score || 0,
-              headlineRank: cluster[`rank_${activeEdition}`] || cluster.headline_rank || cluster.importance_score || 50,
+              headlineRank: cluster.rank_world || cluster.headline_rank || cluster.importance_score || 50,
               coverageVelocity: cluster.coverage_velocity || 0,
               deepDive: consensusPoints.length > 0 || divergencePoints.length > 0 || cluster.claim_consensus
                 ? {

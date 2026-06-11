@@ -2,9 +2,9 @@
   "name": "void --news",
   "short_name": "void--news",
   "description": "Free per-article bias analysis across 1,016 sources. Six axes. No paywall. No algorithm.",
-  "id": "/void--news/",
-  "start_url": "/void--news/",
-  "scope": "/void--news/",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "display_override": ["window-controls-overlay", "standalone"],
   "orientation": "portrait",
@@ -18,12 +18,12 @@
     {
       "name": "Today's feed",
       "short_name": "Feed",
-      "url": "/void--news/",
-      "icons": [{ "src": "/void--news/icon-192.png", "sizes": "192x192" }]
+      "url": "/",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }
   ],
   "share_target": {
-    "action": "/void--news/",
+    "action": "/",
     "method": "GET",
     "params": {
       "url": "shared_url"
@@ -31,25 +31,25 @@
   },
   "icons": [
     {
-      "src": "/void--news/icon.svg",
+      "src": "/icon.svg",
       "type": "image/svg+xml",
       "sizes": "any",
       "purpose": "any"
     },
     {
-      "src": "/void--news/icon-192.png",
+      "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/void--news/icon-512.png",
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/void--news/icon-512.png",
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"

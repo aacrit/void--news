@@ -1,5 +1,0 @@
-[      52ms] [ERROR] The Content Security Policy directive 'frame-ancestors' is ignored when delivered via a <meta> element. @ http://localhost:3456/void--news/sources/:0
-[      62ms] [WARNING] Manifest: Enctype should be set to either application/x-www-form-urlencoded or multipart/form-data. It currently defaults to application/x-www-form-urlencoded @ http://localhost:3456/void--news/manifest.json:0
-[      98ms] [INFO] %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold @ http://localhost:3456/void--news/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
-[     120ms] [LOG] [HMR] connected @ http://localhost:3456/void--news/_next/static/chunks/node_modules_next_dist_115brz8._.js:2431
-[     155ms] [WARNING] Error while trying to use the following icon from the Manifest: http://localhost:3456/void--news/icon.svg (Download error or resource isn't a valid image) @ http://localhost:3456/void--news/sources/:0

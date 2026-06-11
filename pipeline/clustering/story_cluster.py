@@ -668,24 +668,61 @@ MEGA_SPLIT_IDF = 4.0      # 2.0x baseline (ENTITY_MERGE_IDF_THRESHOLD = 2.0)
 MERGE_HARD_CEILING = 120
 
 
-def _would_exceed_ceiling(a: dict, b: dict) -> bool:
-    """Return True if merging clusters a and b would produce a cluster
-    with combined source_count above MERGE_HARD_CEILING.
+def _merge_load(c: dict) -> int:
+    """Conservative size estimate for the merge ceiling.
 
     Source_count may be stale during early merge phases (before
-    `_apply_wire_aware_source_count` runs), so we use the larger of
-    the stored count and the unique source_ids in articles as a
-    conservative estimate. This is intentionally pessimistic — we'd
+    `_apply_wire_aware_source_count` runs), so use the larger of the
+    stored count and the article count. Intentionally pessimistic — we'd
     rather miss a few legitimate merges than create a mega-cluster.
     """
-    def _safe_count(c: dict) -> int:
-        stored = int(c.get("source_count", 0) or 0)
-        arts = c.get("articles", []) or []
-        # Cheap upper bound on unique sources without rebuilding the set:
-        # use stored count if available, fall back to article count.
-        return max(stored, len(arts))
+    stored = int(c.get("source_count", 0) or 0)
+    arts = c.get("articles", []) or []
+    return max(stored, len(arts))
 
-    return (_safe_count(a) + _safe_count(b)) > MERGE_HARD_CEILING
+
+def _would_exceed_ceiling(a: dict, b: dict) -> bool:
+    """Pairwise ceiling check on two cluster dicts.
+
+    NOTE: NOT transitive on its own — cluster dicts are never updated on
+    union(), so chained merges slip past it. The merge phases use
+    _ceiling_union_find() below, which tracks accumulated load at each
+    union-find root. Kept for direct two-cluster checks.
+    """
+    return (_merge_load(a) + _merge_load(b)) > MERGE_HARD_CEILING
+
+
+def _ceiling_union_find(clusters: list[dict]):
+    """Union-find whose MERGE_HARD_CEILING gate is TRANSITIVE.
+
+    The old per-pair gate read source_count off the two ROOT CLUSTER
+    DICTS, which no merge phase updates on union() — so two 60-source
+    groups could chain through a third cluster and sail past the 120
+    ceiling unseen. Track accumulated load at each root instead (the
+    same defence merge_related_clusters applies via group_size).
+
+    Returns (parent, find, union, would_exceed) where would_exceed(i, j)
+    gates on the CURRENT accumulated group loads of i's and j's roots.
+    """
+    parent = list(range(len(clusters)))
+    load = [_merge_load(c) for c in clusters]
+
+    def find(x: int) -> int:
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    def union(a: int, b: int) -> None:
+        ra, rb = find(a), find(b)
+        if ra != rb:
+            parent[ra] = rb
+            load[rb] += load[ra]
+
+    def would_exceed(i: int, j: int) -> bool:
+        return (load[find(i)] + load[find(j)]) > MERGE_HARD_CEILING
+
+    return parent, find, union, would_exceed
 
 
 _ENTITY_QUALIFIER_PREFIXES = (
@@ -980,18 +1017,7 @@ def merge_canonical_pairs(
     surface_sets = [_cluster_entity_surface_set(c) for c in clusters]
     timestamps = [_parse_first_pub(c) for c in clusters]
 
-    parent = list(range(n))
-
-    def find(x: int) -> int:
-        while parent[x] != x:
-            parent[x] = parent[parent[x]]
-            x = parent[x]
-        return x
-
-    def union(a: int, b: int) -> None:
-        ra, rb = find(a), find(b)
-        if ra != rb:
-            parent[ra] = rb
+    parent, find, union, _uf_exceeds = _ceiling_union_find(clusters)
 
     for i in range(n):
         if not surface_sets[i]:
@@ -1013,8 +1039,8 @@ def merge_canonical_pairs(
             for pair in pair_set:
                 # pair is a frozenset of two names
                 if pair.issubset(surface_sets[i]) and pair.issubset(surface_sets[j]):
-                    # Hard ceiling — refuse merges that produce mega-clusters
-                    if _would_exceed_ceiling(clusters[find(i)], clusters[find(j)]):
+                    # Hard ceiling — transitive via accumulated root loads
+                    if _uf_exceeds(i, j):
                         break
                     union(i, j)
                     break
@@ -1082,18 +1108,7 @@ def merge_synonym_pairs(
     timestamps = [_parse_first_pub(c) for c in clusters]
     titles = [c.get("title", "") or "" for c in clusters]
 
-    parent = list(range(n))
-
-    def find(x: int) -> int:
-        while parent[x] != x:
-            parent[x] = parent[parent[x]]
-            x = parent[x]
-        return x
-
-    def union(a: int, b: int) -> None:
-        ra, rb = find(a), find(b)
-        if ra != rb:
-            parent[ra] = rb
+    parent, find, union, _uf_exceeds = _ceiling_union_find(clusters)
 
     def cluster_has(idx: int, term: str) -> bool:
         """True if cluster idx contains term in surface set or phrase set."""
@@ -1131,8 +1146,8 @@ def merge_synonym_pairs(
             if _stemmed_title_jaccard(titles[i], titles[j]) < title_jaccard_floor:
                 continue
 
-            # Hard ceiling — refuse merges that produce mega-clusters
-            if _would_exceed_ceiling(clusters[find(i)], clusters[find(j)]):
+            # Hard ceiling — transitive via accumulated root loads
+            if _uf_exceeds(i, j):
                 continue
 
             union(i, j)
@@ -1273,18 +1288,7 @@ def merge_anchor_entities(
         set(ents.keys()) & anchor_entities for ents in cluster_entities
     ]
 
-    parent = list(range(n))
-
-    def find(x: int) -> int:
-        while parent[x] != x:
-            parent[x] = parent[parent[x]]
-            x = parent[x]
-        return x
-
-    def union(a: int, b: int) -> None:
-        ra, rb = find(a), find(b)
-        if ra != rb:
-            parent[ra] = rb
+    parent, find, union, _uf_exceeds = _ceiling_union_find(clusters)
 
     for i in range(n):
         if not cluster_anchors[i]:
@@ -1319,7 +1323,8 @@ def merge_anchor_entities(
 
             # Hard ceiling — Phase 2.6 is the most aggressive merger;
             # it must be the most conservative about creating mega-clusters.
-            if _would_exceed_ceiling(clusters[find(i)], clusters[find(j)]):
+            # Transitive via accumulated root loads.
+            if _uf_exceeds(i, j):
                 continue
 
             union(i, j)
@@ -1819,18 +1824,7 @@ def merge_duplicate_title_clusters(
     title_stems = [_title_word_stems(c.get("title", "")) for c in clusters]
     timestamps = [_parse_first_pub(c) for c in clusters]
 
-    parent = list(range(n))
-
-    def find(x: int) -> int:
-        while parent[x] != x:
-            parent[x] = parent[parent[x]]
-            x = parent[x]
-        return x
-
-    def union(a: int, b: int) -> None:
-        ra, rb = find(a), find(b)
-        if ra != rb:
-            parent[ra] = rb
+    parent, find, union, _uf_exceeds = _ceiling_union_find(clusters)
 
     for i in range(n):
         if not title_stems[i]:
@@ -1854,8 +1848,8 @@ def merge_duplicate_title_clusters(
                 if spread > max_age_spread_hours:
                     continue
 
-            # Hard ceiling — refuse merges that produce mega-clusters
-            if _would_exceed_ceiling(clusters[find(i)], clusters[find(j)]):
+            # Hard ceiling — transitive via accumulated root loads
+            if _uf_exceeds(i, j):
                 continue
 
             union(i, j)

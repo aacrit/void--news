@@ -108,7 +108,10 @@ def _select_top_sources(cluster: dict) -> list[str]:
     slug_tiers: dict[str, str] = {}
     for art in cluster.get("articles", []):
         slug = art.get("source_slug") or art.get("source_id", "")
-        tier = art.get("source_tier", "independent")
+        # Pipeline articles carry "tier"; only the standalone run_memory.py
+        # path sets "source_tier". Reading source_tier alone degraded tier
+        # priority to alphabetical for every pipeline run.
+        tier = art.get("source_tier") or art.get("tier") or "independent"
         if slug and slug not in slug_tiers:
             slug_tiers[slug] = tier
 

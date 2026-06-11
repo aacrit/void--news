@@ -229,8 +229,8 @@ const PHASES: Phase[] = [
         num: "7c",
         title: "Editorial Triage",
         detail:
-          "Gemini reorders top 10 per section by editorial priority \u2014 currently disabled via DISABLE_EDITORIAL_TRIAGE env var",
-        file: "edition_ranker.py",
+          "Gemini reorders the top 10 of the daily feed by editorial priority \u00b7 currently disabled via DISABLE_EDITORIAL_TRIAGE env var",
+        file: "feed_ranker.py",
         badge: "5 calls/run",
         badgeDisabled: true,
       },
@@ -250,13 +250,13 @@ const PHASES: Phase[] = [
     label: "STORAGE",
     icon: "\u25a4",
     color: "#7060A0",
-    desc: "Persist to Supabase \u00b7 edition ranks \u00b7 global re-rank",
+    desc: "Persist to Supabase \u00b7 rank_world \u00b7 global re-rank",
     steps: [
       {
         num: "8",
         title: "Store Clusters",
         detail:
-          "Upsert story_clusters + cluster_articles \u00b7 writes per-edition ranks (rank_world, rank_us, rank_europe, rank_south_asia) via edition_ranker.py",
+          "Upsert story_clusters + cluster_articles \u00b7 writes a single rank_world for one daily feed (top 50) via feed_ranker.py",
       },
       {
         num: "8b",
@@ -268,7 +268,7 @@ const PHASES: Phase[] = [
         num: "8c",
         title: "Holistic Re-Rank",
         detail:
-          "Re-score ALL clusters in DB with v6.0 \u2014 old clusters compete against new ones on identical criteria \u00b7 runs importance_ranker + edition_ranker on every cluster",
+          "Re-score ALL clusters in DB with v6.0 \u00b7 old clusters compete against new ones on identical criteria \u00b7 runs importance_ranker + feed_ranker on every cluster",
         file: "rerank.py",
       },
     ],
@@ -618,10 +618,10 @@ export default function PipelineFlow() {
           <span className="pf-header__title">void --pipeline</span>
           <span className="pf-header__sep" aria-hidden="true" />
           <span className="pf-header__meta">
-            3x daily &middot; 25&ndash;35 min &middot; GitHub Actions
+            1x daily &middot; 25-35 min &middot; GitHub Actions
           </span>
         </div>
-        <Link href="/void--news/command-center" className="pf-header__back">
+        <Link href="/command-center" className="pf-header__back">
           &larr; Command Center
         </Link>
       </header>

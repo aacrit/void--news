@@ -15,6 +15,7 @@ so brief calls draw from a separate budget, not the 25-call summarization budget
 Falls back to rule-based TL;DR when Gemini is unavailable.
 """
 
+import re
 import sys
 import time
 from datetime import datetime, timezone
@@ -22,6 +23,13 @@ from pathlib import Path
 
 # Allow running from pipeline root or as part of main.py
 sys.path.insert(0, str(Path(__file__).parent.parent))
+
+# daily_briefs.opinion_cluster_id is a UUID FK (migration 029); anything that
+# is not a real DB UUID must never reach the upsert.
+_UUID_RE = re.compile(
+    r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+    re.IGNORECASE,
+)
 
 from summarizer.gemini_client import generate_json as gemini_generate_json, is_available as gemini_is_available
 from briefing.voice_rotation import get_voices_for_today, get_opinion_host
@@ -1091,7 +1099,14 @@ def _rule_based_opinion(cluster: dict, lean: str) -> dict:
     """
     title = (cluster.get("title") or "Untitled").strip()
     summary = (cluster.get("summary") or title).strip()
-    cluster_id = cluster.get("_db_id", cluster.get("id", ""))
+    # Only a real DB UUID may reach daily_briefs.opinion_cluster_id (UUID FK,
+    # migration 029). At step 7d the pipeline's in-memory clusters carry a
+    # str(id(c)) placeholder in "id"; writing that poisons the brief upsert
+    # and loses the whole row for the day. Step 8's linkage backfill fills
+    # the real id once the cluster is stored.
+    cluster_id = cluster.get("_db_id", "") or ""
+    if not _UUID_RE.match(cluster_id):
+        cluster_id = ""
 
     # Build audio script from summary
     lean_label = {"left": "progressive", "center": "pragmatic", "right": "conservative"}[lean]
@@ -1558,6 +1573,10 @@ def generate_daily_briefs(
             carried = _fetch_last_successful_brief(edition)
             if carried:
                 brief_result = carried
+                # Text describes a PREVIOUS run's stories — main.py's
+                # post-store linkage backfill must not attach this run's
+                # cluster ids to it.
+                brief_result["_carried"] = True
                 _stats["carried"] += 1
             else:
                 print(f"  [brief:{edition}] No previous successful brief — using rule-based fallback")
@@ -1588,12 +1607,16 @@ def generate_daily_briefs(
                 brief_result["opinion_audio_script"] = opinion_result.get("opinion_audio_script")
                 brief_result["opinion_lean"] = opinion_result["opinion_lean"]
                 brief_result["opinion_cluster_id"] = opinion_result["opinion_cluster_id"]
+                brief_result["_opinion_cluster_ref"] = opinion_cluster
+                brief_result["_fresh_opinion"] = True
                 print(f"  [opinion:{edition}] Opinion generated — audio_script: "
                       f"{'yes' if brief_result.get('opinion_audio_script') else 'NO'}")
             elif not brief_result.get("opinion_text"):
                 # Gemini failed and no carried-forward opinion — rule-based last resort
                 print(f"  [opinion:{edition}] Gemini failed, no carry-forward — building rule-based opinion")
                 brief_result.update(_rule_based_opinion(opinion_cluster, today_lean))
+                brief_result["_opinion_cluster_ref"] = opinion_cluster
+                brief_result["_fresh_opinion"] = True
             else:
                 print(f"  [opinion:{edition}] Gemini failed — keeping carried-forward opinion")
         elif has_carried_opinion:
@@ -1605,8 +1628,18 @@ def generate_daily_briefs(
                 if edition_top:
                     print(f"  [opinion:{edition}] No ideal cluster — using top-ranked cluster")
                     brief_result.update(_rule_based_opinion(edition_top[0], today_lean))
+                    brief_result["_opinion_cluster_ref"] = edition_top[0]
+                    brief_result["_fresh_opinion"] = True
                 else:
                     print(f"  [opinion:{edition}] No clusters with summaries — skipping opinion")
+
+        # Cluster-dict references for main.py's post-store linkage backfill:
+        # at this point the clusters have no DB ids yet (step 8 inserts run
+        # after the brief), so top_cluster_ids above is empty. main.py
+        # patches the stored brief row once _db_id exists on these dicts.
+        # Private keys (never persisted — main builds brief_row explicitly).
+        if not brief_result.get("_carried"):
+            brief_result["_top_cluster_refs"] = top_clusters
 
         results[edition] = brief_result
 

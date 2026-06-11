@@ -140,10 +140,6 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
             <span className="msp__link-cmd">void --history</span>
             <span className="msp__link-desc">The archive</span>
           </Link>
-          <Link href="/world" className="msp__link" data-msp-cascade="2" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">void --world</span>
-            <span className="msp__link-desc">International overflow</span>
-          </Link>
           {/* /weekly + /paper hidden from nav per CEO 2026-05-15 — not
               production-ready. Routes still resolve at /weekly and /paper
               for direct URL access. */}

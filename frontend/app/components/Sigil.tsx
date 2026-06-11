@@ -453,7 +453,7 @@ const INK_UNDERLINES = [
 ];
 
 function InkUnderline({ variant, color }: { variant: number; color: string }) {
-  const path = INK_UNDERLINES[variant % INK_UNDERLINES.length];
+  const path = INK_UNDERLINES[(Math.round(Number(variant)) || 0) % INK_UNDERLINES.length];
   return (
     <div className="sigil__ink-underline" aria-hidden="true">
       <svg viewBox="0 0 100 12" preserveAspectRatio="none" fill="none">
@@ -537,10 +537,10 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
       }}>
         {labelInfo.text}
         {data.divergenceFlag === "divergent" && (
-          <InkUnderline variant={data.politicalLean % 3} color="var(--sense-high)" />
+          <InkUnderline variant={(Math.round(Number(data.politicalLean)) || 0) % 3} color="var(--sense-high)" />
         )}
         {data.divergenceFlag === "consensus" && (
-          <InkUnderline variant={(data.politicalLean + 1) % 3} color="var(--sense-low)" />
+          <InkUnderline variant={((Math.round(Number(data.politicalLean)) || 0) + 1) % 3} color="var(--sense-low)" />
         )}
       </span>
 
