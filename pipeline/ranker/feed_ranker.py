@@ -101,10 +101,13 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
       2. Apply STORY_TYPE_GATES.
       3. Same-event cap: if more than MAX_SAME_EVENT clusters share an event
          keyword group, the excess get rank_world × EVENT_DECAY.
-      4. Topic-diversity tie-breaking on the top TOP_N positions, then a
-         FEED_CATEGORY_CAP for positions TOP_N..FEED_CAP_END.
-      5. Feed-lead gate: clusters with source_count < FEED_LEAD_MIN cannot
-         appear in the top FEED_LEAD_SLOTS slots.
+      3.5. Feed-lead gate: clusters with source_count < FEED_LEAD_MIN cannot
+         appear in the top FEED_LEAD_SLOTS slots. Runs BEFORE the diversity
+         partition so a post-partition eviction can't backfill the top 10
+         with over-cap categories.
+      4. Topic-diversity partition on the top TOP_N positions, then a
+         FEED_CATEGORY_CAP for positions TOP_N..FEED_CAP_END; the final pool
+         order is encoded into strictly-decreasing rank_world.
 
     The `sources` parameter is accepted for back-compat with the old
     edition_ranker signature but is no longer used — single-feed mode
@@ -139,14 +142,45 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
                     event_counts[event] = event_counts.get(event, 0) + 1
         pool.sort(key=lambda c: c.get("rank_world", 0), reverse=True)
 
-    # 4. Topic diversity on top N.
+    # 3.5. Feed-lead gate — BEFORE the diversity partition. Clusters below
+    # the source-count floor cannot sit in the top FEED_LEAD_SLOTS positions
+    # when enough eligible clusters exist. Running this gate after the
+    # partition (as it used to) let the diversity pass promote a thin
+    # cluster into the top 10, evict it here, and backfill the vacated slot
+    # with a deferred same-category cluster — silently busting the category
+    # cap. Clamping first means the partition only ever sees an
+    # already-gated ordering. (When fewer than FEED_LEAD_SLOTS eligible
+    # clusters exist, thin clusters may still reach the top 10 by design.)
+    eligible = [c for c in pool if c.get("source_count", 0) >= FEED_LEAD_MIN]
+    ineligible = [c for c in pool if c.get("source_count", 0) < FEED_LEAD_MIN]
+    if len(eligible) >= FEED_LEAD_SLOTS and ineligible:
+        floor_rank = max(
+            0.0, eligible[FEED_LEAD_SLOTS - 1].get("rank_world", 0) - 0.1
+        )
+        for c in ineligible:
+            if c.get("rank_world", 0) > floor_rank:
+                c["rank_world"] = round(floor_rank, 2)
+        pool.sort(key=lambda c: c.get("rank_world", 0), reverse=True)
+
+    # 4. Topic diversity on top N. The partition must enforce the lead gate
+    # itself: it defers over-cap clusters and reaches deeper into the pool,
+    # so the rank clamp from 3.5 alone can't keep thin clusters out of the
+    # promoted tier (a clamped thin cluster can still outrank the deeper
+    # eligible candidates the partition falls through to).
     if len(pool) > TOP_N:
+        gate_active = (
+            sum(1 for c in pool if c.get("source_count", 0) >= FEED_LEAD_MIN)
+            >= FEED_LEAD_SLOTS
+        )
         promoted: list[dict] = []
         deferred: list[dict] = []
         cat_counts: dict[str, int] = {}
 
         for c in pool:
             if len(promoted) >= TOP_N:
+                deferred.append(c)
+                continue
+            if gate_active and c.get("source_count", 0) < FEED_LEAD_MIN:
                 deferred.append(c)
                 continue
             cat = c.get("category", "general")
@@ -159,8 +193,16 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
             else:
                 deferred.append(c)
 
+        # Backfill to TOP_N from deferred, eligible clusters first so the
+        # lead gate survives the over-cap fallback; thin clusters only if
+        # eligible ones run out.
         while len(promoted) < TOP_N and deferred:
-            promoted.append(deferred.pop(0))
+            pick = next(
+                (i for i, c in enumerate(deferred)
+                 if not gate_active or c.get("source_count", 0) >= FEED_LEAD_MIN),
+                0,
+            )
+            promoted.append(deferred.pop(pick))
 
         # Mid-feed category cap for positions TOP_N..FEED_CAP_END.
         mid_promoted: list[dict] = []
@@ -195,18 +237,6 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
                 pool[j]["rank_world"] = round(
                     pool[j - 1].get("rank_world", 0) - 0.1, 2
                 )
-
-    # 5. Feed-lead gate. Clusters below the source-count floor cannot sit in
-    # the top FEED_LEAD_SLOTS positions when enough eligible clusters exist.
-    eligible = [c for c in pool if c.get("source_count", 0) >= FEED_LEAD_MIN]
-    ineligible = [c for c in pool if c.get("source_count", 0) < FEED_LEAD_MIN]
-    if len(eligible) >= FEED_LEAD_SLOTS and ineligible:
-        floor_rank = max(
-            0.0, eligible[FEED_LEAD_SLOTS - 1].get("rank_world", 0) - 0.1
-        )
-        for c in ineligible:
-            if c.get("rank_world", 0) > floor_rank:
-                c["rank_world"] = round(floor_rank, 2)
 
 
 # ---------------------------------------------------------------------------
