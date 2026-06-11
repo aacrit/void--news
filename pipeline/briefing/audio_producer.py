@@ -28,6 +28,25 @@ from typing import Optional
 EDGE_TTS_AVAILABLE = False
 PYDUB_AVAILABLE = False
 
+# ── Parked Gemini-TTS globals ───────────────────────────────────────────
+# The legacy _synthesize_gemini_tts / _synthesize_opinion_monologue path
+# references these names. The path is PARKED (Gemini TTS is ~$3/day, not
+# free tier) but must stay importable: without module-level definitions,
+# re-enabling it raises NameError on the first call. GEMINI_TTS_AVAILABLE
+# stays False unless google-genai imports AND VOID_ENABLE_GEMINI_TTS=1.
+GEMINI_TTS_AVAILABLE = False
+genai = None
+types = None
+_TTS_MODEL = "gemini-2.5-flash-preview-tts"
+_tts_quota_exhausted = False
+if os.environ.get("VOID_ENABLE_GEMINI_TTS", "").strip() in ("1", "true", "yes"):
+    try:
+        from google import genai  # type: ignore[no-redef]
+        from google.genai import types  # type: ignore[no-redef]
+        GEMINI_TTS_AVAILABLE = True
+    except ImportError:
+        pass
+
 try:
     import edge_tts as _edge_tts_module
     EDGE_TTS_AVAILABLE = True

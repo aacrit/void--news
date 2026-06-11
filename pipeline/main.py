@@ -1471,12 +1471,22 @@ def main():
             # categorizer to refine and store the final cluster category.
             topic_lean_map: dict[tuple, dict] = {}
             try:
-                topic_lean_result = supabase.table("source_topic_lean").select(
-                    "source_id,category,avg_lean"
-                ).execute()
-                for row in (topic_lean_result.data or []):
-                    key = (row["source_id"], row.get("category", ""))
-                    topic_lean_map[key] = {"avg_lean": row["avg_lean"]}
+                # Paginated: 1,016 sources x N categories exceeds PostgREST's
+                # 1,000-row response cap, which silently truncates a bare
+                # select and starves the Axis-6 EMA of most of its rows.
+                _tl_PAGE = 1000
+                _tl_offset = 0
+                while True:
+                    topic_lean_result = supabase.table("source_topic_lean").select(
+                        "source_id,category,avg_lean"
+                    ).range(_tl_offset, _tl_offset + _tl_PAGE - 1).execute()
+                    _tl_rows = topic_lean_result.data or []
+                    for row in _tl_rows:
+                        key = (row["source_id"], row.get("category", ""))
+                        topic_lean_map[key] = {"avg_lean": row["avg_lean"]}
+                    if len(_tl_rows) < _tl_PAGE:
+                        break
+                    _tl_offset += _tl_PAGE
             except Exception as _tl_err:
                 print(f"    [warn] Could not fetch source_topic_lean: {_tl_err}")
 
@@ -1538,7 +1548,8 @@ def main():
             _recent_collected: list[dict] = []
             while True:
                 recent_res = supabase.table("articles").select(
-                    "id,title,summary,full_text,source_id,published_at,fetched_at,word_count,section"
+                    "id,title,summary,full_text,source_id,published_at,fetched_at,word_count,section,"
+                    "is_wire_copy,wire_origin_publisher_id"
                 ).gte("published_at", cutoff).order(
                     "published_at", desc=True
                 ).range(_recent_offset, _recent_offset + _recent_PAGE - 1).execute()
@@ -2209,7 +2220,16 @@ def main():
                     clusters[idx]["summary_article_hash"] = _content_hash(
                         clusters[idx].get("articles", [])
                     )
-                    clusters[idx]["summary_tier"] = _summary_tier_used
+                    # Stamp the tier that ACTUALLY answered this cluster, not
+                    # the batch-level guess: a mid-batch Claude latch flips
+                    # later clusters to Gemini, and mislabeling those "sonnet"
+                    # freezes them in the step-8d cache forever.
+                    _gen = result.get("_generator")
+                    clusters[idx]["summary_tier"] = (
+                        "sonnet" if _gen == "claude-sonnet"
+                        else "flash" if _gen == "gemini-flash"
+                        else _summary_tier_used
+                    )
                     if result.get("editorial_importance") is not None:
                         clusters[idx]["editorial_importance"] = result["editorial_importance"]
                     if result.get("story_type") is not None:
@@ -2231,34 +2251,11 @@ def main():
         else:
             print("\n[7b] Skipping LLM summarization (SDKs not installed)")
 
-        # Topic diversity — single pass over whole pool (2026-06-02).
-        if len(clusters) > 10:
-            _SOFT_CATS = {"culture"}
-            MAX_SAME_CAT_DEFAULT = 2
-            MAX_SAME_CAT_SOFT = 1
-            TOP_N = 10
-            promoted: list[dict] = []
-            deferred: list[dict] = []
-            cat_counts: dict[str, int] = {}
-            for c in clusters:
-                if len(promoted) >= TOP_N:
-                    deferred.append(c)
-                    continue
-                cat = c.get("category", "general")
-                cat_limit = MAX_SAME_CAT_SOFT if cat in _SOFT_CATS else MAX_SAME_CAT_DEFAULT
-                if cat_counts.get(cat, 0) < cat_limit:
-                    promoted.append(c)
-                    cat_counts[cat] = cat_counts.get(cat, 0) + 1
-                else:
-                    deferred.append(c)
-            while len(promoted) < TOP_N and deferred:
-                promoted.append(deferred.pop(0))
-            if len(promoted) >= 2:
-                for j in range(1, len(promoted)):
-                    if promoted[j].get("headline_rank", 0) >= promoted[j-1].get("headline_rank", 0):
-                        promoted[j]["headline_rank"] = round(
-                            promoted[j-1].get("headline_rank", 0) - 0.1, 2
-                        )
+        # Topic diversity lives in feed_ranker.apply_feed_ordering() — the
+        # in-line copy that used to sit here mutated nothing the consumers
+        # read (it only tie-spaced the promoted tier of a local list) and
+        # duplicated the partition feed_ranker already does on rank_world.
+        # Removed 2026-06-11; feed_ranker is the single owner.
 
         # Recency gate for top-10 — single pool (2026-06-02).
         recency_cutoff = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
@@ -2284,7 +2281,7 @@ def main():
                 c["headline_rank"] = round(
                     min(c.get("headline_rank", 0), floor_rank - 0.01), 2
                 )
-                print(f"  [{section_val}] Recency gate: demoted {len(demoted)} stale stories from top 10")
+            print(f"  [feed] Recency gate: demoted {len(demoted)} stale stories from top 10")
 
         # ── Feed ordering (2026-06-02 single-edition) ──────────────────────
         # Normalized cluster IDs: feed_ranker uses c["id"] for identity.
@@ -2306,6 +2303,7 @@ def main():
             )
 
         # ── Step 7d: Generate Daily Brief (TL;DR + audio broadcast) ──
+        brief_results: dict[str, dict] = {}
         if BRIEFING_AVAILABLE:
             print("\n[7d] Generating Daily Briefs...")
             start_7d = time.time()
@@ -2634,6 +2632,13 @@ def main():
             if result:
                 clusters_created += 1
                 cluster_id = result.get("id", "")
+                # Write the DB UUID back onto the in-memory cluster. Image
+                # caching (step 8e), the step-8d summary sync, title dedup,
+                # brief linkage, and the memory engine all key on this; the
+                # str(id(c)) placeholder set before feed ordering satisfies
+                # none of them.
+                cluster["_db_id"] = cluster_id
+                cluster["id"] = cluster_id
                 cluster_ids_to_enrich.append(cluster_id)
                 if has_gemini:
                     gemini_enriched_ids.add(cluster_id)
@@ -2658,18 +2663,60 @@ def main():
             )
             try:
                 # Attach to pipeline_runs.errors so monitoring can alarm.
-                supabase.table("pipeline_runs").update({
-                    "errors": [{
-                        "error": (
-                            f"cluster_insert_failures={cluster_insert_failures}, "
-                            f"sample={cluster_insert_sample_err}"
-                        ),
-                        "source": "step_8_store_clusters",
-                        "timestamp": datetime.now(timezone.utc).isoformat(),
-                    }]
-                }).eq("id", run_id).execute()
+                # Appends (does not overwrite) so claude_client latch
+                # markers written earlier in the run survive.
+                from utils.supabase_client import append_pipeline_run_errors
+                append_pipeline_run_errors(run_id, [{
+                    "error": (
+                        f"cluster_insert_failures={cluster_insert_failures}, "
+                        f"sample={cluster_insert_sample_err}"
+                    ),
+                    "source": "step_8_store_clusters",
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                }])
             except Exception:
                 pass
+
+        # Brief linkage backfill — step 7d runs BEFORE these inserts, so the
+        # generator saw no _db_id and persisted top_cluster_ids=[] and a NULL
+        # opinion_cluster_id. The generator keeps references to the cluster
+        # dicts it used (_top_cluster_refs / _opinion_cluster_ref); those
+        # same dicts now carry _db_id, so patch the stored rows.
+        if brief_results and run_id:
+            for _bf_edition, _bf_brief in brief_results.items():
+                _bf_patch: dict = {}
+                # TL;DR linkage only when the text was generated from THIS
+                # run's clusters (a carried-forward brief describes a
+                # previous run's stories).
+                if not _bf_brief.get("_carried"):
+                    _bf_top_ids = [
+                        c.get("_db_id")
+                        for c in (_bf_brief.get("_top_cluster_refs") or [])
+                        if c.get("_db_id")
+                    ]
+                    if _bf_top_ids:
+                        _bf_patch["top_cluster_ids"] = _bf_top_ids
+                else:
+                    _bf_top_ids = []
+                # Opinion linkage whenever THIS run generated the opinion
+                # (a carried brief can still receive a fresh opinion).
+                _bf_op_ref = _bf_brief.get("_opinion_cluster_ref")
+                _bf_op_id = (_bf_op_ref or {}).get("_db_id")
+                if _bf_op_id and _bf_brief.get("_fresh_opinion"):
+                    _bf_patch["opinion_cluster_id"] = _bf_op_id
+                if not _bf_patch:
+                    continue
+                try:
+                    supabase.table("daily_briefs").update(_bf_patch).eq(
+                        "edition", _bf_edition
+                    ).eq("pipeline_run_id", run_id).execute()
+                    print(
+                        f"  [brief:{_bf_edition}] Linkage backfilled: "
+                        f"{len(_bf_top_ids)} top clusters"
+                        + (", opinion" if _bf_patch.get("opinion_cluster_id") else "")
+                    )
+                except Exception as _bf_e:
+                    print(f"  [warn] Brief linkage backfill failed ({_bf_edition}): {_bf_e}")
 
         # Batch-insert cluster_articles links (instead of one per article)
         if all_cluster_article_links:
@@ -2683,16 +2730,20 @@ def main():
         if CLAIMS_AVAILABLE and all_article_claims and cluster_ids_to_enrich:
             print("  Storing article claims (void --verify)...")
             try:
-                # Build cluster_id mapping: cluster index -> DB cluster_id
+                # Map article -> cluster via the _db_id written back at
+                # insert time. The old index-zip against
+                # cluster_ids_to_enrich misaligned the moment any insert
+                # failed (the failure `continue` skips the id append but
+                # not the cluster), attaching claims to the wrong clusters.
                 ci_to_db_id: dict[int, str] = {}
-                for ci_idx, cid in enumerate(cluster_ids_to_enrich):
-                    ci_to_db_id[ci_idx] = cid
-
                 article_to_ci: dict[str, int] = {}
                 for ci_idx, cluster in enumerate(clusters):
-                    if ci_idx < len(cluster_ids_to_enrich):
-                        for art_id in cluster.get("article_ids", []):
-                            article_to_ci[art_id] = ci_idx
+                    db_id = cluster.get("_db_id")
+                    if not db_id:
+                        continue
+                    ci_to_db_id[ci_idx] = db_id
+                    for art_id in cluster.get("article_ids", []):
+                        article_to_ci[art_id] = ci_idx
 
                 claim_rows: list[dict] = []
                 for art_id, claims in all_article_claims.items():
@@ -2724,9 +2775,22 @@ def main():
                         })
 
                 if claim_rows:
+                    # Replace, don't accumulate: rows carry no `id`, so the
+                    # old on_conflict="id" never fired and re-runs over the
+                    # same articles duplicated every claim. Claims are
+                    # regenerated per run; delete the affected articles'
+                    # claims first, then plain-insert.
+                    _claim_art_ids = sorted({r["article_id"] for r in claim_rows})
+                    for _del_i in range(0, len(_claim_art_ids), 200):
+                        try:
+                            supabase.table("article_claims").delete().in_(
+                                "article_id", _claim_art_ids[_del_i:_del_i + 200]
+                            ).execute()
+                        except Exception as _del_e:
+                            print(f"  [warn] claim pre-delete failed: {_del_e}")
+                            break
                     inserted = _batch_upsert(
                         "article_claims", claim_rows, chunk_size=200,
-                        on_conflict="id",
                     )
                     print(f"  Article claims stored: {inserted}")
             except Exception as e:
@@ -2779,16 +2843,25 @@ def main():
         for i in range(0, len(all_new_article_list), 500):
             batch = all_new_article_list[i:i + 500]
             try:
-                res = supabase.table("cluster_articles").select(
-                    "cluster_id,article_id"
-                ).in_("article_id", batch).execute()
-                if res.data:
-                    for row in res.data:
+                # Paginated: one article can sit in multiple clusters, so a
+                # 500-id batch can exceed PostgREST's 1,000-row response cap.
+                _dq_offset = 0
+                while True:
+                    res = supabase.table("cluster_articles").select(
+                        "cluster_id,article_id"
+                    ).in_("article_id", batch).range(
+                        _dq_offset, _dq_offset + 999
+                    ).execute()
+                    _dq_rows = res.data or []
+                    for row in _dq_rows:
                         cid = row["cluster_id"]
                         if cid not in new_cluster_ids:
                             old_cluster_articles.setdefault(cid, set()).add(
                                 row["article_id"]
                             )
+                    if len(_dq_rows) < 1000:
+                        break
+                    _dq_offset += 1000
             except Exception as e:
                 print(f"  [warn] dedup query failed: {e}")
 
@@ -2849,8 +2922,10 @@ def main():
             # Build title word sets for new clusters
             new_titles: dict[str, set[str]] = {}
             for cid in new_cluster_ids:
-                # Find title from the stored clusters
-                for c in all_clusters:
+                # Find title from the stored clusters (was `all_clusters`, an
+                # undefined name whose NameError the outer try swallowed
+                # every run, leaving this dedup permanently inert)
+                for c in clusters:
                     db_id = c.get("_db_id", "")
                     if db_id == cid:
                         new_titles[cid] = _title_words(c.get("title", ""))
@@ -2998,10 +3073,20 @@ def main():
     if MEMORY_AVAILABLE and cluster_ids_to_enrich and ANALYSIS_AVAILABLE:
         print("\n[9a] Updating news memory engine...")
         try:
+            # Pass only successfully-stored clusters, ordered by the final
+            # display signal (rank_world), so the recorded "top story"
+            # matches the homepage #1. The old (clusters,
+            # cluster_ids_to_enrich) index-zip misaligned on any insert
+            # failure and followed pre-feed-ordering list order.
+            _mem_clusters = sorted(
+                (c for c in clusters if c.get("_db_id")),
+                key=lambda c: c.get("rank_world", 0),
+                reverse=True,
+            )
             memory_result = update_memory_after_pipeline_run(
                 pipeline_run_id=run_id,
-                clusters=clusters,
-                cluster_ids=cluster_ids_to_enrich,
+                clusters=_mem_clusters,
+                cluster_ids=[c["_db_id"] for c in _mem_clusters],
             )
             print(f"  Memory engine: {memory_result.get('status', 'unknown')}"
                   f" — {memory_result.get('top_story', 'n/a')}"

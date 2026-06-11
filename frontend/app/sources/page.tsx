@@ -364,7 +364,7 @@ interface MethodologyArticle {
   id: string;
   title: string;
   published_at: string;
-  excerpt: string | null;
+  summary: string | null;
   source: { name: string; slug: string; url: string } | null;
   bias_scores: {
     political_lean: number | null;
@@ -969,9 +969,9 @@ function SourcesPageInner() {
           <>
             <SpectrumChart sources={filteredSources} />
             <div className="meth__skip-link-wrap">
-              <Link href="/about#methodology" className="meth__skip-link">
+              <a href="#methodology" className="meth__skip-link">
                 How we score &rarr;
-              </Link>
+              </a>
             </div>
           </>
         )}
@@ -990,7 +990,11 @@ function SourcesPageInner() {
           </div>
         )}
 
-        {/* Methodology moved to /about#methodology — sources is pure data reference */}
+        {/* Scoring methodology — anchor target for #methodology deep links
+            (DeepDive "How we score" + the in-page skip link above). */}
+        {!isLoading && !error && (
+          <Methodology sources={filteredSources} />
+        )}
       </main>
 
       <Footer />

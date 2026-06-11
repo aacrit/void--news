@@ -161,7 +161,10 @@ def update_pipeline_run(
         "articles_fetched": articles_fetched,
         "articles_analyzed": articles_analyzed,
         "clusters_created": clusters_created,
-        "errors": errors or [],
+        # Merge, never clobber: claude_client failure latches and the step-8
+        # insert-failure marker append to this column mid-run; a finalize
+        # that overwrites with fetch_errors erases those signals.
+        "errors": _merge_run_errors(run_id, errors or []),
     }
     if duration_seconds is not None:
         update_data["duration_seconds"] = duration_seconds
@@ -180,6 +183,41 @@ def update_pipeline_run(
     except Exception as e:
         print(f"  [error] Failed to update pipeline run: {e}")
     return None
+
+
+def _merge_run_errors(run_id: str, new_errors: list, cap: int = 50) -> list:
+    """Return existing pipeline_runs.errors with new_errors appended (deduped,
+    capped). Best-effort: on any read failure, fall back to new_errors alone."""
+    try:
+        prev = (
+            supabase.table("pipeline_runs")
+            .select("errors")
+            .eq("id", run_id)
+            .limit(1)
+            .execute()
+        )
+        existing = (prev.data[0].get("errors") or []) if prev.data else []
+    except Exception:
+        existing = []
+    merged = list(existing)
+    for err in new_errors:
+        if err not in merged:
+            merged.append(err)
+    return merged[:cap]
+
+
+def append_pipeline_run_errors(run_id: str, new_errors: list) -> None:
+    """Append error dicts to pipeline_runs.errors without clobbering what
+    other writers (claude_client latch reports, step markers) already put
+    there. Best-effort; never raises."""
+    if not run_id or not new_errors:
+        return
+    try:
+        supabase.table("pipeline_runs").update(
+            {"errors": _merge_run_errors(run_id, new_errors)}
+        ).eq("id", run_id).execute()
+    except Exception as e:
+        print(f"  [warn] append_pipeline_run_errors failed: {e}")
 
 
 def get_active_sources() -> list[dict]:

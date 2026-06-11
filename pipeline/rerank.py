@@ -69,23 +69,40 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
     start = time.time()
     print(f"\n  Re-ranking all clusters {'(DRY RUN)' if dry_run else ''}...")
 
-    # Fetch all clusters
+    # Fetch all clusters — paginated. PostgREST caps any single response at
+    # 1,000 rows; with orphan-wrapping the retention window routinely holds
+    # more, and every cluster past the cap silently kept its stale
+    # headline_rank/rank_world (the same stale-pin class as the 2026-05-22
+    # 13-source #1 regression).
+    def _fetch_all_clusters(select: str) -> list[dict]:
+        rows: list[dict] = []
+        page = 1000
+        offset = 0
+        while True:
+            res = supabase.table("story_clusters").select(select).range(
+                offset, offset + page - 1
+            ).execute()
+            batch = res.data or []
+            rows.extend(batch)
+            if len(batch) < page:
+                return rows
+            offset += page
+
     try:
-        clusters_res = supabase.table("story_clusters").select(
+        clusters = _fetch_all_clusters(
             "id,title,category,section,sections,content_type,headline_rank,source_count,"
             "editorial_importance,story_type,mega_cluster_capped"
-        ).execute()
+        )
     except Exception:
         try:
-            clusters_res = supabase.table("story_clusters").select(
+            clusters = _fetch_all_clusters(
                 "id,title,category,section,sections,content_type,headline_rank,source_count,"
                 "mega_cluster_capped"
-            ).execute()
+            )
         except Exception:
-            clusters_res = supabase.table("story_clusters").select(
+            clusters = _fetch_all_clusters(
                 "id,title,category,section,sections,content_type,headline_rank,source_count"
-            ).execute()
-    clusters = clusters_res.data or []
+            )
     print(f"  {len(clusters)} clusters found")
 
     if not clusters:

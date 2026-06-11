@@ -37,9 +37,18 @@ on:
         required: false
         default: false
 
+# One pipeline run at a time — a manual dispatch overlapping the daily cron
+# double-writes clusters/briefs against the same run window.
+concurrency:
+  group: news-pipeline
+  cancel-in-progress: false
+
 jobs:
   run-pipeline:
     runs-on: ubuntu-latest
+    # Fresh-DB worst case is ~108 min; a hung fetch must not burn the 6h
+    # Actions job default.
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

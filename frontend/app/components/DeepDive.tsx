@@ -892,7 +892,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
     } catch {
       // Clipboard API not available — silent fail
     }
-  }, [story]);
+  }, [story, liveData]);
 
   /* ---- Close — reverse FLIP morph (panel shrinks back into the card) ---- */
   const handleClose = useCallback(() => {
@@ -1440,7 +1440,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
                 }
               }}
             >
-              Read All Sides &mdash; {sources.length} sources
+              Read All Sides ({sources.length} sources)
             </button>
           </div>
         )}

@@ -50,8 +50,8 @@ def brief_health() -> None:
     section("DAILY BRIEFS — most recent per edition")
     rows = (
         supabase.table("daily_briefs")
-        .select("edition, generated_at, tldr_headline, opinion_headline")
-        .order("generated_at", desc=True)
+        .select("edition, created_at, tldr_headline, opinion_headline")
+        .order("created_at", desc=True)
         .limit(20)
         .execute()
         .data
@@ -66,7 +66,7 @@ def brief_health() -> None:
         if ed in seen:
             continue
         seen.add(ed)
-        ts = r.get("generated_at", "")
+        ts = r.get("created_at", "")
         age = _hours_ago(ts)
         head = (r.get("tldr_headline") or "")[:60]
         opin = (r.get("opinion_headline") or "")[:60]

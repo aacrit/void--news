@@ -6,24 +6,30 @@ on:
         description: 'Migration file (e.g., 007_expand_lean_spectrum.sql) or "all" to run all pending'
         required: true
         default: 'all'
-  # Auto-apply pending migrations when a new .sql file lands on a claude
-  # branch. The migrate script tracks applied migrations in the
-  # _migrations table (CREATE TABLE IF NOT EXISTS) and uses
-  # `CREATE ... IF NOT EXISTS` / `ADD COLUMN IF NOT EXISTS` patterns,
-  # so re-running an already-applied migration is a no-op. This trigger
-  # closes the "I committed a migration but forgot to click the dispatch
-  # button" gap without changing existing security posture (same secrets,
-  # same script, same idempotency guarantees).
+  # Auto-apply pending migrations on direct pushes to main only. The old
+  # 'claude/**' trigger let any unmerged, unvalidated branch mutate the
+  # production schema before the auto-merge gates ran. Auto-merged claude
+  # branches are covered by the post-merge `migrate` job inside
+  # auto-merge-claude.yml (the merge push uses GITHUB_TOKEN, which cannot
+  # trigger this workflow). Tracking in _migrations keeps every path
+  # idempotent.
   push:
-    branches: ['claude/**', 'main']
+    branches: ['main']
     paths:
       - 'supabase/migrations/*.sql'
 
 permissions: {}
 
+# Never run two migration applications concurrently (shared with the
+# post-merge job in auto-merge-claude.yml).
+concurrency:
+  group: migrate-prod
+  cancel-in-progress: false
+
 jobs:
   migrate:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -59,6 +65,9 @@ jobs:
                   applied_at TIMESTAMPTZ DEFAULT now()
               )
           """)
+          # Deny PostgREST anon access (anon rows here would silently block
+          # future migrations from applying). Owner connection bypasses RLS.
+          cur.execute("ALTER TABLE _migrations ENABLE ROW LEVEL SECURITY")
 
           if migration_input == 'all':
               # Discover all migration files, sorted by numeric prefix

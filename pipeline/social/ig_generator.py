@@ -132,7 +132,11 @@ def _gen_receipt(topic_hint: str | None = None) -> list[dict[str, Any]] | None:
             articles = (
                 supabase.table("cluster_articles")
                 .select(
-                    "article:articles(title, source:sources(name, lean_label, lean_score), bias_scores(political_lean))"
+                    # sources carries political_lean_baseline (7-point
+                    # label). The lean_label/lean_score columns this used
+                    # to select never existed, so every receipt query
+                    # 42703'd and the pillar never generated a draft.
+                    "article:articles(title, source:sources(name, political_lean_baseline), bias_scores(political_lean))"
                 )
                 .eq("cluster_id", cid)
                 .execute()
@@ -155,7 +159,9 @@ def _gen_receipt(topic_hint: str | None = None) -> list[dict[str, Any]] | None:
             lean = (bias or {}).get("political_lean")
             if lean is None:
                 src = a.get("source") or {}
-                lean = src.get("lean_score")
+                lean = _BASELINE_LEAN_SCORE.get(
+                    (src.get("political_lean_baseline") or "").strip().lower()
+                )
             if lean is None:
                 continue
             lean = int(lean)
@@ -192,6 +198,21 @@ def _gen_receipt(topic_hint: str | None = None) -> list[dict[str, Any]] | None:
 
     print("  [warn] receipt: no eligible cluster found")
     return None
+
+
+# 7-point sources.political_lean_baseline label -> 0-100 lean score used as
+# a fallback when an article has no per-article bias score. Values chosen so
+# each label lands in the matching _lean_band() bucket; "varies" is omitted
+# (no usable signal, the article is skipped).
+_BASELINE_LEAN_SCORE: dict[str, int] = {
+    "far-left": 12,
+    "left": 30,
+    "center-left": 42,
+    "center": 50,
+    "center-right": 58,
+    "right": 70,
+    "far-right": 88,
+}
 
 
 def _lean_band(score: int) -> int:

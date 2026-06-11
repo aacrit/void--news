@@ -201,7 +201,7 @@ export async function fetchMethodologyArticles(): Promise<any[]> {
   if (!_client) return [];
   const { data, error } = await _client
     .from('articles')
-    .select('id, title, published_at, excerpt, source:sources(name, slug, url), bias_scores(political_lean, sensationalism, opinion_fact, factual_rigor, framing, rationale)')
+    .select('id, title, published_at, summary, source:sources(name, slug, url), bias_scores(political_lean, sensationalism, opinion_fact, factual_rigor, framing, rationale)')
     .not('bias_scores', 'is', null)
     .order('published_at', { ascending: false })
     .limit(10);
@@ -234,7 +234,7 @@ export async function fetchMethodologyArticles(): Promise<any[]> {
 export async function fetchDailyBrief(edition: string): Promise<any | null> {
   if (!_client) return null;
 
-  const cols = 'tldr_headline, tldr_text, opinion_text, opinion_headline, opinion_lean, audio_url, audio_duration_seconds, opinion_start_seconds, audio_voice_label, audio_voice, audio_script, top_cluster_ids, created_at';
+  const cols = 'id, edition, tldr_headline, tldr_text, opinion_text, opinion_headline, opinion_lean, audio_url, audio_duration_seconds, opinion_start_seconds, audio_voice_label, audio_voice, audio_script, top_cluster_ids, created_at';
 
   // Try requested edition first, then fall back to any edition
   let res = await _client
@@ -414,30 +414,25 @@ export async function submitShipRequest(req: {
   return data as ShipRequest;
 }
 
-/** Vote on a ship request. Returns true if vote counted.
+/** Vote on a ship request. Returns the authoritative new vote count, or null
+ *  if the vote did not count.
  *  F07: vote dedup is enforced server-side by unique(request_id, fingerprint)
- *  on ship_votes. The read-then-write on ship_requests.votes has a minor race
- *  window under concurrent votes; acceptable at current traffic levels.
- *  TODO: replace with an RPC (SELECT ... FOR UPDATE) if vote volume grows. */
-export async function voteOnShipRequest(requestId: string, fingerprint: string): Promise<boolean> {
-  if (!_client) return false;
+ *  on ship_votes. The previous read-then-write on ship_requests.votes was
+ *  silently blocked by RLS (migration 037 grants UPDATE to service_role only),
+ *  so the counter never incremented for anon voters. sync_ship_votes (migration
+ *  062) is a SECURITY DEFINER function that recounts ship_votes for the request,
+ *  writes the count to ship_requests.votes, and returns the new count. */
+export async function voteOnShipRequest(requestId: string, fingerprint: string): Promise<number | null> {
+  if (!_client) return null;
   const { error: voteError } = await _client
     .from('ship_votes')
     .insert([{ request_id: requestId, fingerprint }]);
-  if (voteError) return false;
-  // Increment vote count (read-then-write; see F07 note above)
-  const { data: current } = await _client
-    .from('ship_requests')
-    .select('votes')
-    .eq('id', requestId)
-    .single();
-  if (current) {
-    await _client
-      .from('ship_requests')
-      .update({ votes: (current.votes || 0) + 1 })
-      .eq('id', requestId);
-  }
-  return true;
+  if (voteError) return null;
+  // Recount + persist server-side (bypasses the service_role-only UPDATE RLS).
+  const { data: newCount, error: rpcError } = await _client
+    .rpc('sync_ship_votes', { p_request_id: requestId });
+  if (rpcError) return null;
+  return typeof newCount === 'number' ? newCount : null;
 }
 
 /** Subscribe to realtime changes on ship_requests */

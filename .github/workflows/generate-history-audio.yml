@@ -60,17 +60,25 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          # User-controlled inputs flow through env vars, never direct ${{ }}
+          # interpolation into shell lines (shell-injection vector). Env
+          # expansion only word-splits — shell metacharacters in values are
+          # passed as literal argument text, not executed. SLUGS stays
+          # unquoted on purpose: --slugs is argparse nargs='+'.
+          SLUGS: ${{ inputs.slugs }}
+          BATCH_SIZE: ${{ inputs.batch_size }}
+          OFFSET: ${{ inputs.offset }}
         run: |
           cd $GITHUB_WORKSPACE
 
           FLAGS="${{ inputs.force == 'true' && ' --force' || '' }}${{ inputs.voices_only == 'true' && ' --voices-only' || '' }}"
 
-          if [ -n "${{ inputs.slugs }}" ]; then
-            python -m pipeline.history.generate_audio --slugs ${{ inputs.slugs }}$FLAGS
+          if [ -n "$SLUGS" ]; then
+            python -m pipeline.history.generate_audio --slugs $SLUGS$FLAGS
           else
             python -m pipeline.history.generate_audio \
-              --batch-size ${{ inputs.batch_size }} \
-              --offset ${{ inputs.offset }}$FLAGS
+              --batch-size "$BATCH_SIZE" \
+              --offset "$OFFSET"$FLAGS
           fi
 
       - name: Commit manifest + script cache

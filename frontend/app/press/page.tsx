@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BASE_PATH } from "../lib/utils";
 import "../styles/about.css";
 import "../privacy/privacy.css";
 
@@ -63,19 +64,19 @@ export default function PressPage() {
         <ul style={{ listStyle: "none", padding: 0 }}>
           <li className="press__kit-item">
             <span>Brand mark (SVG, ink)</span>
-            <a href="/void--news/icon.svg" download>
+            <a href={`${BASE_PATH}/icon.svg`} download>
               icon.svg
             </a>
           </li>
           <li className="press__kit-item">
             <span>Brand mark (PNG, transparent)</span>
-            <a href="/void--news/apple-touch-icon.png" download>
+            <a href={`${BASE_PATH}/apple-touch-icon.png`} download>
               icon@180.png
             </a>
           </li>
           <li className="press__kit-item">
             <span>Open Graph card</span>
-            <a href="/void--news/og-image.svg" download>
+            <a href={`${BASE_PATH}/og-image.svg`} download>
               og-image.svg
             </a>
           </li>

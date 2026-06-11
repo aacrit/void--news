@@ -533,12 +533,19 @@ def _build_articles_block(articles: list[dict], max_articles: int = 10) -> str:
         "independent": "Independent Source",
     }
 
-    # Sort newest-first so Gemini prioritizes recent developments
+    # Sort newest-first across the WHOLE membership, then slice. Slicing
+    # first fed the prompt an arbitrary 10 of a larger cluster while
+    # _content_hash() keyed the cache on the true newest 10 — the prompt
+    # inputs and the cache key diverged. Sort key matches _content_hash
+    # (published_at, id) for full determinism.
     sorted_articles = sorted(
-        articles[:max_articles],
-        key=lambda a: a.get("published_at", "") or "",
+        articles,
+        key=lambda a: (
+            a.get("published_at") or "",
+            str(a.get("id") or a.get("article_id") or ""),
+        ),
         reverse=True,
-    )
+    )[:max_articles]
 
     lines = []
     for i, art in enumerate(sorted_articles):
@@ -681,7 +688,12 @@ def summarize_cluster(articles: list[dict],
             '"consensus_summary": "..."}',
         )
 
-    result = generate_json(prompt, system_instruction=_SYSTEM_INSTRUCTION)
+    # Call the smart router directly (not the generate_json alias, which
+    # discards the generator label) so callers can stamp summary_tier with
+    # the provider that ACTUALLY answered.
+    result, _generator_label = _smart_generate_json(
+        prompt, system_instruction=_SYSTEM_INSTRUCTION
+    )
 
     if not result:
         return None
@@ -767,6 +779,10 @@ def summarize_cluster(articles: list[dict],
         "claims": claims,
         "consensus_ratio": consensus_ratio_val,
         "consensus_summary": consensus_summary_val,
+        # Which provider answered ("claude-sonnet" | "gemini-flash").
+        # Callers map this to summary_tier so the step-8d cache only
+        # freezes genuine Sonnet output.
+        "_generator": _generator_label,
     }
 
     # Quality gate: log warnings for out-of-spec output (no discards).
@@ -1091,7 +1107,12 @@ def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 
             "title": result["headline"],
             "summary": result["summary"],
             "summary_article_hash": h,
-            "summary_tier": "sonnet",
+            # Stamp the provider that actually answered. Hardcoding
+            # "sonnet" froze Gemini-fallback output in the cache forever
+            # (the cache check above only skips when tier == "sonnet").
+            "summary_tier": (
+                "sonnet" if result.get("_generator") == "claude-sonnet" else "flash"
+            ),
         }
         if result.get("consensus"):
             update_payload["consensus_points"] = result["consensus"]

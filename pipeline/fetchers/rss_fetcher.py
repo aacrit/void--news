@@ -338,8 +338,16 @@ def fetch_from_rss(sources: list[dict]) -> tuple[list[dict], list[dict]]:
         # as_completed raises TimeoutError during iteration if any futures
         # are still pending after the timeout. Catch it gracefully so one
         # hung feed doesn't crash the entire pipeline.
+        #
+        # Budget the GLOBAL timeout for the whole wave plan, not one feed:
+        # ~1,000 feeds / 50 workers = ~20 waves x 15s worst case. The old
+        # FEED_TIMEOUT*2 (30s) could fire on a routine slow-tail run,
+        # stamping hundreds of healthy-but-pending feeds "timeout" and
+        # marching them toward the 5-strike quarantine.
+        _waves = -(-len(future_to_source) // MAX_WORKERS) if future_to_source else 1
+        _global_timeout = max(120, FEED_TIMEOUT * (_waves + 2))
         try:
-            for future in as_completed(future_to_source, timeout=FEED_TIMEOUT * 2):
+            for future in as_completed(future_to_source, timeout=_global_timeout):
                 source = future_to_source[future]
                 source_id = source.get("db_id") or source.get("id")
                 try:

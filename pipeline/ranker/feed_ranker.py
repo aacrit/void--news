@@ -179,14 +179,22 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
             else:
                 mid_deferred.append(c)
 
-        # 0.1pt spacing on the top-N tier so reorder survives the float sort.
-        for j in range(1, len(promoted)):
-            if promoted[j].get("rank_world", 0) >= promoted[j - 1].get("rank_world", 0):
-                promoted[j]["rank_world"] = round(
-                    promoted[j - 1].get("rank_world", 0) - 0.1, 2
-                )
-
         pool = promoted + mid_promoted + mid_deferred
+
+        # Encode the final pool order into rank_world. Every consumer (the
+        # DB write, main's diagnostics, the frontend) sorts by rank_world
+        # alone, so the partition above only takes effect if ranks are
+        # strictly decreasing along the intended order. Without this, the
+        # deferred clusters kept their original higher ranks and re-emerged
+        # in the top 10 untouched, making both the diversity pass and the
+        # mid-feed category cap silent no-ops. Violations only occur at
+        # partition boundaries and cascade locally until the natural
+        # descending order resumes, so tail granularity is preserved.
+        for j in range(1, len(pool)):
+            if pool[j].get("rank_world", 0) >= pool[j - 1].get("rank_world", 0):
+                pool[j]["rank_world"] = round(
+                    pool[j - 1].get("rank_world", 0) - 0.1, 2
+                )
 
     # 5. Feed-lead gate. Clusters below the source-count floor cannot sit in
     # the top FEED_LEAD_SLOTS positions when enough eligible clusters exist.
