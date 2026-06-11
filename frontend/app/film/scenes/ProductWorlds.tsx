@@ -4,6 +4,7 @@ import {
   VOID_CIRCLE, BEAM_CURVE, SRC_DOTS, WAVE_HEIGHTS,
 } from "../constants";
 import { PRODUCT_FAMILY } from "../data";
+import { BASE_PATH } from "../../lib/utils";
 
 /* ==========================================================================
    ProductWorlds — Scene V: "The Worlds"
@@ -147,7 +148,7 @@ export default function ProductWorlds({ mode, active }: Props) {
 
           // Manifesto: clickable links. Prologue: static cards.
           return mode === "manifesto" ? (
-            <a key={w.cli} href={`/void--news${w.href}`} className={className} style={style}>
+            <a key={w.cli} href={`${BASE_PATH}${w.href}`} className={className} style={style}>
               {inner}
             </a>
           ) : (
