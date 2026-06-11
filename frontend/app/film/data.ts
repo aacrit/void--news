@@ -161,9 +161,10 @@ export interface ProductWorld {
 // and therefore omitted here so About + onboarding don't promise what
 // the user can't yet use. Routes still resolve at /weekly /paper /games
 // for direct URLs; re-add to this array when each goes prod-ready.
+// void --world retired rev 46 (collapse-editions): the /world route was
+// deleted; one daily feed now carries everything.
 export const PRODUCT_FAMILY: ProductWorld[] = [
-  { cli: "void --news", name: "The Feed", desc: "US-primary newspaper. World as inline section.", href: "/", palette: "feed" },
-  { cli: "void --world", name: "The World Section", desc: "International overflow — stories not on the homepage", href: "/world", palette: "feed" },
+  { cli: "void --news", name: "The Feed", desc: "One daily feed. Top 50 stories, ranked once.", href: "/", palette: "feed" },
   { cli: "void --sources", name: "The Spectrum", desc: "1,016 sources on one axis", href: "/sources", palette: "sources" },
   { cli: "void --history", name: "The Archive", desc: "Multi-perspective historical events", href: "/history", palette: "archive" },
   { cli: "void --ship", name: "The Forge", desc: "Feature request board", href: "/ship", palette: "ship" },

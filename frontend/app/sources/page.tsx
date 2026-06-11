@@ -991,10 +991,13 @@ function SourcesPageInner() {
         )}
 
         {/* Scoring methodology — anchor target for #methodology deep links
-            (DeepDive "How we score" + the in-page skip link above). */}
-        {!isLoading && !error && (
-          <Methodology sources={filteredSources} />
-        )}
+            (DeepDive "How we score" + the in-page skip link above).
+            Rendered UNCONDITIONALLY: gating it behind !isLoading excluded
+            id="methodology" from the SSG prerender (isLoading starts true),
+            so cold deep links and crawlers found no anchor in the static
+            HTML. The component takes filteredSources for its live examples
+            but its prose + anchor must exist before any fetch resolves. */}
+        <Methodology sources={filteredSources} />
       </main>
 
       <Footer />
