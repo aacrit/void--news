@@ -25,13 +25,18 @@ from .claude_client import (
     is_available as claude_is_available,
     calls_remaining as claude_calls_remaining,
 )
+from .groq_client import (
+    generate_json as groq_generate_json,
+    is_available as groq_is_available,
+    calls_remaining as groq_calls_remaining,
+)
 
 
 def _smart_generate_json(prompt: str,
                           system_instruction: str | None = None,
                           max_output_tokens: int = 8192,
                           ) -> tuple[dict | None, str]:
-    """Try Claude first, fall back to Gemini. Returns (result, generator_label)."""
+    """Try Claude → Groq ($0) → Gemini ($0). Returns (result, generator_label)."""
     if claude_is_available():
         result = claude_generate_json(
             prompt,
@@ -41,6 +46,15 @@ def _smart_generate_json(prompt: str,
         )
         if result and isinstance(result, dict):
             return result, "claude-sonnet"
+    if groq_is_available():
+        result = groq_generate_json(
+            prompt,
+            system_instruction=system_instruction,
+            count_call=True,
+            max_output_tokens=max_output_tokens,
+        )
+        if result and isinstance(result, dict):
+            return result, "groq-gpt-oss"
     if gemini_is_available():
         result = gemini_generate_json(
             prompt,
@@ -90,11 +104,13 @@ def generate_json(prompt, system_instruction=None, max_retries=1, count_call=Tru
     return result
 
 def is_available():
-    return claude_is_available() or gemini_is_available()
+    return claude_is_available() or groq_is_available() or gemini_is_available()
 
 def calls_remaining():
     if claude_is_available():
         return claude_calls_remaining()
+    if groq_is_available():
+        return groq_calls_remaining()
     return gemini_calls_remaining()
 
 # Import shared prohibited terms — single canonical source.

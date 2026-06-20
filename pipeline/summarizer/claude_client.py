@@ -262,11 +262,17 @@ def generate_json(
 
 
 def is_available() -> bool:
-    # Emergency kill-switch: pause every Claude call in the pipeline with one
-    # env var. Set `DISABLE_ANTHROPIC=1` in pipeline.yml (or any local shell)
-    # and all four downstream callers — cluster_summarizer, daily_brief,
-    # weekly_digest, ig_caption — fall back to Gemini Flash or rule-based
-    # stubs. Costs drop to $0/day immediately; pipeline keeps running.
+    # PERMANENTLY DISABLED (2026-06-20). Claude/Anthropic was retired in the
+    # move to a sustainable $0 stack: cluster summaries + TL;DR run on Groq
+    # (openai/gpt-oss-20b) with Gemini as the $0 fallback for the large daily
+    # brief. This hard return False is the master switch — it cascades to all
+    # four callers (cluster_summarizer, daily_brief, weekly_digest, ig_caption),
+    # so no ANTHROPIC_API_KEY or env change can re-enable a paid call.
+    #
+    # To re-enable later: delete this early return and restore the gated logic
+    # below (env DISABLE_ANTHROPIC + key presence).
+    return False
+
     if os.environ.get("DISABLE_ANTHROPIC", "").strip().lower() in ("1", "true", "yes"):
         return False
     if _persistent_failure:

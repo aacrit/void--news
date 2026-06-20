@@ -46,6 +46,17 @@ except ImportError:
     def claude_generate_json(*a, **kw): return None
     def claude_is_available(): return False
 
+# Groq API client — optional, preferred $0 provider when Claude is disabled.
+# Self-defers oversized (65k brief) requests to Gemini via its own guard.
+try:
+    from summarizer.groq_client import (
+        generate_json as groq_generate_json,
+        is_available as groq_is_available,
+    )
+except ImportError:
+    def groq_generate_json(*a, **kw): return None
+    def groq_is_available(): return False
+
 
 def _smart_generate_json(
     prompt: str,
@@ -53,7 +64,7 @@ def _smart_generate_json(
     max_output_tokens: int = 8192,
     edition: str = "",
 ) -> tuple[dict | None, str]:
-    """Try Claude first, fall back to Gemini. Returns (result, generator_label)."""
+    """Try Claude → Groq ($0) → Gemini ($0). Returns (result, generator_label)."""
     if claude_is_available():
         result = claude_generate_json(
             prompt,
@@ -65,7 +76,18 @@ def _smart_generate_json(
             print(f"  [brief:{edition}] Claude Sonnet OK")
             return result, "claude-sonnet"
         # Highlighted single-line log — easy to grep in run output
-        print(f"  [brief:{edition}] >>> SONNET FAILED, FALLING BACK TO GEMINI <<<")
+        print(f"  [brief:{edition}] >>> SONNET FAILED, FALLING BACK <<<")
+
+    if groq_is_available():
+        result = groq_generate_json(
+            prompt,
+            system_instruction=system_instruction,
+            count_call=False,
+            max_output_tokens=max_output_tokens,
+        )
+        if result and isinstance(result, dict):
+            print(f"  [brief:{edition}] Groq gpt-oss OK")
+            return result, "groq-gpt-oss"
 
     if gemini_is_available():
         result = gemini_generate_json(
@@ -88,7 +110,7 @@ def generate_json(prompt, system_instruction=None, max_retries=1, count_call=Tru
                                 max_output_tokens=max_output_tokens)
 
 def is_available():
-    return gemini_is_available()
+    return groq_is_available() or gemini_is_available()
 
 # Import shared prohibited terms — single canonical source.
 try:
@@ -1472,7 +1494,7 @@ def generate_daily_briefs(
         brief_result = None
         generator_label = None
         gemini_failure_reason = None
-        any_llm_ok = (gemini_ok or claude_is_available())
+        any_llm_ok = (gemini_ok or groq_is_available() or claude_is_available())
         if any_llm_ok and _brief_calls_remaining() > 0:
             edition_key = edition.upper()
             edition_focus = _EDITION_FOCUS.get(edition_key, _EDITION_FOCUS["WORLD"])
