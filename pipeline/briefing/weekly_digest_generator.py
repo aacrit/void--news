@@ -47,6 +47,15 @@ except ImportError:
     def claude_generate_json(*a, **kw): return None
     def claude_is_available(): return False
 
+try:
+    from summarizer.groq_client import (
+        generate_json as groq_generate_json,
+        is_available as groq_is_available,
+    )
+except ImportError:
+    def groq_generate_json(*a, **kw): return None
+    def groq_is_available(): return False
+
 from briefing.voice_rotation import get_voices_for_today, get_opinion_host
 
 try:
@@ -113,7 +122,7 @@ PROHIBITED_TERMS = frozenset({
 # LLM call
 # ---------------------------------------------------------------------------
 def _smart_generate(prompt, system_instruction=None, max_output_tokens=8192):
-    """Try Claude first, fall back to Gemini. Returns (result_dict, gen_label)."""
+    """Try Claude → Groq ($0) → Gemini ($0). Returns (result_dict, gen_label)."""
     if claude_is_available():
         result = claude_generate_json(
             prompt, system_instruction=system_instruction,
@@ -121,6 +130,14 @@ def _smart_generate(prompt, system_instruction=None, max_output_tokens=8192):
         )
         if result:
             return result, "claude-sonnet"
+
+    if groq_is_available():
+        result = groq_generate_json(
+            prompt, system_instruction=system_instruction,
+            count_call=False, max_output_tokens=max_output_tokens,
+        )
+        if result:
+            return result, "groq-gpt-oss"
 
     if gemini_is_available():
         result = gemini_generate_json(
