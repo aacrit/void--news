@@ -122,7 +122,9 @@ PROHIBITED_TERMS = frozenset({
 # LLM call
 # ---------------------------------------------------------------------------
 def _smart_generate(prompt, system_instruction=None, max_output_tokens=8192):
-    """Try Claude → Groq ($0) → Gemini ($0). Returns (result_dict, gen_label)."""
+    """Try Claude (off) → Gemini ($0 primary) → Groq ($0 fallback). Gemini
+    leads — Groq's gpt-oss-20b can't hold its JSON budget (see
+    cluster_summarizer). Returns (result_dict, gen_label)."""
     if claude_is_available():
         result = claude_generate_json(
             prompt, system_instruction=system_instruction,
@@ -131,14 +133,6 @@ def _smart_generate(prompt, system_instruction=None, max_output_tokens=8192):
         if result:
             return result, "claude-sonnet"
 
-    if groq_is_available():
-        result = groq_generate_json(
-            prompt, system_instruction=system_instruction,
-            count_call=False, max_output_tokens=max_output_tokens,
-        )
-        if result:
-            return result, "groq-gpt-oss"
-
     if gemini_is_available():
         result = gemini_generate_json(
             prompt, system_instruction=system_instruction,
@@ -146,6 +140,14 @@ def _smart_generate(prompt, system_instruction=None, max_output_tokens=8192):
         )
         if result:
             return result, "gemini-flash"
+
+    if groq_is_available():
+        result = groq_generate_json(
+            prompt, system_instruction=system_instruction,
+            count_call=False, max_output_tokens=max_output_tokens,
+        )
+        if result:
+            return result, "groq-gpt-oss"
 
     return None, "none"
 

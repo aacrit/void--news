@@ -22,9 +22,18 @@ Free-tier limits to respect (verify in console.groq.com — they move):
     single giant completion impractical) — generate_json() returns None for
     oversized requests so the caller falls through to Gemini.
 
+Model: llama-3.1-8b-instant (a non-reasoning instruct model). 2026-06-20: the
+default was openai/gpt-oss-20b, but that's a REASONING model — with json_object
+mode + a small token budget it burns its output on internal reasoning and emits
+'max completion tokens reached before generating a valid document', failing
+nearly every summary. llama-3.1-8b-instant returns clean JSON in few tokens and
+has far more generous RPD/TPD, so it carries the bulk of cluster summaries.
+NOTE: Groq's Llama models are slated to deprecate ~2026-08-16 — when that lands,
+set GROQ_MODEL to whatever instruct model Groq offers then (one-line change).
+
 Environment:
     GROQ_API_KEY — required. Get one free at https://console.groq.com/keys
-    GROQ_MODEL   — optional model override (default openai/gpt-oss-20b).
+    GROQ_MODEL   — optional model override (default llama-3.1-8b-instant).
 """
 
 import json
@@ -38,7 +47,7 @@ try:
 except ImportError:
     GROQ_AVAILABLE = False
 
-_MODEL = os.environ.get("GROQ_MODEL", "").strip() or "openai/gpt-oss-20b"
+_MODEL = os.environ.get("GROQ_MODEL", "").strip() or "llama-3.1-8b-instant"
 
 # Rate limiting state (module-level singleton). 30 RPM free tier → 2.1s spacing.
 _last_call_time: float = 0.0

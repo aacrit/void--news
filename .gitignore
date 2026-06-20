@@ -65,3 +65,6 @@ UAT_*.md
 IMPLEMENTATION_GUIDE_*.md
 audit_output.txt
 .playwright-mcp/
+
+# local pipeline run logs (not for VCS)
+pipeline_run*.log

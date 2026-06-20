@@ -2204,10 +2204,14 @@ def main():
             "flash" if gemini_is_available() else None
         )
         if SUMMARIZER_AVAILABLE and llm_is_available():
-            print(f"\n[7b] Summarizing up to 50 clusters (tier={_summary_tier_used})...")
+            print(f"\n[7b] Summarizing top 30 clusters (tier={_summary_tier_used})...")
             try:
+                # 2026-06-20 cost-cut: top-30 only. The regional/topic fill pools
+                # (parked editions + topic desks) burned ~15 LLM calls/day with no
+                # homepage consumer; ranks beyond 30 keep rule-based summaries.
                 gemini_results, gemini_failed = summarize_clusters_batch(
                     clusters, cluster_consensus=cluster_consensus,
+                    top_n=30, regional_fill=0, topic_fill=0,
                 )
                 for idx, result in gemini_results.items():
                     clusters[idx]["title"] = result["headline"]
@@ -2224,11 +2228,11 @@ def main():
                     # the batch-level guess: a mid-batch Claude latch flips
                     # later clusters to Gemini, and mislabeling those "sonnet"
                     # freezes them in the step-8d cache forever.
+                    # Map provider -> DB summary_tier (CHECK allows 'sonnet' or
+                    # 'flash'). Both $0 providers (Gemini flash, Groq llama) -> 'flash'.
                     _gen = result.get("_generator")
                     clusters[idx]["summary_tier"] = (
-                        "sonnet" if _gen == "claude-sonnet"
-                        else "flash" if _gen == "gemini-flash"
-                        else _summary_tier_used
+                        "sonnet" if _gen == "claude-sonnet" else "flash"
                     )
                     if result.get("editorial_importance") is not None:
                         clusters[idx]["editorial_importance"] = result["editorial_importance"]
@@ -3029,11 +3033,17 @@ def main():
     # reads fresh top-15 summaries.
     summary_metrics = {"summarized": 0, "cached": 0, "skipped": 0, "failed": 0}
     if SUMMARIZER_AVAILABLE and llm_is_available() and calls_remaining() > 0:
-        print("\n[8d] Post-rerank top-50 summarization (single-pass, cached)...")
+        print("\n[8d] Post-rerank top-10 Gemini upgrade (premium slots)...")
         try:
-            summary_metrics = summarize_top50_after_rerank(supabase, edition="world", limit=50)
+            # 2026-06-20 split: 7b summarized the top 30 on Groq (llama). Here we
+            # upgrade only the VISIBLE top 10 (post-rerank) to Gemini quality.
+            # That keeps Gemini at ~10 calls/run (+2 for the brief), under its
+            # 20/day free cap. Ranks 11-30 keep their Groq summaries; 31-50 stay
+            # rule-based. prefer_provider="gemini" (Groq fallback if Gemini out).
+            summary_metrics = summarize_top50_after_rerank(
+                supabase, edition="world", limit=10, prefer_provider="gemini")
             print(
-                f"  Top-50: {summary_metrics['summarized']} summarized, "
+                f"  Top-10: {summary_metrics['summarized']} summarized, "
                 f"{summary_metrics['cached']} cache hits, "
                 f"{summary_metrics['skipped']} skipped (op-ed / <3 sources), "
                 f"{summary_metrics['failed']} failed"
