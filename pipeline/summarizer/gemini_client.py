@@ -26,17 +26,27 @@ try:
 except ImportError:
     GEMINI_AVAILABLE = False
 
-_MODEL = "gemini-2.5-flash"
+# 2026-06-20: gemini-2.5-flash free tier was cut to just 20 requests/DAY
+# (RESOURCE_EXHAUSTED: GenerateRequestsPerDayPerProjectPerModel-FreeTier=20),
+# which can't cover a ~30-call summarization run. flash-LITE is the high-volume
+# free tier (far higher RPD, same JSON/structured-output mode, ample quality for
+# grounded summarization). Override per-deploy with GEMINI_MODEL if needed.
+_MODEL = os.environ.get("GEMINI_MODEL", "").strip() or "gemini-2.5-flash-lite"
 
-# Rate limiting state (module-level singleton)
+# Rate limiting state (module-level singleton). flash-lite free tier is 15 RPM,
+# so ~4.2s spacing (≈14 RPM) keeps every run under the per-minute ceiling — this
+# is the "staggering" that prevents minute-limit 429s. Calls are emitted one at
+# a time with this gap, never bursted.
 _last_call_time: float = 0.0
-_MIN_INTERVAL: float = 4.2  # 60s / 14 calls = ~4.3s (stay under 15 RPM)
+# flash-lite free tier is 10 requests/MINUTE (GenerateRequestsPerMinute
+# FreeTier=10, confirmed 2026-06-20). 7s spacing ≈ 8.5 RPM keeps every run
+# clearly under that ceiling — this is the staggering that prevents 429
+# throttles. Override with GEMINI_MIN_INTERVAL if a model/tier differs.
+_MIN_INTERVAL: float = float(os.environ.get("GEMINI_MIN_INTERVAL", "") or 7.0)
 
-# Per-run call cap — hard limit to stay within free tier (250 RPD).
-# Pipeline runs 2x/day: 70 (summarization step-7b + step-8d) × 2 = 140 RPD
-# + 9 (brief) × 2 = 18 RPD → 158 RPD total.
-# 92 RPD safety buffer against the 250 RPD free-tier limit.
-# Step 7b uses up to 50 slots; step 8d uses up to 20 of the remaining 20.
+# Per-run call cap — safety net. After the 2026-06-20 cost-cut the daily run
+# makes ~30-35 LLM calls (top-30 summaries + brief + opinion), well under both
+# this cap and flash-lite's daily request quota.
 _MAX_CALLS_PER_RUN: int = 70
 _call_count: int = 0
 
@@ -79,12 +89,17 @@ def calls_remaining() -> int:
 def generate_json(
     prompt: str,
     system_instruction: str | None = None,
-    max_retries: int = 1,
+    max_retries: int = 0,
     count_call: bool = True,
     max_output_tokens: int = 8192,
 ) -> dict | None:
     """
     Send a prompt to Gemini Flash and parse the JSON response.
+
+    2026-06-20: default max_retries 1 -> 0. Each retry is a NEW request against
+    the free tier's 20-requests/day cap, so retrying a throttle/error just burns
+    scarce quota. Fail fast instead — the caller falls back to Groq (summaries)
+    or carry-forward (brief). Pass max_retries explicitly to opt back in.
 
     Args:
         prompt: The user-turn prompt text.
@@ -161,24 +176,37 @@ def generate_json(
             return None
         except Exception as e:
             error_str = str(e).lower()
-            # Detect persistent billing/spending-cap errors — no point retrying
-            if "spending cap" in error_str or "credit" in error_str or "billing" in error_str:
-                _persistent_failure = True
-                print(f"  [error] Gemini persistent billing failure — disabling for this run: {e}")
-                return None
-            if "429" in error_str or "quota" in error_str or "rate" in error_str:
+            # Transient FIRST. A free-tier 429 RESOURCE_EXHAUSTED (e.g. the
+            # flash-lite 10-RPM cap) embeds "check your plan and billing
+            # details", so checking billing keywords first would misread a
+            # per-minute throttle as a terminal failure and disable Gemini for
+            # the ENTIRE run (2026-06-20: this killed a whole pipeline run after
+            # the first throttle). Order matters — rate limit is checked first.
+            if ("429" in error_str or "resource_exhausted" in error_str
+                    or "quota" in error_str or "rate" in error_str):
                 print(f"  [warn] Gemini rate limit (attempt {attempt + 1}): {e}")
                 if attempt < max_retries:
-                    time.sleep(15)
+                    time.sleep(10)
                     continue
-            elif "503" in error_str or "unavailable" in error_str or "overloaded" in error_str or "high demand" in error_str:
+                return None
+            if "503" in error_str or "unavailable" in error_str or "overloaded" in error_str or "high demand" in error_str:
                 # 503 = transient server overload — wait longer before retry
                 print(f"  [warn] Gemini API error (attempt {attempt + 1}): {e}")
                 if attempt < max_retries:
                     time.sleep(30)
                     continue
-            else:
-                print(f"  [warn] Gemini API error (attempt {attempt + 1}): {e}")
+                return None
+            # Genuinely terminal: a blocked/invalid key or a hard spending cap.
+            # NOT bare "billing"/"credit" — those appear in transient quota text.
+            if any(k in error_str for k in (
+                "api key not valid", "api_key_invalid", "invalid api key",
+                "permission_denied", "permission denied", "suspended",
+                "spending cap",
+            )):
+                _persistent_failure = True
+                print(f"  [error] Gemini terminal failure — disabling for this run: {e}")
+                return None
+            print(f"  [warn] Gemini API error (attempt {attempt + 1}): {e}")
             return None
 
     return None

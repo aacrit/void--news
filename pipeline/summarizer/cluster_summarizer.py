@@ -35,35 +35,41 @@ from .groq_client import (
 def _smart_generate_json(prompt: str,
                           system_instruction: str | None = None,
                           max_output_tokens: int = 8192,
+                          prefer_provider: str | None = None,
                           ) -> tuple[dict | None, str]:
-    """Try Claude → Groq ($0) → Gemini ($0). Returns (result, generator_label)."""
+    """Route a summary call by provider preference. Returns (result, label).
+
+    Google cut the Gemini free tier to 20 requests/DAY (2026-06-20), so Gemini
+    is reserved for premium slots and the brief; Groq (llama-3.1-8b-instant)
+    carries the bulk. Claude is permanently off.
+
+    prefer_provider:
+        "gemini" — Gemini first, Groq fallback. Premium top-10 + brief/opinion.
+        "groq"   — Groq only. The tail; never spends Gemini's scarce 20/day.
+        None     — Gemini then Groq (legacy default).
+    """
+    try_gemini = prefer_provider in (None, "gemini")
     if claude_is_available():
         result = claude_generate_json(
-            prompt,
-            system_instruction=system_instruction,
-            count_call=True,
-            max_output_tokens=max_output_tokens,
+            prompt, system_instruction=system_instruction,
+            count_call=True, max_output_tokens=max_output_tokens,
         )
         if result and isinstance(result, dict):
             return result, "claude-sonnet"
-    if groq_is_available():
-        result = groq_generate_json(
-            prompt,
-            system_instruction=system_instruction,
-            count_call=True,
-            max_output_tokens=max_output_tokens,
-        )
-        if result and isinstance(result, dict):
-            return result, "groq-gpt-oss"
-    if gemini_is_available():
+    if try_gemini and gemini_is_available():
         result = gemini_generate_json(
-            prompt,
-            system_instruction=system_instruction,
-            count_call=True,
-            max_output_tokens=max_output_tokens,
+            prompt, system_instruction=system_instruction,
+            count_call=True, max_output_tokens=max_output_tokens,
         )
         if result and isinstance(result, dict):
             return result, "gemini-flash"
+    if groq_is_available():
+        result = groq_generate_json(
+            prompt, system_instruction=system_instruction,
+            count_call=True, max_output_tokens=max_output_tokens,
+        )
+        if result and isinstance(result, dict):
+            return result, "groq-llama"
     return None, "none"
 
 
@@ -104,14 +110,19 @@ def generate_json(prompt, system_instruction=None, max_retries=1, count_call=Tru
     return result
 
 def is_available():
-    return claude_is_available() or groq_is_available() or gemini_is_available()
+    return claude_is_available() or gemini_is_available() or groq_is_available()
 
 def calls_remaining():
+    # Report the PRIMARY provider's remaining budget so a throttled/exhausted
+    # fallback can't gate the summarization loop. Order mirrors the router:
+    # Claude (off) → Gemini (primary) → Groq (fallback). 2026-06-20: the old
+    # order returned Groq's budget, so Groq's 200k-TPD exhaustion zeroed
+    # calls_remaining() and starved the top-50 pass even though Gemini had room.
     if claude_is_available():
         return claude_calls_remaining()
-    if groq_is_available():
-        return groq_calls_remaining()
-    return gemini_calls_remaining()
+    if gemini_is_available():
+        return gemini_calls_remaining()
+    return groq_calls_remaining()
 
 # Import shared prohibited terms — single canonical source.
 try:
@@ -655,17 +666,29 @@ Output these three additional fields in the JSON:
 
 
 def summarize_cluster(articles: list[dict],
-                      claims_consensus=None) -> dict | None:
+                      claims_consensus=None,
+                      prefer_provider: str | None = None) -> dict | None:
     """
     Generate headline, summary, consensus, and divergence for a cluster.
 
-    Returns None if Gemini is unavailable, fails, or call cap reached.
+    prefer_provider routes the call ("gemini" for premium slots, "groq" for the
+    tail) — see _smart_generate_json. Returns None if no provider is configured,
+    the call fails, or the chosen provider's per-run cap is reached (each client
+    enforces its own cap and returns None, so no cross-provider budget gate here).
     """
-    if not is_available() or calls_remaining() <= 0:
+    if not is_available():
         return None
 
     if not articles:
         return None
+
+    # The Groq tail (ranks 11-30) runs on llama-3.1-8b-instant, whose free-tier
+    # TPM (6000) leaves a tight output budget. The optional claims task balloons
+    # the JSON past that budget ('max completion tokens reached before generating
+    # a valid document'), so skip it for Groq — the premium top-10 still get full
+    # claims via Gemini in step 8d.
+    if prefer_provider == "groq":
+        claims_consensus = None
 
     context_line = _build_context_line(articles)
     source_names_line = _build_source_names_line(articles)
@@ -708,7 +731,8 @@ def summarize_cluster(articles: list[dict],
     # discards the generator label) so callers can stamp summary_tier with
     # the provider that ACTUALLY answered.
     result, _generator_label = _smart_generate_json(
-        prompt, system_instruction=_SYSTEM_INSTRUCTION
+        prompt, system_instruction=_SYSTEM_INSTRUCTION,
+        prefer_provider=prefer_provider,
     )
 
     if not result:
@@ -813,6 +837,7 @@ def summarize_clusters_batch(clusters: list[dict],
                              top_n: int = 30,
                              regional_fill: int = 10,
                              topic_fill: int = 10,
+                             prefer_provider: str | None = "groq",
                              ) -> tuple[dict[int, dict], set[int]]:
     """
     Summarize up to 50 clusters using three non-overlapping priority pools.
@@ -973,7 +998,8 @@ def summarize_clusters_batch(clusters: list[dict],
             attempted_pool1.add(idx)
         articles = clusters[idx].get("articles", [])
         cc = cluster_consensus.get(str(idx)) if cluster_consensus else None
-        result = summarize_cluster(articles, claims_consensus=cc)
+        result = summarize_cluster(articles, claims_consensus=cc,
+                                   prefer_provider=prefer_provider)
         if result:
             results[idx] = result
             consecutive_failures = 0  # reset on success
@@ -1011,7 +1037,8 @@ def summarize_clusters_batch(clusters: list[dict],
     return results, attempted_pool1 - results.keys()
 
 
-def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 50) -> dict:
+def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 50,
+                                 prefer_provider: str | None = "gemini") -> dict:
     """
     Single-pass post-rerank summarization for the final feed top N.
 
@@ -1114,7 +1141,7 @@ def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 
             metrics["cached"] += 1
             continue
 
-        result = summarize_cluster(articles)
+        result = summarize_cluster(articles, prefer_provider=prefer_provider)
         if not result:
             metrics["failed"] += 1
             continue

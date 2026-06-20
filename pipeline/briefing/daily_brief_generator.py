@@ -64,7 +64,9 @@ def _smart_generate_json(
     max_output_tokens: int = 8192,
     edition: str = "",
 ) -> tuple[dict | None, str]:
-    """Try Claude → Groq ($0) → Gemini ($0). Returns (result, generator_label)."""
+    """Try Claude (off) → Gemini ($0 primary) → Groq ($0 fallback). Gemini
+    leads (Groq self-defers the 65k brief anyway, and gpt-oss-20b can't hold
+    its JSON budget — see cluster_summarizer). Returns (result, label)."""
     if claude_is_available():
         result = claude_generate_json(
             prompt,
@@ -75,8 +77,18 @@ def _smart_generate_json(
         if result and isinstance(result, dict):
             print(f"  [brief:{edition}] Claude Sonnet OK")
             return result, "claude-sonnet"
+
+    if gemini_is_available():
+        result = gemini_generate_json(
+            prompt,
+            system_instruction=system_instruction,
+            count_call=False,
+            max_output_tokens=max_output_tokens,
+        )
+        if result and isinstance(result, dict):
+            return result, "gemini-flash"
         # Highlighted single-line log — easy to grep in run output
-        print(f"  [brief:{edition}] >>> SONNET FAILED, FALLING BACK <<<")
+        print(f"  [brief:{edition}] >>> GEMINI FAILED, FALLING BACK TO GROQ <<<")
 
     if groq_is_available():
         result = groq_generate_json(
@@ -88,17 +100,7 @@ def _smart_generate_json(
         if result and isinstance(result, dict):
             print(f"  [brief:{edition}] Groq gpt-oss OK")
             return result, "groq-gpt-oss"
-
-    if gemini_is_available():
-        result = gemini_generate_json(
-            prompt,
-            system_instruction=system_instruction,
-            count_call=False,
-            max_output_tokens=max_output_tokens,
-        )
-        if result and isinstance(result, dict):
-            return result, "gemini-flash"
-        print(f"  [brief:{edition}] >>> GEMINI ALSO FAILED — no LLM brief this run <<<")
+        print(f"  [brief:{edition}] >>> GROQ ALSO FAILED — no LLM brief this run <<<")
 
     return None, "none"
 
@@ -814,9 +816,13 @@ def _get_previous_brief_opening(edition: str) -> str:
     return ""
 
 
-def _build_stories_block(clusters: list[dict], edition: str, max_stories: int = 20) -> tuple[list[dict], str]:
+def _build_stories_block(clusters: list[dict], edition: str, max_stories: int = 10) -> tuple[list[dict], str]:
     """
     Build the stories context block for the prompt.
+
+    2026-06-20 cost-cut: max_stories 20 -> 10. The TL;DR/opinion headline signal
+    is in the top ~5-10 clusters; feeding 10 roughly halves the brief's input
+    tokens (TPM relief) with no loss of front-page coverage.
 
     Filters by edition, prioritizes fresh stories over previously-covered ones.
     Stories from the last brief are deprioritized (sorted after new stories at
