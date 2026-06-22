@@ -112,15 +112,10 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
 
   /* ---- Fetch brief when edition changes ---- */
   useEffect(() => {
-    // Audio kill switch (void --onair parked): skip all audio fetch/setup.
-    // No daily-brief request, no previous-episode request, no <audio> mount.
-    // The provider stays mounted with safe defaults so non-audio consumers
-    // (and the gated audio UI surfaces) don't crash.
-    if (!AUDIO_ENABLED) return;
-
     let cancelled = false;
 
-    // Pause and detach audio before switching briefs
+    // Pause and detach audio before switching briefs. No-ops when audio is
+    // parked (the <audio> element is never mounted, so audioRef is null).
     const audio = audioRef.current;
     if (audio) {
       audio.pause();
@@ -136,12 +131,20 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
     setBuffered(0);
     setPreviousEpisodes([]);
 
+    // TL;DR + opinion are editorial TEXT, not audio: they must load even when
+    // the void --onair kill switch is on. Only the audio playback layer
+    // (previous-episode list + <audio> mount) is gated by AUDIO_ENABLED.
+    // Coupling this fetch to the kill switch left SkyboxBanner / MobileBriefPill
+    // stuck on "Loading today's brief…" whenever audio was disabled.
     fetchDailyBrief(edition).then((data) => {
       if (!cancelled) setBrief(data);
     });
-    fetchPreviousEpisodes(edition).then((data) => {
-      if (!cancelled) setPreviousEpisodes(data);
-    });
+
+    if (AUDIO_ENABLED) {
+      fetchPreviousEpisodes(edition).then((data) => {
+        if (!cancelled) setPreviousEpisodes(data);
+      });
+    }
     return () => {
       cancelled = true;
     };
