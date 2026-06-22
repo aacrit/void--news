@@ -3040,8 +3040,12 @@ def main():
             # That keeps Gemini at ~10 calls/run (+2 for the brief), under its
             # 20/day free cap. Ranks 11-30 keep their Groq summaries; 31-50 stay
             # rule-based. prefer_provider="gemini" (Groq fallback if Gemini out).
+            # Quality hierarchy: top-5 highest-impact stories → gemini-2.5-flash
+            # (premium), ranks 6-10 → gemini-2.5-flash-lite. Groq fallback for
+            # both. See summarize_top50_after_rerank / migration 063.
             summary_metrics = summarize_top50_after_rerank(
-                supabase, edition="world", limit=10, prefer_provider="gemini")
+                supabase, edition="world", limit=10, prefer_provider="gemini",
+                flash_top_n=5)
             print(
                 f"  Top-10: {summary_metrics['summarized']} summarized, "
                 f"{summary_metrics['cached']} cache hits, "
