@@ -9,6 +9,7 @@ import {
   tiltLabel,
   tiltDescriptor,
   sigilLabelInfo,
+  leanToDisplayAngle,
   lerpColor as lerp,
 } from "../lib/biasColors";
 import MicroSpectrum from "./MicroSpectrum";
@@ -97,13 +98,14 @@ function DataMark({ data, size, mounted }: {
 }) {
   const lean = data.politicalLean;
   const isUnscored = !!data.unscored;
-  // Sigmoid beam tilt — front-loads angular discrimination so subtle lean
-  // differences (±10 points) register at 40px the way saturated extremes do.
-  // Saturates at ±22° so crowded layouts don't collide.
-  const leanDelta = lean - 50;
+  // Beam tilt uses the shared perceptual-expansion curve (biasColors
+  // leanToDisplayAngle) so subtle center-left/center-right tilt registers at
+  // 40px the way saturated extremes do, consistently with every other lean
+  // surface. Confidence-damped (thin clusters near 50 don't swing on noise),
+  // saturates near ±24° so crowded layouts don't collide.
   const beamAngle = isUnscored
     ? 0
-    : Math.sign(leanDelta) * (1 - Math.exp(-Math.abs(leanDelta) / 15)) * 22;
+    : leanToDisplayAngle(lean, data.biasSpread?.aggregateConfidence ?? 1, 24);
   const beamCol = isUnscored ? "var(--fg-tertiary)" : leanColor(lean);
 
   // Circle r=11 (was r=9) — larger mark, more room in lower semi-circle.

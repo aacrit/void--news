@@ -20,6 +20,13 @@ export interface BiasSpread {
   opinionSpread: number;
   aggregateConfidence: number;
   analyzedCount: number;
+  /** Contestedness 0-100: 0 = one-sided / all-center, 100 = perfect L/R split.
+   *  Reveals the bimodal coverage that the mean lean conceals. */
+  polarization?: number;
+  /** Source counts collapsed to 3 segments for the coverage bar. */
+  leanLeftCount?: number;
+  leanCenterCount?: number;
+  leanRightCount?: number;
 }
 
 export interface Source {

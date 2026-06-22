@@ -2,6 +2,7 @@
 
 import type { SigilData } from "../lib/types";
 import { getLeanColor, leanLabel } from "../lib/biasColors";
+import LeanCoverageBar from "./LeanCoverageBar";
 
 interface BiasSnapshotProps {
   data: SigilData;
@@ -49,6 +50,7 @@ export default function BiasSnapshot({ data, sourceCount, variant = "inline" }: 
           <span className="bias-snapshot__label">Sources</span>
           <span className="bias-snapshot__value bias-snapshot__value--strong">{sourceCount}</span>
         </div>
+        <LeanCoverageBar spread={data.biasSpread} />
       </aside>
     );
   }
@@ -71,6 +73,7 @@ export default function BiasSnapshot({ data, sourceCount, variant = "inline" }: 
       <span className="bias-snapshot__pill">{opinion}</span>
       <span className="bias-snapshot__sep" aria-hidden="true">·</span>
       <span className="bias-snapshot__sources">{sourceCount} {sourceCount === 1 ? "source" : "sources"}</span>
+      <LeanCoverageBar spread={data.biasSpread} compact />
     </div>
   );
 }
