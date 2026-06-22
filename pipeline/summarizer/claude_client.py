@@ -263,11 +263,12 @@ def generate_json(
 
 def is_available() -> bool:
     # PERMANENTLY DISABLED (2026-06-20). Claude/Anthropic was retired in the
-    # move to a sustainable $0 stack: cluster summaries + TL;DR run on Groq
-    # (openai/gpt-oss-20b) with Gemini as the $0 fallback for the large daily
-    # brief. This hard return False is the master switch — it cascades to all
-    # four callers (cluster_summarizer, daily_brief, weekly_digest, ig_caption),
-    # so no ANTHROPIC_API_KEY or env change can re-enable a paid call.
+    # move to a sustainable $0 stack. Gemini is now the sole primary: cluster
+    # summaries run on gemini-2.5-flash-lite (high-RPD tier) and the daily brief
+    # TL;DR + opinion run on gemini-2.5-flash; Groq (openai/gpt-oss-20b) is the
+    # $0 fallback for both. This hard return False is the master switch — it
+    # cascades to all callers (cluster_summarizer, daily_brief, weekly_digest,
+    # ig_caption), so no ANTHROPIC_API_KEY or env change can re-enable a paid call.
     #
     # To re-enable later: delete this early return and restore the gated logic
     # below (env DISABLE_ANTHROPIC + key presence).

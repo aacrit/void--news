@@ -31,22 +31,14 @@ _UUID_RE = re.compile(
     re.IGNORECASE,
 )
 
-from summarizer.gemini_client import generate_json as gemini_generate_json, is_available as gemini_is_available
+from summarizer.gemini_client import (
+    generate_json as gemini_generate_json,
+    is_available as gemini_is_available,
+    _FLASH_MODEL as GEMINI_FLASH_MODEL,
+)
 from briefing.voice_rotation import get_voices_for_today, get_opinion_host
 
-# Claude API client — optional, used as primary when available
-try:
-    from summarizer.claude_client import (
-        generate_json as claude_generate_json,
-        is_available as claude_is_available,
-    )
-    _CLAUDE_CLIENT_AVAILABLE = True
-except ImportError:
-    _CLAUDE_CLIENT_AVAILABLE = False
-    def claude_generate_json(*a, **kw): return None
-    def claude_is_available(): return False
-
-# Groq API client — optional, preferred $0 provider when Claude is disabled.
+# Groq API client — optional, $0 fallback when Gemini Flash is unavailable.
 # Self-defers oversized (65k brief) requests to Gemini via its own guard.
 try:
     from summarizer.groq_client import (
@@ -64,31 +56,23 @@ def _smart_generate_json(
     max_output_tokens: int = 8192,
     edition: str = "",
 ) -> tuple[dict | None, str]:
-    """Try Claude (off) → Gemini ($0 primary) → Groq ($0 fallback). Gemini
-    leads (Groq self-defers the 65k brief anyway, and gpt-oss-20b can't hold
-    its JSON budget — see cluster_summarizer). Returns (result, label)."""
-    if claude_is_available():
-        result = claude_generate_json(
-            prompt,
-            system_instruction=system_instruction,
-            count_call=False,
-            max_output_tokens=max_output_tokens,
-        )
-        if result and isinstance(result, dict):
-            print(f"  [brief:{edition}] Claude Sonnet OK")
-            return result, "claude-sonnet"
-
+    """Gemini Flash ($0 primary) → Groq ($0 fallback). The brief is low volume
+    (a few calls/day), so it spends the higher-quality flash tier rather than
+    flash-lite; flash's 20/day free cap is ample here. Groq self-defers the 65k
+    brief anyway, and gpt-oss-20b can't hold its JSON budget (see
+    cluster_summarizer). Claude was retired 2026-06-22. Returns (result, label)."""
     if gemini_is_available():
         result = gemini_generate_json(
             prompt,
             system_instruction=system_instruction,
             count_call=False,
             max_output_tokens=max_output_tokens,
+            model=GEMINI_FLASH_MODEL,
         )
         if result and isinstance(result, dict):
             return result, "gemini-flash"
         # Highlighted single-line log — easy to grep in run output
-        print(f"  [brief:{edition}] >>> GEMINI FAILED, FALLING BACK TO GROQ <<<")
+        print(f"  [brief:{edition}] >>> GEMINI FLASH FAILED, FALLING BACK TO GROQ <<<")
 
     if groq_is_available():
         result = groq_generate_json(
@@ -1218,7 +1202,7 @@ def _generate_opinion(cluster: dict, lean: str, date_str: str, edition: str = "w
     """
     global _brief_call_count
 
-    if not is_available() and not claude_is_available():
+    if not is_available():
         print(f"  [opinion] No LLM available — skipping opinion")
         return None
     if _brief_calls_remaining() <= 0:
@@ -1449,7 +1433,7 @@ def generate_daily_briefs(
         clusters: Full list of ranked cluster dicts from the pipeline.
         source_map: Source slug -> source dict (used for context; reserved
             for future per-source attribution enrichment).
-        edition_sections: List of editions to generate (default: world, us, india).
+        edition_sections: List of editions to generate (default: ["world"]).
 
     Returns:
         Dict mapping edition -> brief dict with keys:
@@ -1461,14 +1445,15 @@ def generate_daily_briefs(
     global _brief_call_count
 
     if edition_sections is None:
-        edition_sections = ["world", "us", "india"]
+        # Single feed since rev 46 (collapse-editions). Keeps brief volume at a
+        # few Gemini Flash calls/day, well under flash's 20/day free cap.
+        edition_sections = ["world"]
 
     gemini_ok = gemini_is_available()
-    claude_ok = claude_is_available()
-    if claude_ok:
-        print(f"  [brief] Claude Sonnet available — using as primary")
-    elif gemini_ok:
+    if gemini_ok:
         print(f"  [brief] Gemini Flash available — using as primary")
+    elif groq_is_available():
+        print(f"  [brief] Gemini unavailable — Groq fallback for brief")
     date_str = datetime.now(timezone.utc).strftime("%A, %d %B %Y")
     date_short = datetime.now(timezone.utc).strftime("%B %d")  # e.g. "April 02"
 
@@ -1500,7 +1485,7 @@ def generate_daily_briefs(
         brief_result = None
         generator_label = None
         gemini_failure_reason = None
-        any_llm_ok = (gemini_ok or groq_is_available() or claude_is_available())
+        any_llm_ok = (gemini_ok or groq_is_available())
         if any_llm_ok and _brief_calls_remaining() > 0:
             edition_key = edition.upper()
             edition_focus = _EDITION_FOCUS.get(edition_key, _EDITION_FOCUS["WORLD"])
