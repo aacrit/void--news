@@ -124,6 +124,38 @@ export function tiltDescriptor(v: number): string {
   return "Strong right lean in coverage language";
 }
 
+/* ── Perceptual scale expansion — DISPLAY POSITION ONLY ────────────────────
+   The cluster lean is a rigor-weighted mean; high-rigor wires (AP/Reuters≈50)
+   plus genuinely two-sided coverage bunch most stories in ~40-62, so a LINEAR
+   marker renders real center-left/center-right tilt nearly on top of dead
+   center. This maps the TRUE lean (0-100) to a DISPLAY position (0-100) with
+   high gain near center and saturation at the wings — a real 3-pt tilt becomes
+   a ~7-8-pt visual offset — while staying strictly monotonic and side-
+   preserving (a left story can never render right) and pinning the extremes
+   (lean 0→0, 50→50, 100→100). The numeric score and label stay 100% TRUE;
+   only on-screen distance from center is exaggerated for legibility.
+
+   `confidence` (0-1) damps the amplification so low-signal thin clusters near
+   50 aren't pushed out on noise; top stories (many sources) sit near 1.0 and
+   get the full expansion. Tune sensitivity with DISPLAY_GAIN.                ── */
+
+export const DISPLAY_GAIN = 2.8;
+
+export function leanToDisplayPos(lean: number, confidence = 1): number {
+  const d = (Math.max(0, Math.min(100, lean)) - 50) / 50; // -1..+1 true deviation
+  const k = DISPLAY_GAIN * Math.max(0.4, Math.min(1, confidence));
+  // tanh(k·d)/tanh(k): expands the middle, normalizes so the wings still reach
+  // the rail (|d|=1 → ±1). Strictly increasing ⇒ order + side preserved.
+  const expanded = Math.tanh(k * d) / Math.tanh(k);
+  return 50 + 50 * expanded;
+}
+
+/** Display-space beam/needle angle in degrees for a lean, sharing the same
+ *  expansion curve so every lean surface tilts consistently. */
+export function leanToDisplayAngle(lean: number, confidence = 1, maxDeg = 24): number {
+  return ((leanToDisplayPos(lean, confidence) - 50) / 50) * maxDeg;
+}
+
 /* ── Unscored gate — story lacks analytical signal for tilt label ───────── */
 
 /**

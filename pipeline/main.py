@@ -679,6 +679,30 @@ def _enrich_cluster_fallback(cluster_id: str, skip_text: bool = False) -> None:
         sensationalism_spread = round(_stddev(sens_values), 1)
         opinion_spread = round(_stddev(of_values), 1)
 
+        # ── Polarization / contestedness ──────────────────────────────────
+        # The rigor-weighted MEAN hides bimodal coverage: a story carried by
+        # far-left AND far-right sources averages to ~50 and looks "balanced"
+        # when it is in fact highly contested. Compute an explicit per-bucket
+        # histogram + a polarization index so the frontend can reveal the
+        # split the mean conceals (Layer 2). Buckets match biasColors.ts
+        # leanToBucket boundaries so the UI and pipeline agree.
+        lean_buckets = {
+            "far_left": sum(1 for v in pl_values if v <= 20),
+            "left": sum(1 for v in pl_values if 20 < v <= 35),
+            "center_left": sum(1 for v in pl_values if 35 < v <= 45),
+            "center": sum(1 for v in pl_values if 45 < v <= 55),
+            "center_right": sum(1 for v in pl_values if 55 < v <= 65),
+            "right": sum(1 for v in pl_values if 65 < v <= 80),
+            "far_right": sum(1 for v in pl_values if v > 80),
+        }
+        # 3-segment collapse for the at-a-glance coverage bar.
+        lean_left_count = lean_buckets["far_left"] + lean_buckets["left"] + lean_buckets["center_left"]
+        lean_center_count = lean_buckets["center"]
+        lean_right_count = lean_buckets["center_right"] + lean_buckets["right"] + lean_buckets["far_right"]
+        # Polarization: 0 when one-sided / all-center, 100 when a perfect L/R
+        # split. minority = the smaller wing; both wings large ⇒ contested.
+        polarization = round(100.0 * (2.0 * min(lean_left_count, lean_right_count) / count)) if count else 0
+
         # Divergence score
         divergence = min(100.0,
             (min(lean_range / 60.0, 1.0) * 40.0) +
@@ -759,6 +783,11 @@ def _enrich_cluster_fallback(cluster_id: str, skip_text: bool = False) -> None:
             "coverage_score": coverage_score,
             "tier_breakdown": tier_breakdown,
             "avg_opinion_label": opinion_label,
+            "lean_buckets": lean_buckets,
+            "lean_left_count": lean_left_count,
+            "lean_center_count": lean_center_count,
+            "lean_right_count": lean_right_count,
+            "polarization": polarization,
         }
 
         # Classify as reporting vs opinion based on avg opinion score

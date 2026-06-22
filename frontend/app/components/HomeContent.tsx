@@ -471,6 +471,10 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
                   opinionSpread: safeNum(bd, "opinion_spread", 0),
                   aggregateConfidence: safeNum(bd, "aggregate_confidence", 0),
                   analyzedCount: safeNum(bd, "analyzed_count", 0),
+                  polarization: safeNum(bd, "polarization", 0),
+                  leanLeftCount: safeNum(bd, "lean_left_count", 0),
+                  leanCenterCount: safeNum(bd, "lean_center_count", 0),
+                  leanRightCount: safeNum(bd, "lean_right_count", 0),
                 }
               : undefined;
 

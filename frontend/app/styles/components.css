@@ -631,6 +631,56 @@
   opacity: 0.5;
 }
 
+/* ── Lean coverage bar — reveals the left/right split the mean hides ─────── */
+.lean-coverage {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+}
+.lean-coverage__tag {
+  flex: none;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--fg-tertiary);
+}
+.lean-coverage--contested .lean-coverage__tag {
+  /* Contested = both wings large. Borrow the high-divergence accent so a
+     centrist-looking mean reads as genuinely split at a glance. */
+  color: var(--sense-high);
+}
+.lean-coverage__track {
+  flex: 1 1 auto;
+  display: flex;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--bg-subtle, rgba(127, 127, 127, 0.12));
+}
+.lean-coverage__seg { display: block; height: 100%; }
+.lean-coverage__seg--left   { background: var(--bias-left); }
+.lean-coverage__seg--center { background: var(--bias-center); }
+.lean-coverage__seg--right  { background: var(--bias-right); }
+.lean-coverage--contested .lean-coverage__track {
+  /* Subtle outline so the split bar pops on a busy card. */
+  box-shadow: 0 0 0 1px var(--sense-high);
+}
+.lean-coverage__counts {
+  flex: none;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+.lean-coverage__counts-sep {
+  opacity: 0.45;
+  margin: 0 0.18em;
+}
+.lean-coverage--compact .lean-coverage__tag { display: none; }
+
 
 .story-card__byline,
 .lead-story__byline {
