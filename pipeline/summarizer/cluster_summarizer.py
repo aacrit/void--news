@@ -20,11 +20,6 @@ from .gemini_client import (
     is_available as gemini_is_available,
     calls_remaining as gemini_calls_remaining,
 )
-from .claude_client import (
-    generate_json as claude_generate_json,
-    is_available as claude_is_available,
-    calls_remaining as claude_calls_remaining,
-)
 from .groq_client import (
     generate_json as groq_generate_json,
     is_available as groq_is_available,
@@ -39,30 +34,24 @@ def _smart_generate_json(prompt: str,
                           ) -> tuple[dict | None, str]:
     """Route a summary call by provider preference. Returns (result, label).
 
-    Google cut the Gemini free tier to 20 requests/DAY (2026-06-20), so Gemini
-    is reserved for premium slots and the brief; Groq (llama-3.1-8b-instant)
-    carries the bulk. Claude is permanently off.
+    Story/cluster summaries run on Gemini flash-LITE (the high-RPD free tier —
+    flash itself was cut to 20 requests/DAY on 2026-06-20, too few for a ~30-50
+    call run). Groq (llama-3.1-8b-instant) is the $0 fallback. Claude was retired
+    2026-06-22; Gemini is the sole primary.
 
     prefer_provider:
-        "gemini" — Gemini first, Groq fallback. Premium top-10 + brief/opinion.
-        "groq"   — Groq only. The tail; never spends Gemini's scarce 20/day.
+        "gemini" — Gemini flash-lite first, Groq fallback (default for summaries).
+        "groq"   — Groq only. The tail; never spends Gemini's quota.
         None     — Gemini then Groq (legacy default).
     """
     try_gemini = prefer_provider in (None, "gemini")
-    if claude_is_available():
-        result = claude_generate_json(
-            prompt, system_instruction=system_instruction,
-            count_call=True, max_output_tokens=max_output_tokens,
-        )
-        if result and isinstance(result, dict):
-            return result, "claude-sonnet"
     if try_gemini and gemini_is_available():
         result = gemini_generate_json(
             prompt, system_instruction=system_instruction,
             count_call=True, max_output_tokens=max_output_tokens,
         )
         if result and isinstance(result, dict):
-            return result, "gemini-flash"
+            return result, "gemini-flash-lite"
     if groq_is_available():
         result = groq_generate_json(
             prompt, system_instruction=system_instruction,
@@ -110,16 +99,14 @@ def generate_json(prompt, system_instruction=None, max_retries=1, count_call=Tru
     return result
 
 def is_available():
-    return claude_is_available() or gemini_is_available() or groq_is_available()
+    return gemini_is_available() or groq_is_available()
 
 def calls_remaining():
     # Report the PRIMARY provider's remaining budget so a throttled/exhausted
     # fallback can't gate the summarization loop. Order mirrors the router:
-    # Claude (off) → Gemini (primary) → Groq (fallback). 2026-06-20: the old
-    # order returned Groq's budget, so Groq's 200k-TPD exhaustion zeroed
-    # calls_remaining() and starved the top-50 pass even though Gemini had room.
-    if claude_is_available():
-        return claude_calls_remaining()
+    # Gemini (primary) → Groq (fallback). 2026-06-20: the old order returned
+    # Groq's budget, so Groq's 200k-TPD exhaustion zeroed calls_remaining()
+    # and starved the top-50 pass even though Gemini had room.
     if gemini_is_available():
         return gemini_calls_remaining()
     return groq_calls_remaining()
@@ -819,7 +806,7 @@ def summarize_cluster(articles: list[dict],
         "claims": claims,
         "consensus_ratio": consensus_ratio_val,
         "consensus_summary": consensus_summary_val,
-        # Which provider answered ("claude-sonnet" | "gemini-flash").
+        # Which provider answered ("gemini-flash-lite" | "groq-llama").
         # Callers map this to summary_tier so the step-8d cache only
         # freezes genuine Sonnet output.
         "_generator": _generator_label,
@@ -1137,7 +1124,14 @@ def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 
             continue
 
         h = _content_hash(articles)
-        if h == row.get("summary_article_hash") and row.get("summary_tier") == "sonnet":
+        # Skip re-summarization when the cluster's article membership is
+        # unchanged AND a prior successful LLM summary exists. The gate used to
+        # require tier=="sonnet" (to let a later Claude run upgrade a Gemini
+        # fallback). Claude was retired 2026-06-22, so that gate never hit and
+        # forced a full re-summarize of all ~50 clusters every run. Now any
+        # prior tier ('sonnet' legacy rows, 'flash' for Gemini/Groq) counts as
+        # a cache hit — content unchanged means the summary is still valid.
+        if h == row.get("summary_article_hash") and row.get("summary_tier") in ("sonnet", "flash"):
             metrics["cached"] += 1
             continue
 

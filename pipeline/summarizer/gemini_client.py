@@ -2,13 +2,21 @@
 Gemini API client for the void --news pipeline.
 
 Uses the google-genai SDK (not the deprecated google-generativeai).
-Free-tier protection:
-    - Rate limited to ~14 RPM (4.2s between calls)
-    - Hard cap of 50 calls per pipeline run (summarization budget)
-    - 1 retry max on transient failures
 
-At 3 pipeline runs/day: 50 calls/run × 3 = 150 RPD (summarization) + ~27 RPD (briefs)
-= ~177 RPD total (71% of the 250 RPD free limit). ~73 RPD safety buffer.
+Gemini is the sole LLM primary (Claude retired 2026-06-22). Two-model split:
+    - gemini-2.5-flash-lite (_MODEL)       → story/cluster summaries. High
+      volume (~30-50/run), so it rides the high-RPD lite tier.
+    - gemini-2.5-flash (_FLASH_MODEL)      → daily brief TL;DR + opinion. A few
+      calls/day, comfortably under flash's 20-requests/DAY free cap.
+Groq (gpt-oss-20b) is the $0 fallback for both.
+
+Free-tier protection:
+    - Rate limited to ~8.5 RPM (7s between calls) — under flash-lite's 10 RPM
+    - Hard cap of 70 calls per pipeline run (summarization budget safety net)
+    - 0 retries by default (each retry burns scarce daily quota)
+
+At 1 pipeline run/day the summarization pass makes ~30-50 flash-lite calls and
+the brief ~2-4 flash calls — both well inside their respective free quotas.
 
 Environment:
     GEMINI_API_KEY — required. Get one free at https://aistudio.google.com/apikey
@@ -31,7 +39,16 @@ except ImportError:
 # which can't cover a ~30-call summarization run. flash-LITE is the high-volume
 # free tier (far higher RPD, same JSON/structured-output mode, ample quality for
 # grounded summarization). Override per-deploy with GEMINI_MODEL if needed.
+#
+# 2026-06-22: two-model split (Gemini is now the sole primary; Claude retired).
+#   _MODEL (flash-lite)  → story/cluster summaries. High volume (~30-50/run),
+#                          so it MUST be the high-RPD lite tier.
+#   _FLASH_MODEL (flash) → daily brief TL;DR + opinion. Low volume (a few
+#                          calls/day, well under flash's 20/day cap), so we
+#                          spend the higher-quality flash tier where it shows.
+# Callers pick per-call via generate_json(..., model=...). Both overridable.
 _MODEL = os.environ.get("GEMINI_MODEL", "").strip() or "gemini-2.5-flash-lite"
+_FLASH_MODEL = os.environ.get("GEMINI_FLASH_MODEL", "").strip() or "gemini-2.5-flash"
 
 # Rate limiting state (module-level singleton). flash-lite free tier is 15 RPM,
 # so ~4.2s spacing (≈14 RPM) keeps every run under the per-minute ceiling — this
@@ -92,6 +109,7 @@ def generate_json(
     max_retries: int = 0,
     count_call: bool = True,
     max_output_tokens: int = 8192,
+    model: str | None = None,
 ) -> dict | None:
     """
     Send a prompt to Gemini Flash and parse the JSON response.
@@ -131,6 +149,10 @@ def generate_json(
     if count_call and _call_count >= _MAX_CALLS_PER_RUN:
         return None
 
+    # Default to flash-lite (high-RPD summarization tier); brief callers pass
+    # model=_FLASH_MODEL for the higher-quality, low-volume TL;DR + opinion.
+    use_model = (model or "").strip() or _MODEL
+
     config = types.GenerateContentConfig(
         response_mime_type="application/json",
         temperature=0.2,
@@ -147,7 +169,7 @@ def generate_json(
         try:
             _rate_limit()
             response = client.models.generate_content(
-                model=_MODEL,
+                model=use_model,
                 contents=prompt,
                 config=config,
             )
