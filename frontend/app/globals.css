@@ -20,6 +20,7 @@
 @import url("./styles/floating-player.css");
 @import url("./styles/mobile-nav.css");
 @import url("./styles/responsive.css");
+@import url("./styles/onboarding.css");
 /* spectrum.css → imported by /sources/page.tsx AND
                   components/DeepDiveSpectrum.tsx (Deep Dive routes).
                   Stays out of globals.css so it doesn't ship on the

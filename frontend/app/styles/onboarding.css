@@ -1,0 +1,217 @@
+/* ==========================================================================
+   onboarding.css — the unified About + onboarding experience.
+
+   Loaded globally (via globals.css) because the overlay presentation is
+   mounted from the feed (UnifiedOnboarding), not the /about route. Covers:
+   invitation card (.onb-invite*), overlay chrome (.onb*), page shell
+   (.about-x*), and the four beats (.beat*, .vrail/.vchip, .sigdemo,
+   .rsignals, .verdict*).
+   ========================================================================== */
+
+/* ── Invitation card — subtle bottom CTA (was missing entirely) ──────────── */
+.onb-invite {
+  position: fixed;
+  left: 50%;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 1rem);
+  transform: translate(-50%, 140%);
+  z-index: var(--z-popup);
+  max-width: min(92vw, 30rem);
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.28);
+  opacity: 0;
+  transition: transform 520ms var(--spring, cubic-bezier(0.22, 1, 0.36, 1)), opacity 320ms ease;
+}
+.onb-invite--visible { transform: translate(-50%, 0); opacity: 1; }
+.onb-invite__grain { display: none; }
+.onb-invite__content { display: flex; align-items: center; gap: var(--space-4); flex: 1; flex-wrap: wrap; }
+.onb-invite__text {
+  font-family: var(--font-editorial);
+  font-size: var(--text-base);
+  color: var(--fg-primary);
+  margin: 0;
+}
+.onb-invite__actions { display: flex; gap: var(--space-2); margin-left: auto; }
+.onb-invite__btn {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  letter-spacing: 0.03em;
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  min-height: 40px;
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--fg-secondary);
+  transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+.onb-invite__btn--go { background: var(--accent); border-color: var(--accent); color: #fff; }
+.onb-invite__btn--go:hover { background: var(--accent-hover); }
+.onb-invite__btn--skip:hover { color: var(--fg-primary); border-color: var(--border-strong); }
+.onb-invite__close {
+  position: absolute; top: 4px; right: 8px;
+  background: none; border: none; color: var(--fg-tertiary);
+  font-size: 1.1rem; line-height: 1; cursor: pointer; padding: 4px;
+}
+
+/* ── Overlay chrome — first-visit dialog ─────────────────────────────────── */
+.onb { position: fixed; inset: 0; z-index: var(--z-modal); display: grid; place-items: center; }
+.onb__backdrop { position: absolute; inset: 0; background: var(--overlay-backdrop, rgba(0, 0, 0, 0.6)); backdrop-filter: blur(6px); }
+.onb__stage {
+  position: relative;
+  width: min(94vw, 46rem);
+  height: min(92vh, 56rem);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.4);
+  animation: onbStageIn 420ms var(--ease-cinematic, cubic-bezier(0.22, 1, 0.36, 1));
+}
+.onb--exiting .onb__stage { animation: onbStageOut 340ms var(--ease-cinematic) forwards; }
+.onb--exiting .onb__backdrop { animation: onbFadeOut 340ms ease forwards; }
+@keyframes onbStageIn { from { opacity: 0; transform: translateY(16px) scale(0.98); } to { opacity: 1; transform: none; } }
+@keyframes onbStageOut { to { opacity: 0; transform: translateY(10px) scale(0.99); } }
+@keyframes onbFadeOut { to { opacity: 0; } }
+
+.onb__progress { position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--border-subtle); z-index: 3; }
+.onb__progress-fill { height: 100%; background: var(--accent); transition: width 120ms linear; }
+.onb__skip {
+  position: absolute; top: 10px; right: 12px; z-index: 4;
+  font-family: var(--font-data); font-size: var(--text-xs);
+  background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);
+  color: var(--fg-secondary); padding: 0.4rem 0.7rem; min-height: 36px; cursor: pointer;
+}
+.onb__skip:hover { color: var(--fg-primary); }
+.onb__scroller {
+  flex: 1; overflow-y: auto; scroll-snap-type: y mandatory; scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+.onb__scroller::-webkit-scrollbar { display: none; }
+.onb__scroller > .beat { scroll-snap-align: start; min-height: 100%; }
+.onb__next {
+  position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); z-index: 4;
+  font-family: var(--font-data); font-size: var(--text-xs);
+  background: var(--accent); color: #fff; border: none; border-radius: var(--radius-sm);
+  padding: 0.5rem 1rem; min-height: 40px; cursor: pointer; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+/* ── Page shell ──────────────────────────────────────────────────────────── */
+.about-x { max-width: 56rem; margin: 0 auto; padding: 0 var(--space-4) var(--space-8); }
+.about-x__hero { text-align: center; padding: clamp(3rem, 12vh, 7rem) 0 2rem; }
+.about-x__hero-mark { display: inline-flex; }
+.about-x__tagline { font-family: var(--font-editorial); font-size: var(--text-hero); line-height: 1.05; margin: var(--space-4) 0 var(--space-2); }
+.about-x__sub { font-family: var(--font-structural); color: var(--fg-secondary); font-size: var(--text-lg); }
+.about-x__scroll { display: block; width: 1px; height: 2.5rem; margin: 2rem auto 0; background: linear-gradient(var(--fg-tertiary), transparent); }
+
+.about-x__footer { margin-top: var(--space-8); padding-top: var(--space-7); border-top: 1px solid var(--border-subtle); }
+.about-x__footer-h { font-family: var(--font-editorial); font-size: var(--text-xl); text-align: center; margin-bottom: var(--space-5); }
+.about-x__worlds { list-style: none; display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); padding: 0; }
+.about-x__world { display: flex; flex-direction: column; gap: 2px; padding: var(--space-4); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); text-decoration: none; transition: border-color 160ms ease, transform 160ms var(--ease-cinematic); }
+.about-x__world:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+.about-x__world-cli { font-family: var(--font-data); font-size: var(--text-xs); color: var(--accent); }
+.about-x__world-name { font-family: var(--font-editorial); font-size: var(--text-lg); color: var(--fg-primary); }
+.about-x__world-desc { font-family: var(--font-structural); font-size: var(--text-sm); color: var(--fg-secondary); }
+.about-x__principles { list-style: none; padding: 0; margin: var(--space-6) 0 0; display: grid; gap: var(--space-2); text-align: center; }
+.about-x__principles li { font-family: var(--font-editorial); color: var(--fg-secondary); font-size: var(--text-base); }
+
+/* ── Beat scaffold (shared by page + overlay) ────────────────────────────── */
+.beat { padding: clamp(2rem, 6vh, 4rem) var(--space-4); max-width: 40rem; margin: 0 auto; display: flex; flex-direction: column; justify-content: center; }
+.beat__head { text-align: center; margin-bottom: var(--space-5); }
+.beat__headline { font-family: var(--font-editorial); font-size: var(--text-xl); line-height: 1.1; margin-bottom: var(--space-3); }
+.beat__body { font-family: var(--font-structural); color: var(--fg-secondary); font-size: var(--text-base); line-height: 1.6; }
+.beat__action {
+  align-self: center; margin-top: var(--space-5);
+  font-family: var(--font-data); font-size: var(--text-sm);
+  background: var(--accent); color: #fff; border: none; border-radius: var(--radius-sm);
+  padding: 0.7rem 1.3rem; min-height: 44px; cursor: pointer;
+  transition: background 160ms ease, transform 120ms var(--ease-cinematic);
+}
+.beat__action:hover { background: var(--accent-hover); transform: translateY(-1px); }
+.beat__note { text-align: center; margin-top: var(--space-4); font-family: var(--font-editorial); font-style: italic; color: var(--fg-secondary); }
+.beat__more { margin-top: var(--space-5); border-top: 1px solid var(--border-subtle); padding-top: var(--space-3); }
+.beat__more summary { font-family: var(--font-data); font-size: var(--text-xs); color: var(--accent); cursor: pointer; }
+.beat__axes { list-style: none; padding: 0; margin: var(--space-3) 0 0; display: grid; gap: var(--space-2); }
+.beat__axes li { font-family: var(--font-structural); font-size: var(--text-sm); color: var(--fg-secondary); }
+.beat__axes strong { color: var(--fg-primary); }
+.beat__axes-signals { display: block; color: var(--fg-tertiary); font-size: var(--text-xs); }
+.beat__more-note { margin-top: var(--space-3); font-family: var(--font-structural); font-size: var(--text-sm); color: var(--fg-secondary); }
+
+/* ── Beat 1 — spectrum rail + draggable chips ────────────────────────────── */
+.vrail { position: relative; margin-top: var(--space-6); min-height: 16rem; touch-action: pan-y; }
+.vrail__track { position: absolute; left: 0; right: 0; bottom: 1.5rem; height: 4px; border-radius: 2px;
+  background: linear-gradient(90deg, var(--bias-left), var(--bias-center), var(--bias-right)); display: flex; align-items: center; }
+.vrail__end { position: absolute; top: 0.6rem; font-family: var(--font-data); font-size: var(--text-xxs); color: var(--fg-tertiary); }
+.vrail__end--l { left: 0; } .vrail__end--r { right: 0; }
+.vrail__tick { position: absolute; left: 50%; top: -3px; width: 1px; height: 10px; background: var(--fg-tertiary); }
+.vchip {
+  position: absolute; bottom: 3rem; transform: translateX(-50%);
+  width: 12rem; max-width: 60vw; padding: var(--space-2) var(--space-3);
+  background: var(--bg-card); border: 1px solid var(--border-subtle); border-left: 3px solid var(--fg-tertiary);
+  border-radius: var(--radius-sm); cursor: grab; touch-action: none; user-select: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+}
+.vchip:active { cursor: grabbing; }
+.vchip--revealed { border-left-color: var(--vchip-color, var(--fg-tertiary)); cursor: default; }
+.vchip__outlet { display: block; font-family: var(--font-data); font-size: var(--text-xxs); color: var(--fg-tertiary); }
+.vchip__headline { display: block; font-family: var(--font-editorial); font-size: var(--text-sm); color: var(--fg-primary); line-height: 1.25; }
+.vchip__lean { display: block; margin-top: 2px; font-family: var(--font-data); font-size: var(--text-xxs); color: var(--vchip-color, var(--fg-secondary)); }
+
+/* ── Beat 2 — live Sigil demo ────────────────────────────────────────────── */
+.sigdemo { display: grid; gap: var(--space-4); justify-items: center; margin-top: var(--space-5); }
+.sigdemo__stage { display: grid; place-items: center; min-height: 6rem; }
+.sigdemo__readout { display: flex; gap: var(--space-5); margin: 0; }
+.sigdemo__readout div { text-align: center; }
+.sigdemo__readout dt { font-family: var(--font-data); font-size: var(--text-xxs); color: var(--fg-tertiary); text-transform: uppercase; letter-spacing: 0.05em; }
+.sigdemo__readout dd { margin: 0; font-family: var(--font-editorial); font-size: var(--text-base); color: var(--fg-primary); }
+.sigdemo__controls { width: 100%; max-width: 22rem; display: grid; gap: var(--space-3); }
+.sigdemo__ctl { display: grid; gap: 4px; }
+.sigdemo__ctl span { font-family: var(--font-data); font-size: var(--text-xs); color: var(--fg-secondary); }
+.sigdemo__ctl input[type="range"] { width: 100%; accent-color: var(--accent); min-height: 24px; }
+.sigdemo__hint { text-align: center; font-family: var(--font-structural); font-size: var(--text-sm); color: var(--fg-secondary); min-height: 2.5em; max-width: 26rem; }
+
+/* ── Beat 3 — ranking signals ────────────────────────────────────────────── */
+.rsignals { list-style: none; padding: 0; margin: var(--space-5) auto 0; max-width: 30rem; display: grid; gap: var(--space-2); }
+.rsignals__row { display: grid; grid-template-columns: 9rem 1fr 2.5rem; align-items: center; gap: var(--space-2); }
+.rsignals__name { font-family: var(--font-structural); font-size: var(--text-sm); color: var(--fg-secondary); }
+.rsignals__bar { height: 8px; background: var(--bg-secondary); border-radius: 4px; overflow: hidden; }
+.rsignals__fill { display: block; height: 100%; width: 100%; transform-origin: left center; background: var(--accent); border-radius: 4px; }
+.rsignals__w { font-family: var(--font-data); font-size: var(--text-xs); color: var(--fg-tertiary); text-align: right; }
+.rsignals__gate { text-align: center; margin-top: var(--space-3); font-family: var(--font-data); font-size: var(--text-xs); color: var(--fg-tertiary); }
+
+/* ── Beat 4 — verdict ────────────────────────────────────────────────────── */
+.verdict__marks { display: flex; justify-content: center; gap: var(--space-6); margin-top: var(--space-5); flex-wrap: wrap; }
+.verdict__mark { display: grid; justify-items: center; gap: 4px; }
+.verdict__mark-label { font-family: var(--font-data); font-size: var(--text-xxs); color: var(--fg-tertiary); }
+.verdict__mark-verdict { font-family: var(--font-structural); font-size: var(--text-sm); font-weight: 600; }
+.verdict__mark-verdict--consensus { color: var(--bias-center); }
+.verdict__mark-verdict--broad { color: var(--fg-primary); }
+.verdict__mark-verdict--thin { color: var(--accent-warm); }
+.verdict__numbers { list-style: none; padding: 0; margin: var(--space-6) 0; display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-5); }
+.verdict__numbers li { text-align: center; }
+.verdict__num { display: block; font-family: var(--font-editorial); font-size: var(--text-xl); color: var(--fg-primary); }
+.verdict__num-label { font-family: var(--font-data); font-size: var(--text-xxs); color: var(--fg-tertiary); text-transform: uppercase; letter-spacing: 0.05em; }
+.verdict__cta { text-align: center; display: grid; justify-items: center; gap: var(--space-2); }
+.verdict__go {
+  font-family: var(--font-data); font-size: var(--text-base); text-decoration: none;
+  background: var(--accent); color: #fff; border: none; border-radius: var(--radius-sm);
+  padding: 0.8rem 1.6rem; min-height: 48px; display: inline-flex; align-items: center; cursor: pointer;
+}
+.verdict__go:hover { background: var(--accent-hover); }
+.verdict__fine { font-family: var(--font-data); font-size: var(--text-xs); color: var(--fg-tertiary); }
+.verdict__secondary { font-family: var(--font-structural); font-size: var(--text-sm); color: var(--fg-secondary); text-decoration: none; }
+.verdict__secondary:hover { color: var(--fg-primary); }
+
+/* ── Reduced motion ──────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .onb__stage, .onb--exiting .onb__stage, .onb--exiting .onb__backdrop { animation: none; }
+  .onb__scroller { scroll-behavior: auto; }
+  .onb-invite { transition: opacity 200ms ease; }
+}

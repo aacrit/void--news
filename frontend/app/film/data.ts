@@ -1,115 +1,112 @@
 /* ==========================================================================
-   film/data.ts — Canonical content constants for "The Film"
+   film/data.ts — Canonical content for the unified About + onboarding
+   experience (app/components/about/*).
 
-   Single source of truth for all demo/onboarding/about-page content.
-   Both the prologue (onboarding carousel) and manifesto (about page)
-   import from here. Change once, both surfaces update.
+   Single source of truth for the interactive beats. Numbers here are kept
+   in lockstep with the real codebase (sources.json, importance_ranker).
    ========================================================================== */
 
-/* ── Divergent Headlines — Scene I: "The Void" ── */
+/* ── Canonical source counts (data/sources.json — verified) ───────────────
+   Use these everywhere instead of hard-coding, so the figures can't drift. */
+export const SOURCE_TIERS = {
+  usMajor: 43,
+  international: 373,
+  independent: 600,
+  total: 1016,
+  countries: 158,
+} as const;
+
+/* ── Beat 1 — "Same story, five headlines" ──────────────────────────────── */
 
 export interface DivergentHeadline {
   outlet: string;
   lean: string;
+  /** True text lean 0-100 (drives the chip's spectrum position + color). */
   leanScore: number;
-  color: string;
   headline: string;
 }
 
+// Illustrative — one real-world-shaped event, five framings. Kept internally
+// consistent (same administration throughout).
 export const DIVERGENT_HEADLINES: DivergentHeadline[] = [
   {
     outlet: "Reuters",
     lean: "Center",
-    leanScore: 48,
-    color: "var(--bias-center)",
-    headline: "\u201CUS and China resume trade talks amid tariff tensions\u201D",
-  },
-  {
-    outlet: "Fox News",
-    lean: "Right",
-    leanScore: 72,
-    color: "var(--bias-right)",
-    headline: "\u201CTrump administration takes hard line as China trade talks restart\u201D",
+    leanScore: 50,
+    headline: "US and China resume trade talks amid tariff tensions",
   },
   {
     outlet: "The Guardian",
     lean: "Center-Left",
     leanScore: 38,
-    color: "var(--bias-left)",
-    headline: "\u201CTrade war uncertainty looms as US-China negotiations resume\u201D",
+    headline: "Trade-war uncertainty looms as US-China negotiations resume",
   },
   {
     outlet: "Al Jazeera",
     lean: "Center-Left",
     leanScore: 35,
-    color: "var(--bias-left)",
-    headline: "\u201CGlobal markets brace as superpowers return to negotiating table\u201D",
+    headline: "Global markets brace as superpowers return to the table",
+  },
+  {
+    outlet: "Fox News",
+    lean: "Right",
+    leanScore: 72,
+    headline: "Administration takes hard line as China trade talks restart",
   },
   {
     outlet: "New York Post",
     lean: "Right",
     leanScore: 74,
-    color: "var(--bias-right)",
-    headline: "\u201CBiden caves to China pressure, agrees to new round of trade talks\u201D",
+    headline: "China comes crawling back to the negotiating table",
   },
 ];
 
-/* ── Six Axes — Scene II extension (manifesto) ── */
+/* ── Beat 2 — "The mark that shows the bias" (Learn more) ─────────────────
+   Source for the optional methodology disclosure. Matches the real engine. */
 
 export interface BiasAxis {
   name: string;
   brief: string;
-  score: number;
   signals: string;
-  sample: string;
 }
 
 export const SIX_AXES: BiasAxis[] = [
   {
     name: "Political Lean",
-    brief: "Where the article falls on the spectrum.",
-    score: 42,
-    signals: "Keyword lexicons, entity sentiment (NER + TextBlob), framing phrases, length-adaptive + sparsity-weighted source baseline blending.",
-    sample: "The <mark>administration</mark> defended the <mark>crackdown</mark> as necessary to <mark>restore order</mark>.",
+    brief: "Where the article's language falls, left to right.",
+    signals: "Keyword lexicons, entity sentiment (NER + TextBlob), framing phrases, length-adaptive source-baseline blending.",
   },
   {
     name: "Sensationalism",
     brief: "How much urgency is inflated beyond the facts.",
-    score: 28,
-    signals: "Clickbait patterns, superlative density, TextBlob extremity, partisan attack density (capped 30 pts).",
-    sample: "The <mark>unprecedented</mark> move sent <mark>shockwaves</mark> through the <mark>entire</mark> industry.",
+    signals: "Clickbait patterns, superlative density, TextBlob extremity, partisan-attack density.",
   },
   {
     name: "Opinion vs. Reporting",
     brief: "Whether it reports facts or argues a position.",
-    score: 15,
-    signals: "First-person pronouns, subjectivity score, attribution density (24 investigative patterns), value judgments, rhetorical questions.",
-    sample: "<mark>I believe</mark> the decision <mark>should have been</mark> made earlier. <mark>Don\u2019t you agree?</mark>",
+    signals: "First-person pronouns, subjectivity, attribution density, value judgments, rhetorical questions.",
   },
   {
     name: "Factual Rigor",
     brief: "How thoroughly it cites named sources and data.",
-    score: 78,
-    signals: "Named sources via NER + attribution verbs, org citations, data patterns, direct quotes, vague-source penalty.",
-    sample: "<mark>Treasury Secretary Janet Yellen</mark> told reporters at the <mark>G7 summit</mark> that <mark>2.3% GDP growth</mark> was expected.",
+    signals: "Named sources via NER + attribution verbs, org citations, data patterns, direct quotes.",
   },
   {
     name: "Framing",
     brief: "Whether word choices nudge the reader.",
-    score: 31,
-    signals: "50+ charged synonym pairs, cluster-aware omission detection, headline-body divergence, passive voice (capped 30).",
-    sample: "Protestors <mark>clashed with</mark> police vs. Police <mark>dispersed</mark> the crowd.",
+    signals: "50+ charged synonym pairs, omission detection, headline-body divergence, passive voice.",
   },
   {
     name: "Outlet Tracking",
     brief: "How each outlet covers each topic over time.",
-    score: 55,
-    signals: "Per-topic per-outlet EMA with adaptive alpha (0.3 new / 0.15 established). Stored across pipeline runs.",
-    sample: "Fox News on immigration: <mark>lean 68 avg</mark> over 30 days (12 articles). CNN: <mark>lean 35 avg</mark>.",
+    signals: "Per-topic per-outlet EMA with adaptive alpha, stored across pipeline runs.",
   },
 ];
 
-/* ── Ranking Signals — Scene III: "The Engine" ── */
+/* ── Beat 3 — "We rank by importance, not clicks" ─────────────────────────
+   The real ranker (pipeline/ranker/importance_ranker.py) uses 10 signals:
+   nine weighted contributors below + a soft-news category gate (0.78x
+   multiplier) as the tenth. Bias-blind by design. */
 
 export interface RankingSignal {
   name: string;
@@ -117,74 +114,52 @@ export interface RankingSignal {
 }
 
 export const RANKING_SIGNALS: RankingSignal[] = [
-  { name: "Source Breadth", weight: 20 },
-  { name: "Maturity", weight: 16 },
-  { name: "Tier Diversity", weight: 13 },
+  { name: "Source breadth", weight: 20 },
+  { name: "Story maturity", weight: 16 },
+  { name: "Tier diversity", weight: 13 },
   { name: "Consequentiality", weight: 10 },
-  { name: "Institutional Authority", weight: 8 },
+  { name: "Institutional authority", weight: 8 },
+  { name: "Factual density", weight: 8 },
+  { name: "Divergence", weight: 7 },
+  { name: "Perspective diversity", weight: 6 },
+  { name: "Geographic impact", weight: 6 },
 ];
 
-/* ── Competitive Landscape — Scene IV extension (manifesto) ── */
+/** Tenth signal is a gate, not a positive weight. */
+export const RANKING_GATE = "Soft-news category gate (0.78×)";
+export const RANKING_SIGNAL_COUNT = 10;
 
-export interface LandscapePair {
-  them: string;
-  us: string;
-}
+/* ── Beat 4 — "Read with clarity" ────────────────────────────────────────
+   Headline numbers (verified against the live codebase). */
 
-export const LANDSCAPE: LandscapePair[] = [
-  { them: "They rate the outlet.", us: "We read the article." },
-  { them: "They track who owns the source.", us: "We analyze what the source wrote." },
-  { them: "They score once and move on.", us: "We score every article, every run, every day." },
+export const NUMBERS = [
+  { value: "1,016", label: "sources" },
+  { value: "158", label: "countries" },
+  { value: "6", label: "bias axes" },
+  { value: "$0", label: "to read" },
+  { value: "0", label: "accounts" },
+  { value: "0", label: "tracking" },
 ];
 
-/* ── Comparison Morph — Scene IV: "The Difference" ── */
-
-export const COMPARISON_SCORES = [
-  { name: "Lean", value: 42 },
-  { name: "Rigor", value: 78 },
-  { name: "Tone", value: 18 },
-  { name: "Framing", value: 31 },
-];
-
-/* ── Product Family — Scene V: "The Worlds" ── */
+/* ── Product family (page-only footer, not shown in the overlay) ──────────
+   Production-available products only. Weekly / Paper / OnAir / Games are
+   parked (not production-ready) and intentionally omitted. */
 
 export interface ProductWorld {
   cli: string;
   name: string;
   desc: string;
   href: string;
-  palette: string;
 }
 
-// Production-available products only. Weekly + Paper + OnAir + Games are
-// hidden from launch nav (per CEO 2026-05-15) — not production-ready —
-// and therefore omitted here so About + onboarding don't promise what
-// the user can't yet use. Routes still resolve at /weekly /paper /games
-// for direct URLs; re-add to this array when each goes prod-ready.
-// void --world retired rev 46 (collapse-editions): the /world route was
-// deleted; one daily feed now carries everything.
 export const PRODUCT_FAMILY: ProductWorld[] = [
-  { cli: "void --news", name: "The Feed", desc: "One daily feed. Top 50 stories, ranked once.", href: "/", palette: "feed" },
-  { cli: "void --sources", name: "The Spectrum", desc: "1,016 sources on one axis", href: "/sources", palette: "sources" },
-  { cli: "void --history", name: "The Archive", desc: "Multi-perspective historical events", href: "/history", palette: "archive" },
-  { cli: "void --ship", name: "The Forge", desc: "Feature request board", href: "/ship", palette: "ship" },
+  { cli: "void --news", name: "The Feed", desc: "One daily feed. Top 50 stories, ranked once.", href: "/" },
+  { cli: "void --sources", name: "The Spectrum", desc: "Every source we read, on one axis.", href: "/sources" },
+  { cli: "void --history", name: "The Archive", desc: "Historical events, told from every side.", href: "/history" },
+  { cli: "void --ship", name: "The Forge", desc: "Tell us what to build next.", href: "/ship" },
 ];
 
-/* ── Key Numbers — Scene VI: "The Verdict" ── */
-
-// Numbers updated 2026-05-15 to reflect current production state:
-// editions removed (the whole product is now ONE US-primary newspaper);
-// pipeline cadence is 1\u00D7/day (was 4\u00D7 during multi-edition era).
-export const NUMBERS = [
-  { value: "1,016", label: "sources" },
-  { value: "158", label: "countries" },
-  { value: "6", label: "bias axes" },
-  { value: "$0", label: "to read" },
-  { value: "0", label: "accounts required" },
-  { value: "0", label: "tracking" },
-];
-
-/* ── First Principles (manifesto extension after Scene I) ── */
+/* ── First principles (page-only footer) ─────────────────────────────────── */
 
 export const FIRST_PRINCIPLES = [
   "Every reader sees the same stories in the same order.",
@@ -192,85 +167,35 @@ export const FIRST_PRINCIPLES = [
   "Every feature is free. There is no premium tier. There never will be.",
 ];
 
-/* ── Sigil Component Labels (Scene II breakdown) ── */
+/* ── Beats — the 4 chapters of the unified experience ─────────────────────
+   Plain, user-focused copy. Deeper detail lives behind each beat's
+   "Learn more" disclosure, not in the headline layer. */
 
-export const SIGIL_PARTS = [
-  { id: "circle", name: "Coverage Lens", desc: "Sources reporting on this story" },
-  { id: "beam", name: "Lean Spectrum", desc: "Political lean, per article" },
-  { id: "ticks", name: "Confidence", desc: "Weight of analytical signal" },
-  { id: "post", name: "Grounding", desc: "Anchored to methodology" },
-  { id: "base", name: "Stability", desc: "Foundation of consistent scoring" },
-];
-
-/* ── Beam Sweep Data (Scene II animation) ── */
-
-export const SWEEP_POSITIONS = [
-  { lean: 10, color: "var(--bias-far-left)", label: "Far Left" },
-  { lean: 30, color: "var(--bias-left)", label: "Left" },
-  { lean: 50, color: "var(--bias-center)", label: "Center" },
-  { lean: 70, color: "var(--bias-right)", label: "Right" },
-  { lean: 90, color: "var(--bias-far-right)", label: "Far Right" },
-  { lean: 50, color: "var(--bias-center)", label: "Center" },
-];
-
-/* ── Chapter Definitions ── */
-
-export interface Chapter {
-  id: string;
-  roman: string;
+export interface Beat {
+  id: "void" | "sigil" | "engine" | "verdict";
   headline: string;
-  subtitle?: string;
-  prologueBody: string;
-  manifestoLead?: string;
-  duration: number;
+  body: string;
 }
 
-export const CHAPTERS: Chapter[] = [
+export const BEATS: Beat[] = [
   {
-    id: "the-void",
-    roman: "I",
-    headline: "The Void",
-    prologueBody: "One event. Five outlets. Five different realities. One calls it a crackdown. Another calls it restoring order. A third buries it on page six.",
-    manifestoLead: "Not the absence of information. The opposite. A flood of it, shaped by incentive, refracted through ideology, optimized for the click that keeps you inside the bubble you didn\u2019t choose.",
-    duration: 15_000,
+    id: "void",
+    headline: "One story. Five versions.",
+    body: "The same event becomes five different stories depending on who tells it. Drag each headline to where its language actually lands.",
   },
   {
-    id: "the-instrument",
-    roman: "II",
-    headline: "The Instrument",
-    subtitle: "Every story, measured",
-    prologueBody: "Six axes. Zero black boxes. The beam tilts with coverage lean \u2014 per story, not per outlet. The ring fills as sources weigh in. Sparse signal? Honest uncertainty over false precision.",
-    duration: 20_000,
+    id: "sigil",
+    headline: "One mark reads the bias.",
+    body: "Every story carries this mark. The beam is the lean. The ring is how many sources cover it. When sources disagree, it splits. Try it.",
   },
   {
-    id: "the-engine",
-    roman: "III",
-    headline: "The Engine",
-    subtitle: "Importance, not popularity",
-    prologueBody: "1,016 sources. 158 countries. 10 ranking signals. Zero engagement metrics. The algorithm decides what matters \u2014 not what gets clicked.",
-    duration: 15_000,
+    id: "engine",
+    headline: "Ranked by what matters.",
+    body: "1,016 sources across 158 countries. We order the feed by importance, never by what gets the most clicks.",
   },
   {
-    id: "the-difference",
-    roman: "IV",
-    headline: "The Difference",
-    prologueBody: "They rate the outlet. We read the article. An outlet labeled \u201CLeft\u201D published this article with center-right lean, high rigor, and minimal framing. The label would have told you to distrust it. The article earned that trust back.",
-    manifestoLead: "Per article. Not per outlet. That is the difference.",
-    duration: 15_000,
-  },
-  {
-    id: "the-worlds",
-    roman: "V",
-    headline: "The Worlds",
-    subtitle: "One newspaper, a few surfaces",
-    prologueBody: "A US-primary feed. A World section below it. A Spectrum of every source we read. An Archive that holds what the news forgets. A public Forge for what comes next.",
-    duration: 15_000,
-  },
-  {
-    id: "the-verdict",
-    roman: "VI",
+    id: "verdict",
     headline: "Read with clarity.",
-    prologueBody: "Broad coverage from across the spectrum, grounded in named sources. That\u2019s where confidence lives. Thin coverage from one corner? Scrutinize more.",
-    duration: 10_000,
+    body: "Broad coverage from across the spectrum, grounded in named sources, is where confidence lives. Thin coverage from one corner? Read it with more scrutiny.",
   },
 ];
