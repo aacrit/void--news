@@ -139,7 +139,7 @@ export function tiltDescriptor(v: number): string {
    50 aren't pushed out on noise; top stories (many sources) sit near 1.0 and
    get the full expansion. Tune sensitivity with DISPLAY_GAIN.                ── */
 
-export const DISPLAY_GAIN = 2.8;
+export const DISPLAY_GAIN = 3.2;
 
 export function leanToDisplayPos(lean: number, confidence = 1): number {
   const d = (Math.max(0, Math.min(100, lean)) - 50) / 50; // -1..+1 true deviation
