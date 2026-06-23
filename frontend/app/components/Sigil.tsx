@@ -9,7 +9,7 @@ import {
   tiltLabel,
   tiltDescriptor,
   sigilLabelInfo,
-  leanToDisplayAngle,
+  leanToDisplayPos,
   lerpColor as lerp,
 } from "../lib/biasColors";
 import MicroSpectrum from "./MicroSpectrum";
@@ -98,15 +98,17 @@ function DataMark({ data, size, mounted }: {
 }) {
   const lean = data.politicalLean;
   const isUnscored = !!data.unscored;
-  // Beam tilt uses the shared perceptual-expansion curve (biasColors
-  // leanToDisplayAngle) so subtle center-left/center-right tilt registers at
-  // 40px the way saturated extremes do, consistently with every other lean
-  // surface. Confidence-damped (thin clusters near 50 don't swing on noise),
-  // saturates near ±24° so crowded layouts don't collide.
-  const beamAngle = isUnscored
-    ? 0
-    : leanToDisplayAngle(lean, data.biasSpread?.aggregateConfidence ?? 1, 24);
-  const beamCol = isUnscored ? "var(--fg-tertiary)" : leanColor(lean);
+  // Beam tilt AND color both use the shared perceptual-expansion curve
+  // (biasColors leanToDisplayPos) so subtle center-left/center-right tilt
+  // registers — both in angle and in hue — the way saturated extremes do.
+  // Coloring the RAW lean left the solid green band (46-55) swallowing every
+  // near-center story; coloring the expanded position shrinks green to ~±1.4
+  // of true center, so a 47/53 reads blue/red. Confidence-damped (thin
+  // clusters near 50 don't swing on noise); angle saturates near ±24°.
+  const conf = data.biasSpread?.aggregateConfidence ?? 1;
+  const displayLean = leanToDisplayPos(lean, conf);
+  const beamAngle = isUnscored ? 0 : ((displayLean - 50) / 50) * 24;
+  const beamCol = isUnscored ? "var(--fg-tertiary)" : leanColor(displayLean);
 
   // Circle r=11 (was r=9) — larger mark, more room in lower semi-circle.
   // px sizes: sm=40, lg=56, xl=72 — The Moat, no horizontal saving.
@@ -249,7 +251,9 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
 
   const lean = data.politicalLean;
   const popupUnscored = !!data.unscored;
-  const lc = popupUnscored ? "var(--fg-tertiary)" : leanColor(lean);
+  // Color by the expanded display position (consistent with the mark); the
+  // numeric score + label below stay TRUE to the raw lean.
+  const lc = popupUnscored ? "var(--fg-tertiary)" : leanColor(leanToDisplayPos(lean, data.biasSpread?.aggregateConfidence ?? 1));
   const ll = popupUnscored ? "Unscored" : tiltLabel(lean);
   const full = isFullDetail(size);
 
@@ -494,7 +498,7 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
 
   const unscored = !!data.unscored;
   const labelInfo = sigilLabelInfo(data.politicalLean, data.agreement, data.divergenceFlag, unscored);
-  const lc = unscored ? "var(--fg-tertiary)" : leanColor(data.politicalLean);
+  const lc = unscored ? "var(--fg-tertiary)" : leanColor(leanToDisplayPos(data.politicalLean, data.biasSpread?.aggregateConfidence ?? 1));
   const full = isFullDetail(size);
 
   useEffect(() => { const t = setTimeout(() => setMounted(true), 60); return () => clearTimeout(t); }, []);
