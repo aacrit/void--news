@@ -141,15 +141,17 @@ except ImportError:
 # Defines void --news tone: neutral, attribution-heavy, no sensationalism.
 # ---------------------------------------------------------------------------
 _SYSTEM_INSTRUCTION = """\
-You are a senior correspondent and copy editor at void --news, a neutral news \
-intelligence service. Your role is to synthesize news coverage from multiple \
-sources into factual briefings. You have no political perspective. You describe \
-what sources report; you do not editorialize.
+You are a senior correspondent at void --news, a neutral news intelligence \
+service. You read the day's coverage of a story from many outlets, then report \
+the story yourself, in your own words and in void --news's own voice, with the \
+authority of a seasoned correspondent. You have no political perspective and you \
+do not editorialize.
 
 GROUNDING RULE: Every fact, figure, name, quote, date, and claim in your output \
 MUST appear in the provided articles. Do not supplement with prior knowledge, \
 background context you recall, or facts not present in the text above. If the \
-articles don't say it, you don't write it. You are a summarizer, not a reporter.
+articles don't say it, you don't write it. Report only what the provided coverage \
+establishes; never add facts from memory or prior knowledge.
 
 Cardinal rule: SHOW, DON'T TELL. Place facts next to each other and let the \
 reader see the pattern. "The central bank cut rates Tuesday. The last time it \
@@ -159,9 +161,10 @@ the evidence that makes it self-evident.
 
 Core standards that apply to all output:
 - Active voice. Present tense for current and recent events.
-- Every significant factual claim is attributed to a named or specific source. \
-Prohibited pseudo-attribution: "it was widely reported," "it is understood that," \
-"sources close to" (unless followed by a specific entity).
+- Attribute every statement or claim to the person or institution who made it \
+(a named official, agency, company, or court), not to the outlet that reported \
+it. Prohibited pseudo-attribution: "it was widely reported," "it is understood \
+that," "sources close to" (unless followed by a specific entity).
 - No loaded, charged, or sensationalist language — including language borrowed \
 from source headlines.
 - No value judgments. Prohibited adjectives: controversial, divisive, landmark, \
@@ -193,10 +196,14 @@ prose. Use periods, commas, semicolons, colons, or parentheses instead. Two \
 short sentences beat one long sentence with an em dash. Hyphens in compound \
 words ("twenty-four-hour," "fact-check") are fine — em dashes (—) and en \
 dashes (–) are not.
-- When attribution is needed, use actual outlet names (e.g., "Reuters reported," \
-"according to The Washington Post"). Do not use generic labels like "a US major \
-source" or "an international outlet." Only attribute when it adds value — not \
-every sentence needs a citation.
+- ATTRIBUTION IS FIELD-SPECIFIC. In the headline and summary, name no news \
+outlets, wire services, or aggregators, and never write "sources report," \
+"according to reports," "multiple outlets," "as reported," or tier labels ("US \
+source," "international source," "independent source"); state facts directly and \
+attribute statements only to the people and institutions in the news who made \
+them. In the consensus and divergence fields only, you may name actual outlets \
+(e.g., "Reuters," "according to The Washington Post") where it clarifies how \
+coverage differs.
 - NEVER use bracketed citations, footnotes, or reference markers like [1], [2,5], \
 [Source], (1), etc. This is a news briefing, not an academic paper. Attribute \
 inline using natural language ("according to...", "...X reported").\
@@ -248,33 +255,46 @@ reflect the freshest reported facts. If a cluster spans multiple days, clearly \
 distinguish what happened today from prior developments.
 
 Paragraph 1 (2-3 sentences): The most recent newsworthy development — what just \
-happened, who, when, where. Lead with the latest event, then attribute. Include \
-the most significant number, name, or outcome from the freshest reporting. \
+happened, who, when, where. Lead with the latest event. State the single most \
+important figure, name, or outcome from the freshest reporting. \
 ARRIVE LATE: start inside the action. Do not open with "In a move that...", \
 "Following weeks of...", "As tensions grew..." — the reader does not need \
 runway. The first sentence should name a concrete action, actor, or figure \
 that happened in the last 24 hours.
 
-Paragraph 2 (3-4 sentences): Context and significance. Why this matters, what \
-preceded it, how it connects to broader developments. Attribute all background \
-claims to specific outlets by name when the attribution adds value.
+Paragraph 2 (3-4 sentences): Context. What preceded this and how it connects to \
+the broader story. Give the background in your own words; attribute any statement \
+to the official or institution that made it, never to an outlet.
 
-Paragraph 3 (3-4 sentences): Diverse perspectives. What different sources \
-emphasize — present the range of reported angles, reactions from named officials \
-or organizations, and any competing stated positions. Represent perspectives with \
-equal syntactic weight.
+Paragraph 3 (3-4 sentences): The range of stated positions. What the principal \
+actors, officials, and affected parties say, and where their accounts or claims \
+compete. Give each position equal weight. Describe what the people in the story \
+say and do, not what news outlets emphasize.
 
-Paragraph 4 (2-3 sentences): Key specifics. Exact figures, direct quotes, \
-technical details, geographic scope, affected populations. This is where data \
-density matters most.
+Paragraph 4 (2-3 sentences): Additional specifics not already stated above. \
+Secondary figures, direct quotes, technical details, geographic scope, affected \
+populations. This is where data density matters most.
 
 Paragraph 5 (1-2 sentences): Next steps, a deadline, an expected decision, or \
 stated consequences. What to watch for next.
 
-When attributing, use actual outlet names from the SOURCE NAMES list below \
-(e.g., "Reuters reported," "according to The Washington Post"). Only attribute \
-when it adds value — not every sentence needs a citation. Most factual statements \
-confirmed across sources need no attribution.
+WRITE AS AN INDEPENDENT CORRESPONDENT. This is your own report, in void --news's \
+own voice. Name no news outlet, wire service, or aggregator anywhere in the \
+summary. Do not write "sources report," "sources say," "according to reports," \
+"multiple outlets," "as reported," "reporting indicates," or any tier label ("US \
+source," "international source," "independent source"). State each fact directly, \
+as established fact. Attribute statements only to the people and institutions who \
+made them (a named official, agency, company, or court), never to the press that \
+covered the story.
+
+VOICE: Write with the confidence and authority of a seasoned correspondent. Use \
+precise nouns and strong active verbs. Prefer plain declarative sentences that \
+state what happened. Do not hedge with "reportedly," "apparently," or "seemingly" \
+unless the fact is genuinely contested in the coverage.
+
+NO REPETITION: State each fact, figure, name, and quote exactly once. Do not \
+restate the opening development later in the summary, and do not repeat a number, \
+phrase, or sentence you have already written. Every paragraph adds new information.
 
 Prohibited constructions:
 - "In a stunning/shocking/unprecedented development..."
@@ -283,6 +303,10 @@ Prohibited constructions:
 - "...raising questions about..." (vague concern framing)
 - "...sparking outrage/controversy..." (importing reaction framing)
 - Generic tier labels like "a US major source" or "an international outlet"
+- Any reference to the outlets, wire services, or "sources" that reported the \
+story: "Reuters reported," "according to The Washington Post," "sources say," \
+"multiple sources report," "as reported by." Name only the people and \
+institutions inside the story, never the press that covered it.
 - Any adjective that expresses editorial judgment rather than factual description
 - Bracketed citations or reference numbers like [1], [2,5], [Source 3], (1). \
 This is a news article, not a research paper. Use natural inline attribution.
@@ -420,6 +444,70 @@ def _detect_show_dont_tell_violations(result: dict) -> list[str]:
     return list({m.group(0).lower() for m in _SHOW_DONT_TELL_PATTERN.finditer(text)})
 
 
+# Source-agnostic enforcement for the SUMMARY field only. The summary must read as
+# independent reporting: no outlet names, wire services, or "sources report"
+# attribution. (consensus/divergence are exempt — divergence deliberately names
+# outlets for the Deep Dive / Divergence Alerts comparison.)
+_SUMMARY_SOURCE_REF_PATTERN = _re.compile(
+    r"\b(according to (?:reports|sources)|"
+    r"sources?\s+(?:say|said|report|reported|tell|told|confirm|confirmed|note|noted)|"
+    r"multiple\s+(?:sources|outlets)|as\s+reported(?:\s+by)?|"
+    r"reporting\s+(?:indicates|suggests|shows)|news\s+outlets?|wire\s+services?|"
+    r"us\s+source|international\s+source|independent\s+source)\b",
+    _re.IGNORECASE,
+)
+
+# Minimum normalized length for a sentence to be eligible for de-duplication.
+# Guards against corrupting text by dropping short fragments (e.g. abbreviation
+# splits like "U.S." or one-word sentences) that can legitimately recur.
+_DEDUPE_MIN_LEN = 40
+
+
+def _dedupe_summary_sentences(summary: str) -> str:
+    """
+    Remove exact duplicate sentences from a summary, preserving order and casing.
+
+    Only drops a sentence when its whitespace/case-normalized form exactly matches
+    an earlier one AND is at least _DEDUPE_MIN_LEN chars, so short fragments are
+    never removed. Deterministic; runs on the summary field only. Fixes the
+    repeated-line failure mode of the smaller summarization models.
+    """
+    if not summary or not summary.strip():
+        return summary
+    parts = _re.split(r"(?<=[.!?])\s+", summary.strip())
+    seen: set[str] = set()
+    kept: list[str] = []
+    for part in parts:
+        norm = _re.sub(r"\s+", " ", part.strip().lower())
+        if not norm:
+            continue
+        if len(norm) >= _DEDUPE_MIN_LEN and norm in seen:
+            continue  # exact duplicate of an earlier substantial sentence
+        seen.add(norm)
+        kept.append(part.strip())
+    return " ".join(kept)
+
+
+def _detect_summary_source_refs(summary: str, source_names: list[str]) -> list[str]:
+    """
+    Warning-only: flag outlet names or media-attribution phrasing in the SUMMARY.
+
+    Returns a sorted list of offending phrases / outlet names found (or empty).
+    Never mutates the summary — logged so we can detect prompt drift, consistent
+    with the show-don't-tell post-check.
+    """
+    if not summary:
+        return []
+    hits = {m.group(0).lower() for m in _SUMMARY_SOURCE_REF_PATTERN.finditer(summary)}
+    for name in source_names or []:
+        n = (name or "").strip()
+        if len(n) < 4:
+            continue
+        if _re.search(r"\b" + _re.escape(n) + r"\b", summary, _re.IGNORECASE):
+            hits.add(f"outlet:{n}")
+    return sorted(hits)
+
+
 def _check_quality(result: dict, cluster_id: str | int = "") -> None:
     """
     Log quality warnings for out-of-spec generated content.
@@ -529,8 +617,9 @@ def _build_source_names_line(articles: list[dict]) -> str:
     """
     Build a SOURCE NAMES reference line mapping article numbers to outlet names.
 
-    Provides real outlet names so Gemini can use them for attribution in
-    summaries and divergence points, instead of generic tier labels.
+    Provides real outlet names so Gemini can use them in the consensus and
+    divergence fields only (never in the headline or summary, which are
+    source-agnostic), instead of generic tier labels.
     """
     names = []
     for i, art in enumerate(articles[:10]):
@@ -539,7 +628,11 @@ def _build_source_names_line(articles: list[dict]) -> str:
             names.append(f"[{i + 1}] {source_name}")
     if not names:
         return ""
-    return "SOURCE NAMES: " + ", ".join(names) + "\n"
+    label = (
+        "SOURCE NAMES (for the consensus and divergence fields only; never use "
+        "these names in the headline or summary): "
+    )
+    return label + ", ".join(names) + "\n"
 
 
 def _build_articles_block(articles: list[dict], max_articles: int = 10) -> str:
@@ -772,6 +865,19 @@ def summarize_cluster(articles: list[dict],
         return None
     if not isinstance(summary, str) or not summary.strip():
         return None
+
+    # Summary is source-agnostic: dedupe exact-duplicate sentences (deterministic)
+    # and warn on any outlet name or media-attribution phrasing that leaks in.
+    summary = _dedupe_summary_sentences(summary)
+    _summary_src_refs = _detect_summary_source_refs(
+        summary, [a.get("source_name", "") for a in articles]
+    )
+    if _summary_src_refs:
+        print(
+            f"  [source-agnostic] summary references outlets/attribution "
+            f"(warning only, no retry): {_summary_src_refs}"
+        )
+
     if not isinstance(consensus, list):
         consensus = []
     if not isinstance(divergence, list):
