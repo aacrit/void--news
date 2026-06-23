@@ -312,6 +312,25 @@ export function getLeanColor(v: number): string {
     : lerpColor(c["--bias-right"], c["--bias-far-right"], (t - 0.5) / 0.5);
 }
 
+/** leanSpread (stddev) at/above which a cluster's coverage counts as divergent. */
+export const DIVERGENT_SPREAD_MIN = 10;
+
+/**
+ * At-a-glance lean color for the Sigil. Identical to getLeanColor of the
+ * expanded display position, EXCEPT a balanced-but-divergent story (a
+ * contested standoff that merely averages to center) drops the green for a
+ * neutral slate — green is reserved for GENUINE consensus (balanced AND
+ * agreed). Tilted stories keep their blue/red hue regardless of spread; their
+ * divergence is shown by the beam fan, not the color.
+ */
+export function getSigilLeanColor(lean: number, leanSpread: number, confidence = 1): string {
+  const pos = leanToDisplayPos(lean, confidence);
+  if (Math.abs(pos - 50) <= GREEN_HALF && leanSpread >= DIVERGENT_SPREAD_MIN) {
+    return "var(--fg-secondary)";
+  }
+  return getLeanColor(pos);
+}
+
 export function getCoverageColor(v: number): string {
   const c = getColors();
   if (v >= 60) return c["--sense-low"];
