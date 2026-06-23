@@ -19,7 +19,7 @@ import dynamic from "next/dynamic";
    Single localStorage key with migration from old keys.
    --------------------------------------------------------------------------- */
 
-const OnboardingCarousel = dynamic(() => import("./OnboardingCarousel"), { ssr: false });
+const AboutExperience = dynamic(() => import("./about/AboutExperience"), { ssr: false });
 
 const STORAGE_KEY = "void-news-onboarding";
 const OLD_CAROUSEL_KEY = "void-news-intro-seen";
@@ -117,6 +117,12 @@ export default function UnifiedOnboarding({ active }: UnifiedOnboardingProps) {
   const interactionCountRef = useRef(0);
   const reducedMotion = useRef(false);
 
+  // Declared before the effects that call it (lint: no use-before-declare).
+  const showInvitation = useCallback(() => {
+    if (exploreTimerRef.current) clearTimeout(exploreTimerRef.current);
+    setState((prev) => prev === "idle" ? "invitation" : prev);
+  }, []);
+
   // Check storage on mount — skip if already completed or migrated
   useEffect(() => {
     reducedMotion.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -170,7 +176,7 @@ export default function UnifiedOnboarding({ active }: UnifiedOnboardingProps) {
 
     document.addEventListener("click", handler, { passive: true });
     return () => document.removeEventListener("click", handler);
-  }, [state, active]);
+  }, [state, active, showInvitation]);
 
   // Time-based trigger
   useEffect(() => {
@@ -183,12 +189,7 @@ export default function UnifiedOnboarding({ active }: UnifiedOnboardingProps) {
     return () => {
       if (exploreTimerRef.current) clearTimeout(exploreTimerRef.current);
     };
-  }, [state, active]);
-
-  const showInvitation = useCallback(() => {
-    if (exploreTimerRef.current) clearTimeout(exploreTimerRef.current);
-    setState((prev) => prev === "idle" ? "invitation" : prev);
-  }, []);
+  }, [state, active, showInvitation]);
 
   const markComplete = useCallback(() => {
     try { localStorage.setItem(STORAGE_KEY, "complete"); } catch { /* ignore */ }
@@ -236,11 +237,13 @@ export default function UnifiedOnboarding({ active }: UnifiedOnboardingProps) {
           onDismiss={handleDismissInvitation}
         />
       )}
-      <OnboardingCarousel
-        visible={state === "prologue"}
-        onComplete={handlePrologueComplete}
-        onSkip={handlePrologueSkip}
-      />
+      {state === "prologue" && (
+        <AboutExperience
+          presentation="overlay"
+          onComplete={handlePrologueComplete}
+          onClose={handlePrologueSkip}
+        />
+      )}
     </>
   );
 }
