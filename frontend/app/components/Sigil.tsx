@@ -110,6 +110,23 @@ function DataMark({ data, size, mounted }: {
   const beamAngle = isUnscored ? 0 : ((displayLean - 50) / 50) * 24;
   const beamCol = isUnscored ? "var(--fg-tertiary)" : leanColor(displayLean);
 
+  // Divergence fan — agreed vs divergent, shown in the mark itself. The beam
+  // half-angle scales with how spread the source leans are (leanSpread): a
+  // thin/absent fan = sources agree; a wide fan = they diverge. Each arm is
+  // colored by its OWN fanned position, so a balanced-but-divergent story
+  // shows a green center beam with a blue (left) and a red (right) arm —
+  // visibly contested even though the mean sits at center.
+  // Only open the fan once the lean spread is genuinely divergent (stddev ≥ 10):
+  // agreed stories keep a single crisp beam, divergent ones fan wider with more
+  // spread (10→40 maps to a 5°→22° half-angle).
+  const leanSpread = data.biasSpread?.leanSpread ?? 0;
+  const showFan = !isUnscored && leanSpread >= 10;
+  const coneHalf = showFan
+    ? 5 + ((Math.min(leanSpread, 40) - 10) / 30) * 17
+    : 0;
+  const fanColor = (deg: number) =>
+    leanColor(Math.max(0, Math.min(100, 50 + (deg / 24) * 50)));
+
   // Circle r=11 (was r=9) — larger mark, more room in lower semi-circle.
   // px sizes: sm=40, lg=56, xl=72 — The Moat, no horizontal saving.
   const px = size === "xl" ? 72 : size === "lg" ? 56 : 40;
@@ -166,6 +183,36 @@ function DataMark({ data, size, mounted }: {
             }}
             opacity={0.9}
           />
+        </>
+      )}
+
+      {/* Divergence fan — faded arms behind the main beam. Width = leanSpread
+          (agreement when thin/absent, divergent when wide). Arms colored by
+          their own fanned position so a contested story spans blue → red. */}
+      {showFan && (
+        <>
+          <g style={{
+            transformOrigin: "16px 14px",
+            transform: `rotate(${mounted ? beamAngle - coneHalf : 0}deg)`,
+            transition: "transform var(--beam-tilt-dur, 800ms) var(--spring-beam, var(--spring)) var(--beam-tilt-delay, 60ms)",
+          }}>
+            <line x1="4" y1="14" x2="28" y2="14"
+              stroke={fanColor(beamAngle - coneHalf)} strokeWidth="1.3"
+              style={{ transition: "stroke 500ms var(--ease-rack) 200ms, opacity 500ms" }}
+              opacity={mounted ? 0.4 : 0}
+            />
+          </g>
+          <g style={{
+            transformOrigin: "16px 14px",
+            transform: `rotate(${mounted ? beamAngle + coneHalf : 0}deg)`,
+            transition: "transform var(--beam-tilt-dur, 800ms) var(--spring-beam, var(--spring)) var(--beam-tilt-delay, 60ms)",
+          }}>
+            <line x1="4" y1="14" x2="28" y2="14"
+              stroke={fanColor(beamAngle + coneHalf)} strokeWidth="1.3"
+              style={{ transition: "stroke 500ms var(--ease-rack) 200ms, opacity 500ms" }}
+              opacity={mounted ? 0.4 : 0}
+            />
+          </g>
         </>
       )}
 

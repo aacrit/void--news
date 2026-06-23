@@ -284,19 +284,32 @@ export function lerpColor(a: string, b: string, t: number): string {
 
 /* ── Semantic color getters ─────────────────────────────────────────────── */
 
+/** Half-width of the green "strictly balanced" band, in the 0-100 space passed
+ *  to getLeanColor. Green renders only within 50 ± this; everything else is a
+ *  continuous light→dark blue (left) / red (right) ramp. */
+export const GREEN_HALF = 3;
+
 export function getLeanColor(v: number): string {
   const c = getColors();
-  // Green reserved for center only. Left of center = blue family, right = red family.
-  // Narrow green band at 46-54. Sharp transition to blue/red outside that.
-  if (v <= 10) return c["--bias-far-left"];
-  if (v <= 20) return lerpColor(c["--bias-far-left"], c["--bias-left"], (v - 10) / 10);
-  if (v <= 35) return lerpColor(c["--bias-left"], c["--bias-center-left"], (v - 20) / 15);
-  if (v <= 45) return lerpColor(c["--bias-center-left"], c["--bias-center"], (v - 35) / 10);
-  if (v <= 55) return c["--bias-center"];
-  if (v <= 65) return lerpColor(c["--bias-center"], c["--bias-center-right"], (v - 55) / 10);
-  if (v <= 80) return lerpColor(c["--bias-center-right"], c["--bias-right"], (v - 65) / 15);
-  if (v <= 90) return lerpColor(c["--bias-right"], c["--bias-far-right"], (v - 80) / 10);
-  return c["--bias-far-right"];
+  // Green is reserved for STRICTLY balanced (50 ± GREEN_HALF). Outside that,
+  // a continuous light→dark ramp: left = center-left → left → far-left (light
+  // steel blue to navy); right = center-right → right → far-right (coral to
+  // dark red). Magnitude of tilt drives darkness, so a slight tilt is a light
+  // shade and an extreme tilt is the darkest. (Callers may pass an expanded
+  // display position — see leanToDisplayPos — so near-center tilt is visible.)
+  const d = v - 50;
+  if (Math.abs(d) <= GREEN_HALF) return c["--bias-center"];
+  const t = (Math.abs(d) - GREEN_HALF) / (50 - GREEN_HALF); // 0 (just off center) → 1 (extreme)
+  if (d < 0) {
+    // Left — light → dark blue across two stops.
+    return t <= 0.5
+      ? lerpColor(c["--bias-center-left"], c["--bias-left"], t / 0.5)
+      : lerpColor(c["--bias-left"], c["--bias-far-left"], (t - 0.5) / 0.5);
+  }
+  // Right — light → dark red across two stops.
+  return t <= 0.5
+    ? lerpColor(c["--bias-center-right"], c["--bias-right"], t / 0.5)
+    : lerpColor(c["--bias-right"], c["--bias-far-right"], (t - 0.5) / 0.5);
 }
 
 export function getCoverageColor(v: number): string {
