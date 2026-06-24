@@ -2229,9 +2229,8 @@ def main():
         gemini_results: dict[int, dict] = {}
         # Tier label persisted to DB cache. Claude is primary; Gemini fallback
         # only when ANTHROPIC_API_KEY is unset or Claude has a persistent fault.
-        _summary_tier_used = "sonnet" if claude_is_available() else (
-            "flash" if gemini_is_available() else None
-        )
+        # 7b runs on the flash-lite default tier (see summary_tier stamping below).
+        _summary_tier_used = "flash-lite" if gemini_is_available() else None
         if SUMMARIZER_AVAILABLE and llm_is_available():
             print(f"\n[7b] Summarizing top 30 clusters (tier={_summary_tier_used})...")
             try:
@@ -2253,15 +2252,15 @@ def main():
                     clusters[idx]["summary_article_hash"] = _content_hash(
                         clusters[idx].get("articles", [])
                     )
-                    # Stamp the tier that ACTUALLY answered this cluster, not
-                    # the batch-level guess: a mid-batch Claude latch flips
-                    # later clusters to Gemini, and mislabeling those "sonnet"
-                    # freezes them in the step-8d cache forever.
-                    # Map provider -> DB summary_tier (CHECK allows 'sonnet' or
-                    # 'flash'). Both $0 providers (Gemini flash, Groq llama) -> 'flash'.
+                    # Stamp the tier that ACTUALLY answered so the step-8d cache
+                    # is upgrade-aware. 7b runs on the flash-lite default, so its
+                    # Gemini output is tier 'flash-lite', NOT 'flash'. Labeling it
+                    # 'flash' would make 8d cache-hit the post-rerank top-10 and
+                    # never upgrade them to real flash. Map by generator label
+                    # (migration 063 allows 'sonnet'/'flash'/'flash-lite').
                     _gen = result.get("_generator")
                     clusters[idx]["summary_tier"] = (
-                        "sonnet" if _gen == "claude-sonnet" else "flash"
+                        "flash" if _gen == "gemini-flash" else "flash-lite"
                     )
                     if result.get("editorial_importance") is not None:
                         clusters[idx]["editorial_importance"] = result["editorial_importance"]
@@ -3052,31 +3051,34 @@ def main():
               f"Skipping LLM editorial steps (8d, brief, weekly).")
         return
 
-    # Step 8d: Post-rerank single-pass top-50 Sonnet summarization with cache.
-    # Reads final top-50 by rank_world from DB. For each cluster:
+    # Step 8d: Post-rerank single-pass summarization of the DISPLAYED top-50
+    # (exactly the set the homepage renders: top 50 by rank_world). For each
+    # cluster, in rank order:
     #   - hash its current article membership
-    #   - if hash matches stored summary_article_hash AND tier='sonnet' → skip
-    #   - else → call Claude (Gemini fallback), write summary + hash + tier
+    #   - skip if the hash matches AND the cached tier already meets this slot
+    #     (premium top-10 want 'flash'; ranks 11-50 accept 'flash-lite'+)
+    #   - else → summarize on Gemini (flash for the top-10, flash-lite for the
+    #     rest), write summary + consensus/divergence + hash + tier.
     # Op-eds (content_type='opinion') and clusters with <3 articles skipped.
-    # Updates the in-memory `clusters` list so the daily brief regen below
-    # reads fresh top-15 summaries.
+    # Self-caches across runs (8d writes the hash it later reads). Updates the
+    # in-memory `clusters` list so downstream consumers see the post-rerank text.
     summary_metrics = {"summarized": 0, "cached": 0, "skipped": 0, "failed": 0}
     if SUMMARIZER_AVAILABLE and llm_is_available() and calls_remaining() > 0:
-        print("\n[8d] Post-rerank top-10 Gemini upgrade (premium slots)...")
+        print("\n[8d] Post-rerank top-50 Gemini summarization (top-10 flash, rest flash-lite)...")
         try:
-            # 2026-06-20 split: 7b summarized the top 30 on Groq (llama). Here we
-            # upgrade only the VISIBLE top 10 (post-rerank) to Gemini quality.
-            # That keeps Gemini at ~10 calls/run (+2 for the brief), under its
-            # 20/day free cap. Ranks 11-30 keep their Groq summaries; 31-50 stay
-            # rule-based. prefer_provider="gemini" (Groq fallback if Gemini out).
-            # Quality hierarchy: top-5 highest-impact stories → gemini-2.5-flash
-            # (premium), ranks 6-10 → gemini-2.5-flash-lite. Groq fallback for
-            # both. See summarize_top50_after_rerank / migration 063.
+            # Summarize the full displayed top-50 (post-rerank, rank_world order)
+            # so the summarized set == exactly what the homepage renders. Quality
+            # hierarchy: the top 10 highest-impact stories → gemini-2.5-flash
+            # (premium); ranks 11-50 → gemini-2.5-flash-lite (high-RPD tier).
+            # flash stays at ~10 calls/run (+ the brief), under its 20/day cap.
+            # Most ranks 11-50 cache-hit from step 7b's brief-input pass; the
+            # post-rerank top-10 upgrade flash-lite → flash. Groq retired.
+            # See summarize_top50_after_rerank / migration 063.
             summary_metrics = summarize_top50_after_rerank(
-                supabase, edition="world", limit=10, prefer_provider="gemini",
-                flash_top_n=5)
+                supabase, edition="world", limit=50, prefer_provider="gemini",
+                flash_top_n=10)
             print(
-                f"  Top-10: {summary_metrics['summarized']} summarized, "
+                f"  Top-50: {summary_metrics['summarized']} summarized, "
                 f"{summary_metrics['cached']} cache hits, "
                 f"{summary_metrics['skipped']} skipped (op-ed / <3 sources), "
                 f"{summary_metrics['failed']} failed"
