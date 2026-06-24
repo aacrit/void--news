@@ -38,16 +38,7 @@ from summarizer.gemini_client import (
 )
 from briefing.voice_rotation import get_voices_for_today, get_opinion_host
 
-# Groq API client — optional, $0 fallback when Gemini Flash is unavailable.
-# Self-defers oversized (65k brief) requests to Gemini via its own guard.
-try:
-    from summarizer.groq_client import (
-        generate_json as groq_generate_json,
-        is_available as groq_is_available,
-    )
-except ImportError:
-    def groq_generate_json(*a, **kw): return None
-    def groq_is_available(): return False
+# Groq + Claude retired; Gemini Flash is the sole brief LLM (carry-forward on fail).
 
 
 def _smart_generate_json(
@@ -56,11 +47,11 @@ def _smart_generate_json(
     max_output_tokens: int = 8192,
     edition: str = "",
 ) -> tuple[dict | None, str]:
-    """Gemini Flash ($0 primary) → Groq ($0 fallback). The brief is low volume
-    (a few calls/day), so it spends the higher-quality flash tier rather than
-    flash-lite; flash's 20/day free cap is ample here. Groq self-defers the 65k
-    brief anyway, and gpt-oss-20b can't hold its JSON budget (see
-    cluster_summarizer). Claude was retired 2026-06-22. Returns (result, label)."""
+    """Daily brief TL;DR + opinion on Gemini Flash ($0). The brief is low volume
+    (a few calls/day), so it spends the higher-quality flash tier; flash's 20/day
+    free cap is ample here. Claude (2026-06-22) and Groq (2026-06-24) are retired.
+    On failure the caller carries forward the previous brief. Returns
+    (result, label)."""
     if gemini_is_available():
         result = gemini_generate_json(
             prompt,
@@ -72,19 +63,7 @@ def _smart_generate_json(
         if result and isinstance(result, dict):
             return result, "gemini-flash"
         # Highlighted single-line log — easy to grep in run output
-        print(f"  [brief:{edition}] >>> GEMINI FLASH FAILED, FALLING BACK TO GROQ <<<")
-
-    if groq_is_available():
-        result = groq_generate_json(
-            prompt,
-            system_instruction=system_instruction,
-            count_call=False,
-            max_output_tokens=max_output_tokens,
-        )
-        if result and isinstance(result, dict):
-            print(f"  [brief:{edition}] Groq gpt-oss OK")
-            return result, "groq-gpt-oss"
-        print(f"  [brief:{edition}] >>> GROQ ALSO FAILED — no LLM brief this run <<<")
+        print(f"  [brief:{edition}] >>> GEMINI FLASH FAILED, carrying forward previous brief <<<")
 
     return None, "none"
 
@@ -96,7 +75,7 @@ def generate_json(prompt, system_instruction=None, max_retries=1, count_call=Tru
                                 max_output_tokens=max_output_tokens)
 
 def is_available():
-    return groq_is_available() or gemini_is_available()
+    return gemini_is_available()
 
 # Import shared prohibited terms — single canonical source.
 try:
@@ -1452,8 +1431,8 @@ def generate_daily_briefs(
     gemini_ok = gemini_is_available()
     if gemini_ok:
         print(f"  [brief] Gemini Flash available — using as primary")
-    elif groq_is_available():
-        print(f"  [brief] Gemini unavailable — Groq fallback for brief")
+    else:
+        print(f"  [brief] Gemini unavailable — brief carries forward / rule-based")
     date_str = datetime.now(timezone.utc).strftime("%A, %d %B %Y")
     date_short = datetime.now(timezone.utc).strftime("%B %d")  # e.g. "April 02"
 
@@ -1485,7 +1464,7 @@ def generate_daily_briefs(
         brief_result = None
         generator_label = None
         gemini_failure_reason = None
-        any_llm_ok = (gemini_ok or groq_is_available())
+        any_llm_ok = gemini_ok
         if any_llm_ok and _brief_calls_remaining() > 0:
             edition_key = edition.upper()
             edition_focus = _EDITION_FOCUS.get(edition_key, _EDITION_FOCUS["WORLD"])

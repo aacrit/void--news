@@ -8,7 +8,7 @@ Gemini is the sole LLM primary (Claude retired 2026-06-22). Two-model split:
       volume (~30-50/run), so it rides the high-RPD lite tier.
     - gemini-2.5-flash (_FLASH_MODEL)      → daily brief TL;DR + opinion. A few
       calls/day, comfortably under flash's 20-requests/DAY free cap.
-Groq (gpt-oss-20b) is the $0 fallback for both.
+Claude and Groq are retired; Gemini is the only LLM (rule-based fallback).
 
 Free-tier protection:
     - Rate limited to ~8.5 RPM (7s between calls) — under flash-lite's 10 RPM
@@ -61,10 +61,11 @@ _last_call_time: float = 0.0
 # throttles. Override with GEMINI_MIN_INTERVAL if a model/tier differs.
 _MIN_INTERVAL: float = float(os.environ.get("GEMINI_MIN_INTERVAL", "") or 7.0)
 
-# Per-run call cap — safety net. After the 2026-06-20 cost-cut the daily run
-# makes ~30-35 LLM calls (top-30 summaries + brief + opinion), well under both
-# this cap and flash-lite's daily request quota.
-_MAX_CALLS_PER_RUN: int = 70
+# Per-run call cap — safety net. The daily run summarizes the displayed top-50
+# post-rerank (step 8d) plus the step-7b brief-input pass, so on a low-cache day
+# it can approach ~80 flash-lite calls — well under flash-lite's high daily
+# request quota. Cap set above that so full top-50 coverage is never truncated.
+_MAX_CALLS_PER_RUN: int = 90
 _call_count: int = 0
 
 # Persistent failure flag — set on billing/spending-cap errors to skip all
@@ -116,7 +117,7 @@ def generate_json(
 
     2026-06-20: default max_retries 1 -> 0. Each retry is a NEW request against
     the free tier's 20-requests/day cap, so retrying a throttle/error just burns
-    scarce quota. Fail fast instead — the caller falls back to Groq (summaries)
+    scarce quota. Fail fast instead — the caller falls back to rule-based (summaries)
     or carry-forward (brief). Pass max_retries explicitly to opt back in.
 
     Args:

@@ -35,11 +35,10 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          # $0 posture: Gemini Flash (primary) → Groq (fallback) handle the
-          # brief. Claude is retired at the source (claude_client.is_available).
+          # $0 posture: Gemini Flash handles the brief (Groq retired 2026-06-24).
+          # Claude is retired at the source (claude_client.is_available).
           DISABLE_ANTHROPIC: "1"
           DISABLE_AUDIO: "1"
         run: |

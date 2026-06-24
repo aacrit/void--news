@@ -47,14 +47,7 @@ except ImportError:
     def claude_generate_json(*a, **kw): return None
     def claude_is_available(): return False
 
-try:
-    from summarizer.groq_client import (
-        generate_json as groq_generate_json,
-        is_available as groq_is_available,
-    )
-except ImportError:
-    def groq_generate_json(*a, **kw): return None
-    def groq_is_available(): return False
+# Groq retired 2026-06-24; Gemini Flash is the sole digest LLM.
 
 from briefing.voice_rotation import get_voices_for_today, get_opinion_host
 
@@ -122,9 +115,9 @@ PROHIBITED_TERMS = frozenset({
 # LLM call
 # ---------------------------------------------------------------------------
 def _smart_generate(prompt, system_instruction=None, max_output_tokens=8192):
-    """Try Claude (off) → Gemini ($0 primary) → Groq ($0 fallback). Gemini
-    leads — Groq's gpt-oss-20b can't hold its JSON budget (see
-    cluster_summarizer). Returns (result_dict, gen_label)."""
+    """Gemini Flash ($0) is the sole digest LLM. Claude (2026-06-22) and Groq
+    (2026-06-24) are retired; on failure the caller degrades to rule-based.
+    Returns (result_dict, gen_label)."""
     if claude_is_available():
         result = claude_generate_json(
             prompt, system_instruction=system_instruction,
@@ -140,14 +133,6 @@ def _smart_generate(prompt, system_instruction=None, max_output_tokens=8192):
         )
         if result:
             return result, "gemini-flash"
-
-    if groq_is_available():
-        result = groq_generate_json(
-            prompt, system_instruction=system_instruction,
-            count_call=False, max_output_tokens=max_output_tokens,
-        )
-        if result:
-            return result, "groq-gpt-oss"
 
     return None, "none"
 

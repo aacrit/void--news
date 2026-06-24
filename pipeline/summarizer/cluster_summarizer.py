@@ -1,8 +1,9 @@
 """
 Cluster-level headline and summary generation.
 
-Primary path: Claude Sonnet 4.6 via Anthropic API. Falls back to Gemini Flash
-if Anthropic is unavailable, then to rule-based generation.
+Primary path: Gemini (flash-lite for the bulk of cluster summaries, flash for
+the premium top-N highest-impact stories). Falls back to rule-based generation.
+Claude (retired 2026-06-22) and Groq (retired 2026-06-24) are gone.
 
 Minimizes API usage by only summarizing high-value clusters:
     - 3+ sources (2-source clusters use rule-based — sufficient quality)
@@ -10,7 +11,7 @@ Minimizes API usage by only summarizing high-value clusters:
     - Stops when the per-run call cap is reached
 
 Content-hash caching: clusters whose article membership has not changed
-since their last Sonnet summary are skipped (no API call).
+since their last Gemini summary are skipped (no API call).
 """
 
 import hashlib
@@ -21,11 +22,6 @@ from .gemini_client import (
     calls_remaining as gemini_calls_remaining,
     _FLASH_MODEL as GEMINI_FLASH_MODEL,
 )
-from .groq_client import (
-    generate_json as groq_generate_json,
-    is_available as groq_is_available,
-    calls_remaining as groq_calls_remaining,
-)
 
 
 def _smart_generate_json(prompt: str,
@@ -34,30 +30,26 @@ def _smart_generate_json(prompt: str,
                           prefer_provider: str | None = None,
                           model: str | None = None,
                           ) -> tuple[dict | None, str]:
-    """Route a summary call by provider preference. Returns (result, label).
+    """Route a summary call to Gemini. Returns (result, label).
 
-    Gemini is the sole primary (Claude retired 2026-06-22). Two-model quality
-    hierarchy, picked by the caller via `model`:
-        gemini-2.5-flash      → top-5 highest-impact stories (premium).
-        gemini-2.5-flash-lite → the rest of the top-50 (high-RPD tier; flash
-                                 itself is only 20 requests/DAY).
-    Groq (llama-3.1-8b-instant) is the $0 fallback for both.
+    Gemini is the sole LLM (Claude retired 2026-06-22, Groq 2026-06-24).
+    Two-model quality hierarchy, picked by the caller via `model`:
+        gemini-2.5-flash      → top-N highest-impact stories (premium).
+        gemini-2.5-flash-lite → the rest of the displayed top-50 (high-RPD
+                                 tier; flash itself is only 20 requests/DAY).
 
-    Fallback chain for a flash (premium) request, so a high-impact story never
-    silently drops to the unreliable provider before exhausting Gemini:
-        flash → flash-lite → Groq.
-    A flash-lite request is simply: flash-lite → Groq.
+    A flash (premium) request degrades to flash-lite within Gemini if flash's
+    20/day cap is spent: flash → flash-lite. A flash-lite request is flash-lite
+    only — there is no further fallback now that Groq is gone; a failed slot
+    keeps its prior/rule-based summary rather than risk a low-quality provider.
 
-    prefer_provider:
-        "gemini" — Gemini first, Groq fallback (default for summaries).
-        "groq"   — Groq only. The tail; never spends Gemini's quota.
-        None     — Gemini then Groq (legacy default).
+    prefer_provider is retained for signature compatibility; every value now
+    routes to Gemini.
     """
-    try_gemini = prefer_provider in (None, "gemini")
-    if try_gemini and gemini_is_available():
+    if gemini_is_available():
         # Premium requests try flash first, then degrade to flash-lite within
-        # Gemini (e.g. flash's 20/day cap is spent) before dropping to Groq.
-        # `None` resolves to the flash-lite default inside the Gemini client.
+        # Gemini (e.g. flash's 20/day cap is spent). `None` resolves to the
+        # flash-lite default inside the Gemini client.
         wants_flash = (model or "") == GEMINI_FLASH_MODEL
         models_to_try = [GEMINI_FLASH_MODEL, None] if wants_flash else [None]
         for m in models_to_try:
@@ -69,13 +61,6 @@ def _smart_generate_json(prompt: str,
             if result and isinstance(result, dict):
                 label = "gemini-flash" if m == GEMINI_FLASH_MODEL else "gemini-flash-lite"
                 return result, label
-    if groq_is_available():
-        result = groq_generate_json(
-            prompt, system_instruction=system_instruction,
-            count_call=True, max_output_tokens=max_output_tokens,
-        )
-        if result and isinstance(result, dict):
-            return result, "groq-llama"
     return None, "none"
 
 
@@ -116,17 +101,12 @@ def generate_json(prompt, system_instruction=None, max_retries=1, count_call=Tru
     return result
 
 def is_available():
-    return gemini_is_available() or groq_is_available()
+    return gemini_is_available()
 
 def calls_remaining():
-    # Report the PRIMARY provider's remaining budget so a throttled/exhausted
-    # fallback can't gate the summarization loop. Order mirrors the router:
-    # Gemini (primary) → Groq (fallback). 2026-06-20: the old order returned
-    # Groq's budget, so Groq's 200k-TPD exhaustion zeroed calls_remaining()
-    # and starved the top-50 pass even though Gemini had room.
-    if gemini_is_available():
-        return gemini_calls_remaining()
-    return groq_calls_remaining()
+    # Gemini is the sole LLM (Groq retired 2026-06-24). Report its remaining
+    # per-run budget so the summarization loop knows when to stop.
+    return gemini_calls_remaining()
 
 # Import shared prohibited terms — single canonical source.
 try:
@@ -769,9 +749,9 @@ def summarize_cluster(articles: list[dict],
     """
     Generate headline, summary, consensus, and divergence for a cluster.
 
-    prefer_provider routes the call ("gemini" for premium slots, "groq" for the
-    tail) — see _smart_generate_json. `model` selects the Gemini tier
-    (GEMINI_FLASH_MODEL for top-5 premium stories; None = flash-lite default).
+    prefer_provider is retained for signature compatibility (Groq retired).
+    `model` selects the Gemini tier (GEMINI_FLASH_MODEL for the premium top-N
+    stories; None = flash-lite default). See _smart_generate_json.
     Returns None if no provider is configured, the call fails, or the chosen
     provider's per-run cap is reached (each client enforces its own cap and
     returns None, so no cross-provider budget gate here).
@@ -781,14 +761,6 @@ def summarize_cluster(articles: list[dict],
 
     if not articles:
         return None
-
-    # The Groq tail (ranks 11-30) runs on llama-3.1-8b-instant, whose free-tier
-    # TPM (6000) leaves a tight output budget. The optional claims task balloons
-    # the JSON past that budget ('max completion tokens reached before generating
-    # a valid document'), so skip it for Groq — the premium top-10 still get full
-    # claims via Gemini in step 8d.
-    if prefer_provider == "groq":
-        claims_consensus = None
 
     context_line = _build_context_line(articles)
     source_names_line = _build_source_names_line(articles)
@@ -932,7 +904,7 @@ def summarize_cluster(articles: list[dict],
         "claims": claims,
         "consensus_ratio": consensus_ratio_val,
         "consensus_summary": consensus_summary_val,
-        # Which provider answered ("gemini-flash-lite" | "groq-llama").
+        # Which provider answered ("gemini-flash" | "gemini-flash-lite").
         # Callers map this to summary_tier so the step-8d cache only
         # freezes genuine Sonnet output.
         "_generator": _generator_label,
@@ -950,7 +922,7 @@ def summarize_clusters_batch(clusters: list[dict],
                              top_n: int = 30,
                              regional_fill: int = 10,
                              topic_fill: int = 10,
-                             prefer_provider: str | None = "groq",
+                             prefer_provider: str | None = "gemini",
                              ) -> tuple[dict[int, dict], set[int]]:
     """
     Summarize up to 50 clusters using three non-overlapping priority pools.
@@ -1156,20 +1128,20 @@ def _tier_for_label(label: str) -> str:
         return "sonnet"
     if label == "gemini-flash":
         return "flash"          # premium gemini-2.5-flash
-    return "flash-lite"          # gemini-2.5-flash-lite or Groq fallback
+    return "flash-lite"          # gemini-2.5-flash-lite
 
 
 def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 50,
                                  prefer_provider: str | None = "gemini",
-                                 flash_top_n: int = 5) -> dict:
+                                 flash_top_n: int = 10) -> dict:
     """
     Single-pass post-rerank summarization for the final feed top N.
 
     Reads the top-N clusters by rank_{edition} from Supabase (rank DESC),
     fetches their article membership, and summarizes via a Gemini quality
     hierarchy: the top `flash_top_n` highest-impact stories run on
-    gemini-2.5-flash (premium); the rest on gemini-2.5-flash-lite. Groq is the
-    $0 fallback for both (flash → flash-lite → Groq for premium slots).
+    gemini-2.5-flash (premium); the rest on gemini-2.5-flash-lite. There is no
+    Groq fallback (retired 2026-06-24); premium slots degrade flash → flash-lite.
 
     Cache logic (upgrade-aware, migration 063):
         - flash-lite slot: hash matches AND prior tier in
@@ -1293,7 +1265,7 @@ def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 
             "summary": result["summary"],
             "summary_article_hash": h,
             # Stamp the tier that ACTUALLY answered (migration 063): 'flash' for
-            # gemini-2.5-flash, 'flash-lite' for flash-lite/Groq. A premium slot
+            # gemini-2.5-flash, 'flash-lite' for flash-lite. A premium slot
             # that fell back to flash-lite (flash exhausted) is stamped
             # 'flash-lite', so the next run retries the flash upgrade.
             "summary_tier": _tier_for_label(result.get("_generator") or ""),
