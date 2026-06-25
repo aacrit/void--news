@@ -613,6 +613,17 @@
     justify-content: flex-start;
   }
 
+  /* Deep Dive lede tabs (phones only): show one panel at a time. Both panels
+     stay in the DOM; the wrapper's data-lede-view drives which one shows, so
+     SSR and first client paint always match (no hydration mismatch). The tab
+     bar itself is visible here via its base flex (hidden again >=768px). */
+  .dd-lede[data-lede-view="story"] .dd-lede__spectrum {
+    display: none;
+  }
+  .dd-lede[data-lede-view="spread"] .dd-lede__story {
+    display: none;
+  }
+
   /* Press expand: faster transition on mobile */
   .dd-press-expand {
     transition: grid-template-rows 300ms var(--ease-cinematic);

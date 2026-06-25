@@ -324,21 +324,131 @@
 
 
 /* ==========================================================================
-   Deep Dive — single column flow
+   Deep Dive lede zone (summary + Sigil/Spectrum)
    ----------------------------------------------------------------------------
-   The 2-column "summary left, sigil+spectrum right rail" layout was reverted
-   2026-04-29: the right rail at 1280px was ~370px wide and forced the
-   DeepDiveSpectrum's horizontal source-bar chart + multi-color source list
-   to render compressed and overlapping with the summary text on the left.
+   Goal: give the summary and the bias bell-curve equal weight, and stop the
+   summary from opening below the fold behind a ~250px Sigil+Spectrum slab.
 
-   New approach: keep a single-column flow at every viewport. Moat protection
-   comes from the BiasSnapshot inline strip directly under the headline (lean
-   dot · rigor bar · opinion pill · source count) — that gives the reader the
-   three primary axes at a glance above the fold without forcing the heavy
-   spectrum visualization into a narrow column where it can't render.
+   Responsive ladder (lede only; every section below it stays full width):
+     >=1024px   two columns: summary LEFT (~56%), Sigil+Spectrum RIGHT (~44%,
+                min 400px so the 400-viewBox spectrum never compresses).
+     768-1023   single column, summary first, Spectrum below a hairline.
+     <768px     a tab control ("The Story" / "The Spread"), default Story; the
+                summary fills the view, one tap reveals the Spectrum.
 
-   The full DeepDiveSpectrum and Six Lenses live below the summary at full
-   width where they have room to breathe.
+   History: a 2-column "summary left, spectrum right rail" was reverted
+   2026-04-29 because the rail was a FIXED ~370px and crushed the spectrum's
+   source bar + pins into the summary. The fix is minmax(400px, 1fr): the right
+   column has a hard 400px floor and only engages at >=1024px, where the panel
+   is wide enough to honor it. The moat still reads above the fold via the
+   BiasSnapshot inline strip under the headline. The phone tab show/hide lives
+   in responsive.css (the <768px block); the tab bar is hidden >=768px below.
    ========================================================================== */
+
+.dd-lede {
+  margin-bottom: var(--space-6);
+}
+
+/* Sigil-over-Spectrum stack (replaces the old .dd-analysis-block wrapper). */
+.dd-lede__spectrum {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* Phone tab bar — segmented control, mirrors the .lean-bar idiom. Visible only
+   <768px (responsive.css turns it on); hidden at tablet/desktop here. */
+.dd-lede__tabs {
+  display: flex;
+  position: relative;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--bg-primary);
+  margin-bottom: var(--space-4);
+}
+
+.dd-lede__tab {
+  flex: 1;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-right: 1px solid var(--border-subtle);
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  transition:
+    color var(--dur-fast) var(--ease-cinematic),
+    background-color var(--dur-fast) var(--ease-cinematic);
+}
+
+.dd-lede__tab:last-child {
+  border-right: none;
+}
+
+.dd-lede__tab:active {
+  transform: scale(0.97);
+  transition: transform 60ms var(--ease-cinematic);
+}
+
+.dd-lede__tab:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: -2px;
+}
+
+.dd-lede__tab--active {
+  font-weight: 700;
+  color: var(--fg-primary);
+  background-color: color-mix(in srgb, var(--fg-primary) 6%, transparent);
+}
+
+/* Tablet + desktop: no tabs (both panels always shown). */
+@media (min-width: 768px) {
+  .dd-lede__tabs {
+    display: none;
+  }
+}
+
+/* Tablet (768-1023): single-column stack, summary first, hairline before the
+   Sigil+Spectrum. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .dd-lede__spectrum {
+    margin-top: var(--space-4);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border-subtle);
+  }
+}
+
+/* Desktop (>=1024): two columns. Summary left, Sigil+Spectrum right with a hard
+   400px floor so the spectrum renders uncompressed (the 2026-04 revert fix). */
+@media (min-width: 1024px) {
+  .dd-lede {
+    display: grid;
+    grid-template-columns: minmax(0, 1.27fr) minmax(400px, 1fr);
+    column-gap: var(--space-5);
+    align-items: start;
+  }
+
+  .dd-lede__story {
+    grid-column: 1;
+    min-width: 0;
+  }
+
+  .dd-lede__spectrum {
+    grid-column: 2;
+    min-width: 0;
+    border-left: 1px solid var(--border-subtle);
+    padding-left: var(--space-5);
+  }
+}
 
 
