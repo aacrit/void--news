@@ -20,6 +20,9 @@
   background: var(--bg-primary);
   /* Top + bottom hairline frame the in-flow block apart from the cards. */
   border-block: 1px solid var(--border-subtle);
+  /* On open, scrollIntoView({block:"start"}) aligns the top just below the
+     sticky nav instead of under it. */
+  scroll-margin-top: calc(var(--nav-height, 53px) + var(--space-3));
 }
 
 /* ---- Masthead --------------------------------------------------------- */
