@@ -1,0 +1,110 @@
+/* ==========================================================================
+   void --news — Cinematic Inline Deep Dive (stage 1: STATIC)
+   ----------------------------------------------------------------------------
+   The InlineDeepDive renders the Deep Dive content IN the feed as a full-width,
+   in-flow block (no fixed positioning, no backdrop, no scroll lock). It reuses
+   the Deep Dive vocabulary (.dd-lede*, .dd-collapsible, .dd-section-label, the
+   .anim-dd-section / .dd-cascade-* cascade, BiasSnapshot, ClaimConsensus,
+   ComparativeView), so this file only adds the in-flow block chrome and the
+   "headline as collapse toggle" masthead.
+
+   It must sit OUTSIDE .feed-grid (between the two split grids in HomeContent)
+   so it is naturally full width. No animation / blur in this stage.
+   ========================================================================== */
+
+.inline-dd {
+  display: block;
+  width: 100%;
+  padding: var(--space-5);
+  margin-block: var(--space-4);
+  background: var(--bg-primary);
+  /* Top + bottom hairline frame the in-flow block apart from the cards. */
+  border-block: 1px solid var(--border-subtle);
+}
+
+/* ---- Masthead --------------------------------------------------------- */
+
+.inline-dd__header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+/* Headline IS the collapse toggle — a reset button styled like .dd-headline. */
+.inline-dd__headline {
+  /* button reset */
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  color: var(--fg-primary);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.inline-dd__headline-text {
+  /* Mirror the modal .dd-headline editorial voice. */
+  font-family: var(--font-editorial);
+  font-size: var(--type-lead-headline);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: var(--type-lead-tracking);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Small caret signalling "collapse" — points up, nudges on hover. */
+.inline-dd__caret {
+  flex: 0 0 auto;
+  align-self: center;
+  color: var(--fg-tertiary);
+  transition:
+    transform var(--dur-fast, 150ms) var(--ease-cinematic, ease-out),
+    color var(--dur-fast, 150ms) var(--ease-cinematic, ease-out);
+}
+
+.inline-dd__headline:hover .inline-dd__caret {
+  color: var(--fg-secondary);
+  transform: translateY(-2px);
+}
+
+.inline-dd__headline:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* Meta row — give it a touch of air below the headline. */
+.inline-dd__meta {
+  margin-top: var(--space-3);
+}
+
+/* ---- Content ---------------------------------------------------------- */
+
+.inline-dd__content {
+  margin-top: var(--space-4);
+  width: 100%;
+}
+
+/* The lede float (.dd-lede__spectrum at >=1024px) already establishes its own
+   BFC via .dd-lede { display: flow-root }, so the summary wraps correctly
+   inside the full-width block with no extra rules here. */
+
+/* Reduced motion: the caret nudge is the only motion in this stage; disable it. */
+@media (prefers-reduced-motion: reduce) {
+  .inline-dd__caret {
+    transition: none;
+  }
+  .inline-dd__headline:hover .inline-dd__caret {
+    transform: none;
+  }
+}
