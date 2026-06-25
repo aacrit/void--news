@@ -95,6 +95,17 @@
   width: 100%;
 }
 
+/* Full-bleed block, capped reading column. The background + hairlines span the
+   full feed width (that is the "feature"), but the masthead + content sit in a
+   centered ~68rem measure so the line length stays readable instead of
+   stretching across the whole broadsheet. Tablet/phone viewports fall below the
+   cap, so this reads as a desktop effect. */
+.inline-dd__header,
+.inline-dd__content {
+  max-width: 68rem;
+  margin-inline: auto;
+}
+
 /* The lede float (.dd-lede__spectrum at >=1024px) already establishes its own
    BFC via .dd-lede { display: flow-root }, so the summary wraps correctly
    inside the full-width block with no extra rules here. */
@@ -106,5 +117,38 @@
   }
   .inline-dd__headline:hover .inline-dd__caret {
     transform: none;
+  }
+}
+
+/* ==========================================================================
+   Sibling rack-focus — other stories recede "backstage" when one is expanded
+   ----------------------------------------------------------------------------
+   When a story is open inline, the remaining cards (both split feed-grids and
+   the twin-lead block) blur, dim, and scale down a touch, leaving the expanded
+   .inline-dd block (which sits OUTSIDE these containers) as the one sharp
+   subject. The transition lives on the base wrappers so siblings ease BOTH into
+   the backstage and back into focus on collapse. Lens-focus token + rack ease.
+   ========================================================================== */
+.feed-grid__item,
+.lead-twin {
+  transition:
+    filter var(--dur-normal, 300ms) var(--ease-rack, ease),
+    opacity var(--dur-normal, 300ms) var(--ease-rack, ease),
+    transform var(--dur-normal, 300ms) var(--ease-rack, ease);
+}
+
+.feed-grid--recede .feed-grid__item,
+.lead-twin--recede {
+  filter: var(--focus-soft);     /* blur(1.5px) */
+  opacity: 0.5;
+  transform: scale(0.99);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feed-grid--recede .feed-grid__item,
+  .lead-twin--recede {
+    filter: none;
+    transform: none;
+    opacity: 0.6;                /* dim only — no blur or scale */
   }
 }

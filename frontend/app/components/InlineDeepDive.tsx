@@ -9,7 +9,7 @@
 import "../styles/verify.css";
 import "../styles/inline-dd.css";
 
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from "react";
 import { CaretUp } from "@phosphor-icons/react";
 import type {
   Story,
@@ -94,8 +94,9 @@ interface InlineDeepDiveProps {
 }
 
 export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProps) {
-  /* ---- Static cascade flag — true on mount (animation lands in a later stage) ---- */
-  const [contentVisible, setContentVisible] = useState(true);
+  /* ---- Cascade flag — flips true just after the accordion starts opening so
+     the .anim-dd-section sections L-cut in (see the mount effect below). ---- */
+  const [contentVisible, setContentVisible] = useState(false);
 
   /* ---- Live cluster data (copied pattern from DeepDive.tsx) ------------- */
   const [liveData, setLiveData] = useState<DeepDiveData | null>(null);
@@ -389,15 +390,93 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
     return () => ro.disconnect();
   }, [summaryExpanded, story.summary, contentVisible]);
 
-  // Static-stage no-op reference so the lint rule does not flag the setter as
-  // unused; the real reveal choreography (setContentVisible(false) on enter,
-  // then true) arrives in a later stage.
-  void setContentVisible;
+  /* ---- Accordion expand on mount + L-cut content cascade -----------------
+     The block grows from 0 to its natural height (cards below slide down via
+     normal flow), then releases to height:auto so later/lazy content and hover
+     overflow (spectrum tooltips, Sigil popup) are not clipped. The
+     .anim-dd-section sections fade in just after the grow starts (an L-cut).
+     prefers-reduced-motion: skip the height tween and reveal instantly. */
+  const articleRef = useRef<HTMLElement>(null);
+
+  useLayoutEffect(() => {
+    const el = articleRef.current;
+    if (!el) return;
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) {
+      setContentVisible(true);
+      return;
+    }
+    const natural = el.scrollHeight;
+    el.style.overflow = "hidden";
+    el.style.height = "0px";
+    void el.offsetHeight; // commit the 0 start before transitioning
+    el.style.transition = "height 380ms var(--ease-cinematic)";
+    el.style.height = `${natural}px`;
+
+    const release = () => {
+      el.style.height = "auto";
+      el.style.overflow = "";
+      el.style.transition = "";
+    };
+    const onEnd = (e: TransitionEvent) => {
+      if (e.target === el && e.propertyName === "height") {
+        el.removeEventListener("transitionend", onEnd);
+        release();
+      }
+    };
+    el.addEventListener("transitionend", onEnd);
+    const fallback = window.setTimeout(release, 460); // safety if transitionend misses
+    const cascade = window.setTimeout(() => setContentVisible(true), 90);
+    return () => {
+      el.removeEventListener("transitionend", onEnd);
+      window.clearTimeout(fallback);
+      window.clearTimeout(cascade);
+    };
+    // mount-only; remounts per story via the key in HomeContent
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /* Collapse: reverse the accordion to 0, then unmount via onCollapse. */
+  const collapsingRef = useRef(false);
+  const handleCollapse = useCallback(() => {
+    hapticLight();
+    const el = articleRef.current;
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!el || reduce) {
+      onCollapse();
+      return;
+    }
+    if (collapsingRef.current) return;
+    collapsingRef.current = true;
+    const current = el.scrollHeight;
+    el.style.height = `${current}px`;
+    el.style.overflow = "hidden";
+    void el.offsetHeight;
+    el.style.transition =
+      "height 300ms var(--ease-cinematic), opacity 300ms var(--ease-cinematic)";
+    el.style.height = "0px";
+    el.style.opacity = "0";
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      onCollapse();
+    };
+    const onEnd = (e: TransitionEvent) => {
+      if (e.target === el && e.propertyName === "height") finish();
+    };
+    el.addEventListener("transitionend", onEnd);
+    window.setTimeout(finish, 380); // safety if transitionend misses
+  }, [onCollapse]);
 
   const sourceCount = sources.length > 0 ? sources.length : story.source.count;
 
   return (
-    <article className="inline-dd" aria-label={`Deep dive: ${story.title}`}>
+    <article ref={articleRef} className="inline-dd" aria-label={`Deep dive: ${story.title}`}>
       {/* ---- Masthead: headline IS the collapse toggle ------------------- */}
       <header className="inline-dd__header">
         <button
@@ -405,7 +484,7 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
           className="inline-dd__headline"
           aria-expanded={true}
           aria-label={`Collapse deep dive: ${story.title}`}
-          onClick={() => { hapticLight(); onCollapse(); }}
+          onClick={handleCollapse}
         >
           <span className="inline-dd__headline-text">{story.title}</span>
           <CaretUp size={18} weight="bold" className="inline-dd__caret" aria-hidden="true" />
