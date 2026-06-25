@@ -251,7 +251,25 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
   const [analysisExpanded, setAnalysisExpanded] = useState(false);
   const [summaryOverflows, setSummaryOverflows] = useState(false);
   const summaryInnerRef = useRef<HTMLDivElement>(null);
-  // Tabs removed — Deep Dive is now a single continuous scroll view
+  /* Lede view tabs — phones (<768px) only. Default "story" so the summary is
+     the first thing readers see. Both panels always render (hydration-safe):
+     CSS hides the inactive one only inside the <768px media query, keyed on the
+     wrapper's data-lede-view. At >=768px both show and the tab bar is hidden, so
+     the initializer must stay window-free for SSR/first-paint to match. */
+  const [ledeView, setLedeView] = useState<"story" | "spread">("story");
+  const ledeTablistRef = useRef<HTMLDivElement>(null);
+  const handleLedeTabKey = useCallback((e: React.KeyboardEvent) => {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight" && e.key !== "Home" && e.key !== "End") return;
+    e.preventDefault();
+    const next: "story" | "spread" =
+      e.key === "Home" ? "story"
+        : e.key === "End" ? "spread"
+          : ledeView === "story" ? "spread" : "story";
+    setLedeView(next);
+    hapticMicro();
+    const id = next === "story" ? "dd-lede-tab-story" : "dd-lede-tab-spread";
+    ledeTablistRef.current?.querySelector<HTMLElement>(`#${id}`)?.focus();
+  }, [ledeView]);
   /** Null = normal slide-in style (isVisible-driven). Object = FLIP morph phase. */
   const [morphStyle, setMorphStyle] = useState<React.CSSProperties | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -287,6 +305,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
     setIsDragging(false);
     setDragOffset(0);
     setShareCopied(false);
+    setLedeView("story"); // prev/next lands on The Story, not a leftover Spread tab
     setHeroImageUrl(null);
     setHeroImgLoaded(false);
     setHeroImgError(false);
@@ -337,6 +356,10 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
         })),
     [sources]
   );
+
+  /* Lede has a Sigil/Spectrum panel to pair with the summary — drives whether
+     the phone tab bar ("The Story" / "The Spread") and the second column render. */
+  const hasLedeSpectrum = Boolean(story.sigilData) || spectrumSources.length > 0;
 
   /* ---- Trust score helper — for trust badge computation ---- */
   // tierScore + factualRigor * 0.4 + confidence * 0.2 (0–100 scale)
@@ -1305,42 +1328,87 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             </div>
           )}
 
-          {/* ---- Sigil (stacked: icon above, lean+underline below) + full-width Spectrum ---- */}
-          {(story.sigilData || spectrumSources.length > 0) && (
-            <div
-              id="dd-panel-spectrum"
-              className={`dd-analysis-block anim-dd-section dd-cascade-1${contentVisible ? " anim-dd-section--visible" : ""}`}
-              style={{ marginBottom: "var(--space-6)" }}
-            >
-              {story.sigilData && (
-                <div className="dd-analysis-block__sigil">
-                  <Sigil data={story.sigilData} size="xl" storyId={story.id} />
-                </div>
-              )}
-              {spectrumSources.length > 0 && (
-                <div className="dd-analysis-block__spectrum">
-                  <DeepDiveSpectrum sources={spectrumSources} />
-                </div>
-              )}
-            </div>
-          )}
-
-          <hr className="ink-rule" style={{ margin: "0 0 var(--space-4) 0" }} aria-hidden="true" />
-
-          {/* ---- Summary ---- */}
-          <section id="dd-panel-story" className={`anim-dd-section dd-cascade-2${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)" }}>
-            <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-2)" }}>The Story</h3>
-            <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}${!summaryOverflows && !summaryExpanded ? " dd-collapsible--fits" : ""}`}>
-              <div className="dd-collapsible__inner" ref={summaryInnerRef}>
-                <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
-                  {renderSummaryWithContradictions(story.summary, deepDive?.claimConsensus?.disputed_details)}
-                </p>
+          {/* ---- Lede: summary + Sigil/Spectrum. Summary leads in DOM so the
+               tablet stack and the phone tabs open on the story; at >=1024px CSS
+               grids the Spectrum into the right column instead. data-lede-view
+               drives the phone-only tab show/hide (CSS, <768px). ---- */}
+          <div className="dd-lede" data-lede-view={ledeView}>
+            {hasLedeSpectrum && (
+              <div
+                className="dd-lede__tabs"
+                role="tablist"
+                aria-label="Story or bias spread"
+                ref={ledeTablistRef}
+                onKeyDown={handleLedeTabKey}
+              >
+                <button
+                  type="button"
+                  role="tab"
+                  id="dd-lede-tab-story"
+                  aria-selected={ledeView === "story"}
+                  aria-controls="dd-panel-story"
+                  tabIndex={ledeView === "story" ? 0 : -1}
+                  className={`dd-lede__tab${ledeView === "story" ? " dd-lede__tab--active" : ""}`}
+                  onClick={() => { hapticLight(); setLedeView("story"); }}
+                >
+                  The Story
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  id="dd-lede-tab-spread"
+                  aria-selected={ledeView === "spread"}
+                  aria-controls="dd-panel-spectrum"
+                  tabIndex={ledeView === "spread" ? 0 : -1}
+                  className={`dd-lede__tab${ledeView === "spread" ? " dd-lede__tab--active" : ""}`}
+                  onClick={() => { hapticLight(); setLedeView("spread"); }}
+                >
+                  The Spread
+                </button>
               </div>
-            </div>
-            {summaryOverflows && !summaryExpanded && (
-              <button className="dd-read-more" onClick={() => { hapticLight(); setSummaryExpanded(true); }}>Read more</button>
             )}
-          </section>
+
+            {/* ---- Summary (lede subject) ---- */}
+            <section
+              id="dd-panel-story"
+              role={hasLedeSpectrum ? "tabpanel" : undefined}
+              aria-labelledby={hasLedeSpectrum ? "dd-lede-tab-story" : undefined}
+              className={`dd-lede__story anim-dd-section dd-cascade-1${contentVisible ? " anim-dd-section--visible" : ""}`}
+            >
+              <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-2)" }}>The Story</h3>
+              <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}${!summaryOverflows && !summaryExpanded ? " dd-collapsible--fits" : ""}`}>
+                <div className="dd-collapsible__inner" ref={summaryInnerRef}>
+                  <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
+                    {renderSummaryWithContradictions(story.summary, deepDive?.claimConsensus?.disputed_details)}
+                  </p>
+                </div>
+              </div>
+              {summaryOverflows && !summaryExpanded && (
+                <button className="dd-read-more" onClick={() => { hapticLight(); setSummaryExpanded(true); }}>Read more</button>
+              )}
+            </section>
+
+            {/* ---- Sigil + Spectrum (lede context) ---- */}
+            {hasLedeSpectrum && (
+              <section
+                id="dd-panel-spectrum"
+                role="tabpanel"
+                aria-labelledby="dd-lede-tab-spread"
+                className={`dd-lede__spectrum anim-dd-section dd-cascade-2${contentVisible ? " anim-dd-section--visible" : ""}`}
+              >
+                {story.sigilData && (
+                  <div className="dd-analysis-block__sigil">
+                    <Sigil data={story.sigilData} size="xl" storyId={story.id} />
+                  </div>
+                )}
+                {spectrumSources.length > 0 && (
+                  <div className="dd-analysis-block__spectrum">
+                    <DeepDiveSpectrum sources={spectrumSources} />
+                  </div>
+                )}
+              </section>
+            )}
+          </div>
 
           {/* ---- Claim Consensus — cross-source verification (lazy-rendered) ---- */}
           {deepDive?.claimConsensus && (
