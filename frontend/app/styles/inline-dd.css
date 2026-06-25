@@ -121,9 +121,16 @@
    cramped). The modal keeps the .dd-lede float untouched.
    ========================================================================== */
 
-/* Keep the summary at a readable measure even though the block is wide. */
-.inline-dd__story {
-  max-width: 42rem;
+/* The summary spans the full content width (matching the masthead + the band).
+   On tablet/desktop it flows in newspaper columns so it fills the whole row
+   without a single ~120-character line; the column measure stays readable. */
+@media (min-width: 768px) {
+  .inline-dd__story .dd-summary-text {
+    max-width: none;          /* override the base reading-measure cap */
+    column-width: 20rem;
+    column-gap: var(--space-6);
+    column-rule: 1px solid var(--border-subtle);
+  }
 }
 
 /* The spectrum spans the full content column as a landscape band. */

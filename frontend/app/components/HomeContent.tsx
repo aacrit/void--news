@@ -285,13 +285,17 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
     window.scrollTo(0, scrollBeforeDeepDive.current);
   }, []);
 
-  // Inline-mode collapse — clears the open story without the modal's scroll
-  // restore. The inline block lives in the document flow, so removing it lets
-  // the feed reflow in place; jumping scroll back to the pre-open position
-  // would feel wrong here (the user scrolled while reading the expansion).
+  // Inline-mode collapse — clear the open story and glide back to where the user
+  // was when they opened it. The inline block is in the document flow, so removing
+  // it changes scroll height; restore after the DOM updates (double rAF) so we
+  // land on the original feed position instead of a clamped spot.
   const handleInlineCollapse = useCallback(() => {
+    const restore = scrollBeforeDeepDive.current;
     setSelectedStory(null);
     setOriginRect(null);
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => window.scrollTo({ top: restore, behavior: "smooth" })),
+    );
   }, []);
 
   // Detect mobile for feed layout — responsive to viewport changes

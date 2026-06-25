@@ -341,6 +341,17 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
   const articleRef = useRef<HTMLElement>(null);
   const headlineRef = useRef<HTMLButtonElement>(null);
 
+  /* Scroll the open story's headline to just under the sticky nav. Driven from
+     the accordion effect (once the block has reached full height) so a story low
+     in the feed has enough body below it to actually reach the top — a mount-time
+     scrollIntoView (height 0) clamped short and left lower stories mis-seated. */
+  const scrollHeadlineToTop = useCallback((behavior: ScrollBehavior) => {
+    const el = articleRef.current;
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY - 64; // nav (~53) + gap
+    window.scrollTo({ top: Math.max(0, top), behavior });
+  }, []);
+
   useLayoutEffect(() => {
     const el = articleRef.current;
     if (!el) return;
@@ -349,6 +360,7 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
       window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) {
       setContentVisible(true);
+      scrollHeadlineToTop("auto");
       return;
     }
     const natural = el.scrollHeight;
@@ -357,11 +369,13 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
     void el.offsetHeight; // commit the 0 start before transitioning
     el.style.transition = "height 600ms var(--ease-cinematic)";
     el.style.height = `${natural}px`;
+    scrollHeadlineToTop("smooth"); // best-effort start (may clamp low in the feed)
 
     const release = () => {
       el.style.height = "auto";
       el.style.overflow = "";
       el.style.transition = "";
+      scrollHeadlineToTop("smooth"); // authoritative: full height now, so it seats at the top
     };
     const onEnd = (e: TransitionEvent) => {
       if (e.target === el && e.propertyName === "height") {
@@ -428,16 +442,9 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
     return () => document.removeEventListener("keydown", onKey);
   }, [handleCollapse]);
 
-  /* On open, bring the story to the top (under the sticky masthead via the
-     scroll-margin-top on .inline-dd) and move focus into the block so keyboard
-     and screen-reader users land on the expanded content. */
+  /* Move focus into the block on open so keyboard + screen-reader users land on
+     the expanded content. Scroll is owned by the accordion effect above. */
   useEffect(() => {
-    const el = articleRef.current;
-    if (!el) return;
-    const reduce =
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
     headlineRef.current?.focus({ preventScroll: true });
     // mount only (remounts per story via the key in HomeContent)
     // eslint-disable-next-line react-hooks/exhaustive-deps
