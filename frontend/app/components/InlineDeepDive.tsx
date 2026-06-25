@@ -397,6 +397,7 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
      .anim-dd-section sections fade in just after the grow starts (an L-cut).
      prefers-reduced-motion: skip the height tween and reveal instantly. */
   const articleRef = useRef<HTMLElement>(null);
+  const headlineRef = useRef<HTMLButtonElement>(null);
 
   useLayoutEffect(() => {
     const el = articleRef.current;
@@ -473,6 +474,33 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
     window.setTimeout(finish, 380); // safety if transitionend misses
   }, [onCollapse]);
 
+  /* Esc collapses the inline block (parity with the modal's Escape-to-close). */
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        handleCollapse();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [handleCollapse]);
+
+  /* On open, bring the story to the top (under the sticky masthead via the
+     scroll-margin-top on .inline-dd) and move focus into the block so keyboard
+     and screen-reader users land on the expanded content. */
+  useEffect(() => {
+    const el = articleRef.current;
+    if (!el) return;
+    const reduce =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+    headlineRef.current?.focus({ preventScroll: true });
+    // mount only (remounts per story via the key in HomeContent)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const sourceCount = sources.length > 0 ? sources.length : story.source.count;
 
   return (
@@ -480,6 +508,7 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
       {/* ---- Masthead: headline IS the collapse toggle ------------------- */}
       <header className="inline-dd__header">
         <button
+          ref={headlineRef}
           type="button"
           className="inline-dd__headline"
           aria-expanded={true}
