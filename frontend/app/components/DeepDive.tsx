@@ -1328,10 +1328,10 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             </div>
           )}
 
-          {/* ---- Lede: summary + Sigil/Spectrum. Summary leads in DOM so the
-               tablet stack and the phone tabs open on the story; at >=1024px CSS
-               grids the Spectrum into the right column instead. data-lede-view
-               drives the phone-only tab show/hide (CSS, <768px). ---- */}
+          {/* ---- Lede: Sigil/Spectrum + summary. The Spectrum leads in DOM so the
+               desktop float (>=1024px) wraps the summary around AND under it (no dead
+               column); the tablet stack uses flex order to keep the summary first, and
+               the phone tabs (data-lede-view, <768px) default to the story. ---- */}
           <div className="dd-lede" data-lede-view={ledeView}>
             {hasLedeSpectrum && (
               <div
@@ -1368,27 +1368,8 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
               </div>
             )}
 
-            {/* ---- Summary (lede subject) ---- */}
-            <section
-              id="dd-panel-story"
-              role={hasLedeSpectrum ? "tabpanel" : undefined}
-              aria-labelledby={hasLedeSpectrum ? "dd-lede-tab-story" : undefined}
-              className={`dd-lede__story anim-dd-section dd-cascade-1${contentVisible ? " anim-dd-section--visible" : ""}`}
-            >
-              <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-2)" }}>The Story</h3>
-              <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}${!summaryOverflows && !summaryExpanded ? " dd-collapsible--fits" : ""}`}>
-                <div className="dd-collapsible__inner" ref={summaryInnerRef}>
-                  <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
-                    {renderSummaryWithContradictions(story.summary, deepDive?.claimConsensus?.disputed_details)}
-                  </p>
-                </div>
-              </div>
-              {summaryOverflows && !summaryExpanded && (
-                <button className="dd-read-more" onClick={() => { hapticLight(); setSummaryExpanded(true); }}>Read more</button>
-              )}
-            </section>
-
-            {/* ---- Sigil + Spectrum (lede context) ---- */}
+            {/* ---- Sigil + Spectrum (lede context) — first in DOM so the desktop
+                 float wraps the summary around and under it ---- */}
             {hasLedeSpectrum && (
               <section
                 id="dd-panel-spectrum"
@@ -1408,6 +1389,26 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
                 )}
               </section>
             )}
+
+            {/* ---- Summary (lede subject) — flows around/under the float on desktop ---- */}
+            <section
+              id="dd-panel-story"
+              role={hasLedeSpectrum ? "tabpanel" : undefined}
+              aria-labelledby={hasLedeSpectrum ? "dd-lede-tab-story" : undefined}
+              className={`dd-lede__story anim-dd-section dd-cascade-1${contentVisible ? " anim-dd-section--visible" : ""}`}
+            >
+              <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-2)" }}>The Story</h3>
+              <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}${!summaryOverflows && !summaryExpanded ? " dd-collapsible--fits" : ""}`}>
+                <div className="dd-collapsible__inner" ref={summaryInnerRef}>
+                  <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
+                    {renderSummaryWithContradictions(story.summary, deepDive?.claimConsensus?.disputed_details)}
+                  </p>
+                </div>
+              </div>
+              {summaryOverflows && !summaryExpanded && (
+                <button className="dd-read-more" onClick={() => { hapticLight(); setSummaryExpanded(true); }}>Read more</button>
+              )}
+            </section>
           </div>
 
           {/* ---- Claim Consensus — cross-source verification (lazy-rendered) ---- */}
