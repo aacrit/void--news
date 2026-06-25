@@ -21,7 +21,7 @@
 @media (min-width: 768px) {
   .feed-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--space-4) var(--space-5);
+    gap: 0 var(--space-5);
   }
 
   .feed-grid__item {
@@ -64,7 +64,7 @@
 @media (min-width: 1024px) {
   .feed-grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: var(--space-4) var(--space-5);
+    gap: 0 var(--space-5);
   }
 
   .feed-grid__item {
@@ -156,7 +156,7 @@
   /* Ultra-wide: 4-column unified grid — balances density with readability */
   .feed-grid {
     grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-4) var(--space-5);
+    gap: 0 var(--space-5);
   }
 
   .feed-grid__item:nth-child(3n) {
