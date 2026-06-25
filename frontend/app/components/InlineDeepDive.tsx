@@ -413,7 +413,7 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
     el.style.overflow = "hidden";
     el.style.height = "0px";
     void el.offsetHeight; // commit the 0 start before transitioning
-    el.style.transition = "height 380ms var(--ease-cinematic)";
+    el.style.transition = "height 600ms var(--ease-cinematic)";
     el.style.height = `${natural}px`;
 
     const release = () => {
@@ -428,8 +428,8 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
       }
     };
     el.addEventListener("transitionend", onEnd);
-    const fallback = window.setTimeout(release, 460); // safety if transitionend misses
-    const cascade = window.setTimeout(() => setContentVisible(true), 90);
+    const fallback = window.setTimeout(release, 680); // safety if transitionend misses
+    const cascade = window.setTimeout(() => setContentVisible(true), 150);
     return () => {
       el.removeEventListener("transitionend", onEnd);
       window.clearTimeout(fallback);
@@ -458,7 +458,7 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
     el.style.overflow = "hidden";
     void el.offsetHeight;
     el.style.transition =
-      "height 300ms var(--ease-cinematic), opacity 300ms var(--ease-cinematic)";
+      "height 480ms var(--ease-cinematic), opacity 420ms var(--ease-cinematic)";
     el.style.height = "0px";
     el.style.opacity = "0";
     let done = false;
@@ -471,7 +471,7 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
       if (e.target === el && e.propertyName === "height") finish();
     };
     el.addEventListener("transitionend", onEnd);
-    window.setTimeout(finish, 380); // safety if transitionend misses
+    window.setTimeout(finish, 560); // safety if transitionend misses
   }, [onCollapse]);
 
   /* Esc collapses the inline block (parity with the modal's Escape-to-close). */
