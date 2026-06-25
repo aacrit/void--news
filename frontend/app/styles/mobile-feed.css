@@ -16,6 +16,8 @@
 .mf__cards {
   display: flex;
   flex-direction: column;
+  /* Predictable lead-in so the compact band starts on a steady rhythm. */
+  padding-top: var(--space-2);
 }
 
 /* v3 (2026-05-14): twin top stories on mobile — both heroes stacked
@@ -78,7 +80,9 @@
 
 .msc--hero {
   padding: var(--space-3) 0 var(--space-4);
-  margin-bottom: var(--space-mobile-hero-bottom, var(--space-5));
+  /* Hero is its own zone: larger gap before the compact stream so the eye
+     rests on the lead before scanning the list. */
+  margin-bottom: var(--space-mobile-section-gap, var(--space-6));
   border-bottom: var(--rule-thin);
 }
 
@@ -135,8 +139,11 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  text-align: justify;
-  text-align-last: left;
+  /* Left-aligned (the max-width:767px rule below already enforces this at
+     every mobile width; set here too for honesty). Capped measure guards
+     wide foldables / landscape. */
+  text-align: left;
+  max-width: 42ch;
   margin-bottom: var(--space-2);
 }
 
@@ -1249,6 +1256,7 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  max-width: 44ch;
 }
 
 .mbp__teaser-preview--opinion {

@@ -301,10 +301,13 @@
   padding: var(--space-5);
 }
 
-/* Inside Deep Dive, text should fill the panel width — override the
-   global 65ch measure since the panel itself is already narrow. */
+/* Inside Deep Dive, cap running prose to a comfortable reading measure.
+   The panel is up to 1120px+ wide, so uncapped body text ran ~110ch. */
 .deep-dive-panel__content .text-base {
-  max-width: none;
+  max-width: 68ch;
+}
+.deep-dive-panel__content .dd-summary-text {
+  max-width: 68ch;
 }
 
 /* ---- Footer ------------------------------------------------------------ */
