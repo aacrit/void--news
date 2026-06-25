@@ -9,6 +9,7 @@ import { supabase, supabaseError } from "../lib/supabase";
 import { cacheGet, cacheSet } from "../lib/feedCache";
 import { BASE_PATH } from "../lib/utils";
 import { AUDIO_ENABLED } from "../lib/audioGate";
+import { getDeepDiveMode, type DeepDiveMode } from "../lib/deepDiveModeGate";
 import LogoIcon from "./LogoIcon";
 import LogoWordmark from "./LogoWordmark";
 import NavBar from "./NavBar";
@@ -16,6 +17,7 @@ import LeadStory from "./LeadStory";
 import StoryCard from "./StoryCard";
 import { computeStoryFamilies } from "../lib/storyFamilies";
 const DeepDive = dynamic(() => import("./DeepDive"), { ssr: false });
+const InlineDeepDive = dynamic(() => import("./InlineDeepDive"), { ssr: false });
 import ErrorBoundary from "./ErrorBoundary";
 
 /* DeepDive-specific ErrorBoundary — shows dismissible error in the panel
@@ -175,6 +177,16 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
   const [originRect, setOriginRect] = useState<DOMRect | null>(null);
 
+  // Deep Dive mode — "card" (legacy modal) or "inline" (in-feed expand).
+  // MUST initialize to "card" so SSR + first client paint match (the query
+  // override + env are resolved in the useEffect below, after mount). The
+  // default `card` render path is byte-identical to before; only `inline`
+  // branches diverge.
+  const [deepDiveMode, setDeepDiveMode] = useState<DeepDiveMode>("card");
+  useEffect(() => {
+    setDeepDiveMode(getDeepDiveMode());
+  }, []);
+
   // Initial value MUST be false (matches SSR) — the matchMedia useEffect below
   // promotes it to true on mobile after mount. Reading data-viewport synchronously
   // here caused React #418 hydration mismatch on every iPhone-width route because
@@ -271,6 +283,15 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
     setSelectedStory(null);
     setOriginRect(null);
     window.scrollTo(0, scrollBeforeDeepDive.current);
+  }, []);
+
+  // Inline-mode collapse — clears the open story without the modal's scroll
+  // restore. The inline block lives in the document flow, so removing it lets
+  // the feed reflow in place; jumping scroll back to the pre-open position
+  // would feel wrong here (the user scrolled while reading the expansion).
+  const handleInlineCollapse = useCallback(() => {
+    setSelectedStory(null);
+    setOriginRect(null);
   }, []);
 
   // Detect mobile for feed layout — responsive to viewport changes
@@ -705,6 +726,21 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
   const twinLeads = mainStories.slice(0, 2);
   const gridStories = mainStories.slice(2);
 
+  // --- Inline Deep Dive split (inline mode only) ---------------------------
+  // When deepDiveMode === "inline" and a story is open, the feed splits around
+  // it so the expanded block renders full-width in the document flow. These
+  // values stay inert in "card" mode (inlineActive is false), so the card
+  // render path is byte-identical.
+  const inlineActive = deepDiveMode === "inline" && selectedStory != null;
+  // Index of the open story within mainStories: 0/1 = twin lead, >=2 = grid.
+  const inlineIndex = inlineActive
+    ? mainStories.findIndex((s) => s.id === selectedStory!.id)
+    : -1;
+  // Open story is one of the two twin leads (replaces the whole twin block).
+  const inlineInLead = inlineActive && inlineIndex >= 0 && inlineIndex < 2;
+  // Open story is in the grid — split position within gridStories.
+  const inlineGridSplit = inlineActive && inlineIndex >= 2 ? inlineIndex - 2 : -1;
+
   // Lead hero image removed 2026-05-13 — text-only newspaper composition.
 
   // Continuous-scroll set: main feed + World overflow. Keyboard nav (J/K) and
@@ -730,6 +766,33 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
     visibleStories,
     kbdSelectStory,
     !!selectedStory,
+  );
+
+  // Single grid-card renderer — shared by the unsplit grid and both halves of
+  // the inline split so the index-derived props (globalIndex, variant, family,
+  // keyboard focus) stay identical regardless of which path renders the card.
+  // `idx` is the card's position within gridStories (rank = idx + 2). Declared
+  // after kbdFocusIndex since it closes over it.
+  const renderGridCard = useCallback(
+    (story: Story, idx: number) => {
+      const gi = 2 + idx;
+      const variant: "digest" | "wire" = idx < 8 ? "digest" : "wire";
+      const family = storyFamilies.get(story.id);
+      return (
+        <div key={story.id} className="feed-grid__item">
+          <StoryCard
+            story={story}
+            index={idx + 2}
+            onStoryClick={handleStoryClick}
+            globalIndex={gi}
+            kbdFocused={kbdFocusIndex === gi}
+            variant={variant}
+            family={family}
+          />
+        </div>
+      );
+    },
+    [storyFamilies, handleStoryClick, kbdFocusIndex],
   );
 
   // Inter-story navigation within Deep Dive — traverses main + overflow.
@@ -861,38 +924,61 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
 
                   {/* Twin top stories — ranks 0 and 1, co-equal "Top Story"
                       leads side-by-side in a 50/50 split (vertical stack on
-                      <1024px). Both wear the badge. v3 2026-05-14. */}
-                  {twinLeads.length > 0 && (
-                    <div key={filterKey} className={`lead-twin hero-slot${isEditionSwitch ? " anim-content-arrive" : ""}`}>
-                      {twinLeads.map((story, idx) => (
-                        <LeadStory
-                          key={story.id}
-                          story={story}
-                          rank={idx}
-                          twin={twinLeads.length === 2}
-                          onStoryClick={handleStoryClick}
-                          kbdFocused={kbdFocusIndex === idx}
-                        />
-                      ))}
-                    </div>
+                      <1024px). Both wear the badge. v3 2026-05-14.
+                      Inline mode: when one of the twin leads is open, the whole
+                      twin block is replaced by the full-width InlineDeepDive. */}
+                  {inlineInLead ? (
+                    <InlineDeepDive story={selectedStory!} onCollapse={handleInlineCollapse} />
+                  ) : (
+                    twinLeads.length > 0 && (
+                      <div key={filterKey} className={`lead-twin hero-slot${isEditionSwitch ? " anim-content-arrive" : ""}`}>
+                        {twinLeads.map((story, idx) => (
+                          <LeadStory
+                            key={story.id}
+                            story={story}
+                            rank={idx}
+                            twin={twinLeads.length === 2}
+                            onStoryClick={handleStoryClick}
+                            kbdFocused={kbdFocusIndex === idx}
+                          />
+                        ))}
+                      </div>
+                    )
                   )}
 
                   {/* Grid below twin leads — ranks 2-49 (digest at 2-9, wire
                       at 10-49). Slot math: 8 digest + 40 wire = 48 grid cards,
-                      plus 2 twin leads above = 50 total. */}
+                      plus 2 twin leads above = 50 total.
+                      Inline mode: when a grid card is open, the grid is split
+                      into two sub-grids with the full-width InlineDeepDive
+                      between them (one <section> each avoids the empty-cell gap
+                      that grid-column:1/-1 would leave). The original grid index
+                      is preserved on each card so variant + globalIndex math is
+                      identical to the unsplit grid. */}
                   {gridStories.length > 0 && (
-                    <section key={`grid-${filterKey}`} aria-label="Stories" className={`feed-grid${isEditionSwitch ? " anim-content-arrive" : ""}`}>
-                      {gridStories.map((story, idx) => {
-                        const gi = 2 + idx;
-                        const variant: "digest" | "wire" = idx < 8 ? "digest" : "wire";
-                        const family = storyFamilies.get(story.id);
-                        return (
-                          <div key={story.id} className="feed-grid__item">
-                            <StoryCard story={story} index={idx + 2} onStoryClick={handleStoryClick} globalIndex={gi} kbdFocused={kbdFocusIndex === gi} variant={variant} family={family} />
-                          </div>
-                        );
-                      })}
-                    </section>
+                    inlineGridSplit >= 0 ? (
+                      <React.Fragment key={`grid-split-${filterKey}`}>
+                        {inlineGridSplit > 0 && (
+                          <section aria-label="Stories" className="feed-grid">
+                            {gridStories.slice(0, inlineGridSplit).map((story, idx) =>
+                              renderGridCard(story, idx),
+                            )}
+                          </section>
+                        )}
+                        <InlineDeepDive story={selectedStory!} onCollapse={handleInlineCollapse} />
+                        {inlineGridSplit < gridStories.length - 1 && (
+                          <section aria-label="Stories" className="feed-grid">
+                            {gridStories.slice(inlineGridSplit + 1).map((story, sIdx) =>
+                              renderGridCard(story, inlineGridSplit + 1 + sIdx),
+                            )}
+                          </section>
+                        )}
+                      </React.Fragment>
+                    ) : (
+                      <section key={`grid-${filterKey}`} aria-label="Stories" className={`feed-grid${isEditionSwitch ? " anim-content-arrive" : ""}`}>
+                        {gridStories.map((story, idx) => renderGridCard(story, idx))}
+                      </section>
+                    )
                   )}
 
                   {/* Expand-to-50 affordance — sits between the default
@@ -935,9 +1021,12 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
       {/* Footer */}
       {!isLoading && <Footer lastUpdated={lastUpdated} />}
 
-      {/* Deep Dive panel — wrapped in its own ErrorBoundary so one bad
-           cluster doesn't crash the entire feed */}
-      {selectedStory && (
+      {/* Deep Dive panel (card mode) — wrapped in its own ErrorBoundary so one
+           bad cluster doesn't crash the entire feed. In inline mode the modal
+           is NOT mounted on the desktop broadsheet (InlineDeepDive renders
+           in-feed instead); mobile keeps the modal since the inline split is a
+           desktop-feed feature and MobileFeed has no split path yet. */}
+      {(deepDiveMode === "card" || isMobile) && selectedStory && (
         <DeepDiveErrorBoundary onClose={handleDeepDiveClose}>
           <DeepDive
             story={selectedStory}
