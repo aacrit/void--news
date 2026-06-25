@@ -121,16 +121,10 @@
    cramped). The modal keeps the .dd-lede float untouched.
    ========================================================================== */
 
-/* The summary spans the full content width (matching the masthead + the band).
-   On tablet/desktop it flows in newspaper columns so it fills the whole row
-   without a single ~120-character line; the column measure stays readable. */
-@media (min-width: 768px) {
-  .inline-dd__story .dd-summary-text {
-    max-width: none;          /* override the base reading-measure cap */
-    column-width: 20rem;
-    column-gap: var(--space-6);
-    column-rule: 1px solid var(--border-subtle);
-  }
+/* The summary is a single column flowing across the full content width
+   (max-width:none overrides the inherited reading-measure cap). */
+.inline-dd__story .dd-summary-text {
+  max-width: none;
 }
 
 /* The spectrum spans the full content column as a landscape band. */
@@ -141,15 +135,19 @@
   width: 100%;
 }
 
-/* The SVG scales uniformly to the band width (~2.7x at full width). Hold the
-   curve / needle / contour / dot line weights steady so they read as crisp
-   editorial strokes rather than bold slabs; the dots + labels scale naturally. */
-.inline-dd__spectrum .dd-sv-view__stroke,
+/* The SVG scales uniformly to the band width (~2.7x at full width). Keep the
+   fixed-dash contour / needle + the dots crisp via non-scaling-stroke. The CURVE
+   stroke is excluded on purpose: it draws on via a getTotalLength() dasharray
+   animation, and non-scaling-stroke reinterprets that user-unit length in screen
+   px, which gaps the center. Let it scale normally (continuous) + trim its weight. */
 .inline-dd__spectrum .dd-sv-view__contour,
 .inline-dd__spectrum .dd-sv-view__mean,
 .inline-dd__spectrum .dd-sv-view__dot,
 .inline-dd__spectrum .dd-sv-view__src-dot {
   vector-effect: non-scaling-stroke;
+}
+.inline-dd__spectrum .dd-sv-view__stroke {
+  stroke-width: 0.8;   /* user units → ~2px at the band scale, continuous */
 }
 
 /* Reduced motion: the caret nudge is the only motion in this stage; disable it. */
