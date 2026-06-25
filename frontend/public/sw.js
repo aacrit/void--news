@@ -1,9 +1,9 @@
 // void --news Service Worker
 // Enables offline reading, asset caching, and background sync
 
-const CACHE_NAME = 'void-news-v2';
-const ASSET_CACHE = 'void-news-assets-v2';
-const API_CACHE = 'void-news-api-v2';
+const CACHE_NAME = 'void-news-v3';
+const ASSET_CACHE = 'void-news-assets-v3';
+const API_CACHE = 'void-news-api-v3';
 
 const OFFLINE_URL = '/offline.html';
 

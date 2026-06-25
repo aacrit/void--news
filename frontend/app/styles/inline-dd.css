@@ -17,7 +17,9 @@
   width: 100%;
   padding: var(--space-5);
   margin-block: var(--space-4);
-  background: var(--bg-primary);
+  /* Transparent so the block reads as part of the feed canvas, not a darker
+     panel sitting on top of it (was var(--bg-primary), which read more black). */
+  background: transparent;
   /* Top + bottom hairline frame the in-flow block apart from the cards. */
   border-block: 1px solid var(--border-subtle);
   /* On open, scrollIntoView({block:"start"}) aligns the top just below the
@@ -107,6 +109,26 @@
 .inline-dd__content {
   max-width: 68rem;
   margin-inline: auto;
+}
+
+/* ==========================================================================
+   Newspaper embed (desktop) — float just the compact spectrum inside the lede
+   ----------------------------------------------------------------------------
+   The shared .dd-lede float (layout-zones.css) floats the whole Sigil+Spectrum
+   stack right. In the full-width inline block that stack is far taller than the
+   short summary, so the text runs out and leaves dead space under it. Here we
+   hide the big radial Sigil (redundant with the masthead BiasSnapshot in inline
+   mode) and narrow the float so only the bell curve floats — short enough that
+   the summary wraps around AND flows under it, like a figure set into an
+   article. Tablet/phone keep the stacked Sigil; the modal is untouched.
+   ========================================================================== */
+@media (min-width: 1024px) {
+  .inline-dd .dd-lede__spectrum .dd-analysis-block__sigil {
+    display: none;
+  }
+  .inline-dd .dd-lede__spectrum {
+    width: clamp(300px, 34%, 440px);
+  }
 }
 
 /* The lede float (.dd-lede__spectrum at >=1024px) already establishes its own

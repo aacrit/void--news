@@ -13,15 +13,15 @@
  *
  * Mirrors the audioGate.ts kill-switch idiom. SSR-safe: the query-param
  * branch only runs when `window` exists, so the first server/client paint
- * always resolves to the env value (default "card") and never mismatches.
+ * always resolves to the env value (default "inline") and never mismatches.
  */
 export type DeepDiveMode = "card" | "inline";
 
-/** Compile-time default from the deploy env. Falls back to "card". */
+/** Compile-time default from the deploy env. Falls back to "inline". */
 export const DEEP_DIVE_MODE_ENV: DeepDiveMode =
-  (process.env.NEXT_PUBLIC_DEEP_DIVE_MODE ?? "card") === "inline"
-    ? "inline"
-    : "card";
+  (process.env.NEXT_PUBLIC_DEEP_DIVE_MODE ?? "inline") === "card"
+    ? "card"
+    : "inline";
 
 /**
  * Resolve the active Deep Dive mode.
