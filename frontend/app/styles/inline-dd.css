@@ -112,28 +112,38 @@
 }
 
 /* ==========================================================================
-   Newspaper embed (desktop) — float just the compact spectrum inside the lede
+   The Story + The Spread — two stacked sections (replaces the old lede float)
    ----------------------------------------------------------------------------
-   The shared .dd-lede float (layout-zones.css) floats the whole Sigil+Spectrum
-   stack right. In the full-width inline block that stack is far taller than the
-   short summary, so the text runs out and leaves dead space under it. Here we
-   hide the big radial Sigil (redundant with the masthead BiasSnapshot in inline
-   mode) and narrow the float so only the bell curve floats — short enough that
-   the summary wraps around AND flows under it, like a figure set into an
-   article. Tablet/phone keep the stacked Sigil; the modal is untouched.
+   Inline mode no longer reuses the shared .dd-lede float. The summary ("The
+   Story") sits in a comfortable reading measure; the source-lean spectrum ("The
+   Spread") gets its own full-width landscape band, because the bell curve draws
+   its vertical room from horizontal width (the float forced it ~66px tall and
+   cramped). The modal keeps the .dd-lede float untouched.
    ========================================================================== */
-@media (min-width: 1024px) {
-  .inline-dd .dd-lede__spectrum .dd-analysis-block__sigil {
-    display: none;
-  }
-  .inline-dd .dd-lede__spectrum {
-    width: clamp(300px, 34%, 440px);
-  }
+
+/* Keep the summary at a readable measure even though the block is wide. */
+.inline-dd__story {
+  max-width: 42rem;
 }
 
-/* The lede float (.dd-lede__spectrum at >=1024px) already establishes its own
-   BFC via .dd-lede { display: flow-root }, so the summary wraps correctly
-   inside the full-width block with no extra rules here. */
+/* The spectrum spans the full content column as a landscape band. */
+.inline-dd__spread {
+  margin-top: var(--space-5);
+}
+.inline-dd__spectrum {
+  width: 100%;
+}
+
+/* The SVG scales uniformly to the band width (~2.7x at full width). Hold the
+   curve / needle / contour / dot line weights steady so they read as crisp
+   editorial strokes rather than bold slabs; the dots + labels scale naturally. */
+.inline-dd__spectrum .dd-sv-view__stroke,
+.inline-dd__spectrum .dd-sv-view__contour,
+.inline-dd__spectrum .dd-sv-view__mean,
+.inline-dd__spectrum .dd-sv-view__dot,
+.inline-dd__spectrum .dd-sv-view__src-dot {
+  vector-effect: non-scaling-stroke;
+}
 
 /* Reduced motion: the caret nudge is the only motion in this stage; disable it. */
 @media (prefers-reduced-motion: reduce) {
