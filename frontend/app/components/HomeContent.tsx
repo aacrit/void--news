@@ -928,10 +928,10 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
                       Inline mode: when one of the twin leads is open, the whole
                       twin block is replaced by the full-width InlineDeepDive. */}
                   {inlineInLead ? (
-                    <InlineDeepDive story={selectedStory!} onCollapse={handleInlineCollapse} />
+                    <InlineDeepDive key={selectedStory!.id} story={selectedStory!} onCollapse={handleInlineCollapse} />
                   ) : (
                     twinLeads.length > 0 && (
-                      <div key={filterKey} className={`lead-twin hero-slot${isEditionSwitch ? " anim-content-arrive" : ""}`}>
+                      <div key={filterKey} className={`lead-twin hero-slot${isEditionSwitch ? " anim-content-arrive" : ""}${inlineActive ? " lead-twin--recede" : ""}`}>
                         {twinLeads.map((story, idx) => (
                           <LeadStory
                             key={story.id}
@@ -959,15 +959,15 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
                     inlineGridSplit >= 0 ? (
                       <React.Fragment key={`grid-split-${filterKey}`}>
                         {inlineGridSplit > 0 && (
-                          <section aria-label="Stories" className="feed-grid">
+                          <section aria-label="Stories" className="feed-grid feed-grid--recede">
                             {gridStories.slice(0, inlineGridSplit).map((story, idx) =>
                               renderGridCard(story, idx),
                             )}
                           </section>
                         )}
-                        <InlineDeepDive story={selectedStory!} onCollapse={handleInlineCollapse} />
+                        <InlineDeepDive key={selectedStory!.id} story={selectedStory!} onCollapse={handleInlineCollapse} />
                         {inlineGridSplit < gridStories.length - 1 && (
-                          <section aria-label="Stories" className="feed-grid">
+                          <section aria-label="Stories" className="feed-grid feed-grid--recede">
                             {gridStories.slice(inlineGridSplit + 1).map((story, sIdx) =>
                               renderGridCard(story, inlineGridSplit + 1 + sIdx),
                             )}
@@ -975,7 +975,7 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
                         )}
                       </React.Fragment>
                     ) : (
-                      <section key={`grid-${filterKey}`} aria-label="Stories" className={`feed-grid${isEditionSwitch ? " anim-content-arrive" : ""}`}>
+                      <section key={`grid-${filterKey}`} aria-label="Stories" className={`feed-grid${isEditionSwitch ? " anim-content-arrive" : ""}${inlineActive ? " feed-grid--recede" : ""}`}>
                         {gridStories.map((story, idx) => renderGridCard(story, idx))}
                       </section>
                     )
