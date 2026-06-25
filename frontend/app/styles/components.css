@@ -4479,6 +4479,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   color: var(--fg-secondary);
   font-family: var(--font-structural);
   text-align: left;
+  hyphens: auto;
 }
 
 /* Drop cap — newspaper premium. First letter of the lede spans 3 lines.

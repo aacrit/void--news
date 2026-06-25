@@ -106,9 +106,7 @@
   gap: clamp(1.5rem, 2.5vw, 2.5rem);
   align-items: start;
   width: 100%;
-  /* Deeper trough between the co-equal lead zone and the dense feed grid,
-     so the eye rests at the group boundary. */
-  margin-bottom: clamp(2rem, 3vw, 3.5rem);
+  margin-bottom: clamp(1.5rem, 2.5vw, 2.5rem);
 }
 
 .lead-twin > .lead-story:first-child {

@@ -301,13 +301,12 @@
   padding: var(--space-5);
 }
 
-/* Inside Deep Dive, cap running prose to a comfortable reading measure.
-   The panel is up to 1120px+ wide, so uncapped body text ran ~110ch. */
+/* Inside Deep Dive, text fills the panel width. The panel is already a
+   constrained reading column, and the summary lives in a max-height
+   collapsible (.dd-collapsible__inner) — a ch cap makes it wrap taller and
+   clip against that max-height, so keep it uncapped. See DeepDive.tsx. */
 .deep-dive-panel__content .text-base {
-  max-width: 68ch;
-}
-.deep-dive-panel__content .dd-summary-text {
-  max-width: 68ch;
+  max-width: none;
 }
 
 /* ---- Footer ------------------------------------------------------------ */
