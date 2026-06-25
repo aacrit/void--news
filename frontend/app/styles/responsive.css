@@ -21,7 +21,7 @@
 @media (min-width: 768px) {
   .feed-grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 0 var(--space-5);
+    gap: var(--space-4) var(--space-5);
   }
 
   .feed-grid__item {
@@ -64,7 +64,7 @@
 @media (min-width: 1024px) {
   .feed-grid {
     grid-template-columns: repeat(3, 1fr);
-    gap: 0 var(--space-5);
+    gap: var(--space-4) var(--space-5);
   }
 
   .feed-grid__item {
@@ -156,7 +156,7 @@
   /* Ultra-wide: 4-column unified grid — balances density with readability */
   .feed-grid {
     grid-template-columns: repeat(4, 1fr);
-    gap: 0 var(--space-5);
+    gap: var(--space-4) var(--space-5);
   }
 
   .feed-grid__item:nth-child(3n) {
@@ -180,6 +180,16 @@
   /* Deep Dive: wider on ultra-wide for more reading comfort */
   .deep-dive-panel {
     max-width: 1120px;
+  }
+}
+
+/* ---- Ultrawide (1728px+) ------------------------------------------------ */
+@media (min-width: 1728px) {
+  /* Give the Deep Dive panel more room so it isn't marooned in dead margin.
+     Running prose stays at its 68ch cap (layout.css); only the analysis and
+     spectrum blocks use the extra width. */
+  .deep-dive-panel {
+    max-width: 1240px;
   }
 }
 

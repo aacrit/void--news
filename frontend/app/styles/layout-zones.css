@@ -80,9 +80,10 @@
   line-height: 1.6;
   color: var(--fg-secondary);
   margin: 0 0 var(--space-4);
-  /* Single column spanning the full canvas. CEO 2026-05-13. */
+  /* Single column; body measure capped to ~72ch for readability (the cap the
+     CEO 2026-05-13 comment above intended). The headline stays full-width. */
   width: 100%;
-  max-width: none;
+  max-width: 72ch;
   /* Page-catch hover (handled in components.css :hover rule). */
   transition: transform 280ms var(--ease-cinematic);
 }
@@ -105,7 +106,9 @@
   gap: clamp(1.5rem, 2.5vw, 2.5rem);
   align-items: start;
   width: 100%;
-  margin-bottom: clamp(1.5rem, 2.5vw, 2.5rem);
+  /* Deeper trough between the co-equal lead zone and the dense feed grid,
+     so the eye rests at the group boundary. */
+  margin-bottom: clamp(2rem, 3vw, 3.5rem);
 }
 
 .lead-twin > .lead-story:first-child {

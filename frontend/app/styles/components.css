@@ -613,16 +613,10 @@
   -webkit-line-clamp: 5;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  /* Newspaper norm: justified body copy with hyphenation.
-     text-align-last:left prevents the clamp cutoff line from being
-     stretched across the full measure by the justify algorithm. */
-  text-align: justify;
-  text-align-last: left;
-  hyphens: auto;
-  -webkit-hyphens: auto;
-  /* Page-catch hover — see .story-card__headline-text. Box translates
-     by 2px; the justify algorithm sees an unchanged container width,
-     so the text doesn't re-justify or reflow. */
+  /* Left-aligned body copy: avoids the "rivers" that justified + hyphenated
+     text creates in a narrow card column (calmer to read). */
+  text-align: left;
+  /* Page-catch hover — see .story-card__headline-text. Box translates 2px. */
   transition: transform 280ms var(--ease-cinematic);
 }
 
@@ -881,13 +875,10 @@
   line-height: 1.6;
   color: var(--fg-secondary);
   margin-bottom: var(--space-4);
-  /* Newspaper norm: justified body copy with hyphenation.
-     text-align-last:left prevents the last line from being
-     stretched across the full measure by the justify algorithm. */
-  text-align: justify;
-  text-align-last: left;
-  hyphens: auto;
-  -webkit-hyphens: auto;
+  /* Reading measure capped to ~72ch so the lead summary stays legible and
+     doesn't become a wide slab competing with the headline on big screens. */
+  max-width: 72ch;
+  text-align: left;
   /* Page-catch hover — see .story-card__headline-text. */
   transition: transform 280ms var(--ease-cinematic);
 }
@@ -4487,8 +4478,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 .dd-summary-text {
   color: var(--fg-secondary);
   font-family: var(--font-structural);
-  text-align: justify;
-  hyphens: auto;
+  text-align: left;
 }
 
 /* Drop cap — newspaper premium. First letter of the lede spans 3 lines.
