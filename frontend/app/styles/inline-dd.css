@@ -150,6 +150,13 @@
   stroke-width: 0.8;   /* user units → ~2px at the band scale, continuous */
 }
 
+/* PERF: drop the ink-wash SVG filter (feTurbulence + feDisplacementMap) in the
+   full-width band. It scales with area, so at ~1088px it processes ~7x the
+   pixels of the modal float for a texture that barely reads at this size. */
+.inline-dd__spectrum .dd-sv-view__fill {
+  filter: none;
+}
+
 /* Reduced motion: the caret nudge is the only motion in this stage; disable it. */
 @media (prefers-reduced-motion: reduce) {
   .inline-dd__caret {
@@ -164,31 +171,29 @@
    Sibling rack-focus — other stories recede "backstage" when one is expanded
    ----------------------------------------------------------------------------
    When a story is open inline, the remaining cards (both split feed-grids and
-   the twin-lead block) blur, dim, and scale down a touch, leaving the expanded
-   .inline-dd block (which sits OUTSIDE these containers) as the one sharp
-   subject. The transition lives on the base wrappers so siblings ease BOTH into
-   the backstage and back into focus on collapse. Lens-focus token + rack ease.
+   the twin-lead block) dim and scale down a touch, leaving the expanded .inline-dd
+   block (which sits OUTSIDE these containers) as the one sharp subject.
+   PERF: this uses ONLY opacity + transform (compositor-cheap). An earlier version
+   animated filter: blur() across all ~50 cards at once, which is GPU/paint-heavy
+   and caused jank on open; the extra dim compensates for dropping the blur.
    ========================================================================== */
 .feed-grid__item,
 .lead-twin {
   transition:
-    filter var(--dur-normal, 300ms) var(--ease-rack, ease),
     opacity var(--dur-normal, 300ms) var(--ease-rack, ease),
     transform var(--dur-normal, 300ms) var(--ease-rack, ease);
 }
 
 .feed-grid--recede .feed-grid__item,
 .lead-twin--recede {
-  filter: var(--focus-soft);     /* blur(1.5px) */
-  opacity: 0.5;
-  transform: scale(0.99);
+  opacity: 0.42;
+  transform: scale(0.985);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .feed-grid--recede .feed-grid__item,
   .lead-twin--recede {
-    filter: none;
     transform: none;
-    opacity: 0.6;                /* dim only — no blur or scale */
+    opacity: 0.6;                /* dim only — no scale */
   }
 }
