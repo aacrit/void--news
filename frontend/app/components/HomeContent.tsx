@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useCallback, useRef, Component, type ReactNode } from "react";
+import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import type { Edition, Category, Story, BiasScores, BiasSpread, ThreeLensData, OpinionLabel, SigilData } from "../lib/types";
 import { EDITIONS } from "../lib/types";
@@ -9,46 +9,14 @@ import { supabase, supabaseError } from "../lib/supabase";
 import { cacheGet, cacheSet } from "../lib/feedCache";
 import { BASE_PATH } from "../lib/utils";
 import { AUDIO_ENABLED } from "../lib/audioGate";
-import { getDeepDiveMode, type DeepDiveMode } from "../lib/deepDiveModeGate";
 import LogoIcon from "./LogoIcon";
 import LogoWordmark from "./LogoWordmark";
 import NavBar from "./NavBar";
 import LeadStory from "./LeadStory";
 import StoryCard from "./StoryCard";
 import { computeStoryFamilies } from "../lib/storyFamilies";
-const DeepDive = dynamic(() => import("./DeepDive"), { ssr: false });
 const InlineDeepDive = dynamic(() => import("./InlineDeepDive"), { ssr: false });
 import ErrorBoundary from "./ErrorBoundary";
-
-/* DeepDive-specific ErrorBoundary — shows dismissible error in the panel
-   instead of crashing the entire feed. */
-class DeepDiveErrorBoundary extends Component<
-  { children: ReactNode; onClose: () => void },
-  { hasError: boolean }
-> {
-  constructor(props: { children: ReactNode; onClose: () => void }) {
-    super(props);
-    this.state = { hasError: false };
-  }
-  static getDerivedStateFromError(): { hasError: boolean } {
-    return { hasError: true };
-  }
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div className="deep-dive dd-error-boundary" role="dialog" aria-label="Error">
-          <div className="dd-error-boundary__inner">
-            <p className="text-base empty-state__body">
-              Unable to load analysis for this story.
-            </p>
-            <button className="btn-primary" onClick={this.props.onClose}>Close</button>
-          </div>
-        </div>
-      );
-    }
-    return this.props.children;
-  }
-}
 
 import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
@@ -177,16 +145,6 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
   const [originRect, setOriginRect] = useState<DOMRect | null>(null);
 
-  // Deep Dive mode — "card" (legacy modal) or "inline" (in-feed expand).
-  // MUST initialize to "card" so SSR + first client paint match (the query
-  // override + env are resolved in the useEffect below, after mount). The
-  // default `card` render path is byte-identical to before; only `inline`
-  // branches diverge.
-  const [deepDiveMode, setDeepDiveMode] = useState<DeepDiveMode>("card");
-  useEffect(() => {
-    setDeepDiveMode(getDeepDiveMode());
-  }, []);
-
   // Initial value MUST be false (matches SSR) — the matchMedia useEffect below
   // promotes it to true on mobile after mount. Reading data-viewport synchronously
   // here caused React #418 hydration mismatch on every iPhone-width route because
@@ -277,12 +235,6 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
     scrollBeforeDeepDive.current = window.scrollY;
     setOriginRect(rect.width > 0 ? rect : null);
     setSelectedStory(story);
-  }, []);
-
-  const handleDeepDiveClose = useCallback(() => {
-    setSelectedStory(null);
-    setOriginRect(null);
-    window.scrollTo(0, scrollBeforeDeepDive.current);
   }, []);
 
   // Inline-mode collapse — clear the open story and glide back to where the user
@@ -730,12 +682,12 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
   const twinLeads = mainStories.slice(0, 2);
   const gridStories = mainStories.slice(2);
 
-  // --- Inline Deep Dive split (inline mode only) ---------------------------
-  // When deepDiveMode === "inline" and a story is open, the feed splits around
-  // it so the expanded block renders full-width in the document flow. These
-  // values stay inert in "card" mode (inlineActive is false), so the card
-  // render path is byte-identical.
-  const inlineActive = deepDiveMode === "inline" && selectedStory != null;
+  // --- Inline Deep Dive split ----------------------------------------------
+  // When a story is open, the feed splits around it so the expanded block
+  // renders full-width in the document flow. Inline is the only Deep Dive mode
+  // now (the legacy modal was removed); inlineActive simply tracks whether a
+  // story is open.
+  const inlineActive = selectedStory != null;
   // Index of the open story within mainStories: 0/1 = twin lead, >=2 = grid.
   const inlineIndex = inlineActive
     ? mainStories.findIndex((s) => s.id === selectedStory!.id)
@@ -798,17 +750,6 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
     },
     [storyFamilies, handleStoryClick, kbdFocusIndex],
   );
-
-  // Inter-story navigation within Deep Dive — traverses main + overflow.
-  const handleDeepDiveNav = useCallback((direction: "prev" | "next") => {
-    if (!selectedStory) return;
-    const idx = visibleStories.findIndex((s) => s.id === selectedStory.id);
-    if (idx < 0) return;
-    const newIdx = direction === "prev" ? idx - 1 : idx + 1;
-    if (newIdx >= 0 && newIdx < visibleStories.length) {
-      setSelectedStory(visibleStories[newIdx]);
-    }
-  }, [selectedStory, visibleStories]);
 
   // Search: when a result is selected, open its Deep Dive
   const handleSearchSelect = useCallback((story: Story) => {
@@ -1027,25 +968,9 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
       {/* Footer */}
       {!isLoading && <Footer lastUpdated={lastUpdated} />}
 
-      {/* Deep Dive panel (card mode) — wrapped in its own ErrorBoundary so one
-           bad cluster doesn't crash the entire feed. The modal is NOT mounted
-           on the desktop broadsheet in inline mode (InlineDeepDive renders
-           in-feed instead) and is NO LONGER mounted on mobile (MobileFeed now
-           expands InlineDeepDive in place — see its split-render path). This
-           leaves the modal only for desktop `?dd=card`; it is slated for full
-           removal in a later phase. */}
-      {deepDiveMode === "card" && selectedStory && (
-        <DeepDiveErrorBoundary onClose={handleDeepDiveClose}>
-          <DeepDive
-            story={selectedStory}
-            onClose={handleDeepDiveClose}
-            originRect={originRect}
-            onNavigate={handleDeepDiveNav}
-            storyIndex={visibleStories.findIndex((s) => s.id === selectedStory.id)}
-            totalStories={visibleStories.length}
-          />
-        </DeepDiveErrorBoundary>
-      )}
+      {/* Deep Dive renders inline in the feed (InlineDeepDive) on both desktop
+           (split broadsheet) and mobile (MobileFeed split-render). The legacy
+           modal was removed 2026-06-26. */}
 
       {/* Search overlay — Cmd+K. Search across main feed + World overflow. */}
       <SearchOverlay
