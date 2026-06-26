@@ -2278,6 +2278,22 @@
   --hist-nav-accent-glow: rgba(139, 115, 85, 0.12);
 }
 
+/* ── Weekly Link — signature magazine red (matches the weekly masthead
+   --palette-weekly). Reuses the .nav-history structure (rule + italic label),
+   overrides only the accent custom properties. Placed after the dark
+   .nav-history block so the dark override below wins on source order. ── */
+.nav-weekly {
+  --hist-nav-accent: var(--palette-weekly);
+  --hist-nav-accent-bright: #D41920;
+  --hist-nav-accent-glow: rgba(185, 28, 28, 0.12);
+}
+
+:root[data-mode="dark"] .nav-weekly {
+  --hist-nav-accent: var(--palette-weekly);
+  --hist-nav-accent-bright: #FCA5A5;
+  --hist-nav-accent-glow: rgba(239, 83, 80, 0.15);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .nav-history,
   .nav-history__rule,

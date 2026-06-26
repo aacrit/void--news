@@ -113,7 +113,7 @@ export default function NavBar({
             <span className="nav-history__rule" aria-hidden="true" />
             <span className="nav-history__label">History</span>
           </Link>
-          <Link href="/weekly" className="nav-history" aria-label="Go to the Weekly digest" title="void --weekly">
+          <Link href="/weekly" className="nav-history nav-weekly" aria-label="Go to the Weekly digest" title="void --weekly">
             <span className="nav-history__rule" aria-hidden="true" />
             <span className="nav-history__label">Weekly</span>
           </Link>
