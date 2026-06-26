@@ -403,6 +403,14 @@ _LOW_SPECIFICITY_ENTITIES = frozenset({
 })
 _LOW_SPECIFICITY_WEIGHT = 0.4
 
+# Phase 2 distinguishing-shared gate. After the total entity-overlap gate
+# passes, the shared set must still contain >= this many SPECIFIC entities
+# once generic ones (_LOW_SPECIFICITY_ENTITIES + _ENTITY_STOP_TOKENS) are
+# removed. Generic entities alone (e.g. {obama, court, ruling, washington}
+# bridging an unrelated SCOTUS story and an Obama story) must not trigger a
+# merge. Set-membership only — NOT the IDF-math scheme reverted 2026-05-31.
+MIN_DISTINGUISHING_SHARED = 1
+
 
 # ---------------------------------------------------------------------------
 # Canonical summit / known co-occurrence pairs
@@ -908,6 +916,17 @@ def merge_related_clusters(
             # Entity-overlap gate
             shared = ents_i & ents_j
             if len(shared) < min_shared_entities:
+                continue
+
+            # Distinguishing-shared gate — generic entities (world leaders,
+            # hot-spot countries, institution shells) alone must not bridge two
+            # stories. Require >= MIN_DISTINGUISHING_SHARED specific entities in
+            # the overlap once generic ones are removed. Legitimate Trump-X /
+            # Iran-X consolidations share a concrete entity (a person, place, or
+            # org named in the event), so they still merge; an unrelated SCOTUS
+            # and Obama cluster sharing only {obama, court, ...} does not.
+            distinguishing = shared - _LOW_SPECIFICITY_ENTITIES - _ENTITY_STOP_TOKENS
+            if len(distinguishing) < MIN_DISTINGUISHING_SHARED:
                 continue
 
             # Time gate — don't merge stories far apart in time.
