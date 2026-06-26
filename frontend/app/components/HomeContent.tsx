@@ -912,6 +912,8 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
                     filterKey={filterKey}
                     kbdFocusIndex={kbdFocusIndex}
                     editionMeta={editionMeta}
+                    selectedStory={selectedStory}
+                    onInlineCollapse={handleInlineCollapse}
                     transitionClass={editionTransition === "out" ? "anim-edition-out" : editionTransition === "in" ? "anim-edition-in" : undefined}
                   />
 
@@ -1026,11 +1028,13 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
       {!isLoading && <Footer lastUpdated={lastUpdated} />}
 
       {/* Deep Dive panel (card mode) — wrapped in its own ErrorBoundary so one
-           bad cluster doesn't crash the entire feed. In inline mode the modal
-           is NOT mounted on the desktop broadsheet (InlineDeepDive renders
-           in-feed instead); mobile keeps the modal since the inline split is a
-           desktop-feed feature and MobileFeed has no split path yet. */}
-      {(deepDiveMode === "card" || isMobile) && selectedStory && (
+           bad cluster doesn't crash the entire feed. The modal is NOT mounted
+           on the desktop broadsheet in inline mode (InlineDeepDive renders
+           in-feed instead) and is NO LONGER mounted on mobile (MobileFeed now
+           expands InlineDeepDive in place — see its split-render path). This
+           leaves the modal only for desktop `?dd=card`; it is slated for full
+           removal in a later phase. */}
+      {deepDiveMode === "card" && selectedStory && (
         <DeepDiveErrorBoundary onClose={handleDeepDiveClose}>
           <DeepDive
             story={selectedStory}

@@ -20,6 +20,28 @@
   padding-top: var(--space-2);
 }
 
+/* ==========================================================================
+   Inline Deep Dive — sibling rack-focus (mobile)
+   ----------------------------------------------------------------------------
+   When a story is expanded inline, the remaining bands (twin leads + the
+   compact card lists) dim and scale down a touch, leaving the in-flow
+   <InlineDeepDive> block — which sits OUTSIDE these containers — as the one
+   sharp subject. Mirrors the desktop rack-focus in inline-dd.css.
+   PERF: opacity + transform only (compositor-cheap) — NO blur across the band.
+   ========================================================================== */
+.mf__twin-leads,
+.mf__cards {
+  transition:
+    opacity var(--dur-normal, 300ms) var(--ease-rack, ease),
+    transform var(--dur-normal, 300ms) var(--ease-rack, ease);
+}
+
+.mf__twin-leads--recede,
+.mf__cards--recede {
+  opacity: 0.5;
+  transform: scale(0.985);
+}
+
 /* v3 (2026-05-14): twin top stories on mobile — both heroes stacked
    vertically, both wearing the "Top Story" badge. A hairline divider sits
    between them via the bottom border of the first twin hero. */
@@ -988,6 +1010,13 @@
     animation: none;
     opacity: 1;
     transform: none;
+  }
+
+  /* Inline rack-focus: dim only — no scale — when motion is reduced. */
+  .mf__twin-leads--recede,
+  .mf__cards--recede {
+    transform: none;
+    opacity: 0.6;
   }
 }
 

@@ -26,6 +26,8 @@ import type { DeepDiveSpectrumSource } from "./DeepDiveSpectrum";
 import BiasSnapshot from "./BiasSnapshot";
 import ComparativeView from "./ComparativeView";
 import ClaimConsensusSection from "./ClaimConsensusSection";
+import SixLenses from "./SixLenses";
+import SummaryWithContradictions from "./SummaryWithContradictions";
 import { findHistoryContext } from "../lib/historyContext";
 import LazyOnView from "./LazyOnView";
 
@@ -514,7 +516,10 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
         <section className={`inline-dd__story anim-dd-section dd-cascade-1${contentVisible ? " anim-dd-section--visible" : ""}`}>
           <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-2)" }}>The Story</h3>
           <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
-            {story.summary}
+            <SummaryWithContradictions
+              summary={story.summary}
+              disputed={deepDive?.claimConsensus?.disputed_details}
+            />
           </p>
         </section>
 
@@ -529,6 +534,17 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
             <div className="inline-dd__spectrum">
               <DeepDiveSpectrum sources={spectrumSources} />
             </div>
+          </section>
+        )}
+
+        {/* ---- Six Lenses — 6-axis ink-stamp bias breakdown ---- */}
+        {story.sigilData && !story.sigilData.pending && (
+          <section
+            className={`anim-dd-section dd-cascade-3${contentVisible ? " anim-dd-section--visible" : ""}`}
+            aria-label="Six Lenses"
+          >
+            <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
+            <SixLenses sigilData={story.sigilData} visible={contentVisible} />
           </section>
         )}
 
