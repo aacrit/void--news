@@ -234,6 +234,12 @@ Older articles in the cluster provide context and background, but the lede must 
 reflect the freshest reported facts. If a cluster spans multiple days, clearly \
 distinguish what happened today from prior developments.
 
+DOMINANT STORY ONLY: These articles were grouped automatically by topic, and one \
+or two may concern a different event. Summarize only the single story described \
+by your TASK 1 headline. If an article covers an unrelated event, exclude it \
+entirely. Never stitch two unrelated stories into one briefing, and never \
+reference a person, place, or event that does not belong to the headline story.
+
 Paragraph 1 (2-3 sentences): The most recent newsworthy development — what just \
 happened, who, when, where. Lead with the latest event. State the single most \
 important figure, name, or outcome from the freshest reporting. \
