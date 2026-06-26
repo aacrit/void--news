@@ -1,27 +1,26 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo, Fragment } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import Link from "next/link";
-import type { HistoricalEvent, MediaItem, EventConnection, ConnectionType } from "../types";
+import type { HistoricalEvent, Perspective, MediaItem, ConnectionType } from "../types";
 import { HOOKS, CTAS } from "../hooks";
 import { ARC_FEATURES } from "../arc-features";
 import HistoryAudioCue from "./HistoryAudioCue";
-import StorySpine, { type SpineSection } from "./StorySpine";
-import DossierRail from "./DossierRail";
-import PerspectiveExhibit from "./PerspectiveExhibit";
-import MediaGallery from "./MediaGallery";
+import ReelScrubber, { type ScrubNode } from "./ReelScrubber";
+import PerspectiveFrame from "./PerspectiveFrame";
+import PerspectiveReader from "./PerspectiveReader";
+import Lightbox from "./Lightbox";
 
 /* ===========================================================================
-   EventDetail — "The Dossier"
+   EventDetail — "The Testimony Reel"
    Cardinal rules: Show Not Tell. Arrive Late, Leave Early.
 
-   Cinematic cold open (Hero + Crack) then a navigable, two-column body:
-     reading column  — The Account, The Voices, The Evidence, Threads
-     dossier rail    — the record (facts, figures, parallel threads)
-   A sticky spine lets the reader orient and jump instead of scrolling blind.
+   The full-screen hero stays the cold open. Beneath it, a thin facts readout,
+   then a horizontal, snap-scrubbable reel: one perspective per frame, then a
+   Threads exit. A drawn ink-track scrubber (echoing the timeline) tracks
+   position; depth lives in a reader overlay. Mobile flips to vertical snap.
    =========================================================================== */
 
-/* ── Connection type priority for sorting ── */
 const CONNECTION_PRIORITY: Record<ConnectionType, number> = {
   caused: 4,
   consequence: 3,
@@ -30,7 +29,6 @@ const CONNECTION_PRIORITY: Record<ConnectionType, number> = {
   parallel: 1,
 };
 
-/* ── Connection type directional glyphs (Show Don't Tell) ── */
 const CONNECTION_GLYPH: Record<ConnectionType, string> = {
   caused: "↓",
   consequence: "↑",
@@ -47,99 +45,198 @@ interface EventDetailProps {
 }
 
 export default function EventDetail({ event, allEvents }: EventDetailProps) {
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [storyExpanded, setStoryExpanded] = useState(false);
+  const reelRef = useRef<HTMLDivElement>(null);
+  const [focusedIndex, setFocusedIndex] = useState(0);
+  const [fraction, setFraction] = useState(0);
+  const [reader, setReader] = useState<Perspective | null>(null);
+  const [evidenceIndex, setEvidenceIndex] = useState<number | null>(null);
+  const [isVertical, setIsVertical] = useState(false);
 
-  /* Determine next event for the chronological exit */
+  const perspectives = event.perspectives;
+  const frameCount = perspectives.length + 1; // voices + threads
+
+  /* Background images for voice frames (skip video posters) */
+  const bgImages = useMemo(
+    () => event.media.filter((m) => m.type !== "video"),
+    [event.media]
+  );
+  const bgFor = (i: number): MediaItem | null =>
+    bgImages.length ? bgImages[i % bgImages.length] : null;
+
+  /* Chronological next */
   const nextEvent = useMemo(() => {
     const sorted = [...allEvents].sort((a, b) => a.dateSort - b.dateSort);
     const idx = sorted.findIndex((e) => e.slug === event.slug);
-    if (idx === -1 || idx >= sorted.length - 1) return null;
-    return sorted[idx + 1];
+    return idx === -1 || idx >= sorted.length - 1 ? null : sorted[idx + 1];
   }, [allEvents, event.slug]);
 
-  /* Context image (map preferred) for inline narrative; the rest go to the
-     contained Evidence gallery. */
-  const { contextImage, galleryMedia } = useMemo(() => {
-    const media = event.media;
-    if (media.length === 0) return { contextImage: null, galleryMedia: [] as MediaItem[] };
-    const mapIdx = media.findIndex((m) => m.type === "map");
-    const ctxIdx = mapIdx >= 0 ? mapIdx : 0;
-    return {
-      contextImage: media[ctxIdx],
-      galleryMedia: media.filter((_, i) => i !== ctxIdx),
-    };
-  }, [event.media]);
+  const sortedConnections = useMemo(
+    () =>
+      [...event.connections].sort(
+        (a, b) => (CONNECTION_PRIORITY[b.type] ?? 0) - (CONNECTION_PRIORITY[a.type] ?? 0)
+      ),
+    [event.connections]
+  );
 
-  /* The crack — hook text */
-  const hook =
-    HOOKS[event.slug] ||
-    (event.contextNarrative || event.title).split(". ").slice(0, 2).join(". ") + ".";
-
-  const sortedConnections = useMemo(() => {
-    return [...event.connections].sort(
-      (a, b) => (CONNECTION_PRIORITY[b.type] ?? 0) - (CONNECTION_PRIORITY[a.type] ?? 0)
-    );
-  }, [event.connections]);
-
-  /* Dossier: top 3 connection-ranked events */
   const dossierEvents = useMemo(() => {
     if (!ARC_FEATURES.DOSSIER || sortedConnections.length === 0) return [];
-    return sortedConnections.slice(0, 3).map((conn) => {
-      const linked = allEvents.find((e) => e.slug === conn.targetSlug);
-      return { connection: conn, event: linked ?? null };
-    });
+    return sortedConnections.slice(0, 3).map((conn) => ({
+      connection: conn,
+      event: allEvents.find((e) => e.slug === conn.targetSlug) ?? null,
+    }));
   }, [sortedConnections, allEvents]);
 
-  /* Rail: parallel + consequence connections for "Elsewhere, Meanwhile" */
-  const sidebarConnections = useMemo(() => {
-    if (!ARC_FEATURES.SIDEBAR) return [] as EventConnection[];
-    return event.connections.filter(
-      (c) => c.type === "parallel" || c.type === "consequence"
-    );
-  }, [event.connections]);
+  /* Scrubber nodes: one per voice + the threads exit */
+  const scrubNodes = useMemo<ScrubNode[]>(() => {
+    const voices = perspectives.map((p) => ({
+      key: p.id,
+      label: p.viewpointName,
+      sublabel: p.viewpointType,
+      color: `var(--hist-persp-${p.color})`,
+    }));
+    return [
+      ...voices,
+      { key: "threads", label: "Threads", sublabel: "connections", color: "var(--hist-accent)" },
+    ];
+  }, [perspectives]);
 
-  /* Story paragraphs */
-  const paragraphs = useMemo(
-    () => (event.contextNarrative || "").split("\n").filter(Boolean),
-    [event.contextNarrative]
+  /* Facts readout */
+  const facts = useMemo(() => {
+    const f: { label: string; value: string }[] = [];
+    f.push({ label: "Date", value: event.dateRange || event.datePrimary });
+    if (event.location) f.push({ label: "Location", value: event.location });
+    if (event.deathToll && event.deathToll !== "N/A") f.push({ label: "Killed", value: event.deathToll });
+    if (event.displaced && event.displaced !== "N/A") f.push({ label: "Displaced", value: event.displaced });
+    return f;
+  }, [event]);
+
+  const cast = useMemo(
+    () => event.keyFigures.slice(0, 5).map((k) => k.name).join("  ·  "),
+    [event.keyFigures]
   );
-  const visibleParas = paragraphs.slice(0, 2);
-  const extraParas = paragraphs.slice(2);
 
-  /* Spine sections — only those actually rendered */
-  const hasThreads = (ARC_FEATURES.DOSSIER && dossierEvents.length > 0) || !!nextEvent;
-  const sections = useMemo<SpineSection[]>(() => {
-    const s: SpineSection[] = [];
-    if (paragraphs.length > 0) s.push({ id: "story", label: "The Account" });
-    if (event.perspectives.length > 0) s.push({ id: "voices", label: "The Voices" });
-    if (galleryMedia.length > 0) s.push({ id: "evidence", label: "The Evidence" });
-    if (hasThreads) s.push({ id: "threads", label: "Threads" });
-    return s;
-  }, [paragraphs.length, event.perspectives.length, galleryMedia.length, hasThreads]);
-
-  /* Scroll reveal for .hist-reveal elements + dossier cards */
+  /* Orientation: vertical snap on narrow screens (mirrors the timeline) */
   useEffect(() => {
-    const root = contentRef.current;
-    if (!root) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) entry.target.classList.add("hist-reveal--visible");
-        });
-      },
-      { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
-    );
-    root.querySelectorAll(".hist-reveal, .hist-dossier__card").forEach((el) =>
-      observer.observe(el)
-    );
-    return () => observer.disconnect();
+    const mq = window.matchMedia("(max-width: 1023px)");
+    const apply = () => setIsVertical(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
   }, []);
 
-  return (
-    <div ref={contentRef} className="hist-event-detail hist-story">
+  /* Scroll choreography: focus tracking + progress fraction + parallax */
+  useEffect(() => {
+    const el = reelRef.current;
+    if (!el) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      {/* ── HERO — full-screen cinematic cold open ── */}
+    const onScroll = () => {
+      const frames = Array.from(el.children) as HTMLElement[];
+      if (frames.length === 0) return;
+
+      let closest = 0;
+      let closestDist = Infinity;
+      if (isVertical) {
+        const center = el.scrollTop + el.clientHeight / 2;
+        frames.forEach((fr, i) => {
+          const c = fr.offsetTop + fr.offsetHeight / 2;
+          const d = Math.abs(c - center);
+          if (d < closestDist) { closestDist = d; closest = i; }
+        });
+        const max = el.scrollHeight - el.clientHeight;
+        setFraction(max > 0 ? el.scrollTop / max : 0);
+      } else {
+        const center = el.scrollLeft + el.clientWidth / 2;
+        frames.forEach((fr, i) => {
+          const c = fr.offsetLeft + fr.offsetWidth / 2;
+          const d = Math.abs(c - center);
+          if (d < closestDist) { closestDist = d; closest = i; }
+        });
+        const max = el.scrollWidth - el.clientWidth;
+        setFraction(max > 0 ? el.scrollLeft / max : 0);
+      }
+      setFocusedIndex(closest);
+
+      /* Parallax: shift each frame's background against the scroll */
+      if (!reduce) {
+        frames.forEach((fr) => {
+          const bg = fr.querySelector<HTMLElement>(".hist-frame__bg");
+          if (!bg) return;
+          if (isVertical) {
+            const rel = (fr.offsetTop - el.scrollTop) / el.clientHeight;
+            bg.style.transform = `translateY(${rel * 40}px) scale(1.14)`;
+          } else {
+            const rel = (fr.offsetLeft - el.scrollLeft) / el.clientWidth;
+            bg.style.transform = `translateX(${rel * 48}px) scale(1.14)`;
+          }
+        });
+      }
+    };
+
+    onScroll();
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [isVertical, frameCount]);
+
+  /* Desktop: translate vertical wheel into horizontal scrubbing, releasing to
+     the page at the left edge so the reader can scroll back up to the hero. */
+  useEffect(() => {
+    const el = reelRef.current;
+    if (!el || isVertical) return;
+
+    const onWheel = (e: WheelEvent) => {
+      /* Only scrub once the reel has snapped to fill the viewport — otherwise
+         let the page finish scrolling the hero away. */
+      if (el.getBoundingClientRect().top > 2) return;
+      const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+      const max = el.scrollWidth - el.clientWidth;
+      const atLeft = el.scrollLeft <= 0;
+      const atRight = el.scrollLeft >= max - 1;
+      if ((atLeft && delta < 0) || (atRight && delta > 0)) return; // release to page
+      e.preventDefault();
+      el.scrollLeft += delta;
+    };
+
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, [isVertical]);
+
+  const goToFrame = useCallback((i: number) => {
+    const el = reelRef.current;
+    if (!el) return;
+    const frame = el.children[i] as HTMLElement | undefined;
+    if (!frame) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    frame.scrollIntoView({
+      behavior: reduce ? "auto" : "smooth",
+      inline: "center",
+      block: "center",
+    });
+  }, []);
+
+  const onReelKey = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        e.preventDefault();
+        goToFrame(Math.min(focusedIndex + 1, frameCount - 1));
+      } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        e.preventDefault();
+        goToFrame(Math.max(focusedIndex - 1, 0));
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        goToFrame(0);
+      } else if (e.key === "End") {
+        e.preventDefault();
+        goToFrame(frameCount - 1);
+      }
+    },
+    [focusedIndex, frameCount, goToFrame]
+  );
+
+  return (
+    <div className="hist-event-detail hist-reel-page">
+
+      {/* ── HERO — full-screen cold open (unchanged) ── */}
       <section className="hist-stage hist-stage--scene">
         <div
           className="hist-stage__hero"
@@ -178,7 +275,7 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
         </div>
       </section>
 
-      {/* ── AUDIO COMPANION — void --onair (gated; renders only if generated) ── */}
+      {/* ── AUDIO COMPANION (gated; renders only if generated) ── */}
       {event.audioUrl && (
         <HistoryAudioCue
           audioUrl={event.audioUrl}
@@ -188,175 +285,108 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
         />
       )}
 
-      {/* ── CRACK — inscribed line, bridge from cinema to dossier ── */}
-      <section className="hist-stage hist-stage--crack">
-        <blockquote className="hist-crack__text hist-reveal">{hook}</blockquote>
+      {/* ── FACTS READOUT — the only persistent supporting material ── */}
+      <div className="hist-readout">
+        <dl className="hist-readout__facts">
+          {facts.map((f) => (
+            <div key={f.label} className="hist-readout__fact">
+              <dt>{f.label}</dt>
+              <dd>{f.value}</dd>
+            </div>
+          ))}
+        </dl>
+        <div className="hist-readout__aside">
+          {cast && <p className="hist-readout__cast">{cast}</p>}
+          {bgImages.length > 0 && (
+            <button
+              type="button"
+              className="hist-readout__evidence"
+              onClick={() => setEvidenceIndex(0)}
+            >
+              Evidence ({event.media.length})
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* ── THE REEL — one voice per frame, then Threads ── */}
+      <section className="hist-reel-section">
+        <div
+          ref={reelRef}
+          className={`hist-reel${isVertical ? " hist-reel--vertical" : ""}`}
+          tabIndex={0}
+          role="group"
+          aria-label={`${perspectives.length} accounts of ${event.title}. Use arrow keys to move between them.`}
+          onKeyDown={onReelKey}
+        >
+          {perspectives.map((p, i) => (
+            <PerspectiveFrame
+              key={p.id}
+              perspective={p}
+              index={i}
+              total={perspectives.length}
+              background={bgFor(i)}
+              active={focusedIndex === i}
+              onReadFull={() => setReader(p)}
+            />
+          ))}
+
+          {/* Threads exit frame */}
+          <section className="hist-reel__frame hist-frame hist-frame--threads">
+            <div className="hist-frame__content hist-frame__content--threads">
+              <span className="hist-frame__eyebrow">Threads</span>
+              <h2 className="hist-frame__name">What this connects to</h2>
+              {dossierEvents.length > 0 ? (
+                <div className="hist-exit">
+                  {dossierEvents.map(({ connection, event: linked }) => {
+                    const slug = connection.targetSlug;
+                    const hookText = HOOKS[slug]
+                      || (linked?.contextNarrative || connection.targetTitle).split(". ").slice(0, 2).join(". ") + ".";
+                    const glyph = CONNECTION_GLYPH[connection.type] ?? "·";
+                    return (
+                      <Link key={slug} href={`/history/${slug}`} className="hist-exit__card">
+                        <span className="hist-exit__glyph" aria-hidden="true">{glyph}</span>
+                        <span className="hist-exit__title">{connection.targetTitle}</span>
+                        <span className="hist-exit__hook">{hookText}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="hist-frame__lead">A single thread in a longer record.</p>
+              )}
+              <div className="hist-exit__exits">
+                {nextEvent && (
+                  <Link href={`/history/${nextEvent.slug}`} className="hist-exit__next">
+                    {CTAS[nextEvent.slug] || `Next: ${nextEvent.title}`} →
+                  </Link>
+                )}
+                <Link href="/history" className="hist-exit__archive">Return to The Archive</Link>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <ReelScrubber
+          nodes={scrubNodes}
+          activeIndex={focusedIndex}
+          fraction={fraction}
+          onSelect={goToFrame}
+        />
       </section>
 
-      {/* ── BODY — two columns: reading column + sticky dossier rail ── */}
-      <div className="hist-story__body">
-        <StorySpine sections={sections} />
+      {reader && (
+        <PerspectiveReader perspective={reader} onClose={() => setReader(null)} />
+      )}
 
-        <main className="hist-story__main">
-          {/* THE ACCOUNT */}
-          {paragraphs.length > 0 && (
-            <section id="story" className="hist-story-section hist-reveal">
-              <h2 className="hist-story-section__label">The Account</h2>
-              <div className="hist-context__body">
-                {visibleParas.map((para, i) => (
-                  <Fragment key={i}>
-                    <p>{para}</p>
-                    {i === 0 && contextImage && (
-                      <figure className="hist-context__figure">
-                        <img
-                          src={contextImage.url}
-                          alt={contextImage.caption}
-                          loading="lazy"
-                          onError={(e) => { (e.currentTarget.parentElement as HTMLElement).style.display = "none"; }}
-                        />
-                        <figcaption>
-                          {contextImage.caption}
-                          <span className="hist-context__figure-attr">{contextImage.attribution}</span>
-                        </figcaption>
-                      </figure>
-                    )}
-                  </Fragment>
-                ))}
-
-                {event.significance && (
-                  <blockquote className="hist-context__significance">
-                    {event.significance}
-                  </blockquote>
-                )}
-
-                {(extraParas.length > 0 || (event.legacyPoints && event.legacyPoints.length > 0)) && (
-                  <>
-                    {storyExpanded && (
-                      <div className="hist-context__extra">
-                        {extraParas.map((para, i) => (
-                          <p key={i + 2}>{para}</p>
-                        ))}
-                        {event.legacyPoints && event.legacyPoints.length > 0 && (
-                          <ul className="hist-context__legacy">
-                            {event.legacyPoints.map((point, li) => (
-                              <li key={li}>{point}</li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
-                    )}
-                    <button
-                      type="button"
-                      className="hist-context__more-toggle"
-                      onClick={() => setStoryExpanded((v) => !v)}
-                      aria-expanded={storyExpanded}
-                    >
-                      {storyExpanded ? "▴ Less" : "▾ Continue the account"}
-                    </button>
-                  </>
-                )}
-              </div>
-            </section>
-          )}
-
-          {/* THE VOICES */}
-          {event.perspectives.length > 0 && (
-            <section id="voices" className="hist-story-section hist-reveal">
-              <h2 className="hist-story-section__label">
-                The Voices
-                <span className="hist-story-section__count">{event.perspectives.length} accounts</span>
-              </h2>
-              <PerspectiveExhibit perspectives={event.perspectives} />
-            </section>
-          )}
-
-          {/* THE EVIDENCE */}
-          {galleryMedia.length > 0 && (
-            <section id="evidence" className="hist-story-section hist-reveal">
-              <h2 className="hist-story-section__label">The Evidence</h2>
-              <MediaGallery media={galleryMedia} />
-            </section>
-          )}
-
-          {/* THREADS — exit / dossier */}
-          {hasThreads && (
-            <section id="threads" className="hist-story-section hist-reveal">
-              <h2 className="hist-story-section__label">Threads</h2>
-              {ARC_FEATURES.DOSSIER && dossierEvents.length > 0 ? (
-                <>
-                  {ARC_FEATURES.THREAD_STAGE && sortedConnections.length > 0 && (
-                    <blockquote className="hist-dossier__thread-lead hist-reveal">
-                      {sortedConnections[0].description}
-                    </blockquote>
-                  )}
-                  <div className="hist-dossier">
-                    {dossierEvents.map(({ connection, event: linkedEvent }, cardIndex) => {
-                      const slug = connection.targetSlug;
-                      const hookText = HOOKS[slug]
-                        || (linkedEvent?.contextNarrative || connection.targetTitle).split(". ").slice(0, 2).join(". ") + ".";
-                      const ctaText = CTAS[slug]
-                        || `${linkedEvent?.perspectives.length ?? 0} accounts`;
-                      const heroImg = linkedEvent?.heroImage;
-                      const glyph = CONNECTION_GLYPH[connection.type] ?? "·";
-                      return (
-                        <Link
-                          key={slug}
-                          href={`/history/${slug}`}
-                          className="hist-dossier__card"
-                          style={{ transitionDelay: `${cardIndex * 120}ms` }}
-                        >
-                          {heroImg && (
-                            <div
-                              className="hist-dossier__card-bg"
-                              style={{ backgroundImage: `url(${heroImg})` }}
-                              aria-hidden="true"
-                            />
-                          )}
-                          <div className="hist-dossier__card-content">
-                            <span className="hist-dossier__card-glyph" aria-hidden="true">{glyph}</span>
-                            <p className="hist-dossier__card-hook">{hookText}</p>
-                            <span className="hist-dossier__card-cta">{ctaText}</span>
-                          </div>
-                        </Link>
-                      );
-                    })}
-                  </div>
-                  {nextEvent && (
-                    <p className="hist-dossier__chrono">
-                      <Link href={`/history/${nextEvent.slug}`}>chronologically &rarr;</Link>
-                    </p>
-                  )}
-                </>
-              ) : nextEvent ? (
-                <div className="hist-next__cliffhanger">
-                  {nextEvent.heroImage && (
-                    <div className="hist-next__thumb-wrap">
-                      <img src={nextEvent.heroImage} alt="" className="hist-next__thumb" loading="lazy" />
-                    </div>
-                  )}
-                  <p className="hist-next__hook">
-                    {HOOKS[nextEvent.slug] || (nextEvent.contextNarrative || nextEvent.title).split(". ").slice(0, 2).join(". ") + "."}
-                  </p>
-                  <Link href={`/history/${nextEvent.slug}`} className="hist-next__cta">
-                    {CTAS[nextEvent.slug] || `${nextEvent.perspectives.length} accounts of ${nextEvent.title}`}
-                  </Link>
-                </div>
-              ) : null}
-            </section>
-          )}
-        </main>
-
-        <DossierRail
-          event={event}
-          sidebarConnections={sidebarConnections}
-          allEvents={allEvents}
+      {evidenceIndex !== null && event.media.length > 0 && (
+        <Lightbox
+          media={event.media}
+          currentIndex={evidenceIndex}
+          onClose={() => setEvidenceIndex(null)}
+          onNavigate={setEvidenceIndex}
         />
-      </div>
-
-      {/* Return link */}
-      <div className="hist-story__return">
-        <Link href="/history" className="hist-next__cta">Return to The Archive</Link>
-      </div>
+      )}
     </div>
   );
 }
