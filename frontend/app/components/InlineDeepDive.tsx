@@ -10,7 +10,7 @@ import "../styles/verify.css";
 import "../styles/inline-dd.css";
 
 import { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from "react";
-import { CaretUp } from "@phosphor-icons/react";
+import { X, ShareNetwork } from "@phosphor-icons/react";
 import type {
   Story,
   StorySource,
@@ -98,6 +98,7 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
   /* ---- Cascade flag — flips true just after the accordion starts opening so
      the .anim-dd-section sections L-cut in (see the mount effect below). ---- */
   const [contentVisible, setContentVisible] = useState(false);
+  const [shareToast, setShareToast] = useState(false);
 
   /* ---- Live cluster data (copied pattern from DeepDive.tsx) ------------- */
   const [liveData, setLiveData] = useState<DeepDiveData | null>(null);
@@ -454,10 +455,53 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
 
   const sourceCount = sources.length > 0 ? sources.length : story.source.count;
 
+  /* Share — native share sheet, clipboard fallback with a brief toast. */
+  const handleShare = useCallback(async () => {
+    hapticLight();
+    const url = typeof window !== "undefined" ? window.location.href : "";
+    try {
+      if (typeof navigator !== "undefined" && navigator.share) {
+        await navigator.share({ title: story.title, url });
+        return;
+      }
+    } catch {
+      /* cancelled or unsupported — fall through to clipboard */
+    }
+    try {
+      await navigator.clipboard.writeText(`${story.title}\n${url}`);
+      setShareToast(true);
+      window.setTimeout(() => setShareToast(false), 2000);
+    } catch {
+      /* clipboard blocked — silent no-op */
+    }
+  }, [story.title]);
+
   return (
     <article ref={articleRef} className="inline-dd" aria-label={`Deep dive: ${story.title}`}>
-      {/* ---- Masthead: headline IS the collapse toggle ------------------- */}
+      {/* ---- Masthead: share + close toolbar, then headline (also a toggle) -- */}
       <header className="inline-dd__header">
+        <div className="inline-dd__toolbar">
+          <button
+            type="button"
+            className="inline-dd__action"
+            aria-label="Share this story"
+            onClick={handleShare}
+          >
+            <ShareNetwork size={17} weight="regular" aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            className="inline-dd__action"
+            aria-label={`Close deep dive: ${story.title}`}
+            onClick={handleCollapse}
+          >
+            <X size={17} weight="bold" aria-hidden="true" />
+          </button>
+          {shareToast && (
+            <span className="inline-dd__share-toast" role="status">Link copied</span>
+          )}
+        </div>
+
         <button
           ref={headlineRef}
           type="button"
@@ -467,7 +511,6 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
           onClick={handleCollapse}
         >
           <span className="inline-dd__headline-text">{story.title}</span>
-          <CaretUp size={18} weight="bold" className="inline-dd__caret" aria-hidden="true" />
         </button>
 
         <div className="deep-dive-meta inline-dd__meta">
