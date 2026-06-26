@@ -8639,3 +8639,365 @@ a.hist-record__figure-name:hover {
   --hist-brass-dim: #8A6A56;
   --hist-brass-ghost: rgba(168, 128, 108, 0.08);
 }
+
+/* ===========================================================================
+   STORY PAGE REDESIGN — "The Dossier"
+   Cinematic cold open (sticky hero + crack) then a navigable two-column body:
+   a reading column (Account / Voices / Evidence / Threads) and a sticky
+   dossier rail (record facts, key figures, parallel threads). A sticky spine
+   provides scroll-spy orientation + jump. Cuts a ~15,000px stack to a few
+   viewports without losing the archival-cinema entrance.
+   =========================================================================== */
+
+/* Post-hero content is an opaque "paper" panel that rises over the pinned
+   hero as the reader scrolls. */
+.hist-story .hist-stage--crack {
+  position: relative;
+  z-index: 1;
+  background: var(--hist-bg);
+}
+
+.hist-story__body {
+  position: relative;
+  z-index: 1;
+  background: var(--hist-bg);
+  max-width: var(--canvas-max);
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4) var(--space-7);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+@media (min-width: 1024px) {
+  .hist-story__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    grid-template-rows: auto 1fr;
+    column-gap: var(--space-7);
+    row-gap: var(--space-5);
+    padding: var(--space-6) var(--space-6) var(--space-8);
+    align-items: start;
+  }
+  .hist-story__body > .hist-spine { grid-column: 1; grid-row: 1; }
+  .hist-story__main { grid-column: 1; grid-row: 2; }
+  .hist-story__body > .hist-rail { grid-column: 2; grid-row: 1 / span 2; }
+}
+
+/* ── Section spine (scroll-spy nav) ── */
+.hist-spine {
+  order: 0;
+  position: sticky;
+  top: var(--hist-topbar-height);
+  z-index: 6;
+  background: var(--hist-bg);
+  border-bottom: 1px solid var(--hist-border-subtle);
+  margin: 0;
+  padding: var(--space-2) 0;
+}
+
+.hist-spine__list {
+  display: flex;
+  gap: var(--space-1);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.hist-spine__list::-webkit-scrollbar { display: none; }
+.hist-spine__item { flex: 0 0 auto; }
+
+.hist-spine__link {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: var(--hist-ink-muted);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: var(--space-2) var(--space-3);
+  min-height: 44px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    color 200ms var(--ease-cinematic),
+    border-color 200ms var(--ease-cinematic);
+}
+
+.hist-spine__link:hover { color: var(--hist-ink); }
+
+.hist-spine__link--active {
+  color: var(--hist-accent);
+  border-bottom-color: var(--hist-accent);
+}
+
+.hist-spine__link:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
+}
+
+/* ── Reading column ── */
+.hist-story__main {
+  order: 2;
+  min-width: 0;
+}
+
+.hist-story-section {
+  scroll-margin-top: calc(var(--hist-topbar-height) + 64px);
+  margin-bottom: var(--space-7);
+}
+
+.hist-story-section:last-child { margin-bottom: 0; }
+
+.hist-story-section__label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-family: var(--font-editorial);
+  font-size: clamp(1.1rem, 1rem + 0.6vw, 1.5rem);
+  font-weight: 700;
+  color: var(--hist-ink);
+  margin: 0 0 var(--space-4);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--hist-divider);
+}
+
+.hist-story-section__count {
+  flex: 0 0 auto;
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: var(--hist-ink-muted);
+}
+
+/* ── Voices exhibit: lead argument + collapsible account ── */
+.hist-exhibit { width: 100%; }
+
+.hist-persp-lead {
+  max-width: 720px;
+  margin: 0 auto var(--space-5);
+  padding-left: var(--space-4);
+  border-left: 3px solid var(--hist-accent);
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: clamp(1.05rem, 1rem + 0.5vw, 1.35rem);
+  line-height: 1.5;
+  color: var(--hist-ink);
+}
+
+.hist-persp-more {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  margin: 0 0 var(--space-4);
+  padding: var(--space-2) 0;
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--hist-accent);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: opacity 200ms var(--ease-cinematic);
+}
+
+.hist-persp-more:hover { opacity: 0.7; }
+.hist-persp-more:focus-visible { outline: 2px solid var(--hist-brass); outline-offset: 2px; }
+.hist-persp-more__arrow { font-size: var(--text-sm); }
+
+/* ── Dossier rail ── */
+.hist-rail {
+  order: 1;
+  align-self: start;
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .hist-rail {
+    position: sticky;
+    top: calc(var(--hist-topbar-height) + var(--space-4));
+    max-height: calc(100vh - var(--hist-topbar-height) - var(--space-5));
+    overflow-y: auto;
+    scrollbar-width: thin;
+  }
+}
+
+.hist-rail__block {
+  padding: var(--space-4);
+  background: var(--hist-bg-card);
+  box-shadow: var(--hist-doc-edge);
+  border-radius: 2px;
+  margin-bottom: var(--space-4);
+}
+
+.hist-rail__block:last-child { margin-bottom: 0; }
+
+.hist-rail__eyebrow {
+  display: block;
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--hist-accent);
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--hist-border-subtle);
+}
+
+.hist-rail__ledger { margin: 0; }
+
+.hist-rail__row {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--hist-border-subtle);
+}
+
+.hist-rail__row:last-child { border-bottom: none; }
+
+.hist-rail__row dt {
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--hist-ink-muted);
+}
+
+.hist-rail__row dd {
+  margin: 0;
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  color: var(--hist-ink);
+  line-height: 1.4;
+}
+
+.hist-rail__figures,
+.hist-rail__threads {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.hist-rail__figure,
+.hist-rail__thread {
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--hist-border-subtle);
+}
+
+.hist-rail__figure:last-child,
+.hist-rail__thread:last-child { border-bottom: none; }
+
+.hist-rail__figure-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.hist-rail__figure-name {
+  font-family: var(--font-editorial);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--hist-ink);
+  text-decoration: none;
+}
+
+a.hist-rail__figure-name:hover { color: var(--hist-accent); text-decoration: underline; }
+
+.hist-rail__figure-dates {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: var(--hist-ink-muted);
+}
+
+.hist-rail__figure-role {
+  display: block;
+  margin-top: 1px;
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--hist-ink-secondary);
+  line-height: 1.35;
+}
+
+.hist-rail__thread-year {
+  display: block;
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: var(--hist-ink-muted);
+}
+
+.hist-rail__thread-title {
+  display: block;
+  margin: 1px 0;
+  font-family: var(--font-editorial);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--hist-ink);
+  text-decoration: none;
+  line-height: 1.3;
+}
+
+.hist-rail__thread-title:hover { color: var(--hist-accent); }
+
+.hist-rail__thread-desc {
+  margin: 0;
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--hist-ink-secondary);
+  line-height: 1.4;
+}
+
+.hist-rail a:focus-visible { outline: 2px solid var(--hist-brass); outline-offset: 2px; }
+
+/* ── Evidence: video affordance in the gallery + lightbox ── */
+.hist-gallery__frame { position: relative; display: block; }
+
+.hist-gallery__play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--hist-paper-fixed);
+  pointer-events: none;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.5));
+}
+
+.hist-lightbox__video {
+  width: min(90vw, 1100px);
+  aspect-ratio: 16 / 9;
+  border: none;
+  background: #000;
+}
+
+/* ── Return to archive ── */
+.hist-story__return {
+  position: relative;
+  z-index: 1;
+  background: var(--hist-bg);
+  text-align: center;
+  padding: var(--space-6) var(--space-4) var(--space-8);
+}
+
+/* Mobile: spine is a sticky segmented bar; rail is a compact card up top */
+@media (max-width: 1023px) {
+  .hist-rail__block {
+    margin-bottom: var(--space-3);
+  }
+  .hist-story-section__label {
+    font-size: clamp(1.05rem, 1rem + 0.5vw, 1.25rem);
+  }
+}
