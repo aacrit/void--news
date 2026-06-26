@@ -36,6 +36,73 @@
   width: 100%;
 }
 
+/* Masthead toolbar — share + close, right-aligned above the headline. */
+.inline-dd__toolbar {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--space-1);
+  width: 100%;
+  margin-bottom: var(--space-1);
+}
+
+.inline-dd__action {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: var(--fg-tertiary);
+  cursor: pointer;
+  border-radius: var(--radius-sm, 4px);
+  transition:
+    color var(--dur-fast, 150ms) var(--ease-cinematic, ease-out),
+    background-color var(--dur-fast, 150ms) var(--ease-cinematic, ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.inline-dd__action:hover {
+  color: var(--fg-primary);
+  background: color-mix(in srgb, var(--fg-primary) 6%, transparent);
+}
+
+.inline-dd__action:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+/* WCAG 2.5.5 — full 44px tap target on touch pointers. */
+@media (pointer: coarse) {
+  .inline-dd__action { width: 44px; height: 44px; }
+}
+
+.inline-dd__share-toast {
+  position: absolute;
+  top: calc(100% + var(--space-1));
+  right: 0;
+  z-index: 2;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  color: var(--fg-secondary);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm, 4px);
+  padding: 4px 8px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inline-dd__action { transition: none; }
+}
+
 /* Headline IS the collapse toggle — a reset button styled like .dd-headline. */
 .inline-dd__headline {
   /* button reset */

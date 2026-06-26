@@ -36,6 +36,7 @@ from utils.supabase_client import supabase
 from summarizer.gemini_client import (
     generate_json as gemini_generate_json,
     is_available as gemini_is_available,
+    _FLASH_MODEL,
 )
 
 try:
@@ -114,9 +115,13 @@ PROHIBITED_TERMS = frozenset({
 # ---------------------------------------------------------------------------
 # LLM call
 # ---------------------------------------------------------------------------
-def _smart_generate(prompt, system_instruction=None, max_output_tokens=8192):
-    """Gemini Flash ($0) is the sole digest LLM. Claude (2026-06-22) and Groq
+def _smart_generate(prompt, system_instruction=None, max_output_tokens=8192, model=None):
+    """Gemini ($0) is the sole digest LLM. Claude (2026-06-22) and Groq
     (2026-06-24) are retired; on failure the caller degrades to rule-based.
+    `model` selects the Gemini tier: pass `_FLASH_MODEL` for the flagship
+    sections (cover essays + week recap); leave None for the flash-lite default
+    (opinions / tech / sports / audio). Flagship-only flash keeps the Sunday run
+    within flash's shared 20-RPD free cap (the daily pipeline already spends ~13).
     Returns (result_dict, gen_label)."""
     if claude_is_available():
         result = claude_generate_json(
@@ -129,10 +134,10 @@ def _smart_generate(prompt, system_instruction=None, max_output_tokens=8192):
     if gemini_is_available():
         result = gemini_generate_json(
             prompt, system_instruction=system_instruction,
-            count_call=False, max_output_tokens=max_output_tokens,
+            count_call=False, max_output_tokens=max_output_tokens, model=model,
         )
         if result:
-            return result, "gemini-flash"
+            return result, ("gemini-flash" if model == _FLASH_MODEL else "gemini-flash-lite")
 
     return None, "none"
 
@@ -459,7 +464,7 @@ def _generate_cover_stories(threads, edition):
             f"Use these real dates. Do NOT invent events not shown above."
         )
 
-        result, gen = _smart_generate(prompt, system_instruction=COVER_SYSTEM)
+        result, gen = _smart_generate(prompt, system_instruction=COVER_SYSTEM, model=_FLASH_MODEL)
         calls += 1
         if result and isinstance(result, dict):
             result["cluster_id"] = lead.get("id")
@@ -703,7 +708,7 @@ def _generate_week_recap(clusters, edition, skip_ids=None):
     )
 
     prompt = f"Write 150-200 word recaps for these {len(remaining)} stories ({edition} edition):\n\n{stories_text}"
-    result, gen = _smart_generate(prompt, system_instruction=RECAP_SYSTEM)
+    result, gen = _smart_generate(prompt, system_instruction=RECAP_SYSTEM, model=_FLASH_MODEL)
     return result, 1
 
 
