@@ -143,6 +143,22 @@ export async function listIgPostsForReview(): Promise<IgPostRow[]> {
   return data as IgPostRow[];
 }
 
+// Post IDs the capture step renders. Used by the IG render route's
+// generateStaticParams in dev so these are valid params under dynamicParams=false.
+// Mirrors the state set in pipeline/social/ig_capture.py::_fetch_targets.
+export async function listRenderablePostIds(): Promise<string[]> {
+  const c = getClient();
+  if (!c) return [];
+  const { data, error } = await c
+    .from("ig_posts")
+    .select("id")
+    .in("state", ["draft", "render_failed"])
+    .order("scheduled_for", { ascending: true })
+    .limit(100);
+  if (error || !data) return [];
+  return (data as Array<{ id: string }>).map((r) => r.id);
+}
+
 export async function listIgPostsPosted(limit = 50): Promise<IgPostRow[]> {
   const c = getClient();
   if (!c) return [];

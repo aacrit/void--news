@@ -25,10 +25,27 @@ import { HeatmapTemplate } from "../templates/Heatmap";
 // slide index client-side via URLSearchParams. The real Playwright capture
 // flow runs against `npm run dev` (dynamic routes from Supabase per request)
 // — the placeholder is never visited in production.
-export function generateStaticParams() {
-  return [{ postId: "placeholder" }];
+export async function generateStaticParams() {
+  // Production static export: only the placeholder. Post IDs aren't known at
+  // build time and this route is never served in prod.
+  if (process.env.IG_RENDER_DYNAMIC !== "1") {
+    return [{ postId: "placeholder" }];
+  }
+  // Dev capture (`next dev`, output:export dropped): enumerate the posts that
+  // need rendering so they are valid params despite dynamicParams=false.
+  try {
+    const { listRenderablePostIds } = await import("../../../lib/supabase-server");
+    const ids = await listRenderablePostIds();
+    return [{ postId: "placeholder" }, ...ids.map((postId) => ({ postId }))];
+  } catch {
+    return [{ postId: "placeholder" }];
+  }
 }
 
+// Must stay a static literal `false` — output:export rejects dynamicParams=true.
+// Dev capture still renders real post IDs because generateStaticParams above
+// enumerates them when IG_RENDER_DYNAMIC=1 (and output:export is dropped under
+// `next dev` — see next.config.ts).
 export const dynamicParams = false;
 
 interface PageProps {
