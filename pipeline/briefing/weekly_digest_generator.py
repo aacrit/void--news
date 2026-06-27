@@ -747,10 +747,10 @@ WEEKLY_VOICE_PAIR = {
         ),
     },
     "host_b": {
-        "id": "Charon",
+        "id": "Achernar",
         "name": "The Correspondent",
         "key": "correspondent",
-        "gender": "male",
+        "gender": "female",
         "google_label": "informative",
         "trait": (
             "Measured authority. Lets facts land with their own weight. Short "
