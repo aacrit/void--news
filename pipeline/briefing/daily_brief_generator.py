@@ -567,9 +567,9 @@ def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
     report["metrics"]["pacing_short_pct"] = short_pct
     report["metrics"]["pacing_long_pct"] = long_pct
     report["metrics"]["rhythm_markers"] = total_markers
-    report["metrics"]["rhythm_pauses"] = pause_count
-    report["metrics"]["short_pause_count"] = short_pause_count if script.strip() else 0
-    report["metrics"]["long_pause_count"] = long_pause_count if script.strip() else 0
+    report["metrics"]["rhythm_pauses"] = 0  # pause markers banned (stripped at synthesis)
+    report["metrics"]["short_pause_count"] = 0
+    report["metrics"]["long_pause_count"] = 0
     report["metrics"]["rhythm_ellipses"] = ellipsis_count
     report["metrics"]["rhythm_dashes"] = dash_count
 
