@@ -8,7 +8,6 @@ import { isUnscoredTilt } from "../lib/biasColors";
 import { supabase, supabaseError } from "../lib/supabase";
 import { cacheGet, cacheSet } from "../lib/feedCache";
 import { BASE_PATH } from "../lib/utils";
-import { AUDIO_ENABLED } from "../lib/audioGate";
 import LogoIcon from "./LogoIcon";
 import LogoWordmark from "./LogoWordmark";
 import NavBar from "./NavBar";
@@ -22,7 +21,8 @@ import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
 import { useDailyBrief } from "./DailyBrief";
 import SkyboxBanner from "./SkyboxBanner";
-const FloatingPlayer = dynamic(() => import("./FloatingPlayer"), { ssr: false });
+// FloatingPlayer is now mounted globally in MobileNav (layout.tsx) so it renders
+// on every route, including /weekly. It reads the global AudioProvider directly.
 import { hapticConfirm, hapticLight } from "../lib/haptics";
 const UnifiedOnboarding = dynamic(() => import("./UnifiedOnboarding"), { ssr: false });
 import { useStoryKeyboardNav } from "./KeyboardShortcuts";
@@ -989,10 +989,8 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
       {/* PWA install prompt — 2nd+ visit, above bottom nav */}
       <InstallPrompt />
 
-      {/* Floating audio player — gated by AUDIO_DISABLED flag (void --onair
-          parking lot). When flipped on, AudioProvider in layout.tsx owns
-          the underlying audio element. */}
-      {AUDIO_ENABLED && <FloatingPlayer state={dailyBriefState} />}
+      {/* FloatingPlayer moved to MobileNav (layout-level) so it is global across
+          routes. dailyBriefState is still consumed above (SkyboxBanner etc.). */}
     </div>
   );
 }

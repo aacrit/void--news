@@ -344,7 +344,7 @@ export async function fetchWeeklyDigest(edition: string): Promise<any | null> {
 export async function fetchWeeklyArchive(edition?: string): Promise<any[]> {
   if (!_client) return [];
 
-  const cols = 'id, edition, week_start, week_end, issue_number, cover_headline, created_at';
+  const cols = 'id, edition, week_start, week_end, issue_number, cover_headline, audio_url, audio_duration_seconds, created_at';
 
   let query = _client
     .from('weekly_digests')
