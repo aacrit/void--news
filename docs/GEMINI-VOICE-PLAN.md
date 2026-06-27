@@ -6,6 +6,15 @@ Last updated: 2026-04-29 (rev 2 — Sonnet 4.6 primary)
 
 LLM voice covers summarization, daily brief, opinion, weekly digest. Audio synthesis is separate (edge-tts, $0).
 
+> **2026-06-27 update (audio):** void --onair re-enabled. Voices collapsed from 4 Multilingual
+> voices to **2** — `en-US-BrianMultilingualNeural` (male: all news hosts + male opinion) and
+> `en-US-AvaMultilingualNeural` (female: all female roles + world opinion) — the two most natural
+> of Microsoft's newest *free* generation; Andrew + Emma dropped (CEO ear-test). Dragon HD voices
+> are paid Azure, not in free edge-tts, so we stay on the Multilingual tier. Pause/stage-direction
+> markers like `[short pause]` are now banned in scripts and stripped at synthesis
+> (`_strip_stage_directions` in `audio_producer.py`) because edge-tts reads them aloud verbatim.
+> Single source of truth for voices: `_GEMINI_TO_EDGE_VOICE` in `audio_producer.py`.
+
 ---
 
 ## 1. Editorial Voice Definition
