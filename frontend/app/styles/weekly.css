@@ -168,7 +168,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--wk-accent);
+  color: var(--fg-secondary);
   margin-bottom: var(--space-3);
   padding-bottom: var(--space-2);
   position: relative;
@@ -311,18 +311,10 @@
 .wk-masthead {
   text-align: center;
   padding: var(--space-3) var(--space-4);
-  background: var(--wk-accent);
+  background: transparent;
+  border-bottom: 1px solid var(--wk-accent-ink);
   position: relative;
   overflow: hidden;
-}
-
-.wk-masthead::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.5' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
-  pointer-events: none;
-  mix-blend-mode: soft-light;
 }
 
 .wk-masthead__home {
@@ -344,7 +336,7 @@
   width: auto;
   max-width: min(280px, 80vw);
   display: block;
-  color: var(--wk-cream);
+  color: var(--fg-primary);
 }
 
 @media (min-width: 768px) {
@@ -359,9 +351,9 @@
   font-weight: 400;
   text-transform: uppercase;
   letter-spacing: 0.10em;
-  color: var(--wk-white, #FFFFFF);
+  color: var(--fg-secondary);
   margin-bottom: 0;
-  opacity: 0.9;
+  opacity: 1;
   position: relative;
   z-index: 1;
 }
@@ -373,7 +365,7 @@
 
 .wk-masthead__edition {
   font-weight: 600;
-  color: var(--wk-cream);
+  color: var(--wk-accent);
   opacity: 1;
 }
 
@@ -398,7 +390,7 @@
   font-family: var(--font-editorial);
   font-size: clamp(1.75rem, 5vw, 3rem);
   font-weight: 700;
-  color: var(--wk-accent);
+  color: var(--fg-primary);
   line-height: 1.1;
   letter-spacing: -0.02em;
   margin: 0 0 var(--space-3);
@@ -767,7 +759,7 @@
 .wk-opinion {
   background: none;
   border: none;
-  border-left: 4px solid var(--lean-color, var(--wk-accent));
+  border-left: 3px solid var(--lean-color, var(--bias-center));
   padding: var(--space-3) var(--space-4);
   position: relative;
   transition:
@@ -787,13 +779,14 @@
 .wk-opinion__badge {
   font-family: var(--font-meta);
   font-size: var(--text-xxs);
-  font-weight: 700;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  padding: 2px var(--space-2);
-  background: var(--wk-accent);
-  border: none;
-  color: #FFFFFF;
+  padding: 1px var(--space-2);
+  border-radius: 2px;
+  color: var(--lean-color, var(--fg-secondary));
+  border: 1px solid color-mix(in srgb, var(--lean-color, var(--fg-tertiary)) 30%, transparent);
+  background: color-mix(in srgb, var(--lean-color, var(--fg-tertiary)) 6%, transparent);
   white-space: nowrap;
 }
 
