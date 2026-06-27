@@ -201,7 +201,7 @@ def capture(post_id: str | None = None, only_slide: int | None = None) -> int:
     return captured
 
 
-def _wait_for_server(url: str, timeout_s: int = 60) -> bool:
+def _wait_for_server(url: str, timeout_s: int = 120) -> bool:
     import urllib.request
     import urllib.error
 
@@ -223,7 +223,7 @@ def main() -> int:
     parser.add_argument(
         "--wait-server",
         action="store_true",
-        help="wait up to 60s for the dev server to be reachable before capturing",
+        help="wait up to 120s for the dev server to be reachable before capturing",
     )
     args = parser.parse_args()
 

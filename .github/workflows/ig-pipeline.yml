@@ -79,7 +79,7 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
-          nohup npx next dev --port 3000 --turbopack false > /tmp/next-dev.log 2>&1 &
+          nohup npx next dev --port 3000 > /tmp/next-dev.log 2>&1 &
           echo $! > /tmp/next-dev.pid
 
       - name: Seed launch posts (one-shot)
@@ -104,12 +104,12 @@ jobs:
           RENDER_BASE_URL: 'http://localhost:3000'
         run: python -m pipeline.social.ig_capture --wait-server
 
-      - name: Generate captions (Sonnet 4.6)
+      - name: Generate captions (Gemini flash-lite)
         if: steps.mode.outputs.mode == 'draft' || steps.mode.outputs.mode == 'seed-launch'
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python -m pipeline.social.ig_caption
 
       - name: Stop dev server
