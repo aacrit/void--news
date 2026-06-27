@@ -164,7 +164,13 @@ def capture(post_id: str | None = None, only_slide: int | None = None) -> int:
                     )
                     page = context.new_page()
                     try:
-                        page.goto(url, wait_until="networkidle", timeout=60_000)
+                        response = page.goto(url, wait_until="networkidle", timeout=60_000)
+                        # page.goto does NOT raise on HTTP error status, so an
+                        # error page (e.g. a 500 from the render route) would
+                        # otherwise be screenshotted as a "successful" slide.
+                        if response is None or not response.ok:
+                            status = response.status if response is not None else "no response"
+                            raise RuntimeError(f"render route returned HTTP {status}")
                         page.evaluate("() => document.fonts.ready")
                         # Wait a beat for any final reflow
                         page.wait_for_timeout(250)
@@ -192,9 +198,11 @@ def capture(post_id: str | None = None, only_slide: int | None = None) -> int:
 
                 if ok:
                     _write_image_urls(pid, [u for u in urls if u])
-                    # Don't flip state here — caption step is next in the pipeline
-                    if row.get("state") == "render_failed":
-                        _set_state(pid, "draft")  # captioner picks it up
+                    # Reset the transient 'rendering' lock back to 'draft' so the
+                    # caption step (which scans state='draft' with caption IS NULL)
+                    # picks it up. Previously only render_failed rows were reset, so
+                    # freshly-rendered drafts got stuck in 'rendering', un-captioned.
+                    _set_state(pid, "draft")
                     captured += 1
         finally:
             browser.close()

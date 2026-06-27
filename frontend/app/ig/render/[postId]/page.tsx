@@ -29,7 +29,11 @@ export function generateStaticParams() {
   return [{ postId: "placeholder" }];
 }
 
-export const dynamicParams = false;
+// Must be false for the production static export (output:export requires every
+// dynamic param to be prerendered). The IG capture step runs `next dev` with
+// IG_RENDER_DYNAMIC=1 so arbitrary post IDs render on demand (output:export is
+// also dropped in dev — see next.config.ts).
+export const dynamicParams = process.env.IG_RENDER_DYNAMIC === "1";
 
 interface PageProps {
   params: Promise<{ postId: string }>;
