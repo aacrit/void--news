@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'draft | publish | dry-run-publish | seed-launch'
+        description: 'draft | publish | dry-run-publish | seed-launch | cleanup'
         required: true
         default: 'draft'
         type: choice
@@ -21,6 +21,7 @@ on:
           - publish
           - dry-run-publish
           - seed-launch
+          - cleanup
 
 jobs:
   ig-pipeline:
@@ -150,3 +151,11 @@ jobs:
           BLUESKY_HANDLE: ${{ secrets.BLUESKY_HANDLE }}
           BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
         run: python -m pipeline.social.cross_post
+
+      # ---- Mode: cleanup (reject posts stuck in a transient lock state) ---
+      - name: Clean up stuck posts
+        if: steps.mode.outputs.mode == 'cleanup'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python -m pipeline.social.ig_cleanup
