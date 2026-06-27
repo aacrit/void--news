@@ -46,6 +46,13 @@ export interface AudioState {
   brief: DailyBriefData | null;
   edition: string;
   setEdition: (ed: string) => void;
+  /** Which product currently owns the player — drives accent theming + labels */
+  contentType: "daily" | "weekly";
+  /** Load a weekly digest (+ optional archive playlist) into the shared player */
+  playWeekly: (
+    digest: import("../lib/types").WeeklyDigestData,
+    archiveIssues?: EpisodeMeta[]
+  ) => void;
   isPlaying: boolean;
   currentTime: number;
   duration: number;
@@ -83,7 +90,7 @@ export function useAudio(): AudioState {
 }
 
 export default function AudioProvider({ children }: { children: ReactNode }) {
-  const [edition, setEdition] = useState<string>("world");
+  const [edition, setEditionState] = useState<string>("world");
   const [brief, setBrief] = useState<DailyBriefData | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -103,15 +110,35 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
   const [isExpanded, setExpanded] = useState(false);
   const [hasEverPlayed, setHasEverPlayed] = useState(false);
   const [previousEpisodes, setPreviousEpisodes] = useState<EpisodeMeta[]>([]);
+  // Which product owns the player. A ref mirror lets the edition-fetch effect
+  // bail when a weekly issue is loaded, without re-running on contentType change.
+  const [contentType, setContentType] = useState<"daily" | "weekly">("daily");
+  const contentTypeRef = useRef<"daily" | "weekly">("daily");
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Public setEdition: the daily flow (useDailyBrief) is the only caller, so
+  // any setEdition means we are back on a daily surface — flip ownership to
+  // 'daily' BEFORE the edition-fetch effect re-runs so its clobber guard lets
+  // the daily brief load. (Ref is updated synchronously; state for rendering.)
+  const setEdition = useCallback((ed: string) => {
+    contentTypeRef.current = "daily";
+    setContentType("daily");
+    setEditionState(ed);
+  }, []);
 
   /* ---- Web Audio API: real-time analyser for oscilloscope ---- */
   const audioContextRef = useRef<AudioContext | null>(null);
   const analyserRef = useRef<AnalyserNode | null>(null);
   const connectedElements = useRef<WeakSet<HTMLAudioElement>>(new WeakSet());
 
-  /* ---- Fetch brief when edition changes ---- */
+  /* ---- Fetch brief when edition changes (or when returning to the daily surface) ---- */
   useEffect(() => {
+    // A weekly issue currently owns the player — do NOT overwrite it with the
+    // daily brief. (Read the ref for the live value: playWeekly sets the ref
+    // synchronously, so even if this effect fires from the contentType state
+    // change it sees 'weekly' and bails.)
+    if (contentTypeRef.current === "weekly") return;
+
     let cancelled = false;
 
     // Pause and detach audio before switching briefs. No-ops when audio is
@@ -148,7 +175,10 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
-  }, [edition]);
+    // contentType is a dep so returning from a weekly issue to the daily surface
+    // reloads the brief even when the edition string is unchanged. The ref guard
+    // above prevents a weekly load from triggering a stray daily fetch.
+  }, [edition, contentType]);
 
   /* ---- Callback ref — attaches listeners when <audio> mounts ---- */
   const listenerCleanupRef = useRef<(() => void) | null>(null);
@@ -387,6 +417,58 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
     hapticLight();
   }, []);
 
+  /** Load a weekly issue into the shared player. Maps WeeklyDigestData onto the
+   *  DailyBriefData shape the player consumes (weekly lacks opinion sections /
+   *  voice metadata, so those are null). Does NOT auto-play — it reveals the
+   *  player ready to start, mirroring the daily brief's load behaviour. The
+   *  optional archiveIssues become the "Previous issues" playlist. */
+  const playWeekly = useCallback(
+    (
+      digest: import("../lib/types").WeeklyDigestData,
+      archiveIssues?: EpisodeMeta[]
+    ) => {
+      if (!digest.audio_url) return;
+      contentTypeRef.current = "weekly";
+      setContentType("weekly");
+
+      const audio = audioRef.current;
+      if (audio) audio.pause();
+
+      // cover_text is a structured WeeklyCoverStory[]; take the lead story's body.
+      const coverText =
+        Array.isArray(digest.cover_text) && digest.cover_text.length > 0
+          ? digest.cover_text[0]?.text ?? ""
+          : "";
+
+      setBrief({
+        id: digest.id,
+        edition: (digest.edition ?? "world") as DailyBriefData["edition"],
+        tldr_text: coverText,
+        tldr_headline: digest.cover_headline ?? null,
+        opinion_text: null,
+        opinion_headline: null,
+        opinion_lean: null,
+        opinion_cluster_id: null,
+        audio_url: digest.audio_url,
+        audio_duration_seconds: digest.audio_duration_seconds,
+        opinion_start_seconds: null,
+        audio_voice_label: null,
+        audio_voice: null,
+        audio_script: null,
+        top_cluster_ids: null,
+        created_at: digest.created_at,
+      });
+      setPreviousEpisodes(archiveIssues ?? []);
+      setCurrentTime(0);
+      setDuration(digest.audio_duration_seconds ?? 0);
+      setBuffered(0);
+      setAudioError(false);
+      setIsPlaying(false);
+      setPlayerVisible(true);
+    },
+    []
+  );
+
   /* ---- Media Session API — iOS lock screen + notification controls ---- */
   useEffect(() => {
     if (typeof navigator === "undefined" || !("mediaSession" in navigator))
@@ -433,6 +515,8 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
     brief,
     edition,
     setEdition,
+    contentType,
+    playWeekly,
     isPlaying,
     currentTime,
     duration,

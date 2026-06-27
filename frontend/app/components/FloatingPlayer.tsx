@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
-import type { DailyBriefState } from "./DailyBrief";
-import type { EpisodeMeta } from "./AudioProvider";
+import { useAudio } from "./AudioProvider";
 import { CaretRight } from "@phosphor-icons/react";
 import LogoIcon from "./LogoIcon";
 import ScaleIcon from "./ScaleIcon";
@@ -68,14 +67,16 @@ function formatEpisodeTime(dateStr: string): string {
 
 type PlayerView = "compact" | "expanded" | "broadcast";
 
-export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
+export default function FloatingPlayer() {
+  const state = useAudio();
   const {
     brief, isPlaying, currentTime, duration, buffered, audioError,
     handlePlayPause, handleSeek,
     playbackSpeed, cycleSpeed, skipForward, skipBackward, seekTo,
     isPlayerVisible, setPlayerVisible,
-    previousEpisodes, loadEpisode,
+    previousEpisodes, loadEpisode, contentType,
   } = state;
+  const isWeekly = contentType === "weekly";
 
   const [view, setView] = useState<PlayerView>("compact");
   const [closing, setClosing] = useState(false);
@@ -387,6 +388,7 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
         view === "compact" ? "fp--compact" : view === "expanded" ? "fp--expanded" : "fp--broadcast",
         isPlaying ? "fp--playing" : "",
         closing ? "fp--closing" : "",
+        isWeekly ? "fp--weekly" : "",
       ].filter(Boolean).join(" ")}
       style={dragOffset > 0 ? { transform: `translateY(${dragOffset}px)`, transition: "none" } : undefined}
       role="region"
@@ -418,8 +420,8 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
 
           <div className="fp__info">
             {isPlaying && <span className="fp__rec-dot" aria-hidden="true" />}
-            <span className="fp__title">void --onair</span>
-            <span className="fp__section">{inOpinion ? "Opinion" : "News"}</span>
+            <span className="fp__title">{isWeekly ? "void --weekly" : "void --onair"}</span>
+            <span className="fp__section">{isWeekly ? "Issue" : inOpinion ? "Opinion" : "News"}</span>
           </div>
 
           <span className="fp__time">
@@ -445,7 +447,7 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
           <div className="fp__bar-header">
             <div className="fp__bar-brand">
               <LogoIcon size={16} animation={isPlaying ? "analyzing" : "idle"} />
-              <span className="fp__bar-title">void --onair</span>
+              <span className="fp__bar-title">{isWeekly ? "void --weekly" : "void --onair"}</span>
               <span className={`fp__status${isPlaying ? " fp__status--live" : ""}`}>
                 <span className="fp__status-dot" />
                 <span className="fp__status-label">{isPlaying ? "ON AIR" : "OFFLINE"}</span>
@@ -506,7 +508,7 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
               <ScaleIcon size={22} animation={isPlaying ? "broadcast" : "idle"} />
               <div className="fp__bcast-title-group">
                 <span className="fp__bcast-void">void</span>
-                <span className="fp__bcast-cmd">--onair</span>
+                <span className="fp__bcast-cmd">{isWeekly ? "--weekly" : "--onair"}</span>
               </div>
               <span className={`fp__status${isPlaying ? " fp__status--live" : ""}`}>
                 <span className="fp__status-dot" />
@@ -593,7 +595,7 @@ export default function FloatingPlayer({ state }: { state: DailyBriefState }) {
           {groupedEpisodes && (
               <details className="fp__bcast-details fp__playlist">
                 <summary className="fp__bcast-summary">
-                  <span>Previous episodes</span>
+                  <span>{isWeekly ? "Previous issues" : "Previous episodes"}</span>
                   <CaretRight size={12} weight="bold" className="fp__caret fp__bcast-summary-arrow" />
                 </summary>
                 <div className="fp__playlist-wrap">
