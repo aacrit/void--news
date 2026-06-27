@@ -12,7 +12,6 @@ import type {
 } from "../lib/types";
 import { EDITIONS } from "../lib/types";
 import { fetchWeeklyDigest, fetchWeeklyArchive } from "../lib/supabase";
-import { getLeanColor } from "../lib/biasColors";
 import { AUDIO_ENABLED } from "../lib/audioGate";
 import Footer from "./Footer";
 import ThemeToggle from "./ThemeToggle";
@@ -40,46 +39,6 @@ function InkRule({ className = "" }: { className?: string }) {
         strokeWidth="1.2"
         fill="none"
         opacity="0.35"
-      />
-    </svg>
-  );
-}
-
-function InkVerticalTrack() {
-  return (
-    <svg
-      className="wk-timeline__ink-track"
-      viewBox="0 0 4 400"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-    >
-      <path
-        d="M2 0 C0.5 20, 3.5 40, 2 80 S0.5 160, 2 200 S3.5 280, 2 320 S0.5 380, 2 400"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        fill="none"
-        opacity="0.25"
-        strokeDasharray="8 4"
-      />
-    </svg>
-  );
-}
-
-function InkHorizontalTrack() {
-  return (
-    <svg
-      className="wk-timeline__ink-track"
-      viewBox="0 0 400 4"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-    >
-      <path
-        d="M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        fill="none"
-        opacity="0.25"
-        strokeDasharray="8 4"
       />
     </svg>
   );
@@ -173,17 +132,14 @@ function leanBadgeLabel(lean: string): string {
   return map[(lean || "center").toLowerCase()] ?? lean ?? "center";
 }
 
-function leanToScore(lean: string): number {
-  const map: Record<string, number> = {
-    "far-left": 10,
-    "left": 28,
-    "center-left": 40,
-    "center": 50,
-    "center-right": 60,
-    "right": 73,
-    "far-right": 90,
-  };
-  return map[(lean || "center").toLowerCase()] ?? 50;
+/* Map a lean label to the shared bias color token — same blue/green/red
+   tokens the daily Opinion view uses, applied with restraint (thin border +
+   low-opacity badge) rather than a saturated fill. */
+function leanToBiasVar(lean: string): string {
+  const l = (lean || "center").toLowerCase();
+  if (l.includes("left")) return "var(--bias-left)";
+  if (l.includes("right")) return "var(--bias-right)";
+  return "var(--bias-center)";
 }
 
 /* ── Scroll-Reveal Hook ────────────────────────────────────────────────────── */
@@ -351,9 +307,6 @@ function CoverBody({
 }) {
   const [sectionRef, sectionVisible] = useScrollReveal(0.1);
 
-  // Timeline from first story
-  const timeline = (stories[0]?.timeline ?? []) as Record<string, string>[];
-
   return (
     <section
       ref={sectionRef as React.RefObject<HTMLElement>}
@@ -372,98 +325,17 @@ function CoverBody({
           </div>
         </div>
       ))}
-
-      {/* Timeline — uses TimelineSection which handles desktop/mobile detection */}
-      <TimelineSection timeline={timeline} />
     </section>
   );
 }
 
-/* --- D. Timeline --- */
-
-function TimelineNode({
-  entry,
-  index,
-}: {
-  entry: Record<string, string>;
-  index: number;
-}) {
-  const [expanded, setExpanded] = useState(false);
-  const dateText = entry.date || entry.day || "";
-  const noteText = entry.title || entry.event || entry.note || entry.development || "";
-
-  const sentences = noteText.split(/(?<=[.!?])\s+/);
-  const summary = sentences[0] || noteText;
-  const detail = sentences.length > 1 ? sentences.slice(1).join(" ") : "";
-  const hasDetail = detail.length > 0;
-
-  return (
-    <div role="listitem">
-      <button
-        className={`wk-timeline__node${expanded ? " wk-timeline__node--expanded" : ""}`}
-        onClick={() => hasDetail && setExpanded(!expanded)}
-        aria-expanded={hasDetail ? expanded : undefined}
-        type="button"
-        style={{ "--node-delay": `${index * 80}ms` } as React.CSSProperties}
-      >
-        <span className="wk-timeline__dot" aria-hidden="true" />
-        <span className="wk-timeline__day">{dateText}</span>
-        <span className="wk-timeline__note">{hasDetail ? summary : noteText}</span>
-        {hasDetail && (
-          <>
-            <div className="wk-timeline__detail">
-              <div className="wk-timeline__detail-inner">
-                <p className="wk-timeline__detail-text">{detail}</p>
-              </div>
-            </div>
-            <span className="wk-timeline__expand-hint">
-              {expanded ? "Collapse" : "Expand"}
-            </span>
-          </>
-        )}
-      </button>
-    </div>
-  );
-}
-
-function TimelineSection({ timeline }: { timeline: Record<string, string>[] }) {
-  const [isDesktop, setIsDesktop] = useState(false);
-  const [ref, visible] = useScrollReveal(0.15);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px)");
-    setIsDesktop(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
-
-  if (!timeline || timeline.length === 0) return null;
-
-  return (
-    <div
-      ref={ref as React.RefObject<HTMLDivElement>}
-      className={`wk-timeline-section wk-reveal${visible ? " wk-reveal--visible" : ""}`}
-      aria-labelledby="wk-timeline-heading"
-    >
-      <h3 className="wk-section-label" id="wk-timeline-heading" data-prefix="void --">Timeline</h3>
-      <div className="wk-timeline" role="list" aria-label="Key events">
-        {isDesktop ? <InkHorizontalTrack /> : <InkVerticalTrack />}
-        {timeline.map((entry, k) => (
-          <TimelineNode key={k} entry={entry} index={k} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/* --- E. Opinions --- */
+/* --- D. Opinions --- */
 
 function OpinionCard({ op }: { op: WeeklyOpinion }) {
   return (
     <article
       className="wk-opinion wk-reveal-child"
-      style={{ "--lean-color": getLeanColor(leanToScore(op.lean)) } as React.CSSProperties}
+      style={{ "--lean-color": leanToBiasVar(op.lean) } as React.CSSProperties}
     >
       <div className="wk-opinion__header">
         <span className="wk-opinion__badge">
@@ -822,7 +694,7 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
               imageAttribution={digest.cover_image_attribution}
             />
 
-            {/* C. Cover Body + Timeline */}
+            {/* C. Cover Body */}
             {digest.cover_text && digest.cover_text.length > 0 && (
               <CoverBody
                 stories={digest.cover_text}
