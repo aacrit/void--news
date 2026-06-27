@@ -39,7 +39,7 @@ News aggregation, 6-axis rule-based NLP bias analysis. 1,016 sources / 158 count
 GitHub Actions (1x daily cron, 11:00 UTC) → Python Pipeline → Supabase (PostgreSQL) ← Next.js Static Site (Cloudflare Pages — void-news.pages.dev)
 ```
 
-No backend server. **Tech**: Python/spaCy/NLTK/TextBlob (NLP), Pillow ~=11 (WebP conversion at upload, q82, ~25-35% LCP image shrink), Gemini 2.5 via google-genai SDK — flash (`gemini-2.5-flash`) for the daily brief + top-10 stories, flash-lite (`gemini-2.5-flash-lite`) for the rest of the top-50 + history script gen (Claude + Groq retired 2026-06-22 / 2026-06-24; rule-based fallback), edge-tts 4-voice Multilingual Neural roster (audio, $0), Supabase, Next.js 16/React 19/TypeScript, native CSS + Web Animations API. Fonts: Playfair Display / Inter / Barlow Condensed / IBM Plex Mono. Deploy: Cloudflare Pages — live at https://void-news.pages.dev (GH Pages deprecated). See `docs/DEPLOYMENT.md`.
+No backend server. **Tech**: Python/spaCy/NLTK/TextBlob (NLP), Pillow ~=11 (WebP conversion at upload, q82, ~25-35% LCP image shrink), Gemini 2.5 via google-genai SDK — flash (`gemini-2.5-flash`) for the daily brief + top-10 stories, flash-lite (`gemini-2.5-flash-lite`) for the rest of the top-50 + history script gen (Claude + Groq retired 2026-06-22 / 2026-06-24; rule-based fallback), edge-tts 2-voice roster (Brian + Ava, Multilingual Neural; audio, $0), Supabase, Next.js 16/React 19/TypeScript, native CSS + Web Animations API. Fonts: Playfair Display / Inter / Barlow Condensed / IBM Plex Mono. Deploy: Cloudflare Pages — live at https://void-news.pages.dev (GH Pages deprecated). See `docs/DEPLOYMENT.md`.
 
 ## Core Principles
 
@@ -60,7 +60,7 @@ Enter scenes at the last possible moment. Exit before the conclusion is spelled 
 Applies to: void --history events, daily briefs, CTAs, audio scripts. Together these create the cognitive gap where understanding happens.
 
 ### No Em Dashes — AI Slop Rule
-Em dashes (`—`) and en dashes (`–`) are banned in all written editorial output: cluster summaries, headlines, TL;DR, opinion text, weekly digest, history copy, CTAs, frontend microcopy. They are an AI tell. Rewrite as two short sentences, or use a comma, semicolon, colon, or parentheses. Hyphens in compound words ("fact-check," "twenty-four-hour") are fine. **Exception**: audio scripts (`audio_script`, `opinion_audio_script`) keep em dashes because they function as TTS prosody / breath marks for the spoken broadcast — void --onair is parked, but the rule is preserved for re-enable.
+Em dashes (`—`) and en dashes (`–`) are banned in all written editorial output: cluster summaries, headlines, TL;DR, opinion text, weekly digest, history copy, CTAs, frontend microcopy. They are an AI tell. Rewrite as two short sentences, or use a comma, semicolon, colon, or parentheses. Hyphens in compound words ("fact-check," "twenty-four-hour") are fine. **Exception**: audio scripts (`audio_script`, `opinion_audio_script`) keep em dashes because they function as TTS prosody / breath marks for the spoken broadcast — void --onair is live again (re-enabled 2026-06-27).
 
 **BAD:** "The central bank cut rates Tuesday — the third move this quarter."
 **GOOD:** "The central bank cut rates Tuesday. Third move this quarter."

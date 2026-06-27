@@ -256,7 +256,7 @@ REGISTER: Newsroom broadcast. Contractions. Fragments for emphasis. Em dashes \
 for pivots. The cadence of two anchors who report for a living — clipped, \
 efficient, authoritative. Not conversational. Not leisurely. Professional.
 
-FIRST LINE: A: From void news, {DATE_SHORT}. [short pause]
+FIRST LINE: A: From void news, {DATE_SHORT}.
 LAST LINE: The last speaker says "This was void news." with finality.
 
 Two senior journalists briefing each other as co-anchors. 4-5 minutes. \
@@ -551,18 +551,16 @@ def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
                 report["warnings"].append(msg)
                 print(f"  [quality][brief:{edition}] {msg}")
 
-        short_pause_count = script.lower().count("[short pause]")
-        long_pause_count = script.lower().count("[long pause]")
-        pause_count = short_pause_count + long_pause_count
+        # Pause markers ([short/long pause]) are banned — edge-tts reads them
+        # verbatim and they are stripped at synthesis. Rhythm rides on em dashes
+        # + ellipses; paragraph breaks add natural pauses too.
         ellipsis_count = script.count("...")
         dash_count = script.count(" — ") + script.count("—")
-        total_markers = pause_count + ellipsis_count + dash_count
-        # [long pause] markers removed from requirements — TTS handles
-        # pacing via punctuation, paragraph breaks, and em dashes.
+        total_markers = ellipsis_count + dash_count
 
         if total_markers < 5:
             msg = (f"Pacing: only {total_markers} rhythm markers "
-                   f"(pauses: {pause_count}, ellipses: {ellipsis_count}, dashes: {dash_count})")
+                   f"(ellipses: {ellipsis_count}, dashes: {dash_count})")
             report["warnings"].append(msg)
             print(f"  [quality][brief:{edition}] {msg}")
 
@@ -1331,7 +1329,7 @@ def _build_retry_suffix(quality_report: dict | None) -> str:
         return (
             "\n\nCRITICAL REMINDER: Your previous attempt failed quality checks. "
             "Start every sentence with a FACT or NAME. "
-            "First line MUST be: A: From void news, [date]. [short pause] — "
+            "First line MUST be: A: From void news, [date]. "
             "Last speaker MUST say: This was void news."
         )
     parts = ["\n\nCRITICAL RETRY — your previous attempt failed quality checks:"]
@@ -1339,7 +1337,7 @@ def _build_retry_suffix(quality_report: dict | None) -> str:
         if "Prohibited terms" in failure:
             parts.append(f"- {failure}. Start every sentence with a FACT or NAME.")
         elif "sign_on" in failure:
-            parts.append("- MISSING SIGN-ON: First line MUST be exactly: A: From void news, [date]. [short pause]")
+            parts.append("- MISSING SIGN-ON: First line MUST be exactly: A: From void news, [date].")
         elif "sign_off" in failure:
             parts.append("- MISSING SIGN-OFF: Last speaker MUST say: This was void news.")
         elif "filler" in failure.lower():
