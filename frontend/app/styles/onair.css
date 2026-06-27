@@ -1,0 +1,331 @@
+/* ---------------------------------------------------------------------------
+   void --onair — dedicated broadcast page (/onair)
+   Teal --voice-accent is the audio identity. Mobile-first; centered column on
+   desktop. Bottom padding clears the mobile tab bar.
+   --------------------------------------------------------------------------- */
+
+.onair {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: clamp(1.25rem, 5vw, 2.5rem) clamp(1rem, 4vw, 1.75rem) 6rem;
+  min-height: 100vh;
+}
+
+/* -- Masthead ------------------------------------------------------------- */
+.onair__masthead {
+  margin-bottom: 1.75rem;
+}
+.onair__kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-ibm-mono), monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: lowercase;
+  color: var(--voice-accent);
+}
+.onair__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--border-strong);
+  flex: none;
+}
+.onair__dot--live {
+  background: var(--voice-accent);
+  box-shadow: 0 0 0 0 var(--voice-accent-glow);
+  animation: onair-pulse 1.8s ease-out infinite;
+}
+@keyframes onair-pulse {
+  0% { box-shadow: 0 0 0 0 var(--voice-accent-glow); }
+  70% { box-shadow: 0 0 0 7px rgba(77, 175, 160, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(77, 175, 160, 0); }
+}
+.onair__title {
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: clamp(1.85rem, 7vw, 2.6rem);
+  line-height: 1.05;
+  font-weight: 700;
+  color: var(--fg-primary);
+  margin: 0.4rem 0 0.5rem;
+}
+.onair__sub {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--fg-secondary);
+  max-width: 42ch;
+  margin: 0;
+}
+
+/* -- Empty state ---------------------------------------------------------- */
+.onair__empty {
+  border: 1px dashed var(--border-strong);
+  border-radius: 12px;
+  padding: 2.5rem 1.5rem;
+  text-align: center;
+  color: var(--fg-secondary);
+}
+.onair__empty p { margin: 0 0 0.35rem; font-size: 1.05rem; color: var(--fg-primary); }
+.onair__empty-sub { font-size: 0.85rem; color: var(--fg-muted); }
+
+/* -- Now playing ---------------------------------------------------------- */
+.onair__now {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 1.25rem 1.25rem 1.4rem;
+  box-shadow: 0 1px 0 var(--border-subtle);
+}
+.onair__voices {
+  font-family: var(--font-ibm-mono), monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--voice-accent);
+  margin: 0 0 0.4rem;
+}
+.onair__np-headline {
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: clamp(1.1rem, 4.5vw, 1.4rem);
+  line-height: 1.2;
+  font-weight: 700;
+  color: var(--fg-primary);
+  margin: 0 0 1.1rem;
+}
+
+/* Seek */
+.onair__seek { position: relative; height: 22px; display: flex; align-items: center; }
+.onair__range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border-strong);
+  outline: none;
+  cursor: pointer;
+}
+.onair__range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--voice-accent);
+  border: 2px solid var(--bg-elevated);
+  cursor: pointer;
+}
+.onair__range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--voice-accent);
+  border: 2px solid var(--bg-elevated);
+  cursor: pointer;
+}
+.onair__chapter-mark {
+  position: absolute;
+  top: 50%;
+  width: 2px;
+  height: 12px;
+  background: var(--accent-warm);
+  transform: translate(-1px, -50%);
+  pointer-events: none;
+  border-radius: 1px;
+}
+.onair__times {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-ibm-mono), monospace;
+  font-size: 0.72rem;
+  color: var(--fg-muted);
+  margin-top: 0.3rem;
+}
+
+/* Chapter chips */
+.onair__chapters { display: flex; gap: 0.5rem; margin: 0.9rem 0 0.2rem; }
+.onair__chip {
+  flex: 1;
+  padding: 0.45rem 0.5rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--fg-secondary);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.onair__chip--on {
+  color: var(--voice-accent);
+  border-color: var(--voice-accent);
+  background: var(--voice-accent-ghost);
+}
+
+/* Transport */
+.onair__transport {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  margin-top: 1.1rem;
+}
+.onair__tbtn {
+  position: relative;
+  background: none;
+  border: none;
+  color: var(--fg-secondary);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  padding: 0.4rem;
+  border-radius: 50%;
+}
+.onair__tbtn-n {
+  position: absolute;
+  font-family: var(--font-ibm-mono), monospace;
+  font-size: 0.5rem;
+  font-weight: 600;
+  top: 52%;
+  left: 50%;
+  transform: translate(-50%, -40%);
+  pointer-events: none;
+}
+.onair__play {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: none;
+  background: var(--voice-accent);
+  color: #0d1f1c;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 16px var(--voice-accent-glow);
+  transition: transform 0.12s ease;
+}
+.onair__play:active { transform: scale(0.94); }
+.onair__speed {
+  background: none;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  color: var(--fg-secondary);
+  font-family: var(--font-ibm-mono), monospace;
+  font-size: 0.78rem;
+  padding: 0.3rem 0.5rem;
+  cursor: pointer;
+  min-width: 2.6rem;
+}
+
+/* -- Show notes ----------------------------------------------------------- */
+.onair__notes { margin-top: 1.75rem; display: grid; gap: 1.5rem; }
+.onair__note-h {
+  font-family: var(--font-barlow), sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  margin: 0 0 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.onair__lean {
+  font-family: var(--font-ibm-mono), monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.04em;
+  color: var(--voice-accent);
+  border: 1px solid var(--voice-accent-dim);
+  border-radius: 4px;
+  padding: 0.05rem 0.35rem;
+  text-transform: none;
+}
+.onair__note-lead {
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: 1.05rem;
+  line-height: 1.3;
+  font-weight: 700;
+  color: var(--fg-primary);
+  margin: 0 0 0.4rem;
+}
+.onair__note-body {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--fg-secondary);
+  margin: 0;
+}
+
+/* -- Archive -------------------------------------------------------------- */
+.onair__archive { margin-top: 2.25rem; }
+.onair__archive-h {
+  font-family: var(--font-barlow), sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 1.25rem;
+  margin: 0 0 1rem;
+}
+.onair__archive-date {
+  font-family: var(--font-ibm-mono), monospace;
+  font-size: 0.7rem;
+  color: var(--fg-muted);
+  margin: 1rem 0 0.5rem;
+}
+.onair__archive-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.4rem; }
+.onair__ep {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.6rem 0.5rem;
+  background: none;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  transition: background 0.15s;
+}
+.onair__ep:hover { background: var(--bg-elevated); }
+.onair__ep:disabled { opacity: 0.45; cursor: default; }
+.onair__ep--on { background: var(--voice-accent-ghost); }
+.onair__ep-play {
+  width: 34px;
+  height: 34px;
+  flex: none;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  display: grid;
+  place-items: center;
+  color: var(--fg-secondary);
+}
+.onair__ep--on .onair__ep-play { color: var(--voice-accent); border-color: var(--voice-accent); }
+.onair__ep-play svg { width: 16px; height: 16px; }
+.onair__ep-text { display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; }
+.onair__ep-headline {
+  font-size: 0.9rem;
+  line-height: 1.3;
+  color: var(--fg-primary);
+  font-weight: 500;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.onair__ep-meta {
+  font-family: var(--font-ibm-mono), monospace;
+  font-size: 0.68rem;
+  color: var(--fg-muted);
+}
+
+/* Desktop: a touch more generous, but the page stays a centered column. */
+@media (min-width: 768px) {
+  .onair { padding-bottom: 3rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .onair__dot--live { animation: none; }
+}
