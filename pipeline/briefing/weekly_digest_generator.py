@@ -35,6 +35,7 @@ load_dotenv()
 from utils.supabase_client import supabase
 from summarizer.gemini_client import (
     generate_json as gemini_generate_json,
+    generate_text as gemini_generate_text,
     is_available as gemini_is_available,
     _FLASH_MODEL,
 )
@@ -140,6 +141,19 @@ def _smart_generate(prompt, system_instruction=None, max_output_tokens=8192, mod
             return result, ("gemini-flash" if model == _FLASH_MODEL else "gemini-flash-lite")
 
     return None, "none"
+
+
+def _smart_generate_text(prompt, system_instruction=None, max_output_tokens=8192, model=None):
+    """Plain-text Gemini generation (no JSON) for the single long weekly audio
+    script — JSON-escaping a ~3000-word script with embedded opinion quotes is
+    fragile (one stray quote drops the whole result). Returns the script string,
+    or None on failure (caller degrades to no audio)."""
+    if gemini_is_available():
+        return gemini_generate_text(
+            prompt, system_instruction=system_instruction,
+            count_call=False, max_output_tokens=max_output_tokens, model=model,
+        )
+    return None
 
 
 # ---------------------------------------------------------------------------
@@ -827,8 +841,11 @@ a point. B responds with a new angle or counter-fact, also developed across \
 
 STRUCTURE (target: 2500-3000 words total):
 
-1. COLD OPEN (~100 words, ~30 sec)
-   A hooks the listener with the week's defining tension in one dramatic sentence.
+1. COLD OPEN (~120 words, ~35 sec)
+   A grounds the listener first, in the composed, lightly formal cadence of The \
+   Economist — unhurried, assured: "From void news. Today is {TODAY_LABEL}. On this \
+   week's edition..." then one clause previewing what the week held. ONLY THEN does \
+   A hook the listener with the week's defining tension in one dramatic sentence.
    B adds the second dimension — the fact that complicates the obvious reading.
    Example tone: "This was the week the trade war stopped being theoretical." / \
    "And the week both sides discovered their threat had the same price tag."
@@ -906,10 +923,11 @@ BANNED WORDS/PHRASES (hard kill):
 
 ---
 
-FIRST LINE: A: From void news, this is the weekly for {WEEK_LABEL}.
+FIRST LINE: A: From void news. Today is {TODAY_LABEL}. On this week's edition, the weekly for {WEEK_LABEL}.
 LAST LINE: A: From void news, this was the weekly. We'll be back next Sunday.
 
-Output JSON: {{"script": "A: ...\\nB: ...\\n\\nA: ..."}}
+OUTPUT: the script ONLY, as plain text. Every line starts with "A:" or "B:". \
+No JSON, no markdown fences, no preamble or commentary — just the spoken script.
 """
 
 
@@ -932,6 +950,9 @@ def _generate_audio(covers, opinions, tech, sports, recap, bias_data, edition,
             week_label = f"{week_start} through {week_end}"
     else:
         week_label = "this week"
+
+    # Air date for the Economist-style grounding intro ("Today is ...").
+    today_label = datetime.now(timezone.utc).strftime("%A, %B %-d")
 
     # --- Cover stories with data timelines ---
     cover_blocks = []
@@ -1022,7 +1043,7 @@ def _generate_audio(covers, opinions, tech, sports, recap, bias_data, edition,
             recap_context = "OTHER STORIES THIS WEEK:\n" + "\n".join(recap_lines)
 
     # --- Build the system instruction with week label ---
-    system = AUDIO_SYSTEM.replace("{WEEK_LABEL}", week_label)
+    system = AUDIO_SYSTEM.replace("{WEEK_LABEL}", week_label).replace("{TODAY_LABEL}", today_label)
 
     # --- Assemble the user prompt ---
     prompt = (
@@ -1056,8 +1077,13 @@ def _generate_audio(covers, opinions, tech, sports, recap, bias_data, edition,
         f"from the opinion section."
     )
 
-    result, gen = _smart_generate(prompt, system_instruction=system, max_output_tokens=8192)
-    return result, 1
+    # Single ~3000-word field with embedded opinion quotes — generate as PLAIN
+    # TEXT so a stray quote can't break a JSON wrapper (the prior failure mode:
+    # "Gemini JSON parse failed -> No audio script generated").
+    script = _smart_generate_text(prompt, system_instruction=system, max_output_tokens=8192)
+    if script and script.strip():
+        return {"script": script.strip()}, 1
+    return None, 1
 
 
 # ---------------------------------------------------------------------------
