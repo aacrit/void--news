@@ -86,7 +86,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           DISABLE_GEMINI_REASONING: "1"
           DISABLE_EDITORIAL_TRIAGE: "1"
-          DISABLE_AUDIO: "1"
+          DISABLE_AUDIO: "0"   # void --onair audio re-enabled (edge-tts, $0). Set "1" to re-park.
           # 2026-05-22 cost-emergency kill switch: pauses every Claude call
           # (cluster_summarizer + daily_brief + weekly + ig_caption) via
           # claude_client.is_available() guard. Gemini Flash takes over the
@@ -109,7 +109,7 @@ jobs:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           DISABLE_GEMINI_REASONING: "1"
           DISABLE_EDITORIAL_TRIAGE: "1"
-          DISABLE_AUDIO: "1"
+          DISABLE_AUDIO: "0"   # void --onair audio re-enabled (edge-tts, $0). Set "1" to re-park.
           # 2026-05-22 cost-emergency kill switch: pauses every Claude call
           # (cluster_summarizer + daily_brief + weekly + ig_caption) via
           # claude_client.is_available() guard. Gemini Flash takes over the
