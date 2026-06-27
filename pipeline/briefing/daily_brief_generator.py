@@ -256,7 +256,10 @@ REGISTER: Newsroom broadcast. Contractions. Fragments for emphasis. Em dashes \
 for pivots. The cadence of two anchors who report for a living — clipped, \
 efficient, authoritative. Not conversational. Not leisurely. Professional.
 
-FIRST LINE: A: From void news, {DATE_SHORT}.
+FIRST LINE (grounding, in the calm and measured cadence of NYT's "The Daily" — \
+unhurried, present-tense, settling the listener into the day before any news \
+breaks): A says it plainly — "From void news. Today is {DATE_SPOKEN}." A single \
+beat. Then the headline rundown.
 LAST LINE: The last speaker says "This was void news." with finality.
 
 Two senior journalists briefing each other as co-anchors. 4-5 minutes. \
@@ -292,7 +295,7 @@ RIGHT: A reports Story 1. B adds a dimension. B reports Story 2. A adds a dimens
 
 Story [1] gets the most depth — at least 6 exchanges between hosts. \
 Story [2] gets 4 exchanges. Story [3] gets 2. \
-Open with a headline rundown — maximum 3 headlines, maximum 8 words each. \
+After that grounding beat, the headline rundown — maximum 3 headlines, maximum 8 words each. \
 "US strikes inside Iran. NATO's future in doubt. Oil at $103." — that terse. \
 B enters IMMEDIATELY after the headline rundown with a NEW FACT or counter-data \
 — not a reaction, not a framing comment. The listener must hear both voices \
@@ -1433,6 +1436,7 @@ def generate_daily_briefs(
         print(f"  [brief] Gemini unavailable — brief carries forward / rule-based")
     date_str = datetime.now(timezone.utc).strftime("%A, %d %B %Y")
     date_short = datetime.now(timezone.utc).strftime("%B %d")  # e.g. "April 02"
+    date_spoken = datetime.now(timezone.utc).strftime("%A, %B %-d")  # e.g. "Friday, June 27" — Daily-style grounding
 
     results: dict[str, dict] = {}
     _stats = {"fresh": 0, "carried": 0, "rule_based": 0}
@@ -1486,6 +1490,7 @@ def generate_daily_briefs(
                 EDITION_FOCUS=edition_focus,
                 DATE=date_str,
                 DATE_SHORT=date_short,
+                DATE_SPOKEN=date_spoken,
                 N=len(top_clusters),
                 stories_block=stories_block,
                 previous_brief_line=previous_brief_line,

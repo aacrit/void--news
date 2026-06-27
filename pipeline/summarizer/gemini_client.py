@@ -235,6 +235,68 @@ def generate_json(
     return None
 
 
+def generate_text(
+    prompt: str,
+    system_instruction: str | None = None,
+    count_call: bool = True,
+    max_output_tokens: int = 8192,
+    model: str | None = None,
+) -> str | None:
+    """Send a prompt to Gemini and return the PLAIN-TEXT response (no JSON).
+
+    For a single long free-text output (e.g. the ~3000-word weekly audio script),
+    wrapping the text in JSON is fragile — one unescaped quote inside the string
+    breaks json.loads and drops the whole result. This path skips JSON entirely.
+    Returns the stripped text, or None on failure (caller falls back).
+    """
+    global _call_count, _persistent_failure
+
+    if _persistent_failure:
+        return None
+    client = _get_client()
+    if client is None:
+        return None
+    if count_call and _call_count >= _MAX_CALLS_PER_RUN:
+        return None
+
+    use_model = (model or "").strip() or _MODEL
+    config = types.GenerateContentConfig(
+        temperature=0.2,
+        max_output_tokens=max_output_tokens,
+        system_instruction=system_instruction,
+    )
+    if count_call:
+        _call_count += 1
+
+    try:
+        _rate_limit()
+        response = client.models.generate_content(
+            model=use_model, contents=prompt, config=config,
+        )
+        if not response.text:
+            print("  [warn] Gemini returned empty text response")
+            return None
+        text = response.text.strip()
+        # Strip markdown fences if the model added them despite instructions.
+        if text.startswith("```"):
+            text = text.split("\n", 1)[1] if "\n" in text else text[3:]
+            if text.endswith("```"):
+                text = text[:-3]
+            text = text.strip()
+        return text
+    except Exception as e:
+        error_str = str(e).lower()
+        if any(k in error_str for k in (
+            "api key not valid", "api_key_invalid", "invalid api key",
+            "permission_denied", "permission denied", "suspended", "spending cap",
+        )):
+            _persistent_failure = True
+            print(f"  [error] Gemini terminal failure — disabling for this run: {e}")
+        else:
+            print(f"  [warn] Gemini text generation failed: {e}")
+        return None
+
+
 def is_available() -> bool:
     """Check if Gemini is configured, the SDK is installed, and no persistent failure."""
     # 2026-05-24 — mirror DISABLE_ANTHROPIC kill switch. When set, every
