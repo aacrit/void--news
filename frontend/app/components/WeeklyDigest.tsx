@@ -119,17 +119,13 @@ function formatArchiveRange(start: string, end: string): string {
   return `${s.toLocaleDateString("en-US", { month: "short", day: "numeric" })}\u2013${e.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`;
 }
 
+/* Lean marker — same three labels the daily Opinion view uses
+   (SkyboxBanner: Progressive / Pragmatic / Conservative). */
 function leanBadgeLabel(lean: string): string {
-  const map: Record<string, string> = {
-    "left": "The Progressive",
-    "center-left": "The Reformist",
-    "center": "The Pragmatist",
-    "center-right": "The Strategist",
-    "right": "The Traditionalist",
-    "far-left": "The Progressive",
-    "far-right": "The Traditionalist",
-  };
-  return map[(lean || "center").toLowerCase()] ?? lean ?? "center";
+  const l = (lean || "center").toLowerCase();
+  if (l.includes("left")) return "Progressive";
+  if (l.includes("right")) return "Conservative";
+  return "Pragmatic";
 }
 
 /* Map a lean label to the shared bias color token — same blue/green/red

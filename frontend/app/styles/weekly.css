@@ -738,33 +738,25 @@
   padding: var(--space-4) 0;
 }
 
+/* Single column — each perspective spans the full content width
+   (was a 2/3-col grid that truncated the essays). */
 .wk-opinions__grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: var(--space-3);
-}
-
-@media (min-width: 768px) {
-  .wk-opinions__grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .wk-opinions__grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+  gap: var(--space-4);
 }
 
 .wk-opinion {
   background: none;
   border: none;
-  border-left: 3px solid var(--lean-color, var(--bias-center));
-  padding: var(--space-3) var(--space-4);
+  padding: 0;
   position: relative;
-  transition:
-    box-shadow 320ms var(--ease-cinematic),
-    transform 320ms var(--spring-snappy);
+}
+
+/* Neutral hairline between stacked perspectives — no colored accent line. */
+.wk-opinion + .wk-opinion {
+  border-top: var(--rule-thin);
+  padding-top: var(--space-4);
 }
 
 /* .wk-opinion:hover lift/shadow removed — opinion cards sit still */
@@ -779,14 +771,13 @@
 .wk-opinion__badge {
   font-family: var(--font-meta);
   font-size: var(--text-xxs);
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
-  padding: 1px var(--space-2);
-  border-radius: 2px;
+  padding: 0;
   color: var(--lean-color, var(--fg-secondary));
-  border: 1px solid color-mix(in srgb, var(--lean-color, var(--fg-tertiary)) 30%, transparent);
-  background: color-mix(in srgb, var(--lean-color, var(--fg-tertiary)) 6%, transparent);
+  border: none;
+  background: none;
   white-space: nowrap;
 }
 
