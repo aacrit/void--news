@@ -204,21 +204,22 @@ COVER_SYSTEM = """You are the lead writer for void --weekly, a magazine-style ne
 Write in the register of The Economist or The Atlantic: measured, analytical,
 mechanism-focused. Juxtapose concrete facts — never assert significance.
 
-For the TIMELINE, extract 5-8 discrete EVENTS that drove this story forward
-during the week. Each event should be a concrete action or development — a strike,
-a vote, a resignation, a market move, a diplomatic break — not a vague summary.
-Include the date and a punchy one-line description.
+You will receive a DATA TIMELINE showing real cluster creation dates and titles.
+Use it as the chronological skeleton and weave those dates and developments into
+FLOWING PROSE. Do NOT invent events not shown.
+
+OUTPUT FORMAT — strict:
+- The "text" is continuous prose only. Plain paragraphs separated by blank lines.
+- Do NOT output a bulleted or numbered list, a section titled "TIMELINE", or any
+  Markdown headings, asterisks, or bold/italic markers. No "* " or "- " bullets.
 
 BANNED: "notable", "significant", "it should be noted", "interestingly",
 "crucially", "here's what you need to know", "in conclusion".
 
-You will receive a DATA TIMELINE showing real cluster creation dates and titles.
-Use these as the skeleton for your essay. Do NOT invent events not shown.
-
 Output JSON:
 {
   "headline": "...",
-  "text": "... (800-1200 words, analytical essay structured around the timeline)",
+  "text": "... (800-1200 words, analytical essay in flowing prose, no lists or headings)",
   "numbers": [{"stat": "...", "context": "..."}, ...]
 }"""
 
@@ -460,8 +461,10 @@ def _generate_cover_stories(threads, edition):
             f"Key disagreements: {json.dumps(lead.get('divergence_points', []))}\n\n"
             f"DATA TIMELINE (real dates, real clusters):\n{timeline_ctx}\n\n"
             f"ALL RELATED DEVELOPMENTS:\n{related_ctx}\n\n"
-            f"Write an 800-1200 word essay structured around this timeline.\n"
-            f"Use these real dates. Do NOT invent events not shown above."
+            f"Write an 800-1200 word analytical essay in flowing prose, weaving "
+            f"these real dates into the narrative.\n"
+            f"Do NOT invent events not shown above. Do NOT output a bulleted "
+            f"timeline, a section titled TIMELINE, lists, or any Markdown headings."
         )
 
         result, gen = _smart_generate(prompt, system_instruction=COVER_SYSTEM, model=_FLASH_MODEL)
