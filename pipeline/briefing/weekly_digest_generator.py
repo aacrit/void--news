@@ -543,14 +543,16 @@ STRICT:
 - BANNED words: "notable", "significant", "it should be noted", "interestingly",
   "crucially", "in conclusion".
 
-Output JSON: {"text": "..."}"""
+Output the note as plain prose text only. No JSON, no labels, no quotation
+marks around the whole note."""
 
 
 def _generate_editor_note(top_threads, edition):
     """Generate a ~130-word italic editor's note from the week's lead threads.
 
-    Flagship-flash (model=_FLASH_MODEL), same router as the cover essays.
-    Rule-based fallback = "" so the layout degrades gracefully.
+    Plain-text generation (model=_FLASH_MODEL, flagship flash) to dodge the
+    json.loads fragility that truncates a long single-string note. Rule-based
+    fallback = "" so the layout degrades gracefully.
     """
     if not top_threads:
         return "", 0
@@ -566,15 +568,12 @@ def _generate_editor_note(top_threads, edition):
         f"Name the through-line and what it asks the reader to weigh. "
         f"120-150 words, flowing prose."
     )
-    result, gen = _smart_generate(
+    text = _smart_generate_text(
         prompt, system_instruction=EDITOR_NOTE_SYSTEM,
         max_output_tokens=1024, model=_FLASH_MODEL,
     )
-    if result and isinstance(result, dict):
-        text = (result.get("text") or "").strip()
-        if text:
-            return text, 1
-    return "", 1
+    text = (text or "").strip()
+    return (text, 1) if text else ("", 1)
 
 
 # ── SECTION 2: THE OPINIONS (5-6 topics × 1 voice each) ──
