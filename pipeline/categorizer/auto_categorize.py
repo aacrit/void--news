@@ -500,6 +500,14 @@ def categorize_article(article: dict) -> list[str]:
         (r"\b(quarterback|touchdown|home run|slam dunk|hat trick|penalty kick)\b", "sports"),
         (r"\b(lakers|celtics|yankees|dodgers|cowboys|patriots|warriors|chiefs)\b", "sports"),
         (r"\b(cricket|rugby|f1|formula 1|grand prix|marathon|triathlon)\b", "sports"),
+        # Accidents/disasters (no dedicated desk) -> general, so a fatal crash
+        # is not mislabeled "conflict" by the "killed/injured" keywords or the
+        # mass-casualty pre-override. Placed BEFORE the conflict markers so a
+        # military cause ("plane shot down", "missile") still wins for a mixed
+        # title (later override in this list takes precedence). (2026-06-28)
+        (r"\b(plane crash|plane crashes|jet crash|helicopter crash|air crash|"
+         r"train derail\w*|derailment|building collapse|bridge collapse|"
+         r"ferry (?:capsiz\w*|sink\w*)|bus crash|car crash|stampede)\b", "general"),
         # Conflict: military hardware, combat actions
         (r"\b(f-15|f-35|f-16|b-52|warplane|fighter jet|warship|submarine)\b", "conflict"),
         (r"\b(shot down|downed|airstrike|shelling|bombardment|missile strike)\b", "conflict"),

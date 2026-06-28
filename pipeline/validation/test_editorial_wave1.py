@@ -117,6 +117,29 @@ def test_coverage_discount_deflates_bag_not_legit():
     assert bag_cov < legit_cov
 
 
+def test_categorizer_edge_cases():
+    # Categorizer follow-up: the headline cases the first live run mislabeled
+    # (SCOTUS->health, museum->health, plane crash->conflict). Skips if spaCy
+    # is unavailable (the categorizer needs it).
+    try:
+        from categorizer.auto_categorize import categorize_article, map_to_desk
+    except Exception:
+        print("  [skip] test_categorizer_edge_cases (spaCy unavailable)")
+        return
+
+    def cat(t):
+        c = categorize_article({"title": t, "summary": "", "full_text": ""})
+        return map_to_desk(c[0]) if c else None
+
+    assert cat("Supreme Court allows end of temporary protected status") == "politics"
+    assert cat("America 250: Gilcrease Museum's Declaration of Independence") == "culture"
+    # fatal accident -> general (no disaster desk), not the war "conflict" desk
+    assert cat("Beijing plane crash: Pilot killed, 13 injured") == "general"
+    # but a genuine military strike must STILL be conflict
+    assert cat("Israeli airstrike kills 12 in Gaza") == "conflict"
+    assert cat("Russia missile strike hits Kyiv, 8 killed") == "conflict"
+
+
 def _run():
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     passed = 0
