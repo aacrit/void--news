@@ -303,13 +303,32 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
             avg_opinion = 25.0
         content_type = "opinion" if avg_opinion > 50 else "reporting"
 
-        # Re-categorize using up to 3 articles
+        # Re-categorize. Headline-primary (O10): the cluster headline is the
+        # cleanest topical signal and is immune to the off-topic members an
+        # over-merged cluster accumulates; fall back to a wide member-sample
+        # vote only when the headline is too vague. This MUST mirror main.py's
+        # step-7 categorization — the holistic re-ranker runs last and writes
+        # the final category, so without this it overwrote O10 with the old
+        # 3-article vote (e.g. a SCOTUS ruling mislabeled "health"). (2026-06-28)
         try:
-            cat_votes: dict[str, int] = {}
-            for art in articles[:3]:
-                for cat in categorize_article(art):
-                    cat_votes[cat] = cat_votes.get(cat, 0) + 1
-            best_cat = max(cat_votes, key=cat_votes.get) if cat_votes else "politics"
+            cluster_title = (cluster.get("title") or "").strip()
+            headline_cats = (
+                categorize_article(
+                    {"title": cluster_title, "summary": "", "full_text": ""}
+                )
+                if cluster_title
+                else []
+            )
+            if headline_cats and headline_cats != ["general"]:
+                best_cat = headline_cats[0]
+            else:
+                cat_votes: dict[str, int] = {}
+                for art in articles[:8]:
+                    for cat in categorize_article(art):
+                        cat_votes[cat] = cat_votes.get(cat, 0) + 1
+                best_cat = (
+                    max(cat_votes, key=cat_votes.get) if cat_votes else "politics"
+                )
             category = map_to_desk(best_cat)
         except Exception:
             category = cluster.get("category", "politics")
