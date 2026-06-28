@@ -45,6 +45,19 @@
   .page-container {
     transition: padding-left 350ms var(--ease-cinematic, ease);
   }
+
+  /* /weekly uses .wk-page (not .page-container) as its outer container, so the
+     broadcast sidebar push needs a sibling rule to avoid overlapping the
+     weekly canvas. Mirrors the .page-container values exactly. */
+  html[data-onair-pane] .wk-page {
+    padding-left: clamp(320px, calc(100vw - 1400px - 80px), 480px);
+    transition: padding-left 420ms var(--ease-cinematic, ease);
+    will-change: padding-left;
+  }
+
+  .wk-page {
+    transition: padding-left 350ms var(--ease-cinematic, ease);
+  }
 }
 
 /* ---- Skybox — editorial brief zone above the news canvas -------------- */

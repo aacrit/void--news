@@ -466,6 +466,15 @@ export interface WeeklyDigestData {
   editor_note: string | null;
   audio_url: string | null;
   audio_duration_seconds: number | null;
+  // Weekly editorial (one argued week-in-review column; migration 064).
+  // Distinct from the three-lens opinion_left/center/right "Perspectives".
+  opinion_text: string | null;
+  opinion_headline: string | null;
+  opinion_lean: OpinionLean | null;
+  opinion_audio_script: string | null;
+  opinion_start_seconds: number | null;
+  audio_voice: string | null;
+  audio_voice_label: string | null;
   total_articles: number | null;
   total_clusters: number | null;
   contested_stories?: WeeklyContestedStory[] | null;

@@ -1974,29 +1974,45 @@ def main():
         for cluster in clusters:
             cluster_articles_list = cluster.get("articles", [])
 
-            # Categorize — use up to 3 articles for more reliable classification.
-            # The old approach used only the first article, which could be a
-            # brief wire bulletin that miscategorizes the whole cluster.
+            # Categorize. The cluster HEADLINE is the cleanest topical signal —
+            # it is immune to the off-topic members an over-merged cluster
+            # accumulates (which previously dragged whole clusters into
+            # "science" via incidental "AI"/"study"/"launch" tokens in the
+            # sampled bodies). Use the headline as the primary category and fall
+            # back to a wide member-sample vote only when the headline is too
+            # vague to classify. (2026-06-28, Wave 1 / O10)
             try:
-                cat_votes: dict[str, int] = {}
-                sample = cluster_articles_list[:3] if cluster_articles_list else []
-                all_categories: list[str] = []
-                for art in sample:
-                    cats = categorize_article(art)
-                    for cat in cats:
-                        cat_votes[cat] = cat_votes.get(cat, 0) + 1
-                    if not all_categories:
-                        all_categories = cats
-                # Pick the category with the most votes across sampled articles,
-                # then map to merged desk slug for display.
-                if cat_votes:
-                    best_cat = max(cat_votes, key=cat_votes.get)
-                    cluster["category"] = map_to_desk(best_cat)
-                    if best_cat not in all_categories:
-                        all_categories.insert(0, best_cat)
+                cluster_title = (cluster.get("title") or "").strip()
+                headline_cats = (
+                    categorize_article(
+                        {"title": cluster_title, "summary": "", "full_text": ""}
+                    )
+                    if cluster_title
+                    else []
+                )
+                if headline_cats and headline_cats != ["general"]:
+                    best_cat = headline_cats[0]
+                    all_categories = headline_cats
                 else:
-                    cluster["category"] = "politics"
-                    all_categories = ["politics"]
+                    # Vague headline — vote across a wide member sample (8, up
+                    # from 3) so the on-topic majority outweighs any pollution.
+                    cat_votes: dict[str, int] = {}
+                    all_categories = []
+                    sample = cluster_articles_list[:8] if cluster_articles_list else []
+                    for art in sample:
+                        cats = categorize_article(art)
+                        for cat in cats:
+                            cat_votes[cat] = cat_votes.get(cat, 0) + 1
+                        if not all_categories:
+                            all_categories = cats
+                    best_cat = (
+                        max(cat_votes, key=cat_votes.get) if cat_votes else "politics"
+                    )
+                    if not all_categories:
+                        all_categories = [best_cat]
+                cluster["category"] = map_to_desk(best_cat)
+                if best_cat not in all_categories:
+                    all_categories.insert(0, best_cat)
                 # Store fine-grained categories for article_categories table
                 for art in cluster_articles_list:
                     art_id = art.get("id", "")

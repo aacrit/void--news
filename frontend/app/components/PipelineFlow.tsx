@@ -238,7 +238,7 @@ const PHASES: Phase[] = [
         num: "7d",
         title: "Daily Brief (void --tl;dr)",
         detail:
-          "TL;DR (150\u2013220 words) + Opinion (lean rotates L/C/R daily). Audio broadcast (void --onair) is currently parked.",
+          "TL;DR (150\u2013220 words) + Opinion (lean rotates L/C/R daily). Audio broadcast (void --onair) reads the day's brief in two voices.",
         file: "daily_brief_generator.py",
         badge: "9 calls/run",
         badgeActive: true,

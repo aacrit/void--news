@@ -85,24 +85,32 @@ ASSETS_DIR = Path(__file__).parent / "assets"
 # Chosen for character match: tone, gender, and delivery style.
 # ---------------------------------------------------------------------------
 
+# 2026-06-27 (CEO ear-test): collapsed from 4 Multilingual voices to TWO.
+# Every male persona → Brian, every female persona → Ava — the two most natural
+# of Microsoft's newest *free* generation ("Multilingual Neural"). Andrew + Emma
+# dropped. News desk pairs are always male+female, so every TL;DR reads as
+# Brian + Ava; the world opinion (Sulafat) is Ava. (Dragon HD voices are paid
+# Azure, not in free edge-tts, so we stay on the Multilingual tier.)
+_MALE_EDGE_VOICE = "en-US-BrianMultilingualNeural"
+_FEMALE_EDGE_VOICE = "en-US-AvaMultilingualNeural"
 _GEMINI_TO_EDGE_VOICE: dict[str, str] = {
-    # History pair — The Chronicler (Andrew) + The Witness (Emma)
-    "Sadaltager":   "en-US-AndrewMultilingualNeural",  # warm scholarly male
-    "Achernar":     "en-US-EmmaMultilingualNeural",    # editorial-gravity female
-    # News host rotation — 6 personas, 4 voices (pairs always gender-split)
-    "Kore":         "en-US-EmmaMultilingualNeural",    # correspondent — authoritative female
-    "Charon":       "en-US-BrianMultilingualNeural",   # structuralist — conversational male
-    "Orus":         "en-US-AndrewMultilingualNeural",  # investigator — measured male
-    "Gacrux":       "en-US-AvaMultilingualNeural",     # pragmatist — smooth female
-    # Opinion voices by edition — all 4 Multilingual voices represented
-    "Sulafat":      "en-US-AvaMultilingualNeural",     # warm female (world)
-    "Schedar":      "en-US-AndrewMultilingualNeural",  # even male (us)
-    "Despina":      "en-US-AvaMultilingualNeural",     # smooth female (india)
-    "Rasalgethi":   "en-US-BrianMultilingualNeural",   # informative male (uk)
-    "Vindemiatrix": "en-US-EmmaMultilingualNeural",    # gentle female (canada)
+    # History pair — The Chronicler (male) + The Witness (female)
+    "Sadaltager":   _MALE_EDGE_VOICE,    # male
+    "Achernar":     _FEMALE_EDGE_VOICE,  # female
+    # News host rotation — 6 personas, 2 voices (pairs always gender-split)
+    "Kore":         _FEMALE_EDGE_VOICE,  # correspondent — female
+    "Charon":       _MALE_EDGE_VOICE,    # structuralist — male
+    "Orus":         _MALE_EDGE_VOICE,    # investigator — male
+    "Gacrux":       _FEMALE_EDGE_VOICE,  # pragmatist — female
+    # Opinion voices by edition
+    "Sulafat":      _FEMALE_EDGE_VOICE,  # world opinion — female
+    "Schedar":      _MALE_EDGE_VOICE,    # us opinion — male
+    "Despina":      _FEMALE_EDGE_VOICE,  # india opinion — female
+    "Rasalgethi":   _MALE_EDGE_VOICE,    # uk opinion — male
+    "Vindemiatrix": _FEMALE_EDGE_VOICE,  # canada opinion — female
 }
-_DEFAULT_EDGE_VOICE_A = "en-US-AndrewMultilingualNeural"
-_DEFAULT_EDGE_VOICE_B = "en-US-EmmaMultilingualNeural"
+_DEFAULT_EDGE_VOICE_A = _MALE_EDGE_VOICE
+_DEFAULT_EDGE_VOICE_B = _FEMALE_EDGE_VOICE
 
 
 def _edge_voice(gemini_id: str) -> str:
@@ -114,10 +122,33 @@ def _edge_voice(gemini_id: str) -> str:
 # Script conversion
 # ---------------------------------------------------------------------------
 
+# Parenthetical stage directions to drop (pause/beat keywords). Parentheses can
+# hold real speech, so we only strip the ones that read as a direction.
+_STAGE_DIRECTION_PAREN = re.compile(
+    r"\([^)]*\b(?:pause|beat|sighs?|laughs?|chuckles?|breath|silence|aside)\b[^)]*\)",
+    re.IGNORECASE,
+)
+
+
+def _strip_stage_directions(text: str) -> str:
+    """Remove non-spoken stage directions so edge-tts never reads them aloud.
+
+    edge-tts is not an LLM: a literal "[short pause]" or "(beat)" gets spoken
+    verbatim. Bracketed tokens are always markers in our scripts, so strip every
+    "[...]" (any case, anywhere); parentheses may hold real speech, so only strip
+    the ones that read as a stage direction. Em dashes and ellipses are left
+    intact — they are the working pause cues.
+    """
+    text = re.sub(r"\[[^\]]*\]", "", text)        # any bracketed marker, any case
+    text = _STAGE_DIRECTION_PAREN.sub("", text)   # parenthetical stage directions
+    return re.sub(r"  +", " ", text).strip()
+
+
 def _script_to_dialogue(audio_script: str) -> str:
     """Convert broadcast script (A:/B: + [MARKER]) to Gemini TTS dialogue format.
 
-    Maps A→One, B→Two. Strips structural markers and Gemini artifacts.
+    Maps A→One, B→Two. Strips structural markers (case-insensitive) and Gemini
+    artifacts so edge-tts never voices a stage direction like "[short pause]".
     """
     lines = []
     for line in audio_script.splitlines():
@@ -125,12 +156,12 @@ def _script_to_dialogue(audio_script: str) -> str:
         if not stripped:
             continue
 
-        # Skip pure marker lines
-        if re.match(r"^\[([A-Z_0-9]+)\]$", stripped):
+        # Skip pure marker lines (e.g. "[SECTION]", "[short pause]")
+        if re.match(r"^\[[^\]]*\]$", stripped):
             continue
 
-        # Strip inline markers
-        stripped = re.sub(r"^\[([A-Z_0-9]+)\]\s*", "", stripped)
+        # Strip a leading marker so the A:/B: speaker tag can be matched
+        stripped = re.sub(r"^\[[^\]]*\]\s*", "", stripped)
 
         # Map speaker tags
         sp_match = re.match(r"^([AB]):\s*(.+)$", stripped)
@@ -142,11 +173,11 @@ def _script_to_dialogue(audio_script: str) -> str:
             text = stripped
 
         # Clean artifacts
-        text = re.sub(r"\*+", "", text)
-        text = re.sub(r"\[(\d+)\]", "", text)
-        text = re.sub(r"#{1,6}\s*", "", text)
-        text = re.sub(r"`+", "", text)
-        text = re.sub(r"\(\s*\)", "", text)
+        text = re.sub(r"\*+", "", text)            # asterisks / markdown bold
+        text = re.sub(r"#{1,6}\s*", "", text)      # markdown headers
+        text = re.sub(r"`+", "", text)             # backticks
+        text = _strip_stage_directions(text)       # [..] markers + (pause) directions
+        text = re.sub(r"\(\s*\)", "", text)        # leftover empty parens
         text = re.sub(r"  +", " ", text).strip()
 
         if text:
@@ -907,6 +938,7 @@ def produce_audio(
             stripped = line.strip()
             if stripped:
                 stripped = re.sub(r"^(One|Two|A|B):\s*", "", stripped)
+                stripped = _strip_stage_directions(stripped)
                 if stripped:
                     opinion_lines.append(f"One: {stripped}")
         opinion_dialogue = "\n".join(opinion_lines)

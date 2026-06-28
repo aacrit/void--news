@@ -256,7 +256,10 @@ REGISTER: Newsroom broadcast. Contractions. Fragments for emphasis. Em dashes \
 for pivots. The cadence of two anchors who report for a living — clipped, \
 efficient, authoritative. Not conversational. Not leisurely. Professional.
 
-FIRST LINE: A: From void news, {DATE_SHORT}. [short pause]
+FIRST LINE (grounding, in the calm and measured cadence of NYT's "The Daily" — \
+unhurried, present-tense, settling the listener into the day before any news \
+breaks): A says it plainly — "From void news. Today is {DATE_SPOKEN}." A single \
+beat. Then the headline rundown.
 LAST LINE: The last speaker says "This was void news." with finality.
 
 Two senior journalists briefing each other as co-anchors. 4-5 minutes. \
@@ -292,7 +295,7 @@ RIGHT: A reports Story 1. B adds a dimension. B reports Story 2. A adds a dimens
 
 Story [1] gets the most depth — at least 6 exchanges between hosts. \
 Story [2] gets 4 exchanges. Story [3] gets 2. \
-Open with a headline rundown — maximum 3 headlines, maximum 8 words each. \
+After that grounding beat, the headline rundown — maximum 3 headlines, maximum 8 words each. \
 "US strikes inside Iran. NATO's future in doubt. Oil at $103." — that terse. \
 B enters IMMEDIATELY after the headline rundown with a NEW FACT or counter-data \
 — not a reaction, not a framing comment. The listener must hear both voices \
@@ -551,27 +554,25 @@ def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
                 report["warnings"].append(msg)
                 print(f"  [quality][brief:{edition}] {msg}")
 
-        short_pause_count = script.lower().count("[short pause]")
-        long_pause_count = script.lower().count("[long pause]")
-        pause_count = short_pause_count + long_pause_count
+        # Pause markers ([short/long pause]) are banned — edge-tts reads them
+        # verbatim and they are stripped at synthesis. Rhythm rides on em dashes
+        # + ellipses; paragraph breaks add natural pauses too.
         ellipsis_count = script.count("...")
         dash_count = script.count(" — ") + script.count("—")
-        total_markers = pause_count + ellipsis_count + dash_count
-        # [long pause] markers removed from requirements — TTS handles
-        # pacing via punctuation, paragraph breaks, and em dashes.
+        total_markers = ellipsis_count + dash_count
 
         if total_markers < 5:
             msg = (f"Pacing: only {total_markers} rhythm markers "
-                   f"(pauses: {pause_count}, ellipses: {ellipsis_count}, dashes: {dash_count})")
+                   f"(ellipses: {ellipsis_count}, dashes: {dash_count})")
             report["warnings"].append(msg)
             print(f"  [quality][brief:{edition}] {msg}")
 
     report["metrics"]["pacing_short_pct"] = short_pct
     report["metrics"]["pacing_long_pct"] = long_pct
     report["metrics"]["rhythm_markers"] = total_markers
-    report["metrics"]["rhythm_pauses"] = pause_count
-    report["metrics"]["short_pause_count"] = short_pause_count if script.strip() else 0
-    report["metrics"]["long_pause_count"] = long_pause_count if script.strip() else 0
+    report["metrics"]["rhythm_pauses"] = 0  # pause markers banned (stripped at synthesis)
+    report["metrics"]["short_pause_count"] = 0
+    report["metrics"]["long_pause_count"] = 0
     report["metrics"]["rhythm_ellipses"] = ellipsis_count
     report["metrics"]["rhythm_dashes"] = dash_count
 
@@ -1331,7 +1332,7 @@ def _build_retry_suffix(quality_report: dict | None) -> str:
         return (
             "\n\nCRITICAL REMINDER: Your previous attempt failed quality checks. "
             "Start every sentence with a FACT or NAME. "
-            "First line MUST be: A: From void news, [date]. [short pause] — "
+            "First line MUST be: A: From void news, [date]. "
             "Last speaker MUST say: This was void news."
         )
     parts = ["\n\nCRITICAL RETRY — your previous attempt failed quality checks:"]
@@ -1339,7 +1340,7 @@ def _build_retry_suffix(quality_report: dict | None) -> str:
         if "Prohibited terms" in failure:
             parts.append(f"- {failure}. Start every sentence with a FACT or NAME.")
         elif "sign_on" in failure:
-            parts.append("- MISSING SIGN-ON: First line MUST be exactly: A: From void news, [date]. [short pause]")
+            parts.append("- MISSING SIGN-ON: First line MUST be exactly: A: From void news, [date].")
         elif "sign_off" in failure:
             parts.append("- MISSING SIGN-OFF: Last speaker MUST say: This was void news.")
         elif "filler" in failure.lower():
@@ -1435,6 +1436,7 @@ def generate_daily_briefs(
         print(f"  [brief] Gemini unavailable — brief carries forward / rule-based")
     date_str = datetime.now(timezone.utc).strftime("%A, %d %B %Y")
     date_short = datetime.now(timezone.utc).strftime("%B %d")  # e.g. "April 02"
+    date_spoken = datetime.now(timezone.utc).strftime("%A, %B %-d")  # e.g. "Friday, June 27" — Daily-style grounding
 
     results: dict[str, dict] = {}
     _stats = {"fresh": 0, "carried": 0, "rule_based": 0}
@@ -1488,6 +1490,7 @@ def generate_daily_briefs(
                 EDITION_FOCUS=edition_focus,
                 DATE=date_str,
                 DATE_SHORT=date_short,
+                DATE_SPOKEN=date_spoken,
                 N=len(top_clusters),
                 stories_block=stories_block,
                 previous_brief_line=previous_brief_line,

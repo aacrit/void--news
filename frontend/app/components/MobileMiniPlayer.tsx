@@ -39,7 +39,9 @@ export default function MobileMiniPlayer() {
     isPlayerVisible,
     setExpanded,
     setPlayerVisible,
+    contentType,
   } = useAudio();
+  const isWeekly = contentType === "weekly";
 
   // Set data-audio-active on body when mini-player becomes visible —
   // CSS uses this to add bottom padding for the 44px mini-player strip.
@@ -74,14 +76,14 @@ export default function MobileMiniPlayer() {
   if (isPlayerVisible && isExpanded) return null;
 
   return (
-    <div className="mmp" onClick={handleExpand} role="complementary" aria-label="Audio mini-player">
+    <div className={`mmp${isWeekly ? " mmp--weekly" : ""}`} onClick={handleExpand} role="complementary" aria-label="Audio mini-player">
       {/* Logo icon */}
       <div className="mmp__icon">
         <LogoIcon size={16} animation={isPlaying ? "analyzing" : "idle"} />
       </div>
 
       {/* Label */}
-      <span className="mmp__label">void --onair</span>
+      <span className="mmp__label">{isWeekly ? "void --weekly" : "void --onair"}</span>
 
       {/* Spacer */}
       <div className="mmp__spacer" />

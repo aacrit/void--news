@@ -139,22 +139,31 @@ export default function Lightbox({
         </button>
       )}
 
-      {/* Image */}
-      <img
-        src={current.url}
-        alt={current.caption}
-        className="hist-lightbox__image"
-        onError={(e) => {
-          e.currentTarget.alt = `[Image unavailable: ${current.caption}]`;
-          e.currentTarget.style.maxWidth = "400px";
-          e.currentTarget.style.background = "var(--hist-bg-card)";
-          e.currentTarget.style.padding = "2rem";
-          e.currentTarget.style.textAlign = "center";
-          e.currentTarget.style.color = "var(--hist-ink-muted)";
-          e.currentTarget.style.fontFamily = "var(--font-data)";
-          e.currentTarget.style.fontSize = "var(--text-sm)";
-        }}
-      />
+      {/* Media — iframe for archival video, image otherwise */}
+      {current.type === "video" && current.videoEmbedUrl ? (
+        <iframe
+          src={current.videoEmbedUrl}
+          className="hist-lightbox__video"
+          allowFullScreen
+          title={current.caption}
+        />
+      ) : (
+        <img
+          src={current.url}
+          alt={current.caption}
+          className="hist-lightbox__image"
+          onError={(e) => {
+            e.currentTarget.alt = `[Image unavailable: ${current.caption}]`;
+            e.currentTarget.style.maxWidth = "400px";
+            e.currentTarget.style.background = "var(--hist-bg-card)";
+            e.currentTarget.style.padding = "2rem";
+            e.currentTarget.style.textAlign = "center";
+            e.currentTarget.style.color = "var(--hist-ink-muted)";
+            e.currentTarget.style.fontFamily = "var(--font-data)";
+            e.currentTarget.style.fontSize = "var(--text-sm)";
+          }}
+        />
+      )}
 
       {/* Next */}
       {hasNext && (

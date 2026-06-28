@@ -964,6 +964,62 @@
 }
 
 /* ===========================================================================
+   E2. WEEKLY EDITORIAL — the one argued week-in-review column (the weekly's
+   void --opinion). More prominent than the Perspectives cards above: a lead
+   lens tag, a larger serif headline, and a thin lean-colored rule down the side.
+   =========================================================================== */
+.wk-editorial-section {
+  padding: var(--space-4) 0;
+}
+
+.wk-editorial {
+  position: relative;
+  max-width: 62ch;
+  margin: 0 auto;
+  padding-left: var(--space-4);
+  border-left: 3px solid var(--lean-color, var(--wk-accent));
+}
+
+.wk-editorial__lens {
+  display: block;
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--lean-color, var(--wk-accent));
+  margin-bottom: var(--space-2);
+}
+
+.wk-editorial__headline {
+  font-family: var(--font-editorial);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--fg-primary);
+  margin-bottom: var(--space-3);
+  text-wrap: balance;
+}
+
+.wk-editorial__text {
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  line-height: 1.7;
+  color: var(--fg-secondary);
+  text-align: justify;
+  hyphens: auto;
+}
+
+.wk-editorial__text p {
+  margin-bottom: var(--space-3);
+}
+
+.wk-editorial__text p:last-child {
+  margin-bottom: 0;
+}
+
+/* ===========================================================================
    F. WEEK IN BRIEF — compact 2-column list
    =========================================================================== */
 .wk-brief-section {

@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'draft | publish | dry-run-publish | seed-launch'
+        description: 'draft | publish | dry-run-publish | seed-launch | cleanup'
         required: true
         default: 'draft'
         type: choice
@@ -21,6 +21,7 @@ on:
           - publish
           - dry-run-publish
           - seed-launch
+          - cleanup
 
 jobs:
   ig-pipeline:
@@ -78,8 +79,11 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          # Render arbitrary post IDs on demand (output:export is dropped under
+          # `next dev`; this flips the render route's dynamicParams to true).
+          IG_RENDER_DYNAMIC: "1"
         run: |
-          nohup npx next dev --port 3000 --turbopack false > /tmp/next-dev.log 2>&1 &
+          nohup npx next dev --port 3000 > /tmp/next-dev.log 2>&1 &
           echo $! > /tmp/next-dev.pid
 
       - name: Seed launch posts (one-shot)
@@ -104,12 +108,12 @@ jobs:
           RENDER_BASE_URL: 'http://localhost:3000'
         run: python -m pipeline.social.ig_capture --wait-server
 
-      - name: Generate captions (Sonnet 4.6)
+      - name: Generate captions (Gemini flash-lite)
         if: steps.mode.outputs.mode == 'draft' || steps.mode.outputs.mode == 'seed-launch'
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python -m pipeline.social.ig_caption
 
       - name: Stop dev server
@@ -147,3 +151,11 @@ jobs:
           BLUESKY_HANDLE: ${{ secrets.BLUESKY_HANDLE }}
           BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
         run: python -m pipeline.social.cross_post
+
+      # ---- Mode: cleanup (reject posts stuck in a transient lock state) ---
+      - name: Clean up stuck posts
+        if: steps.mode.outputs.mode == 'cleanup'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python -m pipeline.social.ig_cleanup

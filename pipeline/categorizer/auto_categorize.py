@@ -174,15 +174,19 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         "kidnapped": 3, "abducted": 3, "hostage crisis": 3,
     },
     "science": {
-        "research": 2, "study": 1, "discovery": 2, "nasa": 3,
+        # 2026-06-28 (O10): dropped the generic terms that fired on hard news —
+        # "study"/"launch"/"theory" (launch an offensive, conspiracy theory) and
+        # "journal" (matched the outlet "Wall Street Journal"). Science stories
+        # still resolve via the specific terms below.
+        "research": 2, "discovery": 2, "nasa": 3,
         "space": 2, "experiment": 2, "scientific": 2, "laboratory": 2,
         "physics": 3, "chemistry": 3, "biology": 2, "astronomy": 3,
         "telescope": 3, "satellite": 2, "mars": 3, "moon": 2,
-        "spacex": 3, "rocket": 2, "launch": 1, "orbit": 2,
+        "spacex": 3, "rocket": 2, "orbit": 2,
         "particle": 2, "molecule": 2, "atom": 2, "quantum": 2,
         "fossil": 2, "paleontology": 3, "archaeology": 3,
-        "peer-reviewed": 3, "journal": 1, "thesis": 2,
-        "hypothesis": 2, "theory": 1, "breakthrough": 2,
+        "peer-reviewed": 3, "thesis": 2,
+        "hypothesis": 2, "breakthrough": 2,
         "neuroscience": 3, "genetics": 3, "dna": 3, "rna": 3,
         "evolution": 2, "species": 1, "climate science": 3,
         "observatory": 3, "cosmic": 3, "galaxy": 3, "universe": 2,
