@@ -99,6 +99,23 @@ function RevealFlourish() {
 
 /* ── Formatting Helpers ────────────────────────────────────────────────────── */
 
+/* Defensive: drop any embedded "TIMELINE" block the generator may have
+   written into the cover essay (a heading line + bullet list). The timeline
+   UI was removed, but older issues have it baked into cover_text. */
+function stripTimelineFromText(text: string): string {
+  const blocks = (text || "").split(/\n\n+/);
+  const kept = blocks.filter((block) => {
+    const lines = block.trim().split("\n").map((l) => l.trim()).filter(Boolean);
+    if (lines.length === 0) return false;
+    const heading = lines[0].replace(/[*_#\s:]/g, "").toUpperCase();
+    if (heading === "TIMELINE") return false;
+    const allBullets = lines.every((l) => /^[*\-•]\s+/.test(l));
+    if (allBullets) return false;
+    return true;
+  });
+  return kept.join("\n\n");
+}
+
 function formatWeekRange(start: string, end: string): string {
   const s = new Date(start + "T00:00:00");
   const e = new Date(end + "T00:00:00");
@@ -316,7 +333,7 @@ function CoverBody({
           {si > 0 && <InkRule className="wk-ink-rule--strong" />}
           {si > 0 && story.headline?.trim() && <h3 className="wk-cover-body__subhead">{story.headline}</h3>}
           <div className="wk-cover-body__text">
-            {(story.text || "").split("\n\n").filter(Boolean).map((para, j) => (
+            {stripTimelineFromText(story.text || "").split("\n\n").filter(Boolean).map((para, j) => (
               <p key={`${si}-${j}`}>{para}</p>
             ))}
           </div>
