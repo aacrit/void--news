@@ -157,17 +157,33 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
     # Sort by current rank.
     pool = sorted(clusters, key=lambda c: c.get("rank_world", 0), reverse=True)
 
-    # 3. Same-event cap.
+    # 3. Same-event cap. Keep MAX_SAME_EVENT clusters per event undeacyed; decay
+    #    the rest by EVENT_DECAY. The kept set is the CANONICAL (most-sourced)
+    #    cluster plus the next highest-ranked siblings. (2026-06-28, O8)
+    #    Previously the cap kept the first MAX_SAME_EVENT in rank order, which
+    #    decayed the comprehensive 75-source Iran-war cluster to ~#35 while a
+    #    narrow 24-source framing led at #2. Anchoring the kept set on the
+    #    richest cluster ensures the "biggest story" version is the one that
+    #    survives. Same number of clusters decayed as before (no extra
+    #    suppression), only a better choice of which survive.
     if len(pool) > TOP_N:
-        event_counts: dict[str, int] = {}
+        groups: dict[str, list[dict]] = {}
         for c in pool:
-            title = (c.get("title", "") or "").lower()
-            event = _detect_event(title)
+            event = _detect_event((c.get("title", "") or "").lower())
             if event:
-                if event_counts.get(event, 0) >= MAX_SAME_EVENT:
+                groups.setdefault(event, []).append(c)
+        for members in groups.values():
+            if len(members) <= MAX_SAME_EVENT:
+                continue
+            canonical = max(members, key=lambda c: c.get("source_count", 0))
+            keep_ids = {id(canonical)}
+            for c in sorted(members, key=lambda c: c.get("rank_world", 0), reverse=True):
+                if len(keep_ids) >= MAX_SAME_EVENT:
+                    break
+                keep_ids.add(id(c))
+            for c in members:
+                if id(c) not in keep_ids:
                     c["rank_world"] = round(c["rank_world"] * EVENT_DECAY, 2)
-                else:
-                    event_counts[event] = event_counts.get(event, 0) + 1
         pool.sort(key=lambda c: c.get("rank_world", 0), reverse=True)
 
     # 3.5. Feed-lead gate — BEFORE the diversity partition. Clusters below

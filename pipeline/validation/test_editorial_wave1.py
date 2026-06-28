@@ -69,6 +69,26 @@ def test_entertainment_and_opinion_gates_present():
     assert 0.0 < OPINION_GATE < 1.0
 
 
+def test_same_event_cap_never_decays_canonical():
+    # O8: the most-sourced ("canonical") cluster of an event must survive the
+    # same-event cap even when a narrower framing outranks it.
+    from ranker.feed_ranker import apply_feed_ordering
+    clusters = [
+        {"title": f"Filler story {i}", "headline_rank": 80 - i, "source_count": 5}
+        for i in range(15)
+    ]
+    # Three Iran-event clusters: a narrow high-rank framing and the rich canonical.
+    narrow = {"title": "UAE condemns Iran strikes", "headline_rank": 72, "source_count": 24}
+    third = {"title": "Iran halts talks after Tehran strikes", "headline_rank": 61, "source_count": 18}
+    canonical = {"title": "Iran-US war live: Tehran strikes bases", "headline_rank": 57, "source_count": 75}
+    clusters += [narrow, third, canonical]
+    apply_feed_ordering(clusters)
+    # canonical keeps full headline_rank (not multiplied by EVENT_DECAY=0.80);
+    # the third Iran cluster is the one decayed.
+    assert canonical["rank_world"] >= 57 * 0.95
+    assert third["rank_world"] <= 61 * 0.85
+
+
 def _run():
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     passed = 0

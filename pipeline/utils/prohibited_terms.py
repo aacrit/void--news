@@ -200,10 +200,13 @@ def check_prohibited_terms(text: str, context: str = "") -> list[str]:
 # IMPORTANT: do NOT run this on audio_script / opinion_audio_script — em dashes
 # are intentional TTS prosody there (CLAUDE.md No-Em-Dash exception).
 # ---------------------------------------------------------------------------
+import html as _html
 import re as _re
 
 # Spaced or unspaced em/en dash -> ", ". Regular hyphens ("fact-check") are
-# untouched (only the em "—" and en "–" code points are matched).
+# untouched (only the em "—" and en "–" code points are matched). HTML entity
+# forms (&mdash; &#8212; ...) are normalised to the unicode char first via
+# html.unescape(), so this single pattern catches every spelling.
 _EM_EN_DASH_RE = _re.compile(r"\s*[—–]\s*")
 
 # Significance assertions. An optional leading intensifier (most/very/...) is
@@ -234,7 +237,10 @@ def sanitize_editorial_text(text: str) -> str:
     """
     if not text or not isinstance(text, str):
         return text
-    out = _EM_EN_DASH_RE.sub(", ", text)
+    # Decode HTML entities first (&mdash; &amp; &#39; ...) so raw article text
+    # never displays escape artifacts and every dash spelling is normalised.
+    out = _html.unescape(text)
+    out = _EM_EN_DASH_RE.sub(", ", out)
     out = _SIGNIFICANCE_RE.sub(_significance_sub, out)
     # Clean up artifacts left by word deletion.
     out = out.replace(" ,", ",").replace(" .", ".").replace(" ;", ";").replace(" :", ":")
