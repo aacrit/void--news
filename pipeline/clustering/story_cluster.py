@@ -66,7 +66,7 @@ except ImportError:  # utils not on path (e.g. isolated unit test)
 # Calibrated thresholds — single source of truth for clustering signal
 # sensitivity. Tuned 2026-05-15 against the 21-fixture clustering suite.
 # ---------------------------------------------------------------------------
-STORY_TFIDF_THRESHOLD       = 0.18   # Phase 1 agglomerative cosine cut
+STORY_TFIDF_THRESHOLD       = 0.24   # Phase 1 agglomerative cosine cut (2026-06-28 O1: 0.18->0.24, tighter to curb over-merge chaining)
 ENTITY_MERGE_IDF_THRESHOLD  = 2.0    # legacy — unused after 2026-05-31 simplification
 TITLE_JACCARD_THRESHOLD     = 0.22   # Phase 3: stemmed title Jaccard
                                      # 0.27 → 0.22 on 2026-05-31 to align with
@@ -508,7 +508,11 @@ _LOW_SPECIFICITY_WEIGHT = 0.4
 # removed. Generic entities alone (e.g. {obama, court, ruling, washington}
 # bridging an unrelated SCOTUS story and an Obama story) must not trigger a
 # merge. Set-membership only — NOT the IDF-math scheme reverted 2026-05-31.
-MIN_DISTINGUISHING_SHARED = 1
+# 2026-06-28 (Wave 3 / O2): 1 -> 2. A single shared specific entity is too weak
+# a bridge — one common name (e.g. "Trump") merged unrelated stories. Requiring
+# two distinguishing shared entities keeps genuine same-story merges (which
+# share several) while rejecting one-entity coincidental bridges.
+MIN_DISTINGUISHING_SHARED = 2
 
 
 # ---------------------------------------------------------------------------
@@ -2186,12 +2190,18 @@ def cluster_stories(
         _apply_wire_aware_source_count(c)
         return [c] + empty_singletons
 
-    # Phase 1: TF-IDF + agglomerative clustering
+    # Phase 1: TF-IDF + agglomerative clustering.
+    # min_df=2 on production-scale corpora suppresses single-document
+    # boilerplate (nav/footer/byline tokens) that otherwise bridges one
+    # publisher's unrelated articles into a grab-bag; kept at 1 for tiny
+    # corpora (fixtures) where min_df=2 would empty the vocabulary.
+    # (2026-06-28, Wave 3 / O1)
+    _phase1_min_df = 2 if len(valid_docs) >= 30 else 1
     vectorizer = TfidfVectorizer(
         max_features=5000,
         stop_words="english",
         ngram_range=(1, 2),
-        min_df=1,
+        min_df=_phase1_min_df,
         max_df=0.95,
     )
     tfidf_matrix = vectorizer.fit_transform(valid_docs)
