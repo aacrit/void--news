@@ -22,6 +22,7 @@ Schedule: Sunday 6 AM CST (12:00 UTC).
 """
 
 import json
+import re
 import sys
 import time
 from datetime import datetime, timedelta, timezone
@@ -157,6 +158,101 @@ def _smart_generate_text(prompt, system_instruction=None, max_output_tokens=8192
 
 
 # ---------------------------------------------------------------------------
+# Plain-text essay generation + parsing
+#
+# The cover/opinion/tech/sports/recap essays were generated as JSON, but Gemini
+# intermittently emits long prose with an unescaped quote or stray newline that
+# breaks json.loads (e.g. "Unterminated string", "Expecting ',' delimiter"),
+# dropping the whole section to a stub. These helpers generate PLAIN TEXT in a
+# tolerant, self-describing layout and parse out the same keys the callers
+# consume — the pattern already used for the audio script and editor's note.
+# No JSON, so prose with any punctuation is safe; no extra LLM calls.
+# ---------------------------------------------------------------------------
+
+def _clean_headline(line):
+    """Strip an optional 'HEADLINE:'/'TITLE:' label and Markdown chars off a line.
+
+    The label is only stripped when followed by a colon, so a real headline that
+    happens to start with the word "Headline" (e.g. "Headline inflation") is kept.
+    """
+    line = re.sub(r"^\s*#{0,3}\s*(?:HEADLINE|TITLE)\s*:\s*", "", line, flags=re.IGNORECASE)
+    return line.strip().strip("*_#").strip()
+
+
+def _parse_essay(raw, want_numbers=False):
+    """Parse a plain-text essay into {headline, text[, numbers]} or None.
+
+    Layout: first non-empty line is the headline, the rest is the body. If
+    want_numbers, a trailing line "NUMBERS" splits off a block of
+    "value | context" lines parsed into [{"stat", "context"}].
+    """
+    if not raw or not raw.strip():
+        return None
+    text = raw.strip()
+    numbers = []
+    if want_numbers:
+        parts = re.split(r"\n\s*#{0,3}\s*NUMBERS\s*:?\s*\n", text, maxsplit=1, flags=re.IGNORECASE)
+        if len(parts) == 2:
+            text, num_block = parts[0].strip(), parts[1]
+            for ln in num_block.splitlines():
+                ln = ln.strip().lstrip("-*•").strip()
+                if "|" not in ln:
+                    continue
+                value, _, context = ln.partition("|")
+                value = value.strip()
+                if value:
+                    numbers.append({"stat": value, "context": context.strip()})
+
+    lines = text.splitlines()
+    idx = next((k for k, ln in enumerate(lines) if ln.strip()), None)
+    if idx is None:
+        return None
+    headline = _clean_headline(lines[idx])
+    body = "\n".join(lines[idx + 1:]).strip()
+    if not body:
+        # Single-block output: no separable headline; keep it all as text.
+        body, headline = headline, ""
+    result = {"headline": headline, "text": body}
+    if want_numbers:
+        result["numbers"] = numbers
+    return result
+
+
+def _gen_essay(prompt, system, model=None, max_output_tokens=4096, want_numbers=False):
+    """Generate a {headline, text[, numbers]} essay as plain text (no JSON)."""
+    raw = _smart_generate_text(
+        prompt, system_instruction=system,
+        max_output_tokens=max_output_tokens, model=model,
+    )
+    return _parse_essay(raw, want_numbers=want_numbers)
+
+
+def _parse_recap(raw):
+    """Parse a plain-text recap batch into {stories: [{headline, summary}]}.
+
+    Stories are separated by a line that is just "###" (optionally "### STORY").
+    Within each block, the first non-empty line is the headline, the rest is the
+    summary. Returns None if nothing parseable.
+    """
+    if not raw or not raw.strip():
+        return None
+    blocks = re.split(r"\n\s*#{2,}(?:\s*STORY\s*\d*)?\s*\n", "\n" + raw.strip())
+    stories = []
+    for block in blocks:
+        lines = block.strip().splitlines()
+        idx = next((k for k, ln in enumerate(lines) if ln.strip()), None)
+        if idx is None:
+            continue
+        headline = _clean_headline(lines[idx])
+        summary = " ".join(ln.strip() for ln in lines[idx + 1:] if ln.strip()).strip()
+        if not summary:
+            summary, headline = headline, ""
+        if headline or summary:
+            stories.append({"headline": headline, "summary": summary})
+    return {"stories": stories} if stories else None
+
+
+# ---------------------------------------------------------------------------
 # Data
 # ---------------------------------------------------------------------------
 def _fetch_week_clusters(edition, week_start, week_end):
@@ -222,20 +318,18 @@ You will receive a DATA TIMELINE showing real cluster creation dates and titles.
 Use it as the chronological skeleton and weave those dates and developments into
 FLOWING PROSE. Do NOT invent events not shown.
 
-OUTPUT FORMAT — strict:
-- The "text" is continuous prose only. Plain paragraphs separated by blank lines.
-- Do NOT output a bulleted or numbered list, a section titled "TIMELINE", or any
-  Markdown headings, asterisks, or bold/italic markers. No "* " or "- " bullets.
-
 BANNED: "notable", "significant", "it should be noted", "interestingly",
 "crucially", "here's what you need to know", "in conclusion".
 
-Output JSON:
-{
-  "headline": "...",
-  "text": "... (800-1200 words, analytical essay in flowing prose, no lists or headings)",
-  "numbers": [{"stat": "...", "context": "..."}, ...]
-}"""
+OUTPUT FORMAT — plain text only, no JSON, no Markdown:
+- Line 1: the headline only (no label, no quotes, no Markdown).
+- Then a blank line.
+- Then the 800-1200 word essay in flowing prose paragraphs separated by blank
+  lines. No bulleted or numbered lists, no "TIMELINE" section, no headings,
+  no asterisks or bold/italic markers.
+- Then a blank line, then a line containing only: NUMBERS
+- Then up to 4 lines, each "value | context" (e.g. "589 | confirmed deaths").
+Do not write anything after the numbers."""
 
 
 # ---------------------------------------------------------------------------
@@ -503,7 +597,7 @@ def _generate_cover_stories(threads, edition):
             f"timeline, a section titled TIMELINE, lists, or any Markdown headings."
         )
 
-        result, gen = _smart_generate(prompt, system_instruction=COVER_SYSTEM, model=_FLASH_MODEL)
+        result = _gen_essay(prompt, COVER_SYSTEM, model=_FLASH_MODEL, max_output_tokens=8192, want_numbers=True)
         calls += 1
         if result and isinstance(result, dict):
             result["cluster_id"] = lead.get("id")
@@ -589,7 +683,9 @@ Your essay should:
 
 BANNED: "notable", "significant", "it should be noted", "in conclusion".
 
-Output JSON: {{"headline": "...", "text": "..."}}"""
+OUTPUT FORMAT — plain text only, no JSON, no Markdown:
+Line 1 is the headline only (no label, no quotes). Then a blank line. Then the
+400-600 word essay in flowing prose."""
 
 
 def _generate_opinions(top_threads, all_threads, edition):
@@ -641,7 +737,7 @@ def _generate_opinions(top_threads, all_threads, edition):
             f"Disagreements: {json.dumps(cluster.get('divergence_points', []))}\n"
         )
 
-        result, gen = _smart_generate(prompt, system_instruction=system, max_output_tokens=4096)
+        result = _gen_essay(prompt, system, max_output_tokens=4096)
         calls += 1
 
         if result and isinstance(result, dict):
@@ -664,7 +760,9 @@ Focus on mechanism and implication, not hype. Think Ars Technica meets The Econo
 
 BANNED: "game-changing", "revolutionary", "notable", "significant", "disrupting".
 
-Output JSON: {"headline": "...", "text": "..."}"""
+OUTPUT FORMAT — plain text only, no JSON, no Markdown:
+Line 1 is the headline only (no label, no quotes). Then a blank line. Then the
+analysis in flowing prose."""
 
 
 def _generate_tech_brief(clusters, edition):
@@ -692,7 +790,7 @@ def _generate_tech_brief(clusters, edition):
         f"Sources: {top_tech.get('source_count', 0)}\n"
     )
 
-    result, gen = _smart_generate(prompt, system_instruction=TECH_SYSTEM, max_output_tokens=4096)
+    result = _gen_essay(prompt, TECH_SYSTEM, max_output_tokens=4096)
     if result:
         result["cluster_id"] = top_tech.get("id")
     return result, 1
@@ -706,7 +804,9 @@ lens of culture, politics, or economics. Sports as a mirror of society.
 Think of how The New Yorker covers sports: the game is the entry point, the
 story is about something larger.
 
-Output JSON: {"headline": "...", "text": "..."}"""
+OUTPUT FORMAT — plain text only, no JSON, no Markdown:
+Line 1 is the headline only (no label, no quotes). Then a blank line. Then the
+piece in flowing prose."""
 
 
 def _generate_sports(clusters, edition):
@@ -732,7 +832,7 @@ def _generate_sports(clusters, edition):
         f"Summary: {top.get('summary', '')}\n"
     )
 
-    result, gen = _smart_generate(prompt, system_instruction=SPORTS_SYSTEM, max_output_tokens=4096)
+    result = _gen_essay(prompt, SPORTS_SYSTEM, max_output_tokens=4096)
     if result:
         result["cluster_id"] = top.get("id")
     return result, 1
@@ -775,7 +875,14 @@ Focus on what happened and what it means. Use specific facts.
 
 BANNED: "notable", "significant", "it should be noted", "interestingly".
 
-Output JSON: {"stories": [{"headline": "...", "summary": "..."}]}"""
+OUTPUT FORMAT — plain text only, no JSON, no Markdown. For EACH story, output a
+block in this exact shape:
+###
+<headline on one line>
+<150-200 word summary in flowing prose>
+
+Separate every story with a line containing only ### before it. No other
+headings, labels, or Markdown."""
 
 
 def _generate_week_recap(clusters, edition, skip_ids=None):
@@ -795,8 +902,8 @@ def _generate_week_recap(clusters, edition, skip_ids=None):
     )
 
     prompt = f"Write 150-200 word recaps for these {len(remaining)} stories ({edition} edition):\n\n{stories_text}"
-    result, gen = _smart_generate(prompt, system_instruction=RECAP_SYSTEM, model=_FLASH_MODEL)
-    return result, 1
+    raw = _smart_generate_text(prompt, system_instruction=RECAP_SYSTEM, model=_FLASH_MODEL)
+    return _parse_recap(raw), 1
 
 
 # ── SECTION 7: AUDIO ──
