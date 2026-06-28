@@ -187,7 +187,17 @@ def generate_json(
                     text = text[:-3]
                 text = text.strip()
 
-            return json.loads(text)
+            try:
+                return json.loads(text)
+            except json.JSONDecodeError:
+                # Tolerant fallback: re-parse the outermost {...} substring. Catches
+                # the common "extra data after the object" / wrapper-prose cases
+                # without any aggressive string repair. Only runs after a clean
+                # parse already failed, so it never corrupts a valid response.
+                start, end = text.find("{"), text.rfind("}")
+                if 0 <= start < end:
+                    return json.loads(text[start:end + 1])
+                raise
 
         except json.JSONDecodeError as je:
             # Log what Gemini actually returned so we can diagnose format issues
