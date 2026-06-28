@@ -179,3 +179,73 @@ def check_prohibited_terms(text: str, context: str = "") -> list[str]:
     lower = text.lower()
     found = [term for term in PROHIBITED_TERMS if term in lower]
     return sorted(found)
+
+
+# ---------------------------------------------------------------------------
+# Deterministic editorial sanitizer (2026-06-28, Wave 1 / O5)
+#
+# The show-don't-tell + no-em-dash Cardinal Rules (CLAUDE.md) were only
+# DETECTED (warning logs), never enforced, so "significant"/em-dashes leaked
+# into displayed summaries on both the LLM and the rule-based fallback paths.
+# This is the single mutating pass shared by both. $0, no LLM call.
+#
+# Scope is deliberately narrow to avoid distorting facts:
+#   * em/en dashes  -> comma  (the most common AI tell; always safe)
+#   * significance ADVERBS (significantly, notably, crucially, ...) -> removed
+#     (parenthetical; removal leaves a grammatical sentence)
+#   * significance ADJECTIVES (significant, notable, crucial) -> removed UNLESS
+#     immediately negated/minimized ("no significant damage" stays, because
+#     dropping the adjective there would invert the factual claim).
+#
+# IMPORTANT: do NOT run this on audio_script / opinion_audio_script — em dashes
+# are intentional TTS prosody there (CLAUDE.md No-Em-Dash exception).
+# ---------------------------------------------------------------------------
+import re as _re
+
+# Spaced or unspaced em/en dash -> ", ". Regular hyphens ("fact-check") are
+# untouched (only the em "—" and en "–" code points are matched).
+_EM_EN_DASH_RE = _re.compile(r"\s*[—–]\s*")
+
+# Significance assertions. An optional leading intensifier (most/very/...) is
+# swallowed with the word. A leading negation/minimizer is CAPTURED so the
+# replacement can keep load-bearing phrases ("no significant damage") intact.
+_SIGNIFICANCE_RE = _re.compile(
+    r"\b(?P<neg>no|not|without|little|any|minimal|hardly|barely)?\s*"
+    r"(?:(?:most|more|very|highly|particularly|quite|so|the\s+most)\s+)?"
+    r"(?P<word>significantly|significant|notably|notable|crucially|crucial|"
+    r"remarkably|strikingly|importantly|interestingly|markedly)\b",
+    _re.IGNORECASE,
+)
+
+
+def _significance_sub(m: "_re.Match") -> str:
+    # Keep the phrase when the significance word is negated/minimized — removing
+    # it would change the meaning ("no significant damage" != "no damage").
+    if m.group("neg"):
+        return m.group(0)
+    return ""
+
+
+def sanitize_editorial_text(text: str) -> str:
+    """Enforce the no-em-dash + show-don't-tell Cardinal Rules deterministically.
+
+    Returns a cleaned copy of ``text``. Safe on None/empty. Do NOT apply to
+    audio script fields (em dashes are intentional prosody there).
+    """
+    if not text or not isinstance(text, str):
+        return text
+    out = _EM_EN_DASH_RE.sub(", ", text)
+    out = _SIGNIFICANCE_RE.sub(_significance_sub, out)
+    # Clean up artifacts left by word deletion.
+    out = out.replace(" ,", ",").replace(" .", ".").replace(" ;", ";").replace(" :", ":")
+    out = _re.sub(r",\s*,", ",", out)          # doubled commas
+    out = _re.sub(r"\s{2,}", " ", out)          # collapsed double spaces
+    out = _re.sub(r"\(\s+", "(", out).replace(" )", ")")
+    out = out.strip(" ,;:")
+    # Re-capitalize sentence starts a leading-word deletion may have lowercased.
+    out = _re.sub(
+        r"(^|[.!?]\s+)([a-z])",
+        lambda mm: mm.group(1) + mm.group(2).upper(),
+        out,
+    )
+    return out

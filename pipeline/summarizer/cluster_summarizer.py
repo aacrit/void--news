@@ -110,10 +110,16 @@ def calls_remaining():
 
 # Import shared prohibited terms — single canonical source.
 try:
-    from utils.prohibited_terms import PROHIBITED_TERMS as _SHARED_PROHIBITED, check_prohibited_terms as _shared_check
+    from utils.prohibited_terms import (
+        PROHIBITED_TERMS as _SHARED_PROHIBITED,
+        check_prohibited_terms as _shared_check,
+        sanitize_editorial_text as _sanitize_editorial,
+    )
     _USE_SHARED_PROHIBITED = True
 except ImportError:
     _USE_SHARED_PROHIBITED = False
+    def _sanitize_editorial(text):  # no-op fallback if utils not on path
+        return text
 
 
 # ---------------------------------------------------------------------------
@@ -847,6 +853,13 @@ def summarize_cluster(articles: list[dict],
     # Summary is source-agnostic: dedupe exact-duplicate sentences (deterministic)
     # and warn on any outlet name or media-attribution phrasing that leaks in.
     summary = _dedupe_summary_sentences(summary)
+
+    # Enforce (not just warn) the no-em-dash + show-don't-tell Cardinal Rules.
+    # The model follows the system instruction most of the time, but leaks slip
+    # through ("significant", em-dashes); this deterministic pass removes them so
+    # the displayed text always complies. (Wave 1 / O5.)
+    headline = _sanitize_editorial(headline)
+    summary = _sanitize_editorial(summary)
     _summary_src_refs = _detect_summary_source_refs(
         summary, [a.get("source_name", "") for a in articles]
     )

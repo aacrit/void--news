@@ -55,6 +55,12 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 from utils.nlp_shared import get_nlp
 
+try:
+    from utils.prohibited_terms import sanitize_editorial_text as _sanitize_editorial
+except ImportError:  # utils not on path (e.g. isolated unit test)
+    def _sanitize_editorial(text):
+        return text
+
 
 # ---------------------------------------------------------------------------
 # Calibrated thresholds — single source of truth for clustering signal
@@ -100,6 +106,21 @@ _DOMAIN_SUFFIX_RE = re.compile(
     r"\s*[-–—|]+\s*\w+\.(?:com|org|net|co\.uk|or\.jp|co\.jp)\s*$",
     re.IGNORECASE,
 )
+# Outlet-suffix shapes the explicit wire allow-list above misses (2026-06-28,
+# O6). Case-sensitive so a leading word must be capitalised (a proper noun),
+# which keeps ordinary trailing clauses intact. Each strips one trailing tag:
+#   all-caps wire/outlet acronyms  ("- WSJ", "| UPI", "- NHK", "- TheCab"→no)
+#   single-token CamelCase outlets ("- TheCable", "- TheBlaze")
+#   multi-word names ending in an outlet-type word ("- Just The News")
+_ACRONYM_SUFFIX_RE = re.compile(r"\s*[-–—|]+\s*[A-Z]{2,6}\s*$")
+_CAMEL_OUTLET_SUFFIX_RE = re.compile(r"\s*[-–—|]+\s*The[A-Z][a-zA-Z]+\s*$")
+_OUTLET_WORD_SUFFIX_RE = re.compile(
+    r"\s*[-–—|]+\s*(?:[A-Z][\w.&'’-]*\s+){0,3}"
+    r"(?:News|Times|Post|Herald|Journal|Tribune|Cable|Wire|Bulletin|Observer|"
+    r"Gazette|Globe|Sun|Star|Mail|Express|Telegraph|Independent|Standard|"
+    r"Chronicle|Review|Today|Press|Agency|Daily|Weekly|Monitor|Dispatch|"
+    r"Pioneer|Examiner|Sentinel|Ledger|Recorder|Courier|Beacon|Network)\s*$"
+)
 
 
 def _clean_title(title: str) -> str:
@@ -107,8 +128,24 @@ def _clean_title(title: str) -> str:
     title = _WIRE_PREFIX_RE.sub("", title).strip()
     for _ in range(2):
         title = _ATTRIBUTION_SUFFIX_RE.sub("", title).strip()
+        title = _OUTLET_WORD_SUFFIX_RE.sub("", title).strip()
+        title = _CAMEL_OUTLET_SUFFIX_RE.sub("", title).strip()
+        title = _ACRONYM_SUFFIX_RE.sub("", title).strip()
         title = _DOMAIN_SUFFIX_RE.sub("", title).strip()
     return title.strip(" \t\n\r-–—|")
+
+
+def _mostly_ascii(text: str, threshold: float = 0.7) -> bool:
+    """True if >= threshold of the alphabetic chars are ASCII (Latin script).
+
+    Used to prefer an English-language headline over a co-clustered foreign
+    one when both are present (the English feed should not surface an
+    untranslated Spanish/Arabic headline)."""
+    letters = [c for c in text if c.isalpha()]
+    if not letters:
+        return True
+    ascii_letters = sum(1 for c in letters if ord(c) < 128)
+    return ascii_letters / len(letters) >= threshold
 
 
 def _build_document(article: dict) -> str:
@@ -184,7 +221,7 @@ def _generate_cluster_title(articles: list[dict]) -> str:
         return ", ".join(top) if top else "Developing Story"
 
     if len(valid_titles) == 1:
-        return valid_titles[0]
+        return _sanitize_editorial(valid_titles[0])
 
     # Score titles by entity coverage + length sweet spot
     nlp = get_nlp()
@@ -226,7 +263,11 @@ def _generate_cluster_title(articles: list[dict]) -> str:
 
     scored = [(t, _score(t)) for t in valid_titles]
     scored.sort(key=lambda x: x[1], reverse=True)
-    return scored[0][0]
+    # Prefer the highest-scoring English (Latin-script) headline so the feed
+    # never surfaces an untranslated foreign-language title when an English
+    # member exists; fall back to the top score if all are non-Latin. (O6)
+    best = next((t for t, _ in scored if _mostly_ascii(t)), scored[0][0])
+    return _sanitize_editorial(best)
 
 
 def _generate_cluster_summary(articles: list[dict]) -> str:
@@ -243,11 +284,11 @@ def _generate_cluster_summary(articles: list[dict]) -> str:
                 summaries.append(s)
     if summaries:
         summaries.sort(key=len, reverse=True)
-        return summaries[0]
+        return _sanitize_editorial(summaries[0])
     for a in articles:
         t = (a.get("title", "") or "").strip()
         if t:
-            return t
+            return _sanitize_editorial(t)
     return ""
 
 
