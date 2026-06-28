@@ -528,6 +528,55 @@ def _generate_cover_stories(threads, edition):
     return covers, calls
 
 
+# ── SECTION 1.5: EDITOR'S NOTE (short italic editorial, flagship flash) ──
+
+EDITOR_NOTE_SYSTEM = """You are the editor of void --weekly. Write a short
+EDITOR'S NOTE: 120-150 words of flowing prose that names the single thread
+tying this week together and what it asks the reader to weigh.
+
+Voice: measured, literate, a magazine editor addressing readers directly.
+Show, don't tell. Juxtapose concrete facts; never assert significance.
+
+STRICT:
+- Flowing prose only. No lists, no headings, no Markdown, no asterisks.
+- No em-dashes or en-dashes. Use short sentences, commas, or semicolons.
+- BANNED words: "notable", "significant", "it should be noted", "interestingly",
+  "crucially", "in conclusion".
+
+Output JSON: {"text": "..."}"""
+
+
+def _generate_editor_note(top_threads, edition):
+    """Generate a ~130-word italic editor's note from the week's lead threads.
+
+    Flagship-flash (model=_FLASH_MODEL), same router as the cover essays.
+    Rule-based fallback = "" so the layout degrades gracefully.
+    """
+    if not top_threads:
+        return "", 0
+
+    leads = "\n".join(
+        f"- {t['title']} ({t['cumulative_sources']} sources across "
+        f"{t['daily_appearances']} days)"
+        for t in top_threads[:5]
+    )
+    prompt = (
+        f"Write the Editor's Note for void --weekly ({edition} edition).\n\n"
+        f"This week's leading story threads:\n{leads}\n\n"
+        f"Name the through-line and what it asks the reader to weigh. "
+        f"120-150 words, flowing prose."
+    )
+    result, gen = _smart_generate(
+        prompt, system_instruction=EDITOR_NOTE_SYSTEM,
+        max_output_tokens=1024, model=_FLASH_MODEL,
+    )
+    if result and isinstance(result, dict):
+        text = (result.get("text") or "").strip()
+        if text:
+            return text, 1
+    return "", 1
+
+
 # ── SECTION 2: THE OPINIONS (5-6 topics × 1 voice each) ──
 
 OPINION_SYSTEM = """You are a {perspective} columnist for void --weekly.
@@ -1505,6 +1554,15 @@ def generate_weekly_digest(editions=None, week_offset=0):
             else:
                 print(f"    No suitable cover image found")
 
+        # Section 1.5: Editor's Note (short italic editorial beside the covers)
+        print(f"\n  ── EDITOR'S NOTE ──")
+        editor_note, calls = _generate_editor_note(top_threads, edition)
+        total_calls += calls
+        if editor_note:
+            print(f"    {editor_note[:70]}...")
+        else:
+            print(f"    No editor's note generated")
+
         # Section 2: Opinions (5-6 topics × rotating leans)
         print(f"\n  ── THE OPINIONS ──")
         opinions, calls = _generate_opinions(top_threads, threads, edition)
@@ -1637,6 +1695,8 @@ def generate_weekly_digest(editions=None, week_offset=0):
             # Bias report
             "bias_report_text": bias_text,
             "bias_report_data": json.dumps(bias_data),
+            # Editor's Note (italic editorial rail beside the covers)
+            "editor_note": editor_note,
             # Tech + Sports (store in cover_text JSON alongside covers)
             # Audio (fixed weekly pair: Editor + Correspondent)
             "audio_script": audio_script,

@@ -402,8 +402,12 @@ export interface WeeklyTimelineDay {
 }
 
 export interface WeeklyCoverNumber {
-  value: string;
-  label: string;
+  // Generator emits {stat, context}; older rows used {value, label}.
+  // Renderer normalizes: value ?? stat / label ?? context.
+  value?: string;
+  label?: string;
+  stat?: string;
+  context?: string;
 }
 
 export interface WeeklyRecapStory {
@@ -459,6 +463,7 @@ export interface WeeklyDigestData {
   opinion_topic: string | null;
   bias_report_text: string | null;
   bias_report_data: WeeklyBiasReportData | null;
+  editor_note: string | null;
   audio_url: string | null;
   audio_duration_seconds: number | null;
   // Weekly editorial (one argued week-in-review column; migration 064).

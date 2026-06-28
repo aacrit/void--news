@@ -6,6 +6,7 @@ import type {
   Edition,
   WeeklyDigestData,
   WeeklyCoverStory,
+  WeeklyCoverNumber,
   WeeklyRecapStory,
   WeeklyOpinion,
   WeeklyContestedStory,
@@ -114,6 +115,16 @@ function stripTimelineFromText(text: string): string {
     return true;
   });
   return kept.join("\n\n");
+}
+
+/* Pick a single magazine-style pull-quote from a cover essay: the first
+   self-contained sentence in a comfortable length band, drawn from existing
+   text (no generation). Returns "" if nothing suitable. */
+function pickPullQuote(text: string): string {
+  const clean = stripTimelineFromText(text || "").replace(/\s+/g, " ").trim();
+  const sentences = clean.split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter(Boolean);
+  const inBand = sentences.find((s) => s.length >= 70 && s.length <= 150);
+  return inBand || sentences.find((s) => s.length >= 45 && s.length <= 200) || "";
 }
 
 function formatWeekRange(start: string, end: string): string {
@@ -328,18 +339,81 @@ function CoverBody({
       aria-labelledby="wk-cover-heading"
     >
       {/* Show up to 2 cover stories */}
-      {stories.slice(0, 2).map((story, si) => (
-        <div key={si} className="wk-cover-body wk-cold-open--body">
-          {si > 0 && <InkRule className="wk-ink-rule--strong" />}
-          {si > 0 && story.headline?.trim() && <h3 className="wk-cover-body__subhead">{story.headline}</h3>}
-          <div className="wk-cover-body__text">
-            {stripTimelineFromText(story.text || "").split("\n\n").filter(Boolean).map((para, j) => (
-              <p key={`${si}-${j}`}>{para}</p>
-            ))}
+      {stories.slice(0, 2).map((story, si) => {
+        const paras = stripTimelineFromText(story.text || "").split("\n\n").filter(Boolean);
+        const pullQuote = pickPullQuote(story.text || "");
+        return (
+          <div key={si} className="wk-cover-body wk-cold-open--body">
+            {si > 0 && <InkRule className="wk-ink-rule--strong" />}
+            {si > 0 && story.headline?.trim() && <h3 className="wk-cover-body__subhead">{story.headline}</h3>}
+            <div className="wk-cover-body__text">
+              {paras.flatMap((para, j) => {
+                const nodes = [<p key={`${si}-p-${j}`}>{para}</p>];
+                // Pull-quote floats after the opening paragraph (magazine break).
+                if (j === 0 && pullQuote && paras.length > 1) {
+                  nodes.push(
+                    <blockquote key={`${si}-pq`} className="wk-pullquote">
+                      {pullQuote}
+                    </blockquote>
+                  );
+                }
+                return nodes;
+              })}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </section>
+  );
+}
+
+/* --- C2. Editor's Note (italic rail beside the covers) --- */
+
+function EditorNote({ text }: { text: string }) {
+  const [ref, visible] = useScrollReveal(0.1);
+  if (!text?.trim()) return null;
+  return (
+    <div
+      ref={ref as React.RefObject<HTMLDivElement>}
+      className={`wk-editor-note wk-reveal${visible ? " wk-reveal--visible" : ""}`}
+      aria-label="Editor's Note"
+    >
+      <h2 className="wk-editor-note__label" data-prefix="void --">Editor&rsquo;s Note</h2>
+      <div className="wk-editor-note__text">
+        {text.split("\n\n").filter(Boolean).map((para, i) => (
+          <p key={i}>{para}</p>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* --- C3. By the Numbers callout --- */
+
+function NumbersCallout({ numbers }: { numbers: WeeklyCoverNumber[] | null }) {
+  const [ref, visible] = useScrollReveal(0.1);
+  // Normalize both shapes: {value,label} (legacy) and {stat,context} (generator).
+  const items = (numbers ?? [])
+    .map((n) => ({ value: (n.value ?? n.stat ?? "").trim(), label: (n.label ?? n.context ?? "").trim() }))
+    .filter((n) => n.value)
+    .slice(0, 5);
+  if (items.length === 0) return null;
+  return (
+    <div
+      ref={ref as React.RefObject<HTMLDivElement>}
+      className={`wk-numbers wk-reveal${visible ? " wk-reveal--visible" : ""}`}
+      aria-label="By the numbers"
+    >
+      <h2 className="wk-numbers__label" data-prefix="void --">By the Numbers</h2>
+      <dl className="wk-numbers__list">
+        {items.map((n, i) => (
+          <div key={i} className="wk-numbers__item">
+            <dt className="wk-numbers__value">{n.value}</dt>
+            {n.label && <dd className="wk-numbers__context">{n.label}</dd>}
+          </div>
+        ))}
+      </dl>
+    </div>
   );
 }
 
@@ -681,11 +755,19 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
               imageAttribution={digest.cover_image_attribution}
             />
 
-            {/* C. Cover Body */}
+            {/* C. Cover zone — two features beside the italic Editor's Note rail */}
             {digest.cover_text && digest.cover_text.length > 0 && (
-              <CoverBody
-                stories={digest.cover_text}
-              />
+              <div className="wk-cover-zone">
+                <div className="wk-cover-zone__main">
+                  <CoverBody stories={digest.cover_text} />
+                </div>
+                <aside className="wk-cover-zone__aside" aria-label="This week">
+                  {digest.editor_note && <EditorNote text={digest.editor_note} />}
+                  <NumbersCallout
+                    numbers={digest.cover_numbers ?? digest.cover_text[0]?.numbers ?? null}
+                  />
+                </aside>
+              </div>
             )}
 
             <RevealFlourish />
