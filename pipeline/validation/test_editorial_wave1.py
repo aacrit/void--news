@@ -89,6 +89,34 @@ def test_same_event_cap_never_decays_canonical():
     assert third["rank_world"] <= 61 * 0.85
 
 
+def test_coherence_factor_separates_legit_from_bag():
+    # O9: a coherent cluster scores ~1.0; an over-merged bag scores ~0.
+    from ranker.importance_ranker import _coherence_factor
+    title = "Iran strikes Bahrain and Kuwait after US attack"
+    legit = [{"title": t} for t in [
+        "Iran attacks Bahrain military base", "Kuwait condemns Iranian strikes",
+        "Bahrain reports Iranian drone strike", "US base in Kuwait hit by Iran",
+    ]]
+    bag = [{"title": t} for t in [
+        "England wins the World Cup match", "New study on a shingles vaccine",
+        "Local tree service expands hours", "Pop star collapses on a stage",
+    ]]
+    assert _coherence_factor(title, legit) >= 0.9
+    assert _coherence_factor(title, bag) <= 0.1
+    assert _coherence_factor("", legit) == 1.0  # no title -> no discount
+
+
+def test_coverage_discount_deflates_bag_not_legit():
+    # O9: lower coherence -> lower coverage credit; coherence 1.0 is the baseline.
+    from ranker.importance_ranker import _source_coverage_score
+    arts = [{"title": "x", "source_id": f"s{i}"} for i in range(20)]
+    sm = {f"s{i}": {"tier": "international", "country": "GB"} for i in range(20)}
+    legit_cov = _source_coverage_score(arts, sm, None, coherence=1.0)
+    bag_cov = _source_coverage_score(arts, sm, None, coherence=0.1)
+    assert legit_cov > 0
+    assert bag_cov < legit_cov
+
+
 def _run():
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     passed = 0

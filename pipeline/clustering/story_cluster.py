@@ -508,11 +508,11 @@ _LOW_SPECIFICITY_WEIGHT = 0.4
 # removed. Generic entities alone (e.g. {obama, court, ruling, washington}
 # bridging an unrelated SCOTUS story and an Obama story) must not trigger a
 # merge. Set-membership only — NOT the IDF-math scheme reverted 2026-05-31.
-# 2026-06-28 (Wave 3 / O2): 1 -> 2. A single shared specific entity is too weak
-# a bridge — one common name (e.g. "Trump") merged unrelated stories. Requiring
-# two distinguishing shared entities keeps genuine same-story merges (which
-# share several) while rejecting one-entity coincidental bridges.
-MIN_DISTINGUISHING_SHARED = 2
+# 2026-06-28 (Wave 3 / O2 evaluated, REVERTED): raising this to 2 rejected
+# one-entity coincidental bridges but also broke a legitimate loose-window merge
+# (trump-xi-loose fixture: Trump-Xi summit articles share one strong entity).
+# The Phase-1 tightening (O1) already curbs the over-merge, so this stays at 1.
+MIN_DISTINGUISHING_SHARED = 1
 
 
 # ---------------------------------------------------------------------------
@@ -1647,6 +1647,13 @@ def split_garbage_clusters(clusters: list[dict]) -> list[dict]:
 # Phase 5: Mega-cluster soft cap
 # ---------------------------------------------------------------------------
 
+# O3 (2026-06-28): an article pile this large that did NOT reach the 75-source
+# mega threshold is a candidate over-merge. If it is ALSO internally incoherent
+# (cohesion < MEGA_COHESION_FLOOR), flag it so the ranker's 0.65x mega penalty
+# deprioritizes it. A genuine big story scores high cohesion and is exempt.
+MEGA_OVERMERGE_ARTICLE_FLOOR = 45
+
+
 def split_mega_clusters(
     clusters: list[dict],
     threshold: int = MEGA_CLUSTER_THRESHOLD,
@@ -1671,6 +1678,7 @@ def split_mega_clusters(
     out: list[dict] = []
     for c in clusters:
         sc = int(c.get("source_count", 0) or 0)
+        n_articles = len(c.get("articles") or [])
         if sc >= threshold:
             c["_mega_cluster_original_count"] = sc
             c["source_count"] = threshold
@@ -1680,6 +1688,20 @@ def split_mega_clusters(
                     f"  [Phase5/mega-cap] '{c.get('title','')[:60]!r}' "
                     f"(src={sc}) kept whole, source_count capped at {threshold}"
                 )
+        elif (
+            n_articles >= MEGA_OVERMERGE_ARTICLE_FLOOR
+            and not c.get("mega_cluster_capped")
+        ):
+            # O3: large-but-sub-threshold pile — flag only if incoherent.
+            cohesion = _cluster_cohesion(c).get("cohesion_score", 100.0)
+            if cohesion < MEGA_COHESION_FLOOR:
+                c["mega_cluster_capped"] = True
+                if verbose:
+                    print(
+                        f"  [Phase5/overmerge-flag] '{c.get('title','')[:55]!r}' "
+                        f"(art={n_articles}, src={sc}, cohesion={cohesion:.0f}) "
+                        f"flagged as over-merge"
+                    )
         out.append(c)
     return out
 

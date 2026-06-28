@@ -439,10 +439,47 @@ _US_TOKENS = frozenset({
 })
 
 
+# O9 (2026-06-28): cluster topic-coherence for the source-count discount.
+# Fraction of member titles sharing a content keyword with the cluster headline.
+# On production data this cleanly separates genuine big stories (>0.8) from
+# over-merged bags (<0.25); the graduated discount barely touches the former.
+_COH_STOPWORDS = frozenset(
+    "the a an of in on at to for and or but with from by as is are was were be "
+    "been this that those it its their his her our your we they you he she them "
+    "us over under after before during into out up down off about above below "
+    "between through against amid new news say says said will would could should "
+    "may might can has have had do does did not no nor so than then here there "
+    "what which who when where why how all any both each more most other some "
+    "such only own same too very just also back even still way get got make made "
+    "latest live update day days week year years world cup".split()
+)
+
+
+def _coherence_keywords(text: str) -> set[str]:
+    return {
+        w for w in re.findall(r"[a-z][a-z']{3,}", (text or "").lower())
+        if w not in _COH_STOPWORDS
+    }
+
+
+def _coherence_factor(title: str, cluster_articles: list[dict]) -> float:
+    """Fraction of member titles sharing a content keyword with the cluster
+    headline. Returns 1.0 (no discount) when too little to assess."""
+    kw = _coherence_keywords(title)
+    if not kw or not cluster_articles:
+        return 1.0
+    on = sum(
+        1 for a in cluster_articles
+        if kw & _coherence_keywords(a.get("title", "") or "")
+    )
+    return on / len(cluster_articles)
+
+
 def _source_coverage_score(
     cluster_articles: list[dict],
     source_map: dict[str, dict],
     cluster_countries: set[str] | None = None,
+    coherence: float = 1.0,
 ) -> float:
     """
     Score based on number of unique sources with diminishing returns.
@@ -516,6 +553,15 @@ def _source_coverage_score(
         elif foreign_mentions < 2:
             # Partial US-dominant: keep the v6.1 tone.
             weighted_count *= 0.80
+
+    # O9: discount the effective source count by topic coherence so an
+    # over-merged bag (many unrelated articles) cannot buy coverage credit it
+    # has not earned. Graduated and self-targeting: coherence ~1.0 (a genuine
+    # big story) leaves weighted_count essentially unchanged; coherence ~0.2 (a
+    # garbage bag) halves it. Clusters already flagged mega_capped pass
+    # coherence=1.0 here (the caller skips the discount — they take the 0.65x
+    # mega penalty instead, no double-count).
+    weighted_count *= 0.5 + 0.5 * max(0.0, min(1.0, coherence))
 
     # Diminishing returns with extended dynamic range: 100 * (1 - e^(-x/10))
     # Old curve (/5) flattened at 15 sources — a 40-source story scored only
@@ -1210,7 +1256,14 @@ def rank_importance(
     geographic, cluster_countries = _geographic_impact_score(
         cluster_articles, return_countries=True
     )
-    coverage = _source_coverage_score(cluster_articles, source_map, cluster_countries)
+    # O9: discount coverage by topic coherence (skip mega_capped — those already
+    # take the 0.65x mega penalty below, so don't double-count).
+    _coh = 1.0
+    if not mega_capped and cluster is not None:
+        _coh = _coherence_factor(cluster.get("title", "") or "", cluster_articles)
+    coverage = _source_coverage_score(
+        cluster_articles, source_map, cluster_countries, coherence=_coh
+    )
     spectrum = _perspective_diversity_score(cluster_articles, source_map, bias_scores)
     divergence = _divergence_score(bias_scores)
     factual = _factual_density_score(bias_scores)
