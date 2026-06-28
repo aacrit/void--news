@@ -385,6 +385,47 @@ function OpinionsSection({
   );
 }
 
+/* --- E. Weekly Editorial (one argued week-in-review column) ---
+   Distinct from Perspectives above: a single synthesized argument across the
+   week, mirroring the daily void --opinion. The spoken version is appended to
+   the weekly broadcast (player News/Opinion seek tab). */
+
+function EditorialOpinionSection({
+  headline,
+  text,
+  lean,
+}: {
+  headline: string | null;
+  text: string;
+  lean: string | null;
+}) {
+  const [ref, visible] = useScrollReveal(0.1);
+  const paras = text.split("\n\n").filter(Boolean);
+  if (paras.length === 0) return null;
+
+  return (
+    <section
+      ref={ref as React.RefObject<HTMLElement>}
+      className={`wk-editorial-section wk-reveal${visible ? " wk-reveal--visible" : ""}`}
+      aria-labelledby="wk-editorial-heading"
+      style={{ "--lean-color": leanToBiasVar(lean || "center") } as React.CSSProperties}
+    >
+      <h2 className="wk-section-label" id="wk-editorial-heading" data-prefix="void --">Editorial</h2>
+      <article className="wk-editorial">
+        <span className="wk-editorial__lens">
+          Through a {leanBadgeLabel(lean || "center").toLowerCase()} lens
+        </span>
+        {headline?.trim() && <h3 className="wk-editorial__headline">{headline}</h3>}
+        <div className="wk-editorial__text">
+          {paras.map((para, j) => (
+            <p key={j}>{para}</p>
+          ))}
+        </div>
+      </article>
+    </section>
+  );
+}
+
 /* --- F. Week in Brief --- */
 
 function BriefList({ stories }: { stories: WeeklyRecapStory[] }) {
@@ -641,7 +682,19 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
 
             <RevealFlourish />
 
-            {/* E. Week in Brief */}
+            {/* E. Weekly Editorial (one argued week-in-review column) */}
+            {digest.opinion_text && (
+              <>
+                <EditorialOpinionSection
+                  headline={digest.opinion_headline}
+                  text={digest.opinion_text}
+                  lean={digest.opinion_lean}
+                />
+                <RevealFlourish />
+              </>
+            )}
+
+            {/* F. Week in Brief */}
             <BriefList stories={digest?.recap_stories ?? []} />
 
             {/* F. Most Contested */}
