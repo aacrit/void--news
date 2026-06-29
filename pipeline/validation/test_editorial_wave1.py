@@ -138,6 +138,14 @@ def test_categorizer_edge_cases():
     # but a genuine military strike must STILL be conflict
     assert cat("Israeli airstrike kills 12 in Gaza") == "conflict"
     assert cat("Russia missile strike hits Kyiv, 8 killed") == "conflict"
+    # crash verb forms also -> general (not conflict via "killed"/casualties)
+    assert cat("Aramco helicopter crashes in Ras Tanura, at least 14 dead") == "general"
+    assert cat("A small plane has crashed into a Beijing high-rise") == "general"
+    # bare "ai" must NOT match inside common words (rem-AI-n) -> not science
+    assert cat("IDF will remain in the security zone until Hezbollah disarms") != "science"
+    # ...but real AI coverage still resolves to the science/tech desk
+    assert cat("OpenAI and Anthropic limit new AI models") == "science"
+    assert cat("Google limits Meta use of Gemini AI models") == "science"
 
 
 def _run():

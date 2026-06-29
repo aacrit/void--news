@@ -102,8 +102,15 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         # Big tech companies
         "google": 2, "apple": 2, "meta platforms": 3, "amazon web services": 3,
         "microsoft azure": 3, "cloud computing": 3, "tech startup": 3,
-        # AI-specific terms (often categorized as "general" without these)
-        "ai": 2, "chatbot": 3, "llm": 3, "gpt": 3, "anthropic": 3,
+        # AI-specific terms (often categorized as "general" without these).
+        # 2026-06-29: bare "ai" REMOVED — as a 2-char substring it matched
+        # inside common words (rem-AI-n, cl-AI-ms, cert-AI-n, camp-AI-gn),
+        # falsely tagging unrelated stories technology->science. Phrase forms
+        # are safe substrings; real AI coverage still resolves via openai /
+        # anthropic / "ai model" / chatbot / llm / "artificial intelligence".
+        "ai model": 3, "ai models": 3, "ai chatbot": 3, "ai system": 2,
+        "ai tool": 2, "ai race": 3, "a.i.": 3,
+        "chatbot": 3, "llm": 3, "gpt": 3, "anthropic": 3,
         "copilot": 2, "deepfake": 3, "neural network": 3,
         "training data": 3, "foundation model": 3, "transformer": 2,
         "tech regulation": 3, "antitrust": 2, "data privacy": 3,
@@ -505,9 +512,12 @@ def categorize_article(article: dict) -> list[str]:
         # mass-casualty pre-override. Placed BEFORE the conflict markers so a
         # military cause ("plane shot down", "missile") still wins for a mixed
         # title (later override in this list takes precedence). (2026-06-28)
-        (r"\b(plane crash|plane crashes|jet crash|helicopter crash|air crash|"
-         r"train derail\w*|derailment|building collapse|bridge collapse|"
-         r"ferry (?:capsiz\w*|sink\w*)|bus crash|car crash|stampede)\b", "general"),
+        (r"\b(?:plane|jet|aircraft|airliner|helicopter|chopper)\b.{0,18}?"
+         r"\bcrash(?:e[ds])?\b"                       # "plane crashes/crashed/has crashed"
+         r"|\bcrash(?:e[ds])?\s+into\b"               # "crashed into a building"
+         r"|\b(?:plane|jet|air|helicopter)\s+crash\b" # "plane crash" (noun)
+         r"|\b(?:train derail\w*|derailment|building collapse|bridge collapse|"
+         r"ferry (?:capsiz\w*|sink\w*)|bus crash\w*|car crash\w*|stampede)\b", "general"),
         # Conflict: military hardware, combat actions
         (r"\b(f-15|f-35|f-16|b-52|warplane|fighter jet|warship|submarine)\b", "conflict"),
         (r"\b(shot down|downed|airstrike|shelling|bombardment|missile strike)\b", "conflict"),
