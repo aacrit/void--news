@@ -1990,11 +1990,16 @@ def main():
                     if cluster_title
                     else []
                 )
-                if headline_cats and headline_cats != ["general"]:
+                if headline_cats:
+                    # Trust the headline category, INCLUDING "general" — an
+                    # accident headline deliberately resolves to general, and
+                    # treating general as "vague" sent it back to the polluted
+                    # member-vote (which re-mislabeled it). Member-vote now
+                    # fires only when there is no headline at all. (2026-06-29)
                     best_cat = headline_cats[0]
                     all_categories = headline_cats
                 else:
-                    # Vague headline — vote across a wide member sample (8, up
+                    # No headline — vote across a wide member sample (8, up
                     # from 3) so the on-topic majority outweighs any pollution.
                     cat_votes: dict[str, int] = {}
                     all_categories = []

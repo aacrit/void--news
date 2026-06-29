@@ -319,7 +319,11 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
                 if cluster_title
                 else []
             )
-            if headline_cats and headline_cats != ["general"]:
+            if headline_cats:
+                # Trust the headline category, including "general" (e.g. an
+                # accident headline); member-vote only when there is no
+                # headline, so the polluted member sample can't re-mislabel a
+                # cluster the headline already classified. (2026-06-29)
                 best_cat = headline_cats[0]
             else:
                 cat_votes: dict[str, int] = {}
