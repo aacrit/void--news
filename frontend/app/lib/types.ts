@@ -463,7 +463,6 @@ export interface WeeklyDigestData {
   opinion_topic: string | null;
   bias_report_text: string | null;
   bias_report_data: WeeklyBiasReportData | null;
-  editor_note: string | null;
   audio_url: string | null;
   audio_duration_seconds: number | null;
   // Weekly editorial (one argued week-in-review column; migration 064).

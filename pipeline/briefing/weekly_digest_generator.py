@@ -326,10 +326,7 @@ OUTPUT FORMAT — plain text only, no JSON, no Markdown:
 - Then a blank line.
 - Then the 800-1200 word essay in flowing prose paragraphs separated by blank
   lines. No bulleted or numbered lists, no "TIMELINE" section, no headings,
-  no asterisks or bold/italic markers.
-- Then a blank line, then a line containing only: NUMBERS
-- Then up to 4 lines, each "value | context" (e.g. "589 | confirmed deaths").
-Do not write anything after the numbers."""
+  no asterisks or bold/italic markers."""
 
 
 # ---------------------------------------------------------------------------
@@ -597,7 +594,7 @@ def _generate_cover_stories(threads, edition):
             f"timeline, a section titled TIMELINE, lists, or any Markdown headings."
         )
 
-        result = _gen_essay(prompt, COVER_SYSTEM, model=_FLASH_MODEL, max_output_tokens=8192, want_numbers=True)
+        result = _gen_essay(prompt, COVER_SYSTEM, model=_FLASH_MODEL, max_output_tokens=8192)
         calls += 1
         if result and isinstance(result, dict):
             result["cluster_id"] = lead.get("id")
@@ -620,54 +617,6 @@ def _generate_cover_stories(threads, edition):
         time.sleep(3)
 
     return covers, calls
-
-
-# ── SECTION 1.5: EDITOR'S NOTE (short italic editorial, flagship flash) ──
-
-EDITOR_NOTE_SYSTEM = """You are the editor of void --weekly. Write a short
-EDITOR'S NOTE: 120-150 words of flowing prose that names the single thread
-tying this week together and what it asks the reader to weigh.
-
-Voice: measured, literate, a magazine editor addressing readers directly.
-Show, don't tell. Juxtapose concrete facts; never assert significance.
-
-STRICT:
-- Flowing prose only. No lists, no headings, no Markdown, no asterisks.
-- No em-dashes or en-dashes. Use short sentences, commas, or semicolons.
-- BANNED words: "notable", "significant", "it should be noted", "interestingly",
-  "crucially", "in conclusion".
-
-Output the note as plain prose text only. No JSON, no labels, no quotation
-marks around the whole note."""
-
-
-def _generate_editor_note(top_threads, edition):
-    """Generate a ~130-word italic editor's note from the week's lead threads.
-
-    Plain-text generation (model=_FLASH_MODEL, flagship flash) to dodge the
-    json.loads fragility that truncates a long single-string note. Rule-based
-    fallback = "" so the layout degrades gracefully.
-    """
-    if not top_threads:
-        return "", 0
-
-    leads = "\n".join(
-        f"- {t['title']} ({t['cumulative_sources']} sources across "
-        f"{t['daily_appearances']} days)"
-        for t in top_threads[:5]
-    )
-    prompt = (
-        f"Write the Editor's Note for void --weekly ({edition} edition).\n\n"
-        f"This week's leading story threads:\n{leads}\n\n"
-        f"Name the through-line and what it asks the reader to weigh. "
-        f"120-150 words, flowing prose."
-    )
-    text = _smart_generate_text(
-        prompt, system_instruction=EDITOR_NOTE_SYSTEM,
-        max_output_tokens=1024, model=_FLASH_MODEL,
-    )
-    text = (text or "").strip()
-    return (text, 1) if text else ("", 1)
 
 
 # ── SECTION 2: THE OPINIONS (5-6 topics × 1 voice each) ──
@@ -1660,15 +1609,6 @@ def generate_weekly_digest(editions=None, week_offset=0):
             else:
                 print(f"    No suitable cover image found")
 
-        # Section 1.5: Editor's Note (short italic editorial beside the covers)
-        print(f"\n  ── EDITOR'S NOTE ──")
-        editor_note, calls = _generate_editor_note(top_threads, edition)
-        total_calls += calls
-        if editor_note:
-            print(f"    {editor_note[:70]}...")
-        else:
-            print(f"    No editor's note generated")
-
         # Section 2: Opinions (5-6 topics × rotating leans)
         print(f"\n  ── THE OPINIONS ──")
         opinions, calls = _generate_opinions(top_threads, threads, edition)
@@ -1801,8 +1741,6 @@ def generate_weekly_digest(editions=None, week_offset=0):
             # Bias report
             "bias_report_text": bias_text,
             "bias_report_data": json.dumps(bias_data),
-            # Editor's Note (italic editorial rail beside the covers)
-            "editor_note": editor_note,
             # Tech + Sports (store in cover_text JSON alongside covers)
             # Audio (fixed weekly pair: Editor + Correspondent)
             "audio_script": audio_script,

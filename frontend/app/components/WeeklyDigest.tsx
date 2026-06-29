@@ -6,7 +6,6 @@ import type {
   Edition,
   WeeklyDigestData,
   WeeklyCoverStory,
-  WeeklyCoverNumber,
   WeeklyRecapStory,
   WeeklyOpinion,
   WeeklyContestedStory,
@@ -367,52 +366,36 @@ function CoverBody({
   );
 }
 
-/* --- C2. Editor's Note (italic rail beside the covers) --- */
+/* --- C2. void --Editorial (the single argued editorial, in the cover rail) --- */
 
-function EditorNote({ text }: { text: string }) {
+function RailEditorial({
+  headline,
+  text,
+  lean,
+}: {
+  headline: string | null;
+  text: string;
+  lean: string | null;
+}) {
   const [ref, visible] = useScrollReveal(0.1);
-  if (!text?.trim()) return null;
+  const paras = (text || "").split("\n\n").filter(Boolean);
+  if (paras.length === 0) return null;
   return (
     <div
       ref={ref as React.RefObject<HTMLDivElement>}
-      className={`wk-editor-note wk-reveal${visible ? " wk-reveal--visible" : ""}`}
-      aria-label="Editor's Note"
+      className={`wk-rail-editorial wk-reveal${visible ? " wk-reveal--visible" : ""}`}
+      aria-label="Editorial"
     >
-      <h2 className="wk-editor-note__label" data-prefix="void --">Editor&rsquo;s Note</h2>
-      <div className="wk-editor-note__text">
-        {text.split("\n\n").filter(Boolean).map((para, i) => (
+      <h2 className="wk-rail-editorial__label" data-prefix="void --">Editorial</h2>
+      <span className="wk-rail-editorial__lens">
+        Through a {leanBadgeLabel(lean || "center").toLowerCase()} lens
+      </span>
+      {headline?.trim() && <h3 className="wk-rail-editorial__headline">{headline}</h3>}
+      <div className="wk-rail-editorial__text">
+        {paras.map((para, i) => (
           <p key={i}>{para}</p>
         ))}
       </div>
-    </div>
-  );
-}
-
-/* --- C3. By the Numbers callout --- */
-
-function NumbersCallout({ numbers }: { numbers: WeeklyCoverNumber[] | null }) {
-  const [ref, visible] = useScrollReveal(0.1);
-  // Normalize both shapes: {value,label} (legacy) and {stat,context} (generator).
-  const items = (numbers ?? [])
-    .map((n) => ({ value: (n.value ?? n.stat ?? "").trim(), label: (n.label ?? n.context ?? "").trim() }))
-    .filter((n) => n.value)
-    .slice(0, 5);
-  if (items.length === 0) return null;
-  return (
-    <div
-      ref={ref as React.RefObject<HTMLDivElement>}
-      className={`wk-numbers wk-reveal${visible ? " wk-reveal--visible" : ""}`}
-      aria-label="By the numbers"
-    >
-      <h2 className="wk-numbers__label" data-prefix="void --">By the Numbers</h2>
-      <dl className="wk-numbers__list">
-        {items.map((n, i) => (
-          <div key={i} className="wk-numbers__item">
-            <dt className="wk-numbers__value">{n.value}</dt>
-            {n.label && <dd className="wk-numbers__context">{n.label}</dd>}
-          </div>
-        ))}
-      </dl>
     </div>
   );
 }
@@ -472,47 +455,6 @@ function OpinionsSection({
           <OpinionCard key={i} op={op} />
         ))}
       </div>
-    </section>
-  );
-}
-
-/* --- E. Weekly Editorial (one argued week-in-review column) ---
-   Distinct from Perspectives above: a single synthesized argument across the
-   week, mirroring the daily void --opinion. The spoken version is appended to
-   the weekly broadcast (player News/Opinion seek tab). */
-
-function EditorialOpinionSection({
-  headline,
-  text,
-  lean,
-}: {
-  headline: string | null;
-  text: string;
-  lean: string | null;
-}) {
-  const [ref, visible] = useScrollReveal(0.1);
-  const paras = text.split("\n\n").filter(Boolean);
-  if (paras.length === 0) return null;
-
-  return (
-    <section
-      ref={ref as React.RefObject<HTMLElement>}
-      className={`wk-editorial-section wk-reveal${visible ? " wk-reveal--visible" : ""}`}
-      aria-labelledby="wk-editorial-heading"
-      style={{ "--lean-color": leanToBiasVar(lean || "center") } as React.CSSProperties}
-    >
-      <h2 className="wk-section-label" id="wk-editorial-heading" data-prefix="void --">Editorial</h2>
-      <article className="wk-editorial">
-        <span className="wk-editorial__lens">
-          Through a {leanBadgeLabel(lean || "center").toLowerCase()} lens
-        </span>
-        {headline?.trim() && <h3 className="wk-editorial__headline">{headline}</h3>}
-        <div className="wk-editorial__text">
-          {paras.map((para, j) => (
-            <p key={j}>{para}</p>
-          ))}
-        </div>
-      </article>
     </section>
   );
 }
@@ -761,11 +703,14 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
                 <div className="wk-cover-zone__main">
                   <CoverBody stories={digest.cover_text} />
                 </div>
-                <aside className="wk-cover-zone__aside" aria-label="This week">
-                  {digest.editor_note && <EditorNote text={digest.editor_note} />}
-                  <NumbersCallout
-                    numbers={digest.cover_numbers ?? digest.cover_text[0]?.numbers ?? null}
-                  />
+                <aside className="wk-cover-zone__aside" aria-label="Editorial">
+                  {digest.opinion_text && (
+                    <RailEditorial
+                      headline={digest.opinion_headline}
+                      text={digest.opinion_text}
+                      lean={digest.opinion_lean}
+                    />
+                  )}
                 </aside>
               </div>
             )}
@@ -781,19 +726,7 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
 
             <RevealFlourish />
 
-            {/* E. Weekly Editorial (one argued week-in-review column) */}
-            {digest.opinion_text && (
-              <>
-                <EditorialOpinionSection
-                  headline={digest.opinion_headline}
-                  text={digest.opinion_text}
-                  lean={digest.opinion_lean}
-                />
-                <RevealFlourish />
-              </>
-            )}
-
-            {/* F. Week in Brief */}
+            {/* E. Week in Brief */}
             <BriefList stories={digest?.recap_stories ?? []} />
 
             {/* F. Most Contested */}
