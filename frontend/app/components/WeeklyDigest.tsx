@@ -366,9 +366,10 @@ function CoverBody({
   );
 }
 
-/* --- C2. void --Editorial (the single argued editorial, in the cover rail) --- */
+/* --- C2. void --Editorial (the single argued editorial, its own full-width
+   section after the cover features) --- */
 
-function RailEditorial({
+function SectionEditorial({
   headline,
   text,
   lean,
@@ -381,22 +382,24 @@ function RailEditorial({
   const paras = (text || "").split("\n\n").filter(Boolean);
   if (paras.length === 0) return null;
   return (
-    <div
-      ref={ref as React.RefObject<HTMLDivElement>}
-      className={`wk-rail-editorial wk-reveal${visible ? " wk-reveal--visible" : ""}`}
-      aria-label="Editorial"
+    <section
+      ref={ref as React.RefObject<HTMLElement>}
+      className={`wk-editorial-section wk-reveal${visible ? " wk-reveal--visible" : ""}`}
+      aria-labelledby="wk-editorial-heading"
     >
-      <h2 className="wk-rail-editorial__label" data-prefix="void --">Editorial</h2>
-      <span className="wk-rail-editorial__lens">
-        Through a {leanBadgeLabel(lean || "center").toLowerCase()} lens
-      </span>
-      {headline?.trim() && <h3 className="wk-rail-editorial__headline">{headline}</h3>}
-      <div className="wk-rail-editorial__text">
-        {paras.map((para, i) => (
-          <p key={i}>{para}</p>
-        ))}
-      </div>
-    </div>
+      <h2 className="wk-section-label" id="wk-editorial-heading" data-prefix="void --">Editorial</h2>
+      <article className="wk-editorial">
+        <span className="wk-editorial__lens">
+          Through a {leanBadgeLabel(lean || "center").toLowerCase()} lens
+        </span>
+        {headline?.trim() && <h3 className="wk-editorial__headline">{headline}</h3>}
+        <div className="wk-editorial__text">
+          {paras.map((para, i) => (
+            <p key={i}>{para}</p>
+          ))}
+        </div>
+      </article>
+    </section>
   );
 }
 
@@ -697,22 +700,22 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
               imageAttribution={digest.cover_image_attribution}
             />
 
-            {/* C. Cover zone — two features beside the italic Editor's Note rail */}
+            {/* C. Cover features — full width */}
             {digest.cover_text && digest.cover_text.length > 0 && (
-              <div className="wk-cover-zone">
-                <div className="wk-cover-zone__main">
-                  <CoverBody stories={digest.cover_text} />
-                </div>
-                <aside className="wk-cover-zone__aside" aria-label="Editorial">
-                  {digest.opinion_text && (
-                    <RailEditorial
-                      headline={digest.opinion_headline}
-                      text={digest.opinion_text}
-                      lean={digest.opinion_lean}
-                    />
-                  )}
-                </aside>
-              </div>
+              <CoverBody stories={digest.cover_text} />
+            )}
+
+            {/* C2. void --Editorial — its own full-width section, with a line
+                separator before it */}
+            {digest.opinion_text && (
+              <>
+                <hr className="wk-rule" />
+                <SectionEditorial
+                  headline={digest.opinion_headline}
+                  text={digest.opinion_text}
+                  lean={digest.opinion_lean}
+                />
+              </>
             )}
 
             <RevealFlourish />
