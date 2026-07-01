@@ -68,3 +68,5 @@ audit_output.txt
 
 # local pipeline run logs (not for VCS)
 pipeline_run*.log
+scripts/top50_export*.json
+scripts/review_result.json

@@ -41,16 +41,33 @@ OPINION_GATE = 0.70
 import re as _re
 _OPINION_TITLE_RE = _re.compile(r"\bopinion\s*[|:]|\|\s*opinion\b", _re.IGNORECASE)
 
+# Tabloid / editorial framing that RSS-stripped content_type misses (2026-07-01
+# top-50 review BIAS-01): a scare-quote label lead ("'What a loser': Biden
+# blasts...", "'Morning Joe' Accuses...") or an unambiguous roast phrase marks a
+# piece as opinion/tabloid rather than straight reporting, even when every
+# /opinion/ URL marker was stripped upstream. Deliberately CONSERVATIVE — it
+# requires a scare-quote label or a strong roast phrase, so ordinary news verbs
+# ("court blasts ruling") do not trip it.
+_TABLOID_TITLE_RE = _re.compile(
+    r"^\s*['\"‘“].{1,45}['\"’”]\s*[:,]"        # leading scare-quote label lead
+    r"|\b(?:scathing takedown|gets? savaged|claps? back|eviscerat\w+|"
+    r"torches|rages? (?:at|over)|rips into|goes off on|unloads on|"
+    r"melts? down|roasted (?:for|over)|owns? (?:the )?libs)\b",
+    _re.IGNORECASE,
+)
+
 
 def _is_opinion(cluster: dict) -> bool:
     """True when a cluster is an opinion column rather than reporting.
 
     Reads content_type first; falls back to an "Opinion |" headline label
     because content_type is a member-average that an over-merged cluster can
-    dilute to "reporting" even when its seed article is an op-ed."""
+    dilute to "reporting" even when its seed article is an op-ed. Also catches
+    scare-quote / roast tabloid framing that has no /opinion/ marker."""
     if (cluster.get("content_type") or "").lower() == "opinion":
         return True
-    return bool(_OPINION_TITLE_RE.search(cluster.get("title", "") or ""))
+    title = cluster.get("title", "") or ""
+    return bool(_OPINION_TITLE_RE.search(title) or _TABLOID_TITLE_RE.search(title))
 
 # Same-event cap — prevents the feed from being dominated by one event.
 MAX_SAME_EVENT = 2
