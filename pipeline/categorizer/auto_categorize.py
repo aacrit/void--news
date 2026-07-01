@@ -18,11 +18,21 @@ from utils.nlp_shared import get_nlp
 
 @lru_cache(maxsize=4096)
 def _keyword_pattern(keyword: str) -> "re.Pattern":
-    """Word-boundary matcher for a keyword. Boundaries are alphanumeric edges,
-    so short tokens ('ev', 'epa', 'eu', 'ko') match only as standalone words,
-    never inside 'review'/'repatriates'/'campaign'. Phrases with spaces
-    ('electric vehicle', 'heat wave') match verbatim. (2026-07-01 review CAT-3)"""
-    return re.compile(r"(?<![a-z0-9])" + re.escape(keyword) + r"(?![a-z0-9])")
+    """Word-boundary matcher for a keyword (2026-07-01 review CAT-3).
+
+    The LEFT boundary is always strict (a non-alphanumeric must precede), which
+    is what kills the substring false positives: 'ev' inside 'review', 'epa'
+    inside 'repatriates', 'eu' inside 'euro'. For single-word keywords of >=5
+    letters the RIGHT boundary additionally allows a trailing inflection
+    (s/es/ed/ing/d) so 'arrest' still matches 'arrests'/'arrested' and 'flood'
+    matches 'floods' -- recall that plain substring matching gave for free and
+    that strict both-side boundaries would silently lose (which mislabeled
+    'Israel Arrests ... West Bank' as economy via the lone word 'bank'). Short
+    abbreviations (<5) and multi-word phrases stay strict on both sides."""
+    esc = re.escape(keyword)
+    if len(keyword) >= 5 and keyword.isalpha():
+        return re.compile(r"(?<![a-z0-9])" + esc + r"(?:s|es|ed|ing|d)?(?![a-z0-9])")
+    return re.compile(r"(?<![a-z0-9])" + esc + r"(?![a-z0-9])")
 
 
 # ---------------------------------------------------------------------------
@@ -151,6 +161,11 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         "biotech": 2, "biotechnology": 3, "genome": 3,
         "surgical": 2, "transplant": 2, "organ": 1,
         "insurance": 1, "medicare": 2, "medicaid": 2,
+        # Disease-outbreak vocabulary (2026-07-01 review): "UN Warns Ebola
+        # Outbreak..." had no health keyword and fell to general.
+        "ebola": 3, "outbreak": 2, "cholera": 3, "measles": 3, "mpox": 3,
+        "malaria": 3, "tuberculosis": 3, "polio": 3, "dengue": 3,
+        "quarantine": 2, "contagious": 2, "immunization": 3,
     },
     "environment": {
         "climate": 3, "carbon": 2, "pollution": 3, "renewable": 3,
