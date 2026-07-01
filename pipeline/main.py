@@ -50,7 +50,7 @@ try:
     from analyzers.factual_rigor import analyze_factual_rigor
     from analyzers.framing import analyze_framing
     from clustering.story_cluster import cluster_stories
-    from categorizer.auto_categorize import categorize_article, categorize_early, map_to_desk
+    from categorizer.auto_categorize import categorize_article, categorize_cluster, categorize_early, map_to_desk
     from ranker.importance_ranker import rank_importance, compute_coverage_velocity
     from ranker.feed_ranker import apply_feed_ordering
     ANALYSIS_AVAILABLE = True
@@ -1945,34 +1945,26 @@ def main():
         for cluster in clusters:
             cluster_articles_list = cluster.get("articles", [])
 
-            # Categorize — use up to 3 articles for more reliable classification.
-            # The old approach used only the first article, which could be a
-            # brief wire bulletin that miscategorizes the whole cluster.
+            # Categorize the cluster from its POLISHED title + summary (the
+            # representative, on-topic text) plus its members — not just the
+            # first 3 raw articles, which on an over-merged cluster could be
+            # off-topic and mislabel the whole story (2026-07-01 review
+            # CAT-1/CAT-2). categorize_cluster trusts the representative
+            # title/summary and only falls back to a member vote when that
+            # text is itself unclassifiable.
             try:
-                cat_votes: dict[str, int] = {}
-                sample = cluster_articles_list[:3] if cluster_articles_list else []
-                all_categories: list[str] = []
-                for art in sample:
-                    cats = categorize_article(art)
-                    for cat in cats:
-                        cat_votes[cat] = cat_votes.get(cat, 0) + 1
-                    if not all_categories:
-                        all_categories = cats
-                # Pick the category with the most votes across sampled articles,
-                # then map to merged desk slug for display.
-                if cat_votes:
-                    best_cat = max(cat_votes, key=cat_votes.get)
-                    cluster["category"] = map_to_desk(best_cat)
-                    if best_cat not in all_categories:
-                        all_categories.insert(0, best_cat)
-                else:
-                    cluster["category"] = "politics"
-                    all_categories = ["politics"]
+                best_cat = categorize_cluster(
+                    cluster.get("title", "") or "",
+                    cluster.get("summary", "") or "",
+                    cluster_articles_list,
+                )
+                cluster["category"] = map_to_desk(best_cat)
+                all_categories = [best_cat]
                 # Store fine-grained categories for article_categories table
                 for art in cluster_articles_list:
                     art_id = art.get("id", "")
                     if art_id:
-                        article_categories_map[art_id] = all_categories
+                        article_categories_map[art_id] = categorize_article(art) or all_categories
             except Exception:
                 cluster["category"] = "politics"
 

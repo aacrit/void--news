@@ -11,8 +11,30 @@ Uses rule-based NLP (no LLM API calls):
 """
 
 import re
+from collections import defaultdict
+from functools import lru_cache
 
 from utils.nlp_shared import get_nlp
+
+
+@lru_cache(maxsize=4096)
+def _keyword_pattern(keyword: str) -> "re.Pattern":
+    """Word-boundary matcher for a keyword. Boundaries are alphanumeric edges,
+    so short tokens ('ev', 'ai', 'epa', 'eu', 'ko') match only as standalone
+    words, never inside 'review'/'campaign'/'repatriates'. Phrases with spaces
+    ('electric vehicle', 'heat wave') match verbatim."""
+    return re.compile(r"(?<![a-z0-9])" + re.escape(keyword) + r"(?![a-z0-9])")
+
+
+# Deterministic tie-break order for equal-score categories (2026-07-01 review
+# CAT-6). Earlier = wins. `environment` is intentionally low (it was the
+# false-positive magnet); `general` is always last so a real desk wins any tie.
+_CATEGORY_PRIORITY: dict[str, int] = {
+    cat: i for i, cat in enumerate([
+        "politics", "conflict", "economy", "health", "science",
+        "technology", "environment", "sports", "culture", "general",
+    ])
+}
 
 
 # ---------------------------------------------------------------------------
@@ -109,6 +131,14 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         "tech regulation": 3, "antitrust": 2, "data privacy": 3,
         "social media": 2, "algorithm": 2, "encryption": 2,
         "startup": 1, "unicorn": 2,
+        # Consumer tech / messaging apps (2026-07-01 review CAT-4): a pure
+        # app story like "WhatsApp to launch usernames" matched no tech
+        # keyword and fell to conflict via a GPE boost.
+        "whatsapp": 3, "telegram app": 3, "signal app": 3, "imessage": 3,
+        "messaging app": 3, "username": 2, "usernames": 2, "sim card": 2,
+        "sim-binding": 3, "smartphone": 2, "iphone": 2, "android": 2,
+        "instagram": 2, "tiktok": 2, "youtube": 1, "gadget": 2,
+        "operating system": 2, "data center": 2, "chip": 1, "chipmaker": 3,
     },
     "health": {
         "vaccine": 3, "vaccination": 3, "disease": 2, "hospital": 2,
@@ -143,6 +173,12 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         "earthquake": 2, "tsunami": 2, "volcanic": 2,
         "water quality": 3, "air quality": 3, "smog": 3,
         "plastic": 1, "microplastic": 3, "ocean acidification": 3,
+        # Extreme-heat vocabulary (2026-07-01 review CAT-4): a heatwave
+        # cluster matched no environment keyword and fell to "general".
+        "heat wave": 3, "heatwave": 3, "heat advisory": 3, "extreme heat": 3,
+        "record heat": 3, "record temperatures": 3, "heat-related": 3,
+        "scorching": 2, "sweltering": 2, "heat dome": 3, "temperatures": 1,
+        "wildfires": 3, "blaze": 1,
     },
     "conflict": {
         "war": 3, "military": 3, "attack": 2, "troops": 3,
@@ -385,18 +421,27 @@ def categorize_article(article: dict) -> list[str]:
         return ["general"]  # safe default for empty articles
 
     # 1. Keyword matching scores (title keywords get 2x weight)
+    #
+    # 2026-07-01 (review CAT-3): keyword hits are matched on WORD BOUNDARIES,
+    # not raw substrings. The old combined_lower.count(keyword) matched short
+    # abbreviations inside unrelated words — "ev" inside "review"/"revolution",
+    # "epa" inside "repatriates", "ai" inside "campaign" — which made
+    # `environment` a false-positive magnet (the #1 SCOTUS lead was tagged
+    # environment via "ev"). _boundary_count() requires non-alphanumeric
+    # neighbors so "ev" only matches the standalone token.
     title_lower = title.lower()
     category_scores: dict[str, float] = {}
     for category, keywords in CATEGORY_KEYWORDS.items():
         score = 0.0
         for keyword, weight in keywords.items():
-            count = combined_lower.count(keyword)
+            pat = _keyword_pattern(keyword)
+            count = len(pat.findall(combined_lower))
             if count > 0:
                 # Normalize by word count to avoid length bias
                 density = count / max(word_count / 100, 1)
                 score += density * weight
             # Title bonus: keywords in the title are the strongest signal
-            if keyword in title_lower:
+            if pat.search(title_lower):
                 score += weight * 2.0
         category_scores[category] = score
 
@@ -529,3 +574,46 @@ def categorize_article(article: dict) -> list[str]:
             break
 
     return result
+
+
+def categorize_cluster(title: str, summary: str,
+                       articles: list[dict], member_cap: int = 8) -> str:
+    """Return the single best FINE-GRAINED category for a whole cluster.
+
+    2026-07-01 (review CAT-1/CAT-2/CAT-6). The old cluster vote ran
+    categorize_article over articles[:3] only, so an over-merged cluster's
+    off-topic lead articles decided the label (the #1 SCOTUS lead was tagged
+    `environment`, #6 maternity review `environment`, and clean stories fell
+    to `general`). This votes over the POLISHED cluster title + summary at 3x
+    weight — the representative, on-topic text — plus up to `member_cap`
+    members, and breaks ties deterministically via _CATEGORY_PRIORITY instead
+    of dict-insertion order.
+
+    Caller maps the result to a display desk via map_to_desk().
+    """
+    # The polished cluster title + summary is the single most reliable,
+    # on-topic signal (it is the representative text the story is actually
+    # about). categorize_article already returns "general" when that text
+    # genuinely lacks a category, so a confident non-general primary here is
+    # trustworthy — trust it directly. This fixes the flagged mislabels (#1
+    # SCOTUS, #6 maternity, #29 WhatsApp, #30 heatwave, #47) without letting
+    # title-only member articles (which degrade to "general" with no body
+    # text) flood the vote.
+    rep = {"title": title or "", "summary": summary or "", "full_text": ""}
+    rep_cats = categorize_article(rep) if (title or summary) else ["general"]
+    if rep_cats and rep_cats[0] != "general":
+        return rep_cats[0]
+
+    # Representative text was unclassifiable — fall back to a member vote
+    # (general allowed here as a genuine last resort), tie-broken
+    # deterministically rather than by dict-insertion order.
+    votes: dict[str, float] = defaultdict(float)
+    for a in articles[:member_cap]:
+        for i, cat in enumerate(categorize_article(a)):
+            votes[cat] += 1.0 if i == 0 else 0.5
+    if not votes:
+        return "general"
+    return max(
+        votes.items(),
+        key=lambda kv: (kv[1], -_CATEGORY_PRIORITY.get(kv[0], 99)),
+    )[0]

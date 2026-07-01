@@ -54,6 +54,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 from utils.nlp_shared import get_nlp
+from utils.text_sanitizer import normalize_headline, sanitize_summary
 
 
 # ---------------------------------------------------------------------------
@@ -108,7 +109,12 @@ def _clean_title(title: str) -> str:
     for _ in range(2):
         title = _ATTRIBUTION_SUFFIX_RE.sub("", title).strip()
         title = _DOMAIN_SUFFIX_RE.sub("", title).strip()
-    return title.strip(" \t\n\r-–—|")
+    title = title.strip(" \t\n\r-–—|")
+    # Deterministic normalizer (2026-07-01): strips editorial/tabloid label
+    # leads ("INSIGHT:", "Devastating:", epithet leads) and trailing source /
+    # date / non-Latin suffixes the whitelist above misses (Euractiv, Focus
+    # Taiwan, Українська правда). Idempotent on already-clean LLM headlines.
+    return normalize_headline(title)
 
 
 def _build_document(article: dict) -> str:
@@ -242,12 +248,20 @@ def _generate_cluster_summary(articles: list[dict]) -> str:
             if s and len(s) >= 15:
                 summaries.append(s)
     if summaries:
+        # Prefer the longest summary that survives boilerplate stripping with
+        # substantive body left; sanitize the winner so raw CMS/RSS scaffolding
+        # ("appeared first on", "Submitted by", twitter embeds, mid-word
+        # truncation) never reaches the DB/dashboard on null-tier clusters.
         summaries.sort(key=len, reverse=True)
-        return summaries[0]
+        for s in summaries:
+            cleaned = sanitize_summary(s)
+            if len(cleaned) >= 40:
+                return cleaned
+        return sanitize_summary(summaries[0])
     for a in articles:
         t = (a.get("title", "") or "").strip()
         if t:
-            return t
+            return sanitize_summary(t) or t
     return ""
 
 
