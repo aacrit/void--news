@@ -1,0 +1,1152 @@
+{
+  "plan": {
+    "summary": "31 verified findings collapse to ~7 underlying defects. ONE root cause dominates: clustering over-merge (generic-entity chain-merge into 50-85 article grab-bags) was independently flagged by all 5 perspectives and is the upstream source of the ranking, categorization, bias, and summary/headline failures. The single biggest lever is fixing the clustering merge phases; once article bags are coherent, the first-3-article category vote, the minority-headline picker, the inflated source counts, and the polluted bias aggregates all improve for free. A second independent cluster of defects lives in the null-tier tail: 30/50 feed rows never got an LLM summary/headline/divergence pass, so they ship raw scraped CMS text, un-normalized source-suffix headlines, tabloid/banned-adjective clickbait, and empty perspective-diversity panels, with no deterministic fallback to sanitize any of it. These two, plus a batch of cheap rule-based categorization fixes and two genuine ranking-framework gaps (feed_ranker EVENT_DECAY buries fast-moving multi-cluster conflicts; no cluster-level opinion demotion), account for nearly every confirmed issue. Several findings' proposed fixes target dead code (CL-2's _cluster_cohesion has zero callers; MEGA_COHESION_* constants are never read) or misattribute mechanism (RANK-05 coverage-weight is only ~13% of variance; CAT-3 blames disaster keywords when the real bug is substring matching 'ev'/'epa'); the plan corrects those before scheduling work. Everything here is verifiable at $0: regex unit tests over the export, recategorize/rerank reruns, and the clustering validation snapshot — no paid LLM required.",
+    "headline_metrics": "CLUSTERING hit/miss: ~30/50 coherent, ~15/50 over-merged grab-bags (verified incoherent: #1,#4,#6,#10,#11(85 arts),#17,#24,#33,#34,#42,#45,#47), ~5 events split by under-clustering (#27/#40 same firing ruling; #31/#32 Iran war; #3/#36 ballots). 27/50 pinned at the article cap. Effective hit rate ~60%. CATEGORIZATION accuracy ~65-70%: 'general' absorbs 22% (11/50, >=9 wrong), 'environment' is a false-positive magnet (8 clusters, 4 wrong incl. the #1 SCOTUS lead tagged environment via 'ev' substring in 'review/revolution'), WhatsApp app story tagged 'conflict'. RANKING vs benchmark: FAIL at the top of the feed — Venezuela ~1,450-dead quake surfaces only at #23 under an RT-propaganda headline; DRC Ebola buried inside an over-merged #17 China-trade cluster; active US-Iran war at #31/#32 sits below a Taipei forex close (#24) and a WhatsApp usernames update (#29); wrong SCOTUS story leads at #1. Mid-feed soft-news penetration (forex, product launches, book/football promos ranks 24-50). Two real mechanisms: feed_ranker's blanket 0.80x EVENT_DECAY (arithmetically proven to demote Iran from ~#6 to #31) and coverage-weighted over-merged source counts. SUMMARY/HEADLINE quality: only 20/50 rows are proper synthesized prose; 30/50 are raw scraped article text with CMS boilerplate ('appeared first on', 'Submitted by...date', 'Continue reading', twitter embeds, mid-word truncation), 8 leak ' - Outlet' source suffixes (incl. Cyrillic), 6 ship tabloid/banned-adjective clickbait ('Devastating:', 'Unbothered King:', scare-quote roasts). TOP EDITORIAL BLIND SPOTS: (1) no casualty/humanitarian-magnitude signal — mass-death disasters and epidemics rank like ordinary weather/health items; (2) opinion/fact axis fully collapsed — all 50 clusters labeled 'Reporting', zero opinion/tabloid demotion; (3) single-publisher and state-media concentration invisible (#24 is 64% one outlet, RT headlines the quake with no state-affiliation label).",
+    "waves": [
+      {
+        "wave": 1,
+        "theme": "Deterministic hygiene + telemetry: rule-based text/label fixes that ship value regardless of LLM availability",
+        "rationale": "Highest fixability, no paid LLM, no clustering dependency. These directly repair the most visible defects on the null-tier tail (60% of rows) and the cheapest categorization bugs. All verifiable by regex unit tests over scripts/top50_export.json and by rerunning the categorizer/rerank over the existing export. Sequenced first because they are low-risk and independent of the deeper clustering/ranking work in later waves.",
+        "items": [
+          {
+            "title": "Deterministic boilerplate-sanitizing summary fallback for null-tier rows (strip CMS/RSS scaffolding, never emit mid-word truncation)",
+            "severity": "high",
+            "consensus": 2,
+            "code_targets": [
+              "pipeline/summarizer/cluster_summarizer.py:1124-1179",
+              "pipeline/clustering/story_cluster.py:232 (_generate_cluster_summary raw-passthrough source)"
+            ],
+            "fix": "Add a rule-based sanitizer applied whenever the LLM summary is None: regex-strip 'The post/article ... appeared first on <x>', 'Continue reading', 'Read more at <x>', 'Submitted by <name> on <date>', 'pic.twitter.com/...', byline scaffolding and BREAKING unicode; reject/repair mid-word '...' truncation; select a clean lead sentence from the representative article rather than dumping the longest raw member body. This is the true missing piece behind CQ-1, BIAS-02's title/summary mismatch, and the raw footers.",
+            "verification": "Unit-test the sanitizer regex set against the 22 flagged raw-passthrough rows extracted from scripts/top50_export.json (R12,R19,R21,R22,R33,R41,R44,R47,R49...); assert zero boilerplate markers and zero mid-word truncation in output. No LLM needed."
+          },
+          {
+            "title": "Deterministic headline normalizer: strip trailing ' - / | / , <Outlet>' suffixes (incl. non-Latin) and neutralize banned-adjective/editorial-prefix clickbait on ALL cluster titles",
+            "severity": "high",
+            "consensus": 2,
+            "code_targets": [
+              "pipeline/clustering/story_cluster.py:88 _ATTRIBUTION_SUFFIX_RE / :99 _DOMAIN_SUFFIX_RE / :105 _clean_title",
+              "pipeline/summarizer/cluster_summarizer.py:139-194 banned-adjective list"
+            ],
+            "fix": "Extend the EXISTING _clean_title (it already runs; whitelist is just incomplete): match trailing suffix against data/sources.json publisher names (not a hardcoded whitelist), strip any trailing non-Latin fragment, and add a hard editorial-prefix/banned-adjective filter ('INSIGHT:', 'Exclusive,', 'Devastating:', 'Unbothered King:', leading scare-quote roast verbs blasts/roasts/savaged/accuses). Applies to every title whether or not an LLM rewrite exists. Merges CQ-2 + CQ-3.",
+            "verification": "Regex unit test over the 8 suffix-leak titles (R11,19,21,22,24,41,48,49) and 6 clickbait titles (R20,26,41,44,47,50) from the export; assert all cleaned. Cross-check against sources.json outlet-name list. $0."
+          },
+          {
+            "title": "Category vote must score the polished cluster title (+all members), not just the first 3 raw off-topic articles",
+            "severity": "high",
+            "consensus": 2,
+            "code_targets": [
+              "pipeline/main.py:1953",
+              "pipeline/rerank.py:309",
+              "pipeline/categorizer/auto_categorize.py:362"
+            ],
+            "fix": "Call categorize_article on a synthetic {title: cluster['title'], summary: cluster['summary']} with 3x vote weight and vote across ALL members rather than articles[:3]. This alone fixes the #1 SCOTUS='environment', #6 maternity='environment', #43 UBS='general' mislabels (CAT-1) and mitigates CAT-2's 'general' overflow.",
+            "verification": "Rerun the categorizer over scripts/top50_export.json member arrays with the title-weighted vote; assert the 6 CAT-1 ranks (1,6,18,43,46,47) and >=9 CAT-2 'general' ranks resolve to sensible desks. Pure recategorize rerun, no pipeline run, no LLM."
+          },
+          {
+            "title": "Fix categorizer substring bug + missing consumer-tech/heat vocabulary + deterministic tie-break",
+            "severity": "medium",
+            "consensus": 1,
+            "code_targets": [
+              "pipeline/categorizer/auto_categorize.py:78-146 keyword tables",
+              "pipeline/categorizer/auto_categorize.py:393-400 substring match",
+              "pipeline/main.py:1964 / pipeline/rerank.py:312 tie-break"
+            ],
+            "fix": "(a) Make keyword matching word-boundary-aware so 'ev'/'epa'/'ai' stop matching inside review/repatriates/claim — this is the REAL cause of the environment false-positive magnet (CAT-3), not disaster keywords. (b) Add whatsapp/telegram/signal/username/messaging/sim/smartphone to technology and heat wave/heatwave/heat-related/extreme heat/heat advisory to environment (CAT-4). (c) Add a deterministic priority tie-break (politics>economy>conflict>science>environment>culture>general) so ties stop resolving to dict-insertion order (CAT-6).",
+            "verification": "Unit test categorize_article on the exact flagged titles: assert #1/#6/#47 no longer 'environment', #29 WhatsApp -> technology, #30 heatwave -> environment. Deterministic, offline."
+          },
+          {
+            "title": "summary_tier telemetry: explicit provider labels (sonnet/gemini/groq), backfill 11 stale 'flash-lite' rows, re-summarize any tier outside allowed set",
+            "severity": "low",
+            "consensus": 1,
+            "code_targets": [
+              "pipeline/summarizer/cluster_summarizer.py:1156-1158",
+              "pipeline/main.py:2233-2236",
+              "supabase/migrations/062_security_hardening.sql:63-80"
+            ],
+            "fix": "Stop collapsing all $0 providers to 'flash'; stamp the real provider so the Groq tail is distinguishable from Gemini top-10 in the dashboard. Widen the CHECK to ('sonnet','gemini','groq') and add a one-time normalize of 'flash-lite'->'gemini'. Note: applying 062 as-is to a DB already holding 'flash-lite' rows will fail the ADD CONSTRAINT validation, so backfill MUST precede the constraint. Low severity (observability/deploy-safety, not user-facing) but it is the telemetry that makes Waves 1-4 measurable.",
+            "verification": "Re-query the DB export after a recategorize/re-summarize pass; assert no tier violates the CHECK and Groq vs Gemini rows are distinguishable. Migration dry-run against a copy. $0."
+          }
+        ]
+      },
+      {
+        "wave": 2,
+        "theme": "Clustering merge tuning: kill the generic-entity chain-merge that produces incoherent grab-bags (the dominant root cause)",
+        "rationale": "Single highest-consensus defect — independently flagged by all 5 perspectives. Fixing coherence is the upstream unlock for Wave 3 (rankings stop being inflated by fake source counts and split events) and improves Wave 1's category vote and Wave 4's bias aggregates. Placed second (not first) only because it is higher-risk than pure regex and must be regression-gated by the clustering validation snapshot. IMPORTANT: two sub-findings (CL-2, CL-7) proposed patching dead code — corrected below.",
+        "items": [
+          {
+            "title": "Restore permissive IDF/specificity weighting to Phase 2 entity merge so generic geopolitical entities stop chaining unrelated events",
+            "severity": "critical",
+            "consensus": 5,
+            "code_targets": [
+              "pipeline/clustering/story_cluster.py:840 merge_related_clusters",
+              "pipeline/clustering/story_cluster.py:762 _extract_cluster_entities",
+              "pipeline/clustering/story_cluster.py:63 ENTITY_MERGE_IDF_THRESHOLD"
+            ],
+            "fix": "Phase 2 currently uses min_shared_entities=3 on RAW entity sets (IDF/specificity gates were reverted 2026-05-31). Require >=2 DISTINGUISHING (high-IDF, low-corpus-frequency) shared entities IN ADDITION to the 3 raw shared, so specific pairings (Trump+Iran+Doha) still consolidate while all-high-df bridges (Trump+US+Supreme-Court -> Iran) do not. This is the origin of the #1, #8, #11 (85-arts) and 27 cap-pinned piles.",
+            "verification": "Run the clustering validation snapshot (pipeline/validation/runner.py against snapshot.json + fixtures.py); assert the generic-entity chain-merge fixtures split and no regression vs the rev-46 baseline (33/2/3 target). Re-cluster the day's article set offline; confirm #11 no longer fuses Ukraine/Romania/Bollywood. $0, no LLM."
+          },
+          {
+            "title": "Add a post-merge cohesion purity gate (re-wire _cluster_cohesion, which currently has ZERO callers) triggered by article-count/wire-amp, not the dead 40-source floor",
+            "severity": "high",
+            "consensus": 5,
+            "code_targets": [
+              "pipeline/clustering/story_cluster.py:1682 _cluster_cohesion (never called)",
+              "pipeline/clustering/story_cluster.py:1528 split_mega_clusters (reverted to display-only soft-cap)",
+              "pipeline/clustering/story_cluster.py:1674 MEGA_COHESION_* (dead constants)"
+            ],
+            "fix": "CL-2's diagnosis was refuted: the cohesion force-split path and MEGA_COHESION_MIN_SOURCES=40 gate no longer run — _cluster_cohesion is never invoked and split_mega_clusters is a pure source_count>=75 display cap. Actually WIRE UP a cohesion audit: trigger on (article_count>=25 OR wire_amp_ratio>=2.5) regardless of source_count, split or demote when title-Jaccard/entity-convergence cohesion falls below ~35, protect real breaking news via a source-scaled floor. This is the guard that would have caught the #11 pile at 36 sources.",
+            "verification": "Add fixtures for the #11/#24/#33 incoherent piles to pipeline/validation/fixtures.py; assert cohesion gate flags them and coherent large clusters (#27=72 Cook, #3=65 ballots) survive. Snapshot regression run. $0."
+          },
+          {
+            "title": "Lower MERGE_HARD_CEILING and add per-cluster article cap to Phase 3 title-merge (currently uncapped)",
+            "severity": "high",
+            "consensus": 5,
+            "code_targets": [
+              "pipeline/clustering/story_cluster.py:668 MERGE_HARD_CEILING",
+              "pipeline/clustering/story_cluster.py:1804 merge_duplicate_title_clusters",
+              "pipeline/clustering/story_cluster.py:696 _ceiling_union_find"
+            ],
+            "fix": "The 50-article cap is Phase-2-only; Phases 2.5/2.6/3 grow clusters to 85 while the 120 ceiling never fires. Add the accumulated-load cap to the Phase 3 title-Jaccard union-find. Do NOT simply drop the ceiling to 60-70 as CL-3 proposed — that would wrongly split the coherent #27=72 and #3=65 clusters; article count is a poor over-merge proxy. Pair the cap with the Wave-2 cohesion gate so any cluster crossing ~50 articles is cohesion-audited rather than blindly split.",
+            "verification": "Re-cluster offline; assert no cluster exceeds cap without passing cohesion, and #27/#3 stay intact. Clustering snapshot. $0."
+          },
+          {
+            "title": "Enforce single-publisher / wire-duplication concentration as a split trigger (topic-bucket verticals) and global title-dedup",
+            "severity": "medium",
+            "consensus": 2,
+            "code_targets": [
+              "pipeline/clustering/story_cluster.py:63 STORY_TFIDF_THRESHOLD",
+              "pipeline/clustering/story_cluster.py:1682 _cluster_cohesion dominant_publisher_share",
+              "pipeline/clustering/deduplicator.py:111 _fingerprint_hash"
+            ],
+            "fix": "dominant_publisher_share IS computed but never enforced (same dead-code issue). Force re-split when one publisher supplies >50% of >15 members (#24 Focus-Taiwan dump, #33 Yonhap bucket, #19 Nigerian bucket). Raise Phase-1 STORY_TFIDF_THRESHOLD 0.18->~0.24 to reduce single-outlet vocabulary bridging. Add a stemmed-title exact/near-exact secondary dedup key so title-identical syndication stubs (#12 x7, #47 x7) collapse. Note CL-5's 'per-chunk bucketing' mechanism was refuted (dedup is global and no longer removes articles), so this is a coherence/prompt-hygiene fix, not a source-count fix.",
+            "verification": "Re-cluster offline; assert #24/#33/#19 split by publisher-share and duplicate-title counts drop to 1 per cluster. Snapshot. $0."
+          },
+          {
+            "title": "Representative-headline picker must choose the modal-event / high-source-agreement member and warn when title entities cover <40% of cluster",
+            "severity": "medium",
+            "consensus": 2,
+            "code_targets": [
+              "pipeline/clustering/story_cluster.py:167 _generate_cluster_title",
+              "pipeline/clustering/story_cluster.py:1682 _cluster_cohesion"
+            ],
+            "fix": "Downstream guard for CL-6/BIAS-02: on a heterogeneous cluster, pick the headline from the largest entity-convergent sub-group and prefer a low-opinion member; emit a validation warning when the chosen title's entities match <40% of members. Largely subsumed once Wave-2 over-merge fixes land, but the warning is a cheap coherence tripwire.",
+            "verification": "Assert on re-clustered output that #4/#6/#11 titles match their plurality sub-group; add a validation warning count metric. $0."
+          }
+        ]
+      },
+      {
+        "wave": 3,
+        "theme": "Ranking framework: same-event consolidation, casualty/humanitarian magnitude floor, domestic-insularity + soft-news demotion",
+        "rationale": "Depends on Wave 2 (coherent clusters and honest source counts) to be measured cleanly, since several ranking failures are actually clustering artifacts (RANK-02 Ebola, RANK-04 SCOTUS lead, RANK-05 coverage weight). The two GENUINE ranker bugs — EVENT_DECAY burying multi-cluster conflicts and the missing casualty floor — are isolated and fixable/verifiable by rerunning feed_ranker + importance_ranker offline over the export with no LLM.",
+        "items": [
+          {
+            "title": "Replace blanket 0.80x EVENT_DECAY with strongest-cluster promotion so fast-moving multi-cluster conflicts aren't buried",
+            "severity": "high",
+            "consensus": 1,
+            "code_targets": [
+              "pipeline/ranker/feed_ranker.py EVENT_DECAY / MAX_SAME_EVENT",
+              "pipeline/ranker/feed_ranker.py:_detect_event",
+              "pipeline/ranker/feed_ranker.py EVENT_KEYWORDS"
+            ],
+            "fix": "Arithmetically proven: Iran-war clusters have importance 67/66.8 but rank_world = importance x 0.80 = 53.6/53.45, dropping them below forex(#24) and WhatsApp(#29) which escape decay. Promote the single strongest cluster of an event to its full importance and decay only the tail; add a live-armed-conflict/interstate-strike authority floor so active war cannot be out-ranked by market/product clusters. NOTE: the importance_ranker source-count portion of RANK-03/05 was refuted (Iran already out-scores forex in the ranker) — the bug is entirely in feed_ranker; do not touch _consequentiality_score for this.",
+            "verification": "Rerun feed_ranker over the importance_scores in scripts/top50_export.json; assert the strongest Iran cluster lands top-~7 and no soft cluster outranks it. Pure rerank rerun, offline."
+          },
+          {
+            "title": "Add a casualty / humanitarian-magnitude floor to importance_ranker (disasters, epidemics, heat deaths) that is phrasing-robust",
+            "severity": "high",
+            "consensus": 1,
+            "code_targets": [
+              "pipeline/ranker/importance_ranker.py:_consequentiality_score",
+              "pipeline/ranker/importance_ranker.py:247 _HIGH_AUTHORITY_PHRASES (has 'death toll'/'mass casualty')"
+            ],
+            "fix": "The floor-70 'death toll'/'mass casualty' phrases exist but are brittle — they don't fire on 'Kill at Least 1,450' or 'heat wave kills over 1,300' and only sample cluster_articles[:10]. Add a numeric death-toll/killed/dead/missing + magnitude detector that sets the high-authority floor and scans beyond the first 10 members. Covers RANK-01 (Venezuela), RANK-02 (Ebola), RANK-07 (Europe heat) uniformly. Pair with Wave-2 so the quake/Ebola stop being diluted inside polluted clusters.",
+            "verification": "Rerun importance_ranker over re-clustered offline output; assert the Venezuela quake cluster and Europe-heat cluster clear the top ~10 and the Ebola content surfaces as its own ranked story. Offline, no LLM."
+          },
+          {
+            "title": "Generalize the US-only pile-on penalty to any single-country domestic concentration + demote routine market-wrap / product-launch clusters",
+            "severity": "medium",
+            "consensus": 2,
+            "code_targets": [
+              "pipeline/ranker/importance_ranker.py:506 _source_coverage_score",
+              "pipeline/ranker/importance_ranker.py:373 _SOFT_NEWS_CATEGORIES / :1424 soft gate",
+              "pipeline/ranker/importance_ranker.py:134-157 _GEOPOLITICAL_WEIGHT"
+            ],
+            "fix": "The pile-on damper only checks country_counts['US']; generalize to any cluster >70% one country with <2 foreign GPEs (fixes RANK-06 UK-domestic Burnham/Amos/Scotland dominating the top-12). Add a routine-market-wrap and product-launch demotion INDEPENDENT of category, since forex(economy)/iPhone(science)/WhatsApp all sit in hard categories the soft gate never touches (RANK-08). The Wave-1 category fixes route product/promo stories to soft desks; this closes the remainder.",
+            "verification": "Rerun importance_ranker offline; assert forex/WhatsApp/iPhone/book-promo drop below the Iran war and quake, and no single UK-domestic story appears twice in the top-12. Offline rerank + the Burnham dedup from Wave 2."
+          }
+        ]
+      },
+      {
+        "wave": 4,
+        "theme": "Bias-diversity & opinion demotion: restore void's flagship perspective-diversity value where it is currently dead or misleading",
+        "rationale": "Deepest and most product-defining, but correctly last: BIAS-03's empty divergence panels are a consequence of the null-tier tail (Wave 1) and the incoherent clusters (Wave 2), and the opinion aggregate (BIAS-01) is meaningful only once clusters are coherent. These require new aggregation logic (cluster-level MAX/percentile, dispersion display, concentration/state-media labels) but every piece is rule-based and verifiable from the existing per-article bias scores in the export.",
+        "items": [
+          {
+            "title": "Cluster-level opinion signal (MAX/high-percentile, not mean) + headline-pattern opinion detector + feed_ranker opinion demotion",
+            "severity": "high",
+            "consensus": 3,
+            "code_targets": [
+              "pipeline/analyzers/opinion_detector.py:_metadata_score / analyze_opinion",
+              "pipeline/main.py:659-671 avg_opinion_fact mean aggregation",
+              "pipeline/ranker/feed_ranker.py (no opinion term)"
+            ],
+            "fix": "All 50 clusters read 'Reporting' because a single op-ed is mean-averaged across 30-50 wire stories AND per-article scores regress to the ~18-22 tier baseline on short RSS stubs. Use MAX/high-percentile opinion_fact (or the representative headline's score) for the cluster signal, add a title-pattern detector (scare-quote lead + blasts/roasts/savaged/accuses/begs, outlet tags HuffPost/Mediaite/thenationalpulse) since RSS strips /opinion/ URL markers, and feed it to feed_ranker as a demotion multiplier. Ties together BIAS-01, CQ-3 tabloid headlines, and RANK-08 opinion promos.",
+            "verification": "Recompute the cluster opinion aggregate offline over per-article opinion_fact in scripts/top50_export.json; assert #10/#41/#44/#47/#50 cross the Analysis/Opinion boundary and demote. Regex-test the title detector on those headlines. $0, no LLM."
+          },
+          {
+            "title": "Backfill divergence/consensus for null-tier clusters from rule-based bias metrics with story-specific entities (or gate empties out of top-50)",
+            "severity": "medium",
+            "consensus": 2,
+            "code_targets": [
+              "pipeline/main.py:509-609 _generate_consensus_divergence",
+              "pipeline/main.py:796-824 _generate_cluster_consensus_divergence (early-return on missing bias_scores)"
+            ],
+            "fix": "21/50 clusters have empty divergence+consensus and 9 more carry generic 'lean spread'/'measured tone' boilerplate — all coincide with tier=None. BIAS-03 misattributed this to cluster_summarizer; the real early-return is main.py:823-824 when bias_scores are absent. Populate story-specific points from the rule-based lean-spread + factual-rigor metrics with named entities from the (now-coherent) cluster, or exclude no-signal clusters from the top-50 rather than shipping a blank flagship panel.",
+            "verification": "Recompute divergence/consensus offline from the bias arrays in the export; assert the 21 empty ranks get non-boilerplate, entity-specific points. Offline. $0."
+          },
+          {
+            "title": "Surface lean DISPERSION (spread / left-center-right split) instead of the always-~50 cluster mean; add source-concentration + state-media labels",
+            "severity": "medium",
+            "consensus": 2,
+            "code_targets": [
+              "pipeline/analyzers/political_lean.py:_keyword_lean_score",
+              "pipeline/ranker/feed_ranker.py (no concentration term)",
+              "frontend/app/components/BiasSnapshot.tsx / Sigil.tsx"
+            ],
+            "fix": "avg_political_lean is 45-58 for all 50 (mean 50.7) because opposing member leans cancel to the center — an inherent property of a mean, not a regression. lean_spread/lean_range are already computed and partly drawn; make DIRECTION display the distribution (how many left/center/right outlets) rather than the centered mean. Separately add a source-concentration penalty to rank_world when one publisher/wire-group exceeds ~35% of members (#24=64%) and a state-affiliated badge when the representative headline is state media (RT headlines the Venezuela quake unlabeled). Reconcile displayed source_count with distinct source_id (#12: 34 vs 40, #47: 40 vs 46).",
+            "verification": "Recompute the concentration ratios and lean distribution offline from _articles in the export; assert #24 gets flagged/penalized, RT #23 gets a state badge, and displayed counts match distinct source_id. Rerank + frontend snapshot. $0."
+          }
+        ]
+      }
+    ]
+  },
+  "survivors": [
+    {
+      "id": "CQ-1",
+      "title": "30 of 50 feed summaries are raw scraped article text, not LLM summaries (tier=null)",
+      "severity": "critical",
+      "evidence": "Every cluster with summary_tier=null (ranks 6,11,12,14,16,17,18,19,20,21,22,23,24,25,26,28,31,32,33,34,35,37,39,41,43,44,47,48,49,50 = 30 rows) shows raw first-article body text instead of a synthesized summary. 23/30 carry hard proof of raw-passthrough: R12 = 'How Andy Burnham can win back the Muslim voters Labour has lostSubmitted byImran MullaonMon, 06/29/2026 - 11:06MEE examines...'; R19/R22/R47/R49 end '...appeared first onThe Namibian./Asia Times./Egypt Independent.'; R21 ends 'third.Continue reading...'; R33 embeds 'pic.twitter.com/X2XWlEjLGW' plus Unicode-math BREAKING chars; R11 truncates mid-word 'an annex of a househol...'; R41 'Read more at The Daily Beast.'; R44 'first appeared onMediaite.'. In contrast the 20 tier=flash/flash-lite rows (R1-5,7-10,13,15,27,29,30,36,38,40,42,45,46) are proper multi-source synthesized prose. This is 60% of the visible feed rendering un-editorialized scraper output.",
+      "affected_ranks": [
+        6,
+        11,
+        12,
+        14,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        28,
+        31,
+        32,
+        33,
+        34,
+        35,
+        37,
+        39,
+        41,
+        43,
+        44,
+        47,
+        48,
+        49,
+        50
+      ],
+      "root_cause": "main.py step 7b (main.py:2212-2215) only summarizes top_n=30 by headline_rank with regional_fill=0/topic_fill=0, so ranks beyond that never enter the batch. The post-rerank pass summarize_top50_after_rerank (cluster_summarizer.py:1040, prefer_provider='gemini') is meant to cover the top-50, but for the tail summarize_cluster returns None (Gemini free tier cut to 20 req/day per _smart_generate_json docstring line 42; Groq llama-3.1-8b hits TPM/TPD caps) -> metrics['failed'] at cluster_summarizer.py:1145-1147, so the row is left untouched: it keeps the upstream rule-based/raw summary and summary_tier stays null. There is no clean rule-based synthesizer or excerpt-sanitizer fallback, so raw article.summary/full_text reaches the DB and the dashboard.",
+      "proposed_fix": "1) Add a sanitized deterministic fallback summarizer that strips CMS/RSS boilerplate (regex for 'The post... appeared first on', 'Continue reading', 'Submitted by...date', twitter embeds, byline scaffolding) and never emits mid-word '...'-truncated text, used whenever LLM returns None. 2) Route the null tail through Groq with a smaller output budget instead of Gemini (the tail is exactly what Groq was added for per CLAUDE.md) and lower the <3-article/opinion skip only after a fallback exists. 3) At minimum, gate the frontend to not render a summary whose tier is null AND whose text matches the boilerplate regexes.",
+      "code_targets": [
+        "pipeline/main.py:2206-2252",
+        "pipeline/summarizer/cluster_summarizer.py:1124-1179",
+        "pipeline/summarizer/cluster_summarizer.py:1144-1147"
+      ],
+      "perspective": "content-summary",
+      "verdict": {
+        "finding_id": "CQ-1",
+        "verdict": "confirmed",
+        "confidence": 0.9,
+        "reasoning": "Independently verified against scripts/top50_export.json and pipeline code. (a) EVIDENCE holds exactly: 30 rows have summary_tier=null on precisely the claimed ranks; every cited raw-passthrough marker is present in the actual data (R12 'Submitted byImran MullaonMon, 06/29/2026'; R19/R22/R47/R49 'appeared first on...'; R21 'Continue reading...'; R33 'pic.twitter.com/X2XWlEjLGW'; R11 mid-word 'househol...'; R41 'Read more at The Daily Beast.'; R44 'first appeared onMediaite.'). 22/30 null rows carry hard boilerplate proof (finding said 23; diff is R11 truncation, also a valid tell). The 20 flash/flash-lite rows are proper synthesized prose. (b) ROOT CAUSE is code-confirmed: main.py:2212-2215 step 7b runs top_n=30 Groq batch (fill=0); cluster_summarizer.py:1144-1147 returns None -> metrics['failed'] -> row left untouched with raw upstream text and null tier; 1126-1131 also skip <3-article/opinion clusters. One minor framing error: the post-rerank pass is NOT 'meant to cover top-50' — the actual call at main.py:3043-3044 passes limit=10 (limit=50 is only the default param), design is 1-10 Gemini / 11-30 Groq / 31-50 rule-based. This strengthens rather than weakens the finding: only the top 10 have a Gemini safety net, and the null tier in ranks 11-30 reflects Groq batch failures consistent with the free-tier-cap hypothesis. There is genuinely no boilerplate-sanitizing fallback, so raw scraped text with CMS artifacts reaches the DB. (c) SEVERITY adjusted critical->high: dispositive, user-visible, recurring editorial defect on the flagship feed, but the site still renders readable content (not a crash/security/data-loss) and ranks 31-50 staying rule-based is a documented design tradeoff, so it is partly by-design rather than pure bug. The unmitigated real defect is the missing sanitizer.",
+        "severity_adjusted": "high"
+      }
+    },
+    {
+      "id": "CQ-2",
+      "title": "Source-name suffix leakage in 8 headlines (raw un-normalized source titles)",
+      "severity": "high",
+      "evidence": "Titles ending in ' - <Outlet>' because the raw source headline was never rewritten: R11 'Latvia to build joint drone production facility with Ukraine near Russian border - Українська правда'; R19 '...Anti-Migrant Protests - South African News Briefs - June 30, 2026'; R21 '...protect its industry from overcapacity - Telegraph India'; R22 '...inmates overpowered the guards - New Haven Register'; R24 'U.S. Dollar closes lower on Taipei forex market - Focus Taiwan'; R41 '...In Scathing Takedown - HuffPost'; R48 'Meet the MEPs behind the French far-right challenge - Euractiv'; R49 '...IDF Chief of Staff at Haredi protest - i24NEWS'. R11 additionally leaks Cyrillic source name. All 8 are exactly the tier=null rows that never got an LLM headline rewrite.",
+      "affected_ranks": [
+        11,
+        19,
+        21,
+        22,
+        24,
+        41,
+        48,
+        49
+      ],
+      "root_cause": "clusters[idx]['title'] is only overwritten with result['headline'] for clusters that the LLM successfully summarized (main.py:2217, cluster_summarizer.py:1150). Null-tier clusters retain story_cluster's title, which is the verbatim best-article headline including the ' - Outlet' RSS suffix. There is no title-normalization step that strips trailing ' - <source>' / ' | <source>' before display.",
+      "proposed_fix": "Add a deterministic headline normalizer in story_cluster/rerank that strips trailing ' - <outlet>', ' | <outlet>', ', <Outlet>' suffixes (match against sources.json publisher names) and any non-Latin trailing fragment, applied to every cluster title regardless of whether an LLM summary was produced.",
+      "code_targets": [
+        "pipeline/main.py:2216-2221",
+        "pipeline/clustering/story_cluster.py",
+        "pipeline/rerank.py"
+      ],
+      "perspective": "content-summary",
+      "verdict": {
+        "finding_id": "CQ-2",
+        "verdict": "partially_confirmed",
+        "confidence": 0.85,
+        "reasoning": "Evidence is real and exact: the export at scripts/top50_export.json has precisely 8 titles with trailing ' - <suffix>' leakage, matching flagged ranks 11,19,21,22,24,41,48,49 verbatim (incl. Cyrillic 'Українська правда' at R11), all summary_tier=null. No false positives. However the root cause is partially wrong: the finding asserts 'There is no title-normalization step that strips trailing - <source>'. There IS one — _clean_title() in story_cluster.py:105 with _ATTRIBUTION_SUFFIX_RE (line 88) and _DOMAIN_SUFFIX_RE (line 99), applied via _generate_cluster_title. Proof it runs: zero whitelisted outlets (Reuters/BBC/AP/CNN/etc.) leak into any of the 50 titles. The 8 that survive are outlets NOT in the hardcoded whitelist (Telegraph India, HuffPost, Euractiv, Focus Taiwan, New Haven Register, i24NEWS), a Latin-only regex missing the Cyrillic name, and R19 whose tail is a date not an outlet. So the true cause is an INCOMPLETE deterministic normalizer, not its absence; the 'never LLM-rewritten' factor is a correct contributing condition. main.py:2216-2217 and cluster_summarizer.py:1149-1150 are cited correctly. Proposed fix (sources.json match + non-Latin strip) is sound but should extend the existing _clean_title, and wouldn't fix R19's date suffix. Severity high overstates a purely cosmetic headline-polish defect with no functional/security/correctness impact affecting ~16% of the feed; medium is appropriate.",
+        "severity_adjusted": "medium"
+      }
+    },
+    {
+      "id": "CQ-3",
+      "title": "Tabloid / opinion / banned-adjective clickbait headlines pass through un-neutralized",
+      "severity": "high",
+      "evidence": "R26 'Devastating: 3 Firefighters Die Battling Massive Colorado-Utah Wildfire' ('Devastating' and 'Massive' are on the system-instruction banned adjective list). R41 \"'Morning Joe' Accuses Dem Sen. Chris Murphy Of MAGA Antics In Scathing Takedown\". R44 \"'What a loser': Biden blasts Trump's Reflecting Pool, arch construction\". R50 'Unbothered King: Justice Clarence Thomas Walks Through Capitol with Zero Drama While Media Begs for Leaks'. R20 'INSIGHT: Japan on alert...' and R47 'Exclusive, Xi Van Fleet: One Ideal, Two Revolutions...' keep source editorial prefixes. All are tier=null (no LLM neutralization). The banned-adjective policy in _SYSTEM_INSTRUCTION (cluster_summarizer.py:163-165: 'devastating... shocking, stunning... historic') is only enforced on LLM output, never on the raw titles these rows actually ship.",
+      "affected_ranks": [
+        20,
+        26,
+        41,
+        44,
+        47,
+        50
+      ],
+      "root_cause": "Same as CQ-2: for null-tier rows the raw source headline is the shipped title with zero editorial filtering. The show-don't-tell / banned-adjective regex (_detect_show_dont_tell_violations, cluster_summarizer.py:751) runs only on LLM result objects and is warning-only (no rewrite/reject).",
+      "proposed_fix": "Run the banned-adjective + editorial-prefix regex ('INSIGHT:', 'Exclusive,', 'Devastating:', leading quoted-slur pattern) as a hard filter over ALL cluster titles; when a title trips it and no LLM rewrite exists, fall back to a neutral templated headline from the dominant claim rather than shipping the tabloid string.",
+      "code_targets": [
+        "pipeline/summarizer/cluster_summarizer.py:139-194",
+        "pipeline/summarizer/cluster_summarizer.py:751-756",
+        "pipeline/rerank.py"
+      ],
+      "perspective": "content-summary",
+      "verdict": {
+        "finding_id": "CQ-3",
+        "verdict": "confirmed",
+        "confidence": 0.9,
+        "reasoning": "Evidence is real and verified against scripts/top50_export.json: all six cited titles (R20, R26, R41, R44, R47, R50) match exactly and all have summary_tier=None. Notably these are high-coverage clusters (23-40 sources), so prominent stories are shipping raw clickbait/editorial-prefix/banned-adjective headlines. Root cause confirmed in code: null-tier titles come from story_cluster.py:_generate_cluster_title (line 167), which best-scores lightly-cleaned raw source headlines; _clean_title (line 105) strips only wire prefixes and a known-outlet suffix list, not INSIGHT:/Devastating:/Exclusive,/Unbothered King:, and the _score penalty list (lines 220-222) is relative and covers only four unrelated phrases. The banned-adjective policy in _SYSTEM_INSTRUCTION (cluster_summarizer.py:163-165) and the two quality checks (_detect_show_dont_tell_violations called at line 751; _check_quality at line 419, explicitly non-modifying per line 427) run only on LLM result objects and are warning-only, never rewriting or rejecting. Two minor imprecisions do not affect the verdict: 'Massive' is not on the explicit adjective list (only 'devastating' is; 'massive' falls under the broader no-sensationalism clause), and the finding slightly conflates the significance-assertion detector with the _PROHIBITED_TERMS scan, but both are LLM-only and warning-only. Severity high is appropriate: it violates a locked Cardinal Rule (neutral, no-sensationalism headlines) on the public homepage across 12% of the top-50 feed; it is editorial, not a crash/security defect, so not critical.",
+        "severity_adjusted": "high"
+      }
+    },
+    {
+      "id": "CQ-4",
+      "title": "Cluster contamination poisons the _articles evidence list backing LLM headlines",
+      "severity": "high",
+      "evidence": "R10 'Scott Wiener Calls Israel Government Abomination' (tier=flash, 50 articles) — its _articles include 'Senior Director, Programs (Internships) - New York City job with Studio in a School' (a job posting), 'Seattle Pride parade pandemonium as nude marchers prance', 'How the Mass Shooting at Bondi Beach Shattered Australia'; zero Wiener articles in the first 8. R42 'DOJ Investigates Neville Roy Singham' (tier=flash-lite, 43 articles) is dominated by sports: 'Titans legend Chris Johnson diagnosed with ALS', 'Detroit Lions release cornerback Terrion Arnold', 'NBA Trade Rumours: Golden Warriors Eye LeBron James', 'Gavin Mckenna... NHL draft' — only 1 of first 8 is on-topic. R45 'Guo Wengui Sentenced' pulls in 'Australia, Vanuatu sign deal barring foreign military base', 'China forgives $50m Sudan debt', \"Pether's health deteriorating\". The LLM summary stays grounded only because summarize_cluster feeds just the 10 newest articles, but the dashboard shows source_count/_articles as evidence, and that evidence does not support the headline.",
+      "affected_ranks": [
+        10,
+        42,
+        45
+      ],
+      "root_cause": "Over-merge in the clustering engine (story_cluster.py phases) folds loosely-related or thematically-adjacent articles (China / Pride / sports) into one cluster; feed_ranker/rerank do not re-validate topical coherence of merged members. From the content perspective the grounding contract ('every fact must appear in the provided articles') is technically met on the 10-newest slice while the displayed 43-50 article evidence set is contaminated.",
+      "proposed_fix": "Add a post-merge coherence guard: compute title-token cosine of each member against the cluster centroid and drop/relegate outliers (a job posting or NFL story in a China-fraud cluster) before source_count is finalized; surface only coherent members in _articles. Cross-file with the clustering perspective.",
+      "code_targets": [
+        "pipeline/clustering/story_cluster.py",
+        "pipeline/rerank.py",
+        "pipeline/summarizer/cluster_summarizer.py:96 (_content_hash 10-newest slice)"
+      ],
+      "perspective": "content-summary",
+      "verdict": {
+        "finding_id": "CQ-4",
+        "verdict": "partially_confirmed",
+        "confidence": 0.85,
+        "reasoning": "Evidence is real and independently verified: R10 (Scott Wiener, 50 members/33 sources), R42 (Singham DOJ, 43 members), and R45 (Guo Wengui, 50 members) all contain the cited off-topic articles (job posting, Seattle Pride, Bondi shooting; NFL/NBA/NHL sports; Australia-Vanuatu/Sudan debt). This is genuine over-merge in the clustering engine, correctly attributed to story_cluster.py with no coherence re-validation in feed_ranker/rerank. However, the finding's load-bearing mechanistic claim is REFUTED: it asserts grounding survives \"only because summarize_cluster feeds just the 10 newest articles.\" Sorting _articles by published_at (the exact key _build_articles_block and _content_hash use) shows the newest-10 slice the LLM actually sees is ALSO heavily contaminated (R10 newest-10 ~2/10 on-topic; R42 ~2/10), yet all three headlines and summaries came out on-topic and correctly grounded. So the 10-newest slice is not the safety mechanism, and the finding's title claim that contamination \"poisons LLM headlines\" does not materialize. Real residual harms are lower-grade: (1) frontend fetchDeepDiveData (supabase.ts:36) surfaces every contaminated member with bias scores in the Deep Dive, showing off-topic articles as story coverage; (2) inflated source_count/coverage_velocity mildly over-rank these clusters. Affects ~6% of top-50. Downgrading to medium: no demonstrated wrong editorial output, refuted grounding mechanism, but a genuine clustering-quality issue with a reasonable proposed fix. Root cause and code_targets are otherwise accurate.",
+        "severity_adjusted": "medium"
+      }
+    },
+    {
+      "id": "CQ-5",
+      "title": "summary_tier is an unreliable quality signal: groq collapsed to 'flash' and stale 'flash-lite' rows violate the CHECK constraint",
+      "severity": "medium",
+      "evidence": "Tier distribution: 9 flash, 11 flash-lite, 30 null. The stamping code maps ANY non-Claude generator to 'flash' (cluster_summarizer.py:1156-1158 and main.py:2234-2235: \"'sonnet' if _gen=='claude-sonnet' else 'flash'\"), so a Groq-llama answer (generator label 'groq-llama' from _smart_generate_json line 72) is indistinguishable from Gemini flash in the cache and to the dashboard. Yet 11 rows are stamped 'flash-lite' (e.g. R13,R15,R27,R29,R30,R36,R38,R40,R42,R45,R46) — a value NO current code path writes; migration 062 (062_security_hardening.sql:76) restricts summary_tier to CHECK IN ('sonnet','flash'), which 'flash-lite' violates. These are stale rows from a retired code version that stamped the raw model name gemini-2.5-flash-lite (gemini_client.py:34), never refreshed because summarize_top50 only cache-skips tier=='sonnet' (cluster_summarizer.py:1140) but the re-summarization then fails on provider caps and leaves the stale row intact.",
+      "affected_ranks": [
+        13,
+        15,
+        27,
+        29,
+        30,
+        36,
+        38,
+        40,
+        42,
+        45,
+        46
+      ],
+      "root_cause": "Tier stamping conflates three $0 providers into 'flash' (cluster_summarizer.py:1156, main.py:2234) so downstream cannot tell Groq-llama tail output from Gemini top-10 output; and migration 062's CHECK(sonnet,flash) is either unapplied in prod or was applied without cleaning pre-existing 'flash-lite' values, so the constraint is not actually holding.",
+      "proposed_fix": "Extend the summary_tier CHECK and the stamping map to explicit provider labels ('sonnet','gemini','groq') and backfill the 11 stale 'flash-lite' rows; add a one-time migration to normalize 'flash-lite'->'gemini'. Make the top50 cache re-summarize any tier not in the current allowed set so stale rows get regenerated.",
+      "code_targets": [
+        "pipeline/summarizer/cluster_summarizer.py:1156-1158",
+        "pipeline/main.py:2233-2236",
+        "supabase/migrations/062_security_hardening.sql:63-80",
+        "pipeline/summarizer/gemini_client.py:34"
+      ],
+      "perspective": "content-summary",
+      "verdict": {
+        "finding_id": "CQ-5",
+        "verdict": "partially_confirmed",
+        "confidence": 0.8,
+        "reasoning": "The observable evidence is real and exact: the live-DB export (scripts/top50_export.json via scripts/export_top50.py) shows 9 flash / 11 flash-lite / 30 null, and the 11 flash-lite ranks (13,15,27,29,30,36,38,40,42,45,46) match one-for-one. Code claims verified: cluster_summarizer.py:1156-1158 and main.py:2233-2236 both stamp \"sonnet\" if generator==\"claude-sonnet\" else \"flash\", collapsing gemini-flash and groq-llama (label at line 72) into one 'flash' bucket; cache-skip at line 1140 only skips tier=='sonnet'; migration 049:21 allowed only ('sonnet'), 062:76 widens to ('sonnet','flash'); 'flash-lite' violates the CHECK; grep + git pickaxe confirm NO current code path writes 'flash-lite'. So the two core assertions (provider conflation into 'flash', and 'flash-lite' being an out-of-spec value that the 062 CHECK is demonstrably not enforcing in prod) hold up.\n\nHowever, the root_cause narrative is partly speculative and partly wrong. (1) The provenance claim — 'stale rows from a retired code version that stamped the raw model name gemini-2.5-flash-lite' — is unsupported by git history (no committed code ever wrote 'flash-lite' or 'gemini-2.5-flash-lite' to summary_tier) and internally inconsistent (the raw model string is 'gemini-2.5-flash-lite', not 'flash-lite'). The true origin of the 11 rows is unexplained. (2) The persistence mechanism claim ('re-summarization fails on provider caps and leaves the stale row intact') is backwards/speculative: since Claude is permanently retired, no row is ever 'sonnet', so ALL rows are re-summarized every run — flash-lite rows are not cache-protected; they'd persist only if that cluster's re-summarization repeatedly fails, which is asserted not shown.\n\nSeverity is overstated. summary_tier is a dashboard/observability metadata field with zero user-facing impact — it does not affect rank_world, the displayed summary, or feed content. The two genuine risks are an observability blind spot (Groq tail indistinguishable from Gemini) and a deployment hazard (applying migration 062 to a DB already holding flash-lite rows would error on ADD CONSTRAINT validation). Both are low-severity data-hygiene/ops concerns, not a medium feed-quality defect. Labeling those 11 ranks 'affected' overstates harm; their summaries are fine, only the tier label is off.",
+        "severity_adjusted": "low"
+      }
+    },
+    {
+      "id": "CL-1",
+      "title": "Phase 2 entity merge uses unweighted 3-shared-entity set-intersection — generic geopolitical entities (Trump/US/Iran/Russia/Ukraine/EU/Romania) chain unrelated events into heterogeneous piles",
+      "severity": "critical",
+      "evidence": "Rank 11 (85 arts, 36 sources) fuses Ukraine war (dozens of Kyiv Independent), Romania rail/infra ('Bucharest-Ilfov metropolitan train', 'CFR Calatori modernization of 42 passenger rail cars'), Trump White House ballroom ('$500M no-bid contract'), Jasmin Bhasin's ileitis diagnosis, and figure-skating reinstatement — bridged by shared generic entities. Rank 1 fuses the SCOTUS Humphrey's-Executor firing ruling with ~15 US-Iran Doha-talks articles ('Qatar Says No High-Level US-Iran Talks','US-Iran Talks Stall'). Rank 8 fuses Spain's migrant amnesty (~14 arts) with ~30 Romania business items (Banca Transilvania, Digi IPO, poultry, Sziget festival). 27/50 clusters are pinned at exactly 50 articles = the union-find truncation cap, i.e. they would be even larger.",
+      "affected_ranks": [
+        1,
+        2,
+        8,
+        9,
+        10,
+        11,
+        13,
+        17,
+        18,
+        20,
+        21,
+        33,
+        41,
+        42,
+        43,
+        45,
+        46,
+        47
+      ],
+      "root_cause": "pipeline/clustering/story_cluster.py:840 merge_related_clusters (Phase 2): min_shared_entities=3 on RAW entity sets. The docstring (lines 848-862) states the IDF-weighting + _LOW_SPECIFICITY_ENTITIES downweighting + distinguishing_shared>=1 gate were REVERTED 2026-05-31 because they blocked legitimate Trump-X/Iran-X consolidations. Removing them reintroduced generic-entity chain-merges; the only remaining defence is the 50-article size cap, which truncates but does not prevent the merge.",
+      "proposed_fix": "Restore IDF/specificity weighting to Phase 2 but keep it permissive: require >=2 DISTINGUISHING (high-IDF, low-corpus-frequency) shared entities in addition to the 3 raw shared, so Trump-Iran-Doha (specific pairing) still consolidates while Trump+US+Supreme-Court (all high-df) does not bridge to Iran. Alternatively add a post-merge title-Jaccard/entity-convergence purity gate (reuse _cluster_cohesion) that rejects any Phase-2 union dropping cohesion below ~35.",
+      "code_targets": [
+        "pipeline/clustering/story_cluster.py:840 merge_related_clusters",
+        "pipeline/clustering/story_cluster.py:762 _extract_cluster_entities",
+        "pipeline/clustering/story_cluster.py:63 STORY_TFIDF_THRESHOLD/ENTITY_MERGE_IDF_THRESHOLD"
+      ],
+      "perspective": "clustering",
+      "verdict": {
+        "finding_id": "CL-1",
+        "verdict": "confirmed",
+        "confidence": 0.9,
+        "reasoning": "Evidence is real and verbatim-accurate against scripts/top50_export.json. Rank 11 (85 arts/36 src) contains all cited strings: 'Bucharest-Ilfov metropolitan train project', 'CFR Calatori completes modernization of 42 passenger rail cars in EUR 67 million', Trump ballroom '$500M no-bid contract', 'Jasmin Bhasin... Terminal Ileitis', 'ISU Reinstates Russian and Belarusian Figure Skaters' — genuinely fusing Ukraine war, Romania infra, Trump White House, an Indian actor's health, and figure skating. Rank 1 (the flagship homepage #1, 50 arts/41 src) fuses the SCOTUS Humphrey's-Executor/FTC firing ruling with ~15 US-Iran Doha-talks articles ('Qatar Says No High-Level US-Iran Talks', 'US-Iran Talks Stall') plus unrelated Obama op-eds and a Kobo eReader review; its summary only covers SCOTUS, so the absorbed articles inflate source_count and corrupt bias_diversity. Rank 8 fuses Spain migrant amnesty with ~30 Romania business items (Banca Transilvania, Digi IPO, Safir poultry, Sziget). The broader affected list is not padded: spot-checked ranks 13, 20, 42 are equally heterogeneous. 27/50 clusters pinned at exactly 50 = the max_cluster_articles gate, confirmed in the export distribution. Root cause confirmed in code: story_cluster.py:840 merge_related_clusters uses min_shared_entities=3 on RAW entity sets (line 909 shared = ents_i & ents_j) with no IDF weighting; the docstring (848-871) explicitly documents the 2026-05-31 revert of the IDF/specificity/distinguishing-entity gates and admits the size cap only truncates, not prevents, chain merges. Only caveat: without re-running clustering I cannot fully exclude that later phases (2.5/2.6/3) formed some piles, but the observed generic-entity bridging exactly matches an unweighted 3-shared gate. Critical severity justified: this visibly corrupts the flagship ranked feed, the #1 story cluster, summaries, source counts, and bias-diversity metrics across at least 6 verified top clusters and 27 cap-pinned clusters.",
+        "severity_adjusted": "critical"
+      }
+    },
+    {
+      "id": "CL-2",
+      "title": "Phase 5 cohesion force-split gate is triple-gated so real over-merges never get checked; the rank-11 85-article Frankenstein escaped every guard",
+      "severity": "critical",
+      "evidence": "Rank 11 has 85 articles but source_count=36 and mega_cluster_capped=False — it passed clean through Phase 5. The cohesion force-split only runs when article_count>=20 AND source_count>=MEGA_COHESION_MIN_SOURCES=40 AND cohesion<30. With 36 sources it is below the 40-source floor, so the check is skipped entirely despite being the single most incoherent cluster in the feed. Its wire_amp_ratio is 85/36=2.4 and its title-Jaccard across Ukraine/Romania/Trump/Bollywood titles is near zero.",
+      "affected_ranks": [
+        11,
+        2,
+        9,
+        10,
+        13,
+        17,
+        20,
+        21,
+        33,
+        41,
+        42,
+        43,
+        45,
+        46,
+        47
+      ],
+      "root_cause": "pipeline/clustering/story_cluster.py:1674-1679 MEGA_COHESION_FLOOR=30, MEGA_COHESION_MIN_ARTICLES=20, MEGA_COHESION_MIN_SOURCES=40. The 40-source floor (added to stop force-splitting healthy 12-source breaking news) is set above the source count of the actual offenders, which cluster at 20-40 sources. The gate therefore protects exactly the clusters it should catch.",
+      "proposed_fix": "Decouple the guard: trigger the cohesion check on (article_count>=25 OR wire_amp_ratio>=2.5) regardless of source_count, and protect legitimate breaking news via the cohesion score itself (raise floor for high-source clusters) rather than by a blanket source-count skip. Lower MEGA_COHESION_MIN_SOURCES to ~20 or remove it in favour of an amp-ratio trigger.",
+      "code_targets": [
+        "pipeline/clustering/story_cluster.py:1674 MEGA_COHESION_MIN_SOURCES",
+        "pipeline/clustering/story_cluster.py:1682 _cluster_cohesion",
+        "pipeline/clustering/story_cluster.py:1530 mega-split driver"
+      ],
+      "perspective": "clustering",
+      "verdict": {
+        "finding_id": "CL-2",
+        "verdict": "partially_confirmed",
+        "confidence": 0.88,
+        "reasoning": "SYMPTOM IS REAL, ROOT CAUSE IS WRONG.\n\n(a) Evidence — confirmed. In scripts/top50_export.json, the rank-11 cluster (\"Latvia to build joint drone production facility with Ukraine...\") has _article_count_actual=85, source_count=36, mega_cluster_capped=False. Its 85 article titles are wildly incoherent: Jasmin Bhasin (Bollywood actor illness), Ukraine drone war, Romania railways/rail cars, Trump White House ballroom, ISU figure-skating reinstatements, Brazil LNG terminal, South Western Railway India, Cambridge-Oxford railway. Title-Jaccard is effectively zero and wire_amp is 85/36=2.4. So a real, user-visible over-merge exists.\n\n(b) Root cause — REFUTED. The finding attributes the escape to an ACTIVE Phase 5 cohesion force-split gate that skips clusters with source_count<MEGA_COHESION_MIN_SOURCES=40. That code path does not exist in the current codebase:\n  - split_mega_clusters() (pipeline/clustering/story_cluster.py:1528-1562) was REVERTED 2026-05-31 (see its own docstring, lines 1535-1542) to a pure display soft-cap. It only does: if source_count >= MEGA_CLUSTER_THRESHOLD(75): cap source_count to 75, set mega_cluster_capped=True. There is NO cohesion computation, NO force-split, NO article_count>=20 / source>=40 / cohesion<30 triple-gate.\n  - _cluster_cohesion() (defined 1682) is NEVER CALLED anywhere (grep for '_cluster_cohesion(' minus the def returns nothing).\n  - MEGA_COHESION_FLOOR/MIN_ARTICLES/MIN_SOURCES (1674-1676) are NEVER READ in active code — only defined, plus a pointer comment at 659 and a stale .pyc. They are dead constants.\n  Therefore the \"40-source floor protects exactly the clusters it should catch\" mechanism is fabricated from dead code. Rank 11 didn't slip past a gate at 36<40; there is no gate running. Additionally, even the surviving soft-cap uses a 75-source floor, and 36<75, so nothing in Phase 5 would touch this cluster regardless of the cohesion constants.\n\n(c) Proposed fix — INVALID. Lowering MEGA_COHESION_MIN_SOURCES to ~20 or adding an amp-ratio trigger to it would accomplish NOTHING because no code reads that constant and _cluster_cohesion is never invoked. The over-merge actually originates upstream (Phase 2 IDF-weighted entity / Phase 2.5-2.6 anchor-entity / Phase 3 title-Jaccard merges bridging on shared generic tokens), not in the reverted Phase 5. A real fix must re-wire cohesion gating (or tighten the upstream entity/anchor merge) — the finding does not target that.\n\nSeverity: downgraded from critical to medium. A genuine incoherent 85-article cluster at rank 11 is a real feed-quality defect worth fixing, but the finding's diagnosis and remediation are refuted (they point at code that no longer runs), so it is not actionable as written and overstates a precise-but-false mechanism.",
+        "severity_adjusted": "medium"
+      }
+    },
+    {
+      "id": "CL-3",
+      "title": "MERGE_HARD_CEILING=120 is far above real over-merge sizes and Phase 3 title-merge has no per-cluster article cap, so clusters balloon to 65-85 articles unchecked",
+      "severity": "high",
+      "evidence": "Ranks exceeding the Phase-1 50-cap: #11=85, #27=72, #3=65, #33=52, #7=53, #15=53, #31=53, #5=56. #27 (72, Lisa Cook) and #3 (65, mail ballots) are coherent, but the same unbounded path produced the #11 pile. Phase 3 docstring line 1816 explicitly states 'No max-merged-articles cap.' The only ceiling is 120, which 85 never approaches.",
+      "affected_ranks": [
+        3,
+        7,
+        11,
+        27,
+        33
+      ],
+      "root_cause": "pipeline/clustering/story_cluster.py:668 MERGE_HARD_CEILING=120; pipeline/clustering/story_cluster.py:1804 merge_duplicate_title_clusters (Phase 3) intentionally omits a size cap; the 50-article cap at line 844 applies only to Phase 2 union-find, so Phases 2.5/2.6/3 can grow clusters past it.",
+      "proposed_fix": "Lower MERGE_HARD_CEILING to ~60-70 (roughly the largest legitimate single-event coverage observed) and add the same accumulated-load cap to the Phase 3 title-Jaccard union-find so title merges cannot exceed it. Pair with CL-2 cohesion gate so any cluster crossing 50 articles is cohesion-audited.",
+      "code_targets": [
+        "pipeline/clustering/story_cluster.py:668 MERGE_HARD_CEILING",
+        "pipeline/clustering/story_cluster.py:1804 merge_duplicate_title_clusters",
+        "pipeline/clustering/story_cluster.py:696 _ceiling_union_find"
+      ],
+      "perspective": "clustering",
+      "verdict": {
+        "finding_id": "CL-3",
+        "verdict": "confirmed",
+        "confidence": 0.9,
+        "reasoning": "Evidence verified against scripts/top50_export.json: all cited article counts match exactly (#11=85, #27=72, #3=65, #33=52, #7/#15/#31=53, #5=56). Dumping #11's _articles confirms a genuinely incoherent 85-article/36-source pile mixing Ukraine drone stories, Romania railway/infrastructure filings, Trump ballroom coverage, an Indian TV actor's ileitis diagnosis, figure-skating reinstatement, and Brazil LNG — surfaced at homepage rank 11. Root cause confirmed in story_cluster.py: MERGE_HARD_CEILING=120 (L668); the 50-article cap is only in Phase 2 merge_related_clusters via group_size (max_cluster_articles=50, L844/L925); Phases 2.5/2.55/2.6/3 (merge_canonical_pairs L1020, merge_synonym_pairs L1111, merge_anchor_entities L1291, merge_duplicate_title_clusters L1827) all gate on _ceiling_union_find (120), and Phase 3's docstring L1816 explicitly states 'No max-merged-articles cap.' So a Phase-2-capped 50-cluster provably grows to 85 in later phases, never approaching 120; the many '- The Kyiv Independent' byline-stub titles in #11 are the fingerprint of Phase 3 title-Jaccard chaining. Two caveats, neither fatal: (1) the evidence blurb mislabels the cap as 'Phase-1' when it is Phase 2, though the root_cause field and code_targets correctly cite line 844/Phase 2; (2) the proposed fix's lead lever (lower ceiling to 60-70) would wrongly split the coherent #27=72 and #3=65 clusters — article count is a poor over-merge proxy — so the CL-2 cohesion gate the finding also proposes is the correct primary remedy. Core defect and mechanism hold; high severity justified because a visibly garbage cluster ranks #11 on the public homepage.",
+        "severity_adjusted": "high"
+      }
+    },
+    {
+      "id": "CL-4",
+      "title": "Same news event split across multiple top-50 clusters (under-clustering) — inflates the feed with duplicate stories",
+      "severity": "high",
+      "evidence": "The single SCOTUS decision day on presidential firing power appears as THREE separate clusters: #1 'Supreme Court Ruling Challenges Administrative State', #27 'Supreme Court Blocks Trump's Firing of Fed Governor Lisa Cook', #40 'Supreme Court Expands Presidential Power to Fire Agency Heads' (all cite the same Trump v. Slaughter / Humphrey's Executor / Cook rulings). The one mail-ballot ruling is split #3 and #36. US-Iran Doha talks is split #31 and #32 (and again inside #1). South Africa anti-migrant deadline is split #15 and #19. That is 4 top-slots wasted on the firing ruling alone.",
+      "affected_ranks": [
+        1,
+        3,
+        15,
+        19,
+        27,
+        31,
+        32,
+        36,
+        40
+      ],
+      "root_cause": "Two compounding causes: (a) MAX_AGE_SPREAD_HOURS=48 plus the MERGE_HARD_CEILING blocking further consolidation once a sibling already carries a large load (the ceiling refuses to union two 40-50 article SCOTUS clusters, leaving them parallel); (b) Phase 2's generic-entity merges pulled cross-topic noise into #1, lowering its title-Jaccard with the cleaner #27/#40 so the title-merge phase no longer recognises them as the same story.",
+      "proposed_fix": "Add a final same-event consolidation pass keyed on high-IDF anchor-entity + headline-verb agreement that runs AFTER purity cleanup (so cleaned clusters can re-merge), and raise the ceiling only for genuinely-cohesive pairs (cohesion>60) rather than blanket-blocking. Fixing CL-1 (less noise in #1) will also let #1/#27/#40 title-merge naturally.",
+      "code_targets": [
+        "pipeline/clustering/story_cluster.py:71 MAX_AGE_SPREAD_HOURS",
+        "pipeline/clustering/story_cluster.py:1804 merge_duplicate_title_clusters",
+        "pipeline/clustering/story_cluster.py:1196 anchor-entity merge phase"
+      ],
+      "perspective": "clustering",
+      "verdict": {
+        "finding_id": "CL-4",
+        "verdict": "partially_confirmed",
+        "confidence": 0.8,
+        "reasoning": "OBSERVABLE PHENOMENON IS REAL but overstated; ROOT CAUSE IS WRONG. Verified against scripts/top50_export.json (_articles arrays) and pipeline/clustering/story_cluster.py.\n\n(a) Evidence: Genuinely confirmed that the SCOTUS June-29 firing-power decision day spans #27 (Cook block, 72 arts, coherent) and #40 (FTC expand, 44 arts, coherent) — the clean under-clustering case — and that US-Iran ceasefire/Doha talks span #31 and #32. However, several other cited \"splits\" are actually a DIFFERENT defect (over-merge / grab-bag), not clean duplication: #1 is polluted (its 50 articles mix the firing ruling with US-Iran Doha talks + Obama Center op-eds); #36's articles are ~17 unrelated US-politics items (Biden, Virginia guns, Colorado primaries) with only ONE mail-ballot article — a mislabeled grab-bag, not a duplicate of #3; #19 is literally an \"African News Briefs\" grab-bag (Sowore bail, Kebbi crash, octopus story) with only partial SA-migrant overlap. So \"4 top-slots wasted on the firing ruling\" and the clean mail-ballot/SA splits are inflated.\n\n(b) Root cause is substantially incorrect. MAX_AGE_SPREAD_HOURS=48 is non-binding: every cited article falls in June 29 ~04:00 to June 30 ~13:00 (~33h < 48h), so the age gate blocks no merge here. MERGE_HARD_CEILING=120 does NOT block the primary duplicate pair: #27 (72) + #40 (44) = 116 < 120 via _ceiling_union_find loads; the finding's own \"two 40-50 article clusters\" = 80-100 is self-contradictingly under the ceiling. The real binding constraint for #27/#40 is the title-Jaccard gate — stemmed J=0.200 just misses the 0.22 threshold because \"Blocks...Cook\" vs \"Expands...Fire Heads\" describe opposite holdings and share only {court, fire, supreme}. That loosely supports root_cause (b) (low title overlap) but not the (a) mechanisms the finding leads with. (Caveat: merge phases run on pre-summarization article titles, not the final LLM headlines I computed, so exact merge decisions can't be fully reconstructed — but the age-gate and ceiling arithmetic disproof stands independent of that.)\n\n(c) Severity: user-facing duplication at the very top of the feed is real (#1 polluted + #27/#40 same-day), but the genuine clean under-clustering reduces to ~2 borderline, judgment-call cases (#27/#40 opposite holdings; #31/#32), and #1's contamination overlaps CL-1. Wrong root cause + conflation of over-merge with under-merge + inflated scope warrant a downgrade from high to medium.",
+        "severity_adjusted": "medium"
+      }
+    },
+    {
+      "id": "CL-5",
+      "title": "Exact-duplicate article titles survive inside clusters — deduplicator hashes body lead only, so title-identical syndication stubs with empty/short bodies are never collapsed",
+      "severity": "medium",
+      "evidence": "Rank 12 contains the identical title 'What's on the agenda at the next EU-UK summit... if it takes place?' SEVEN times; rank 47 contains 'What you should expect when the EU's small parcel fee kicks in on July 1st' seven times; rank 14 has 'Turkey's Erdogan says NATO summit must emphasise unity and resilience' twice. These inflate source_count/article_count and pollute the summarizer's input.",
+      "affected_ranks": [
+        12,
+        14,
+        47
+      ],
+      "root_cause": "pipeline/clustering/deduplicator.py:111 _fingerprint_hash keys SHA1 on the first 800 chars of the normalised BODY only; deduplicate_articles (line 239) buckets per-chunk (comment line 266: 'far cheaper than the previous O(N^2) cross-chunk dedup'). Articles with identical titles but missing/short bodies produce different (or empty) body hashes and land in different chunks, so they are never merged.",
+      "proposed_fix": "Add a secondary exact/near-exact title fingerprint (normalised, stemmed) to the dedup key so title-identical items collapse even when body text is absent, and make the title-dup collapse cross-chunk (global) rather than per-chunk.",
+      "code_targets": [
+        "pipeline/clustering/deduplicator.py:111 _fingerprint_hash",
+        "pipeline/clustering/deduplicator.py:239 deduplicate_articles"
+      ],
+      "perspective": "clustering",
+      "verdict": {
+        "finding_id": "CL-5",
+        "verdict": "partially_confirmed",
+        "confidence": 0.82,
+        "reasoning": "Symptom is real: the export shows rank 12 with 7 identical \"EU-UK summit\" titles, rank 47 with 7 identical \"parcel fee\" titles, and rank 14 with the Erdogan title 3x (finding said \"twice\"). Duplicate titles do survive in cluster _articles and can pollute summarizer input. BUT the finding's technical root cause is substantially wrong: (1) The 7x/7x duplicates are FULL 619-/624-word articles syndicated across The Local's 7 country domains (thelocal.at/.it/.de/... all identical word counts), the exact OPPOSITE of the claimed \"empty/short bodies\" — identical full bodies would in fact be caught by the wire fingerprint. (2) The claimed \"buckets per-chunk / land in different chunks\" mechanism does not exist: main.py:1371 calls deduplicate_articles once on the whole list, and deduplicate_articles runs _tag_chunk a single global time (deduplicator.py:265-267). The line-266 comment describes the OLD removed O(N^2) approach, which the finding misread as current behavior. (3) The real reason duplicates survive is that this module by design NO LONGER REMOVES articles (docstring 9-13; main.py:1355-1357) — it only tags wire copies for source_count math, so no dedup-key change collapses them. The \"inflate source_count\" impact is also likely mitigated: story_cluster._apply_wire_aware_source_count + _voice_id collapse identical-body syndications to one voice (rank 12 source_count=34<50, rank 47=40<50). Only residual valid concern is minor summarizer prompt pollution. Line references (111, 239, 266) are accurate but their interpretation is not. Proposed fix targets the wrong mechanism.",
+        "severity_adjusted": "low"
+      }
+    },
+    {
+      "id": "CL-6",
+      "title": "Cluster headline selection picks a minority/atypical article as the title on over-merged piles, so the displayed headline misrepresents the cluster",
+      "severity": "medium",
+      "evidence": "Rank 4 headline 'Federal Judge Blocks Trump Administration Funding Halt for Gateway Tunnel Project' but only ~4/50 articles concern the tunnel; the plurality is Gaza/Hamas and Mike Johnson housing. Rank 6 headline 'Baroness Amos maternity review: 5 key findings' but only ~3/50 are Amos; the bulk is Colorado redistricting and Venezuela deportees. Rank 11's headline is 'Latvia to build joint drone production facility with Ukraine' — a single minor article inside an 85-article Ukraine/Romania/Trump pile.",
+      "affected_ranks": [
+        4,
+        6,
+        11,
+        13,
+        22,
+        25,
+        47,
+        50
+      ],
+      "root_cause": "pipeline/clustering/story_cluster.py:1898 _generate_cluster_title on a heterogeneous cluster has no dominant story to pick from, so it selects a non-representative headline. This is a downstream symptom of CL-1/CL-2 (the pile has no plurality), but it directly degrades the visible feed.",
+      "proposed_fix": "Primary fix is CL-1/CL-2 (stop building the piles). As a guard, make _generate_cluster_title choose the headline from the largest entity-convergent sub-group (the modal event), and add a validation warning when the chosen title's entities match <40% of cluster articles.",
+      "code_targets": [
+        "pipeline/clustering/story_cluster.py:1898 _generate_cluster_title",
+        "pipeline/clustering/story_cluster.py:1682 _cluster_cohesion"
+      ],
+      "perspective": "clustering",
+      "verdict": {
+        "finding_id": "CL-6",
+        "verdict": "confirmed",
+        "confidence": 0.85,
+        "reasoning": "Evidence reproduced directly from scripts/top50_export.json. Rank 4 (50 arts) titled for the Gateway/Hudson tunnel has only ~4 tunnel articles; the bulk is Gaza/Hamas and Mike Johnson housing. Rank 6 (50 arts) titled 'Baroness Amos maternity review' has only ~3 Amos articles; plurality is Colorado redistricting and Venezuela deportees. Rank 11 (85 arts) titled 'Latvia to build joint drone production facility' rests on a single minor Latvia article in a Ukraine/Romania/Trump pile. Ranks 13, 22, 47, 50 confirm the same pattern. Root cause is correct: _generate_cluster_title (def at story_cluster.py:167; cited :1898 is the merge call-site) scores candidate titles by length-band + entity-coverage argmax with no dominant-sub-group/modal-event logic, so a heterogeneous pile gets an arbitrary/minority headline. The finding honestly frames this as a downstream symptom of the over-merge findings (CL-1/CL-2) and proposes a valid, currently-absent guard. Minor imprecisions: the cited line 1898 is a call site not the function definition, and rank 25 is actually a counterexample (of 13 articles ~8 ARE the Pune case, so its title is representative), making its inclusion an overreach. These do not undermine the core claim. Medium severity is right: visible top-of-feed headline misrepresentation, non-crashing, largely subsumed by the CL-1/CL-2 primary fix.",
+        "severity_adjusted": "medium"
+      }
+    },
+    {
+      "id": "CL-7",
+      "title": "Single-publisher verticals collapse into topic-bucket clusters (one outlet's whole day of unrelated stories), not single events",
+      "severity": "medium",
+      "evidence": "Rank 24 (source_count=15, lowest in feed) is a Focus-Taiwan dump: US-dollar forex, badminton titles, THSR secret passage, chip-smuggling raids, crypto-firm law, orangutan twins — one publisher's entire Taiwan feed, no single event. Rank 33 is the analogous Yonhap/Korea bucket: Japan defense pact + $880B AI chip plan + World Cup coach resignation + solid-fuel rocket + won at 17-yr low. Rank 19 is dominated by ~25 Nigerian-outlet domestic items under a South-Africa headline.",
+      "affected_ranks": [
+        19,
+        24,
+        33
+      ],
+      "root_cause": "When one publisher supplies many same-region articles, Phase 2 entity-overlap (shared GPE like 'Taiwan'/'South Korea'/'Nigeria') plus the low Phase-1 TF-IDF cut (story_cluster.py:63 STORY_TFIDF_THRESHOLD=0.18) merges them; the publisher-concentration penalty exists in _cluster_cohesion (dominant_publisher_share) but is never enforced as a split trigger for sub-40-source clusters (same gating flaw as CL-2).",
+      "proposed_fix": "Enforce the dominant_publisher_share and tier_concentration cohesion components as an independent split trigger (e.g. dominant_publisher_share>0.5 with >15 articles forces a re-split), decoupled from the 40-source floor. Raise STORY_TFIDF_THRESHOLD from 0.18 toward ~0.24 to reduce single-outlet vocabulary bridging in Phase 1.",
+      "code_targets": [
+        "pipeline/clustering/story_cluster.py:63 STORY_TFIDF_THRESHOLD",
+        "pipeline/clustering/story_cluster.py:1682 _cluster_cohesion",
+        "pipeline/clustering/story_cluster.py:1674 MEGA_COHESION_MIN_SOURCES"
+      ],
+      "perspective": "clustering",
+      "verdict": {
+        "finding_id": "CL-7",
+        "verdict": "confirmed",
+        "confidence": 0.9,
+        "reasoning": "Evidence verified directly in scripts/top50_export.json. Rank 24 (50 arts, 32 from Focus Taiwan source_id 62cefa81) is a single-publisher Taiwan feed dump: US-dollar forex, US Open badminton, THSR secret passage, chip-smuggling raids, crypto law, orangutan twins — no single event. Rank 33 (52 arts, 23 from Yonhap 45abeec1): Japan defense pact + $880B AI chip plan + World Cup coach resignation + solid-fuel rocket + Seoul FX. Rank 19 (50 arts) dominated by Nigerian-outlet domestic items under a South Africa headline plus cross-region noise (HK, science). Root cause is correct and in fact understated: dominant_publisher_share IS computed in _cluster_cohesion (story_cluster.py:1783) but _cluster_cohesion has ZERO callers, and MEGA_COHESION_FLOOR/MIN_ARTICLES/MIN_SOURCES are defined-but-never-referenced dead constants. Active Phase 5 split_mega_clusters only caps source_count>=75 for display with 'no force-split, no cohesion gate' (its own docstring). So publisher concentration is never a split trigger at all, not merely gated by the 40-source floor. Phase 1 STORY_TFIDF_THRESHOLD=0.18 (line 63) confirmed. Only defect in the finding: 'source_count=15, lowest in feed' is wrong (ranks 39/48/25/49 are lower) — trivial. Medium severity fits: 6% of feed, mid-rank, non-crashing but systemic.",
+        "severity_adjusted": "medium"
+      }
+    },
+    {
+      "id": "RANK-01",
+      "title": "The day's #1 world story (Venezuela earthquake, ~1,500 dead + US Marines deployed) is buried at #18/#23 and fragmented into peripheral angles",
+      "severity": "critical",
+      "evidence": "AP/NPR/PBS/WORLD all led June 30 with Venezuela: ~1,500 confirmed dead, tens of thousands missing, UN estimate up to 7M affected, ~130 US Marines landing at La Guaira to reopen the port. void surfaces NO core cluster for this. Only two peripheral fragments exist: #18 'Dominican Republic repatriates 65 people from Venezuela after earthquakes' (rank_world 60.07) and #23 'It could fall any moment: RT reports from scene of Venezuela quake' (rank_world 57.72, sourced to Russian state outlet RT). The mass-casualty / Marines deployment framing that every wire led with is absent. A serious global desk puts this at #1; void puts a downstream-repatriation angle at #18.",
+      "affected_ranks": [
+        18,
+        23
+      ],
+      "root_cause": "Dual root cause. (a) Clustering (clustering/story_cluster.py) split the Venezuela event into sub-angles (repatriation, eyewitness) instead of forming one dominant death-toll cluster, so no single cluster accumulates the coverage/authority to rank high. (b) importance_ranker.rank_importance has no signal for human casualty scale/humanitarian magnitude — death toll only reaches consequentiality via generic verbs; 'earthquake' is not in _HIGH_AUTHORITY_PHRASES and mass-casualty disasters get no floor comparable to the tier-1 'supreme court ruled' floor.",
+      "proposed_fix": "Add a casualty/disaster-magnitude signal to importance_ranker: detect death-toll/'killed'/'dead'/'missing' + numeric magnitude and set a high-authority floor (parallel to _HIGH_AUTHORITY_PHRASES) so natural-disaster mass-casualty events float to the top. Separately, tighten clustering so same-event disaster fragments merge into one lead cluster (or add a disaster-anchor entity pass).",
+      "code_targets": [
+        "pipeline/ranker/importance_ranker.py:_consequentiality_score",
+        "pipeline/ranker/importance_ranker.py:_HIGH_AUTHORITY_PHRASES",
+        "pipeline/clustering/story_cluster.py"
+      ],
+      "perspective": "ranking-benchmark",
+      "verdict": {
+        "finding_id": "RANK-01",
+        "verdict": "partially_confirmed",
+        "confidence": 0.82,
+        "reasoning": "The underlying editorial concern is real: the Venezuela earthquake (a genuine ~1,450+ dead mass-casualty event) is not surfaced as a top story and is presented under an RT propaganda-video headline. But the finding's specific evidence and root cause are substantially wrong, so it cannot stand as written.\\n\\nEVIDENCE: Verified against scripts/top50_export.json. Ranks/titles #18 (rank_world 60.07) and #23 (57.72) are accurate. However the central claim \"void surfaces NO core cluster\" is FALSE. Cluster #23 IS the core Venezuela earthquake cluster: 22 of its articles are quake coverage (rescue ops, aftershocks, survivor counts) including an explicit death-toll headline \"Israel Sends Rescue Teams to Venezuela After Earthquakes Kill at Least 1,450, Leave Tens of Thousands Missing.\" The mass-casualty framing is present, not absent. Characterizing #23 as an \"RT-sourced eyewitness fragment\" mistakes the (badly chosen) representative title for the cluster's actual 32-source content. The \"US Marines / La Guaira port\" framing appears in ZERO fetched articles, so it is an unverifiable external assertion, not a demonstrable void ranking failure.\\n\\nROOT CAUSE (b) REFUTED: importance_ranker._HIGH_AUTHORITY_PHRASES (line 247) already contains \"mass casualty\" and \"death toll\", which set a consequentiality floor of 70 (lines 930-931) exactly parallel to \"supreme court ruled.\" The claim that mass-casualty disasters get no comparable floor is false, and the proposed fix (add a death-toll floor) is redundant. The genuine, narrower gap is that the floor only samples cluster_articles[:10] and these headlines phrase it as \"Kill at Least 1,450\" rather than literal \"death toll,\" so the floor never fires.\\n\\nROOT CAUSE (a) PARTIALLY TRUE but mischaracterized: the dominant driver in the data is over-merge cluster POLLUTION, not clean sub-angle splitting. #23 mixes Venezuela quake with French air-conditioning opinion; #18 with Europe heatwave deaths and Pope schism; #6 (titled \"Baroness Amos maternity review\") with Colorado redistricting. This pollution corrupts representative-title selection and dilutes the first-10 consequentiality window.\\n\\nBecause the core cluster does exist and is surfaced (just too low and mislabeled), the casualty floor already exists, and the proposed fix is partly redundant, this is partially_confirmed and down-adjusted from critical to high.",
+        "severity_adjusted": "high"
+      }
+    },
+    {
+      "id": "RANK-02",
+      "title": "DR Congo Ebola outbreak (1,307 cases / 377 deaths, 4th province) is completely absent from the top-50, despite ranker code explicitly claiming it would rank #3",
+      "severity": "critical",
+      "evidence": "Benchmark (WORLD/NPR) reports the DRC Ebola outbreak at 1,307 cases and 377 deaths, spread to a fourth province — a top-tier global health story. Grep of all 50 clusters for ebola/congo/drc returns ZERO matches. Ironically importance_ranker.py lines 310-317 hard-code WHO/PHEIC as tier-1 authority with the comment: \"Today's DRC Ebola declaration would rank #3 instead of #2 without this.\" The authority code exists but the story never made the feed.",
+      "affected_ranks": [],
+      "root_cause": "Not a ranking-math bug per se — the story is missing upstream. Either RSS ingestion pulled no DRC Ebola articles, or clustering discarded/merged them below the top-50 cut. The dead WHO/PHEIC authority lexicon (importance_ranker._AUTHORITY_TIER1) can only fire on stories that survive to rank_importance; it cannot rescue a story that clustering never surfaced.",
+      "proposed_fix": "Audit fetch + clustering for DRC/Ebola on this run: confirm whether any source produced these articles and whether they were clustered but fell below rank 50 (if so, the WHO tier-1 floor is being drowned by the coverage/maturity source-count weight — see RANK-05). Add a health-emergency magnitude signal analogous to the disaster signal in RANK-01.",
+      "code_targets": [
+        "pipeline/ranker/importance_ranker.py:_institutional_authority_score",
+        "pipeline/clustering/story_cluster.py",
+        "pipeline/fetchers/"
+      ],
+      "perspective": "ranking-benchmark",
+      "verdict": {
+        "finding_id": "RANK-02",
+        "verdict": "partially_confirmed",
+        "confidence": 0.82,
+        "reasoning": "The symptom is real: no distinct, user-visible DRC Ebola story exists in the top-50. Scanning cluster titles/summaries yields zero Ebola/DRC clusters, so a reader cannot find the outbreak as its own story. The importance_ranker.py:310-317 WHO/PHEIC quote is verbatim accurate (line 313: 'Today's DRC Ebola declaration would rank #3 instead of #2 without this.'). BUT the finding's evidence and root cause are materially wrong. (1) 'Grep of all 50 clusters returns ZERO matches' is FALSE at article level: rank 17 (labeled 'China-Canada trade thaw') contains 11 DRC-titled and 2 Ebola-titled articles ('Ebola in the DRC: At least 300 positive cases unaccounted for', 'DRC World Cup rise amid Ebola upsurge'), and rank 46 mentions the Ebola health push. The story was fetched AND clustered AND surfaced INSIDE the top-50. (2) Root cause is misdiagnosed: the finding says fetch failure OR clustering dropped it below rank 50; neither is true (it's at rank 17). The true cause is a clustering OVER-MERGE producing an incoherent 50-article mega-cluster (China trade + DRC conflict + DRC football + Ebola + Mexico cartels + Drake) mislabeled as a China trade story, with mega_cluster_capped=False so the guard never fired. (3) The proposed fix (WHO authority floor drowned by source-count weight per RANK-05) is speculative and unsupported. Severity downgraded from critical because the story is present in the pipeline, the 'completely absent'/'ZERO matches' evidence is overstated, and the diagnosis targets the wrong subsystem (fetch/ranking-authority instead of clustering over-merge).",
+        "severity_adjusted": "high"
+      }
+    },
+    {
+      "id": "RANK-03",
+      "title": "Active US-Iran war at the Strait of Hormuz ranks #31/#32 — below a routine forex close (#24) and a WhatsApp product update (#29)",
+      "severity": "critical",
+      "evidence": "Benchmark: four days of US-Iran strikes around the Strait of Hormuz with a Monday ceasefire and US envoys heading to Qatar — a top-3 world story. void ranks it at #31 ('Iran-US war latest: Qatar says Trump envoys won't meet Tehran', rank_world 53.60) and #32 ('U.S. And Iran exchange fire despite ceasefire', 53.45), fragmented further across #14 and #37. Both sit BELOW #24 'U.S. Dollar closes lower on Taipei forex market' (57.24) and #29 'WhatsApp to Launch Usernames' (54.13). A shooting war between two major powers at the world's key oil chokepoint should be top-5.",
+      "affected_ranks": [
+        14,
+        24,
+        29,
+        31,
+        32,
+        37
+      ],
+      "root_cause": "Two compounding causes. (a) The same-event cap in feed_ranker (MAX_SAME_EVENT=2, EVENT_DECAY=0.80) fragments the Iran story across 4 clusters and the 'iran' event group only decays the 3rd+ once, so the fragments each score independently and none consolidates. (b) importance_ranker's coverage(20%)+maturity(16%)+tier_div(13%) source-count stack lets a heavily-syndicated forex roundup (#24, 15 sources) and a product-launch cluster (#29) out-score war fragments. The Iran clusters also likely eat the deliberation dampener (0.70x, _consequentiality_score) on titles like 'envoys won't meet'/'talks'.",
+      "proposed_fix": "Consolidate Iran-Hormuz fragments in clustering (summit/conflict anchor). In feed_ranker, replace the single 0.80x EVENT_DECAY with a rank-consolidation that promotes the strongest cluster of an event rather than only decaying the tail. Add a live-armed-conflict authority floor so active interstate strikes cannot be out-ranked by market/product clusters.",
+      "code_targets": [
+        "pipeline/ranker/feed_ranker.py:EVENT_KEYWORDS",
+        "pipeline/ranker/feed_ranker.py:_detect_event",
+        "pipeline/ranker/importance_ranker.py:_consequentiality_score"
+      ],
+      "perspective": "ranking-benchmark",
+      "verdict": {
+        "finding_id": "RANK-03",
+        "verdict": "partially_confirmed",
+        "confidence": 0.9,
+        "reasoning": "Evidence is real and exact. In scripts/top50_export.json the two Iran-war clusters sit at #31 (rank_world 53.60) and #32 (53.45), both below #24 forex (57.24) and #29 WhatsApp (54.13) — verbatim as claimed. An active US-Iran war being ranked below a Taipei forex close and a WhatsApp product update is a genuine ranking failure.\n\nPRIMARY ROOT CAUSE CONFIRMED (feed_ranker EVENT_DECAY). Both Iran clusters have importance_score/headline_rank of 67.0 and 66.8 (top-7 material). rank_world = importance × exactly 0.80 (67.0×0.80=53.60; 66.8×0.80=53.45). Three clusters detected as event 'iran' (#31, #32, #37) all carry the precise 0.80 factor; forex/#24 and WhatsApp/#29 have rank_world == importance (no decay). Without the same-event decay the Iran story ranks ~#6-7, exactly the finding's expected top-tier. The 0.80x EVENT_DECAY in pipeline/ranker/feed_ranker.py is the sole, arithmetic-proven cause. Notably all three top iran clusters were decayed (the two free MAX_SAME_EVENT slots went to clusters not in the top-50 export), so the demotion is even more aggressive than the finding describes.\n\nSECONDARY ROOT CAUSE REFUTED (importance_ranker source-count stack). The finding claims coverage(20%)+maturity(16%)+tier_div(13%) let a syndicated forex roundup (#24, 15 sources) and WhatsApp (#29) out-score the war fragments. False: the Iran clusters have HIGHER importance (67/66.8 vs 57.2/54.1) AND MORE sources (38/42 vs 15/32). The importance_ranker ranked Iran correctly above both; forex/WhatsApp only end up ahead because they escape the event decay, not via any coverage advantage. The 'deliberation dampener (0.70x _consequentiality_score)' claim is speculative and immaterial — the Iran cluster's importance is 67 (top-tier), so the dampener did not demote it. importance_ranker.py:_consequentiality_score is a mis-directed code target; the bug is entirely in feed_ranker.\n\nAlso imprecise: 'fragmented across #14 and #37' — #14 is a NATO-exercises story (not Iran); #37 is a Lebanon/Israel story mis-tagged 'iran' by substring match. The real fragmentation is two genuine Iran-war clusters (#31 with 53 articles, #32 with 50). The proposed fix direction (consolidate event fragments / promote strongest cluster instead of blanket 0.80 decay / add armed-conflict authority floor) is sound and targets the correct file (feed_ranker), but the importance_ranker changes it prescribes are unnecessary.\n\nSeverity adjusted critical -> high: the mis-ranking is real, systematic (the same-event cap will bury any fast-moving multi-cluster conflict), and clearly wrong, but (1) it is an ordering defect, not data loss — the war story is present and near mid-feed; (2) a ceasefire was in effect (de-escalating); (3) half the stated diagnosis (importance_ranker source stack + consequentiality dampener) is refuted.",
+        "severity_adjusted": "high"
+      }
+    },
+    {
+      "id": "RANK-04",
+      "title": "void leads with the wrong SCOTUS story (abstract 'administrative state' concurrence) and misses the marquee birthright-citizenship ruling; 5 separate SCOTUS clusters clog the top-40",
+      "severity": "high",
+      "evidence": "Benchmark's headline SCOTUS story was the Court striking down Trump's birthright-citizenship order (plus trans-athlete ban upheld, campaign-finance restrictions struck). void's #1 is 'Supreme Court Ruling Challenges Administrative State, Justice Gorsuch Suggests Broad Impact' (rank_world 72.89) — a wonky FTC concurrence, not the birthright ruling, which is absent from all 50 clusters. SCOTUS is fragmented into 5 clusters: #1, #3 (postmarked ballots), #27 (Fed governor firing), #36 (Mississippi absentee), #40 (agency-head firing power). The feed_ranker us_scotus same-event cap failed to prevent this: #27 (rank_world 54.62) and #36 (52.58) show rank_world == headline_rank, i.e. they were NOT decayed at all, while only #40 was decayed (63.55->50.84).",
+      "affected_ranks": [
+        1,
+        3,
+        27,
+        36,
+        40
+      ],
+      "root_cause": "importance_ranker gives tier-1 institutional-authority floor (80-100) to every 'supreme court' cluster, so all five SCOTUS rulings score high on authority(8%) and the biggest source-count ones win the lead regardless of editorial weight. feed_ranker._detect_event maps all five to 'us_scotus' but MAX_SAME_EVENT=2 with a single 0.80x decay is too weak and (per the export) inconsistently applied — #27/#36 were not decayed, likely because the diversity-partition re-encode (feed_ranker.py:235-239) re-derived their rank_world after the decay pass. There is no editorial signal distinguishing a landmark ruling (birthright citizenship) from a procedural one (postmarked ballots).",
+      "proposed_fix": "Verify the same-event decay is applied AFTER, not before, the diversity re-encode, or fold event consolidation into the final strictly-decreasing pass. Lower the tier-1 authority contribution's ability to auto-lead purely procedural rulings, and add an editorial-importance tiebreak among same-event clusters so the highest-stakes ruling leads.",
+      "code_targets": [
+        "pipeline/ranker/feed_ranker.py:apply_feed_ordering",
+        "pipeline/ranker/feed_ranker.py:EVENT_KEYWORDS",
+        "pipeline/ranker/importance_ranker.py:_institutional_authority_score"
+      ],
+      "perspective": "ranking-benchmark",
+      "verdict": {
+        "finding_id": "RANK-04",
+        "verdict": "partially_confirmed",
+        "confidence": 0.85,
+        "reasoning": "The observable symptoms are real and verified against scripts/top50_export.json: five SCOTUS clusters sit at ranks 1, 3, 27, 36, 40; #1 is the wonky 'administrative state / Gorsuch' concurrence framing (rank_world 72.89, but its articles show it is actually the Humphrey's-Executor firing-power ruling over-merged with Iran-talks articles); #27 and #36 have rank_world == headline_rank (undecayed) while only #40 was decayed 63.55->50.84; and no cluster is a completed birthright-citizenship ruling. So evidence (a) largely holds.\n\nHowever the root_cause (b) is substantially wrong. (1) The cited mechanism is provably false: the re-encode at feed_ranker.py:235-239 only LOWERS values (pool[j]=pool[j-1]-0.1 when pool[j]>=pool[j-1]); it can never raise a decayed cluster back up to headline_rank, so it cannot explain #27/#36 equaling headline_rank. Worse, with the current code the same-event loop iterates by descending rank_world, so #40 (63.55) is visited before #27 (54.62) and #36 (52.58); if #40 decayed (count already >=2), #27 and #36 must also decay. The export is therefore internally inconsistent with one clean run of apply_feed_ordering, an anomaly the finding misattributes. The proposed_fix ('apply decay after the re-encode') is built on this false premise. (2) 'The biggest source-count ones win the lead' is contradicted by the data: the highest-source SCOTUS cluster #27 (54 sources) is at rank 27 and #3 (52) at rank 3, while #1 leads with only 41 sources; the lead is set by the importance composite, not source count. (3) The dominant real cause is CLUSTERING, not ranking: #1/#27/#40 are the same firing-power ruling fragmented into three clusters and #3/#36 are the same ballot ruling split in two (#36's own articles are mostly off-topic). Even a perfect same-event cap keeps 2 SCOTUS clusters in the top slots by design (MAX_SAME_EVENT=2), so #1+#3 would still clog the top. The birthright 'miss' is overstated: void's corpus holds only anticipatory 'set to rule / imminent / undecided' articles scattered across #1 and #32, i.e. a fragmentation/timing artifact, not a demonstrable missed completed ruling. The confirmed authority claim (Tier-1 80-100 floor at 8%, importance_ranker line 1268) is accurate but is a minor contributor, not the driver.\n\nNet: the symptom is genuine and user-visible, but the finding misdiagnoses the mechanism, makes a falsified source-count claim, and points at the wrong code targets (ranking rather than clustering). Downgrade high -> medium.",
+        "severity_adjusted": "medium"
+      }
+    },
+    {
+      "id": "RANK-05",
+      "title": "Coverage/source-count dominates ~40% of headline_rank, so wire-roundup and over-merged clusters out-rank higher-stakes stories",
+      "severity": "high",
+      "evidence": "headline_rank = coverage*0.20 + maturity*0.16 + tier_div*0.13 + ... (importance_ranker.py:1263-1274). maturity itself multiplies recency by log2(1+source_count), so raw source count drives roughly 40% of the score. Result: nearly every top cluster has source_count 25-52 / ~50 articles regardless of topic. Volume artifacts rank high: #11 'Latvia to build joint drone facility with Ukraine' has 85 articles (n=85) yet is a minor procurement story at rank 11; #24 forex close (15 src) beats the Iran war; #34 Ohio State football 'Buckeye Lore' carries 40 sources / 50 articles — implausible for a college-football promo and a likely over-merge (mega_cluster_capped is False, so no penalty fired).",
+      "affected_ranks": [
+        11,
+        24,
+        34
+      ],
+      "root_cause": "importance_ranker weight allocation concentrates ~40% on source-volume signals (coverage 20% + the log(source_count) depth term inside maturity 16% + tier_div 13%), with importance/consequentiality/authority together only ~18%. The v6.1/v6.2 US-wire pile-on penalty only fires on US-country concentration (_source_coverage_score:506-518); it cannot catch international wire pile-ons (forex, Ohio State, Latvia). mega_cluster_capped was False on these, so the over-merge penalty never engaged.",
+      "proposed_fix": "Rebalance weights toward consequentiality/authority/geographic-magnitude and away from raw coverage; apply diminishing returns to maturity's depth term earlier. Extend the wire pile-on penalty to any single-topic syndication regardless of country (detect articles/voices ratio). Tighten Phase-5 mega-cap detection so 40-source soft-news clusters get flagged.",
+      "code_targets": [
+        "pipeline/ranker/importance_ranker.py:rank_importance",
+        "pipeline/ranker/importance_ranker.py:_source_coverage_score",
+        "pipeline/ranker/importance_ranker.py:_story_maturity_score"
+      ],
+      "perspective": "ranking-benchmark",
+      "verdict": {
+        "finding_id": "RANK-05",
+        "verdict": "partially_confirmed",
+        "confidence": 0.82,
+        "reasoning": "SYMPTOM REAL, DIAGNOSIS WRONG. The export (scripts/top50_export.json) confirms the three cited clusters, and inspecting their _articles shows forex(#24) and Ohio State(#34) and Latvia(#11) are blatant over-merges (heterogeneous grab-bags: pancreatic cancer + badminton in the forex cluster; Haitian immigration + Tokyo sex-work + bison grazing in Ohio State) — junk legitimately polluting the top 34. But the finding's root cause is refuted on four counts: (1) The '~40% on source-volume' is inflated. Weights (importance_ranker.py:1263-74) are coverage 0.20 + maturity 0.16 + tier_div 0.13, but maturity=recency*(0.40+0.60*depth_mult) so source-count only swings maturity 0.51x-1.0x (~8% real share, log-compressed), and tier_div scores tier PRESENCE not volume (a 3-source all-tier cluster scores 100). Real source-count weight ~20-28%. (2) Empirically corr(source_count, headline_rank)=0.362, R²≈0.13 — source count explains ~13% of variance, not dominant. (3) Both coverage and maturity depth saturate above ~25 sources (coverage 91.8->99.4), so among the 38/50 clusters with 25+ sources coverage barely discriminates — the ranking spread there is driven by the OTHER signals, contradicting 'coverage dominates.' (4) The marquee '#24 forex beats the Iran war' is misattributed: Iran's headline_rank (67) BEATS forex (57.24) in the ranker itself; the display inversion is feed_ranker's same-event/topic-diversity demotion of the multiple Iran war clusters, not coverage weighting. The actual cause is clustering over-merge inflating source counts + Phase-5 mega-cap failing to flag them; the proposed ranker-weight rebalance would not remove these clusters (they'd still carry 40 fake sources). Real fix belongs in clustering/mega-cap, not weight allocation.",
+        "severity_adjusted": "medium"
+      }
+    },
+    {
+      "id": "RANK-06",
+      "title": "US/UK-centric skew: top-12 is 5 US-SCOTUS + 4 UK-domestic clusters; UK NHS maternity review (#6) out-ranks the Venezuela quake and the Iran war",
+      "severity": "high",
+      "evidence": "Top-12 by rank_world: #1/#3 US SCOTUS, #4 US Gateway Tunnel funding (regional infra), #5 Andy Burnham/UK Labour, #6 'Baroness Amos maternity review: 5 key findings' (UK NHS-specific), #10 Scott Wiener (a California congressional CANDIDATE's comments), #12 Andy Burnham again, #13 Scotland renewable energy. Burnham appears TWICE in the top-12 (#5 and #12). A UK NHS maternity-care review (#6, rank_world 68.13) out-ranks the Venezuela mass-casualty disaster (#18) and the US-Iran war (#31). The _GEOPOLITICAL_WEIGHT map (importance_ranker.py:134-157) gives US/UK 3.0x and the institutional-authority lexicon is heavily Anglo ('supreme court','federal reserve','prime minister','the president').",
+      "affected_ranks": [
+        4,
+        5,
+        6,
+        10,
+        12,
+        13
+      ],
+      "root_cause": "The v6.1/v6.2 US-wire pile-on penalty checks only country_counts['US'] (_source_coverage_score:506); there is NO equivalent damper for UK-only or any other single-country domestic story, so UK-domestic clusters (Burnham, Amos, Scotland) keep full coverage credit plus tier-1 'prime minister' authority. The geopolitical weight map hard-codes Anglophone powers at 3.0x. No de-duplication prevents the same UK political story (Burnham) forming two top-12 clusters.",
+      "proposed_fix": "Generalize the domestic-insularity penalty from US-only to any cluster whose sources concentrate >70% in a single country with <2 foreign GPEs. Merge duplicate same-subject clusters (Burnham #5/#12) before ranking. Reconsider the flat 3.0x Anglophone geopolitical weighting for domestic (non-foreign-facing) stories.",
+      "code_targets": [
+        "pipeline/ranker/importance_ranker.py:_source_coverage_score",
+        "pipeline/ranker/importance_ranker.py:_GEOPOLITICAL_WEIGHT",
+        "pipeline/clustering/story_cluster.py"
+      ],
+      "perspective": "ranking-benchmark",
+      "verdict": {
+        "finding_id": "RANK-06",
+        "verdict": "partially_confirmed",
+        "confidence": 0.7,
+        "reasoning": "EVIDENCE (mostly real). Sorting scripts/top50_export.json by rank_world reproduces the cited feed almost exactly: #1 SCOTUS Gorsuch (72.89), #3 SCOTUS ballots (70.92), #4 Gateway Tunnel funding (69.03), #5 Andy Burnham/Labour (68.27), #6 \"Baroness Amos maternity review: 5 key findings\" (68.13), #10 Scott Wiener (60.82), #12 Andy Burnham again (60.62), #13 Scotland renewable energy (60.52). Burnham genuinely appears TWICE in the top-12 as two distinct cluster IDs (ca0e186f… and 105885bd…), both about his premiership bid — a real de-dup miss. The Amos UK-NHS review (68.13) does out-rank the Venezuela quake clusters (#18 60.07, #23 57.72) and the Iran-US war (#31 53.60). So the headline comparison holds. Caveat: the title's \"5 US-SCOTUS\" is inaccurate — only 2 of the top-12 are SCOTUS; the itemized body is accurate though.\n\nROOT CAUSE (partially correct). The two code facts check out: _source_coverage_score's pile-on penalty at importance_ranker.py:506 literally only tests country_counts.get(\"US\",…), with no UK/single-country generalization; and _GEOPOLITICAL_WEIGHT (lines 134-157) hard-codes UK/Britain/London at 3.0x. However the finding overstates the geopolitical-weight mechanism as the driver: geographic impact is only 6% of importance, and the dominant signals are coverage breadth (20%) + maturity — the UK stories simply accumulated 31-40 sources, which is as much a source-list composition problem (Anglo-heavy 1,016-source list) as a ranker bug. Also, on RAW importance_score, Iran-war is 67.00 vs Amos 68.13 (nearly tied); Iran's drop to rank_world 53.60 is caused by feed_ranker's same-event/topic-diversity gate (two Iran clusters #31/#32 both demoted), NOT the ranker's Anglo weighting — the finding attributes that gap to geopolitical weight incorrectly. The Burnham duplicate is a clustering issue (correctly listed in code_targets under story_cluster.py, not the ranker).\n\nSEVERITY. Real, systemic editorial skew on the flagship world feed, and the direction of the proposed fix (generalize the US-only insularity damper, dedupe same-subject clusters) is sound. But I downgrade high→medium: the numeric mechanism is partly misattributed (Iran demotion is a feed gate, geopolitical weight is minor), and some cited \"US-centric\" evidence is weak (a NASA science story #9 and a California candidate's remarks #10 are not strong evidence of algorithmic Anglo bias).",
+        "severity_adjusted": "medium"
+      }
+    },
+    {
+      "id": "RANK-07",
+      "title": "European heat wave (1,300+ WHO-counted deaths) ranks only #30, below forex/WhatsApp/Ohio State trivia",
+      "severity": "medium",
+      "evidence": "Benchmark: WHO counted 1,300+ heat-related deaths across Europe since June 21 — a mass-casualty climate story on every wire. void ranks 'Europe Heatwave Intensifies; US Faces Record-Breaking Temperatures' at #30 (rank_world 54.00), below #24 forex close, #26 Colorado wildfire, #28 Santorini winemakers. A second heat fragment ('Santorini winemakers adapt to heat') sits at #28, splitting the topic.",
+      "affected_ranks": [
+        28,
+        30
+      ],
+      "root_cause": "Same casualty-blindness as RANK-01: importance_ranker has no signal for aggregate death toll / humanitarian magnitude, so a 1,300-death slow-onset event scores like an ordinary weather story. 'heatwave'/'heat-related deaths' are not in _HIGH_AUTHORITY_PHRASES and the WHO tier-1 authority hook only fires on explicit 'world health organization' / PHEIC phrasing, which the heat cluster title lacks.",
+      "proposed_fix": "Add the casualty-magnitude floor from RANK-01 (covers disasters, heat deaths, and epidemics uniformly). Merge the heat fragments (#28/#30) in clustering.",
+      "code_targets": [
+        "pipeline/ranker/importance_ranker.py:_consequentiality_score",
+        "pipeline/ranker/importance_ranker.py:_HIGH_AUTHORITY_PHRASES"
+      ],
+      "perspective": "ranking-benchmark",
+      "verdict": {
+        "finding_id": "RANK-07",
+        "verdict": "partially_confirmed",
+        "confidence": 0.8,
+        "reasoning": "Evidence largely holds: \"Europe Heatwave Intensifies...\" sits at #30 with rank_world 54.00 (exact match), below forex close #24 (57.24), Colorado wildfire #26, Santorini #28 (54.27), and WhatsApp usernames #29 (54.13). A 40-source, 1,300-death mass-casualty story (title \"heat wave kills over 1,300 in Europe\" confirmed in the cluster) ranking below a 15-source forex report and a trivial WhatsApp feature is a real inversion. In this export rank_world == importance_score == headline_rank for these rows, so ordering is driven purely by importance_ranker — the exact code the finding targets. Root cause verified: \"heatwave\"/\"heat-related deaths\" are not in _HIGH_AUTHORITY_PHRASES (line 245); the WHO tier-1 hook requires literal \"world health organization\"/PHEIC phrasing absent from the titles; and no signal scales with death-toll magnitude (\"kills\" is a binary hit). Two errors dock it from fully confirmed: (1) the title cites \"Ohio State trivia\" as ranking ABOVE the heat wave, but Ohio State is #34/52.68, BELOW it; (2) #28 Santorini is a Greek-tourism/culture mega-cluster (mega_cluster_capped, summary about the ancient Greek lyre), not a genuine heat fragment, so the \"merge #28/#30\" fix is misguided. The finding also slightly overstates absence of a casualty signal: \"death toll\"/\"mass casualty\" DO exist as floor-70 high-authority phrases, but they're phrasing-brittle and didn't fire on \"kills over 1,300.\" Severity medium is appropriate — an embarrassing systemic misrank, not a crash or top-3 dislocation.",
+        "severity_adjusted": "medium"
+      }
+    },
+    {
+      "id": "RANK-08",
+      "title": "Trivial/soft stories penetrate the mid-feed above hard-news: forex close (#24), WhatsApp usernames (#29), Ohio State football (#34), iPhone leak (#39), book promo (#47)",
+      "severity": "medium",
+      "evidence": "#24 'U.S. Dollar closes lower on Taipei forex market - Focus Taiwan' (rank_world 57.24) is a routine daily market wrap. #29 'WhatsApp to Launch Usernames' (54.13) is a product update, miscategorized 'conflict'. #34 'Buckeye Lore: Ohio State football' (52.68) is a sports promo. #39 'Apple iPhone 18 Pro secrets leaked in Tata hack' (51.51, 5 sources). #47 'Xi Van Fleet: One Ideal, Two Revolutions' (46.85) is a book/opinion promo carrying an implausible 40 sources. #50 'Unbothered King: Clarence Thomas Walks Through Capitol' (46.43) is tabloid-style. All out-rank or sit near the Iran war and Venezuela quake.",
+      "affected_ranks": [
+        24,
+        29,
+        34,
+        39,
+        47,
+        50
+      ],
+      "root_cause": "The soft-news gate (importance_ranker.py:1424, 0.78x) only fires when category is in _SOFT_NEWS_CATEGORIES; #24/#29/#39/#47 are categorized economy/conflict/science/environment, so the gate never fires (a categorizer defect feeding a ranker defect). #34 does get the 0.78x sports gate but its 40-source over-merge keeps it at 52.68. The forex/book-promo clusters accrue rank purely on syndication volume (RANK-05).",
+      "proposed_fix": "Fix upstream categorization so product/market/promo stories map to soft categories (auto_categorize). Add a routine-market-wrap and product-launch demotion in the ranker independent of category. Combine with the RANK-05 wire-volume fix so 40-source promos cannot ride coverage weight.",
+      "code_targets": [
+        "pipeline/categorizer/auto_categorize.py",
+        "pipeline/ranker/importance_ranker.py:_SOFT_NEWS_CATEGORIES"
+      ],
+      "perspective": "ranking-benchmark",
+      "verdict": {
+        "finding_id": "RANK-08",
+        "verdict": "partially_confirmed",
+        "confidence": 0.82,
+        "reasoning": "Evidence is fully reproducible against scripts/top50_export.json: every cited rank, title, rank_world value, category, and source_count matches exactly (#24 forex 57.24/economy/15src; #29 WhatsApp 54.13/conflict/mega=True; #34 Ohio State 52.68/culture/40src; #39 iPhone 51.51/science/5src; #47 Xi Van Fleet book promo 46.85/environment/40src; #50 Thomas 46.43/politics). The positional claim holds: Iran-US war clusters sit at #31 (53.6) and #32 (53.45) and the Venezuela quake at #23 (57.72), so the forex wrap (#24) outranks both Iran clusters and WhatsApp (#29) outranks the Iran war. These are genuinely soft/product/promo stories penetrating mid-feed above hard news, a real editorial-quality issue. Root cause is directionally correct: the soft-news gate at importance_ranker.py:1424 keys off _SOFT_NEWS_CATEGORIES (line 373), which excludes economy/conflict/science/environment, so the gate never fires for #24/#29/#39/#47; feed_ranker.py adds no compensating category demotion (only story_type gates + diversity caps). Miscategorization is real (WhatsApp=conflict, book promo=environment are clearly wrong). Two inaccuracies keep this at partially_confirmed rather than fully confirmed: (1) #34 is category=culture which IS in the soft set, so it already receives the 0.78x gate — the finding calls it the 'sports gate' and implies the gate needs fixing there when it already fires; (2) the 'categorizer defect feeding a ranker defect' framing is incomplete because even correct categorization (economy for forex, technology for product launches) would not trigger the gate, since those hard categories are legitimately non-soft — the true gap is the missing product-launch/routine-wrap demotion, which the finding only partially captures in its secondary fix. Severity medium is appropriate: impact is bounded to mid-feed (ranks 24-50); the top 10 are all hard news, so no headline is compromised.",
+        "severity_adjusted": "medium"
+      }
+    },
+    {
+      "id": "CAT-1",
+      "title": "Category is voted from the first 3 RAW articles, ignoring the polished cluster headline; on over-merged clusters those 3 articles are off-topic",
+      "severity": "critical",
+      "evidence": "main.py:1953 samples cluster_articles_list[:3]; rerank.py:309 samples articles[:3]. 44/50 clusters have >=40 articles (many exactly 50). The first-3 articles routinely have nothing to do with the shown title: rank 6 'Baroness Amos maternity review' first-3 = ['Trump...American Flag Blue','Trump blamed for racist C-SPAN caller','Baroness Amos maternity review'] -> voted environment; rank 1 'Supreme Court...Administrative State' first-3 = [Roberts Court agencies, Trump Doha Iran talks, Qatar no US-Iran talks] -> environment; rank 43 'Nearly one million became millionaires (UBS)' first-3 = [strawberry moon, GST tax reforms, strawberry moon] -> general; rank 18 'DR repatriates 65 from Venezuela' first-3 = [Europe heat deaths, Belgium customs deal, Pope Lefebvrists] -> environment; rank 47 first-3 = [China investment regs, China-EU youth cartoon, American Revolution] -> environment. The keyword-rich final headline (e.g. rank 46 'EU...China Trade Deficit', which contains 'trade deficit') never reaches categorize_article, so its economy signal is discarded.",
+      "affected_ranks": [
+        1,
+        6,
+        18,
+        43,
+        46,
+        47
+      ],
+      "root_cause": "pipeline/main.py step 7 (~line 1953) and pipeline/rerank.py (~line 309): category vote uses articles[:3] of an over-merged cluster and never scores the final cluster.title. Upstream clustering over-merge (clustering/story_cluster.py) supplies mixed article bags.",
+      "proposed_fix": "Score the polished cluster title with high weight in the vote (call categorize_article on a synthetic {title: cluster['title'], summary: cluster['summary']} and give it 3x the per-article vote weight), and/or vote across all articles rather than the first 3. Longer term, fix the over-merge so the article bag is topically coherent.",
+      "code_targets": [
+        "pipeline/main.py:1953",
+        "pipeline/rerank.py:309",
+        "pipeline/categorizer/auto_categorize.py:362"
+      ],
+      "perspective": "categorization",
+      "verdict": {
+        "finding_id": "CAT-1",
+        "verdict": "confirmed",
+        "confidence": 0.95,
+        "reasoning": "Evidence (a) is real and precise. I loaded scripts/top50_export.json (50 clusters) and verified every cited rank against its actual _articles[:3] and shown category:\n- Rank 1 \"Supreme Court Ruling Challenges Administrative State\" -> category=environment; first-3 = [The Roberts Court Just Put Trump in Charge..., Trump Team Arrives In Doha As Direct Iran Talks..., Qatar Says No High-Level US-Iran Talks]. Exact match.\n- Rank 6 \"Baroness Amos maternity review\" -> environment; first-3 = [Trump...American Flag, Trump blamed for caller's racist comments, Baroness Amos maternity review]. Match.\n- Rank 18 \"Dominican Republic repatriates 65 from Venezuela\" -> environment; first-3 = [Europe 1,300 heat-related deaths, DR-Belgium customs, Pope Lefebvrists]. Match.\n- Rank 43 \"Nearly one million became millionaires\" -> general; first-3 = [June full moon, 9 years of GST tax reforms, strawberry moon]. Match.\n- Rank 46 \"EU Sets October Deadline for China Trade Deficit\" -> general (economy signal in title discarded). Match.\n- Rank 47 \"Xi Van Fleet: One Ideal, Two Revolutions\" -> environment; first-3 = [China New Investment Regulations Block Stra..., Chinese and European youth Moving Forward, The American Revolution Isn't Over]. Exact match.\nThe \"44/50 clusters have >=40 articles\" claim is exactly correct (I counted 44/50). 8 clusters are labeled \"environment,\" several of them obviously non-environmental.\n\nRoot cause (b) is correct. main.py step 7 (line ~1953, verified) sets `sample = cluster_articles_list[:3]` and votes categorize_article over those 3 articles only; rerank.py (line ~309, verified) does `for art in articles[:3]`. Neither path ever scores the polished cluster.title/summary — categorize_article (auto_categorize.py:362) reads article.get('title'), i.e. the individual raw article title, never the cluster headline. On over-merged clusters the first-3 raw titles are topically unrelated to the chosen headline, so the vote reflects off-topic articles. Mechanism confirmed exactly as described.\n\nSeverity: adjusting critical -> high. The bug is pervasive and the mislabels are unambiguously wrong (Supreme Court story tagged \"environment\"), and category is not merely cosmetic — it is passed into rank_importance(category=...) and the feed_ranker mid-feed category cap, so wrong categories also degrade ranking/diversity. However it causes no crash, data loss, or security exposure and the feed still renders and orders; it is a systematic output-quality defect on a display/desk label. High is the honest level; not critical.",
+        "severity_adjusted": "high"
+      }
+    },
+    {
+      "id": "CAT-2",
+      "title": "'general' catch-all absorbs 22% of the feed (11/50); at least 9 are cleanly categorizable",
+      "severity": "high",
+      "evidence": "MIN_SCORE_THRESHOLD=1.0 (auto_categorize.py:440) plus density normalization 'count / max(word_count/100, 1)' (line 396) crush keyword scores on long combined text, so anything without a title-keyword hit falls to 'general' (line 442). Miscategorized 'general' clusters: 5 Burnham/Labour->politics, 10 Wiener/Netanyahu->politics, 20 Japan-China EEZ->conflict, 30 heatwave->environment, 38 SA fuel-price cut->economy, 41 Sen. Murphy->politics, 43 UBS millionaires->economy, 45 Guo fraud->politics, 46 EU-China trade->economy, 48 French MEPs->politics. Only rank 44 (Biden/Reflecting-Pool late-night bit) is a defensible 'general'.",
+      "affected_ranks": [
+        5,
+        10,
+        20,
+        30,
+        38,
+        41,
+        43,
+        45,
+        46,
+        48
+      ],
+      "root_cause": "pipeline/categorizer/auto_categorize.py:396 density normalization divides keyword hits by (word_count/100), diluting scores on long full_text; line 440 MIN_SCORE_THRESHOLD then dumps sub-1.0 scores into 'general'.",
+      "proposed_fix": "Weight the cluster title independently of body length (title hits already unnormalized at line 399/400, but body dilution still sinks the primary score), lower/remove the density divisor for the title path, and only fall to 'general' when the top-2 categories are BOTH below threshold. Add a secondary tie-break that prefers the title-derived category over 'general'.",
+      "code_targets": [
+        "pipeline/categorizer/auto_categorize.py:396",
+        "pipeline/categorizer/auto_categorize.py:440-442"
+      ],
+      "perspective": "categorization",
+      "verdict": {
+        "finding_id": "CAT-2",
+        "verdict": "partially_confirmed",
+        "confidence": 0.8,
+        "reasoning": "Evidence CONFIRMED: scripts/top50_export.json has exactly 11/50 (22%) clusters tagged 'general' at the cited ranks (5,10,20,30,38,41,43,44,45,46,48); titles match; running the real categorize_article on the cluster HEADLINES returns clean desks for most (Burnham/Wiener/Guo->politics, EU-China->economy), so these are genuine miscategorizations and 'at least 9 cleanly categorizable' holds.\n\nRoot cause PARTIALLY correct. I reproduced the density mechanism (auto_categorize.py:396 + MIN_SCORE_THRESHOLD=1.0 at 440-442): identical economy keywords classify as 'economy' in a short body but dilute to 'general' in a long body. So it IS a real contributor. BUT the finding overstates it: (1) the title bonus (weight*2.0, lines 399-400) is immune to density normalization -- an article whose TITLE contains any dictionary keyword can never fall to 'general' regardless of body length (verified: 'Senate approves measure' + 1200-word neutral body still -> politics). The finding's claim that 'body dilution still sinks the primary score' for title-classifiable stories is false. (2) The pipeline does not categorize the clean cluster headline at all; it votes across the first 3 MEMBER articles (main.py:1953-1965, rerank.py:308-313). The dominant driver of these generals is noisy clustering feeding keyword-free/off-topic member titles into the vote (rank 43 UBS-millionaires led by 'strawberry moon' articles; rank 46 EU-China-trade led by 'Cleaning up Mt Everest'; rank 10 Wiener led by a job posting). Density is one contributor among several, not the sole/primary cause.\n\nSeverity overstated: category is a secondary display/desk label (all clusters are section='world'); no crash, ranking, or security impact. It is a known, tracked quality issue (code comment at 438-439 notes the threshold was already lowered 1.5->1.0 because general 'was 20% of clusters'). Real and worth fixing, but medium not high.",
+        "severity_adjusted": "medium"
+      }
+    },
+    {
+      "id": "CAT-3",
+      "title": "'environment' is a false-positive magnet: incidental disaster words (earthquake/heat/climate) in one merged article win the vote on non-environment stories",
+      "severity": "high",
+      "evidence": "8 environment clusters, 4 are wrong. Rank 1 (SCOTUS FTC ruling) and rank 47 (Xi Van Fleet China book) have zero environmental content yet show environment. Rank 6 (maternity review) and rank 18 (Venezuela repatriation) got environment because a co-merged article mentioned heat deaths / earthquakes. NER GPE/NORP give only 0.3/0.2 to politics+conflict (auto_categorize.py:258-269), so a single 'earthquake':2 or 'wildfire':3 keyword hit outweighs governance signals and wins the arbitrary max() tie-break.",
+      "affected_ranks": [
+        1,
+        6,
+        18,
+        47
+      ],
+      "root_cause": "pipeline/categorizer/auto_categorize.py CATEGORY_KEYWORDS['environment'] disaster terms (earthquake/wildfire/drought) score high per-hit; combined with max(cat_votes, key=...) tie-break (main.py:1964) and over-merged article bags, environment wins on incidental mentions.",
+      "proposed_fix": "Demote pure-disaster keywords when human-toll/governance keywords co-occur (mirror the existing mass-casualty conflict pre-override at auto_categorize.py:465-488, but for environment->health/politics), and require environment to be supported by the title, not just a body mention.",
+      "code_targets": [
+        "pipeline/categorizer/auto_categorize.py:130-146",
+        "pipeline/main.py:1964"
+      ],
+      "perspective": "categorization",
+      "verdict": {
+        "finding_id": "CAT-3",
+        "verdict": "partially_confirmed",
+        "confidence": 0.9,
+        "reasoning": "SYMPTOM CONFIRMED, ROOT CAUSE REFUTED. The export (scripts/top50_export.json) does show environment as a false-positive magnet: 8 environment clusters, with ranks 1 (SCOTUS/FTC), 6 (maternity review), and 47 (Xi Van Fleet book) clearly mis-tagged, and rank 1 is the lead story — so a real, visible defect exists. But I reproduced categorize_article on the actual titles and the mechanism the finding blames is wrong. The false positives are NOT driven by disaster keywords (earthquake/wildfire/heat) in co-merged body articles winning a max() vote. They are driven by a substring-matching bug: auto_categorize.py:393 (combined_lower.count(keyword)) and :399 (keyword in title_lower) fire on 2-3 char keywords. Rank 6 'maternity rEView' scores environment 10.0 purely from keyword 'ev':2 (line 141) matching the substring in 'review' — not from any heat-death article. Rank 47 'Two rEVolutions' = same 'ev' substring. Rank 1 comes from 'ev' in Level/Development and 'ai':2 in 'Claim'. Rank 18 'rEPAtriates ... after earthquake' hits 'epa':3 (substring of repatriates) PLUS a title-present 'earthquake' — which directly contradicts the finding's claim that rank 18's earthquake was in a co-merged body article, and defeats its proposed fix (require title support: the title already has earthquake). The cited max() tie-break at main.py:1964 exists but is not causal; the real issue is upstream per-article substring scoring plus [:3] sampling. Net: the finding correctly flags a real problem but misdiagnoses the root cause and its proposed fix (demote disaster keywords, require title support) would fix none of the cited ranks. Severity downgraded from high to medium because the observed defect is genuine and front-page-visible, but the finding as written is not actionable and its evidence attributions are largely fabricated.",
+        "severity_adjusted": "medium"
+      }
+    },
+    {
+      "id": "CAT-4",
+      "title": "Technology taxonomy has no consumer-tech / messaging vocabulary, so a pure app story (WhatsApp usernames) fell to 'conflict'",
+      "severity": "high",
+      "evidence": "grep for whatsapp|username|messaging|\"sim\"|smartphone in auto_categorize.py returns 0 hits. Rank 29 first-3 articles are ALL about WhatsApp usernames ('How WhatsApp usernames could impact India SIM-binding', 'WhatsApp to introduce usernames', 'Usernames Are Coming to WhatsApp') yet none match a technology keyword ('social media':2 is present but the titles don't say it), so technology scored ~0 and the GPE boost ('India','China' -> conflict 0.3) made conflict win. Separately, environment has no 'heat wave'/'heatwave'/'heat'/'temperature' keyword (0 grep hits), so rank 30 (all-heatwave first-3 articles: 'Heat advisory...Ohio','record-smashing heat wave','Europe Heat Wave') scored 0 on environment and fell to 'general'.",
+      "affected_ranks": [
+        29,
+        30
+      ],
+      "root_cause": "pipeline/categorizer/auto_categorize.py CATEGORY_KEYWORDS['technology'] lacks whatsapp/username/messaging/messaging app/sim/smartphone; CATEGORY_KEYWORDS['environment'] lacks heat wave/heatwave/heat-related/temperature/extreme heat.",
+      "proposed_fix": "Add 'whatsapp','telegram','signal','username','messaging app','sim card','smartphone','instagram','tiktok' to technology; add 'heat wave','heatwave','heat-related','extreme heat','record temperatures','heat advisory' to environment.",
+      "code_targets": [
+        "pipeline/categorizer/auto_categorize.py:78-112",
+        "pipeline/categorizer/auto_categorize.py:130-146"
+      ],
+      "perspective": "categorization",
+      "verdict": {
+        "finding_id": "CAT-4",
+        "verdict": "partially_confirmed",
+        "confidence": 0.82,
+        "reasoning": "Evidence is real and verified in scripts/top50_export.json: rank 29 (category=conflict) has first-3 articles all about WhatsApp usernames/India SIM-binding; rank 30 (category=general) has first-3 articles all about heat waves. Root cause is substantially correct. Cluster category is voted over articles[:3] in rerank.py:307-313 via categorize_article + map_to_desk, so the position-4 Nigeria/Boko-Haram article in rank 29 is NOT the driver (this strengthens the finding). I confirmed the vocabulary gap directly: technology keywords score ZERO genuine hits on the WhatsApp titles (the only match is a spurious substring 'ai' inside 'explAIner'), and environment keywords score ZERO on the heatwave titles (no heat/heat wave/heatwave/temperature keyword). code_targets line ranges (technology 78-112, environment 130-146) are accurate and the proposed keywords are genuinely absent. One imprecision downgrades this to partially_confirmed: the claim that 'GPE India/China -> conflict 0.3 made conflict win' does not fully hold, because NER_CATEGORY_BOOST['GPE'] boosts politics AND conflict equally (0.3 each) and stable sort favors politics on ties, so conflict specifically winning requires an additional signal not identified. The rank-30 environment->general mechanism is fully correct. Severity lowered to medium: it is a reproducible editorial labeling defect on 2/50 items with a trivial, safe fix; category does feed the feed_ranker diversity partition so it is not purely cosmetic, but scope is limited and it is not a failure/security/user-blocking issue.",
+        "severity_adjusted": "medium"
+      }
+    },
+    {
+      "id": "CAT-5",
+      "title": "DESK_MAP collapse hides technology/health/sports as visible categories, causing correct-by-code but wrong-to-user labels",
+      "severity": "medium",
+      "evidence": "DESK_MAP (auto_categorize.py:277-288) folds technology->science and sports->culture. Feed shows science 1, technology 0, sports 0, health 0. Rank 39 (iPhone 18 hack) and rank 9 (NASA) can only ever display 'science' even though they are a tech-security story and a spaceflight story respectively; rank 34 (Ohio State football) shows 'culture'. A health story (rank 6 maternity review) has nowhere natural to land in the shipped label set and got mis-shelved to environment. Users reading '#9 NASA = science' vs '#39 iPhone hack = science' see the same label for very different desks.",
+      "affected_ranks": [
+        9,
+        34,
+        39
+      ],
+      "root_cause": "pipeline/categorizer/auto_categorize.py:277-288 DESK_MAP merges technology into science and sports into culture, and health is never assigned by the current vote path.",
+      "proposed_fix": "Either surface 'technology','health','sports' as first-class display desks, or document the fold in the frontend legend. At minimum stop folding technology into 'science' so consumer-tech isn't mislabeled as hard science.",
+      "code_targets": [
+        "pipeline/categorizer/auto_categorize.py:277-288"
+      ],
+      "perspective": "categorization",
+      "verdict": {
+        "finding_id": "CAT-5",
+        "verdict": "partially_confirmed",
+        "confidence": 0.85,
+        "reasoning": "The DESK_MAP fold is real and verified: auto_categorize.py:281 maps technology->science and :286 maps sports->culture, applied via map_to_desk() at main.py:1965 and rerank.py:313. Two of the three cited ranks hold: rank 39 (iPhone 18/Tata hack, a consumer-tech/security story) shows category=science, and rank 34 (Ohio State football) shows category=culture. Feed category counts confirm technology=0, sports=0. BUT the finding's flagship illustration is factually false: rank 9 NASA does NOT display 'science' in the export — it displays 'economy'. So the 'same label for two different desks (#9 NASA vs #39 iPhone both science)' confusion does not exist in the data; only one science story is present. The root_cause claim that 'health is never assigned by the current vote path' is also incorrect: DESK_MAP preserves health->health (line 283) and categorize_article can emit health (keyword table line 113); rank 6 maternity->environment is a categorization scoring miss, not a consequence of the fold. Additionally the fold is an intentional, code-documented design decision ('Science + Tech -> Science', 'Culture + Sports -> Culture'), not a defect. Real mechanism, but the evidence is half-wrong and the concern is an intentional labeling design choice, so severity is overstated.",
+        "severity_adjusted": "low"
+      }
+    },
+    {
+      "id": "CAT-6",
+      "title": "Arbitrary max() tie-break plus weak, symmetric NER boosts make ties resolve non-deterministically toward whatever category was inserted first",
+      "severity": "medium",
+      "evidence": "main.py:1964 and rerank.py:312 use max(cat_votes, key=cat_votes.get) with no explicit tie-break, so a 1-1-1 vote across the first 3 articles resolves to the first-seen key in dict-insertion order. Combined with NER_CATEGORY_BOOST fractional values (GPE 0.3, NORP 0.2, PERSON politics/culture 0.2), keyword-free stories are decided by which entity type spaCy happened to tag. Rank 29 (WhatsApp) landing on conflict and rank 33 (SK-Japan AI/defense, whose summary is actually about a football coach's death threats) illustrate votes decided by noise rather than topic.",
+      "affected_ranks": [
+        29,
+        33
+      ],
+      "root_cause": "pipeline/main.py:1964 / pipeline/rerank.py:312 unstable tie-break; pipeline/categorizer/auto_categorize.py:257-269 fractional NER boosts dominate when keyword scores are ~0.",
+      "proposed_fix": "Add a deterministic tie-break priority (e.g. politics > economy > conflict > science > environment > culture > general) and only let NER boosts break ties, never override a nonzero keyword winner.",
+      "code_targets": [
+        "pipeline/main.py:1964",
+        "pipeline/rerank.py:312",
+        "pipeline/categorizer/auto_categorize.py:257-269"
+      ],
+      "perspective": "categorization",
+      "verdict": {
+        "finding_id": "CAT-6",
+        "verdict": "partially_confirmed",
+        "confidence": 0.78,
+        "reasoning": "Code facts confirmed: main.py:1964 and rerank.py:312 both call max(cat_votes, key=cat_votes.get) with no explicit tie-break, and Python's max + dict insertion order do make ties resolve toward the first-seen key. NER boost values quoted (GPE 0.3, NORP 0.2, PERSON 0.2) are accurate. The symptom is also real: export rank 29 (WhatsApp, a tech story) and rank 33 (SK-Japan AI/defense, summary actually about a football coach's death threats) are both stored category=conflict. HOWEVER the causal claim is largely refuted/speculative: (1) I reproduced the keyword scorer on rank 29's first-3 article titles and they score science 15 / technology 10 with conflict entirely absent, so an arbitrary tie-break among the title-derived top categories could never produce 'conflict' — the 'keyword-free story decided by NER noise' premise fails for the flagship example. (2) The asserted '1-1-1 vote' is unverifiable from the export (articles carry only titles, no summary/full_text) and is not demonstrated. (3) Both cited clusters are over-merged garbage clusters (rank 29 mega_cluster_capped=True, 47 articles/32 sources mixing WhatsApp with Nigeria violence + mental-health; rank 33 has 52 articles/24 sources with title/summary describing two different stories). The 'conflict' label is far better explained by off-topic conflict-heavy article text feeding the cluster vote plus summary/full-text signals absent from the export — i.e. a clustering + summary-selection defect, not the categorization tie-break. (4) 'non-deterministic' is imprecise; outcome is deterministic-but-arbitrary given fixed input order. The unstable max() tie-break is a genuine low-impact code smell worth a cheap deterministic-priority hardening, but it is not shown to cause the cited examples and would not fix them. Downgrade medium to low.",
+        "severity_adjusted": "low"
+      }
+    },
+    {
+      "id": "BIAS-01",
+      "title": "Opinion/fact axis fully collapsed: every one of 50 clusters labeled \"Reporting\", overt opinion/tabloid pieces never demoted",
+      "severity": "critical",
+      "evidence": "bias_diversity.avg_opinion_label == 'Reporting' for ALL 50 clusters; avg_opinion_fact spans only 9-25 (mean ~21) and never crosses the Analysis boundary (>25) or Opinion boundary (>50). This holds even for unmistakable opinion/tabloid content: #41 \"'Morning Joe' Accuses Dem Sen. Chris Murphy Of MAGA Antics In Scathing Takedown - HuffPost\" (opf=21), #44 \"'What a loser': Biden blasts Trump's Reflecting Pool\" whose summary is actually a Mediaite/John Oliver roast (opf=22), #50 \"Unbothered King: Justice Clarence Thomas Walks Through Capitol... While Media Begs for Leaks\" (opf=20), #47 \"Exclusive, Xi Van Fleet: One Ideal, Two Revolutions, How America and Communist China Pursued Justice\" ideological op-ed (opf=21), #10 \"Scott Wiener Calls Israel's Government 'Abomination,' Netanyahu 'Abusive'\" (opf=21). A neutral news feed is presenting editorial/tabloid framing as straight reporting with no demotion.",
+      "affected_ranks": [
+        10,
+        41,
+        44,
+        47,
+        49,
+        50
+      ],
+      "root_cause": "Two-layer failure. (1) opinion_detector.analyze_opinion() scores per-ARTICLE and its strongest gate, _metadata_score(), keys on 'opinion'/'editorial'/'op-ed' substrings in URL/section/title (opinion_detector.py:389-422); RSS feeds strip /opinion/ path markers, so op-eds fall back to text signals that on 30-80 word scraped stubs regress to the tier baseline (~18-22, opinion_detector.py:659-668). (2) The homepage/feed consumes a CLUSTER-LEVEL mean (bias_diversity.avg_opinion_fact) computed across 30-50 member articles; a single opinion headline is averaged against dozens of wire stories, so the cluster mean can never rise above Reporting. There is no cluster-level opinion signal or opinion demotion term in pipeline/ranker/feed_ranker.py.",
+      "proposed_fix": "Add a cluster-level opinion signal that uses MAX / high-percentile (not mean) opinion_fact of the members, or specifically the opinion_fact of the article chosen as the cluster headline, and feed it into feed_ranker as a demotion multiplier when the representative article scores Opinion/Editorial. Independently, add a headline/title-pattern opinion detector (scare-quote lead + verbs like 'blasts'/'roasts'/'savaged'/'accuses'/'begs', outlet tags HuffPost/Mediaite/westernjournal/thenationalpulse) so tabloid framing is caught even when RSS strips the /opinion/ URL marker.",
+      "code_targets": [
+        "pipeline/analyzers/opinion_detector.py:_metadata_score",
+        "pipeline/analyzers/opinion_detector.py:analyze_opinion",
+        "pipeline/ranker/feed_ranker.py",
+        "pipeline/clustering/story_cluster.py"
+      ],
+      "perspective": "bias-diversity",
+      "verdict": {
+        "finding_id": "BIAS-01",
+        "verdict": "confirmed",
+        "confidence": 0.9,
+        "reasoning": "Evidence is exact: in scripts/top50_export.json all 50 clusters carry avg_opinion_label==\"Reporting\", avg_opinion_fact spans 9-25 (mean 21, 0 clusters >25 or >50), and every cited rank/title/opf matches (#10=21, #41 HuffPost=21, #44 Biden 'blasts'=22, #47 Xi Van Fleet=21, #50 Clarence Thomas=20). Cluster 41 genuinely contains overt opinion members (Carville, Megyn Kelly Rages, Trump Gets Savaged/HuffPost, Fetterman Blasts/westernjournal, thenationalpulse) mixed with wire copy. Root cause verified in code, both layers: (1) opinion_detector.py:396-399 _metadata_score gates only on opinion/editorial/op-ed/commentary substrings, and :657-668 collapses raw_score to the tier baseline (~18-22) on short stubs via text_weight=word_count/500; (2) main.py:659-671 computes avg_opinion_fact as a plain member mean and :737-744 labels off that mean. feed_ranker.py confirmed to have NO opinion/demotion term (only a stale edition-era comment). Additional corroboration: per-cluster opinion_spread maxes at 8.1 (mean 5.69), so even the overt op-eds score only ~20-30 individually, proving the per-article detector failure (layer 1) is the dominant cause, not mere averaging; and main.py:1635-1638 shows the intended op-ed carve-out at opinion_fact>50 which these RSS-stripped op-eds never reach. Proposed fix (MAX/percentile cluster signal PLUS headline-pattern detector) is sound; note MAX alone would only reach ~Analysis given the low member scores, which the finding correctly anticipates by pairing it with a title-pattern detector. Downgrade to high rather than critical: this is a fully-collapsed, actively-mislabeling displayed axis (serious for a bias-transparency product) but not a crash/security/data-loss issue; pipeline runs, feed renders, other axes still discriminate, and it is part of a broader axis-compression calibration pattern (sensationalism also flat ~13).",
+        "severity_adjusted": "high"
+      }
+    },
+    {
+      "id": "BIAS-02",
+      "title": "Incoherent grab-bag clusters headlined by opinion/tabloid articles; title and summary describe different stories",
+      "severity": "critical",
+      "evidence": "#41, #44, #47 are 47-50-article clusters with no topical coherence. #41 (\"'Morning Joe' Accuses...\") members include the SAVE Act, a Carville prediction, an Epstein victim, Warren Buffett/Gates Foundation, Megyn Kelly raging at Amy Coney Barrett, a housing bill, and Fetterman 'Orgy of Socialism' — unrelated US-politics opinion pieces. #44 (\"Biden blasts Reflecting Pool\") members include USMCA/CUSMA exit, RFK Jr/Cassidy, a dad's car crash, a Star Wars-music settlement, and 'House of the Dragon' Season 3. #47 (\"Xi Van Fleet: One Ideal, Two Revolutions\") members include China investment regs, a Windsor housing development, a memory stock, and NASA planes at a 250th-birthday event. The rendered summaries mismatch the titles entirely: #41's summary is about Henry Schuster leaving 60 Minutes and Bari Weiss; #44's summary is a John Oliver/Jesse Watters segment; #47's summary is about Jensen Huang/Nvidia H200 chips.",
+      "affected_ranks": [
+        41,
+        44,
+        47
+      ],
+      "root_cause": "Clustering over-merge (Phase 5 mega-cluster / garbage-title bucket in pipeline/clustering/story_cluster.py) is producing large topically-incoherent clusters; the headline/representative-article selector then picks a scare-quote tabloid/opinion piece as the cluster title with no opinion penalty. Because summary_tier=None on these clusters, cluster_summarizer's rule-based fallback emits one member article's raw scraped text as the 'summary', which is why title and summary describe different articles (also visible as broken concatenation and smart-quote artifacts like 'news magazineonLinkedIn').",
+      "proposed_fix": "Tighten the over-merge guard so these low-cohesion buckets are split or dropped from the feed rather than surfaced at ranks 41/44/47; require the representative-headline picker to prefer a low-opinion, high-source-agreement member; and when summary_tier is None, suppress divergence/consensus and gate the cluster out of the top-50 rather than shipping a mismatched raw-text summary.",
+      "code_targets": [
+        "pipeline/clustering/story_cluster.py",
+        "pipeline/summarizer/cluster_summarizer.py",
+        "pipeline/ranker/feed_ranker.py"
+      ],
+      "perspective": "bias-diversity",
+      "verdict": {
+        "finding_id": "BIAS-02",
+        "verdict": "confirmed",
+        "confidence": 0.9,
+        "reasoning": "Evidence verified in scripts/top50_export.json at _display_rank 41/44/47: all three are 49-50-article, topically-incoherent grab-bags headlined by opinion/tabloid pieces, with summaries that describe entirely different stories than their titles (each ends in a raw scraped footer like 'Read more at The Daily Beast.', 'first appeared onMediaite.', 'appeared first onAsia Times.'). The specific member lists cited (SAVE Act, Carville, Epstein victim, Buffett/Gates, Megyn Kelly/ACB, Fetterman 'Orgy of Socialism' for #41; USMCA, RFK Jr, car crash, Star Wars settlement, House of the Dragon for #44; China regs, Windsor housing, memory stock, NASA 250th-birthday for #47) all appear. All three have summary_tier=None. Root cause is substantially correct: the title/summary mismatch traces to _generate_cluster_summary() in pipeline/clustering/story_cluster.py:232, which selects the LONGEST raw member-article summary (an unrelated member for a grab-bag cluster) rather than an LLM summary when summary_tier is None; and _generate_cluster_title() (story_cluster.py:166) scores headlines by entity coverage + length with only a mild clickbait-phrase penalty and NO opinion/tabloid/source-agreement penalty, so a scare-quote opinion piece wins. Two imprecisions: (1) the finding blames Phase 5 mega-cluster capping, but mega_cluster_capped=False on all three, so the over-merge comes from earlier merge phases / the loose MERGE_HARD_CEILING=120, not Phase 5; (2) the raw-summary fallback lives in story_cluster.py, not cluster_summarizer.py as stated. Neither imprecision undermines the finding's substance. Severity lowered from critical to high: the defect is genuine and user-visible (and it also corrupts the bias-diversity aggregates the reviewer cares about, since consensus/lean stats are computed over 50 unrelated articles), but it is confined to 3 of 50 slots at lower ranks 41/44/47 and is a quality/correctness defect rather than a crash, security, or feed-blocking failure.",
+        "severity_adjusted": "high"
+      }
+    },
+    {
+      "id": "BIAS-03",
+      "title": "Divergence/consensus points (void's flagship perspective-diversity feature) dead or boilerplate on 60% of the feed",
+      "severity": "high",
+      "evidence": "21/50 clusters have EMPTY divergence_points AND consensus_points (ranks 6,11,12,14,16,20,21,22,24,26,32,33,34,35,37,43,44,47,48,49,50). Another 9/50 carry only generic boilerplate with no story-specific content: e.g. #23 and #41 show divergence 'Sources show significant differences in political framing (lean spread: N points)' / 'Sources differ in the depth of their factual sourcing' and consensus 'Coverage maintains a measured tone across sources'. Only 20/50 clusters (the flash / flash-lite tiers) carry substantive, story-specific points (e.g. #42 Singham DOJ probe). All 30 empty/boilerplate clusters coincide exactly with summary_tier=None.",
+      "affected_ranks": [
+        6,
+        11,
+        12,
+        14,
+        16,
+        20,
+        21,
+        22,
+        23,
+        24,
+        26,
+        32,
+        33,
+        34,
+        35,
+        37,
+        41,
+        43,
+        44,
+        47,
+        48,
+        49,
+        50
+      ],
+      "root_cause": "The LLM summarizer did not run on 30/50 clusters (summary_tier=None). On this branch the tail was intended to route to Groq/llama for summaries + divergence/consensus, but the tier is never stamped and the clusters fall through to cluster_summarizer's rule-based fallback, which produces empty lists or the templated 'lean spread'/'measured tone' strings. The result is that void's core 'where sources agree/disagree' value proposition is absent from the entire lower half of the feed.",
+      "proposed_fix": "Ensure the Groq tail path actually executes and stamps summary_tier (and populates divergence/consensus) for tail clusters; if it cannot, either exclude no-tier clusters from the top-50 or backfill divergence/consensus from the rule-based bias metrics with story-specific entities rather than generic templates.",
+      "code_targets": [
+        "pipeline/summarizer/cluster_summarizer.py",
+        "pipeline/main.py",
+        "pipeline/briefing/daily_brief_generator.py"
+      ],
+      "perspective": "bias-diversity",
+      "verdict": {
+        "finding_id": "BIAS-03",
+        "verdict": "partially_confirmed",
+        "confidence": 0.9,
+        "reasoning": "Observable evidence is exact and verified in scripts/top50_export.json: 21/50 clusters have empty divergence_points AND consensus_points at precisely the cited ranks (6,11,12,14,16,20,21,22,24,26,32,33,34,35,37,43,44,47,48,49,50); 9/50 (17,18,19,23,25,28,31,39,41) carry generic boilerplate matching the quoted #23/#41 text verbatim; 20/50 (9 flash + 11 flash-lite) carry substantive story-specific points (#42 Singham confirmed). All 30 empty/boilerplate clusters have summary_tier=None. The 21 empty clusters are multi-source (8-46 sources, mostly 30+), so this is a genuine defect, not the legitimate single-source case — a 40-source story renders a blank perspective-diversity panel. Real user-facing degradation on 60% of the feed.\n\nRoot cause is only partially correct. The proximate correlation (tier=None = no LLM enrichment) is right, but the code attribution is wrong: cluster_summarizer.py has NO rule-based divergence/consensus fallback (the boilerplate strings do not exist there). The boilerplate is generated by _generate_consensus_divergence in main.py:509-609; the fully-empty case is _generate_cluster_consensus_divergence (main.py:796) returning early at line 823-824 when bias_scores are missing — an enrichment/data-gap path, not a summarizer routing issue. \"The tier is never stamped\" is imprecise: step 7b (main.py:2234) does stamp 'flash' on successful Groq calls; tier=None just means the LLM did not run/succeed for that cluster. Also, the DB snapshot contains 11 'flash-lite' tier values that the current branch code never writes (it only writes 'sonnet'/'flash'), indicating the export reflects mixed/historical runs, so the branch-specific 'Groq tail' narrative is not cleanly substantiated.\n\nSeverity lowered from high to medium: impact is real (flagship feature blank on 42% of the feed, boilerplate on another 18%), but it is degradation of a supplementary feature (summaries still present for tiered clusters, top-10 fully populated), the root cause is misattributed, and the proposed fix points at the wrong module (cluster_summarizer.py) rather than the actual main.py enrichment early-return and the missing-LLM-enrichment gate.",
+        "severity_adjusted": "medium"
+      }
+    },
+    {
+      "id": "BIAS-04",
+      "title": "Political-lean signal regressed to center (mean 50.7) on every cluster; diversity indicator is cosmetic",
+      "severity": "high",
+      "evidence": "bias_diversity.avg_political_lean is 45-58 for all 50 clusters (mean 50.7, most 49-53) even though per-cluster lean_range is 60-70, i.e. individual member outlets DO span left and right. A genuinely left- or right-slanted story cannot surface as such because the displayed number always sits at ~50. #40 (SCOTUS presidential-firing expansion) reads 45 and #46 (EU/China) reads 58 — a 13-point total spread across the entire feed.",
+      "affected_ranks": [
+        1,
+        40,
+        42,
+        46,
+        49
+      ],
+      "root_cause": "Per-article lean = text_weight*keyword_score + baseline_weight*source_baseline (political_lean.py:887-895), and _keyword_lean_score returns 50.0 (neutral) whenever thin RSS text lacks >=4 distinct partisan keywords (political_lean.py:632-634). The cluster then averages these near-50 per-article scores across 30-50 ideologically opposed sources, so the mean mechanically collapses to ~50. Cluster-mean aggregation cancels opposing leans, making avg_political_lean uninformative.",
+      "proposed_fix": "Display lean dispersion (lean_range / lean_spread / a left-right source split) rather than, or alongside, the mean, since the mean of a balanced multi-source cluster is trivially ~50 and hides the actual spread. Consider surfacing the distribution (how many left vs center vs right outlets) as the perspective-diversity indicator instead of a single centered number.",
+      "code_targets": [
+        "pipeline/analyzers/political_lean.py:_keyword_lean_score",
+        "pipeline/analyzers/political_lean.py:analyze_political_lean"
+      ],
+      "perspective": "bias-diversity",
+      "verdict": {
+        "finding_id": "BIAS-04",
+        "verdict": "partially_confirmed",
+        "confidence": 0.74,
+        "reasoning": "Evidence is real and accurately reported. In scripts/top50_export.json, avg_political_lean across the 50 clusters is min 45 / max 58 / mean 50.68 / stdev 2.14, with 41/50 in 49-53; #40=45 and #46=58 give the claimed 13-point full-feed spread. lean_range (12-79) and lean_spread (mean 10.19) confirm member outlets genuinely span left-right while the cluster mean collapses to ~50. Root cause is substantially correct: the dominant, mathematically-guaranteed driver is cluster-mean cancellation of opposing leans across 30-50 balanced sources, and the length-adaptive blend at political_lean.py:887-895 plus the sigmoid dampening (x0=4, line 651) do push thin-RSS per-article scores toward center (the code's own comments at 869-876 admit this). Two imprecisions: (1) the cited line 632-634 returns 50.0 only in the zero-keyword branch, not a hard <4-keyword return; the >=4 is the sigmoid x0. (2) Thin text re-weights toward the SOURCE BASELINE (up to 0.50), so per-article scores retain lean signal rather than collapsing to 50 outright — though averaging opposed baselines still cancels to ~50, so the conclusion holds. Severity is overstated: \"diversity indicator is cosmetic\" is partly refuted because lean_spread/lean_range ARE computed and surfaced — HomeContent.tsx:465-475 maps them into biasSpread and Sigil.tsx:360/MicroSpectrum draws a bell whose width equals leanSpread. The genuine residual issue is that the DIRECTION indicator (BiasSnapshot leanLabel(politicalLean) and the spectrum center) reads ~Center for every cluster, hiding directional slant. That is an inherent property of a mean, not a regression or defect, and dispersion is already partly visualized. Valid observation, real evidence, but not high severity.",
+        "severity_adjusted": "medium"
+      }
+    },
+    {
+      "id": "BIAS-06",
+      "title": "Single-source-dominated clusters presented as multi-source consensus; state media surfaced unlabeled",
+      "severity": "medium",
+      "evidence": "8/50 clusters draw >=35% of their linked articles from one publisher: #24 'U.S. Dollar closes lower on Taipei forex market - Focus Taiwan' 32/50 = 64%, #38 'South Africa Cuts Fuel Prices...' 25/49 = 51%, #8 'Spain's Migrant Regularization' 23/50 = 46%, #33 'South Korea, Japan deepen AI and defense' 23/52 = 44%, #22 'North Carolina jail takeover' 16/37 = 43%, #28 'Santorini winemakers' 20/50 = 40%, #44 'Biden blasts Reflecting Pool' 19/49 = 39%, #46 'EU Sets October Deadline for China' 19/50 = 38%. #24 in particular is 64% wire-copy from a single outlet yet is presented with the same multi-source styling as diverse clusters. Separately, #23 '‘It could fall any moment’: RT reports from scene of Venezuela quake' is headlined by Russian state media (RT) with no state-affiliation label, and its consensus_points are the generic 'neutral framing' boilerplate.",
+      "affected_ranks": [
+        8,
+        22,
+        24,
+        28,
+        33,
+        38,
+        44,
+        46,
+        23
+      ],
+      "root_cause": "Neither feed_ranker nor the cluster export computes a source-concentration (single-publisher share / wire-duplication) penalty, so a 64%-one-outlet cluster ranks identically to a genuinely diverse one. is_wire_copy/wire_origin flags exist in the schema (per CLAUDE.md) but are not applied as a diversity discount here. State-media surfacing as a cluster headline is not penalized, and political_lean's state_affiliated correction (political_lean.py:867,897) does not propagate to a homepage label.",
+      "proposed_fix": "Add a source-concentration term to rank_world that penalizes clusters where one publisher (or wire-origin group) exceeds ~35% of members, and surface a state-affiliated badge when the representative headline is from a state_affiliated source (RT #23). Also reconcile the source_count field with actual distinct source_id (mismatched on #12: 34 vs 40, #47: 40 vs 46) so the displayed diversity count is truthful.",
+      "code_targets": [
+        "pipeline/ranker/feed_ranker.py",
+        "pipeline/clustering/story_cluster.py",
+        "pipeline/analyzers/political_lean.py"
+      ],
+      "perspective": "bias-diversity",
+      "verdict": {
+        "finding_id": "BIAS-06",
+        "verdict": "confirmed",
+        "confidence": 0.9,
+        "reasoning": "Every concrete claim verifies against scripts/top50_export.json. All 8 single-publisher concentration ratios match exactly (computed from _articles source_id counts): #24=32/50 (64%), #38=25/49 (51%), #8=23/50 (46%), #33=23/52 (44%), #22=16/37 (43%), #28=20/50 (40%), #44=19/49 (39%), #46=19/50 (38%); the \"8/50 >=35%\" count is precise (next are #13 34%, #11 33%, both below). #23 is titled \"RT reports from scene of Venezuela quake\" with generic boilerplate consensus_points, and RT is in data/sources.json as broadcast/far-right/RU. source_count mismatches confirmed: #12 34 vs 40 distinct, #47 40 vs 46. Root cause confirmed: pipeline/ranker/feed_ranker.py uses source_count only as a feed-lead minimum threshold (lines 154-183), with no single-publisher-share or wire-duplication penalty in the rank_world formula; no is_wire_copy/wire_origin/state_affiliated field exists in the export; political_lean.py:897 only floors the baseline scoring weight for state-affiliated sources and does not propagate a homepage label; frontend BiasSnapshot.tsx/HomeContent.tsx render bare source_count with no concentration adjustment, so #24 (64% one outlet) displays like a diverse cluster. Severity stays medium: real transparency/editorial-integrity gap (hidden concentration, unlabeled state media) but not a crash/security/feed-breaking defect. Only soft spot is the source_count-reconciliation sub-item, where the mismatch under-reports diversity rather than over-reports, but the cited values are accurate and it is a secondary fix.",
+        "severity_adjusted": "medium"
+      }
+    }
+  ],
+  "totalFindings": 33
+}

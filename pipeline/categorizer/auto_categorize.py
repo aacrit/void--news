@@ -11,8 +11,18 @@ Uses rule-based NLP (no LLM API calls):
 """
 
 import re
+from functools import lru_cache
 
 from utils.nlp_shared import get_nlp
+
+
+@lru_cache(maxsize=4096)
+def _keyword_pattern(keyword: str) -> "re.Pattern":
+    """Word-boundary matcher for a keyword. Boundaries are alphanumeric edges,
+    so short tokens ('ev', 'epa', 'eu', 'ko') match only as standalone words,
+    never inside 'review'/'repatriates'/'campaign'. Phrases with spaces
+    ('electric vehicle', 'heat wave') match verbatim. (2026-07-01 review CAT-3)"""
+    return re.compile(r"(?<![a-z0-9])" + re.escape(keyword) + r"(?![a-z0-9])")
 
 
 # ---------------------------------------------------------------------------
@@ -116,6 +126,14 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         "tech regulation": 3, "antitrust": 2, "data privacy": 3,
         "social media": 2, "algorithm": 2, "encryption": 2,
         "startup": 1, "unicorn": 2,
+        # Consumer tech / messaging apps (2026-07-01 review CAT-4): a pure
+        # app story like "WhatsApp to launch usernames" matched no tech
+        # keyword and fell to conflict via a GPE boost.
+        "whatsapp": 3, "telegram app": 3, "signal app": 3, "imessage": 3,
+        "messaging app": 3, "username": 2, "usernames": 2, "sim card": 2,
+        "sim-binding": 3, "smartphone": 2, "iphone": 2, "android": 2,
+        "instagram": 2, "tiktok": 2, "youtube": 1, "gadget": 2,
+        "operating system": 2, "data center": 2, "chip": 1, "chipmaker": 3,
     },
     "health": {
         "vaccine": 3, "vaccination": 3, "disease": 2, "hospital": 2,
@@ -150,6 +168,12 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         "earthquake": 2, "tsunami": 2, "volcanic": 2,
         "water quality": 3, "air quality": 3, "smog": 3,
         "plastic": 1, "microplastic": 3, "ocean acidification": 3,
+        # Extreme-heat vocabulary (2026-07-01 review CAT-4): a heatwave
+        # cluster matched no environment keyword and fell to "general".
+        "heat wave": 3, "heatwave": 3, "heat advisory": 3, "extreme heat": 3,
+        "record heat": 3, "record temperatures": 3, "heat-related": 3,
+        "scorching": 2, "sweltering": 2, "heat dome": 3, "temperatures": 1,
+        "wildfires": 3, "blaze": 1,
     },
     "conflict": {
         "war": 3, "military": 3, "attack": 2, "troops": 3,
@@ -396,18 +420,27 @@ def categorize_article(article: dict) -> list[str]:
         return ["general"]  # safe default for empty articles
 
     # 1. Keyword matching scores (title keywords get 2x weight)
+    #
+    # 2026-07-01 (review CAT-3): keyword hits are matched on WORD BOUNDARIES,
+    # not raw substrings. The old combined_lower.count(keyword) matched short
+    # abbreviations inside unrelated words — "ev" inside "review"/"revolution",
+    # "epa" inside "repatriates", "ai" inside "campaign" — which made
+    # `environment` a false-positive magnet (the #1 SCOTUS lead was tagged
+    # environment via "ev"). _boundary_count() requires non-alphanumeric
+    # neighbors so "ev" only matches the standalone token.
     title_lower = title.lower()
     category_scores: dict[str, float] = {}
     for category, keywords in CATEGORY_KEYWORDS.items():
         score = 0.0
         for keyword, weight in keywords.items():
-            count = combined_lower.count(keyword)
+            pat = _keyword_pattern(keyword)
+            count = len(pat.findall(combined_lower))
             if count > 0:
                 # Normalize by word count to avoid length bias
                 density = count / max(word_count / 100, 1)
                 score += density * weight
             # Title bonus: keywords in the title are the strongest signal
-            if keyword in title_lower:
+            if pat.search(title_lower):
                 score += weight * 2.0
         category_scores[category] = score
 
@@ -551,3 +584,13 @@ def categorize_article(article: dict) -> list[str]:
             break
 
     return result
+
+
+# NOTE (2026-07-01): a title+summary `categorize_cluster()` was prototyped
+# here during the top-50 review, but main's O10 headline-primary path
+# (main.py / rerank.py) proved strictly better — the cluster HEADLINE is immune
+# to the off-topic summary an over-merged cluster accumulates, whereas voting
+# over the summary re-imported that pollution. The engine fixes that made O10
+# correct on the flagged cases live above: word-boundary keyword matching
+# (kills ev/epa/eu/ai substring false positives) and the consumer-tech /
+# extreme-heat vocabulary. No separate cluster-categorizer is needed.

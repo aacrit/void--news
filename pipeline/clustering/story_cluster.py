@@ -61,6 +61,22 @@ except ImportError:  # utils not on path (e.g. isolated unit test)
     def _sanitize_editorial(text):
         return text
 
+# text_sanitizer adds what _sanitize_editorial (em-dash / significance / HTML
+# entities) does not cover (2026-07-01 top-50 review): normalize_headline strips
+# source-name suffixes the O6 whitelist misses (Euractiv, Focus Taiwan, Cyrillic
+# outlets), editorial prefixes (INSIGHT:/Exclusive,) and tabloid epithet leads
+# (Devastating:/Unbothered King:); sanitize_summary strips CMS/RSS scaffolding
+# ("appeared first on", "Submitted by ... <date>", twitter embeds) and repairs
+# mid-word "..." truncation on the un-summarized null-tier tail.
+try:
+    from utils.text_sanitizer import normalize_headline, sanitize_summary
+except ImportError:  # pragma: no cover
+    def normalize_headline(t):
+        return t
+
+    def sanitize_summary(t):
+        return t
+
 
 # ---------------------------------------------------------------------------
 # Calibrated thresholds — single source of truth for clustering signal
@@ -132,7 +148,11 @@ def _clean_title(title: str) -> str:
         title = _CAMEL_OUTLET_SUFFIX_RE.sub("", title).strip()
         title = _ACRONYM_SUFFIX_RE.sub("", title).strip()
         title = _DOMAIN_SUFFIX_RE.sub("", title).strip()
-    return title.strip(" \t\n\r-–—|")
+    title = title.strip(" \t\n\r-–—|")
+    # Final deterministic pass for the suffix/prefix/epithet shapes the O6
+    # whitelist above misses (Euractiv, Focus Taiwan, Cyrillic outlets,
+    # INSIGHT:/Exclusive,/Devastating:/epithet leads). Idempotent.
+    return normalize_headline(title)
 
 
 def _mostly_ascii(text: str, threshold: float = 0.7) -> bool:
@@ -338,7 +358,14 @@ def _generate_cluster_summary(articles: list[dict], title: str = "") -> str:
     )
     if summaries:
         summaries.sort(key=len, reverse=True)
-        return _sanitize_editorial(summaries[0])
+        # sanitize_summary strips CMS/RSS scaffolding + mid-word truncation the
+        # raw member excerpt carries (the null-tier tail ships this verbatim);
+        # _sanitize_editorial then enforces the em-dash / significance rules.
+        for s in summaries:
+            cleaned = sanitize_summary(s)
+            if len(cleaned) >= 40:
+                return _sanitize_editorial(cleaned)
+        return _sanitize_editorial(sanitize_summary(summaries[0]))
     # No usable summary — fall back to an on-topic title, then any title.
     for on_topic_only in (True, False):
         for a in articles:
@@ -346,7 +373,7 @@ def _generate_cluster_summary(articles: list[dict], title: str = "") -> str:
                 continue
             t = (a.get("title", "") or "").strip()
             if t:
-                return _sanitize_editorial(t)
+                return _sanitize_editorial(sanitize_summary(t) or t)
     return ""
 
 
