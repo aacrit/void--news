@@ -61,6 +61,30 @@ HEDGING_PHRASES: list[str] = [
     # a shared editorial stance. (bias-auditor final cycle fix)
     "surely", "any day now", "needless to say", "of course",
     "because nothing says", "just as they have",
+    # -------------------------------------------------------------------
+    # Subtle hedging/uncertainty markers from NLP hedge detection literature
+    # (Hyland 2005, Recasens et al. 2013 "hedges"). These signal editorial
+    # interpretation or rhetorical stance rather than factual reporting.
+    # Each passed the false-positive gate: AP/Reuters do NOT routinely use
+    # these in wire copy.
+    # Evidence: A (corpus-derived), B (frequency-differential)
+    # (computational-linguist expansion 2026-04-03)
+    # -------------------------------------------------------------------
+    "remains to be seen",            # A — hedge signaling editorial skepticism
+    "only time will tell",           # A — hedge signaling editorial uncertainty
+    "make no mistake",               # B — editorial assertion disguised as hedge
+    "to put it mildly",              # B — editorial understatement (ironic hedge)
+    "it goes without saying",        # A — rhetorical presupposition
+    "for better or worse",           # B — editorial equivocation
+    "the jury is still out",         # A — hedge signaling editorial uncertainty
+    "at the end of the day",         # B — editorial summation marker
+    "the bottom line is",            # B — editorial summation marker
+    "let us be clear",               # B — editorial assertion marker
+    "the fact remains",              # B — editorial assertion disguised as factual
+    "like it or not",                # B — editorial stance marker
+    "to say the least",              # B — editorial understatement (ironic hedge)
+    "it is worth noting",            # B — editorial emphasis / meta-commentary
+    "it bears repeating",            # B — editorial emphasis / meta-commentary
 ]
 
 # ---------------------------------------------------------------------------
@@ -151,6 +175,38 @@ VALUE_JUDGMENTS: list[str] = [
     "disappointing", "refreshing", "troubling", "promising",
     "absurd", "ridiculous", "sensible", "wise", "misguided",
     "naive", "cynical", "brave", "cowardly",
+    # -------------------------------------------------------------------
+    # Evaluative adjectives from editorial corpus studies (Koivunen et al.
+    # 2021, Recasens et al. 2013 "subjective intensifiers"). These appear
+    # in opinion/editorial pieces but rarely in AP/Reuters wire copy.
+    # Each passed the false-positive gate: AP/Reuters do NOT routinely use
+    # these as neutral descriptors.
+    # Evidence: A (corpus-derived), C (MBFC methodology)
+    # NOTE: "stunning" excluded — already in sensationalism superlative list.
+    # NOTE: "crucial"/"vital" excluded — AP/Reuters use neutrally in
+    # "crucial vote", "vital infrastructure". Prescriptive uses already
+    # captured by MODAL_PRESCRIPTIVE ("it is crucial that").
+    # (computational-linguist expansion 2026-04-03)
+    # -------------------------------------------------------------------
+    "overdue", "long overdue",       # C — editorial judgment of timing
+    "prudent",                       # C — editorial approval of caution
+    "dubious",                       # A — Recasens: subjective intensifier
+    "laudable",                      # C — editorial approval
+    "deplorable",                    # C — strong editorial condemnation
+    "ill-conceived",                 # C — editorial rejection of policy/plan
+    "short-sighted",                 # C — editorial judgment of foresight
+    "wrongheaded",                   # C — editorial judgment of direction
+    "astounding",                    # A — Recasens: subjective intensifier
+    "appalling",                     # C — editorial moral judgment
+    "remarkable",                    # A — Recasens: subjective intensifier
+    "striking",                      # A — Recasens: subjective intensifier
+    "unprecedented",                 # B — editorial emphasis; AP uses sparingly
+    "inexcusable",                   # C — editorial condemnation
+    "commonsense",                   # C — editorial approval framing
+    "woefully",                      # C — editorial intensifier
+    "egregious",                     # C — editorial condemnation
+    "heartening",                    # C — editorial approval
+    "disheartening",                 # C — editorial disapproval
 ]
 
 # ---------------------------------------------------------------------------
@@ -474,12 +530,36 @@ def _value_judgment_score(text: str) -> float:
     return min(100.0, ratio * 500.0)
 
 
-def analyze_opinion(article: dict) -> dict:
+OPINION_TIER_BASELINES: dict[str, float] = {
+    "us_major": 15.0,
+    "international": 18.0,
+    "independent": 28.0,  # was 22; lifted because independents skew opinion/advocacy
+}
+_OPINION_DEFAULT_BASELINE = 18.0
+
+# Source-type baselines (applied as MAX with tier baseline).  Magazines and
+# investigative/independent types publish predominantly analysis or commentary —
+# their floor should sit in Analysis territory (~35-45) so that short stubs and
+# even moderate-length pieces register above the Reporting threshold without
+# a URL/section marker.
+OPINION_SOURCE_TYPE_BASELINES: dict[str, float] = {
+    "magazine": 38.0,       # The Atlantic, Mother Jones, Jacobin, The Economist
+    "tabloid": 32.0,        # Daily Mail, NY Post — heavy framing, light attribution
+    "independent": 30.0,    # commentary-heavy independents
+    "investigative": 22.0,  # ProPublica, Bellingcat — analytical but sourced
+    "nonprofit": 22.0,      # NPR, PBS — explanatory voice
+}
+
+
+def analyze_opinion(article: dict, source: dict | None = None) -> dict:
     """
     Score where an article falls on the opinion-fact spectrum.
 
     Args:
         article: Dict with keys: full_text, title, summary, section, url.
+        source:  Optional source dict with "tier" field.  Used for
+                 tier-baseline blending on short-text articles so that
+                 scores are not all compressed to a single low bucket.
 
     Returns:
         Dict with "score" (int 0-100) and "rationale" (dict with sub-scores).
@@ -494,7 +574,7 @@ def analyze_opinion(article: dict) -> dict:
             "rationale": {
                 "pronoun_score": 0, "subjectivity_score": 0, "modal_score": 0,
                 "hedging_score": 0, "attribution_score": 50, "metadata_score": 0,
-                "rhetorical_score": 0, "value_judgment_score": 0,
+                "value_judgment_score": 0,
                 "absolutist_assertion_score": 0,
                 "classification": "Reporting", "dominant_signals": [],
             },
@@ -507,7 +587,6 @@ def analyze_opinion(article: dict) -> dict:
     hedging = _hedging_score(combined)
     attribution = _attribution_score(combined)
     metadata = _metadata_score(article)
-    rhetorical = _rhetorical_question_score(combined)
     value_judg = _value_judgment_score(combined)
     absolutist = _absolutist_assertion_score(combined)
 
@@ -526,16 +605,24 @@ def analyze_opinion(article: dict) -> dict:
     # absolutist_assertion at 0.13 captures state-media and ideological op-ed
     # voice ("historical inevitability", "firmly opposes", "no force can
     # prevent") that TextBlob subjectivity misses on declarative assertions.
+    # 2026-05-21 nlp-engineer dead-signal removal:
+    #   • rhetorical removed: naive ?-counter; 0.61% mean contribution per
+    #     bias-auditor data. The 2026-05-13 weight bump (0.04→0.06) didn't
+    #     move the needle. Op-eds that use rhetorical questions already
+    #     score high on absolutist + pronoun, so the signal is fully
+    #     redundant. Weight redistributed to absolutist (captures the same
+    #     editorial intent — categorical assertion — with higher precision).
+    #   • Weights still sum to 1.00: 0.12 + 0.18 + 0.12 + 0.06 + 0.15 +
+    #     0.12 + 0.06 + 0.19 = 1.00.
     weighted = (
         pronoun * 0.12
         + subjectivity * 0.18
         + modal * 0.12
-        + hedging * 0.08
+        + hedging * 0.06
         + attribution * 0.15
         + metadata * 0.12
-        + rhetorical * 0.04
         + value_judg * 0.06
-        + absolutist * 0.13
+        + absolutist * 0.19  # absorbed 0.06 from removed rhetorical
     )
 
     # Metadata override: when URL/section explicitly marks content as
@@ -553,7 +640,34 @@ def analyze_opinion(article: dict) -> dict:
         # Blog/personal essay → floor at 35
         weighted = max(weighted, 35.0)
 
-    score = max(0, min(100, int(round(weighted))))
+    raw_score = max(0.0, min(100.0, weighted))
+
+    # Tier-baseline blending: lifts near-zero scores on short stubs using
+    # source reputation.  Uses max() so the baseline acts as a FLOOR, never
+    # pulling down legitimately high opinion scores (e.g. opinion pieces with
+    # metadata floors from URL/section markers).
+    #
+    # Source-type baseline (2026-05-13): production sample showed only 0.9% of
+    # articles scoring ≥60 on opinion_fact despite the source list containing
+    # ~88 magazines + ~24 commentary-heavy independents + many partisan outlets.
+    # The URL/section metadata gate misses most op-eds because RSS feeds don't
+    # preserve `/opinion/` markers reliably.  Use source.type as a secondary
+    # signal — magazines and independents publish predominantly analysis voice,
+    # so their floor lives in Analysis territory.
+    full_text = article.get("full_text", "") or ""
+    word_count = len((full_text or "").split())
+    if source:
+        tier = (source.get("tier") or "").lower()
+        tier_baseline = OPINION_TIER_BASELINES.get(tier, _OPINION_DEFAULT_BASELINE)
+        src_type = (source.get("type") or "").lower()
+        type_baseline = OPINION_SOURCE_TYPE_BASELINES.get(src_type, 0.0)
+        # Use the higher of tier vs source-type baseline (additive lift, not double-apply).
+        effective_baseline = max(tier_baseline, type_baseline)
+        text_weight = min(1.0, word_count / 500.0)
+        blended = text_weight * raw_score + (1.0 - text_weight) * effective_baseline
+        raw_score = max(raw_score, blended)
+
+    score = max(0, min(100, int(round(raw_score))))
 
     # Derive classification label
     if score <= 25:
@@ -566,16 +680,17 @@ def analyze_opinion(article: dict) -> dict:
         classification = "Editorial"
 
     # Identify dominant signals (top 3 by weighted contribution)
+    # Weights here MUST mirror the `weighted` formula above. The 0.19
+    # absolutist weight absorbed the removed rhetorical 0.06.
     signal_contributions = [
         ("subjectivity", subjectivity * 0.18),
+        ("absolutist_assertions", absolutist * 0.19),
         ("attribution_gaps", attribution * 0.15),
-        ("absolutist_assertions", absolutist * 0.13),
         ("pronouns", pronoun * 0.12),
         ("modal_language", modal * 0.12),
         ("metadata", metadata * 0.12),
-        ("hedging", hedging * 0.08),
+        ("hedging", hedging * 0.06),
         ("value_judgments", value_judg * 0.06),
-        ("rhetorical_questions", rhetorical * 0.04),
     ]
     signal_contributions.sort(key=lambda x: x[1], reverse=True)
     dominant = [s[0] for s in signal_contributions[:3] if s[1] > 0]
@@ -589,7 +704,6 @@ def analyze_opinion(article: dict) -> dict:
             "hedging_score": round(hedging, 1),
             "attribution_score": round(attribution, 1),
             "metadata_score": round(metadata, 1),
-            "rhetorical_score": round(rhetorical, 1),
             "value_judgment_score": round(value_judg, 1),
             "absolutist_assertion_score": round(absolutist, 1),
             "classification": classification,

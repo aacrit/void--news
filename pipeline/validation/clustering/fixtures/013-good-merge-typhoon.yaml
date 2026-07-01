@@ -1,0 +1,81 @@
+id: typhoon-philippines-good-merge-2026-04
+name: "Typhoon Hagibis Philippines disaster — known-good merge across 5 sources"
+failure_date: "2026-04-08"
+failure_kind: known-good-merge
+articles:
+  - id: typ-1
+    title: "Super Typhoon Hagibis devastates northern Philippines, 142 dead"
+    summary: "Super Typhoon Hagibis devastated the northern Philippines Tuesday, killing at least 142 people and displacing 480,000."
+    full_text: >
+      Super Typhoon Hagibis devastated the northern Philippines on Tuesday, killing at
+      least 142 people and displacing approximately 480,000 from coastal communities in
+      Cagayan, Isabela, and Aurora provinces, the National Disaster Risk Reduction
+      Council reported. Hagibis made landfall near Casiguran with sustained winds of
+      245 km/h. Philippine President Bongbong Marcos declared a state of national
+      calamity. The Philippine Coast Guard rescued more than 4,200 people overnight.
+      Power was out across more than two-thirds of Luzon. The storm was the strongest
+      to hit the country since Typhoon Yolanda in 2013. International aid offers came
+      from Japan, the US and Singapore within twelve hours of landfall.
+    source: { slug: gma-news, country: PH, tier: domestic }
+    published_at: "2026-04-08T06:00Z"
+  - id: typ-2
+    title: "Typhoon Hagibis kills 142 in Philippines, Marcos declares calamity"
+    summary: "Typhoon Hagibis has killed 142 in the Philippines and President Bongbong Marcos has declared a state of calamity."
+    full_text: >
+      Typhoon Hagibis has killed at least 142 in the Philippines and President Bongbong
+      Marcos has declared a state of calamity, as the country battles its worst storm
+      since 2013. The Reuters wire reports power outages affecting more than 16 million
+      residents of Luzon. The Philippine Red Cross warned of imminent water-borne
+      disease risks in displacement camps. International aid pledges have begun arriving.
+    source: { slug: reuters, country: PH, tier: wire }
+    published_at: "2026-04-08T07:00Z"
+  - id: typ-3
+    title: "Philippines storm: Hagibis rescue effort widens"
+    summary: "The Philippines storm rescue effort widened Tuesday afternoon as additional military helicopters and naval vessels were dispatched to Cagayan."
+    full_text: >
+      The Philippines storm rescue effort widened on Tuesday afternoon as additional
+      military helicopters and naval vessels were dispatched to Cagayan and Isabela.
+      The BBC's Manila correspondent reports the death toll is expected to climb sharply
+      as rescue teams reach isolated coastal villages. Officials cautioned that
+      flooding from the Cagayan River could persist for several days. Schools across
+      Luzon will remain closed at least through Friday.
+    source: { slug: bbc, country: GB, tier: international }
+    published_at: "2026-04-08T08:30Z"
+  - id: typ-4
+    title: "Marcos calls for international aid as Typhoon Hagibis death toll rises"
+    summary: "President Bongbong Marcos called for international aid Tuesday as the Typhoon Hagibis death toll rose to 142."
+    full_text: >
+      President Bongbong Marcos called for international aid on Tuesday as the Typhoon
+      Hagibis death toll in the Philippines rose to 142, with at least 80 still missing.
+      The Manila Bulletin reports Japan was the first foreign government to dispatch
+      relief supplies, with a Self Defense Force C-2 transport aircraft expected at
+      Manila within 36 hours. The US Pacific Command said two MV-22 Osprey aircraft
+      stationed at Camp Hansen were on standby. The European Civil Protection
+      Mechanism pledged emergency tents for 25,000 people. Australia offered a
+      one-million-dollar initial contribution.
+    source: { slug: manila-bulletin, country: PH, tier: domestic }
+    published_at: "2026-04-08T10:00Z"
+  - id: typ-5
+    title: "Philippines: Typhoon Hagibis among deadliest in a decade"
+    summary: "The Philippines: Typhoon Hagibis is among the deadliest storms in a decade, with at least 142 confirmed dead in northern Luzon."
+    full_text: >
+      The Philippines: Typhoon Hagibis is among the deadliest storms to hit the country
+      in a decade, with at least 142 confirmed dead in northern Luzon, the AP reports.
+      Cagayan and Isabela provinces bore the brunt of 245-km/h winds. The Philippine
+      meteorological agency PAGASA had upgraded Hagibis to a super typhoon eight hours
+      before landfall, which officials credited with limiting casualties. Rescue
+      operations continue. The death toll is expected to rise as remote villages are
+      reached.
+    source: { slug: ap-news, country: US, tier: wire }
+    published_at: "2026-04-08T11:30Z"
+expectation:
+  type: should_merge
+  expected_member_ids: [typ-1, typ-2, typ-3, typ-4, typ-5]
+  min_clusters: 1
+  max_clusters: 1
+  min_source_count: 4
+rationale: |
+  Known-good baseline. Natural-disaster coverage with shared entities
+  (Hagibis, Philippines, Marcos, Cagayan) and dense vocabulary overlap
+  merges reliably under the current algorithm. Regression-detection
+  fixture for the rewrite — must continue to merge.

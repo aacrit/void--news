@@ -1,11 +1,28 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
+import "../styles/spectrum.css";
+import {
+  getLeanColor,
+  leanLabel,
+  leanLabelAbbr,
+  leanToBucket,
+} from "../lib/biasColors";
+import {
+  computeKDE,
+  robustBandwidth,
+  normalizeKDE,
+  kdeToCubicPath,
+  getYOnCurve,
+} from "../lib/kde";
 
 /* ---------------------------------------------------------------------------
-   DeepDiveSpectrum — Full-width bias spectrum with categorized sources.
-   7-zone gradient bar on top, sources grouped by lean bucket below.
-   Shows top sources per category; "More" expands gracefully downward.
+   DeepDiveSpectrum — Spectrum Visualization System
+   Three toggleable views: Ink Ridge, Witness Line, Terrain Map.
+   Container reads/writes localStorage "void-spectrum-view".
+
+   Architecture: SVG renders distribution shape only; HTML renders sources.
    --------------------------------------------------------------------------- */
 
 export interface DeepDiveSpectrumSource {
@@ -14,49 +31,26 @@ export interface DeepDiveSpectrumSource {
   sourceUrl: string;
   tier: string;
   politicalLean: number;
-  /** Factual rigor score 0–100 (from bias_scores) */
+  /** Factual rigor score 0-100 (from bias_scores) */
   factualRigor?: number;
-  /** Raw confidence 0–1 from pipeline */
+  /** Raw confidence 0-1 from pipeline */
   confidence?: number;
 }
 
-type LeanCategory =
-  | "far-left"
-  | "left"
-  | "center-left"
-  | "center"
-  | "center-right"
-  | "right"
-  | "far-right";
+// (single organic view — no toggle)
 
-const LEAN_ZONES: { key: LeanCategory; label: string; shortLabel: string }[] = [
-  { key: "far-left", label: "Far Left", shortLabel: "Far L" },
-  { key: "left", label: "Left", shortLabel: "Left" },
-  { key: "center-left", label: "Center Left", shortLabel: "Ctr-L" },
-  { key: "center", label: "Center", shortLabel: "Ctr" },
-  { key: "center-right", label: "Center Right", shortLabel: "Ctr-R" },
-  { key: "right", label: "Right", shortLabel: "Right" },
-  { key: "far-right", label: "Far Right", shortLabel: "Far R" },
-];
+/* ── Helpers ────────────────────────────────────────────────────────────── */
 
-function leanToBucket(lean: number): LeanCategory {
-  if (lean <= 14) return "far-left";
-  if (lean <= 28) return "left";
-  if (lean <= 42) return "center-left";
-  if (lean <= 57) return "center";
-  if (lean <= 71) return "center-right";
-  if (lean <= 85) return "right";
-  return "far-right";
-}
-
-function leanLabel(lean: number): string {
-  if (lean <= 20) return "Far Left";
-  if (lean <= 35) return "Left";
-  if (lean <= 45) return "Center Left";
-  if (lean <= 55) return "Center";
-  if (lean <= 65) return "Center Right";
-  if (lean <= 80) return "Right";
-  return "Far Right";
+function getFaviconUrl(sourceUrl: string): string {
+  if (!sourceUrl) return "";
+  try {
+    const domain = new URL(
+      sourceUrl.startsWith("http") ? sourceUrl : `https://${sourceUrl}`
+    ).hostname;
+    return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+  } catch {
+    return "";
+  }
 }
 
 function tierLabel(tier: string): string {
@@ -65,29 +59,41 @@ function tierLabel(tier: string): string {
   return "Independent";
 }
 
-function getFaviconUrl(sourceUrl: string): string {
-  if (!sourceUrl) return "";
-  try {
-    const domain = new URL(
-      sourceUrl.startsWith("http") ? sourceUrl : `https://${sourceUrl}`
-    ).hostname;
-    return `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
-  } catch {
-    return "";
+/* ── Hover fan-out clustering ─────────────────────────────────────────────
+   Groups source pins whose x-coordinates are within `threshold` SVG units
+   of each other, so a hover-expand can fan overlapping circles into a
+   readable arc and each one can be clicked through to its article. */
+function clusterPinsByX<T extends { x: number }>(pins: T[], threshold = 8): T[][] {
+  if (pins.length === 0) return [];
+  const sorted = pins
+    .map((p, i) => ({ p, i }))
+    .sort((a, b) => a.p.x - b.p.x);
+  const groups: T[][] = [[sorted[0].p]];
+  for (let k = 1; k < sorted.length; k++) {
+    const last = groups[groups.length - 1];
+    if (sorted[k].p.x - last[last.length - 1].x <= threshold) {
+      last.push(sorted[k].p);
+    } else {
+      groups.push([sorted[k].p]);
+    }
   }
+  return groups;
 }
 
-/** Sort sources within a bucket: us_major first, then by factual rigor desc */
-function sortBucket(sources: DeepDiveSpectrumSource[]): DeepDiveSpectrumSource[] {
-  return [...sources].sort((a, b) => {
-    const tierRank = (t: string) => t === "us_major" ? 0 : t === "international" ? 1 : 2;
-    const td = tierRank(a.tier) - tierRank(b.tier);
-    if (td !== 0) return td;
-    return (b.factualRigor ?? 50) - (a.factualRigor ?? 50);
+/* Pre-compute each pin's hover-translate offset so we can drive the fan-out
+   purely with a CSS transition (no React state per hover). Pins are
+   distributed along a 140° upward arc centered above their cluster. */
+function fanOffsets(count: number, radius = 22): { dx: number; dy: number }[] {
+  if (count <= 1) return [{ dx: 0, dy: 0 }];
+  const span = Math.PI * 0.78; // ~140°
+  const start = -Math.PI / 2 - span / 2;
+  return Array.from({ length: count }, (_, i) => {
+    const t = i / (count - 1);
+    const angle = start + t * span;
+    return { dx: Math.cos(angle) * radius, dy: Math.sin(angle) * radius };
   });
 }
 
-/** Compute trust score: tierScore * 0.4 + factualRigor * 0.4 + confidence * 0.2 */
 function computeTrustScore(source: DeepDiveSpectrumSource): number {
   const tierScore = source.tier === "us_major" ? 60 : source.tier === "international" ? 50 : 40;
   const rigor = source.factualRigor ?? 50;
@@ -95,201 +101,802 @@ function computeTrustScore(source: DeepDiveSpectrumSource): number {
   return Math.round(tierScore * 0.4 + rigor * 0.4 + conf * 0.2);
 }
 
-function trustClass(score: number): string {
-  if (score >= 70) return "dd-spectrum__trust-dot--high";
-  if (score >= 40) return "dd-spectrum__trust-dot--medium";
-  return "dd-spectrum__trust-dot--low";
+/** Weighted mean lean (us_major = weight 3, international = 2, independent = 1) */
+function weightedMeanLean(sources: DeepDiveSpectrumSource[]): number {
+  let wSum = 0, wTotal = 0;
+  for (const s of sources) {
+    const w = s.tier === "us_major" ? 3 : s.tier === "international" ? 2 : 1;
+    wSum += s.politicalLean * w;
+    wTotal += w;
+  }
+  return wTotal > 0 ? wSum / wTotal : 50;
 }
 
-const INITIAL_PER_BUCKET = 2;
+/* ── Lean gradient stops for SVG (CSS vars for theme reactivity) ────── */
 
-/* ---------------------------------------------------------------------------
-   Main component
-   --------------------------------------------------------------------------- */
+const LEAN_GRADIENT_STOPS: Array<{ offset: string; color: string }> = [
+  { offset: "0%", color: "var(--bias-far-left)" },
+  { offset: "16%", color: "var(--bias-left)" },
+  { offset: "32%", color: "var(--bias-center-left)" },
+  { offset: "50%", color: "var(--bias-center)" },
+  { offset: "68%", color: "var(--bias-center-right)" },
+  { offset: "84%", color: "var(--bias-right)" },
+  { offset: "100%", color: "var(--bias-far-right)" },
+];
+
+/* ── Min gap for 2-row source collision detection (% of container width) ── */
+const MIN_GAP_PCT = 5.5;
+
+/* ── Tooltip shared ──────────────────────────────────────────────────── */
+
+interface TooltipData {
+  source: DeepDiveSpectrumSource;
+  x: number;
+  y: number;
+}
+
+function SpectrumTooltip({ data }: { data: TooltipData }) {
+  // Portal to document.body so the tooltip's `position: fixed` is viewport-
+  // anchored. Without this, the tooltip inherits the deep-dive-panel's
+  // transform-induced containing block (panel uses `translate(-50%, -50%)`)
+  // — `position: fixed` then resolves against the panel, not the viewport,
+  // and `data.x/y` (viewport coords from getBoundingClientRect on hover)
+  // land in the wrong place. Per CEO 2026-05-15: tooltip "in random place."
+  if (typeof document === "undefined") return null;
+  return createPortal(
+    <div
+      className="dd-sv__tooltip"
+      style={{ left: `${data.x}px`, top: `${data.y}px` }}
+      role="tooltip"
+    >
+      <p className="dd-sv__tooltip-name">{data.source.name}</p>
+      <p className="dd-sv__tooltip-lean">
+        <span
+          className="dd-sv__tooltip-dot"
+          style={{ backgroundColor: getLeanColor(data.source.politicalLean) }}
+          aria-hidden="true"
+        />
+        {leanLabel(data.source.politicalLean)}
+        <span className="dd-sv__tooltip-score">{data.source.politicalLean}</span>
+      </p>
+      <p className="dd-sv__tooltip-tier">{tierLabel(data.source.tier)}</p>
+      {(data.source.factualRigor != null || data.source.confidence != null) && (
+        <p className="dd-sv__tooltip-trust">
+          Trust {computeTrustScore(data.source)}
+          {data.source.factualRigor != null && <> &middot; Rigor: {data.source.factualRigor}</>}
+          {data.source.confidence != null && <> &middot; Conf: {Math.round(data.source.confidence * 100)}%</>}
+        </p>
+      )}
+      <p className="dd-sv__tooltip-hint">
+        <a
+          href={data.source.articleUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="dd-sv__tooltip-link"
+          onClick={(e) => e.stopPropagation()}
+        >
+          &#x2197; Open article
+        </a>
+      </p>
+    </div>,
+    document.body,
+  );
+}
+
+/* ── Axis — gradient bar with explicit Left / Center / Right labels ──── */
+
+function SpectrumAxis() {
+  return (
+    <div className="dd-sv__axis" aria-hidden="true">
+      <div className="dd-sv__axis-bar" />
+      <div className="dd-sv__axis-labels">
+        <span className="dd-sv__axis-label dd-sv__axis-label--left">Left</span>
+        <span className="dd-sv__axis-label dd-sv__axis-label--center">Center</span>
+        <span className="dd-sv__axis-label dd-sv__axis-label--right">Right</span>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   FaviconAvatar — HTML avatar with img + fallback letter
+   ═══════════════════════════════════════════════════════════════════════ */
+
+function FaviconAvatar({
+  source,
+  size = 20,
+  onPointerEnter,
+  onPointerLeave,
+}: {
+  source: DeepDiveSpectrumSource;
+  size?: number;
+  onPointerEnter?: (e: React.PointerEvent) => void;
+  onPointerLeave?: (e: React.PointerEvent) => void;
+}) {
+  const [failed, setFailed] = useState(false);
+  const url = getFaviconUrl(source.sourceUrl);
+  // Use data-lean for border/letter color — CSS vars are theme-reactive, no inline getLeanColor()
+  const leanBucket = leanToBucket(source.politicalLean);
+
+  return (
+    <div
+      className="dd-sv-avatar"
+      data-lean={leanBucket}
+      style={{ width: size, height: size }}
+      title={source.name}
+      onPointerEnter={onPointerEnter}
+      onPointerLeave={onPointerLeave}
+    >
+      {!failed && url ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={url}
+          alt={source.name}
+          width={size - 6}
+          height={size - 6}
+          onError={() => setFailed(true)}
+          className="dd-sv-avatar__img"
+        />
+      ) : (
+        <span className="dd-sv-avatar__letter">
+          {source.name.charAt(0).toUpperCase()}
+        </span>
+      )}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SourceFaviconRow — continuous lean% positioning, 2-row collision
+   Each source placed at its actual lean value. No zone buckets.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+function SourceFaviconRow({
+  sources,
+  setTooltip,
+}: {
+  sources: DeepDiveSpectrumSource[];
+  setTooltip: (t: TooltipData | null) => void;
+}) {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  const avatarSize = isMobile ? 14 : 20;
+  const rowH = avatarSize + 4; // 4px gap between rows
+
+  // Mobile: limit to top 5 sources by confidence; single-row layout.
+  // Desktop: show all sources with 2-row collision detection.
+  const visibleSources = isMobile
+    ? sources.sort((a, b) => (b.confidence ?? 0) - (a.confidence ?? 0)).slice(0, 5)
+    : sources;
+
+  // Sort by lean, assign row
+  const placed: Array<{ source: DeepDiveSpectrumSource; leftPct: number; row: 0 | 1 }> = useMemo(() => {
+    const sorted = [...visibleSources].sort((a, b) => a.politicalLean - b.politicalLean);
+
+    // Mobile: single-row layout with larger minimum gap
+    if (isMobile) {
+      const MIN_GAP_MOBILE = 8; // 8% gap to fit fewer icons
+      const lastRight = [-Infinity];
+      return sorted
+        .map((s) => {
+          const leftPct = 2 + (s.politicalLean / 100) * 96;
+          // Force single row; skip icons that overlap
+          if (leftPct - lastRight[0] < MIN_GAP_MOBILE) {
+            return null; // Skip overlapping icons on mobile
+          }
+          lastRight[0] = leftPct;
+          return { source: s, leftPct, row: 0 as const };
+        })
+        .filter((x): x is { source: DeepDiveSpectrumSource; leftPct: number; row: 0 } => x !== null);
+    }
+
+    // Desktop: 2-row collision detection
+    const lastRight: [number, number] = [-Infinity, -Infinity];
+    return sorted.map((s) => {
+      const leftPct = 2 + (s.politicalLean / 100) * 96;
+      let row: 0 | 1;
+      if (leftPct - lastRight[0] >= MIN_GAP_PCT) {
+        row = 0;
+      } else if (leftPct - lastRight[1] >= MIN_GAP_PCT) {
+        row = 1;
+      } else {
+        row = 1;
+      }
+      lastRight[row] = leftPct;
+      return { source: s, leftPct, row };
+    });
+  }, [visibleSources, isMobile]);
+
+  // Show "+N more" indicator on mobile if sources were filtered
+  const hiddenCount = isMobile ? Math.max(0, sources.length - visibleSources.length) : 0;
+
+  return (
+    <>
+      <div className="dd-sv-sources" style={{ height: isMobile ? rowH : rowH * 2 }}>
+        {placed.map(({ source, leftPct, row }, i) => (
+          <a
+            key={`pin-${i}`}
+            href={source.articleUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="dd-sv-sources__pin"
+            style={{ left: `${leftPct}%`, top: `${row * rowH}px` }}
+            onPointerEnter={(e) => {
+              const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+              setTooltip({ source, x: rect.left + rect.width / 2, y: rect.top });
+            }}
+            onPointerLeave={() => setTooltip(null)}
+          >
+            <FaviconAvatar source={source} size={avatarSize} />
+          </a>
+        ))}
+      </div>
+      {hiddenCount > 0 && (
+        <div className="dd-sv-sources-more" style={{ fontSize: "11px", color: "var(--fg-tertiary)", marginTop: "4px" }}>
+          +{hiddenCount} more source{hiddenCount !== 1 ? 's' : ''}
+        </div>
+      )}
+    </>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   TiltRow — HTML tilt indicator below SVG, above source row
+   ═══════════════════════════════════════════════════════════════════════ */
+
+function TiltRow({ mean }: { mean: number }) {
+  return (
+    <div className="dd-sv__tilt-row" aria-hidden="true">
+      <div
+        className="dd-sv__tilt-needle"
+        style={{ left: `${mean}%` }}
+      />
+      <span
+        className="dd-sv__tilt-label"
+        style={{ left: `clamp(20px, ${mean}%, calc(100% - 20px))` }}
+      >
+        {leanLabelAbbr(mean)} {Math.round(mean)}
+      </span>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Bimodal detection — two significant peaks with deep valley between them
+   ═══════════════════════════════════════════════════════════════════════ */
+
+interface BimodalPeak { lean: number; density: number; }
+interface BimodalInfo {
+  peaks: BimodalPeak[];
+  valleyLean: number;
+  valleyDensity: number;
+}
+
+function detectBimodal(densities: number[]): BimodalInfo | null {
+  if (densities.length < 10) return null;
+
+  // Find local maxima ≥ 20% of normalized max
+  const peaks: Array<{ idx: number; density: number }> = [];
+  for (let i = 2; i < densities.length - 2; i++) {
+    if (
+      densities[i] > densities[i - 1] &&
+      densities[i] > densities[i + 1] &&
+      densities[i] >= 0.20
+    ) {
+      peaks.push({ idx: i, density: densities[i] });
+    }
+  }
+  if (peaks.length < 2) return null;
+
+  // Top 2 peaks by density
+  peaks.sort((a, b) => b.density - a.density);
+  const [p1, p2] = peaks.slice(0, 2);
+  const [left, right] = p1.idx < p2.idx ? [p1, p2] : [p2, p1];
+
+  // Peaks must be ≥ 15 lean-points apart — prevents noise within center from triggering
+  const leftLean = (left.idx / (densities.length - 1)) * 100;
+  const rightLean = (right.idx / (densities.length - 1)) * 100;
+  if (rightLean - leftLean < 15) return null;
+
+  // Valley between peaks
+  let valleyIdx = left.idx;
+  let valleyDensity = densities[left.idx];
+  for (let i = left.idx; i <= right.idx; i++) {
+    if (densities[i] < valleyDensity) { valleyDensity = densities[i]; valleyIdx = i; }
+  }
+
+  // Bimodal when valley < 55% of lower peak — catches real editorial splits,
+  // not just polar extremes (loosened from 30% per CEO advisory)
+  if (valleyDensity >= Math.min(left.density, right.density) * 0.55) return null;
+
+  return {
+    peaks: [
+      { lean: leftLean, density: left.density },
+      { lean: rightLean, density: right.density },
+    ],
+    valleyLean: (valleyIdx / (densities.length - 1)) * 100,
+    valleyDensity,
+  };
+}
+
+/* ── Dead zone detection — spectrum regions with no coverage ─────────── */
+
+function detectDeadZones(
+  densities: number[]
+): Array<{ startLean: number; endLean: number; midLean: number }> {
+  const zones: Array<{ startLean: number; endLean: number; midLean: number }> = [];
+  const threshold = 0.03; // < 3% of normalized peak = dead zone
+  const minWidth = 14;    // minimum 14 lean-point span to annotate
+
+  let inZone = false;
+  let zoneStart = 0;
+  for (let i = 0; i < densities.length; i++) {
+    const lean = (i / (densities.length - 1)) * 100;
+    if (densities[i] < threshold && !inZone) {
+      inZone = true; zoneStart = lean;
+    } else if (densities[i] >= threshold && inZone) {
+      inZone = false;
+      if (lean - zoneStart >= minWidth) {
+        zones.push({ startLean: zoneStart, endLean: lean, midLean: (zoneStart + lean) / 2 });
+      }
+    }
+  }
+  return zones;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   SpectrumView — merged organic view
+   Ink wash rises (rAF) → stroke draws (dashoffset) → contours settle →
+   amber plumb line drops → bimodal callout appears.
+   Expand toggle: source pins on curve + label strip + scrub line.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+function SpectrumView({ sources, isMobile = false }: { sources: DeepDiveSpectrumSource[]; isMobile?: boolean }) {
+  const fillRef = useRef<SVGPathElement>(null);
+  const strokeRef = useRef<SVGPathElement>(null);
+  const riseRafRef = useRef<number>(0);
+  const svgWrapRef = useRef<HTMLDivElement>(null);
+  const [animated, setAnimated] = useState(false);
+
+  const n = sources.length;
+  const leans = sources.map((s) => s.politicalLean);
+  const mean = weightedMeanLean(sources);
+
+  const W = 400;
+  const svgH = isMobile ? 52 : 60;  // Slightly reduced on mobile to fit safe area
+  const isFlat = n <= 3;  // dot strip — only for ≤3 sources
+  const isLow = n >= 4 && n <= 7; // tight bandwidth + source dots overlay
+  const peakH = isFlat ? 0 : isLow ? 26 : 48;
+
+  // Standard deviation of lean — used for divergence classification
+  const std = useMemo(() => {
+    if (leans.length < 2) return 0;
+    const m = leans.reduce((s, v) => s + v, 0) / leans.length;
+    return Math.sqrt(leans.reduce((s, v) => s + (v - m) ** 2, 0) / leans.length);
+  }, [leans]);
+
+  const densities = useMemo(() => {
+    if (isFlat) return null;
+    // isLow: fixed bw=6 (Silverman at n=5 gives ~12 — obliterates two clusters)
+    const bw = isLow ? 6 : robustBandwidth(leans);
+    const raw = computeKDE(leans, bw, 100);
+    return normalizeKDE(raw);
+  }, [leans, isFlat, isLow]);
+
+  // Paths
+  const paths = useMemo(() => {
+    if (!densities) return null;
+    const scaled = densities.map((d) => d * (peakH / (svgH - 12)));
+    return kdeToCubicPath(scaled, svgH, W, 12);
+  }, [densities, svgH, peakH]);
+
+  // Contour lines: 1 at 50%; 2 (33%+66%) for 16+ sources
+  const contours = useMemo(() => {
+    if (!densities || isFlat || isLow) return [];
+    const thresholds = n >= 16 ? [0.33, 0.66] : [0.5];
+    return thresholds.map((thresh) => {
+      const segments: Array<{ x1: number; x2: number; y: number }> = [];
+      let inRegion = false;
+      let startX = 0;
+      for (let i = 0; i < densities.length; i++) {
+        if (densities[i] >= thresh && !inRegion) {
+          inRegion = true;
+          startX = (i / (densities.length - 1)) * W;
+        } else if ((densities[i] < thresh || i === densities.length - 1) && inRegion) {
+          inRegion = false;
+          const endX = (i / (densities.length - 1)) * W;
+          const y = svgH - thresh * peakH - 12;
+          segments.push({ x1: startX, x2: endX, y });
+        }
+      }
+      return { thresh, segments };
+    });
+  }, [densities, n, svgH, peakH, isFlat, isLow]);
+
+  // Bimodal & dead-zone detection
+  const bimodal = useMemo(() => {
+    if (!densities || isFlat || n < 5) return null;
+    return detectBimodal(densities);
+  }, [densities, isFlat, n]);
+
+  const deadZones = useMemo(() => {
+    if (!densities || isFlat || n < 4) return [];
+    return detectDeadZones(densities);
+  }, [densities, isFlat, n]);
+
+  // 4-state coverage classification
+  // consensus (silent) / leaning / divergent / split
+  type CoverageClass = "consensus" | "leaning" | "divergent" | "split";
+  const coverage = useMemo((): CoverageClass => {
+    if (bimodal) return "split";
+    if (std >= 18) return "divergent";
+    if (mean < 38 || mean > 62) return "leaning";
+    return "consensus";
+  }, [bimodal, std, mean]);
+
+  const gradStops = LEAN_GRADIENT_STOPS;
+
+  // Source pins — each source mapped to its KDE curve (x,y) position
+  const sourcePins = useMemo(() => {
+    const scaledD = densities
+      ? densities.map((d) => d * (peakH / (svgH - 12)))
+      : null;
+    return sources.map((s) => ({
+      source: s,
+      x: (s.politicalLean / 100) * W,
+      y: scaledD ? getYOnCurve(s.politicalLean, scaledD, svgH, 12) : svgH - 8,
+      leanBucket: leanToBucket(s.politicalLean),
+    }));
+  }, [densities, sources, peakH, svgH]);
+
+  // Trigger entrance
+  useEffect(() => {
+    const timer = setTimeout(() => setAnimated(true), 50);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Beat 1 (0ms): fill rises from flat via rAF — 450ms ease-out cubic
+  useEffect(() => {
+    if (!animated || !fillRef.current || !densities || !paths) return;
+    const el = fillRef.current;
+    const finalD = densities.map((d) => d * (peakH / (svgH - 12)));
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.setAttribute("d", kdeToCubicPath(finalD, svgH, W, 12).fillPath);
+      return;
+    }
+
+    const flatD = densities.map(() => 0);
+    let start: number | null = null;
+    function step(ts: number) {
+      if (!start) start = ts;
+      const progress = Math.min((ts - start) / 450, 1);
+      const t = 1 - Math.pow(1 - progress, 3);
+      const interp = flatD.map((f, i) => f + (finalD[i] - f) * t);
+      el.setAttribute("d", kdeToCubicPath(interp, svgH, W, 12).fillPath);
+      if (progress < 1) riseRafRef.current = requestAnimationFrame(step);
+    }
+    riseRafRef.current = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(riseRafRef.current);
+  }, [animated, densities, paths, svgH, peakH]);
+
+  // Beat 2 (150ms): stroke draws via CSS transition on dashoffset
+  useEffect(() => {
+    if (!animated || !strokeRef.current || !paths) return;
+    const el = strokeRef.current;
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const len = el.getTotalLength();
+      el.style.strokeDasharray = `${len}`;
+      el.style.strokeDashoffset = "0";
+      return;
+    }
+
+    const len = el.getTotalLength();
+    el.style.strokeDasharray = `${len}`;
+    el.style.strokeDashoffset = `${len}`;
+    void el.getBoundingClientRect();
+    const timer = setTimeout(() => { el.style.strokeDashoffset = "0"; }, 150);
+    return () => clearTimeout(timer);
+  }, [animated, paths]);
+
+  return (
+    <div className={`dd-sv-view${animated ? " dd-sv-view--animated" : ""}`}>
+      {/* SVG wrapper */}
+      <div
+        ref={svgWrapRef}
+        className="dd-sv-view__svg-wrap"
+      >
+        <svg
+          viewBox={`0 0 ${W} ${svgH}`}
+          width="100%"
+          className="dd-sv-view__svg"
+          preserveAspectRatio="xMidYMid meet"
+          aria-hidden="true"
+        >
+          <defs>
+            {/* Fill gradient — spectrum colors at medium opacity */}
+            <linearGradient id="sv-lean-grad" x1="0" y1="0" x2="1" y2="0">
+              {gradStops.map((s) => (
+                <stop key={s.offset} offset={s.offset} stopColor={s.color} stopOpacity="0.38" />
+              ))}
+            </linearGradient>
+            {/* Stroke gradient — same spectrum, full opacity for the curve line */}
+            <linearGradient id="sv-lean-stroke-grad" x1="0" y1="0" x2="1" y2="0">
+              {gradStops.map((s) => (
+                <stop key={`stroke-${s.offset}`} offset={s.offset} stopColor={s.color} stopOpacity="0.9" />
+              ))}
+            </linearGradient>
+            {/* Ink wash filter on fill only — not stroke — 8+ sources */}
+            {n >= 8 && (
+              <filter id="sv-ink-wash" x="-5%" y="-5%" width="110%" height="110%">
+                <feTurbulence
+                  type="turbulence"
+                  baseFrequency="0.012 0.025"
+                  numOctaves="1"
+                  seed="42"
+                  result="turb"
+                />
+                <feDisplacementMap in="SourceGraphic" in2="turb" scale="1.8" />
+              </filter>
+            )}
+          </defs>
+
+          {/* Dot strip — ≤3 sources: honest dots, no KDE curve.
+              Clustered so overlapping circles fan out + become clickable on hover. */}
+          {isFlat && (
+            <>
+              <line
+                x1="10" y1={svgH - 8} x2={W - 10} y2={svgH - 8}
+                stroke="url(#sv-lean-stroke-grad)" strokeWidth="0.75" opacity="0.4"
+              />
+              {clusterPinsByX(
+                sources.map((s) => ({
+                  source: s,
+                  x: (s.politicalLean / 100) * W,
+                  y: svgH - 8,
+                  leanBucket: leanToBucket(s.politicalLean),
+                })),
+                10
+              ).map((cluster, ci) => {
+                // Subtle fan radius — user feels the resolve, doesn't see the move.
+                const offsets = fanOffsets(cluster.length, 10);
+                const overlap = cluster.length > 1;
+                return (
+                  <g
+                    key={`flat-cluster-${ci}`}
+                    className={`dd-sv-view__cluster${overlap ? " dd-sv-view__cluster--overlap" : ""}`}
+                  >
+                    {cluster.map((pin, i) => (
+                      <g
+                        key={`flat-pin-${ci}-${i}`}
+                        className="dd-sv-view__pin"
+                        style={{
+                          ["--fan-dx" as string]: `${offsets[i].dx}px`,
+                          ["--fan-dy" as string]: `${offsets[i].dy}px`,
+                          transformBox: "fill-box",
+                          transformOrigin: "center",
+                        }}
+                      >
+                        <a
+                          href={pin.source.articleUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="dd-sv-view__pin-anchor"
+                          aria-label={`${pin.source.name} — open article`}
+                        >
+                          <circle
+                            cx={pin.x}
+                            cy={pin.y}
+                            r="5"
+                            fill="none"
+                            strokeWidth="1.5"
+                            className="dd-sv-view__dot"
+                            data-lean={pin.leanBucket}
+                          />
+                          <title>{pin.source.name}</title>
+                        </a>
+                      </g>
+                    ))}
+                  </g>
+                );
+              })}
+            </>
+          )}
+
+          {/* Beat 1: Ink wash fill — rises first, soft organic texture */}
+          {paths && (
+            <path
+              ref={fillRef}
+              d={paths.fillPath}
+              fill="url(#sv-lean-grad)"
+              filter={n >= 8 ? "url(#sv-ink-wash)" : undefined}
+              className="dd-sv-view__fill"
+            />
+          )}
+
+          {/* Beat 3 (350ms): Contour lines — topographic depth, dashed */}
+          {contours.map((contour, ci) =>
+            contour.segments.map((seg, si) => (
+              <line
+                key={`contour-${ci}-${si}`}
+                x1={seg.x1} y1={seg.y} x2={seg.x2} y2={seg.y}
+                stroke="var(--fg-tertiary)"
+                strokeWidth="0.5"
+                strokeDasharray="4 3"
+                className="dd-sv-view__contour"
+                style={{ transitionDelay: `${350 + ci * 80}ms` }}
+              />
+            ))
+          )}
+
+          {/* Beat 2 (150ms): Stroke — chromatic curve, blue→green→red spectrum */}
+          {paths && (
+            <path
+              ref={strokeRef}
+              d={paths.strokePath}
+              fill="none"
+              stroke="url(#sv-lean-stroke-grad)"
+              strokeWidth="1.8"
+              className="dd-sv-view__stroke"
+            />
+          )}
+
+          {/* Source dots overlay — n=4-7 only.
+              Clustered + fan-out on hover so overlapping pins become readable
+              and each one resolves to its article on click. */}
+          {isLow && densities && clusterPinsByX(sourcePins, 8).map((cluster, ci) => {
+            // Subtle fan radius — half of the original 22px arc so the
+            // movement reads as "barely shifting" rather than "popping out".
+            const offsets = fanOffsets(cluster.length, 12);
+            const overlap = cluster.length > 1;
+            return (
+              <g
+                key={`pin-cluster-${ci}`}
+                className={`dd-sv-view__cluster${overlap ? " dd-sv-view__cluster--overlap" : ""}`}
+              >
+                {cluster.map((pin, i) => (
+                  <g
+                    key={`pin-${ci}-${i}`}
+                    className="dd-sv-view__pin"
+                    style={{
+                      ["--fan-dx" as string]: `${offsets[i].dx}px`,
+                      ["--fan-dy" as string]: `${offsets[i].dy}px`,
+                      transformBox: "fill-box",
+                      transformOrigin: "center",
+                    }}
+                  >
+                    <a
+                      href={pin.source.articleUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="dd-sv-view__pin-anchor"
+                      aria-label={`${pin.source.name} — open article`}
+                    >
+                      <circle
+                        cx={pin.x}
+                        cy={pin.y}
+                        r="2.5"
+                        fill="none"
+                        strokeWidth="1.5"
+                        className="dd-sv-view__src-dot"
+                        data-lean={pin.leanBucket}
+                      />
+                      <title>{pin.source.name}</title>
+                    </a>
+                  </g>
+                ))}
+              </g>
+            );
+          })}
+
+          {/* Beat 4 (400ms): Amber plumb line — weighted mean */}
+          {!isFlat && (
+            <line
+              x1={(mean / 100) * W} y1={4}
+              x2={(mean / 100) * W} y2={svgH - 4}
+              stroke="var(--cin-amber)"
+              strokeWidth="0.75"
+              strokeDasharray="3 2"
+              className="dd-sv-view__mean"
+            />
+          )}
+
+          {/* Beat 5 (500ms): Bimodal peak dots — only when split detected */}
+          {bimodal && bimodal.peaks.map((peak, pi) => {
+            const x = (peak.lean / 100) * W;
+            const scaledD = densities!.map((d) => d * (peakH / (svgH - 12)));
+            const y = getYOnCurve(peak.lean, scaledD, svgH, 12);
+            const anchor = x > W * 0.75 ? "end" : x < W * 0.25 ? "start" : "middle";
+            return (
+              <g key={`bm-peak-${pi}`} className="dd-sv-view__bm-peak">
+                <circle cx={x} cy={y} r="2.5" fill="var(--fg-muted)" opacity="0.6" />
+                <text
+                  x={x} y={y - 7}
+                  textAnchor={anchor}
+                  fill="var(--fg-muted)"
+                  fontSize="6"
+                  fontFamily="var(--font-data)"
+                  letterSpacing="0.04em"
+                >
+                  {leanLabelAbbr(peak.lean)}
+                </text>
+              </g>
+            );
+          })}
+
+          {/* Dead zone annotations */}
+          {deadZones.map((zone, zi) => (
+            <text
+              key={`dead-${zi}`}
+              x={(zone.midLean / 100) * W}
+              y={svgH - 3}
+              textAnchor="middle"
+              fill="var(--fg-muted)"
+              fontSize="5.5"
+              fontFamily="var(--font-data)"
+              className="dd-sv-view__dead-label"
+            >
+              no coverage
+            </text>
+          ))}
+
+        </svg>
+      </div>
+
+      {/* Coverage banner removed per CEO 2026-05-13 — the visualization itself
+          already shows whether coverage is split / divergent / leaning; the
+          redundant text label was visually misplaced and added no signal. */}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   Container — DeepDiveSpectrum
+   ═══════════════════════════════════════════════════════════════════════ */
+
 interface DeepDiveSpectrumProps {
   sources: DeepDiveSpectrumSource[];
 }
 
 export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
-  const [expanded, setExpanded] = useState(false);
-  const [tooltip, setTooltip] = useState<{
-    source: DeepDiveSpectrumSource;
-    x: number;
-    y: number;
-  } | null>(null);
+  const [tooltip, setTooltip] = useState<TooltipData | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const mean = useMemo(() => weightedMeanLean(sources), [sources]);
 
-  // Group sources into lean buckets
-  const buckets = useMemo(() => {
-    const map = new Map<LeanCategory, DeepDiveSpectrumSource[]>();
-    for (const zone of LEAN_ZONES) map.set(zone.key, []);
-    for (const s of sources) {
-      const bucket = leanToBucket(s.politicalLean);
-      map.get(bucket)!.push(s);
-    }
-    // Sort each bucket
-    for (const [key, arr] of map) map.set(key, sortBucket(arr));
-    return map;
-  }, [sources]);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    setIsMobile(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
-  // Count how many are hidden
-  const totalHidden = useMemo(() => {
-    let hidden = 0;
-    for (const arr of buckets.values()) {
-      if (arr.length > INITIAL_PER_BUCKET) hidden += arr.length - INITIAL_PER_BUCKET;
-    }
-    return hidden;
-  }, [buckets]);
-
-  const hasAnySources = sources.length > 0;
-
-  if (!hasAnySources) {
+  if (sources.length === 0) {
     return (
-      <div className="dd-spectrum" role="img" aria-label="No sources available for spectrum">
-        <div className="dd-spectrum__bar" aria-hidden="true">
-          {LEAN_ZONES.map((zone) => (
-            <div key={zone.key} className="dd-spectrum__bar-zone">
-              <span className="dd-spectrum__zone-label">{zone.label}</span>
-            </div>
-          ))}
-        </div>
-        <div className="dd-spectrum__empty">
-          <span>No sources</span>
-        </div>
+      <div className="dd-sv" role="img" aria-label="No sources available for spectrum">
+        <div className="dd-sv__empty">No sources</div>
       </div>
     );
   }
 
   return (
-    <div className="dd-spectrum" role="img" aria-label="Article political lean spectrum with sources">
-      {/* ---- 7-zone gradient bar ---- */}
-      <div className="dd-spectrum__bar" aria-hidden="true">
-        {LEAN_ZONES.map((zone) => (
-          <div key={zone.key} className="dd-spectrum__bar-zone">
-            <span className="dd-spectrum__zone-label">{zone.label}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* ---- Source columns: one per lean zone ---- */}
-      <div className="dd-spectrum__columns">
-        {LEAN_ZONES.map((zone) => {
-          const zoneSources = buckets.get(zone.key) || [];
-          const visible = expanded ? zoneSources : zoneSources.slice(0, INITIAL_PER_BUCKET);
-          const overflow = zoneSources.length - visible.length;
-
-          return (
-            <div key={zone.key} className={`dd-spectrum__col${zoneSources.length === 0 ? " dd-spectrum__col--empty" : ""}`}>
-              {visible.map((source, i) => {
-                const favicon = getFaviconUrl(source.sourceUrl);
-                return (
-                  <a
-                    key={source.articleUrl || `${source.name}-${i}`}
-                    className="dd-spectrum__source"
-                    href={source.articleUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`${source.name}: ${leanLabel(source.politicalLean)} — click to read article`}
-                    onPointerEnter={(e) => {
-                      const rect = e.currentTarget.getBoundingClientRect();
-                      setTooltip({ source, x: rect.left + rect.width / 2, y: rect.top });
-                    }}
-                    onPointerLeave={() => setTooltip(null)}
-                    style={{ animationDelay: `${i * 40}ms` }}
-                  >
-                    <span className="dd-spectrum__source-icon">
-                      {favicon ? (
-                        <>
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={favicon}
-                            alt=""
-                            width={14}
-                            height={14}
-                            className="dd-spectrum__source-favicon"
-                            loading="lazy"
-                            onError={(e) => {
-                              const t = e.currentTarget;
-                              t.style.display = "none";
-                              const fb = t.nextElementSibling as HTMLElement | null;
-                              if (fb) fb.style.display = "flex";
-                            }}
-                          />
-                          <span className="dd-spectrum__source-fallback" style={{ display: "none" }}>
-                            {source.name.charAt(0)}
-                          </span>
-                        </>
-                      ) : (
-                        <span className="dd-spectrum__source-fallback">{source.name.charAt(0)}</span>
-                      )}
-                      <span
-                        className={`dd-spectrum__trust-dot ${trustClass(computeTrustScore(source))}`}
-                        aria-hidden="true"
-                      />
-                    </span>
-                    <span className="dd-spectrum__source-name">{source.name}</span>
-                  </a>
-                );
-              })}
-              {/* Overflow count (shown when collapsed) */}
-              {!expanded && overflow > 0 && (
-                <span className="dd-spectrum__col-more">+{overflow}</span>
-              )}
-            </div>
-          );
-        })}
-      </div>
-
-      {/* ---- Expand / Collapse ---- */}
-      {totalHidden > 0 && (
-        <button
-          className="dd-spectrum__expand"
-          onClick={() => setExpanded(!expanded)}
-          type="button"
-          aria-expanded={expanded}
-          aria-label={expanded ? "Show fewer sources" : `Show ${totalHidden} more sources`}
-        >
-          {expanded ? "Show less" : `+${totalHidden} more sources`}
-        </button>
-      )}
-
-      {/* ---- Tooltip ---- */}
-      {tooltip && (
-        <div
-          className="dd-spectrum__tooltip"
-          style={{ left: `${tooltip.x}px`, top: `${tooltip.y}px` }}
-          role="tooltip"
-        >
-          <p className="dd-spectrum__tooltip-name">{tooltip.source.name}</p>
-          <p className="dd-spectrum__tooltip-lean">
-            <span
-              className="dd-spectrum__tooltip-dot"
-              data-lean={leanToBucket(tooltip.source.politicalLean)}
-              aria-hidden="true"
-            />
-            {leanLabel(tooltip.source.politicalLean)}
-            <span className="dd-spectrum__tooltip-score">
-              {tooltip.source.politicalLean}
-            </span>
-          </p>
-          <p className="dd-spectrum__tooltip-tier">
-            {tierLabel(tooltip.source.tier)}
-          </p>
-          {(tooltip.source.factualRigor != null || tooltip.source.confidence != null) && (
-            <p className="dd-spectrum__tooltip-trust">
-              Trust{" "}
-              <span className={`dd-spectrum__trust-dot dd-spectrum__trust-dot--inline ${trustClass(computeTrustScore(tooltip.source))}`} aria-hidden="true" />
-              {" "}{computeTrustScore(tooltip.source)}
-              {tooltip.source.factualRigor != null && (
-                <> &middot; Rigor: {tooltip.source.factualRigor}</>
-              )}
-              {tooltip.source.confidence != null && (
-                <> &middot; Conf: {Math.round(tooltip.source.confidence * 100)}%</>
-              )}
-            </p>
-          )}
-          <p className="dd-spectrum__tooltip-hint">Click to read article</p>
-        </div>
-      )}
+    <div className="dd-sv" role="img" aria-label="Source political lean spectrum">
+      <SpectrumView sources={sources} isMobile={isMobile} />
+      {/* Mobile: hide TiltRow (mean needle + label) to reduce clutter.
+          Desktop: show weighted mean needle and label for additional context. */}
+      {!isMobile && <TiltRow mean={mean} />}
+      <SpectrumAxis />
+      <SourceFaviconRow sources={sources} setTooltip={setTooltip} />
+      {tooltip && <SpectrumTooltip data={tooltip} />}
     </div>
   );
 }

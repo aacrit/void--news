@@ -1,0 +1,92 @@
+id: generic-entity-overmerge-scotus-obama-reject-2026-06-26
+name: "SCOTUS ruling and unrelated Obama event share only generic politician names — must NOT merge"
+failure_date: "2026-06-26"
+failure_kind: generic-entity-bridge
+articles:
+  # Story A — Supreme Court strikes down an emissions rule. The only
+  # low-specificity politician names present are Obama, Biden, Harris.
+  - id: scotus-emissions-1
+    title: "Supreme Court strikes down EPA emissions rule in 6-3 decision"
+    summary: "The Supreme Court struck down the EPA Clean Power Plan emissions rule 6-3, with Justice Kavanaugh writing for the majority."
+    full_text: >
+      The Supreme Court struck down the EPA Clean Power Plan emissions rule on
+      Thursday in a 6-3 decision, with Justice Kavanaugh writing for the majority.
+      The rule, first issued under Obama and later defended by Biden and Harris,
+      had set carbon limits for power plants. Kavanaugh wrote that the EPA lacked
+      clear congressional authorization for the sweeping mandate. The Environmental
+      Protection Agency said it would review compliance pathways. Utility operators
+      welcomed the ruling, while environmental groups said state-level emissions
+      caps remained intact. Solicitor General arguments had leaned on the major
+      questions doctrine.
+    source: { slug: ap-news, country: US, tier: wire }
+    published_at: "2026-06-26T14:00Z"
+  - id: scotus-emissions-2
+    title: "SCOTUS voids Clean Power Plan, Kavanaugh cites major questions doctrine"
+    summary: "The Supreme Court voided the EPA Clean Power Plan, with Justice Kavanaugh citing the major questions doctrine in the 6-3 majority opinion."
+    full_text: >
+      The Supreme Court voided the EPA Clean Power Plan on Thursday, with Justice
+      Kavanaugh citing the major questions doctrine in the 6-3 majority opinion.
+      The emissions rule had originated under Obama, survived a stay, and was
+      reinstated under Biden and Harris before this challenge. The Environmental
+      Protection Agency administrator said the agency respected the decision. Legal
+      scholars said the ruling further narrows EPA rulemaking authority over carbon.
+      West Virginia's attorney general, who led the coalition of challenger states,
+      called the decision a victory for the separation of powers.
+    source: { slug: reuters, country: US, tier: wire }
+    published_at: "2026-06-26T14:40Z"
+
+  # Story B — Obama, Biden, and Harris appear together at a Democratic
+  # fundraiser. Completely unrelated event; shares only {obama, biden, harris}
+  # with Story A and no specific entity (Chicago, DNC, the venue) in common.
+  - id: obama-fundraiser-1
+    title: "Obama, Biden and Harris headline Chicago fundraiser for Democrats"
+    summary: "Obama, Biden, and Harris headlined a Democratic National Committee fundraiser in Chicago, raising a reported 40 million dollars."
+    full_text: >
+      Obama, Biden, and Harris headlined a Democratic National Committee fundraiser
+      in Chicago on Thursday evening, raising a reported 40 million dollars for the
+      party's congressional campaign arm. Obama delivered the keynote at the
+      Auditorium Theatre, urging donors to focus on down-ballot races. Biden
+      thanked grassroots organizers, and Harris spoke about voter mobilization in
+      battleground states. The Democratic National Committee chair introduced the
+      three to a sold-out hall. Organizers said the Chicago event was the largest
+      single-night haul of the cycle.
+    source: { slug: politico, country: US, tier: us_major }
+    published_at: "2026-06-26T15:10Z"
+  - id: obama-fundraiser-2
+    title: "Chicago Democratic gala with Obama, Biden, Harris raises 40 million dollars"
+    summary: "A Chicago Democratic gala featuring Obama, Biden, and Harris raised 40 million dollars for the party's campaign committee."
+    full_text: >
+      A Chicago Democratic gala featuring Obama, Biden, and Harris raised 40 million
+      dollars for the party's congressional campaign committee, organizers said. The
+      Auditorium Theatre event drew donors from across the Midwest. Obama's keynote
+      framed the coming election around economic fairness. Biden and Harris worked
+      the rope line afterward. The Democratic National Committee said proceeds would
+      fund field offices in seven states. The gala ran nearly an hour past schedule.
+    source: { slug: wsj, country: US, tier: us_major }
+    published_at: "2026-06-26T16:00Z"
+expectation:
+  type: should_split
+  member_ids: [scotus-emissions-1, obama-fundraiser-1]
+  min_clusters: 2
+rationale: |
+  Two unrelated stories: a Supreme Court ruling striking down an EPA emissions
+  rule (scotus-emissions-1/2) and a Democratic fundraiser headlined by Obama,
+  Biden, and Harris (obama-fundraiser-1/2). Within each story the pair shares
+  specific entities (Kavanaugh + EPA + Clean Power Plan for the SCOTUS pair;
+  Chicago + DNC + Auditorium Theatre for the fundraiser pair), so Phase 2 merges
+  each pair on its own.
+
+  Across the two stories, the ONLY shared entities are {obama, biden, harris} —
+  all three are politician names in _LOW_SPECIFICITY_ENTITIES and none are
+  stop-listed, so under the bare set-intersection they total 3 and clear the
+  min_shared_entities=3 gate, falsely bridging the SCOTUS ruling to the
+  fundraiser. This was the live failure: a "Supreme Court" card showing callouts
+  about an unrelated Obama story, with a NYT source link opening the Obama
+  article.
+
+  The Phase 2 distinguishing-shared gate fixes this: after removing
+  _LOW_SPECIFICITY_ENTITIES and _ENTITY_STOP_TOKENS, the cross-story shared set
+  is empty, so no distinguishing entity remains and the merge is rejected. The
+  two stories stay in separate clusters. Legitimate multi-desk consolidations
+  (fixture 036, Trump-Iran) still merge because they share a concrete entity
+  (Witkoff, Hormuz, Vance) that survives the generic filter.

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="dark">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>void --news — Offline</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: #1C1A17;
+    color: #D4C5A9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100dvh;
+    padding: 2rem;
+    text-align: center;
+  }
+  .logo {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 2rem;
+    opacity: 0.7;
+  }
+  .logo span { opacity: 0.5; }
+  h1 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(1.25rem, 3vw, 1.5rem);
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #E8D5B5;
+  }
+  p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    max-width: 28rem;
+    opacity: 0.65;
+    margin-bottom: 1.5rem;
+  }
+  button {
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid rgba(212, 197, 169, 0.2);
+    border-radius: 6px;
+    background: transparent;
+    color: #D4C5A9;
+    cursor: pointer;
+    transition: border-color 200ms, background 200ms;
+  }
+  button:hover, button:focus-visible {
+    border-color: rgba(212, 197, 169, 0.4);
+    background: rgba(212, 197, 169, 0.05);
+  }
+  .rule {
+    width: 4rem;
+    height: 1px;
+    background: rgba(212, 197, 169, 0.15);
+    margin: 1.5rem 0;
+  }
+  .hint { font-size: 0.8rem; opacity: 0.4; }
+</style>
+</head>
+<body>
+  <div class="logo">void <span>--news</span></div>
+  <div class="rule"></div>
+  <h1>You're Offline</h1>
+  <p>The presses need a connection. Cached stories may load when you reconnect.</p>
+  <button onclick="location.reload()">Try Again</button>
+  <div class="rule"></div>
+  <p class="hint">Tip: Install void --news for a better offline experience.</p>
+</body>
+</html>

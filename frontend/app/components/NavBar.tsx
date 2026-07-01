@@ -1,37 +1,29 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import type { Edition, Category } from "../lib/types";
-import { EDITIONS } from "../lib/types";
+import { MagnifyingGlass } from "@phosphor-icons/react";
 import ThemeToggle from "./ThemeToggle";
 import PageToggle from "./PageToggle";
 import LogoFull from "./LogoFull";
-import EditionIcon from "./EditionIcon";
 import { getEditionTimestamp } from "../lib/utils";
-import type { LeanChip } from "./FilterBar";
-import { hapticMicro } from "../lib/haptics";
-
-const ALL_CATEGORIES: ("All" | Category)[] = [
-  "All", "Politics", "Economy", "Science", "Health", "Culture",
-];
 
 interface NavBarProps {
-  activeEdition: Edition;
-  /** Filter props — when provided, renders the compact filter row */
-  activeCategory?: "All" | Category;
-  onCategoryChange?: (category: "All" | Category) => void;
-  activeLean?: LeanChip;
-  onLeanChange?: (lean: LeanChip) => void;
+  onSearchClick?: () => void;
+  hasAudio?: boolean;
+  isAudioPlaying?: boolean;
+  onOnairClick?: () => void;
 }
 
 /* ---------------------------------------------------------------------------
-   NavBar — Newspaper masthead with integrated compact filter row
+   NavBar — Single-row masthead
 
-   Row 1: Logo | dateline | Sources | Theme
-   Row 2: [World US India] · [L C R] · [Topics ▾] [×badge]
+   Row 1 (Chrome — structural, about the app):
+     Logo | dateline · timestamp | Spinoffs | Pages | Theme | Search
 
-   Everything in one sticky header. No separate filter bar, no bottom nav.
+   Filters (lean chips + topic dropdown) and the inline Row 2 lens were removed
+   in 2026-05-15 redesign — pure curation, no client-side filtering. The
+   server-side ranker enforces topic diversity and source-count quality floor.
    --------------------------------------------------------------------------- */
 
 function formatDateCompact(): string {
@@ -42,49 +34,57 @@ function formatDateCompact(): string {
   });
 }
 
-function getEditionHref(slug: Edition): string {
-  if (slug === "world") return "/";
-  return `/${slug}`;
-}
-
 export default function NavBar({
-  activeEdition,
-  activeCategory = "All",
-  onCategoryChange,
-  activeLean = "All",
-  onLeanChange,
+  onSearchClick,
 }: NavBarProps) {
-  const [topicOpen, setTopicOpen] = useState(false);
-  const topicRef = useRef<HTMLDivElement>(null);
+  const [mounted, setMounted] = useState(false);
+  // SSR-safe hydration pattern — defer dateline/timestamp render until after
+  // mount so server HTML matches client HTML on first paint (avoids React #418).
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { setMounted(true); }, []);
+  const dateline = mounted ? formatDateCompact() : "            ";
+  const timestamp = mounted ? getEditionTimestamp() : "     ";
 
-  const handleLeanTap = (lean: LeanChip) => {
-    hapticMicro();
-    onLeanChange?.(lean === activeLean ? "All" : lean);
-  };
-
-  const handleTopicTap = (cat: "All" | Category) => {
-    hapticMicro();
-    onCategoryChange?.(cat);
-    setTopicOpen(false);
-  };
-
-  // Close topic dropdown on outside click
+  /* ── Scroll-compact masthead (NYT-style): wires --scroll-nav-compact-* tokens.
+     Adds data-scroll-compact="true" past 80px, removes at ≤40px (hysteresis
+     prevents jitter at threshold). rAF-throttled, passive listener.
+     Desktop-only behavior — mobile nav is a separate component (MobileNav).   */
+  const [scrollCompact, setScrollCompact] = useState(false);
   useEffect(() => {
-    if (!topicOpen) return;
-    const close = (e: MouseEvent) => {
-      if (topicRef.current && !topicRef.current.contains(e.target as Node)) {
-        setTopicOpen(false);
+    let ticking = false;
+    let compact = false;
+
+    const update = () => {
+      ticking = false;
+      const y = window.scrollY;
+      if (!compact && y > 80) {
+        compact = true;
+        setScrollCompact(true);
+      } else if (compact && y <= 40) {
+        compact = false;
+        setScrollCompact(false);
       }
     };
-    document.addEventListener("mousedown", close);
-    return () => document.removeEventListener("mousedown", close);
-  }, [topicOpen]);
 
-  const hasFilters = !!onLeanChange;
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        window.requestAnimationFrame(update);
+      }
+    };
+
+    // Prime initial state (e.g., page reload mid-scroll)
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <header className="nav-header">
-      {/* ── Row 1: Masthead ── */}
+    <header
+      className="nav-header anim-cold-open-nav"
+      data-scroll-compact={scrollCompact ? "true" : undefined}
+    >
+      {/* ── Row 1: Chrome — structural, about the app ── */}
       <nav className="nav-inner" aria-label="Main navigation">
         <div className="nav-left">
           <Link href="/" aria-label="void --news — home" className="nav-logo si-hoverable">
@@ -97,113 +97,61 @@ export default function NavBar({
           </Link>
         </div>
 
-        <span className="nav-dateline-inline" aria-hidden="true">
-          {formatDateCompact()}
+        <span className="nav-dateline-inline" aria-hidden="true" suppressHydrationWarning>
+          {dateline}
           <span className="nav-dateline-inline__sep">&middot;</span>
-          <span className="nav-dateline-inline__time">{getEditionTimestamp(activeEdition)}</span>
+          <span className="nav-dateline-inline__time">{timestamp}</span>
         </span>
-        <span className="nav-dateline-mobile" aria-hidden="true">
-          {formatDateCompact()}
+        <span className="nav-dateline-mobile" aria-hidden="true" suppressHydrationWarning>
+          {dateline}
         </span>
 
+        {/* Spinoff product links — standalone products under the void --news
+            umbrella, treated with italic accents (warm rule + label). */}
+        <nav className="nav-spinoffs" aria-label="Spinoff editions">
+          <Link href="/history" className="nav-history" aria-label="Go to History archive" title="void --history">
+            <span className="nav-history__rule" aria-hidden="true" />
+            <span className="nav-history__label">History</span>
+          </Link>
+          <Link href="/weekly" className="nav-history nav-weekly" aria-label="Go to the Weekly digest" title="void --weekly">
+            <span className="nav-history__rule" aria-hidden="true" />
+            <span className="nav-history__label">Weekly</span>
+          </Link>
+        </nav>
+
         <div className="nav-right">
-          <PageToggle activePage="feed" />
+          {/* Page navigation — destinations.
+              Games + Paper hidden from production nav (not ready). Routes
+              still resolve at /games and /paper for direct URL access. */}
+          <nav className="nav-pages" aria-label="Pages">
+            <PageToggle activePage="feed" />
+            <Link href="/ship" className="nav-page" aria-label="void --ship" title="void --ship">
+              Ship
+            </Link>
+            <Link href="/about" className="nav-page" aria-label="About void --news" title="void --about">
+              About
+            </Link>
+          </nav>
+
+          {/* Search — single icon button. Cmd+K opens overlay. */}
+          {onSearchClick && (
+            <button
+              type="button"
+              className="nav-search-btn"
+              onClick={onSearchClick}
+              aria-label="Search stories (Ctrl+K)"
+              title="Search (Ctrl+K)"
+            >
+              <MagnifyingGlass size={18} weight="regular" aria-hidden="true" />
+            </button>
+          )}
+
+          {/* Utility: Theme (hidden on mobile — ThemeToggle is in MobileSidePanel) */}
           <ThemeToggle />
         </div>
       </nav>
 
-      {/* ── Row 2: Compact filters (editions + lean + topic) ── */}
-      {hasFilters && (
-        <div className="nav-filters">
-          {/* Edition pills */}
-          <div className="nav-filters__group" role="tablist" aria-label="Edition">
-            {EDITIONS.map((ed) => (
-              <Link
-                key={ed.slug}
-                href={getEditionHref(ed.slug)}
-                role="tab"
-                aria-selected={activeEdition === ed.slug}
-                className={`nav-filters__ed${activeEdition === ed.slug ? " nav-filters__ed--active" : ""}`}
-              >
-                <EditionIcon slug={ed.slug} size={11} />
-                <span>{ed.label}</span>
-              </Link>
-            ))}
-          </div>
-
-          <div className="nav-filters__sep" aria-hidden="true" />
-
-          {/* Lean chips */}
-          <div className="nav-filters__group" role="tablist" aria-label="Political perspective">
-            {(["Left", "Center", "Right"] as LeanChip[]).map((lean) => (
-              <button
-                key={lean}
-                role="tab"
-                aria-selected={activeLean === lean}
-                onClick={() => handleLeanTap(lean)}
-                className={`nav-filters__lean nav-filters__lean--${lean.toLowerCase()}${activeLean === lean ? " nav-filters__lean--active" : ""}`}
-              >
-                <span className="nav-filters__lean-dot" aria-hidden="true" />
-                {lean}
-              </button>
-            ))}
-          </div>
-
-          <div className="nav-filters__sep" aria-hidden="true" />
-
-          {/* Topic dropdown */}
-          <div
-            ref={topicRef}
-            className={`nav-filters__topics${topicOpen ? " nav-filters__topics--open" : ""}`}
-          >
-            <button
-              className="nav-filters__topic-trigger"
-              onClick={() => setTopicOpen((v) => !v)}
-              onMouseEnter={() => setTopicOpen(true)}
-              aria-expanded={topicOpen}
-              aria-label="Filter by topic"
-            >
-              {activeCategory === "All" ? "Topics" : activeCategory}
-              <span className={`nav-filters__topic-caret${topicOpen ? " nav-filters__topic-caret--open" : ""}`} aria-hidden="true">&#9662;</span>
-            </button>
-
-            {topicOpen && (
-              <div
-                className="nav-filters__topic-panel"
-                role="listbox"
-                aria-label="Topics"
-                onMouseLeave={() => setTopicOpen(false)}
-              >
-                {ALL_CATEGORIES.map((cat) => (
-                  <button
-                    key={cat}
-                    role="option"
-                    aria-selected={activeCategory === cat}
-                    onClick={() => handleTopicTap(cat)}
-                    className={`nav-filters__topic-opt${activeCategory === cat ? " nav-filters__topic-opt--active" : ""}`}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Active lean badge */}
-          {activeLean !== "All" && (
-            <div className="nav-filters__badge" role="status" aria-live="polite">
-              <span>{activeLean}</span>
-              <button
-                className="nav-filters__badge-x"
-                onClick={() => { hapticMicro(); onLeanChange?.("All"); }}
-                aria-label={`Clear ${activeLean} filter`}
-              >
-                &times;
-              </button>
-            </div>
-          )}
-        </div>
-      )}
+      {/* Mobile edition tabs removed 2026-06-02 single-feed. */}
     </header>
   );
 }

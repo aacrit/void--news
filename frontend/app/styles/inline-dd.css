@@ -1,0 +1,266 @@
+/* ==========================================================================
+   void --news — Cinematic Inline Deep Dive (stage 1: STATIC)
+   ----------------------------------------------------------------------------
+   The InlineDeepDive renders the Deep Dive content IN the feed as a full-width,
+   in-flow block (no fixed positioning, no backdrop, no scroll lock). It reuses
+   the Deep Dive vocabulary (.dd-lede*, .dd-collapsible, .dd-section-label, the
+   .anim-dd-section / .dd-cascade-* cascade, BiasSnapshot, ClaimConsensus,
+   ComparativeView), so this file only adds the in-flow block chrome and the
+   "headline as collapse toggle" masthead.
+
+   It must sit OUTSIDE .feed-grid (between the two split grids in HomeContent)
+   so it is naturally full width. No animation / blur in this stage.
+   ========================================================================== */
+
+.inline-dd {
+  display: block;
+  width: 100%;
+  padding: var(--space-5);
+  margin-block: var(--space-4);
+  /* Transparent so the block reads as part of the feed canvas, not a darker
+     panel sitting on top of it (was var(--bg-primary), which read more black). */
+  background: transparent;
+  /* Top + bottom hairline frame the in-flow block apart from the cards. */
+  border-block: 1px solid var(--border-subtle);
+  /* On open, scrollIntoView({block:"start"}) aligns the top just below the
+     sticky nav instead of under it. */
+  scroll-margin-top: calc(var(--nav-height, 53px) + var(--space-3));
+}
+
+/* ---- Masthead --------------------------------------------------------- */
+
+.inline-dd__header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+/* Masthead toolbar — share + close, right-aligned above the headline. */
+.inline-dd__toolbar {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--space-1);
+  width: 100%;
+  margin-bottom: var(--space-1);
+}
+
+.inline-dd__action {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: var(--fg-tertiary);
+  cursor: pointer;
+  border-radius: var(--radius-sm, 4px);
+  transition:
+    color var(--dur-fast, 150ms) var(--ease-cinematic, ease-out),
+    background-color var(--dur-fast, 150ms) var(--ease-cinematic, ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.inline-dd__action:hover {
+  color: var(--fg-primary);
+  background: color-mix(in srgb, var(--fg-primary) 6%, transparent);
+}
+
+.inline-dd__action:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+/* WCAG 2.5.5 — full 44px tap target on touch pointers. */
+@media (pointer: coarse) {
+  .inline-dd__action { width: 44px; height: 44px; }
+}
+
+.inline-dd__share-toast {
+  position: absolute;
+  top: calc(100% + var(--space-1));
+  right: 0;
+  z-index: 2;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  color: var(--fg-secondary);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm, 4px);
+  padding: 4px 8px;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inline-dd__action { transition: none; }
+}
+
+/* Headline IS the collapse toggle — a reset button styled like .dd-headline. */
+.inline-dd__headline {
+  /* button reset */
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  margin: 0;
+  padding: 0;
+
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  color: var(--fg-primary);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.inline-dd__headline-text {
+  /* Mirror the modal .dd-headline editorial voice. */
+  font-family: var(--font-editorial);
+  font-size: var(--type-lead-headline);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: var(--type-lead-tracking);
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Small caret signalling "collapse" — points up, nudges on hover. */
+.inline-dd__caret {
+  flex: 0 0 auto;
+  align-self: center;
+  color: var(--fg-tertiary);
+  transition:
+    transform var(--dur-fast, 150ms) var(--ease-cinematic, ease-out),
+    color var(--dur-fast, 150ms) var(--ease-cinematic, ease-out);
+}
+
+.inline-dd__headline:hover .inline-dd__caret {
+  color: var(--fg-secondary);
+  transform: translateY(-2px);
+}
+
+.inline-dd__headline:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
+/* Meta row — give it a touch of air below the headline. */
+.inline-dd__meta {
+  margin-top: var(--space-3);
+}
+
+/* ---- Content ---------------------------------------------------------- */
+
+.inline-dd__content {
+  margin-top: var(--space-4);
+  width: 100%;
+}
+
+/* Full-bleed block, capped reading column. The background + hairlines span the
+   full feed width (that is the "feature"), but the masthead + content sit in a
+   centered ~68rem measure so the line length stays readable instead of
+   stretching across the whole broadsheet. Tablet/phone viewports fall below the
+   cap, so this reads as a desktop effect. */
+.inline-dd__header,
+.inline-dd__content {
+  max-width: 68rem;
+  margin-inline: auto;
+}
+
+/* ==========================================================================
+   The Story + The Spread — two stacked sections (replaces the old lede float)
+   ----------------------------------------------------------------------------
+   Inline mode no longer reuses the shared .dd-lede float. The summary ("The
+   Story") sits in a comfortable reading measure; the source-lean spectrum ("The
+   Spread") gets its own full-width landscape band, because the bell curve draws
+   its vertical room from horizontal width (the float forced it ~66px tall and
+   cramped). The modal keeps the .dd-lede float untouched.
+   ========================================================================== */
+
+/* The summary is a single column flowing across the full content width
+   (max-width:none overrides the inherited reading-measure cap). */
+.inline-dd__story .dd-summary-text {
+  max-width: none;
+}
+
+/* The spectrum spans the full content column as a landscape band. */
+.inline-dd__spread {
+  margin-top: var(--space-5);
+}
+.inline-dd__spectrum {
+  width: 100%;
+}
+
+/* The SVG scales uniformly to the band width (~2.7x at full width). Keep the
+   fixed-dash contour / needle + the dots crisp via non-scaling-stroke. The CURVE
+   stroke is excluded on purpose: it draws on via a getTotalLength() dasharray
+   animation, and non-scaling-stroke reinterprets that user-unit length in screen
+   px, which gaps the center. Let it scale normally (continuous) + trim its weight. */
+.inline-dd__spectrum .dd-sv-view__contour,
+.inline-dd__spectrum .dd-sv-view__mean,
+.inline-dd__spectrum .dd-sv-view__dot,
+.inline-dd__spectrum .dd-sv-view__src-dot {
+  vector-effect: non-scaling-stroke;
+}
+.inline-dd__spectrum .dd-sv-view__stroke {
+  stroke-width: 0.8;   /* user units → ~2px at the band scale, continuous */
+}
+
+/* PERF: drop the ink-wash SVG filter (feTurbulence + feDisplacementMap) in the
+   full-width band. It scales with area, so at ~1088px it processes ~7x the
+   pixels of the modal float for a texture that barely reads at this size. */
+.inline-dd__spectrum .dd-sv-view__fill {
+  filter: none;
+}
+
+/* Reduced motion: the caret nudge is the only motion in this stage; disable it. */
+@media (prefers-reduced-motion: reduce) {
+  .inline-dd__caret {
+    transition: none;
+  }
+  .inline-dd__headline:hover .inline-dd__caret {
+    transform: none;
+  }
+}
+
+/* ==========================================================================
+   Sibling rack-focus — other stories recede "backstage" when one is expanded
+   ----------------------------------------------------------------------------
+   When a story is open inline, the remaining cards (both split feed-grids and
+   the twin-lead block) dim and scale down a touch, leaving the expanded .inline-dd
+   block (which sits OUTSIDE these containers) as the one sharp subject.
+   PERF: this uses ONLY opacity + transform (compositor-cheap). An earlier version
+   animated filter: blur() across all ~50 cards at once, which is GPU/paint-heavy
+   and caused jank on open; the extra dim compensates for dropping the blur.
+   ========================================================================== */
+.feed-grid__item,
+.lead-twin {
+  transition:
+    opacity var(--dur-normal, 300ms) var(--ease-rack, ease),
+    transform var(--dur-normal, 300ms) var(--ease-rack, ease);
+}
+
+.feed-grid--recede .feed-grid__item,
+.lead-twin--recede {
+  opacity: 0.42;
+  transform: scale(0.985);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feed-grid--recede .feed-grid__item,
+  .lead-twin--recede {
+    transform: none;
+    opacity: 0.6;                /* dim only — no scale */
+  }
+}

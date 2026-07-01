@@ -48,7 +48,7 @@ html:has(.np-root) body { background: transparent; }
   min-height: 100vh;
   background: var(--np-paper);
   color: var(--np-ink);
-  max-width: 1400px;
+  max-width: var(--canvas-max);
   margin: 0 auto;
   padding: 24px 36px 48px;
   position: relative;
@@ -416,6 +416,52 @@ html:has(.np-root) body { background: transparent; }
   margin: 0 0 5px;
 }
 
+/* --- Front-Page Photograph — 1960s newspaper B&W ----------------------- */
+/*
+ * Full grayscale: saturate(0) strips all color. High contrast (1.15 light,
+ * 1.20 dark) delivers the punchy halftone look of 1960s wire photography.
+ * brightness(1.02) lifts midtones so the desat + contrast combo doesn't
+ * crush shadow detail.
+ *
+ * The e-paper page (.np-root) is NOT inside .page-main, so there is no
+ * compounding with --cin-grade. The image filter is the only filter applied.
+ *
+ * No grain/vignette pseudo-elements — the e-paper design is clean newsprint.
+ * CLS safety: explicit aspect-ratio on the wrapper prevents layout shift.
+ */
+.np-article__image-wrap {
+  position: relative;
+  width: 100%;
+  margin: 0 0 8px;
+  overflow: hidden;
+  background: var(--np-paper);
+}
+
+/* Banner layout: centered image spanning columns */
+.np-article--banner .np-article__image-wrap {
+  aspect-ratio: 16 / 9;
+  max-height: 380px;
+  margin-bottom: 12px;
+}
+
+.np-article__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 400ms ease-out;
+  filter: var(--img-grade-epaper);
+}
+
+.np-article__image--loaded {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .np-article__image { transition: opacity 10ms ease-out; }
+}
+
 /* --- Body Text — Century/Imperial style (Lora) --- */
 .np-article__summary {
   font-family: var(--np-font-body);
@@ -738,9 +784,9 @@ html:has(.np-root) body { background: transparent; }
 }
 
 /* Tablet portrait: 2 columns */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .np-root { padding: 16px 20px 32px; }
-  .np-masthead__nameplate { font-size: 42px; }
+  .np-masthead__nameplate { font-size: clamp(1.75rem, 8vw, 2.625rem); }
 
   .np-front {
     display: block;
@@ -832,6 +878,15 @@ html:has(.np-root) body { background: transparent; }
   }
 
   .np-pdf-action { bottom: 12px; right: 12px; }
+
+  /* Tab bar clearance — content must not hide behind fixed bottom nav */
+  .np-root {
+    padding-bottom: calc(var(--tab-bar-height, 64px) + env(safe-area-inset-bottom, 0px) + var(--space-4, 16px));
+  }
+
+  /* Touch targets — WCAG 44x44px minimum */
+  .np-article { min-height: 44px; }
+  .np-pdf-action { min-height: 44px; min-width: 44px; }
 }
 
 /* ==========================================================================

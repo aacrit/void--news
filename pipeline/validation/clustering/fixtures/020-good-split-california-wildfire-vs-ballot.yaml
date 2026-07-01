@@ -1,0 +1,93 @@
+id: california-wildfire-vs-ballot-good-split-2026-04
+name: "California wildfires vs California Prop 16 ballot (must split)"
+failure_date: "2026-04-30"
+failure_kind: known-good-split
+articles:
+  # ---- Wildfire track ----
+  - id: ca-fire-1
+    title: "California wildfires force 18,000 to evacuate Riverside County"
+    summary: "California wildfires forced 18,000 to evacuate Riverside County Wednesday, with the Apple Fire growing to 47,000 acres."
+    full_text: >
+      California wildfires forced 18,000 residents to evacuate Riverside County on
+      Wednesday, with the Apple Fire growing to 47,000 acres in 36 hours. CalFire
+      reported only 12 percent containment as of evening briefings. The blaze, ignited
+      by a lightning strike Monday night, was driven by Santa Ana winds gusting to 65
+      mph. Governor Gavin Newsom declared a state of emergency. The Federal Emergency
+      Management Agency approved a Fire Management Assistance Grant within four hours.
+      Riverside County Sheriff Chad Bianco described conditions as "the worst since the
+      2018 Camp Fire."
+    source: { slug: la-times, country: US, tier: international }
+    published_at: "2026-04-30T15:00Z"
+  - id: ca-fire-2
+    title: "Apple Fire: California evacuates 18,000 in Riverside County"
+    summary: "The Apple Fire grew to 47,000 acres Wednesday, with California evacuating 18,000 residents in Riverside County."
+    full_text: >
+      The Apple Fire grew to 47,000 acres on Wednesday, with California evacuating
+      18,000 residents in Riverside County, the AP reports. CalFire reported 12 percent
+      containment by early evening. Governor Gavin Newsom toured the staging area at
+      the Riverside County Fairgrounds. Three structures had been confirmed lost. No
+      injuries had been reported. Fire weather watches remained in effect through
+      Thursday morning.
+    source: { slug: ap-news, country: US, tier: wire }
+    published_at: "2026-04-30T16:00Z"
+  - id: ca-fire-3
+    title: "Riverside County wildfire: Newsom declares emergency"
+    summary: "Riverside County wildfire emergency declared by Governor Newsom Wednesday as Apple Fire grew to 47,000 acres."
+    full_text: >
+      Riverside County wildfire emergency declared by Governor Gavin Newsom on Wednesday
+      as the Apple Fire grew to 47,000 acres, KTLA reports. Newsom said the state would
+      "spare no resource" in evacuation and structure protection. Some 18,000 residents
+      have been displaced; San Jacinto evacuation centers were operating at near
+      capacity. CalFire deployed seven additional Type-1 incident management teams from
+      Northern California.
+    source: { slug: ktla, country: US, tier: domestic }
+    published_at: "2026-04-30T17:30Z"
+  # ---- Ballot track ----
+  - id: ca-ballot-1
+    title: "California Prop 16 polls show 53-41 lead for affirmative-action repeal"
+    summary: "California Prop 16 polls show a 53-41 lead for the affirmative-action repeal measure ahead of November's ballot."
+    full_text: >
+      California Prop 16 polls show a 53-41 lead for the affirmative-action repeal
+      measure ahead of November's ballot, the latest UC Berkeley IGS poll found. The
+      Field Poll, taken April 22 to 28, surveyed 1,200 likely voters with a 3.1
+      percent margin of error. The campaign in favor of Prop 16 has out-spent opponents
+      by a 4-to-1 margin, with significant support from the California Restaurant
+      Association and the California Chamber of Commerce. The opposition campaign is
+      led by the ACLU of Southern California.
+    source: { slug: politico, country: US, tier: international }
+    published_at: "2026-04-30T11:00Z"
+  - id: ca-ballot-2
+    title: "Prop 16: California voters lean toward affirmative-action repeal"
+    summary: "Prop 16: California voters lean toward affirmative-action repeal in the latest IGS poll, by a 53-41 margin."
+    full_text: >
+      Prop 16: California voters lean toward affirmative-action repeal in the latest UC
+      Berkeley IGS poll, by a 53-41 margin, the Sacramento Bee reports. The poll
+      surveyed 1,200 likely voters in late April. Support for repeal was strongest
+      among voters over 50, women, and self-identified moderates. Civil-rights
+      organizations including the NAACP have launched a get-out-the-vote effort
+      targeting Bay Area precincts.
+    source: { slug: sacramento-bee, country: US, tier: domestic }
+    published_at: "2026-04-30T12:30Z"
+  - id: ca-ballot-3
+    title: "Affirmative-action repeal leads in California Prop 16 polling"
+    summary: "Affirmative-action repeal leads in California Prop 16 polling, with the IGS poll showing a 53-41 advantage."
+    full_text: >
+      Affirmative-action repeal leads in California Prop 16 polling, with the UC
+      Berkeley IGS poll showing a 53-41 advantage, the Los Angeles Daily News reports.
+      Prop 16 would repeal a constitutional ban on race-based admissions and contracting
+      preferences enacted by 1996's Prop 209. Stanford law professor Alex Lee said the
+      measure faces "a tougher path than the polls suggest" because of strong opposition
+      from California's Asian-American voters in the Bay Area.
+    source: { slug: la-daily-news, country: US, tier: domestic }
+    published_at: "2026-04-30T14:00Z"
+expectation:
+  type: should_split
+  member_ids: [ca-fire-1, ca-fire-2, ca-fire-3, ca-ballot-1, ca-ballot-2, ca-ballot-3]
+  min_clusters: 2
+rationale: |
+  Known-good split. Two distinct California stories sharing GPE
+  "California" — wildfire emergency vs Prop 16 ballot polling. Phase-1
+  TF-IDF separates them on Apple Fire/Newsom/CalFire/Riverside vs Prop
+  16/IGS/Berkeley/affirmative-action vocabulary. California is in the
+  _OVERLY_COMMON_ENTITIES blacklist, so Phase-2 entity merge will not
+  fire. Regression fixture.
