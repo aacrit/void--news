@@ -1,36 +1,26 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo, useCallback, Fragment } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import Link from "next/link";
-import type { HistoricalEvent, Perspective, MediaItem, EventConnection, ConnectionType } from "../types";
+import type { HistoricalEvent, Perspective, MediaItem, ConnectionType } from "../types";
 import { HOOKS, CTAS } from "../hooks";
 import { ARC_FEATURES } from "../arc-features";
 import HistoryAudioCue from "./HistoryAudioCue";
+import ReelScrubber, { type ScrubNode } from "./ReelScrubber";
+import PerspectiveFrame from "./PerspectiveFrame";
+import PerspectiveReader from "./PerspectiveReader";
+import Lightbox from "./Lightbox";
 
 /* ===========================================================================
-   EventDetail — Museum Journey
+   EventDetail — "The Testimony Reel"
    Cardinal rules: Show Not Tell. Arrive Late, Leave Early.
 
-   Hero      — full-screen cinematic entry
-   Crack     — one inscribed line that breaks the textbook
-   Record    — merged facts + figures, aged artifact treatment
-   Context   — balanced full story, significance, legacy
-   Witnesses — perspectives one argument at a time (museum vitrine)
-   Omissions — what each side hides (toggle on mobile)
-   Evidence  — archival gallery
-   Exit      — dossier or cliffhanger
+   The full-screen hero stays the cold open. Beneath it, a thin facts readout,
+   then a horizontal, snap-scrubbable reel: one perspective per frame, then a
+   Threads exit. A drawn ink-track scrubber (echoing the timeline) tracks
+   position; depth lives in a reader overlay. Mobile flips to vertical snap.
    =========================================================================== */
 
-/* ── Perspective color map ── */
-const PERSP_COLORS: Record<string, string> = {
-  a: "var(--hist-persp-a)",
-  b: "var(--hist-persp-b)",
-  c: "var(--hist-persp-c)",
-  d: "var(--hist-persp-d)",
-  e: "var(--hist-persp-e)",
-};
-
-/* ── Connection type priority for sorting ── */
 const CONNECTION_PRIORITY: Record<ConnectionType, number> = {
   caused: 4,
   consequence: 3,
@@ -39,7 +29,6 @@ const CONNECTION_PRIORITY: Record<ConnectionType, number> = {
   parallel: 1,
 };
 
-/* ── Connection type directional glyphs (Show Don't Tell) ── */
 const CONNECTION_GLYPH: Record<ConnectionType, string> = {
   caused: "↓",
   consequence: "↑",
@@ -55,149 +44,199 @@ interface EventDetailProps {
   onClose?: () => void;
 }
 
-export default function EventDetail({ event, allEvents, onNavigateToEvent, onClose }: EventDetailProps) {
-  const contentRef = useRef<HTMLDivElement>(null);
-  // storyExpanded + omissionsView state removed 2026-04-29 — Context paragraphs
-  // and both omissions panels now render inline by default. The "click-tax to
-  // moat" was 7 taps before this change; product promise is multi-perspective
-  // visibility, not progressive disclosure of every section.
+export default function EventDetail({ event, allEvents }: EventDetailProps) {
+  const reelRef = useRef<HTMLDivElement>(null);
+  const [focusedIndex, setFocusedIndex] = useState(0);
+  const [fraction, setFraction] = useState(0);
+  const [reader, setReader] = useState<Perspective | null>(null);
+  const [evidenceIndex, setEvidenceIndex] = useState<number | null>(null);
+  const [isVertical, setIsVertical] = useState(false);
 
-  /* Determine next event for Stage 6 navigation */
+  const perspectives = event.perspectives;
+  const frameCount = perspectives.length + 1; // voices + threads
+
+  /* Background images for voice frames (skip video posters) */
+  const bgImages = useMemo(
+    () => event.media.filter((m) => m.type !== "video"),
+    [event.media]
+  );
+  const bgFor = (i: number): MediaItem | null =>
+    bgImages.length ? bgImages[i % bgImages.length] : null;
+
+  /* Chronological next */
   const nextEvent = useMemo(() => {
     const sorted = [...allEvents].sort((a, b) => a.dateSort - b.dateSort);
     const idx = sorted.findIndex((e) => e.slug === event.slug);
-    if (idx === -1 || idx >= sorted.length - 1) return null;
-    return sorted[idx + 1];
+    return idx === -1 || idx >= sorted.length - 1 ? null : sorted[idx + 1];
   }, [allEvents, event.slug]);
 
-  /* ── Image distribution algorithm — documentary intercut model ──
-     Distributes media across stages: context insert, perspective intercuts,
-     omission exhibit, and remaining gallery. Maps first for context priority. */
-  const { contextImage, perspectiveIntercuts, omissionImage, galleryImages } = useMemo(() => {
-    const media = event.media;
-    if (media.length === 0) return { contextImage: null, perspectiveIntercuts: [], omissionImage: null, galleryImages: [] };
+  const sortedConnections = useMemo(
+    () =>
+      [...event.connections].sort(
+        (a, b) => (CONNECTION_PRIORITY[b.type] ?? 0) - (CONNECTION_PRIORITY[a.type] ?? 0)
+      ),
+    [event.connections]
+  );
 
-    // First map for context, fallback to first image
-    const mapIdx = media.findIndex(m => m.type === 'map');
-    const ctxIdx = mapIdx >= 0 ? mapIdx : 0;
-    const contextImage = media[ctxIdx];
-
-    const remaining = media.filter((_, i) => i !== ctxIdx);
-
-    // Intercuts between witnesses: up to (perspectives - 1)
-    const maxIntercuts = Math.min(
-      Math.max(event.perspectives.length - 1, 0),
-      Math.floor(remaining.length / 2)
-    );
-    const perspectiveIntercuts = remaining.slice(0, maxIntercuts);
-    const afterIntercuts = remaining.slice(maxIntercuts);
-
-    // Omission image only if 6+ total
-    const omissionImage = media.length >= 6 && afterIntercuts.length > 1 ? afterIntercuts[0] : null;
-    const galleryImages = omissionImage ? afterIntercuts.slice(1) : afterIntercuts;
-
-    return { contextImage, perspectiveIntercuts, omissionImage, galleryImages };
-  }, [event.media, event.perspectives.length]);
-
-  /* The crack — hook text */
-  const hook =
-    HOOKS[event.slug] ||
-    (event.contextNarrative || event.title).split(". ").slice(0, 2).join(". ") + ".";
-
-  const sortedConnections = useMemo(() => {
-    return [...event.connections].sort(
-      (a, b) => (CONNECTION_PRIORITY[b.type] ?? 0) - (CONNECTION_PRIORITY[a.type] ?? 0)
-    );
-  }, [event.connections]);
-
-  /* ── Dossier: top 3 connection-ranked events ── */
   const dossierEvents = useMemo(() => {
     if (!ARC_FEATURES.DOSSIER || sortedConnections.length === 0) return [];
-    return sortedConnections.slice(0, 3).map((conn) => {
-      const linked = allEvents.find((e) => e.slug === conn.targetSlug);
-      return { connection: conn, event: linked ?? null };
-    });
+    return sortedConnections.slice(0, 3).map((conn) => ({
+      connection: conn,
+      event: allEvents.find((e) => e.slug === conn.targetSlug) ?? null,
+    }));
   }, [sortedConnections, allEvents]);
 
-  /* ── Sidebar: parallel + consequence connections for "Elsewhere" ── */
-  const sidebarConnections = useMemo(() => {
-    if (!ARC_FEATURES.SIDEBAR) return [];
-    return event.connections.filter(
-      (c) => c.type === "parallel" || c.type === "consequence"
-    );
-  }, [event.connections]);
+  /* Scrubber nodes: one per voice + the threads exit */
+  const scrubNodes = useMemo<ScrubNode[]>(() => {
+    const voices = perspectives.map((p) => ({
+      key: p.id,
+      label: p.viewpointName,
+      sublabel: p.viewpointType,
+      color: `var(--hist-persp-${p.color})`,
+    }));
+    return [
+      ...voices,
+      { key: "threads", label: "Threads", sublabel: "connections", color: "var(--hist-accent)" },
+    ];
+  }, [perspectives]);
 
-  const showSidebar = ARC_FEATURES.SIDEBAR && sidebarConnections.length >= 2;
+  /* Facts readout */
+  const facts = useMemo(() => {
+    const f: { label: string; value: string }[] = [];
+    f.push({ label: "Date", value: event.dateRange || event.datePrimary });
+    if (event.location) f.push({ label: "Location", value: event.location });
+    if (event.deathToll && event.deathToll !== "N/A") f.push({ label: "Killed", value: event.deathToll });
+    if (event.displaced && event.displaced !== "N/A") f.push({ label: "Displaced", value: event.displaced });
+    return f;
+  }, [event]);
 
-  /* ── Scroll reveal observer for all .hist-reveal elements ──
-       Also observes arc connection elements that have their own
-       CSS transitions triggered by hist-reveal--visible:
-       - .hist-thread-stage (parent for divider + lead quote)
-       - .hist-thread-stage__item (staggered connection list items)
-       - .hist-dossier__card (staggered dossier cards)
-       - .hist-sidebar__entry (margin note slide-in) */
+  const cast = useMemo(
+    () => event.keyFigures.slice(0, 5).map((k) => k.name).join("  ·  "),
+    [event.keyFigures]
+  );
+
+  /* Orientation: vertical snap on narrow screens (mirrors the timeline) */
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("hist-reveal--visible");
-          }
-        });
-      },
-      { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
-    );
-
-    const root = contentRef.current;
-    if (!root) return;
-
-    /* Standard stage sections */
-    root.querySelectorAll(".hist-reveal").forEach((el) => observer.observe(el));
-
-    /* Arc connection elements — each observed individually for
-       per-element stagger timing (delays set via inline style) */
-    root.querySelectorAll(
-      ".hist-thread-stage, .hist-thread-stage__item, .hist-dossier__card, .hist-sidebar__entry"
-    ).forEach((el) => observer.observe(el));
-
-    return () => observer.disconnect();
+    const mq = window.matchMedia("(max-width: 1023px)");
+    const apply = () => setIsVertical(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
   }, []);
 
-  /* ── Witness background dimming: when a new witness becomes visible,
-       add background class to previously revealed witnesses ── */
+  /* Scroll choreography: focus tracking + progress fraction + parallax */
   useEffect(() => {
-    const witnesses = contentRef.current?.querySelectorAll(".hist-witness");
-    if (!witnesses || witnesses.length === 0) return;
+    const el = reelRef.current;
+    if (!el) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.3) {
-            /* Mark this witness as the focus */
-            witnesses.forEach((w) => {
-              if (w === entry.target) {
-                w.classList.remove("hist-witness--background");
-              } else if (w.classList.contains("hist-reveal--visible")) {
-                w.classList.add("hist-witness--background");
-              }
-            });
+    const onScroll = () => {
+      const frames = Array.from(el.children) as HTMLElement[];
+      if (frames.length === 0) return;
+
+      let closest = 0;
+      let closestDist = Infinity;
+      if (isVertical) {
+        const center = el.scrollTop + el.clientHeight / 2;
+        frames.forEach((fr, i) => {
+          const c = fr.offsetTop + fr.offsetHeight / 2;
+          const d = Math.abs(c - center);
+          if (d < closestDist) { closestDist = d; closest = i; }
+        });
+        const max = el.scrollHeight - el.clientHeight;
+        setFraction(max > 0 ? el.scrollTop / max : 0);
+      } else {
+        const center = el.scrollLeft + el.clientWidth / 2;
+        frames.forEach((fr, i) => {
+          const c = fr.offsetLeft + fr.offsetWidth / 2;
+          const d = Math.abs(c - center);
+          if (d < closestDist) { closestDist = d; closest = i; }
+        });
+        const max = el.scrollWidth - el.clientWidth;
+        setFraction(max > 0 ? el.scrollLeft / max : 0);
+      }
+      setFocusedIndex(closest);
+
+      /* Parallax: shift each frame's background against the scroll */
+      if (!reduce) {
+        frames.forEach((fr) => {
+          const bg = fr.querySelector<HTMLElement>(".hist-frame__bg");
+          if (!bg) return;
+          if (isVertical) {
+            const rel = (fr.offsetTop - el.scrollTop) / el.clientHeight;
+            bg.style.transform = `translateY(${rel * 40}px) scale(1.14)`;
+          } else {
+            const rel = (fr.offsetLeft - el.scrollLeft) / el.clientWidth;
+            bg.style.transform = `translateX(${rel * 48}px) scale(1.14)`;
           }
         });
-      },
-      { threshold: [0.3], rootMargin: "-10% 0px -10% 0px" }
-    );
+      }
+    };
 
-    witnesses.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
+    onScroll();
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [isVertical, frameCount]);
+
+  /* Desktop: translate vertical wheel into horizontal scrubbing, releasing to
+     the page at the left edge so the reader can scroll back up to the hero. */
+  useEffect(() => {
+    const el = reelRef.current;
+    if (!el || isVertical) return;
+
+    const onWheel = (e: WheelEvent) => {
+      /* Only scrub once the reel has snapped to fill the viewport — otherwise
+         let the page finish scrolling the hero away. */
+      if (el.getBoundingClientRect().top > 2) return;
+      const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+      const max = el.scrollWidth - el.clientWidth;
+      const atLeft = el.scrollLeft <= 0;
+      const atRight = el.scrollLeft >= max - 1;
+      if ((atLeft && delta < 0) || (atRight && delta > 0)) return; // release to page
+      e.preventDefault();
+      el.scrollLeft += delta;
+    };
+
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, [isVertical]);
+
+  const goToFrame = useCallback((i: number) => {
+    const el = reelRef.current;
+    if (!el) return;
+    const frame = el.children[i] as HTMLElement | undefined;
+    if (!frame) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    frame.scrollIntoView({
+      behavior: reduce ? "auto" : "smooth",
+      inline: "center",
+      block: "center",
+    });
   }, []);
 
-  /* Format year for Key Figures: ≤0 = BCE */
-  const fmtYear = (y: number) => y <= 0 ? `${Math.abs(y) + (y === 0 ? 1 : 0)} BCE` : String(y);
+  const onReelKey = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        e.preventDefault();
+        goToFrame(Math.min(focusedIndex + 1, frameCount - 1));
+      } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        e.preventDefault();
+        goToFrame(Math.max(focusedIndex - 1, 0));
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        goToFrame(0);
+      } else if (e.key === "End") {
+        e.preventDefault();
+        goToFrame(frameCount - 1);
+      }
+    },
+    [focusedIndex, frameCount, goToFrame]
+  );
 
   return (
-    <div ref={contentRef} className={`hist-event-detail${showSidebar ? " hist-layout-sidebar" : ""}`}>
+    <div className="hist-event-detail hist-reel-page">
 
-      {/* ── HERO — full-screen cinematic entry, unchanged ── */}
+      {/* ── HERO — full-screen cold open (unchanged) ── */}
       <section className="hist-stage hist-stage--scene">
         <div
           className="hist-stage__hero"
@@ -236,9 +275,7 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
         </div>
       </section>
 
-      {/* ── AUDIO COMPANION — void --onair for history
-           In-flow between Scene and The Crack.
-           Renders only when audio has been generated for this event. ── */}
+      {/* ── AUDIO COMPANION (gated; renders only if generated) ── */}
       {event.audioUrl && (
         <HistoryAudioCue
           audioUrl={event.audioUrl}
@@ -248,574 +285,108 @@ export default function EventDetail({ event, allEvents, onNavigateToEvent, onClo
         />
       )}
 
-      {/* ── CRACK — inscribed line, separate scroll stop ── */}
-      <section className="hist-stage hist-stage--crack">
-        <blockquote className="hist-crack__text hist-reveal">{hook}</blockquote>
-      </section>
-
-      {/* ── RECORD — merged facts + figures, aged artifact ── */}
-      <section className="hist-stage hist-stage--record">
-        <div className="hist-record hist-reveal">
-          <dl className="hist-record__ledger">
-            <div className="hist-record__row">
-              <dt>Date</dt>
-              <dd>{event.dateRange || event.datePrimary}</dd>
-            </div>
-            <div className="hist-record__row">
-              <dt>Location</dt>
-              <dd>{event.location}</dd>
-            </div>
-            {event.duration && (
-              <div className="hist-record__row">
-                <dt>Duration</dt>
-                <dd>{event.duration}</dd>
-              </div>
-            )}
-            {event.deathToll && event.deathToll !== "N/A" && (
-              <div className="hist-record__row">
-                <dt>Killed</dt>
-                <dd>{event.deathToll}</dd>
-              </div>
-            )}
-            {event.displaced && event.displaced !== "N/A" && (
-              <div className="hist-record__row">
-                <dt>Displaced</dt>
-                <dd>{event.displaced}</dd>
-              </div>
-            )}
-          </dl>
-
-          {event.keyFigures.length > 0 && (
-            <>
-              <div className="hist-record__divider" aria-hidden="true" />
-              <dl className="hist-record__ledger hist-record__ledger--figures">
-                {event.keyFigures.map((fig, i) => {
-                  const hasDates = fig.born != null || fig.died != null;
-                  const dateStr = hasDates
-                    ? `${fig.born != null ? fmtYear(fig.born) : "?"}–${fig.died != null ? fmtYear(fig.died) : "?"}`
-                    : null;
-                  return (
-                    <div key={i} className="hist-record__row hist-record__row--figure">
-                      <dt>
-                        {fig.wikipedia ? (
-                          <a
-                            href={fig.wikipedia}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="hist-record__figure-name"
-                            aria-label={`${fig.name} on Wikipedia (opens in new tab)`}
-                          >
-                            {fig.name}
-                          </a>
-                        ) : (
-                          <span className="hist-record__figure-name">{fig.name}</span>
-                        )}
-                        {dateStr && (
-                          <span className="hist-record__figure-dates">{dateStr}</span>
-                        )}
-                      </dt>
-                      <dd>{fig.role}</dd>
-                    </div>
-                  );
-                })}
-              </dl>
-            </>
-          )}
-        </div>
-      </section>
-
-      {/* ── CONTEXT — balanced full story, then significance + legacy ── */}
-      <section className="hist-stage hist-stage--context">
-        <div className="hist-context__body hist-reveal">
-          {(() => {
-            const paragraphs = (event.contextNarrative || "").split("\n").filter(Boolean);
-            const visible = paragraphs.slice(0, 2);
-            const extra = paragraphs.slice(2);
-            return (
-              <>
-                {visible.map((para, i) => (
-                  <Fragment key={i}>
-                    <p>{para}</p>
-                    {i === 0 && contextImage && (
-                      <figure className="hist-context__figure hist-reveal">
-                        <img
-                          src={contextImage.url}
-                          alt={contextImage.caption}
-                          loading="lazy"
-                          onError={(e) => { (e.currentTarget.parentElement as HTMLElement).style.display = "none"; }}
-                        />
-                        <figcaption>
-                          {contextImage.caption}
-                          <span className="hist-context__figure-attr">{contextImage.attribution}</span>
-                        </figcaption>
-                      </figure>
-                    )}
-                  </Fragment>
-                ))}
-
-                {/* Significance — long-term impact pull quote */}
-                {event.significance && (
-                  <blockquote className="hist-context__significance">
-                    {event.significance}
-                  </blockquote>
-                )}
-
-                {extra.length > 0 && (
-                  <div className="hist-context__extra">
-                    {extra.map((para, i) => (
-                          <p key={i + 2}>{para}</p>
-                        ))}
-                        {/* Legacy points — surfaced in expanded section */}
-                        {event.legacyPoints && event.legacyPoints.length > 0 && (
-                          <ul className="hist-context__legacy">
-                            {event.legacyPoints.map((point, li) => (
-                              <li key={li}>{point}</li>
-                            ))}
-                          </ul>
-                        )}
-                  </div>
-                )}
-              </>
-            );
-          })()}
-        </div>
-      </section>
-
-      {/* ── PERSPECTIVES — witnesses, one argument visible, museum vitrine ── */}
-      <section className="hist-stage hist-stage--perspectives">
-        {event.perspectives.map((perspective, i) => (
-          <Fragment key={perspective.id}>
-            <WitnessBlock perspective={perspective} index={i} />
-            {(i + 1) % 2 === 0 && perspectiveIntercuts[Math.floor(i / 2)] && (
-              <figure className="hist-intercut hist-reveal">
-                <img
-                  src={perspectiveIntercuts[Math.floor(i / 2)].url}
-                  alt={perspectiveIntercuts[Math.floor(i / 2)].caption}
-                  loading="lazy"
-                  onError={(e) => { (e.currentTarget.parentElement as HTMLElement).style.display = "none"; }}
-                />
-                <figcaption>
-                  {perspectiveIntercuts[Math.floor(i / 2)].caption}
-                  {perspectiveIntercuts[Math.floor(i / 2)].year && (
-                    <span className="hist-intercut__year">
-                      {" "}({perspectiveIntercuts[Math.floor(i / 2)].year})
-                    </span>
-                  )}
-                  <span className="hist-intercut__attribution">
-                    {perspectiveIntercuts[Math.floor(i / 2)].attribution}
-                  </span>
-                </figcaption>
-              </figure>
-            )}
-          </Fragment>
-        ))}
-      </section>
-
-      {/* ── OMISSIONS — stressed vs ignored, mobile toggle ── */}
-      <section className="hist-stage hist-stage--omissions">
-        <div className="hist-omissions-split">
-          <div
-            className={`hist-omissions-split__panel hist-omissions-split__panel--emphasized hist-reveal`}
-          >
-            {event.perspectives.map((p) => (
-              <div key={p.id} className="hist-omissions-split__group">
-                <span className="hist-omissions-split__name" style={{ color: PERSP_COLORS[p.color] }}>
-                  {p.viewpointName}
-                </span>
-                <ul className="hist-omissions-split__list">
-                  {p.keyNarratives.map((n, ni) => (
-                    <li key={ni}>{n}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          {omissionImage && (
-            <figure className="hist-intercut hist-intercut--omission hist-reveal">
-              <img
-                src={omissionImage.url}
-                alt={omissionImage.caption}
-                loading="lazy"
-                onError={(e) => { (e.currentTarget.parentElement as HTMLElement).style.display = "none"; }}
-              />
-              <figcaption>
-                {omissionImage.caption}
-                <span className="hist-intercut__attribution">{omissionImage.attribution}</span>
-              </figcaption>
-            </figure>
-          )}
-
-          <div
-            className={`hist-omissions-split__panel hist-omissions-split__panel--omitted hist-reveal`}
-          >
-            {event.perspectives.filter((p) => p.omissions.length > 0).map((p) => (
-              <div key={p.id} className="hist-omissions-split__group">
-                <span className="hist-omissions-split__name" style={{ color: PERSP_COLORS[p.color] }}>
-                  {p.viewpointName}
-                </span>
-                <ul className="hist-omissions-split__list">
-                  {p.omissions.map((o, oi) => (
-                    <li key={oi} className="hist-omission--struck">{o}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── EVIDENCE — archival gallery, no label ── */}
-      {galleryImages.length > 0 && (
-        <section className="hist-stage hist-stage--evidence">
-          <div className="hist-evidence__gallery">
-            {galleryImages.map((item, i) => (
-              <div
-                key={item.id}
-                className={`hist-evidence__image hist-evidence__image--${i % 2 === 0 ? "left" : "right"} hist-reveal`}
-                style={{ transitionDelay: `${i * 100}ms` }}
-              >
-                {item.type === "video" && item.videoEmbedUrl ? (
-                  <ArchivalVideo item={item} />
-                ) : (
-                  <img
-                    src={item.url}
-                    alt={item.caption}
-                    loading="lazy"
-                    onError={(e) => { e.currentTarget.style.display = "none"; }}
-                  />
-                )}
-                <p className="hist-evidence__caption">{item.caption}</p>
-                <span className="hist-evidence__image-attribution">
-                  {item.type === "video" ? "Filmed by: " : ""}
-                  {item.attribution}
-                  {item.year && ` (${item.year})`}
-                </span>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* ── EXIT — dossier or cliffhanger ── */}
-      <section className="hist-stage hist-stage--next hist-reveal">
-        {ARC_FEATURES.DOSSIER && dossierEvents.length > 0 ? (
-          <>
-            {ARC_FEATURES.THREAD_STAGE && sortedConnections.length > 0 && (
-              <blockquote className="hist-dossier__thread-lead hist-reveal">
-                {sortedConnections[0].description}
-              </blockquote>
-            )}
-            <div className="hist-dossier">
-              {dossierEvents.map(({ connection, event: linkedEvent }, cardIndex) => {
-                const slug = connection.targetSlug;
-                const hookText = HOOKS[slug]
-                  || (linkedEvent?.contextNarrative || connection.targetTitle).split(". ").slice(0, 2).join(". ") + ".";
-                const ctaText = CTAS[slug]
-                  || `${linkedEvent?.perspectives.length ?? 0} accounts`;
-                const heroImg = linkedEvent?.heroImage;
-                const glyph = CONNECTION_GLYPH[connection.type] ?? "·";
-
-                return (
-                  <Link
-                    key={slug}
-                    href={`/history/${slug}`}
-                    className="hist-dossier__card"
-                    style={{ transitionDelay: `${cardIndex * 120}ms` }}
-                  >
-                    {heroImg && (
-                      <div
-                        className="hist-dossier__card-bg"
-                        style={{ backgroundImage: `url(${heroImg})` }}
-                        aria-hidden="true"
-                      />
-                    )}
-                    <div className="hist-dossier__card-content">
-                      <span className="hist-dossier__card-glyph" aria-hidden="true">{glyph}</span>
-                      <p className="hist-dossier__card-hook">{hookText}</p>
-                      <span className="hist-dossier__card-cta">{ctaText}</span>
-                    </div>
-                  </Link>
-                );
-              })}
-            </div>
-            {nextEvent && (
-              <p className="hist-dossier__chrono">
-                <Link href={`/history/${nextEvent.slug}`}>
-                  chronologically &rarr;
-                </Link>
-              </p>
-            )}
-            {ARC_FEATURES.THREAD_STAGE && sortedConnections.length > 1 && (
-              <div className="hist-thread-stage__list hist-reveal">
-                {sortedConnections.slice(1).map((conn, i) => (
-                  <div
-                    key={`${conn.targetSlug}-${i}`}
-                    className={`hist-thread-stage__item hist-thread-stage__item--${conn.type}`}
-                    style={{ transitionDelay: `${i * 150}ms` }}
-                  >
-                    <span className="hist-thread-stage__indicator" aria-hidden="true">
-                      {CONNECTION_GLYPH[conn.type] ?? "·"}
-                    </span>
-                    <div className="hist-thread-stage__content">
-                      <Link href={`/history/${conn.targetSlug}`} className="hist-thread-stage__title">
-                        {conn.targetTitle}
-                      </Link>
-                      <span className="hist-thread-stage__date">
-                        {allEvents.find((e) => e.slug === conn.targetSlug)?.datePrimary ?? ""}
-                      </span>
-                      <p className="hist-thread-stage__desc">{conn.description.split(". ")[0]}.</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </>
-        ) : nextEvent ? (
-          <div className="hist-next__cliffhanger">
-            {nextEvent.heroImage && (
-              <div className="hist-next__thumb-wrap">
-                <img src={nextEvent.heroImage} alt="" className="hist-next__thumb" loading="lazy" />
-              </div>
-            )}
-            <p className="hist-next__hook">
-              {HOOKS[nextEvent.slug] || (nextEvent.contextNarrative || nextEvent.title).split(". ").slice(0, 2).join(". ") + "."}
-            </p>
-            <Link href={`/history/${nextEvent.slug}`} className="hist-next__cta">
-              {CTAS[nextEvent.slug] || `${nextEvent.perspectives.length} accounts of ${nextEvent.title}`}
-            </Link>
-          </div>
-        ) : (
-          <Link href="/history" className="hist-next__cta">Return to The Archive</Link>
-        )}
-      </section>
-
-      {showSidebar && (
-        <SidebarElsewhere connections={sidebarConnections} allEvents={allEvents} />
-      )}
-    </div>
-  );
-}
-
-/* ===========================================================================
-   WitnessBlock — Museum vitrine model
-   Identity + ONE argument visible. Rest behind expand.
-   Cinematic reveal: lean in to see more.
-   =========================================================================== */
-function WitnessBlock({
-  perspective,
-  index,
-}: {
-  perspective: Perspective;
-  index: number;
-}) {
-  const side = index % 2 === 0 ? "left" : "right";
-  // Default-expanded 2026-04-29: the multi-perspective comparison IS the
-  // moat. Hiding secondary arguments + primary sources behind a chevron
-  // forced 1 click per witness × N witnesses just to reach the page's
-  // value prop. Toggle stays so a reader who wants to compact one
-  // witness can collapse it (e.g. while comparing two others).
-  const [expanded, setExpanded] = useState(true);
-  const toggleExpand = useCallback(() => setExpanded((prev) => !prev), []);
-  const perspColor = PERSP_COLORS[perspective.color] || PERSP_COLORS.a;
-
-  const leadArgument = perspective.keyNarratives[0];
-  const remainingArguments = perspective.keyNarratives.slice(1);
-  const hasMore = remainingArguments.length > 0 || perspective.primarySources.length > 0 || !!perspective.narrative;
-  const moreCount = remainingArguments.length + perspective.primarySources.length;
-
-  return (
-    <div
-      className={`hist-witness hist-witness--${side} hist-reveal`}
-      style={{ transitionDelay: `${index * 150}ms`, "--persp-color": perspColor } as React.CSSProperties}
-    >
-      {/* Identity */}
-      <div className="hist-witness__identity">
-        <span
-          className="hist-witness__dot"
-          style={{ background: perspColor }}
-          aria-hidden="true"
-        />
-        <span className="hist-witness__name">{perspective.viewpointName}</span>
-        <span className="hist-witness__type">{perspective.viewpointType}</span>
-      </div>
-
-      {/* Lead argument — always visible */}
-      {leadArgument && (
-        <blockquote className="hist-witness__argument">{leadArgument}</blockquote>
-      )}
-
-      {/* Expand — remaining arguments + narrative + sources */}
-      {hasMore && (
-        <button
-          className="hist-witness__expand"
-          type="button"
-          onClick={toggleExpand}
-          aria-expanded={expanded}
-        >
-          <span className={`hist-witness__expand-arrow${expanded ? " hist-witness__expand-arrow--open" : ""}`} aria-hidden="true">
-            {expanded ? "\u25B4" : "\u25BE"}
-          </span>
-          {!expanded && moreCount > 0 && (
-            <span className="hist-witness__expand-count">{moreCount}</span>
-          )}
-        </button>
-      )}
-
-      {expanded && (
-        <div className="hist-witness__full-narrative">
-          {/* Remaining key arguments */}
-          {remainingArguments.map((narrative, ni) => (
-            <blockquote key={ni} className="hist-witness__argument hist-witness__argument--secondary">
-              {narrative}
-            </blockquote>
-          ))}
-
-          {/* Full narrative */}
-          {perspective.narrative && (
-            <p className="hist-witness__narrative-text">{perspective.narrative}</p>
-          )}
-
-          {/* Primary source quotes */}
-          {perspective.primarySources.map((source, si) => (
-            <div key={si} className="hist-witness__source">
-              <p className="hist-witness__quote">&ldquo;{source.text}&rdquo;</p>
-              <cite className="hist-witness__cite">
-                &mdash; {source.author}
-                {source.work && <>, <em>{source.work}</em></>}
-                {source.date && `, ${source.date}`}
-              </cite>
+      {/* ── FACTS READOUT — the only persistent supporting material ── */}
+      <div className="hist-readout">
+        <dl className="hist-readout__facts">
+          {facts.map((f) => (
+            <div key={f.label} className="hist-readout__fact">
+              <dt>{f.label}</dt>
+              <dd>{f.value}</dd>
             </div>
           ))}
-
-          {/* Disputed claims */}
-          {perspective.disputed.length > 0 && (
-            <div className="hist-witness__disputed">
-              <ul className="hist-witness__disputed-list">
-                {perspective.disputed.map((d, di) => (
-                  <li key={di}>{d}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-/* ===========================================================================
-   SidebarElsewhere — "Elsewhere, Meanwhile" margin notes
-   Desktop: sticky right column (via CSS grid on parent).
-   Mobile: disclosure accordion.
-   =========================================================================== */
-function SidebarElsewhere({
-  connections,
-  allEvents,
-}: {
-  connections: EventConnection[];
-  allEvents: HistoricalEvent[];
-}) {
-  // mobileOpen state retained but defaulted to true so the "Elsewhere,
-  // Meanwhile" sidebar renders inline on mobile. The accordion trigger is
-  // unused at default state; entries are short and the click-tax wasn't
-  // earning anything.
-  const [mobileOpen, setMobileOpen] = useState(true);
-
-  const entries = connections.map((conn) => {
-    const linked = allEvents.find((e) => e.slug === conn.targetSlug);
-    return {
-      slug: conn.targetSlug,
-      title: conn.targetTitle,
-      year: linked?.datePrimary ?? "",
-      description: conn.description.split(". ")[0] + ".",
-    };
-  });
-
-  return (
-    <aside className="hist-sidebar--elsewhere" aria-label="Parallel events">
-      {/* Desktop heading — always visible (section is at bottom of page) */}
-      <span className="hist-sidebar__eyebrow hist-sidebar__eyebrow--desktop">ELSEWHERE, MEANWHILE</span>
-
-      {/* Mobile accordion trigger */}
-      <button
-        className="hist-sidebar--mobile-toggle"
-        type="button"
-        onClick={() => setMobileOpen((prev) => !prev)}
-        aria-expanded={mobileOpen}
-      >
-        <span className="hist-sidebar__eyebrow">ELSEWHERE, MEANWHILE</span>
-        <span
-          className={`hist-sidebar__disclosure ${mobileOpen ? "hist-sidebar__disclosure--open" : ""}`}
-          aria-hidden="true"
-        >
-          &#9662;
-        </span>
-      </button>
-
-      {/* Content — always visible on desktop, toggle on mobile */}
-      <div className={`hist-sidebar__content ${mobileOpen ? "hist-sidebar__content--open" : ""}`}>
-        {entries.map((entry, entryIndex) => (
-          <div
-            key={entry.slug}
-            className="hist-sidebar__entry hist-reveal"
-            style={{ transitionDelay: `${entryIndex * 100}ms` }}
-          >
-            <span className="hist-sidebar__entry-year">{entry.year}</span>
-            <Link
-              href={`/history/${entry.slug}`}
-              className="hist-sidebar__entry-title"
+        </dl>
+        <div className="hist-readout__aside">
+          {cast && <p className="hist-readout__cast">{cast}</p>}
+          {bgImages.length > 0 && (
+            <button
+              type="button"
+              className="hist-readout__evidence"
+              onClick={() => setEvidenceIndex(0)}
             >
-              {entry.title}
-            </Link>
-            <p className="hist-sidebar__entry-desc">{entry.description}</p>
-          </div>
-        ))}
+              Evidence ({event.media.length})
+            </button>
+          )}
+        </div>
       </div>
-    </aside>
-  );
-}
 
-/* ===========================================================================
-   ArchivalVideo — Poster frame with play overlay → Internet Archive iframe
-   No self-hosting. Camera-holder attribution is prominent ("Filmed by:").
-   =========================================================================== */
-function ArchivalVideo({ item }: { item: MediaItem }) {
-  const [playing, setPlaying] = useState(false);
+      {/* ── THE REEL — one voice per frame, then Threads ── */}
+      <section className="hist-reel-section">
+        <div
+          ref={reelRef}
+          className={`hist-reel${isVertical ? " hist-reel--vertical" : ""}`}
+          tabIndex={0}
+          role="group"
+          aria-label={`${perspectives.length} accounts of ${event.title}. Use arrow keys to move between them.`}
+          onKeyDown={onReelKey}
+        >
+          {perspectives.map((p, i) => (
+            <PerspectiveFrame
+              key={p.id}
+              perspective={p}
+              index={i}
+              total={perspectives.length}
+              background={bgFor(i)}
+              active={focusedIndex === i}
+              onReadFull={() => setReader(p)}
+            />
+          ))}
 
-  if (playing && item.videoEmbedUrl) {
-    return (
-      <div className="hist-video">
-        <iframe
-          src={item.videoEmbedUrl}
-          className="hist-video__iframe"
-          allowFullScreen
-          title={item.caption}
-          loading="lazy"
+          {/* Threads exit frame */}
+          <section className="hist-reel__frame hist-frame hist-frame--threads">
+            <div className="hist-frame__content hist-frame__content--threads">
+              <span className="hist-frame__eyebrow">Threads</span>
+              <h2 className="hist-frame__name">What this connects to</h2>
+              {dossierEvents.length > 0 ? (
+                <div className="hist-exit">
+                  {dossierEvents.map(({ connection, event: linked }) => {
+                    const slug = connection.targetSlug;
+                    const hookText = HOOKS[slug]
+                      || (linked?.contextNarrative || connection.targetTitle).split(". ").slice(0, 2).join(". ") + ".";
+                    const glyph = CONNECTION_GLYPH[connection.type] ?? "·";
+                    return (
+                      <Link key={slug} href={`/history/${slug}`} className="hist-exit__card">
+                        <span className="hist-exit__glyph" aria-hidden="true">{glyph}</span>
+                        <span className="hist-exit__title">{connection.targetTitle}</span>
+                        <span className="hist-exit__hook">{hookText}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="hist-frame__lead">A single thread in a longer record.</p>
+              )}
+              <div className="hist-exit__exits">
+                {nextEvent && (
+                  <Link href={`/history/${nextEvent.slug}`} className="hist-exit__next">
+                    {CTAS[nextEvent.slug] || `Next: ${nextEvent.title}`} →
+                  </Link>
+                )}
+                <Link href="/history" className="hist-exit__archive">Return to The Archive</Link>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <ReelScrubber
+          nodes={scrubNodes}
+          activeIndex={focusedIndex}
+          fraction={fraction}
+          onSelect={goToFrame}
         />
-      </div>
-    );
-  }
+      </section>
 
-  return (
-    <button
-      className="hist-video hist-video--poster"
-      onClick={() => setPlaying(true)}
-      type="button"
-      aria-label={`Play archival footage: ${item.caption}`}
-    >
-      <img
-        src={item.url}
-        alt={item.caption}
-        className="hist-video__poster"
-        loading="lazy"
-      />
-      <div className="hist-video__play" aria-hidden="true">
-        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
-          <circle cx="24" cy="24" r="23" stroke="currentColor" strokeWidth="1.5" opacity="0.8" />
-          <path d="M19 16l14 8-14 8V16z" fill="currentColor" opacity="0.9" />
-        </svg>
-      </div>
-    </button>
+      {reader && (
+        <PerspectiveReader perspective={reader} onClose={() => setReader(null)} />
+      )}
+
+      {evidenceIndex !== null && event.media.length > 0 && (
+        <Lightbox
+          media={event.media}
+          currentIndex={evidenceIndex}
+          onClose={() => setEvidenceIndex(null)}
+          onNavigate={setEvidenceIndex}
+        />
+      )}
+    </div>
   );
 }

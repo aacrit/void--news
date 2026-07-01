@@ -11,7 +11,6 @@ Uses rule-based NLP (no LLM API calls):
 """
 
 import re
-from collections import defaultdict
 from functools import lru_cache
 
 from utils.nlp_shared import get_nlp
@@ -20,21 +19,10 @@ from utils.nlp_shared import get_nlp
 @lru_cache(maxsize=4096)
 def _keyword_pattern(keyword: str) -> "re.Pattern":
     """Word-boundary matcher for a keyword. Boundaries are alphanumeric edges,
-    so short tokens ('ev', 'ai', 'epa', 'eu', 'ko') match only as standalone
-    words, never inside 'review'/'campaign'/'repatriates'. Phrases with spaces
-    ('electric vehicle', 'heat wave') match verbatim."""
+    so short tokens ('ev', 'epa', 'eu', 'ko') match only as standalone words,
+    never inside 'review'/'repatriates'/'campaign'. Phrases with spaces
+    ('electric vehicle', 'heat wave') match verbatim. (2026-07-01 review CAT-3)"""
     return re.compile(r"(?<![a-z0-9])" + re.escape(keyword) + r"(?![a-z0-9])")
-
-
-# Deterministic tie-break order for equal-score categories (2026-07-01 review
-# CAT-6). Earlier = wins. `environment` is intentionally low (it was the
-# false-positive magnet); `general` is always last so a real desk wins any tie.
-_CATEGORY_PRIORITY: dict[str, int] = {
-    cat: i for i, cat in enumerate([
-        "politics", "conflict", "economy", "health", "science",
-        "technology", "environment", "sports", "culture", "general",
-    ])
-}
 
 
 # ---------------------------------------------------------------------------
@@ -124,8 +112,15 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         # Big tech companies
         "google": 2, "apple": 2, "meta platforms": 3, "amazon web services": 3,
         "microsoft azure": 3, "cloud computing": 3, "tech startup": 3,
-        # AI-specific terms (often categorized as "general" without these)
-        "ai": 2, "chatbot": 3, "llm": 3, "gpt": 3, "anthropic": 3,
+        # AI-specific terms (often categorized as "general" without these).
+        # 2026-06-29: bare "ai" REMOVED — as a 2-char substring it matched
+        # inside common words (rem-AI-n, cl-AI-ms, cert-AI-n, camp-AI-gn),
+        # falsely tagging unrelated stories technology->science. Phrase forms
+        # are safe substrings; real AI coverage still resolves via openai /
+        # anthropic / "ai model" / chatbot / llm / "artificial intelligence".
+        "ai model": 3, "ai models": 3, "ai chatbot": 3, "ai system": 2,
+        "ai tool": 2, "ai race": 3, "a.i.": 3,
+        "chatbot": 3, "llm": 3, "gpt": 3, "anthropic": 3,
         "copilot": 2, "deepfake": 3, "neural network": 3,
         "training data": 3, "foundation model": 3, "transformer": 2,
         "tech regulation": 3, "antitrust": 2, "data privacy": 3,
@@ -210,15 +205,19 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         "kidnapped": 3, "abducted": 3, "hostage crisis": 3,
     },
     "science": {
-        "research": 2, "study": 1, "discovery": 2, "nasa": 3,
+        # 2026-06-28 (O10): dropped the generic terms that fired on hard news —
+        # "study"/"launch"/"theory" (launch an offensive, conspiracy theory) and
+        # "journal" (matched the outlet "Wall Street Journal"). Science stories
+        # still resolve via the specific terms below.
+        "research": 2, "discovery": 2, "nasa": 3,
         "space": 2, "experiment": 2, "scientific": 2, "laboratory": 2,
         "physics": 3, "chemistry": 3, "biology": 2, "astronomy": 3,
         "telescope": 3, "satellite": 2, "mars": 3, "moon": 2,
-        "spacex": 3, "rocket": 2, "launch": 1, "orbit": 2,
+        "spacex": 3, "rocket": 2, "orbit": 2,
         "particle": 2, "molecule": 2, "atom": 2, "quantum": 2,
         "fossil": 2, "paleontology": 3, "archaeology": 3,
-        "peer-reviewed": 3, "journal": 1, "thesis": 2,
-        "hypothesis": 2, "theory": 1, "breakthrough": 2,
+        "peer-reviewed": 3, "thesis": 2,
+        "hypothesis": 2, "breakthrough": 2,
         "neuroscience": 3, "genetics": 3, "dna": 3, "rna": 3,
         "evolution": 2, "species": 1, "climate science": 3,
         "observatory": 3, "cosmic": 3, "galaxy": 3, "universe": 2,
@@ -541,6 +540,17 @@ def categorize_article(article: dict) -> list[str]:
         (r"\b(quarterback|touchdown|home run|slam dunk|hat trick|penalty kick)\b", "sports"),
         (r"\b(lakers|celtics|yankees|dodgers|cowboys|patriots|warriors|chiefs)\b", "sports"),
         (r"\b(cricket|rugby|f1|formula 1|grand prix|marathon|triathlon)\b", "sports"),
+        # Accidents/disasters (no dedicated desk) -> general, so a fatal crash
+        # is not mislabeled "conflict" by the "killed/injured" keywords or the
+        # mass-casualty pre-override. Placed BEFORE the conflict markers so a
+        # military cause ("plane shot down", "missile") still wins for a mixed
+        # title (later override in this list takes precedence). (2026-06-28)
+        (r"\b(?:plane|jet|aircraft|airliner|helicopter|chopper)\b.{0,18}?"
+         r"\bcrash(?:e[ds])?\b"                       # "plane crashes/crashed/has crashed"
+         r"|\bcrash(?:e[ds])?\s+into\b"               # "crashed into a building"
+         r"|\b(?:plane|jet|air|helicopter)\s+crash\b" # "plane crash" (noun)
+         r"|\b(?:train derail\w*|derailment|building collapse|bridge collapse|"
+         r"ferry (?:capsiz\w*|sink\w*)|bus crash\w*|car crash\w*|stampede)\b", "general"),
         # Conflict: military hardware, combat actions
         (r"\b(f-15|f-35|f-16|b-52|warplane|fighter jet|warship|submarine)\b", "conflict"),
         (r"\b(shot down|downed|airstrike|shelling|bombardment|missile strike)\b", "conflict"),
@@ -576,44 +586,11 @@ def categorize_article(article: dict) -> list[str]:
     return result
 
 
-def categorize_cluster(title: str, summary: str,
-                       articles: list[dict], member_cap: int = 8) -> str:
-    """Return the single best FINE-GRAINED category for a whole cluster.
-
-    2026-07-01 (review CAT-1/CAT-2/CAT-6). The old cluster vote ran
-    categorize_article over articles[:3] only, so an over-merged cluster's
-    off-topic lead articles decided the label (the #1 SCOTUS lead was tagged
-    `environment`, #6 maternity review `environment`, and clean stories fell
-    to `general`). This votes over the POLISHED cluster title + summary at 3x
-    weight — the representative, on-topic text — plus up to `member_cap`
-    members, and breaks ties deterministically via _CATEGORY_PRIORITY instead
-    of dict-insertion order.
-
-    Caller maps the result to a display desk via map_to_desk().
-    """
-    # The polished cluster title + summary is the single most reliable,
-    # on-topic signal (it is the representative text the story is actually
-    # about). categorize_article already returns "general" when that text
-    # genuinely lacks a category, so a confident non-general primary here is
-    # trustworthy — trust it directly. This fixes the flagged mislabels (#1
-    # SCOTUS, #6 maternity, #29 WhatsApp, #30 heatwave, #47) without letting
-    # title-only member articles (which degrade to "general" with no body
-    # text) flood the vote.
-    rep = {"title": title or "", "summary": summary or "", "full_text": ""}
-    rep_cats = categorize_article(rep) if (title or summary) else ["general"]
-    if rep_cats and rep_cats[0] != "general":
-        return rep_cats[0]
-
-    # Representative text was unclassifiable — fall back to a member vote
-    # (general allowed here as a genuine last resort), tie-broken
-    # deterministically rather than by dict-insertion order.
-    votes: dict[str, float] = defaultdict(float)
-    for a in articles[:member_cap]:
-        for i, cat in enumerate(categorize_article(a)):
-            votes[cat] += 1.0 if i == 0 else 0.5
-    if not votes:
-        return "general"
-    return max(
-        votes.items(),
-        key=lambda kv: (kv[1], -_CATEGORY_PRIORITY.get(kv[0], 99)),
-    )[0]
+# NOTE (2026-07-01): a title+summary `categorize_cluster()` was prototyped
+# here during the top-50 review, but main's O10 headline-primary path
+# (main.py / rerank.py) proved strictly better — the cluster HEADLINE is immune
+# to the off-topic summary an over-merged cluster accumulates, whereas voting
+# over the summary re-imported that pollution. The engine fixes that made O10
+# correct on the flagged cases live above: word-boundary keyword matching
+# (kills ev/epa/eu/ai substring false positives) and the consumer-tech /
+# extreme-heat vocabulary. No separate cluster-categorizer is needed.

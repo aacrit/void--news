@@ -164,7 +164,13 @@ def capture(post_id: str | None = None, only_slide: int | None = None) -> int:
                     )
                     page = context.new_page()
                     try:
-                        page.goto(url, wait_until="networkidle", timeout=30_000)
+                        response = page.goto(url, wait_until="networkidle", timeout=60_000)
+                        # page.goto does NOT raise on HTTP error status, so an
+                        # error page (e.g. a 500 from the render route) would
+                        # otherwise be screenshotted as a "successful" slide.
+                        if response is None or not response.ok:
+                            status = response.status if response is not None else "no response"
+                            raise RuntimeError(f"render route returned HTTP {status}")
                         page.evaluate("() => document.fonts.ready")
                         # Wait a beat for any final reflow
                         page.wait_for_timeout(250)
@@ -192,26 +198,33 @@ def capture(post_id: str | None = None, only_slide: int | None = None) -> int:
 
                 if ok:
                     _write_image_urls(pid, [u for u in urls if u])
-                    # Don't flip state here — caption step is next in the pipeline
-                    if row.get("state") == "render_failed":
-                        _set_state(pid, "draft")  # captioner picks it up
+                    # Reset the transient 'rendering' lock back to 'draft' so the
+                    # caption step (which scans state='draft' with caption IS NULL)
+                    # picks it up. Previously only render_failed rows were reset, so
+                    # freshly-rendered drafts got stuck in 'rendering', un-captioned.
+                    _set_state(pid, "draft")
                     captured += 1
         finally:
             browser.close()
     return captured
 
 
-def _wait_for_server(url: str, timeout_s: int = 60) -> bool:
+def _wait_for_server(url: str, timeout_s: int = 120) -> bool:
     import urllib.request
-    import urllib.error
 
     deadline = time.time() + timeout_s
     while time.time() < deadline:
         try:
-            with urllib.request.urlopen(url, timeout=2) as r:
+            with urllib.request.urlopen(url, timeout=10) as r:
                 if r.status < 500:
                     return True
-        except (urllib.error.URLError, ConnectionResetError):
+        except OSError:
+            # Transient during dev-server boot: connection refused (not
+            # listening yet) OR a socket read timeout (listening, but Next is
+            # still compiling the route on first hit and hasn't answered yet).
+            # OSError covers urllib's URLError, ConnectionResetError, and the
+            # built-in TimeoutError a slow first compile raises — retry until
+            # the deadline instead of crashing on the first slow response.
             time.sleep(1)
     return False
 
@@ -223,7 +236,7 @@ def main() -> int:
     parser.add_argument(
         "--wait-server",
         action="store_true",
-        help="wait up to 60s for the dev server to be reachable before capturing",
+        help="wait up to 120s for the dev server to be reachable before capturing",
     )
     args = parser.parse_args()
 

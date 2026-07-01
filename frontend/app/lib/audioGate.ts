@@ -16,7 +16,7 @@
  * See: CLAUDE.md → Parking Lot.
  */
 export const AUDIO_DISABLED: boolean =
-  (process.env.NEXT_PUBLIC_DISABLE_AUDIO ?? "1") === "1";
+  (process.env.NEXT_PUBLIC_DISABLE_AUDIO ?? "0") === "1";
 
 /** Convenience inverse — read-side. */
 export const AUDIO_ENABLED: boolean = !AUDIO_DISABLED;

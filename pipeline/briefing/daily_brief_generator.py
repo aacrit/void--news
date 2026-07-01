@@ -31,31 +31,14 @@ _UUID_RE = re.compile(
     re.IGNORECASE,
 )
 
-from summarizer.gemini_client import generate_json as gemini_generate_json, is_available as gemini_is_available
+from summarizer.gemini_client import (
+    generate_json as gemini_generate_json,
+    is_available as gemini_is_available,
+    _FLASH_MODEL as GEMINI_FLASH_MODEL,
+)
 from briefing.voice_rotation import get_voices_for_today, get_opinion_host
 
-# Claude API client — optional, used as primary when available
-try:
-    from summarizer.claude_client import (
-        generate_json as claude_generate_json,
-        is_available as claude_is_available,
-    )
-    _CLAUDE_CLIENT_AVAILABLE = True
-except ImportError:
-    _CLAUDE_CLIENT_AVAILABLE = False
-    def claude_generate_json(*a, **kw): return None
-    def claude_is_available(): return False
-
-# Groq API client — optional, preferred $0 provider when Claude is disabled.
-# Self-defers oversized (65k brief) requests to Gemini via its own guard.
-try:
-    from summarizer.groq_client import (
-        generate_json as groq_generate_json,
-        is_available as groq_is_available,
-    )
-except ImportError:
-    def groq_generate_json(*a, **kw): return None
-    def groq_is_available(): return False
+# Groq + Claude retired; Gemini Flash is the sole brief LLM (carry-forward on fail).
 
 
 def _smart_generate_json(
@@ -64,43 +47,23 @@ def _smart_generate_json(
     max_output_tokens: int = 8192,
     edition: str = "",
 ) -> tuple[dict | None, str]:
-    """Try Claude (off) → Gemini ($0 primary) → Groq ($0 fallback). Gemini
-    leads (Groq self-defers the 65k brief anyway, and gpt-oss-20b can't hold
-    its JSON budget — see cluster_summarizer). Returns (result, label)."""
-    if claude_is_available():
-        result = claude_generate_json(
-            prompt,
-            system_instruction=system_instruction,
-            count_call=False,
-            max_output_tokens=max_output_tokens,
-        )
-        if result and isinstance(result, dict):
-            print(f"  [brief:{edition}] Claude Sonnet OK")
-            return result, "claude-sonnet"
-
+    """Daily brief TL;DR + opinion on Gemini Flash ($0). The brief is low volume
+    (a few calls/day), so it spends the higher-quality flash tier; flash's 20/day
+    free cap is ample here. Claude (2026-06-22) and Groq (2026-06-24) are retired.
+    On failure the caller carries forward the previous brief. Returns
+    (result, label)."""
     if gemini_is_available():
         result = gemini_generate_json(
             prompt,
             system_instruction=system_instruction,
             count_call=False,
             max_output_tokens=max_output_tokens,
+            model=GEMINI_FLASH_MODEL,
         )
         if result and isinstance(result, dict):
             return result, "gemini-flash"
         # Highlighted single-line log — easy to grep in run output
-        print(f"  [brief:{edition}] >>> GEMINI FAILED, FALLING BACK TO GROQ <<<")
-
-    if groq_is_available():
-        result = groq_generate_json(
-            prompt,
-            system_instruction=system_instruction,
-            count_call=False,
-            max_output_tokens=max_output_tokens,
-        )
-        if result and isinstance(result, dict):
-            print(f"  [brief:{edition}] Groq gpt-oss OK")
-            return result, "groq-gpt-oss"
-        print(f"  [brief:{edition}] >>> GROQ ALSO FAILED — no LLM brief this run <<<")
+        print(f"  [brief:{edition}] >>> GEMINI FLASH FAILED, carrying forward previous brief <<<")
 
     return None, "none"
 
@@ -112,7 +75,7 @@ def generate_json(prompt, system_instruction=None, max_retries=1, count_call=Tru
                                 max_output_tokens=max_output_tokens)
 
 def is_available():
-    return groq_is_available() or gemini_is_available()
+    return gemini_is_available()
 
 # Import shared prohibited terms — single canonical source.
 try:
@@ -293,7 +256,10 @@ REGISTER: Newsroom broadcast. Contractions. Fragments for emphasis. Em dashes \
 for pivots. The cadence of two anchors who report for a living — clipped, \
 efficient, authoritative. Not conversational. Not leisurely. Professional.
 
-FIRST LINE: A: From void news, {DATE_SHORT}. [short pause]
+FIRST LINE (grounding, in the calm and measured cadence of NYT's "The Daily" — \
+unhurried, present-tense, settling the listener into the day before any news \
+breaks): A says it plainly — "From void news. Today is {DATE_SPOKEN}." A single \
+beat. Then the headline rundown.
 LAST LINE: The last speaker says "This was void news." with finality.
 
 Two senior journalists briefing each other as co-anchors. 4-5 minutes. \
@@ -329,7 +295,7 @@ RIGHT: A reports Story 1. B adds a dimension. B reports Story 2. A adds a dimens
 
 Story [1] gets the most depth — at least 6 exchanges between hosts. \
 Story [2] gets 4 exchanges. Story [3] gets 2. \
-Open with a headline rundown — maximum 3 headlines, maximum 8 words each. \
+After that grounding beat, the headline rundown — maximum 3 headlines, maximum 8 words each. \
 "US strikes inside Iran. NATO's future in doubt. Oil at $103." — that terse. \
 B enters IMMEDIATELY after the headline rundown with a NEW FACT or counter-data \
 — not a reaction, not a framing comment. The listener must hear both voices \
@@ -588,27 +554,25 @@ def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
                 report["warnings"].append(msg)
                 print(f"  [quality][brief:{edition}] {msg}")
 
-        short_pause_count = script.lower().count("[short pause]")
-        long_pause_count = script.lower().count("[long pause]")
-        pause_count = short_pause_count + long_pause_count
+        # Pause markers ([short/long pause]) are banned — edge-tts reads them
+        # verbatim and they are stripped at synthesis. Rhythm rides on em dashes
+        # + ellipses; paragraph breaks add natural pauses too.
         ellipsis_count = script.count("...")
         dash_count = script.count(" — ") + script.count("—")
-        total_markers = pause_count + ellipsis_count + dash_count
-        # [long pause] markers removed from requirements — TTS handles
-        # pacing via punctuation, paragraph breaks, and em dashes.
+        total_markers = ellipsis_count + dash_count
 
         if total_markers < 5:
             msg = (f"Pacing: only {total_markers} rhythm markers "
-                   f"(pauses: {pause_count}, ellipses: {ellipsis_count}, dashes: {dash_count})")
+                   f"(ellipses: {ellipsis_count}, dashes: {dash_count})")
             report["warnings"].append(msg)
             print(f"  [quality][brief:{edition}] {msg}")
 
     report["metrics"]["pacing_short_pct"] = short_pct
     report["metrics"]["pacing_long_pct"] = long_pct
     report["metrics"]["rhythm_markers"] = total_markers
-    report["metrics"]["rhythm_pauses"] = pause_count
-    report["metrics"]["short_pause_count"] = short_pause_count if script.strip() else 0
-    report["metrics"]["long_pause_count"] = long_pause_count if script.strip() else 0
+    report["metrics"]["rhythm_pauses"] = 0  # pause markers banned (stripped at synthesis)
+    report["metrics"]["short_pause_count"] = 0
+    report["metrics"]["long_pause_count"] = 0
     report["metrics"]["rhythm_ellipses"] = ellipsis_count
     report["metrics"]["rhythm_dashes"] = dash_count
 
@@ -1218,7 +1182,7 @@ def _generate_opinion(cluster: dict, lean: str, date_str: str, edition: str = "w
     """
     global _brief_call_count
 
-    if not is_available() and not claude_is_available():
+    if not is_available():
         print(f"  [opinion] No LLM available — skipping opinion")
         return None
     if _brief_calls_remaining() <= 0:
@@ -1368,7 +1332,7 @@ def _build_retry_suffix(quality_report: dict | None) -> str:
         return (
             "\n\nCRITICAL REMINDER: Your previous attempt failed quality checks. "
             "Start every sentence with a FACT or NAME. "
-            "First line MUST be: A: From void news, [date]. [short pause] — "
+            "First line MUST be: A: From void news, [date]. "
             "Last speaker MUST say: This was void news."
         )
     parts = ["\n\nCRITICAL RETRY — your previous attempt failed quality checks:"]
@@ -1376,7 +1340,7 @@ def _build_retry_suffix(quality_report: dict | None) -> str:
         if "Prohibited terms" in failure:
             parts.append(f"- {failure}. Start every sentence with a FACT or NAME.")
         elif "sign_on" in failure:
-            parts.append("- MISSING SIGN-ON: First line MUST be exactly: A: From void news, [date]. [short pause]")
+            parts.append("- MISSING SIGN-ON: First line MUST be exactly: A: From void news, [date].")
         elif "sign_off" in failure:
             parts.append("- MISSING SIGN-OFF: Last speaker MUST say: This was void news.")
         elif "filler" in failure.lower():
@@ -1449,7 +1413,7 @@ def generate_daily_briefs(
         clusters: Full list of ranked cluster dicts from the pipeline.
         source_map: Source slug -> source dict (used for context; reserved
             for future per-source attribution enrichment).
-        edition_sections: List of editions to generate (default: world, us, india).
+        edition_sections: List of editions to generate (default: ["world"]).
 
     Returns:
         Dict mapping edition -> brief dict with keys:
@@ -1461,16 +1425,18 @@ def generate_daily_briefs(
     global _brief_call_count
 
     if edition_sections is None:
-        edition_sections = ["world", "us", "india"]
+        # Single feed since rev 46 (collapse-editions). Keeps brief volume at a
+        # few Gemini Flash calls/day, well under flash's 20/day free cap.
+        edition_sections = ["world"]
 
     gemini_ok = gemini_is_available()
-    claude_ok = claude_is_available()
-    if claude_ok:
-        print(f"  [brief] Claude Sonnet available — using as primary")
-    elif gemini_ok:
+    if gemini_ok:
         print(f"  [brief] Gemini Flash available — using as primary")
+    else:
+        print(f"  [brief] Gemini unavailable — brief carries forward / rule-based")
     date_str = datetime.now(timezone.utc).strftime("%A, %d %B %Y")
     date_short = datetime.now(timezone.utc).strftime("%B %d")  # e.g. "April 02"
+    date_spoken = datetime.now(timezone.utc).strftime("%A, %B %-d")  # e.g. "Friday, June 27" — Daily-style grounding
 
     results: dict[str, dict] = {}
     _stats = {"fresh": 0, "carried": 0, "rule_based": 0}
@@ -1500,7 +1466,7 @@ def generate_daily_briefs(
         brief_result = None
         generator_label = None
         gemini_failure_reason = None
-        any_llm_ok = (gemini_ok or groq_is_available() or claude_is_available())
+        any_llm_ok = gemini_ok
         if any_llm_ok and _brief_calls_remaining() > 0:
             edition_key = edition.upper()
             edition_focus = _EDITION_FOCUS.get(edition_key, _EDITION_FOCUS["WORLD"])
@@ -1524,6 +1490,7 @@ def generate_daily_briefs(
                 EDITION_FOCUS=edition_focus,
                 DATE=date_str,
                 DATE_SHORT=date_short,
+                DATE_SPOKEN=date_spoken,
                 N=len(top_clusters),
                 stories_block=stories_block,
                 previous_brief_line=previous_brief_line,

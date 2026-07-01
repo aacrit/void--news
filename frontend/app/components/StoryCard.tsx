@@ -4,6 +4,7 @@ import type { Story } from "../lib/types";
 import type { FamilyInfo } from "../lib/storyFamilies";
 import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
+import LeanCoverageBar from "./LeanCoverageBar";
 import { hapticLight } from "../lib/haptics";
 import { useInView } from "../lib/sharedObserver";
 import { classifyCoverage } from "../lib/coverageClass";
@@ -106,6 +107,10 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
           {verdict.label}
         </p>
       )}
+
+      {/* Contested-coverage reveal — shows the left/right split the mean lean
+          hides (only when both wings are present). */}
+      <LeanCoverageBar spread={story.biasSpread} />
     </article>
   );
 }

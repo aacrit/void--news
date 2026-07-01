@@ -420,19 +420,6 @@
   color: var(--fg-muted);
 }
 
-/* ---- DeepDive Error Boundary (F04) ------------------------------------- */
-.dd-error-boundary {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 200px;
-}
-
-.dd-error-boundary__inner {
-  text-align: center;
-  padding: var(--space-6);
-}
-
 /* ---- DeepDive Fetch Error / Empty Data (F06) --------------------------- */
 .dd-fetch-error {
   padding: var(--space-6) 0;
@@ -613,16 +600,10 @@
   -webkit-line-clamp: 5;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  /* Newspaper norm: justified body copy with hyphenation.
-     text-align-last:left prevents the clamp cutoff line from being
-     stretched across the full measure by the justify algorithm. */
-  text-align: justify;
-  text-align-last: left;
-  hyphens: auto;
-  -webkit-hyphens: auto;
-  /* Page-catch hover — see .story-card__headline-text. Box translates
-     by 2px; the justify algorithm sees an unchanged container width,
-     so the text doesn't re-justify or reflow. */
+  /* Left-aligned body copy: avoids the "rivers" that justified + hyphenated
+     text creates in a narrow card column (calmer to read). */
+  text-align: left;
+  /* Page-catch hover — see .story-card__headline-text. Box translates 2px. */
   transition: transform 280ms var(--ease-cinematic);
 }
 
@@ -630,6 +611,56 @@
   font-style: italic;
   opacity: 0.5;
 }
+
+/* ── Lean coverage bar — reveals the left/right split the mean hides ─────── */
+.lean-coverage {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-tertiary);
+}
+.lean-coverage__tag {
+  flex: none;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--fg-tertiary);
+}
+.lean-coverage--contested .lean-coverage__tag {
+  /* Contested = both wings large. Borrow the high-divergence accent so a
+     centrist-looking mean reads as genuinely split at a glance. */
+  color: var(--sense-high);
+}
+.lean-coverage__track {
+  flex: 1 1 auto;
+  display: flex;
+  height: 6px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: var(--bg-subtle, rgba(127, 127, 127, 0.12));
+}
+.lean-coverage__seg { display: block; height: 100%; }
+.lean-coverage__seg--left   { background: var(--bias-left); }
+.lean-coverage__seg--center { background: var(--bias-center); }
+.lean-coverage__seg--right  { background: var(--bias-right); }
+.lean-coverage--contested .lean-coverage__track {
+  /* Subtle outline so the split bar pops on a busy card. */
+  box-shadow: 0 0 0 1px var(--sense-high);
+}
+.lean-coverage__counts {
+  flex: none;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+.lean-coverage__counts-sep {
+  opacity: 0.45;
+  margin: 0 0.18em;
+}
+.lean-coverage--compact .lean-coverage__tag { display: none; }
 
 
 .story-card__byline,
@@ -831,13 +862,10 @@
   line-height: 1.6;
   color: var(--fg-secondary);
   margin-bottom: var(--space-4);
-  /* Newspaper norm: justified body copy with hyphenation.
-     text-align-last:left prevents the last line from being
-     stretched across the full measure by the justify algorithm. */
-  text-align: justify;
-  text-align-last: left;
-  hyphens: auto;
-  -webkit-hyphens: auto;
+  /* Reading measure capped to ~72ch so the lead summary stays legible and
+     doesn't become a wide slab competing with the headline on big screens. */
+  max-width: 72ch;
+  text-align: left;
   /* Page-catch hover — see .story-card__headline-text. */
   transition: transform 280ms var(--ease-cinematic);
 }
@@ -2250,6 +2278,22 @@
   --hist-nav-accent-glow: rgba(139, 115, 85, 0.12);
 }
 
+/* ── Weekly Link — signature magazine red (matches the weekly masthead
+   --palette-weekly). Reuses the .nav-history structure (rule + italic label),
+   overrides only the accent custom properties. Placed after the dark
+   .nav-history block so the dark override below wins on source order. ── */
+.nav-weekly {
+  --hist-nav-accent: var(--palette-weekly);
+  --hist-nav-accent-bright: #D41920;
+  --hist-nav-accent-glow: rgba(185, 28, 28, 0.12);
+}
+
+:root[data-mode="dark"] .nav-weekly {
+  --hist-nav-accent: var(--palette-weekly);
+  --hist-nav-accent-bright: #FCA5A5;
+  --hist-nav-accent-glow: rgba(239, 83, 80, 0.15);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .nav-history,
   .nav-history__rule,
@@ -2704,38 +2748,6 @@
   color: var(--fg-secondary);
 }
 
-/* ---- Deep Dive Buttons ------------------------------------------------- */
-.deep-dive-back {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  font-weight: 500;
-  color: var(--fg-secondary);
-  padding: var(--space-2);
-  margin-left: calc(-1 * var(--space-2));
-  min-width: 44px;
-  min-height: 44px;
-  border-radius: var(--radius-md);
-  transition:
-    background-color var(--dur-fast) var(--ease-cinematic),
-    transform var(--dur-step) var(--spring);
-}
-
-.deep-dive-back:hover {
-  background-color: var(--bg-secondary);
-}
-
-.deep-dive-back:active {
-  transform: scale(0.94);
-}
-
-.deep-dive-back:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: 2px;
-}
-
 /* Brand label — subtle monospace tag in header bar */
 .dd-brand-label {
   font-family: var(--font-data);
@@ -2747,33 +2759,6 @@
   white-space: nowrap;
   margin-left: auto;
   margin-right: var(--space-2);
-}
-
-.deep-dive-close {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  color: var(--fg-secondary);
-  flex-shrink: 0;
-  border-radius: var(--radius-md);
-  transition:
-    background-color var(--dur-fast) var(--ease-cinematic),
-    transform var(--dur-step) var(--spring);
-}
-
-.deep-dive-close:hover {
-  background-color: var(--bg-secondary);
-}
-
-.deep-dive-close:active {
-  transform: scale(0.90);
-}
-
-.deep-dive-close:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: 2px;
 }
 
 /* ---- Deep Dive Share Button -------------------------------------------- */
@@ -4437,7 +4422,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
 .dd-summary-text {
   color: var(--fg-secondary);
   font-family: var(--font-structural);
-  text-align: justify;
+  text-align: left;
   hyphens: auto;
 }
 
@@ -4661,12 +4646,6 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) transparent;
-}
-
-/* ---- Deep Dive: Drag indicator (mobile bottom-sheet handle) ------------ */
-/* Hidden by default on desktop — shown via responsive.css mobile override */
-.dd-drag-indicator {
-  display: none;
 }
 
 /* ---- BiasInspectorInline — inline scorecard in Deep Dive content ------- */
@@ -6841,70 +6820,6 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   opacity: 1;
 }
 
-/* ---- Deep Dive inter-story navigation ---- */
-
-.dd-story-nav {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  position: relative;
-}
-
-.dd-story-nav__btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  border: 1px solid var(--border-subtle);
-  background-color: transparent;
-  color: var(--fg-secondary);
-  cursor: pointer;
-  transition:
-    background-color var(--dur-fast) var(--ease-cinematic),
-    color var(--dur-fast) var(--ease-cinematic),
-    border-color var(--dur-fast) var(--ease-cinematic);
-}
-
-.dd-story-nav__btn:hover {
-  background-color: var(--bg-secondary);
-  color: var(--fg-primary);
-  border-color: var(--border-strong);
-}
-
-.dd-story-nav__btn:disabled {
-  opacity: 0.3;
-  cursor: default;
-}
-
-.dd-story-nav__btn:disabled:hover {
-  background-color: transparent;
-  color: var(--fg-secondary);
-  border-color: var(--border-subtle);
-}
-
-.dd-story-nav__counter {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  color: var(--fg-muted);
-  letter-spacing: 0.03em;
-}
-
-.dd-swipe-hint {
-  position: absolute;
-  bottom: -18px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: var(--font-meta);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  color: var(--fg-muted);
-  white-space: nowrap;
-  pointer-events: none;
-  letter-spacing: 0.03em;
-}
-
 /* (daily-brief__timestamp and opinion--mobile-hidden moved to pill-based layout above) */
 
 /* ---- InstallPrompt — PWA install banner -------------------------------- */
@@ -7104,23 +7019,6 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   mix-blend-mode: soft-light;
 }
 
-/* ── Deep Dive: Editorial Grade + Warm Vignette ──
-   Once the Deep Dive panel settles, the content receives a subtle editorial
-   color grade (slightly higher contrast, lower saturation) that distinguishes
-   the reading surface from the feed. The warm inset vignette creates an
-   intimate reading atmosphere — a desk lamp casting warm falloff at the
-   panel edges. */
-.deep-dive-panel[data-settled] .deep-dive-panel__content {
-  filter: var(--cin-grade-editorial);
-  transition: filter 500ms var(--ease-cinematic);
-}
-
-.deep-dive-panel[data-settled] {
-  box-shadow:
-    var(--shadow-cinematic-dramatic),
-    inset 0 0 120px 40px var(--cin-vignette-warm);
-}
-
 /* ── Page Warmth During Audio Playback ──
    When audio is playing, the entire page receives an imperceptible
    warmth shift (sepia 0.01) — the motivated lighting from the
@@ -7217,7 +7115,6 @@ a.footer-products__item:hover { color: var(--accent-warm); }
    speeds — paper (background) is slower than ink (text). */
 @media (prefers-reduced-motion: no-preference) {
   body,
-  .deep-dive-panel,
   .skb,
   .filter-chip,
   .site-footer {

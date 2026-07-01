@@ -1,8 +1,9 @@
 name: Weekly Digest
 on:
-  # Parking Lot: weekly digest cron disabled pre-launch to save Gemini RPD budget.
-  # schedule:
-  #   - cron: '0 12 * * 0'  # Sunday 12:00 UTC = 6:00 AM CST
+  schedule:
+    # Sunday 12:00 UTC (6 AM CST) — weekly onair runs after the week's dailies.
+    # Sunday flash budget: ~13 daily + ~4 weekly (covers + recap + audio) < 20 RPD.
+    - cron: '0 12 * * 0'
   workflow_dispatch:
     inputs:
       week_offset:
@@ -26,6 +27,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          sudo apt-get update && sudo apt-get install -y ffmpeg
           pip install -r pipeline/requirements.txt
           python -m spacy download en_core_web_sm
 
@@ -33,12 +35,11 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          # $0 posture: Groq (preferred) → Gemini handle the digest; Claude off.
+          # $0 posture: Gemini Flash handles the digest (Groq retired); Claude off.
           DISABLE_ANTHROPIC: "1"
-          DISABLE_AUDIO: "1"
+          DISABLE_AUDIO: "0"   # void --onair weekly audio enabled (edge-tts, $0). Set "1" to re-park.
         run: |
           ARGS=""
           if [ -n "${{ inputs.week_offset }}" ] && [ "${{ inputs.week_offset }}" != "0" ]; then

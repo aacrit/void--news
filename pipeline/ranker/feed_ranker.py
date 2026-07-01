@@ -23,10 +23,34 @@ from __future__ import annotations
 # ---------------------------------------------------------------------------
 
 # Story-type multipliers applied to every cluster's rank.
+# entertainment (sports results, celebrity items) is soft news and must not
+# occupy premium hard-news slots; Gemini tags it as story_type="entertainment",
+# which is reliable even when the category vote mislabels it (2026-06-28, O7).
 STORY_TYPE_GATES = {
     "incremental_update": 0.75,
     "ceremonial": 0.82,
+    "entertainment": 0.78,
 }
+
+# Opinion / op-ed demotion. Opinion columns are not reporting and should sit
+# below hard news. Applied in addition to the story-type gate. (2026-06-28, O7)
+OPINION_GATE = 0.70
+
+# Detects an "Opinion |" / "| Opinion" / "Opinion:" section label in a headline.
+# Requires a separator after the word so "opinion poll shows..." is NOT matched.
+import re as _re
+_OPINION_TITLE_RE = _re.compile(r"\bopinion\s*[|:]|\|\s*opinion\b", _re.IGNORECASE)
+
+
+def _is_opinion(cluster: dict) -> bool:
+    """True when a cluster is an opinion column rather than reporting.
+
+    Reads content_type first; falls back to an "Opinion |" headline label
+    because content_type is a member-average that an over-merged cluster can
+    dilute to "reporting" even when its seed article is an op-ed."""
+    if (cluster.get("content_type") or "").lower() == "opinion":
+        return True
+    return bool(_OPINION_TITLE_RE.search(cluster.get("title", "") or ""))
 
 # Same-event cap — prevents the feed from being dominated by one event.
 MAX_SAME_EVENT = 2
@@ -120,26 +144,46 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
     for c in clusters:
         c["rank_world"] = round(float(c.get("headline_rank", 0) or 0), 2)
 
-    # 2. Story-type gates.
+    # 2. Story-type + editorial gates.
     for c in clusters:
         st = c.get("story_type")
         if st and st in STORY_TYPE_GATES:
             c["rank_world"] = round(c["rank_world"] * STORY_TYPE_GATES[st], 2)
+        # Opinion columns are demoted below hard news (O7). Kept separate from
+        # the story-type gate so a future opinion story_type still composes.
+        if _is_opinion(c):
+            c["rank_world"] = round(c["rank_world"] * OPINION_GATE, 2)
 
     # Sort by current rank.
     pool = sorted(clusters, key=lambda c: c.get("rank_world", 0), reverse=True)
 
-    # 3. Same-event cap.
+    # 3. Same-event cap. Keep MAX_SAME_EVENT clusters per event undeacyed; decay
+    #    the rest by EVENT_DECAY. The kept set is the CANONICAL (most-sourced)
+    #    cluster plus the next highest-ranked siblings. (2026-06-28, O8)
+    #    Previously the cap kept the first MAX_SAME_EVENT in rank order, which
+    #    decayed the comprehensive 75-source Iran-war cluster to ~#35 while a
+    #    narrow 24-source framing led at #2. Anchoring the kept set on the
+    #    richest cluster ensures the "biggest story" version is the one that
+    #    survives. Same number of clusters decayed as before (no extra
+    #    suppression), only a better choice of which survive.
     if len(pool) > TOP_N:
-        event_counts: dict[str, int] = {}
+        groups: dict[str, list[dict]] = {}
         for c in pool:
-            title = (c.get("title", "") or "").lower()
-            event = _detect_event(title)
+            event = _detect_event((c.get("title", "") or "").lower())
             if event:
-                if event_counts.get(event, 0) >= MAX_SAME_EVENT:
+                groups.setdefault(event, []).append(c)
+        for members in groups.values():
+            if len(members) <= MAX_SAME_EVENT:
+                continue
+            canonical = max(members, key=lambda c: c.get("source_count", 0))
+            keep_ids = {id(canonical)}
+            for c in sorted(members, key=lambda c: c.get("rank_world", 0), reverse=True):
+                if len(keep_ids) >= MAX_SAME_EVENT:
+                    break
+                keep_ids.add(id(c))
+            for c in members:
+                if id(c) not in keep_ids:
                     c["rank_world"] = round(c["rank_world"] * EVENT_DECAY, 2)
-                else:
-                    event_counts[event] = event_counts.get(event, 0) + 1
         pool.sort(key=lambda c: c.get("rank_world", 0), reverse=True)
 
     # 3.5. Feed-lead gate — BEFORE the diversity partition. Clusters below

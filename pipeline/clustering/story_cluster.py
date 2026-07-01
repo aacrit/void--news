@@ -54,14 +54,35 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 from utils.nlp_shared import get_nlp
-from utils.text_sanitizer import normalize_headline, sanitize_summary
+
+try:
+    from utils.prohibited_terms import sanitize_editorial_text as _sanitize_editorial
+except ImportError:  # utils not on path (e.g. isolated unit test)
+    def _sanitize_editorial(text):
+        return text
+
+# text_sanitizer adds what _sanitize_editorial (em-dash / significance / HTML
+# entities) does not cover (2026-07-01 top-50 review): normalize_headline strips
+# source-name suffixes the O6 whitelist misses (Euractiv, Focus Taiwan, Cyrillic
+# outlets), editorial prefixes (INSIGHT:/Exclusive,) and tabloid epithet leads
+# (Devastating:/Unbothered King:); sanitize_summary strips CMS/RSS scaffolding
+# ("appeared first on", "Submitted by ... <date>", twitter embeds) and repairs
+# mid-word "..." truncation on the un-summarized null-tier tail.
+try:
+    from utils.text_sanitizer import normalize_headline, sanitize_summary
+except ImportError:  # pragma: no cover
+    def normalize_headline(t):
+        return t
+
+    def sanitize_summary(t):
+        return t
 
 
 # ---------------------------------------------------------------------------
 # Calibrated thresholds — single source of truth for clustering signal
 # sensitivity. Tuned 2026-05-15 against the 21-fixture clustering suite.
 # ---------------------------------------------------------------------------
-STORY_TFIDF_THRESHOLD       = 0.18   # Phase 1 agglomerative cosine cut
+STORY_TFIDF_THRESHOLD       = 0.24   # Phase 1 agglomerative cosine cut (2026-06-28 O1: 0.18->0.24, tighter to curb over-merge chaining)
 ENTITY_MERGE_IDF_THRESHOLD  = 2.0    # legacy — unused after 2026-05-31 simplification
 TITLE_JACCARD_THRESHOLD     = 0.22   # Phase 3: stemmed title Jaccard
                                      # 0.27 → 0.22 on 2026-05-31 to align with
@@ -101,6 +122,21 @@ _DOMAIN_SUFFIX_RE = re.compile(
     r"\s*[-–—|]+\s*\w+\.(?:com|org|net|co\.uk|or\.jp|co\.jp)\s*$",
     re.IGNORECASE,
 )
+# Outlet-suffix shapes the explicit wire allow-list above misses (2026-06-28,
+# O6). Case-sensitive so a leading word must be capitalised (a proper noun),
+# which keeps ordinary trailing clauses intact. Each strips one trailing tag:
+#   all-caps wire/outlet acronyms  ("- WSJ", "| UPI", "- NHK", "- TheCab"→no)
+#   single-token CamelCase outlets ("- TheCable", "- TheBlaze")
+#   multi-word names ending in an outlet-type word ("- Just The News")
+_ACRONYM_SUFFIX_RE = re.compile(r"\s*[-–—|]+\s*[A-Z]{2,6}\s*$")
+_CAMEL_OUTLET_SUFFIX_RE = re.compile(r"\s*[-–—|]+\s*The[A-Z][a-zA-Z]+\s*$")
+_OUTLET_WORD_SUFFIX_RE = re.compile(
+    r"\s*[-–—|]+\s*(?:[A-Z][\w.&'’-]*\s+){0,3}"
+    r"(?:News|Times|Post|Herald|Journal|Tribune|Cable|Wire|Bulletin|Observer|"
+    r"Gazette|Globe|Sun|Star|Mail|Express|Telegraph|Independent|Standard|"
+    r"Chronicle|Review|Today|Press|Agency|Daily|Weekly|Monitor|Dispatch|"
+    r"Pioneer|Examiner|Sentinel|Ledger|Recorder|Courier|Beacon|Network)\s*$"
+)
 
 
 def _clean_title(title: str) -> str:
@@ -108,13 +144,60 @@ def _clean_title(title: str) -> str:
     title = _WIRE_PREFIX_RE.sub("", title).strip()
     for _ in range(2):
         title = _ATTRIBUTION_SUFFIX_RE.sub("", title).strip()
+        title = _OUTLET_WORD_SUFFIX_RE.sub("", title).strip()
+        title = _CAMEL_OUTLET_SUFFIX_RE.sub("", title).strip()
+        title = _ACRONYM_SUFFIX_RE.sub("", title).strip()
         title = _DOMAIN_SUFFIX_RE.sub("", title).strip()
     title = title.strip(" \t\n\r-–—|")
-    # Deterministic normalizer (2026-07-01): strips editorial/tabloid label
-    # leads ("INSIGHT:", "Devastating:", epithet leads) and trailing source /
-    # date / non-Latin suffixes the whitelist above misses (Euractiv, Focus
-    # Taiwan, Українська правда). Idempotent on already-clean LLM headlines.
+    # Final deterministic pass for the suffix/prefix/epithet shapes the O6
+    # whitelist above misses (Euractiv, Focus Taiwan, Cyrillic outlets,
+    # INSIGHT:/Exclusive,/Devastating:/epithet leads). Idempotent.
     return normalize_headline(title)
+
+
+def _mostly_ascii(text: str, threshold: float = 0.7) -> bool:
+    """True if >= threshold of the alphabetic chars are ASCII (Latin script).
+
+    Used to prefer an English-language headline over a co-clustered foreign
+    one when both are present (the English feed should not surface an
+    untranslated Spanish/Arabic headline)."""
+    letters = [c for c in text if c.isalpha()]
+    if not letters:
+        return True
+    ascii_letters = sum(1 for c in letters if ord(c) < 128)
+    return ascii_letters / len(letters) >= threshold
+
+
+# Content-word stopwords for headline-keyword overlap (O4 on-topic summary
+# selection + O9 cluster coherence). Kept local and lightweight (no spaCy).
+_TITLE_STOPWORDS = frozenset("""the a an of in on at to for and or but with from by as is are was were be
+been this that these those it its their his her our your my we they you he she them us i over under after
+before during into out up down off about above below between through against amid new news say says said
+will would could should may might can has have had do does did not no nor so than then here there what
+which who whom whose when where why how all any both each few more most other some such only own same too
+very just also back even still way get got make made latest live update updates day days week year years
+world cup over into onto amid says said report reports""".split())
+
+
+def _title_keywords(text: str) -> set[str]:
+    """Lowercased content-word tokens (length >= 4, minus stopwords) from a
+    headline. Used to decide whether two headlines are about the same story."""
+    toks = re.findall(r"[A-Za-z][A-Za-z']{3,}", (text or "").lower())
+    return {t for t in toks if t not in _TITLE_STOPWORDS}
+
+
+def topic_coherence(title: str, articles: list[dict]) -> float:
+    """Fraction of member-article titles that share a content keyword with the
+    cluster headline. 1.0 = every member on-topic, low = over-merged bag.
+
+    Stored on the cluster and read by the ranker (O9) to discount the source
+    count of incoherent clusters. Returns 1.0 for clusters too small/title-less
+    to assess (no penalty)."""
+    kw = _title_keywords(title)
+    if not kw or not articles:
+        return 1.0
+    on = sum(1 for a in articles if kw & _title_keywords(a.get("title", "") or ""))
+    return on / len(articles)
 
 
 def _build_document(article: dict) -> str:
@@ -190,7 +273,7 @@ def _generate_cluster_title(articles: list[dict]) -> str:
         return ", ".join(top) if top else "Developing Story"
 
     if len(valid_titles) == 1:
-        return valid_titles[0]
+        return _sanitize_editorial(valid_titles[0])
 
     # Score titles by entity coverage + length sweet spot
     nlp = get_nlp()
@@ -232,36 +315,65 @@ def _generate_cluster_title(articles: list[dict]) -> str:
 
     scored = [(t, _score(t)) for t in valid_titles]
     scored.sort(key=lambda x: x[1], reverse=True)
-    return scored[0][0]
+    # Prefer the highest-scoring English (Latin-script) headline so the feed
+    # never surfaces an untranslated foreign-language title when an English
+    # member exists; fall back to the top score if all are non-Latin. (O6)
+    best = next((t for t, _ in scored if _mostly_ascii(t)), scored[0][0])
+    return _sanitize_editorial(best)
 
 
-def _generate_cluster_summary(articles: list[dict]) -> str:
-    """Pick the longest substantive article summary in a cluster."""
-    summaries = []
-    for a in articles:
-        s = (a.get("summary", "") or "").strip()
-        if s and len(s) >= 40:
-            summaries.append(s)
-    if not summaries:
+def _generate_cluster_summary(articles: list[dict], title: str = "") -> str:
+    """Pick the longest substantive member summary, preferring members that are
+    on-topic with the cluster headline.
+
+    On an over-merged cluster the longest member excerpt is frequently from an
+    off-topic article (headline says "heatwave", the longest summary is about an
+    archaeology dig). Restricting the candidate pool to members whose own title
+    shares a content keyword with the cluster title keeps the rule-based summary
+    on-topic; it widens to all members only when none qualify (or no title is
+    given), preserving prior behavior for small/coherent clusters.
+    (2026-06-28, Wave 2 / O4)
+    """
+    keywords = _title_keywords(title) if title else set()
+
+    def _on_topic(a: dict) -> bool:
+        if not keywords:
+            return True
+        return bool(keywords & _title_keywords(a.get("title", "") or ""))
+
+    def _collect(min_len: int, on_topic_only: bool) -> list[str]:
+        out = []
         for a in articles:
+            if on_topic_only and not _on_topic(a):
+                continue
             s = (a.get("summary", "") or "").strip()
-            if s and len(s) >= 15:
-                summaries.append(s)
+            if s and len(s) >= min_len:
+                out.append(s)
+        return out
+
+    # On-topic members first; widen to all members only if none qualify.
+    summaries = (
+        _collect(40, True) or _collect(40, False)
+        or _collect(15, True) or _collect(15, False)
+    )
     if summaries:
-        # Prefer the longest summary that survives boilerplate stripping with
-        # substantive body left; sanitize the winner so raw CMS/RSS scaffolding
-        # ("appeared first on", "Submitted by", twitter embeds, mid-word
-        # truncation) never reaches the DB/dashboard on null-tier clusters.
         summaries.sort(key=len, reverse=True)
+        # sanitize_summary strips CMS/RSS scaffolding + mid-word truncation the
+        # raw member excerpt carries (the null-tier tail ships this verbatim);
+        # _sanitize_editorial then enforces the em-dash / significance rules.
         for s in summaries:
             cleaned = sanitize_summary(s)
             if len(cleaned) >= 40:
-                return cleaned
-        return sanitize_summary(summaries[0])
-    for a in articles:
-        t = (a.get("title", "") or "").strip()
-        if t:
-            return sanitize_summary(t) or t
+                return _sanitize_editorial(cleaned)
+        return _sanitize_editorial(sanitize_summary(summaries[0]))
+    # No usable summary — fall back to an on-topic title, then any title.
+    for on_topic_only in (True, False):
+        for a in articles:
+            if on_topic_only and not _on_topic(a):
+                continue
+            t = (a.get("title", "") or "").strip()
+            if t:
+                return _sanitize_editorial(sanitize_summary(t) or t)
     return ""
 
 
@@ -416,6 +528,18 @@ _LOW_SPECIFICITY_ENTITIES = frozenset({
     "the new york times", "washington post", "guardian",
 })
 _LOW_SPECIFICITY_WEIGHT = 0.4
+
+# Phase 2 distinguishing-shared gate. After the total entity-overlap gate
+# passes, the shared set must still contain >= this many SPECIFIC entities
+# once generic ones (_LOW_SPECIFICITY_ENTITIES + _ENTITY_STOP_TOKENS) are
+# removed. Generic entities alone (e.g. {obama, court, ruling, washington}
+# bridging an unrelated SCOTUS story and an Obama story) must not trigger a
+# merge. Set-membership only — NOT the IDF-math scheme reverted 2026-05-31.
+# 2026-06-28 (Wave 3 / O2 evaluated, REVERTED): raising this to 2 rejected
+# one-entity coincidental bridges but also broke a legitimate loose-window merge
+# (trump-xi-loose fixture: Trump-Xi summit articles share one strong entity).
+# The Phase-1 tightening (O1) already curbs the over-merge, so this stays at 1.
+MIN_DISTINGUISHING_SHARED = 1
 
 
 # ---------------------------------------------------------------------------
@@ -922,6 +1046,17 @@ def merge_related_clusters(
             # Entity-overlap gate
             shared = ents_i & ents_j
             if len(shared) < min_shared_entities:
+                continue
+
+            # Distinguishing-shared gate — generic entities (world leaders,
+            # hot-spot countries, institution shells) alone must not bridge two
+            # stories. Require >= MIN_DISTINGUISHING_SHARED specific entities in
+            # the overlap once generic ones are removed. Legitimate Trump-X /
+            # Iran-X consolidations share a concrete entity (a person, place, or
+            # org named in the event), so they still merge; an unrelated SCOTUS
+            # and Obama cluster sharing only {obama, court, ...} does not.
+            distinguishing = shared - _LOW_SPECIFICITY_ENTITIES - _ENTITY_STOP_TOKENS
+            if len(distinguishing) < MIN_DISTINGUISHING_SHARED:
                 continue
 
             # Time gate — don't merge stories far apart in time.
@@ -1461,7 +1596,7 @@ def _force_split_cluster(
         pub_dates = [a.get("published_at", "") for a in carts if a.get("published_at")]
         first_published = min(pub_dates) if pub_dates else ""
         sub_title = _generate_cluster_title(carts)
-        sub_summary = _generate_cluster_summary(carts)
+        sub_summary = _generate_cluster_summary(carts, sub_title)
         sub_clusters.append({
             "title": sub_title,
             "summary": sub_summary,
@@ -1539,6 +1674,13 @@ def split_garbage_clusters(clusters: list[dict]) -> list[dict]:
 # Phase 5: Mega-cluster soft cap
 # ---------------------------------------------------------------------------
 
+# O3 (2026-06-28): an article pile this large that did NOT reach the 75-source
+# mega threshold is a candidate over-merge. If it is ALSO internally incoherent
+# (cohesion < MEGA_COHESION_FLOOR), flag it so the ranker's 0.65x mega penalty
+# deprioritizes it. A genuine big story scores high cohesion and is exempt.
+MEGA_OVERMERGE_ARTICLE_FLOOR = 45
+
+
 def split_mega_clusters(
     clusters: list[dict],
     threshold: int = MEGA_CLUSTER_THRESHOLD,
@@ -1563,6 +1705,7 @@ def split_mega_clusters(
     out: list[dict] = []
     for c in clusters:
         sc = int(c.get("source_count", 0) or 0)
+        n_articles = len(c.get("articles") or [])
         if sc >= threshold:
             c["_mega_cluster_original_count"] = sc
             c["source_count"] = threshold
@@ -1572,6 +1715,20 @@ def split_mega_clusters(
                     f"  [Phase5/mega-cap] '{c.get('title','')[:60]!r}' "
                     f"(src={sc}) kept whole, source_count capped at {threshold}"
                 )
+        elif (
+            n_articles >= MEGA_OVERMERGE_ARTICLE_FLOOR
+            and not c.get("mega_cluster_capped")
+        ):
+            # O3: large-but-sub-threshold pile — flag only if incoherent.
+            cohesion = _cluster_cohesion(c).get("cohesion_score", 100.0)
+            if cohesion < MEGA_COHESION_FLOOR:
+                c["mega_cluster_capped"] = True
+                if verbose:
+                    print(
+                        f"  [Phase5/overmerge-flag] '{c.get('title','')[:55]!r}' "
+                        f"(art={n_articles}, src={sc}, cohesion={cohesion:.0f}) "
+                        f"flagged as over-merge"
+                    )
         out.append(c)
     return out
 
@@ -1910,7 +2067,7 @@ def _rebuild_merged(
 
         first_published = min(all_pub_dates) if all_pub_dates else ""
         merged_title = _generate_cluster_title(all_articles)
-        merged_summary = _generate_cluster_summary(all_articles)
+        merged_summary = _generate_cluster_summary(all_articles, merged_title)
         merged_section = _determine_section(all_articles, merged_title, merged_summary)
 
         out.append({
@@ -2082,12 +2239,18 @@ def cluster_stories(
         _apply_wire_aware_source_count(c)
         return [c] + empty_singletons
 
-    # Phase 1: TF-IDF + agglomerative clustering
+    # Phase 1: TF-IDF + agglomerative clustering.
+    # min_df=2 on production-scale corpora suppresses single-document
+    # boilerplate (nav/footer/byline tokens) that otherwise bridges one
+    # publisher's unrelated articles into a grab-bag; kept at 1 for tiny
+    # corpora (fixtures) where min_df=2 would empty the vocabulary.
+    # (2026-06-28, Wave 3 / O1)
+    _phase1_min_df = 2 if len(valid_docs) >= 30 else 1
     vectorizer = TfidfVectorizer(
         max_features=5000,
         stop_words="english",
         ngram_range=(1, 2),
-        min_df=1,
+        min_df=_phase1_min_df,
         max_df=0.95,
     )
     tfidf_matrix = vectorizer.fit_transform(valid_docs)
@@ -2116,7 +2279,7 @@ def cluster_stories(
         pub_dates = [a.get("published_at", "") for a in carts if a.get("published_at")]
         first_published = min(pub_dates) if pub_dates else ""
         cluster_title = _generate_cluster_title(carts)
-        cluster_summary = _generate_cluster_summary(carts)
+        cluster_summary = _generate_cluster_summary(carts, cluster_title)
         clusters.append({
             "title": cluster_title,
             "summary": cluster_summary,

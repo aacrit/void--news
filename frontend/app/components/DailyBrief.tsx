@@ -46,6 +46,13 @@ export interface DailyBriefState {
   previousEpisodes: import("./AudioProvider").EpisodeMeta[];
   /** Load and play a specific episode */
   loadEpisode: (episode: import("./AudioProvider").EpisodeMeta) => void;
+  /** Which product owns the player — drives accent theming + labels */
+  contentType: "daily" | "weekly";
+  /** Load a weekly issue (+ optional archive playlist) into the shared player */
+  playWeekly: (
+    digest: import("../lib/types").WeeklyDigestData,
+    archiveIssues?: import("./AudioProvider").EpisodeMeta[]
+  ) => void;
 }
 
 /**
@@ -91,6 +98,8 @@ export function useDailyBrief(edition: string): DailyBriefState {
     connectAnalyser: audio.connectAnalyser,
     previousEpisodes: audio.previousEpisodes,
     loadEpisode: audio.loadEpisode,
+    contentType: audio.contentType,
+    playWeekly: audio.playWeekly,
   };
 }
 

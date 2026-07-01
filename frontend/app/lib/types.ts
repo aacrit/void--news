@@ -20,6 +20,13 @@ export interface BiasSpread {
   opinionSpread: number;
   aggregateConfidence: number;
   analyzedCount: number;
+  /** Contestedness 0-100: 0 = one-sided / all-center, 100 = perfect L/R split.
+   *  Reveals the bimodal coverage that the mean lean conceals. */
+  polarization?: number;
+  /** Source counts collapsed to 3 segments for the coverage bar. */
+  leanLeftCount?: number;
+  leanCenterCount?: number;
+  leanRightCount?: number;
 }
 
 export interface Source {
@@ -395,8 +402,12 @@ export interface WeeklyTimelineDay {
 }
 
 export interface WeeklyCoverNumber {
-  value: string;
-  label: string;
+  // Generator emits {stat, context}; older rows used {value, label}.
+  // Renderer normalizes: value ?? stat / label ?? context.
+  value?: string;
+  label?: string;
+  stat?: string;
+  context?: string;
 }
 
 export interface WeeklyRecapStory {
@@ -454,6 +465,15 @@ export interface WeeklyDigestData {
   bias_report_data: WeeklyBiasReportData | null;
   audio_url: string | null;
   audio_duration_seconds: number | null;
+  // Weekly editorial (one argued week-in-review column; migration 064).
+  // Distinct from the three-lens opinion_left/center/right "Perspectives".
+  opinion_text: string | null;
+  opinion_headline: string | null;
+  opinion_lean: OpinionLean | null;
+  opinion_audio_script: string | null;
+  opinion_start_seconds: number | null;
+  audio_voice: string | null;
+  audio_voice_label: string | null;
   total_articles: number | null;
   total_clusters: number | null;
   contested_stories?: WeeklyContestedStory[] | null;

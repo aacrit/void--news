@@ -51,8 +51,6 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
   // pill + Top Story all fit above the fold on any mobile resolution.
   // Tap the chevron (or any pill row) to expand.
   const [isExpanded, setIsExpanded] = useState(false);
-  const [tldrExpanded, setTldrExpanded] = useState(false);
-  const [opinionExpanded, setOpinionExpanded] = useState(false);
   const [episodesExpanded, setEpisodesExpanded] = useState(false);
 
   if (!brief) return (
@@ -73,11 +71,9 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
   const hasAudio = !!brief.audio_url;
 
   const tldrSentences = String(brief.tldr_text).split(/(?<=[.!?])\s+/).filter(Boolean);
-  // UAT 2026-05-13 P1-11: show 3 sentences instead of 2 so the TL;DR
-  // delivers a full thought before the "read more" hand-off.
+  // Collapsed-teaser preview (CSS clamps it to one line). The expanded brief
+  // renders brief.tldr_text in full, so there is no preview/"read more" split.
   const tldrPreview = tldrSentences.slice(0, 3).join(" ");
-  const tldrRest = tldrSentences.slice(3).join(" ");
-  const tldrHasMore = tldrRest.length > 0;
 
   const handleOnairClick = () => {
     hapticConfirm();
@@ -96,10 +92,6 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
   const opinionTeaser = firstOpinionSentence && firstOpinionSentence !== opinionHeadline
     ? firstOpinionSentence
     : (opinionSentences[1] || "");
-  // Mirror TL;DR: 2-sentence preview + "Read more" reveals the rest.
-  const opinionPreviewText = opinionSentences.slice(0, 2).join(" ");
-  const opinionRestText = opinionSentences.slice(2).join(" ");
-  const opinionHasMore = opinionRestText.length > 0;
 
   /* Collapsed pill — TL;DR teaser (headline + preview) + Opinion teaser.
      CEO 2026-05-14: filter buried inside topics dropdown, freeing room for
@@ -164,18 +156,9 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
         </div>
       </div>
 
-      {/* TL;DR — first 2 sentences always visible */}
+      {/* TL;DR — full text once the pill is expanded (no inner "Read more"). */}
       {brief.tldr_headline && <h3 className="mbp__hl mbp__hl--tldr">{brief.tldr_headline}</h3>}
-      <p className="mbp__preview mbp__preview--tldr">{tldrPreview}</p>
-      <div className={`mbp__expand${tldrExpanded ? " mbp__expand--open" : ""}`}>
-        <div className="mbp__expand-inner">
-          <p className="mbp__expand-text mbp__expand-text--tldr">{tldrRest}</p>
-        </div>
-      </div>
-      {tldrHasMore && (
-        <button className="mbp__more" onClick={() => { hapticLight(); setTldrExpanded((v) => !v); }}
-          type="button" aria-expanded={tldrExpanded}>{tldrExpanded ? "Less" : "Read more"}</button>
-      )}
+      <p className="mbp__preview mbp__preview--tldr">{brief.tldr_text}</p>
 
       {/* Opinion — re-introduced for mobile expanded brief (CEO 2026-05-13).
           User can collapse the whole brief; in expanded state TL;DR + Opinion
@@ -187,16 +170,7 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
           <div className={`mbp__opinion${brief.opinion_lean ? ` mbp__opinion--${brief.opinion_lean}` : ""}`}>
             <span className="mbp__cmd mbp__cmd--opinion">void --opinion</span>
             {opinionHeadline && <h3 className="mbp__hl mbp__hl--opinion">{opinionHeadline}</h3>}
-            <p className="mbp__preview mbp__preview--opinion">{opinionPreviewText}</p>
-            <div className={`mbp__expand${opinionExpanded ? " mbp__expand--open" : ""}`}>
-              <div className="mbp__expand-inner">
-                <p className="mbp__expand-text mbp__expand-text--opinion">{opinionRestText}</p>
-              </div>
-            </div>
-            {opinionHasMore && (
-              <button className="mbp__more" onClick={() => { hapticLight(); setOpinionExpanded((v) => !v); }}
-                type="button" aria-expanded={opinionExpanded}>{opinionExpanded ? "Less" : "Read more"}</button>
-            )}
+            <p className="mbp__preview mbp__preview--opinion">{brief.opinion_text}</p>
           </div>
         </>
       )}

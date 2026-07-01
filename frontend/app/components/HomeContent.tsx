@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useCallback, useRef, Component, type ReactNode } from "react";
+import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import type { Edition, Category, Story, BiasScores, BiasSpread, ThreeLensData, OpinionLabel, SigilData } from "../lib/types";
 import { EDITIONS } from "../lib/types";
@@ -8,51 +8,21 @@ import { isUnscoredTilt } from "../lib/biasColors";
 import { supabase, supabaseError } from "../lib/supabase";
 import { cacheGet, cacheSet } from "../lib/feedCache";
 import { BASE_PATH } from "../lib/utils";
-import { AUDIO_ENABLED } from "../lib/audioGate";
 import LogoIcon from "./LogoIcon";
 import LogoWordmark from "./LogoWordmark";
 import NavBar from "./NavBar";
 import LeadStory from "./LeadStory";
 import StoryCard from "./StoryCard";
 import { computeStoryFamilies } from "../lib/storyFamilies";
-const DeepDive = dynamic(() => import("./DeepDive"), { ssr: false });
+const InlineDeepDive = dynamic(() => import("./InlineDeepDive"), { ssr: false });
 import ErrorBoundary from "./ErrorBoundary";
-
-/* DeepDive-specific ErrorBoundary — shows dismissible error in the panel
-   instead of crashing the entire feed. */
-class DeepDiveErrorBoundary extends Component<
-  { children: ReactNode; onClose: () => void },
-  { hasError: boolean }
-> {
-  constructor(props: { children: ReactNode; onClose: () => void }) {
-    super(props);
-    this.state = { hasError: false };
-  }
-  static getDerivedStateFromError(): { hasError: boolean } {
-    return { hasError: true };
-  }
-  render() {
-    if (this.state.hasError) {
-      return (
-        <div className="deep-dive dd-error-boundary" role="dialog" aria-label="Error">
-          <div className="dd-error-boundary__inner">
-            <p className="text-base empty-state__body">
-              Unable to load analysis for this story.
-            </p>
-            <button className="btn-primary" onClick={this.props.onClose}>Close</button>
-          </div>
-        </div>
-      );
-    }
-    return this.props.children;
-  }
-}
 
 import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
 import { useDailyBrief } from "./DailyBrief";
 import SkyboxBanner from "./SkyboxBanner";
-const FloatingPlayer = dynamic(() => import("./FloatingPlayer"), { ssr: false });
+// FloatingPlayer is now mounted globally in MobileNav (layout.tsx) so it renders
+// on every route, including /weekly. It reads the global AudioProvider directly.
 import { hapticConfirm, hapticLight } from "../lib/haptics";
 const UnifiedOnboarding = dynamic(() => import("./UnifiedOnboarding"), { ssr: false });
 import { useStoryKeyboardNav } from "./KeyboardShortcuts";
@@ -267,10 +237,17 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
     setSelectedStory(story);
   }, []);
 
-  const handleDeepDiveClose = useCallback(() => {
+  // Inline-mode collapse — clear the open story and glide back to where the user
+  // was when they opened it. The inline block is in the document flow, so removing
+  // it changes scroll height; restore after the DOM updates (double rAF) so we
+  // land on the original feed position instead of a clamped spot.
+  const handleInlineCollapse = useCallback(() => {
+    const restore = scrollBeforeDeepDive.current;
     setSelectedStory(null);
     setOriginRect(null);
-    window.scrollTo(0, scrollBeforeDeepDive.current);
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => window.scrollTo({ top: restore, behavior: "smooth" })),
+    );
   }, []);
 
   // Detect mobile for feed layout — responsive to viewport changes
@@ -471,6 +448,10 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
                   opinionSpread: safeNum(bd, "opinion_spread", 0),
                   aggregateConfidence: safeNum(bd, "aggregate_confidence", 0),
                   analyzedCount: safeNum(bd, "analyzed_count", 0),
+                  polarization: safeNum(bd, "polarization", 0),
+                  leanLeftCount: safeNum(bd, "lean_left_count", 0),
+                  leanCenterCount: safeNum(bd, "lean_center_count", 0),
+                  leanRightCount: safeNum(bd, "lean_right_count", 0),
                 }
               : undefined;
 
@@ -701,6 +682,21 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
   const twinLeads = mainStories.slice(0, 2);
   const gridStories = mainStories.slice(2);
 
+  // --- Inline Deep Dive split ----------------------------------------------
+  // When a story is open, the feed splits around it so the expanded block
+  // renders full-width in the document flow. Inline is the only Deep Dive mode
+  // now (the legacy modal was removed); inlineActive simply tracks whether a
+  // story is open.
+  const inlineActive = selectedStory != null;
+  // Index of the open story within mainStories: 0/1 = twin lead, >=2 = grid.
+  const inlineIndex = inlineActive
+    ? mainStories.findIndex((s) => s.id === selectedStory!.id)
+    : -1;
+  // Open story is one of the two twin leads (replaces the whole twin block).
+  const inlineInLead = inlineActive && inlineIndex >= 0 && inlineIndex < 2;
+  // Open story is in the grid — split position within gridStories.
+  const inlineGridSplit = inlineActive && inlineIndex >= 2 ? inlineIndex - 2 : -1;
+
   // Lead hero image removed 2026-05-13 — text-only newspaper composition.
 
   // Continuous-scroll set: main feed + World overflow. Keyboard nav (J/K) and
@@ -728,16 +724,32 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
     !!selectedStory,
   );
 
-  // Inter-story navigation within Deep Dive — traverses main + overflow.
-  const handleDeepDiveNav = useCallback((direction: "prev" | "next") => {
-    if (!selectedStory) return;
-    const idx = visibleStories.findIndex((s) => s.id === selectedStory.id);
-    if (idx < 0) return;
-    const newIdx = direction === "prev" ? idx - 1 : idx + 1;
-    if (newIdx >= 0 && newIdx < visibleStories.length) {
-      setSelectedStory(visibleStories[newIdx]);
-    }
-  }, [selectedStory, visibleStories]);
+  // Single grid-card renderer — shared by the unsplit grid and both halves of
+  // the inline split so the index-derived props (globalIndex, variant, family,
+  // keyboard focus) stay identical regardless of which path renders the card.
+  // `idx` is the card's position within gridStories (rank = idx + 2). Declared
+  // after kbdFocusIndex since it closes over it.
+  const renderGridCard = useCallback(
+    (story: Story, idx: number) => {
+      const gi = 2 + idx;
+      const variant: "digest" | "wire" = idx < 8 ? "digest" : "wire";
+      const family = storyFamilies.get(story.id);
+      return (
+        <div key={story.id} className="feed-grid__item">
+          <StoryCard
+            story={story}
+            index={idx + 2}
+            onStoryClick={handleStoryClick}
+            globalIndex={gi}
+            kbdFocused={kbdFocusIndex === gi}
+            variant={variant}
+            family={family}
+          />
+        </div>
+      );
+    },
+    [storyFamilies, handleStoryClick, kbdFocusIndex],
+  );
 
   // Search: when a result is selected, open its Deep Dive
   const handleSearchSelect = useCallback((story: Story) => {
@@ -841,6 +853,8 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
                     filterKey={filterKey}
                     kbdFocusIndex={kbdFocusIndex}
                     editionMeta={editionMeta}
+                    selectedStory={selectedStory}
+                    onInlineCollapse={handleInlineCollapse}
                     transitionClass={editionTransition === "out" ? "anim-edition-out" : editionTransition === "in" ? "anim-edition-in" : undefined}
                   />
 
@@ -857,38 +871,61 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
 
                   {/* Twin top stories — ranks 0 and 1, co-equal "Top Story"
                       leads side-by-side in a 50/50 split (vertical stack on
-                      <1024px). Both wear the badge. v3 2026-05-14. */}
-                  {twinLeads.length > 0 && (
-                    <div key={filterKey} className={`lead-twin hero-slot${isEditionSwitch ? " anim-content-arrive" : ""}`}>
-                      {twinLeads.map((story, idx) => (
-                        <LeadStory
-                          key={story.id}
-                          story={story}
-                          rank={idx}
-                          twin={twinLeads.length === 2}
-                          onStoryClick={handleStoryClick}
-                          kbdFocused={kbdFocusIndex === idx}
-                        />
-                      ))}
-                    </div>
+                      <1024px). Both wear the badge. v3 2026-05-14.
+                      Inline mode: when one of the twin leads is open, the whole
+                      twin block is replaced by the full-width InlineDeepDive. */}
+                  {inlineInLead ? (
+                    <InlineDeepDive key={selectedStory!.id} story={selectedStory!} onCollapse={handleInlineCollapse} />
+                  ) : (
+                    twinLeads.length > 0 && (
+                      <div key={filterKey} className={`lead-twin hero-slot${isEditionSwitch ? " anim-content-arrive" : ""}${inlineActive ? " lead-twin--recede" : ""}`}>
+                        {twinLeads.map((story, idx) => (
+                          <LeadStory
+                            key={story.id}
+                            story={story}
+                            rank={idx}
+                            twin={twinLeads.length === 2}
+                            onStoryClick={handleStoryClick}
+                            kbdFocused={kbdFocusIndex === idx}
+                          />
+                        ))}
+                      </div>
+                    )
                   )}
 
                   {/* Grid below twin leads — ranks 2-49 (digest at 2-9, wire
                       at 10-49). Slot math: 8 digest + 40 wire = 48 grid cards,
-                      plus 2 twin leads above = 50 total. */}
+                      plus 2 twin leads above = 50 total.
+                      Inline mode: when a grid card is open, the grid is split
+                      into two sub-grids with the full-width InlineDeepDive
+                      between them (one <section> each avoids the empty-cell gap
+                      that grid-column:1/-1 would leave). The original grid index
+                      is preserved on each card so variant + globalIndex math is
+                      identical to the unsplit grid. */}
                   {gridStories.length > 0 && (
-                    <section key={`grid-${filterKey}`} aria-label="Stories" className={`feed-grid${isEditionSwitch ? " anim-content-arrive" : ""}`}>
-                      {gridStories.map((story, idx) => {
-                        const gi = 2 + idx;
-                        const variant: "digest" | "wire" = idx < 8 ? "digest" : "wire";
-                        const family = storyFamilies.get(story.id);
-                        return (
-                          <div key={story.id} className="feed-grid__item">
-                            <StoryCard story={story} index={idx + 2} onStoryClick={handleStoryClick} globalIndex={gi} kbdFocused={kbdFocusIndex === gi} variant={variant} family={family} />
-                          </div>
-                        );
-                      })}
-                    </section>
+                    inlineGridSplit >= 0 ? (
+                      <React.Fragment key={`grid-split-${filterKey}`}>
+                        {inlineGridSplit > 0 && (
+                          <section aria-label="Stories" className="feed-grid feed-grid--recede">
+                            {gridStories.slice(0, inlineGridSplit).map((story, idx) =>
+                              renderGridCard(story, idx),
+                            )}
+                          </section>
+                        )}
+                        <InlineDeepDive key={selectedStory!.id} story={selectedStory!} onCollapse={handleInlineCollapse} />
+                        {inlineGridSplit < gridStories.length - 1 && (
+                          <section aria-label="Stories" className="feed-grid feed-grid--recede">
+                            {gridStories.slice(inlineGridSplit + 1).map((story, sIdx) =>
+                              renderGridCard(story, inlineGridSplit + 1 + sIdx),
+                            )}
+                          </section>
+                        )}
+                      </React.Fragment>
+                    ) : (
+                      <section key={`grid-${filterKey}`} aria-label="Stories" className={`feed-grid${isEditionSwitch ? " anim-content-arrive" : ""}${inlineActive ? " feed-grid--recede" : ""}`}>
+                        {gridStories.map((story, idx) => renderGridCard(story, idx))}
+                      </section>
+                    )
                   )}
 
                   {/* Expand-to-50 affordance — sits between the default
@@ -931,20 +968,9 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
       {/* Footer */}
       {!isLoading && <Footer lastUpdated={lastUpdated} />}
 
-      {/* Deep Dive panel — wrapped in its own ErrorBoundary so one bad
-           cluster doesn't crash the entire feed */}
-      {selectedStory && (
-        <DeepDiveErrorBoundary onClose={handleDeepDiveClose}>
-          <DeepDive
-            story={selectedStory}
-            onClose={handleDeepDiveClose}
-            originRect={originRect}
-            onNavigate={handleDeepDiveNav}
-            storyIndex={visibleStories.findIndex((s) => s.id === selectedStory.id)}
-            totalStories={visibleStories.length}
-          />
-        </DeepDiveErrorBoundary>
-      )}
+      {/* Deep Dive renders inline in the feed (InlineDeepDive) on both desktop
+           (split broadsheet) and mobile (MobileFeed split-render). The legacy
+           modal was removed 2026-06-26. */}
 
       {/* Search overlay — Cmd+K. Search across main feed + World overflow. */}
       <SearchOverlay
@@ -963,10 +989,8 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
       {/* PWA install prompt — 2nd+ visit, above bottom nav */}
       <InstallPrompt />
 
-      {/* Floating audio player — gated by AUDIO_DISABLED flag (void --onair
-          parking lot). When flipped on, AudioProvider in layout.tsx owns
-          the underlying audio element. */}
-      {AUDIO_ENABLED && <FloatingPlayer state={dailyBriefState} />}
+      {/* FloatingPlayer moved to MobileNav (layout-level) so it is global across
+          routes. dailyBriefState is still consumed above (SkyboxBanner etc.). */}
     </div>
   );
 }

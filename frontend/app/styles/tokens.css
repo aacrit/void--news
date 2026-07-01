@@ -756,19 +756,19 @@
   --text-hero:  clamp(1.5rem, 1.3rem + 1.2vw, 3rem);
 
   /* Newspaper variant scale — drives Lead/Digest/Wire typography hierarchy.
-     Lead reaches 64px on wide desktop; Digest sits at ~22px; Wire at 14px.
-     Aggressive contrast between scales is what gives the page its
-     "premium broadsheet" feel. */
-  --type-lead-headline:   clamp(2.25rem, 1.8rem + 2vw, 4rem);     /* 36 → 64px */
+     Lead reaches 72px on wide desktop; cards sit at ~18-22px. Aggressive
+     contrast between scales is what gives the page its "premium broadsheet"
+     feel — and makes the lead the single clear focal point on a wide screen. */
+  --type-lead-headline:   clamp(1.8rem, 1.36rem + 1.92vw, 3.6rem);  /* 29 -> 58px (-20% 2026-06-25) */
   /* Twin lead headline scale (v3, 2026-05-14): when two top stories share
      the hero canvas in a 50/50 split, each headline scales down one notch
      from full lead — half the width means smaller type so lines don't break
      into single words. */
-  --type-twin-headline:   clamp(1.75rem, 1.3rem + 1.5vw, 2.75rem); /* 28 → 44px */
+  --type-twin-headline:   clamp(1.4rem, 1.04rem + 1.2vw, 2.2rem); /* 22 -> 35px (-20% 2026-06-25) */
   /* Unified card-headline scale for ranks 1+ (digest and wire variants).
      CEO 2026-05-13: feed should read as a single editorial surface, not
      two tiered scales. Layout grids still differ; type does not. */
-  --type-card-headline:   clamp(1.125rem, 1rem + 0.6vw, 1.375rem); /* 18 → 22px */
+  --type-card-headline:   clamp(0.9rem, 0.816rem + 0.36vw, 1.1rem); /* 14 -> 18px (-20% 2026-06-25) */
   --type-card-tracking:   -0.01em;
   --type-lead-tracking:   -0.02em;
   /* Brief headline scale when TL;DR / Opinion pill expands. The collapsed

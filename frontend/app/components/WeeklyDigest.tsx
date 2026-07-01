@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import Link from "next/link";
 import type {
   Edition,
@@ -12,8 +12,8 @@ import type {
 } from "../lib/types";
 import { EDITIONS } from "../lib/types";
 import { fetchWeeklyDigest, fetchWeeklyArchive } from "../lib/supabase";
-import { getLeanColor } from "../lib/biasColors";
 import { AUDIO_ENABLED } from "../lib/audioGate";
+import { useAudio, type EpisodeMeta } from "./AudioProvider";
 import Footer from "./Footer";
 import ThemeToggle from "./ThemeToggle";
 import LogoFull from "./LogoFull";
@@ -40,46 +40,6 @@ function InkRule({ className = "" }: { className?: string }) {
         strokeWidth="1.2"
         fill="none"
         opacity="0.35"
-      />
-    </svg>
-  );
-}
-
-function InkVerticalTrack() {
-  return (
-    <svg
-      className="wk-timeline__ink-track"
-      viewBox="0 0 4 400"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-    >
-      <path
-        d="M2 0 C0.5 20, 3.5 40, 2 80 S0.5 160, 2 200 S3.5 280, 2 320 S0.5 380, 2 400"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        fill="none"
-        opacity="0.25"
-        strokeDasharray="8 4"
-      />
-    </svg>
-  );
-}
-
-function InkHorizontalTrack() {
-  return (
-    <svg
-      className="wk-timeline__ink-track"
-      viewBox="0 0 400 4"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-    >
-      <path
-        d="M0 2 C20 0.5, 40 3.5, 80 2 S160 0.5, 200 2 S280 3.5, 320 2 S380 0.5, 400 2"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        fill="none"
-        opacity="0.25"
-        strokeDasharray="8 4"
       />
     </svg>
   );
@@ -139,6 +99,33 @@ function RevealFlourish() {
 
 /* ── Formatting Helpers ────────────────────────────────────────────────────── */
 
+/* Defensive: drop any embedded "TIMELINE" block the generator may have
+   written into the cover essay (a heading line + bullet list). The timeline
+   UI was removed, but older issues have it baked into cover_text. */
+function stripTimelineFromText(text: string): string {
+  const blocks = (text || "").split(/\n\n+/);
+  const kept = blocks.filter((block) => {
+    const lines = block.trim().split("\n").map((l) => l.trim()).filter(Boolean);
+    if (lines.length === 0) return false;
+    const heading = lines[0].replace(/[*_#\s:]/g, "").toUpperCase();
+    if (heading === "TIMELINE") return false;
+    const allBullets = lines.every((l) => /^[*\-•]\s+/.test(l));
+    if (allBullets) return false;
+    return true;
+  });
+  return kept.join("\n\n");
+}
+
+/* Pick a single magazine-style pull-quote from a cover essay: the first
+   self-contained sentence in a comfortable length band, drawn from existing
+   text (no generation). Returns "" if nothing suitable. */
+function pickPullQuote(text: string): string {
+  const clean = stripTimelineFromText(text || "").replace(/\s+/g, " ").trim();
+  const sentences = clean.split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter(Boolean);
+  const inBand = sentences.find((s) => s.length >= 70 && s.length <= 150);
+  return inBand || sentences.find((s) => s.length >= 45 && s.length <= 200) || "";
+}
+
 function formatWeekRange(start: string, end: string): string {
   const s = new Date(start + "T00:00:00");
   const e = new Date(end + "T00:00:00");
@@ -160,30 +147,23 @@ function formatArchiveRange(start: string, end: string): string {
   return `${s.toLocaleDateString("en-US", { month: "short", day: "numeric" })}\u2013${e.toLocaleDateString("en-US", { month: "short", day: "numeric" })}`;
 }
 
+/* Lean marker — same three labels the daily Opinion view uses
+   (SkyboxBanner: Progressive / Pragmatic / Conservative). */
 function leanBadgeLabel(lean: string): string {
-  const map: Record<string, string> = {
-    "left": "The Progressive",
-    "center-left": "The Reformist",
-    "center": "The Pragmatist",
-    "center-right": "The Strategist",
-    "right": "The Traditionalist",
-    "far-left": "The Progressive",
-    "far-right": "The Traditionalist",
-  };
-  return map[(lean || "center").toLowerCase()] ?? lean ?? "center";
+  const l = (lean || "center").toLowerCase();
+  if (l.includes("left")) return "Progressive";
+  if (l.includes("right")) return "Conservative";
+  return "Pragmatic";
 }
 
-function leanToScore(lean: string): number {
-  const map: Record<string, number> = {
-    "far-left": 10,
-    "left": 28,
-    "center-left": 40,
-    "center": 50,
-    "center-right": 60,
-    "right": 73,
-    "far-right": 90,
-  };
-  return map[(lean || "center").toLowerCase()] ?? 50;
+/* Map a lean label to the shared bias color token — same blue/green/red
+   tokens the daily Opinion view uses, applied with restraint (thin border +
+   low-opacity badge) rather than a saturated fill. */
+function leanToBiasVar(lean: string): string {
+  const l = (lean || "center").toLowerCase();
+  if (l.includes("left")) return "var(--bias-left)";
+  if (l.includes("right")) return "var(--bias-right)";
+  return "var(--bias-center)";
 }
 
 /* ── Scroll-Reveal Hook ────────────────────────────────────────────────────── */
@@ -351,9 +331,6 @@ function CoverBody({
 }) {
   const [sectionRef, sectionVisible] = useScrollReveal(0.1);
 
-  // Timeline from first story
-  const timeline = (stories[0]?.timeline ?? []) as Record<string, string>[];
-
   return (
     <section
       ref={sectionRef as React.RefObject<HTMLElement>}
@@ -361,109 +338,78 @@ function CoverBody({
       aria-labelledby="wk-cover-heading"
     >
       {/* Show up to 2 cover stories */}
-      {stories.slice(0, 2).map((story, si) => (
-        <div key={si} className="wk-cover-body wk-cold-open--body">
-          {si > 0 && <InkRule className="wk-ink-rule--strong" />}
-          {si > 0 && story.headline?.trim() && <h3 className="wk-cover-body__subhead">{story.headline}</h3>}
-          <div className="wk-cover-body__text">
-            {(story.text || "").split("\n\n").filter(Boolean).map((para, j) => (
-              <p key={`${si}-${j}`}>{para}</p>
-            ))}
+      {stories.slice(0, 2).map((story, si) => {
+        const paras = stripTimelineFromText(story.text || "").split("\n\n").filter(Boolean);
+        const pullQuote = pickPullQuote(story.text || "");
+        return (
+          <div key={si} className="wk-cover-body wk-cold-open--body">
+            {si > 0 && <InkRule className="wk-ink-rule--strong" />}
+            {si > 0 && story.headline?.trim() && <h3 className="wk-cover-body__subhead">{story.headline}</h3>}
+            <div className="wk-cover-body__text">
+              {paras.flatMap((para, j) => {
+                const nodes = [<p key={`${si}-p-${j}`}>{para}</p>];
+                // Pull-quote floats after the opening paragraph (magazine break).
+                if (j === 0 && pullQuote && paras.length > 1) {
+                  nodes.push(
+                    <blockquote key={`${si}-pq`} className="wk-pullquote">
+                      {pullQuote}
+                    </blockquote>
+                  );
+                }
+                return nodes;
+              })}
+            </div>
           </div>
-        </div>
-      ))}
-
-      {/* Timeline — uses TimelineSection which handles desktop/mobile detection */}
-      <TimelineSection timeline={timeline} />
+        );
+      })}
     </section>
   );
 }
 
-/* --- D. Timeline --- */
+/* --- C2. void --Editorial (the single argued editorial, its own full-width
+   section after the cover features) --- */
 
-function TimelineNode({
-  entry,
-  index,
+function SectionEditorial({
+  headline,
+  text,
+  lean,
 }: {
-  entry: Record<string, string>;
-  index: number;
+  headline: string | null;
+  text: string;
+  lean: string | null;
 }) {
-  const [expanded, setExpanded] = useState(false);
-  const dateText = entry.date || entry.day || "";
-  const noteText = entry.title || entry.event || entry.note || entry.development || "";
-
-  const sentences = noteText.split(/(?<=[.!?])\s+/);
-  const summary = sentences[0] || noteText;
-  const detail = sentences.length > 1 ? sentences.slice(1).join(" ") : "";
-  const hasDetail = detail.length > 0;
-
+  const [ref, visible] = useScrollReveal(0.1);
+  const paras = (text || "").split("\n\n").filter(Boolean);
+  if (paras.length === 0) return null;
   return (
-    <div role="listitem">
-      <button
-        className={`wk-timeline__node${expanded ? " wk-timeline__node--expanded" : ""}`}
-        onClick={() => hasDetail && setExpanded(!expanded)}
-        aria-expanded={hasDetail ? expanded : undefined}
-        type="button"
-        style={{ "--node-delay": `${index * 80}ms` } as React.CSSProperties}
-      >
-        <span className="wk-timeline__dot" aria-hidden="true" />
-        <span className="wk-timeline__day">{dateText}</span>
-        <span className="wk-timeline__note">{hasDetail ? summary : noteText}</span>
-        {hasDetail && (
-          <>
-            <div className="wk-timeline__detail">
-              <div className="wk-timeline__detail-inner">
-                <p className="wk-timeline__detail-text">{detail}</p>
-              </div>
-            </div>
-            <span className="wk-timeline__expand-hint">
-              {expanded ? "Collapse" : "Expand"}
-            </span>
-          </>
-        )}
-      </button>
-    </div>
-  );
-}
-
-function TimelineSection({ timeline }: { timeline: Record<string, string>[] }) {
-  const [isDesktop, setIsDesktop] = useState(false);
-  const [ref, visible] = useScrollReveal(0.15);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 768px)");
-    setIsDesktop(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
-
-  if (!timeline || timeline.length === 0) return null;
-
-  return (
-    <div
-      ref={ref as React.RefObject<HTMLDivElement>}
-      className={`wk-timeline-section wk-reveal${visible ? " wk-reveal--visible" : ""}`}
-      aria-labelledby="wk-timeline-heading"
+    <section
+      ref={ref as React.RefObject<HTMLElement>}
+      className={`wk-editorial-section wk-reveal${visible ? " wk-reveal--visible" : ""}`}
+      aria-labelledby="wk-editorial-heading"
     >
-      <h3 className="wk-section-label" id="wk-timeline-heading" data-prefix="void --">Timeline</h3>
-      <div className="wk-timeline" role="list" aria-label="Key events">
-        {isDesktop ? <InkHorizontalTrack /> : <InkVerticalTrack />}
-        {timeline.map((entry, k) => (
-          <TimelineNode key={k} entry={entry} index={k} />
-        ))}
-      </div>
-    </div>
+      <h2 className="wk-section-label" id="wk-editorial-heading" data-prefix="void --">Editorial</h2>
+      <article className="wk-editorial">
+        <span className="wk-editorial__lens">
+          Through a {leanBadgeLabel(lean || "center").toLowerCase()} lens
+        </span>
+        {headline?.trim() && <h3 className="wk-editorial__headline">{headline}</h3>}
+        <div className="wk-editorial__text">
+          {paras.map((para, i) => (
+            <p key={i}>{para}</p>
+          ))}
+        </div>
+      </article>
+    </section>
   );
 }
 
-/* --- E. Opinions --- */
+/* --- D. Opinions --- */
 
 function OpinionCard({ op }: { op: WeeklyOpinion }) {
   return (
     <article
       className="wk-opinion wk-reveal-child"
-      style={{ "--lean-color": getLeanColor(leanToScore(op.lean)) } as React.CSSProperties}
+      style={{ "--lean-color": leanToBiasVar(op.lean) } as React.CSSProperties}
     >
       <div className="wk-opinion__header">
         <span className="wk-opinion__badge">
@@ -583,108 +529,11 @@ function ContestedSection({ stories }: { stories: WeeklyContestedStory[] }) {
   );
 }
 
-/* --- H. Audio Player --- */
-
-function AudioBar({
-  audioUrl,
-  durationSeconds,
-}: {
-  audioUrl: string;
-  durationSeconds: number | null;
-}) {
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(durationSeconds ?? 0);
-  const [audioError, setAudioError] = useState(false);
-
-  const handlePlayPause = useCallback(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    if (isPlaying) {
-      audio.pause();
-    } else {
-      audio.play().catch(() => {});
-    }
-  }, [isPlaying]);
-
-  const handleSeek = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    const t = parseFloat(e.target.value);
-    audio.currentTime = t;
-    setCurrentTime(t);
-  }, []);
-
-  const formatTime = (s: number): string => {
-    const mins = Math.floor(s / 60);
-    const secs = Math.floor(s % 60);
-    return `${mins}:${secs.toString().padStart(2, "0")}`;
-  };
-
-  return (
-    <section className="wk-audio-section" aria-labelledby="wk-audio-heading">
-      <h2 className="wk-section-label" id="wk-audio-heading" data-prefix="void --">On Air</h2>
-      <div className="wk-audio__player">
-        <audio
-          ref={audioRef}
-          src={audioUrl}
-          preload="metadata"
-          onLoadedMetadata={() => {
-            if (audioRef.current) setDuration(audioRef.current.duration);
-          }}
-          onTimeUpdate={() => {
-            if (audioRef.current) setCurrentTime(audioRef.current.currentTime);
-          }}
-          onPlay={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
-          onEnded={() => setIsPlaying(false)}
-          onError={() => setAudioError(true)}
-        />
-        <button
-          className={`wk-audio__play${isPlaying ? " wk-audio__play--active" : ""}${audioError ? " wk-audio__play--disabled" : ""}`}
-          onClick={handlePlayPause}
-          aria-label={audioError ? "Audio unavailable" : isPlaying ? "Pause" : "Play"}
-          type="button"
-          disabled={audioError}
-        >
-          {isPlaying ? (
-            <svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor" aria-hidden="true">
-              <rect x="1" y="1" width="4" height="14" rx="1" />
-              <rect x="9" y="1" width="4" height="14" rx="1" />
-            </svg>
-          ) : (
-            <svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor" aria-hidden="true">
-              <path d="M2 1.5v13l11-6.5z" />
-            </svg>
-          )}
-        </button>
-        <div className="wk-audio__controls">
-          {audioError ? (
-            <span className="wk-audio__error">Audio unavailable</span>
-          ) : (
-            <>
-              <input
-                type="range"
-                className="wk-audio__scrubber"
-                min={0}
-                max={duration || 1}
-                step={0.1}
-                value={currentTime}
-                onChange={handleSeek}
-                aria-label="Seek"
-              />
-              <div className="wk-audio__time">
-                <span>{formatTime(currentTime)}</span>
-                <span>{formatTime(duration)}</span>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-    </section>
-  );
-}
+/* --- H. Audio — now plays through the shared void --onair player (recolored
+       to the weekly red accent). The local <AudioBar> was removed; weekly audio
+       is loaded into the global AudioProvider via playWeekly() in the main
+       component, so it shares the daily transport, broadcast console, and
+       playlist. --- */
 
 /* --- I. Issue Archive --- */
 
@@ -695,6 +544,8 @@ interface ArchiveEntry {
   week_end: string;
   issue_number: number;
   cover_headline: string;
+  audio_url?: string | null;
+  audio_duration_seconds?: number | null;
   created_at: string;
 }
 
@@ -745,6 +596,7 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const mainRef = useRef<HTMLElement>(null);
+  const { playWeekly } = useAudio();
 
   useEffect(() => {
     let cancelled = false;
@@ -772,6 +624,32 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
 
     return () => { cancelled = true; };
   }, [edition]);
+
+  /* Load this issue's audio into the shared void --onair player (recolored to
+     the weekly red accent). Previous playable issues from the archive become
+     the "Previous issues" playlist. Does not auto-play. */
+  useEffect(() => {
+    if (!AUDIO_ENABLED || !digest?.audio_url) return;
+    const archiveIssues: EpisodeMeta[] = archive
+      .filter((issue) => !!issue.audio_url)
+      .map((issue) => ({
+        id: issue.id,
+        edition: issue.edition,
+        tldr_headline: issue.cover_headline,
+        tldr_text: "",
+        opinion_headline: null,
+        opinion_text: null,
+        opinion_lean: null,
+        audio_url: issue.audio_url ?? null,
+        audio_duration_seconds: issue.audio_duration_seconds ?? null,
+        opinion_start_seconds: null,
+        audio_voice_label: null,
+        audio_voice: null,
+        created_at: issue.created_at,
+      }));
+    playWeekly(digest, archiveIssues);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [digest?.id, archive]);
 
   return (
     <div className="wk-page">
@@ -822,11 +700,22 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
               imageAttribution={digest.cover_image_attribution}
             />
 
-            {/* C. Cover Body + Timeline */}
+            {/* C. Cover features — full width */}
             {digest.cover_text && digest.cover_text.length > 0 && (
-              <CoverBody
-                stories={digest.cover_text}
-              />
+              <CoverBody stories={digest.cover_text} />
+            )}
+
+            {/* C2. void --Editorial — its own full-width section, with a line
+                separator before it */}
+            {digest.opinion_text && (
+              <>
+                <hr className="wk-rule" />
+                <SectionEditorial
+                  headline={digest.opinion_headline}
+                  text={digest.opinion_text}
+                  lean={digest.opinion_lean}
+                />
+              </>
             )}
 
             <RevealFlourish />
@@ -851,16 +740,9 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
               </>
             )}
 
-            {/* G. Audio — gated by AUDIO_ENABLED (void --onair parking lot). */}
-            {AUDIO_ENABLED && digest.audio_url && (
-              <>
-                <InkRule />
-                <AudioBar
-                  audioUrl={digest.audio_url}
-                  durationSeconds={digest.audio_duration_seconds}
-                />
-              </>
-            )}
+            {/* G. Audio now plays through the shared void --onair player
+                (red-accented for weekly). Loaded via playWeekly() in an effect
+                below — no inline player here. */}
 
             <InkRule />
 

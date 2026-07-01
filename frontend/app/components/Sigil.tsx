@@ -6,9 +6,12 @@ import type { SigilData } from "../lib/types";
 import {
   getColors as gc,
   getLeanColor as leanColor,
+  getSigilLeanColor,
+  DIVERGENT_SPREAD_MIN,
   tiltLabel,
   tiltDescriptor,
   sigilLabelInfo,
+  leanToDisplayPos,
   lerpColor as lerp,
 } from "../lib/biasColors";
 import MicroSpectrum from "./MicroSpectrum";
@@ -97,14 +100,37 @@ function DataMark({ data, size, mounted }: {
 }) {
   const lean = data.politicalLean;
   const isUnscored = !!data.unscored;
-  // Sigmoid beam tilt — front-loads angular discrimination so subtle lean
-  // differences (±10 points) register at 40px the way saturated extremes do.
-  // Saturates at ±22° so crowded layouts don't collide.
-  const leanDelta = lean - 50;
-  const beamAngle = isUnscored
-    ? 0
-    : Math.sign(leanDelta) * (1 - Math.exp(-Math.abs(leanDelta) / 15)) * 22;
-  const beamCol = isUnscored ? "var(--fg-tertiary)" : leanColor(lean);
+  // Beam tilt AND color both use the shared perceptual-expansion curve
+  // (biasColors leanToDisplayPos) so subtle center-left/center-right tilt
+  // registers — both in angle and in hue — the way saturated extremes do.
+  // Coloring the RAW lean left the solid green band (46-55) swallowing every
+  // near-center story; coloring the expanded position shrinks green to ~±1.4
+  // of true center, so a 47/53 reads blue/red. Confidence-damped (thin
+  // clusters near 50 don't swing on noise); angle saturates near ±24°.
+  const conf = data.biasSpread?.aggregateConfidence ?? 1;
+  const leanSpread = data.biasSpread?.leanSpread ?? 0;
+  const displayLean = leanToDisplayPos(lean, conf);
+  const beamAngle = isUnscored ? 0 : ((displayLean - 50) / 50) * 24;
+  // Color = lean (expanded), EXCEPT a balanced-but-divergent standoff drops the
+  // green for a neutral slate — green is reserved for genuine consensus
+  // (balanced AND agreed). See getSigilLeanColor.
+  const beamCol = isUnscored ? "var(--fg-tertiary)" : getSigilLeanColor(lean, leanSpread, conf);
+
+  // Divergence fan — agreed vs divergent, shown in the mark itself. The beam
+  // half-angle scales with how spread the source leans are (leanSpread): a
+  // thin/absent fan = sources agree; a wide fan = they diverge. Each arm is
+  // colored by its OWN fanned position, so a balanced-but-divergent story
+  // shows a neutral slate center beam flanked by a blue (left) and a red
+  // (right) arm — visibly contested even though the mean sits at center.
+  // Only open the fan once the lean spread is genuinely divergent (stddev ≥ 10):
+  // agreed stories keep a single crisp beam, divergent ones fan wider with more
+  // spread (10→40 maps to a 5°→22° half-angle).
+  const showFan = !isUnscored && leanSpread >= DIVERGENT_SPREAD_MIN;
+  const coneHalf = showFan
+    ? 5 + ((Math.min(leanSpread, 40) - 10) / 30) * 17
+    : 0;
+  const fanColor = (deg: number) =>
+    leanColor(Math.max(0, Math.min(100, 50 + (deg / 24) * 50)));
 
   // Circle r=11 (was r=9) — larger mark, more room in lower semi-circle.
   // px sizes: sm=40, lg=56, xl=72 — The Moat, no horizontal saving.
@@ -162,6 +188,36 @@ function DataMark({ data, size, mounted }: {
             }}
             opacity={0.9}
           />
+        </>
+      )}
+
+      {/* Divergence fan — faded arms behind the main beam. Width = leanSpread
+          (agreement when thin/absent, divergent when wide). Arms colored by
+          their own fanned position so a contested story spans blue → red. */}
+      {showFan && (
+        <>
+          <g style={{
+            transformOrigin: "16px 14px",
+            transform: `rotate(${mounted ? beamAngle - coneHalf : 0}deg)`,
+            transition: "transform var(--beam-tilt-dur, 800ms) var(--spring-beam, var(--spring)) var(--beam-tilt-delay, 60ms)",
+          }}>
+            <line x1="4" y1="14" x2="28" y2="14"
+              stroke={fanColor(beamAngle - coneHalf)} strokeWidth="1.3"
+              style={{ transition: "stroke 500ms var(--ease-rack) 200ms, opacity 500ms" }}
+              opacity={mounted ? 0.4 : 0}
+            />
+          </g>
+          <g style={{
+            transformOrigin: "16px 14px",
+            transform: `rotate(${mounted ? beamAngle + coneHalf : 0}deg)`,
+            transition: "transform var(--beam-tilt-dur, 800ms) var(--spring-beam, var(--spring)) var(--beam-tilt-delay, 60ms)",
+          }}>
+            <line x1="4" y1="14" x2="28" y2="14"
+              stroke={fanColor(beamAngle + coneHalf)} strokeWidth="1.3"
+              style={{ transition: "stroke 500ms var(--ease-rack) 200ms, opacity 500ms" }}
+              opacity={mounted ? 0.4 : 0}
+            />
+          </g>
         </>
       )}
 
@@ -247,7 +303,9 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
 
   const lean = data.politicalLean;
   const popupUnscored = !!data.unscored;
-  const lc = popupUnscored ? "var(--fg-tertiary)" : leanColor(lean);
+  // Color consistent with the mark (expanded position; neutral for a
+  // balanced-but-divergent standoff). The numeric score + label stay TRUE.
+  const lc = popupUnscored ? "var(--fg-tertiary)" : getSigilLeanColor(lean, data.biasSpread?.leanSpread ?? 0, data.biasSpread?.aggregateConfidence ?? 1);
   const ll = popupUnscored ? "Unscored" : tiltLabel(lean);
   const full = isFullDetail(size);
 
@@ -492,7 +550,7 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
 
   const unscored = !!data.unscored;
   const labelInfo = sigilLabelInfo(data.politicalLean, data.agreement, data.divergenceFlag, unscored);
-  const lc = unscored ? "var(--fg-tertiary)" : leanColor(data.politicalLean);
+  const lc = unscored ? "var(--fg-tertiary)" : getSigilLeanColor(data.politicalLean, data.biasSpread?.leanSpread ?? 0, data.biasSpread?.aggregateConfidence ?? 1);
   const full = isFullDetail(size);
 
   useEffect(() => { const t = setTimeout(() => setMounted(true), 60); return () => clearTimeout(t); }, []);

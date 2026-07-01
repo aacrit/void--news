@@ -136,7 +136,7 @@ reconciliation logic into `main.py`. The simplification removes:
 | `DISABLE_ANTHROPIC=1` | 2026-05-22 cost emergency | **KEEP** (cost lever; remove only when budget restored) |
 | `DISABLE_GEMINI_REASONING=1` | Era 4 | **KEEP** (pre-Era 7, separate concern) |
 | `DISABLE_EDITORIAL_TRIAGE=1` | Era 4 | **KEEP** (pre-Era 7) |
-| `DISABLE_AUDIO=1` | onair-parked | **KEEP** (audio is parked) |
+| `DISABLE_AUDIO=0` | onair re-enabled 2026-06-27 (daily) | **KEEP** (flip to `1` to re-park; `weekly-digest.yml` still `1`) |
 
 All env-var kill switches are orthogonal to the engine simplification.
 Leave them alone.

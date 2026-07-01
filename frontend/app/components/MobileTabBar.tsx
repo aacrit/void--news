@@ -1,10 +1,9 @@
 "use client";
 
-import { useCallback, useState, useRef } from "react";
+import { useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { hapticMicro } from "../lib/haptics";
-import { useAudio } from "./AudioProvider";
 import { BASE_PATH } from "../lib/utils";
 import { AUDIO_ENABLED } from "../lib/audioGate";
 
@@ -12,7 +11,7 @@ import { AUDIO_ENABLED } from "../lib/audioGate";
    MobileTabBar — Persistent bottom tab bar (mobile only, <768px).
    4 tabs: Feed, History, OnAir, More.
    "More" toggles MobileSidePanel (callback from parent).
-   "OnAir" triggers audio playback via AudioProvider.
+   "OnAir" routes to the dedicated /onair broadcast page.
    Hidden on desktop via CSS.
    --------------------------------------------------------------------------- */
 
@@ -69,25 +68,22 @@ type TabDef = {
   label: string;
   Icon: () => React.JSX.Element;
   href: string | null;
-  action?: "onair";
 };
 
 // onair tab gated by AUDIO_ENABLED — when audio is parked, the bottom nav
-// drops the entry entirely (no empty slot, no broken action).
+// drops the entry entirely (no empty slot). It routes to the dedicated
+// /onair broadcast page (now-playing, chapters, show notes, archive).
 const TABS: TabDef[] = [
   { key: "feed", label: "feed", Icon: FeedIcon, href: "/" },
   { key: "history", label: "history", Icon: HistoryIcon, href: "/history" },
   ...(AUDIO_ENABLED
-    ? [{ key: "onair", label: "onair", Icon: OnAirIcon, href: null, action: "onair" as const }]
+    ? [{ key: "onair", label: "onair", Icon: OnAirIcon, href: "/onair" }]
     : []),
   { key: "more", label: "more", Icon: MoreIcon, href: null },
 ];
 
 export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps) {
   const pathname = usePathname();
-  const audio = useAudio();
-  const [onairMsg, setOnairMsg] = useState<string | null>(null);
-  const onairMsgTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const isActive = useCallback(
     (key: string): boolean => {
@@ -98,46 +94,19 @@ export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps)
         case "history":
           return p.startsWith("/history");
         case "onair":
-          return audio.isPlaying;
+          return p.startsWith("/onair");
         case "more":
           return moreOpen;
         default:
           return false;
       }
     },
-    [pathname, moreOpen, audio.isPlaying]
+    [pathname, moreOpen]
   );
-
-  const showOnairMsg = useCallback((msg: string) => {
-    setOnairMsg(msg);
-    if (onairMsgTimer.current) clearTimeout(onairMsgTimer.current);
-    onairMsgTimer.current = setTimeout(() => setOnairMsg(null), 2000);
-  }, []);
-
-  const handleOnAirTap = useCallback(() => {
-    hapticMicro();
-    if (audio.isPlaying) {
-      audio.setPlayerVisible(true);
-      audio.setExpanded(true);
-      return;
-    }
-    if (audio.brief?.audio_url) {
-      audio.setPlayerVisible(true);
-      audio.handlePlayPause();
-      return;
-    }
-    const briefPill = document.querySelector(".mbp, .skybox");
-    if (briefPill) {
-      briefPill.scrollIntoView({ behavior: "smooth", block: "center" });
-      showOnairMsg("brief above ↑");
-    } else {
-      showOnairMsg("loading soon");
-    }
-  }, [audio, showOnairMsg]);
 
   return (
     <nav className="mtb" aria-label="Mobile navigation">
-      {TABS.map(({ key, label, Icon, href, action }) => {
+      {TABS.map(({ key, label, Icon, href }) => {
         const active = isActive(key);
         if (href) {
           return (
@@ -151,27 +120,6 @@ export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps)
               <Icon />
               <span className="mtb__label">{label}</span>
             </Link>
-          );
-        }
-        if (action === "onair") {
-          return (
-            <button
-              key={key}
-              type="button"
-              className={`mtb__tab${active ? " mtb__tab--active" : ""}`}
-              aria-label="Play audio brief"
-              onClick={handleOnAirTap}
-            >
-              <span className="mtb__onair-wrap">
-                <Icon />
-                {onairMsg && (
-                  <span className="mtb__onair-msg" role="status" aria-live="polite">
-                    {onairMsg}
-                  </span>
-                )}
-              </span>
-              <span className="mtb__label">{label}</span>
-            </button>
           );
         }
         return (

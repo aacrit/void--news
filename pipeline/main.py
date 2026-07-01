@@ -50,7 +50,7 @@ try:
     from analyzers.factual_rigor import analyze_factual_rigor
     from analyzers.framing import analyze_framing
     from clustering.story_cluster import cluster_stories
-    from categorizer.auto_categorize import categorize_article, categorize_cluster, categorize_early, map_to_desk
+    from categorizer.auto_categorize import categorize_article, categorize_early, map_to_desk
     from ranker.importance_ranker import rank_importance, compute_coverage_velocity
     from ranker.feed_ranker import apply_feed_ordering
     ANALYSIS_AVAILABLE = True
@@ -679,6 +679,30 @@ def _enrich_cluster_fallback(cluster_id: str, skip_text: bool = False) -> None:
         sensationalism_spread = round(_stddev(sens_values), 1)
         opinion_spread = round(_stddev(of_values), 1)
 
+        # ── Polarization / contestedness ──────────────────────────────────
+        # The rigor-weighted MEAN hides bimodal coverage: a story carried by
+        # far-left AND far-right sources averages to ~50 and looks "balanced"
+        # when it is in fact highly contested. Compute an explicit per-bucket
+        # histogram + a polarization index so the frontend can reveal the
+        # split the mean conceals (Layer 2). Buckets match biasColors.ts
+        # leanToBucket boundaries so the UI and pipeline agree.
+        lean_buckets = {
+            "far_left": sum(1 for v in pl_values if v <= 20),
+            "left": sum(1 for v in pl_values if 20 < v <= 35),
+            "center_left": sum(1 for v in pl_values if 35 < v <= 45),
+            "center": sum(1 for v in pl_values if 45 < v <= 55),
+            "center_right": sum(1 for v in pl_values if 55 < v <= 65),
+            "right": sum(1 for v in pl_values if 65 < v <= 80),
+            "far_right": sum(1 for v in pl_values if v > 80),
+        }
+        # 3-segment collapse for the at-a-glance coverage bar.
+        lean_left_count = lean_buckets["far_left"] + lean_buckets["left"] + lean_buckets["center_left"]
+        lean_center_count = lean_buckets["center"]
+        lean_right_count = lean_buckets["center_right"] + lean_buckets["right"] + lean_buckets["far_right"]
+        # Polarization: 0 when one-sided / all-center, 100 when a perfect L/R
+        # split. minority = the smaller wing; both wings large ⇒ contested.
+        polarization = round(100.0 * (2.0 * min(lean_left_count, lean_right_count) / count)) if count else 0
+
         # Divergence score
         divergence = min(100.0,
             (min(lean_range / 60.0, 1.0) * 40.0) +
@@ -759,6 +783,11 @@ def _enrich_cluster_fallback(cluster_id: str, skip_text: bool = False) -> None:
             "coverage_score": coverage_score,
             "tier_breakdown": tier_breakdown,
             "avg_opinion_label": opinion_label,
+            "lean_buckets": lean_buckets,
+            "lean_left_count": lean_left_count,
+            "lean_center_count": lean_center_count,
+            "lean_right_count": lean_right_count,
+            "polarization": polarization,
         }
 
         # Classify as reporting vs opinion based on avg opinion score
@@ -1945,26 +1974,55 @@ def main():
         for cluster in clusters:
             cluster_articles_list = cluster.get("articles", [])
 
-            # Categorize the cluster from its POLISHED title + summary (the
-            # representative, on-topic text) plus its members — not just the
-            # first 3 raw articles, which on an over-merged cluster could be
-            # off-topic and mislabel the whole story (2026-07-01 review
-            # CAT-1/CAT-2). categorize_cluster trusts the representative
-            # title/summary and only falls back to a member vote when that
-            # text is itself unclassifiable.
+            # Categorize. The cluster HEADLINE is the cleanest topical signal —
+            # it is immune to the off-topic members an over-merged cluster
+            # accumulates (which previously dragged whole clusters into
+            # "science" via incidental "AI"/"study"/"launch" tokens in the
+            # sampled bodies). Use the headline as the primary category and fall
+            # back to a wide member-sample vote only when the headline is too
+            # vague to classify. (2026-06-28, Wave 1 / O10)
             try:
-                best_cat = categorize_cluster(
-                    cluster.get("title", "") or "",
-                    cluster.get("summary", "") or "",
-                    cluster_articles_list,
+                cluster_title = (cluster.get("title") or "").strip()
+                headline_cats = (
+                    categorize_article(
+                        {"title": cluster_title, "summary": "", "full_text": ""}
+                    )
+                    if cluster_title
+                    else []
                 )
+                if headline_cats:
+                    # Trust the headline category, INCLUDING "general" — an
+                    # accident headline deliberately resolves to general, and
+                    # treating general as "vague" sent it back to the polluted
+                    # member-vote (which re-mislabeled it). Member-vote now
+                    # fires only when there is no headline at all. (2026-06-29)
+                    best_cat = headline_cats[0]
+                    all_categories = headline_cats
+                else:
+                    # No headline — vote across a wide member sample (8, up
+                    # from 3) so the on-topic majority outweighs any pollution.
+                    cat_votes: dict[str, int] = {}
+                    all_categories = []
+                    sample = cluster_articles_list[:8] if cluster_articles_list else []
+                    for art in sample:
+                        cats = categorize_article(art)
+                        for cat in cats:
+                            cat_votes[cat] = cat_votes.get(cat, 0) + 1
+                        if not all_categories:
+                            all_categories = cats
+                    best_cat = (
+                        max(cat_votes, key=cat_votes.get) if cat_votes else "politics"
+                    )
+                    if not all_categories:
+                        all_categories = [best_cat]
                 cluster["category"] = map_to_desk(best_cat)
-                all_categories = [best_cat]
+                if best_cat not in all_categories:
+                    all_categories.insert(0, best_cat)
                 # Store fine-grained categories for article_categories table
                 for art in cluster_articles_list:
                     art_id = art.get("id", "")
                     if art_id:
-                        article_categories_map[art_id] = categorize_article(art) or all_categories
+                        article_categories_map[art_id] = all_categories
             except Exception:
                 cluster["category"] = "politics"
 
@@ -2192,9 +2250,8 @@ def main():
         gemini_results: dict[int, dict] = {}
         # Tier label persisted to DB cache. Claude is primary; Gemini fallback
         # only when ANTHROPIC_API_KEY is unset or Claude has a persistent fault.
-        _summary_tier_used = "sonnet" if claude_is_available() else (
-            "flash" if gemini_is_available() else None
-        )
+        # 7b runs on the flash-lite default tier (see summary_tier stamping below).
+        _summary_tier_used = "flash-lite" if gemini_is_available() else None
         if SUMMARIZER_AVAILABLE and llm_is_available():
             print(f"\n[7b] Summarizing top 30 clusters (tier={_summary_tier_used})...")
             try:
@@ -2216,15 +2273,15 @@ def main():
                     clusters[idx]["summary_article_hash"] = _content_hash(
                         clusters[idx].get("articles", [])
                     )
-                    # Stamp the tier that ACTUALLY answered this cluster, not
-                    # the batch-level guess: a mid-batch Claude latch flips
-                    # later clusters to Gemini, and mislabeling those "sonnet"
-                    # freezes them in the step-8d cache forever.
-                    # Map provider -> DB summary_tier (CHECK allows 'sonnet' or
-                    # 'flash'). Both $0 providers (Gemini flash, Groq llama) -> 'flash'.
+                    # Stamp the tier that ACTUALLY answered so the step-8d cache
+                    # is upgrade-aware. 7b runs on the flash-lite default, so its
+                    # Gemini output is tier 'flash-lite', NOT 'flash'. Labeling it
+                    # 'flash' would make 8d cache-hit the post-rerank top-10 and
+                    # never upgrade them to real flash. Map by generator label
+                    # (migration 063 allows 'sonnet'/'flash'/'flash-lite').
                     _gen = result.get("_generator")
                     clusters[idx]["summary_tier"] = (
-                        "sonnet" if _gen == "claude-sonnet" else "flash"
+                        "flash" if _gen == "gemini-flash" else "flash-lite"
                     )
                     if result.get("editorial_importance") is not None:
                         clusters[idx]["editorial_importance"] = result["editorial_importance"]
@@ -3015,27 +3072,34 @@ def main():
               f"Skipping LLM editorial steps (8d, brief, weekly).")
         return
 
-    # Step 8d: Post-rerank single-pass top-50 Sonnet summarization with cache.
-    # Reads final top-50 by rank_world from DB. For each cluster:
+    # Step 8d: Post-rerank single-pass summarization of the DISPLAYED top-50
+    # (exactly the set the homepage renders: top 50 by rank_world). For each
+    # cluster, in rank order:
     #   - hash its current article membership
-    #   - if hash matches stored summary_article_hash AND tier='sonnet' → skip
-    #   - else → call Claude (Gemini fallback), write summary + hash + tier
+    #   - skip if the hash matches AND the cached tier already meets this slot
+    #     (premium top-10 want 'flash'; ranks 11-50 accept 'flash-lite'+)
+    #   - else → summarize on Gemini (flash for the top-10, flash-lite for the
+    #     rest), write summary + consensus/divergence + hash + tier.
     # Op-eds (content_type='opinion') and clusters with <3 articles skipped.
-    # Updates the in-memory `clusters` list so the daily brief regen below
-    # reads fresh top-15 summaries.
+    # Self-caches across runs (8d writes the hash it later reads). Updates the
+    # in-memory `clusters` list so downstream consumers see the post-rerank text.
     summary_metrics = {"summarized": 0, "cached": 0, "skipped": 0, "failed": 0}
     if SUMMARIZER_AVAILABLE and llm_is_available() and calls_remaining() > 0:
-        print("\n[8d] Post-rerank top-10 Gemini upgrade (premium slots)...")
+        print("\n[8d] Post-rerank top-50 Gemini summarization (top-10 flash, rest flash-lite)...")
         try:
-            # 2026-06-20 split: 7b summarized the top 30 on Groq (llama). Here we
-            # upgrade only the VISIBLE top 10 (post-rerank) to Gemini quality.
-            # That keeps Gemini at ~10 calls/run (+2 for the brief), under its
-            # 20/day free cap. Ranks 11-30 keep their Groq summaries; 31-50 stay
-            # rule-based. prefer_provider="gemini" (Groq fallback if Gemini out).
+            # Summarize the full displayed top-50 (post-rerank, rank_world order)
+            # so the summarized set == exactly what the homepage renders. Quality
+            # hierarchy: the top 10 highest-impact stories → gemini-2.5-flash
+            # (premium); ranks 11-50 → gemini-2.5-flash-lite (high-RPD tier).
+            # flash stays at ~10 calls/run (+ the brief), under its 20/day cap.
+            # Most ranks 11-50 cache-hit from step 7b's brief-input pass; the
+            # post-rerank top-10 upgrade flash-lite → flash. Groq retired.
+            # See summarize_top50_after_rerank / migration 063.
             summary_metrics = summarize_top50_after_rerank(
-                supabase, edition="world", limit=10, prefer_provider="gemini")
+                supabase, edition="world", limit=50, prefer_provider="gemini",
+                flash_top_n=10)
             print(
-                f"  Top-10: {summary_metrics['summarized']} summarized, "
+                f"  Top-50: {summary_metrics['summarized']} summarized, "
                 f"{summary_metrics['cached']} cache hits, "
                 f"{summary_metrics['skipped']} skipped (op-ed / <3 sources), "
                 f"{summary_metrics['failed']} failed"

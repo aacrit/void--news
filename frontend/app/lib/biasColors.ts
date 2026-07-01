@@ -124,6 +124,38 @@ export function tiltDescriptor(v: number): string {
   return "Strong right lean in coverage language";
 }
 
+/* ── Perceptual scale expansion — DISPLAY POSITION ONLY ────────────────────
+   The cluster lean is a rigor-weighted mean; high-rigor wires (AP/Reuters≈50)
+   plus genuinely two-sided coverage bunch most stories in ~40-62, so a LINEAR
+   marker renders real center-left/center-right tilt nearly on top of dead
+   center. This maps the TRUE lean (0-100) to a DISPLAY position (0-100) with
+   high gain near center and saturation at the wings — a real 3-pt tilt becomes
+   a ~7-8-pt visual offset — while staying strictly monotonic and side-
+   preserving (a left story can never render right) and pinning the extremes
+   (lean 0→0, 50→50, 100→100). The numeric score and label stay 100% TRUE;
+   only on-screen distance from center is exaggerated for legibility.
+
+   `confidence` (0-1) damps the amplification so low-signal thin clusters near
+   50 aren't pushed out on noise; top stories (many sources) sit near 1.0 and
+   get the full expansion. Tune sensitivity with DISPLAY_GAIN.                ── */
+
+export const DISPLAY_GAIN = 3.2;
+
+export function leanToDisplayPos(lean: number, confidence = 1): number {
+  const d = (Math.max(0, Math.min(100, lean)) - 50) / 50; // -1..+1 true deviation
+  const k = DISPLAY_GAIN * Math.max(0.4, Math.min(1, confidence));
+  // tanh(k·d)/tanh(k): expands the middle, normalizes so the wings still reach
+  // the rail (|d|=1 → ±1). Strictly increasing ⇒ order + side preserved.
+  const expanded = Math.tanh(k * d) / Math.tanh(k);
+  return 50 + 50 * expanded;
+}
+
+/** Display-space beam/needle angle in degrees for a lean, sharing the same
+ *  expansion curve so every lean surface tilts consistently. */
+export function leanToDisplayAngle(lean: number, confidence = 1, maxDeg = 24): number {
+  return ((leanToDisplayPos(lean, confidence) - 50) / 50) * maxDeg;
+}
+
 /* ── Unscored gate — story lacks analytical signal for tilt label ───────── */
 
 /**
@@ -252,19 +284,51 @@ export function lerpColor(a: string, b: string, t: number): string {
 
 /* ── Semantic color getters ─────────────────────────────────────────────── */
 
+/** Half-width of the green "strictly balanced" band, in the 0-100 space passed
+ *  to getLeanColor. Green renders only within 50 ± this; everything else is a
+ *  continuous light→dark blue (left) / red (right) ramp. */
+export const GREEN_HALF = 3;
+
 export function getLeanColor(v: number): string {
   const c = getColors();
-  // Green reserved for center only. Left of center = blue family, right = red family.
-  // Narrow green band at 46-54. Sharp transition to blue/red outside that.
-  if (v <= 10) return c["--bias-far-left"];
-  if (v <= 20) return lerpColor(c["--bias-far-left"], c["--bias-left"], (v - 10) / 10);
-  if (v <= 35) return lerpColor(c["--bias-left"], c["--bias-center-left"], (v - 20) / 15);
-  if (v <= 45) return lerpColor(c["--bias-center-left"], c["--bias-center"], (v - 35) / 10);
-  if (v <= 55) return c["--bias-center"];
-  if (v <= 65) return lerpColor(c["--bias-center"], c["--bias-center-right"], (v - 55) / 10);
-  if (v <= 80) return lerpColor(c["--bias-center-right"], c["--bias-right"], (v - 65) / 15);
-  if (v <= 90) return lerpColor(c["--bias-right"], c["--bias-far-right"], (v - 80) / 10);
-  return c["--bias-far-right"];
+  // Green is reserved for STRICTLY balanced (50 ± GREEN_HALF). Outside that,
+  // a continuous light→dark ramp: left = center-left → left → far-left (light
+  // steel blue to navy); right = center-right → right → far-right (coral to
+  // dark red). Magnitude of tilt drives darkness, so a slight tilt is a light
+  // shade and an extreme tilt is the darkest. (Callers may pass an expanded
+  // display position — see leanToDisplayPos — so near-center tilt is visible.)
+  const d = v - 50;
+  if (Math.abs(d) <= GREEN_HALF) return c["--bias-center"];
+  const t = (Math.abs(d) - GREEN_HALF) / (50 - GREEN_HALF); // 0 (just off center) → 1 (extreme)
+  if (d < 0) {
+    // Left — light → dark blue across two stops.
+    return t <= 0.5
+      ? lerpColor(c["--bias-center-left"], c["--bias-left"], t / 0.5)
+      : lerpColor(c["--bias-left"], c["--bias-far-left"], (t - 0.5) / 0.5);
+  }
+  // Right — light → dark red across two stops.
+  return t <= 0.5
+    ? lerpColor(c["--bias-center-right"], c["--bias-right"], t / 0.5)
+    : lerpColor(c["--bias-right"], c["--bias-far-right"], (t - 0.5) / 0.5);
+}
+
+/** leanSpread (stddev) at/above which a cluster's coverage counts as divergent. */
+export const DIVERGENT_SPREAD_MIN = 10;
+
+/**
+ * At-a-glance lean color for the Sigil. Identical to getLeanColor of the
+ * expanded display position, EXCEPT a balanced-but-divergent story (a
+ * contested standoff that merely averages to center) drops the green for a
+ * neutral slate — green is reserved for GENUINE consensus (balanced AND
+ * agreed). Tilted stories keep their blue/red hue regardless of spread; their
+ * divergence is shown by the beam fan, not the color.
+ */
+export function getSigilLeanColor(lean: number, leanSpread: number, confidence = 1): string {
+  const pos = leanToDisplayPos(lean, confidence);
+  if (Math.abs(pos - 50) <= GREEN_HALF && leanSpread >= DIVERGENT_SPREAD_MIN) {
+    return "var(--fg-secondary)";
+  }
+  return getLeanColor(pos);
 }
 
 export function getCoverageColor(v: number): string {

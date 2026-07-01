@@ -22,6 +22,7 @@ Schedule: Sunday 6 AM CST (12:00 UTC).
 """
 
 import json
+import re
 import sys
 import time
 from datetime import datetime, timedelta, timezone
@@ -35,7 +36,9 @@ load_dotenv()
 from utils.supabase_client import supabase
 from summarizer.gemini_client import (
     generate_json as gemini_generate_json,
+    generate_text as gemini_generate_text,
     is_available as gemini_is_available,
+    _FLASH_MODEL,
 )
 
 try:
@@ -47,14 +50,7 @@ except ImportError:
     def claude_generate_json(*a, **kw): return None
     def claude_is_available(): return False
 
-try:
-    from summarizer.groq_client import (
-        generate_json as groq_generate_json,
-        is_available as groq_is_available,
-    )
-except ImportError:
-    def groq_generate_json(*a, **kw): return None
-    def groq_is_available(): return False
+# Groq retired 2026-06-24; Gemini Flash is the sole digest LLM.
 
 from briefing.voice_rotation import get_voices_for_today, get_opinion_host
 
@@ -121,10 +117,14 @@ PROHIBITED_TERMS = frozenset({
 # ---------------------------------------------------------------------------
 # LLM call
 # ---------------------------------------------------------------------------
-def _smart_generate(prompt, system_instruction=None, max_output_tokens=8192):
-    """Try Claude (off) → Gemini ($0 primary) → Groq ($0 fallback). Gemini
-    leads — Groq's gpt-oss-20b can't hold its JSON budget (see
-    cluster_summarizer). Returns (result_dict, gen_label)."""
+def _smart_generate(prompt, system_instruction=None, max_output_tokens=8192, model=None):
+    """Gemini ($0) is the sole digest LLM. Claude (2026-06-22) and Groq
+    (2026-06-24) are retired; on failure the caller degrades to rule-based.
+    `model` selects the Gemini tier: pass `_FLASH_MODEL` for the flagship
+    sections (cover essays + week recap); leave None for the flash-lite default
+    (opinions / tech / sports / audio). Flagship-only flash keeps the Sunday run
+    within flash's shared 20-RPD free cap (the daily pipeline already spends ~13).
+    Returns (result_dict, gen_label)."""
     if claude_is_available():
         result = claude_generate_json(
             prompt, system_instruction=system_instruction,
@@ -136,20 +136,120 @@ def _smart_generate(prompt, system_instruction=None, max_output_tokens=8192):
     if gemini_is_available():
         result = gemini_generate_json(
             prompt, system_instruction=system_instruction,
-            count_call=False, max_output_tokens=max_output_tokens,
+            count_call=False, max_output_tokens=max_output_tokens, model=model,
         )
         if result:
-            return result, "gemini-flash"
-
-    if groq_is_available():
-        result = groq_generate_json(
-            prompt, system_instruction=system_instruction,
-            count_call=False, max_output_tokens=max_output_tokens,
-        )
-        if result:
-            return result, "groq-gpt-oss"
+            return result, ("gemini-flash" if model == _FLASH_MODEL else "gemini-flash-lite")
 
     return None, "none"
+
+
+def _smart_generate_text(prompt, system_instruction=None, max_output_tokens=8192, model=None):
+    """Plain-text Gemini generation (no JSON) for the single long weekly audio
+    script — JSON-escaping a ~3000-word script with embedded opinion quotes is
+    fragile (one stray quote drops the whole result). Returns the script string,
+    or None on failure (caller degrades to no audio)."""
+    if gemini_is_available():
+        return gemini_generate_text(
+            prompt, system_instruction=system_instruction,
+            count_call=False, max_output_tokens=max_output_tokens, model=model,
+        )
+    return None
+
+
+# ---------------------------------------------------------------------------
+# Plain-text essay generation + parsing
+#
+# The cover/opinion/tech/sports/recap essays were generated as JSON, but Gemini
+# intermittently emits long prose with an unescaped quote or stray newline that
+# breaks json.loads (e.g. "Unterminated string", "Expecting ',' delimiter"),
+# dropping the whole section to a stub. These helpers generate PLAIN TEXT in a
+# tolerant, self-describing layout and parse out the same keys the callers
+# consume — the pattern already used for the audio script and editor's note.
+# No JSON, so prose with any punctuation is safe; no extra LLM calls.
+# ---------------------------------------------------------------------------
+
+def _clean_headline(line):
+    """Strip an optional 'HEADLINE:'/'TITLE:' label and Markdown chars off a line.
+
+    The label is only stripped when followed by a colon, so a real headline that
+    happens to start with the word "Headline" (e.g. "Headline inflation") is kept.
+    """
+    line = re.sub(r"^\s*#{0,3}\s*(?:HEADLINE|TITLE)\s*:\s*", "", line, flags=re.IGNORECASE)
+    return line.strip().strip("*_#").strip()
+
+
+def _parse_essay(raw, want_numbers=False):
+    """Parse a plain-text essay into {headline, text[, numbers]} or None.
+
+    Layout: first non-empty line is the headline, the rest is the body. If
+    want_numbers, a trailing line "NUMBERS" splits off a block of
+    "value | context" lines parsed into [{"stat", "context"}].
+    """
+    if not raw or not raw.strip():
+        return None
+    text = raw.strip()
+    numbers = []
+    if want_numbers:
+        parts = re.split(r"\n\s*#{0,3}\s*NUMBERS\s*:?\s*\n", text, maxsplit=1, flags=re.IGNORECASE)
+        if len(parts) == 2:
+            text, num_block = parts[0].strip(), parts[1]
+            for ln in num_block.splitlines():
+                ln = ln.strip().lstrip("-*•").strip()
+                if "|" not in ln:
+                    continue
+                value, _, context = ln.partition("|")
+                value = value.strip()
+                if value:
+                    numbers.append({"stat": value, "context": context.strip()})
+
+    lines = text.splitlines()
+    idx = next((k for k, ln in enumerate(lines) if ln.strip()), None)
+    if idx is None:
+        return None
+    headline = _clean_headline(lines[idx])
+    body = "\n".join(lines[idx + 1:]).strip()
+    if not body:
+        # Single-block output: no separable headline; keep it all as text.
+        body, headline = headline, ""
+    result = {"headline": headline, "text": body}
+    if want_numbers:
+        result["numbers"] = numbers
+    return result
+
+
+def _gen_essay(prompt, system, model=None, max_output_tokens=4096, want_numbers=False):
+    """Generate a {headline, text[, numbers]} essay as plain text (no JSON)."""
+    raw = _smart_generate_text(
+        prompt, system_instruction=system,
+        max_output_tokens=max_output_tokens, model=model,
+    )
+    return _parse_essay(raw, want_numbers=want_numbers)
+
+
+def _parse_recap(raw):
+    """Parse a plain-text recap batch into {stories: [{headline, summary}]}.
+
+    Stories are separated by a line that is just "###" (optionally "### STORY").
+    Within each block, the first non-empty line is the headline, the rest is the
+    summary. Returns None if nothing parseable.
+    """
+    if not raw or not raw.strip():
+        return None
+    blocks = re.split(r"\n\s*#{2,}(?:\s*STORY\s*\d*)?\s*\n", "\n" + raw.strip())
+    stories = []
+    for block in blocks:
+        lines = block.strip().splitlines()
+        idx = next((k for k, ln in enumerate(lines) if ln.strip()), None)
+        if idx is None:
+            continue
+        headline = _clean_headline(lines[idx])
+        summary = " ".join(ln.strip() for ln in lines[idx + 1:] if ln.strip()).strip()
+        if not summary:
+            summary, headline = headline, ""
+        if headline or summary:
+            stories.append({"headline": headline, "summary": summary})
+    return {"stories": stories} if stories else None
 
 
 # ---------------------------------------------------------------------------
@@ -214,23 +314,19 @@ COVER_SYSTEM = """You are the lead writer for void --weekly, a magazine-style ne
 Write in the register of The Economist or The Atlantic: measured, analytical,
 mechanism-focused. Juxtapose concrete facts — never assert significance.
 
-For the TIMELINE, extract 5-8 discrete EVENTS that drove this story forward
-during the week. Each event should be a concrete action or development — a strike,
-a vote, a resignation, a market move, a diplomatic break — not a vague summary.
-Include the date and a punchy one-line description.
+You will receive a DATA TIMELINE showing real cluster creation dates and titles.
+Use it as the chronological skeleton and weave those dates and developments into
+FLOWING PROSE. Do NOT invent events not shown.
 
 BANNED: "notable", "significant", "it should be noted", "interestingly",
 "crucially", "here's what you need to know", "in conclusion".
 
-You will receive a DATA TIMELINE showing real cluster creation dates and titles.
-Use these as the skeleton for your essay. Do NOT invent events not shown.
-
-Output JSON:
-{
-  "headline": "...",
-  "text": "... (800-1200 words, analytical essay structured around the timeline)",
-  "numbers": [{"stat": "...", "context": "..."}, ...]
-}"""
+OUTPUT FORMAT — plain text only, no JSON, no Markdown:
+- Line 1: the headline only (no label, no quotes, no Markdown).
+- Then a blank line.
+- Then the 800-1200 word essay in flowing prose paragraphs separated by blank
+  lines. No bulleted or numbered lists, no "TIMELINE" section, no headings,
+  no asterisks or bold/italic markers."""
 
 
 # ---------------------------------------------------------------------------
@@ -441,6 +537,28 @@ def _fetch_brief_signals(edition, week_start, week_end):
         return []
 
 
+def _fetch_daily_opinions(edition, week_start, week_end):
+    """Fetch the week's daily void --opinion editorials.
+
+    The weekly editorial must NOT restate any of these — it argues the
+    week-length through-line the daily columns could not see. Returns a list of
+    {opinion_headline, opinion_text, opinion_lean, created_at}, oldest first.
+    """
+    try:
+        result = supabase.table("daily_briefs").select(
+            "opinion_headline,opinion_text,opinion_lean,created_at"
+        ).eq("edition", edition).gte(
+            "created_at", week_start.isoformat()
+        ).lte(
+            "created_at", week_end.isoformat()
+        ).order("created_at", desc=False).execute()
+        # Keep only rows that actually carried an editorial.
+        return [r for r in (result.data or []) if (r.get("opinion_text") or "").strip()]
+    except Exception as e:
+        print(f"  [weekly:{edition}] daily opinion query failed: {e}")
+        return []
+
+
 def _generate_cover_stories(threads, edition):
     """Generate 2 cover stories from scored threads with data-driven timelines."""
     covers = []
@@ -470,11 +588,13 @@ def _generate_cover_stories(threads, edition):
             f"Key disagreements: {json.dumps(lead.get('divergence_points', []))}\n\n"
             f"DATA TIMELINE (real dates, real clusters):\n{timeline_ctx}\n\n"
             f"ALL RELATED DEVELOPMENTS:\n{related_ctx}\n\n"
-            f"Write an 800-1200 word essay structured around this timeline.\n"
-            f"Use these real dates. Do NOT invent events not shown above."
+            f"Write an 800-1200 word analytical essay in flowing prose, weaving "
+            f"these real dates into the narrative.\n"
+            f"Do NOT invent events not shown above. Do NOT output a bulleted "
+            f"timeline, a section titled TIMELINE, lists, or any Markdown headings."
         )
 
-        result, gen = _smart_generate(prompt, system_instruction=COVER_SYSTEM)
+        result = _gen_essay(prompt, COVER_SYSTEM, model=_FLASH_MODEL, max_output_tokens=8192)
         calls += 1
         if result and isinstance(result, dict):
             result["cluster_id"] = lead.get("id")
@@ -512,7 +632,9 @@ Your essay should:
 
 BANNED: "notable", "significant", "it should be noted", "in conclusion".
 
-Output JSON: {{"headline": "...", "text": "..."}}"""
+OUTPUT FORMAT — plain text only, no JSON, no Markdown:
+Line 1 is the headline only (no label, no quotes). Then a blank line. Then the
+400-600 word essay in flowing prose."""
 
 
 def _generate_opinions(top_threads, all_threads, edition):
@@ -564,7 +686,7 @@ def _generate_opinions(top_threads, all_threads, edition):
             f"Disagreements: {json.dumps(cluster.get('divergence_points', []))}\n"
         )
 
-        result, gen = _smart_generate(prompt, system_instruction=system, max_output_tokens=4096)
+        result = _gen_essay(prompt, system, max_output_tokens=4096)
         calls += 1
 
         if result and isinstance(result, dict):
@@ -587,7 +709,9 @@ Focus on mechanism and implication, not hype. Think Ars Technica meets The Econo
 
 BANNED: "game-changing", "revolutionary", "notable", "significant", "disrupting".
 
-Output JSON: {"headline": "...", "text": "..."}"""
+OUTPUT FORMAT — plain text only, no JSON, no Markdown:
+Line 1 is the headline only (no label, no quotes). Then a blank line. Then the
+analysis in flowing prose."""
 
 
 def _generate_tech_brief(clusters, edition):
@@ -615,7 +739,7 @@ def _generate_tech_brief(clusters, edition):
         f"Sources: {top_tech.get('source_count', 0)}\n"
     )
 
-    result, gen = _smart_generate(prompt, system_instruction=TECH_SYSTEM, max_output_tokens=4096)
+    result = _gen_essay(prompt, TECH_SYSTEM, max_output_tokens=4096)
     if result:
         result["cluster_id"] = top_tech.get("id")
     return result, 1
@@ -629,7 +753,9 @@ lens of culture, politics, or economics. Sports as a mirror of society.
 Think of how The New Yorker covers sports: the game is the entry point, the
 story is about something larger.
 
-Output JSON: {"headline": "...", "text": "..."}"""
+OUTPUT FORMAT — plain text only, no JSON, no Markdown:
+Line 1 is the headline only (no label, no quotes). Then a blank line. Then the
+piece in flowing prose."""
 
 
 def _generate_sports(clusters, edition):
@@ -655,7 +781,7 @@ def _generate_sports(clusters, edition):
         f"Summary: {top.get('summary', '')}\n"
     )
 
-    result, gen = _smart_generate(prompt, system_instruction=SPORTS_SYSTEM, max_output_tokens=4096)
+    result = _gen_essay(prompt, SPORTS_SYSTEM, max_output_tokens=4096)
     if result:
         result["cluster_id"] = top.get("id")
     return result, 1
@@ -698,7 +824,14 @@ Focus on what happened and what it means. Use specific facts.
 
 BANNED: "notable", "significant", "it should be noted", "interestingly".
 
-Output JSON: {"stories": [{"headline": "...", "summary": "..."}]}"""
+OUTPUT FORMAT — plain text only, no JSON, no Markdown. For EACH story, output a
+block in this exact shape:
+###
+<headline on one line>
+<150-200 word summary in flowing prose>
+
+Separate every story with a line containing only ### before it. No other
+headings, labels, or Markdown."""
 
 
 def _generate_week_recap(clusters, edition, skip_ids=None):
@@ -718,8 +851,8 @@ def _generate_week_recap(clusters, edition, skip_ids=None):
     )
 
     prompt = f"Write 150-200 word recaps for these {len(remaining)} stories ({edition} edition):\n\n{stories_text}"
-    result, gen = _smart_generate(prompt, system_instruction=RECAP_SYSTEM)
-    return result, 1
+    raw = _smart_generate_text(prompt, system_instruction=RECAP_SYSTEM, model=_FLASH_MODEL)
+    return _parse_recap(raw), 1
 
 
 # ── SECTION 7: AUDIO ──
@@ -757,10 +890,10 @@ WEEKLY_VOICE_PAIR = {
         ),
     },
     "host_b": {
-        "id": "Charon",
+        "id": "Achernar",
         "name": "The Correspondent",
         "key": "correspondent",
-        "gender": "male",
+        "gender": "female",
         "google_label": "informative",
         "trait": (
             "Measured authority. Lets facts land with their own weight. Short "
@@ -837,8 +970,11 @@ a point. B responds with a new angle or counter-fact, also developed across \
 
 STRUCTURE (target: 2500-3000 words total):
 
-1. COLD OPEN (~100 words, ~30 sec)
-   A hooks the listener with the week's defining tension in one dramatic sentence.
+1. COLD OPEN (~120 words, ~35 sec)
+   A grounds the listener first, in the composed, lightly formal cadence of The \
+   Economist — unhurried, assured: "From void news. Today is {TODAY_LABEL}. On this \
+   week's edition..." then one clause previewing what the week held. ONLY THEN does \
+   A hook the listener with the week's defining tension in one dramatic sentence.
    B adds the second dimension — the fact that complicates the obvious reading.
    Example tone: "This was the week the trade war stopped being theoretical." / \
    "And the week both sides discovered their threat had the same price tag."
@@ -916,10 +1052,11 @@ BANNED WORDS/PHRASES (hard kill):
 
 ---
 
-FIRST LINE: A: From void news, this is the weekly for {WEEK_LABEL}.
+FIRST LINE: A: From void news. Today is {TODAY_LABEL}. On this week's edition, the weekly for {WEEK_LABEL}.
 LAST LINE: A: From void news, this was the weekly. We'll be back next Sunday.
 
-Output JSON: {{"script": "A: ...\\nB: ...\\n\\nA: ..."}}
+OUTPUT: the script ONLY, as plain text. Every line starts with "A:" or "B:". \
+No JSON, no markdown fences, no preamble or commentary — just the spoken script.
 """
 
 
@@ -942,6 +1079,9 @@ def _generate_audio(covers, opinions, tech, sports, recap, bias_data, edition,
             week_label = f"{week_start} through {week_end}"
     else:
         week_label = "this week"
+
+    # Air date for the Economist-style grounding intro ("Today is ...").
+    today_label = datetime.now(timezone.utc).strftime("%A, %B %-d")
 
     # --- Cover stories with data timelines ---
     cover_blocks = []
@@ -1032,7 +1172,7 @@ def _generate_audio(covers, opinions, tech, sports, recap, bias_data, edition,
             recap_context = "OTHER STORIES THIS WEEK:\n" + "\n".join(recap_lines)
 
     # --- Build the system instruction with week label ---
-    system = AUDIO_SYSTEM.replace("{WEEK_LABEL}", week_label)
+    system = AUDIO_SYSTEM.replace("{WEEK_LABEL}", week_label).replace("{TODAY_LABEL}", today_label)
 
     # --- Assemble the user prompt ---
     prompt = (
@@ -1066,8 +1206,325 @@ def _generate_audio(covers, opinions, tech, sports, recap, bias_data, edition,
         f"from the opinion section."
     )
 
-    result, gen = _smart_generate(prompt, system_instruction=system, max_output_tokens=8192)
-    return result, 1
+    # Single ~3000-word field with embedded opinion quotes — generate as PLAIN
+    # TEXT so a stray quote can't break a JSON wrapper (the prior failure mode:
+    # "Gemini JSON parse failed -> No audio script generated").
+    script = _smart_generate_text(prompt, system_instruction=system, max_output_tokens=8192)
+    if script and script.strip():
+        return {"script": script.strip()}, 1
+    return None, 1
+
+
+# ---------------------------------------------------------------------------
+# SECTION 6.5: THE WEEKLY EDITORIAL (one argued week-in-review column)
+# Mirrors the daily void --opinion, but argues the through-line that only
+# becomes visible at the week's length — and is told NOT to restate any of the
+# week's daily columns (fed in as context). Opinion TEXT runs on flagship flash;
+# the spoken monologue runs on flash-lite (plain text, to avoid json.loads
+# fragility on a long em-dash/quote-heavy script).
+# ---------------------------------------------------------------------------
+_WEEKLY_LEAN_CYCLE = ["left", "center", "right"]
+_WEEKLY_LEAN_LABELS = {"left": "progressive", "center": "pragmatic", "right": "conservative"}
+
+
+def _get_week_lean(issue_number):
+    """Rotate the weekly editorial's lens by issue number (mirrors the daily's
+    day-of-year rotation). Successive weeks cycle left -> center -> right."""
+    return _WEEKLY_LEAN_CYCLE[int(issue_number) % 3]
+
+
+_WEEKLY_OPINION_LEAN_INSTRUCTIONS = {
+    "left": """\
+Today's lens: PROGRESSIVE. Argue from principles of collective welfare, institutional \
+accountability, systemic equity, and the expansion of individual rights. Ask: who bore \
+the cost this week? Whose voice was absent from the decisions that moved? What did the \
+structure — not the individual actor — reward? You believe institutions exist to level \
+asymmetries of power. When they failed to this week, that is the story.""",
+    "center": """\
+Today's lens: PRAGMATIC CENTER. Argue from principles of institutional stability, \
+empirical evidence, tradeoff analysis, and incremental reform. Ask: what did the week's \
+data actually show? What did every side get right, and what did each refuse to see? You \
+distrust grand narratives from any direction. When everyone spent the week certain, that \
+is the story.""",
+    "right": """\
+Today's lens: CONSERVATIVE. Argue from principles of individual liberty, market \
+discipline, institutional restraint, and the wisdom of inherited structures. Ask: what \
+did this week cost, and who was asked to pay without consenting? What second-order \
+effects will the architects never face? You believe concentrated power corrupts \
+regardless of intent. When the week's solutions required more authority than the \
+problems, that is the story.""",
+}
+
+
+_WEEKLY_OPINION_SYSTEM = """\
+You are the lead editorial writer at void --weekly. Once a week you step back from the \
+daily churn to write the column that only makes sense at the week's length. You use \
+"we" — not as a hiding place behind the institution, but because what you are saying \
+carries the desk's weight behind it.
+
+You are NOT recapping the week. You are building ONE argument with accumulating weight, \
+drawn from the through-line that runs across the week's biggest stories. Steady pace \
+throughout. Each piece of evidence adds gravitational pull. By the end the reader should \
+feel the conclusion was inevitable before you stated it. Earned, not announced.
+
+THE WEEKLY DIFFERENCE — READ THIS TWICE:
+You have already published this week's daily columns. They are provided below. Your job \
+is NOT to restate them. A daily column argues one story on one day. Your column argues \
+what becomes visible only when you set the week's stories beside each other: the pattern, \
+the repetition, the cost that compounded across days while everyone watched a different \
+headline. Name the through-line no single day could see. If your argument could have run \
+on Tuesday about Tuesday's news, you have failed. Throw it out and find the week-length \
+pattern.
+
+VOICE & REGISTER:
+You publish a position for the record, with the desk's weight behind it. You are direct. \
+Short sentences when you are certain. You slow down when the complexity is real. You are \
+allowed to be pointed. You are allowed to be angry if the facts warrant it. What you are \
+NOT allowed to be is detached.
+
+CARDINAL RULE — SHOW, DON'T TELL:
+Every sentence earns its place through evidence. Never assert significance — demonstrate \
+it through mechanism and the pattern across the week. The column's weight comes from \
+facts marshaled in sequence, not from adjectives.
+
+KILL SCAFFOLDING — ZERO TOLERANCE (output containing these is REJECTED):
+Never announce what you are about to argue. ALL banned: "This isn't just...", "Here's \
+the thing...", "The bigger picture...", "What makes this...", "The reality is...", "The \
+question now is...", "This goes beyond...", "What's really happening here is...", "It's \
+not just about...", "The takeaway is...", "The bottom line...", "This matters \
+because...", "This is about more than...", "Let's be clear...". Also banned — slop \
+adjectives that assert instead of show: "significant", "notable", "crucially", \
+"importantly", "unprecedented", "pivotal", "nuanced", "comprehensive", "robust", \
+"landscape", "navigate", "navigating", "underscores", "multifaceted", "delve", \
+"breaking", "historic", "controversial", "divisive."
+NO EM DASHES (—) OR EN DASHES (–) IN "opinion_text" OR "opinion_headline." Em dashes are \
+an AI tell in written editorial prose. Rewrite as two sentences, or use a comma, \
+semicolon, colon, or parentheses. Hyphens in compound words are fine.
+Never reference outlet names, "coverage," "sources," or "reporting patterns." Synthesize \
+the facts — do not cite where they came from. Start every sentence with the FACT or the \
+ARGUMENT. If the sentence works without its opening clause, delete the opening clause.
+
+IDEOLOGICAL LENS — {LEAN_UPPER}:
+{LEAN_INSTRUCTION}
+
+CRITICAL: Argue from PRINCIPLES, not parties. Never name Democrats, Republicans, BJP, \
+Congress, Labour, or any party. Never take a politician's side. Reason from underlying \
+values — what kind of society the week's decisions build, what tradeoffs they accept.
+
+CRAFT:
+Open with the most striking fact of the week — a number, a name, a reversal. Front-load \
+evidence for 60-70% of the piece, pulling from at least two different stories so the \
+pattern shows. The thesis arrives no earlier than the third paragraph; by then the \
+evidence has made it inescapable. Include a genuine turn: the counterargument you take \
+seriously. Close on tension, not summary. Every evaluative word must be replaceable by a \
+specific number or mechanism. If it cannot be, delete it and show the evidence instead.
+
+Standards:
+- 450-650 words. One argument, drawn across multiple stories. No meta-commentary about media.
+- Active voice. Concrete nouns. Specific numbers, names, dates.
+- Write for a reader who followed the week. Add the insight they missed.
+- Short sentences deliver verdicts. Long sentences build cases. Vary both.
+- MUST use first-person plural "we" at least 3 times — the editorial board speaking as an \
+institution.\
+"""
+
+
+_WEEKLY_OPINION_PROMPT = """\
+Write the void --weekly editorial for the {LEAN_UPPER} lens.
+Week: {WEEK_LABEL}
+Edition: {EDITION_UPPER}
+
+THE WEEK'S COVER STORIES (your primary evidence — draw the through-line across them):
+{COVERS}
+
+OTHER STORIES THAT MOVED THIS WEEK:
+{THREADS}
+
+WHAT THE WEEK IN BRIEF COVERED:
+{RECAP}
+
+BIAS SIGNAL (how contested the week's coverage was):
+{BIAS}
+
+DAILY COLUMNS WE ALREADY PUBLISHED THIS WEEK — DO NOT RESTATE ANY OF THESE:
+{DAILY_OPINIONS}
+
+Return JSON with exactly two fields:
+1. "opinion_headline" — 6-12 word editorial headline. Not a news headline. A declarative \
+statement of the week's thesis. Concrete nouns, active verbs. No "slams," "blasts." \
+Example: "The week three institutions chose speed over proof."
+2. "opinion_text" — 450-650 words. ONE argument about the WEEK, from the {LEAN_UPPER} \
+lens, built across at least two of the stories above. Structure: opening fact -> \
+accumulating evidence -> thesis (third paragraph) -> turn -> close on tension. Synthesize \
+the facts; never cite where they came from. NO em dashes in this field.\
+"""
+
+
+_WEEKLY_OPINION_AUDIO_PROMPT = """\
+Rewrite the editorial below as a single-voice spoken monologue for the void --weekly \
+broadcast. ONE speaker at the editorial desk on a Sunday, who has spent the week with \
+these stories and has something to say. Not reading — TELLING.
+
+EDITORIAL ({LEAN_UPPER} lens):
+Headline: {HEADLINE}
+
+{TEXT}
+
+Write ONLY the spoken monologue — no labels, no A:/B: tags, just flowing text.
+Open with exactly: "Now, the void weekly editorial."
+Then: "The week, through a {LEAN_LABEL} lens."
+Then speak the headline as a title.
+Then deliver the argument.
+PACING — let thoughts linger. Steady throughout, never rush. Each sentence of evidence \
+adds weight; the listener should feel the conclusion becoming inevitable before you state \
+it. Short declarative sentences are verdicts. Long sentences build the case. Use 3-4 \
+paragraph breaks — in a monologue, a paragraph break is a full beat of silence. At least \
+once, let a one-sentence paragraph stand alone. Use em dashes for mid-thought pivots and \
+ellipses (2-3 max) for genuine deliberation. Write for the ear, not the page.
+Target 600-800 words.
+End with exactly: "This was void opinion." End on the unresolved question, not a summary.\
+"""
+
+
+_WEEKLY_OPINION_RETRY_SUFFIX = (
+    "\n\nCRITICAL RETRY: your previous attempt used banned scaffolding or slop "
+    "adjectives. Start every sentence with a fact or a name. Show, do not assert. "
+    "No em dashes in opinion_text or opinion_headline."
+)
+
+
+def _generate_weekly_opinion(covers, top_threads, recap, bias_data, daily_opinions,
+                             lean, week_label, edition):
+    """Generate the weekly editorial — one argued week-in-review column.
+
+    Two LLM calls:
+      1. flash JSON -> {opinion_headline, opinion_text}
+      2. flash-lite plain text -> opinion_audio_script (long monologue; plain
+         text avoids the json.loads fragility of a quote/em-dash-heavy script)
+    Returns {opinion_text, opinion_headline, opinion_lean, opinion_audio_script}
+    or None on failure (caller stores NULLs / skips opinion audio).
+    """
+    if not gemini_is_available():
+        print("    [weekly-opinion] Gemini unavailable — skipping editorial")
+        return None, 0
+
+    calls = 0
+    lean_upper = lean.upper()
+    lean_label = _WEEKLY_LEAN_LABELS[lean]
+
+    # --- Build evidence blocks ---
+    cover_block = "\n\n".join(
+        f"COVER {i+1}: {c.get('headline', '?')}\n"
+        f"{' '.join((c.get('text', '') or '').split()[:220])}"
+        for i, c in enumerate((covers or [])[:2])
+    ) or "None"
+
+    thread_block = "\n".join(
+        f"  - {t.get('title', '?')} ({t.get('cumulative_sources', 0)} sources, "
+        f"{t.get('daily_appearances', 0)} days)"
+        for t in (top_threads or [])[:8]
+    ) or "None"
+
+    recap_block = "\n".join(
+        f"  - {s.get('headline', '?')}"
+        for s in (recap.get("stories", []) if recap else [])[:10]
+    ) or "None"
+
+    mp = (bias_data.get("most_polarized") or []) if isinstance(bias_data, dict) else []
+    stats = (bias_data.get("stats") or {}) if isinstance(bias_data, dict) else {}
+    if mp or stats:
+        bias_block = (
+            f"Most polarized story: {mp[0].get('title', '?') if mp else '?'}. "
+            f"Average lean {stats.get('avg_lean', '?')}/100, spread "
+            f"{stats.get('lean_std', '?')} (higher spread = more contested coverage)."
+        )
+    else:
+        bias_block = "None"
+
+    if daily_opinions:
+        daily_block = "\n".join(
+            f"  [{(o.get('opinion_lean') or '?')}] {o.get('opinion_headline', '?')}: "
+            f"{' '.join((o.get('opinion_text', '') or '').split()[:60])}..."
+            for o in daily_opinions
+        )
+    else:
+        daily_block = "None published this week."
+
+    system = _WEEKLY_OPINION_SYSTEM.format(
+        LEAN_UPPER=lean_upper,
+        LEAN_INSTRUCTION=_WEEKLY_OPINION_LEAN_INSTRUCTIONS[lean],
+    )
+    prompt = _WEEKLY_OPINION_PROMPT.format(
+        LEAN_UPPER=lean_upper,
+        WEEK_LABEL=week_label,
+        EDITION_UPPER=edition.upper(),
+        COVERS=cover_block,
+        THREADS=thread_block,
+        RECAP=recap_block,
+        BIAS=bias_block,
+        DAILY_OPINIONS=daily_block,
+    )
+
+    # --- Call 1: opinion headline + text (flash, JSON, 1 retry on banned terms) ---
+    headline, text = None, None
+    for attempt in range(2):
+        calls += 1
+        result, gen = _smart_generate(
+            prompt if attempt == 0 else prompt + _WEEKLY_OPINION_RETRY_SUFFIX,
+            system_instruction=system, model=_FLASH_MODEL,
+        )
+        if not (result and isinstance(result, dict)):
+            continue
+        cand_text = (result.get("opinion_text") or "").strip()
+        cand_head = (result.get("opinion_headline") or "").strip()
+        if not cand_text or len(cand_text.split()) < 150:
+            print("    [weekly-opinion] Text too short or empty — discarding")
+            continue
+        found = [t for t in PROHIBITED_TERMS if t in cand_text.lower()]
+        if found and attempt == 0:
+            print(f"    [weekly-opinion] Prohibited terms {found} — retrying")
+            continue
+        # Defensive: prose must be dash-free even if the model slipped.
+        cand_text = cand_text.replace(" — ", ", ").replace("—", ", ").replace("–", "-")
+        headline, text = (cand_head or None), cand_text
+        print(f"    [weekly-opinion] {lean_upper} editorial: {len(text.split())} words"
+              f"{', headline: ' + repr(headline[:50]) if headline else ''}"
+              f"{' (retry)' if attempt else ''}")
+        break
+
+    if not text:
+        print("    [weekly-opinion] Editorial generation failed")
+        return None, calls
+
+    # --- Call 2: spoken monologue (flash-lite, plain text) ---
+    audio_prompt = _WEEKLY_OPINION_AUDIO_PROMPT.format(
+        LEAN_UPPER=lean_upper, LEAN_LABEL=lean_label,
+        HEADLINE=headline or text.split(".")[0], TEXT=text,
+    )
+    calls += 1
+    audio_script = _smart_generate_text(audio_prompt)
+    if audio_script:
+        audio_script = audio_script.strip()
+
+    sign_on = f"Now, the void weekly editorial. The week, through a {lean_label} lens."
+    if not audio_script or len(audio_script.split()) < 200:
+        # Fallback: the opinion text is already in spoken cadence — add bookends.
+        head_line = f" {headline}." if headline else ""
+        audio_script = f"{sign_on}{head_line}\n\n{text}\n\nThis was void opinion."
+        print(f"    [weekly-opinion] Audio: fallback from text ({len(audio_script.split())} words)")
+    else:
+        if "now, the void weekly editorial" not in audio_script.lower()[:80]:
+            audio_script = f"{sign_on}\n\n{audio_script}"
+        if "this was void opinion" not in audio_script.lower()[-80:]:
+            audio_script = f"{audio_script}\n\nThis was void opinion."
+        print(f"    [weekly-opinion] Audio script: {len(audio_script.split())} words")
+
+    return {
+        "opinion_text": text,
+        "opinion_headline": headline,
+        "opinion_lean": lean,
+        "opinion_audio_script": audio_script,
+    }, calls
 
 
 # ---------------------------------------------------------------------------
@@ -1193,6 +1650,19 @@ def generate_weekly_digest(editions=None, week_offset=0):
         recap_count = len(recap.get("stories", [])) if recap else 0
         print(f"    {recap_count} stories")
 
+        # Section 6.5: Weekly editorial — one argued week-in-review column,
+        # distinct from every daily opinion this week (fed in below).
+        print(f"\n  ── WEEKLY EDITORIAL ──")
+        daily_opinions = _fetch_daily_opinions(edition, week_start, week_end)
+        week_lean = _get_week_lean(issue_number)
+        week_label = f"{week_start.strftime('%B %d')} through {week_end.strftime('%B %d, %Y')}"
+        print(f"    {len(daily_opinions)} daily columns to differ from; lens: {week_lean}")
+        weekly_opinion, calls = _generate_weekly_opinion(
+            covers, top_threads, recap, bias_data, daily_opinions,
+            week_lean, week_label, edition,
+        )
+        total_calls += calls
+
         # Section 7: Audio — weekly uses fixed voice pair + richer context
         print(f"\n  ── AUDIO ──")
         audio_result, calls = _generate_audio(
@@ -1206,25 +1676,33 @@ def generate_weekly_digest(editions=None, week_offset=0):
         audio_url = None
         audio_duration = None
         audio_size = None
+        opinion_start = None
         if audio_script and len(audio_script) > 100:
             print(f"    Producing audio ({len(audio_script.split())} words)...")
             try:
                 # Weekly uses WEEKLY_VOICE_PAIR (fixed) instead of daily rotation
-                # and overrides the TTS preamble for magazine pace
+                # and overrides the TTS preamble for magazine pace. The editorial
+                # monologue uses the female desk voice (host_b -> Ava), mirroring
+                # the daily TL;DR-male / opinion-female split.
                 weekly_voices = {
                     "host_a": WEEKLY_VOICE_PAIR["host_a"],
                     "host_b": WEEKLY_VOICE_PAIR["host_b"],
-                    "opinion": {"id": WEEKLY_VOICE_PAIR["host_a"]["id"]},
+                    "opinion": {"id": WEEKLY_VOICE_PAIR["host_b"]["id"]},
                 }
-                # Use "weekly-{edition}" path to avoid overwriting daily audio
+                # Use "weekly-{edition}" path to avoid overwriting daily audio.
+                # Pass the editorial monologue so produce_audio appends it after
+                # the news read and reports where it starts (opinion seek tab).
                 result = produce_audio(
                     audio_script, weekly_voices, f"weekly-{edition}",
+                    opinion_audio_script=(weekly_opinion or {}).get("opinion_audio_script"),
+                    opinion_lean=(weekly_opinion or {}).get("opinion_lean"),
                     tts_preamble_override=_WEEKLY_TTS_PREAMBLE,
                 )
                 if result and isinstance(result, dict):
                     audio_url = result.get("audio_url")
                     audio_duration = result.get("duration_seconds")
                     audio_size = result.get("file_size")
+                    opinion_start = result.get("opinion_start_seconds")
                     print(f"    Audio: {audio_duration:.0f}s uploaded" if audio_duration else "    Audio: uploaded")
             except Exception as e:
                 print(f"    [warn] Audio failed: {e}")
@@ -1269,6 +1747,21 @@ def generate_weekly_digest(editions=None, week_offset=0):
             "audio_url": audio_url,
             "audio_duration_seconds": audio_duration,
             "audio_file_size": audio_size,
+            # Weekly editorial (one argued week-in-review column + monologue)
+            "opinion_text": weekly_opinion.get("opinion_text") if weekly_opinion else None,
+            "opinion_headline": weekly_opinion.get("opinion_headline") if weekly_opinion else None,
+            "opinion_lean": weekly_opinion.get("opinion_lean") if weekly_opinion else None,
+            "opinion_audio_script": weekly_opinion.get("opinion_audio_script") if weekly_opinion else None,
+            "opinion_start_seconds": opinion_start,
+            # Broadcast desk voices (news pair drives player host chips + label)
+            "audio_voice": (
+                f"{WEEKLY_VOICE_PAIR['host_a']['id']}+{WEEKLY_VOICE_PAIR['host_b']['id']}"
+                if audio_url else None
+            ),
+            "audio_voice_label": (
+                f"{WEEKLY_VOICE_PAIR['host_a']['name']} & {WEEKLY_VOICE_PAIR['host_b']['name']}"
+                if audio_url else None
+            ),
             # Cover image
             "cover_image_url": cover_image["url"] if cover_image else None,
             "cover_image_attribution": cover_image["attribution"] if cover_image else None,

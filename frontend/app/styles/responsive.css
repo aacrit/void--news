@@ -92,61 +92,11 @@
     border-right: none;
   }
 
-  /* Deep Dive: centered overlay covering 75% of viewport.
-     Opaque surface — no see-through. Cinematic depth via shadow layers.
-     The backdrop blur handles the "frosted world behind" feel. */
-  .deep-dive-panel {
-    left: 50%;
-    top: 50%;
-    right: auto;
-    bottom: auto;
-    transform: translate(-50%, -50%);
-    width: 75vw;
-    max-width: 920px;
-    height: 80vh;
-    max-height: 80vh;
-    min-height: 0;
-    border-radius: 6px;
-    border: 1px solid var(--border-subtle);
-
-    /* Solid opaque — content demands full attention, not transparency */
-    background-color: var(--bg-primary);
-
-    /* Cinematic depth: layered shadows using brand-warm tint.
-       Four rings: ambient → mid → close → inner rim light.
-       Uses --cinematic-shadow-tint for warm walnut shadows instead of
-       neutral black. The rim light uses --cinematic-rim-light for
-       brand-consistent edge catch. */
-    box-shadow:
-      0 50px 140px color-mix(in srgb, var(--cinematic-shadow-tint) 50%, transparent),
-      0 20px 60px color-mix(in srgb, var(--cinematic-shadow-tint) 28%, transparent),
-      0 6px 16px color-mix(in srgb, var(--cinematic-shadow-tint) 18%, transparent),
-      0 1px 3px color-mix(in srgb, var(--cinematic-shadow-tint) 12%, transparent),
-      inset 0 1px 0 color-mix(in srgb, var(--cinematic-rim-light) 40%, transparent);
-  }
-
-  /* Studio light — refined top-edge catch. Higher opacity + wider gradient
-     mimics a single overhead light source catching the panel's lip. */
-  .deep-dive-panel::before {
-    opacity: 0.8;
-    height: 2px;
-  }
-
-  /* Close button visible on desktop modal — no back arrow needed */
-  .deep-dive-close {
-    display: inline-flex;
-  }
-
 }
 
 /* ---- Wide Desktop (1280px+) -------------------------------------------- */
 
 @media (min-width: 1280px) {
-  /* Wider modal on large screens */
-  .deep-dive-panel {
-    max-width: 1080px;
-  }
-
   /* 1280: keep 3-col compact — enough room for footer without overflow */
 }
 
@@ -176,11 +126,6 @@
   .feed-grid__item:last-child {
     border-right: none;
   }
-
-  /* Deep Dive: wider on ultra-wide for more reading comfort */
-  .deep-dive-panel {
-    max-width: 1120px;
-  }
 }
 
 /* ---- Mobile (max-width: 767px) ----------------------------------------- */
@@ -205,7 +150,6 @@
   }
 
   .mf,
-  .deep-dive-panel__content,
   .msp {
     overscroll-behavior: contain;
   }
@@ -353,17 +297,6 @@
     filter: blur(3px) saturate(0.8) brightness(0.9);
   }
 
-  /* Mobile GPU budget: disable backdrop-filters on elements hidden behind
-     the Deep Dive overlay (z-50). These elements already have solid background
-     fallbacks — the backdrop-filter is pure enhancement, invisible when
-     occluded. 2026-05-15: MobileBottomNav removed, so we no longer need
-     the .mob-nav__bar selector here; only nav-page / nav-weekly remain. */
-  .deep-dive-active .nav-page,
-  .deep-dive-active .nav-weekly {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
-
   /* Disable expensive GPU compositing hint on mobile — reduces VRAM pressure
      on low-end devices. Fixed paper texture doesn't scroll on mobile anyway. */
   body::before {
@@ -463,131 +396,6 @@
     line-height: 1.5;
   }
 
-  /* === DEEP DIVE === */
-
-  /* iOS bottom-sheet: full screen from bottom, rounded top corners, momentum scroll */
-  .deep-dive-panel {
-    left: 0;
-    right: 0;
-    top: auto;
-    bottom: 0;
-    width: 100%;
-    max-width: 100%;
-    max-height: 92vh;
-    border-radius: 16px 16px 0 0;
-    border: none;
-    /* Reset glass to solid background on mobile */
-    background: var(--bg-primary);
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-    /* Layered upward shadow — bottom sheet lifts off the feed.
-       Warm tint from cinematic shadow system. */
-    box-shadow:
-      0 -8px 40px color-mix(in srgb, var(--cinematic-shadow-tint) 25%, transparent),
-      0 -2px 12px color-mix(in srgb, var(--cinematic-shadow-tint) 12%, transparent);
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .deep-dive-panel::before {
-    opacity: 0;
-  }
-
-  /* Override cinematic settled shadow — bottom sheet keeps upward shadow, no inset vignette */
-  .deep-dive-panel[data-settled] {
-    box-shadow:
-      0 -8px 40px color-mix(in srgb, var(--cinematic-shadow-tint) 25%, transparent),
-      0 -2px 12px color-mix(in srgb, var(--cinematic-shadow-tint) 12%, transparent);
-  }
-
-  /* Suppress DD breathing on mobile — 0.05% scale is imperceptible on small viewports */
-  .deep-dive-panel[data-settled] .deep-dive-panel__content {
-    animation: none;
-    /* Disable editorial color grade filter — forces recomposite on scroll */
-    filter: none;
-  }
-
-  .deep-dive-panel::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* Deep Dive header: tighter padding on mobile, clears notch */
-  .deep-dive-panel__header {
-    padding: var(--space-3) var(--space-4);
-    padding-top: max(var(--space-3), env(safe-area-inset-top, 0px));
-  }
-
-  /* Deep Dive headline: fills mobile reading width with editorial authority */
-  .dd-headline {
-    font-size: clamp(1.25rem, 5vw, 1.5rem);
-  }
-
-  /* Deep Dive content: tighter padding, clears bottom home indicator */
-  .deep-dive-panel__content {
-    padding: var(--space-3) var(--space-4);
-    padding-bottom: calc(var(--space-5) + env(safe-area-inset-bottom, 0px));
-  }
-
-  /* Drag indicator pill — iOS bottom sheet handle, cinematic palette */
-  .dd-drag-indicator {
-    display: block;
-    width: 56px;
-    height: 6px;
-    border-radius: 2px;
-    background-color: var(--cin-ash-warm, var(--border-strong));
-    margin: var(--space-2) auto var(--space-1);
-    opacity: 0.8;
-    transition: width 150ms var(--ease-cinematic), opacity 150ms var(--ease-cinematic);
-    /* Brief width-expansion entrance that draws attention to the handle */
-    animation: dragIndicatorReveal 200ms var(--ease-cinematic) 100ms both;
-    box-shadow: 0 1px 2px color-mix(in srgb, var(--cinematic-shadow-tint) 4%, transparent);
-  }
-
-  /* Grabbed state: wider pill + full opacity — confirms the handle is active */
-  .dd-drag-indicator--grabbed {
-    width: 72px;
-    opacity: 1;
-  }
-
-  /* Dragging state: promote to compositor layer for jank-free 60fps dragging.
-     Suppress transitions so the panel tracks the finger with zero latency —
-     the inline style already sets transition:none while isDragging is true,
-     but will-change must be set before the gesture begins to avoid a layer
-     promotion stutter on the first move event. */
-  .deep-dive-panel--dragging {
-    will-change: transform;
-  }
-
-  /* Hide "Back to feed" text, keep arrow visible with adequate touch target */
-  .deep-dive-back-label {
-    display: none;
-  }
-
-  /* Ensure back button arrow is always visible and tappable on mobile.
-     The drag indicator remains as secondary close affordance. */
-  .deep-dive-back {
-    display: inline-flex;
-    min-width: 44px;
-    min-height: 44px;
-  }
-
-  /* Deep Dive: sticky "Read All Sides" footer on mobile */
-  .dd-cta-footer {
-    position: sticky;
-    bottom: 0;
-    background: linear-gradient(to top, var(--bg-primary) 80%, transparent);
-    padding: var(--space-4) var(--space-5) calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
-    margin-top: auto;
-    z-index: 2;
-  }
-  .dd-cta-footer__btn {
-    width: 100%;
-    text-align: center;
-    padding: var(--space-3) var(--space-4);
-    font-weight: 600;
-  }
-
   /* Analysis section: tighter padding and gap on mobile */
   .dd-analysis-section {
     padding: var(--space-3) 0;
@@ -601,6 +409,17 @@
 
   .dd-analysis-block__sigil {
     justify-content: flex-start;
+  }
+
+  /* Deep Dive lede tabs (phones only): show one panel at a time. Both panels
+     stay in the DOM; the wrapper's data-lede-view drives which one shows, so
+     SSR and first client paint always match (no hydration mismatch). The tab
+     bar itself is visible here via its base flex (hidden again >=768px). */
+  .dd-lede[data-lede-view="story"] .dd-lede__spectrum {
+    display: none;
+  }
+  .dd-lede[data-lede-view="spread"] .dd-lede__story {
+    display: none;
   }
 
   /* Press expand: faster transition on mobile */
@@ -755,7 +574,6 @@
   .lean-bar__seg,
   .topic-bar__chip,
   .theme-toggle,
-  .deep-dive-close,
   .skb-overlay__close {
     min-height: 44px;
     min-width: 44px;
@@ -769,15 +587,6 @@
   .dd-action-btn {
     min-height: 44px;
     min-width: 44px;
-  }
-
-  /* Story nav prev/next — base rule is 32×32px; bump to WCAG minimum.
-     Padding expands the tap area to 44px while the border-box keeps the
-     visual circle at 32px. The ::before pseudo-element approach is avoided
-     here since these are interactive buttons that already render an icon. */
-  .dd-story-nav__btn {
-    min-width: 44px;
-    min-height: 44px;
   }
 
   /* === TEXT SELECTION — DISABLE ON INTERACTIVE ELEMENTS === */

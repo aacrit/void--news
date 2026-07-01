@@ -301,7 +301,7 @@ export async function fetchPreviousEpisodes(edition: string, limit = 9): Promise
 export async function fetchWeeklyDigest(edition: string): Promise<any | null> {
   if (!_client) return null;
 
-  const cols = 'id, edition, week_start, week_end, issue_number, cover_headline, cover_text, cover_numbers, cover_image_url, cover_image_attribution, cover_image_source, recap_stories, opinion_left, opinion_center, opinion_right, opinion_headlines, opinion_topic, bias_report_text, bias_report_data, audio_url, audio_duration_seconds, total_articles, total_clusters, created_at';
+  const cols = 'id, edition, week_start, week_end, issue_number, cover_headline, cover_text, cover_image_url, cover_image_attribution, cover_image_source, recap_stories, opinion_left, opinion_center, opinion_right, opinion_headlines, opinion_topic, bias_report_text, bias_report_data, audio_url, audio_duration_seconds, opinion_text, opinion_headline, opinion_lean, opinion_start_seconds, audio_voice, audio_voice_label, total_articles, total_clusters, created_at';
 
   let res = await _client
     .from('weekly_digests')
@@ -326,7 +326,7 @@ export async function fetchWeeklyDigest(edition: string): Promise<any | null> {
   // Parse JSONB fields that may arrive as strings
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const d = res.data as Record<string, any>;
-  const jsonFields = ['cover_text', 'cover_numbers', 'recap_stories', 'opinion_left', 'opinion_center', 'opinion_right', 'opinion_headlines', 'bias_report_data'];
+  const jsonFields = ['cover_text', 'recap_stories', 'opinion_left', 'opinion_center', 'opinion_right', 'opinion_headlines', 'bias_report_data'];
   for (const field of jsonFields) {
     if (typeof d[field] === 'string') {
       try { d[field] = JSON.parse(d[field]); } catch { d[field] = null; }
@@ -344,7 +344,7 @@ export async function fetchWeeklyDigest(edition: string): Promise<any | null> {
 export async function fetchWeeklyArchive(edition?: string): Promise<any[]> {
   if (!_client) return [];
 
-  const cols = 'id, edition, week_start, week_end, issue_number, cover_headline, created_at';
+  const cols = 'id, edition, week_start, week_end, issue_number, cover_headline, audio_url, audio_duration_seconds, created_at';
 
   let query = _client
     .from('weekly_digests')
