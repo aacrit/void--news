@@ -2963,7 +2963,11 @@ def main():
         # story as new clusters but with ZERO article overlap (different RSS
         # fetch batches). The article-overlap check above misses these entirely.
         try:
-            from clustering.story_cluster import _title_words
+            # `_title_words` never existed in story_cluster — the ImportError
+            # was swallowed by this try every run, leaving the title dedup
+            # permanently inert (2026-07-04 run-log audit). Use the real
+            # stemmed-title tokenizer.
+            from clustering.story_cluster import _title_word_stems as _title_words
             # Fetch titles of old clusters in DB (recent 48h).
             # Paginated to avoid payload size limits on large cluster sets.
             cutoff = (datetime.now(timezone.utc) - timedelta(hours=48)).isoformat()

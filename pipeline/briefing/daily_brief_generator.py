@@ -114,6 +114,44 @@ def _sanitize_multiline(text: str | None) -> str | None:
     return "\n".join(_sanitize_editorial(l) if l.strip() else l for l in text.split("\n"))
 
 
+# JSON-era artifact: a model can emit literal backslash-n instead of real
+# newlines. Always an artifact in editorial text — normalize early.
+_LITERAL_NL_RE = re.compile(r"\s*\\n\s*")
+# Sentence-boundary split, tolerant of a closing quote/paren after the stop.
+_SENT_SPLIT_RE = re.compile(r"(?<=[.!?])\s+|(?<=[.!?][\"'”’])\s+")
+_ABBREV_END_RE = re.compile(
+    r"\b(?:[A-Z]|Mr|Mrs|Ms|Dr|St|Gen|Sen|Gov|Lt|Col|vs|No)\.$"
+)
+
+
+def _ensure_sentence_lines(text: str, min_lines: int = 6) -> str:
+    """The TL;DR renders one sentence per line. If the model returned a
+    flowing paragraph (observed 2026-07-04: '1 lines' shipped), re-split
+    deterministically on sentence boundaries. No-op when the text already
+    has line structure."""
+    if not text or not isinstance(text, str):
+        return text
+    if text.count("\n") >= min_lines - 1:
+        return text
+    out: list[str] = []
+    for para in text.split("\n"):
+        para = para.strip()
+        if not para:
+            continue
+        buf: list[str] = []
+        for tok in _SENT_SPLIT_RE.split(para):
+            if not tok:
+                continue
+            buf.append(tok)
+            if _ABBREV_END_RE.search(tok.rstrip()):
+                continue  # don't break after "U.S." / "Gen." etc.
+            out.append(" ".join(buf))
+            buf = []
+        if buf:
+            out.append(" ".join(buf))
+    return "\n".join(out)
+
+
 def _parse_brief_sections(raw: str) -> dict:
     """Parse the plain-text brief format into sections.
 
@@ -128,7 +166,8 @@ def _parse_brief_sections(raw: str) -> dict:
     as the audio start (TL;DR dialogue scripts always carry A:/B: tags);
     if that is missing too, the whole text is the body and audio is None.
     """
-    lines = (raw or "").split("\n")
+    raw = _LITERAL_NL_RE.sub("\n", raw) if raw and "\\n" in raw else (raw or "")
+    lines = raw.split("\n")
     delim_idx = next((i for i, l in enumerate(lines) if _AUDIO_DELIM_RE.match(l)), None)
     if delim_idx is None:
         delim_idx_a = next(
@@ -283,18 +322,19 @@ STORIES:
 
 ---
 
-TL;DR HEADLINE (return as "tldr_headline"):
+TL;DR HEADLINE (the first output line):
 6-10 words. Declarative sweep headline stitching the day's top 2-3 themes. \
 Examples: "Tariffs Bite, Courts Push Back, Markets Shrug" / \
 "Ceasefire Holds as Trade War Enters Week Two"
 
-TL;DR INSTRUCTIONS (return as "tldr_text"):
+TL;DR INSTRUCTIONS (the written body after the headline):
 REGISTER: Newspaper editorial page. No contractions. No spoken fragments. \
 Declarative sentences. Every clause load-bearing.
-16-20 sentences as a flowing editorial paragraph. Aim for exactly 400 words. \
+16-20 sentences. Aim for exactly 400 words. \
 Acceptable range: 360-480 words. Density over length — if a sentence restates \
 rather than advances, cut it. \
-Put one sentence per line, separated by \\n (literal newline). \
+FORMAT: put ONE sentence per line — press Enter after every sentence so the \
+body is 16-20 separate lines, never a single flowing paragraph. \
 Write in the voice of today's lead host:
 {LEAD_HOST_BLOCK}
 
@@ -330,13 +370,13 @@ picture," "the takeaway."
 NO EM DASHES (—) OR EN DASHES (–) IN TL;DR OUTPUT. Em dashes are an AI \
 tell in written prose. Use periods, commas, semicolons, colons, or \
 parentheses. Two short sentences beat one long sentence stitched with an \
-em dash. Hyphens in compound words are fine. This rule applies to \
-"tldr_text" and "tldr_headline" only — the audio_script is exempt because \
+em dash. Hyphens in compound words are fine. This rule applies to the \
+written headline and TL;DR body only — the audio script is exempt because \
 em dashes function as TTS prosody marks there.
 
 ---
 
-AUDIO SCRIPT INSTRUCTIONS (return as "audio_script"):
+AUDIO SCRIPT INSTRUCTIONS (everything after the ===AUDIO SCRIPT=== delimiter):
 REGISTER: Newsroom broadcast. Contractions. Fragments for emphasis. Em dashes \
 for pivots. The cadence of two anchors who report for a living — clipped, \
 efficient, authoritative. Not conversational. Not leisurely. Professional.
@@ -435,7 +475,8 @@ NEVER use: "This isn't just...", "Here's the thing...", "The bigger picture...",
 OUTPUT FORMAT — PLAIN TEXT, exactly this shape (no JSON, no markdown fences):
 
 Line 1: the TL;DR headline (6-10 words, no label, no quotes).
-Then a blank line, then the full TL;DR text (the written brief).
+Then a blank line, then the TL;DR body: 16-20 sentences, ONE sentence per \
+line (a real line break after every sentence — never one flowing paragraph).
 Then a line containing exactly:
 ===AUDIO SCRIPT===
 Then the full broadcast dialogue script (A:/B: speaker lines).\
@@ -878,8 +919,13 @@ def _get_previous_cluster_info(edition: str) -> tuple[set[str], list[set[str]]]:
                     _brief_title_keywords(r.get("title", "")) for r in (res.data or [])
                 ) if len(k) >= 2
             ]
-        except Exception:
-            pass
+            # Diagnosability: 0 fetched titles means every story reads [NEW]
+            # by construction (retention/dedup may have removed the rows).
+            print(f"  [brief:{edition}] previous brief: {len(ids)} cluster ids, "
+                  f"{len(kw_sets)} titles fetched for continuing-story matching")
+        except Exception as e:
+            print(f"  [warn][brief:{edition}] previous-title fetch failed "
+                  f"(all stories will read [NEW]): {e}")
     return ids, kw_sets
 
 
@@ -893,7 +939,15 @@ def _matches_previous(cluster: dict, previous_ids: set[str],
     if len(kw) < 2:
         return False
     for prev in previous_kw:
-        if len(kw & prev) >= 2 and len(kw & prev) / min(len(kw), len(prev)) >= 0.5:
+        shared = len(kw & prev)
+        # 3+ shared content words is same-story evidence on its own;
+        # 2 shared needs half of the smaller title covered. (The original
+        # AND-only rule missed real continuations: "Europe Braces for 44C
+        # Heatwave Amid Wildfire Alerts" vs yesterday's heatwave title
+        # shared {europe, heatwave} = 2 of 5 → 0.4 < 0.5 → tagged [NEW].)
+        if shared >= 3:
+            return True
+        if shared >= 2 and shared / min(len(kw), len(prev)) >= 0.5:
             return True
     return False
 
@@ -1561,6 +1615,13 @@ def _build_retry_suffix(quality_report: dict | None) -> str:
         "Never label patterns or assert significance. Place facts adjacent — the reader "
         "sees the connection."
     )
+    # And the output shape (the 2026-07-04 retry collapsed the body to one
+    # paragraph): repeat the plain-text three-section contract.
+    parts.append(
+        "- OUTPUT SHAPE (plain text, no JSON): line 1 = headline; blank line; "
+        "TL;DR body as 16-20 separate lines, ONE sentence per line; then a line "
+        "reading exactly ===AUDIO SCRIPT===; then the A:/B: dialogue script."
+    )
     return "\n".join(parts)
 
 
@@ -1714,7 +1775,10 @@ def generate_daily_briefs(
                     _sections = _parse_brief_sections(raw_text)
                     raw = {
                         "tldr_headline": _sections["headline"],
-                        "tldr_text": _sections["body"],
+                        # Enforce line-per-sentence structure before the
+                        # quality gate AND storage: a flowing paragraph
+                        # shipped as "1 lines" on 2026-07-04.
+                        "tldr_text": _ensure_sentence_lines(_sections["body"]),
                         "audio_script": _sections["audio"],
                     }
                 if raw and isinstance(raw, dict):
