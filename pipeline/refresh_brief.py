@@ -185,6 +185,10 @@ def main():
         else:
             brief = {}
             if current:
+                # Carry the headline too: writing tldr_headline=None here
+                # disqualified the new row from every future carry-forward
+                # (both fetchers filter tldr_headline NOT NULL).
+                brief["tldr_headline"] = current.get("tldr_headline")
                 brief["tldr_text"] = current.get("tldr_text", "")
                 brief["audio_script"] = current.get("audio_script")
                 brief["top_cluster_ids"] = current.get("top_cluster_ids", [])
@@ -287,21 +291,23 @@ def main():
             row["audio_voice_label"] = "Three voices" if has_opinion else "Two voices"
             row["opinion_start_seconds"] = audio_result.get("opinion_start_seconds")
 
+        from utils.supabase_client import supabase
+        # Best-effort cleanup of stale manual-refresh rows (null run id) only.
+        # NEVER delete the edition's whole history: the old fallback wiped
+        # every brief for the edition and re-tried the same insert — a
+        # deterministic insert failure (FK violation, schema drift) left the
+        # table EMPTY and the homepage brief blank until the next pipeline run.
         try:
-            from utils.supabase_client import supabase
             supabase.table("daily_briefs").delete().eq("edition", edition).is_(
                 "pipeline_run_id", "null"
             ).execute()
+        except Exception as e:
+            print(f"  [warn] stale-row cleanup failed (continuing): {e}")
+        try:
             supabase.table("daily_briefs").insert(row).execute()
             print(f"  Stored successfully")
         except Exception as e:
-            try:
-                from utils.supabase_client import supabase
-                supabase.table("daily_briefs").delete().eq("edition", edition).execute()
-                supabase.table("daily_briefs").insert(row).execute()
-                print(f"  Stored (replaced existing)")
-            except Exception as e2:
-                print(f"  DB error: {e2}")
+            print(f"  DB error (history preserved, no rows deleted): {e}")
 
     # --- Write JSON output ---
     if args.output:

@@ -200,6 +200,11 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
     # We compute the article-id whitelist from cluster_articles and pass it as
     # an IN-list filter, plus a 48h published_at floor as defence in depth.
     from datetime import datetime, timezone, timedelta
+    # COUPLING: this 48h window must stay >= main.py's cluster retention
+    # window (2 days on first_published). Clusters whose articles all fall
+    # outside this window are skipped and keep a stale rank_world; today
+    # retention deletes them first, but widening retention without widening
+    # this window re-opens the 2026-05-22 stale-pin regression.
     _window_cutoff_iso = (datetime.now(timezone.utc) - timedelta(hours=48)).isoformat()
 
     # 3a. Fetch cluster_articles for the clusters we care about. cluster_ids
@@ -378,13 +383,10 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
                 print(f"  [err] Cluster {cid[:8]}: {e}")
             continue
 
-        # Story-type gates (v5.0): demote incremental updates and ceremonial
-        if story_type == "incremental_update":
-            result["headline_rank"] *= 0.75
-            result["importance_score"] = result["headline_rank"]
-        elif story_type == "ceremonial":
-            result["headline_rank"] *= 0.82
-            result["importance_score"] = result["headline_rank"]
+        # Story-type gates are applied ONCE, by apply_feed_ordering on
+        # rank_world — story_type is threaded through the update dict below.
+        # Pre-gating headline_rank here double-applied the incremental /
+        # ceremonial penalty and never covered entertainment at all.
 
         old_rank = cluster.get("headline_rank") or 0
         new_rank = result["headline_rank"]
@@ -404,6 +406,7 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
             "coverage_velocity": result["coverage_velocity"],
             "content_type": content_type,
             "category": category,
+            "story_type": story_type,
             "source_count": db_source_count,  # for diagnostic print only; NOT written back
             "_articles": articles,
             "_bias_scores": bias_scores,
