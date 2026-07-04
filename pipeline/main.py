@@ -2116,13 +2116,10 @@ def main():
                 raw = max(0.0, min(100.0, c.get("headline_rank", 0)))
                 c["headline_rank"] = round(5.0 + raw * 0.95, 2)
 
-        # Story-type gates (v5.0): demote incremental updates and ceremonial stories
-        for cluster in clusters:
-            st = cluster.get("story_type")
-            if st == "incremental_update":
-                cluster["headline_rank"] = round(cluster.get("headline_rank", 0) * 0.75, 2)
-            elif st == "ceremonial":
-                cluster["headline_rank"] = round(cluster.get("headline_rank", 0) * 0.82, 2)
+        # Story-type gates apply ONCE, in feed_ranker.apply_feed_ordering
+        # (rank_world). Fresh clusters have no story_type yet at this point
+        # (it is set by triage below / Gemini in 7b), so the old
+        # headline_rank pre-gate here was dead code on the daily path.
 
         # v5.2: deterministic sort — tiebreak on source_count (more sources = higher
         # priority), then cluster _db_id or object id as final tiebreaker to ensure
@@ -2165,8 +2162,12 @@ def main():
                         for cid in incr_flags:
                             for c in top_30:
                                 if (c.get("_db_id", "") or str(id(c))) == cid:
+                                    # Flag only — the 0.75 penalty is applied
+                                    # once by STORY_TYPE_GATES in
+                                    # apply_feed_ordering. Multiplying
+                                    # headline_rank here too compounded it
+                                    # to 0.5625x.
                                     c["story_type"] = c.get("story_type") or "incremental_update"
-                                    c["headline_rank"] = round(c.get("headline_rank", 0) * 0.75, 2)
                         if incr_flags:
                             print(f"  Incremental updates flagged: {len(incr_flags)}")
                         dupe_flags = triage_result.get("duplicate_flags", [])
@@ -2183,74 +2184,23 @@ def main():
             reverse=True,
         )
 
-        # Same-event cap (v5.1): max 3 stories about the same major event.
-        # Without this, 11/20 top stories can be Iran war variants.
-        _EVENT_KEYWORDS = {
-            "iran": {"iran", "iranian", "tehran", "hormuz", "persian gulf", "irgc", "hegseth"},
-            "ukraine": {"ukraine", "ukrainian", "kyiv", "zelenskyy", "zelensky"},
-            "israel_palestine": {"gaza", "hamas", "west bank", "netanyahu", "idf"},
-            "china_taiwan": {"taiwan", "taipei", "strait", "xi jinping", "pla"},
-        }
-        MAX_SAME_EVENT = 3
-
-        # 2026-06-02 single-feed — same-event cap runs once on whole pool.
-        if len(clusters) > 10:
-            event_counts: dict[str, int] = {}
-            event_promoted: list[dict] = []
-            event_deferred: list[dict] = []
-            for c in clusters:
-                title_lower = (c.get("title", "") or "").lower()
-                event = None
-                for ek, kws in _EVENT_KEYWORDS.items():
-                    if any(kw in title_lower for kw in kws):
-                        event = ek
-                        break
-                if event and event_counts.get(event, 0) >= MAX_SAME_EVENT:
-                    event_deferred.append(c)
-                else:
-                    event_promoted.append(c)
-                    if event:
-                        event_counts[event] = event_counts.get(event, 0) + 1
-            if event_deferred:
-                event_last_promoted: dict[str, float] = {}
-                for c in event_promoted:
-                    t = (c.get("title", "") or "").lower()
-                    for ek, kws in _EVENT_KEYWORDS.items():
-                        if any(kw in t for kw in kws):
-                            event_last_promoted[ek] = c.get("headline_rank", 0)
-                            break
-                for c in event_deferred:
-                    idx = clusters.index(c)
-                    t = (c.get("title", "") or "").lower()
-                    event = None
-                    for ek, kws in _EVENT_KEYWORDS.items():
-                        if any(kw in t for kw in kws):
-                            event = ek
-                            break
-                    if event and event in event_last_promoted:
-                        floor = event_last_promoted[event] * 0.75
-                    elif event_promoted:
-                        floor = event_promoted[-1].get("headline_rank", 0) * 0.75
-                    else:
-                        continue
-                    clusters[idx]["headline_rank"] = round(
-                        min(c.get("headline_rank", 0), floor), 2
-                    )
-            clusters.sort(
-                key=lambda c: (c.get("headline_rank", 0), c.get("source_count", 0), c.get("_db_id", str(id(c)))),
-                reverse=True,
-            )
+        # Same-event cap is OWNED by feed_ranker.apply_feed_ordering
+        # (MAX_SAME_EVENT=2, EVENT_DECAY on rank_world, richer keyword
+        # groups incl. summit_diplomacy). The old in-line headline_rank
+        # floor here ran a SECOND, divergent cap (max 3, 0.75x floor,
+        # narrower keywords) that composed with feed_ranker's, so the
+        # brief/image-cache saw a double-capped order the homepage never
+        # showed. Deleted 2026-07-04; same pattern as topic diversity.
 
         # Step 7b: Summarize clusters with Gemini Flash (runs after ranking so
         # Gemini calls are spent on the clusters that will actually appear on the
         # frontend, not merely the ones with the most raw sources).
         # Gemini generates headlines + summaries for the top 30 clusters only.
-        # Clusters that fail Gemini get their rule-based summary cleared so
-        # no fallback text reaches the frontend.
+        # Clusters that fail Gemini KEEP their rule-based summary (better a
+        # plain excerpt than a blank card); step 8d retries them post-rerank.
         gemini_results: dict[int, dict] = {}
-        # Tier label persisted to DB cache. Claude is primary; Gemini fallback
-        # only when ANTHROPIC_API_KEY is unset or Claude has a persistent fault.
-        # 7b runs on the flash-lite default tier (see summary_tier stamping below).
+        # 7b runs on the flash-lite default tier (see summary_tier stamping
+        # below); Gemini is the sole LLM (Claude retired 2026-06-22).
         _summary_tier_used = "flash-lite" if gemini_is_available() else None
         if SUMMARIZER_AVAILABLE and llm_is_available():
             print(f"\n[7b] Summarizing top 30 clusters (tier={_summary_tier_used})...")
@@ -2391,12 +2341,18 @@ def main():
                     )
                     if is_empty_brief:
                         try:
+                            # tldr_headline NOT NULL mirrors the generator's
+                            # _fetch_last_successful_brief filter: without it a
+                            # prior stub row ("Daily brief unavailable...",
+                            # headline null) gets resurrected as today's brief.
                             prev = supabase.table("daily_briefs").select(
                                 "tldr_headline,tldr_text,opinion_text,opinion_headline,opinion_lean,opinion_cluster_id,"
                                 "audio_script,audio_url,audio_duration_seconds,"
                                 "audio_voice_label,audio_voice,audio_file_size,"
                                 "opinion_audio_script,top_cluster_ids,opinion_start_seconds"
-                            ).eq("edition", edition).order(
+                            ).eq("edition", edition).not_.is_(
+                                "tldr_headline", "null"
+                            ).order(
                                 "created_at", desc=True
                             ).limit(1).execute()
                             if prev.data and prev.data[0].get("tldr_text"):
@@ -2921,13 +2877,71 @@ def main():
         # Only delete old clusters with >30% article overlap with a new cluster.
         # This prevents aggressive deletion of clusters that share only 1-2 articles.
         stale_ids: list[str] = []
+        stale_to_new: dict[str, str] = {}
         for old_cid, old_aids in old_cluster_articles.items():
             # Check overlap with ANY new cluster
             for new_cid, new_aids in new_cluster_articles.items():
                 overlap = len(old_aids & new_aids)
                 if len(old_aids) > 0 and overlap / len(old_aids) > 0.3:
                     stale_ids.append(old_cid)
+                    stale_to_new[old_cid] = new_cid
                     break
+
+        # Carry the summary cache forward across the row swap. Every
+        # re-clustered story gets a brand-new row whose tier is 7b's
+        # 'flash-lite' stamp, so without this the 8d premium cache could
+        # never hit across runs (yesterday's 'flash' tier died with the
+        # deleted row) and the top-10 re-burned ~10 flash calls every run.
+        # If the old row's summary_article_hash equals the new row's (same
+        # membership → 8d would produce the same input) and the old tier is
+        # higher, promote the new row's tier so 8d cache-hits.
+        if stale_ids:
+            _TIER_RANK = {"sonnet": 3, "flash": 2, "flash-lite": 1}
+            try:
+                _old_rows: dict[str, dict] = {}
+                for i in range(0, len(stale_ids), 100):
+                    res = supabase.table("story_clusters").select(
+                        "id,summary_article_hash,summary_tier"
+                    ).in_("id", stale_ids[i:i + 100]).execute()
+                    for r in (res.data or []):
+                        _old_rows[r["id"]] = r
+                _new_ids = list({ncid for ncid in stale_to_new.values()})
+                _new_rows: dict[str, dict] = {}
+                for i in range(0, len(_new_ids), 100):
+                    res = supabase.table("story_clusters").select(
+                        "id,summary_article_hash,summary_tier"
+                    ).in_("id", _new_ids[i:i + 100]).execute()
+                    for r in (res.data or []):
+                        _new_rows[r["id"]] = r
+                _promoted = 0
+                _best_for_new: dict[str, str] = {}
+                for old_cid, new_cid in stale_to_new.items():
+                    old_r = _old_rows.get(old_cid)
+                    new_r = _new_rows.get(new_cid)
+                    if not old_r or not new_r:
+                        continue
+                    if not old_r.get("summary_article_hash"):
+                        continue
+                    if old_r.get("summary_article_hash") != new_r.get("summary_article_hash"):
+                        continue
+                    old_tier = old_r.get("summary_tier") or ""
+                    cur_best = _best_for_new.get(new_cid) or (new_r.get("summary_tier") or "")
+                    if _TIER_RANK.get(old_tier, 0) > _TIER_RANK.get(cur_best, 0):
+                        _best_for_new[new_cid] = old_tier
+                for new_cid, tier in _best_for_new.items():
+                    if tier == (_new_rows.get(new_cid, {}).get("summary_tier") or ""):
+                        continue
+                    try:
+                        supabase.table("story_clusters").update(
+                            {"summary_tier": tier}
+                        ).eq("id", new_cid).execute()
+                        _promoted += 1
+                    except Exception as _te:
+                        print(f"  [warn] tier carry-forward update failed: {_te}")
+                if _promoted:
+                    print(f"  Summary-tier carry-forward: promoted {_promoted} new rows")
+            except Exception as e:
+                print(f"  [warn] summary-tier carry-forward failed: {e}")
 
         if stale_ids:
             for i in range(0, len(stale_ids), 100):

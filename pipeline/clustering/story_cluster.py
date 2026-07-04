@@ -1,33 +1,32 @@
 """
 Story clustering engine for the void --news pipeline.
 
-Seven rule-based phases (no tier-conditional caps, no special-case
-blacklists outside the explicit editorial pair-list):
+Rule-based phases. PRODUCTION runs 1 → 2 → 3 → 4 → 5 (see
+cluster_stories); the historical 2.5/2.55/2.6 passes are parked:
 
     Phase 1:   TF-IDF + agglomerative clustering on (title + first 500 words)
                at distance threshold 1 - STORY_TFIDF_THRESHOLD.
     Phase 2:   IDF-weighted entity-overlap merge — pairs of clusters
                accumulate sum-of-IDF over shared named entities, merging
                when the score crosses ENTITY_MERGE_IDF_THRESHOLD.
-    Phase 2.5: Canonical-pair merge — editorial override for known
-               co-occurrence pairs (Trump+Xi, Starmer+Streeting, etc).
-               Pure surface-form match; bypasses IDF dilution that
-               occurs when both names appear in many unrelated stories.
-    Phase 2.55:Synonym-pair merge — geographic + name aliases (DRC↔Congo,
-               UK↔Britain, etc) that the canonical pair list cannot
-               enumerate. Requires both surface-pair + stemmed-title-
-               Jaccard floor as safety against same-name-different-place
-               collisions (DR Congo vs Republic of Congo).
-    Phase 2.6: Anchor-entity merge — high-IDF rare proper nouns
-               (Siliņa, Ouagadougou) that two clusters share are strong
-               evidence of same-story even when IDF sum doesn't cross.
-               Requires stemmed-title-Jaccard floor against false merges.
     Phase 3:   Stem-aware title Jaccard merge — Porter-stemmed title-word
                sets that cross TITLE_JACCARD_THRESHOLD merge.
     Phase 4:   Garbage-title force-split — when the title-generator
                produces a "X Spans Y, Z, and W" signature it has been
                forced to mash up unrelated sub-events; we re-cluster the
                articles at a stricter TF-IDF + IDF gate.
+    Phase 5:   Mega-cluster soft cap + over-merge flag (no force-split
+               since the 2026-05-31 revert).
+
+    PARKED (not wired into cluster_stories — kept for possible revival):
+    Phase 2.5  merge_canonical_pairs (_SUMMIT_PAIRS editorial override —
+               NOTE: its Trump+Xi fragmentation protection has NO
+               replacement in the live path; _SYNONYM_NORMALISATION in
+               _build_document only canonicalises name variants).
+    Phase 2.55 merge_synonym_pairs — geographic aliases folded into
+               _build_document's _SYNONYM_NORMALISATION (2026-05-31).
+    Phase 2.6  merge_anchor_entities — behind enable_anchor_merge=False;
+               no production caller passes the flag.
 
 Wire-amplification is handled OUTSIDE the cluster topology: every article
 arriving here may carry `is_wire_copy` / `wire_origin_publisher_id`
@@ -170,7 +169,10 @@ def _mostly_ascii(text: str, threshold: float = 0.7) -> bool:
 
 # Content-word stopwords for headline-keyword overlap (O4 on-topic summary
 # selection + O9 cluster coherence). Kept local and lightweight (no spaCy).
-_TITLE_STOPWORDS = frozenset("""the a an of in on at to for and or but with from by as is are was were be
+# NOTE: named distinctly from Phase 3's _TITLE_STOPWORDS — a previous same-name
+# redefinition further down silently clobbered this set at call time, letting
+# filler words ("latest", "world", "update") count as content keywords.
+_HEADLINE_CONTENT_STOPWORDS = frozenset("""the a an of in on at to for and or but with from by as is are was were be
 been this that these those it its their his her our your my we they you he she them us i over under after
 before during into out up down off about above below between through against amid new news say says said
 will would could should may might can has have had do does did not no nor so than then here there what
@@ -183,7 +185,7 @@ def _title_keywords(text: str) -> set[str]:
     """Lowercased content-word tokens (length >= 4, minus stopwords) from a
     headline. Used to decide whether two headlines are about the same story."""
     toks = re.findall(r"[A-Za-z][A-Za-z']{3,}", (text or "").lower())
-    return {t for t in toks if t not in _TITLE_STOPWORDS}
+    return {t for t in toks if t not in _HEADLINE_CONTENT_STOPWORDS}
 
 
 def topic_coherence(title: str, articles: list[dict]) -> float:
@@ -687,8 +689,9 @@ ANCHOR_TITLE_JACCARD_FLOOR = 0.22
 #   - "Cluster Spans" — the title-generator literally writes "Cluster"
 _GARBAGE_TITLE_PATTERNS = [
     # "Spans Deaths, Weddings, and Bond Casting" / "Spans Four Continents"
+    # Separator accepts ", and " (Oxford comma) so 3-item Spans-lists match.
     re.compile(
-        r"\bSpans\s+(?:[A-Z][A-Za-z]+(?:,\s*|\s+and\s+)){2,}[A-Z][A-Za-z]+",
+        r"\bSpans\s+(?:[A-Z][A-Za-z]+(?:,\s*(?:and\s+)?|\s+and\s+)){2,}[A-Z][A-Za-z]+",
     ),
     # "Italy Diplomatic Activity Spans..." / "Diplomatic and Cultural Activity Spans..."
     re.compile(
@@ -765,10 +768,13 @@ _GARBAGE_TITLE_PATTERNS = [
     ),
     # Three-clause titles joined by commas where the clauses describe
     # unrelated topics. Conservative: requires 4+ comma-separated capitalized
-    # phrases. "Politics, Culture, and Society" / "Business, Sports, Weather,
-    # and Diplomacy". Matches "X, Y, Z, [and] W" capitalized list patterns.
+    # phrases. "Business, Sports, Weather, and Diplomacy". Matches 4+ item
+    # capitalized lists ("X, Y, Z, [and] W"). Requires {3,} comma-separated
+    # items before the final one: at {2,} this matched routine 3-item news
+    # headlines ("Britain, France, Germany Trigger Sanctions...",
+    # "Trump, Putin, and Zelensky to Meet...") and force-split real clusters.
     re.compile(
-        r"\b([A-Z][a-z]+,\s+){2,}(?:and\s+)?[A-Z][a-z]+\b",
+        r"\b([A-Z][a-z]+,\s+){3,}(?:and\s+)?[A-Z][a-z]+\b",
     ),
 ]
 
@@ -1717,10 +1723,18 @@ def split_mega_clusters(
                 )
         elif (
             n_articles >= MEGA_OVERMERGE_ARTICLE_FLOOR
+            and sc >= MEGA_COHESION_MIN_SOURCES
             and not c.get("mega_cluster_capped")
         ):
             # O3: large-but-sub-threshold pile — flag only if incoherent.
-            cohesion = _cluster_cohesion(c).get("cohesion_score", 100.0)
+            # The MEGA_COHESION_MIN_SOURCES floor keeps the trip off
+            # heavily wire-amplified real stories (48 articles / 12 voices)
+            # — the documented 2026-05 false-positive class. source_map is
+            # threaded via the _source_map stash so tier_concentration is
+            # actually measured (it was silently pinned to 1.0 before).
+            cohesion = _cluster_cohesion(
+                c, source_map=c.get("_source_map")
+            ).get("cohesion_score", 100.0)
             if cohesion < MEGA_COHESION_FLOOR:
                 c["mega_cluster_capped"] = True
                 if verbose:
@@ -1842,8 +1856,11 @@ COHESION_WEIGHT_PUBLISHER_CONCENTRATION = 0.15
 # happens to have multi-desk title diversity. Today's regression: a slow
 # day produced 22-article real clusters with cohesion ~28 that got
 # force-split into singletons because there was no source-count floor.
-MEGA_COHESION_FLOOR = 30          # cohesion below this trips force-split
-MEGA_COHESION_MIN_ARTICLES = 20   # only check cohesion for article piles
+MEGA_COHESION_FLOOR = 30          # cohesion below this flags over-merge
+                                  # (rank penalty; no force-split since the
+                                  # 2026-05-31 Phase 5 revert)
+MEGA_COHESION_MIN_ARTICLES = 20   # superseded by MEGA_OVERMERGE_ARTICLE_FLOOR
+                                  # (=45) as the operative article floor
 MEGA_COHESION_MIN_SOURCES = 40    # AND require source_count >= this so
                                   # cohesion-trip never fires on healthy
                                   # medium clusters (e.g. 12-source breaking
@@ -2133,32 +2150,28 @@ def cluster_stories(
 ) -> list[dict]:
     """Group articles into story clusters.
 
-    Pipeline:
+    Pipeline (what actually runs; 2.5/2.55/2.6 are parked — see module
+    docstring):
         Phase 1    — TF-IDF + agglomerative clustering at
                      `similarity_threshold` (default STORY_TFIDF_THRESHOLD).
+                     Synonym aliases (DRC↔Congo, UK↔Britain) are
+                     normalised inside _build_document, subsuming the old
+                     Phase 2.55.
         Phase 2    — IDF-weighted entity-overlap merge
                      (merge_related_clusters).
-        Phase 2.5  — Canonical-pair merge (merge_canonical_pairs):
-                     editorial override for known co-occurrence pairs
-                     that IDF systematically under-weights.
-        Phase 2.55 — Synonym-pair (alias) merge (merge_synonym_pairs):
-                     DRC↔Congo, UK↔Britain, Trump↔Donald Trump. Same
-                     entity referenced by different surface forms.
-                     Stemmed-title Jaccard ≥ 0.20 safety guard.
-        Phase 2.6  — Anchor-entity merge (merge_anchor_entities):
-                     high-IDF rare proper nouns (Siliņa, Ouagadougou)
-                     shared across two clusters with title Jaccard ≥ 0.15
-                     are strong same-story evidence. Surfaces under-
-                     covered international stories the IDF sum misses.
+        Phase 2.6  — Anchor-entity merge (merge_anchor_entities): ONLY
+                     when enable_anchor_merge=True; no production caller
+                     passes it today.
         Phase 3    — Stem-aware title-Jaccard merge
                      (merge_duplicate_title_clusters).
         Phase 4    — Garbage-title force-split (split_garbage_clusters):
                      re-clusters at stricter gates when the title-generator
                      produces a "Spans X, Y, and Z" mash-up signature.
         Phase 5    — Mega-cluster soft cap (split_mega_clusters):
-                     clusters with source_count >= 75 are force-split at
-                     aggressive thresholds; if still uncuttable, kept
-                     intact but source_count capped at 75 for display.
+                     clusters with source_count >= 75 are kept whole with
+                     source_count capped at 75 for display; large
+                     incoherent piles are flagged mega_cluster_capped for
+                     the ranker penalty (no force-split since 2026-05-31).
 
     Wire-amplification: if articles arrive carrying `is_wire_copy` /
     `wire_origin_publisher_id` (set by deduplicator.deduplicate_articles),

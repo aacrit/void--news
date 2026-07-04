@@ -790,10 +790,15 @@ def summarize_cluster(articles: list[dict],
     # Inject claims task before the final "Return JSON only" line
     if claims_block:
         # Replace field count and add claims task
+        # NOTE: the template's trailing backslash is a line CONTINUATION, so
+        # the rendered prompt reads "exactly seven fields:" on one line. The
+        # old needle contained a literal backslash+newline and never matched,
+        # leaving the prompt self-contradictory (header said seven, TASK 8
+        # demanded ten).
         prompt = prompt.replace(
-            "exactly seven \\\nfields: headline, summary, consensus, divergence, "
+            "exactly seven fields: headline, summary, consensus, divergence, "
             "editorial_importance, story_type, has_binding_consequences.",
-            "exactly ten \\\nfields: headline, summary, consensus, divergence, "
+            "exactly ten fields: headline, summary, consensus, divergence, "
             "editorial_importance, story_type, has_binding_consequences, "
             "claims, consensus_ratio, consensus_summary.",
         )
@@ -874,8 +879,10 @@ def summarize_cluster(articles: list[dict],
     if not isinstance(divergence, list):
         divergence = []
 
-    consensus = [str(c) for c in consensus if c]
-    divergence = [str(d) for d in divergence if d]
+    # Consensus/divergence render on the Deep Dive — the em-dash /
+    # significance-word ban applies to them exactly as to the summary.
+    consensus = [s for s in (_sanitize_editorial(str(c)) for c in consensus if c) if s]
+    divergence = [s for s in (_sanitize_editorial(str(d)) for d in divergence if d) if s]
 
     # Extract editorial intelligence fields (v5.0)
     editorial_importance = result.get("editorial_importance")
@@ -1188,13 +1195,18 @@ def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 
         "updated_summaries": {},
     }
 
+    # Over-fetch beyond `limit`: the homepage displays the top `limit` clusters
+    # AFTER filtering source_count >= 3 (HomeContent fetches 100, filters, then
+    # slices 50), so thin rows in the raw DB top-50 must not consume window
+    # slots or the last displayed cards fall outside the summarized set.
+    fetch_limit = limit + 20
     try:
         rank_res = (
             supabase.table("story_clusters")
             .select("id, content_type, source_count, summary_article_hash, summary_tier")
             .contains("sections", [edition])
             .order(rank_col, desc=True)
-            .limit(limit)
+            .limit(fetch_limit)
             .execute()
         )
     except Exception as e:
@@ -1235,16 +1247,53 @@ def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 
             for art in (art_res.data or []):
                 articles_by_id[art["id"]] = art
         except Exception as e:
-            print(f"  [warn] summarize_top50_after_rerank: articles fetch failed: {e}")
-            return metrics
+            # A transient failure on one batch must not abort the whole pass:
+            # per-cluster <3-article guards below handle the missing members.
+            print(f"  [warn] summarize_top50_after_rerank: articles batch fetch failed: {e}")
+            continue
 
-    # `rows` is ordered by rank_{edition} DESC, so the first `flash_top_n` are
-    # the highest-impact stories. They summarize on gemini-2.5-flash (premium);
-    # the rest ride gemini-2.5-flash-lite. enumerate over rank POSITION — an
-    # op-ed / thin cluster in the premium band is skipped (no call) without
-    # consuming a flash slot from a summarizable story further down.
-    for idx, row in enumerate(rows):
+    # Backfill source_name + tier onto article dicts (mirrors main.py's 36h
+    # lookback enrichment). Without this the prompt degrades to "mixed
+    # sources" / generic "Source N" labels, the divergence task cannot name
+    # outlets, and the outlet-leak detector goes blind — precisely on the
+    # premium flash summaries users see.
+    src_ids = sorted({a.get("source_id") for a in articles_by_id.values() if a.get("source_id")})
+    src_info_by_id: dict[str, dict] = {}
+    for i in range(0, len(src_ids), 200):
+        batch = src_ids[i:i + 200]
+        try:
+            src_res = (
+                supabase.table("sources")
+                .select("id, name, tier")
+                .in_("id", batch)
+                .execute()
+            )
+            for s in (src_res.data or []):
+                src_info_by_id[s["id"]] = s
+        except Exception as e:
+            print(f"  [warn] summarize_top50_after_rerank: sources batch fetch failed: {e}")
+            continue
+    for art in articles_by_id.values():
+        src = src_info_by_id.get(art.get("source_id") or "", {})
+        art.setdefault("source_name", src.get("name", ""))
+        art.setdefault("tier", src.get("tier", ""))
+
+    # `rows` is ordered by rank_{edition} DESC. Window accounting mirrors the
+    # homepage: only rows with source_count >= 3 occupy display slots, and we
+    # stop once `limit` displayed slots are covered. The premium flash band is
+    # the first `flash_top_n` SUMMARIZABLE stories (op-eds / thin clusters do
+    # not consume a flash slot; the band extends past them).
+    window_used = 0
+    premium_used = 0
+    for row in rows:
+        if window_used >= limit:
+            break
         cid = row["id"]
+        if (row.get("source_count") or 0) < 3:
+            # Filtered out by the frontend — not displayed, no window slot.
+            metrics["skipped"] += 1
+            continue
+        window_used += 1
         article_ids = by_cluster.get(cid, [])
         if len(article_ids) < 3:
             metrics["skipped"] += 1
@@ -1258,7 +1307,8 @@ def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 
             metrics["skipped"] += 1
             continue
 
-        is_premium = idx < flash_top_n
+        is_premium = premium_used < flash_top_n
+        premium_used += 1 if is_premium else 0
         target_model = GEMINI_FLASH_MODEL if is_premium else None
 
         h = _content_hash(articles)

@@ -33,9 +33,14 @@ _UUID_RE = re.compile(
 
 from summarizer.gemini_client import (
     generate_json as gemini_generate_json,
+    generate_text as gemini_generate_text,
     is_available as gemini_is_available,
     _FLASH_MODEL as GEMINI_FLASH_MODEL,
 )
+try:
+    from utils.prohibited_terms import sanitize_editorial_text as _sanitize_editorial
+except ImportError:
+    _sanitize_editorial = lambda t: t
 from briefing.voice_rotation import get_voices_for_today, get_opinion_host
 
 # Groq + Claude retired; Gemini Flash is the sole brief LLM (carry-forward on fail).
@@ -66,6 +71,85 @@ def _smart_generate_json(
         print(f"  [brief:{edition}] >>> GEMINI FLASH FAILED, carrying forward previous brief <<<")
 
     return None, "none"
+
+
+def _smart_generate_text(
+    prompt: str,
+    system_instruction: str | None = None,
+    max_output_tokens: int = 8192,
+    edition: str = "",
+) -> tuple[str | None, str]:
+    """Plain-text sibling of _smart_generate_json on the same flash tier.
+
+    Long prose in JSON is fragile (one unescaped quote / truncation breaks
+    json.loads and silently drops the WHOLE brief — the failure class rev 54
+    fixed for the weekly). The daily TL;DR + opinion now generate plain text
+    and parse sections out deterministically. Returns (text, label)."""
+    if gemini_is_available():
+        text = gemini_generate_text(
+            prompt,
+            system_instruction=system_instruction,
+            count_call=False,
+            max_output_tokens=max_output_tokens,
+            model=GEMINI_FLASH_MODEL,
+        )
+        if text and text.strip():
+            return text.strip(), "gemini-flash"
+        print(f"  [brief:{edition}] >>> GEMINI FLASH FAILED (plain-text) <<<")
+    return None, "none"
+
+
+# Section delimiter the prompts ask for between written text and audio script.
+_AUDIO_DELIM_RE = re.compile(
+    r"^\s*[=\-#*]{0,4}\s*AUDIO\s*SCRIPT\s*[=\-#*:]{0,4}\s*$", re.IGNORECASE
+)
+_HEADLINE_LABEL_RE = re.compile(r"^\s*(?:HEADLINE|TITLE)\s*:\s*", re.IGNORECASE)
+
+
+def _sanitize_multiline(text: str | None) -> str | None:
+    """sanitize_editorial_text per line — the shared sanitizer collapses
+    paragraph breaks, and tldr/opinion text is deliberately multi-line."""
+    if not text or not isinstance(text, str):
+        return text
+    return "\n".join(_sanitize_editorial(l) if l.strip() else l for l in text.split("\n"))
+
+
+def _parse_brief_sections(raw: str) -> dict:
+    """Parse the plain-text brief format into sections.
+
+    Expected shape (tolerant):
+        HEADLINE: <one line>          <- label optional
+        <written body, multi-line>
+        ===AUDIO SCRIPT===            <- delimiter line, punctuation flexible
+        <audio script, multi-line>
+
+    Returns {"headline": str|None, "body": str, "audio": str|None}.
+    If the delimiter is missing, falls back to the first "A:" speaker line
+    as the audio start (TL;DR dialogue scripts always carry A:/B: tags);
+    if that is missing too, the whole text is the body and audio is None.
+    """
+    lines = (raw or "").split("\n")
+    delim_idx = next((i for i, l in enumerate(lines) if _AUDIO_DELIM_RE.match(l)), None)
+    if delim_idx is None:
+        delim_idx_a = next(
+            (i for i, l in enumerate(lines) if l.strip().startswith("A:")), None
+        )
+        written = lines if delim_idx_a is None else lines[:delim_idx_a]
+        audio_lines = [] if delim_idx_a is None else lines[delim_idx_a:]
+    else:
+        written = lines[:delim_idx]
+        audio_lines = lines[delim_idx + 1:]
+
+    headline = None
+    body_start = 0
+    for i, l in enumerate(written):
+        if l.strip():
+            headline = _HEADLINE_LABEL_RE.sub("", l).strip() or None
+            body_start = i + 1
+            break
+    body = "\n".join(written[body_start:]).strip()
+    audio = "\n".join(audio_lines).strip() or None
+    return {"headline": headline, "body": body, "audio": audio}
 
 
 # Backward-compatible aliases used throughout this module
@@ -125,8 +209,9 @@ Attribute facts to institutions, officials, and documents — not to media outle
 Never reference "coverage," "outlets," "sources," or "reporting patterns."
 
 You receive up to 20 stories as raw intelligence. Find the pattern that \
-connects them. Return exactly three JSON fields: "tldr_headline", "tldr_text", \
-"audio_script".\
+connects them. Return PLAIN TEXT in exactly the three-section format the \
+prompt specifies: headline line, TL;DR body, then the audio script after \
+the ===AUDIO SCRIPT=== delimiter line. No JSON. No markdown fences.\
 """
 
 # ---------------------------------------------------------------------------
@@ -347,8 +432,13 @@ NEVER use: "This isn't just...", "Here's the thing...", "The bigger picture...",
 
 ---
 
-Return JSON with exactly three fields:
-{{"tldr_headline": "...", "tldr_text": "...", "audio_script": "..."}}\
+OUTPUT FORMAT — PLAIN TEXT, exactly this shape (no JSON, no markdown fences):
+
+Line 1: the TL;DR headline (6-10 words, no label, no quotes).
+Then a blank line, then the full TL;DR text (the written brief).
+Then a line containing exactly:
+===AUDIO SCRIPT===
+Then the full broadcast dialogue script (A:/B: speaker lines).\
 """
 
 # ---------------------------------------------------------------------------
@@ -749,6 +839,65 @@ def _get_previous_cluster_ids(edition: str) -> set[str]:
     return set()
 
 
+_BRIEF_TITLE_STOPWORDS = frozenset(
+    """the a an of in on at to for and or but with from by as is are was were
+    be been this that these those after over under amid into says said say
+    reports report will would could should may might can has have had new
+    latest live update updates more most than about while where when what
+    which who how all any some such very just also""".split()
+)
+
+
+def _brief_title_keywords(title: str) -> set[str]:
+    """Content keywords of a cluster title, for continuing-story matching."""
+    return {
+        w for w in re.findall(r"[a-z']{4,}", (title or "").lower())
+        if w not in _BRIEF_TITLE_STOPWORDS
+    }
+
+
+def _get_previous_cluster_info(edition: str) -> tuple[set[str], list[set[str]]]:
+    """Return (previous cluster ids, previous cluster-title keyword sets).
+
+    During pipeline runs the fresh clusters have no _db_id yet (step 8
+    inserts run AFTER the brief), so matching on ids alone made every story
+    [NEW] and killed the repeat-deprioritization. Titles give a stable
+    pre-insert key: the previous rows still exist at 7d time (8b dedup runs
+    later), so we fetch their titles and match by keyword overlap.
+    """
+    ids = _get_previous_cluster_ids(edition)
+    kw_sets: list[set[str]] = []
+    if ids:
+        try:
+            from utils.supabase_client import supabase
+            res = supabase.table("story_clusters").select(
+                "id,title"
+            ).in_("id", list(ids)).execute()
+            kw_sets = [
+                k for k in (
+                    _brief_title_keywords(r.get("title", "")) for r in (res.data or [])
+                ) if len(k) >= 2
+            ]
+        except Exception:
+            pass
+    return ids, kw_sets
+
+
+def _matches_previous(cluster: dict, previous_ids: set[str],
+                      previous_kw: list[set[str]]) -> bool:
+    """True when a cluster was covered in the previous brief (id or title)."""
+    db_id = cluster.get("_db_id", "")
+    if db_id and db_id in previous_ids:
+        return True
+    kw = _brief_title_keywords(cluster.get("title", ""))
+    if len(kw) < 2:
+        return False
+    for prev in previous_kw:
+        if len(kw & prev) >= 2 and len(kw & prev) / min(len(kw), len(prev)) >= 0.5:
+            return True
+    return False
+
+
 def _get_previous_brief_opening(edition: str) -> str:
     """Fetch the first 2 sentences of the previous brief for cross-run dedup.
 
@@ -795,7 +944,7 @@ def _build_stories_block(clusters: list[dict], edition: str, max_stories: int = 
 
     Returns (filtered_clusters, stories_block_text).
     """
-    previous_ids = _get_previous_cluster_ids(edition)
+    previous_ids, previous_kw = _get_previous_cluster_info(edition)
 
     edition_clusters = []
     for c in clusters:
@@ -803,21 +952,30 @@ def _build_stories_block(clusters: list[dict], edition: str, max_stories: int = 
         if edition in sections:
             edition_clusters.append(c)
 
+    # Continuing-story matching works by id AND by title keywords: in
+    # pipeline runs the fresh clusters carry no _db_id yet, so id-only
+    # matching tagged everything [NEW] and never deprioritized repeats.
+    _repeat_cache: dict[int, bool] = {}
+    def _is_repeat(c):
+        key = id(c)
+        if key not in _repeat_cache:
+            _repeat_cache[key] = _matches_previous(c, previous_ids, previous_kw)
+        return _repeat_cache[key]
+
     # Sort by per-edition rank (falls back to headline_rank for pre-migration data).
     # Deprioritize previously-covered clusters by 15%.
     rank_col = f"rank_{edition}"
     def _sort_key(c):
         rank = c.get(rank_col, 0) or c.get("headline_rank", 0)
-        db_id = c.get("_db_id", "")
-        if db_id and db_id in previous_ids:
+        if _is_repeat(c):
             rank *= 0.85  # deprioritize repeat
         return (rank, c.get("source_count", 0))
 
     edition_clusters.sort(key=_sort_key, reverse=True)
 
     top = edition_clusters[:max_stories]
-    new_count = sum(1 for c in top if c.get("_db_id", "") not in previous_ids)
-    repeat_count = len(top) - new_count
+    repeat_count = sum(1 for c in top if _is_repeat(c))
+    new_count = len(top) - repeat_count
     if previous_ids:
         print(f"  [brief:{edition}] {new_count} new stories, {repeat_count} continuing")
 
@@ -834,7 +992,7 @@ def _build_stories_block(clusters: list[dict], edition: str, max_stories: int = 
 
         cat_label = f" [{category}]" if category else ""
         # Tag previously-covered stories so Gemini can lead with what's new
-        repeat_tag = " [CONTINUING]" if c.get("_db_id", "") in previous_ids else " [NEW]"
+        repeat_tag = " [CONTINUING]" if _is_repeat(c) else " [NEW]"
         lines.append(f"[{i}] ({source_count} sources{cat_label}{repeat_tag}) {title}")
         if summary:
             lines.append(f"    Summary: {summary}")
@@ -1051,17 +1209,26 @@ Consensus facts:
 Where coverage diverges:
 {DIVERGENCE}
 
-Return JSON with exactly three fields:
-1. "opinion_headline" — 6-12 word editorial headline for this opinion piece. \
+Return PLAIN TEXT in exactly this three-section shape (no JSON, no markdown \
+fences):
+Line 1: the opinion headline (no label, no quotes).
+Then a blank line, then the opinion text.
+Then a line containing exactly:
+===AUDIO SCRIPT===
+Then the spoken editorial monologue.
+
+Section contents:
+1. Headline — 6-12 word editorial headline for this opinion piece. \
 Not a news headline. A declarative statement of the editorial thesis. \
 Concrete nouns and active verbs. No "slams," "blasts," "rips." \
 Example: "Europe's energy bet just got called" or "The court ruling nobody wanted to write."
-2. "opinion_text" — 300-500 words. A focused editorial argument on THIS story, \
+2. Opinion text — 300-500 words. A focused editorial argument on THIS story, \
 from the {LEAN_UPPER} ideological lens. Follow the structure: \
 opening → thesis → evidence → turn → close. \
 Never reference outlet names, "coverage," "sources," or "reporting." \
 Synthesize the facts — do not cite where they came from.
-3. "opinion_audio_script" — A single-voice editorial monologue. 3-4 minutes. \
+3. Audio script (after the ===AUDIO SCRIPT=== delimiter) — A single-voice \
+editorial monologue. 3-4 minutes. \
 Target 500-700 words. Someone at the editorial desk who has spent the day with \
 this story and has something to say. Not reading — TELLING. \
 Written for ONE speaker only — no A:/B: tags. Just flowing text. \
@@ -1224,103 +1391,131 @@ def _generate_opinion(cluster: dict, lean: str, date_str: str, edition: str = "w
         DIVERGENCE="; ".join(str(x) for x in divergence[:4]) if divergence else "None available",
     )
 
+    def _finalize(raw: dict, is_retry: bool) -> dict:
+        """Build the opinion result from a parsed raw dict (accept mode)."""
+        text = _sanitize_multiline(raw["opinion_text"].strip())
+        words = len(text.split())
+        lower = text.lower()
+        headline = raw.get("opinion_headline")
+        if isinstance(headline, str) and headline.strip():
+            headline = _sanitize_editorial(headline.strip()) or None
+        else:
+            headline = None
+
+        opinion_audio = raw.get("opinion_audio_script")
+        if isinstance(opinion_audio, str) and opinion_audio.strip():
+            # Audio keeps em dashes (TTS prosody) — never sanitized.
+            opinion_audio = opinion_audio.strip()
+            print(f"  [opinion] Audio script: {len(opinion_audio.split())} words")
+        else:
+            # Fallback: synthesize audio script from opinion text. The opinion
+            # text is already written in spoken cadence — add the preamble.
+            preamble = "Now, void opinion."
+            if headline:
+                preamble += f" {headline}."
+            opinion_audio = f"{preamble}\n{text}\nThis was void opinion."
+            print(f"  [opinion] Audio script: fallback from opinion_text ({len(opinion_audio.split())} words)")
+
+        cluster_id = cluster.get("_db_id", "")
+        print(f"  [opinion] Generated {lean.upper()} editorial on \"{title[:60]}\" "
+              f"({words} words, {source_count} sources"
+              f"{', headline: ' + repr(headline[:50]) if headline else ''})"
+              f"{' (retry)' if is_retry else ''}")
+
+        # 4e. Check for first-person plural in opinion
+        if "we " not in lower and "we'" not in lower and " we " not in lower:
+            print(f"  [quality][opinion] Missing first-person plural ('we') — opinion should use editorial 'we'")
+
+        # 4f. Check opinion headline word count (4-15 words)
+        if headline:
+            hl_words = len(headline.split())
+            if hl_words < 4 or hl_words > 15:
+                print(f"  [quality][opinion] Headline word count {hl_words} (expected 4-15): {headline!r}")
+
+        return {
+            "opinion_text": text,
+            "opinion_headline": headline,
+            "opinion_audio_script": opinion_audio,
+            "opinion_lean": lean,
+            "opinion_cluster_id": cluster_id if cluster_id else None,
+        }
+
     last_found_terms = []
+    best_raw = None  # attempt-0 output that tripped only soft gates
     for attempt in range(2):
         _brief_call_count += 1
         attempt_prompt = prompt if attempt == 0 else prompt + _build_opinion_retry_suffix(last_found_terms)
-        raw, gen_label = _smart_generate_json(
+        # Plain text (rev-54 pattern) — a 500-word JSON string field broke
+        # json.loads on unescaped quotes and silently dropped the editorial.
+        raw_text, gen_label = _smart_generate_text(
             attempt_prompt,
             system_instruction=system,
             max_output_tokens=65536,
             edition=edition,
         )
+        if not raw_text:
+            continue
+        _sections = _parse_brief_sections(raw_text)
+        raw = {
+            "opinion_headline": _sections["headline"],
+            "opinion_text": _sections["body"] or "",
+            "opinion_audio_script": _sections["audio"],
+        }
+        text = raw["opinion_text"].strip()
+        if not text:
+            continue
+        words = len(text.split())
+        can_retry = attempt == 0 and _brief_calls_remaining() > 0
 
-        if raw and isinstance(raw, dict):
-            opinion = raw.get("opinion_text", "")
-            if isinstance(opinion, str) and opinion.strip():
-                text = opinion.strip()
-                words = len(text.split())
-                # Quality check
-                if words < 100:
-                    print(f"  [opinion] Too short ({words} words) — discarding")
-                    return None
-                if words > 700:
-                    print(f"  [opinion] Long ({words} words) — keeping but flagged")
+        # Hard-ish gate: too short. Spend the retry on it instead of bailing.
+        if words < 100:
+            print(f"  [opinion] Too short ({words} words) — "
+                  f"{'retrying' if can_retry else 'discarding'}")
+            if can_retry:
+                continue
+            break
+        if words > 700:
+            print(f"  [opinion] Long ({words} words) — keeping but flagged")
 
-                # Check prohibited terms — retry if found and budget allows
-                lower = text.lower()
-                # Also check audio script for prohibited terms
-                opinion_audio_raw = raw.get("opinion_audio_script", "") or ""
-                all_opinion_text = f"{lower} {opinion_audio_raw.lower()}"
-                found = [t for t in _PROHIBITED_TERMS if t in all_opinion_text]
-                if found:
-                    last_found_terms = found
-                    print(f"  [opinion] Prohibited terms: {found}")
-                    if attempt == 0 and _brief_calls_remaining() > 0:
-                        print(f"  [opinion] Retrying opinion generation (attempt 2)...")
-                        continue
-                    else:
-                        print(f"  [opinion] Accepting with prohibited terms (no retry budget)")
+        # Soft gates: prohibited terms / audio shape. On attempt 0, stash the
+        # output and retry; if the retry fails, we accept the stash rather
+        # than degrade to the rule-based raw-summary stub.
+        opinion_audio_raw = raw.get("opinion_audio_script") or ""
+        all_opinion_text = f"{text.lower()} {opinion_audio_raw.lower()}"
+        # Word-boundary matching (same as _check_quality) so a quoted
+        # "extremely" doesn't burn a scarce flash retry.
+        found = []
+        for t in _PROHIBITED_TERMS:
+            if " " in t:
+                if t in all_opinion_text:
+                    found.append(t)
+            elif re.search(r"\b" + re.escape(t) + r"\b", all_opinion_text):
+                found.append(t)
+        soft_fail = None
+        if found:
+            last_found_terms = found
+            soft_fail = f"prohibited terms: {found}"
+        elif opinion_audio_raw.strip():
+            audio_words = len(opinion_audio_raw.split())
+            oa_lower = opinion_audio_raw.lower()
+            if audio_words < 450:
+                soft_fail = f"audio script too short: {audio_words} words (minimum 450)"
+            elif "now, void opinion" not in oa_lower[:100]:
+                soft_fail = "missing 'Now, void opinion.' open"
+            elif "this was void opinion" not in oa_lower[-100:]:
+                soft_fail = "missing 'This was void opinion.' close"
 
-                # Extract opinion headline (needed before audio script fallback)
-                headline = raw.get("opinion_headline", "")
-                if not isinstance(headline, str) or not headline.strip():
-                    headline = None
-                else:
-                    headline = headline.strip()
+        if soft_fail and can_retry:
+            print(f"  [opinion] {soft_fail} — retrying (attempt 2)...")
+            best_raw = raw
+            continue
+        if soft_fail:
+            print(f"  [opinion] {soft_fail} — accepting (no retry budget)")
+        return _finalize(raw, is_retry=attempt > 0)
 
-                # Extract opinion audio script
-                opinion_audio = raw.get("opinion_audio_script", "")
-                if isinstance(opinion_audio, str) and opinion_audio.strip():
-                    opinion_audio = opinion_audio.strip()
-                    audio_words = len(opinion_audio.split())
-                    if audio_words < 450 and attempt == 0 and _brief_calls_remaining() > 0:
-                        print(f"  [opinion] Audio script too short: {audio_words} words (minimum 450) — retrying")
-                        continue
-                    # Opinion sign-on/sign-off gate
-                    oa_lower = opinion_audio.lower()
-                    if "now, void opinion" not in oa_lower[:100]:
-                        print(f"  [opinion] Missing 'Now, void opinion.' open")
-                        if attempt == 0 and _brief_calls_remaining() > 0:
-                            continue
-                    if "this was void opinion" not in oa_lower[-100:]:
-                        print(f"  [opinion] Missing 'This was void opinion.' close")
-                        if attempt == 0 and _brief_calls_remaining() > 0:
-                            continue
-                    print(f"  [opinion] Audio script: {audio_words} words")
-                else:
-                    # Fallback: synthesize audio script from opinion text.
-                    # Gemini often omits the third JSON field. The opinion text
-                    # is already written in spoken cadence — just add the preamble.
-                    preamble = "Now, void opinion."
-                    if headline:
-                        preamble += f" {headline}."
-                    opinion_audio = f"{preamble}\n{text}\nThis was void opinion."
-                    print(f"  [opinion] Audio script: fallback from opinion_text ({len(opinion_audio.split())} words)")
-
-                cluster_id = cluster.get("_db_id", "")
-                print(f"  [opinion] Generated {lean.upper()} editorial on \"{title[:60]}\" "
-                      f"({words} words, {source_count} sources"
-                      f"{', headline: ' + repr(headline[:50]) if headline else ''})"
-                      f"{' (retry)' if attempt > 0 else ''}")
-
-                # 4e. Check for first-person plural in opinion
-                if "we " not in lower and "we'" not in lower and " we " not in lower:
-                    print(f"  [quality][opinion] Missing first-person plural ('we') — opinion should use editorial 'we'")
-
-                # 4f. Check opinion headline word count (4-15 words)
-                if headline:
-                    hl_words = len(headline.split())
-                    if hl_words < 4 or hl_words > 15:
-                        print(f"  [quality][opinion] Headline word count {hl_words} (expected 4-15): {headline!r}")
-
-                return {
-                    "opinion_text": text,
-                    "opinion_headline": headline,
-                    "opinion_audio_script": opinion_audio,
-                    "opinion_lean": lean,
-                    "opinion_cluster_id": cluster_id if cluster_id else None,
-                }
+    if best_raw is not None:
+        print(f"  [opinion] Retry failed — accepting attempt-0 editorial with warnings")
+        return _finalize(best_raw, is_retry=False)
 
     print(f"  [opinion] LLM call failed for {lean} editorial")
     return None
@@ -1464,6 +1659,7 @@ def generate_daily_briefs(
 
         # --- Step 1: Generate TL;DR + audio script ---
         brief_result = None
+        soft_failed_result = None
         generator_label = None
         gemini_failure_reason = None
         any_llm_ok = gemini_ok
@@ -1500,15 +1696,27 @@ def generate_daily_briefs(
             )
             # Retry once if quality gates fail (costs 1 extra call)
             quality_report = None
+            soft_failed_result = None  # attempt-0 output that tripped only the term gate
             for attempt in range(2):
                 _brief_call_count += 1
                 attempt_prompt = prompt if attempt == 0 else prompt + _build_retry_suffix(quality_report)
-                raw, generator_label = _smart_generate_json(
+                # Plain-text generation (rev-54 pattern): long prose in JSON
+                # broke json.loads on unescaped quotes/truncation and silently
+                # shipped yesterday's brief with today's timestamp.
+                raw_text, generator_label = _smart_generate_text(
                     attempt_prompt,
                     system_instruction=_SYSTEM_INSTRUCTION,
                     max_output_tokens=65536,
                     edition=edition,
                 )
+                raw = None
+                if raw_text:
+                    _sections = _parse_brief_sections(raw_text)
+                    raw = {
+                        "tldr_headline": _sections["headline"],
+                        "tldr_text": _sections["body"],
+                        "audio_script": _sections["audio"],
+                    }
                 if raw and isinstance(raw, dict):
                     tldr = raw.get("tldr_text", "")
                     script = raw.get("audio_script")
@@ -1517,8 +1725,11 @@ def generate_daily_briefs(
 
                     if isinstance(tldr, str) and tldr.strip():
                         brief_result = {
-                            "tldr_headline": raw.get("tldr_headline") or None,
-                            "tldr_text": tldr.strip(),
+                            # Written editorial fields are sanitized (em-dash
+                            # ban); the audio script is NOT (dashes are TTS
+                            # prosody there).
+                            "tldr_headline": _sanitize_editorial(raw.get("tldr_headline") or "") or None,
+                            "tldr_text": _sanitize_multiline(tldr.strip()),
                             "opinion_text": None,
                             "opinion_headline": None,
                             "opinion_lean": None,
@@ -1537,7 +1748,12 @@ def generate_daily_briefs(
                                   f"{' (retry)' if attempt > 0 else ''}")
                             break
                         else:
-                            print(f"  [quality][brief:{edition}] Prohibited terms found — retrying (attempt {attempt + 2})")
+                            print(f"  [quality][brief:{edition}] Hard quality gates failed "
+                                  f"({quality_report.get('failures')}) — retrying (attempt {attempt + 2})")
+                            # Keep the usable attempt-0 output: if the retry
+                            # call fails outright, accepting this beats
+                            # carrying forward yesterday's brief.
+                            soft_failed_result = brief_result
                             brief_result = None  # Reset so retry replaces it
                     else:
                         gemini_failure_reason = "invalid_tldr"
@@ -1559,6 +1775,12 @@ def generate_daily_briefs(
         else:
             gemini_failure_reason = "budget"
             print(f"  [brief:{edition}] Brief call cap reached ({_brief_call_count}/{_MAX_BRIEF_CALLS})")
+
+        # A soft-gated attempt-0 brief beats yesterday's carry-forward: if the
+        # quality retry itself failed (429 / parse), accept it with warnings.
+        if brief_result is None and soft_failed_result is not None:
+            print(f"  [quality][brief:{edition}] Retry failed — accepting attempt-0 brief with warnings")
+            brief_result = soft_failed_result
 
         # Fallback: carry forward last successful Gemini brief instead of
         # generating a dry rule-based stub.  Only use rule-based as last resort.
