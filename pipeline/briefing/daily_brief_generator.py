@@ -889,10 +889,21 @@ _BRIEF_TITLE_STOPWORDS = frozenset(
 )
 
 
+def _light_stem(w: str) -> str:
+    """Suffix-strip so inflections match ("cancels"/"canceled" -> "cancel").
+    Deliberately tiny — no NLTK import in the brief path."""
+    for suf in ("ing", "ed", "es", "s"):
+        if w.endswith(suf) and len(w) - len(suf) >= 4:
+            return w[: -len(suf)]
+    return w
+
+
 def _brief_title_keywords(title: str) -> set[str]:
-    """Content keywords of a cluster title, for continuing-story matching."""
+    """Stemmed content keywords of a cluster title, for continuing-story
+    matching. (2026-07-04 run: "Cancels DC Parade" vs "Parade Canceled"
+    failed to match on raw tokens.)"""
     return {
-        w for w in re.findall(r"[a-z']{4,}", (title or "").lower())
+        _light_stem(w) for w in re.findall(r"[a-z']{4,}", (title or "").lower())
         if w not in _BRIEF_TITLE_STOPWORDS
     }
 
