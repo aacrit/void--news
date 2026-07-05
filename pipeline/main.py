@@ -3538,17 +3538,27 @@ def main():
     except Exception as e:
         print(f"  [warn] article retention failed: {e}")
 
-    # Archive retention: prune entries older than 10 days (buffer past Sunday weekly digest)
+    # Archive retention: prune entries older than 10 days (buffer past Sunday
+    # weekly digest). BATCHED: the single-statement DELETE hit the Free-Plan
+    # statement timeout (57014, 2026-07-04/05 runs) once the backlog grew,
+    # and PostgREST returning every deleted row made it heavier. Page ids
+    # (indexed on first_published) and delete in chunks instead.
+    pruned = 0
     try:
         archive_cutoff = (datetime.now(timezone.utc) - timedelta(days=10)).isoformat()
-        result = supabase.table("cluster_archive").delete().lt(
-            "first_published", archive_cutoff
-        ).execute()
-        pruned = len(result.data) if result.data else 0
+        for _ in range(200):  # hard bound: 200 x 500 = 100k rows/run
+            sel = supabase.table("cluster_archive").select("id").lt(
+                "first_published", archive_cutoff
+            ).limit(500).execute()
+            ids = [r["id"] for r in (sel.data or [])]
+            if not ids:
+                break
+            supabase.table("cluster_archive").delete().in_("id", ids).execute()
+            pruned += len(ids)
         if pruned:
-            print(f"  Retention: pruned {pruned} archive entries older than 30 days")
+            print(f"  Retention: pruned {pruned} archive entries older than 10 days")
     except Exception as e:
-        print(f"  [warn] archive retention failed: {e}")
+        print(f"  [warn] archive retention failed (kept {pruned} pruned so far): {e}")
 
     # Finalize
     duration = time.time() - start_time

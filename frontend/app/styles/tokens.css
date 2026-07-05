@@ -946,6 +946,20 @@
   --canvas-max: min(92vw, 1600px);
 }
 
+/* Phones: the 92vw clamp was designed for wide monitors. On a 390px
+   iPhone it burned ~31px of dead margin BEFORE .page-main / .nav-inner
+   added their own 16px gutters, so 16% of the screen width went unused
+   (read as "extra padding" in the installed PWA, where there is no
+   browser chrome to excuse it). Below 768px the canvas is full-bleed;
+   each container's 16px horizontal padding is the only gutter. Every
+   route consumes the same token, so nav, feed, footer, weekly, ship,
+   and history all stay edge-aligned. */
+@media (max-width: 767px) {
+  :root {
+    --canvas-max: 100%;
+  }
+}
+
 /* --------------------------------------------------------------------------
    Glass Morphism Tokens
    Layered frosted-glass surfaces. Used for nav, panels, overlays.
