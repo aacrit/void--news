@@ -882,7 +882,7 @@ def _get_previous_cluster_ids(edition: str) -> set[str]:
 
 _BRIEF_TITLE_STOPWORDS = frozenset(
     """the a an of in on at to for and or but with from by as is are was were
-    be been this that these those after over under amid into says said say
+    be been this that these those after over under amid amidst into says said say
     reports report will would could should may might can has have had new
     latest live update updates more most than about while where when what
     which who how all any some such very just also""".split()
@@ -901,11 +901,16 @@ def _light_stem(w: str) -> str:
 def _brief_title_keywords(title: str) -> set[str]:
     """Stemmed content keywords of a cluster title, for continuing-story
     matching. (2026-07-04 run: "Cancels DC Parade" vs "Parade Canceled"
-    failed to match on raw tokens.)"""
-    return {
-        _light_stem(w) for w in re.findall(r"[a-z']{4,}", (title or "").lower())
-        if w not in _BRIEF_TITLE_STOPWORDS
-    }
+    failed to match on raw tokens; 2026-07-05 run: "Iran's Supreme
+    Leader's Son..." failed against "Iran ... Supreme Leader" because
+    possessive tokens never matched their bare forms.)"""
+    out = set()
+    for w in re.findall(r"[a-z']{4,}", (title or "").lower()):
+        w = w.replace("'s", "").strip("'")
+        if len(w) < 4 or w in _BRIEF_TITLE_STOPWORDS:
+            continue
+        out.add(_light_stem(w))
+    return out
 
 
 def _get_previous_cluster_info(edition: str) -> tuple[set[str], list[set[str]]]:
