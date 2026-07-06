@@ -3139,6 +3139,49 @@ def main():
         except Exception as e:
             print(f"  [warn] Post-rerank summarization failed: {e}")
 
+    # Step 8d.5: FINAL feed ordering on fresh 8d signals. 8c's rerank applied
+    # feed ordering using YESTERDAY'S (or 7b's) story_type / editorial
+    # importance / titles — 8d then rewrote all three for the displayed top-50,
+    # so the gates and the near-duplicate guard were judging stale data (the
+    # 2026-07-05 feed led with a 26-source ei=5 spectacle over the 69-source
+    # funeral, kept an ungated incremental_update at #2, and sat the same
+    # SCOTUS story at #3 AND #4). Re-run apply_feed_ordering over the DB top
+    # pool with the fresh metadata and write rank_world back. headline_rank is
+    # written UNGATED by rerank, so re-initializing from it re-applies every
+    # gate exactly once.
+    try:
+        print("\n[8d.5] Final feed ordering (fresh story_type / ei / titles)...")
+        _fo_res = supabase.table("story_clusters").select(
+            "id,title,headline_rank,rank_world,story_type,content_type,"
+            "category,source_count,editorial_importance,sections"
+        ).contains("sections", ["world"]).order(
+            "rank_world", desc=True
+        ).limit(80).execute()
+        _fo_rows = _fo_res.data or []
+        if _fo_rows:
+            _old_rank = {r["id"]: r.get("rank_world") for r in _fo_rows}
+            apply_feed_ordering(_fo_rows, sources)
+            _changed = 0
+            for r in _fo_rows:
+                new_rw = r.get("rank_world", 0)
+                old_rw = _old_rank.get(r["id"]) or 0
+                if abs(new_rw - old_rw) > 0.01:
+                    supabase.table("story_clusters").update(
+                        {"rank_world": new_rw}
+                    ).eq("id", r["id"]).execute()
+                    _changed += 1
+            _fo_rows.sort(key=lambda r: r.get("rank_world", 0), reverse=True)
+            print(f"  Final ordering: {_changed} rank_world updates. New top 5:")
+            for _i, r in enumerate(_fo_rows[:5], 1):
+                _dup = " [near-dup demoted]" if r.get("_near_dup_of") else ""
+                print(f"   {_i}. [{r.get('rank_world', 0):5.1f}] src={r.get('source_count', 0):3} "
+                      f"ei={r.get('editorial_importance')} {r.get('title', '')[:60]}{_dup}")
+            _dups = [r for r in _fo_rows if r.get("_near_dup_of")]
+            for r in _dups[:5]:
+                print(f"  [near-dup] demoted \"{r.get('title', '')[:55]}\" -> kept \"{r['_near_dup_of'][:55]}\"")
+    except Exception as e:
+        print(f"  [warn] Final feed ordering failed (keeping 8c order): {e}")
+
     # Step 8e: Cache cluster images to Supabase Storage (bypasses CDN hotlink protection)
     # Downloads og:images server-side on GitHub Actions (neutral IP = no Referer block),
     # re-serves from Supabase CDN. Top 15 clusters get guaranteed image availability —
