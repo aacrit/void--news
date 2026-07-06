@@ -9,9 +9,12 @@ regional editions. All that machinery was removed.
 
 What survives is the only thing the feed actually needs:
     rank_world = headline_rank
-                 × STORY_TYPE_GATES (incremental_update / ceremonial)
-                 × topic-diversity tie-breaking
+                 × STORY_TYPE_GATES (incremental_update / ceremonial / entertainment)
+                 × OPINION_GATE
+                 × editorial-importance nudge (Gemini 1-10, ±3%/point clamped)
                  × same-event cap (MAX_SAME_EVENT events get decayed)
+                 × near-duplicate story guard (unmerged same-story clusters)
+                 × topic-diversity tie-breaking
 
 Imported by pipeline/main.py and pipeline/rerank.py.
 """
@@ -72,6 +75,38 @@ def _is_opinion(cluster: dict) -> bool:
 # Same-event cap — prevents the feed from being dominated by one event.
 MAX_SAME_EVENT = 2
 EVENT_DECAY = 0.80
+
+# Gemini's per-cluster editorial_importance (1-10, from 7b/8d) nudges rank.
+# 2026-07-05 regression: a 26-source bridge-fire spectacle (ei=5) led the
+# feed over the 69-source Khamenei funeral (ei=6) and the SCOTUS ruling
+# (ei=8) because velocity/recency outweighed breadth and the ranker ignored
+# the model's own judgment. Deliberately a NUDGE, not a takeover: +/-3% per
+# point around the pivot, clamped, so an uncalibrated per-cluster score can
+# reorder near-ties but cannot bury a heavily-covered story.
+EDITORIAL_IMPORTANCE_PIVOT = 6
+EDITORIAL_IMPORTANCE_WEIGHT = 0.03
+EDITORIAL_IMPORTANCE_CLAMP = (0.88, 1.12)
+
+# Near-duplicate story guard — clustering occasionally ships the SAME story
+# as two clusters (2026-07-05: the transgender-ruling story sat at #3 AND #4;
+# the Khamenei funeral split twice on 07-04/05). The same-event cap allows 2
+# per event by design (two ANGLES are fine), so it cannot catch a true
+# duplicate. Among the top NEAR_DUP_SCAN clusters, when two titles share
+# >= 4 Porter-stemmed content words (or >= 3 covering >= 65% of the shorter
+# title), the lower-sourced cluster is decayed below the leader.
+NEAR_DUP_SCAN = 25
+NEAR_DUP_DECAY = 0.72
+NEAR_DUP_SHARED_HARD = 4
+NEAR_DUP_SHARED_SOFT = 3
+NEAR_DUP_CONTAINMENT = 0.65
+
+# Lead-breadth gate — the #1 slot is the front page. A story leads only when
+# its outlet breadth is a meaningful share of the day's most-covered story;
+# a high-velocity spectacle with a fraction of the coverage waits at #2+
+# until verification breadth builds. (2026-07-05: a 26-source bridge fire
+# led over a 69-source funeral and a 72-source national anniversary.)
+LEAD_BREADTH_FRACTION = 0.45
+LEAD_BREADTH_SCAN = 5
 
 # Topic diversity
 MAX_SAME_CAT_DEFAULT = 2
@@ -170,6 +205,12 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
         # the story-type gate so a future opinion story_type still composes.
         if _is_opinion(c):
             c["rank_world"] = round(c["rank_world"] * OPINION_GATE, 2)
+        # Editorial-importance nudge (see constants above).
+        ei = c.get("editorial_importance")
+        if isinstance(ei, (int, float)) and ei:
+            lo, hi = EDITORIAL_IMPORTANCE_CLAMP
+            factor = 1.0 + EDITORIAL_IMPORTANCE_WEIGHT * (float(ei) - EDITORIAL_IMPORTANCE_PIVOT)
+            c["rank_world"] = round(c["rank_world"] * max(lo, min(hi, factor)), 2)
 
     # Sort by current rank.
     pool = sorted(clusters, key=lambda c: c.get("rank_world", 0), reverse=True)
@@ -202,6 +243,45 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
                 if id(c) not in keep_ids:
                     c["rank_world"] = round(c["rank_world"] * EVENT_DECAY, 2)
         pool.sort(key=lambda c: c.get("rank_world", 0), reverse=True)
+
+    # 3.6. Near-duplicate story guard (see constants). Runs after the event
+    # cap: the cap keeps two ANGLES of one event; this demotes a literal
+    # second cluster of the SAME story that clustering failed to merge.
+    # The kept cluster is the higher-sourced one (coverage breadth = the
+    # canonical telling), mirroring the event cap's canonical anchor.
+    _stems = _dup_title_stems_fn()
+    if _stems is not None and len(pool) > 2:
+        scan = pool[:NEAR_DUP_SCAN]
+        stem_sets = [_stems(c.get("title", "") or "") for c in scan]
+        demoted: set[int] = set()
+        for i in range(len(scan)):
+            if i in demoted or len(stem_sets[i]) < 3:
+                continue
+            for j in range(i + 1, len(scan)):
+                if j in demoted or len(stem_sets[j]) < 3:
+                    continue
+                shared = len(stem_sets[i] & stem_sets[j])
+                smaller = min(len(stem_sets[i]), len(stem_sets[j]))
+                if shared >= NEAR_DUP_SHARED_HARD or (
+                    shared >= NEAR_DUP_SHARED_SOFT
+                    and shared / smaller >= NEAR_DUP_CONTAINMENT
+                ):
+                    # Keep the higher-sourced telling; demote the other.
+                    keep, drop = (i, j) if (
+                        scan[i].get("source_count", 0) >= scan[j].get("source_count", 0)
+                    ) else (j, i)
+                    scan[drop]["rank_world"] = round(
+                        min(
+                            scan[drop].get("rank_world", 0),
+                            scan[keep].get("rank_world", 0) * NEAR_DUP_DECAY,
+                        ), 2,
+                    )
+                    scan[drop]["_near_dup_of"] = scan[keep].get("title", "")[:60]
+                    demoted.add(drop)
+                    if drop == i:
+                        break  # the anchor itself was demoted; stop pairing it
+        if demoted:
+            pool.sort(key=lambda c: c.get("rank_world", 0), reverse=True)
 
     # 3.5. Feed-lead gate — BEFORE the diversity partition. Clusters below
     # the source-count floor cannot sit in the top FEED_LEAD_SLOTS positions
@@ -284,6 +364,21 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
 
         pool = promoted + mid_promoted + mid_deferred
 
+        # 5. Lead-breadth gate (see constants): if the current #1 lacks
+        # breadth, promote the highest-ranked top-5 story that has it.
+        if len(pool) >= 10:
+            _max_src = max(c.get("source_count", 0) for c in pool[:10])
+            _required = LEAD_BREADTH_FRACTION * _max_src
+            if pool[0].get("source_count", 0) < _required:
+                for k in range(1, min(LEAD_BREADTH_SCAN, len(pool))):
+                    if pool[k].get("source_count", 0) >= _required:
+                        _lead = pool.pop(k)
+                        pool.insert(0, _lead)
+                        _lead["rank_world"] = round(
+                            pool[1].get("rank_world", 0) + 0.1, 2
+                        )
+                        break
+
         # Encode the final pool order into rank_world. Every consumer (the
         # DB write, main's diagnostics, the frontend) sorts by rank_world
         # alone, so the partition above only takes effect if ranks are
@@ -303,6 +398,27 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
 # ---------------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------------
+
+def _dup_title_stems_fn():
+    """Lazy accessor for the Phase-3 stemmed-title tokenizer.
+
+    Reuses clustering's Porter stemmer + stopwords so the near-dup guard
+    judges titles with exactly the same lens Phase 3 used (and failed
+    with) upstream. Returns None when unavailable (guard silently skips —
+    ordering still works, just without dup demotion)."""
+    global _DUP_STEMS_CACHED
+    if _DUP_STEMS_CACHED is _UNSET:
+        try:
+            from clustering.story_cluster import _title_word_stems
+            _DUP_STEMS_CACHED = _title_word_stems
+        except Exception:
+            _DUP_STEMS_CACHED = None
+    return _DUP_STEMS_CACHED
+
+
+_UNSET = object()
+_DUP_STEMS_CACHED = _UNSET
+
 
 def _detect_event(title: str) -> str | None:
     """Return event key if title matches a known event, else None."""

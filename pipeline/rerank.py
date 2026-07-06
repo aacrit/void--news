@@ -407,6 +407,7 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
             "content_type": content_type,
             "category": category,
             "story_type": story_type,
+            "editorial_importance": cluster.get("editorial_importance"),
             "source_count": db_source_count,  # for diagnostic print only; NOT written back
             "_articles": articles,
             "_bias_scores": bias_scores,
