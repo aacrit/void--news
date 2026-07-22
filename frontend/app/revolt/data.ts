@@ -90,6 +90,16 @@ export async function fetchConcludedRevolutions(): Promise<Revolution[]> {
   return all.filter((r) => r.status === 'concluded');
 }
 
+export async function fetchRevolutionsByOutcome(outcome: string): Promise<Revolution[]> {
+  const all = await fetchRevolutions();
+  return all.filter((r) => r.outcome === outcome);
+}
+
+export async function fetchRevolutionsByPhase(phaseKey: string): Promise<Revolution[]> {
+  const all = await fetchRevolutions();
+  return all.filter((r) => r.phases.some((p) => p.phase === phaseKey && p.reached));
+}
+
 /* ── The live-news bridge: match story_clusters to an active revolution ── */
 const REVOLT_FEED_FIELDS =
   'id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,rank_world';

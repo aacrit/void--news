@@ -209,6 +209,31 @@
   box-shadow: var(--rev-edge);
 }
 
+/* ── Browse strip (phase/outcome browser entry points) ── */
+.rev-browse { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 var(--space-4); }
+.rev-browse__group-label {
+  font-family: var(--font-data), monospace;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--rev-ink-muted);
+  margin: var(--space-2) 0 6px;
+}
+.rev-browse__chip {
+  font-family: var(--font-meta), sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: var(--text-sm);
+  color: var(--rev-ink-secondary);
+  border: 2px solid var(--rev-iron);
+  padding: 5px 12px;
+  text-decoration: none;
+  box-shadow: var(--rev-edge-pressed);
+  transition: box-shadow 0.15s var(--rev-ease-cut), transform 0.15s var(--rev-ease-cut);
+}
+.rev-browse__chip:hover { box-shadow: var(--rev-edge); transform: translate(-1px, -1px); }
+.rev-browse__chip--accent { border-color: var(--rev-oxide); color: var(--rev-oxide); }
+
 /* ── Revolution card grid ── */
 .rev-grid {
   display: grid;
