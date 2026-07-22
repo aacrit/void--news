@@ -3,7 +3,7 @@ import type { Revolution } from '../types';
 import { REVOLT_ERAS, isActiveStatus, isLiveStatus } from '../types';
 import { OUTCOME_LABELS, STATUS_LABELS } from '../anatomy';
 import { HOOKS } from '../hooks';
-import { heroImageFor } from '../images';
+import { heroImageFor, thumbUrl } from '../images';
 
 function eraLabel(era: string): string {
   return REVOLT_ERAS.find((e) => e.id === era)?.label ?? era;
@@ -21,7 +21,7 @@ export default function RevolutionCard({ r }: { r: Revolution }) {
     <Link href={href} className={`rev-card${live ? ' rev-card--active' : ''}`}>
       {hero && (
         <span className="rev-card__img" aria-hidden="true">
-          <img src={hero} alt="" loading="lazy" />
+          <img src={thumbUrl(hero, 640)} alt="" loading="lazy" decoding="async" width={640} height={300} />
         </span>
       )}
       <div className="rev-card__meta">

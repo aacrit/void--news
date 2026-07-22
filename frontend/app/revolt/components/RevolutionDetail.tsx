@@ -5,7 +5,7 @@ import Link from 'next/link';
 import type { Revolution } from '../types';
 import { phaseSpec, OUTCOME_LABELS, RESISTANCE_LABELS, DEFECTION_LABELS } from '../anatomy';
 import { verdictChip } from '../scoring';
-import { heroImageFor } from '../images';
+import { heroImageFor, thumbUrl } from '../images';
 import RevoltScrubber, { type ScrubNode } from './RevoltScrubber';
 import RevoltAudioCue from './RevoltAudioCue';
 
@@ -79,7 +79,7 @@ export default function RevolutionDetail({ revolution: r }: { revolution: Revolu
       {/* Cold-open stage */}
       <section className="rev-stage">
         {(r.heroImage ?? heroImageFor(r.slug)) && (
-          <img className="rev-stage__hero-img" src={r.heroImage ?? heroImageFor(r.slug)} alt="" aria-hidden="true" />
+          <img className="rev-stage__hero-img" src={thumbUrl(r.heroImage ?? heroImageFor(r.slug), 1600)} alt="" aria-hidden="true" decoding="async" />
         )}
         <div className="rev-stage__inner">
           <p className="rev-stage__kicker">{r.dateDisplay} &middot; {r.country}</p>
