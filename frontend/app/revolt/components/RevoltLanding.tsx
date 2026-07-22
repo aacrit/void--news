@@ -3,42 +3,23 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import type { Revolution } from '../types';
-import { REVOLT_ERAS, isActiveStatus } from '../types';
-import { OUTCOME_LABELS, STATUS_LABELS } from '../anatomy';
-import { HOOKS } from '../hooks';
+import { isActiveStatus } from '../types';
+import { OUTCOME_LABELS } from '../anatomy';
 import { fetchRevolutions } from '../data';
+import RevolutionCard from './RevolutionCard';
 
-function eraLabel(era: string): string {
-  return REVOLT_ERAS.find((e) => e.id === era)?.label ?? era;
-}
-
-function RevolutionCard({ r }: { r: Revolution }) {
-  const active = isActiveStatus(r.status);
-  const href = active ? `/revolt/active/${r.slug}` : `/revolt/${r.slug}`;
-  const tail = active
-    ? STATUS_LABELS[r.status]
-    : r.outcome
-      ? OUTCOME_LABELS[r.outcome]
-      : '';
-  return (
-    <Link href={href} className={`rev-card${active ? ' rev-card--active' : ''}`}>
-      <div className="rev-card__meta">
-        <span>{eraLabel(r.era)}</span>
-        <span>&middot;</span>
-        <span>{r.country}</span>
-        {active && (
-          <span className="rev-live-stamp">
-            <span className="rev-live-stamp__dot" aria-hidden="true" />
-            Live
-          </span>
-        )}
-      </div>
-      <div className="rev-card__title">{r.title}</div>
-      <div className="rev-card__hook">{HOOKS[r.slug] ?? r.subtitle}</div>
-      {tail && <div className="rev-card__outcome">{tail}</div>}
-    </Link>
-  );
-}
+/* A few high-signal browse entry points into the phase/outcome browsers. */
+const BROWSE_OUTCOMES: { key: string; label: string }[] = [
+  { key: 'independence', label: OUTCOME_LABELS['independence'] },
+  { key: 'consolidated-democracy', label: OUTCOME_LABELS['consolidated-democracy'] },
+  { key: 'consolidated-autocracy', label: OUTCOME_LABELS['consolidated-autocracy'] },
+  { key: 'civil-war', label: OUTCOME_LABELS['civil-war'] },
+  { key: 'failed-suppressed', label: OUTCOME_LABELS['failed-suppressed'] },
+];
+const BROWSE_PHASES: { key: string; label: string }[] = [
+  { key: 'terror-virtue', label: 'Reached the Terror' },
+  { key: 'consolidation', label: 'Reached consolidation' },
+];
 
 export default function RevoltLanding() {
   const [revolutions, setRevolutions] = useState<Revolution[] | null>(null);
@@ -87,6 +68,25 @@ export default function RevoltLanding() {
           <h2 className="rev-banner">The Archive &middot; revolutions of the past</h2>
           <div className="rev-grid">
             {concluded.map((r) => <RevolutionCard key={r.slug} r={r} />)}
+          </div>
+        </section>
+      )}
+
+      {revolutions !== null && revolutions.length > 0 && (
+        <section>
+          <h2 className="rev-banner">Browse the arc</h2>
+          <p className="rev-browse__group-label">By how it ended</p>
+          <div className="rev-browse">
+            {BROWSE_OUTCOMES.map((o) => (
+              <Link key={o.key} href={`/revolt/outcome/${o.key}`} className="rev-browse__chip">{o.label}</Link>
+            ))}
+            <Link href="/revolt/compare" className="rev-browse__chip rev-browse__chip--accent">Compare side by side &rarr;</Link>
+          </div>
+          <p className="rev-browse__group-label">By how far it went</p>
+          <div className="rev-browse">
+            {BROWSE_PHASES.map((p) => (
+              <Link key={p.key} href={`/revolt/phase/${p.key}`} className="rev-browse__chip">{p.label}</Link>
+            ))}
           </div>
         </section>
       )}
