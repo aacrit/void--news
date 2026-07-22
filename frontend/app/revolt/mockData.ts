@@ -9,6 +9,7 @@ import type { Revolution } from './types';
 import { MOCK_HISTORICAL_EXTRA } from './mockHistoricalExtra';
 import { MOCK_HISTORICAL_EXTRA_2 } from './mockHistoricalExtra2';
 import { MOCK_ACTIVE_EXTRA } from './mockActiveExtra';
+import { MOCK_ACTIVE_EXTRA_2 } from './mockActiveExtra2';
 
 /* ── The French Revolution — the type anchor (ported from the YAML canary) ── */
 const FRENCH_REVOLUTION: Revolution = {
@@ -462,6 +463,7 @@ export const MOCK_ACTIVE: Revolution[] = [
   SUDAN,
   VENEZUELA,
   ...MOCK_ACTIVE_EXTRA,
+  ...MOCK_ACTIVE_EXTRA_2,
 ];
 
 export const MOCK_REVOLUTIONS: Revolution[] = [...MOCK_HISTORICAL, ...MOCK_ACTIVE];

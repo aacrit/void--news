@@ -47,6 +47,8 @@ export const REVOLT_HERO_IMAGES: Record<string, RevoltHeroImage> = {
   'hong-kong': { url: 'https://upload.wikimedia.org/wikipedia/commons/f/fb/Hong_Kong_anti-extradition_bill_protest_%2848108527758%29.jpg', attribution: 'Hong Kong, 2019, via Wikimedia Commons' },
   'cuba-2021': { url: 'https://upload.wikimedia.org/wikipedia/commons/f/f8/2021_Cuban_protests.png', attribution: '2021 Cuban protests, via Wikimedia Commons' },
   'thailand': { url: 'https://upload.wikimedia.org/wikipedia/commons/b/bf/Protest_in_2020_Democracy_Monument_%28I%29.jpg', attribution: 'Bangkok, 2020, via Wikimedia Commons' },
+  'nepal-gen-z': { url: 'https://upload.wikimedia.org/wikipedia/commons/e/e9/2025_Nepalese_Gen_Z_protesters_infront_of_Bharatpur_mahanagarpalika_office.jpg', attribution: 'Bharatpur, September 2025, via Wikimedia Commons' },
+  'india-cockroach-janta': { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Cockroach_Janta_Party_logo.svg/960px-Cockroach_Janta_Party_logo.svg.png', attribution: 'Cockroach Janta Party emblem, via Wikimedia Commons' },
 };
 
 export function heroImageFor(slug: string): string | undefined {
