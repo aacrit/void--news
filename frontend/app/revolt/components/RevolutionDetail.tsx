@@ -5,7 +5,9 @@ import Link from 'next/link';
 import type { Revolution } from '../types';
 import { phaseSpec, OUTCOME_LABELS, RESISTANCE_LABELS, DEFECTION_LABELS } from '../anatomy';
 import { verdictChip } from '../scoring';
+import { heroImageFor } from '../images';
 import RevoltScrubber, { type ScrubNode } from './RevoltScrubber';
+import RevoltAudioCue from './RevoltAudioCue';
 
 const ACTOR_COLOR: Record<string, string> = {
   vanguard: 'var(--rev-actor-vanguard)',
@@ -15,6 +17,7 @@ const ACTOR_COLOR: Record<string, string> = {
   'military-defectors': 'var(--rev-actor-defect)',
   'security-forces': 'var(--rev-actor-reaction)',
   'old-regime': 'var(--rev-actor-reaction)',
+  regime: 'var(--rev-actor-reaction)',
   'counter-revolutionaries': 'var(--rev-actor-reaction)',
   'religious-clergy': 'var(--rev-actor-defect)',
   'foreign-backer': 'var(--rev-actor-foreign)',
@@ -74,7 +77,9 @@ export default function RevolutionDetail({ revolution: r }: { revolution: Revolu
     <article>
       {/* Cold-open stage */}
       <section className="rev-stage">
-        {r.heroImage && <img className="rev-stage__hero-img" src={r.heroImage} alt="" aria-hidden="true" />}
+        {(r.heroImage ?? heroImageFor(r.slug)) && (
+          <img className="rev-stage__hero-img" src={r.heroImage ?? heroImageFor(r.slug)} alt="" aria-hidden="true" />
+        )}
         <div className="rev-stage__inner">
           <p className="rev-stage__kicker">{r.dateDisplay} &middot; {r.country}</p>
           <h1 className="rev-stage__title">{r.title}</h1>
@@ -93,6 +98,7 @@ export default function RevolutionDetail({ revolution: r }: { revolution: Revolu
           <div><dt>Outcome</dt><dd>{r.outcome ? OUTCOME_LABELS[r.outcome] : 'Unresolved'}</dd></div>
         </dl>
         {verdictChip(r) && <p className="rev-verdict">{verdictChip(r)}</p>}
+        {r.audioUrl && <RevoltAudioCue audioUrl={r.audioUrl} durationSeconds={r.audioDuration ?? 0} title={r.title} />}
       </div>
 
       {/* The Anatomy Reel */}

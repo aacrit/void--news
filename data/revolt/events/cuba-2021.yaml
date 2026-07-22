@@ -1,0 +1,224 @@
+slug: cuba-2021
+title: 'Cuba: 11J'
+subtitle: A blackout, a protest video, and the broadest unrest since 1959
+date_display: 2021 to present
+date_start: 2021
+date_precision: year
+era: square-revolutions
+region: americas
+country: Cuba
+revolt_type: democratic-uprising
+status: dormant
+summary: On 11 July 2021, in the town of San Antonio de los Banos outside Havana, residents facing months of blackouts and shortages amid the pandemic and a collapsing economy took to the streets. Video spread within hours and protests reached dozens of towns and cities the same day, the broadest demonstrations in Cuba since the 1959 revolution. President Miguel Diaz-Canel called on 'revolutionaries' to confront the protesters and blamed the unrest on the United States embargo. Security forces and mobilized civilian groups moved through the night; by the following week more than 1,000 people had been detained, with hundreds later sentenced to years in prison.
+significance: 11J, as the date is known in Cuba, was the first protest movement in more than six decades of Communist Party rule to spread nationwide in a single day without a central organizing committee, using cellphone internet access the government had only permitted since 2018. It tested whether decades-old single-party control could survive the same social media dynamics that reshaped protest elsewhere, and it largely held.
+analytical_outlook: 'The government''s response, mass arrest, harsh sentencing and periodic internet shutdowns during later flashpoints, has kept protest episodic rather than sustained. Emigration, not confrontation, has been the dominant response since: hundreds of thousands of Cubans left in the years after 11J, one of the largest exoduses in the country''s history. Placement on the arc: a single-day spark that reached a brief radical peak and was suppressed before any dual-power or negotiating phase could form.'
+grievances:
+  - kind: economic
+    intensity: 90
+    evidence: Cuba's economy contracted an estimated 11 percent in 2020, and residents faced rolling blackouts of eight hours or more alongside shortages of basic food and medicine.
+  - kind: political
+    intensity: 80
+    evidence: Cuba remains a one-party state under the Communist Party, the only legal party under the constitution, with no direct multi-party elections for its top leadership.
+  - kind: repression
+    intensity: 78
+    evidence: More than 1,000 people were detained after the July 2021 protests, and rights groups documented sentences of up to 25 years for some defendants convicted of sedition.
+repression_level: severe
+actors:
+  - actor_type: masses
+    name: The 11J protesters
+    description: Residents of San Antonio de los Banos and, within hours, dozens of other towns and cities, who took to the streets over blackouts and shortages.
+    role_in_arc: Produced the most geographically widespread protest since 1959 inside a single day.
+    defected: false
+  - actor_type: diaspora
+    name: The San Isidro Movement and Cuban artists
+    description: A pre-existing collective of artists and independent journalists that had protested censorship since 2018 and helped seed the wider movement's networks.
+    role_in_arc: Provided an organizing precedent and some of the earliest documented flashpoints of dissent before 11J.
+    defected: false
+  - actor_type: security-forces
+    name: State security and mobilized party brigades
+    description: Police, state security agents and, according to witnesses, civilian groups organized by the Communist Party moved through protest areas.
+    role_in_arc: Suppressed the protests within days through mass detention.
+    defected: false
+  - actor_type: old-regime
+    name: Miguel Diaz-Canel and the Communist Party
+    description: Diaz-Canel, the first Cuban president since 1959 from outside the Castro family, in office since 2019.
+    role_in_arc: Called publicly for supporters to confront protesters and framed the unrest as US-orchestrated destabilization.
+    defected: false
+tactics:
+  - tactic_type: mass-demonstration
+    description: Simultaneous street protests that spread from San Antonio de los Banos to dozens of towns and cities within hours on 11 July 2021.
+    prominence: high
+  - tactic_type: digital-mobilization
+    description: Protests organized and documented over cellphone internet access, only permitted in Cuba since 2018; the government cut mobile data within the day.
+    prominence: high
+  - tactic_type: civil-disobedience
+    description: The protest song 'Patria y Vida,' released months earlier, became the movement's unifying chant.
+    prominence: medium
+resistance_type: nonviolent
+phases:
+  - phase: old-regime-crisis
+    label: Blackouts and a collapsing economy
+    date_start: '2020'
+    t_start: 0
+    t_end: 0.12
+    intensity: 35
+    reached: true
+    summary: The pandemic collapses tourism revenue and deepens an economy already strained by tightened US sanctions; blackouts and shortages spread nationwide.
+    key_events:
+      - Pandemic tourism collapse
+      - Release of the song 'Patria y Vida'
+  - phase: the-spark
+    label: A single day, dozens of towns
+    date_start: '2021-07-11'
+    t_start: 0.22
+    t_end: 0.34
+    intensity: 85
+    reached: true
+    summary: Protests begin in San Antonio de los Banos and spread to dozens of towns and cities within hours, the widest single-day unrest since 1959.
+    key_events:
+      - Protests begin in San Antonio de los Banos
+      - Unrest spreads nationwide the same day
+  - phase: radical-phase
+    label: A call to confront
+    date_start: '2021-07-12'
+    t_start: 0.6
+    t_end: 0.72
+    intensity: 70
+    reached: true
+    summary: Diaz-Canel calls on 'revolutionaries' to confront protesters. Security forces and mobilized party brigades move through protest areas overnight; internet access is cut nationwide.
+    key_events:
+      - Diaz-Canel's televised call to confront protesters
+      - Nationwide mobile internet shutdown
+  - phase: thermidor
+    label: Sentencing and emigration
+    date_start: 2021-08
+    t_start: 0.84
+    t_end: 0.92
+    intensity: 40
+    reached: true
+    summary: More than 1,000 people are detained; hundreds are later sentenced, some to decades in prison, for sedition and related charges.
+    key_events:
+      - Mass sentencing of 11J defendants
+      - A subsequent wave of emigration begins
+outcome: failed-suppressed
+peak_participation_pct: null
+peak_participation_display: Protests reached dozens of towns and cities within a single day; no reliable estimate of total national participants exists, though it is widely described as the broadest unrest since 1959.
+crossed_participation_threshold: null
+military_defection: none
+foreign_intervention: diplomatic
+duration_days: null
+death_toll: At least one protester death was confirmed by authorities in Havana; independent tallies of deaths and injuries during the crackdown remain incomplete.
+death_toll_low: 1
+death_toll_high: null
+regime_before: one-party
+regime_after: one-party
+democratization_delta: 0
+success_factors:
+  - factor_key: resistance_method
+    label: Method of struggle
+    framework: chenoweth
+    status: Nonviolent street protest, organized without a central committee.
+    direction: favors-movement
+    base_rate: About 53 percent of nonviolent campaigns from 1900 to 2006 succeeded, versus about 26 percent for armed ones.
+    rationale: The protests kept a nonviolent, spontaneous character even as the state response escalated.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+    as_of: '2021'
+    confidence: medium
+  - factor_key: security_defection
+    label: Did the security forces defect
+    framework: chenoweth
+    status: None. Police, state security and mobilized party brigades suppressed the protests within days.
+    direction: favors-regime
+    base_rate: Defection of the security forces is the single strongest predictor of a nonviolent campaign's success.
+    rationale: More than six decades of party control over Cuba's security apparatus left no visible fault line to exploit.
+    sources:
+      - Nepstad, Nonviolent Revolutions (2011)
+    as_of: '2021'
+    confidence: high
+  - factor_key: leadership_structure
+    label: Leadership
+    framework: tilly
+    status: No central organizing committee; the protests spread through cellphone video and word of mouth within hours.
+    direction: indeterminate
+    base_rate: Leaderless, spontaneous mobilizations can spread unusually fast but historically struggle to sustain pressure once the initial surge passes.
+    rationale: '11J''s speed was also its ceiling: without an organizing body, the movement had no mechanism to regroup once the government cut mobile internet and began mass arrests.'
+    sources:
+      - Tilly, From Mobilization to Revolution (1978)
+    as_of: '2021'
+    confidence: medium
+  - factor_key: peak_participation
+    label: Duration of peak mobilization
+    framework: chenoweth
+    status: Broad in geographic spread but brief; most street activity was suppressed within 48 hours.
+    direction: favors-regime
+    base_rate: Sustained, not just broad, mobilization is associated with higher odds of a nonviolent campaign's success.
+    rationale: 11J's speed of onset was matched by the speed of the crackdown, leaving little time for the kind of sustained turnout linked to successful outcomes elsewhere.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+    as_of: '2021'
+    confidence: medium
+key_figures:
+  - name: Miguel Diaz-Canel
+    role: President since 2019, first Cuban head of state since 1959 from outside the Castro family
+    born: 1960
+    wikipedia: https://en.wikipedia.org/wiki/Miguel_D%C3%ADaz-Canel
+  - name: Luis Manuel Otero Alcantara
+    role: Artist and San Isidro Movement figure, repeatedly detained before and after the July 2021 protests
+    born: 1987
+    wikipedia: https://en.wikipedia.org/wiki/Luis_Manuel_Otero_Alc%C3%A1ntara
+legacy_points:
+  - Produced the broadest single-day protest movement in Cuba since 1959, reaching dozens of towns within hours over cellphone networks.
+  - Ended in mass arrest and sentencing rather than negotiation; more than 1,000 people were detained within the following week.
+  - Was followed by one of the largest waves of Cuban emigration in the country's history rather than a renewed protest cycle.
+related_revolt_slugs:
+  - venezuela
+related_history_slugs: []
+live_query:
+  strong:
+    - Diaz-Canel
+    - Patria y Vida
+    - San Isidro
+    - 11J
+  context:
+    - Cuba
+    - Havana
+  exclude: []
+analysis_reviewed_at: '2026-07-01'
+prediction_confidence: low
+is_published: true
+perspectives:
+  - viewpoint: The 11J protesters
+    viewpoint_type: movement
+    region_origin: Havana
+    narrative: We did not plan a revolution, we filmed a blackout and a protest. It spread because everyone was living the same shortage at the same time. What followed was not a negotiation, it was a manhunt, and some of us are still serving sentences for being on camera that day.
+    key_arguments:
+      - The protests were spontaneous and decentralized, not foreign-directed.
+      - Sentencing was disproportionate to the acts committed.
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - Blackouts and shortages
+      - The scale and length of prison sentences
+    omitted:
+      - Instances of property damage during the unrest
+  - viewpoint: The government's position
+    viewpoint_type: regime
+    region_origin: Havana
+    narrative: The United States embargo, in place for more than six decades, is the root cause of the shortages that triggered the unrest, and outside actors amplified it online to destabilize the government. Cuba's courts, not the street, are where the acts of vandalism and assault on officers that occurred that day are properly judged.
+    key_arguments:
+      - The embargo is presented by the government as the structural cause of the economic crisis.
+      - Legal proceedings followed acts of violence and property damage during the protests.
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - The US embargo
+      - Incidents of violence during the unrest
+    omitted:
+      - The scale and geographic breadth of the protests
+      - International criticism of the sentencing
+media: []
+connections:
+  - target_slug: venezuela
+    connection_type: parallel
+    description: Both movements formed against single-party or single-coalition control of the security forces and the courts, and both saw the government attribute the crisis primarily to outside sanctions rather than domestic policy.

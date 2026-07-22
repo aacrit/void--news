@@ -253,6 +253,8 @@ function mapRevolutionWithRelations(row: any, dbPersp: any[], dbMedia: any[], db
     liveQuery,
     analysisReviewedAt: row.analysis_reviewed_at ?? undefined,
     predictionConfidence: row.prediction_confidence ?? undefined,
+    audioUrl: row.audio_url ?? null,
+    audioDuration: row.audio_duration_seconds ? Number(row.audio_duration_seconds) : null,
     published: row.is_published ?? false,
   };
 }

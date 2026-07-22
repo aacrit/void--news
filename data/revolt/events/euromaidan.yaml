@@ -1,0 +1,232 @@
+slug: euromaidan
+title: Euromaidan
+subtitle: Three months on the square end a presidency and open a war
+date_display: November 2013 - February 2014
+date_start: 2013
+date_end: 2014
+date_precision: year
+era: square-revolutions
+region: europe
+country: Ukraine
+revolt_type: democratic-uprising
+status: concluded
+summary: President Viktor Yanukovych's last-minute refusal to sign a long-negotiated EU association agreement brought students onto Kyiv's central square on November 21, 2013. A violent police crackdown nine days later turned a policy protest into a mass occupation that lasted three months, ending in February 2014 with roughly 100 dead in the square's final days and Yanukovych's flight to Russia.
+significance: 'A rapid, security-force-defection-driven collapse of an elected government that nonetheless failed to produce a stable, uncontested outcome: Russia annexed Crimea within weeks and backed a separatist war in the Donbas that same spring.'
+grievances:
+  - kind: Reversal of the EU association agreement
+    intensity: 80
+    evidence: Yanukovych announced on November 21, 2013 that Ukraine would not sign the EU Association Agreement after months of negotiation, days before it was due to be signed in Vilnius.
+  - kind: Violent crackdown on student protesters
+    intensity: 85
+    evidence: Berkut riot police beat student demonstrators camped on Maidan Nezalezhnosti before dawn on November 30, 2013, injuring dozens and dramatically widening the protest movement.
+  - kind: Entrenched high-level corruption
+    intensity: 70
+    evidence: Yanukovych's private Mezhyhirya estate, revealed in detail after his flight, was valued by investigators in the hundreds of millions of dollars, a stark contrast to his stated presidential salary.
+  - kind: Anti-protest legislation
+    intensity: 65
+    evidence: A package of laws passed on January 16, 2014 criminalized many forms of protest activity, sharply escalating tensions rather than deterring the demonstrations.
+actors:
+  - actor_type: students-youth
+    name: The first Maidan protesters
+    description: Students and young professionals who gathered on Kyiv's Independence Square the night of November 21, 2013.
+    role_in_arc: Initiated the protest movement in response to Yanukovych's EU agreement reversal, before the November 30 crackdown widened it into a mass movement.
+    defected: false
+  - actor_type: masses
+    name: The Maidan encampment
+    description: A self-organized protest camp on Independence Square that grew to an estimated 500,000 to 800,000 at its December 2013 peak.
+    role_in_arc: Sustained a three-month occupation with its own medical, security, and supply structures functioning alongside a paralyzed state authority.
+    defected: false
+  - actor_type: security-forces
+    name: Berkut riot police
+    description: Ukraine's special police force, later disbanded after the revolution.
+    role_in_arc: Carried out repeated violent clearance attempts, including the fatal shootings of February 18-20, 2014, before the unit was dissolved.
+    defected: false
+  - actor_type: old-regime
+    name: Viktor Yanukovych
+    description: President of Ukraine since 2010.
+    role_in_arc: Fled Kyiv on February 22, 2014, as police and security units began refusing orders to use lethal force, and was removed by parliamentary vote the same day.
+    defected: false
+  - actor_type: foreign-intervener
+    name: Russia
+    description: Ukraine's neighboring power and Yanukovych's chief external backer.
+    role_in_arc: Annexed Crimea within weeks of Yanukovych's fall and backed separatist forces in the Donbas that same spring.
+    defected: false
+tactics:
+  - tactic_type: occupation
+    description: The Maidan encampment held central Kyiv for three months, building its own barricades, kitchens, and medical stations.
+    prominence: primary
+  - tactic_type: mass-demonstration
+    description: Crowds estimated between 500,000 and 800,000 filled Independence Square at the movement's December 2013 peak.
+    prominence: primary
+  - tactic_type: civil-disobedience
+    description: Protesters built barricades and organized self-defense units to resist repeated riot police clearance attempts through January and February 2014.
+    prominence: secondary
+resistance_type: hybrid
+phases:
+  - phase: old-regime-crisis
+    label: The EU deal stalls
+    t_start: 0
+    t_end: 0.12
+    intensity: 40
+    reached: true
+    summary: Months of negotiation over the EU Association Agreement culminate in Yanukovych's abrupt reversal, straining a policy path his government had pursued for years.
+    key_events:
+      - EU Association Agreement negotiations near completion, 2013
+      - Yanukovych signals reversal, November 2013
+  - phase: the-spark
+    label: The first protests
+    date_start: '2013-11-21'
+    t_start: 0.22
+    t_end: 0.34
+    intensity: 60
+    reached: true
+    summary: Yanukovych's announcement that Ukraine will not sign the EU agreement draws students onto Independence Square the same night.
+    key_events:
+      - Yanukovych announces the EU agreement will not be signed, November 21, 2013
+      - First Maidan protests begin that night
+  - phase: moderate-phase
+    label: Peaceful encampment
+    t_start: 0.34
+    t_end: 0.48
+    intensity: 55
+    reached: true
+    summary: The protest camp grows through December into a sustained, largely peaceful occupation following the November 30 police crackdown that widened public outrage.
+    key_events:
+      - Berkut crackdown on protesters, November 30, 2013
+      - Crowds swell to peak size, December 2013
+  - phase: dual-power
+    label: Self-organization amid paralysis
+    t_start: 0.48
+    t_end: 0.6
+    intensity: 60
+    reached: true
+    summary: Maidan's own security, medical, and supply structures function alongside an increasingly paralyzed state authority through January 2014.
+    key_events:
+      - Anti-protest laws passed, January 16, 2014
+      - Maidan self-defense units organize
+  - phase: radical-phase
+    label: The Heavenly Hundred
+    date_start: '2014-02-18'
+    t_start: 0.6
+    t_end: 0.72
+    intensity: 95
+    reached: true
+    summary: Clashes between February 18 and 20, 2014 leave roughly 100 protesters and police dead in the square, the deadliest days of the entire occupation.
+    key_events:
+      - Violent clashes begin, February 18, 2014
+      - Roughly 100 killed over three days, February 18-20, 2014
+  - phase: consolidation
+    label: Yanukovych flees
+    date_start: '2014-02-22'
+    t_start: 0.92
+    t_end: 1
+    intensity: 60
+    reached: true
+    summary: Yanukovych flees Kyiv on February 22, 2014, and parliament votes to remove him from office the same day, installing an interim government.
+    key_events:
+      - Yanukovych flees Kyiv, February 22, 2014
+      - Parliament votes to remove Yanukovych, February 22, 2014
+outcome: ongoing-unresolved
+peak_participation_pct: 1.8
+peak_participation_display: An estimated 500,000 to 800,000 gathered in Kyiv's Independence Square at peak in December 2013, roughly 1 to 2 percent of Ukraine's population on a single day
+crossed_participation_threshold: null
+military_defection: partial
+foreign_intervention: direct-military
+duration_days: 93
+death_toll: Roughly 100 protesters, along with a smaller number of police, were killed in Kyiv between November 2013 and February 2014, the great majority in the final three days of clashes.
+death_toll_low: 100
+death_toll_high: 130
+regime_before: democracy
+regime_after: unresolved
+democratization_delta: null
+success_factors:
+  - factor_key: security-force-fracture
+    label: Security force refusal to fire is the strongest single predictor of rapid collapse
+    framework: chenoweth
+    status: confirmed
+    direction: favors-movement
+    base_rate: Security force defection or refusal to fire remains the single strongest predictor of rapid regime collapse across the comparative record
+    rationale: Police and some military units refused orders to use lethal force against protesters in the final days, removing Yanukovych's last coercive option and precipitating his flight within hours.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+  - factor_key: nonviolent-then-violent-escalation
+    label: A mostly peaceful campaign that escalates late can still remove an incumbent without settling the outcome
+    framework: chenoweth
+    status: partial
+    direction: indeterminate
+    base_rate: Nonviolent-leaning campaigns succeed roughly twice as often as armed ones, 53 percent versus 26 percent, though the finding concerns durable outcomes, not merely toppling an incumbent
+    rationale: Euromaidan stayed overwhelmingly peaceful for three months before a violent final escalation, and while it succeeded in removing Yanukovych within days of that escalation, the post-victory outcome was immediately contested rather than settled.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+  - factor_key: foreign-counter-intervention
+    label: Foreign military intervention against a successful uprising can reverse or freeze its gains
+    framework: goldstone
+    status: confirmed
+    direction: favors-regime
+    base_rate: Direct foreign military intervention against a successful uprising's outcome can reverse or freeze its gains even after the incumbent has already fallen
+    rationale: Russia's annexation of Crimea within weeks and its backing of separatist war in the Donbas the same spring prevented the post-Yanukovych government from consolidating control over the whole country.
+    sources:
+      - 'Goldstone, Revolutions: A Very Short Introduction (2014)'
+key_figures:
+  - name: Viktor Yanukovych
+    role: Deposed President of Ukraine
+    born: 1950
+  - name: Petro Poroshenko
+    role: Businessman, later President of Ukraine
+    born: 1965
+  - name: Vitali Klitschko
+    role: Opposition leader, later Mayor of Kyiv
+    born: 1971
+  - name: The Heavenly Hundred
+    role: Collective name for the protesters killed in the square's final days
+legacy_points:
+  - Roughly 100 protesters and a smaller number of police died in central Kyiv between February 18 and 20, 2014, remembered in Ukraine as the Heavenly Hundred.
+  - The crackdown accelerated rather than deterred Yanukovych's collapse, which came within 72 hours of the square's deadliest violence.
+  - Russia annexed Crimea within weeks and backed separatist war in the Donbas that same spring, opening a conflict that continued for years afterward.
+  - The events reoriented Ukrainian national identity and policy decisively toward European and NATO integration, a trajectory still shaping the region years later.
+related_revolt_slugs:
+  - people-power-1986
+  - fall-of-communism-1989
+related_history_slugs: []
+is_published: true
+perspectives:
+  - viewpoint: Pro-European civic view
+    viewpoint_type: movement
+    region_origin: Ukraine
+    narrative: A democratic reassertion of national sovereignty and European orientation against a corrupt, increasingly authoritarian government.
+    key_arguments:
+      - Yanukovych's reversal on the EU agreement followed months of apparent negotiation, reading as a last-minute capitulation to external pressure
+      - The Mezhyhirya estate's scale symbolized entrenched corruption at the top of government
+      - The movement's self-organized, largely peaceful character over three months reflected broad civic rather than narrow factional support
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - the EU agreement reversal
+      - the Mezhyhirya revelations
+    omitted:
+      - divisions within Ukraine over EU versus Russia orientation in eastern and southern regions
+      - the composition of far-right groups within the broader protest movement
+  - viewpoint: Russian state-aligned view
+    viewpoint_type: regime
+    region_origin: Russia
+    narrative: Frames the events as an externally encouraged, unconstitutional removal of an elected president, the basis Moscow cited for its subsequent actions in Crimea and the Donbas.
+    key_arguments:
+      - Yanukovych was removed by a parliamentary vote taken under street pressure rather than through a constitutional process like impeachment
+      - Western governments' public support for the protest movement is presented as direct interference in Ukrainian internal politics
+      - The rapid change of government is portrayed as illegitimate given the circumstances of Yanukovych's removal
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - the manner of Yanukovych's removal from office
+      - Western statements of support for the protesters
+    omitted:
+      - the scale of the killings in the square's final days
+      - Yanukovych's own reversal of a long-negotiated agreement that triggered the protests
+media: []
+connections:
+  - target_slug: people-power-1986
+    connection_type: parallel
+    description: Both toppled an incumbent through a sustained mass occupation of a central public space rather than through elections or armed conquest.
+  - target_slug: fall-of-communism-1989
+    connection_type: shared-repertoire
+    description: Both relied on mass peaceful occupation of central squares as the core tactic, even where outcomes ultimately diverged.
