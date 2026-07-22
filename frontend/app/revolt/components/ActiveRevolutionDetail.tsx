@@ -37,27 +37,31 @@ export default function ActiveRevolutionDetail({ revolution: r, liveCards }: { r
 
         {r.audioUrl && <RevoltAudioCue audioUrl={r.audioUrl} durationSeconds={r.audioDuration ?? 0} title={r.title} />}
 
-        {r.analyticalOutlook && (
-          <>
-            <h2 className="rev-h2">The situation</h2>
-            <p className="rev-prose">{r.analyticalOutlook}</p>
-          </>
-        )}
+        {/* The Situation + Where it is on the arc, side by side on desktop */}
+        <div className={`rev-active-cols${r.analyticalOutlook ? '' : ' rev-active-cols--single'}`}>
+          {r.analyticalOutlook && (
+            <section>
+              <h2 className="rev-h2">The situation</h2>
+              <p className="rev-prose">{r.analyticalOutlook}</p>
+            </section>
+          )}
 
-        {/* Where it is on the arc */}
-        <h2 className="rev-h2">Where it is on the arc</h2>
-        <ol className="rev-gauge" style={{ listStyle: 'none', padding: 0 }}>
-          {r.phases.map((p, i) => {
-            const spec = phaseSpec(p.phase);
-            const isCurrent = p.reached && i === reachedCount - 1;
-            return (
-              <li key={i} className={p.reached ? '' : 'rev-frame--unreached'} style={{ borderLeft: `4px solid ${p.reached ? (spec?.hueVar ?? 'var(--rev-accent)') : 'var(--rev-iron)'}`, paddingLeft: '0.75rem' }}>
-                <div className="rev-actor__name">{p.label}{isCurrent ? ' (where it is now)' : ''}</div>
-                <div className="rev-actor__role">{p.reached ? p.summary : 'Not reached.'}</div>
-              </li>
-            );
-          })}
-        </ol>
+          <section>
+            <h2 className="rev-h2">Where it is on the arc</h2>
+            <ol className="rev-gauge" style={{ listStyle: 'none', padding: 0, maxWidth: 'none' }}>
+              {r.phases.map((p, i) => {
+                const spec = phaseSpec(p.phase);
+                const isCurrent = p.reached && i === reachedCount - 1;
+                return (
+                  <li key={i} className={p.reached ? '' : 'rev-frame--unreached'} style={{ borderLeft: `4px solid ${p.reached ? (spec?.hueVar ?? 'var(--rev-accent)') : 'var(--rev-iron)'}`, paddingLeft: '0.75rem' }}>
+                    <div className="rev-actor__name">{p.label}{isCurrent ? ' (where it is now)' : ''}</div>
+                    <div className="rev-actor__role">{p.reached ? p.summary : 'Not reached.'}</div>
+                  </li>
+                );
+              })}
+            </ol>
+          </section>
+        </div>
 
         <SuccessScorecard revolution={r} />
 

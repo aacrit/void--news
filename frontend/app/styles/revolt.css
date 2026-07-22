@@ -735,12 +735,18 @@
 /* ── Live cards ── */
 .rev-livecards { display: grid; gap: var(--space-2); }
 .rev-livecard {
+  display: block;
   border-left: 3px solid var(--rev-live);
   padding: 8px var(--space-2);
   background: var(--rev-live-ghost);
+  text-decoration: none;
+  color: var(--rev-ink);
+  transition: border-left-width 0.12s var(--rev-ease-cut), background 0.12s var(--rev-ease-cut);
 }
+.rev-livecard:hover { border-left-width: 6px; background: var(--rev-accent-ghost); }
 .rev-livecard__title { font-family: var(--font-structural), sans-serif; font-weight: 600; font-size: var(--text-sm); }
 .rev-livecard__meta { font-family: var(--font-data), monospace; font-size: var(--text-xxs); color: var(--rev-ink-muted); }
+.rev-livecard__cta { color: var(--rev-accent); }
 .rev-livecards__label {
   font-family: var(--font-data), monospace; font-size: var(--text-xxs);
   text-transform: uppercase; letter-spacing: 0.1em; color: var(--rev-ink-muted);
@@ -748,6 +754,14 @@
 
 /* ── Active tracker ── */
 .rev-tracker { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-4); }
+
+/* ── Active detail: The Situation + arc placement, side by side on desktop ── */
+.rev-active-cols { display: grid; gap: var(--space-4) var(--space-6); align-items: start; }
+@media (min-width: 900px) {
+  .rev-active-cols:not(.rev-active-cols--single) { grid-template-columns: 1fr 1fr; }
+}
+.rev-active-cols .rev-prose { max-width: none; }
+.rev-active-cols .rev-h2 { margin-top: var(--space-4); }
 
 /* ── Section headings ── */
 .rev-h2 {

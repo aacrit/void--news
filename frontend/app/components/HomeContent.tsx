@@ -143,6 +143,9 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
   // page reload — gives users a clean retry path from the error state.
   const [retryKey, setRetryKey] = useState(0);
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
+  // Fires once: open a story's deep dive from a ?story=<id> deep link
+  // (used by void --revolt "related coverage" cross-links).
+  const deepLinkHandled = useRef(false);
   const [originRect, setOriginRect] = useState<DOMRect | null>(null);
 
   // Initial value MUST be false (matches SSR) — the matchMedia useEffect below
@@ -638,6 +641,26 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
     () => filteredStories.slice(0, EDITION_FEED_SIZE),
     [filteredStories],
   );
+
+  // Deep link: ?story=<id> opens that story's inline deep dive once the feed
+  // has loaded. Used by void --revolt to jump into a story's popout. No-ops
+  // silently if the story isn't in the loaded feed.
+  useEffect(() => {
+    if (deepLinkHandled.current || typeof window === "undefined") return;
+    if (filteredStories.length === 0) return;
+    const id = new URL(window.location.href).searchParams.get("story");
+    if (!id) { deepLinkHandled.current = true; return; }
+    const story = filteredStories.find((s) => s.id === id);
+    deepLinkHandled.current = true;
+    if (!story) return;
+    handleStoryClick(story, new DOMRect());
+    requestAnimationFrame(() => {
+      document.querySelector(`[data-story-id="${id}"]`)?.scrollIntoView({ block: "start" });
+    });
+    const url = new URL(window.location.href);
+    url.searchParams.delete("story");
+    window.history.replaceState({}, "", url.toString());
+  }, [filteredStories, handleStoryClick]);
 
   // Reader-controlled disclosure: default to 30, click "Show 20 more" to
   // reveal 31..50 BEFORE the World section. Pure curation principle —
