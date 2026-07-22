@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import type { Revolution } from '../types';
-import { isActiveStatus } from '../types';
+import { isActiveStatus, statusRank } from '../types';
 import { OUTCOME_LABELS } from '../anatomy';
 import { fetchRevolutions } from '../data';
 import RevolutionCard from './RevolutionCard';
@@ -33,7 +33,9 @@ export default function RevoltLanding() {
   }, []);
 
   const concluded = (revolutions ?? []).filter((r) => !isActiveStatus(r.status));
-  const active = (revolutions ?? []).filter((r) => isActiveStatus(r.status));
+  const active = (revolutions ?? [])
+    .filter((r) => isActiveStatus(r.status))
+    .sort((a, b) => statusRank(a.status) - statusRank(b.status));
 
   return (
     <div className="rev-shell">
@@ -52,10 +54,11 @@ export default function RevoltLanding() {
 
       {active.length > 0 && (
         <section>
-          <h2 className="rev-banner">The Living &middot; happening now</h2>
+          <h2 className="rev-banner">The Living &middot; movements on the arc</h2>
           <p className="rev-prose" style={{ marginBottom: 'var(--space-4)' }}>
-            Curated ongoing movements, placed on the arc and weighed against the historical
-            record. Analytical, not predictive. Not an endorsement.
+            Active uprisings first, then the dormant and suppressed ones kept here for
+            comparison, each placed on the arc and weighed against the historical record.
+            Analytical, not predictive. Not an endorsement.
           </p>
           <div className="rev-grid">
             {active.map((r) => <RevolutionCard key={r.slug} r={r} />)}

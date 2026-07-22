@@ -148,7 +148,7 @@ function buildFrames(r: Revolution): Frame[] {
   // 1..n — phases
   r.phases.forEach((p, i) => {
     const spec = phaseSpec(p.phase);
-    const hue = spec?.hueVar ?? 'var(--rev-oxide)';
+    const hue = spec?.hueVar ?? 'var(--rev-accent)';
     frames.push({
       key: `phase-${p.phase}-${i}`,
       label: spec?.short ?? p.label,
@@ -241,7 +241,7 @@ function buildFrames(r: Revolution): Frame[] {
   frames.push({
     key: 'threads',
     label: 'Threads',
-    color: 'var(--rev-oxide)',
+    color: 'var(--rev-accent)',
     node: (
       <>
         <p className="rev-frame__index">Where it leads</p>

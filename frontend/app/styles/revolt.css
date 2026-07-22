@@ -1,56 +1,55 @@
 /* ===========================================================================
-   void --revolt — "Barricade Press"
-   History's opposite temperament in the same paper: risograph-samizdat urgency.
-   Barlow-Condensed placards over Playfair analysis. Oxblood-iron on bone.
-   Hard, zero-blur block shadows. Light = "Proclamation"; dark = "Curfew".
+   void --revolt — "Barricade Press" (blueprint palette)
+   The section reads like a schematic of revolution: royal-blue drafting ink on
+   cool paper (light "Drafting Paper"), sky-blue on deep navy (dark "Cyanotype").
+   Barlow-Condensed placards over Playfair analysis; hard, zero-blur block shadows.
    Consumes the global scaffold (--canvas-max, --space-*, --text-*, --font-*);
    adds only the --rev-* palette + hard-edge system + easings. All .rev-* / .revolt-page.
    =========================================================================== */
 
 .revolt-page {
-  /* ── Surfaces + ink (light "Proclamation") ── */
-  --rev-bone: #F2ECDE;
-  --rev-bone-deep: #E8E0CE;
-  --rev-newsprint: #F6F1E6;
-  --rev-ink: #1A1613;
-  --rev-ink-secondary: #463C33;
-  --rev-ink-muted: #63574A;
-  --rev-iron: #3A342C;
+  /* ── Surfaces + ink (light "Drafting Paper": cool blueprint stock) ── */
+  --rev-bone: #E8EDF5;
+  --rev-bone-deep: #D7E0EE;
+  --rev-newsprint: #F1F5FB;
+  --rev-ink: #131C2E;
+  --rev-ink-secondary: #33415B;
+  --rev-ink-muted: #5A6785;
+  --rev-iron: #2E3A52;
 
-  /* ── Oxide (iron-oxide / oxblood: the color a red banner fades to, and rust
-        on a barricade). Structural only; never running body text. ── */
-  --rev-oxide: #7E2E20;
-  --rev-oxide-bright: #9A3A26;
-  --rev-oxide-deep: #5C2017;
-  --rev-oxide-ghost: rgba(126, 46, 32, 0.06);
-  --rev-oxide-fg: #F2ECDE;
+  /* ── Accent (royal/cobalt blueprint ink). Structural only; never body text. ── */
+  --rev-accent: #1E40AF;
+  --rev-accent-bright: #2563EB;
+  --rev-accent-deep: #172E7C;
+  --rev-accent-ghost: rgba(30, 64, 175, 0.07);
+  --rev-accent-fg: #EAF1FF;
 
   /* ── Actor identity (analog of --hist-persp-a..f) ── */
-  --rev-actor-vanguard: #8E2E22;
-  --rev-actor-masses: #4A4136;
-  --rev-actor-defect: #9A7A1C;
-  --rev-actor-reaction: #5E3A66;
-  --rev-actor-foreign: #2A6560;
+  --rev-actor-vanguard: #1E40AF;
+  --rev-actor-masses: #45506A;
+  --rev-actor-defect: #8A6D1E;
+  --rev-actor-reaction: #6B3F86;
+  --rev-actor-foreign: #1F7A70;
 
-  /* ── Brinton phase ramp (a sequential temperature story) ── */
-  --rev-phase-1: #4A5560;
-  --rev-phase-2: #8A6D1E;
-  --rev-phase-3: #B0512A;
-  --rev-phase-4: #8A3120;
-  --rev-phase-5: #7A4A44;
-  --rev-phase-6: #3A342C;
+  /* ── Brinton phase ramp (a heat-map: cool crisis -> hot radical -> settle) ── */
+  --rev-phase-1: #4A5D82;
+  --rev-phase-2: #2E8C8C;
+  --rev-phase-3: #C08A1E;
+  --rev-phase-4: #C24A2A;
+  --rev-phase-5: #8A5A6A;
+  --rev-phase-6: #2E3A52;
 
   /* ── Live + signal ── */
-  --rev-live: #9A3324;
-  --rev-live-ghost: rgba(154, 51, 36, 0.14);
-  --rev-signal-yes: #4E6A3C;
-  --rev-signal-no: #8E5B42;
-  --rev-signal-partial: #8A6D1E;
+  --rev-live: #1E6FE0;
+  --rev-live-ghost: rgba(30, 111, 224, 0.14);
+  --rev-signal-yes: #3F7A48;
+  --rev-signal-no: #B0512A;
+  --rev-signal-partial: #B08A1E;
 
   /* ── Hard-edge system (the anti-history: zero-blur offset block shadows) ── */
   --rev-edge: 3px 3px 0 0 var(--rev-iron);
   --rev-edge-hover: 5px 5px 0 0 var(--rev-iron);
-  --rev-edge-oxide: 4px 4px 0 0 var(--rev-oxide);
+  --rev-edge-accent: 4px 4px 0 0 var(--rev-accent);
   --rev-edge-pressed: 1px 1px 0 0 var(--rev-iron);
 
   /* ── Easings ── */
@@ -64,36 +63,36 @@
 }
 
 :root[data-mode="dark"] .revolt-page {
-  /* "Curfew": oxblood on soot */
-  --rev-bone: #16120E;
-  --rev-bone-deep: #201A15;
-  --rev-newsprint: #1C1712;
-  --rev-ink: #ECE3D2;
-  --rev-ink-secondary: #C9BCA6;
-  --rev-ink-muted: #A0957F;
-  --rev-iron: #8A8177;
+  /* "Cyanotype": sky-blue on deep navy */
+  --rev-bone: #0D1524;
+  --rev-bone-deep: #14203A;
+  --rev-newsprint: #111C33;
+  --rev-ink: #DCE6F5;
+  --rev-ink-secondary: #AEBED8;
+  --rev-ink-muted: #7E8DAC;
+  --rev-iron: #40506E;
 
-  --rev-oxide: #CE7C60;          /* rust/terracotta, ~5.5:1 on soot — AA text */
-  --rev-oxide-bright: #DE9076;
-  --rev-oxide-deep: #A34E38;     /* fills only */
-  --rev-oxide-ghost: rgba(206, 124, 96, 0.12);
-  --rev-oxide-fg: #16120E;
+  --rev-accent: #6AA0FF;          /* sky/cornflower, ~6.9:1 on navy — AA text */
+  --rev-accent-bright: #8FBAFF;
+  --rev-accent-deep: #3E6FD0;     /* fills only */
+  --rev-accent-ghost: rgba(106, 160, 255, 0.14);
+  --rev-accent-fg: #0D1524;
 
-  --rev-actor-vanguard: #DA8368;
-  --rev-actor-masses: #B8AD9A;
+  --rev-actor-vanguard: #6AA0FF;
+  --rev-actor-masses: #A9B6D0;
   --rev-actor-defect: #D4A94A;
-  --rev-actor-reaction: #B085BE;
-  --rev-actor-foreign: #52A8AD;
+  --rev-actor-reaction: #B58FD0;
+  --rev-actor-foreign: #52B0A6;
 
-  --rev-phase-1: #7E8A96;
-  --rev-phase-2: #C6A24A;
-  --rev-phase-3: #D67A50;
-  --rev-phase-4: #D67E64;
-  --rev-phase-5: #C0928A;
-  --rev-phase-6: #8A8177;
+  --rev-phase-1: #8394B4;
+  --rev-phase-2: #48B0B0;
+  --rev-phase-3: #D6A24A;
+  --rev-phase-4: #E0714A;
+  --rev-phase-5: #C093A6;
+  --rev-phase-6: #6E7C9A;
 
-  --rev-live: #DE8060;
-  --rev-live-ghost: rgba(222, 128, 96, 0.18);
+  --rev-live: #5AA0FF;
+  --rev-live-ghost: rgba(90, 160, 255, 0.20);
 
   --rev-edge: 3px 3px 0 0 var(--rev-iron);
   --rev-edge-hover: 5px 5px 0 0 var(--rev-iron);
@@ -110,8 +109,8 @@
     -18deg,
     transparent 0,
     transparent 46px,
-    var(--rev-oxide-ghost) 46px,
-    var(--rev-oxide-ghost) 47px
+    var(--rev-accent-ghost) 46px,
+    var(--rev-accent-ghost) 47px
   );
   opacity: 0.5;
 }
@@ -127,15 +126,21 @@
   background: var(--rev-bone);
 }
 .rev-topbar__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  text-decoration: none;
+}
+.rev-topbar__mark { display: inline-flex; color: var(--rev-accent); }
+.rev-topbar__wordmark {
   font-family: var(--font-meta), sans-serif;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   font-size: var(--text-lg);
   color: var(--rev-ink);
-  text-decoration: none;
 }
-.rev-topbar__brand b { color: var(--rev-oxide); }
+.rev-topbar__wordmark b { color: var(--rev-accent); }
 .rev-topbar__spacer { flex: 1; }
 .rev-topbar__link {
   font-family: var(--font-meta), sans-serif;
@@ -146,7 +151,7 @@
   text-decoration: none;
   padding: 4px 6px;
 }
-.rev-topbar__link:hover { color: var(--rev-oxide); }
+.rev-topbar__link:hover { color: var(--rev-accent); }
 
 .rev-footer {
   border-top: 2px solid var(--rev-iron);
@@ -167,14 +172,14 @@
 /* ── Landing hero ── */
 .rev-hero {
   padding: var(--space-7) 0 var(--space-5);
-  border-bottom: 3px solid var(--rev-oxide);
+  border-bottom: 3px solid var(--rev-accent);
 }
 .rev-hero__kicker {
   font-family: var(--font-data), monospace;
   font-size: var(--text-xs);
   text-transform: uppercase;
   letter-spacing: 0.22em;
-  color: var(--rev-oxide);
+  color: var(--rev-accent);
 }
 .rev-hero__title {
   font-family: var(--font-meta), sans-serif;
@@ -194,10 +199,10 @@
   color: var(--rev-ink-secondary);
 }
 
-/* ── Section banner (full-bleed oxide, label knocked out) ── */
+/* ── Section banner (full-bleed accent, label knocked out) ── */
 .rev-banner {
-  background: var(--rev-oxide);
-  color: var(--rev-oxide-fg);
+  background: var(--rev-accent);
+  color: var(--rev-accent-fg);
   font-family: var(--font-meta), sans-serif;
   font-weight: 700;
   text-transform: uppercase;
@@ -232,7 +237,7 @@
   transition: box-shadow 0.15s var(--rev-ease-cut), transform 0.15s var(--rev-ease-cut);
 }
 .rev-browse__chip:hover { box-shadow: var(--rev-edge); transform: translate(-1px, -1px); }
-.rev-browse__chip--accent { border-color: var(--rev-oxide); color: var(--rev-oxide); }
+.rev-browse__chip--accent { border-color: var(--rev-accent); color: var(--rev-accent); }
 
 /* ── Revolution card grid ── */
 .rev-grid {
@@ -272,7 +277,7 @@
   transition: filter 0.2s var(--rev-ease-cut), transform 0.3s var(--rev-ease-cut);
 }
 .rev-card:hover .rev-card__img img { filter: grayscale(0.1) contrast(1.08); transform: scale(1.03); }
-.rev-card--active .rev-card__img { border-bottom-color: var(--rev-oxide); }
+.rev-card--active .rev-card__img { border-bottom-color: var(--rev-accent); }
 .rev-card__meta {
   font-family: var(--font-data), monospace;
   font-size: var(--text-xs);
@@ -314,18 +319,31 @@
   font-size: var(--text-xxs);
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  color: var(--rev-oxide-fg);
+  color: var(--rev-accent-fg);
   background: var(--rev-live);
   padding: 2px 6px;
   transform: rotate(-2deg);
 }
 .rev-live-stamp__dot {
   width: 7px; height: 7px; border-radius: 50%;
-  background: var(--rev-oxide-fg);
+  background: var(--rev-accent-fg);
   animation: rev-pulse 1.6s ease-in-out infinite;
 }
 @keyframes rev-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
-.rev-card--active { border-color: var(--rev-oxide); }
+.rev-card--active { border-color: var(--rev-accent); }
+
+/* Non-pulsing status chip for dormant / suppressed / watchlist movements. */
+.rev-dormant-tag {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-data), monospace;
+  font-size: var(--text-xxs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--rev-ink-muted);
+  border: 1px solid var(--rev-iron);
+  padding: 1px 6px;
+}
 
 /* ── The Stage (deep-dive cold open) ── */
 .rev-stage {
@@ -334,7 +352,7 @@
   flex-direction: column;
   justify-content: flex-end;
   padding: var(--space-7) var(--space-4) var(--space-5);
-  border-bottom: 3px solid var(--rev-oxide);
+  border-bottom: 3px solid var(--rev-accent);
   background: var(--rev-bone-deep);
   position: relative;
   overflow: hidden;
@@ -352,7 +370,7 @@
   font-size: var(--text-xs);
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: var(--rev-oxide);
+  color: var(--rev-accent);
 }
 .rev-stage__title {
   font-family: var(--font-meta), sans-serif;
@@ -395,9 +413,9 @@
   color: var(--rev-ink);
 }
 .rev-verdict {
-  border-left: 4px solid var(--rev-oxide);
+  border-left: 4px solid var(--rev-accent);
   padding: var(--space-3);
-  background: var(--rev-oxide-ghost);
+  background: var(--rev-accent-ghost);
   font-family: var(--font-editorial), serif;
   font-size: var(--text-md);
   line-height: 1.5;
@@ -430,7 +448,7 @@
   font-size: var(--text-xs);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--rev-phase-hue, var(--rev-oxide));
+  color: var(--rev-phase-hue, var(--rev-accent));
 }
 .rev-frame__label {
   font-family: var(--font-meta), sans-serif;
@@ -451,7 +469,7 @@
   max-width: 52ch;
 }
 .rev-frame--unreached { opacity: 0.5; }
-.rev-frame--unreached .rev-frame__label { text-decoration: line-through; text-decoration-color: var(--rev-oxide); }
+.rev-frame--unreached .rev-frame__label { text-decoration: line-through; text-decoration-color: var(--rev-accent); }
 .rev-frame__events { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
 .rev-frame__events li {
   font-family: var(--font-data), monospace;
@@ -471,7 +489,7 @@
   color: var(--rev-ink-muted);
 }
 .rev-gauge__bar { height: 8px; background: var(--rev-bone-deep); border: 1px solid var(--rev-iron); }
-.rev-gauge__fill { height: 100%; background: var(--rev-oxide); }
+.rev-gauge__fill { height: 100%; background: var(--rev-accent); }
 
 /* Actors + tactics */
 .rev-actors { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-3); }
@@ -496,7 +514,7 @@
 .rev-scrubber__readout {
   font-family: var(--font-meta), sans-serif; font-weight: 700;
   text-transform: uppercase; font-size: var(--text-sm);
-  color: var(--rev-oxide);
+  color: var(--rev-accent);
   margin-bottom: 6px;
 }
 .rev-scrubber__track { position: relative; height: 20px; }
@@ -507,7 +525,7 @@
   background: var(--rev-bone); border: 2px solid var(--node-color, var(--rev-iron));
   cursor: pointer; padding: 0;
 }
-.rev-scrubber__node--active { background: var(--node-color, var(--rev-oxide)); }
+.rev-scrubber__node--active { background: var(--node-color, var(--rev-accent)); }
 
 /* ── Success scorecard ── */
 .rev-scorecard { display: grid; gap: var(--space-3); }
@@ -539,9 +557,9 @@
   text-transform: uppercase; letter-spacing: 0.05em;
   padding: 3px 10px; display: inline-block; box-shadow: var(--rev-edge-pressed);
 }
-.rev-band--favorable { background: var(--rev-signal-yes); color: var(--rev-oxide-fg); }
-.rev-band--contested { background: var(--rev-signal-partial); color: var(--rev-oxide-fg); }
-.rev-band--low { background: var(--rev-signal-no); color: var(--rev-oxide-fg); }
+.rev-band--favorable { background: var(--rev-signal-yes); color: var(--rev-accent-fg); }
+.rev-band--contested { background: var(--rev-signal-partial); color: var(--rev-accent-fg); }
+.rev-band--low { background: var(--rev-signal-no); color: var(--rev-accent-fg); }
 .rev-band--none { background: var(--rev-bone-deep); color: var(--rev-ink-muted); }
 
 .rev-count {
@@ -551,7 +569,7 @@
 
 /* Disclaimer + review stamp */
 .rev-disclaimer {
-  border: 1px dashed var(--rev-oxide);
+  border: 1px dashed var(--rev-accent);
   padding: var(--space-2) var(--space-3);
   font-family: var(--font-data), monospace;
   font-size: var(--text-xs);
@@ -580,14 +598,14 @@
   height: 42px;
   display: grid;
   place-items: center;
-  background: var(--rev-oxide);
-  color: var(--rev-oxide-fg);
+  background: var(--rev-accent);
+  color: var(--rev-accent-fg);
   border: none;
   cursor: pointer;
   box-shadow: var(--rev-edge-pressed);
   transition: background 0.15s var(--rev-ease-cut);
 }
-.rev-audio__btn:hover { background: var(--rev-oxide-bright); }
+.rev-audio__btn:hover { background: var(--rev-accent-bright); }
 .rev-audio__body { flex: 1; min-width: 0; }
 .rev-audio__label {
   font-family: var(--font-data), monospace;
@@ -598,7 +616,7 @@
   margin-bottom: 5px;
 }
 .rev-audio__track { height: 6px; background: var(--rev-bone-deep); border: 1px solid var(--rev-iron); cursor: pointer; }
-.rev-audio__fill { display: block; height: 100%; background: var(--rev-oxide); }
+.rev-audio__fill { display: block; height: 100%; background: var(--rev-accent); }
 .rev-audio__time {
   flex: 0 0 auto;
   font-family: var(--font-data), monospace;
@@ -644,7 +662,7 @@
 /* ── Focus + reduced motion ── */
 .revolt-page a:focus-visible,
 .revolt-page button:focus-visible {
-  outline: 2px solid var(--rev-oxide);
+  outline: 2px solid var(--rev-accent);
   outline-offset: 2px;
 }
 @media (prefers-reduced-motion: reduce) {

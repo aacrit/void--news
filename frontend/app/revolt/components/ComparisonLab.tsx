@@ -6,7 +6,7 @@ import { OUTCOME_LABELS, RESISTANCE_LABELS, DEFECTION_LABELS, phaseSpec } from '
 import { fetchRevolutions } from '../data';
 import { phaseArc } from '../lib/phaseArc';
 
-const SLOT_COLORS = ['#7E2E20', '#2A6560', '#8A6D1E', '#5E3A66'];
+const SLOT_COLORS = ['#1E40AF', '#1F7A70', '#B08A1E', '#6B3F86'];
 const MAX = 4;
 
 export default function ComparisonLab() {
@@ -71,7 +71,7 @@ export default function ComparisonLab() {
               style={{
                 border: `2px solid ${on ? SLOT_COLORS[idx] : 'var(--rev-iron)'}`,
                 background: on ? SLOT_COLORS[idx] : 'transparent',
-                color: on ? 'var(--rev-oxide-fg)' : 'var(--rev-ink-secondary)',
+                color: on ? 'var(--rev-accent-fg)' : 'var(--rev-ink-secondary)',
                 padding: '4px 10px',
               }}
               aria-pressed={on}
