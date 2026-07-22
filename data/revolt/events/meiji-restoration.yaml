@@ -1,0 +1,218 @@
+slug: meiji-restoration
+title: The Meiji Restoration
+subtitle: Provincial samurai overthrow a shogunate to modernize it out of existence
+date_display: 1868-1869
+date_start: 1868
+date_end: 1869
+date_precision: year
+era: modern-nationalist
+region: east-asia
+country: Japan
+revolt_type: coup-from-above
+status: concluded
+summary: Commodore Perry's 1853 warships exposed the Tokugawa shogunate's weakness against foreign power. Fifteen years later, samurai from the Satsuma and Choshu domains forced the last shogun to resign, fought the Boshin War against his loyalists, and installed the teenage Emperor Meiji as the figurehead of a rapid, top-down industrial transformation.
+significance: One of the few revolutions where the challengers explicitly organized around restoring an ancient monarch, then used that restored authority to abolish the very feudal class, the samurai, that had carried out the restoration.
+grievances:
+  - kind: Humiliation by foreign powers
+    intensity: 85
+    evidence: Commodore Perry's 1853 fleet forced the shogunate to sign unequal treaties opening Japanese ports and surrendering tariff control, treaties Japan could not renegotiate for decades.
+  - kind: Samurai economic decline
+    intensity: 65
+    evidence: Rice-stipend samurai incomes had stagnated for generations under Tokugawa rule while merchant wealth grew, leaving lower-ranking samurai in the Satsuma and Choshu domains with status but shrinking income.
+  - kind: Domain exclusion from national power
+    intensity: 60
+    evidence: The Satsuma and Choshu domains, among Japan's largest, had been excluded from senior shogunate posts since their defeat at the 1600 Battle of Sekigahara.
+  - kind: Repeated foreign bombardment
+    intensity: 55
+    evidence: British warships shelled Kagoshima in 1863 and an allied Western fleet bombarded Shimonoseki in 1864, demonstrating the shogunate could not protect its own domains from foreign navies.
+actors:
+  - actor_type: vanguard
+    name: Satsuma-Choshu alliance
+    description: A secret 1866 pact between two rival domains united against the shogunate.
+    role_in_arc: Provided the troops, funding, and political strategy behind the restoration and the Boshin War that followed.
+    defected: false
+  - actor_type: old-regime
+    name: Tokugawa Yoshinobu
+    description: The fifteenth and last Tokugawa shogun.
+    role_in_arc: Resigned civil authority to the emperor in November 1867, then fought and lost the Boshin War before formally submitting in 1869.
+    defected: false
+  - actor_type: military-defectors
+    name: Domain lords who switched allegiance
+    description: Regional daimyo who abandoned the shogunate once its military weakness became clear.
+    role_in_arc: Their defections after the shogunate's 1868 defeat at Toba-Fushimi accelerated the Boshin War's rapid conclusion.
+    defected: true
+  - actor_type: foreign-backer
+    name: British and French arms traders
+    description: European powers who sold modern rifles and warships to both the pro-restoration and shogunate sides.
+    role_in_arc: British merchants favored the Satsuma-Choshu alliance while France backed the shogunate, indirectly shaping the war's military balance.
+    defected: false
+  - actor_type: vanguard
+    name: Emperor Meiji
+    description: Enthroned in 1867 at age fourteen.
+    role_in_arc: Served as the symbolic center of authority the restoration invoked, then as the figurehead of the modernization program carried out largely by his former samurai backers.
+    defected: false
+tactics:
+  - tactic_type: armed-insurgency
+    description: The Boshin War's set-piece battles, Toba-Fushimi and the fall of Edo, decided the shogunate's fate within eighteen months.
+    prominence: primary
+  - tactic_type: parallel-institutions
+    description: The Satsuma-Choshu alliance built a shadow imperial court and military command structure around the young emperor before openly challenging the shogunate.
+    prominence: primary
+  - tactic_type: defection-fraternization
+    description: Domain after domain abandoned the shogunate once Toba-Fushimi showed which side could win, sparing much of Japan a prolonged war.
+    prominence: secondary
+resistance_type: armed
+phases:
+  - phase: old-regime-crisis
+    label: The unequal treaties
+    t_start: 0
+    t_end: 0.12
+    intensity: 50
+    reached: true
+    summary: Perry's 1853 fleet and the treaties that followed expose the shogunate's inability to defend Japanese sovereignty, discrediting it in the eyes of ambitious domains.
+    key_events:
+      - Perry's fleet arrives, 1853
+      - Unequal treaties signed, 1858
+      - Bombardment of Kagoshima, 1863
+  - phase: the-spark
+    label: The shogun resigns
+    date_start: '1867-11-09'
+    t_start: 0.22
+    t_end: 0.34
+    intensity: 65
+    reached: true
+    summary: Tokugawa Yoshinobu resigns civil authority to the emperor in an attempt to preserve influence within a new order, a bid the Satsuma-Choshu alliance moves to preempt.
+    key_events:
+      - Satsuma-Choshu secret alliance formed, 1866
+      - Yoshinobu resigns to the emperor, November 9, 1867
+  - phase: radical-phase
+    label: The Boshin War
+    date_start: '1868-01-27'
+    t_start: 0.6
+    t_end: 0.72
+    intensity: 88
+    reached: true
+    summary: Pro-restoration forces defeat shogunate loyalists at Toba-Fushimi, triggering a cascade of domain defections and the fall of Edo without a prolonged siege.
+    key_events:
+      - Battle of Toba-Fushimi, January 27, 1868
+      - Edo surrenders without major battle, May 1868
+  - phase: consolidation
+    label: Restoration proclaimed
+    date_start: '1869-06-27'
+    t_start: 0.92
+    t_end: 1
+    intensity: 55
+    reached: true
+    summary: The last shogunate holdouts surrender at Hakodate in June 1869, and the new imperial government begins dismantling the feudal domain system that had just carried it to power.
+    key_events:
+      - Battle of Hakodate ends resistance, June 1869
+      - Charter Oath sets reform direction, 1868
+outcome: consolidated-autocracy
+peak_participation_pct: null
+crossed_participation_threshold: null
+military_defection: partial
+foreign_intervention: material
+duration_days: 500
+death_toll: An estimated 8,000 to 10,000 killed in the Boshin War, a fraction of the toll from contemporaneous revolutions elsewhere, reflecting the speed of domain defections once the shogunate's weakness was proven.
+death_toll_low: 8000
+death_toll_high: 12000
+regime_before: military
+regime_after: monarchy
+democratization_delta: -1
+success_factors:
+  - factor_key: elite-fracture
+    label: Elite fracture between rival power centers, not mass mobilization, drove the outcome
+    framework: skocpol
+    status: confirmed
+    direction: favors-movement
+    base_rate: 'Skocpol''s model applies most cleanly to elite-driven cases like this one: a split between the shogunate and excluded regional elites, not a popular uprising, produced the state collapse'
+    rationale: The restoration was organized by samurai from two domains, not by peasants or urban crowds; ordinary Japanese participation in the actual fighting was minimal.
+    sources:
+      - Skocpol, States and Social Revolutions (1979)
+  - factor_key: participation-threshold-inapplicable
+    label: The 3.5 percent mass-participation rule does not apply to elite coups
+    framework: chenoweth
+    status: atypical
+    direction: indeterminate
+    base_rate: Chenoweth's participation threshold research concerns mass civil resistance campaigns and offers no predictive claim about narrowly elite-led restorations
+    rationale: The Meiji Restoration succeeded with a coalition of a few domains' samurai forces rather than broad popular mobilization, a structurally different mechanism than the mass movements the 3.5 percent finding describes.
+    sources:
+      - 'Chenoweth, Civil Resistance: What Everyone Needs to Know (2021)'
+  - factor_key: foreign-material-limited
+    label: Indirect foreign arms sales shaped, but did not decide, the military balance
+    framework: goldstone
+    status: partial
+    direction: favors-movement
+    base_rate: Goldstone's comparative work finds foreign material support a secondary factor next to domestic elite alignment in determining a challenger's success
+    rationale: British arms sales to Satsuma and Choshu improved their forces, but domain defections after Toba-Fushimi, not superior weaponry, decided the war's outcome.
+    sources:
+      - 'Goldstone, Revolutions: A Very Short Introduction (2014)'
+key_figures:
+  - name: Emperor Meiji
+    role: Restored emperor, figurehead of the modernization program
+    born: 1852
+    died: 1912
+  - name: Saigo Takamori
+    role: Satsuma military leader of the restoration, later led the 1877 Satsuma Rebellion against it
+    born: 1828
+    died: 1877
+  - name: Tokugawa Yoshinobu
+    role: Last Tokugawa shogun
+    born: 1837
+    died: 1913
+  - name: Okubo Toshimichi
+    role: Chief architect of the new Meiji government's centralizing reforms
+    born: 1830
+    died: 1878
+legacy_points:
+  - The new government abolished the samurai class and the feudal domain system within a few years of the restoration that samurai themselves had carried out.
+  - Japan industrialized fast enough to defeat Qing China in 1895 and Russia in 1905, within two generations of Perry's warships.
+  - The 1889 Meiji Constitution established a parliament, though one that left the emperor and military largely outside civilian control.
+  - The centralized, militarized state the restoration built later drove Japan's expansionism through the 1930s and into the Second World War.
+related_revolt_slugs:
+  - chinese-revolution-1949
+  - french-revolution
+related_history_slugs:
+  - meiji-restoration
+is_published: true
+perspectives:
+  - viewpoint: Meiji nationalist and modernizer view
+    viewpoint_type: revolutionary
+    region_origin: Japan
+    narrative: 'The restoration was a necessary act of national survival: without rapid centralization and industrial catch-up, Japan risked colonization like much of the rest of Asia.'
+    key_arguments:
+      - Unequal treaties proved the shogunate could not defend Japanese sovereignty
+      - Rapid modernization required a unified national government the domain system could not provide
+      - Within a single generation Japan avoided the colonization that befell its neighbors
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - the speed of industrial and military modernization
+      - the treaty humiliations that preceded the restoration
+    omitted:
+      - the loss of status and livelihood imposed on lower-ranking samurai
+      - the militarist trajectory the centralized state later took
+  - viewpoint: Displaced samurai retrospective
+    viewpoint_type: counter-revolutionary
+    region_origin: Japan
+    narrative: Many of the very samurai who fought for the restoration found their class abolished within a decade, a betrayal significant enough to trigger armed rebellion against the government they had helped install.
+    key_arguments:
+      - Saigo Takamori, a restoration hero, led the 1877 Satsuma Rebellion against the government he helped create
+      - Stipend abolition and conscription reform stripped samurai of both income and social function
+      - The restoration's rhetoric of honoring the emperor obscured how thoroughly it dismantled the old order
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - the 1877 Satsuma Rebellion
+      - stipend and status losses among lower samurai
+    omitted:
+      - the economic stagnation samurai already faced before the restoration
+      - the industrial gains that followed for the wider population
+media: []
+connections:
+  - target_slug: chinese-revolution-1949
+    connection_type: counter-example
+    description: Japan's elite-led, top-down transformation avoided the prolonged mass civil war China endured eight decades later to reach a comparably centralized state.
+  - target_slug: french-revolution
+    connection_type: parallel
+    description: Both revolutions dismantled a feudal privileged class, the French nobility, the Japanese samurai, in the name of a more centralized national state.

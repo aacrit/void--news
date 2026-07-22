@@ -68,14 +68,14 @@ JSONB_FIELDS = {
 # leaves viewpoint values inside JSONB unconstrained beyond the promoted column.
 ACTOR_TYPES = {
     "vanguard", "masses", "organized-labor", "students-youth", "military-defectors",
-    "security-forces", "old-regime", "counter-revolutionaries", "religious-clergy",
+    "security-forces", "old-regime", "regime", "counter-revolutionaries", "religious-clergy",
     "foreign-backer", "foreign-intervener", "diaspora",
 }
 TACTIC_TYPES = {
     "mass-demonstration", "general-strike", "occupation", "civil-disobedience",
     "boycott-noncooperation", "armed-insurgency", "guerrilla-warfare",
     "urban-uprising", "defection-fraternization", "digital-mobilization",
-    "sabotage", "parallel-institutions",
+    "sabotage", "parallel-institutions", "elite-negotiation",
 }
 PHASE_KEYS = {
     "old-regime-crisis", "intellectual-desertion", "the-spark", "moderate-phase",

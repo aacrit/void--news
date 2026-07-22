@@ -1,0 +1,208 @@
+slug: carnation-revolution
+title: The Carnation Revolution
+subtitle: An army coup ends a dictatorship before breakfast, and a nation answers with flowers
+date_display: April 1974
+date_start: 1974
+date_end: 1974
+date_precision: year
+era: people-power
+region: europe
+country: Portugal
+revolt_type: democratic-uprising
+status: concluded
+summary: Junior army officers exhausted by thirteen years of colonial war in Angola, Mozambique, and Guinea-Bissau seized Lisbon's key installations before dawn on April 25, 1974. Civilians filled the streets within hours, putting carnations into soldiers' rifle barrels, and the forty-eight-year-old Estado Novo dictatorship collapsed by nightfall with fewer than five deaths.
+significance: One of the fastest and least violent authoritarian collapses of the twentieth century, driven almost entirely by the military itself rather than by prior mass civilian mobilization, and a direct trigger for the rapid decolonization of Portugal's African territories.
+grievances:
+  - kind: Colonial war exhaustion
+    intensity: 88
+    evidence: Portugal had fought simultaneous colonial wars in Angola, Mozambique, and Guinea-Bissau since 1961, consuming an estimated 40 percent of the state budget by the early 1970s.
+  - kind: Officer promotion grievance
+    intensity: 60
+    evidence: A 1973 decree allowed conscript militia officers to gain seniority over career officers with equivalent combat service, angering the professional officer corps that would form the Armed Forces Movement.
+  - kind: Decades of political repression
+    intensity: 65
+    evidence: The Estado Novo's secret police, the PIDE, had operated since the 1930s, suppressing opposition parties and a free press for longer than most Portuguese citizens had been alive.
+actors:
+  - actor_type: military-defectors
+    name: The Armed Forces Movement
+    description: A clandestine network of junior and mid-ranking officers frustrated by the colonial wars and promotion policy.
+    role_in_arc: Planned and executed the coup, seizing radio stations, the airport, and government buildings within hours on April 25, 1974.
+    defected: true
+  - actor_type: masses
+    name: Lisbon civilians
+    description: Residents who filled the streets once word of the coup spread on the morning of April 25.
+    role_in_arc: Placed carnations in soldiers' rifle barrels and uniforms, giving the revolution its name and helping deter any violent response.
+    defected: false
+  - actor_type: old-regime
+    name: Marcelo Caetano
+    description: Prime Minister and head of the Estado Novo government since 1968.
+    role_in_arc: Surrendered to Armed Forces Movement units at the Carmo barracks on the evening of April 25 and was flown into exile.
+    defected: false
+  - actor_type: security-forces
+    name: PIDE secret police
+    description: The regime's political police force.
+    role_in_arc: Fired the coup's only fatal shots from its Lisbon headquarters, killing four civilians before surrendering.
+    defected: false
+tactics:
+  - tactic_type: defection-fraternization
+    description: The coup was carried out by serving army units themselves refusing to defend the regime, the decisive act rather than a supporting one.
+    prominence: primary
+  - tactic_type: occupation
+    description: Armed Forces Movement units seized the national radio and television stations, the airport, and government ministries within hours of the coup's start.
+    prominence: primary
+  - tactic_type: mass-demonstration
+    description: Spontaneous crowds filled central Lisbon within hours, physically surrounding army vehicles in celebration rather than confrontation.
+    prominence: secondary
+resistance_type: nonviolent
+phases:
+  - phase: old-regime-crisis
+    label: Thirteen years of colonial war
+    t_start: 0
+    t_end: 0.12
+    intensity: 55
+    reached: true
+    summary: Portugal's wars in Angola, Mozambique, and Guinea-Bissau drain the treasury and exhaust the officer corps by the early 1970s.
+    key_events:
+      - Colonial wars begin, 1961
+      - 1973 officer seniority decree angers career officers
+  - phase: the-spark
+    label: Two songs and a coup
+    date_start: '1974-04-25'
+    t_start: 0.22
+    t_end: 0.34
+    intensity: 90
+    reached: true
+    summary: A pair of coded radio broadcasts signal Armed Forces Movement units to move at dawn, and Lisbon's key installations fall within hours.
+    key_events:
+      - E depois do adeus broadcast as first signal
+      - Grandola Vila Morena broadcast as second signal
+      - Armed Forces Movement units seize Lisbon, April 25, 1974
+  - phase: radical-phase
+    label: PREC
+    t_start: 0.6
+    t_end: 0.72
+    intensity: 65
+    reached: true
+    summary: The Processo Revolucionario Em Curso sees factional struggle between moderates and a more radical left through 1975, including an attempted leftist countercoup.
+    key_events:
+      - Nationalization wave, 1974-75
+      - Attempted leftist coup, November 25, 1975
+  - phase: consolidation
+    label: The 1976 constitution
+    t_start: 0.92
+    t_end: 1
+    intensity: 45
+    reached: true
+    summary: Portugal holds its first free elections in April 1975 and adopts a democratic constitution in 1976.
+    key_events:
+      - First free elections, April 1975
+      - 1976 constitution adopted
+outcome: consolidated-democracy
+peak_participation_pct: null
+peak_participation_display: Hundreds of thousands of Lisbon residents filled the streets within hours of the coup, though the decisive action was the army's own defection rather than prior mass mobilization
+crossed_participation_threshold: null
+military_defection: full
+foreign_intervention: none
+duration_days: 1
+death_toll: Four civilians killed by PIDE gunfire at its Lisbon headquarters; otherwise close to bloodless.
+death_toll_low: 4
+death_toll_high: 4
+regime_before: personalist
+regime_after: democracy
+democratization_delta: 4
+success_factors:
+  - factor_key: security-force-defection
+    label: Security force defection is the single strongest predictor of rapid regime collapse
+    framework: chenoweth
+    status: confirmed
+    direction: favors-movement
+    base_rate: Movements that achieve security force defection succeed at markedly higher rates than those that do not, across the cross-national record
+    rationale: The coup succeeded because it was carried out by the military itself, not because the military had to be persuaded to abandon a regime it still defended.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+  - factor_key: nonviolent-success-rate
+    label: Low-violence campaigns succeed more often than armed ones
+    framework: chenoweth
+    status: confirmed
+    direction: favors-movement
+    base_rate: Nonviolent campaigns succeed roughly 53% of the time historically, versus about 26% for armed campaigns
+    rationale: A near-bloodless outcome, four deaths, matches the historical pattern that low-violence transitions succeed at markedly higher rates.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+  - factor_key: incumbent-coercive-exhaustion
+    label: Prolonged external conflict can exhaust an incumbent's coercive apparatus before a challenger even appears
+    framework: goldstone
+    status: confirmed
+    direction: favors-movement
+    base_rate: An incumbent regime whose coercive apparatus is exhausted by prolonged external conflict is structurally vulnerable to even a small, well-organized internal challenge
+    rationale: Thirteen years of colonial war had already broken the officer corps' loyalty to the regime before a single carnation was placed in a rifle.
+    sources:
+      - 'Goldstone, Revolutions: A Very Short Introduction (2014)'
+key_figures:
+  - name: Marcelo Caetano
+    role: Deposed Prime Minister of the Estado Novo
+    born: 1906
+    died: 1980
+  - name: Otelo Saraiva de Carvalho
+    role: Chief military planner of the coup
+    born: 1936
+    died: 2009
+  - name: Mario Soares
+    role: Opposition leader, later prime minister and president
+    born: 1924
+    died: 2017
+  - name: Antonio de Spinola
+    role: General and first post-coup president
+    born: 1910
+    died: 1996
+legacy_points:
+  - The revolution's name comes from carnations placed in soldiers' rifle barrels by Celeste Caeiro and other Lisbon civilians on the morning of April 25, 1974.
+  - Portugal granted independence to Angola, Mozambique, Guinea-Bissau, Cape Verde, and Sao Tome and Principe within eighteen months of the coup.
+  - Portugal joined the European Community in 1986, cementing its democratic consolidation within little more than a decade of the coup.
+  - April 25 is now a national holiday, Freedom Day, marked across Portugal every year.
+related_revolt_slugs:
+  - euromaidan
+  - anti-apartheid
+related_history_slugs: []
+is_published: true
+perspectives:
+  - viewpoint: Armed Forces Movement officer view
+    viewpoint_type: military
+    region_origin: Portugal
+    narrative: The war in Africa could not be won militarily and the regime could not be reformed from within, leaving the army itself as the only institution capable of ending both at once.
+    key_arguments:
+      - Colonial war casualties and budget strain had become unsustainable by 1973
+      - Officers who had served multiple African tours concluded no military victory was achievable
+      - Reform attempts within the Estado Novo's own structures had repeatedly failed
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - colonial war exhaustion
+      - officer testimony from multiple African tours
+    omitted:
+      - the retornado settler displacement that followed decolonization
+      - PREC-era political instability
+  - viewpoint: Retornado settler view
+    viewpoint_type: diaspora
+    region_origin: Portugal, Angola, and Mozambique
+    narrative: Over half a million settlers were displaced from Angola and Mozambique within months of the coup, a rupture rarely centered in the celebratory national memory of April 25.
+    key_arguments:
+      - Decolonization's speed left little time for an orderly settler transition
+      - Many retornados arrived in Portugal with only what they could carry
+      - Their displacement is often treated as a footnote to the coup's domestic celebration
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - the speed of the settler exodus
+      - economic hardship on arrival in Portugal
+    omitted:
+      - the colonial war's cost to Angolan and Mozambican populations
+      - the democratic gains that followed in Portugal itself
+media: []
+connections:
+  - target_slug: euromaidan
+    connection_type: parallel
+    description: 'Both revolutions turned on the same hinge: a security apparatus refusing, at the decisive moment, to defend the regime it served.'
+  - target_slug: anti-apartheid
+    connection_type: parallel
+    description: Both produced negotiated rather than violently contested transitions, though Portugal's took a single day and South Africa's took decades.

@@ -211,6 +211,10 @@ export interface Revolution {
   analysisReviewedAt?: string;
   predictionConfidence?: string;
 
+  /** void --onair companion audio (narrated anatomy). Null = not generated. */
+  audioUrl?: string | null;
+  audioDuration?: number | null;
+
   published: boolean;
 }
 
