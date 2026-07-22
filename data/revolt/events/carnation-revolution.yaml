@@ -109,7 +109,7 @@ death_toll_low: 4
 death_toll_high: 4
 regime_before: personalist
 regime_after: democracy
-democratization_delta: 4
+democratization_delta: 3
 success_factors:
   - factor_key: security-force-defection
     label: Security force defection is the single strongest predictor of rapid regime collapse

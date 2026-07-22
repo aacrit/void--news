@@ -785,7 +785,7 @@ export const MOCK_HISTORICAL_EXTRA_2: Revolution[] = [
   deathTollHigh: 4,
   regimeBefore: "personalist",
   regimeAfter: "democracy",
-  democratizationDelta: 4,
+  democratizationDelta: 3,
   successFactors: [
     { factorKey: "security-force-defection", label: "Security force defection is the single strongest predictor of rapid regime collapse", framework: "chenoweth", status: "confirmed", direction: "favors-movement", baseRate: "Movements that achieve security force defection succeed at markedly higher rates than those that do not, across the cross-national record", rationale: "The coup succeeded because it was carried out by the military itself, not because the military had to be persuaded to abandon a regime it still defended.", sources: ["Chenoweth and Stephan, Why Civil Resistance Works (2011)"] },
     { factorKey: "nonviolent-success-rate", label: "Low-violence campaigns succeed more often than armed ones", framework: "chenoweth", status: "confirmed", direction: "favors-movement", baseRate: "Nonviolent campaigns succeed roughly 53% of the time historically, versus about 26% for armed campaigns", rationale: "A near-bloodless outcome, four deaths, matches the historical pattern that low-violence transitions succeed at markedly higher rates.", sources: ["Chenoweth and Stephan, Why Civil Resistance Works (2011)"] },
