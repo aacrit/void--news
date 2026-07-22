@@ -117,6 +117,10 @@ export default function NavBar({
             <span className="nav-history__rule" aria-hidden="true" />
             <span className="nav-history__label">Weekly</span>
           </Link>
+          <Link href="/revolt" className="nav-history nav-revolt" aria-label="Go to Revolt, the anatomy of revolutions" title="void --revolt">
+            <span className="nav-history__rule" aria-hidden="true" />
+            <span className="nav-history__label">Revolt</span>
+          </Link>
         </nav>
 
         <div className="nav-right">

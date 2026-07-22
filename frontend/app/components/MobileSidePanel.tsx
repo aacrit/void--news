@@ -144,6 +144,10 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
             <span className="msp__link-cmd">void --weekly</span>
             <span className="msp__link-desc">The week in review</span>
           </Link>
+          <Link href="/revolt" className="msp__link" data-msp-cascade="2" onClick={handleLinkClick}>
+            <span className="msp__link-cmd">void --revolt</span>
+            <span className="msp__link-desc">The anatomy of revolution</span>
+          </Link>
           {/* /paper hidden from nav per CEO 2026-05-15 — not production-ready.
               Route still resolves at /paper for direct URL access. */}
 

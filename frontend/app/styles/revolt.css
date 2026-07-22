@@ -1,0 +1,569 @@
+/* ===========================================================================
+   void --revolt — "Barricade Press"
+   History's opposite temperament in the same paper: risograph-samizdat urgency.
+   Barlow-Condensed placards over Playfair analysis. Crimson-iron on bone.
+   Hard, zero-blur block shadows. Light = "Proclamation"; dark = "Curfew".
+   Consumes the global scaffold (--canvas-max, --space-*, --text-*, --font-*);
+   adds only the --rev-* palette + hard-edge system + easings. All .rev-* / .revolt-page.
+   =========================================================================== */
+
+.revolt-page {
+  /* ── Surfaces + ink (light "Proclamation") ── */
+  --rev-bone: #F2ECDE;
+  --rev-bone-deep: #E8E0CE;
+  --rev-newsprint: #F6F1E6;
+  --rev-ink: #1A1613;
+  --rev-ink-secondary: #463C33;
+  --rev-ink-muted: #63574A;
+  --rev-iron: #3A342C;
+
+  /* ── Crimson (structural only; never running body text) ── */
+  --rev-crimson: #B01217;
+  --rev-crimson-bright: #C81A20;
+  --rev-crimson-deep: #8A0D12;
+  --rev-crimson-ghost: rgba(176, 18, 23, 0.06);
+  --rev-crimson-fg: #F2ECDE;
+
+  /* ── Actor identity (analog of --hist-persp-a..f) ── */
+  --rev-actor-vanguard: #A8121A;
+  --rev-actor-masses: #4A4136;
+  --rev-actor-defect: #9A7A1C;
+  --rev-actor-reaction: #5E3A66;
+  --rev-actor-foreign: #256A6E;
+
+  /* ── Brinton phase ramp (a sequential temperature story) ── */
+  --rev-phase-1: #4A5560;
+  --rev-phase-2: #8A6D1E;
+  --rev-phase-3: #C24A1C;
+  --rev-phase-4: #B01217;
+  --rev-phase-5: #7A4A52;
+  --rev-phase-6: #3A342C;
+
+  /* ── Live + signal ── */
+  --rev-live: #C81A20;
+  --rev-live-ghost: rgba(200, 26, 32, 0.14);
+  --rev-signal-yes: #4E6A3C;
+  --rev-signal-no: #8E5B42;
+  --rev-signal-partial: #8A6D1E;
+
+  /* ── Hard-edge system (the anti-history: zero-blur offset block shadows) ── */
+  --rev-edge: 3px 3px 0 0 var(--rev-iron);
+  --rev-edge-hover: 5px 5px 0 0 var(--rev-iron);
+  --rev-edge-crimson: 4px 4px 0 0 var(--rev-crimson);
+  --rev-edge-pressed: 1px 1px 0 0 var(--rev-iron);
+
+  /* ── Easings ── */
+  --rev-ease-stamp: cubic-bezier(0.2, 1.8, 0.3, 1);
+  --rev-ease-cut: cubic-bezier(0.85, 0, 0.15, 1);
+
+  background: var(--rev-bone);
+  color: var(--rev-ink);
+  min-height: 100vh;
+  font-family: var(--font-structural), system-ui, sans-serif;
+}
+
+:root[data-mode="dark"] .revolt-page {
+  /* "Curfew": oxblood on soot */
+  --rev-bone: #16120E;
+  --rev-bone-deep: #201A15;
+  --rev-newsprint: #1C1712;
+  --rev-ink: #ECE3D2;
+  --rev-ink-secondary: #C9BCA6;
+  --rev-ink-muted: #A0957F;
+  --rev-iron: #8A8177;
+
+  --rev-crimson: #EA3E36;        /* 4.68:1 on soot — AA text */
+  --rev-crimson-bright: #F2564C;
+  --rev-crimson-deep: #C41F1C;   /* fills only */
+  --rev-crimson-ghost: rgba(234, 62, 54, 0.10);
+  --rev-crimson-fg: #16120E;
+
+  --rev-actor-vanguard: #E85A5A;
+  --rev-actor-masses: #B8AD9A;
+  --rev-actor-defect: #D4A94A;
+  --rev-actor-reaction: #B085BE;
+  --rev-actor-foreign: #52A8AD;
+
+  --rev-phase-1: #7E8A96;
+  --rev-phase-2: #C6A24A;
+  --rev-phase-3: #E06A3A;
+  --rev-phase-4: #EA3E36;
+  --rev-phase-5: #C08A92;
+  --rev-phase-6: #8A8177;
+
+  --rev-live: #F2564C;
+  --rev-live-ghost: rgba(242, 86, 76, 0.18);
+
+  --rev-edge: 3px 3px 0 0 var(--rev-iron);
+  --rev-edge-hover: 5px 5px 0 0 var(--rev-iron);
+}
+
+/* ── Diagonal Rodchenko rake (subtle texture) ── */
+.revolt-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: repeating-linear-gradient(
+    -18deg,
+    transparent 0,
+    transparent 46px,
+    var(--rev-crimson-ghost) 46px,
+    var(--rev-crimson-ghost) 47px
+  );
+  opacity: 0.5;
+}
+.revolt-page > * { position: relative; z-index: 1; }
+
+/* ── Chrome: topbar + footer ── */
+.rev-topbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 2px solid var(--rev-iron);
+  background: var(--rev-bone);
+}
+.rev-topbar__brand {
+  font-family: var(--font-meta), sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: var(--text-lg);
+  color: var(--rev-ink);
+  text-decoration: none;
+}
+.rev-topbar__brand b { color: var(--rev-crimson); }
+.rev-topbar__spacer { flex: 1; }
+.rev-topbar__link {
+  font-family: var(--font-meta), sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: var(--text-sm);
+  color: var(--rev-ink-secondary);
+  text-decoration: none;
+  padding: 4px 6px;
+}
+.rev-topbar__link:hover { color: var(--rev-crimson); }
+
+.rev-footer {
+  border-top: 2px solid var(--rev-iron);
+  padding: var(--space-5) var(--space-4);
+  margin-top: var(--space-7);
+  color: var(--rev-ink-muted);
+  font-size: var(--text-sm);
+}
+.rev-footer a { color: var(--rev-ink-secondary); }
+
+/* ── Layout shell ── */
+.rev-shell {
+  max-width: var(--canvas-max);
+  margin: 0 auto;
+  padding: 0 var(--space-4);
+}
+
+/* ── Landing hero ── */
+.rev-hero {
+  padding: var(--space-7) 0 var(--space-5);
+  border-bottom: 3px solid var(--rev-crimson);
+}
+.rev-hero__kicker {
+  font-family: var(--font-data), monospace;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--rev-crimson);
+}
+.rev-hero__title {
+  font-family: var(--font-meta), sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 0.95;
+  font-size: clamp(2.6rem, 8vw, 5.5rem);
+  margin: var(--space-2) 0;
+  color: var(--rev-ink);
+}
+.rev-hero__sub {
+  font-family: var(--font-editorial), serif;
+  font-size: var(--text-lg);
+  line-height: 1.5;
+  max-width: 60ch;
+  color: var(--rev-ink-secondary);
+}
+
+/* ── Section banner (full-bleed crimson, label knocked out) ── */
+.rev-banner {
+  background: var(--rev-crimson);
+  color: var(--rev-crimson-fg);
+  font-family: var(--font-meta), sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: var(--text-md);
+  padding: 8px var(--space-3);
+  margin: var(--space-6) 0 var(--space-4);
+  display: inline-block;
+  box-shadow: var(--rev-edge);
+}
+
+/* ── Revolution card grid ── */
+.rev-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--space-4);
+}
+.rev-card {
+  display: block;
+  background: var(--rev-newsprint);
+  border: 2px solid var(--rev-iron);
+  box-shadow: var(--rev-edge);
+  padding: var(--space-4);
+  text-decoration: none;
+  color: var(--rev-ink);
+  transition: box-shadow 0.18s var(--rev-ease-cut), transform 0.18s var(--rev-ease-cut);
+}
+.rev-card:hover {
+  box-shadow: var(--rev-edge-hover);
+  transform: translate(-2px, -2px);
+}
+.rev-card:active { box-shadow: var(--rev-edge-pressed); transform: translate(1px, 1px); }
+.rev-card__meta {
+  font-family: var(--font-data), monospace;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--rev-ink-muted);
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.rev-card__title {
+  font-family: var(--font-meta), sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: var(--text-xl);
+  line-height: 1.02;
+  margin: 8px 0;
+}
+.rev-card__hook {
+  font-family: var(--font-editorial), serif;
+  font-size: var(--text-sm);
+  line-height: 1.45;
+  color: var(--rev-ink-secondary);
+}
+.rev-card__outcome {
+  margin-top: var(--space-2);
+  font-family: var(--font-data), monospace;
+  font-size: var(--text-xs);
+  color: var(--rev-ink-muted);
+}
+
+/* ── LIVE stamp + active edge ── */
+.rev-live-stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-data), monospace;
+  font-size: var(--text-xxs);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--rev-crimson-fg);
+  background: var(--rev-live);
+  padding: 2px 6px;
+  transform: rotate(-2deg);
+}
+.rev-live-stamp__dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--rev-crimson-fg);
+  animation: rev-pulse 1.6s ease-in-out infinite;
+}
+@keyframes rev-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+.rev-card--active { border-color: var(--rev-crimson); }
+
+/* ── The Stage (deep-dive cold open) ── */
+.rev-stage {
+  min-height: 62vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--space-7) var(--space-4) var(--space-5);
+  border-bottom: 3px solid var(--rev-crimson);
+  background: var(--rev-bone-deep);
+  position: relative;
+  overflow: hidden;
+}
+.rev-stage__hero-img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  opacity: 0.22;
+  filter: grayscale(0.3) contrast(1.05);
+}
+.rev-stage__inner { position: relative; max-width: var(--canvas-max); margin: 0 auto; width: 100%; }
+.rev-stage__kicker {
+  font-family: var(--font-data), monospace;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--rev-crimson);
+}
+.rev-stage__title {
+  font-family: var(--font-meta), sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 0.94;
+  font-size: clamp(2.4rem, 7vw, 5rem);
+  margin: 8px 0;
+}
+.rev-stage__sub {
+  font-family: var(--font-editorial), serif;
+  font-size: var(--text-lg);
+  color: var(--rev-ink-secondary);
+  max-width: 56ch;
+}
+
+/* ── The Ledger ── */
+.rev-ledger {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: var(--space-5);
+  max-width: var(--canvas-max);
+  margin: var(--space-5) auto;
+  padding: 0 var(--space-4);
+}
+@media (max-width: 767px) { .rev-ledger { grid-template-columns: 1fr; } }
+.rev-ledger__facts { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.rev-ledger__facts dt {
+  font-family: var(--font-data), monospace;
+  font-size: var(--text-xxs);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--rev-ink-muted);
+}
+.rev-ledger__facts dd {
+  margin: 2px 0 0;
+  font-family: var(--font-data), monospace;
+  font-variant-numeric: tabular-nums;
+  font-size: var(--text-md);
+  color: var(--rev-ink);
+}
+.rev-verdict {
+  border-left: 4px solid var(--rev-crimson);
+  padding: var(--space-3);
+  background: var(--rev-crimson-ghost);
+  font-family: var(--font-editorial), serif;
+  font-size: var(--text-md);
+  line-height: 1.5;
+}
+
+/* ── The Anatomy Reel ── */
+.rev-reel {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  gap: 0;
+  scrollbar-width: thin;
+}
+.rev-reel__frame {
+  scroll-snap-align: center;
+  flex: 0 0 min(88vw, 720px);
+  padding: var(--space-6) var(--space-5);
+  border-right: 1px dashed var(--rev-iron);
+  min-height: 58vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+@media (max-width: 767px) {
+  .rev-reel { scroll-snap-type: y mandatory; flex-direction: column; overflow-x: hidden; }
+  .rev-reel__frame { flex: none; border-right: none; border-bottom: 1px dashed var(--rev-iron); min-height: auto; }
+}
+.rev-frame__index {
+  font-family: var(--font-data), monospace;
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--rev-phase-hue, var(--rev-crimson));
+}
+.rev-frame__label {
+  font-family: var(--font-meta), sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: var(--text-2xl);
+  line-height: 1;
+  margin: 6px 0 4px;
+  color: var(--rev-ink);
+}
+.rev-frame__date { font-family: var(--font-data), monospace; font-size: var(--text-sm); color: var(--rev-ink-muted); }
+.rev-frame__body {
+  font-family: var(--font-editorial), serif;
+  font-size: var(--text-lg);
+  line-height: 1.5;
+  margin: var(--space-3) 0;
+  color: var(--rev-ink-secondary);
+  max-width: 52ch;
+}
+.rev-frame--unreached { opacity: 0.5; }
+.rev-frame--unreached .rev-frame__label { text-decoration: line-through; text-decoration-color: var(--rev-crimson); }
+.rev-frame__events { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.rev-frame__events li {
+  font-family: var(--font-data), monospace;
+  font-size: var(--text-xs);
+  border: 1px solid var(--rev-iron);
+  padding: 2px 6px;
+  color: var(--rev-ink-secondary);
+}
+
+/* Grievance pressure gauge */
+.rev-gauge { display: grid; gap: 10px; margin: var(--space-3) 0; max-width: 44ch; }
+.rev-gauge__row { display: grid; gap: 3px; }
+.rev-gauge__label {
+  display: flex; justify-content: space-between;
+  font-family: var(--font-data), monospace;
+  font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--rev-ink-muted);
+}
+.rev-gauge__bar { height: 8px; background: var(--rev-bone-deep); border: 1px solid var(--rev-iron); }
+.rev-gauge__fill { height: 100%; background: var(--rev-crimson); }
+
+/* Actors + tactics */
+.rev-actors { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-3); }
+.rev-actor {
+  border-left: 4px solid var(--actor-color, var(--rev-iron));
+  padding: 4px 0 4px var(--space-2);
+}
+.rev-actor__name { font-family: var(--font-meta), sans-serif; font-weight: 600; text-transform: uppercase; font-size: var(--text-sm); }
+.rev-actor__role { font-size: var(--text-sm); color: var(--rev-ink-secondary); }
+.rev-actor__badge {
+  font-family: var(--font-data), monospace; font-size: var(--text-xxs);
+  text-transform: uppercase; color: var(--rev-signal-yes);
+}
+
+/* ── Scrubber ── */
+.rev-scrubber {
+  position: sticky; bottom: 0; z-index: 5;
+  background: var(--rev-bone);
+  border-top: 2px solid var(--rev-iron);
+  padding: 10px var(--space-4);
+}
+.rev-scrubber__readout {
+  font-family: var(--font-meta), sans-serif; font-weight: 700;
+  text-transform: uppercase; font-size: var(--text-sm);
+  color: var(--rev-crimson);
+  margin-bottom: 6px;
+}
+.rev-scrubber__track { position: relative; height: 20px; }
+.rev-scrubber__rail { position: absolute; top: 9px; left: 0; right: 0; height: 2px; background: var(--rev-iron); }
+.rev-scrubber__node {
+  position: absolute; top: 4px; width: 12px; height: 12px;
+  transform: translateX(-50%) rotate(45deg);
+  background: var(--rev-bone); border: 2px solid var(--node-color, var(--rev-iron));
+  cursor: pointer; padding: 0;
+}
+.rev-scrubber__node--active { background: var(--node-color, var(--rev-crimson)); }
+
+/* ── Success scorecard ── */
+.rev-scorecard { display: grid; gap: var(--space-3); }
+.rev-factor {
+  border: 2px solid var(--rev-iron);
+  box-shadow: var(--rev-edge);
+  background: var(--rev-newsprint);
+  padding: var(--space-3);
+}
+.rev-factor__head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.rev-factor__label { font-family: var(--font-meta), sans-serif; font-weight: 700; text-transform: uppercase; font-size: var(--text-md); }
+.rev-factor__dir {
+  font-family: var(--font-data), monospace; font-size: var(--text-xxs);
+  text-transform: uppercase; letter-spacing: 0.06em; padding: 2px 6px; border: 1px solid currentColor;
+}
+.rev-factor__dir--favors-movement { color: var(--rev-signal-yes); }
+.rev-factor__dir--favors-regime { color: var(--rev-signal-no); }
+.rev-factor__dir--indeterminate { color: var(--rev-ink-muted); }
+.rev-factor__baserate {
+  font-family: var(--font-editorial), serif; font-style: italic;
+  color: var(--rev-ink-secondary); margin: 8px 0 4px; font-size: var(--text-sm); line-height: 1.5;
+}
+.rev-factor__status { font-size: var(--text-sm); line-height: 1.5; }
+.rev-factor__src { font-family: var(--font-data), monospace; font-size: var(--text-xxs); color: var(--rev-ink-muted); margin-top: 6px; }
+
+/* Bands */
+.rev-band {
+  font-family: var(--font-meta), sans-serif; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  padding: 3px 10px; display: inline-block; box-shadow: var(--rev-edge-pressed);
+}
+.rev-band--favorable { background: var(--rev-signal-yes); color: var(--rev-crimson-fg); }
+.rev-band--contested { background: var(--rev-signal-partial); color: var(--rev-crimson-fg); }
+.rev-band--low { background: var(--rev-signal-no); color: var(--rev-crimson-fg); }
+.rev-band--none { background: var(--rev-bone-deep); color: var(--rev-ink-muted); }
+
+.rev-count {
+  font-family: var(--font-data), monospace; font-variant-numeric: tabular-nums;
+  font-size: var(--text-md); color: var(--rev-ink);
+}
+
+/* Disclaimer + review stamp */
+.rev-disclaimer {
+  border: 1px dashed var(--rev-crimson);
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-data), monospace;
+  font-size: var(--text-xs);
+  color: var(--rev-ink-secondary);
+  margin: var(--space-3) 0;
+}
+.rev-review-stamp {
+  font-family: var(--font-data), monospace; font-size: var(--text-xxs);
+  text-transform: uppercase; letter-spacing: 0.08em; color: var(--rev-ink-muted);
+}
+
+/* ── Live cards ── */
+.rev-livecards { display: grid; gap: var(--space-2); }
+.rev-livecard {
+  border-left: 3px solid var(--rev-live);
+  padding: 8px var(--space-2);
+  background: var(--rev-live-ghost);
+}
+.rev-livecard__title { font-family: var(--font-structural), sans-serif; font-weight: 600; font-size: var(--text-sm); }
+.rev-livecard__meta { font-family: var(--font-data), monospace; font-size: var(--text-xxs); color: var(--rev-ink-muted); }
+.rev-livecards__label {
+  font-family: var(--font-data), monospace; font-size: var(--text-xxs);
+  text-transform: uppercase; letter-spacing: 0.1em; color: var(--rev-ink-muted);
+}
+
+/* ── Active tracker ── */
+.rev-tracker { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: var(--space-4); }
+
+/* ── Section headings ── */
+.rev-h2 {
+  font-family: var(--font-meta), sans-serif; font-weight: 700;
+  text-transform: uppercase; font-size: var(--text-2xl);
+  margin: var(--space-5) 0 var(--space-3);
+}
+.rev-prose {
+  font-family: var(--font-editorial), serif; font-size: var(--text-md);
+  line-height: 1.6; max-width: 68ch; color: var(--rev-ink-secondary);
+}
+
+/* ── States ── */
+.rev-loading, .rev-empty {
+  padding: var(--space-7) var(--space-4); text-align: center;
+  font-family: var(--font-data), monospace; color: var(--rev-ink-muted);
+}
+
+/* ── Focus + reduced motion ── */
+.revolt-page a:focus-visible,
+.revolt-page button:focus-visible {
+  outline: 2px solid var(--rev-crimson);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .revolt-page *, .revolt-page *::before, .revolt-page *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
