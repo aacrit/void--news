@@ -4,7 +4,7 @@ import Link from 'next/link';
 import type { Revolution, LiveCard } from '../types';
 import { isLiveStatus } from '../types';
 import { phaseSpec, STATUS_LABELS } from '../anatomy';
-import { heroImageFor } from '../images';
+import { heroImageFor, thumbUrl } from '../images';
 import SuccessScorecard from './SuccessScorecard';
 import LiveRevoltCards from './LiveRevoltCards';
 import RevoltAudioCue from './RevoltAudioCue';
@@ -18,7 +18,7 @@ export default function ActiveRevolutionDetail({ revolution: r, liveCards }: { r
     <article>
       <section className="rev-stage">
         {(r.heroImage ?? heroImageFor(r.slug)) && (
-          <img className="rev-stage__hero-img" src={r.heroImage ?? heroImageFor(r.slug)} alt="" aria-hidden="true" />
+          <img className="rev-stage__hero-img" src={thumbUrl(r.heroImage ?? heroImageFor(r.slug), 1600)} alt="" aria-hidden="true" decoding="async" />
         )}
         <div className="rev-stage__inner">
           <p className="rev-stage__kicker">

@@ -1,21 +1,22 @@
 /* ===========================================================================
-   void --revolt — "Barricade Press" (blueprint palette)
-   The section reads like a schematic of revolution: royal-blue drafting ink on
-   cool paper (light "Drafting Paper"), sky-blue on deep navy (dark "Cyanotype").
-   Barlow-Condensed placards over Playfair analysis; hard, zero-blur block shadows.
-   Consumes the global scaffold (--canvas-max, --space-*, --text-*, --font-*);
-   adds only the --rev-* palette + hard-edge system + easings. All .rev-* / .revolt-page.
+   void --revolt — "Barricade Press" (blueprint accent)
+   Surfaces = the shared void --news scaffold (neutral paper light / walnut dark,
+   mode-aware) so the background stays quiet and reads as one paper with the rest
+   of the site. The ONE distinctive element is a blueprint-blue accent: royal
+   cobalt in light, sky blue in dark. Barlow-Condensed placards over Playfair
+   analysis; hard, zero-blur block shadows.
+   Adds only the --rev-* palette + hard-edge system + easings. All .rev-* / .revolt-page.
    =========================================================================== */
 
 .revolt-page {
-  /* ── Surfaces + ink (light "Drafting Paper": cool blueprint stock) ── */
-  --rev-bone: #E8EDF5;
-  --rev-bone-deep: #D7E0EE;
-  --rev-newsprint: #F1F5FB;
-  --rev-ink: #131C2E;
-  --rev-ink-secondary: #33415B;
-  --rev-ink-muted: #5A6785;
-  --rev-iron: #2E3A52;
+  /* ── Surfaces + ink: inherit the site scaffold (same as void --news) ── */
+  --rev-bone: var(--bg-primary);
+  --rev-bone-deep: var(--bg-secondary);
+  --rev-newsprint: var(--bg-card);
+  --rev-ink: var(--fg-primary);
+  --rev-ink-secondary: var(--fg-secondary);
+  --rev-ink-muted: var(--fg-muted);
+  --rev-iron: var(--border-strong);
 
   /* ── Accent (royal/cobalt blueprint ink). Structural only; never body text. ── */
   --rev-accent: #1E40AF;
@@ -63,16 +64,8 @@
 }
 
 :root[data-mode="dark"] .revolt-page {
-  /* "Cyanotype": sky-blue on deep navy */
-  --rev-bone: #0D1524;
-  --rev-bone-deep: #14203A;
-  --rev-newsprint: #111C33;
-  --rev-ink: #DCE6F5;
-  --rev-ink-secondary: #AEBED8;
-  --rev-ink-muted: #7E8DAC;
-  --rev-iron: #40506E;
-
-  --rev-accent: #6AA0FF;          /* sky/cornflower, ~6.9:1 on navy — AA text */
+  /* Surfaces inherit the site's dark scaffold (walnut); only the accent shifts. */
+  --rev-accent: #6AA0FF;          /* sky/cornflower, high contrast on walnut — AA text */
   --rev-accent-bright: #8FBAFF;
   --rev-accent-deep: #3E6FD0;     /* fills only */
   --rev-accent-ghost: rgba(106, 160, 255, 0.14);

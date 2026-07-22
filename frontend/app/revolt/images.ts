@@ -51,6 +51,17 @@ export const REVOLT_HERO_IMAGES: Record<string, RevoltHeroImage> = {
   'india-cockroach-janta': { url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Cockroach_Janta_Party_logo.svg/960px-Cockroach_Janta_Party_logo.svg.png', attribution: 'Cockroach Janta Party emblem, via Wikimedia Commons' },
 };
 
+/** Serve a width-capped Wikimedia thumbnail instead of the full original: a big
+   LCP/bandwidth win (a 150px card was pulling multi-MB originals). Special:FilePath
+   with ?width= never 404s on a width mismatch (returns the original if smaller). */
+export function thumbUrl(url: string | undefined, width = 1024): string | undefined {
+  if (!url) return url;
+  const m = url.match(/upload\.wikimedia\.org\/wikipedia\/([^/]+)\/(?:thumb\/)?[0-9a-f]\/[0-9a-f]{2}\/([^/]+?)(?:\/[0-9]+px-[^/]+)?$/);
+  if (!m) return url;
+  const host = m[1] === 'commons' ? 'commons.wikimedia.org' : `${m[1]}.wikipedia.org`;
+  return `https://${host}/wiki/Special:FilePath/${m[2]}?width=${width}`;
+}
+
 export function heroImageFor(slug: string): string | undefined {
   return REVOLT_HERO_IMAGES[slug]?.url;
 }
