@@ -15,6 +15,7 @@ const ACTOR_COLOR: Record<string, string> = {
   'organized-labor': 'var(--rev-actor-masses)',
   'students-youth': 'var(--rev-actor-masses)',
   'military-defectors': 'var(--rev-actor-defect)',
+  military: 'var(--rev-actor-defect)',
   'security-forces': 'var(--rev-actor-reaction)',
   'old-regime': 'var(--rev-actor-reaction)',
   regime: 'var(--rev-actor-reaction)',
