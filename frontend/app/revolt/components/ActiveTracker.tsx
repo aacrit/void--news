@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import type { Revolution } from '../types';
+import { isLiveStatus, statusRank } from '../types';
 import { STATUS_LABELS, phaseSpec } from '../anatomy';
 import { successBand, bandClass } from '../scoring';
 import { fetchActiveRevolutions } from '../data';
@@ -37,12 +38,15 @@ export default function ActiveTracker() {
       {rows === null && <p className="rev-loading">Reading the record&hellip;</p>}
 
       <div className="rev-tracker" style={{ marginTop: 'var(--space-4)' }}>
-        {(rows ?? []).map((r) => {
+        {[...(rows ?? [])].sort((a, b) => statusRank(a.status) - statusRank(b.status)).map((r) => {
           const band = successBand(r.successFactors);
+          const live = isLiveStatus(r.status);
           return (
-            <Link href={`/revolt/active/${r.slug}`} className="rev-card rev-card--active" key={r.slug}>
+            <Link href={`/revolt/active/${r.slug}`} className={`rev-card${live ? ' rev-card--active' : ''}`} key={r.slug}>
               <div className="rev-card__meta">
-                <span className="rev-live-stamp"><span className="rev-live-stamp__dot" aria-hidden="true" />Live</span>
+                {live
+                  ? <span className="rev-live-stamp"><span className="rev-live-stamp__dot" aria-hidden="true" />Live</span>
+                  : <span className="rev-dormant-tag">{STATUS_LABELS[r.status]}</span>}
                 <span>{r.country}</span>
               </div>
               <div className="rev-card__title">{r.title}</div>

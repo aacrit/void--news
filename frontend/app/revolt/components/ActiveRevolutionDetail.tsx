@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import type { Revolution, LiveCard } from '../types';
+import { isLiveStatus } from '../types';
 import { phaseSpec, STATUS_LABELS } from '../anatomy';
 import { heroImageFor } from '../images';
 import SuccessScorecard from './SuccessScorecard';
@@ -21,7 +22,9 @@ export default function ActiveRevolutionDetail({ revolution: r, liveCards }: { r
         )}
         <div className="rev-stage__inner">
           <p className="rev-stage__kicker">
-            <span className="rev-live-stamp"><span className="rev-live-stamp__dot" aria-hidden="true" />Live</span>
+            {isLiveStatus(r.status)
+              ? <span className="rev-live-stamp"><span className="rev-live-stamp__dot" aria-hidden="true" />Live</span>
+              : <span className="rev-dormant-tag">{STATUS_LABELS[r.status]}</span>}
             &nbsp; {r.dateDisplay} &middot; {r.country}
           </p>
           <h1 className="rev-stage__title">{r.title}</h1>
@@ -48,7 +51,7 @@ export default function ActiveRevolutionDetail({ revolution: r, liveCards }: { r
             const spec = phaseSpec(p.phase);
             const isCurrent = p.reached && i === reachedCount - 1;
             return (
-              <li key={i} className={p.reached ? '' : 'rev-frame--unreached'} style={{ borderLeft: `4px solid ${p.reached ? (spec?.hueVar ?? 'var(--rev-oxide)') : 'var(--rev-iron)'}`, paddingLeft: '0.75rem' }}>
+              <li key={i} className={p.reached ? '' : 'rev-frame--unreached'} style={{ borderLeft: `4px solid ${p.reached ? (spec?.hueVar ?? 'var(--rev-accent)') : 'var(--rev-iron)'}`, paddingLeft: '0.75rem' }}>
                 <div className="rev-actor__name">{p.label}{isCurrent ? ' (where it is now)' : ''}</div>
                 <div className="rev-actor__role">{p.reached ? p.summary : 'Not reached.'}</div>
               </li>

@@ -267,6 +267,18 @@ export const REVOLT_REGIONS: RevoltRegionInfo[] = [
 
 export const ACTIVE_STATUSES: RevoltStatus[] = ['active', 'consolidating', 'dormant', 'watchlist'];
 
+/** Membership in the "Living" portal (includes dormant/watchlist for comparison). */
 export function isActiveStatus(s: RevoltStatus): boolean {
   return ACTIVE_STATUSES.includes(s);
+}
+
+/** Genuinely unfolding right now — only these earn the pulsing LIVE badge.
+   Dormant/suppressed and watchlist movements stay in the tracker but are not "live". */
+export function isLiveStatus(s: RevoltStatus): boolean {
+  return s === 'active' || s === 'consolidating';
+}
+
+/** Sort priority for the tracker: live first, dormant/suppressed last. */
+export function statusRank(s: RevoltStatus): number {
+  return { active: 0, consolidating: 1, watchlist: 2, dormant: 3, concluded: 4 }[s] ?? 5;
 }
