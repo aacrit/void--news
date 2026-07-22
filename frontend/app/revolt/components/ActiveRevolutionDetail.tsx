@@ -42,7 +42,7 @@ export default function ActiveRevolutionDetail({ revolution: r, liveCards }: { r
             const spec = phaseSpec(p.phase);
             const isCurrent = p.reached && i === reachedCount - 1;
             return (
-              <li key={i} className={p.reached ? '' : 'rev-frame--unreached'} style={{ borderLeft: `4px solid ${p.reached ? (spec?.hueVar ?? 'var(--rev-crimson)') : 'var(--rev-iron)'}`, paddingLeft: '0.75rem' }}>
+              <li key={i} className={p.reached ? '' : 'rev-frame--unreached'} style={{ borderLeft: `4px solid ${p.reached ? (spec?.hueVar ?? 'var(--rev-oxide)') : 'var(--rev-iron)'}`, paddingLeft: '0.75rem' }}>
                 <div className="rev-actor__name">{p.label}{isCurrent ? ' (where it is now)' : ''}</div>
                 <div className="rev-actor__role">{p.reached ? p.summary : 'Not reached.'}</div>
               </li>

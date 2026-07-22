@@ -1,7 +1,7 @@
 /* ===========================================================================
    void --revolt — "Barricade Press"
    History's opposite temperament in the same paper: risograph-samizdat urgency.
-   Barlow-Condensed placards over Playfair analysis. Crimson-iron on bone.
+   Barlow-Condensed placards over Playfair analysis. Oxblood-iron on bone.
    Hard, zero-blur block shadows. Light = "Proclamation"; dark = "Curfew".
    Consumes the global scaffold (--canvas-max, --space-*, --text-*, --font-*);
    adds only the --rev-* palette + hard-edge system + easings. All .rev-* / .revolt-page.
@@ -17,31 +17,32 @@
   --rev-ink-muted: #63574A;
   --rev-iron: #3A342C;
 
-  /* ── Crimson (structural only; never running body text) ── */
-  --rev-crimson: #B01217;
-  --rev-crimson-bright: #C81A20;
-  --rev-crimson-deep: #8A0D12;
-  --rev-crimson-ghost: rgba(176, 18, 23, 0.06);
-  --rev-crimson-fg: #F2ECDE;
+  /* ── Oxide (iron-oxide / oxblood: the color a red banner fades to, and rust
+        on a barricade). Structural only; never running body text. ── */
+  --rev-oxide: #7E2E20;
+  --rev-oxide-bright: #9A3A26;
+  --rev-oxide-deep: #5C2017;
+  --rev-oxide-ghost: rgba(126, 46, 32, 0.06);
+  --rev-oxide-fg: #F2ECDE;
 
   /* ── Actor identity (analog of --hist-persp-a..f) ── */
-  --rev-actor-vanguard: #A8121A;
+  --rev-actor-vanguard: #8E2E22;
   --rev-actor-masses: #4A4136;
   --rev-actor-defect: #9A7A1C;
   --rev-actor-reaction: #5E3A66;
-  --rev-actor-foreign: #256A6E;
+  --rev-actor-foreign: #2A6560;
 
   /* ── Brinton phase ramp (a sequential temperature story) ── */
   --rev-phase-1: #4A5560;
   --rev-phase-2: #8A6D1E;
-  --rev-phase-3: #C24A1C;
-  --rev-phase-4: #B01217;
-  --rev-phase-5: #7A4A52;
+  --rev-phase-3: #B0512A;
+  --rev-phase-4: #8A3120;
+  --rev-phase-5: #7A4A44;
   --rev-phase-6: #3A342C;
 
   /* ── Live + signal ── */
-  --rev-live: #C81A20;
-  --rev-live-ghost: rgba(200, 26, 32, 0.14);
+  --rev-live: #9A3324;
+  --rev-live-ghost: rgba(154, 51, 36, 0.14);
   --rev-signal-yes: #4E6A3C;
   --rev-signal-no: #8E5B42;
   --rev-signal-partial: #8A6D1E;
@@ -49,7 +50,7 @@
   /* ── Hard-edge system (the anti-history: zero-blur offset block shadows) ── */
   --rev-edge: 3px 3px 0 0 var(--rev-iron);
   --rev-edge-hover: 5px 5px 0 0 var(--rev-iron);
-  --rev-edge-crimson: 4px 4px 0 0 var(--rev-crimson);
+  --rev-edge-oxide: 4px 4px 0 0 var(--rev-oxide);
   --rev-edge-pressed: 1px 1px 0 0 var(--rev-iron);
 
   /* ── Easings ── */
@@ -72,13 +73,13 @@
   --rev-ink-muted: #A0957F;
   --rev-iron: #8A8177;
 
-  --rev-crimson: #EA3E36;        /* 4.68:1 on soot — AA text */
-  --rev-crimson-bright: #F2564C;
-  --rev-crimson-deep: #C41F1C;   /* fills only */
-  --rev-crimson-ghost: rgba(234, 62, 54, 0.10);
-  --rev-crimson-fg: #16120E;
+  --rev-oxide: #CE7C60;          /* rust/terracotta, ~5.5:1 on soot — AA text */
+  --rev-oxide-bright: #DE9076;
+  --rev-oxide-deep: #A34E38;     /* fills only */
+  --rev-oxide-ghost: rgba(206, 124, 96, 0.12);
+  --rev-oxide-fg: #16120E;
 
-  --rev-actor-vanguard: #E85A5A;
+  --rev-actor-vanguard: #DA8368;
   --rev-actor-masses: #B8AD9A;
   --rev-actor-defect: #D4A94A;
   --rev-actor-reaction: #B085BE;
@@ -86,13 +87,13 @@
 
   --rev-phase-1: #7E8A96;
   --rev-phase-2: #C6A24A;
-  --rev-phase-3: #E06A3A;
-  --rev-phase-4: #EA3E36;
-  --rev-phase-5: #C08A92;
+  --rev-phase-3: #D67A50;
+  --rev-phase-4: #D67E64;
+  --rev-phase-5: #C0928A;
   --rev-phase-6: #8A8177;
 
-  --rev-live: #F2564C;
-  --rev-live-ghost: rgba(242, 86, 76, 0.18);
+  --rev-live: #DE8060;
+  --rev-live-ghost: rgba(222, 128, 96, 0.18);
 
   --rev-edge: 3px 3px 0 0 var(--rev-iron);
   --rev-edge-hover: 5px 5px 0 0 var(--rev-iron);
@@ -109,8 +110,8 @@
     -18deg,
     transparent 0,
     transparent 46px,
-    var(--rev-crimson-ghost) 46px,
-    var(--rev-crimson-ghost) 47px
+    var(--rev-oxide-ghost) 46px,
+    var(--rev-oxide-ghost) 47px
   );
   opacity: 0.5;
 }
@@ -134,7 +135,7 @@
   color: var(--rev-ink);
   text-decoration: none;
 }
-.rev-topbar__brand b { color: var(--rev-crimson); }
+.rev-topbar__brand b { color: var(--rev-oxide); }
 .rev-topbar__spacer { flex: 1; }
 .rev-topbar__link {
   font-family: var(--font-meta), sans-serif;
@@ -145,7 +146,7 @@
   text-decoration: none;
   padding: 4px 6px;
 }
-.rev-topbar__link:hover { color: var(--rev-crimson); }
+.rev-topbar__link:hover { color: var(--rev-oxide); }
 
 .rev-footer {
   border-top: 2px solid var(--rev-iron);
@@ -166,14 +167,14 @@
 /* ── Landing hero ── */
 .rev-hero {
   padding: var(--space-7) 0 var(--space-5);
-  border-bottom: 3px solid var(--rev-crimson);
+  border-bottom: 3px solid var(--rev-oxide);
 }
 .rev-hero__kicker {
   font-family: var(--font-data), monospace;
   font-size: var(--text-xs);
   text-transform: uppercase;
   letter-spacing: 0.22em;
-  color: var(--rev-crimson);
+  color: var(--rev-oxide);
 }
 .rev-hero__title {
   font-family: var(--font-meta), sans-serif;
@@ -193,10 +194,10 @@
   color: var(--rev-ink-secondary);
 }
 
-/* ── Section banner (full-bleed crimson, label knocked out) ── */
+/* ── Section banner (full-bleed oxide, label knocked out) ── */
 .rev-banner {
-  background: var(--rev-crimson);
-  color: var(--rev-crimson-fg);
+  background: var(--rev-oxide);
+  color: var(--rev-oxide-fg);
   font-family: var(--font-meta), sans-serif;
   font-weight: 700;
   text-transform: uppercase;
@@ -270,18 +271,18 @@
   font-size: var(--text-xxs);
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  color: var(--rev-crimson-fg);
+  color: var(--rev-oxide-fg);
   background: var(--rev-live);
   padding: 2px 6px;
   transform: rotate(-2deg);
 }
 .rev-live-stamp__dot {
   width: 7px; height: 7px; border-radius: 50%;
-  background: var(--rev-crimson-fg);
+  background: var(--rev-oxide-fg);
   animation: rev-pulse 1.6s ease-in-out infinite;
 }
 @keyframes rev-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
-.rev-card--active { border-color: var(--rev-crimson); }
+.rev-card--active { border-color: var(--rev-oxide); }
 
 /* ── The Stage (deep-dive cold open) ── */
 .rev-stage {
@@ -290,7 +291,7 @@
   flex-direction: column;
   justify-content: flex-end;
   padding: var(--space-7) var(--space-4) var(--space-5);
-  border-bottom: 3px solid var(--rev-crimson);
+  border-bottom: 3px solid var(--rev-oxide);
   background: var(--rev-bone-deep);
   position: relative;
   overflow: hidden;
@@ -308,7 +309,7 @@
   font-size: var(--text-xs);
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: var(--rev-crimson);
+  color: var(--rev-oxide);
 }
 .rev-stage__title {
   font-family: var(--font-meta), sans-serif;
@@ -351,9 +352,9 @@
   color: var(--rev-ink);
 }
 .rev-verdict {
-  border-left: 4px solid var(--rev-crimson);
+  border-left: 4px solid var(--rev-oxide);
   padding: var(--space-3);
-  background: var(--rev-crimson-ghost);
+  background: var(--rev-oxide-ghost);
   font-family: var(--font-editorial), serif;
   font-size: var(--text-md);
   line-height: 1.5;
@@ -386,7 +387,7 @@
   font-size: var(--text-xs);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--rev-phase-hue, var(--rev-crimson));
+  color: var(--rev-phase-hue, var(--rev-oxide));
 }
 .rev-frame__label {
   font-family: var(--font-meta), sans-serif;
@@ -407,7 +408,7 @@
   max-width: 52ch;
 }
 .rev-frame--unreached { opacity: 0.5; }
-.rev-frame--unreached .rev-frame__label { text-decoration: line-through; text-decoration-color: var(--rev-crimson); }
+.rev-frame--unreached .rev-frame__label { text-decoration: line-through; text-decoration-color: var(--rev-oxide); }
 .rev-frame__events { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
 .rev-frame__events li {
   font-family: var(--font-data), monospace;
@@ -427,7 +428,7 @@
   color: var(--rev-ink-muted);
 }
 .rev-gauge__bar { height: 8px; background: var(--rev-bone-deep); border: 1px solid var(--rev-iron); }
-.rev-gauge__fill { height: 100%; background: var(--rev-crimson); }
+.rev-gauge__fill { height: 100%; background: var(--rev-oxide); }
 
 /* Actors + tactics */
 .rev-actors { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--space-3); }
@@ -452,7 +453,7 @@
 .rev-scrubber__readout {
   font-family: var(--font-meta), sans-serif; font-weight: 700;
   text-transform: uppercase; font-size: var(--text-sm);
-  color: var(--rev-crimson);
+  color: var(--rev-oxide);
   margin-bottom: 6px;
 }
 .rev-scrubber__track { position: relative; height: 20px; }
@@ -463,7 +464,7 @@
   background: var(--rev-bone); border: 2px solid var(--node-color, var(--rev-iron));
   cursor: pointer; padding: 0;
 }
-.rev-scrubber__node--active { background: var(--node-color, var(--rev-crimson)); }
+.rev-scrubber__node--active { background: var(--node-color, var(--rev-oxide)); }
 
 /* ── Success scorecard ── */
 .rev-scorecard { display: grid; gap: var(--space-3); }
@@ -495,9 +496,9 @@
   text-transform: uppercase; letter-spacing: 0.05em;
   padding: 3px 10px; display: inline-block; box-shadow: var(--rev-edge-pressed);
 }
-.rev-band--favorable { background: var(--rev-signal-yes); color: var(--rev-crimson-fg); }
-.rev-band--contested { background: var(--rev-signal-partial); color: var(--rev-crimson-fg); }
-.rev-band--low { background: var(--rev-signal-no); color: var(--rev-crimson-fg); }
+.rev-band--favorable { background: var(--rev-signal-yes); color: var(--rev-oxide-fg); }
+.rev-band--contested { background: var(--rev-signal-partial); color: var(--rev-oxide-fg); }
+.rev-band--low { background: var(--rev-signal-no); color: var(--rev-oxide-fg); }
 .rev-band--none { background: var(--rev-bone-deep); color: var(--rev-ink-muted); }
 
 .rev-count {
@@ -507,7 +508,7 @@
 
 /* Disclaimer + review stamp */
 .rev-disclaimer {
-  border: 1px dashed var(--rev-crimson);
+  border: 1px dashed var(--rev-oxide);
   padding: var(--space-2) var(--space-3);
   font-family: var(--font-data), monospace;
   font-size: var(--text-xs);
@@ -556,7 +557,7 @@
 /* ── Focus + reduced motion ── */
 .revolt-page a:focus-visible,
 .revolt-page button:focus-visible {
-  outline: 2px solid var(--rev-crimson);
+  outline: 2px solid var(--rev-oxide);
   outline-offset: 2px;
 }
 @media (prefers-reduced-motion: reduce) {
