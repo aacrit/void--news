@@ -9,6 +9,8 @@
    =========================================================================== */
 
 import type { LiveCard, Revolution } from '../revolt/types';
+import { MOCK_ACTIVE } from '../revolt/mockData';
+import { BASE_PATH } from './utils';
 
 /* Shared revolt vocabulary. A bare country name only counts when it co-occurs
    with one of these, so an "Iran nuclear talks" story does not surface under
@@ -89,4 +91,25 @@ export function assignClustersToRevolts(clusters: any[], movements: Revolution[]
     buckets[slug].sort((a, b) => b.score - a.score);
   }
   return buckets;
+}
+
+/* ── The reverse bridge: one live story -> a tracked active movement ──
+   Mirrors findHistoryContext. Scores a feed story against the curated active
+   movements and returns the best match for a "Track this movement" chip. */
+export interface RevoltMatch {
+  slug: string;
+  title: string;
+  href: string;
+}
+
+export function findRevoltContext(title: string, summary: string): RevoltMatch | null {
+  const cluster = { title, summary };
+  let best: Revolution | null = null;
+  let bestScore = 0;
+  for (const m of MOCK_ACTIVE) {
+    const s = scoreRevoltMatch(cluster, m);
+    if (s > bestScore) { bestScore = s; best = m; }
+  }
+  if (!best || bestScore < 1) return null;
+  return { slug: best.slug, title: best.title, href: `${BASE_PATH}/revolt/active/${best.slug}` };
 }

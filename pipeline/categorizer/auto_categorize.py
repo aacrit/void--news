@@ -204,6 +204,12 @@ CATEGORY_KEYWORDS: dict[str, dict[str, int]] = {
         "pentagon": 3, "armed forces": 3, "navy": 2, "army": 2,
         "combat": 3, "battlefield": 3, "frontline": 3,
         "coup": 3, "revolution": 2, "civil war": 3,
+        # 2026-07-22: revolt/protest signals so uprising coverage reliably lands
+        # in conflict (tightens void --revolt's active-portal live pre-filter).
+        "protest": 2, "protester": 2, "protesters": 2, "uprising": 3,
+        "regime": 2, "regime change": 3, "junta": 3, "crackdown": 3,
+        "general strike": 3, "self-immolation": 3, "mutiny": 3,
+        "dissident": 2, "revolutionary": 2,
         "hostage": 3, "kidnapping": 2, "assassination": 3,
         "espionage": 3, "intelligence": 1, "cia": 2,
         # Military-specific terms to outweigh politics NER boosts

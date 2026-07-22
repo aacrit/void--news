@@ -1,0 +1,229 @@
+slug: haitian-revolution
+title: The Haitian Revolution
+subtitle: The only successful slave revolt in history to found a state
+date_display: August 1791 to January 1804
+date_start: 1791
+date_end: 1804
+date_precision: year
+era: atlantic
+region: americas
+country: Saint-Domingue (Haiti)
+revolt_type: social
+status: concluded
+summary: On the night of August 22, 1791, enslaved organizers at a Vodou ceremony at Bois Caiman signaled a coordinated uprising across the Northern Plain of Saint-Domingue, France's most profitable colony and the source of nearly half of Europe's sugar and coffee. Within ten days roughly 1,000 plantations burned. Thirteen years of fighting followed, against French colonial forces, British and Spanish invasions, and finally an 1802 French expedition of over 40,000 troops sent by Napoleon to restore slavery. Jean-Jacques Dessalines declared independence on January 1, 1804, founding Haiti as the first nation in the Americas to abolish slavery and the first Black-led republic in the world.
+significance: The only slave uprising in world history to abolish slavery and establish an independent state, achieved against the era's dominant colonial and military power.
+analytical_outlook: A movement whose armed campaign succeeded against overwhelming odds, then paid for independence through a French indemnity debt Haiti did not finish repaying until 1947.
+grievances:
+  - kind: Chattel slavery
+    intensity: 100
+    evidence: Roughly 500,000 enslaved people worked Saint-Domingue's plantations by 1789, with mortality so high that planters calculated it was cheaper to work captives to death and import replacements than to sustain births.
+  - kind: Racial caste exclusion
+    intensity: 80
+    evidence: The colony's roughly 30,000 free people of color, many property-owning, were barred by the Code Noir and later restrictions from full civic and legal rights held by white colonists.
+  - kind: Brutal plantation discipline
+    intensity: 95
+    evidence: Firsthand accounts documented by historians included mutilation, branding, and burial alive as punishments used on Saint-Domingue's plantations.
+  - kind: Revolutionary ideals withheld from the colony
+    intensity: 70
+    evidence: The 1789 Declaration of the Rights of Man circulated in the colony while the National Assembly initially refused to extend citizenship to free people of color, let alone the enslaved.
+actors:
+  - actor_type: vanguard
+    name: Toussaint Louverture
+    description: Formerly enslaved coachman turned military commander, rose to govern the colony as Governor-General by 1801.
+    role_in_arc: Unified rebel forces, negotiated with and fought against French, British, and Spanish forces before capture in 1802
+    defected: false
+  - actor_type: vanguard
+    name: Jean-Jacques Dessalines
+    description: Formerly enslaved general who took command after Louverture's 1802 capture and deportation to France.
+    role_in_arc: Led the final campaign against Napoleon's expedition and declared Haitian independence January 1, 1804
+    defected: false
+  - actor_type: old-regime
+    name: France (colonial administration and Napoleon's expedition)
+    description: Colonial government of Saint-Domingue, later an expeditionary force of over 40,000 troops under General Leclerc sent by Napoleon in 1802.
+    role_in_arc: Attempted to restore slavery after the 1794 abolition decree, was defeated by 1803
+    defected: false
+  - actor_type: masses
+    name: Affranchis leadership
+    description: Free, often property-owning people of mixed African and European descent, including early leader Vincent Oge.
+    role_in_arc: Initially fought for civil rights within the colonial system before joining the broader independence struggle
+    defected: false
+  - actor_type: foreign-intervener
+    name: Britain and Spain
+    description: Rival colonial powers that invaded Saint-Domingue during the 1790s to seize French territory amid revolutionary chaos.
+    role_in_arc: Both were ultimately repelled by rebel forces, with British losses alone estimated near 15,000 dead from combat and yellow fever by 1798
+    defected: false
+tactics:
+  - tactic_type: urban-uprising
+    description: The August 1791 rebellion burned roughly 1,000 plantations across the Northern Plain within the first ten days, organized through overseer and driver networks.
+    prominence: primary, opening phase
+  - tactic_type: armed-insurgency
+    description: Rebel forces under Louverture and later Dessalines fought a thirteen-year campaign combining irregular warfare with organized troop formations against three European powers in turn.
+    prominence: primary, throughout
+  - tactic_type: guerrilla-warfare
+    description: Rebel commanders retreated to the interior during the rainy season, letting yellow fever decimate the 1802 French expeditionary force, which lost an estimated 50,000 of its roughly 60,000 total deployed troops to combat and disease.
+    prominence: secondary
+resistance_type: armed
+phases:
+  - phase: old-regime-crisis
+    label: Plantation Slavery at Its Peak
+    t_start: 0
+    t_end: 0.12
+    intensity: 60
+    reached: true
+    summary: Saint-Domingue produces roughly 40 percent of Europe's sugar and 60 percent of its coffee under a brutal plantation system worked by roughly 500,000 enslaved people.
+    key_events:
+      - Colony reaches peak export production, late 1780s
+      - 1789 Declaration of the Rights of Man circulates without extension to the colony
+  - phase: the-spark
+    label: Bois Caiman and the August Uprising
+    t_start: 0.22
+    t_end: 0.34
+    intensity: 85
+    reached: true
+    summary: A coordinated uprising begins the night of August 22, 1791, burning roughly 1,000 plantations within ten days.
+    key_events:
+      - Bois Caiman ceremony, August 22, 1791
+      - Northern Plain plantations burn, late August 1791
+  - phase: moderate-phase
+    label: Louverture's Rise and Abolition
+    t_start: 0.34
+    t_end: 0.48
+    intensity: 65
+    reached: true
+    summary: France abolishes slavery in its colonies in 1794 under pressure from the ongoing rebellion; Toussaint Louverture consolidates military and political leadership.
+    key_events:
+      - French National Convention abolishes slavery, February 1794
+      - Louverture named Governor-General, 1801
+  - phase: radical-phase
+    label: Napoleon's Expedition
+    t_start: 0.6
+    t_end: 0.72
+    intensity: 100
+    reached: true
+    summary: Napoleon dispatches over 40,000 troops in 1802 to restore French control and re-establish slavery; Louverture is captured and deported to France, where he dies in captivity in 1803.
+    key_events:
+      - Leclerc expedition lands, February 1802
+      - Louverture captured June 1802, dies at Fort de Joux, April 1803
+  - phase: consolidation
+    label: Independence Declared
+    t_start: 0.92
+    t_end: 1
+    intensity: 70
+    reached: true
+    summary: Rebel forces under Dessalines defeat the remaining French garrison at the Battle of Vertieres; independence is declared days later.
+    key_events:
+      - Battle of Vertieres, November 18, 1803
+      - Haiti declares independence, January 1, 1804
+outcome: independence
+peak_participation_pct: null
+peak_participation_display: roughly 100,000 combatants under arms at the movement's peak, drawn from a colony-wide enslaved population near 500,000
+crossed_participation_threshold: null
+military_defection: partial
+foreign_intervention: direct-military
+duration_days: 4535
+death_toll: estimates range widely; roughly 350,000 to 500,000 total deaths across the thirteen-year conflict including combat, disease, and reprisal killings on all sides
+death_toll_low: 350000
+death_toll_high: 500000
+regime_before: colonial
+regime_after: democracy
+democratization_delta: 2
+success_factors:
+  - factor_key: armed-campaign-rate
+    label: Armed campaign base rate
+    framework: chenoweth
+    status: A fully armed thirteen-year campaign defeated France, Britain, and Spain in turn
+    direction: favors-movement
+    base_rate: Chenoweth and Stephan's dataset finds armed campaigns succeed in roughly 26 percent of cases historically, well below nonviolent campaigns' roughly 53 percent
+    rationale: The Haitian Revolution sits among the rarer successful armed campaigns in the historical record, aided by disease attrition among European troops and the extreme, existential nature of the enslaved population's stake in the outcome.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+  - factor_key: foreign-attrition
+    label: Environmental and disease attrition of the intervening power
+    framework: tilly
+    status: Yellow fever killed an estimated 50,000 of the roughly 60,000 French troops deployed in the 1802 to 1803 campaign
+    direction: favors-movement
+    base_rate: Disease attrition of European expeditionary forces in the Caribbean is a widely documented factor across colonial military campaigns of the era, distinct from and additive to battlefield casualties
+    rationale: Rebel commanders' strategy of retreating to the interior during the rainy season deliberately let disease do damage conventional battle could not, a documented factor historians credit as decisive alongside battlefield resistance.
+    sources:
+      - Girard, The Slaves Who Defeated Napoleon (2011)
+  - factor_key: elite-fracture
+    label: Colonial elite fracture
+    framework: skocpol
+    status: The French Revolution's own instability, competing revolutionary factions, and war with Britain and Spain divided colonial administrative authority throughout the 1790s
+    direction: favors-movement
+    base_rate: Skocpol's framework identifies a fractured or distracted central authority as a structural precondition enabling peripheral revolutions to succeed
+    rationale: Saint-Domingue's rebellion unfolded while revolutionary France itself was consumed by internal political turnover and war with European rivals, leaving the colony's defense chronically under-resourced relative to the scale of the uprising it faced.
+    sources:
+      - Skocpol, States and Social Revolutions (1979)
+key_figures:
+  - name: Toussaint Louverture
+    role: Revolutionary general and Governor-General of Saint-Domingue
+    born: 1743
+    died: 1803
+    wikipedia: https://en.wikipedia.org/wiki/Toussaint_Louverture
+  - name: Jean-Jacques Dessalines
+    role: Revolutionary general, first ruler of independent Haiti
+    born: 1758
+    died: 1806
+    wikipedia: https://en.wikipedia.org/wiki/Jean-Jacques_Dessalines
+  - name: Vincent Oge
+    role: Free man of color who led an early 1790 uprising for civil rights, executed 1791
+    born: 1755
+    died: 1791
+    wikipedia: https://en.wikipedia.org/wiki/Vincent_Og%C3%A9
+  - name: Napoleon Bonaparte
+    role: First Consul of France, ordered the 1802 expedition to restore slavery
+    born: 1769
+    died: 1821
+    wikipedia: https://en.wikipedia.org/wiki/Napoleon
+legacy_points:
+  - Founded Haiti as the first independent nation in Latin America and the Caribbean and the first republic in the world founded by formerly enslaved people.
+  - France demanded a 150 million franc indemnity from Haiti in 1825 in exchange for diplomatic recognition, a debt Haiti finished repaying only in 1947, widely cited by economic historians as a drag on the country's subsequent development.
+  - The revolution ended slavery in the colony that had been France's single most profitable possession, and its news spread fear and inspiration through slaveholding societies across the Americas.
+  - Napoleon abandoned his broader plans for a North American empire partly as a consequence of the losses suffered in Saint-Domingue, a factor historians link to the 1803 Louisiana Purchase.
+related_revolt_slugs:
+  - french-revolution
+  - american-revolution
+related_history_slugs:
+  - haitian-revolution
+is_published: true
+perspectives:
+  - viewpoint: Formerly enslaved combatant
+    viewpoint_type: revolutionary
+    region_origin: americas
+    narrative: 'For the enslaved majority who rose up in August 1791, the revolution was an act of self-liberation against a system that worked people to death for profit. Freedom and independence were inseparable: no promise of gradual reform from a colonial or metropolitan authority could substitute for ending slavery outright and controlling their own state.'
+    key_arguments:
+      - Only total abolition and independent Black governance could guarantee freedom would not be reversed, a fear later justified by Napoleon's 1802 attempt to restore slavery
+      - Armed resistance was a rational response given the brutality documented on Saint-Domingue's plantations
+    sources: []
+    notable_quotes:
+      - text: In overthrowing me, you have cut down in Saint-Domingue only the trunk of the tree of liberty. It will spring up again by the roots, for they are numerous and deep
+        speaker: Toussaint Louverture
+        context: Reported statement upon his 1802 capture and deportation to France
+    emphasized:
+      - The scale and organization of the August 1791 uprising
+      - The thirteen-year duration and cost of defeating three European powers
+    omitted:
+      - Internal divisions between formerly enslaved leaders and the free-colored elite over land and political structure after 1804
+  - viewpoint: French colonial official
+    viewpoint_type: counter-revolutionary
+    region_origin: europe
+    narrative: French colonial and later Napoleonic officials viewed the uprising as a catastrophic loss of the empire's most valuable possession and a precedent that risked destabilizing slavery across every other colonial holding in the Americas, justifying the scale of the 1802 military response.
+    key_arguments:
+      - Saint-Domingue represented an irreplaceable share of French colonial trade revenue that had to be defended by any means
+      - Allowing the rebellion to stand risked inspiring uprisings in other French and rival colonial possessions
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - The economic value of Saint-Domingue's sugar and coffee exports
+      - The scale of French military commitment to the 1802 expedition
+    omitted:
+      - The brutality of plantation conditions that produced the uprising in the first place
+media: []
+connections:
+  - target_slug: french-revolution
+    connection_type: inspired
+    description: The 1789 Declaration of the Rights of Man and revolutionary France's internal political chaos both catalyzed and enabled the Saint-Domingue uprising, though France itself resisted extending those rights to the colony.
+  - target_slug: american-revolution
+    connection_type: counter-example
+    description: Where the American Revolution's new republic preserved and expanded chattel slavery for another eight decades, Haiti's revolution abolished it immediately and made abolition the founding condition of the state.
