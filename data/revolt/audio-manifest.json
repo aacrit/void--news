@@ -202,5 +202,17 @@
     "duration_seconds": 134.9,
     "file_size_kb": 1582.1,
     "generated_at": "2026-07-22T16:29:48.660987+00:00"
+  },
+  "nepal-gen-z": {
+    "url": "https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/audio-briefs/revolt/nepal-gen-z.mp3?v=03c5067f",
+    "duration_seconds": 179.5,
+    "file_size_kb": 2104.1,
+    "generated_at": "2026-07-22T18:53:40.546709+00:00"
+  },
+  "india-cockroach-janta": {
+    "url": "https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/audio-briefs/revolt/india-cockroach-janta.mp3?v=9ccfeeef",
+    "duration_seconds": 145.7,
+    "file_size_kb": 1708.1,
+    "generated_at": "2026-07-22T18:54:01.760903+00:00"
   }
 }
