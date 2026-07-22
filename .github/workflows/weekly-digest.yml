@@ -1,0 +1,48 @@
+name: Weekly Digest
+on:
+  schedule:
+    # Sunday 12:00 UTC (6 AM CST) — weekly onair runs after the week's dailies.
+    # Sunday flash budget: ~13 daily + ~4 weekly (covers + recap + audio) < 20 RPD.
+    - cron: '0 12 * * 0'
+  workflow_dispatch:
+    inputs:
+      week_offset:
+        description: '0=current week, -1=last week'
+        required: false
+        default: '0'
+
+permissions: {}
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: pipeline/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y ffmpeg
+          pip install -r pipeline/requirements.txt
+          python -m spacy download en_core_web_sm
+
+      - name: Generate weekly digest
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # $0 posture: Gemini Flash handles the digest (Groq retired); Claude off.
+          DISABLE_ANTHROPIC: "1"
+          DISABLE_AUDIO: "0"   # void --onair weekly audio enabled (edge-tts, $0). Set "1" to re-park.
+        run: |
+          ARGS=""
+          if [ -n "${{ inputs.week_offset }}" ] && [ "${{ inputs.week_offset }}" != "0" ]; then
+            ARGS="--week-offset ${{ inputs.week_offset }}"
+          fi
+          python -m pipeline.briefing.weekly_digest_generator $ARGS

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 /* ---------------------------------------------------------------------------
    KeyboardShortcuts — Hidden overlay triggered by ?
@@ -14,11 +14,14 @@ const SHORTCUTS = [
   { keys: ["Enter"], action: "Open void --deep-dive" },
   { keys: ["Esc"], action: "Close panel" },
   { keys: ["\u2190", "\u2192"], action: "Prev/next story" },
+  { keys: ["\u2318", "K"], action: "Search stories" },
   { keys: ["?"], action: "Toggle this overlay" },
 ];
 
 export function KeyboardShortcutsOverlay() {
   const [open, setOpen] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const previousFocusRef = useRef<Element | null>(null);
 
   useEffect(() => {
     function handleKey(e: KeyboardEvent) {
@@ -31,6 +34,9 @@ export function KeyboardShortcutsOverlay() {
 
       if (e.key === "?" && !e.ctrlKey && !e.metaKey) {
         e.preventDefault();
+        if (!open) {
+          previousFocusRef.current = document.activeElement;
+        }
         setOpen((v) => !v);
       }
       if (e.key === "Escape" && open) {
@@ -42,6 +48,55 @@ export function KeyboardShortcutsOverlay() {
     return () => document.removeEventListener("keydown", handleKey);
   }, [open]);
 
+  // Focus management: move focus into dialog on open, restore on close
+  useEffect(() => {
+    if (open) {
+      // Focus the panel on open
+      requestAnimationFrame(() => {
+        panelRef.current?.focus();
+      });
+    } else if (previousFocusRef.current) {
+      // Restore focus to previously focused element
+      const el = previousFocusRef.current as HTMLElement;
+      if (typeof el.focus === "function") el.focus();
+      previousFocusRef.current = null;
+    }
+  }, [open]);
+
+  // Focus trap: Tab wraps within the dialog
+  const handleTrapKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key !== "Tab") return;
+
+    const panel = panelRef.current;
+    if (!panel) return;
+
+    const focusable = panel.querySelectorAll<HTMLElement>(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    if (focusable.length === 0) {
+      // Nothing to trap, keep focus on panel itself
+      e.preventDefault();
+      return;
+    }
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+
+    if (e.shiftKey) {
+      // Shift+Tab at first (or panel itself) => wrap to last
+      if (document.activeElement === first || document.activeElement === panel) {
+        e.preventDefault();
+        last.focus();
+      }
+    } else {
+      // Tab at last => wrap to first
+      if (document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  };
+
   if (!open) return null;
 
   return (
@@ -49,9 +104,16 @@ export function KeyboardShortcutsOverlay() {
       className="kbd-overlay"
       onClick={() => setOpen(false)}
       role="dialog"
+      aria-modal="true"
       aria-label="Keyboard shortcuts"
     >
-      <div className="kbd-overlay__panel" onClick={(e) => e.stopPropagation()}>
+      <div
+        ref={panelRef}
+        className="kbd-overlay__panel"
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={handleTrapKeyDown}
+        tabIndex={-1}
+      >
         <h3 className="kbd-overlay__title">Keyboard Shortcuts</h3>
         <div className="kbd-overlay__list">
           {SHORTCUTS.map((s) => (

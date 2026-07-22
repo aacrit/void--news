@@ -1,0 +1,92 @@
+id: brazil-deforestation-vs-football-good-split-2026-04
+name: "Brazil deforestation report vs Brazil Copa America victory (must split)"
+failure_date: "2026-04-25"
+failure_kind: known-good-split
+articles:
+  # ---- Deforestation track ----
+  - id: br-def-1
+    title: "Brazil deforestation drops 38 percent in INPE annual report"
+    summary: "Brazil deforestation dropped 38 percent year-over-year in INPE's annual report, the largest single-year decline in 17 years."
+    full_text: >
+      Brazil deforestation dropped 38 percent year-over-year in INPE's annual report
+      released Thursday, the largest single-year decline in 17 years and a vindication
+      of President Lula's environment-policy agenda. The Amazon biome accounted for
+      most of the reduction, falling from 11,594 to 7,188 square kilometers. Environment
+      Minister Marina Silva called the result "a national triumph." International
+      observers including the World Resources Institute confirmed the methodology. The
+      Cerrado biome saw a smaller 12-percent decline. Indigenous Affairs Minister Sonia
+      Guajajara credited expanded enforcement on Indigenous lands.
+    source: { slug: folha, country: BR, tier: domestic }
+    published_at: "2026-04-25T11:00Z"
+  - id: br-def-2
+    title: "Lula deforestation policy vindicated: 38 percent annual drop"
+    summary: "President Lula's deforestation policy was vindicated by a 38 percent annual drop, the INPE annual report shows."
+    full_text: >
+      President Lula's deforestation policy was vindicated by a 38 percent annual drop,
+      the INPE annual report shows, the BBC's Sao Paulo correspondent reports. The
+      Amazon basin accounted for most of the reduction. Environment Minister Marina
+      Silva said expanded IBAMA enforcement and new satellite monitoring drove the
+      decline. The result will likely be highlighted by the Brazilian delegation at
+      COP30 in November.
+    source: { slug: bbc, country: GB, tier: international }
+    published_at: "2026-04-25T13:00Z"
+  - id: br-def-3
+    title: "Amazon: deforestation falls 38 percent in 2025"
+    summary: "Amazon deforestation fell 38 percent in 2025, INPE confirmed Thursday in its annual report."
+    full_text: >
+      Amazon deforestation fell 38 percent in 2025, the Brazilian space agency INPE
+      confirmed Thursday in its annual report. Reuters reports the Amazon-only number
+      is the lowest since 2016. The result is expected to feature in Brazil's COP30
+      diplomatic positioning. The European Union's deforestation regulation team has
+      requested early access to the dataset for verification ahead of August
+      compliance deadlines.
+    source: { slug: reuters, country: BR, tier: wire }
+    published_at: "2026-04-25T14:30Z"
+  # ---- Football track ----
+  - id: br-fb-1
+    title: "Brazil wins Copa America 2026 with 1-0 final victory over Argentina"
+    summary: "Brazil won Copa America 2026 with a 1-0 final victory over Argentina at Maracana on Sunday night."
+    full_text: >
+      Brazil won Copa America 2026 with a 1-0 final victory over Argentina at Maracana
+      Stadium on Sunday night, ending a 17-year title drought against their bitter
+      South American rivals. Vinicius Junior scored the only goal in the 67th minute, a
+      curling left-foot strike from outside the box. The result triggered nationwide
+      celebrations. Coach Dorival Junior was carried from the field on the shoulders
+      of his players. Argentine forward Lautaro Martinez missed a clear chance in the
+      83rd minute that would have equalized.
+    source: { slug: globo-esporte, country: BR, tier: domestic }
+    published_at: "2026-04-24T03:00Z"
+  - id: br-fb-2
+    title: "Vinicius Junior wins Copa for Brazil in 1-0 Argentina defeat"
+    summary: "Vinicius Junior won Copa America for Brazil in a 1-0 victory over Argentina at Maracana, ending the team's 17-year drought."
+    full_text: >
+      Vinicius Junior won Copa America for Brazil in a 1-0 victory over Argentina at
+      Maracana on Sunday night, ending the team's 17-year drought against their bitter
+      rivals, ESPN reports. Vinicius's 67th-minute curler beat Argentine goalkeeper
+      Emiliano Martinez at the near post. The win sparked celebrations from Sao Paulo
+      to Salvador. Brazilian President Lula attended the match.
+    source: { slug: espn, country: BR, tier: international }
+    published_at: "2026-04-24T04:00Z"
+  - id: br-fb-3
+    title: "Maracana: Brazil 1-0 Argentina, Copa America title comes home"
+    summary: "Maracana: Brazil 1-0 Argentina, Copa America title comes home for the first time in 17 years."
+    full_text: >
+      Maracana: Brazil 1-0 Argentina, Copa America title comes home for the first time
+      in 17 years. Vinicius Junior's left-footed curler in the 67th minute settled it,
+      AP Sport reports. The crowd of 78,000 erupted. Coach Dorival Junior dedicated the
+      victory to "every Brazilian who believed in this group when others wrote us off."
+      Argentine coach Lionel Scaloni called the loss "a small consolation in a great
+      tournament" but congratulated Brazil on a deserved victory.
+    source: { slug: ap-news, country: BR, tier: wire }
+    published_at: "2026-04-24T05:00Z"
+expectation:
+  type: should_split
+  member_ids: [br-def-1, br-def-2, br-def-3, br-fb-1, br-fb-2, br-fb-3]
+  min_clusters: 2
+rationale: |
+  Known-good split. Two distinct stories sharing only GPE "Brazil" and
+  "Argentina" — Amazon deforestation policy news vs Maracana football
+  final. Phase-1 TF-IDF separates them on INPE/deforestation/Lula vs
+  Vinicius/Copa/Maracana vocabulary. Brazil is in the
+  _OVERLY_COMMON_ENTITIES blacklist, so Phase-2 entity merge will not
+  fire. Regression fixture.

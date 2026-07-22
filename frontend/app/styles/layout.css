@@ -8,15 +8,14 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: var(--bg-primary);
-  transition: background-color var(--dur-morph) var(--ease-out);
+  /* No background — body handles bg-color + wrinkle texture */
   /* Prevent any child from causing horizontal scroll */
   overflow-x: hidden;
 }
 
 .page-main {
   flex: 1;
-  max-width: 1280px;
+  max-width: var(--canvas-max);
   margin: 0 auto;
   /* Mobile-first: --space-5 (~16px) at 375px, promoted to --space-7 at 768px+ */
   padding: 0 var(--space-5);
@@ -31,15 +30,105 @@
   }
 }
 
+/* ---- On-Air Pane — desktop left sidebar pushes canvas right ----------- */
+/* When the broadcast pane is open (data-onair-pane on html), the page
+   container shifts right by the pane width. page-main auto-recenters
+   via margin: 0 auto within the remaining space. */
+@media (min-width: 1024px) {
+  html[data-onair-pane] .page-container {
+    padding-left: clamp(320px, calc(100vw - 1400px - 80px), 480px);
+    transition: padding-left 420ms var(--ease-cinematic, ease);
+    will-change: padding-left;
+  }
+
+  /* Smooth return when pane closes */
+  .page-container {
+    transition: padding-left 350ms var(--ease-cinematic, ease);
+  }
+
+  /* /weekly uses .wk-page (not .page-container) as its outer container, so the
+     broadcast sidebar push needs a sibling rule to avoid overlapping the
+     weekly canvas. Mirrors the .page-container values exactly. */
+  html[data-onair-pane] .wk-page {
+    padding-left: clamp(320px, calc(100vw - 1400px - 80px), 480px);
+    transition: padding-left 420ms var(--ease-cinematic, ease);
+    will-change: padding-left;
+  }
+
+  .wk-page {
+    transition: padding-left 350ms var(--ease-cinematic, ease);
+  }
+}
+
+/* ---- Skybox — editorial brief zone above the news canvas -------------- */
+/*
+ * Full-bleed band: TL;DR | Opinion | On Air side by side on desktop.
+ * Visually distinct from the story canvas — warm accent tint extending
+ * to viewport edges creates "outside the newspaper" separation.
+ * Stories below get 100% of original canvas width.
+ */
+
+.skybox {
+  margin: var(--space-2) 0;
+}
+
+/* Desktop: skybox sits within normal canvas flow — no full-bleed breakout.
+   Texture differentiation on .skb handles the editorial territory signal. */
+@media (min-width: 1024px) {
+  .skybox {
+    position: relative;
+    z-index: 0;
+  }
+}
+
+@keyframes skyboxReveal {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skybox { animation: none !important; }
+}
+
 /* ---- Section Header — Newspaper tradition ------------------------------ */
 .section-header {
-  border-bottom: 2px solid var(--fg-primary);
+  border-bottom: none;
   padding-top: var(--space-5);
   padding-bottom: var(--space-2);
   margin-bottom: var(--space-2);
   display: flex;
+  flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
+}
+
+/* Ink stroke section divider — organic wavy line replaces rigid border-bottom */
+.section-header::after {
+  content: "";
+  flex-basis: 100%;
+  height: 6px;
+  margin-top: var(--space-2);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 6' preserveAspectRatio='none'%3E%3Cpath d='M0 3 C30 1 70 5 100 3 C130 1 170 5 200 3 C230 1 270 5 300 3 C330 1 370 5 400 3' stroke='%2352504A' stroke-width='1' fill='none' opacity='0.3' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+:root[data-mode="dark"] .section-header::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 6' preserveAspectRatio='none'%3E%3Cpath d='M0 3 C30 1 70 5 100 3 C130 1 170 5 200 3 C230 1 270 5 300 3 C330 1 370 5 400 3' stroke='%239CA3AF' stroke-width='1' fill='none' opacity='0.2' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+/* Reusable organic ink rule — horizontal wavy SVG stroke */
+.ink-rule {
+  border: none;
+  height: 6px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 6' preserveAspectRatio='none'%3E%3Cpath d='M0 3 C30 1 70 5 100 3 C130 1 170 5 200 3 C230 1 270 5 300 3 C330 1 370 5 400 3' stroke='%2352504A' stroke-width='1' fill='none' opacity='0.3' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  margin: 0;
+}
+
+:root[data-mode="dark"] .ink-rule {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 6' preserveAspectRatio='none'%3E%3Cpath d='M0 3 C30 1 70 5 100 3 C130 1 170 5 200 3 C230 1 270 5 300 3 C330 1 370 5 400 3' stroke='%239CA3AF' stroke-width='1' fill='none' opacity='0.2' stroke-linecap='round'/%3E%3C/svg%3E");
 }
 
 .section-header__title {
@@ -57,51 +146,25 @@
   gap: var(--space-3);
 }
 
-/* ---- Lead Section — Above the fold -------------------------------------- */
-/* Mobile: single column stack. Desktop: two equal columns (1fr 1fr). */
-.lead-section {
-  display: grid;
-  grid-template-columns: 1fr;
+/* ---- Hero Slot — rank 0 front-page image treatment --------------------- */
+.hero-slot {
   border-bottom: var(--rule-strong);
 }
 
-.lead-section__col {
-  /* Prevent grid blowout from long headlines */
-  min-width: 0;
-}
-
-.lead-section__col:not(:last-child) {
-  border-bottom: var(--rule-thin);
-}
-
-.lead-section__col .lead-story {
-  border-bottom: none;
-}
-
-/* ---- Broadsheet Grid — Asymmetric newspaper layout --------------------- */
+/* ---- Unified Feed Grid — ranks 1-29, identical StoryCard --------------- */
 /* Mobile: single column stack */
-.grid-medium {
-  display: grid;
-  grid-template-columns: 1fr;
-  border-bottom: var(--rule-thin);
-}
-
-.grid-medium__item {
-  padding-right: 0;
-  padding-left: 0;
-  border-right: none;
-  /* Prevent grid blowout from long headlines */
-  min-width: 0;
-}
-
-.grid-compact {
+.feed-grid {
   display: grid;
   grid-template-columns: 1fr;
 }
 
-.grid-compact__item {
+.feed-grid__item {
   content-visibility: auto;
   contain-intrinsic-size: auto 200px;
+  /* contain: paint removed — clips outline-offset focus rings and box-shadow
+     on .story-card--kbd-focus (outline-offset: 3px paints outside padding box).
+     layout + style still prevent layout/counter propagation up the tree. */
+  contain: layout style;
   /* Prevent grid blowout from long headlines */
   min-width: 0;
 }
@@ -133,89 +196,13 @@
   max-width: none;
 }
 
-/* ---- Deep Dive Panel --------------------------------------------------- */
-.deep-dive-backdrop {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.72);
-  z-index: var(--z-overlay);
-  cursor: pointer;
-  /* Cinematic blur — page becomes abstract texture, full attention on overlay.
-     Reduced to 24px for better perf on mid-range devices.
-     @supports fallback for browsers without backdrop-filter. */
-  backdrop-filter: blur(24px) saturate(0.5) brightness(0.6);
-  -webkit-backdrop-filter: blur(24px) saturate(0.5) brightness(0.6);
-}
-
-.deep-dive-panel {
-  position: fixed;
-  z-index: var(--z-modal);
-  overflow-y: auto;
-  overflow-x: hidden;
-  outline: none;
-  /* Mobile default: full-screen from bottom */
-  inset: 0;
-  /* GPU layer promotion during transform animation — eliminates repaint */
-  will-change: transform;
-  /* Scaling from center keeps the FLIP morph visually anchored to the card's center */
-  transform-origin: center center;
-  /* Prevent flash before JS applies transform.
-     opacity: 0 safety net; JS-driven isVisible controls actual opacity. */
-  opacity: 0;
-
-  /* Solid opaque surface — no see-through, full attention on content */
-  background-color: var(--bg-primary);
-  box-shadow: var(--shadow-e3);
-}
-
-/* Studio light reflection on top edge — glass refraction artifact */
-.deep-dive-panel::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.5) 30%,
-    rgba(255, 255, 255, 0.7) 50%,
-    rgba(255, 255, 255, 0.5) 70%,
-    transparent 100%
-  );
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: 1;
-  opacity: 0;
-}
-
-.deep-dive-panel__header {
-  position: sticky;
-  top: 0;
-  background-color: var(--bg-primary);
-  border-bottom: 1px solid var(--border-subtle);
-  z-index: 2;
-  padding: var(--space-4) var(--space-5);
-}
-
-.deep-dive-panel__content {
-  padding: var(--space-5);
-}
-
-/* Inside Deep Dive, text should fill the panel width — override the
-   global 65ch measure since the panel itself is already narrow. */
-.deep-dive-panel__content .text-base {
-  max-width: none;
-}
-
 /* ---- Footer ------------------------------------------------------------ */
 .site-footer {
   border-top: 1px solid var(--divider);
   margin-top: var(--space-6);
   /* Match page-main padding so footer border aligns with content canvas */
   padding: var(--space-5) var(--space-5);
-  max-width: 1280px;
+  max-width: var(--canvas-max);
   margin-left: auto;
   margin-right: auto;
   width: 100%;
@@ -227,6 +214,7 @@
     padding: var(--space-6) var(--space-7);
   }
 }
+
 
 .site-footer__inner {
   max-width: 100%;
@@ -253,7 +241,7 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-3);
-  transition: background-color var(--dur-fast) var(--ease-out);
+  transition: background-color var(--dur-fast) var(--ease-cinematic);
 }
 
 .source-row:nth-child(even) {

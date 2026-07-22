@@ -12,6 +12,13 @@ function getThemeFromStorage(): "light" | "dark" {
   if (typeof window === "undefined") return "dark";
   const stored = localStorage.getItem("void-news-theme") as "light" | "dark" | null;
   if (stored) return stored;
+  // Match the inline script's logic: respect system preference on first visit.
+  // The inline script in layout.tsx sets data-mode before React hydrates, so
+  // reading the DOM attribute is the fastest path. matchMedia is the fallback
+  // if the DOM attribute hasn't been set yet (SSR / edge case).
+  const domMode = document.documentElement.getAttribute("data-mode");
+  if (domMode === "light" || domMode === "dark") return domMode;
+  if (window.matchMedia("(prefers-color-scheme: light)").matches) return "light";
   return "dark";
 }
 
@@ -27,10 +34,35 @@ export default function ThemeToggle() {
     setMode(next);
     document.documentElement.setAttribute("data-mode", next);
     localStorage.setItem("void-news-theme", next);
+
+    // Update status bar color to match app chrome
+    const themeColor = next === "light" ? "#F0EBDD" : "#1C1A17";
+    document.querySelector('meta[name="theme-color"][media*="dark"]')?.setAttribute("content", themeColor);
+    document.querySelector('meta[name="theme-color"][media*="light"]')?.setAttribute("content", themeColor);
+
+    // Golden hour pulse — cinematic color grade flash on theme switch.
+    // Targets .page-main (not .page-container) because the color grade filter
+    // lives on .page-main. Applying filter to .page-container would create a
+    // containing block that breaks position:fixed children (AudioPlayer, DeepDive).
+    // Golden hour pulse on both page-main AND nav-header — the dissolve
+    // warms the entire visible frame, not just the content area. Scene 8
+    // spec: "paper is slower than ink, both are slower than light."
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!prefersReducedMotion) {
+      const targets = document.querySelectorAll('.page-main, .nav-header');
+      targets.forEach(el => el.classList.add('cin-golden-hour'));
+      setTimeout(() => targets.forEach(el => el.classList.remove('cin-golden-hour')), 700);
+    }
   };
 
   if (!mounted) {
-    return <button aria-label="Toggle theme" className="theme-toggle theme-toggle--placeholder" />;
+    return (
+      <button aria-label="Toggle theme" className="theme-toggle theme-toggle--placeholder">
+        <span aria-hidden="true" className="theme-toggle__icon">
+          <Sun size={18} weight="light" />
+        </span>
+      </button>
+    );
   }
 
   return (

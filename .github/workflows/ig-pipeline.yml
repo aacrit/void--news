@@ -1,0 +1,161 @@
+name: IG Pipeline
+
+permissions: {}
+
+on:
+  schedule:
+    # Daily 12:00 UTC: generator + capture + caption.
+    # Drafts ready for human review by the time Aacrit opens /admin/ig.
+    - cron: '0 12 * * *'
+    # Mon & Thu 13:30 UTC: publisher (ships approved drafts to IG).
+    - cron: '30 13 * * 1,4'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'draft | publish | dry-run-publish | seed-launch | cleanup'
+        required: true
+        default: 'draft'
+        type: choice
+        options:
+          - draft
+          - publish
+          - dry-run-publish
+          - seed-launch
+          - cleanup
+
+jobs:
+  ig-pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # ---- Mode resolution ------------------------------------------------
+      - name: Resolve mode from cron schedule
+        id: mode
+        run: |
+          MODE="${{ inputs.mode }}"
+          if [ -z "$MODE" ]; then
+            case "${{ github.event.schedule }}" in
+              "0 12 * * *")    MODE="draft" ;;
+              "30 13 * * 1,4") MODE="publish" ;;
+              *)               MODE="draft" ;;
+            esac
+          fi
+          echo "mode=$MODE" >> "$GITHUB_OUTPUT"
+          echo "Mode: $MODE"
+
+      # ---- Setup ----------------------------------------------------------
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: pipeline/requirements.txt
+      - name: Install dependencies
+        run: pip install -r pipeline/requirements.txt
+
+      - name: Install Playwright Chromium
+        if: steps.mode.outputs.mode == 'draft' || steps.mode.outputs.mode == 'seed-launch'
+        run: playwright install chromium --with-deps
+
+      - uses: actions/setup-node@v4
+        if: steps.mode.outputs.mode == 'draft' || steps.mode.outputs.mode == 'seed-launch'
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        if: steps.mode.outputs.mode == 'draft' || steps.mode.outputs.mode == 'seed-launch'
+        working-directory: frontend
+        run: npm ci
+
+      # ---- Mode: draft (generate + capture + caption) ---------------------
+      - name: Start Next.js dev server
+        if: steps.mode.outputs.mode == 'draft' || steps.mode.outputs.mode == 'seed-launch'
+        working-directory: frontend
+        env:
+          NEXT_PUBLIC_BASE_PATH: ""
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          # Render arbitrary post IDs on demand (output:export is dropped under
+          # `next dev`; this flips the render route's dynamicParams to true).
+          IG_RENDER_DYNAMIC: "1"
+        run: |
+          nohup npx next dev --port 3000 > /tmp/next-dev.log 2>&1 &
+          echo $! > /tmp/next-dev.pid
+
+      - name: Seed launch posts (one-shot)
+        if: steps.mode.outputs.mode == 'seed-launch'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python -m pipeline.social.ig_generator --seed-all-launch
+
+      - name: Generate next draft
+        if: steps.mode.outputs.mode == 'draft'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python -m pipeline.social.ig_generator
+
+      - name: Capture slides (Playwright)
+        if: steps.mode.outputs.mode == 'draft' || steps.mode.outputs.mode == 'seed-launch'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          RENDER_BASE_URL: 'http://localhost:3000'
+        run: python -m pipeline.social.ig_capture --wait-server
+
+      - name: Generate captions (Gemini flash-lite)
+        if: steps.mode.outputs.mode == 'draft' || steps.mode.outputs.mode == 'seed-launch'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python -m pipeline.social.ig_caption
+
+      - name: Stop dev server
+        if: always() && (steps.mode.outputs.mode == 'draft' || steps.mode.outputs.mode == 'seed-launch')
+        run: |
+          if [ -f /tmp/next-dev.pid ]; then
+            kill "$(cat /tmp/next-dev.pid)" || true
+          fi
+          tail -200 /tmp/next-dev.log || true
+
+      # ---- Mode: publish --------------------------------------------------
+      - name: Publish approved (dry-run)
+        if: steps.mode.outputs.mode == 'dry-run-publish'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          INSTAGRAM_GRAPH_TOKEN: ${{ secrets.INSTAGRAM_GRAPH_TOKEN }}
+          INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
+        run: python -m pipeline.social.ig_publisher --dry-run
+
+      - name: Publish approved
+        if: steps.mode.outputs.mode == 'publish'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          INSTAGRAM_GRAPH_TOKEN: ${{ secrets.INSTAGRAM_GRAPH_TOKEN }}
+          INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
+        run: python -m pipeline.social.ig_publisher
+
+      - name: Cross-post to Bluesky
+        if: steps.mode.outputs.mode == 'publish'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          BLUESKY_HANDLE: ${{ secrets.BLUESKY_HANDLE }}
+          BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
+        run: python -m pipeline.social.cross_post
+
+      # ---- Mode: cleanup (reject posts stuck in a transient lock state) ---
+      - name: Clean up stuck posts
+        if: steps.mode.outputs.mode == 'cleanup'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python -m pipeline.social.ig_cleanup

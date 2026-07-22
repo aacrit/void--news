@@ -1,0 +1,247 @@
+slug: mexican-revolution
+title: The Mexican Revolution
+subtitle: Ten years of war leave a constitution, a ruling party, and a million dead
+date_display: 1910-1920
+date_start: 1910
+date_end: 1920
+date_precision: year
+era: modern-nationalist
+region: americas
+country: Mexico
+revolt_type: social
+status: concluded
+summary: Porfirio Diaz's rigged 1910 re-election set off a decade of shifting armed coalitions, Madero's liberal reformers, Zapata's landless peasants, Villa's northern cavalry, Carranza's constitutionalists, that toppled Diaz, then fought each other for control of what came after him.
+significance: Produced Latin America's first great social revolution of the twentieth century and a constitution, 1917, whose land reform and labor provisions still shape Mexican law, even as the revolutionary coalition's own factions spent years killing each other over what the revolution meant.
+grievances:
+  - kind: Land concentration under the Porfiriato
+    intensity: 90
+    evidence: By 1910, roughly 90 percent of Mexico's rural population owned no land at all, while haciendas belonging to a small elite controlled the majority of arable territory.
+  - kind: Fraudulent 1910 re-election
+    intensity: 75
+    evidence: Porfirio Diaz jailed his opposition candidate Francisco Madero before the 1910 election and declared himself the winner for an eighth term after 34 years in power.
+  - kind: Foreign ownership of Mexican industry
+    intensity: 60
+    evidence: American and British companies controlled the majority of Mexico's oil production and much of its mining by 1910, with profits flowing largely out of the country.
+actors:
+  - actor_type: vanguard
+    name: Francisco Madero
+    description: Wealthy landowner turned liberal reformer, jailed then exiled by Diaz before the 1910 election.
+    role_in_arc: Issued the Plan of San Luis Potosi calling for revolt, became president in 1911, and was overthrown and killed in Huerta's 1913 coup.
+    defected: false
+  - actor_type: masses
+    name: Emiliano Zapata
+    description: Leader of the Ejercito Libertador del Sur, the peasant army of Morelos state.
+    role_in_arc: Fought for land redistribution under the slogan Tierra y Libertad through every shift in national leadership, and was assassinated by Carranza's forces in 1919.
+    defected: false
+  - actor_type: military-defectors
+    name: Pancho Villa
+    description: Former bandit turned commander of the Division del Norte cavalry.
+    role_in_arc: Won major battles against Huerta and later against Carranza, then was marginalized after his coalition's defeat at Celaya in 1915.
+    defected: false
+  - actor_type: old-regime
+    name: Porfirio Diaz
+    description: President of Mexico for 34 of the previous 35 years.
+    role_in_arc: Resigned and went into exile in France in May 1911 after Madero's forces took Ciudad Juarez.
+    defected: false
+  - actor_type: counter-revolutionaries
+    name: Victoriano Huerta
+    description: General who led the coup against Madero.
+    role_in_arc: Seized the presidency in February 1913 after Madero's assassination, and was driven from power by the Constitutionalist coalition in 1914.
+    defected: false
+tactics:
+  - tactic_type: armed-insurgency
+    description: Successive campaigns, Ciudad Juarez, Torreon, Celaya, moved the front lines across most of Mexico's territory over ten years.
+    prominence: primary
+  - tactic_type: guerrilla-warfare
+    description: Zapata's Ejercito Libertador fought a sustained irregular campaign in Morelos, retreating to the hills whenever a national government's army advanced.
+    prominence: primary
+  - tactic_type: sabotage
+    description: Villa's forces repeatedly cut rail lines to isolate federal garrisons and disrupt troop movements across the north.
+    prominence: secondary
+resistance_type: armed
+phases:
+  - phase: old-regime-crisis
+    label: The Porfiriato's stagnation
+    t_start: 0
+    t_end: 0.12
+    intensity: 45
+    reached: true
+    summary: Three decades of Diaz rule concentrate land and political power while leaving most Mexicans landless and unrepresented.
+    key_events:
+      - Diaz jails Madero before the 1910 election
+      - Diaz declared winner of an eighth term, 1910
+  - phase: the-spark
+    label: The Plan of San Luis Potosi
+    date_start: '1910-11-20'
+    t_start: 0.22
+    t_end: 0.34
+    intensity: 70
+    reached: true
+    summary: Madero calls for armed revolt from exile in Texas, and fighting spreads across northern Mexico within weeks.
+    key_events:
+      - Plan of San Luis Potosi issued, October 1910
+      - Armed revolt begins, November 20, 1910
+  - phase: moderate-phase
+    label: Madero's presidency
+    t_start: 0.34
+    t_end: 0.48
+    intensity: 55
+    reached: true
+    summary: Diaz resigns and Madero takes office promising gradual reform, disappointing Zapata's peasant base, which resumes fighting almost immediately.
+    key_events:
+      - Diaz resigns, May 1911
+      - Madero inaugurated, November 1911
+      - Zapata's Plan of Ayala rejects Madero, November 1911
+  - phase: radical-phase
+    label: Huerta's coup and the Constitutionalist war
+    date_start: '1913-02-22'
+    t_start: 0.6
+    t_end: 0.72
+    intensity: 85
+    reached: true
+    summary: Huerta's coup and Madero's assassination unite Villa, Zapata, and Carranza in a war against the new dictatorship, which collapses within eighteen months.
+    key_events:
+      - Madero assassinated, February 22, 1913
+      - Huerta driven from power, July 1914
+  - phase: terror-virtue
+    label: War among the winners
+    t_start: 0.72
+    t_end: 0.84
+    intensity: 80
+    reached: true
+    summary: The victorious revolutionary coalition splits; Villa and Zapata fight Carranza's constitutionalists in a war as bloody as the one against Huerta.
+    key_events:
+      - Convention of Aguascalientes fails to unify factions, October 1914
+      - Villa defeated at Celaya, April 1915
+  - phase: thermidor
+    label: Carranza consolidates
+    t_start: 0.84
+    t_end: 0.92
+    intensity: 60
+    reached: true
+    summary: Carranza secures national power and moves against his former allies, having Zapata ambushed and killed in 1919.
+    key_events:
+      - Zapata assassinated, April 10, 1919
+      - Carranza's government recognized internationally, 1915-1917
+  - phase: consolidation
+    label: The 1917 Constitution
+    date_start: '1917-02-05'
+    t_start: 0.92
+    t_end: 1
+    intensity: 50
+    reached: true
+    summary: Mexico ratifies a new constitution enshrining land reform and labor rights, and Alvaro Obregon's 1920 accession ends the decade of open civil war.
+    key_events:
+      - 1917 Constitution ratified, February 5, 1917
+      - Obregon becomes president, 1920
+outcome: consolidated-autocracy
+peak_participation_pct: null
+crossed_participation_threshold: null
+military_defection: partial
+foreign_intervention: material
+duration_days: 3650
+death_toll: Estimated at close to one million dead across the decade of fighting, disease, and displacement, roughly one in fifteen of Mexico's 1910 population.
+death_toll_low: 900000
+death_toll_high: 1000000
+regime_before: personalist
+regime_after: one-party
+democratization_delta: 1
+success_factors:
+  - factor_key: armed-duration-cost
+    label: Prolonged armed campaigns are costlier and less predictable than short ones
+    framework: chenoweth
+    status: confirmed
+    direction: indeterminate
+    base_rate: Armed campaigns succeed in roughly 26% of historical cases and tend to produce more durable authoritarian aftermaths than nonviolent transitions when they do succeed
+    rationale: A full decade of shifting armed coalitions eventually toppled Diaz and Huerta, but produced a one-party state, the PRI's predecessor coalitions, rather than the pluralist democracy Madero had originally sought.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+  - factor_key: coalition-fracture
+    label: Revolutionary coalitions that win together often fracture immediately after victory
+    framework: skocpol
+    status: confirmed
+    direction: favors-regime
+    base_rate: Skocpol's comparative cases find post-victory elite fracture among a revolution's own factions a common cause of prolonged instability
+    rationale: Villa, Zapata, and Carranza fought together against Huerta in 1914, then fought each other for the next three years, with Carranza's faction eventually prevailing.
+    sources:
+      - Skocpol, States and Social Revolutions (1979)
+  - factor_key: agrarian-mobilization
+    label: Peasant-army mobilization can outlast urban elite coalitions
+    framework: goldstone
+    status: confirmed
+    direction: favors-movement
+    base_rate: Goldstone's comparative work identifies sustained agrarian mobilization as a structural advantage over narrowly elite-led movements in protracted conflicts
+    rationale: Zapata's peasant base in Morelos kept fighting through every change of national government from 1911 until his 1919 assassination, outlasting three separate national administrations.
+    sources:
+      - 'Goldstone, Revolutions: A Very Short Introduction (2014)'
+key_figures:
+  - name: Francisco Madero
+    role: Reformist president, 1911-1913
+    born: 1873
+    died: 1913
+  - name: Emiliano Zapata
+    role: Leader of the peasant Ejercito Libertador del Sur
+    born: 1879
+    died: 1919
+  - name: Pancho Villa
+    role: Commander of the Division del Norte
+    born: 1878
+    died: 1923
+  - name: Venustiano Carranza
+    role: Constitutionalist leader, president 1917-1920
+    born: 1859
+    died: 1920
+legacy_points:
+  - The 1917 Constitution's Article 27 authorized land redistribution and Article 123 guaranteed labor rights, both still cited in Mexican legal and political debate today.
+  - The revolutionary coalition's surviving generals founded the party that would rule Mexico continuously for 71 years, later renamed the PRI.
+  - Zapata's slogan Tierra y Libertad became a rallying cry for agrarian movements far beyond Mexico's borders.
+  - The decade of war and its near million deaths reshaped Mexico's population distribution and drove significant emigration to the United States.
+related_revolt_slugs:
+  - cuban-revolution
+  - chinese-revolution-1949
+related_history_slugs: []
+is_published: true
+perspectives:
+  - viewpoint: Zapatista agrarian view
+    viewpoint_type: movement
+    region_origin: Morelos, Mexico
+    narrative: The revolution's true promise was land for the people who worked it; every national government from Madero to Carranza betrayed that promise in turn, and Zapata's assassination confirmed the betrayal was deliberate.
+    key_arguments:
+      - The Plan of Ayala explicitly demanded land redistribution Madero refused to deliver
+      - Carranza's forces hunted and killed Zapata rather than negotiate land reform
+      - Genuine land reform waited until Cardenas's presidency in the 1930s, over a decade after the fighting ended
+    sources: []
+    notable_quotes:
+      - text: It is better to die on your feet than to live on your knees.
+        speaker: Emiliano Zapata
+        context: Widely attributed statement of the Zapatista movement's stance
+    emphasized:
+      - the Plan de Ayala
+      - Zapata's assassination
+    omitted:
+      - the administrative difficulty of redistributing land nationally during ongoing civil war
+      - gains urban labor secured under the 1917 Constitution
+  - viewpoint: Constitutionalist institution-building view
+    viewpoint_type: moderate
+    region_origin: Mexico City
+    narrative: Ending a decade of factional war required a single dominant coalition capable of writing and enforcing a national constitution, even at the cost of marginalizing rival revolutionary leaders like Villa and Zapata.
+    key_arguments:
+      - The 1917 Constitution's reforms could not be implemented while rival armies still contested the countryside
+      - Carranza's consolidation, however costly, ended open civil war faster than a continued three-way conflict would have
+      - The resulting one-party system provided decades of political stability after ten years of war
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - the 1917 Constitution's durability
+      - the end of open civil war by 1920
+    omitted:
+      - the human cost of suppressing Villa's and Zapata's factions
+      - the decades of one-party rule the consolidation entrenched
+media: []
+connections:
+  - target_slug: cuban-revolution
+    connection_type: parallel
+    description: Both revolutions were fought substantially over land concentration and produced sweeping agrarian reform once the fighting ended.
+  - target_slug: chinese-revolution-1949
+    connection_type: parallel
+    description: Both mobilized a landless peasant base as a decisive military and political force against an urban-elite-backed government.

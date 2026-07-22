@@ -1,0 +1,17 @@
+# 2026-06-02 — void --news collapsed to a single daily feed.
+# Old multi-edition URLs (/world, /us, /europe, /south-asia) 301-redirect
+# to the homepage. Cloudflare Pages honors this file at the edge before
+# any HTML is served.
+/world      /  301
+/world/*    /  301
+/us         /  301
+/us/*       /  301
+/europe     /  301
+/europe/*   /  301
+/south-asia /  301
+/south-asia/*  /  301
+
+# Legacy GitHub Pages project-path. CF Pages serves at root, so 301 any
+# stray /void--news/* deep link to the equivalent root path. Placed last:
+# first match wins, so the specific edition rules above take precedence.
+/void--news/*  /:splat  301

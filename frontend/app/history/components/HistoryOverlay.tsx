@@ -1,0 +1,240 @@
+"use client";
+
+import { useEffect, useRef, useCallback, useState } from "react";
+import type { HistoricalEvent } from "../types";
+import EventDetail from "./EventDetail";
+
+/* ===========================================================================
+   DEPRECATED — HistoryOverlay
+   Replaced by inline story loading in HistoryLanding.tsx (State B).
+   Kept for backward compatibility with [slug]/page.tsx direct access routes.
+   Do not use in new code. Will be removed in a future cleanup.
+   =========================================================================== */
+
+/* ===========================================================================
+   HistoryOverlay — Full-screen story overlay with FLIP morph
+   Opens when user clicks "Read all N perspectives" on a landing tile.
+   The tile photo FLIP-morphs into EventDetail's hero image. URL updates
+   via pushState (no router.push). Browser back closes overlay.
+   =========================================================================== */
+
+interface HistoryOverlayProps {
+  event: HistoricalEvent;
+  allEvents: HistoricalEvent[];
+  sourceRect: DOMRect | null; // tile photo position for FLIP
+  onClose: () => void;
+  onNavigateToEvent?: (event: HistoricalEvent) => void;
+}
+
+export default function HistoryOverlay({
+  event,
+  allEvents,
+  sourceRect,
+  onNavigateToEvent,
+  onClose,
+}: HistoryOverlayProps) {
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const [contentVisible, setContentVisible] = useState(false);
+  const closingRef = useRef(false);
+
+  /* ── Reduced motion check ── */
+  const reducedMotion = typeof window !== "undefined"
+    ? window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    : false;
+
+  /* ── FLIP morph on mount ── */
+  useEffect(() => {
+    if (reducedMotion || !sourceRect) {
+      setContentVisible(true);
+      return;
+    }
+
+    /* Find EventDetail's hero image inside the overlay */
+    const heroEl = overlayRef.current?.querySelector<HTMLElement>(".hist-stage__hero");
+
+    if (!heroEl) {
+      setContentVisible(true);
+      return;
+    }
+
+    /* Double rAF: first commits the snap frame, second starts transition */
+    requestAnimationFrame(() => {
+      const targetRect = heroEl.getBoundingClientRect();
+
+      if (targetRect.width === 0 || targetRect.height === 0) {
+        setContentVisible(true);
+        return;
+      }
+
+      /* Snap to source position */
+      const dx = sourceRect.left - targetRect.left;
+      const dy = sourceRect.top - targetRect.top;
+      const sx = sourceRect.width / targetRect.width;
+      const sy = sourceRect.height / targetRect.height;
+
+      heroEl.style.transform = `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`;
+      heroEl.style.transformOrigin = "top left";
+      heroEl.style.transition = "none";
+
+      /* Force reflow */
+      heroEl.offsetHeight; // eslint-disable-line @typescript-eslint/no-unused-expressions
+
+      requestAnimationFrame(() => {
+        /* Animate to final position */
+        heroEl.style.transition = "transform 500ms cubic-bezier(0.4, 0, 0.2, 1)";
+        heroEl.style.transform = "none";
+
+        /* L-cut: content cascades in while morph settles */
+        setTimeout(() => setContentVisible(true), 250);
+      });
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  /* ── Auto-focus close button on mount (WCAG: Item 6) ── */
+  useEffect(() => {
+    closeRef.current?.focus();
+  }, []);
+
+  /* ── pushState for URL + popstate listener ── */
+  useEffect(() => {
+    /* Push history state so browser back closes overlay */
+    window.history.pushState(
+      { historyOverlay: true, slug: event.slug },
+      "",
+      `/history/${event.slug}`
+    );
+
+    const handlePopState = () => {
+      if (!closingRef.current) {
+        closingRef.current = true;
+        onClose();
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+
+    /* Lock body scroll */
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      window.removeEventListener("popstate", handlePopState);
+      document.body.style.overflow = "";
+    };
+  }, [event.slug, onClose]);
+
+  /* ── Close handler with reverse-morph ── */
+  const handleClose = useCallback(() => {
+    if (closingRef.current) return;
+    closingRef.current = true;
+
+    /* Attempt reverse-morph animation back to source card */
+    if (!reducedMotion) {
+      const heroEl = overlayRef.current?.querySelector<HTMLElement>(".hist-stage__hero");
+      const sourceCard = document.querySelector<HTMLElement>(`[data-slug="${event.slug}"]`);
+      const sourcePhoto = sourceCard?.querySelector<HTMLElement>(".hist-tl-card__photo");
+
+      if (heroEl && sourcePhoto) {
+        const heroRect = heroEl.getBoundingClientRect();
+        const targetRect = sourcePhoto.getBoundingClientRect();
+
+        if (heroRect.width > 0 && targetRect.width > 0) {
+          const dx = targetRect.left - heroRect.left;
+          const dy = targetRect.top - heroRect.top;
+          const sx = targetRect.width / heroRect.width;
+          const sy = targetRect.height / heroRect.height;
+
+          const animation = heroEl.animate(
+            [
+              { transform: "translate(0, 0) scale(1, 1)", opacity: "1" },
+              { transform: `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})`, opacity: "0.4" },
+            ],
+            { duration: 380, easing: "cubic-bezier(0.4, 0, 0.2, 1)", fill: "forwards" }
+          );
+
+          animation.onfinish = () => {
+            window.history.back();
+          };
+          return;
+        }
+      }
+    }
+
+    /* Fallback: close instantly */
+    window.history.back();
+  }, [event.slug, reducedMotion]);
+
+  /* ── Keyboard: Escape to close + focus trap ── */
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        handleClose();
+        return;
+      }
+      /* Focus trap: Tab/Shift+Tab stay within overlay */
+      if (e.key === "Tab" && overlayRef.current) {
+        const focusable = overlayRef.current.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [handleClose]);
+
+  return (
+    <div
+      ref={overlayRef}
+      className={`hist-overlay ${reducedMotion ? "hist-overlay--instant" : ""}`}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${event.title} — full story`}
+    >
+      {/* Close button */}
+      <button
+        ref={closeRef}
+        className="hist-overlay__close"
+        onClick={handleClose}
+        aria-label="Close story overlay"
+        type="button"
+      >
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          aria-hidden="true"
+        >
+          <path d="M18 6L6 18" />
+          <path d="M6 6l12 12" />
+        </svg>
+      </button>
+
+      {/* EventDetail — rendered as complete unit.
+          FLIP morph targets its .hist-hero__image element. */}
+      <div
+        className={`hist-overlay__content ${contentVisible ? "hist-overlay__content--visible" : ""}`}
+      >
+        <EventDetail
+          event={event}
+          allEvents={allEvents}
+          onNavigateToEvent={onNavigateToEvent}
+          onClose={onClose}
+        />
+      </div>
+    </div>
+  );
+}

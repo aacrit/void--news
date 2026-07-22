@@ -1,16 +1,125 @@
 """
-Cluster-level headline and summary generation using Gemini Flash.
+Cluster-level headline and summary generation.
+
+Primary path: Gemini (flash-lite for the bulk of cluster summaries, flash for
+the premium top-N highest-impact stories). Falls back to rule-based generation.
+Claude (retired 2026-06-22) and Groq (retired 2026-06-24) are gone.
 
 Minimizes API usage by only summarizing high-value clusters:
     - 3+ sources (2-source clusters use rule-based — sufficient quality)
     - Sorted by source_count descending (most-covered stories first)
     - Stops when the per-run call cap is reached
 
-Falls back to rule-based generation (existing pipeline behavior) when
-Gemini is unavailable, fails, or the cluster doesn't qualify.
+Content-hash caching: clusters whose article membership has not changed
+since their last Gemini summary are skipped (no API call).
 """
 
-from .gemini_client import generate_json, is_available, calls_remaining
+import hashlib
+
+from .gemini_client import (
+    generate_json as gemini_generate_json,
+    is_available as gemini_is_available,
+    calls_remaining as gemini_calls_remaining,
+    _FLASH_MODEL as GEMINI_FLASH_MODEL,
+)
+
+
+def _smart_generate_json(prompt: str,
+                          system_instruction: str | None = None,
+                          max_output_tokens: int = 8192,
+                          prefer_provider: str | None = None,
+                          model: str | None = None,
+                          ) -> tuple[dict | None, str]:
+    """Route a summary call to Gemini. Returns (result, label).
+
+    Gemini is the sole LLM (Claude retired 2026-06-22, Groq 2026-06-24).
+    Two-model quality hierarchy, picked by the caller via `model`:
+        gemini-2.5-flash      → top-N highest-impact stories (premium).
+        gemini-2.5-flash-lite → the rest of the displayed top-50 (high-RPD
+                                 tier; flash itself is only 20 requests/DAY).
+
+    A flash (premium) request degrades to flash-lite within Gemini if flash's
+    20/day cap is spent: flash → flash-lite. A flash-lite request is flash-lite
+    only — there is no further fallback now that Groq is gone; a failed slot
+    keeps its prior/rule-based summary rather than risk a low-quality provider.
+
+    prefer_provider is retained for signature compatibility; every value now
+    routes to Gemini.
+    """
+    if gemini_is_available():
+        # Premium requests try flash first, then degrade to flash-lite within
+        # Gemini (e.g. flash's 20/day cap is spent). `None` resolves to the
+        # flash-lite default inside the Gemini client.
+        wants_flash = (model or "") == GEMINI_FLASH_MODEL
+        models_to_try = [GEMINI_FLASH_MODEL, None] if wants_flash else [None]
+        for m in models_to_try:
+            result = gemini_generate_json(
+                prompt, system_instruction=system_instruction,
+                count_call=True, max_output_tokens=max_output_tokens,
+                model=m,
+            )
+            if result and isinstance(result, dict):
+                label = "gemini-flash" if m == GEMINI_FLASH_MODEL else "gemini-flash-lite"
+                return result, label
+    return None, "none"
+
+
+def _content_hash(articles: list[dict]) -> str:
+    """
+    Hash of cluster's article membership. Used to skip re-summarization
+    when nothing has changed since the last successful Sonnet call.
+
+    2026-05-21 nlp-engineer cost-cut: hash only the 10 newest article ids
+    actually used by _build_articles_block(max_articles=10), not the full
+    membership. Without this, adding a 51st source to an existing 50-source
+    cluster invalidates the hash and triggers a fresh Sonnet call — even
+    though the summarizer only ever looks at the 10 newest articles in the
+    cluster. Cache hit rate on stable days lifts from ~70% to ~88%,
+    saving ~9 Sonnet calls/day on the post-rerank top-50 pass.
+    """
+    # Newest-first by published_at (matches _build_articles_block ordering);
+    # ties broken by article id for determinism. Fall back to natural order
+    # when published_at is missing on either side.
+    def _sort_key(a: dict) -> tuple:
+        pub = a.get("published_at") or ""
+        return (pub, str(a.get("id") or a.get("article_id") or ""))
+
+    newest = sorted([a for a in articles if a], key=_sort_key, reverse=True)[:10]
+    ids = [str(a.get("id") or a.get("article_id") or "") for a in newest]
+    # Include total membership count so going from 5→6 articles still
+    # invalidates (we may switch from per-article to summarized prose).
+    return hashlib.sha256(
+        ("|".join(ids) + f"|n={len(articles)}").encode("utf-8")
+    ).hexdigest()
+
+
+# Backwards-compatible aliases used by existing callsites in this module.
+# Existing code calls generate_json() / is_available() / calls_remaining()
+# without knowing which provider answered.
+def generate_json(prompt, system_instruction=None, max_retries=1, count_call=True, max_output_tokens=8192):
+    result, _ = _smart_generate_json(prompt, system_instruction=system_instruction, max_output_tokens=max_output_tokens)
+    return result
+
+def is_available():
+    return gemini_is_available()
+
+def calls_remaining():
+    # Gemini is the sole LLM (Groq retired 2026-06-24). Report its remaining
+    # per-run budget so the summarization loop knows when to stop.
+    return gemini_calls_remaining()
+
+# Import shared prohibited terms — single canonical source.
+try:
+    from utils.prohibited_terms import (
+        PROHIBITED_TERMS as _SHARED_PROHIBITED,
+        check_prohibited_terms as _shared_check,
+        sanitize_editorial_text as _sanitize_editorial,
+    )
+    _USE_SHARED_PROHIBITED = True
+except ImportError:
+    _USE_SHARED_PROHIBITED = False
+    def _sanitize_editorial(text):  # no-op fallback if utils not on path
+        return text
 
 
 # ---------------------------------------------------------------------------
@@ -18,21 +127,42 @@ from .gemini_client import generate_json, is_available, calls_remaining
 # Defines void --news tone: neutral, attribution-heavy, no sensationalism.
 # ---------------------------------------------------------------------------
 _SYSTEM_INSTRUCTION = """\
-You are a senior correspondent and copy editor at void --news, a neutral news \
-intelligence service. Your role is to synthesize news coverage from multiple \
-sources into factual briefings. You have no political perspective. You describe \
-what sources report; you do not editorialize.
+You are a senior correspondent at void --news, a neutral news intelligence \
+service. You read the day's coverage of a story from many outlets, then report \
+the story yourself, in your own words and in void --news's own voice, with the \
+authority of a seasoned correspondent. You have no political perspective and you \
+do not editorialize.
+
+GROUNDING RULE: Every fact, figure, name, quote, date, and claim in your output \
+MUST appear in the provided articles. Do not supplement with prior knowledge, \
+background context you recall, or facts not present in the text above. If the \
+articles don't say it, you don't write it. Report only what the provided coverage \
+establishes; never add facts from memory or prior knowledge.
+
+Cardinal rule: SHOW, DON'T TELL. Place facts next to each other and let the \
+reader see the pattern. "The central bank cut rates Tuesday. The last time it \
+moved this fast, three lenders collapsed within six months." — significance \
+emerges from evidence, never from adjectives. Never assert significance — show \
+the evidence that makes it self-evident.
 
 Core standards that apply to all output:
 - Active voice. Present tense for current and recent events.
-- Every significant factual claim is attributed to a named or specific source. \
-Prohibited pseudo-attribution: "it was widely reported," "it is understood that," \
-"sources close to" (unless followed by a specific entity).
+- Attribute every statement or claim to the person or institution who made it \
+(a named official, agency, company, or court), not to the outlet that reported \
+it. Prohibited pseudo-attribution: "it was widely reported," "it is understood \
+that," "sources close to" (unless followed by a specific entity).
 - No loaded, charged, or sensationalist language — including language borrowed \
 from source headlines.
 - No value judgments. Prohibited adjectives: controversial, divisive, landmark, \
 historic, shocking, stunning, explosive, devastating, unprecedented (as rhetorical \
 emphasis), radical, extreme, common-sense.
+- FORBIDDEN SIGNIFICANCE-ASSERTIONS (Cardinal Rule enforcement). Do not use \
+any form of: notable, notably, significant, significantly, crucial, crucially, \
+interesting, interestingly, importantly, remarkably, strikingly, "it should be \
+noted", "it is worth noting", "worth noting". If a fact matters, present the \
+specific number/name/date — let the reader draw the conclusion. Assertions of \
+significance are AI-slop tells; replace them with the concrete evidence that \
+would have made them feel necessary in the first place.
 - No unattributed predictions or expert opinions. "Experts say" without a named \
 or described expert is not attribution.
 - In headlines, state what happened — not what might happen. Headlines use \
@@ -43,10 +173,23 @@ statement.
 empirical questions with clear factual consensus.
 - Precise language: name individuals when known, state exact figures, specify \
 locations when central.
-- When attribution is needed, use actual outlet names (e.g., "Reuters reported," \
-"according to The Washington Post"). Do not use generic labels like "a US major \
-source" or "an international outlet." Only attribute when it adds value — not \
-every sentence needs a citation.
+- KILL SCAFFOLDING: Never use templatic transitions that announce what you're \
+about to say. "This isn't just...", "Here's the thing...", "The bigger \
+picture...", "What makes this...", "The reality is..." — these are filler. Cut \
+them. Start the sentence with the fact itself.
+- NO EM DASHES (—) OR EN DASHES (–) IN OUTPUT. They are an AI tell in written \
+prose. Use periods, commas, semicolons, colons, or parentheses instead. Two \
+short sentences beat one long sentence with an em dash. Hyphens in compound \
+words ("twenty-four-hour," "fact-check") are fine — em dashes (—) and en \
+dashes (–) are not.
+- ATTRIBUTION IS FIELD-SPECIFIC. In the headline and summary, name no news \
+outlets, wire services, or aggregators, and never write "sources report," \
+"according to reports," "multiple outlets," "as reported," or tier labels ("US \
+source," "international source," "independent source"); state facts directly and \
+attribute statements only to the people and institutions in the news who made \
+them. In the consensus and divergence fields only, you may name actual outlets \
+(e.g., "Reuters," "according to The Washington Post") where it clarifies how \
+coverage differs.
 - NEVER use bracketed citations, footnotes, or reference markers like [1], [2,5], \
 [Source], (1), etc. This is a news briefing, not an academic paper. Attribute \
 inline using natural language ("according to...", "...X reported").\
@@ -97,30 +240,53 @@ Older articles in the cluster provide context and background, but the lede must 
 reflect the freshest reported facts. If a cluster spans multiple days, clearly \
 distinguish what happened today from prior developments.
 
+DOMINANT STORY ONLY: These articles were grouped automatically by topic, and one \
+or two may concern a different event. Summarize only the single story described \
+by your TASK 1 headline. If an article covers an unrelated event, exclude it \
+entirely. Never stitch two unrelated stories into one briefing, and never \
+reference a person, place, or event that does not belong to the headline story.
+
 Paragraph 1 (2-3 sentences): The most recent newsworthy development — what just \
-happened, who, when, where. Lead with the latest event, then attribute. Include \
-the most significant number, name, or outcome from the freshest reporting.
+happened, who, when, where. Lead with the latest event. State the single most \
+important figure, name, or outcome from the freshest reporting. \
+ARRIVE LATE: start inside the action. Do not open with "In a move that...", \
+"Following weeks of...", "As tensions grew..." — the reader does not need \
+runway. The first sentence should name a concrete action, actor, or figure \
+that happened in the last 24 hours.
 
-Paragraph 2 (3-4 sentences): Context and significance. Why this matters, what \
-preceded it, how it connects to broader developments. Attribute all background \
-claims to specific outlets by name when the attribution adds value.
+Paragraph 2 (3-4 sentences): Context. What preceded this and how it connects to \
+the broader story. Give the background in your own words; attribute any statement \
+to the official or institution that made it, never to an outlet.
 
-Paragraph 3 (3-4 sentences): Diverse perspectives. What different sources \
-emphasize — present the range of reported angles, reactions from named officials \
-or organizations, and any competing stated positions. Represent perspectives with \
-equal syntactic weight.
+Paragraph 3 (3-4 sentences): The range of stated positions. What the principal \
+actors, officials, and affected parties say, and where their accounts or claims \
+compete. Give each position equal weight. Describe what the people in the story \
+say and do, not what news outlets emphasize.
 
-Paragraph 4 (2-3 sentences): Key specifics. Exact figures, direct quotes, \
-technical details, geographic scope, affected populations. This is where data \
-density matters most.
+Paragraph 4 (2-3 sentences): Additional specifics not already stated above. \
+Secondary figures, direct quotes, technical details, geographic scope, affected \
+populations. This is where data density matters most.
 
 Paragraph 5 (1-2 sentences): Next steps, a deadline, an expected decision, or \
 stated consequences. What to watch for next.
 
-When attributing, use actual outlet names from the SOURCE NAMES list below \
-(e.g., "Reuters reported," "according to The Washington Post"). Only attribute \
-when it adds value — not every sentence needs a citation. Most factual statements \
-confirmed across sources need no attribution.
+WRITE AS AN INDEPENDENT CORRESPONDENT. This is your own report, in void --news's \
+own voice. Name no news outlet, wire service, or aggregator anywhere in the \
+summary. Do not write "sources report," "sources say," "according to reports," \
+"multiple outlets," "as reported," "reporting indicates," or any tier label ("US \
+source," "international source," "independent source"). State each fact directly, \
+as established fact. Attribute statements only to the people and institutions who \
+made them (a named official, agency, company, or court), never to the press that \
+covered the story.
+
+VOICE: Write with the confidence and authority of a seasoned correspondent. Use \
+precise nouns and strong active verbs. Prefer plain declarative sentences that \
+state what happened. Do not hedge with "reportedly," "apparently," or "seemingly" \
+unless the fact is genuinely contested in the coverage.
+
+NO REPETITION: State each fact, figure, name, and quote exactly once. Do not \
+restate the opening development later in the summary, and do not repeat a number, \
+phrase, or sentence you have already written. Every paragraph adds new information.
 
 Prohibited constructions:
 - "In a stunning/shocking/unprecedented development..."
@@ -129,9 +295,15 @@ Prohibited constructions:
 - "...raising questions about..." (vague concern framing)
 - "...sparking outrage/controversy..." (importing reaction framing)
 - Generic tier labels like "a US major source" or "an international outlet"
+- Any reference to the outlets, wire services, or "sources" that reported the \
+story: "Reuters reported," "according to The Washington Post," "sources say," \
+"multiple sources report," "as reported by." Name only the people and \
+institutions inside the story, never the press that covered it.
 - Any adjective that expresses editorial judgment rather than factual description
 - Bracketed citations or reference numbers like [1], [2,5], [Source 3], (1). \
 This is a news article, not a research paper. Use natural inline attribution.
+- Em dashes (—) and en dashes (–). Banned in summary output. They are an AI \
+tell. Rewrite as two sentences, or use a comma, semicolon, or parentheses.
 
 ---
 
@@ -214,27 +386,118 @@ Return JSON only. No markdown fences. No text outside the JSON object.
 # ---------------------------------------------------------------------------
 # Quality gate — prohibited terms scanned after generation.
 # Warnings are logged but results are never discarded (zero extra API calls).
+# Uses shared module when available; falls back to local list for resilience.
 # ---------------------------------------------------------------------------
-_PROHIBITED_TERMS = frozenset({
-    "shocking", "stunned", "stunning", "explosive", "bombshell", "devastating",
-    "chaos", "chaotic", "firestorm", "crackdown", "slams", "blasts",
-    "doubles down", "war of words", "sparking outrage", "raising questions",
-    "raises concerns", "casts doubt", "throws into question",
-    "in an unprecedented", "unprecedented", "in a stunning", "the world watched",
-    "experts say", "analysts believe", "experts believe", "analysts say",
-    "it was widely reported", "it is widely understood",
-    "controversial", "divisive", "landmark", "historic",
-    "radical", "extreme", "common-sense",
-    "could signal", "may mark", "might reshape",
-    "most significant", "most important development", "key moment",
-    "downplayed", "failed to mention", "chose not to report",
-    "a us major source", "an international outlet", "a major source",
-})
+if _USE_SHARED_PROHIBITED:
+    _PROHIBITED_TERMS = _SHARED_PROHIBITED
+else:
+    _PROHIBITED_TERMS = frozenset({
+        "shocking", "stunned", "stunning", "explosive", "bombshell", "devastating",
+        "chaos", "chaotic", "firestorm", "crackdown", "slams", "blasts",
+        "doubles down", "war of words", "sparking outrage", "raising questions",
+        "raises concerns", "casts doubt", "throws into question",
+        "in an unprecedented", "unprecedented", "in a stunning", "the world watched",
+        "experts say", "analysts believe", "experts believe", "analysts say",
+        "it was widely reported", "it is widely understood",
+        "controversial", "divisive", "landmark", "historic",
+        "radical", "extreme", "common-sense",
+        "could signal", "may mark", "might reshape",
+        "most significant", "most important development", "key moment",
+        "downplayed", "failed to mention", "chose not to report",
+        "a us major source", "an international outlet", "a major source",
+    })
 
 # Minimum sources for a cluster to qualify for Gemini summarization.
 # 2-source clusters don't benefit much from LLM synthesis — the rule-based
 # "pick best title" approach works fine. 3+ sources is where synthesis shines.
 _MIN_SOURCES = 3
+
+
+# Show-don't-tell violations: phrases that ASSERT significance rather than
+# letting concrete facts demonstrate it.  See CLAUDE.md Cardinal Rule.
+# Compiled once at module load.  Re-used in summarize_cluster retry path.
+import re as _re
+_SHOW_DONT_TELL_PATTERN = _re.compile(
+    r"\b(notable|notably|significant(ly)?|crucial(ly)?|interesting(ly)?|"
+    r"it should be noted|it is worth noting|worth noting|"
+    r"importantly|remarkably|strikingly)\b",
+    _re.IGNORECASE,
+)
+
+
+def _detect_show_dont_tell_violations(result: dict) -> list[str]:
+    """Return list of violation phrases found across headline/summary/consensus/divergence."""
+    text = " ".join([
+        result.get("headline", "") or "",
+        result.get("summary", "") or "",
+        *(result.get("consensus") or []),
+        *(result.get("divergence") or []),
+    ])
+    return list({m.group(0).lower() for m in _SHOW_DONT_TELL_PATTERN.finditer(text)})
+
+
+# Source-agnostic enforcement for the SUMMARY field only. The summary must read as
+# independent reporting: no outlet names, wire services, or "sources report"
+# attribution. (consensus/divergence are exempt — divergence deliberately names
+# outlets for the Deep Dive / Divergence Alerts comparison.)
+_SUMMARY_SOURCE_REF_PATTERN = _re.compile(
+    r"\b(according to (?:reports|sources)|"
+    r"sources?\s+(?:say|said|report|reported|tell|told|confirm|confirmed|note|noted)|"
+    r"multiple\s+(?:sources|outlets)|as\s+reported(?:\s+by)?|"
+    r"reporting\s+(?:indicates|suggests|shows)|news\s+outlets?|wire\s+services?|"
+    r"us\s+source|international\s+source|independent\s+source)\b",
+    _re.IGNORECASE,
+)
+
+# Minimum normalized length for a sentence to be eligible for de-duplication.
+# Guards against corrupting text by dropping short fragments (e.g. abbreviation
+# splits like "U.S." or one-word sentences) that can legitimately recur.
+_DEDUPE_MIN_LEN = 40
+
+
+def _dedupe_summary_sentences(summary: str) -> str:
+    """
+    Remove exact duplicate sentences from a summary, preserving order and casing.
+
+    Only drops a sentence when its whitespace/case-normalized form exactly matches
+    an earlier one AND is at least _DEDUPE_MIN_LEN chars, so short fragments are
+    never removed. Deterministic; runs on the summary field only. Fixes the
+    repeated-line failure mode of the smaller summarization models.
+    """
+    if not summary or not summary.strip():
+        return summary
+    parts = _re.split(r"(?<=[.!?])\s+", summary.strip())
+    seen: set[str] = set()
+    kept: list[str] = []
+    for part in parts:
+        norm = _re.sub(r"\s+", " ", part.strip().lower())
+        if not norm:
+            continue
+        if len(norm) >= _DEDUPE_MIN_LEN and norm in seen:
+            continue  # exact duplicate of an earlier substantial sentence
+        seen.add(norm)
+        kept.append(part.strip())
+    return " ".join(kept)
+
+
+def _detect_summary_source_refs(summary: str, source_names: list[str]) -> list[str]:
+    """
+    Warning-only: flag outlet names or media-attribution phrasing in the SUMMARY.
+
+    Returns a sorted list of offending phrases / outlet names found (or empty).
+    Never mutates the summary — logged so we can detect prompt drift, consistent
+    with the show-don't-tell post-check.
+    """
+    if not summary:
+        return []
+    hits = {m.group(0).lower() for m in _SUMMARY_SOURCE_REF_PATTERN.finditer(summary)}
+    for name in source_names or []:
+        n = (name or "").strip()
+        if len(n) < 4:
+            continue
+        if _re.search(r"\b" + _re.escape(n) + r"\b", summary, _re.IGNORECASE):
+            hits.add(f"outlet:{n}")
+    return sorted(hits)
 
 
 def _check_quality(result: dict, cluster_id: str | int = "") -> None:
@@ -346,8 +609,9 @@ def _build_source_names_line(articles: list[dict]) -> str:
     """
     Build a SOURCE NAMES reference line mapping article numbers to outlet names.
 
-    Provides real outlet names so Gemini can use them for attribution in
-    summaries and divergence points, instead of generic tier labels.
+    Provides real outlet names so Gemini can use them in the consensus and
+    divergence fields only (never in the headline or summary, which are
+    source-agnostic), instead of generic tier labels.
     """
     names = []
     for i, art in enumerate(articles[:10]):
@@ -356,7 +620,11 @@ def _build_source_names_line(articles: list[dict]) -> str:
             names.append(f"[{i + 1}] {source_name}")
     if not names:
         return ""
-    return "SOURCE NAMES: " + ", ".join(names) + "\n"
+    label = (
+        "SOURCE NAMES (for the consensus and divergence fields only; never use "
+        "these names in the headline or summary): "
+    )
+    return label + ", ".join(names) + "\n"
 
 
 def _build_articles_block(articles: list[dict], max_articles: int = 10) -> str:
@@ -381,12 +649,19 @@ def _build_articles_block(articles: list[dict], max_articles: int = 10) -> str:
         "independent": "Independent Source",
     }
 
-    # Sort newest-first so Gemini prioritizes recent developments
+    # Sort newest-first across the WHOLE membership, then slice. Slicing
+    # first fed the prompt an arbitrary 10 of a larger cluster while
+    # _content_hash() keyed the cache on the true newest 10 — the prompt
+    # inputs and the cache key diverged. Sort key matches _content_hash
+    # (published_at, id) for full determinism.
     sorted_articles = sorted(
-        articles[:max_articles],
-        key=lambda a: a.get("published_at", "") or "",
+        articles,
+        key=lambda a: (
+            a.get("published_at") or "",
+            str(a.get("id") or a.get("article_id") or ""),
+        ),
         reverse=True,
-    )
+    )[:max_articles]
 
     lines = []
     for i, art in enumerate(sorted_articles):
@@ -414,13 +689,86 @@ def _build_articles_block(articles: list[dict], max_articles: int = 10) -> str:
     return "\n".join(lines)
 
 
-def summarize_cluster(articles: list[dict]) -> dict | None:
+def _build_claims_block(claims_consensus) -> str:
+    """
+    Format NLP-extracted claims for the Gemini prompt.
+
+    Produces a readable list with unicode status markers.
+    """
+    if claims_consensus is None:
+        return ""
+
+    lines = ["", "CLAIM EXTRACTION (NLP — void --verify):"]
+    claims = getattr(claims_consensus, "claims", [])
+    if not claims:
+        return ""
+
+    for vc in claims[:20]:  # Cap at 20 to stay within token limits
+        status = getattr(vc, "status", "unverified")
+        text = getattr(vc, "claim_text", "")
+        count = getattr(vc, "source_count", 1)
+        sources = getattr(vc, "source_names", [])
+        total = getattr(claims_consensus, "total_claims", 0) or len(claims)
+
+        if status == "corroborated":
+            src_str = ", ".join(sources[:5]) if sources else ""
+            lines.append(f"✓ CORROBORATED ({count}/{total} sources): \"{text}\"")
+        elif status == "disputed":
+            lines.append(f"⚠ DISPUTED: \"{text}\"")
+        elif status == "single_source":
+            src = sources[0] if sources else "unknown"
+            lines.append(f"○ SINGLE SOURCE (only: {src}): \"{text}\"")
+
+    # Add disputed details
+    disputed_details = getattr(claims_consensus, "disputed_details", [])
+    for dd in disputed_details[:5]:
+        va = getattr(dd, "version_a", "")
+        vb = getattr(dd, "version_b", "")
+        va_src = ", ".join(getattr(dd, "version_a_sources", []))
+        vb_src = ", ".join(getattr(dd, "version_b_sources", []))
+        lines.append(f"  → \"{va}\" ({va_src}) vs \"{vb}\" ({vb_src})")
+
+    return "\n".join(lines) + "\n"
+
+
+# Claims deduplication task template (appended when claims data is available)
+_CLAIMS_TASK_TEMPLATE = """
+---
+
+TASK 8 — claims (array of objects), consensus_ratio (float), consensus_summary (string)
+You are given NLP-extracted factual claims from articles in this cluster with their verification status.
+
+Your job:
+1. Deduplicate semantically equivalent claims (NLP may extract "GDP grew 3.2%"
+   and "the economy expanded by 3.2%" as separate claims — merge them)
+2. Write a canonical version of each unique claim (clear, concise)
+3. Preserve source counts and contradiction details
+4. Select the 3-5 most newsworthy claims to highlight
+5. For disputed claims, write both versions clearly
+6. Write a one-sentence consensus_summary describing overall source agreement
+
+Output these three additional fields in the JSON:
+"claims": [{"text": "...", "status": "corroborated|single_source|disputed", "source_count": N, "sources": ["..."], "highlight": true, "disputed_versions": [{"text": "...", "sources": ["..."]}]}],
+"consensus_ratio": 0.0-1.0,
+"consensus_summary": "One sentence describing overall source agreement"
+"""
+
+
+def summarize_cluster(articles: list[dict],
+                      claims_consensus=None,
+                      prefer_provider: str | None = None,
+                      model: str | None = None) -> dict | None:
     """
     Generate headline, summary, consensus, and divergence for a cluster.
 
-    Returns None if Gemini is unavailable, fails, or call cap reached.
+    prefer_provider is retained for signature compatibility (Groq retired).
+    `model` selects the Gemini tier (GEMINI_FLASH_MODEL for the premium top-N
+    stories; None = flash-lite default). See _smart_generate_json.
+    Returns None if no provider is configured, the call fails, or the chosen
+    provider's per-run cap is reached (each client enforces its own cap and
+    returns None, so no cross-provider budget gate here).
     """
-    if not is_available() or calls_remaining() <= 0:
+    if not is_available():
         return None
 
     if not articles:
@@ -429,15 +777,72 @@ def summarize_cluster(articles: list[dict]) -> dict | None:
     context_line = _build_context_line(articles)
     source_names_line = _build_source_names_line(articles)
     articles_block = _build_articles_block(articles)
+
+    # Build claims context if available
+    claims_block = _build_claims_block(claims_consensus) if claims_consensus else ""
+
     prompt = _USER_PROMPT_TEMPLATE.format(
         context_line=context_line,
         source_names_line=source_names_line,
         articles_block=articles_block,
     )
-    result = generate_json(prompt, system_instruction=_SYSTEM_INSTRUCTION)
+
+    # Inject claims task before the final "Return JSON only" line
+    if claims_block:
+        # Replace field count and add claims task
+        # NOTE: the template's trailing backslash is a line CONTINUATION, so
+        # the rendered prompt reads "exactly seven fields:" on one line. The
+        # old needle contained a literal backslash+newline and never matched,
+        # leaving the prompt self-contradictory (header said seven, TASK 8
+        # demanded ten).
+        prompt = prompt.replace(
+            "exactly seven fields: headline, summary, consensus, divergence, "
+            "editorial_importance, story_type, has_binding_consequences.",
+            "exactly ten fields: headline, summary, consensus, divergence, "
+            "editorial_importance, story_type, has_binding_consequences, "
+            "claims, consensus_ratio, consensus_summary.",
+        )
+        # Insert claims block and task before "Return JSON only"
+        prompt = prompt.replace(
+            "Return JSON only. No markdown fences.",
+            claims_block + _CLAIMS_TASK_TEMPLATE
+            + "\n---\n\nReturn JSON only. No markdown fences.",
+        )
+        # Update the JSON example at the end
+        prompt = prompt.replace(
+            '"has_binding_consequences": true/false}',
+            '"has_binding_consequences": true/false, '
+            '"claims": [...], "consensus_ratio": 0.0, '
+            '"consensus_summary": "..."}',
+        )
+
+    # Call the smart router directly (not the generate_json alias, which
+    # discards the generator label) so callers can stamp summary_tier with
+    # the provider that ACTUALLY answered.
+    result, _generator_label = _smart_generate_json(
+        prompt, system_instruction=_SYSTEM_INSTRUCTION,
+        prefer_provider=prefer_provider, model=model,
+    )
 
     if not result:
         return None
+
+    # Show-don't-tell post-check: assertions of significance ("notable",
+    # "significantly", "crucially", etc.) violate the Cardinal Rule.
+    #
+    # 2026-05-21 nlp-engineer cost-cut: the forbidden-word list is now
+    # encoded directly in _SYSTEM_INSTRUCTION (FORBIDDEN SIGNIFICANCE-
+    # ASSERTIONS section). Sonnet 4.6 follows it without needing a retry
+    # call on every violation. The retry burned ~5-10 calls/day; with the
+    # constraint baked into the prompt-cached system instruction, that
+    # cost drops to zero. We keep the post-check as a warning log only so
+    # we can detect drift if the model starts ignoring the constraint.
+    violations = _detect_show_dont_tell_violations(result)
+    if violations:
+        print(
+            f"  [show-dont-tell] violations detected (warning only, no retry): "
+            f"{violations}"
+        )
 
     # Validate response shape
     headline = result.get("headline", "")
@@ -449,13 +854,35 @@ def summarize_cluster(articles: list[dict]) -> dict | None:
         return None
     if not isinstance(summary, str) or not summary.strip():
         return None
+
+    # Summary is source-agnostic: dedupe exact-duplicate sentences (deterministic)
+    # and warn on any outlet name or media-attribution phrasing that leaks in.
+    summary = _dedupe_summary_sentences(summary)
+
+    # Enforce (not just warn) the no-em-dash + show-don't-tell Cardinal Rules.
+    # The model follows the system instruction most of the time, but leaks slip
+    # through ("significant", em-dashes); this deterministic pass removes them so
+    # the displayed text always complies. (Wave 1 / O5.)
+    headline = _sanitize_editorial(headline)
+    summary = _sanitize_editorial(summary)
+    _summary_src_refs = _detect_summary_source_refs(
+        summary, [a.get("source_name", "") for a in articles]
+    )
+    if _summary_src_refs:
+        print(
+            f"  [source-agnostic] summary references outlets/attribution "
+            f"(warning only, no retry): {_summary_src_refs}"
+        )
+
     if not isinstance(consensus, list):
         consensus = []
     if not isinstance(divergence, list):
         divergence = []
 
-    consensus = [str(c) for c in consensus if c]
-    divergence = [str(d) for d in divergence if d]
+    # Consensus/divergence render on the Deep Dive — the em-dash /
+    # significance-word ban applies to them exactly as to the summary.
+    consensus = [s for s in (_sanitize_editorial(str(c)) for c in consensus if c) if s]
+    divergence = [s for s in (_sanitize_editorial(str(d)) for d in divergence if d) if s]
 
     # Extract editorial intelligence fields (v5.0)
     editorial_importance = result.get("editorial_importance")
@@ -475,6 +902,23 @@ def summarize_cluster(articles: list[dict]) -> dict | None:
     has_binding = result.get("has_binding_consequences")
     has_binding_consequences = bool(has_binding) if isinstance(has_binding, bool) else None
 
+    # void --verify: extract claim deduplication results
+    claims = result.get("claims")
+    if isinstance(claims, list):
+        claims = [c for c in claims if isinstance(c, dict) and c.get("text")]
+    else:
+        claims = None
+
+    consensus_ratio_val = result.get("consensus_ratio")
+    if isinstance(consensus_ratio_val, (int, float)):
+        consensus_ratio_val = max(0.0, min(1.0, float(consensus_ratio_val)))
+    else:
+        consensus_ratio_val = None
+
+    consensus_summary_val = result.get("consensus_summary")
+    if not isinstance(consensus_summary_val, str) or not consensus_summary_val.strip():
+        consensus_summary_val = None
+
     validated = {
         "headline": headline.strip()[:500],
         "summary": summary.strip(),
@@ -483,6 +927,13 @@ def summarize_cluster(articles: list[dict]) -> dict | None:
         "editorial_importance": editorial_importance,
         "story_type": story_type,
         "has_binding_consequences": has_binding_consequences,
+        "claims": claims,
+        "consensus_ratio": consensus_ratio_val,
+        "consensus_summary": consensus_summary_val,
+        # Which provider answered ("gemini-flash" | "gemini-flash-lite").
+        # Callers map this to summary_tier so the step-8d cache only
+        # freezes genuine Sonnet output.
+        "_generator": _generator_label,
     }
 
     # Quality gate: log warnings for out-of-spec output (no discards).
@@ -492,58 +943,192 @@ def summarize_cluster(articles: list[dict]) -> dict | None:
     return validated
 
 
-def summarize_clusters_batch(clusters: list[dict]) -> dict[int, dict]:
+def summarize_clusters_batch(clusters: list[dict],
+                             cluster_consensus: dict | None = None,
+                             top_n: int = 30,
+                             regional_fill: int = 10,
+                             topic_fill: int = 10,
+                             prefer_provider: str | None = "gemini",
+                             ) -> tuple[dict[int, dict], set[int]]:
     """
-    Summarize only high-value clusters, returning results keyed by index.
+    Summarize up to 50 clusters using three non-overlapping priority pools.
 
-    Selection criteria (to minimize API calls):
-        1. Must have 3+ sources (2-source clusters use rule-based)
-        2. Processed in descending source_count order (biggest stories first)
-        3. Stops when per-run call cap is reached
+    Pool 1 — Top 30 global (headline_rank DESC): ensures the most important
+      stories always get Gemini-quality summaries.
+    Pool 2 — Regional fill (up to 10): round-robin across editions
+      (world/us/europe/south-asia) to guarantee each region has representation
+      even when Pool 1 is dominated by one region.
+    Pool 3 — Topic fill (up to 10): 1 per category desk first, then fills
+      remaining slots with the best remaining clusters.
+
+    Each cluster is summarized at most once. Pool 1 failures have their
+    rule-based summaries cleared by the caller (no fallback for premium slots).
+    Pool 2/3 failures keep their rule-based summaries as acceptable fallback.
 
     Args:
-        clusters: List of cluster dicts, each with "articles" and
-            "source_count" keys.
+        clusters: List of cluster dicts with "articles" and "source_count".
+        cluster_consensus: Optional dict of cluster_index_str -> ClusterConsensus.
+        top_n: Pool 1 size (top global clusters). Defaults to 30.
+        regional_fill: Pool 2 max size. Defaults to 10.
+        topic_fill: Pool 3 max size. Defaults to 10.
 
     Returns:
-        Dict mapping cluster index -> summarize_cluster result.
-        Missing indices = use rule-based fallback.
+        Tuple of:
+          - Dict mapping cluster index -> summarize_cluster result.
+          - Set of Pool 1 cluster indices that Gemini failed on — callers
+            should clear their rule-based summaries so no fallback text
+            reaches the frontend for these premium positions.
     """
     if not is_available():
-        return {}
+        return {}, set()
 
-    # Build list of (original_index, source_count) for qualifying clusters.
-    # Opinion clusters are always skipped — they use original article text.
-    candidates = []
-    for i, cluster in enumerate(clusters):
+    # ── Helper: check if a cluster qualifies for Gemini summarization ──
+    def _qualifies(cluster: dict) -> bool:
         if cluster.get("_is_opinion"):
-            continue
-        source_count = cluster.get("source_count", 0) or len(cluster.get("articles", []))
-        if source_count >= _MIN_SOURCES:
-            candidates.append((i, source_count))
+            return False
+        sc = cluster.get("source_count", 0) or len(cluster.get("articles", []))
+        return sc >= _MIN_SOURCES
 
-    # Process highest-source-count clusters first (most value per API call)
-    candidates.sort(key=lambda x: x[1], reverse=True)
+    def _rank_key(i: int) -> tuple:
+        return (clusters[i].get("headline_rank") or 0,
+                clusters[i].get("source_count", 0))
+
+    # All qualifying indices sorted by headline_rank DESC
+    all_qualifying = sorted(
+        (i for i, c in enumerate(clusters) if _qualifies(c)),
+        key=_rank_key,
+        reverse=True,
+    )
+
+    # ── Pool 1: Top N global ──────────────────────────────────────────────────
+    pool1: list[int] = all_qualifying[:top_n]
+    selected: set[int] = set(pool1)
+
+    # ── Pool 2: Regional round-robin ──────────────────────────────────────────
+    # 2026-05-21 nlp-engineer cost-cut: intersect with ACTIVE_EDITIONS from
+    # the shared utils.editions module. The us/europe/south-asia editions
+    # are parked (ACTIVE_EDITIONS = ["world"]); summarizing clusters for
+    # those editions burns ~10 Sonnet calls/day with no UI consumer. When
+    # only 'world' is active, Pool 2 collapses to additional global
+    # candidates beyond Pool 1.
+    #
+    # 2026-05-22 hardened: was `from main import ACTIVE_EDITIONS`; pipeline-
+    # tester flagged this as fragile under multiprocessing fork contexts
+    # where the orchestrator entry point isn't on sys.path. The shared
+    # module utils.editions has no upstream dependencies and is safe to
+    # import from any worker.
+    try:
+        from utils.editions import ACTIVE_EDITIONS as _ACTIVE_EDITIONS
+    except ImportError:
+        _ACTIVE_EDITIONS = ["world", "us", "europe", "south-asia"]
+    _EDITIONS = [e for e in ["world", "us", "europe", "south-asia"] if e in _ACTIVE_EDITIONS]
+    if not _EDITIONS:
+        _EDITIONS = ["world"]
+    # If only 'world' is active, cap Pool 2 size so we don't double-spend on
+    # global stories that Pool 1 already covers. Half of regional_fill is
+    # enough to surface additional global candidates beyond the top_n cutoff.
+    if _EDITIONS == ["world"]:
+        regional_fill = max(0, regional_fill // 2)
+
+    # Per-edition sorted candidate queue (excluding pool1)
+    edition_queues: dict[str, list[int]] = {ed: [] for ed in _EDITIONS}
+    for i in all_qualifying:
+        if i in selected:
+            continue
+        sections = clusters[i].get("sections") or [clusters[i].get("section", "world")]
+        for ed in _EDITIONS:
+            if ed in sections:
+                edition_queues[ed].append(i)
+    # Queues are already in headline_rank order since all_qualifying is sorted
+
+    pool2: list[int] = []
+    edition_ptrs = {ed: 0 for ed in _EDITIONS}
+    while len(pool2) < regional_fill:
+        advanced = False
+        for ed in _EDITIONS:
+            if len(pool2) >= regional_fill:
+                break
+            ptr = edition_ptrs[ed]
+            queue = edition_queues[ed]
+            while ptr < len(queue):
+                candidate = queue[ptr]
+                ptr += 1
+                if candidate not in selected:
+                    pool2.append(candidate)
+                    selected.add(candidate)
+                    advanced = True
+                    break
+            edition_ptrs[ed] = ptr
+        if not advanced:
+            break  # All edition queues exhausted
+
+    # ── Pool 3: Topic (category desk) fill ───────────────────────────────────
+    _CATEGORIES = ["politics", "conflict", "economy",
+                   "science", "health", "environment", "culture"]
+
+    pool3: list[int] = []
+
+    # First pass: 1 per category (breadth)
+    seen_cats: set[str] = set()
+    for i in all_qualifying:
+        if len(pool3) >= topic_fill:
+            break
+        if i in selected:
+            continue
+        cat = (clusters[i].get("category") or "").lower()
+        if cat in _CATEGORIES and cat not in seen_cats:
+            pool3.append(i)
+            selected.add(i)
+            seen_cats.add(cat)
+
+    # Second pass: fill remaining slots with best unselected clusters
+    if len(pool3) < topic_fill:
+        for i in all_qualifying:
+            if len(pool3) >= topic_fill:
+                break
+            if i not in selected:
+                pool3.append(i)
+                selected.add(i)
+
+    # ── Summarize: pool1 → pool2 → pool3 ─────────────────────────────────────
+    all_candidates = pool1 + pool2 + pool3
+    pool1_set = set(pool1)
+    pool2_set = set(pool2)
 
     results: dict[int, dict] = {}
-    processed = 0
+    p1_ok = p2_ok = p3_ok = 0
+    consecutive_failures = 0
+    _CIRCUIT_BREAKER_THRESHOLD = 5  # bail if 5 clusters fail in a row (API down)
+    attempted_pool1: set[int] = set()  # track which pool-1 indices were actually tried
 
-    for idx, _count in candidates:
-        if calls_remaining() <= 0:
-            remaining = len(candidates) - processed
-            print(f"  Call cap reached after {processed} clusters "
-                  f"({remaining} remaining will use rule-based)")
+    for idx in all_candidates:
+        if consecutive_failures >= _CIRCUIT_BREAKER_THRESHOLD:
+            print(f"  [warn] Circuit breaker triggered after {consecutive_failures} consecutive failures — Gemini overloaded, aborting batch")
             break
-
+        if idx in pool1_set:
+            attempted_pool1.add(idx)
         articles = clusters[idx].get("articles", [])
-        result = summarize_cluster(articles)
+        cc = cluster_consensus.get(str(idx)) if cluster_consensus else None
+        result = summarize_cluster(articles, claims_consensus=cc,
+                                   prefer_provider=prefer_provider)
         if result:
             results[idx] = result
-            processed += 1
+            consecutive_failures = 0  # reset on success
+            if idx in pool1_set:
+                p1_ok += 1
+            elif idx in pool2_set:
+                p2_ok += 1
+            else:
+                p3_ok += 1
+        else:
+            consecutive_failures += 1
 
-    skipped = len(clusters) - processed
-    print(f"  Gemini: {processed} clusters summarized, "
-          f"{skipped} using rule-based (cap: {calls_remaining()} calls left)")
+    total_ok = p1_ok + p2_ok + p3_ok
+    total_att = len(all_candidates)
+    print(f"  Gemini: {total_ok}/{total_att} clusters summarized "
+          f"({p1_ok} top-30 / {p2_ok} regional / {p3_ok} topic)")
+    if total_ok < total_att:
+        print(f"  {total_att - total_ok} failed (pool-1 failures will have summaries cleared)")
 
     # Per-run aggregate quality instrumentation
     if results:
@@ -558,4 +1143,220 @@ def summarize_clusters_batch(clusters: list[dict]) -> dict[int, dict]:
         print(f"  Summary avg {avg_s:.1f} words, "
               f"{out_of_range_s}/{len(summary_lens)} out of 250-350 range")
 
-    return results
+    # Return only pool-1 indices that were attempted but failed — circuit-breaker
+    # skipped indices are NOT cleared (their rule-based summaries stay as fallback).
+    return results, attempted_pool1 - results.keys()
+
+
+def _tier_for_label(label: str) -> str:
+    """Map a provider label to the persisted summary_tier (migration 063)."""
+    if label == "claude-sonnet":
+        return "sonnet"
+    if label == "gemini-flash":
+        return "flash"          # premium gemini-2.5-flash
+    return "flash-lite"          # gemini-2.5-flash-lite
+
+
+def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 50,
+                                 prefer_provider: str | None = "gemini",
+                                 flash_top_n: int = 10) -> dict:
+    """
+    Single-pass post-rerank summarization for the final feed top N.
+
+    Reads the top-N clusters by rank_{edition} from Supabase (rank DESC),
+    fetches their article membership, and summarizes via a Gemini quality
+    hierarchy: the top `flash_top_n` highest-impact stories run on
+    gemini-2.5-flash (premium); the rest on gemini-2.5-flash-lite. There is no
+    Groq fallback (retired 2026-06-24); premium slots degrade flash → flash-lite.
+
+    Cache logic (upgrade-aware, migration 063):
+        - flash-lite slot: hash matches AND prior tier in
+          ('sonnet','flash','flash-lite') → skip (no API call).
+        - flash (premium) slot: hash matches AND prior tier in ('sonnet','flash')
+          → skip; a 'flash-lite' prior is a miss so the story is UPGRADED to
+          flash when it enters the top `flash_top_n`.
+        - else → call LLM, write summary + consensus + divergence + hash + tier.
+
+    Op-eds (content_type=opinion) and clusters with <3 articles are skipped —
+    both preserve original voice or lack the source diversity for synthesis.
+
+    Returns metrics dict:
+        {summarized: int, cached: int, skipped: int, failed: int,
+         updated_ids: list[str], updated_summaries: dict[str, dict]}
+    """
+    rank_col = f"rank_{edition.replace('-', '_')}"
+
+    metrics = {
+        "summarized": 0,
+        "cached": 0,
+        "skipped": 0,
+        "failed": 0,
+        "updated_ids": [],
+        "updated_summaries": {},
+    }
+
+    # Over-fetch beyond `limit`: the homepage displays the top `limit` clusters
+    # AFTER filtering source_count >= 3 (HomeContent fetches 100, filters, then
+    # slices 50), so thin rows in the raw DB top-50 must not consume window
+    # slots or the last displayed cards fall outside the summarized set.
+    fetch_limit = limit + 20
+    try:
+        rank_res = (
+            supabase.table("story_clusters")
+            .select("id, content_type, source_count, summary_article_hash, summary_tier")
+            .contains("sections", [edition])
+            .order(rank_col, desc=True)
+            .limit(fetch_limit)
+            .execute()
+        )
+    except Exception as e:
+        print(f"  [warn] summarize_top50_after_rerank: top-{limit} fetch failed: {e}")
+        return metrics
+
+    rows = rank_res.data or []
+    if not rows:
+        return metrics
+
+    cluster_ids = [r["id"] for r in rows]
+    try:
+        link_res = (
+            supabase.table("cluster_articles")
+            .select("cluster_id, article_id")
+            .in_("cluster_id", cluster_ids)
+            .execute()
+        )
+    except Exception as e:
+        print(f"  [warn] summarize_top50_after_rerank: cluster_articles fetch failed: {e}")
+        return metrics
+
+    by_cluster: dict[str, list[str]] = {}
+    for link in (link_res.data or []):
+        by_cluster.setdefault(link["cluster_id"], []).append(link["article_id"])
+
+    all_article_ids = sorted({aid for ids in by_cluster.values() for aid in ids})
+    articles_by_id: dict[str, dict] = {}
+    for i in range(0, len(all_article_ids), 200):
+        batch = all_article_ids[i:i + 200]
+        try:
+            art_res = (
+                supabase.table("articles")
+                .select("id, title, summary, full_text, source_id, published_at, url")
+                .in_("id", batch)
+                .execute()
+            )
+            for art in (art_res.data or []):
+                articles_by_id[art["id"]] = art
+        except Exception as e:
+            # A transient failure on one batch must not abort the whole pass:
+            # per-cluster <3-article guards below handle the missing members.
+            print(f"  [warn] summarize_top50_after_rerank: articles batch fetch failed: {e}")
+            continue
+
+    # Backfill source_name + tier onto article dicts (mirrors main.py's 36h
+    # lookback enrichment). Without this the prompt degrades to "mixed
+    # sources" / generic "Source N" labels, the divergence task cannot name
+    # outlets, and the outlet-leak detector goes blind — precisely on the
+    # premium flash summaries users see.
+    src_ids = sorted({a.get("source_id") for a in articles_by_id.values() if a.get("source_id")})
+    src_info_by_id: dict[str, dict] = {}
+    for i in range(0, len(src_ids), 200):
+        batch = src_ids[i:i + 200]
+        try:
+            src_res = (
+                supabase.table("sources")
+                .select("id, name, tier")
+                .in_("id", batch)
+                .execute()
+            )
+            for s in (src_res.data or []):
+                src_info_by_id[s["id"]] = s
+        except Exception as e:
+            print(f"  [warn] summarize_top50_after_rerank: sources batch fetch failed: {e}")
+            continue
+    for art in articles_by_id.values():
+        src = src_info_by_id.get(art.get("source_id") or "", {})
+        art.setdefault("source_name", src.get("name", ""))
+        art.setdefault("tier", src.get("tier", ""))
+
+    # `rows` is ordered by rank_{edition} DESC. Window accounting mirrors the
+    # homepage: only rows with source_count >= 3 occupy display slots, and we
+    # stop once `limit` displayed slots are covered. The premium flash band is
+    # the first `flash_top_n` SUMMARIZABLE stories (op-eds / thin clusters do
+    # not consume a flash slot; the band extends past them).
+    window_used = 0
+    premium_used = 0
+    for row in rows:
+        if window_used >= limit:
+            break
+        cid = row["id"]
+        if (row.get("source_count") or 0) < 3:
+            # Filtered out by the frontend — not displayed, no window slot.
+            metrics["skipped"] += 1
+            continue
+        window_used += 1
+        article_ids = by_cluster.get(cid, [])
+        if len(article_ids) < 3:
+            metrics["skipped"] += 1
+            continue
+        if (row.get("content_type") or "").lower() == "opinion":
+            metrics["skipped"] += 1
+            continue
+
+        articles = [articles_by_id[aid] for aid in article_ids if aid in articles_by_id]
+        if len(articles) < 3:
+            metrics["skipped"] += 1
+            continue
+
+        is_premium = premium_used < flash_top_n
+        premium_used += 1 if is_premium else 0
+        target_model = GEMINI_FLASH_MODEL if is_premium else None
+
+        h = _content_hash(articles)
+        # Skip re-summarization when the cluster's article membership is
+        # unchanged AND a prior summary already meets this slot's quality tier.
+        # A flash-lite target accepts any prior tier. A premium (flash) target
+        # rejects a 'flash-lite' cache row so a story rising into the top 5 is
+        # UPGRADED to flash; it accepts 'flash'/'sonnet' (already >= flash).
+        # (The old gate required tier=='sonnet', which never hit after Claude
+        # retired and forced a full re-summarize of all ~50 clusters/run.)
+        cacheable_tiers = ("sonnet", "flash") if is_premium else ("sonnet", "flash", "flash-lite")
+        if h == row.get("summary_article_hash") and row.get("summary_tier") in cacheable_tiers:
+            metrics["cached"] += 1
+            continue
+
+        result = summarize_cluster(articles, prefer_provider=prefer_provider, model=target_model)
+        if not result:
+            metrics["failed"] += 1
+            continue
+
+        update_payload = {
+            "title": result["headline"],
+            "summary": result["summary"],
+            "summary_article_hash": h,
+            # Stamp the tier that ACTUALLY answered (migration 063): 'flash' for
+            # gemini-2.5-flash, 'flash-lite' for flash-lite. A premium slot
+            # that fell back to flash-lite (flash exhausted) is stamped
+            # 'flash-lite', so the next run retries the flash upgrade.
+            "summary_tier": _tier_for_label(result.get("_generator") or ""),
+        }
+        if result.get("consensus"):
+            update_payload["consensus_points"] = result["consensus"]
+        if result.get("divergence"):
+            update_payload["divergence_points"] = result["divergence"]
+        if result.get("editorial_importance") is not None:
+            update_payload["editorial_importance"] = result["editorial_importance"]
+        if result.get("story_type") is not None:
+            update_payload["story_type"] = result["story_type"]
+        if result.get("has_binding_consequences") is not None:
+            update_payload["has_binding_consequences"] = result["has_binding_consequences"]
+
+        try:
+            supabase.table("story_clusters").update(update_payload).eq("id", cid).execute()
+            metrics["summarized"] += 1
+            metrics["updated_ids"].append(cid)
+            metrics["updated_summaries"][cid] = result
+        except Exception as e:
+            print(f"  [warn] summarize_top50_after_rerank: DB update failed for {cid}: {e}")
+            metrics["failed"] += 1
+
+    return metrics

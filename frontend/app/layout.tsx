@@ -6,6 +6,9 @@ import {
   Barlow_Condensed,
 } from "next/font/google";
 import "./globals.css";
+import AudioProvider from "./components/AudioProvider";
+import MobileNav from "./components/MobileNav";
+import { BASE_PATH } from "./lib/utils";
 
 /* ---------------------------------------------------------------------------
    Four Voices of Type
@@ -41,16 +44,16 @@ const barlowCondensed = Barlow_Condensed({
 
 const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: ["400"],
   variable: "--font-ibm-mono",
   display: "swap",
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://aacrit.github.io"),
-  title: "void --news — See every side of the story",
+  metadataBase: new URL("https://void-news.pages.dev"),
+  title: "void --news — See through the void.",
   description:
-    "Free news aggregation with per-article bias analysis across 200 curated sources. See political lean, sensationalism, factual rigor, and framing for every story.",
+    "Free per-article bias analysis across 1,016 sources. Six axes. No paywall. No algorithm. Just the news, dissected.",
   keywords: [
     "news",
     "bias analysis",
@@ -62,14 +65,14 @@ export const metadata: Metadata = {
   ],
   authors: [{ name: "void --news" }],
   openGraph: {
-    title: "void --news — See every side of the story",
+    title: "void --news — See through the void.",
     description:
-      "Free news aggregation with per-article bias analysis across 200 curated sources. See political lean, sensationalism, factual rigor, and framing for every story.",
+      "Free per-article bias analysis across 1,016 sources. Six axes. No paywall. No algorithm. Just the news, dissected.",
     type: "website",
     siteName: "void --news",
     images: [
       {
-        url: "/void--news/og-image.svg",
+        url: `${BASE_PATH}/og-image.svg`,
         width: 1200,
         height: 630,
         alt: "void --news — News aggregation with multi-axis bias analysis",
@@ -79,21 +82,21 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "void --news — See every side of the story",
+    title: "void --news — See through the void.",
     description:
-      "Free news aggregation with per-article bias analysis across 200 curated sources.",
-    images: ["/void--news/twitter-card.svg"],
+      "Free per-article bias analysis across 1,016 sources. Six axes. No paywall. No algorithm.",
+    images: [`${BASE_PATH}/twitter-card.svg`],
   },
   icons: {
     icon: [
-      { url: "/void--news/icon.svg", type: "image/svg+xml" },
-      { url: "/void--news/favicon.ico", sizes: "32x32" },
+      { url: `${BASE_PATH}/icon.svg`, type: "image/svg+xml" },
+      { url: `${BASE_PATH}/favicon.ico`, sizes: "32x32" },
     ],
     apple: [
-      { url: "/void--news/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+      { url: `${BASE_PATH}/apple-touch-icon.png`, sizes: "180x180", type: "image/png" },
     ],
   },
-  manifest: "/void--news/manifest.json",
+  manifest: `${BASE_PATH}/manifest.json`,
 };
 
 export const viewport: Viewport = {
@@ -101,7 +104,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#FAF8F5" },
+    { media: "(prefers-color-scheme: light)", color: "#F0EBDD" },
     { media: "(prefers-color-scheme: dark)", color: "#1C1A17" },
   ],
 };
@@ -126,11 +129,43 @@ export default function RootLayout({
         {/* Fonts loaded via next/font/google above — no additional font loads needed.
             Chomsky, IM Fell English, Old Standard TT, and Lora were removed:
             none are referenced in CSS. Saves 4 network requests. */}
+        {/* CSP — UAT 2026-05-13 P1-2/P1-3:
+            • frame-ancestors removed from <meta> (CSP3 ignores it via meta —
+              must be sent as a response header). It now lives in
+              `frontend/public/_headers` as `Content-Security-Policy:
+              frame-ancestors 'none'`, which Cloudflare Pages honors.
+            • connect-src now includes `wss://*.supabase.co` so Supabase
+              Realtime websockets (used by /ship board) are not blocked.
+            • 'unsafe-inline' on script-src covers the inline theme bootstrap
+              below; upgrade to a sha256 hash if/when the inline body is frozen.
+            • X-Frame-Options retained as a belt-and-suspenders click-jacking
+              guard while CSP frame-ancestors propagates via headers.
+            No backend exists; the meta-CSP is the GH Pages fallback. CF Pages
+            also gets the header from _headers (accumulates). */}
+        <meta
+          httpEquiv="Content-Security-Policy"
+          content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; media-src 'self' https://*.supabase.co; base-uri 'self'; form-action 'self';"
+        />
+        <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
+        <meta httpEquiv="X-Frame-Options" content="DENY" />
+        <meta httpEquiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
         {/* PWA: iOS standalone mode + Android install support */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="void --news" />
         <meta name="mobile-web-app-capable" content="yes" />
-        {/* Inline script to set theme before first paint — avoids flash */}
+        {/* iOS splash screens — solid #1C1A17, icon from manifest */}
+        <link rel="apple-touch-startup-image" href={`${BASE_PATH}/splash-430x932.png`} media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+        <link rel="apple-touch-startup-image" href={`${BASE_PATH}/splash-393x852.png`} media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+        <link rel="apple-touch-startup-image" href={`${BASE_PATH}/splash-390x844.png`} media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+        <link rel="apple-touch-startup-image" href={`${BASE_PATH}/splash-428x926.png`} media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+        <link rel="apple-touch-startup-image" href={`${BASE_PATH}/splash-414x896.png`} media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
+        <link rel="apple-touch-startup-image" href={`${BASE_PATH}/splash-375x812.png`} media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />
+        <link rel="apple-touch-startup-image" href={`${BASE_PATH}/splash-375x667.png`} media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" />
+        {/* Status bar integration — matches app chrome to warm paper tones */}
+        <meta name="theme-color" content="#1C1A17" media="(prefers-color-scheme: dark)" />
+        <meta name="theme-color" content="#F0EBDD" media="(prefers-color-scheme: light)" />
+        {/* Inline script to set theme + viewport before first paint — avoids flash */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -139,11 +174,15 @@ export default function RootLayout({
                   var stored = localStorage.getItem('void-news-theme');
                   if (stored === 'light') {
                     document.documentElement.setAttribute('data-mode', 'light');
+                  } else if (!stored && window.matchMedia('(prefers-color-scheme: light)').matches) {
+                    document.documentElement.setAttribute('data-mode', 'light');
                   }
                 } catch(e) {}
+                var m = window.matchMedia('(max-width: 767px)').matches;
+                document.documentElement.setAttribute('data-viewport', m ? 'mobile' : 'desktop');
               })();
               if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/void--news/sw.js').catch(function() {});
+                navigator.serviceWorker.register('${BASE_PATH}/sw.js').catch(function() {});
               }
             `,
           }}
@@ -161,7 +200,10 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        {children}
+        <AudioProvider>
+          {children}
+          <MobileNav />
+        </AudioProvider>
       </body>
     </html>
   );

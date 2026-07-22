@@ -1,564 +1,162 @@
 # void --news
 
-Last updated: 2026-03-23 (rev 13)
+Last updated: 2026-07-05 (rev 59, editorial-rank-integrity. **CEO-reported: 26-source ei=5 Brooklyn-Bridge spectacle led the feed over the 69-source Khamenei funeral (12 us_major + 51 intl outlets — the day's most-covered story, at #5) and the same SCOTUS transgender ruling sat at #3 AND #4. Root causes + 4 fixes, all in feed_ranker (single owner) and replay-verified against the real 07-05 top-15:** **(1) Editorial-importance nudge:** Gemini's per-cluster `editorial_importance` (1-10) now multiplies rank_world at ±3%/point around pivot 6, clamped [0.88, 1.12] — a nudge that reorders near-ties (ei=8 SCOTUS over ei=5 spectacle) but can't bury broad coverage; rerank threads the field through its update dicts. **(2) Near-duplicate story guard:** among the top 25, two titles sharing >=4 Porter-stemmed content words (or >=3 covering >=65% of the shorter set — reuses clustering's `_title_word_stems` via lazy import) are the SAME story; the lower-sourced cluster decays to leader×0.72 and logs `_near_dup_of`. The same-event cap (2 per event, kept) can't catch these: it permits two ANGLES; this kills literal re-tellings (the real SCOTUS pair shares exactly 4 stems → demoted #4→#8 in replay). **(3) Lead-breadth gate:** slot #1 requires source_count >= 0.45× the top-10 max — the front page demands verification breadth; a high-velocity spectacle waits at #2+ until coverage builds (promotes the highest-ranked top-5 story with breadth). **(4) Step 8d.5 (main.py, NEW):** rerank (8c) applied feed ordering with YESTERDAY'S story_type/ei/titles — 8d then rewrote all three for the top-50, so gates judged stale data (an 8d-tagged `incremental_update` sat ungated at #2 all day). After 8d, re-fetch the top-80 and re-run `apply_feed_ordering` on the fresh metadata, writing changed rank_world back (headline_rank is stored UNGATED since rev 56, so re-initializing re-applies every gate exactly once); runs BEFORE the image cache so the top-15 images match the final order. Replay of the real 07-05 rows: SCOTUS (ei=8) #1, bridge #2, funeral #3, dup SCOTUS demoted to #8 flagged near-dup, crypto incremental finally gated 65.2→50.4, strictly-decreasing verified; boundary harnesses (no-ei promotion, broad-lead no-op, small-pool skip) clean. `py_compile` clean.)
 
-> **Read this file first. Only read other docs when task-relevant. Only open source files when modifying code.**
+Previous: 2026-07-05 (rev 58, run-verified-2 + mobile-full-bleed. **07-05 run verified rev-57 live: title dedup removed 48 old clusters (FIRST time the feature ever fired since rev 47), TL;DR shipped 19 real lines (re-split fallback + prompt fix holding), top-50 coverage 100% (28 new + 22 cached, cache trending up), 0 errors.** Residuals fixed: **(1)** continuing-story matching STILL logged 0 despite the Khamenei-son continuation sitting at 7d-pool #4 — possessive tokens never matched bare forms ("iran's"/"leader's" vs "iran"/"leader"); `_brief_title_keywords` now strips 's/apostrophes before stemming (verified against the real 07-05 titles; negatives stay clean) and "amidst" joined the stopwords. **(2)** archive retention hit its second consecutive 57014 statement timeout (DB 413 MB, 82% of free cap): the single-statement DELETE (which also made PostgREST return every deleted row) replaced with id-paged batches of 500, hard-bounded at 100k rows/run. **(3) Mobile full-bleed (CEO-reported iPhone PWA dead margins):** `--canvas-max: min(92vw,1600px)` was designed for wide monitors but on a 390px phone burned ~31px of margin BEFORE the 16px container gutters — 16% of screen width unused. New `@media (max-width:767px){ :root{ --canvas-max:100% } }` in tokens.css makes every route (nav/feed/footer/weekly/ship/history all consume the token) full-bleed on phones with the 16px padding as the only gutter; tablet/desktop keep 92vw. Verified via local static build + Playwright at 375/390/412/430/768 (page-main/nav/footer widths = viewport on phones, 92vw resumes at 768; live-data feed cards 16px-gutter-exact; zero horizontal scroll on / weekly history sources about paper ship). Safe-area insets already correct (nav top, tab-bar bottom; manifest locks portrait). Known cosmetic: /about layout-viewport reads 400 on a 390 emulator (Chromium auto-fit quirk, no element >390px, invisible). Deferred: summit-pair rewire (07-04/05 both showed live funeral-cluster fragmentation), 7d-brief pre-rerank story selection diverging from the post-rerank homepage top-10 (brief describes a different mix than the displayed feed; structural, needs a 7d-after-8c redesign), DB size trajectory.)
 
-A modern news aggregation platform with per-article, 6-axis rule-based NLP bias analysis. Every source is curated for credibility. Covers World, US, and India editions.
+Previous: 2026-07-04 (rev 57, run-verified-gap-fixes. **Rev-56 verified against the 2026-07-04 production run (0 errors; top-50 coverage 100%, 31 new + 19 cached — the upgrade-aware cache now hits; fresh plain-text brief shipped, no JSON failure; word-boundary opinion gate + detailed hard-gate logging confirmed live). Three gaps found in the run log, fixed:** **(1)** main.py 8b title-based cross-run dedup imported `_title_words`, a name that NEVER existed in story_cluster — the ImportError was swallowed by the outer try every run since rev 47, leaving title dedup permanently inert; now aliases the real `_title_word_stems`. **(2)** The plain-text TL;DR shipped as ONE line (the JSON-era "separated by \\n" instruction confused the model; the retry made it worse, 5→1 lines): prompt rewritten (headline/body/audio labels no longer reference JSON field names; FORMAT demands one sentence per line as real line breaks; retry suffix repeats the three-section contract), plus a deterministic `_ensure_sentence_lines` fallback (abbreviation-safe sentence splitter, no-op when already structured) applied before BOTH the quality gate and storage, and `_parse_brief_sections` normalizes literal backslash-n artifacts. **(3)** Continuing-story matching logged "10 new, 0 continuing" despite an obvious heatwave continuation: the AND-only rule (2 shared words AND containment>=0.5) missed real cases ({europe, heatwave} = 2 of 5 → 0.4); now shared>=3 matches outright, shared>=2 needs containment>=0.5, and the previous-title fetch logs how many titles it actually got (was silently swallowed). Offline harnesses: sentence-splitter (U.S./E.U./Gen. abbreviations), literal-\\n parser case, heatwave-continuation + no-false-positive matching, full mock brief (paragraph in → 17 lines out). Run-log residuals noted, not code: DB at 411 MB (82% of free cap), archive-retention RPC statement timeout, opinion audio 356w < 450 target (soft-accepted by design).)
+
+Previous: 2026-07-04 (rev 56, four-subsystem-audit-fixes. **Full audit of clustering / summarization / ranking / daily brief; 20 verified defects fixed across 6 files.** **Ranking (single-owner gates):** rerank.py now threads `story_type` into the update dicts so `STORY_TYPE_GATES` actually applies in the FINAL rank_world write (the entertainment gate NEVER reached the DB before; incremental/ceremonial were pre-applied to headline_rank instead) and the duplicate pre-gate is deleted; main.py triage no longer multiplies headline_rank ×0.75 itself (was compounding with feed_ranker's gate to 0.5625×) and only sets the flag; main.py's dead pre-triage story-type block and its SECOND divergent same-event cap (max-3/0.75-floor vs feed_ranker's max-2/0.80-decay) are deleted; feed_ranker owns gates + caps, applied exactly once. **Summarization (8d premium quality):** step 8d now backfills `source_name`+`tier` onto articles (prompts were degrading to "mixed sources"/"Source N"; the flash top-10 got POORER prompts than throwaway 7b); the claims-task field-count `str.replace` needle contained a literal backslash+newline and NEVER matched (prompt said "exactly seven fields" while TASK 8 demanded ten), fixed to the rendered text; consensus/divergence points now pass through `sanitize_editorial_text` (em dashes reached the Deep Dive); one failed article batch no longer aborts the whole 8d pass; the flash band is now a `premium_used` counter over SUMMARIZABLE clusters (op-eds/thin rows no longer burn flash slots); 8d over-fetches limit+20 and mirrors the frontend's source_count>=3 window so the displayed tail is covered; step 8b carries `summary_tier` forward across the dedup row-swap when `summary_article_hash` matches (the cross-run premium cache could never hit before; every run re-burned ~10 flash calls). **Clustering:** `_TITLE_STOPWORDS` was defined TWICE; the rich O4/O9 content-stopword set was silently shadowed by Phase 3's small set (renamed `_HEADLINE_CONTENT_STOPWORDS`); the garbage-title list regex `{2,}`→`{3,}` (it force-split real 3-item headlines like "Britain, France, Germany Trigger Sanctions"; the Spans-pattern gained Oxford-comma support to keep true mash-ups caught); Phase 5's O3 over-merge flag now enforces `MEGA_COHESION_MIN_SOURCES=40` (defined-but-unused; wire-amplified 48-art/12-src real stories were eating the 0.65× penalty) and finally receives `source_map` via the `_source_map` stash so `tier_concentration` is measured (was pinned 1.0, deflating every cohesion score 15pts); module + cluster_stories docstrings now tell the truth (production = phases 1,2,3,4,5; 2.5/2.55/2.6 parked; **known gap: `_SUMMIT_PAIRS` Trump-Xi fragmentation protection has NO live replacement**). **Daily brief (rev-54 pattern ported):** TL;DR + opinion now generate PLAIN TEXT (`_smart_generate_text` on flash + `_parse_brief_sections`: headline line / body / `===AUDIO SCRIPT===` delimiter with A:-line fallback); the daily was the last long-prose-in-JSON consumer, where one unescaped quote silently shipped YESTERDAY'S brief with today's timestamp; quality-gate retries now stash the attempt-0 output and accept-with-warnings if the retry call fails (was discarding a usable brief for carry-forward / rule-based stub); written fields (`tldr_headline/tldr_text/opinion_headline/opinion_text`) are deterministically sanitized per-line (em-dash ban enforced, audio scripts exempt); the opinion prohibited-terms check uses word boundaries (quoted "extremely" no longer burns a flash retry); [NEW]/[CONTINUING] tagging works during pipeline runs via previous-brief TITLE matching (was _db_id-only, which is empty pre-insert so everything read [NEW] and repeat-deprioritization was dead); main.py's empty-feed carry-forward filters `tldr_headline NOT NULL` (could resurrect a stub as today's brief); refresh_brief.py's insert-failure fallback NO LONGER deletes the edition's entire brief history (one bad dispatch could blank the homepage brief) and partial modes carry `tldr_headline`. rerank's 48h article window documented as coupled to the 2-day retention. `py_compile` all 6 files + offline harnesses (prompt-needle render test, section parser 6 cases, sanitizer multiline, garbage-regex legit/garbage suites, cohesion tier plumbing, O3 floor, brief+opinion mock end-to-end incl. stash rescue) clean. Deferred: summit-pair rewire (needs fixture-backed design), dedup cosine-confirmation tautology (harmless).)
+
+Previous: 2026-06-28 (rev 55, weekly-editorial-unify. **Three weekly polish items.** **(1) One editorial.** The page had two overlapping editorial elements: rev-53's short ~130w "Editor's Note" in the cover rail and rev-52's ~450w argued "void --Editorial" column after Perspectives. Unified to ONE: the argued column (`opinion_text`/`opinion_headline`/`opinion_lean`) now renders italic in the cover rail (`RailEditorial`, label "void --Editorial", muted lens line), and the standalone `EditorialOpinionSection` + the short `EditorNote` are removed. Renders from existing Issue #14 data (no regen needed). Backend `_generate_editor_note`/`EDITOR_NOTE_SYSTEM` + its call + the `editor_note` upsert key deleted (Sunday flash −1 call; `editor_note` DB column left nullable). Audio path (`_generate_weekly_opinion`) unchanged. **(2) Pull-quotes full width.** `.wk-pullquote` changed from a floated ~48% sidebar to a full-width centered block break across the cover essay column (top/bottom hairline rules, larger italic). **(3) "By the Numbers" killed.** `NumbersCallout` + `.wk-numbers*` removed; cover generation no longer requests a NUMBERS block (`COVER_SYSTEM` trailing-NUMBERS instruction + `want_numbers` dropped together so nothing leaks into the essay). `editor_note`/`cover_numbers` trimmed from `fetchWeeklyDigest` cols + `WeeklyDigestData`. Rail widened `minmax(200,260)`→`minmax(240,300)`. `py_compile` + `tsc` + `next build` clean.)
+
+Previous: 2026-06-28 (rev 54, weekly-essay-plaintext. **Weekly essays hardened against Gemini JSON-parse fragility.** The cover/opinion/tech/sports/recap generators asked for JSON, but long prose with an unescaped quote, stray newline, or truncation broke `json.loads` (`Unterminated string`, `Expecting ',' delimiter`) → the section dropped to a stub (covers fell back to the raw cluster summary; opinions were silently skipped). **(1)** New plain-text path in `weekly_digest_generator.py`: `_parse_essay` (first non-empty line = headline, rest = body, optional trailing `NUMBERS` block of `value | context` lines → `{stat,context}`), `_gen_essay` (wraps `_smart_generate_text`), and `_parse_recap` (`###`-delimited story blocks → `{stories:[{headline,summary}]}`). Cover/opinion/tech/sports/recap now generate PLAIN TEXT and parse out the same keys callers already consume — the pattern already used for the audio script + editor's note. No JSON, no added LLM calls (Sunday flash unchanged ~18/20). `_clean_headline` only strips a `HEADLINE:`/`TITLE:` label when a colon follows, so a real headline like "Headline inflation" survives. **(2)** Conservative shared safety net in `gemini_client.generate_json`: on `JSONDecodeError`, retry once on the outermost `{...}` substring (catches wrapper-prose / extra-data cases) before returning None; never corrupts a valid parse, no extra API call. Helps the remaining JSON callers (rev-52 weekly opinion editorial + the daily pipeline). `_smart_generate` (JSON router) kept for the rev-52 editorial. `import re` added. `py_compile` + offline parser harness (embedded quotes/em-dash/NUMBERS block/missing-headline/`###` recap all asserted) + brace-extraction unit test + `next build` clean.)
+
+Previous: 2026-06-28 (rev 53, weekly-magazine-layout. **void --weekly redesigned to read like a magazine.** Built on top of rev 52 (weekly-editorial-opinion); coexists with that branch's `void --Editorial` argued column (after Perspectives) — this rev's **Editor's Note** is a distinct short magazine note in the cover rail, not the argued opinion. **(1) Cover zone** is now a 2-col grid (`.wk-cover-zone`): the two cover features stacked in the wide column beside a thinner sticky **Editor's Note** rail that flows alongside both (drops below on mobile). **(2) Editor's Note** is a NEW generated field: migration `065_weekly_editor_note.sql` adds `editor_note TEXT` (renamed from 064 to avoid collision with rev 52's `064` opinion migration); `_generate_editor_note` (flagship-flash, `model=_FLASH_MODEL`, ~130-word italic editorial, prose-only/no-em-dash) wired into `generate_weekly_digest` + upsert (Sunday flash now ~5: 2 cover + 1 recap + 1 note + 1 rev-52 opinion ≈18/20 RPD). Rendered italic in the rail (`EditorNote`); rule-based fallback "" so layout degrades. **(3) By the Numbers** callout (`NumbersCallout`) renders the previously-orphaned `cover_numbers`, normalizing both key shapes (`value??stat`/`label??context`). **(4) Pull-quotes**: `pickPullQuote` floats one italic quote per cover essay (from existing text, no gen). **(5) Perspectives** now 3-up side-by-side (Progressive | Pragmatic | Conservative) at ≥768px with neutral column rules, stacking on mobile. **(6) Earlier same-rev cleanups:** hero headline forced to accent red (`--wk-accent`) all modes/resolutions; embedded `**TIMELINE**` essay block killed (COVER_SYSTEM rewritten prose-only + frontend `stripTimelineFromText`); masthead de-reddened to ink-on-paper. Week in Brief unchanged. `editor_note` added to `WeeklyDigestData` + `fetchWeeklyDigest` cols. `py_compile` + `next build` clean. Regenerate Issue #14 via `workflow_dispatch` to populate `editor_note`.)
+
+Previous: 2026-06-28 (rev 52, weekly-editorial-opinion. **void --weekly gains a single ARGUED editorial, mirroring the daily void --opinion.** The weekly already shipped a three-lens "Perspectives" trio + a two-voice news broadcast, but no one argued column. **(1) Generator** (`weekly_digest_generator.py`): new `_generate_weekly_opinion()` runs after the week recap, before audio. Two Gemini calls — the opinion `{headline, text 450-650w}` as **flash** JSON (`model=_FLASH_MODEL`, the flagship tier alongside covers + recap), and the spoken monologue (600-800w) as **flash-lite** plain text via `_smart_generate_text` (plain text dodges the `json.loads` fragility of a long em-dash/quote-heavy script — the same failure fixed earlier for the weekly news script; falls back to text+bookends if the call returns nothing). New `_fetch_daily_opinions()` pulls the week's daily columns from `daily_briefs`; the prompt feeds them in and FORBIDS restating them, so the weekly argues the week-length through-line no single day could see. Lean rotates by `issue_number % 3` (`_get_week_lean`). Prompt mirrors the daily's rigor: show-don't-tell, kill-scaffolding, NO em dashes in prose, institutional "we", lean lens; banned-term retry reuses the file's `PROHIBITED_TERMS`. **(2) Audio** (`produce_audio` already supported the opinion path): weekly `voices["opinion"]` flipped from host_a (Sadaltager→Brian male) → host_b (Achernar→**Ava female**), matching the daily TL;DR-male / opinion-female split; the monologue is appended after the news read and `opinion_start_seconds` captured so the shared player's News/Opinion seek tab lights up for weekly. **(3) Migration 064** adds 7 nullable cols to `weekly_digests` (`opinion_text`/`opinion_headline`/`opinion_lean` [CHECK left|center|right] / `opinion_audio_script` / `opinion_start_seconds` + `audio_voice`/`audio_voice_label`) — DISTINCT from the existing `opinion_left/center/right` "Perspectives". **(4) Frontend:** `WeeklyDigestData` + `fetchWeeklyDigest` carry the 6 client cols; `AudioProvider.playWeekly` threads them into the brief (was 6 hardcoded nulls), lighting the Opinion seek tab; new `EditorialOpinionSection` in `WeeklyDigest.tsx` renders "void --Editorial" (lens tag + headline + body) after Perspectives, before Week in Brief; `.wk-editorial*` styles in `weekly.css` (lean-colored side rule). Net Sunday LLM cost +1 flash, +1 flash-lite (~17/20 documented flash cap; real flash RPD ~250). `py_compile` + offline generator dry-run (flash/flash-lite routing, banned-term retry, bookend fallback all asserted) + `tsc` + `next build` (`/weekly` + `/weekly/world` prerender) clean.)
+
+Previous: 2026-06-26 (rev 51, weekly-page-restore. **void --weekly un-archived.** The page, component (`WeeklyDigest.tsx`), CSS (`styles/weekly.css`), types, and Supabase fetchers (`fetchWeeklyDigest`/`fetchWeeklyArchive`) were always intact — the archive was (a) nav links commented out (CEO 2026-05-15) and (b) the Sunday cron disabled. **(1) Nav restored:** re-added the `/weekly` link in `NavBar.tsx` (nav-spinoffs, beside History), `Footer.tsx` (footer-products), and `MobileSidePanel.tsx` (Read section). `next build` clean, `/weekly` + `/weekly/world` prerender. **(2) Flagship-only flash routing.** The weekly makes ~11 Gemini calls/run, all silently on flash-lite before (`_smart_generate` never passed a `model`). `gemini-2.5-flash` free tier = 20 req/DAY shared per key, and the daily pipeline (`cron '0 11 * * *'`, runs Sunday too) already burns ~13 flash/day, leaving ~7 slots. So full-flash weekly (11) would blow the cap. Fix: `_smart_generate` gained a `model` param threaded into `gemini_generate_json`; only the 2 cover essays (`_generate_cover_stories`) + the week recap (`_generate_week_recap`) pass `model=_FLASH_MODEL` (~3 flash calls → Sunday ≈16/20 RPD), opinions/tech/sports/audio stay flash-lite. The returned `gen` label is now honest (`gemini-flash` vs `gemini-flash-lite`) instead of always `gemini-flash`. **(3) Schedule still manual:** cron in `weekly-digest.yml` left commented; first issue generated via `workflow_dispatch` and verified before re-enabling. **Out of scope (follow-up):** "Most Contested" still never renders — `fetchWeeklyDigest` doesn't select `contested_stories` and migrations 034/035 don't define that column (needs a generator + migration, not just a select). `py_compile` clean; `_FLASH_MODEL` import resolves.)
+
+Previous: 2026-06-24 (rev 50, drop-groq-top50-coverage. **Groq removed entirely (CEO: unreliable) + summarization realigned to the displayed feed.** **(1) Groq retired.** Deleted `groq_client.py`, dropped `groq` from `requirements.txt`, stripped every Groq branch/import from the three routers (`cluster_summarizer._smart_generate_json`, `daily_brief_generator._smart_generate_json`, `weekly_digest_generator._smart_generate`) + their `is_available`/`calls_remaining`, and removed `GROQ_API_KEY`/`GROQ_MODEL` from `pipeline.yml` (both steps), `refresh-brief.yml`, `weekly-digest.yml`, `.env.example`. Gemini is now the SOLE LLM: fallback chains are flash → flash-lite (premium) and flash-lite only (no further net; a failed slot keeps its prior/rule-based summary rather than risk bad output). **Root-cause win:** `summarize_clusters_batch` defaulted to `prefer_provider="groq"`, so step 7b's top-30 summaries hit GROQ first; its failures were a primary source of the raw-excerpt (`tier=None`) cards. Default flipped to `"gemini"`, so 7b now summarizes on flash-lite. **(2) Summarized set == displayed set.** Homepage renders the top 50 by `rank_world` (`HomeContent`: FETCH_LIMIT=100, EDITION_FEED_SIZE=50), but step 8d summarized only the post-rerank top-10 (`limit=10, flash_top_n=5`) while 7b's top-30 were chosen by a DIFFERENT pre-rerank order, so ~33/50 cards showed raw article excerpts. 8d now covers the full displayed 50 post-rerank in `rank_world` order (`limit=50`), self-caching across runs (it writes the hash it later reads). **(3) Two-model split (CEO):** top-10 highest-impact stories → `gemini-2.5-flash` (`flash_top_n=10`); ranks 11-50 → `gemini-2.5-flash-lite`; daily brief TL;DR + opinion stay on flash. flash budget ≈10 stories + ~3 brief ≈13/day, under flash's hard 20-requests/DAY cap (CEO picked top-10 over top-15 for headroom). **(4) Cache-correctness fix:** step 7b stamped its flash-lite output as tier `'flash'`, which made 8d cache-hit the post-rerank top-10 and NEVER upgrade them to real flash; 7b now stamps the accurate tier by generator label so 8d upgrades flash-lite → flash for the top-10. **(5)** Gemini per-run cap 70→90 (`gemini_client._MAX_CALLS_PER_RUN`) so 7b(≤30) + 8d(≤50) full coverage isn't truncated on a low-cache day (flash-lite's high RPD absorbs it). Claude stays retired (imports kept, parked). `py_compile` + routing smoke tests clean; no live `groq_*` refs remain. NOTE: migration 063's column-comment still reads 'Groq fallback', left as immutable applied-migration history.)
+
+Previous: 2026-06-22 (rev 49, bias-tilt-sensitivity. **Problem:** top stories visually bunch at center because the displayed lean is a rigor-weighted MEAN — wires (AP/Reuters≈50) + genuinely two-sided coverage average to ~50, and far-left coverage cancels far-right, so a *contested* story reads identically to a *consensus-centrist* one. Two-part fix, honest (never moves the mean or relabels a side). **(1) Perceptual scale expansion (display position only).** `biasColors.ts` adds `leanToDisplayPos(lean, confidence)` + `leanToDisplayAngle`: `50 + 50·tanh(k·d)/tanh(k)`, `k = DISPLAY_GAIN(3.2)·clamp(confidence,0.4,1)`. High gain near center (a real 3-pt tilt → ~10-pt visual offset), saturates at the wings, strictly monotonic + side-preserving, extremes pinned (0→0, 50→50, 100→100). Confidence-damped so thin clusters near 50 don't swing on noise. The Sigil drives BOTH its beam angle AND its color from the expanded position — the critical fix: coloring the RAW lean left `getLeanColor`'s solid green band (46-55) swallowing every center-left/center-right story, so the feed looked uniformly green; coloring `leanToDisplayPos` shrinks green to raw lean ~49-51, painting 46-48 center-left blue and 52-54 center-right red. The numeric score + label stay 100% true (glanceable surfaces exaggerate for legibility; the Deep Dive KDE remains the true-distribution view). **Color ramp redesigned** (`getLeanColor` + `GREEN_HALF=3`): green is now reserved for STRICTLY balanced only (50±3 in the space passed in; via expanded displayPos that is raw lean ~49.4-50.6), with a continuous light→dark ramp on each side — center-left→left→far-left (light steel blue→navy) and center-right→right→far-right (coral→dark red); tilt magnitude drives darkness. **Agreed-vs-divergent visual:** the Sigil beam now renders a divergence FAN — two faded arms at ±coneHalf around the main beam, where coneHalf scales with `leanSpread` (stddev≥10 opens the fan, 10→40 maps 5°→22°). Agreed stories keep a single crisp beam; divergent ones fan out, and because each arm is colored by its own fanned position a balanced-but-contested story shows a blue (left) and a red (right) arm — visibly contested even at mean 50. **Green = consensus only** (`getSigilLeanColor` + `DIVERGENT_SPREAD_MIN=10`): green now means balanced AND agreed; a balanced-but-divergent standoff drops the green for a neutral slate center beam (`var(--fg-secondary)`) flanked by the blue/red fan arms, so green never gives false "consensus" comfort to a contested story. Color stays one channel = lean (tilts keep their blue/red hue regardless of spread; divergence rides the fan, not the hue). Applied to the Sigil mark, popup, and label. **(2) Polarization / contestedness (reveals the split the mean hides).** `main.py` bias aggregation now computes a per-cluster 7-bucket lean histogram + 3-segment L/C/R counts + a `polarization` index (`100·2·min(L,R)/n`: 0 = one-sided/all-center, 100 = perfect L/R split) and stores them in the existing `bias_diversity` JSONB (no migration). New `LeanCoverageBar.tsx` renders a blue/green/red segmented coverage bar + a "Contested" tag (polarization≥50), shown only when BOTH wings are present (`left>0 && right>0 && total≥3`) — exactly the false-center case; one-sided/all-center stories skip it (the Sigil tilt suffices). Rendered on `StoryCard` (feed) + `BiasSnapshot` (Deep Dive, inline+rail). `BiasSpread` type + HomeContent mapping extended with `polarization`/`leanLeftCount`/`leanCenterCount`/`leanRightCount`. Verified: Jacobin+Breitbart (mean 50) → polarization 100, split bar; all-center (mean 50) → polarization 0, no bar. `tsc` clean, `next build` 98/98.)
+
+Previous: 2026-06-22 (rev 48, gemini-primary-llm + tldr-loading-fix. **Two headline issues.** **(1) Frontend P0 — TL;DR + opinion never loaded.** `AudioProvider` gated the daily-brief DATA fetch behind the void --onair audio kill switch (`if (!AUDIO_ENABLED) return;` before `fetchDailyBrief`). Since `NEXT_PUBLIC_DISABLE_AUDIO` defaults to `"1"` pre-launch, the brief was never fetched, leaving `SkyboxBanner` (desktop) stuck on "Loading today's brief…" and `MobileBriefPill` on its placeholder. TL;DR + opinion are editorial TEXT, not audio. Decoupled: the brief text always fetches; only the audio playback layer (`fetchPreviousEpisodes` + the `<audio>` mount) stays gated by `AUDIO_ENABLED`. `tsc` clean, `next build` 98/98. **(2) LLM stack — Claude retired, Gemini sole primary, two-model quality hierarchy.** Claude was already hard-disabled at the source (`claude_client.is_available()` returns `False` since 2026-06-20) but both routers still listed it first and imported it. Removed the dead Claude branches/imports from `cluster_summarizer._smart_generate_json` + `daily_brief_generator._smart_generate_json` and their `is_available`/`calls_remaining`. **Gemini is now the explicit sole primary, split by workload:** `gemini_client.generate_json` gained a `model` param; `_FLASH_MODEL = "gemini-2.5-flash"` added alongside `_MODEL = "gemini-2.5-flash-lite"`. Daily brief (TL;DR + opinion) → **flash** (low volume, a few calls/day, under flash's 20-requests/DAY free cap). Story summaries: **top-5 highest-impact stories (post-rerank rank order) → flash; ranks 6+ → flash-lite.** Groq (`gpt-oss-20b`) is the $0 fallback. **Fallback chains:** premium slot = flash → flash-lite → Groq; flash-lite slot = flash-lite → Groq (a high-impact story never silently drops to the unreliable provider before exhausting Gemini). `summarize_top50_after_rerank` gained `flash_top_n=5`; `main.py` callsite (post-rerank top-10) passes it. **Migration 063:** `summary_tier` CHECK widened to ('sonnet','flash','flash-lite') so the tier distinguishes premium flash from flash-lite. **Cache fix (latent P1, surfaced by retiring Claude):** the step-8d cache only skipped when `summary_tier=='sonnet'`; with Claude gone every tier was 'flash', so the gate never hit and forced a full re-summarize of all ~50 clusters every run. Now upgrade-aware: a flash-lite slot accepts any prior tier; a flash (premium) slot rejects a 'flash-lite' row so a story rising into the top-5 is UPGRADED to flash, and accepts 'sonnet'/'flash'. **Misc:** brief edition default `["world","us","india"]`→`["world"]` (rev 46 collapse-editions); stale "Groq preferred" comments corrected (`refresh-brief.yml`, `gemini_client.py` header, `claude_client.is_available`). Routing unit-tested: brief→`gemini-2.5-flash`, summaries top-5→`gemini-2.5-flash`, rest→`gemini-2.5-flash-lite`, flash→flash-lite→Groq fallback all verified.)
+
+Previous: 2026-06-11 (rev 47, review-fix-wave. Full independent review (`docs/INDEPENDENT-REVIEW-2026-06-11.md`) found, and this rev fixes, every issue. **P0s:** `section_val` NameError crashed the daily run whenever the recency gate fired (no enclosing try); weekly digest's LLM-fallback branch referenced undefined `cluster` (crashed exactly when the kill switch should degrade); `/paper` selected 061-dropped rank columns (42703, blank page). **Security (migration 062):** RLS enabled on `article_claims`/`source_claim_accuracy` (041 shipped none: anon read/WRITE), `weekly_digests` write policy was `USING(true)` (anon-writable), dead `sandbox_runs` anon INSERT/UPDATE policies dropped (diag UI never shipped; free-tier DB-fill DoS), `_migrations` RLS, `summary_tier` CHECK widened to ('sonnet','flash') (was sonnet-only, so every cluster insert during a Gemini-fallback run violated it), `sync_ship_votes()` SECURITY DEFINER recount RPC (anon vote UPDATE was RLS-blocked; counter frozen since launch). **Workflows:** auto-merge build gate no longer `|| echo`-passes failing builds and now requires bias + clustering validation jobs before merging; migration application moved INTO auto-merge-claude.yml as a post-merge job (GITHUB_TOKEN pushes can't trigger migrate.yml) and migrate.yml's push trigger scoped to main (unmerged branches can no longer mutate prod schema); concurrency + timeout-minutes on pipeline/auto-merge/migrate; generate-history-audio inputs routed via env vars (shell-injection); audit-db trimmed to the real 1x/day cadence. **P1s:** step 8 now writes `cluster["_db_id"]`/`["id"]` back after insert, un-deadening the WebP image cache (was 0 images cached every run), step-8d summary sync, cross-run title dedup, and the memory engine; daily-brief linkage backfilled post-store via `_top_cluster_refs`/`_opinion_cluster_ref` (step 7d runs pre-insert, so `top_cluster_ids` was always `[]`); `rerank.py`, `source_topic_lean`, and the dedup query paginated past PostgREST's 1,000-row cap; `feed_ranker` now ENCODES the topic-diversity partition + mid-feed category cap into strictly-decreasing rank_world (both were no-ops; main.py's duplicate block deleted, feed_ranker is sole owner); weekly `EDITIONS=["world"]`; `_fetch_brief_signals` selects `top_cluster_ids`; PWA root-canonical for CF Pages (manifest/sw.js/layout icons, SW cache v2 + offline.html fallback, `_redirects` catch-all 301); dead `/world` nav link removed; `excerpt`→`summary`, ig_generator `lean_label/lean_score`→`political_lean_baseline` + 7-point→score map, pipeline_health `generated_at`→`created_at`. **P2s:** per-result `summary_tier` stamping (Gemini fallback output no longer cache-frozen as "sonnet"); `_build_articles_block` sorts before slicing (prompt inputs now match `_content_hash`); 36h-lookback select carries `is_wire_copy`/`wire_origin_publisher_id`; `MERGE_HARD_CEILING` made transitive via `_ceiling_union_find` accumulated-root-load tracking across all 4 merge phases; `pipeline_runs.errors` merge-appends everywhere (`_merge_run_errors` + `append_pipeline_run_errors`); claims/memory mapping uses `_db_id` instead of index-zipping (memory now sorted by rank_world so the recorded top story matches homepage #1); `_rule_based_opinion` UUID-guards `opinion_cluster_id` (str(id(c)) placeholder could poison the brief upsert); article_claims delete-then-insert (the old `on_conflict="id"` never fired, accumulating duplicates); parked Gemini-TTS globals defined in audio_producer (instant NameError on re-enable before); RSS global timeout budgeted per wave plan, `max(120, FEED_TIMEOUT*(waves+2))` (was 30s flat — a slow tail could mass-stamp healthy feeds "timeout" toward 5-strike quarantine); migration 003's invalid `ADD CONSTRAINT IF NOT EXISTS` rewritten as a guarded DO-block (fresh-DB bootstrap previously halted at 003, never applying 004+); `.playwright-mcp/` untracked + gitignored. **Frontend details** in rev-47 commit (17 files): ship voting returns the authoritative RPC count; Sigil non-integer-lean modulo guarded; DeepDive handleShare stale closure fixed; Methodology rendered at `/sources#methodology` (both inbound anchors were dead); AudioProvider fully inert under the audio kill switch. Clustering snapshot refreshed to the rev-46 baseline. **Validation post-fix:** bias 207 CORRECT / 8 ACCEPTABLE / 0 WRONG / 0 CATASTROPHIC (215 checks); clustering 33/2/3/0 with zero regression vs snapshot (the 3 WRONG remain the documented obsolete section-classification fixtures); `next build` 98/98 pages.)
+
+Previous: 2026-06-02 (rev 46, collapse-editions. **One daily feed, one route, one ranking signal.** Removed the multi-edition data plane that had been latent under `ACTIVE_EDITIONS=["world"]` since launch. **Pipeline:** `edition_ranker.py` (553 LOC) replaced with `feed_ranker.py` (~190 LOC) that computes `rank_world = headline_rank × STORY_TYPE_GATES × topic-diversity × same-event cap × feed-lead gate`. Dropped: `EDITIONS`, `COUNTRY_EDITION_MAP`, `REGIONAL_KEYWORDS`, `LOCAL_EXCLUSIVE_BOOST`, `LOCAL_CROSSLIST_BOOST`, `CROSS_DEMOTION`, `GLOBAL_SIG_DEMOTION`, `WORLD_MULTI_ED_BOOST`, claimed_ids orchestration, `BACKFILL_*`, regional affinity boost. **main.py:** per-section editorial triage / topic diversity / recency loops collapsed to single passes; section assignment frozen to `"world"`; step 8c.5 world-tag reconciliation deleted; `--editions` CLI arg deleted; `rank_us/europe/south_asia` writes deleted. **rerank.py:** import `apply_feed_ordering`; deleted `_cluster_in_section` + `rank_us/europe/south_asia` writes. **clustering/story_cluster.py:** `_determine_section()` always returns `"world"`. **utils/editions.py:** `ACTIVE_EDITIONS = ALL_EDITIONS = ["world"]`. **Frontend:** deleted `[edition]/page.tsx`, `world/page.tsx`, `WorldPageContent.tsx`, `WorldDivider.tsx`, `EditionIcon.tsx`. Stripped `activeEdition` state from `HomeContent.tsx` + `NavBar.tsx`; removed `EDITION_STORAGE_KEY`, edition transitions, whip-pan, URL push, mobile edition pills. `getEditionTimeOfDay()` / `getEditionTimestamp()` now UTC-only. **DB:** migration 061 drops `story_clusters.rank_us / rank_europe / rank_south_asia` + their partial indexes. `section`/`sections` kept as defensive constants (`"world"` / `["world"]`). **Public-facing:** manifest.json single "Today's feed" shortcut, `_redirects` 301s old `/world|/us|/europe|/south-asia` URLs to `/`, about page CTA "Read today's feed". **Workflows:** removed `editions:` input from `pipeline.yml`, `refresh-brief.yml`, `weekly-digest.yml`. Clustering validation: 33 CORRECT / 2 ACCEPTABLE / 3 WRONG / 0 CATASTROPHIC (2 of 3 WRONG are now-obsolete section-classification fixtures that expected `section="us"` for Trump-Xi or the 15-way overflow cohort). See `/home/aacrit/.claude/plans/i-think-the-editions-iterative-abelson.md`.)
+
+News aggregation, 6-axis rule-based NLP bias analysis. 1,016 sources / 158 countries. **Single daily feed: top 50 stories, ranked once.** Pipeline runs 1×/day; all editorial LLM work routes through Gemini 2.5 (flash for the daily brief + top-10 stories, flash-lite for the rest). Claude (2026-06-22) and Groq (2026-06-24) retired; rule-based fallback. **Live at https://void-news.pages.dev** (Cloudflare Pages, root basePath). GH Pages deprecated.
+
+## Quick Reference
+
+| Working on... | Read |
+|---|---|
+| Frontend, components, CSS, animation | `docs/DESIGN-SYSTEM.md` |
+| **Diagnostic lab — engine flow, kill switch, knob tuning, $0 replay** | `docs/DIAGNOSTIC-LAB.md` (UI not shipped — no diag.html in frontend/public; doc describes the design. sandbox_runs anon-write policies removed in migration 062) |
+| Pipeline flow, ranker v6.0, bias axes, summarization | `docs/PIPELINE-BRAIN.md` |
+| Agents, workflows, slash commands | `docs/AGENT-TEAM.md` |
+| void --history | `docs/HISTORY.md` |
+| Source curation, tiers, L:R | `docs/SOURCE-CURATION-REPORT-2026-04-02.md` |
+| Daily brief, audio, edge-tts, voice rotation | `docs/GEMINI-VOICE-PLAN.md` |
+| DB schema, audits | `docs/DB-REVIEWER-GUIDE.md`, `docs/DB-AUDIT-FRAMEWORK.md` |
+| Performance | `docs/PERF-REPORT-2026-04-29.md` (Lighthouse polish), `docs/PERF-REPORT-2026-03-22.md` (Vol I baseline) |
+| Deploy, basePath, CF migration | `docs/DEPLOYMENT.md` |
+| PWA, iOS/Android app build | `docs/APP-BUILD-GUIDE.md` |
+| Security | `docs/IP-COMPLIANCE.md` |
+| Memory engine | `docs/MEMORY-ENGINE-ARCHITECTURE.md` |
+| Scope, roadmap | `docs/PROJECT-CHARTER.md`, `docs/IMPLEMENTATION-PLAN.md` |
 
 ## Architecture
 
 ```
-GitHub Actions (4x daily cron) → Python Pipeline → Supabase (PostgreSQL) ← Next.js Static Site (GitHub Pages)
+GitHub Actions (1x daily cron, 11:00 UTC) → Python Pipeline → Supabase (PostgreSQL) ← Next.js Static Site (Cloudflare Pages — void-news.pages.dev)
 ```
 
-- **No backend server.** Fully serverless.
-- **Python pipeline** runs on GitHub Actions, handles ingestion, NLP analysis, writes to Supabase.
-- **Next.js frontend** is statically exported, hosted on GitHub Pages, reads Supabase client-side.
-- **Supabase** is the single data layer: articles, bias scores, source metadata, story clusters.
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|------------|
-| Ingestion | Python, feedparser, BeautifulSoup/Scrapy |
-| NLP/Bias Engine | Python, spaCy, NLTK, TextBlob |
-| Summarization | Gemini 2.5 Flash (free tier, google-genai SDK) |
-| Audio | Gemini 2.5 Flash TTS (native multi-speaker, free tier, $0), pydub |
-| Database | Supabase (PostgreSQL) |
-| Frontend | Next.js 16 (App Router), React 19, TypeScript |
-| Animation | Motion One v11 (spring physics, ~6.5KB CDN) |
-| Styling | CSS custom properties, mobile-first, clamp() |
-| Fonts | Playfair Display (editorial), Inter (structural), Barlow Condensed (meta), IBM Plex Mono (data) |
-| Hosting | GitHub Pages (frontend), GitHub Actions (pipeline) |
+No backend server. **Tech**: Python/spaCy/NLTK/TextBlob (NLP), Pillow ~=11 (WebP conversion at upload, q82, ~25-35% LCP image shrink), Gemini 2.5 via google-genai SDK — flash (`gemini-2.5-flash`) for the daily brief + top-10 stories, flash-lite (`gemini-2.5-flash-lite`) for the rest of the top-50 + history script gen (Claude + Groq retired 2026-06-22 / 2026-06-24; rule-based fallback), edge-tts 2-voice roster (Brian + Ava, Multilingual Neural; audio, $0), Supabase, Next.js 16/React 19/TypeScript, native CSS + Web Animations API. Fonts: Playfair Display / Inter / Barlow Condensed / IBM Plex Mono. Deploy: Cloudflare Pages — live at https://void-news.pages.dev (GH Pages deprecated). See `docs/DEPLOYMENT.md`.
 
 ## Core Principles
 
-### Show, Don't Tell — The Cardinal Rule
-
-Every piece of generated text in void --news — summaries, TL;DR, opinion, audio scripts — MUST embody show-don't-tell writing. This is non-negotiable and applies to all prompts, all output, all future development.
-
-**What this means:**
-- Never assert significance. Show the evidence that makes significance self-evident.
-- Never say "this is important" — place facts side by side so the reader realizes it themselves.
-- Never use "notable," "significant," "it should be noted," "interestingly," "crucially" — these are crutch words that TELL instead of SHOW.
-- Juxtapose concrete facts to reveal patterns. "Three central banks moved in the same direction. Two did so despite domestic pressure. The third didn't have a choice." — the reader sees the pattern without being told.
-- Use specific numbers, names, dates, actions. Abstraction is the enemy of show-don't-tell.
-- The opinion section shows hidden patterns by placing facts next to each other — never by declaring a conclusion.
+### Show, Don't Tell — Cardinal Rule (Fiction)
+All generated text MUST embody show-don't-tell. Never assert significance — juxtapose concrete facts so the reader sees the pattern. Never use "notable," "significant," "it should be noted," "interestingly," "crucially." Use specific numbers, names, dates, actions. Present evidence. Let the reader conclude.
 
 **BAD:** "It is worth noting that tensions are rising significantly between the two nations."
 **GOOD:** "Both countries recalled their ambassadors within 48 hours. Neither has done that since 1979."
 
-This principle applies to: `cluster_summarizer.py` prompts, `daily_brief_generator.py` prompts, `claude_brief_generator.py` prompts, and any future content generation. When reviewing or modifying prompts, enforce this standard.
-
-### Product Family Branding
-
-CLI-style naming convention — every feature is a command the user runs. Transparent, no mystery.
-
-| Brand | English Subtitle | Purpose |
-|-------|-----------------|---------|
-| `void --news` | — | The platform |
-| `void --tl;dr` | The Daily Brief | Top stories, editorially weighed |
-| `void --onair` | Audio Broadcast | Two-voice BBC-style news conversation |
-| `void --opinion` | The Board | Observational editorial judgment |
-| `void --sources` | Source Spectrum | 370 outlets on one axis |
-| `void --deep-dive` | Story Analysis | Per-story bias breakdown |
-| `void --paper` | Broadsheet Edition | E-paper reading experience |
-
-English subtitles appear on first encounter (sessionStorage) then fade. The CLI aesthetic signals transparency and anti-marketing — users are querying, not passively consuming. Extended branding should follow this pattern for any new feature.
-
-### Zero Operational Cost
-- No paid APIs. All bias analysis is rule-based NLP running locally.
-- Gemini 2.5 Flash free tier: ~116 RPD used (7.7% of 1500 RPD limit). 4x daily runs × ~26 cluster calls + 3 brief calls per run.
-- Gemini 2.5 Flash TTS: free tier ($0), same GEMINI_API_KEY as summarization. LLM-native multi-speaker dialogue synthesis in a single API call. No per-turn stitching needed.
-- GitHub Actions, Supabase, GitHub Pages — all free tier.
-- Motion One via CDN importmap (no npm install needed).
-
-### Bias Analysis — The Differentiator
-Per-article analysis across 6 axes. Axes 1-5 return score (0-100) + structured rationale dict (JSONB) for frontend hover display. Axis 6 tracks longitudinal trends per source per topic.
-
-1. **Political Lean** — keyword lexicons (90+ terms per side), entity sentiment (spaCy NER + TextBlob), framing phrases, length-adaptive + sparsity-weighted source baseline blending. Blending: `<50w → 0.50/0.50`, `50-150w → 0.70/0.30`, `150-500w → 0.85/0.15`, `500+w → 0.90/0.10`. Sparsity override: when ≤3 distinct keywords found, baseline weight increases further (up to 0.8× of available slack) — a Fox article with zero keyword hits scores ~75 not 53. Short-article divergence guard: when `<150w` and text diverges `>30pts` from baseline, baseline weight floors at 0.60. State-affiliated outlets (RT, CGTN, Sputnik, CGTN): baseline weight floors at 0.30 regardless of length. Optional `topic_lean_data` from Axis 6 EMA blends into prior: `source_baseline = baseline×0.7 + topic_avg×0.3`. Figures added to entity lists: Trump/Soros/Musk (RIGHT), Biden/Sanders/AOC/Harris (LEFT). "critics say"/"some argue"/"many believe" framing weights: 0.05 each (reduced from 0.3/0.1/0.1). "crisis at the border" moved from LEFT to RIGHT framing. Rationale: top left/right keywords, framing phrases, entity sentiments.
-2. **Sensationalism** — headline clickbait patterns, superlative/urgency density (word-boundary regex, no substring hits), TextBlob extremity, short-sentence ratio, partisan attack phrase density (capped at 30pts, was 50pts), measured-phrase inverse. Rationale: headline_score, body_score, clickbait_signals, partisan_attack_density.
-3. **Opinion vs. Reporting** — first-person pronouns (excludes all-caps "US" country code), TextBlob subjectivity (weight 0.18, reduced from 0.22), modal language, hedging, attribution density (includes 14 investigative sourcing patterns: "a review of", "obtained by", "documents show", etc.), absolutist assertion density (state-media correction), value judgment score (weight 0.06, restored from 0.02; denominator is total_judgments not sentence count), metadata markers, rhetorical questions. Rationale: 8 sub-scores, classification label, dominant signals.
-4. **Factual Rigor** — named source counting (spaCy NER near attribution verbs, ±120 char window), organization citations (requires ORG_CITATION_PATTERNS or verb within 80 chars; normalizes "the " prefix), data patterns, direct quotes, attribution specificity (SPECIFIC_ATTRIBUTION regex requires verb within ±150 chars — prevents biographical mentions), 8 vague-source phrases added, direct vague-source penalty up to -15pts. Tier baselines: `us_major=65`, `international=55`, `independent=50`. LOW_CREDIBILITY_US_MAJOR frozenset (22 slugs: Breitbart, Newsmax, Daily Wire, Daily Caller, Gateway Pundit, Infowars, OANN, NY Post, Daily Mail, Occupy Democrats, Palmer Report, Daily Kos, Raw Story, etc.) receives baseline 35 instead of 65. Rationale: named_sources_count, data_points_count, direct_quotes_count, vague_sources_count, specificity_ratio.
-5. **Framing Analysis** — connotation analysis, charged synonym detection (50+ pairs; word-boundary regex for single-word terms), omission detection (one-sided sourcing + cross-article entity comparison; cluster entity cache excludes current article's own entities), headline-body divergence, passive voice ratio (capped at 30, was ~80). "killed" intensity 3→1, "invasion" intensity 3→1 (AP wire false positive fixes). Rationale: 5 sub-scores + has_cluster_context flag.
-6. **Per-Topic Per-Outlet Tracking** — Adaptive EMA: alpha=0.3 for new series (<10 articles), alpha=0.15 for established series (≥10 articles). Category normalized to lowercase before grouping. Wired to `analyze_political_lean` via `topic_lean_data` parameter but dormant until categorization moves before step 5. Stored in `source_topic_lean`. Updated at step 9c.
+Applies to: `cluster_summarizer.py`, `daily_brief_generator.py`, `claude_brief_generator.py`, void --history, CTAs, all generated content.
 
-No LLM API calls for scoring. Confidence computed per-article: text length + availability + signal strength.
+### Arrive Late, Leave Early — Screenplay Rule
+Enter scenes at the last possible moment. Exit before the conclusion is spelled out. Drop the reader INTO the action. Cut when the point lands. The user's brain completes the story.
 
-### Bias Engine Validation Framework (`pipeline/validation/`)
+**BAD:** "The Partition of India was a complex historical process that began with British colonial rule and eventually led to the creation of two nations in 1947, resulting in massive displacement."
+**GOOD:** "A lawyer who'd never been to India drew the border in five weeks. 15 million crossed it."
 
-Ground-truth test suite for regression-safe bias engine development.
+Applies to: void --history events, daily briefs, CTAs, audio scripts. Together these create the cognitive gap where understanding happens.
 
-| File | Purpose |
-|------|---------|
-| `fixtures.py` | 26 ground-truth articles across 8 categories (wire, opinion, investigative, partisan_left, partisan_right, state_media, breaking, analysis) with expected score ranges + rationale |
-| `signal_tracker.py` | Per-signal decomposition — `decompose_lean`, `decompose_sensationalism`, `decompose_opinion`, `decompose_rigor`, `decompose_framing`, `detect_dead_signals` |
-| `source_profiles.py` | AllSides cross-reference alignment — maps AllSides ratings to expected lean ranges per article |
-| `runner.py` | Validation runner; distribution health checks, directional invariants, regression snapshots; 96.9% accuracy on first run |
-| `snapshot.json` | Regression baseline snapshot |
+### No Em Dashes — AI Slop Rule
+Em dashes (`—`) and en dashes (`–`) are banned in all written editorial output: cluster summaries, headlines, TL;DR, opinion text, weekly digest, history copy, CTAs, frontend microcopy. They are an AI tell. Rewrite as two short sentences, or use a comma, semicolon, colon, or parentheses. Hyphens in compound words ("fact-check," "twenty-four-hour") are fine. **Exception**: audio scripts (`audio_script`, `opinion_audio_script`) keep em dashes because they function as TTS prosody / breath marks for the spoken broadcast — void --onair is live again (re-enabled 2026-06-27).
 
-**Run it:**
-```bash
-cd /home/aacrit/projects/void-news
-python pipeline/validation/runner.py              # Full validation
-python pipeline/validation/runner.py --quick      # Skip distribution checks
-python pipeline/validation/runner.py --verbose    # Per-signal decomposition
-python pipeline/validation/runner.py --json       # JSON output for CI
-python pipeline/validation/runner.py --update-snapshot  # Refresh regression baseline
-python pipeline/validation/runner.py --category wire    # Single category
-```
-
-Requires `spaCy en_core_web_sm`. Designed for CI integration (exits non-zero on regression); CI gate via `.github/workflows/validate-bias.yml`. Run after any bias engine change.
-
-### Importance Ranking — v5.1
-
-**Ranking is BIAS-BLIND.** Bias analysis belongs in the display layer, not story selection.
-
-10-signal formula in `pipeline/ranker/importance_ranker.py`. Deterministic weights sum to 1.0 (0.88 when Gemini editorial importance available):
-
-| Signal | Weight | Notes |
-|--------|--------|-------|
-| Source coverage breadth | 20% | Tier-weighted: independent 1.5x, international 1.2x, us_major 1.0x |
-| Story maturity | 16% | recency × log2(1 + source_count); rewards "recent AND thoroughly reported" |
-| Tier diversity | 13% | Composition-aware; us_major presence explicitly rewarded |
-| Consequentiality | 10% | Outcome/action verbs + high-authority phrase floor (70+) |
-| Institutional authority | 8% | Heads of state, supreme courts, central banks, UN Security Council |
-| Factual density | 8% | Avg factual rigor; gate: <30 → 0.88x |
-| Divergence | 7% | Framing-weighted (50% framing, 30% sensationalism, 20% lean); US-only → 0.85x damper |
-| Perspective diversity | 6% | Editorial viewpoint spread; bias-blind |
-| Geographic impact | 6% | G20/P5 nations score 3x |
-| Coverage velocity | 6% | Sources added in last 6h; diminishing returns |
-
-**Gemini editorial importance** (v5.0): When available, 1-10 editorial score adds 12% weight; deterministic signals scale to 88%.
-
-**v5.1 additions**: US-only divergence damper (0.85x); cross-spectrum interest bonus (+2.5 pts max when genuine left-right split across 3+ articles, non-US clusters only).
-
-Tier diversity scoring:
-
-| Tier combination | Score |
-|-----------------|-------|
-| all 3 tiers | 100 |
-| us_major + international | 80 |
-| us_major + independent | 70 |
-| us_major alone | 50 |
-| international + independent | 50 |
-| international alone | 30 |
-| independent alone | 15 |
-
-Gates and modifiers:
-- **Confidence multiplier**: `0.65 + 0.35 * conf` (soft curve)
-- **Consequentiality gate**: consequentiality < 5 → 0.82x
-- **Soft-news gate**: sports/entertainment/culture/lifestyle → 0.78x
-- **Low factual rigor gate**: avg factual_rigor < 30 → 0.88x
-- **Lead eligibility gate**: top 10 per-section require 3+ sources; exception: independent investigative exclusives (factual_rigor > 70)
-- **Topic diversity re-rank**: max 2 per hard-news category, max 1 per soft-news in top 10 per section pool
-- **Cross-edition demotion**: top-5 in primary section demoted below pos 5 in secondary sections
-- **Same-event cap**: max 3 per event (Iran/Ukraine/Gaza/Taiwan)
-- **Deliberation dampener**: 0.7x for "considers"/"weighs"/"discusses"
-- **Tier concentration penalty**: 0.85x when >70% same tier
+**BAD:** "The central bank cut rates Tuesday — the third move this quarter."
+**GOOD:** "The central bank cut rates Tuesday. Third move this quarter."
 
-`pipeline/rerank.py` — standalone re-ranker without full pipeline run. Source map keyed by slug + db_id (UUID).
+Applies to: `cluster_summarizer.py` (summary, headline), `daily_brief_generator.py` (tldr_text, tldr_headline, opinion_text, opinion_headline), `claude_brief_generator.py`, `weekly_digest_generator.py`, void --history YAML copy, all frontend strings.
 
-### Cluster Summarization (Gemini Flash)
-3+-source clusters only, processed descending source-count. Hard cap: **25 API calls per run** (4 runs/day = 100 RPD for cluster summaries + reasoning budget). Summaries: 250-350 words. `max_output_tokens=8192`. Falls back to rule-based when unavailable or cap reached.
+- **Product Family**: `void --news`, `void --tl;dr`, `void --onair`, `void --history`, `void --weekly`, `void --paper`, `void --sources`, `void --deep-dive`, `void --opinion`, `void --ship`, `void --games`.
+- **No Personalization (LOCKED)**: Newspaper principle. Same stories, same order for everyone. No accounts, no recommendation algorithms.
+- **Minimal Cost, High Editorial Value**: **$0/month LLM spend** since the 2026-06-22 move to a free-tier Gemini stack (Claude retired). `gemini-2.5-flash` (free tier: 20 requests/DAY) carries the low-volume premium work — the daily brief + top-10 stories; `gemini-2.5-flash-lite` (high-RPD free tier) carries the ~40 cluster summaries (ranks 11-50); rule-based is the only fallback (Groq retired 2026-06-24). Rule-based NLP, edge-tts audio, Supabase, GitHub Actions/Pages also $0. **Gemini TTS NOT used — was $3/day, not free tier.**
+- **Bias Analysis**: 6 axes (political lean, sensationalism, opinion vs reporting, factual rigor, framing, per-topic EMA). All rule-based NLP, no LLM. See `docs/PIPELINE-BRAIN.md`.
+- **LLM Grounding**: All Claude/Gemini prompts: "Every fact MUST appear in the provided articles. Do not supplement with prior knowledge."
 
-**Gemini Voice** (`cluster_summarizer.py`): `_SYSTEM_INSTRUCTION` (editorial role) + `_USER_PROMPT_TEMPLATE` per cluster. `_PROHIBITED_TERMS` frozenset (26 terms) + `_check_quality()` validator enforce output. Source names used directly (not tier labels — per feedback). `generate_json()` in `gemini_client.py` accepts optional `system_instruction` (backward-compatible).
+## Status
 
-**Op-eds** (opinion_fact > 50): No clustering, no Gemini. Single-article clusters using original text/headline. Author/pub shown only if available.
+**Complete**: Pipeline (all steps + cleanup + memory engine + holistic re-rank + post-rerank top-10 single-pass on the Gemini quality hierarchy (top-5 flash, rest flash-lite, Groq fallback) with upgrade-aware content-hash cache + WebP image cache; daily-brief stub-on-failure writer so homepage never serves stale audio; article retention RPC `cleanup_stale_articles(days INT)` + source-health `consecutive_fetch_failures` quarantine via migrations 050 + 051), **7-phase clustering engine** (Phase 1 TF-IDF agglomerative → Phase 2 IDF-weighted entity merge → Phase 2.5 canonical-pair → Phase 2.55 synonym-pair → Phase 2.6 anchor-entity (IDF≥0.70 of max, df≤2.5% corpus, title-Jaccard≥0.22) → Phase 3 stem-aware title Jaccard → Phase 4 garbage-title force-split → Phase 5 mega-cluster soft cap with `avg_articles_per_sub < 1.5` sanity guard. `MERGE_HARD_CEILING = 120` blocks every merge phase from creating a mega-cluster via union-find transitive closure (made genuinely transitive rev 47: `_ceiling_union_find` tracks accumulated root loads; the old per-pair dict check let chained merges slip past). Phase 5 stamps `mega_cluster_capped=True` when stricter re-split fails; ranker applies 0.65x penalty; `rerank.py` no longer overwrites `source_count` on write-back. Hardened 2026-05-18 after live 217-source AI-deployment over-merge), 6-axis bias engine recalibrated 2026-05-13 (political_lean `unscored` gate widened `total_distinct≤2` + ±2.0 shifts + 40-60 baseline → fires ~26% on fixtures, target 30-50% in prod; sensationalism inflection 15→22, tier baselines un-halved; opinion_detector adds `OPINION_SOURCE_TYPE_BASELINES` for magazine/tabloid/independent/investigative/nonprofit; confidence formula recomputed → mean 0.545/std 0.119; show-don't-tell regex post-check in cluster_summarizer; validation 210/210 with 203 CORRECT / 7 ACCEPTABLE / 0 WRONG), ranking v6.0 + edition-unique, daily brief + weekly digest (Gemini flash primary, Groq fallback), frontend MVP (feed top 50 with digest/wire variants + Deep Dive 2-col + sources + paper + weekly + about + command center + ship + games — wire/run/frame/undertow), $100B layout overhaul + 2026-05-13 lead simplification (top story is text-only — no hero image; `--type-card-headline` token unifies ranks 1+ at 18→22px Playfair; lead summary single full-width column; "Top Story" badge `align-self: flex-start` so SVG oval hugs text), Lighthouse polish, **mobile layout redesign + 2026-05-13 reorder** (TL;DR + Opinion collapsible pill on top with single chevron; hero second; compact cards below — all three above the fold on 360-430 widths; React #418 hydration root cause fixed in HomeContent.tsx; WCAG 2.5.5 tap-target sweep across .mob-nav__lean, .nav-logo, .nav-lens__*, .sigil--sm via `@media (pointer:coarse)`, floating-player controls 32→44; mobile summary clamp 2→3 lines, TL;DR preview 2→3 sentences), **subconscious hover microinteractions** (no translateY card lift, no caret translate, lens-index hover = color only no fill no underline, source-circle fan radius halved 22→12px + r-jump 80%→20%), **PWA distribution** + **Capacitor iOS/Android shells**, **Cloudflare Pages live at void-news.pages.dev** (GH Pages deprecated; CSP `frame-ancestors 'none'` + `wss://*.supabase.co` moved to `_headers`), void --history (58 events, 22 components, 25 events rewritten Show-Don't-Tell + Arrive Late), `--canvas-max: min(92vw, 1600px)`, scroll-compact masthead, route-scoped CSS splits.
+**In progress**: Deep Dive framing comparison; source credibility panels; iOS/Android signing + first store submission.
+**Pending**: WCAG audit, Lighthouse 90+ verified post-deploy, cross-browser testing, launch. CF Pages live; PWA installable. Verify on the next run: TL;DR + opinion now render on the homepage (rev-48 AudioProvider fix); the Gemini flash/flash-lite hierarchy routes correctly (top-10 stories + brief on flash, ranks 11-50 flash-lite); all 50 displayed stories now get a post-rerank LLM summary (rev-50, was top-10); migration 063 applied; the upgrade-aware summary cache hits on stable days; brief stub-on-failure + cluster-image-cache writer logging.
 
-### Daily Brief — "void --onair"
-One world-focused brief generated per run, drawing from the top 20 clusters globally (all editions). Stored in `daily_briefs` table; old briefs pruned to keep latest per edition.
+### Parking Lot (Disabled Pre-Launch)
 
-**TL;DR** (`tldr_text`): 8-12 sentences as a flowing editorial paragraph (150-220 words). Written as a joint editorial board voice — expert writers from left, center, and right. Opinionated about significance, neutral on partisanship. Writes about the world, never about coverage patterns or media behavior. Displayed between FilterBar and Lead Section on homepage. Fetched as "world" brief regardless of active edition.
-
-**Opinion** (`opinion_text`): 3-5 sentences (80-120 words) from "The Board." Genuinely opinionated editorial judgment in first person plural ("we"). Where the TL;DR says what happened, the opinion says what the board thinks about it. Italic Playfair Display, fg-primary color, text-md size. Separated from TL;DR by 2px dotted editorial firewall rule. Desktop: always visible. Mobile: hidden behind "Read more · The Board" toggle (3-line clamp). Same Gemini API call as TL;DR — $0 extra cost.
-
-**Audio broadcast** (`audio_script` + `audio_url`): BBC World Service 1970s two-host radio format. Host A (anchor) delivers facts; Host B (analyst) adds context/divergence. Script uses `[MARKER]` structural delimiters + `A:`/`B:` speaker tags. **Gemini 2.5 Flash TTS** (`gemini-2.5-flash-preview-tts`) generates both speakers in a single API call with LLM-native prosody, natural turn-taking, and conversational rhythm — no per-turn synthesis or stitching needed. Script converted to `One:`/`Two:` dialogue format, artifacts stripped. PCM 24kHz output → pydub post-processing (Glass & Gravity sonic identity: D major 9th bloom intro, glass-bell story transitions, resolving outro; no background bed) → MP3 192k mono → Supabase Storage `audio-briefs` bucket (`{edition}/latest.mp3`).
-
-**Voice pairs** (`pipeline/briefing/voice_rotation.py`): Gemini prebuilt voices. world=Charon/Aoede, us=Enceladus/Kore, india=Puck/Leda. Roles swap on alternate days (UTC day-of-year parity). 30 voices available.
-
-**Gemini budget**: 3 calls/run (one per edition requested, currently world-only). Uses `count_call=False` — does not consume 25-call cluster summarization cap. Falls back to rule-based TL;DR (top 5 cluster titles) when Gemini unavailable. No audio without Gemini script.
-
-**Claude CLI premium scripts** (`pipeline/briefing/claude_brief_generator.py`): Optional manual 1x/day generation via `python -m pipeline.briefing.claude_brief_generator --edition world --model sonnet`. Uses Claude Max (Sonnet/Opus) for higher-quality conversational dialogue. Enhanced disfluency prompt addendum for natural speech patterns. Stores to Supabase, overwrites current brief for edition.
-
-**Audio cadence**: currently always-on (testing mode). Production target: 2x/day (morning + evening UTC).
-
-### Source Curation
-370 vetted sources in three tiers:
-- **Major US (49)** — AP, Reuters, NYT, WSJ, WaPo, Fox, CNN, NPR, PBS, Bloomberg, Breitbart, Newsmax, Daily Wire, etc.
-- **International (154)** — BBC, Al Jazeera, DW, France24, The Guardian, NHK, Yonhap, TRT World, RT, CGTN, etc.
-- **Independent/Nonprofit (167)** — ProPublica, The Intercept, Bellingcat, The Markup, RealClearPolitics, The Free Press, Epoch Times, etc.
+| Feature | Gate | Re-enable |
+|---|---|---|
+| Gemini bias reasoning | `DISABLE_GEMINI_REASONING=1` in `pipeline.yml` | Remove env var |
+| Editorial triage | `DISABLE_EDITORIAL_TRIAGE=1` in `pipeline.yml` | Remove env var |
+| **All Claude API calls — RETIRED 2026-06-22 (was cost-emergency kill switch 2026-05-22)** | `claude_client.is_available()` hard-returns `False` at the source (master switch — no env var or API key can re-enable a paid call). `DISABLE_ANTHROPIC=1` in `pipeline.yml`/`refresh-brief.yml` is now redundant but kept. Gemini is the sole primary; the dead Claude branches were removed from both summarizer routers. ig_caption still imports Claude but degrades to `caption_review` (no Gemini fallback there). | To re-enable: delete the early `return False` in `claude_client.is_available()` and restore the Claude branches in the two `_smart_generate_json` routers |
+| Weekly digest cron — RE-ENABLED 2026-06-27 (Sunday 12:00 UTC) | Cron un-commented in `weekly-digest.yml`; the weekly now runs on schedule (still also `workflow_dispatch`). LLM = flagship-only flash: cover essays + week recap on `gemini-2.5-flash`, opinions/tech/sports/audio on flash-lite (~11 calls/run, ~3-4 on flash). Sunday flash total ≈13 daily + ~4 weekly = ~17/20 RPD. Weekly audio also on (edge-tts Brian+Ava; ffmpeg added). **First scheduled issue is unverified** — recommend a manual `workflow_dispatch` spot-check before Sunday. | To re-park: re-comment the cron + flip `DISABLE_AUDIO` back to `1` |
+| **Audio (void --onair) — RE-ENABLED 2026-06-27 (daily brief)** | Gates flipped to `0`: `DISABLE_AUDIO=0` in `pipeline.yml` (both steps) + `refresh-brief.yml` (pipeline TTS + podcast feed) **AND** `NEXT_PUBLIC_DISABLE_AUDIO=0` in `deploy-cloudflare.yml` (frontend; `app/lib/audioGate.ts` default also flipped `1`→`0`), lighting up FloatingPlayer, MobileMiniPlayer, MobileTabBar onair entry, MobileBriefPill Listen button, WeeklyDigest AudioBar, Footer `void --onair` pill. TTS = **edge-tts** Multilingual Neural ($0); Gemini TTS stays parked (paid, `VOID_ENABLE_GEMINI_TTS`). Audio scripts ride inside the existing brief flash calls — zero new Gemini calls. **Weekly digest audio also re-enabled 2026-06-27** (`weekly-digest.yml` `DISABLE_AUDIO=0` + ffmpeg install + Sunday cron; weekly desk pair fixed to Brian+Ava). | To re-park: flip all `DISABLE_AUDIO` / `NEXT_PUBLIC_DISABLE_AUDIO` back to `1` together |
 
-7-point lean spectrum: far-left, left, center-left, center, center-right, right, far-right. Left:Right ratio 1.91:1 (113 left : 59 right : 198 center).
-
-**Editions**: world (default), us, india. Source country determines edition (IN→india, US→us, else→world). Source counts: US=150, World=200, India=20.
-
-## Pipeline Flow (4x Daily)
-
-```
- 1.  LOAD SOURCES  — 370 sources from data/sources.json, sync to Supabase
- 2.  PIPELINE RUN  — Create pipeline_runs record
- 3.  FETCH         — RSS feeds from 370 sources (parallel)
- 4.  SCRAPE        — Full text via web scraper (15 workers), RSS summary fallback
- 4b. DEDUPLICATE   — TF-IDF + cosine similarity (threshold 0.80), Union-Find grouping
- 5.  ANALYZE       — 5-axis bias scoring (all return score + rationale)
- 6.  CLUSTER       — Phase 1: TF-IDF agglomerative (threshold 0.2, doc length 500 words)
-                     Phase 2: entity-overlap merge pass (2+ shared entities, 72h window)
- 6b. RE-FRAME      — Framing re-run with cluster context (omission detection)
-     ORPHANS       — Unclustered articles wrapped as single-article clusters
- 6c. GEMINI REASON — Contextual score adjustments on low-confidence/high-divergence clusters (25-call budget); mutates article_bias_map
- 7b. SUMMARIZE     — Gemini: 250-350 word briefings + consensus/divergence + editorial_importance (1-10); 3+-source clusters, 25-call cap
- 7.  CATEGORIZE & RANK — Topic tagging (3-article majority vote) + v5.1 ranking (10 signals + optional Gemini importance); topic diversity re-rank
- 7c. EDITORIAL TRIAGE  — Gemini reorders top 10 per section using editorial_importance when available
- 7d. DAILY BRIEF   — Gemini generates 1 world-focused TL;DR (5-7 sentences) + two-host BBC-style audio script (3-call budget, separate from 25-call cap); Gemini 2.5 Flash TTS synthesizes native multi-speaker dialogue in single API call; pydub post-processing (Glass & Gravity: bloom intro, glass-bell transitions, resolving outro) → MP3 192k mono; uploaded to Supabase Storage `audio-briefs`; stored in `daily_briefs` table. Non-audio runs (00:00, 12:00 UTC) carry forward audio fields (audio_url, audio_script, audio_duration) from the previous brief so audio is never buried by text-only updates.
- 8.  STORE         — Write clusters; sections[] array from all editions covered
- 8b. DEDUP CLUSTERS — Delete old clusters whose articles overlap any new cluster (any shared article → old cluster is stale); prevents duplicate story clusters across pipeline runs
- 9.  ENRICH        — Cluster-level bias aggregation, consensus/divergence points
- 9b. ARTICLE CATS  — Populate article_categories junction table
- 9c. TOPIC TRACK   — Axis 6 EMA update (source_topic_lean)
-10.  TRUNCATE      — full_text → 300-char excerpts (IP compliance)
-     CLEANUP       — cleanup_stale_clusters + cleanup_stuck_pipeline_runs RPCs; old daily_briefs (keep latest per edition)
-```
-
-## Frontend Design
-
-### Design Philosophy — "Press & Precision"
-Modern newspaper aesthetic. Serif headlines, editorial layout sensibility. **Clean on arrival, data-dense on interaction.** Progressive disclosure is the core interaction pattern. 1920s low-tech aesthetic: space-efficient, enriched only on user interaction.
-
-Adapted from DondeAI's "Ink & Momentum": spring physics for user-initiated actions, ease-out for system reveals.
-
-### Four Voices of Type
-
-| Voice | Font | Use For |
-|-------|------|---------|
-| Editorial | Playfair Display | Headlines, story titles, section headers |
-| Structural | Inter | Body text, labels, navigation, buttons |
-| Meta | Barlow Condensed | Category tags, source counts, timestamps, edition metadata (Franklin Gothic / News Gothic newspaper tradition) |
-| Data | IBM Plex Mono | Bias scores, numeric data (humanist monospace; institutional warmth, not a coding font) |
-
-CSS variable: `--font-meta` (Barlow Condensed). IBM Plex Mono replaces JetBrains Mono for data display.
-
-### Responsive Strategy — One Project, Two Layouts
-
-| Aspect | Desktop | Mobile |
-|--------|---------|--------|
-| Layout | Multi-column newspaper grid | Single-column feed, bottom sheet |
-| Story cards | Horizontal, inline bias indicators | Vertical stack, indicators below headline |
-| Deep Dive | 55% side panel (min 560px), backdrop blur 6px | Full-screen bottom sheet, blur 2px |
-| Navigation | Top nav bar | Bottom nav bar (thumb-reachable) |
-| Data density | High — more metrics at a glance | Progressive — tap to reveal |
-
-Shared: component logic, Supabase queries, animation system, color system, accessibility (WCAG 2.1 AA).
-
-Mobile rules:
-- Edge padding: `--space-5` (~16px) on `.page-main`, `.nav-inner`, `.site-footer`
-- `overflow-wrap: break-word` on all headline elements
-- `.section-header` and Deep Dive source rows: `flex-wrap: wrap`
-- Touch targets ≥ 44×44px
-
-### Two Core Views
-
-#### 1. Homepage — News Feed
-- Importance-ranked story flow. Auto-generated category tags for filtering.
-- Each card: headline, source count, key bias indicators (BiasLens).
-- "Last updated" timestamp + Refresh button (confirmation dialog).
-- Sections: World / US / India.
-- **Daily Brief** (`DailyBriefText`): displayed between FilterBar and Lead Section. Full-width, on-canvas. TL;DR in Inter regular with blockquote left-border (newspaper editorial aside tradition), justified text, top/bottom rules. Opinion ("The Board") always visible on desktop; separated by 2px dotted editorial firewall rule; italic Playfair Display. "void --onair" pill (right-aligned) with ScaleIcon (analyzing animation when playing); progress bar fills as audio plays. Mobile: body collapses to 3 lines with "Read more · The Board" toggle (opinion hidden). Always fetches world brief regardless of active edition.
+**LLM budget**: $0/day, all free tier. Gemini 2.5 sole primary — `gemini-2.5-flash` (20 requests/DAY free cap: spends ~2-4 on the brief + ≤10 on the top-10 stories ≈13/day, well under) and `gemini-2.5-flash-lite` (high-RPD: ~40 cluster summaries/run for ranks 11-50; ~7s spacing ≈ 8.5 RPM under the 10-RPM cap; 90 calls/run safety cap). Rule-based fallback (Groq retired 2026-06-24). Content-hash cache (now upgrade-aware, migration 063) keeps stable-day re-summarization low. Op-eds bypass all LLM — original article text preserved (`content_type=opinion`).
 
-#### 2. Deep Dive Dashboard
-- Slide-in panel (desktop 55% width from right; mobile full-screen from bottom).
-- **Summary as lede**: no "What happened" heading; flows as article lede. Viewport-responsive height (`clamp(12em, 25vh, 22em)`); "Read more" overflow detected via ResizeObserver (not character count). Gradient overlay hidden when content fits (`dd-collapsible--fits` class).
-- **`dd-analysis-row`**: Sigil + `DeepDiveSpectrum` (7-zone gradient bar, logos positioned continuously at their exact lean %, nearby sources use 3-row algorithm for dense clusters, no max-height cap, "+N more" expand button when >6 sources) + "Press Analysis ▶" trigger in one flex row (desktop); stacked vertically (mobile). Zone labels smaller font on mobile.
-- **Press Analysis**: collapsed behind ▶ trigger; expands via `grid-template-rows 0fr→1fr`; opens `BiasInspectorInline` (4-axis scorecard: Lean, Sensationalism, Factual Rigor, Framing; each axis collapsible with Gemini reasoning text). Expand panel: max-height 60vh with overflow-y scroll.
-- **Source Perspectives**: Agreement | Divergence in 2-column grid (desktop); single column (mobile). Green left borders = agree, red = diverge.
-- Action buttons: WCAG 44×44px touch targets.
-- **Panel open animation**: `var(--spring-bouncy)` 500ms with genuine overshoot. **Close**: `var(--spring-snappy)` 380ms. Asymmetric: slow open, fast close.
-- Slot-machine cascade: `translateY(12px) → 0`. Desktop: content reveal 180ms delay (was 400ms). Mobile: `opacity 150ms ease-out, transform 250ms ease-out` (no spring), reveal delay 30ms. rAF snap uses `setTimeout(0)` for 90/120Hz reliability.
-- Panel flash prevention: CSS `opacity:0` on `.deep-dive-panel` + JS asymmetric opacity transition; fallback 200ms opacity ramp.
-- iOS bottom-sheet: `border-radius: 16px 16px 0 0`, drag indicator, momentum scroll, safe-area insets.
-
-### Interaction Model
-- **On arrival**: clean, minimal, newspaper-like.
-- **On interaction**: rich data layers reveal via hover/click/tap.
-- Progressive disclosure throughout. Unified interaction: Press Analysis and lean spectrum details use the same system.
-
-## Animation System
-
-**Motion One v11** via CDN importmap (~6.5KB).
-
-### Spring Presets
-
-| Preset | Stiffness | Damping | Mass | Use Case |
-|--------|-----------|---------|------|----------|
-| snappy | 600 | 35 | 1 | Buttons, toggles, filter chips; Deep Dive close (380ms) |
-| smooth | 280 | 22 | 1 | Cards, panels, story expansion |
-| gentle | 150 | 12 | 1.2 | Page transitions, view switches |
-| bouncy | — | — | — | Deep Dive open (500ms, genuine overshoot); `--spring-bouncy` token |
-
-### Duration Tokens
-
-```css
---dur-instant: 0ms; --dur-fast: 150ms; --dur-normal: 300ms;
---dur-morph: 400ms; --dur-step: 450ms; --dur-slow: 600ms;
-```
-
-### Easing Curves
-
-```css
---ease-out: cubic-bezier(0.16, 1, 0.3, 1);  /* Apple-sharp deceleration */
---ease-in:  cubic-bezier(0.4, 0, 1, 1);     /* Use sparingly */
-/* --spring: linear(/* damped oscillation */) — defined in tokens.css */
-```
-
-### Rules
-- GPU-only: animate transform + opacity only.
-- Accessible: all → 0ms under `prefers-reduced-motion`.
-- Asymmetric for panels: open uses `--spring-bouncy` (500ms, overshoot), close uses `--spring-snappy` (380ms, tight). Symmetric for micro-interactions (chips, toggles).
-- Interruptible: no animation locks.
-- Max 3 simultaneous springs, 60fps target. rAF snap via `setTimeout(0)` for 90/120Hz reliability.
-
-## CSS Architecture
-
-Load order: `reset.css → tokens.css → layout.css → typography.css → components.css → animations.css → responsive.css` (split into `frontend/app/styles/`; `globals.css` is the entry point via `@import`).
-
-- CSS custom properties only (no Sass/LESS). BEM-like naming. Mobile-first `min-width` queries.
-- `clamp()` for all fluid scaling. No `!important`.
-- Body text (story summaries, lead story, Daily Brief): `text-align: justify; hyphens: auto` — newspaper norm.
-- Sticky `.filter-row` uses `background-color: var(--bg-primary)` (opaque) to prevent text bleed-through on scroll.
-- `overflow-x: hidden` on `.page-container`; `min-width: 0` on all CSS Grid children to prevent blowout from long headlines.
-
-Breakpoints: 375px (mobile), 768px (tablet), 1024px (desktop), 1440px (wide).
-
-## Data Model (Supabase)
-
-### Key Tables
-- `sources` — outlet metadata, RSS/scrape config, tier, slug, 7-point lean baseline
-- `articles` — 300-char excerpt (truncated post-analysis), metadata, source_id, publish_date, url, section, updated_at
-- `bias_scores` — per-article multi-axis scores + rationale JSONB
-- `story_clusters` — event groups; bias_diversity JSONB, consensus_points JSONB, divergence_points JSONB, divergence_score, headline_rank, coverage_velocity, updated_at, `sections text[]` (GIN-indexed)
-- `cluster_articles` — junction: articles ↔ clusters
-- `categories` + `article_categories` — topic tags + junction (populated by pipeline)
-- `source_topic_lean` — EMA lean/sensationalism/opinion per source per topic (Axis 6)
-- `pipeline_runs` — execution history
-- `daily_briefs` — per-edition TL;DR text + audio script + audio metadata (url, duration_seconds, file_size, voice); unique on (edition, pipeline_run_id); public read RLS
-
-Frontend filters by edition: `.contains("sections", [edition])` (PostgREST array containment). Cross-listed clusters appear in all matching edition feeds.
-
-### Key Views & Functions
-- `cluster_bias_summary` — weighted bias averages/spreads per cluster
-- `refresh_cluster_enrichment(p_cluster_id)` — computes divergence_score, bias_diversity, coverage_score, tier_breakdown
-- `update_updated_at_column()` — auto-trigger on articles + story_clusters
-- `cleanup_stale_clusters()` + `cleanup_stuck_pipeline_runs()` — maintenance RPCs
-
-Migrations: `supabase/migrations/` (001-017).
-
-## Skills (`.claude/skills/`)
-
-| Skill | Purpose | Trigger |
-|-------|---------|---------|
-| `/pressdesign` | Press & Precision design enforcement — anti-slop, typography, motion grammar, newspaper layout, responsive strategy | Auto on UI tasks |
-
-## Agent Team (19 Agents, 8 Divisions)
-
-> Full structure, R&R, cycles: `docs/AGENT-TEAM.md`
-
-```
-CEO (Aacrit)
-  ├── Quality ————————— analytics-expert, bias-auditor, bias-calibrator, pipeline-tester, bug-fixer
-  ├── Infrastructure ——— perf-optimizer, db-reviewer, update-docs
-  ├── Frontend ————————— frontend-builder, frontend-fixer, responsive-specialist, uat-tester
-  ├── Pipeline ————————— feed-intelligence, nlp-engineer, source-curator
-  ├── Audio ———————————— audio-engineer
-  ├── Security ————————— void-ciso
-  ├── Product —————————— ceo-advisor
-  └── Branding ————————— logo-designer
-```
-
-**$0 Cost — Claude Max CLI Only.** No Anthropic API keys. No OpenAI. No paid inference. Gemini Flash free tier only (capped per run).
-
-### Agent Routing Rules
-
-| Task Pattern | Agent |
-|---|---|
-| RSS health, article collection, deduplication, cluster summaries, content quality | `feed-intelligence` |
-| Bias score accuracy, calibration, benchmarking | `analytics-expert` |
-| Ground-truth validation, known-outlet comparison | `bias-auditor` |
-| Bias score regression, validation suite, weight tuning | `bias-calibrator` |
-| Pipeline output validation, clustering quality | `pipeline-tester` |
-| Post-test bug fixing | `bug-fixer` |
-| Pipeline runtime, frontend load, Lighthouse | `perf-optimizer` |
-| Article/cluster data quality, NULL audits | `db-reviewer` |
-| Sync docs with codebase | `update-docs` |
-| Build UI components, new features | `frontend-builder` |
-| Fix UI bugs, layout breaks, a11y gaps | `frontend-fixer` |
-| Desktop/mobile layout, responsive issues | `responsive-specialist` |
-| UI/UX audit, user-lens testing, journey validation | `uat-tester` |
-| spaCy models, bias scoring, NER | `nlp-engineer` |
-| Broadcast audio, sonic branding, TTS voice, audio post-processing | `audio-engineer` |
-| Source vetting, RSS config, credibility | `source-curator` |
-| Security audit, secrets scan, RLS, OWASP | `void-ciso` |
-| Strategic advice, roadmap, priorities | `ceo-advisor` |
-| Logo, favicon, brand identity | `logo-designer` |
-
-### Sequential Cycles
-```
-Pipeline Quality:  pipeline-tester → bug-fixer → pipeline-tester
-Bias Audit:        analytics-expert → bias-auditor → nlp-engineer → pipeline-tester
-Bias Calibration:  nlp-engineer → bias-calibrator → bias-auditor → pipeline-tester
-Frontend Build:    frontend-builder → responsive-specialist → uat-tester → frontend-fixer
-Audio Quality:     audio-engineer → pipeline-tester → bug-fixer
-```
-
-### Locked Decisions (Require CEO Approval)
-- Press & Precision design system (3-voice type, BiasLens Three Lenses, newspaper grid)
-- 6-axis bias scoring model + confidence
-- Supabase as single data layer
-- Static export (Next.js → GitHub Pages)
-- 370-source curated list (3 tiers); 7-point political lean spectrum
-- $0 operational cost constraint
-- Claude Max CLI for all AI work
+## Git & Dev
+
+- **Always push to `claude/*` branches.** Auto-merge to main. Confirm deploy passes.
+- **Always commit AND push after every task.** Never wait to be asked.
+- **Sync before push:** `git fetch origin main && git merge origin/main --no-edit`.
+- Python 3.11+, Node 18+, TypeScript. All bias analysis rule-based.
+- Pipeline: 25-35 min incremental, 108 min fresh DB. Static export (`next export`).
+
+## Locked Decisions (CEO Approval)
+
+Cinematic Press design, 6-axis bias model, Supabase, static export, 1,016-source list (3 tiers, 7-point lean), no personalization, $0/mo LLM cost on the free-tier Gemini stack (Claude retired 2026-06-22), 1x/day pipeline cadence, top-50 homepage feed, Claude Max CLI for all agent work.
 
 ## Project Structure
 
 ```
 void-news/
-├── CLAUDE.md
-├── docs/
-│   ├── PROJECT-CHARTER.md         # Project charter and scope
-│   ├── DESIGN-SYSTEM.md           # Press & Precision design system (component inventory, layout diagrams)
-│   ├── IMPLEMENTATION-PLAN.md     # Phased implementation roadmap
-│   ├── GEMINI-VOICE-PLAN.md       # Gemini voice architecture, prompt templates, anti-bias guardrails
-│   └── PERF-REPORT-2026-03-22.md  # Vol I: pipeline + frontend performance analysis
 ├── pipeline/
-│   ├── fetchers/
-│   │   ├── rss_fetcher.py         # Parallel RSS fetch; global as_completed TimeoutError caught gracefully — hung feeds logged and skipped without crashing pipeline
-│   │   └── web_scraper.py
-│   ├── analyzers/
-│   │   ├── political_lean.py      # Length-adaptive + sparsity-weighted blending; entity lists include key political figures
-│   │   ├── sensationalism.py      # Word-boundary regex for superlatives; partisan_attack cap 30pts
-│   │   ├── opinion_detector.py    # Adaptive EMA alpha; 14 investigative attribution patterns; value_judgment weight 0.06
-│   │   ├── factual_rigor.py       # SPECIFIC_ATTRIBUTION verb-proximity gate; LOW_CREDIBILITY_US_MAJOR baseline 35
-│   │   ├── framing.py             # Cluster-aware omission detection; passive voice ratio capped at 30
-│   │   ├── gemini_reasoning.py    # Step 6c: contextual score adjustments; mutates article_bias_map; reasoning strings capped at 300 chars
-│   │   └── topic_outlet_tracker.py # Axis 6: adaptive EMA (0.3 new / 0.15 established); category normalized to lowercase
-│   ├── clustering/
-│   │   ├── deduplicator.py        # TF-IDF + cosine dedup
-│   │   └── story_cluster.py       # Two-phase: TF-IDF agglomerative + entity-overlap merge
-│   ├── summarizer/
-│   │   ├── gemini_client.py       # Rate limiting, call caps, optional system_instruction
-│   │   └── cluster_summarizer.py  # Headline/summary/consensus/divergence + editorial_importance
-│   ├── briefing/
-│   │   ├── daily_brief_generator.py # Gemini: TL;DR (5-7 sentences) + two-host audio script; 3-call budget; rule-based fallback
-│   │   ├── audio_producer.py      # Gemini 2.5 Flash TTS: native multi-speaker dialogue synthesis, PCM→MP3 via pydub, Supabase Storage upload
-│   │   ├── claude_brief_generator.py # Claude CLI premium script generator (manual 1x/day, Claude Max)
-│   │   ├── voice_rotation.py      # Neural voice pairs per edition; roles swap daily
-│   │   ├── generate_assets.py     # Glass & Gravity sonic identity: bloom intro, glass-bell transition, resolving outro
-│   │   └── assets/                # ident.wav, transition.wav, outro.wav (generated)
-│   ├── categorizer/
-│   ├── ranker/                    # v5.1: 10 signals + confidence curve + Gemini editorial importance
-│   ├── validation/                # Bias engine test suite: 26 ground-truth articles, signal_tracker, AllSides cross-ref, runner (96.9% accuracy), snapshot
-│   ├── utils/                     # Supabase client, nlp_shared
-│   ├── main.py                    # Orchestrator (12 steps + cleanup)
-│   ├── rerank.py                  # Standalone re-ranker
-│   └── refresh_audio.py           # Standalone audio brief refresh — regenerates TTS from current DB without full pipeline run (~60-90s)
+│   ├── fetchers/          # RSS + scraping
+│   ├── analyzers/         # 5 bias axes + gemini_reasoning + topic_outlet_tracker
+│   ├── clustering/        # deduplicator, story_cluster
+│   ├── summarizer/        # gemini_client (sole LLM; flash + flash-lite split), cluster_summarizer (flash_top_n=10 hierarchy, post-rerank top-50); claude_client retired (present, is_available()→False); groq_client deleted 2026-06-24
+│   ├── briefing/          # daily brief (Gemini flash primary, Groq fallback), audio (edge-tts), weekly digest, voice rotation, podcast feed
+│   ├── categorizer/       # auto_categorize
+│   ├── ranker/            # importance_ranker, feed_ranker
+│   ├── validation/        # 42 ground-truth fixtures, runner, CI gate
+│   ├── memory/            # memory_orchestrator, live_poller
+│   ├── history/           # content_loader, image/source enrichers, verify
+│   ├── utils/             # supabase client, nlp_shared
+│   ├── main.py            # Orchestrator (1x daily, smart-routed Claude→Gemini)
+│   └── rerank.py          # Holistic re-ranker
 ├── frontend/
 │   ├── app/
-│   │   ├── components/
-│   │   │   ├── BiasInspector.tsx  # "Press Analysis" 4-axis scorecard; BiasInspectorInline (Deep Dive inline), BiasInspectorTrigger + BiasInspectorPanel (legacy); each axis collapsible with Gemini reasoning
-│   │   │   ├── BiasLens.tsx       # Three Lenses: Needle, Ring, Prism
-│   │   │   ├── DeepDive.tsx       # Slide-in panel: FLIP morph open/close, lede, DeepDiveSpectrum, Press Analysis ▶, Source Perspectives
-│   │   │   ├── DeepDiveSpectrum.tsx # Continuous lean spectrum: 7-zone gradient bar + logos at exact politicalLean %, nearby sources alternate rows, each logo links to source article, tooltip on hover
-│   │   │   ├── HomeContent.tsx    # Feed container: edition switching, lean filter, story grid; progressive batch reveal (BATCH_SIZE=8, visibleCount); desktop "Continue reading" link; mobile infinite scroll via IntersectionObserver sentinel; Supabase limit 500
-│   │   │   ├── LeadStory.tsx      # Hero story card
-│   │   │   ├── OpEdPage.tsx       # SHELVED — commented out, pending redesign
-│   │   │   ├── OpinionCard.tsx    # SHELVED — commented out, pending redesign
-│   │   │   ├── StoryCard.tsx      # Standard story card
-│   │   │   ├── NavBar.tsx         # World/US/India nav; dateline row with edition badge pills, time-of-day badge, regional timestamps (US: "9 AM ET", World: HH:MM UTC, India: HH:MM IST); India: Ashoka Chakra SVG icon
-│   │   │   ├── FilterBar.tsx
-│   │   │   ├── RefreshButton.tsx
-│   │   │   ├── ThemeToggle.tsx
-│   │   │   ├── LoadingSkeleton.tsx
-│   │   │   ├── ErrorBoundary.tsx
-│   │   │   ├── Footer.tsx
-│   │   │   ├── LogoFull.tsx       # Combo mark: void circle + scale beam + wordmark (SVG, Direction 5)
-│   │   │   ├── LogoIcon.tsx       # Icon-only wrapper around ScaleIcon
-│   │   │   ├── LogoWordmark.tsx   # Text-only "void --news" SVG, hollow-O
-│   │   │   ├── ScaleIcon.tsx      # Void Circle + Scale Beam; 8 animation states (idle/loading/hover/analyzing/balanced/pulse/draw/none)
-│   │   │   ├── PageToggle.tsx     # Feed / Sources view switcher
-│   │   │   ├── SpectrumChart.tsx  # /sources political spectrum: gradient bar + all sources below in 7 lean zone columns (mixed tiers), logos overlap with -3px margin / fan out on hover, zone counts below, single "Show all" expand button, each zone scrollable at 60vh when expanded
-│   │   │   ├── Sigil.tsx          # Compact bias sigil (SigilData type)
-│   │   │   └── DailyBrief.tsx     # useDailyBrief() hook + DailyBriefText; "void --onair" pill + ScaleIcon; progress bar; TL;DR in Inter regular with blockquote left-border; text-align justify; mobile 4-line collapse
-│   │   ├── lib/
-│   │   │   ├── supabase.ts        # Supabase client, fetchDeepDiveData, fetchLastPipelineRun
-│   │   │   ├── types.ts           # BiasScores, ThreeLensData, Story, etc.
-│   │   │   ├── mockData.ts        # Fallback mock data
-│   │   │   └── utils.ts           # timeAgo, etc.
-│   │   ├── page.tsx               # Homepage: live Supabase queries
-│   │   ├── sources/page.tsx       # /sources: SpectrumChart + source list with favicons
-│   │   ├── layout.tsx             # Root layout: fonts, metadata
-│   │   ├── globals.css            # Style entry point: @imports from ./styles/
-│   │   └── styles/                # tokens.css, layout.css, typography.css, components.css, animations.css, responsive.css, spectrum.css
-│   ├── public/
-│   ├── package.json               # Next.js 16.1.7, React 19.2.3
-│   └── next.config.ts
-├── .claude/
-│   ├── agents/                    # 18 agent definitions
-│   └── skills/                    # pressdesign skill
-├── .github/workflows/
-│   ├── pipeline.yml               # 4x daily cron
-│   ├── deploy.yml                 # Build + deploy to GitHub Pages
-│   ├── migrate.yml                # Supabase migration runner
-│   └── validate-bias.yml          # CI gate: bias engine regression on every push
-├── data/sources.json              # 370 curated sources (7-point lean spectrum)
-└── supabase/migrations/           # 001-017
+│   │   ├── components/    # 55 components (HomeContent: EDITION_FEED_SIZE=50, FETCH_LIMIT=100; StoryCard variant=digest|wire; BiasSnapshot inline+rail; MobilePerspectivePeek long-press modal)
+│   │   ├── history/       # 22 history components + data/types/hooks
+│   │   ├── film/          # 7 cinematic scenes
+│   │   ├── lib/           # supabase, types, utils (BASE_PATH ← NEXT_PUBLIC_BASE_PATH), haptics, biasColors
+│   │   ├── styles/        # 23 CSS files (added layout-zones.css — Grid scaffold + lead-split + BiasSnapshot + Deep Dive 2-col)
+│   │   ├── games/         # 4 games (wire, run, frame, undertow)
+│   │   └── [routes]/      # sources, paper, weekly, about, ship, command-center, [edition]
+│   ├── public/            # _headers (Cloudflare Pages cache + security policy + CSP — frame-ancestors via HTTP, not meta), sw.js (PWA service worker), manifest.json, offline.html
+│   ├── ios/               # Capacitor iOS shell (appId void.news; opens in Xcode)
+│   ├── android/           # Capacitor Android shell (appId void.news; opens in Android Studio)
+│   ├── capacitor.config.ts # appId void.news, webDir out
+│   └── next.config.ts     # basePath = NEXT_PUBLIC_BASE_PATH ?? "/void--news"
+├── data/sources.json      # 1,016 sources
+├── data/history/events/   # 58 YAML event files
+├── supabase/migrations/   # 001-063 (061 = drop per-edition rank columns; 062 = security hardening: RLS on claims tables, weekly write policy, sandbox anon-write removal, summary_tier widen, sync_ship_votes RPC; 063 = summary_tier widened to 'flash-lite' for the two-model Gemini hierarchy)
+├── pipeline/media/        # cluster_image_cacher (WebP at upload, top_n=15)
+├── .github/workflows/     # pipeline (1x/day), deploy-cloudflare (CF Pages, primary), migrate, validate-bias, validate-clustering (CI gate on `pipeline/clustering/**`), auto-merge, audit-db, refresh-brief, weekly-digest, generate-history-audio (deploy.yml GH Pages, deprecated)
+├── .claude/agents/        # 35 agents across 14 divisions
+├── .claude/skills/        # 24 skills
+└── docs/                  # 26 documentation files
 ```
-
-## MVP Scope
-
-### Phase 1 — Foundation -- COMPLETE
-- [x] Project scaffolding, 370 sources (expanded from 222), Supabase schema (migrations 001-017), RSS fetcher, web scraper, GitHub Actions cron, pipeline orchestrator.
-
-### Phase 2 — Analysis Engine -- COMPLETE
-- [x] Content dedup (TF-IDF, threshold 0.80, Union-Find), story clustering (two-phase), 5-axis bias scoring (all with rationale), auto-categorization (3-article majority vote), ranking v5.1 (10 signals + Gemini), multi-section cross-listing (sections[]), confidence scoring, consensus/divergence, IP truncation, Axis 6 EMA tracking, Gemini reasoning (step 6c), editorial triage (step 7c), Daily Brief (step 7d: TL;DR + two-host BBC-style audio via Gemini 2.5 Flash TTS), cluster dedup (step 8b), RSS fetch global timeout handling.
-
-### Phase 3 — Frontend MVP -- COMPLETE
-- [x] Next.js 16 App Router, design token system, desktop + mobile layouts, StoryCard + LeadStory, news feed (headline_rank), "Why This Story" tooltip, category filtering, BiasLens Three Lenses, RefreshButton, light/dark mode, DailyBrief ("void --onair" TL;DR + audio player).
-- [ ] Animation system (Motion One spring presets, utilities) — pending.
-- [ ] GitHub Pages deployment — pending.
-
-### Phase 4 — Deep Dive Dashboard -- IN PROGRESS
-- [x] Slide-in panel (desktop 55% / mobile full-screen), per-source BiasLens, tier breakdown bars, Source Perspectives (Agreement/Divergence), Press Analysis inline (BiasInspectorInline), lean spectrum above/below track.
-- [ ] Detailed framing comparison view.
-- [ ] Source credibility context panels.
-
-### SHELVED — Op-Ed / Opinion Page
-Removed from frontend. Pipeline still computes opinion_fact (Axis 3). `OpEdPage.tsx` and `OpinionCard.tsx` commented out for reference. Future redesign needs: dedicated curation, distinct visual treatment, author-first display, no Gemini, no clustering.
-
-### Phase 5 — Polish & Launch
-- [ ] WCAG 2.1 AA accessibility audit
-- [ ] Lighthouse 90+ performance
-- [ ] Animation polish
-- [ ] Cross-browser testing
-- [ ] Mobile touch gesture refinement
-- [ ] Launch
-
-## Git Workflow
-
-- **Always push to `claude/*` branches.** Never push directly to `main`.
-- GitHub auto-merge is enabled — pushing to `claude/*` auto-creates a PR and merges.
-- **After every completed change:** commit, push to `claude/*`, and confirm deployment succeeds (`gh run watch`). Do not consider work done until the deploy workflow passes.
-
-## Development Notes
-
-- Python 3.11+, Node 18+, TypeScript for all frontend.
-- All bias analysis must be rule-based (no external API dependencies).
-- Pipeline runtime: realistic target is **25-35 min** for normal incremental runs (after perf optimizations). Fresh DB run (Vol I, 2026-03-22) took 108 min. The 6-min GitHub Actions soft limit does not apply — pipeline runs to completion.
-- Frontend is fully static (next export). Supabase client-side reads only.
-- Animation adapted from DondeAI (`/home/aacrit/projects/dondeAI/js/spring.js`, `motion.js`).
-- CSS adapted from DondeAI (`/home/aacrit/projects/dondeAI/css/tokens.css`).
-
-### perf-optimizer: Applied Optimizations
-- TextBlob text limit: 50K → 5K chars (`sensationalism.py`; sentiment signal saturates within ~1000 words)
-- RSS entry cap: 30 per feed (`rss_fetcher.py`; reduces fetch + parse time)
-- Bias analysis workers: 4 → 8 (`main.py`; parallel analyzer threads)

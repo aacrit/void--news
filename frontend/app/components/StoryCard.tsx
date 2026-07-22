@@ -1,11 +1,13 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
 import type { Story } from "../lib/types";
-import { timeAgo } from "../lib/utils";
+import type { FamilyInfo } from "../lib/storyFamilies";
 import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
+import LeanCoverageBar from "./LeanCoverageBar";
 import { hapticLight } from "../lib/haptics";
+import { useInView } from "../lib/sharedObserver";
+import { classifyCoverage } from "../lib/coverageClass";
 
 interface StoryCardProps {
   story: Story;
@@ -15,6 +17,15 @@ interface StoryCardProps {
   globalIndex?: number;
   /** True when this card is focused via keyboard (J/K) navigation */
   kbdFocused?: boolean;
+  /** Newspaper variant — drives type scale via layout-zones.css.
+      digest = ranks 1-9 (22px Playfair); wire = ranks 10+ (14px Playfair).
+      Omit for default StoryCard scale. */
+  variant?: "digest" | "wire";
+  /** Same-story family info — when present, the card is one of N angles
+      on the same event. Renders a "Related: N angles" chip above the
+      headline so readers see the connection rather than reading the
+      duplicates as a clustering failure. */
+  family?: FamilyInfo;
 }
 
 /* ---------------------------------------------------------------------------
@@ -24,53 +35,57 @@ interface StoryCardProps {
    the card enters the viewport — below-fold cards don't waste their entrance.
    --------------------------------------------------------------------------- */
 
-export default function StoryCard({ story, index, onStoryClick, globalIndex, kbdFocused }: StoryCardProps) {
-  const cardRef = useRef<HTMLElement>(null);
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const el = cardRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setVisible(true); observer.disconnect(); } },
-      { threshold: 0.1 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
+export default function StoryCard({ story, index, onStoryClick, globalIndex, kbdFocused, variant, family }: StoryCardProps) {
+  const [cardRef, visible] = useInView<HTMLElement>();
+  const verdict = classifyCoverage(story);
 
   return (
     <article
       ref={cardRef}
-      role="button"
-      tabIndex={0}
-      aria-label={`Open deep dive for: ${story.title}`}
-      onClick={() => {
-        if (cardRef.current && onStoryClick) {
-          hapticLight();
-          onStoryClick(story, cardRef.current.getBoundingClientRect());
-        }
-      }}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          hapticLight();
-          onStoryClick?.(story, new DOMRect());
-        }
-      }}
       data-story-index={globalIndex}
-      className={`story-card anim-stagger${visible ? " anim-stagger--visible" : ""}${kbdFocused ? " story-card--kbd-focus" : ""}`}
+      data-story-id={story.id}
+      data-variant={variant}
+      data-family-id={family?.familyId}
+      className={`story-card anim-stagger${visible ? " anim-stagger--visible" : ""}${kbdFocused ? " story-card--kbd-focus" : ""}${family ? " story-card--family-member" : ""}`}
       style={{ animationDelay: `${Math.round(40 * Math.log2(index + 2))}ms` }}
     >
-      {/* Category tag + time */}
-      <div className="story-card__meta">
-        <span className="category-tag">{story.category}</span>
-        <span className="time-tag">{timeAgo(story.publishedAt)}</span>
-      </div>
+      {/* Stretched link — invisible button covers the entire article
+          while preserving <article> semantics for screen readers */}
+      <button
+        type="button"
+        className="story-card__stretch-link"
+        aria-label={`Open deep dive for: ${story.title}`}
+        onClick={() => {
+          if (cardRef.current && onStoryClick) {
+            hapticLight();
+            onStoryClick(story, cardRef.current.getBoundingClientRect());
+          }
+        }}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            hapticLight();
+            onStoryClick?.(story, new DOMRect());
+          }
+        }}
+      />
+      {/* Family relationship chip — visible only when this card shares
+          a stemmed-title-Jaccard family with another top-10 card. Tells
+          the reader "this is one of N angles on the same event" rather
+          than letting duplicates read as a clustering failure. */}
+      {family && (
+        <p className="story-card__family" aria-label={`Part of a family of ${family.size} angles on this event`}>
+          <span className="story-card__family-dot" aria-hidden="true" />
+          <span className="story-card__family-label">
+            {family.size} angles · {family.label}
+          </span>
+        </p>
+      )}
 
-      {/* Headline */}
+      {/* Headline + inline Sigil + caret */}
       <h3 className="story-card__headline">
         <span className="story-card__headline-text">{story.title}</span>
+        <Sigil data={story.sigilData} size="lg" storyId={story.id} />
         <CaretRight
           size={14}
           weight="bold"
@@ -79,13 +94,23 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
         />
       </h3>
 
-      {/* Summary */}
-      <p className="story-card__summary">{story.summary}</p>
+      {/* Summary — hidden when empty (Gemini pending or failed) */}
+      {story.summary?.trim() && <p className="story-card__summary">{story.summary}</p>}
+      {!story.summary?.trim() && (
+        <p className="story-card__summary story-card__summary--pending">
+          {story.source.count} source{story.source.count !== 1 ? 's' : ''} reporting
+        </p>
+      )}
 
-      {/* Bias indicator */}
-      <div className="story-card__footer">
-        <Sigil data={story.sigilData} size="lg" />
-      </div>
+      {verdict && (
+        <p className={`coverage-verdict coverage-verdict--${verdict.tone}`} aria-label={`Coverage: ${verdict.label}`}>
+          {verdict.label}
+        </p>
+      )}
+
+      {/* Contested-coverage reveal — shows the left/right split the mean lean
+          hides (only when both wings are present). */}
+      <LeanCoverageBar spread={story.biasSpread} />
     </article>
   );
 }

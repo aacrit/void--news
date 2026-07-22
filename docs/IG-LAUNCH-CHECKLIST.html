@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>void --news / @void.news manual checklist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg-primary:    #F0EBDD;
+    --bg-card:       #F5F0E4;
+    --bg-secondary:  #E8E2D4;
+    --fg-primary:    #1A1A1A;
+    --fg-secondary:  #4A4540;
+    --fg-tertiary:   #686260;
+    --fg-accent:     #946B15;
+    --ember:         #C8472D;
+    --border-subtle: #D4CCC2;
+    --border-strong: #B8B0A5;
+    --burnt-umber:   #6B4423;
+    --font-editorial: "Playfair Display", Georgia, serif;
+    --font-structural: "Inter", "Helvetica Neue", sans-serif;
+    --font-meta: "Barlow Condensed", "Franklin Gothic", sans-serif;
+    --font-data: "IBM Plex Mono", Menlo, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg-primary);
+    color: var(--fg-primary);
+    font-family: var(--font-structural);
+    line-height: 1.55;
+    padding-bottom: 96px;
+  }
+
+  /* ─── Header ──────────────────────────────────────────────────────────── */
+  header.hdr {
+    background: #0E0B08;
+    color: #F4EDE0;
+    padding: 48px 32px 28px;
+    position: relative;
+  }
+  header.hdr::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.15'/%3E%3C/svg%3E");
+    pointer-events: none;
+    mix-blend-mode: screen;
+    opacity: 0.5;
+  }
+  header.hdr > * { position: relative; z-index: 2; }
+  .eyebrow {
+    font-family: var(--font-data);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    color: rgba(244, 237, 224, 0.65);
+    margin: 0 0 12px;
+  }
+  .title {
+    font-family: var(--font-editorial);
+    font-size: 44px;
+    line-height: 1.05;
+    font-weight: 700;
+    margin: 0;
+    max-width: 22ch;
+  }
+  .subtitle {
+    font-family: var(--font-editorial);
+    font-style: italic;
+    font-size: 19px;
+    line-height: 1.4;
+    color: rgba(244, 237, 224, 0.7);
+    max-width: 60ch;
+    margin: 16px 0 0;
+  }
+
+  /* ─── Progress ────────────────────────────────────────────────────────── */
+  .progress-shell { background: #0E0B08; padding: 0 32px 28px; }
+  .progress-bar {
+    position: relative;
+    height: 26px;
+    background: rgba(244, 237, 224, 0.06);
+    border: 1px solid rgba(244, 237, 224, 0.15);
+    overflow: hidden;
+  }
+  .progress-fill {
+    position: absolute;
+    inset: 0;
+    width: 0%;
+    background: linear-gradient(90deg, var(--fg-accent) 0%, var(--ember) 100%);
+    transition: width 320ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+  .progress-label {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px;
+    font-family: var(--font-data);
+    font-size: 13px;
+    color: rgba(244, 237, 224, 0.95);
+    letter-spacing: 0.04em;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+    z-index: 2;
+  }
+
+  main { max-width: 860px; margin: 0 auto; padding: 40px 32px 0; }
+
+  /* ─── Auto note ───────────────────────────────────────────────────────── */
+  .auto-note {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid var(--fg-accent);
+    padding: 18px 22px;
+    margin-bottom: 36px;
+  }
+  .auto-note h2 {
+    font-family: var(--font-meta);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--fg-accent);
+    margin: 0 0 8px;
+  }
+  .auto-note p {
+    font-family: var(--font-structural);
+    font-size: 14px;
+    color: var(--fg-secondary);
+    margin: 0;
+  }
+  .auto-note code {
+    font-family: var(--font-data);
+    font-size: 12.5px;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 1px 5px;
+  }
+
+  /* ─── Toolbar ─────────────────────────────────────────────────────────── */
+  .toolbar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+  .toolbar button {
+    font-family: var(--font-data);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 8px 12px;
+    background: transparent;
+    border: 1px solid var(--border-strong);
+    color: var(--fg-secondary);
+    cursor: pointer;
+  }
+  .toolbar button:hover { background: var(--bg-card); color: var(--fg-primary); }
+  .toolbar button.danger:hover { background: rgba(200,71,45,0.08); border-color: var(--ember); color: var(--ember); }
+
+  /* ─── Group ───────────────────────────────────────────────────────────── */
+  .group { margin-bottom: 36px; }
+  .group__head {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding-bottom: 12px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--border-strong);
+  }
+  .group__num {
+    font-family: var(--font-data);
+    font-size: 13px;
+    color: var(--fg-accent);
+    letter-spacing: 0.12em;
+  }
+  .group__title {
+    font-family: var(--font-editorial);
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    flex: 1;
+  }
+  .group__tag {
+    font-family: var(--font-data);
+    font-size: 11px;
+    color: var(--fg-tertiary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* ─── Step ────────────────────────────────────────────────────────────── */
+  .step {
+    display: grid;
+    grid-template-columns: 26px 1fr;
+    gap: 14px;
+    padding: 16px 0;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .step:first-of-type { border-top: none; }
+  .step[data-done="true"] .step__title { color: var(--fg-tertiary); text-decoration: line-through; }
+  .step[data-done="true"] .step__body { opacity: 0.5; }
+
+  .step input[type="checkbox"] {
+    appearance: none;
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--border-strong);
+    background: var(--bg-primary);
+    cursor: pointer;
+    margin-top: 1px;
+    position: relative;
+  }
+  .step input[type="checkbox"]:hover { border-color: var(--fg-accent); }
+  .step input[type="checkbox"]:checked { background: var(--fg-primary); border-color: var(--fg-primary); }
+  .step input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    left: 5px; top: 1px;
+    width: 6px; height: 12px;
+    border: solid var(--bg-primary);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  .step__title {
+    font-family: var(--font-structural);
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    color: var(--fg-primary);
+    cursor: pointer;
+  }
+  .step__body {
+    font-family: var(--font-structural);
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--fg-secondary);
+    margin: 7px 0 0;
+  }
+  .step__body p { margin: 0 0 7px; }
+  .step__body p:last-child { margin-bottom: 0; }
+  .step__body code {
+    font-family: var(--font-data);
+    font-size: 12.5px;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 1px 5px;
+    color: var(--fg-primary);
+  }
+  .step__body pre {
+    font-family: var(--font-data);
+    font-size: 12.5px;
+    display: block;
+    padding: 11px 14px;
+    margin: 7px 0;
+    background: #0E0B08;
+    color: #F4EDE0;
+    overflow-x: auto;
+    line-height: 1.5;
+  }
+  .step__body a {
+    color: var(--fg-accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .step__done {
+    margin-top: 9px;
+    padding: 7px 11px;
+    background: rgba(107, 68, 35, 0.06);
+    border-left: 2px solid var(--burnt-umber);
+    font-size: 13px;
+    color: var(--fg-secondary);
+  }
+  .step__done::before {
+    content: "done when · ";
+    font-family: var(--font-data);
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--burnt-umber);
+  }
+
+  .done-banner {
+    display: none;
+    margin-bottom: 32px;
+    padding: 22px;
+    background: linear-gradient(135deg, var(--fg-accent) 0%, var(--ember) 100%);
+    color: #F4EDE0;
+    font-family: var(--font-editorial);
+    font-size: 22px;
+    line-height: 1.3;
+  }
+  body[data-all-done="true"] .done-banner { display: block; }
+
+  footer {
+    max-width: 860px;
+    margin: 56px auto 0;
+    padding: 28px 32px 40px;
+    border-top: 1px solid var(--border-subtle);
+    text-align: center;
+    color: var(--fg-tertiary);
+    font-family: var(--font-data);
+    font-size: 12px;
+    line-height: 1.7;
+  }
+
+  @media (max-width: 640px) {
+    header.hdr { padding: 32px 20px 18px; }
+    .progress-shell { padding: 0 20px 18px; }
+    .title { font-size: 34px; }
+    main { padding: 28px 20px 0; }
+    .step { grid-template-columns: 24px 1fr; gap: 12px; }
+  }
+  @media print {
+    header.hdr, .progress-shell { background: white; color: black; }
+    header.hdr::after, .toolbar { display: none; }
+    .step__body pre { background: #F0EBDD; color: black; }
+  }
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <p class="eyebrow">void / @void.news</p>
+  <h1 class="title">The manual checklist.</h1>
+  <p class="subtitle">Only the steps a human has to do by hand. The pipeline generates, renders, captions, publishes, and cross-posts on its own. Everything below is the part that can't be automated. Progress saves in your browser.</p>
+</header>
+
+<div class="progress-shell">
+  <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+    <div class="progress-fill" id="pbar"></div>
+    <div class="progress-label"><span id="pct">0%</span><span id="ratio">0 / 0</span></div>
+  </div>
+</div>
+
+<main>
+  <div class="done-banner">@void.news is live. Same stories. Same order. For everyone.</div>
+
+  <div class="auto-note">
+    <h2>What runs automatically — not your job</h2>
+    <p>The <code>ig-pipeline.yml</code> workflow generates one draft a day, renders the slide images, writes the caption with Gemini flash-lite, and on Mon/Thu publishes whatever you have <em>approved</em> to Instagram, then cross-posts it to Bluesky. The token refreshes itself weekly and metrics collect daily. You never render, caption, or publish by hand. You decide what ships.</p>
+  </div>
+
+  <div class="toolbar">
+    <button type="button" id="reset" class="danger">reset progress</button>
+  </div>
+
+  <!-- ═══ 1 · ACCOUNTS & META ═══════════════════════════════════════════ -->
+  <section class="group">
+    <div class="group__head">
+      <span class="group__num">01</span>
+      <h2 class="group__title">Accounts &amp; Meta setup</h2>
+      <span class="group__tag">one-time</span>
+    </div>
+
+    <div class="step">
+      <input type="checkbox" id="m1" />
+      <div>
+        <label for="m1" class="step__title">Reserve @void.news on Instagram</label>
+        <div class="step__body">
+          <p>Sign up with a personal phone number (Meta bans virtual numbers). If <code>void.news</code> is taken, fall back to <code>voidnews</code> or <code>void_news</code> — hyphens are blocked, so the double-dash wordmark is impossible.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <input type="checkbox" id="m2" />
+      <div>
+        <label for="m2" class="step__title">Defend the handle elsewhere</label>
+        <div class="step__body">
+          <p>Threads picks up the IG handle automatically. Reserve the matching handle on <a href="https://bsky.app" target="_blank" rel="noopener">Bluesky</a> and X even if unused — it blocks impersonation.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <input type="checkbox" id="m3" />
+      <div>
+        <label for="m3" class="step__title">Switch IG to a Creator account</label>
+        <div class="step__body">
+          <p>IG app → Settings → Account → Switch to Professional → <strong>Creator</strong>. In-app only; there is no API for this.</p>
+        </div>
+        <div class="step__done">The "Professional dashboard" entry appears under your bio.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <input type="checkbox" id="m4" />
+      <div>
+        <label for="m4" class="step__title">Set the bio + profile photo</label>
+        <div class="step__body">
+          <pre>Same stories. Same order. For everyone.
+6-axis bias on every article, not every outlet.
+No signup. No tracking. Free forever.</pre>
+          <p>Link: <code>void-news.pages.dev</code>. Photo: brand mark at 320×320, ink on ivory. The Graph API can't edit bio or photo, so this stays manual forever.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <input type="checkbox" id="m5" />
+      <div>
+        <label for="m5" class="step__title">Create a Facebook Page and link IG to it</label>
+        <div class="step__body">
+          <p>Meta requires a real-person admin via Facebook. Create a Page at <a href="https://www.facebook.com/pages/create" target="_blank" rel="noopener">facebook.com/pages/create</a> ("void --news", News &amp; Media), then IG → Settings → Linked Accounts → Facebook → that Page.</p>
+        </div>
+        <div class="step__done">Both assets show under the same Page in Meta Business Suite.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <input type="checkbox" id="m6" />
+      <div>
+        <label for="m6" class="step__title">Create the Meta developer app</label>
+        <div class="step__body">
+          <p>At <a href="https://developers.facebook.com" target="_blank" rel="noopener">developers.facebook.com</a>: a <strong>Business</strong> app, then Add Product → <strong>Instagram Graph API</strong> + <strong>Instagram Messaging</strong>. Note the App ID and App Secret.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <input type="checkbox" id="m7" />
+      <div>
+        <label for="m7" class="step__title">Generate the long-lived Graph token</label>
+        <div class="step__body">
+          <p>In the Graph API Explorer, request: <code>instagram_basic</code>, <code>instagram_content_publish</code>, <code>instagram_manage_comments</code>, <code>instagram_manage_messages</code>, <code>instagram_manage_insights</code>, <code>pages_show_list</code>, <code>pages_read_engagement</code>. Exchange the short-lived token for a 60-day one — that is <code>INSTAGRAM_GRAPH_TOKEN</code>. The weekly cron rotates it from here on.</p>
+        </div>
+        <div class="step__done"><code>curl ".../me?access_token=$TOKEN"</code> returns your IG user object.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <input type="checkbox" id="m8" />
+      <div>
+        <label for="m8" class="step__title">Find INSTAGRAM_USER_ID</label>
+        <div class="step__body">
+          <p>Query <code>/me/accounts</code> for your Page id, then <code>/{PAGE_ID}?fields=instagram_business_account</code>. The numeric <code>instagram_business_account.id</code> is <code>INSTAGRAM_USER_ID</code>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <input type="checkbox" id="m9" />
+      <div>
+        <label for="m9" class="step__title">Generate a Bluesky app password</label>
+        <div class="step__body">
+          <p>Bluesky → Settings → App Passwords → Add. Save it as <code>BLUESKY_APP_PASSWORD</code>; <code>BLUESKY_HANDLE</code> is the full handle. Never use your main password.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <input type="checkbox" id="m10" />
+      <div>
+        <label for="m10" class="step__title">Invent the two secret values</label>
+        <div class="step__body">
+          <p><code>META_WEBHOOK_VERIFY_TOKEN</code> (any 32+ char string) and <code>IG_ADMIN_PASSWORD</code> (basic-auth gate on <code>/admin/ig</code>). Generate with <code>python -c "import secrets; print(secrets.token_urlsafe(32))"</code>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 2 · SECRETS ═══════════════════════════════════════════════════ -->
+  <section class="group">
+    <div class="group__head">
+      <span class="group__num">02</span>
+      <h2 class="group__title">Plant the secrets</h2>
+      <span class="group__tag">one-time</span>
+    </div>
+
+    <div class="step">
+      <input type="checkbox" id="m11" />
+      <div>
+        <label for="m11" class="step__title">Add the GitHub Actions secrets</label>
+        <div class="step__body">
+          <p>At <a href="https://github.com/aacrit/void--news/settings/secrets/actions" target="_blank" rel="noopener">repo → Settings → Secrets → Actions</a>:</p>
+          <pre>INSTAGRAM_GRAPH_TOKEN   INSTAGRAM_USER_ID
+META_APP_ID             META_APP_SECRET
+BLUESKY_HANDLE          BLUESKY_APP_PASSWORD
+IG_SECRET_WRITE_TOKEN   IG_ADMIN_USER
+IG_ADMIN_PASSWORD</pre>
+          <p><code>IG_SECRET_WRITE_TOKEN</code> is a fine-grained PAT scoped to this repo with <strong>Secrets: Read &amp; Write</strong> (the token-refresh cron writes the rotated token back). <code>GEMINI_API_KEY</code> and the Supabase secrets already exist.</p>
+        </div>
+        <div class="step__done">All secrets appear in the Actions secrets list.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <input type="checkbox" id="m12" />
+      <div>
+        <label for="m12" class="step__title">Add the Cloudflare Pages env vars</label>
+        <div class="step__body">
+          <p>For the webhook function at <code>/api/ig/webhook</code> — CF dashboard → Pages → void-news → Settings → Environment variables (Production): <code>META_APP_SECRET</code>, <code>META_WEBHOOK_VERIFY_TOKEN</code>, <code>SUPABASE_URL</code>, <code>SUPABASE_SERVICE_ROLE_KEY</code>. Redeploy after saving (CF won't pick up env changes otherwise).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <input type="checkbox" id="m13" />
+      <div>
+        <label for="m13" class="step__title">Create a local <code>.env</code> for /admin/ig</label>
+        <div class="step__body">
+          <p><code>cp .env.example .env</code> and fill in <code>IG_ADMIN_USER</code>, <code>IG_ADMIN_PASSWORD</code>, <code>SUPABASE_SERVICE_ROLE_KEY</code>, <code>NEXT_PUBLIC_SUPABASE_*</code>. You run the admin page locally to approve posts.</p>
+        </div>
+        <div class="step__done"><code>npm run dev</code> → <code>localhost:3000/admin/ig</code> accepts your basic-auth login.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 3 · GO LIVE ═══════════════════════════════════════════════════ -->
+  <section class="group">
+    <div class="group__head">
+      <span class="group__num">03</span>
+      <h2 class="group__title">Go live &amp; pass review</h2>
+      <span class="group__tag">one-time</span>
+    </div>
+
+    <div class="step">
+      <input type="checkbox" id="m14" />
+      <div>
+        <label for="m14" class="step__title">Review &amp; merge the IG branch to main</label>
+        <div class="step__body">
+          <p>Open the PR from <code>claude/social-media-content-check-di1uzv</code>, read the diff, merge. This deploys the pipeline, the admin page, and the <code>/privacy</code> + <code>/press</code> pages, and activates the daily/publish crons.</p>
+        </div>
+        <div class="step__done"><code>/privacy</code> and <code>/press</code> load, and the webhook returns 403 to a bad verify token (proves it deployed).</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <input type="checkbox" id="m15" />
+      <div>
+        <label for="m15" class="step__title">Verify the domain in Meta Business Manager</label>
+        <div class="step__body">
+          <p><a href="https://business.facebook.com/settings/owned-domains" target="_blank" rel="noopener">Owned domains</a> → add <code>void-news.pages.dev</code> → DNS TXT method → add the record at your DNS provider → Verify.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <input type="checkbox" id="m16" />
+      <div>
+        <label for="m16" class="step__title">Record a screencast &amp; submit App Review</label>
+        <div class="step__body">
+          <p>60–90s: show a draft in <code>/admin/ig</code>, its slides + caption, click Approve, run a dry-run publish, show the post on Instagram. Submit App Review for <code>instagram_content_publish</code>, <code>instagram_manage_comments</code>, <code>instagram_manage_messages</code>, <code>instagram_manage_insights</code>, each with the screencast, a one-paragraph use case, and the privacy URL. Approval takes 1–7 business days.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <input type="checkbox" id="m17" />
+      <div>
+        <label for="m17" class="step__title">Subscribe webhooks in the Meta dashboard</label>
+        <div class="step__body">
+          <p>App → Webhooks → Instagram. Callback <code>https://void-news.pages.dev/api/ig/webhook</code>, paste your verify token, subscribe to <code>comments</code>, <code>mentions</code>, <code>messages</code>, <code>message_reactions</code>, <code>media</code>.</p>
+        </div>
+        <div class="step__done">Each field shows "Subscribed", no red banners.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 4 · LAUNCH ════════════════════════════════════════════════════ -->
+  <section class="group">
+    <div class="group__head">
+      <span class="group__num">04</span>
+      <h2 class="group__title">Launch day</h2>
+      <span class="group__tag">one-time</span>
+    </div>
+
+    <div class="step">
+      <input type="checkbox" id="m18" />
+      <div>
+        <label for="m18" class="step__title">Seed the 10 launch posts</label>
+        <div class="step__body">
+          <p>Actions → IG Pipeline → Run workflow → mode <code>seed-launch</code>. It generates rows 1–10, renders every slide, and writes captions, then parks them in <code>draft</code> for you.</p>
+        </div>
+        <div class="step__done">Ten rows tagged launch #1–#10 appear in <code>/admin/ig</code>.</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <input type="checkbox" id="m19" />
+      <div>
+        <label for="m19" class="step__title">Review &amp; approve each launch post</label>
+        <div class="step__body">
+          <p>In <code>/admin/ig</code>, scrub the slides and read each caption: no em dashes, no "notable / significant / interestingly", numbers do the work. Edit inline if needed, then save + approve. This editorial yes/no is the one gate that never automates.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <input type="checkbox" id="m20" />
+      <div>
+        <label for="m20" class="step__title">Ship Post 1 + the personal warm-launch</label>
+        <div class="step__body">
+          <p>Run mode <code>publish</code> to ship the approved opener (or wait for the next Mon/Thu cron). The same morning, post the "something I'm working on" version from your <strong>personal</strong> account to your network.</p>
+        </div>
+        <div class="step__done">Post 1 is live on Instagram and mirrored to Bluesky.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ 5 · ONGOING ═══════════════════════════════════════════════════ -->
+  <section class="group">
+    <div class="group__head">
+      <span class="group__num">05</span>
+      <h2 class="group__title">Ongoing rhythm</h2>
+      <span class="group__tag">recurring</span>
+    </div>
+
+    <div class="step">
+      <input type="checkbox" id="m21" />
+      <div>
+        <label for="m21" class="step__title">Daily: approve the day's draft</label>
+        <div class="step__body">
+          <p>The cron drops a fresh, captioned draft each morning. Open <code>/admin/ig</code>, give it a yes or no. Approved posts ship on the next Mon/Thu; nothing publishes without your approval.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <input type="checkbox" id="m22" />
+      <div>
+        <label for="m22" class="step__title">Daily: work the inbox</label>
+        <div class="step__body">
+          <p><code>/admin/ig/inbox</code> collects the DMs, comments, mentions, and hashtag leads the pipeline flagged for a human. Auto-replies only cover trivial cases; anything with a question or a real person is yours to answer.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <input type="checkbox" id="m23" />
+      <div>
+        <label for="m23" class="step__title">LinkedIn: paste by hand</label>
+        <div class="step__body">
+          <p>There is no LinkedIn automation. For a post worth long-form, copy the caption and post it manually in your own voice.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <input type="checkbox" id="m24" />
+      <div>
+        <label for="m24" class="step__title">Weekly / monthly: glance + Reel</label>
+        <div class="step__body">
+          <p>Weekly, skim the metrics the pipeline collected (reach, saves, follows). Monthly, consider one Reel — the only format the automation doesn't produce.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  void --news · @void.news manual checklist<br />
+  the pipeline does the work · you decide what ships
+</footer>
+
+<script>
+  (function () {
+    var KEY = "void-ig-manual-checklist-v2";
+    var boxes = Array.prototype.slice.call(document.querySelectorAll('.step input[type="checkbox"]'));
+    var pbar = document.getElementById("pbar");
+    var pct = document.getElementById("pct");
+    var ratio = document.getElementById("ratio");
+
+    function load() {
+      var saved = {};
+      try { saved = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) {}
+      boxes.forEach(function (b) {
+        b.checked = !!saved[b.id];
+        b.closest(".step").setAttribute("data-done", b.checked ? "true" : "false");
+      });
+    }
+    function save() {
+      var state = {};
+      boxes.forEach(function (b) { if (b.checked) state[b.id] = 1; });
+      try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+    }
+    function render() {
+      var done = boxes.filter(function (b) { return b.checked; }).length;
+      var total = boxes.length;
+      var p = total ? Math.round((done / total) * 100) : 0;
+      pbar.style.width = p + "%";
+      pct.textContent = p + "%";
+      ratio.textContent = done + " / " + total;
+      document.body.setAttribute("data-all-done", done === total && total > 0 ? "true" : "false");
+    }
+
+    boxes.forEach(function (b) {
+      b.addEventListener("change", function () {
+        b.closest(".step").setAttribute("data-done", b.checked ? "true" : "false");
+        save();
+        render();
+      });
+    });
+    document.getElementById("reset").addEventListener("click", function () {
+      if (!confirm("Reset all checkboxes?")) return;
+      try { localStorage.removeItem(KEY); } catch (e) {}
+      load();
+      render();
+    });
+
+    load();
+    render();
+  })();
+</script>
+</body>
+</html>
