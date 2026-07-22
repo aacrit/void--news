@@ -190,5 +190,17 @@
     "duration_seconds": 73.2,
     "file_size_kb": 858.7,
     "generated_at": "2026-07-22T16:27:31.245332+00:00"
+  },
+  "arab-spring": {
+    "url": "https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/audio-briefs/revolt/arab-spring.mp3?v=9ea97b39",
+    "duration_seconds": 112.8,
+    "file_size_kb": 1323.3,
+    "generated_at": "2026-07-22T16:29:33.331017+00:00"
+  },
+  "hong-kong": {
+    "url": "https://xryzskhgfuafyotrcdvj.supabase.co/storage/v1/object/public/audio-briefs/revolt/hong-kong.mp3?v=a23cb0f7",
+    "duration_seconds": 134.9,
+    "file_size_kb": 1582.1,
+    "generated_at": "2026-07-22T16:29:48.660987+00:00"
   }
 }
