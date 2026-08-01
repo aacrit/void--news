@@ -136,17 +136,13 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
         {/* Content destinations */}
         <nav className="msp__links" aria-label="Side navigation">
           <span className="msp__section-label" data-msp-cascade="2">Read</span>
-          <Link href="/history" className="msp__link" data-msp-cascade="2" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">void --history</span>
-            <span className="msp__link-desc">The archive</span>
+          <Link href="/archive" className="msp__link" data-msp-cascade="2" onClick={handleLinkClick}>
+            <span className="msp__link-cmd">void --archive</span>
+            <span className="msp__link-desc">History and revolt</span>
           </Link>
           <Link href="/weekly" className="msp__link" data-msp-cascade="2" onClick={handleLinkClick}>
             <span className="msp__link-cmd">void --weekly</span>
             <span className="msp__link-desc">The week in review</span>
-          </Link>
-          <Link href="/revolt" className="msp__link" data-msp-cascade="2" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">void --revolt</span>
-            <span className="msp__link-desc">The anatomy of revolution</span>
           </Link>
           {/* /paper hidden from nav per CEO 2026-05-15 — not production-ready.
               Route still resolves at /paper for direct URL access. */}
@@ -174,9 +170,9 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
           </svg>
 
           <span className="msp__section-label" data-msp-cascade="4">Participate</span>
-          <Link href="/ship" className="msp__link" data-msp-cascade="4" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">void --ship</span>
-            <span className="msp__link-desc">Request features, report bugs</span>
+          <Link href="/feedback" className="msp__link" data-msp-cascade="4" onClick={handleLinkClick}>
+            <span className="msp__link-cmd">void --feedback</span>
+            <span className="msp__link-desc">Tell us what breaks</span>
           </Link>
         </nav>
 

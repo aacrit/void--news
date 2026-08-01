@@ -9,7 +9,7 @@ import { AUDIO_ENABLED } from "../lib/audioGate";
 
 /* ---------------------------------------------------------------------------
    MobileTabBar — Persistent bottom tab bar (mobile only, <768px).
-   4 tabs: Feed, History, OnAir, More.
+   4 tabs: Feed, Archive, OnAir, More.
    "More" toggles MobileSidePanel (callback from parent).
    "OnAir" routes to the dedicated /onair broadcast page.
    Hidden on desktop via CSS.
@@ -75,7 +75,7 @@ type TabDef = {
 // /onair broadcast page (now-playing, chapters, show notes, archive).
 const TABS: TabDef[] = [
   { key: "feed", label: "feed", Icon: FeedIcon, href: "/" },
-  { key: "history", label: "history", Icon: HistoryIcon, href: "/history" },
+  { key: "archive", label: "archive", Icon: HistoryIcon, href: "/archive" },
   ...(AUDIO_ENABLED
     ? [{ key: "onair", label: "onair", Icon: OnAirIcon, href: "/onair" }]
     : []),
@@ -91,8 +91,8 @@ export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps)
       switch (key) {
         case "feed":
           return p === "/" || p === "" || /^\/(world)\/?$/.test(p);
-        case "history":
-          return p.startsWith("/history");
+        case "archive":
+          return p.startsWith("/archive") || p.startsWith("/history") || p.startsWith("/revolt");
         case "onair":
           return p.startsWith("/onair");
         case "more":

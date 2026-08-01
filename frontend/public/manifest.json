@@ -1,7 +1,7 @@
 {
   "name": "void --news",
   "short_name": "void--news",
-  "description": "Free per-article bias analysis across 1,016 sources. Six axes. No paywall. No algorithm.",
+  "description": "Experimental. Free per-article bias analysis across 1,016 sources. Six axes. No paywall. No algorithm.",
   "id": "/",
   "start_url": "/",
   "scope": "/",

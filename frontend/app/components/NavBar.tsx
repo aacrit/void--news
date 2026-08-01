@@ -6,6 +6,7 @@ import { MagnifyingGlass } from "@phosphor-icons/react";
 import ThemeToggle from "./ThemeToggle";
 import PageToggle from "./PageToggle";
 import LogoFull from "./LogoFull";
+import ExperimentalBadge from "./ExperimentalBadge";
 import { getEditionTimestamp } from "../lib/utils";
 
 interface NavBarProps {
@@ -95,6 +96,7 @@ export default function NavBar({
               <LogoFull height={22} />
             </span>
           </Link>
+          <ExperimentalBadge />
         </div>
 
         <span className="nav-dateline-inline" aria-hidden="true" suppressHydrationWarning>
@@ -109,17 +111,13 @@ export default function NavBar({
         {/* Spinoff product links — standalone products under the void --news
             umbrella, treated with italic accents (warm rule + label). */}
         <nav className="nav-spinoffs" aria-label="Spinoff editions">
-          <Link href="/history" className="nav-history" aria-label="Go to History archive" title="void --history">
+          <Link href="/archive" className="nav-history" aria-label="Go to the Archive: history and revolt" title="void --archive">
             <span className="nav-history__rule" aria-hidden="true" />
-            <span className="nav-history__label">History</span>
+            <span className="nav-history__label">Archive</span>
           </Link>
           <Link href="/weekly" className="nav-history nav-weekly" aria-label="Go to the Weekly digest" title="void --weekly">
             <span className="nav-history__rule" aria-hidden="true" />
             <span className="nav-history__label">Weekly</span>
-          </Link>
-          <Link href="/revolt" className="nav-history nav-revolt" aria-label="Go to Revolt, the anatomy of revolutions" title="void --revolt">
-            <span className="nav-history__rule" aria-hidden="true" />
-            <span className="nav-history__label">Revolt</span>
           </Link>
         </nav>
 
@@ -129,8 +127,8 @@ export default function NavBar({
               still resolve at /games and /paper for direct URL access. */}
           <nav className="nav-pages" aria-label="Pages">
             <PageToggle activePage="feed" />
-            <Link href="/ship" className="nav-page" aria-label="void --ship" title="void --ship">
-              Ship
+            <Link href="/feedback" className="nav-page" aria-label="Send feedback" title="Feedback">
+              Feedback
             </Link>
             <Link href="/about" className="nav-page" aria-label="About void --news" title="void --about">
               About
