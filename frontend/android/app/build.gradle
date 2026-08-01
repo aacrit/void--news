@@ -38,7 +38,7 @@ android {
     namespace = "void.news"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "void.news"
+        applicationId "com.void.news"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         // Bump BOTH before every Play Store upload:
