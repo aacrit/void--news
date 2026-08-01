@@ -8,6 +8,7 @@ import {
 import "./globals.css";
 import AudioProvider from "./components/AudioProvider";
 import MobileNav from "./components/MobileNav";
+import ExperimentalBanner from "./components/ExperimentalBanner";
 import { BASE_PATH } from "./lib/utils";
 
 /* ---------------------------------------------------------------------------
@@ -53,7 +54,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://void-news.pages.dev"),
   title: "void --news — See through the void.",
   description:
-    "Free per-article bias analysis across 1,016 sources. Six axes. No paywall. No algorithm. Just the news, dissected.",
+    "An experimental newsroom: free per-article bias analysis across 1,016 sources. Six axes. No paywall. No algorithm. Just the news, dissected.",
   keywords: [
     "news",
     "bias analysis",
@@ -67,7 +68,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "void --news — See through the void.",
     description:
-      "Free per-article bias analysis across 1,016 sources. Six axes. No paywall. No algorithm. Just the news, dissected.",
+      "An experimental newsroom: free per-article bias analysis across 1,016 sources. Six axes. No paywall. No algorithm. Just the news, dissected.",
     type: "website",
     siteName: "void --news",
     images: [
@@ -84,7 +85,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "void --news — See through the void.",
     description:
-      "Free per-article bias analysis across 1,016 sources. Six axes. No paywall. No algorithm.",
+      "An experimental newsroom: free per-article bias analysis across 1,016 sources. Six axes. No paywall. No algorithm.",
     images: [`${BASE_PATH}/twitter-card.svg`],
   },
   icons: {
@@ -200,6 +201,7 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
+        <ExperimentalBanner />
         <AudioProvider>
           {children}
           <MobileNav />

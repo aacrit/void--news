@@ -11,6 +11,19 @@
 /south-asia /  301
 /south-asia/*  /  301
 
+# 2026-08-01 — Product consolidation.
+# History + Revolt now live under one tabbed /archive; void --ship became a
+# simple /feedback page. These are EXACT-path 301s (no wildcards), so deep
+# routes (/history/<slug>, /history/era/*, /revolt/active, /revolt/<slug>, ...)
+# still resolve directly and are never shadowed. trailingSlash is on, so both
+# the bare and slashed forms are listed.
+/history     /archive              301
+/history/    /archive              301
+/revolt      /archive?tab=revolt   301
+/revolt/     /archive?tab=revolt   301
+/ship        /feedback             301
+/ship/       /feedback             301
+
 # Legacy GitHub Pages project-path. CF Pages serves at root, so 301 any
 # stray /void--news/* deep link to the equivalent root path. Placed last:
 # first match wins, so the specific edition rules above take precedence.

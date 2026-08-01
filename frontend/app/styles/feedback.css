@@ -1,0 +1,194 @@
+/* ===========================================================================
+   Feedback — the retired void --ship, reduced to a single calm form.
+   Writes to the same ship_requests table via submitShipRequest.
+   =========================================================================== */
+
+.fb-page {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4) var(--space-7);
+}
+
+.fb-back {
+  margin-bottom: var(--space-5);
+}
+
+.fb-back__link {
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  letter-spacing: 0.03em;
+  color: var(--fg-secondary);
+  text-decoration: none;
+  transition: color 180ms var(--ease-cinematic);
+}
+
+.fb-back__link:hover {
+  color: var(--fg-primary);
+}
+
+.fb-header {
+  margin-bottom: var(--space-6);
+}
+
+.fb-kicker {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-accent);
+}
+
+.fb-title {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: clamp(1.75rem, 1.4rem + 1.8vw, 2.5rem);
+  line-height: 1.1;
+  color: var(--fg-primary);
+}
+
+.fb-intro {
+  margin: 0;
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  color: var(--fg-secondary);
+}
+
+.fb-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.fb-field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.fb-label {
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-secondary);
+}
+
+.fb-input,
+.fb-textarea,
+.fb-select {
+  width: 100%;
+  padding: var(--space-3);
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  color: var(--fg-primary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  transition: border-color 180ms var(--ease-cinematic);
+}
+
+.fb-input:focus,
+.fb-textarea:focus,
+.fb-select:focus {
+  outline: none;
+  border-color: var(--fg-accent);
+}
+
+.fb-textarea {
+  min-height: 160px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.fb-honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.fb-error {
+  margin: 0;
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: #b4442e;
+}
+
+.fb-submit {
+  align-self: flex-start;
+  min-height: 44px;
+  padding: var(--space-3) var(--space-5);
+  font-family: var(--font-meta);
+  font-size: var(--text-base);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--bg-primary);
+  background: var(--fg-primary);
+  border: 1px solid var(--fg-primary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: opacity 180ms var(--ease-cinematic),
+              background-color 180ms var(--ease-cinematic);
+}
+
+.fb-submit:hover:not(:disabled) {
+  background: var(--fg-accent);
+  border-color: var(--fg-accent);
+}
+
+.fb-submit:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ── Success state ── */
+.fb-success {
+  padding: var(--space-6) 0;
+  text-align: center;
+}
+
+.fb-success__mark {
+  font-size: 2rem;
+  color: var(--fg-accent);
+}
+
+.fb-success__text {
+  margin: var(--space-3) 0 var(--space-5);
+  font-family: var(--font-editorial);
+  font-size: clamp(1.25rem, 1.1rem + 0.8vw, 1.5rem);
+  color: var(--fg-primary);
+}
+
+.fb-success__again {
+  min-height: 44px;
+  padding: var(--space-2) var(--space-4);
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fg-primary);
+  background: none;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: border-color 180ms var(--ease-cinematic);
+}
+
+.fb-success__again:hover {
+  border-color: var(--fg-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fb-back__link,
+  .fb-input,
+  .fb-textarea,
+  .fb-select,
+  .fb-submit,
+  .fb-success__again {
+    transition: none;
+  }
+}

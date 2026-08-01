@@ -1,5 +1,39 @@
 apply plugin: 'com.android.application'
 
+// ---------------------------------------------------------------------------
+// Release signing (void --news).
+// Reads the keystore location/passwords/alias from, in order of precedence:
+//   1. Environment variables (used by Codemagic CI, see codemagic.yaml):
+//        VOID_KEYSTORE_PATH, VOID_KEYSTORE_PASSWORD, VOID_KEY_ALIAS, VOID_KEY_PASSWORD
+//   2. A local, git-ignored keystore.properties file at frontend/android/keystore.properties:
+//        storeFile=../void-release.keystore
+//        storePassword=...
+//        keyAlias=void
+//        keyPassword=...
+// If NEITHER source provides a keystore, the release signingConfig is left
+// unconfigured so that `assembleDebug` (and any unsigned tasks) still work.
+// See docs/MOBILE-RELEASE.md for keystore generation + offline-backup steps.
+// ---------------------------------------------------------------------------
+def keystorePropsFile = rootProject.file("keystore.properties")
+def keystoreProps = new Properties()
+if (keystorePropsFile.exists()) {
+    keystoreProps.load(new FileInputStream(keystorePropsFile))
+}
+
+def resolveSigning = { String envKey, String propKey ->
+    def v = System.getenv(envKey)
+    if (v == null || v.isEmpty()) {
+        v = keystoreProps.getProperty(propKey)
+    }
+    return v
+}
+
+def voidStorePath = resolveSigning("VOID_KEYSTORE_PATH", "storeFile")
+def voidStorePassword = resolveSigning("VOID_KEYSTORE_PASSWORD", "storePassword")
+def voidKeyAlias = resolveSigning("VOID_KEY_ALIAS", "keyAlias")
+def voidKeyPassword = resolveSigning("VOID_KEY_PASSWORD", "keyPassword")
+def hasReleaseSigning = voidStorePath != null && !voidStorePath.isEmpty() && file(voidStorePath).exists()
+
 android {
     namespace = "void.news"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -7,6 +41,9 @@ android {
         applicationId "void.news"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+        // Bump BOTH before every Play Store upload:
+        //   versionCode  -> integer, MUST increase each upload (Play rejects duplicates)
+        //   versionName  -> user-facing string (e.g. "1.0", "1.1")
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -16,10 +53,29 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        release {
+            // Only populated when a keystore is actually available. When it is
+            // not, these stay null and we never attach this config to a build
+            // (see buildTypes.release below), so debug builds are unaffected.
+            if (hasReleaseSigning) {
+                storeFile file(voidStorePath)
+                storePassword voidStorePassword
+                keyAlias voidKeyAlias
+                keyPassword voidKeyPassword
+            }
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // Attach the release signing config ONLY when a keystore was found.
+            // A missing keystore leaves the release build unsigned rather than
+            // failing the whole Gradle invocation (so assembleDebug keeps working).
+            if (hasReleaseSigning) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 }
