@@ -3,6 +3,8 @@
 import { Suspense, useEffect, useState } from "react";
 import type { HistoricalEvent, RedactedEvent } from "../history/types";
 import { fetchHistoryEvents, fetchRedactedEvents } from "../history/data";
+import NavBar from "../components/NavBar";
+import Footer from "../components/Footer";
 import ArchiveTabs from "./ArchiveTabs";
 
 /* ===========================================================================
@@ -40,10 +42,17 @@ export default function ArchivePage() {
   }, []);
 
   return (
+    // /archive is a top-level destination (not an immersive sub-route), so it
+    // carries the standard site masthead + footer for orientation. The tabs
+    // mount the existing history/revolt landings unchanged.
     // useSearchParams() inside ArchiveTabs requires a Suspense boundary under
     // static export.
-    <Suspense fallback={null}>
-      <ArchiveTabs events={events} redacted={redacted} loading={loading} />
-    </Suspense>
+    <>
+      <NavBar />
+      <Suspense fallback={null}>
+        <ArchiveTabs events={events} redacted={redacted} loading={loading} />
+      </Suspense>
+      <Footer />
+    </>
   );
 }
