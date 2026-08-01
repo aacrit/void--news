@@ -591,6 +591,41 @@
 /* --- void --Editorial — the single argued editorial, its own full-width
    section. Left-aligned to the content edge (same x-start as the hero
    headline), bigger type, wide measure. --- */
+/* Cover zone: the week's top stories in the main column, the argued Editorial
+   pinned in a right rail. Single column on mobile (editorial drops below the
+   stories); two columns on wide screens where the rail spans the stories'
+   full height with a divider rule and the editorial sticks into view. */
+.wk-cover-zone {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+.wk-cover-zone__main,
+.wk-cover-zone__rail {
+  min-width: 0;
+}
+@media (min-width: 900px) {
+  .wk-cover-zone {
+    grid-template-columns: minmax(0, 1fr) minmax(15rem, 20rem);
+    gap: var(--space-5);
+    align-items: stretch;
+  }
+  .wk-cover-zone--no-rail {
+    grid-template-columns: 1fr;
+  }
+  /* Rail stretches to the stories' height; the rule spans them vertically. */
+  .wk-cover-zone__rail {
+    border-left: 1px solid var(--border-strong);
+    padding-left: var(--space-4);
+  }
+  /* Editorial sticks into view as you scroll past the stories. */
+  .wk-cover-zone__rail .wk-editorial-section {
+    position: sticky;
+    top: var(--space-4);
+    padding: 0;
+  }
+}
+
 .wk-editorial-section {
   padding: var(--space-4) 0 var(--space-5);
 }
@@ -598,6 +633,17 @@
 .wk-editorial {
   max-width: 74ch;
   /* left-aligned: no margin auto */
+}
+
+/* Inside the rail the editorial fills the column (no prose cap) and reads a
+   touch smaller, like a sidebar column. */
+.wk-cover-zone__rail .wk-editorial {
+  max-width: none;
+}
+@media (min-width: 900px) {
+  .wk-cover-zone__rail .wk-editorial__text {
+    font-size: var(--text-sm);
+  }
 }
 
 .wk-editorial__lens {
