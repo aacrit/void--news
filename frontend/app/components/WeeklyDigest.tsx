@@ -700,22 +700,32 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
               imageAttribution={digest.cover_image_attribution}
             />
 
-            {/* C. Cover features — full width */}
-            {digest.cover_text && digest.cover_text.length > 0 && (
-              <CoverBody stories={digest.cover_text} />
-            )}
-
-            {/* C2. void --Editorial — its own full-width section, with a line
-                separator before it */}
-            {digest.opinion_text && (
-              <>
-                <hr className="wk-rule" />
-                <SectionEditorial
-                  headline={digest.opinion_headline}
-                  text={digest.opinion_text}
-                  lean={digest.opinion_lean}
-                />
-              </>
+            {/* C. Cover zone — the week's top stories run in the main column;
+                the argued void --Editorial is pinned in a right rail that spans
+                their full height (magazine feel). Rail drops below on mobile. */}
+            {(digest.cover_text?.length || digest.opinion_text) && (
+              <div
+                className={`wk-cover-zone${
+                  digest.opinion_text && digest.cover_text?.length
+                    ? ""
+                    : " wk-cover-zone--no-rail"
+                }`}
+              >
+                {digest.cover_text && digest.cover_text.length > 0 && (
+                  <div className="wk-cover-zone__main">
+                    <CoverBody stories={digest.cover_text} />
+                  </div>
+                )}
+                {digest.opinion_text && (
+                  <aside className="wk-cover-zone__rail">
+                    <SectionEditorial
+                      headline={digest.opinion_headline}
+                      text={digest.opinion_text}
+                      lean={digest.opinion_lean}
+                    />
+                  </aside>
+                )}
+              </div>
             )}
 
             <RevealFlourish />
