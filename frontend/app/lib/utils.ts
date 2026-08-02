@@ -9,21 +9,33 @@
 export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "/void--news";
 
 /**
- * 2026-06-02 single-feed — Morning/Evening shorthand from UTC.
- * Edition-specific timezone branches removed.
+ * Morning/Evening shorthand from the reader's LOCAL time.
+ * Only rendered client-side (after mount) so the local clock is the reader's.
  */
 export function getEditionTimeOfDay(): "Morning" | "Evening" {
-  return new Date().getUTCHours() < 12 ? "Morning" : "Evening";
+  return new Date().getHours() < 12 ? "Morning" : "Evening";
 }
 
 /**
- * Compact UTC dateline timestamp ("14:05 UTC"). Single-feed mode.
+ * Compact dateline timestamp in the reader's LOCAL time with its zone label
+ * (e.g. "14:05 CDT"). Only rendered client-side (after mount) in the masthead,
+ * so it reflects the visitor's own timezone rather than UTC.
  */
 export function getEditionTimestamp(): string {
   const now = new Date();
-  const h = String(now.getUTCHours()).padStart(2, "0");
-  const m = String(now.getUTCMinutes()).padStart(2, "0");
-  return `${h}:${m} UTC`;
+  const h = String(now.getHours()).padStart(2, "0");
+  const m = String(now.getMinutes()).padStart(2, "0");
+  // Local timezone short label ("CDT", "GMT+2", ...); degrade to bare time.
+  let tz = "";
+  try {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZoneName: "short",
+    }).formatToParts(now);
+    tz = parts.find((p) => p.type === "timeZoneName")?.value ?? "";
+  } catch {
+    /* Intl unavailable — show time without a zone label. */
+  }
+  return tz ? `${h}:${m} ${tz}` : `${h}:${m}`;
 }
 
 /**
