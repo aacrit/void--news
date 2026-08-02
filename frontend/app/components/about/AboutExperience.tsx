@@ -56,7 +56,7 @@ function PageExperience() {
       <header className="about-x__hero">
         <div className="about-x__hero-mark"><LogoIcon size={108} animation="idle" /></div>
         <h1 className="about-x__tagline">See through the void.</h1>
-        <p className="about-x__sub">News, measured. Scroll to see how it works.</p>
+        <p className="about-x__sub">Every outlet spins the same events. void measures the spin, on six axes, from the words themselves, and prints one front page ranked by importance, not by an algorithm tuned to you. Scroll to see how it works.</p>
         <span className="about-x__scroll" aria-hidden="true" />
       </header>
 
