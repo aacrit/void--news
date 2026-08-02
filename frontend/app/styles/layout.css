@@ -103,6 +103,19 @@
 /* When a Deep Dive takes over the canvas the nameplate recedes with the feed. */
 .page-main--deep-dive-open .home-flag { opacity: 0.5; }
 
+/* Mobile: keep the flag as a masthead + LCP anchor, but slimmer so the feed
+   stays close to the fold. Still a large Playfair block (largest contentful
+   element before the feed hydrates). */
+@media (max-width: 767px) {
+  .home-flag {
+    padding-top: var(--space-3);
+    padding-bottom: var(--space-2);
+    margin-bottom: var(--space-3);
+  }
+  .home-flag__name { font-size: clamp(2.1rem, 1.6rem + 6vw, 2.8rem); }
+  .home-flag__tag { font-size: 0.9rem; margin-top: var(--space-1); }
+}
+
 /* ---- Skybox — editorial brief zone above the news canvas -------------- */
 /*
  * Full-bleed band: TL;DR | Opinion | On Air side by side on desktop.
