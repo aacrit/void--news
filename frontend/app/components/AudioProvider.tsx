@@ -551,7 +551,13 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
         <audio
           ref={audioCallbackRef}
           src={brief.audio_url}
-          preload="metadata"
+          /* Defer the MP3 fetch until the reader actually plays. "metadata"
+             (the old value) fetched the file's header bytes on every home load
+             even though the player auto-shows without interaction. "none" until
+             first play means zero audio bytes on the initial render; the browser
+             loads on demand when play() is called, then keeps metadata for the
+             scrubber on subsequent renders. */
+          preload={hasEverPlayed ? "metadata" : "none"}
           crossOrigin="anonymous"
           hidden
         />

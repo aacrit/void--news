@@ -294,6 +294,8 @@ function CoverHero({
             alt=""
             className={`wk-cover-hero__image${imgLoaded ? " wk-cover-hero__image--loaded" : ""}`}
             loading="eager"
+            fetchPriority="high"
+            decoding="async"
             onLoad={() => setImgLoaded(true)}
             onError={() => setImgError(true)}
           />
@@ -730,6 +732,20 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
         id="main-content"
         className="wk-main"
       >
+        {/* Large, static nameplate — server-rendered into the export HTML
+            (digest is null at build) and kept until a real issue loads, so a
+            genuine contentful element paints at FCP and anchors LCP across the
+            loading AND empty/error states. It is gated on !digest (not on
+            loading, which flips false fast on the empty-DB path and removed the
+            anchor before LCP settled). When an issue loads, the CoverHero
+            headline becomes the LCP. Without it, LCP fell to a tiny late text
+            node (the site-wide experimental banner). */}
+        {!digest && (
+          <div className="wk-loading__flag" aria-hidden="true">
+            void<span className="wk-loading__flag-cmd">&nbsp;--weekly</span>
+          </div>
+        )}
+
         {loading && (
           <div className="wk-loading" aria-live="polite">
             <div className="wk-loading__bar" />

@@ -801,6 +801,24 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
         onTouchMove={handlePullMove}
         onTouchEnd={handlePullEnd}
       >
+        {/* ── Editorial nameplate (broadsheet flag) ──────────────────────────
+            Server-rendered, always present, data-independent. This is the one
+            large, contentful element guaranteed to be in the static export
+            HTML, so it paints at FCP and anchors LCP (the feed loads client
+            side, so nothing else contentful is in the prerendered markup).
+            Persistent — it is never removed, so it introduces no layout shift.
+            Utility chrome (small logo) lives in the NavBar above; this is the
+            newspaper nameplate, a distinct and intentional editorial element. */}
+        {/* Decorative nameplate, not a heading: the lead story keeps the page's
+            single <h1> (LeadStory). aria-hidden because the nav logo already
+            announces the brand; this is the visual masthead + the LCP anchor. */}
+        <div className="home-flag" aria-hidden="true">
+          <div className="home-flag__name">
+            void<span className="home-flag__cmd">&nbsp;--news</span>
+          </div>
+          <p className="home-flag__tag">See through the void.</p>
+        </div>
+
         {/* Pull-to-refresh indicator (mobile) */}
         {(isPulling || isRefreshing) && (
           <div
