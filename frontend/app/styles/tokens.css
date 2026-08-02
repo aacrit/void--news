@@ -67,8 +67,12 @@
      Deepened from #C8956C (2.2:1 — failed WCAG AA) to pass 4.5:1. */
   --accent-warm: #946B15;
 
-  /* Foreground accent — warm editorial accent for badges, active states */
-  --fg-accent: #946B15;
+  /* Foreground accent — warm editorial accent for badges, active states, and
+     small accent TEXT (kickers, the experimental badge/banner link). Deepened
+     from #946B15 to clear WCAG AA 4.5:1 as text on the warm paper tints
+     (banner ~5.6:1, kickers ~6:1). --accent-warm keeps #946B15 for tints,
+     borders, and focus outlines, which only need 3:1. */
+  --fg-accent: #7A5810;
 
   /* Terracotta action accent — CTA buttons in the onboarding / user-journey
      tiles. Ink-splash fill; foreground is warm paper (never #fff on cream, the
@@ -597,10 +601,11 @@
   /* Foreground accent — warm editorial accent for badges, active states */
   --fg-accent: #D4A574;
 
-  /* Terracotta action accent — brighter on the dark ground so it reads as an
-     ember, not a smudge. Keeps warm-paper foreground for contrast. */
-  --accent-ember: #C64C2C;
-  --accent-ember-hover: #DB5C3B;
+  /* Terracotta action accent — reads as an ember on the dark ground while
+     keeping the warm-paper foreground above 4.5:1 (WCAG AA). Hover goes DARKER
+     than base so contrast rises on hover, not falls. */
+  --accent-ember: #B84325;      /* #FBF6EC on this = 4.6:1 (AA) */
+  --accent-ember-hover: #A2381D; /* darker => ~5.3:1 on hover */
   --accent-ember-fg: #FBF6EC;
 
   /* Hover surface — subtle tint for interactive rows */

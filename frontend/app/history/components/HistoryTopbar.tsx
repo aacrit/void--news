@@ -32,6 +32,10 @@ export default function HistoryTopbar() {
         <span className="hist-topbar__subtitle">The Archive</span>
       </Link>
       <div className="hist-topbar__actions">
+        <Link href="/revolt" className="hist-topbar__revolt" title="void --revolt: the anatomy of revolution" aria-label="Go to void --revolt, the anatomy of revolution">
+          <span className="hist-topbar__revolt-cmd">void --revolt</span>
+          <span className="hist-topbar__revolt-arrow" aria-hidden="true">&rarr;</span>
+        </Link>
         <ThemeToggle />
       </div>
     </header>
