@@ -30,9 +30,11 @@
 /_next/static/*
   Cache-Control: public, max-age=31536000, immutable
 
-# Hashed font files served by next/font
-/*.woff2
-  Cache-Control: public, max-age=31536000, immutable
+# next/font woff2 files live under /_next/static/media/, so they are already
+# covered by the /_next/static/* rule above. A separate /*.woff2 rule was
+# removed because Cloudflare Pages ACCUMULATES headers from every matching
+# rule: /*.woff2 overlapped /_next/static/* and emitted a duplicate
+# Cache-Control on every font, which defeats the immutable long-cache.
 
 # ── HTML routes — short browser cache + stale-while-revalidate ──────────
 # 2026-06-01 egress fix: HomeContent.tsx fetches Supabase JSON on every

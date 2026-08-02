@@ -1282,6 +1282,30 @@
   gap: var(--space-4);
 }
 
+.wk-loading__flag {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  /* Sized to clearly out-area the site-wide experimental banner text (a
+     client-rendered, and therefore late, LCP candidate) so this static
+     nameplate stays the largest contentful element and anchors LCP at FCP. */
+  font-size: clamp(3.75rem, 3rem + 8vw, 6rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--wk-accent, var(--fg-primary));
+  text-align: center;
+  padding: clamp(2rem, 6vh, 4rem) var(--space-4) var(--space-4);
+  margin: 0;
+}
+
+.wk-loading__flag-cmd {
+  font-family: var(--font-data);
+  font-weight: 400;
+  font-size: 0.3em;
+  letter-spacing: 0;
+  color: var(--fg-tertiary);
+  vertical-align: 0.32em;
+}
+
 .wk-loading__bar {
   width: 3rem;
   height: 2px;

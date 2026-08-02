@@ -19,6 +19,15 @@ export default function config(phase: string): NextConfig {
     compress: true,
     // Reduce bundle size by disabling source maps in production
     productionBrowserSourceMaps: false,
+    experimental: {
+      // @phosphor-icons/react ships a barrel that does not tree-shake well —
+      // importing a single icon can pull a large slice of the library into the
+      // client bundle. optimizePackageImports rewrites named imports to direct
+      // per-icon module paths, cutting the eager JS on every route that uses an
+      // icon (NavBar, StoryCard, LeadStory, SkyboxBanner are all on the home
+      // critical path). Lowers TBT and the JS the LCP estimate waits behind.
+      optimizePackageImports: ["@phosphor-icons/react"],
+    },
   };
   if (phase !== PHASE_DEVELOPMENT_SERVER) {
     nextConfig.output = "export";

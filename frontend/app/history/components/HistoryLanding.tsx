@@ -398,6 +398,10 @@ function PosterImage({ event, eager, year }: { event: HistoricalEvent; eager?: b
       src={fallbackUrls[0]}
       alt={event.heroCaption || event.title}
       loading={eager ? "eager" : "lazy"}
+      // The first cards are the LCP candidate on /history — hint the browser to
+      // fetch them at high priority instead of the default (low for images).
+      fetchPriority={eager ? "high" : undefined}
+      decoding="async"
       className="hist-tl-card__photo-img"
       onError={handleError}
     />

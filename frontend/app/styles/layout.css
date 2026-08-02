@@ -60,6 +60,49 @@
   }
 }
 
+/* ---- Editorial nameplate (broadsheet flag) ---------------------------- */
+/* Persistent, server-rendered masthead. Sits at the top of the feed so a
+   large, contentful text element is present in the static export HTML and
+   paints at FCP, anchoring LCP (the feed itself loads client-side). Kept slim
+   so it costs little above-the-fold real estate on mobile. */
+.home-flag {
+  padding-top: var(--space-4);
+  padding-bottom: var(--space-3);
+  margin-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border-subtle);
+  text-align: center;
+}
+
+.home-flag__name {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: clamp(2.5rem, 3rem + 4vw, 5rem);
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--fg-primary);
+  margin: 0;
+}
+
+.home-flag__cmd {
+  font-family: var(--font-data);
+  font-weight: 400;
+  font-size: 0.32em;
+  letter-spacing: 0;
+  color: var(--fg-tertiary);
+  vertical-align: 0.28em;
+}
+
+.home-flag__tag {
+  margin: var(--space-2) 0 0;
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: clamp(0.95rem, 0.85rem + 0.4vw, 1.15rem);
+  color: var(--fg-secondary);
+}
+
+/* When a Deep Dive takes over the canvas the nameplate recedes with the feed. */
+.page-main--deep-dive-open .home-flag { opacity: 0.5; }
+
 /* ---- Skybox — editorial brief zone above the news canvas -------------- */
 /*
  * Full-bleed band: TL;DR | Opinion | On Air side by side on desktop.
