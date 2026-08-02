@@ -391,6 +391,11 @@ export interface WeeklyCoverStory {
   text: string;
   timeline?: WeeklyTimelineDay[];
   numbers?: WeeklyCoverNumber[];
+  /* Optional illustration embedded by the backend into the weekly JSON.
+     cluster_id is stored in the DB row and now surfaced for image lookup. */
+  image_url?: string;
+  image_attribution?: string;
+  cluster_id?: string;
 }
 
 export interface WeeklyTimelineDay {
@@ -414,6 +419,9 @@ export interface WeeklyRecapStory {
   headline: string;
   summary: string;
   section?: string;
+  /* Optional thumbnail embedded by the backend into the weekly JSON. */
+  image_url?: string;
+  image_attribution?: string;
 }
 
 export interface WeeklyOpinion {

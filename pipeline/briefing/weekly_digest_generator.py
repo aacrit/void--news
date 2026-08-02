@@ -261,7 +261,8 @@ def _fetch_week_clusters(edition, week_start, week_end):
         result = supabase.table("story_clusters").select(
             "id,title,summary,consensus_points,divergence_points,"
             "category,source_count,headline_rank,divergence_score,bias_diversity,"
-            "sections,created_at,first_published,last_updated"
+            "sections,created_at,first_published,last_updated,"
+            "cached_image_url,cached_image_attribution"
         ).contains("sections", [edition]).gte(
             "created_at", week_start.isoformat()
         ).lte(
@@ -852,7 +853,20 @@ def _generate_week_recap(clusters, edition, skip_ids=None):
 
     prompt = f"Write 150-200 word recaps for these {len(remaining)} stories ({edition} edition):\n\n{stories_text}"
     raw = _smart_generate_text(prompt, system_instruction=RECAP_SYSTEM, model=_FLASH_MODEL)
-    return _parse_recap(raw), 1
+    parsed = _parse_recap(raw)
+    # Re-attach the cluster identity that _parse_recap drops so each recap story
+    # can surface the daily pipeline's already-cached WebP. The parsed stories
+    # follow the same order as `remaining`; zip stops at the shortest, so a
+    # count mismatch (e.g. the model merged or dropped a block) is safe.
+    if parsed and parsed.get("stories"):
+        for story, cluster in zip(parsed["stories"], remaining):
+            img = cluster.get("cached_image_url")
+            if img:
+                story["image_url"] = img
+                attribution = cluster.get("cached_image_attribution")
+                if attribution:
+                    story["image_attribution"] = attribution
+    return parsed, 1
 
 
 # ── SECTION 7: AUDIO ──
@@ -1711,6 +1725,30 @@ def generate_weekly_digest(editions=None, week_offset=0):
 
         # Store
         elapsed = time.time() - t0
+
+        # Surface the daily pipeline's already-cached WebP on each cover item by
+        # matching the cover's cluster_id back to the fetched week clusters. No
+        # new image API calls; the keys are omitted when a cluster has no cache.
+        _cluster_by_id = {c["id"]: c for c in clusters if c.get("id")}
+
+        def _cover_item(c):
+            item = {
+                "headline": c.get("headline", ""),
+                "text": c.get("text", ""),
+                "timeline": c.get("timeline", []),
+                "numbers": c.get("numbers", []),
+                "cluster_id": c.get("cluster_id"),
+            }
+            cluster = _cluster_by_id.get(c.get("cluster_id"))
+            if cluster:
+                img = cluster.get("cached_image_url")
+                if img:
+                    item["image_url"] = img
+                    attribution = cluster.get("cached_image_attribution")
+                    if attribution:
+                        item["image_attribution"] = attribution
+            return item
+
         row = {
             "edition": edition,
             "week_start": week_start.strftime("%Y-%m-%d"),
@@ -1718,13 +1756,7 @@ def generate_weekly_digest(editions=None, week_offset=0):
             "issue_number": issue_number,
             # Cover
             "cover_headline": covers[0].get("headline", "") if covers else "",
-            "cover_text": json.dumps([{
-                "headline": c.get("headline", ""),
-                "text": c.get("text", ""),
-                "timeline": c.get("timeline", []),
-                "numbers": c.get("numbers", []),
-                "cluster_id": c.get("cluster_id"),
-            } for c in covers]),
+            "cover_text": json.dumps([_cover_item(c) for c in covers]),
             "cover_numbers": json.dumps(covers[0].get("numbers", []) if covers else []),
             "cover_timelines": json.dumps([
                 {"story_index": i, "entries": c.get("timeline", [])}
