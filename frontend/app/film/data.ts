@@ -135,6 +135,8 @@ export const RANKING_SIGNAL_COUNT = 10;
 export const NUMBERS = [
   { value: "1,016", label: "sources" },
   { value: "158", label: "countries" },
+  { value: "50", label: "top stories" },
+  { value: "1×", label: "a day" },
   { value: "6", label: "bias axes" },
   { value: "$0", label: "to read" },
   { value: "0", label: "accounts" },
@@ -142,8 +144,8 @@ export const NUMBERS = [
 ];
 
 /* ── Product family (page-only footer, not shown in the overlay) ──────────
-   Production-available products only. Weekly / Paper / OnAir / Games are
-   parked (not production-ready) and intentionally omitted. */
+   The live void suite. Paper and Games are still parked (hidden from nav,
+   not production-ready) and intentionally omitted here. */
 
 export interface ProductWorld {
   cli: string;
@@ -153,18 +155,21 @@ export interface ProductWorld {
 }
 
 export const PRODUCT_FAMILY: ProductWorld[] = [
-  { cli: "void --news", name: "The Feed", desc: "One daily feed. Top 50 stories, ranked once.", href: "/" },
-  { cli: "void --sources", name: "The Spectrum", desc: "Every source we read, on one axis.", href: "/sources" },
-  { cli: "void --history", name: "The Archive", desc: "Historical events, told from every side.", href: "/history" },
-  { cli: "void --ship", name: "The Forge", desc: "Tell us what to build next.", href: "/ship" },
+  { cli: "void --news", name: "The Front Page", desc: "One daily front page. The 50 stories that matter, ranked once.", href: "/" },
+  { cli: "void --weekly", name: "The Magazine", desc: "The week, read like a magazine. Covers, essays, an editorial.", href: "/weekly" },
+  { cli: "void --history", name: "The Archive", desc: "Consequential events, told from every side.", href: "/history" },
+  { cli: "void --revolt", name: "The Anatomy", desc: "Every revolution on one arc, past and unfolding.", href: "/revolt" },
+  { cli: "void --sources", name: "The Spectrum", desc: "All 1,016 sources we read, placed on one axis.", href: "/sources" },
+  { cli: "void --onair", name: "The Broadcast", desc: "The daily brief, read aloud.", href: "/onair" },
+  { cli: "void --feedback", name: "The Suggestion Box", desc: "Tell us what breaks, or what to build next.", href: "/feedback" },
 ];
 
 /* ── First principles (page-only footer) ─────────────────────────────────── */
 
 export const FIRST_PRINCIPLES = [
-  "Every reader sees the same stories in the same order.",
-  "Every score traces to specific words in the text.",
-  "Every feature is free. There is no premium tier. There never will be.",
+  "A front page, not a feed. The same 50 stories, in the same order, for every reader.",
+  "Every bias score traces to specific words in the text. No black box, no opinion.",
+  "Free, forever. No account, no tracking, no premium tier. There never will be.",
 ];
 
 /* ── Beats — the 4 chapters of the unified experience ─────────────────────
@@ -181,21 +186,21 @@ export const BEATS: Beat[] = [
   {
     id: "void",
     headline: "One story. Five versions.",
-    body: "The same event becomes five different stories depending on who tells it. Drag each headline to where its language actually lands.",
+    body: "The same event becomes five different stories depending on who tells it. That spin is usually invisible. Drag each headline to where its language actually lands, and watch the bias appear.",
   },
   {
     id: "sigil",
     headline: "One mark reads the bias.",
-    body: "Every story carries this mark. The beam is the lean. The ring is how many sources cover it. When sources disagree, it splits. Try it.",
+    body: "Every story on void carries this mark, measured from the words themselves, not from who published it. The beam is the lean. The ring is how many sources cover it. When they disagree, it splits. Try it.",
   },
   {
     id: "engine",
-    headline: "Ranked by what matters.",
-    body: "1,016 sources across 158 countries. We order the feed by importance, never by what gets the most clicks.",
+    headline: "A front page, not a feed.",
+    body: "A newspaper prints one front page, the same for everyone. So do we: the 50 stories that matter most each day, chosen once by importance, never by what you click. No endless scroll, no feed tuned to you. Here is what decides the order.",
   },
   {
     id: "verdict",
     headline: "Read with clarity.",
-    body: "Broad coverage from across the spectrum, grounded in named sources, is where confidence lives. Thin coverage from one corner? Read it with more scrutiny.",
+    body: "Broad coverage from across the spectrum, grounded in named sources, is where confidence lives. Thin coverage from one corner deserves more scrutiny. void gives you the whole picture, measured, so you decide what to trust.",
   },
 ];
