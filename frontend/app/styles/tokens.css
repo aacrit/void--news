@@ -70,6 +70,13 @@
   /* Foreground accent — warm editorial accent for badges, active states */
   --fg-accent: #946B15;
 
+  /* Terracotta action accent — CTA buttons in the onboarding / user-journey
+     tiles. Ink-splash fill; foreground is warm paper (never #fff on cream, the
+     dark-mode clash this replaces). ~4.6:1 with --accent-ember-fg. */
+  --accent-ember: #BE4326;
+  --accent-ember-hover: #A5391F;
+  --accent-ember-fg: #FBF6EC;
+
   /* Hover surface — subtle tint for interactive rows */
   --bg-hover: rgba(0, 0, 0, 0.04);
 
@@ -589,6 +596,12 @@
 
   /* Foreground accent — warm editorial accent for badges, active states */
   --fg-accent: #D4A574;
+
+  /* Terracotta action accent — brighter on the dark ground so it reads as an
+     ember, not a smudge. Keeps warm-paper foreground for contrast. */
+  --accent-ember: #C64C2C;
+  --accent-ember-hover: #DB5C3B;
+  --accent-ember-fg: #FBF6EC;
 
   /* Hover surface — subtle tint for interactive rows */
   --bg-hover: rgba(255, 255, 255, 0.06);
