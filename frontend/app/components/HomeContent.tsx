@@ -801,23 +801,10 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
         onTouchMove={handlePullMove}
         onTouchEnd={handlePullEnd}
       >
-        {/* ── Editorial nameplate (broadsheet flag) ──────────────────────────
-            Server-rendered, always present, data-independent. This is the one
-            large, contentful element guaranteed to be in the static export
-            HTML, so it paints at FCP and anchors LCP (the feed loads client
-            side, so nothing else contentful is in the prerendered markup).
-            Persistent — it is never removed, so it introduces no layout shift.
-            Utility chrome (small logo) lives in the NavBar above; this is the
-            newspaper nameplate, a distinct and intentional editorial element. */}
-        {/* Decorative nameplate, not a heading: the lead story keeps the page's
-            single <h1> (LeadStory). aria-hidden because the nav logo already
-            announces the brand; this is the visual masthead + the LCP anchor. */}
-        {/* Slim editorial tagline strip. The nav logo already carries the
-            wordmark, so this is just the masthead tagline. Being static text in
-            the export HTML, it is the largest contentful element before the
-            feed hydrates, so it still anchors LCP without duplicating the logo
-            or eating much above-the-fold space. */}
-        <p className="home-flag" aria-hidden="true">See through the void.</p>
+        {/* Masthead tagline moved into the NavBar (2026-08-02). The former
+            full-width ".home-flag" strip was removed so the feed starts higher
+            on both mobile and desktop; "See through the void." now renders as
+            an inline italic subline beside the wordmark in the top bar. */}
 
         {/* Pull-to-refresh indicator (mobile) */}
         {(isPulling || isRefreshing) && (

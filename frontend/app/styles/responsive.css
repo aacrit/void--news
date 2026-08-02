@@ -190,13 +190,25 @@
     display: none;
   }
 
-  /* Mobile dateline: compact date only */
+  /* Mobile dateline: time (with zone) always visible; date appears >=400px.
+     display:flex so the sub-spans align; pushed to the right edge of the row. */
   .nav-dateline-mobile {
-    display: block;
+    display: flex;
     flex: 1;
-    text-align: right;
+    justify-content: flex-end;
     padding: 0 var(--space-2);
   }
+
+  /* Date shows once the row is wide enough to carry both without squeezing the
+     time off the edge (iPhone 14 = 390px shows time only; >=400px adds date). */
+  @media (min-width: 400px) {
+    .nav-dateline-mobile__date {
+      display: inline;
+    }
+  }
+
+  /* Experimental badge hidden on mobile in experimental.css (later source order
+     wins over its own base rule); frees the row for the wordmark + date/time. */
 
   /* Dateline: show medium variant, hide full */
   .nav-dateline__full {

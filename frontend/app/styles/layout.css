@@ -17,15 +17,17 @@
   flex: 1;
   max-width: var(--canvas-max);
   margin: 0 auto;
-  /* Mobile-first: --space-5 (~16px) at 375px, promoted to --space-7 at 768px+ */
-  padding: 0 var(--space-5);
+  /* Mobile-first: --space-5 (~16px) at 375px, promoted to --space-7 at 768px+.
+     Small top pad (space-3) replaces the removed .home-flag strip so the feed
+     gets a breath below the nav without the old full-width nameplate. */
+  padding: var(--space-3) var(--space-5);
   padding-bottom: var(--space-5);
   width: 100%;
 }
 
 @media (min-width: 768px) {
   .page-main {
-    padding: 0 var(--space-7);
+    padding: var(--space-4) var(--space-7);
     padding-bottom: var(--space-7);
   }
 }
@@ -60,35 +62,12 @@
   }
 }
 
-/* ---- Editorial tagline strip ------------------------------------------- */
-/* A slim, persistent, server-rendered masthead tagline at the top of the feed.
-   The nav logo carries the wordmark; this is just the tagline. Being static
-   text in the export HTML, it is the largest contentful element before the
-   feed hydrates, so it still anchors LCP without duplicating the logo or
-   eating much above-the-fold space. */
-.home-flag {
-  margin: 0 0 var(--space-4);
-  padding: var(--space-3) 0;
-  border-bottom: 1px solid var(--border-subtle);
-  text-align: center;
-  font-family: var(--font-editorial);
-  font-style: italic;
-  font-weight: 400;
-  font-size: clamp(1.3rem, 1rem + 1.6vw, 1.9rem);
-  line-height: 1.2;
-  color: var(--fg-secondary);
-}
-
-/* When a Deep Dive takes over the canvas the tagline recedes with the feed. */
-.page-main--deep-dive-open .home-flag { opacity: 0.5; }
-
-@media (max-width: 767px) {
-  .home-flag {
-    margin-bottom: var(--space-3);
-    padding: var(--space-2) 0;
-    font-size: clamp(1.15rem, 0.95rem + 2vw, 1.5rem);
-  }
-}
+/* ---- Editorial tagline ------------------------------------------------- */
+/* The former full-width ".home-flag" strip was retired 2026-08-02. Its tagline
+   ("See through the void.") now lives inline in the NavBar (.nav-tagline,
+   desktop) so the feed starts higher on every viewport. The strip's LCP-anchor
+   role is intentionally given up: observed real-user LCP is ~0.6s regardless,
+   and the clean, denser masthead is the priority. */
 
 /* ---- Skybox — editorial brief zone above the news canvas -------------- */
 /*
