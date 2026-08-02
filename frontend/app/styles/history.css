@@ -297,9 +297,14 @@
 }
 
 /* Accented entry point into void --revolt from within the history archive.
-   Filled terracotta pill (warm-paper text, contrast-safe in both modes);
-   signals a distinct sibling and stays prominent on the sepia topbar. */
+   Filled revolt-blue pill (void --revolt's brand color); signals a distinct
+   sibling and stays prominent on the sepia topbar. Theme-aware: deep blue on
+   near-white text in light, bright blue on dark ink in dark.
+   Contrast: #EAF1FF on #1E40AF > 8:1; #0B1B3B on #6AA0FF ~6.7:1 (both AA). */
 .hist-topbar__revolt {
+  --rev-cta: #1E40AF;
+  --rev-cta-hover: #17348C;
+  --rev-cta-fg: #EAF1FF;
   display: inline-flex;
   align-items: center;
   gap: 0.4em;
@@ -308,19 +313,25 @@
   font-family: var(--font-data);
   font-size: var(--text-xs);
   letter-spacing: 0.03em;
-  color: var(--accent-ember-fg);
-  background-color: var(--accent-ember);
+  color: var(--rev-cta-fg);
+  background-color: var(--rev-cta);
   border: 1px solid rgba(0, 0, 0, 0.22);
   border-radius: var(--radius-sm);
   text-decoration: none;
   white-space: nowrap;
   transition: background-color 160ms ease, transform 140ms var(--ease-cinematic, ease);
 }
+:root[data-mode="dark"] .hist-topbar__revolt {
+  --rev-cta: #6AA0FF;
+  --rev-cta-hover: #83B2FF;
+  --rev-cta-fg: #0B1B3B;
+  border-color: rgba(0, 0, 0, 0.28);
+}
 .hist-topbar__revolt:hover {
-  background-color: var(--accent-ember-hover);
+  background-color: var(--rev-cta-hover);
 }
 .hist-topbar__revolt:focus-visible {
-  outline: 2px solid var(--accent-ember);
+  outline: 2px solid var(--rev-cta);
   outline-offset: 2px;
 }
 .hist-topbar__revolt-arrow { transition: transform 160ms ease; }
@@ -330,6 +341,70 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .hist-topbar__revolt, .hist-topbar__revolt-arrow { transition: none; }
+}
+
+/* Sibling-world discovery card — void --revolt callout at the end of the
+   threads flow. A distinct blue-framed card on the sepia archive page.
+   Theme-aware: deep blue in light, bright blue in dark. */
+.hist-revolt-card {
+  --rev-blue: #1E40AF;
+  display: block;
+  position: relative;
+  max-width: 640px;
+  margin: var(--space-7) auto var(--space-6);
+  padding: var(--space-5) var(--space-6);
+  border: 1px solid color-mix(in srgb, var(--rev-blue) 45%, transparent);
+  border-left: 4px solid var(--rev-blue);
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--rev-blue) 6%, var(--hist-bg));
+  text-decoration: none;
+  transition: transform 180ms var(--ease-cinematic, ease), box-shadow 180ms ease, border-color 180ms ease;
+}
+:root[data-mode="dark"] .hist-revolt-card { --rev-blue: #6AA0FF; }
+.hist-revolt-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--rev-blue);
+  box-shadow: 0 8px 26px color-mix(in srgb, var(--rev-blue) 24%, transparent);
+}
+.hist-revolt-card:focus-visible {
+  outline: 2px solid var(--rev-blue);
+  outline-offset: 3px;
+}
+.hist-revolt-card__kicker {
+  display: block;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--rev-blue);
+  margin-bottom: var(--space-2);
+}
+.hist-revolt-card__name {
+  display: block;
+  font-family: var(--font-editorial);
+  font-size: var(--text-xl);
+  color: var(--rev-blue);
+  margin-bottom: var(--space-1);
+}
+.hist-revolt-card__desc {
+  display: block;
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  color: var(--hist-ink-secondary);
+  max-width: 46ch;
+}
+.hist-revolt-card__arrow {
+  position: absolute;
+  right: var(--space-5);
+  bottom: var(--space-5);
+  font-size: var(--text-xl);
+  color: var(--rev-blue);
+  transition: transform 160ms ease;
+}
+.hist-revolt-card:hover .hist-revolt-card__arrow { transform: translateX(3px); }
+@media (prefers-reduced-motion: reduce) {
+  .hist-revolt-card, .hist-revolt-card__arrow { transition: none; }
+  .hist-revolt-card:hover { transform: none; }
 }
 
 /* ---------------------------------------------------------------------------

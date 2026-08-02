@@ -152,16 +152,26 @@ export interface ProductWorld {
   name: string;
   desc: string;
   href: string;
+  /** Brand accent for light mode ("Morning Edition"). */
+  accentLight: string;
+  /** Brand accent for dark mode ("Evening Edition"). */
+  accentDark: string;
+  /** When true, the card shows a small "Coming soon" chip. */
+  comingSoon?: boolean;
+  /** Tooltip text for the coming-soon chip. */
+  soonNote?: string;
 }
 
+// Each product carries its own brand accent, chosen to read on both the light
+// card background (~#F5F0E4) and the dark card background (~#333028).
 export const PRODUCT_FAMILY: ProductWorld[] = [
-  { cli: "void --news", name: "The Front Page", desc: "One daily front page. The 50 stories that matter, ranked once.", href: "/" },
-  { cli: "void --weekly", name: "The Magazine", desc: "The week, read like a magazine. Covers, essays, an editorial.", href: "/weekly" },
-  { cli: "void --history", name: "The Archive", desc: "Consequential events, told from every side.", href: "/history" },
-  { cli: "void --revolt", name: "The Anatomy", desc: "Every revolution on one arc, past and unfolding.", href: "/revolt" },
-  { cli: "void --sources", name: "The Spectrum", desc: "All 1,016 sources we read, placed on one axis.", href: "/sources" },
-  { cli: "void --onair", name: "The Broadcast", desc: "The daily brief, read aloud.", href: "/onair" },
-  { cli: "void --feedback", name: "The Suggestion Box", desc: "Tell us what breaks, or what to build next.", href: "/feedback" },
+  { cli: "void --news", name: "The Front Page", desc: "One daily front page. The 50 stories that matter, ranked once.", href: "/", accentLight: "#6B4423", accentDark: "#C9A88A" },
+  { cli: "void --weekly", name: "The Magazine", desc: "The week, read like a magazine. Covers, essays, an editorial.", href: "/weekly", accentLight: "#B23A2A", accentDark: "#E0705C" },
+  { cli: "void --history", name: "The Archive", desc: "Consequential events, told from every side.", href: "/history", accentLight: "#8A6410", accentDark: "#D4A574" },
+  { cli: "void --revolt", name: "The Anatomy", desc: "Every revolution on one arc, past and unfolding.", href: "/revolt", accentLight: "#1E40AF", accentDark: "#6AA0FF" },
+  { cli: "void --sources", name: "The Spectrum", desc: "All 1,016 sources we read, placed on one axis.", href: "/sources", accentLight: "#3F7A5A", accentDark: "#77B994" },
+  { cli: "void --onair", name: "The Broadcast", desc: "The daily brief, read aloud.", href: "/onair", accentLight: "#2E8B7D", accentDark: "#4DAFA0" },
+  { cli: "void --ship", name: "The Forge", desc: "Request it, vote, watch it ship. The live tracker is coming soon; send requests now.", href: "/feedback", accentLight: "#BE4326", accentDark: "#D2593A", comingSoon: true, soonNote: "Live tracker coming soon" },
 ];
 
 /* ── First principles (page-only footer) ─────────────────────────────────── */
