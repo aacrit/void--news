@@ -386,9 +386,13 @@ export function generateFingerprint(): string {
 /** Fetch all ship requests */
 export async function fetchShipRequests(): Promise<ShipRequest[]> {
   if (!_client) return [];
+  // Explicit column list (omits device_info + ip_hash, which are revoked from
+  // anon in migration 068 — they are collected for rate limiting only).
   const { data, error } = await _client
     .from('ship_requests')
-    .select('*')
+    .select(
+      'id,title,description,category,area,edition_context,status,priority,votes,ceo_response,claude_branch,shipped_commit,shipped_diff_summary,created_at,triaged_at,shipped_at,updated_at'
+    )
     .order('created_at', { ascending: false });
   if (error || !data) return [];
   return data as ShipRequest[];
