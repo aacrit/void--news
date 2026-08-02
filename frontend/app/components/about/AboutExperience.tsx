@@ -4,11 +4,14 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import LogoIcon from "../LogoIcon";
-import { PRODUCT_FAMILY, FIRST_PRINCIPLES } from "../../film/data";
+import { PRODUCT_FAMILY } from "../../film/data";
 import BeatVoid from "./beats/BeatVoid";
 import BeatSigil from "./beats/BeatSigil";
 import BeatEngine from "./beats/BeatEngine";
 import BeatVerdict from "./beats/BeatVerdict";
+import AboutMission from "./AboutMission";
+import AboutPipeline from "./AboutPipeline";
+import AboutFaq from "./AboutFaq";
 
 /* ===========================================================================
    AboutExperience — ONE interactive experience, two presentations.
@@ -62,7 +65,12 @@ function PageExperience() {
 
       <Beats presentation="page" />
 
-      {/* Page-only footer: product family + principles (not in the overlay). */}
+      {/* Page-only deep sections (not in the overlay tour). */}
+      <AboutMission />
+      <AboutPipeline />
+      <AboutFaq />
+
+      {/* Page-only footer: the product family (principles now live in the FAQ). */}
       <footer className="about-x__footer">
         <h2 className="about-x__footer-h">The void suite</h2>
         <ul className="about-x__worlds">
@@ -75,9 +83,6 @@ function PageExperience() {
               </Link>
             </li>
           ))}
-        </ul>
-        <ul className="about-x__principles">
-          {FIRST_PRINCIPLES.map((t) => <li key={t}>{t}</li>)}
         </ul>
       </footer>
     </div>
