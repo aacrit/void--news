@@ -75,7 +75,7 @@ type TabDef = {
 // /onair broadcast page (now-playing, chapters, show notes, archive).
 const TABS: TabDef[] = [
   { key: "feed", label: "feed", Icon: FeedIcon, href: "/" },
-  { key: "archive", label: "archive", Icon: HistoryIcon, href: "/archive" },
+  { key: "archive", label: "history", Icon: HistoryIcon, href: "/history" },
   ...(AUDIO_ENABLED
     ? [{ key: "onair", label: "onair", Icon: OnAirIcon, href: "/onair" }]
     : []),
@@ -92,7 +92,7 @@ export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps)
         case "feed":
           return p === "/" || p === "" || /^\/(world)\/?$/.test(p);
         case "archive":
-          return p.startsWith("/archive") || p.startsWith("/history") || p.startsWith("/revolt");
+          return p.startsWith("/history") || p.startsWith("/revolt");
         case "onair":
           return p.startsWith("/onair");
         case "more":

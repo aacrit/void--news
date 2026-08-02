@@ -90,10 +90,11 @@
   transition: border-color 180ms var(--ease-cinematic);
 }
 
-.fb-input:focus,
-.fb-textarea:focus,
-.fb-select:focus {
-  outline: none;
+.fb-input:focus-visible,
+.fb-textarea:focus-visible,
+.fb-select:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
   border-color: var(--fg-accent);
 }
 

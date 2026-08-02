@@ -111,9 +111,9 @@ export default function NavBar({
         {/* Spinoff product links — standalone products under the void --news
             umbrella, treated with italic accents (warm rule + label). */}
         <nav className="nav-spinoffs" aria-label="Spinoff editions">
-          <Link href="/archive" className="nav-history" aria-label="Go to the Archive: history and revolt" title="void --archive">
+          <Link href="/history" className="nav-history" aria-label="Go to void --history" title="void --history">
             <span className="nav-history__rule" aria-hidden="true" />
-            <span className="nav-history__label">Archive</span>
+            <span className="nav-history__label">History</span>
           </Link>
           <Link href="/weekly" className="nav-history nav-weekly" aria-label="Go to the Weekly digest" title="void --weekly">
             <span className="nav-history__rule" aria-hidden="true" />

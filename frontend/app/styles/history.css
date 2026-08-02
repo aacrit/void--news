@@ -296,6 +296,42 @@
   gap: var(--space-3);
 }
 
+/* Accented entry point into void --revolt from within the history archive.
+   Filled terracotta pill (warm-paper text, contrast-safe in both modes);
+   signals a distinct sibling and stays prominent on the sepia topbar. */
+.hist-topbar__revolt {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.34rem 0.72rem;
+  min-height: 36px;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  letter-spacing: 0.03em;
+  color: var(--accent-ember-fg);
+  background-color: var(--accent-ember);
+  border: 1px solid rgba(0, 0, 0, 0.22);
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background-color 160ms ease, transform 140ms var(--ease-cinematic, ease);
+}
+.hist-topbar__revolt:hover {
+  background-color: var(--accent-ember-hover);
+}
+.hist-topbar__revolt:focus-visible {
+  outline: 2px solid var(--accent-ember);
+  outline-offset: 2px;
+}
+.hist-topbar__revolt-arrow { transition: transform 160ms ease; }
+.hist-topbar__revolt:hover .hist-topbar__revolt-arrow { transform: translateX(2px); }
+@media (max-width: 420px) {
+  .hist-topbar__revolt { padding: 0.34rem 0.55rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hist-topbar__revolt, .hist-topbar__revolt-arrow { transition: none; }
+}
+
 /* ---------------------------------------------------------------------------
    Main Content Area
    --------------------------------------------------------------------------- */

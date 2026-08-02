@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 
 export default function FeedbackPage() {
   return (
-    <main className="fb-page">
+    <main id="main-content" className="fb-page">
       <nav className="fb-back">
         <Link href="/" className="fb-back__link">
           &larr; void --news

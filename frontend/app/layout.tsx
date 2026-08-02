@@ -36,11 +36,14 @@ const inter = Inter({
   display: "swap",
 });
 
+// Secondary families (meta labels, mono data): not on the critical render
+// path, so don't preload them — keeps Playfair + Inter uncontended at FCP.
 const barlowCondensed = Barlow_Condensed({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   variable: "--font-barlow",
   display: "swap",
+  preload: false,
 });
 
 const ibmPlexMono = IBM_Plex_Mono({
@@ -48,6 +51,7 @@ const ibmPlexMono = IBM_Plex_Mono({
   weight: ["400"],
   variable: "--font-ibm-mono",
   display: "swap",
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -148,7 +152,9 @@ export default function RootLayout({
           content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; media-src 'self' https://*.supabase.co; base-uri 'self'; form-action 'self';"
         />
         <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
-        <meta httpEquiv="X-Frame-Options" content="DENY" />
+        {/* X-Frame-Options is NOT valid via <meta> (Chrome logs a console
+            error and it has no effect). It is set as a real HTTP header in
+            frontend/public/_headers, so the meta tag is removed. */}
         <meta httpEquiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
         {/* PWA: iOS standalone mode + Android install support */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
