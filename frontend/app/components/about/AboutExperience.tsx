@@ -4,7 +4,8 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
 import LogoIcon from "../LogoIcon";
-import { PRODUCT_FAMILY } from "../../film/data";
+import { PRODUCT_FAMILY, TRANSPARENCY_TOOLS } from "../../film/data";
+import type { ProductWorld } from "../../film/data";
 import BeatVoid from "./beats/BeatVoid";
 import BeatSigil from "./beats/BeatSigil";
 import BeatEngine from "./beats/BeatEngine";
@@ -47,6 +48,33 @@ export default function AboutExperience({ presentation, onClose, onComplete }: P
   return <PageExperience />;
 }
 
+/* ── Shared card grid for the suite footer ───────────────────────────────── */
+
+function WorldGrid({ worlds }: { worlds: ProductWorld[] }) {
+  return (
+    <ul className="about-x__worlds">
+      {worlds.map((p) => (
+        <li key={p.cli}>
+          <Link
+            href={p.href}
+            className="about-x__world"
+            style={{ "--acc-l": p.accentLight, "--acc-d": p.accentDark } as React.CSSProperties}
+          >
+            <span className="about-x__world-cli">{p.cli}</span>
+            <span className="about-x__world-name">
+              {p.name}
+              {p.comingSoon && (
+                <span className="about-x__world-soon" title={p.soonNote}>Coming soon</span>
+              )}
+            </span>
+            <span className="about-x__world-desc">{p.desc}</span>
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 /* ── Page presentation — the /about route ────────────────────────────────── */
 
 function PageExperience() {
@@ -70,29 +98,14 @@ function PageExperience() {
       <AboutPipeline />
       <AboutFaq />
 
-      {/* Page-only footer: the product family (principles now live in the FAQ). */}
+      {/* Page-only footer: the product family + the transparency tools
+          (principles now live in the FAQ). */}
       <footer className="about-x__footer">
         <h2 className="about-x__footer-h">The void suite</h2>
-        <ul className="about-x__worlds">
-          {PRODUCT_FAMILY.map((p) => (
-            <li key={p.cli}>
-              <Link
-                href={p.href}
-                className="about-x__world"
-                style={{ "--acc-l": p.accentLight, "--acc-d": p.accentDark } as React.CSSProperties}
-              >
-                <span className="about-x__world-cli">{p.cli}</span>
-                <span className="about-x__world-name">
-                  {p.name}
-                  {p.comingSoon && (
-                    <span className="about-x__world-soon" title={p.soonNote}>Coming soon</span>
-                  )}
-                </span>
-                <span className="about-x__world-desc">{p.desc}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
+        <WorldGrid worlds={PRODUCT_FAMILY} />
+
+        <h2 className="about-x__footer-h about-x__footer-h--sub">Transparency and feedback</h2>
+        <WorldGrid worlds={TRANSPARENCY_TOOLS} />
       </footer>
     </div>
   );

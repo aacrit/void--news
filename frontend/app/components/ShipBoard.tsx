@@ -28,14 +28,32 @@ import type { ShipRequest, ShipReply, ShipStatus, ShipCategory, Edition } from '
    All 7 cinematic scenes preserved. 5 new features added.
    ========================================================================== */
 
-const STATUS_ORDER: ShipStatus[] = ['submitted', 'triaged', 'building', 'shipped', 'wontship'];
+const STATUS_ORDER: ShipStatus[] = ['submitted', 'triaged', 'building', 'shipped', 'wontship', 'deferred', 'not_feasible'];
 const STATUS_LABELS: Record<ShipStatus, string> = {
   submitted: 'Submitted',
   triaged: 'Triaged',
   building: 'Building',
   shipped: 'Shipped',
   wontship: "Won't Ship",
+  deferred: 'Deferred',
+  not_feasible: 'Not Feasible',
 };
+
+// Terminal / closed states. These are not "open" work; they collect in a single
+// "Resolved" board column (a 7-column Kanban is too wide) where each card wears
+// its own status tag. Honest endings: won't-ship, deferred, or not feasible.
+const CLOSED_STATUSES: ShipStatus[] = ['wontship', 'deferred', 'not_feasible'];
+
+// The Kanban columns actually rendered: the four active-flow states plus one
+// combined Resolved pile for every closed status.
+interface BoardColumn { key: string; label: string; statuses: ShipStatus[]; }
+const BOARD_COLUMNS: BoardColumn[] = [
+  { key: 'submitted', label: 'Submitted', statuses: ['submitted'] },
+  { key: 'triaged', label: 'Triaged', statuses: ['triaged'] },
+  { key: 'building', label: 'Building', statuses: ['building'] },
+  { key: 'shipped', label: 'Shipped', statuses: ['shipped'] },
+  { key: 'resolved', label: 'Resolved', statuses: CLOSED_STATUSES },
+];
 
 const CATEGORY_OPTIONS: { value: ShipCategory; label: string }[] = [
   { value: 'bug', label: 'Bug' },
@@ -487,7 +505,7 @@ export default function ShipBoard() {
   }, []);
 
   // Group by status
-  const grouped: Record<ShipStatus, ShipRequest[]> = { submitted: [], triaged: [], building: [], shipped: [], wontship: [] };
+  const grouped: Record<ShipStatus, ShipRequest[]> = { submitted: [], triaged: [], building: [], shipped: [], wontship: [], deferred: [], not_feasible: [] };
   for (const r of requests) { if (grouped[r.status]) grouped[r.status].push(r); }
   for (const status of STATUS_ORDER) {
     if (status === 'shipped') {
@@ -506,9 +524,9 @@ export default function ShipBoard() {
     [requests]
   );
 
-  const visibleStatuses = isMobile
-    ? STATUS_ORDER.filter(s => grouped[s].length > 0 || s === 'submitted')
-    : STATUS_ORDER;
+  const visibleColumns = isMobile
+    ? BOARD_COLUMNS.filter(col => col.key === 'submitted' || col.statuses.some(s => grouped[s].length > 0))
+    : BOARD_COLUMNS;
 
   return (
     <main className="ship-page" data-dash-expanded={boardOpen || logOpen || undefined}>
@@ -705,8 +723,8 @@ export default function ShipBoard() {
           {/* Loading skeleton */}
           {loading ? (
             <div className="ship-board__loading" aria-label="Loading requests">
-              {STATUS_ORDER.map(status => (
-                <div key={status} className="ship-board__loading-col">
+              {BOARD_COLUMNS.map(col => (
+                <div key={col.key} className="ship-board__loading-col">
                   <div className="ship-board__loading-header" />
                   <div className="ship-board__loading-card" />
                   <div className="ship-board__loading-card ship-board__loading-card--short" />
@@ -715,38 +733,50 @@ export default function ShipBoard() {
             </div>
           ) : (
             <div className="ship-board" role="region" aria-label="Kanban board">
-              {visibleStatuses.map(status => (
-                <section
-                  key={status}
-                  className={`ship-column ship-column--${status}`}
-                  aria-label={`${STATUS_LABELS[status]} requests`}
-                >
-                  <div className="ship-column__header">
-                    <span className="ship-column__title">{STATUS_LABELS[status]}</span>
-                    <span className="ship-column__count">{grouped[status].length}</span>
-                  </div>
-                  <div className="ship-column__cards">
-                    {grouped[status].length === 0 ? (
-                      <div className="ship-column__empty">
-                        {status === 'submitted' ? 'No requests yet' : status === 'shipped' ? 'Nothing shipped yet' : 'Empty'}
-                      </div>
-                    ) : grouped[status].map(req => (
-                      <ShipCard
-                        key={req.id}
-                        request={req}
-                        hasVoted={votedIds.has(req.id)}
-                        onVote={handleVote}
-                        isNew={newIdsRef.current.has(req.id)}
-                        onAnimationEnd={() => newIdsRef.current.delete(req.id)}
-                        isJustShipped={justShippedIds.has(req.id)}
-                        fingerprint={fingerprintRef.current}
-                        replies={replyMap[req.id] || []}
-                        onRepliesLoaded={(id, replies) => setReplyMap(prev => ({ ...prev, [id]: replies }))}
-                      />
-                    ))}
-                  </div>
-                </section>
-              ))}
+              {visibleColumns.map(col => {
+                const isResolved = col.key === 'resolved';
+                // Resolved is a pile of several closed statuses; sort the merged
+                // list by most-recent activity. Single-status columns keep their
+                // existing per-status sort from grouped[].
+                const cards = isResolved
+                  ? col.statuses
+                      .flatMap(s => grouped[s])
+                      .sort((a, b) => new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime())
+                  : grouped[col.statuses[0]];
+                return (
+                  <section
+                    key={col.key}
+                    className={`ship-column ship-column--${col.key}`}
+                    aria-label={`${col.label} requests`}
+                  >
+                    <div className="ship-column__header">
+                      <span className="ship-column__title">{col.label}</span>
+                      <span className="ship-column__count">{cards.length}</span>
+                    </div>
+                    <div className="ship-column__cards">
+                      {cards.length === 0 ? (
+                        <div className="ship-column__empty">
+                          {col.key === 'submitted' ? 'No requests yet' : col.key === 'shipped' ? 'Nothing shipped yet' : col.key === 'resolved' ? 'Nothing closed yet' : 'Empty'}
+                        </div>
+                      ) : cards.map(req => (
+                        <ShipCard
+                          key={req.id}
+                          request={req}
+                          hasVoted={votedIds.has(req.id)}
+                          onVote={handleVote}
+                          isNew={newIdsRef.current.has(req.id)}
+                          onAnimationEnd={() => newIdsRef.current.delete(req.id)}
+                          isJustShipped={justShippedIds.has(req.id)}
+                          fingerprint={fingerprintRef.current}
+                          replies={replyMap[req.id] || []}
+                          onRepliesLoaded={(id, replies) => setReplyMap(prev => ({ ...prev, [id]: replies }))}
+                          showStatusTag={isResolved}
+                        />
+                      ))}
+                    </div>
+                  </section>
+                );
+              })}
             </div>
           )}
         </section>
@@ -810,6 +840,7 @@ function ShipCard({
   fingerprint,
   replies,
   onRepliesLoaded,
+  showStatusTag = false,
 }: {
   request: ShipRequest;
   hasVoted: boolean;
@@ -820,11 +851,14 @@ function ShipCard({
   fingerprint: string;
   replies: ShipReply[];
   onRepliesLoaded: (id: string, replies: ShipReply[]) => void;
+  /** In the merged Resolved column, print each card's own status tag. */
+  showStatusTag?: boolean;
 }) {
   const r = request;
   const isShipped = r.status === 'shipped';
   const isBuilding = r.status === 'building';
   const isWontShip = r.status === 'wontship';
+  const isClosed = CLOSED_STATUSES.includes(r.status);
   const isOpen = ['submitted', 'triaged', 'building'].includes(r.status);
 
   // F11: expandable descriptions
@@ -913,7 +947,8 @@ function ShipCard({
     'ship-card',
     isShipped && 'ship-card--shipped',
     isBuilding && 'ship-card--building',
-    isWontShip && 'ship-card--wontship',
+    isClosed && 'ship-card--closed',
+    isClosed && `ship-card--${r.status}`,
     isNew && 'ship-card--new',
     isJustShipped && 'ship-card--just-shipped',
   ].filter(Boolean).join(' ');
@@ -924,6 +959,9 @@ function ShipCard({
       onAnimationEnd={isNew ? onAnimationEnd : undefined}
     >
       <div className="ship-card__top">
+        {showStatusTag && (
+          <span className={`ship-card__status-tag ship-card__status-tag--${r.status}`}>{STATUS_LABELS[r.status]}</span>
+        )}
         <span className={`ship-card__badge ship-card__badge--${r.category}`}>{r.category}</span>
         <span className="ship-card__badge">{r.area}</span>
         {r.priority && <span className={`ship-card__priority ship-card__priority--${r.priority}`}>{r.priority.toUpperCase()}</span>}
@@ -1015,8 +1053,11 @@ function ShipCard({
         </div>
       )}
 
-      {isWontShip && r.ceo_response && (
-        <div className="ship-card__ceo-response"><span className="ship-card__ceo-label">CEO Response</span>{r.ceo_response}</div>
+      {isClosed && r.ceo_response && (
+        <div className="ship-card__ceo-response">
+          <span className="ship-card__ceo-label">{isWontShip ? 'CEO Response' : 'Response'}</span>
+          {r.ceo_response}
+        </div>
       )}
       {r.status === 'triaged' && r.ceo_response && (
         <div className="ship-card__ceo-response"><span className="ship-card__ceo-label">Response</span>{r.ceo_response}</div>

@@ -164,14 +164,21 @@ export interface ProductWorld {
 
 // Each product carries its own brand accent, chosen to read on both the light
 // card background (~#F5F0E4) and the dark card background (~#333028).
+
+// The products — the things you read and listen to.
 export const PRODUCT_FAMILY: ProductWorld[] = [
   { cli: "void --news", name: "The Front Page", desc: "One daily front page. The 50 stories that matter, ranked once.", href: "/", accentLight: "#6B4423", accentDark: "#C9A88A" },
   { cli: "void --weekly", name: "The Magazine", desc: "The week, read like a magazine. Covers, essays, an editorial.", href: "/weekly", accentLight: "#B23A2A", accentDark: "#E0705C" },
   { cli: "void --history", name: "The Archive", desc: "Consequential events, told from every side.", href: "/history", accentLight: "#8A6410", accentDark: "#D4A574" },
   { cli: "void --revolt", name: "The Anatomy", desc: "Every revolution on one arc, past and unfolding.", href: "/revolt", accentLight: "#1E40AF", accentDark: "#6AA0FF" },
-  { cli: "void --sources", name: "The Spectrum", desc: "All 1,016 sources we read, placed on one axis.", href: "/sources", accentLight: "#3F7A5A", accentDark: "#77B994" },
   { cli: "void --onair", name: "The Broadcast", desc: "The daily brief, read aloud.", href: "/onair", accentLight: "#2E8B7D", accentDark: "#4DAFA0" },
-  { cli: "void --ship", name: "The Forge", desc: "Request it, vote, watch it ship. The live tracker is coming soon; send requests now.", href: "/feedback", accentLight: "#BE4326", accentDark: "#D2593A", comingSoon: true, soonNote: "Live tracker coming soon" },
+];
+
+// Transparency and feedback tools — how the work stays honest and open, not
+// products in their own right.
+export const TRANSPARENCY_TOOLS: ProductWorld[] = [
+  { cli: "void --sources", name: "The Spectrum", desc: "All 1,016 sources we read, placed on one axis.", href: "/sources", accentLight: "#3F7A5A", accentDark: "#77B994" },
+  { cli: "void --ship", name: "The Forge", desc: "Request it, vote, watch it ship. Deferred and not-feasible requests are tracked honestly.", href: "/ship", accentLight: "#BE4326", accentDark: "#D2593A" },
 ];
 
 /* ── First principles (page-only footer) ─────────────────────────────────── */

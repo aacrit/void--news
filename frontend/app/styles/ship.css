@@ -1038,8 +1038,37 @@ a.ship-card__commit:hover {
 }
 
 
-/* ---- Won't Ship Card ---- */
-.ship-card--wontship { opacity: 0.7; }
+/* ---- Closed / terminal cards (won't-ship, deferred, not feasible) ---- */
+.ship-card--closed { opacity: 0.72; }
+
+/* Status tag worn by each card in the merged Resolved column. Muted, distinct
+   per outcome: deferred = brass/amber, not feasible = muted red, won't-ship =
+   neutral. */
+.ship-card__status-tag {
+  font-family: var(--font-data);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: 2px;
+  border: 1px solid var(--border-subtle);
+  color: var(--fg-secondary);
+  white-space: nowrap;
+}
+.ship-card__status-tag--wontship {
+  color: var(--fg-secondary);
+  border-color: var(--border-strong);
+}
+.ship-card__status-tag--deferred {
+  color: #9a6b13;
+  border-color: color-mix(in srgb, #9a6b13 45%, var(--border-subtle));
+}
+:root[data-mode="dark"] .ship-card__status-tag--deferred { color: #d4a24a; }
+.ship-card__status-tag--not_feasible {
+  color: #a24a3c;
+  border-color: color-mix(in srgb, #a24a3c 45%, var(--border-subtle));
+}
+:root[data-mode="dark"] .ship-card__status-tag--not_feasible { color: #d68a7c; }
 
 .ship-card__ceo-response {
   font-family: var(--font-structural);
