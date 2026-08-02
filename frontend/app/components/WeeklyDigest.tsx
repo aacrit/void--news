@@ -324,6 +324,58 @@ function CoverHero({
 
 /* --- C. Cover Body --- */
 
+/* Secondary cover-feature image (rendered above story subheads for si > 0).
+   Mirrors the CoverHero fade-in / error-hide pattern. The wrapper carries an
+   explicit aspect-ratio in CSS so there is zero layout shift while loading. */
+function CoverFeatureImage({
+  imageUrl,
+  attribution,
+}: {
+  imageUrl: string;
+  attribution?: string;
+}) {
+  const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState(false);
+  if (error) return null;
+  return (
+    <div className="wk-cover-body__image-wrap">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={imageUrl}
+        alt=""
+        className={`wk-cover-body__image${loaded ? " wk-cover-body__image--loaded" : ""}`}
+        loading="lazy"
+        onLoad={() => setLoaded(true)}
+        onError={() => setError(true)}
+      />
+      {attribution && (
+        <span className="wk-cover-body__image-credit">{attribution}</span>
+      )}
+    </div>
+  );
+}
+
+/* Small Week-in-Brief thumbnail (magazine index look). Fixed aspect-ratio in
+   CSS prevents CLS; fades in on load, hides cleanly on error. */
+function BriefThumb({ imageUrl }: { imageUrl: string }) {
+  const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState(false);
+  if (error) return null;
+  return (
+    <div className="wk-brief__thumb">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={imageUrl}
+        alt=""
+        className={`wk-brief__thumb-img${loaded ? " wk-brief__thumb-img--loaded" : ""}`}
+        loading="lazy"
+        onLoad={() => setLoaded(true)}
+        onError={() => setError(true)}
+      />
+    </div>
+  );
+}
+
 function CoverBody({
   stories,
 }: {
@@ -344,6 +396,11 @@ function CoverBody({
         return (
           <div key={si} className="wk-cover-body wk-cold-open--body">
             {si > 0 && <InkRule className="wk-ink-rule--strong" />}
+            {/* si === 0 image is already the big CoverHero up top; only render a
+                body image for the 2nd+ feature to avoid duplicating the lead. */}
+            {si > 0 && story.image_url && (
+              <CoverFeatureImage imageUrl={story.image_url} attribution={story.image_attribution} />
+            )}
             {si > 0 && story.headline?.trim() && <h3 className="wk-cover-body__subhead">{story.headline}</h3>}
             <div className="wk-cover-body__text">
               {paras.flatMap((para, j) => {
@@ -477,9 +534,15 @@ function BriefList({ stories }: { stories: WeeklyRecapStory[] }) {
       <h2 className="wk-section-label" id="wk-brief-heading" data-prefix="void --">Week in Brief</h2>
       <div className="wk-brief__list">
         {stories.map((story, i) => (
-          <article key={i} className="wk-brief__item">
-            {story.headline?.trim() && <h3 className="wk-brief__headline">{story.headline}</h3>}
-            <p className="wk-brief__summary">{story.summary}</p>
+          <article
+            key={i}
+            className={`wk-brief__item${story.image_url ? " wk-brief__item--has-thumb" : ""}`}
+          >
+            {story.image_url && <BriefThumb imageUrl={story.image_url} />}
+            <div className="wk-brief__body">
+              {story.headline?.trim() && <h3 className="wk-brief__headline">{story.headline}</h3>}
+              <p className="wk-brief__summary">{story.summary}</p>
+            </div>
           </article>
         ))}
       </div>
