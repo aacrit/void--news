@@ -174,9 +174,9 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
           </svg>
 
           <span className="msp__section-label" data-msp-cascade="4">Participate</span>
-          <Link href="/feedback" className="msp__link" data-msp-cascade="4" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">void --feedback</span>
-            <span className="msp__link-desc">Tell us what breaks</span>
+          <Link href="/ship" className="msp__link" data-msp-cascade="4" onClick={handleLinkClick}>
+            <span className="msp__link-cmd">void --ship</span>
+            <span className="msp__link-desc">Request it, vote, watch it ship</span>
           </Link>
         </nav>
 

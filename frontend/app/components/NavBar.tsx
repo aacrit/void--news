@@ -135,7 +135,7 @@ export default function NavBar({
               still resolve at /games and /paper for direct URL access. */}
           <nav className="nav-pages" aria-label="Pages">
             <PageToggle activePage="feed" />
-            <Link href="/feedback" className="nav-page" aria-label="Send feedback" title="Feedback">
+            <Link href="/ship" className="nav-page" aria-label="Send feedback" title="Feedback">
               Feedback
             </Link>
             <Link href="/about" className="nav-page" aria-label="About void --news" title="void --about">

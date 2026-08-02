@@ -340,7 +340,7 @@ export type LeanChip = "All" | "Left" | "Balanced" | "Right";
 
 export type ShipCategory = 'bug' | 'feature' | 'enhancement';
 export type ShipArea = 'frontend' | 'pipeline' | 'bias' | 'audio' | 'design' | 'other';
-export type ShipStatus = 'submitted' | 'triaged' | 'building' | 'shipped' | 'wontship';
+export type ShipStatus = 'submitted' | 'triaged' | 'building' | 'shipped' | 'wontship' | 'deferred' | 'not_feasible';
 export type ShipPriority = 'p0' | 'p1' | 'p2' | 'p3';
 
 export interface ShipRequest {
