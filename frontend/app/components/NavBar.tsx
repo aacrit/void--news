@@ -90,13 +90,17 @@ export default function NavBar({
         <div className="nav-left">
           <Link href="/" aria-label="void --news — home" className="nav-logo si-hoverable">
             <span className="nav-logo-desktop">
-              <LogoFull height={32} />
+              <LogoFull height={30} />
             </span>
             <span className="nav-logo-mobile">
-              <LogoFull height={22} />
+              <LogoFull height={18} />
             </span>
           </Link>
           <ExperimentalBadge />
+          {/* Masthead tagline — lives inline in the top bar (desktop only). The
+              standalone full-width ".home-flag" strip was retired 2026-08-02 so
+              the feed starts higher; this italic subline carries the tagline. */}
+          <span className="nav-tagline" aria-hidden="true">See through the void.</span>
         </div>
 
         <span className="nav-dateline-inline" aria-hidden="true" suppressHydrationWarning>
@@ -104,8 +108,12 @@ export default function NavBar({
           <span className="nav-dateline-inline__sep">&middot;</span>
           <span className="nav-dateline-inline__time">{timestamp}</span>
         </span>
+        {/* Mobile dateline — compact freshness signal. Time (with zone) is the
+            priority in the tight row; the date shows only when the row is wide
+            enough (>=400px, via CSS). */}
         <span className="nav-dateline-mobile" aria-hidden="true" suppressHydrationWarning>
-          {dateline}
+          <span className="nav-dateline-mobile__date">{dateline}</span>
+          <span className="nav-dateline-mobile__time">{timestamp}</span>
         </span>
 
         {/* Spinoff product links — standalone products under the void --news

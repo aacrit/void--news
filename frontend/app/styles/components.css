@@ -1925,8 +1925,50 @@
 .nav-left {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
   min-width: 0;
+}
+
+/* ── Masthead tagline — inline italic subline beside the wordmark ────────────
+   Replaces the retired full-width ".home-flag" strip. Desktop only: shown at
+   >=1024px where the row has room; hidden below (the dateline + spinoffs win
+   the tight space). A thin leading rule separates it from the wordmark.       */
+.nav-tagline {
+  display: none;
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-weight: 400;
+  font-size: var(--text-sm);
+  line-height: 1;
+  color: var(--fg-tertiary);
+  white-space: nowrap;
+  padding-left: var(--space-3);
+  border-left: 1px solid var(--border-subtle);
+  letter-spacing: 0.01em;
+}
+
+/* Shown only once the row is wide enough to carry the wordmark + badge +
+   tagline + dateline + spinoffs + pages without squeezing the dateline off.
+   Below this the dateline (functional) keeps the space; the tagline is
+   decorative branding and degrades gracefully by hiding. */
+@media (min-width: 1180px) {
+  .nav-tagline {
+    display: inline-block;
+  }
+}
+
+/* Scroll-compact: the tagline fades away with the dateline. */
+.nav-header[data-scroll-compact="true"] .nav-tagline {
+  opacity: 0;
+  max-width: 0;
+  padding-left: 0;
+  border-left-color: transparent;
+  overflow: hidden;
+  pointer-events: none;
+  transition:
+    opacity var(--dur-settle, 240ms) var(--ease-rack, ease-in-out),
+    max-width var(--dur-settle, 240ms) var(--ease-rack, ease-in-out),
+    padding-left var(--dur-settle, 240ms) var(--ease-rack, ease-in-out);
 }
 
 .nav-right {
@@ -2205,14 +2247,18 @@
   --wk-accent-glow: rgba(239, 83, 80, 0.12);
 }
 
-/* ── Spinoff Editions container — Weekly + History, center-left ── */
+/* ── Spinoff Editions container — Weekly + History, center-left ──
+   Shown from 1024px up. Below that (tablet + mobile) the row cannot carry the
+   logo + spinoffs + pages + controls without overlapping, so History/Weekly are
+   reached via the footer (all widths) and the mobile side panel (phones). This
+   raised breakpoint (was 768px) is what fixes the 768-1023 masthead pile-up. */
 .nav-spinoffs {
   display: none;
   align-items: center;
   gap: var(--space-1);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .nav-spinoffs {
     display: inline-flex;
   }
@@ -2363,9 +2409,12 @@
 }
 
 /* ---- Dateline inline (Tier 3) — between logo and utility buttons -------- */
-/* JetBrains Mono, very subtle. Fills remaining flex space, right-aligned.   */
-/* Hidden on mobile — masthead stays pure: logo + utility only.              */
+/* JetBrains Mono, very subtle. Fills remaining flex space, right-aligned.
+   Shown only >=1280px: narrower desktop rows leave it so little room it
+   truncates to a meaningless "A…" orphan, so it is hidden below that (the
+   mobile masthead has its own compact date/time; see .nav-dateline-mobile).  */
 .nav-dateline-inline {
+  display: none;
   flex: 1;
   text-align: right;
   font-family: var(--font-data);
@@ -2376,7 +2425,13 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding: 0 var(--space-3);
+  padding: 0 var(--space-2);
+}
+
+@media (min-width: 1280px) {
+  .nav-dateline-inline {
+    display: block;
+  }
 }
 
 .nav-dateline-inline__sep {
@@ -2388,18 +2443,31 @@
   opacity: 0.7;
 }
 
-/* Mobile dateline — compact date only, hidden on desktop */
+/* Mobile dateline — compact time (with optional date), hidden on desktop.
+   The time is the priority freshness signal; the date shows only when the row
+   is wide enough (>=400px, see responsive.css). */
 .nav-dateline-mobile {
   display: none;
+  align-items: baseline;
+  gap: var(--space-2);
   font-family: var(--font-data);
   font-size: var(--text-xs);
   color: var(--fg-muted);
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
   font-feature-settings: "tnum" 1;
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 50vw;
+  max-width: 52vw;
+}
+
+.nav-dateline-mobile__date {
+  display: none;
+  opacity: 0.75;
+}
+
+.nav-dateline-mobile__time {
+  color: var(--fg-secondary);
+  opacity: 0.9;
 }
 
 .nav-edition-badge {

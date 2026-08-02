@@ -4,7 +4,12 @@
    =========================================================================== */
 
 .exp-badge {
-  display: inline-flex;
+  /* Hidden by default; revealed only on wide desktop (>=1320px) where the
+     masthead row has room for it beside the wordmark + tagline + nav links.
+     On every narrower width the dismissible ".exp-banner" above the nav carries
+     the same "experimental" signal, so nothing is lost. This width gate is what
+     keeps the badge from overlapping the nav links at 768-1319px. */
+  display: none;
   align-items: center;
   padding: 2px 7px;
   font-family: var(--font-data);
@@ -79,10 +84,11 @@
   outline-offset: 2px;
 }
 
-@media (max-width: 767px) {
+/* Wide desktop: enough room in the masthead row to show the posture badge
+   beside the wordmark + inline tagline without crowding the nav links. */
+@media (min-width: 1320px) {
   .exp-badge {
-    padding: 1px 5px;
-    letter-spacing: 0.06em;
+    display: inline-flex;
   }
 }
 
