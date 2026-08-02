@@ -546,7 +546,7 @@ export default function ShipBoard() {
         </div>
         <h1 className="ship-page__title">Request, vote, watch it deploy.</h1>
         <p className="ship-page__subtitle">
-          Submit bugs and features. The ones you vote for get built — often within hours.
+          Submit bugs and features. The ones you vote for get built, often within hours.
         </p>
       </header>
 
@@ -564,7 +564,7 @@ export default function ShipBoard() {
           <form className="ship-form-canvas__form" onSubmit={handleFormSubmit}>
             {rateLimited && (
               <div className="ship-form-canvas__rate-limit" role="alert">
-                Slow down — max {RATE_LIMIT_MAX} requests per hour.
+                Slow down. Max {RATE_LIMIT_MAX} requests per hour.
               </div>
             )}
 
