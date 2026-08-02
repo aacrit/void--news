@@ -252,6 +252,117 @@
   outline-offset: 2px;
 }
 
+/* ── Page-only deep sections (Mission / Pipeline / FAQ) ───────────────────────
+   Shown only on the /about route (never in the onboarding overlay). Share one
+   header language: a data-font accent eyebrow, an editorial headline, and a
+   hairline top rule that reads like an editorial section break. */
+.about-sec {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: var(--space-7) var(--space-4) 0;
+  border-top: 1px solid var(--border-subtle);
+}
+.about-sec:first-of-type { border-top: none; }
+.about-sec__eyebrow {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fg-accent);
+  margin: 0 0 var(--space-3);
+}
+.about-sec__h {
+  font-family: var(--font-editorial);
+  font-size: var(--text-xl);
+  line-height: 1.12;
+  color: var(--fg-primary);
+  margin: 0 0 var(--space-4);
+}
+.about-sec__lede {
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  line-height: 1.6;
+  color: var(--fg-secondary);
+  margin: 0 0 var(--space-5);
+  max-width: 38rem;
+}
+
+/* Mission — two editorial paragraphs, newspaper-justified. */
+.about-mission__body { display: grid; gap: var(--space-4); }
+.about-mission__body p {
+  font-family: var(--font-editorial);
+  font-size: var(--text-lg);
+  line-height: 1.55;
+  color: var(--fg-secondary);
+  margin: 0;
+  text-align: justify;
+  hyphens: auto;
+}
+.about-mission__body p:last-child { color: var(--fg-primary); }
+
+/* Pipeline — five stepped cards. */
+.pipe { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-3); }
+.pipe__step {
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  align-items: start;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid var(--accent-ember);
+  border-radius: var(--radius-md);
+}
+.pipe__n {
+  font-family: var(--font-data);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--accent-ember);
+  line-height: 1;
+}
+.pipe__body { display: grid; gap: 4px; }
+.pipe__verb {
+  font-family: var(--font-editorial);
+  font-size: var(--text-lg);
+  color: var(--fg-primary);
+  margin: 0;
+}
+.pipe__detail {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  color: var(--fg-secondary);
+  margin: 0;
+}
+
+/* FAQ — plain Q/A, hairline-separated. */
+.faq { margin: 0; display: grid; gap: 0; }
+.faq__item {
+  padding: var(--space-4) 0;
+  border-top: 1px solid var(--border-subtle);
+}
+.faq__item:first-child { border-top: none; }
+.faq__q {
+  font-family: var(--font-editorial);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--fg-primary);
+  margin: 0 0 var(--space-2);
+}
+.faq__a {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  color: var(--fg-secondary);
+  margin: 0;
+}
+.faq__link { color: var(--fg-accent); text-decoration: underline; text-underline-offset: 2px; }
+.faq__link:hover { color: var(--accent-ember); }
+
+@media (min-width: 640px) {
+  .pipe__step { grid-template-columns: 3.5rem 1fr; }
+}
+
 /* ── Reduced motion ──────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .onb__stage, .onb--exiting .onb__stage, .onb--exiting .onb__backdrop { animation: none; }

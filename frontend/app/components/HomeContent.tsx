@@ -812,12 +812,12 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
         {/* Decorative nameplate, not a heading: the lead story keeps the page's
             single <h1> (LeadStory). aria-hidden because the nav logo already
             announces the brand; this is the visual masthead + the LCP anchor. */}
-        <div className="home-flag" aria-hidden="true">
-          <div className="home-flag__name">
-            void<span className="home-flag__cmd">&nbsp;--news</span>
-          </div>
-          <p className="home-flag__tag">See through the void.</p>
-        </div>
+        {/* Slim editorial tagline strip. The nav logo already carries the
+            wordmark, so this is just the masthead tagline. Being static text in
+            the export HTML, it is the largest contentful element before the
+            feed hydrates, so it still anchors LCP without duplicating the logo
+            or eating much above-the-fold space. */}
+        <p className="home-flag" aria-hidden="true">See through the void.</p>
 
         {/* Pull-to-refresh indicator (mobile) */}
         {(isPulling || isRefreshing) && (
