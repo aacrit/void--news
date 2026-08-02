@@ -76,9 +76,18 @@ function PageExperience() {
         <ul className="about-x__worlds">
           {PRODUCT_FAMILY.map((p) => (
             <li key={p.cli}>
-              <Link href={p.href} className="about-x__world">
+              <Link
+                href={p.href}
+                className="about-x__world"
+                style={{ "--acc-l": p.accentLight, "--acc-d": p.accentDark } as React.CSSProperties}
+              >
                 <span className="about-x__world-cli">{p.cli}</span>
-                <span className="about-x__world-name">{p.name}</span>
+                <span className="about-x__world-name">
+                  {p.name}
+                  {p.comingSoon && (
+                    <span className="about-x__world-soon" title={p.soonNote}>Coming soon</span>
+                  )}
+                </span>
                 <span className="about-x__world-desc">{p.desc}</span>
               </Link>
             </li>
