@@ -1,12 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="Void News">
   <!-- Void News favicon (generic, referenced by layout.tsx icon.svg) —
-       walnut rounded tile + brass Sigil-O. Explicit colors only (no
-       currentColor / no <style> / no @media). -->
+       walnut rounded tile + brass footed Sigil (ring + level beam + ticks +
+       scale post + base). Explicit colors only (no currentColor / no <style> /
+       no @media) so manifest + favicon decoders accept it. -->
   <rect width="32" height="32" rx="6" fill="#1C1A17"/>
   <g transform="translate(3.56,3.56) scale(0.2489)" fill="none" stroke="#D4A574" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="50" cy="50" r="41" stroke-width="8"/>
-    <line x1="8" y1="50" x2="92" y2="50" stroke-width="6"/>
-    <line x1="9" y1="43" x2="8" y2="57" stroke-width="5"/>
-    <line x1="91" y1="43" x2="92" y2="57" stroke-width="5"/>
+    <circle cx="50" cy="40" r="30" stroke-width="8"/>
+    <line x1="12" y1="40" x2="88" y2="40" stroke-width="6"/>
+    <line x1="13" y1="33" x2="12" y2="47" stroke-width="5"/>
+    <line x1="87" y1="33" x2="88" y2="47" stroke-width="5"/>
+    <line x1="50" y1="70" x2="50" y2="86" stroke-width="6"/>
+    <path d="M36 93 C44 88 56 88 64 93" stroke-width="6"/>
   </g>
 </svg>

@@ -5,7 +5,8 @@
 
 /* ---------------------------------------------------------------------------
    MobileTabBar (.mtb)
-   Persistent bottom tab bar. 4 tabs: Feed, History, OnAir, More.
+   Persistent bottom tab bar. 5 text-label tabs: Home, Weekly, History,
+   On Air, Menu. Playfair-italic labels with per-product accents; no icons.
    --------------------------------------------------------------------------- */
 
 .mtb {
@@ -29,17 +30,20 @@
     pointer-events: auto;
   }
 
+  /* ── Tabs — TEXT labels only (no icons). Per-product accents mirror the
+     desktop masthead spinoffs (.nav-history / .nav-weekly). The accent is
+     carried on a per-tab --mtb-accent so the label and the active rule share
+     one value. Home + Menu stay neutral. ── */
   .mtb__tab {
+    --mtb-accent: var(--accent-warm);
+    position: relative;
     display: flex;
-    flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: var(--space-2);
     flex: 1;
     min-height: 44px;
     min-width: 44px;
-    padding: 0;
-    color: var(--fg-tertiary);
+    padding: 0 var(--space-1);
     text-decoration: none;
     background: none;
     border: none;
@@ -55,63 +59,54 @@
     transition: transform 50ms var(--ease-cinematic);
   }
 
-  .mtb__tab--active {
+  /* Per-product accent values — same as the desktop NavBar.
+     History burnt umber, Weekly magazine red (--palette-weekly),
+     On Air broadcast red (--indicator-broadcast). */
+  .mtb__tab[data-accent="history"] { --mtb-accent: #5C4033; }
+  .mtb__tab[data-accent="weekly"]  { --mtb-accent: var(--palette-weekly); }
+  .mtb__tab[data-accent="onair"]   { --mtb-accent: var(--indicator-broadcast); }
+  :root[data-mode="dark"] .mtb__tab[data-accent="history"] { --mtb-accent: #8B7355; }
+
+  /* Label — Playfair italic, matching the desktop spinoff labels. */
+  .mtb__label {
+    font-family: var(--font-editorial);
+    font-style: italic;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    line-height: 1;
+    white-space: nowrap;
+    color: var(--fg-tertiary);
+    transition: color 150ms var(--ease-cinematic);
+  }
+
+  /* Accented products wear their color at rest (like the desktop masthead). */
+  .mtb__tab[data-accent="history"] .mtb__label,
+  .mtb__tab[data-accent="weekly"] .mtb__label,
+  .mtb__tab[data-accent="onair"] .mtb__label {
+    color: var(--mtb-accent);
+  }
+
+  /* Active: neutral tabs darken to primary ink; all tabs gain weight + a top
+     accent rule (brand-consistent indicator, not an icon). */
+  .mtb__tab--active[data-accent="neutral"] .mtb__label {
     color: var(--fg-primary);
   }
 
-  /* Dotted underline on active — matches filter bar design language */
   .mtb__tab--active .mtb__label {
-    text-decoration: underline;
-    text-decoration-style: dotted;
-    text-underline-offset: 2px;
-    text-decoration-color: var(--accent-warm);
+    font-weight: 600;
   }
 
-  .mtb__label {
-    font-family: var(--font-data);
-    font-size: var(--text-xxs);
-    font-weight: 400;
-    letter-spacing: 0.04em;
-    text-transform: lowercase;
-    line-height: 1;
-  }
-
-  /* Icon color follows parent */
-  .mtb__tab svg {
-    flex-shrink: 0;
-  }
-
-  .mtb__tab--active svg {
-    color: var(--accent-warm);
-  }
-
-  /* OnAir status message — brief tooltip above icon when audio unavailable */
-  .mtb__onair-wrap {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .mtb__onair-msg {
+  .mtb__tab--active::before {
+    content: "";
     position: absolute;
-    bottom: calc(100% + 4px);
+    top: 0;
     left: 50%;
     transform: translateX(-50%);
-    background: var(--bg-inverse, #1c1a17);
-    color: var(--text-inverse, #f0ebdd);
-    font-family: var(--font-data);
-    font-size: var(--text-xxs);
-    white-space: nowrap;
-    padding: 3px 8px;
-    border-radius: 4px;
-    pointer-events: none;
-    animation: onairMsgIn 150ms var(--ease-cinematic) forwards;
-  }
-
-  @keyframes onairMsgIn {
-    from { opacity: 0; transform: translateX(-50%) translateY(4px); }
-    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+    width: 22px;
+    height: 2px;
+    background: var(--mtb-accent);
+    border-radius: 0 0 2px 2px;
   }
 }
 
@@ -340,6 +335,7 @@
   }
 
   .msp__link {
+    --msp-accent: var(--fg-primary);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -354,27 +350,39 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Press: scale + amber rail + dotted underline on cmd text */
+  /* Per-product accents — same values as the desktop masthead.
+     History umber, Weekly red, Revolt blueprint blue, On Air broadcast red.
+     Revolt/History hexes are hardcoded (their vars are page-scoped). */
+  .msp__link[data-accent="history"] { --msp-accent: #5C4033; }
+  .msp__link[data-accent="weekly"]  { --msp-accent: var(--palette-weekly); }
+  .msp__link[data-accent="revolt"]  { --msp-accent: #1E40AF; }
+  .msp__link[data-accent="onair"]   { --msp-accent: var(--indicator-broadcast); }
+  :root[data-mode="dark"] .msp__link[data-accent="history"] { --msp-accent: #8B7355; }
+  :root[data-mode="dark"] .msp__link[data-accent="revolt"]  { --msp-accent: #6AA0FF; }
+
+  /* Press: scale + accent rail + dotted underline on cmd text */
   .msp__link:active {
-    background-color: color-mix(in srgb, var(--accent-warm) 6%, transparent);
+    background-color: color-mix(in srgb, var(--msp-accent) 8%, transparent);
     transform: scale(0.97);
-    border-left-color: var(--accent-warm);
+    border-left-color: var(--msp-accent);
   }
 
   .msp__link:active .msp__link-cmd {
-    color: var(--accent-warm);
     text-decoration: underline;
     text-decoration-style: dotted;
     text-underline-offset: 3px;
-    text-decoration-color: var(--accent-warm);
+    text-decoration-color: var(--msp-accent);
   }
 
+  /* Command — Playfair italic, wearing the product accent (matches the
+     desktop spinoff labels). Neutral links resolve --msp-accent to primary ink. */
   .msp__link-cmd {
-    font-family: var(--font-data);
-    font-size: var(--text-sm);
-    font-weight: 400;
-    letter-spacing: 0.02em;
-    color: var(--fg-primary);
+    font-family: var(--font-editorial);
+    font-style: italic;
+    font-size: var(--text-base);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: var(--msp-accent);
     transition: color 120ms var(--ease-cinematic);
   }
 
@@ -382,6 +390,39 @@
     font-family: var(--font-structural);
     font-size: var(--text-xs);
     color: var(--fg-muted);
+  }
+
+  /* Utility group — About / Press / Privacy. Smaller, quieter, inline. */
+  .msp__util {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-5) var(--space-2);
+  }
+
+  .msp__util-link {
+    font-family: var(--font-meta);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    text-decoration: none;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 120ms var(--ease-cinematic);
+  }
+
+  .msp__util-link:active {
+    color: var(--accent-warm);
+  }
+
+  .msp__util-sep {
+    color: var(--fg-muted);
+    opacity: 0.5;
   }
 
   /* Theme toggle row */

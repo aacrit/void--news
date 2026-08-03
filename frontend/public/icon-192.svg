@@ -1,11 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192" role="img" aria-label="Void News">
-  <!-- Void News app icon 192 — walnut tile + brass Sigil-O. Explicit colors
-       only. Full-bleed for maskable use; mark within the 80% safe zone. -->
+  <!-- Void News app icon 192 — walnut tile + brass footed Sigil. Explicit
+       colors only. Full-bleed for maskable use; the mark sits within the
+       central ~60% so it survives the maskable 80% safe-zone crop. -->
   <rect width="192" height="192" fill="#1C1A17"/>
   <g transform="translate(32,32) scale(1.28)" fill="none" stroke="#D4A574" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="50" cy="50" r="41" stroke-width="8"/>
-    <line x1="8" y1="50" x2="92" y2="50" stroke-width="6"/>
-    <line x1="9" y1="43" x2="8" y2="57" stroke-width="5"/>
-    <line x1="91" y1="43" x2="92" y2="57" stroke-width="5"/>
+    <circle cx="50" cy="40" r="30" stroke-width="8"/>
+    <line x1="12" y1="40" x2="88" y2="40" stroke-width="6"/>
+    <line x1="13" y1="33" x2="12" y2="47" stroke-width="5"/>
+    <line x1="87" y1="33" x2="88" y2="47" stroke-width="5"/>
+    <line x1="50" y1="70" x2="50" y2="86" stroke-width="6"/>
+    <path d="M36 93 C44 88 56 88 64 93" stroke-width="6"/>
   </g>
 </svg>

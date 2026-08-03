@@ -5,16 +5,23 @@ import { useRef, useEffect } from "react";
 /* ---------------------------------------------------------------------------
    ScaleIcon — the Sigil-O brand glyph
 
-   The standalone version of the mark that sits inside the SigilWordmark's
-   "O": a coverage ring (the analytical lens) with a level LEVEL balance beam
-   passing through it and a weight tick at each end. Identical geometry to the
-   wordmark's O (viewBox 0 0 100 100; ring cx50 cy50 r41 strokeWidth 8; beam
-   x8->x92 y50 strokeWidth 6 round; ticks x9,43->x8,57 and x91,43->x92,57
-   strokeWidth 5 round). No foot, post, or base. Stroked in --sigil-brass.
+   The FULL standalone Sigil: the same coverage ring (the analytical lens) with
+   a level balance beam + end ticks as the wordmark's "O", now carrying the
+   scale FOOT (post + base) so it reads as a complete balance-scale instrument.
+   To keep the SQUARE aspect (consumers render at size=16/22/24/28), the ring is
+   lifted and shrunk from the wordmark's full-box O so the ring + beam + ticks +
+   post + base all fit centered within viewBox 0 0 100 100:
+     ring   cx50 cy40 r30 strokeWidth 8
+     beam   x12->x88 y40 strokeWidth 6 round
+     ticks  x13,33->x12,47 and x87,33->x88,47 strokeWidth 5 round
+     post   x50 y70->y86 strokeWidth 6 round      (static)
+     base   M36 93 C44 88 56 88 64 93 strokeWidth 6 round (static)
+   Stroked in --sigil-brass.
 
-   At rest the mark is LEVEL and static. The animation prop tips the beam group
-   around the ring center (50,50) for loading / analyzing / broadcast states,
-   and animation="none" shows just the ring (pure favicon mark). All motion is
+   At rest the mark is LEVEL and static. The animation prop tips the BEAM group
+   (beam + ticks) around the ring center (50,40) for loading / analyzing /
+   broadcast states; the FOOT never tips (it is the ground the scale stands on).
+   animation="none" shows the full mark, static (no tilt). All motion is
    suppressed under prefers-reduced-motion, leaving the level brass mark.
 
    Pure CSS keyframe animations scoped with `si-` prefix, injected once into
@@ -117,32 +124,32 @@ const STYLES = `
 /* === Animation classes — beam pivots around the ring center (50,50) === */
 
 .si-beam--idle {
-  transform-origin: 50px 50px;
+  transform-origin: 50px 40px;
   animation: si-idle 5.5s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .si-beam--loading {
-  transform-origin: 50px 50px;
+  transform-origin: 50px 40px;
   animation: si-loading 1.5s cubic-bezier(0.16, 1, 0.3, 1) infinite;
 }
 
 .si-beam--hover {
-  transform-origin: 50px 50px;
+  transform-origin: 50px 40px;
   animation: si-hover 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .si-beam--analyzing {
-  transform-origin: 50px 50px;
+  transform-origin: 50px 40px;
   animation: si-analyzing 2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
 }
 
 .si-beam--balanced {
-  transform-origin: 50px 50px;
+  transform-origin: 50px 40px;
   animation: si-balanced 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .si-beam--broadcast {
-  transform-origin: 50px 50px;
+  transform-origin: 50px 40px;
   animation: si-broadcast 3s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
@@ -151,7 +158,7 @@ const STYLES = `
 }
 
 /* === Hover — activated by .si-hoverable ancestor === */
-.si-void { transform-origin: 50px 50px; }
+.si-void { transform-origin: 50px 40px; }
 
 .si-hoverable:hover .si-beam--idle {
   animation: si-hover 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -163,17 +170,17 @@ const STYLES = `
 
 /* === Draw animation — staggered per element === */
 .si-draw-void {
-  --si-len: 258;
-  stroke-dasharray: 258;
-  stroke-dashoffset: 258;
+  --si-len: 189;
+  stroke-dasharray: 189;
+  stroke-dashoffset: 189;
   animation: si-draw 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-delay: 0ms;
 }
 
 .si-draw-beam {
-  --si-len: 84;
-  stroke-dasharray: 84;
-  stroke-dashoffset: 84;
+  --si-len: 76;
+  stroke-dasharray: 76;
+  stroke-dashoffset: 76;
   animation: si-draw 220ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-delay: 300ms;
 }
@@ -266,11 +273,10 @@ export function ScaleIcon({
 
   const rootClass = animation === "pulse" ? "si-root--pulse" : undefined;
   const isDraw = animation === "draw";
-  const isNone = animation === "none";
 
-  /* When animation="none", show only the coverage ring (pure favicon mark).
-     For all other states, add the level balance beam + weight ticks. */
-  const showBeam = !isNone;
+  /* The full footed Sigil renders in every state — ring + beam + ticks + foot.
+     animation="none" simply applies no animation class, leaving the mark static
+     (the complete favicon-style mark, not a bare ring). */
 
   return (
     <svg
@@ -291,36 +297,39 @@ export function ScaleIcon({
       }}
     >
       {/* Coverage ring — the analytical lens, the void. Hollow, no fill.
-          This is what you see at favicon size (animation="none"). */}
+          Lifted to cy40 / r30 so the foot fits below within the square box. */}
       <circle
         cx="50"
-        cy="50"
-        r="41"
+        cy="40"
+        r="30"
         strokeWidth={8}
         className={isDraw ? "si-draw-void" : "si-void"}
       />
 
-      {showBeam && (
-        /* Balance beam + weight ticks — level at rest, tips on animation.
-           The ring is the fulcrum; the group pivots around (50,50). */
-        <g className={beamClass}>
-          <line
-            x1="8" y1="50" x2="92" y2="50"
-            strokeWidth={6} strokeLinecap="round"
-            className={isDraw ? "si-draw-beam" : undefined}
-          />
-          <line
-            x1="9" y1="43" x2="8" y2="57"
-            strokeWidth={5} strokeLinecap="round"
-            className={isDraw ? "si-draw-left-tick" : undefined}
-          />
-          <line
-            x1="91" y1="43" x2="92" y2="57"
-            strokeWidth={5} strokeLinecap="round"
-            className={isDraw ? "si-draw-right-tick" : undefined}
-          />
-        </g>
-      )}
+      {/* Balance beam + weight ticks — level at rest, tips on animation.
+          The ring is the fulcrum; the group pivots around (50,40). */}
+      <g className={beamClass}>
+        <line
+          x1="12" y1="40" x2="88" y2="40"
+          strokeWidth={6} strokeLinecap="round"
+          className={isDraw ? "si-draw-beam" : undefined}
+        />
+        <line
+          x1="13" y1="33" x2="12" y2="47"
+          strokeWidth={5} strokeLinecap="round"
+          className={isDraw ? "si-draw-left-tick" : undefined}
+        />
+        <line
+          x1="87" y1="33" x2="88" y2="47"
+          strokeWidth={5} strokeLinecap="round"
+          className={isDraw ? "si-draw-right-tick" : undefined}
+        />
+      </g>
+
+      {/* Scale foot — post + base. Static: it is the ground the scale stands on
+          and never tips with the beam. Outside the beam group by design. */}
+      <line x1="50" y1="70" x2="50" y2="86" strokeWidth={6} strokeLinecap="round" />
+      <path d="M36 93 C44 88 56 88 64 93" fill="none" strokeWidth={6} strokeLinecap="round" />
     </svg>
   );
 }

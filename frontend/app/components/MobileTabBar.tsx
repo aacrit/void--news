@@ -2,16 +2,28 @@
 
 import { useCallback } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { hapticMicro } from "../lib/haptics";
 import { BASE_PATH } from "../lib/utils";
 import { AUDIO_ENABLED } from "../lib/audioGate";
+import { useAudio } from "./AudioProvider";
 
 /* ---------------------------------------------------------------------------
    MobileTabBar — Persistent bottom tab bar (mobile only, <768px).
-   4 tabs: Feed, Archive, OnAir, More.
-   "More" toggles MobileSidePanel (callback from parent).
-   "OnAir" routes to the dedicated /onair broadcast page.
+
+   Five TEXT-label slots (no icons), typography mirrors the desktop masthead
+   spinoffs: Playfair italic with per-product accent colors.
+
+     Home · Weekly · History · On Air · Menu
+
+   - Weekly / History / On Air carry their product accent (same values as the
+     desktop NavBar: History burnt umber, Weekly magazine red, On Air the
+     broadcast red). Home + Menu use the neutral nav color.
+   - On Air reveals the collapsed mini-player when a brief with audio is loaded;
+     otherwise it routes to the dedicated /onair page. It never auto-plays and
+     never opens the full in-page sheet (that IS /onair on mobile).
+   - Menu toggles the MobileSidePanel.
+   - Active route shown via a top accent rule (not an icon).
    Hidden on desktop via CSS.
    --------------------------------------------------------------------------- */
 
@@ -20,125 +32,105 @@ interface MobileTabBarProps {
   moreOpen: boolean;
 }
 
-/* -- SVG Icons — 20x20, currentColor -- */
-
-function FeedIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="3" y="3" width="14" height="14" rx="2" />
-      <line x1="3" y1="8" x2="17" y2="8" />
-      <line x1="8" y1="8" x2="8" y2="17" />
-    </svg>
-  );
-}
-
-function HistoryIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="3" y="2" width="14" height="4" rx="1" />
-      <rect x="4" y="8" width="12" height="4" rx="1" />
-      <rect x="5" y="14" width="10" height="4" rx="1" />
-    </svg>
-  );
-}
-
-function OnAirIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="8" y="6" width="4" height="8" rx="2" />
-      <path d="M5 10a5 5 0 0 0 10 0" />
-      <line x1="10" y1="14" x2="10" y2="17" />
-      <line x1="7" y1="17" x2="13" y2="17" />
-    </svg>
-  );
-}
-
-function MoreIcon() {
-  return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <line x1="3" y1="5" x2="17" y2="5" />
-      <line x1="3" y1="10" x2="17" y2="10" />
-      <line x1="3" y1="15" x2="17" y2="15" />
-    </svg>
-  );
-}
-
-type TabDef = {
-  key: string;
-  label: string;
-  Icon: () => React.JSX.Element;
-  href: string | null;
-};
-
-// onair tab gated by AUDIO_ENABLED — when audio is parked, the bottom nav
-// drops the entry entirely (no empty slot). It routes to the dedicated
-// /onair broadcast page (now-playing, chapters, show notes, archive).
-const TABS: TabDef[] = [
-  { key: "feed", label: "feed", Icon: FeedIcon, href: "/" },
-  { key: "archive", label: "history", Icon: HistoryIcon, href: "/history" },
-  ...(AUDIO_ENABLED
-    ? [{ key: "onair", label: "onair", Icon: OnAirIcon, href: "/onair" }]
-    : []),
-  { key: "more", label: "more", Icon: MoreIcon, href: null },
-];
-
 export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { brief, setPlayerVisible, setExpanded } = useAudio();
+
+  const path = pathname.replace(BASE_PATH, "") || "/";
 
   const isActive = useCallback(
     (key: string): boolean => {
-      const p = pathname.replace(BASE_PATH, "") || "/";
       switch (key) {
-        case "feed":
-          return p === "/" || p === "" || /^\/(world)\/?$/.test(p);
-        case "archive":
-          return p.startsWith("/history") || p.startsWith("/revolt");
+        case "home":
+          return path === "/" || path === "" || /^\/(world)\/?$/.test(path);
+        case "weekly":
+          return path.startsWith("/weekly");
+        case "history":
+          return path.startsWith("/history") || path.startsWith("/revolt");
         case "onair":
-          return p.startsWith("/onair");
-        case "more":
+          return path.startsWith("/onair");
+        case "menu":
           return moreOpen;
         default:
           return false;
       }
     },
-    [pathname, moreOpen]
+    [path, moreOpen]
   );
+
+  // On Air tap: reveal the collapsed mini-player strip when a brief with audio
+  // is loaded; otherwise take the reader to /onair. Never auto-plays, never
+  // opens the expanded sheet (setExpanded(false) keeps it collapsed).
+  const handleOnAir = useCallback(() => {
+    hapticMicro();
+    if (AUDIO_ENABLED && brief?.audio_url) {
+      setExpanded(false);
+      setPlayerVisible(true);
+    } else {
+      router.push("/onair");
+    }
+  }, [brief?.audio_url, setExpanded, setPlayerVisible, router]);
+
+  const tabClass = (key: string) =>
+    `mtb__tab${isActive(key) ? " mtb__tab--active" : ""}`;
 
   return (
     <nav className="mtb" aria-label="Mobile navigation">
-      {TABS.map(({ key, label, Icon, href }) => {
-        const active = isActive(key);
-        if (href) {
-          return (
-            <Link
-              key={key}
-              href={href}
-              className={`mtb__tab${active ? " mtb__tab--active" : ""}`}
-              aria-current={active ? "page" : undefined}
-              onClick={() => hapticMicro()}
-            >
-              <Icon />
-              <span className="mtb__label">{label}</span>
-            </Link>
-          );
-        }
-        return (
-          <button
-            key={key}
-            type="button"
-            className={`mtb__tab${active ? " mtb__tab--active" : ""}`}
-            aria-expanded={moreOpen}
-            aria-label="More options"
-            onClick={() => {
-              hapticMicro();
-              onMoreTap();
-            }}
-          >
-            <Icon />
-            <span className="mtb__label">{label}</span>
-          </button>
-        );
-      })}
+      <Link
+        href="/"
+        className={tabClass("home")}
+        data-accent="neutral"
+        aria-current={isActive("home") ? "page" : undefined}
+        onClick={() => hapticMicro()}
+      >
+        <span className="mtb__label">Home</span>
+      </Link>
+
+      <Link
+        href="/weekly"
+        className={tabClass("weekly")}
+        data-accent="weekly"
+        aria-current={isActive("weekly") ? "page" : undefined}
+        onClick={() => hapticMicro()}
+      >
+        <span className="mtb__label">Weekly</span>
+      </Link>
+
+      <Link
+        href="/history"
+        className={tabClass("history")}
+        data-accent="history"
+        aria-current={isActive("history") ? "page" : undefined}
+        onClick={() => hapticMicro()}
+      >
+        <span className="mtb__label">History</span>
+      </Link>
+
+      <button
+        type="button"
+        className={tabClass("onair")}
+        data-accent="onair"
+        aria-current={isActive("onair") ? "page" : undefined}
+        aria-label="On Air"
+        onClick={handleOnAir}
+      >
+        <span className="mtb__label">On Air</span>
+      </button>
+
+      <button
+        type="button"
+        className={tabClass("menu")}
+        data-accent="neutral"
+        aria-expanded={moreOpen}
+        aria-label="Menu"
+        onClick={() => {
+          hapticMicro();
+          onMoreTap();
+        }}
+      >
+        <span className="mtb__label">Menu</span>
+      </button>
     </nav>
   );
 }
