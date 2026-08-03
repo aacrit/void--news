@@ -315,12 +315,12 @@ export function ScaleIcon({
           className={isDraw ? "si-draw-beam" : undefined}
         />
         <line
-          x1="13" y1="33" x2="12" y2="47"
+          x1="12" y1="32" x2="12" y2="48"
           strokeWidth={5} strokeLinecap="round"
           className={isDraw ? "si-draw-left-tick" : undefined}
         />
         <line
-          x1="87" y1="33" x2="88" y2="47"
+          x1="88" y1="32" x2="88" y2="48"
           strokeWidth={5} strokeLinecap="round"
           className={isDraw ? "si-draw-right-tick" : undefined}
         />

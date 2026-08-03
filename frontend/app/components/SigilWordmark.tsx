@@ -98,11 +98,13 @@ export default function SigilWordmark({
           fill="none"
           strokeWidth={8}
         />
-        {/* Balance beam + weight ticks — level at rest, tilts/sweeps on hover */}
+        {/* Balance beam + weight ticks — level at rest, tilts/sweeps on hover.
+            The beam flows OUT past the ring, capped by vertical end-ticks: the
+            sigil's |-| scale-beam shape. */}
         <g className="sigil-word__beam">
-          <line x1="8" y1="50" x2="92" y2="50" strokeWidth={6} strokeLinecap="round" />
-          <line x1="9" y1="43" x2="8" y2="57" strokeWidth={5} strokeLinecap="round" />
-          <line x1="91" y1="43" x2="92" y2="57" strokeWidth={5} strokeLinecap="round" />
+          <line x1="4" y1="50" x2="96" y2="50" strokeWidth={6} strokeLinecap="round" />
+          <line x1="4" y1="42" x2="4" y2="58" strokeWidth={5} strokeLinecap="round" />
+          <line x1="96" y1="42" x2="96" y2="58" strokeWidth={5} strokeLinecap="round" />
         </g>
         {/* Scale foot — post + base, static brass. The ring's bottom rests on the
             text baseline with the other caps; the foot draws BELOW y=91 and, via
