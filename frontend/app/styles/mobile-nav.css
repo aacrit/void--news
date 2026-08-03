@@ -5,8 +5,11 @@
 
 /* ---------------------------------------------------------------------------
    MobileTabBar (.mtb)
-   Persistent bottom tab bar. 5 text-label tabs: Home, Weekly, History,
-   On Air, Menu. Playfair-italic labels with per-product accents; no icons.
+   Persistent bottom tab bar. A mix of a brand mark, editorial text, and icons:
+     [Sigil-O]  Weekly  History  [broadcast]  [hamburger]
+   Home = the Sigil-O mark (terracotta); Weekly/History = Playfair-italic labels
+   with per-product accents; On Air = teal broadcast glyph; Menu = neutral
+   hamburger glyph. Every slot is a >=44px tap target.
    --------------------------------------------------------------------------- */
 
 .mtb {
@@ -61,11 +64,41 @@
 
   /* Per-product accent values — same as the desktop NavBar.
      History burnt umber, Weekly magazine red (--palette-weekly),
-     On Air broadcast red (--indicator-broadcast). */
+     On Air teal (--voice-accent, the On Air brand color). */
   .mtb__tab[data-accent="history"] { --mtb-accent: #5C4033; }
   .mtb__tab[data-accent="weekly"]  { --mtb-accent: var(--palette-weekly); }
-  .mtb__tab[data-accent="onair"]   { --mtb-accent: var(--indicator-broadcast); }
+  .mtb__tab[data-accent="onair"]   { --mtb-accent: var(--voice-accent); }
   :root[data-mode="dark"] .mtb__tab[data-accent="history"] { --mtb-accent: #8B7355; }
+
+  /* ── Icon / brand-mark slots. The broadcast (On Air) glyph inherits the tab
+     accent (teal) via currentColor; the hamburger (Menu) glyph is neutral; the
+     Home Sigil-O carries its own --palette-news override. All three centered,
+     ~24px, within the shared 44px tap target. ── */
+  .mtb__icon {
+    width: 24px;
+    height: 24px;
+    display: block;
+    flex-shrink: 0;
+  }
+
+  /* On Air glyph wears the teal accent; darkens is not needed (accent = teal). */
+  .mtb__tab[data-accent="onair"] .mtb__icon {
+    color: var(--mtb-accent);
+  }
+
+  /* Menu glyph stays neutral ink; darkens to primary when the panel is open. */
+  .mtb__tab[data-accent="neutral"] .mtb__icon {
+    color: var(--fg-tertiary);
+  }
+  .mtb__tab--active[data-accent="neutral"] .mtb__icon {
+    color: var(--fg-primary);
+  }
+
+  /* Home Sigil-O mark — color is driven by its own --sigil-brass override
+     (terracotta), so it stays on-brand regardless of active/neutral state. */
+  .mtb__mark {
+    flex-shrink: 0;
+  }
 
   /* Label — Playfair italic, matching the desktop spinoff labels. */
   .mtb__label {
