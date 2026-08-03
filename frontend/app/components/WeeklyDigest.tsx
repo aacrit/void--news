@@ -200,39 +200,183 @@ function useScrollReveal(threshold = 0.15): [React.RefObject<HTMLElement | null>
   return [ref, visible];
 }
 
-/* ── Section Components ──────────────────────────────────────────────────── */
-
-/* --- A. Masthead --- */
-
-function Masthead({
-  issueNumber,
-  weekStart,
-  weekEnd,
-  edition,
+/* ── Image Caption ─────────────────────────────────────────────────────────
+   Magazine attribution line rendered BELOW an image: an italic serif caption
+   describing the picture, followed by a smaller mono credit. Renders
+   caption + credit when a caption exists; falls back to credit-only; nothing
+   when neither is present. The caption DATA is generated backend-side and may
+   be absent — degrade cleanly. */
+function ImgCaption({
+  caption,
+  credit,
 }: {
-  issueNumber: number;
-  weekStart: string;
-  weekEnd: string;
-  edition: string;
+  caption?: string | null;
+  credit?: string | null;
 }) {
-  const editionLabel = EDITIONS.find((e) => e.slug === edition)?.label ?? "World";
+  const cap = caption?.trim();
+  const cr = credit?.trim();
+  if (!cap && !cr) return null;
   return (
-    <header className="wk-masthead wk-cold-open--masthead">
-      <Link href="/" className="wk-masthead__home" aria-label="Return to Void News">
-        <div className="wk-masthead__brand">
-          <SigilWordmark product="WEEKLY" height={32} accent="var(--palette-weekly)" />
-        </div>
-      </Link>
-      <p className="wk-masthead__meta">
-        Issue #{issueNumber}
-        <span className="wk-masthead__sep">&middot;</span>
-        {formatWeekRange(weekStart, weekEnd)}
-        <span className="wk-masthead__sep">&middot;</span>
-        <span className="wk-masthead__edition">{editionLabel}</span>
-      </p>
-    </header>
+    <figcaption className="wk-img-caption">
+      {cap && <span className="wk-img-caption__text">{cap}</span>}
+      {cap && cr && <span className="wk-img-caption__sep" aria-hidden="true"> · </span>}
+      {cr && <span className="wk-img-caption__credit">{cr}</span>}
+    </figcaption>
   );
 }
+
+/* ── Full-Screen Cinematic Cover ───────────────────────────────────────────
+   A newsstand cover that holds the full viewport on arrival: full-bleed cover
+   image with a slow Ken-Burns push and a bottom-up scrim, VOID WEEKLY
+   nameplate, issue line, cover headline, coverlines, and a scroll cue. After
+   ~3.5s it auto-scrolls down to Page 1 — cancelled the moment the reader
+   scrolls, taps, or keys (their intent wins). Honors prefers-reduced-motion:
+   no auto-scroll, no Ken Burns. Degrades to a typographic cover on paper when
+   no cover image is available. */
+function CinematicCover({
+  nameplate,
+  issueLine,
+  headline,
+  coverlines,
+  imageUrl,
+  imageCaption,
+  imageAttribution,
+}: {
+  nameplate: React.ReactNode;
+  issueLine: string;
+  headline: string;
+  coverlines: string[];
+  imageUrl?: string | null;
+  imageCaption?: string | null;
+  imageAttribution?: string | null;
+}) {
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [imgError, setImgError] = useState(false);
+  const hasImage = !!imageUrl && !imgError;
+
+  const scrollToPageOne = () => {
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const target = document.getElementById("wk-page-1");
+    target?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+  };
+
+  /* Auto-scroll to Page 1 after a linger, but never trap the reader: any
+     wheel / touch / key / pointer intent cancels it, and it is skipped
+     entirely under reduced-motion or if the reader has already scrolled. */
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let done = false;
+    const cancel = () => {
+      if (done) return;
+      done = true;
+      cleanup();
+    };
+    const opts = { passive: true } as AddEventListenerOptions;
+    window.addEventListener("wheel", cancel, opts);
+    window.addEventListener("touchstart", cancel, opts);
+    window.addEventListener("pointerdown", cancel, opts);
+    window.addEventListener("keydown", cancel);
+
+    const timer = window.setTimeout(() => {
+      if (done) return;
+      done = true;
+      // Only take over if the reader is still parked on the cover.
+      if (window.scrollY < 12) {
+        const target = document.getElementById("wk-page-1");
+        target?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      cleanup();
+    }, 3500);
+
+    function cleanup() {
+      window.clearTimeout(timer);
+      window.removeEventListener("wheel", cancel, opts);
+      window.removeEventListener("touchstart", cancel, opts);
+      window.removeEventListener("pointerdown", cancel, opts);
+      window.removeEventListener("keydown", cancel);
+    }
+    return cleanup;
+  }, []);
+
+  return (
+    <section
+      className={`wk-cover${hasImage ? " wk-cover--has-image" : " wk-cover--type"}`}
+      aria-label="Cover"
+    >
+      {hasImage && (
+        <div className="wk-cover__media" aria-hidden="true">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={imageUrl!}
+            alt=""
+            className={`wk-cover__img${imgLoaded ? " wk-cover__img--loaded" : ""}`}
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+            onLoad={() => setImgLoaded(true)}
+            onError={() => setImgError(true)}
+          />
+          <div className="wk-cover__scrim" />
+        </div>
+      )}
+
+      <div className="wk-cover__furniture">
+        <div className="wk-cover__top">
+          <div className="wk-cover__nameplate">{nameplate}</div>
+          <p className="wk-cover__issue">{issueLine}</p>
+        </div>
+
+        <div className="wk-cover__bottom">
+          <h1 className="wk-cover__headline">{headline}</h1>
+
+          {coverlines.length > 0 && (
+            <div className="wk-cover__coverlines">
+              <span className="wk-cover__coverlines-label">Also inside</span>
+              <ul className="wk-cover__coverlines-list">
+                {coverlines.map((line, i) => (
+                  <li key={i} className="wk-cover__coverline">{line}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <button
+            type="button"
+            className="wk-cover__cue"
+            onClick={scrollToPageOne}
+            aria-label="Enter the issue"
+          >
+            <span className="wk-cover__kicker">See through the void</span>
+            <svg
+              className="wk-cover__chevron"
+              viewBox="0 0 24 14"
+              width="24"
+              height="14"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path d="M2 2 L12 12 L22 2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+        </div>
+
+        {(imageCaption || imageAttribution) && hasImage && (
+          <div className="wk-cover__credit">
+            <ImgCaption caption={imageCaption} credit={imageAttribution} />
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/* ── Section Components ──────────────────────────────────────────────────── */
+
+/* The large VOID WEEKLY nameplate now lives in the full-screen CinematicCover
+   at the top of the issue; the compact sticky topbar carries a small copy for
+   the rest of the page, so the old standalone <Masthead> was removed to avoid
+   doubling the nameplate. */
 
 /* --- B. Cover Hero --- */
 
@@ -240,10 +384,12 @@ function CoverHero({
   headline,
   imageUrl,
   imageAttribution,
+  imageCaption,
 }: {
   headline: string;
   imageUrl?: string | null;
   imageAttribution?: string | null;
+  imageCaption?: string | null;
 }) {
   const [imgLoaded, setImgLoaded] = useState(false);
   const [imgError, setImgError] = useState(false);
@@ -251,23 +397,23 @@ function CoverHero({
   return (
     <div className={`wk-cover-hero wk-cold-open--hero${imageUrl && !imgError ? " wk-cover-hero--has-image" : ""}`}>
       {imageUrl && !imgError && (
-        <div className="wk-cover-hero__image-wrap">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={imageUrl}
-            alt=""
-            className={`wk-cover-hero__image${imgLoaded ? " wk-cover-hero__image--loaded" : ""}`}
-            loading="eager"
-            fetchPriority="high"
-            decoding="async"
-            onLoad={() => setImgLoaded(true)}
-            onError={() => setImgError(true)}
-          />
-          <div className="wk-cover-hero__image-overlay" aria-hidden="true" />
-          {imageAttribution && (
-            <span className="wk-cover-hero__image-credit">{imageAttribution}</span>
-          )}
-        </div>
+        <>
+          <div className="wk-cover-hero__image-wrap">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={imageUrl}
+              alt=""
+              className={`wk-cover-hero__image${imgLoaded ? " wk-cover-hero__image--loaded" : ""}`}
+              loading="eager"
+              fetchPriority="high"
+              decoding="async"
+              onLoad={() => setImgLoaded(true)}
+              onError={() => setImgError(true)}
+            />
+            <div className="wk-cover-hero__image-overlay" aria-hidden="true" />
+          </div>
+          <ImgCaption caption={imageCaption} credit={imageAttribution} />
+        </>
       )}
       <div className="wk-cover-hero__content">
         {/* Cover hero is the page's primary headline — <h1> for SR + SEO.
@@ -296,28 +442,30 @@ function CoverHero({
 function CoverFeatureImage({
   imageUrl,
   attribution,
+  caption,
 }: {
   imageUrl: string;
   attribution?: string;
+  caption?: string;
 }) {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
   if (error) return null;
   return (
-    <div className="wk-cover-body__image-wrap">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={imageUrl}
-        alt=""
-        className={`wk-cover-body__image${loaded ? " wk-cover-body__image--loaded" : ""}`}
-        loading="lazy"
-        onLoad={() => setLoaded(true)}
-        onError={() => setError(true)}
-      />
-      {attribution && (
-        <span className="wk-cover-body__image-credit">{attribution}</span>
-      )}
-    </div>
+    <figure className="wk-cover-body__figure">
+      <div className="wk-cover-body__image-wrap">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={imageUrl}
+          alt=""
+          className={`wk-cover-body__image${loaded ? " wk-cover-body__image--loaded" : ""}`}
+          loading="lazy"
+          onLoad={() => setLoaded(true)}
+          onError={() => setError(true)}
+        />
+      </div>
+      <ImgCaption caption={caption} credit={attribution} />
+    </figure>
   );
 }
 
@@ -344,7 +492,11 @@ function CoverBody({
             {/* si === 0 image is already the big CoverHero up top; only render a
                 body image for the 2nd+ feature to avoid duplicating the lead. */}
             {si > 0 && story.image_url && (
-              <CoverFeatureImage imageUrl={story.image_url} attribution={story.image_attribution} />
+              <CoverFeatureImage
+                imageUrl={story.image_url}
+                attribution={story.image_attribution}
+                caption={story.image_caption}
+              />
             )}
             {/* Second cover feature's headline is a top-level section under the
                 cover <h1>; keep it <h2> so heading levels never skip (a11y). */}
@@ -452,8 +604,9 @@ function OpinionsSection({
 
   return (
     <section
+      id="wk-perspectives"
       ref={ref as React.RefObject<HTMLElement>}
-      className={`wk-opinions-section wk-reveal${visible ? " wk-reveal--visible" : ""}`}
+      className={`wk-cover-anchor wk-opinions-section wk-reveal${visible ? " wk-reveal--visible" : ""}`}
       aria-labelledby="wk-opinions-heading"
     >
       <h2 className="wk-section-label" id="wk-opinions-heading">Perspectives</h2>
@@ -474,8 +627,9 @@ function BriefList({ stories }: { stories: WeeklyRecapStory[] }) {
 
   return (
     <section
+      id="wk-brief"
       ref={ref as React.RefObject<HTMLElement>}
-      className={`wk-brief-section wk-reveal${visible ? " wk-reveal--visible" : ""}`}
+      className={`wk-cover-anchor wk-brief-section wk-reveal${visible ? " wk-reveal--visible" : ""}`}
       aria-labelledby="wk-brief-heading"
     >
       <h2 className="wk-section-label" id="wk-brief-heading">Week in Brief</h2>
@@ -512,8 +666,9 @@ function ContestedSection({ stories }: { stories: WeeklyContestedStory[] }) {
 
   return (
     <section
+      id="wk-contested"
       ref={ref as React.RefObject<HTMLElement>}
-      className={`wk-contested-section wk-reveal${visible ? " wk-reveal--visible" : ""}`}
+      className={`wk-cover-anchor wk-contested-section wk-reveal${visible ? " wk-reveal--visible" : ""}`}
       aria-labelledby="wk-contested-heading"
     >
       <h2 className="wk-section-label" id="wk-contested-heading">Most Contested</h2>
@@ -571,8 +726,9 @@ function IssueArchive({
 
   return (
     <section
+      id="wk-archive"
       ref={ref as React.RefObject<HTMLElement>}
-      className={`wk-archive wk-reveal${visible ? " wk-reveal--visible" : ""}`}
+      className={`wk-cover-anchor wk-archive wk-reveal${visible ? " wk-reveal--visible" : ""}`}
       aria-labelledby="wk-archive-heading"
     >
       <h2 className="wk-section-label" id="wk-archive-heading">Issue Archive</h2>
@@ -590,6 +746,52 @@ function IssueArchive({
         ))}
       </div>
     </section>
+  );
+}
+
+/* --- J. Editorial-rail furniture: "In This Issue" index + colophon --------
+   These fill the cover-zone rail so a short editorial never leaves a blank
+   gap beside the taller story column. */
+
+interface RailIndexItem {
+  href: string;
+  label: string;
+}
+
+function RailIndex({ items }: { items: RailIndexItem[] }) {
+  if (items.length === 0) return null;
+  return (
+    <nav className="wk-rail-index" aria-label="In this issue">
+      <span className="wk-rail-index__label">In This Issue</span>
+      <ul className="wk-rail-index__list">
+        {items.map((item) => (
+          <li key={item.href}>
+            <a href={item.href} className="wk-rail-index__link">
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  );
+}
+
+function RailColophon({
+  issueNumber,
+  weekRange,
+  editionLabel,
+}: {
+  issueNumber: number;
+  weekRange: string;
+  editionLabel: string;
+}) {
+  return (
+    <div className="wk-rail-colophon">
+      <span className="wk-rail-colophon__mark">VOID WEEKLY</span>
+      <span className="wk-rail-colophon__line">Issue #{issueNumber}</span>
+      <span className="wk-rail-colophon__line">{weekRange}</span>
+      <span className="wk-rail-colophon__line wk-rail-colophon__edition">{editionLabel} Edition</span>
+    </div>
   );
 }
 
@@ -660,14 +862,82 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [digest?.id, archive]);
 
+  /* ── Derived cover + rail data (guarded against a null digest) ── */
+  const editionLabel = digest
+    ? EDITIONS.find((e) => e.slug === digest.edition)?.label ?? "World"
+    : "World";
+  const weekRange = digest ? formatWeekRange(digest.week_start, digest.week_end) : "";
+  const coverHeadline = digest
+    ? digest.cover_headline || (digest.cover_text?.[0]?.headline ?? "")
+    : "";
+
+  /* Coverlines — "Also inside" teasers pulled from the OTHER cover-feature
+     headlines and the top Week-in-Brief titles, excluding the lead headline,
+     deduped, capped at three. */
+  const coverlines: string[] = [];
+  if (digest) {
+    const norm = (s: string) => s.trim().toLowerCase();
+    const seen = new Set<string>([norm(coverHeadline)]);
+    const candidates = [
+      ...(digest.cover_text ?? []).slice(1).map((s) => s.headline),
+      ...(digest.recap_stories ?? []).map((s) => s.headline),
+    ];
+    for (const c of candidates) {
+      const t = (c ?? "").trim();
+      if (!t || seen.has(norm(t))) continue;
+      seen.add(norm(t));
+      coverlines.push(t);
+      if (coverlines.length >= 3) break;
+    }
+  }
+
+  /* "In This Issue" index — only the sections that actually exist this week. */
+  const hasPerspectives = !!(
+    digest?.opinion_left?.length ||
+    digest?.opinion_center?.length ||
+    digest?.opinion_right?.length
+  );
+  const hasBrief = !!digest?.recap_stories?.length;
+  const hasContested = !!digest?.contested_stories?.length;
+  const hasArchive = archive.length > 1;
+  const indexItems: RailIndexItem[] = [];
+  if (hasPerspectives) indexItems.push({ href: "#wk-perspectives", label: "Perspectives" });
+  if (hasBrief) indexItems.push({ href: "#wk-brief", label: "Week in Brief" });
+  if (hasContested) indexItems.push({ href: "#wk-contested", label: "Most Contested" });
+  if (hasArchive) indexItems.push({ href: "#wk-archive", label: "Archive" });
+
   return (
     <div className="wk-page">
-      {/* Top bar: back to main + theme toggle */}
+      {/* Full-screen cinematic cover — the first thing on arrival. Full-bleed
+          (direct child of .wk-page so it escapes the .wk-main canvas width).
+          The compact sticky topbar below only appears once the reader scrolls
+          past the cover into Page 1, so the big nameplate is never doubled. */}
+      {digest && !loading && (
+        <CinematicCover
+          nameplate={<SigilWordmark product="WEEKLY" height={44} accent="var(--palette-weekly)" />}
+          issueLine={`Issue #${digest.issue_number} · ${weekRange}`}
+          headline={coverHeadline}
+          coverlines={coverlines}
+          imageUrl={digest.cover_image_url}
+          imageCaption={digest.cover_text?.[0]?.image_caption}
+          imageAttribution={digest.cover_image_attribution}
+        />
+      )}
+
+      {/* Page-1 scroll target: the auto-scroll and the cover scroll-cue land
+          the reader here, at the boundary where the sticky topbar takes over. */}
+      <div id="wk-page-1" className="wk-page-anchor" aria-hidden="true" />
+
+      {/* Compact sticky topbar for the rest of the page: back to Void News, a
+          small VOID WEEKLY, and the theme toggle. */}
       <div className="wk-topbar">
         <Link href="/" className="wk-back" aria-label="Back to Void News">
           <span className="wk-back__arrow" aria-hidden="true">&larr;</span>
           <LogoFull height={20} className="wk-back__logo" />
         </Link>
+        <span className="wk-topbar__mark" aria-hidden="true">
+          <SigilWordmark product="WEEKLY" height={16} accent="var(--palette-weekly)" />
+        </span>
         <ThemeToggle />
       </div>
 
@@ -708,18 +978,14 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
 
         {digest && !loading && (
           <>
-            {/* A. Masthead */}
-            <Masthead
-              issueNumber={digest.issue_number}
-              weekStart={digest.week_start}
-              weekEnd={digest.week_end}
-              edition={digest.edition}
-            />
-
             {/* B + C. Cover zone — the top story (hero) and the cover features
                 run in the main column; the argued Editorial is pinned in a right
                 rail beside them, aligned to the top-story headline (magazine
-                feel). Rail drops below on mobile. */}
+                feel). The rail is a flex column that always fills the story
+                column's height: sticky editorial + "In This Issue" index up
+                top, a decorative flex-grow filler, then the colophon pinned at
+                the bottom — so a short editorial never leaves a blank gap. Rail
+                drops below on mobile. */}
             <div
               className={`wk-cover-zone${
                 digest.opinion_text ? "" : " wk-cover-zone--no-rail"
@@ -727,9 +993,10 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
             >
               <div className="wk-cover-zone__main">
                 <CoverHero
-                  headline={digest.cover_headline || (digest.cover_text?.[0]?.headline ?? "")}
+                  headline={coverHeadline}
                   imageUrl={digest.cover_image_url}
                   imageAttribution={digest.cover_image_attribution}
+                  imageCaption={digest.cover_text?.[0]?.image_caption}
                 />
                 {digest.cover_text && digest.cover_text.length > 0 && (
                   <CoverBody stories={digest.cover_text} />
@@ -737,10 +1004,21 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
               </div>
               {digest.opinion_text && (
                 <aside className="wk-cover-zone__rail">
-                  <SectionEditorial
-                    headline={digest.opinion_headline}
-                    text={digest.opinion_text}
-                    lean={digest.opinion_lean}
+                  <div className="wk-rail__sticky">
+                    <SectionEditorial
+                      headline={digest.opinion_headline}
+                      text={digest.opinion_text}
+                      lean={digest.opinion_lean}
+                    />
+                    <RailIndex items={indexItems} />
+                  </div>
+                  <div className="wk-rail-filler" aria-hidden="true">
+                    <span className="wk-rail-filler__rule" />
+                  </div>
+                  <RailColophon
+                    issueNumber={digest.issue_number}
+                    weekRange={weekRange}
+                    editionLabel={editionLabel}
                   />
                 </aside>
               )}

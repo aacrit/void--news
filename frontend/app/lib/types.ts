@@ -395,6 +395,10 @@ export interface WeeklyCoverStory {
      cluster_id is stored in the DB row and now surfaced for image lookup. */
   image_url?: string;
   image_attribution?: string;
+  /* Optional magazine caption describing the image (generated backend-side,
+     populates later). Rendered as an italic serif line beside the credit;
+     degrades to credit-only when absent. */
+  image_caption?: string;
   cluster_id?: string;
 }
 
@@ -422,6 +426,8 @@ export interface WeeklyRecapStory {
   /* Optional thumbnail embedded by the backend into the weekly JSON. */
   image_url?: string;
   image_attribution?: string;
+  /* Optional magazine caption describing the thumbnail (see WeeklyCoverStory). */
+  image_caption?: string;
 }
 
 export interface WeeklyOpinion {

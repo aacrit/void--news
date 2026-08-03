@@ -27,10 +27,6 @@ export default function HistoryTopbar() {
         <SigilWordmark product="HISTORY" height={24} accent="var(--palette-history)" />
       </Link>
       <div className="hist-topbar__actions">
-        <Link href="/revolt" className="hist-topbar__revolt" title="Revolt: the anatomy of revolution" aria-label="Go to Revolt, the anatomy of revolution">
-          <span className="hist-topbar__revolt-cmd">Revolt</span>
-          <span className="hist-topbar__revolt-arrow" aria-hidden="true">&rarr;</span>
-        </Link>
         <ThemeToggle />
       </div>
     </header>

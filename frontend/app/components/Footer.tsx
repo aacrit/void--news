@@ -44,8 +44,6 @@ export default function Footer({ lastUpdated }: FooterProps) {
           <span className="footer-products__sep" aria-hidden="true">&middot;</span>
           <Link href="/history" className="footer-products__item" title="The archive of consequence">History</Link>
           <span className="footer-products__sep" aria-hidden="true">&middot;</span>
-          <Link href="/revolt" className="footer-products__item" title="The anatomy of revolution">Revolt</Link>
-          <span className="footer-products__sep" aria-hidden="true">&middot;</span>
           <Link href="/ship" className="footer-products__item" title="Request, vote, watch it ship">Ship</Link>
           <span className="footer-products__sep" aria-hidden="true">&middot;</span>
           <Link href="/about" className="footer-products__item" title="About">About</Link>

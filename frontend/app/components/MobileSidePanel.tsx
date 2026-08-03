@@ -151,10 +151,6 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
             <span className="msp__link-cmd">History</span>
             <span className="msp__link-desc">The archive of consequence</span>
           </Link>
-          <Link href="/revolt" className="msp__link" data-accent="revolt" data-msp-cascade="2" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">Revolt</span>
-            <span className="msp__link-desc">The anatomy of revolution</span>
-          </Link>
           <Link href="/onair" className="msp__link" data-accent="onair" data-msp-cascade="2" onClick={handleLinkClick}>
             <span className="msp__link-cmd">On Air</span>
             <span className="msp__link-desc">The audio broadcast</span>

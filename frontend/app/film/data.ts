@@ -172,7 +172,6 @@ export const PRODUCT_FAMILY: ProductWorld[] = [
   { name: "Void News", subtitle: "The Front Page", desc: "One daily front page. The 50 stories that matter, ranked once.", href: "/", accentLight: "#6B4423", accentDark: "#C9A88A" },
   { name: "Weekly", subtitle: "The Magazine", desc: "The week, read like a magazine. Covers, essays, an editorial.", href: "/weekly", accentLight: "#B23A2A", accentDark: "#E0705C" },
   { name: "History", subtitle: "The Archive", desc: "Consequential events, told from every side.", href: "/history", accentLight: "#8A6410", accentDark: "#D4A574" },
-  { name: "Revolt", subtitle: "The Anatomy", desc: "Every revolution on one arc, past and unfolding.", href: "/revolt", accentLight: "#1E40AF", accentDark: "#6AA0FF" },
   { name: "On Air", subtitle: "The Broadcast", desc: "The daily brief, read aloud.", href: "/onair", accentLight: "#2E8B7D", accentDark: "#4DAFA0" },
 ];
 

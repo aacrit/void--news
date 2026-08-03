@@ -26,6 +26,14 @@
   --wk-cream-deep: #EDE5D4;
   --wk-white: #FFFFFF;
 
+  /* Opaque page paper — reused by the sticky topbar and the editorial-rail
+     sticky block so a pinned element paints cleanly over the decorative
+     filler beneath it. Matches background-color below. */
+  --wk-paper: #EDE4D0;
+  /* Approximate rendered height of the compact sticky topbar — drives the
+     scroll-margin so smooth-scroll / anchor jumps land below the sticky bar. */
+  --wk-topbar-h: 3rem;
+
   /* Warmer, thicker-feeling paper — visually distinct from main feed.
      Main page: #F0EBDD. Weekly: warmer, more matte, like heavy stock. */
   background-color: #EDE4D0;
@@ -42,6 +50,7 @@
   --wk-accent-ink: rgba(239, 83, 80, 0.22);
   --wk-cream: #2A2420;
   --wk-cream-deep: #221E1A;
+  --wk-paper: #1E1A16;
 
   /* Dark mode: warmer charcoal than main feed (#151310 → #1E1A16) */
   background-color: #1E1A16;
@@ -82,19 +91,48 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--space-2) var(--space-4);
-  background-color: color-mix(in srgb, #EDE4D0 85%, transparent);
+  min-height: var(--wk-topbar-h);
+  background-color: color-mix(in srgb, var(--wk-paper) 85%, transparent);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--wk-accent-ink);
 }
 
 :root[data-mode="dark"] .wk-topbar {
-  background-color: color-mix(in srgb, #1E1A16 85%, transparent);
+  background-color: color-mix(in srgb, var(--wk-paper) 85%, transparent);
 }
 
 @media (min-width: 768px) {
   .wk-topbar {
     padding: var(--space-2) var(--space-6);
   }
+}
+
+/* Small VOID WEEKLY lockup, centered in the sticky topbar (the big nameplate
+   lives in the cover). Hidden on very narrow screens where back + toggle need
+   the room. */
+.wk-topbar__mark {
+  display: inline-flex;
+  align-items: center;
+  color: var(--fg-secondary);
+  pointer-events: none;
+}
+
+@media (max-width: 480px) {
+  .wk-topbar__mark {
+    display: none;
+  }
+}
+
+/* Zero-height Page-1 scroll target between the cover and the sticky topbar. */
+.wk-page-anchor {
+  height: 0;
+  scroll-margin-top: 0;
+}
+
+/* Jump-target sections land below the sticky topbar, not under it. */
+.wk-cover-anchor {
+  scroll-margin-top: calc(var(--wk-topbar-h) + var(--space-3));
 }
 
 /* Back link — arrow + real void logo */
@@ -642,9 +680,19 @@
   grid-template-columns: 1fr;
   gap: var(--space-4);
 }
-.wk-cover-zone__main,
+.wk-cover-zone__main {
+  min-width: 0;
+}
+/* Rail is a flex column so it can always fill the story column's height:
+   sticky editorial + index up top, a flex-grow decorative filler, then the
+   colophon pinned at the bottom. */
 .wk-cover-zone__rail {
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.wk-cover-zone__rail .wk-editorial-section {
+  padding: 0;
 }
 @media (min-width: 900px) {
   .wk-cover-zone {
@@ -660,11 +708,132 @@
     border-left: 1px solid var(--border-strong);
     padding-left: var(--space-4);
   }
-  /* Editorial sticks into view as you scroll past the stories. */
-  .wk-cover-zone__rail .wk-editorial-section {
+  /* The editorial + index pin together as you scroll past the tall story
+     column; an opaque paper background makes the pinned block paint cleanly
+     over the decorative filler beneath it (no overlap bleed-through). */
+  .wk-cover-zone__rail .wk-rail__sticky {
     position: sticky;
-    top: var(--space-4);
-    padding: 0;
+    top: calc(var(--wk-topbar-h) + var(--space-3));
+    z-index: 2;
+    background: var(--wk-paper);
+  }
+}
+
+/* ── Editorial-rail furniture — fills any leftover height ── */
+.wk-rail__sticky {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.wk-rail-index {
+  padding-top: var(--space-3);
+  border-top: 1px dotted var(--wk-accent-ink);
+}
+
+.wk-rail-index__label {
+  display: block;
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: var(--fg-tertiary);
+  margin-bottom: var(--space-2);
+}
+
+.wk-rail-index__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.wk-rail-index__link {
+  display: block;
+  padding: var(--space-1) 0;
+  font-family: var(--font-editorial);
+  font-size: var(--text-sm);
+  color: var(--fg-secondary);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 200ms var(--ease-cinematic), border-color 200ms var(--ease-cinematic);
+}
+
+.wk-rail-index__link:hover,
+.wk-rail-index__link:focus-visible {
+  color: var(--wk-accent);
+}
+
+.wk-rail-index__link:focus-visible {
+  outline: 2px solid var(--wk-accent);
+  outline-offset: 2px;
+}
+
+/* Decorative flex-grow filler — a faint repeating vertical hairline that
+   expands to consume any leftover rail height. Collapses to nothing when the
+   editorial is long. Desktop only (no fixed height to fill on mobile). */
+.wk-rail-filler {
+  display: none;
+}
+
+.wk-rail-colophon {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--wk-accent-ink);
+  margin-top: var(--space-4);
+}
+
+.wk-rail-colophon__mark {
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--wk-accent);
+}
+
+.wk-rail-colophon__line {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  color: var(--fg-tertiary);
+  letter-spacing: 0.02em;
+}
+
+.wk-rail-colophon__edition {
+  color: var(--fg-secondary);
+}
+
+@media (min-width: 900px) {
+  .wk-rail-filler {
+    display: block;
+    flex: 1 1 auto;
+    min-height: var(--space-5);
+    position: relative;
+    margin: var(--space-3) 0;
+  }
+  /* Centered faint dotted rule down the filler. */
+  .wk-rail-filler__rule {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 1px;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      var(--wk-accent-ink) 0,
+      var(--wk-accent-ink) 4px,
+      transparent 4px,
+      transparent 10px
+    );
+    opacity: 0.7;
+  }
+  .wk-rail-colophon {
+    margin-top: 0;
   }
 }
 
@@ -1726,4 +1895,359 @@
 .wk-flourish.wk-reveal--visible {
   opacity: 1;
   transform: scaleX(1);
+}
+
+/* ===========================================================================
+   IMAGE CAPTION — magazine attribution line below an image
+   =========================================================================== */
+.wk-img-caption {
+  display: block;
+  margin: var(--space-2) 0 0;
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: 0.72rem;
+  line-height: 1.45;
+  color: var(--fg-tertiary);
+  text-align: left;
+}
+
+.wk-img-caption__sep {
+  opacity: 0.6;
+  font-style: normal;
+}
+
+.wk-img-caption__credit {
+  font-family: var(--font-data);
+  font-style: normal;
+  font-size: 0.66rem;
+  letter-spacing: 0.02em;
+  color: var(--fg-tertiary);
+  opacity: 0.85;
+}
+
+/* The secondary cover-feature figure resets default <figure> margins. */
+.wk-cover-body__figure {
+  margin: 0;
+}
+
+/* ===========================================================================
+   FULL-SCREEN CINEMATIC COVER — newsstand cold open
+   =========================================================================== */
+.wk-cover {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Over-image: light furniture. Typographic: ink furniture on paper. */
+.wk-cover--has-image {
+  --wk-cover-fg: #F7F2E7;
+  --wk-cover-fg-dim: rgba(247, 242, 231, 0.74);
+  --wk-cover-rule: rgba(247, 242, 231, 0.45);
+}
+
+.wk-cover--type {
+  --wk-cover-fg: var(--fg-primary);
+  --wk-cover-fg-dim: var(--fg-tertiary);
+  --wk-cover-rule: var(--wk-accent-ink);
+  background-color: var(--wk-paper);
+}
+
+/* ── Media layer — full-bleed image with a slow Ken-Burns push ── */
+.wk-cover__media {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  z-index: 0;
+  background: var(--cin-ash-900, #1a1a1a);
+}
+
+.wk-cover__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.8s var(--ease-cinematic, ease-out);
+  /* Magazine warmth grade (matches the in-flow hero + feature images). */
+  filter: var(--img-grade-weekly, contrast(1.05) saturate(0.92) sepia(0.04));
+  transform-origin: 50% 46%;
+  animation: wkKenBurns 22s var(--ease-cinematic, ease-out) both;
+  will-change: transform;
+}
+
+.wk-cover__img--loaded {
+  opacity: 1;
+}
+
+@keyframes wkKenBurns {
+  from { transform: scale(1.0); }
+  to   { transform: scale(1.06); }
+}
+
+/* Bottom-up scrim so overlaid furniture stays legible. */
+.wk-cover__scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    to bottom,
+    rgba(20, 16, 12, 0.34) 0%,
+    rgba(20, 16, 12, 0.10) 26%,
+    rgba(20, 16, 12, 0.42) 66%,
+    rgba(20, 16, 12, 0.86) 100%
+  );
+  pointer-events: none;
+}
+
+/* ── Furniture ── */
+.wk-cover__furniture {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-5);
+  width: 100%;
+  max-width: min(92vw, 1080px);
+  margin: 0 auto;
+  padding: clamp(var(--space-5), 7vh, var(--space-7))
+           var(--space-4)
+           clamp(var(--space-4), 5vh, var(--space-6));
+  text-align: center;
+  color: var(--wk-cover-fg);
+}
+
+.wk-cover__top {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+}
+
+/* Nameplate framed by thin top/bottom hairline rules. */
+.wk-cover__nameplate {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-3) var(--space-4);
+  border-top: 1px solid var(--wk-cover-rule);
+  border-bottom: 1px solid var(--wk-cover-rule);
+  color: var(--wk-cover-fg);
+  max-width: 100%;
+}
+
+.wk-cover--has-image .wk-cover__nameplate {
+  filter: drop-shadow(0 2px 10px rgba(0, 0, 0, 0.5));
+}
+
+.wk-cover__issue {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--wk-cover-fg-dim);
+  margin: 0;
+}
+
+.wk-cover--has-image .wk-cover__issue {
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+}
+
+.wk-cover__bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+  width: 100%;
+  max-width: 22ch;
+}
+
+.wk-cover__headline {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: clamp(2rem, 1.4rem + 5vw, 4.25rem);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--wk-cover-fg);
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+
+.wk-cover--type .wk-cover__headline {
+  color: var(--wk-accent);
+}
+
+.wk-cover--has-image .wk-cover__headline {
+  text-shadow: 0 2px 22px rgba(0, 0, 0, 0.55);
+}
+
+/* Coverlines — "Also inside" teasers */
+.wk-cover__coverlines {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.wk-cover__coverlines-label {
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--wk-accent);
+}
+
+.wk-cover--has-image .wk-cover__coverlines-label {
+  color: var(--wk-accent-light, var(--wk-accent));
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+}
+
+.wk-cover__coverlines-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 34ch;
+}
+
+.wk-cover__coverline {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: var(--text-sm);
+  line-height: 1.35;
+  color: var(--wk-cover-fg-dim);
+}
+
+.wk-cover--has-image .wk-cover__coverline {
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.55);
+}
+
+/* Scroll cue — kicker + gently bobbing chevron. It's a real button that also
+   scrolls to Page 1 on click (keyboard-focusable). */
+.wk-cover__cue {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-2) var(--space-3);
+  color: var(--wk-cover-fg);
+  min-height: 44px;
+}
+
+.wk-cover__cue:focus-visible {
+  outline: 2px solid var(--wk-accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.wk-cover__kicker {
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--wk-cover-fg-dim);
+}
+
+.wk-cover--has-image .wk-cover__kicker {
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+}
+
+.wk-cover__chevron {
+  display: block;
+  color: var(--wk-cover-fg);
+  opacity: 0.85;
+  animation: wkCoverBob 2.2s var(--ease-rack, ease-in-out) infinite;
+}
+
+@keyframes wkCoverBob {
+  0%, 100% { transform: translateY(0); opacity: 0.7; }
+  50%      { transform: translateY(5px); opacity: 1; }
+}
+
+/* Image credit / caption pinned in a bottom corner. */
+.wk-cover__credit {
+  position: absolute;
+  right: var(--space-4);
+  bottom: var(--space-3);
+  max-width: min(56ch, 70vw);
+  text-align: right;
+  z-index: 3;
+}
+
+.wk-cover__credit .wk-img-caption {
+  margin: 0;
+  text-align: right;
+  color: rgba(247, 242, 231, 0.66);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+}
+
+.wk-cover__credit .wk-img-caption__credit {
+  color: rgba(247, 242, 231, 0.6);
+}
+
+/* Cold-open entrance for the cover furniture (settles on load). */
+.wk-cover__top,
+.wk-cover__bottom {
+  animation: wkColdOpenFade 900ms var(--ease-cinematic) 200ms both;
+}
+.wk-cover__bottom {
+  animation-delay: 360ms;
+}
+
+@media (max-width: 767px) {
+  .wk-cover__furniture {
+    gap: var(--space-4);
+    padding: clamp(var(--space-4), 6vh, var(--space-6))
+             var(--space-3)
+             clamp(var(--space-4), 6vh, var(--space-5));
+  }
+  .wk-cover__credit {
+    right: var(--space-3);
+    left: var(--space-3);
+    max-width: none;
+  }
+}
+
+/* Very narrow: scale the nameplate lockup down so it never overflows. */
+@media (max-width: 400px) {
+  .wk-cover__nameplate {
+    transform: scale(0.82);
+    transform-origin: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wk-cover__img {
+    animation: none;
+    transform: none;
+    transition: none;
+  }
+  .wk-cover__chevron {
+    animation: none;
+  }
+  .wk-cover__top,
+  .wk-cover__bottom {
+    animation: none;
+  }
 }
