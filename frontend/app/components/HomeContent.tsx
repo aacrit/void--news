@@ -274,7 +274,26 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
     sync(mql.matches);
     const handler = (e: MediaQueryListEvent) => sync(e.matches);
     mql.addEventListener("change", handler);
-    return () => mql.removeEventListener("change", handler);
+    // F6 (bfcache restore): the layout.tsx inline bootstrap stamps data-viewport
+    // ONCE at first paint and the `change` handler above keeps it live on
+    // resize, but NEITHER runs when the browser restores this page from the
+    // back/forward cache (pageshow with persisted=true re-shows the frozen DOM
+    // + JS heap without re-executing the head script or re-running effects). If
+    // the viewport crossed the 767px breakpoint while the page sat in bfcache,
+    // both the `data-viewport` attribute AND the frozen React `isMobile` state
+    // are stale on restore. The feed CSS keys the whole layout off the attribute
+    // ([data-viewport="mobile"] hides .skybox/.hero-slot/.feed-grid/.edition-line;
+    // [data-viewport="desktop"] hides .mf), so a stale value renders the wrong
+    // layout on back-nav: the desktop broadsheet display:none'd on a phone, or
+    // the mobile feed forced full-bleed on desktop (the width cap appears lost).
+    // Re-sync from the LIVE viewport on every pageshow, which fixes both the
+    // attribute and the React state. Idempotent on a normal load (persisted=false).
+    const onPageShow = () => sync(window.matchMedia("(max-width: 767px)").matches);
+    window.addEventListener("pageshow", onPageShow);
+    return () => {
+      mql.removeEventListener("change", handler);
+      window.removeEventListener("pageshow", onPageShow);
+    };
   }, []);
 
   // Active desktop grid column count (matches responsive.css breakpoints:

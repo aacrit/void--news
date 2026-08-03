@@ -1911,22 +1911,22 @@
    On hover / focus-visible the beam tilts and sweeps across the lean spectrum.
    =========================================================================== */
 .sigil-word__ring {
-  stroke: var(--sigil-brass);
+  stroke: var(--sigil-mark, var(--sigil-brass));
 }
 .sigil-word__beam {
-  stroke: var(--sigil-brass);
+  stroke: var(--sigil-mark, var(--sigil-brass));
   transform-box: fill-box;
   transform-origin: center;
-  /* Settle back to level + brass when the pointer leaves. */
+  /* Settle back to level + the product accent (brass fallback) when the pointer leaves. */
   transition: stroke 320ms var(--ease-rack, ease-in-out),
               transform 320ms var(--ease-rack, ease-in-out);
 }
 .sigil-word__beam line {
   stroke: inherit;
 }
-/* Scale foot (post + base) — static brass, does not tilt with the beam. */
+/* Scale foot (post + base) — static product accent (brass fallback), does not tilt with the beam. */
 .sigil-word__foot {
-  stroke: var(--sigil-brass);
+  stroke: var(--sigil-mark, var(--sigil-brass));
 }
 
 /* Continuous gentle sweep while hovered or while an enclosing link/button is
@@ -1943,7 +1943,7 @@ button:focus-visible .sigil-word__beam {
   0%,
   100% {
     transform: rotate(0deg);
-    stroke: var(--sigil-brass);
+    stroke: var(--sigil-mark, var(--sigil-brass));
   }
   25% {
     transform: rotate(-16deg);

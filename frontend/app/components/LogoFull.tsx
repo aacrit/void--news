@@ -24,5 +24,5 @@ interface LogoFullProps {
 }
 
 export default function LogoFull({ height = 28, className, product = "NEWS" }: LogoFullProps) {
-  return <SigilWordmark height={height} className={className} product={product} />;
+  return <SigilWordmark height={height} className={className} product={product} accent={"var(--palette-news)"} />;
 }
