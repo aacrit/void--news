@@ -166,14 +166,6 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
             <span className="msp__link-cmd">Sources</span>
             <span className="msp__link-desc">1,016 curated sources</span>
           </Link>
-          <Link href="/games" className="msp__link" data-accent="neutral" data-msp-cascade="3" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">Games</span>
-            <span className="msp__link-desc">Read between the lines</span>
-          </Link>
-          <Link href="/paper" className="msp__link" data-accent="neutral" data-msp-cascade="3" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">Paper</span>
-            <span className="msp__link-desc">The front page, printed</span>
-          </Link>
 
           {/* Organic ink divider */}
           <svg className="msp__divider" data-msp-cascade="4" viewBox="0 0 200 4" preserveAspectRatio="none" aria-hidden="true">

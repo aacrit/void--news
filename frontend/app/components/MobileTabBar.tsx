@@ -7,23 +7,26 @@ import { hapticMicro } from "../lib/haptics";
 import { BASE_PATH } from "../lib/utils";
 import { AUDIO_ENABLED } from "../lib/audioGate";
 import { useAudio } from "./AudioProvider";
+import ScaleIcon from "./ScaleIcon";
 
 /* ---------------------------------------------------------------------------
    MobileTabBar — Persistent bottom tab bar (mobile only, <768px).
 
-   Five TEXT-label slots (no icons), typography mirrors the desktop masthead
-   spinoffs: Playfair italic with per-product accent colors.
+   A MIX of a brand mark, editorial text, and icons — evenly spaced, each a
+   >=44px tap target:
 
-     Home · Weekly · History · On Air · Menu
+     [Sigil-O]  ·  Weekly  ·  History  ·  [broadcast]  ·  [hamburger]
 
-   - Weekly / History / On Air carry their product accent (same values as the
-     desktop NavBar: History burnt umber, Weekly magazine red, On Air the
-     broadcast red). Home + Menu use the neutral nav color.
-   - On Air reveals the collapsed mini-player when a brief with audio is loaded;
-     otherwise it routes to the dedicated /onair page. It never auto-plays and
-     never opens the full in-page sheet (that IS /onair on mobile).
-   - Menu toggles the MobileSidePanel.
-   - Active route shown via a top accent rule (not an icon).
+   - Home is the standalone Sigil-O brand mark, recolored to the News terracotta
+     (--palette-news) so it matches the masthead. Links to "/".
+   - Weekly / History keep their Playfair-italic labels + product accents
+     (Weekly magazine red, History burnt umber).
+   - On Air is a teal broadcast glyph (--voice-accent, the On Air brand color).
+     It reveals the collapsed mini-player when a brief with audio is loaded;
+     otherwise it routes to the dedicated /onair page. Never auto-plays and never
+     opens the full in-page sheet (that IS /onair on mobile).
+   - Menu is a neutral hamburger glyph; toggles the MobileSidePanel.
+   - Active route shown via a top accent rule (not an icon swap).
    Hidden on desktop via CSS.
    --------------------------------------------------------------------------- */
 
@@ -81,10 +84,17 @@ export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps)
         href="/"
         className={tabClass("home")}
         data-accent="neutral"
+        aria-label="Home"
         aria-current={isActive("home") ? "page" : undefined}
         onClick={() => hapticMicro()}
       >
-        <span className="mtb__label">Home</span>
+        {/* Sigil-O brand mark, recolored to the News terracotta */}
+        <ScaleIcon
+          size={26}
+          animation="none"
+          className="mtb__mark"
+          style={{ ["--sigil-brass" as string]: "var(--palette-news)" }}
+        />
       </Link>
 
       <Link
@@ -115,7 +125,22 @@ export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps)
         aria-label="On Air"
         onClick={handleOnAir}
       >
-        <span className="mtb__label">On Air</span>
+        {/* Broadcast glyph — center dot with concentric radio-wave arcs (teal) */}
+        <svg
+          className="mtb__icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          strokeLinecap="round"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="1.75" fill="currentColor" stroke="none" />
+          <path d="M8.2 8.2 a5.4 5.4 0 0 0 0 7.6" />
+          <path d="M5.1 5.1 a9.8 9.8 0 0 0 0 13.8" />
+          <path d="M15.8 8.2 a5.4 5.4 0 0 1 0 7.6" />
+          <path d="M18.9 5.1 a9.8 9.8 0 0 1 0 13.8" />
+        </svg>
       </button>
 
       <button
@@ -129,7 +154,20 @@ export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps)
           onMoreTap();
         }}
       >
-        <span className="mtb__label">Menu</span>
+        {/* Hamburger glyph — three horizontal bars (neutral) */}
+        <svg
+          className="mtb__icon"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          strokeLinecap="round"
+          aria-hidden="true"
+        >
+          <line x1="4" y1="7" x2="20" y2="7" />
+          <line x1="4" y1="12" x2="20" y2="12" />
+          <line x1="4" y1="17" x2="20" y2="17" />
+        </svg>
       </button>
     </nav>
   );

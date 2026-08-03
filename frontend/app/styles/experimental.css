@@ -31,7 +31,11 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-3);
-  padding: var(--space-2) var(--space-4);
+  padding: var(--space-1) var(--space-4);
+  /* PWA/notch: the banner is the topmost element, so it must clear the status
+     bar itself, otherwise its text + dismiss sit under the notch and the X is
+     untappable. env() is 0 in normal browser tabs, so no effect there. */
+  padding-top: calc(var(--space-1) + env(safe-area-inset-top, 0px));
   background: color-mix(in srgb, var(--accent-warm) 8%, var(--bg-secondary));
   border-bottom: 1px solid color-mix(in srgb, var(--accent-warm) 30%, var(--border-subtle));
 }
@@ -82,6 +86,23 @@
 .exp-banner__dismiss:focus-visible {
   outline: 2px solid var(--fg-accent);
   outline-offset: 2px;
+}
+
+/* Touch: a full 44px tap target so the dismiss is always reachable (the glyph
+   stays visually small; only the hit area grows). */
+@media (pointer: coarse) {
+  .exp-banner__dismiss {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* When the banner is shown it already reserves the notch inset, so the sticky
+   nav must NOT add its own on top, or the status-bar gap is doubled (PWA). */
+@media (max-width: 767px) {
+  body:has(.exp-banner) .nav-header {
+    padding-top: 0;
+  }
 }
 
 /* Wide desktop: enough room in the masthead row to show the posture badge
