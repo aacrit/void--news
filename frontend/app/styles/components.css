@@ -1926,8 +1926,9 @@
 }
 
 /* Continuous gentle sweep while hovered or while an enclosing link/button is
-   keyboard-focused. Left tilt pairs with blue, right tilt with red, passing
-   through level brass at center — the live product Sigil's lean metaphor. */
+   keyboard-focused: left tilt = blue, center = green (consensus), right = red,
+   then back to the accented brass level O. The live product Sigil's lean
+   metaphor. */
 .sigil-word:hover .sigil-word__beam,
 a:focus-visible .sigil-word__beam,
 button:focus-visible .sigil-word__beam {
@@ -1946,7 +1947,7 @@ button:focus-visible .sigil-word__beam {
   }
   50% {
     transform: rotate(0deg);
-    stroke: var(--sigil-brass);
+    stroke: var(--sigil-lean-center);
   }
   75% {
     transform: rotate(16deg);
