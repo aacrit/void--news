@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import LogoIcon from "./LogoIcon";
 import { useAudio } from "./AudioProvider";
 import { hapticLight, hapticConfirm } from "../lib/haptics";
@@ -34,32 +35,35 @@ export default function MobileMiniPlayer() {
     currentTime,
     duration,
     handlePlayPause,
-    hasEverPlayed,
     isExpanded,
     isPlayerVisible,
-    setExpanded,
-    setPlayerVisible,
     contentType,
   } = useAudio();
+  const router = useRouter();
   const isWeekly = contentType === "weekly";
 
-  // Set data-audio-active on body when mini-player becomes visible —
-  // CSS uses this to add bottom padding for the 44px mini-player strip.
+  // Set data-audio-active on body while the mini-player strip is visible —
+  // CSS uses this to add bottom padding for the 44px strip. Visibility is now
+  // driven by isPlayerVisible (set when the reader taps the On Air tab), so the
+  // padding tracks the strip both when it appears and when it is dismissed.
   useEffect(() => {
-    if (hasEverPlayed && brief?.audio_url) {
+    if (isPlayerVisible && brief?.audio_url) {
       document.body.setAttribute("data-audio-active", "true");
+    } else {
+      document.body.removeAttribute("data-audio-active");
     }
-  }, [hasEverPlayed, brief?.audio_url]);
+  }, [isPlayerVisible, brief?.audio_url]);
 
   const displayDuration = brief?.audio_duration_seconds || duration;
   const progress =
     displayDuration > 0 ? (currentTime / displayDuration) * 100 : 0;
 
+  // Expanding the mini-player on mobile navigates to the full /onair page
+  // rather than opening the in-page expanded sheet.
   const handleExpand = useCallback(() => {
     hapticLight();
-    setPlayerVisible(true);
-    setExpanded(true);
-  }, [setPlayerVisible, setExpanded]);
+    router.push("/onair");
+  }, [router]);
 
   const handlePlayPauseClick = useCallback(
     (e: React.MouseEvent) => {
@@ -70,10 +74,12 @@ export default function MobileMiniPlayer() {
     [handlePlayPause]
   );
 
-  // Only show when audio has been started and brief has audio.
+  // Only show once the reader has revealed the player (via the On Air tab) and
+  // a brief with audio is loaded. Nothing appears on load — the auto-show is
+  // suppressed on mobile in AudioProvider.
   // Hide when FloatingPlayer is expanded (they overlap in the same zone).
-  if (!hasEverPlayed || !brief?.audio_url) return null;
-  if (isPlayerVisible && isExpanded) return null;
+  if (!isPlayerVisible || !brief?.audio_url) return null;
+  if (isExpanded) return null;
 
   return (
     <div className={`mmp${isWeekly ? " mmp--weekly" : ""}`} onClick={handleExpand} role="complementary" aria-label="Audio mini-player">

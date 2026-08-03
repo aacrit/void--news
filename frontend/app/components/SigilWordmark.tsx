@@ -104,6 +104,12 @@ export default function SigilWordmark({
           <line x1="9" y1="43" x2="8" y2="57" strokeWidth={5} strokeLinecap="round" />
           <line x1="91" y1="43" x2="92" y2="57" strokeWidth={5} strokeLinecap="round" />
         </g>
+        {/* Scale foot — post + base, static brass. The ring's bottom rests on the
+            text baseline with the other caps; the foot draws BELOW y=91 and, via
+            the svg's overflow:visible, hangs beneath the letters like a descender
+            (the full void lens + sigil). Outside the beam group so it never tilts. */}
+        <line className="sigil-word__foot" x1="50" y1="91" x2="50" y2="112" strokeWidth={6} strokeLinecap="round" />
+        <path className="sigil-word__foot" d="M35 118 C43 113 57 113 65 118" fill="none" strokeWidth={6} strokeLinecap="round" />
       </svg>
       <span style={letter} aria-hidden="true">
         ID

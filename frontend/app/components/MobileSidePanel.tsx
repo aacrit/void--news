@@ -133,23 +133,32 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
           <ScaleIcon size={28} animation="idle" />
         </div>
 
-        {/* Content destinations */}
+        {/* Content destinations — grouped Read / Explore / Participate, with a
+            smaller utility group in the footer. Editorial serif links carry the
+            same per-product accents as the desktop masthead (History umber,
+            Weekly red, Revolt blue, On Air broadcast red); the rest neutral. */}
         <nav className="msp__links" aria-label="Side navigation">
           <span className="msp__section-label" data-msp-cascade="2">Read</span>
-          <Link href="/history" className="msp__link" data-msp-cascade="2" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">History</span>
-            <span className="msp__link-desc">The archive of consequence</span>
+          <Link href="/" className="msp__link" data-accent="neutral" data-msp-cascade="2" onClick={handleLinkClick}>
+            <span className="msp__link-cmd">News</span>
+            <span className="msp__link-desc">Today&rsquo;s feed</span>
           </Link>
-          <Link href="/revolt" className="msp__link" data-msp-cascade="2" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">Revolt</span>
-            <span className="msp__link-desc">The anatomy of revolution</span>
-          </Link>
-          <Link href="/weekly" className="msp__link" data-msp-cascade="2" onClick={handleLinkClick}>
+          <Link href="/weekly" className="msp__link" data-accent="weekly" data-msp-cascade="2" onClick={handleLinkClick}>
             <span className="msp__link-cmd">Weekly</span>
             <span className="msp__link-desc">The week in review</span>
           </Link>
-          {/* /paper hidden from nav per CEO 2026-05-15 — not production-ready.
-              Route still resolves at /paper for direct URL access. */}
+          <Link href="/history" className="msp__link" data-accent="history" data-msp-cascade="2" onClick={handleLinkClick}>
+            <span className="msp__link-cmd">History</span>
+            <span className="msp__link-desc">The archive of consequence</span>
+          </Link>
+          <Link href="/revolt" className="msp__link" data-accent="revolt" data-msp-cascade="2" onClick={handleLinkClick}>
+            <span className="msp__link-cmd">Revolt</span>
+            <span className="msp__link-desc">The anatomy of revolution</span>
+          </Link>
+          <Link href="/onair" className="msp__link" data-accent="onair" data-msp-cascade="2" onClick={handleLinkClick}>
+            <span className="msp__link-cmd">On Air</span>
+            <span className="msp__link-desc">The audio broadcast</span>
+          </Link>
 
           {/* Organic ink divider */}
           <svg className="msp__divider" data-msp-cascade="3" viewBox="0 0 200 4" preserveAspectRatio="none" aria-hidden="true">
@@ -157,15 +166,17 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
           </svg>
 
           <span className="msp__section-label" data-msp-cascade="3">Explore</span>
-          <Link href="/sources" className="msp__link" data-msp-cascade="3" onClick={handleLinkClick}>
+          <Link href="/sources" className="msp__link" data-accent="neutral" data-msp-cascade="3" onClick={handleLinkClick}>
             <span className="msp__link-cmd">Sources</span>
             <span className="msp__link-desc">1,016 curated sources</span>
           </Link>
-          {/* /games hidden from nav per CEO 2026-05-15 — not production-ready.
-              Route still resolves at /games for direct URL access. */}
-          <Link href="/about" className="msp__link" data-msp-cascade="3" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">About</span>
-            <span className="msp__link-desc">See through the void</span>
+          <Link href="/games" className="msp__link" data-accent="neutral" data-msp-cascade="3" onClick={handleLinkClick}>
+            <span className="msp__link-cmd">Games</span>
+            <span className="msp__link-desc">Read between the lines</span>
+          </Link>
+          <Link href="/paper" className="msp__link" data-accent="neutral" data-msp-cascade="3" onClick={handleLinkClick}>
+            <span className="msp__link-cmd">Paper</span>
+            <span className="msp__link-desc">The front page, printed</span>
           </Link>
 
           {/* Organic ink divider */}
@@ -174,10 +185,19 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
           </svg>
 
           <span className="msp__section-label" data-msp-cascade="4">Participate</span>
-          <Link href="/ship" className="msp__link" data-msp-cascade="4" onClick={handleLinkClick}>
+          <Link href="/ship" className="msp__link" data-accent="neutral" data-msp-cascade="4" onClick={handleLinkClick}>
             <span className="msp__link-cmd">Ship</span>
             <span className="msp__link-desc">Request it, vote, watch it ship</span>
           </Link>
+
+          {/* Utility group — smaller, quieter type */}
+          <div className="msp__util" data-msp-cascade="5">
+            <Link href="/about" className="msp__util-link" onClick={handleLinkClick}>About</Link>
+            <span className="msp__util-sep" aria-hidden="true">&middot;</span>
+            <Link href="/press" className="msp__util-link" onClick={handleLinkClick}>Press</Link>
+            <span className="msp__util-sep" aria-hidden="true">&middot;</span>
+            <Link href="/privacy" className="msp__util-link" onClick={handleLinkClick}>Privacy</Link>
+          </div>
         </nav>
 
         {/* Theme toggle removed per Kill List — theme auto-detects from prefers-color-scheme.

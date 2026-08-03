@@ -375,9 +375,17 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
     [isPlaying, audioError]
   );
 
-  // Auto-show player when brief has audio
+  // Auto-show player when brief has audio — DESKTOP ONLY. On mobile (<768px)
+  // the auto-show is suppressed so nothing audio-related appears until the
+  // reader taps the On Air tab. The brief TEXT (TL;DR / Opinion pill) still
+  // loads and renders independently of this (see the fetch effect above).
   useEffect(() => {
-    if (brief?.audio_url) setPlayerVisible(true);
+    if (!brief?.audio_url) return;
+    const isMobile =
+      typeof window !== "undefined" &&
+      window.matchMedia("(max-width: 767px)").matches;
+    if (isMobile) return;
+    setPlayerVisible(true);
   }, [brief]);
 
   /** Load a previous episode — swap audio source and reset playback state.
