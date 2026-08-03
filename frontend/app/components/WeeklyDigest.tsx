@@ -357,27 +357,6 @@ function CoverFeatureImage({
   );
 }
 
-/* Small Week-in-Brief thumbnail (magazine index look). Fixed aspect-ratio in
-   CSS prevents CLS; fades in on load, hides cleanly on error. */
-function BriefThumb({ imageUrl }: { imageUrl: string }) {
-  const [loaded, setLoaded] = useState(false);
-  const [error, setError] = useState(false);
-  if (error) return null;
-  return (
-    <div className="wk-brief__thumb">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={imageUrl}
-        alt=""
-        className={`wk-brief__thumb-img${loaded ? " wk-brief__thumb-img--loaded" : ""}`}
-        loading="lazy"
-        onLoad={() => setLoaded(true)}
-        onError={() => setError(true)}
-      />
-    </div>
-  );
-}
-
 function CoverBody({
   stories,
 }: {
@@ -540,9 +519,8 @@ function BriefList({ stories }: { stories: WeeklyRecapStory[] }) {
         {stories.map((story, i) => (
           <article
             key={i}
-            className={`wk-brief__item${story.image_url ? " wk-brief__item--has-thumb" : ""}`}
+            className="wk-brief__item"
           >
-            {story.image_url && <BriefThumb imageUrl={story.image_url} />}
             <div className="wk-brief__body">
               {story.headline?.trim() && <h3 className="wk-brief__headline">{story.headline}</h3>}
               <p className="wk-brief__summary">{story.summary}</p>
@@ -774,40 +752,35 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
               edition={digest.edition}
             />
 
-            {/* B. Cover Hero */}
-            <CoverHero
-              headline={digest.cover_headline || (digest.cover_text?.[0]?.headline ?? "")}
-              imageUrl={digest.cover_image_url}
-              imageAttribution={digest.cover_image_attribution}
-            />
-
-            {/* C. Cover zone — the week's top stories run in the main column;
-                the argued void --Editorial is pinned in a right rail that spans
-                their full height (magazine feel). Rail drops below on mobile. */}
-            {(digest.cover_text?.length || digest.opinion_text) && (
-              <div
-                className={`wk-cover-zone${
-                  digest.opinion_text && digest.cover_text?.length
-                    ? ""
-                    : " wk-cover-zone--no-rail"
-                }`}
-              >
+            {/* B + C. Cover zone — the top story (hero) and the cover features
+                run in the main column; the argued Editorial is pinned in a right
+                rail beside them, aligned to the top-story headline (magazine
+                feel). Rail drops below on mobile. */}
+            <div
+              className={`wk-cover-zone${
+                digest.opinion_text ? "" : " wk-cover-zone--no-rail"
+              }`}
+            >
+              <div className="wk-cover-zone__main">
+                <CoverHero
+                  headline={digest.cover_headline || (digest.cover_text?.[0]?.headline ?? "")}
+                  imageUrl={digest.cover_image_url}
+                  imageAttribution={digest.cover_image_attribution}
+                />
                 {digest.cover_text && digest.cover_text.length > 0 && (
-                  <div className="wk-cover-zone__main">
-                    <CoverBody stories={digest.cover_text} />
-                  </div>
-                )}
-                {digest.opinion_text && (
-                  <aside className="wk-cover-zone__rail">
-                    <SectionEditorial
-                      headline={digest.opinion_headline}
-                      text={digest.opinion_text}
-                      lean={digest.opinion_lean}
-                    />
-                  </aside>
+                  <CoverBody stories={digest.cover_text} />
                 )}
               </div>
-            )}
+              {digest.opinion_text && (
+                <aside className="wk-cover-zone__rail">
+                  <SectionEditorial
+                    headline={digest.opinion_headline}
+                    text={digest.opinion_text}
+                    lean={digest.opinion_lean}
+                  />
+                </aside>
+              )}
+            </div>
 
             <RevealFlourish />
 
