@@ -647,3 +647,44 @@
     transition: none;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   F12 — Lead Sigil must not steal the card's click target
+   ---------------------------------------------------------------------------
+   The lead headline (.lead-headline, LeadStory split layout) is a block <h1>,
+   so the inline-flex Sigil established an oversized inline line box (the xl mark
+   is 72px tall) that overlapped the headline text on the line above it. The
+   Sigil sits at z-index:10 with pointer-events:auto (so its own bias popup works
+   on hover/tap), so that invisible overlap captured clicks meant for the
+   stretch-link and blocked the Deep Dive on the lead card.
+
+   Fix: lay the lead headline out as flex, exactly like the working
+   .story-card__headline (components.css), so the Sigil becomes a compact,
+   top-aligned, non-shrinking flex item BESIDE the headline text rather than an
+   overlapping inline box. The text fills the row and stays under the stretch-
+   link (click -> Deep Dive); the Sigil keeps its own contained hit region
+   (click -> bias popup). No pixel is claimed by both. Desktop-only: MobileFeed
+   does not render .lead-headline. */
+.lead-headline {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* Title text (the first, unclassed <span> in the split lead headline) fills the
+   row so the Sigil/badge/caret sit to its side, not stacked over its text. */
+.lead-headline > span:first-child {
+  flex: 1 1 12ch;
+  min-width: 0;
+}
+
+/* Compact, top-aligned Sigil — mirrors the .story-card__headline .sigil rule so
+   the mark + lean label stack vertically and the box hugs its own content. */
+.lead-headline .sigil {
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  align-self: flex-start;
+}

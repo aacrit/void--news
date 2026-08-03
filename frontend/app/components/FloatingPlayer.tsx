@@ -74,6 +74,7 @@ export default function FloatingPlayer() {
     handlePlayPause, handleSeek,
     playbackSpeed, cycleSpeed, skipForward, skipBackward, seekTo,
     isPlayerVisible, setPlayerVisible,
+    isExpanded, setExpanded,
     previousEpisodes, loadEpisode, contentType,
   } = state;
   const isWeekly = contentType === "weekly";
@@ -94,14 +95,35 @@ export default function FloatingPlayer() {
     return grouped;
   }, [previousEpisodes]);
 
-  // On mobile, skip compact pill (hidden via CSS) — open expanded directly
+  // On mobile the persistent COLLAPSED state is the MobileMiniPlayer strip
+  // (the compact pill is display:none on phones). The big expanded console must
+  // open ONLY on explicit user intent — isExpanded, set when the reader taps the
+  // mini-player — never merely because the brief auto-loaded and made the player
+  // visible. Auto-expanding on isPlayerVisible was the F2 blocker: a full sheet
+  // covered ~35% of the viewport before any playback. isExpanded now drives the
+  // mobile view both ways, so minimize/dismiss return cleanly to the mini strip.
   useEffect(() => {
-    if (!isPlayerVisible) return;
     const isMobile = window.matchMedia("(max-width: 767px)").matches;
-    if (isMobile && view === "compact") {
+    if (!isMobile) return;
+    if (isExpanded && view === "compact") {
       setView("expanded");
+    } else if (!isExpanded && view !== "compact") {
+      setView("compact");
     }
-  }, [isPlayerVisible, view]);
+  }, [isExpanded, view]);
+
+  // Desktop: reserve a bottom gutter so the fixed compact pill never covers the
+  // end of page content (/ship, /about, /sources — F10). floating-player.css
+  // consumes html[data-fp-pill] to pad the document body on >=768px. Mobile is
+  // unaffected: the compact pill is display:none there and the mini strip owns
+  // its own spacing via body[data-audio-active].
+  useEffect(() => {
+    const showPill = view === "compact" && isPlayerVisible && !!brief?.audio_url;
+    const root = document.documentElement;
+    if (showPill) root.setAttribute("data-fp-pill", "");
+    else root.removeAttribute("data-fp-pill");
+    return () => root.removeAttribute("data-fp-pill");
+  }, [view, isPlayerVisible, brief?.audio_url]);
   const playerRef = useRef<HTMLDivElement>(null);
 
   /* ---- VU Meter: 16 bars, audio-reactive via Web Audio + CSS fallback ---- */
@@ -217,7 +239,11 @@ export default function FloatingPlayer() {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault();
-        if (view === "broadcast") {
+        const isMobile = window.matchMedia("(max-width: 767px)").matches;
+        if (isMobile) {
+          // Collapse back to the mini-player strip (isExpanded drives the view).
+          setExpanded(false);
+        } else if (view === "broadcast") {
           const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
           if (isDesktop) {
             setClosing(true);
@@ -226,15 +252,13 @@ export default function FloatingPlayer() {
             setView("compact");
           }
         } else {
-          const isMobile = window.matchMedia("(max-width: 767px)").matches;
-          if (isMobile) setPlayerVisible(false);
-          else setView("compact");
+          setView("compact");
         }
       }
     };
     document.addEventListener("keydown", handleEsc);
     return () => document.removeEventListener("keydown", handleEsc);
-  }, [view, setPlayerVisible]);
+  }, [view, setExpanded]);
 
   if (!brief || !brief.audio_url || !isPlayerVisible) return null;
 
@@ -283,8 +307,8 @@ export default function FloatingPlayer() {
     hapticLight();
     const isMobile = typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches;
     if (isMobile) {
-      // On mobile, compact is hidden — dismiss player entirely
-      setPlayerVisible(false);
+      // Minimize back to the persistent mini-player strip (not a full dismiss).
+      setExpanded(false);
     } else {
       setView("compact");
     }
@@ -298,6 +322,7 @@ export default function FloatingPlayer() {
       setTimeout(() => { setClosing(false); setView("compact"); setPlayerVisible(false); }, 300);
     } else {
       setPlayerVisible(false);
+      setExpanded(false);
       setView("compact");
     }
   };
@@ -325,10 +350,10 @@ export default function FloatingPlayer() {
       if (view === "broadcast") {
         setView("expanded");
       } else {
-        // On mobile, dismiss entirely; on desktop, go to compact
+        // On mobile, minimize to the mini strip; on desktop, go to compact.
         const isMobile = window.matchMedia("(max-width: 767px)").matches;
         if (isMobile) {
-          setPlayerVisible(false);
+          setExpanded(false);
         } else {
           setView("compact");
         }
@@ -450,7 +475,7 @@ export default function FloatingPlayer() {
               <span className="fp__bar-title">{isWeekly ? "Weekly" : "On Air"}</span>
               <span className={`fp__status${isPlaying ? " fp__status--live" : ""}`}>
                 <span className="fp__status-dot" />
-                <span className="fp__status-label">{isPlaying ? "ON AIR" : "OFFLINE"}</span>
+                <span className="fp__status-label">{isPlaying ? "ON AIR" : "On demand"}</span>
               </span>
               {audioError && <span className="fp__bar-error">Unavailable</span>}
             </div>
@@ -512,7 +537,7 @@ export default function FloatingPlayer() {
               </div>
               <span className={`fp__status${isPlaying ? " fp__status--live" : ""}`}>
                 <span className="fp__status-dot" />
-                <span className="fp__status-label">{isPlaying ? "ON AIR" : "OFFLINE"}</span>
+                <span className="fp__status-label">{isPlaying ? "ON AIR" : "On demand"}</span>
               </span>
             </div>
             <div className="fp__bar-actions">

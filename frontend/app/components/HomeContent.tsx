@@ -253,13 +253,48 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
     );
   }, []);
 
-  // Detect mobile for feed layout — responsive to viewport changes
+  // Detect mobile for feed layout — responsive to viewport changes.
+  // F5: keep React state AND the documentElement `data-viewport` attribute in
+  // sync with the live viewport on every resize. The layout.tsx inline script
+  // stamps data-viewport ONCE before first paint but never updates it, while the
+  // feed CSS keys `.mf` (MobileFeed) vs `.feed-grid` (desktop) visibility off it
+  // ([data-viewport="mobile"] .feed-grid { display:none } and the mirror rule).
+  // A live resize across 767px flips this React branch (MobileFeed <-> desktop
+  // grid) but left data-viewport stale, so CSS hid the newly-rendered feed and
+  // every card vanished until a fresh navigation re-ran the inline script. The
+  // loaded `stories` state survives the resize (deps are [activeEdition,
+  // retryKey], so no refetch/remount), so syncing the attribute is all that is
+  // needed to keep the cards on screen through the breakpoint switch.
   useEffect(() => {
     const mql = window.matchMedia("(max-width: 767px)");
-    setIsMobile(mql.matches);
-    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    const sync = (matches: boolean) => {
+      setIsMobile(matches);
+      document.documentElement.setAttribute("data-viewport", matches ? "mobile" : "desktop");
+    };
+    sync(mql.matches);
+    const handler = (e: MediaQueryListEvent) => sync(e.matches);
     mql.addEventListener("change", handler);
     return () => mql.removeEventListener("change", handler);
+  }, []);
+
+  // Active desktop grid column count (matches responsive.css breakpoints:
+  // 768->2, 1024->3, 1440->4; mobile is single-column). Used by F15 to balance
+  // the collapsed grid so the last row never leaves a single-card orphan.
+  const [gridColumns, setGridColumns] = useState(1);
+  useEffect(() => {
+    const q4 = window.matchMedia("(min-width: 1440px)");
+    const q3 = window.matchMedia("(min-width: 1024px)");
+    const q2 = window.matchMedia("(min-width: 768px)");
+    const compute = () => setGridColumns(q4.matches ? 4 : q3.matches ? 3 : q2.matches ? 2 : 1);
+    compute();
+    q4.addEventListener("change", compute);
+    q3.addEventListener("change", compute);
+    q2.addEventListener("change", compute);
+    return () => {
+      q4.removeEventListener("change", compute);
+      q3.removeEventListener("change", compute);
+      q2.removeEventListener("change", compute);
+    };
   }, []);
 
   // Cmd+K / Ctrl+K to open search
@@ -364,38 +399,74 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
         // per-edition rank columns were dropped by migration 061).
         const rankColumn = "rank_world" as const;
 
-        let res;
-        let usingEnriched = true;
-
-        res = await supabase
-          .from("story_clusters")
-          .select(enrichedFields)
-          .contains("sections", [activeEdition])
-          .order(rankColumn, { ascending: false })
-          .limit(FETCH_LIMIT);
-
-        // If enriched query failed (columns don't exist — e.g. is_international
-        // missing on older schema), retry with the smaller enriched set minus
-        // is_international before bottoming out at base.
-        if (res.error) {
-          res = await supabase
+        /* eslint-disable @typescript-eslint/no-explicit-any */
+        // One feed query with tiered field fallback: enriched -> enriched-minus-
+        // is_international (older schema) -> base. Returns the PostgREST result
+        // plus which field set won so downstream mapping knows what's present.
+        const runFeedQuery = async (): Promise<{ res: any; enriched: boolean }> => {
+          let enriched = true;
+          let r: any = await supabase!
             .from("story_clusters")
-            .select(enrichedFields.replace(",is_international", ""))
+            .select(enrichedFields)
             .contains("sections", [activeEdition])
             .order(rankColumn, { ascending: false })
             .limit(FETCH_LIMIT);
-        }
-        if (res.error) {
-          usingEnriched = false;
-          res = await supabase
-            .from("story_clusters")
-            .select(baseFields)
-            .contains("sections", [activeEdition])
-            .order("first_published", { ascending: false })
-            .limit(FETCH_LIMIT);
-        }
+          if (r.error) {
+            r = await supabase!
+              .from("story_clusters")
+              .select(enrichedFields.replace(",is_international", ""))
+              .contains("sections", [activeEdition])
+              .order(rankColumn, { ascending: false })
+              .limit(FETCH_LIMIT);
+          }
+          if (r.error) {
+            enriched = false;
+            r = await supabase!
+              .from("story_clusters")
+              .select(baseFields)
+              .contains("sections", [activeEdition])
+              .order("first_published", { ascending: false })
+              .limit(FETCH_LIMIT);
+          }
+          return { res: r, enriched };
+        };
 
-        if (controller.signal.aborted) return;
+        // F1: the sole homepage feed query intermittently 500s (PostgREST) and,
+        // when it does, previously blanked the page with no signal. Retry with
+        // exponential backoff (400ms, 900ms) on error OR empty before giving up,
+        // so a transient failure or a mid-write empty read self-heals. A genuine
+        // empty (pipeline mid-run) simply exhausts the retries and falls through
+        // to the "warming up" state below; a persistent error surfaces the
+        // distinct failed state (visible editorial line + Retry button).
+        const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+        const BACKOFF_MS = [400, 900];
+        let res: any = null;
+        let usingEnriched = true;
+        for (let attempt = 0; attempt < 3; attempt++) {
+          const out = await runFeedQuery();
+          if (controller.signal.aborted) return;
+          res = out.res;
+          usingEnriched = out.enriched;
+          const rowCount = res.error ? 0 : (res.data?.length ?? 0);
+          if (!res.error && rowCount > 0) break;
+          if (attempt < BACKOFF_MS.length) {
+            await sleep(BACKOFF_MS[attempt]);
+            if (controller.signal.aborted) return;
+          }
+        }
+        /* eslint-enable @typescript-eslint/no-explicit-any */
+
+        // Persistent failure after all retries — surface a visible, on-brand
+        // failed state rather than a blank feed. If cached stories are already
+        // on screen (repeat visitor), keep them and fail silently in the
+        // background instead of replacing content with an error.
+        if (!res || res.error) {
+          if (!hasCachedData) {
+            setError("Today's edition is taking a moment to load.");
+          }
+          setIsLoading(false);
+          return;
+        }
 
         const clusters = res.data || [];
 
@@ -705,6 +776,20 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
   const twinLeads = mainStories.slice(0, 2);
   const gridStories = mainStories.slice(2);
 
+  // F15: in the collapsed default view, avoid a single-card orphan on the last
+  // grid row (which leaves 2 empty cells + a lopsided seam at 1024/3-col). When
+  // the grid would end with exactly one card alone for the active column count,
+  // hold that one card back until the reader expands the feed. Only a lone
+  // orphan (remainder of 1) is trimmed; a 2-card tail reads as balanced and is
+  // left intact. Never trims when expanded or on mobile (single column). This is
+  // a prefix slice, so each card keeps its true index (rank = idx + 2).
+  const displayGridStories = useMemo(() => {
+    if (feedExpanded || isMobile || gridColumns < 2) return gridStories;
+    if (gridStories.length % gridColumns === 1) return gridStories.slice(0, -1);
+    return gridStories;
+  }, [gridStories, feedExpanded, isMobile, gridColumns]);
+  const orphanHeldBack = gridStories.length - displayGridStories.length;
+
   // --- Inline Deep Dive split ----------------------------------------------
   // When a story is open, the feed splits around it so the expanded block
   // renders full-width in the document flow. Inline is the only Deep Dive mode
@@ -835,20 +920,24 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
             {/* Loading skeleton */}
             {isLoading && <LoadingSkeleton />}
 
-            {/* Error state */}
+            {/* Failed state (F1) — distinct from "genuinely empty" below. Shows
+                only after the feed query exhausts its retries with a persistent
+                error and no cached edition is on screen. On-brand editorial line
+                plus a Retry that re-runs the fetch via retryKey. No blank page. */}
             {error && !isLoading && (
-              <div className="empty-state">
+              <div className="empty-state" role="alert">
+                <LogoIcon size={56} animation="idle" />
                 <h2 className="text-xl" style={{ color: "var(--fg-primary)", marginBottom: "var(--space-3)" }}>
-                  Unable to load stories
-                </h2>
-                <p className="text-base" style={{ color: "var(--fg-tertiary)", marginBottom: "var(--space-4)" }}>
                   {error}
+                </h2>
+                <p className="text-base" style={{ color: "var(--fg-tertiary)", lineHeight: 1.6, marginBottom: "var(--space-4)" }}>
+                  The wire hiccuped on its way to the page. One more try usually sets it right.
                 </p>
                 <button
                   className="btn-primary"
                   onClick={() => setRetryKey((k) => k + 1)}
                 >
-                  Try again
+                  Retry
                 </button>
               </div>
             )}
@@ -951,7 +1040,7 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
                       </React.Fragment>
                     ) : (
                       <section key={`grid-${filterKey}`} aria-label="Stories" className={`feed-grid${isEditionSwitch ? " anim-content-arrive" : ""}${inlineActive ? " feed-grid--recede" : ""}`}>
-                        {gridStories.map((story, idx) => renderGridCard(story, idx))}
+                        {displayGridStories.map((story, idx) => renderGridCard(story, idx))}
                       </section>
                     )
                   )}
@@ -961,7 +1050,7 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
                       disclosure of the remaining curated stories before the
                       international overflow. Hidden when already expanded
                       or when there's nothing more to reveal. */}
-                  {!feedExpanded && hiddenMainCount > 0 && (
+                  {!feedExpanded && (hiddenMainCount + orphanHeldBack) > 0 && (
                     <div className="feed-expand">
                       <button
                         type="button"
@@ -970,9 +1059,9 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
                           hapticLight();
                           setFeedExpanded(true);
                         }}
-                        aria-label={`Show ${hiddenMainCount} more stories`}
+                        aria-label={`Show ${hiddenMainCount + orphanHeldBack} more stories`}
                       >
-                        Show {hiddenMainCount} more
+                        Show {hiddenMainCount + orphanHeldBack} more
                       </button>
                     </div>
                   )}

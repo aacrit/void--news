@@ -69,10 +69,17 @@
 
   /* Foreground accent — warm editorial accent for badges, active states, and
      small accent TEXT (kickers, the experimental badge/banner link). Deepened
-     from #946B15 to clear WCAG AA 4.5:1 as text on the warm paper tints
-     (banner ~5.6:1, kickers ~6:1). --accent-warm keeps #946B15 for tints,
-     borders, and focus outlines, which only need 3:1. */
-  --fg-accent: #7A5810;
+     to clear WCAG AA 4.5:1 as small (10px) text on every warm-paper surface,
+     including the amber-TINTED grounds these micro-labels sit on (the exp badge
+     mixes 10% --accent-warm into the ground; the banner 8%), where the old
+     #7A5810 fell to ~3.2-4.6:1. Measured for #6B4C0E:
+       page cream  #F0EBDD ...... 6.62:1
+       card cream  #F5F0E4 ...... 6.93:1
+       exp badge (10% amber tint) ~5.9:1
+       exp banner ( 8% amber tint) ~5.6:1
+     Stays a warm brass (same hue family as #7A5810), not muddy. --accent-warm
+     keeps #946B15 for tints, borders, and focus outlines, which only need 3:1. */
+  --fg-accent: #6B4C0E;
 
   /* Terracotta action accent — CTA buttons in the onboarding / user-journey
      tiles. Ink-splash fill; foreground is warm paper (never #fff on cream, the
@@ -598,7 +605,10 @@
   /* Warm accent — focus indicators, accessibility outlines */
   --accent-warm: #D4A574;
 
-  /* Foreground accent — warm editorial accent for badges, active states */
+  /* Foreground accent — warm editorial accent for badges, active states.
+     Re-verified for small (10px) text on walnut: #D4A574 gives 7.80:1 on
+     --bg-primary (#1C1A17) and ~6.1:1 on the amber-tinted exp badge/banner
+     grounds, all clear of WCAG AA 4.5:1. Unchanged. */
   --fg-accent: #D4A574;
 
   /* Terracotta action accent — reads as an ember on the dark ground while

@@ -21,6 +21,10 @@ import LogoFull from "../components/LogoFull";
 import LogoIcon from "../components/LogoIcon";
 import Footer from "../components/Footer";
 import { getEditionTimeOfDay, getEditionTimestamp } from "../lib/utils";
+// Canonical curated-source total (data/sources.json — verified). Single source
+// of truth so the /sources header, the finale hero, and the About page can't
+// drift apart (F9). Live DB row count can include inactive/duplicate rows.
+import { SOURCE_TIERS } from "../film/data";
 import ErrorBoundary from "../components/ErrorBoundary";
 import { useInView } from "../lib/sharedObserver";
 
@@ -631,8 +635,29 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
                   >
                     <span className="meth-picker__icon">
                       {favicon ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={favicon} alt="" width={16} height={16} loading="lazy" className="meth-picker__favicon" />
+                        <>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={favicon}
+                            alt=""
+                            width={16}
+                            height={16}
+                            loading="lazy"
+                            className="meth-picker__favicon"
+                            onError={(e) => {
+                              // Silent, graceful swap to the letter monogram.
+                              // No console.log — the error event is handled here
+                              // so it never surfaces as an uncaught error (F7).
+                              const t = e.currentTarget;
+                              t.style.display = "none";
+                              const fb = t.nextElementSibling as HTMLElement | null;
+                              if (fb) fb.style.display = "flex";
+                            }}
+                          />
+                          <span className="meth-picker__fallback" style={{ display: "none" }}>
+                            {article.source?.name?.charAt(0) ?? "?"}
+                          </span>
+                        </>
                       ) : (
                         <span className="meth-picker__fallback">{article.source?.name?.charAt(0) ?? "?"}</span>
                       )}
@@ -719,7 +744,7 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
         <div className="meth-finale">
           {/* Hero count — giant ink circle around source number */}
           <div className="meth-finale__hero">
-            <span className="meth-finale__count">{sources.length || 1013}</span>
+            <span className="meth-finale__count">{SOURCE_TIERS.total.toLocaleString()}</span>
             <span className="meth-finale__subtitle">Hand-Curated Sources</span>
           </div>
 
@@ -737,8 +762,27 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
                     style={{ "--river-y": `${yOffset}px`, "--river-delay": `${i * 20}ms` } as React.CSSProperties}
                   >
                     {fav ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={fav} alt="" width={18} height={18} loading="lazy" className="meth-river__fav-img" />
+                      <>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={fav}
+                          alt=""
+                          width={18}
+                          height={18}
+                          loading="lazy"
+                          className="meth-river__fav-img"
+                          onError={(e) => {
+                            // Silent, graceful swap to the letter monogram (F7).
+                            const t = e.currentTarget;
+                            t.style.display = "none";
+                            const fb = t.nextElementSibling as HTMLElement | null;
+                            if (fb) fb.style.display = "flex";
+                          }}
+                        />
+                        <span className="meth-river__fav-letter" style={{ display: "none" }}>
+                          {s.name.charAt(0)}
+                        </span>
+                      </>
                     ) : (
                       <span className="meth-river__fav-letter">{s.name.charAt(0)}</span>
                     )}
@@ -912,7 +956,7 @@ function SourcesPageInner() {
         <div className="sources-toolbar">
           <div className="sources-toolbar__text">
             <h1 className="sources-toolbar__title" title="Sources">
-              <span className="sources-toolbar__count">{sources.length}</span> Sources
+              <span className="sources-toolbar__count">{SOURCE_TIERS.total.toLocaleString()}</span> Sources
             </h1>
           </div>
         </div>

@@ -70,7 +70,12 @@ export default function OnAirPage() {
   const inOpinion = opinionStart != null && a.currentTime >= opinionStart;
 
   const episodes = a.previousEpisodes;
-  const voiceLabel = brief?.audio_voice_label || "Two voices";
+  // The roster is locked to two voices (Brian + Ava). The stored
+  // audio_voice_label can carry a stale count from the old three-voice era
+  // ("Three voices"), which the .onair__voices kicker uppercases into a
+  // "THREE VOICES" label that contradicts the "two voices" subtitle. Render the
+  // truthful count instead of trusting that field. (F8)
+  const voiceLabel = "Two voices";
 
   const leanKey = (brief?.opinion_lean || "").toLowerCase();
   const leanLabel = LEAN_LABEL[leanKey] || null;

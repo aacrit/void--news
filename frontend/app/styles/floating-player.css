@@ -19,6 +19,34 @@
   --fp-amber: var(--cin-amber, var(--accent-warm));
 }
 
+/* ---------------------------------------------------------------------------
+   F2 — never layer over an open overlay
+   The player sits at --z-player (60), above the mobile side panel
+   (.msp, --z-overlay 50). While the nav side panel is open the player must
+   not cover it, so it hides for as long as the panel is open. (.msp--open
+   exists only on phones, so this is inert on desktop.) The mini strip
+   (.mmp, --z-nav 20) already sits below the panel and its backdrop, and the
+   Deep Dive is in-flow content the mini strip clears via body[data-audio-active].
+   --------------------------------------------------------------------------- */
+body:has(.msp--open) .fp {
+  display: none !important;
+}
+
+/* ---------------------------------------------------------------------------
+   F10 — desktop bottom safe-gutter
+   The fixed compact pill (bottom-left) otherwise sits on top of the final
+   rows of content at the end of long routes (/ship, /about, /sources). When
+   the pill is present the player sets html[data-fp-pill]; here we pad the
+   document body so the last content clears the pill. Desktop only — on phones
+   the compact pill is display:none and the mini strip owns its own spacing.
+   Scoped to this file; no shared layout/token file is touched.
+   --------------------------------------------------------------------------- */
+@media (min-width: 768px) {
+  html[data-fp-pill] body {
+    padding-bottom: var(--player-safe-gutter, 92px);
+  }
+}
+
 /* ── Compact pill — bottom-left ── */
 .fp--compact {
   bottom: var(--space-4);
@@ -282,7 +310,7 @@
   color: var(--indicator-broadcast);
 }
 
-/* ON AIR / OFFLINE status indicator */
+/* ON AIR (playing) / On demand (paused) status indicator */
 .fp__status {
   display: inline-flex;
   align-items: center;
