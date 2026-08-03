@@ -88,6 +88,7 @@
      brass = center, red = right), mirroring the live product Sigil. */
   --sigil-brass: #946B15;
   --sigil-lean-left: #3F72B0;
+  --sigil-lean-center: #3E7C57;
   --sigil-lean-right: #B0433B;
 
   /* Terracotta action accent — CTA buttons in the onboarding / user-journey
@@ -623,6 +624,7 @@
   /* Sigil brand-mark brass — aged brass reads as pale gold on walnut. */
   --sigil-brass: #D4A574;
   --sigil-lean-left: #6098D8;
+  --sigil-lean-center: #6FB98C;
   --sigil-lean-right: #D46A62;
 
   /* Terracotta action accent — reads as an ember on the dark ground while
