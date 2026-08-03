@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const r = MOCK_REVOLUTIONS.find((x) => x.slug === slug);
   const title = r?.title ?? slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
   return {
-    title: `${title} — void --revolt`,
+    title: `${title} | Revolt`,
     description: HOOKS[slug] ?? r?.subtitle ?? 'The anatomy of a revolution.',
   };
 }

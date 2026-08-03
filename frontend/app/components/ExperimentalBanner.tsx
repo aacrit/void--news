@@ -37,7 +37,7 @@ export default function ExperimentalBanner() {
   return (
     <div className="exp-banner" role="region" aria-label="Experimental notice">
       <p className="exp-banner__text">
-        void --news is experimental. Things will change.{" "}
+        Void News is experimental. Things will change.{" "}
         <Link href="/ship" className="exp-banner__link">
           Tell us what breaks.
         </Link>

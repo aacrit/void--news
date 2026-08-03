@@ -54,19 +54,19 @@ function WorldGrid({ worlds }: { worlds: ProductWorld[] }) {
   return (
     <ul className="about-x__worlds">
       {worlds.map((p) => (
-        <li key={p.cli}>
+        <li key={p.name}>
           <Link
             href={p.href}
             className="about-x__world"
             style={{ "--acc-l": p.accentLight, "--acc-d": p.accentDark } as React.CSSProperties}
           >
-            <span className="about-x__world-cli">{p.cli}</span>
             <span className="about-x__world-name">
               {p.name}
               {p.comingSoon && (
                 <span className="about-x__world-soon" title={p.soonNote}>Coming soon</span>
               )}
             </span>
+            <span className="about-x__world-subtitle">{p.subtitle}</span>
             <span className="about-x__world-desc">{p.desc}</span>
           </Link>
         </li>
@@ -87,7 +87,7 @@ function PageExperience() {
       <header className="about-x__hero">
         <div className="about-x__hero-mark"><LogoIcon size={108} animation="idle" /></div>
         <h1 className="about-x__tagline">See through the void.</h1>
-        <p className="about-x__sub">Every outlet spins the same events. void measures the spin, on six axes, from the words themselves, and prints one front page ranked by importance, not by an algorithm tuned to you. Scroll to see how it works.</p>
+        <p className="about-x__sub">Every outlet spins the same events. Void measures the spin, on six axes, from the words themselves, and prints one front page ranked by importance, not by an algorithm tuned to you. Scroll to see how it works.</p>
         <span className="about-x__scroll" aria-hidden="true" />
       </header>
 
@@ -101,7 +101,7 @@ function PageExperience() {
       {/* Page-only footer: the product family + the transparency tools
           (principles now live in the FAQ). */}
       <footer className="about-x__footer">
-        <h2 className="about-x__footer-h">The void suite</h2>
+        <h2 className="about-x__footer-h">The Void suite</h2>
         <WorldGrid worlds={PRODUCT_FAMILY} />
 
         <h2 className="about-x__footer-h about-x__footer-h--sub">Transparency and feedback</h2>
@@ -175,7 +175,7 @@ function Overlay({ onClose, onComplete }: { onClose?: () => void; onComplete?: (
   return createPortal(
     <div className={`onb${exiting ? " onb--exiting" : ""}`}>
       <div className="onb__backdrop" aria-hidden="true" onClick={handleSkip} />
-      <div ref={dialogRef} role="dialog" aria-modal="true" aria-label="How void news works" className="onb__stage">
+      <div ref={dialogRef} role="dialog" aria-modal="true" aria-label="How Void News works" className="onb__stage">
         <div className="onb__progress" aria-hidden="true"><div className="onb__progress-fill" style={{ width: `${progress * 100}%` }} /></div>
         <button className="onb__skip" onClick={handleSkip} aria-label="Skip tour">Skip</button>
 

@@ -18,7 +18,7 @@ const STEPS = [
   {
     n: "01",
     verb: "Read",
-    detail: `Every day void reads ${SOURCE_TIERS.total.toLocaleString()} sources across ${SOURCE_TIERS.countries} countries: ${SOURCE_TIERS.usMajor} US majors, ${SOURCE_TIERS.international} international outlets, ${SOURCE_TIERS.independent} independents. Left, right, and everywhere between.`,
+    detail: `Every day Void reads ${SOURCE_TIERS.total.toLocaleString()} sources across ${SOURCE_TIERS.countries} countries: ${SOURCE_TIERS.usMajor} US majors, ${SOURCE_TIERS.international} international outlets, ${SOURCE_TIERS.independent} independents. Left, right, and everywhere between.`,
   },
   {
     n: "02",

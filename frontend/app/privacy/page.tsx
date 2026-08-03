@@ -4,9 +4,9 @@ import "../styles/about.css";
 import "./privacy.css";
 
 export const metadata: Metadata = {
-  title: "Privacy — void --news",
+  title: "Privacy | Void News",
   description:
-    "void --news collects no reader data. No accounts, no tracking, no analytics. This page describes what we do and do not collect, and the scope of our Instagram integration.",
+    "Void News collects no reader data. No accounts, no tracking, no analytics. This page describes what we do and do not collect, and the scope of our Instagram integration.",
 };
 
 export default function PrivacyPage() {
@@ -17,7 +17,7 @@ export default function PrivacyPage() {
       </Link>
 
       <header className="privacy__hdr">
-        <p className="privacy__eyebrow">void --news / privacy</p>
+        <p className="privacy__eyebrow">Void News / privacy</p>
         <h1>What we collect. What we don&rsquo;t.</h1>
         <p className="privacy__updated">Last updated 2026-05-14.</p>
       </header>
@@ -61,8 +61,8 @@ export default function PrivacyPage() {
       <section>
         <h2>Instagram integration scope.</h2>
         <p>
-          The <code>@void.news</code> Instagram account is operated by void
-          --news and uses the official Instagram Graph API for the following
+          The <code>@void.news</code> Instagram account is operated by Void
+          News and uses the official Instagram Graph API for the following
           purposes:
         </p>
         <ul>
@@ -110,7 +110,7 @@ export default function PrivacyPage() {
       <section>
         <h2>Children.</h2>
         <p>
-          void --news is not designed for or directed at children under 13.
+          Void News is not designed for or directed at children under 13.
           We do not knowingly collect any information from anyone under 13.
         </p>
       </section>

@@ -209,7 +209,7 @@ function VoidMascot() {
 
 function GamesWordmark() {
   return (
-    <div className="games-hub__wordmark-wrap" role="img" aria-label="void --games">
+    <div className="games-hub__wordmark-wrap" role="img" aria-label="Games">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 340 44"
@@ -449,7 +449,7 @@ export default function GamesHub() {
         <nav className="games-hub__nav" aria-label="Navigation">
           <Link href="/" className="games-hub__back">
             <span aria-hidden="true">&larr;</span>
-            {" "}void --news
+            {" "}Void News
           </Link>
         </nav>
 
@@ -536,7 +536,7 @@ export default function GamesHub() {
         <footer className="games-hub__footer">
           <p className="games-hub__footer-text">
             Media literacy, gamified. From{" "}
-            <Link href="/" className="games-hub__footer-link">void --news</Link>.
+            <Link href="/" className="games-hub__footer-link">Void News</Link>.
           </p>
         </footer>
       </div>

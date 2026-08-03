@@ -39,7 +39,7 @@ export default function RevoltBrowser({ kicker, heading, blurb, fetcher, dep }: 
       {rows !== null && rows.length === 0 && (
         <div className="rev-empty">
           <p>No revolutions in the archive match this yet.</p>
-          <p><Link href="/revolt">&larr; Back to void --revolt</Link></p>
+          <p><Link href="/revolt">&larr; Back to Revolt</Link></p>
         </div>
       )}
 

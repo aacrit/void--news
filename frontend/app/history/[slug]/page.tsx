@@ -83,7 +83,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const title = event?.title ?? slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
   const description = HOOKS[slug] ?? event?.subtitle ?? `One event. Every side. Decide for yourself.`;
   return {
-    title: `${title} — void --history`,
+    title: `${title} | History`,
     description,
   };
 }

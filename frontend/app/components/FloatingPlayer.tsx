@@ -420,7 +420,7 @@ export default function FloatingPlayer() {
 
           <div className="fp__info">
             {isPlaying && <span className="fp__rec-dot" aria-hidden="true" />}
-            <span className="fp__title">{isWeekly ? "void --weekly" : "void --onair"}</span>
+            <span className="fp__title">{isWeekly ? "Weekly" : "On Air"}</span>
             <span className="fp__section">{isWeekly ? "Issue" : inOpinion ? "Opinion" : "News"}</span>
           </div>
 
@@ -447,7 +447,7 @@ export default function FloatingPlayer() {
           <div className="fp__bar-header">
             <div className="fp__bar-brand">
               <LogoIcon size={16} animation={isPlaying ? "analyzing" : "idle"} />
-              <span className="fp__bar-title">{isWeekly ? "void --weekly" : "void --onair"}</span>
+              <span className="fp__bar-title">{isWeekly ? "Weekly" : "On Air"}</span>
               <span className={`fp__status${isPlaying ? " fp__status--live" : ""}`}>
                 <span className="fp__status-dot" />
                 <span className="fp__status-label">{isPlaying ? "ON AIR" : "OFFLINE"}</span>
@@ -507,8 +507,8 @@ export default function FloatingPlayer() {
             <div className="fp__bcast-brand">
               <ScaleIcon size={22} animation={isPlaying ? "broadcast" : "idle"} />
               <div className="fp__bcast-title-group">
-                <span className="fp__bcast-void">void</span>
-                <span className="fp__bcast-cmd">{isWeekly ? "--weekly" : "--onair"}</span>
+                <span className="fp__bcast-void">Void</span>
+                <span className="fp__bcast-cmd">{isWeekly ? "Weekly" : "On Air"}</span>
               </div>
               <span className={`fp__status${isPlaying ? " fp__status--live" : ""}`}>
                 <span className="fp__status-dot" />

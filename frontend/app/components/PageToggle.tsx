@@ -15,7 +15,7 @@ export default function PageToggle({ activePage }: PageToggleProps) {
   const isFeed = activePage === "feed";
   const href = isFeed ? "/sources" : "/";
   const label = isFeed ? "Sources" : "News Feed";
-  const brandLabel = isFeed ? "void --sources" : "void --news";
+  const brandLabel = isFeed ? "Sources" : "Void News";
 
   return (
     <Link href={href} className="nav-page" aria-label={`Go to ${label}`} title={brandLabel}>

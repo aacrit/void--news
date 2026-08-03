@@ -14,7 +14,7 @@ export default function ExperimentalBadge({ className }: ExperimentalBadgeProps)
   return (
     <span
       className={`exp-badge${className ? ` ${className}` : ""}`}
-      title="void --news is experimental"
+      title="Void News is experimental"
     >
       experimental
     </span>

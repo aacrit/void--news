@@ -12,7 +12,7 @@ export default function AboutMission() {
 
   return (
     <section className="about-sec about-sec--mission" ref={rootRef} aria-labelledby="about-mission-h">
-      <p className="about-sec__eyebrow" ref={register(0)} style={{ opacity: 0 }}>Why void exists</p>
+      <p className="about-sec__eyebrow" ref={register(0)} style={{ opacity: 0 }}>Why Void exists</p>
       <h2 id="about-mission-h" className="about-sec__h" ref={register(1)} style={{ opacity: 0 }}>
         The spin is the story no one prints.
       </h2>
@@ -24,7 +24,7 @@ export default function AboutMission() {
           that a shared set of facts depends on.
         </p>
         <p ref={register(3)} style={{ opacity: 0 }}>
-          void measures that tilt from the words themselves, on six axes, rule by rule, with no opinion of
+          Void measures that tilt from the words themselves, on six axes, rule by rule, with no opinion of
           its own. It ranks the day like a newspaper, by what matters, not by what you click. And it gives
           the whole thing away: no account, no tracking, no price. See the words, see the slant, and decide
           for yourself. See through the void.

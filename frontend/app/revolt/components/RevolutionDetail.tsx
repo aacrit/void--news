@@ -259,7 +259,7 @@ function buildFrames(r: Revolution): Frame[] {
         </p>
         {r.relatedHistorySlugs.length > 0 && (
           <p className="rev-frame__body">
-            <Link href={`/history/${r.relatedHistorySlugs[0]}`}>See the testimony &rarr; void --history</Link>
+            <Link href={`/history/${r.relatedHistorySlugs[0]}`}>See the testimony &rarr; History</Link>
           </p>
         )}
       </>

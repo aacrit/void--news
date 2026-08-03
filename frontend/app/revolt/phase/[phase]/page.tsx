@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ phase: st
   const { phase } = await params;
   const label = phaseSpec(phase as PhaseKey)?.label ?? phase;
   return {
-    title: `Revolutions that reached ${label} — void --revolt`,
+    title: `Revolutions that reached ${label} | Revolt`,
     description: `Every revolution in the archive whose arc reached the ${label} stage.`,
   };
 }

@@ -11,7 +11,7 @@ export default function OutcomeBrowserClient({ slugPromise }: { slugPromise: Pro
   const label = OUTCOME_LABELS[outcome as RevoltOutcome] ?? outcome;
   return (
     <RevoltBrowser
-      kicker="void --revolt · by outcome"
+      kicker="Revolt · by outcome"
       heading={label}
       blurb={`Revolutions in the archive that ${label.toLowerCase()}. The same anatomy, sorted by where it landed.`}
       fetcher={() => fetchRevolutionsByOutcome(outcome)}

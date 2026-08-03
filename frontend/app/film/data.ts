@@ -148,8 +148,10 @@ export const NUMBERS = [
    not production-ready) and intentionally omitted here. */
 
 export interface ProductWorld {
-  cli: string;
+  /** Plain newspaper name — the card heading (e.g. "Void News", "Weekly"). */
   name: string;
+  /** Poetic subtitle, rendered italic beneath the name (e.g. "The Front Page"). */
+  subtitle: string;
   desc: string;
   href: string;
   /** Brand accent for light mode ("Morning Edition"). */
@@ -167,18 +169,18 @@ export interface ProductWorld {
 
 // The products — the things you read and listen to.
 export const PRODUCT_FAMILY: ProductWorld[] = [
-  { cli: "void --news", name: "The Front Page", desc: "One daily front page. The 50 stories that matter, ranked once.", href: "/", accentLight: "#6B4423", accentDark: "#C9A88A" },
-  { cli: "void --weekly", name: "The Magazine", desc: "The week, read like a magazine. Covers, essays, an editorial.", href: "/weekly", accentLight: "#B23A2A", accentDark: "#E0705C" },
-  { cli: "void --history", name: "The Archive", desc: "Consequential events, told from every side.", href: "/history", accentLight: "#8A6410", accentDark: "#D4A574" },
-  { cli: "void --revolt", name: "The Anatomy", desc: "Every revolution on one arc, past and unfolding.", href: "/revolt", accentLight: "#1E40AF", accentDark: "#6AA0FF" },
-  { cli: "void --onair", name: "The Broadcast", desc: "The daily brief, read aloud.", href: "/onair", accentLight: "#2E8B7D", accentDark: "#4DAFA0" },
+  { name: "Void News", subtitle: "The Front Page", desc: "One daily front page. The 50 stories that matter, ranked once.", href: "/", accentLight: "#6B4423", accentDark: "#C9A88A" },
+  { name: "Weekly", subtitle: "The Magazine", desc: "The week, read like a magazine. Covers, essays, an editorial.", href: "/weekly", accentLight: "#B23A2A", accentDark: "#E0705C" },
+  { name: "History", subtitle: "The Archive", desc: "Consequential events, told from every side.", href: "/history", accentLight: "#8A6410", accentDark: "#D4A574" },
+  { name: "Revolt", subtitle: "The Anatomy", desc: "Every revolution on one arc, past and unfolding.", href: "/revolt", accentLight: "#1E40AF", accentDark: "#6AA0FF" },
+  { name: "On Air", subtitle: "The Broadcast", desc: "The daily brief, read aloud.", href: "/onair", accentLight: "#2E8B7D", accentDark: "#4DAFA0" },
 ];
 
 // Transparency and feedback tools — how the work stays honest and open, not
 // products in their own right.
 export const TRANSPARENCY_TOOLS: ProductWorld[] = [
-  { cli: "void --sources", name: "The Spectrum", desc: "All 1,016 sources we read, placed on one axis.", href: "/sources", accentLight: "#3F7A5A", accentDark: "#77B994" },
-  { cli: "void --ship", name: "The Forge", desc: "Request it, vote, watch it ship. Deferred and not-feasible requests are tracked honestly.", href: "/ship", accentLight: "#BE4326", accentDark: "#D2593A" },
+  { name: "Sources", subtitle: "The Spectrum", desc: "All 1,016 sources we read, placed on one axis.", href: "/sources", accentLight: "#3F7A5A", accentDark: "#77B994" },
+  { name: "Ship", subtitle: "The Forge", desc: "Request it, vote, watch it ship. Deferred and not-feasible requests are tracked honestly.", href: "/ship", accentLight: "#BE4326", accentDark: "#D2593A" },
 ];
 
 /* ── First principles (page-only footer) ─────────────────────────────────── */
@@ -208,7 +210,7 @@ export const BEATS: Beat[] = [
   {
     id: "sigil",
     headline: "One mark reads the bias.",
-    body: "Every story on void carries this mark, measured from the words themselves, not from who published it. The beam is the lean. The ring is how many sources cover it. When they disagree, it splits. Try it.",
+    body: "Every story on Void carries this mark, measured from the words themselves, not from who published it. The beam is the lean. The ring is how many sources cover it. When they disagree, it splits. Try it.",
   },
   {
     id: "engine",
@@ -218,6 +220,6 @@ export const BEATS: Beat[] = [
   {
     id: "verdict",
     headline: "Read with clarity.",
-    body: "Broad coverage from across the spectrum, grounded in named sources, is where confidence lives. Thin coverage from one corner deserves more scrutiny. void gives you the whole picture, measured, so you decide what to trust.",
+    body: "Broad coverage from across the spectrum, grounded in named sources, is where confidence lives. Thin coverage from one corner deserves more scrutiny. Void gives you the whole picture, measured, so you decide what to trust.",
   },
 ];

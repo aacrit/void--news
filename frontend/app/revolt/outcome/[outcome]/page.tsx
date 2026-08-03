@@ -10,7 +10,7 @@ export async function generateMetadata({ params }: { params: Promise<{ outcome: 
   const { outcome } = await params;
   const label = OUTCOME_LABELS[outcome as keyof typeof OUTCOME_LABELS] ?? outcome;
   return {
-    title: `Revolutions that ${label.toLowerCase()} — void --revolt`,
+    title: `Revolutions that ${label.toLowerCase()} | Revolt`,
     description: `Every revolution in the archive that ${label.toLowerCase()}, laid over one shared anatomy.`,
   };
 }

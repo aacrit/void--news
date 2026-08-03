@@ -532,17 +532,17 @@ export default function ShipBoard() {
     <main className="ship-page" data-dash-expanded={boardOpen || logOpen || undefined}>
       {/* ---- Back nav + theme ---- */}
       <nav className="ship-cold-open-back" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <Link href="/" className="ship-page__back" aria-label="Back to void --news">&larr; void --news</Link>
+        <Link href="/" className="ship-page__back" aria-label="Back to Void News">&larr; Void News</Link>
         <ThemeToggle />
       </nav>
 
       {/* ---- Header ---- */}
       <header className="ship-page__header ship-cold-open-header">
         <div className="ship-page__brand">
-          <Link href="/" aria-label="void --news home" className="ship-page__logo">
+          <Link href="/" aria-label="Void News home" className="ship-page__logo">
             <LogoFull height={22} />
           </Link>
-          <span className="ship-page__brand-suffix">--ship</span>
+          <span className="ship-page__brand-suffix">Ship</span>
         </div>
         <h1 className="ship-page__title">Request, vote, watch it deploy.</h1>
         <p className="ship-page__subtitle">
@@ -787,9 +787,9 @@ export default function ShipBoard() {
         <section
           id="ship-log-section"
           className="ship-log ship-board-section--open"
-          aria-label="void --log activity feed"
+          aria-label="Ship Log activity feed"
         >
-          <h2 className="ship-log__title">void --log</h2>
+          <h2 className="ship-log__title">Ship Log</h2>
           <div className="ship-log__entries">
             {requests
               .slice()

@@ -136,7 +136,7 @@ function ShipQueueWidget() {
   ];
   return (
     <div className="cc-ticker cc-animate-in" style={{ animationDelay: '500ms' }}>
-      <div className="cc-ticker__title"><Link href="/ship" style={{ color: 'inherit', textDecoration: 'none' }}>void --ship</Link></div>
+      <div className="cc-ticker__title"><Link href="/ship" style={{ color: 'inherit', textDecoration: 'none' }}>Ship</Link></div>
       <div style={{ display: 'flex', gap: 16, padding: '8px 0' }}>
         {items.map(i => (
           <div key={i.label} style={{ display: 'flex', alignItems: 'center', gap: 6, fontFamily: 'var(--cc-font-mono)', fontSize: 'var(--cc-text-xs)' }}>
@@ -217,7 +217,7 @@ export default function CommandCenter() {
   if (!authed) return (
     <div className="cc-root"><div className="cc-auth-gate"><div className="cc-auth-card">
       <div style={{ fontFamily: 'var(--cc-font-editorial)', fontSize: 'var(--text-lg)', fontWeight: 700, marginBottom: 4 }}>Command Center</div>
-      <div style={{ fontFamily: 'var(--cc-font-mono)', fontSize: 'var(--cc-text-xs)', color: 'var(--cc-text3)', marginBottom: 20 }}>void --news</div>
+      <div style={{ fontFamily: 'var(--cc-font-mono)', fontSize: 'var(--cc-text-xs)', color: 'var(--cc-text3)', marginBottom: 20 }}>Void News</div>
       <input type="password" value={passInput} onChange={e => { setPassInput(e.target.value); setPassErr(false); }} onKeyDown={e => { if (e.key === 'Enter') login(); }} placeholder="Password" autoFocus aria-label="Password"
         style={{ width: '100%', padding: '10px 14px', background: 'var(--cc-bg)', border: `1px solid ${passErr ? 'var(--cc-red)' : 'var(--cc-border)'}`, color: 'var(--cc-text)', fontFamily: 'var(--cc-font-mono)', fontSize: 'var(--cc-text-sm)', outline: 'none', marginBottom: 12 }} />
       <button onClick={login} style={{ width: '100%', padding: 10, background: 'var(--cc-accent)', color: 'var(--cc-bg)', border: 'none', fontWeight: 600, fontSize: 'var(--cc-text-sm)', cursor: 'pointer' }}>Enter</button>
@@ -254,7 +254,7 @@ export default function CommandCenter() {
     <div className="cc-root">
       <a href="#main-content" className="skip-to-content">Skip to content</a>
       <header className="cc-header">
-        <div className="cc-header__left"><span className="cc-header__title">Command Center</span><span className="cc-header__sub">void --news</span></div>
+        <div className="cc-header__left"><span className="cc-header__title">Command Center</span><span className="cc-header__sub">Void News</span></div>
         <div className="cc-header__right">
           <span className={`cc-health-dot ${hDot}`} role="status" aria-label={`System: ${pOk && fr ? 'healthy' : pOk ? 'stale' : 'unhealthy'}`} />
           <Link href="/" className="cc-header__back">Feed</Link>

@@ -159,7 +159,7 @@ export default function WireGame() {
         {/* Navigation */}
         <nav className="wire-page__nav" aria-label="Breadcrumb">
           <Link href="/games" className="wire-page__back">
-            <span aria-hidden="true">&larr;</span> void --games
+            <span aria-hidden="true">&larr;</span> Games
           </Link>
         </nav>
 

@@ -83,7 +83,7 @@ export default function MobileMiniPlayer() {
       </div>
 
       {/* Label */}
-      <span className="mmp__label">{isWeekly ? "void --weekly" : "void --onair"}</span>
+      <span className="mmp__label">{isWeekly ? "Weekly" : "On Air"}</span>
 
       {/* Spacer */}
       <div className="mmp__spacer" />

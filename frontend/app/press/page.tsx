@@ -5,9 +5,9 @@ import "../styles/about.css";
 import "../privacy/privacy.css";
 
 export const metadata: Metadata = {
-  title: "Press — void --news",
+  title: "Press | Void News",
   description:
-    "Press kit and media inquiries for void --news. Coverage requests, interviews, methodology questions, and brand assets.",
+    "Press kit and media inquiries for Void News. Coverage requests, interviews, methodology questions, and brand assets.",
 };
 
 export default function PressPage() {
@@ -18,7 +18,7 @@ export default function PressPage() {
       </Link>
 
       <header className="press__hdr">
-        <p className="press__eyebrow">void --news / press</p>
+        <p className="press__eyebrow">Void News / press</p>
         <h1>For journalists, critics, researchers.</h1>
         <p className="press__byline">
           Bias methodology, source curation, and editorial decisions are
@@ -29,7 +29,7 @@ export default function PressPage() {
       <section>
         <h2>One paragraph.</h2>
         <p>
-          void --news is a news aggregator that scores every individual
+          Void News is a news aggregator that scores every individual
           article on six bias axes using rule-based NLP (no machine learning
           black box), reads 1,016 sources across 158 countries, and presents
           one importance-ranked feed to every reader. No accounts, no

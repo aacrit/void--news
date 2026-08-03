@@ -66,7 +66,7 @@ export default function ShareButton({
     });
 
     const lines = [
-      `void --undertow #${challengeId}`,
+      `UNDERTOW #${challengeId}`,
       axisLabel,
       "",
       ...attemptLines,

@@ -234,7 +234,7 @@ export default function HistoryAudioCue({
           <div className="hist-audio-bar__inner">
             {/* Brand mark */}
             <span className="hist-audio-bar__brand" aria-hidden="true">
-              void <span className="hist-audio-bar__brand-cmd">--history</span>
+              <span className="hist-audio-bar__brand-cmd">History</span>
             </span>
 
             {/* Transport */}
