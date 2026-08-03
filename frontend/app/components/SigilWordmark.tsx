@@ -34,22 +34,35 @@ interface SigilWordmarkProps {
   className?: string;
   /** Swappable product word after VOID. Defaults to "NEWS". */
   product?: string;
+  /**
+   * Per-product accent color. When provided, the Sigil-O (ring + beam + ticks +
+   * foot) AND the product word render in this color; "VOID" stays currentColor.
+   * When absent (e.g. VOID NEWS, the flagship), the mark stays brass and the
+   * product word stays currentColor.
+   */
+  accent?: string;
 }
 
 export default function SigilWordmark({
   height,
   className,
   product = "NEWS",
+  accent,
 }: SigilWordmarkProps) {
   const fontSize = height;
   // The ring's visible outer edge is inset ~5% inside the 100x100 viewBox, so
   // markSize is sized up from cap height (~0.72em for these serifs) to make the
   // ring read as a true cap-height O; overshoot then re-centers it on the cap
-  // band with a ~1.5% round-letter overshoot past the baseline and cap line.
+  // band with a round-letter overshoot so the ring bottom sits on/just below
+  // the baseline (foot hanging below like a descender via overflow:visible).
   const markSize = fontSize * 0.81;
-  const overshoot = fontSize * 0.055;
+  const overshoot = fontSize * 0.08;
 
   const letter: CSSProperties = { display: "inline-block" };
+
+  const wordStyle: CSSProperties = accent
+    ? { ...letter, color: accent }
+    : letter;
 
   return (
     <span
@@ -70,6 +83,9 @@ export default function SigilWordmark({
         lineHeight: 1,
         letterSpacing: "0.02em",
         color: "currentColor",
+        // Per-instance accent drives the Sigil-O stroke via components.css
+        // (var(--sigil-mark, var(--sigil-brass))). Absent = brass fallback.
+        ...(accent ? { ["--sigil-mark" as string]: accent } : {}),
       }}
     >
       <span style={letter} aria-hidden="true">
@@ -118,7 +134,7 @@ export default function SigilWordmark({
       </span>
       {/* Wider gap between the two words */}
       <span style={{ display: "inline-block", width: "0.34em" }} aria-hidden="true" />
-      <span style={letter} aria-hidden="true">
+      <span style={wordStyle} aria-hidden="true">
         {product}
       </span>
     </span>

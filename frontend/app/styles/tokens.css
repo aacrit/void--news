@@ -147,8 +147,11 @@
   --cin-card-glow:            0 0 0 1px color-mix(in srgb, var(--cinematic-rim-light, rgba(148,107,21,0.08)) 60%, transparent);
 
   /* ── Product World Palette — accent colors for product family previews ── */
+  --palette-news: #B26F52;
   --palette-weekly: #B91C1C;
   --palette-weekly-paper: #EDE4D0;
+  --palette-history: #5C4033;
+  --palette-revolt: #1E40AF;
   --palette-onair-surface: #1A1816;
 
   /* ── Audio Console — adapts to light/dark mode ──
@@ -655,8 +658,11 @@
   --cin-amber-muted: #9E8568;
 
   /* ── Product World Palette (Dark) ── */
+  --palette-news: #D89A7C;
   --palette-weekly: #EF5350;
   --palette-weekly-paper: #1E1A16;
+  --palette-history: #8B7355;
+  --palette-revolt: #6AA0FF;
   --palette-onair-surface: #1A1816;
 
   --cin-shadow-color: rgba(20, 16, 10, 1);

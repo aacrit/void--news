@@ -220,7 +220,7 @@ function Masthead({
     <header className="wk-masthead wk-cold-open--masthead">
       <Link href="/" className="wk-masthead__home" aria-label="Return to Void News">
         <div className="wk-masthead__brand">
-          <SigilWordmark product="WEEKLY" height={32} />
+          <SigilWordmark product="WEEKLY" height={32} accent="var(--palette-weekly)" />
         </div>
       </Link>
       <p className="wk-masthead__meta">

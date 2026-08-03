@@ -22,5 +22,5 @@ interface LogoWordmarkProps {
 }
 
 export default function LogoWordmark({ height = 20, className, product = "NEWS" }: LogoWordmarkProps) {
-  return <SigilWordmark height={height} className={className} product={product} />;
+  return <SigilWordmark height={height} className={className} product={product} accent={"var(--palette-news)"} />;
 }

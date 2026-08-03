@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import ThemeToggle from '../../components/ThemeToggle';
-import LogoIcon from '../../components/LogoIcon';
+import SigilWordmark from '../../components/SigilWordmark';
 
 /* Barricade Press topbar — bespoke chrome, but leads with the shared void mark
    (LogoIcon) exactly like void --news (LogoFull) and void --history, so the
@@ -11,10 +11,7 @@ export default function RevoltTopbar() {
   return (
     <header className="rev-topbar">
       <Link href="/revolt" className="rev-topbar__brand" aria-label="Revolt home">
-        <span className="rev-topbar__mark" aria-hidden="true">
-          <LogoIcon size={24} animation="idle" />
-        </span>
-        <span className="rev-topbar__wordmark"><b>Revolt</b></span>
+        <SigilWordmark product="REVOLT" height={24} accent="var(--palette-revolt)" />
       </Link>
       <span className="rev-topbar__spacer" />
       <Link href="/revolt" className="rev-topbar__link">The Archive</Link>
