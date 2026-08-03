@@ -143,13 +143,17 @@ export default function RootLayout({
               Realtime websockets (used by /ship board) are not blocked.
             • 'unsafe-inline' on script-src covers the inline theme bootstrap
               below; upgrade to a sha256 hash if/when the inline body is frozen.
+            • 'unsafe-eval' DROPPED (2026-08): the production static-export
+              bundle never eval()s at runtime. This meta CSP and the header
+              CSP in `_headers` must stay in lockstep because browsers enforce
+              the INTERSECTION of every delivered policy.
             • X-Frame-Options retained as a belt-and-suspenders click-jacking
               guard while CSP frame-ancestors propagates via headers.
             No backend exists; the meta-CSP is the GH Pages fallback. CF Pages
             also gets the header from _headers (accumulates). */}
         <meta
           httpEquiv="Content-Security-Policy"
-          content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; media-src 'self' https://*.supabase.co; base-uri 'self'; form-action 'self';"
+          content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; media-src 'self' https://*.supabase.co; base-uri 'self'; form-action 'self';"
         />
         <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
         {/* X-Frame-Options is NOT valid via <meta> (Chrome logs a console

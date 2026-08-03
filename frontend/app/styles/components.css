@@ -2248,19 +2248,43 @@
 }
 
 /* ── Spinoff Editions container — Weekly + History, center-left ──
-   Shown from 1024px up. Below that (tablet + mobile) the row cannot carry the
-   logo + spinoffs + pages + controls without overlapping, so History/Weekly are
-   reached via the footer (all widths) and the mobile side panel (phones). This
-   raised breakpoint (was 768px) is what fixes the 768-1023 masthead pile-up. */
+   Shown from 768px up. At 768-1023 (iPad portrait) the mobile tab bar (.mtb,
+   <=767 only) is gone, so History/Weekly would otherwise be reachable only via
+   the footer — a tablet nav dead zone. The row has room here: the inline
+   dateline is hidden below 1280 and the tagline/badge below 1180/1320, so the
+   masthead carries only logo + spinoffs + pages + controls (the same proven
+   layout the 1024-1279 range already used). Below 768 the mobile tab bar +
+   side panel carry these destinations. */
 .nav-spinoffs {
   display: none;
   align-items: center;
   gap: var(--space-1);
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 768px) {
   .nav-spinoffs {
     display: inline-flex;
+  }
+}
+
+/* ── Tablet band (768-1023): make the spinoff row fit ────────────────────────
+   Adding History + Weekly to the masthead at 768 would overflow the row: the
+   full wordmark (~255px) + spinoffs (~164px) + pages/controls (~373px) exceed
+   768px on their own. So in this band we swap to the compact wordmark (~153px,
+   the same mark phones use) and tighten the gutter to --space-5. Measured fit
+   at 768: 690px content + ~38px gutter = ~728px, ~40px of headroom, zero
+   overflow. The full wordmark + wider gutter resume at 1024 where there is
+   room. Kept in one place so the two levers stay coupled. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .nav-logo-desktop {
+    display: none;
+  }
+  .nav-logo-mobile {
+    display: block;
+  }
+  .nav-inner {
+    padding-left: var(--space-5);
+    padding-right: var(--space-5);
   }
 }
 

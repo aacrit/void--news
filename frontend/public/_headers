@@ -16,12 +16,27 @@
 # UAT 2026-05-13 P1-2: frame-ancestors must be delivered as a header (CSP3
 # ignores it via <meta>). UAT P1-3: wss://*.supabase.co added to connect-src
 # so Supabase Realtime websockets used by /ship are not blocked.
+#
+# CSP notes (2026-08 hardening):
+#   • 'unsafe-eval' DROPPED from script-src. The Next.js static-export
+#     production bundle does not eval() at runtime (eval is a dev/HMR-only
+#     path), so removing it costs nothing and closes an injection vector.
+#     The mirrored <meta> CSP in app/layout.tsx dropped it too — browsers
+#     enforce the INTERSECTION of every delivered policy, so both must agree.
+#   • 'unsafe-inline' KEPT on script-src. A static export has no server to
+#     mint per-request nonces, and Next injects its own inline hydration
+#     scripts (self.__next_f push) alongside our inline theme/SW bootstrap
+#     in layout.tsx. Their bodies change every build, so sha256 hashing is
+#     not maintainable here. Dropping it would break hydration. Revisit only
+#     if a nonce-capable runtime (Workers) fronts the site.
+#   • Strict-Transport-Security: 1yr, includeSubDomains. Site is HTTPS-only.
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(), microphone=(), camera=()
-  Content-Security-Policy: default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; media-src 'self' https://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Content-Security-Policy: default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; media-src 'self' https://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
 
 # ── Hashed static assets — long-lived, immutable ────────────────────────
 # Next.js writes /_next/static/* with content-hashed filenames; safe to
