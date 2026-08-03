@@ -1245,17 +1245,48 @@ def main():
     else:
         print(f"\n[4/9] Scraping article text (parallel, 30 workers)...")
 
-    with ThreadPoolExecutor(max_workers=30) as executor:
+    # Hard wall-clock budget for the scrape phase. Each individual scrape is
+    # already bounded (web_scraper REQUEST_TIMEOUT=12s + 1 retry, robots.txt
+    # 5s, Playwright goto 15s), but an edge case — a wedged Playwright
+    # subprocess, a stalled DNS lookup, a socket that ignores its timeout —
+    # can leave one future pending forever and block the as_completed loop
+    # indefinitely. That is how the daily run reaches the 150-min GitHub
+    # Actions kill and writes nothing. Cap the whole phase: once the budget
+    # elapses, abandon still-pending scrapes and proceed with what we have.
+    # A partial scrape that continues beats a killed run. Default 40 min keeps
+    # the total fetch (RSS ~5 min + scrape) well under the 90-min target.
+    _SCRAPE_BUDGET_SECONDS = int(os.getenv("SCRAPE_BUDGET_SECONDS", "2400"))
+
+    executor = ThreadPoolExecutor(max_workers=30)
+    try:
         futures = {
             executor.submit(_scrape_single, article_data, source_map): article_data
             for article_data in articles_to_scrape
         }
-        for i, future in enumerate(as_completed(futures)):
-            if (i + 1) % 50 == 0 or i == 0:
-                print(f"  Scraped {i + 1}/{len(articles_to_scrape)}...")
-            result = future.result()
-            if result:
-                scraped_articles.append(result)
+        try:
+            for i, future in enumerate(
+                as_completed(futures, timeout=_SCRAPE_BUDGET_SECONDS)
+            ):
+                if (i + 1) % 50 == 0 or i == 0:
+                    print(f"  Scraped {i + 1}/{len(articles_to_scrape)}...")
+                try:
+                    result = future.result()
+                except Exception:
+                    result = None  # one bad scrape never sinks the phase
+                if result:
+                    scraped_articles.append(result)
+        except TimeoutError:
+            pending = sum(1 for f in futures if not f.done())
+            print(
+                f"  [warn] Scrape budget of {_SCRAPE_BUDGET_SECONDS}s elapsed: "
+                f"abandoning {pending} pending scrape(s), proceeding with "
+                f"{len(scraped_articles)} scraped (of {len(articles_to_scrape)} "
+                f"queued). Coverage is PARTIAL this run."
+            )
+    finally:
+        # wait=False + cancel_futures so a wedged worker can't re-block us at
+        # executor teardown (the implicit `with` __exit__ would join(wait=True)).
+        executor.shutdown(wait=False, cancel_futures=True)
 
     # Resolve source slugs to DB UUIDs and build clean article rows
     # The raw article dicts from _scrape_single have source_id set to the

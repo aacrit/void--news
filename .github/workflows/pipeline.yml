@@ -48,7 +48,11 @@ jobs:
     runs-on: ubuntu-latest
     # Fresh-DB worst case is ~108 min; a hung fetch must not burn the 6h
     # Actions job default.
-    timeout-minutes: 150
+    # A healthy run finishes well under this. The fetch phase is now hard-capped
+    # in code (per-source + global fetch budget), so a hanging source tail can no
+    # longer stall the run to the ceiling; a genuine hang fails FAST and visibly
+    # (see alert-on-failure.yml) instead of burning 2.5h before a silent kill.
+    timeout-minutes: 90
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

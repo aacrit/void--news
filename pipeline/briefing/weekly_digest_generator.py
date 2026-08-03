@@ -1620,6 +1620,38 @@ def generate_weekly_digest(editions=None, week_offset=0):
             )
             if cover_image:
                 print(f"    ✓ {cover_image['source']}: {cover_image['url'][:80]}...")
+                # Cache the cover image to Supabase Storage instead of hotlinking
+                # a third-party CDN. find_cover_image_for_cluster can return a raw
+                # publisher URL (e.g. commondreams.org) that later 403s or dies,
+                # breaking the magazine hero. Route it through the SAME cacher the
+                # daily pipeline uses (download → WebP q82 → cluster-images bucket).
+                # Distinct "weekly-cover-" key so it never collides with the daily
+                # cluster image at "{cluster_id}.webp". Attribution is preserved.
+                try:
+                    from media.cluster_image_cacher import (
+                        _download as _cache_download,
+                        _init_bucket as _cache_init_bucket,
+                        _upload as _cache_upload,
+                    )
+                    _cache_init_bucket(supabase)
+                    _dl = _cache_download(cover_image["url"])
+                    if _dl:
+                        _img_bytes, _img_ct = _dl
+                        _cached_url = _cache_upload(
+                            supabase,
+                            f"weekly-cover-{covers[0]['cluster_id']}",
+                            _img_bytes,
+                            _img_ct,
+                        )
+                        if _cached_url:
+                            print(f"    ✓ cached → {_cached_url[:80]}...")
+                            cover_image["url"] = _cached_url
+                        else:
+                            print("    [warn] cover-image cache upload failed; keeping original URL")
+                    else:
+                        print("    [warn] cover-image download failed; keeping original URL")
+                except Exception as _cover_cache_err:
+                    print(f"    [warn] cover-image cache error ({_cover_cache_err}); keeping original URL")
             else:
                 print(f"    No suitable cover image found")
 
