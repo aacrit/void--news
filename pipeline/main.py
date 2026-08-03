@@ -2860,6 +2860,39 @@ def main():
                         cid = enrich_futures[future]
                         print(f"  [warn] Enrichment failed for {cid}: {enrich_err}")
 
+        # Backfill: clusters that were not "new" this run never reach
+        # enrich_cluster, so a carried-over cluster keeps bias_diversity DEFAULT
+        # '{}' (no avg_political_lean) and the frontend renders a gray "no
+        # coverage" Sigil. Re-enrich any well-covered cluster (source_count >= 3,
+        # the display threshold) whose bias_diversity still lacks a lean.
+        # Idempotent; skip_text=True keeps it to the numeric RPC. A cluster whose
+        # article bias_scores have aged out simply stays unscored (nothing to
+        # aggregate) rather than erroring.
+        try:
+            _stale = (
+                supabase.table("story_clusters")
+                .select("id,bias_diversity,source_count")
+                .gte("source_count", 3)
+                .order("source_count", desc=True)
+                .limit(200)
+                .execute()
+            )
+            _backfill = [
+                r["id"] for r in (_stale.data or [])
+                if (r.get("bias_diversity") or {}).get("avg_political_lean") is None
+            ]
+            if _backfill:
+                print(f"  Backfilling enrichment for {len(_backfill)} carried-over clusters...")
+                with ThreadPoolExecutor(max_workers=8) as _bf_ex:
+                    _bf = {_bf_ex.submit(enrich_cluster, _cid, True): _cid for _cid in _backfill}
+                    for _fut in as_completed(_bf):
+                        try:
+                            _fut.result()
+                        except Exception as _bf_err:
+                            print(f"  [warn] backfill enrich failed: {_bf_err}")
+        except Exception as _sweep_err:
+            print(f"  [warn] enrichment backfill sweep failed: {_sweep_err}")
+
     print(f"  Clusters stored: {clusters_created}/{len(clusters) if ANALYSIS_AVAILABLE else 0}")
 
     # Step 8b (deferred): Deduplicate clusters — runs AFTER enrichment so old
