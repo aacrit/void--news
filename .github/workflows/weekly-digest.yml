@@ -3,7 +3,10 @@ on:
   schedule:
     # Sunday 12:00 UTC (6 AM CST) — weekly onair runs after the week's dailies.
     # Sunday flash budget: ~13 daily + ~4 weekly (covers + recap + audio) < 20 RPD.
-    - cron: '0 12 * * 0'
+    # Monday 12:00 UTC (was Sunday). Moved off the daily pipeline's day so the
+    # weekly's ~4 flash calls do not collide with the daily brief + top-10 on the
+    # shared Gemini flash key (20 req/day cap). Covers the week that just ended.
+    - cron: '0 12 * * 1'
   workflow_dispatch:
     inputs:
       week_offset:

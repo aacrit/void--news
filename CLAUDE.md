@@ -113,7 +113,8 @@ Applies to: `cluster_summarizer.py` (summary, headline), `daily_brief_generator.
 - **Always commit AND push after every task.** Never wait to be asked.
 - **Sync before push:** `git fetch origin main && git merge origin/main --no-edit`.
 - Python 3.11+, Node 18+, TypeScript. All bias analysis rule-based.
-- Pipeline: 25-35 min incremental, 108 min fresh DB. Static export (`next export`).
+- Pipeline: real scheduled runtime is ~1.5-2h (dominated by RSS fetch/scrape across 1,016 sources), not the old "25-35 min" claim. The GitHub-Actions `timeout-minutes` is 90 (2026-08-03) and the scrape phase is hard-capped by a 40-min global budget (`SCRAPE_BUDGET_SECONDS`, `main.py`) so a hanging source tail fails fast/visibly (see `alert-on-failure.yml` + `freshness-check.yml`) instead of a silent 2.5h kill. Static export (`next export`).
+- DB size (2026-08-03): live ~272 MB, ~54% of the 0.5 GB free cap and trending DOWN via two retention tracks (`db-cleanup.yml` + the pipeline's cleanup phase). The old "413 MB / 82% of cap / archive-retention statement-timeout" warnings in the rev-history above are RESOLVED, not current. DB size is bounded by 7-day retention and does not grow with reader traffic.
 
 ## Locked Decisions (CEO Approval)
 
