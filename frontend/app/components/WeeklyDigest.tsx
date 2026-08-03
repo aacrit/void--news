@@ -403,7 +403,9 @@ function CoverBody({
             {si > 0 && story.image_url && (
               <CoverFeatureImage imageUrl={story.image_url} attribution={story.image_attribution} />
             )}
-            {si > 0 && story.headline?.trim() && <h3 className="wk-cover-body__subhead">{story.headline}</h3>}
+            {/* Second cover feature's headline is a top-level section under the
+                cover <h1>; keep it <h2> so heading levels never skip (a11y). */}
+            {si > 0 && story.headline?.trim() && <h2 className="wk-cover-body__subhead">{story.headline}</h2>}
             <div className="wk-cover-body__text">
               {paras.flatMap((para, j) => {
                 const nodes = [<p key={`${si}-p-${j}`}>{para}</p>];

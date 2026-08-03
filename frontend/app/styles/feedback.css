@@ -119,6 +119,22 @@
   color: #b4442e;
 }
 
+/* Per-field min-length hint — quiet guidance shown before any error. */
+.fb-hint {
+  margin: 0;
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+}
+
+/* Per-field validation error (aria-describedby target). Same red as .fb-error. */
+.fb-field-error {
+  margin: 0;
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: #b4442e;
+}
+
 .fb-submit {
   align-self: flex-start;
   min-height: 44px;

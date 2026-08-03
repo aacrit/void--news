@@ -11,6 +11,14 @@
 /south-asia /  301
 /south-asia/*  /  301
 
+# 2026-08 — void --weekly is a single (world) issue now; the per-edition
+# variants were never generated. 301 stray /weekly/europe + /weekly/south-asia
+# links (and trailing-slash forms) to the current weekly instead of a 404.
+/weekly/europe        /weekly  301
+/weekly/europe/       /weekly  301
+/weekly/south-asia    /weekly  301
+/weekly/south-asia/   /weekly  301
+
 # 2026-08 — void --ship is the full transparency board again (submit + Kanban).
 # The board contains the submit form, so the old /feedback URL now lands on it.
 /feedback    /ship                 301

@@ -53,20 +53,41 @@ export default function FeedbackForm() {
   const [honeypot, setHoneypot] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [titleError, setTitleError] = useState("");
+  const [messageError, setMessageError] = useState("");
   const [success, setSuccess] = useState(false);
   const fingerprintRef = useRef("");
   const titleRef = useRef<HTMLInputElement>(null);
+  const messageRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     fingerprintRef.current = generateFingerprint();
   }, []);
 
-  const canSubmit =
-    title.trim().length >= 5 && message.trim().length >= 10 && !submitting;
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!canSubmit) return;
+    if (submitting) return;
+
+    // WCAG 3.3.1/3.3.3: the submit button stays enabled so keyboard/AT users
+    // can trigger validation and hear WHY it failed. On invalid input we set
+    // per-field error text (wired via aria-describedby + aria-invalid) and move
+    // focus to the first offending field rather than silently blocking.
+    const tErr =
+      title.trim().length < 5
+        ? "Please add a subject of at least 5 characters."
+        : "";
+    const mErr =
+      message.trim().length < 10
+        ? "Please add a message of at least 10 characters."
+        : "";
+    setTitleError(tErr);
+    setMessageError(mErr);
+    if (tErr || mErr) {
+      if (tErr) titleRef.current?.focus();
+      else messageRef.current?.focus();
+      return;
+    }
+
     // Honeypot: silently accept and reset without hitting the network.
     if (honeypot) {
       setSuccess(true);
@@ -104,6 +125,8 @@ export default function FeedbackForm() {
   const sendAnother = () => {
     setSuccess(false);
     setError("");
+    setTitleError("");
+    setMessageError("");
     setHoneypot("");
     titleRef.current?.focus();
   };
@@ -164,10 +187,24 @@ export default function FeedbackForm() {
           type="text"
           maxLength={120}
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(e) => {
+            setTitle(e.target.value);
+            if (titleError && e.target.value.trim().length >= 5) setTitleError("");
+          }}
           placeholder="A short summary"
           required
+          aria-invalid={titleError ? true : undefined}
+          aria-describedby={titleError ? "fb-title-error" : "fb-title-hint"}
         />
+        {titleError ? (
+          <p className="fb-field-error" id="fb-title-error">
+            {titleError}
+          </p>
+        ) : (
+          <p className="fb-hint" id="fb-title-hint">
+            At least 5 characters.
+          </p>
+        )}
       </div>
 
       <div className="fb-field">
@@ -175,14 +212,29 @@ export default function FeedbackForm() {
           Message
         </label>
         <textarea
+          ref={messageRef}
           id="fb-message"
           className="fb-textarea"
           maxLength={2000}
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(e) => {
+            setMessage(e.target.value);
+            if (messageError && e.target.value.trim().length >= 10) setMessageError("");
+          }}
           placeholder="What broke, what is missing, or what would make this better."
           required
+          aria-invalid={messageError ? true : undefined}
+          aria-describedby={messageError ? "fb-message-error" : "fb-message-hint"}
         />
+        {messageError ? (
+          <p className="fb-field-error" id="fb-message-error">
+            {messageError}
+          </p>
+        ) : (
+          <p className="fb-hint" id="fb-message-hint">
+            At least 10 characters.
+          </p>
+        )}
       </div>
 
       {error && (
@@ -191,7 +243,7 @@ export default function FeedbackForm() {
         </p>
       )}
 
-      <button type="submit" className="fb-submit" disabled={!canSubmit}>
+      <button type="submit" className="fb-submit" disabled={submitting}>
         {submitting ? "Sending..." : "Send feedback"}
       </button>
     </form>
