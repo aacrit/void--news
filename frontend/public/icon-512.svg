@@ -1,41 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <!--
-    void --news — PWA Icon 512x512
-    Dark walnut background with cream icon and wordmark.
-    Full detail at this size — show the complete scale apparatus.
-  -->
-  <!-- Background — dark walnut -->
-  <rect width="512" height="512" rx="0" fill="#1C1A17"/>
-
-  <!-- Icon centered and larger -->
-  <g transform="translate(96, 68)" stroke="#EDE8E0" stroke-width="12">
-    <!-- Void circle -->
-    <circle cx="160" cy="130" r="90"/>
-    <!-- Beam -->
-    <line x1="30" y1="130" x2="290" y2="130"/>
-    <!-- Left tick -->
-    <line x1="50" y1="110" x2="50" y2="150"/>
-    <!-- Right tick -->
-    <line x1="270" y1="110" x2="270" y2="150"/>
-    <!-- Post -->
-    <line x1="160" y1="220" x2="160" y2="290"/>
-    <!-- Base -->
-    <line x1="120" y1="290" x2="200" y2="290"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Void News">
+  <!-- Void News app icon 512 — walnut tile + brass Sigil-O. Explicit colors
+       only (no currentColor, no <style>/@media) so manifest decoders accept it.
+       Full-bleed for maskable use; mark within the central 80% safe zone. -->
+  <rect width="512" height="512" fill="#1C1A17"/>
+  <g transform="translate(85.33,85.33) scale(3.4133)" fill="none" stroke="#D4A574" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="50" cy="50" r="41" stroke-width="8"/>
+    <line x1="8" y1="50" x2="92" y2="50" stroke-width="6"/>
+    <line x1="9" y1="43" x2="8" y2="57" stroke-width="5"/>
+    <line x1="91" y1="43" x2="92" y2="57" stroke-width="5"/>
   </g>
-
-  <!-- Wordmark text below -->
-  <text x="256" y="430" text-anchor="middle" fill="#EDE8E0"
-        font-family="'Georgia', 'Times New Roman', serif"
-        font-size="36" font-weight="700" letter-spacing="0.02em">
-    void
-    <tspan fill="#8A8278" font-family="'Menlo', 'Consolas', monospace" font-size="30" font-weight="400"> --news</tspan>
-  </text>
-
-  <!-- Tagline -->
-  <text x="256" y="462" text-anchor="middle" fill="#5A5550"
-        font-family="'Inter', 'Helvetica Neue', Arial, sans-serif"
-        font-size="16" font-weight="400" letter-spacing="0.06em">
-    See through the void.
-
-  </text>
 </svg>

@@ -1905,6 +1905,67 @@
   }
 }
 
+/* ===========================================================================
+   Sigil Wordmark — "V[Sigil-O]ID  NEWS" brand lockup (SigilWordmark.tsx)
+   Letters inherit currentColor; the Sigil-O ring + beam render in brass.
+   On hover / focus-visible the beam tilts and sweeps across the lean spectrum.
+   =========================================================================== */
+.sigil-word__ring {
+  stroke: var(--sigil-brass);
+}
+.sigil-word__beam {
+  stroke: var(--sigil-brass);
+  transform-box: fill-box;
+  transform-origin: center;
+  /* Settle back to level + brass when the pointer leaves. */
+  transition: stroke 320ms var(--ease-rack, ease-in-out),
+              transform 320ms var(--ease-rack, ease-in-out);
+}
+.sigil-word__beam line {
+  stroke: inherit;
+}
+
+/* Continuous gentle sweep while hovered or while an enclosing link/button is
+   keyboard-focused. Left tilt pairs with blue, right tilt with red, passing
+   through level brass at center — the live product Sigil's lean metaphor. */
+.sigil-word:hover .sigil-word__beam,
+a:focus-visible .sigil-word__beam,
+button:focus-visible .sigil-word__beam {
+  animation: sigil-word-sweep 1.4s var(--ease-rack, ease-in-out) infinite;
+}
+
+@keyframes sigil-word-sweep {
+  0%,
+  100% {
+    transform: rotate(0deg);
+    stroke: var(--sigil-brass);
+  }
+  25% {
+    transform: rotate(-16deg);
+    stroke: var(--sigil-lean-left);
+  }
+  50% {
+    transform: rotate(0deg);
+    stroke: var(--sigil-brass);
+  }
+  75% {
+    transform: rotate(16deg);
+    stroke: var(--sigil-lean-right);
+  }
+}
+
+/* Reduced motion: no tilt, no sweep — hold the static level brass mark. */
+@media (prefers-reduced-motion: reduce) {
+  .sigil-word__beam {
+    transition: none;
+  }
+  .sigil-word:hover .sigil-word__beam,
+  a:focus-visible .sigil-word__beam,
+  button:focus-visible .sigil-word__beam {
+    animation: none;
+  }
+}
+
 .nav-inner {
   max-width: var(--canvas-max);
   margin: 0 auto;

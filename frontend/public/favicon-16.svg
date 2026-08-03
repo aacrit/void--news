@@ -1,22 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <!--
-    void --news — 16px Favicon (Simplified)
-    At 16px, the full scale beam is too detailed.
-    Show: void circle + beam line only. No ticks, no post, no base.
-    Thicker strokes for pixel-grid clarity.
-  -->
-  <style>
-    .s { stroke: #1A1A1A; stroke-width: 1.8; }
-    @media (prefers-color-scheme: dark) {
-      .s { stroke: #EDE8E0; }
-    }
-  </style>
-  <!-- Void circle -->
-  <circle cx="8" cy="7" r="5" class="s"/>
-  <!-- Beam through circle -->
-  <line x1="1.5" y1="7" x2="14.5" y2="7" class="s"/>
-  <!-- Post -->
-  <line x1="8" y1="12" x2="8" y2="14.5" class="s"/>
-  <!-- Base -->
-  <line x1="5.5" y1="14.5" x2="10.5" y2="14.5" class="s"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" role="img" aria-label="Void News">
+  <!-- Void News 16px favicon — walnut rounded tile + brass Sigil-O.
+       Heavier strokes than the larger tiles so the ring + beam hold on the
+       pixel grid. Explicit colors only. -->
+  <rect width="16" height="16" rx="3" fill="#1C1A17"/>
+  <g transform="translate(1.04,1.04) scale(0.1391)" fill="none" stroke="#D4A574" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="50" cy="50" r="40" stroke-width="10"/>
+    <line x1="10" y1="50" x2="90" y2="50" stroke-width="8"/>
+    <line x1="11" y1="44" x2="10" y2="56" stroke-width="6"/>
+    <line x1="89" y1="44" x2="90" y2="56" stroke-width="6"/>
+  </g>
 </svg>

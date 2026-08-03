@@ -1,32 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <!--
-    void --news — PWA Icon 192x192
-    Dark walnut background (Evening Edition) with cream icon.
-    For Android home screen, PWA install prompt.
-  -->
-  <!-- Background — dark walnut -->
-  <rect width="192" height="192" rx="0" fill="#1C1A17"/>
-
-  <!-- Icon centered -->
-  <g transform="translate(36, 30)" stroke="#EDE8E0" stroke-width="6">
-    <!-- Void circle -->
-    <circle cx="60" cy="48.75" r="33.75"/>
-    <!-- Beam -->
-    <line x1="11.25" y1="48.75" x2="108.75" y2="48.75"/>
-    <!-- Left tick -->
-    <line x1="18.75" y1="41.25" x2="18.75" y2="56.25"/>
-    <!-- Right tick -->
-    <line x1="101.25" y1="41.25" x2="101.25" y2="56.25"/>
-    <!-- Post -->
-    <line x1="60" y1="82.5" x2="60" y2="108.75"/>
-    <!-- Base -->
-    <line x1="45" y1="108.75" x2="75" y2="108.75"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192" role="img" aria-label="Void News">
+  <!-- Void News app icon 192 — walnut tile + brass Sigil-O. Explicit colors
+       only. Full-bleed for maskable use; mark within the 80% safe zone. -->
+  <rect width="192" height="192" fill="#1C1A17"/>
+  <g transform="translate(32,32) scale(1.28)" fill="none" stroke="#D4A574" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="50" cy="50" r="41" stroke-width="8"/>
+    <line x1="8" y1="50" x2="92" y2="50" stroke-width="6"/>
+    <line x1="9" y1="43" x2="8" y2="57" stroke-width="5"/>
+    <line x1="91" y1="43" x2="92" y2="57" stroke-width="5"/>
   </g>
-
-  <!-- Brand text -->
-  <text x="96" y="164" text-anchor="middle" fill="#8A8278"
-        font-family="'Inter', 'Helvetica Neue', Arial, sans-serif"
-        font-size="12" font-weight="500" letter-spacing="0.08em">
-    void --news
-  </text>
 </svg>

@@ -81,6 +81,15 @@
      keeps #946B15 for tints, borders, and focus outlines, which only need 3:1. */
   --fg-accent: #6B4C0E;
 
+  /* Sigil brand-mark brass — the Sigil-O in the VOID NEWS lockup + app tiles.
+     A DECORATIVE logo accent, so the AA text-contrast rule does not bind it;
+     tuned to read as clearly brass against the ink/cream letters at rest.
+     The lean-sweep colors drive the hover beam-tilt spectrum (blue = left,
+     brass = center, red = right), mirroring the live product Sigil. */
+  --sigil-brass: #946B15;
+  --sigil-lean-left: #3F72B0;
+  --sigil-lean-right: #B0433B;
+
   /* Terracotta action accent — CTA buttons in the onboarding / user-journey
      tiles. Ink-splash fill; foreground is warm paper (never #fff on cream, the
      dark-mode clash this replaces). ~4.6:1 with --accent-ember-fg. */
@@ -610,6 +619,11 @@
      --bg-primary (#1C1A17) and ~6.1:1 on the amber-tinted exp badge/banner
      grounds, all clear of WCAG AA 4.5:1. Unchanged. */
   --fg-accent: #D4A574;
+
+  /* Sigil brand-mark brass — aged brass reads as pale gold on walnut. */
+  --sigil-brass: #D4A574;
+  --sigil-lean-left: #6098D8;
+  --sigil-lean-right: #D46A62;
 
   /* Terracotta action accent — reads as an ember on the dark ground while
      keeping the warm-paper foreground above 4.5:1 (WCAG AA). Hover goes DARKER
