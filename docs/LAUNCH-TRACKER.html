@@ -587,10 +587,25 @@
     <div class="step" data-kind="manual">
       <input type="checkbox" id="b5" />
       <div>
-        <div class="step__titlerow"><span class="pill pill--manual">manual</span><label for="b5" class="step__title">Confirm the first backup + check DB headroom</label></div>
+        <div class="step__titlerow"><span class="pill pill--manual">manual</span><label for="b5" class="step__title">Run the backup once + do a test restore</label></div>
         <div class="step__body">
-          <p>Verify a backup artifact was produced and is restorable. The DB sits near the free-tier cap — run the retention cleanup if needed and note when a paid tier becomes necessary.</p>
+          <p>The backup client was fixed to <code>postgresql-client-17</code> (the server is Postgres 17.6; every earlier run failed on a version mismatch). Run it and prove recovery: <a href="https://github.com/aacrit/void--news/actions/workflows/backup-db.yml" target="_blank" rel="noopener">Actions → Nightly DB Backup → Run workflow</a>, download the <code>db-backup</code> artifact, then restore it into a throwaway Postgres to confirm it is real: <code>gunzip -c backup-*.sql.gz | psql &lt;scratch-db-url&gt;</code>. (Claude can dispatch the run; the restore is yours to do once.)</p>
+          <p><strong>DB size is fine</strong> now: ~272 MB, ~54% of the 0.5 GB cap and shrinking (retention works). The old "near the cap" warning is stale. <strong>Egress note:</strong> a full dump is ~272 MB read from Supabase; the free tier allows ~5 GB egress/month, so a <em>nightly</em> full backup (~8 GB/mo) would exceed it. Consider running the backup weekly (plus the automatic pre-migration dumps) to stay in budget.</p>
         </div>
+        <div class="step__done">A downloaded dump restores cleanly into a scratch DB.</div>
+      </div>
+    </div>
+
+    <div class="step" data-kind="manual">
+      <input type="checkbox" id="b6" />
+      <div>
+        <div class="step__titlerow"><span class="pill pill--manual">manual</span><label for="b6" class="step__title">Connect a Discord (or Slack) webhook for failure alerts</label></div>
+        <div class="step__body">
+          <p>The pipeline, deploy, and backup now alert on failure, and a daily check flags a stale feed, but only once a webhook is wired. Without this you are flying blind.</p>
+          <p><strong>Discord:</strong> a server → Server Settings → Integrations → Webhooks → New Webhook → pick a channel → Copy Webhook URL, then <strong>append <code>/slack</code></strong> to the end of that URL (Discord accepts Slack-format payloads at that suffix). <strong>Slack:</strong> create an Incoming Webhook and copy its URL as-is.</p>
+          <p>Add it as a repo secret named <code>ALERT_WEBHOOK_URL</code>: <a href="https://github.com/aacrit/void--news/settings/secrets/actions/new" target="_blank" rel="noopener">Repo → Settings → Secrets → Actions → New secret</a>. Until it is set, the alert steps no-op safely.</p>
+        </div>
+        <div class="step__done">A deliberately-failed run posts a message to your channel.</div>
       </div>
     </div>
   </section>
