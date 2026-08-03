@@ -623,7 +623,13 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
             aria-label="Six Lenses"
           >
             <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
-            <SixLenses sigilData={story.sigilData} visible={contentVisible} />
+            {/* Round agreement for display parity with the other integer axes
+                (F14: the stored value can be fractional, e.g. 30.88). Display
+                only — the underlying story.sigilData is left untouched. */}
+            <SixLenses
+              sigilData={{ ...story.sigilData, agreement: Math.round(story.sigilData.agreement) }}
+              visible={contentVisible}
+            />
           </section>
         )}
 

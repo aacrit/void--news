@@ -92,6 +92,13 @@ export default function NavBar({
             <span className="nav-logo-desktop">
               <LogoFull height={30} />
             </span>
+            {/* Tablet / landscape-phone band (768-1023): a compact wordmark so the
+                masthead reads as a masthead, not a stray icon. Full mark won't fit
+                once History + Weekly join the row; the phone mark (18px) is too
+                small for this width. See components.css tablet-band block. */}
+            <span className="nav-logo-tablet">
+              <LogoFull height={22} />
+            </span>
             <span className="nav-logo-mobile">
               <LogoFull height={18} />
             </span>

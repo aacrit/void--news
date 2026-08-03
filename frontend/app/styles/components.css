@@ -2270,17 +2270,25 @@
 /* ── Tablet band (768-1023): make the spinoff row fit ────────────────────────
    Adding History + Weekly to the masthead at 768 would overflow the row: the
    full wordmark (~255px) + spinoffs (~164px) + pages/controls (~373px) exceed
-   768px on their own. So in this band we swap to the compact wordmark (~153px,
-   the same mark phones use) and tighten the gutter to --space-5. Measured fit
-   at 768: 690px content + ~38px gutter = ~728px, ~40px of headroom, zero
-   overflow. The full wordmark + wider gutter resume at 1024 where there is
-   room. Kept in one place so the two levers stay coupled. */
+   768px on their own. So in this band we swap to a COMPACT wordmark (the
+   dedicated .nav-logo-tablet, LogoFull at 22px — icon + "Void News", ~150px)
+   and tighten the gutter to --space-5. Without this the band showed a bare
+   44px .nav-logo box: the base ".nav-logo-mobile { display:none }" rule sits
+   LATER in source order than this block, so an unqualified override here lost
+   the cascade and BOTH logos vanished. The `.nav-left` prefix lifts specificity
+   (0,2,0 vs 0,1,0) so the compact wordmark wins regardless of source order.
+   Measured fit at 768: ~690px content + ~38px gutter = ~728px, ~40px headroom,
+   zero overflow. The full wordmark + wider gutter resume at 1024. Kept in one
+   place so the levers stay coupled. */
 @media (min-width: 768px) and (max-width: 1023px) {
-  .nav-logo-desktop {
+  .nav-left .nav-logo-desktop {
     display: none;
   }
-  .nav-logo-mobile {
+  .nav-left .nav-logo-tablet {
     display: block;
+  }
+  .nav-left .nav-logo-mobile {
+    display: none;
   }
   .nav-inner {
     padding-left: var(--space-5);
@@ -2427,6 +2435,16 @@
 
 /* Hidden by default, shown on mobile via responsive.css */
 .nav-logo-mobile {
+  display: none;
+  text-decoration: none;
+  color: var(--fg-primary);
+}
+
+/* Compact wordmark for the 768-1023 tablet / landscape-phone band only.
+   Hidden at every other width; the tablet-band media block above (with its
+   `.nav-left` specificity lift) turns it on. Keeps the >=1024 full mark and
+   the <768 phone mark untouched. */
+.nav-logo-tablet {
   display: none;
   text-decoration: none;
   color: var(--fg-primary);
