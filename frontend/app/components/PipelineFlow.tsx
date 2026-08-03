@@ -236,9 +236,9 @@ const PHASES: Phase[] = [
       },
       {
         num: "7d",
-        title: "Daily Brief (void --tl;dr)",
+        title: "Daily Brief (TL;DR)",
         detail:
-          "TL;DR (150\u2013220 words) + Opinion (lean rotates L/C/R daily). Audio broadcast (void --onair) reads the day's brief in two voices.",
+          "TL;DR (150-220 words) + Opinion (lean rotates L/C/R daily). Audio broadcast (On Air) reads the day's brief in two voices.",
         file: "daily_brief_generator.py",
         badge: "9 calls/run",
         badgeActive: true,
@@ -567,7 +567,7 @@ function FrontendOutput() {
   return (
     <div className="pf-output" role="figure" aria-label="Frontend output mapping">
       <div className="pf-output__header">
-        Frontend Output &rarr; void --news
+        Frontend Output &rarr; Void News
       </div>
 
       {/* Hero slot */}
@@ -615,7 +615,7 @@ export default function PipelineFlow() {
       {/* ---- 1. Sticky Header ---- */}
       <header className="pf-header" role="banner">
         <div className="pf-header__left">
-          <span className="pf-header__title">void --pipeline</span>
+          <span className="pf-header__title">Pipeline</span>
           <span className="pf-header__sep" aria-hidden="true" />
           <span className="pf-header__meta">
             1x daily &middot; 25-35 min &middot; GitHub Actions

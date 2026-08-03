@@ -217,7 +217,7 @@ function Masthead({
   const editionLabel = EDITIONS.find((e) => e.slug === edition)?.label ?? "World";
   return (
     <header className="wk-masthead wk-cold-open--masthead">
-      <Link href="/" className="wk-masthead__home" aria-label="Return to void --news">
+      <Link href="/" className="wk-masthead__home" aria-label="Return to Void News">
         <div className="wk-masthead__brand">
           {/* Full void logo with icon + "--weekly" wordmark */}
           <svg
@@ -225,7 +225,7 @@ function Masthead({
             viewBox="0 0 380 40"
             fill="currentColor"
             role="img"
-            aria-label="void --weekly"
+            aria-label="Void News Weekly"
             className="wk-masthead__logo"
           >
             {/* Icon — void circle + scale beam */}
@@ -448,7 +448,7 @@ function SectionEditorial({
       className={`wk-editorial-section wk-reveal${visible ? " wk-reveal--visible" : ""}`}
       aria-labelledby="wk-editorial-heading"
     >
-      <h2 className="wk-section-label" id="wk-editorial-heading" data-prefix="void --">Editorial</h2>
+      <h2 className="wk-section-label" id="wk-editorial-heading">Editorial</h2>
       <article className="wk-editorial">
         <span className="wk-editorial__lens">
           Through a {leanBadgeLabel(lean || "center").toLowerCase()} lens
@@ -513,7 +513,7 @@ function OpinionsSection({
       className={`wk-opinions-section wk-reveal${visible ? " wk-reveal--visible" : ""}`}
       aria-labelledby="wk-opinions-heading"
     >
-      <h2 className="wk-section-label" id="wk-opinions-heading" data-prefix="void --">Perspectives</h2>
+      <h2 className="wk-section-label" id="wk-opinions-heading">Perspectives</h2>
       <div className="wk-opinions__grid">
         {picks.map((op, i) => (
           <OpinionCard key={i} op={op} />
@@ -535,7 +535,7 @@ function BriefList({ stories }: { stories: WeeklyRecapStory[] }) {
       className={`wk-brief-section wk-reveal${visible ? " wk-reveal--visible" : ""}`}
       aria-labelledby="wk-brief-heading"
     >
-      <h2 className="wk-section-label" id="wk-brief-heading" data-prefix="void --">Week in Brief</h2>
+      <h2 className="wk-section-label" id="wk-brief-heading">Week in Brief</h2>
       <div className="wk-brief__list">
         {stories.map((story, i) => (
           <article
@@ -574,7 +574,7 @@ function ContestedSection({ stories }: { stories: WeeklyContestedStory[] }) {
       className={`wk-contested-section wk-reveal${visible ? " wk-reveal--visible" : ""}`}
       aria-labelledby="wk-contested-heading"
     >
-      <h2 className="wk-section-label" id="wk-contested-heading" data-prefix="void --">Most Contested</h2>
+      <h2 className="wk-section-label" id="wk-contested-heading">Most Contested</h2>
       <div className="wk-contested__list">
         {contestedStories.map((story) => (
           <article key={story.id} className="wk-contested__item">
@@ -633,7 +633,7 @@ function IssueArchive({
       className={`wk-archive wk-reveal${visible ? " wk-reveal--visible" : ""}`}
       aria-labelledby="wk-archive-heading"
     >
-      <h2 className="wk-section-label" id="wk-archive-heading" data-prefix="void --">Issue Archive</h2>
+      <h2 className="wk-section-label" id="wk-archive-heading">Issue Archive</h2>
       <div className="wk-archive__list">
         {entries.map((entry) => (
           <div
@@ -722,7 +722,7 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
     <div className="wk-page">
       {/* Top bar: back to main + theme toggle */}
       <div className="wk-topbar">
-        <Link href="/" className="wk-back" aria-label="Back to void --news">
+        <Link href="/" className="wk-back" aria-label="Back to Void News">
           <span className="wk-back__arrow" aria-hidden="true">&larr;</span>
           <LogoFull height={20} className="wk-back__logo" />
         </Link>
@@ -744,7 +744,7 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
             node (the site-wide experimental banner). */}
         {!digest && (
           <div className="wk-loading__flag" aria-hidden="true">
-            void<span className="wk-loading__flag-cmd">&nbsp;--weekly</span>
+            Void News<span className="wk-loading__flag-cmd">&nbsp;Weekly</span>
           </div>
         )}
 
@@ -759,7 +759,7 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
           <div className="wk-empty" role="status">
             <p className="wk-empty__text">{error}</p>
             <Link href="/" className="wk-empty__link">
-              Return to void --news
+              Return to Void News
             </Link>
           </div>
         )}

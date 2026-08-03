@@ -64,7 +64,7 @@ export default function ShareButton({
     ).length;
 
     const lines = [
-      `void --frame #${challengeId}`,
+      `THE FRAME #${challengeId}`,
       playerEmojis,
       `correct: ${correctEmojis}`,
       `${correctCount} of ${correctOrder.length} \u00B7 ${attemptsUsed} attempt${attemptsUsed !== 1 ? "s" : ""}`,

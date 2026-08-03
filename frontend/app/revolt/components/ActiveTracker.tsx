@@ -27,7 +27,7 @@ export default function ActiveTracker() {
   return (
     <div className="rev-shell">
       <section className="rev-hero">
-        <p className="rev-hero__kicker">void --revolt &middot; the living</p>
+        <p className="rev-hero__kicker">Revolt &middot; the living</p>
         <h1 className="rev-hero__title">The Situation Board</h1>
         <p className="rev-hero__sub">
           Uprisings and revolutions underway now, each placed on the arc and weighed against the

@@ -31,7 +31,7 @@ export default function RevealPanel({
   const score = wordsCorrect * 25 + (honorClaimed ? 25 : 0);
 
   const shareText = [
-    `void --wire #${challengeId}`,
+    `THE WIRE #${challengeId}`,
     `${"████ ".repeat(totalWords).trim()}`,
     `solved: ${wordsCorrect}/${totalWords} words${honorClaimed ? " + connection" : ""}`,
     `connection: ${connection}`,

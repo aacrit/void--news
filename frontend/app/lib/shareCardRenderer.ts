@@ -239,11 +239,11 @@ export async function generateShareCardImage(story: Story): Promise<Blob> {
   ctx.textBaseline = "alphabetic";
   ctx.font = `700 16px ${EDITORIAL}`;
   ctx.fillStyle = FG_SECONDARY;
-  ctx.fillText("void", 48, 44);
-  const vw = ctx.measureText("void").width;
+  ctx.fillText("Void", 48, 44);
+  const vw = ctx.measureText("Void").width;
   ctx.font = `400 16px ${DATA}`;
   ctx.fillStyle = FG_MUTED;
-  ctx.fillText(" --news", 48 + vw, 44);
+  ctx.fillText(" News", 48 + vw, 44);
 
   // Category badge
   ctx.font = `600 11px ${META}`;
@@ -353,11 +353,11 @@ export async function generateShareCardImage(story: Story): Promise<Blob> {
   // Brand + tagline
   ctx.font = `700 24px ${EDITORIAL}`;
   ctx.fillStyle = FG_PRIMARY;
-  ctx.fillText("void", 48, 520);
-  const vw2 = ctx.measureText("void").width;
+  ctx.fillText("Void", 48, 520);
+  const vw2 = ctx.measureText("Void").width;
   ctx.font = `400 24px ${DATA}`;
   ctx.fillStyle = FG_MUTED;
-  ctx.fillText(" --news", 48 + vw2, 520);
+  ctx.fillText(" News", 48 + vw2, 520);
 
   ctx.font = `400 13px ${STRUCTURAL}`;
   ctx.fillStyle = FG_TERTIARY;
@@ -410,11 +410,11 @@ export async function generateSquareCardImage(story: Story): Promise<Blob> {
   ctx.textBaseline = "alphabetic";
   ctx.font = `700 18px ${EDITORIAL}`;
   ctx.fillStyle = FG_SECONDARY;
-  ctx.fillText("void", 56, 56);
-  const vw = ctx.measureText("void").width;
+  ctx.fillText("Void", 56, 56);
+  const vw = ctx.measureText("Void").width;
   ctx.font = `400 18px ${DATA}`;
   ctx.fillStyle = FG_MUTED;
-  ctx.fillText(" --news", 56 + vw, 56);
+  ctx.fillText(" News", 56 + vw, 56);
 
   ctx.font = `600 12px ${META}`;
   ctx.fillStyle = AMBER;
@@ -509,11 +509,11 @@ export async function generateSquareCardImage(story: Story): Promise<Blob> {
   // Brand
   ctx.font = `700 28px ${EDITORIAL}`;
   ctx.fillStyle = FG_PRIMARY;
-  ctx.fillText("void", 56, 960);
-  const sqvw = ctx.measureText("void").width;
+  ctx.fillText("Void", 56, 960);
+  const sqvw = ctx.measureText("Void").width;
   ctx.font = `400 28px ${DATA}`;
   ctx.fillStyle = FG_MUTED;
-  ctx.fillText(" --news", 56 + sqvw, 960);
+  ctx.fillText(" News", 56 + sqvw, 960);
 
   ctx.font = `400 14px ${STRUCTURAL}`;
   ctx.fillStyle = FG_TERTIARY;
@@ -625,7 +625,7 @@ export async function generateStoryCardImage(
   ctx.textBaseline = "alphabetic";
   ctx.font = `600 14px ${META}`;
   ctx.fillStyle = FG_MUTED;
-  ctx.fillText("void --deep-dive", 64, 72);
+  ctx.fillText("Deep Dive", 64, 72);
 
   /* Category badge (right) */
   ctx.font = `600 12px ${META}`;
@@ -678,11 +678,11 @@ export async function generateStoryCardImage(
   // Brand lockup (right of QR)
   ctx.font = `700 32px ${EDITORIAL}`;
   ctx.fillStyle = FG_PRIMARY;
-  ctx.fillText("void", 230, 1600);
-  const bw = ctx.measureText("void").width;
+  ctx.fillText("Void", 230, 1600);
+  const bw = ctx.measureText("Void").width;
   ctx.font = `400 32px ${DATA}`;
   ctx.fillStyle = FG_MUTED;
-  ctx.fillText(" --news", 230 + bw, 1600);
+  ctx.fillText(" News", 230 + bw, 1600);
 
   ctx.font = `400 16px ${DATA}`;
   ctx.fillStyle = FG_TERTIARY;

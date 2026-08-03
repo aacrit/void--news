@@ -852,7 +852,7 @@ export default function VoidRun() {
       {/* Navigation */}
       <nav className="run-page__nav" aria-label="Breadcrumb">
         <Link href="/games" className="run-page__back">
-          <span aria-hidden="true">&larr;</span> void --games
+          <span aria-hidden="true">&larr;</span> Games
         </Link>
       </nav>
 

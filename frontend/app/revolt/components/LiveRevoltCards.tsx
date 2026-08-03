@@ -10,7 +10,7 @@ export default function LiveRevoltCards({ cards }: { cards: LiveCard[] }) {
   if (cards.length === 0) return null;
   return (
     <section aria-label="Related live coverage" style={{ marginTop: 'var(--space-5)' }}>
-      <p className="rev-livecards__label">Related coverage from the void --news feed</p>
+      <p className="rev-livecards__label">Related coverage from the Void News feed</p>
       <div className="rev-livecards">
         {cards.map((c) => (
           <a

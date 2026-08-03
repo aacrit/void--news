@@ -91,7 +91,7 @@ export default function OnAirPage() {
       <header className="onair__masthead">
         <span className="onair__kicker">
           <span className={`onair__dot${a.isPlaying ? " onair__dot--live" : ""}`} aria-hidden="true" />
-          void --onair
+          On Air
         </span>
         <h1 className="onair__title">The Broadcast</h1>
         <p className="onair__sub">

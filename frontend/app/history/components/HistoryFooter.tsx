@@ -18,7 +18,7 @@ export default function HistoryFooter() {
         <span className="hist-footer__section">history</span>
       </div>
       <Link href="/" className="hist-footer__link">
-        &larr; Back to void --news
+        &larr; Back to Void News
       </Link>
     </footer>
   );

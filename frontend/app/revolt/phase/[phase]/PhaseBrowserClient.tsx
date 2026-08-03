@@ -12,7 +12,7 @@ export default function PhaseBrowserClient({ slugPromise }: { slugPromise: Promi
   const label = spec?.label ?? phase;
   return (
     <RevoltBrowser
-      kicker="void --revolt · by phase"
+      kicker="Revolt · by phase"
       heading={`Reached ${label}`}
       blurb={spec?.gloss ?? `Revolutions whose arc reached the ${label} stage.`}
       fetcher={() => fetchRevolutionsByPhase(phase)}

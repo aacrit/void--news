@@ -137,15 +137,15 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
         <nav className="msp__links" aria-label="Side navigation">
           <span className="msp__section-label" data-msp-cascade="2">Read</span>
           <Link href="/history" className="msp__link" data-msp-cascade="2" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">void --history</span>
+            <span className="msp__link-cmd">History</span>
             <span className="msp__link-desc">The archive of consequence</span>
           </Link>
           <Link href="/revolt" className="msp__link" data-msp-cascade="2" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">void --revolt</span>
+            <span className="msp__link-cmd">Revolt</span>
             <span className="msp__link-desc">The anatomy of revolution</span>
           </Link>
           <Link href="/weekly" className="msp__link" data-msp-cascade="2" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">void --weekly</span>
+            <span className="msp__link-cmd">Weekly</span>
             <span className="msp__link-desc">The week in review</span>
           </Link>
           {/* /paper hidden from nav per CEO 2026-05-15 — not production-ready.
@@ -158,13 +158,13 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
 
           <span className="msp__section-label" data-msp-cascade="3">Explore</span>
           <Link href="/sources" className="msp__link" data-msp-cascade="3" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">void --sources</span>
+            <span className="msp__link-cmd">Sources</span>
             <span className="msp__link-desc">1,016 curated sources</span>
           </Link>
           {/* /games hidden from nav per CEO 2026-05-15 — not production-ready.
               Route still resolves at /games for direct URL access. */}
           <Link href="/about" className="msp__link" data-msp-cascade="3" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">void --about</span>
+            <span className="msp__link-cmd">About</span>
             <span className="msp__link-desc">See through the void</span>
           </Link>
 
@@ -175,7 +175,7 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
 
           <span className="msp__section-label" data-msp-cascade="4">Participate</span>
           <Link href="/ship" className="msp__link" data-msp-cascade="4" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">void --ship</span>
+            <span className="msp__link-cmd">Ship</span>
             <span className="msp__link-desc">Request it, vote, watch it ship</span>
           </Link>
         </nav>

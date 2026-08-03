@@ -115,11 +115,11 @@ function RevoltContextLink({
       <a
         href={match.href}
         className="dd-history-context__link"
-        aria-label={`Track this movement in void --revolt: ${match.title}`}
+        aria-label={`Track this movement in Revolt: ${match.title}`}
       >
         <span className="dd-history-context__arrow" aria-hidden="true">&rarr;</span>
         <span className="dd-history-context__title">{match.title}</span>
-        <span className="dd-history-context__desc">Weigh it against the historical record in void --revolt</span>
+        <span className="dd-history-context__desc">Weigh it against the historical record in Revolt</span>
       </a>
     </div>
   );

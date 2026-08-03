@@ -264,7 +264,7 @@ export default function ShareCard({
                 letterSpacing: "-0.01em",
               }}
             >
-              void
+              Void
             </span>
             <span
               style={{
@@ -274,7 +274,7 @@ export default function ShareCard({
                 color: FG_SECONDARY,
               }}
             >
-              {" "}--news
+              {" "}News
             </span>
           </div>
 
@@ -545,7 +545,7 @@ export default function ShareCard({
                 letterSpacing: "-0.01em",
               }}
             >
-              void
+              Void
             </span>
             <span
               style={{
@@ -555,7 +555,7 @@ export default function ShareCard({
                 color: FG_SECONDARY,
               }}
             >
-              {" "}--news
+              {" "}News
             </span>
           </div>
           <span

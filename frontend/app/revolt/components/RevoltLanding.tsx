@@ -21,7 +21,7 @@ export default function RevoltLanding() {
   return (
     <div className="rev-shell">
       <section className="rev-hero">
-        <p className="rev-hero__kicker">void --revolt</p>
+        <p className="rev-hero__kicker">Revolt</p>
         <h1 className="rev-hero__title">The Anatomy of Revolution</h1>
         <p className="rev-hero__sub">
           Revolutions are not random. They share a skeleton: a broke and brittle regime, a

@@ -48,7 +48,7 @@ export default function ComparisonLab() {
   return (
     <div className="rev-shell">
       <section className="rev-hero">
-        <p className="rev-hero__kicker">void --revolt &middot; comparison lab</p>
+        <p className="rev-hero__kicker">Revolt &middot; comparison lab</p>
         <h1 className="rev-hero__title">Lay Them Side by Side</h1>
         <p className="rev-hero__sub">
           Pick up to four revolutions and see them over one shared anatomy. The chart overlays each

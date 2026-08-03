@@ -56,7 +56,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://void-news.pages.dev"),
-  title: "void --news — See through the void.",
+  title: "Void News. See through the void.",
   description:
     "An experimental newsroom: free per-article bias analysis across 1,016 sources. Six axes. No paywall. No algorithm. Just the news, dissected.",
   keywords: [
@@ -68,26 +68,26 @@ export const metadata: Metadata = {
     "news aggregation",
     "fact checking",
   ],
-  authors: [{ name: "void --news" }],
+  authors: [{ name: "Void News" }],
   openGraph: {
-    title: "void --news — See through the void.",
+    title: "Void News. See through the void.",
     description:
       "An experimental newsroom: free per-article bias analysis across 1,016 sources. Six axes. No paywall. No algorithm. Just the news, dissected.",
     type: "website",
-    siteName: "void --news",
+    siteName: "Void News",
     images: [
       {
         url: `${BASE_PATH}/og-image.svg`,
         width: 1200,
         height: 630,
-        alt: "void --news — News aggregation with multi-axis bias analysis",
+        alt: "Void News. News aggregation with multi-axis bias analysis",
         type: "image/svg+xml",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "void --news — See through the void.",
+    title: "Void News. See through the void.",
     description:
       "An experimental newsroom: free per-article bias analysis across 1,016 sources. Six axes. No paywall. No algorithm.",
     images: [`${BASE_PATH}/twitter-card.svg`],
@@ -163,7 +163,7 @@ export default function RootLayout({
         {/* PWA: iOS standalone mode + Android install support */}
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="void --news" />
+        <meta name="apple-mobile-web-app-title" content="Void News" />
         <meta name="mobile-web-app-capable" content="yes" />
         {/* iOS splash screens — solid #1C1A17, icon from manifest */}
         <link rel="apple-touch-startup-image" href={`${BASE_PATH}/splash-430x932.png`} media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" />

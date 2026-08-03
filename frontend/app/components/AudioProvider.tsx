@@ -483,8 +483,8 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
     const editionLabel = editionLabels[edition] || "World";
 
     navigator.mediaSession.metadata = new MediaMetadata({
-      title: "void --onair",
-      artist: "void --news",
+      title: "On Air",
+      artist: "Void News",
       album: editionLabel + " Edition",
     });
 

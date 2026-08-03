@@ -69,7 +69,7 @@ export default function RevoltAudioCue({
         {playing ? <PauseIcon /> : <PlayIcon />}
       </button>
       <div className="rev-audio__body">
-        <div className="rev-audio__label">void --onair &middot; narrated anatomy</div>
+        <div className="rev-audio__label">On Air &middot; narrated anatomy</div>
         <div className="rev-audio__track" onClick={seek} role="progressbar" aria-valuenow={Math.round(cur)} aria-valuemax={Math.round(dur)}>
           <span className="rev-audio__fill" style={{ width: dur ? `${(cur / dur) * 100}%` : '0%' }} />
         </div>

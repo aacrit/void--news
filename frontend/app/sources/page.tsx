@@ -591,7 +591,7 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
           <p className="meth__body">
             Most bias tools assign a single score to an entire outlet.
             The New York Times is &ldquo;Lean Left&rdquo; regardless of the article.
-            void --news rejects that premise. Every article is scored independently
+            Void News rejects that premise. Every article is scored independently
             across six axes by rule-based NLP. No LLM calls. The same text always
             produces the same scores.
           </p>
@@ -883,7 +883,7 @@ function SourcesPageInner() {
           <div className="nav-left">
             <Link
               href="/"
-              aria-label="void --news — home"
+              aria-label="Void News home"
               className="nav-logo si-hoverable"
             >
               <span className="nav-logo-desktop">
@@ -911,7 +911,7 @@ function SourcesPageInner() {
         {/* ---- Toolbar: title ---- */}
         <div className="sources-toolbar">
           <div className="sources-toolbar__text">
-            <h1 className="sources-toolbar__title" title="void --sources">
+            <h1 className="sources-toolbar__title" title="Sources">
               <span className="sources-toolbar__count">{sources.length}</span> Sources
             </h1>
           </div>

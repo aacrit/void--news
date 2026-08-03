@@ -28,30 +28,30 @@ export default function Footer({ lastUpdated }: FooterProps) {
 
         {/* Product family — void --onair gated by AUDIO_ENABLED flag. */}
         <div className="footer-products">
-          <span className="footer-products__item" title="The Daily Brief">void --tl;dr</span>
+          <span className="footer-products__item" title="The Daily Brief">The Brief</span>
           <span className="footer-products__sep" aria-hidden="true">&middot;</span>
           {AUDIO_ENABLED && (
             <>
-              <span className="footer-products__item" title="Audio Broadcast">void --onair</span>
+              <span className="footer-products__item" title="Audio Broadcast">On Air</span>
               <span className="footer-products__sep" aria-hidden="true">&middot;</span>
             </>
           )}
-          <span className="footer-products__item" title="The Board">void --opinion</span>
+          <span className="footer-products__item" title="The Board">Opinion</span>
           <span className="footer-products__sep" aria-hidden="true">&middot;</span>
-          <Link href="/sources" className="footer-products__item" title="Source Spectrum">void --sources</Link>
+          <Link href="/sources" className="footer-products__item" title="Source Spectrum">Sources</Link>
           <span className="footer-products__sep" aria-hidden="true">&middot;</span>
-          <Link href="/weekly" className="footer-products__item" title="The Weekly Digest">void --weekly</Link>
+          <Link href="/weekly" className="footer-products__item" title="The Weekly Digest">Weekly</Link>
           <span className="footer-products__sep" aria-hidden="true">&middot;</span>
-          <Link href="/history" className="footer-products__item" title="The archive of consequence">void --history</Link>
+          <Link href="/history" className="footer-products__item" title="The archive of consequence">History</Link>
           <span className="footer-products__sep" aria-hidden="true">&middot;</span>
-          <Link href="/revolt" className="footer-products__item" title="The anatomy of revolution">void --revolt</Link>
+          <Link href="/revolt" className="footer-products__item" title="The anatomy of revolution">Revolt</Link>
           <span className="footer-products__sep" aria-hidden="true">&middot;</span>
-          <Link href="/ship" className="footer-products__item" title="Request, vote, watch it ship">void --ship</Link>
+          <Link href="/ship" className="footer-products__item" title="Request, vote, watch it ship">Ship</Link>
           <span className="footer-products__sep" aria-hidden="true">&middot;</span>
-          <Link href="/about" className="footer-products__item" title="About">void --about</Link>
+          <Link href="/about" className="footer-products__item" title="About">About</Link>
         </div>
 
-        <p className="footer-built">&copy; 2026 void --news. All rights reserved.</p>
+        <p className="footer-built">&copy; 2026 Void News. All rights reserved.</p>
         <p className="footer-kbd-hint" aria-label="Press question mark for keyboard shortcuts">
           <kbd className="footer-kbd-hint__key">?</kbd> shortcuts
         </p>

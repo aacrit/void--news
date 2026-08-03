@@ -68,7 +68,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
               <div className="skb__compact-label">
                 <LogoIcon size={16} animation="analyzing" />
                 <span className="skb__compact-human">News Brief</span>
-                <span className="skb__compact-cmd">void --tl;dr</span>
+                <span className="skb__compact-cmd">The Brief</span>
               </div>
               <span className="skb__compact-loading">Loading today&rsquo;s brief&hellip;</span>
             </div>
@@ -118,7 +118,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                   <div className="skb__compact-label">
                     <LogoIcon size={16} animation="idle" className="skb__compact-logo" />
                     <span className="skb__compact-human">News Brief</span>
-                    <span className="skb__compact-cmd">void --tl;dr</span>
+                    <span className="skb__compact-cmd">The Brief</span>
                     {brief.created_at && <span className="skb__compact-time">{timeAgo(brief.created_at)}</span>}
                   </div>
                   {brief.tldr_headline && <h3 className="skb__compact-hl skb__compact-hl--tldr">{String(brief.tldr_headline)}</h3>}
@@ -142,7 +142,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                     <div className="skb__compact-label">
                       <LogoIcon size={16} animation="idle" className="skb__compact-logo" />
                       <span className="skb__compact-human">Editorial</span>
-                      <span className="skb__compact-cmd">void --opinion</span>
+                      <span className="skb__compact-cmd">Opinion</span>
                       {brief.opinion_lean && <span className={`skb__lean-badge ${leanMod}`}>{leanLabel}</span>}
                     </div>
                     {brief.opinion_headline && <h3 className="skb__compact-hl skb__compact-hl--opinion">{String(brief.opinion_headline)}</h3>}
@@ -163,7 +163,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                 <div className="skb__section-label">
                   <LogoIcon size={16} animation="idle" />
                   <span className="skb__section-label-human">News Brief</span>
-                  <span className="skb__section-label-cmd">void --tl;dr</span>
+                  <span className="skb__section-label-cmd">The Brief</span>
                   {brief.created_at && <span className="skb__section-label-time">{timeAgo(brief.created_at)}</span>}
                   <button
                     ref={collapseRef}
@@ -187,7 +187,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                 <div className="skb__section-label">
                   <LogoIcon size={16} animation="idle" />
                   <span className="skb__section-label-human">Editorial</span>
-                  <span className="skb__section-label-cmd">void --opinion</span>
+                  <span className="skb__section-label-cmd">Opinion</span>
                   {brief.opinion_lean && <span className={`skb__lean-badge ${leanMod}`}>{leanLabel}</span>}
                   <button
                     ref={collapseRef}

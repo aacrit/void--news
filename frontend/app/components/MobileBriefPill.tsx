@@ -61,7 +61,7 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
         aria-expanded={false}
         disabled
       >
-        <span className="mbp__pill-cmd">void --tl;dr</span>
+        <span className="mbp__pill-cmd">The Brief</span>
         <span className="mbp__pill-sep" aria-hidden="true">/</span>
         <span className="mbp__pill-label mbp__pill-label--loading">Loading&hellip;</span>
       </button>
@@ -107,14 +107,14 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
           aria-label="Expand daily brief"
         >
           <div className="mbp__teaser-tldr">
-            <span className="mbp__teaser-cmd">void --tl;dr</span>
+            <span className="mbp__teaser-cmd">The Brief</span>
             <span className="mbp__teaser-hl">{pillHeadline}</span>
             <span className="mbp__teaser-preview">{tldrPreview}</span>
           </div>
 
           {hasOpinion && (
             <div className={`mbp__teaser-opinion${brief.opinion_lean ? ` mbp__teaser-opinion--${brief.opinion_lean}` : ""}`}>
-              <span className="mbp__teaser-cmd mbp__teaser-cmd--opinion">void --opinion</span>
+              <span className="mbp__teaser-cmd mbp__teaser-cmd--opinion">Opinion</span>
               <span className="mbp__teaser-hl mbp__teaser-hl--opinion">{opinionHeadline}</span>
               {opinionTeaser && <span className="mbp__teaser-preview mbp__teaser-preview--opinion">{opinionTeaser}</span>}
             </div>
@@ -131,7 +131,7 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
       {/* Header row: branding + OnAir button */}
       <div className="mbp__header">
         <LogoIcon size={14} animation="idle" />
-        <span className="mbp__cmd">void --tl;dr</span>
+        <span className="mbp__cmd">The Brief</span>
         {brief.created_at && <span className="mbp__time">{timeAgo(brief.created_at)}</span>}
         <div className="mbp__header-actions">
           <button
@@ -168,7 +168,7 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
         <>
           <hr className="mbp__rule" />
           <div className={`mbp__opinion${brief.opinion_lean ? ` mbp__opinion--${brief.opinion_lean}` : ""}`}>
-            <span className="mbp__cmd mbp__cmd--opinion">void --opinion</span>
+            <span className="mbp__cmd mbp__cmd--opinion">Opinion</span>
             {opinionHeadline && <h3 className="mbp__hl mbp__hl--opinion">{opinionHeadline}</h3>}
             <p className="mbp__preview mbp__preview--opinion">{brief.opinion_text}</p>
           </div>

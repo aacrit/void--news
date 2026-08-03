@@ -27,7 +27,7 @@ export default function RevoltDetailClient({ slugPromise }: { slugPromise: Promi
     return (
       <div className="rev-empty">
         <p>That revolution is not in the archive yet.</p>
-        <p><Link href="/revolt">&larr; Back to void --revolt</Link></p>
+        <p><Link href="/revolt">&larr; Back to Revolt</Link></p>
       </div>
     );
   }

@@ -309,7 +309,7 @@ export default function UndertowGame() {
         {/* Navigation back */}
         <nav className="undertow-page__nav" aria-label="Breadcrumb">
           <Link href="/games" className="undertow-page__back">
-            <span aria-hidden="true">&larr;</span> void --games
+            <span aria-hidden="true">&larr;</span> Games
           </Link>
         </nav>
 

@@ -88,7 +88,7 @@ export default function NavBar({
       {/* ── Row 1: Chrome — structural, about the app ── */}
       <nav className="nav-inner" aria-label="Main navigation">
         <div className="nav-left">
-          <Link href="/" aria-label="void --news — home" className="nav-logo si-hoverable">
+          <Link href="/" aria-label="Void News home" className="nav-logo si-hoverable">
             <span className="nav-logo-desktop">
               <LogoFull height={30} />
             </span>
@@ -119,11 +119,11 @@ export default function NavBar({
         {/* Spinoff product links — standalone products under the void --news
             umbrella, treated with italic accents (warm rule + label). */}
         <nav className="nav-spinoffs" aria-label="Spinoff editions">
-          <Link href="/history" className="nav-history" aria-label="Go to void --history" title="void --history">
+          <Link href="/history" className="nav-history" aria-label="Go to History" title="History">
             <span className="nav-history__rule" aria-hidden="true" />
             <span className="nav-history__label">History</span>
           </Link>
-          <Link href="/weekly" className="nav-history nav-weekly" aria-label="Go to the Weekly digest" title="void --weekly">
+          <Link href="/weekly" className="nav-history nav-weekly" aria-label="Go to the Weekly" title="Weekly">
             <span className="nav-history__rule" aria-hidden="true" />
             <span className="nav-history__label">Weekly</span>
           </Link>
@@ -138,7 +138,7 @@ export default function NavBar({
             <Link href="/ship" className="nav-page" aria-label="Send feedback" title="Feedback">
               Feedback
             </Link>
-            <Link href="/about" className="nav-page" aria-label="About void --news" title="void --about">
+            <Link href="/about" className="nav-page" aria-label="About Void News" title="About">
               About
             </Link>
           </nav>

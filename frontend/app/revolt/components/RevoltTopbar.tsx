@@ -10,17 +10,17 @@ import LogoIcon from '../../components/LogoIcon';
 export default function RevoltTopbar() {
   return (
     <header className="rev-topbar">
-      <Link href="/revolt" className="rev-topbar__brand" aria-label="void --revolt home">
+      <Link href="/revolt" className="rev-topbar__brand" aria-label="Revolt home">
         <span className="rev-topbar__mark" aria-hidden="true">
           <LogoIcon size={24} animation="idle" />
         </span>
-        <span className="rev-topbar__wordmark">void <b>--revolt</b></span>
+        <span className="rev-topbar__wordmark"><b>Revolt</b></span>
       </Link>
       <span className="rev-topbar__spacer" />
       <Link href="/revolt" className="rev-topbar__link">The Archive</Link>
       <Link href="/revolt/active" className="rev-topbar__link">The Living</Link>
       <Link href="/revolt/compare" className="rev-topbar__link">Compare</Link>
-      <Link href="/" className="rev-topbar__link">void --news</Link>
+      <Link href="/" className="rev-topbar__link">Void News</Link>
       <ThemeToggle />
     </header>
   );
