@@ -24,6 +24,10 @@
 /feedback    /ship                 301
 /feedback/   /ship                 301
 
+# 2026-08-03 — Revolt removed from prod (temporarily). 301 all /revolt* to home.
+/revolt      /  301
+/revolt/*    /  301
+
 # Legacy GitHub Pages project-path. CF Pages serves at root, so 301 any
 # stray /void--news/* deep link to the equivalent root path. Placed last:
 # first match wins, so the specific edition rules above take precedence.

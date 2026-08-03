@@ -1163,14 +1163,6 @@ export default function HistoryLanding({
             );
           })()}
 
-          {/* Sibling-world discovery card — the archive's quiet doorway into
-              void --revolt. A distinct blue callout at the end of the threads flow. */}
-          <Link href="/revolt" className="hist-revolt-card">
-            <span className="hist-revolt-card__kicker">the sibling</span>
-            <span className="hist-revolt-card__name">Revolt</span>
-            <span className="hist-revolt-card__desc">Every revolution on one arc, past and unfolding.</span>
-            <span className="hist-revolt-card__arrow" aria-hidden="true">&rarr;</span>
-          </Link>
         </div>
       )}
 

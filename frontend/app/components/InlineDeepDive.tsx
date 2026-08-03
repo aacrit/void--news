@@ -29,7 +29,6 @@ import ClaimConsensusSection from "./ClaimConsensusSection";
 import SixLenses from "./SixLenses";
 import SummaryWithContradictions from "./SummaryWithContradictions";
 import { findHistoryContext } from "../lib/historyContext";
-import { findRevoltContext } from "../lib/revoltContext";
 import LazyOnView from "./LazyOnView";
 
 /* ---------------------------------------------------------------------------
@@ -90,40 +89,6 @@ function HistoryContextLink({
   );
 }
 
-/* Reverse of HistoryContextLink: if a live story maps to a tracked active
-   revolution, offer a link into void --revolt's analytical portal. */
-function RevoltContextLink({
-  title,
-  summary,
-  visible,
-}: {
-  title: string;
-  summary: string;
-  visible: boolean;
-}) {
-  const match = findRevoltContext(title, summary);
-  if (!match) return null;
-
-  return (
-    <div
-      className={`dd-history-context anim-dd-section dd-cascade-5${visible ? " anim-dd-section--visible" : ""}`}
-    >
-      <hr className="ink-rule" style={{ margin: "0 0 var(--space-3) 0" }} aria-hidden="true" />
-      <span className="dd-history-context__label text-meta" aria-hidden="true">
-        Track this movement
-      </span>
-      <a
-        href={match.href}
-        className="dd-history-context__link"
-        aria-label={`Track this movement in Revolt: ${match.title}`}
-      >
-        <span className="dd-history-context__arrow" aria-hidden="true">&rarr;</span>
-        <span className="dd-history-context__title">{match.title}</span>
-        <span className="dd-history-context__desc">Weigh it against the historical record in Revolt</span>
-      </a>
-    </div>
-  );
-}
 
 interface InlineDeepDiveProps {
   story: Story;
@@ -678,7 +643,6 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
 
         {/* ---- Historical Context cross-link (only when keyword matches) -- */}
         <HistoryContextLink title={story.title} summary={story.summary} visible={contentVisible} />
-        <RevoltContextLink title={story.title} summary={story.summary} visible={contentVisible} />
 
         {/* Fetch error — retry UI */}
         {fetchError && !isLoadingData && sources.length === 0 && (
