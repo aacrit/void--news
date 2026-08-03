@@ -10,7 +10,7 @@ on:
     workflows:
       - "News Pipeline"
       - "Auto-merge Claude branches"
-      - "Nightly DB Backup"
+      - "Weekly DB Backup"
       - "Weekly Digest"
       - "Deploy to Cloudflare Pages"
     types: [completed]
