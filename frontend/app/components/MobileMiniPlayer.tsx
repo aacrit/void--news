@@ -41,6 +41,8 @@ export default function MobileMiniPlayer() {
   } = useAudio();
   const router = useRouter();
   const isWeekly = contentType === "weekly";
+  const isHistory = contentType === "history";
+  const productLabel = isHistory ? "History" : isWeekly ? "Weekly" : "On Air";
 
   // Set data-audio-active on body while the mini-player strip is visible —
   // CSS uses this to add bottom padding for the 44px strip. Visibility is now
@@ -82,14 +84,14 @@ export default function MobileMiniPlayer() {
   if (isExpanded) return null;
 
   return (
-    <div className={`mmp${isWeekly ? " mmp--weekly" : ""}`} onClick={handleExpand} role="complementary" aria-label="Audio mini-player">
+    <div className={`mmp${isWeekly ? " mmp--weekly" : ""}${isHistory ? " mmp--history" : ""}`} onClick={handleExpand} role="complementary" aria-label="Audio mini-player">
       {/* Logo icon */}
       <div className="mmp__icon">
         <LogoIcon size={16} animation={isPlaying ? "analyzing" : "idle"} />
       </div>
 
       {/* Label */}
-      <span className="mmp__label">{isWeekly ? "Weekly" : "On Air"}</span>
+      <span className="mmp__label">{productLabel}</span>
 
       {/* Spacer */}
       <div className="mmp__spacer" />

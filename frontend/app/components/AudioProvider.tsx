@@ -42,17 +42,30 @@ export interface EpisodeMeta {
   created_at: string;
 }
 
+/** Minimal void --history event audio payload for the shared player.
+ *  History audio is a single narrated account (no opinion firewall, no host
+ *  personas), so only the fields the shared transport needs are threaded in. */
+export interface HistoryAudioPayload {
+  id: string;
+  title: string;
+  subtitle?: string | null;
+  audioUrl: string;
+  durationSeconds: number;
+}
+
 export interface AudioState {
   brief: DailyBriefData | null;
   edition: string;
   setEdition: (ed: string) => void;
   /** Which product currently owns the player — drives accent theming + labels */
-  contentType: "daily" | "weekly";
+  contentType: "daily" | "weekly" | "history";
   /** Load a weekly digest (+ optional archive playlist) into the shared player */
   playWeekly: (
     digest: import("../lib/types").WeeklyDigestData,
     archiveIssues?: EpisodeMeta[]
   ) => void;
+  /** Load a void --history event's companion audio into the shared player */
+  playHistory: (payload: HistoryAudioPayload) => void;
   isPlaying: boolean;
   currentTime: number;
   duration: number;
@@ -111,9 +124,10 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
   const [hasEverPlayed, setHasEverPlayed] = useState(false);
   const [previousEpisodes, setPreviousEpisodes] = useState<EpisodeMeta[]>([]);
   // Which product owns the player. A ref mirror lets the edition-fetch effect
-  // bail when a weekly issue is loaded, without re-running on contentType change.
-  const [contentType, setContentType] = useState<"daily" | "weekly">("daily");
-  const contentTypeRef = useRef<"daily" | "weekly">("daily");
+  // bail when a weekly issue or history account is loaded, without re-running on
+  // contentType change.
+  const [contentType, setContentType] = useState<"daily" | "weekly" | "history">("daily");
+  const contentTypeRef = useRef<"daily" | "weekly" | "history">("daily");
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Public setEdition: the daily flow (useDailyBrief) is the only caller, so
@@ -133,11 +147,12 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
 
   /* ---- Fetch brief when edition changes (or when returning to the daily surface) ---- */
   useEffect(() => {
-    // A weekly issue currently owns the player — do NOT overwrite it with the
-    // daily brief. (Read the ref for the live value: playWeekly sets the ref
-    // synchronously, so even if this effect fires from the contentType state
-    // change it sees 'weekly' and bails.)
-    if (contentTypeRef.current === "weekly") return;
+    // A weekly issue or a history account currently owns the player — do NOT
+    // overwrite it with the daily brief. (Read the ref for the live value:
+    // playWeekly / playHistory set the ref synchronously, so even if this
+    // effect fires from the contentType state change it sees the non-daily
+    // owner and bails.)
+    if (contentTypeRef.current !== "daily") return;
 
     let cancelled = false;
 
@@ -477,6 +492,48 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
     []
   );
 
+  /** Load a void --history event's companion audio into the shared player.
+   *  Mirrors playWeekly: maps the event onto the DailyBriefData shape the player
+   *  consumes (history has no opinion firewall or host personas, so those are
+   *  null → the transport renders a single "Account" section). Does NOT auto-play
+   *  — it reveals the player ready to start, matching the daily/weekly behaviour.
+   *  Taking ownership here also pauses any daily brief that was playing, so the
+   *  news broadcast never continues on a history route. */
+  const playHistory = useCallback((payload: HistoryAudioPayload) => {
+    if (!payload.audioUrl) return;
+    contentTypeRef.current = "history";
+    setContentType("history");
+
+    const audio = audioRef.current;
+    if (audio) audio.pause();
+
+    setBrief({
+      id: payload.id,
+      edition: "world" as DailyBriefData["edition"],
+      tldr_text: payload.subtitle ?? "",
+      tldr_headline: payload.title,
+      opinion_text: null,
+      opinion_headline: null,
+      opinion_lean: null,
+      opinion_cluster_id: null,
+      audio_url: payload.audioUrl,
+      audio_duration_seconds: payload.durationSeconds,
+      opinion_start_seconds: null,
+      audio_voice_label: null,
+      audio_voice: null,
+      audio_script: null,
+      top_cluster_ids: null,
+      created_at: new Date().toISOString(),
+    });
+    setPreviousEpisodes([]);
+    setCurrentTime(0);
+    setDuration(payload.durationSeconds || 0);
+    setBuffered(0);
+    setAudioError(false);
+    setIsPlaying(false);
+    setPlayerVisible(true);
+  }, []);
+
   /* ---- Media Session API — iOS lock screen + notification controls ---- */
   useEffect(() => {
     if (typeof navigator === "undefined" || !("mediaSession" in navigator))
@@ -525,6 +582,7 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
     setEdition,
     contentType,
     playWeekly,
+    playHistory,
     isPlaying,
     currentTime,
     duration,
