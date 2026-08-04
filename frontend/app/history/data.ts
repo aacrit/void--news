@@ -233,15 +233,33 @@ function mapEventWithRelations(
       : [],
   }));
 
-  const media: MediaItem[] = dbMedia.map((m) => ({
-    id: m.id,
-    type: m.media_type === "photograph" ? "image" : m.media_type,
-    url: resolveMediaUrl(m.source_url),
-    caption: m.description ?? m.title,
-    attribution: m.attribution,
-    year: m.creation_date ?? undefined,
-    videoEmbedUrl: m.embed_url ?? undefined,
-  }));
+  /* A stock "Landscape orientation, 6000x4000px" dimension string is not a
+     caption — surface the image title (or the event title) instead. */
+  const isDimensionString = (s: string): boolean =>
+    /^\s*(landscape|portrait|square)\s+orientation/i.test(s) ||
+    /\d+\s*[x×]\s*\d+\s*px/i.test(s);
+
+  const media: MediaItem[] = dbMedia.map((m) => {
+    const rawDescription = (m.description ?? "").toString();
+    const rawTitle = (m.title ?? "").toString();
+    let caption = rawDescription;
+    if (!caption || isDimensionString(caption)) {
+      caption =
+        (rawTitle && !isDimensionString(rawTitle) ? rawTitle : "") ||
+        row.title ||
+        "Archival image";
+    }
+    return {
+      id: m.id,
+      type: m.media_type === "photograph" ? "image" : m.media_type,
+      url: resolveMediaUrl(m.source_url),
+      caption,
+      attribution: m.attribution,
+      year: m.creation_date ?? undefined,
+      location: m.location ?? row.country ?? undefined,
+      videoEmbedUrl: m.embed_url ?? undefined,
+    };
+  });
 
   const connections: EventConnection[] = dbConnections.map((c) => {
     /* Handle both forward and reverse connections */

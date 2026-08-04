@@ -176,14 +176,30 @@ export default function Lightbox({
         </button>
       )}
 
-      {/* Caption */}
-      <div className="hist-lightbox__caption">
+      {/* Caption — archival plate: caption line + date | location | credit */}
+      <figcaption className="hist-lightbox__caption">
         <p className="hist-lightbox__caption-text">{current.caption}</p>
-        <p className="hist-lightbox__caption-attr">
-          {current.attribution}
-          {current.year && ` (${current.year})`}
-        </p>
-      </div>
+        {(() => {
+          const meta: { label: string; value: string }[] = [];
+          if (current.year) meta.push({ label: "Date", value: current.year });
+          if (current.location) meta.push({ label: "Place", value: current.location });
+          if (current.attribution) meta.push({ label: "Credit", value: current.attribution });
+          if (meta.length === 0) return null;
+          return (
+            <div className="hist-lightbox__meta">
+              {meta.map((m, i) => (
+                <span key={m.label} className="hist-lightbox__meta-item">
+                  {i > 0 && (
+                    <span className="hist-lightbox__meta-sep" aria-hidden="true">·</span>
+                  )}
+                  <span className="hist-lightbox__meta-label">{m.label}</span>
+                  <span className="hist-lightbox__meta-value">{m.value}</span>
+                </span>
+              ))}
+            </div>
+          );
+        })()}
+      </figcaption>
     </div>
   );
 }

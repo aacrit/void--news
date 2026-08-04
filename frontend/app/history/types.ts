@@ -33,6 +33,8 @@ export interface MediaItem {
   caption: string;
   attribution: string;
   year?: string;
+  /** Where the image was taken / depicts. Falls back to the event location. */
+  location?: string;
   /** Internet Archive embed URL — only for type 'video' */
   videoEmbedUrl?: string;
 }
