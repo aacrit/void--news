@@ -14,6 +14,7 @@ Usage:
 """
 import argparse
 import html
+import io
 import json
 import os
 import re
@@ -161,15 +162,94 @@ body{{background:#14120f;color:#ece7dd;font-family:-apple-system,Segoe UI,Inter,
     return out, len(rows)
 
 
+def _pdf_font(size, bold=False):
+    from PIL import ImageFont
+    names = (["georgiab.ttf", "arialbd.ttf"] if bold else ["georgia.ttf", "arial.ttf"]) + ["DejaVuSans.ttf"]
+    for n in names:
+        try:
+            return ImageFont.truetype(n, size)
+        except Exception:
+            pass
+    return ImageFont.load_default()
+
+
+def _wrap(draw, text, font, max_w):
+    lines, cur = [], ""
+    for w in (text or "").split():
+        t = (cur + " " + w).strip()
+        if not cur or draw.textlength(t, font=font) <= max_w:
+            cur = t
+        else:
+            lines.append(cur)
+            cur = w
+    if cur:
+        lines.append(cur)
+    return lines
+
+
+def build_pdf(track, limit):
+    """One LANDSCAPE page per post (3 slides side by side + caption + tags),
+    combined into a shareable multi-page PDF. Pillow only, no browser."""
+    try:
+        from PIL import Image, ImageDraw
+    except ImportError:
+        sys.exit("ig_review --pdf needs Pillow (pip install pillow)")
+    inlist = ",".join(TRACK_PILLARS[track])
+    rows = _rest(f"ig_posts?select=id,pillar,caption,hashtags,image_urls"
+                 f"&pillar=in.({inlist})&state=neq.rejected"
+                 f"&order=created_at.desc&limit={limit}")
+    W, H, M, GAP = 2200, 1400, 70, 44
+    SW = (W - 2 * M - 2 * GAP) // 3
+    SH = int(SW * 1350 / 1080)   # keep the 1080x1350 slide aspect
+    SY = 150
+    BG, INK, TAG = (250, 247, 240), (28, 24, 20), (90, 120, 150)
+    hfont, cfont, tfont = _pdf_font(34, bold=True), _pdf_font(30), _pdf_font(24)
+    pages = []
+    for i, r in enumerate(rows):
+        pg = Image.new("RGB", (W, H), BG)
+        d = ImageDraw.Draw(pg)
+        d.text((M, 52), f"POST {i + 1} / {len(rows)}    {(r.get('pillar') or '').upper()}", font=hfont, fill=INK)
+        d.line([(M, 120), (W - M, 120)], fill=(210, 200, 188), width=2)
+        imgs = r.get("image_urls") or []
+        x = M
+        for u in (imgs[:3] if isinstance(imgs, list) else []):
+            try:
+                raw = urllib.request.urlopen(u, timeout=25).read()
+                pg.paste(Image.open(io.BytesIO(raw)).convert("RGB").resize((SW, SH)), (x, SY))
+            except Exception:
+                d.rectangle([x, SY, x + SW, SY + SH], outline=(200, 190, 178), width=2)
+            x += SW + GAP
+        cy = SY + SH + 34
+        for ln in _wrap(d, (r.get("caption") or "").strip(), cfont, W - 2 * M)[:6]:
+            d.text((M, cy), ln, font=cfont, fill=INK)
+            cy += 40
+        tags = r.get("hashtags")
+        tags = " ".join(tags) if isinstance(tags, list) else (tags or "")
+        for ln in _wrap(d, tags, tfont, W - 2 * M)[:2]:
+            d.text((M, cy + 8), ln, font=tfont, fill=TAG)
+            cy += 32
+        pages.append(pg)
+    out = os.path.join(tempfile.gettempdir(), f"ig_strategy_{track}.pdf")
+    if pages:
+        pages[0].save(out, save_all=True, append_images=pages[1:], resolution=150.0)
+    return out, len(rows)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--track", choices=list(TRACK_PILLARS), default="void")
     ap.add_argument("--limit", type=int, default=12)
-    ap.add_argument("--open", action="store_true", help="open the HTML in a browser")
+    ap.add_argument("--open", action="store_true", help="open the output in a browser/viewer")
+    ap.add_argument("--pdf", action="store_true", help="also render a landscape PDF (1 post per page)")
     args = ap.parse_args()
     _load_env()
     path, n = build(args.track, args.limit)
     print(f"WROTE {path} ({n} drafts)")
+    if args.pdf:
+        pdf, _ = build_pdf(args.track, args.limit)
+        print(f"WROTE {pdf}")
+        if args.open:
+            webbrowser.open("file:///" + pdf.replace("\\", "/"))
     if args.open:
         webbrowser.open("file:///" + path.replace("\\", "/"))
 
