@@ -85,6 +85,8 @@
    stacking contexts that previously trapped the sigil under stretch-link). */
 .story-card .sigil,
 .lead-story .sigil,
+.lead-split .sigil,
+.lead-headline .sigil,
 .dg-row .sigil,
 .wire-card .sigil {
   position: relative;
