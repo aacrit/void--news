@@ -23,6 +23,18 @@ const ARCHETYPES = [
   { key: "thin", label: "One corner, thin", verdict: "Scrutinize", data: demoSigil(78, 6, 3) },
 ];
 
+/* The full page map for the closing step — every live destination, each in its
+   own brand accent so the family reads as branded, not a grey link list. Colors
+   mirror the product-family palette used across About and the nav. */
+const EXPLORE = [
+  { name: "Today's Feed", sub: "The front page, ranked once", href: "/", accentLight: "#9A5638", accentDark: "#D89A7C" },
+  { name: "Weekly Edition", sub: "The week, read like a magazine", href: "/weekly", accentLight: "#B23A2A", accentDark: "#E0705C" },
+  { name: "History", sub: "Events, told from every side", href: "/history", accentLight: "#8A6410", accentDark: "#D4A574" },
+  { name: "Sources", sub: "All 1,016, on one axis", href: "/sources", accentLight: "#3F7A5A", accentDark: "#77B994" },
+  { name: "On Air", sub: "The daily brief, read aloud", href: "/onair", accentLight: "#2E8B7D", accentDark: "#4DAFA0" },
+  { name: "Ship", sub: "Request it, vote, watch it ship", href: "/ship", accentLight: "#BE4326", accentDark: "#D2593A" },
+] as const;
+
 interface Props {
   presentation: "page" | "overlay";
   onComplete?: () => void;
@@ -82,14 +94,34 @@ export default function BeatVerdict({ presentation, onComplete }: Props) {
         ))}
       </ul>
 
-      <div className="verdict__cta">
+      <div className="verdict__final">
+        <p className="verdict__final-eyebrow">Where to next</p>
+        <h3 className="verdict__final-h">Explore everything.</h3>
+
         {presentation === "overlay" ? (
-          <button className="verdict__go" onClick={onComplete} autoFocus>Start reading</button>
+          <button className="verdict__go" onClick={onComplete} autoFocus>Start reading &rarr;</button>
         ) : (
-          <Link href="/" className="verdict__go">Read today&rsquo;s feed</Link>
+          <Link href="/" className="verdict__go">Read today&rsquo;s feed &rarr;</Link>
         )}
         <p className="verdict__fine">No signup. No paywall. No tracking.</p>
-        <Link href="/history" className="verdict__secondary">Or explore the archive &rarr;</Link>
+
+        <nav className="verdict__map" aria-label="Everything on Void">
+          {EXPLORE.map((e) => (
+            <Link
+              key={e.name}
+              href={e.href}
+              className="verdict__map-link"
+              style={{ ["--acc-l" as string]: e.accentLight, ["--acc-d" as string]: e.accentDark }}
+            >
+              <span className="verdict__map-name">{e.name}</span>
+              <span className="verdict__map-sub">{e.sub}</span>
+            </Link>
+          ))}
+        </nav>
+
+        <p className="verdict__map-note">
+          Every story opens a Deep Dive. The daily Opinion column runs on the feed and is read aloud On Air.
+        </p>
       </div>
     </section>
   );
