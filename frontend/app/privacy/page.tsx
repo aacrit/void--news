@@ -25,7 +25,7 @@ export default function PrivacyPage() {
       <section>
         <h2>From readers: nothing.</h2>
         <p>
-          The website at <code>void-news.pages.dev</code> requires no account.
+          The website at <code>news.voidvision.org</code> requires no account.
           We do not run analytics. We do not place cookies for tracking. We do
           not fingerprint browsers. We do not load third-party scripts for
           advertising or marketing. The newspaper principle: every reader sees
@@ -129,7 +129,7 @@ export default function PrivacyPage() {
       <section>
         <h2>Contact.</h2>
         <p>
-          Privacy questions: <a href="mailto:privacy@void-news.pages.dev">privacy@void-news.pages.dev</a>.
+          Privacy questions: <a href="mailto:privacy@voidvision.org">privacy@voidvision.org</a>.
           Press questions: see <Link href="/press">/press</Link>.
         </p>
       </section>

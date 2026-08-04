@@ -146,7 +146,7 @@ The MVP is complete when:
 - [x] BiasLens Three Lenses displays inline on every story card
 - [x] v6.0 importance ranking active with edition-unique ranking
 - [x] Light and dark modes retain newspaper aesthetic
-- [x] Deployed to production (Cloudflare Pages, live at https://void-news.pages.dev, root basePath — was the launch blocker; GitHub Pages retired)
+- [x] Deployed to production (Cloudflare Pages, live at https://news.voidvision.org, CF origin void-news.pages.dev, root basePath — was the launch blocker; GitHub Pages retired)
 - [x] PWA installable (manifest + service worker + offline fallback)
 - [x] Capacitor iOS/Android shells initialized (`appId: void.news`)
 - [ ] Lighthouse score 90+ on all categories (verified post-deploy; projection 88-93 mobile / 95-98 desktop pre-CF)

@@ -54,7 +54,7 @@ NOISE_KEYWORDS = [
 PRESS_TEMPLATE = (
     "Thanks for reaching out. I will get you a longer reply within 24 hours. "
     "If it helps in the meantime: press kit and methodology at "
-    "void-news.pages.dev/press. Talk soon."
+    "news.voidvision.org/press. Talk soon."
 )
 
 

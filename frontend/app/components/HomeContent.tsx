@@ -270,7 +270,7 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
     const sync = (matches: boolean) => {
       setIsMobile(matches);
       document.documentElement.setAttribute("data-viewport", matches ? "mobile" : "desktop");
-      // Canvas-cap freeze workaround (measured on void-news.pages.dev, 2026-08).
+      // Canvas-cap freeze workaround (measured on news.voidvision.org, 2026-08).
       // .page-main carries `filter: var(--cin-grade)`, which makes it a composited
       // layer whose COMPUTED STYLE Chromium restores STALE on a back/forward
       // navigation across the 767px breakpoint (load mobile, resize to desktop

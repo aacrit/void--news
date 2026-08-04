@@ -90,7 +90,7 @@ function Cta({ spec }: { spec: MethodSlideSpec }) {
       <h2 className="ig-cta__line">
         {spec.headline ?? "Rule based. Traceable. Every score shows its math."}
       </h2>
-      <p className="ig-url">{spec.url ?? "void-news.pages.dev"}</p>
+      <p className="ig-url">{spec.url ?? "news.voidvision.org"}</p>
       <LogoMark position="bl" tone="onDark" />
     </div>
   );

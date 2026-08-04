@@ -49,7 +49,7 @@ function Cta({ spec }: { spec: VisionSlideSpec }) {
     <div className="ig-vision ig-vision--cta">
       <HeroSigil size={280} accent="terracotta" word="NEWS" />
       <h2 className="ig-cta__line">{spec.headline ?? "See through the void."}</h2>
-      <p className="ig-url">{spec.url ?? "void-news.pages.dev"}</p>
+      <p className="ig-url">{spec.url ?? "news.voidvision.org"}</p>
     </div>
   );
 }

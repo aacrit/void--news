@@ -55,7 +55,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://void-news.pages.dev"),
+  metadataBase: new URL("https://news.voidvision.org"),
   title: "Void News. See through the void.",
   description:
     "An experimental newsroom: free per-article bias analysis across 1,016 sources. Six axes. No paywall. No algorithm. Just the news, dissected.",
