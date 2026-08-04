@@ -101,6 +101,67 @@ _EPITHET_LEAD_RE = re.compile(
 
 _DELIMS = ("-", "–", "—", "|")
 
+# ---------------------------------------------------------------------------
+# Tabloid shout-headline neutralization (2026-08-03)
+#
+# Source headlines like  "Drama With the CDC? WHOA: Fauci's 2021 Diary Entry ...
+# Paints the Most EVIL Picture of All"  shipped verbatim on null-tier cards:
+# all-caps emphatic shout words + clickbait "?:" teasers straight from the
+# source. This pass detects those markers and rewrites to a neutral factual
+# headline; if nothing substantive survives it returns "" so the caller falls
+# back to another member headline.
+#
+# Detection is a CURATED shout vocabulary (all-caps, case-sensitive) so genuine
+# acronyms (NATO, SCOTUS, COVID, NASA, OPEC) are never touched.
+# ---------------------------------------------------------------------------
+_SHOUT_WORDS = frozenset({
+    "WHOA", "OMG", "WOW", "LOL", "LMAO", "WTF", "OUCH", "YIKES", "BOOM",
+    "EVIL", "INSANE", "CRAZY", "SHOCKING", "BRUTAL", "SAVAGE", "EPIC", "VIRAL",
+    "MELTDOWN", "SLAMMED", "DESTROYED", "OWNED", "BUSTED", "EXPOSED", "BOMBSHELL",
+    "UNREAL", "OUTRAGEOUS", "DISGUSTING", "SHOOK", "SMACKDOWN", "CLAPBACK",
+})
+_SHOUT_ALT = "|".join(sorted(_SHOUT_WORDS, key=len, reverse=True))
+# A shout word used as a label ("WHOA:", "BOOM!").
+_SHOUT_LABEL_RE = re.compile(r"\b(?:" + _SHOUT_ALT + r")\b\s*[:!]+\s*")
+# A shout word anywhere (case-sensitive all-caps).
+_SHOUT_WORD_RE = re.compile(r"\b(" + _SHOUT_ALT + r")\b")
+# Clickbait punctuation: "?:", "!?", "!!", "??".
+_CLICKBAIT_PUNCT_RE = re.compile(r"\?\s*[:!]|!\s*\?|!{2,}|\?{2,}")
+
+
+def _is_sensational_headline(title: str) -> bool:
+    """True if a headline carries all-caps shout words or clickbait punctuation."""
+    if not title:
+        return False
+    if _CLICKBAIT_PUNCT_RE.search(title):
+        return True
+    return bool(_SHOUT_WORD_RE.search(title))
+
+
+def _desensationalize_headline(title: str) -> str:
+    """Neutralize a shout/clickbait headline deterministically ($0). Drops a
+    leading teaser question and shout labels, title-cases residual shout words,
+    and removes clickbait punctuation. May return "" if nothing substantive
+    remains (signals the caller to fall back to another headline)."""
+    t = title
+    # Drop a leading teaser question that precedes a shout label:
+    # "Drama With the CDC? WHOA: ..." -> "WHOA: ..."
+    if _SHOUT_LABEL_RE.search(t):
+        t = re.sub(
+            r"^[^?]{0,80}\?\s+(?=\b(?:" + _SHOUT_ALT + r")\b)", "", t
+        ).strip()
+    # Remove shout labels ("WHOA:", "BOOM!").
+    t = _SHOUT_LABEL_RE.sub("", t).strip()
+    # Title-case residual mid-sentence shout words ("EVIL" -> "Evil").
+    t = _SHOUT_WORD_RE.sub(lambda m: m.group(1).capitalize(), t)
+    # Neutralize clickbait punctuation.
+    t = re.sub(r"\?\s*[:!]", ". ", t)
+    t = re.sub(r"!\s*\?", "?", t)
+    t = re.sub(r"!+", "", t)
+    t = re.sub(r"\?{2,}", "?", t)
+    t = re.sub(r"\s{2,}", " ", t).strip(" :-–—.")
+    return t
+
 
 def _looks_like_source_suffix(seg: str) -> bool:
     """True if a trailing segment (after a delimiter) is a source attribution,
@@ -165,7 +226,16 @@ def normalize_headline(title: str) -> str:
         if not stripped:
             break
 
-    return t.strip(" \t\r\n-–—|,").strip()
+    t = t.strip(" \t\r\n-–—|,").strip()
+
+    # Tabloid shout-headline neutralization (all-caps shout words + clickbait
+    # "?:"). A no-op on ordinary/LLM headlines. If nothing substantive survives
+    # the rewrite, return "" so the caller falls back to another member title.
+    if _is_sensational_headline(t):
+        cleaned = _desensationalize_headline(t)
+        t = cleaned if len(cleaned) >= 15 else ""
+
+    return t.strip()
 
 
 # ---------------------------------------------------------------------------
@@ -210,23 +280,151 @@ def _fix_missing_spaces(text: str) -> str:
     return text
 
 
+def _repair_runons(text: str) -> str:
+    """Insert missing spaces at glued sentence/word joins that HTML stripping
+    produces in raw article excerpts:
+        'friendship.The'  -> 'friendship. The'   (period glued to a Cap word)
+        'Wednesday.In'    -> 'Wednesday. In'
+        'KokSINGAPORE'    -> 'Kok SINGAPORE'     (byline glued to a DATELINE)
+
+    Never splits a dotted abbreviation ('U.S.') — the punct rule only fires
+    when the char BEFORE the punctuation is a lowercase letter.
+    """
+    if not text:
+        return text
+    # sentence/clause punctuation glued directly to a following capitalized
+    # letter, only when preceded by a lowercase letter (protects 'U.S.').
+    text = re.sub(r"(?<=[a-z])([.!?,;])(?=[A-Z])", r"\1 ", text)
+    # a lowercase run glued directly to an ALL-CAPS run (byline|DATELINE). Two
+    # leading lowercase letters required so 'iOS'/'eBay' are left intact.
+    text = re.sub(r"(?<=[a-z][a-z])(?=[A-Z]{2,}\b)", " ", text)
+    return text
+
+
+# ---------------------------------------------------------------------------
+# Leading byline / dateline / outlet-slug / photo-credit stripping (2026-08-03)
+#
+# The un-summarized ("null-tier") fallback ships the raw member excerpt. Those
+# excerpts routinely open with wire scaffolding that leaks onto the card:
+#   dateline    "SINGAPORE, Aug 3 (Reuters) - ..."   / "WASHINGTON — ..."
+#   byline      "By Xinghui Kok ..."
+#   outlet slug "ALBAWABA - ..."
+#   photo credit "... via Getty Images"  / "(Photo by ...)"
+# Each strip is applied only when a substantial body (>= 40 chars) survives, so
+# a real headline that merely resembles one of these shapes is never gutted.
+# ---------------------------------------------------------------------------
+# Byline: Title-cased name tokens only (so an all-caps DATELINE that follows a
+# byline is NOT swallowed as a name).
+_BYLINE_RE = re.compile(
+    r"^\s*By\s+[A-Z][a-z][\w.'\-]*(?:\s+(?:and\s+|& )?[A-Z][a-z][\w.'\-]*){0,3}"
+    r"\s*[.,;:\-–—]?\s+"
+)
+# Strong dateline: requires an (agency) parenthetical before the dash.
+_DATELINE_STRONG_RE = re.compile(
+    r"^\s*[A-Z][A-Z.'\-]+(?:\s+[A-Z][A-Z.'\-]+){0,3}\s*"
+    r"(?:,\s*[A-Z][a-z]{2,8}\.?\s+\d{1,2}(?:\s*,\s*\d{4})?\s*)?"
+    r"\([^)]{1,40}\)\s*[-–—]\s+"
+)
+# Date dateline: requires a ", <Month> <Day>" before the dash.
+_DATELINE_DATE_RE = re.compile(
+    r"^\s*[A-Z][A-Z.'\-]+(?:\s+[A-Z][A-Z.'\-]+){0,3}\s*,\s*"
+    r"[A-Z][a-z]{2,8}\.?\s+\d{1,2}(?:\s*,\s*\d{4})?\s*"
+    r"(?:\([^)]{1,40}\))?\s*[-–—]\s+"
+)
+# Em/en-dash dateline: "WASHINGTON — ..." (em/en dash only; a plain hyphen is
+# skipped so "US - China trade" is never mistaken for a dateline).
+_DATELINE_EMDASH_RE = re.compile(
+    r"^\s*[A-Z][A-Z.'\-]{3,}(?:\s+[A-Z][A-Z.'\-]+){0,3}\s*[–—]\s+"
+)
+# Outlet slug: a single all-caps token (>= 5 chars, so US/USA/AFP are safe) then
+# " - ".
+_OUTLET_SLUG_RE = re.compile(r"^\s*[A-Z][A-Z0-9.&'\-]{4,20}\s+[-–—]\s+")
+# Photo credit fragment ending in an agency tag.
+_PHOTO_CREDIT_RE = re.compile(
+    r"^\s*(?:"
+    r"\(?\s*(?:Photo|Image|Picture|File Photo|Credit|Pictured)\b[^.)\n]{0,120}?\)?[.:]?\s+"
+    r"|[^.\n]{0,140}?\b(?:via\s+Getty Images|Getty Images|AP Photo|"
+    r"/\s*(?:AFP|AP|Reuters|Getty|EPA|Bloomberg|Xinhua))\b[^.\n]{0,60}?[.\n]\s*"
+    r")",
+    re.IGNORECASE,
+)
+
+_LEADING_CREDIT_RES = [
+    _BYLINE_RE, _PHOTO_CREDIT_RE,
+    _DATELINE_STRONG_RE, _DATELINE_DATE_RE, _DATELINE_EMDASH_RE,
+    _OUTLET_SLUG_RE,
+]
+
+
+def _strip_leading_credits(text: str) -> str:
+    """Strip leading bylines, datelines, outlet slugs, and photo credits, keeping
+    a strip only when >= 40 chars of body remain."""
+    t = text
+    for _ in range(3):
+        changed = False
+        for rx in _LEADING_CREDIT_RES:
+            m = rx.match(t)
+            if not m:
+                continue
+            candidate = t[m.end():].lstrip()
+            if len(candidate) >= 40:
+                t = candidate
+                changed = True
+        if not changed:
+            break
+    return t
+
+
+# Abbreviations whose trailing period is NOT a sentence end. Used so a hard
+# truncation like "...post-Oct." or "...the Rev." is not mistaken for a
+# complete sentence.
+_ABBREV_END = frozenset({
+    "oct", "sept", "sep", "nov", "dec", "jan", "feb", "mar", "apr", "jun",
+    "jul", "aug", "mr", "mrs", "ms", "dr", "prof", "st", "sen", "rep", "gov",
+    "gen", "lt", "col", "sgt", "capt", "jr", "sr", "inc", "ltd", "co", "corp",
+    "vs", "etc", "no", "dept", "est", "approx", "gmt", "rev", "hon", "adm",
+})
+
+
+def _ends_in_abbrev(chunk: str) -> bool:
+    """True if `chunk` ends on an abbreviation period ('post-Oct.', '9 a.m.',
+    'the Rev.') rather than a genuine sentence terminator."""
+    m = re.search(r"([A-Za-z](?:[A-Za-z.'\-]*[A-Za-z])?)\.[\"')\]]?\s*$", chunk)
+    if not m:
+        return False
+    word = m.group(1).lower()
+    tail = word.rsplit("-", 1)[-1].rsplit(".", 1)[-1]  # "post-oct" -> "oct"
+    if tail in _ABBREV_END or word in _ABBREV_END:
+        return True
+    # dotted abbreviation ("a.m", "u.s") or single-letter initial.
+    if re.fullmatch(r"[a-z](?:\.[a-z])*", word):
+        return True
+    return False
+
+
 def _trim_to_sentence(text: str, max_chars: int = 600) -> str:
-    """Cut trailing mid-word '...' truncation and end on a complete sentence."""
+    """End on the last COMPLETE sentence; never cut mid-word or mid-sentence.
+
+    Trailing '...' truncation is removed. Terminators that are actually
+    abbreviation periods ('...post-Oct.') are not treated as sentence ends, so
+    a hard-truncated fragment is dropped rather than shipped verbatim.
+    """
     text = text.strip()
     # Kill a trailing ellipsis/truncation marker and any partial final word.
-    text = re.sub(r"\s*(?:\.\.\.|…|…)\s*$", "", text)
-    if len(text) > max_chars:
+    text = re.sub(r"\s*(?:\.\.\.|…)\s*$", "", text)
+    truncated = len(text) > max_chars
+    if truncated:
         text = text[:max_chars]
-    # Prefer ending on the last sentence terminator if we have enough body.
-    m = list(re.finditer(r"[.!?][\"')\]]?(?:\s|$)", text))
-    if m:
-        end = m[-1].end()
-        if end >= min(80, len(text) // 2):
-            text = text[:end]
-    else:
-        # No sentence end at all -> we likely truncated mid-word; drop the
-        # dangling partial token.
-        text = re.sub(r"\s+\S{1,20}$", "", text) if " " in text else text
+    ends = list(re.finditer(r"[.!?][\"')\]]?(?=\s|$)", text))
+    real_ends = [m.end() for m in ends if not _ends_in_abbrev(text[:m.end()])]
+    if real_ends:
+        good = [e for e in real_ends if e >= min(80, len(text) // 2)]
+        end = max(good) if good else max(real_ends)
+        return text[:end].strip()
+    # No complete sentence available. Never leave a mid-word cut: if we
+    # truncated, drop the dangling final partial token.
+    if truncated and " " in text:
+        text = re.sub(r"\s+\S+$", "", text)
     return text.strip()
 
 
@@ -238,7 +436,12 @@ def sanitize_summary(text: str) -> str:
     if not text:
         return ""
     t = _UNICODE_JUNK_RE.sub("", text).strip()
+    # Repair glued run-ons BEFORE credit stripping so a byline glued to a
+    # dateline ('KokSINGAPORE') separates and both can be recognized.
+    t = _repair_runons(t)
     t = _fix_missing_spaces(t)
+    # Strip leading byline / dateline / outlet-slug / photo-credit scaffolding.
+    t = _strip_leading_credits(t)
     for rx in _BOILERPLATE_RES:
         t = rx.sub("", t).strip()
     t = re.sub(r"\s{2,}", " ", t)
