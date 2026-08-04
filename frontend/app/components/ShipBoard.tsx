@@ -476,16 +476,15 @@ function QuickSubmit({
 
 
 /* ===========================================================================
-   OBSERVATIONS RAIL — the signature interactive element.
+   OBSERVATIONS RAIL — an expandable list that fills the right column.
 
-   Desktop, motion allowed: a vertical ticker. One observation holds the focal
-   slot expanded (claim + note + what we are doing + chip + Suggest a fix), rises
-   in, and hands off to the next on a timer. Pauses on hover/focus and via an
-   explicit control. "Expand all" opens every observation at once in an overlay.
-
-   Mobile or reduced-motion: a plain scrollable list of every observation. The
-   ticker region is aria-live="off" so it never spams assistive tech; the full
-   list and the overlay are the accessible reading paths.
+   All eight observations render as a vertical accordion that occupies the whole
+   column height and scrolls inside its own panel. Each row shows the claim + chip
+   collapsed; clicking it expands in place to reveal the note, what we are doing,
+   and the "Suggest a fix" control (which files via submitShipRequest with the
+   same rate-limit / honeypot / fingerprint guards). An "Expand all / Collapse
+   all" toggle opens or closes every row at once. One implementation for every
+   viewport; expand/collapse height animates unless reduced motion is requested.
    =========================================================================== */
 
 function ObservationChipTag({ chip }: { chip: ObservationChip }) {
@@ -497,138 +496,100 @@ function ObservationChipTag({ chip }: { chip: ObservationChip }) {
   );
 }
 
-function ObservationDetail({ obs, fingerprint }: { obs: Observation; fingerprint: string }) {
+function ObservationItem({
+  obs,
+  index,
+  open,
+  onToggle,
+  fingerprint,
+}: {
+  obs: Observation;
+  index: number;
+  open: boolean;
+  onToggle: (index: number) => void;
+  fingerprint: string;
+}) {
+  const panelId = `ship-obs-panel-${index}`;
+  const btnId = `ship-obs-btn-${index}`;
   return (
-    <>
-      <div className="ship-obs__row">
-        <p className="ship-obs__claim">{obs.claim}</p>
+    <li className={`ship-obs-item${open ? ' ship-obs-item--open' : ''}`}>
+      <button
+        type="button"
+        id={btnId}
+        className="ship-obs-item__head"
+        aria-expanded={open}
+        aria-controls={panelId}
+        onClick={() => onToggle(index)}
+      >
+        <span className="ship-obs-item__claim">{obs.claim}</span>
         <ObservationChipTag chip={obs.chip} />
+        <span className="ship-obs-item__caret" aria-hidden="true">{open ? '−' : '+'}</span>
+      </button>
+      <div
+        id={panelId}
+        role="region"
+        aria-labelledby={btnId}
+        className="ship-obs-item__panel"
+      >
+        {/* inert while collapsed: keeps the height animation working (no
+            display:none) while removing the hidden controls from the tab order
+            and the accessibility tree. */}
+        <div className="ship-obs-item__body" inert={!open}>
+          <p className="ship-obs__note">{obs.note}</p>
+          <p className="ship-obs__optimizing">
+            <span className="ship-obs__optimizing-label">What we are doing</span>
+            {obs.optimizing}
+          </p>
+          <QuickSubmit
+            fingerprint={fingerprint}
+            variant="inline"
+            presetTitle={`Re: ${obs.claim}`}
+            descPrefix={`On the observation: "${obs.claim}"`}
+            placeholder="Seen this yourself, or have a fix in mind? Tell us."
+            toggleLabel="Suggest a fix"
+          />
+        </div>
       </div>
-      <p className="ship-obs__note">{obs.note}</p>
-      <p className="ship-obs__optimizing">
-        <span className="ship-obs__optimizing-label">What we are doing</span>
-        {obs.optimizing}
-      </p>
-      <QuickSubmit
-        fingerprint={fingerprint}
-        variant="inline"
-        presetTitle={`Re: ${obs.claim}`}
-        descPrefix={`On the observation: "${obs.claim}"`}
-        placeholder="Seen this yourself, or have a fix in mind? Tell us."
-        toggleLabel="Suggest a fix"
-      />
-    </>
+    </li>
   );
 }
 
 function ObservationsRail({ fingerprint }: { fingerprint: string }) {
-  const isMobile = useIsMobile();
-  const prefersReduced = usePrefersReducedMotion();
-  const useTicker = !isMobile && !prefersReduced;
+  // Which rows are expanded. Multiple rows may be open at once.
+  const [openSet, setOpenSet] = useState<Set<number>>(new Set());
 
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [hoverPaused, setHoverPaused] = useState(false);
-  const [manualPaused, setManualPaused] = useState(false);
-  const [expandAll, setExpandAll] = useState(false);
+  const toggle = useCallback((index: number) => {
+    setOpenSet(prev => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index); else next.add(index);
+      return next;
+    });
+  }, []);
 
-  const paused = hoverPaused || manualPaused;
-
-  useEffect(() => {
-    if (!useTicker || paused || expandAll) return;
-    const id = setInterval(() => {
-      setActiveIndex(i => (i + 1) % OBSERVATIONS.length);
-    }, 6500);
-    return () => clearInterval(id);
-  }, [useTicker, paused, expandAll]);
-
-  const active = OBSERVATIONS[activeIndex];
-  const upNext = [1, 2].map(o => OBSERVATIONS[(activeIndex + o) % OBSERVATIONS.length]);
+  const allOpen = openSet.size === OBSERVATIONS.length;
+  const toggleAll = useCallback(() => {
+    setOpenSet(prev => (prev.size === OBSERVATIONS.length ? new Set() : new Set(OBSERVATIONS.map((_, i) => i))));
+  }, []);
 
   return (
     <div className="ship-rail">
       <div className="ship-rail__controls">
-        <button
-          type="button"
-          className="ship-rail__expand-all"
-          onClick={() => setExpandAll(true)}
-          aria-haspopup="dialog"
-        >
-          Expand all
+        <button type="button" className="ship-rail__expand-all" onClick={toggleAll} aria-pressed={allOpen}>
+          {allOpen ? 'Collapse all' : 'Expand all'}
         </button>
-        {useTicker && (
-          <button
-            type="button"
-            className="ship-rail__pause"
-            onClick={() => setManualPaused(p => !p)}
-            aria-pressed={manualPaused}
-          >
-            {manualPaused ? 'Play' : 'Pause'}
-          </button>
-        )}
       </div>
-
-      {useTicker ? (
-        <div
-          className="ship-ticker"
-          onMouseEnter={() => setHoverPaused(true)}
-          onMouseLeave={() => setHoverPaused(false)}
-          onFocusCapture={() => setHoverPaused(true)}
-          onBlurCapture={() => setHoverPaused(false)}
-        >
-          {/* aria-live off: the rotating focal card is decorative motion. The
-              full list lives in the "Expand all" dialog for assistive tech. */}
-          <div className="ship-ticker__stage" aria-live="off">
-            <article key={activeIndex} className="ship-ticker__focal">
-              <ObservationDetail obs={active} fingerprint={fingerprint} />
-            </article>
-          </div>
-
-          <div className="ship-ticker__next" aria-hidden="true">
-            <span className="ship-ticker__next-label">Up next</span>
-            {upNext.map((o, i) => (
-              <p key={i} className="ship-ticker__next-claim">{o.claim}</p>
-            ))}
-          </div>
-
-          <div className="ship-ticker__dots" role="tablist" aria-label="Observations">
-            {OBSERVATIONS.map((o, i) => (
-              <button
-                key={i}
-                type="button"
-                role="tab"
-                aria-selected={i === activeIndex}
-                aria-label={o.claim}
-                className={`ship-ticker__dot${i === activeIndex ? ' ship-ticker__dot--active' : ''}`}
-                onClick={() => setActiveIndex(i)}
-              />
-            ))}
-          </div>
-        </div>
-      ) : (
-        <ul className="ship-obs-list">
-          {OBSERVATIONS.map((o, i) => (
-            <li key={i} className="ship-obs-list__item">
-              <ObservationDetail obs={o} fingerprint={fingerprint} />
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {expandAll && (
-        <ShipOverlay title="Known Observations" onClose={() => setExpandAll(false)}>
-          <p className="ship-overlay__intro">
-            We would rather tell you where the machine still stumbles than pretend
-            it does not. Here is what we are watching, and what we are doing about it.
-          </p>
-          <ul className="ship-obs-list ship-obs-list--overlay">
-            {OBSERVATIONS.map((o, i) => (
-              <li key={i} className="ship-obs-list__item">
-                <ObservationDetail obs={o} fingerprint={fingerprint} />
-              </li>
-            ))}
-          </ul>
-        </ShipOverlay>
-      )}
+      <ul className="ship-obs-list">
+        {OBSERVATIONS.map((o, i) => (
+          <ObservationItem
+            key={i}
+            obs={o}
+            index={i}
+            open={openSet.has(i)}
+            onToggle={toggle}
+            fingerprint={fingerprint}
+          />
+        ))}
+      </ul>
     </div>
   );
 }
@@ -960,9 +921,11 @@ export default function ShipBoard() {
         </div>
       </header>
 
-      {/* ==== MAIN: Submit / The Board / Known Observations ==== */}
+      {/* ==== MAIN: [ Submit over Board ] | Known Observations ==== */}
       <div className="ship-main">
-        {/* ---- LEFT: Submit ---- */}
+        {/* ---- LEFT COLUMN: Submit (compact, top) over the Board ---- */}
+        <div className="ship-main__left">
+        {/* ---- Submit ---- */}
         <section className="ship-col ship-col--submit" aria-label="Submit a request">
           <div className="ship-panel__head">
             <h2 className="ship-panel__title">Submit</h2>
@@ -1072,7 +1035,7 @@ export default function ShipBoard() {
           </div>
         </section>
 
-        {/* ---- CENTER: The Board ---- */}
+        {/* ---- The Board (fills the rest of the left column) ---- */}
         <section className="ship-col ship-col--board" aria-label="The board">
           <div className="ship-panel__head">
             <h2 className="ship-panel__title">The Board</h2>
@@ -1136,8 +1099,9 @@ export default function ShipBoard() {
             )}
           </div>
         </section>
+        </div>{/* /.ship-main__left */}
 
-        {/* ---- RIGHT: Known Observations ---- */}
+        {/* ---- RIGHT COLUMN: Known Observations ---- */}
         <aside className="ship-col ship-col--obs" aria-label="Known observations">
           <div className="ship-panel__head">
             <h2 className="ship-panel__title">Known Observations</h2>
