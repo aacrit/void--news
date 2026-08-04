@@ -95,52 +95,59 @@ def build(track, limit):
         fl = _flags(i, rows, sigs)
         badges = "".join(f'<span class="flag {c}">{html.escape(t)}</span>' for c, t in fl)
         ring = "card--err" if any(c == "err" for c, _ in fl) else ("card--warn" if fl else "")
+        cap = html.escape((r.get("caption") or "(no caption yet)").strip())
         cards.append(f"""
-        <article class="card {ring}">
-          <div class="slides">{slides}</div>
-          <div class="meta">
-            <div class="head"><span class="pill pill--{html.escape(r.get('pillar') or '')}">{html.escape((r.get('pillar') or '').upper())}</span><span class="state">{html.escape(r.get('state') or '')}</span></div>
-            {f'<div class="flags">{badges}</div>' if badges else ''}
-            <p class="cap">{html.escape((r.get('caption') or '(no caption yet)').strip())}</p>
+        <section class="page {ring}">
+          <div class="page__head">
+            <span class="idx">Post {i + 1} / {len(rows)}</span>
+            <span class="pill pill--{html.escape(r.get('pillar') or '')}">{html.escape((r.get('pillar') or '').upper())}</span>
+            <span class="state">{html.escape(r.get('state') or '')}</span>
+            {badges}
+          </div>
+          <div class="page__slides">{slides}</div>
+          <div class="page__cap">
+            <p class="cap">{cap}</p>
             <p class="tags">{html.escape(tags)}</p>
           </div>
-        </article>""")
+        </section>""")
     doc = f"""<!doctype html><html><head><meta charset="utf-8"><title>Void News social drafts, {html.escape(track)}</title>
 <style>
 :root{{color-scheme:dark}}*{{box-sizing:border-box}}
-body{{margin:0;background:#14120f;color:#ece7dd;font-family:-apple-system,Segoe UI,Inter,system-ui,sans-serif;padding:28px}}
-h1{{font-family:Georgia,serif;margin:0 0 4px}}
-.sub{{color:#a89f8f;margin:0 0 24px;font-size:14px}}
-.grid{{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:22px}}
-.card{{background:#1e1b16;border:1px solid #322d25;border-radius:10px;overflow:hidden}}
-.card--warn{{border-color:#8a6d1f}}.card--err{{border-color:#a23b2f}}
-.slides{{display:flex;gap:6px;overflow-x:auto;background:#0d0b09;padding:6px}}
-.slides img{{height:300px;width:auto;border-radius:3px;flex:0 0 auto;cursor:zoom-in}}
+html,body{{margin:0;height:100%}}
+body{{background:#14120f;color:#ece7dd;font-family:-apple-system,Segoe UI,Inter,system-ui,sans-serif}}
+/* One post per full-viewport page; scroll snaps to the next post. */
+.deck{{height:100vh;overflow-y:scroll;scroll-snap-type:y mandatory;scroll-behavior:smooth}}
+.page{{height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;gap:12px;padding:18px 30px 16px}}
+.page--warn{{box-shadow:inset 0 0 0 2px #8a6d1f}}
+.page--err{{box-shadow:inset 0 0 0 2px #a23b2f}}
+.page__head{{flex:0 0 auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap}}
+.idx{{font-family:Georgia,serif;font-size:15px;color:#a89f8f}}
+.pill{{font-size:12px;letter-spacing:.06em;padding:3px 11px;border-radius:20px;background:#322d25;color:#cbb98f;text-transform:uppercase}}
+.pill--vision,.pill--method,.pill--example{{color:#d9a184}}
+.pill--history{{color:#c6a678}}.pill--weekly{{color:#e08a7c}}
+.state{{font-size:12px;color:#8a8175}}
+.flag{{font-size:12px;padding:3px 9px;border-radius:5px}}
+.flag.err{{background:#3a1512;color:#f0a89c;border:1px solid #a23b2f}}
+.flag.warn{{background:#332812;color:#e6c878;border:1px solid #8a6d1f}}
+/* The three slides, side by side, filling the middle. */
+.page__slides{{flex:1 1 auto;min-height:0;display:flex;gap:18px;justify-content:center;align-items:center}}
+.page__slides img{{max-height:100%;max-width:31vw;width:auto;height:auto;border-radius:4px;box-shadow:0 6px 30px rgba(0,0,0,.45);cursor:zoom-in}}
+.noimg{{color:#6b6459;font-size:14px}}
+.page__cap{{flex:0 0 auto;max-height:20vh;overflow-y:auto;display:flex;gap:26px;align-items:flex-start}}
+.cap{{font-size:14px;line-height:1.5;margin:0;white-space:pre-wrap;flex:1 1 auto}}
+.tags{{font-size:12.5px;color:#7fa8c8;margin:0;flex:0 0 28%}}
 .lb{{position:fixed;inset:0;background:rgba(8,7,6,.94);display:none;align-items:center;justify-content:center;z-index:999;cursor:zoom-out;padding:24px}}
 .lb.on{{display:flex}}
 .lb img{{max-width:96vw;max-height:96vh;width:auto;height:auto;box-shadow:0 10px 60px rgba(0,0,0,.6);border-radius:4px}}
-.noimg{{color:#6b6459;font-size:13px;padding:24px}}
-.meta{{padding:14px 15px 16px}}
-.head{{display:flex;gap:8px;align-items:center;margin-bottom:8px}}
-.pill{{font-size:11px;letter-spacing:.06em;padding:2px 9px;border-radius:20px;background:#322d25;color:#cbb98f}}
-.pill--vision,.pill--method,.pill--example{{color:#d9a184}}
-.pill--history{{color:#c6a678}}.pill--weekly{{color:#e08a7c}}
-.state{{font-size:11px;color:#8a8175;margin-left:auto}}
-.flags{{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}}
-.flag{{font-size:12px;padding:4px 8px;border-radius:5px}}
-.flag.err{{background:#3a1512;color:#f0a89c;border:1px solid #a23b2f}}
-.flag.warn{{background:#332812;color:#e6c878;border:1px solid #8a6d1f}}
-.cap{{font-size:13.5px;line-height:1.5;margin:0 0 10px;white-space:pre-wrap}}
-.tags{{font-size:12px;color:#7fa8c8;margin:0}}
+.hint{{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);font-size:12px;color:#a89f8f;background:rgba(20,18,15,.85);border:1px solid #322d25;padding:5px 14px;border-radius:20px;pointer-events:none;z-index:50}}
 </style></head><body>
-<h1>Void News social drafts, {html.escape(track)} track</h1>
-<p class="sub">{len(rows)} drafts, nothing posted. Red = broken (do not publish). Amber = needs a fix. Scroll a card's slides sideways; click to zoom.</p>
-<div class="grid">{''.join(cards)}</div>
+<div class="deck">{''.join(cards)}</div>
+<div class="hint">{len(rows)} drafts, nothing posted &middot; scroll for next &darr; &middot; click a slide to zoom</div>
 <div class="lb" id="lb"><img id="lbimg" alt="expanded slide"></div>
 <script>
 (function(){{
   var lb=document.getElementById('lb'), im=document.getElementById('lbimg');
-  document.querySelectorAll('.slides img').forEach(function(t){{
+  document.querySelectorAll('.page__slides img').forEach(function(t){{
     t.addEventListener('click',function(){{ im.src=t.src; lb.classList.add('on'); }});
   }});
   lb.addEventListener('click',function(){{ lb.classList.remove('on'); im.src=''; }});

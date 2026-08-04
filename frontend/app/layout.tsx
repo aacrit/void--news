@@ -77,11 +77,11 @@ export const metadata: Metadata = {
     siteName: "Void News",
     images: [
       {
-        url: `${BASE_PATH}/og-image.svg`,
+        url: `${BASE_PATH}/og-image.png`,
         width: 1200,
         height: 630,
-        alt: "Void News. News aggregation with multi-axis bias analysis",
-        type: "image/svg+xml",
+        alt: "Void News. See through the void.",
+        type: "image/png",
       },
     ],
   },
@@ -90,7 +90,7 @@ export const metadata: Metadata = {
     title: "Void News. See through the void.",
     description:
       "An experimental newsroom: free per-article bias analysis across 1,016 sources. Six axes. No paywall. No algorithm.",
-    images: [`${BASE_PATH}/twitter-card.svg`],
+    images: [`${BASE_PATH}/og-image.png`],
   },
   icons: {
     icon: [
