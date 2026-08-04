@@ -543,6 +543,27 @@ _LOW_SPECIFICITY_WEIGHT = 0.4
 # The Phase-1 tightening (O1) already curbs the over-merge, so this stays at 1.
 MIN_DISTINGUISHING_SHARED = 1
 
+# Phase 2 cross-topic sanity floor (2026-08-04). merge_related_clusters unions
+# purely on entity overlap with NO content-similarity requirement — the only
+# main-path merge that lacks the stemmed-title-Jaccard guard that Phases 2.55
+# and 2.6 both carry. A SINGLE coincidental or roundup-bridged entity (e.g. a
+# "news in brief" member article injecting "Flagstar"/"Senate" into a Korea
+# heatwave cluster's entity set) can therefore union two topically-disjoint
+# stories. 2026-08-04 production: a "South Korea Heatwave Deaths Rise to 19"
+# cluster absorbed a Flagstar Bank 2021 data-breach story AND a US Senate-panel
+# story, all three stitched into one summary.
+#
+# Guard: a merge on only ONE distinguishing shared entity now also requires the
+# two cluster titles to share a MINIMAL amount of stemmed content (they must
+# name the same story). Two or more distinguishing shared entities remain strong
+# enough on their own (this preserves multi-desk consolidations like Trump-Iran,
+# whose sibling clusters each name a different secondary detail). The floor is
+# deliberately far below Phase 3's TITLE_JACCARD_THRESHOLD (0.22) so genuine
+# multi-desk title diversity is not refused — it only rejects the near-zero
+# overlap of a genuinely cross-topic bridge.
+PHASE2_STRONG_DISTINGUISHING = 2      # >= this many → title check waived
+PHASE2_TITLE_SANITY_FLOOR = 0.08      # single-entity bridge must clear this
+
 
 # ---------------------------------------------------------------------------
 # Canonical summit / known co-occurrence pairs
@@ -1021,6 +1042,7 @@ def merge_related_clusters(
         for c in clusters
     ]
     timestamps = [_parse_first_pub(c) for c in clusters]
+    titles = [c.get("title", "") or "" for c in clusters]
 
     n = len(clusters)
     parent = list(range(n))
@@ -1064,6 +1086,16 @@ def merge_related_clusters(
             distinguishing = shared - _LOW_SPECIFICITY_ENTITIES - _ENTITY_STOP_TOKENS
             if len(distinguishing) < MIN_DISTINGUISHING_SHARED:
                 continue
+
+            # Cross-topic sanity floor — a single-distinguishing-entity bridge
+            # must be confirmed by a minimal stemmed-title overlap so a lone
+            # coincidental / roundup-injected entity cannot union two disjoint
+            # stories (2026-08-04 Korea-heatwave / Flagstar / Senate contamination).
+            # Two or more distinguishing shared entities are strong enough alone
+            # and skip the title check (preserves multi-desk consolidation).
+            if len(distinguishing) < PHASE2_STRONG_DISTINGUISHING:
+                if _stemmed_title_jaccard(titles[i], titles[j]) < PHASE2_TITLE_SANITY_FLOOR:
+                    continue
 
             # Time gate — don't merge stories far apart in time.
             ti, tj = timestamps[i], timestamps[j]

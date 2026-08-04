@@ -64,6 +64,7 @@ try:
         summarize_clusters_batch,
         summarize_cluster,
         summarize_top50_after_rerank,
+        ensure_top50_summary_floor,
         _content_hash,
     )
     from summarizer.cluster_summarizer import is_available as llm_is_available
@@ -474,6 +475,48 @@ def _batch_upsert(table: str, rows: list[dict], chunk_size: int = 200,
     return total
 
 
+# Transient transport-drop markers for Supabase/PostgREST httpx calls. The
+# 08-04 run logged a burst of "Server disconnected" (httpx.RemoteProtocolError)
+# on the step-8 enrichment RPC and the consensus/divergence update during a
+# flaky-connection window; those calls were not retried. Same class of failure
+# the gemini_client transport retry now covers, applied here to the DB calls.
+_TRANSIENT_DB_MARKERS = (
+    "server disconnected", "remoteprotocolerror", "remote protocol",
+    "connection reset", "connection aborted", "connection closed",
+    "connectionerror", "connection error", "connecterror",
+    "readerror", "read error", "readtimeout", "read timeout",
+    "writetimeout", "connecttimeout", "connect timeout", "pooltimeout",
+    "httpcore", "protocolerror", "broken pipe", "eof occurred",
+    "timed out", "temporarily unavailable", "connection refused",
+)
+
+
+def _is_transient_db_error(exc: Exception) -> bool:
+    s = (str(exc) + " " + type(exc).__name__).lower()
+    return any(m in s for m in _TRANSIENT_DB_MARKERS)
+
+
+def _db_call_with_retry(fn, label: str, retries: int = 3, base_backoff: float = 1.5):
+    """Run a Supabase call, retrying only on transient transport drops
+    (Server disconnected / reset / read timeout) with exponential backoff.
+    Non-transient errors (and the final transient attempt) re-raise so the
+    caller's existing except handling is unchanged. Returns fn()'s result."""
+    import time as _t
+    attempt = 0
+    while True:
+        try:
+            return fn()
+        except Exception as e:
+            if _is_transient_db_error(e) and attempt < retries:
+                attempt += 1
+                backoff = base_backoff * (2 ** (attempt - 1))
+                print(f"  [warn] {label} transport drop "
+                      f"(retry {attempt}/{retries}, backoff {backoff:.1f}s): {e}")
+                _t.sleep(backoff)
+                continue
+            raise
+
+
 def enrich_cluster(cluster_id: str, skip_text: bool = False) -> None:
     """
     Call the Supabase RPC to refresh enrichment data for a cluster,
@@ -491,7 +534,12 @@ def enrich_cluster(cluster_id: str, skip_text: bool = False) -> None:
     """
     rpc_succeeded = False
     try:
-        supabase.rpc("refresh_cluster_enrichment", {"p_cluster_id": cluster_id}).execute()
+        _db_call_with_retry(
+            lambda: supabase.rpc(
+                "refresh_cluster_enrichment", {"p_cluster_id": cluster_id}
+            ).execute(),
+            label=f"Cluster enrichment {cluster_id}",
+        )
         rpc_succeeded = True
     except Exception as e:
         # RPC not deployed yet — compute client-side as fallback
@@ -894,10 +942,13 @@ def _generate_cluster_consensus_divergence(cluster_id: str) -> None:
         )
 
         # Pass raw Python lists — Supabase client handles JSONB serialization
-        supabase.table("story_clusters").update({
-            "consensus_points": consensus_pts,
-            "divergence_points": divergence_pts,
-        }).eq("id", cluster_id).execute()
+        _db_call_with_retry(
+            lambda: supabase.table("story_clusters").update({
+                "consensus_points": consensus_pts,
+                "divergence_points": divergence_pts,
+            }).eq("id", cluster_id).execute(),
+            label=f"Consensus/divergence {cluster_id}",
+        )
 
     except Exception as e:
         print(f"  [warn] Consensus/divergence generation failed for {cluster_id}: {e}")
@@ -3202,6 +3253,29 @@ def main():
                 clusters[idx]["_gemini_enriched"] = True
         except Exception as e:
             print(f"  [warn] Post-rerank summarization failed: {e}")
+
+    # Step 8d.1: Summary floor — guarantee NO displayed top-50 card is left at
+    # summary_tier=None showing a raw scraped excerpt. A flaky-connection window
+    # can still drop 8d Gemini calls even with the transport retry (or the
+    # per-run cap is spent), leaving cards null; those render the raw member
+    # excerpt (outlet slugs, bylines, mid-sentence truncation, sometimes
+    # off-topic to the headline — the 08-04 Cricket / Nigeria cards). This pass
+    # makes one more Gemini attempt per null card, else rebuilds a clean on-topic
+    # rule-based summary. Runs BEFORE 8d.5 so the final ordering / near-dup guard
+    # judges the cleaned titles.
+    if SUMMARIZER_AVAILABLE:
+        print("\n[8d.1] Top-50 summary floor (no raw-excerpt / tier=None cards)...")
+        try:
+            floor_metrics = ensure_top50_summary_floor(
+                supabase, edition="world", limit=50, prefer_provider="gemini")
+            print(
+                f"  Summary floor: {floor_metrics['checked']} top-50 cards were "
+                f"tier=None → {floor_metrics['resummarized']} re-summarized (LLM), "
+                f"{floor_metrics['sanitized']} cleaned (rule-based), "
+                f"{floor_metrics['still_null']} still tier=None"
+            )
+        except Exception as e:
+            print(f"  [warn] Top-50 summary floor failed: {e}")
 
     # Step 8d.5: FINAL feed ordering on fresh 8d signals. 8c's rerank applied
     # feed ordering using YESTERDAY'S (or 7b's) story_type / editorial

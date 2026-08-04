@@ -72,6 +72,49 @@ _call_count: int = 0
 # subsequent calls in the same run (avoids wasting minutes on doomed retries).
 _persistent_failure: bool = False
 
+# ---------------------------------------------------------------------------
+# Transient transport-drop retry (2026-08-04).
+# The 08-04 production run left ~22 top-50 cards at summary_tier=None because a
+# flaky-connection window dropped the google-genai httpx calls with
+# "Server disconnected" (httpx.RemoteProtocolError) / connection resets / read
+# timeouts. Those are TRANSPORT failures — the request never reached the model
+# (or dropped mid-response), so retrying does NOT burn additional daily quota.
+# We retry them a few times with short exponential backoff, distinct from the
+# `max_retries` param (which retries model/JSON failures and DOES count against
+# quota). A genuine 429 / RESOURCE_EXHAUSTED is deliberately NOT retried here
+# (see _is_quota_error) so we never hammer a real per-day/per-minute cap.
+_MAX_TRANSPORT_RETRIES: int = 3
+_TRANSPORT_BACKOFF_BASE: float = 1.5  # seconds; 1.5, 3.0, 6.0
+
+# Substrings that mark a transient transport-layer drop (retryable). Matched
+# against str(exception) + the exception CLASS NAME lowercased, because httpx
+# transport exceptions (ReadTimeout, RemoteProtocolError, ConnectError) often
+# stringify to an empty message but always carry a descriptive class name.
+_TRANSIENT_TRANSPORT_MARKERS: tuple[str, ...] = (
+    "server disconnected", "remoteprotocolerror", "remote protocol",
+    "connection reset", "connection aborted", "connection closed",
+    "connectionerror", "connection error", "connecterror", "connect error",
+    "readerror", "read error", "readtimeout", "read timeout",
+    "writetimeout", "write timeout", "connecttimeout", "connect timeout",
+    "pooltimeout", "httpcore", "protocolerror", "incomplete", "peer closed",
+    "broken pipe", "eof occurred", "timed out", "connection timed out",
+    "temporarily unavailable", "connection refused",
+)
+
+
+def _is_quota_error(error_str: str) -> bool:
+    """True for a real free-tier quota / rate-limit exhaustion (do NOT retry as
+    a transport drop — that would hammer a per-day/per-minute cap)."""
+    return ("429" in error_str or "resource_exhausted" in error_str
+            or "quota" in error_str or "rate" in error_str)
+
+
+def _is_transient_transport(error_str: str) -> bool:
+    """True for a retryable transport-layer drop (Server disconnected, reset,
+    read timeout, httpcore error). Quota errors are excluded by the caller."""
+    return any(m in error_str for m in _TRANSIENT_TRANSPORT_MARKERS)
+
+
 _client: object = None
 
 
@@ -166,7 +209,13 @@ def generate_json(
     if count_call:
         _call_count += 1
 
-    for attempt in range(max_retries + 1):
+    # `attempt` counts model/JSON retries (bounded by max_retries, quota-costing).
+    # `transport_retries` counts transient transport-drop retries separately —
+    # those never reached the model so they do NOT burn daily quota.
+    attempt = 0
+    transport_retries = 0
+    text = ""
+    while True:
         try:
             _rate_limit()
             response = client.models.generate_content(
@@ -177,7 +226,10 @@ def generate_json(
 
             if not response.text:
                 print(f"  [warn] Gemini returned empty response (attempt {attempt + 1})")
-                continue
+                if attempt < max_retries:
+                    attempt += 1
+                    continue
+                return None
 
             text = response.text.strip()
             # Handle markdown code fences if present
@@ -205,20 +257,39 @@ def generate_json(
             print(f"  [warn] Gemini JSON parse failed (attempt {attempt + 1}): "
                   f"{je} — response starts with: {snippet!r}")
             if attempt < max_retries:
+                attempt += 1
                 continue
             return None
         except Exception as e:
-            error_str = str(e).lower()
-            # Transient FIRST. A free-tier 429 RESOURCE_EXHAUSTED (e.g. the
-            # flash-lite 10-RPM cap) embeds "check your plan and billing
-            # details", so checking billing keywords first would misread a
-            # per-minute throttle as a terminal failure and disable Gemini for
-            # the ENTIRE run (2026-06-20: this killed a whole pipeline run after
-            # the first throttle). Order matters — rate limit is checked first.
-            if ("429" in error_str or "resource_exhausted" in error_str
-                    or "quota" in error_str or "rate" in error_str):
+            # Include the exception CLASS NAME — httpx transport exceptions
+            # (ReadTimeout, RemoteProtocolError, ConnectError) frequently
+            # stringify to an empty message but carry a descriptive class name.
+            error_str = (str(e) + " " + type(e).__name__).lower()
+            # Transient TRANSPORT drop FIRST (but never a real quota error).
+            # "Server disconnected" / connection reset / read timeout / httpcore
+            # errors are transport-layer failures: the request never reached the
+            # model (or dropped mid-response), so a retry does NOT burn quota.
+            # This is the fix for the 08-04 run's ~22 tier=None cards.
+            if _is_transient_transport(error_str) and not _is_quota_error(error_str):
+                if transport_retries < _MAX_TRANSPORT_RETRIES:
+                    transport_retries += 1
+                    backoff = _TRANSPORT_BACKOFF_BASE * (2 ** (transport_retries - 1))
+                    print(f"  [warn] Gemini transport drop "
+                          f"(transport retry {transport_retries}/{_MAX_TRANSPORT_RETRIES}, "
+                          f"backoff {backoff:.1f}s): {e}")
+                    time.sleep(backoff)
+                    continue
+                print(f"  [warn] Gemini transport drop — retries exhausted: {e}")
+                return None
+            # A free-tier 429 RESOURCE_EXHAUSTED (e.g. the flash-lite 10-RPM cap)
+            # embeds "check your plan and billing details", so checking billing
+            # keywords first would misread a per-minute throttle as a terminal
+            # failure and disable Gemini for the ENTIRE run (2026-06-20: this
+            # killed a whole pipeline run after the first throttle).
+            if _is_quota_error(error_str):
                 print(f"  [warn] Gemini rate limit (attempt {attempt + 1}): {e}")
                 if attempt < max_retries:
+                    attempt += 1
                     time.sleep(10)
                     continue
                 return None
@@ -226,6 +297,7 @@ def generate_json(
                 # 503 = transient server overload — wait longer before retry
                 print(f"  [warn] Gemini API error (attempt {attempt + 1}): {e}")
                 if attempt < max_retries:
+                    attempt += 1
                     time.sleep(30)
                     continue
                 return None
@@ -241,8 +313,6 @@ def generate_json(
                 return None
             print(f"  [warn] Gemini API error (attempt {attempt + 1}): {e}")
             return None
-
-    return None
 
 
 def generate_text(
@@ -278,33 +348,47 @@ def generate_text(
     if count_call:
         _call_count += 1
 
-    try:
-        _rate_limit()
-        response = client.models.generate_content(
-            model=use_model, contents=prompt, config=config,
-        )
-        if not response.text:
-            print("  [warn] Gemini returned empty text response")
+    transport_retries = 0
+    while True:
+        try:
+            _rate_limit()
+            response = client.models.generate_content(
+                model=use_model, contents=prompt, config=config,
+            )
+            if not response.text:
+                print("  [warn] Gemini returned empty text response")
+                return None
+            text = response.text.strip()
+            # Strip markdown fences if the model added them despite instructions.
+            if text.startswith("```"):
+                text = text.split("\n", 1)[1] if "\n" in text else text[3:]
+                if text.endswith("```"):
+                    text = text[:-3]
+                text = text.strip()
+            return text
+        except Exception as e:
+            error_str = (str(e) + " " + type(e).__name__).lower()
+            # Transient transport drop — retry with backoff (does not burn quota).
+            if _is_transient_transport(error_str) and not _is_quota_error(error_str):
+                if transport_retries < _MAX_TRANSPORT_RETRIES:
+                    transport_retries += 1
+                    backoff = _TRANSPORT_BACKOFF_BASE * (2 ** (transport_retries - 1))
+                    print(f"  [warn] Gemini transport drop "
+                          f"(transport retry {transport_retries}/{_MAX_TRANSPORT_RETRIES}, "
+                          f"backoff {backoff:.1f}s): {e}")
+                    time.sleep(backoff)
+                    continue
+                print(f"  [warn] Gemini transport drop — retries exhausted: {e}")
+                return None
+            if any(k in error_str for k in (
+                "api key not valid", "api_key_invalid", "invalid api key",
+                "permission_denied", "permission denied", "suspended", "spending cap",
+            )):
+                _persistent_failure = True
+                print(f"  [error] Gemini terminal failure — disabling for this run: {e}")
+            else:
+                print(f"  [warn] Gemini text generation failed: {e}")
             return None
-        text = response.text.strip()
-        # Strip markdown fences if the model added them despite instructions.
-        if text.startswith("```"):
-            text = text.split("\n", 1)[1] if "\n" in text else text[3:]
-            if text.endswith("```"):
-                text = text[:-3]
-            text = text.strip()
-        return text
-    except Exception as e:
-        error_str = str(e).lower()
-        if any(k in error_str for k in (
-            "api key not valid", "api_key_invalid", "invalid api key",
-            "permission_denied", "permission denied", "suspended", "spending cap",
-        )):
-            _persistent_failure = True
-            print(f"  [error] Gemini terminal failure — disabling for this run: {e}")
-        else:
-            print(f"  [warn] Gemini text generation failed: {e}")
-        return None
 
 
 def is_available() -> bool:

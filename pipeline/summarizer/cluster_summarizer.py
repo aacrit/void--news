@@ -1360,3 +1360,230 @@ def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 
             metrics["failed"] += 1
 
     return metrics
+
+
+# ---------------------------------------------------------------------------
+# Safety net — no DISPLAYED top-50 card left at summary_tier=None (2026-08-04)
+# ---------------------------------------------------------------------------
+# The 08-04 run left ~22 top-50 cards at tier=None because a flaky-connection
+# window dropped the 8d Gemini calls ("Server disconnected"). A tier=None card
+# renders its raw scraped member excerpt (outlet slugs, bylines, mid-sentence
+# truncation, sometimes off-topic to the headline). Even with the transport
+# retry now in gemini_client, a fully-doomed window (or the per-run cap) can
+# still leave a card null. This pass runs AFTER 8d as a floor: for each
+# displayed top-50 cluster still at tier=None it (i) makes ONE more Gemini
+# attempt, and failing that (ii) rebuilds a clean, on-topic, sentence-bounded
+# summary from the member articles via the deterministic text hygiene path so
+# the card NEVER shows a raw excerpt.
+
+# A sanitized rule-based summary is honestly stamped 'rule_based' when the DB
+# CHECK allows it (migration proposed separately). Until then the update
+# gracefully degrades to text-only (tier stays NULL, which is the CORRECT cache
+# state — the row is re-attempted on the LLM next run). Detected once so we do
+# not spam the log with constraint violations.
+_RULE_BASED_TIER_SUPPORTED = True
+
+
+def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = 50,
+                               prefer_provider: str | None = "gemini") -> dict:
+    """Guarantee no DISPLAYED top-50 card is left showing a raw scraped excerpt.
+
+    For each cluster in the displayed top-`limit` (by rank_{edition}, applying
+    the same source_count>=3 window as the homepage) still at summary_tier NULL
+    and not an op-ed:
+      (i)  one Gemini re-summarize attempt (flash-lite). On success → write the
+           LLM summary + tier='flash-lite'.
+      (ii) failing that → rebuild a clean on-topic summary from the member
+           articles (clustering's rule-based _generate_cluster_summary, which
+           selects an on-topic member and runs the CMS/byline/dateline/
+           truncation sanitizer) and normalize the headline. Written with
+           tier='rule_based' when supported, else text-only (tier stays NULL).
+
+    Returns {checked, resummarized, sanitized, still_null}.
+    """
+    global _RULE_BASED_TIER_SUPPORTED
+    rank_col = f"rank_{edition.replace('-', '_')}"
+    metrics = {"checked": 0, "resummarized": 0, "sanitized": 0, "still_null": 0}
+
+    # Lazy imports: heavy clustering/text deps are already loaded during a real
+    # pipeline run; importing here keeps this module import-light for callers
+    # that only need the summarize path.
+    try:
+        from utils.text_sanitizer import normalize_headline, sanitize_summary
+    except ImportError:
+        def normalize_headline(t):  # type: ignore
+            return t or ""
+
+        def sanitize_summary(t):  # type: ignore
+            return t or ""
+    try:
+        from clustering.story_cluster import _generate_cluster_summary
+    except ImportError:
+        _generate_cluster_summary = None  # type: ignore
+
+    fetch_limit = limit + 20
+    try:
+        rank_res = (
+            supabase.table("story_clusters")
+            .select("id, content_type, source_count, summary, title, summary_tier")
+            .contains("sections", [edition])
+            .order(rank_col, desc=True)
+            .limit(fetch_limit)
+            .execute()
+        )
+    except Exception as e:
+        print(f"  [warn] ensure_top50_summary_floor: top-{limit} fetch failed: {e}")
+        return metrics
+
+    rows = rank_res.data or []
+    if not rows:
+        return metrics
+
+    # Window accounting mirrors summarize_top50_after_rerank / the homepage:
+    # only source_count>=3 rows occupy display slots; stop once `limit` covered.
+    window_used = 0
+    null_rows: list[dict] = []
+    for row in rows:
+        if window_used >= limit:
+            break
+        if (row.get("source_count") or 0) < 3:
+            continue
+        window_used += 1
+        if (row.get("content_type") or "").lower() == "opinion":
+            continue  # op-eds preserve original text by design — not a defect
+        if (row.get("summary_tier") or "").strip():
+            continue  # already has an LLM/rule-based summary
+        null_rows.append(row)
+
+    if not null_rows:
+        return metrics
+    metrics["checked"] = len(null_rows)
+
+    # Fetch article membership for the null clusters only.
+    null_ids = [r["id"] for r in null_rows]
+    by_cluster: dict[str, list[str]] = {}
+    try:
+        link_res = (
+            supabase.table("cluster_articles")
+            .select("cluster_id, article_id")
+            .in_("cluster_id", null_ids)
+            .execute()
+        )
+        for link in (link_res.data or []):
+            by_cluster.setdefault(link["cluster_id"], []).append(link["article_id"])
+    except Exception as e:
+        print(f"  [warn] ensure_top50_summary_floor: cluster_articles fetch failed: {e}")
+
+    all_article_ids = sorted({aid for ids in by_cluster.values() for aid in ids})
+    articles_by_id: dict[str, dict] = {}
+    for i in range(0, len(all_article_ids), 200):
+        batch = all_article_ids[i:i + 200]
+        try:
+            art_res = (
+                supabase.table("articles")
+                .select("id, title, summary, full_text, source_id, published_at, url")
+                .in_("id", batch)
+                .execute()
+            )
+            for art in (art_res.data or []):
+                articles_by_id[art["id"]] = art
+        except Exception as e:
+            print(f"  [warn] ensure_top50_summary_floor: articles batch fetch failed: {e}")
+            continue
+
+    # Backfill source_name + tier so a re-summarize gets proper attribution.
+    src_ids = sorted({a.get("source_id") for a in articles_by_id.values() if a.get("source_id")})
+    src_info_by_id: dict[str, dict] = {}
+    for i in range(0, len(src_ids), 200):
+        batch = src_ids[i:i + 200]
+        try:
+            src_res = (
+                supabase.table("sources").select("id, name, tier").in_("id", batch).execute()
+            )
+            for s in (src_res.data or []):
+                src_info_by_id[s["id"]] = s
+        except Exception:
+            continue
+    for art in articles_by_id.values():
+        src = src_info_by_id.get(art.get("source_id") or "", {})
+        art.setdefault("source_name", src.get("name", ""))
+        art.setdefault("tier", src.get("tier", ""))
+
+    for row in null_rows:
+        cid = row["id"]
+        title = row.get("title", "") or ""
+        article_ids = by_cluster.get(cid, [])
+        articles = [articles_by_id[aid] for aid in article_ids if aid in articles_by_id]
+
+        # (i) One more Gemini attempt (transport retry now covers the flaky
+        # window; the network may have recovered since 8d, or a cap slot freed).
+        if len(articles) >= 3:
+            result = summarize_cluster(articles, prefer_provider=prefer_provider, model=None)
+            if result:
+                payload = {
+                    "title": result["headline"],
+                    "summary": result["summary"],
+                    "summary_article_hash": _content_hash(articles),
+                    "summary_tier": _tier_for_label(result.get("_generator") or ""),
+                }
+                if result.get("consensus"):
+                    payload["consensus_points"] = result["consensus"]
+                if result.get("divergence"):
+                    payload["divergence_points"] = result["divergence"]
+                if result.get("editorial_importance") is not None:
+                    payload["editorial_importance"] = result["editorial_importance"]
+                if result.get("story_type") is not None:
+                    payload["story_type"] = result["story_type"]
+                if result.get("has_binding_consequences") is not None:
+                    payload["has_binding_consequences"] = result["has_binding_consequences"]
+                try:
+                    supabase.table("story_clusters").update(payload).eq("id", cid).execute()
+                    metrics["resummarized"] += 1
+                    continue
+                except Exception as e:
+                    print(f"  [warn] ensure_top50_summary_floor: re-summarize write failed for {cid}: {e}")
+
+        # (ii) Deterministic rule-based fallback — clean, on-topic, no raw excerpt.
+        clean_title = (normalize_headline(title) or title).strip()
+        if _generate_cluster_summary is not None and articles:
+            clean_summary = _generate_cluster_summary(articles, clean_title or title)
+        else:
+            clean_summary = sanitize_summary(row.get("summary", "") or "")
+        clean_summary = (clean_summary or "").strip()
+        if not clean_summary:
+            # Nothing usable to rebuild — leave the row as-is (still NULL).
+            metrics["still_null"] += 1
+            continue
+
+        text_payload = {"summary": clean_summary}
+        if clean_title:
+            text_payload["title"] = clean_title[:500]
+
+        wrote = False
+        if _RULE_BASED_TIER_SUPPORTED:
+            try:
+                supabase.table("story_clusters").update(
+                    {**text_payload, "summary_tier": "rule_based"}
+                ).eq("id", cid).execute()
+                wrote = True
+            except Exception as e:
+                # Most likely the summary_tier CHECK does not yet include
+                # 'rule_based' (migration proposed separately). Degrade to a
+                # text-only write and stop attempting the tier this run.
+                _RULE_BASED_TIER_SUPPORTED = False
+                print(f"  [info] ensure_top50_summary_floor: 'rule_based' tier not "
+                      f"accepted ({e}); writing cleaned text without a tier stamp")
+        if not wrote:
+            try:
+                supabase.table("story_clusters").update(text_payload).eq("id", cid).execute()
+            except Exception as e:
+                print(f"  [warn] ensure_top50_summary_floor: sanitize write failed for {cid}: {e}")
+                metrics["still_null"] += 1
+                continue
+
+        metrics["sanitized"] += 1
+        if not _RULE_BASED_TIER_SUPPORTED:
+            # Text is clean but the tier stamp could not be written → still NULL.
+            metrics["still_null"] += 1
+
+    return metrics
