@@ -17,15 +17,17 @@ import {
 import type { ShipRequest, ShipReply, ShipStatus, ShipCategory, Edition } from '../lib/types';
 
 /* ==========================================================================
-   void --ship v2 — "Form-first canvas. Graph paper. Extremely dynamic."
+   void --ship v3 — "Mission Control"
 
-   Tier 1 (Hero):   Submit form always visible on canvas, graph-paper bg,
-                     category pill toggle, request templates.
-   Tier 2 (Compact): Summary line + Pulse Graph sparkline, ship clock.
-   Tier 3 (Expand):  Kanban board + void --log (collapsed by default),
-                     thread replies, ship diff summaries.
+   A single-viewport dashboard on desktop (>=1024px): the page owns 100dvh and
+   only inner panels scroll. Top bar (brand + live metrics + sparkline) sits over
+   a three-column main area — Submit / The Board / Known Observations — with a
+   short bottom strip (recent ticker + personal touch + log + Discord placeholder).
 
-   All 7 cinematic scenes preserved. 5 new features added.
+   Mobile (<768px): the same content stacked into a normal scrollable column.
+   Tablet (768-1023): stacked, no fixed-height trap.
+
+   Every Supabase wiring, spam guard, and ShipCard feature from v2 is preserved.
    ========================================================================== */
 
 const STATUS_ORDER: ShipStatus[] = ['submitted', 'triaged', 'building', 'shipped', 'wontship', 'deferred', 'not_feasible'];
@@ -39,13 +41,12 @@ const STATUS_LABELS: Record<ShipStatus, string> = {
   not_feasible: 'Not Feasible',
 };
 
-// Terminal / closed states. These are not "open" work; they collect in a single
-// "Resolved" board column (a 7-column Kanban is too wide) where each card wears
-// its own status tag. Honest endings: won't-ship, deferred, or not feasible.
+// Terminal / closed states. These collect in a single "Resolved" board column
+// (a 7-column Kanban is too wide) where each card wears its own status tag.
 const CLOSED_STATUSES: ShipStatus[] = ['wontship', 'deferred', 'not_feasible'];
 
 // The Kanban columns actually rendered: the four active-flow states plus one
-// combined Resolved pile for every closed status.
+// combined Resolved pile for every closed status. Left-to-right pipeline.
 interface BoardColumn { key: string; label: string; statuses: ShipStatus[]; }
 const BOARD_COLUMNS: BoardColumn[] = [
   { key: 'submitted', label: 'Submitted', statuses: ['submitted'] },
@@ -61,9 +62,10 @@ const CATEGORY_OPTIONS: { value: ShipCategory; label: string }[] = [
 ];
 
 // ---- Known Observations ----
-// Radical transparency about current limitations. Framed as "what we watch and
-// how to read around it," never as apology. Chip labels are deliberately quiet
-// and neutral so they do not read as Kanban board columns.
+// Radical transparency about current limitations, paired with what we are doing
+// about each. Framed as "what we watch and how we are improving it," never as
+// apology. Chip labels are deliberately quiet so they do not read as Kanban
+// columns. Copy is show-don't-tell and free of em/en dashes (locked project rule).
 type ObservationChip = 'tuning' | 'by-design' | 'roadmap' | 'known';
 const CHIP_LABELS: Record<ObservationChip, string> = {
   tuning: 'Actively tuning',
@@ -71,46 +73,54 @@ const CHIP_LABELS: Record<ObservationChip, string> = {
   roadmap: 'On the roadmap',
   known: 'Known',
 };
-interface Observation { claim: string; note: string; chip: ObservationChip; }
+interface Observation { claim: string; note: string; optimizing: string; chip: ObservationChip; }
 const OBSERVATIONS: Observation[] = [
   {
     claim: 'Clustering can split or double up.',
-    note: 'Sometimes one event lands on two cards, or two near-identical stories both appear. The merge thresholds get retuned every run.',
+    note: 'Sometimes one event lands on two cards, or two near-identical stories both appear.',
+    optimizing: 'We retune the merge thresholds every run and added a same-event cap so one story cannot fill the front page.',
     chip: 'tuning',
   },
   {
     claim: 'The bias score is a signal, not a verdict.',
-    note: 'Every score is rule-based and traces to specific words in the coverage. Thin coverage reads as no clear lean. Weigh it as one input, not the answer.',
+    note: 'Every score is rule-based and traces to specific words in the coverage. Thin coverage reads as no clear lean.',
+    optimizing: 'We keep expanding the lexicons and calibrating against known outlet ratings. The Deep Dive shows the full distribution behind every score.',
     chip: 'by-design',
   },
   {
     claim: 'Summaries thin out down the feed.',
     note: 'The top stories get the fullest write-ups. Lower-ranked cards can read more mechanically, or surface a raw excerpt.',
+    optimizing: 'The summarizer now covers all fifty displayed stories, and a sanitizer repairs run-ons and stray credits before they ship.',
     chip: 'tuning',
   },
   {
     claim: 'Coverage skews English-language.',
-    note: '1,016 sources span 158 countries, but well-resourced English outlets dominate the mix. Some regions and languages are under-represented.',
+    note: '1,016 sources span 158 countries, but well-resourced English outlets dominate the mix.',
+    optimizing: 'We are widening the non-English source list and weighting regional outlets up where a story is local to them.',
     chip: 'roadmap',
   },
   {
     claim: 'Figures can differ between cards.',
     note: 'Death tolls and counts come from different outlets reporting at different hours, so the same event may show one number here and another there.',
+    optimizing: 'We surface source count and spread so you can see how firm a number is. Cross-card reconciliation is on the list.',
     chip: 'known',
   },
   {
     claim: 'The feed moves once a day.',
     note: 'One run at 11:00 UTC. Breaking news mid-day waits for the next edition.',
+    optimizing: 'The once-a-day rhythm is deliberate, a newspaper not a scroll. A lighter mid-day refresh is under consideration.',
     chip: 'by-design',
   },
   {
     claim: 'A tabloid headline occasionally slips through.',
     note: 'The sanitizer neutralizes shouty, clickbait headlines, but a raw one can get past it before we catch it.',
+    optimizing: "We keep growing the desensationalizer's shout list and clickbait rules as new ones appear.",
     chip: 'tuning',
   },
   {
     claim: 'Generated prose is imperfect.',
     note: 'The weekly essays and daily brief are machine-drafted under strict rules. An occasional clunky line gets through.',
+    optimizing: 'Every generated line runs a show-dont-tell and no-em-dash check. Failures get retried or flagged.',
     chip: 'known',
   },
 ];
@@ -253,7 +263,7 @@ function detectEdition(): Edition | null {
   return null;
 }
 
-// ---- Metrics countup easing (Scene 5) ----
+// ---- Metrics countup easing ----
 function easeOutPoly(t: number): number {
   return 1 - Math.pow(1 - t, 3.5);
 }
@@ -270,48 +280,21 @@ function useIsMobile(breakpoint = 768): boolean {
   return isMobile;
 }
 
-// ---- Organic Divider (draw-in on scroll) ----
-function OrganicDivider() {
-  const ref = useRef<SVGSVGElement>(null);
+// ---- Reduced-motion detection ----
+function usePrefersReducedMotion(): boolean {
+  const [reduced, setReduced] = useState(false);
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const io = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) { el.setAttribute('data-visible', 'true'); io.unobserve(el); }
-    }, { threshold: 0.5 });
-    io.observe(el);
-    return () => io.disconnect();
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const on = () => setReduced(mq.matches);
+    on();
+    mq.addEventListener('change', on);
+    return () => mq.removeEventListener('change', on);
   }, []);
-  return (
-    <svg ref={ref} className="ship-divider" viewBox="0 0 600 4" preserveAspectRatio="none" aria-hidden="true">
-      <path d="M0,2 C50,0.5 100,3.5 150,2 C200,0.5 250,3 300,2 C350,1 400,3.5 450,2 C500,0.5 550,3 600,2" />
-    </svg>
-  );
+  return reduced;
 }
 
-// ---- InkDroplet (splat on scroll) ----
-function InkDroplet() {
-  const ref = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const io = new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) { el.setAttribute('data-visible', 'true'); io.unobserve(el); }
-    }, { threshold: 0.5 });
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-  return (
-    <div ref={ref} className="ship-ink-droplet" aria-hidden="true">
-      <div className="ship-ink-droplet__dot" />
-    </div>
-  );
-}
-
-// ---- Pulse Graph (Feature #3) ----
+// ---- Pulse Graph (30-day sparkline) ----
 function PulseGraph({ requests }: { requests: ShipRequest[] }) {
-  const svgRef = useRef<SVGSVGElement>(null);
-
   const { submittedPath, shippedPath } = useMemo(() => {
     const now = Date.now();
     const thirtyDaysAgo = now - 30 * 24 * 60 * 60 * 1000;
@@ -347,7 +330,6 @@ function PulseGraph({ requests }: { requests: ShipRequest[] }) {
 
   return (
     <svg
-      ref={svgRef}
       className="ship-pulse-graph"
       viewBox="0 0 280 36"
       preserveAspectRatio="none"
@@ -362,6 +344,334 @@ function PulseGraph({ requests }: { requests: ShipRequest[] }) {
 
 
 /* ===========================================================================
+   QUICK SUBMIT — shared "note into the ship queue" control.
+
+   Reuses submitShipRequest + the submission rate limit + honeypot + fingerprint.
+   Two callers: "Suggest a fix" (preset title "Re: {claim}") and "Got an idea?"
+   (title derived from the note). Both file a feature request.
+   =========================================================================== */
+
+function deriveIdeaTitle(note: string): string {
+  const firstLine = note.trim().split('\n')[0].trim();
+  const t = firstLine.slice(0, 80).trim();
+  return t.length >= 5 ? t : 'Reader idea';
+}
+
+function QuickSubmit({
+  fingerprint,
+  presetTitle,
+  descPrefix,
+  placeholder,
+  toggleLabel,
+  variant,
+}: {
+  fingerprint: string;
+  /** When set, the ship request title is fixed (Suggest a fix). Otherwise the
+   *  title is derived from the note (Got an idea). */
+  presetTitle?: string;
+  /** Optional context line prepended to the description. */
+  descPrefix?: string;
+  placeholder: string;
+  toggleLabel: string;
+  /** 'inline' = compact suggest-a-fix; 'block' = the standing idea box. */
+  variant: 'inline' | 'block';
+}) {
+  const [open, setOpen] = useState(variant === 'block');
+  const [note, setNote] = useState('');
+  const [honeypot, setHoneypot] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [done, setDone] = useState(false);
+  const [error, setError] = useState('');
+
+  const canSend = note.trim().length >= 10 && !submitting;
+
+  const send = useCallback(async () => {
+    if (!canSend) return;
+    if (!checkRateLimit()) { setError(`Slow down. Max ${RATE_LIMIT_MAX} submissions per hour.`); return; }
+    if (honeypot) { setDone(true); return; }
+    setSubmitting(true);
+    setError('');
+    const trimmed = note.trim();
+    const description = descPrefix ? `${descPrefix}\n\n${trimmed}` : trimmed;
+    const deviceInfo = typeof navigator !== 'undefined' ? navigator.userAgent.slice(0, 180) : null;
+    const result = await submitShipRequest({
+      title: (presetTitle ?? deriveIdeaTitle(trimmed)).slice(0, 120),
+      description,
+      category: 'feature',
+      area: 'other',
+      edition_context: null,
+      device_info: deviceInfo,
+      ip_hash: fingerprint,
+    });
+    if (result) {
+      recordSubmission();
+      setNote('');
+      setDone(true);
+    } else {
+      setError('Could not send. Please try again.');
+    }
+    setSubmitting(false);
+  }, [canSend, honeypot, note, descPrefix, presetTitle, fingerprint]);
+
+  if (done) {
+    return (
+      <div className={`ship-quick ship-quick--${variant} ship-quick--done`}>
+        <p className="ship-quick__done">Filed to the queue. Thank you.</p>
+        <button
+          type="button"
+          className="ship-quick__again"
+          onClick={() => { setDone(false); if (variant === 'inline') setOpen(false); }}
+        >
+          {variant === 'inline' ? 'Close' : 'Send another'}
+        </button>
+      </div>
+    );
+  }
+
+  if (variant === 'inline' && !open) {
+    return (
+      <button type="button" className="ship-quick__toggle" onClick={() => setOpen(true)}>
+        {toggleLabel}
+      </button>
+    );
+  }
+
+  return (
+    <div className={`ship-quick ship-quick--${variant}`}>
+      {variant === 'block' && <span className="ship-quick__label">{toggleLabel}</span>}
+      {/* Honeypot: bots fill hidden fields; a filled value fakes success. */}
+      <div className="ship-form__honeypot" aria-hidden="true">
+        <label htmlFor={`ship-quick-hp-${variant}-${presetTitle ?? 'idea'}`}>Company</label>
+        <input
+          id={`ship-quick-hp-${variant}-${presetTitle ?? 'idea'}`}
+          type="text"
+          value={honeypot}
+          onChange={(e) => setHoneypot(e.target.value)}
+          tabIndex={-1}
+          autoComplete="off"
+        />
+      </div>
+      <textarea
+        className="ship-quick__input"
+        value={note}
+        maxLength={1000}
+        onChange={(e) => setNote(e.target.value)}
+        placeholder={placeholder}
+        aria-label={toggleLabel}
+      />
+      {error && <p className="ship-quick__error" role="alert">{error}</p>}
+      <div className="ship-quick__actions">
+        {variant === 'inline' && (
+          <button type="button" className="ship-quick__cancel" onClick={() => { setOpen(false); setNote(''); setError(''); }}>
+            Cancel
+          </button>
+        )}
+        <button type="button" className="ship-quick__send" onClick={send} disabled={!canSend}>
+          {submitting ? 'Sending...' : 'Send'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+
+/* ===========================================================================
+   OBSERVATIONS RAIL — the signature interactive element.
+
+   Desktop, motion allowed: a vertical ticker. One observation holds the focal
+   slot expanded (claim + note + what we are doing + chip + Suggest a fix), rises
+   in, and hands off to the next on a timer. Pauses on hover/focus and via an
+   explicit control. "Expand all" opens every observation at once in an overlay.
+
+   Mobile or reduced-motion: a plain scrollable list of every observation. The
+   ticker region is aria-live="off" so it never spams assistive tech; the full
+   list and the overlay are the accessible reading paths.
+   =========================================================================== */
+
+function ObservationChipTag({ chip }: { chip: ObservationChip }) {
+  return (
+    <span className={`ship-obs__chip ship-obs__chip--${chip}`}>
+      <span className="ship-obs__chip-dot" aria-hidden="true" />
+      {CHIP_LABELS[chip]}
+    </span>
+  );
+}
+
+function ObservationDetail({ obs, fingerprint }: { obs: Observation; fingerprint: string }) {
+  return (
+    <>
+      <div className="ship-obs__row">
+        <p className="ship-obs__claim">{obs.claim}</p>
+        <ObservationChipTag chip={obs.chip} />
+      </div>
+      <p className="ship-obs__note">{obs.note}</p>
+      <p className="ship-obs__optimizing">
+        <span className="ship-obs__optimizing-label">What we are doing</span>
+        {obs.optimizing}
+      </p>
+      <QuickSubmit
+        fingerprint={fingerprint}
+        variant="inline"
+        presetTitle={`Re: ${obs.claim}`}
+        descPrefix={`On the observation: "${obs.claim}"`}
+        placeholder="Seen this yourself, or have a fix in mind? Tell us."
+        toggleLabel="Suggest a fix"
+      />
+    </>
+  );
+}
+
+function ObservationsRail({ fingerprint }: { fingerprint: string }) {
+  const isMobile = useIsMobile();
+  const prefersReduced = usePrefersReducedMotion();
+  const useTicker = !isMobile && !prefersReduced;
+
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [hoverPaused, setHoverPaused] = useState(false);
+  const [manualPaused, setManualPaused] = useState(false);
+  const [expandAll, setExpandAll] = useState(false);
+
+  const paused = hoverPaused || manualPaused;
+
+  useEffect(() => {
+    if (!useTicker || paused || expandAll) return;
+    const id = setInterval(() => {
+      setActiveIndex(i => (i + 1) % OBSERVATIONS.length);
+    }, 6500);
+    return () => clearInterval(id);
+  }, [useTicker, paused, expandAll]);
+
+  const active = OBSERVATIONS[activeIndex];
+  const upNext = [1, 2].map(o => OBSERVATIONS[(activeIndex + o) % OBSERVATIONS.length]);
+
+  return (
+    <div className="ship-rail">
+      <div className="ship-rail__controls">
+        <button
+          type="button"
+          className="ship-rail__expand-all"
+          onClick={() => setExpandAll(true)}
+          aria-haspopup="dialog"
+        >
+          Expand all
+        </button>
+        {useTicker && (
+          <button
+            type="button"
+            className="ship-rail__pause"
+            onClick={() => setManualPaused(p => !p)}
+            aria-pressed={manualPaused}
+          >
+            {manualPaused ? 'Play' : 'Pause'}
+          </button>
+        )}
+      </div>
+
+      {useTicker ? (
+        <div
+          className="ship-ticker"
+          onMouseEnter={() => setHoverPaused(true)}
+          onMouseLeave={() => setHoverPaused(false)}
+          onFocusCapture={() => setHoverPaused(true)}
+          onBlurCapture={() => setHoverPaused(false)}
+        >
+          {/* aria-live off: the rotating focal card is decorative motion. The
+              full list lives in the "Expand all" dialog for assistive tech. */}
+          <div className="ship-ticker__stage" aria-live="off">
+            <article key={activeIndex} className="ship-ticker__focal">
+              <ObservationDetail obs={active} fingerprint={fingerprint} />
+            </article>
+          </div>
+
+          <div className="ship-ticker__next" aria-hidden="true">
+            <span className="ship-ticker__next-label">Up next</span>
+            {upNext.map((o, i) => (
+              <p key={i} className="ship-ticker__next-claim">{o.claim}</p>
+            ))}
+          </div>
+
+          <div className="ship-ticker__dots" role="tablist" aria-label="Observations">
+            {OBSERVATIONS.map((o, i) => (
+              <button
+                key={i}
+                type="button"
+                role="tab"
+                aria-selected={i === activeIndex}
+                aria-label={o.claim}
+                className={`ship-ticker__dot${i === activeIndex ? ' ship-ticker__dot--active' : ''}`}
+                onClick={() => setActiveIndex(i)}
+              />
+            ))}
+          </div>
+        </div>
+      ) : (
+        <ul className="ship-obs-list">
+          {OBSERVATIONS.map((o, i) => (
+            <li key={i} className="ship-obs-list__item">
+              <ObservationDetail obs={o} fingerprint={fingerprint} />
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {expandAll && (
+        <ShipOverlay title="Known Observations" onClose={() => setExpandAll(false)}>
+          <p className="ship-overlay__intro">
+            We would rather tell you where the machine still stumbles than pretend
+            it does not. Here is what we are watching, and what we are doing about it.
+          </p>
+          <ul className="ship-obs-list ship-obs-list--overlay">
+            {OBSERVATIONS.map((o, i) => (
+              <li key={i} className="ship-obs-list__item">
+                <ObservationDetail obs={o} fingerprint={fingerprint} />
+              </li>
+            ))}
+          </ul>
+        </ShipOverlay>
+      )}
+    </div>
+  );
+}
+
+
+/* ===========================================================================
+   SHIP OVERLAY — a small accessible dialog used for "Expand all" and the log.
+   Esc closes, backdrop closes, focus lands on the close button.
+   =========================================================================== */
+
+function ShipOverlay({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
+  const closeRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    closeRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  return (
+    <div className="ship-overlay" role="presentation" onClick={onClose}>
+      <div
+        className="ship-overlay__panel"
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="ship-overlay__head">
+          <h2 className="ship-overlay__title">{title}</h2>
+          <button ref={closeRef} type="button" className="ship-overlay__close" onClick={onClose} aria-label="Close">
+            &times;
+          </button>
+        </div>
+        <div className="ship-overlay__body">{children}</div>
+      </div>
+    </div>
+  );
+}
+
+
+/* ===========================================================================
    MAIN COMPONENT
    =========================================================================== */
 
@@ -371,17 +681,19 @@ export default function ShipBoard() {
   const [votedIds, setVotedIds] = useState<Set<string>>(new Set());
   const fingerprintRef = useRef<string>('');
   const isMobile = useIsMobile();
+  const prefersReduced = usePrefersReducedMotion();
 
-  // Expandable sections
-  const [boardOpen, setBoardOpen] = useState(false);
+  const pageRef = useRef<HTMLElement>(null);
+
+  // Log overlay
   const [logOpen, setLogOpen] = useState(false);
 
-  // F20: track IDs that arrived via INSERT (not UPDATE)
+  // Track IDs that arrived via INSERT (not UPDATE) for the enter animation
   const newIdsRef = useRef<Set<string>>(new Set());
-  // Scene 6: track IDs that just transitioned to shipped
+  // Track IDs that just transitioned to shipped for the golden flash
   const [justShippedIds, setJustShippedIds] = useState<Set<string>>(new Set());
 
-  // Scene 5: animated metric values
+  // Animated metric values (count-up)
   const [animatedMetrics, setAnimatedMetrics] = useState<{
     totalShipped: number; openCount: number; totalRequests: number; avgShipTimeHours: number;
   } | null>(null);
@@ -446,10 +758,30 @@ export default function ShipBoard() {
     return () => { unsub(); unsubReplies(); };
   }, []);
 
-  // Scene 5: countup animation after data loads
+  // No-outer-scroll enforcement: the desktop grid pins the page to the viewport
+  // height minus whatever chrome sits above it (the dismissible experimental
+  // banner). Measure the page's top offset and expose it as a CSS variable so
+  // `height: calc(100dvh - var(--ship-chrome-offset))` fills exactly the space
+  // left. A ResizeObserver on <body> re-measures when the banner is dismissed.
+  useEffect(() => {
+    const el = pageRef.current;
+    if (!el) return;
+    const measure = () => {
+      const top = el.getBoundingClientRect().top + window.scrollY;
+      el.style.setProperty('--ship-chrome-offset', `${Math.max(0, Math.round(top))}px`);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(document.body);
+    window.addEventListener('resize', measure);
+    return () => { ro.disconnect(); window.removeEventListener('resize', measure); };
+  }, []);
+
+  // Count-up animation after data loads (skipped under reduced motion).
   useEffect(() => {
     if (loading || metricsAnimatedRef.current || requests.length === 0) return;
     metricsAnimatedRef.current = true;
+    if (prefersReduced) { setMetricsLanded(true); return; }
     const target = computeMetrics(requests);
     const duration = 800;
     const stagger = 80;
@@ -482,7 +814,7 @@ export default function ShipBoard() {
     };
     raf = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(raf);
-  }, [loading, requests]);
+  }, [loading, requests, prefersReduced]);
 
   const liveMetrics = computeMetrics(requests);
   const displayMetrics = animatedMetrics && !metricsLanded ? animatedMetrics : liveMetrics;
@@ -570,341 +902,325 @@ export default function ShipBoard() {
     }
   }
 
-  // Recent activity (5 most recent)
+  // Recent activity (most recent first)
   const recentActivity = useMemo(() =>
     requests
       .slice()
       .sort((a, b) => new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime())
-      .slice(0, 5),
+      .slice(0, 8),
     [requests]
   );
 
+  // On mobile the board stacks; hide empty columns (keep submitted). On desktop
+  // every column stays so the pipeline reads left to right.
   const visibleColumns = isMobile
     ? BOARD_COLUMNS.filter(col => col.key === 'submitted' || col.statuses.some(s => grouped[s].length > 0))
     : BOARD_COLUMNS;
 
-  return (
-    <main className="ship-page" data-dash-expanded={boardOpen || logOpen || undefined}>
-      {/* ---- Back nav + theme ---- */}
-      <nav className="ship-cold-open-back" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <Link href="/" className="ship-page__back" aria-label="Back to Void News">&larr; Void News</Link>
-        <ThemeToggle />
-      </nav>
+  const avgLabel = displayMetrics.avgShipTimeHours > 0
+    ? `${displayMetrics.avgShipTimeHours.toFixed(1)}h`
+    : 'pending';
 
-      {/* ---- Header ---- */}
-      <header className="ship-page__header ship-cold-open-header">
-        <div className="ship-page__brand">
-          <Link href="/" aria-label="Void News home" className="ship-page__logo">
-            <LogoFull height={22} />
+  return (
+    <main className="ship-page" ref={pageRef}>
+      {/* ==== TOP BAR: brand + live metrics + sparkline ==== */}
+      <header className="ship-topbar">
+        <div className="ship-topbar__lead">
+          <Link href="/" className="ship-topbar__back" aria-label="Back to Void News">
+            &larr; <span className="ship-topbar__back-text">Void News</span>
           </Link>
-          <span className="ship-page__brand-suffix">Ship</span>
+          <span className="ship-topbar__lockup">
+            <Link href="/" className="ship-topbar__logo" aria-label="Void News home">
+              <LogoFull height={20} />
+            </Link>
+            <span className="ship-topbar__sep" aria-hidden="true">&middot;</span>
+            <span className="ship-topbar__suffix">Ship</span>
+          </span>
         </div>
-        <h1 className="ship-page__title">Request, vote, watch it deploy.</h1>
-        <p className="ship-page__subtitle">
-          Submit bugs and features. The ones you vote for get built, often within hours.
-        </p>
+
+        <div className="ship-topbar__metrics-wrap">
+          <div className="ship-metrics" aria-label="Live ship metrics">
+            <span className={`ship-metrics__item ship-metrics__item--gold${metricsLanded ? ' ship-metrics__item--landed' : ''}`}>
+              <span className="ship-metrics__num">{displayMetrics.totalShipped}</span> shipped
+            </span>
+            <span className="ship-metrics__sep" aria-hidden="true">&middot;</span>
+            <span className={`ship-metrics__item${metricsLanded ? ' ship-metrics__item--landed' : ''}`}>
+              <span className="ship-metrics__num">{displayMetrics.openCount}</span> open
+            </span>
+            <span className="ship-metrics__sep" aria-hidden="true">&middot;</span>
+            <span className={`ship-metrics__item ship-metrics__item--gold${metricsLanded ? ' ship-metrics__item--landed' : ''}`}>
+              avg <span className="ship-metrics__num">{avgLabel}</span>
+            </span>
+          </div>
+          <PulseGraph requests={requests} />
+        </div>
+
+        <div className="ship-topbar__tools">
+          <ThemeToggle />
+        </div>
       </header>
 
-      {/* ==== TIER 1: FORM-FIRST CANVAS ==== */}
-      <section className="ship-form-canvas ship-hero-form ship-cold-open-metrics" aria-label="Submit a request">
-        {formSuccess ? (
-          <div className="ship-form-canvas__success">
-            <div className="ship-form-canvas__success-icon" aria-hidden="true">&#9998;</div>
-            <p className="ship-form-canvas__success-text">Request submitted. It will appear on the board momentarily.</p>
-            <button type="button" className="ship-form-canvas__reset-btn" onClick={resetForm}>
-              Submit another
-            </button>
+      {/* ==== MAIN: Submit / The Board / Known Observations ==== */}
+      <div className="ship-main">
+        {/* ---- LEFT: Submit ---- */}
+        <section className="ship-col ship-col--submit" aria-label="Submit a request">
+          <div className="ship-panel__head">
+            <h2 className="ship-panel__title">Submit</h2>
+            <p className="ship-panel__sub">Bugs and features. The ones you vote up get built, often within hours.</p>
           </div>
-        ) : (
-          <form className="ship-form-canvas__form" onSubmit={handleFormSubmit}>
-            {rateLimited && (
-              <div className="ship-form-canvas__rate-limit" role="alert">
-                Slow down. Max {RATE_LIMIT_MAX} requests per hour.
-              </div>
-            )}
-
-            {/* Honeypot */}
-            <div className="ship-form__honeypot" aria-hidden="true">
-              <label htmlFor="ship-website">Website</label>
-              <input id="ship-website" type="text" value={formHoneypot} onChange={(e) => setFormHoneypot(e.target.value)} tabIndex={-1} autoComplete="off" />
-            </div>
-
-            {/* Category pill toggle */}
-            <div className="ship-category-toggle" role="radiogroup" aria-label="Request type">
-              {CATEGORY_OPTIONS.map(opt => (
-                <button
-                  key={opt.value}
-                  type="button"
-                  role="radio"
-                  aria-checked={formCategory === opt.value}
-                  className={`ship-category-toggle__pill${formCategory === opt.value ? ' ship-category-toggle__pill--active' : ''} ship-category-toggle__pill--${opt.value}`}
-                  onClick={() => handleCategoryChange(opt.value)}
-                >
-                  {opt.label}
+          <div className="ship-panel__scroll">
+            {formSuccess ? (
+              <div className="ship-form-canvas__success">
+                <div className="ship-form-canvas__success-icon" aria-hidden="true">&#9998;</div>
+                <p className="ship-form-canvas__success-text">Request submitted. It will appear on the board momentarily.</p>
+                <button type="button" className="ship-form-canvas__reset-btn" onClick={resetForm}>
+                  Submit another
                 </button>
-              ))}
-              <div
-                className="ship-category-toggle__indicator"
-                style={{ transform: formCategory === 'bug' ? 'translateX(0)' : 'translateX(100%)' }}
-                aria-hidden="true"
-              />
-            </div>
-
-            {/* Title */}
-            <div className="ship-form-canvas__field">
-              <input
-                ref={titleInputRef}
-                id="ship-title"
-                className="ship-form-canvas__title-input"
-                type="text"
-                maxLength={120}
-                value={formTitle}
-                onChange={(e) => setFormTitle(e.target.value)}
-                placeholder="Title your request"
-                required
-                aria-label="Request title"
-              />
-              <div className="ship-form-canvas__char-count">
-                <span className={formTitle.length > 100 ? 'ship-form-canvas__char-count--warn' : ''}>{formTitle.length}/120</span>
               </div>
-            </div>
-
-            {/* Description */}
-            <div className="ship-form-canvas__field">
-              <textarea
-                id="ship-desc"
-                className="ship-form-canvas__desc-input"
-                maxLength={2000}
-                value={formDesc}
-                onChange={handleDescChange}
-                placeholder={formCategory === 'bug' ? 'Describe the bug...' : 'Describe the feature...'}
-                required
-                aria-label="Request description"
-              />
-              <div className="ship-form-canvas__char-count">
-                <span className={formDesc.length > 1800 ? 'ship-form-canvas__char-count--warn' : ''}>{formDesc.length}/2000</span>
-              </div>
-            </div>
-
-            {formError && <p className="ship-form-canvas__error" role="alert">{formError}</p>}
-
-            <button
-              type="submit"
-              className={`ship-form-canvas__submit${formSubmitting ? ' ship-form-canvas__submit--loading' : ''}`}
-              disabled={!canSubmit || rateLimited}
-            >
-              {formSubmitting ? 'Submitting...' : 'Submit Request'}
-            </button>
-          </form>
-        )}
-      </section>
-
-      <InkDroplet />
-      <OrganicDivider />
-
-      {/* ==== TIER 2: COMPACT DASHBOARD ==== */}
-      {!loading && (
-        <section className="ship-dashboard ship-cold-open-column" aria-label="Dashboard summary">
-          <div className="ship-dashboard__summary">
-            <div className="ship-dashboard__metrics">
-              <span className={`ship-dashboard__metric ship-dashboard__metric--gold${metricsLanded ? ' ship-dashboard__metric--landed' : ''}`}>
-                {displayMetrics.totalShipped} shipped
-              </span>
-              <span className="ship-dashboard__sep" aria-hidden="true">&middot;</span>
-              <span className={`ship-dashboard__metric${metricsLanded ? ' ship-dashboard__metric--landed' : ''}`}>
-                {displayMetrics.openCount} open
-              </span>
-              <span className="ship-dashboard__sep" aria-hidden="true">&middot;</span>
-              <span className={`ship-dashboard__metric ship-dashboard__metric--gold${metricsLanded ? ' ship-dashboard__metric--landed' : ''}`}>
-                avg {displayMetrics.avgShipTimeHours > 0 ? `${displayMetrics.avgShipTimeHours.toFixed(1)}h` : '\u2014'}
-              </span>
-            </div>
-            <PulseGraph requests={requests} />
-          </div>
-          <div className="ship-dashboard__actions">
-            <button
-              className={`ship-dashboard__toggle${boardOpen ? ' ship-dashboard__toggle--open' : ''}`}
-              onClick={() => setBoardOpen(v => !v)}
-              aria-expanded={boardOpen}
-              aria-controls="ship-board-section"
-            >
-              {boardOpen ? '\u25B4 Hide Board' : '\u25BE View Board'}
-            </button>
-            <button
-              className={`ship-dashboard__toggle${logOpen ? ' ship-dashboard__toggle--open' : ''}`}
-              onClick={() => setLogOpen(v => !v)}
-              aria-expanded={logOpen}
-              aria-controls="ship-log-section"
-            >
-              {logOpen ? '\u25B4 Hide Log' : '\u25BE View Log'}
-            </button>
-          </div>
-        </section>
-      )}
-
-      {/* ---- Recent Activity (always visible) ---- */}
-      {!loading && (
-        <section className="ship-recent ship-cold-open-column" aria-label="Recent activity">
-          <h2 className="ship-recent__title">Recent</h2>
-          <div className="ship-recent__list">
-            {recentActivity.length === 0 ? (
-              <p className="ship-recent__empty">No requests yet. Be the first to submit one above.</p>
-            ) : recentActivity.map(r => (
-              <div key={r.id} className={`ship-recent__item ship-recent__item--${r.status}`}>
-                <span className={`ship-recent__status ship-recent__status--${r.status}`}>
-                  {STATUS_LABELS[r.status]}
-                </span>
-                <span className="ship-recent__item-title">{r.title}</span>
-                <span className="ship-recent__time">{timeAgo(r.updated_at || r.created_at)}</span>
-                {['submitted', 'triaged', 'building'].includes(r.status) && (
-                  <span className="ship-recent__clock">{elapsedTimer(r.created_at)}</span>
+            ) : (
+              <form className="ship-form-canvas__form" onSubmit={handleFormSubmit}>
+                {rateLimited && (
+                  <div className="ship-form-canvas__rate-limit" role="alert">
+                    Slow down. Max {RATE_LIMIT_MAX} requests per hour.
+                  </div>
                 )}
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
 
-      <OrganicDivider />
-      <InkDroplet />
-
-      {/* ==== TIER 3: EXPANDABLE BOARD ==== */}
-      {boardOpen && !loading && (
-        <section
-          id="ship-board-section"
-          className="ship-board-section ship-board-section--open"
-          aria-label="Ship request board"
-        >
-          {/* Loading skeleton */}
-          {loading ? (
-            <div className="ship-board__loading" aria-label="Loading requests">
-              {BOARD_COLUMNS.map(col => (
-                <div key={col.key} className="ship-board__loading-col">
-                  <div className="ship-board__loading-header" />
-                  <div className="ship-board__loading-card" />
-                  <div className="ship-board__loading-card ship-board__loading-card--short" />
+                {/* Honeypot */}
+                <div className="ship-form__honeypot" aria-hidden="true">
+                  <label htmlFor="ship-website">Website</label>
+                  <input id="ship-website" type="text" value={formHoneypot} onChange={(e) => setFormHoneypot(e.target.value)} tabIndex={-1} autoComplete="off" />
                 </div>
-              ))}
-            </div>
-          ) : (
-            <div className="ship-board" role="region" aria-label="Kanban board">
-              {visibleColumns.map(col => {
-                const isResolved = col.key === 'resolved';
-                // Resolved is a pile of several closed statuses; sort the merged
-                // list by most-recent activity. Single-status columns keep their
-                // existing per-status sort from grouped[].
-                const cards = isResolved
-                  ? col.statuses
-                      .flatMap(s => grouped[s])
-                      .sort((a, b) => new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime())
-                  : grouped[col.statuses[0]];
-                return (
-                  <section
-                    key={col.key}
-                    className={`ship-column ship-column--${col.key}`}
-                    aria-label={`${col.label} requests`}
-                  >
-                    <div className="ship-column__header">
-                      <span className="ship-column__title">{col.label}</span>
-                      <span className="ship-column__count">{cards.length}</span>
-                    </div>
-                    <div className="ship-column__cards">
-                      {cards.length === 0 ? (
-                        <div className="ship-column__empty">
-                          {col.key === 'submitted' ? 'No requests yet' : col.key === 'shipped' ? 'Nothing shipped yet' : col.key === 'resolved' ? 'Nothing closed yet' : 'Empty'}
-                        </div>
-                      ) : cards.map(req => (
-                        <ShipCard
-                          key={req.id}
-                          request={req}
-                          hasVoted={votedIds.has(req.id)}
-                          onVote={handleVote}
-                          isNew={newIdsRef.current.has(req.id)}
-                          onAnimationEnd={() => newIdsRef.current.delete(req.id)}
-                          isJustShipped={justShippedIds.has(req.id)}
-                          fingerprint={fingerprintRef.current}
-                          replies={replyMap[req.id] || []}
-                          onRepliesLoaded={(id, replies) => setReplyMap(prev => ({ ...prev, [id]: replies }))}
-                          showStatusTag={isResolved}
-                        />
-                      ))}
-                    </div>
-                  </section>
-                );
-              })}
-            </div>
-          )}
-        </section>
-      )}
 
-      {/* ==== TIER 3: EXPANDABLE LOG ==== */}
-      {logOpen && !loading && requests.length > 0 && (
-        <section
-          id="ship-log-section"
-          className="ship-log ship-board-section--open"
-          aria-label="Ship Log activity feed"
-        >
-          <h2 className="ship-log__title">Ship Log</h2>
-          <div className="ship-log__entries">
-            {requests
-              .slice()
-              .sort((a, b) => new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime())
-              .map(r => (
-                <div key={r.id} className={`ship-log__entry ship-log__entry--${r.status}`}>
-                  <div className="ship-log__dot" />
-                  <div className="ship-log__content">
-                    <div className="ship-log__header">
-                      <span className={`ship-log__status ship-log__status--${r.status}`}>{STATUS_LABELS[r.status]}</span>
-                      <span className="ship-log__time">{timeAgo(r.updated_at || r.created_at)}</span>
-                    </div>
-                    <p className="ship-log__request-title">{r.title}</p>
-                    <div className="ship-log__meta">
-                      <span className={`ship-log__badge ship-log__badge--${r.category}`}>{r.category}</span>
-                      {r.votes > 0 && <span className="ship-log__votes">{r.votes} vote{r.votes !== 1 ? 's' : ''}</span>}
-                      {r.shipped_at && r.status === 'shipped' && (
-                        <span className="ship-log__ship-time">shipped in {shipDuration(r.created_at, r.shipped_at)}</span>
-                      )}
-                      {r.shipped_commit && (
-                        <a className="ship-log__commit" href={`https://github.com/aacrit/void--news/commit/${r.shipped_commit}`} target="_blank" rel="noopener">
-                          {r.shipped_commit.slice(0, 7)}
-                        </a>
-                      )}
-                    </div>
-                    {r.ceo_response && <p className="ship-log__response">{r.ceo_response}</p>}
+                {/* Category pill toggle */}
+                <div className="ship-category-toggle" role="radiogroup" aria-label="Request type">
+                  {CATEGORY_OPTIONS.map(opt => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      role="radio"
+                      aria-checked={formCategory === opt.value}
+                      className={`ship-category-toggle__pill${formCategory === opt.value ? ' ship-category-toggle__pill--active' : ''} ship-category-toggle__pill--${opt.value}`}
+                      onClick={() => handleCategoryChange(opt.value)}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                  <div
+                    className="ship-category-toggle__indicator"
+                    style={{ transform: formCategory === 'bug' ? 'translateX(0)' : 'translateX(100%)' }}
+                    aria-hidden="true"
+                  />
+                </div>
+
+                {/* Title */}
+                <div className="ship-form-canvas__field">
+                  <input
+                    ref={titleInputRef}
+                    id="ship-title"
+                    className="ship-form-canvas__title-input"
+                    type="text"
+                    maxLength={120}
+                    value={formTitle}
+                    onChange={(e) => setFormTitle(e.target.value)}
+                    placeholder="Title your request"
+                    required
+                    aria-label="Request title"
+                  />
+                  <div className="ship-form-canvas__char-count">
+                    <span className={formTitle.length > 100 ? 'ship-form-canvas__char-count--warn' : ''}>{formTitle.length}/120</span>
                   </div>
                 </div>
-              ))}
+
+                {/* Description */}
+                <div className="ship-form-canvas__field">
+                  <textarea
+                    id="ship-desc"
+                    className="ship-form-canvas__desc-input"
+                    maxLength={2000}
+                    value={formDesc}
+                    onChange={handleDescChange}
+                    placeholder={formCategory === 'bug' ? 'Describe the bug...' : 'Describe the feature...'}
+                    required
+                    aria-label="Request description"
+                  />
+                  <div className="ship-form-canvas__char-count">
+                    <span className={formDesc.length > 1800 ? 'ship-form-canvas__char-count--warn' : ''}>{formDesc.length}/2000</span>
+                  </div>
+                </div>
+
+                {formError && <p className="ship-form-canvas__error" role="alert">{formError}</p>}
+
+                <button
+                  type="submit"
+                  className={`ship-form-canvas__submit${formSubmitting ? ' ship-form-canvas__submit--loading' : ''}`}
+                  disabled={!canSubmit || rateLimited}
+                >
+                  {formSubmitting ? 'Submitting...' : 'Submit Request'}
+                </button>
+              </form>
+            )}
+
+            {/* ---- Got an idea? A lighter path that files a feature request. ---- */}
+            <div className="ship-idea">
+              <QuickSubmit
+                fingerprint={fingerprintRef.current}
+                variant="block"
+                placeholder="A rough thought is fine. What would make Void News better?"
+                toggleLabel="Got an idea?"
+              />
+            </div>
           </div>
         </section>
-      )}
 
-      <OrganicDivider />
-
-      {/* ==== KNOWN OBSERVATIONS: radical transparency board ==== */}
-      <section className="ship-obs ship-cold-open-column" aria-labelledby="ship-obs-heading">
-        <header className="ship-obs__head">
-          <p className="ship-obs__eyebrow">Radical transparency</p>
-          <h2 id="ship-obs-heading" className="ship-obs__title">Known Observations</h2>
-          <p className="ship-obs__intro">
-            We would rather tell you where the machine still stumbles than pretend it
-            does not. Here is what we are watching, and how to read around it.
-          </p>
-        </header>
-        <ul className="ship-obs__list">
-          {OBSERVATIONS.map((obs, i) => (
-            <li key={i} className="ship-obs__item">
-              <div className="ship-obs__body">
-                <p className="ship-obs__claim">{obs.claim}</p>
-                <p className="ship-obs__note">{obs.note}</p>
+        {/* ---- CENTER: The Board ---- */}
+        <section className="ship-col ship-col--board" aria-label="The board">
+          <div className="ship-panel__head">
+            <h2 className="ship-panel__title">The Board</h2>
+            <p className="ship-panel__sub">submitted to building to shipped, live.</p>
+          </div>
+          <div className="ship-panel__scroll ship-board__scroll">
+            {loading ? (
+              <div className="ship-board__loading" aria-label="Loading requests">
+                {BOARD_COLUMNS.map(col => (
+                  <div key={col.key} className="ship-board__loading-col">
+                    <div className="ship-board__loading-header" />
+                    <div className="ship-board__loading-card" />
+                    <div className="ship-board__loading-card ship-board__loading-card--short" />
+                  </div>
+                ))}
               </div>
-              <span className={`ship-obs__chip ship-obs__chip--${obs.chip}`}>
-                <span className="ship-obs__chip-dot" aria-hidden="true" />
-                {CHIP_LABELS[obs.chip]}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
+            ) : (
+              <div className="ship-board" role="region" aria-label="Kanban board">
+                {visibleColumns.map(col => {
+                  const isResolved = col.key === 'resolved';
+                  const cards = isResolved
+                    ? col.statuses
+                        .flatMap(s => grouped[s])
+                        .sort((a, b) => new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime())
+                    : grouped[col.statuses[0]];
+                  return (
+                    <section
+                      key={col.key}
+                      className={`ship-column ship-column--${col.key}`}
+                      aria-label={`${col.label} requests`}
+                    >
+                      <div className="ship-column__header">
+                        <span className="ship-column__title">{col.label}</span>
+                        <span className="ship-column__count">{cards.length}</span>
+                      </div>
+                      <div className="ship-column__cards">
+                        {cards.length === 0 ? (
+                          <div className="ship-column__empty">
+                            {col.key === 'submitted' ? 'No requests yet' : col.key === 'shipped' ? 'Nothing shipped yet' : col.key === 'resolved' ? 'Nothing closed yet' : 'Empty'}
+                          </div>
+                        ) : cards.map(req => (
+                          <ShipCard
+                            key={req.id}
+                            request={req}
+                            hasVoted={votedIds.has(req.id)}
+                            onVote={handleVote}
+                            isNew={newIdsRef.current.has(req.id)}
+                            onAnimationEnd={() => newIdsRef.current.delete(req.id)}
+                            isJustShipped={justShippedIds.has(req.id)}
+                            fingerprint={fingerprintRef.current}
+                            replies={replyMap[req.id] || []}
+                            onRepliesLoaded={(id, replies) => setReplyMap(prev => ({ ...prev, [id]: replies }))}
+                            showStatusTag={isResolved}
+                          />
+                        ))}
+                      </div>
+                    </section>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* ---- RIGHT: Known Observations ---- */}
+        <aside className="ship-col ship-col--obs" aria-label="Known observations">
+          <div className="ship-panel__head">
+            <h2 className="ship-panel__title">Known Observations</h2>
+            <p className="ship-panel__sub">Where the machine still stumbles, and what we are doing about it.</p>
+          </div>
+          <ObservationsRail fingerprint={fingerprintRef.current} />
+        </aside>
+      </div>
+
+      {/* ==== BOTTOM STRIP: recent ticker + personal touch + log + Discord ==== */}
+      <footer className="ship-strip">
+        <div className="ship-strip__recent" aria-label="Recent activity">
+          <span className="ship-strip__label">Recent</span>
+          {recentActivity.length === 0 ? (
+            <span className="ship-strip__empty">No requests yet. Be the first above.</span>
+          ) : (
+            <div className="ship-strip__items">
+              {recentActivity.map(r => (
+                <span key={r.id} className="ship-strip__item">
+                  <span className={`ship-strip__item-status ship-strip__item-status--${r.status}`}>{STATUS_LABELS[r.status]}</span>
+                  <span className="ship-strip__item-title">{r.title}</span>
+                  <span className="ship-strip__item-time">{timeAgo(r.updated_at || r.created_at)}</span>
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="ship-strip__aside">
+          <span className="ship-strip__you" aria-label={`You have voted on ${votedIds.size} requests`}>
+            you voted <span className="ship-strip__you-num">{votedIds.size}</span>
+          </span>
+          <button type="button" className="ship-strip__log-btn" onClick={() => setLogOpen(true)}>
+            View full log
+          </button>
+          {/* Discord: community is coming. This is a disabled placeholder. Wire a
+              real invite URL (and any webhook) in here when the server is live. */}
+          <span className="ship-discord" role="note" aria-label="Discord community coming soon" title="Community is coming soon">
+            <span className="ship-discord__dot" aria-hidden="true" />
+            Discord &middot; coming soon
+          </span>
+        </div>
+      </footer>
+
+      {/* ==== SHIP LOG (overlay) ==== */}
+      {logOpen && (
+        <ShipOverlay title="Ship Log" onClose={() => setLogOpen(false)}>
+          {requests.length === 0 ? (
+            <p className="ship-overlay__intro">Nothing logged yet.</p>
+          ) : (
+            <div className="ship-log__entries">
+              {requests
+                .slice()
+                .sort((a, b) => new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime())
+                .map(r => (
+                  <div key={r.id} className={`ship-log__entry ship-log__entry--${r.status}`}>
+                    <div className="ship-log__dot" />
+                    <div className="ship-log__content">
+                      <div className="ship-log__header">
+                        <span className={`ship-log__status ship-log__status--${r.status}`}>{STATUS_LABELS[r.status]}</span>
+                        <span className="ship-log__time">{timeAgo(r.updated_at || r.created_at)}</span>
+                      </div>
+                      <p className="ship-log__request-title">{r.title}</p>
+                      <div className="ship-log__meta">
+                        <span className={`ship-log__badge ship-log__badge--${r.category}`}>{r.category}</span>
+                        {r.votes > 0 && <span className="ship-log__votes">{r.votes} vote{r.votes !== 1 ? 's' : ''}</span>}
+                        {r.shipped_at && r.status === 'shipped' && (
+                          <span className="ship-log__ship-time">shipped in {shipDuration(r.created_at, r.shipped_at)}</span>
+                        )}
+                        {r.shipped_commit && (
+                          <a className="ship-log__commit" href={`https://github.com/aacrit/void--news/commit/${r.shipped_commit}`} target="_blank" rel="noopener">
+                            {r.shipped_commit.slice(0, 7)}
+                          </a>
+                        )}
+                      </div>
+                      {r.ceo_response && <p className="ship-log__response">{r.ceo_response}</p>}
+                    </div>
+                  </div>
+                ))}
+            </div>
+          )}
+        </ShipOverlay>
+      )}
     </main>
   );
 }
@@ -1093,7 +1409,7 @@ function ShipCard({
               className={`ship-card__vote-arrow${arrowPop ? ' ship-card__vote-arrow--pop' : ''}`}
               onAnimationEnd={() => setArrowPop(false)}
             >
-              {hasVoted ? '\u25B2' : '\u25B3'}
+              {hasVoted ? '▲' : '△'}
             </span>
             {r.votes}
             {/* Ink splash micro-dots */}
@@ -1128,7 +1444,7 @@ function ShipCard({
       {isShipped && r.shipped_diff_summary && (
         <div className="ship-card__diff">
           <button className="ship-card__diff-toggle" onClick={() => setDiffOpen(v => !v)} aria-expanded={diffOpen}>
-            {diffOpen ? '\u25B4 Hide changes' : '\u25BE View changes'}
+            {diffOpen ? '▴ Hide changes' : '▾ View changes'}
           </button>
           {diffOpen && (
             <div className="ship-card__diff-content">{r.shipped_diff_summary}</div>
