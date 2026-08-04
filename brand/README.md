@@ -18,11 +18,21 @@ brand/
   index.html            One-stop showcase (self-contained, theme-aware, offline)
   README.md             This file
   generate.py           Regenerates all logo SVG masters + the animated SVG
+  _sigil_draw.py        Pillow Sigil geometry (shared: icons, social, animation)
+  build_png_icons.py    Phase 2 - icon PNG matrix (Pillow, all sizes)
+  build_png_lockups.py  Phase 2 - lockup PNGs (chromium render of SVG masters)
+  build_social.py       Phase 2 - platform avatars + banners
+  build_video.py        Phase 2 - animation frames + GIF (+ MP4/WebM if capable ffmpeg)
+  render-video.sh       CI: MP4 + WebM from frames with a full ffmpeg
   logos/                36 SVG masters (4 brands x 3 assets x 3 treatments)
+    png/                64 raster exports (40 icons + 24 lockups)
+  social/               7 platform assets (YouTube, Instagram, X, Bluesky)
+  video/                2 GIFs + 88 frame PNGs (MP4/WebM via render-video.sh)
   animated/             Living Sigil - animated SVG + Lottie JSON
   color/                colors.css, colors.json, palette.md
   type/                 type.md (specimen + scale + pairing rules)
-  guidelines/           guidelines.md (logo, color, type, voice, Sigil meaning)
+  guidelines/           guidelines.md + guidelines-print.html + void-brand-book.pdf
+  ci/                   render_svg.mjs, render_pdf.mjs (chromium renderers)
 ```
 
 ### logos/ naming
@@ -84,38 +94,68 @@ IBM Plex Mono (data). Locked. See `type/type.md`.
 
 ---
 
-## Phase 2 checklist (NOT in this phase)
+## Phase 2 - raster, social, animation, print
 
-The following are deliberately out of scope for the foundation. Run next:
+Regenerate everything at once:
 
-- [ ] **Outline the wordmark/lockup text to vector paths** so the marks render
-      identically without the fonts installed. Open each `*-wordmark-*.svg` and
-      `*-horizontal-*.svg` in Illustrator/Inkscape/Fonttools, convert `<text>`
-      to paths, and re-save. (Alternatively embed a subset WOFF2 as a data URI.)
-- [ ] **Multi-resolution PNG export matrix.** Rasterize every SVG at 16 / 32 /
-      48 / 64 / 128 / 256 / 512 / 1024 px. Recommended approach (same
-      supersample method used for the app favicons): render the SVG to a canvas
-      or via a headless renderer at **4x** the target, then downscale with a
-      high-quality Lanczos filter for crisp edges.
-      - Node: `sharp(svgBuffer, { density: 4*targetDPI }).resize(size).png()`
-      - Python: `cairosvg.svg2png(url=..., output_width=size*4, ...)` then
-        `Pillow` `Image.resize((size,size), Image.LANCZOS)`.
-      - Keep transparent backgrounds; produce `@1x/@2x/@3x` sets for app tiles.
-- [ ] **Favicon + PWA icon set.** `favicon.ico` (16/32/48 multi-size), Apple
-      touch icon (180), maskable 512 with safe-area padding, from the icon SVGs.
-- [ ] **Video renders of the animated Sigil.** MP4 (H.264) + WebM (VP9) +
-      transparent GIF, ~4.4s loop at 1080x1080 and 512x512, from the Lottie
-      (`lottie` -> `puppeteer`/`lottie-web` frames -> `ffmpeg`).
-- [ ] **Per-platform social avatars/banners.** X/Twitter, YouTube (Vision),
-      Instagram, LinkedIn, Open Graph 1200x630. Icon-on-accent avatar +
-      lockup-on-paper banner per brand.
-- [ ] **PDF brand book.** Compose the guidelines + specimens + logo grid into a
-      print-ready PDF.
-- [ ] **Wire the `/press` page.** Surface `index.html` (or a Next.js port) at a
-      public press/brand route with the download pack.
-- [ ] **Recolor the animated Sigil for History / Weekly / Vision** (currently
-      only the News flagship exists). Swap the accent + ring/foot stroke in the
-      SVG `<style>` and the Lottie stroke keyframes.
+```bash
+python brand/build_png_icons.py     # 40 icon PNGs
+python brand/build_png_lockups.py   # 24 lockup PNGs (needs frontend/node_modules/playwright)
+python brand/build_social.py        #  7 social assets
+python brand/build_video.py         #  2 GIFs + 88 frames (+ MP4/WebM if ffmpeg is capable)
+node   brand/ci/render_pdf.mjs brand/guidelines/guidelines-print.html brand/guidelines/void-brand-book.pdf
+```
+
+### Done in this phase
+
+- [x] **PNG export matrix** -> `logos/png/` (64 files, dimensions verified).
+      - Icons: each brand at 16/32/48/64/128/256/512/1024 transparent, plus 512
+        on Morning paper (`#F0EBDD`) and Evening ink (`#14120F`). Drawn directly
+        in **Pillow** from the exact Sigil geometry (supersample x4 + LANCZOS),
+        so they are pixel-crisp at 16 px with no browser dependency.
+      - Lockups: `horizontal` at 800 and 1600 px wide, transparent + light +
+        dark. Rendered from the SVG masters via **Playwright chromium**.
+- [x] **Social kit** -> `social/` (7 files, dimensions verified). YouTube (Void
+      Vision, brass) avatar 800 + banner 2560x1440 (mark inside the 1546x423
+      safe area); Instagram (News) avatar 320; X (News) avatar 400 + header
+      1500x500; Bluesky (News) avatar 512 + banner 3000x1000. Deep-ink / paper
+      grounds, mark centred inside the circular-crop / TV-safe zones.
+- [x] **Animation renders** -> `video/`. Seamless 4.4s beam-sweep loop
+      (accent -> blue -> green -> red -> accent), 512 px, 88 frames.
+      **GIF** (ink ground + transparent) via Pillow, plus the 88 frame PNGs.
+- [x] **Print brand book** -> `guidelines/guidelines-print.html` (A4 `@media
+      print`, `print-color-adjust: exact`) + a **real** `void-brand-book.pdf`
+      (6 pages) rendered with chromium `page.pdf()`.
+
+### Deferred / approximated (honest notes)
+
+- **MP4 + WebM: DEFERRED to CI.** The only ffmpeg on the dev box is Playwright's
+      bundled build, which is capture-only (VP8, and it cannot even decode PNG /
+      has no image2 demuxer). `build_video.py` probes for a capable ffmpeg and,
+      finding none, delivers the GIF + frames and prints a deferral note. Run
+      **`bash brand/render-video.sh`** in CI (ubuntu-latest ships a full ffmpeg)
+      to encode `void-news-sigil-ink.mp4` (H.264) + `void-news-sigil-alpha.webm`
+      (VP9 alpha) from the frames. Only the file encode is deferred; every frame
+      is already rendered.
+- **Lockup wordmark face: Georgia stand-in, not Playfair.** Playfair Display is
+      not installed on this box and is not present as a decodable font binary
+      (the Next cache holds only brotli-compressed subsets that lack basic-latin
+      A-Z, and there is no fontTools/brotli to convert them), so chromium renders
+      the SVG masters' declared fallback (Georgia). **The Sigil-O geometry is
+      exact**; only the letterforms differ. `ci/render_svg.mjs` is the CI script:
+      run it on a box with Playfair Display installed (or embed a Playfair WOFF2
+      via `@font-face`) for pixel-perfect Playfair lockups, identical pipeline.
+- **Icon PNGs are true Playfair-free** (pure geometry), so they are final, not
+      approximated.
+
+### Still not in scope (Phase 3)
+
+- [ ] Outline the wordmark/lockup `<text>` to vector paths (or embed a subset
+      WOFF2) so the SVG masters render identically without fonts installed.
+- [ ] `favicon.ico` (16/32/48 multi-size) + Apple touch icon (180) + maskable
+      512 with safe-area padding, packaged for the app.
+- [ ] Recolour the animated Sigil for History / Weekly / Vision.
+- [ ] Wire a public `/press` route with the download pack.
 
 ---
 
