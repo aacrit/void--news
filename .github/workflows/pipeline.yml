@@ -46,14 +46,17 @@ concurrency:
 jobs:
   run-pipeline:
     runs-on: ubuntu-latest
-    # Real runtime is ~100 min (Aug 1: 1h44m, Aug 2: 1h39m — both succeeded);
-    # fresh-DB worst case ~108 min. The 90-min ceiling set 2026-08-03 was BELOW
-    # the real runtime, so every scheduled run since was cancelled mid-step-7b
-    # (summarization) and the feed went stale. Ceiling raised to 120 (margin over
-    # the ~108 worst case). The 40-min in-code scrape budget + per-source fetch
-    # budget still cap a genuine hang so it fails fast/visibly (alert-on-failure.yml)
-    # rather than burning to this ceiling.
-    timeout-minutes: 120
+    # Runtime is inherently variable (RSS fetch + scrape of 1,016 sources):
+    # observed healthy runs range ~70-141 min (Jul 29: 127m, Jul 31: 141m, both
+    # succeeded). The 90-min ceiling set 2026-08-03 was BELOW the normal runtime,
+    # so every run since was cancelled mid step-7b (summarization) and the feed
+    # went stale. Restored to 150 (the pre-Aug-3 value that let healthy runs
+    # finish; Jul 24/30 hitting exactly 150 were genuine runaways). The 40-min
+    # in-code scrape budget + per-source fetch budget cap a true hang so it fails
+    # visibly (alert-on-failure.yml). TODO: the 127-150m long-tail days are worth
+    # trimming in the fetch/scrape phase (PYTHONUNBUFFERED below now exposes the
+    # per-phase timing) so this ceiling can come back down.
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
