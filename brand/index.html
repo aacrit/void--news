@@ -112,6 +112,10 @@
   .chip.light { background: #F0EBDD; }
   .chip.dark { background: var(--chip-dark); border-color: #322d27; }
   .chip img { max-width: 100%; max-height: 84px; }
+  /* Phase 2 raster/social: let full-size marks, banners, and native-px
+     icon demos render at their intended dimensions (override the 84px cap). */
+  #raster .chip img, #social .chip img { max-height: none; }
+  #raster .chip, #social .chip { min-height: 0; }
   .chip .icon-row { display: flex; align-items: center; gap: 24px; }
   .chip .icon-row img { height: 64px; width: 64px; }
   .chip .cap {
@@ -206,18 +210,94 @@
     <p class="sec-note">The flagship animated mark: the beam sweeps level, tilts left (blue), balances (green), tilts right (red), and settles back to the brand accent - the same spectrum the product paints across every story. Self-contained SVG (inline CSS, loops, honors reduced-motion) and a Lottie JSON twin. The other brands reuse it with a recolor.</p>
     <div class="lockups">
       <div class="chip light"><img src="animated/void-news-sigil-animated.svg" alt="Animated Sigil, light" style="height:120px;width:120px"></div>
-      <div class="chip dark"><img src="animated/void-news-sigil-animated.svg" alt="Animated Sigil, dark" style="height:120px;width:120px"></div>
+      <div class="chip dark"><img src="video/void-news-sigil-ink.gif" alt="Sigil beam-sweep GIF, ink ground" style="height:120px;width:120px"></div>
     </div>
     <div class="row-label">Downloads</div>
     <div class="dl-list">
       <a class="dl" href="animated/void-news-sigil-animated.svg" download><span class="arr">&darr;</span> void-news-sigil-animated.svg</a>
       <a class="dl" href="animated/void-news-sigil-animated.json" download><span class="arr">&darr;</span> void-news-sigil-animated.json (Lottie)</a>
+      <a class="dl" href="video/void-news-sigil-ink.gif" download><span class="arr">&darr;</span> void-news-sigil-ink.gif</a>
+      <a class="dl" href="video/void-news-sigil-transparent.gif" download><span class="arr">&darr;</span> void-news-sigil-transparent.gif</a>
+    </div>
+    <p class="sec-note" style="margin-top:14px">The GIF above (ink ground) is the raster loop; a transparent 1-bit twin ships alongside. MP4 (H.264) and WebM (VP9 alpha) render from the 88 frame PNGs in <code style="font-family:var(--font-data)">video/frames/</code> via <code style="font-family:var(--font-data)">brand/render-video.sh</code> in CI (a full ffmpeg). The dev box only carries Playwright&rsquo;s capture-only ffmpeg, so the file encodes are deferred; the frames are done.</p>
+  </section>
+
+  <!-- ================= RASTER ================= -->
+  <section id="raster">
+    <div class="sec-kicker">03 &middot; Raster</div>
+    <h2>Every Pixel Size</h2>
+    <p class="sec-note">64 PNG exports in <code style="font-family:var(--font-data)">logos/png/</code>. The icon is drawn directly from the Sigil geometry in Pillow (supersample x4 + LANCZOS), so it holds the ring, beam, and foot cleanly down to 16&nbsp;px. Lockups are rendered from the SVG masters. Each icon ships transparent at 16/32/48/64/128/256/512/1024 plus 512 on both grounds.</p>
+
+    <div class="row-label">Icon at native 16 / 32 / 48 / 64 / 128 px (Void News)</div>
+    <div class="chip light" style="display:flex;align-items:flex-end;gap:22px;padding:26px 28px">
+      <img src="logos/png/void-news-icon-16.png" alt="16px" width="16" height="16">
+      <img src="logos/png/void-news-icon-32.png" alt="32px" width="32" height="32">
+      <img src="logos/png/void-news-icon-48.png" alt="48px" width="48" height="48">
+      <img src="logos/png/void-news-icon-64.png" alt="64px" width="64" height="64">
+      <img src="logos/png/void-news-icon-128.png" alt="128px" width="128" height="128">
+    </div>
+
+    <div class="row-label">Icon 512 on both grounds &middot; four brands</div>
+    <div class="lockups">
+      <div class="chip light"><img src="logos/png/void-news-icon-512-light.png" alt="News on paper" style="width:120px;height:120px"></div>
+      <div class="chip dark"><img src="logos/png/void-history-icon-512-dark.png" alt="History on ink" style="width:120px;height:120px"></div>
+      <div class="chip light"><img src="logos/png/void-weekly-icon-512-light.png" alt="Weekly on paper" style="width:120px;height:120px"></div>
+      <div class="chip dark"><img src="logos/png/void-vision-icon-512-dark.png" alt="Vision on ink" style="width:120px;height:120px"></div>
+    </div>
+
+    <div class="row-label">Horizontal lockup 800px &middot; light &amp; dark</div>
+    <div class="lockups">
+      <div class="chip light" style="flex:1;min-width:280px"><img src="logos/png/void-news-horizontal-800-light.png" alt="News lockup light" style="width:100%;height:auto"></div>
+      <div class="chip dark" style="flex:1;min-width:280px"><img src="logos/png/void-vision-horizontal-800-dark.png" alt="Vision lockup dark" style="width:100%;height:auto"></div>
+    </div>
+
+    <div class="row-label">Downloads (representative &middot; full set of 64 in logos/png/)</div>
+    <div class="dl-list">
+      <a class="dl" href="logos/png/void-news-icon-1024.png" download><span class="arr">&darr;</span> void-news-icon-1024.png</a>
+      <a class="dl" href="logos/png/void-news-icon-512-light.png" download><span class="arr">&darr;</span> void-news-icon-512-light.png</a>
+      <a class="dl" href="logos/png/void-news-horizontal-1600.png" download><span class="arr">&darr;</span> void-news-horizontal-1600.png</a>
+      <a class="dl" href="logos/png/" ><span class="arr">&rarr;</span> browse logos/png/ (64 files)</a>
+    </div>
+  </section>
+
+  <!-- ================= SOCIAL ================= -->
+  <section id="social">
+    <div class="sec-kicker">04 &middot; Social</div>
+    <h2>Ready to Post</h2>
+    <p class="sec-note">Seven platform assets in <code style="font-family:var(--font-data)">social/</code>, each sized to spec with the mark centred inside the circular-crop and TV-safe zones. Void Vision (brass) fronts YouTube; Void News (terracotta) fronts Instagram, X, and Bluesky.</p>
+
+    <div class="row-label">Avatars &middot; YouTube 800 / X 400 / Bluesky 512 / Instagram 320</div>
+    <div class="lockups">
+      <div class="chip dark"><img src="social/youtube-void-vision-avatar-800.png" alt="YouTube avatar" style="width:110px;height:110px;border-radius:50%"></div>
+      <div class="chip light"><img src="social/x-void-news-avatar-400.png" alt="X avatar" style="width:110px;height:110px;border-radius:50%"></div>
+      <div class="chip light"><img src="social/bluesky-void-news-avatar-512.png" alt="Bluesky avatar" style="width:110px;height:110px;border-radius:50%"></div>
+      <div class="chip light"><img src="social/instagram-void-news-avatar-320.png" alt="Instagram avatar" style="width:110px;height:110px;border-radius:50%"></div>
+    </div>
+
+    <div class="row-label">YouTube channel banner 2560x1440 (safe area 1546x423)</div>
+    <div class="chip dark" style="padding:0;overflow:hidden"><img src="social/youtube-void-vision-banner-2560x1440.png" alt="YouTube banner" style="width:100%;height:auto;display:block"></div>
+
+    <div class="row-label">X header 1500x500 &middot; Bluesky banner 3000x1000</div>
+    <div class="lockups">
+      <div class="chip light" style="flex:1;min-width:280px;padding:0;overflow:hidden"><img src="social/x-void-news-header-1500x500.png" alt="X header" style="width:100%;height:auto;display:block"></div>
+      <div class="chip light" style="flex:1;min-width:280px;padding:0;overflow:hidden"><img src="social/bluesky-void-news-banner-3000x1000.png" alt="Bluesky banner" style="width:100%;height:auto;display:block"></div>
+    </div>
+
+    <div class="row-label">Downloads</div>
+    <div class="dl-list">
+      <a class="dl" href="social/youtube-void-vision-avatar-800.png" download><span class="arr">&darr;</span> youtube-void-vision-avatar-800.png</a>
+      <a class="dl" href="social/youtube-void-vision-banner-2560x1440.png" download><span class="arr">&darr;</span> youtube-void-vision-banner-2560x1440.png</a>
+      <a class="dl" href="social/x-void-news-avatar-400.png" download><span class="arr">&darr;</span> x-void-news-avatar-400.png</a>
+      <a class="dl" href="social/x-void-news-header-1500x500.png" download><span class="arr">&darr;</span> x-void-news-header-1500x500.png</a>
+      <a class="dl" href="social/bluesky-void-news-avatar-512.png" download><span class="arr">&darr;</span> bluesky-void-news-avatar-512.png</a>
+      <a class="dl" href="social/bluesky-void-news-banner-3000x1000.png" download><span class="arr">&darr;</span> bluesky-void-news-banner-3000x1000.png</a>
+      <a class="dl" href="social/instagram-void-news-avatar-320.png" download><span class="arr">&darr;</span> instagram-void-news-avatar-320.png</a>
     </div>
   </section>
 
   <!-- ================= COLOR ================= -->
   <section id="color">
-    <div class="sec-kicker">03 &middot; Color</div>
+    <div class="sec-kicker">05 &middot; Color</div>
     <h2>The Palette</h2>
     <p class="sec-note">Click any swatch to copy its HEX. Brand accents are decorative (large marks); the bias spectrum is earned by data and never used for decoration. Full four-space reference in palette.md.</p>
 
@@ -233,7 +313,7 @@
 
   <!-- ================= TYPE ================= -->
   <section id="type">
-    <div class="sec-kicker">04 &middot; Type</div>
+    <div class="sec-kicker">06 &middot; Type</div>
     <h2>Four Faces, Four Jobs</h2>
     <p class="sec-note">Editorial authority meets data terminal. The tension between a high-contrast Didone and a monospace face is the whole brand. (Web fonts load in the product; this page falls back to system serif/sans/mono, so exact rendering will differ from Playfair et al.)</p>
 
@@ -257,7 +337,7 @@
 
   <!-- ================= VOICE ================= -->
   <section id="voice">
-    <div class="sec-kicker">05 &middot; Voice &amp; Rules</div>
+    <div class="sec-kicker">07 &middot; Voice &amp; Rules</div>
     <h2>How Void Speaks</h2>
     <p class="sec-note">The writing is as disciplined as the design. Three non-negotiable rules.</p>
     <div class="guide-grid">
@@ -287,7 +367,7 @@
 
   <!-- ================= DOWNLOADS ================= -->
   <section id="downloads">
-    <div class="sec-kicker">06 &middot; The Pack</div>
+    <div class="sec-kicker">08 &middot; The Pack</div>
     <h2>Download Everything</h2>
     <p class="sec-note">Every asset in the pack. Right-click &rarr; Save, or click to download.</p>
     <div id="dlAll"></div>
@@ -295,7 +375,7 @@
 
   <footer>
     <p><span class="sig">Void</span> brand pack &middot; generated from the live product tokens.<br>
-    Regenerate the logo masters with <code style="font-family:var(--font-data)">python brand/generate.py</code>. See README.md for Phase 2.</p>
+    Regenerate the SVG masters with <code style="font-family:var(--font-data)">python brand/generate.py</code>; the raster / social / animation exports with the <code style="font-family:var(--font-data)">build_*.py</code> scripts. Print book: <a href="guidelines/void-brand-book.pdf" download>void-brand-book.pdf</a>. See README.md.</p>
   </footer>
 
 </div>
