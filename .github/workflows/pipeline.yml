@@ -46,13 +46,14 @@ concurrency:
 jobs:
   run-pipeline:
     runs-on: ubuntu-latest
-    # Fresh-DB worst case is ~108 min; a hung fetch must not burn the 6h
-    # Actions job default.
-    # A healthy run finishes well under this. The fetch phase is now hard-capped
-    # in code (per-source + global fetch budget), so a hanging source tail can no
-    # longer stall the run to the ceiling; a genuine hang fails FAST and visibly
-    # (see alert-on-failure.yml) instead of burning 2.5h before a silent kill.
-    timeout-minutes: 90
+    # Real runtime is ~100 min (Aug 1: 1h44m, Aug 2: 1h39m — both succeeded);
+    # fresh-DB worst case ~108 min. The 90-min ceiling set 2026-08-03 was BELOW
+    # the real runtime, so every scheduled run since was cancelled mid-step-7b
+    # (summarization) and the feed went stale. Ceiling raised to 120 (margin over
+    # the ~108 worst case). The 40-min in-code scrape budget + per-source fetch
+    # budget still cap a genuine hang so it fails fast/visibly (alert-on-failure.yml)
+    # rather than burning to this ceiling.
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -107,6 +108,11 @@ jobs:
       - name: Run pipeline
         if: ${{ !inputs.brief_only }}
         env:
+          # Unbuffered stdout so step timings appear in the live log as they
+          # happen. Without this, print() output buffers and flushes in one
+          # block, making every step share a single timestamp — which hid where
+          # the ~100-min runtime actually goes (see the 2026-08-03/04 timeouts).
+          PYTHONUNBUFFERED: "1"
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
