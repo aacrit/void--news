@@ -522,12 +522,14 @@ function CoverBody({
 }
 
 /* --- C2. void --Editorial (the single argued editorial) --------------------
-   Rendered as a magazine pull-out BOX: on desktop it floats right inside the
-   cover-zone content flow so the top-story essay wraps around it and then
-   reflows full-width the moment the box ends. Below ~900px it un-floats to a
-   full-width boxed block (see .wk-editorial-float in weekly.css). No inset or
-   tinted background: the box is defined by a border + a strong left rule +
-   padding only, on the same paper as the page. */
+   Rendered as a FULL-WIDTH bordered magazine box, placed AFTER the cover
+   features (before Perspectives / Week in Brief). No float: the essay never
+   leaves a blank column at any editorial or story length. The box sits on the
+   same paper as the page (no shading), defined by a hairline border + a strong
+   accent LEFT rule + padding. At tablet/desktop the body flows in two balanced
+   CSS columns so a full-width measure stays readable; single column on mobile.
+   The "EDITORIAL" label + lens line + headline keep it a distinct
+   "void --Editorial" magazine column. */
 
 function SectionEditorial({
   headline,
@@ -541,11 +543,11 @@ function SectionEditorial({
   const paras = (text || "").split("\n\n").filter(Boolean);
   if (paras.length === 0) return null;
   return (
-    <aside
-      className="wk-editorial-float"
+    <section
+      className="wk-editorial"
       aria-labelledby="wk-editorial-heading"
     >
-      <h2 className="wk-section-label wk-editorial-float__label" id="wk-editorial-heading">
+      <h2 className="wk-section-label wk-editorial__label" id="wk-editorial-heading">
         Editorial
       </h2>
       <span className="wk-editorial__lens">
@@ -557,7 +559,7 @@ function SectionEditorial({
           <p key={i}>{para}</p>
         ))}
       </div>
-    </aside>
+    </section>
   );
 }
 
@@ -925,16 +927,12 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
 
         {digest && !loading && (
           <>
-            {/* B + C. Cover zone — a single flowing content column. The hero
-                spans full width above; the cover essay + 2nd feature then flow
-                inside .wk-cover-flow, where the argued Editorial floats right
-                (desktop) as a bordered magazine pull-out box. The essay text
-                wraps to the left of the box and reflows full-width the instant
-                the box ends — short editorial, brief wrap then full width; long
-                editorial, wrap the whole way. .wk-cover-flow is a flow-root, so
-                it fully contains the float and the sections below always start
-                clean beneath it. Below ~900px the box un-floats to a full-width
-                bordered block stacked after the hero, before the essay. */}
+            {/* B + C. Cover zone — a single flowing column of full-width blocks:
+                the hero, then the cover essay + 2nd feature, then the argued
+                Editorial as a full-width bordered magazine box. No float, so no
+                blank column is ever left beside the Editorial regardless of its
+                length or the essay's. The Editorial box sits AFTER the cover
+                features and before Perspectives. */}
             <div className="wk-cover-zone">
               <CoverHero
                 headline={coverHeadline}
@@ -942,21 +940,16 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
                 imageAttribution={digest.cover_image_attribution}
                 imageCaption={digest.cover_text?.[0]?.image_caption}
               />
-              <div className="wk-cover-flow">
-                {digest.opinion_text && (
-                  <SectionEditorial
-                    headline={digest.opinion_headline}
-                    text={digest.opinion_text}
-                    lean={digest.opinion_lean}
-                  />
-                )}
-                {digest.cover_text && digest.cover_text.length > 0 && (
-                  <CoverBody stories={digest.cover_text} />
-                )}
-                {/* Clearfix: guarantees the wrap zone is fully closed even on
-                    engines where flow-root containment is disabled. */}
-                <div className="wk-cover-flow__clear" aria-hidden="true" />
-              </div>
+              {digest.cover_text && digest.cover_text.length > 0 && (
+                <CoverBody stories={digest.cover_text} />
+              )}
+              {digest.opinion_text && (
+                <SectionEditorial
+                  headline={digest.opinion_headline}
+                  text={digest.opinion_text}
+                  lean={digest.opinion_lean}
+                />
+              )}
             </div>
 
             <RevealFlourish />

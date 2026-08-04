@@ -20,33 +20,47 @@ export default function Footer({ lastUpdated }: FooterProps) {
   return (
     <footer className="site-footer">
       <div className="site-footer__inner">
-        <div className="si-hoverable" style={{ display: "flex", alignItems: "center", gap: "var(--space-3)" }}>
+        {/* nowrap belt-and-suspenders: the wordmark must always read "VOID NEWS"
+            on ONE line (matching the masthead), never break to V / ID / NEWS. */}
+        <div
+          className="si-hoverable"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "var(--space-3)",
+            flexWrap: "nowrap",
+            whiteSpace: "nowrap",
+            maxWidth: "100%",
+          }}
+        >
           <LogoIcon size={22} animation="idle" />
           <LogoWordmark height={16} />
         </div>
         <p className="footer-tagline">See through the void.</p>
 
-        {/* Product family — void --onair gated by AUDIO_ENABLED flag. */}
+        {/* Product family — the live product set only (no Paper / Games /
+            Revolt). Names match the nav + mobile side panel. void --onair gated
+            by AUDIO_ENABLED. */}
         <div className="footer-products">
           <span className="footer-products__item" title="The Daily Brief">The Brief</span>
           <span className="footer-products__sep" aria-hidden="true">&middot;</span>
           {AUDIO_ENABLED && (
             <>
-              <span className="footer-products__item" title="Audio Broadcast">On Air</span>
+              <Link href="/onair" className="footer-products__item" title="The audio broadcast">On Air</Link>
               <span className="footer-products__sep" aria-hidden="true">&middot;</span>
             </>
           )}
-          <span className="footer-products__item" title="The Board">Opinion</span>
+          <span className="footer-products__item" title="The Opinion board">Opinion</span>
           <span className="footer-products__sep" aria-hidden="true">&middot;</span>
-          <Link href="/sources" className="footer-products__item" title="Source Spectrum">Sources</Link>
-          <span className="footer-products__sep" aria-hidden="true">&middot;</span>
-          <Link href="/weekly" className="footer-products__item" title="The Weekly Digest">Weekly</Link>
+          <Link href="/weekly" className="footer-products__item" title="The week in review">Weekly</Link>
           <span className="footer-products__sep" aria-hidden="true">&middot;</span>
           <Link href="/history" className="footer-products__item" title="The archive of consequence">History</Link>
           <span className="footer-products__sep" aria-hidden="true">&middot;</span>
-          <Link href="/ship" className="footer-products__item" title="Request, vote, watch it ship">Ship</Link>
+          <Link href="/sources" className="footer-products__item" title="1,016 curated sources">Sources</Link>
           <span className="footer-products__sep" aria-hidden="true">&middot;</span>
-          <Link href="/about" className="footer-products__item" title="About">About</Link>
+          <Link href="/ship" className="footer-products__item" title="Request it, vote, watch it ship">Ship</Link>
+          <span className="footer-products__sep" aria-hidden="true">&middot;</span>
+          <Link href="/about" className="footer-products__item" title="About Void News">About</Link>
         </div>
 
         <p className="footer-built">&copy; 2026 Void News. All rights reserved.</p>
