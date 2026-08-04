@@ -211,12 +211,42 @@
   min-width: 0;
 }
 
+/* Left column wrapper: Submit stacked over the Board. */
+.ship-main__left {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
 @media (min-width: 1024px) {
   .ship-main {
     min-height: 0;
     display: grid;
-    grid-template-columns: minmax(300px, 0.95fr) minmax(0, 1.9fr) minmax(300px, 1fr);
+    /* Two columns: a wide left (Submit over Board) and a fixed-ish right rail
+       (Known Observations). The right stays ~320-360px so the left is wide
+       enough for all 5 kanban columns to fit without horizontal scroll at
+       common desktop widths (>=1280). */
+    grid-template-columns: minmax(0, 1fr) clamp(320px, 26%, 360px);
     gap: var(--space-4);
+  }
+
+  .ship-main__left {
+    min-width: 0;
+    min-height: 0;
+    gap: var(--space-4);
+  }
+
+  /* Submit sits on top as a compact panel; it takes only what it needs and is
+     capped so the Board always gets the majority of the column height. */
+  .ship-main__left .ship-col--submit {
+    flex: 0 1 auto;
+    max-height: 46%;
+  }
+
+  /* The Board fills whatever height is left under the form and scrolls inside. */
+  .ship-main__left .ship-col--board {
+    flex: 1 1 auto;
   }
 }
 
@@ -661,18 +691,16 @@
    THE BOARD — Kanban
    ========================================================================== */
 
-.ship-board__scroll {
-  /* On desktop this panel scrolls both axes: vertical for tall columns, and
-     horizontal inside the panel when the 5 columns cannot fit its width. */
-}
-
 @media (min-width: 1024px) {
+  /* Vertical scroll for tall columns; horizontal scroll stays available ONLY as
+     a fallback on genuinely narrow desktops (~1024-1200) where 5 columns still
+     cannot fit. At >=1280 the wide left column fits all five without scrolling. */
   .ship-board__scroll { overflow: auto; }
 }
 
 .ship-board {
   display: grid;
-  grid-template-columns: repeat(5, minmax(190px, 1fr));
+  grid-template-columns: repeat(5, minmax(150px, 1fr));
   gap: var(--space-3);
   align-items: start;
 }
@@ -1203,7 +1231,7 @@ a.ship-card__commit:hover {
 /* ---- Loading Skeleton ---- */
 .ship-board__loading {
   display: grid;
-  grid-template-columns: repeat(5, minmax(190px, 1fr));
+  grid-template-columns: repeat(5, minmax(150px, 1fr));
   gap: var(--space-3);
 }
 
@@ -1237,7 +1265,7 @@ a.ship-card__commit:hover {
 
 
 /* ==========================================================================
-   KNOWN OBSERVATIONS RAIL — ticker (desktop) + list (mobile / reduced motion)
+   KNOWN OBSERVATIONS RAIL — expandable accordion list, fills the column
    ========================================================================== */
 
 .ship-rail {
@@ -1278,74 +1306,6 @@ a.ship-card__commit:hover {
 .ship-rail__expand-all:hover {
   border-color: var(--cin-amber, var(--accent-warm));
   color: var(--cin-amber, var(--accent-warm));
-}
-
-.ship-rail__pause {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  letter-spacing: 0.04em;
-  color: var(--fg-muted);
-  background: transparent;
-  border: 1px solid var(--border-subtle);
-  border-radius: 3px;
-  padding: var(--space-2) var(--space-3);
-  min-height: 36px;
-  cursor: pointer;
-  transition: all 0.15s var(--ease-cinematic);
-}
-
-.ship-rail__pause:hover { color: var(--fg-secondary); border-color: var(--border-strong); }
-
-/* ---- Ticker ---- */
-.ship-ticker {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  min-height: 0;
-}
-
-@media (min-width: 1024px) {
-  .ship-ticker {
-    flex: 1;
-    overflow: hidden;
-  }
-}
-
-.ship-ticker__stage {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  /* Scrolls internally when the focal card grows (e.g. Suggest-a-fix open) so
-     the input is never clipped. Auto-advance is paused while focus is inside. */
-  overflow-y: auto;
-}
-
-.ship-ticker__focal {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  width: 100%;
-  padding: var(--space-4);
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-left: 3px solid var(--cin-amber, var(--accent-warm));
-  border-radius: 6px;
-  animation: shipTickerRise 500ms var(--ease-cinematic) both;
-}
-
-.ship-obs__row {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-3);
-}
-
-.ship-obs__claim {
-  font-family: var(--font-editorial);
-  font-size: var(--text-base);
-  font-weight: 700;
-  line-height: 1.25;
-  color: var(--fg-primary);
 }
 
 .ship-obs__note {
@@ -1415,94 +1375,101 @@ a.ship-card__commit:hover {
 :root[data-mode="dark"] .ship-obs__chip--roadmap { color: #a49ec0; }
 :root[data-mode="dark"] .ship-obs__chip--known { color: #b0a894; }
 
-/* ---- Up next ---- */
-.ship-ticker__next {
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding-top: var(--space-2);
-  border-top: 1px dashed var(--border-subtle);
-}
-
-.ship-ticker__next-label {
-  font-family: var(--font-data);
-  font-size: 9px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--fg-muted);
-}
-
-.ship-ticker__next-claim {
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  color: var(--fg-secondary);
-  opacity: 0.65;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-/* ---- Dots ---- */
-.ship-ticker__dots {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  flex-wrap: wrap;
-  flex-shrink: 0;
-}
-
-.ship-ticker__dot {
-  width: 8px;
-  height: 8px;
-  padding: 0;
-  border-radius: 50%;
-  border: 1px solid var(--border-strong);
-  background: transparent;
-  cursor: pointer;
-  transition: all 0.2s var(--ease-cinematic);
-  position: relative;
-}
-
-/* Keep the visible dot small but give it a 44px hit area on coarse pointers. */
-.ship-ticker__dot::after {
-  content: '';
-  position: absolute;
-  inset: -6px;
-}
-
-.ship-ticker__dot--active {
-  background: var(--cin-amber, var(--accent-warm));
-  border-color: var(--cin-amber, var(--accent-warm));
-  transform: scale(1.25);
-}
-
-/* ---- Observations list (mobile / reduced motion / overlay) ---- */
+/* ---- Observations list: expandable accordion, fills the column ---- */
 .ship-obs-list {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
+  gap: var(--space-2);
 }
 
 @media (min-width: 1024px) {
-  .ship-obs-list:not(.ship-obs-list--overlay) {
+  .ship-obs-list {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
+    padding-right: var(--space-1);
   }
 }
 
-.ship-obs-list__item {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-4);
+.ship-obs-item {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: 6px;
+  overflow: hidden;
+  transition: border-color 0.2s var(--ease-cinematic);
+}
+
+.ship-obs-item:hover { border-color: var(--border-strong); }
+
+.ship-obs-item--open {
+  border-color: var(--border-strong);
+  border-left: 3px solid var(--cin-amber, var(--accent-warm));
+}
+
+.ship-obs-item__head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  min-height: 44px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s var(--ease-cinematic);
+}
+
+.ship-obs-item__head:hover {
+  background: color-mix(in srgb, var(--fg-primary) 4%, transparent);
+}
+
+.ship-obs-item__claim {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-editorial);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--fg-primary);
+}
+
+.ship-obs-item__caret {
+  flex-shrink: 0;
+  font-family: var(--font-data);
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--fg-muted);
+  width: 18px;
+  text-align: center;
+}
+
+.ship-obs-item--open .ship-obs-item__caret {
+  color: var(--cin-amber, var(--accent-warm));
+}
+
+/* Height animation via grid rows (0fr -> 1fr); the inner body is inert while
+   collapsed so its focusable controls leave the tab order. */
+.ship-obs-item__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 260ms var(--ease-cinematic);
+}
+
+.ship-obs-item--open .ship-obs-item__panel {
+  grid-template-rows: 1fr;
+}
+
+.ship-obs-item__body {
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: 0 var(--space-4) var(--space-4);
 }
 
 
@@ -1968,12 +1935,6 @@ a.ship-card__commit:hover {
   0% { transform: translateX(0) scale(0); opacity: 0; } 30% { transform: translateX(8px) scale(1); opacity: 0.8; } 100% { transform: translateX(14px) scale(0.3); opacity: 0; }
 }
 
-/* Ticker focal rise-in */
-@keyframes shipTickerRise {
-  from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 /* Overlay */
 @keyframes shipOverlayFade {
   from { opacity: 0; }
@@ -2066,16 +2027,10 @@ a.ship-card__commit:hover {
     flex-wrap: wrap;
   }
 
-  .ship-obs__row {
-    flex-direction: column;
-  }
-
-  .ship-obs__chip { margin-top: 0; }
 }
 
-/* Coarse pointers: give the pause + dot controls a full tap target. */
+/* Coarse pointers: give the rail controls a full tap target. */
 @media (pointer: coarse) {
-  .ship-rail__pause,
   .ship-rail__expand-all,
   .ship-quick__toggle {
     min-height: 44px;
@@ -2091,12 +2046,14 @@ a.ship-card__commit:hover {
   .ship-card--new,
   .ship-card--just-shipped,
   .ship-metrics__item--landed,
-  .ship-ticker__focal,
   .ship-overlay,
   .ship-overlay__panel,
   .ship-card__thread {
     animation: none;
   }
+
+  /* Expand/collapse of observation rows snaps instead of animating. */
+  .ship-obs-item__panel { transition: none; }
 
   .ship-card__vote-arrow--pop { animation: none; }
 
