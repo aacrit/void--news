@@ -23,8 +23,13 @@ const FloatingPlayer = dynamic(() => import("./FloatingPlayer"), { ssr: false })
 export default function MobileNav() {
   const [sidePanelOpen, setSidePanelOpen] = useState(false);
   const pathname = usePathname();
+  const route = pathname.replace(BASE_PATH, "") || "/";
   // The /onair page is itself the player — suppress the redundant mini-player.
-  const onOnAir = (pathname.replace(BASE_PATH, "") || "/").startsWith("/onair");
+  const onOnAir = route.startsWith("/onair");
+  // The /ship "Mission Control" dashboard owns the viewport and has no place for
+  // the On Air player chrome — suppress both audio players there. The global
+  // MobileTabBar / side panel (site navigation, not audio) stay.
+  const onShip = route.startsWith("/ship");
 
   const handleMoreTap = useCallback(() => {
     setSidePanelOpen((v) => !v);
@@ -36,10 +41,10 @@ export default function MobileNav() {
 
   return (
     <>
-      {AUDIO_ENABLED && !onOnAir && <MobileMiniPlayer />}
+      {AUDIO_ENABLED && !onOnAir && !onShip && <MobileMiniPlayer />}
       {/* Desktop floating player — global across all routes (incl. /weekly),
-          hidden on mobile via CSS. */}
-      {AUDIO_ENABLED && <FloatingPlayer />}
+          hidden on mobile via CSS. Suppressed on /ship. */}
+      {AUDIO_ENABLED && !onShip && <FloatingPlayer />}
       <MobileTabBar onMoreTap={handleMoreTap} moreOpen={sidePanelOpen} />
       <MobileSidePanel open={sidePanelOpen} onClose={handleSidePanelClose} />
     </>
