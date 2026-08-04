@@ -137,33 +137,37 @@ body:has(.ig-canvas) {
   flex-direction: column;
 }
 
-/* Dark ink ground for every hook + cta (all five tracks). */
-.ig-vision--hook,
-.ig-vision--cta,
-.ig-method--hook,
-.ig-method--cta,
-.ig-example--hook,
-.ig-example--cta,
-.ig-history--hook,
-.ig-history--cta,
-.ig-weekly--hook,
-.ig-weekly--cta {
+/* ---------------------------------------------------------------------------
+   Ground cadence — DARK ink -> CREAM paper -> DARK ink, on EVERY pillar.
+   One deliberate rhythm so a carousel reads as intentional, never a strobe:
+     slide 1 HOOK      deep ink + pillar accent
+     slide 2 SUBSTANCE the pillar's paper (the calm editorial "proof")
+     slide 3 CTA       deep ink + pillar accent + the Sigil-O hero mark
+   Grounds live on .ig-canvas, which carries data-pillar + data-variant, so the
+   cadence is enforced in ONE place regardless of a template's markup. Each
+   pillar keeps its own accent identity (set in the templates); only the ground
+   rhythm is unified here. The slide-root divs paint no ground of their own.
+   --------------------------------------------------------------------------- */
+
+/* HOOK + CTA — deep ink bookends, all five pillars (news / history / weekly). */
+.ig-canvas[data-variant="hook"],
+.ig-canvas[data-variant="cta"] {
   background: var(--ig-ink);
   color: var(--ig-dark-fg);
 }
 
-/* Substance grounds — one paper per track. */
-.ig-vision--stance,
-.ig-method--sample,
-.ig-example--spectrum {
+/* SUBSTANCE — one paper per pillar. */
+.ig-canvas[data-pillar="vision"][data-variant="stance"],
+.ig-canvas[data-pillar="method"][data-variant="sample"],
+.ig-canvas[data-pillar="example"][data-variant="spectrum"] {
   background: var(--ig-cream);
   color: var(--ig-cream-fg);
 }
-.ig-history--perspectives {
+.ig-canvas[data-pillar="history"][data-variant="perspectives"] {
   background: var(--ig-archival);
   color: var(--ig-cream-fg);
 }
-.ig-weekly--stories {
+.ig-canvas[data-pillar="weekly"][data-variant="stories"] {
   background: var(--ig-weekly-paper);
   color: var(--ig-cream-fg);
 }
@@ -484,71 +488,44 @@ body:has(.ig-canvas) {
   max-width: 18ch;
 }
 
-.ig-spectrum {
+/* --- KDE ridge — static render of the in-app Deep Dive spectrum ------------ */
+
+.ig-example__ridge {
+  margin: 20px 0 6px;
+}
+.ig-example__ridge-svg {
+  display: block;
+  width: 100%;
+  height: auto;          /* height follows the 400x110 viewBox ratio */
+  overflow: visible;     /* on-curve outlet dots near the edges aren't clipped */
+}
+
+/* Mean tilt readout beneath the ridge — mirrors DeepDiveSpectrum's TiltRow. */
+.ig-example__ridge-tilt {
   position: relative;
-  height: 200px;
-  margin: 24px 0 0;
+  height: 34px;
+  margin-top: 6px;
 }
-.ig-spectrum__track {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 16px;
-  transform: translateY(-50%);
-  border-radius: 999px;
-  background: linear-gradient(
-    90deg,
-    var(--bias-far-left) 0%,
-    var(--bias-left) 18%,
-    var(--bias-center-left) 34%,
-    var(--bias-center) 50%,
-    var(--bias-center-right) 66%,
-    var(--bias-right) 82%,
-    var(--bias-far-right) 100%
-  );
-}
-.ig-spectrum__pin {
+.ig-example__ridge-tilt-needle {
   position: absolute;
   top: 0;
-  bottom: 0;
-  width: 2px;
+  width: 3px;
+  height: 14px;
   transform: translateX(-50%);
+  border-radius: 999px;
 }
-.ig-spectrum__dot {
+.ig-example__ridge-tilt-label {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: 5px solid var(--ig-cream);
-  transform: translate(-50%, -50%);
-  box-shadow: 0 2px 8px rgba(20, 18, 15, 0.24);
-  z-index: 2;
-}
-.ig-spectrum__stem {
-  position: absolute;
-  left: 50%;
-  width: 2px;
-  transform: translateX(-50%);
-  opacity: 0.55;
-}
-.ig-spectrum__flag {
-  position: absolute;
-  left: 50%;
+  top: 16px;
   transform: translateX(-50%);
   font-family: var(--font-data);
-  font-size: 21px;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  white-space: nowrap;
+  font-size: 22px;
+  letter-spacing: 0.06em;
   font-weight: 500;
+  color: var(--ig-cream-fg-2);
+  white-space: nowrap;
+  font-feature-settings: "tnum" 1;
 }
-.ig-spectrum__pin[data-side="above"] .ig-spectrum__flag { top: 6px; }
-.ig-spectrum__pin[data-side="above"] .ig-spectrum__stem { top: 40px; bottom: 50%; }
-.ig-spectrum__pin[data-side="below"] .ig-spectrum__flag { bottom: 6px; }
-.ig-spectrum__pin[data-side="below"] .ig-spectrum__stem { top: 50%; bottom: 40px; }
 
 .ig-spectrum__axis {
   display: flex;

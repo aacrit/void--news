@@ -154,6 +154,14 @@ export interface ExampleSlideSpec {
   outlet_count?: number;
   /** spectrum: the outlets to plot (recommend 4-6 for legibility). */
   headlines?: OutletHeadline[];
+  /**
+   * spectrum: the FULL per-article political-lean distribution (0..100) for the
+   * event, one value per contributing article. When present it drives the KDE
+   * ridge exactly as the in-app Deep Dive spectrum does; when absent the ridge
+   * falls back to the shown `headlines[].lean_score` values. The generator
+   * populates this from the cluster's per-article bias scores.
+   */
+  lean_values?: number[];
   /** cta: the site URL. */
   url?: string;
 }
