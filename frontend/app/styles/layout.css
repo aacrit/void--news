@@ -9,8 +9,13 @@
   display: flex;
   flex-direction: column;
   /* No background — body handles bg-color + wrinkle texture */
-  /* Prevent any child from causing horizontal scroll */
-  overflow-x: hidden;
+  /* Prevent any child from causing horizontal scroll.
+     `clip` (not `hidden`): `overflow-x: hidden` establishes a scroll container,
+     which breaks `position: sticky` on descendants (the .nav-header masthead
+     would scroll away instead of pinning). `overflow-x: clip` clips the same
+     horizontal overflow WITHOUT creating a scroll context, so the sticky nav
+     pins on scroll. Chrome 90+/FF 81+/Safari 16+. */
+  overflow-x: clip;
 }
 
 .page-main {

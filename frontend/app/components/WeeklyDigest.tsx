@@ -235,7 +235,7 @@ function ImgCaption({
    A newsstand cover that holds the full viewport on arrival: full-bleed cover
    image with a slow Ken-Burns push and a bottom-up scrim, VOID WEEKLY
    nameplate, issue line, cover headline, coverlines, and a scroll cue. After
-   ~3.5s it auto-scrolls down to Page 1 — cancelled the moment the reader
+   ~7s it auto-scrolls down to Page 1 — cancelled the moment the reader
    scrolls, taps, or keys (their intent wins). Honors prefers-reduced-motion:
    no auto-scroll, no Ken Burns. Degrades to a typographic cover on paper when
    no cover image is available. */
@@ -293,7 +293,7 @@ function CinematicCover({
         target?.scrollIntoView({ behavior: "smooth", block: "start" });
       }
       cleanup();
-    }, 3500);
+    }, 7000);
 
     function cleanup() {
       window.clearTimeout(timer);

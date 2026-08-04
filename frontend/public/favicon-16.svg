@@ -1,9 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16" role="img" aria-label="Void News">
-  <!-- Void News 16px favicon — walnut rounded tile + brass footed Sigil.
-       Heavier strokes than the larger tiles so the ring + beam + foot hold on
-       the pixel grid. Explicit colors only. -->
-  <rect width="16" height="16" rx="3" fill="#1C1A17"/>
-  <g transform="translate(1.04,1.04) scale(0.1391)" fill="none" stroke="#D4A574" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Void News 16px favicon — TRANSPARENT (no tile), brass footed Sigil.
+       Heavier strokes so the ring + beam + foot hold on the 16px grid.
+       Theme-aware: light-brass #946B15 on light tabs, dark-brass #D4A574 on
+       dark tabs. -->
+  <style>
+    .sig { stroke: #946B15; }
+    @media (prefers-color-scheme: dark) { .sig { stroke: #D4A574; } }
+  </style>
+  <g class="sig" transform="translate(1.04,1.04) scale(0.1391)" fill="none" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="50" cy="40" r="30" stroke-width="11"/>
     <line x1="12" y1="40" x2="88" y2="40" stroke-width="8"/>
     <line x1="13" y1="32" x2="12" y2="48" stroke-width="7"/>

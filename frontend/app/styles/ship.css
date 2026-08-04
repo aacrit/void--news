@@ -1547,6 +1547,137 @@ a.ship-card__commit:hover {
 
 
 /* ==========================================================================
+   KNOWN OBSERVATIONS — radical transparency board
+   Matches the ship-card visual system (bg-card, subtle border, radius).
+   Chips are deliberately quiet + neutral so they never read as Kanban columns.
+   ========================================================================== */
+
+.ship-obs {
+  max-width: 720px;
+  margin: var(--space-6) auto var(--space-4);
+}
+
+.ship-obs__head {
+  margin-bottom: var(--space-5);
+}
+
+.ship-obs__eyebrow {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  margin-bottom: var(--space-2);
+}
+
+.ship-obs__title {
+  font-family: var(--font-editorial);
+  font-size: clamp(1.375rem, 3vw, 1.75rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--fg-primary);
+  margin-bottom: var(--space-2);
+}
+
+.ship-obs__intro {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  color: var(--fg-secondary);
+  max-width: 60ch;
+}
+
+.ship-obs__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.ship-obs__item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  transition: border-color 0.2s var(--ease-cinematic);
+}
+
+.ship-obs__item:hover {
+  border-color: var(--border-strong);
+}
+
+.ship-obs__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.ship-obs__claim {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--fg-primary);
+  margin-bottom: var(--space-1);
+}
+
+.ship-obs__note {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  color: var(--fg-secondary);
+}
+
+/* ---- Status chip: quiet, neutral, distinct from Kanban status colors ---- */
+.ship-obs__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-shrink: 0;
+  font-family: var(--font-data);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
+  color: var(--fg-muted);
+  margin-top: 1px;
+}
+
+.ship-obs__chip-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.65;
+  flex-shrink: 0;
+}
+
+/* Subtle tonal variation per state. Deliberately muted slates/stones, kept
+   clear of the amber (shipped) and teal (building) Kanban hues. */
+.ship-obs__chip--tuning { color: #5b6b7a; }
+.ship-obs__chip--by-design { color: #6b6f78; }
+.ship-obs__chip--roadmap { color: #6a6480; }
+.ship-obs__chip--known { color: #6f6a5e; }
+
+:root[data-mode="dark"] .ship-obs__chip {
+  background: color-mix(in srgb, var(--bg-secondary) 60%, transparent);
+}
+:root[data-mode="dark"] .ship-obs__chip--tuning { color: #93a4b4; }
+:root[data-mode="dark"] .ship-obs__chip--by-design { color: #9aa0aa; }
+:root[data-mode="dark"] .ship-obs__chip--roadmap { color: #a49ec0; }
+:root[data-mode="dark"] .ship-obs__chip--known { color: #b0a894; }
+
+
+/* ==========================================================================
    RESPONSIVE
    ========================================================================== */
 
@@ -1671,6 +1802,18 @@ a.ship-card__commit:hover {
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  /* Known Observations: chip drops below the claim on narrow screens */
+  .ship-obs__item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+  }
+
+  .ship-obs__chip {
+    order: -1;
+    margin-top: 0;
   }
 }
 
