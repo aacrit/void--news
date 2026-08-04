@@ -407,9 +407,10 @@ def _lean_band(score: int) -> int:
     return 4
 
 
-def _select_example_cluster() -> tuple[str, list[dict[str, Any]], int] | None:
+def _select_example_cluster() -> tuple[str, list[dict[str, Any]], int, list[int]] | None:
     """Highest-coverage cluster from the last 48h with >=3 outlets spanning
-    >=2 lean bands. Returns (title, headlines[4-6 best-spread], source_count)."""
+    >=2 lean bands. Returns (title, headlines[4-6 best-spread], source_count,
+    lean_values[all article leans for the KDE ridge])."""
     cutoff = (datetime.now(timezone.utc) - timedelta(hours=48)).isoformat()
     try:
         clusters = (
@@ -476,8 +477,12 @@ def _select_example_cluster() -> tuple[str, list[dict[str, Any]], int] | None:
         if len(bands_seen) < 2 or len(headlines) < 3:
             continue
 
-        # 4-6 best-spread outlets across the lean axis.
         headlines.sort(key=lambda h: h["lean_score"])
+        # Full per-article lean distribution (0-100) for the KDE ridge on the
+        # spectrum slide, captured BEFORE the display down-sample below.
+        lean_values = [h["lean_score"] for h in headlines]
+
+        # 4-6 best-spread outlets across the lean axis (the labeled ones).
         target = min(6, max(4, len(headlines)))
         if len(headlines) > target:
             step = len(headlines) / target
@@ -485,7 +490,7 @@ def _select_example_cluster() -> tuple[str, list[dict[str, Any]], int] | None:
 
         title = (cluster.get("title") or "Today's top story").strip()[:100]
         source_count = int(cluster.get("source_count") or len(headlines))
-        return title, headlines, source_count
+        return title, headlines, source_count, lean_values
 
     print("  [warn] example: no eligible cluster found")
     return None
@@ -510,7 +515,7 @@ def _example_specs() -> list[dict[str, Any]] | None:
     selected = _select_example_cluster()
     if not selected:
         return None
-    title, headlines, source_count = selected
+    title, headlines, source_count, lean_values = selected
     topic = _short_topic(title)
     return [
         {
@@ -525,6 +530,7 @@ def _example_specs() -> list[dict[str, Any]] | None:
             "variant": "spectrum",
             "topic": topic,
             "headlines": headlines,
+            "lean_values": lean_values,
         },
         {
             "kind": "example",
