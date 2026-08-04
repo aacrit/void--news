@@ -229,6 +229,88 @@ def _significance_sub(m: "_re.Match") -> str:
     return ""
 
 
+# ---------------------------------------------------------------------------
+# Abbreviation-aware sentence-start recapitalization (2026-08-03)
+#
+# A naive "capitalize the word after a period" pass treats the period inside an
+# abbreviation as a sentence boundary and mis-cases the following word:
+#   "a U.S. energy embargo"  -> "a U.S. Energy embargo"
+#   "at 9 a.m. the vote"     -> "at 9 a.m. The vote"
+#   "reported by J. smith"   -> (period after "J" is an initial, not a boundary)
+# This was the single most frequent mechanical error on the feed. The pass is
+# now abbreviation-aware: a period that ends a known abbreviation or initial
+# does NOT trigger recapitalization of the next word.
+# ---------------------------------------------------------------------------
+# Non-dotted abbreviations that end in a period but do not end a sentence.
+_ABBREV_STEMS = frozenset({
+    "mr", "mrs", "ms", "dr", "prof", "st", "sen", "rep", "gov", "gen",
+    "lt", "col", "sgt", "capt", "jr", "sr", "inc", "ltd", "co", "corp",
+    "vs", "etc", "dept", "est", "approx", "fig", "rev", "hon", "adm",
+    "jan", "feb", "aug", "sept", "sep", "oct", "nov", "dec",
+})
+# Dotted initials / abbreviations: u.s, u.a.e, a.m, e.g, i.e (final period is
+# stripped before the check, so "u.s." arrives here as "u.s").
+_DOTTED_ABBREV_RE = _re.compile(r"[a-z](?:\.[a-z])+", _re.IGNORECASE)
+# Sentence boundary candidate: a token, its terminal period/!/?, whitespace, and
+# the following lowercase letter. `prev` is captured so we can veto abbreviations.
+_SENTENCE_START_RE = _re.compile(
+    r"(?P<prev>\S*?)(?P<punct>[.!?])(?P<gap>\s+)(?P<letter>[a-z])"
+)
+
+
+def _is_abbrev(prev: str) -> bool:
+    """True if `prev` (the token immediately before a period+space) is an
+    abbreviation or initial, so the word after it must NOT be recapitalized."""
+    if not prev:
+        return False
+    # Single-letter initial ("J. Smith"), excluding the pronoun "I" / article "A"
+    # which legitimately end sentences ("...blood type A. The donor...").
+    if len(prev) == 1 and prev.isalpha() and prev not in ("I", "A"):
+        return True
+    low = prev.lower()
+    if _DOTTED_ABBREV_RE.fullmatch(low):
+        return True
+    if low in _ABBREV_STEMS:
+        return True
+    # Short all-caps acronym (US, UN, UK, EU, NATO). Only reached when the
+    # FOLLOWING word is lowercase, which a genuine sentence boundary never is,
+    # so suppressing capitalization here is safe.
+    if prev.isupper() and prev.isalpha() and 2 <= len(prev) <= 5:
+        return True
+    return False
+
+
+def _recap_sub(m: "_re.Match") -> str:
+    if _is_abbrev(m.group("prev")):
+        return m.group(0)  # abbreviation period — not a sentence boundary
+    return m.group("prev") + m.group("punct") + m.group("gap") + m.group("letter").upper()
+
+
+# ---------------------------------------------------------------------------
+# a/an agreement (2026-08-03). Conservative, single-direction: "a" + a word
+# that starts with a vowel SOUND -> "an" ("a opposition" -> "an opposition").
+# The reverse ("an" -> "a") is intentionally NOT done: "an FBI agent" / "an MP"
+# start with consonant LETTERS but vowel SOUNDS, so flipping them would regress.
+# ---------------------------------------------------------------------------
+_AN_AGREEMENT_RE = _re.compile(r"\b(?P<art>[Aa])\s+(?P<word>[A-Za-z][A-Za-z'.\-]*)")
+# Vowel-LETTER words that take "a" because they open on a consonant SOUND.
+_AN_EXCEPTION_RE = _re.compile(
+    r"^(?:uni|use|usu|usa|ubiq|ufo|eu|ewe|one|once|u\.)", _re.IGNORECASE
+)
+
+
+def _an_agreement_sub(m: "_re.Match") -> str:
+    art, word = m.group("art"), m.group("word")
+    if word[0].lower() not in "aeiou":
+        return m.group(0)
+    # All-caps acronym: pronunciation unpredictable ("a UFO", "a UN vote"). Skip.
+    if len(word) > 1 and word.isupper():
+        return m.group(0)
+    if _AN_EXCEPTION_RE.match(word):
+        return m.group(0)
+    return ("An" if art == "A" else "an") + " " + word
+
+
 def sanitize_editorial_text(text: str) -> str:
     """Enforce the no-em-dash + show-don't-tell Cardinal Rules deterministically.
 
@@ -249,9 +331,12 @@ def sanitize_editorial_text(text: str) -> str:
     out = _re.sub(r"\(\s+", "(", out).replace(" )", ")")
     out = out.strip(" ,;:")
     # Re-capitalize sentence starts a leading-word deletion may have lowercased.
-    out = _re.sub(
-        r"(^|[.!?]\s+)([a-z])",
-        lambda mm: mm.group(1) + mm.group(2).upper(),
-        out,
-    )
+    # Abbreviation-aware (see _is_abbrev): the period in "U.S.", "a.m.", or an
+    # initial "J." is NOT a sentence boundary, so the next word keeps its case.
+    # This is the fix for the pervasive "a U.S. Energy embargo" miscasing.
+    if out and out[0].islower():
+        out = out[0].upper() + out[1:]
+    out = _SENTENCE_START_RE.sub(_recap_sub, out)
+    # a/an agreement on generated text ("a opposition" -> "an opposition").
+    out = _AN_AGREEMENT_RE.sub(_an_agreement_sub, out)
     return out
