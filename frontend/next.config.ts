@@ -19,6 +19,10 @@ export default function config(phase: string): NextConfig {
     compress: true,
     // Reduce bundle size by disabling source maps in production
     productionBrowserSourceMaps: false,
+    // Hide the Next.js dev-tools indicator. The IG slide capture runs against
+    // `next dev`, and the indicator's bottom-left pill would render into the
+    // 1080x1350 screenshot. Dev-only affordance; safe to disable.
+    devIndicators: false,
     experimental: {
       // @phosphor-icons/react ships a barrel that does not tree-shake well —
       // importing a single icon can pull a large slice of the library into the

@@ -34,7 +34,16 @@ body:has(.ig-canvas) .mtb,
 body:has(.ig-canvas) .mmp,
 body:has(.ig-canvas) .mbp,
 body:has(.ig-canvas) .skb,
-body:has(.ig-canvas) .fp {
+body:has(.ig-canvas) .fp,
+/* The global "experimental" banner/badge from the root layout, and the
+   Next.js dev-tools indicator (the capture runs against `next dev`, so its
+   bottom-left "N / Issues" pill would otherwise render into the frame). */
+body:has(.ig-canvas) .exp-banner,
+body:has(.ig-canvas) .exp-badge,
+body:has(.ig-canvas) nextjs-portal,
+body:has(.ig-canvas) [data-nextjs-toast],
+body:has(.ig-canvas) [data-next-badge-root],
+body:has(.ig-canvas) #__next-build-watcher {
   display: none !important;
 }
 
