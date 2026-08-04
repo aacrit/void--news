@@ -9438,6 +9438,23 @@ a.hist-record__figure-name:hover {
   gap: var(--space-1);
   padding: var(--space-4) var(--space-5) var(--space-3);
   background: var(--hist-bg);
+  /* Now a button: reset native chrome, keep it full-bleed + clickable. */
+  width: 100%;
+  border: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  min-height: 44px;
+  -webkit-tap-highlight-color: transparent;
+  transition: background var(--dur-quick, 150ms) ease;
+}
+.hist-reel-leadin:hover .hist-reel-leadin__label,
+.hist-reel-leadin:focus-visible .hist-reel-leadin__label {
+  color: var(--hist-accent);
+}
+.hist-reel-leadin:focus-visible {
+  outline: 2px solid var(--hist-accent);
+  outline-offset: -4px;
 }
 
 .hist-reel-leadin__label {

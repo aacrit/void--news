@@ -385,12 +385,14 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
       if (!reelEngagedRef.current) return;
       if (el.getBoundingClientRect().top > 2) return;
       const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+      /* Upward intent ALWAYS releases the hijack from any frame, so the reader
+         can scroll back up to the facts/hero without walking back to frame 1. */
+      if (delta < 0) return;
       const max = el.scrollWidth - el.clientWidth;
-      const atLeft = el.scrollLeft <= 0;
       const atRight = el.scrollLeft >= max - 1;
-      if ((atLeft && delta < 0) || (atRight && delta > 0)) return; // release cleanly at the edges
+      if (atRight) return; // release down to the page at the last frame
       e.preventDefault();
-      el.scrollLeft += delta;
+      el.scrollLeft += delta; // downward intent walks through the frames
     };
 
     const onEnter = () => { reelEngagedRef.current = true; };
@@ -537,11 +539,17 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
         )}
       </section>
 
-      {/* ── LEAD-IN — the vertical scroll flows into the horizontal reel ── */}
-      <div className="hist-reel-leadin" aria-hidden="true">
+      {/* ── LEAD-IN — the vertical scroll flows into the horizontal reel;
+             also a button: click jumps to the first perspective ── */}
+      <button
+        type="button"
+        className="hist-reel-leadin"
+        onClick={() => goToFrame(0)}
+        aria-label={`Jump to the ${perspectives.length} perspectives`}
+      >
         <span className="hist-reel-leadin__label">{perspectives.length} perspectives ahead</span>
-        <span className="hist-reel-leadin__chevron" />
-      </div>
+        <span className="hist-reel-leadin__chevron" aria-hidden="true" />
+      </button>
 
       {/* ── THE REEL — one voice per frame, then Threads ── */}
       <section className="hist-reel-section">
