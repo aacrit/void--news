@@ -560,11 +560,9 @@
   height: 0;
 }
 
-/* Plain block flow (NOT grid/flex): a grid or flex box establishes an
-   independent formatting context and would sit BESIDE the floated Editorial
-   instead of letting its text lines wrap around it. Block flow lets the essay
-   paragraphs' line boxes shorten around the float, then reflow full-width once
-   the float ends. Child spacing comes from each child's own margins. */
+/* Plain block flow: the cover features stack full-width, and the first
+   paragraph's drop cap (float:left ::first-letter) needs a block container.
+   Child spacing comes from each child's own margins. */
 .wk-cover-body {
   display: block;
   padding: var(--space-4) 0;
@@ -678,38 +676,22 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Cover zone + floated Editorial box
+   Cover zone + full-width Editorial box
    --------------------------------------------------------------------------- */
-/* Cover zone is a single flowing content column. The hero spans full width at
-   the top; the essay and the floated Editorial box then share .wk-cover-flow. */
+/* Cover zone is a single flowing column of full-width blocks: the hero, then
+   the cover essay + 2nd feature, then the Editorial box. Plain block flow. */
 .wk-cover-zone {
   display: block;
 }
 
-/* The wrap container. flow-root makes it a self-contained block formatting
-   context: it fully encloses the floated Editorial (so the box never bleeds
-   into the sections below) while the essay text inside still wraps around the
-   float. min-width:0 guards against overflow from long unbroken words. */
-.wk-cover-flow {
-  display: flow-root;
-  min-width: 0;
-}
-
-/* Belt-and-suspenders clearfix: closes the wrap zone below both floats even if
-   flow-root containment is unavailable, so Opinions / Week in Brief / Most
-   Contested always begin cleanly beneath the box. */
-.wk-cover-flow__clear {
-  clear: both;
-  height: 0;
-  font-size: 0;
-}
-
-/* ── The Editorial as a magazine pull-out box ──
-   Mobile-first: a full-width bordered block stacked after the hero, before the
-   essay. No tinted or inset background: it sits on the same paper as the page,
-   defined by a hairline border + a strong accent left rule + padding only. */
-.wk-editorial-float {
-  margin: var(--space-4) 0 var(--space-4);
+/* ── The Editorial as a FULL-WIDTH bordered magazine box ──
+   Placed AFTER the cover features, before Perspectives. No float, so no blank
+   column is ever left beside it at any editorial or story length. No tinted or
+   inset background: it sits on the same paper as the page, defined by a
+   hairline border + a strong accent LEFT rule + padding only. */
+.wk-editorial {
+  display: block;
+  margin: var(--space-5) 0;
   padding: var(--space-4);
   border: 1px solid var(--wk-accent-ink);
   border-left: 3px solid var(--wk-accent);
@@ -717,38 +699,29 @@
   background: transparent;
 }
 
-.wk-editorial-float__label {
+.wk-editorial__label {
   margin-bottom: var(--space-3);
 }
 
-/* Desktop: float the box to the right of the essay flow. The essay wraps to
-   its left and reflows full-width the moment the box ends. Left + bottom margin
-   keep the wrapping text off the box; a small top margin drops it just below
-   the first line so it reads as beside the story's opening, not pinned to the
-   very top edge. */
-@media (min-width: 900px) {
-  .wk-editorial-float {
-    float: right;
-    width: clamp(300px, 38%, 420px);
-    margin: 0.35rem 0 var(--space-4) var(--space-5);
+@media (min-width: 768px) {
+  .wk-editorial {
+    padding: var(--space-5);
   }
 }
 
-/* Guard: keep block-level essay furniture (2nd-feature image, pull-quote) from
-   sliding under the right float and colliding with it. They clear past the box
-   and render full-width below; text between them still wraps normally. */
-@media (min-width: 900px) {
-  .wk-cover-flow .wk-cover-body__figure,
-  .wk-cover-flow .wk-pullquote {
-    clear: right;
+/* Desktop/tablet: flow the body in two balanced columns so a full-width box
+   keeps a readable measure and fills top-to-bottom with no blank space.
+   column-fill: balance (default) evens the two columns at any length. The
+   label + lens + headline stay full-width above the columns. */
+@media (min-width: 768px) {
+  .wk-editorial .wk-editorial__text {
+    column-count: 2;
+    column-gap: var(--space-6);
   }
-}
-
-/* Editorial prose measure — capped so the un-floated (mobile / narrow) block
-   still reads as an editorial column, not an over-wide slab. Inside the float
-   the box width already constrains the measure. */
-.wk-editorial-float .wk-editorial__text {
-  max-width: 74ch;
+  /* Keep the first paragraph's top edge flush with the second column's top. */
+  .wk-editorial .wk-editorial__text p:first-child {
+    margin-top: 0;
+  }
 }
 
 .wk-editorial__lens {
@@ -789,17 +762,6 @@
 
 .wk-editorial__text p:last-child {
   margin-bottom: 0;
-}
-
-/* Inside the floated box the type steps down a touch so a ~340px column reads
-   as a sidebar pull-out, not a second lead. Applies at all widths; the box is
-   full width on mobile where the smaller measure still reads well. */
-.wk-editorial-float .wk-editorial__headline {
-  font-size: clamp(1.15rem, 2.4vw, 1.5rem);
-}
-
-.wk-editorial-float .wk-editorial__text {
-  font-size: var(--text-sm);
 }
 
 /* ===========================================================================
