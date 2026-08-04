@@ -375,6 +375,44 @@ def update_yaml_media(slug: str, new_media_entries: list[dict]) -> bool:
 
 
 # ---------------------------------------------------------------------------
+# Caption builder
+# ---------------------------------------------------------------------------
+def _slug_to_name(slug: str) -> str:
+    """'partition-of-india' -> 'Partition of India' (lowercase small words)."""
+    small = {"of", "the", "and", "in", "on", "for", "a", "an", "to"}
+    words = slug.replace("_", "-").split("-")
+    out = []
+    for i, w in enumerate(words):
+        if i > 0 and w.lower() in small:
+            out.append(w.lower())
+        else:
+            out.append(w.capitalize())
+    return " ".join(out)
+
+
+def _build_caption(slug: str, img: ImageResult) -> str:
+    """Return a clean human caption, never the dimension string.
+
+    Prefer the source's own alt/description text (already a human sentence for
+    Unsplash/Pexels); fall back to an event-context line built from the slug.
+    """
+    alt = (img.alt_text or "").strip()
+    # Reject junk / dimension-like alt text: bare "6000x4000", the legacy
+    # "Landscape orientation, WxHpx" caption bug, or "NNNNxNNNNpx" fragments.
+    lowered = alt.lower()
+    import re
+    looks_like_dims = (
+        ("x" in lowered and any(c.isdigit() for c in lowered) and len(alt) < 24)
+        or "orientation" in lowered
+        or bool(re.search(r"\d{3,}\s*x\s*\d{3,}", lowered))
+    )
+    if alt and not looks_like_dims and lowered != slug.replace("-", " ").lower():
+        # Capitalize first letter, trim trailing period duplication.
+        return alt[0].upper() + alt[1:]
+    return f"{_slug_to_name(slug)}: present-day view."
+
+
+# ---------------------------------------------------------------------------
 # Process one event
 # ---------------------------------------------------------------------------
 def process_event(slug: str, client, dry_run: bool = False) -> dict:
@@ -424,16 +462,23 @@ def process_event(slug: str, client, dry_run: bool = False) -> dict:
         uploaded += 1
         print(f"      OK")
 
-        # Build media entry for YAML — use attribution from ImageResult
+        # Build media entry for YAML — use attribution from ImageResult.
+        # Caption is a real human sentence (the source's own alt/title text,
+        # else a clean event-context fallback), NOT the dimension string that
+        # used to leak "Landscape orientation, 6000x4000px" into the Lightbox.
+        title = img.alt_text[:100] if img.alt_text else f"Image for {slug}"
+        caption = _build_caption(slug, img)
         new_media.append({
             "media_type": "photograph",
-            "title": img.alt_text[:100] if img.alt_text else f"Image for {slug}",
-            "description": f"Landscape orientation, {img.width}x{img.height}px",
+            "title": title,
+            "description": caption,
             "source_url": img.source_url,
             "supabase_url": public_url,
             "attribution": img.attribution,
             "license": img.license,
             "creator": img.photographer,
+            "width": img.width or None,
+            "height": img.height or None,
         })
 
         time.sleep(0.5)

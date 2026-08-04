@@ -123,6 +123,13 @@ def upsert_media(event_id: str, media_items: list[dict]) -> int:
             "creator": m.get("creator"),
             "creation_date": m.get("creation_date"),
             "display_order": m.get("display_order", i),
+            # Persisted image dimensions (from image_search.ImageResult) so the
+            # frontend can render at full size / correct aspect ratio.
+            "width": m.get("width"),
+            "height": m.get("height"),
+            # Per-image capture location. Null at sourcing today; falls back to
+            # the event's location in the frontend mapper when absent.
+            "location": m.get("location"),
         }
         supabase.table("history_media").insert(row).execute()
         count += 1

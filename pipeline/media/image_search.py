@@ -21,6 +21,20 @@ import requests
 _SESSION = requests.Session()
 _SESSION.headers.update({"User-Agent": "void-news/1.0 (media-curator; +https://github.com/void-news)"})
 
+# ---------------------------------------------------------------------------
+# Minimum-resolution gate (shared across APIs)
+# History event pages render the image large (Lightbox object-fit: contain,
+# which never upscales), so modest sources look tiny. Reject anything that
+# won't fill a large frame and request the highest-res render each API offers.
+# ---------------------------------------------------------------------------
+MIN_WIDTH = 1200          # Unsplash / Pexels: skip candidates narrower than this
+MIN_HEIGHT = 600          # paired height floor where a height is known
+WIKI_MIN_WIDTH = 800      # Wikimedia: raised from the old 200x150 floor
+WIKI_MIN_HEIGHT = 600
+WIKI_RENDER_WIDTH = 1600  # iiurlwidth render request (was 800)
+UNSPLASH_RENDER_WIDTH = 2000  # width param appended to the raw URL
+PEXELS_RENDER_WIDTH = 2000    # informational; Pexels 'original' is full-res
+
 
 @dataclass
 class ImageResult:
@@ -57,7 +71,7 @@ def search_wikimedia(query: str, max_results: int = 5) -> list[ImageResult]:
                 "gsrlimit": str(min(max_results * 2, 20)),  # fetch extra to filter
                 "prop": "imageinfo",
                 "iiprop": "url|size|extmetadata|mime",
-                "iiurlwidth": "800",
+                "iiurlwidth": str(WIKI_RENDER_WIDTH),
                 "format": "json",
             },
             timeout=15,
@@ -70,6 +84,7 @@ def search_wikimedia(query: str, max_results: int = 5) -> list[ImageResult]:
 
     pages = data.get("query", {}).get("pages", {})
     results = []
+    dropped_res = 0
 
     for page in sorted(pages.values(), key=lambda p: p.get("index", 999)):
         if len(results) >= max_results:
@@ -85,10 +100,12 @@ def search_wikimedia(query: str, max_results: int = 5) -> list[ImageResult]:
         if not mime.startswith("image/"):
             continue
 
-        # Skip tiny images
+        # Skip low-resolution images (raised from the old 200x150 floor so
+        # sources fill the large Lightbox frame without upscaling).
         w = info.get("width", 0)
         h = info.get("height", 0)
-        if w < 200 or h < 150:
+        if w < WIKI_MIN_WIDTH or h < WIKI_MIN_HEIGHT:
+            dropped_res += 1
             continue
 
         ext = info.get("extmetadata", {})
@@ -117,6 +134,10 @@ def search_wikimedia(query: str, max_results: int = 5) -> list[ImageResult]:
             license=license_key,
             attribution=f"{artist}, {license_short}, via Wikimedia Commons",
         ))
+
+    if dropped_res:
+        print(f"  [media] Wikimedia '{query}': dropped {dropped_res} candidate(s) below "
+              f"{WIKI_MIN_WIDTH}x{WIKI_MIN_HEIGHT}px min-resolution floor")
 
     return results
 
@@ -151,10 +172,13 @@ def search_unsplash(query: str, per_page: int = 5) -> list[ImageResult]:
     if not key:
         return []
 
+    # Over-fetch so the min-resolution filter has headroom and still returns
+    # up to per_page usable results.
+    fetch_n = min(per_page + 4, 30)
     try:
         resp = _SESSION.get(
             "https://api.unsplash.com/search/photos",
-            params={"query": query, "per_page": str(per_page), "orientation": "landscape"},
+            params={"query": query, "per_page": str(fetch_n), "orientation": "landscape"},
             headers={"Authorization": f"Client-ID {key}"},
             timeout=15,
         )
@@ -165,14 +189,28 @@ def search_unsplash(query: str, per_page: int = 5) -> list[ImageResult]:
         return []
 
     results = []
-    for photo in data.get("results", [])[:per_page]:
+    dropped_res = 0
+    for photo in data.get("results", []):
+        if len(results) >= per_page:
+            break
+        w = photo.get("width", 0)
+        h = photo.get("height", 0)
+        # Skip low-resolution originals so the served image fills a large frame.
+        if w and w < MIN_WIDTH:
+            dropped_res += 1
+            continue
+
         user = photo.get("user", {})
         name = user.get("name", "Unknown")
+        urls = photo.get("urls", {})
+        # Request a high-res render: Unsplash 'raw' accepts dynamic sizing params;
+        # fall back to 'full' then 'regular' (~1080px) if raw is absent.
+        hi_res = _unsplash_hi_res_url(urls)
         results.append(ImageResult(
-            url=photo.get("urls", {}).get("regular", ""),
-            thumbnail_url=photo.get("urls", {}).get("small", ""),
-            width=photo.get("width", 0),
-            height=photo.get("height", 0),
+            url=hi_res,
+            thumbnail_url=urls.get("small", ""),
+            width=w,
+            height=h,
             alt_text=photo.get("alt_description", "") or photo.get("description", "") or query,
             photographer=name,
             source="unsplash",
@@ -181,7 +219,24 @@ def search_unsplash(query: str, per_page: int = 5) -> list[ImageResult]:
             attribution=f"Photo by {name} on Unsplash",
         ))
 
+    if dropped_res:
+        print(f"  [media] Unsplash '{query}': dropped {dropped_res} candidate(s) below "
+              f"{MIN_WIDTH}px min-width floor")
+
     return results
+
+
+def _unsplash_hi_res_url(urls: dict) -> str:
+    """Build a ~2000px-wide render from the Unsplash 'raw' URL.
+
+    'raw' already carries query params (?ixid=...), so append sizing with '&'.
+    Falls back to 'full' then 'regular' (~1080px) when 'raw' is unavailable.
+    """
+    raw = urls.get("raw", "")
+    if raw:
+        sep = "&" if "?" in raw else "?"
+        return f"{raw}{sep}w={UNSPLASH_RENDER_WIDTH}&fit=max&q=80&fm=jpg"
+    return urls.get("full", "") or urls.get("regular", "")
 
 
 # ---------------------------------------------------------------------------
@@ -194,10 +249,13 @@ def search_pexels(query: str, per_page: int = 5) -> list[ImageResult]:
     if not key:
         return []
 
+    # Over-fetch so the min-resolution filter has headroom and still returns
+    # up to per_page usable results.
+    fetch_n = min(per_page + 4, 30)
     try:
         resp = _SESSION.get(
             "https://api.pexels.com/v1/search",
-            params={"query": query, "per_page": str(per_page), "orientation": "landscape"},
+            params={"query": query, "per_page": str(fetch_n), "orientation": "landscape"},
             headers={"Authorization": key},
             timeout=15,
         )
@@ -208,12 +266,25 @@ def search_pexels(query: str, per_page: int = 5) -> list[ImageResult]:
         return []
 
     results = []
-    for photo in data.get("photos", [])[:per_page]:
+    dropped_res = 0
+    for photo in data.get("photos", []):
+        if len(results) >= per_page:
+            break
+        w = photo.get("width", 0)
+        h = photo.get("height", 0)
+        # Skip low-resolution originals so the served image fills a large frame.
+        if w and w < MIN_WIDTH:
+            dropped_res += 1
+            continue
+
+        src = photo.get("src", {})
+        # Prefer the full-res 'original'; fall back to 'large2x' (~1880px wide).
+        hi_res = src.get("original", "") or src.get("large2x", "")
         results.append(ImageResult(
-            url=photo.get("src", {}).get("large2x", ""),
-            thumbnail_url=photo.get("src", {}).get("medium", ""),
-            width=photo.get("width", 0),
-            height=photo.get("height", 0),
+            url=hi_res,
+            thumbnail_url=src.get("medium", ""),
+            width=w,
+            height=h,
             alt_text=photo.get("alt", "") or query,
             photographer=photo.get("photographer", "Unknown"),
             source="pexels",
@@ -221,6 +292,10 @@ def search_pexels(query: str, per_page: int = 5) -> list[ImageResult]:
             license="pexels-license",
             attribution=f"Photo by {photo.get('photographer', 'Unknown')} on Pexels",
         ))
+
+    if dropped_res:
+        print(f"  [media] Pexels '{query}': dropped {dropped_res} candidate(s) below "
+              f"{MIN_WIDTH}px min-width floor")
 
     return results
 
