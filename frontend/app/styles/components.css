@@ -2258,72 +2258,13 @@ button:focus-visible .sigil-word__beam {
   outline-offset: 3px;
 }
 
-/* ── Row 2: Weekly — Playfair italic, deep red magazine accent ──
-   Signals the transition from monochrome news to flamboyant magazine.
-   Hover is more theatrical — organic ink energy, unfold physics. */
+/* The old "Row 2: Weekly" text-label block (--wk-accent, .nav-weekly__rule,
+   .nav-weekly__label + their hover/active/focus/dark rules) was removed
+   2026-08-04: Weekly now renders the VOID WEEKLY Sigil wordmark, matching
+   History. Its layout/active/focus come from the shared .nav-history block; its
+   red focus outline from the .nav-weekly accent override further below. */
 
-.nav-weekly {
-  --wk-accent: var(--palette-weekly);
-  --wk-accent-bright: #D41920;
-  --wk-accent-glow: rgba(185, 28, 28, 0.12);
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  text-decoration: none;
-  padding: var(--space-1) var(--space-3);
-  position: relative;
-  border-radius: var(--radius-sm);
-  transition: transform 300ms var(--ease-unfold);
-}
-
-.nav-weekly__rule {
-  width: 2px;
-  height: 16px;
-  background-color: var(--wk-accent);
-  opacity: 0.5;
-  flex-shrink: 0;
-  border-radius: 1px;
-  transition:
-    opacity 300ms var(--ease-cinematic),
-    height 400ms var(--ease-unfold),
-    transform 400ms var(--ease-unfold);
-}
-
-.nav-weekly__label {
-  font-family: var(--font-editorial);
-  font-style: italic;
-  font-size: var(--text-sm);
-  font-weight: 500;
-  color: var(--wk-accent);
-  letter-spacing: 0.01em;
-  white-space: nowrap;
-  transition: color 200ms var(--ease-cinematic);
-}
-
-/* Hover: label brightens (color only, no glow/unfold) */
-.nav-weekly:hover .nav-weekly__label {
-  color: var(--wk-accent-bright);
-}
-
-/* Active: press-in with spring rebound */
-.nav-weekly:active {
-  transform: scale(0.95);
-  transition: transform 60ms var(--ease-cinematic);
-}
-
-.nav-weekly:focus-visible {
-  outline: 2px solid var(--wk-accent);
-  outline-offset: 2px;
-}
-
-/* Dark mode: lifted red for contrast */
-:root[data-mode="dark"] .nav-weekly {
-  --wk-accent: var(--palette-weekly);
-  --wk-accent-bright: #F87171;
-  --wk-accent-glow: rgba(239, 83, 80, 0.12);
-}
-
-/* ── Spinoff Editions container — Weekly + History, center-left ──
+/* ── Spinoff product family container — History + Weekly, center-left ──
    Shown from 768px up. At 768-1023 (iPad portrait) the mobile tab bar (.mtb,
    <=767 only) is gone, so History/Weekly would otherwise be reachable only via
    the footer — a tablet nav dead zone. The row has room here: the inline
@@ -2340,6 +2281,42 @@ button:focus-visible .sigil-word__beam {
 @media (min-width: 768px) {
   .nav-spinoffs {
     display: inline-flex;
+  }
+}
+
+/* ── Vertical hairline — fences the spinoff family off from the masthead /
+   dateline zone to its left, so VOID HISTORY / VOID WEEKLY read as a related
+   pair rather than three competing mastheads. ── */
+.nav-spinoffs__divider {
+  width: 1px;
+  height: 18px;
+  flex-shrink: 0;
+  background-color: var(--border-subtle);
+  margin-right: var(--space-1);
+}
+
+/* ── "Also from Void" eyebrow — the family label. Barlow Condensed, small,
+   letter-spaced, muted; a whisper, not a headline. Hidden below 1200px so the
+   tablet band (768-1023) and narrow desktop keep the two wordmarks + divider
+   without overflow; the size delta vs the 30px masthead already signals
+   "secondary" on its own there. ── */
+.nav-spinoffs__eyebrow {
+  display: none;
+  font-family: var(--font-meta);
+  font-size: 9.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  line-height: 1;
+  color: var(--fg-tertiary);
+  white-space: nowrap;
+  margin-right: var(--space-1);
+  user-select: none;
+}
+
+@media (min-width: 1200px) {
+  .nav-spinoffs__eyebrow {
+    display: inline-block;
   }
 }
 
@@ -2372,48 +2349,21 @@ button:focus-visible .sigil-word__beam {
   }
 }
 
-/* ── History Link — burnt umber archival accent ── */
+/* ── Spinoff brand links (History + Weekly) — the clickable wrapper around each
+   VOID <PRODUCT> Sigil wordmark. History carries the burnt-umber archival
+   accent; .nav-weekly (below) overrides only the accent to magazine red. The
+   accent now drives the focus ring + the Sigil-O (via the wordmark's `accent`
+   prop); the old italic text label + hairline rule were retired 2026-08-04. ── */
 .nav-history {
   --hist-nav-accent: #5C4033;
-  --hist-nav-accent-bright: #7A5B47;
-  --hist-nav-accent-glow: rgba(92, 64, 51, 0.12);
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
   text-decoration: none;
-  padding: var(--space-1) var(--space-3);
+  padding: var(--space-1) var(--space-2);
   position: relative;
   border-radius: var(--radius-sm);
   transition: transform 300ms var(--ease-unfold);
-}
-
-.nav-history__rule {
-  width: 2px;
-  height: 16px;
-  background-color: var(--hist-nav-accent);
-  opacity: 0.5;
-  flex-shrink: 0;
-  border-radius: 1px;
-  transition:
-    opacity 300ms var(--ease-cinematic),
-    height 400ms var(--ease-unfold),
-    transform 400ms var(--ease-unfold);
-}
-
-.nav-history__label {
-  font-family: var(--font-editorial);
-  font-style: italic;
-  font-size: var(--text-sm);
-  font-weight: 500;
-  color: var(--hist-nav-accent);
-  letter-spacing: 0.01em;
-  white-space: nowrap;
-  transition: color 200ms var(--ease-cinematic);
-}
-
-/* Hover: label brightens (color only, no glow/unfold) */
-.nav-history:hover .nav-history__label {
-  color: var(--hist-nav-accent-bright);
 }
 
 .nav-history:active {
@@ -2428,30 +2378,23 @@ button:focus-visible .sigil-word__beam {
 
 :root[data-mode="dark"] .nav-history {
   --hist-nav-accent: #8B7355;
-  --hist-nav-accent-bright: #B8972F;
-  --hist-nav-accent-glow: rgba(139, 115, 85, 0.12);
 }
 
-/* ── Weekly Link — signature magazine red (matches the weekly masthead
-   --palette-weekly). Reuses the .nav-history structure (rule + italic label),
-   overrides only the accent custom properties. Placed after the dark
+/* ── Weekly link — signature magazine red (matches the weekly masthead
+   --palette-weekly). Reuses the .nav-history structure, overriding only the
+   accent so the FOCUS RING reads red instead of umber (the VOID WEEKLY Sigil-O
+   itself is colored by the wordmark's `accent` prop). Placed after the dark
    .nav-history block so the dark override below wins on source order. ── */
 .nav-weekly {
   --hist-nav-accent: var(--palette-weekly);
-  --hist-nav-accent-bright: #D41920;
-  --hist-nav-accent-glow: rgba(185, 28, 28, 0.12);
 }
 
 :root[data-mode="dark"] .nav-weekly {
   --hist-nav-accent: var(--palette-weekly);
-  --hist-nav-accent-bright: #FCA5A5;
-  --hist-nav-accent-glow: rgba(239, 83, 80, 0.15);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .nav-history,
-  .nav-history__rule,
-  .nav-history__label {
+  .nav-history {
     transition: none;
   }
 }

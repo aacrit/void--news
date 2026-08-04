@@ -124,17 +124,19 @@ export default function NavBar({
           <span className="nav-dateline-mobile__time">{timestamp}</span>
         </span>
 
-        {/* Spinoff product links — standalone products under the void --news
-            umbrella, treated with italic accents (warm rule + label). */}
-        <nav className="nav-spinoffs" aria-label="Spinoff editions">
-          {/* History carries its own VOID HISTORY sub-brand lockup (umber),
-              not a plain text label. Weekly stays a text label. */}
-          <Link href="/history" className="nav-history nav-history--brand si-hoverable" aria-label="Go to History" title="History">
-            <SigilWordmark height={15} product="HISTORY" accent="var(--palette-history)" />
+        {/* Spinoff product family — standalone products under the Void
+            umbrella. Both render their own VOID <PRODUCT> Sigil lockup at a
+            single shared height (14), clearly smaller than the 30px VOID NEWS
+            masthead so they read as SECONDARY. A leading hairline + "Also from
+            Void" eyebrow frame them as the spinoff family, not rival mastheads. */}
+        <nav className="nav-spinoffs" aria-label="More from Void">
+          <span className="nav-spinoffs__divider" aria-hidden="true" />
+          <span className="nav-spinoffs__eyebrow" aria-hidden="true">Also from Void</span>
+          <Link href="/history" className="nav-history nav-history--brand si-hoverable" aria-label="Go to Void History" title="Void History">
+            <SigilWordmark height={14} product="HISTORY" accent="var(--palette-history)" />
           </Link>
-          <Link href="/weekly" className="nav-history nav-weekly" aria-label="Go to the Weekly Edition" title="Weekly Edition">
-            <span className="nav-history__rule" aria-hidden="true" />
-            <span className="nav-history__label">Weekly Edition</span>
+          <Link href="/weekly" className="nav-history nav-weekly nav-history--brand si-hoverable" aria-label="Go to Void Weekly" title="Void Weekly">
+            <SigilWordmark height={14} product="WEEKLY" accent="var(--palette-weekly)" />
           </Link>
         </nav>
 
