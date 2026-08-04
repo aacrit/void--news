@@ -100,6 +100,66 @@ NEAR_DUP_SHARED_HARD = 4
 NEAR_DUP_SHARED_SOFT = 3
 NEAR_DUP_CONTAINMENT = 0.65
 
+# Dynamic same-event cap on a shared DISTINCTIVE (salient) title token.
+# The static EVENT_KEYWORDS cap and the stem-overlap near-dup guard (3.6)
+# both miss a live event whose clusters name the same place/actor but frame
+# it with entirely different words, so no pair clears >=4 shared stems and
+# most pairs share <2 stems. 2026-08 live front page: the Ceuta/Morocco
+# migration story fragmented into FIVE top cards — "Spain Returns Migrants
+# to Morocco", "Ceuta Migrant Death Toll Rises to 72", "Minister Blames
+# Israel for Ceuta Migrant Surge", "EU Chief Urges Border Action After
+# Ceuta" — glued only by the anchor "ceuta" (in 3 of them) and the topic
+# "migrant" (in 3 of them). Wildfire and Ukraine-drone stories fragment the
+# same way. When a SALIENT stem (a title stem that is NOT a generic country,
+# leader, institution, or wire word) appears in >= DYN_EVENT_MIN_CLUSTERS of
+# the top scan, those clusters are treated as one event: the MAX_SAME_EVENT
+# most-sourced survive undecayed, the rest decay below them. Grouping is
+# PER-TOKEN and never transitively unioned across tokens, so one anchor can
+# only reach the clusters that literally name it — an unrelated story cannot
+# be chained in. Pure ranking demotion: no cluster is merged, so
+# MERGE_HARD_CEILING and every clustering fixture are untouched.
+DYN_EVENT_MIN_CLUSTERS = 3
+DYN_EVENT_DECAY = 0.72
+DYN_EVENT_MIN_STEM_LEN = 3
+
+# Generic geopolitical / institutional / role / wire words that name WHERE or
+# WHO but never WHICH event. Removed before a stem is allowed to anchor a
+# dynamic event group, so "spain" / "israel" / "minister" / "united" cannot
+# bridge two unrelated stories; only a distinctive locus ("ceuta", "drone")
+# survives to anchor. Stemmed lazily with clustering's Porter stemmer so the
+# set aligns with _title_word_stems output. Over-inclusion here only makes
+# anchoring MORE conservative (the safe direction).
+_GENERIC_EVENT_WORDS = frozenset({
+    # countries / demonyms / capitals / blocs
+    "us", "usa", "america", "american", "uk", "britain", "british", "england",
+    "english", "europe", "european", "eu", "un", "nato", "brics", "opec",
+    "russia", "russian", "moscow", "kremlin", "ukraine", "ukrainian", "kyiv",
+    "kiev", "china", "chinese", "beijing", "taiwan", "taipei",
+    "israel", "israeli", "palestinian", "palestine",
+    "iran", "iranian", "tehran", "spain", "spanish", "madrid", "france",
+    "french", "paris", "germany", "german", "berlin", "italy", "italian",
+    "rome", "india", "indian", "delhi", "japan", "japanese", "tokyo", "korea",
+    "korean", "pakistan", "turkey", "turkish", "morocco", "moroccan", "egypt",
+    "egyptian", "saudi", "brazil", "brazilian", "mexico", "mexican", "africa",
+    "african", "asia", "asian", "canada", "canadian", "australia", "australian",
+    # leaders / roles / titles
+    "trump", "biden", "putin", "modi", "netanyahu", "zelensky", "zelenskyy",
+    "starmer", "macron", "president", "minister", "premier", "chancellor",
+    "secretary", "chief", "official", "officials", "leader", "leaders",
+    "government", "governments", "spokesman", "lawmaker", "lawmakers",
+    "senator", "governor", "mayor", "envoy", "ambassador",
+    # institutions / generic bodies
+    "united", "nations", "nation", "state", "states", "congress", "senate",
+    "parliament", "court", "house", "white", "council", "commission",
+    "committee", "ministry", "agency", "department", "administration",
+    "authority", "authorities", "police", "military", "army", "forces",
+    "troops",
+    # wire / outlet / filler
+    "reuters", "afp", "bloomberg", "bbc", "cnn", "press", "news", "report",
+    "reports", "world", "global", "international", "national", "latest",
+    "update", "updates", "live", "breaking", "today",
+})
+
 # Lead-breadth gate — the #1 slot is the front page. A story leads only when
 # its outlet breadth is a meaningful share of the day's most-covered story;
 # a high-velocity spectacle with a fraction of the coverage waits at #2+
@@ -283,6 +343,49 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
         if demoted:
             pool.sort(key=lambda c: c.get("rank_world", 0), reverse=True)
 
+    # 3.7. Dynamic same-event cap (see DYN_EVENT_* constants). Catches the
+    # fragmentation the stem-overlap guard misses: clusters that share a
+    # distinctive locus but not enough stems. Runs after 3.6 so the two
+    # collaborate — 3.6 kills literal re-tellings, 3.7 caps the count of
+    # differently-framed angles of one event. Per-token, non-transitive.
+    if _stems is not None and len(pool) > TOP_N:
+        scan = pool[:NEAR_DUP_SCAN]
+        salient_sets = [_salient_title_stems(c.get("title", "") or "") for c in scan]
+        token_members: dict[str, list[int]] = {}
+        for idx, sset in enumerate(salient_sets):
+            for tok in sset:
+                token_members.setdefault(tok, []).append(idx)
+        capped: set[int] = set()
+        for tok, members in token_members.items():
+            if len(members) < DYN_EVENT_MIN_CLUSTERS:
+                continue
+            # Keep the MAX_SAME_EVENT most-sourced (breadth = canonical
+            # telling); demote the rest below the lower kept rank.
+            ordered = sorted(
+                members,
+                key=lambda k: (
+                    scan[k].get("source_count", 0),
+                    scan[k].get("rank_world", 0),
+                ),
+                reverse=True,
+            )
+            keeper_floor = min(
+                scan[k].get("rank_world", 0) for k in ordered[:MAX_SAME_EVENT]
+            )
+            for k in ordered[MAX_SAME_EVENT:]:
+                target = round(
+                    min(
+                        scan[k].get("rank_world", 0),
+                        keeper_floor * DYN_EVENT_DECAY,
+                    ), 2,
+                )
+                if target < scan[k].get("rank_world", 0):
+                    scan[k]["rank_world"] = target
+                    scan[k].setdefault("_same_event_anchor", tok)
+                    capped.add(k)
+        if capped:
+            pool.sort(key=lambda c: c.get("rank_world", 0), reverse=True)
+
     # 3.5. Feed-lead gate — BEFORE the diversity partition. Clusters below
     # the source-count floor cannot sit in the top FEED_LEAD_SLOTS positions
     # when enough eligible clusters exist. Running this gate after the
@@ -418,6 +521,37 @@ def _dup_title_stems_fn():
 
 _UNSET = object()
 _DUP_STEMS_CACHED = _UNSET
+_GENERIC_STEMS_CACHED = _UNSET
+
+
+def _generic_event_stems() -> frozenset:
+    """Porter-stemmed generic-word set (lazy). Stemming with clustering's own
+    stemmer keeps the set comparable to _title_word_stems output; falls back
+    to the raw words if the stemmer can't be imported."""
+    global _GENERIC_STEMS_CACHED
+    if _GENERIC_STEMS_CACHED is _UNSET:
+        try:
+            from clustering.story_cluster import _stem_word
+            _GENERIC_STEMS_CACHED = frozenset(
+                _stem_word(w) for w in _GENERIC_EVENT_WORDS
+            ) | _GENERIC_EVENT_WORDS
+        except Exception:
+            _GENERIC_STEMS_CACHED = _GENERIC_EVENT_WORDS
+    return _GENERIC_STEMS_CACHED
+
+
+def _salient_title_stems(title: str) -> set[str]:
+    """Distinctive title stems: Phase-3 stems minus generic geopolitical /
+    institutional / role / wire words. What remains is a locus specific enough
+    to anchor a same-event group (e.g. "ceuta", "drone", "wildfir")."""
+    stems_fn = _dup_title_stems_fn()
+    if stems_fn is None:
+        return set()
+    generic = _generic_event_stems()
+    return {
+        s for s in stems_fn(title)
+        if len(s) >= DYN_EVENT_MIN_STEM_LEN and s not in generic
+    }
 
 
 def _detect_event(title: str) -> str | None:
