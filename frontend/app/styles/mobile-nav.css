@@ -599,6 +599,11 @@
   .mmp--weekly {
     --mmp-accent: var(--palette-weekly);
   }
+
+  /* void --history mini-player — recolor the progress fill to archival umber. */
+  .mmp--history {
+    --mmp-accent: var(--palette-history);
+  }
 }
 
 /* ---------------------------------------------------------------------------

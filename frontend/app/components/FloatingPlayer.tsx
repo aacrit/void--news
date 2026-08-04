@@ -78,6 +78,9 @@ export default function FloatingPlayer() {
     previousEpisodes, loadEpisode, contentType,
   } = state;
   const isWeekly = contentType === "weekly";
+  const isHistory = contentType === "history";
+  // Product label shown across pill / expanded / broadcast surfaces.
+  const productLabel = isHistory ? "History" : isWeekly ? "Weekly" : "On Air";
 
   const [view, setView] = useState<PlayerView>("compact");
   const [closing, setClosing] = useState(false);
@@ -381,7 +384,7 @@ export default function FloatingPlayer() {
     <div className="fp__seek">
       <div className="fp__seek-sections">
         <button className={`fp__seek-sec${!inOpinion ? " fp__seek-sec--active" : ""}`}
-          onClick={() => seekTo(0)} type="button">News</button>
+          onClick={() => seekTo(0)} type="button">{isHistory ? "Account" : "News"}</button>
         {hasOpinionSection && (
           <button className={`fp__seek-sec${inOpinion ? " fp__seek-sec--active" : ""}`}
             onClick={() => effectiveOpinionStart != null ? seekTo(effectiveOpinionStart) : null}
@@ -414,6 +417,7 @@ export default function FloatingPlayer() {
         isPlaying ? "fp--playing" : "",
         closing ? "fp--closing" : "",
         isWeekly ? "fp--weekly" : "",
+        isHistory ? "fp--history" : "",
       ].filter(Boolean).join(" ")}
       style={dragOffset > 0 ? { transform: `translateY(${dragOffset}px)`, transition: "none" } : undefined}
       role="region"
@@ -445,8 +449,8 @@ export default function FloatingPlayer() {
 
           <div className="fp__info">
             {isPlaying && <span className="fp__rec-dot" aria-hidden="true" />}
-            <span className="fp__title">{isWeekly ? "Weekly" : "On Air"}</span>
-            <span className="fp__section">{isWeekly ? "Issue" : inOpinion ? "Opinion" : "News"}</span>
+            <span className="fp__title">{productLabel}</span>
+            <span className="fp__section">{isHistory ? "Account" : isWeekly ? "Issue" : inOpinion ? "Opinion" : "News"}</span>
           </div>
 
           <span className="fp__time">
@@ -472,7 +476,7 @@ export default function FloatingPlayer() {
           <div className="fp__bar-header">
             <div className="fp__bar-brand">
               <LogoIcon size={16} animation={isPlaying ? "analyzing" : "idle"} />
-              <span className="fp__bar-title">{isWeekly ? "Weekly" : "On Air"}</span>
+              <span className="fp__bar-title">{productLabel}</span>
               <span className={`fp__status${isPlaying ? " fp__status--live" : ""}`}>
                 <span className="fp__status-dot" />
                 <span className="fp__status-label">{isPlaying ? "ON AIR" : "On demand"}</span>
@@ -533,7 +537,7 @@ export default function FloatingPlayer() {
               <ScaleIcon size={22} animation={isPlaying ? "broadcast" : "idle"} />
               <div className="fp__bcast-title-group">
                 <span className="fp__bcast-void">Void</span>
-                <span className="fp__bcast-cmd">{isWeekly ? "Weekly" : "On Air"}</span>
+                <span className="fp__bcast-cmd">{productLabel}</span>
               </div>
               <span className={`fp__status${isPlaying ? " fp__status--live" : ""}`}>
                 <span className="fp__status-dot" />
@@ -559,10 +563,17 @@ export default function FloatingPlayer() {
             </div>
           </div>
 
-          {/* Episode dateline */}
+          {/* Episode dateline. History has no edition/date; it leads with the
+              event title instead so the panel reads like an archival plate. */}
           <div className="fp__bcast-dateline">
-            <span className="fp__bcast-edition">{editionLabel} Edition</span>
-            {episodeDate && <span className="fp__bcast-date">{episodeDate}</span>}
+            {isHistory ? (
+              <span className="fp__bcast-edition">{brief.tldr_headline || "Account"}</span>
+            ) : (
+              <>
+                <span className="fp__bcast-edition">{editionLabel} Edition</span>
+                {episodeDate && <span className="fp__bcast-date">{episodeDate}</span>}
+              </>
+            )}
             {durationMin && <span className="fp__bcast-duration">{durationMin} min</span>}
           </div>
 

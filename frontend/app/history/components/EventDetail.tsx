@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { HistoricalEvent, Perspective, MediaItem, ConnectionType } from "../types";
 import { HOOKS, CTAS } from "../hooks";
 import { ARC_FEATURES } from "../arc-features";
-import HistoryAudioCue from "./HistoryAudioCue";
+import { useAudio } from "../../components/AudioProvider";
 import ReelScrubber, { type ScrubNode } from "./ReelScrubber";
 import PerspectiveFrame from "./PerspectiveFrame";
 import PerspectiveReader from "./PerspectiveReader";
@@ -52,6 +52,7 @@ interface EventDetailProps {
 }
 
 export default function EventDetail({ event, allEvents }: EventDetailProps) {
+  const { playHistory } = useAudio();
   const reelRef = useRef<HTMLDivElement>(null);
   const galleryRef = useRef<HTMLElement>(null);
   const [focusedIndex, setFocusedIndex] = useState(0);
@@ -293,11 +294,16 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
               <button
                 type="button"
                 className="hist-hero-listen"
-                onClick={() => {
-                  const playBtn = document.querySelector('.hist-audio-cue__play') as HTMLButtonElement;
-                  if (playBtn) playBtn.click();
-                }}
-                aria-label={`Listen to ${event.title} — ${event.perspectives.length} perspectives`}
+                onClick={() =>
+                  playHistory({
+                    id: event.id,
+                    title: event.title,
+                    subtitle: event.subtitle,
+                    audioUrl: event.audioUrl!,
+                    durationSeconds: event.audioDuration ?? 0,
+                  })
+                }
+                aria-label={`Listen to ${event.title}, ${event.perspectives.length} perspectives`}
               >
                 <svg width="12" height="14" viewBox="0 0 12 14" fill="currentColor" aria-hidden="true" className="hist-hero-listen__icon">
                   <path d="M1 1.5v11l10-5.5z" />
@@ -316,15 +322,10 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
         </div>
       </section>
 
-      {/* ── AUDIO COMPANION (gated; renders only if generated) ── */}
-      {event.audioUrl && (
-        <HistoryAudioCue
-          audioUrl={event.audioUrl}
-          durationSeconds={event.audioDuration ?? 0}
-          eventTitle={event.title}
-          perspectives={event.perspectives}
-        />
-      )}
+      {/* ── AUDIO — plays through the shared void --onair player. The hero
+             "Listen" button calls playHistory(), which loads this event into the
+             global FloatingPlayer (collapsed pill → side panel), exactly like
+             News and Weekly. The old inline HistoryAudioCue was retired. ── */}
 
       {/* ── FACTS READOUT — the only persistent supporting material ── */}
       <div className="hist-readout">

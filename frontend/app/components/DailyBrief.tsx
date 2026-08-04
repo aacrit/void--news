@@ -47,7 +47,7 @@ export interface DailyBriefState {
   /** Load and play a specific episode */
   loadEpisode: (episode: import("./AudioProvider").EpisodeMeta) => void;
   /** Which product owns the player — drives accent theming + labels */
-  contentType: "daily" | "weekly";
+  contentType: "daily" | "weekly" | "history";
   /** Load a weekly issue (+ optional archive playlist) into the shared player */
   playWeekly: (
     digest: import("../lib/types").WeeklyDigestData,

@@ -1739,3 +1739,13 @@ body:has(.msp--open) .fp {
   --fp-accent: var(--palette-weekly);
   --fp-amber: var(--palette-weekly);
 }
+
+/* ---------------------------------------------------------------------------
+   void --history skin — same console, recolored to the archival umber accent
+   so the shared player reads as History (not the golden daily brief). Mirrors
+   the weekly skin; the teal --voice-accent signal is kept across all products.
+   --------------------------------------------------------------------------- */
+.fp--history {
+  --fp-accent: var(--palette-history);
+  --fp-amber: var(--palette-history);
+}
