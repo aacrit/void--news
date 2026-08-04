@@ -6,6 +6,7 @@ import { MagnifyingGlass } from "@phosphor-icons/react";
 import ThemeToggle from "./ThemeToggle";
 import PageToggle from "./PageToggle";
 import LogoFull from "./LogoFull";
+import SigilWordmark from "./SigilWordmark";
 import ExperimentalBadge from "./ExperimentalBadge";
 import { getEditionTimestamp } from "../lib/utils";
 
@@ -126,9 +127,10 @@ export default function NavBar({
         {/* Spinoff product links — standalone products under the void --news
             umbrella, treated with italic accents (warm rule + label). */}
         <nav className="nav-spinoffs" aria-label="Spinoff editions">
-          <Link href="/history" className="nav-history" aria-label="Go to History" title="History">
-            <span className="nav-history__rule" aria-hidden="true" />
-            <span className="nav-history__label">History</span>
+          {/* History carries its own VOID HISTORY sub-brand lockup (umber),
+              not a plain text label. Weekly stays a text label. */}
+          <Link href="/history" className="nav-history nav-history--brand si-hoverable" aria-label="Go to History" title="History">
+            <SigilWordmark height={15} product="HISTORY" accent="var(--palette-history)" />
           </Link>
           <Link href="/weekly" className="nav-history nav-weekly" aria-label="Go to the Weekly Edition" title="Weekly Edition">
             <span className="nav-history__rule" aria-hidden="true" />
