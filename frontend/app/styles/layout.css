@@ -27,7 +27,7 @@
      re-resolves the custom property on :root (it reads the desktop value again)
      but does NOT re-resolve the var() substitution already baked into this
      max-width, so the cap stays frozen at the stale mobile 100% and the canvas
-     spills edge-to-edge. Measured on void-news.pages.dev 2026-08: page-main
+     spills edge-to-edge. Measured on news.voidvision.org 2026-08: page-main
      1434px at 1440 viewport with --canvas-max correctly reading min(92vw,1600px).
      A direct min(92vw,1600px) has no var() layer to freeze — the vw term is
      re-resolved live on every restore. Mobile full-bleed is the 767px override

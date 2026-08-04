@@ -2,7 +2,7 @@
 
 ## Context
 
-void --news is feature-complete and already deployed to a single live surface (`https://void-news.pages.dev`, Cloudflare Pages, root basePath). The daily pipeline, 7-phase clustering, 6-axis bias engine, daily/weekly briefs, and seven live products (news, history, revolt, weekly, sources, ship, about) all work. What's missing is not features — it's the **launch scaffolding**: a way to open it to real people safely, a public "this is experimental" posture, a distribution story (web + app stores), and a single place to drive the whole go-live sequence.
+void --news is feature-complete and already deployed to a single live surface (`https://news.voidvision.org`, custom domain over the `void-news.pages.dev` Cloudflare Pages origin, root basePath). The daily pipeline, 7-phase clustering, 6-axis bias engine, daily/weekly briefs, and seven live products (news, history, revolt, weekly, sources, ship, about) all work. What's missing is not features — it's the **launch scaffolding**: a way to open it to real people safely, a public "this is experimental" posture, a distribution story (web + app stores), and a single place to drive the whole go-live sequence.
 
 Goal: soft-launch to people the CEO knows, clearly tagged **experimental**, and over ~3 months grow to a wider set of real users. This mirrors Ground News's own path (rough beta → most-active users → feedback → public launch) and the 2025 indie consensus (warm list first, niche boards next, Product Hunt/Show HN last — the PH spike fades fast).
 
@@ -10,7 +10,7 @@ Goal: soft-launch to people the CEO knows, clearly tagged **experimental**, and 
 1. **Merge history + revolt** into one tabbed `/archive` section (two voices, one roof).
 2. **Ship to both app stores** (Apple + Google), signed and submitted — native, not PWA-only.
 3. **Dev/prod = frontend preview only** — keep the single Supabase DB; add a Cloudflare preview branch for a staging UI URL.
-4. **Stay on `void-news.pages.dev`** (no custom domain yet).
+4. **Custom domain `news.voidvision.org`** now sits on top of the `void-news.pages.dev` CF origin (supersedes the original "no custom domain yet" decision; apex `voidvision.org` → `news.voidvision.org` is a CF dashboard Redirect Rule).
 5. **void --ship becomes a simple feedback page** (no build tracking).
 6. A visible **"experimental" tag** across the product.
 
@@ -68,7 +68,7 @@ Per decision #3: keep one Supabase DB; add a **staging frontend surface** so UI 
 Reuse the existing `docs/IG-LAUNCH-CHECKLIST.html` (the @void.news Instagram automation is already built) and layer the phased rollout on top.
 
 - **Phase 0 (now → launch): private hardening.** Everything experimental-tagged, feedback page live, staging in place. No sharing yet.
-- **Phase 1 (Weeks 1-2): friends & family.** Share `void-news.pages.dev` directly to a small warm list (text/DM/email), explicitly "experimental, tell me what's broken." Point them at the Feedback page. This is exactly Ground News's step one. Collect qualitative feedback; watch which product (feed vs archive vs bias view) makes people say "oh, that's useful."
+- **Phase 1 (Weeks 1-2): friends & family.** Share `news.voidvision.org` directly to a small warm list (text/DM/email), explicitly "experimental, tell me what's broken." Point them at the Feedback page. This is exactly Ground News's step one. Collect qualitative feedback; watch which product (feed vs archive vs bias view) makes people say "oh, that's useful."
 - **Phase 2 (Weeks 3-6): warm-network broadcast.** Personal social posts (the CEO's own IG/X/LinkedIn), the @void.news IG account going active on its automated cadence, and any relevant group chats/communities. Still "experimental."
 - **Phase 3 (Weeks 7-12): niche indie boards.** BetaList / Uneed / Fazier / SaaSHub, then Show HN and (last) Product Hunt once the product has survived real users. Have testimonials + a crisp one-liner ready by now.
 - Prepare launch assets: a one-line pitch, 3-4 screenshots/GIF (the bias sigil + Deep Dive is the hook), and a short "why void" note that leans on the existing brand voice ("See through the void").

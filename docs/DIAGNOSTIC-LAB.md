@@ -1,6 +1,6 @@
 # Diagnostic Lab — `/diag.html`
 
-Standalone single-file diagnostic UI for the void --news pipeline. Lives at `frontend/public/diag.html`; deploys with the rest of the static site to `void-news.pages.dev/diag.html`.
+Standalone single-file diagnostic UI for the void --news pipeline. Lives at `frontend/public/diag.html`; deploys with the rest of the static site to `news.voidvision.org/diag.html`.
 
 **Dark premium theme** — warm-black ink + gold accent + terminal-grade typography (Playfair Display / Inter / IBM Plex Mono). 39 pipeline steps mapped, color-coded by type, with live DB examples and a $0 sandbox.
 
@@ -19,7 +19,7 @@ Standalone single-file diagnostic UI for the void --news pipeline. Lives at `fro
 
 **Zero setup for the default project.** The void --news Supabase URL + anon key are baked into `diag.html` (anon keys are designed to be public — RLS enforces access control server-side, same as the production frontend does). Open the file, the connection banner turns green, you're done.
 
-1. Open `frontend/public/diag.html` — either locally (`file://...`) or hosted at `void-news.pages.dev/diag.html`.
+1. Open `frontend/public/diag.html` — either locally (`file://...`) or hosted at `news.voidvision.org/diag.html`.
 2. The connection diagnostic banner under the masthead tells you what works:
    - **Green** — built-in creds are live, everything works.
    - **Yellow** — connected but migrations 057 + 058 aren't applied yet. Step examples still work; sandbox + run picker are limited.

@@ -111,7 +111,7 @@ export interface VisionSlideSpec {
   headline?: string;
   /** stance: the principle paragraph. */
   body?: string;
-  /** cta: the site URL, e.g. "void-news.pages.dev". */
+  /** cta: the site URL, e.g. "news.voidvision.org". */
   url?: string;
 }
 

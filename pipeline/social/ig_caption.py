@@ -55,7 +55,7 @@ BANNED_PHRASES = [
 
 EM_DASH_RE = re.compile(r"[—–]")
 HASHTAG_RE = re.compile(r"#[A-Za-z0-9_]{2,}")
-URL_RE = re.compile(r"https?://\S+|void-news\.pages\.dev")
+URL_RE = re.compile(r"https?://\S+|news\.voidvision\.org")
 
 IG_MAX_CAPTION_CHARS = 2200
 WORD_MIN = 50
@@ -95,7 +95,7 @@ Voice rules, enforced, not aspirational:
 
 6. MANIFESTO: the Void News promise is "Same stories. Same order. For everyone." Every caption ladders up to it. Quote the line verbatim at most once per week, usually paraphrase.
 
-7. NEVER write "void --news" or "void --history"; the brands are "Void News" and "Void History". The site is "void-news.pages.dev".
+7. NEVER write "void --news" or "void --history"; the brands are "Void News" and "Void History". The site is "news.voidvision.org".
 
 8. NEVER praise the product. Never say "we built something amazing." Let the evidence carry the weight.
 
@@ -105,7 +105,7 @@ Output STRICT JSON with this shape:
   "hashtags": ["medialiteracy", "newsmediabias", ...]
 }
 
-The body must end with the URL "void-news.pages.dev" unless the post type indicates otherwise."""
+The body must end with the URL "news.voidvision.org" unless the post type indicates otherwise."""
 
 
 def _build_user_prompt(row: dict[str, Any]) -> str:
@@ -143,14 +143,14 @@ def _build_user_prompt(row: dict[str, Any]) -> str:
             "HISTORY post (archival, multi-perspective) for Void History. Drop the reader inside one "
             "fact about the event on the slides, then note that the record holds several accounts with "
             "no winner declared. Do not lecture. Let the fact and the competing voices carry it. "
-            "End with the void-news.pages.dev/history URL."
+            "End with the news.voidvision.org/history URL."
         )
     elif pillar == "weekly":
         intent = (
             "WEEKLY post (the week in review) for Void Weekly. The slides carry the issue's cover "
             "headline, deck, and the week's key or most-contested stories. Caption is a short standfirst: "
             "name the issue number, tease two of the stories by their real headlines, and point to the "
-            "edition. Three sentences of context, no more. End with the void-news.pages.dev/weekly URL."
+            "edition. Three sentences of context, no more. End with the news.voidvision.org/weekly URL."
         )
     else:
         intent = "Standard Void News post. Follow the voice rules. URL last."

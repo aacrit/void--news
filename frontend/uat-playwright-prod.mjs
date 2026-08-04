@@ -7,7 +7,10 @@ const chromium = firefox; // Use Firefox (libs bundled) — chromium needs libns
 import fs from "node:fs/promises";
 import path from "node:path";
 
-const BASE = process.env.BASE_URL || "https://void-news.pages.dev";
+// NOTE: news.voidvision.org only resolves once DNS is live. Until then, the
+// Cloudflare origin https://void-news.pages.dev still works — override with
+// BASE_URL=https://void-news.pages.dev when running against the pre-DNS site.
+const BASE = process.env.BASE_URL || "https://news.voidvision.org";
 const OUT = "/tmp/uat-prod-2026-05-13";
 await fs.mkdir(OUT, { recursive: true });
 

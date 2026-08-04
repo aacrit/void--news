@@ -57,10 +57,10 @@ POST_HOUR_UTC = 13
 POST_MINUTE_UTC = 30
 VOID_TRIO_STAGGER_HOURS = 3
 
-# CTA destinations. All live under the void-news.pages.dev domain.
-URL_HOME = "void-news.pages.dev"
-URL_HISTORY = "void-news.pages.dev/history"
-URL_WEEKLY = "void-news.pages.dev/weekly"
+# CTA destinations. All live under the news.voidvision.org domain.
+URL_HOME = "news.voidvision.org"
+URL_HISTORY = "news.voidvision.org/history"
+URL_WEEKLY = "news.voidvision.org/weekly"
 
 
 # ---------------------------------------------------------------------------

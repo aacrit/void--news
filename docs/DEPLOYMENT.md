@@ -1,7 +1,7 @@
 # void --news Deployment Runbook
 
 **Last updated**: 2026-08-01 (rev 4 — Cloudflare-Pages-only reality; GitHub Pages removed; staging/preview split + branch protection documented)
-**Status**: Single production surface, live at https://void-news.pages.dev (Cloudflare Pages, root basePath). PWA installable. Capacitor iOS/Android shells initialized, awaiting signing. GitHub Pages retired (the old `deploy.yml` no longer exists).
+**Status**: Single production surface, live at https://news.voidvision.org (Cloudflare Pages, root basePath). The Cloudflare Pages origin remains `void-news.pages.dev`; the custom domain `news.voidvision.org` sits on top of it (added in the CF Pages dashboard → Custom domains). PWA installable. Capacitor iOS/Android shells initialized, awaiting signing. GitHub Pages retired (the old `deploy.yml` no longer exists).
 
 ---
 
@@ -31,7 +31,7 @@ Pipeline cron 11:00 UTC writes Supabase; the static site polls the same DB at ru
 | Cloudflare Pages | `.github/workflows/deploy-cloudflare.yml` | **live (production)** | CF Pages project `void-news`, production branch `main`. Root basePath (`NEXT_PUBLIC_BASE_PATH=""`). Honors `frontend/public/_headers` + `_redirects` at the edge |
 | GitHub Pages | (removed) | **retired** | `deploy.yml` deleted. No `aacrit.github.io/void--news/` surface. `_redirects` still 301s any stray `/void--news/*` deep link to the root path |
 
-There is exactly one production URL: **https://void-news.pages.dev**.
+The canonical public URL is **https://news.voidvision.org** (custom domain). The Cloudflare Pages origin `https://void-news.pages.dev` still serves the same build and keeps working. The apex `voidvision.org` → `news.voidvision.org` 301 is a Cloudflare dashboard Redirect Rule (host-based redirects are not reliable in `_redirects`), not a code change.
 
 ---
 
@@ -183,7 +183,7 @@ void --news ships as an installable Progressive Web App. No separate build step 
 - Android Chrome → menu → Install app → standalone PWA in the app drawer.
 - Desktop Chrome/Edge → omnibox install icon → windowed app.
 
-**basePath note:** the production deploy uses the root basePath (`NEXT_PUBLIC_BASE_PATH=""`), so the manifest, service-worker scope, and `start_url` resolve at `/` on `void-news.pages.dev` — consistent with the CF root serve. (The old `/void--news/` GitHub-Pages scoping is gone.)
+**basePath note:** the production deploy uses the root basePath (`NEXT_PUBLIC_BASE_PATH=""`), so the manifest, service-worker scope, and `start_url` resolve at `/` on `news.voidvision.org` (and equally on the `void-news.pages.dev` origin) — consistent with the CF root serve. (The old `/void--news/` GitHub-Pages scoping is gone.)
 
 **Cache invalidation:** bump the `CACHE_NAME` constants in `frontend/public/sw.js` before any breaking change to cached asset shape. Existing clients pick up the new SW on next visit.
 

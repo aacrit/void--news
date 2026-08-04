@@ -57,7 +57,7 @@ function Cta({ spec }: { spec: HistorySlideSpec }) {
     <div className="ig-history ig-history--cta">
       <HeroSigil size={180} accent="umber" />
       <h2 className="ig-cta__line">{spec.headline ?? "Read the full record."}</h2>
-      <p className="ig-url ig-url--umber">{spec.url ?? "void-news.pages.dev"}</p>
+      <p className="ig-url ig-url--umber">{spec.url ?? "news.voidvision.org"}</p>
       <LogoMark position="bl" tone="onDark" accent="umber" word="HISTORY" />
     </div>
   );

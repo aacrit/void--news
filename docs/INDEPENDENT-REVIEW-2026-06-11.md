@@ -80,7 +80,7 @@ Migration 061 dropped `rank_us / rank_europe / rank_south_asia`. PostgREST retur
 **Fix:** assign `cluster["_db_id"] = cluster_id` in the step-8 loop; reorder brief generation after step 8 (or title-match) to make `top_cluster_ids` real.
 
 ### P1-2 · PWA / service worker / icons fully broken on the live Cloudflare origin
-The CF build sets `NEXT_PUBLIC_BASE_PATH=""` (root), but these are hardcoded to `/void--news/...`, which 404s on `void-news.pages.dev` (and `_redirects` has no catch-all):
+The CF build sets `NEXT_PUBLIC_BASE_PATH=""` (root), but these are hardcoded to `/void--news/...`, which 404s on `news.voidvision.org` (and `_redirects` has no catch-all):
 - `frontend/app/layout.tsx:184` — `navigator.serviceWorker.register('/void--news/sw.js')` → SW never registers (offline + installability dead; the `.catch` swallows it).
 - `frontend/public/manifest.json:5-7,34-55` — `id`/`start_url`/`scope`/icons all `/void--news/...`.
 - `layout.tsx:91-98,157-163` — favicon, apple-touch-icon, 7 iOS splash images.

@@ -108,14 +108,14 @@ export default function PressPage() {
         <div className="press__contact">
           <p style={{ margin: 0 }}>
             <strong>Press inquiries:</strong>{" "}
-            <a href="mailto:press@void-news.pages.dev">
-              press@void-news.pages.dev
+            <a href="mailto:press@voidvision.org">
+              press@voidvision.org
             </a>
           </p>
           <p style={{ margin: 0 }}>
             <strong>Methodology questions:</strong>{" "}
-            <a href="mailto:methodology@void-news.pages.dev">
-              methodology@void-news.pages.dev
+            <a href="mailto:methodology@voidvision.org">
+              methodology@voidvision.org
             </a>
           </p>
           <p style={{ margin: 0 }}>
