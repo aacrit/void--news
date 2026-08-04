@@ -1,7 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="Void News">
-  <!-- Void News 32px favicon — TRANSPARENT (no tile), brass footed Sigil.
-       Theme-aware: light-brass #946B15 on light tabs, dark-brass #D4A574 on
-       dark tabs. -->
+  <!-- Void News primary tab favicon — TRANSPARENT (no tile), brass footed Sigil
+       (ring + level beam + ticks + scale post + base). Theme-aware via <style> +
+       @media prefers-color-scheme: strokes are light-brass #946B15 on light tabs,
+       dark-brass #D4A574 on dark tabs. This is a rel="icon" type="image/svg+xml"
+       favicon, so the media-query <style> is honored by modern browsers. -->
   <style>
     .sig { stroke: #946B15; }
     @media (prefers-color-scheme: dark) { .sig { stroke: #D4A574; } }

@@ -60,6 +60,61 @@ const CATEGORY_OPTIONS: { value: ShipCategory; label: string }[] = [
   { value: 'feature', label: 'Feature' },
 ];
 
+// ---- Known Observations ----
+// Radical transparency about current limitations. Framed as "what we watch and
+// how to read around it," never as apology. Chip labels are deliberately quiet
+// and neutral so they do not read as Kanban board columns.
+type ObservationChip = 'tuning' | 'by-design' | 'roadmap' | 'known';
+const CHIP_LABELS: Record<ObservationChip, string> = {
+  tuning: 'Actively tuning',
+  'by-design': 'By design',
+  roadmap: 'On the roadmap',
+  known: 'Known',
+};
+interface Observation { claim: string; note: string; chip: ObservationChip; }
+const OBSERVATIONS: Observation[] = [
+  {
+    claim: 'Clustering can split or double up.',
+    note: 'Sometimes one event lands on two cards, or two near-identical stories both appear. The merge thresholds get retuned every run.',
+    chip: 'tuning',
+  },
+  {
+    claim: 'The bias score is a signal, not a verdict.',
+    note: 'Every score is rule-based and traces to specific words in the coverage. Thin coverage reads as no clear lean. Weigh it as one input, not the answer.',
+    chip: 'by-design',
+  },
+  {
+    claim: 'Summaries thin out down the feed.',
+    note: 'The top stories get the fullest write-ups. Lower-ranked cards can read more mechanically, or surface a raw excerpt.',
+    chip: 'tuning',
+  },
+  {
+    claim: 'Coverage skews English-language.',
+    note: '1,016 sources span 158 countries, but well-resourced English outlets dominate the mix. Some regions and languages are under-represented.',
+    chip: 'roadmap',
+  },
+  {
+    claim: 'Figures can differ between cards.',
+    note: 'Death tolls and counts come from different outlets reporting at different hours, so the same event may show one number here and another there.',
+    chip: 'known',
+  },
+  {
+    claim: 'The feed moves once a day.',
+    note: 'One run at 11:00 UTC. Breaking news mid-day waits for the next edition.',
+    chip: 'by-design',
+  },
+  {
+    claim: 'A tabloid headline occasionally slips through.',
+    note: 'The sanitizer neutralizes shouty, clickbait headlines, but a raw one can get past it before we catch it.',
+    chip: 'tuning',
+  },
+  {
+    claim: 'Generated prose is imperfect.',
+    note: 'The weekly essays and daily brief are machine-drafted under strict rules. An occasional clunky line gets through.',
+    chip: 'known',
+  },
+];
+
 const EDITION_SLUGS: Edition[] = ['world'];
 
 // ---- Templates ----
@@ -822,6 +877,34 @@ export default function ShipBoard() {
           </div>
         </section>
       )}
+
+      <OrganicDivider />
+
+      {/* ==== KNOWN OBSERVATIONS: radical transparency board ==== */}
+      <section className="ship-obs ship-cold-open-column" aria-labelledby="ship-obs-heading">
+        <header className="ship-obs__head">
+          <p className="ship-obs__eyebrow">Radical transparency</p>
+          <h2 id="ship-obs-heading" className="ship-obs__title">Known Observations</h2>
+          <p className="ship-obs__intro">
+            We would rather tell you where the machine still stumbles than pretend it
+            does not. Here is what we are watching, and how to read around it.
+          </p>
+        </header>
+        <ul className="ship-obs__list">
+          {OBSERVATIONS.map((obs, i) => (
+            <li key={i} className="ship-obs__item">
+              <div className="ship-obs__body">
+                <p className="ship-obs__claim">{obs.claim}</p>
+                <p className="ship-obs__note">{obs.note}</p>
+              </div>
+              <span className={`ship-obs__chip ship-obs__chip--${obs.chip}`}>
+                <span className="ship-obs__chip-dot" aria-hidden="true" />
+                {CHIP_LABELS[obs.chip]}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
     </main>
   );
 }

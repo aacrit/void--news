@@ -1,9 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" width="180" height="180" role="img" aria-label="Void News">
-  <!-- Void News Apple touch icon 180 — walnut tile + brass footed Sigil. Must
-       be opaque (no transparency). iOS applies its own corner mask, so
-       full-bleed square. Explicit colors only. -->
-  <rect width="180" height="180" fill="#1C1A17"/>
-  <g transform="translate(28,28) scale(1.24)" fill="none" stroke="#D4A574" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Void News Apple touch icon 180 — CREAM PAPER tile + brass footed Sigil.
+       Must be opaque (iOS forces black onto a transparent icon), so a solid cream
+       tile. iOS applies its own corner mask, so full-bleed square. Explicit
+       colors only. -->
+  <rect width="180" height="180" fill="#F0EBDD"/>
+  <g transform="translate(28,28) scale(1.24)" fill="none" stroke="#946B15" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="50" cy="40" r="30" stroke-width="8"/>
     <line x1="12" y1="40" x2="88" y2="40" stroke-width="6"/>
     <line x1="13" y1="33" x2="12" y2="47" stroke-width="5"/>

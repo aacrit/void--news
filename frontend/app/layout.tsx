@@ -94,7 +94,7 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: `${BASE_PATH}/icon.svg`, type: "image/svg+xml" },
+      { url: `${BASE_PATH}/favicon.svg`, type: "image/svg+xml" },
       { url: `${BASE_PATH}/favicon.ico`, sizes: "32x32" },
     ],
     apple: [

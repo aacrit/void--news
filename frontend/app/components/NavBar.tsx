@@ -130,9 +130,9 @@ export default function NavBar({
             <span className="nav-history__rule" aria-hidden="true" />
             <span className="nav-history__label">History</span>
           </Link>
-          <Link href="/weekly" className="nav-history nav-weekly" aria-label="Go to the Weekly" title="Weekly">
+          <Link href="/weekly" className="nav-history nav-weekly" aria-label="Go to the Weekly Edition" title="Weekly Edition">
             <span className="nav-history__rule" aria-hidden="true" />
-            <span className="nav-history__label">Weekly</span>
+            <span className="nav-history__label">Weekly Edition</span>
           </Link>
         </nav>
 
