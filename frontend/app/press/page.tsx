@@ -60,28 +60,86 @@ export default function PressPage() {
       </section>
 
       <section className="press__kit">
-        <h2 style={{ marginTop: 0 }}>Press kit</h2>
+        <h2 style={{ marginTop: 0 }}>Brand assets</h2>
+        <p style={{ marginTop: 0, color: "var(--fg-tertiary)", fontSize: 14 }}>
+          Logos are vector SVG. Use the color version on light grounds and the
+          reversed (white) version on dark or photographic grounds. Do not
+          recolor the bias spectrum. Full usage rules live in the internal pack.
+        </p>
         <ul style={{ listStyle: "none", padding: 0 }}>
           <li className="press__kit-item">
-            <span>Brand mark (SVG, ink)</span>
-            <a href={`${BASE_PATH}/icon.svg`} download>
-              icon.svg
+            <span>Void News logo (horizontal, color)</span>
+            <a href={`${BASE_PATH}/brand/logos/void-news-horizontal-color.svg`} download>
+              void-news-horizontal-color.svg
             </a>
           </li>
           <li className="press__kit-item">
-            <span>Brand mark (PNG, transparent)</span>
-            <a href={`${BASE_PATH}/apple-touch-icon.png`} download>
-              icon@180.png
+            <span>Void News logo (horizontal, reversed)</span>
+            <a href={`${BASE_PATH}/brand/logos/void-news-horizontal-reversed.svg`} download>
+              void-news-horizontal-reversed.svg
             </a>
           </li>
           <li className="press__kit-item">
-            <span>Open Graph card</span>
-            <a href={`${BASE_PATH}/og-image.svg`} download>
-              og-image.svg
+            <span>Void News mark (Sigil icon, color)</span>
+            <a href={`${BASE_PATH}/brand/logos/void-news-icon-color.svg`} download>
+              void-news-icon-color.svg
             </a>
           </li>
           <li className="press__kit-item">
-            <span>Manifesto page (link)</span>
+            <span>Void News mark (Sigil icon, reversed)</span>
+            <a href={`${BASE_PATH}/brand/logos/void-news-icon-reversed.svg`} download>
+              void-news-icon-reversed.svg
+            </a>
+          </li>
+          <li className="press__kit-item">
+            <span>Animated Sigil (bias-sweep, SVG)</span>
+            <a href={`${BASE_PATH}/brand/void-news-sigil-animated.svg`} download>
+              void-news-sigil-animated.svg
+            </a>
+          </li>
+          <li className="press__kit-item">
+            <span>Void History logo (horizontal, color)</span>
+            <a href={`${BASE_PATH}/brand/logos/void-history-horizontal-color.svg`} download>
+              void-history-horizontal-color.svg
+            </a>
+          </li>
+          <li className="press__kit-item">
+            <span>Void Weekly logo (horizontal, color)</span>
+            <a href={`${BASE_PATH}/brand/logos/void-weekly-horizontal-color.svg`} download>
+              void-weekly-horizontal-color.svg
+            </a>
+          </li>
+          <li className="press__kit-item">
+            <span>Void Vision logo (horizontal, color)</span>
+            <a href={`${BASE_PATH}/brand/logos/void-vision-horizontal-color.svg`} download>
+              void-vision-horizontal-color.svg
+            </a>
+          </li>
+          <li className="press__kit-item">
+            <span>Color reference (all palettes, hex)</span>
+            <a href={`${BASE_PATH}/brand/colors.md`} download>
+              colors.md
+            </a>
+          </li>
+          <li className="press__kit-item">
+            <span>Social share card (Open Graph, 1200x630)</span>
+            <a href={`${BASE_PATH}/og-image.png`} download>
+              og-image.png
+            </a>
+          </li>
+        </ul>
+        <p style={{ marginBottom: 0, color: "var(--fg-tertiary)", fontSize: 14 }}>
+          Team and partners: the full internal brand pack (every lockup, icon,
+          and wordmark across color, one-color, and reversed treatments, plus
+          guidelines) lives at <code>brand/index.html</code> in the repository.
+        </p>
+      </section>
+
+      <section className="press__kit">
+        <h2 style={{ marginTop: 0 }}>Reference pages</h2>
+        <ul style={{ listStyle: "none", padding: 0 }}>
+          <li className="press__kit-item">
+            <span>Manifesto page</span>
             <Link href="/about">/about</Link>
           </li>
           <li className="press__kit-item">
