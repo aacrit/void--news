@@ -728,10 +728,57 @@
    ========================================================================== */
 
 @media (min-width: 1024px) {
-  /* Vertical scroll for tall columns; horizontal scroll stays available ONLY as
-     a fallback on genuinely narrow desktops (~1024-1200) where 5 columns still
-     cannot fit. At >=1280 the wide left column fits all five without scrolling. */
-  .ship-board__scroll { overflow: auto; }
+  /* The board panel no longer scrolls vertically as one unit: each column scrolls
+     its own card list. The panel itself only keeps the HORIZONTAL fallback so the
+     5 columns can slide sideways on narrow desktops (~1024-1200); at >=1280 the
+     wide left column fits all five without any horizontal scroll. */
+  .ship-board__scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  /* Fill the panel height and give the single row a definite height so columns
+     stretch to it (align-items:stretch) instead of sizing to their content. */
+  .ship-board {
+    height: 100%;
+    min-height: 0;
+    align-items: stretch;
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  /* Each column is a fixed-height unit: header pinned as the non-scrolling top,
+     only its own card list scrolls. */
+  .ship-column {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    max-height: 100%;
+  }
+
+  .ship-column__header {
+    flex: 0 0 auto;
+    margin-bottom: 0;
+  }
+
+  .ship-column__cards {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    /* Keep scroll gestures inside the column; never chain to the page. */
+    overscroll-behavior: contain;
+    padding-top: var(--space-3);
+    padding-right: 2px;
+    /* Subtle, consistent, theme-aware scrollbars across all five columns. */
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+
+  .ship-column__cards::-webkit-scrollbar { width: 6px; }
+  .ship-column__cards::-webkit-scrollbar-track { background: transparent; }
+  .ship-column__cards::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 3px;
+  }
 }
 
 .ship-board {
@@ -750,15 +797,6 @@
   margin-bottom: var(--space-3);
   padding-bottom: var(--space-2);
   border-bottom: 2px solid var(--border-strong);
-}
-
-@media (min-width: 1024px) {
-  .ship-board__scroll .ship-column__header {
-    position: sticky;
-    top: 0;
-    z-index: 3;
-    background: var(--bg-card);
-  }
 }
 
 .ship-column__title {
