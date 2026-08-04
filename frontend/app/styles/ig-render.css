@@ -25,7 +25,16 @@
 body:has(.ig-canvas) .mob-nav,
 body:has(.ig-canvas) .floating-player,
 body:has(.ig-canvas) .floating-player-shell,
-body:has(.ig-canvas) .skip-to-content {
+body:has(.ig-canvas) .skip-to-content,
+/* void --onair was re-enabled 2026-06-27, adding newer global players with
+   different root classes the original hide-list never covered. Without these
+   the mobile tab bar / mini-player / brief pill / skybox / floating player
+   leak into the 1080x1350 capture. */
+body:has(.ig-canvas) .mtb,
+body:has(.ig-canvas) .mmp,
+body:has(.ig-canvas) .mbp,
+body:has(.ig-canvas) .skb,
+body:has(.ig-canvas) .fp {
   display: none !important;
 }
 
