@@ -142,8 +142,8 @@ export default function NavBar({
               still resolve at /games and /paper for direct URL access. */}
           <nav className="nav-pages" aria-label="Pages">
             <PageToggle activePage="feed" />
-            <Link href="/ship" className="nav-page" aria-label="Send feedback" title="Feedback">
-              Feedback
+            <Link href="/ship" className="nav-page" aria-label="Ship: request it, vote, watch it ship" title="Ship">
+              Ship
             </Link>
             <Link href="/about" className="nav-page" aria-label="About Void News" title="About">
               About

@@ -136,9 +136,9 @@ function formatWeekRange(start: string, end: string): string {
   const eYear = e.getFullYear();
 
   if (sMonth === eMonth) {
-    return `${sMonth} ${sDay}\u2009\u2013\u2009${eDay}, ${eYear}`;
+    return `${sMonth} ${sDay} to ${eDay}, ${eYear}`;
   }
-  return `${sMonth} ${sDay}\u2009\u2013\u2009${eMonth} ${eDay}, ${eYear}`;
+  return `${sMonth} ${sDay} to ${eMonth} ${eDay}, ${eYear}`;
 }
 
 function formatArchiveRange(start: string, end: string): string {
