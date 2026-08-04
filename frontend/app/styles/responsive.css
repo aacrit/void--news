@@ -16,6 +16,21 @@
   display: none;
 }
 
+/* Belt-and-suspenders: MobileFeed (.mf) is chosen by the React `isMobile`
+   branch, which can go stale on a back/forward restore. If it ever renders at a
+   desktop width, cap it at the same canvas width as .page-main and centre it so
+   it can NEVER spill edge-to-edge — the cap holds even if both the JS state and
+   the [data-viewport] attribute are wrong. .mf normally sits inside the already
+   capped .page-main, so on a correct render this is a no-op; below 768px .mf is
+   full-bleed as designed (no cap here). Direct media query, re-evaluated live. */
+@media (min-width: 768px) {
+  .mf {
+    max-width: min(92vw, 1600px);
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
 /* ---- Tablet (768px+) --------------------------------------------------- */
 
 @media (min-width: 768px) {
@@ -287,6 +302,17 @@
      on all sides. Bottom padding overridden later (line ~769) by tab bar clearance. */
   .page-main {
     padding: 0 var(--space-5);
+    /* Mobile full-bleed: reclaim the 8% that min(92vw,1600px) would inset on a
+       phone (the rev-58 dead-margin fix). This is the direct media-query
+       counterpart to the .page-main base cap in layout.css — a plain cascade
+       swap, re-evaluated live on back/forward restore, so it replaces the old
+       --canvas-max:100% custom-property swap that froze after such restores. */
+    max-width: 100%;
+  }
+
+  /* Footer tracks the canvas: full-bleed on phones to match .page-main above. */
+  .site-footer {
+    max-width: 100%;
   }
 
   .site-footer {

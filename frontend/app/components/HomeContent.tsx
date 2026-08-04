@@ -270,6 +270,25 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
     const sync = (matches: boolean) => {
       setIsMobile(matches);
       document.documentElement.setAttribute("data-viewport", matches ? "mobile" : "desktop");
+      // Canvas-cap freeze workaround (measured on void-news.pages.dev, 2026-08).
+      // .page-main carries `filter: var(--cin-grade)`, which makes it a composited
+      // layer whose COMPUTED STYLE Chromium restores STALE on a back/forward
+      // navigation across the 767px breakpoint (load mobile, resize to desktop
+      // while off-page, navigate back). The media-query cascade is never re-run
+      // for this element, so its max-width stays frozen at the mobile value
+      // (--canvas-max flips to 100% under 767px) and the whole canvas spills
+      // edge-to-edge at desktop width. Reflow, class toggles, even display:none
+      // do NOT clear the freeze; only writing the max-width property directly
+      // re-resolves it. So re-assert the cap inline here, mirroring the CSS
+      // literal in layout.css (.page-main). The value string flips across the
+      // breakpoint, which guarantees style invalidation. This runs on mount, on
+      // every breakpoint change, and on pageshow (see onPageShow below), covering
+      // every restore path. The unfiltered .site-footer recomputes on its own, so
+      // its pure-CSS cap in layout.css needs no nudge. NOTE: the base CSS cap
+      // still owns first paint (no FOUC, correct with JS disabled); this only
+      // corrects the post-restore frozen value on the one composited element.
+      const pm = document.querySelector<HTMLElement>(".page-main");
+      if (pm) pm.style.maxWidth = matches ? "100%" : "min(92vw, 1600px)";
     };
     sync(mql.matches);
     const handler = (e: MediaQueryListEvent) => sync(e.matches);

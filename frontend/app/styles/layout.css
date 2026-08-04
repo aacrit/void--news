@@ -15,7 +15,20 @@
 
 .page-main {
   flex: 1;
-  max-width: var(--canvas-max);
+  /* Canvas cap — LITERAL viewport expression, deliberately NOT var(--canvas-max).
+     tokens.css swaps --canvas-max to 100% under @media (max-width:767px). When
+     the page is restored via a back/forward navigation across the 767px
+     breakpoint (load mobile, resize to desktop off-page, navigate back), Chromium
+     re-resolves the custom property on :root (it reads the desktop value again)
+     but does NOT re-resolve the var() substitution already baked into this
+     max-width, so the cap stays frozen at the stale mobile 100% and the canvas
+     spills edge-to-edge. Measured on void-news.pages.dev 2026-08: page-main
+     1434px at 1440 viewport with --canvas-max correctly reading min(92vw,1600px).
+     A direct min(92vw,1600px) has no var() layer to freeze — the vw term is
+     re-resolved live on every restore. Mobile full-bleed is the 767px override
+     in responsive.css (max-width:100%), a direct media-query cascade swap which
+     (unlike a swapped custom property) IS reliably re-evaluated on restore. */
+  max-width: min(92vw, 1600px);
   margin: 0 auto;
   /* Mobile-first: --space-5 (~16px) at 375px, promoted to --space-7 at 768px+.
      Small top pad (space-3) replaces the removed .home-flag strip so the feed
@@ -211,7 +224,12 @@
   margin-top: var(--space-6);
   /* Match page-main padding so footer border aligns with content canvas */
   padding: var(--space-5) var(--space-5);
-  max-width: var(--canvas-max);
+  /* Literal cap, mirroring .page-main — NOT var(--canvas-max). See the
+     .page-main note above: a media-query-swapped custom property freezes its
+     var() substitution across a back/forward restore, so the footer would
+     otherwise spill edge-to-edge while the feed above it is capped. Mobile
+     full-bleed is the 767px override in responsive.css. */
+  max-width: min(92vw, 1600px);
   margin-left: auto;
   margin-right: auto;
   width: 100%;

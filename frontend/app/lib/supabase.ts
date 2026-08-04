@@ -349,6 +349,9 @@ export async function fetchWeeklyArchive(edition?: string): Promise<any[]> {
   let query = _client
     .from('weekly_digests')
     .select(cols)
+    // Prod launched at issue_number 19; hide the earlier dev issues (and their
+    // broken archive entries) from the public archive.
+    .gte('issue_number', 19)
     .order('created_at', { ascending: false })
     .limit(52);
 

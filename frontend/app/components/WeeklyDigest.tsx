@@ -10,7 +10,6 @@ import type {
   WeeklyOpinion,
   WeeklyContestedStory,
 } from "../lib/types";
-import { EDITIONS } from "../lib/types";
 import { fetchWeeklyDigest, fetchWeeklyArchive } from "../lib/supabase";
 import { AUDIO_ENABLED } from "../lib/audioGate";
 import { useAudio, type EpisodeMeta } from "./AudioProvider";
@@ -522,8 +521,13 @@ function CoverBody({
   );
 }
 
-/* --- C2. void --Editorial (the single argued editorial, its own full-width
-   section after the cover features) --- */
+/* --- C2. void --Editorial (the single argued editorial) --------------------
+   Rendered as a magazine pull-out BOX: on desktop it floats right inside the
+   cover-zone content flow so the top-story essay wraps around it and then
+   reflows full-width the moment the box ends. Below ~900px it un-floats to a
+   full-width boxed block (see .wk-editorial-float in weekly.css). No inset or
+   tinted background: the box is defined by a border + a strong left rule +
+   padding only, on the same paper as the page. */
 
 function SectionEditorial({
   headline,
@@ -534,28 +538,26 @@ function SectionEditorial({
   text: string;
   lean: string | null;
 }) {
-  const [ref, visible] = useScrollReveal(0.1);
   const paras = (text || "").split("\n\n").filter(Boolean);
   if (paras.length === 0) return null;
   return (
-    <section
-      ref={ref as React.RefObject<HTMLElement>}
-      className={`wk-editorial-section wk-reveal${visible ? " wk-reveal--visible" : ""}`}
+    <aside
+      className="wk-editorial-float"
       aria-labelledby="wk-editorial-heading"
     >
-      <h2 className="wk-section-label" id="wk-editorial-heading">Editorial</h2>
-      <article className="wk-editorial">
-        <span className="wk-editorial__lens">
-          Through a {leanBadgeLabel(lean || "center").toLowerCase()} lens
-        </span>
-        {headline?.trim() && <h3 className="wk-editorial__headline">{headline}</h3>}
-        <div className="wk-editorial__text">
-          {paras.map((para, i) => (
-            <p key={i}>{para}</p>
-          ))}
-        </div>
-      </article>
-    </section>
+      <h2 className="wk-section-label wk-editorial-float__label" id="wk-editorial-heading">
+        Editorial
+      </h2>
+      <span className="wk-editorial__lens">
+        Through a {leanBadgeLabel(lean || "center").toLowerCase()} lens
+      </span>
+      {headline?.trim() && <h3 className="wk-editorial__headline">{headline}</h3>}
+      <div className="wk-editorial__text">
+        {paras.map((para, i) => (
+          <p key={i}>{para}</p>
+        ))}
+      </div>
+    </aside>
   );
 }
 
@@ -699,6 +701,15 @@ function ContestedSection({ stories }: { stories: WeeklyContestedStory[] }) {
        component, so it shares the daily transport, broadcast console, and
        playlist. --- */
 
+/* Prod launched at weekly issue_number 19 (the week of 2026-07-27), so the first
+   prod issue reads "Issue 1". The DB keeps its real sequence; this only shifts
+   the DISPLAY. Dev issues (< 19) are filtered out of the archive query, so their
+   broken entries never appear. */
+const WEEKLY_LAUNCH_ISSUE = 19;
+function weeklyDisplayNo(n: number): number {
+  return Math.max(1, n - WEEKLY_LAUNCH_ISSUE + 1);
+}
+
 /* --- I. Issue Archive --- */
 
 interface ArchiveEntry {
@@ -738,7 +749,7 @@ function IssueArchive({
             key={entry.id}
             className={`wk-archive__item${entry.id === currentId ? " wk-archive__item--current" : ""}`}
           >
-            <span className="wk-archive__issue">#{entry.issue_number}</span>
+            <span className="wk-archive__issue">#{weeklyDisplayNo(entry.issue_number)}</span>
             <span className="wk-archive__range">
               {formatArchiveRange(entry.week_start, entry.week_end)}
             </span>
@@ -746,52 +757,6 @@ function IssueArchive({
         ))}
       </div>
     </section>
-  );
-}
-
-/* --- J. Editorial-rail furniture: "In This Issue" index + colophon --------
-   These fill the cover-zone rail so a short editorial never leaves a blank
-   gap beside the taller story column. */
-
-interface RailIndexItem {
-  href: string;
-  label: string;
-}
-
-function RailIndex({ items }: { items: RailIndexItem[] }) {
-  if (items.length === 0) return null;
-  return (
-    <nav className="wk-rail-index" aria-label="In this issue">
-      <span className="wk-rail-index__label">In This Issue</span>
-      <ul className="wk-rail-index__list">
-        {items.map((item) => (
-          <li key={item.href}>
-            <a href={item.href} className="wk-rail-index__link">
-              {item.label}
-            </a>
-          </li>
-        ))}
-      </ul>
-    </nav>
-  );
-}
-
-function RailColophon({
-  issueNumber,
-  weekRange,
-  editionLabel,
-}: {
-  issueNumber: number;
-  weekRange: string;
-  editionLabel: string;
-}) {
-  return (
-    <div className="wk-rail-colophon">
-      <span className="wk-rail-colophon__mark">VOID WEEKLY</span>
-      <span className="wk-rail-colophon__line">Issue #{issueNumber}</span>
-      <span className="wk-rail-colophon__line">{weekRange}</span>
-      <span className="wk-rail-colophon__line wk-rail-colophon__edition">{editionLabel} Edition</span>
-    </div>
   );
 }
 
@@ -862,10 +827,7 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [digest?.id, archive]);
 
-  /* ── Derived cover + rail data (guarded against a null digest) ── */
-  const editionLabel = digest
-    ? EDITIONS.find((e) => e.slug === digest.edition)?.label ?? "World"
-    : "World";
+  /* ── Derived cover data (guarded against a null digest) ── */
   const weekRange = digest ? formatWeekRange(digest.week_start, digest.week_end) : "";
   const coverHeadline = digest
     ? digest.cover_headline || (digest.cover_text?.[0]?.headline ?? "")
@@ -891,21 +853,6 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
     }
   }
 
-  /* "In This Issue" index — only the sections that actually exist this week. */
-  const hasPerspectives = !!(
-    digest?.opinion_left?.length ||
-    digest?.opinion_center?.length ||
-    digest?.opinion_right?.length
-  );
-  const hasBrief = !!digest?.recap_stories?.length;
-  const hasContested = !!digest?.contested_stories?.length;
-  const hasArchive = archive.length > 1;
-  const indexItems: RailIndexItem[] = [];
-  if (hasPerspectives) indexItems.push({ href: "#wk-perspectives", label: "Perspectives" });
-  if (hasBrief) indexItems.push({ href: "#wk-brief", label: "Week in Brief" });
-  if (hasContested) indexItems.push({ href: "#wk-contested", label: "Most Contested" });
-  if (hasArchive) indexItems.push({ href: "#wk-archive", label: "Archive" });
-
   return (
     <div className="wk-page">
       {/* Full-screen cinematic cover — the first thing on arrival. Full-bleed
@@ -915,7 +862,7 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
       {digest && !loading && (
         <CinematicCover
           nameplate={<SigilWordmark product="WEEKLY" height={44} accent="var(--palette-weekly)" />}
-          issueLine={`Issue #${digest.issue_number} · ${weekRange}`}
+          issueLine={`Issue #${weeklyDisplayNo(digest.issue_number)} · ${weekRange}`}
           headline={coverHeadline}
           coverlines={coverlines}
           imageUrl={digest.cover_image_url}
@@ -978,50 +925,38 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
 
         {digest && !loading && (
           <>
-            {/* B + C. Cover zone — the top story (hero) and the cover features
-                run in the main column; the argued Editorial is pinned in a right
-                rail beside them, aligned to the top-story headline (magazine
-                feel). The rail is a flex column that always fills the story
-                column's height: sticky editorial + "In This Issue" index up
-                top, a decorative flex-grow filler, then the colophon pinned at
-                the bottom — so a short editorial never leaves a blank gap. Rail
-                drops below on mobile. */}
-            <div
-              className={`wk-cover-zone${
-                digest.opinion_text ? "" : " wk-cover-zone--no-rail"
-              }`}
-            >
-              <div className="wk-cover-zone__main">
-                <CoverHero
-                  headline={coverHeadline}
-                  imageUrl={digest.cover_image_url}
-                  imageAttribution={digest.cover_image_attribution}
-                  imageCaption={digest.cover_text?.[0]?.image_caption}
-                />
+            {/* B + C. Cover zone — a single flowing content column. The hero
+                spans full width above; the cover essay + 2nd feature then flow
+                inside .wk-cover-flow, where the argued Editorial floats right
+                (desktop) as a bordered magazine pull-out box. The essay text
+                wraps to the left of the box and reflows full-width the instant
+                the box ends — short editorial, brief wrap then full width; long
+                editorial, wrap the whole way. .wk-cover-flow is a flow-root, so
+                it fully contains the float and the sections below always start
+                clean beneath it. Below ~900px the box un-floats to a full-width
+                bordered block stacked after the hero, before the essay. */}
+            <div className="wk-cover-zone">
+              <CoverHero
+                headline={coverHeadline}
+                imageUrl={digest.cover_image_url}
+                imageAttribution={digest.cover_image_attribution}
+                imageCaption={digest.cover_text?.[0]?.image_caption}
+              />
+              <div className="wk-cover-flow">
+                {digest.opinion_text && (
+                  <SectionEditorial
+                    headline={digest.opinion_headline}
+                    text={digest.opinion_text}
+                    lean={digest.opinion_lean}
+                  />
+                )}
                 {digest.cover_text && digest.cover_text.length > 0 && (
                   <CoverBody stories={digest.cover_text} />
                 )}
+                {/* Clearfix: guarantees the wrap zone is fully closed even on
+                    engines where flow-root containment is disabled. */}
+                <div className="wk-cover-flow__clear" aria-hidden="true" />
               </div>
-              {digest.opinion_text && (
-                <aside className="wk-cover-zone__rail">
-                  <div className="wk-rail__sticky">
-                    <SectionEditorial
-                      headline={digest.opinion_headline}
-                      text={digest.opinion_text}
-                      lean={digest.opinion_lean}
-                    />
-                    <RailIndex items={indexItems} />
-                  </div>
-                  <div className="wk-rail-filler" aria-hidden="true">
-                    <span className="wk-rail-filler__rule" />
-                  </div>
-                  <RailColophon
-                    issueNumber={digest.issue_number}
-                    weekRange={weekRange}
-                    editionLabel={editionLabel}
-                  />
-                </aside>
-              )}
             </div>
 
             <RevealFlourish />
