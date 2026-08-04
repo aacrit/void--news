@@ -1856,9 +1856,11 @@
   position: sticky;
   top: 0;
   z-index: var(--z-nav);
-  background-color: var(--glass-bg);
-  backdrop-filter: blur(12px) saturate(1.2);
-  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  /* OPAQUE, not the translucent --glass-bg: the masthead is sticky, so a
+     translucent ground let feed content bleed through it while scrolling.
+     Dropping backdrop-filter also removes the composited layer that used to
+     freeze .nav-inner's max-width on a bfcache restore. */
+  background-color: var(--bg-primary);
   border-bottom: 1px solid var(--glass-border);
   transition: background-color var(--dur-morph) var(--ease-cinematic);
 }
