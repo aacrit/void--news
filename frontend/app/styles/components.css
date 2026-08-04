@@ -1974,7 +1974,11 @@ button:focus-visible .sigil-word__beam {
 }
 
 .nav-inner {
-  max-width: var(--canvas-max);
+  /* Literal cap, not var(--canvas-max): .nav-header is a composited layer
+     (filter), so the media-swapped custom property freezes its max-width on a
+     bfcache/back restore across the breakpoint (same bug fixed on .page-main).
+     A direct value + the @media(max-width:767px) override re-evaluate reliably. */
+  max-width: min(92vw, 1600px);
   margin: 0 auto;
   /* Mobile-first: --space-5 (~16px) horizontal; promoted to --space-7 at 768px+.
      Vertical padding reduced from --space-3 to --space-2 for single-row compactness. */

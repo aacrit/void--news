@@ -315,6 +315,13 @@
     max-width: 100%;
   }
 
+  /* Nav tracks the canvas on phones — literal counterpart to the .nav-inner
+     base cap; re-evaluated live on back/forward restore (composited-layer
+     freeze guard, same as .page-main). */
+  .nav-inner {
+    max-width: 100%;
+  }
+
   .site-footer {
     /* Shorthand overrides the base rule's padding on all sides.
        margin-bottom clears the fixed bottom nav + home indicator. */
