@@ -381,7 +381,9 @@ def find_cover_image_for_cluster(
 
                     return {
                         "url": img_url,
-                        "attribution": f"Image via {source_name}" if source_name else "Publisher image",
+                        # Omit the credit when the publisher is unknown rather
+                        # than showing a placeholder-sounding "Publisher image".
+                        "attribution": f"Image via {source_name}" if source_name else "",
                         "source": "og_image",
                     }
     except Exception as e:

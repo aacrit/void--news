@@ -263,7 +263,9 @@ def cache_cluster_images(
         if img_url:
             result = _download(img_url)
             if result:
-                attribution = f"Image via {source_name}" if source_name else "Publisher image"
+                # Omit the credit entirely when the publisher is unknown rather
+                # than showing a placeholder-sounding "Publisher image".
+                attribution = f"Image via {source_name}" if source_name else ""
 
         # --- Strategy 2: Wikimedia Commons fallback ---
         if not result:

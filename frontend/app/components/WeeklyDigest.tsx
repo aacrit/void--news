@@ -116,12 +116,19 @@ function stripTimelineFromText(text: string): string {
   return kept.join("\n\n");
 }
 
-/* Pick a single magazine-style pull-quote from a cover essay: the first
-   self-contained sentence in a comfortable length band, drawn from existing
-   text (no generation). Returns "" if nothing suitable. */
+/* Pick a single magazine-style pull-quote from a cover essay, drawn from
+   existing text (no generation). The quote floats right after the opening
+   paragraph, so it must NOT lift the essay's opening line (that would repeat
+   visible copy word for word). Skip the first paragraph entirely and choose a
+   later, distinct sentence in a comfortable length band. Returns "" if none. */
 function pickPullQuote(text: string): string {
-  const clean = stripTimelineFromText(text || "").replace(/\s+/g, " ").trim();
-  const sentences = clean.split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter(Boolean);
+  const paras = stripTimelineFromText(text || "")
+    .split("\n\n")
+    .map((p) => p.trim())
+    .filter(Boolean);
+  const body = paras.slice(1).join(" ").replace(/\s+/g, " ").trim();
+  if (!body) return "";
+  const sentences = body.split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter(Boolean);
   const inBand = sentences.find((s) => s.length >= 70 && s.length <= 150);
   return inBand || sentences.find((s) => s.length >= 45 && s.length <= 200) || "";
 }
@@ -575,9 +582,9 @@ function OpinionCard({ op }: { op: WeeklyOpinion }) {
         <span className="wk-opinion__badge">
           {leanBadgeLabel(op.lean)}
         </span>
-        {op.topic && (
-          <span className="wk-opinion__topic">{op.topic}</span>
-        )}
+        {/* The raw cluster title (op.topic) rendered ALL-CAPS above the real
+            headline is a redundant machine label; dropped. The lean badge plus
+            the columnist's own headline carry the card. */}
       </div>
       {op.headline?.trim() && <h3 className="wk-opinion__headline">{op.headline}</h3>}
       <div className="wk-opinion__text">
