@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'draft | publish | dry-run-publish | seed-launch | cleanup'
+        description: 'draft | publish | dry-run-publish | cleanup'
         required: true
         default: 'draft'
         type: choice
@@ -20,8 +20,16 @@ on:
           - draft
           - publish
           - dry-run-publish
-          - seed-launch
           - cleanup
+      track:
+        description: 'draft mode only: which track to generate'
+        required: false
+        default: 'void'
+        type: choice
+        options:
+          - void
+          - history
+          - weekly
 
 jobs:
   ig-pipeline:
@@ -41,8 +49,15 @@ jobs:
               *)               MODE="draft" ;;
             esac
           fi
+          # Track only applies to draft mode. Daily cron always generates the
+          # void trio; workflow_dispatch may override to history or weekly.
+          TRACK="${{ inputs.track }}"
+          if [ -z "$TRACK" ]; then
+            TRACK="void"
+          fi
           echo "mode=$MODE" >> "$GITHUB_OUTPUT"
-          echo "Mode: $MODE"
+          echo "track=$TRACK" >> "$GITHUB_OUTPUT"
+          echo "Mode: $MODE | Track: $TRACK"
 
       # ---- Setup ----------------------------------------------------------
       - uses: actions/setup-python@v5
@@ -54,24 +69,24 @@ jobs:
         run: pip install -r pipeline/requirements.txt
 
       - name: Install Playwright Chromium
-        if: steps.mode.outputs.mode == 'draft' || steps.mode.outputs.mode == 'seed-launch'
+        if: steps.mode.outputs.mode == 'draft'
         run: playwright install chromium --with-deps
 
       - uses: actions/setup-node@v4
-        if: steps.mode.outputs.mode == 'draft' || steps.mode.outputs.mode == 'seed-launch'
+        if: steps.mode.outputs.mode == 'draft'
         with:
           node-version: 20
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install frontend dependencies
-        if: steps.mode.outputs.mode == 'draft' || steps.mode.outputs.mode == 'seed-launch'
+        if: steps.mode.outputs.mode == 'draft'
         working-directory: frontend
         run: npm ci
 
       # ---- Mode: draft (generate + capture + caption) ---------------------
       - name: Start Next.js dev server
-        if: steps.mode.outputs.mode == 'draft' || steps.mode.outputs.mode == 'seed-launch'
+        if: steps.mode.outputs.mode == 'draft'
         working-directory: frontend
         env:
           NEXT_PUBLIC_BASE_PATH: ""
@@ -86,22 +101,15 @@ jobs:
           nohup npx next dev --port 3000 > /tmp/next-dev.log 2>&1 &
           echo $! > /tmp/next-dev.pid
 
-      - name: Seed launch posts (one-shot)
-        if: steps.mode.outputs.mode == 'seed-launch'
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: python -m pipeline.social.ig_generator --seed-all-launch
-
       - name: Generate next draft
         if: steps.mode.outputs.mode == 'draft'
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: python -m pipeline.social.ig_generator
+        run: python -m pipeline.social.ig_generator --track ${{ steps.mode.outputs.track }}
 
       - name: Capture slides (Playwright)
-        if: steps.mode.outputs.mode == 'draft' || steps.mode.outputs.mode == 'seed-launch'
+        if: steps.mode.outputs.mode == 'draft'
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
@@ -109,7 +117,7 @@ jobs:
         run: python -m pipeline.social.ig_capture --wait-server
 
       - name: Generate captions (Gemini flash-lite)
-        if: steps.mode.outputs.mode == 'draft' || steps.mode.outputs.mode == 'seed-launch'
+        if: steps.mode.outputs.mode == 'draft'
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
@@ -117,7 +125,7 @@ jobs:
         run: python -m pipeline.social.ig_caption
 
       - name: Stop dev server
-        if: always() && (steps.mode.outputs.mode == 'draft' || steps.mode.outputs.mode == 'seed-launch')
+        if: always() && steps.mode.outputs.mode == 'draft'
         run: |
           if [ -f /tmp/next-dev.pid ]; then
             kill "$(cat /tmp/next-dev.pid)" || true
