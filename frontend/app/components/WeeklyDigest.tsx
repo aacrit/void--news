@@ -15,7 +15,6 @@ import { AUDIO_ENABLED } from "../lib/audioGate";
 import { useAudio, type EpisodeMeta } from "./AudioProvider";
 import Footer from "./Footer";
 import ThemeToggle from "./ThemeToggle";
-import LogoFull from "./LogoFull";
 import SigilWordmark from "./SigilWordmark";
 
 /* ---------------------------------------------------------------------------
@@ -884,17 +883,32 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
           the reader here, at the boundary where the sticky topbar takes over. */}
       <div id="wk-page-1" className="wk-page-anchor" aria-hidden="true" />
 
-      {/* Compact sticky topbar for the rest of the page: back to Void News, a
-          small VOID WEEKLY, and the theme toggle. */}
+      {/* Compact sticky three-zone topbar (matches void --history):
+          LEFT small "← VOID NEWS" back-to-parent mark -> /;
+          CENTER large VOID WEEKLY product logo (red) -> /weekly;
+          RIGHT theme toggle. */}
       <div className="wk-topbar">
-        <Link href="/" className="wk-back" aria-label="Back to Void News">
-          <span className="wk-back__arrow" aria-hidden="true">&larr;</span>
-          <LogoFull height={20} className="wk-back__logo" />
+        <div className="wk-topbar__left">
+          <Link href="/" className="wk-back" aria-label="Back to Void News">
+            <span className="wk-back__arrow" aria-hidden="true">&larr;</span>
+            <span className="wk-back__word">
+              <SigilWordmark product="NEWS" height={14} />
+            </span>
+          </Link>
+        </div>
+        <Link href="/weekly" className="wk-topbar__brand" aria-label="Void Weekly home">
+          {/* Two size variants, toggled by CSS so the centered hero never
+              overflows a narrow phone. Both are aria-hidden; the Link names it. */}
+          <span className="wk-topbar__brand-lg">
+            <SigilWordmark product="WEEKLY" height={26} accent="var(--palette-weekly)" />
+          </span>
+          <span className="wk-topbar__brand-sm">
+            <SigilWordmark product="WEEKLY" height={21} accent="var(--palette-weekly)" />
+          </span>
         </Link>
-        <span className="wk-topbar__mark" aria-hidden="true">
-          <SigilWordmark product="WEEKLY" height={16} accent="var(--palette-weekly)" />
-        </span>
-        <ThemeToggle />
+        <div className="wk-topbar__actions">
+          <ThemeToggle />
+        </div>
       </div>
 
       <main
