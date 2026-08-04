@@ -44,7 +44,7 @@ export type IgPostState =
   | "failed"
   | "rejected";
 
-export type IgPillar = "receipt" | "method" | "history" | "brief" | "bts" | "heatmap";
+export type IgPillar = "vision" | "method" | "example" | "history" | "weekly";
 
 export interface IgPostRow {
   id: string;
@@ -69,58 +69,131 @@ export interface IgPostRow {
   retry_count: number;
 }
 
-/* Slide spec shapes — discriminated by pillar. See plan §5. */
-export type SlideSpec =
-  | ReceiptSlideSpec
-  | MethodSlideSpec
-  | HistorySlideSpec
-  | BriefSlideSpec
-  | HeatmapSlideSpec;
+/* ---------------------------------------------------------------------------
+   Slide spec shapes — three launch pillars, each a 3-slide carousel.
+   Discriminated by `kind`; the `variant` selects the slide within a carousel
+   (hook -> substance -> cta). The pipeline generator emits EXACTLY these shapes.
 
-export interface ReceiptSlideSpec {
-  kind: "receipt";
-  topic: string;
-  headlines: Array<{
-    outlet: string;
-    lean_score: number;
-    framing_score?: number;
-    headline: string;
-  }>;
-  caption?: string;
+   Track 1 — "Void News Social" (the daily trio):
+     VISION  (evergreen manifesto)     hook | stance | cta
+     METHOD  (evergreen bias explainer) hook | sample | cta
+     EXAMPLE (dynamic real top story)  hook | spectrum | cta
+   Track 2 — "Void History Social" (adhoc, umber):
+     HISTORY  hook | perspectives | cta
+   Track 3 — "Void Weekly Social" (adhoc, red):
+     WEEKLY   hook | stories | cta
+   --------------------------------------------------------------------------- */
+export type SlideSpec =
+  | VisionSlideSpec
+  | MethodSlideSpec
+  | ExampleSlideSpec
+  | HistorySlideSpec
+  | WeeklySlideSpec;
+
+/** One outlet's take on a shared event — reused by EXAMPLE spectrum + hook. */
+export interface OutletHeadline {
+  outlet: string;
+  /** 0 (far left) .. 50 (center) .. 100 (far right). Drives dot position + colour. */
+  lean_score: number;
+  headline: string;
 }
 
+/* ── VISION ────────────────────────────────────────────────────────────────
+   hook:   kicker + headline (the provocation about the algorithmic feed)
+   stance: kicker + headline (short) + body (the core principle)
+   cta:    headline (the sign-off) + url                                       */
+export interface VisionSlideSpec {
+  kind: "vision";
+  variant: "hook" | "stance" | "cta";
+  /** small-caps label. hook + stance. */
+  kicker?: string;
+  /** hook: the provocation. stance: short lead line. cta: the sign-off line. */
+  headline?: string;
+  /** stance: the principle paragraph. */
+  body?: string;
+  /** cta: the site URL, e.g. "void-news.pages.dev". */
+  url?: string;
+}
+
+/* ── METHOD ────────────────────────────────────────────────────────────────
+   hook:   kicker + headline ("Bias isn't the outlet. It's the words.")
+   sample: axis_name + sample{text,highlights} + score + lean_label + principle
+   cta:    headline + url                                                       */
 export interface MethodSlideSpec {
   kind: "method";
-  axis_name: string;
-  brief: string;
-  signals?: string;
+  variant: "hook" | "sample" | "cta";
+  kicker?: string;
+  /** hook + cta headline. */
+  headline?: string;
+  /** sample: the bias axis being demonstrated, e.g. "Political Lean". */
+  axis_name?: string;
+  /** sample: the real sentence; highlight ranges become terracotta <mark> spans. */
   sample?: { text: string; highlights?: Array<{ start: number; end: number }> };
+  /** sample: 0..100 lean score for the chip; coloured on the --bias-* scale. */
+  score?: number;
+  /** sample: human label for the score, e.g. "Center-left". */
+  lean_label?: string;
+  /** sample: one-line principle under the sample. */
   principle?: string;
+  /** cta: the site URL. */
+  url?: string;
 }
 
+/* ── EXAMPLE ───────────────────────────────────────────────────────────────
+   hook:     topic + headline (the real event) + outlet_count
+   spectrum: topic + headlines[] (each outlet plotted on the lean axis)
+   cta:      headline + url                                                     */
+export interface ExampleSlideSpec {
+  kind: "example";
+  variant: "hook" | "spectrum" | "cta";
+  /** hook + spectrum kicker: the event topic, e.g. "SUPREME COURT". */
+  topic?: string;
+  /** hook: the event line. cta: the sign-off line. */
+  headline?: string;
+  /** hook: number of outlets covering the event (for "N outlets"). */
+  outlet_count?: number;
+  /** spectrum: the outlets to plot (recommend 4-6 for legibility). */
+  headlines?: OutletHeadline[];
+  /** cta: the site URL. */
+  url?: string;
+}
+
+/* ── HISTORY (adhoc track, umber) ────────────────────────────────────────────
+   hook:         date + headline (the event title)
+   perspectives: perspectives[] (each lens + its account — no winner declared)
+   cta:          headline (sign-off) + url                                      */
 export interface HistorySlideSpec {
   kind: "history";
-  event_slug: string;
-  date: string;
-  lead_fact?: string;
-  perspective?: { lens: string; voice: string };
-  image_url?: string;
-  cta?: string;
+  variant: "hook" | "perspectives" | "cta";
+  /** optional slug for provenance / caption linkage. */
+  event_slug?: string;
+  /** hook: the dateline, e.g. "August 1947". */
+  date?: string;
+  /** hook: the event title. cta: the sign-off line. */
+  headline?: string;
+  /** perspectives: each historiographic lens and its one-line account. */
+  perspectives?: Array<{ lens: string; voice: string }>;
+  /** cta: the site URL. */
+  url?: string;
 }
 
-export interface BriefSlideSpec {
-  kind: "brief";
-  variant: "pullquote" | "bts" | "manifesto";
-  content: string;
-  attribution?: string;
-  stats?: Record<string, string | number>;
-}
-
-export interface HeatmapSlideSpec {
-  kind: "heatmap";
-  topic: string;
-  countries: Array<{ code: string; lean: number; source_count: number }>;
-  caption?: string;
+/* ── WEEKLY (adhoc track, red) ───────────────────────────────────────────────
+   hook:    issue_number + headline (cover headline) + deck
+   stories: stories[] (the week's key / most-contested stories)
+   cta:     headline (sign-off) + url                                           */
+export interface WeeklySlideSpec {
+  kind: "weekly";
+  variant: "hook" | "stories" | "cta";
+  /** hook: the issue number, e.g. 14. */
+  issue_number?: number;
+  /** hook: the cover headline. cta: the sign-off line. */
+  headline?: string;
+  /** hook: the cover deck / standfirst under the headline. */
+  deck?: string;
+  /** stories: the week's key stories, one per row. `tag` e.g. "Most contested". */
+  stories?: Array<{ headline: string; tag?: string }>;
+  /** cta: the site URL. */
+  url?: string;
 }
 
 export async function fetchIgPost(id: string): Promise<IgPostRow | null> {

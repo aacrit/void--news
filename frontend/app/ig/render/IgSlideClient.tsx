@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import type { SlideSpec, IgPillar } from "../../lib/supabase-server";
-import { ReceiptTemplate } from "./templates/Receipt";
+import { VisionTemplate } from "./templates/Vision";
 import { MethodTemplate } from "./templates/Method";
+import { ExampleTemplate } from "./templates/Example";
 import { HistoryTemplate } from "./templates/History";
-import { BriefTemplate } from "./templates/Brief";
-import { HeatmapTemplate } from "./templates/Heatmap";
+import { WeeklyTemplate } from "./templates/Weekly";
 
 /* ---------------------------------------------------------------------------
    Client-side slide selector for the IG render route.
@@ -15,29 +15,30 @@ import { HeatmapTemplate } from "./templates/Heatmap";
    requests one URL per slide (?slide=N), and the slide index is read from the
    URL at runtime. When this logic lived inline in the server component it only
    ever ran the server branch (window undefined) and rendered slide 0 for every
-   request, so multi-slide carousels (e.g. history's 5 slides) captured slide 0
-   five times. Reading ?slide in a useEffect after hydration fixes that — the
+   request. Reading ?slide in a useEffect after hydration fixes that — the
    capture waits for networkidle + fonts + 250ms, by which point the correct
    slide has rendered.
+
+   Three pillars, each a 3-slide carousel (hook -> substance -> cta):
+     vision  -> VisionTemplate    (Void News, terracotta)
+     method  -> MethodTemplate    (Void News, terracotta)
+     example -> ExampleTemplate   (Void News, terracotta)
+     history -> HistoryTemplate   (Void History, umber)
+     weekly  -> WeeklyTemplate    (Void Weekly, red)
    --------------------------------------------------------------------------- */
 
-function renderSlide(
-  spec: SlideSpec,
-  pillar: IgPillar,
-  index: number,
-  count: number,
-) {
+function renderSlide(spec: SlideSpec, index: number, count: number) {
   switch (spec.kind) {
-    case "receipt":
-      return <ReceiptTemplate spec={spec} slideIndex={index} slideCount={count} />;
+    case "vision":
+      return <VisionTemplate spec={spec} slideIndex={index} slideCount={count} />;
     case "method":
       return <MethodTemplate spec={spec} slideIndex={index} slideCount={count} />;
+    case "example":
+      return <ExampleTemplate spec={spec} slideIndex={index} slideCount={count} />;
     case "history":
       return <HistoryTemplate spec={spec} slideIndex={index} slideCount={count} />;
-    case "brief":
-      return <BriefTemplate spec={spec} slideIndex={index} slideCount={count} pillar={pillar} />;
-    case "heatmap":
-      return <HeatmapTemplate spec={spec} slideIndex={index} slideCount={count} />;
+    case "weekly":
+      return <WeeklyTemplate spec={spec} slideIndex={index} slideCount={count} />;
     default: {
       const _exhaustive: never = spec;
       void _exhaustive;
@@ -68,11 +69,11 @@ export function IgSlideClient({
     <div
       className="ig-canvas"
       data-pillar={pillar}
-      data-variant={spec.kind === "brief" ? spec.variant : undefined}
+      data-variant={spec.variant}
       data-slide-index={slideIndex}
       data-slide-count={slides.length}
     >
-      {renderSlide(spec, pillar, slideIndex, slides.length)}
+      {renderSlide(spec, slideIndex, slides.length)}
     </div>
   );
 }

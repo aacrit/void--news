@@ -141,10 +141,11 @@
   border: 1px solid var(--border-subtle);
 }
 
-.ig-review__pill[data-pillar="receipt"] { color: var(--bias-center-right); }
-.ig-review__pill[data-pillar="method"] { color: var(--cin-amber); }
-.ig-review__pill[data-pillar="history"] { background: rgba(107, 68, 35, 0.12); color: #6B4423; }
-.ig-review__pill[data-pillar="brief"] { color: var(--fg-primary); }
+.ig-review__pill[data-pillar="vision"] { color: var(--palette-news-ink, #9A5638); }
+.ig-review__pill[data-pillar="method"] { color: var(--fg-primary); }
+.ig-review__pill[data-pillar="example"] { background: rgba(178, 111, 82, 0.12); color: var(--palette-news-ink, #9A5638); }
+.ig-review__pill[data-pillar="history"] { background: rgba(92, 64, 51, 0.12); color: var(--palette-history, #5C4033); }
+.ig-review__pill[data-pillar="weekly"] { background: rgba(185, 28, 28, 0.12); color: var(--palette-weekly, #B91C1C); }
 .ig-review__pill[data-state="caption_review"] { background: rgba(204, 62, 52, 0.12); color: var(--bias-right); }
 .ig-review__pill[data-state="render_failed"] { background: rgba(204, 62, 52, 0.18); color: var(--bias-right); }
 .ig-review__pill[data-launch="true"] { background: rgba(148, 107, 21, 0.12); color: var(--cin-amber); }
