@@ -11,12 +11,20 @@ import Lightbox from "./Lightbox";
 
 interface MediaGalleryProps {
   media: MediaItem[];
+  /** When provided, a thumbnail click delegates to the caller (e.g. to open a
+      shared Lightbox) instead of the gallery's own internal Lightbox. */
+  onSelect?: (index: number) => void;
 }
 
-export default function MediaGallery({ media }: MediaGalleryProps) {
+export default function MediaGallery({ media, onSelect }: MediaGalleryProps) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   if (media.length === 0) return null;
+
+  const openAt = (i: number) => {
+    if (onSelect) onSelect(i);
+    else setLightboxIndex(i);
+  };
 
   return (
     <>
@@ -28,7 +36,7 @@ export default function MediaGallery({ media }: MediaGalleryProps) {
               key={item.id}
               className="hist-gallery__item"
               role="listitem"
-              onClick={() => setLightboxIndex(i)}
+              onClick={() => openAt(i)}
               aria-label={`${isVideo ? "Play" : "View"}: ${item.caption}`}
             >
               <span className="hist-gallery__frame">
@@ -38,17 +46,10 @@ export default function MediaGallery({ media }: MediaGalleryProps) {
                   className="hist-gallery__image"
                   loading="lazy"
                   onError={(e) => {
-                    /* Graceful fallback for missing images */
-                    const target = e.currentTarget;
-                    target.style.display = "none";
-                    const parent = target.parentElement;
-                    if (parent) {
-                      const fallback = document.createElement("div");
-                      fallback.style.cssText =
-                        "width:100%;aspect-ratio:3/2;background:var(--hist-paper-deep);display:flex;align-items:center;justify-content:center;border-radius:2px;";
-                      fallback.innerHTML = `<span style="font-family:var(--font-data);font-size:var(--text-xs);color:var(--hist-ink-muted);">[${item.type}]</span>`;
-                      parent.insertBefore(fallback, target);
-                    }
+                    /* Skip broken thumbnails entirely — hide the whole item so
+                       the gallery never shows a broken frame. */
+                    const el = e.currentTarget.closest(".hist-gallery__item") as HTMLElement | null;
+                    if (el) el.style.display = "none";
                   }}
                 />
                 {isVideo && (

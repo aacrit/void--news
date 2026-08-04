@@ -32,8 +32,16 @@ export default function ReelScrubber({ nodes, activeIndex, fraction, onSelect }:
   const active = nodes[Math.min(activeIndex, nodes.length - 1)];
   const fillWidth = Math.max(0, Math.min(1, fraction)) * 100;
 
+  const pad = (n: number) => String(n).padStart(2, "0");
+
   return (
     <nav className="hist-scrubber" aria-label="Jump between accounts">
+      <div className="hist-scrubber__header">
+        <span className="hist-scrubber__nav-label">Perspectives</span>
+        <span className="hist-scrubber__count" aria-hidden="true">
+          {pad(Math.min(activeIndex, nodes.length - 1) + 1)} / {pad(nodes.length)}
+        </span>
+      </div>
       <div className="hist-scrubber__readout" aria-live="polite">
         <span className="hist-scrubber__readout-label">{active.label}</span>
         {active.sublabel && (

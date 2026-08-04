@@ -10,6 +10,13 @@ import ReelScrubber, { type ScrubNode } from "./ReelScrubber";
 import PerspectiveFrame from "./PerspectiveFrame";
 import PerspectiveReader from "./PerspectiveReader";
 import Lightbox from "./Lightbox";
+import MediaGallery from "./MediaGallery";
+
+/* Floor-based clock so a float duration reads "4:30", not "4:30.3000001". */
+function formatClock(seconds: number): string {
+  const s = Math.max(0, Math.floor(seconds));
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+}
 
 /* ===========================================================================
    EventDetail — "The Testimony Reel"
@@ -46,11 +53,26 @@ interface EventDetailProps {
 
 export default function EventDetail({ event, allEvents }: EventDetailProps) {
   const reelRef = useRef<HTMLDivElement>(null);
+  const galleryRef = useRef<HTMLElement>(null);
   const [focusedIndex, setFocusedIndex] = useState(0);
   const [fraction, setFraction] = useState(0);
   const [reader, setReader] = useState<Perspective | null>(null);
   const [evidenceIndex, setEvidenceIndex] = useState<number | null>(null);
   const [isVertical, setIsVertical] = useState(false);
+
+  /* One-time "scroll/swipe to explore" cue on the first frame. Dismissed on the
+     reader's first scroll / arrow-key / node interaction. */
+  const [cueVisible, setCueVisible] = useState(true);
+  const cueDismissedRef = useRef(false);
+  const dismissCue = useCallback(() => {
+    if (cueDismissedRef.current) return;
+    cueDismissedRef.current = true;
+    setCueVisible(false);
+  }, []);
+
+  /* The reel only hijacks the vertical wheel while it is the engaged (hovered /
+     focused) region, so the page scrolls normally everywhere else. */
+  const reelEngagedRef = useRef(false);
 
   const perspectives = event.perspectives;
   const frameCount = perspectives.length + 1; // voices + threads
@@ -157,6 +179,9 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
       }
       setFocusedIndex(closest);
 
+      /* First real scroll retires the discovery cue */
+      if ((isVertical ? el.scrollTop : el.scrollLeft) > 8) dismissCue();
+
       /* Parallax: shift each frame's background against the scroll */
       if (!reduce) {
         frames.forEach((fr) => {
@@ -176,7 +201,7 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
     onScroll();
     el.addEventListener("scroll", onScroll, { passive: true });
     return () => el.removeEventListener("scroll", onScroll);
-  }, [isVertical, frameCount]);
+  }, [isVertical, frameCount, dismissCue]);
 
   /* Desktop: translate vertical wheel into horizontal scrubbing, releasing to
      the page at the left edge so the reader can scroll back up to the hero. */
@@ -185,23 +210,38 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
     if (!el || isVertical) return;
 
     const onWheel = (e: WheelEvent) => {
-      /* Only scrub once the reel has snapped to fill the viewport — otherwise
-         let the page finish scrolling the hero away. */
+      /* Only scrub while the reel is the engaged region AND has snapped to fill
+         the viewport — otherwise let the page finish scrolling the hero away. */
+      if (!reelEngagedRef.current) return;
       if (el.getBoundingClientRect().top > 2) return;
       const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
       const max = el.scrollWidth - el.clientWidth;
       const atLeft = el.scrollLeft <= 0;
       const atRight = el.scrollLeft >= max - 1;
-      if ((atLeft && delta < 0) || (atRight && delta > 0)) return; // release to page
+      if ((atLeft && delta < 0) || (atRight && delta > 0)) return; // release cleanly at the edges
       e.preventDefault();
       el.scrollLeft += delta;
     };
 
+    const onEnter = () => { reelEngagedRef.current = true; };
+    const onLeave = () => { reelEngagedRef.current = false; };
+
     el.addEventListener("wheel", onWheel, { passive: false });
-    return () => el.removeEventListener("wheel", onWheel);
+    el.addEventListener("pointerenter", onEnter);
+    el.addEventListener("pointerleave", onLeave);
+    el.addEventListener("focusin", onEnter);
+    el.addEventListener("focusout", onLeave);
+    return () => {
+      el.removeEventListener("wheel", onWheel);
+      el.removeEventListener("pointerenter", onEnter);
+      el.removeEventListener("pointerleave", onLeave);
+      el.removeEventListener("focusin", onEnter);
+      el.removeEventListener("focusout", onLeave);
+    };
   }, [isVertical]);
 
   const goToFrame = useCallback((i: number) => {
+    dismissCue();
     const el = reelRef.current;
     if (!el) return;
     const frame = el.children[i] as HTMLElement | undefined;
@@ -212,10 +252,11 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
       inline: "center",
       block: "center",
     });
-  }, []);
+  }, [dismissCue]);
 
   const onReelKey = useCallback(
     (e: React.KeyboardEvent) => {
+      dismissCue();
       if (e.key === "ArrowRight" || e.key === "ArrowDown") {
         e.preventDefault();
         goToFrame(Math.min(focusedIndex + 1, frameCount - 1));
@@ -230,7 +271,7 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
         goToFrame(frameCount - 1);
       }
     },
-    [focusedIndex, frameCount, goToFrame]
+    [focusedIndex, frameCount, goToFrame, dismissCue]
   );
 
   return (
@@ -262,7 +303,7 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
                   <path d="M1 1.5v11l10-5.5z" />
                 </svg>
                 <span className="hist-hero-listen__label">Listen</span>
-                <span className="hist-hero-listen__meta">{event.perspectives.length} perspectives · {Math.floor((event.audioDuration ?? 0) / 60)}:{String((event.audioDuration ?? 0) % 60).padStart(2, '0')}</span>
+                <span className="hist-hero-listen__meta">{event.perspectives.length} perspectives · {formatClock(event.audioDuration ?? 0)}</span>
               </button>
             )}
           </div>
@@ -297,16 +338,24 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
         </dl>
         <div className="hist-readout__aside">
           {cast && <p className="hist-readout__cast">{cast}</p>}
-          {bgImages.length > 0 && (
+          {event.media.length > 0 && (
             <button
               type="button"
               className="hist-readout__evidence"
-              onClick={() => setEvidenceIndex(0)}
+              onClick={() =>
+                galleryRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+              }
             >
-              Evidence ({event.media.length})
+              Gallery ({event.media.length})
             </button>
           )}
         </div>
+      </div>
+
+      {/* ── LEAD-IN — the vertical scroll flows into the horizontal reel ── */}
+      <div className="hist-reel-leadin" aria-hidden="true">
+        <span className="hist-reel-leadin__label">{perspectives.length} perspectives ahead</span>
+        <span className="hist-reel-leadin__chevron" />
       </div>
 
       {/* ── THE REEL — one voice per frame, then Threads ── */}
@@ -367,6 +416,45 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
           </section>
         </div>
 
+        {/* One-time discovery cue on the first frame */}
+        {cueVisible && (
+          <div
+            className={`hist-reel__cue${isVertical ? " hist-reel__cue--vertical" : ""}`}
+            aria-hidden="true"
+          >
+            <span className="hist-reel__cue-text">
+              {isVertical ? "Swipe" : "Scroll"} to explore {perspectives.length} accounts
+            </span>
+            <span className="hist-reel__cue-chevron" />
+          </div>
+        )}
+
+        {/* Desktop prev / next chevrons — hidden at the ends */}
+        {!isVertical && (
+          <>
+            {focusedIndex > 0 && (
+              <button
+                type="button"
+                className="hist-reel__nav-btn hist-reel__nav-btn--prev"
+                onClick={() => goToFrame(focusedIndex - 1)}
+                aria-label="Previous account"
+              >
+                &larr;
+              </button>
+            )}
+            {focusedIndex < frameCount - 1 && (
+              <button
+                type="button"
+                className="hist-reel__nav-btn hist-reel__nav-btn--next"
+                onClick={() => goToFrame(focusedIndex + 1)}
+                aria-label="Next account"
+              >
+                &rarr;
+              </button>
+            )}
+          </>
+        )}
+
         <ReelScrubber
           nodes={scrubNodes}
           activeIndex={focusedIndex}
@@ -374,6 +462,17 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
           onSelect={goToFrame}
         />
       </section>
+
+      {/* ── GALLERY — the archival evidence, promoted from the facts pill ── */}
+      {event.media.length > 0 && (
+        <section className="hist-gallery-section" id="gallery" ref={galleryRef}>
+          <div className="hist-gallery-section__head">
+            <h2 className="hist-gallery-section__title">Gallery</h2>
+            <span className="hist-gallery-section__count">{event.media.length} items</span>
+          </div>
+          <MediaGallery media={event.media} onSelect={setEvidenceIndex} />
+        </section>
+      )}
 
       {reader && (
         <PerspectiveReader perspective={reader} onClose={() => setReader(null)} />

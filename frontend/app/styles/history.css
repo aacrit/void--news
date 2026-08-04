@@ -1292,6 +1292,44 @@
 }
 
 /* ---------------------------------------------------------------------------
+   Gallery section — promoted evidence, sits after the reel
+   --------------------------------------------------------------------------- */
+.hist-gallery-section {
+  max-width: var(--canvas-max);
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-5) var(--space-7);
+  background: var(--hist-bg);
+  scroll-margin-top: var(--space-5);
+}
+
+.hist-gallery-section__head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--hist-border-subtle);
+}
+
+.hist-gallery-section__title {
+  margin: 0;
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: var(--text-xl);
+  letter-spacing: var(--type-card-tracking, -0.01em);
+  color: var(--hist-ink);
+}
+
+.hist-gallery-section__count {
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--hist-ink-muted);
+}
+
+/* ---------------------------------------------------------------------------
    Media Gallery — Horizontal scroll
    --------------------------------------------------------------------------- */
 .hist-gallery {
@@ -1396,27 +1434,70 @@
   border-radius: 2px;
 }
 
+/* Archival plate — the lightbox backdrop is always dark, so tones are tuned
+   for near-black (AA contrast) regardless of the page theme. */
 .hist-lightbox__caption {
   position: absolute;
   bottom: var(--space-5);
   left: 50%;
   transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: min(90vw, 640px);
+  padding: var(--space-3) var(--space-4);
   text-align: center;
-  max-width: 600px;
-  color: rgba(242, 237, 224, 0.9);
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(6px);
+  color: rgba(242, 237, 224, 0.95);
 }
 
 .hist-lightbox__caption-text {
+  margin: 0;
   font-family: var(--font-structural);
   font-size: var(--text-sm);
   line-height: 1.5;
+  color: rgba(242, 237, 224, 0.95);
 }
 
-.hist-lightbox__caption-attr {
+.hist-lightbox__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: var(--space-1) var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid rgba(242, 237, 224, 0.22);
+}
+
+.hist-lightbox__meta-item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.hist-lightbox__meta-sep {
+  color: rgba(242, 237, 224, 0.5);
+  margin-right: var(--space-1);
+}
+
+.hist-lightbox__meta-label {
   font-family: var(--font-data);
   font-size: var(--text-xxs);
-  color: rgba(242, 237, 224, 0.6);
-  margin-top: 4px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  /* Bumped from 0.6 → AA-legible on near-black */
+  color: rgba(242, 237, 224, 0.62);
+}
+
+.hist-lightbox__meta-value {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  letter-spacing: 0.02em;
+  color: rgba(242, 237, 224, 0.9);
 }
 
 .hist-lightbox__close {
@@ -9135,6 +9216,30 @@ a.hist-record__figure-name:hover {
 
 .hist-scrubber > * { pointer-events: auto; }
 
+/* Nav label + count — mark the dots as a switcher, not a progress bar */
+.hist-scrubber__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.hist-scrubber__nav-label {
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--hist-ink-muted);
+}
+
+.hist-scrubber__count {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  color: var(--hist-ink-secondary);
+}
+
 .hist-scrubber__readout { display: flex; align-items: baseline; gap: var(--space-2); }
 
 .hist-scrubber__readout-label {
@@ -9174,8 +9279,8 @@ a.hist-record__figure-name:hover {
 .hist-scrubber__node {
   position: absolute;
   top: 50%;
-  width: 12px;
-  height: 12px;
+  width: 16px;
+  height: 16px;
   transform: translate(-50%, -50%);
   border-radius: 50%;
   background: var(--hist-bg);
@@ -9185,15 +9290,150 @@ a.hist-record__figure-name:hover {
   transition: transform 220ms var(--ease-archive-snap), background 200ms var(--ease-document-settle);
 }
 
-.hist-scrubber__node::after { content: ""; position: absolute; inset: -16px; }
+/* Keep the 44px hit area (16 + 2*14) even though the dot is now larger. */
+.hist-scrubber__node::after { content: ""; position: absolute; inset: -14px; }
 
 .hist-scrubber__node--active {
   background: var(--node-color, var(--hist-accent));
-  transform: translate(-50%, -50%) scale(1.5);
+  transform: translate(-50%, -50%) scale(1.4);
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--node-color, var(--hist-accent)) 22%, transparent);
 }
 
 .hist-scrubber__node:focus-visible { outline: 2px solid var(--hist-brass); outline-offset: 3px; }
+
+/* ── Reel navigation affordances ── */
+
+/* Lead-in: the vertical scroll flows into the horizontal reel */
+.hist-reel-leadin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-4) var(--space-5) var(--space-3);
+  background: var(--hist-bg);
+}
+
+.hist-reel-leadin__label {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--hist-ink-muted);
+}
+
+.hist-reel-leadin__chevron {
+  width: 10px;
+  height: 10px;
+  border-right: 1.5px solid var(--hist-accent);
+  border-bottom: 1.5px solid var(--hist-accent);
+  transform: rotate(45deg);
+  animation: histLeadinBob 1.8s var(--ease-document-settle) infinite;
+}
+
+@keyframes histLeadinBob {
+  0%, 100% { transform: translateY(0) rotate(45deg); opacity: 0.55; }
+  50% { transform: translateY(3px) rotate(45deg); opacity: 1; }
+}
+
+/* One-time discovery cue on the first frame */
+.hist-reel__cue {
+  position: absolute;
+  z-index: 6;
+  right: var(--space-6);
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--hist-border-subtle);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--hist-bg-card) 88%, transparent);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+  pointer-events: none;
+  animation: histCueIn 400ms var(--ease-document-settle) both;
+}
+
+.hist-reel__cue--vertical {
+  right: 50%;
+  top: auto;
+  bottom: calc(var(--tab-bar-height, 64px) + 120px);
+  transform: translateX(50%);
+}
+
+.hist-reel__cue-text {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--hist-ink);
+  white-space: nowrap;
+}
+
+.hist-reel__cue-chevron {
+  width: 8px;
+  height: 8px;
+  border-top: 1.5px solid var(--hist-accent);
+  border-right: 1.5px solid var(--hist-accent);
+  transform: rotate(45deg);
+  animation: histCueNudge 1.4s var(--ease-document-settle) infinite;
+}
+
+.hist-reel__cue--vertical .hist-reel__cue-chevron {
+  transform: rotate(135deg);
+}
+
+@keyframes histCueIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes histCueNudge {
+  0%, 100% { transform: translateX(0) rotate(45deg); opacity: 0.6; }
+  50% { transform: translateX(3px) rotate(45deg); opacity: 1; }
+}
+
+/* Desktop prev / next chevrons (reuses the threads scroll-btn look) */
+.hist-reel__nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 6;
+  width: 48px;
+  height: 48px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--hist-border-subtle);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--hist-bg-card) 90%, transparent);
+  backdrop-filter: blur(4px);
+  color: var(--hist-ink);
+  font-size: var(--text-lg);
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
+  transition: background 200ms var(--ease-cinematic), border-color 200ms var(--ease-cinematic);
+}
+
+.hist-reel__nav-btn--prev { left: var(--space-5); }
+.hist-reel__nav-btn--next { right: var(--space-5); }
+
+.hist-reel__nav-btn:hover {
+  background: var(--hist-accent-ghost);
+  border-color: var(--hist-accent);
+}
+
+.hist-reel__nav-btn:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
+}
+
+@media (min-width: 1024px) {
+  .hist-reel__nav-btn { display: flex; }
+}
 
 /* ── Reader overlay (full account; main-page typography) ── */
 .hist-reader {
@@ -9332,4 +9572,8 @@ a.hist-record__figure-name:hover {
   .hist-frame__bg { transform: none !important; }
   .hist-scrubber__fill { transition: none; }
   .hist-reader { animation: none; }
+  /* Discovery cues appear static — no pulse — but stay visible; arrows work */
+  .hist-reel__cue { animation: none; }
+  .hist-reel__cue-chevron,
+  .hist-reel-leadin__chevron { animation: none; }
 }
