@@ -863,15 +863,6 @@ export default function ShipBoard() {
     }
   }
 
-  // Recent activity (most recent first)
-  const recentActivity = useMemo(() =>
-    requests
-      .slice()
-      .sort((a, b) => new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime())
-      .slice(0, 8),
-    [requests]
-  );
-
   // On mobile the board stacks; hide empty columns (keep submitted). On desktop
   // every column stays so the pipeline reads left to right.
   const visibleColumns = isMobile
@@ -955,7 +946,7 @@ export default function ShipBoard() {
                 </div>
 
                 {/* Category pill toggle */}
-                <div className="ship-category-toggle" role="radiogroup" aria-label="Request type">
+                <div className="ship-category-toggle" data-active={formCategory} role="radiogroup" aria-label="Request type">
                   {CATEGORY_OPTIONS.map(opt => (
                     <button
                       key={opt.value}
@@ -1108,42 +1099,26 @@ export default function ShipBoard() {
             <p className="ship-panel__sub">Where the machine still stumbles, and what we are doing about it.</p>
           </div>
           <ObservationsRail fingerprint={fingerprintRef.current} />
+          <div className="ship-obs-foot">
+            {/* Discord: community is coming. Disabled placeholder, no invite yet.
+                Wire a real invite URL (and any webhook) in here when it is live. */}
+            <span className="ship-discord" role="note" aria-label="Discord community coming soon" title="Community is coming soon">
+              <span className="ship-discord__dot" aria-hidden="true" />
+              Discord &middot; coming soon
+            </span>
+          </div>
         </aside>
       </div>
 
-      {/* ==== BOTTOM STRIP: recent ticker + personal touch + log + Discord ==== */}
+      {/* ==== BOTTOM STRIP: slim utility bar ==== */}
       <footer className="ship-strip">
-        <div className="ship-strip__recent" aria-label="Recent activity">
-          <span className="ship-strip__label">Recent</span>
-          {recentActivity.length === 0 ? (
-            <span className="ship-strip__empty">No requests yet. Be the first above.</span>
-          ) : (
-            <div className="ship-strip__items">
-              {recentActivity.map(r => (
-                <span key={r.id} className="ship-strip__item">
-                  <span className={`ship-strip__item-status ship-strip__item-status--${r.status}`}>{STATUS_LABELS[r.status]}</span>
-                  <span className="ship-strip__item-title">{r.title}</span>
-                  <span className="ship-strip__item-time">{timeAgo(r.updated_at || r.created_at)}</span>
-                </span>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <div className="ship-strip__aside">
-          <span className="ship-strip__you" aria-label={`You have voted on ${votedIds.size} requests`}>
-            you voted <span className="ship-strip__you-num">{votedIds.size}</span>
-          </span>
-          <button type="button" className="ship-strip__log-btn" onClick={() => setLogOpen(true)}>
-            View full log
-          </button>
-          {/* Discord: community is coming. This is a disabled placeholder. Wire a
-              real invite URL (and any webhook) in here when the server is live. */}
-          <span className="ship-discord" role="note" aria-label="Discord community coming soon" title="Community is coming soon">
-            <span className="ship-discord__dot" aria-hidden="true" />
-            Discord &middot; coming soon
-          </span>
-        </div>
+        <span className="ship-strip__you" aria-label={`You have voted on ${votedIds.size} requests`}>
+          <span className="ship-strip__you-label">Your session</span>
+          you voted <span className="ship-strip__you-num">{votedIds.size}</span>
+        </span>
+        <button type="button" className="ship-strip__log-btn" onClick={() => setLogOpen(true)}>
+          View full log
+        </button>
       </footer>
 
       {/* ==== SHIP LOG (overlay) ==== */}

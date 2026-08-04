@@ -14,10 +14,31 @@
 :root,
 :root[data-mode="light"] {
   --ship-grid-color: rgba(148, 107, 21, 0.06);
+
+  /* Ship-scoped RAG + info palette. Deliberately NOT the --bias-* tokens (those
+     stay reserved for political-lean data); these carry status / severity /
+     category meaning on the ship dashboard. All chosen for WCAG AA (>=4.5:1) as
+     text on the warm paper card backgrounds.
+     GREEN = working as intended, AMBER = in progress, ORANGE = queued,
+     RED = open limitation / bug, BLUE = feature / info, GREY = neutral. */
+  --ship-green:   #2E7D4F;
+  --ship-amber:   #8A6410;
+  --ship-orange:  #A65518;
+  --ship-red:     #BE3626;
+  --ship-blue:    #2B6AA8;
+  --ship-neutral: #6B6F78;
 }
 
 :root[data-mode="dark"] {
   --ship-grid-color: rgba(77, 175, 160, 0.06);
+
+  /* Lighter tints for AA on the dark ground (#1C1A17 / #2A2725). */
+  --ship-green:   #6FC495;
+  --ship-amber:   #D9A64E;
+  --ship-orange:  #E39A5C;
+  --ship-red:     #E58873;
+  --ship-blue:    #7DB0E8;
+  --ship-neutral: #9AA0AA;
 }
 
 /* ==========================================================================
@@ -347,6 +368,10 @@
   font-weight: 600;
 }
 
+/* Category color: BUG = red, FEATURE = blue. The active pill reads its color. */
+.ship-category-toggle__pill--bug.ship-category-toggle__pill--active { color: var(--ship-red); }
+.ship-category-toggle__pill--feature.ship-category-toggle__pill--active { color: var(--ship-blue); }
+
 .ship-category-toggle__indicator {
   position: absolute;
   top: 2px;
@@ -354,10 +379,21 @@
   width: calc(50% - 2px);
   height: calc(100% - 4px);
   background: var(--bg-card);
+  border: 1px solid transparent;
   border-radius: 2px;
   box-shadow: var(--shadow-e1);
-  transition: transform 0.25s var(--ease-cinematic);
+  transition: transform 0.25s var(--ease-cinematic), background 0.25s var(--ease-cinematic), border-color 0.25s var(--ease-cinematic);
   pointer-events: none;
+}
+
+/* The sliding indicator tints to match the active category. */
+.ship-category-toggle[data-active="bug"] .ship-category-toggle__indicator {
+  background: color-mix(in srgb, var(--ship-red) 12%, var(--bg-card));
+  border-color: color-mix(in srgb, var(--ship-red) 40%, transparent);
+}
+.ship-category-toggle[data-active="feature"] .ship-category-toggle__indicator {
+  background: color-mix(in srgb, var(--ship-blue) 12%, var(--bg-card));
+  border-color: color-mix(in srgb, var(--ship-blue) 40%, transparent);
 }
 
 /* ---- Title Input (underline style) ---- */
@@ -743,13 +779,22 @@
   border-radius: 2px;
 }
 
-.ship-column--shipped .ship-column__header {
-  border-bottom-color: var(--cin-amber, var(--accent-warm));
+/* Status-colored header rule per column so the board reads with color:
+   Submitted = neutral, Triaged = blue, Building = amber, Shipped = green,
+   Resolved = muted. Kept as a 2px bottom rule + a whisper of header tint so it
+   stays editorial and graph-paper friendly in both themes. */
+.ship-column--submitted .ship-column__header { border-bottom-color: var(--ship-neutral); }
+.ship-column--triaged .ship-column__header { border-bottom-color: var(--ship-blue); }
+.ship-column--building .ship-column__header { border-bottom-color: var(--ship-amber); }
+.ship-column--shipped .ship-column__header { border-bottom-color: var(--ship-green); }
+.ship-column--resolved .ship-column__header {
+  border-bottom-color: var(--border-subtle);
+  opacity: 0.85;
 }
 
-.ship-column--building .ship-column__header {
-  border-bottom-color: var(--voice-accent, #4DAFA0);
-}
+.ship-column--triaged .ship-column__title { color: var(--ship-blue); }
+.ship-column--building .ship-column__title { color: var(--ship-amber); }
+.ship-column--shipped .ship-column__title { color: var(--ship-green); }
 
 .ship-column__cards {
   display: flex;
@@ -796,13 +841,13 @@
 }
 
 .ship-card__badge--bug {
-  background: color-mix(in srgb, #C0392B 12%, transparent);
-  color: #C0392B;
+  background: color-mix(in srgb, var(--ship-red) 14%, transparent);
+  color: var(--ship-red);
 }
 
 .ship-card__badge--feature {
-  background: color-mix(in srgb, var(--voice-accent, #4DAFA0) 12%, transparent);
-  color: var(--voice-accent, #4DAFA0);
+  background: color-mix(in srgb, var(--ship-blue) 14%, transparent);
+  color: var(--ship-blue);
 }
 
 .ship-card__badge--enhancement {
@@ -1334,7 +1379,7 @@ a.ship-card__commit:hover {
   margin-bottom: 2px;
 }
 
-/* ---- Chip ---- */
+/* ---- Chip: RAG severity (red / amber / green) ---- */
 .ship-obs__chip {
   display: inline-flex;
   align-items: center;
@@ -1347,9 +1392,9 @@ a.ship-card__commit:hover {
   white-space: nowrap;
   padding: 2px 8px;
   border-radius: 999px;
-  border: 1px solid var(--border-subtle);
-  background: var(--bg-secondary);
-  color: var(--fg-muted);
+  color: var(--chip-c, var(--fg-muted));
+  background: color-mix(in srgb, var(--chip-c, var(--fg-muted)) 12%, var(--bg-card));
+  border: 1px solid color-mix(in srgb, var(--chip-c, var(--fg-muted)) 38%, transparent);
   margin-top: 2px;
 }
 
@@ -1358,22 +1403,16 @@ a.ship-card__commit:hover {
   height: 5px;
   border-radius: 50%;
   background: currentColor;
-  opacity: 0.65;
   flex-shrink: 0;
 }
 
-.ship-obs__chip--tuning { color: #5b6b7a; }
-.ship-obs__chip--by-design { color: #6b6f78; }
-.ship-obs__chip--roadmap { color: #6a6480; }
-.ship-obs__chip--known { color: #6f6a5e; }
-
-:root[data-mode="dark"] .ship-obs__chip {
-  background: color-mix(in srgb, var(--bg-secondary) 60%, transparent);
-}
-:root[data-mode="dark"] .ship-obs__chip--tuning { color: #93a4b4; }
-:root[data-mode="dark"] .ship-obs__chip--by-design { color: #9aa0aa; }
-:root[data-mode="dark"] .ship-obs__chip--roadmap { color: #a49ec0; }
-:root[data-mode="dark"] .ship-obs__chip--known { color: #b0a894; }
+/* RAG mapping: By design = green (working as intended), Actively tuning = amber
+   (in progress), On the roadmap = orange-amber (queued), Known = red (open
+   limitation). Tokens theme-swap, so light + dark are both covered. */
+.ship-obs__chip--by-design { --chip-c: var(--ship-green); }
+.ship-obs__chip--tuning    { --chip-c: var(--ship-amber); }
+.ship-obs__chip--roadmap   { --chip-c: var(--ship-orange); }
+.ship-obs__chip--known     { --chip-c: var(--ship-red); }
 
 /* ---- Observations list: expandable accordion, fills the column ---- */
 .ship-obs-list {
@@ -1673,13 +1712,13 @@ a.ship-card__commit:hover {
 }
 
 .ship-log__badge--bug {
-  background: color-mix(in srgb, var(--fg-error, #C0392B) 12%, transparent);
-  color: var(--fg-error, #C0392B);
+  background: color-mix(in srgb, var(--ship-red) 14%, transparent);
+  color: var(--ship-red);
 }
 
 .ship-log__badge--feature {
-  background: color-mix(in srgb, var(--voice-accent, #4DAFA0) 12%, transparent);
-  color: var(--voice-accent, #4DAFA0);
+  background: color-mix(in srgb, var(--ship-blue) 14%, transparent);
+  color: var(--ship-blue);
 }
 
 .ship-log__votes {
@@ -1717,99 +1756,36 @@ a.ship-card__commit:hover {
 
 
 /* ==========================================================================
-   BOTTOM STRIP — recent ticker + personal touch + log + Discord placeholder
+   BOTTOM STRIP — slim utility bar (session stat + full-log access)
    ========================================================================== */
 
 .ship-strip {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--space-4);
   flex-wrap: wrap;
-  padding: var(--space-3) var(--space-4);
+  padding: var(--space-2) var(--space-4);
   background: color-mix(in srgb, var(--bg-card) 70%, transparent);
   border: 1px solid var(--border-subtle);
   border-radius: 8px;
 }
 
-.ship-strip__recent {
-  display: flex;
+.ship-strip__you {
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-3);
-  min-width: 0;
-  flex: 1;
+  gap: var(--space-2);
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-secondary);
+  white-space: nowrap;
 }
 
-.ship-strip__label {
-  font-family: var(--font-data);
+.ship-strip__you-label {
   font-size: 10px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--fg-muted);
-  flex-shrink: 0;
-}
-
-.ship-strip__empty {
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  font-style: italic;
-  color: var(--fg-muted);
-}
-
-.ship-strip__items {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  overflow-x: auto;
-  min-width: 0;
-  scrollbar-width: thin;
-}
-
-.ship-strip__item {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.ship-strip__item-status {
-  font-family: var(--font-data);
-  font-size: 9px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  color: var(--fg-secondary);
-}
-
-.ship-strip__item-status--shipped { color: var(--cin-amber, var(--accent-warm)); }
-.ship-strip__item-status--building { color: var(--voice-accent, #4DAFA0); }
-
-.ship-strip__item-title {
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  color: var(--fg-primary);
-  max-width: 22ch;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.ship-strip__item-time {
-  font-family: var(--font-data);
-  font-size: 9px;
-  color: var(--fg-muted);
-}
-
-.ship-strip__aside {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-3);
-  flex-shrink: 0;
-}
-
-.ship-strip__you {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  color: var(--fg-secondary);
-  white-space: nowrap;
 }
 
 .ship-strip__you-num {
@@ -1837,7 +1813,17 @@ a.ship-card__commit:hover {
   border-color: var(--border-strong);
 }
 
-/* ---- Discord placeholder (disabled, coming soon) ---- */
+/* ---- Observations column footer + Discord placeholder ---- */
+.ship-obs-foot {
+  flex-shrink: 0;
+  padding-top: var(--space-3);
+  margin-top: var(--space-1);
+  border-top: 1px dashed var(--border-subtle);
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* Disabled "coming soon" chip. No invite URL yet; wire one in ShipBoard.tsx. */
 .ship-discord {
   display: inline-flex;
   align-items: center;
@@ -2019,14 +2005,8 @@ a.ship-card__commit:hover {
   }
 
   .ship-strip {
-    flex-direction: column;
-    align-items: stretch;
+    justify-content: space-between;
   }
-
-  .ship-strip__aside {
-    flex-wrap: wrap;
-  }
-
 }
 
 /* Coarse pointers: give the rail controls a full tap target. */
