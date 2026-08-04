@@ -209,7 +209,7 @@ function SpectrumRidge({
 }
 
 function Spectrum({ spec }: { spec: ExampleSlideSpec }) {
-  const outlets: OutletHeadline[] = (spec.headlines ?? []).slice(0, 6);
+  const outlets: OutletHeadline[] = (spec.headlines ?? []).slice(0, 4);
   // Prefer the full per-article distribution; fall back to the shown outlets.
   const leanValues =
     spec.lean_values && spec.lean_values.length > 0

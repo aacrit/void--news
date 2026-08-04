@@ -482,8 +482,10 @@ def _select_example_cluster() -> tuple[str, list[dict[str, Any]], int, list[int]
         # spectrum slide, captured BEFORE the display down-sample below.
         lean_values = [h["lean_score"] for h in headlines]
 
-        # 4-6 best-spread outlets across the lean axis (the labeled ones).
-        target = min(6, max(4, len(headlines)))
+        # 3-4 best-spread outlets across the lean axis (the labeled rows). Kept
+        # small so the breakdown list clears the bottom-right stamp on the
+        # spectrum slide; the KDE ridge still uses the FULL lean distribution.
+        target = min(4, max(3, len(headlines)))
         if len(headlines) > target:
             step = len(headlines) / target
             headlines = [headlines[int(i * step)] for i in range(target)]
