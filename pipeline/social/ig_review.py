@@ -115,7 +115,10 @@ h1{{font-family:Georgia,serif;margin:0 0 4px}}
 .card{{background:#1e1b16;border:1px solid #322d25;border-radius:10px;overflow:hidden}}
 .card--warn{{border-color:#8a6d1f}}.card--err{{border-color:#a23b2f}}
 .slides{{display:flex;gap:6px;overflow-x:auto;background:#0d0b09;padding:6px}}
-.slides img{{height:300px;width:auto;border-radius:3px;flex:0 0 auto}}
+.slides img{{height:300px;width:auto;border-radius:3px;flex:0 0 auto;cursor:zoom-in}}
+.lb{{position:fixed;inset:0;background:rgba(8,7,6,.94);display:none;align-items:center;justify-content:center;z-index:999;cursor:zoom-out;padding:24px}}
+.lb.on{{display:flex}}
+.lb img{{max-width:96vw;max-height:96vh;width:auto;height:auto;box-shadow:0 10px 60px rgba(0,0,0,.6);border-radius:4px}}
 .noimg{{color:#6b6459;font-size:13px;padding:24px}}
 .meta{{padding:14px 15px 16px}}
 .head{{display:flex;gap:8px;align-items:center;margin-bottom:8px}}
@@ -132,7 +135,19 @@ h1{{font-family:Georgia,serif;margin:0 0 4px}}
 </style></head><body>
 <h1>Void News social drafts, {html.escape(track)} track</h1>
 <p class="sub">{len(rows)} drafts, nothing posted. Red = broken (do not publish). Amber = needs a fix. Scroll a card's slides sideways; click to zoom.</p>
-<div class="grid">{''.join(cards)}</div></body></html>"""
+<div class="grid">{''.join(cards)}</div>
+<div class="lb" id="lb"><img id="lbimg" alt="expanded slide"></div>
+<script>
+(function(){{
+  var lb=document.getElementById('lb'), im=document.getElementById('lbimg');
+  document.querySelectorAll('.slides img').forEach(function(t){{
+    t.addEventListener('click',function(){{ im.src=t.src; lb.classList.add('on'); }});
+  }});
+  lb.addEventListener('click',function(){{ lb.classList.remove('on'); im.src=''; }});
+  document.addEventListener('keydown',function(e){{ if(e.key==='Escape'){{ lb.classList.remove('on'); im.src=''; }} }});
+}})();
+</script>
+</body></html>"""
     out = os.path.join(tempfile.gettempdir(), f"ig_review_{track}.html")
     with open(out, "w", encoding="utf-8") as f:
         f.write(doc)
