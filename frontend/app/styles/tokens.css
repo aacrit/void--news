@@ -148,6 +148,11 @@
 
   /* ── Product World Palette — accent colors for product family previews ── */
   --palette-news: #B26F52;
+  /* Deeper terracotta of the same hue for small bold labels (Top Story,
+     News Brief, Editorial). The wordmark's --palette-news (#B26F52) only hits
+     ~3.3:1 on cream, which fails WCAG AA at 11px; this ink shade reads as the
+     same color to the eye but clears AA. */
+  --palette-news-ink: #9A5638;
   --palette-weekly: #B91C1C;
   --palette-weekly-paper: #EDE4D0;
   --palette-history: #5C4033;
@@ -659,6 +664,9 @@
 
   /* ── Product World Palette (Dark) ── */
   --palette-news: #D89A7C;
+  /* On dark ground the lighter terracotta already clears contrast, so the ink
+     label shade matches the wordmark exactly. */
+  --palette-news-ink: #D89A7C;
   --palette-weekly: #EF5350;
   --palette-weekly-paper: #1E1A16;
   --palette-history: #8B7355;

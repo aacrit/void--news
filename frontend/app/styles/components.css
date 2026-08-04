@@ -762,7 +762,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--accent-warm);
+  color: var(--palette-news-ink);
   padding: var(--space-2) var(--space-4);
   border: none;
   background: none;
@@ -794,7 +794,7 @@
   content: "";
   position: absolute;
   inset: -4px -8px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 60'%3E%3Cpath d='M60 4 C100 2 116 14 114 30 C112 46 96 58 60 56 C24 58 8 46 6 30 C4 14 20 2 60 4' stroke='%23946B15' stroke-width='1.5' fill='none' opacity='0.5'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 60'%3E%3Cpath d='M60 4 C100 2 116 14 114 30 C112 46 96 58 60 56 C24 58 8 46 6 30 C4 14 20 2 60 4' stroke='%239A5638' stroke-width='1.5' fill='none' opacity='0.5'/%3E%3C/svg%3E");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
@@ -803,7 +803,7 @@
 }
 
 :root[data-mode="dark"] .lead-story__badge::before {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 60'%3E%3Cpath d='M60 4 C100 2 116 14 114 30 C112 46 96 58 60 56 C24 58 8 46 6 30 C4 14 20 2 60 4' stroke='%23AD7E1E' stroke-width='1.5' fill='none' opacity='0.4'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 60'%3E%3Cpath d='M60 4 C100 2 116 14 114 30 C112 46 96 58 60 56 C24 58 8 46 6 30 C4 14 20 2 60 4' stroke='%23D89A7C' stroke-width='1.5' fill='none' opacity='0.4'/%3E%3C/svg%3E");
 }
 
 /* Why-top-story subtitle — derived signals explain what pushed this to #1.

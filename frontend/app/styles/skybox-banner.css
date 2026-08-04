@@ -162,7 +162,7 @@
   font-family: var(--font-meta);
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--accent-warm);
+  color: var(--palette-news-ink);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   white-space: nowrap;
