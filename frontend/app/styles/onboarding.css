@@ -82,7 +82,7 @@
 @keyframes onbFadeOut { to { opacity: 0; } }
 
 .onb__progress { position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--border-subtle); z-index: 3; }
-.onb__progress-fill { height: 100%; background: var(--accent-ember); transition: width 120ms linear; }
+.onb__progress-fill { height: 100%; background: var(--about-accent); transition: width 120ms linear; }
 .onb__skip {
   position: absolute; top: 10px; right: 12px; z-index: 4;
   font-family: var(--font-data); font-size: var(--text-xs);
@@ -101,6 +101,30 @@
   font-family: var(--font-data); font-size: var(--text-xs);
   background: var(--accent); color: #fff; border: none; border-radius: var(--radius-sm);
   padding: 0.5rem 1rem; min-height: 40px; cursor: pointer; box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+}
+
+/* ── About accent — deep terracotta ink ───────────────────────────────────
+   The whole About + onboarding experience uses the deep terracotta ink
+   (--palette-news-ink: #9A5638 light / #D89A7C dark) as its single accent for
+   links, highlights and control tints. The primary action buttons use a solid
+   deep-terracotta fill (--about-btn) that stays deep in BOTH modes so cream
+   text clears AA. Scoped to the three experience roots so the beats resolve the
+   token wherever they render (page shell, overlay, invitation). */
+.about-x,
+.onb,
+.onb-invite {
+  --about-accent: var(--palette-news-ink);
+  --about-btn: #9A5638;         /* deep terracotta, cream text ~5.2:1 */
+  --about-btn-hover: #834730;
+  --about-btn-fg: #FBF6EC;
+}
+:root[data-mode="dark"] .about-x,
+:root[data-mode="dark"] .onb,
+:root[data-mode="dark"] .onb-invite {
+  /* --palette-news-ink is a LIGHT terracotta on dark (good link color), so the
+     button needs its own deeper terracotta to keep cream text ~4.8:1. */
+  --about-btn: #A85838;
+  --about-btn-hover: #94492D;
 }
 
 /* ── Page shell ──────────────────────────────────────────────────────────── */
@@ -124,7 +148,19 @@
 :root[data-mode="dark"] .about-x__world { --card-accent: var(--acc-d, var(--accent)); }
 .about-x__world:hover { border-color: var(--card-accent); transform: translateY(-2px); box-shadow: 0 6px 20px color-mix(in srgb, var(--card-accent) 22%, transparent); }
 .about-x__world-cli { font-family: var(--font-data); font-size: var(--text-xs); color: var(--card-accent); }
-.about-x__world-name { display: inline-flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); font-family: var(--font-editorial); font-size: var(--text-lg); color: var(--fg-primary); }
+/* Branded name: the product renders in its own accent, prefixed with a small
+   coverage-ring glyph (the Sigil "O") so the suite reads as one branded family
+   rather than a grey word list. */
+.about-x__world-name { display: inline-flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); font-family: var(--font-editorial); font-weight: 600; font-size: var(--text-lg); color: var(--card-accent); }
+.about-x__world-name::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 0.62em;
+  height: 0.62em;
+  border-radius: 50%;
+  border: 0.13em solid var(--card-accent);
+  opacity: 0.9;
+}
 /* Poetic subtitle beneath the plain name — italic, small, muted. */
 .about-x__world-subtitle { font-family: var(--font-editorial); font-style: italic; font-size: var(--text-sm); color: var(--fg-tertiary); margin-bottom: 2px; }
 .about-x__world-desc { flex: 1 1 auto; font-family: var(--font-structural); font-size: var(--text-sm); color: var(--fg-secondary); }
@@ -147,32 +183,75 @@
 .beat__action:hover { background: var(--accent-hover); transform: translateY(-1px); }
 .beat__note { text-align: center; margin-top: var(--space-4); font-family: var(--font-editorial); font-style: italic; color: var(--fg-secondary); }
 .beat__more { margin-top: var(--space-5); border-top: 1px solid var(--border-subtle); padding-top: var(--space-3); }
-.beat__more summary { font-family: var(--font-data); font-size: var(--text-xs); color: var(--accent); cursor: pointer; }
+.beat__more summary { font-family: var(--font-data); font-size: var(--text-xs); color: var(--about-accent); cursor: pointer; }
 .beat__axes { list-style: none; padding: 0; margin: var(--space-3) 0 0; display: grid; gap: var(--space-2); }
 .beat__axes li { font-family: var(--font-structural); font-size: var(--text-sm); color: var(--fg-secondary); }
 .beat__axes strong { color: var(--fg-primary); }
 .beat__axes-signals { display: block; color: var(--fg-tertiary); font-size: var(--text-xs); }
 .beat__more-note { margin-top: var(--space-3); font-family: var(--font-structural); font-size: var(--text-sm); color: var(--fg-secondary); }
 
-/* ── Beat 1 — spectrum rail + draggable chips ────────────────────────────── */
-.vrail { position: relative; margin-top: var(--space-6); min-height: 16rem; touch-action: pan-y; }
-.vrail__track { position: absolute; left: 0; right: 0; bottom: 1.5rem; height: 4px; border-radius: 2px;
-  background: linear-gradient(90deg, var(--bias-left), var(--bias-center), var(--bias-right)); display: flex; align-items: center; }
-.vrail__end { position: absolute; top: 0.6rem; font-family: var(--font-data); font-size: var(--text-xxs); color: var(--fg-tertiary); }
+/* ── Beat 1 — spectrum rail + draggable chips ──────────────────────────────
+   The five headline chips are staggered onto TWO rows (odd indices above the
+   rail, even below) so they never stack, no matter where they land on drag or
+   reveal. The rail sits at the vertical centre; each chip drops a connector
+   stem + dot to its point on the line. The chip box is width-clamped so it can
+   never overflow the rail (--vchip-pct is the true point; `left` clamps the
+   box centre to stay inside), which is what keeps the two far-left and two
+   far-right landings readable — and stops horizontal scroll on narrow phones. */
+.vrail { position: relative; margin-top: var(--space-5); min-height: 24rem; touch-action: pan-y; }
+.vrail__track { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%); height: 4px; border-radius: 2px;
+  background: linear-gradient(90deg, var(--bias-left), var(--bias-center), var(--bias-right)); }
+.vrail__end { position: absolute; top: calc(50% + 0.75rem); font-family: var(--font-data); font-size: var(--text-xxs); text-transform: uppercase; letter-spacing: 0.06em; color: var(--fg-tertiary); }
 .vrail__end--l { left: 0; } .vrail__end--r { right: 0; }
-.vrail__tick { position: absolute; left: 50%; top: -3px; width: 1px; height: 10px; background: var(--fg-tertiary); }
+.vrail__tick { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 1px; height: 12px; background: var(--fg-tertiary); }
+
 .vchip {
-  position: absolute; bottom: 3rem; transform: translateX(-50%);
-  width: 12rem; max-width: 60vw; padding: var(--space-2) var(--space-3);
+  --vchip-w: clamp(6.5rem, 42vw, 12rem);
+  position: absolute;
+  /* Clamp the box centre so the chip always stays fully inside the rail. */
+  left: clamp(calc(var(--vchip-w) / 2), var(--vchip-pct, 50%), calc(100% - var(--vchip-w) / 2));
+  transform: translateX(-50%);
+  width: var(--vchip-w); padding: var(--space-2) var(--space-3);
   background: var(--bg-card); border: 1px solid var(--border-subtle); border-left: 3px solid var(--fg-tertiary);
   border-radius: var(--radius-sm); cursor: grab; touch-action: none; user-select: none;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
 }
+/* Two rows: above / below the centred rail, with room for the connector stem. */
+.vchip--above { bottom: calc(50% + 2rem); }
+.vchip--below { top: calc(50% + 2rem); }
 .vchip:active { cursor: grabbing; }
 .vchip--revealed { border-left-color: var(--vchip-color, var(--fg-tertiary)); cursor: default; }
 .vchip__outlet { display: block; font-family: var(--font-data); font-size: var(--text-xxs); color: var(--fg-tertiary); }
 .vchip__headline { display: block; font-family: var(--font-editorial); font-size: var(--text-sm); color: var(--fg-primary); line-height: 1.25; }
 .vchip__lean { display: block; margin-top: 2px; font-family: var(--font-data); font-size: var(--text-xxs); color: var(--vchip-color, var(--fg-secondary)); }
+
+/* Connector stem (::after = line to the rail) + landing dot (::before = on the
+   rail). Both track the chip's own centre, so they read cleanly at every
+   position. Colour follows the revealed lean colour, neutral before reveal. */
+.vchip::after {
+  content: ""; position: absolute; left: 50%; transform: translateX(-50%); width: 1px; height: 2rem;
+  background: var(--vchip-color, var(--border-strong)); opacity: 0.7;
+}
+.vchip--above::after { top: 100%; }
+.vchip--below::after { bottom: 100%; }
+.vchip::before {
+  content: ""; position: absolute; left: 50%; width: 9px; height: 9px; border-radius: 50%;
+  background: var(--bg-card); border: 2px solid var(--vchip-color, var(--fg-tertiary)); z-index: 1;
+}
+.vchip--above::before { top: calc(100% + 2rem); transform: translate(-50%, -50%); }
+.vchip--below::before { bottom: calc(100% + 2rem); transform: translate(-50%, 50%); }
+
+/* Phones + small tablets: the top row carries three chips (far-left, centre,
+   far-right), so the full-width 12rem cap only clears once the rail passes
+   ~600px. Below that, slim the chips: narrower boxes also relax the centre
+   clamp (they sit closer to the rail ends), spreading the three landings apart,
+   so slimming fixes the overlap twice over. Headline type drops a step to keep
+   the slimmer chips from getting too tall. */
+@media (max-width: 680px) {
+  .vrail { min-height: 27rem; }
+  .vchip { --vchip-w: clamp(5rem, 26vw, 10rem); padding: var(--space-2); }
+  .vchip__headline { font-size: var(--text-xs); line-height: 1.2; }
+}
 
 /* ── Beat 2 — live Sigil demo ────────────────────────────────────────────── */
 .sigdemo { display: grid; gap: var(--space-4); justify-items: center; margin-top: var(--space-5); }
@@ -184,7 +263,7 @@
 .sigdemo__controls { width: 100%; max-width: 22rem; display: grid; gap: var(--space-3); }
 .sigdemo__ctl { display: grid; gap: 4px; }
 .sigdemo__ctl span { font-family: var(--font-data); font-size: var(--text-xs); color: var(--fg-secondary); }
-.sigdemo__ctl input[type="range"] { width: 100%; accent-color: var(--accent-ember); min-height: 24px; }
+.sigdemo__ctl input[type="range"] { width: 100%; accent-color: var(--about-accent); min-height: 24px; }
 .sigdemo__hint { text-align: center; font-family: var(--font-structural); font-size: var(--text-sm); color: var(--fg-secondary); min-height: 2.5em; max-width: 26rem; }
 
 /* ── Beat 3 — ranking signals ────────────────────────────────────────────── */
@@ -192,7 +271,7 @@
 .rsignals__row { display: grid; grid-template-columns: 9rem 1fr 2.5rem; align-items: center; gap: var(--space-2); }
 .rsignals__name { font-family: var(--font-structural); font-size: var(--text-sm); color: var(--fg-secondary); }
 .rsignals__bar { height: 8px; background: var(--bg-secondary); border-radius: 4px; overflow: hidden; }
-.rsignals__fill { display: block; height: 100%; width: 100%; transform-origin: left center; background: var(--accent-ember); border-radius: 4px; }
+.rsignals__fill { display: block; height: 100%; width: 100%; transform-origin: left center; background: var(--about-accent); border-radius: 4px; }
 .rsignals__w { font-family: var(--font-data); font-size: var(--text-xs); color: var(--fg-tertiary); text-align: right; }
 .rsignals__gate { text-align: center; margin-top: var(--space-3); font-family: var(--font-data); font-size: var(--text-xs); color: var(--fg-tertiary); }
 
@@ -203,45 +282,81 @@
 .verdict__mark-verdict { font-family: var(--font-structural); font-size: var(--text-sm); font-weight: 600; }
 .verdict__mark-verdict--consensus { color: var(--bias-center); }
 .verdict__mark-verdict--broad { color: var(--fg-primary); }
-.verdict__mark-verdict--thin { color: var(--accent-warm); }
+.verdict__mark-verdict--thin { color: var(--about-accent); }
 .verdict__numbers { list-style: none; padding: 0; margin: var(--space-6) 0; display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-5); }
 .verdict__numbers li { text-align: center; }
 .verdict__num { display: block; font-family: var(--font-editorial); font-size: var(--text-xl); color: var(--fg-primary); }
 .verdict__num-label { font-family: var(--font-data); font-size: var(--text-xxs); color: var(--fg-tertiary); text-transform: uppercase; letter-spacing: 0.05em; }
-.verdict__cta { text-align: center; display: grid; justify-items: center; gap: var(--space-2); }
+/* Closing step — one hero CTA + the full page map. A deliberate conclusion to
+   the About journey: "you finished; here is everywhere to go next." */
+.verdict__final {
+  text-align: center; display: grid; justify-items: center; gap: var(--space-2);
+  margin-top: var(--space-6); padding-top: var(--space-6);
+  border-top: 1px solid var(--border-subtle);
+}
+.verdict__final-eyebrow {
+  font-family: var(--font-data); font-size: var(--text-xxs); text-transform: uppercase;
+  letter-spacing: 0.14em; color: var(--about-accent); margin: 0;
+}
+.verdict__final-h {
+  font-family: var(--font-editorial); font-size: var(--text-xl); line-height: 1.1;
+  color: var(--fg-primary); margin: 0 0 var(--space-3);
+}
 .verdict__go {
   font-family: var(--font-data); font-size: var(--text-base); text-decoration: none;
-  background: var(--accent); color: #fff; border: none; border-radius: var(--radius-sm);
-  padding: 0.8rem 1.6rem; min-height: 48px; display: inline-flex; align-items: center; cursor: pointer;
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1.8rem; min-height: 48px; display: inline-flex; align-items: center; gap: 0.4ch; cursor: pointer;
 }
-.verdict__go:hover { background: var(--accent-hover); }
-.verdict__fine { font-family: var(--font-data); font-size: var(--text-xs); color: var(--fg-tertiary); }
-.verdict__secondary { font-family: var(--font-structural); font-size: var(--text-sm); color: var(--fg-secondary); text-decoration: none; }
-.verdict__secondary:hover { color: var(--fg-primary); }
+.verdict__fine { font-family: var(--font-data); font-size: var(--text-xs); color: var(--fg-tertiary); margin: 0 0 var(--space-4); }
 
-/* ── Action buttons — terracotta ink-splash ──────────────────────────────────
-   The onboarding / user-journey CTAs (tour, next, beat action, "see the feed")
-   were a flat var(--accent) fill with hard #fff text. In dark mode --accent is
-   cream, so it rendered white-on-cream (near invisible). These now sit on a
-   terracotta ground with warm-paper text, an ink-wash texture, and a soft ink
-   bloom that rises on hover (an inset glow, so it paints behind the label and
-   never lowers its contrast). Echoes the ship vote-splash language. Placed last
-   so it overrides the earlier flat fills at equal specificity. */
+/* Page map — every live destination, each in its own brand accent. */
+.verdict__map {
+  width: 100%; margin: 0 auto; max-width: 34rem;
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-2);
+}
+@media (min-width: 560px) { .verdict__map { grid-template-columns: repeat(3, 1fr); } }
+.verdict__map-link {
+  --card-accent: var(--acc-l, var(--about-accent));
+  display: grid; gap: 2px; text-align: left;
+  padding: var(--space-3); text-decoration: none;
+  background: var(--bg-card); border: 1px solid var(--border-subtle);
+  border-left: 3px solid var(--card-accent); border-radius: var(--radius-sm);
+  transition: border-color 160ms ease, transform 160ms var(--ease-cinematic, ease), box-shadow 160ms ease;
+}
+:root[data-mode="dark"] .verdict__map-link { --card-accent: var(--acc-d, var(--about-accent)); }
+.verdict__map-link:hover {
+  border-color: var(--card-accent); transform: translateY(-2px);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--card-accent) 22%, transparent);
+}
+.verdict__map-link:focus-visible { outline: 2px solid var(--card-accent); outline-offset: 2px; }
+.verdict__map-name { font-family: var(--font-editorial); font-weight: 600; font-size: var(--text-base); color: var(--card-accent); }
+.verdict__map-sub { font-family: var(--font-structural); font-size: var(--text-xs); color: var(--fg-secondary); line-height: 1.35; }
+.verdict__map-note { font-family: var(--font-structural); font-size: var(--text-xs); color: var(--fg-tertiary); max-width: 34rem; margin: var(--space-3) auto 0; }
+
+/* ── Primary action buttons — solid deep-terracotta, action-demanding ─────────
+   The user-journey CTAs (tour, next, beat action, "read today's feed", "start
+   reading") are the loudest thing on the page: a solid deep-terracotta fill
+   (--about-btn, deep in BOTH modes) with warm-paper text, an ink-wash texture,
+   a resting lift shadow, and an ink bloom that rises on hover. They read as
+   raised buttons that want to be pressed, never as faint text links. Placed
+   last so they override the earlier flat fills at equal specificity. */
 .onb-invite__btn--go,
 .onb__next,
 .beat__action,
 .verdict__go {
   position: relative;
-  color: var(--accent-ember-fg);
-  font-weight: 600;
+  color: var(--about-btn-fg);
+  font-weight: 700;
+  letter-spacing: 0.01em;
   border: 1px solid rgba(0, 0, 0, 0.24);
-  background-color: var(--accent-ember);
+  background-color: var(--about-btn);
   background-image:
     radial-gradient(115% 130% at 12% 6%, rgba(24, 10, 4, 0.22), transparent 44%),
     radial-gradient(95% 105% at 92% 92%, rgba(24, 10, 4, 0.16), transparent 52%),
     var(--paper-texture);
   background-blend-mode: multiply, multiply, normal;
-  box-shadow: inset 0 0 0 0 rgba(255, 241, 226, 0);
+  box-shadow: 0 4px 14px rgba(122, 60, 34, 0.28),
+              inset 0 0 0 0 rgba(255, 241, 226, 0);
   transition: background-color 180ms ease,
               box-shadow 260ms var(--ease-cinematic, ease),
               transform 140ms var(--ease-cinematic, ease);
@@ -250,16 +365,23 @@
 .onb__next:hover,
 .beat__action:hover,
 .verdict__go:hover {
-  background-color: var(--accent-ember-hover);
+  background-color: var(--about-btn-hover);
   box-shadow: inset 0 -22px 30px -12px rgba(255, 241, 226, 0.34),
-              0 8px 22px rgba(150, 45, 22, 0.30);
+              0 10px 26px rgba(122, 60, 34, 0.38);
+}
+.onb-invite__btn--go:active,
+.onb__next:active,
+.beat__action:active,
+.verdict__go:active {
+  transform: translateY(1px) scale(0.985);
+  box-shadow: 0 2px 8px rgba(122, 60, 34, 0.30);
 }
 .onb-invite__btn--go:focus-visible,
 .onb__next:focus-visible,
 .beat__action:focus-visible,
 .verdict__go:focus-visible {
-  outline: 2px solid var(--accent-ember-fg);
-  outline-offset: 2px;
+  outline: 2px solid var(--about-btn);
+  outline-offset: 3px;
 }
 
 /* ── Page-only deep sections (Mission / Pipeline / FAQ) ───────────────────────
@@ -278,7 +400,7 @@
   font-size: var(--text-xs);
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--fg-accent);
+  color: var(--about-accent);
   margin: 0 0 var(--space-3);
 }
 .about-sec__h {
@@ -320,14 +442,14 @@
   padding: var(--space-4);
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  border-left: 3px solid var(--accent-ember);
+  border-left: 3px solid var(--about-accent);
   border-radius: var(--radius-md);
 }
 .pipe__n {
   font-family: var(--font-data);
   font-size: var(--text-lg);
   font-weight: 600;
-  color: var(--accent-ember);
+  color: var(--about-accent);
   line-height: 1;
 }
 .pipe__body { display: grid; gap: 4px; }
@@ -366,8 +488,8 @@
   color: var(--fg-secondary);
   margin: 0;
 }
-.faq__link { color: var(--fg-accent); text-decoration: underline; text-underline-offset: 2px; }
-.faq__link:hover { color: var(--accent-ember); }
+.faq__link { color: var(--about-accent); text-decoration: underline; text-underline-offset: 2px; }
+.faq__link:hover { color: var(--about-btn-hover); }
 
 @media (min-width: 640px) {
   .pipe__step { grid-template-columns: 3.5rem 1fr; }

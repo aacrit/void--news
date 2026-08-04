@@ -1135,8 +1135,12 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
         onClose={() => setSearchOpen(false)}
       />
 
-      {/* Unified onboarding — carousel (concepts) then spotlight tour (real UI) */}
-      <UnifiedOnboarding active={!isLoading && stories.length > 0} />
+      {/* Unified onboarding — DISABLED (2026-08-04). The auto-launching tour was
+          distracting and the /about experience now covers the same ground. The
+          UnifiedOnboarding component + onboarding.css are kept intact so it can
+          be re-enabled later; here it is hard-gated to never auto-activate.
+          Re-enable by restoring: active={!isLoading && stories.length > 0} */}
+      <UnifiedOnboarding active={false} />
 
       {/* Keyboard shortcuts overlay — press ? to toggle */}
       <KeyboardShortcutsOverlay />

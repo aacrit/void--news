@@ -32,10 +32,15 @@ export default function BeatVoid() {
   const chipRefs = useRef<(HTMLDivElement | null)[]>([]);
   const railRef = useRef<HTMLDivElement>(null);
   const dragState = useRef<{ i: number; startX: number; startPct: number } | null>(null);
-  // Per-chip horizontal position as % of rail width (guess positions).
-  const [pcts, setPcts] = useState<number[]>(() =>
-    DIVERGENT_HEADLINES.map((_, i) => 18 + (i / (DIVERGENT_HEADLINES.length - 1)) * 64),
-  );
+  // Per-chip horizontal position as % of rail width. Reduced-motion / no-JS
+  // starts already at the true landing points (reveal never fires there);
+  // otherwise an evenly spread set of guess positions to drag from.
+  const [pcts, setPcts] = useState<number[]>(() => {
+    const reducedStart =
+      typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reducedStart) return DIVERGENT_HEADLINES.map((h) => leanToX(h.leanScore));
+    return DIVERGENT_HEADLINES.map((_, i) => 18 + (i / (DIVERGENT_HEADLINES.length - 1)) * 64);
+  });
 
   const reveal = () => {
     setRevealed(true);
@@ -49,7 +54,10 @@ export default function BeatVoid() {
           type: "spring",
           stiffness: 220,
           damping: 26,
-          onUpdate: (v: number) => { el.style.left = `${v}%`; },
+          // Drive the CSS custom property, not `left` directly: `left` is a
+          // clamp() expression that keeps the chip box inside the rail, and
+          // --vchip-pct is the true landing point it clamps.
+          onUpdate: (v: number) => { el.style.setProperty("--vchip-pct", `${v}%`); },
         });
       });
     }
@@ -82,18 +90,22 @@ export default function BeatVoid() {
 
       <div className="vrail" ref={railRef} onPointerMove={onPointerMove} onPointerUp={onPointerUp} onPointerLeave={onPointerUp}>
         <div className="vrail__track" aria-hidden="true">
-          <span className="vrail__end vrail__end--l">Left</span>
           <span className="vrail__tick" />
-          <span className="vrail__end vrail__end--r">Right</span>
         </div>
+        <span className="vrail__end vrail__end--l" aria-hidden="true">Left</span>
+        <span className="vrail__end vrail__end--r" aria-hidden="true">Right</span>
         {DIVERGENT_HEADLINES.map((h, i) => {
           const color = getLeanColor(leanToDisplayPos(h.leanScore));
+          // Stagger the chips onto two rows so they never stack: chips 1, 3, 5
+          // ride above the rail, 2 and 4 below. Each keeps a connector stem +
+          // dot marking its point on the spectrum line.
+          const row = i % 2 === 0 ? "vchip--above" : "vchip--below";
           return (
             <div
               key={h.outlet}
               ref={(el) => { chipRefs.current[i] = el; }}
-              className={`vchip${revealed ? " vchip--revealed" : ""}`}
-              style={{ left: `${pcts[i]}%`, ...(revealed ? { ["--vchip-color" as string]: color } : {}) }}
+              className={`vchip ${row}${revealed ? " vchip--revealed" : ""}`}
+              style={{ ["--vchip-pct" as string]: `${pcts[i]}%`, ...(revealed ? { ["--vchip-color" as string]: color } : {}) }}
               onPointerDown={onPointerDown(i)}
               role="group"
               aria-label={`${h.outlet}: ${h.headline}. ${revealed ? `Actual lean: ${leanLabel(h.leanScore)}.` : "Drag to place on the spectrum."}`}
