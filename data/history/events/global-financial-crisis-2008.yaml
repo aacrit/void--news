@@ -87,6 +87,7 @@ coordinates:
   lat: 40.7069
   lng: -74.0113
 related_event_slugs:
+- great-depression
 - september-11-attacks
 - arab-spring
 perspectives:
@@ -348,6 +349,9 @@ perspectives:
   - Behavioral and outright fraud dimensions at the loan level
 media: []
 connections:
+- target_slug: great-depression
+  connection_type: parallel
+  description: The 1930s were the disaster every later crash is measured against. Ben Bernanke, a scholar of how the Federal Reserve let the money supply collapse after 1929, flooded the banks with cash in 2008 to keep the panic from becoming a second Depression.
 - target_slug: september-11-attacks
   connection_type: influenced
   description: After September 2001, the Federal Reserve cut its benchmark rate to 1 percent, the lowest since 1958, and held it there through the recovery. Cheap money poured into housing. Economists still argue over how much of the 2008 bubble was inflated in the rubble of 2001

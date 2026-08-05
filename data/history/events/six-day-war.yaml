@@ -121,6 +121,7 @@ coordinates:
   lng: 35.2137
 related_event_slugs:
 - creation-of-israel-nakba
+- sykes-picot-agreement
 - iranian-revolution
 - arab-spring
 perspectives:
@@ -230,9 +231,6 @@ perspectives:
   - text: We are ready for war. Our armed forces, our people, all of us are ready for war, but we shall in no way be the ones to begin.
     speaker: Gamal Abdel Nasser
     context: Press conference, Cairo, May 28, 1967
-  - text: The problem was not that Nasser wanted war, but that he wanted a crisis he could not control.
-    speaker: Mohamed Hassanein Heikal
-    context: Paraphrase of his account of the road to June 1967
   emphasized:
   - The war as a miscalculation that spiraled beyond Cairo's intent
   - The role of inter-Arab rivalry and Soviet disinformation in the escalation
@@ -289,9 +287,6 @@ perspectives:
   - text: We were told to leave for a few days until the fighting stopped. We are still waiting to go back.
     speaker: Displaced resident of Beit Nuba
     context: Oral testimony recorded on the 1967 exodus
-  - text: The Naksa was not a defeat of armies only. It was the day the world became our jailer.
-    speaker: Palestinian refugee testimony
-    context: Collected in accounts of the 1967 displacement
   emphasized:
   - The occupation as a permanent condition, not a six-day event
   - The second displacement of Palestinians already made refugees in 1948
@@ -424,6 +419,9 @@ perspectives:
   - The role of non-state actors that no UN resolution addressed
 media: []
 connections:
+- target_slug: sykes-picot-agreement
+  connection_type: consequence
+  description: The mandate borders that Sykes and Picot sketched across the Levant in 1916 became the frontiers of the states that went to war in 1967. The Golan, the West Bank, and the Sinai lines Israel crossed were first drawn in the imperial partition of the Ottoman Arab lands.
 - target_slug: creation-of-israel-nakba
   connection_type: influenced
   description: In 1948, 700,000 Palestinians were displaced when Israel was founded. In 1967, another 300,000 were displaced when Israel took the land the 1948 war had left in Arab hands. The second exodus was the sequel Palestinians named al-Naksa, the setback after the catastrophe

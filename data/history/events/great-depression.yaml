@@ -95,10 +95,12 @@ coordinates:
   lat: 40.7069
   lng: -74.0113
 related_event_slugs:
+- world-war-i
 - russian-revolution
 - the-holocaust
 - industrial-revolution
 - holodomor
+- global-financial-crisis-2008
 perspectives:
 - viewpoint: Keynesian / Demand Collapse
   viewpoint_type: academic
@@ -184,9 +186,9 @@ perspectives:
   - text: You're right, we did it. We're very sorry. But thanks to you, we won't do it again.
     speaker: Milton Friedman
     context: Remarks at a 2002 conference honoring Anna Schwartz, addressing Federal Reserve Governor Ben Bernanke
-  - text: The thing to do was to allow the recession to run its course, to let prices and costs fall until a new bottom was found.
-    speaker: Paraphrase of the liquidationist view attributed to Andrew Mellon
-    context: As recounted in Hoover's Memoirs, 1952
+  - text: Liquidate labor, liquidate stocks, liquidate the farmers, liquidate real estate. It will purge the rottenness out of the system.
+    speaker: Andrew Mellon
+    context: US Treasury Secretary's liquidationist prescription, as recounted in Herbert Hoover's Memoirs, 1952
   emphasized:
   - Monetary contraction and Federal Reserve passivity as the decisive cause
   - The Depression as a failure of policy and central banking, not of markets
@@ -325,9 +327,6 @@ perspectives:
   - text: The origins of the cataclysm lay in the Utopian endeavor of economic liberalism to set up a self-regulating market system.
     speaker: Karl Polanyi
     context: The Great Transformation, 1944
-  - text: The Nazi party was, above all, the party of the economic crisis.
-    speaker: Paraphrase of Adam Tooze's argument
-    context: The Wages of Destruction, 2006
   emphasized:
   - The Depression as the cause of fascism's rise and the collapse of interwar democracy
   - The German unemployment-to-Nazism link and the role of austerity in enabling it
@@ -347,3 +346,9 @@ connections:
 - target_slug: industrial-revolution
   connection_type: influenced
   description: 'The Depression was the great crisis of the industrial-capitalist order the Industrial Revolution created: too much productive capacity, too little purchasing power, and a boom-bust cycle that finally overwhelmed the faith that markets always right themselves'
+- target_slug: world-war-i
+  connection_type: consequence
+  description: The First World War left the debts, reparations, and gold-standard strains that made the 1920s economy brittle. The Depression was the delayed bill for a war whose guns had gone quiet a decade earlier.
+- target_slug: global-financial-crisis-2008
+  connection_type: parallel
+  description: The 1930s became the benchmark catastrophe. Ben Bernanke, who had studied how the Federal Reserve let the money supply collapse after 1929, ran the 2008 rescue precisely to avoid repeating it.

@@ -100,6 +100,8 @@ related_event_slugs:
 - fall-of-berlin-wall
 - russian-revolution
 - cuban-missile-crisis
+- apollo-11-moon-landing
+- srebrenica-genocide
 - holodomor
 perspectives:
 - viewpoint: Western Triumph / End of History
@@ -322,9 +324,6 @@ perspectives:
     year: '2014'
     type: book
   notable_quotes:
-  - text: The Soviet Union was not overthrown. It committed suicide, or was killed by its own reformers.
-    speaker: Stephen Kotkin
-    context: Paraphrasing the argument of Armageddon Averted, 2001
   - text: The Soviet collapse was neither preordained nor the product of a single cause.
     speaker: Serhii Plokhy
     context: The Last Empire, 2014
@@ -350,3 +349,9 @@ connections:
 - target_slug: holodomor
   connection_type: influenced
   description: Stalin's engineered famine killed millions of Ukrainians in 1932 and 1933. On December 1, 1991, 92 percent of Ukraine voted to leave the union that had starved it, and without Ukraine there was no union to preserve
+- target_slug: apollo-11-moon-landing
+  connection_type: parallel
+  description: The space race was one front of the Cold War the Soviet Union ultimately lost. It launched the first satellite and the first man, then watched America reach the Moon first. Twenty-two years later the runner-up superpower voted itself out of existence.
+- target_slug: srebrenica-genocide
+  connection_type: influenced
+  description: The collapse of European communism between 1989 and 1991 removed the frame that had held multi-ethnic Yugoslavia together. As the federation broke apart in the Cold War's wake, the drive to carve out ethnically pure states produced the Bosnian War and the massacre at Srebrenica.

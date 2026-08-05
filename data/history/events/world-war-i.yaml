@@ -105,6 +105,7 @@ related_event_slugs:
 - armenian-genocide
 - sykes-picot-agreement
 - spanish-flu-1918
+- great-depression
 - the-holocaust
 - womens-suffrage
 perspectives:
@@ -352,3 +353,6 @@ connections:
 - target_slug: the-holocaust
   connection_type: influenced
   description: Versailles, the reparations bill, and the stab-in-the-back myth gave German nationalism its grievance. A corporal gassed near Ypres in 1918 built a movement on the claim that Germany had been betrayed, not beaten.
+- target_slug: great-depression
+  connection_type: influenced
+  description: The war left a wreckage of reparations, inter-Allied debts, and a strained return to the gold standard. That brittle 1920s economy held until 1929, when the crash broke it and carried the German unemployed toward Hitler.

@@ -125,6 +125,7 @@ coordinates:
 related_event_slugs:
 - cuban-missile-crisis
 - fall-of-berlin-wall
+- soviet-union-collapse
 - civil-rights-movement
 perspectives:
 - viewpoint: American Triumph / Cold War Victory
@@ -416,3 +417,6 @@ connections:
 - target_slug: fall-of-berlin-wall
   connection_type: influenced
   description: Apollo settled the Cold War's technological contest in America's favor in 1969; twenty years later the system it had outbuilt collapsed at the Berlin Wall. The Space Race was one front of a rivalry the Soviet Union would ultimately lose
+- target_slug: soviet-union-collapse
+  connection_type: influenced
+  description: The Moon race was one front of the superpower contest, and the Soviet Union lost it. Korolev was dead by 1966, the N1 rocket exploded on all four flights, and the lunar program was hidden and then denied. Twenty-two years after Tranquility, the state that came second dissolved itself.
