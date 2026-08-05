@@ -1540,9 +1540,18 @@ a.ship-card__commit:hover {
   grid-template-rows: 1fr;
 }
 
+/* The animated grid child must collapse to a TRUE zero when closed. Any
+   padding here keeps the min-content contribution above 0, so the 0fr track
+   never fully closes and a clipped first line of the note leaks under the
+   claim. Keep this element padding-free (just the overflow clip); all spacing
+   lives on the inner wrapper, which the overflow:hidden crops to nothing while
+   collapsed. */
 .ship-obs-item__body {
   min-height: 0;
   overflow: hidden;
+}
+
+.ship-obs-item__inner {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);

@@ -268,18 +268,6 @@ function easeOutPoly(t: number): number {
   return 1 - Math.pow(1 - t, 3.5);
 }
 
-// ---- Mobile detection ----
-function useIsMobile(breakpoint = 768): boolean {
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth < breakpoint);
-    check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
-  }, [breakpoint]);
-  return isMobile;
-}
-
 // ---- Reduced-motion detection ----
 function usePrefersReducedMotion(): boolean {
   const [reduced, setReduced] = useState(false);
@@ -535,19 +523,21 @@ function ObservationItem({
             display:none) while removing the hidden controls from the tab order
             and the accessibility tree. */}
         <div className="ship-obs-item__body" inert={!open}>
-          <p className="ship-obs__note">{obs.note}</p>
-          <p className="ship-obs__optimizing">
-            <span className="ship-obs__optimizing-label">What we are doing</span>
-            {obs.optimizing}
-          </p>
-          <QuickSubmit
-            fingerprint={fingerprint}
-            variant="inline"
-            presetTitle={`Re: ${obs.claim}`}
-            descPrefix={`On the observation: "${obs.claim}"`}
-            placeholder="Seen this yourself, or have a fix in mind? Tell us."
-            toggleLabel="Suggest a fix"
-          />
+          <div className="ship-obs-item__inner">
+            <p className="ship-obs__note">{obs.note}</p>
+            <p className="ship-obs__optimizing">
+              <span className="ship-obs__optimizing-label">What we are doing</span>
+              {obs.optimizing}
+            </p>
+            <QuickSubmit
+              fingerprint={fingerprint}
+              variant="inline"
+              presetTitle={`Re: ${obs.claim}`}
+              descPrefix={`On the observation: "${obs.claim}"`}
+              placeholder="Seen this yourself, or have a fix in mind? Tell us."
+              toggleLabel="Suggest a fix"
+            />
+          </div>
         </div>
       </div>
     </li>
@@ -641,7 +631,6 @@ export default function ShipBoard() {
   const [loading, setLoading] = useState(true);
   const [votedIds, setVotedIds] = useState<Set<string>>(new Set());
   const fingerprintRef = useRef<string>('');
-  const isMobile = useIsMobile();
   const prefersReduced = usePrefersReducedMotion();
 
   const pageRef = useRef<HTMLElement>(null);
@@ -863,11 +852,13 @@ export default function ShipBoard() {
     }
   }
 
-  // On mobile the board stacks; hide empty columns (keep submitted). On desktop
-  // every column stays so the pipeline reads left to right.
-  const visibleColumns = isMobile
-    ? BOARD_COLUMNS.filter(col => col.key === 'submitted' || col.statuses.some(s => grouped[s].length > 0))
-    : BOARD_COLUMNS;
+  // Hide empty columns on every viewport (desktop included): two "Empty"
+  // columns make the board read dead. Submitted always shows so the funnel
+  // entry is visible; the remaining populated columns keep their left-to-right
+  // pipeline order.
+  const visibleColumns = BOARD_COLUMNS.filter(
+    col => col.key === 'submitted' || col.statuses.some(s => grouped[s].length > 0),
+  );
 
   const avgLabel = displayMetrics.avgShipTimeHours > 0
     ? `${displayMetrics.avgShipTimeHours.toFixed(1)}h`
