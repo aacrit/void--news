@@ -1,0 +1,30 @@
+name: Curate ship board (one-off)
+
+# One-off cleanup of the ship_requests board for launch: removes an internal
+# test card and rewrites stale/jargon shipped items into reader English. Runs
+# in CI because the anon key cannot write ship_requests (migration 068); the
+# service-role key is supplied via secrets. Idempotent (matches rows by their
+# current title), so safe to re-run. Manual trigger only.
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: curate-ship
+  cancel-in-progress: false
+
+jobs:
+  curate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: pip install supabase python-dotenv
+      - name: Curate ship board
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python -m pipeline.admin.curate_ship
