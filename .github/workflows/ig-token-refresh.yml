@@ -3,11 +3,15 @@ name: IG Token Refresh
 permissions:
   contents: read
 
+# PARKED with posting (2026-08-05): no auto-posting means the Instagram Graph
+# token is not in active use, so the weekly auto-refresh is disabled. Keep manual
+# dispatch to refresh on demand if posting is re-enabled. Re-enable by
+# uncommenting the schedule below.
 on:
-  schedule:
-    # Every Sunday 04:00 UTC. Long-lived tokens last 60 days; this refreshes
-    # them at most once per week so we never come within 14 days of expiry.
-    - cron: '0 4 * * 0'
+  # schedule:
+  #   # Every Sunday 04:00 UTC. Long-lived tokens last 60 days; this refreshes
+  #   # them at most once per week so we never come within 14 days of expiry.
+  #   - cron: '0 4 * * 0'
   workflow_dispatch:
 
 jobs:

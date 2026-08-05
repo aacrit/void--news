@@ -2,11 +2,15 @@ name: IG Metrics
 
 permissions: {}
 
+# PARKED with posting (2026-08-05): nothing auto-posts, so there is no live
+# content to pull insights for. The daily cron is disabled; keep manual dispatch
+# for one-off backfills if posting is ever re-enabled. Re-enable by uncommenting
+# the schedule below (alongside the ig-pipeline publish mode).
 on:
-  schedule:
-    # Daily 14:00 UTC — 30 minutes after the Mon/Thu publish window, so
-    # newly-posted content is already in the IG insights system.
-    - cron: '0 14 * * *'
+  # schedule:
+  #   # Daily 14:00 UTC — 30 minutes after the Mon/Thu publish window, so
+  #   # newly-posted content is already in the IG insights system.
+  #   - cron: '0 14 * * *'
   workflow_dispatch:
 
 jobs:
