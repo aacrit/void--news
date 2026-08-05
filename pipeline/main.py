@@ -3360,19 +3360,17 @@ def main():
         except Exception as e:
             print(f"  [warn] Flash-tier reconciliation failed: {e}")
 
-    # Step 8e: Cache cluster images to Supabase Storage (bypasses CDN hotlink protection)
-    # Downloads og:images server-side on GitHub Actions (neutral IP = no Referer block),
-    # re-serves from Supabase CDN. Top 15 clusters get guaranteed image availability —
-    # buffer for the 50/50 lead split (rank 0) + headroom if rank 0 image fetch fails
-    # (rank 1 promotes seamlessly).
-    if IMAGE_CACHER_AVAILABLE:
-        print("\n[8e] Caching cluster images to Supabase Storage...")
-        try:
-            cache_cluster_images(clusters, supabase, top_n=15)
-        except Exception as e:
-            print(f"  [warn] Image caching failed: {e}")
-    else:
-        print("\n[8e] Skipping image cache (cluster_image_cacher not available)")
+    # Step 8e: RETIRED 2026-08-05 (copyright compliance). The cacher downloaded,
+    # re-encoded (stripping EXIF/IPTC copyright-management info), and re-hosted
+    # scraped news-publisher og:images into Supabase Storage — that is reproduction
+    # plus a separate DMCA 1202(b) exposure per image, and wire photos (Getty/AP/
+    # Reuters) were the highest-enforcement category. The News feed renders
+    # text-only and Weekly is hidden for the light launch, so nothing consumes
+    # cached_image_url. The stage is disabled here (cache_cluster_images left in
+    # media/cluster_image_cacher.py, uninvoked). When Weekly returns as a feature it
+    # will use public-domain Wikimedia (hotlinked + attributed), like History, not
+    # this scraped-image cacher.
+    print("\n[8e] Image cache RETIRED (copyright): scraped-image re-hosting disabled.")
 
     # Step 9a: Update memory engine with new top story
     if MEMORY_AVAILABLE and cluster_ids_to_enrich and ANALYSIS_AVAILABLE:
