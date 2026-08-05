@@ -12,8 +12,8 @@ severity: catastrophic
 death_toll: Economic catastrophe with no direct battlefield toll; mass impoverishment, hunger, and suicide across four continents (excess mortality debated)
 affected_population: US unemployment peaked near 25% (about 15 million workers); German unemployment hit 6 million; world trade fell roughly 66% between 1929 and 1933; global industrial output fell by about a third
 duration: October 1929 - 1939 (US output did not regain its 1929 peak until 1939; the slump ended only with wartime mobilization)
-hero_image_url: null
-hero_image_attribution: null
+hero_image_url: https://commons.wikimedia.org/wiki/File:Lange-MigrantMother02.jpg
+hero_image_attribution: Dorothea Lange, Farm Security Administration, 1936, public domain via Wikimedia Commons
 summary: |
   On October 29, 1929, "Black Tuesday," 16.4 million shares changed hands on the New York Stock Exchange as prices collapsed. The Dow had lost about a quarter of its value in two days. But the crash was a symptom, not the disease. The disease spread slowly, then everywhere.
 
@@ -335,7 +335,37 @@ perspectives:
   - The economic mechanics of the slump treated in the causation debates
   - The famine and repression concealed behind the Soviet Union's reported full employment
   - The democracies, such as the United States and Britain, that survived the crisis intact
-media: []
+media:
+- media_type: photograph
+  title: Migrant Mother, Nipomo, California, 1936
+  description: Florence Owens Thompson, 32, a destitute pea-picker with her children in a California migrant camp. Dorothea Lange made the photograph for the Farm Security Administration; it became the defining image of the Depression's human cost.
+  source_url: https://commons.wikimedia.org/wiki/File:Lange-MigrantMother02.jpg
+  attribution: Dorothea Lange, Farm Security Administration, 1936, public domain via Wikimedia Commons
+  license: public-domain
+  creator: Dorothea Lange
+  creation_date: '1936'
+  width: 6205
+  height: 8066
+- media_type: photograph
+  title: Crowd on Wall Street during the Crash of 1929
+  description: A crowd gathers outside the New York Stock Exchange as prices collapse in October 1929. The crash wiped out billions in paper wealth and marked the start of the decade-long slump.
+  source_url: https://commons.wikimedia.org/wiki/File:Crowd_outside_nyse.jpg
+  attribution: Unknown photographer, 1929, public domain via Wikimedia Commons
+  license: public-domain
+  creator: Unknown
+  creation_date: October 1929
+  width: 718
+  height: 1024
+- media_type: photograph
+  title: Soup kitchen line, Chicago, 1931
+  description: Unemployed men queue outside a Depression soup kitchen opened in Chicago. By 1933 roughly a quarter of the American workforce was out of work.
+  source_url: https://commons.wikimedia.org/wiki/File:Unemployed_men_queued_outside_a_depression_soup_kitchen_opened_in_Chicago_by_Al_Capone,_02-1931_-_NARA_-_541927.jpg
+  attribution: U.S. National Archives (NARA 541927), 1931, public domain via Wikimedia Commons
+  license: public-domain
+  creator: Unknown
+  creation_date: February 1931
+  width: 2939
+  height: 2392
 connections:
 - target_slug: russian-revolution
   connection_type: parallel

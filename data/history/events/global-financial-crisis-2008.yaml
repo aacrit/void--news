@@ -12,8 +12,8 @@ severity: catastrophic
 death_toll: No mass casualties; a 2014 BMJ study linked the recession to more than 10,000 excess suicides across North America and Europe (2008-2010)
 affected_population: About 8.7 million US jobs lost, roughly 10 million US home foreclosures, an estimated 19.2 trillion dollars in US household wealth erased; global unemployment rose by more than 30 million
 duration: Acute phase August 2007 - March 2009; the US Great Recession, dated by the NBER, ran December 2007 - June 2009
-hero_image_url: null
-hero_image_attribution: null
+hero_image_url: https://commons.wikimedia.org/wiki/File:Lehman_Brothers_Times_Square_by_David_Shankbone.jpg
+hero_image_attribution: David Shankbone, 2007, CC BY-SA 3.0, via Wikimedia Commons
 summary: |
   The bankruptcy petition was filed in a Manhattan federal court at 1:45 on the morning of September 15, 2008. Lehman Brothers, founded in 1850, having survived the Civil War, two world wars, and the Great Depression, listed 639 billion dollars in assets and 619 billion dollars in debt. It was the largest bankruptcy filing in United States history. By the time markets opened in Asia, the short-term credit that moves through the global economy every day had begun to freeze.
 
@@ -347,7 +347,37 @@ perspectives:
   - The broad consensus on the mechanics of the panic itself
   - The possibility that several causes were jointly necessary
   - Behavioral and outright fraud dimensions at the loan level
-media: []
+media:
+- media_type: photograph
+  title: Lehman Brothers headquarters, Times Square, New York
+  description: The Lehman Brothers tower on Seventh Avenue. On 15 September 2008 the 158-year-old investment bank filed the largest bankruptcy in U.S. history, with 613 billion dollars in debt, tipping the credit crunch into a global panic.
+  source_url: https://commons.wikimedia.org/wiki/File:Lehman_Brothers_Times_Square_by_David_Shankbone.jpg
+  attribution: David Shankbone, 2007, CC BY-SA 3.0, via Wikimedia Commons
+  license: cc-by-sa
+  creator: David Shankbone
+  creation_date: '2007'
+  width: 2448
+  height: 3264
+- media_type: photograph
+  title: Bank run at Northern Rock, September 2007
+  description: Customers queue to withdraw their savings from a Northern Rock branch in Brighton, England. It was the first run on a British bank in over a century, an early tremor of the crisis that would peak a year later.
+  source_url: https://commons.wikimedia.org/wiki/File:Northern_Rock_Queue.jpg
+  attribution: Dominic Alves, CC BY 2.0, via Wikimedia Commons
+  license: cc-by
+  creator: Dominic Alves
+  creation_date: September 2007
+  width: 2592
+  height: 1944
+- media_type: photograph
+  title: Onlookers outside Lehman Brothers, 15 September 2008
+  description: People gather and film outside the Lehman Brothers headquarters on the day of the bankruptcy filing. Staff carried boxes of belongings onto the street as the firm collapsed.
+  source_url: https://commons.wikimedia.org/wiki/File:Lehman_Brothers-20080915.jpg
+  attribution: Robert Scoble, CC BY 2.0, via Wikimedia Commons
+  license: cc-by
+  creator: Robert Scoble
+  creation_date: September 15, 2008
+  width: 2666
+  height: 4000
 connections:
 - target_slug: great-depression
   connection_type: parallel

@@ -12,8 +12,8 @@ severity: critical
 death_toll: The dissolution itself was largely bloodless (3 killed in the August coup, 14 in Vilnius, January 1991); the 1990s aftermath produced millions of excess deaths
 affected_population: ~290 million people across 15 republics and 11 time zones
 duration: 'Reform to dissolution: March 1985 (Gorbachev takes office) - December 26, 1991 (formal end)'
-hero_image_url: null
-hero_image_attribution: null
+hero_image_url: https://commons.wikimedia.org/wiki/File:RIAN_archive_848095_Signing_the_Agreement_to_eliminate_the_USSR_and_establish_the_Commonwealth_of_Independent_States.jpg
+hero_image_attribution: U. Ivanov, RIA Novosti archive, 1991, CC BY-SA 3.0, via Wikimedia Commons
 summary: |
   On the evening of December 25, 1991, Mikhail Gorbachev sat before a television camera in the Kremlin and read for twelve minutes. "Due to the situation which has evolved as a result of the formation of the Commonwealth of Independent States, I hereby discontinue my activities at the post of President of the U.S.S.R." He signed a decree transferring control of the Soviet nuclear arsenal, roughly 27,000 warheads, to Boris Yeltsin, the president of a country called Russia that had existed as an independent state for four months. At 7:32 p.m. the red flag with hammer and sickle came down over the Senate dome. The Russian tricolor went up. There was no ceremony. A caretaker did it.
 
@@ -335,7 +335,27 @@ perspectives:
   - The lived, emotional experience that structural analysis flattens
   - Moral judgment on the successor states and their trajectories
   - A definitive verdict, which the scholarship deliberately withholds
-media: []
+media:
+- media_type: photograph
+  title: Signing the accord that dissolved the USSR, 8 December 1991
+  description: Leaders of Russia, Ukraine, and Belarus sign the Belavezha Accords, declaring the Soviet Union dissolved and establishing the Commonwealth of Independent States. Boris Yeltsin signs while the other delegations look on.
+  source_url: https://commons.wikimedia.org/wiki/File:RIAN_archive_848095_Signing_the_Agreement_to_eliminate_the_USSR_and_establish_the_Commonwealth_of_Independent_States.jpg
+  attribution: U. Ivanov, RIA Novosti archive, 1991, CC BY-SA 3.0, via Wikimedia Commons
+  license: cc-by-sa
+  creator: U. Ivanov
+  creation_date: December 8, 1991
+  width: 2622
+  height: 1724
+- media_type: photograph
+  title: Mikhail Gorbachev, 1987
+  description: The last leader of the Soviet Union, photographed in the White House Library during a state visit. His reforms of perestroika and glasnost loosened the party's grip; on 25 December 1991 he resigned and the red flag came down over the Kremlin.
+  source_url: https://commons.wikimedia.org/wiki/File:Mikhail_Gorbachev_1987.jpg
+  attribution: White House Photo Office, 1987, public domain via Wikimedia Commons
+  license: public-domain
+  creator: White House Photo Office
+  creation_date: '1987'
+  width: 1169
+  height: 1187
 connections:
 - target_slug: fall-of-berlin-wall
   connection_type: influenced

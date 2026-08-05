@@ -12,8 +12,8 @@ severity: catastrophic
 death_toll: 50-100 million (revised upward from a 1920s estimate of 21 million; Johnson and Mueller, 2002)
 affected_population: About one third of the global population, roughly 500 million people, infected across 1918-1919
 duration: 'Three waves: spring 1918, autumn 1918 (deadliest), and winter 1918-1919'
-hero_image_url: null
-hero_image_attribution: null
+hero_image_url: https://commons.wikimedia.org/wiki/File:Emergency_hospital_during_Influenza_epidemic,_Camp_Funston,_Kansas_-_NCP_1603.jpg
+hero_image_attribution: Otis Historical Archives, National Museum of Health and Medicine, 1918, public domain via Wikimedia Commons
 summary: 'In the first week of March 1918, a mess cook reported to the camp infirmary at Camp Funston, Kansas, with a fever. By noon
   the surgeon had more than a hundred men on cots. Within three weeks, 1,100 soldiers at the camp were too sick to stand. It looked
   like ordinary influenza. Most of the men recovered. Then they shipped out to France.
@@ -490,7 +490,37 @@ perspectives:
   - The lived, individual experience of the dying
   - The contemporary political and wartime context
   - The immediate human response of the officials and physicians of 1918
-media: []
+media:
+- media_type: photograph
+  title: Emergency influenza ward, Camp Funston, Kansas, 1918
+  description: Rows of army cots fill an emergency ward at Camp Funston, one of the first recorded outbreaks of the 1918 pandemic. Recruits training for the Western Front carried the virus across the world.
+  source_url: https://commons.wikimedia.org/wiki/File:Emergency_hospital_during_Influenza_epidemic,_Camp_Funston,_Kansas_-_NCP_1603.jpg
+  attribution: Otis Historical Archives, National Museum of Health and Medicine, 1918, public domain via Wikimedia Commons
+  license: public-domain
+  creator: U.S. Army photographer
+  creation_date: '1918'
+  width: 4802
+  height: 3597
+- media_type: photograph
+  title: Red Cross litter carriers, Washington DC, 1918
+  description: Red Cross volunteers carry a stretcher during the pandemic in Washington, D.C. Cities banned public gatherings, mandated masks, and pressed volunteers into ambulance duty as hospitals overflowed.
+  source_url: https://commons.wikimedia.org/wiki/File:1918_flu_outbreak_RedCrossLitterCarriersSpanishFluWashingtonDC.jpg
+  attribution: American National Red Cross photograph, 1918, public domain via Wikimedia Commons
+  license: public-domain
+  creator: American National Red Cross
+  creation_date: '1918'
+  width: 4767
+  height: 3724
+- media_type: document
+  title: Mortality curve of the 1918 pandemic
+  description: A chart of weekly deaths from combined influenza and pneumonia across major cities. The autumn 1918 second wave, far deadlier than the spring first wave, produced the tall central spike that killed most of the pandemic's victims.
+  source_url: https://commons.wikimedia.org/wiki/File:Spanish_flu_death_chart.png
+  attribution: National Museum of Health and Medicine, public domain via Wikimedia Commons
+  license: public-domain
+  creator: National Museum of Health and Medicine
+  creation_date: '1919'
+  width: 992
+  height: 756
 connections:
 - target_slug: world-war-i
   connection_type: consequence
