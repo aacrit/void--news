@@ -647,7 +647,7 @@ def _history_specs(event_slug: str | None = None) -> list[dict[str, Any]] | None
     perspectives_raw = event.get("perspectives") or []
     perspectives: list[dict[str, str]] = []
     if isinstance(perspectives_raw, list):
-        for p in perspectives_raw[:4]:
+        for p in perspectives_raw[:3]:
             if not isinstance(p, dict):
                 continue
             lens = (
