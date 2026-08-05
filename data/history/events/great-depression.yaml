@@ -1,0 +1,349 @@
+slug: great-depression
+title: The Great Depression
+subtitle: In 1929 America had never been richer. Four years later one in four workers had no job and nobody could agree why.
+date_display: October 1929 - 1939
+date_sort: 1929
+date_precision: year
+era: contemporary
+region: global
+country: Multiple
+category: economic
+severity: catastrophic
+death_toll: Economic catastrophe with no direct battlefield toll; mass impoverishment, hunger, and suicide across four continents (excess mortality debated)
+affected_population: US unemployment peaked near 25% (about 15 million workers); German unemployment hit 6 million; world trade fell roughly 66% between 1929 and 1933; global industrial output fell by about a third
+duration: October 1929 - 1939 (US output did not regain its 1929 peak until 1939; the slump ended only with wartime mobilization)
+hero_image_url: null
+hero_image_attribution: null
+summary: |
+  On October 29, 1929, "Black Tuesday," 16.4 million shares changed hands on the New York Stock Exchange as prices collapsed. The Dow had lost about a quarter of its value in two days. But the crash was a symptom, not the disease. The disease spread slowly, then everywhere.
+
+  Between 1929 and 1933, US industrial production fell 47%, real output fell about 30%, and consumer prices fell roughly a quarter. Roughly 9,000 American banks failed, wiping out the savings of millions. Unemployment climbed from near zero in 1929 to 24.9% in 1933, about 15 million people with no work in a country that six years earlier had believed poverty was almost abolished.
+
+  It did not stay in America. In May 1931 Austria's largest bank, the Creditanstalt, revealed it had lost most of its capital. Foreign creditors pulled their money out of Central Europe. Germany's Danat-Bank shut its doors on July 13, 1931. Germany left the gold standard days later; Britain abandoned it on September 21, 1931. The Smoot-Hawley Tariff, signed by Herbert Hoover on June 17, 1930, raised US duties and triggered retaliation; world trade shrank by about two-thirds in value by 1933.
+
+  The pain reached places that had never seen a Wall Street ticker. Coffee, cotton, rubber, jute, and wheat lost close to half their value. In colonial India indebted peasants shipped "distress gold," their ornaments and coins, out of the country to pay fixed land taxes on collapsing incomes. In Latin America, where single commodities earned more than half of foreign exchange in ten of twenty republics, export revenue vanished. Across Africa and Southeast Asia, cash-crop economies built by empire fell with the price of their one crop.
+
+  Recovery came unevenly and late. In the United States, Franklin Roosevelt's New Deal after 1933 slowed the collapse but did not end it; unemployment was still 14% in 1940. In Germany, 6 million unemployed men helped carry Adolf Hitler from 800,000 votes in 1928 to 13.4 million in July 1932 and into the chancellorship on January 30, 1933. The Soviet Union, sealed off behind its Five-Year Plans, reported no unemployment at all and told the world that capitalism was finished. Economists have argued ever since about what actually caused it.
+significance: |
+  The Great Depression ended the long nineteenth-century faith that free markets self-correct and that the gold standard was sacred. Every major economy that left gold earlier recovered earlier; the ones that clung to it, France chief among them, suffered longest, a pattern Barry Eichengreen called the "golden fetters." The crisis birthed modern macroeconomics through Keynes, modern central banking through the lesson that the Federal Reserve had let the money supply fall by a third, and the modern welfare and regulatory state through the New Deal's Social Security, deposit insurance, and securities regulation, much of which still governs finance in the 2020s.
+
+  It also broke the interwar political order. Mass unemployment discredited liberal democracy across much of Europe and handed openings to fascism and communism alike. The line from Germany's 6 million jobless to the Nazi vote to the Second World War is the most consequential political fact of the century. The Depression is the reference disaster against which every later downturn, including 2008, is measured, and the argument over its causes, demand collapse, monetary contraction, or malinvestment, still divides economists and shapes how governments respond to recessions today.
+key_figures:
+- name: Franklin D. Roosevelt
+  role: US President from 1933; launched the New Deal and abandoned the gold standard
+  wikidata: Q8007
+  born: 1882
+  died: 1945
+  wikipedia: https://en.wikipedia.org/wiki/Franklin_D._Roosevelt
+- name: Herbert Hoover
+  role: US President 1929-1933; signed the Smoot-Hawley Tariff, blamed for an inadequate response
+  wikidata: Q6534
+  born: 1874
+  died: 1964
+  wikipedia: https://en.wikipedia.org/wiki/Herbert_Hoover
+- name: John Maynard Keynes
+  role: British economist; argued the slump was a collapse of demand curable by government spending
+  wikidata: Q9317
+  born: 1883
+  died: 1946
+  wikipedia: https://en.wikipedia.org/wiki/John_Maynard_Keynes
+- name: Milton Friedman
+  role: Economist who, with Anna Schwartz, blamed the Federal Reserve for letting the money supply collapse
+  wikidata: Q184935
+  born: 1912
+  died: 2006
+  wikipedia: https://en.wikipedia.org/wiki/Milton_Friedman
+- name: Friedrich Hayek
+  role: Austrian-school economist; saw the Depression as the necessary correction of a prior credit-fueled boom
+  born: 1899
+  died: 1992
+  wikipedia: https://en.wikipedia.org/wiki/Friedrich_Hayek
+- name: Andrew Mellon
+  role: US Treasury Secretary 1921-1932; associated with the liquidationist "purge the rottenness" response
+  born: 1855
+  died: 1937
+  wikipedia: https://en.wikipedia.org/wiki/Andrew_Mellon
+- name: Heinrich Bruning
+  role: German Chancellor 1930-1932; his deflationary austerity is blamed for deepening the slump and enabling the Nazis
+  born: 1885
+  died: 1970
+  wikipedia: https://en.wikipedia.org/wiki/Heinrich_Br%C3%BCning
+legacy_points:
+- Produced modern macroeconomics and the Keynesian case for government intervention (The General Theory, 1936)
+- Established deposit insurance, securities regulation, and Social Security through the New Deal, still in force today
+- Proved the gold standard transmitted deflation worldwide; countries that left it first recovered first
+- Carried Hitler from 800,000 votes in 1928 to power in 1933 on the back of 6 million German unemployed
+- Remains the benchmark catastrophe against which later crises, including 2008, are measured
+primary_source_excerpts:
+- text: So, first of all, let me assert my firm belief that the only thing we have to fear is fear itself, nameless, unreasoning, unjustified terror.
+  author: Franklin D. Roosevelt
+  work: First Inaugural Address
+  date: March 4, 1933
+- text: Mr. Mellon had only one formula. Liquidate labor, liquidate stocks, liquidate the farmers, liquidate real estate. It will purge the rottenness out of the system.
+  author: Herbert Hoover (recounting Andrew Mellon)
+  work: The Memoirs of Herbert Hoover, Volume 3
+  date: '1952'
+- text: The boom, not the slump, is the right time for austerity at the Treasury.
+  author: John Maynard Keynes
+  work: 'The Times, "How to Avoid a Slump"'
+  date: January 1937
+- text: The contraction is in fact a tragic testimonial to the importance of monetary forces.
+  author: Milton Friedman and Anna Schwartz
+  work: A Monetary History of the United States, 1867-1960
+  date: '1963'
+coordinates:
+  lat: 40.7069
+  lng: -74.0113
+related_event_slugs:
+- russian-revolution
+- the-holocaust
+- industrial-revolution
+- holodomor
+perspectives:
+- viewpoint: Keynesian / Demand Collapse
+  viewpoint_type: academic
+  region_origin: europe
+  narrative: |
+    The Keynesian reading begins with a simple observation: in 1933 there were idle factories, idle workers, and unmet needs all at once. Nothing physical had been destroyed. No plague, no war, no crop failure explained why 15 million Americans could not find work while the machines to employ them sat silent. The economy had not run out of capacity. It had run out of spending.
+
+    John Maynard Keynes named the mechanism in The General Theory of Employment, Interest and Money (1936). Saving decisions and investment decisions are made by different people for different reasons, and when frightened households and businesses all try to hoard cash at once, total demand falls below what the economy can produce. Output and employment collapse until they reach a low, miserable equilibrium that can persist for years with no automatic tendency to recover. The classical faith that markets always return to full employment was, in Keynes's phrase, true only "in the long run," and "in the long run we are all dead."
+
+    In this view Hoover's orthodoxy made the disaster worse. Balancing the budget in a slump, defending the gold standard, and waiting for wages and prices to fall far enough to restore confidence all drained demand exactly when demand was already failing. The Smoot-Hawley Tariff of 1930 exported the shortfall abroad and invited retaliation. Herbert Hoover's Treasury Secretary Andrew Mellon reportedly urged the government to "liquidate labor, liquidate stocks," to let the pain run its course. To Keynesians that was like bleeding a patient dying of blood loss.
+
+    The remedy was for government to spend what the private sector would not, running deficits, cutting interest rates, and putting money directly into people's hands so they would buy again and restart the circular flow. Franklin Roosevelt's New Deal did some of this after 1933, and output grew, but the deficits were too timid; when Roosevelt tried to balance the budget in 1937, the economy crashed again. In the Keynesian account it was the vast, unbalanced spending of the Second World War, not the New Deal, that finally proved the point by ending the Depression overnight.
+
+    John Kenneth Galbraith's The Great Crash, 1929 (1955) added the social diagnosis: an economy resting on the spending of the rich, riddled with speculation and a fragile banking structure, was primed to fall and had no floor to catch it.
+  key_arguments:
+  - The Depression was a self-reinforcing collapse of aggregate demand, not a shortage of productive capacity
+  - Balanced budgets, tariffs, and gold-standard austerity deepened the slump instead of curing it
+  - Only government deficit spending large enough to replace lost private demand could break the low-employment trap
+  - The 1937 relapse after Roosevelt cut spending, and the wartime boom, both confirm the demand diagnosis
+  sources:
+  - title: The General Theory of Employment, Interest and Money
+    author: John Maynard Keynes
+    year: '1936'
+    type: book
+    archive_url: https://archive.org/details/in.ernet.dli.2015.213256
+  - title: 'The Great Crash, 1929'
+    author: John Kenneth Galbraith
+    year: '1955'
+    type: book
+    archive_url: https://archive.org/details/greatcrash192900galb
+  - title: 'The World in Depression, 1929-1939'
+    author: Charles P. Kindleberger
+    year: '1973'
+    type: book
+    archive_url: https://archive.org/details/worldindepressio0000kind
+  notable_quotes:
+  - text: The long run is a misleading guide to current affairs. In the long run we are all dead.
+    speaker: John Maynard Keynes
+    context: A Tract on Monetary Reform, 1923
+  - text: The economy, in fact, was fundamentally unsound. This is a proposition of some importance.
+    speaker: John Kenneth Galbraith
+    context: The Great Crash, 1929
+  emphasized:
+  - Insufficient demand as the central cause and government spending as the central cure
+  - The failure of budget-balancing austerity under Hoover and again in 1937
+  - The role of unequal income and financial speculation in leaving the economy without a floor
+  omitted:
+  - The role of Federal Reserve policy in letting the money supply itself collapse
+  - The possibility that the preceding boom was an unsustainable distortion requiring correction
+  - How much of the recovery came from monetary expansion and gold inflows rather than fiscal deficits
+- viewpoint: Monetarist and Austrian / A Failure of Money
+  viewpoint_type: revisionist
+  region_origin: americas
+  narrative: |
+    Milton Friedman and Anna Schwartz overturned the "capitalism failed" reading in A Monetary History of the United States, 1867-1960 (1963). Their chapter on the years 1929 to 1933, "The Great Contraction," argued that an ordinary recession became a catastrophe because the Federal Reserve let the quantity of money in the United States fall by about a third. When thousands of banks failed, deposits vanished, and the Fed, whose job was to be lender of last resort, stood by. Had it flooded the banks with cash in 1930 and 1931 as it was designed to do, the panics would have been contained and the slump would have been a bad year, not a lost decade. Friedman later put it plainly to Ben Bernanke: "You're right, we did it. We're very sorry. But thanks to you we won't do it again."
+
+    This was a revisionist claim in the strict sense. It moved the blame from "the market" to a specific policy institution making specific mistakes, and it revived the idea that steady control of the money supply, not fiscal fine-tuning, is what keeps an economy stable. It is the intellectual reason central banks in 2008 and 2020 responded to panic by creating money on an enormous scale rather than repeating 1931.
+
+    The Austrian school, led by Friedrich Hayek and Lionel Robbins, agreed the Depression was catastrophic but located the fault earlier, in the boom. Cheap credit in the 1920s, they argued, had funneled investment into projects that made no sense at honest interest rates. The bust was the market discovering and correcting those errors. From this came the "liquidationist" prescription attributed to Andrew Mellon: let bad debts, failing banks, and inflated wages fall until the structure of production is sound again, and do not prop up the very distortions that caused the crisis. Robbins's The Great Depression (1934) made the case in print.
+
+    The two schools disagree sharply with each other. Monetarists say the Fed should have printed money to stop the deflation; Austrians say further monetary intervention only postpones a necessary reckoning. But both reject the Keynesian conclusion that the free market is inherently prone to collapse and needs permanent government management of demand. For both, the Depression was a policy failure, not a market failure. Robbins himself later recanted, conceding the deflationary forces overwhelmed any purging benefit, a concession Keynesians cite as the debate's turning point.
+  key_arguments:
+  - The Federal Reserve allowed the US money supply to fall by roughly a third, turning a recession into a depression
+  - Central banks failing as lender of last resort, not capitalism itself, caused the banking collapse
+  - Austrians locate the fault in the 1920s credit boom; the bust was a necessary correction of malinvestment
+  - The lesson drove the aggressive money creation of central banks in 2008 and 2020
+  sources:
+  - title: A Monetary History of the United States, 1867-1960
+    author: Milton Friedman and Anna Jacobson Schwartz
+    year: '1963'
+    type: book
+    archive_url: https://archive.org/details/monetaryhistoryo0000frie
+  - title: The Great Depression
+    author: Lionel Robbins
+    year: '1934'
+    type: book
+    archive_url: https://archive.org/details/greatdepression0000robb
+  - title: 'Essays on the Great Depression'
+    author: Ben S. Bernanke
+    year: '2000'
+    type: book
+  notable_quotes:
+  - text: You're right, we did it. We're very sorry. But thanks to you, we won't do it again.
+    speaker: Milton Friedman
+    context: Remarks at a 2002 conference honoring Anna Schwartz, addressing Federal Reserve Governor Ben Bernanke
+  - text: The thing to do was to allow the recession to run its course, to let prices and costs fall until a new bottom was found.
+    speaker: Paraphrase of the liquidationist view attributed to Andrew Mellon
+    context: As recounted in Hoover's Memoirs, 1952
+  emphasized:
+  - Monetary contraction and Federal Reserve passivity as the decisive cause
+  - The Depression as a failure of policy and central banking, not of markets
+  - The Austrian claim that the preceding boom made a painful correction unavoidable
+  omitted:
+  - The lived human cost of leaving deflation and unemployment to "run their course"
+  - Demand-side dynamics and the international collapse of trade and confidence
+  - Whether monetary rescue alone could have restored employment without fiscal action
+- viewpoint: The Unemployed / Breadlines and Hoovervilles
+  viewpoint_type: vanquished
+  region_origin: americas
+  narrative: |
+    Behind the 24.9% unemployment figure were specific mornings. A man in Chicago or Detroit walked to a factory gate that no longer opened, then to a soup kitchen where the line stretched around the block, then home to a family he could not feed. Studs Terkel spent years collecting these accounts for Hard Times: An Oral History of the Great Depression (1970), and the pattern he found was not statistics but shame. Men who had worked their whole lives spoke of the humiliation of asking for relief, of watching their authority in the family dissolve, of the neighbor who quietly killed himself.
+
+    The physical landscape recorded the collapse. Shantytowns of packing crates and tar paper rose on the edge of every large city; the people who built them called them "Hoovervilles," after the president they blamed. Newspapers used to keep off the cold were "Hoover blankets." When banks failed, and roughly 9,000 did between 1930 and 1933, they took the savings of ordinary depositors with them; there was no insurance until the New Deal created it. Farmers in the Great Plains, already crushed by collapsing crop prices, watched the topsoil itself blow away in the Dust Bowl and loaded their families onto trucks bound for California, the migration John Steinbeck fixed in The Grapes of Wrath (1939).
+
+    In the summer of 1932, about 20,000 First World War veterans, the "Bonus Army," camped in Washington to demand early payment of a promised bonus. On July 28 the US Army, led by General Douglas MacArthur, drove them out with cavalry, tanks, and tear gas and burned their camp. Photographs of soldiers turning on veterans helped end Hoover's presidency that November.
+
+    This perspective refuses to let the causation debate stand in for the experience. Whether the fault lay with demand or the money supply mattered nothing to the child sent to school without breakfast or the woman who boiled the same soup bone for a week. The Depression was measured, for those who lived through it, not in output gaps but in the daily arithmetic of scarcity, and in the discovery that in the richest country on earth a person could work hard, do everything right, and still end up hungry.
+  key_arguments:
+  - The Depression's meaning lay in lived humiliation and scarcity, not in macroeconomic abstractions
+  - Bank failures without deposit insurance destroyed the savings of ordinary families overnight
+  - Hoovervilles, breadlines, and the Dust Bowl migration were the visible face of policy failure
+  - The violent eviction of the Bonus Army in 1932 exposed the gulf between the state and the desperate
+  sources:
+  - title: 'Hard Times: An Oral History of the Great Depression'
+    author: Studs Terkel
+    year: '1970'
+    type: book
+    archive_url: https://archive.org/details/hardtimesoralhis00terk
+  - title: The Grapes of Wrath
+    author: John Steinbeck
+    year: '1939'
+    type: book
+    archive_url: https://archive.org/details/grapesofwrath0000stei
+  - title: 'Since Yesterday: The 1930s in America'
+    author: Frederick Lewis Allen
+    year: '1940'
+    type: book
+    archive_url: https://archive.org/details/sinceyesterday0000alle
+  notable_quotes:
+  - text: I'd get up at five in the morning and head for the waterfront. Only the man who's in it knows what it's like. It got worse and worse.
+    speaker: Anonymous testimony
+    context: Collected in Studs Terkel, Hard Times, 1970
+  - text: How can you frighten a man whose hunger is not only in his own cramped stomach but in the wretched bellies of his children?
+    speaker: John Steinbeck
+    context: The Grapes of Wrath, 1939
+  emphasized:
+  - The human and psychological toll of unemployment and lost savings
+  - Everyday survival, shame, and the failure of institutions to protect ordinary people
+  - The visible geography of the Depression: Hoovervilles, breadlines, the Dust Bowl exodus
+  omitted:
+  - The technical economic mechanisms and the scholarly causation debate
+  - The global dimensions of the crisis beyond the United States
+  - The policy successes and structural reforms that eventually came from the New Deal
+- viewpoint: The Global Periphery / Colonies and Commodity Producers
+  viewpoint_type: revisionist
+  region_origin: global
+  narrative: |
+    The Depression is remembered as an American story that spread to Europe, but its cruelest effects fell on places that had no stock exchange and no vote in the policies that ruined them. The economies of Asia, Africa, and Latin America had been built by empire and by the world market to produce a few raw commodities, and when the prices of coffee, cotton, rubber, jute, sugar, and wheat fell by roughly half between 1929 and 1931, entire nations lost their income at once.
+
+    Colonial India shows the mechanism in its harshest form. British monetary policy kept the rupee overvalued and land taxes fixed in cash, even as the prices peasants received for their crops collapsed. Wheat lost nearly half its value and raw jute more than 60%, yet the revenue demand did not fall. To pay it, indebted farmers sold the only wealth they had left, their gold ornaments and coins. By the end of 1931 gold worth about 174.6 million rupees had been exported to Britain, "distress gold" that helped London balance its accounts while it drained rural India of its last reserves. This grievance fed directly into Gandhi's Civil Disobedience movement.
+
+    In Latin America the collapse was equally direct. In ten of the region's twenty republics a single product earned more than half of all foreign exchange, coffee in Brazil, tin in Bolivia, nitrates and copper in Chile. When export markets closed, government revenue and employment fell with them. Brazil burned or dumped tens of millions of bags of unsellable coffee into the sea. The political result was a wave of coups and revolutions across the continent between 1930 and 1932, and a lasting turn away from export dependence toward state-led industrialization.
+
+    African colonies experienced the same shock filtered through imperial control. Peasant producers of cocoa, groundnuts, and cotton saw prices collapse while colonial states, desperate for revenue, held taxes firm and sometimes raised them. The revisionist point is structural: the periphery did not merely catch the Depression from the center, it had been arranged in advance to absorb the center's shocks. The gold standard and the imperial trading system that Barry Eichengreen and later historians describe transmitted deflation outward with brutal efficiency, and the people who paid most had the least say in any of it. For millions in the colonial world, the Depression was less an interruption of prosperity than the moment the promises of the global economy were exposed as a trap.
+  key_arguments:
+  - Commodity-dependent economies lost roughly half their export income when prices collapsed after 1929
+  - Colonial monetary and tax policy forced the burden onto the poorest, as with India's "distress gold"
+  - The crisis triggered coups, revolutions, and a turn to state-led industrialization across Latin America
+  - The periphery was structurally arranged to absorb shocks originating in the industrial core
+  sources:
+  - title: 'Latin America in the 1930s: The Role of the Periphery in World Crisis'
+    author: Rosemary Thorp (editor)
+    year: '1984'
+    type: book
+    archive_url: https://archive.org/details/latinamericain1900thor
+  - title: 'Golden Fetters: The Gold Standard and the Great Depression, 1919-1939'
+    author: Barry Eichengreen
+    year: '1992'
+    type: book
+    archive_url: https://archive.org/details/goldenfettersgol0000eich
+  - title: 'Saving Indian Villages: British Empire, the Great Depression and Gandhi''s Civil Disobedience Movement'
+    author: Alok Oak
+    year: '2022'
+    type: journal
+    doi: 10.1177/23210230221135834
+  notable_quotes:
+  - text: The Depression revealed how completely the fortunes of the colonial peasant had been tied to a world market he neither saw nor controlled.
+    speaker: Rosemary Thorp
+    context: Latin America in the 1930s, 1984
+  - text: Countries that shed their golden fetters recovered; those that clung to the gold standard languished.
+    speaker: Barry Eichengreen
+    context: Golden Fetters, 1992
+  emphasized:
+  - The global and colonial reach of the crisis beyond Europe and North America
+  - How imperial monetary and fiscal policy shifted the burden onto commodity producers
+  - The structural vulnerability of economies built to export a single raw material
+  omitted:
+  - The internal policy debates of the industrial core that dominate most accounts
+  - The agency of local elites who benefited from the export system before and after the crisis
+  - Detailed macroeconomic mechanics of money and demand in the advanced economies
+- viewpoint: Political Consequences / The Crisis of Democracy
+  viewpoint_type: academic
+  region_origin: europe
+  narrative: |
+    The most lasting product of the Great Depression was not economic but political. Mass unemployment discredited the liberal democracies that presided over it and made the radical alternatives, fascism and communism, look like the future. Nowhere was this clearer than in Germany, where the slump did not merely coincide with Hitler's rise. It caused it.
+
+    In 1928, before the crash, the Nazi Party won 800,000 votes, a fringe. As German unemployment climbed toward 6 million, more than 40% of the workforce by the winter of 1932, the Nazi vote rose to 6.4 million in 1930 and 13.4 million in July 1932, when the party became the largest in the Reichstag. Chancellor Heinrich Bruning, governing by emergency decree, responded to the crisis with deflationary austerity, cutting wages, benefits, and spending to defend the currency, which deepened the misery and hollowed out the moderate center. On January 30, 1933, President Hindenburg appointed Hitler chancellor. Adam Tooze and other historians trace a direct line from the deflation of 1930 to 1932 to the destruction of the Weimar Republic. Without the Depression there is no obvious path by which a marginal extremist reaches power in an advanced industrial nation.
+
+    The contrast that haunted the 1930s was the Soviet Union. Sealed off by a state monopoly on trade and a planned economy, the USSR was launching its first Five-Year Plan while the West collapsed, and it reported no unemployment at all. To many Western intellectuals, and to anticolonial movements watching from Asia and Africa, the comparison seemed to prove that capitalism was finished and central planning was the answer. That the same years hid mass famine and terror inside the Soviet borders was largely unknown or ignored abroad.
+
+    Karl Polanyi, in The Great Transformation (1944), gave the deepest reading. The attempt to run society as an appendage of a self-regulating market, he argued, generated so much social devastation that people inevitably demanded protection, and the form that demand took, the New Deal, social democracy, fascism, or Stalinism, decided the fate of nations. The Depression was the hinge. It ended one economic order and forced every major society to choose a new relationship between the market and the state, a choice that produced the Second World War in one place and the welfare state in another.
+  key_arguments:
+  - Mass unemployment discredited liberal democracy and empowered fascism and communism across the 1930s
+  - German unemployment near 6 million carried the Nazis from a fringe party to power by 1933
+  - Bruning's deflationary austerity destroyed the Weimar center and cleared Hitler's path
+  - The Soviet Union's apparent immunity made central planning look like capitalism's successor
+  sources:
+  - title: 'The Wages of Destruction: The Making and Breaking of the Nazi Economy'
+    author: Adam Tooze
+    year: '2006'
+    type: book
+    archive_url: https://archive.org/details/wagesofdestructi0000tooz
+  - title: 'The Great Transformation: The Political and Economic Origins of Our Time'
+    author: Karl Polanyi
+    year: '1944'
+    type: book
+    archive_url: https://archive.org/details/greattransformat0000pola
+  - title: Austerity and the Rise of the Nazi Party
+    author: Gregori Galofre-Vila, Christopher Meissner, Martin McKee, David Stuckler
+    year: '2021'
+    type: journal
+    doi: 10.1017/S0022050720000601
+  notable_quotes:
+  - text: The origins of the cataclysm lay in the Utopian endeavor of economic liberalism to set up a self-regulating market system.
+    speaker: Karl Polanyi
+    context: The Great Transformation, 1944
+  - text: The Nazi party was, above all, the party of the economic crisis.
+    speaker: Paraphrase of Adam Tooze's argument
+    context: The Wages of Destruction, 2006
+  emphasized:
+  - The Depression as the cause of fascism's rise and the collapse of interwar democracy
+  - The German unemployment-to-Nazism link and the role of austerity in enabling it
+  - The ideological contest between failing capitalism, fascism, and Soviet planning
+  omitted:
+  - The economic mechanics of the slump treated in the causation debates
+  - The famine and repression concealed behind the Soviet Union's reported full employment
+  - The democracies, such as the United States and Britain, that survived the crisis intact
+media: []
+connections:
+- target_slug: russian-revolution
+  connection_type: parallel
+  description: The 1917 revolution built the planned economy that, sealed behind its Five-Year Plans, reported no unemployment while the capitalist West collapsed after 1929. To a watching world it looked like proof that capitalism was finished
+- target_slug: the-holocaust
+  connection_type: influenced
+  description: In 1928 the Nazi Party won 800,000 votes. As German unemployment reached 6 million, it won 13.4 million in July 1932. The road from the Depression to Hitler's chancellorship in January 1933 ran straight through the breadline
+- target_slug: industrial-revolution
+  connection_type: influenced
+  description: 'The Depression was the great crisis of the industrial-capitalist order the Industrial Revolution created: too much productive capacity, too little purchasing power, and a boom-bust cycle that finally overwhelmed the faith that markets always right themselves'
