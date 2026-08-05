@@ -12,15 +12,15 @@ import ScaleIcon from "./ScaleIcon";
 /* ---------------------------------------------------------------------------
    MobileTabBar — Persistent bottom tab bar (mobile only, <768px).
 
-   A MIX of a brand mark, editorial text, and icons — evenly spaced, each a
-   >=44px tap target:
+   A brand mark + two icons, evenly spaced, each a >=44px tap target:
 
-     [Sigil-O]  ·  Weekly  ·  History  ·  [broadcast]  ·  [hamburger]
+     [Sigil-O]  ·  [broadcast]  ·  [hamburger]
+
+   Weekly + History tabs HIDDEN for launch 2026-08-05 (restore alongside the
+   desktop .nav-spinoffs block when those ship as features).
 
    - Home is the standalone Sigil-O brand mark, recolored to the News terracotta
      (--palette-news) so it matches the masthead. Links to "/".
-   - Weekly / History keep their Playfair-italic labels + product accents
-     (Weekly magazine red, History burnt umber).
    - On Air is a teal broadcast glyph (--voice-accent, the On Air brand color).
      It reveals the collapsed mini-player when a brief with audio is loaded;
      otherwise it routes to the dedicated /onair page. Never auto-plays and never
@@ -47,10 +47,6 @@ export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps)
       switch (key) {
         case "home":
           return path === "/" || path === "" || /^\/(world)\/?$/.test(path);
-        case "weekly":
-          return path.startsWith("/weekly");
-        case "history":
-          return path.startsWith("/history") || path.startsWith("/revolt");
         case "onair":
           return path.startsWith("/onair");
         case "menu":
@@ -97,25 +93,8 @@ export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps)
         />
       </Link>
 
-      <Link
-        href="/weekly"
-        className={tabClass("weekly")}
-        data-accent="weekly"
-        aria-current={isActive("weekly") ? "page" : undefined}
-        onClick={() => hapticMicro()}
-      >
-        <span className="mtb__label">Weekly</span>
-      </Link>
-
-      <Link
-        href="/history"
-        className={tabClass("history")}
-        data-accent="history"
-        aria-current={isActive("history") ? "page" : undefined}
-        onClick={() => hapticMicro()}
-      >
-        <span className="mtb__label">History</span>
-      </Link>
+      {/* Weekly + History tabs HIDDEN for launch 2026-08-05 — restore here when
+          those ship as features. */}
 
       <button
         type="button"

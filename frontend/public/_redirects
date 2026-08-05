@@ -11,6 +11,15 @@
 /south-asia /  301
 /south-asia/*  /  301
 
+# Hidden for launch 2026-08-05 — restore when History/Weekly ship as features.
+# Routes/components/data/CSS remain intact; these 301s just make the sections
+# unreachable from the live site. Placed above the older /weekly/* rules so the
+# wildcard wins (first match wins) and every path resolves straight to home.
+/history/*  /  301
+/history    /  301
+/weekly/*   /  301
+/weekly     /  301
+
 # 2026-08 — void --weekly is a single (world) issue now; the per-edition
 # variants were never generated. 301 stray /weekly/europe + /weekly/south-asia
 # links (and trailing-slash forms) to the current weekly instead of a 404.

@@ -5,11 +5,12 @@
 
 /* ---------------------------------------------------------------------------
    MobileTabBar (.mtb)
-   Persistent bottom tab bar. A mix of a brand mark, editorial text, and icons:
-     [Sigil-O]  Weekly  History  [broadcast]  [hamburger]
-   Home = the Sigil-O mark (terracotta); Weekly/History = Playfair-italic labels
-   with per-product accents; On Air = teal broadcast glyph; Menu = neutral
-   hamburger glyph. Every slot is a >=44px tap target.
+   Persistent bottom tab bar. A brand mark + two icons:
+     [Sigil-O]  [broadcast]  [hamburger]
+   Home = the Sigil-O mark (terracotta); On Air = teal broadcast glyph; Menu =
+   neutral hamburger glyph. Every slot is a >=44px tap target. (Weekly + History
+   tabs hidden for launch 2026-08-05; their data-accent rules are kept below for
+   when those restore.)
    --------------------------------------------------------------------------- */
 
 .mtb {
