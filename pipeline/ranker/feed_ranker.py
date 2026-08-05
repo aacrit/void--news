@@ -94,7 +94,17 @@ EDITORIAL_IMPORTANCE_CLAMP = (0.88, 1.12)
 # duplicate. Among the top NEAR_DUP_SCAN clusters, when two titles share
 # >= 4 Porter-stemmed content words (or >= 3 covering >= 65% of the shorter
 # title), the lower-sourced cluster is decayed below the leader.
-NEAR_DUP_SCAN = 25
+#
+# Window = the full displayed feed (50). At 25 a duplicate whose second telling
+# fell below the fold went uncaught: 2026-08-04 shipped "25 States Sue Trump
+# Administration Over Global Tariffs" at #3 AND "25 States Sue Trump Over New
+# Tariffs, Citing Illegality" at #38 (5 shared content stems, well past the
+# HARD floor) because #38 sat outside the 25-row scan. The guard already keeps
+# the higher-sourced telling and requires >= 4 shared content stems (stopwords
+# excluded), so widening to 50 catches split duplicates without new false
+# positives — a 4-content-word title collision between unrelated stories is rare
+# and the demotion always favours the broader-sourced cluster regardless of rank.
+NEAR_DUP_SCAN = 50
 NEAR_DUP_DECAY = 0.72
 NEAR_DUP_SHARED_HARD = 4
 NEAR_DUP_SHARED_SOFT = 3

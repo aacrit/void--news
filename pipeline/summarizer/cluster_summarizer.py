@@ -192,7 +192,13 @@ them. In the consensus and divergence fields only, you may name actual outlets \
 coverage differs.
 - NEVER use bracketed citations, footnotes, or reference markers like [1], [2,5], \
 [Source], (1), etc. This is a news briefing, not an academic paper. Attribute \
-inline using natural language ("according to...", "...X reported").\
+inline using natural language ("according to...", "...X reported").
+- NO META-COMMENTARY ABOUT THE SOURCE MATERIAL. You are reporting the story, not \
+reviewing your inputs. Never mention "the provided articles," "the provided \
+text," "the reporting," "the coverage," or "the available text," and never note \
+that a detail "was not detailed / specified / provided / available" or that "the \
+article cuts off." If a fact is absent, simply leave it out. Write only what the \
+story says, never what it fails to say.\
 """
 
 # ---------------------------------------------------------------------------
@@ -478,6 +484,62 @@ def _dedupe_summary_sentences(summary: str) -> str:
         seen.add(norm)
         kept.append(part.strip())
     return " ".join(kept)
+
+
+# ---------------------------------------------------------------------------
+# Source-meta-commentary strip (belt-and-suspenders to the system-instruction
+# ban above). The smaller Gemini models sometimes narrate the limits of their
+# inputs instead of just reporting the story, leaking sentences like:
+#   "[The article cuts off here, preventing further detail on the agreement]"
+#   "the provided articles do not detail specific policy proposals ..."
+#   "... are not available in the provided text."
+#   "The specific nature ... were not detailed in the reporting."
+# These are AI tells that must never reach the reader. Deterministic, $0.
+# High-precision: only self-referential source/coverage meta phrases are hit,
+# so a legitimate factual sentence ("The FBI has not commented") is preserved.
+# ---------------------------------------------------------------------------
+
+# Bracketed editorial aside about the inputs, e.g. "[The article cuts off ...]".
+_META_BRACKET_RE = _re.compile(
+    r"\s*\[[^\]]*?(?:cut[s]?\s+off|provided\s+(?:text|articles?)|"
+    r"not\s+(?:available|provided|detailed|specified|clear))[^\]]*?\]",
+    _re.IGNORECASE,
+)
+
+# A whole sentence is meta-commentary if it references the corpus itself
+# ("the provided articles / text") or narrates an absence "in the reporting /
+# coverage / provided text / available text".
+_META_SENT_RE = _re.compile(
+    r"(?:"
+    r"provided\s+(?:text|articles?)"
+    r"|not\s+(?:detailed|specified|mentioned|provided|disclosed|elaborated|"
+    r"clear|available|reported)\b[^.?!]{0,80}?\bin\s+the\s+"
+    r"(?:reporting|coverage|provided\s+(?:text|articles?)|available\s+(?:text|reporting)|text)"
+    r"|\bin\s+the\s+(?:provided\s+)?(?:reporting|coverage)\b[^.?!]{0,40}?\bnot\b"
+    r")",
+    _re.IGNORECASE,
+)
+
+
+def _strip_source_meta_commentary(summary: str) -> str:
+    """Drop bracketed input-asides and whole sentences that narrate the limits
+    of the source material rather than reporting the story. Deterministic; a
+    no-op on clean summaries. Never returns empty: if every sentence is meta
+    (pathological), the original text is kept so the card is not blanked."""
+    if not summary or not summary.strip():
+        return summary
+    t = _META_BRACKET_RE.sub("", summary).strip()
+    # Bracket removal can orphan punctuation ("Tuesday. . Anand" / "Tuesday..").
+    t = _re.sub(r"\s+([.!?,;:])", r"\1", t)
+    t = _re.sub(r"([.!?])\1+", r"\1", t)
+    parts = _re.split(r"(?<=[.!?])\s+", t)
+    kept = [p for p in parts if p.strip() and not _META_SENT_RE.search(p)]
+    cleaned = " ".join(s.strip() for s in kept).strip()
+    cleaned = _re.sub(r"\s{2,}", " ", cleaned)
+    # Safety: never blank a card. Require a substantive remainder.
+    if len(cleaned) < 40:
+        return summary.strip()
+    return cleaned
 
 
 def _detect_summary_source_refs(summary: str, source_names: list[str]) -> list[str]:
@@ -865,6 +927,10 @@ def summarize_cluster(articles: list[dict],
     # the displayed text always complies. (Wave 1 / O5.)
     headline = _sanitize_editorial(headline)
     summary = _sanitize_editorial(summary)
+    # Remove source-material meta-commentary ("the provided articles do not...",
+    # "[The article cuts off here]", "...not detailed in the reporting") that the
+    # smaller models leak despite the system-instruction ban.
+    summary = _strip_source_meta_commentary(summary)
     _summary_src_refs = _detect_summary_source_refs(
         summary, [a.get("source_name", "") for a in articles]
     )
