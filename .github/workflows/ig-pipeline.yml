@@ -1,28 +1,38 @@
+# ============================================================================
+# IG Pipeline — GENERATE-ONLY (posting PARKED as of 2026-08-05)
+#
+# CEO decision: no overposting. This pipeline no longer auto-posts anything and
+# no longer runs on a schedule. It is manual-dispatch only. The default flow
+# GENERATES a downloadable bundle (generator -> Playwright capture -> Gemini
+# captions -> export) and uploads it as an artifact for MANUAL upload: the CEO
+# downloads social_out/, opens index.html, uploads the slide images by hand and
+# pastes the per-platform caption they pick after adding a personal touch.
+#
+# The `publish` / `dry-run-publish` modes (ig_publisher + cross_post) are PARKED
+# and reachable ONLY by an explicit manual workflow_dispatch. Nothing here auto
+# invokes them. ig_publisher.py / cross_post.py are retained (not deleted) so the
+# CEO can enable posting later after growing a following.
+# ============================================================================
 name: IG Pipeline
 
 permissions: {}
 
 on:
-  schedule:
-    # Daily 12:00 UTC: generator + capture + caption.
-    # Drafts ready for human review by the time Aacrit opens /admin/ig.
-    - cron: '0 12 * * *'
-    # Mon & Thu 13:30 UTC: publisher (ships approved drafts to IG).
-    - cron: '30 13 * * 1,4'
+  # No schedules. Posting + auto-runs are parked (2026-08-05). Manual only.
   workflow_dispatch:
     inputs:
       mode:
-        description: 'draft | publish | dry-run-publish | cleanup'
+        description: 'generate (bundle for manual upload) | cleanup | publish [PARKED] | dry-run-publish [PARKED]'
         required: true
-        default: 'draft'
+        default: 'generate'
         type: choice
         options:
-          - draft
-          - publish
-          - dry-run-publish
+          - generate
           - cleanup
+          - dry-run-publish   # PARKED: manual-only, does not post
+          - publish           # PARKED: manual-only, posts to IG + Bluesky
       track:
-        description: 'draft mode only: which track to generate'
+        description: 'generate mode only: which track to build'
         required: false
         default: 'void'
         type: choice
@@ -38,23 +48,13 @@ jobs:
       - uses: actions/checkout@v4
 
       # ---- Mode resolution ------------------------------------------------
-      - name: Resolve mode from cron schedule
+      - name: Resolve mode
         id: mode
         run: |
           MODE="${{ inputs.mode }}"
-          if [ -z "$MODE" ]; then
-            case "${{ github.event.schedule }}" in
-              "0 12 * * *")    MODE="draft" ;;
-              "30 13 * * 1,4") MODE="publish" ;;
-              *)               MODE="draft" ;;
-            esac
-          fi
-          # Track only applies to draft mode. Daily cron always generates the
-          # void trio; workflow_dispatch may override to history or weekly.
+          if [ -z "$MODE" ]; then MODE="generate"; fi
           TRACK="${{ inputs.track }}"
-          if [ -z "$TRACK" ]; then
-            TRACK="void"
-          fi
+          if [ -z "$TRACK" ]; then TRACK="void"; fi
           echo "mode=$MODE" >> "$GITHUB_OUTPUT"
           echo "track=$TRACK" >> "$GITHUB_OUTPUT"
           echo "Mode: $MODE | Track: $TRACK"
@@ -69,24 +69,24 @@ jobs:
         run: pip install -r pipeline/requirements.txt
 
       - name: Install Playwright Chromium
-        if: steps.mode.outputs.mode == 'draft'
+        if: steps.mode.outputs.mode == 'generate'
         run: playwright install chromium --with-deps
 
       - uses: actions/setup-node@v4
-        if: steps.mode.outputs.mode == 'draft'
+        if: steps.mode.outputs.mode == 'generate'
         with:
           node-version: 20
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install frontend dependencies
-        if: steps.mode.outputs.mode == 'draft'
+        if: steps.mode.outputs.mode == 'generate'
         working-directory: frontend
         run: npm ci
 
-      # ---- Mode: draft (generate + capture + caption) ---------------------
+      # ---- Mode: generate (generator + capture + caption + export) --------
       - name: Start Next.js dev server
-        if: steps.mode.outputs.mode == 'draft'
+        if: steps.mode.outputs.mode == 'generate'
         working-directory: frontend
         env:
           NEXT_PUBLIC_BASE_PATH: ""
@@ -102,38 +102,57 @@ jobs:
           echo $! > /tmp/next-dev.pid
 
       - name: Generate next draft
-        if: steps.mode.outputs.mode == 'draft'
+        if: steps.mode.outputs.mode == 'generate'
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: python -m pipeline.social.ig_generator --track ${{ steps.mode.outputs.track }}
 
       - name: Capture slides (Playwright)
-        if: steps.mode.outputs.mode == 'draft'
+        if: steps.mode.outputs.mode == 'generate'
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           RENDER_BASE_URL: 'http://localhost:3000'
         run: python -m pipeline.social.ig_capture --wait-server
 
-      - name: Generate captions (Gemini flash-lite)
-        if: steps.mode.outputs.mode == 'draft'
+      - name: Generate captions (Gemini flash-lite) + per-platform variants
+        if: steps.mode.outputs.mode == 'generate'
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: python -m pipeline.social.ig_caption
 
+      - name: Export manual-upload bundle (social_out/)
+        if: steps.mode.outputs.mode == 'generate'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python -m pipeline.social.ig_export --out-dir social_out
+
       - name: Stop dev server
-        if: always() && steps.mode.outputs.mode == 'draft'
+        if: always() && steps.mode.outputs.mode == 'generate'
         run: |
           if [ -f /tmp/next-dev.pid ]; then
             kill "$(cat /tmp/next-dev.pid)" || true
           fi
           tail -200 /tmp/next-dev.log || true
 
-      # ---- Mode: publish --------------------------------------------------
-      - name: Publish approved (dry-run)
+      - name: Upload bundle artifact
+        if: steps.mode.outputs.mode == 'generate'
+        uses: actions/upload-artifact@v4
+        with:
+          name: social-bundle-${{ github.run_id }}
+          path: social_out/
+          if-no-files-found: warn
+          retention-days: 14
+
+      # ---- Mode: publish [PARKED — manual dispatch only, nothing auto-runs] --
+      # These steps NEVER run on a schedule (there is no schedule) and only fire
+      # when a human explicitly dispatches mode=publish / dry-run-publish. Kept
+      # so the CEO can turn posting back on later without rebuilding it.
+      - name: Publish approved (dry-run) [PARKED]
         if: steps.mode.outputs.mode == 'dry-run-publish'
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -142,7 +161,7 @@ jobs:
           INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
         run: python -m pipeline.social.ig_publisher --dry-run
 
-      - name: Publish approved
+      - name: Publish approved [PARKED]
         if: steps.mode.outputs.mode == 'publish'
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -151,7 +170,7 @@ jobs:
           INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
         run: python -m pipeline.social.ig_publisher
 
-      - name: Cross-post to Bluesky
+      - name: Cross-post to Bluesky [PARKED]
         if: steps.mode.outputs.mode == 'publish'
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
