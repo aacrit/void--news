@@ -1451,8 +1451,13 @@ _RULE_BASED_TIER_SUPPORTED = True
 
 
 def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = 50,
-                               prefer_provider: str | None = "gemini") -> dict:
+                               prefer_provider: str | None = "gemini",
+                               title_only: bool = False) -> dict:
     """Guarantee no DISPLAYED top-50 card is left showing a raw scraped excerpt.
+
+    Run this AFTER the final feed ordering (step 8d.5) so it covers every card
+    the final ordering promoted into the displayed top-50. It is idempotent —
+    it no-ops on any card that already carries a summary_tier.
 
     For each cluster in the displayed top-`limit` (by rank_{edition}, applying
     the same source_count>=3 window as the homepage) still at summary_tier NULL
@@ -1462,14 +1467,23 @@ def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = 50
       (ii) failing that → rebuild a clean on-topic summary from the member
            articles (clustering's rule-based _generate_cluster_summary, which
            selects an on-topic member and runs the CMS/byline/dateline/
-           truncation sanitizer) and normalize the headline. Written with
-           tier='rule_based' when supported, else text-only (tier stays NULL).
+           truncation sanitizer) and normalize the headline. When even that
+           yields nothing (no usable article text), fall back to the normalized
+           headline itself so the card NEVER renders a raw excerpt. Written with
+           tier='rule_based' (migration 071); still_null is now structurally
+           impossible whenever the cluster has a title.
 
-    Returns {checked, resummarized, sanitized, still_null}.
+    title_only=True is a LIGHTWEIGHT pre-ordering pass: it only normalizes the
+    headlines of the still-null displayed cards (no article fetch, no LLM) so
+    step 8d.5's near-duplicate guard + story-type gates judge cleaned titles.
+    The full summary-coverage guarantee runs AFTER 8d.5 with title_only=False.
+
+    Returns {checked, resummarized, sanitized, still_null, titles_cleaned}.
     """
     global _RULE_BASED_TIER_SUPPORTED
     rank_col = f"rank_{edition.replace('-', '_')}"
-    metrics = {"checked": 0, "resummarized": 0, "sanitized": 0, "still_null": 0}
+    metrics = {"checked": 0, "resummarized": 0, "sanitized": 0,
+               "still_null": 0, "titles_cleaned": 0}
 
     # Lazy imports: heavy clustering/text deps are already loaded during a real
     # pipeline run; importing here keeps this module import-light for callers
@@ -1524,6 +1538,26 @@ def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = 50
     if not null_rows:
         return metrics
     metrics["checked"] = len(null_rows)
+
+    # Lightweight pre-ordering pass: just normalize the headlines of the
+    # still-null displayed cards so step 8d.5's near-dup guard / story-type
+    # gates judge cleaned titles. No article fetch, no LLM — the full
+    # summary-coverage floor runs AFTER 8d.5 (title_only=False).
+    if title_only:
+        for row in null_rows:
+            cid = row["id"]
+            title = (row.get("title") or "").strip()
+            clean = (normalize_headline(title) or title).strip()
+            if clean and clean != title:
+                try:
+                    supabase.table("story_clusters").update(
+                        {"title": clean[:500]}
+                    ).eq("id", cid).execute()
+                    metrics["titles_cleaned"] += 1
+                except Exception as e:
+                    print(f"  [warn] ensure_top50_summary_floor(title_only): "
+                          f"title write failed for {cid}: {e}")
+        return metrics
 
     # Fetch article membership for the null clusters only.
     null_ids = [r["id"] for r in null_rows]
@@ -1617,7 +1651,14 @@ def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = 50
             clean_summary = sanitize_summary(row.get("summary", "") or "")
         clean_summary = (clean_summary or "").strip()
         if not clean_summary:
-            # Nothing usable to rebuild — leave the row as-is (still NULL).
+            # No usable article text at all. Rather than leave a raw excerpt (or
+            # a NULL that renders one), fall back to the normalized headline as a
+            # clean, on-topic line. still_null is thus impossible whenever the
+            # cluster has a title.
+            clean_summary = (clean_title or title or "").strip()
+        if not clean_summary:
+            # Truly nothing to work with (no articles, no title) — degenerate
+            # row; leave as-is.
             metrics["still_null"] += 1
             continue
 
@@ -1651,5 +1692,184 @@ def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = 50
         if not _RULE_BASED_TIER_SUPPORTED:
             # Text is clean but the tier stamp could not be written → still NULL.
             metrics["still_null"] += 1
+
+    return metrics
+
+
+# ---------------------------------------------------------------------------
+# Flash-tier reconciliation — premium tier must follow the FINAL rank (2026-08-05)
+# ---------------------------------------------------------------------------
+# Step 8d summarizes the top-50 and assigns the premium 'flash' tier to the
+# INTERMEDIATE top-10 (the rank_world order BEFORE the final 8d.5 ordering pass).
+# 8d.5 then rewrites rank_world with fresh story_type/ei/title signals and can
+# promote a 'flash-lite' card into the final top-10. This pass, run AFTER 8d.5,
+# upgrades any final top-`top_n` displayed, summarizable card still at
+# 'flash-lite' to 'flash' so the premium tier follows the FINAL rank. It is
+# budget-safe: it only fires while Gemini is available and the per-run cap has
+# headroom, caps the number of upgrades, and degrades gracefully (never raises).
+
+def reconcile_flash_top10(supabase, edition: str = "world", top_n: int = 10,
+                          prefer_provider: str | None = "gemini",
+                          max_upgrades: int = 5) -> dict:
+    """Upgrade the FINAL top-`top_n` displayed cards from flash-lite → flash.
+
+    Runs after step 8d.5 (final feed ordering). For each of the final top-`top_n`
+    DISPLAYED (source_count>=3), non-op-ed, summarizable clusters whose cached
+    summary_tier is not already 'flash'/'sonnet', re-summarize on gemini-2.5-flash
+    and write the result + tier='flash' — but only while flash actually answers
+    (if the flash daily cap is spent the call degrades to flash-lite; that is NOT
+    written, so no equivalent-quality churn and the row is retried next run).
+
+    Budget-safe: no-ops when Gemini is unavailable or the per-run cap is spent,
+    caps upgrades at `max_upgrades`, and never raises.
+
+    Returns {checked, upgraded, skipped, failed}.
+    """
+    metrics = {"checked": 0, "upgraded": 0, "skipped": 0, "failed": 0}
+    if not is_available() or calls_remaining() <= 0:
+        return metrics
+
+    rank_col = f"rank_{edition.replace('-', '_')}"
+    fetch_limit = top_n + 20
+    try:
+        rank_res = (
+            supabase.table("story_clusters")
+            .select("id, content_type, source_count, summary_tier")
+            .contains("sections", [edition])
+            .order(rank_col, desc=True)
+            .limit(fetch_limit)
+            .execute()
+        )
+    except Exception as e:
+        print(f"  [warn] reconcile_flash_top10: top-{top_n} fetch failed: {e}")
+        return metrics
+
+    rows = rank_res.data or []
+    if not rows:
+        return metrics
+
+    # Window the displayed premium band exactly like the homepage / 8d: only
+    # source_count>=3 rows occupy display slots; op-eds keep original voice and
+    # do not consume a flash slot (the band extends past them).
+    window_used = 0
+    candidates: list[dict] = []
+    for row in rows:
+        if window_used >= top_n:
+            break
+        if (row.get("source_count") or 0) < 3:
+            continue
+        window_used += 1
+        if (row.get("content_type") or "").lower() == "opinion":
+            continue
+        if (row.get("summary_tier") or "") in ("flash", "sonnet"):
+            continue  # already premium — nothing to upgrade
+        candidates.append(row)
+
+    metrics["checked"] = len(candidates)
+    if not candidates:
+        return metrics
+
+    # Fetch article membership for the upgrade candidates only.
+    cand_ids = [r["id"] for r in candidates]
+    by_cluster: dict[str, list[str]] = {}
+    try:
+        link_res = (
+            supabase.table("cluster_articles")
+            .select("cluster_id, article_id")
+            .in_("cluster_id", cand_ids)
+            .execute()
+        )
+        for link in (link_res.data or []):
+            by_cluster.setdefault(link["cluster_id"], []).append(link["article_id"])
+    except Exception as e:
+        print(f"  [warn] reconcile_flash_top10: cluster_articles fetch failed: {e}")
+        return metrics
+
+    all_article_ids = sorted({aid for ids in by_cluster.values() for aid in ids})
+    articles_by_id: dict[str, dict] = {}
+    for i in range(0, len(all_article_ids), 200):
+        batch = all_article_ids[i:i + 200]
+        try:
+            art_res = (
+                supabase.table("articles")
+                .select("id, title, summary, full_text, source_id, published_at, url")
+                .in_("id", batch)
+                .execute()
+            )
+            for art in (art_res.data or []):
+                articles_by_id[art["id"]] = art
+        except Exception as e:
+            print(f"  [warn] reconcile_flash_top10: articles batch fetch failed: {e}")
+            continue
+
+    # Backfill source_name + tier so the flash prompt gets proper attribution.
+    src_ids = sorted({a.get("source_id") for a in articles_by_id.values() if a.get("source_id")})
+    src_info_by_id: dict[str, dict] = {}
+    for i in range(0, len(src_ids), 200):
+        batch = src_ids[i:i + 200]
+        try:
+            src_res = (
+                supabase.table("sources").select("id, name, tier").in_("id", batch).execute()
+            )
+            for s in (src_res.data or []):
+                src_info_by_id[s["id"]] = s
+        except Exception:
+            continue
+    for art in articles_by_id.values():
+        src = src_info_by_id.get(art.get("source_id") or "", {})
+        art.setdefault("source_name", src.get("name", ""))
+        art.setdefault("tier", src.get("tier", ""))
+
+    for row in candidates:
+        # Stop cleanly if the budget is spent or Gemini went unavailable mid-pass
+        # (e.g. a flash 429 disabled the client), or we hit the upgrade cap.
+        if (metrics["upgraded"] >= max_upgrades
+                or calls_remaining() <= 0 or not is_available()):
+            metrics["skipped"] += 1
+            continue
+
+        cid = row["id"]
+        article_ids = by_cluster.get(cid, [])
+        articles = [articles_by_id[aid] for aid in article_ids if aid in articles_by_id]
+        if len(articles) < 3:
+            metrics["skipped"] += 1
+            continue
+
+        result = summarize_cluster(
+            articles, prefer_provider=prefer_provider, model=GEMINI_FLASH_MODEL)
+        if not result:
+            metrics["failed"] += 1
+            continue
+
+        tier = _tier_for_label(result.get("_generator") or "")
+        if tier not in ("flash", "sonnet"):
+            # flash's daily cap is spent; the call degraded to flash-lite. Don't
+            # overwrite the existing (equivalent) flash-lite summary — the row is
+            # re-attempted for the flash upgrade next run.
+            metrics["skipped"] += 1
+            continue
+
+        payload = {
+            "title": result["headline"],
+            "summary": result["summary"],
+            "summary_article_hash": _content_hash(articles),
+            "summary_tier": tier,
+        }
+        if result.get("consensus"):
+            payload["consensus_points"] = result["consensus"]
+        if result.get("divergence"):
+            payload["divergence_points"] = result["divergence"]
+        if result.get("editorial_importance") is not None:
+            payload["editorial_importance"] = result["editorial_importance"]
+        if result.get("story_type") is not None:
+            payload["story_type"] = result["story_type"]
+        if result.get("has_binding_consequences") is not None:
+            payload["has_binding_consequences"] = result["has_binding_consequences"]
+        try:
+            supabase.table("story_clusters").update(payload).eq("id", cid).execute()
+            metrics["upgraded"] += 1
+        except Exception as e:
+            print(f"  [warn] reconcile_flash_top10: write failed for {cid}: {e}")
+            metrics["failed"] += 1
 
     return metrics

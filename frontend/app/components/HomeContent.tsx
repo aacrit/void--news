@@ -7,6 +7,7 @@ import { EDITIONS } from "../lib/types";
 import { isUnscoredTilt } from "../lib/biasColors";
 import { supabase, supabaseError } from "../lib/supabase";
 import { cacheGet, cacheSet } from "../lib/feedCache";
+import { cleanFeedSummary } from "../lib/summaryHygiene";
 import { BASE_PATH } from "../lib/utils";
 import LogoIcon from "./LogoIcon";
 import LogoWordmark from "./LogoWordmark";
@@ -374,7 +375,12 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
     return {
       ...s,
       title: typeof s.title === "string" ? s.title : String(s.title ?? ""),
-      summary: typeof s.summary === "string" ? s.summary : String(s.summary ?? ""),
+      // Belt-and-suspenders: drop any cached raw-excerpt summary so the card
+      // shows its neutral pending line instead of scraped garbage.
+      summary: cleanFeedSummary(
+        typeof s.summary === "string" ? s.summary : String(s.summary ?? ""),
+        typeof s.title === "string" ? s.title : "",
+      ),
       category: (typeof s.category === "string" ? s.category : "Politics") as Category,
       deepDive: s.deepDive ? {
         ...s.deepDive,
@@ -619,7 +625,13 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
             // Defensive: coerce title/summary to string — JSONB fields or
             // corrupted data can return objects, crashing React (#310).
             const safeTitle = typeof cluster.title === "string" ? cluster.title : String(cluster.title ?? "");
-            const safeSummary = typeof cluster.summary === "string" ? cluster.summary : String(cluster.summary ?? "");
+            // Guard against a raw scraped excerpt slipping onto a card: if the
+            // summary fails the hygiene check it is blanked, and the card falls
+            // back to its neutral "N sources reporting" pending line.
+            const safeSummary = cleanFeedSummary(
+              typeof cluster.summary === "string" ? cluster.summary : String(cluster.summary ?? ""),
+              safeTitle,
+            );
 
             return {
               id: cluster.id,
