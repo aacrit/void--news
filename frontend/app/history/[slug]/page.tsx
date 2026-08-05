@@ -10,6 +10,16 @@ import EventPageClient from "./EventPageClient";
 
 /* All known event slugs — mock data + YAML/Supabase canonical slugs */
 const YAML_SLUGS = [
+  "apollo-11-moon-landing",
+  "global-financial-crisis-2008",
+  "great-depression",
+  "nanjing-massacre",
+  "six-day-war",
+  "soviet-union-collapse",
+  "spanish-flu-1918",
+  "srebrenica-genocide",
+  "sykes-picot-agreement",
+  "world-war-i",
   "alexanders-conquests",
   "angkor-khmer-empire",
   "apartheid",
