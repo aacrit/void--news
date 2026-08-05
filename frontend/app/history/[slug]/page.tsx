@@ -79,6 +79,17 @@ const YAML_SLUGS = [
   "ottoman-empire",
   "vietnam-war",
   "womens-suffrage",
+  // Batch 3 — 10 new events (2026-08-05)
+  "algerian-war",
+  "chernobyl-disaster",
+  "chinese-civil-war",
+  "cuban-revolution",
+  "great-leap-forward",
+  "iran-iraq-war",
+  "spanish-civil-war",
+  "suez-crisis",
+  "the-reformation",
+  "watergate",
 ];
 
 export function generateStaticParams() {
