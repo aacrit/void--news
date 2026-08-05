@@ -65,6 +65,7 @@ try:
         summarize_cluster,
         summarize_top50_after_rerank,
         ensure_top50_summary_floor,
+        reconcile_flash_top10,
         _content_hash,
     )
     from summarizer.cluster_summarizer import is_available as llm_is_available
@@ -3254,28 +3255,25 @@ def main():
         except Exception as e:
             print(f"  [warn] Post-rerank summarization failed: {e}")
 
-    # Step 8d.1: Summary floor — guarantee NO displayed top-50 card is left at
-    # summary_tier=None showing a raw scraped excerpt. A flaky-connection window
-    # can still drop 8d Gemini calls even with the transport retry (or the
-    # per-run cap is spent), leaving cards null; those render the raw member
-    # excerpt (outlet slugs, bylines, mid-sentence truncation, sometimes
-    # off-topic to the headline — the 08-04 Cricket / Nigeria cards). This pass
-    # makes one more Gemini attempt per null card, else rebuilds a clean on-topic
-    # rule-based summary. Runs BEFORE 8d.5 so the final ordering / near-dup guard
-    # judges the cleaned titles.
+    # Step 8d.1: Lightweight PRE-ORDERING title clean. The full summary-coverage
+    # floor moved to step 8d.6 (AFTER the final ordering) so it covers every card
+    # 8d.5 PROMOTES into the displayed top-50 — running it here (before 8d.5)
+    # judged an INTERMEDIATE top-50, so any newly-promoted card was never floored
+    # and shipped a raw excerpt (the root cause of the 15/50 tier=None cards).
+    # This pass only normalizes the headlines of the still-null top-pool cards
+    # (no article fetch, no LLM) so 8d.5's near-duplicate guard + story-type
+    # gates still judge cleaned titles. The summary guarantee is 8d.6's job.
     if SUMMARIZER_AVAILABLE:
-        print("\n[8d.1] Top-50 summary floor (no raw-excerpt / tier=None cards)...")
+        print("\n[8d.1] Pre-order title clean (null-tier top-pool cards)...")
         try:
-            floor_metrics = ensure_top50_summary_floor(
-                supabase, edition="world", limit=50, prefer_provider="gemini")
+            tc_metrics = ensure_top50_summary_floor(
+                supabase, edition="world", limit=50, title_only=True)
             print(
-                f"  Summary floor: {floor_metrics['checked']} top-50 cards were "
-                f"tier=None → {floor_metrics['resummarized']} re-summarized (LLM), "
-                f"{floor_metrics['sanitized']} cleaned (rule-based), "
-                f"{floor_metrics['still_null']} still tier=None"
+                f"  Title clean: {tc_metrics['checked']} null-tier cards, "
+                f"{tc_metrics['titles_cleaned']} titles normalized"
             )
         except Exception as e:
-            print(f"  [warn] Top-50 summary floor failed: {e}")
+            print(f"  [warn] Pre-order title clean failed: {e}")
 
     # Step 8d.5: FINAL feed ordering on fresh 8d signals. 8c's rerank applied
     # feed ordering using YESTERDAY'S (or 7b's) story_type / editorial
@@ -3319,6 +3317,48 @@ def main():
                 print(f"  [near-dup] demoted \"{r.get('title', '')[:55]}\" -> kept \"{r['_near_dup_of'][:55]}\"")
     except Exception as e:
         print(f"  [warn] Final feed ordering failed (keeping 8c order): {e}")
+
+    # Step 8d.6: Summary-coverage FLOOR on the FINAL displayed top-50. Runs AFTER
+    # 8d.5 so it covers every card the final ordering PROMOTED into view (8d/8d.1
+    # only saw the intermediate order, so a promoted flash-lite/null card would
+    # otherwise ship a raw scraped excerpt — the 15/50 tier=None cards). For each
+    # still-null displayed card: one Gemini re-summarize (flash-lite), else a
+    # clean, on-topic rule-based summary stamped tier='rule_based' (migration
+    # 071). Idempotent: no-ops on cards already summarized by 8d. Guarantees no
+    # displayed top-50 card renders a raw excerpt.
+    if SUMMARIZER_AVAILABLE:
+        print("\n[8d.6] Final-order summary floor (guarantee top-50 coverage)...")
+        try:
+            floor_metrics = ensure_top50_summary_floor(
+                supabase, edition="world", limit=50, prefer_provider="gemini")
+            print(
+                f"  Summary floor: {floor_metrics['checked']} final top-50 cards "
+                f"were tier=None → {floor_metrics['resummarized']} re-summarized "
+                f"(LLM), {floor_metrics['sanitized']} cleaned (rule-based), "
+                f"{floor_metrics['still_null']} still tier=None"
+            )
+        except Exception as e:
+            print(f"  [warn] Final-order summary floor failed: {e}")
+
+    # Step 8d.7: Flash-tier reconciliation. 8d assigned the premium 'flash' tier
+    # to the INTERMEDIATE top-10; 8d.5 may have promoted a 'flash-lite' card into
+    # the FINAL top-10. Upgrade those to flash (budget permitting) so the premium
+    # tier follows the final rank rather than yesterday's intermediate one.
+    # Budget-safe: no-ops when Gemini is unavailable / the per-run cap is spent,
+    # caps upgrades, and degrades gracefully (a spent flash daily-cap leaves the
+    # card at flash-lite, retried next run).
+    if SUMMARIZER_AVAILABLE and llm_is_available() and calls_remaining() > 0:
+        print("\n[8d.7] Final top-10 flash-tier reconciliation...")
+        try:
+            recon_metrics = reconcile_flash_top10(
+                supabase, edition="world", top_n=10, prefer_provider="gemini")
+            print(
+                f"  Flash reconcile: {recon_metrics['checked']} final top-10 "
+                f"cards below flash → {recon_metrics['upgraded']} upgraded, "
+                f"{recon_metrics['skipped']} skipped, {recon_metrics['failed']} failed"
+            )
+        except Exception as e:
+            print(f"  [warn] Flash-tier reconciliation failed: {e}")
 
     # Step 8e: Cache cluster images to Supabase Storage (bypasses CDN hotlink protection)
     # Downloads og:images server-side on GitHub Actions (neutral IP = no Referer block),
