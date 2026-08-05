@@ -95,6 +95,7 @@ related_event_slugs:
 - the-holocaust
 - armenian-genocide
 - fall-of-berlin-wall
+- soviet-union-collapse
 perspectives:
 - viewpoint: Bosniak Survivors and the Legal Record
   viewpoint_type: vanquished
@@ -338,3 +339,6 @@ connections:
 - target_slug: fall-of-berlin-wall
   connection_type: influenced
   description: The 1989 collapse of communist Europe dissolved Yugoslavia along with the Eastern Bloc. As the federation broke apart, suppressed nationalisms hardened into the borders that Serb forces tried to purify by force between 1992 and 1995
+- target_slug: soviet-union-collapse
+  connection_type: influenced
+  description: The same collapse of European communism that ended the Soviet Union in 1991 dissolved Yugoslavia. As the federation came apart in the Cold War's wake, the war to build ethnically pure states out of it led to Srebrenica.

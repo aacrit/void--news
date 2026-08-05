@@ -129,6 +129,7 @@ coordinates:
   lat: 39.0619
   lng: -96.7733
 related_event_slugs:
+- world-war-i
 - black-death
 - indian-independence-movement
 - scramble-for-africa
@@ -491,6 +492,9 @@ perspectives:
   - The immediate human response of the officials and physicians of 1918
 media: []
 connections:
+- target_slug: world-war-i
+  connection_type: consequence
+  description: The war moved millions of soldiers between continents at the moment the virus turned lethal, and censorship in the belligerent states let it spread unwarned. The 1918 pandemic was the war's deadliest and least-counted consequence.
 - target_slug: black-death
   connection_type: parallel
   description: The two deadliest pandemics of their eras, both misnamed and misplaced by the people who feared them. Yersinia pestis
