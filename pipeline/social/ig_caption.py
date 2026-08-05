@@ -33,6 +33,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -138,6 +139,33 @@ Output STRICT JSON with this shape:
 The Instagram caption body must end with the URL "news.voidvision.org" unless the post type indicates otherwise."""
 
 
+def _operator_note() -> str:
+    """Optional free-text steer for THIS batch, dispatched via the workflow's
+    `note` input and threaded in as SOCIAL_NOTE. Empty/unset -> no steer, so the
+    prompt is byte-for-byte identical to the pre-steer behavior."""
+    return (os.environ.get("SOCIAL_NOTE") or "").strip()
+
+
+def _operator_steer_block(note: str) -> str:
+    """The operator steer, injected into the caption prompt. Shapes angle /
+    emphasis / emotional register only; never authorizes new facts, never
+    relaxes a voice rule. Empty note -> empty string (no prompt change)."""
+    if not note:
+        return ""
+    return (
+        "\n\nOPERATOR STEER (from the editor, for THIS batch only):\n"
+        f"\"{note}\"\n"
+        "Let this steer shape the ANGLE, the EMPHASIS, and the EMOTIONAL REGISTER "
+        "of the Instagram caption AND every variant (X, Bluesky), and make the "
+        "intent line visibly reflect this direction so the editor can see it was "
+        "heard. The steer changes tone and emphasis ONLY. It does NOT license any "
+        "new fact: every fact must still come from the SLIDE CONTENT above. Keep "
+        "obeying every rule already stated (show-don't-tell, arrive-late-leave-"
+        "early, no em or en dashes, the length and character limits, the hashtag "
+        "stack, and the banned phrases)."
+    )
+
+
 def _build_user_prompt(row: dict[str, Any]) -> str:
     pillar = row.get("pillar", "vision")
     specs = row.get("slide_specs") or []
@@ -191,6 +219,8 @@ def _build_user_prompt(row: dict[str, Any]) -> str:
         "owned: " + ", ".join(HASHTAG_POOL["owned"])
     )
 
+    steer = _operator_steer_block(_operator_note())
+
     return f"""POST PILLAR: {pillar}
 POST INTENT: {intent}
 
@@ -198,7 +228,7 @@ SLIDE CONTENT (first 4 slides, JSON):
 {spec_summary}
 
 APPROVED HASHTAG POOL (lead with niche; include at least 1 owned):
-{pool}
+{pool}{steer}
 
 Write the caption now. Return STRICT JSON only."""
 

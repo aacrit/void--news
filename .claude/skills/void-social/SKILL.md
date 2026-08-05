@@ -21,6 +21,12 @@ gh workflow run ig-pipeline.yml -f mode=generate -f track=void
 ```
 Confirm it queued: `gh run list --workflow=ig-pipeline.yml --limit 1`.
 
+**Optional `note` steer.** Pass a short free-text `note` to focus this batch's captions + intent (and, for the Example post, nudge which story is chosen) on a specific angle, tone, or theme:
+```bash
+gh workflow run ig-pipeline.yml -f mode=generate -f track=void -f note="lead with the Iran story; calm, factual, less punchy"
+```
+The note steers tone / angle / intent only. It never invents facts (those still come from the slides) and never relaxes a voice rule. Omit it for the default behavior.
+
 ### 2. Wait for it to finish (~5-9 min)
 ```bash
 RID=$(gh run list --workflow=ig-pipeline.yml --limit 1 --json databaseId -q '.[0].databaseId')
@@ -40,6 +46,8 @@ Summarize the three posts (Vision / Method / Example) and each one's **INTENT** 
 
 ## Notes
 - **Per-platform variants:** every post ships an Instagram caption (+ hashtags), an X variant (<=280 chars, 1-2 hashtags), a Bluesky variant (<=300 chars, plain), and a one-sentence director's-note **intent**. All follow the voice rules (no em/en dashes, show-don't-tell).
+- **Optional `note` input:** a free-text steer (e.g. `-f note="calm, factual, less punchy"`) that shapes the ANGLE, EMPHASIS, and EMOTIONAL REGISTER of every caption variant and the visible INTENT line, and softly biases the Example post's story pick toward a matching topic. It never changes the facts (grounded in the slides) and never bypasses a voice rule. Empty/omitted = today's exact behavior.
+- **Each `generate` run bundles only ITS OWN posts** (the workflow captures a start timestamp and passes `--since` to the exporter), so leftover drafts from earlier runs are no longer swept into the bundle.
 - Migrations 073 + 074 must be applied (073 widens `ig_posts.pillar`; 074 adds `caption_x`/`caption_bluesky`/`intent`). If 074 is unapplied, X/Bluesky are still derived by trimming the IG caption.
 - **Posting is parked.** The `publish` workflow mode (ships to IG + Bluesky) is disabled/manual-only and reachable solely by an explicit `gh workflow run ig-pipeline.yml -f mode=publish`. No cron auto-posts.
 - The related commands are `/history-social` and `/weekly-social` for the ad-hoc tracks.

@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 from datetime import datetime, timedelta, timezone, date, time as dtime
@@ -395,6 +396,50 @@ _BASELINE_LEAN_SCORE: dict[str, int] = {
 }
 
 
+# Operator-note keyword matching. Common words that would match almost any
+# headline are ignored so the steer only fires on a real topic word.
+_NOTE_STOPWORDS = {
+    "lead", "with", "story", "stories", "less", "more", "calm", "tone",
+    "focus", "angle", "theme", "make", "keep", "than", "that", "this",
+    "them", "then", "into", "from", "about", "over", "punchy", "factual",
+    "emphasis", "register", "emotional", "please", "batch", "post",
+}
+
+
+def _operator_note() -> str:
+    """Optional free-text steer for THIS batch (workflow `note` input, threaded
+    as SOCIAL_NOTE). Best-effort soft signal only; empty/unset -> no effect."""
+    return (os.environ.get("SOCIAL_NOTE") or "").strip()
+
+
+def _note_keywords(note: str) -> list[str]:
+    words = re.findall(r"[a-z0-9]{4,}", (note or "").lower())
+    return [w for w in words if w not in _NOTE_STOPWORDS]
+
+
+def _prefer_note_clusters(clusters: list[dict[str, Any]], note: str) -> list[dict[str, Any]]:
+    """Stable-reorder candidate clusters so any whose title matches an operator
+    note keyword sort first, preserving the existing source_count order among
+    both groups. No match -> the list is returned unchanged (default path)."""
+    kws = _note_keywords(note)
+    if not kws:
+        return clusters
+
+    def _matches(c: dict[str, Any]) -> bool:
+        title = (c.get("title") or "").lower()
+        return any(k in title for k in kws)
+
+    preferred = [c for c in clusters if _matches(c)]
+    if not preferred:
+        return clusters
+    rest = [c for c in clusters if not _matches(c)]
+    print(
+        f"  [example] operator note steered selection toward {len(preferred)} "
+        f"matching cluster(s) (keywords: {', '.join(kws[:6])})"
+    )
+    return preferred + rest
+
+
 def _lean_band(score: int) -> int:
     if score <= 25:
         return 0
@@ -426,6 +471,16 @@ def _select_example_cluster() -> tuple[str, list[dict[str, Any]], int, list[int]
     except Exception as e:
         print(f"  [warn] example: cluster query failed: {e}")
         return None
+
+    # Soft steer: if the operator note names a topic that matches a candidate's
+    # title, try that cluster first. Falls back cleanly to the highest
+    # source_count ordering when there is no note or no match.
+    note = _operator_note()
+    if note:
+        try:
+            clusters = _prefer_note_clusters(clusters, note)
+        except Exception as e:
+            print(f"  [warn] example: note steer skipped: {e}")
 
     for cluster in clusters:
         if cluster.get("source_count", 0) < 3:
