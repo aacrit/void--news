@@ -645,7 +645,7 @@ body:has(.ig-canvas) {
 .ig-history__voices {
   display: flex;
   flex-direction: column;
-  gap: 40px;
+  gap: 26px;
   margin: 8px 0 auto;
 }
 .ig-history__lens {
@@ -659,21 +659,26 @@ body:has(.ig-canvas) {
 .ig-history__quote {
   font-family: var(--font-editorial);
   font-style: italic;
-  font-size: 40px;
-  line-height: 1.34;
+  font-size: 31px;
+  line-height: 1.26;
   color: var(--ig-cream-fg);
   border-left: 4px solid var(--ig-umber-ink);
   padding-left: 28px;
   margin: 0;
-  max-width: 24ch;
+  max-width: 30ch;
+  /* Clamp so a long account can't push the last voice + coda off-canvas. */
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .ig-history__coda {
   font-family: var(--font-editorial);
   font-size: 34px;
   color: var(--ig-umber-ink);
   border-top: 1px solid var(--ig-umber-soft);
-  padding-top: 32px;
-  margin: 40px 0 0;
+  padding-top: 24px;
+  margin: 26px 0 0;
 }
 
 .ig-history--cta {

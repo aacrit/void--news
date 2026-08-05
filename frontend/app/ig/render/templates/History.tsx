@@ -34,7 +34,7 @@ function Hook({ spec }: { spec: HistorySlideSpec }) {
 }
 
 function Perspectives({ spec }: { spec: HistorySlideSpec }) {
-  const rows = spec.perspectives ?? [];
+  const rows = (spec.perspectives ?? []).slice(0, 3);
   return (
     <div className="ig-history ig-history--perspectives">
       <p className="ig-kicker ig-kicker--umber">One event. Many accounts.</p>
