@@ -2376,6 +2376,38 @@ button:focus-visible .sigil-word__beam {
   outline-offset: 2px;
 }
 
+/* ── Deliberate hover/focus cue: an accent-colored underline that draws in from
+   the left, in each link's own product accent (umber for History, red for
+   Weekly via --hist-nav-accent). Signals "distinct destination" without any
+   external-link arrow (these stay internal routes). Sits inside the link's
+   horizontal padding so it underlines the wordmark, not the full hit box. ── */
+.nav-history::after {
+  content: "";
+  position: absolute;
+  left: var(--space-2);
+  right: var(--space-2);
+  bottom: 1px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--hist-nav-accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  opacity: 0;
+  transition: transform 260ms var(--ease-unfold), opacity 160ms ease;
+}
+
+.nav-history:hover::after,
+.nav-history:focus-visible::after {
+  transform: scaleX(1);
+  opacity: 1;
+}
+
+/* Hovering anywhere on the link (including its padding) drives the Sigil-O
+   lean-sweep, so the whole tap target reacts, not just the mark glyph. */
+.nav-history:hover .sigil-word__beam {
+  animation: sigil-word-sweep 1.4s var(--ease-rack, ease-in-out) infinite;
+}
+
 :root[data-mode="dark"] .nav-history {
   --hist-nav-accent: #8B7355;
 }
@@ -2393,9 +2425,35 @@ button:focus-visible .sigil-word__beam {
   --hist-nav-accent: var(--palette-weekly);
 }
 
+/* Coarse pointers (touch tablets ≥768px, where the spinoffs are shown): keep a
+   ≥44px tap target per WCAG 2.5.5. The link is inline-flex + centered, so the
+   min-height grows the hit box without shifting the wordmark. */
+@media (pointer: coarse) {
+  .nav-history {
+    min-height: 44px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .nav-history {
     transition: none;
+  }
+  /* Underline still appears on hover/focus, but snaps in (no left-to-right
+     draw); the Sigil-O lean-sweep is suppressed (handled by the .sigil-word
+     reduced-motion block above, which also covers this whole-link trigger). */
+  .nav-history::after {
+    transition: opacity 160ms ease;
+    transform: none;
+    transform-origin: left center;
+    opacity: 0;
+  }
+  .nav-history:hover::after,
+  .nav-history:focus-visible::after {
+    transform: none;
+    opacity: 1;
+  }
+  .nav-history:hover .sigil-word__beam {
+    animation: none;
   }
 }
 
