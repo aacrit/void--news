@@ -12,8 +12,8 @@ severity: catastrophic
 death_toll: 40,000-300,000 (disputed)
 affected_population: An estimated 20,000 to 80,000 women and girls raped; roughly 200,000-250,000 civilians sheltered inside the Nanjing Safety Zone
 duration: Six weeks of peak violence (December 13, 1937 - early February 1938)
-hero_image_url: null
-hero_image_attribution: null
+hero_image_url: https://commons.wikimedia.org/wiki/File:Nanjing_Massacre_Memorial_Hall,_outside_1.jpg
+hero_image_attribution: 維基小霸王, CC BY-SA 4.0, via Wikimedia Commons
 summary: |
   On December 13, 1937, the Japanese Central China Area Army entered Nanjing, the capital of the Republic of China. The Nationalist government had already fled west to Chongqing. The garrison commander, General Tang Shengzhi, had sworn to defend the city to the last man, then crossed the Yangtze and left his soldiers behind. Tens of thousands of them stripped off their uniforms and hid among the civilian population inside the city walls.
 
@@ -334,7 +334,37 @@ perspectives:
   - The emotional and human reality behind the legal categories
   - The Chinese national investment in the tribunal's 300,000 figure
   - The lived aftermath for survivors and perpetrators alike
-media: []
+media:
+- media_type: photograph
+  title: The Memorial Hall of the Victims in Nanjing Massacre
+  description: The exterior of the memorial hall in Nanjing, built on the site of a mass grave. The sculpture and the wall inscribed 300,000 mark the Chinese government's official death toll for the six weeks of killing that began in December 1937.
+  source_url: https://commons.wikimedia.org/wiki/File:Nanjing_Massacre_Memorial_Hall,_outside_1.jpg
+  attribution: 維基小霸王, CC BY-SA 4.0, via Wikimedia Commons
+  license: cc-by-sa
+  creator: 維基小霸王
+  creation_date: '2015'
+  width: 5184
+  height: 3456
+- media_type: photograph
+  title: Nanjing after the Japanese occupation, 1937
+  description: An archival photograph from the weeks following the fall of Nanjing in December 1937, when Japanese troops killed tens of thousands of prisoners and civilians. The scale of the atrocity was documented by foreign residents of the Nanjing Safety Zone.
+  source_url: https://commons.wikimedia.org/wiki/File:Nanking_bodies_1937.jpg
+  attribution: Unknown photographer, 1937, public domain via Wikimedia Commons
+  license: public-domain
+  creator: Unknown
+  creation_date: December 1937
+  width: 800
+  height: 559
+- media_type: photograph
+  title: Wall of survivor portraits, Nanjing memorial
+  description: Portraits of registered survivors displayed inside the Nanjing Massacre Memorial Hall. Each face is a first-hand witness whose testimony anchors the historical record against later denial.
+  source_url: https://commons.wikimedia.org/wiki/File:Photos_of_survivors_in_Nanjing_Massacre_(flickr9106319989).jpg
+  attribution: Kevin Dooley, CC BY 2.0, via Wikimedia Commons
+  license: cc-by
+  creator: Kevin Dooley
+  creation_date: '2013'
+  width: 3941
+  height: 3008
 connections:
 - target_slug: hiroshima-nagasaki
   connection_type: parallel

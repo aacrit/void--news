@@ -12,8 +12,8 @@ severity: critical
 death_toll: 3 (Apollo 1 crew, January 27, 1967 launch-pad fire)
 affected_population: An estimated 600 million watched the landing live, roughly one sixth of humanity
 duration: May 25, 1961 (Kennedy's commitment) to July 24, 1969 (splashdown)
-hero_image_url: null
-hero_image_attribution: NASA, public domain
+hero_image_url: https://commons.wikimedia.org/wiki/File:Aldrin_Apollo_11_original.jpg
+hero_image_attribution: Neil Armstrong, NASA, 1969, public domain via Wikimedia Commons
 summary: 'At 20:17:40 UTC on July 20, 1969, a spidery aluminum craft with legs settled onto a plain of basalt on the Moon. "Houston, Tranquility Base here. The Eagle has landed." In Mission Control, a flight
   controller keyed his microphone: "You got a bunch of guys about to turn blue. We''re breathing again."
 
@@ -406,7 +406,27 @@ perspectives:
   - The genuine inspiration Apollo provided to future non-Western space programs
   - The eventual global spread of satellite technology for weather and communication
   - The scientific knowledge shared openly through returned samples and data
-media: []
+media:
+- media_type: photograph
+  title: Buzz Aldrin on the Moon, 20 July 1969
+  description: Astronaut Edwin "Buzz" Aldrin stands on the Sea of Tranquility. Neil Armstrong, who took the photograph, is reflected in Aldrin's gold visor along with the lunar module Eagle. It is the most reproduced image of the first Moon landing.
+  source_url: https://commons.wikimedia.org/wiki/File:Aldrin_Apollo_11_original.jpg
+  attribution: Neil Armstrong, NASA, 1969, public domain via Wikimedia Commons
+  license: public-domain
+  creator: Neil Armstrong
+  creation_date: July 20, 1969
+  width: 3912
+  height: 3936
+- media_type: photograph
+  title: Launch of Apollo 11, 16 July 1969
+  description: The Saturn V rocket lifts off from Launch Complex 39A at the Kennedy Space Center carrying Armstrong, Aldrin, and Collins. The vehicle stood 363 feet tall and burned through 20 tons of fuel per second at liftoff.
+  source_url: https://commons.wikimedia.org/wiki/File:Apollo_11_Launch_-_GPN-2000-000630.jpg
+  attribution: NASA, 1969, public domain via Wikimedia Commons
+  license: public-domain
+  creator: NASA
+  creation_date: July 16, 1969
+  width: 2400
+  height: 3000
 connections:
 - target_slug: cuban-missile-crisis
   connection_type: parallel

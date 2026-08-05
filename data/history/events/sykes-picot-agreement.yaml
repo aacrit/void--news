@@ -12,8 +12,8 @@ severity: critical
 death_toll: N/A (secret agreement; downstream conflicts include the 1920 Franco-Syrian War and the 1925-27 Great Syrian Revolt, 6,000+ killed)
 affected_population: The Arab provinces of the Ottoman Empire, roughly 5-7 million people, later divided into Syria, Iraq, Lebanon, Jordan, and Israel/Palestine
 duration: Negotiated November 23, 1915 - January 3, 1916; ratified May 16, 1916
-hero_image_url: null
-hero_image_attribution: null
+hero_image_url: https://commons.wikimedia.org/wiki/File:MPK1-426_Sykes_Picot_Agreement_Map_signed_8_May_1916.jpg
+hero_image_attribution: Mark Sykes and Francois Georges-Picot, 1916, public domain via Wikimedia Commons
 summary: |
   In December 1915, Sir Mark Sykes stood before the British War Committee, put his finger on a map, and said he wanted to draw a line "from the 'e' in Acre to the last 'k' in Kirkuk." He was thirty-six. He had traveled the region as a tourist and an amateur, and he was about to help decide the fate of provinces holding several million people. Lord Kitchener corrected the geography. The line stayed.
 
@@ -347,7 +347,27 @@ perspectives:
   - The genuine emotional and political force the Sykes-Picot symbol still carries in the region
   - The direct line from the Balfour Declaration to an unresolved conflict
   - How far scholarly nuance can travel against a century of lived grievance
-media: []
+media:
+- media_type: map
+  title: The signed Sykes-Picot map, 8 May 1916
+  description: The original map attached to the secret agreement, initialled by Mark Sykes and Francois Georges-Picot. A blue zone marks direct French control and a red zone direct British control, with lettered zones A and B as spheres of influence and a brown international administration over Palestine.
+  source_url: https://commons.wikimedia.org/wiki/File:MPK1-426_Sykes_Picot_Agreement_Map_signed_8_May_1916.jpg
+  attribution: Mark Sykes and Francois Georges-Picot, 1916, public domain via Wikimedia Commons
+  license: public-domain
+  creator: Mark Sykes and Francois Georges-Picot
+  creation_date: May 8, 1916
+  width: 3322
+  height: 3225
+- media_type: map
+  title: Sykes-Picot zones of influence
+  description: A modern rendering of the partition. Zones A and B mark the French and British spheres of influence, the coastal blue and red zones mark areas of direct control, and Palestine is shaded as an international administration.
+  source_url: https://commons.wikimedia.org/wiki/File:Sykes-Picot.svg
+  attribution: Rafy, CC BY-SA 3.0, via Wikimedia Commons
+  license: cc-by-sa
+  creator: Rafy
+  creation_date: '2011'
+  width: 800
+  height: 900
 connections:
 - target_slug: ottoman-empire
   connection_type: consequence

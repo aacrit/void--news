@@ -12,8 +12,8 @@ severity: catastrophic
 death_toll: 15,000-20,000 Arab soldiers; 776-983 Israelis
 affected_population: ~1 million Palestinians placed under military occupation; ~300,000 displaced from the West Bank and Gaza
 duration: 132 hours (June 5-10, 1967)
-hero_image_url: null
-hero_image_attribution: null
+hero_image_url: https://commons.wikimedia.org/wiki/File:Six_Day_War._Army_chief_chaplain_rabbi_Shlomo_Goren,_who_is_surrounded_by_IDF_soldiers,_blows_the_shofar_in_front_of_the_western_wall_in_Jerusalem._June_1967._D327-043.jpg
+hero_image_attribution: David Rubinger, Israeli Government Press Office, 1967, CC BY-SA 4.0, via Wikimedia Commons
 summary: 'At 7:45 a.m. on June 5, 1967, roughly 180 Israeli jets crossed the Mediterranean below Egyptian radar, banked south, and struck eleven airfields at once. Within three hours about 300 of Egypt''s
   420 combat aircraft were burning on the ground. The pilots who were supposed to defend Cairo never left the tarmac. Israel called it Operation Focus. The war was decided before most of the Arab world
   knew it had begun.
@@ -417,7 +417,27 @@ perspectives:
   - The lived experience of the occupation the diplomacy was meant to end
   - The domestic political limits that constrained each government's room to negotiate
   - The role of non-state actors that no UN resolution addressed
-media: []
+media:
+- media_type: photograph
+  title: Rabbi Shlomo Goren blows the shofar at the Western Wall, June 1967
+  description: The IDF chief chaplain, surrounded by soldiers, sounds the ram's horn at the Western Wall in the Old City of Jerusalem, captured on the third day of the war. The image became the defining Israeli photograph of the victory.
+  source_url: https://commons.wikimedia.org/wiki/File:Six_Day_War._Army_chief_chaplain_rabbi_Shlomo_Goren,_who_is_surrounded_by_IDF_soldiers,_blows_the_shofar_in_front_of_the_western_wall_in_Jerusalem._June_1967._D327-043.jpg
+  attribution: David Rubinger, Israeli Government Press Office, 1967, CC BY-SA 4.0, via Wikimedia Commons
+  license: cc-by-sa
+  creator: David Rubinger
+  creation_date: June 1967
+  width: 2042
+  height: 3072
+- media_type: map
+  title: Territory occupied by Israel in the Six-Day War
+  description: 'The lands Israel took in six days: the Sinai Peninsula and Gaza Strip from Egypt, the West Bank and East Jerusalem from Jordan, and the Golan Heights from Syria. The occupation displaced hundreds of thousands of Palestinians in the Naksa and set the terms of the conflict for decades.'
+  source_url: https://commons.wikimedia.org/wiki/File:Six_Day_War_Territories.svg
+  attribution: Wikimedia Commons contributors, CC BY-SA 3.0
+  license: cc-by-sa
+  creator: Wikimedia Commons contributors
+  creation_date: '2007'
+  width: 800
+  height: 1200
 connections:
 - target_slug: sykes-picot-agreement
   connection_type: consequence

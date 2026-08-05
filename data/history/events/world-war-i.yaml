@@ -12,8 +12,8 @@ severity: catastrophic
 death_toll: About 20 million dead (roughly 9-11 million military, 6-13 million civilian); an estimated 21 million wounded
 affected_population: Mobilized roughly 65 million soldiers from over 30 nations and empires; drew in colonial subjects across Asia, Africa, and the Pacific
 duration: 4 years, 3 months (July 28, 1914 to November 11, 1918)
-hero_image_url: null
-hero_image_attribution: null
+hero_image_url: https://commons.wikimedia.org/wiki/File:Cheshire_Regiment_trench_Somme_1916.jpg
+hero_image_attribution: John Warwick Brooke, British official photographer, 1916, public domain via Wikimedia Commons
 summary: |
   Gavrilo Princip was nineteen and had already missed his chance. The motorcade carrying Archduke Franz Ferdinand had sped past after another conspirator's bomb bounced off the car and wounded bystanders. Then, on June 28, 1914, the Archduke's driver took a wrong turn onto Franz Josef Street in Sarajevo, realized his error, and stopped to reverse. Princip was standing a few feet away outside a delicatessen. He fired twice. The heir to the Austro-Hungarian throne and his wife Sophie were both dead within minutes.
 
@@ -333,7 +333,37 @@ perspectives:
   - The lived experience of soldiers and civilians
   - The war's colonial and non-European dimensions
   - The moral immediacy of individual suffering in favor of systemic analysis
-media: []
+media:
+- media_type: photograph
+  title: Cheshire Regiment in a captured trench, the Somme, July 1916
+  description: Men of the 11th Battalion, Cheshire Regiment, hold a captured German trench near the Albert-Bapaume road at Ovillers-la-Boisselle during the Battle of the Somme. A sentry keeps watch while the rest of the section sleeps in the mud.
+  source_url: https://commons.wikimedia.org/wiki/File:Cheshire_Regiment_trench_Somme_1916.jpg
+  attribution: John Warwick Brooke, British official photographer, 1916, public domain via Wikimedia Commons
+  license: public-domain
+  creator: John Warwick Brooke
+  creation_date: July 1916
+  width: 1400
+  height: 1069
+- media_type: photograph
+  title: Australian infantry in gas respirators, Ypres, 1917
+  description: Soldiers of the Australian 45th Battalion wear small box respirators near Ypres during the Third Battle of Ypres (Passchendaele). Poison gas made the respirator standard kit on the Western Front.
+  source_url: https://commons.wikimedia.org/wiki/File:Australian_infantry_small_box_respirators_Ypres_1917.jpg
+  attribution: Frank Hurley, Australian official photographer, 1917, public domain via Wikimedia Commons
+  license: public-domain
+  creator: Frank Hurley
+  creation_date: September 1917
+  width: 1200
+  height: 1607
+- media_type: map
+  title: European alliances on the eve of war, 1914
+  description: The two armed camps of 1914, the Triple Entente of France, Russia, and Britain against the Triple Alliance of Germany, Austria-Hungary, and Italy. The interlocking treaties turned an assassination in Sarajevo into a continental war within six weeks.
+  source_url: https://commons.wikimedia.org/wiki/File:Map_Europe_alliances_1914-en.svg
+  attribution: Wikimedia Commons contributors, CC BY-SA 2.5
+  license: cc-by-sa
+  creator: Wikimedia Commons contributors
+  creation_date: '2006'
+  width: 1002
+  height: 593
 connections:
 - target_slug: russian-revolution
   connection_type: caused
