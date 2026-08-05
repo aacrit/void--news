@@ -143,14 +143,8 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
             <span className="msp__link-cmd">News</span>
             <span className="msp__link-desc">Today&rsquo;s feed</span>
           </Link>
-          <Link href="/weekly" className="msp__link" data-accent="weekly" data-msp-cascade="2" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">Weekly</span>
-            <span className="msp__link-desc">The week in review</span>
-          </Link>
-          <Link href="/history" className="msp__link" data-accent="history" data-msp-cascade="2" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">History</span>
-            <span className="msp__link-desc">The archive of consequence</span>
-          </Link>
+          {/* Weekly + History links HIDDEN for launch 2026-08-05 — restore in the
+              Read group when those ship as features. Routes intact behind redirects. */}
           <Link href="/onair" className="msp__link" data-accent="onair" data-msp-cascade="2" onClick={handleLinkClick}>
             <span className="msp__link-cmd">On Air</span>
             <span className="msp__link-desc">The audio broadcast</span>
@@ -174,8 +168,8 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
 
           <span className="msp__section-label" data-msp-cascade="4">Participate</span>
           <Link href="/ship" className="msp__link" data-accent="neutral" data-msp-cascade="4" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">Ship</span>
-            <span className="msp__link-desc">Request it, vote, watch it ship</span>
+            <span className="msp__link-cmd">Feedback</span>
+            <span className="msp__link-desc">Tell us what to build or fix</span>
           </Link>
 
           {/* Utility group — smaller, quieter type */}

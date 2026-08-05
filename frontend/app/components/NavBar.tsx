@@ -6,7 +6,6 @@ import { MagnifyingGlass } from "@phosphor-icons/react";
 import ThemeToggle from "./ThemeToggle";
 import PageToggle from "./PageToggle";
 import LogoFull from "./LogoFull";
-import SigilWordmark from "./SigilWordmark";
 import ExperimentalBadge from "./ExperimentalBadge";
 import { getEditionTimestamp } from "../lib/utils";
 
@@ -124,21 +123,9 @@ export default function NavBar({
           <span className="nav-dateline-mobile__time">{timestamp}</span>
         </span>
 
-        {/* Spinoff product family — standalone products under the Void
-            umbrella. Both render their own VOID <PRODUCT> Sigil lockup at a
-            single shared height (14), clearly smaller than the 30px VOID NEWS
-            masthead so they read as SECONDARY. A leading hairline + "Also from
-            Void" eyebrow frame them as the spinoff family, not rival mastheads. */}
-        <nav className="nav-spinoffs" aria-label="More from Void">
-          <span className="nav-spinoffs__divider" aria-hidden="true" />
-          <span className="nav-spinoffs__eyebrow" aria-hidden="true">Also from Void</span>
-          <Link href="/history" className="nav-history nav-history--brand si-hoverable" aria-label="Go to Void History" title="Void History">
-            <SigilWordmark height={14} product="HISTORY" accent="var(--palette-history)" />
-          </Link>
-          <Link href="/weekly" className="nav-history nav-weekly nav-history--brand si-hoverable" aria-label="Go to Void Weekly" title="Void Weekly">
-            <SigilWordmark height={14} product="WEEKLY" accent="var(--palette-weekly)" />
-          </Link>
-        </nav>
+        {/* Spinoff product family (Void History + Void Weekly) HIDDEN for launch
+            2026-08-05 — restore the .nav-spinoffs block when History/Weekly ship
+            as features. Links + SigilWordmark import removed, routes intact. */}
 
         <div className="nav-right">
           {/* Page navigation — destinations.
@@ -146,8 +133,8 @@ export default function NavBar({
               still resolve at /games and /paper for direct URL access. */}
           <nav className="nav-pages" aria-label="Pages">
             <PageToggle activePage="feed" />
-            <Link href="/ship" className="nav-page" aria-label="Ship: request it, vote, watch it ship" title="Ship">
-              Ship
+            <Link href="/ship" className="nav-page" aria-label="Feedback: tell us what to build or fix" title="Feedback">
+              Feedback
             </Link>
             <Link href="/about" className="nav-page" aria-label="About Void News" title="About">
               About
