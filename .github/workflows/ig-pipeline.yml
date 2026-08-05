@@ -45,6 +45,11 @@ on:
         required: false
         default: ''
         type: string
+      vision_hook:
+        description: 'generate/void only: override the VISION slide 1 (and optionally 2/3). Format: HEADLINE || SUBSTANCE || CTA. Blank = normal rotation.'
+        required: false
+        default: ''
+        type: string
       purge_drafts:
         description: 'cleanup mode only: also delete ALL stale draft posts (resets the queue)'
         required: false
@@ -126,6 +131,7 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           SOCIAL_NOTE: ${{ inputs.note }}
+          SOCIAL_VISION_HOOK: ${{ inputs.vision_hook }}
         run: python -m pipeline.social.ig_generator --track ${{ steps.mode.outputs.track }}
 
       - name: Capture slides (Playwright)

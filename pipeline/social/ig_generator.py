@@ -26,6 +26,13 @@ Usage:
 
 Environment:
     SUPABASE_URL / KEY      existing pipeline vars
+    SOCIAL_NOTE             optional free-text steer for THIS batch (topic /
+                            tone); best-effort soft signal.
+    SOCIAL_VISION_HOOK      optional override for the VISION post's slide 1
+                            (and optionally slides 2/3). Format:
+                            "HEADLINE || SUBSTANCE || CTA" (pipe-separated;
+                            missing parts fall back to the normal rotation).
+                            Empty/unset = the VISION_HOOKS rotation, unchanged.
 """
 
 from __future__ import annotations
@@ -184,28 +191,64 @@ VISION_SIGNOFFS = [
 ]
 
 
+def _vision_hook_override() -> dict[str, str | None] | None:
+    """Parse SOCIAL_VISION_HOOK (a custom debut hook). Format is pipe-separated
+    "HEADLINE || SUBSTANCE || CTA"; any missing/blank part falls back to the
+    normal rotation. Empty/unset -> None (rotation unchanged)."""
+    raw = (os.environ.get("SOCIAL_VISION_HOOK") or "").strip()
+    if not raw:
+        return None
+    parts = [p.strip() for p in raw.split("||")]
+    return {
+        "headline": parts[0] if len(parts) > 0 and parts[0] else None,
+        "substance": parts[1] if len(parts) > 1 and parts[1] else None,
+        "cta": parts[2] if len(parts) > 2 and parts[2] else None,
+    }
+
+
 def _vision_specs() -> list[dict[str, Any]]:
     idx = _rotation_day_index(VISION_EPOCH, len(VISION_HOOKS))
     hook = VISION_HOOKS[idx]
     signoff = VISION_SIGNOFFS[idx % len(VISION_SIGNOFFS)]
+
+    # Optional debut-hook override (env). Only the parts supplied are replaced;
+    # the rest stay on the deterministic rotation, so an unset var is a no-op.
+    ov = _vision_hook_override()
+    hook_headline = hook["headline"]
+    stance_body = VISION_STANCE_BODY
+    cta_headline = signoff
+    if ov:
+        if ov["headline"]:
+            hook_headline = ov["headline"]
+        if ov["substance"]:
+            stance_body = ov["substance"]
+        if ov["cta"]:
+            cta_headline = ov["cta"]
+        print(
+            "  [vision] SOCIAL_VISION_HOOK override applied "
+            f"(headline={'y' if ov['headline'] else 'n'}, "
+            f"substance={'y' if ov['substance'] else 'n'}, "
+            f"cta={'y' if ov['cta'] else 'n'})"
+        )
+
     return [
         {
             "kind": "vision",
             "variant": "hook",
             "kicker": hook["kicker"],
-            "headline": hook["headline"],
+            "headline": hook_headline,
         },
         {
             "kind": "vision",
             "variant": "stance",
             "kicker": VISION_STANCE_KICKER,
             "headline": VISION_STANCE_HEADLINE,
-            "body": VISION_STANCE_BODY,
+            "body": stance_body,
         },
         {
             "kind": "vision",
             "variant": "cta",
-            "headline": signoff,
+            "headline": cta_headline,
             "url": URL_HOME,
         },
     ]
@@ -417,27 +460,163 @@ def _note_keywords(note: str) -> list[str]:
     return [w for w in words if w not in _NOTE_STOPWORDS]
 
 
-def _prefer_note_clusters(clusters: list[dict[str, Any]], note: str) -> list[dict[str, Any]]:
-    """Stable-reorder candidate clusters so any whose title matches an operator
-    note keyword sort first, preserving the existing source_count order among
-    both groups. No match -> the list is returned unchanged (default path)."""
-    kws = _note_keywords(note)
+def _note_matches(title: str, kws: list[str]) -> bool:
     if not kws:
-        return clusters
+        return False
+    t = (title or "").lower()
+    return any(k in t for k in kws)
 
-    def _matches(c: dict[str, Any]) -> bool:
-        title = (c.get("title") or "").lower()
-        return any(k in title for k in kws)
 
-    preferred = [c for c in clusters if _matches(c)]
-    if not preferred:
-        return clusters
-    rest = [c for c in clusters if not _matches(c)]
-    print(
-        f"  [example] operator note steered selection toward {len(preferred)} "
-        f"matching cluster(s) (keywords: {', '.join(kws[:6])})"
-    )
-    return preferred + rest
+# ---------------------------------------------------------------------------
+# EXAMPLE outlet recognizability. The Example spectrum must show KNOWN outlets
+# at distinct scores, not obscure single-market feeds. Majorness ranks a source
+# so ties collapse to the more recognizable outlet and the displayed set favors
+# names a reader will recognize.
+#   3 = globally recognized brand (name allowlist)
+#   2 = us_major tier
+#   1 = international tier
+#   0 = independent / obscure
+# "Recognizable" for the display floor = majorness >= _MAJOR_DISPLAY_MIN (2).
+# ---------------------------------------------------------------------------
+_MAJOR_OUTLET_NAMES = frozenset({
+    "bbc", "reuters", "associated press", "ap news", "al jazeera", "guardian",
+    "deutsche welle", "france 24", "france24", "nhk", "cnn", "fox news",
+    "new york times", "washington post", "wall street journal", "npr",
+    "bloomberg", "politico", "economist", "financial times", "sky news",
+    "cnbc", "abc news", "cbs news", "nbc news", "msnbc", "usa today",
+    "newsweek", "the hill", "axios", "afp", "agence france", "the times",
+    "los angeles times", "the telegraph", "the independent", "vox",
+    "the atlantic", "pbs", "breitbart", "national review", "the daily beast",
+    "huffpost", "the intercept", "propublica", "the new yorker",
+})
+
+_MAJORNESS_BRAND = 3
+_MAJORNESS_US_MAJOR = 2
+_MAJORNESS_INTL = 1
+_MAJORNESS_INDIE = 0
+_MAJOR_DISPLAY_MIN = 2  # us_major tier or brand-listed counts as "recognizable"
+
+# Example selection knobs.
+_EXAMPLE_CRED_FLOOR = 5       # min cluster source_count for a "strict" pick
+_EXAMPLE_MIN_MAJOR = 3        # min recognizable outlets in the displayed set
+_EXAMPLE_DISPLAY_TARGET = 4   # outlets rendered on the spectrum slide (Example.tsx slices [0:4])
+
+# Title tokenization for off-topic outlier detection (over-merged clusters).
+_TITLE_STOPWORDS = frozenset({
+    "the", "and", "for", "with", "from", "into", "over", "after", "before",
+    "under", "about", "amid", "amidst", "says", "said", "will", "would",
+    "could", "should", "has", "have", "had", "are", "was", "were", "been",
+    "its", "his", "her", "their", "new", "how", "why", "what", "when",
+    "where", "who", "this", "that", "these", "those", "than", "then",
+    "live", "update", "updates", "report", "reports", "amp", "news",
+})
+
+
+def _outlet_majorness(name: str, tier: str | None) -> int:
+    n = (name or "").lower()
+    if any(b in n for b in _MAJOR_OUTLET_NAMES):
+        return _MAJORNESS_BRAND
+    if tier == "us_major":
+        return _MAJORNESS_US_MAJOR
+    if tier == "international":
+        return _MAJORNESS_INTL
+    return _MAJORNESS_INDIE
+
+
+def _title_tokens(title: str) -> set[str]:
+    return {
+        w for w in re.findall(r"[a-z0-9]{4,}", (title or "").lower())
+        if w not in _TITLE_STOPWORDS
+    }
+
+
+def _ontopic_outlets(
+    cluster_title: str, outlets: list[dict[str, Any]]
+) -> list[dict[str, Any]]:
+    """Drop obvious outliers from an over-merged cluster. Core topic tokens =
+    the cluster title's content words plus any content word shared by >=2
+    article titles; an article is on-topic if its title shares >=1 core token.
+    Never strips below 3 outlets (a thin/odd core set must not gut a real
+    cluster) and no-ops when there is nothing to compare against."""
+    if len(outlets) < 4:
+        return outlets
+    from collections import Counter
+
+    freq: Counter[str] = Counter()
+    for o in outlets:
+        freq.update(_title_tokens(o.get("headline") or ""))
+    shared = {t for t, c in freq.items() if c >= 2}
+    core = _title_tokens(cluster_title) | shared
+    if not core:
+        return outlets
+    kept = [o for o in outlets if _title_tokens(o.get("headline") or "") & core]
+    if len(kept) < 3:
+        return outlets
+    if len(kept) < len(outlets):
+        print(
+            f"  [example] dropped {len(outlets) - len(kept)} off-topic "
+            f"outlier(s) from an over-merged cluster"
+        )
+    return kept
+
+
+def _cluster_disagreement(
+    lean_values: list[int], bias_diversity: Any
+) -> float:
+    """Score genuine left-right contestedness. Prefers the pipeline's stored
+    polarization index (rev-49 bias aggregation) and takes the max of it and a
+    locally recomputed polarization, then adds a spread term and a both-wings
+    bonus. A one-sided cluster (all-left or all-center) scores near 0 no matter
+    how many sources it has, so disagreement beats coverage volume."""
+    if not lean_values:
+        return 0.0
+    lo, hi = min(lean_values), max(lean_values)
+    spread = hi - lo
+    n = len(lean_values)
+    left = sum(1 for v in lean_values if v <= 42)
+    right = sum(1 for v in lean_values if v >= 58)
+    pol_local = 100.0 * (2.0 * min(left, right) / n) if n else 0.0
+    pol_stored = 0.0
+    if isinstance(bias_diversity, dict):
+        try:
+            pol_stored = float(bias_diversity.get("polarization") or 0)
+        except (TypeError, ValueError):
+            pol_stored = 0.0
+    polarization = max(pol_local, pol_stored)
+    both = 20.0 if (left > 0 and right > 0) else 0.0
+    return polarization + 0.5 * spread + both
+
+
+def _select_display_outlets(
+    candidates: list[dict[str, Any]], target: int = _EXAMPLE_DISPLAY_TARGET
+) -> list[dict[str, Any]]:
+    """Choose the outlets to DISPLAY on the spectrum slide:
+      (a) collapse ties to ONE outlet per distinct lean score, keeping the more
+          recognizable outlet (no two rows ever share a score);
+      (b) if still over budget, always keep the two lean extremes (max visible
+          range + both wings) and fill the interior preferring major outlets.
+    Returns outlets sorted left -> right."""
+    best_by_score: dict[int, dict[str, Any]] = {}
+    for o in candidates:
+        s = o["lean_score"]
+        cur = best_by_score.get(s)
+        if cur is None or o["majorness"] > cur["majorness"]:
+            best_by_score[s] = o
+    pool = sorted(best_by_score.values(), key=lambda o: o["lean_score"])
+    if len(pool) <= target:
+        return pool
+
+    left_end, right_end = pool[0], pool[-1]
+    picked = [left_end, right_end]
+    picked_ids = {id(left_end), id(right_end)}
+    interior = [o for o in pool if id(o) not in picked_ids]
+    interior.sort(key=lambda o: (-o["majorness"], o["lean_score"]))
+    for o in interior:
+        if len(picked) >= target:
+            break
+        picked.append(o)
+    picked.sort(key=lambda o: o["lean_score"])
+    return picked
 
 
 def _lean_band(score: int) -> int:
@@ -452,18 +631,68 @@ def _lean_band(score: int) -> int:
     return 4
 
 
+def _gather_cluster_outlets(cid: str) -> list[dict[str, Any]]:
+    """All articles in a cluster with a resolvable political lean, as outlet
+    rows {outlet, lean_score, headline, majorness}. Lean prefers the per-article
+    bias score, falling back to the source's 7-point baseline."""
+    try:
+        articles = (
+            supabase.table("cluster_articles")
+            .select(
+                "article:articles(title, source:sources(name, tier, political_lean_baseline), bias_scores(political_lean))"
+            )
+            .eq("cluster_id", cid)
+            .execute()
+            .data
+            or []
+        )
+    except Exception as e:
+        print(f"  [warn] example: article query failed: {e}")
+        return []
+
+    out: list[dict[str, Any]] = []
+    for row in articles:
+        a = row.get("article") or {}
+        if not a:
+            continue
+        bias = a.get("bias_scores")
+        if isinstance(bias, list):
+            bias = bias[0] if bias else None
+        lean = (bias or {}).get("political_lean")
+        src = a.get("source") or {}
+        if lean is None:
+            lean = _BASELINE_LEAN_SCORE.get(
+                (src.get("political_lean_baseline") or "").strip().lower()
+            )
+        if lean is None:
+            continue
+        out.append(
+            {
+                "outlet": (src.get("name") or "Unknown")[:32],
+                "lean_score": int(lean),
+                "headline": (a.get("title") or "").strip()[:140],
+                "majorness": _outlet_majorness(src.get("name") or "", src.get("tier")),
+            }
+        )
+    return out
+
+
 def _select_example_cluster() -> tuple[str, list[dict[str, Any]], int, list[int]] | None:
-    """Highest-coverage cluster from the last 48h with >=3 outlets spanning
-    >=2 lean bands. Returns (title, headlines[4-6 best-spread], source_count,
-    lean_values[all article leans for the KDE ridge])."""
+    """Pick the Example cluster by genuine LEFT-RIGHT DISAGREEMENT, not coverage
+    volume. Among clusters from the last 48h, rank by a contestedness score
+    (stored polarization + lean spread + both-wings bonus) above source_count,
+    keeping a modest credibility floor and requiring a clean spread of
+    recognizable, distinct-score outlets. Returns (title, headlines[displayed
+    outlets], source_count, lean_values[on-topic article leans for the KDE ridge]).
+    """
     cutoff = (datetime.now(timezone.utc) - timedelta(hours=48)).isoformat()
     try:
         clusters = (
             supabase.table("story_clusters")
-            .select("id, title, source_count")
+            .select("id, title, source_count, bias_diversity")
             .gte("first_published", cutoff)
             .order("source_count", desc=True)
-            .limit(20)
+            .limit(30)
             .execute()
             .data
             or []
@@ -472,85 +701,87 @@ def _select_example_cluster() -> tuple[str, list[dict[str, Any]], int, list[int]
         print(f"  [warn] example: cluster query failed: {e}")
         return None
 
-    # Soft steer: if the operator note names a topic that matches a candidate's
-    # title, try that cluster first. Falls back cleanly to the highest
-    # source_count ordering when there is no note or no match.
+    # Operator note: a title match dominates the disagreement score (a huge
+    # bonus) so the steer still wins, while the MOST contested matching cluster
+    # is chosen among matches. No note / no match -> pure disagreement ranking.
     note = _operator_note()
-    if note:
-        try:
-            clusters = _prefer_note_clusters(clusters, note)
-        except Exception as e:
-            print(f"  [warn] example: note steer skipped: {e}")
+    kws = _note_keywords(note) if note else []
 
+    entries: list[dict[str, Any]] = []
     for cluster in clusters:
-        if cluster.get("source_count", 0) < 3:
+        sc = int(cluster.get("source_count") or 0)
+        if sc < 3:
             continue
         cid = cluster["id"]
-        try:
-            articles = (
-                supabase.table("cluster_articles")
-                .select(
-                    "article:articles(title, source:sources(name, political_lean_baseline), bias_scores(political_lean))"
-                )
-                .eq("cluster_id", cid)
-                .execute()
-                .data
-                or []
-            )
-        except Exception as e:
-            print(f"  [warn] example: article query failed: {e}")
+        raw = _gather_cluster_outlets(cid)
+        if len(raw) < 3:
+            continue
+        ontopic = _ontopic_outlets(cluster.get("title") or "", raw)
+        if len(ontopic) < 3:
+            continue
+        display = _select_display_outlets(ontopic)
+        if len(display) < 3:
+            continue
+        bands = {_lean_band(o["lean_score"]) for o in display}
+        if len(bands) < 2:
             continue
 
-        headlines: list[dict[str, Any]] = []
-        bands_seen: set[int] = set()
-        for row in articles:
-            a = row.get("article") or {}
-            if not a:
-                continue
-            bias = a.get("bias_scores")
-            if isinstance(bias, list):
-                bias = bias[0] if bias else None
-            lean = (bias or {}).get("political_lean")
-            if lean is None:
-                src = a.get("source") or {}
-                lean = _BASELINE_LEAN_SCORE.get(
-                    (src.get("political_lean_baseline") or "").strip().lower()
-                )
-            if lean is None:
-                continue
-            lean = int(lean)
-            bands_seen.add(_lean_band(lean))
-            src = a.get("source") or {}
-            headlines.append(
-                {
-                    "outlet": (src.get("name") or "Unknown")[:32],
-                    "lean_score": lean,
-                    "headline": (a.get("title") or "").strip()[:140],
-                }
-            )
+        has_left = any(o["lean_score"] <= 42 for o in display)
+        has_right = any(o["lean_score"] >= 58 for o in display)
+        spans = has_left and has_right
+        major_ct = sum(1 for o in display if o["majorness"] >= _MAJOR_DISPLAY_MIN)
+        lean_values = sorted(o["lean_score"] for o in ontopic)
+        score = _cluster_disagreement(lean_values, cluster.get("bias_diversity"))
+        matched = _note_matches(cluster.get("title") or "", kws)
+        strict = sc >= _EXAMPLE_CRED_FLOOR and spans and major_ct >= _EXAMPLE_MIN_MAJOR
 
-        if len(bands_seen) < 2 or len(headlines) < 3:
-            continue
+        entries.append(
+            {
+                "cluster": cluster,
+                "display": display,
+                "lean_values": lean_values,
+                "score": score,
+                "strict": strict,
+                "spans": spans,
+                "matched": matched,
+                "source_count": sc,
+            }
+        )
 
-        headlines.sort(key=lambda h: h["lean_score"])
-        # Full per-article lean distribution (0-100) for the KDE ridge on the
-        # spectrum slide, captured BEFORE the display down-sample below.
-        lean_values = [h["lean_score"] for h in headlines]
+    if not entries:
+        print("  [warn] example: no eligible cluster found")
+        return None
 
-        # 3-4 best-spread outlets across the lean axis (the labeled rows). Kept
-        # small so the breakdown list clears the bottom-right stamp on the
-        # spectrum slide; the KDE ridge still uses the FULL lean distribution.
-        target = min(4, max(3, len(headlines)))
-        if len(headlines) > target:
-            step = len(headlines) / target
-            headlines = [headlines[int(i * step)] for i in range(target)]
+    # Operator note is authoritative: if it matched any candidate, restrict the
+    # search to matched clusters (still picking the most contested / cleanest
+    # among them). No note / no match -> the full eligible set.
+    matched_entries = [e for e in entries if e["matched"]]
+    search = matched_entries or entries
 
-        title = (cluster.get("title") or "Today's top story").strip()[:100]
-        source_count = int(cluster.get("source_count") or len(headlines))
-        return title, headlines, source_count, lean_values
+    # Prefer a strict pick (credible + both wings + recognizable spread); then a
+    # cluster that at least spans left and right; then anything eligible. Within
+    # the chosen tier, disagreement wins, source_count breaks ties.
+    strict_pool = [e for e in search if e["strict"]]
+    spanning_pool = [e for e in search if e["spans"]]
+    pool = strict_pool or spanning_pool or search
+    best = max(pool, key=lambda e: (e["score"], e["source_count"]))
 
-    print("  [warn] example: no eligible cluster found")
-    return None
+    tier = "strict" if best in strict_pool else ("spanning" if best in spanning_pool else "relaxed")
+    if matched_entries:
+        print(f"  [example] operator note steered selection (keywords: {', '.join(kws[:6])})")
+    print(
+        f"  [example] selected by disagreement (tier={tier}, score={best['score']:.1f}, "
+        f"sources={best['source_count']}, outlets={len(best['display'])})"
+    )
+
+    cluster = best["cluster"]
+    title = (cluster.get("title") or "Today's top story").strip()[:100]
+    source_count = int(cluster.get("source_count") or len(best["display"]))
+    headlines = [
+        {"outlet": o["outlet"], "lean_score": o["lean_score"], "headline": o["headline"]}
+        for o in best["display"]
+    ]
+    return title, headlines, source_count, best["lean_values"]
 
 
 def _short_topic(title: str, budget: int = 34) -> str:
