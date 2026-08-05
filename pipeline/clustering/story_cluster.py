@@ -459,6 +459,17 @@ _ENTITY_STOP_TOKENS = frozenset({
     "monitor", "bulletin", "register", "news", "media", "broadcasting",
     "wire", "newswire", "press", "report", "review", "weekly", "today",
     "online", "digital", "edition", "network", "channel",
+    # 2026-08-05 production audit — masthead-name token bridges (same class
+    # as "Observer" above). A "The Virginian-Pilot - The Virginian-Pilot"
+    # doubled-masthead cluster (pos 52, 49 arts) formed because spaCy tagged
+    # the masthead as an ORG anchor across every article that carried the
+    # publisher's name in a byline / breadcrumb / footer. These words appear
+    # in dozens of US/regional publisher names in data/sources.json and are
+    # never a distinguishing event entity.
+    "virginian-pilot", "virginian", "pilot", "sentinel", "dispatch",
+    "courier", "advertiser", "ledger", "enquirer", "examiner",
+    "standard", "record", "star", "beacon", "inquirer", "picayune",
+    "clarion", "advocate",
     # Often-occurring source-byline / copyright phrases
     "staff", "writer", "correspondent", "reporter", "editor",
     # 2026-05-31 simplification — moved here from _LOW_SPECIFICITY_ENTITIES
@@ -796,6 +807,15 @@ _GARBAGE_TITLE_PATTERNS = [
     # "Trump, Putin, and Zelensky to Meet...") and force-split real clusters.
     re.compile(
         r"\b([A-Z][a-z]+,\s+){3,}(?:and\s+)?[A-Z][a-z]+\b",
+    ),
+    # 2026-08-05 production audit — doubled-masthead title. When a cluster is
+    # a publisher-name-bridged bag with no real story to headline, the title-
+    # generator falls back to the masthead and emits it TWICE across a dash:
+    # "The Virginian-Pilot - The Virginian-Pilot" (pos 52, 49 arts). The two
+    # halves are byte-identical around the separator — a signature no genuine
+    # headline produces. Backreference-anchored so only a true repeat matches.
+    re.compile(
+        r"^\s*(.{4,}?)\s*[-–—|]\s*\1\s*$",
     ),
 ]
 
@@ -1718,6 +1738,30 @@ def split_garbage_clusters(clusters: list[dict]) -> list[dict]:
 # deprioritizes it. A genuine big story scores high cohesion and is exempt.
 MEGA_OVERMERGE_ARTICLE_FLOOR = 45
 
+# O4 (2026-08-05): over-merge FORCE-SPLIT gate. The 2026-06-28 O3 path only
+# FLAGGED (rank penalty) and only fired when source_count >= 40 — so the
+# wire-collapsed "desk bag" over-merges live in production (16-38 source, ~50-
+# article Phase-2 accretions that grow to the max_cluster_articles=50 ceiling
+# and then borrow a title from one stray member) were NEVER caught: their
+# source_count sits below 40, and even when a bigger one tripped the flag the
+# mismatched title still shipped. This gate is INDEPENDENT of source_count and
+# FORCE-SPLITS the pile back into its real sub-stories.
+#
+# It keys on the only two cohesion signals that actually separate a grab-bag
+# from a real story: how many of the articles share the cluster's top entities
+# (entity_convergence) and how much their titles overlap (avg_title_jaccard).
+# The wire-amp / tier / publisher-spread signals are deliberately IGNORED here
+# because a 50-article/38-source grab-bag looks *healthily diverse* on them
+# (measured 2026-08-05: desk bag entity_conv=0.13 / title_jac=0.07 / cohesion=35;
+# a coherent 100+-article Iran-Hormuz mega-event entity_conv~1.0 / title_jac~0.8
+# / cohesion~73). The gate is an AND of both floors, so a genuine mega-event
+# must fail BOTH to be touched — and _force_split_cluster's own collapse-to-1
+# guard is a second net that returns the pile unchanged if a stricter re-cluster
+# proves it coherent. Per the launch constraint, this is cohesion-gated, NOT a
+# naive article-count cap: a clean Phase-1 mega-story is never fragmented.
+MEGA_OVERMERGE_ENTITY_CONV_FLOOR = 0.40   # top-entity coverage below this AND
+MEGA_OVERMERGE_TITLE_JACCARD_FLOOR = 0.12  # stemmed-title overlap below this
+
 
 def split_mega_clusters(
     clusters: list[dict],
@@ -1753,21 +1797,62 @@ def split_mega_clusters(
                     f"  [Phase5/mega-cap] '{c.get('title','')[:60]!r}' "
                     f"(src={sc}) kept whole, source_count capped at {threshold}"
                 )
-        elif (
+            out.append(c)
+            continue
+
+        if (
             n_articles >= MEGA_OVERMERGE_ARTICLE_FLOOR
-            and sc >= MEGA_COHESION_MIN_SOURCES
             and not c.get("mega_cluster_capped")
         ):
-            # O3: large-but-sub-threshold pile — flag only if incoherent.
-            # The MEGA_COHESION_MIN_SOURCES floor keeps the trip off
-            # heavily wire-amplified real stories (48 articles / 12 voices)
-            # — the documented 2026-05 false-positive class. source_map is
-            # threaded via the _source_map stash so tier_concentration is
-            # actually measured (it was silently pinned to 1.0 before).
-            cohesion = _cluster_cohesion(
-                c, source_map=c.get("_source_map")
-            ).get("cohesion_score", 100.0)
-            if cohesion < MEGA_COHESION_FLOOR:
+            # O4 (2026-08-05): over-size pile, source_count-independent. Measure
+            # the two coherence signals that separate a real story from a wire
+            # desk-bag. source_map is threaded via the _source_map stash so the
+            # (unused-here) tier signal stays consistent with the ranker.
+            coh = _cluster_cohesion(c, source_map=c.get("_source_map"))
+            entity_conv = coh.get("entity_convergence", 1.0)
+            title_jac = coh.get("avg_title_jaccard", 1.0)
+            cohesion = coh.get("cohesion_score", 100.0)
+
+            # Grab-bag = oversize AND the articles do not describe one story:
+            # near-zero shared-entity convergence AND near-zero title overlap.
+            if (
+                entity_conv < MEGA_OVERMERGE_ENTITY_CONV_FLOOR
+                and title_jac < MEGA_OVERMERGE_TITLE_JACCARD_FLOOR
+            ):
+                sub = _force_split_cluster(c)
+                if len(sub) > 1:
+                    # Productive split: the bag dissolved into its real sub-
+                    # stories (+ peeled aggregator singletons). The entity+title
+                    # AND gate above is the actual guarantee that a coherent
+                    # mega-event never reaches here (it scores entity_conv~1.0 /
+                    # title_jac~0.8, both far above the floors); _force_split_
+                    # cluster's collapse-to-1 return is an additional backstop
+                    # for a borderline pile that turns out cohesive at the
+                    # stricter TF-IDF gate.
+                    if verbose:
+                        print(
+                            f"  [Phase5/overmerge-split] "
+                            f"'{c.get('title','')[:55]!r}' (art={n_articles}, "
+                            f"src={sc}, ent_conv={entity_conv:.2f}, "
+                            f"title_jac={title_jac:.2f}) force-split into "
+                            f"{len(sub)} sub-clusters"
+                        )
+                    out.extend(sub)
+                    continue
+                # Split declined (coherent after all) — keep whole but flag for
+                # the ranker penalty so a still-suspect pile is deprioritized.
+                c["mega_cluster_capped"] = True
+                if verbose:
+                    print(
+                        f"  [Phase5/overmerge-flag] '{c.get('title','')[:55]!r}' "
+                        f"(art={n_articles}, src={sc}) split declined; flagged"
+                    )
+            elif cohesion < MEGA_COHESION_FLOOR and sc >= MEGA_COHESION_MIN_SOURCES:
+                # Legacy O3 flag preserved for the medium-incoherent case that
+                # does not meet the stricter grab-bag split gate (e.g. a merged
+                # pile that shares SOME entities/titles but still reads muddled).
+                # The MEGA_COHESION_MIN_SOURCES floor keeps it off heavily
+                # wire-amplified real stories (48 articles / 12 voices).
                 c["mega_cluster_capped"] = True
                 if verbose:
                     print(
