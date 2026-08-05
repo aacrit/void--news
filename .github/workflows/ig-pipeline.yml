@@ -40,6 +40,16 @@ on:
           - void
           - history
           - weekly
+      note:
+        description: 'Optional steer for this batch: angle / tone / focus / theme (shapes captions + intent, never the facts)'
+        required: false
+        default: ''
+        type: string
+      purge_drafts:
+        description: 'cleanup mode only: also delete ALL stale draft posts (resets the queue)'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   ig-pipeline:
@@ -101,11 +111,21 @@ jobs:
           nohup npx next dev --port 3000 > /tmp/next-dev.log 2>&1 &
           echo $! > /tmp/next-dev.pid
 
+      # Capture the run-start instant BEFORE any draft is generated, so the
+      # export step can scope the bundle to exactly this run's posts (--since)
+      # rather than every draft created today. A small backdated buffer absorbs
+      # any clock skew between the runner and Supabase without widening the
+      # window enough to catch an unrelated (much older) run.
+      - name: Capture generation start timestamp
+        if: steps.mode.outputs.mode == 'generate'
+        run: echo "GEN_SINCE=$(date -u -d '-2 minutes' +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
+
       - name: Generate next draft
         if: steps.mode.outputs.mode == 'generate'
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SOCIAL_NOTE: ${{ inputs.note }}
         run: python -m pipeline.social.ig_generator --track ${{ steps.mode.outputs.track }}
 
       - name: Capture slides (Playwright)
@@ -122,6 +142,7 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          SOCIAL_NOTE: ${{ inputs.note }}
         run: python -m pipeline.social.ig_caption
 
       - name: Export manual-upload bundle (social_out/)
@@ -129,7 +150,7 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: python -m pipeline.social.ig_export --out-dir social_out
+        run: python -m pipeline.social.ig_export --since "$GEN_SINCE" --out-dir social_out
 
       - name: Stop dev server
         if: always() && steps.mode.outputs.mode == 'generate'
@@ -179,10 +200,15 @@ jobs:
           BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
         run: python -m pipeline.social.cross_post
 
-      # ---- Mode: cleanup (reject posts stuck in a transient lock state) ---
+      # ---- Mode: cleanup (reject stuck posts; optionally purge stale drafts) ---
       - name: Clean up stuck posts
         if: steps.mode.outputs.mode == 'cleanup'
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-        run: python -m pipeline.social.ig_cleanup
+        run: |
+          if [ "${{ inputs.purge_drafts }}" = "true" ]; then
+            python -m pipeline.social.ig_cleanup --purge-drafts --older-than-hours 0
+          else
+            python -m pipeline.social.ig_cleanup
+          fi

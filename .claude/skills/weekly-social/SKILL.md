@@ -20,6 +20,12 @@ Generate ONE **Void Weekly** showcase post (a 3-slide carousel in the red Weekly
 gh workflow run ig-pipeline.yml -f mode=generate -f track=weekly
 ```
 
+**Optional `note` steer.** Pass a short free-text `note` to focus this batch's caption + intent on a specific angle or tone:
+```bash
+gh workflow run ig-pipeline.yml -f mode=generate -f track=weekly -f note="tease the two most-contested stories; measured, magazine tone"
+```
+The note steers tone / angle / intent only. It never invents facts and never relaxes a voice rule. Omit it for the default behavior.
+
 ### 2. Wait for it to finish (~5-9 min)
 ```bash
 RID=$(gh run list --workflow=ig-pipeline.yml --limit 1 --json databaseId -q '.[0].databaseId')
@@ -39,6 +45,8 @@ Summarize the issue number, cover headline, the stories featured, and the **INTE
 
 ## Notes
 - **Per-platform variants:** Instagram caption (+ hashtags), X (<=280 chars, 1-2 hashtags), Bluesky (<=300 chars, plain), plus a one-sentence director's-note **intent**. Voice rules apply to all (no em/en dashes).
+- **Optional `note` input:** a free-text steer (e.g. `-f note="measured, magazine tone"`) that shapes the ANGLE, EMPHASIS, and EMOTIONAL REGISTER of every caption variant and the visible INTENT line. It never changes the facts (grounded in the slides) and never bypasses a voice rule. Empty/omitted = today's exact behavior.
+- **Each `generate` run bundles only ITS OWN posts** (the workflow passes `--since` to the exporter), so leftover drafts from earlier runs are no longer swept in.
 - Migrations 073 + 074 must be applied (073 adds `weekly` to the pillar CHECK; 074 adds the variant + intent columns; if 074 is unapplied, X/Bluesky are derived by trimming the IG caption).
 - Needs at least one row in `weekly_digests`; sources issue_number + cover headline + most-contested stories.
 - **Posting is parked.** The `publish` mode is disabled/manual-only; no cron auto-posts.

@@ -23,9 +23,17 @@ via the public ig-renders bucket URLs already on each row.
 
 Usage:
     python -m pipeline.social.ig_export                     # today's (UTC) draft posts
+    python -m pipeline.social.ig_export --since 2026-08-05T13:00:00Z  # this run's posts
     python -m pipeline.social.ig_export --date 2026-08-05   # a specific run day
     python -m pipeline.social.ig_export --post-id <uuid>    # one post
     python -m pipeline.social.ig_export --limit 3 --out-dir ./social_out
+
+`--since <ISO8601 UTC>` restricts the selection to rows created at/after that
+instant, so a bundle contains EXACTLY the posts the current run created rather
+than every draft made today (the old `--date` behavior grabbed leftover drafts
+from other manual runs). The workflow captures the timestamp right before the
+generator step and passes it here. `--date` remains the fallback when `--since`
+is absent.
 
 Environment:
     SUPABASE_URL / KEY   existing pipeline vars (read-only use here)
@@ -167,14 +175,24 @@ _LEGACY_SELECT = (
 )
 
 
-def _fetch(date_str: str | None, post_id: str | None, limit: int | None) -> list[dict]:
+def _fetch(
+    date_str: str | None,
+    post_id: str | None,
+    limit: int | None,
+    since: str | None = None,
+) -> list[dict]:
     def _run(select: str) -> list[dict]:
         q = supabase.table("ig_posts").select(select)
         if post_id:
             q = q.eq("id", post_id)
         else:
             q = q.eq("state", "draft")
-            if date_str:
+            # `--since` (this run's start) takes precedence: it captures exactly
+            # the rows this run created. `--date` is the legacy day-window
+            # fallback used only when no `--since` is supplied.
+            if since:
+                q = q.gte("created_at", since)
+            elif date_str:
                 q = q.gte("created_at", f"{date_str}T00:00:00Z").lte(
                     "created_at", f"{date_str}T23:59:59Z"
                 )
@@ -192,6 +210,24 @@ def _fetch(date_str: str | None, post_id: str | None, limit: int | None) -> list
             print("  [export] variant columns absent (migration 074 unapplied); using legacy select + derived variants")
             return _run(_LEGACY_SELECT)
         raise
+
+
+def _dedupe_rows(rows: list[dict]) -> list[dict]:
+    """Belt-and-suspenders: even after `--since` scopes the selection to this
+    run, drop any row whose (slide-0 title + pillar) duplicates one already kept
+    (e.g. a re-render / double-generate). First occurrence wins."""
+    seen: set[tuple[str, str]] = set()
+    out: list[dict] = []
+    for r in rows:
+        pillar = (r.get("pillar") or "vision")
+        title = _derive_title(pillar, r.get("slide_specs"))
+        key = (pillar.strip().lower(), title.strip().lower())
+        if key in seen:
+            print(f"  [export] dedupe: dropping duplicate {pillar} / {title!r}")
+            continue
+        seen.add(key)
+        out.append(r)
+    return out
 
 
 def _download(url: str, dest: Path) -> bool:
@@ -349,10 +385,11 @@ def export_bundle(
     post_id: str | None = None,
     limit: int | None = None,
     out_dir: Path = DEFAULT_OUT_DIR,
+    since: str | None = None,
 ) -> int:
     """Build the dated bundle. Returns the number of posts bundled."""
     day = date_str or datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    rows = _fetch(date_str, post_id, limit)
+    rows = _dedupe_rows(_fetch(date_str, post_id, limit, since=since))
 
     # Only rows that actually have rendered images + a caption are uploadable.
     usable = [r for r in rows if (r.get("image_urls") and r.get("caption"))]
@@ -409,17 +446,27 @@ def export_bundle(
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Build the manual-upload social bundle.")
-    parser.add_argument("--date", default=None, help="run day YYYY-MM-DD (default: today UTC)")
+    parser.add_argument(
+        "--since",
+        default=None,
+        help="ISO8601 UTC instant; bundle only rows created at/after this "
+        "(this run's start). Takes precedence over --date.",
+    )
+    parser.add_argument("--date", default=None, help="run day YYYY-MM-DD (fallback when --since absent)")
     parser.add_argument("--post-id", default=None, help="bundle a single post by id")
     parser.add_argument("--limit", type=int, default=None, help="max posts to bundle")
     parser.add_argument("--out-dir", default=str(DEFAULT_OUT_DIR), help="output root (default ./social_out)")
     args = parser.parse_args()
+
+    # An empty-string --since (unset workflow env) must behave as absent.
+    since = (args.since or "").strip() or None
 
     n = export_bundle(
         date_str=args.date,
         post_id=args.post_id,
         limit=args.limit,
         out_dir=Path(args.out_dir),
+        since=since,
     )
     print(f"  [export] done. {n} post(s) bundled.")
     return 0
