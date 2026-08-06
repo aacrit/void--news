@@ -1632,19 +1632,29 @@ def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = 50
     the final ordering promoted into the displayed top-50. It is idempotent —
     it no-ops on any card that already carries a summary_tier.
 
-    For each cluster in the displayed top-`limit` (by rank_{edition}, applying
-    the same source_count>=3 window as the homepage) still at summary_tier NULL
-    and not an op-ed:
-      (i)  one Gemini re-summarize attempt (flash-lite). On success → write the
-           LLM summary + tier='flash-lite'.
-      (ii) failing that → rebuild a clean on-topic summary from the member
-           articles (clustering's rule-based _generate_cluster_summary, which
-           selects an on-topic member and runs the CMS/byline/dateline/
-           truncation sanitizer) and normalize the headline. When even that
-           yields nothing (no usable article text), fall back to the normalized
-           headline itself so the card NEVER renders a raw excerpt. Written with
-           tier='rule_based' (migration 071); still_null is now structurally
-           impossible whenever the cluster has a title.
+    RULE-BASED-FIRST, two passes over the displayed top-`limit` (by rank_{edition},
+    applying the same source_count>=3 window as the homepage), skipping op-eds and
+    cards that already carry a summary_tier:
+
+      Pass 1 (fast, NO LLM): for EVERY still-null card, immediately write a clean,
+        on-topic rule-based summary from the member articles (clustering's
+        _generate_cluster_summary, which selects an on-topic member and runs the
+        CMS/byline/dateline/truncation sanitizer) + a normalized headline, stamped
+        tier='rule_based' (migration 071). When no usable article text exists it
+        falls back to the normalized headline itself, so the card NEVER renders a
+        raw excerpt. This pass completes in seconds and guarantees non-null
+        coverage for the whole top-50 BEFORE any slow work — so the "100%
+        coverage" guarantee no longer depends on the run finishing inside its
+        wall-clock budget (a mid-pass-2 watchdog kill leaves every card with its
+        clean pass-1 summary). still_null is structurally impossible whenever the
+        cluster has a title.
+
+      Pass 2 (upgrade, budget-permitting): re-visit the now-rule_based cards in
+        rank order and, while is_available() and calls_remaining() allow, make ONE
+        Gemini attempt each. On success overwrite the pass-1 text with the LLM
+        summary + real tier + content-hash (so the next run's cache can hit). The
+        pass stops the moment the per-run cap / budget is spent; a kill here is
+        harmless because pass 1 already covered every card.
 
     title_only=True is a LIGHTWEIGHT pre-ordering pass: it only normalizes the
     headlines of the still-null displayed cards (no article fetch, no LLM) so
@@ -1782,43 +1792,27 @@ def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = 50
         art.setdefault("source_name", src.get("name", ""))
         art.setdefault("tier", src.get("tier", ""))
 
+    # =====================================================================
+    # PASS 1 (fast, NO LLM): guarantee non-null coverage for the WHOLE
+    # displayed top-50 in seconds. For every still-null card write a clean,
+    # on-topic rule-based summary + normalized headline (tier='rule_based',
+    # migration 071). This runs to completion long before any watchdog kill,
+    # so the coverage guarantee no longer depends on the run finishing inside
+    # its wall-clock budget. Cards written here with >=3 articles are queued
+    # for the LLM upgrade in pass 2.
+    # =====================================================================
+    # (cid -> cleaned title) for pass-2 prompts; only cards eligible for the
+    # LLM upgrade (rule_based text landed, >=3 articles) are queued.
+    upgrade_queue: list[str] = []
+    cleaned_title_by_id: dict[str, str] = {}
     for row in null_rows:
         cid = row["id"]
         title = row.get("title", "") or ""
         article_ids = by_cluster.get(cid, [])
         articles = [articles_by_id[aid] for aid in article_ids if aid in articles_by_id]
 
-        # (i) One more Gemini attempt (transport retry now covers the flaky
-        # window; the network may have recovered since 8d, or a cap slot freed).
-        if len(articles) >= 3:
-            result = summarize_cluster(articles, prefer_provider=prefer_provider,
-                                       model=None, cluster_title=title)
-            if result:
-                payload = {
-                    "title": result["headline"],
-                    "summary": result["summary"],
-                    "summary_article_hash": _content_hash(articles),
-                    "summary_tier": _tier_for_label(result.get("_generator") or ""),
-                }
-                if result.get("consensus"):
-                    payload["consensus_points"] = result["consensus"]
-                if result.get("divergence"):
-                    payload["divergence_points"] = result["divergence"]
-                if result.get("editorial_importance") is not None:
-                    payload["editorial_importance"] = result["editorial_importance"]
-                if result.get("story_type") is not None:
-                    payload["story_type"] = result["story_type"]
-                if result.get("has_binding_consequences") is not None:
-                    payload["has_binding_consequences"] = result["has_binding_consequences"]
-                try:
-                    supabase.table("story_clusters").update(payload).eq("id", cid).execute()
-                    metrics["resummarized"] += 1
-                    continue
-                except Exception as e:
-                    print(f"  [warn] ensure_top50_summary_floor: re-summarize write failed for {cid}: {e}")
-
-        # (ii) Deterministic rule-based fallback — clean, on-topic, no raw excerpt.
         clean_title = (normalize_headline(title) or title).strip()
+        cleaned_title_by_id[cid] = clean_title or title
         if _generate_cluster_summary is not None and articles:
             clean_summary = _generate_cluster_summary(articles, clean_title or title)
         else:
@@ -1863,9 +1857,64 @@ def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = 50
                 continue
 
         metrics["sanitized"] += 1
-        if not _RULE_BASED_TIER_SUPPORTED:
-            # Text is clean but the tier stamp could not be written → still NULL.
+        if _RULE_BASED_TIER_SUPPORTED:
+            # Clean rule_based text landed. Eligible for the LLM upgrade in
+            # pass 2 iff it has enough sources to summarize.
+            if len(articles) >= 3:
+                upgrade_queue.append(cid)
+        else:
+            # Text is clean but the tier stamp could not be written → still
+            # NULL (frontend still renders the clean text, not a raw excerpt;
+            # the row is re-attempted on the LLM next run).
             metrics["still_null"] += 1
+
+    # =====================================================================
+    # PASS 2 (upgrade, budget-permitting): every card now carries a clean
+    # pass-1 rule_based summary, so a watchdog kill here is harmless. Re-visit
+    # the queued cards in rank order and, while Gemini is available and the
+    # per-run cap has headroom, make ONE re-summarize attempt each. On success
+    # overwrite the rule_based text with the LLM summary + real tier +
+    # content-hash (so the next run's cache can hit). Stops the moment the
+    # budget is spent — the remaining cards keep their clean pass-1 summary.
+    # =====================================================================
+    for cid in upgrade_queue:
+        if not is_available() or calls_remaining() <= 0:
+            break  # budget spent — remaining cards keep their pass-1 summary
+        article_ids = by_cluster.get(cid, [])
+        articles = [articles_by_id[aid] for aid in article_ids if aid in articles_by_id]
+        if len(articles) < 3:
+            continue
+        result = summarize_cluster(
+            articles, prefer_provider=prefer_provider, model=None,
+            cluster_title=cleaned_title_by_id.get(cid, ""))
+        if not result:
+            continue  # keep the pass-1 rule_based summary
+        payload = {
+            "title": result["headline"],
+            "summary": result["summary"],
+            "summary_article_hash": _content_hash(articles),
+            "summary_tier": _tier_for_label(result.get("_generator") or ""),
+        }
+        if result.get("consensus"):
+            payload["consensus_points"] = result["consensus"]
+        if result.get("divergence"):
+            payload["divergence_points"] = result["divergence"]
+        if result.get("editorial_importance") is not None:
+            payload["editorial_importance"] = result["editorial_importance"]
+        if result.get("story_type") is not None:
+            payload["story_type"] = result["story_type"]
+        if result.get("has_binding_consequences") is not None:
+            payload["has_binding_consequences"] = result["has_binding_consequences"]
+        try:
+            supabase.table("story_clusters").update(payload).eq("id", cid).execute()
+            # Card was counted as `sanitized` (rule_based) in pass 1; it is now
+            # an LLM summary. Reclassify so checked == resummarized + sanitized
+            # + still_null stays exact.
+            metrics["resummarized"] += 1
+            metrics["sanitized"] -= 1
+        except Exception as e:
+            print(f"  [warn] ensure_top50_summary_floor: upgrade write failed for {cid}: {e}")
+            # Keep the clean pass-1 summary; it stays counted as `sanitized`.
 
     return metrics
 
