@@ -24,10 +24,11 @@ export default function AboutMission() {
           that a shared set of facts depends on.
         </p>
         <p ref={register(3)} style={{ opacity: 0 }}>
-          Void measures that tilt from the words themselves, on six axes, rule by rule, with no opinion of
-          its own. It ranks the day like a newspaper, by what matters, not by what you click. And it gives
-          the whole thing away: no account, no tracking, no price. See the words, see the slant, and decide
-          for yourself. See through the void.
+          Void measures that tilt on six axes, rule by rule, with no opinion of its own. It reads two things:
+          what the outlet has published before, and what this article actually says. It ranks the day like a
+          newspaper, by what matters, not by what you click. And it gives the whole thing away: no account,
+          no tracking, no price. See the slant, see how it was reached, and decide for yourself. See through
+          the void.
         </p>
       </div>
     </section>

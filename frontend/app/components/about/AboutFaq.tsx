@@ -48,8 +48,8 @@ export default function AboutFaq() {
         <div className="faq__item" ref={register(2 + QA.length)} style={{ opacity: 0 }}>
           <dt className="faq__q">Can I check a bias score?</dt>
           <dd className="faq__a">
-            Yes. Every score on all {SIX_AXES.length} axes traces back to specific words in the article. Nothing is a
-            black box.{" "}
+            Yes. Every score on all {SIX_AXES.length} axes traces back to two things: the article&rsquo;s own words and the
+            outlet&rsquo;s track record. Nothing is a black box.{" "}
             <Link href="/sources#methodology" className="faq__link">Read the methodology</Link>.
           </dd>
         </div>

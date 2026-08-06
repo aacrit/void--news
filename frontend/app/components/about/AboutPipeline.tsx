@@ -28,7 +28,7 @@ const STEPS = [
   {
     n: "03",
     verb: "Measure",
-    detail: `Each article is scored on ${SIX_AXES.length} bias axes, read straight from its own words. Rule-based language analysis, no AI opinion, no outlet reputation baked in.`,
+    detail: `Each article is scored on ${SIX_AXES.length} bias axes from two things: the outlet's track record and the article's own words. Rule-based language analysis, no AI opinion. A short item leans on the record; a full article leans on its words.`,
   },
   {
     n: "04",
