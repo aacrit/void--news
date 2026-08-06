@@ -921,6 +921,7 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
     <div className="page-container">
       <NavBar
         onSearchClick={() => setSearchOpen(true)}
+        editionBuiltAt={lastUpdated}
         hasAudio={!!dailyBriefState.brief?.audio_url}
         isAudioPlaying={dailyBriefState.isPlaying}
         onOnairClick={() => {

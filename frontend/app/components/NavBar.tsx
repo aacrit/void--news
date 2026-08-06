@@ -14,6 +14,10 @@ interface NavBarProps {
   hasAudio?: boolean;
   isAudioPlaying?: boolean;
   onOnairClick?: () => void;
+  /** Edition build time (pipeline completed_at, ISO). Drives the masthead
+      dateline + timestamp so they reflect when THIS edition was built, not the
+      reader's current clock. Falls back to now when absent. */
+  editionBuiltAt?: string | null;
 }
 
 /* ---------------------------------------------------------------------------
@@ -27,8 +31,8 @@ interface NavBarProps {
    server-side ranker enforces topic diversity and source-count quality floor.
    --------------------------------------------------------------------------- */
 
-function formatDateCompact(): string {
-  return new Date().toLocaleDateString("en-US", {
+function formatDateCompact(d: Date): string {
+  return d.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -37,14 +41,21 @@ function formatDateCompact(): string {
 
 export default function NavBar({
   onSearchClick,
+  editionBuiltAt,
 }: NavBarProps) {
   const [mounted, setMounted] = useState(false);
   // SSR-safe hydration pattern — defer dateline/timestamp render until after
   // mount so server HTML matches client HTML on first paint (avoids React #418).
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setMounted(true); }, []);
-  const dateline = mounted ? formatDateCompact() : "            ";
-  const timestamp = mounted ? getEditionTimestamp() : "     ";
+  // Masthead reflects the edition's build time (pipeline completed_at), not the
+  // reader's current clock; falls back to now when the build time is absent.
+  const editionDate =
+    editionBuiltAt && !isNaN(Date.parse(editionBuiltAt))
+      ? new Date(editionBuiltAt)
+      : new Date();
+  const dateline = mounted ? formatDateCompact(editionDate) : "            ";
+  const timestamp = mounted ? getEditionTimestamp(editionBuiltAt) : "     ";
 
   /* ── Scroll-compact masthead (NYT-style): wires --scroll-nav-compact-* tokens.
      Adds data-scroll-compact="true" past 80px, removes at ≤40px (hysteresis
