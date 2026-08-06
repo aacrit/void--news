@@ -61,14 +61,14 @@ export default function PrivacyPage() {
       <section>
         <h2>Instagram integration scope.</h2>
         <p>
-          The <code>@void.news</code> Instagram account is operated by Void
+          The <code>@voidvision.media</code> Instagram account is operated by Void
           News and uses the official Instagram Graph API for the following
           purposes:
         </p>
         <ul>
           <li>
             <strong>Publishing posts</strong> (Feed images, carousels,
-            Stories, and Reels) to the <code>@void.news</code> account. Every
+            Stories, and Reels) to the <code>@voidvision.media</code> account. Every
             post is reviewed and approved by a human in our internal review
             queue before publication.
           </li>
@@ -86,7 +86,7 @@ export default function PrivacyPage() {
           </li>
           <li>
             <strong>Reading mentions and hashtag results.</strong> We monitor
-            public posts that tag <code>@void.news</code> or use our owned
+            public posts that tag <code>@voidvision.media</code> or use our owned
             hashtags so we can engage substantively. We store only the post
             ID and timestamp.
           </li>
