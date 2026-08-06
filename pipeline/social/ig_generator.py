@@ -7,9 +7,15 @@ carousel - hook -> substance -> cta - discriminated by `kind`, and the
 frontend renders EXACTLY these shapes.
 
 Tracks (CLI `--track`):
-  void    (default) the daily trio: one VISION, one METHOD, one EXAMPLE post.
-  history           one HISTORY post (optionally pinned with `--event <slug>`).
-  weekly            one WEEKLY post from the latest weekly_digests issue.
+  void          (default) the daily trio: one VISION, one METHOD, one EXAMPLE.
+  vision-series fable's six debut Vision posts (data/social/debut_vision_series
+                .json) in ONE run. Each is a full vision carousel built from its
+                eyebrow/hook/substance/cta, with caption + per-platform variants
+                + intent PRE-FILLED verbatim, so the Gemini caption pass skips
+                them (it only touches caption IS NULL). capture + export then
+                render + bundle all six.
+  history       one HISTORY post (optionally pinned with `--event <slug>`).
+  weekly        one WEEKLY post from the latest weekly_digests issue.
 
 The capture (Playwright) + caption (Gemini flash-lite) steps take each draft
 row from here. State machine: draft -> rendering -> draft -> captioning ->
@@ -18,6 +24,7 @@ draft -> (admin) approved -> posted.
 Usage:
     python -m pipeline.social.ig_generator                              # void trio
     python -m pipeline.social.ig_generator --track void
+    python -m pipeline.social.ig_generator --track vision-series        # 6 debut Visions
     python -m pipeline.social.ig_generator --track history
     python -m pipeline.social.ig_generator --track history --event partition-of-india
     python -m pipeline.social.ig_generator --track weekly
@@ -123,12 +130,32 @@ def _next_post_datetime(now_utc: datetime | None = None) -> datetime:
     return target
 
 
+_VARIANT_COLS = ("caption_x", "caption_bluesky", "intent")
+
+
 def _insert_draft(row: dict[str, Any]) -> str | None:
     try:
         res = supabase.table("ig_posts").insert(row).execute()
         if res.data:
             return res.data[0]["id"]
     except Exception as e:
+        msg = str(e).lower()
+        # Migration 074 (caption_x / caption_bluesky / intent) not applied yet:
+        # retry without those columns so the caption still lands. ig_export then
+        # derives the X/Bluesky variants from the IG caption. Rows without those
+        # columns are unaffected (default behavior unchanged).
+        if any(c in row for c in _VARIANT_COLS) and (
+            "column" in msg or any(c in msg for c in _VARIANT_COLS)
+        ):
+            slim = {k: v for k, v in row.items() if k not in _VARIANT_COLS}
+            print(f"  [warn] variant columns missing (apply migration 074); inserting caption only: {e}")
+            try:
+                res = supabase.table("ig_posts").insert(slim).execute()
+                if res.data:
+                    return res.data[0]["id"]
+            except Exception as e2:
+                print(f"  [error] insert draft (slim fallback): {e2}")
+                return None
         print(f"  [error] insert draft: {e}")
     return None
 
@@ -252,6 +279,114 @@ def _vision_specs() -> list[dict[str, Any]]:
             "url": URL_HOME,
         },
     ]
+
+
+# ===========================================================================
+# VISION SERIES - fable's six debut Vision posts, rendered in ONE run.
+#
+# A curated content bank (data/social/debut_vision_series.json) of six distinct
+# Vision posts. Each renders through the SAME Vision.tsx template as the daily
+# rotation (hook -> stance -> cta), built from its own eyebrow/hook/substance/
+# cta, with caption + per-platform variants + intent PRE-FILLED verbatim. The
+# caption fields are inserted straight onto the row, so ig_caption.py (which
+# only touches rows with caption IS NULL) skips them: no Gemini call, fable's
+# exact copy preserved. capture + export then render + bundle all six.
+#
+# On-slide text is trimmed to fit the template gracefully; the FULL prose always
+# survives in the pre-filled caption.
+# ===========================================================================
+
+_SERIES_JSON = REPO_ROOT / "data" / "social" / "debut_vision_series.json"
+
+# On-slide budgets. Only what is RENDERED onto the slide is capped; the full
+# substance / CTA prose lives in the caption. Sentence-aware (whole sentences
+# only, never a mid-sentence cut), matching the short editorial rhythm the
+# Vision template is designed for.
+_SERIES_STANCE_BODY_MAX = 240   # ig-vision__body: 46px column, ~20ch wide
+_SERIES_CTA_LINE_MAX = 95       # ig-cta__line: 62px sign-off, ~16ch wide
+
+_URL_TAIL_RE = re.compile(r"\s*news\.voidvision\.org\s*$", re.IGNORECASE)
+# Sentence terminator: . ! or ? plus an optional closing quote, at a word
+# boundary. The debut copy has no abbreviations, so no special-casing is needed.
+_SENTENCE_END_RE = re.compile(r"[.!?][\"'’”]?(?=\s|$)")
+
+
+def _split_sentences(text: str) -> list[str]:
+    text = (text or "").strip()
+    if not text:
+        return []
+    out: list[str] = []
+    start = 0
+    for m in _SENTENCE_END_RE.finditer(text):
+        out.append(text[start:m.end()].strip())
+        start = m.end()
+    tail = text[start:].strip()
+    if tail:
+        out.append(tail)
+    return [s for s in out if s]
+
+
+def _fit_sentences(text: str, budget: int) -> str:
+    """Keep whole sentences while the running length stays within `budget`.
+    Always keeps at least the first sentence (even if it alone exceeds budget),
+    so the on-slide line is never empty and never cut mid-sentence."""
+    sentences = _split_sentences(text)
+    if not sentences:
+        return (text or "").strip()
+    kept = [sentences[0]]
+    total = len(sentences[0])
+    for s in sentences[1:]:
+        if total + 1 + len(s) > budget:
+            break
+        kept.append(s)
+        total += 1 + len(s)
+    return " ".join(kept)
+
+
+def _strip_trailing_url(text: str) -> str:
+    """Drop a trailing 'news.voidvision.org' so the CTA line does not duplicate
+    the URL the CTA slide renders in its own field. The sentence's terminal
+    period is preserved (only whitespace before the URL is consumed)."""
+    return _URL_TAIL_RE.sub("", (text or "").strip()).strip()
+
+
+def _load_debut_vision_series() -> list[dict[str, Any]]:
+    with open(_SERIES_JSON, encoding="utf-8") as f:
+        data = json.load(f)
+    posts = data.get("posts") if isinstance(data, dict) else data
+    return list(posts or [])
+
+
+def _debut_vision_series_specs(post: dict[str, Any]) -> list[dict[str, Any]]:
+    """Build the three vision slide_specs (hook -> stance -> cta) from one
+    debut post. Shape matches VisionSlideSpec in supabase-server.ts exactly:
+    hook {kicker, headline}, stance {kicker, body}, cta {headline, url}."""
+    eyebrow = (post.get("eyebrow") or "").strip()
+    hook = (post.get("hook") or "").strip()
+    body = _fit_sentences((post.get("substance") or "").strip(), _SERIES_STANCE_BODY_MAX)
+    cta_line = _fit_sentences(_strip_trailing_url(post.get("cta") or ""), _SERIES_CTA_LINE_MAX)
+    return [
+        {"kind": "vision", "variant": "hook", "kicker": eyebrow, "headline": hook},
+        # stance: headline intentionally omitted so the template renders the
+        # kicker + rule + substance column (Vision.tsx guards `spec.headline`).
+        {"kind": "vision", "variant": "stance", "kicker": eyebrow, "body": body},
+        {"kind": "vision", "variant": "cta", "headline": cta_line, "url": URL_HOME},
+    ]
+
+
+def _debut_vision_series_extra(post: dict[str, Any]) -> dict[str, Any]:
+    """The pre-filled caption columns for a debut post. caption_instagram is
+    inserted whole (fable's hashtags already live inline on its last line), so
+    `hashtags` is left EMPTY to stop ig_export re-appending them. Pre-filling
+    `caption` is what makes ig_caption.py skip the row (it selects caption IS
+    NULL). Text is inserted verbatim, never scrubbed."""
+    return {
+        "caption": (post.get("caption_instagram") or "").strip(),
+        "hashtags": [],
+        "caption_x": (post.get("caption_x") or "").strip(),
+        "caption_bluesky": (post.get("caption_bluesky") or "").strip(),
+        "intent": (post.get("intent") or "").strip(),
+    }
 
 
 # ===========================================================================
@@ -1237,7 +1372,13 @@ def _emit(
     specs: list[dict[str, Any]] | None,
     scheduled: datetime,
     dry_run: bool,
+    extra: dict[str, Any] | None = None,
 ) -> str | None:
+    """Insert one draft row. `extra` merges pre-filled columns (e.g. a verbatim
+    caption + per-platform variants + intent) onto the row AFTER slide_specs are
+    scrubbed; extra values are inserted verbatim (never scrubbed) so pre-filled
+    editorial copy is preserved byte-for-byte. A pre-filled `caption` also makes
+    the caption pass skip the row (ig_caption selects caption IS NULL)."""
     if not specs:
         print(f"  [generator] {pillar}: no specs produced, skipping")
         return None
@@ -1245,14 +1386,24 @@ def _emit(
     if dry_run:
         print(f"\n  [dry-run] {pillar} ({len(specs)} slides) @ {scheduled.isoformat()}")
         print(json.dumps(specs, indent=2, ensure_ascii=False))
+        if extra:
+            cap = extra.get("caption") or ""
+            print(
+                f"  [dry-run] {pillar} pre-filled columns: {sorted(extra.keys())} "
+                f"(caption {len(cap)}c, x {len(extra.get('caption_x') or '')}c, "
+                f"bsky {len(extra.get('caption_bluesky') or '')}c) "
+                f"-> caption pass will SKIP this row"
+            )
         return None
-    row = {
+    row: dict[str, Any] = {
         "state": "draft",
         "scheduled_for": scheduled.isoformat(),
         "pillar": pillar,
         "surface": "feed",
         "slide_specs": specs,
     }
+    if extra:
+        row.update(extra)
     pid = _insert_draft(row)
     if pid:
         variants = ",".join(str(s.get("variant")) for s in specs)
@@ -1276,6 +1427,42 @@ def run_void(when: datetime | None, dry_run: bool) -> int:
     return made
 
 
+VISION_SERIES_STAGGER_MINUTES = 30  # distinct scheduled_for per post so the
+#                                     export bundle orders them 1..6.
+
+
+def run_vision_series(when: datetime | None, dry_run: bool) -> int:
+    """Render fable's six debut Vision posts in ONE run. Each is a full vision
+    carousel with caption + variants + intent pre-filled verbatim, so the Gemini
+    caption pass is skipped and capture + export bundle all six for manual
+    upload."""
+    try:
+        posts = _load_debut_vision_series()
+    except Exception as e:
+        print(f"  [vision-series] could not load {_SERIES_JSON}: {e}")
+        return 0
+    if not posts:
+        print("  [vision-series] no posts in series data")
+        return 0
+
+    base = when or _next_post_datetime()
+    made = 0
+    for i, post in enumerate(posts):
+        scheduled = base + timedelta(minutes=i * VISION_SERIES_STAGGER_MINUTES)
+        specs = _debut_vision_series_specs(post)
+        extra = _debut_vision_series_extra(post)
+        slug = post.get("slug") or f"post-{i + 1}"
+        print(f"  [vision-series] {i + 1}/{len(posts)} {slug}")
+        if _emit("vision", specs, scheduled, dry_run, extra=extra):
+            made += 1
+    if not dry_run:
+        print(
+            f"  [vision-series] {made}/{len(posts)} debut Vision draft(s) inserted "
+            f"(captions pre-filled; caption pass will skip them)"
+        )
+    return made
+
+
 def run_history(when: datetime | None, event_slug: str | None, dry_run: bool) -> int:
     scheduled = when or _next_post_datetime()
     return 1 if _emit("history", _history_specs(event_slug), scheduled, dry_run) else 0
@@ -1291,8 +1478,9 @@ def main() -> int:
     parser.add_argument(
         "--track",
         default="void",
-        choices=["void", "history", "weekly"],
-        help="void (daily trio, default) | history | weekly",
+        choices=["void", "vision-series", "history", "weekly"],
+        help="void (daily trio, default) | vision-series (fable's six debut "
+        "Vision posts, captions pre-filled) | history | weekly",
     )
     parser.add_argument(
         "--event",
@@ -1319,6 +1507,8 @@ def main() -> int:
         run_history(when, args.event, args.dry_run)
     elif args.track == "weekly":
         run_weekly(when, args.dry_run)
+    elif args.track == "vision-series":
+        run_vision_series(when, args.dry_run)
     else:
         run_void(when, args.dry_run)
     return 0
