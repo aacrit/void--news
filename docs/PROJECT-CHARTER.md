@@ -18,7 +18,7 @@ A free, transparent news aggregation platform delivering World, US, Europe, and 
 
 | Problem | Industry Status Quo | void --news Solution |
 |---------|---------------------|---------------------|
-| Bias is per-outlet, not per-article | Tools label an entire outlet "left" or "right" | Multi-axis NLP on every individual article |
+| One label for a whole outlet | Tools label an entire outlet "left" or "right", the same for everything it publishes | Multi-axis NLP that weighs BOTH the outlet's track record and each individual article's own words |
 | Bias features are paywalled | Full insights require subscriptions | All bias data free and central |
 | Aggregators include untrusted sources | Low-credibility outlets mixed in | 1,016 curated, vetted sources only |
 | Left/right is too simplistic | Single-axis spectrum | 6-axis analysis + 7-point lean spectrum (far-left → far-right) |

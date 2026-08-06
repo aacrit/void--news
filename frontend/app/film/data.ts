@@ -73,8 +73,8 @@ export interface BiasAxis {
 export const SIX_AXES: BiasAxis[] = [
   {
     name: "Political Lean",
-    brief: "Where the article's language falls, left to right.",
-    signals: "Keyword lexicons, entity sentiment (NER + TextBlob), framing phrases, length-adaptive source-baseline blending.",
+    brief: "Where it falls left to right, from the outlet's track record and the article's own words.",
+    signals: "Keyword lexicons, entity sentiment (NER + TextBlob), framing phrases, length-adaptive blend of the article's words with the outlet's historical baseline.",
   },
   {
     name: "Sensationalism",
@@ -186,7 +186,7 @@ export const TRANSPARENCY_TOOLS: ProductWorld[] = [
 
 export const FIRST_PRINCIPLES = [
   "A front page, not a feed. The same 50 stories, in the same order, for every reader.",
-  "Every bias score traces to specific words in the text. No black box, no opinion.",
+  "Every bias score weighs two things: the outlet's track record and the article's own words. No black box, no opinion.",
   "Free, forever. No account, no tracking, no premium tier. There never will be.",
 ];
 
@@ -209,7 +209,7 @@ export const BEATS: Beat[] = [
   {
     id: "sigil",
     headline: "One mark reads the bias.",
-    body: "Every story on Void carries this mark, measured from the words themselves, not from who published it. The beam is the lean. The ring is how many sources cover it. When they disagree, it splits. Try it.",
+    body: "Every story on Void carries this mark. The lean behind it comes from two things: what the outlet has published before, and what this article actually says. The beam is the lean. The ring is how many sources cover it. When they disagree, it splits. Try it.",
   },
   {
     id: "engine",

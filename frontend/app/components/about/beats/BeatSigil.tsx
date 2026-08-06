@@ -95,7 +95,10 @@ export default function BeatSigil() {
           ))}
         </ul>
         <p className="beat__more-note">
-          Every score is rule-based NLP on the article text. No LLM, no outlet label. We read the article, not the masthead.
+          Every score reads two things: what the outlet has published before, and what this article
+          actually says. A short wire item gives little text to read, so the outlet&rsquo;s track record
+          carries more of the score. A full article gives more, so its words carry more. All rule-based
+          NLP, no LLM, and the same text always gives the same result. Every score shows how it was reached.
         </p>
       </details>
     </section>

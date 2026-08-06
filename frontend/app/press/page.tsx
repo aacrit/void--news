@@ -177,10 +177,13 @@ export default function PressPage() {
             </a>
           </p>
           <p style={{ margin: 0 }}>
-            <strong>Instagram:</strong> <a href="https://instagram.com/void.news" rel="noopener noreferrer">@void.news</a>
+            <strong>Instagram:</strong> <a href="https://instagram.com/voidvision.media" rel="noopener noreferrer">@voidvision.media</a>
           </p>
           <p style={{ margin: 0 }}>
-            <strong>Bluesky:</strong> <a href="https://bsky.app/profile/void.news" rel="noopener noreferrer">@void.news</a>
+            <strong>X:</strong> <a href="https://x.com/voidvisionx" rel="noopener noreferrer">@voidvisionx</a>
+          </p>
+          <p style={{ margin: 0 }}>
+            <strong>Bluesky:</strong> <a href="https://bsky.app/profile/voidvisionmedia.bsky.social" rel="noopener noreferrer">@voidvisionmedia</a>
           </p>
         </div>
         <p>

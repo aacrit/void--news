@@ -51,6 +51,7 @@ try:
     from analyzers.framing import analyze_framing
     from clustering.story_cluster import cluster_stories
     from categorizer.auto_categorize import categorize_article, categorize_early, map_to_desk
+    from categorizer.newsworthiness import drop_evergreen_junk
     from ranker.importance_ranker import rank_importance, compute_coverage_velocity
     from ranker.feed_ranker import apply_feed_ordering
     ANALYSIS_AVAILABLE = True
@@ -1289,6 +1290,11 @@ def main():
     except Exception as e:
         print(f"  [warn] URL filter query failed ({e}), scraping all {total_rss_urls} articles")
         articles_to_scrape = articles_raw
+
+    # Step 3c: Drop evergreen / non-news junk (guides, loyalty promo, live market
+    # tickers, horoscopes/puzzles/lottery) before scrape. Scored rule-based, $0,
+    # fail-open on missing titles; no-op on the --recluster-only path (empty list).
+    articles_to_scrape = drop_evergreen_junk(articles_to_scrape)
 
     # Step 4: Scrape full text (parallel), then batch-insert articles
     scraped_articles = []

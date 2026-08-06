@@ -83,7 +83,7 @@ const OBSERVATIONS: Observation[] = [
   },
   {
     claim: 'The bias score is a signal, not a verdict.',
-    note: 'Every score is rule-based and traces to specific words in the coverage. Thin coverage reads as no clear lean.',
+    note: 'Every score is rule-based and weighs both the outlet\'s track record and the article\'s own words. Thin coverage reads as no clear lean.',
     optimizing: 'We keep expanding the lexicons and calibrating against known outlet ratings. The Deep Dive shows the full distribution behind every score.',
     chip: 'by-design',
   },

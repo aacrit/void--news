@@ -92,8 +92,8 @@ EDITORIAL_IMPORTANCE_CLAMP = (0.88, 1.12)
 # the Khamenei funeral split twice on 07-04/05). The same-event cap allows 2
 # per event by design (two ANGLES are fine), so it cannot catch a true
 # duplicate. Among the top NEAR_DUP_SCAN clusters, when two titles share
-# >= 4 Porter-stemmed content words (or >= 3 covering >= 65% of the shorter
-# title), the lower-sourced cluster is decayed below the leader.
+# >= 4 Porter-stemmed content words (HARD), or >= 3 covering >= 65% of the
+# shorter title (SOFT), the lower-sourced cluster is decayed below the leader.
 #
 # Window = the full displayed feed (50). At 25 a duplicate whose second telling
 # fell below the fold went uncaught: 2026-08-04 shipped "25 States Sue Trump
@@ -104,11 +104,67 @@ EDITORIAL_IMPORTANCE_CLAMP = (0.88, 1.12)
 # excluded), so widening to 50 catches split duplicates without new false
 # positives — a 4-content-word title collision between unrelated stories is rare
 # and the demotion always favours the broader-sourced cluster regardless of rank.
+#
+# SPECIFIC-STEM widening (2026-08-06): the HARD/SOFT floors are tuned for long
+# titles and missed short same-story pairs that share only 2-3 words. 2026-08-06
+# shipped "Michigan Democratic Primaries See 'Uncommitted' Founder Win" (#7,
+# sc=34) AND "Progressive El-Sayed Wins Michigan Senate Primary" (#29, sc=75) —
+# the SAME race — because they share only {michigan, primari, win} = 3 stems, one
+# of which ("win") is a common outcome verb, so the SOFT rule's 65% containment
+# was not met and HARD needs 4. Two Ukraine oil-refinery strikes (#1/#44) split
+# the same way on {drone, refineri}. New rule: collapse when a pair shares >= 3
+# raw stems AND >= NEAR_DUP_SPECIFIC_MIN of them are SPECIFIC (high-IDF: a
+# distinctive locus/entity/topic — NOT a generic country/role/wire word and NOT
+# a common reporting/action verb). "michigan"+"primari" are specific; "sign",
+# "order", "win", "say", "new" are not, so two DIFFERENT Trump stories that both
+# "sign an order" cannot collide. Over-collapse guard: the widened rule is
+# blocked when the two titles name DIFFERENT elective offices (Senate vs
+# Governor), so two distinct races in the same state (which share {state,
+# primari, win} identically to a genuine dup) stay separate. The HARD/SOFT rules
+# on RAW stems are untouched, so nothing that collapsed before stops collapsing.
 NEAR_DUP_SCAN = 50
 NEAR_DUP_DECAY = 0.72
 NEAR_DUP_SHARED_HARD = 4
 NEAR_DUP_SHARED_SOFT = 3
 NEAR_DUP_CONTAINMENT = 0.65
+# Widened rule: >= this many of the >= 3 shared raw stems must be SPECIFIC
+# (entity/topic, per _specific_title_stems) for a short same-story pair to
+# collapse. Two is the floor the task set ("michigan"+"primari" is enough).
+NEAR_DUP_SPECIFIC_MIN = 2
+
+# Common reporting / action verbs and vacuous outcome nouns. Stripped (on top of
+# the generic geopolitical/role/wire set) before a stem counts as SPECIFIC for
+# the widened near-dup rule, so a shared pair of these ("signs ... order",
+# "announces ... plan", the task's "say"+"new") can never be the 2 specifics
+# that trigger a collapse. Deliberately excludes physically-meaningful words
+# (strike, hit, blast, fire, attack, crash) that distinguish real events.
+_COMMON_ACTION_WORDS = frozenset({
+    "sign", "signs", "signed", "order", "orders", "ordered", "announce",
+    "announced", "unveil", "unveils", "unveiled", "reveal", "reveals",
+    "revealed", "launch", "launches", "launched", "plan", "plans", "planned",
+    "deal", "deals", "move", "moves", "back", "backs", "backed", "call",
+    "calls", "called", "urge", "urges", "urged", "vow", "vows", "vowed",
+    "warn", "warns", "warned", "set", "sets", "face", "faces", "faced",
+    "push", "pushes", "pushed", "seek", "seeks", "sought", "eye", "eyes",
+    "eyed", "weigh", "weighs", "weighed", "mull", "mulls", "hail", "hails",
+    "hailed", "name", "names", "named", "pick", "picks", "picked", "tap",
+    "taps", "meet", "meets", "hold", "holds", "held", "offer", "offers",
+    "give", "gives", "get", "gets", "make", "makes", "keep", "keeps", "add",
+    "adds", "see", "sees", "win", "wins", "won", "victory", "defeat",
+    "elect", "elects", "elected",
+})
+
+# Elective-office / contest words. Two titles that each name an office and name
+# DIFFERENT ones are distinct contests (Senate primary vs Governor primary), so
+# the widened rule is suppressed for that pair even though they share {state,
+# primari, win}. A SHARED office (both "Senate") never suppresses. Deliberately
+# NOT in _GENERIC_EVENT_WORDS: these are still generic for anchoring, but here
+# they carry the discriminating signal that separates two same-state races.
+_CONTEST_ANCHOR_WORDS = frozenset({
+    "senate", "governor", "gubernatorial", "mayor", "mayoral", "house",
+    "presidential", "congressional", "council", "assembly", "parliamentary",
+    "ward", "seat",
+})
 
 # Dynamic same-event cap on a shared DISTINCTIVE (salient) title token.
 # The static EVENT_KEYWORDS cap and the stem-overlap near-dup guard (3.6)
@@ -184,6 +240,21 @@ MAX_SAME_CAT_SOFT = 1
 TOP_N = 10
 FEED_CATEGORY_CAP = 12  # cap each category at this across positions TOP_N..FEED_CAP_END
 FEED_CAP_END = 50
+
+# Coverage guard on the TOP_N diversity swap (2026-08-06). The category cap can
+# defer a 3rd-in-category cluster in favour of a lower-ranked, DIFFERENT-category
+# filler purely for variety. That trades verification breadth for monotony
+# relief. 2026-08-06 live feed: Diageo cost-cut (economy, sc=17) and an
+# extradition (politics, sc=13) were promoted into the top-10 while
+# Trump-munitions (general, sc=34) and EU golden-passport (general, sc=31) were
+# demoted out. A 13-17-source item must not take a front-page slot from a
+# 2x-better-sourced story. The guard: only complete the defer-and-backfill swap
+# when the filler's coverage is at least this fraction of the deferred (over-cap)
+# story's source_count; if the filler is materially thinner, the better-sourced
+# story keeps its top-10 slot even as the 3rd of its category. Anti-monotony is
+# preserved for genuinely comparable coverage (filler.sc >= ratio × displaced.sc
+# still swaps). Applies to the TOP_N partition ONLY; the tail cap is untouched.
+COVERAGE_GUARD_RATIO = 0.6
 
 # Feed lead gate — top positions require this many sources.
 FEED_LEAD_MIN = 3
@@ -323,6 +394,7 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
     if _stems is not None and len(pool) > 2:
         scan = pool[:NEAR_DUP_SCAN]
         stem_sets = [_stems(c.get("title", "") or "") for c in scan]
+        spec_sets = [_specific_title_stems(c.get("title", "") or "") for c in scan]
         demoted: set[int] = set()
         for i in range(len(scan)):
             if i in demoted or len(stem_sets[i]) < 3:
@@ -332,7 +404,17 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
                     continue
                 shared = len(stem_sets[i] & stem_sets[j])
                 smaller = min(len(stem_sets[i]), len(stem_sets[j]))
-                if shared >= NEAR_DUP_SHARED_HARD or (
+                # Widened SPECIFIC rule (B): a short same-story pair that shares
+                # >= 3 raw stems of which >= NEAR_DUP_SPECIFIC_MIN are specific
+                # (entity/topic, not common verbs), UNLESS the two titles name
+                # different elective offices (distinct same-state races).
+                shared_specific = len(spec_sets[i] & spec_sets[j])
+                specific_match = (
+                    shared >= NEAR_DUP_SHARED_SOFT
+                    and shared_specific >= NEAR_DUP_SPECIFIC_MIN
+                    and not _contest_anchor_conflict(stem_sets[i], stem_sets[j])
+                )
+                if shared >= NEAR_DUP_SHARED_HARD or specific_match or (
                     shared >= NEAR_DUP_SHARED_SOFT
                     and shared / smaller >= NEAR_DUP_CONTAINMENT
                 ):
@@ -428,6 +510,7 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
         )
         promoted: list[dict] = []
         deferred: list[dict] = []
+        overcap_deferred: list[dict] = []  # deferred purely by the category cap
         cat_counts: dict[str, int] = {}
 
         for c in pool:
@@ -445,7 +528,52 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
                 promoted.append(c)
                 cat_counts[cat] = cat_counts.get(cat, 0) + 1
             else:
+                # Over-cap while top-10 slots still remained: this cluster is
+                # being displaced by a lower-ranked, different-category filler.
                 deferred.append(c)
+                overcap_deferred.append(c)
+
+        # 4a. Coverage guard (COVERAGE_GUARD_RATIO). Runs only when the forward
+        # pass filled all TOP_N slots, so at least one over-cap cluster was
+        # actually displaced by a lower-ranked filler. For each such displaced
+        # story (best-ranked first), the marginal filler is the lowest-ranked
+        # promoted cluster. If that filler is materially thinner than the
+        # displaced story, reclaim the slot: keep the better-sourced over-cap
+        # story even though it is the 3rd of its category. When the filler's
+        # coverage is comparable (>= ratio × displaced), the swap stands and the
+        # anti-monotony diversity treatment is preserved.
+        if overcap_deferred and len(promoted) >= TOP_N:
+            swapped = False
+            for d in sorted(
+                overcap_deferred,
+                key=lambda c: c.get("rank_world", 0),
+                reverse=True,
+            ):
+                if not promoted:
+                    break
+                filler = promoted[-1]  # lowest-ranked promoted cluster
+                d_sc = d.get("source_count", 0)
+                if (
+                    filler.get("rank_world", 0) < d.get("rank_world", 0)
+                    and filler.get("source_count", 0) < COVERAGE_GUARD_RATIO * d_sc
+                ):
+                    promoted.pop()
+                    deferred.append(filler)
+                    promoted.append(d)
+                    deferred.remove(d)
+                    promoted.sort(
+                        key=lambda c: c.get("rank_world", 0), reverse=True
+                    )
+                    d_cat = d.get("category", "general")
+                    f_cat = filler.get("category", "general")
+                    cat_counts[d_cat] = cat_counts.get(d_cat, 0) + 1
+                    cat_counts[f_cat] = max(0, cat_counts.get(f_cat, 0) - 1)
+                    d["_coverage_guard_kept"] = True
+                    swapped = True
+            if swapped:
+                # Restore rank order to the tail so the mid-feed cap and the
+                # final strictly-decreasing encoding see a clean ordering.
+                deferred.sort(key=lambda c: c.get("rank_world", 0), reverse=True)
 
         # Backfill to TOP_N from deferred, eligible clusters first so the
         # lead gate survives the over-cap fallback; thin clusters only if
@@ -532,6 +660,33 @@ def _dup_title_stems_fn():
 _UNSET = object()
 _DUP_STEMS_CACHED = _UNSET
 _GENERIC_STEMS_CACHED = _UNSET
+_COMMON_ACTION_STEMS_CACHED = _UNSET
+_CONTEST_ANCHOR_STEMS_CACHED = _UNSET
+
+
+def _stemmed_word_set(words: frozenset) -> frozenset:
+    """Porter-stem a word set with clustering's stemmer (lazy). Falls back to
+    the raw words if the stemmer can't be imported. Keeps the union of stemmed
+    and raw forms so a match works whichever form a title tokenises to."""
+    try:
+        from clustering.story_cluster import _stem_word
+        return frozenset(_stem_word(w) for w in words) | words
+    except Exception:
+        return words
+
+
+def _common_action_stems() -> frozenset:
+    global _COMMON_ACTION_STEMS_CACHED
+    if _COMMON_ACTION_STEMS_CACHED is _UNSET:
+        _COMMON_ACTION_STEMS_CACHED = _stemmed_word_set(_COMMON_ACTION_WORDS)
+    return _COMMON_ACTION_STEMS_CACHED
+
+
+def _contest_anchor_stems() -> frozenset:
+    global _CONTEST_ANCHOR_STEMS_CACHED
+    if _CONTEST_ANCHOR_STEMS_CACHED is _UNSET:
+        _CONTEST_ANCHOR_STEMS_CACHED = _stemmed_word_set(_CONTEST_ANCHOR_WORDS)
+    return _CONTEST_ANCHOR_STEMS_CACHED
 
 
 def _generic_event_stems() -> frozenset:
@@ -562,6 +717,27 @@ def _salient_title_stems(title: str) -> set[str]:
         s for s in stems_fn(title)
         if len(s) >= DYN_EVENT_MIN_STEM_LEN and s not in generic
     }
+
+
+def _specific_title_stems(title: str) -> set[str]:
+    """SPECIFIC (high-IDF) title stems for the widened near-dup rule: salient
+    stems minus common reporting/action verbs and vacuous outcome nouns. What
+    remains is distinctive enough that TWO shared specifics ("michigan" +
+    "primari", "drone" + "refineri") mark two clusters as the same story, while
+    a shared pair of generic verbs ("signs" + "order", "say" + "new") never
+    can."""
+    return _salient_title_stems(title) - _common_action_stems()
+
+
+def _contest_anchor_conflict(stems_a: set[str], stems_b: set[str]) -> bool:
+    """True when both titles name an elective office and the offices DIFFER
+    (Senate primary vs Governor primary). Signals two distinct contests, so the
+    widened near-dup rule is suppressed even when the pair shares {state,
+    primari, win}. A shared office (both "Senate") is NOT a conflict."""
+    anchors = _contest_anchor_stems()
+    oa = stems_a & anchors
+    ob = stems_b & anchors
+    return bool(oa and ob and not (oa & ob))
 
 
 def _detect_event(title: str) -> str | None:
