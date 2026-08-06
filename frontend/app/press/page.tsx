@@ -200,7 +200,7 @@ export default function PressPage() {
         <ul>
           <li>Article-level bias scores, with the rule-based reasoning trace exposed in the UI.</li>
           <li>Per-topic per-outlet exponential moving average of lean (the Outlet Tracking axis).</li>
-          <li>Source roster (3 tiers: 43 US major, 373 international, 597 independent — see <Link href="/sources">/sources</Link>).</li>
+          <li>Source roster (3 tiers: 43 US major, 373 international, 597 independent; see <Link href="/sources">/sources</Link>).</li>
           <li>The 6-axis methodology, including which signals each axis uses and where the &quot;unscored&quot; gate fires.</li>
           <li>The daily editorial brief, including the editorial opinion section (clearly labeled).</li>
         </ul>
