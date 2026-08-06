@@ -1736,7 +1736,11 @@ def split_garbage_clusters(clusters: list[dict]) -> list[dict]:
 # mega threshold is a candidate over-merge. If it is ALSO internally incoherent
 # (cohesion < MEGA_COHESION_FLOOR), flag it so the ranker's 0.65x mega penalty
 # deprioritizes it. A genuine big story scores high cohesion and is exempt.
-MEGA_OVERMERGE_ARTICLE_FLOOR = 45
+# O5 (2026-08-06): lowered 45 -> 30 so single-source feed-dump piles that sit
+# just under the old ceiling (e.g. a 33-article Kyiv-Independent feed) become
+# eligible. Size alone NEVER splits a cluster — every trigger below is
+# coherence-gated, so a genuine 30-article single-event story is untouched.
+MEGA_OVERMERGE_ARTICLE_FLOOR = 30
 
 # O4 (2026-08-05): over-merge FORCE-SPLIT gate. The 2026-06-28 O3 path only
 # FLAGGED (rank penalty) and only fired when source_count >= 40 — so the
@@ -1761,6 +1765,105 @@ MEGA_OVERMERGE_ARTICLE_FLOOR = 45
 # naive article-count cap: a clean Phase-1 mega-story is never fragmented.
 MEGA_OVERMERGE_ENTITY_CONV_FLOOR = 0.40   # top-entity coverage below this AND
 MEGA_OVERMERGE_TITLE_JACCARD_FLOOR = 0.12  # stemmed-title overlap below this
+
+# O5 (2026-08-06): the O4 gross-garbage AND-gate above cleared the obvious
+# wire-desk bags, but two SUBTLER over-merge classes still reached the top-50:
+#
+#   (a) Entity-anchored regional bags. A recurring GPE/actor (EU, Iran) keeps
+#       entity_convergence >= 0.40, so the O4 floor never fires — yet the
+#       cluster TITLE describes a MINORITY of members (measured: "EU Urges
+#       Caribbean Nations..." on-topic for 0/7 sampled; a Europe/Morocco
+#       grab-bag). topic_coherence(title, articles) — already computed for the
+#       ranker — measures exactly this title-vs-content coverage and is
+#       INDEPENDENT of entity_convergence, so it catches them.
+#
+#   (b) Single-source feed dumps. One publisher's RSS feed collapses into one
+#       cluster that then borrows one item's headline ("Ukraine hits 2 Russian
+#       oil refineries", 33 art / 12 src, a Kyiv-Independent feed padded with a
+#       Sweden-residency item + a house ad). The tell is publisher dominance
+#       (dominant_publisher_share high, or source_count/n_articles low) plus low
+#       internal coherence.
+#
+# CRITICAL CONSTRAINT: coherent large single-event clusters (a 192-article
+# El-Sayed Michigan story, a 52-article Ukraine-war story) MUST stay whole.
+# They score HIGH on BOTH entity_convergence AND title coverage, so:
+#   1. the coherent-override below exempts any entity-saturated + title-
+#      representative cluster outright, and
+#   2. every trigger is coherence-gated (never size-alone), and
+#   3. _force_split_cluster's stricter-TF-IDF collapse-to-1 guard is the final
+#      net — a pile that re-clusters back to one story is returned unchanged.
+#
+# Title-vs-content coverage (Fix 1): title on-topic for < half the members, and
+# NOT entity-saturated (an entity-saturated cluster is a coherent single-actor
+# story regardless of headline wording).
+MEGA_OVERMERGE_TITLE_COVERAGE_FLOOR = 0.50
+MEGA_OVERMERGE_TITLE_COVERAGE_ENTITY_CEIL = 0.85
+# Single-source feed dump (Fix 2): one publisher dominates OR the wire-amp ratio
+# is high, AND the pile is internally incoherent (low title coverage OR low
+# pairwise title overlap — distinct feed items barely share headlines, whereas a
+# single outlet covering ONE event intensely shares heavy headline vocabulary).
+MEGA_OVERMERGE_PUB_SHARE_FLOOR = 0.50
+MEGA_OVERMERGE_SRC_RATIO_FLOOR = 0.40
+MEGA_OVERMERGE_FEED_DUMP_COVERAGE_FLOOR = 0.60
+MEGA_OVERMERGE_FEED_DUMP_JACCARD_FLOOR = 0.15
+# Coherent single-event override (the CRITICAL protection): entity-saturated AND
+# title-representative => one real story; skip every split trigger. El-Sayed /
+# Ukraine-war clear both; the bags fail title coverage (their title matches a
+# minority) so they are never exempted.
+MEGA_OVERMERGE_COHERENT_ENTITY_FLOOR = 0.80
+MEGA_OVERMERGE_COHERENT_COVERAGE_FLOOR = 0.50
+
+
+def _overmerge_split_reason(
+    entity_conv: float,
+    title_jac: float,
+    title_cov: float,
+    dom_pub_share: float,
+    src_ratio: float,
+) -> str | None:
+    """Decide whether an over-size cluster should be force-split, and why.
+
+    Pure/deterministic so it is unit-testable without building real clusters.
+    Returns the trigger name ('gross' | 'title-minority' | 'feed-dump') or None.
+
+    All triggers are coherence-gated; the coherent-override short-circuits any
+    entity-saturated + title-representative (i.e. genuinely coherent) pile so a
+    real large single-event story can never match a trigger.
+    """
+    # Coherent single-event: entity-saturated AND title represents the members.
+    if (
+        entity_conv >= MEGA_OVERMERGE_COHERENT_ENTITY_FLOOR
+        and title_cov >= MEGA_OVERMERGE_COHERENT_COVERAGE_FLOOR
+    ):
+        return None
+
+    # (existing) gross garbage: near-zero shared entities AND near-zero titles.
+    if (
+        entity_conv < MEGA_OVERMERGE_ENTITY_CONV_FLOOR
+        and title_jac < MEGA_OVERMERGE_TITLE_JACCARD_FLOOR
+    ):
+        return "gross"
+
+    # (new) entity-anchored title-minority bag: the headline is on-topic for a
+    # minority of members, and the cluster is not entity-saturated.
+    if (
+        title_cov < MEGA_OVERMERGE_TITLE_COVERAGE_FLOOR
+        and entity_conv < MEGA_OVERMERGE_TITLE_COVERAGE_ENTITY_CEIL
+    ):
+        return "title-minority"
+
+    # (new) single-source feed dump: one publisher dominates OR wire-amp is
+    # high, AND the pile is internally incoherent.
+    if (
+        dom_pub_share >= MEGA_OVERMERGE_PUB_SHARE_FLOOR
+        or src_ratio <= MEGA_OVERMERGE_SRC_RATIO_FLOOR
+    ) and (
+        title_cov < MEGA_OVERMERGE_FEED_DUMP_COVERAGE_FLOOR
+        or title_jac < MEGA_OVERMERGE_FEED_DUMP_JACCARD_FLOOR
+    ):
+        return "feed-dump"
+
+    return None
 
 
 def split_mega_clusters(
@@ -1804,37 +1907,49 @@ def split_mega_clusters(
             n_articles >= MEGA_OVERMERGE_ARTICLE_FLOOR
             and not c.get("mega_cluster_capped")
         ):
-            # O4 (2026-08-05): over-size pile, source_count-independent. Measure
-            # the two coherence signals that separate a real story from a wire
-            # desk-bag. source_map is threaded via the _source_map stash so the
-            # (unused-here) tier signal stays consistent with the ranker.
+            # O4/O5: over-size pile, source_count-independent. Measure the
+            # coherence signals that separate a real story from a wire desk-bag /
+            # entity-anchored regional bag / single-source feed dump. source_map
+            # is threaded via the _source_map stash so the (unused-here) tier
+            # signal stays consistent with the ranker.
             coh = _cluster_cohesion(c, source_map=c.get("_source_map"))
             entity_conv = coh.get("entity_convergence", 1.0)
             title_jac = coh.get("avg_title_jaccard", 1.0)
             cohesion = coh.get("cohesion_score", 100.0)
+            dom_pub_share = coh.get("dominant_publisher_share", 1.0)
+            # Title-vs-content coverage (Fix 1): computed over ALL members (not
+            # the cohesion sample) since it is a cheap keyword-set operation.
+            title_cov = topic_coherence(
+                c.get("title", "") or "", c.get("articles") or []
+            )
+            src_ratio = (sc / n_articles) if n_articles else 1.0
 
-            # Grab-bag = oversize AND the articles do not describe one story:
-            # near-zero shared-entity convergence AND near-zero title overlap.
-            if (
-                entity_conv < MEGA_OVERMERGE_ENTITY_CONV_FLOOR
-                and title_jac < MEGA_OVERMERGE_TITLE_JACCARD_FLOOR
-            ):
+            reason = _overmerge_split_reason(
+                entity_conv=entity_conv,
+                title_jac=title_jac,
+                title_cov=title_cov,
+                dom_pub_share=dom_pub_share,
+                src_ratio=src_ratio,
+            )
+
+            if reason:
                 sub = _force_split_cluster(c)
                 if len(sub) > 1:
                     # Productive split: the bag dissolved into its real sub-
-                    # stories (+ peeled aggregator singletons). The entity+title
-                    # AND gate above is the actual guarantee that a coherent
-                    # mega-event never reaches here (it scores entity_conv~1.0 /
-                    # title_jac~0.8, both far above the floors); _force_split_
-                    # cluster's collapse-to-1 return is an additional backstop
+                    # stories (+ peeled aggregator singletons). The coherent-
+                    # override + coherence gates in _overmerge_split_reason are
+                    # the guarantee a real mega-event never reaches here (it is
+                    # entity-saturated AND title-representative); _force_split_
+                    # cluster's collapse-to-1 return is the additional backstop
                     # for a borderline pile that turns out cohesive at the
                     # stricter TF-IDF gate.
                     if verbose:
                         print(
-                            f"  [Phase5/overmerge-split] "
+                            f"  [Phase5/overmerge-split:{reason}] "
                             f"'{c.get('title','')[:55]!r}' (art={n_articles}, "
                             f"src={sc}, ent_conv={entity_conv:.2f}, "
-                            f"title_jac={title_jac:.2f}) force-split into "
+                            f"title_jac={title_jac:.2f}, title_cov={title_cov:.2f}, "
+                            f"pub_share={dom_pub_share:.2f}) force-split into "
                             f"{len(sub)} sub-clusters"
                         )
                     out.extend(sub)
@@ -1844,7 +1959,8 @@ def split_mega_clusters(
                 c["mega_cluster_capped"] = True
                 if verbose:
                     print(
-                        f"  [Phase5/overmerge-flag] '{c.get('title','')[:55]!r}' "
+                        f"  [Phase5/overmerge-flag:{reason}] "
+                        f"'{c.get('title','')[:55]!r}' "
                         f"(art={n_articles}, src={sc}) split declined; flagged"
                     )
             elif cohesion < MEGA_COHESION_FLOOR and sc >= MEGA_COHESION_MIN_SOURCES:
