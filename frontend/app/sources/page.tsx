@@ -91,7 +91,7 @@ const AXES_DATA: {
     range: "0\u2013100",
     low: "Far Left",
     high: "Far Right",
-    what: "Where an article lands on the left\u2013right spectrum, independent of its outlet\u2019s reputation.",
+    what: "Where an article\u2019s words place it on the left-right spectrum, calibrated toward the outlet\u2019s track record when the text is too short to read reliably.",
     signals: [
       "Keyword frequency against curated left/right phrase lists",
       "Positive or negative tone around named political figures",
@@ -593,11 +593,14 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
         <div className="meth-scene__callout">
           <h3 className="meth-scene__heading">Every Article, Six Lenses</h3>
           <p className="meth__body">
-            Most bias tools assign a single score to an entire outlet.
-            The New York Times is &ldquo;Lean Left&rdquo; regardless of the article.
-            Void News rejects that premise. Every article is scored independently
-            across six axes by rule-based NLP. No LLM calls. The same text always
-            produces the same scores.
+            Most bias tools assign one fixed score to an entire outlet, as if
+            every article from it leaned the same way. Void News scores each
+            article on its own words instead, across six axes, by rule-based NLP.
+            No LLM calls. The same text always produces the same scores.
+            Sensationalism, opinion, and framing are read purely from the words.
+            Political lean is read from the words too, and when an item is too
+            short to judge, it is calibrated toward the outlet&rsquo;s track
+            record, which every score discloses.
           </p>
         </div>
         <div className="meth-scene__viz" ref={dotRef}>
