@@ -38,6 +38,7 @@ on:
         type: choice
         options:
           - void
+          - vision-series   # fable's six debut Vision posts, captions pre-filled
           - history
           - weekly
       note:
