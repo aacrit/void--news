@@ -185,6 +185,21 @@ TOP_N = 10
 FEED_CATEGORY_CAP = 12  # cap each category at this across positions TOP_N..FEED_CAP_END
 FEED_CAP_END = 50
 
+# Coverage guard on the TOP_N diversity swap (2026-08-06). The category cap can
+# defer a 3rd-in-category cluster in favour of a lower-ranked, DIFFERENT-category
+# filler purely for variety. That trades verification breadth for monotony
+# relief. 2026-08-06 live feed: Diageo cost-cut (economy, sc=17) and an
+# extradition (politics, sc=13) were promoted into the top-10 while
+# Trump-munitions (general, sc=34) and EU golden-passport (general, sc=31) were
+# demoted out. A 13-17-source item must not take a front-page slot from a
+# 2x-better-sourced story. The guard: only complete the defer-and-backfill swap
+# when the filler's coverage is at least this fraction of the deferred (over-cap)
+# story's source_count; if the filler is materially thinner, the better-sourced
+# story keeps its top-10 slot even as the 3rd of its category. Anti-monotony is
+# preserved for genuinely comparable coverage (filler.sc >= ratio × displaced.sc
+# still swaps). Applies to the TOP_N partition ONLY; the tail cap is untouched.
+COVERAGE_GUARD_RATIO = 0.6
+
 # Feed lead gate — top positions require this many sources.
 FEED_LEAD_MIN = 3
 FEED_LEAD_SLOTS = 10
@@ -428,6 +443,7 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
         )
         promoted: list[dict] = []
         deferred: list[dict] = []
+        overcap_deferred: list[dict] = []  # deferred purely by the category cap
         cat_counts: dict[str, int] = {}
 
         for c in pool:
@@ -445,7 +461,52 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
                 promoted.append(c)
                 cat_counts[cat] = cat_counts.get(cat, 0) + 1
             else:
+                # Over-cap while top-10 slots still remained: this cluster is
+                # being displaced by a lower-ranked, different-category filler.
                 deferred.append(c)
+                overcap_deferred.append(c)
+
+        # 4a. Coverage guard (COVERAGE_GUARD_RATIO). Runs only when the forward
+        # pass filled all TOP_N slots, so at least one over-cap cluster was
+        # actually displaced by a lower-ranked filler. For each such displaced
+        # story (best-ranked first), the marginal filler is the lowest-ranked
+        # promoted cluster. If that filler is materially thinner than the
+        # displaced story, reclaim the slot: keep the better-sourced over-cap
+        # story even though it is the 3rd of its category. When the filler's
+        # coverage is comparable (>= ratio × displaced), the swap stands and the
+        # anti-monotony diversity treatment is preserved.
+        if overcap_deferred and len(promoted) >= TOP_N:
+            swapped = False
+            for d in sorted(
+                overcap_deferred,
+                key=lambda c: c.get("rank_world", 0),
+                reverse=True,
+            ):
+                if not promoted:
+                    break
+                filler = promoted[-1]  # lowest-ranked promoted cluster
+                d_sc = d.get("source_count", 0)
+                if (
+                    filler.get("rank_world", 0) < d.get("rank_world", 0)
+                    and filler.get("source_count", 0) < COVERAGE_GUARD_RATIO * d_sc
+                ):
+                    promoted.pop()
+                    deferred.append(filler)
+                    promoted.append(d)
+                    deferred.remove(d)
+                    promoted.sort(
+                        key=lambda c: c.get("rank_world", 0), reverse=True
+                    )
+                    d_cat = d.get("category", "general")
+                    f_cat = filler.get("category", "general")
+                    cat_counts[d_cat] = cat_counts.get(d_cat, 0) + 1
+                    cat_counts[f_cat] = max(0, cat_counts.get(f_cat, 0) - 1)
+                    d["_coverage_guard_kept"] = True
+                    swapped = True
+            if swapped:
+                # Restore rank order to the tail so the mid-feed cap and the
+                # final strictly-decreasing encoding see a clean ordering.
+                deferred.sort(key=lambda c: c.get("rank_world", 0), reverse=True)
 
         # Backfill to TOP_N from deferred, eligible clusters first so the
         # lead gate survives the over-cap fallback; thin clusters only if
