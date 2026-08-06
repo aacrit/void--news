@@ -829,10 +829,11 @@
   --type-card-headline:   clamp(0.9rem, 0.816rem + 0.36vw, 1.1rem); /* 14 -> 18px (-20% 2026-06-25) */
   --type-card-tracking:   -0.01em;
   --type-lead-tracking:   -0.02em;
-  /* Brief headline scale when TL;DR / Opinion pill expands. The collapsed
-     pill keeps --text-base (~16px); on expand the headline climbs to the
-     magazine-subhead register so the editorial mode reads distinctly. */
-  --type-brief-headline-expanded: clamp(1.5rem, 1.2rem + 0.8vw, 2.125rem); /* 24 → 34px */
+  /* Brief headline scale when the TL;DR / Opinion block expands. Kept
+     readable but deliberately below the lead story (20-30px): the brief is an
+     auto-generated summary module, not the top news, so its expanded headline
+     must not out-shout a real story headline. */
+  --type-brief-headline-expanded: clamp(1.125rem, 0.95rem + 0.55vw, 1.5rem); /* 18 → 24px */
   /* Legacy aliases — kept so any stray reference outside layout-zones.css
      still resolves. Remove once the codebase is fully migrated. */
   --type-digest-headline: var(--type-card-headline);

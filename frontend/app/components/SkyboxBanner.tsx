@@ -45,7 +45,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
       const next = prev === section ? null : section;
       if (next) {
         hasExpandedOnce.current = true;
-        setAnnouncement(`Daily brief expanded, showing ${next === "tldr" ? "news brief" : "editorial opinion"}.`);
+        setAnnouncement(`Daily brief expanded, showing ${next === "tldr" ? "the brief" : "opinion"}.`);
       } else {
         setAnnouncement("Daily brief collapsed.");
       }
@@ -67,7 +67,6 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
             <div className="skb__compact-col">
               <div className="skb__compact-label">
                 <LogoIcon size={16} animation="analyzing" />
-                <span className="skb__compact-human">News Brief</span>
                 <span className="skb__compact-cmd">The Brief</span>
               </div>
               <span className="skb__compact-loading">Loading today&rsquo;s brief&hellip;</span>
@@ -117,7 +116,6 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                 >
                   <div className="skb__compact-label">
                     <LogoIcon size={16} animation="idle" className="skb__compact-logo" />
-                    <span className="skb__compact-human">News Brief</span>
                     <span className="skb__compact-cmd">The Brief</span>
                     {brief.created_at && <span className="skb__compact-time">{timeAgo(brief.created_at)}</span>}
                   </div>
@@ -137,11 +135,10 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                     role="button"
                     tabIndex={0}
                     aria-expanded={false}
-                    aria-label="Expand editorial opinion"
+                    aria-label="Expand opinion"
                   >
                     <div className="skb__compact-label">
                       <LogoIcon size={16} animation="idle" className="skb__compact-logo" />
-                      <span className="skb__compact-human">Editorial</span>
                       <span className="skb__compact-cmd">Opinion</span>
                       {brief.opinion_lean && <span className={`skb__lean-badge ${leanMod}`}>{leanLabel}</span>}
                     </div>
@@ -162,7 +159,6 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
               <div className="skb__section skb__section--tldr">
                 <div className="skb__section-label">
                   <LogoIcon size={16} animation="idle" />
-                  <span className="skb__section-label-human">News Brief</span>
                   <span className="skb__section-label-cmd">The Brief</span>
                   {brief.created_at && <span className="skb__section-label-time">{timeAgo(brief.created_at)}</span>}
                   <button
@@ -186,7 +182,6 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
               <div className={`skb__section skb__section--opinion ${leanMod}`}>
                 <div className="skb__section-label">
                   <LogoIcon size={16} animation="idle" />
-                  <span className="skb__section-label-human">Editorial</span>
                   <span className="skb__section-label-cmd">Opinion</span>
                   {brief.opinion_lean && <span className={`skb__lean-badge ${leanMod}`}>{leanLabel}</span>}
                   <button
@@ -194,7 +189,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                     className="skb__collapse-inline"
                     onClick={collapseAll}
                     type="button"
-                    aria-label="Collapse editorial"
+                    aria-label="Collapse opinion"
                   >
                     <CaretRight size={14} weight="bold" />
                   </button>

@@ -316,12 +316,16 @@
    Per-section "read more" expand. Reuses skb__* classes for radio/waveform.
    --------------------------------------------------------------------------- */
 
+/* Subtle module framing: hairline top+bottom rules + a faint accent tint set
+   the brief apart as its own auto-generated summary block. The old 2px accent
+   top border read as a loud masthead; softened to a hairline per the
+   subtle-not-loud directive. */
 .mbp {
   display: flex;
   flex-direction: column;
-  border-top: 2px solid var(--accent-warm);
+  border-top: 1px solid var(--border-subtle);
   border-bottom: 1px solid var(--border-subtle);
-  background: color-mix(in srgb, var(--accent-warm) 3%, var(--bg-primary));
+  background: color-mix(in srgb, var(--accent-warm) 2.5%, var(--bg-primary));
   margin-bottom: var(--space-mobile-section-gap, var(--space-6));
 }
 
@@ -1168,7 +1172,9 @@
 
 .mbp--teaser {
   padding: 0;
-  margin-bottom: var(--space-3);
+  /* Clear gap to the Top Story below so the brief teaser reads as a separate
+     module, not the first headline of the feed. */
+  margin-bottom: var(--space-5);
 }
 
 .mbp__teaser {
@@ -1192,26 +1198,32 @@
 .mbp__teaser-tldr   { grid-area: tldr; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .mbp__teaser-opinion { grid-area: opin; display: flex; flex-direction: column; gap: 4px; min-width: 0; padding-left: var(--space-3); border-left: 2px solid var(--border-subtle); }
 
+/* Module kicker — small uppercase accent label signalling a summary block.
+   No human-authorship label (the brief is LLM-generated). */
 .mbp__teaser-cmd {
   font-family: var(--font-data);
   font-size: var(--text-xxs);
   font-weight: 600;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.08em;
   color: var(--accent-warm);
-  text-transform: lowercase;
+  text-transform: uppercase;
 }
 
 .mbp__teaser-cmd--opinion {
   color: var(--fg-tertiary);
 }
 
+/* De-headlined standfirst — NOT a story headline. Was --text-base weight 600
+   primary, which read as a peer of the Top Story headline right below it.
+   Now smaller (--text-sm) and secondary so the summary prose carries the
+   block and the first real headline on the page is the lead story. */
 .mbp__teaser-hl {
   font-family: var(--font-editorial);
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
   font-weight: 600;
-  line-height: 1.25;
-  color: var(--fg-primary);
-  /* Allow up to 2 lines so headlines breathe; ellipsize beyond. */
+  line-height: 1.35;
+  color: var(--fg-secondary);
+  /* Allow up to 2 lines so the lead-in breathes; ellipsize beyond. */
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -1221,6 +1233,7 @@
 .mbp__teaser-hl--opinion {
   font-size: var(--text-sm);
   font-weight: 600;
+  color: var(--fg-tertiary);
 }
 
 .mbp__teaser-preview {

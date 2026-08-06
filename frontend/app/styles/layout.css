@@ -96,7 +96,10 @@
  */
 
 .skybox {
-  margin: var(--space-2) 0;
+  /* Extra bottom gap sets a clear boundary between the auto-generated brief
+     module and the first real story below, so the lead's "Top Story" headline
+     is unmistakably the top news, not a peer of the brief. */
+  margin: var(--space-2) 0 var(--space-5);
 }
 
 /* Desktop: skybox sits within normal canvas flow — no full-bleed breakout.
