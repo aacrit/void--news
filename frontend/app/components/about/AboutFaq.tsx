@@ -23,7 +23,7 @@ const QA = [
   },
   {
     q: "What does it cost?",
-    a: "The daily edition is free to read, and always will be. No paywall, no tracking, no feed tuned to you. If Void News ever earns money, it will be from optional membership, tools, or licensing our analysis, never from the front page.",
+    a: "The daily edition is free to read. No paywall, no tracking, no feed tuned to you.",
   },
 ];
 

@@ -64,11 +64,8 @@ export default function PressPage() {
 
       <div className="press-principle">
         <p>
-          <strong>Free to read, and built to stay that way.</strong> No paywall
-          on the news, no trackers, no feed tuned to you, no paying for a better
-          rank. If Void News ever earns money, it will be from optional
-          membership, tools, or licensing our analysis, never from the front
-          page.
+          <strong>Free to read.</strong> No paywall, no trackers, no feed tuned
+          to you.
         </p>
       </div>
 

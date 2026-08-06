@@ -187,7 +187,7 @@ export const TRANSPARENCY_TOOLS: ProductWorld[] = [
 export const FIRST_PRINCIPLES = [
   "A front page, not a feed. The same 50 stories, in the same order, for every reader.",
   "Every bias score weighs two things: the outlet's track record and the article's own words. No black box, no opinion.",
-  "Free to read, and built to stay that way. No account, no tracking, no feed tuned to you.",
+  "Free to read. No paywall. No account. No feed tuned to you.",
 ];
 
 /* ── Beats — the 4 chapters of the unified experience ─────────────────────
