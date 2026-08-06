@@ -6,7 +6,7 @@ import { SIX_AXES } from "../../film/data";
 
 /* ---------------------------------------------------------------------------
    About — "What void is, and is not." A compact, honest FAQ. Covers the fixed
-   principles (no personalization, no account, free forever, every score traces
+   principles (no personalization, no account, free to read, every score traces
    to words) plus the honest limits (experimental, rule-based, not a human board
    and not an AI judge). Replaces the old footer principles list so the same
    promise is never printed twice on the page.
@@ -23,7 +23,7 @@ const QA = [
   },
   {
     q: "What does it cost?",
-    a: "Free, forever. No paywall, no premium tier, no ads. There never will be.",
+    a: "The daily edition is free to read, and always will be. No paywall, no tracking, no feed tuned to you. If Void News ever earns money, it will be from optional membership, tools, or licensing our analysis, never from the front page.",
   },
 ];
 
