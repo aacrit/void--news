@@ -76,9 +76,15 @@ body:has(.ig-canvas) {
   --ig-dark-fg: #F4EDE0;
   --ig-dark-fg-2: rgba(244, 237, 224, 0.74);
   --ig-dark-fg-3: rgba(244, 237, 224, 0.48);
-  --ig-terracotta: #B26F52;      /* Void News — large elements */
-  --ig-terracotta-ink: #9A5638;  /* Void News — small AA text on cream */
-  --ig-terracotta-soft: rgba(178, 111, 82, 0.16);
+  /* Void News brand terracotta — SINGLE SOURCE OF TRUTH lives in tokens.css as
+     --palette-news / --palette-news-ink. Pinned here as LIGHT-mode literals (not
+     var()) on purpose: the IG capture is theme-independent — the token flips to
+     #D89A7C in dark mode, but these slides always render against baked cream/ink
+     grounds, so the light terracotta is the correct match. If the brand accent
+     ever changes in tokens.css, mirror the new light-mode hex here. */
+  --ig-terracotta: #B26F52;      /* == tokens.css --palette-news (light) — large elements */
+  --ig-terracotta-ink: #9A5638;  /* == tokens.css --palette-news-ink (light) — small AA text on cream */
+  --ig-terracotta-soft: rgba(178, 111, 82, 0.16); /* #B26F52 @ 16% */
 
   /* Void History — umber */
   --ig-umber: #A07A54;           /* accent on the dark ink bookends */
