@@ -29,12 +29,17 @@
    Mohawk Via Vellum. The tactile feel of editorial stationery —
    formal, authoritative, textured under the fingertip. */
 
+/* Distinct-but-subtle module framing: a faint accent-tinted ground plus
+   hairline top+bottom rules set the brief apart from the story feed as its
+   own auto-generated summary module. Token-driven, subtle, works in both
+   modes (accent-warm + border-subtle are defined light AND dark). */
 .skb {
   display: flex;
   flex-direction: column;
   position: relative;
+  border-top: 1px solid var(--border-subtle);
   border-bottom: 1px solid var(--border-subtle);
-  background: var(--bg-primary);
+  background: color-mix(in srgb, var(--accent-warm) 2.5%, var(--bg-primary));
 }
 
 /* Layer 1: Laid lines (horizontal) + Chain lines (vertical)
@@ -168,12 +173,18 @@
   white-space: nowrap;
 }
 
+/* Module kicker — small, uppercase, accent-tinted. Legible enough to signal
+   "this is a summary block" without shouting. This is now the sole label
+   (the "News Brief"/"Editorial" human-authorship labels were removed: the
+   brief is LLM-generated, so no byline/editor framing). */
 .skb__compact-cmd {
   font-family: var(--font-data);
   font-size: var(--text-xxs);
-  color: var(--fg-muted);
-  letter-spacing: 0.02em;
-  opacity: 0.7;
+  font-weight: 600;
+  color: var(--accent-warm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.85;
 }
 
 .skb__compact-time {
@@ -189,28 +200,35 @@
   opacity: 0.4;
 }
 
-/* Headlines — compact but readable */
+/* De-headlined lead-in — NOT a story headline.
+   Root-cause fix: the brief's TL;DR/Opinion titles used to sit at --text-base
+   weight 700 primary, visually identical to a story-card headline, so the
+   first big serif line on the page read as the #1 story. They are now a
+   subordinate standfirst: smaller than any story headline (--text-sm vs the
+   --type-card-headline 14-18px feed cards and the 20-30px lead), lighter
+   weight (600), and secondary color. The summary prose below carries the
+   block. */
 .skb__compact-hl {
   margin: 0;
-  line-height: 1.3;
+  line-height: 1.4;
 }
 
 .skb__compact-hl--tldr {
   font-family: var(--font-editorial);
-  font-size: var(--text-base);
-  font-weight: 700;
-  color: var(--fg-primary);
-  letter-spacing: -0.01em;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--fg-secondary);
+  letter-spacing: 0;
   /* Page-catch hover, see story-card. Pill is hovered, text slides. */
   transition: transform 280ms var(--ease-cinematic);
 }
 
 .skb__compact-hl--opinion {
   font-family: var(--font-editorial);
-  font-size: var(--text-base);
-  font-weight: 700;
+  font-size: var(--text-sm);
+  font-weight: 600;
   font-style: italic;
-  color: var(--fg-primary);
+  color: var(--fg-secondary);
   letter-spacing: 0.005em;
   transition: transform 280ms var(--ease-cinematic);
 }
@@ -505,8 +523,11 @@
 .skb__section-label-cmd {
   font-family: var(--font-data);
   font-size: var(--text-xs);
-  color: var(--fg-muted);
-  letter-spacing: 0.02em;
+  font-weight: 600;
+  color: var(--accent-warm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.85;
 }
 
 .skb__section-label-time {

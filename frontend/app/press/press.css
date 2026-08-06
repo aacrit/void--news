@@ -1,0 +1,189 @@
+/* ==========================================================================
+   /press — press-kit modules layered on top of privacy.css (.press base).
+   Three ported modules: fast-facts ledger, bias-read explainer (spectrum +
+   6-axis grid), copy-paste boilerplate, plus a "free to read" principle
+   callout. All color/type comes from site tokens so light + dark theme both
+   work. No hardcoded palette. The clay accent is var(--palette-news); the
+   spectrum band uses the lean semantic colors (--bias-left / --bias-center /
+   --bias-right), never the clay accent.
+   ========================================================================== */
+
+/* ── Fast-facts ledger ──────────────────────────────────────────────────── */
+.press-ledger {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--divider);
+  border: 1px solid var(--divider);
+  margin: 0 0 32px;
+}
+
+.press-stat {
+  background: var(--bg-card);
+  padding: 18px 16px;
+}
+
+.press-stat__n {
+  font-family: var(--font-data);
+  font-weight: 600;
+  font-size: clamp(1.375rem, 3.4vw, 1.75rem);
+  line-height: 1.05;
+  color: var(--fg-primary);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+.press-stat__l {
+  font-family: var(--font-structural);
+  font-size: 12.5px;
+  color: var(--fg-tertiary);
+  margin-top: 5px;
+  line-height: 1.35;
+}
+
+/* ── Positive principle callout (free to read) ──────────────────────────── */
+.press-principle {
+  background: var(--bg-card);
+  border-left: 3px solid var(--palette-news);
+  padding: 16px 20px;
+  margin: 0 0 32px;
+}
+
+.press-principle p {
+  margin: 0;
+  font-size: 15.5px;
+  color: var(--fg-secondary);
+}
+
+.press-principle strong {
+  color: var(--fg-primary);
+}
+
+/* ── Bias-read explainer ────────────────────────────────────────────────── */
+.press-callout {
+  background: var(--bg-card);
+  border-left: 3px solid var(--palette-news);
+  padding: 16px 20px;
+  margin: 0 0 24px;
+  font-size: 15.5px;
+  color: var(--fg-secondary);
+}
+
+.press-callout strong {
+  color: var(--fg-primary);
+}
+
+/* Spectrum band — lean semantic colors, blue -> green -> red */
+.press-spectrum {
+  margin: 0 0 26px;
+}
+
+.press-spectrum__bar {
+  height: 16px;
+  border-radius: 9px;
+  overflow: hidden;
+  display: flex;
+  border: 1px solid var(--divider);
+}
+
+.press-spectrum__bar i {
+  display: block;
+  height: 100%;
+}
+
+.press-spectrum__scale {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-family: var(--font-data);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+  margin-top: 8px;
+}
+
+/* 6-axis grid */
+.press-axes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: var(--divider);
+  border: 1px solid var(--divider);
+  margin: 0;
+}
+
+.press-axis {
+  background: var(--bg-card);
+  padding: 16px 18px;
+}
+
+.press-axis__n {
+  font-family: var(--font-data);
+  font-size: 11px;
+  color: var(--palette-news);
+  letter-spacing: 0.1em;
+}
+
+.press-axis h3 {
+  font-family: var(--font-editorial);
+  font-size: 16.5px;
+  line-height: 1.25;
+  margin: 3px 0 0;
+  color: var(--fg-primary);
+}
+
+.press-axis p {
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 4px 0 0;
+  color: var(--fg-tertiary);
+}
+
+/* ── Copy-paste boilerplate ─────────────────────────────────────────────── */
+.press-boiler {
+  background: var(--bg-card);
+  border: 1px dashed var(--border-strong);
+  border-radius: 10px;
+  padding: 20px 22px;
+  margin: 0 0 16px;
+}
+
+.press-boiler__label {
+  font-family: var(--font-meta);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--fg-tertiary);
+  margin: 0 0 10px;
+}
+
+.press-boiler p {
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0;
+  color: var(--fg-secondary);
+}
+
+.press-boiler p + p {
+  margin-top: 12px;
+}
+
+.press-boiler__hint {
+  font-size: 14px;
+  color: var(--fg-tertiary);
+  margin: 0 0 16px;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+  .press-ledger {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .press-axes {
+    grid-template-columns: 1fr;
+  }
+}

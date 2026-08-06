@@ -3,6 +3,7 @@ import Link from "next/link";
 import { BASE_PATH } from "../lib/utils";
 import "../styles/about.css";
 import "../privacy/privacy.css";
+import "./press.css";
 
 export const metadata: Metadata = {
   title: "Press | Void News",
@@ -26,6 +27,48 @@ export default function PressPage() {
         </p>
       </header>
 
+      <div className="press-ledger" aria-label="Void News at a glance">
+        <div className="press-stat">
+          <div className="press-stat__n">1,016</div>
+          <div className="press-stat__l">Sources, across 3 credibility tiers</div>
+        </div>
+        <div className="press-stat">
+          <div className="press-stat__n">158</div>
+          <div className="press-stat__l">Countries represented</div>
+        </div>
+        <div className="press-stat">
+          <div className="press-stat__n">6</div>
+          <div className="press-stat__l">Bias axes, scored per article</div>
+        </div>
+        <div className="press-stat">
+          <div className="press-stat__n">50</div>
+          <div className="press-stat__l">Stories in the daily edition</div>
+        </div>
+        <div className="press-stat">
+          <div className="press-stat__n">1&times;</div>
+          <div className="press-stat__l">Published once a day</div>
+        </div>
+        <div className="press-stat">
+          <div className="press-stat__n">$0</div>
+          <div className="press-stat__l">Spent scoring bias. It is all rule-based.</div>
+        </div>
+        <div className="press-stat">
+          <div className="press-stat__n">0</div>
+          <div className="press-stat__l">Accounts, trackers, or recommendation feeds</div>
+        </div>
+        <div className="press-stat">
+          <div className="press-stat__n">100%</div>
+          <div className="press-stat__l">Deterministic: same text, same score</div>
+        </div>
+      </div>
+
+      <div className="press-principle">
+        <p>
+          <strong>Free to read.</strong> No paywall, no trackers, no feed tuned
+          to you.
+        </p>
+      </div>
+
       <section>
         <h2>One paragraph.</h2>
         <p>
@@ -33,10 +76,120 @@ export default function PressPage() {
           article on six bias axes using rule-based NLP (no machine learning
           black box), reads 1,016 sources across 158 countries, and presents
           one importance-ranked feed to every reader. No accounts, no
-          tracking, no personalization, free forever. The product was built
+          tracking, no personalization, free to read. The product was built
           to invert what personalization did to the news: same stories, same
           order, for everyone.
         </p>
+      </section>
+
+      <section>
+        <h2>How the bias read works.</h2>
+        <p>
+          This is the part journalists ask about, so here it is plainly. Void
+          News scores each article on six axes using rule-based language
+          analysis, no large language model, no black box. The scoring is
+          deterministic: the same text always produces the same score, and every
+          score ships with a written rationale.
+        </p>
+
+        <div className="press-callout">
+          <strong>
+            We do not judge a story by its outlet alone, and we do not judge it
+            by its words alone. We use both.
+          </strong>{" "}
+          A score weighs the outlet&rsquo;s measured track record and the
+          specific language of the article in front of you. On a short wire
+          dispatch there is not much text to read, so the outlet&rsquo;s history
+          carries more weight; on a full feature, the article&rsquo;s own words
+          lead. The balance shifts with how much there is to actually read.
+        </div>
+
+        <div className="press-spectrum" aria-label="Political lean spectrum: left is blue, center is green, right is red">
+          <div className="press-spectrum__bar" aria-hidden="true">
+            <i style={{ flex: 1, background: "var(--bias-left)" }} />
+            <i style={{ flex: 1, background: "linear-gradient(90deg, var(--bias-left), var(--bias-center))" }} />
+            <i style={{ flex: 1, background: "var(--bias-center)" }} />
+            <i style={{ flex: 1, background: "linear-gradient(90deg, var(--bias-center), var(--bias-right))" }} />
+            <i style={{ flex: 1, background: "var(--bias-right)" }} />
+          </div>
+          <div className="press-spectrum__scale">
+            <span>Left</span>
+            <span>Center-left</span>
+            <span>Center</span>
+            <span>Center-right</span>
+            <span>Right</span>
+          </div>
+        </div>
+
+        <div className="press-axes">
+          <div className="press-axis">
+            <div className="press-axis__n">Axis 1</div>
+            <h3>Political lean</h3>
+            <p>Left to right placement, blending the outlet&rsquo;s track record with the article&rsquo;s own language.</p>
+          </div>
+          <div className="press-axis">
+            <div className="press-axis__n">Axis 2</div>
+            <h3>Sensationalism</h3>
+            <p>Measured, or reaching for the reader&rsquo;s pulse. Read from the words.</p>
+          </div>
+          <div className="press-axis">
+            <div className="press-axis__n">Axis 3</div>
+            <h3>Opinion vs reporting</h3>
+            <p>Whether the piece is arguing a case or laying out events.</p>
+          </div>
+          <div className="press-axis">
+            <div className="press-axis__n">Axis 4</div>
+            <h3>Factual rigor</h3>
+            <p>Sourcing, attribution, and hedging. The marks of careful reporting.</p>
+          </div>
+          <div className="press-axis">
+            <div className="press-axis__n">Axis 5</div>
+            <h3>Framing</h3>
+            <p>Which facts are foregrounded, and which are left in the margins.</p>
+          </div>
+          <div className="press-axis">
+            <div className="press-axis__n">Axis 6</div>
+            <h3>Per-topic tracking</h3>
+            <p>How an outlet tends to cover a given subject over time, not just today.</p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Boilerplate.</h2>
+        <p className="press-boiler__hint">For editors and reporters. Copy as is.</p>
+
+        <div className="press-boiler">
+          <p className="press-boiler__label">Short</p>
+          <p>
+            Void News is an independent daily news reader that scores the
+            political lean and editorial character of every story with
+            transparent, rule-based analysis, drawing on 1,016 sources across
+            158 countries, in one shared edition of fifty stories, the same for
+            every reader.
+          </p>
+        </div>
+
+        <div className="press-boiler">
+          <p className="press-boiler__label">Long</p>
+          <p>
+            Void News gathers each day&rsquo;s reporting from more than a
+            thousand outlets across 158 countries, groups the coverage of each
+            event together, and scores every article on six axes: political
+            lean, sensationalism, opinion versus reporting, factual rigor,
+            framing, and per-topic tendency. The analysis is rule-based and
+            deterministic rather than an opaque model: each score weighs both
+            the outlet&rsquo;s measured track record and the article&rsquo;s own
+            language, and carries a written rationale.
+          </p>
+          <p>
+            There are no accounts, no trackers, and no personalized feed. The
+            fifty most-covered stories are ranked once a day, in the same order
+            for everyone, on the principle that a shared set of facts matters
+            more than an engaging one. Void News is an independent project with
+            no outside investors, and is available at news.voidvision.org.
+          </p>
+        </div>
       </section>
 
       <section>
@@ -44,7 +197,7 @@ export default function PressPage() {
         <ul>
           <li>Article-level bias scores, with the rule-based reasoning trace exposed in the UI.</li>
           <li>Per-topic per-outlet exponential moving average of lean (the Outlet Tracking axis).</li>
-          <li>Source roster (3 tiers: 43 US major, 373 international, 597 independent — see <Link href="/sources">/sources</Link>).</li>
+          <li>Source roster (3 tiers: 43 US major, 373 international, 597 independent; see <Link href="/sources">/sources</Link>).</li>
           <li>The 6-axis methodology, including which signals each axis uses and where the &quot;unscored&quot; gate fires.</li>
           <li>The daily editorial brief, including the editorial opinion section (clearly labeled).</li>
         </ul>

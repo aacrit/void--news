@@ -17,25 +17,34 @@ export function getEditionTimeOfDay(): "Morning" | "Evening" {
 }
 
 /**
- * Compact dateline timestamp in the reader's LOCAL time with its zone label
- * (e.g. "14:05 CDT"). Only rendered client-side (after mount) in the masthead,
- * so it reflects the visitor's own timezone rather than UTC.
+ * Compact dateline timestamp for the masthead: the edition's BUILD time
+ * (the pipeline's completed_at), rendered in the reader's LOCAL zone and
+ * ROUNDED TO THE NEAREST HOUR, with a short zone label (e.g. "13:00 CDT").
+ * Rounding to the hour signals a once-a-day edition rather than a live clock.
+ * Pass the pipeline completed_at ISO string; with no (or an invalid) argument
+ * it falls back to the current hour. Client-only (local zone), so callers
+ * render it after mount.
  */
-export function getEditionTimestamp(): string {
-  const now = new Date();
-  const h = String(now.getHours()).padStart(2, "0");
-  const m = String(now.getMinutes()).padStart(2, "0");
+export function getEditionTimestamp(builtAtISO?: string | null): string {
+  const src = builtAtISO ? new Date(builtAtISO) : new Date();
+  if (isNaN(src.getTime())) return "";
+  // Round to the nearest hour in local time. >= 30 min rounds up; setHours
+  // overflow rolls the date correctly (23:45 -> next day 00:00).
+  const d = new Date(src);
+  d.setMinutes(0, 0, 0);
+  if (src.getMinutes() >= 30) d.setHours(d.getHours() + 1);
+  const h = String(d.getHours()).padStart(2, "0");
   // Local timezone short label ("CDT", "GMT+2", ...); degrade to bare time.
   let tz = "";
   try {
     const parts = new Intl.DateTimeFormat("en-US", {
       timeZoneName: "short",
-    }).formatToParts(now);
+    }).formatToParts(d);
     tz = parts.find((p) => p.type === "timeZoneName")?.value ?? "";
   } catch {
     /* Intl unavailable — show time without a zone label. */
   }
-  return tz ? `${h}:${m} ${tz}` : `${h}:${m}`;
+  return tz ? `${h}:00 ${tz}` : `${h}:00`;
 }
 
 /**
