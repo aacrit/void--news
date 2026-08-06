@@ -105,11 +105,15 @@ export default function FloatingPlayer() {
   // visible. Auto-expanding on isPlayerVisible was the F2 blocker: a full sheet
   // covered ~35% of the viewport before any playback. isExpanded now drives the
   // mobile view both ways, so minimize/dismiss return cleanly to the mini strip.
+  // On mobile, tapping On Air (or the mini strip) opens the FULL teal broadcast
+  // portal — the same markup/styling as the desktop On Air portal — as a
+  // full-height sheet, NOT the plainer expanded bar. isExpanded drives it both
+  // ways so minimize / dismiss return cleanly to the persistent mini strip.
   useEffect(() => {
     const isMobile = window.matchMedia("(max-width: 767px)").matches;
     if (!isMobile) return;
-    if (isExpanded && view === "compact") {
-      setView("expanded");
+    if (isExpanded && view !== "broadcast") {
+      setView("broadcast");
     } else if (!isExpanded && view !== "compact") {
       setView("compact");
     }
@@ -286,6 +290,14 @@ export default function FloatingPlayer() {
 
   const closePane = () => {
     hapticLight();
+    // On mobile the broadcast portal minimizes to the persistent mini strip.
+    // isExpanded (not view) drives the mobile view, so flip it — setting view
+    // directly here would let the mobile effect bounce straight back to broadcast.
+    const isMobile = typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches;
+    if (isMobile) {
+      setExpanded(false);
+      return;
+    }
     const isDesktop = typeof window !== "undefined" && window.matchMedia("(min-width: 1024px)").matches;
     if (isDesktop) {
       setClosing(true);
@@ -350,11 +362,17 @@ export default function FloatingPlayer() {
     setDragOffset(0);
     if (dy > 80) {
       hapticLight();
+      const isMobile = window.matchMedia("(max-width: 767px)").matches;
       if (view === "broadcast") {
-        setView("expanded");
+        // Mobile: swipe-down minimizes the portal to the mini strip. Desktop:
+        // step down to the compact floating bar.
+        if (isMobile) {
+          setExpanded(false);
+        } else {
+          setView("expanded");
+        }
       } else {
         // On mobile, minimize to the mini strip; on desktop, go to compact.
-        const isMobile = window.matchMedia("(max-width: 767px)").matches;
         if (isMobile) {
           setExpanded(false);
         } else {

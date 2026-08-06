@@ -32,6 +32,12 @@ body:has(.msp--open) .fp {
   display: none !important;
 }
 
+/* Same guard for the MobileMoreSheet (.mms), the current secondary-nav surface.
+   When it is open the player must not layer over it (player z 60 > sheet z 50). */
+body:has(.mms--open) .fp {
+  display: none !important;
+}
+
 /* ---------------------------------------------------------------------------
    F10 — desktop bottom safe-gutter
    The fixed compact pill (bottom-left) otherwise sits on top of the final
@@ -1247,16 +1253,30 @@ body:has(.msp--open) .fp {
    BROADCAST PANEL — Responsive
    --------------------------------------------------------------------------- */
 
-/* Mobile (< 768px) */
+/* Mobile (< 768px) — the broadcast portal is the FULL On Air experience,
+   presented as a full-height sheet (mirrors the desktop teal portal). It covers
+   the masthead + bottom bar; the reader returns via its own minimize (swipe-down
+   / caret) or dismiss (×) controls. */
 @media (max-width: 767px) {
   .fp--broadcast {
-    bottom: var(--nav-bottom-height, 52px);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
   }
 
   .fp__broadcast {
-    padding: var(--space-3) var(--space-4);
-    padding-bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
-    max-height: 85vh;
+    height: 100%;
+    max-height: none;
+    padding: var(--space-4) var(--space-4);
+    padding-top: calc(var(--space-4) + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(var(--space-5) + env(safe-area-inset-bottom, 0px));
+    border-top: none;
+  }
+
+  /* No floating-pill target on mobile — detach is a desktop affordance. */
+  .fp--broadcast .fp__detach {
+    display: none;
   }
 
   .fp__vu--hero {

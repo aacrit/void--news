@@ -3,31 +3,32 @@
 import { useCallback } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { hapticMicro } from "../lib/haptics";
+import { hapticMicro, hapticMedium } from "../lib/haptics";
 import { BASE_PATH } from "../lib/utils";
 import { AUDIO_ENABLED } from "../lib/audioGate";
 import { useAudio } from "./AudioProvider";
 import ScaleIcon from "./ScaleIcon";
 
 /* ---------------------------------------------------------------------------
-   MobileTabBar — Persistent bottom tab bar (mobile only, <768px).
+   MobileTabBar — the single primary nav surface (mobile only, <768px).
 
-   A brand mark + two icons, evenly spaced, each a >=44px tap target:
+   Three zones, "lean bar + raised hero":
 
-     [Sigil-O]  ·  [broadcast]  ·  [hamburger]
+       [ Home ]        (( On Air ))        [ More ^ ]
 
-   Weekly + History tabs HIDDEN for launch 2026-08-05 (restore alongside the
-   desktop .nav-spinoffs block when those ship as features).
+   - Home (left) — the Sigil-O brand mark, recolored to the News terracotta.
+     Links to "/".
+   - On Air (center) — a PROMINENT raised teal disc (the broadcast hero). Tapping
+     it opens the full teal broadcast portal (FloatingPlayer's broadcast view,
+     the same markup/styling as the desktop On Air portal) as a full-height
+     mobile sheet. It does this by revealing the player and flagging it expanded;
+     FloatingPlayer maps that to its broadcast view on mobile. With no audio yet,
+     it routes to /onair (which shows the "being prepared" state).
+   - More (right) — an up-chevron (NOT a hamburger) that slides the
+     MobileMoreSheet up with the secondary destinations.
 
-   - Home is the standalone Sigil-O brand mark, recolored to the News terracotta
-     (--palette-news) so it matches the masthead. Links to "/".
-   - On Air is a teal broadcast glyph (--voice-accent, the On Air brand color).
-     It reveals the collapsed mini-player when a brief with audio is loaded;
-     otherwise it routes to the dedicated /onair page. Never auto-plays and never
-     opens the full in-page sheet (that IS /onair on mobile).
-   - Menu is a neutral hamburger glyph; toggles the MobileSidePanel.
-   - Active route shown via a top accent rule (not an icon swap).
-   Hidden on desktop via CSS.
+   Active route shown via a top accent rule on the side tabs. Sits above the iOS
+   home indicator (safe-area-inset-bottom). Hidden on desktop via CSS.
    --------------------------------------------------------------------------- */
 
 interface MobileTabBarProps {
@@ -38,115 +39,99 @@ interface MobileTabBarProps {
 export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { brief, setPlayerVisible, setExpanded } = useAudio();
+  const { brief, isPlaying, setPlayerVisible, setExpanded } = useAudio();
 
   const path = pathname.replace(BASE_PATH, "") || "/";
+  const homeActive =
+    path === "/" || path === "" || /^\/(world)\/?$/.test(path);
 
-  const isActive = useCallback(
-    (key: string): boolean => {
-      switch (key) {
-        case "home":
-          return path === "/" || path === "" || /^\/(world)\/?$/.test(path);
-        case "onair":
-          return path.startsWith("/onair");
-        case "menu":
-          return moreOpen;
-        default:
-          return false;
-      }
-    },
-    [path, moreOpen]
-  );
-
-  // On Air tap: reveal the collapsed mini-player strip when a brief with audio
-  // is loaded; otherwise take the reader to /onair. Never auto-plays, never
-  // opens the expanded sheet (setExpanded(false) keeps it collapsed).
+  // On Air: open the full broadcast portal (teal, matching desktop) when a brief
+  // with audio is loaded. setExpanded(true) makes FloatingPlayer render its
+  // broadcast view as a full-height mobile sheet. With no audio, fall back to the
+  // dedicated /onair route (empty-state screen).
   const handleOnAir = useCallback(() => {
-    hapticMicro();
+    hapticMedium();
     if (AUDIO_ENABLED && brief?.audio_url) {
-      setExpanded(false);
       setPlayerVisible(true);
+      setExpanded(true);
     } else {
       router.push("/onair");
     }
-  }, [brief?.audio_url, setExpanded, setPlayerVisible, router]);
-
-  const tabClass = (key: string) =>
-    `mtb__tab${isActive(key) ? " mtb__tab--active" : ""}`;
+  }, [brief?.audio_url, setPlayerVisible, setExpanded, router]);
 
   return (
-    <nav className="mtb" aria-label="Mobile navigation">
+    <nav className="mtb" aria-label="Primary navigation">
+      {/* ── Home (left) ── */}
       <Link
         href="/"
-        className={tabClass("home")}
-        data-accent="neutral"
+        className={`mtb__tab${homeActive ? " mtb__tab--active" : ""}`}
         aria-label="Home"
-        aria-current={isActive("home") ? "page" : undefined}
+        aria-current={homeActive ? "page" : undefined}
         onClick={() => hapticMicro()}
       >
-        {/* Sigil-O brand mark, recolored to the News terracotta */}
         <ScaleIcon
-          size={26}
+          size={24}
           animation="none"
           className="mtb__mark"
           style={{ ["--sigil-brass" as string]: "var(--palette-news)" }}
         />
+        <span className="mtb__label">Home</span>
       </Link>
 
-      {/* Weekly + History tabs HIDDEN for launch 2026-08-05 — restore here when
-          those ship as features. */}
-
+      {/* ── On Air (center, raised hero) ── */}
       <button
         type="button"
-        className={tabClass("onair")}
-        data-accent="onair"
-        aria-current={isActive("onair") ? "page" : undefined}
-        aria-label="On Air"
+        className={`mtb__onair${isPlaying ? " mtb__onair--live" : ""}`}
+        aria-label={isPlaying ? "On Air — playing" : "On Air"}
         onClick={handleOnAir}
       >
-        {/* Broadcast glyph — center dot with concentric radio-wave arcs (teal) */}
-        <svg
-          className="mtb__icon"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2}
-          strokeLinecap="round"
-          aria-hidden="true"
-        >
-          <circle cx="12" cy="12" r="1.75" fill="currentColor" stroke="none" />
-          <path d="M8.2 8.2 a5.4 5.4 0 0 0 0 7.6" />
-          <path d="M5.1 5.1 a9.8 9.8 0 0 0 0 13.8" />
-          <path d="M15.8 8.2 a5.4 5.4 0 0 1 0 7.6" />
-          <path d="M18.9 5.1 a9.8 9.8 0 0 1 0 13.8" />
-        </svg>
+        <span className="mtb__onair-disc">
+          {/* Broadcast glyph — center dot with concentric radio-wave arcs */}
+          <svg
+            className="mtb__onair-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            strokeLinecap="round"
+            aria-hidden="true"
+          >
+            <circle cx="12" cy="12" r="1.75" fill="currentColor" stroke="none" />
+            <path d="M8.2 8.2 a5.4 5.4 0 0 0 0 7.6" />
+            <path d="M5.1 5.1 a9.8 9.8 0 0 0 0 13.8" />
+            <path d="M15.8 8.2 a5.4 5.4 0 0 1 0 7.6" />
+            <path d="M18.9 5.1 a9.8 9.8 0 0 1 0 13.8" />
+          </svg>
+        </span>
+        <span className="mtb__label mtb__label--onair">On Air</span>
       </button>
 
+      {/* ── More (right, up-chevron sheet trigger) ── */}
       <button
         type="button"
-        className={tabClass("menu")}
-        data-accent="neutral"
+        className={`mtb__tab${moreOpen ? " mtb__tab--active" : ""}`}
         aria-expanded={moreOpen}
-        aria-label="Menu"
+        aria-haspopup="dialog"
+        aria-label="More"
         onClick={() => {
           hapticMicro();
           onMoreTap();
         }}
       >
-        {/* Hamburger glyph — three horizontal bars (neutral) */}
+        {/* Up-chevron — signals a sheet rising from the bottom (not a hamburger) */}
         <svg
-          className="mtb__icon"
+          className={`mtb__icon mtb__chevron${moreOpen ? " mtb__chevron--open" : ""}`}
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
           strokeWidth={2}
           strokeLinecap="round"
+          strokeLinejoin="round"
           aria-hidden="true"
         >
-          <line x1="4" y1="7" x2="20" y2="7" />
-          <line x1="4" y1="12" x2="20" y2="12" />
-          <line x1="4" y1="17" x2="20" y2="17" />
+          <path d="M6 15l6-6 6 6" />
         </svg>
+        <span className="mtb__label">More</span>
       </button>
     </nav>
   );
