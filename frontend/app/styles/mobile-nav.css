@@ -4,13 +4,15 @@
    =========================================================================== */
 
 /* ---------------------------------------------------------------------------
-   MobileTabBar (.mtb)
-   Persistent bottom tab bar. A brand mark + two icons:
-     [Sigil-O]  [broadcast]  [hamburger]
-   Home = the Sigil-O mark (terracotta); On Air = teal broadcast glyph; Menu =
-   neutral hamburger glyph. Every slot is a >=44px tap target. (Weekly + History
-   tabs hidden for launch 2026-08-05; their data-accent rules are kept below for
-   when those restore.)
+   MobileTabBar (.mtb) — the single primary nav surface.
+   Three zones, "lean bar + raised hero":
+
+       [ Home ]        (( On Air ))        [ More ^ ]
+
+   Home = the Sigil-O mark (terracotta); On Air = a PROMINENT raised teal disc
+   (the broadcast hero); More = an up-chevron that raises the MobileMoreSheet.
+   Side tabs are >=44px tap targets; the On Air disc is 52px. Sits above the iOS
+   home indicator (safe-area-inset-bottom). Hidden on desktop.
    --------------------------------------------------------------------------- */
 
 .mtb {
@@ -20,7 +22,7 @@
 @media (max-width: 767px) {
   .mtb {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-around;
     position: fixed;
     bottom: 0;
@@ -29,25 +31,25 @@
     z-index: var(--z-nav);
     background-color: var(--bg-primary);
     border-top: var(--rule-thin);
-    min-height: 44px;
+    min-height: var(--nav-bottom-height, 52px);
     padding-bottom: env(safe-area-inset-bottom, 0px);
+    /* Let the raised On Air disc overflow above the bar edge. */
+    overflow: visible;
     pointer-events: auto;
   }
 
-  /* ── Tabs — TEXT labels only (no icons). Per-product accents mirror the
-     desktop masthead spinoffs (.nav-history / .nav-weekly). The accent is
-     carried on a per-tab --mtb-accent so the label and the active rule share
-     one value. Home + Menu stay neutral. ── */
+  /* ── Side tabs (Home, More) — icon over a small label ── */
   .mtb__tab {
-    --mtb-accent: var(--accent-warm);
     position: relative;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: 3px;
     flex: 1;
-    min-height: 44px;
+    min-height: var(--nav-bottom-height, 52px);
     min-width: 44px;
-    padding: 0 var(--space-1);
+    padding: var(--space-1);
     text-decoration: none;
     background: none;
     border: none;
@@ -63,74 +65,51 @@
     transition: transform 50ms var(--ease-cinematic);
   }
 
-  /* Per-product accent values — same as the desktop NavBar.
-     History burnt umber, Weekly magazine red (--palette-weekly),
-     On Air teal (--voice-accent, the On Air brand color). */
-  .mtb__tab[data-accent="history"] { --mtb-accent: #5C4033; }
-  .mtb__tab[data-accent="weekly"]  { --mtb-accent: var(--palette-weekly); }
-  .mtb__tab[data-accent="onair"]   { --mtb-accent: var(--voice-accent); }
-  :root[data-mode="dark"] .mtb__tab[data-accent="history"] { --mtb-accent: #8B7355; }
-
-  /* ── Icon / brand-mark slots. The broadcast (On Air) glyph inherits the tab
-     accent (teal) via currentColor; the hamburger (Menu) glyph is neutral; the
-     Home Sigil-O carries its own --palette-news override. All three centered,
-     ~24px, within the shared 44px tap target. ── */
+  /* Icon — neutral ink; darkens to primary when the tab is active. */
   .mtb__icon {
-    width: 24px;
-    height: 24px;
+    width: 22px;
+    height: 22px;
     display: block;
     flex-shrink: 0;
-  }
-
-  /* On Air glyph wears the teal accent; darkens is not needed (accent = teal). */
-  .mtb__tab[data-accent="onair"] .mtb__icon {
-    color: var(--mtb-accent);
-  }
-
-  /* Menu glyph stays neutral ink; darkens to primary when the panel is open. */
-  .mtb__tab[data-accent="neutral"] .mtb__icon {
     color: var(--fg-tertiary);
+    transition: color 150ms var(--ease-cinematic);
   }
-  .mtb__tab--active[data-accent="neutral"] .mtb__icon {
+
+  .mtb__tab--active .mtb__icon {
     color: var(--fg-primary);
   }
 
+  /* Up-chevron rotates to point down (= "close") while the sheet is open. */
+  .mtb__chevron {
+    transition: transform 240ms var(--spring-snappy), color 150ms var(--ease-cinematic);
+  }
+  .mtb__chevron--open {
+    transform: rotate(180deg);
+  }
+
   /* Home Sigil-O mark — color is driven by its own --sigil-brass override
-     (terracotta), so it stays on-brand regardless of active/neutral state. */
+     (terracotta), so it stays on-brand regardless of active state. */
   .mtb__mark {
     flex-shrink: 0;
   }
 
-  /* Label — Playfair italic, matching the desktop spinoff labels. */
+  /* Label — quiet structural meta type. */
   .mtb__label {
-    font-family: var(--font-editorial);
-    font-style: italic;
-    font-size: var(--text-sm);
-    font-weight: 500;
-    letter-spacing: 0.01em;
+    font-family: var(--font-meta);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
     line-height: 1;
     white-space: nowrap;
     color: var(--fg-tertiary);
     transition: color 150ms var(--ease-cinematic);
   }
 
-  /* Accented products wear their color at rest (like the desktop masthead). */
-  .mtb__tab[data-accent="history"] .mtb__label,
-  .mtb__tab[data-accent="weekly"] .mtb__label,
-  .mtb__tab[data-accent="onair"] .mtb__label {
-    color: var(--mtb-accent);
-  }
-
-  /* Active: neutral tabs darken to primary ink; all tabs gain weight + a top
-     accent rule (brand-consistent indicator, not an icon). */
-  .mtb__tab--active[data-accent="neutral"] .mtb__label {
+  .mtb__tab--active .mtb__label {
     color: var(--fg-primary);
   }
 
-  .mtb__tab--active .mtb__label {
-    font-weight: 600;
-  }
-
+  /* Active side tab: top accent rule (brand indicator, not an icon swap). */
   .mtb__tab--active::before {
     content: "";
     position: absolute;
@@ -139,8 +118,273 @@
     transform: translateX(-50%);
     width: 22px;
     height: 2px;
-    background: var(--mtb-accent);
+    background: var(--accent-warm);
     border-radius: 0 0 2px 2px;
+  }
+
+  /* ── On Air (center, raised hero) ── */
+  .mtb__onair {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    flex: 1;
+    min-width: 44px;
+    padding: var(--space-1);
+    background: none;
+    border: none;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Raised teal disc — punches through the bar with a background-colored ring
+     so it reads as elevated. Uses the On Air brand teal (--voice-accent). */
+  .mtb__onair-disc {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    margin-top: -16px;
+    border-radius: 50%;
+    background: var(--voice-accent);
+    /* On-teal glyph color — a fixed light foreground (like the desktop console
+       glows) since there is no themed on-accent token. */
+    color: #fff;
+    border: 3px solid var(--bg-primary);
+    box-shadow:
+      0 4px 14px color-mix(in srgb, var(--voice-accent) 40%, transparent),
+      0 1px 3px color-mix(in srgb, #000 20%, transparent);
+    transition: transform 120ms var(--ease-cinematic), box-shadow 300ms var(--ease-cinematic);
+  }
+
+  .mtb__onair:active .mtb__onair-disc {
+    transform: scale(0.92);
+    transition-duration: 50ms;
+  }
+
+  .mtb__onair-icon {
+    width: 26px;
+    height: 26px;
+    display: block;
+  }
+
+  /* Playing — a breathing teal halo signals live audio. */
+  .mtb__onair--live .mtb__onair-disc {
+    animation: mtbOnairPulse 2.4s var(--ease-rack, ease-in-out) infinite;
+  }
+
+  @keyframes mtbOnairPulse {
+    0%, 100% {
+      box-shadow:
+        0 4px 14px color-mix(in srgb, var(--voice-accent) 40%, transparent),
+        0 0 0 0 color-mix(in srgb, var(--voice-accent) 30%, transparent);
+    }
+    50% {
+      box-shadow:
+        0 4px 18px color-mix(in srgb, var(--voice-accent) 55%, transparent),
+        0 0 0 6px color-mix(in srgb, var(--voice-accent) 12%, transparent);
+    }
+  }
+
+  .mtb__label--onair {
+    color: var(--voice-accent);
+    font-weight: 700;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   MobileMoreSheet (.mms)
+   Bottom sheet that slides UP from the "More" tab. Secondary destinations
+   (Sources / Feedback / About) + a small utility + theme footer. Covers the
+   bottom bar while open; dismiss via backdrop / swipe-down / Esc / link.
+   --------------------------------------------------------------------------- */
+
+.mms,
+.mms__backdrop {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mms__backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: calc(var(--z-overlay) - 1);
+    background-color: var(--overlay-backdrop);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 300ms var(--ease-cinematic);
+  }
+
+  .mms__backdrop--open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .mms {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: var(--z-overlay);
+    max-height: 85vh;
+    background-color: var(--bg-primary);
+    border-top: var(--rule-thin);
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+    /* Exit: confident downward cut. */
+    transform: translateY(100%);
+    transition: transform 240ms var(--ease-whip);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    box-shadow: 0 -8px 24px color-mix(in srgb, var(--cinematic-shadow-tint, rgba(0,0,0,0.2)) 18%, transparent);
+  }
+
+  /* Paper grain overlay — same material as the page canvas. */
+  .mms::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--paper-texture);
+    opacity: 0.15;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    z-index: 0;
+  }
+
+  .mms > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .mms--open {
+    /* Entrance: spring-driven rise. */
+    transform: translateY(0);
+    transition: transform 340ms var(--spring-snappy);
+  }
+
+  /* Grabber — swipe-down target */
+  .mms__grabber-zone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 32px;
+    padding: var(--space-2) 0 var(--space-1);
+    cursor: grab;
+    touch-action: none;
+  }
+
+  .mms__grabber {
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: color-mix(in srgb, var(--fg-muted) 45%, transparent);
+  }
+
+  /* Primary destinations */
+  .mms__links {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-1) 0 var(--space-2);
+  }
+
+  .mms__link {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    padding: var(--space-3) var(--space-5);
+    min-height: 56px;
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: transform 80ms var(--ease-cinematic), background 120ms var(--ease-cinematic);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mms__link + .mms__link {
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .mms__link:active {
+    background-color: color-mix(in srgb, var(--accent-warm) 8%, transparent);
+    transform: scale(0.985);
+    border-left-color: var(--accent-warm);
+  }
+
+  .mms__link-cmd {
+    font-family: var(--font-editorial);
+    font-style: italic;
+    font-size: var(--text-lg);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: var(--fg-primary);
+  }
+
+  .mms__link-desc {
+    font-family: var(--font-structural);
+    font-size: var(--text-xs);
+    color: var(--fg-muted);
+  }
+
+  /* Footer — utility links + theme toggle */
+  .mms__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5) var(--space-2);
+    border-top: var(--rule-thin);
+  }
+
+  .mms__util {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .mms__util-link {
+    font-family: var(--font-meta);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    text-decoration: none;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 120ms var(--ease-cinematic);
+  }
+
+  .mms__util-link:active {
+    color: var(--accent-warm);
+  }
+
+  .mms__util-sep {
+    color: var(--fg-muted);
+    opacity: 0.5;
+  }
+
+  .mms__theme {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .mms__theme-label {
+    font-family: var(--font-meta);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
   }
 }
 
@@ -637,9 +881,28 @@
   .msp__link:active {
     transform: none;
   }
+  /* MobileMoreSheet — no slide/spring, no drag scale, no swipe recoil. */
+  .mms,
+  .mms__backdrop {
+    transition: none;
+  }
+  .mms__link:active {
+    transform: none;
+  }
   .mtb__tab:active {
     transform: none;
     transition: none;
+  }
+  .mtb__chevron {
+    transition: none;
+  }
+  /* On Air raised disc — no press scale, no live halo pulse. */
+  .mtb__onair:active .mtb__onair-disc {
+    transform: none;
+    transition: none;
+  }
+  .mtb__onair--live .mtb__onair-disc {
+    animation: none;
   }
   .mmp__play:active {
     transform: none;

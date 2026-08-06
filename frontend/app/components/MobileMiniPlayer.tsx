@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import LogoIcon from "./LogoIcon";
 import { useAudio } from "./AudioProvider";
 import { hapticLight, hapticConfirm } from "../lib/haptics";
@@ -36,10 +35,10 @@ export default function MobileMiniPlayer() {
     duration,
     handlePlayPause,
     isExpanded,
+    setExpanded,
     isPlayerVisible,
     contentType,
   } = useAudio();
-  const router = useRouter();
   const isWeekly = contentType === "weekly";
   const isHistory = contentType === "history";
   const productLabel = isHistory ? "History" : isWeekly ? "Weekly" : "On Air";
@@ -60,12 +59,13 @@ export default function MobileMiniPlayer() {
   const progress =
     displayDuration > 0 ? (currentTime / displayDuration) * 100 : 0;
 
-  // Expanding the mini-player on mobile navigates to the full /onair page
-  // rather than opening the in-page expanded sheet.
+  // Expanding the mini-player opens the full teal broadcast portal (the same
+  // portal the On Air tab opens — FloatingPlayer's broadcast view as a
+  // full-height mobile sheet), keeping On Air a single, consistent experience.
   const handleExpand = useCallback(() => {
     hapticLight();
-    router.push("/onair");
-  }, [router]);
+    setExpanded(true);
+  }, [setExpanded]);
 
   const handlePlayPauseClick = useCallback(
     (e: React.MouseEvent) => {

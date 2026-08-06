@@ -9,20 +9,23 @@ import { useAudio } from "./AudioProvider";
 import { AUDIO_ENABLED } from "../lib/audioGate";
 import { BASE_PATH } from "../lib/utils";
 
-const MobileSidePanel = dynamic(() => import("./MobileSidePanel"), { ssr: false });
+// The MobileMoreSheet replaces the retired right-edge MobileSidePanel as the
+// secondary-destination surface. The bottom tab bar is now the only primary nav;
+// MobileSidePanel.tsx is kept in the repo (unused) for reversibility.
+const MobileMoreSheet = dynamic(() => import("./MobileMoreSheet"), { ssr: false });
 // Global desktop audio player. Mounted here (a layout-level client module) so it
 // renders on EVERY route — including /weekly — not just the homepage. It hides
 // itself on mobile via CSS, so it is safe alongside the mobile UI below.
 const FloatingPlayer = dynamic(() => import("./FloatingPlayer"), { ssr: false });
 
 /* ---------------------------------------------------------------------------
-   MobileNav — Client wrapper that orchestrates MobileTabBar, MobileSidePanel,
+   MobileNav — Client wrapper that orchestrates MobileTabBar, MobileMoreSheet,
    and MobileMiniPlayer. Placed in layout.tsx so it appears on every page.
-   Desktop: hidden via CSS on .mtb, .msp, .mmp.
+   Desktop: hidden via CSS on .mtb, .mms, .mmp.
    --------------------------------------------------------------------------- */
 
 export default function MobileNav() {
-  const [sidePanelOpen, setSidePanelOpen] = useState(false);
+  const [moreSheetOpen, setMoreSheetOpen] = useState(false);
   const pathname = usePathname();
   const { contentType } = useAudio();
   const route = pathname.replace(BASE_PATH, "") || "/";
@@ -40,11 +43,11 @@ export default function MobileNav() {
   const suppressNewsChrome = route.startsWith("/history") && contentType !== "history";
 
   const handleMoreTap = useCallback(() => {
-    setSidePanelOpen((v) => !v);
+    setMoreSheetOpen((v) => !v);
   }, []);
 
-  const handleSidePanelClose = useCallback(() => {
-    setSidePanelOpen(false);
+  const handleMoreSheetClose = useCallback(() => {
+    setMoreSheetOpen(false);
   }, []);
 
   return (
@@ -54,8 +57,8 @@ export default function MobileNav() {
           hidden on mobile via CSS. Suppressed on /ship and on /history when the
           daily brief (not history audio) would otherwise be shown. */}
       {AUDIO_ENABLED && !onShip && !suppressNewsChrome && <FloatingPlayer />}
-      <MobileTabBar onMoreTap={handleMoreTap} moreOpen={sidePanelOpen} />
-      <MobileSidePanel open={sidePanelOpen} onClose={handleSidePanelClose} />
+      <MobileTabBar onMoreTap={handleMoreTap} moreOpen={moreSheetOpen} />
+      <MobileMoreSheet open={moreSheetOpen} onClose={handleMoreSheetClose} />
     </>
   );
 }
