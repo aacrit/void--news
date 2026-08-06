@@ -501,6 +501,21 @@ _EXAMPLE_CRED_FLOOR = 5       # min cluster source_count for a "strict" pick
 _EXAMPLE_MIN_MAJOR = 3        # min recognizable outlets in the displayed set
 _EXAMPLE_DISPLAY_TARGET = 4   # outlets rendered on the spectrum slide (Example.tsx slices [0:4])
 
+# COHERENCE gate knobs. The disagreement score ranks a cluster "contested"
+# whenever its article leans span left..right, but an OVER-MERGED bag of
+# unrelated stories ALSO spans (unrelated events carry unrelated leans), so a
+# bag can top the ranking and defeat the whole Example concept (ONE event, many
+# framings). Before contestedness is considered, a candidate must prove its
+# DISPLAYED outlets cover the SAME event: a single core content-stem must recur
+# across a strong majority of the displayed headlines, every displayed outlet
+# must connect to that shared core, and the displayed headlines must overlap
+# pairwise above a floor. Judged on the displayed HEADLINES (Porter stems), not
+# the cluster's bridge title (which mirrors a bag's fragments and would
+# manufacture a phantom core).
+_COH_CORE_SHARE = 2          # a stem is part of the event "core" only if >= this many displayed headlines carry it
+_COH_DOMINANCE_MIN = 0.60    # the single most-shared core stem must appear in >= this fraction of displayed headlines
+_COH_PAIRWISE_MIN = 0.08     # mean pairwise stemmed-headline Jaccard floor across the displayed set
+
 # Title tokenization for off-topic outlier detection (over-merged clusters).
 _TITLE_STOPWORDS = frozenset({
     "the", "and", "for", "with", "from", "into", "over", "after", "before",
@@ -585,6 +600,101 @@ def _cluster_disagreement(
     polarization = max(pol_local, pol_stored)
     both = 20.0 if (left > 0 and right > 0) else 0.0
     return polarization + 0.5 * spread + both
+
+
+# ---------------------------------------------------------------------------
+# Single-event coherence (the anti-"bag" gate).
+# ---------------------------------------------------------------------------
+_UNSET = object()
+_STEMS_FN_CACHED: Any = _UNSET
+
+
+def _stems_fn():
+    """Lazy, cached handle to clustering's canonical title stemmer
+    (_title_word_stems: Porter stem + shared stopwords). Reused so coherence
+    judges headlines with the exact lens the upstream clusterer used. Returns
+    None if clustering (spaCy/nltk) cannot be imported; callers fall back to the
+    local 4+ char tokenizer."""
+    global _STEMS_FN_CACHED
+    if _STEMS_FN_CACHED is _UNSET:
+        try:
+            from clustering.story_cluster import _title_word_stems
+            _STEMS_FN_CACHED = _title_word_stems
+        except Exception:
+            _STEMS_FN_CACHED = None
+    return _STEMS_FN_CACHED
+
+
+def _headline_stems(text: str) -> set[str]:
+    """Content-word stems of a headline. Prefers clustering's Porter-stem
+    pipeline; falls back to the local content tokens so coherence still computes
+    when clustering can't load."""
+    fn = _stems_fn()
+    if fn is not None:
+        try:
+            return fn(text or "")
+        except Exception:
+            pass
+    return _title_tokens(text or "")
+
+
+def _cluster_coherence(
+    display: list[dict[str, Any]]
+) -> tuple[bool, float]:
+    """Decide whether the DISPLAYED outlets cover ONE event, and score how
+    tightly. Returns (coherent, coherence_score in 0..1).
+
+    The event "core" = content stems carried by >= _COH_CORE_SHARE (2) of the
+    displayed headlines. A cluster is COHERENT iff ALL of:
+      (1) core is non-empty AND its single most-shared stem appears in
+          >= _COH_DOMINANCE_MIN (60%) of the displayed headlines. A genuine
+          single event has one dominant locus every outlet keeps naming; a bag
+          (four unrelated events) has no stem shared by even two headlines, and
+          a two-topic merge ({boatx2, ufcx2}) has a core but no stem spanning a
+          majority, so both fail here.
+      (2) every displayed outlet shares >= 1 stem with the core, so no displayed
+          row is an off-event outlier.
+      (3) mean pairwise stemmed-headline Jaccard >= _COH_PAIRWISE_MIN.
+
+    Judged only on the displayed headlines (the cluster's bridge title is
+    excluded on purpose: a bag's title mirrors its fragments and would fabricate
+    a core). coherence_score = 0.6*core_dominance + 0.4*mean_pairwise, used to
+    rank the coherent pool when the selector degrades.
+    """
+    n = len(display)
+    if n < 2:
+        return False, 0.0
+    from collections import Counter
+
+    stem_sets = [_headline_stems(o.get("headline") or "") for o in display]
+    freq: Counter[str] = Counter()
+    for s in stem_sets:
+        freq.update(s)
+    core = {t for t, c in freq.items() if c >= _COH_CORE_SHARE}
+    if not core:
+        return False, 0.0
+
+    top_core_count = max(freq[t] for t in core)
+    core_dominance = top_core_count / n
+    all_connect = all((s & core) for s in stem_sets)
+
+    pair_sum = 0.0
+    pair_n = 0
+    for i in range(n):
+        for j in range(i + 1, n):
+            a, b = stem_sets[i], stem_sets[j]
+            uni = len(a | b)
+            pair_sum += (len(a & b) / uni) if uni else 0.0
+            pair_n += 1
+    mean_pairwise = (pair_sum / pair_n) if pair_n else 0.0
+
+    coherent = (
+        core_dominance >= _COH_DOMINANCE_MIN
+        and all_connect
+        and mean_pairwise >= _COH_PAIRWISE_MIN
+    )
+    score = 0.6 * core_dominance + 0.4 * mean_pairwise
+    return coherent, score
 
 
 def _select_display_outlets(
@@ -734,6 +844,9 @@ def _select_example_cluster() -> tuple[str, list[dict[str, Any]], int, list[int]
         score = _cluster_disagreement(lean_values, cluster.get("bias_diversity"))
         matched = _note_matches(cluster.get("title") or "", kws)
         strict = sc >= _EXAMPLE_CRED_FLOOR and spans and major_ct >= _EXAMPLE_MIN_MAJOR
+        # Single-event coherence GATE: does the DISPLAYED set actually cover one
+        # event? A high-disagreement over-merged bag is rejected here.
+        coherent, coherence_score = _cluster_coherence(display)
 
         entries.append(
             {
@@ -744,6 +857,8 @@ def _select_example_cluster() -> tuple[str, list[dict[str, Any]], int, list[int]
                 "strict": strict,
                 "spans": spans,
                 "matched": matched,
+                "coherent": coherent,
+                "coherence_score": coherence_score,
                 "source_count": sc,
             }
         )
@@ -758,20 +873,50 @@ def _select_example_cluster() -> tuple[str, list[dict[str, Any]], int, list[int]
     matched_entries = [e for e in entries if e["matched"]]
     search = matched_entries or entries
 
-    # Prefer a strict pick (credible + both wings + recognizable spread); then a
-    # cluster that at least spans left and right; then anything eligible. Within
-    # the chosen tier, disagreement wins, source_count breaks ties.
-    strict_pool = [e for e in search if e["strict"]]
-    spanning_pool = [e for e in search if e["spans"]]
-    pool = strict_pool or spanning_pool or search
-    best = max(pool, key=lambda e: (e["score"], e["source_count"]))
+    # COHERENCE GATE (applied before contestedness). A candidate only qualifies
+    # if its displayed outlets demonstrably cover the SAME event; an over-merged
+    # bag is rejected here even when its unrelated leans score "contested". The
+    # operator note cannot override this: a bag must never ship.
+    coherent_search = [e for e in search if e["coherent"]]
+    if not coherent_search:
+        print(
+            "  [example] no COHERENT cluster among candidates "
+            f"({len(search)} eligible, all look over-merged); skipping Example"
+        )
+        return None
 
-    tier = "strict" if best in strict_pool else ("spanning" if best in spanning_pool else "relaxed")
+    # Among the COHERENT set: prefer a strict pick (credible + both wings +
+    # recognizable spread); then a cluster that at least spans left and right.
+    # If NO coherent cluster is contested, DEGRADE to the best coherent cluster
+    # (still the most contested / most coherent among them) and log it. Within
+    # the chosen tier, disagreement wins, source_count breaks ties.
+    strict_pool = [e for e in coherent_search if e["strict"]]
+    spanning_pool = [e for e in coherent_search if e["spans"]]
+    degraded = not (strict_pool or spanning_pool)
+    if degraded:
+        # No contested coherent cluster; pick the best coherent one. Keep the
+        # disagreement ranking primary, breaking ties toward the tightest event.
+        best = max(
+            coherent_search,
+            key=lambda e: (e["score"], e["coherence_score"], e["source_count"]),
+        )
+        tier = "coherent-degraded"
+    else:
+        pool = strict_pool or spanning_pool
+        best = max(pool, key=lambda e: (e["score"], e["source_count"]))
+        tier = "strict" if best in strict_pool else "spanning"
+
     if matched_entries:
         print(f"  [example] operator note steered selection (keywords: {', '.join(kws[:6])})")
+    if degraded:
+        print(
+            "  [example] DEGRADED: no coherent+contested cluster; falling back to "
+            f"best coherent (coherence={best['coherence_score']:.2f})"
+        )
     print(
         f"  [example] selected by disagreement (tier={tier}, score={best['score']:.1f}, "
-        f"sources={best['source_count']}, outlets={len(best['display'])})"
+        f"sources={best['source_count']}, outlets={len(best['display'])}, "
+        f"coherence={best['coherence_score']:.2f})"
     )
 
     cluster = best["cluster"]
