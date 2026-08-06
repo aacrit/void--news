@@ -246,11 +246,12 @@ Older articles in the cluster provide context and background, but the lede must 
 reflect the freshest reported facts. If a cluster spans multiple days, clearly \
 distinguish what happened today from prior developments.
 
-DOMINANT STORY ONLY: These articles were grouped automatically by topic, and one \
-or two may concern a different event. Summarize only the single story described \
-by your TASK 1 headline. If an article covers an unrelated event, exclude it \
-entirely. Never stitch two unrelated stories into one briefing, and never \
-reference a person, place, or event that does not belong to the headline story.
+DOMINANT STORY ONLY: Summarize ONLY the single story about the entities named in \
+the DOMINANT TOPIC / ENTITIES line above; ignore any article whose subject is a \
+different event, person, or place than those entities. These articles were \
+grouped automatically and one or two may concern a DIFFERENT event. Never stitch \
+two unrelated stories into one briefing, and never reference a person, place, or \
+event that does not belong to the dominant story.
 
 Paragraph 1 (2-3 sentences): The most recent newsworthy development — what just \
 happened, who, when, where. Lead with the latest event. State the single most \
@@ -627,6 +628,161 @@ def _check_quality(result: dict, cluster_id: str | int = "") -> None:
         )
 
 
+# ---------------------------------------------------------------------------
+# Summary coherence gate — deterministic on-topic INPUT FILTER (Option 1)
+# + computed DOMINANT-TOPIC prompt line (Option 2).
+# ---------------------------------------------------------------------------
+# 2026-08-06: an over-merged Phase-5 "bag" can carry an off-topic member whose
+# article text bleeds into the LLM summary, so the rendered briefing references
+# a person/place/event that does not belong to the cluster's headline story.
+# This filter computes the cluster's DOMINANT topic tokens from the member
+# titles (+ the cluster title when known) and DROPS members whose title shares
+# no dominant token, BEFORE the prompt is built — the model never sees the
+# off-topic article. Ports the proven ig_generator._ontopic_outlets pattern to
+# the summarizer chokepoint (summarize_cluster), so a single change covers all
+# four LLM summary passes (7b batch, 8d top50, 8d.6 floor, 8d.7 reconcile).
+#
+# Cache safety: the four callers key the content-hash cache on FULL membership;
+# this filter is deterministic given (membership, title), so identical
+# membership yields identical filtered input and therefore an identical summary.
+# The cache key is NOT changed. source_count, the coverage/"Contested" bar, and
+# the near-dup guard are untouched — only the summary TEXT input narrows.
+_ONTOPIC_MIN_MEMBERS = 4      # no-op below this many members
+_ONTOPIC_FLOOR = 3            # never strip below this many members
+
+_ONTOPIC_UNSET = object()
+_ONTOPIC_STEMS_FN = _ONTOPIC_UNSET
+
+_ONTOPIC_LOCAL_STOPWORDS = frozenset({
+    "the", "and", "for", "with", "from", "into", "over", "after", "before",
+    "under", "about", "amid", "amidst", "says", "said", "will", "would",
+    "could", "should", "has", "have", "had", "are", "was", "were", "been",
+    "its", "his", "her", "their", "new", "how", "why", "what", "when",
+    "where", "who", "this", "that", "these", "those", "than", "then",
+    "live", "update", "updates", "report", "reports", "amp", "news",
+})
+
+
+def _ontopic_stems_fn():
+    """Lazy, cached handle to clustering's canonical title stemmer
+    (_title_word_stems: Porter stem + shared stopwords). Reused so the on-topic
+    filter judges member titles with the exact lens the upstream clusterer used.
+    Returns None if clustering (spaCy/nltk) cannot be imported; callers fall
+    back to the local content-word tokenizer."""
+    global _ONTOPIC_STEMS_FN
+    if _ONTOPIC_STEMS_FN is _ONTOPIC_UNSET:
+        try:
+            from clustering.story_cluster import _title_word_stems
+            _ONTOPIC_STEMS_FN = _title_word_stems
+        except Exception:
+            _ONTOPIC_STEMS_FN = None
+    return _ONTOPIC_STEMS_FN
+
+
+def _ontopic_local_tokens(title: str) -> set[str]:
+    """Fallback tokenizer (clustering-import-independent): 4+ char content
+    words, stopword-filtered. Mirrors ig_generator._title_tokens."""
+    import re
+    return {
+        w for w in re.findall(r"[a-z0-9]{4,}", (title or "").lower())
+        if w not in _ONTOPIC_LOCAL_STOPWORDS
+    }
+
+
+def _ontopic_title_tokens(title: str) -> set[str]:
+    """Content-token set of a title. Prefers clustering's Porter-stem pipeline
+    (matches the upstream clusterer); falls back to the local 4+ char tokenizer
+    when clustering can't load or yields nothing."""
+    fn = _ontopic_stems_fn()
+    if fn is not None:
+        try:
+            toks = fn(title or "")
+            if toks:
+                return toks
+        except Exception:
+            pass
+    return _ontopic_local_tokens(title or "")
+
+
+def _filter_ontopic_articles(articles: list[dict],
+                             cluster_title: str | None = None) -> list[dict]:
+    """Drop off-topic members from an over-merged cluster BEFORE the summary
+    prompt is built, so the LLM never sees an article about a different event.
+
+    Core topic tokens = the cluster title's content tokens (when known) UNION
+    any content token shared by >= 2 member titles (so a genuine single story
+    with varied vocabulary keeps a shared spine). A member is on-topic iff its
+    title shares >= 1 core token.
+
+    Guards (ported from ig_generator._ontopic_outlets):
+      - No-op when the cluster has < 4 members.
+      - If the core is empty, widen back to full membership (no-op).
+      - Never strips below 3 members; if the filtered set would be < 3, keep the
+        top-by-existing-order members up to 3 (existing order is the caller's
+        newest/rank order).
+    """
+    if len(articles) < _ONTOPIC_MIN_MEMBERS:
+        return articles
+
+    from collections import Counter
+    freq: Counter[str] = Counter()
+    member_tokens: list[set[str]] = []
+    for art in articles:
+        toks = _ontopic_title_tokens(art.get("title") or "")
+        member_tokens.append(toks)
+        freq.update(toks)
+
+    shared = {t for t, c in freq.items() if c >= 2}
+    core = _ontopic_title_tokens(cluster_title or "") | shared
+    if not core:
+        # No shared spine and no title signal — do not trust the filter.
+        return articles
+
+    kept = [art for art, toks in zip(articles, member_tokens) if toks & core]
+    if len(kept) < _ONTOPIC_FLOOR:
+        # A thin/odd core must not gut a real cluster: keep the top members in
+        # existing order up to the floor (articles has >= 4 here, so this is 3).
+        return articles[:_ONTOPIC_FLOOR]
+    if len(kept) < len(articles):
+        print(
+            f"  [coherence] dropped {len(articles) - len(kept)} off-topic "
+            f"member(s) from the summary input of a {len(articles)}-member "
+            f"cluster"
+        )
+    return kept
+
+
+def _build_dominant_topic_line(articles: list[dict],
+                               cluster_title: str | None = None) -> str:
+    """Render a DOMINANT TOPIC / ENTITIES line for the prompt (Option 2).
+
+    Uses the same title-frequency vote as the on-topic filter, but surfaces the
+    raw (unstemmed) high-frequency title words so the model reads recognizable
+    entity names. Cluster-title words lead; remaining terms are ranked by
+    cross-headline frequency (the shared spine). Deterministically ordered so
+    the line is stable run-to-run. Steers the summary onto the single dominant
+    story described by the headline. Adds ~20 tokens, no new API calls."""
+    from collections import Counter
+    freq: Counter[str] = Counter()
+    for art in articles:
+        freq.update(_ontopic_local_tokens(art.get("title") or ""))
+
+    title_terms = sorted(_ontopic_local_tokens(cluster_title or ""))
+    title_set = set(title_terms)
+    ranked = sorted(
+        (t for t, c in freq.items() if c >= 2 and t not in title_set),
+        key=lambda t: (-freq[t], t),
+    )
+    terms = title_terms + ranked
+    if not terms:
+        # No shared spine and no title: fall back to the most common title words.
+        terms = [t for t, _ in sorted(freq.items(), key=lambda kv: (-kv[1], kv[0]))]
+    terms = terms[:8]
+    if not terms:
+        return ""
+    return "DOMINANT TOPIC / ENTITIES: " + ", ".join(terms) + "\n"
+
+
 def _build_context_line(articles: list[dict]) -> str:
     """
     Build a one-line cluster metadata header for the prompt.
@@ -819,13 +975,17 @@ Output these three additional fields in the JSON:
 def summarize_cluster(articles: list[dict],
                       claims_consensus=None,
                       prefer_provider: str | None = None,
-                      model: str | None = None) -> dict | None:
+                      model: str | None = None,
+                      cluster_title: str | None = None) -> dict | None:
     """
     Generate headline, summary, consensus, and divergence for a cluster.
 
     prefer_provider is retained for signature compatibility (Groq retired).
     `model` selects the Gemini tier (GEMINI_FLASH_MODEL for the premium top-N
     stories; None = flash-lite default). See _smart_generate_json.
+    `cluster_title` (optional) is the cluster's stored headline; it strengthens
+    the summary coherence gate's dominant-topic vote. When omitted the gate
+    votes on member titles alone, so no caller is forced to pass it.
     Returns None if no provider is configured, the call fails, or the chosen
     provider's per-run cap is reached (each client enforces its own cap and
     returns None, so no cross-provider budget gate here).
@@ -836,15 +996,25 @@ def summarize_cluster(articles: list[dict],
     if not articles:
         return None
 
-    context_line = _build_context_line(articles)
-    source_names_line = _build_source_names_line(articles)
-    articles_block = _build_articles_block(articles)
+    # Summary coherence gate (Option 1): drop off-topic members so the prompt
+    # inputs describe ONE story. Deterministic given (membership, title); the
+    # callers key the content-hash cache on FULL membership, so this narrowing
+    # of the summary TEXT input never invalidates the cache. source_count and
+    # the coverage/near-dup signals are computed elsewhere and are untouched.
+    summ_articles = _filter_ontopic_articles(articles, cluster_title=cluster_title)
+
+    context_line = _build_context_line(summ_articles)
+    source_names_line = _build_source_names_line(summ_articles)
+    articles_block = _build_articles_block(summ_articles)
+    # Option 2: a computed DOMINANT TOPIC / ENTITIES line, injected next to the
+    # cluster-metadata context line to steer the model onto the dominant story.
+    dominant_line = _build_dominant_topic_line(summ_articles, cluster_title)
 
     # Build claims context if available
     claims_block = _build_claims_block(claims_consensus) if claims_consensus else ""
 
     prompt = _USER_PROMPT_TEMPLATE.format(
-        context_line=context_line,
+        context_line=dominant_line + context_line,
         source_names_line=source_names_line,
         articles_block=articles_block,
     )
@@ -1176,7 +1346,8 @@ def summarize_clusters_batch(clusters: list[dict],
         articles = clusters[idx].get("articles", [])
         cc = cluster_consensus.get(str(idx)) if cluster_consensus else None
         result = summarize_cluster(articles, claims_consensus=cc,
-                                   prefer_provider=prefer_provider)
+                                   prefer_provider=prefer_provider,
+                                   cluster_title=clusters[idx].get("title"))
         if result:
             results[idx] = result
             consecutive_failures = 0  # reset on success
@@ -1390,7 +1561,9 @@ def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 
             metrics["cached"] += 1
             continue
 
-        result = summarize_cluster(articles, prefer_provider=prefer_provider, model=target_model)
+        result = summarize_cluster(articles, prefer_provider=prefer_provider,
+                                   model=target_model,
+                                   cluster_title=row.get("title"))
         if not result:
             metrics["failed"] += 1
             continue
@@ -1618,7 +1791,8 @@ def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = 50
         # (i) One more Gemini attempt (transport retry now covers the flaky
         # window; the network may have recovered since 8d, or a cap slot freed).
         if len(articles) >= 3:
-            result = summarize_cluster(articles, prefer_provider=prefer_provider, model=None)
+            result = summarize_cluster(articles, prefer_provider=prefer_provider,
+                                       model=None, cluster_title=title)
             if result:
                 payload = {
                     "title": result["headline"],
@@ -1836,7 +2010,8 @@ def reconcile_flash_top10(supabase, edition: str = "world", top_n: int = 10,
             continue
 
         result = summarize_cluster(
-            articles, prefer_provider=prefer_provider, model=GEMINI_FLASH_MODEL)
+            articles, prefer_provider=prefer_provider, model=GEMINI_FLASH_MODEL,
+            cluster_title=row.get("title"))
         if not result:
             metrics["failed"] += 1
             continue
