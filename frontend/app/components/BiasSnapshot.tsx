@@ -13,6 +13,12 @@ interface BiasSnapshotProps {
    *   - "rail": vertical compact column for the desktop Deep Dive right rail.
    *     Three primary axes stacked, each with a small bar + label. */
   variant?: "inline" | "rail";
+  /** Suppress the embedded LeanCoverageBar. Set true where a fuller coverage
+   *  view (e.g. the Deep Dive's DeepDiveSpectrum) already plots the L->R
+   *  distribution, so the small segmented bar would be a redundant restatement.
+   *  Defaults false — StoryCard and the mobile feed keep the bar (their only
+   *  coverage signal). */
+  hideCoverageBar?: boolean;
 }
 
 /* ---------------------------------------------------------------------------
@@ -21,7 +27,7 @@ interface BiasSnapshotProps {
    the full SixLenses real estate. Full breakdown sits behind a disclosure.
    --------------------------------------------------------------------------- */
 
-export default function BiasSnapshot({ data, sourceCount, variant = "inline" }: BiasSnapshotProps) {
+export default function BiasSnapshot({ data, sourceCount, variant = "inline", hideCoverageBar = false }: BiasSnapshotProps) {
   const leanColor = getLeanColor(data.politicalLean);
   const lean = leanLabel(data.politicalLean);
   const opinion = data.opinionLabel;
@@ -50,7 +56,7 @@ export default function BiasSnapshot({ data, sourceCount, variant = "inline" }: 
           <span className="bias-snapshot__label">Sources</span>
           <span className="bias-snapshot__value bias-snapshot__value--strong">{sourceCount}</span>
         </div>
-        <LeanCoverageBar spread={data.biasSpread} />
+        {!hideCoverageBar && <LeanCoverageBar spread={data.biasSpread} />}
       </aside>
     );
   }
@@ -73,7 +79,7 @@ export default function BiasSnapshot({ data, sourceCount, variant = "inline" }: 
       <span className="bias-snapshot__pill">{opinion}</span>
       <span className="bias-snapshot__sep" aria-hidden="true">·</span>
       <span className="bias-snapshot__sources">{sourceCount} {sourceCount === 1 ? "source" : "sources"}</span>
-      <LeanCoverageBar spread={data.biasSpread} compact />
+      {!hideCoverageBar && <LeanCoverageBar spread={data.biasSpread} compact />}
     </div>
   );
 }

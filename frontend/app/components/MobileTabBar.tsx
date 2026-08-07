@@ -12,23 +12,25 @@ import ScaleIcon from "./ScaleIcon";
 /* ---------------------------------------------------------------------------
    MobileTabBar — the single primary nav surface (mobile only, <768px).
 
-   Three zones, "lean bar + raised hero":
+   Three zones, "raised center brand anchor between two side tabs":
 
-       [ Home ]        (( On Air ))        [ More ^ ]
+       [ On Air ]        (( Home ))        [ More ^ ]
 
-   - Home (left) — the Sigil-O brand mark, recolored to the News terracotta.
-     Links to "/".
-   - On Air (center) — a PROMINENT raised teal disc (the broadcast hero). Tapping
-     it opens the full teal broadcast portal (FloatingPlayer's broadcast view,
-     the same markup/styling as the desktop On Air portal) as a full-height
-     mobile sheet. It does this by revealing the player and flagging it expanded;
-     FloatingPlayer maps that to its broadcast view on mobile. With no audio yet,
-     it routes to /onair (which shows the "being prepared" state).
+   - Home (center) — the PROMINENT raised brand anchor: the Sigil-O mark in the
+     News terracotta, larger than the side tabs, punching through the bar. Links
+     to "/". This is the center logo/anchor.
+   - On Air (left) — a standard side tab (icon + label), demoted from the old
+     raised disc but keeping a teal accent on its broadcast glyph + label.
+     Tapping it opens the full teal broadcast portal (FloatingPlayer's broadcast
+     view) as a full-height mobile sheet when a brief with audio is loaded; with
+     no audio yet it routes to /onair (the "being prepared" state). A small teal
+     dot marks the live/playing state.
    - More (right) — an up-chevron (NOT a hamburger) that slides the
      MobileMoreSheet up with the secondary destinations.
 
-   Active route shown via a top accent rule on the side tabs. Sits above the iOS
-   home indicator (safe-area-inset-bottom). Hidden on desktop via CSS.
+   Active route shown via a top accent rule on the side tabs / a ring on the
+   center anchor. Sits above the iOS home indicator (safe-area-inset-bottom).
+   Hidden on desktop via CSS.
    --------------------------------------------------------------------------- */
 
 interface MobileTabBarProps {
@@ -61,34 +63,17 @@ export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps)
 
   return (
     <nav className="mtb" aria-label="Primary navigation">
-      {/* ── Home (left) ── */}
-      <Link
-        href="/"
-        className={`mtb__tab${homeActive ? " mtb__tab--active" : ""}`}
-        aria-label="Home"
-        aria-current={homeActive ? "page" : undefined}
-        onClick={() => hapticMicro()}
-      >
-        <ScaleIcon
-          size={24}
-          animation="none"
-          className="mtb__mark"
-          style={{ ["--sigil-brass" as string]: "var(--palette-news)" }}
-        />
-        <span className="mtb__label">Home</span>
-      </Link>
-
-      {/* ── On Air (center, raised hero) ── */}
+      {/* ── On Air (left, demoted side tab with a teal accent) ── */}
       <button
         type="button"
-        className={`mtb__onair${isPlaying ? " mtb__onair--live" : ""}`}
+        className={`mtb__tab mtb__tab--onair${isPlaying ? " mtb__tab--onair-live" : ""}`}
         aria-label={isPlaying ? "On Air — playing" : "On Air"}
         onClick={handleOnAir}
       >
-        <span className="mtb__onair-disc">
+        <span className="mtb__onair-glyph">
           {/* Broadcast glyph — center dot with concentric radio-wave arcs */}
           <svg
-            className="mtb__onair-icon"
+            className="mtb__icon mtb__onair-icon"
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
@@ -102,9 +87,31 @@ export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps)
             <path d="M15.8 8.2 a5.4 5.4 0 0 1 0 7.6" />
             <path d="M18.9 5.1 a9.8 9.8 0 0 1 0 13.8" />
           </svg>
+          {/* Live dot — small teal pip when audio is playing. */}
+          {isPlaying && <span className="mtb__onair-live-dot" aria-hidden="true" />}
         </span>
         <span className="mtb__label mtb__label--onair">On Air</span>
       </button>
+
+      {/* ── Home (center, raised brand anchor) ── */}
+      <Link
+        href="/"
+        className={`mtb__home${homeActive ? " mtb__home--active" : ""}`}
+        aria-label="Home"
+        aria-current={homeActive ? "page" : undefined}
+        onClick={() => hapticMicro()}
+      >
+        <span className="mtb__home-disc">
+          <ScaleIcon
+            size={32}
+            animation="none"
+            className="mtb__mark"
+            /* White mark on the terracotta disc — brand-on-brand anchor. */
+            style={{ ["--sigil-brass" as string]: "#fff" }}
+          />
+        </span>
+        <span className="mtb__label mtb__label--home">Home</span>
+      </Link>
 
       {/* ── More (right, up-chevron sheet trigger) ── */}
       <button
