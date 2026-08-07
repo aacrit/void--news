@@ -20,11 +20,45 @@ Read-only. It never writes to the database and never calls an LLM.
 | **RF-3** | agreement | The headline has distinctive (high-IDF) stems and the summary shares **none** of them. **Judge candidate** (emits both texts). | WRONG (candidate) |
 | **RF-6** | duplication | Two top-50 clusters are the **same story** (re-runs `feed_ranker`'s near-dup shared-stem rules). Keeps the higher-sourced telling. | WRONG |
 | **RF-7** | junk | An evergreen / junk item in the feed (runs `newsworthiness()` over the titles). | WRONG |
-| **RF-5** | cohesion | An incoherent / **mis-titled bag**: `entity_convergence < 0.40` AND `avg_title_jaccard < 0.12` (the `MEGA_OVERMERGE_*` over-merge condition). **Judge candidate.** | WRONG (candidate) |
+| **RF-5** | cohesion | An incoherent / **mis-titled bag**: `entity_convergence < 0.40` AND `avg_title_jaccard < 0.12` (the `MEGA_OVERMERGE_*` over-merge condition), **corroborated** by an off-topic summary. **Judge candidate.** See the RF-5 recalibration note below. | WRONG or ACCEPTABLE (candidate) |
 | **RF-11** | hygiene | Em/en dashes or show-don't-tell / source-meta patterns in `summary`/`title`/`consensus_points`/`divergence_points`. | ACCEPTABLE |
 
 Priorities: **P0** when a finding touches the front page (top-10), otherwise
 **P1** (or **P2** for hygiene). Findings are sorted P0 > P1 > P2.
+
+### RF-5 recalibration (2026-08-07) — trustworthy cohesion WRONGs
+
+RF-5 recomputes cohesion from member **titles** only (the eval does not have the
+pipeline's in-memory NER entity sets), so a coherent BIG story with varied
+headlines (e.g. a 50-member Ebola outbreak, whose members share a topic but
+phrase their headlines many ways) fails both floors and used to be reported as a
+hard **WRONG** — a false positive that made RF-5's WRONGs untrustworthy.
+
+RF-5 now demands a **corroborating signal** before a hard WRONG: after both
+floors fail, it checks whether the cluster's **summary still tracks the members'
+dominant topic** (`_dominant_topic`, the same token vote RF-1 uses).
+
+- **WRONG** (P0/P1, trustworthy) only when: both floors fail **AND** the real
+  (NER-backed `_cluster_cohesion`) numbers were available **AND** the summary is
+  **off-topic** from the members. All three signals agree the bag is incoherent.
+- **ACCEPTABLE** (P2, low-confidence "verify" candidate) when the numbers are the
+  **title-only approximation** (`approximated=True`, no NER) **OR** the summary
+  still tracks the members' topic. The finding is clearly labeled
+  `title-only heuristic, verify` / `summary still on members' topic, verify` and
+  stays a judge candidate, so a coherent big story is surfaced for review but
+  never hard-failed on headline variance alone.
+
+Evidence now carries `summary_on_topic` and `low_confidence` flags; the judge
+payload carries the cluster `summary` (first ~400 chars) + `summary_tier` /
+`content_type` / `n_articles` so the resolution layer can act without re-querying.
+
+### Offending-card data on every finding
+
+Every **RF-4** finding and every **judge candidate** (RF-1 / RF-3 / RF-5) now
+emits the offending card's `summary` (first ~400 chars — RF-4; candidates carry
+the full/whole summary they already emitted), `summary_tier`, `content_type`, and
+`n_articles`, so the resolution/judge layer has the exact text it needs. RF-4
+previously named the card but never carried its summary text.
 
 ## Grade vocabulary
 

@@ -3339,9 +3339,11 @@ def main():
                 supabase, edition="world", limit=50, prefer_provider="gemini")
             print(
                 f"  Summary floor: {floor_metrics['checked']} final top-50 cards "
-                f"were tier=None → {floor_metrics['resummarized']} re-summarized "
-                f"(LLM), {floor_metrics['sanitized']} cleaned (rule-based), "
-                f"{floor_metrics['still_null']} still tier=None"
+                f"needed a summary (null OR raw excerpt) → "
+                f"{floor_metrics['resummarized']} re-summarized (LLM), "
+                f"{floor_metrics['sanitized']} cleaned (rule-based), "
+                f"{floor_metrics.get('raw_excerpts_replaced', 0)} raw excerpts "
+                f"replaced, {floor_metrics['still_null']} still without a summary"
             )
         except Exception as e:
             print(f"  [warn] Final-order summary floor failed: {e}")

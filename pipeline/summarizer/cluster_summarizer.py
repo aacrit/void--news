@@ -15,6 +15,7 @@ since their last Gemini summary are skipped (no API call).
 """
 
 import hashlib
+import re
 
 from .gemini_client import (
     generate_json as gemini_generate_json,
@@ -1623,6 +1624,22 @@ def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 
 _RULE_BASED_TIER_SUPPORTED = True
 
 
+def _floor_needs_summary(summary, tier, raw_check) -> bool:
+    """Decision predicate for the top-50 summary floor.
+
+    A displayed card needs a (re)generated summary when it has NO usable summary
+    at all OR its stored summary is a raw scraped excerpt the frontend hygiene
+    guard would BLANK — EVEN IF an earlier step (7b/8d) already stamped a
+    summary_tier on it (the prod bug: a tier'd card holding a raw excerpt slipped
+    past the old tier-only test and rendered blank). Returns False only for a card
+    that already carries a real, display-safe summary. `raw_check` is the
+    is_raw_excerpt guard (injected so the predicate stays import-light + testable).
+    """
+    summary = (summary or "").strip()
+    tier = (tier or "").strip()
+    return not (tier and summary and not raw_check(summary))
+
+
 def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = 50,
                                prefer_provider: str | None = "gemini",
                                title_only: bool = False) -> dict:
@@ -1661,12 +1678,21 @@ def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = 50
     step 8d.5's near-duplicate guard + story-type gates judge cleaned titles.
     The full summary-coverage guarantee runs AFTER 8d.5 with title_only=False.
 
-    Returns {checked, resummarized, sanitized, still_null, titles_cleaned}.
+    A card is treated as needing a summary when it has NO usable summary at all
+    OR its stored summary is a raw scraped excerpt the frontend hygiene guard
+    (summaryHygiene.ts) would blank — EVEN IF an earlier step already stamped a
+    summary_tier on it. This is the fix for the prod bug where a tier'd card
+    holding a raw excerpt slipped past the old tier-only test and rendered blank.
+    Every write is post-checked with is_raw_excerpt so the INVARIANT holds: after
+    this pass, no displayed card's stored summary satisfies is_raw_excerpt.
+
+    Returns {checked, resummarized, sanitized, still_null, titles_cleaned,
+    raw_excerpts_replaced}.
     """
     global _RULE_BASED_TIER_SUPPORTED
     rank_col = f"rank_{edition.replace('-', '_')}"
     metrics = {"checked": 0, "resummarized": 0, "sanitized": 0,
-               "still_null": 0, "titles_cleaned": 0}
+               "still_null": 0, "titles_cleaned": 0, "raw_excerpts_replaced": 0}
 
     # Lazy imports: heavy clustering/text deps are already loaded during a real
     # pipeline run; importing here keeps this module import-light for callers
@@ -1678,6 +1704,20 @@ def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = 50
             return t or ""
 
         def sanitize_summary(t):  # type: ignore
+            return t or ""
+    # Canonical raw-excerpt guard (single source of truth, mirrors the frontend
+    # summaryHygiene.ts the client blanks cards with). Fall back to no-op guards
+    # only if the module can't import (keeps this path import-light offline).
+    try:
+        from utils.summary_hygiene import (
+            is_raw_excerpt as _is_raw_excerpt,
+            clean_feed_summary as _clean_feed_summary,
+        )
+    except ImportError:
+        def _is_raw_excerpt(t):  # type: ignore
+            return False
+
+        def _clean_feed_summary(t, _title=None):  # type: ignore
             return t or ""
     try:
         from clustering.story_cluster import _generate_cluster_summary
@@ -1714,8 +1754,9 @@ def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = 50
         window_used += 1
         if (row.get("content_type") or "").lower() == "opinion":
             continue  # op-eds preserve original text by design — not a defect
-        if (row.get("summary_tier") or "").strip():
-            continue  # already has an LLM/rule-based summary
+        if not _floor_needs_summary(row.get("summary"), row.get("summary_tier"),
+                                    _is_raw_excerpt):
+            continue  # already has a clean, usable summary
         null_rows.append(row)
 
     if not null_rows:
@@ -1811,6 +1852,9 @@ def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = 50
         article_ids = by_cluster.get(cid, [])
         articles = [articles_by_id[aid] for aid in article_ids if aid in articles_by_id]
 
+        prior_summary = (row.get("summary") or "").strip()
+        prior_was_raw = bool(prior_summary) and _is_raw_excerpt(prior_summary)
+
         clean_title = (normalize_headline(title) or title).strip()
         cleaned_title_by_id[cid] = clean_title or title
         if _generate_cluster_summary is not None and articles:
@@ -1818,15 +1862,25 @@ def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = 50
         else:
             clean_summary = sanitize_summary(row.get("summary", "") or "")
         clean_summary = (clean_summary or "").strip()
+
+        # POST-CHECK: the (re)generated text must not ITSELF be a raw excerpt the
+        # frontend would blank (a broken member excerpt can survive the rule-based
+        # picker). clean_feed_summary returns "" when the text still looks raw.
+        if clean_summary and _is_raw_excerpt(clean_summary):
+            clean_summary = _clean_feed_summary(clean_summary).strip()
         if not clean_summary:
-            # No usable article text at all. Rather than leave a raw excerpt (or
-            # a NULL that renders one), fall back to the normalized headline as a
-            # clean, on-topic line. still_null is thus impossible whenever the
-            # cluster has a title.
+            # No usable / non-raw article text. Fall back to the normalized
+            # headline as a clean, on-topic line. still_null is thus impossible
+            # whenever the cluster has a title that is not itself raw.
             clean_summary = (clean_title or title or "").strip()
-        if not clean_summary:
-            # Truly nothing to work with (no articles, no title) — degenerate
-            # row; leave as-is.
+            if clean_summary and _is_raw_excerpt(clean_summary):
+                clean_summary = _clean_feed_summary(clean_summary).strip()
+        if not clean_summary or _is_raw_excerpt(clean_summary):
+            # Truly nothing clean to work with (no articles, and the title is
+            # empty or itself a raw signature) — degenerate row. Never write a
+            # raw summary: leave it for the frontend guard to blank to the neutral
+            # pending line and count it. The invariant (no displayed card's stored
+            # summary satisfies is_raw_excerpt) holds because we did NOT write.
             metrics["still_null"] += 1
             continue
 
@@ -1857,6 +1911,11 @@ def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = 50
                 continue
 
         metrics["sanitized"] += 1
+        if prior_was_raw:
+            # This card previously carried a summary_tier AND a raw scraped
+            # excerpt (the prod bug) — the frontend would have blanked it. It now
+            # holds clean text. Count the repair distinctly from plain null fills.
+            metrics["raw_excerpts_replaced"] += 1
         if _RULE_BASED_TIER_SUPPORTED:
             # Clean rule_based text landed. Eligible for the LLM upgrade in
             # pass 2 iff it has enough sources to summarize.

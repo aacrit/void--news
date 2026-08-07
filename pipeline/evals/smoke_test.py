@@ -34,6 +34,76 @@ def _mk(cluster_id, position, title, summary, member_titles,
     }
 
 
+def _test_floor_decision() -> None:
+    """BUG A: the top-50 summary floor must treat a card that carries a
+    summary_tier BUT a raw scraped excerpt as still needing a (re)generated
+    summary — while leaving a genuinely clean tier'd summary untouched and still
+    catching the genuinely-null case (no regression)."""
+    try:
+        from summarizer.cluster_summarizer import _floor_needs_summary
+    except Exception as e:  # google-genai etc. unavailable in a hermetic run
+        print(f"  [skip] floor-decision test: cluster_summarizer import "
+              f"unavailable ({e})")
+        return
+
+    raw = ("Photo: A protester walks past a burning barricade in the "
+           "capital - reuters.com")
+    clean = ("The Senate passed a bill after a late-night vote, sending it to "
+             "the House.")
+    assert checks.is_raw_excerpt(raw), "fixture 'raw' should read as raw-excerpt"
+    assert not checks.is_raw_excerpt(clean), "fixture 'clean' should read as prose"
+
+    # (a) THE FIX: a tier'd card holding a raw excerpt now needs a summary.
+    assert _floor_needs_summary(raw, "flash-lite", checks.is_raw_excerpt) is True, \
+        "tier'd raw-excerpt card was NOT flagged as needing a summary (BUG A)"
+    # (b) no regression: a genuinely-null card still needs one, tier or not.
+    assert _floor_needs_summary("", "", checks.is_raw_excerpt) is True
+    assert _floor_needs_summary("", "flash-lite", checks.is_raw_excerpt) is True
+    # (c) no over-triggering: a clean tier'd summary is left untouched.
+    assert _floor_needs_summary(clean, "flash-lite", checks.is_raw_excerpt) is False, \
+        "clean tier'd summary was wrongly flagged as needing regeneration"
+    # (d) a clean summary still lacking a tier stamp needs the floor to stamp it.
+    assert _floor_needs_summary(clean, "", checks.is_raw_excerpt) is True
+    print("  [ok] floor decision: tier'd raw excerpt flagged; clean tier'd left "
+          "alone; null still flagged")
+
+
+def _test_rf5_recalibration() -> None:
+    """BUG B: a coherent BIG story with high headline variance (fails both
+    title-only cohesion floors) whose summary still tracks the members' topic
+    must NOT be a hard WRONG — it is a low-confidence 'verify' candidate."""
+    ebola = _mk(
+        "c-ebola", 12,
+        "Ebola Outbreak Spreads in Congo",
+        "Congo faces a worsening Ebola outbreak as health workers race to "
+        "contain the virus across eastern provinces.",
+        [
+            "Health workers race to contain virus in eastern province",
+            "Congo declares emergency as disease death toll climbs",
+            "WHO deploys vaccines amid fresh hemorrhagic fever cases",
+            "Border screening tightens after new infections reported",
+            "Aid agencies warn of regional spread from Goma",
+            "Villagers flee as clinics overwhelmed by patients",
+            "Experimental treatment reaches remote frontline units",
+            "Government imposes quarantine on affected districts",
+        ],
+        source_count=42,
+    )
+    rf5 = [f for f in checks.check_cohesion([ebola]) if f.code == "RF-5"]
+    # The core guarantee: it is never a hard WRONG on headline variance alone.
+    assert not any(f.grade == "WRONG" for f in rf5), \
+        f"coherent big cluster was hard-WRONGed by RF-5: {[f.message for f in rf5]}"
+    # If flagged at all, it must be a clearly-labeled low-confidence candidate.
+    for f in rf5:
+        assert f.grade == "ACCEPTABLE", f"RF-5 grade was {f.grade}, expected ACCEPTABLE"
+        assert f.priority == "P2", f"RF-5 advisory priority was {f.priority}"
+        assert f.is_candidate, "RF-5 advisory should stay a judge candidate"
+        assert "verify" in f.message, f"RF-5 advisory not labeled verify: {f.message}"
+        assert f.evidence.get("low_confidence") is True
+    print(f"  [ok] RF-5 recalibration: coherent big cluster -> "
+          f"{'no finding' if not rf5 else 'ACCEPTABLE/verify candidate'} (not WRONG)")
+
+
 def main() -> int:
     # 1) CLEAN: summary matches the headline + members, has a tier, no dashes.
     clean = _mk(
@@ -114,6 +184,12 @@ def main() -> int:
     dash_findings = checks.check_hygiene([dashy])
     assert any(f.code == "RF-11" for f in dash_findings), \
         "em dash in summary did not raise RF-11"
+
+    # ---- BUG A: floor decision — a tier'd raw-excerpt card needs a summary ----
+    _test_floor_decision()
+
+    # ---- BUG B: RF-5 recalibration — coherent big cluster is not hard WRONG ---
+    _test_rf5_recalibration()
 
     print(f"SMOKE OK: {len(findings)} findings across {len(clusters)} clusters; "
           f"feed_score={score.feed_score}; candidates={score.n_candidates}")
