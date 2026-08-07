@@ -2535,7 +2535,7 @@ button:focus-visible .sigil-word__beam {
 .nav-dateline-inline {
   display: none;
   flex: 1;
-  text-align: right;
+  text-align: center;
   font-family: var(--font-data);
   font-size: var(--text-xs);
   color: var(--fg-muted);
