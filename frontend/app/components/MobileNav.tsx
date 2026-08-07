@@ -4,7 +4,6 @@ import { useState, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import MobileTabBar from "./MobileTabBar";
-import MobileMiniPlayer from "./MobileMiniPlayer";
 import { useAudio } from "./AudioProvider";
 import { AUDIO_ENABLED } from "../lib/audioGate";
 import { BASE_PATH } from "../lib/utils";
@@ -19,9 +18,14 @@ const MobileMoreSheet = dynamic(() => import("./MobileMoreSheet"), { ssr: false 
 const FloatingPlayer = dynamic(() => import("./FloatingPlayer"), { ssr: false });
 
 /* ---------------------------------------------------------------------------
-   MobileNav — Client wrapper that orchestrates MobileTabBar, MobileMoreSheet,
-   and MobileMiniPlayer. Placed in layout.tsx so it appears on every page.
-   Desktop: hidden via CSS on .mtb, .mms, .mmp.
+   MobileNav — Client wrapper that orchestrates MobileTabBar and MobileMoreSheet.
+   Placed in layout.tsx so it appears on every page. Desktop: hidden via CSS on
+   .mtb, .mms.
+
+   The horizontal MobileMiniPlayer strip (that used to sit above the tab bar) was
+   retired 2026-08-06 as redundant with the /onair destination page. Its file
+   (MobileMiniPlayer.tsx) is kept in the repo (unused) for reversibility, mirroring
+   how MobileSidePanel was retired.
    --------------------------------------------------------------------------- */
 
 export default function MobileNav() {
@@ -29,8 +33,6 @@ export default function MobileNav() {
   const pathname = usePathname();
   const { contentType } = useAudio();
   const route = pathname.replace(BASE_PATH, "") || "/";
-  // The /onair page is itself the player — suppress the redundant mini-player.
-  const onOnAir = route.startsWith("/onair");
   // The /ship "Mission Control" dashboard owns the viewport and has no place for
   // the On Air player chrome — suppress both audio players there. The global
   // MobileTabBar / side panel (site navigation, not audio) stay.
@@ -52,7 +54,6 @@ export default function MobileNav() {
 
   return (
     <>
-      {AUDIO_ENABLED && !onOnAir && !onShip && !suppressNewsChrome && <MobileMiniPlayer />}
       {/* Desktop floating player — global across all routes (incl. /weekly),
           hidden on mobile via CSS. Suppressed on /ship and on /history when the
           daily brief (not history audio) would otherwise be shown. */}
