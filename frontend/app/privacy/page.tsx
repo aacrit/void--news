@@ -6,7 +6,7 @@ import "./privacy.css";
 export const metadata: Metadata = {
   title: "Privacy | Void News",
   description:
-    "Void News collects no reader data. No accounts, no tracking, no analytics. This page describes what we do and do not collect, and the scope of our Instagram integration.",
+    "Void News collects no reader data. No accounts, no tracking, no analytics. This page describes what we do and do not collect.",
 };
 
 export default function PrivacyPage() {
@@ -59,50 +59,9 @@ export default function PrivacyPage() {
       </section>
 
       <section>
-        <h2>Instagram integration scope.</h2>
-        <p>
-          The <code>@voidvision.media</code> Instagram account is operated by Void
-          News and uses the official Instagram Graph API for the following
-          purposes:
-        </p>
-        <ul>
-          <li>
-            <strong>Publishing posts</strong> (Feed images, carousels,
-            Stories, and Reels) to the <code>@voidvision.media</code> account. Every
-            post is reviewed and approved by a human in our internal review
-            queue before publication.
-          </li>
-          <li>
-            <strong>Reading insights</strong> on our own posts (impressions,
-            reach, saves, shares, profile visits, link clicks). We use these
-            to learn which formats perform best and tune our schedule. No
-            third party receives this data.
-          </li>
-          <li>
-            <strong>Reading comments and direct messages on our own
-            content.</strong> We route press inquiries to a priority queue
-            so we can respond promptly. We do not scrape comments or DMs
-            from any other account.
-          </li>
-          <li>
-            <strong>Reading mentions and hashtag results.</strong> We monitor
-            public posts that tag <code>@voidvision.media</code> or use our owned
-            hashtags so we can engage substantively. We store only the post
-            ID and timestamp.
-          </li>
-        </ul>
-        <p>
-          We do not buy or sell data. We do not transfer Instagram-derived
-          data to any third party except where Meta itself processes it as
-          part of the API request.
-        </p>
-      </section>
-
-      <section>
         <h2>What we do not do.</h2>
         <ul>
           <li>We do not run advertising or paid promotion of any kind.</li>
-          <li>We do not auto-follow, auto-unfollow, auto-like, or auto-DM. All such activity violates the Instagram Platform Terms and would compromise the editorial credibility this account exists to build.</li>
           <li>We do not personalize the news feed for any reader. The same stories appear in the same order for everyone, every day.</li>
         </ul>
       </section>
@@ -120,9 +79,7 @@ export default function PrivacyPage() {
         <p>
           Article text is retained until the cleanup job removes stale rows
           (currently 30 days for unranked articles, longer for clustered
-          stories). Instagram insights are retained indefinitely for our own
-          analysis. Direct messages we receive are retained until the
-          conversation is resolved, then archived.
+          stories).
         </p>
       </section>
 
