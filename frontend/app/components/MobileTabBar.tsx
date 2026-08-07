@@ -13,7 +13,7 @@ import ScaleIcon from "./ScaleIcon";
 
    Three zones, "raised center brand anchor between two side tabs":
 
-       [ On Air ]        (( Home ))        [ More ^ ]
+       [ On Air ]        (( Home ))        [ Menu ]
 
    - Home (center) — the PROMINENT raised brand anchor: the Sigil-O mark in the
      News terracotta, larger than the side tabs, punching through the bar. Links
@@ -23,8 +23,9 @@ import ScaleIcon from "./ScaleIcon";
      Tapping it always navigates to the dedicated /onair broadcast page (On Air
      is a first-class destination, not a floating overlay). A small teal dot
      marks the live/playing state.
-   - More (right) — an up-chevron (NOT a hamburger) that slides the
-     MobileMoreSheet up with the secondary destinations.
+   - Menu (right) — a hamburger (three horizontal lines) that slides the
+     MobileSidePanel drawer in from the right with the complete secondary nav
+     + info surface.
 
    Active route shown via a top accent rule on the side tabs / a ring on the
    center anchor. Sits above the iOS home indicator (safe-area-inset-bottom).
@@ -105,21 +106,22 @@ export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps)
         <span className="mtb__label mtb__label--home">Home</span>
       </Link>
 
-      {/* ── More (right, up-chevron sheet trigger) ── */}
+      {/* ── Menu (right, hamburger drawer trigger) ── */}
       <button
         type="button"
         className={`mtb__tab${moreOpen ? " mtb__tab--active" : ""}`}
         aria-expanded={moreOpen}
         aria-haspopup="dialog"
-        aria-label="More"
+        aria-label="Menu"
         onClick={() => {
           hapticMicro();
           onMoreTap();
         }}
       >
-        {/* Up-chevron — signals a sheet rising from the bottom (not a hamburger) */}
+        {/* Hamburger — three horizontal lines, signals the side drawer of
+            secondary navigation + info. */}
         <svg
-          className={`mtb__icon mtb__chevron${moreOpen ? " mtb__chevron--open" : ""}`}
+          className="mtb__icon mtb__hamburger"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -128,9 +130,11 @@ export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps)
           strokeLinejoin="round"
           aria-hidden="true"
         >
-          <path d="M6 15l6-6 6 6" />
+          <path d="M4 7h16" />
+          <path d="M4 12h16" />
+          <path d="M4 17h16" />
         </svg>
-        <span className="mtb__label">More</span>
+        <span className="mtb__label">Menu</span>
       </button>
     </nav>
   );
