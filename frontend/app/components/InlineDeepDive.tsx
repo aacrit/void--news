@@ -530,6 +530,12 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
             data={story.sigilData}
             sourceCount={sourceCount}
             variant="inline"
+            /* The Spread section below plots the full L->R distribution via
+               DeepDiveSpectrum (gated on spectrumSources.length > 0). When that
+               renders, the small segmented LeanCoverageBar restates it, so hide
+               it; keep it as the only coverage signal when the spectrum is
+               absent (too few scored sources). */
+            hideCoverageBar={spectrumSources.length > 0}
           />
         )}
       </header>

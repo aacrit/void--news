@@ -5,14 +5,15 @@
 
 /* ---------------------------------------------------------------------------
    MobileTabBar (.mtb) — the single primary nav surface.
-   Three zones, "lean bar + raised hero":
+   Three zones, "raised center anchor between two side tabs":
 
-       [ Home ]        (( On Air ))        [ More ^ ]
+       [ On Air ]        (( Home ))        [ More ^ ]
 
-   Home = the Sigil-O mark (terracotta); On Air = a PROMINENT raised teal disc
-   (the broadcast hero); More = an up-chevron that raises the MobileMoreSheet.
-   Side tabs are >=44px tap targets; the On Air disc is 52px. Sits above the iOS
-   home indicator (safe-area-inset-bottom). Hidden on desktop.
+   Home = a PROMINENT raised terracotta disc holding the Sigil-O mark (the brand
+   anchor); On Air = a standard side tab with a teal accent glyph + label; More =
+   an up-chevron that raises the MobileMoreSheet. Side tabs are >=44px tap
+   targets; the Home disc is 52px. Sits above the iOS home indicator
+   (safe-area-inset-bottom). Hidden on desktop.
    --------------------------------------------------------------------------- */
 
 .mtb {
@@ -88,7 +89,7 @@
   }
 
   /* Home Sigil-O mark — color is driven by its own --sigil-brass override
-     (terracotta), so it stays on-brand regardless of active state. */
+     (white on the terracotta disc), so it stays on-brand in both themes. */
   .mtb__mark {
     flex-shrink: 0;
   }
@@ -122,8 +123,8 @@
     border-radius: 0 0 2px 2px;
   }
 
-  /* ── On Air (center, raised hero) ── */
-  .mtb__onair {
+  /* ── Home (center, raised brand anchor) ── */
+  .mtb__home {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -132,6 +133,7 @@
     flex: 1;
     min-width: 44px;
     padding: var(--space-1);
+    text-decoration: none;
     background: none;
     border: none;
     cursor: pointer;
@@ -140,58 +142,90 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* Raised teal disc — punches through the bar with a background-colored ring
-     so it reads as elevated. Uses the On Air brand teal (--voice-accent). */
-  .mtb__onair-disc {
+  /* Raised terracotta disc — punches through the bar with a background-colored
+     ring so it reads as the elevated center brand anchor. Uses the News
+     terracotta (--palette-news). */
+  .mtb__home-disc {
     display: grid;
     place-items: center;
     width: 52px;
     height: 52px;
     margin-top: -16px;
     border-radius: 50%;
-    background: var(--voice-accent);
-    /* On-teal glyph color — a fixed light foreground (like the desktop console
-       glows) since there is no themed on-accent token. */
-    color: #fff;
+    background: var(--palette-news);
     border: 3px solid var(--bg-primary);
     box-shadow:
-      0 4px 14px color-mix(in srgb, var(--voice-accent) 40%, transparent),
+      0 4px 14px color-mix(in srgb, var(--palette-news) 40%, transparent),
       0 1px 3px color-mix(in srgb, #000 20%, transparent);
     transition: transform 120ms var(--ease-cinematic), box-shadow 300ms var(--ease-cinematic);
   }
 
-  .mtb__onair:active .mtb__onair-disc {
+  .mtb__home:active .mtb__home-disc {
     transform: scale(0.92);
     transition-duration: 50ms;
   }
 
-  .mtb__onair-icon {
-    width: 26px;
-    height: 26px;
-    display: block;
+  /* The Sigil-O mark sits on the terracotta disc rendered light so it reads
+     as the brand-on-brand anchor mark. */
+  .mtb__home-disc .mtb__mark {
+    --sigil-brass: #fff;
+    flex-shrink: 0;
   }
 
-  /* Playing — a breathing teal halo signals live audio. */
-  .mtb__onair--live .mtb__onair-disc {
-    animation: mtbOnairPulse 2.4s var(--ease-rack, ease-in-out) infinite;
+  /* Active Home: a soft terracotta ring around the disc marks the current route
+     without swapping the mark. */
+  .mtb__home--active .mtb__home-disc {
+    box-shadow:
+      0 4px 14px color-mix(in srgb, var(--palette-news) 45%, transparent),
+      0 0 0 3px color-mix(in srgb, var(--palette-news) 22%, transparent),
+      0 1px 3px color-mix(in srgb, #000 20%, transparent);
   }
 
-  @keyframes mtbOnairPulse {
-    0%, 100% {
-      box-shadow:
-        0 4px 14px color-mix(in srgb, var(--voice-accent) 40%, transparent),
-        0 0 0 0 color-mix(in srgb, var(--voice-accent) 30%, transparent);
-    }
-    50% {
-      box-shadow:
-        0 4px 18px color-mix(in srgb, var(--voice-accent) 55%, transparent),
-        0 0 0 6px color-mix(in srgb, var(--voice-accent) 12%, transparent);
-    }
+  .mtb__label--home {
+    color: var(--palette-news);
+    font-weight: 700;
+  }
+
+  /* ── On Air (left, demoted side tab with a teal accent) ── */
+  /* Layout comes from .mtb__tab; these rules only tint the glyph + label with
+     the On Air brand teal (--voice-accent) so the tab still stands out a touch. */
+  .mtb__onair-glyph {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+  }
+
+  .mtb__tab--onair .mtb__onair-icon {
+    color: var(--voice-accent);
   }
 
   .mtb__label--onair {
     color: var(--voice-accent);
     font-weight: 700;
+  }
+
+  /* Live dot — a small teal pip in the glyph corner while audio is playing. */
+  .mtb__onair-live-dot {
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--voice-accent);
+    border: 1.5px solid var(--bg-primary);
+    animation: mtbOnairLivePulse 2.4s var(--ease-rack, ease-in-out) infinite;
+  }
+
+  @keyframes mtbOnairLivePulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--voice-accent) 45%, transparent);
+    }
+    50% {
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--voice-accent) 0%, transparent);
+    }
   }
 }
 
@@ -896,12 +930,12 @@
   .mtb__chevron {
     transition: none;
   }
-  /* On Air raised disc — no press scale, no live halo pulse. */
-  .mtb__onair:active .mtb__onair-disc {
+  /* Home raised disc — no press scale. On Air live dot — no pulse. */
+  .mtb__home:active .mtb__home-disc {
     transform: none;
     transition: none;
   }
-  .mtb__onair--live .mtb__onair-disc {
+  .mtb__onair-live-dot {
     animation: none;
   }
   .mmp__play:active {
