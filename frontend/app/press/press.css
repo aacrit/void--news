@@ -242,8 +242,9 @@
 }
 
 .press-copy[data-copied="true"] {
-  color: var(--bias-center);
-  border-color: var(--bias-center);
+  color: var(--palette-news-ink);
+  border-color: var(--palette-news);
+  background: var(--bg-card);
 }
 
 /* ── What you can cite ──────────────────────────────────────────────────── */
