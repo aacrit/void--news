@@ -34,6 +34,22 @@
 /* ---- Tablet (768px+) --------------------------------------------------- */
 
 @media (min-width: 768px) {
+  /* F01: 4-line clamp on multi-column grid — more room for long headlines.
+     Applies at every desktop/tablet width (kept unbounded so 1024/1440 keep
+     the 4-line measure). */
+  .story-card__headline-text {
+    -webkit-line-clamp: 4;
+  }
+}
+
+/* ---- Feed column rules: 2-col (768-1023) ------------------------------
+   Broadsheet column separators are per-item border-rights. Each breakpoint's
+   rules are bounded to its own width band (768-1023 / 1024-1439 / 1440+) so no
+   breakpoint's nth-child logic leaks into another via specificity — the source
+   of the previous inconsistent/doubled column rules. One clean rule per column
+   boundary; the row-facing edge (nth-child of the last-in-row) and the final
+   card drop their right border so no line dangles into empty space. */
+@media (min-width: 768px) and (max-width: 1023px) {
   .feed-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 0 var(--space-5);
@@ -44,14 +60,10 @@
     padding-right: var(--space-5);
   }
 
-  .feed-grid__item:nth-child(2n) {
+  .feed-grid__item:nth-child(2n),
+  .feed-grid__item:last-child {
     border-right: none;
     padding-right: 0;
-  }
-
-  /* F01: 4-line clamp on 2-col grid — more room for long headlines */
-  .story-card__headline-text {
-    -webkit-line-clamp: 4;
   }
 }
 
@@ -74,9 +86,12 @@
   }
 }
 
-/* ---- Desktop (1024px+) ------------------------------------------------- */
-
-@media (min-width: 1024px) {
+/* ---- Feed column rules: 3-col (1024-1439) -----------------------------
+   Self-contained band. All items carry a right border + symmetric gutters;
+   the first-in-row (3n+1) drops its left padding to sit flush at the canvas
+   edge; the last-in-row (3n) and the final card drop the right border/padding
+   so the column rule never dangles. No leaked 2-col compensation needed. */
+@media (min-width: 1024px) and (max-width: 1439px) {
   .feed-grid {
     grid-template-columns: repeat(3, 1fr);
     gap: 0 var(--space-5);
@@ -84,48 +99,35 @@
 
   .feed-grid__item {
     border-right: var(--rule-thin);
-    padding-right: var(--space-5);
     padding-left: var(--space-5);
+    padding-right: var(--space-5);
   }
 
   .feed-grid__item:nth-child(3n+1) {
     padding-left: 0;
   }
 
-  /* Reset 2-col rule from 768px breakpoint so the 3-col layout takes over */
-  .feed-grid__item:nth-child(2n) {
-    border-right: var(--rule-thin);
-    padding-right: var(--space-5);
-  }
-
-  .feed-grid__item:nth-child(3n) {
+  .feed-grid__item:nth-child(3n),
+  .feed-grid__item:last-child {
     border-right: none;
     padding-right: 0;
   }
-
-  .feed-grid__item:last-child {
-    border-right: none;
-  }
-
 }
 
-/* ---- Wide Desktop (1280px+) -------------------------------------------- */
-
-@media (min-width: 1280px) {
-  /* 1280: keep 3-col compact — enough room for footer without overflow */
-}
-
-/* ---- Very Wide (1440px+) ----------------------------------------------- */
-
+/* ---- Feed column rules: 4-col (1440+) ---------------------------------
+   Ultra-wide 4-column unified grid. Same self-contained pattern as the 3-col
+   band, re-derived for 4 columns (4n+1 first-in-row, 4n last-in-row). Bounding
+   the 3-col band to <=1439 stops its 3n / 3n+1 rules from misaligning the
+   4-col gutters (the prior cause of uneven column padding at 1440). */
 @media (min-width: 1440px) {
-  /* Ultra-wide: 4-column unified grid — balances density with readability */
   .feed-grid {
     grid-template-columns: repeat(4, 1fr);
     gap: 0 var(--space-5);
   }
 
-  .feed-grid__item:nth-child(3n) {
+  .feed-grid__item {
     border-right: var(--rule-thin);
+    padding-left: var(--space-5);
     padding-right: var(--space-5);
   }
 
@@ -133,13 +135,10 @@
     padding-left: 0;
   }
 
-  .feed-grid__item:nth-child(4n) {
-    border-right: none;
-    padding-right: 0;
-  }
-
+  .feed-grid__item:nth-child(4n),
   .feed-grid__item:last-child {
     border-right: none;
+    padding-right: 0;
   }
 }
 

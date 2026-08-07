@@ -463,10 +463,13 @@
 
 
 /* ===========================================================================
-   Feed-start boundary line
-   A calm, quiet divider between the daily brief module ("about the day") and
-   the first story ("the day"). Centered mono label flanked by hairline rules
-   on both sides. Token-driven, works in light + dark.
+   Feed-start boundary line — "Today's Top Stories"
+   The primary top-story signal now that the per-card "Top Story" badge is gone
+   (2026-08-06). A branded section marker: mono uppercase small-caps label in
+   the clay accent, flanked by hairline rules that carry a short clay tick at
+   the label-facing end and fade to the neutral hairline across the rest of
+   their length. Tasteful and calm — a light accent, not a loud bar. Both the
+   clay tokens and the hairline token are theme-aware (light + dark).
    =========================================================================== */
 .feed-start {
   display: flex;
@@ -475,10 +478,12 @@
   margin: var(--space-4) 0;
   font-family: var(--font-data);
   font-size: var(--text-xxs);
-  font-weight: 500;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--fg-muted);
+  letter-spacing: 0.1em;
+  /* Clay ink variant — the AA-safe small-text terracotta (light #9A5638 /
+     dark #D89A7C), the brand accent for this now-primary section marker. */
+  color: var(--palette-news-ink);
   user-select: none;
 }
 
@@ -487,5 +492,22 @@
   content: "";
   flex: 1 1 auto;
   height: 1px;
-  background: var(--border-subtle);
+  /* Neutral hairline for the run of the rule, with a ~32px clay tick fading in
+     toward the label so the marker reads as branded without a loud bar. */
+  background: linear-gradient(
+    to right,
+    var(--border-subtle) 0%,
+    var(--border-subtle) calc(100% - 32px),
+    var(--palette-news) 100%
+  );
+}
+
+/* The trailing rule mirrors the tick so the clay sits on the label side. */
+.feed-start::after {
+  background: linear-gradient(
+    to left,
+    var(--border-subtle) 0%,
+    var(--border-subtle) calc(100% - 32px),
+    var(--palette-news) 100%
+  );
 }
