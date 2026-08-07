@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS printed_days (
 CREATE TABLE IF NOT EXISTS printed_stories (
   id                    UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   printed_on            DATE NOT NULL REFERENCES printed_days(printed_on),
-  position              SMALLINT NOT NULL CHECK (position BETWEEN 1 AND 50),
+  edition_position              SMALLINT NOT NULL CHECK (edition_position BETWEEN 1 AND 50),
   source_cluster_id     UUID NOT NULL,
   title                 TEXT NOT NULL,
   summary               TEXT,
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS printed_stories (
   CONSTRAINT uq_printed_day_cluster UNIQUE (printed_on, source_cluster_id)
 );
 
-CREATE INDEX IF NOT EXISTS idx_printed_day_pos        ON printed_stories (printed_on DESC, position ASC);
+CREATE INDEX IF NOT EXISTS idx_printed_day_pos        ON printed_stories (printed_on DESC, edition_position ASC);
 CREATE INDEX IF NOT EXISTS idx_printed_source_cluster ON printed_stories (source_cluster_id, printed_on DESC);
 CREATE INDEX IF NOT EXISTS idx_printed_thread         ON printed_stories (story_thread_id, printed_on ASC);
 CREATE INDEX IF NOT EXISTS idx_printed_category_day   ON printed_stories (category, printed_on DESC);
@@ -132,7 +132,7 @@ RETURNS TABLE (
   source_cluster_id UUID,
   story_thread_id   UUID,
   printed_on        DATE,
-  position          SMALLINT,
+  edition_position          SMALLINT,
   title             TEXT,
   summary           TEXT,
   category          TEXT,
@@ -156,7 +156,7 @@ AS $$
       ps.source_cluster_id,
       ps.story_thread_id,
       ps.printed_on,
-      ps.position,
+      ps.edition_position,
       ps.title,
       ps.summary,
       ps.category,
@@ -189,7 +189,7 @@ AS $$
     SELECT * FROM scored WHERE NOT collapse_threads
   )
   SELECT
-    id, source_cluster_id, story_thread_id, printed_on, position,
+    id, source_cluster_id, story_thread_id, printed_on, edition_position,
     title, summary, category, source_count, mean_lean, polarization,
     thread_printings, rank
   FROM final
