@@ -15,9 +15,9 @@ interface MobileStoryCardProps {
   kbdFocused?: boolean;
   /** "hero" = lead story with summary; "compact" = headline + inline Sigil only */
   variant?: "hero" | "compact";
-  /** v3 (2026-05-14): when true, this hero is one of a co-equal twin pair —
-      shows the "Top Story" badge above the headline. Solo heroes (legacy
-      single-lead pages) skip the badge to keep the visual quieter. */
+  /** v3 (2026-05-14): when true, this hero is one of a co-equal twin pair.
+      Since 2026-08-06 this only adds a screen-reader-only "Top story" cue
+      (the visual badge was removed; the accented divider carries the signal). */
   twin?: boolean;
 }
 
@@ -87,8 +87,11 @@ export default function MobileStoryCard({
            Text-only per CEO 2026-05-13 — no photograph. The Sigil + Playfair
            headline carry the editorial moment. */
         <>
-          {/* "Top Story" badge — both twin leads wear it. Solo hero skips. */}
-          {twin && <span className="lead-story__badge msc__badge">Top Story</span>}
+          {/* Visual "Top Story" badge removed 2026-08-06 — the accented
+              "Today's Top Stories" divider + position now carry the signal,
+              so the per-card badge was a redundant third marker. The semantic
+              cue is preserved for assistive tech only. */}
+          {twin && <span className="sr-only">Top story. </span>}
           {/* Hero headline is page <h1> when this card is rank 0 (the
               feed's top story on mobile). Falls back to <h2> for any other
               "hero" usage. UAT 2026-05-13 P0-5 — zero-<h1> page outline. */}

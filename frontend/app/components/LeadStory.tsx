@@ -38,9 +38,11 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, t
   const useSplit = rank === 0 || twin;
   const verdict = classifyCoverage(story);
 
-  // Twin leads are co-equal Top Stories: both wear the badge. Solo rank-0
-  // also wears it. Secondary (rank 1+ in non-twin mode) does not.
-  const showBadge = rank === 0 || twin;
+  // Top-story signal now lives in the accented "Today's Top Stories" divider
+  // above the feed plus position #1, so the per-card "Top Story" badge was
+  // removed (2026-08-06) — it was a third redundant marker that pushed the
+  // headline down. `isTop` drives only a screen-reader-only label now.
+  const isTop = rank === 0 || twin;
 
   // Headline is <h1> for the primary lead (rank 0 OR first twin) to satisfy
   // SEO/a11y "one h1 per page." A second twin lead uses <h2>.
@@ -48,12 +50,11 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, t
   const textContent = (
     <div data-slot="text" className={useSplit ? "lead-split__text" : undefined}>
       <HeadingTag className={useSplit ? "lead-headline" : "lead-story__headline"}>
+        {/* Screen-reader-only "Top story" — the visual badge was removed
+            2026-08-06 (the accented divider + position #1 carry the signal),
+            but the semantic cue is preserved for assistive tech. */}
+        {isTop && <span className="sr-only">Top story. </span>}
         <span className={useSplit ? undefined : "lead-story__headline-text"}>{story.title}</span>
-        {/* Badge moved inline with the Sigil (v6.2, 2026-05-15) — sits in the
-            same row as the source-count Sigil to reclaim the ~24px vertical
-            real estate it used to occupy above the headline. Both leads in a
-            twin layout wear it; solo rank-0 also wears it. */}
-        {showBadge && <span className="lead-story__badge lead-story__badge--inline">Top Story</span>}
         <Sigil data={story.sigilData} size={twin ? "lg" : "xl"} storyId={story.id} />
         <CaretRight
           size={16}
