@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import LogoWordmark from "./LogoWordmark";
 import ThemeToggle from "./ThemeToggle";
+import ScaleIcon from "./ScaleIcon";
 import { hapticLight } from "../lib/haptics";
 import { BASE_PATH, getEditionTimestamp } from "../lib/utils";
 import { fetchLastPipelineRun } from "../lib/supabase";
@@ -18,16 +19,21 @@ import { fetchLastPipelineRun } from "../lib/supabase";
    masthead info the mobile top chrome drops: the edition build time, the source
    count, and the light/dark theme control.
 
-   IA (grouped with small section labels):
+   IA (one flat, icon-led list — no section labels):
      Header  — Void News wordmark + tagline "See through the void."
-     Read    — Today's Feed (/), On Air (/onair)
-     Explore — Sources (/sources)
-     Participate — Feedback (/ship)
-     About Void News — About (/about) · Press (/press) · Privacy (/privacy)
+     Today's Feed (/)   — PRIMARY. Terracotta Sigil-O mark (--palette-news), the
+                          same accent the bottom tab bar's Home anchor wears.
+     On Air (/onair)    — PRIMARY. Teal broadcast glyph (--voice-accent), the
+                          same accent the tab bar's On Air tab wears.
+     Sources (/sources) — peer row, muted layers icon.
+     Feedback (/ship)   — peer row, muted chat icon.
+     About · Press · Privacy — quiet inline utility trio, subordinate.
      Info bar — "Edition as of {time}", "1,016 sources across 158 countries",
                 ThemeToggle
 
-   History + Weekly are intentionally omitted (hidden for launch).
+   History + Weekly are intentionally omitted (hidden for launch). The four main
+   rows share one layout: leading icon + command (editorial voice) + description
+   (structural voice), full-width tap target, accent rail on the active route.
 
    Accessibility / interaction:
    - role="dialog" aria-modal; focus moves into the drawer on open, Tab/Shift+Tab
@@ -44,23 +50,63 @@ interface MobileSidePanelProps {
   onClose: () => void;
 }
 
+type NavIcon = "feed" | "onair" | "sources" | "feedback";
+
 interface NavItem {
   href: string;
   label: string;
   desc: string;
-  accent?: string;
+  /** Drives --msp-accent (rail/wash) and --msp-icon (icon color) in CSS. */
+  accent: "news" | "onair" | "neutral";
+  icon: NavIcon;
 }
 
-const READ_ITEMS: NavItem[] = [
-  { href: "/", label: "Today’s Feed", desc: "The front page, 50 stories", accent: "neutral" },
-  { href: "/onair", label: "On Air", desc: "The broadcast", accent: "onair" },
+// One flat list. Two navbar-accented primary rows (Feed terracotta, On Air
+// teal — matching their MobileTabBar counterparts) then two muted peer rows.
+const MAIN_ITEMS: NavItem[] = [
+  { href: "/", label: "Today’s Feed", desc: "The front page, 50 stories.", accent: "news", icon: "feed" },
+  { href: "/onair", label: "On Air", desc: "The broadcast.", accent: "onair", icon: "onair" },
+  { href: "/sources", label: "Sources", desc: "1,016 sources, 158 countries.", accent: "neutral", icon: "sources" },
+  { href: "/ship", label: "Feedback", desc: "Tell us what to build or fix.", accent: "neutral", icon: "feedback" },
 ];
-const EXPLORE_ITEMS: NavItem[] = [
-  { href: "/sources", label: "Sources", desc: "1,016 sources, 158 countries", accent: "neutral" },
-];
-const PARTICIPATE_ITEMS: NavItem[] = [
-  { href: "/ship", label: "Feedback", desc: "Tell us what to build or fix", accent: "neutral" },
-];
+
+// Leading row glyphs. The Feed mark is the ScaleIcon Sigil-O (same mark the tab
+// bar anchor uses); the On Air glyph is the concentric radio-wave broadcast SVG
+// (same as MobileTabBar). Color flows from currentColor / --sigil-brass, which
+// the .msp__link-icon rule pins to the row's --msp-icon accent.
+function NavGlyph({ icon }: { icon: NavIcon }) {
+  if (icon === "feed") {
+    // --sigil-brass follows currentColor via CSS so the mark wears the row accent.
+    return <ScaleIcon size={24} animation="none" />;
+  }
+  if (icon === "onair") {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="1.75" fill="currentColor" stroke="none" />
+        <path d="M8.2 8.2 a5.4 5.4 0 0 0 0 7.6" />
+        <path d="M5.1 5.1 a9.8 9.8 0 0 0 0 13.8" />
+        <path d="M15.8 8.2 a5.4 5.4 0 0 1 0 7.6" />
+        <path d="M18.9 5.1 a9.8 9.8 0 0 1 0 13.8" />
+      </svg>
+    );
+  }
+  if (icon === "sources") {
+    // Stacked layers — the layered source corpus.
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M12 3 4 7.5l8 4.5 8-4.5-8-4.5Z" />
+        <path d="M4 12l8 4.5 8-4.5" />
+        <path d="M4 16.5l8 4.5 8-4.5" />
+      </svg>
+    );
+  }
+  // feedback — chat bubble.
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.5 8.5 0 0 1-.9-3.8 8.38 8.38 0 0 1 8.5-8.5A8.5 8.5 0 0 1 21 11.5Z" />
+    </svg>
+  );
+}
 
 export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
@@ -234,9 +280,15 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
 
   const handleLinkClick = useCallback(() => {
     hapticLight();
-    // Link navigation proceeds; just drop the visual drawer + our history entry.
-    requestClose();
-  }, [requestClose]);
+    // Link navigation MUST proceed. Do NOT call requestClose()/history.back()
+    // here: unwinding our throwaway pushState entry races the <Link>'s own
+    // pushState, bouncing the route so only the drawer closes and navigation is
+    // lost. Instead release ownership of the entry and close the drawer visually;
+    // the <Link> then navigates normally. A redundant history entry left under
+    // the new route is harmless; a dead link is not.
+    historyPushedRef.current = false;
+    onCloseRef.current();
+  }, []);
 
   const renderItem = (item: NavItem, cascade: number) => {
     const active = isActive(item.href);
@@ -245,13 +297,18 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
         key={item.href}
         href={item.href}
         className={`msp__link${active ? " msp__link--active" : ""}`}
-        data-accent={item.accent ?? "neutral"}
+        data-accent={item.accent}
         data-msp-cascade={cascade}
         aria-current={active ? "page" : undefined}
         onClick={handleLinkClick}
       >
-        <span className="msp__link-cmd">{item.label}</span>
-        <span className="msp__link-desc">{item.desc}</span>
+        <span className="msp__link-icon" aria-hidden="true">
+          <NavGlyph icon={item.icon} />
+        </span>
+        <span className="msp__link-text">
+          <span className="msp__link-cmd">{item.label}</span>
+          <span className="msp__link-desc">{item.desc}</span>
+        </span>
       </Link>
     );
   };
@@ -284,29 +341,21 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
           <span className="msp__header-tagline">See through the void.</span>
         </div>
 
-        {/* Grouped navigation — Read / Explore / Participate + a quieter
-            About Void News utility group. */}
+        {/* One flat, icon-led list. Two accented primary rows (Feed, On Air)
+            then two muted peer rows (Sources, Feedback), then a quiet utility
+            trio subordinated below an organic ink divider. */}
         <nav className="msp__links" aria-label="Site navigation">
-          <span className="msp__section-label" data-msp-cascade="2">Read</span>
-          {READ_ITEMS.map((item) => renderItem(item, 2))}
+          {renderItem(MAIN_ITEMS[0], 2)}
+          {renderItem(MAIN_ITEMS[1], 2)}
+          {renderItem(MAIN_ITEMS[2], 3)}
+          {renderItem(MAIN_ITEMS[3], 3)}
 
-          <svg className="msp__divider" data-msp-cascade="3" viewBox="0 0 200 4" preserveAspectRatio="none" aria-hidden="true">
+          <svg className="msp__divider" data-msp-cascade="4" viewBox="0 0 200 4" preserveAspectRatio="none" aria-hidden="true">
             <path d="M0,2 C25,0.5 50,3.5 75,2 C100,0.5 125,3 150,2 C175,1 200,3 200,2" />
           </svg>
 
-          <span className="msp__section-label" data-msp-cascade="3">Explore</span>
-          {EXPLORE_ITEMS.map((item) => renderItem(item, 3))}
-
-          <svg className="msp__divider" data-msp-cascade="4" viewBox="0 0 200 4" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M0,2 C30,3.2 55,0.8 80,2 C105,3.2 130,0.8 160,2 C180,3 200,1.5 200,2" />
-          </svg>
-
-          <span className="msp__section-label" data-msp-cascade="4">Participate</span>
-          {PARTICIPATE_ITEMS.map((item) => renderItem(item, 4))}
-
-          {/* About Void News — quieter utility group */}
-          <span className="msp__section-label" data-msp-cascade="5">About Void News</span>
-          <div className="msp__util" data-msp-cascade="5">
+          {/* About Void News — quieter utility trio, subordinate to the rows above */}
+          <div className="msp__util" data-msp-cascade="4">
             <Link
               href="/about"
               className={`msp__util-link${isActive("/about") ? " msp__util-link--active" : ""}`}
