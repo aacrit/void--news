@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import LogoIcon from "./LogoIcon";
 import LogoWordmark from "./LogoWordmark";
 
@@ -36,8 +37,20 @@ export default function Footer({ lastUpdated }: FooterProps) {
         </div>
         <p className="footer-tagline">See through the void.</p>
 
-        {/* Product links intentionally omitted — they already live in the top
-            nav + mobile side panel. Repeating them here was redundant. */}
+        {/* Desktop discoverability: the top nav only toggles Feed/Sources and
+            the mobile side panel carries the rest, so the footer links the
+            remaining pages for desktop readers. */}
+        <nav className="footer-links" aria-label="Site pages">
+          <Link href="/about" className="footer-link">About</Link>
+          <span className="footer-link__sep" aria-hidden="true">&middot;</span>
+          <Link href="/sources" className="footer-link">Sources</Link>
+          <span className="footer-link__sep" aria-hidden="true">&middot;</span>
+          <Link href="/ship" className="footer-link">Feedback</Link>
+          <span className="footer-link__sep" aria-hidden="true">&middot;</span>
+          <Link href="/press" className="footer-link">Press</Link>
+          <span className="footer-link__sep" aria-hidden="true">&middot;</span>
+          <Link href="/privacy" className="footer-link">Privacy</Link>
+        </nav>
 
         <p className="footer-built">&copy; 2026 Void News. All rights reserved.</p>
         <p className="footer-kbd-hint" aria-label="Press question mark for keyboard shortcuts">
