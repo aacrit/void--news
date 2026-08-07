@@ -1,8 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useAudio, type EpisodeMeta } from "./AudioProvider";
 import { hapticLight, hapticMicro } from "../lib/haptics";
+import { fetchLastPipelineRun } from "../lib/supabase";
+import NavBar from "./NavBar";
 
 /* ---------------------------------------------------------------------------
    OnAirPage — dedicated void --onair broadcast interface (/onair).
@@ -61,6 +63,20 @@ export default function OnAirPage() {
   const a = useAudio();
   const brief = a.brief;
 
+  // Edition build time (pipeline completed_at) — drives the NavBar masthead
+  // "as of" dateline so it matches Home. Fetched once on mount; NavBar falls
+  // back to the reader's clock when this is null.
+  const [editionBuiltAt, setEditionBuiltAt] = useState<string | null>(null);
+  useEffect(() => {
+    let alive = true;
+    fetchLastPipelineRun().then((run) => {
+      if (alive && run?.completed_at) setEditionBuiltAt(run.completed_at);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   const hasAudio = Boolean(brief?.audio_url);
   const opinionStart = brief?.opinion_start_seconds ?? null;
   const opinionPct =
@@ -92,7 +108,17 @@ export default function OnAirPage() {
   }, [episodes]);
 
   return (
-    <main className="onair" id="main-content">
+    <div className="page-container">
+      {/* Site masthead — the Void News Sigil-wordmark navbar flows across the top
+          of /onair exactly as it does on Home, so On Air reads as a first-class
+          page (masthead on top, the broadcast hero + transport below). Search is
+          omitted here: the SearchOverlay searches the loaded story feed, which
+          /onair does not carry. NavBar renders fine without onSearchClick. Audio
+          props (hasAudio/isAudioPlaying/onOnairClick) are omitted because NavBar
+          does not currently consume them. */}
+      <NavBar editionBuiltAt={editionBuiltAt} />
+
+      <main className="onair" id="main-content">
       <header className="onair__masthead">
         <span className="onair__kicker">
           <span className={`onair__dot${a.isPlaying ? " onair__dot--live" : ""}`} aria-hidden="true" />
@@ -298,6 +324,7 @@ export default function OnAirPage() {
           ))}
         </section>
       )}
-    </main>
+      </main>
+    </div>
   );
 }

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { hapticMicro, hapticMedium } from "../lib/haptics";
 import { BASE_PATH } from "../lib/utils";
-import { AUDIO_ENABLED } from "../lib/audioGate";
 import { useAudio } from "./AudioProvider";
 import ScaleIcon from "./ScaleIcon";
 
@@ -21,10 +20,9 @@ import ScaleIcon from "./ScaleIcon";
      to "/". This is the center logo/anchor.
    - On Air (left) — a standard side tab (icon + label), demoted from the old
      raised disc but keeping a teal accent on its broadcast glyph + label.
-     Tapping it opens the full teal broadcast portal (FloatingPlayer's broadcast
-     view) as a full-height mobile sheet when a brief with audio is loaded; with
-     no audio yet it routes to /onair (the "being prepared" state). A small teal
-     dot marks the live/playing state.
+     Tapping it always navigates to the dedicated /onair broadcast page (On Air
+     is a first-class destination, not a floating overlay). A small teal dot
+     marks the live/playing state.
    - More (right) — an up-chevron (NOT a hamburger) that slides the
      MobileMoreSheet up with the secondary destinations.
 
@@ -41,25 +39,19 @@ interface MobileTabBarProps {
 export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const { brief, isPlaying, setPlayerVisible, setExpanded } = useAudio();
+  const { isPlaying } = useAudio();
 
   const path = pathname.replace(BASE_PATH, "") || "/";
   const homeActive =
     path === "/" || path === "" || /^\/(world)\/?$/.test(path);
 
-  // On Air: open the full broadcast portal (teal, matching desktop) when a brief
-  // with audio is loaded. setExpanded(true) makes FloatingPlayer render its
-  // broadcast view as a full-height mobile sheet. With no audio, fall back to the
-  // dedicated /onair route (empty-state screen).
+  // On Air: always navigate to the dedicated /onair broadcast page. On Air is a
+  // destination page (its own masthead, transport, show notes, archive), not a
+  // floating overlay — playback state persists there via the global AudioProvider.
   const handleOnAir = useCallback(() => {
     hapticMedium();
-    if (AUDIO_ENABLED && brief?.audio_url) {
-      setPlayerVisible(true);
-      setExpanded(true);
-    } else {
-      router.push("/onair");
-    }
-  }, [brief?.audio_url, setPlayerVisible, setExpanded, router]);
+    router.push("/onair");
+  }, [router]);
 
   return (
     <nav className="mtb" aria-label="Primary navigation">
