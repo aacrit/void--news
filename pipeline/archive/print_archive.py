@@ -259,7 +259,7 @@ def archive_printed_edition(supabase, sources_by_id: dict, edition_date,
             pr = (
                 supabase.table("printed_stories")
                 .select("id,story_thread_id,title_keywords,source_cluster_id,"
-                        "printed_on,position")
+                        "printed_on,edition_position")
                 .gte("printed_on", cutoff)
                 .lt("printed_on", edition_date.isoformat())
                 .order("printed_on", desc=True)
@@ -348,7 +348,7 @@ def archive_printed_edition(supabase, sources_by_id: dict, edition_date,
         story_rows.append({
             "id": id_by_cluster[cid],
             "printed_on": edition_date.isoformat(),
-            "position": row["_position"],
+            "edition_position": row["_position"],
             "source_cluster_id": cid,
             "title": row.get("title") or "",
             "summary": row.get("summary"),
@@ -442,7 +442,7 @@ def _prior_rank(p: dict) -> tuple:
     strongest (lowest) position. Higher tuple wins."""
     printed_on = str(p.get("printed_on") or "")
     # lower position is stronger -> negate so higher tuple = better
-    pos = p.get("position")
+    pos = p.get("edition_position")
     pos = -pos if isinstance(pos, (int, float)) else 0
     return (printed_on, pos)
 
