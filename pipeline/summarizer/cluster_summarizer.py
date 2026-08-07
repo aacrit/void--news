@@ -690,6 +690,61 @@ def _ontopic_local_tokens(title: str) -> set[str]:
     }
 
 
+# Generic anchor words — institutional common nouns, bare country / nationality
+# names, and generic event words. A LONE generic word (e.g. "military",
+# "supreme court", "Nigeria", "summit", "election") must never be the token that
+# keeps an off-topic member in the summary input: on an over-merged bag those
+# words bridge unrelated stories. This is the summarizer's belt-and-suspenders to
+# the upstream data-driven clustering gate (the primary defense); it ensures a
+# slipped bag still yields a summary about the cluster's DOMINANT (title) topic
+# rather than a minority member. Kept modest and behavior-safe: if stripping
+# generics empties the title-topic set we simply fall back to the prior broad
+# core, so over-inclusion never mis-strips a real cluster.
+_GENERIC_TOPIC_WORDS = (
+    # institutions / roles / bodies
+    "military supreme court government police senate parliament ministry "
+    "commission congress cabinet council president minister prime federal "
+    "administration department agency authority committee party union army "
+    "navy forces general official officials leader leaders chief state states "
+    "house panel board tribunal assembly secretary spokesman spokesperson "
+    "nation national international regional "
+    # generic event / news words (the CEO's whack-a-mole examples + kin)
+    "summit election elections festival meeting talks statement report update "
+    "latest news world global "
+    # common country / nationality names (a bare country is not a story)
+    "nigeria nigerian india indian china chinese russia russian america "
+    "american britain british england english iran iranian israel israeli "
+    "japan japanese germany german france french ukraine ukrainian pakistan "
+    "pakistani egypt egyptian turkey turkish brazil brazilian mexico mexican "
+    "canada canadian australia australian spain spanish italy italian europe "
+    "european africa african asia asian korea korean saudi qatar kenya kenyan "
+    "ethiopia indonesia philippine philippines thailand vietnam poland polish "
+    "sweden swedish norway greece greek ireland irish scotland scottish"
+)
+_GENERIC_TOPIC_TOKENS = _ONTOPIC_UNSET
+_GENERIC_LOCAL_TOKENS = _ONTOPIC_UNSET
+
+
+def _generic_topic_tokens() -> set[str]:
+    """Generic anchor words in the SAME token space the on-topic filter uses for
+    member titles (Porter stems when clustering is importable, else the local 4+
+    char tokenizer). Built by running the generic word list through the identical
+    tokenizer, so comparison is apples-to-apples. Cached."""
+    global _GENERIC_TOPIC_TOKENS
+    if _GENERIC_TOPIC_TOKENS is _ONTOPIC_UNSET:
+        _GENERIC_TOPIC_TOKENS = _ontopic_title_tokens(_GENERIC_TOPIC_WORDS)
+    return _GENERIC_TOPIC_TOKENS
+
+
+def _generic_local_tokens() -> set[str]:
+    """Generic anchor words in the LOCAL (unstemmed) token space used by
+    _build_dominant_topic_line. Cached."""
+    global _GENERIC_LOCAL_TOKENS
+    if _GENERIC_LOCAL_TOKENS is _ONTOPIC_UNSET:
+        _GENERIC_LOCAL_TOKENS = _ontopic_local_tokens(_GENERIC_TOPIC_WORDS)
+    return _GENERIC_LOCAL_TOKENS
+
+
 def _ontopic_title_tokens(title: str) -> set[str]:
     """Content-token set of a title. Prefers clustering's Porter-stem pipeline
     (matches the upstream clusterer); falls back to the local 4+ char tokenizer
@@ -707,25 +762,43 @@ def _ontopic_title_tokens(title: str) -> set[str]:
 
 def _filter_ontopic_articles(articles: list[dict],
                              cluster_title: str | None = None) -> list[dict]:
-    """Drop off-topic members from an over-merged cluster BEFORE the summary
-    prompt is built, so the LLM never sees an article about a different event.
+    """Restrict the summary input to the cluster's DOMINANT (title) topic so the
+    LLM never describes a minority member of an over-merged bag.
 
-    Core topic tokens = the cluster title's content tokens (when known) UNION
-    any content token shared by >= 2 member titles (so a genuine single story
-    with varied vocabulary keeps a shared spine). A member is on-topic iff its
-    title shares >= 1 core token.
+    The invariant this enforces: the shipped summary's subject matches the
+    cluster's title/dominant topic, not whichever off-topic member happens to
+    carry the most text. Two regimes:
 
-    Guards (ported from ig_generator._ontopic_outlets):
+      * COHERENT cluster (the title is on-topic for a healthy share of members):
+        core = the title's specific tokens UNION the shared spine (tokens shared
+        by >= 2 member titles), so a genuine single story with varied headline
+        vocabulary keeps every member. This preserves prior behavior.
+
+      * INCOHERENT BAG (the title matches only a MINORITY of members): anchor
+        STRICTLY on the title's specific tokens and drop the off-topic (possibly
+        larger) sub-pile, so the summary is built about the headline story. This
+        is the #48/#50 wrong-story-summary fix.
+
+    Generic anchor words (institutions, bare country names, generic event words)
+    are stripped from BOTH the core and each member's tokens, so a lone generic
+    word ("military", "supreme court", "Nigeria") can never bridge an off-topic
+    member into the input.
+
+    Guards:
       - No-op when the cluster has < 4 members.
-      - If the core is empty, widen back to full membership (no-op).
-      - Never strips below 3 members; if the filtered set would be < 3, keep the
-        top-by-existing-order members up to 3 (existing order is the caller's
-        newest/rank order).
+      - If there is nothing specific to anchor on (title + spine are empty after
+        generic-stripping), widen back to full membership (no-op).
+      - Never returns an empty set: if the anchor matches no member (a title that
+        shares nothing with any headline), fall back to full membership rather
+        than blank the summary.
+    Deterministic given (membership, title) — the content-hash cache key is
+    unchanged, so identical membership still yields an identical summary.
     """
     if len(articles) < _ONTOPIC_MIN_MEMBERS:
         return articles
 
     from collections import Counter
+    generic = _generic_topic_tokens()
     freq: Counter[str] = Counter()
     member_tokens: list[set[str]] = []
     for art in articles:
@@ -734,21 +807,41 @@ def _filter_ontopic_articles(articles: list[dict],
         freq.update(toks)
 
     shared = {t for t, c in freq.items() if c >= 2}
-    core = _ontopic_title_tokens(cluster_title or "") | shared
-    if not core:
-        # No shared spine and no title signal — do not trust the filter.
-        return articles
+    title_specific = _ontopic_title_tokens(cluster_title or "") - generic
 
-    kept = [art for art, toks in zip(articles, member_tokens) if toks & core]
-    if len(kept) < _ONTOPIC_FLOOR:
-        # A thin/odd core must not gut a real cluster: keep the top members in
-        # existing order up to the floor (articles has >= 4 here, so this is 3).
-        return articles[:_ONTOPIC_FLOOR]
+    # How many members does the TITLE itself describe (via a SPECIFIC token)?
+    n_title_on_topic = (
+        sum(1 for toks in member_tokens if (toks - generic) & title_specific)
+        if title_specific else 0
+    )
+    minority_ceiling = max(2, (len(articles) + 1) // 2)
+
+    if title_specific and 0 < n_title_on_topic < minority_ceiling:
+        # Incoherent bag: the headline is on-topic for a minority of members.
+        # Summarize the TITLE's story, not the off-topic majority.
+        core = title_specific
+        mode = "title-anchored"
+    else:
+        # Coherent (or title too thin to judge): title tokens + shared spine.
+        core = (title_specific | shared) - generic
+        mode = "broad"
+        if not core:
+            # Nothing specific to anchor on — do not trust the filter.
+            return articles
+
+    kept = [
+        art for art, toks in zip(articles, member_tokens)
+        if (toks - generic) & core
+    ]
+    if not kept:
+        # Anchor matched no member (e.g. a title sharing nothing with any
+        # headline). Never blank the summary — fall back to full membership.
+        return articles
     if len(kept) < len(articles):
         print(
-            f"  [coherence] dropped {len(articles) - len(kept)} off-topic "
+            f"  [coherence:{mode}] dropped {len(articles) - len(kept)} off-topic "
             f"member(s) from the summary input of a {len(articles)}-member "
-            f"cluster"
+            f"cluster (title on-topic for {n_title_on_topic})"
         )
     return kept
 
@@ -764,20 +857,29 @@ def _build_dominant_topic_line(articles: list[dict],
     the line is stable run-to-run. Steers the summary onto the single dominant
     story described by the headline. Adds ~20 tokens, no new API calls."""
     from collections import Counter
+    generic = _generic_local_tokens()
     freq: Counter[str] = Counter()
     for art in articles:
         freq.update(_ontopic_local_tokens(art.get("title") or ""))
 
-    title_terms = sorted(_ontopic_local_tokens(cluster_title or ""))
+    # Prefer SPECIFIC terms so the dominant-topic line names recognizable
+    # entities, not generic institution / country / event words that bridge
+    # unrelated stories on an over-merged bag.
+    title_terms = sorted(_ontopic_local_tokens(cluster_title or "") - generic)
     title_set = set(title_terms)
     ranked = sorted(
-        (t for t, c in freq.items() if c >= 2 and t not in title_set),
+        (t for t, c in freq.items()
+         if c >= 2 and t not in title_set and t not in generic),
         key=lambda t: (-freq[t], t),
     )
     terms = title_terms + ranked
     if not terms:
-        # No shared spine and no title: fall back to the most common title words.
-        terms = [t for t, _ in sorted(freq.items(), key=lambda kv: (-kv[1], kv[0]))]
+        # No specific spine and no specific title tokens: fall back to the most
+        # common title words (generic-filtered first, then unfiltered).
+        terms = [
+            t for t, _ in sorted(freq.items(), key=lambda kv: (-kv[1], kv[0]))
+            if t not in generic
+        ] or [t for t, _ in sorted(freq.items(), key=lambda kv: (-kv[1], kv[0]))]
     terms = terms[:8]
     if not terms:
         return ""

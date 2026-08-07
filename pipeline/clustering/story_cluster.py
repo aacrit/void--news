@@ -575,6 +575,22 @@ MIN_DISTINGUISHING_SHARED = 1
 PHASE2_STRONG_DISTINGUISHING = 2      # >= this many → title check waived
 PHASE2_TITLE_SANITY_FLOOR = 0.08      # single-entity bridge must clear this
 
+# Data-driven common-word over-merge guard (2026-08-07, CEO-directed). A shared
+# entity may only DRIVE a Phase-2 merge when it is DISCRIMINATIVE: its document-
+# frequency across the day's post-Phase-1 clusters is low (equivalently, high
+# IDF). A generic word (an institution like "military" / "supreme court", a bare
+# country/nationality name, or ANY future high-frequency term such as
+# "summit" / "election" / "festival") has high df BY DEFINITION and therefore
+# can never be the sole merge driver — no hand-maintained stop-list required.
+# This is the PRIMARY, catch-all mechanism; _LOW_SPECIFICITY_ENTITIES /
+# _ENTITY_STOP_TOKENS are now belt-and-suspenders, not the mechanism. Mirrors
+# the Phase-2.6 anchor df gate. The absolute floor keeps small fixtures workable
+# (a shared entity that appears in only the 2 clusters being merged always
+# clears df<=floor); the percentage bites at production scale where a generic
+# term shows up across many clusters.
+PHASE2_ANCHOR_DF_FLOOR = 5
+PHASE2_ANCHOR_DF_PCT = 0.05           # <= 5% of the day's clusters
+
 
 # ---------------------------------------------------------------------------
 # Canonical summit / known co-occurrence pairs
@@ -1065,6 +1081,17 @@ def merge_related_clusters(
     titles = [c.get("title", "") or "" for c in clusters]
 
     n = len(clusters)
+
+    # Document-frequency of every entity across the day's clusters — the
+    # data-driven discriminativeness signal (see PHASE2_ANCHOR_DF_*). A
+    # generic term appears in many clusters (high df); a specific named
+    # entity appears in only the few that actually cover its story.
+    entity_df: Counter = Counter()
+    for ents in cluster_entities:
+        for e in ents:
+            entity_df[e] += 1
+    phase2_max_df = max(PHASE2_ANCHOR_DF_FLOOR, int(n * PHASE2_ANCHOR_DF_PCT))
+
     parent = list(range(n))
     group_size = [len(c.get("articles", []) or []) for c in clusters]
 
@@ -1107,13 +1134,29 @@ def merge_related_clusters(
             if len(distinguishing) < MIN_DISTINGUISHING_SHARED:
                 continue
 
-            # Cross-topic sanity floor — a single-distinguishing-entity bridge
-            # must be confirmed by a minimal stemmed-title overlap so a lone
-            # coincidental / roundup-injected entity cannot union two disjoint
-            # stories (2026-08-04 Korea-heatwave / Flagstar / Senate contamination).
-            # Two or more distinguishing shared entities are strong enough alone
-            # and skip the title check (preserves multi-desk consolidation).
-            if len(distinguishing) < PHASE2_STRONG_DISTINGUISHING:
+            # Discriminative-anchor gate (PRIMARY common-word over-merge guard,
+            # data-driven). The merge must be driven by at least one
+            # DISCRIMINATIVE shared entity — one whose corpus document-frequency
+            # is low (high IDF). A generic institutional word, a bare country
+            # name, or any future high-df term is filtered out here automatically
+            # with zero hand-listing: it appears across too many clusters to be
+            # the sole bridge. This is what keeps the "military" / "supreme court"
+            # / "Nigeria" bags from forming.
+            discriminative = {
+                e for e in distinguishing
+                if entity_df.get(e, 0) <= phase2_max_df
+            }
+            if not discriminative:
+                continue
+
+            # Cross-topic sanity floor — a bridge driven by only ONE
+            # discriminative entity must be confirmed by a minimal stemmed-title
+            # overlap so a lone coincidental / roundup-injected entity cannot
+            # union two disjoint stories (2026-08-04 Korea-heatwave / Flagstar /
+            # Senate contamination). Two or more discriminative shared entities
+            # are strong enough alone and skip the title check (preserves
+            # multi-desk consolidation).
+            if len(discriminative) < PHASE2_STRONG_DISTINGUISHING:
                 if _stemmed_title_jaccard(titles[i], titles[j]) < PHASE2_TITLE_SANITY_FLOOR:
                     continue
 
@@ -1742,6 +1785,19 @@ def split_garbage_clusters(clusters: list[dict]) -> list[dict]:
 # coherence-gated, so a genuine 30-article single-event story is untouched.
 MEGA_OVERMERGE_ARTICLE_FLOOR = 30
 
+# Small-bag over-merge catch-all (2026-08-07, CEO-directed). Today's grab-bags
+# were n=3-14 — below MEGA_OVERMERGE_ARTICLE_FLOOR(30) — so they slipped Phase 5
+# entirely. Extend the GROSS-incoherence force-split down to small clusters: a
+# pile whose members share almost no entities AND almost no title words is a bag
+# at ANY size, independent of the specific words that bridged it. ONLY the gross
+# AND-gate (entity_convergence AND avg_title_jaccard BOTH far below floor) is
+# applied here — the riskier title-minority / feed-dump triggers stay gated at
+# the 30-article floor where their statistics are reliable — so a small COHERENT
+# story (high entity_convergence) is never fragmented. A cheap title-jaccard
+# prefilter keeps the spaCy cohesion cost off the coherent majority (only piles
+# whose headlines barely overlap pay for NER).
+MEGA_OVERMERGE_SMALLBAG_ARTICLE_FLOOR = 3
+
 # O4 (2026-08-05): over-merge FORCE-SPLIT gate. The 2026-06-28 O3 path only
 # FLAGGED (rank penalty) and only fired when source_count >= 40 — so the
 # wire-collapsed "desk bag" over-merges live in production (16-38 source, ~50-
@@ -1866,6 +1922,33 @@ def _overmerge_split_reason(
     return None
 
 
+def _cheap_avg_title_jaccard(articles: list[dict], sample_cap: int = 20) -> float:
+    """Pairwise stemmed-title Jaccard with NO spaCy NER — a cheap prefilter for
+    the small-bag over-merge split so the expensive full cohesion (entity
+    convergence) is only computed on clusters whose headlines barely overlap.
+
+    Returns 1.0 (treated as coherent → skip split) when there are no scorable
+    title pairs. Mirrors _cluster_cohesion's title-Jaccard math exactly."""
+    arts = articles[:sample_cap]
+    stems = [_title_word_stems(a.get("title", "") or "") for a in arts]
+    pairs = 0
+    total = 0.0
+    for i in range(len(stems)):
+        si = stems[i]
+        if not si:
+            continue
+        for j in range(i + 1, len(stems)):
+            sj = stems[j]
+            if not sj:
+                continue
+            uni = si | sj
+            if not uni:
+                continue
+            total += len(si & sj) / len(uni)
+            pairs += 1
+    return (total / pairs) if pairs else 1.0
+
+
 def split_mega_clusters(
     clusters: list[dict],
     threshold: int = MEGA_CLUSTER_THRESHOLD,
@@ -1976,6 +2059,45 @@ def split_mega_clusters(
                         f"(art={n_articles}, src={sc}, cohesion={cohesion:.0f}) "
                         f"flagged as over-merge"
                     )
+        elif (
+            n_articles >= MEGA_OVERMERGE_SMALLBAG_ARTICLE_FLOOR
+            and not c.get("mega_cluster_capped")
+        ):
+            # Small-bag catch-all (Layer 2). A grab-bag is a grab-bag at ANY
+            # size: force-split when the pile is GROSSLY incoherent (shares
+            # almost no entities AND almost no title words). Cheap title-jaccard
+            # prefilter first so full spaCy cohesion (entity convergence) is only
+            # computed on clusters whose headlines barely overlap — a small
+            # COHERENT story clears the prefilter and never pays for NER.
+            if (
+                _cheap_avg_title_jaccard(c.get("articles") or [])
+                < MEGA_OVERMERGE_TITLE_JACCARD_FLOOR
+            ):
+                coh = _cluster_cohesion(c, source_map=c.get("_source_map"))
+                entity_conv = coh.get("entity_convergence", 1.0)
+                title_jac = coh.get("avg_title_jaccard", 1.0)
+                # GROSS AND-gate only. A small coherent story scores high
+                # entity_convergence (its members share the event's actors) and
+                # is exempt; the two floors are the same ones the >=30 gross
+                # trigger uses, so the split reason is identical, just size-
+                # independent. _force_split_cluster's collapse-to-1 guard is the
+                # final backstop for a borderline pile.
+                if (
+                    entity_conv < MEGA_OVERMERGE_ENTITY_CONV_FLOOR
+                    and title_jac < MEGA_OVERMERGE_TITLE_JACCARD_FLOOR
+                ):
+                    sub = _force_split_cluster(c)
+                    if len(sub) > 1:
+                        if verbose:
+                            print(
+                                f"  [Phase5/smallbag-split:gross] "
+                                f"'{c.get('title','')[:55]!r}' (art={n_articles}, "
+                                f"src={sc}, ent_conv={entity_conv:.2f}, "
+                                f"title_jac={title_jac:.2f}) force-split into "
+                                f"{len(sub)} sub-clusters"
+                            )
+                        out.extend(sub)
+                        continue
         out.append(c)
     return out
 
@@ -2222,6 +2344,18 @@ def _cluster_cohesion(
     }
 
 
+# Phase 3 discriminative-stem gate (2026-08-07, CEO-directed). A title-Jaccard
+# merge must be driven by at least one DISCRIMINATIVE shared stem — one whose df
+# across the day's cluster titles is low (high IDF). Two clusters that share only
+# generic headline stems ("suprem", "court", "militari", a country stem) never
+# merge on that alone, no matter how high the raw Jaccard: those stems appear
+# across many titles that day. This is the title-path analogue of the Phase-2
+# discriminative-anchor gate and directly kills the "Supreme Court" India-vs-US
+# over-merge. Same floor/pct rationale as Phase 2.
+PHASE3_STEM_DF_FLOOR = 5
+PHASE3_STEM_DF_PCT = 0.08             # <= 8% of the day's cluster titles
+
+
 def merge_duplicate_title_clusters(
     clusters: list[dict],
     jaccard_threshold: float = TITLE_JACCARD_THRESHOLD,
@@ -2234,9 +2368,10 @@ def merge_duplicate_title_clusters(
     Phase 2 — different stories about the same entity at different times
     will not collapse.
 
-    No tier overrides. No max-merged-articles cap. The stem-aware
-    Jaccard signal is strong enough on its own — title rewrites of the
-    same headline reliably cross 0.35 once stemming aligns inflections.
+    A merge additionally requires at least one DISCRIMINATIVE shared stem
+    (df across the day's titles <= PHASE3_STEM_DF_*), so two clusters that
+    overlap only on generic institutional/country headline words never
+    merge on that alone.
     """
     if len(clusters) <= 1:
         return clusters
@@ -2244,6 +2379,14 @@ def merge_duplicate_title_clusters(
     n = len(clusters)
     title_stems = [_title_word_stems(c.get("title", "")) for c in clusters]
     timestamps = [_parse_first_pub(c) for c in clusters]
+
+    # Document-frequency of each title stem across the day's clusters — the
+    # data-driven discriminativeness signal for the title path.
+    stem_df: Counter = Counter()
+    for st in title_stems:
+        for s in st:
+            stem_df[s] += 1
+    phase3_max_df = max(PHASE3_STEM_DF_FLOOR, int(n * PHASE3_STEM_DF_PCT))
 
     parent, find, union, _uf_exceeds = _ceiling_union_find(clusters)
 
@@ -2256,11 +2399,17 @@ def merge_duplicate_title_clusters(
             if not title_stems[j]:
                 continue
 
-            inter = len(title_stems[i] & title_stems[j])
+            shared_stems = title_stems[i] & title_stems[j]
+            inter = len(shared_stems)
             uni = len(title_stems[i] | title_stems[j])
             if uni == 0:
                 continue
             if (inter / uni) < jaccard_threshold:
+                continue
+
+            # Discriminative-stem gate: at least one shared stem must be rare
+            # across the day's titles. Blocks generic-word-only title bridges.
+            if not any(stem_df.get(s, 0) <= phase3_max_df for s in shared_stems):
                 continue
 
             ti, tj = timestamps[i], timestamps[j]
