@@ -28,11 +28,9 @@ const ARCHETYPES = [
    mirror the product-family palette used across About and the nav. */
 const EXPLORE = [
   { name: "Today's Feed", sub: "The front page, ranked once", href: "/", accentLight: "#9A5638", accentDark: "#D89A7C" },
-  { name: "Weekly Edition", sub: "The week, read like a magazine", href: "/weekly", accentLight: "#B23A2A", accentDark: "#E0705C" },
-  { name: "History", sub: "Events, told from every side", href: "/history", accentLight: "#8A6410", accentDark: "#D4A574" },
   { name: "Sources", sub: "All 1,016, on one axis", href: "/sources", accentLight: "#3F7A5A", accentDark: "#77B994" },
   { name: "On Air", sub: "The daily brief, read aloud", href: "/onair", accentLight: "#2E8B7D", accentDark: "#4DAFA0" },
-  { name: "Ship", sub: "Request it, vote, watch it ship", href: "/ship", accentLight: "#BE4326", accentDark: "#D2593A" },
+  { name: "Feedback", sub: "Tell us what to build or fix", href: "/ship", accentLight: "#BE4326", accentDark: "#D2593A" },
 ] as const;
 
 interface Props {

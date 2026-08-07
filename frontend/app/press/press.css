@@ -1,32 +1,148 @@
 /* ==========================================================================
-   /press — press-kit modules layered on top of privacy.css (.press base).
-   Three ported modules: fast-facts ledger, bias-read explainer (spectrum +
-   6-axis grid), copy-paste boilerplate, plus a "free to read" principle
-   callout. All color/type comes from site tokens so light + dark theme both
-   work. No hardcoded palette. The clay accent is var(--palette-news); the
-   spectrum band uses the lean semantic colors (--bias-left / --bias-center /
-   --bias-right), never the clay accent.
+   /press — Void News press room.
+   Layered on the shared .press base in privacy.css (container, h1/h2/p/a/ul,
+   pwa-back). This file elevates it into a real newsroom press kit: a wordmark
+   masthead, numbered section kickers, a fast-facts ledger, copy-paste
+   boilerplate, the bias-read explainer (spectrum + 6-axis grid), brand-asset
+   grid, and a prominent contact block.
+
+   All color/type comes from site tokens so light + dark both work. The clay
+   accent is var(--palette-news) / var(--palette-news-ink); the political-lean
+   spectrum band uses the lean semantic colors (--bias-left/-center/-right) and
+   ONLY there, never as decoration (Dot Matrix Rule).
    ========================================================================== */
+
+/* Widen the reading column a touch beyond the 720px privacy base: a press
+   room carries a facts strip and an asset grid that want a little more room,
+   while the prose still holds a comfortable measure. */
+.press {
+  max-width: 760px;
+}
+
+/* ── Accessible helper ──────────────────────────────────────────────────── */
+.press-vh {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Masthead ───────────────────────────────────────────────────────────── */
+.press__hdr {
+  /* Override the privacy base rule: the masthead breathes on its own, no
+     bottom hairline crowding the lede. */
+  border-bottom: 0;
+  padding-bottom: 0;
+  margin-bottom: clamp(3rem, 2rem + 4vw, 4.5rem);
+}
+
+.press__wordmark {
+  display: block;
+  width: clamp(240px, 46vw, 360px);
+  height: auto;
+  margin: 6px 0 28px;
+}
+
+/* Theme-aware lockup: ink-on-cream in light, reversed (white) on walnut. */
+.press__wordmark--dark {
+  display: none;
+}
+:root[data-mode="dark"] .press__wordmark--light {
+  display: none;
+}
+:root[data-mode="dark"] .press__wordmark--dark {
+  display: block;
+}
+
+/* The positioning line is the real headline — editorial, confident, but sized
+   below a giant hero because the wordmark above already carries the brand. */
+.press__positioning.press__positioning {
+  font-family: var(--font-editorial);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 1.2rem + 1.6vw, 2.25rem);
+  line-height: 1.24;
+  letter-spacing: -0.01em;
+  color: var(--fg-primary);
+  max-width: 22ch;
+  margin: 0 0 20px;
+}
+
+.press__lede {
+  font-size: clamp(1rem, 0.95rem + 0.3vw, 1.1875rem);
+  line-height: 1.6;
+  color: var(--fg-secondary);
+  max-width: 58ch;
+  margin: 0;
+}
+
+/* ── Section rhythm + numbered kickers ──────────────────────────────────── */
+.press-block {
+  margin-bottom: clamp(2.75rem, 2rem + 3vw, 4rem);
+}
+
+.press-kicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-meta);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--palette-news-ink);
+  margin: 0 0 14px;
+}
+
+.press-kicker__n {
+  font-family: var(--font-data);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--fg-tertiary);
+  padding-right: 10px;
+  border-right: 1px solid var(--divider);
+}
+
+/* Tighten the shared .press h2 margin under a kicker. */
+.press-block h2 {
+  margin-top: 0;
+}
 
 /* ── Fast-facts ledger ──────────────────────────────────────────────────── */
 .press-ledger {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1px;
   background: var(--divider);
   border: 1px solid var(--divider);
-  margin: 0 0 32px;
+  margin: 4px 0 0;
 }
 
 .press-stat {
   background: var(--bg-card);
-  padding: 18px 16px;
+  padding: 20px 18px;
+  position: relative;
+}
+
+/* A hairline clay tick at the top-left of each cell — an editorial register
+   mark, not decoration for its own sake. */
+.press-stat::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 22px;
+  height: 2px;
+  background: var(--palette-news);
 }
 
 .press-stat__n {
   font-family: var(--font-data);
   font-weight: 600;
-  font-size: clamp(1.375rem, 3.4vw, 1.75rem);
+  font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2rem);
   line-height: 1.05;
   color: var(--fg-primary);
   font-variant-numeric: tabular-nums;
@@ -37,35 +153,135 @@
   font-family: var(--font-structural);
   font-size: 12.5px;
   color: var(--fg-tertiary);
-  margin-top: 5px;
-  line-height: 1.35;
+  margin-top: 7px;
+  line-height: 1.4;
 }
 
-/* ── Positive principle callout (free to read) ──────────────────────────── */
-.press-principle {
+/* ── Copy-paste boilerplate ─────────────────────────────────────────────── */
+.press-boiler__hint {
+  font-size: 14px;
+  color: var(--fg-tertiary);
+  margin: 0 0 18px;
+}
+
+.press-boiler {
   background: var(--bg-card);
+  border: 1px solid var(--border-strong);
   border-left: 3px solid var(--palette-news);
-  padding: 16px 20px;
-  margin: 0 0 32px;
+  border-radius: 4px;
+  padding: 18px 22px 22px;
+  margin: 0 0 16px;
 }
 
-.press-principle p {
+.press-boiler__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--divider);
+}
+
+.press-boiler__label {
+  font-family: var(--font-meta);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--fg-tertiary);
   margin: 0;
+}
+
+.press-boiler p:not(.press-boiler__label) {
   font-size: 15.5px;
+  line-height: 1.62;
+  margin: 0;
   color: var(--fg-secondary);
 }
 
-.press-principle strong {
+.press-boiler p + p {
+  margin-top: 12px;
+}
+
+/* Copy button — structural voice, quiet until hover/focus. */
+.press-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  font-family: var(--font-structural);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--fg-secondary);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  padding: 7px 12px;
+  min-height: 34px;
+  cursor: pointer;
+  transition: color var(--dur-fast) var(--ease-out),
+    border-color var(--dur-fast) var(--ease-out),
+    background var(--dur-fast) var(--ease-out);
+}
+
+.press-copy__icon {
+  font-family: var(--font-data);
+  font-size: 13px;
+  line-height: 1;
+}
+
+.press-copy:hover {
   color: var(--fg-primary);
+  border-color: var(--palette-news);
+}
+
+.press-copy:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+.press-copy[data-copied="true"] {
+  color: var(--bias-center);
+  border-color: var(--bias-center);
+}
+
+/* ── What you can cite ──────────────────────────────────────────────────── */
+.press-cite {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 0;
+}
+
+.press-cite li {
+  position: relative;
+  padding-left: 26px;
+  margin-bottom: 12px;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--fg-secondary);
+}
+
+.press-cite li::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 0.62em;
+  width: 8px;
+  height: 8px;
+  border: 1.5px solid var(--palette-news);
+  border-radius: 50%;
 }
 
 /* ── Bias-read explainer ────────────────────────────────────────────────── */
 .press-callout {
   background: var(--bg-card);
   border-left: 3px solid var(--palette-news);
+  border-radius: 4px;
   padding: 16px 20px;
-  margin: 0 0 24px;
+  margin: 0 0 26px;
   font-size: 15.5px;
+  line-height: 1.6;
   color: var(--fg-secondary);
 }
 
@@ -73,9 +289,9 @@
   color: var(--fg-primary);
 }
 
-/* Spectrum band — lean semantic colors, blue -> green -> red */
+/* Spectrum band — lean semantic colors, blue -> green -> red. */
 .press-spectrum {
-  margin: 0 0 26px;
+  margin: 0 0 28px;
 }
 
 .press-spectrum__bar {
@@ -121,7 +337,7 @@
 .press-axis__n {
   font-family: var(--font-data);
   font-size: 11px;
-  color: var(--palette-news);
+  color: var(--palette-news-ink);
   letter-spacing: 0.1em;
 }
 
@@ -140,39 +356,115 @@
   color: var(--fg-tertiary);
 }
 
-/* ── Copy-paste boilerplate ─────────────────────────────────────────────── */
-.press-boiler {
-  background: var(--bg-card);
-  border: 1px dashed var(--border-strong);
-  border-radius: 10px;
-  padding: 20px 22px;
-  margin: 0 0 16px;
+/* ── Organization statement ─────────────────────────────────────────────── */
+.press-org.press-org {
+  font-family: var(--font-editorial);
+  font-weight: 400;
+  font-size: clamp(1.125rem, 1rem + 0.6vw, 1.375rem);
+  line-height: 1.5;
+  color: var(--fg-primary);
+  max-width: 46ch;
+  margin: 4px 0 0;
 }
 
-.press-boiler__label {
-  font-family: var(--font-meta);
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: var(--fg-tertiary);
-  margin: 0 0 10px;
+/* ── Brand-asset + reference grid ───────────────────────────────────────── */
+.press-kit {
+  list-style: none;
+  padding: 0;
+  margin: 4px 0 0;
+  border-top: 1px solid var(--divider);
 }
 
-.press-boiler p {
+.press-kit__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 13px 2px;
+  border-bottom: 1px solid var(--divider);
+}
+
+.press-kit__name {
+  font-family: var(--font-structural);
   font-size: 15px;
-  line-height: 1.6;
-  margin: 0;
   color: var(--fg-secondary);
 }
 
-.press-boiler p + p {
-  margin-top: 12px;
+.press-kit__dl {
+  flex-shrink: 0;
+  font-family: var(--font-data);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--fg-accent);
+  text-decoration: none;
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  padding: 5px 12px;
+  min-height: 30px;
+  display: inline-flex;
+  align-items: center;
+  transition: border-color var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out);
 }
 
-.press-boiler__hint {
+.press-kit__dl:hover {
+  color: var(--palette-news-ink);
+  border-color: var(--palette-news);
+}
+
+.press-kit__dl:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+/* Reference-page rows: the target is a route, styled the same as a download. */
+.press-kit--links .press-kit__dl {
+  min-width: 84px;
+  justify-content: center;
+}
+
+/* ── Contact ────────────────────────────────────────────────────────────── */
+.press-contact {
+  border-top: 1px solid var(--divider);
+  margin: 4px 0 0;
+}
+
+.press-contact__row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 2px;
+  border-bottom: 1px solid var(--divider);
+}
+
+.press-contact__k {
+  font-family: var(--font-meta);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--fg-tertiary);
+}
+
+.press-contact__v {
+  font-family: var(--font-data);
+  font-size: 15px;
+  color: var(--fg-accent);
+  text-decoration: none;
+  text-align: right;
+  word-break: break-word;
+}
+
+.press-contact__v:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.press-contact__note {
   font-size: 14px;
   color: var(--fg-tertiary);
-  margin: 0 0 16px;
+  margin: 16px 0 0;
 }
 
 /* ── Responsive ─────────────────────────────────────────────────────────── */
@@ -185,5 +477,27 @@
 @media (max-width: 600px) {
   .press-axes {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 460px) {
+  .press-boiler__head {
+    flex-wrap: wrap;
+  }
+  .press-contact__row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .press-contact__v {
+    text-align: left;
+  }
+}
+
+/* ── Reduced motion ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .press-copy,
+  .press-kit__dl {
+    transition: none;
   }
 }
