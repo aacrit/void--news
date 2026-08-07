@@ -1037,6 +1037,10 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
                     <SkyboxBanner state={dailyBriefState} />
                   </div>
 
+                  {/* Boundary line — marks where "about the day" (the brief) ends
+                      and "the day" (the story feed) begins. */}
+                  <div className="feed-start" aria-hidden="true">Today&rsquo;s Top Stories</div>
+
                   {/* Twin top stories — ranks 0 and 1, co-equal "Top Story"
                       leads side-by-side in a 50/50 split (vertical stack on
                       <1024px). Both wear the badge. v3 2026-05-14.

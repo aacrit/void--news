@@ -54,7 +54,7 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
   const [episodesExpanded, setEpisodesExpanded] = useState(false);
 
   if (!brief) return (
-    <div className={`mbp${className ? ` ${className}` : ""}`} role="complementary" aria-label="Daily Brief">
+    <div className={`mbp${className ? ` ${className}` : ""}`} role="complementary" aria-label="Daily brief: a summary of today's top stories">
       <button
         className="mbp__pill"
         type="button"
@@ -98,7 +98,7 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
      a richer brief teaser. Tap anywhere to expand into full skybox brief. */
   if (!isExpanded) {
     return (
-      <div className={`mbp mbp--teaser${className ? ` ${className}` : ""}`} role="complementary" aria-label="Daily Brief">
+      <div className={`mbp mbp--teaser${className ? ` ${className}` : ""}`} role="complementary" aria-label="Daily brief: a summary of today's top stories">
         <button
           className="mbp__teaser"
           type="button"
@@ -107,14 +107,14 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
           aria-label="Expand daily brief"
         >
           <div className="mbp__teaser-tldr">
-            <span className="mbp__teaser-cmd">The Brief</span>
+            <span className="mbp__teaser-cmd">The Brief <span className="mbp__teaser-desc">&middot; in one read</span></span>
             <span className="mbp__teaser-hl">{pillHeadline}</span>
             <span className="mbp__teaser-preview">{tldrPreview}</span>
           </div>
 
           {hasOpinion && (
             <div className={`mbp__teaser-opinion${brief.opinion_lean ? ` mbp__teaser-opinion--${brief.opinion_lean}` : ""}`}>
-              <span className="mbp__teaser-cmd mbp__teaser-cmd--opinion">Opinion</span>
+              <span className="mbp__teaser-cmd mbp__teaser-cmd--opinion">Opinion <span className="mbp__teaser-desc">&middot; one lens</span></span>
               <span className="mbp__teaser-hl mbp__teaser-hl--opinion">{opinionHeadline}</span>
               {opinionTeaser && <span className="mbp__teaser-preview mbp__teaser-preview--opinion">{opinionTeaser}</span>}
             </div>
@@ -127,7 +127,7 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
   }
 
   return (
-    <div className={`mbp mbp--skybox${className ? ` ${className}` : ""}`} role="complementary" aria-label="Daily Brief">
+    <div className={`mbp mbp--skybox${className ? ` ${className}` : ""}`} role="complementary" aria-label="Daily brief: a summary of today's top stories">
       {/* Header row: branding + OnAir button */}
       <div className="mbp__header">
         <LogoIcon size={14} animation="idle" />
@@ -156,6 +156,8 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
         </div>
       </div>
 
+      <p className="mbp__desc">Today&rsquo;s top stories, in one read</p>
+
       {/* TL;DR — full text once the pill is expanded (no inner "Read more"). */}
       {brief.tldr_headline && <h3 className="mbp__hl mbp__hl--tldr">{brief.tldr_headline}</h3>}
       <p className="mbp__preview mbp__preview--tldr">{brief.tldr_text}</p>
@@ -169,6 +171,7 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
           <hr className="mbp__rule" />
           <div className={`mbp__opinion${brief.opinion_lean ? ` mbp__opinion--${brief.opinion_lean}` : ""}`}>
             <span className="mbp__cmd mbp__cmd--opinion">Opinion</span>
+            <p className="mbp__desc mbp__desc--opinion">The day&rsquo;s coverage, argued from one lens</p>
             {opinionHeadline && <h3 className="mbp__hl mbp__hl--opinion">{opinionHeadline}</h3>}
             <p className="mbp__preview mbp__preview--opinion">{brief.opinion_text}</p>
           </div>

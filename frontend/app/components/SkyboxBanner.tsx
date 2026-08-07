@@ -60,7 +60,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
   }, []);
 
   if (!brief) return (
-    <div className="skb skb--compact" role="complementary" aria-label="Daily Brief">
+    <div className="skb skb--compact" role="complementary" aria-label="Daily brief: a summary of today's top stories">
       <div className="skb__compact">
         <div className="skb__compact-header">
           <div className="skb__compact-cols">
@@ -94,7 +94,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     <>
       <div aria-live="polite" className="sr-only">{announcement}</div>
 
-      <div className={rootClass} role="complementary" aria-label="Daily Brief">
+      <div className={rootClass} role="complementary" aria-label="Daily brief: a summary of today's top stories">
 
         {/* ── COMPACT MODE ── */}
         {isCompact && (
@@ -117,6 +117,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                   <div className="skb__compact-label">
                     <LogoIcon size={16} animation="idle" className="skb__compact-logo" />
                     <span className="skb__compact-cmd">The Brief</span>
+                    <span className="skb__compact-desc">&middot; Today&rsquo;s top stories, in one read</span>
                     {brief.created_at && <span className="skb__compact-time">{timeAgo(brief.created_at)}</span>}
                   </div>
                   {brief.tldr_headline && <h3 className="skb__compact-hl skb__compact-hl--tldr">{String(brief.tldr_headline)}</h3>}
@@ -140,6 +141,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                     <div className="skb__compact-label">
                       <LogoIcon size={16} animation="idle" className="skb__compact-logo" />
                       <span className="skb__compact-cmd">Opinion</span>
+                      <span className="skb__compact-desc">&middot; The day&rsquo;s coverage, argued from one lens</span>
                       {brief.opinion_lean && <span className={`skb__lean-badge ${leanMod}`}>{leanLabel}</span>}
                     </div>
                     {brief.opinion_headline && <h3 className="skb__compact-hl skb__compact-hl--opinion">{String(brief.opinion_headline)}</h3>}
@@ -160,6 +162,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                 <div className="skb__section-label">
                   <LogoIcon size={16} animation="idle" />
                   <span className="skb__section-label-cmd">The Brief</span>
+                  <span className="skb__section-desc">&middot; Today&rsquo;s top stories, in one read</span>
                   {brief.created_at && <span className="skb__section-label-time">{timeAgo(brief.created_at)}</span>}
                   <button
                     ref={collapseRef}
@@ -183,6 +186,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                 <div className="skb__section-label">
                   <LogoIcon size={16} animation="idle" />
                   <span className="skb__section-label-cmd">Opinion</span>
+                  <span className="skb__section-desc">&middot; The day&rsquo;s coverage, argued from one lens</span>
                   {brief.opinion_lean && <span className={`skb__lean-badge ${leanMod}`}>{leanLabel}</span>}
                   <button
                     ref={collapseRef}

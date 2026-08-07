@@ -461,3 +461,31 @@
 }
 
 
+
+/* ===========================================================================
+   Feed-start boundary line
+   A calm, quiet divider between the daily brief module ("about the day") and
+   the first story ("the day"). Centered mono label flanked by hairline rules
+   on both sides. Token-driven, works in light + dark.
+   =========================================================================== */
+.feed-start {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fg-muted);
+  user-select: none;
+}
+
+.feed-start::before,
+.feed-start::after {
+  content: "";
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--border-subtle);
+}
