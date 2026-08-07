@@ -124,14 +124,14 @@ export default function NavBar({
         <span className="nav-dateline-inline" aria-hidden="true" suppressHydrationWarning>
           {dateline}
           <span className="nav-dateline-inline__sep">&middot;</span>
-          <span className="nav-dateline-inline__time">{timestamp}</span>
+          <span className="nav-dateline-inline__time"><span className="nav-asof">as of </span>{timestamp}</span>
         </span>
         {/* Mobile dateline — compact freshness signal. Time (with zone) is the
             priority in the tight row; the date shows only when the row is wide
             enough (>=400px, via CSS). */}
         <span className="nav-dateline-mobile" aria-hidden="true" suppressHydrationWarning>
           <span className="nav-dateline-mobile__date">{dateline}</span>
-          <span className="nav-dateline-mobile__time">{timestamp}</span>
+          <span className="nav-dateline-mobile__time"><span className="nav-asof">as of </span>{timestamp}</span>
         </span>
 
         {/* Spinoff product family (Void History + Void Weekly) HIDDEN for launch

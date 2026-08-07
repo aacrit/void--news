@@ -2562,6 +2562,15 @@ button:focus-visible .sigil-word__beam {
   opacity: 0.7;
 }
 
+/* "as of" — small label prefix clarifying the time is the edition build time,
+   not a live clock. */
+.nav-asof {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.82em;
+  opacity: 0.8;
+}
+
 /* Mobile dateline — compact time (with optional date), hidden on desktop.
    The time is the priority freshness signal; the date shows only when the row
    is wide enough (>=400px, see responsive.css). */
@@ -3347,6 +3356,32 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   font-size: var(--text-xs);
   color: var(--fg-muted);
   margin-top: var(--space-2);
+}
+
+/* Footer link row — desktop discoverability for pages the top nav does not
+   carry (About / Feedback / Press / Privacy); the nav only toggles Feed/Sources. */
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+}
+.footer-link {
+  color: var(--fg-secondary);
+  text-decoration: none;
+  transition: color 0.18s ease;
+}
+.footer-link:hover,
+.footer-link:focus-visible {
+  color: var(--palette-news, var(--fg-primary));
+}
+.footer-link__sep {
+  color: var(--fg-muted);
+  opacity: 0.55;
 }
 
 .footer-cc-link {
