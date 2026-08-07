@@ -3366,6 +3366,23 @@ def main():
         except Exception as e:
             print(f"  [warn] Flash-tier reconciliation failed: {e}")
 
+    # Step 8f: Newspaper of Record — permanent print archive (post-8d.7 final
+    # state, the first point where rank_world + summaries + tiers are all final).
+    # Additive + NON-FATAL: this can never fail the daily run.
+    try:
+        print("\n[8f] Printing the record (permanent top-50 archive)...")
+        from archive.print_archive import archive_printed_edition
+        _sources_by_id = {s.get("db_id"): s for s in sources if s.get("db_id")}
+        pa = archive_printed_edition(
+            supabase, sources_by_id=_sources_by_id,
+            edition_date=datetime.now(timezone.utc).date(),
+            pipeline_run_id=run_id)
+        print(f"  Printed {pa['stories']} stories ({pa['threads_continued']} continuing, "
+              f"{pa['threads_new']} new threads); archive {pa.get('stats',{}).get('total_mb')} MB, "
+              f"{pa.get('stats',{}).get('kb_per_day')} KB/day")
+    except Exception as e:
+        print(f"  [warn] Print archive failed (non-fatal): {e}")
+
     # Step 8e: RETIRED 2026-08-05 (copyright compliance). The cacher downloaded,
     # re-encoded (stripping EXIF/IPTC copyright-management info), and re-hosted
     # scraped news-publisher og:images into Supabase Storage — that is reproduction
