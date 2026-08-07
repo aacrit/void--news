@@ -2,13 +2,40 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
-import ScaleIcon from "./ScaleIcon";
+import { usePathname } from "next/navigation";
+import LogoWordmark from "./LogoWordmark";
+import ThemeToggle from "./ThemeToggle";
 import { hapticLight } from "../lib/haptics";
+import { BASE_PATH, getEditionTimestamp } from "../lib/utils";
+import { fetchLastPipelineRun } from "../lib/supabase";
 
 /* ---------------------------------------------------------------------------
-   MobileSidePanel — Slides from the right edge when "More" tab is tapped.
-   Dark overlay backdrop. Links to About, Ship. ThemeToggle. Tagline.
-   Accessible: Escape to close, backdrop tap to close, link click closes.
+   MobileSidePanel — the mobile secondary-navigation drawer.
+
+   Opened by the hamburger "Menu" tab in MobileTabBar. Slides in from the right
+   edge over a scrim. It is navigation-COMPLETE for the launch surface (every
+   destination not on the bottom bar is one tap away here) AND it carries the
+   masthead info the mobile top chrome drops: the edition build time, the source
+   count, and the light/dark theme control.
+
+   IA (grouped with small section labels):
+     Header  — Void News wordmark + tagline "See through the void."
+     Read    — Today's Feed (/), On Air (/onair)
+     Explore — Sources (/sources)
+     Participate — Feedback (/ship)
+     About Void News — About (/about) · Press (/press) · Privacy (/privacy)
+     Info bar — "Edition as of {time}", "1,016 sources across 158 countries",
+                ThemeToggle
+
+   History + Weekly are intentionally omitted (hidden for launch).
+
+   Accessibility / interaction:
+   - role="dialog" aria-modal; focus moves into the drawer on open, Tab/Shift+Tab
+     cycle within it, and focus returns to the hamburger on close.
+   - Dismiss on backdrop tap, Escape, browser back, swipe-right, or link tap.
+   - Body scroll locked while open; safe-area insets respected.
+   - The active route is marked (aria-current + a filled accent rail).
+   - prefers-reduced-motion disables the slide (handled in mobile-nav.css).
    Hidden on desktop via CSS.
    --------------------------------------------------------------------------- */
 
@@ -17,34 +44,137 @@ interface MobileSidePanelProps {
   onClose: () => void;
 }
 
+interface NavItem {
+  href: string;
+  label: string;
+  desc: string;
+  accent?: string;
+}
+
+const READ_ITEMS: NavItem[] = [
+  { href: "/", label: "Today’s Feed", desc: "The front page, 50 stories", accent: "neutral" },
+  { href: "/onair", label: "On Air", desc: "The broadcast", accent: "onair" },
+];
+const EXPLORE_ITEMS: NavItem[] = [
+  { href: "/sources", label: "Sources", desc: "1,016 sources, 158 countries", accent: "neutral" },
+];
+const PARTICIPATE_ITEMS: NavItem[] = [
+  { href: "/ship", label: "Feedback", desc: "Tell us what to build or fix", accent: "neutral" },
+];
+
 export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps) {
   const panelRef = useRef<HTMLDivElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
   const touchStartRef = useRef<{ x: number } | null>(null);
+  // Element that had focus before the drawer opened (the hamburger) — focus
+  // returns here on close.
+  const openerRef = useRef<HTMLElement | null>(null);
+  // True while we own a pushed history entry (for browser-back-to-close).
+  const historyPushedRef = useRef(false);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
+  const pathname = usePathname();
+  const route = pathname.replace(BASE_PATH, "") || "/";
+  const isActive = useCallback(
+    (href: string) => (href === "/" ? route === "/" : route === href || route.startsWith(href + "/")),
+    [route]
+  );
+
   const [mounted, setMounted] = useState(false);
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setMounted(true); }, []);
 
-  // Close on Escape
+  // Edition build time (pipeline completed_at) for the info bar, formatted in
+  // the reader's local zone and rounded to the hour like the desktop masthead.
+  const [editionBuiltAt, setEditionBuiltAt] = useState<string | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    fetchLastPipelineRun()
+      .then((run) => {
+        if (!cancelled && run?.completed_at) setEditionBuiltAt(run.completed_at as string);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
+  // Close on Escape.
   useEffect(() => {
     if (!open) return;
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault();
-        onClose();
+        onCloseRef.current();
       }
     };
     document.addEventListener("keydown", handleKey);
     return () => document.removeEventListener("keydown", handleKey);
-  }, [open, onClose]);
-
-  // Trap focus inside panel when open
-  useEffect(() => {
-    if (!open || !panelRef.current) return;
-    const first = panelRef.current.querySelector<HTMLElement>("a, button");
-    first?.focus();
   }, [open]);
 
-  // Prevent body scroll when panel is open
+  // Browser back closes the drawer: push a throwaway history entry on open and
+  // close when it is popped. requestClose() consumes the entry so history stays
+  // clean; a genuine back gesture pops it directly.
+  useEffect(() => {
+    if (!open) return;
+    window.history.pushState({ mspDrawer: true }, "");
+    historyPushedRef.current = true;
+    const onPop = () => {
+      historyPushedRef.current = false;
+      onCloseRef.current();
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [open]);
+
+  // Close initiated from inside the drawer (backdrop / Esc-via-button / swipe).
+  // If we still own the pushed history entry, unwind it so the back button does
+  // not leave a dead state; the popstate handler then fires the single close.
+  const requestClose = useCallback(() => {
+    if (historyPushedRef.current) {
+      historyPushedRef.current = false;
+      window.history.back();
+    } else {
+      onCloseRef.current();
+    }
+  }, []);
+
+  // Focus management — move focus into the drawer on open, restore to the
+  // opener (the hamburger) on close.
+  useEffect(() => {
+    if (open) {
+      openerRef.current = (document.activeElement as HTMLElement) ?? null;
+      const first = panelRef.current?.querySelector<HTMLElement>(
+        "a, button, [tabindex]:not([tabindex='-1'])"
+      );
+      first?.focus();
+    } else if (openerRef.current) {
+      openerRef.current.focus();
+      openerRef.current = null;
+    }
+  }, [open]);
+
+  // Trap Tab focus within the drawer while open.
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key !== "Tab" || !panelRef.current) return;
+    const focusables = Array.from(
+      panelRef.current.querySelectorAll<HTMLElement>(
+        "a, button, [tabindex]:not([tabindex='-1'])"
+      )
+    ).filter((el) => !el.hasAttribute("disabled"));
+    if (focusables.length === 0) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    const active = document.activeElement as HTMLElement;
+    if (e.shiftKey && active === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && active === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }, []);
+
+  // Prevent body scroll when drawer is open.
   useEffect(() => {
     if (open) {
       document.body.style.overflow = "hidden";
@@ -56,7 +186,7 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
     };
   }, [open]);
 
-  // Swipe right to close with visual drag feedback
+  // Swipe right to close with visual drag feedback.
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     touchStartRef.current = { x: e.touches[0].clientX };
   }, []);
@@ -72,7 +202,7 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
         }
         if (backdropRef.current) {
           const panelWidth = panelRef.current?.offsetWidth ?? 280;
-          const newOpacity = Math.max(0, 1 - (dx / panelWidth));
+          const newOpacity = Math.max(0, 1 - dx / panelWidth);
           backdropRef.current.style.opacity = String(newOpacity);
           backdropRef.current.style.transition = "none";
         }
@@ -84,28 +214,47 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
     (e: React.TouchEvent) => {
       if (!touchStartRef.current) return;
       const dx = e.changedTouches[0].clientX - touchStartRef.current.x;
+      // Reset any inline drag styles so the CSS state class takes over again.
+      if (panelRef.current) {
+        panelRef.current.style.transition = "transform 300ms var(--spring-snappy)";
+        panelRef.current.style.transform = "";
+      }
+      if (backdropRef.current) {
+        backdropRef.current.style.transition = "opacity 300ms var(--ease-cinematic)";
+        backdropRef.current.style.opacity = "";
+      }
       if (dx > 60) {
         hapticLight();
-        onClose();
-      } else {
-        if (panelRef.current) {
-          panelRef.current.style.transition = "transform 300ms var(--spring-snappy)";
-          panelRef.current.style.transform = "";
-        }
-        if (backdropRef.current) {
-          backdropRef.current.style.transition = "opacity 300ms var(--ease-cinematic)";
-          backdropRef.current.style.opacity = "";
-        }
+        requestClose();
       }
       touchStartRef.current = null;
     },
-    [onClose]
+    [requestClose]
   );
 
   const handleLinkClick = useCallback(() => {
     hapticLight();
-    onClose();
-  }, [onClose]);
+    // Link navigation proceeds; just drop the visual drawer + our history entry.
+    requestClose();
+  }, [requestClose]);
+
+  const renderItem = (item: NavItem, cascade: number) => {
+    const active = isActive(item.href);
+    return (
+      <Link
+        key={item.href}
+        href={item.href}
+        className={`msp__link${active ? " msp__link--active" : ""}`}
+        data-accent={item.accent ?? "neutral"}
+        data-msp-cascade={cascade}
+        aria-current={active ? "page" : undefined}
+        onClick={handleLinkClick}
+      >
+        <span className="msp__link-cmd">{item.label}</span>
+        <span className="msp__link-desc">{item.desc}</span>
+      </Link>
+    );
+  };
 
   return (
     <>
@@ -113,93 +262,94 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
       <div
         ref={backdropRef}
         className={`msp__backdrop${open ? " msp__backdrop--open" : ""}`}
-        onClick={onClose}
+        onClick={requestClose}
         aria-hidden="true"
       />
 
-      {/* Panel */}
+      {/* Drawer */}
       <div
         ref={panelRef}
         className={`msp${open ? " msp--open" : ""}`}
         role="dialog"
         aria-modal={open}
-        aria-label="Navigation menu"
+        aria-label="Menu"
+        onKeyDown={handleKeyDown}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Header — ScaleIcon brand mark with ink underline */}
+        {/* Header — Void News wordmark + tagline */}
         <div className="msp__header" data-msp-cascade="1">
-          <ScaleIcon size={28} animation="idle" />
+          <LogoWordmark height={22} className="msp__wordmark" />
+          <span className="msp__header-tagline">See through the void.</span>
         </div>
 
-        {/* Content destinations — grouped Read / Explore / Participate, with a
-            smaller utility group in the footer. Editorial serif links carry the
-            same per-product accents as the desktop masthead (History umber,
-            Weekly red, Revolt blue, On Air broadcast red); the rest neutral. */}
-        <nav className="msp__links" aria-label="Side navigation">
+        {/* Grouped navigation — Read / Explore / Participate + a quieter
+            About Void News utility group. */}
+        <nav className="msp__links" aria-label="Site navigation">
           <span className="msp__section-label" data-msp-cascade="2">Read</span>
-          <Link href="/" className="msp__link" data-accent="neutral" data-msp-cascade="2" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">News</span>
-            <span className="msp__link-desc">Today&rsquo;s feed</span>
-          </Link>
-          {/* Weekly + History links HIDDEN for launch 2026-08-05 — restore in the
-              Read group when those ship as features. Routes intact behind redirects. */}
-          <Link href="/onair" className="msp__link" data-accent="onair" data-msp-cascade="2" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">On Air</span>
-            <span className="msp__link-desc">The audio broadcast</span>
-          </Link>
+          {READ_ITEMS.map((item) => renderItem(item, 2))}
 
-          {/* Organic ink divider */}
           <svg className="msp__divider" data-msp-cascade="3" viewBox="0 0 200 4" preserveAspectRatio="none" aria-hidden="true">
             <path d="M0,2 C25,0.5 50,3.5 75,2 C100,0.5 125,3 150,2 C175,1 200,3 200,2" />
           </svg>
 
           <span className="msp__section-label" data-msp-cascade="3">Explore</span>
-          <Link href="/sources" className="msp__link" data-accent="neutral" data-msp-cascade="3" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">Sources</span>
-            <span className="msp__link-desc">1,016 curated sources</span>
-          </Link>
+          {EXPLORE_ITEMS.map((item) => renderItem(item, 3))}
 
-          {/* Organic ink divider */}
           <svg className="msp__divider" data-msp-cascade="4" viewBox="0 0 200 4" preserveAspectRatio="none" aria-hidden="true">
             <path d="M0,2 C30,3.2 55,0.8 80,2 C105,3.2 130,0.8 160,2 C180,3 200,1.5 200,2" />
           </svg>
 
           <span className="msp__section-label" data-msp-cascade="4">Participate</span>
-          <Link href="/ship" className="msp__link" data-accent="neutral" data-msp-cascade="4" onClick={handleLinkClick}>
-            <span className="msp__link-cmd">Feedback</span>
-            <span className="msp__link-desc">Tell us what to build or fix</span>
-          </Link>
+          {PARTICIPATE_ITEMS.map((item) => renderItem(item, 4))}
 
-          {/* Utility group — smaller, quieter type */}
+          {/* About Void News — quieter utility group */}
+          <span className="msp__section-label" data-msp-cascade="5">About Void News</span>
           <div className="msp__util" data-msp-cascade="5">
-            <Link href="/about" className="msp__util-link" onClick={handleLinkClick}>About</Link>
+            <Link
+              href="/about"
+              className={`msp__util-link${isActive("/about") ? " msp__util-link--active" : ""}`}
+              aria-current={isActive("/about") ? "page" : undefined}
+              onClick={handleLinkClick}
+            >
+              About
+            </Link>
             <span className="msp__util-sep" aria-hidden="true">&middot;</span>
-            <Link href="/press" className="msp__util-link" onClick={handleLinkClick}>Press</Link>
+            <Link
+              href="/press"
+              className={`msp__util-link${isActive("/press") ? " msp__util-link--active" : ""}`}
+              aria-current={isActive("/press") ? "page" : undefined}
+              onClick={handleLinkClick}
+            >
+              Press
+            </Link>
             <span className="msp__util-sep" aria-hidden="true">&middot;</span>
-            <Link href="/privacy" className="msp__util-link" onClick={handleLinkClick}>Privacy</Link>
+            <Link
+              href="/privacy"
+              className={`msp__util-link${isActive("/privacy") ? " msp__util-link--active" : ""}`}
+              aria-current={isActive("/privacy") ? "page" : undefined}
+              onClick={handleLinkClick}
+            >
+              Privacy
+            </Link>
           </div>
         </nav>
 
-        {/* Theme toggle removed per Kill List — theme auto-detects from prefers-color-scheme.
-             Does not deserve prime real estate in side panel. */}
-
-        {/* Footer — dateline, tagline, colophon mark */}
-        <div className="msp__footer" data-msp-cascade="5">
-          <time className="msp__dateline" suppressHydrationWarning>
-            {mounted
-              ? new Date().toLocaleDateString("en-US", {
-                  weekday: "long",
-                  month: "long",
-                  day: "numeric",
-                  year: "numeric",
-                })
-              : "\u00A0"}
-          </time>
-          <span className="msp__tagline">See through the void.</span>
-          <div className="msp__colophon" aria-hidden="true">
-            <ScaleIcon size={16} animation="none" />
+        {/* Info bar — the masthead facts the mobile top chrome drops: edition
+            build time, source count, and the theme control. */}
+        <div className="msp__infobar" data-msp-cascade="5">
+          <div className="msp__info-lines">
+            <span className="msp__info-line" suppressHydrationWarning>
+              {mounted ? `Edition as of ${getEditionTimestamp(editionBuiltAt)}` : " "}
+            </span>
+            <span className="msp__info-line msp__info-line--muted">
+              1,016 sources across 158 countries
+            </span>
+          </div>
+          <div className="msp__theme-row">
+            <span className="msp__theme-label">Appearance</span>
+            <ThemeToggle />
           </div>
         </div>
       </div>
