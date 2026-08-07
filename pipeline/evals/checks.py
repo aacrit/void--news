@@ -24,8 +24,12 @@ Helpers reused (when importable):
         MEGA_OVERMERGE_ENTITY_CONV_FLOOR, MEGA_OVERMERGE_TITLE_JACCARD_FLOOR
   - categorizer.newsworthiness.newsworthiness
 
-Reimplemented (no importable source):
-  - isRawExcerpt  (ported from frontend/app/lib/summaryHygiene.ts — TypeScript)
+  - utils.summary_hygiene.is_raw_excerpt  (canonical Python port of
+        frontend/app/lib/summaryHygiene.ts; the summary floor uses the same
+        module — single source of truth)
+
+Reimplemented (fallback only, when utils.summary_hygiene can't import):
+  - is_raw_excerpt  (local 1:1 copy of the same port)
 """
 
 from __future__ import annotations
@@ -228,43 +232,47 @@ def _specific_stems(title: str) -> set[str]:
     return {s for s in _title_stems(title) if len(s) >= 3 and s not in banned}
 
 
-# --- raw-excerpt detector (ported from summaryHygiene.ts) ------------------
+# --- raw-excerpt detector (single source of truth) -------------------------
 
-# Ported 1:1 from frontend/app/lib/summaryHygiene.ts (RAW_EXCERPT_PATTERNS).
-_RAW_EXCERPT_PATTERNS = [
-    re.compile(r"\bWhy it matters:", re.I),
-    re.compile(r"\bthe big picture:", re.I),
-    re.compile(r"\bgo deeper:", re.I),
-    re.compile(r"\bread more:", re.I),
-    re.compile(r"\bkeep reading:", re.I),
-    re.compile(r"\bsign up for", re.I),
-    re.compile(r"\bsubscribe to", re.I),
-    re.compile(r"\badvertisement\b", re.I),
-    re.compile(r"\bphoto(?:graph)?:\s", re.I),
-    re.compile(r"\bimage caption\b", re.I),
-    re.compile(r"\bgetty images\b", re.I),
-    re.compile(r"\([^)]*/\s*(?:AFP|AP|Reuters|Getty|EPA|Bloomberg|Anadolu|Xinhua|AAP)\b", re.I),
-    re.compile(r"[\s\-–—]+[a-z0-9-]+\.(?:com|org|net|gov|co\.[a-z]{2})\s*$", re.I),
-]
+# Prefer the canonical Python port in utils.summary_hygiene (the same module the
+# summary floor uses, itself a 1:1 port of frontend/app/lib/summaryHygiene.ts).
+# Fall back to a local 1:1 copy only when that module can't import (hermetic
+# offline runs where `utils` is not on sys.path) — matching this file's
+# established prefer-repo-helper-then-local-fallback pattern.
+try:  # pragma: no cover - exercised via the import path in CI
+    from utils.summary_hygiene import is_raw_excerpt  # type: ignore  # noqa: F401
+except Exception:  # pragma: no cover - hermetic fallback
+    _RAW_EXCERPT_PATTERNS = [
+        re.compile(r"\bWhy it matters:", re.I),
+        re.compile(r"\bthe big picture:", re.I),
+        re.compile(r"\bgo deeper:", re.I),
+        re.compile(r"\bread more:", re.I),
+        re.compile(r"\bkeep reading:", re.I),
+        re.compile(r"\bsign up for", re.I),
+        re.compile(r"\bsubscribe to", re.I),
+        re.compile(r"\badvertisement\b", re.I),
+        re.compile(r"\bphoto(?:graph)?:\s", re.I),
+        re.compile(r"\bimage caption\b", re.I),
+        re.compile(r"\bgetty images\b", re.I),
+        re.compile(r"\([^)]*/\s*(?:AFP|AP|Reuters|Getty|EPA|Bloomberg|Anadolu|Xinhua|AAP)\b", re.I),
+        re.compile(r"[\s\-–—]+[a-z0-9-]+\.(?:com|org|net|gov|co\.[a-z]{2})\s*$", re.I),
+    ]
 
-
-def is_raw_excerpt(summary: str) -> bool:
-    """True when a non-empty summary looks like a raw scraped excerpt, not prose.
-    Deterministic Python port of summaryHygiene.ts isRawExcerpt()."""
-    s = (summary or "").strip()
-    if not s:
-        return False
-    for rx in _RAW_EXCERPT_PATTERNS:
-        if rx.search(s):
+    def is_raw_excerpt(summary: str) -> bool:
+        """Local fallback port of summaryHygiene.ts isRawExcerpt() (used only
+        when utils.summary_hygiene cannot be imported)."""
+        s = (summary or "").strip()
+        if not s:
+            return False
+        for rx in _RAW_EXCERPT_PATTERNS:
+            if rx.search(s):
+                return True
+        camel = len(re.findall(r"[a-z][A-Z]", s))
+        if camel >= 3:
             return True
-    # Run-together words from a broken extraction ("reportingThe minister said").
-    camel = len(re.findall(r"[a-z][A-Z]", s))
-    if camel >= 3:
-        return True
-    # A single absurdly long token is almost always concatenated words / a slug.
-    if re.search(r"\S{40,}", s):
-        return True
-    return False
+        if re.search(r"\S{40,}", s):
+            return True
+        return False
 
 
 # --- show-don't-tell / meta hygiene ----------------------------------------
@@ -330,6 +338,46 @@ def _as_list(v: Any) -> list[str]:
     return []
 
 
+def _n_articles(c: dict) -> int:
+    """Best-effort member count for a cluster dict (n_articles > source_count >
+    len(members))."""
+    for key in ("n_articles", "source_count"):
+        v = c.get(key)
+        if isinstance(v, int) and v > 0:
+            return v
+    members = c.get("member_articles") or c.get("member_titles") or []
+    return len(members)
+
+
+def _card_meta(c: dict) -> dict:
+    """The offending card's identifying metadata, so the resolution/judge layer
+    can act on the finding without re-querying the DB."""
+    return {
+        "summary_tier": (c.get("summary_tier") or None),
+        "content_type": (c.get("content_type") or None),
+        "n_articles": _n_articles(c),
+    }
+
+
+def _card_context(c: dict) -> dict:
+    """Full offending-card context = the actual summary text (first ~400 chars)
+    plus `_card_meta`. Attached to RF-4 findings, which otherwise named the card
+    but never carried the summary text the resolution layer needs to see."""
+    return {"summary": (c.get("summary") or "")[:400], **_card_meta(c)}
+
+
+def _dominant_topic(member_titles: list[str], title: str) -> set[str]:
+    """Cluster's dominant-topic token set = title tokens UNION tokens shared by
+    >= 2 member titles (mirrors cluster_summarizer._filter_ontopic_articles' core;
+    the same lens RF-1 uses)."""
+    from collections import Counter
+    freq: Counter = Counter()
+    for mt in member_titles:
+        freq.update(_ontopic_tokens(mt))
+    shared = {t for t, n in freq.items() if n >= 2}
+    return _ontopic_tokens(title or "") | shared
+
+
 def _priority(base_p1: bool, position: int, both_positions: list[int] | None = None) -> str:
     """P0 when the finding touches the front page (top-10), else P1/P2."""
     positions = both_positions if both_positions is not None else [position]
@@ -364,8 +412,7 @@ def check_coverage(clusters: list[dict]) -> list[Finding]:
                 position=pos,
                 message=(f"no usable summary (summary={'empty' if not summary else 'present'}, "
                          f"tier={tier or 'NULL'})"),
-                evidence={"summary_present": bool(summary),
-                          "summary_tier": tier or None},
+                evidence={"summary_present": bool(summary), **_card_context(c)},
             ))
         elif is_raw_excerpt(summary):
             out.append(Finding(
@@ -374,7 +421,7 @@ def check_coverage(clusters: list[dict]) -> list[Finding]:
                 cluster_id=c["id"], cluster_title=c.get("title", ""),
                 position=pos,
                 message="summary looks like a raw scraped excerpt (would be blanked on the card)",
-                evidence={"summary": summary[:280], "summary_tier": tier},
+                evidence=_card_context(c),
             ))
     return out
 
@@ -456,6 +503,7 @@ def check_headline_summary_agreement(clusters: list[dict]) -> list[Finding]:
                 judge_payload={
                     "question": "Does the summary describe the same story as the headline?",
                     "cluster_id": c["id"], "title": title, "summary": summary,
+                    **_card_meta(c),
                 },
             ))
     return out
@@ -482,12 +530,7 @@ def check_cross_contamination(clusters: list[dict]) -> list[Finding]:
 
         # Dominant topic = title tokens UNION tokens shared by >= 2 members
         # (mirrors cluster_summarizer._filter_ontopic_articles' core).
-        from collections import Counter
-        freq: Counter = Counter()
-        for mt in member_titles:
-            freq.update(_ontopic_tokens(mt))
-        shared = {t for t, n in freq.items() if n >= 2}
-        core = _ontopic_tokens(c.get("title", "") or "") | shared
+        core = _dominant_topic(member_titles, c.get("title", "") or "")
         if not core:
             continue  # no reliable topic signal — do not flag
 
@@ -511,6 +554,7 @@ def check_cross_contamination(clusters: list[dict]) -> list[Finding]:
                     "title": c.get("title", ""),
                     "summary": summary,
                     "member_titles": list(member_titles),
+                    **_card_meta(c),
                 },
             ))
     return out
@@ -671,28 +715,64 @@ def check_cohesion(clusters: list[dict]) -> list[Finding]:
             jaccard = _local_avg_title_jaccard(titles)
             entity_conv = _local_entity_convergence(titles)
 
-        if entity_conv < ent_floor and jaccard < jac_floor:
-            pos = c["position"]
-            out.append(Finding(
-                code="RF-5", grade="WRONG", is_candidate=True,
-                priority=_priority(True, pos), dimension="cohesion",
-                cluster_id=c["id"], cluster_title=c.get("title", ""),
-                position=pos,
-                message=(f"incoherent bag: entity_convergence={entity_conv:.2f} "
-                         f"(<{ent_floor}) AND avg_title_jaccard={jaccard:.2f} "
-                         f"(<{jac_floor}){' [approx]' if approximated else ''} "
-                         f"over {len(titles)} members"),
-                evidence={"entity_convergence": round(float(entity_conv), 3),
-                          "avg_title_jaccard": round(float(jaccard), 3),
-                          "n_members": len(titles),
-                          "approximated": approximated},
-                judge_payload={
-                    "question": "Are these member headlines one event or a mis-merged bag?",
-                    "cluster_id": c["id"],
-                    "title": c.get("title", ""),
-                    "member_titles": titles[:40],
-                },
-            ))
+        if not (entity_conv < ent_floor and jaccard < jac_floor):
+            continue
+
+        pos = c["position"]
+        # RECALIBRATION (2026-08-07): the title-jaccard/entity-convergence floors
+        # are recomputed from member TITLES here (the eval lacks the pipeline's
+        # in-memory entity sets), so a coherent BIG story with varied headlines
+        # (e.g. a 50-member Ebola outbreak) fails both floors and was hard-WRONGed.
+        # Add a corroborating signal: does the cluster SUMMARY still track the
+        # members' shared topic? If so, or if we only have the title-only
+        # approximation (no NER), downgrade to a LOW-CONFIDENCE P2 review
+        # candidate clearly labeled "verify" instead of a hard WRONG. A hard
+        # WRONG now requires BOTH the real (NER-backed) cohesion floors AND a
+        # summary that is off-topic from the members — a trustworthy signal.
+        summary = (c.get("summary") or "").strip()
+        core = _dominant_topic(titles, c.get("title", "") or "")
+        summary_tokens = _ontopic_tokens(summary) if summary else set()
+        summary_on_topic = bool(summary_tokens and core and (summary_tokens & core))
+
+        low_confidence = approximated or summary_on_topic
+        if low_confidence:
+            grade = "ACCEPTABLE"
+            priority = "P2"  # advisory review candidate, never a front-page block
+            label = ("title-only heuristic, verify" if approximated
+                     else "summary still on members' topic, verify")
+            message = (f"possible incoherent bag [{label}]: "
+                       f"entity_convergence={entity_conv:.2f} (<{ent_floor}) AND "
+                       f"avg_title_jaccard={jaccard:.2f} (<{jac_floor}) over "
+                       f"{len(titles)} members")
+        else:
+            grade = "WRONG"
+            priority = _priority(True, pos)
+            message = (f"incoherent bag: entity_convergence={entity_conv:.2f} "
+                       f"(<{ent_floor}) AND avg_title_jaccard={jaccard:.2f} "
+                       f"(<{jac_floor}) AND summary off-topic from members, over "
+                       f"{len(titles)} members")
+
+        out.append(Finding(
+            code="RF-5", grade=grade, is_candidate=True,
+            priority=priority, dimension="cohesion",
+            cluster_id=c["id"], cluster_title=c.get("title", ""),
+            position=pos,
+            message=message,
+            evidence={"entity_convergence": round(float(entity_conv), 3),
+                      "avg_title_jaccard": round(float(jaccard), 3),
+                      "n_members": len(titles),
+                      "approximated": approximated,
+                      "summary_on_topic": summary_on_topic,
+                      "low_confidence": low_confidence},
+            judge_payload={
+                "question": "Are these member headlines one event or a mis-merged bag?",
+                "cluster_id": c["id"],
+                "title": c.get("title", ""),
+                "member_titles": titles[:40],
+                "summary": summary[:400],
+                **_card_meta(c),
+            },
+        ))
     return out
 
 
