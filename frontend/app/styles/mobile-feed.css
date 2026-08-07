@@ -1213,6 +1213,36 @@
   color: var(--fg-tertiary);
 }
 
+/* Functional descriptor (dek) — quiet lowercase mono tail on the kicker line
+   that names what the module is, not a second label. Muted so it adds meaning
+   without visual weight; sits on the same line as the uppercase kicker. */
+.mbp__teaser-desc {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  font-weight: 400;
+  color: var(--fg-muted);
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+/* Expanded-state full descriptor — muted mono line under the header row and
+   near the opinion headline. */
+.mbp__desc {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  font-weight: 400;
+  color: var(--fg-muted);
+  letter-spacing: 0;
+  text-transform: none;
+  line-height: 1.4;
+  margin: calc(var(--space-1) * -1) 0 var(--space-2);
+}
+
+.mbp__desc--opinion {
+  margin: 0 0 var(--space-1);
+}
+
 /* De-headlined standfirst — NOT a story headline. Was --text-base weight 600
    primary, which read as a peer of the Top Story headline right below it.
    Now smaller (--text-sm) and secondary so the summary prose carries the

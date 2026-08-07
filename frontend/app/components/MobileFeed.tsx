@@ -127,6 +127,12 @@ export default function MobileFeed({
         <MobileBriefPill state={dailyBriefState} className="anim-cold-open-pill" />
       )}
 
+      {/* Boundary line — marks where the brief ("about the day") ends and the
+          story feed ("the day") begins. Main feed only; overflow has no brief. */}
+      {!isOverflow && (
+        <div className="feed-start" aria-hidden="true">Today&rsquo;s Top Stories</div>
+      )}
+
       {/* Twin top stories — main feed only. Overflow has no leads.
           Inline mode: when one of the twin leads is open, the whole twin block
           is replaced by the full-width InlineDeepDive. */}

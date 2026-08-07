@@ -156,7 +156,23 @@
 .skb__compact-label {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: var(--space-2);
+}
+
+/* Functional descriptor — a quiet dek after the kicker that names what kind of
+   thing this module is ("a summary digest", not the top story). Data register
+   (mono) matching the kicker, but muted + sentence case so it adds meaning, not
+   visual weight. Leading middot separates it from the clay kicker. */
+.skb__compact-desc,
+.skb__section-desc {
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  font-weight: 400;
+  color: var(--fg-muted);
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: nowrap;
 }
 
 .skb__compact-logo {
@@ -508,6 +524,7 @@
 .skb__section-label {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: var(--space-2);
   margin-bottom: var(--space-2);
 }
