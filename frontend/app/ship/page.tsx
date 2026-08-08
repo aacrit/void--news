@@ -3,7 +3,7 @@ import Link from "next/link";
 import FeedbackForm from "../components/FeedbackForm";
 
 export const metadata: Metadata = {
-  title: "Feedback",
+  title: "Feedback | Void News",
   description:
     "Tell us what to build or what is broken. Every note lands with the team. No account required.",
 };

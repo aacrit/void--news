@@ -58,7 +58,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://news.voidvision.org"),
   title: "Void News. See through the void.",
   description:
-    "An experimental newsroom: free per-article bias analysis across 1,016 sources. Six axes. No paywall. No algorithm. Just the news, dissected.",
+    "An experimental newsroom: free per-article bias analysis across 1,016 sources. Six axes. No paywall. No feed tuned to you. Just the news, dissected.",
   keywords: [
     "news",
     "bias analysis",
@@ -72,7 +72,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Void News. See through the void.",
     description:
-      "An experimental newsroom: free per-article bias analysis across 1,016 sources. Six axes. No paywall. No algorithm. Just the news, dissected.",
+      "An experimental newsroom: free per-article bias analysis across 1,016 sources. Six axes. No paywall. No feed tuned to you. Just the news, dissected.",
     type: "website",
     siteName: "Void News",
     images: [
@@ -89,7 +89,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Void News. See through the void.",
     description:
-      "An experimental newsroom: free per-article bias analysis across 1,016 sources. Six axes. No paywall. No algorithm.",
+      "An experimental newsroom: free per-article bias analysis across 1,016 sources. Six axes. No paywall. No feed tuned to you.",
     images: [`${BASE_PATH}/og-image.png`],
   },
   icons: {

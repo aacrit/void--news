@@ -4,9 +4,8 @@
 // Moving the import here removes ~80KB gzipped from globals/homepage bundle.
 import "../styles/spectrum.css";
 
-import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
-import type { Edition } from "../lib/types";
 import { supabase, supabaseError, fetchMethodologyArticles } from "../lib/supabase";
 import {
   leanLabel,
@@ -14,13 +13,9 @@ import {
   rigorLabel,
 } from "../lib/biasColors";
 import SpectrumChart, { type SpectrumSource, normalizeLean } from "../components/SpectrumChart";
-import ThemeToggle from "../components/ThemeToggle";
-import PageToggle from "../components/PageToggle";
-// EditionIcon import removed 2026-06-02 single-feed
-import LogoFull from "../components/LogoFull";
+import NavBar from "../components/NavBar";
 import LogoIcon from "../components/LogoIcon";
 import Footer from "../components/Footer";
-import { getEditionTimeOfDay, getEditionTimestamp } from "../lib/utils";
 // Canonical curated-source total (data/sources.json — verified). Single source
 // of truth so the /sources header, the finale hero, and the About page can't
 // drift apart (F9). Live DB row count can include inactive/duplicate rows.
@@ -34,41 +29,6 @@ import { useInView } from "../lib/sharedObserver";
    Desktop: horizontal spectrum bar with logos above/below.
    Mobile: horizontal swipeable card strip with scroll-snap.
    --------------------------------------------------------------------------- */
-
-type LeanCategory =
-  | "far-left" | "left" | "center-left" | "center"
-  | "center-right" | "right" | "far-right";
-
-type LeanFilter = "All" | "Left" | "Center" | "Right";
-
-const EDITIONS: { slug: Edition; label: string }[] = [
-  { slug: "world", label: "World" },
-  { slug: "us", label: "US" },
-  { slug: "europe", label: "Europe" },
-  { slug: "south-asia", label: "South Asia" },
-];
-
-const EDITION_COUNTRIES: Record<Edition, string[] | null> = {
-  world: null,
-  us: ["US"],
-  europe: ["GB", "DE", "FR", "IT", "ES", "NL", "BE", "AT", "CH", "SE", "NO", "DK", "FI", "IE", "PL", "PT", "GR", "CZ", "RO", "HU"],
-  "south-asia": ["IN"],
-};
-
-const LEAN_FILTERS: LeanFilter[] = ["Left", "Center", "Right"];
-
-const LEAN_ALLOWED: Record<LeanFilter, LeanCategory[] | null> = {
-  All: null,
-  Left: ["far-left", "left", "center-left"],
-  Center: ["center"],
-  Right: ["center-right", "right", "far-right"],
-};
-
-const LEAN_DOT_COLOR: Record<string, string> = {
-  Left: "var(--bias-left)",
-  Center: "var(--bias-center)",
-  Right: "var(--bias-right)",
-};
 
 /* ---------------------------------------------------------------------------
    Methodology Section — comprehensive trust anchor
@@ -88,7 +48,7 @@ const AXES_DATA: {
   {
     id: "lean",
     name: "Political Lean",
-    range: "0\u2013100",
+    range: "0 to 100",
     low: "Far Left",
     high: "Far Right",
     what: "Where an article falls on the left-right spectrum, read from two things: the outlet\u2019s track record and the article\u2019s own words. On a short item the record weighs more; on a full article the words weigh more.",
@@ -102,7 +62,7 @@ const AXES_DATA: {
   {
     id: "sensationalism",
     name: "Sensationalism",
-    range: "0\u2013100",
+    range: "0 to 100",
     low: "Measured",
     high: "Inflammatory",
     what: "How much the article inflates urgency, emotion, or outrage beyond what the facts warrant.",
@@ -116,7 +76,7 @@ const AXES_DATA: {
   {
     id: "opinion",
     name: "Opinion vs Reporting",
-    range: "0\u2013100",
+    range: "0 to 100",
     low: "Hard Reporting",
     high: "Editorial",
     what: "Whether the article reports facts or argues a position. 50 marks the analysis midpoint.",
@@ -130,7 +90,7 @@ const AXES_DATA: {
   {
     id: "rigor",
     name: "Factual Rigor",
-    range: "0\u2013100",
+    range: "0 to 100",
     low: "Unsourced",
     high: "Well-sourced",
     what: "How thoroughly an article cites named sources, data, and direct quotes.",
@@ -144,14 +104,14 @@ const AXES_DATA: {
   {
     id: "framing",
     name: "Framing",
-    range: "0\u2013100",
+    range: "0 to 100",
     low: "Neutral",
     high: "Heavy Framing",
     what: "Whether word choices, omissions, or structural decisions nudge the reader toward a conclusion.",
     signals: [
       "Charged synonym detection (50+ curated word pairs)",
       "Cluster-aware omission analysis (what peers cover that this article skips)",
-      "Headline\u2013body divergence score",
+      "Headline-body divergence score",
       "Passive voice frequency (capped at 30 points)",
     ],
   },
@@ -179,7 +139,7 @@ const WORKED_EXAMPLE = {
     { axis: "Opinion vs Reporting", score: 12, color: "var(--fg-secondary)", label: "Hard reporting", detail: "Zero first-person pronouns. 8 direct attributions. No value judgments or rhetorical questions." },
     { axis: "Factual Rigor", score: 82, color: "var(--accent-warm)", label: "Well-sourced", detail: "6 named sources, 2 org citations (CBO, OMB), 4 direct quotes, specific dollar figures and vote counts." },
     { axis: "Framing", score: 15, color: "var(--fg-secondary)", label: "Neutral", detail: "No charged synonyms detected. Headline matches body content. Active voice throughout." },
-    { axis: "Outlet Tracking", score: null, color: "var(--fg-muted)", label: "EMA: 47.2", detail: "AP\u2019s economy coverage averages 47.2 (center) across 342 tracked articles on this topic." },
+    { axis: "Outlet Tracking", score: null, color: "var(--fg-muted)", label: "EMA: 47.2", detail: "For example, an outlet\u2019s economy coverage might average 47.2 (center) across the articles tracked on that topic." },
   ],
 };
 
@@ -548,9 +508,9 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
   /* Tier data for source bar visualization */
   const tierCounts = useMemo(() => {
     const tiers = [
-      { tier: "us_major", label: "US Major", count: 0, total: 43, sources: [] as SpectrumSource[] },
-      { tier: "international", label: "International", count: 0, total: 373, sources: [] as SpectrumSource[] },
-      { tier: "independent", label: "Independent", count: 0, total: 597, sources: [] as SpectrumSource[] },
+      { tier: "us_major", label: "US Major", count: 0, total: SOURCE_TIERS.usMajor, sources: [] as SpectrumSource[] },
+      { tier: "international", label: "International", count: 0, total: SOURCE_TIERS.international, sources: [] as SpectrumSource[] },
+      { tier: "independent", label: "Independent", count: 0, total: SOURCE_TIERS.independent, sources: [] as SpectrumSource[] },
     ];
     for (const s of sources) {
       const t = tiers.find((t) => t.tier === s.tier);
@@ -619,7 +579,7 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
           <p className="meth__body">
             Pick any article. Watch the scores populate in real time.
             Every number traces back to a signal decomposition: keyword
-            counts, entity sentiments, attribution density. Nothing is a black box.
+            counts, entity sentiments, attribution density. Every score shows its work.
           </p>
         </div>
         <div className="meth-scene__viz">
@@ -711,7 +671,7 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
           ================================================================ */}
       <InfographicScene layout="lr">
         <div className="meth-scene__callout">
-          <h3 className="meth-scene__heading">Validated. Tested. Proven.</h3>
+          <h3 className="meth-scene__heading">42 articles, scored blind, checked by hand.</h3>
           <p className="meth__body">
             42 ground-truth articles across 9 categories. Each scored by the engine,
             then verified by hand against editorial consensus. A cross-axis correlation
@@ -729,8 +689,8 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
               <span className="meth-stats-strip__label">categories</span>
             </div>
             <div className="meth-stats-strip__item meth-stats-strip__item--hero" role="listitem">
-              <span className="meth-stats-strip__number">100%</span>
-              <span className="meth-stats-strip__label">accuracy</span>
+              <span className="meth-stats-strip__number">0</span>
+              <span className="meth-stats-strip__label">scores wrong</span>
             </div>
             <div className="meth-stats-strip__item" role="listitem">
               <span className="meth-stats-strip__number">r{"\u2009<\u2009"}0.70</span>
@@ -819,47 +779,10 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
   );
 }
 
-function formatDateCompact(): string {
-  return new Date().toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
-
 function SourcesPageInner() {
   const [sources, setSources] = useState<SpectrumSource[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [activeEdition, setActiveEdition] = useState<Edition>("world");
-  const [activeLean, setActiveLean] = useState<LeanFilter>("All");
-  const editionGroupRef = useRef<HTMLDivElement>(null);
-  const leanGroupRef = useRef<HTMLDivElement>(null);
-
-  // Defer date rendering to client to avoid SSG hydration mismatch (#310)
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true); }, []);
-
-  /** Arrow-key navigation within a radiogroup container */
-  const handleRadioGroupKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLDivElement>) => {
-      if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
-      e.preventDefault();
-      const container = e.currentTarget;
-      const radios = Array.from(
-        container.querySelectorAll<HTMLButtonElement>('[role="radio"]')
-      );
-      const idx = radios.indexOf(e.target as HTMLButtonElement);
-      if (idx < 0) return;
-      const next =
-        e.key === "ArrowRight"
-          ? radios[(idx + 1) % radios.length]
-          : radios[(idx - 1 + radios.length) % radios.length];
-      next.focus();
-      next.click();
-    },
-    []
-  );
 
   useEffect(() => {
     const controller = new AbortController();
@@ -911,49 +834,15 @@ function SourcesPageInner() {
     return () => controller.abort();
   }, []);
 
-  // Show all sources — no edition/lean filtering on the sources page
-  const filteredSources = sources;
-
-  const handleLeanTap = (lean: LeanFilter) => {
-    if (typeof navigator !== "undefined" && navigator.vibrate) navigator.vibrate(10);
-    setActiveLean(lean === activeLean ? "All" : lean);
-  };
-
   return (
     <div className="page-container">
       {/* PWA back nav — visible on mobile */}
       <Link href="/" className="pwa-back" aria-label="Back to news feed">
         <span aria-hidden="true">&larr;</span> News Feed
       </Link>
-      {/* ---- Nav header — matches NavBar layout ---- */}
-      <header className="nav-header">
-        <nav className="nav-inner" aria-label="Main navigation">
-          <div className="nav-left">
-            <Link
-              href="/"
-              aria-label="Void News home"
-              className="nav-logo si-hoverable"
-            >
-              <span className="nav-logo-desktop">
-                <LogoFull height={32} />
-              </span>
-              <span className="nav-logo-mobile">
-                <LogoFull height={22} />
-              </span>
-            </Link>
-          </div>
-
-          {/* Dateline — desktop only */}
-          <span className="nav-dateline-inline" aria-hidden="true" suppressHydrationWarning>
-            {mounted ? formatDateCompact() : ""}
-          </span>
-
-          <div className="nav-right">
-            <PageToggle activePage="sources" />
-            <ThemeToggle />
-          </div>
-        </nav>
-      </header>
+      {/* Shared masthead — identical top chrome to the home feed (tagline,
+          edition timestamp, experimental badge, page links, theme toggle). */}
+      <NavBar />
 
       <main id="main-content" className="page-main sources-page">
         {/* ---- Toolbar: title ---- */}
@@ -1013,9 +902,9 @@ function SourcesPageInner() {
         )}
 
         {/* ---- Spectrum visualization ---- */}
-        {!isLoading && !error && filteredSources.length > 0 && (
+        {!isLoading && !error && sources.length > 0 && (
           <>
-            <SpectrumChart sources={filteredSources} />
+            <SpectrumChart sources={sources} />
             <div className="meth__skip-link-wrap">
               <a href="#methodology" className="meth__skip-link">
                 How we score &rarr;
@@ -1024,28 +913,14 @@ function SourcesPageInner() {
           </>
         )}
 
-        {!isLoading && !error && filteredSources.length === 0 && sources.length > 0 && (
-          <div className="empty-state empty-state--inline">
-            <p className="text-base empty-state__body--no-margin">
-              No sources match the current filters.
-            </p>
-            <button
-              className="btn-secondary"
-              onClick={() => { setActiveEdition("world"); setActiveLean("All"); }}
-            >
-              Clear filters
-            </button>
-          </div>
-        )}
-
         {/* Scoring methodology — anchor target for #methodology deep links
             (DeepDive "How we score" + the in-page skip link above).
             Rendered UNCONDITIONALLY: gating it behind !isLoading excluded
             id="methodology" from the SSG prerender (isLoading starts true),
             so cold deep links and crawlers found no anchor in the static
-            HTML. The component takes filteredSources for its live examples
+            HTML. The component takes sources for its live examples
             but its prose + anchor must exist before any fetch resolves. */}
-        <Methodology sources={filteredSources} />
+        <Methodology sources={sources} />
       </main>
 
       <Footer />
