@@ -1876,10 +1876,15 @@ def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = 50
         if (row.get("source_count") or 0) < 3:
             continue
         window_used += 1
-        if (row.get("content_type") or "").lower() == "opinion":
-            continue  # op-eds preserve original text by design — not a defect
-        if not _floor_needs_summary(row.get("summary"), row.get("summary_tier"),
-                                    _is_raw_excerpt):
+        needs = _floor_needs_summary(row.get("summary"), row.get("summary_tier"),
+                                     _is_raw_excerpt)
+        # Op-eds normally preserve their original voice, but a DISPLAYED op-ed
+        # whose summary is null/empty/raw would render BLANK on the card, which is
+        # worse than a clean rule-based summary. So skip an op-ed only when its
+        # summary is already display-safe; otherwise regenerate it like any card.
+        if (row.get("content_type") or "").lower() == "opinion" and not needs:
+            continue
+        if not needs:
             continue  # already has a clean, usable summary
         null_rows.append(row)
 
