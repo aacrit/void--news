@@ -1,0 +1,784 @@
+/* ===========================================================================
+   ig-render.css — Void News Instagram slide system
+   1080 x 1350 portrait (Instagram Feed maximum). No responsive rules. No motion.
+
+   Three pillars, each a 3-slide carousel (hook -> substance -> cta):
+     VISION  — evergreen manifesto
+     METHOD  — evergreen bias explainer
+     EXAMPLE — dynamic real top story
+
+   Dark ink bookends (hook + cta) frame a cream substance slide. Lean colours
+   ride the --bias-* tokens; every accent is the Void terracotta brand colour.
+   ===========================================================================
+*/
+
+/* Hide chrome from root layout so Playwright captures a clean frame. */
+:where(.ig-root) ~ .mob-nav,
+:where(.ig-root) ~ .floating-player,
+:where(.ig-root) ~ .floating-player-shell,
+:where(.ig-root) ~ .skip-to-content,
+.mob-nav:has(~ .ig-root),
+.floating-player:has(~ .ig-root) {
+  display: none !important;
+}
+
+body:has(.ig-canvas) .mob-nav,
+body:has(.ig-canvas) .floating-player,
+body:has(.ig-canvas) .floating-player-shell,
+body:has(.ig-canvas) .skip-to-content,
+/* void --onair was re-enabled 2026-06-27, adding newer global players with
+   different root classes the original hide-list never covered. Without these
+   the mobile tab bar / mini-player / brief pill / skybox / floating player
+   leak into the 1080x1350 capture. */
+body:has(.ig-canvas) .mtb,
+body:has(.ig-canvas) .mmp,
+body:has(.ig-canvas) .mbp,
+body:has(.ig-canvas) .skb,
+body:has(.ig-canvas) .fp,
+/* The global "experimental" banner/badge from the root layout, and the
+   Next.js dev-tools indicator (the capture runs against `next dev`, so its
+   bottom-left "N / Issues" pill would otherwise render into the frame). */
+body:has(.ig-canvas) .exp-banner,
+body:has(.ig-canvas) .exp-badge,
+body:has(.ig-canvas) nextjs-portal,
+body:has(.ig-canvas) [data-nextjs-toast],
+body:has(.ig-canvas) [data-next-badge-root],
+body:has(.ig-canvas) #__next-build-watcher {
+  display: none !important;
+}
+
+body:has(.ig-canvas) {
+  background: transparent !important;
+  overflow: hidden;
+  margin: 0;
+}
+
+/* --- 1080x1350 canvas frame ------------------------------------------------- */
+
+.ig-canvas {
+  width: 1080px;
+  height: 1350px;
+  position: relative;
+  overflow: hidden;
+  font-family: var(--font-structural);
+  isolation: isolate;
+
+  /* Fixed IG-scoped palette — grounds are baked per slide, so the accents are
+     pinned literals too (theme-independent capture). Lean colours stay on the
+     live --bias-* tokens (referenced directly below). */
+  --ig-ink: #14120F;
+  --ig-ink-2: #1E1B16;
+  --ig-cream: #F0EBDD;
+  --ig-cream-fg: #1A1A1A;
+  --ig-cream-fg-2: #4A4540;
+  --ig-cream-fg-3: #6B6560;
+  --ig-cream-divider: #D4CCC2;
+  --ig-dark-fg: #F4EDE0;
+  --ig-dark-fg-2: rgba(244, 237, 224, 0.74);
+  --ig-dark-fg-3: rgba(244, 237, 224, 0.48);
+  /* Void News brand terracotta — SINGLE SOURCE OF TRUTH lives in tokens.css as
+     --palette-news / --palette-news-ink. Pinned here as LIGHT-mode literals (not
+     var()) on purpose: the IG capture is theme-independent — the token flips to
+     #D89A7C in dark mode, but these slides always render against baked cream/ink
+     grounds, so the light terracotta is the correct match. If the brand accent
+     ever changes in tokens.css, mirror the new light-mode hex here. */
+  --ig-terracotta: #B26F52;      /* == tokens.css --palette-news (light) — large elements */
+  --ig-terracotta-ink: #9A5638;  /* == tokens.css --palette-news-ink (light) — small AA text on cream */
+  --ig-terracotta-soft: rgba(178, 111, 82, 0.16); /* #B26F52 @ 16% */
+
+  /* Void History — umber */
+  --ig-umber: #A07A54;           /* accent on the dark ink bookends */
+  --ig-umber-ink: #5C4033;       /* AA text on the archival cream */
+  --ig-umber-soft: rgba(92, 64, 51, 0.14);
+  --ig-archival: #E7DBC2;        /* archival paper substance ground */
+
+  /* Void Weekly — red */
+  --ig-red: #D24334;             /* accent on the dark ink bookends */
+  --ig-red-ink: #A81E1E;         /* AA text on the weekly paper */
+  --ig-red-soft: rgba(185, 28, 28, 0.12);
+  --ig-weekly-paper: #EDE4D0;    /* weekly magazine substance ground */
+}
+
+.ig-canvas * {
+  box-sizing: border-box;
+}
+
+/* Paper grain on the cream / archival / weekly-paper substance slides. */
+.ig-canvas[data-variant="stance"]::before,
+.ig-canvas[data-variant="sample"]::before,
+.ig-canvas[data-variant="spectrum"]::before,
+.ig-canvas[data-variant="perspectives"]::before,
+.ig-canvas[data-variant="stories"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--paper-texture);
+  background-size: 600px;
+  opacity: 0.4;
+  pointer-events: none;
+  mix-blend-mode: multiply;
+  z-index: 3;
+}
+
+/* Faint film grain on the dark bookends. */
+.ig-canvas[data-variant="hook"]::before,
+.ig-canvas[data-variant="cta"]::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: var(--paper-texture);
+  background-size: 600px;
+  opacity: 0.16;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  z-index: 3;
+}
+
+/* ===========================================================================
+   Shared furniture
+   =========================================================================== */
+
+/* Slide root: every template's outer div fills the canvas. */
+.ig-vision,
+.ig-method,
+.ig-example,
+.ig-history,
+.ig-weekly {
+  position: relative;
+  z-index: 2;
+  height: 100%;
+  padding: 104px 80px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------------------------------------------------------------------------
+   Ground cadence — DARK ink -> CREAM paper -> DARK ink, on EVERY pillar.
+   One deliberate rhythm so a carousel reads as intentional, never a strobe:
+     slide 1 HOOK      deep ink + pillar accent
+     slide 2 SUBSTANCE the pillar's paper (the calm editorial "proof")
+     slide 3 CTA       deep ink + pillar accent + the Sigil-O hero mark
+   Grounds live on .ig-canvas, which carries data-pillar + data-variant, so the
+   cadence is enforced in ONE place regardless of a template's markup. Each
+   pillar keeps its own accent identity (set in the templates); only the ground
+   rhythm is unified here. The slide-root divs paint no ground of their own.
+   --------------------------------------------------------------------------- */
+
+/* HOOK + CTA — deep ink bookends, all five pillars (news / history / weekly). */
+.ig-canvas[data-variant="hook"],
+.ig-canvas[data-variant="cta"] {
+  background: var(--ig-ink);
+  color: var(--ig-dark-fg);
+}
+
+/* SUBSTANCE — one paper per pillar. */
+.ig-canvas[data-pillar="vision"][data-variant="stance"],
+.ig-canvas[data-pillar="method"][data-variant="sample"],
+.ig-canvas[data-pillar="example"][data-variant="spectrum"] {
+  background: var(--ig-cream);
+  color: var(--ig-cream-fg);
+}
+.ig-canvas[data-pillar="history"][data-variant="perspectives"] {
+  background: var(--ig-archival);
+  color: var(--ig-cream-fg);
+}
+.ig-canvas[data-pillar="weekly"][data-variant="stories"] {
+  background: var(--ig-weekly-paper);
+  color: var(--ig-cream-fg);
+}
+
+/* Kicker — Barlow Condensed small-caps label. */
+.ig-kicker {
+  font-family: var(--font-meta);
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 40px;
+}
+.ig-kicker--terracotta { color: var(--ig-terracotta); }
+.ig-kicker--umber { color: var(--ig-umber); }
+.ig-kicker--red { color: var(--ig-red); }
+.ig-kicker--ink {
+  color: var(--ig-terracotta-ink);
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--ig-cream-divider);
+}
+.ig-kicker--red-ink {
+  color: var(--ig-red-ink);
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--ig-red-ink);
+}
+
+.ig-rule {
+  border: none;
+  height: 2px;
+  background: var(--ig-terracotta);
+  width: 88px;
+  margin: 0 0 40px;
+}
+
+/* CTA sign-off line + URL, shared by all three pillars. */
+.ig-cta__line {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: 62px;
+  line-height: 1.1;
+  color: var(--ig-dark-fg);
+  margin: 48px 0 0;
+  max-width: 16ch;
+}
+.ig-url {
+  font-family: var(--font-data);
+  font-size: 30px;
+  letter-spacing: 0.04em;
+  color: var(--ig-terracotta);
+  margin: 40px 0 0;
+}
+.ig-url--umber { color: var(--ig-umber); }
+.ig-url--red { color: var(--ig-red); }
+
+/* --- Stamped wordmark ( Sigil + VOID NEWS ) — every slide ------------------- */
+
+.ig-stamp {
+  position: absolute;
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.ig-stamp--tl { top: 72px; left: 80px; }
+.ig-stamp--tr { top: 72px; right: 80px; }
+.ig-stamp--bl { bottom: 72px; left: 80px; }
+.ig-stamp--br { bottom: 72px; right: 80px; }
+
+.ig-stamp__sigil { flex-shrink: 0; }
+
+.ig-stamp__word {
+  font-family: var(--font-meta);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 24px;
+  line-height: 1;
+  color: inherit;
+}
+/* .ig-stamp__word-accent colour is set inline per track (terracotta/umber/red). */
+
+/* --- Hero mark (hook / cta) ------------------------------------------------- */
+
+.ig-hero-mark {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+.ig-hero-mark__sigil { flex-shrink: 0; }
+.ig-hero-mark__word {
+  font-family: var(--font-meta);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  font-size: 38px;
+  color: inherit; /* accent, set on .ig-hero-mark */
+}
+.ig-hero-mark__word-void { color: var(--ig-dark-fg); }
+
+/* ===========================================================================
+   VISION
+   =========================================================================== */
+
+.ig-vision--hook { justify-content: center; }
+
+.ig-vision__watermark {
+  position: absolute;
+  right: -180px;
+  bottom: -220px;
+  width: 640px;
+  height: 640px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, var(--ig-terracotta-soft) 0%, transparent 68%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.ig-vision__provocation {
+  position: relative;
+  z-index: 2;
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: 78px;
+  line-height: 1.08;
+  letter-spacing: -0.01em;
+  color: var(--ig-dark-fg);
+  margin: 0;
+  max-width: 15ch;
+}
+
+.ig-vision--stance { justify-content: flex-start; }
+
+.ig-vision__lead {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: 68px;
+  line-height: 1.06;
+  color: var(--ig-cream-fg);
+  margin: 0 0 36px;
+  max-width: 14ch;
+}
+
+.ig-vision__body {
+  font-family: var(--font-editorial);
+  font-weight: 400;
+  font-size: 46px;
+  line-height: 1.34;
+  color: var(--ig-cream-fg);
+  margin: 0;
+  max-width: 20ch;
+}
+
+.ig-vision--cta {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.ig-vision--cta .ig-cta__line { margin-top: 64px; }
+
+/* ===========================================================================
+   METHOD
+   =========================================================================== */
+
+.ig-method--hook { justify-content: center; }
+
+.ig-method__headline {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: 84px;
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+  color: var(--ig-dark-fg);
+  margin: 0;
+  max-width: 13ch;
+}
+
+.ig-method--sample { justify-content: flex-start; }
+
+.ig-method__sample {
+  font-family: var(--font-editorial);
+  font-size: 44px;
+  line-height: 1.42;
+  color: var(--ig-cream-fg);
+  padding: 44px 48px;
+  background: #FBF8F0;
+  border: 1px solid var(--ig-cream-divider);
+  border-left: 6px solid var(--ig-terracotta);
+  margin: 0 0 48px;
+}
+.ig-method__sample mark {
+  background: var(--ig-terracotta);
+  color: #FBF8F0;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-style: normal;
+}
+
+/* Lean chip — mini spectrum with a positioned dot (bias tokens only). */
+.ig-chip { margin: 0 0 auto; }
+.ig-chip__track {
+  position: relative;
+  height: 16px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--bias-far-left) 0%,
+    var(--bias-left) 18%,
+    var(--bias-center-left) 34%,
+    var(--bias-center) 50%,
+    var(--bias-center-right) 66%,
+    var(--bias-right) 82%,
+    var(--bias-far-right) 100%
+  );
+}
+.ig-chip__dot {
+  position: absolute;
+  top: 50%;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 5px solid #FBF8F0;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 3px 10px rgba(20, 18, 15, 0.28);
+}
+.ig-chip__meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: 22px;
+  font-family: var(--font-data);
+  font-size: 22px;
+  letter-spacing: 0.04em;
+}
+.ig-chip__ends {
+  text-transform: uppercase;
+  color: var(--ig-cream-fg-3);
+  font-size: 18px;
+  letter-spacing: 0.14em;
+}
+.ig-chip__label { font-weight: 500; }
+
+.ig-method__principle {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: 32px;
+  line-height: 1.36;
+  color: var(--ig-cream-fg-2);
+  border-top: 1px solid var(--ig-cream-divider);
+  padding-top: 36px;
+  margin: 48px 0 0;
+  max-width: 26ch;
+}
+
+.ig-method--cta {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.ig-method--cta .ig-cta__line { margin-top: 52px; }
+
+/* ===========================================================================
+   EXAMPLE
+   =========================================================================== */
+
+.ig-example--hook { justify-content: flex-start; }
+
+.ig-example__event {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: 66px;
+  line-height: 1.08;
+  color: var(--ig-dark-fg);
+  margin: 0 0 auto;
+  max-width: 15ch;
+}
+
+.ig-example__count {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+.ig-example__count-n {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: 200px;
+  line-height: 0.9;
+  color: var(--ig-terracotta);
+  letter-spacing: -0.02em;
+}
+.ig-example__count-word {
+  font-family: var(--font-editorial);
+  font-size: 52px;
+  color: var(--ig-dark-fg);
+  margin-top: 8px;
+}
+.ig-example__count-sub {
+  font-family: var(--font-data);
+  font-size: 28px;
+  letter-spacing: 0.04em;
+  color: var(--ig-dark-fg-2);
+  margin-top: 14px;
+}
+
+/* --- Spectrum (the money slide) -------------------------------------------- */
+
+/* Reserve the bottom-right stamp zone so the outlet list never overlaps it. */
+.ig-example--spectrum { justify-content: flex-start; padding-bottom: 150px; }
+
+.ig-example__spectrum-title {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: 46px;
+  line-height: 1.12;
+  color: var(--ig-cream-fg);
+  margin: 0 0 20px;
+  max-width: 18ch;
+}
+
+/* --- KDE ridge — static render of the in-app Deep Dive spectrum ------------ */
+
+.ig-example__ridge {
+  margin: 20px 0 6px;
+}
+.ig-example__ridge-svg {
+  display: block;
+  width: 100%;
+  height: auto;          /* height follows the 400x110 viewBox ratio */
+  overflow: visible;     /* on-curve outlet dots near the edges aren't clipped */
+}
+
+/* Mean tilt readout beneath the ridge — mirrors DeepDiveSpectrum's TiltRow. */
+.ig-example__ridge-tilt {
+  position: relative;
+  height: 34px;
+  margin-top: 6px;
+}
+.ig-example__ridge-tilt-needle {
+  position: absolute;
+  top: 0;
+  width: 3px;
+  height: 14px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+}
+.ig-example__ridge-tilt-label {
+  position: absolute;
+  top: 16px;
+  transform: translateX(-50%);
+  font-family: var(--font-data);
+  font-size: 22px;
+  letter-spacing: 0.06em;
+  font-weight: 500;
+  color: var(--ig-cream-fg-2);
+  white-space: nowrap;
+  font-feature-settings: "tnum" 1;
+}
+
+.ig-spectrum__axis {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-meta);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 20px;
+  color: var(--ig-cream-fg-3);
+  padding-top: 8px;
+  border-top: 1px solid var(--ig-cream-divider);
+  margin-bottom: 28px;
+}
+
+.ig-example__list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.ig-example__item {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  column-gap: 20px;
+  row-gap: 6px;
+  align-items: baseline;
+  padding-bottom: 22px;
+  border-bottom: 1px solid var(--ig-cream-divider);
+}
+.ig-example__item:last-child { border-bottom: none; }
+.ig-example__item-dot {
+  grid-row: 1 / span 2;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  align-self: center;
+}
+.ig-example__item-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.ig-example__item-outlet {
+  font-family: var(--font-data);
+  font-size: 22px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ig-cream-fg-2);
+}
+.ig-example__item-score {
+  font-family: var(--font-data);
+  font-size: 24px;
+  font-weight: 500;
+  font-feature-settings: "tnum" 1;
+}
+.ig-example__item-quote {
+  grid-column: 2;
+  font-family: var(--font-editorial);
+  font-size: 28px;
+  line-height: 1.2;
+  color: var(--ig-cream-fg);
+  margin: 0;
+  /* Clamp to 2 lines so a long headline can't push the list into the
+     bottom-right VOID NEWS stamp. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ig-example--cta {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.ig-example--cta .ig-cta__line { margin-top: 52px; }
+
+/* ===========================================================================
+   HISTORY (Void History — umber, archival)
+   =========================================================================== */
+
+.ig-history--hook { justify-content: center; }
+
+.ig-history__dateline {
+  font-family: var(--font-meta);
+  text-transform: uppercase;
+  letter-spacing: 0.34em;
+  font-size: 24px;
+  color: var(--ig-umber);
+  border-top: 1px solid var(--ig-umber);
+  border-bottom: 1px solid var(--ig-umber);
+  padding: 18px 0;
+  margin: 0 0 44px;
+  align-self: flex-start;
+}
+.ig-history__title {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: 76px;
+  line-height: 1.06;
+  letter-spacing: -0.01em;
+  color: var(--ig-dark-fg);
+  margin: 0;
+  max-width: 15ch;
+}
+
+.ig-history--perspectives { justify-content: flex-start; }
+.ig-history__voices {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  margin: 8px 0 auto;
+}
+.ig-history__lens {
+  font-family: var(--font-meta);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 22px;
+  color: var(--ig-umber-ink);
+  margin: 0 0 12px;
+}
+.ig-history__quote {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: 31px;
+  line-height: 1.26;
+  color: var(--ig-cream-fg);
+  border-left: 4px solid var(--ig-umber-ink);
+  padding-left: 28px;
+  margin: 0;
+  max-width: 30ch;
+  /* Clamp so a long account can't push the last voice + coda off-canvas. */
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.ig-history__coda {
+  font-family: var(--font-editorial);
+  font-size: 34px;
+  color: var(--ig-umber-ink);
+  border-top: 1px solid var(--ig-umber-soft);
+  padding-top: 24px;
+  margin: 26px 0 0;
+}
+
+.ig-history--cta {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.ig-history--cta .ig-cta__line { margin-top: 52px; }
+
+/* ===========================================================================
+   WEEKLY (Void Weekly — red, magazine)
+   =========================================================================== */
+
+.ig-weekly--hook { justify-content: center; }
+
+.ig-weekly__cover {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: 88px;
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  color: var(--ig-dark-fg);
+  margin: 0;
+  max-width: 13ch;
+}
+.ig-weekly__deck {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: 38px;
+  line-height: 1.3;
+  color: var(--ig-dark-fg-2);
+  margin: 36px 0 0;
+  max-width: 22ch;
+}
+
+.ig-weekly--stories { justify-content: flex-start; }
+.ig-weekly__list {
+  list-style: none;
+  margin: 8px 0 auto;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 34px;
+}
+.ig-weekly__item {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  column-gap: 28px;
+  align-items: baseline;
+  padding-bottom: 34px;
+  border-bottom: 1px solid var(--ig-cream-divider);
+}
+.ig-weekly__item:last-child { border-bottom: none; }
+.ig-weekly__num {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: 64px;
+  line-height: 0.9;
+  color: var(--ig-red);
+  font-feature-settings: "tnum" 1;
+}
+.ig-weekly__item-headline {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: 42px;
+  line-height: 1.14;
+  color: var(--ig-cream-fg);
+  margin: 0;
+}
+.ig-weekly__item-tag {
+  font-family: var(--font-meta);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 20px;
+  color: var(--ig-red-ink);
+  margin: 12px 0 0;
+}
+
+.ig-weekly--cta {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.ig-weekly--cta .ig-cta__line { margin-top: 52px; }
+
+/* ===========================================================================
+   Admin styling override (re-show chrome inside /admin/ig)
+   =========================================================================== */
+
+.ig-root[data-admin="true"] ~ .mob-nav,
+.ig-root[data-admin="true"] ~ .floating-player,
+.ig-root[data-admin="true"] ~ .skip-to-content,
+body:has(.ig-root[data-admin="true"]) .mob-nav,
+body:has(.ig-root[data-admin="true"]) .floating-player,
+body:has(.ig-root[data-admin="true"]) .skip-to-content {
+  display: revert !important;
+}

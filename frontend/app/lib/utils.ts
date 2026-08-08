@@ -1,75 +1,50 @@
 /**
- * Returns "Morning" or "Evening" based on the edition's regional time zone.
- * US → America/New_York, India → Asia/Kolkata, World → UTC.
+ * Base path for the deployed site — must match next.config.ts basePath.
+ *
+ * Defaults to /void--news (GitHub Pages project-repo path). Cloudflare
+ * Pages and custom-domain deployments set NEXT_PUBLIC_BASE_PATH="" in the
+ * build env, which Next.js inlines at compile time so the browser bundle
+ * sees the empty string at runtime.
  */
-export function getEditionTimeOfDay(edition: string): "Morning" | "Evening" {
-  const now = new Date();
-  let hour: number;
+export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "/void--news";
 
-  const editionTimezones: Record<string, string> = {
-    us: "America/New_York",
-    india: "Asia/Kolkata",
-    uk: "Europe/London",
-    canada: "America/Toronto",
-  };
-
-  const tz = editionTimezones[edition];
-  if (tz) {
-    hour = parseInt(
-      now.toLocaleString("en-US", {
-        hour: "numeric",
-        hour12: false,
-        timeZone: tz,
-      }),
-      10,
-    );
-  } else {
-    // World edition — UTC
-    hour = now.getUTCHours();
-  }
-
-  return hour < 12 ? "Morning" : "Evening";
+/**
+ * Morning/Evening shorthand from the reader's LOCAL time.
+ * Only rendered client-side (after mount) so the local clock is the reader's.
+ */
+export function getEditionTimeOfDay(): "Morning" | "Evening" {
+  return new Date().getHours() < 12 ? "Morning" : "Evening";
 }
 
 /**
- * Returns a compact regional timestamp string for the dateline.
- * US: "9 AM ET"  World: "14:05 UTC"  India: "19:35 IST"
+ * Compact dateline timestamp for the masthead: the edition's BUILD time
+ * (the pipeline's completed_at), rendered in the reader's LOCAL zone and
+ * ROUNDED TO THE NEAREST HOUR, with a short zone label (e.g. "13:00 CDT").
+ * Rounding to the hour signals a once-a-day edition rather than a live clock.
+ * Pass the pipeline completed_at ISO string; with no (or an invalid) argument
+ * it falls back to the current hour. Client-only (local zone), so callers
+ * render it after mount.
  */
-export function getEditionTimestamp(edition: string): string {
-  const now = new Date();
-
-  const editionFormats: Record<string, { tz: string; label: string; h12: boolean }> = {
-    us: { tz: "America/New_York", label: "ET", h12: true },
-    india: { tz: "Asia/Kolkata", label: "IST", h12: false },
-    uk: { tz: "Europe/London", label: "GMT", h12: false },
-    canada: { tz: "America/Toronto", label: "ET", h12: true },
-  };
-
-  const fmt = editionFormats[edition];
-  if (fmt) {
-    if (fmt.h12) {
-      const ts = now
-        .toLocaleString("en-US", {
-          hour: "numeric",
-          hour12: true,
-          timeZone: fmt.tz,
-        })
-        .replace(" AM", " AM")
-        .replace(" PM", " PM");
-      return `${ts} ${fmt.label}`;
-    }
-    const ts = now.toLocaleString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: false,
-      timeZone: fmt.tz,
-    });
-    return `${ts} ${fmt.label}`;
+export function getEditionTimestamp(builtAtISO?: string | null): string {
+  const src = builtAtISO ? new Date(builtAtISO) : new Date();
+  if (isNaN(src.getTime())) return "";
+  // Round to the nearest hour in local time. >= 30 min rounds up; setHours
+  // overflow rolls the date correctly (23:45 -> next day 00:00).
+  const d = new Date(src);
+  d.setMinutes(0, 0, 0);
+  if (src.getMinutes() >= 30) d.setHours(d.getHours() + 1);
+  const h = String(d.getHours()).padStart(2, "0");
+  // Local timezone short label ("CDT", "GMT+2", ...); degrade to bare time.
+  let tz = "";
+  try {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      timeZoneName: "short",
+    }).formatToParts(d);
+    tz = parts.find((p) => p.type === "timeZoneName")?.value ?? "";
+  } catch {
+    /* Intl unavailable — show time without a zone label. */
   }
-
-  const h = String(now.getUTCHours()).padStart(2, "0");
-  const m = String(now.getUTCMinutes()).padStart(2, "0");
-  return `${h}:${m} UTC`;
+  return tz ? `${h}:00 ${tz}` : `${h}:00`;
 }
 
 /**

@@ -136,6 +136,7 @@ def update_pipeline_run(
     clusters_created: int = 0,
     errors: list | None = None,
     duration_seconds: float | None = None,
+    llm_metrics: dict | None = None,
 ) -> dict | None:
     """
     Update a pipeline run record with final results.
@@ -148,6 +149,8 @@ def update_pipeline_run(
         clusters_created: Total story clusters formed.
         errors: List of error dicts [{source, error, timestamp}].
         duration_seconds: Total pipeline duration.
+        llm_metrics: Optional dict with per-run LLM telemetry (call counts,
+            cache hits, cost estimate). Persisted to pipeline_runs.llm_metrics.
 
     Returns:
         The updated row as a dict, or None on failure.
@@ -158,10 +161,15 @@ def update_pipeline_run(
         "articles_fetched": articles_fetched,
         "articles_analyzed": articles_analyzed,
         "clusters_created": clusters_created,
-        "errors": errors or [],
+        # Merge, never clobber: claude_client failure latches and the step-8
+        # insert-failure marker append to this column mid-run; a finalize
+        # that overwrites with fetch_errors erases those signals.
+        "errors": _merge_run_errors(run_id, errors or []),
     }
     if duration_seconds is not None:
         update_data["duration_seconds"] = duration_seconds
+    if llm_metrics is not None:
+        update_data["llm_metrics"] = llm_metrics
 
     try:
         result = (
@@ -175,6 +183,41 @@ def update_pipeline_run(
     except Exception as e:
         print(f"  [error] Failed to update pipeline run: {e}")
     return None
+
+
+def _merge_run_errors(run_id: str, new_errors: list, cap: int = 50) -> list:
+    """Return existing pipeline_runs.errors with new_errors appended (deduped,
+    capped). Best-effort: on any read failure, fall back to new_errors alone."""
+    try:
+        prev = (
+            supabase.table("pipeline_runs")
+            .select("errors")
+            .eq("id", run_id)
+            .limit(1)
+            .execute()
+        )
+        existing = (prev.data[0].get("errors") or []) if prev.data else []
+    except Exception:
+        existing = []
+    merged = list(existing)
+    for err in new_errors:
+        if err not in merged:
+            merged.append(err)
+    return merged[:cap]
+
+
+def append_pipeline_run_errors(run_id: str, new_errors: list) -> None:
+    """Append error dicts to pipeline_runs.errors without clobbering what
+    other writers (claude_client latch reports, step markers) already put
+    there. Best-effort; never raises."""
+    if not run_id or not new_errors:
+        return
+    try:
+        supabase.table("pipeline_runs").update(
+            {"errors": _merge_run_errors(run_id, new_errors)}
+        ).eq("id", run_id).execute()
+    except Exception as e:
+        print(f"  [warn] append_pipeline_run_errors failed: {e}")
 
 
 def get_active_sources() -> list[dict]:

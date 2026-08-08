@@ -1,0 +1,102 @@
+id: cross-summit-anchor-triangle-2026-05-20
+name: "Xi-Putin-Trump triangle: transitive merge across three head-of-state pairs"
+failure_date: "2026-05-20"
+failure_kind: anchor-entity-fragmentation
+articles:
+  - id: xi-trump-call
+    title: "Xi tells Trump Putin may regret invading Ukraine"
+    summary: "Chinese President Xi Jinping privately told Donald Trump that Vladimir Putin may come to regret the invasion of Ukraine."
+    full_text: >
+      Chinese President Xi Jinping privately told U.S. President Donald Trump
+      that Russian President Vladimir Putin may come to regret invading
+      Ukraine, according to people familiar with the conversation. The
+      remark, reported by Reuters, marks the most pointed Chinese assessment
+      of the Kremlin's war strategy yet conveyed to Washington. Xi and
+      Trump spoke at length about the diplomatic footing for talks. Putin
+      arrived in Beijing on Monday for a four-day state visit with Xi.
+      Russian state media confirmed seven bilateral agreements were signed
+      on the opening day.
+    source: { slug: reuters, country: US, tier: us_major }
+    published_at: "2026-05-19T08:00Z"
+  - id: xi-putin-beijing
+    title: "Xi-Putin Beijing summit opens with seven agreements"
+    summary: "Xi Jinping and Vladimir Putin opened a four-day summit in Beijing on Monday with seven bilateral agreements covering trade, energy, and defense."
+    full_text: >
+      Chinese President Xi Jinping and Russian President Vladimir Putin
+      opened a four-day summit in Beijing on Monday, signing seven
+      bilateral agreements covering trade, energy, and defense. The
+      agreements include a new natural-gas pipeline framework, joint
+      satellite navigation cooperation, and a commemoration of the eightieth
+      anniversary of the Sino-Soviet Treaty. Russian Foreign Minister
+      Sergey Lavrov accompanied Putin. The summit comes days after Donald
+      Trump rejected Tehran's latest ceasefire proposal.
+    source: { slug: ap-news, country: US, tier: us_major }
+    published_at: "2026-05-19T09:30Z"
+  - id: trump-putin-call
+    title: "Trump-Putin Tuesday call yields no breakthrough on Ukraine"
+    summary: "U.S. President Donald Trump and Russian President Vladimir Putin spoke by phone Tuesday but reached no breakthrough on Ukraine."
+    full_text: >
+      U.S. President Donald Trump and Russian President Vladimir Putin
+      spoke by phone Tuesday in their first direct exchange since Putin's
+      Beijing visit, but the conversation produced no breakthrough on
+      Ukraine, the White House said. Both leaders agreed to continue
+      diplomatic contacts. Xi Jinping was briefed on the call by Chinese
+      diplomats. The Kremlin readout described the conversation as
+      "constructive."
+    source: { slug: bbc-news, country: GB, tier: international }
+    published_at: "2026-05-20T14:00Z"
+  - id: putin-beijing-day2
+    title: "Putin signs energy deal with Xi on second day of Beijing visit"
+    summary: "Vladimir Putin signed a new energy cooperation agreement with Xi Jinping on Tuesday, the second day of his Beijing state visit."
+    full_text: >
+      Russian President Vladimir Putin signed a new energy cooperation
+      agreement with Chinese President Xi Jinping on Tuesday, the second
+      day of his Beijing state visit. The deal covers Russian gas exports
+      to China through 2050. Putin praised the Sino-Soviet Treaty
+      commemoration as "a touchstone of strategic partnership." Chinese
+      Foreign Minister Wang Yi attended the signing ceremony.
+    source: { slug: financial-times, country: GB, tier: international }
+    published_at: "2026-05-20T11:15Z"
+  - id: xi-putin-treaty
+    title: "Xi and Putin commemorate Sino-Soviet Treaty at Beijing reception"
+    summary: "Xi Jinping and Vladimir Putin attended a Tuesday-evening reception in Beijing marking the eightieth anniversary of the Sino-Soviet Treaty."
+    full_text: >
+      Chinese President Xi Jinping and Russian President Vladimir Putin
+      attended a Tuesday-evening reception in Beijing marking the
+      eightieth anniversary of the 1945 Sino-Soviet Treaty. Both leaders
+      spoke at the event. Xi called the treaty "the foundation of our
+      strategic trust." Putin called for deeper military cooperation. The
+      reception was held at the Diaoyutai State Guesthouse.
+    source: { slug: al-jazeera, country: QA, tier: international }
+    published_at: "2026-05-20T17:00Z"
+expectation:
+  type: should_merge
+  expected_member_ids: [xi-trump-call, xi-putin-beijing, trump-putin-call, putin-beijing-day2, xi-putin-treaty]
+  min_clusters: 1
+  max_clusters: 2
+rationale: |
+  Materializes Test A from pipeline-tester's 2026-05-20 audit run.
+
+  Three thematic pairs of articles sharing two head-of-state names each,
+  plus one bridging article. The Trump-Xi pair, Xi-Putin pair, and
+  Trump-Putin pair are all in _SUMMIT_PAIRS (story_cluster.py:376-395),
+  so Phase 2.5 canonical-pair merge should fire on each pair and union-
+  find should transitively collapse the entire 5-article set.
+
+  This fixture locks in coverage against a future Phase 2.5 regression
+  (e.g., someone removing a summit pair from the list, or tightening
+  the canonical-pair merge gate). It also confirms that the post-
+  rev-44 tightened Phase 2.6 anchor thresholds (Jaccard 0.22, IDF
+  fraction 0.70, df 2.5%) do NOT over-fragment this realistic triangle
+  even though "Xi", "Putin", and "Trump" individually fall below the
+  anchor IDF floor as low-specificity entities.
+
+  Failure mode this catches: if Phase 2.5 summit pair set is reduced
+  (e.g., {Trump, Putin} removed) AND Phase 2.6 anchor thresholds are
+  tightened further, the 5-article triangle could fragment into 3 or
+  more clusters, surfacing as triplicate top stories on the homepage.
+  The CEO-advisor flagged this as a strategic risk in the same audit.
+
+  Expected behavior: 1 merged cluster containing all 5 articles.
+  Acceptable: 2 clusters if Phase 2.5 catches only the two strongest
+  pairs and one article ends up in a separate cluster.

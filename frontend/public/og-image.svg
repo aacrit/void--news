@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" fill="none">
   <!--
-    void --news — OpenGraph Image (1200x630)
-    Dark walnut background. Centered brand mark with bias spectrum
-    visualization below. Editorial authority meets data precision.
+    VOID NEWS OpenGraph Image (1200x630)
+    Dark walnut background. Brass footed Sigil (balance-scale lens) hero +
+    "VOID NEWS" lockup (Sigil-O in place of the O), bias spectrum below.
   -->
 
   <!-- Background — dark walnut with subtle warm tint -->
@@ -18,46 +18,36 @@
   <line x1="120" y1="80" x2="1080" y2="80" stroke="#4A4540" stroke-width="1"/>
   <line x1="120" y1="84" x2="1080" y2="84" stroke="#4A4540" stroke-width="3"/>
 
-  <!-- Scale icon (centered, large) -->
-  <g transform="translate(520, 120)" stroke="#EDE8E0" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none">
-    <!-- Void circle -->
-    <circle cx="80" cy="65" r="45"/>
-    <!-- Beam -->
-    <line x1="15" y1="65" x2="145" y2="65"/>
-    <!-- Left tick -->
-    <line x1="25" y1="55" x2="25" y2="75"/>
-    <!-- Right tick -->
-    <line x1="135" y1="55" x2="135" y2="75"/>
-    <!-- Post -->
-    <line x1="80" y1="110" x2="80" y2="145"/>
-    <!-- Base -->
-    <line x1="60" y1="145" x2="100" y2="145"/>
+  <!-- Hero: footed Sigil (standalone square geometry — ring cy40 r30 + beam + ticks + foot) -->
+  <g transform="translate(525,110) scale(1.5)" stroke="#D4A574" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <circle cx="50" cy="40" r="30"/>
+    <line x1="12" y1="40" x2="88" y2="40"/>
+    <line x1="13" y1="33" x2="12" y2="47" stroke-width="5"/>
+    <line x1="87" y1="33" x2="88" y2="47" stroke-width="5"/>
+    <line x1="50" y1="70" x2="50" y2="86"/>
+    <path d="M36 93 C44 88 56 88 64 93"/>
   </g>
 
-  <!-- Wordmark: "void" in serif + "--news" in mono -->
-  <!-- "void" -->
-  <text x="398" y="340" fill="#EDE8E0"
-        font-family="Georgia, 'Times New Roman', serif"
-        font-size="72" font-weight="700" letter-spacing="0.02em">
-    v
-  </text>
-  <!-- "o" — hollow (the void) -->
-  <text x="448" y="340" fill="none" stroke="#EDE8E0" stroke-width="1.8"
-        font-family="Georgia, 'Times New Roman', serif"
-        font-size="72" font-weight="700" letter-spacing="0.02em">
-    o
-  </text>
-  <text x="498" y="340" fill="#EDE8E0"
-        font-family="Georgia, 'Times New Roman', serif"
-        font-size="72" font-weight="700" letter-spacing="0.02em">
-    id
-  </text>
-  <!-- "--news" in monospace, lighter weight -->
-  <text x="600" y="340" fill="#8A8278"
-        font-family="'JetBrains Mono', Menlo, Consolas, monospace"
-        font-size="56" font-weight="400" letter-spacing="0.02em">
-    --news
-  </text>
+  <!-- Wordmark: "V[Sigil-O]ID  NEWS" — caps in serif (cream), Sigil-O in brass -->
+  <!-- baseline Y = 330; serif caps -->
+  <text x="387" y="330" fill="#EDE8E0"
+        font-family="'Playfair Display', Georgia, 'Times New Roman', serif"
+        font-size="72" font-weight="700" letter-spacing="0.02em">V</text>
+  <!-- Sigil-O (wordmark geometry: full-box ring cy50 r41 + descender foot) -->
+  <g transform="translate(437,275.7) scale(0.583)" fill="none" stroke="#D4A574" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="50" cy="50" r="41" stroke-width="8"/>
+    <line x1="8" y1="50" x2="92" y2="50" stroke-width="6"/>
+    <line x1="9" y1="43" x2="8" y2="57" stroke-width="5"/>
+    <line x1="91" y1="43" x2="92" y2="57" stroke-width="5"/>
+    <line x1="50" y1="91" x2="50" y2="112" stroke-width="6"/>
+    <path d="M35 118 C43 113 57 113 65 118" stroke-width="6"/>
+  </g>
+  <text x="491" y="330" fill="#EDE8E0"
+        font-family="'Playfair Display', Georgia, 'Times New Roman', serif"
+        font-size="72" font-weight="700" letter-spacing="0.02em">ID</text>
+  <text x="600" y="330" fill="#EDE8E0"
+        font-family="'Playfair Display', Georgia, 'Times New Roman', serif"
+        font-size="72" font-weight="700" letter-spacing="0.02em">NEWS</text>
 
   <!-- Bias spectrum bar — the signature visualization -->
   <g transform="translate(300, 390)">
@@ -76,18 +66,18 @@
 
     <!-- Labels -->
     <text x="60" y="52" text-anchor="middle" fill="#5A5550"
-          font-family="'JetBrains Mono', Menlo, monospace" font-size="11">LEFT</text>
+          font-family="'IBM Plex Mono', Menlo, monospace" font-size="11">LEFT</text>
     <text x="300" y="52" text-anchor="middle" fill="#5A5550"
-          font-family="'JetBrains Mono', Menlo, monospace" font-size="11">CENTER</text>
+          font-family="'IBM Plex Mono', Menlo, monospace" font-size="11">CENTER</text>
     <text x="540" y="52" text-anchor="middle" fill="#5A5550"
-          font-family="'JetBrains Mono', Menlo, monospace" font-size="11">RIGHT</text>
+          font-family="'IBM Plex Mono', Menlo, monospace" font-size="11">RIGHT</text>
   </g>
 
   <!-- Tagline -->
   <text x="600" y="510" text-anchor="middle" fill="#B8B0A5"
         font-family="'Inter', 'Helvetica Neue', Arial, sans-serif"
         font-size="22" font-weight="400" letter-spacing="0.04em">
-    See every side of the story
+    See through the void.
   </text>
 
   <!-- Bottom rule -->
@@ -95,7 +85,7 @@
 
   <!-- Footer stats -->
   <text x="600" y="580" text-anchor="middle" fill="#5A5550"
-        font-family="'JetBrains Mono', Menlo, monospace" font-size="13" letter-spacing="0.06em">
-    200 SOURCES  ·  6-AXIS BIAS ANALYSIS  ·  FREE &amp; OPEN
+        font-family="'IBM Plex Mono', Menlo, monospace" font-size="13" letter-spacing="0.06em">
+    1,016 SOURCES  ·  6-AXIS BIAS ANALYSIS  ·  FREE &amp; OPEN
   </text>
 </svg>

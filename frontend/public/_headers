@@ -1,0 +1,82 @@
+# Cloudflare Pages — HTTP headers
+# https://developers.cloudflare.com/pages/configuration/headers/
+#
+# Cloudflare Pages ACCUMULATES headers from every matching rule. Putting
+# Cache-Control in both a path-specific rule and the global /* rule
+# produces a duplicate Cache-Control header value at request time, which
+# defeats the long-cache directive for hashed assets. So:
+#   - Global rule sets ONLY security headers.
+#   - Specific rules set Cache-Control without overlap.
+#   - HTML responses inherit Cloudflare Pages' default short cache.
+#
+# GitHub Pages ignores this file, so the parallel GH Pages deploy is
+# unaffected during the migration.
+
+# ── Security headers — apply to every response ──────────────────────────
+# UAT 2026-05-13 P1-2: frame-ancestors must be delivered as a header (CSP3
+# ignores it via <meta>). UAT P1-3: wss://*.supabase.co added to connect-src
+# so Supabase Realtime websockets used by /ship are not blocked.
+#
+# CSP notes (2026-08 hardening):
+#   • 'unsafe-eval' DROPPED from script-src. The Next.js static-export
+#     production bundle does not eval() at runtime (eval is a dev/HMR-only
+#     path), so removing it costs nothing and closes an injection vector.
+#     The mirrored <meta> CSP in app/layout.tsx dropped it too — browsers
+#     enforce the INTERSECTION of every delivered policy, so both must agree.
+#   • 'unsafe-inline' KEPT on script-src. A static export has no server to
+#     mint per-request nonces, and Next injects its own inline hydration
+#     scripts (self.__next_f push) alongside our inline theme/SW bootstrap
+#     in layout.tsx. Their bodies change every build, so sha256 hashing is
+#     not maintainable here. Dropping it would break hydration. Revisit only
+#     if a nonce-capable runtime (Workers) fronts the site.
+#   • Strict-Transport-Security: 1yr, includeSubDomains. Site is HTTPS-only.
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Content-Security-Policy: default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; media-src 'self' https://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
+
+# ── Hashed static assets — long-lived, immutable ────────────────────────
+# Next.js writes /_next/static/* with content-hashed filenames; safe to
+# cache effectively forever. This is the rule GH Pages can't match
+# (its 600s cap costs ~4-8 Lighthouse Best Practices points).
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# next/font woff2 files live under /_next/static/media/, so they are already
+# covered by the /_next/static/* rule above. A separate /*.woff2 rule was
+# removed because Cloudflare Pages ACCUMULATES headers from every matching
+# rule: /*.woff2 overlapped /_next/static/* and emitted a duplicate
+# Cache-Control on every font, which defeats the immutable long-cache.
+
+# ── HTML routes — short browser cache + stale-while-revalidate ──────────
+# 2026-06-01 egress fix: HomeContent.tsx fetches Supabase JSON on every
+# page load. Browser caching the HTML response means repeated visits
+# (same tab, multi-page browsing, F5 refreshes) hit the browser cache
+# instead of triggering a fresh React mount + Supabase query.
+#
+# max-age=120: re-validate every 2 minutes — fresh enough that pipeline
+# updates (1×/day) are still visible quickly.
+# stale-while-revalidate=600: serve stale up to 10 minutes while a
+# background refresh fetches the new HTML.
+#
+# Apply to all HTML routes EXCEPT static assets (those have their own
+# longer cache above).
+/
+  Cache-Control: public, max-age=120, stale-while-revalidate=600
+/paper
+  Cache-Control: public, max-age=120, stale-while-revalidate=600
+/weekly
+  Cache-Control: public, max-age=300, stale-while-revalidate=900
+/sources
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+/about
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+/engineering.html
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+/engine-plan.html
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+/engine-evolution.html
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400

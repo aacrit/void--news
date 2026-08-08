@@ -1,0 +1,999 @@
+/* ===========================================================================
+   Mobile Navigation — MobileTabBar, MobileSidePanel, MobileMiniPlayer
+   Hidden on desktop. Mobile-only (<768px).
+   =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   MobileTabBar (.mtb) — the single primary nav surface.
+   Three zones, "raised center anchor between two side tabs":
+
+       [ On Air ]        (( Home ))        [ Menu ]
+
+   Home = a PROMINENT raised terracotta disc holding the Sigil-O mark (the brand
+   anchor); On Air = a standard side tab with a teal accent glyph + label; Menu =
+   a hamburger that slides in the MobileSidePanel drawer. Side tabs are >=44px tap
+   targets; the Home disc is 52px. Sits above the iOS home indicator
+   (safe-area-inset-bottom). Hidden on desktop.
+   --------------------------------------------------------------------------- */
+
+.mtb {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mtb {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: var(--z-nav);
+    background-color: var(--bg-primary);
+    border-top: var(--rule-thin);
+    min-height: var(--nav-bottom-height, 52px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    /* Let the raised On Air disc overflow above the bar edge. */
+    overflow: visible;
+    pointer-events: auto;
+  }
+
+  /* ── Side tabs (Home, More) — icon over a small label ── */
+  .mtb__tab {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    flex: 1;
+    min-height: var(--nav-bottom-height, 52px);
+    min-width: 44px;
+    padding: var(--space-1);
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: none;
+  }
+
+  .mtb__tab:active {
+    transform: scale(0.92);
+    transition: transform 50ms var(--ease-cinematic);
+  }
+
+  /* Icon — neutral ink; darkens to primary when the tab is active. */
+  .mtb__icon {
+    width: 22px;
+    height: 22px;
+    display: block;
+    flex-shrink: 0;
+    color: var(--fg-tertiary);
+    transition: color 150ms var(--ease-cinematic);
+  }
+
+  .mtb__tab--active .mtb__icon {
+    color: var(--fg-primary);
+  }
+
+  /* Hamburger — three static lines; opens the MobileSidePanel side drawer. */
+  .mtb__hamburger {
+    transition: color 150ms var(--ease-cinematic);
+  }
+
+  /* Home Sigil-O mark — color is driven by its own --sigil-brass override
+     (white on the terracotta disc), so it stays on-brand in both themes. */
+  .mtb__mark {
+    flex-shrink: 0;
+  }
+
+  /* Label — quiet structural meta type. */
+  .mtb__label {
+    font-family: var(--font-meta);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    white-space: nowrap;
+    color: var(--fg-tertiary);
+    transition: color 150ms var(--ease-cinematic);
+  }
+
+  .mtb__tab--active .mtb__label {
+    color: var(--fg-primary);
+  }
+
+  /* Active side tab: top accent rule (brand indicator, not an icon swap). */
+  .mtb__tab--active::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 22px;
+    height: 2px;
+    background: var(--accent-warm);
+    border-radius: 0 0 2px 2px;
+  }
+
+  /* ── Home (center, raised brand anchor) ── */
+  .mtb__home {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    flex: 1;
+    min-width: 44px;
+    padding: var(--space-1);
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Raised terracotta disc — punches through the bar with a background-colored
+     ring so it reads as the elevated center brand anchor. Uses the News
+     terracotta (--palette-news). */
+  .mtb__home-disc {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    margin-top: -16px;
+    border-radius: 50%;
+    background: var(--palette-news);
+    border: 3px solid var(--bg-primary);
+    box-shadow:
+      0 4px 14px color-mix(in srgb, var(--palette-news) 40%, transparent),
+      0 1px 3px color-mix(in srgb, #000 20%, transparent);
+    transition: transform 120ms var(--ease-cinematic), box-shadow 300ms var(--ease-cinematic);
+  }
+
+  .mtb__home:active .mtb__home-disc {
+    transform: scale(0.92);
+    transition-duration: 50ms;
+  }
+
+  /* The Sigil-O mark sits on the terracotta disc rendered light so it reads
+     as the brand-on-brand anchor mark. */
+  .mtb__home-disc .mtb__mark {
+    --sigil-brass: #fff;
+    flex-shrink: 0;
+  }
+
+  /* Active Home: a soft terracotta ring around the disc marks the current route
+     without swapping the mark. */
+  .mtb__home--active .mtb__home-disc {
+    box-shadow:
+      0 4px 14px color-mix(in srgb, var(--palette-news) 45%, transparent),
+      0 0 0 3px color-mix(in srgb, var(--palette-news) 22%, transparent),
+      0 1px 3px color-mix(in srgb, #000 20%, transparent);
+  }
+
+  .mtb__label--home {
+    color: var(--palette-news);
+    font-weight: 700;
+  }
+
+  /* ── On Air (left, demoted side tab with a teal accent) ── */
+  /* Layout comes from .mtb__tab; these rules only tint the glyph + label with
+     the On Air brand teal (--voice-accent) so the tab still stands out a touch. */
+  .mtb__onair-glyph {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+  }
+
+  .mtb__tab--onair .mtb__onair-icon {
+    color: var(--voice-accent);
+  }
+
+  .mtb__label--onair {
+    color: var(--voice-accent);
+    font-weight: 700;
+  }
+
+  /* Live dot — a small teal pip in the glyph corner while audio is playing. */
+  .mtb__onair-live-dot {
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--voice-accent);
+    border: 1.5px solid var(--bg-primary);
+    animation: mtbOnairLivePulse 2.4s var(--ease-rack, ease-in-out) infinite;
+  }
+
+  @keyframes mtbOnairLivePulse {
+    0%, 100% {
+      box-shadow: 0 0 0 0 color-mix(in srgb, var(--voice-accent) 45%, transparent);
+    }
+    50% {
+      box-shadow: 0 0 0 4px color-mix(in srgb, var(--voice-accent) 0%, transparent);
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   MobileMoreSheet (.mms)
+   Bottom sheet that slides UP from the "More" tab. Secondary destinations
+   (Sources / Feedback / About) + a small utility + theme footer. Covers the
+   bottom bar while open; dismiss via backdrop / swipe-down / Esc / link.
+   --------------------------------------------------------------------------- */
+
+.mms,
+.mms__backdrop {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mms__backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: calc(var(--z-overlay) - 1);
+    background-color: var(--overlay-backdrop);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 300ms var(--ease-cinematic);
+  }
+
+  .mms__backdrop--open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .mms {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: var(--z-overlay);
+    max-height: 85vh;
+    background-color: var(--bg-primary);
+    border-top: var(--rule-thin);
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    padding-bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+    /* Exit: confident downward cut. */
+    transform: translateY(100%);
+    transition: transform 240ms var(--ease-whip);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    box-shadow: 0 -8px 24px color-mix(in srgb, var(--cinematic-shadow-tint, rgba(0,0,0,0.2)) 18%, transparent);
+  }
+
+  /* Paper grain overlay — same material as the page canvas. */
+  .mms::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--paper-texture);
+    opacity: 0.15;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    z-index: 0;
+  }
+
+  .mms > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .mms--open {
+    /* Entrance: spring-driven rise. */
+    transform: translateY(0);
+    transition: transform 340ms var(--spring-snappy);
+  }
+
+  /* Grabber — swipe-down target */
+  .mms__grabber-zone {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 32px;
+    padding: var(--space-2) 0 var(--space-1);
+    cursor: grab;
+    touch-action: none;
+  }
+
+  .mms__grabber {
+    width: 36px;
+    height: 4px;
+    border-radius: 2px;
+    background: color-mix(in srgb, var(--fg-muted) 45%, transparent);
+  }
+
+  /* Primary destinations */
+  .mms__links {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-1) 0 var(--space-2);
+  }
+
+  .mms__link {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 2px;
+    padding: var(--space-3) var(--space-5);
+    min-height: 56px;
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: transform 80ms var(--ease-cinematic), background 120ms var(--ease-cinematic);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mms__link + .mms__link {
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  .mms__link:active {
+    background-color: color-mix(in srgb, var(--accent-warm) 8%, transparent);
+    transform: scale(0.985);
+    border-left-color: var(--accent-warm);
+  }
+
+  .mms__link-cmd {
+    font-family: var(--font-editorial);
+    font-style: italic;
+    font-size: var(--text-lg);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: var(--fg-primary);
+  }
+
+  .mms__link-desc {
+    font-family: var(--font-structural);
+    font-size: var(--text-xs);
+    color: var(--fg-muted);
+  }
+
+  /* Footer — utility links + theme toggle */
+  .mms__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5) var(--space-2);
+    border-top: var(--rule-thin);
+  }
+
+  .mms__util {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .mms__util-link {
+    font-family: var(--font-meta);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    text-decoration: none;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 120ms var(--ease-cinematic);
+  }
+
+  .mms__util-link:active {
+    color: var(--accent-warm);
+  }
+
+  .mms__util-sep {
+    color: var(--fg-muted);
+    opacity: 0.5;
+  }
+
+  .mms__theme {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .mms__theme-label {
+    font-family: var(--font-meta);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Mobile Edition Pills (.mobile-edition-pills)
+   Horizontal scrollable strip of edition selectors.
+   --------------------------------------------------------------------------- */
+
+.mobile-edition-pills {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mobile-edition-pills {
+    display: flex;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-5);
+    overflow-x: auto;
+    /* Tier 2 gesture inertia: mandatory snap + contained overscroll for
+       native iOS momentum. -webkit-overflow-scrolling retained as the
+       iOS < 13 fallback (modern WebKit ignores it harmlessly). */
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .mobile-edition-pills::-webkit-scrollbar { display: none; }
+
+  .mobile-edition-pill {
+    flex-shrink: 0;
+    font-family: var(--font-meta);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--fg-tertiary);
+    background: none;
+    border: 1px solid var(--border-subtle);
+    border-radius: 20px;
+    padding: var(--space-1) var(--space-3);
+    min-height: 44px;
+    min-width: 44px;
+    cursor: pointer;
+    scroll-snap-align: start;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+    transition: none;
+  }
+
+  .mobile-edition-pill:active {
+    transform: scale(0.92);
+    transition: transform 50ms var(--ease-cinematic);
+  }
+
+  .mobile-edition-pill[data-active="true"] {
+    color: var(--accent-warm);
+    border-color: var(--accent-warm);
+    background-color: color-mix(in srgb, var(--accent-warm) 8%, transparent);
+    font-weight: 600;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   MobileSidePanel (.msp) — the mobile secondary-nav drawer.
+   Slides from the right edge over a scrim when the hamburger "Menu" tab is
+   tapped. One flat, icon-led list (Feed / On Air / Sources / Feedback) + a
+   quiet About/Press/Privacy utility trio + an info bar (edition time, source
+   count, theme toggle). Backdrop overlay.
+   --------------------------------------------------------------------------- */
+
+.msp,
+.msp__backdrop {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  /* Backdrop overlay */
+  .msp__backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: calc(var(--z-overlay) - 1);
+    background-color: var(--overlay-backdrop);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 300ms var(--ease-cinematic);
+  }
+
+  .msp__backdrop--open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Panel — paper-textured surface with cinematic shadow */
+  .msp {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 280px;
+    max-width: 80vw;
+    z-index: var(--z-overlay);
+    background-color: var(--bg-primary);
+    border-left: var(--rule-thin);
+    /* Exit: confident cut — fast, decisive, no lingering */
+    transform: translateX(100%) scale(1.02);
+    transition: transform 220ms var(--ease-whip);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    box-shadow:
+      -8px 0 24px color-mix(in srgb, var(--cinematic-shadow-tint, rgba(0,0,0,0.2)) 15%, transparent);
+  }
+
+  /* Paper grain overlay — same material as page canvas */
+  .msp::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--paper-texture);
+    opacity: 0.15;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    z-index: 0;
+  }
+
+  /* Ensure all panel content sits above the grain layer */
+  .msp > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .msp--open {
+    /* Entrance: spring-driven truck reveal with depth settle */
+    transform: translateX(0) scale(1);
+    transition: transform 340ms var(--spring-snappy);
+  }
+
+  /* Header — Void News wordmark over the tagline, left-aligned, with a warm
+     ink hairline beneath (printer's mark, not a border). */
+  .msp__header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+    position: relative;
+    padding: var(--space-5) var(--space-5) var(--space-4);
+  }
+
+  .msp__wordmark {
+    color: var(--fg-primary);
+  }
+
+  .msp__header-tagline {
+    font-family: var(--font-data);
+    font-size: var(--text-xs);
+    font-style: italic;
+    letter-spacing: 0.03em;
+    color: var(--fg-muted);
+  }
+
+  /* Warm ink mark beneath header — printer's mark, not a border */
+  .msp__header::after {
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: 0;
+    left: var(--space-5);
+    width: 40px;
+    height: 1.5px;
+    background: var(--accent-warm);
+    opacity: 0.3;
+    border-radius: 1px;
+  }
+
+  /* Navigation links */
+  .msp__links {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-3) 0;
+  }
+
+  /* Organic ink divider — one hand-drawn wobble path subordinating the
+     About/Press/Privacy utility trio beneath the four main rows.
+     Same visual language as skb__firewall in SkyboxBanner. */
+  .msp__divider {
+    display: block;
+    width: calc(100% - var(--space-5) * 2);
+    height: 4px;
+    margin: var(--space-1) auto;
+    overflow: visible;
+  }
+
+  .msp__divider path {
+    stroke: var(--accent-warm);
+    stroke-width: 1;
+    stroke-opacity: 0.25;
+    fill: none;
+    stroke-linecap: round;
+  }
+
+  /* ── Content cascade — L-cut: content arrives while panel still sliding ── */
+
+  [data-msp-cascade] {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  .msp:not(.msp--open) [data-msp-cascade] {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: none;
+  }
+
+  .msp--open [data-msp-cascade] {
+    animation: mspCascadeIn 180ms var(--ease-cinematic) both;
+  }
+  .msp--open [data-msp-cascade="1"],
+  .msp--open [data-msp-cascade="2"] { animation-delay: 40ms; }
+  .msp--open [data-msp-cascade="3"],
+  .msp--open [data-msp-cascade="4"] { animation-delay: 80ms; }
+  .msp--open [data-msp-cascade="5"],
+  .msp--open [data-msp-cascade="6"] { animation-delay: 120ms; }
+
+  @keyframes mspCascadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .msp__link {
+    /* --msp-accent drives the active rail/wash + press feedback; --msp-icon
+       colors the leading glyph. Neutral rows: primary-ink rail, muted icon. */
+    --msp-accent: var(--fg-primary);
+    --msp-icon: var(--fg-tertiary);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-3);
+    font-family: var(--font-structural);
+    color: var(--fg-primary);
+    padding: var(--space-3) var(--space-5);
+    min-height: 56px;
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: transform 80ms var(--ease-cinematic);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Primary rows carry a navbar accent on BOTH rail and icon, matching their
+     MobileTabBar counterparts exactly: Feed = News terracotta (--palette-news,
+     the Home anchor), On Air = broadcast teal (--voice-accent, the On Air tab).
+     Sources / Feedback stay neutral (default: ink rail, muted icon). */
+  .msp__link[data-accent="news"]  { --msp-accent: var(--palette-news);  --msp-icon: var(--palette-news); }
+  .msp__link[data-accent="onair"] { --msp-accent: var(--voice-accent);  --msp-icon: var(--voice-accent); }
+
+  /* Leading glyph — a fixed 24px optical box. Icons stroke in currentColor;
+     the Sigil-O (ScaleIcon) reads --sigil-brass, pinned here to currentColor so
+     every glyph wears the row's --msp-icon accent from one channel. */
+  .msp__link-icon {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    color: var(--msp-icon);
+    --sigil-brass: currentColor;
+  }
+
+  .msp__link-icon svg {
+    width: 24px;
+    height: 24px;
+    display: block;
+  }
+
+  /* Text column — command over description. */
+  .msp__link-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1px;
+    min-width: 0;
+  }
+
+  /* Hairline between adjacent rows so the flat list scans cleanly. */
+  .msp__link + .msp__link {
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  /* Press: scale + accent rail + dotted underline on cmd text */
+  .msp__link:active {
+    background-color: color-mix(in srgb, var(--msp-accent) 8%, transparent);
+    transform: scale(0.97);
+    border-left-color: var(--msp-accent);
+  }
+
+  .msp__link:active .msp__link-cmd {
+    text-decoration: underline;
+    text-decoration-style: dotted;
+    text-underline-offset: 3px;
+    text-decoration-color: var(--msp-accent);
+  }
+
+  /* Active route — filled accent rail + a tinted wash so the current page is
+     unmistakable. Pairs with aria-current="page". */
+  .msp__link--active {
+    border-left-color: var(--msp-accent);
+    background-color: color-mix(in srgb, var(--msp-accent) 7%, transparent);
+  }
+
+  .msp__link--active .msp__link-cmd {
+    font-weight: 700;
+  }
+
+  /* Command — Playfair italic, primary ink. The leading icon (not the text) is
+     the single accent channel per row, so the list reads clean and even. */
+  .msp__link-cmd {
+    font-family: var(--font-editorial);
+    font-style: italic;
+    font-size: var(--text-base);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: var(--fg-primary);
+    transition: color 120ms var(--ease-cinematic);
+  }
+
+  .msp__link-desc {
+    font-family: var(--font-structural);
+    font-size: var(--text-xs);
+    color: var(--fg-muted);
+  }
+
+  /* Utility group — About / Press / Privacy. Smaller, quieter, inline. */
+  .msp__util {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-5) var(--space-2);
+  }
+
+  .msp__util-link {
+    font-family: var(--font-meta);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+    text-decoration: none;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 120ms var(--ease-cinematic);
+  }
+
+  .msp__util-link:active,
+  .msp__util-link--active {
+    color: var(--accent-warm);
+  }
+
+  .msp__util-link--active {
+    font-weight: 700;
+  }
+
+  .msp__util-sep {
+    color: var(--fg-muted);
+    opacity: 0.5;
+  }
+
+  /* ── Info bar (footer) — the masthead facts the mobile top chrome drops:
+     edition build time, source count, and the theme control. ── */
+  .msp__infobar {
+    margin-top: auto;
+    padding: var(--space-4) var(--space-5) var(--space-3);
+    border-top: var(--rule-thin);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .msp__info-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .msp__info-line {
+    font-family: var(--font-data);
+    font-size: var(--text-xxs);
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    color: var(--fg-secondary);
+    min-height: 1em;
+  }
+
+  .msp__info-line--muted {
+    color: var(--fg-muted);
+  }
+
+  /* Theme toggle row */
+  .msp__theme-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 44px;
+  }
+
+  .msp__theme-label {
+    font-family: var(--font-meta);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--fg-muted);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   MobileMiniPlayer (.mmp)
+   Persistent strip above MobileTabBar when audio is playing/paused.
+   --------------------------------------------------------------------------- */
+
+.mmp {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .mmp {
+    display: flex;
+    align-items: center;
+    position: fixed;
+    /* Sits above tab bar: 52px tab + safe-area */
+    bottom: calc(52px + env(safe-area-inset-bottom, 0px));
+    left: 0;
+    right: 0;
+    z-index: var(--z-nav);
+    height: 44px;
+    background-color: var(--bg-secondary);
+    border-top: 1px solid var(--border-subtle);
+    padding: 0 var(--space-3);
+    gap: var(--space-2);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mmp__icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .mmp__label {
+    font-family: var(--font-data);
+    font-size: var(--text-xxs);
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--fg-tertiary);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .mmp__spacer {
+    flex: 1;
+  }
+
+  .mmp__play {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    color: var(--fg-primary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mmp__play:active {
+    transform: scale(0.9);
+    transition: transform 50ms var(--ease-cinematic);
+  }
+
+  /* Progress bar — thin accent-warm strip at the bottom of the mini-player */
+  .mmp__progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--border-subtle);
+  }
+
+  .mmp__progress-fill {
+    height: 100%;
+    background: var(--mmp-accent, var(--accent-warm));
+    transition: width 300ms linear;
+  }
+
+  /* void --weekly mini-player — recolor the progress fill to the weekly red. */
+  .mmp--weekly {
+    --mmp-accent: var(--palette-weekly);
+  }
+
+  /* void --history mini-player — recolor the progress fill to archival umber. */
+  .mmp--history {
+    --mmp-accent: var(--palette-history);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Hide NavBar chrome on mobile — replaced by MobileTabBar + MobileSidePanel
+   --------------------------------------------------------------------------- */
+
+@media (max-width: 767px) {
+  /* ThemeToggle in NavBar hidden — available in MobileSidePanel instead */
+  .nav-right > .theme-toggle {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Reduced Motion — disable all new animations
+   --------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .msp {
+    transition: none;
+  }
+  .msp__backdrop {
+    transition: none;
+  }
+  [data-msp-cascade] {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .msp__link:active {
+    transform: none;
+  }
+  /* MobileMoreSheet — no slide/spring, no drag scale, no swipe recoil. */
+  .mms,
+  .mms__backdrop {
+    transition: none;
+  }
+  .mms__link:active {
+    transform: none;
+  }
+  .mtb__tab:active {
+    transform: none;
+    transition: none;
+  }
+  .mtb__hamburger {
+    transition: none;
+  }
+  /* Home raised disc — no press scale. On Air live dot — no pulse. */
+  .mtb__home:active .mtb__home-disc {
+    transform: none;
+    transition: none;
+  }
+  .mtb__onair-live-dot {
+    animation: none;
+  }
+  .mmp__play:active {
+    transform: none;
+    transition: none;
+  }
+
+  /* Tier 2: disable snap/inertia for reduced-motion users — they get a
+     plain horizontal scroll with no carousel feel. */
+  .mobile-edition-pills {
+    scroll-snap-type: none;
+    overscroll-behavior-x: auto;
+  }
+}

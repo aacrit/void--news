@@ -1,0 +1,221 @@
+# ============================================================================
+# IG Pipeline — GENERATE-ONLY (posting PARKED as of 2026-08-05)
+#
+# CEO decision: no overposting. This pipeline no longer auto-posts anything and
+# no longer runs on a schedule. It is manual-dispatch only. The default flow
+# GENERATES a downloadable bundle (generator -> Playwright capture -> Gemini
+# captions -> export) and uploads it as an artifact for MANUAL upload: the CEO
+# downloads social_out/, opens index.html, uploads the slide images by hand and
+# pastes the per-platform caption they pick after adding a personal touch.
+#
+# The `publish` / `dry-run-publish` modes (ig_publisher + cross_post) are PARKED
+# and reachable ONLY by an explicit manual workflow_dispatch. Nothing here auto
+# invokes them. ig_publisher.py / cross_post.py are retained (not deleted) so the
+# CEO can enable posting later after growing a following.
+# ============================================================================
+name: IG Pipeline
+
+permissions: {}
+
+on:
+  # No schedules. Posting + auto-runs are parked (2026-08-05). Manual only.
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'generate (bundle for manual upload) | cleanup | publish [PARKED] | dry-run-publish [PARKED]'
+        required: true
+        default: 'generate'
+        type: choice
+        options:
+          - generate
+          - cleanup
+          - dry-run-publish   # PARKED: manual-only, does not post
+          - publish           # PARKED: manual-only, posts to IG + Bluesky
+      track:
+        description: 'generate mode only: which track to build'
+        required: false
+        default: 'void'
+        type: choice
+        options:
+          - void
+          - vision-series   # fable's six debut Vision posts, captions pre-filled
+          - history
+          - weekly
+      note:
+        description: 'Optional steer for this batch: angle / tone / focus / theme (shapes captions + intent, never the facts)'
+        required: false
+        default: ''
+        type: string
+      vision_hook:
+        description: 'generate/void only: override the VISION slide 1 (and optionally 2/3). Format: HEADLINE || SUBSTANCE || CTA. Blank = normal rotation.'
+        required: false
+        default: ''
+        type: string
+      purge_drafts:
+        description: 'cleanup mode only: also delete ALL stale draft posts (resets the queue)'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  ig-pipeline:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # ---- Mode resolution ------------------------------------------------
+      - name: Resolve mode
+        id: mode
+        run: |
+          MODE="${{ inputs.mode }}"
+          if [ -z "$MODE" ]; then MODE="generate"; fi
+          TRACK="${{ inputs.track }}"
+          if [ -z "$TRACK" ]; then TRACK="void"; fi
+          echo "mode=$MODE" >> "$GITHUB_OUTPUT"
+          echo "track=$TRACK" >> "$GITHUB_OUTPUT"
+          echo "Mode: $MODE | Track: $TRACK"
+
+      # ---- Setup ----------------------------------------------------------
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: pipeline/requirements.txt
+      - name: Install dependencies
+        run: pip install -r pipeline/requirements.txt
+
+      - name: Install Playwright Chromium
+        if: steps.mode.outputs.mode == 'generate'
+        run: playwright install chromium --with-deps
+
+      - uses: actions/setup-node@v4
+        if: steps.mode.outputs.mode == 'generate'
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        if: steps.mode.outputs.mode == 'generate'
+        working-directory: frontend
+        run: npm ci
+
+      # ---- Mode: generate (generator + capture + caption + export) --------
+      - name: Start Next.js dev server
+        if: steps.mode.outputs.mode == 'generate'
+        working-directory: frontend
+        env:
+          NEXT_PUBLIC_BASE_PATH: ""
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          # Render arbitrary post IDs on demand (output:export is dropped under
+          # `next dev`; this flips the render route's dynamicParams to true).
+          IG_RENDER_DYNAMIC: "1"
+        run: |
+          nohup npx next dev --port 3000 > /tmp/next-dev.log 2>&1 &
+          echo $! > /tmp/next-dev.pid
+
+      # Capture the run-start instant BEFORE any draft is generated, so the
+      # export step can scope the bundle to exactly this run's posts (--since)
+      # rather than every draft created today. A small backdated buffer absorbs
+      # any clock skew between the runner and Supabase without widening the
+      # window enough to catch an unrelated (much older) run.
+      - name: Capture generation start timestamp
+        if: steps.mode.outputs.mode == 'generate'
+        run: echo "GEN_SINCE=$(date -u -d '-2 minutes' +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
+
+      - name: Generate next draft
+        if: steps.mode.outputs.mode == 'generate'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SOCIAL_NOTE: ${{ inputs.note }}
+          SOCIAL_VISION_HOOK: ${{ inputs.vision_hook }}
+        run: python -m pipeline.social.ig_generator --track ${{ steps.mode.outputs.track }}
+
+      - name: Capture slides (Playwright)
+        if: steps.mode.outputs.mode == 'generate'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          RENDER_BASE_URL: 'http://localhost:3000'
+        run: python -m pipeline.social.ig_capture --wait-server
+
+      - name: Generate captions (Gemini flash-lite) + per-platform variants
+        if: steps.mode.outputs.mode == 'generate'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          SOCIAL_NOTE: ${{ inputs.note }}
+        run: python -m pipeline.social.ig_caption
+
+      - name: Export manual-upload bundle (social_out/)
+        if: steps.mode.outputs.mode == 'generate'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python -m pipeline.social.ig_export --since "$GEN_SINCE" --out-dir social_out
+
+      - name: Stop dev server
+        if: always() && steps.mode.outputs.mode == 'generate'
+        run: |
+          if [ -f /tmp/next-dev.pid ]; then
+            kill "$(cat /tmp/next-dev.pid)" || true
+          fi
+          tail -200 /tmp/next-dev.log || true
+
+      - name: Upload bundle artifact
+        if: steps.mode.outputs.mode == 'generate'
+        uses: actions/upload-artifact@v4
+        with:
+          name: social-bundle-${{ github.run_id }}
+          path: social_out/
+          if-no-files-found: warn
+          retention-days: 14
+
+      # ---- Mode: publish [PARKED — manual dispatch only, nothing auto-runs] --
+      # These steps NEVER run on a schedule (there is no schedule) and only fire
+      # when a human explicitly dispatches mode=publish / dry-run-publish. Kept
+      # so the CEO can turn posting back on later without rebuilding it.
+      - name: Publish approved (dry-run) [PARKED]
+        if: steps.mode.outputs.mode == 'dry-run-publish'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          INSTAGRAM_GRAPH_TOKEN: ${{ secrets.INSTAGRAM_GRAPH_TOKEN }}
+          INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
+        run: python -m pipeline.social.ig_publisher --dry-run
+
+      - name: Publish approved [PARKED]
+        if: steps.mode.outputs.mode == 'publish'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          INSTAGRAM_GRAPH_TOKEN: ${{ secrets.INSTAGRAM_GRAPH_TOKEN }}
+          INSTAGRAM_USER_ID: ${{ secrets.INSTAGRAM_USER_ID }}
+        run: python -m pipeline.social.ig_publisher
+
+      - name: Cross-post to Bluesky [PARKED]
+        if: steps.mode.outputs.mode == 'publish'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          BLUESKY_HANDLE: ${{ secrets.BLUESKY_HANDLE }}
+          BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
+        run: python -m pipeline.social.cross_post
+
+      # ---- Mode: cleanup (reject stuck posts; optionally purge stale drafts) ---
+      - name: Clean up stuck posts
+        if: steps.mode.outputs.mode == 'cleanup'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          if [ "${{ inputs.purge_drafts }}" = "true" ]; then
+            python -m pipeline.social.ig_cleanup --purge-drafts --older-than-hours 0
+          else
+            python -m pipeline.social.ig_cleanup
+          fi

@@ -1,0 +1,854 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>void --news — Engine Simplification Plan</title>
+<style>
+  :root{
+    --bg:#0c0d10;
+    --bg-alt:#15171c;
+    --panel:#1a1d24;
+    --panel-2:#22262e;
+    --line:#2a2e38;
+    --ink:#e8eaef;
+    --ink-dim:#b3b8c4;
+    --mute:#7c8493;
+    --accent:#d9a455;
+    --green:#62c47b;
+    --red:#e57373;
+    --amber:#e6b864;
+    --blue:#7eb6e3;
+    --violet:#b894e3;
+    --serif:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;
+    --sans:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif;
+    --mono:'JetBrains Mono','SF Mono',ui-monospace,Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;font-size:14.5px}
+  a{color:var(--accent);text-decoration:none;border-bottom:1px dotted rgba(217,164,85,.4)}
+  a:hover{border-bottom-style:solid}
+  .wrap{max-width:1240px;margin:0 auto;padding:48px 28px 80px}
+  header.hero{border-bottom:1px solid var(--line);padding-bottom:32px;margin-bottom:40px}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);margin-bottom:14px}
+  h1{font-family:var(--serif);font-weight:600;font-size:44px;line-height:1.1;margin:0 0 14px;letter-spacing:-.01em}
+  h1 em{font-style:italic;color:var(--accent)}
+  .deck{font-family:var(--serif);font-style:italic;font-size:19px;color:var(--ink-dim);max-width:780px;line-height:1.45}
+
+  h2{font-family:var(--serif);font-weight:600;font-size:28px;margin:54px 0 14px;letter-spacing:-.005em}
+  h2::before{content:"§ ";color:var(--mute);font-weight:400}
+  h3{font-family:var(--sans);font-weight:600;font-size:16px;letter-spacing:.02em;margin:24px 0 10px;color:var(--ink)}
+  p{margin:0 0 14px;color:var(--ink-dim)}
+  code{font-family:var(--mono);font-size:12.5px;background:var(--panel-2);padding:1px 6px;border-radius:3px;color:var(--accent)}
+
+  /* HEADLINE METRIC TILES */
+  .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:28px}
+  @media(max-width:880px){.tiles{grid-template-columns:repeat(2,1fr)}}
+  .tile{background:var(--bg-alt);border:1px solid var(--line);border-radius:6px;padding:18px 18px}
+  .tile .l{font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--mute);text-transform:uppercase;margin-bottom:10px}
+  .tile .before{font-family:var(--serif);font-size:14px;color:var(--mute);text-decoration:line-through;margin-bottom:4px}
+  .tile .after{font-family:var(--serif);font-size:28px;color:var(--accent);line-height:1.1}
+  .tile .delta{font-family:var(--mono);font-size:11px;color:var(--green);margin-top:6px;letter-spacing:.04em}
+
+  /* COMPARISON DIAGRAM */
+  .arch-wrap{background:var(--bg-alt);border:1px solid var(--line);border-radius:6px;padding:24px;margin-top:14px;overflow-x:auto}
+  .arch-wrap svg{display:block;min-width:1180px}
+
+  /* REVERT CARDS */
+  .revert{background:var(--bg-alt);border:1px solid var(--line);border-radius:6px;margin-bottom:18px;overflow:hidden}
+  .revert-head{padding:18px 24px;border-bottom:1px solid var(--line);display:flex;gap:14px;align-items:baseline;flex-wrap:wrap}
+  .revert-num{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--mute)}
+  .revert-title{font-family:var(--serif);font-size:21px;font-weight:600;margin:0;flex:1}
+  .pill{display:inline-block;padding:2px 8px;border-radius:10px;font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;font-weight:600}
+  .pill-revert{background:rgba(184,148,227,.16);color:var(--violet)}
+  .pill-delete{background:rgba(229,115,115,.16);color:var(--red)}
+  .pill-keep{background:rgba(98,196,123,.16);color:var(--green)}
+  .pill-modify{background:rgba(230,184,100,.16);color:var(--amber)}
+  .pill-flag{background:rgba(126,182,227,.16);color:var(--blue)}
+  .pill-loc{background:transparent;color:var(--mute);border:1px solid var(--line)}
+  .revert-body{padding:22px 24px;display:grid;grid-template-columns:1fr 1fr;gap:32px}
+  @media(max-width:880px){.revert-body{grid-template-columns:1fr}}
+  .revert-body h4{font-family:var(--sans);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--mute);margin:0 0 10px;font-weight:600}
+
+  .before-after{display:grid;grid-template-columns:1fr;gap:8px;margin-top:8px}
+  .ba-row{font-family:var(--mono);font-size:11.5px;line-height:1.5;padding:8px 12px;border-radius:3px;border:1px solid var(--line)}
+  .ba-before{background:rgba(229,115,115,.06);border-color:rgba(229,115,115,.25);color:#d09e9e}
+  .ba-after{background:rgba(98,196,123,.06);border-color:rgba(98,196,123,.25);color:#9cd0a8}
+  .ba-label{font-family:var(--sans);font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--mute);margin-bottom:4px;font-weight:600}
+
+  .why{background:rgba(217,164,85,.05);border-left:3px solid var(--accent);padding:14px 16px;border-radius:0 3px 3px 0;margin-top:12px;font-size:13.5px;color:var(--ink-dim)}
+  .why strong{color:var(--ink)}
+
+  /* MATRIX TABLE */
+  table.matrix{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);font-size:13px}
+  table.matrix th{background:var(--panel-2);text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
+  table.matrix td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--ink-dim)}
+  table.matrix tr:last-child td{border-bottom:none}
+  table.matrix code{font-size:11.5px}
+  td .verdict{display:inline-block;padding:1px 7px;border-radius:9px;font-family:var(--mono);font-size:10px;letter-spacing:.04em;font-weight:600;text-transform:uppercase}
+
+  /* TIMELINE */
+  .timeline{background:var(--bg-alt);border:1px solid var(--line);border-radius:6px;padding:24px;margin-top:14px;overflow-x:auto}
+  .timeline svg{display:block;min-width:1180px}
+
+  /* DECISION CARDS */
+  .decisions{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:14px}
+  @media(max-width:780px){.decisions{grid-template-columns:1fr}}
+  .decision{background:var(--bg-alt);border:1px solid var(--line);border-radius:6px;padding:22px 24px}
+  .decision h3{margin-top:0;color:var(--accent)}
+  .decision .opt{display:flex;gap:10px;padding:10px 0;border-bottom:1px dashed var(--line);align-items:baseline}
+  .decision .opt:last-child{border-bottom:none}
+  .opt-label{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--accent);min-width:24px}
+  .opt-text{font-size:13px;color:var(--ink-dim);flex:1}
+  .opt-text .rec{color:var(--green);font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;margin-left:8px}
+
+  /* PREDICTED IMPACT */
+  .impact{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
+  @media(max-width:880px){.impact{grid-template-columns:1fr}}
+  .imp{background:var(--bg-alt);border:1px solid var(--line);border-radius:6px;padding:18px}
+  .imp .l{font-family:var(--mono);font-size:11px;color:var(--mute);letter-spacing:.1em;text-transform:uppercase}
+  .imp .before-num{font-family:var(--serif);font-size:18px;color:var(--red);margin-top:8px}
+  .imp .arr{color:var(--mute);font-family:var(--mono);font-size:14px;margin:0 6px}
+  .imp .after-num{font-family:var(--serif);font-size:24px;color:var(--green);font-weight:600}
+  .imp .note{font-family:var(--sans);font-size:12px;color:var(--ink-dim);margin-top:8px;line-height:1.4}
+
+  footer{margin-top:60px;padding-top:24px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11.5px;color:var(--mute);text-align:center;letter-spacing:.06em}
+
+  .tldr{background:rgba(217,164,85,.06);border-left:3px solid var(--accent);padding:18px 22px;border-radius:0 4px 4px 0;margin:18px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <div class="eyebrow">void --news / engineering plan</div>
+  <h1>Simplification plan — <em>what's reverting, and why</em></h1>
+  <div class="deck">
+    The May 15 rewrite added complexity that the production data doesn't reward.
+    This plan unwinds it. Six engine reverts, one perf fix, three new validation
+    fixtures, fifteen execution steps, zero schema rollbacks. Net result: a
+    smaller, faster, more correct engine that does what the March 28 version did
+    while keeping wire-fingerprinting and the 75-source mega cap from the
+    rewrite.
+  </div>
+
+  <div class="tiles">
+    <div class="tile">
+      <div class="l">Engine LOC</div>
+      <div class="before">2,352</div>
+      <div class="after">~1,237</div>
+      <div class="delta">−1,115 LOC removed</div>
+    </div>
+    <div class="tile">
+      <div class="l">Clustering phases</div>
+      <div class="before">7</div>
+      <div class="after">4</div>
+      <div class="delta">−3 phases collapsed</div>
+    </div>
+    <div class="tile">
+      <div class="l">Tunable constants</div>
+      <div class="before">~20</div>
+      <div class="after">~6</div>
+      <div class="delta">−14 knobs deleted</div>
+    </div>
+    <div class="tile">
+      <div class="l">Schema migrations</div>
+      <div class="before">059</div>
+      <div class="after">059</div>
+      <div class="delta">no DDL rollback</div>
+    </div>
+  </div>
+</header>
+
+<section>
+<h2>The headline change</h2>
+<p>Phase 2 entity-merge is restored to its pre-rewrite shape. Phases 2.5, 2.55, 2.6 either collapse into Phase 1 (synonyms) or move behind a default-off flag (anchor). Phase 5 sheds the cohesion-trip and recursive sub-cap and becomes a single soft cap. Everything else stays put.</p>
+
+<div class="arch-wrap">
+<svg viewBox="0 0 1200 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="arch">
+  <title id="arch">Pipeline before vs. after simplification</title>
+  <style>
+    .box{fill:#1a1d24;stroke:#2a2e38;stroke-width:1.5;rx:6}
+    .box-keep{fill:#1a2520;stroke:#62c47b;stroke-width:1.5;rx:6}
+    .box-drop{fill:#251a1a;stroke:#e57373;stroke-width:1.5;stroke-dasharray:4 4;rx:6}
+    .box-flag{fill:#1a2030;stroke:#7eb6e3;stroke-width:1.5;stroke-dasharray:3 4;rx:6}
+    .tx{fill:#e8eaef;font-family:'JetBrains Mono',monospace;font-size:11.5px}
+    .tx-sub{fill:#7c8493;font-family:'JetBrains Mono',monospace;font-size:10px}
+    .tx-title{fill:#e8eaef;font-family:'Iowan Old Style',serif;font-style:italic;font-size:15px}
+    .arr{stroke:#3a3f4b;stroke-width:1.5;fill:none;marker-end:url(#a)}
+    .arr-rev{stroke:#b894e3;stroke-width:1.5;fill:none;marker-end:url(#b)}
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#3a3f4b"/>
+    </marker>
+    <marker id="b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#b894e3"/>
+    </marker>
+  </defs>
+
+  <!-- LEFT: current 7-phase -->
+  <text class="tx-title" x="80" y="30">Today · 7 clustering phases</text>
+  <text class="tx-sub" x="80" y="46">2,352 LOC, ~20 knobs, max sc=8 on a real top story</text>
+
+  <rect class="box" x="60" y="60" width="180" height="34"/>
+  <text class="tx" x="150" y="80" text-anchor="middle">Phase 1 — TF-IDF cosine</text>
+  <path class="arr" d="M 150 96 L 150 110"/>
+
+  <rect class="box-drop" x="60" y="116" width="180" height="40"/>
+  <text class="tx" x="150" y="135" text-anchor="middle">Phase 2 — IDF entity</text>
+  <text class="tx-sub" x="150" y="148" text-anchor="middle">+ distinguishing_shared gate</text>
+  <path class="arr" d="M 150 156 L 150 170"/>
+
+  <rect class="box-drop" x="60" y="176" width="180" height="34"/>
+  <text class="tx" x="150" y="196" text-anchor="middle">Phase 2.5 — canonical pairs</text>
+  <path class="arr" d="M 150 212 L 150 224"/>
+
+  <rect class="box-drop" x="60" y="230" width="180" height="34"/>
+  <text class="tx" x="150" y="250" text-anchor="middle">Phase 2.55 — synonyms</text>
+  <path class="arr" d="M 150 266 L 150 278"/>
+
+  <rect class="box-drop" x="60" y="284" width="180" height="34"/>
+  <text class="tx" x="150" y="304" text-anchor="middle">Phase 2.6 — anchor entity</text>
+  <path class="arr" d="M 150 320 L 150 332"/>
+
+  <rect class="box" x="60" y="338" width="180" height="28"/>
+  <text class="tx" x="150" y="356" text-anchor="middle">Phase 3 / 4 / 5</text>
+
+  <!-- MIDDLE: arrow + label -->
+  <text class="tx-title" x="600" y="30">Simplification</text>
+  <text class="tx-sub" x="600" y="48" text-anchor="middle">−3 phases · −1,115 LOC · same wire-fingerprint · same 75-cap</text>
+  <path class="arr-rev" d="M 290 200 L 510 200"/>
+  <text class="tx-sub" x="400" y="190" text-anchor="middle" fill="#b894e3">revert Phase 2</text>
+  <text class="tx-sub" x="400" y="220" text-anchor="middle" fill="#b894e3">drop 2.5 / 2.55 / 2.6</text>
+
+  <!-- RIGHT: simplified 4-phase -->
+  <text class="tx-title" x="960" y="30" text-anchor="middle">After · 4 clustering phases</text>
+  <text class="tx-sub" x="960" y="46" text-anchor="middle">~1,237 LOC, ~6 knobs, predicted max sc=25-40 on real top stories</text>
+
+  <rect class="box-keep" x="780" y="60" width="360" height="50"/>
+  <text class="tx" x="960" y="82" text-anchor="middle">Phase 1 — TF-IDF cosine</text>
+  <text class="tx-sub" x="960" y="98" text-anchor="middle">synonyms (DRC↔Congo) normalised in _build_document</text>
+  <path class="arr" d="M 960 112 L 960 130"/>
+
+  <rect class="box-keep" x="780" y="136" width="360" height="60"/>
+  <text class="tx" x="960" y="158" text-anchor="middle">Phase 2 — entity overlap merge (REVERTED)</text>
+  <text class="tx-sub" x="960" y="174" text-anchor="middle">len(shared) ≥ 3 · 48h time gate</text>
+  <text class="tx-sub" x="960" y="188" text-anchor="middle">union-find size cap = 50 articles (works correctly)</text>
+  <path class="arr" d="M 960 198 L 960 214"/>
+
+  <rect class="box-flag" x="780" y="220" width="360" height="34"/>
+  <text class="tx" x="960" y="240" text-anchor="middle">Phase 2.6 — anchor merge (OFF BY DEFAULT FLAG)</text>
+  <path class="arr" d="M 960 256 L 960 272"/>
+
+  <rect class="box-keep" x="780" y="278" width="360" height="34"/>
+  <text class="tx" x="960" y="298" text-anchor="middle">Phase 3 — title-Jaccard 0.22</text>
+  <path class="arr" d="M 960 314 L 960 332"/>
+
+  <rect class="box-keep" x="780" y="338" width="360" height="28"/>
+  <text class="tx" x="960" y="356" text-anchor="middle">Phase 5 — single soft-cap at 75 sources</text>
+</svg>
+</div>
+</section>
+
+<section>
+<h2>The six reverts, one by one</h2>
+<p>Each card explains exactly what's reverting, what code is being deleted or restored, why it solves a real production failure, and what the line-count impact is.</p>
+
+<!-- REVERT 1 -->
+<div class="revert">
+  <div class="revert-head">
+    <span class="revert-num">REVERT 01</span>
+    <h3 class="revert-title">Phase 2 entity-merge — restore the 2026-03-28 design</h3>
+    <span class="pill pill-revert">REVERT</span>
+    <span class="pill pill-loc">−120 LOC</span>
+  </div>
+  <div class="revert-body">
+    <div>
+      <h4>What's changing</h4>
+      <div class="before-after">
+        <div class="ba-row ba-before">
+          <div class="ba-label">today's gate</div>
+          score &gt;= 2.0 IDF<br>
+          AND len(shared) &gt;= 3<br>
+          AND distinguishing_shared &gt;= 1<br>
+          AND wire-bridge IDF downweight 0.4×
+        </div>
+        <div class="ba-row ba-after">
+          <div class="ba-label">restored gate</div>
+          len(shared) &gt;= 3 entities<br>
+          AND time_spread &lt;= 48h<br>
+          AND group_size + group_size &lt;= 50 articles<br>
+          (union-find tracks size correctly)
+        </div>
+      </div>
+      <div class="why">
+        <strong>Why:</strong> The current gate requires at least one shared entity that is NOT in <code>_LOW_SPECIFICITY_ENTITIES</code>. Every realistic Trump-Iran / Trump-China / Israel-Gaza story shares only <code>{trump, iran}</code> or similar — all hot-spots, all downweighted. The gate fails on stories the engine should obviously merge. The old gate didn't need entity quality scoring because the 50-article hard cap (with working union-find size tracking) already prevented the chain-merge mega-clusters this complexity was added to stop.
+      </div>
+    </div>
+    <div>
+      <h4>Production evidence</h4>
+      <p>Today's Trump-Iran deal story is fragmented across 5 clusters of <code>sc=6 + 4 + 4 + 3 + 2 = 19 sources</code>. The old engine on the same input would have caught them all in Phase 2's set-intersection. The 233-source AI-deployment chain merge that motivated the rewrite would have been blocked by the old engine's 50-article cap before it could form.</p>
+      <h4>Code-level change</h4>
+      <p>Replace <code>merge_related_clusters()</code> body in <code>pipeline/clustering/story_cluster.py</code> with the version from commit <code>5402f7d</code>. Drop <code>_LOW_SPECIFICITY_ENTITIES</code> frozenset, <code>_LOW_SPECIFICITY_WEIGHT</code>, <code>distinguishing_shared</code> loop, <code>ENTITY_MERGE_IDF_THRESHOLD</code>, the fallback-Jaccard branch, the broken <code>_would_exceed_ceiling</code>. Restore the union-find with <code>group_size[rb] += group_size[ra]</code> on union.</p>
+    </div>
+  </div>
+</div>
+
+<!-- REVERT 2 -->
+<div class="revert">
+  <div class="revert-head">
+    <span class="revert-num">REVERT 02</span>
+    <h3 class="revert-title">Phase 2.55 synonyms → move into Phase 1 normalisation</h3>
+    <span class="pill pill-modify">RELOCATE</span>
+    <span class="pill pill-loc">−80 LOC</span>
+  </div>
+  <div class="revert-body">
+    <div>
+      <h4>What's changing</h4>
+      <div class="before-after">
+        <div class="ba-row ba-before">
+          <div class="ba-label">today</div>
+          Phase 2.55 — merge clusters that share entities under synonym pairs<br>
+          {DRC ↔ Congo, UK ↔ Britain, Czechia ↔ Czech Republic, ...}<br>
+          Runs AFTER Phase 1 vectorisation
+        </div>
+        <div class="ba-row ba-after">
+          <div class="ba-label">simplified</div>
+          Normalise inside <code>_build_document()</code> before TF-IDF vectorisation:<br>
+          "Democratic Republic of Congo" → "Congo"<br>
+          "UK" → "United Kingdom"<br>
+          Phase 1 vectors already canonical → Phase 2.55 deletable
+        </div>
+      </div>
+      <div class="why">
+        <strong>Why:</strong> Phase 1 cosine similarity is computed on TF-IDF vectors of <code>title + 500 words of full text</code>. If those documents are normalised first, the cosine signal between a "DRC" article and a "Congo" article goes up by exactly the right amount automatically. No separate merge pass needed. Keeping the synonym dictionary as a preprocessing step makes the rest of the pipeline simpler without losing any behaviour.
+      </div>
+    </div>
+    <div>
+      <h4>Production evidence</h4>
+      <p>Validation fixture <code>031-no-regression-republic-of-congo-vs-drc.yaml</code> exists. The simplification rewrites that fixture to test the normalisation path inside Phase 1, not a separate merge phase. Same assertion — Congo and DRC articles cluster together — different mechanism.</p>
+      <h4>Code-level change</h4>
+      <p>Add <code>_SYNONYM_NORMALISATION</code> dict (the existing pair list, flattened to canonical-form mapping). Apply at the top of <code>_build_document()</code> via simple regex substitution. Delete <code>merge_synonym_pairs()</code> function and its call site in <code>cluster_stories()</code>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- REVERT 3 -->
+<div class="revert">
+  <div class="revert-head">
+    <span class="revert-num">REVERT 03</span>
+    <h3 class="revert-title">Phase 2.5 canonical-pairs — delete entirely</h3>
+    <span class="pill pill-delete">DELETE</span>
+    <span class="pill pill-loc">−150 LOC</span>
+  </div>
+  <div class="revert-body">
+    <div>
+      <h4>What's changing</h4>
+      <div class="before-after">
+        <div class="ba-row ba-before">
+          <div class="ba-label">today</div>
+          <code>_SUMMIT_PAIRS</code> frozenset of editorial overrides<br>
+          {trump, xi}, {trump, putin}, {trump, modi}, {starmer, streeting}<br>
+          When BOTH names appear in both clusters → force merge
+        </div>
+        <div class="ba-row ba-after">
+          <div class="ba-label">simplified</div>
+          Phase 2 set-intersection picks up {trump, xi, summit, beijing, g20} naturally.<br>
+          Editorial override list is unnecessary once Phase 2 works.
+        </div>
+      </div>
+      <div class="why">
+        <strong>Why:</strong> The original Phase 2 already merged Trump-Xi summit clusters before the rewrite — the entities <code>{trump, xi, summit, beijing}</code> overlap fine, and the simple <code>len(shared) >= 3</code> gate fires correctly. The summit-pairs editorial override was added because the rewritten Phase 2's <code>distinguishing_shared >= 1</code> gate was failing on these exact cases. With Phase 2 restored, the override is solving a problem that no longer exists.
+      </div>
+    </div>
+    <div>
+      <h4>Production evidence</h4>
+      <p>The pre-rewrite engine (commit <code>5402f7d</code>) ran production from 2026-03-28 through 2026-05-14 with NO summit-pair override and successfully consolidated Trump-Xi G20 coverage. The need for the override only appeared after the rewrite.</p>
+      <h4>Code-level change</h4>
+      <p>Delete <code>_SUMMIT_PAIRS</code>, <code>merge_canonical_pairs()</code>, and the call site in <code>cluster_stories()</code>. If a regression appears in a fresh fixture (002-streeting-fragmentation), restore selectively. Otherwise gone.</p>
+    </div>
+  </div>
+</div>
+
+<!-- REVERT 4 -->
+<div class="revert">
+  <div class="revert-head">
+    <span class="revert-num">REVERT 04</span>
+    <h3 class="revert-title">Phase 2.6 anchor-entity merge — move behind a default-OFF flag</h3>
+    <span class="pill pill-flag">FLAG</span>
+    <span class="pill pill-loc">−50 LOC (active path)</span>
+  </div>
+  <div class="revert-body">
+    <div>
+      <h4>What's changing</h4>
+      <div class="before-after">
+        <div class="ba-row ba-before">
+          <div class="ba-label">today</div>
+          Always runs after Phase 2.55.<br>
+          Five knobs: <code>ANCHOR_IDF_FRACTION_OF_MAX</code>, <code>ANCHOR_MIN_SHARED</code>, <code>ANCHOR_TITLE_JACCARD_FLOOR</code>, plus df cap and IDF cutoff.
+        </div>
+        <div class="ba-row ba-after">
+          <div class="ba-label">simplified</div>
+          Behind <code>--enable-anchor-merge</code> CLI flag, default OFF.<br>
+          Available for diagnostic runs but not in the cron path.
+        </div>
+      </div>
+      <div class="why">
+        <strong>Why:</strong> Phase 2.6 catches international fragmentation cases (Burkinabé minister, Latvian PM) by merging clusters sharing rare proper nouns like "Siliņa" or "Sheinbaum". The simplified Phase 2 catches MOST of these already (the rare names ARE distinguishing under simple set-intersection). What's left is a small edge-case rescue. Keep the code for when it's needed; don't run it by default.
+      </div>
+    </div>
+    <div>
+      <h4>Production evidence</h4>
+      <p>The pre-rewrite engine ran without an anchor-merge phase and the user remembers it as "worked perfectly." The two months of production before the rewrite show no fragmentation-of-international-news complaints in any session transcript.</p>
+      <h4>Code-level change</h4>
+      <p>Add <code>enable_anchor_merge: bool = False</code> parameter to <code>cluster_stories()</code>. Wrap the existing Phase 2.6 call in <code>if enable_anchor_merge:</code>. CLI flag wired through <code>pipeline/main.py</code> for opt-in runs. Validation fixtures that test anchor merge run with the flag explicitly on.</p>
+    </div>
+  </div>
+</div>
+
+<!-- REVERT 5 -->
+<div class="revert">
+  <div class="revert-head">
+    <span class="revert-num">REVERT 05</span>
+    <h3 class="revert-title">Phase 5 mega-cap — single soft-cap branch, no force-split, no cohesion</h3>
+    <span class="pill pill-revert">REVERT</span>
+    <span class="pill pill-loc">−500 LOC</span>
+  </div>
+  <div class="revert-body">
+    <div>
+      <h4>What's changing</h4>
+      <div class="before-after">
+        <div class="ba-row ba-before">
+          <div class="ba-label">today</div>
+          200-line function. <code>_force_split_cluster()</code>, <code>_cluster_cohesion()</code> scorer, recursive sub-cap, chain-merge-dissolve, shattered detection, mega-cap-shattered fallback. Seven constants.
+        </div>
+        <div class="ba-row ba-after">
+          <div class="ba-label">simplified</div>
+          14-line function. At <code>source_count &gt;= 75</code>: cap and stamp flag. Done.<br>
+          No re-split. No cohesion. The 50-article cap in Phase 2 already prevents the chain-merges that motivated all this.
+        </div>
+      </div>
+      <div class="why">
+        <strong>Why:</strong> Phase 5 was originally a soft-cap for the rare genuine mega-event (a presidential inauguration, a 9/11-scale disaster). The Era 6/7 elaborations (cohesion-gated trip, force-split, chain-merge-dissolve, recursive sub-cap) were added to compensate for chain-merges that Phase 2 was no longer preventing. With Phase 2 restored to its working state, none of those elaborations have anything to do.
+      </div>
+    </div>
+    <div>
+      <h4>Production evidence</h4>
+      <p>The cohesion-trip path in today's code force-splits any 20-article cluster scoring cohesion below 30 — including legitimate 12-source breaking stories with multi-desk title diversity. The May 28 unwind added a <code>MEGA_COHESION_MIN_SOURCES = 40</code> floor to narrow the trip, but the underlying mechanism (force-split + shatter + dissolve) is still wrong shape for the problem. Removing it is cleaner than tuning it.</p>
+      <h4>Code-level change</h4>
+      <p>Replace <code>split_mega_clusters()</code> with the 14-line soft-cap version. Delete <code>_force_split_cluster()</code>, <code>_cluster_cohesion()</code>, <code>MEGA_COHESION_*</code> constants, <code>MEGA_SPLIT_*</code> constants, the chain-merge-dissolve branch.</p>
+    </div>
+  </div>
+</div>
+
+<!-- REVERT 6 -->
+<div class="revert">
+  <div class="revert-head">
+    <span class="revert-num">REVERT 06</span>
+    <h3 class="revert-title">is_headline — 3-signal formula, no corpus-size adaptive bands</h3>
+    <span class="pill pill-revert">REVERT</span>
+    <span class="pill pill-loc">−80 LOC</span>
+  </div>
+  <div class="revert-body">
+    <div>
+      <h4>What's changing</h4>
+      <div class="before-after">
+        <div class="ba-row ba-before">
+          <div class="ba-label">today</div>
+          coverage_ok (5+/2tiers OR 8+) AND rank_ok (adaptive 22/35/45 by corpus) AND not mega_capped AND headline_confidence &gt;= conf_floor (30/50/60 adaptive)<br>
+          Plus <code>corpus_size</code> parameter wired through rerank + main
+        </div>
+        <div class="ba-row ba-after">
+          <div class="ba-label">simplified</div>
+          <code>is_headline = source_count &gt;= 8</code><br>
+          <code>AND headline_rank &gt;= 40</code><br>
+          <code>AND not mega_cluster_capped</code><br>
+          No corpus_size parameter. No adaptive bands. <code>headline_confidence</code> becomes a derived display signal.
+        </div>
+      </div>
+      <div class="why">
+        <strong>Why:</strong> The three-tier corpus-volume scaling was a symptom band-aid for the broken rerank corpus_size (already fixed). With clustering producing realistic source counts again, the simple <code>sc &gt;= 8 AND rank &gt;= 40</code> gate captures what humans would call "headline" without any need for day-by-day tuning. The complexity removal is large for a small surface.
+      </div>
+    </div>
+    <div>
+      <h4>Production evidence</h4>
+      <p>The Era 4 (April–mid-May) ranker had no <code>is_headline</code> field at all. Top-of-feed selection was driven by <code>headline_rank</code> alone. The DB column stays for the frontend's query consistency, but its value follows the simple rule.</p>
+      <h4>Code-level change</h4>
+      <p>Drop <code>corpus_size</code> parameter from <code>rank_importance()</code>. Remove three-tier band logic at lines 1573-1579 of <code>importance_ranker.py</code>. Replace <code>headline_confidence</code> blend with a simple two-term linear (50% source_count saturating + 50% headline_rank). Remove <code>corpus_articles_window</code> compute in <code>rerank.py</code>.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<section>
+<h2>Per-category cleanup matrix</h2>
+<p>The reverts above are engine code. This table covers the parallel state that accumulated during Era 5-7 outside <code>clustering/</code> and <code>ranker/</code>.</p>
+
+<table class="matrix">
+  <thead>
+    <tr>
+      <th>Category</th>
+      <th>Artifact</th>
+      <th>Verdict</th>
+      <th>Reasoning</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="6"><strong>Database</strong></td>
+      <td>migration 054 (<code>mega_cluster_capped</code>)</td>
+      <td><span class="verdict pill-keep">KEEP</span></td>
+      <td>Simplified Phase 5 still uses this flag</td>
+    </tr>
+    <tr>
+      <td>migration 055 (wire fields on articles)</td>
+      <td><span class="verdict pill-keep">KEEP</span></td>
+      <td>Wire fingerprinting is one of the two genuinely useful things from the rewrite</td>
+    </tr>
+    <tr>
+      <td>migration 056 (one-shot historical backfill)</td>
+      <td><span class="verdict pill-keep">KEEP</span></td>
+      <td>Already ran once 2026-05-18; column is sparse and harmless</td>
+    </tr>
+    <tr>
+      <td>migrations 057 + 058 (sandbox tables + RLS)</td>
+      <td><span class="verdict pill-keep">KEEP</span></td>
+      <td>Tables inert when not written. Sandbox stays available for opt-in $0 replay.</td>
+    </tr>
+    <tr>
+      <td>migration 059 (<code>is_headline</code>, <code>headline_confidence</code>)</td>
+      <td><span class="verdict pill-keep">KEEP</span></td>
+      <td>Frontend reads these. Simplified ranker writes them with the 3-signal formula.</td>
+    </tr>
+    <tr>
+      <td><strong>migration 060 to drop columns</strong></td>
+      <td><span class="verdict pill-delete">NOT NEEDED</span></td>
+      <td>No DDL rollback. All schema accumulated by Era 5-7 stays in place. The simplified engine just writes a subset of what the schema supports.</td>
+    </tr>
+
+    <tr>
+      <td rowspan="4"><strong>Pipeline aux code</strong></td>
+      <td><code>pipeline/engine_snapshot.py</code> (187 LOC)</td>
+      <td><span class="verdict pill-modify">STOP CALLING</span></td>
+      <td>File stays for opt-in sandbox use. Production runs no longer write the 5-7 MB JSONB payload per run.</td>
+    </tr>
+    <tr>
+      <td><code>pipeline/sandbox_replay.py</code> (264 LOC)</td>
+      <td><span class="verdict pill-keep">KEEP</span></td>
+      <td>Diagnostic-only. Doesn't fire in cron path.</td>
+    </tr>
+    <tr>
+      <td><code>pipeline/sandbox_server.py</code> (106 LOC)</td>
+      <td><span class="verdict pill-keep">KEEP</span></td>
+      <td>FastAPI sidecar started manually by developer.</td>
+    </tr>
+    <tr>
+      <td>main.py engine_snapshot writer call</td>
+      <td><span class="verdict pill-delete">DELETE</span></td>
+      <td>Saves serialisation cost + DB write on every cron run.</td>
+    </tr>
+
+    <tr>
+      <td rowspan="3"><strong>main.py orchestration</strong></td>
+      <td><code>recluster_only</code> flag + <code>_ReclusterSkip</code> path</td>
+      <td><span class="verdict pill-keep">KEEP</span></td>
+      <td>Useful diagnostic flag; bug already fixed in c2ac66c.</td>
+    </tr>
+    <tr>
+      <td>Wire-flag UPDATE loop (lines 1404-1429)</td>
+      <td><span class="verdict pill-modify">BATCH</span></td>
+      <td>N round-trips per run → single <code>upsert</code>. Perf-only.</td>
+    </tr>
+    <tr>
+      <td>Step 8c.5 world-tag reconciliation</td>
+      <td><span class="verdict pill-modify">AUDIT</span></td>
+      <td>Verify the simplified clustering still produces correctly-sectioned clusters. If yes, delete the reconciliation. If clusters lose <code>sections=['world']</code>, keep but trim.</td>
+    </tr>
+
+    <tr>
+      <td rowspan="3"><strong>CI / Actions</strong></td>
+      <td><code>.github/workflows/sandbox.yml</code></td>
+      <td><span class="verdict pill-keep">KEEP</span></td>
+      <td>workflow_dispatch only — no scheduled cost.</td>
+    </tr>
+    <tr>
+      <td><code>.github/workflows/validate-clustering.yml</code></td>
+      <td><span class="verdict pill-modify">UPDATE</span></td>
+      <td>Add three new fixtures (Trump-Iran merge, Observer reject, transitive chain).</td>
+    </tr>
+    <tr>
+      <td><code>pipeline.yml</code> workflow_dispatch inputs</td>
+      <td><span class="verdict pill-keep">KEEP</span></td>
+      <td>All four inputs (brief_only, recluster_only, recluster_window_hours, engine_only) remain useful. Kill-switch env vars orthogonal.</td>
+    </tr>
+
+    <tr>
+      <td rowspan="3"><strong>Frontend</strong></td>
+      <td><code>frontend/public/diag.html</code> (2,397 LOC)</td>
+      <td><span class="verdict pill-flag">DECIDE</span></td>
+      <td>Decision Q1 below. Recommendation: keep with deprecation banner.</td>
+    </tr>
+    <tr>
+      <td><code>frontend/app/components/HomeContent.tsx</code></td>
+      <td><span class="verdict pill-keep">KEEP</span></td>
+      <td>Query field schema unchanged. Simplified ranker still writes the columns it expects.</td>
+    </tr>
+    <tr>
+      <td>HEADLINE badge component</td>
+      <td><span class="verdict pill-keep">N/A</span></td>
+      <td>Never existed. is_headline was wired to DB but never rendered visually.</td>
+    </tr>
+
+    <tr>
+      <td rowspan="4"><strong>Validation</strong></td>
+      <td>existing 35 fixtures</td>
+      <td><span class="verdict pill-keep">KEEP MOST</span></td>
+      <td>Rewrite fixture 033 (size-cap) to assert 50-article cap not 120-source ceiling.</td>
+    </tr>
+    <tr>
+      <td><strong>NEW</strong> 036 Trump-Iran consolidation</td>
+      <td><span class="verdict pill-keep">ADD</span></td>
+      <td>5 articles, shared {trump, iran, deal}, Jaccard ~0.20 → must merge to one cluster.</td>
+    </tr>
+    <tr>
+      <td><strong>NEW</strong> 037 Observer publisher-bridge rejection</td>
+      <td><span class="verdict pill-keep">ADD</span></td>
+      <td>8 articles all "* Observer" outlets → must NOT merge.</td>
+    </tr>
+    <tr>
+      <td><strong>NEW</strong> 038 transitive-chain 50-cap</td>
+      <td><span class="verdict pill-keep">ADD</span></td>
+      <td>3 × 25-source clusters sharing only {trump} → must cap at 50.</td>
+    </tr>
+
+    <tr>
+      <td rowspan="4"><strong>Docs</strong></td>
+      <td><code>CLAUDE.md</code></td>
+      <td><span class="verdict pill-modify">REV 45</span></td>
+      <td>Document the simplification; replace rev 44 paragraph.</td>
+    </tr>
+    <tr>
+      <td><code>docs/DIAGNOSTIC-LAB.md</code></td>
+      <td><span class="verdict pill-modify">DEPRECATE</span></td>
+      <td>Keep for historical record, add deprecation banner pointing to BREAKAGE-ANALYSIS.</td>
+    </tr>
+    <tr>
+      <td><code>docs/PIPELINE-BRAIN.md</code></td>
+      <td><span class="verdict pill-modify">UPDATE</span></td>
+      <td>Replace is_headline three-tier section with 3-signal formula.</td>
+    </tr>
+    <tr>
+      <td><code>docs/ENGINE-EVOLUTION.html</code></td>
+      <td><span class="verdict pill-modify">APPEND</span></td>
+      <td>Era 9 section after simplification ships.</td>
+    </tr>
+  </tbody>
+</table>
+</section>
+
+<section>
+<h2>Execution order — 15 steps</h2>
+<p>Each step is a checkpoint. Start at the top, do not skip ahead. If a step's verification fails, stop and iterate before continuing.</p>
+
+<div class="timeline">
+<svg viewBox="0 0 1200 480" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>15-step execution timeline</title>
+  <style>
+    .step{fill:#1a1d24;stroke:#2a2e38;stroke-width:1;rx:4}
+    .step-test{fill:#1a2520;stroke:#62c47b;stroke-width:1;rx:4}
+    .step-code{fill:#22262e;stroke:#3a3f4b;stroke-width:1;rx:4}
+    .step-deploy{fill:#2c2418;stroke:#d9a455;stroke-width:1;rx:4}
+    .step-num{fill:#d9a455;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600}
+    .step-name{fill:#e8eaef;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:500}
+    .step-sub{fill:#7c8493;font-family:'JetBrains Mono',monospace;font-size:10.5px}
+    .arr{stroke:#3a3f4b;stroke-width:1.5;fill:none;marker-end:url(#a)}
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#3a3f4b"/>
+    </marker>
+  </defs>
+
+  <!-- Phase headers -->
+  <text x="60" y="30" font-family="'Iowan Old Style',serif" font-style="italic" font-size="14" fill="#7c8493">PHASE I — Baseline</text>
+  <text x="430" y="30" font-family="'Iowan Old Style',serif" font-style="italic" font-size="14" fill="#7c8493">PHASE II — Engine</text>
+  <text x="800" y="30" font-family="'Iowan Old Style',serif" font-style="italic" font-size="14" fill="#7c8493">PHASE III — Deploy</text>
+
+  <!-- Phase I -->
+  <rect class="step-test" x="60" y="50" width="320" height="56"/>
+  <text class="step-num" x="74" y="72">01</text>
+  <text class="step-name" x="105" y="72">Add 3 new validation fixtures</text>
+  <text class="step-sub" x="105" y="90">036/037/038 — Trump-Iran, Observer, chain-cap</text>
+  <text class="step-sub" x="105" y="102" fill="#62c47b">expect: 35/38 pass, 3 new ones fail</text>
+
+  <rect class="step" x="60" y="120" width="320" height="40"/>
+  <text class="step-num" x="74" y="142">02</text>
+  <text class="step-name" x="105" y="142">Branch <tspan font-family="JetBrains Mono">claude/engine-simplification</tspan></text>
+
+  <rect class="step-test" x="60" y="172" width="320" height="40"/>
+  <text class="step-num" x="74" y="194">03</text>
+  <text class="step-name" x="105" y="194">Rewrite fixture 033 size-cap assertion</text>
+
+  <rect class="step-code" x="60" y="224" width="320" height="40"/>
+  <text class="step-num" x="74" y="246">04</text>
+  <text class="step-name" x="105" y="246">REVERT 01 — Phase 2 to 5402f7d shape</text>
+
+  <rect class="step-code" x="60" y="276" width="320" height="40"/>
+  <text class="step-num" x="74" y="298">05</text>
+  <text class="step-name" x="105" y="298">REVERT 02 — synonyms into Phase 1</text>
+
+  <rect class="step-code" x="60" y="328" width="320" height="40"/>
+  <text class="step-num" x="74" y="350">06</text>
+  <text class="step-name" x="105" y="350">REVERT 03 — delete Phase 2.5</text>
+
+  <rect class="step-code" x="60" y="380" width="320" height="40"/>
+  <text class="step-num" x="74" y="402">07</text>
+  <text class="step-name" x="105" y="402">REVERT 04 — Phase 2.6 behind flag</text>
+
+  <!-- Phase II -->
+  <rect class="step-code" x="430" y="50" width="320" height="40"/>
+  <text class="step-num" x="444" y="72">08</text>
+  <text class="step-name" x="475" y="72">REVERT 05 — Phase 5 soft-cap-only</text>
+
+  <rect class="step-code" x="430" y="102" width="320" height="40"/>
+  <text class="step-num" x="444" y="124">09</text>
+  <text class="step-name" x="475" y="124">REVERT 06 — is_headline 3-signal</text>
+
+  <rect class="step-code" x="430" y="154" width="320" height="56"/>
+  <text class="step-num" x="444" y="176">10</text>
+  <text class="step-name" x="475" y="176">Delete snapshot writer call</text>
+  <text class="step-sub" x="475" y="194">main.py · file stays for sandbox</text>
+  <text class="step-sub" x="475" y="206" fill="#62c47b">saves 5-7 MB JSONB / run</text>
+
+  <rect class="step-code" x="430" y="224" width="320" height="40"/>
+  <text class="step-num" x="444" y="246">11</text>
+  <text class="step-name" x="475" y="246">Batch wire-flag UPDATE → upsert</text>
+
+  <rect class="step-test" x="430" y="276" width="320" height="56"/>
+  <text class="step-num" x="444" y="298">12</text>
+  <text class="step-name" x="475" y="298">Run validation suite locally</text>
+  <text class="step-sub" x="475" y="316">38 fixtures total · expect all green</text>
+  <text class="step-sub" x="475" y="328" fill="#62c47b">if known-good regresses → iterate</text>
+
+  <rect class="step-test" x="430" y="344" width="320" height="40"/>
+  <text class="step-num" x="444" y="366">13</text>
+  <text class="step-name" x="475" y="366">Push branch · let CI gate green</text>
+
+  <!-- Phase III -->
+  <rect class="step-deploy" x="800" y="50" width="320" height="56"/>
+  <text class="step-num" x="814" y="72">14</text>
+  <text class="step-name" x="845" y="72">Dispatch recluster_only on 48h window</text>
+  <text class="step-sub" x="845" y="90">$0 — verify against today's articles</text>
+  <text class="step-sub" x="845" y="102" fill="#d9a455">target: max sc 8→25-40, headlines 0→15-30</text>
+
+  <rect class="step-deploy" x="800" y="120" width="320" height="56"/>
+  <text class="step-num" x="814" y="142">15</text>
+  <text class="step-name" x="845" y="142">One-shot SQL: recompute is_headline</text>
+  <text class="step-sub" x="845" y="160">on trailing 7 days · UPDATE story_clusters</text>
+  <text class="step-sub" x="845" y="172" fill="#d9a455">via Management API PAT</text>
+
+  <rect class="step" x="800" y="190" width="320" height="40"/>
+  <text class="step-num" x="814" y="212">+</text>
+  <text class="step-name" x="845" y="212">Add diag.html deprecation banner</text>
+
+  <rect class="step" x="800" y="242" width="320" height="40"/>
+  <text class="step-num" x="814" y="264">+</text>
+  <text class="step-name" x="845" y="264">CLAUDE.md → rev 45</text>
+
+  <rect class="step" x="800" y="294" width="320" height="40"/>
+  <text class="step-num" x="814" y="316">+</text>
+  <text class="step-name" x="845" y="316">ENGINE-EVOLUTION.html → Era 9 append</text>
+
+  <rect class="step-deploy" x="800" y="346" width="320" height="40"/>
+  <text class="step-num" x="814" y="368">★</text>
+  <text class="step-name" x="845" y="368">Merge to main · watch next 11:00 UTC cron</text>
+
+  <!-- Arrows between phases -->
+  <path class="arr" d="M 380 75 L 410 75"/>
+  <path class="arr" d="M 380 365 L 410 75" />
+  <path class="arr" d="M 750 365 L 790 75"/>
+</svg>
+</div>
+</section>
+
+<section>
+<h2>Predicted production impact</h2>
+<p>What the numbers should do once the simplification lands. These are the success criteria for step 14 (the <code>recluster_only</code> dispatch). If the post-deploy numbers don't move into the right ranges, the analysis was wrong and we iterate.</p>
+
+<div class="impact">
+  <div class="imp">
+    <div class="l">Max source_count</div>
+    <div><span class="before-num">8</span><span class="arr">→</span><span class="after-num">25-40</span></div>
+    <div class="note">Today's top story is a 6-source Trump-Iran fragment. With Phase 2 consolidating shared-entity clusters, the 5 fragments merge to one cluster of ~19 sources, and similar consolidation happens to other top stories.</div>
+  </div>
+  <div class="imp">
+    <div class="l">Clusters with sc ≥ 5</div>
+    <div><span class="before-num">44</span><span class="arr">→</span><span class="after-num">120-180</span></div>
+    <div class="note">More real consolidation = more clusters clearing the 5-source threshold. The 71.8%-singleton rate today drops as Phase 2 merges fragmented coverage.</div>
+  </div>
+  <div class="imp">
+    <div class="l">is_headline=true</div>
+    <div><span class="before-num">0</span><span class="arr">→</span><span class="after-num">15-30</span></div>
+    <div class="note">With more sc≥8 clusters and the 3-signal formula firing without an over-strict band, the headline gate reaches normal production levels.</div>
+  </div>
+  <div class="imp">
+    <div class="l">Engine LOC</div>
+    <div><span class="before-num">2,352</span><span class="arr">→</span><span class="after-num">~1,237</span></div>
+    <div class="note">Roughly back to the pre-rewrite May 14 baseline. Cleaner audit surface, fewer adaptive overrides to misconfigure.</div>
+  </div>
+  <div class="imp">
+    <div class="l">Pipeline runtime</div>
+    <div><span class="before-num">~25-35 min</span><span class="arr">→</span><span class="after-num">~22-30 min</span></div>
+    <div class="note">Snapshot writer disabled saves ~3-5% (skipping 5-7 MB JSONB serialization + upload). Wire-flag batch upsert saves 1-2 min on high-syndication days.</div>
+  </div>
+  <div class="imp">
+    <div class="l">Tunable constants</div>
+    <div><span class="before-num">~20</span><span class="arr">→</span><span class="after-num">~6</span></div>
+    <div class="note">No more adaptive corpus-volume bands, cohesion weights, anchor IDF fractions, distinguishing-shared thresholds. Six knobs total: STORY_TFIDF_THRESHOLD, min_shared_entities, max_age_spread_hours, max_cluster_articles, TITLE_JACCARD_THRESHOLD, MEGA_CLUSTER_THRESHOLD.</div>
+  </div>
+</div>
+</section>
+
+<section>
+<h2>Two decisions before starting</h2>
+
+<div class="decisions">
+  <div class="decision">
+    <h3>Q1 — Diagnostic lab fate</h3>
+    <div class="opt">
+      <span class="opt-label">A1</span>
+      <span class="opt-text">Keep <code>diag.html</code> + sandbox stack with a deprecation banner. Lose nothing, repo carries 3,500 LOC of dormant code. <span class="rec">Recommended</span></span>
+    </div>
+    <div class="opt">
+      <span class="opt-label">A2</span>
+      <span class="opt-text">Delete <code>diag.html</code>, <code>engine_snapshot.py</code>, <code>sandbox_replay.py</code>, <code>sandbox_server.py</code>, <code>sandbox.yml</code>, migrations 057+058. Cleaner repo, lose the $0 sandbox replay capability.</span>
+    </div>
+  </div>
+  <div class="decision">
+    <h3>Q2 — Phase 2.6 anchor merge fate</h3>
+    <div class="opt">
+      <span class="opt-label">B1</span>
+      <span class="opt-text">Delete entirely. Simpler. Test fixtures 030/032/034 either deleted or expected to rely on Phase 2 / Phase 3 only.</span>
+    </div>
+    <div class="opt">
+      <span class="opt-label">B2</span>
+      <span class="opt-text">Keep code behind <code>--enable-anchor-merge</code> CLI flag, default OFF. Diagnostic capability for rare fragmented international stories. <span class="rec">Recommended</span></span>
+    </div>
+  </div>
+</div>
+
+<div class="tldr" style="margin-top:24px">
+  Default plan: <strong>A1 + B2</strong>. Both reversible, both zero-cost when unused, both leave optionality for future debugging. Reply with your variant and the work starts at step 01 (new validation fixtures).
+</div>
+
+</section>
+
+<footer>
+  void --news · simplification plan · companion to <a href="/engine-evolution.html" style="color:var(--accent)">/engine-evolution.html</a> · index at <a href="/engineering.html" style="color:var(--accent)">/engineering.html</a>
+</footer>
+
+</div>
+</body>
+</html>
