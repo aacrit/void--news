@@ -85,7 +85,7 @@ function SourceLogo({
   return (
     <button
       className="spectrum-logo"
-      aria-label={`${source.name} — ${tierLabel(source.tier)}, ${normalizeLean(source.political_lean_baseline).replace(/-/g, " ")}`}
+      aria-label={`${source.name}, ${tierLabel(source.tier)}, ${normalizeLean(source.political_lean_baseline).replace(/-/g, " ")}`}
       onPointerEnter={(e) => onTooltip(source, e.currentTarget)}
       onPointerLeave={() => onTooltip(null, null)}
       onFocus={(e) => onTooltip(source, e.currentTarget)}

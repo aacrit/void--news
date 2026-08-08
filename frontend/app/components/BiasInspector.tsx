@@ -438,7 +438,7 @@ function LeanAxis({
       {/* Summary — Gemini reasoning or auto-generated 1-liner */}
       {geminiText && (
         <p className="bi-gemini-reasoning">
-          <span className="bi-gemini-label">AI Analysis</span>
+          <span className="bi-gemini-label">Bias Analysis</span>
           {geminiText}
         </p>
       )}
@@ -552,7 +552,7 @@ function SensationalismAxis({
     >
       {geminiText && (
         <p className="bi-gemini-reasoning">
-          <span className="bi-gemini-label">AI Analysis</span>
+          <span className="bi-gemini-label">Bias Analysis</span>
           {geminiText}
         </p>
       )}
@@ -613,7 +613,7 @@ function RigorAxis({
     >
       {geminiText && (
         <p className="bi-gemini-reasoning">
-          <span className="bi-gemini-label">AI Analysis</span>
+          <span className="bi-gemini-label">Bias Analysis</span>
           {geminiText}
         </p>
       )}
@@ -673,7 +673,7 @@ function FramingAxis({
     >
       {geminiText && (
         <p className="bi-gemini-reasoning">
-          <span className="bi-gemini-label">AI Analysis</span>
+          <span className="bi-gemini-label">Bias Analysis</span>
           {geminiText}
         </p>
       )}

@@ -5,7 +5,6 @@ import type { Story } from "../lib/types";
 import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
-import { classifyCoverage } from "../lib/coverageClass";
 
 interface LeadStoryProps {
   story: Story;
@@ -36,7 +35,6 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, t
   // For rank 1+ (legacy secondary leads — currently unused but kept for safety)
   // we fall back to the smaller .lead-story__headline scale.
   const useSplit = rank === 0 || twin;
-  const verdict = classifyCoverage(story);
 
   // Top-story signal now lives in the accented "Today's Top Stories" divider
   // above the feed plus position #1, so the per-card "Top Story" badge was
@@ -73,11 +71,6 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, t
         </p>
       )}
 
-      {verdict && (
-        <p className={`coverage-verdict coverage-verdict--${verdict.tone} coverage-verdict--lead`} aria-label={`Coverage: ${verdict.label}`}>
-          {verdict.label}
-        </p>
-      )}
     </div>
   );
 

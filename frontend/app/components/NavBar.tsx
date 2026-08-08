@@ -42,6 +42,9 @@ function formatDateCompact(d: Date): string {
 export default function NavBar({
   onSearchClick,
   editionBuiltAt,
+  hasAudio,
+  isAudioPlaying,
+  onOnairClick,
 }: NavBarProps) {
   const [mounted, setMounted] = useState(false);
   // SSR-safe hydration pattern — defer dateline/timestamp render until after
@@ -144,6 +147,20 @@ export default function NavBar({
               still resolve at /games and /paper for direct URL access. */}
           <nav className="nav-pages" aria-label="Pages">
             <PageToggle activePage="feed" />
+            {/* On Air — desktop affordance for the daily broadcast. Only shown
+                when a brief with audio is available (hasAudio); tapping opens the
+                player and starts playback via onOnairClick. */}
+            {onOnairClick && hasAudio && (
+              <button
+                type="button"
+                className={`nav-page nav-page--onair${isAudioPlaying ? " nav-page--onair-live" : ""}`}
+                onClick={onOnairClick}
+                aria-label={isAudioPlaying ? "On Air, playing" : "On Air"}
+                title="On Air"
+              >
+                On Air
+              </button>
+            )}
             <Link href="/ship" className="nav-page" aria-label="Feedback: tell us what to build or fix" title="Feedback">
               Feedback
             </Link>

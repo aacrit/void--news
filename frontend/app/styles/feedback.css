@@ -104,6 +104,15 @@
   line-height: 1.6;
 }
 
+/* Touch targets (WCAG 2.5.5): the single-line inputs + select must clear 44px
+   of tappable height on coarse pointers. The submit + textarea already do. */
+@media (pointer: coarse) {
+  .fb-input,
+  .fb-select {
+    min-height: 44px;
+  }
+}
+
 .fb-honeypot {
   position: absolute;
   left: -9999px;

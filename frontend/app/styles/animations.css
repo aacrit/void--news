@@ -1087,11 +1087,13 @@
    (cin-grain-drift) and applying a second animation property via scroll-
    timeline would overwrite it (CSS animation property is not additive).
 
-   Opacity ramps from 1 to 1.4 (capped — beyond 1.5 becomes perceptible
-   as a filter, violating the subliminal constraint). */
+   Opacity is capped at 1.0 (the valid maximum). The vignette starts a touch
+   lighter and settles to full as the reader scrolls deeper, which reads as a
+   subliminal tunnel-vision focus. The old `to: 1.4` was above the valid range
+   and clamped to 1.0 by the browser, so it never deepened at all. */
 @keyframes scrollVignetteDeepen {
-  from { opacity: 1; }
-  to   { opacity: 1.4; }
+  from { opacity: 0.85; }
+  to   { opacity: 1; }
 }
 
 @supports (animation-timeline: scroll()) {

@@ -60,7 +60,7 @@ export default function MobileTabBar({ onMoreTap, moreOpen }: MobileTabBarProps)
       <button
         type="button"
         className={`mtb__tab mtb__tab--onair${isPlaying ? " mtb__tab--onair-live" : ""}`}
-        aria-label={isPlaying ? "On Air — playing" : "On Air"}
+        aria-label={isPlaying ? "On Air, playing" : "On Air"}
         onClick={handleOnAir}
       >
         <span className="mtb__onair-glyph">

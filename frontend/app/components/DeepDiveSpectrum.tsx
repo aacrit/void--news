@@ -691,7 +691,7 @@ function SpectrumView({ sources, isMobile = false }: { sources: DeepDiveSpectrum
                           target="_blank"
                           rel="noopener noreferrer"
                           className="dd-sv-view__pin-anchor"
-                          aria-label={`${pin.source.name} — open article`}
+                          aria-label={`${pin.source.name}, open article`}
                         >
                           <circle
                             cx={pin.x}

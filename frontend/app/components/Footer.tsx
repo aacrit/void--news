@@ -41,6 +41,8 @@ export default function Footer({ lastUpdated }: FooterProps) {
             the mobile side panel carries the rest, so the footer links the
             remaining pages for desktop readers. */}
         <nav className="footer-links" aria-label="Site pages">
+          <Link href="/onair" className="footer-link">On Air</Link>
+          <span className="footer-link__sep" aria-hidden="true">&middot;</span>
           <Link href="/about" className="footer-link">About</Link>
           <span className="footer-link__sep" aria-hidden="true">&middot;</span>
           <Link href="/sources" className="footer-link">Sources</Link>
