@@ -19,7 +19,7 @@ export default function PrivacyPage() {
       <header className="privacy__hdr">
         <p className="privacy__eyebrow">Void News / privacy</p>
         <h1>What we collect. What we don&rsquo;t.</h1>
-        <p className="privacy__updated">Last updated 2026-05-14.</p>
+        <p className="privacy__updated">Last updated 2026-08-08.</p>
       </header>
 
       <section>
@@ -27,18 +27,24 @@ export default function PrivacyPage() {
         <p>
           The website at <code>news.voidvision.org</code> requires no account.
           We do not run analytics. We do not place cookies for tracking. We do
-          not fingerprint browsers. We do not load third-party scripts for
-          advertising or marketing. The newspaper principle: every reader sees
-          the same stories in the same order. There is no profile to maintain
-          and no behavior to record.
+          not fingerprint your browser as you read. We do not load third-party
+          scripts for advertising or marketing. The newspaper principle: every
+          reader sees the same stories in the same order. There is no profile to
+          maintain and no behavior to record.
         </p>
         <p>
-          The two exceptions, both technical and minimal:
+          A few narrow exceptions, all minimal:
         </p>
         <ul>
           <li>
-            A local <code>localStorage</code> entry remembers your selected
-            theme (light or dark). It never leaves your device.
+            A few <code>localStorage</code> entries remember your theme,
+            dismissed notices, and a local send limit for the feedback form.
+            None of them leave your device.
+          </li>
+          <li>
+            If you send feedback, we store what you wrote plus a coarse one-way
+            hash of your browser profile, used only to rate-limit abuse, and only
+            when you choose to send it. Nothing else.
           </li>
           <li>
             Hosting providers (Cloudflare Pages) log request metadata for
@@ -77,9 +83,8 @@ export default function PrivacyPage() {
       <section>
         <h2>Data retention.</h2>
         <p>
-          Article text is retained until the cleanup job removes stale rows
-          (currently 30 days for unranked articles, longer for clustered
-          stories).
+          Article text is retained for about a week, then removed by the daily
+          cleanup job.
         </p>
       </section>
 

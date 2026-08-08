@@ -19,7 +19,7 @@ const BEAT = BEATS[3];
 
 const ARCHETYPES = [
   { key: "broad", label: "Broad, sourced", verdict: "Well sourced", data: demoSigil(28, 16, 12) },
-  { key: "consensus", label: "Center, deep", verdict: "Most reliable", data: demoSigil(50, 3, 14) },
+  { key: "consensus", label: "Center, deep", verdict: "In agreement", data: demoSigil(50, 3, 14) },
   { key: "thin", label: "One corner, thin", verdict: "Scrutinize", data: demoSigil(78, 6, 3) },
 ];
 
@@ -94,7 +94,7 @@ export default function BeatVerdict({ presentation, onComplete }: Props) {
 
       <div className="verdict__final">
         <p className="verdict__final-eyebrow">Where to next</p>
-        <h3 className="verdict__final-h">Explore everything.</h3>
+        <h3 className="verdict__final-h">Start anywhere.</h3>
 
         {presentation === "overlay" ? (
           <button className="verdict__go" onClick={onComplete} autoFocus>Start reading &rarr;</button>

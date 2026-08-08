@@ -16,7 +16,7 @@ const BOILER_SHORT =
   "Void News is an independent daily news reader that shows the political lean and editorial character of every story. It gathers reporting from 1,016 sources across 158 countries into one shared edition of fifty stories, ranked once a day, the same for every reader.";
 
 const BOILER_LONG =
-  "Void News is an independent daily news reader. Each day it gathers reporting from more than a thousand outlets across 158 countries, groups the coverage of each event together, and scores every story on six axes: political lean, sensationalism, opinion versus reporting, factual rigor, framing, and how an outlet has covered a subject over time. Every score is produced by a documented, transparent method and carries a written explanation, so a reader sees not only where a story sits but why.\n\nThere are no accounts, no trackers, and no personalized feed. The fifty most-covered stories are ranked once a day, in the same order for everyone, on the principle that a shared set of facts matters more than an engaging one. Void News is an independent product of Void, with no outside investors, published at news.voidvision.org.";
+  "Void News is an independent daily news reader. Each day it gathers reporting from more than a thousand outlets across 158 countries, groups the coverage of each event together, and scores every story on six axes: political lean, sensationalism, opinion versus reporting, factual rigor, framing, and how an outlet has covered a subject over time. Every score is produced by a documented, transparent method and carries a written explanation, so a reader sees not only where a story sits but why.\n\nThere are no accounts, no trackers, and no personalized feed. The fifty most important stories are ranked once a day, in the same order for everyone, on the principle that a shared set of facts matters more than an engaging one. Void News is an independent product of Void, with no outside investors, published at news.voidvision.org.";
 
 export default function PressPage() {
   return (
@@ -125,7 +125,7 @@ export default function PressPage() {
           </p>
           <p>
             There are no accounts, no trackers, and no personalized feed. The
-            fifty most-covered stories are ranked once a day, in the same order
+            fifty most important stories are ranked once a day, in the same order
             for everyone, on the principle that a shared set of facts matters
             more than an engaging one. Void News is an independent product of
             Void, with no outside investors, published at news.voidvision.org.
@@ -164,7 +164,7 @@ export default function PressPage() {
           </li>
           <li>
             The full methodology, including which signals each axis reads. See{" "}
-            <Link href="/about">/about</Link>.
+            <Link href="/sources#methodology">/sources</Link>.
           </li>
         </ul>
       </section>
@@ -180,7 +180,7 @@ export default function PressPage() {
           News reads every story on six axes of bias by a documented, transparent
           method. The reasoning behind every score is shown in the app, and the
           same story always scores the same way. The full methodology is
-          published at <Link href="/about">/about</Link>.
+          published at <Link href="/sources#methodology">/sources</Link>.
         </p>
 
         <div className="press-callout">
@@ -259,7 +259,7 @@ export default function PressPage() {
           <div className="press-axis">
             <div className="press-axis__n">Axis 6</div>
             <h3>Coverage over time</h3>
-            <p>How an outlet tends to cover a given subject over time, not just today.</p>
+            <p>How an outlet tends to cover a given subject, not just today.</p>
           </div>
         </div>
       </section>
@@ -364,26 +364,6 @@ export default function PressPage() {
             </a>
           </li>
           <li className="press-kit__item">
-            <span className="press-kit__name">Void History logo, horizontal (color)</span>
-            <a
-              className="press-kit__dl"
-              href={`${BASE_PATH}/brand/logos/void-history-horizontal-color.svg`}
-              download
-            >
-              SVG
-            </a>
-          </li>
-          <li className="press-kit__item">
-            <span className="press-kit__name">Void Weekly logo, horizontal (color)</span>
-            <a
-              className="press-kit__dl"
-              href={`${BASE_PATH}/brand/logos/void-weekly-horizontal-color.svg`}
-              download
-            >
-              SVG
-            </a>
-          </li>
-          <li className="press-kit__item">
             <span className="press-kit__name">Void Vision logo, horizontal (color)</span>
             <a
               className="press-kit__dl"
@@ -423,8 +403,8 @@ export default function PressPage() {
           </li>
           <li className="press-kit__item">
             <span className="press-kit__name">Methodology, the six axes</span>
-            <Link className="press-kit__dl" href="/about">
-              /about
+            <Link className="press-kit__dl" href="/sources#methodology">
+              /sources
             </Link>
           </li>
           <li className="press-kit__item">
@@ -487,7 +467,7 @@ export default function PressPage() {
           </div>
         </div>
         <p className="press-contact__note">
-          Response time: typically within 24 hours, earlier on weekdays.
+          Response time: we answer within a day.
         </p>
       </section>
 

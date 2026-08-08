@@ -48,7 +48,7 @@ export default function BeatSigil() {
 
         <div className="sigdemo__controls">
           <label className="sigdemo__ctl">
-            <span>Lean — {leanText}</span>
+            <span>Lean: {leanText}</span>
             <input
               type="range" min={0} max={100} value={lean}
               onChange={(e) => setLean(+e.target.value)}
@@ -57,7 +57,7 @@ export default function BeatSigil() {
             />
           </label>
           <label className="sigdemo__ctl">
-            <span>Source agreement — {spreadText}</span>
+            <span>Source agreement: {spreadText}</span>
             <input
               type="range" min={0} max={40} value={spread}
               onChange={(e) => setSpread(+e.target.value)}
@@ -66,7 +66,7 @@ export default function BeatSigil() {
             />
           </label>
           <label className="sigdemo__ctl">
-            <span>Sources — {sources}</span>
+            <span>Sources: {sources}</span>
             <input
               type="range" min={1} max={15} value={sources}
               onChange={(e) => setSources(+e.target.value)}
@@ -78,7 +78,7 @@ export default function BeatSigil() {
 
         <p className="sigdemo__hint">
           {balanced && spread >= 10
-            ? "Balanced on average — but the sources are split. The mark goes neutral, not green."
+            ? "Balanced on average, but the sources are split. The mark goes neutral, not green."
             : balanced
               ? "Dead center and in agreement: genuine consensus reads green."
               : "The beam takes a side. Darker = stronger tilt."}

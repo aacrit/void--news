@@ -1,7 +1,7 @@
 {
   "name": "Void News",
   "short_name": "Void News",
-  "description": "Experimental. Free per-article bias analysis across 1,016 sources. Six axes. No paywall. No algorithm.",
+  "description": "Experimental. Free per-article bias analysis across 1,016 sources. Six axes. No paywall. No feed tuned to you.",
   "id": "/",
   "start_url": "/",
   "scope": "/",
