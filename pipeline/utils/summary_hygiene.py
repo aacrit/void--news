@@ -64,11 +64,16 @@ def is_raw_excerpt(summary: str) -> bool:
         if rx.search(s):
             return True
 
-    # Run-together words from a broken extraction ("reportingThe minister said").
-    # Require several lowercase->uppercase transitions to avoid flagging the rare
-    # legitimate camel token (iPhone, eBay, McDonald's).
-    camel_boundaries = len(re.findall(r"[a-z][A-Z]", s))
-    if camel_boundaries >= 3:
+    # Run-together words from a broken extraction ("reportingThe minister saidThe").
+    # Only count camel seams inside genuinely LONG tokens (>= 12 chars): legit
+    # short camel terms repeated in real prose (mRNA, iPhone, eBay, iOS, macOS)
+    # must not fire. A real extraction artifact is a long concatenated word, so
+    # flag when two or more long tokens carry an internal lowercase->uppercase
+    # seam. ("mRNA" is 4 chars and never counts, however often it repeats.)
+    long_camel = sum(
+        1 for t in s.split() if len(t) >= 12 and re.search(r"[a-z][A-Z]", t)
+    )
+    if long_camel >= 2:
         return True
 
     # A single absurdly long token is almost always concatenated words / a URL

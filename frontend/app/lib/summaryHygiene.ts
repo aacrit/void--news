@@ -40,11 +40,16 @@ export function isRawExcerpt(summary: string): boolean {
     if (re.test(s)) return true;
   }
 
-  // Run-together words from a broken extraction ("reportingThe minister said").
-  // Require several lowercase→uppercase transitions to avoid flagging the rare
-  // legitimate camel token (iPhone, eBay, McDonald's).
-  const camelBoundaries = (s.match(/[a-z][A-Z]/g) || []).length;
-  if (camelBoundaries >= 3) return true;
+  // Run-together words from a broken extraction ("reportingThe minister saidThe").
+  // Only count camel seams inside genuinely LONG tokens (>= 12 chars): legit
+  // short camel terms repeated in real prose (mRNA, iPhone, eBay, iOS, macOS)
+  // must not fire. A real extraction artifact is a long concatenated word, so
+  // flag when two or more long tokens carry an internal lowercase->uppercase seam.
+  // ("mRNA" is 4 chars and never counts, however often it repeats.)
+  const longCamel = s
+    .split(/\s+/)
+    .filter((t) => t.length >= 12 && /[a-z][A-Z]/.test(t)).length;
+  if (longCamel >= 2) return true;
 
   // A single absurdly long token is almost always concatenated words / a URL
   // slug that survived extraction.
