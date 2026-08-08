@@ -649,7 +649,12 @@ def _check_quality(result: dict, cluster_id: str | int = "") -> None:
 # The cache key is NOT changed. source_count, the coverage/"Contested" bar, and
 # the near-dup guard are untouched — only the summary TEXT input narrows.
 _ONTOPIC_MIN_MEMBERS = 4      # no-op below this many members
-_ONTOPIC_FLOOR = 3            # never strip below this many members
+_ONTOPIC_FLOOR = 3            # blend back up to at least this many members
+# Minimum total member source-text (chars, across the kept set) needed to write
+# a full 200-400 word summary. Below this the title-anchored filter is judged to
+# have STARVED the summary and blends the next-most-relevant members back so a
+# coherent cluster never collapses to a one-line summary (BUG 1, 2026-08-07).
+_ONTOPIC_MIN_TEXT_CHARS = 500
 
 _ONTOPIC_UNSET = object()
 _ONTOPIC_STEMS_FN = _ONTOPIC_UNSET
@@ -833,6 +838,23 @@ def _filter_ontopic_articles(articles: list[dict],
         art for art, toks in zip(articles, member_tokens)
         if (toks - generic) & core
     ]
+    # MIN-CONTENT GUARD: title-anchored filtering can STARVE the summary when the
+    # title's specific tokens appear literally in only a member or two (a coherent
+    # cluster whose members use varied headline vocabulary, mis-read as a bag),
+    # producing a one-line summary. If it leaves too little to write a full
+    # summary, widen to the broad core (title + shared spine, generic-stripped):
+    # this restores the coherent members without re-admitting a true bag's
+    # off-topic pile, which only ever shared GENERIC words with the title.
+    if mode == "title-anchored" and len(kept) < 3:
+        broad_core = (title_specific | shared) - generic
+        if broad_core:
+            widened = [
+                art for art, toks in zip(articles, member_tokens)
+                if (toks - generic) & broad_core
+            ]
+            if len(widened) > len(kept):
+                kept = widened
+                mode = "title-anchored->broad"
     if not kept:
         # Anchor matched no member (e.g. a title sharing nothing with any
         # headline). Never blank the summary — fall back to full membership.
