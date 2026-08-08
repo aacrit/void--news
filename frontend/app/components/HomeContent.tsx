@@ -106,14 +106,11 @@ function deriveCoverageScore(sourceCount: number, factualRigor: number, confiden
 const EDITION_FEED_SIZE = 50;
 
 /** Default visible window before the reader expands the feed. After 30 the
- *  page invites a one-click reveal of stories 31..50, then the World section. */
+ *  page invites a one-click reveal of stories 31..50. */
 const EDITION_FEED_DEFAULT = 30;
 
-/** Maximum World overflow stories appended after the main feed. */
-const WORLD_OVERFLOW_SIZE = 30;
-
-/** Total fetched from Supabase — main feed + headroom for overflow + buffer for
- *  the ≥3-source quality floor. Server-side ranker enforces topic diversity. */
+/** Total fetched from Supabase — main feed + headroom + buffer for the
+ *  ≥3-source quality floor. Server-side ranker enforces topic diversity. */
 const FETCH_LIMIT = 100;
 
 
@@ -808,17 +805,9 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
   );
   const hiddenMainCount = mainPool.length - mainStories.length;
 
-  const mainIds = useMemo(
-    () => new Set(mainPool.map((s) => s.id)),
-    [mainPool],
-  );
-  // 2026-06-02 single-feed — worldOverflow collapsed to an empty array.
-  // The /world overflow split is gone; the homepage now shows a single
-  // 50-story flow. Variable kept so downstream consumers (visibleStories,
-  // aria announcements) don't need rewiring.
-  const worldOverflow: Story[] = useMemo(() => [], []);
-  void mainIds;
-  void WORLD_OVERFLOW_SIZE;
+  // 2026-06-02 single-feed — the /world overflow split is gone; the homepage
+  // now shows a single 50-story flow. The legacy world-overflow scaffolding
+  // (WORLD_OVERFLOW_SIZE / worldOverflow / mainIds) was removed 2026-08-08.
 
   // v3 (2026-05-14): twin top stories — ranks 0 and 1 share the hero canvas
   // as co-equal "Top Story" leads. Grid below holds ranks 2..N where N is
@@ -857,12 +846,11 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
 
   // Lead hero image removed 2026-05-13 — text-only newspaper composition.
 
-  // Continuous-scroll set: main feed + World overflow. Keyboard nav (J/K) and
-  // Deep Dive prev/next traverse this combined order so the divider doesn't
-  // interrupt navigation. Search also operates on this set.
+  // Continuous-scroll set: the single 50-story feed. Keyboard nav (J/K) and
+  // Deep Dive prev/next traverse this order; Search also operates on this set.
   const visibleStories = useMemo(
-    () => [...mainStories, ...worldOverflow],
-    [mainStories, worldOverflow],
+    () => [...mainStories],
+    [mainStories],
   );
 
   // Stable key per edition — when activeEdition changes the grid replays its
@@ -962,10 +950,10 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
 
         {/* Live region, loading, error, empty states, story grids */}
         <>
-            {/* Live region for screen readers — announces story count + World section */}
+            {/* Live region for screen readers — announces the story count. */}
             <div aria-live="polite" className="sr-only">
               {!isLoading && mainStories.length > 0 &&
-                `${mainStories.length} stories loaded.${worldOverflow.length > 0 ? ` World section follows with ${worldOverflow.length} international stories.` : ""} Press ? for keyboard shortcuts.`}
+                `${mainStories.length} stories loaded. Press ? for keyboard shortcuts.`}
             </div>
 
             {/* Loading skeleton */}
@@ -1005,7 +993,7 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
                   sources. The next update will appear shortly.
                 </p>
                 <p className="edition-meta">
-                  Editions: 7 AM &middot; 2 PM &middot; 8 PM Chicago
+                  One edition a day. The next one is on its way.
                 </p>
               </div>
             )}

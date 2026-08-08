@@ -567,7 +567,7 @@ export default function ShareCard({
               letterSpacing: "0.02em",
             }}
           >
-            voidnews.org
+            news.voidvision.org
           </span>
         </div>
       </div>

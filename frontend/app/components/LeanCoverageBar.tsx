@@ -45,7 +45,7 @@ export default function LeanCoverageBar({ spread, compact }: LeanCoverageBarProp
     <div
       className={`lean-coverage${contested ? " lean-coverage--contested" : ""}${compact ? " lean-coverage--compact" : ""}`}
       role="img"
-      aria-label={`${label}${contested ? " — contested" : ""}`}
+      aria-label={`${label}${contested ? ", contested" : ""}`}
     >
       <span className="lean-coverage__tag" aria-hidden="true">
         {contested ? "Contested" : "Coverage"}

@@ -50,6 +50,12 @@ import LazyOnView from "./LazyOnView";
    choreography arrives in a later stage.
    --------------------------------------------------------------------------- */
 
+/* History is hidden for launch (nav links removed + /history 301s to home).
+   While hidden, the Deep Dive archival cross-link must not render (it would
+   promise perspectives and bounce the reader to the homepage). Flip to false
+   when History ships again as a feature. */
+const HISTORY_HIDDEN: boolean = true;
+
 /* --- History Context Link — subtle archival cross-link (mirrors DeepDive) -- */
 function HistoryContextLink({
   title,
@@ -61,7 +67,12 @@ function HistoryContextLink({
   visible: boolean;
 }) {
   const match = findHistoryContext(title, summary);
-  if (!match) return null;
+  // History is HIDDEN for launch (2026-08-05): /history 301-redirects to the
+  // homepage, so this archival cross-link would promise "N perspectives" and
+  // then bounce the reader back to the feed. Gate it off entirely while History
+  // is hidden (HISTORY_HIDDEN). The render path below stays intact and reachable
+  // for when History returns — flip HISTORY_HIDDEN to false to re-enable.
+  if (HISTORY_HIDDEN || !match) return null;
 
   const perspText =
     match.perspectiveCount > 0
@@ -284,7 +295,9 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
           storySourceList.push({
             name: (source?.name as string) ?? "Unknown",
             url: (article.url as string) ?? (source?.url as string) ?? "#",
-            tier: ((source?.tier as string) as StorySource["tier"]) ?? "us_major",
+            // Default an untiered source to "independent" (the neutral floor),
+            // not "us_major" — an unknown tier must not inflate credibility.
+            tier: ((source?.tier as string) as StorySource["tier"]) ?? "independent",
             biasScores: {
               politicalLean: lean,
               sensationalism: (bias?.sensationalism as number) ?? 30,
@@ -309,14 +322,12 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
         });
 
         if (!cancelled && dedupedSourceList.length > 0) {
-          const rawConsensus = Array.isArray(story.deepDive?.consensus) ? story.deepDive.consensus : [];
-          const rawDivergence = Array.isArray(story.deepDive?.divergence) ? story.deepDive.divergence : [];
-          const consensus = rawConsensus.length > 0
-            ? rawConsensus
-            : ["Sources broadly agree on the key facts of this story"];
-          const divergenceData = rawDivergence.length > 0
-            ? rawDivergence
-            : ["Some differences in framing and emphasis were detected across sources"];
+          // When the pipeline supplies no consensus/divergence points, leave
+          // them empty so the section is omitted entirely. Asserting "Sources
+          // broadly agree..." (or fabricating divergence) with no data behind it
+          // misrepresents the coverage.
+          const consensus = Array.isArray(story.deepDive?.consensus) ? story.deepDive.consensus : [];
+          const divergenceData = Array.isArray(story.deepDive?.divergence) ? story.deepDive.divergence : [];
 
           setLiveData({
             consensus,

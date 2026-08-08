@@ -188,10 +188,12 @@
    cramped). The modal keeps the .dd-lede float untouched.
    ========================================================================== */
 
-/* The summary is a single column flowing across the full content width
-   (max-width:none overrides the inherited reading-measure cap). */
+/* The summary flows in a comfortable reading measure rather than the full
+   desktop column width (which produced an unreadable wall of text). ~46rem is
+   the classic 60-75ch line length. The Spread band below is a separate
+   full-width section, so this does not affect the 2-col spectrum layout. */
 .inline-dd__story .dd-summary-text {
-  max-width: none;
+  max-width: 46rem;
 }
 
 /* The spectrum spans the full content column as a landscape band. */

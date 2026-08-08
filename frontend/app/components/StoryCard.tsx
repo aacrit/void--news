@@ -7,7 +7,6 @@ import Sigil from "./Sigil";
 import LeanCoverageBar from "./LeanCoverageBar";
 import { hapticLight } from "../lib/haptics";
 import { useInView } from "../lib/sharedObserver";
-import { classifyCoverage } from "../lib/coverageClass";
 
 interface StoryCardProps {
   story: Story;
@@ -37,7 +36,6 @@ interface StoryCardProps {
 
 export default function StoryCard({ story, index, onStoryClick, globalIndex, kbdFocused, variant, family }: StoryCardProps) {
   const [cardRef, visible] = useInView<HTMLElement>();
-  const verdict = classifyCoverage(story);
 
   return (
     <article
@@ -99,12 +97,6 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
       {!story.summary?.trim() && (
         <p className="story-card__summary story-card__summary--pending">
           {story.source.count} source{story.source.count !== 1 ? 's' : ''} reporting
-        </p>
-      )}
-
-      {verdict && (
-        <p className={`coverage-verdict coverage-verdict--${verdict.tone}`} aria-label={`Coverage: ${verdict.label}`}>
-          {verdict.label}
         </p>
       )}
 
