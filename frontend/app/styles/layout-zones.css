@@ -174,8 +174,8 @@
 /* ---- Card headlines (ranks 1+) — unified typography ------------------
    Digest (ranks 1-9) and wire (ranks 10+) share one type scale so the feed
    reads as a single editorial surface below the lead, not two separate
-   tiers. CEO 2026-05-13. Layout grids still differ (.df-digest 2-col vs
-   .df-wire 3/4-col) — only the headline rhythm is unified. */
+   tiers. CEO 2026-05-13. Layout grids still differ (digest 2-col vs
+   wire 3/4-col); only the headline rhythm is unified. */
 
 .story-card[data-variant="digest"] .story-card__headline,
 .story-card[data-variant="wire"] .story-card__headline {

@@ -42,30 +42,6 @@
   100% { transform: scale(1); }
 }
 
-/* DeepDive panel spring slide-in from right */
-@keyframes springSlideInRight {
-  from {
-    opacity: 0;
-    transform: translateX(48px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-/* DeepDive panel mobile: spring slide-up from bottom */
-@keyframes springSlideInUp {
-  from {
-    opacity: 0;
-    transform: translateY(48px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
 /* Generic spring press — reusable for any interactive element */
 @keyframes springBtnPress {
   0%   { transform: scale(1); }
@@ -189,17 +165,6 @@
   animation: fadeInUp var(--dur-morph) var(--ease-cinematic) 120ms both;
 }
 
-/* Content arrival — whip pan when edition switches, subtle fade otherwise.
-   Applied to the content wrapper, not individual cards (cards have their own stagger).
-   Direction-aware: [data-whip="left"] on page-container reverses the pan direction. */
-.anim-content-arrive {
-  animation: whipPanIn var(--whip-pan-dur) var(--ease-whip) both;
-}
-
-[data-whip="left"] .anim-content-arrive {
-  animation: whipPanInLeft var(--whip-pan-dur) var(--ease-whip) both;
-}
-
 /* Skeleton → content crossfade: skeleton fades out as content arrives */
 .anim-crossfade-in {
   animation: fadeIn var(--dur-normal) var(--ease-cinematic) both;
@@ -258,8 +223,7 @@
 /* DeepDive panel entrance/exit is driven by JS inline transform + transition
    (translateX on desktop ≥1024px, translateY on mobile <1024px).
    CSS keyframe animations are intentionally absent here to avoid conflicting
-   with the JS-controlled state. The springSlideInRight / springSlideInUp
-   keyframes are kept above for potential future use. */
+   with the JS-controlled state. */
 
 
 /* Theme toggle spring entrance on icon swap — elastic for joy */
@@ -514,49 +478,6 @@
   to { opacity: 1; }
 }
 
-/* ══ SCENE 6: Whip Pan (Edition Switch) ══
-   Directional momentum with motion blur — the camera whips to track
-   a moving subject. Content exits in the direction of the new edition,
-   enters from the opposite side.
-
-   The scaleX(1.01) at 30% simulates the horizontal stretch artifact
-   from a real whip pan (motion blur elongates horizontal elements).
-   The filter: blur(1.5px) during the fastest movement phase creates
-   true motion blur — everything is sharp at rest, blurred in transit.
-
-   Choreography:
-   1. Old content exits (whipPanOut): accelerate -> blur peak -> gone
-   2. New content enters (whipPanIn): arrive blurred -> decelerate -> sharp
-
-   The overlap is an L-cut: new content begins entering before old content
-   fully exits, creating the sensation of continuous camera movement
-   rather than cut-insert-cut. */
-
-@keyframes whipPanOut {
-  0%   { transform: translateX(0) scaleX(1); opacity: 1; }
-  35%  { transform: translateX(-4%) scaleX(1.008); opacity: 0.7; }
-  100% { transform: translateX(-10%) scaleX(1); opacity: 0; }
-}
-
-@keyframes whipPanIn {
-  0%   { transform: translateX(10%) scaleX(1); opacity: 0; }
-  35%  { transform: translateX(4%) scaleX(1.008); opacity: 0.3; }
-  100% { transform: translateX(0) scaleX(1); opacity: 1; }
-}
-
-/* Direction-aware: rightward exit (switching to an earlier edition) */
-@keyframes whipPanOutRight {
-  0%   { transform: translateX(0) scaleX(1); opacity: 1; }
-  35%  { transform: translateX(4%) scaleX(1.008); opacity: 0.7; }
-  100% { transform: translateX(10%) scaleX(1); opacity: 0; }
-}
-
-@keyframes whipPanInLeft {
-  0%   { transform: translateX(-10%) scaleX(1); opacity: 0; }
-  35%  { transform: translateX(-4%) scaleX(1.008); opacity: 0.3; }
-  100% { transform: translateX(0) scaleX(1); opacity: 1; }
-}
-
 /* ══ SCENE 8: Golden Hour Pulse — Theme Toggle Dissolve ══
    When the theme toggles, there is a brief "golden hour" moment —
    the warmth peak that occurs during the cross-dissolve between
@@ -686,31 +607,6 @@
 }
 
 /* mobileNavRise removed — bottom nav appears instantly on mobile (persistent chrome) */
-
-/* ── Mobile Edition Switch: Vertical Dissolve ──
-   Replaces horizontal whip pan for bottom-nav gesture context. */
-
-@keyframes mobileEditionOut {
-  from {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: translateY(-8px) scale(0.99);
-  }
-}
-
-@keyframes mobileEditionIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px) scale(0.99);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
 
 /* ── Scroll Divider Reveal — section dividers wipe in on scroll ── */
 @keyframes scrollDividerReveal {
@@ -946,21 +842,9 @@
      Asymmetry: CLOSE = 380ms snappy (decisive, editorial efficiency)
      The viewer already absorbed the content; the close is a confident cut-back.
 
-   Scene 6: Edition Switch (Whip Pan)
-     Frame    0ms: Old content exits:
-                   whipPanOut or whipPanOutRight (direction-aware)
-                   350ms --ease-whip
-                   scaleX(1.012) at 35% = motion blur horizontal stretch
-                   blur(1.5px) at peak velocity
-     Frame  100ms: [L-CUT] New content begins entering before old fully exits
-                   whipPanIn or whipPanInLeft
-                   350ms --ease-whip
-     Frame  200ms: Cards stagger with compressed timing (10ms gap via log scale)
-     Frame  600ms: Scene settled in new edition.
-
-     Direction: World->US->India = rightward (positive translateX exit)
-                India->US->World = leftward (negative translateX exit)
-     data-whip="left" attribute on .page-container reverses direction.
+   Scene 6: [removed] Edition Switch (Whip Pan) — the multi-edition data plane
+     was retired in rev 46 (collapse-editions); the whip-pan keyframes it drove
+     are gone. Scene numbers 7/8 kept as-is for stability.
 
    Scene 7: Audio Playback (Practical Light)
      Frame    0ms: OnAir button glow intensifies (cin-flare-in, 800ms ease-out)
@@ -1136,13 +1020,6 @@
    This prevents the feed from feeling like a slot machine.
    ========================================================================== */
 
-/* ── Edition switch compressed stagger ──
-   During whip pan, cards stagger at 10ms instead of 40ms.
-   Applied via anim-content-arrive on the section wrapper. */
-.anim-content-arrive .anim-filter-card {
-  --stagger-base: 10ms;
-}
-
 /* ==========================================================================
    GESTURE PHYSICS — Touch-driven Interaction Curves
 
@@ -1181,12 +1058,10 @@
    Meaningful pauses (beats):
      Between cold open stages: 120ms (the L-cut overlap creates anticipation)
      Between Deep Dive sections: 120ms (focus pull rhythm)
-     Between edition switch exit/enter: ~100ms overlap (whip pan continuity)
      Theme toggle golden hour peak: 280ms into 700ms (40% = fast attack)
 
    Fast-cut sequences (action):
      Filter change card reshuffling: 50ms * log2 gaps
-     Edition switch compressed stagger: 10ms effective
      Deep Dive close: 380ms total (decisive)
      Card press: 60ms compression (instant tactile)
 
@@ -1198,9 +1073,8 @@
 
    The rhythm alternates: action sequences are followed by contemplative
    holds. The Deep Dive open (700ms) is followed by the content cascade
-   (sustained reveal). The edition switch whip pan (350ms action) is
-   followed by feed scroll (sustained long take). This creates the
-   cinematic breathing pattern that distinguishes void --news from
+   (sustained reveal), then feed scroll (sustained long take). This creates
+   the cinematic breathing pattern that distinguishes void --news from
    a standard web application.
    ========================================================================== */
 
@@ -1208,45 +1082,6 @@
    Canonical definition lives in desktop-feed.css (loaded later in cascade).
    Removed duplicate declaration here to avoid conflicting timing/easing values.
    See desktop-feed.css .page-main--deep-dive-open for the active rule. */
-
-/* ── Backdrop Rack Focus ──
-   The Deep Dive backdrop-filter ramps from no blur to full blur (rack-in)
-   simulating the depth of field deepening as the camera acquires focus on
-   the subject (the Deep Dive panel). On close, the blur clears (rack-out)
-   — the feed "refocuses" — and the viewer sees the world sharpening.
-   Lubezki, The Revenant — progressive depth-of-field shift. */
-@keyframes backdropRackIn {
-  from {
-    backdrop-filter: blur(0px) saturate(1) brightness(1);
-    -webkit-backdrop-filter: blur(0px) saturate(1) brightness(1);
-  }
-  to {
-    backdrop-filter: var(--cin-backdrop-blur);
-    -webkit-backdrop-filter: var(--cin-backdrop-blur);
-  }
-}
-
-@keyframes backdropRackOut {
-  from {
-    backdrop-filter: var(--cin-backdrop-blur);
-    -webkit-backdrop-filter: var(--cin-backdrop-blur);
-  }
-  to {
-    backdrop-filter: blur(0px) saturate(1) brightness(1);
-    -webkit-backdrop-filter: blur(0px) saturate(1) brightness(1);
-  }
-}
-
-/* ── Whip Pan Motion Blur ──
-   During edition switch, the feed receives a blur pulse that simulates
-   motion blur from a real whip pan. The blur holds at 3px during the
-   fastest movement phase (30-70%) and resolves at both ends. */
-@keyframes whipPanBlurPulse {
-  0%   { filter: blur(0); }
-  30%  { filter: blur(2px); }
-  70%  { filter: blur(2px); }
-  100% { filter: blur(0); }
-}
 
 /* ── Scroll direction lens breathing ──
    When scroll direction reverses, content micro-pulses scale

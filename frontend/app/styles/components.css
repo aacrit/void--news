@@ -87,7 +87,6 @@
 .lead-story .sigil,
 .lead-split .sigil,
 .lead-headline .sigil,
-.dg-row .sigil,
 .wire-card .sigil {
   position: relative;
   z-index: 10;
