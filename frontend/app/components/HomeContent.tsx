@@ -15,7 +15,7 @@ import NavBar from "./NavBar";
 import LeadStory from "./LeadStory";
 import StoryCard from "./StoryCard";
 import { computeStoryFamilies } from "../lib/storyFamilies";
-const InlineDeepDive = dynamic(() => import("./InlineDeepDive"), { ssr: false });
+const DeepDiveOverlay = dynamic(() => import("./DeepDiveOverlay"), { ssr: false });
 import ErrorBoundary from "./ErrorBoundary";
 
 import LoadingSkeleton from "./LoadingSkeleton";
@@ -144,7 +144,6 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
   // Fires once: open a story's deep dive from a ?story=<id> deep link
   // (used by void --revolt "related coverage" cross-links).
   const deepLinkHandled = useRef(false);
-  const [originRect, setOriginRect] = useState<DOMRect | null>(null);
 
   // Initial value MUST be false (matches SSR) — the matchMedia useEffect below
   // promotes it to true on mobile after mount. Reading data-viewport synchronously
@@ -157,8 +156,8 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
   // Search overlay state
   const [searchOpen, setSearchOpen] = useState(false);
 
-  // Scroll position before DeepDive opened — restored on close (F06)
-  const scrollBeforeDeepDive = useRef<number>(0);
+  // Scroll-position preservation on Deep Dive open/close is owned by
+  // DeepDiveOverlay (body scroll-lock + restore), so no local ref is needed.
 
   // 2026-06-02 single-feed: edition transition / whip-pan plumbing removed
   // (rev 46 collapse-editions). Only one feed exists, so the switch never fires.
@@ -227,25 +226,19 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
   // while DailyBriefText renders in the content area
   const dailyBriefState = useDailyBrief(activeEdition);
 
-  const handleStoryClick = useCallback((story: Story, rect: DOMRect) => {
-    // Only use the rect for the FLIP morph when it has real dimensions.
-    // DOMRect() with no args gives a zeroed rect (keyboard nav fallback).
-    scrollBeforeDeepDive.current = window.scrollY;
-    setOriginRect(rect.width > 0 ? rect : null);
+  // The `rect` is retained in the signature for all callers (StoryCard,
+  // MobileStoryCard, keyboard nav, deep link) but the overlay does not need it
+  // for positioning — it is a centered modal / bottom sheet, not a FLIP morph.
+  const handleStoryClick = useCallback((story: Story, _rect: DOMRect) => {
+    void _rect;
     setSelectedStory(story);
   }, []);
 
-  // Inline-mode collapse — clear the open story and glide back to where the user
-  // was when they opened it. The inline block is in the document flow, so removing
-  // it changes scroll height; restore after the DOM updates (double rAF) so we
-  // land on the original feed position instead of a clamped spot.
+  // Close the Deep Dive overlay. The overlay owns body scroll-lock and restores
+  // the exact scroll position + returns focus to the triggering card on unmount,
+  // so this only needs to clear the open story.
   const handleInlineCollapse = useCallback(() => {
-    const restore = scrollBeforeDeepDive.current;
     setSelectedStory(null);
-    setOriginRect(null);
-    requestAnimationFrame(() =>
-      requestAnimationFrame(() => window.scrollTo({ top: restore, behavior: "smooth" })),
-    );
   }, []);
 
   // Detect mobile for feed layout — responsive to viewport changes.
@@ -826,20 +819,9 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
   }, [gridStories, feedExpanded, isMobile, gridColumns]);
   const orphanHeldBack = gridStories.length - displayGridStories.length;
 
-  // --- Inline Deep Dive split ----------------------------------------------
-  // When a story is open, the feed splits around it so the expanded block
-  // renders full-width in the document flow. Inline is the only Deep Dive mode
-  // now (the legacy modal was removed); inlineActive simply tracks whether a
-  // story is open.
-  const inlineActive = selectedStory != null;
-  // Index of the open story within mainStories: 0/1 = twin lead, >=2 = grid.
-  const inlineIndex = inlineActive
-    ? mainStories.findIndex((s) => s.id === selectedStory!.id)
-    : -1;
-  // Open story is one of the two twin leads (replaces the whole twin block).
-  const inlineInLead = inlineActive && inlineIndex >= 0 && inlineIndex < 2;
-  // Open story is in the grid — split position within gridStories.
-  const inlineGridSplit = inlineActive && inlineIndex >= 2 ? inlineIndex - 2 : -1;
+  // Deep Dive is now presented as an overlay (DeepDiveOverlay) rendered once,
+  // outside the feed, on both breakpoints. The feed no longer splits around an
+  // open story, so the former inline-split bookkeeping was removed 2026-08-09.
 
   // Lead hero image removed 2026-05-13 — text-only newspaper composition.
 
@@ -1006,7 +988,9 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
                     filterKey={filterKey}
                     kbdFocusIndex={kbdFocusIndex}
                     editionMeta={editionMeta}
-                    selectedStory={selectedStory}
+                    /* Deep Dive is a global overlay now, not an inline split, so
+                       the mobile feed never renders an inline block. */
+                    selectedStory={null}
                     onInlineCollapse={handleInlineCollapse}
                   />
 
@@ -1027,61 +1011,31 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
 
                   {/* Twin top stories — ranks 0 and 1, co-equal "Top Story"
                       leads side-by-side in a 50/50 split (vertical stack on
-                      <1024px). Both wear the badge. v3 2026-05-14.
-                      Inline mode: when one of the twin leads is open, the whole
-                      twin block is replaced by the full-width InlineDeepDive. */}
-                  {inlineInLead ? (
-                    <InlineDeepDive key={selectedStory!.id} story={selectedStory!} onCollapse={handleInlineCollapse} />
-                  ) : (
-                    twinLeads.length > 0 && (
-                      <div key={filterKey} className={`lead-twin hero-slot${inlineActive ? " lead-twin--recede" : ""}`}>
-                        {twinLeads.map((story, idx) => (
-                          <LeadStory
-                            key={story.id}
-                            story={story}
-                            rank={idx}
-                            twin={twinLeads.length === 2}
-                            onStoryClick={handleStoryClick}
-                            kbdFocused={kbdFocusIndex === idx}
-                          />
-                        ))}
-                      </div>
-                    )
+                      <1024px). Both wear the badge. v3 2026-05-14. Opening a
+                      Deep Dive no longer reflows the feed — the grid stays put
+                      under the overlay. */}
+                  {twinLeads.length > 0 && (
+                    <div key={filterKey} className="lead-twin hero-slot">
+                      {twinLeads.map((story, idx) => (
+                        <LeadStory
+                          key={story.id}
+                          story={story}
+                          rank={idx}
+                          twin={twinLeads.length === 2}
+                          onStoryClick={handleStoryClick}
+                          kbdFocused={kbdFocusIndex === idx}
+                        />
+                      ))}
+                    </div>
                   )}
 
                   {/* Grid below twin leads — ranks 2-49 (digest at 2-9, wire
                       at 10-49). Slot math: 8 digest + 40 wire = 48 grid cards,
-                      plus 2 twin leads above = 50 total.
-                      Inline mode: when a grid card is open, the grid is split
-                      into two sub-grids with the full-width InlineDeepDive
-                      between them (one <section> each avoids the empty-cell gap
-                      that grid-column:1/-1 would leave). The original grid index
-                      is preserved on each card so variant + globalIndex math is
-                      identical to the unsplit grid. */}
+                      plus 2 twin leads above = 50 total. */}
                   {gridStories.length > 0 && (
-                    inlineGridSplit >= 0 ? (
-                      <React.Fragment key={`grid-split-${filterKey}`}>
-                        {inlineGridSplit > 0 && (
-                          <section aria-label="Stories" className="feed-grid feed-grid--recede">
-                            {gridStories.slice(0, inlineGridSplit).map((story, idx) =>
-                              renderGridCard(story, idx),
-                            )}
-                          </section>
-                        )}
-                        <InlineDeepDive key={selectedStory!.id} story={selectedStory!} onCollapse={handleInlineCollapse} />
-                        {inlineGridSplit < gridStories.length - 1 && (
-                          <section aria-label="Stories" className="feed-grid feed-grid--recede">
-                            {gridStories.slice(inlineGridSplit + 1).map((story, sIdx) =>
-                              renderGridCard(story, inlineGridSplit + 1 + sIdx),
-                            )}
-                          </section>
-                        )}
-                      </React.Fragment>
-                    ) : (
-                      <section key={`grid-${filterKey}`} aria-label="Stories" className={`feed-grid${inlineActive ? " feed-grid--recede" : ""}`}>
-                        {displayGridStories.map((story, idx) => renderGridCard(story, idx))}
-                      </section>
-                    )
+                    <section key={`grid-${filterKey}`} aria-label="Stories" className="feed-grid">
+                      {displayGridStories.map((story, idx) => renderGridCard(story, idx))}
+                    </section>
                   )}
 
                   {/* Expand-to-50 affordance — sits between the default
@@ -1124,9 +1078,17 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
       {/* Footer */}
       {!isLoading && <Footer lastUpdated={lastUpdated} />}
 
-      {/* Deep Dive renders inline in the feed (InlineDeepDive) on both desktop
-           (split broadsheet) and mobile (MobileFeed split-render). The legacy
-           modal was removed 2026-06-26. */}
+      {/* Deep Dive — a focused overlay on both breakpoints: a centered card
+           over a dimmed backdrop on desktop, a full-screen bottom sheet on
+           mobile. Rendered once here (portaled to <body> by DeepDiveOverlay),
+           outside the feed, so the grid never reflows underneath it. */}
+      {selectedStory && (
+        <DeepDiveOverlay
+          key={selectedStory.id}
+          story={selectedStory}
+          onClose={handleInlineCollapse}
+        />
+      )}
 
       {/* Search overlay — Cmd+K. Search across main feed + World overflow. */}
       <SearchOverlay

@@ -1,0 +1,187 @@
+/* ==========================================================================
+   void --news — Deep Dive Overlay
+   --------------------------------------------------------------------------
+   DeepDiveOverlay presents the Deep Dive content over the feed. It is portaled
+   to <body>, so it is not nested in any transformed / filtered ancestor.
+
+   Desktop (>=768px): a centered card over a dimmed backdrop, capped width and
+   height, with internal scroll. The feed grid underneath does not reflow.
+   Mobile (<768px): a full-screen bottom sheet that slides up, with a sticky
+   top bar (grabber + close) and its own scroll.
+
+   z-index sits at --z-modal (100): above the nav (20) and the floating audio
+   player (60). The Sigil popup (--z-popup, 150) and the raised spectrum tooltip
+   deliberately layer ABOVE this so hover/click detail still reads on top.
+   ========================================================================== */
+
+.dd-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal, 100);
+  display: flex;
+}
+
+/* ---- Backdrop --------------------------------------------------------- */
+.dd-overlay__backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--overlay-backdrop, rgba(0, 0, 0, 0.55));
+  opacity: 0;
+  transition: opacity 300ms var(--ease-cinematic, ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+.dd-overlay--open .dd-overlay__backdrop { opacity: 1; }
+.dd-overlay--closing .dd-overlay__backdrop { opacity: 0; }
+
+/* ---- Panel (shared) --------------------------------------------------- */
+.dd-overlay__panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-card, var(--bg-elevated));
+  box-shadow: var(--shadow-e3, 0 24px 60px rgba(0, 0, 0, 0.35));
+  overflow: hidden;
+  will-change: transform, opacity;
+}
+
+/* ---- Top bar (close + mobile grabber) --------------------------------- */
+.dd-overlay__bar {
+  flex: 0 0 auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--border-subtle);
+  touch-action: none; /* the sheet drag gesture lives here, not page scroll */
+}
+
+.dd-overlay__grabber {
+  display: none; /* mobile only */
+}
+
+.dd-overlay__close {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  color: var(--fg-tertiary);
+  cursor: pointer;
+  border-radius: var(--radius-sm, 4px);
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    color var(--dur-fast, 150ms) var(--ease-cinematic, ease-out),
+    background-color var(--dur-fast, 150ms) var(--ease-cinematic, ease-out);
+}
+.dd-overlay__close:hover {
+  color: var(--fg-primary);
+  background: color-mix(in srgb, var(--fg-primary) 6%, transparent);
+}
+.dd-overlay__close:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+@media (pointer: coarse) {
+  .dd-overlay__close { width: 44px; height: 44px; }
+}
+
+/* ---- Scroll region ---------------------------------------------------- */
+.dd-overlay__scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  padding: var(--space-4) var(--space-5) var(--space-6);
+}
+
+/* ==========================================================================
+   Desktop / tablet — centered card
+   ========================================================================== */
+@media (min-width: 768px) {
+  .dd-overlay {
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-5);
+  }
+  .dd-overlay__panel {
+    width: min(920px, 100%);
+    max-height: 88vh;
+    border: 1px solid var(--border-subtle);
+    /* Sharp Press & Precision edge (design system tops out at --radius-md). */
+    border-radius: var(--radius-md, 2px);
+    opacity: 0;
+    transform: scale(0.98);
+    transition:
+      opacity 260ms var(--ease-cinematic, ease-out),
+      transform 260ms var(--ease-cinematic, ease-out);
+  }
+  .dd-overlay--open .dd-overlay__panel { opacity: 1; transform: scale(1); }
+  .dd-overlay--closing .dd-overlay__panel { opacity: 0; transform: scale(0.98); }
+}
+
+/* ==========================================================================
+   Mobile — full-screen bottom sheet
+   ========================================================================== */
+@media (max-width: 767px) {
+  .dd-overlay {
+    align-items: stretch;
+    justify-content: stretch;
+  }
+  .dd-overlay__panel {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    border-radius: 0;
+    transform: translateY(100%);
+    transition: transform 320ms var(--ease-cinematic, ease-out);
+    /* Respect the notch / home indicator. */
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+  .dd-overlay--open .dd-overlay__panel { transform: translateY(0); }
+  .dd-overlay--closing .dd-overlay__panel { transform: translateY(100%); }
+
+  /* Sheet top bar centers a drag grabber; close sits to the right. */
+  .dd-overlay__bar {
+    justify-content: center;
+    padding-block: var(--space-2);
+  }
+  .dd-overlay__grabber {
+    display: block;
+    width: 36px;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--border-strong, var(--fg-muted));
+  }
+  .dd-overlay__close {
+    position: absolute;
+    right: var(--space-2);
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .dd-overlay__scroll {
+    padding: var(--space-4) var(--space-4)
+      calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* ==========================================================================
+   Reduced motion — no transform / slide; appear + dismiss instantly
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  .dd-overlay__backdrop { opacity: 1; transition: none; }
+  .dd-overlay__panel {
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+}

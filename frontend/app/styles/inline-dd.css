@@ -237,6 +237,139 @@
 }
 
 /* ==========================================================================
+   Overlay context — InlineDeepDive now renders as the CONTENT of
+   DeepDiveOverlay (a modal card / bottom sheet), not an in-flow feed block.
+   Drop the in-flow chrome (top/bottom hairline, vertical margin) so the panel
+   supplies the frame; the overlay owns padding via .dd-overlay__scroll.
+   ========================================================================== */
+.inline-dd--overlay {
+  margin-block: 0;
+  border-block: none;
+  padding: 0;
+  scroll-margin-top: 0;
+}
+
+/* The overlay panel is already capped (~920px desktop, full-bleed mobile), so
+   the header/content no longer need their own 68rem measure + centering. */
+.inline-dd--overlay .inline-dd__header,
+.inline-dd--overlay .inline-dd__content {
+  max-width: none;
+  margin-inline: 0;
+}
+
+/* Headline is now a heading (was a collapse-toggle button); keep the editorial
+   voice, drop the button affordances (pointer cursor, hover caret). */
+.inline-dd--overlay .inline-dd__headline {
+  margin: 0;
+  font-weight: inherit;
+  cursor: default;
+}
+
+/* ==========================================================================
+   All Sources — complete, non-truncating chip roster
+   --------------------------------------------------------------------------
+   Every source as a wrapped pill (lean dot + name + tier). The grid wraps and
+   never overflows horizontally; long names ellipsize inside their own chip.
+   ========================================================================== */
+
+.inline-dd__sources-count {
+  color: var(--fg-tertiary);
+  font-size: var(--text-xs);
+}
+
+.inline-dd__source-chips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.inline-dd__source-chip {
+  min-width: 0; /* allow the name to ellipsize instead of forcing overflow */
+  max-width: 100%;
+}
+
+.inline-dd__source-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  max-width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--border-subtle);
+  /* Crisp tag edge — matches the Press & Precision sharp-radius vocabulary
+     (category-tag et al.), not a fully rounded pill. */
+  border-radius: var(--radius-md, 2px);
+  background: color-mix(in srgb, var(--fg-primary) 3%, transparent);
+  color: var(--fg-secondary);
+  text-decoration: none;
+  transition:
+    border-color var(--dur-fast, 150ms) var(--ease-cinematic, ease-out),
+    background-color var(--dur-fast, 150ms) var(--ease-cinematic, ease-out);
+  -webkit-tap-highlight-color: transparent;
+}
+
+a.inline-dd__source-link:hover {
+  border-color: var(--border-strong, var(--fg-tertiary));
+  background: color-mix(in srgb, var(--fg-primary) 7%, transparent);
+}
+
+a.inline-dd__source-link:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+.inline-dd__source-link--static {
+  cursor: default;
+}
+
+/* WCAG 2.5.5 — comfortable tap target on touch pointers. */
+@media (pointer: coarse) {
+  .inline-dd__source-link {
+    padding-block: 9px;
+    min-height: 40px;
+  }
+}
+
+.inline-dd__source-dot {
+  flex: 0 0 auto;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--bias-center);
+}
+.inline-dd__source-dot[data-lean="far-left"]     { background: var(--bias-far-left); }
+.inline-dd__source-dot[data-lean="left"]         { background: var(--bias-left); }
+.inline-dd__source-dot[data-lean="center-left"]  { background: var(--bias-center-left); }
+.inline-dd__source-dot[data-lean="center"]       { background: var(--bias-center); }
+.inline-dd__source-dot[data-lean="center-right"] { background: var(--bias-center-right); }
+.inline-dd__source-dot[data-lean="right"]        { background: var(--bias-right); }
+.inline-dd__source-dot[data-lean="far-right"]    { background: var(--bias-far-right); }
+
+.inline-dd__source-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-structural, var(--font-data));
+  font-size: var(--text-sm);
+  color: var(--fg-primary);
+}
+
+.inline-dd__source-tier {
+  flex: 0 0 auto;
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  color: var(--fg-tertiary);
+  text-transform: uppercase;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inline-dd__source-link { transition: none; }
+}
+
+/* ==========================================================================
    Sibling rack-focus — other stories recede "backstage" when one is expanded
    ----------------------------------------------------------------------------
    When a story is open inline, the remaining cards (both split feed-grids and
