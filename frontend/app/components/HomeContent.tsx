@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import React, { Component, type ReactNode, useState, useEffect, useMemo, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
 import type { Edition, Category, Story, BiasScores, BiasSpread, ThreeLensData, OpinionLabel, SigilData } from "../lib/types";
 import { EDITIONS } from "../lib/types";
@@ -15,8 +15,41 @@ import NavBar from "./NavBar";
 import LeadStory from "./LeadStory";
 import StoryCard from "./StoryCard";
 import { computeStoryFamilies } from "../lib/storyFamilies";
-const DeepDiveOverlay = dynamic(() => import("./DeepDiveOverlay"), { ssr: false });
+// Deep Dive is a centered modal card on desktop / full-screen bottom sheet on
+// mobile (restored 2026-08-09, reverting the in-feed overlay). Lazy-loaded so
+// its ~50KB chunk stays off the initial homepage bundle.
+const DeepDive = dynamic(() => import("./DeepDive"), { ssr: false });
 import ErrorBoundary from "./ErrorBoundary";
+
+/* DeepDive-specific ErrorBoundary — shows a dismissible error instead of
+   crashing the entire feed when one bad cluster fails to render. */
+class DeepDiveErrorBoundary extends Component<
+  { children: ReactNode; onClose: () => void },
+  { hasError: boolean }
+> {
+  constructor(props: { children: ReactNode; onClose: () => void }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError(): { hasError: boolean } {
+    return { hasError: true };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="deep-dive dd-error-boundary" role="dialog" aria-label="Error">
+          <div className="dd-error-boundary__inner">
+            <p className="text-base empty-state__body">
+              Unable to load analysis for this story.
+            </p>
+            <button className="btn-primary" onClick={this.props.onClose}>Close</button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 import LoadingSkeleton from "./LoadingSkeleton";
 import Footer from "./Footer";
@@ -141,6 +174,14 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
   // page reload — gives users a clean retry path from the error state.
   const [retryKey, setRetryKey] = useState(0);
   const [selectedStory, setSelectedStory] = useState<Story | null>(null);
+  // Card's DOMRect at click time — drives the Deep Dive FLIP morph on desktop.
+  // Null (zeroed rect from keyboard nav / deep link) falls back to a slide-in.
+  const [originRect, setOriginRect] = useState<DOMRect | null>(null);
+  // Scroll position before the Deep Dive opened — restored on close.
+  const scrollBeforeDeepDive = useRef<number>(0);
+  // Live mirror of the visible feed order — lets the (stable) Deep Dive prev/next
+  // handler read the current list without a stale closure or churny deps.
+  const visibleStoriesRef = useRef<Story[]>([]);
   // Fires once: open a story's deep dive from a ?story=<id> deep link
   // (used by void --revolt "related coverage" cross-links).
   const deepLinkHandled = useRef(false);
@@ -156,8 +197,8 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
   // Search overlay state
   const [searchOpen, setSearchOpen] = useState(false);
 
-  // Scroll-position preservation on Deep Dive open/close is owned by
-  // DeepDiveOverlay (body scroll-lock + restore), so no local ref is needed.
+  // Scroll-position preservation on Deep Dive open/close: the modal owns its own
+  // body scroll-lock + restore; scrollBeforeDeepDive re-asserts it on close.
 
   // 2026-06-02 single-feed: edition transition / whip-pan plumbing removed
   // (rev 46 collapse-editions). Only one feed exists, so the switch never fires.
@@ -226,19 +267,36 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
   // while DailyBriefText renders in the content area
   const dailyBriefState = useDailyBrief(activeEdition);
 
-  // The `rect` is retained in the signature for all callers (StoryCard,
-  // MobileStoryCard, keyboard nav, deep link) but the overlay does not need it
-  // for positioning — it is a centered modal / bottom sheet, not a FLIP morph.
-  const handleStoryClick = useCallback((story: Story, _rect: DOMRect) => {
-    void _rect;
+  // Open a story's Deep Dive. Captures the card's rect for the desktop FLIP
+  // morph (only when it has real dimensions — a zeroed DOMRect from keyboard nav
+  // or a deep link means "no morph, slide in") and the scroll position to
+  // restore on close.
+  const handleStoryClick = useCallback((story: Story, rect: DOMRect) => {
+    scrollBeforeDeepDive.current = window.scrollY;
+    setOriginRect(rect.width > 0 ? rect : null);
     setSelectedStory(story);
   }, []);
 
-  // Close the Deep Dive overlay. The overlay owns body scroll-lock and restores
-  // the exact scroll position + returns focus to the triggering card on unmount,
-  // so this only needs to clear the open story.
-  const handleInlineCollapse = useCallback(() => {
+  // Close the Deep Dive. The modal owns its own body scroll-lock + restore; this
+  // clears the open story and re-asserts the pre-open scroll position as a
+  // belt-and-suspenders after the panel unmounts.
+  const handleDeepDiveClose = useCallback(() => {
     setSelectedStory(null);
+    setOriginRect(null);
+    window.scrollTo(0, scrollBeforeDeepDive.current);
+  }, []);
+
+  // Prev/Next inter-story navigation inside the open Deep Dive — walks the
+  // visible feed order without closing the modal.
+  const handleDeepDiveNav = useCallback((direction: "prev" | "next") => {
+    setSelectedStory((current) => {
+      if (!current) return current;
+      const idx = visibleStoriesRef.current.findIndex((s) => s.id === current.id);
+      if (idx < 0) return current;
+      const newIdx = direction === "prev" ? idx - 1 : idx + 1;
+      if (newIdx < 0 || newIdx >= visibleStoriesRef.current.length) return current;
+      return visibleStoriesRef.current[newIdx];
+    });
   }, []);
 
   // Detect mobile for feed layout — responsive to viewport changes.
@@ -819,9 +877,9 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
   }, [gridStories, feedExpanded, isMobile, gridColumns]);
   const orphanHeldBack = gridStories.length - displayGridStories.length;
 
-  // Deep Dive is now presented as an overlay (DeepDiveOverlay) rendered once,
-  // outside the feed, on both breakpoints. The feed no longer splits around an
-  // open story, so the former inline-split bookkeeping was removed 2026-08-09.
+  // Deep Dive is a modal card rendered once outside the feed on both
+  // breakpoints. The feed no longer splits around an open story, so the former
+  // inline-split bookkeeping was removed 2026-08-09.
 
   // Lead hero image removed 2026-05-13 — text-only newspaper composition.
 
@@ -831,6 +889,9 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
     () => [...mainStories],
     [mainStories],
   );
+  // Keep the ref current so handleDeepDiveNav (stable identity) always walks the
+  // latest order. Assigning a ref during render is idempotent and safe.
+  visibleStoriesRef.current = visibleStories;
 
   // Stable key per edition — when activeEdition changes the grid replays its
   // entrance animation. Filters are gone, so the key only varies by edition.
@@ -988,10 +1049,6 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
                     filterKey={filterKey}
                     kbdFocusIndex={kbdFocusIndex}
                     editionMeta={editionMeta}
-                    /* Deep Dive is a global overlay now, not an inline split, so
-                       the mobile feed never renders an inline block. */
-                    selectedStory={null}
-                    onInlineCollapse={handleInlineCollapse}
                   />
 
                   {/* World overflow — international stories that didn't make
@@ -1078,16 +1135,22 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
       {/* Footer */}
       {!isLoading && <Footer lastUpdated={lastUpdated} />}
 
-      {/* Deep Dive — a focused overlay on both breakpoints: a centered card
-           over a dimmed backdrop on desktop, a full-screen bottom sheet on
-           mobile. Rendered once here (portaled to <body> by DeepDiveOverlay),
-           outside the feed, so the grid never reflows underneath it. */}
+      {/* Deep Dive — a centered modal card over a dimmed backdrop on desktop,
+           a full-screen bottom sheet on mobile. Wrapped in its own
+           ErrorBoundary so one bad cluster can't crash the feed. Prev/next
+           navigate between stories; the card owns body scroll-lock + restore. */}
       {selectedStory && (
-        <DeepDiveOverlay
-          key={selectedStory.id}
-          story={selectedStory}
-          onClose={handleInlineCollapse}
-        />
+        <DeepDiveErrorBoundary onClose={handleDeepDiveClose}>
+          <DeepDive
+            key={selectedStory.id}
+            story={selectedStory}
+            onClose={handleDeepDiveClose}
+            originRect={originRect}
+            onNavigate={handleDeepDiveNav}
+            storyIndex={visibleStories.findIndex((s) => s.id === selectedStory.id)}
+            totalStories={visibleStories.length}
+          />
+        </DeepDiveErrorBoundary>
       )}
 
       {/* Search overlay — Cmd+K. Search across main feed + World overflow. */}

@@ -7978,3 +7978,435 @@ a.footer-products__item:hover { color: var(--accent-warm); }
     padding: 0 16px;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DEEP DIVE — MODAL CARD  (restored 2026-08-09)
+   Reverts the in-feed overlay back to the centered modal card (desktop) / full
+   screen bottom sheet (mobile). The shared .dd-* content vocabulary (lede,
+   lenses, collapsible, history-context, claim marks, cascade) lives elsewhere in
+   this file + animations.css + layout-zones.css; this section restores the
+   container chrome (backdrop, panel, header, content, back/close, drag handle,
+   inter-story nav) plus the scrollable Sources roster under The Spread.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Backdrop rack-focus keyframes ── */
+@keyframes backdropRackIn {
+  from {
+    backdrop-filter: blur(0px) saturate(1) brightness(1);
+    -webkit-backdrop-filter: blur(0px) saturate(1) brightness(1);
+  }
+  to {
+    backdrop-filter: var(--cin-backdrop-blur);
+    -webkit-backdrop-filter: var(--cin-backdrop-blur);
+  }
+}
+@keyframes backdropRackOut {
+  from {
+    backdrop-filter: var(--cin-backdrop-blur);
+    -webkit-backdrop-filter: var(--cin-backdrop-blur);
+  }
+  to {
+    backdrop-filter: blur(0px) saturate(1) brightness(1);
+    -webkit-backdrop-filter: blur(0px) saturate(1) brightness(1);
+  }
+}
+
+/* ── Backdrop ── */
+.deep-dive-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: var(--cin-backdrop-bg);
+  z-index: var(--z-overlay);
+  cursor: pointer;
+  backdrop-filter: var(--cin-backdrop-blur);
+  -webkit-backdrop-filter: var(--cin-backdrop-blur);
+  animation: backdropRackIn var(--cin-backdrop-ramp-dur, 200ms) var(--ease-cinematic) both;
+}
+.deep-dive-backdrop--closing {
+  animation: backdropRackOut var(--cin-backdrop-rack-out-dur, 120ms) var(--ease-whip) both;
+}
+.deep-dive-backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--cin-backdrop-vignette);
+  pointer-events: none;
+}
+
+/* ── Panel — mobile-default full-screen; desktop centers below ── */
+.deep-dive-panel {
+  position: fixed;
+  z-index: var(--z-modal);
+  overflow-y: auto;
+  overflow-x: hidden;
+  outline: none;
+  inset: 0;
+  will-change: transform;
+  transform-origin: center center;
+  opacity: 0;
+  background-color: var(--bg-primary);
+  box-shadow: var(--shadow-cinematic-dramatic);
+}
+/* Studio light reflection on top edge — fades in after morph settles. */
+.deep-dive-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.5) 30%,
+    rgba(255, 255, 255, 0.7) 50%,
+    rgba(255, 255, 255, 0.5) 70%,
+    transparent 100%
+  );
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 300ms var(--ease-cinematic);
+}
+.deep-dive-panel[data-settled]::before {
+  opacity: 1;
+}
+.deep-dive-panel__header {
+  position: sticky;
+  top: 0;
+  background-color: var(--bg-primary);
+  border-bottom: none;
+  z-index: 2;
+  padding: var(--space-4) var(--space-5);
+}
+.deep-dive-panel__header::after {
+  content: "";
+  display: block;
+  height: 6px;
+  margin-top: var(--space-2);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 6' preserveAspectRatio='none'%3E%3Cpath d='M0 3 C30 1 70 5 100 3 C130 1 170 5 200 3 C230 1 270 5 300 3 C330 1 370 5 400 3' stroke='%2352504A' stroke-width='1' fill='none' opacity='0.3' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+:root[data-mode="dark"] .deep-dive-panel__header::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 6' preserveAspectRatio='none'%3E%3Cpath d='M0 3 C30 1 70 5 100 3 C130 1 170 5 200 3 C230 1 270 5 300 3 C330 1 370 5 400 3' stroke='%239CA3AF' stroke-width='1' fill='none' opacity='0.2' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+.deep-dive-panel__content {
+  padding: var(--space-5);
+}
+.deep-dive-panel__content .text-base {
+  max-width: none;
+}
+
+/* ── Editorial grade + warm vignette once settled ── */
+.deep-dive-panel[data-settled] .deep-dive-panel__content {
+  filter: var(--cin-grade-editorial);
+  transition: filter 500ms var(--ease-cinematic);
+}
+.deep-dive-panel[data-settled] {
+  box-shadow:
+    var(--shadow-cinematic-dramatic),
+    inset 0 0 120px 40px var(--cin-vignette-warm);
+}
+
+/* ── DeepDive error boundary fallback ── */
+.dd-error-boundary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+.dd-error-boundary__inner {
+  text-align: center;
+  padding: var(--space-6);
+}
+
+/* ── Back / Close buttons ── */
+.deep-dive-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--fg-secondary);
+  padding: var(--space-2);
+  margin-left: calc(-1 * var(--space-2));
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: var(--radius-md);
+  transition:
+    background-color var(--dur-fast) var(--ease-cinematic),
+    transform var(--dur-step) var(--spring);
+}
+.deep-dive-back:hover { background-color: var(--bg-secondary); }
+.deep-dive-back:active { transform: scale(0.94); }
+.deep-dive-back:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+.deep-dive-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  color: var(--fg-secondary);
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  transition:
+    background-color var(--dur-fast) var(--ease-cinematic),
+    transform var(--dur-step) var(--spring);
+}
+.deep-dive-close:hover { background-color: var(--bg-secondary); }
+.deep-dive-close:active { transform: scale(0.90); }
+.deep-dive-close:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: 2px;
+}
+
+/* ── Mobile drag handle — hidden on desktop, shown in the mobile block below ── */
+.dd-drag-indicator { display: none; }
+
+/* ── Inter-story navigation (prev / counter / next) ── */
+.dd-story-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  position: relative;
+}
+.dd-story-nav__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border-subtle);
+  background-color: transparent;
+  color: var(--fg-secondary);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease-cinematic),
+    color var(--dur-fast) var(--ease-cinematic),
+    border-color var(--dur-fast) var(--ease-cinematic);
+}
+.dd-story-nav__btn:hover {
+  background-color: var(--bg-secondary);
+  color: var(--fg-primary);
+  border-color: var(--border-strong);
+}
+.dd-story-nav__btn:disabled { opacity: 0.3; cursor: default; }
+.dd-story-nav__btn:disabled:hover {
+  background-color: transparent;
+  color: var(--fg-secondary);
+  border-color: var(--border-subtle);
+}
+.dd-story-nav__counter {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  letter-spacing: 0.03em;
+}
+.dd-swipe-hint {
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--fg-muted);
+  white-space: nowrap;
+  pointer-events: none;
+  letter-spacing: 0.03em;
+}
+
+/* ── Sources roster — scrollable list directly under The Spread ──
+   Fixed max-height container with its own scroll (mirrors the Sources page's
+   scrollable list): shows EVERY source (no truncation), one row each with a
+   lean signal dot, the outlet name (ellipsized), its lean label, and its tier.
+   Long names ellipsize inside the row; never causes page-level x-scroll. */
+.dd-source-list-wrap { margin-top: var(--space-4); }
+.dd-source-list__label { margin-bottom: var(--space-2); }
+.dd-source-list__count { color: var(--fg-muted); margin-left: var(--space-1); }
+.dd-source-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 260px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border: var(--rule-thin);
+  border-radius: var(--radius-md);
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+.dd-source-list__row { border-bottom: var(--rule-thin); }
+.dd-source-list__row:last-child { border-bottom: none; }
+.dd-source-list__link {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  min-height: 40px;
+  color: var(--fg-primary);
+  text-decoration: none;
+  transition: background-color var(--dur-fast) var(--ease-cinematic);
+}
+.dd-source-list__link:hover { background-color: var(--bg-secondary); }
+.dd-source-list__link:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: -2px;
+}
+.dd-source-list__link--static { cursor: default; }
+.dd-source-list__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.dd-source-list__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+}
+.dd-source-list__lean {
+  color: var(--fg-muted);
+  white-space: nowrap;
+}
+.dd-source-list__tier {
+  color: var(--fg-muted);
+  white-space: nowrap;
+  text-align: right;
+}
+
+/* ── Desktop (1024px+): centered modal card over the dimmed backdrop ── */
+@media (min-width: 1024px) {
+  .deep-dive-panel {
+    left: 50%;
+    top: 50%;
+    right: auto;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+    width: 75vw;
+    max-width: 920px;
+    height: 80vh;
+    max-height: 80vh;
+    min-height: 0;
+    border-radius: 6px;
+    border: 1px solid var(--border-subtle);
+    background-color: var(--bg-primary);
+    box-shadow:
+      0 50px 140px color-mix(in srgb, var(--cinematic-shadow-tint) 50%, transparent),
+      0 20px 60px color-mix(in srgb, var(--cinematic-shadow-tint) 28%, transparent),
+      0 6px 16px color-mix(in srgb, var(--cinematic-shadow-tint) 18%, transparent),
+      0 1px 3px color-mix(in srgb, var(--cinematic-shadow-tint) 12%, transparent),
+      inset 0 1px 0 color-mix(in srgb, var(--cinematic-rim-light) 40%, transparent);
+  }
+  .deep-dive-panel::before { opacity: 0.8; height: 2px; }
+  .deep-dive-close { display: inline-flex; }
+}
+@media (min-width: 1280px) { .deep-dive-panel { max-width: 1080px; } }
+@media (min-width: 1440px) { .deep-dive-panel { max-width: 1120px; } }
+@media (min-width: 1728px) { .deep-dive-panel { max-width: 1240px; } }
+
+/* ── Mobile (max-width 767px): full-screen bottom sheet ── */
+@media (max-width: 767px) {
+  .deep-dive-panel {
+    left: 0;
+    right: 0;
+    top: auto;
+    bottom: 0;
+    width: 100%;
+    max-width: 100%;
+    max-height: 92vh;
+    border-radius: 16px 16px 0 0;
+    border: none;
+    background: var(--bg-primary);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow:
+      0 -8px 40px color-mix(in srgb, var(--cinematic-shadow-tint) 25%, transparent),
+      0 -2px 12px color-mix(in srgb, var(--cinematic-shadow-tint) 12%, transparent);
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .deep-dive-panel::before { opacity: 0; }
+  .deep-dive-panel[data-settled] {
+    box-shadow:
+      0 -8px 40px color-mix(in srgb, var(--cinematic-shadow-tint) 25%, transparent),
+      0 -2px 12px color-mix(in srgb, var(--cinematic-shadow-tint) 12%, transparent);
+  }
+  .deep-dive-panel[data-settled] .deep-dive-panel__content {
+    animation: none;
+    filter: none;
+  }
+  .deep-dive-panel::-webkit-scrollbar { display: none; }
+  .deep-dive-panel__header {
+    padding: var(--space-3) var(--space-4);
+    padding-top: max(var(--space-3), env(safe-area-inset-top, 0px));
+  }
+  .dd-headline { font-size: clamp(1.25rem, 5vw, 1.5rem); }
+  .deep-dive-panel__content {
+    padding: var(--space-3) var(--space-4);
+    padding-bottom: calc(var(--space-5) + env(safe-area-inset-bottom, 0px));
+  }
+  .dd-drag-indicator {
+    display: block;
+    width: 56px;
+    height: 6px;
+    border-radius: 2px;
+    background-color: var(--cin-ash-warm, var(--border-strong));
+    margin: var(--space-2) auto var(--space-1);
+    opacity: 0.8;
+    transition: width 150ms var(--ease-cinematic), opacity 150ms var(--ease-cinematic);
+    animation: dragIndicatorReveal 200ms var(--ease-cinematic) 100ms both;
+    box-shadow: 0 1px 2px color-mix(in srgb, var(--cinematic-shadow-tint) 4%, transparent);
+  }
+  .dd-drag-indicator--grabbed { width: 72px; opacity: 1; }
+  .deep-dive-panel--dragging { will-change: transform; }
+  .deep-dive-back-label { display: none; }
+  .deep-dive-back {
+    display: inline-flex;
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .dd-story-nav__btn { min-width: 44px; min-height: 44px; }
+  .dd-cta-footer {
+    position: sticky;
+    bottom: 0;
+    background: linear-gradient(to top, var(--bg-primary) 80%, transparent);
+    padding: var(--space-4) var(--space-5) calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+    margin-top: auto;
+    z-index: 2;
+  }
+  .dd-cta-footer__btn {
+    width: 100%;
+    text-align: center;
+    padding: var(--space-3) var(--space-4);
+    font-weight: 600;
+  }
+  .deep-dive-active .nav-page,
+  .deep-dive-active .nav-weekly {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+/* ── Reduced motion: no rack, no reveal, no grade transition ── */
+@media (prefers-reduced-motion: reduce) {
+  .dd-drag-indicator { animation: none; }
+  .deep-dive-panel::before,
+  .deep-dive-panel[data-settled] .deep-dive-panel__content {
+    transition: none;
+  }
+}
