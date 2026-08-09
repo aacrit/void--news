@@ -160,11 +160,8 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
   // Scroll position before DeepDive opened — restored on close (F06)
   const scrollBeforeDeepDive = useRef<number>(0);
 
-  // 2026-06-02 single-feed — edition transition / whip-pan state removed.
-  // Constants kept so existing render paths compile without rewiring.
-  const whipDirection = "right" as const;
-  const isEditionSwitch = false;
-  const editionTransition: null = null;
+  // 2026-06-02 single-feed: edition transition / whip-pan plumbing removed
+  // (rev 46 collapse-editions). Only one feed exists, so the switch never fires.
 
   // --- Pull-to-Refresh (mobile only) ---
   const [pullOffset, setPullOffset] = useState(0);
@@ -1011,7 +1008,6 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
                     editionMeta={editionMeta}
                     selectedStory={selectedStory}
                     onInlineCollapse={handleInlineCollapse}
-                    transitionClass={editionTransition === "out" ? "anim-edition-out" : editionTransition === "in" ? "anim-edition-in" : undefined}
                   />
 
                   {/* World overflow — international stories that didn't make
@@ -1038,7 +1034,7 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
                     <InlineDeepDive key={selectedStory!.id} story={selectedStory!} onCollapse={handleInlineCollapse} />
                   ) : (
                     twinLeads.length > 0 && (
-                      <div key={filterKey} className={`lead-twin hero-slot${isEditionSwitch ? " anim-content-arrive" : ""}${inlineActive ? " lead-twin--recede" : ""}`}>
+                      <div key={filterKey} className={`lead-twin hero-slot${inlineActive ? " lead-twin--recede" : ""}`}>
                         {twinLeads.map((story, idx) => (
                           <LeadStory
                             key={story.id}
@@ -1082,7 +1078,7 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
                         )}
                       </React.Fragment>
                     ) : (
-                      <section key={`grid-${filterKey}`} aria-label="Stories" className={`feed-grid${isEditionSwitch ? " anim-content-arrive" : ""}${inlineActive ? " feed-grid--recede" : ""}`}>
+                      <section key={`grid-${filterKey}`} aria-label="Stories" className={`feed-grid${inlineActive ? " feed-grid--recede" : ""}`}>
                         {displayGridStories.map((story, idx) => renderGridCard(story, idx))}
                       </section>
                     )

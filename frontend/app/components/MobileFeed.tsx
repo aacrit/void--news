@@ -24,8 +24,6 @@ interface MobileFeedProps {
   selectedStory: Story | null;
   /** Collapse the inline block — clears the open story + restores scroll. */
   onInlineCollapse: () => void;
-  /** CSS class for edition switch cross-fade animation */
-  transitionClass?: string;
   /** "main" = full layout (Brief Pill + twin heroes + compact cards).
    *  "overflow" = compact-only (no Brief Pill duplicate, no hero treatment).
    *  Used by the inline World section so it doesn't re-render the daily-brief
@@ -65,7 +63,6 @@ export default function MobileFeed({
   editionMeta,
   selectedStory,
   onInlineCollapse,
-  transitionClass,
   variant = "main",
 }: MobileFeedProps) {
   const isOverflow = variant === "overflow";
@@ -120,7 +117,7 @@ export default function MobileFeed({
   );
 
   return (
-    <div className={["mf", isOverflow ? "mf--overflow" : null, transitionClass].filter(Boolean).join(" ")} key={filterKey}>
+    <div className={["mf", isOverflow ? "mf--overflow" : null].filter(Boolean).join(" ")} key={filterKey}>
       {/* Brief Pill — main feed only. Skipped on overflow so we don't duplicate
           the daily-brief teaser inside the inline World section. */}
       {!isOverflow && (
