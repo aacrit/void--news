@@ -2514,7 +2514,9 @@
   box-shadow: var(--shadow-e2);
   padding: var(--space-2) var(--space-3);
   pointer-events: none;
-  z-index: var(--z-tooltip);
+  /* Portaled to <body> alongside the DeepDiveOverlay (--z-modal). It must layer
+     ABOVE the overlay panel so the source detail still reads on hover. */
+  z-index: calc(var(--z-popup) + 2);
   min-width: 140px;
   max-width: 220px;
   animation: svTooltipIn var(--dur-normal) var(--ease-cinematic) both;

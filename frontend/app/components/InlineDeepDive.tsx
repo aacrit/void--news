@@ -9,8 +9,8 @@
 import "../styles/verify.css";
 import "../styles/inline-dd.css";
 
-import { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo } from "react";
-import { X, ShareNetwork } from "@phosphor-icons/react";
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { ShareNetwork } from "@phosphor-icons/react";
 import type {
   Story,
   StorySource,
@@ -20,6 +20,7 @@ import type {
 } from "../lib/types";
 import { fetchDeepDiveData } from "../lib/supabase";
 import { timeAgo } from "../lib/utils";
+import { leanToBucket, leanLabel } from "../lib/biasColors";
 import { hapticLight } from "../lib/haptics";
 import DeepDiveSpectrum from "./DeepDiveSpectrum";
 import type { DeepDiveSpectrumSource } from "./DeepDiveSpectrum";
@@ -32,22 +33,22 @@ import { findHistoryContext } from "../lib/historyContext";
 import LazyOnView from "./LazyOnView";
 
 /* ---------------------------------------------------------------------------
-   InlineDeepDive — Cinematic Inline Deep Dive (stage 1: STATIC).
+   InlineDeepDive — Deep Dive CONTENT renderer.
 
-   Renders the Deep Dive content as an in-flow, full-width block inside the
-   feed instead of the DeepDive modal. NO fixed positioning, NO backdrop, NO
-   body scroll lock, NO focus trap — it is just a block in the document flow
-   that pushes later cards down.
+   Renders only the Deep Dive content (masthead + sections). It is mounted
+   inside DeepDiveOverlay, which owns ALL dialog behaviour: the portal, the
+   backdrop, body scroll-lock, focus trap, Escape / backdrop / back-button
+   dismissal, focus return, and the enter/exit motion. This component therefore
+   does NOT manage positioning, scroll, focus, or Escape — it is presentational.
 
-   The data-fetch + derived-data pattern (liveData / spectrumSources /
-   hasCrossLeanSources) and the lede block are intentionally duplicated from
-   DeepDive.tsx so the legacy modal stays byte-identical. The shared
-   sub-components (Sigil, DeepDiveSpectrum, BiasSnapshot, ComparativeView,
-   ClaimConsensusSection) are reused directly.
+   (Historic note: this component used to expand as an in-flow accordion inside
+   the feed grid on both breakpoints. That inline-expand was replaced by the
+   centered-modal / bottom-sheet overlay; the accordion height tween + self
+   scroll/focus/Escape were removed because the overlay owns them now.)
 
-   The cascade classes (.anim-dd-section / .dd-cascade-*) are wired now but
-   driven statically (contentVisible = true on mount); the actual reveal
-   choreography arrives in a later stage.
+   The cascade classes (.anim-dd-section / .dd-cascade-*) fade the sections in
+   just after mount (contentVisible flips true on the next frame); under
+   prefers-reduced-motion they start visible so nothing animates.
    --------------------------------------------------------------------------- */
 
 /* History is hidden for launch (nav links removed + /history 301s to home).
@@ -55,6 +56,14 @@ import LazyOnView from "./LazyOnView";
    promise perspectives and bounce the reader to the homepage). Flip to false
    when History ships again as a feature. */
 const HISTORY_HIDDEN: boolean = true;
+
+/* Human-readable outlet tier for the source roster chips. Never fabricates a
+   tier — the caller passes the tier already present on the source data. */
+function tierLabel(tier: string): string {
+  if (tier === "us_major") return "US Major";
+  if (tier === "international") return "International";
+  return "Independent";
+}
 
 /* --- History Context Link — subtle archival cross-link (mirrors DeepDive) -- */
 function HistoryContextLink({
@@ -103,13 +112,22 @@ function HistoryContextLink({
 
 interface InlineDeepDiveProps {
   story: Story;
-  onCollapse: () => void;
+  /** id applied to the headline so the overlay dialog can aria-labelledby it. */
+  titleId?: string;
+  /** Legacy prop — the overlay owns dismissal, so this is accepted but unused.
+   *  Kept optional so existing (dormant) call sites still type-check. */
+  onCollapse?: () => void;
 }
 
-export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProps) {
-  /* ---- Cascade flag — flips true just after the accordion starts opening so
-     the .anim-dd-section sections L-cut in (see the mount effect below). ---- */
-  const [contentVisible, setContentVisible] = useState(false);
+export default function InlineDeepDive({ story, titleId }: InlineDeepDiveProps) {
+  /* ---- Cascade flag — flips true on the next frame after mount so the
+     .anim-dd-section sections fade in. Under reduced motion it starts true so
+     the content is visible immediately with no transition. ---- */
+  const prefersReduced =
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const [contentVisible, setContentVisible] = useState(prefersReduced);
   const [shareToast, setShareToast] = useState(false);
 
   /* ---- Live cluster data (copied pattern from DeepDive.tsx) ------------- */
@@ -347,121 +365,15 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
     return () => { cancelled = true; };
   }, [story.id, story.deepDive, retryCount]);
 
-  /* ---- Accordion expand on mount + L-cut content cascade -----------------
-     The block grows from 0 to its natural height (cards below slide down via
-     normal flow), then releases to height:auto so later/lazy content and hover
-     overflow (spectrum tooltips, Sigil popup) are not clipped. The
-     .anim-dd-section sections fade in just after the grow starts (an L-cut).
-     prefers-reduced-motion: skip the height tween and reveal instantly. */
-  const articleRef = useRef<HTMLElement>(null);
-  const headlineRef = useRef<HTMLButtonElement>(null);
-
-  /* Scroll the open story's headline to just under the sticky nav. Driven from
-     the accordion effect (once the block has reached full height) so a story low
-     in the feed has enough body below it to actually reach the top — a mount-time
-     scrollIntoView (height 0) clamped short and left lower stories mis-seated. */
-  const scrollHeadlineToTop = useCallback((behavior: ScrollBehavior) => {
-    const el = articleRef.current;
-    if (!el) return;
-    const top = el.getBoundingClientRect().top + window.scrollY - 64; // nav (~53) + gap
-    window.scrollTo({ top: Math.max(0, top), behavior });
-  }, []);
-
-  useLayoutEffect(() => {
-    const el = articleRef.current;
-    if (!el) return;
-    const reduce =
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) {
-      setContentVisible(true);
-      scrollHeadlineToTop("auto");
-      return;
-    }
-    const natural = el.scrollHeight;
-    el.style.overflow = "hidden";
-    el.style.height = "0px";
-    void el.offsetHeight; // commit the 0 start before transitioning
-    el.style.transition = "height 600ms var(--ease-cinematic)";
-    el.style.height = `${natural}px`;
-    scrollHeadlineToTop("smooth"); // best-effort start (may clamp low in the feed)
-
-    const release = () => {
-      el.style.height = "auto";
-      el.style.overflow = "";
-      el.style.transition = "";
-      scrollHeadlineToTop("smooth"); // authoritative: full height now, so it seats at the top
-    };
-    const onEnd = (e: TransitionEvent) => {
-      if (e.target === el && e.propertyName === "height") {
-        el.removeEventListener("transitionend", onEnd);
-        release();
-      }
-    };
-    el.addEventListener("transitionend", onEnd);
-    const fallback = window.setTimeout(release, 680); // safety if transitionend misses
-    const cascade = window.setTimeout(() => setContentVisible(true), 150);
-    return () => {
-      el.removeEventListener("transitionend", onEnd);
-      window.clearTimeout(fallback);
-      window.clearTimeout(cascade);
-    };
-    // mount-only; remounts per story via the key in HomeContent
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  /* Collapse: reverse the accordion to 0, then unmount via onCollapse. */
-  const collapsingRef = useRef(false);
-  const handleCollapse = useCallback(() => {
-    hapticLight();
-    const el = articleRef.current;
-    const reduce =
-      typeof window !== "undefined" &&
-      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!el || reduce) {
-      onCollapse();
-      return;
-    }
-    if (collapsingRef.current) return;
-    collapsingRef.current = true;
-    const current = el.scrollHeight;
-    el.style.height = `${current}px`;
-    el.style.overflow = "hidden";
-    void el.offsetHeight;
-    el.style.transition =
-      "height 480ms var(--ease-cinematic), opacity 420ms var(--ease-cinematic)";
-    el.style.height = "0px";
-    el.style.opacity = "0";
-    let done = false;
-    const finish = () => {
-      if (done) return;
-      done = true;
-      onCollapse();
-    };
-    const onEnd = (e: TransitionEvent) => {
-      if (e.target === el && e.propertyName === "height") finish();
-    };
-    el.addEventListener("transitionend", onEnd);
-    window.setTimeout(finish, 560); // safety if transitionend misses
-  }, [onCollapse]);
-
-  /* Esc collapses the inline block (parity with the modal's Escape-to-close). */
+  /* ---- Content cascade — fade the sections in on the frame after mount.
+     The overlay owns the panel enter motion; this only staggers the inner
+     sections via the .anim-dd-section / .dd-cascade-* classes. Under reduced
+     motion contentVisible starts true (initial state), so this is a no-op. */
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.preventDefault();
-        handleCollapse();
-      }
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [handleCollapse]);
-
-  /* Move focus into the block on open so keyboard + screen-reader users land on
-     the expanded content. Scroll is owned by the accordion effect above. */
-  useEffect(() => {
-    headlineRef.current?.focus({ preventScroll: true });
-    // mount only (remounts per story via the key in HomeContent)
+    if (contentVisible) return;
+    const id = requestAnimationFrame(() => setContentVisible(true));
+    return () => cancelAnimationFrame(id);
+    // mount only (remounts per story via the key in DeepDiveOverlay)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -489,8 +401,9 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
   }, [story.title]);
 
   return (
-    <article ref={articleRef} className="inline-dd" aria-label={`Deep dive: ${story.title}`}>
-      {/* ---- Masthead: share + close toolbar, then headline (also a toggle) -- */}
+    <article className="inline-dd inline-dd--overlay" aria-label={`Deep dive: ${story.title}`}>
+      {/* ---- Masthead: share toolbar, then headline. The overlay chrome owns
+             the close affordance; this toolbar keeps only Share. -------------- */}
       <header className="inline-dd__header">
         <div className="inline-dd__toolbar">
           <button
@@ -501,29 +414,14 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
           >
             <ShareNetwork size={17} weight="regular" aria-hidden="true" />
           </button>
-          <button
-            type="button"
-            className="inline-dd__action"
-            aria-label={`Close deep dive: ${story.title}`}
-            onClick={handleCollapse}
-          >
-            <X size={17} weight="bold" aria-hidden="true" />
-          </button>
           {shareToast && (
             <span className="inline-dd__share-toast" role="status">Link copied</span>
           )}
         </div>
 
-        <button
-          ref={headlineRef}
-          type="button"
-          className="inline-dd__headline"
-          aria-expanded={true}
-          aria-label={`Collapse deep dive: ${story.title}`}
-          onClick={handleCollapse}
-        >
+        <h2 id={titleId} className="inline-dd__headline">
           <span className="inline-dd__headline-text">{story.title}</span>
-        </button>
+        </h2>
 
         <div className="deep-dive-meta inline-dd__meta">
           <span className="category-tag">{story.category}</span>
@@ -595,6 +493,62 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
             <div className="inline-dd__spectrum">
               <DeepDiveSpectrum sources={spectrumSources} />
             </div>
+          </section>
+        )}
+
+        {/* ---- All Sources — complete, non-truncating chip roster ----------
+             Every source that fed this cluster, as a wrapped pill grid (lean
+             dot + name + tier). No "+N more" hidden truncation: the reader sees
+             the full roster. Long names ellipsize inside a chip; the grid wraps
+             and never causes page-level horizontal scroll. */}
+        {sources.length > 0 && (
+          <section
+            aria-label="All sources"
+            className={`inline-dd__sources anim-dd-section dd-cascade-3${contentVisible ? " anim-dd-section--visible" : ""}`}
+          >
+            <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
+            <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>
+              Sources <span className="text-data inline-dd__sources-count">({sources.length})</span>
+            </h3>
+            <ul className="inline-dd__source-chips">
+              {sources.map((src, i) => {
+                const lean = src.biasScores?.politicalLean ?? 50;
+                const bucket = leanToBucket(lean);
+                const label = `${src.name}. ${leanLabel(lean)}. ${tierLabel(src.tier)}.`;
+                const inner = (
+                  <>
+                    <span
+                      className="inline-dd__source-dot"
+                      data-lean={bucket}
+                      aria-hidden="true"
+                    />
+                    <span className="inline-dd__source-name">{src.name}</span>
+                    <span className="inline-dd__source-tier text-data" aria-hidden="true">
+                      {tierLabel(src.tier)}
+                    </span>
+                  </>
+                );
+                return (
+                  <li key={`${src.name}-${i}`} className="inline-dd__source-chip">
+                    {src.url && src.url !== "#" ? (
+                      <a
+                        href={src.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-dd__source-link"
+                        aria-label={label}
+                      >
+                        {inner}
+                      </a>
+                    ) : (
+                      <span className="inline-dd__source-link inline-dd__source-link--static" aria-label={label}>
+                        {inner}
+                      </span>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
           </section>
         )}
 
