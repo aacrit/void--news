@@ -155,10 +155,9 @@ export default function OnAirPage() {
             On Air
           </span>
           <h1 className="onair__title">The Broadcast</h1>
-          <p className="onair__sub">
-            Today&apos;s brief, read aloud in two voices. The day in five minutes,
-            then the argument worth having.
-          </p>
+          {/* Explanatory sub-callout removed (CEO 2026-08-09): the portal itself
+              is the moat. The dateline, headline, and live transport below say
+              what this is without a paragraph describing it. */}
         </header>
 
         {!hasAudio ? (

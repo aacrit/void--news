@@ -170,10 +170,13 @@
 }
 
 .msc__summary--compact {
-  /* Redundant with MobileBriefPill TL;DR section — removed from feed cards
-     to reduce vertical space. Brief is primary summary source; cards focus
-     on headline + Sigil bias signal. Saves ~20-30px per card. */
-  display: none;
+  /* CEO 2026-08-09: secondary cards now carry a short summary. The headline
+     alone was not enough context to decide whether to open a story. Clamped
+     to 2 lines (the hero keeps 3) so cards stay compact. Inherits the box /
+     font / color from .msc__summary above. */
+  -webkit-line-clamp: 2;
+  margin-top: var(--space-1);
+  margin-bottom: 0;
 }
 
 .msc__summary--pending {
