@@ -519,11 +519,11 @@
     opacity: 0.7;
   }
 
-  /* Compress DD cascade for mobile — desktop timing too slow on phone */
-  .dd-cascade-1 { transition-delay: 50ms; }
-  .dd-cascade-2 { transition-delay: 150ms; }
-  .dd-cascade-3 { transition-delay: 250ms; }
-  .dd-cascade-4 { transition-delay: 350ms; }
+  /* DD cascade stagger removed 2026-08-09 — sections reveal together. */
+  .dd-cascade-1,
+  .dd-cascade-2,
+  .dd-cascade-3,
+  .dd-cascade-4 { transition-delay: 0ms; }
 
   /* === EMPTY STATE === */
 

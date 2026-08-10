@@ -1,0 +1,188 @@
+/* ===========================================================================
+   deep-dive-page.css — Mobile full-page Deep Dive ("next screen")
+
+   The Deep Dive on phones is no longer a modal or bottom sheet. It is its own
+   full-height page that REPLACES the feed: its own Void News masthead
+   (<NavBar/>) at the top, a compact Story / Spread segmented switch, and the
+   analysis content scrolling underneath. The hardware/browser Back button
+   returns to the feed (history.pushState on open). Reuses the shared dd-*
+   content vocabulary from components.css; this file only adds the page shell,
+   the top toolbar, and the compact segmented control.
+
+   Scoped to phones only — the desktop Deep Dive is the in-feed InlineDeepDive.
+   =========================================================================== */
+
+.dd-page {
+  display: block;
+  min-height: 100vh;
+  /* Leave room for the layout-level mobile tab bar so the last section and the
+     CTA are never trapped under it. */
+  padding: 0 var(--space-4) calc(env(safe-area-inset-bottom, 0px) + 96px);
+}
+
+/* Top toolbar — Back to feed on the left, prev/next + share on the right. */
+.dd-page__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3) 0 var(--space-2);
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  background: var(--bg-primary);
+}
+
+.dd-page__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 44px;
+  padding: var(--space-1) var(--space-2) var(--space-1) 0;
+  background: none;
+  border: none;
+  color: var(--fg-secondary);
+  font-family: var(--font-structural, var(--font-body));
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+.dd-page__back:hover { color: var(--fg-primary); }
+.dd-page__back-label { white-space: nowrap; }
+
+.dd-page__bar-right {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+/* Prev / next story walkers + share — all >=44px touch targets. */
+.dd-page__nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+.dd-page__nav-btn,
+.dd-page__share {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  background: none;
+  border: none;
+  color: var(--fg-secondary);
+  cursor: pointer;
+  border-radius: 8px;
+  position: relative;
+}
+.dd-page__nav-btn:hover:not(:disabled),
+.dd-page__share:hover { color: var(--fg-primary); }
+.dd-page__nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+.dd-page__counter {
+  font-family: var(--font-data, monospace);
+  font-size: var(--text-xxs, 0.7rem);
+  color: var(--fg-tertiary);
+  letter-spacing: 0.06em;
+  min-width: 2.4em;
+  text-align: center;
+}
+
+.dd-page__share-toast {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 2px;
+  white-space: nowrap;
+  font-family: var(--font-data, monospace);
+  font-size: var(--text-xxs, 0.7rem);
+  color: var(--fg-secondary);
+  background: var(--bg-elevated, var(--bg-secondary));
+  border: 1px solid var(--border-subtle, var(--border-color));
+  border-radius: 6px;
+  padding: 2px 8px;
+  z-index: 5;
+}
+
+/* Headline + meta */
+.dd-page__headline {
+  margin: var(--space-2) 0 var(--space-2);
+}
+
+/* Compact segmented switch — a slim underline-pill toggle. Deliberately low,
+   nothing like the old full-width tab band. Sticky under the toolbar so the
+   reader can flip Story <-> Spread while scrolled into either panel. */
+.dd-seg {
+  display: inline-flex;
+  align-items: stretch;
+  gap: 2px;
+  margin: var(--space-3) 0 var(--space-4);
+  padding: 3px;
+  background: var(--bg-secondary, rgba(127,127,127,0.08));
+  border-radius: 999px;
+  position: sticky;
+  top: 56px;
+  z-index: 3;
+}
+.dd-seg__btn {
+  appearance: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  min-height: 34px;
+  padding: 0 var(--space-4);
+  border-radius: 999px;
+  font-family: var(--font-structural, var(--font-body));
+  font-size: var(--text-sm);
+  letter-spacing: 0.02em;
+  color: var(--fg-tertiary);
+  transition: color 140ms ease-out, background 140ms ease-out;
+}
+.dd-seg__btn--active {
+  color: var(--fg-primary);
+  background: var(--bg-primary);
+  box-shadow: var(--shadow-e1, 0 1px 2px rgba(0,0,0,0.12));
+  font-weight: 600;
+}
+.dd-seg__btn:focus-visible {
+  outline: 2px solid var(--focus-ring, var(--accent-primary));
+  outline-offset: 2px;
+}
+
+.dd-page__panel { display: block; }
+.dd-page__panel[hidden] { display: none; }
+
+/* Subtle inline loading line — replaces the full-panel shimmer. Only shown
+   while the source roster / spectrum are genuinely still being fetched; the
+   summary + Sigil (already carried on the story) render immediately above it. */
+.dd-page__loading {
+  color: var(--fg-muted);
+  padding: var(--space-3) 0;
+}
+.dd-page__loading::after {
+  content: "";
+  display: inline-block;
+  width: 0.5em;
+  margin-left: 2px;
+  animation: ddPageDots 1.2s steps(4, end) infinite;
+}
+@keyframes ddPageDots {
+  0% { content: ""; }
+  25% { content: "."; }
+  50% { content: ".."; }
+  75% { content: "..."; }
+}
+
+/* Single short whole-panel fade on open — no per-section stagger. */
+.anim-dd-page {
+  animation: ddPageFade 140ms ease-out both;
+}
+@keyframes ddPageFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-dd-page { animation: none; }
+  .dd-page__loading::after { animation: none; content: "..."; }
+}
