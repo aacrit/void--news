@@ -138,7 +138,10 @@ GROUNDING RULE: Every fact, figure, name, quote, date, and claim in your output 
 MUST appear in the provided articles. Do not supplement with prior knowledge, \
 background context you recall, or facts not present in the text above. If the \
 articles don't say it, you don't write it. Report only what the provided coverage \
-establishes; never add facts from memory or prior knowledge.
+establishes; never add facts from memory or prior knowledge. NEVER state a \
+person's age, title, rank, or tenure unless that exact detail appears verbatim in \
+the article text. Do not infer, estimate, or round an age. If an age or title is \
+not written in the articles, leave it out.
 
 Cardinal rule: SHOW, DON'T TELL. Place facts next to each other and let the \
 reader see the pattern. "The central bank cut rates Tuesday. The last time it \
@@ -234,18 +237,20 @@ Bad: "US Senate Could Pass Immigration Bill as Talks Continue"
 
 ---
 
-TASK 2 — summary (string, 250-350 words)
-Write a comprehensive factual briefing in inverted pyramid structure. This should \
-read like a complete news intelligence brief — rich with specifics, diverse \
-perspectives, and contextual depth. SHOW, DON'T TELL: let concrete facts, figures, \
-and juxtaposed perspectives convey significance. Never assert that something is \
-"significant" or "notable" — show the evidence and let the reader conclude.
+TASK 2 — summary (string, AT MOST 90 words)
+Write a tight, specific briefing of NO MORE THAN 90 words. Count the words. Every \
+sentence must carry a new concrete fact: a name, a number, a date, a place, or an \
+action. SHOW, DON'T TELL: juxtapose facts and let the reader see the pattern; \
+never assert that something is significant. The house standard for compression is \
+this: "A lawyer who'd never been to India drew the border in five weeks. 15 \
+million crossed it." Two sentences, no wasted words, the weight lands on its own. \
+That density is the target. A shorter, denser summary always beats a longer, \
+padded one.
 
 IMPORTANT: Articles are sorted newest-first and include publication timestamps. \
-Lead with the MOST RECENT development — what is new as of the latest articles. \
-Older articles in the cluster provide context and background, but the lede must \
-reflect the freshest reported facts. If a cluster spans multiple days, clearly \
-distinguish what happened today from prior developments.
+Open on the MOST RECENT development, the freshest reported fact: who, what, when, \
+where. Older articles are context; use only the background a reader genuinely \
+needs, and give it in one sentence.
 
 DOMINANT STORY ONLY: Summarize ONLY the single story about the entities named in \
 the DOMINANT TOPIC / ENTITIES line above; ignore any article whose subject is a \
@@ -254,47 +259,35 @@ grouped automatically and one or two may concern a DIFFERENT event. Never stitch
 two unrelated stories into one briefing, and never reference a person, place, or \
 event that does not belong to the dominant story.
 
-Paragraph 1 (2-3 sentences): The most recent newsworthy development — what just \
-happened, who, when, where. Lead with the latest event. State the single most \
-important figure, name, or outcome from the freshest reporting. \
 ARRIVE LATE: start inside the action. Do not open with "In a move that...", \
-"Following weeks of...", "As tensions grew..." — the reader does not need \
-runway. The first sentence should name a concrete action, actor, or figure \
-that happened in the last 24 hours.
+"Following weeks of...", or "As tensions grew..." The first sentence should name a \
+concrete action, actor, or figure. Then, in one or two more sentences, add the \
+context and the sharpest point of disagreement between the principal actors. Stop \
+when the facts are stated.
 
-Paragraph 2 (3-4 sentences): Context. What preceded this and how it connects to \
-the broader story. Give the background in your own words; attribute any statement \
-to the official or institution that made it, never to an outlet.
-
-Paragraph 3 (3-4 sentences): The range of stated positions. What the principal \
-actors, officials, and affected parties say, and where their accounts or claims \
-compete. Give each position equal weight. Describe what the people in the story \
-say and do, not what news outlets emphasize.
-
-Paragraph 4 (2-3 sentences): Additional specifics not already stated above. \
-Secondary figures, direct quotes, technical details, geographic scope, affected \
-populations. This is where data density matters most.
-
-Paragraph 5 (1-2 sentences): Next steps, a deadline, an expected decision, or \
-stated consequences. What to watch for next.
-
-WRITE AS AN INDEPENDENT CORRESPONDENT. This is your own report, in void --news's \
-own voice. Name no news outlet, wire service, or aggregator anywhere in the \
-summary. Do not write "sources report," "sources say," "according to reports," \
-"multiple outlets," "as reported," "reporting indicates," or any tier label ("US \
-source," "international source," "independent source"). State each fact directly, \
-as established fact. Attribute statements only to the people and institutions who \
-made them (a named official, agency, company, or court), never to the press that \
-covered the story.
-
-VOICE: Write with the confidence and authority of a seasoned correspondent. Use \
-precise nouns and strong active verbs. Prefer plain declarative sentences that \
-state what happened. Do not hedge with "reportedly," "apparently," or "seemingly" \
-unless the fact is genuinely contested in the coverage.
-
-NO REPETITION: State each fact, figure, name, and quote exactly once. Do not \
-restate the opening development later in the summary, and do not repeat a number, \
-phrase, or sentence you have already written. Every paragraph adds new information.
+HARD RULES for the summary (a reader sees violations instantly):
+- AT MOST 90 words. This is a ceiling, not a target. Do not pad to reach it.
+- NO TERMINAL RESTATEMENT. Never close on a sentence that repeats the opening in \
+other words ("Firefighters continue to battle the fires day and night.", \
+"Authorities are continuing their investigation.", "The campaign continues."). \
+The last sentence must carry a fact the summary has not already stated. If you \
+have nothing new to add, end on the previous sentence.
+- SAY UNKNOWNS ONCE. If a fact is not yet established (a cause, a toll, a motive), \
+state that a SINGLE time, or leave it out. Do not spend two or three consecutive \
+sentences saying the investigation is ongoing or the cause is not yet known.
+- NO REPETITION. State each fact, figure, name, and quote exactly once. Do not \
+restate a claim in different words later in the summary (for example, do not say \
+three times that a strait stays closed until conditions are met).
+- NEVER state a person's age, title, rank, or tenure unless it appears VERBATIM in \
+the article text above. Do not infer, estimate, or round an age. If the articles \
+do not give the age, the summary does not give the age.
+- WRITE AS AN INDEPENDENT CORRESPONDENT, in void --news's own voice. Name no news \
+outlet, wire service, or aggregator. Do not write "sources report," "sources \
+say," "according to reports," "multiple outlets," "as reported," or any tier \
+label. State each fact directly and attribute statements only to the people and \
+institutions who made them (a named official, agency, company, or court).
+- Active voice, plain declarative sentences. Do not hedge with "reportedly," \
+"apparently," or "seemingly" unless the fact is genuinely contested.
 
 Prohibited constructions:
 - "In a stunning/shocking/unprecedented development..."
@@ -544,6 +537,297 @@ def _strip_source_meta_commentary(summary: str) -> str:
     return cleaned
 
 
+# ---------------------------------------------------------------------------
+# Phase-3 summary hygiene post-checks (deterministic, $0, conservative).
+# Applied to the SAME summary text the frontend renders, on BOTH the LLM path
+# (summarize_cluster) and the rule-based floor (ensure_top50_summary_floor).
+# Each check is precision-first: it must never corrupt an already-clean summary.
+#   3a  hard 90-word trim to a sentence boundary
+#   3b  drop a terminal sentence that only restates the lead
+#   3c  collapse consecutive "unknown / ongoing investigation" padding to one
+#   3d  drop a sentence that near-duplicates an earlier claim (high Jaccard)
+#   3e  drop an ungrounded age (not present verbatim in the source article text)
+# ---------------------------------------------------------------------------
+
+# House standard: summaries are tight (<= 90 words). Shared by the trim,
+# _check_quality, and the batch instrumentation so the number lives in one place.
+_SUMMARY_WORD_CAP = 90
+
+# Stopwords for the content-word comparisons in 3b/3d. Deliberately broad
+# (articles, auxiliaries, prepositions, pronouns, continuation verbs) so that a
+# "subset" / "near-duplicate" test keys on the SPECIFIC nouns, names, numbers,
+# and verbs that carry a claim, not on grammatical scaffolding.
+_POSTCHECK_STOPWORDS = frozenset({
+    "the", "a", "an", "and", "or", "but", "for", "nor", "so", "yet",
+    "of", "to", "in", "on", "at", "by", "with", "from", "into", "onto",
+    "over", "under", "after", "before", "during", "amid", "amidst", "about",
+    "as", "than", "then", "that", "this", "these", "those", "it", "its",
+    "he", "she", "his", "her", "they", "them", "their", "we", "our", "us",
+    "you", "your", "who", "whom", "whose", "which", "what", "when", "where",
+    "why", "how", "is", "are", "was", "were", "be", "been", "being", "am",
+    "has", "have", "had", "having", "do", "does", "did", "will", "would",
+    "shall", "should", "can", "could", "may", "might", "must", "not", "no",
+    "there", "here", "also", "still", "just", "only", "both", "each", "any",
+    "some", "all", "more", "most", "such", "up", "out", "off", "down", "again",
+    "continue", "continues", "continued", "continuing", "remain", "remains",
+    "remained", "ongoing", "amp", "said", "says", "say", "told", "according",
+})
+
+# 3c: sentences that narrate an ABSENCE of information / an open process. A run
+# of consecutive such sentences is padding; collapse it to the first one only.
+_UNKNOWN_PADDING_RE = _re.compile(
+    r"(?:"
+    r"investigation[s]?\s+(?:is|are|remain|remains|continue|continues|ongoing)"
+    r"|under\s+investigation"
+    r"|(?:continue|continuing)\s+to\s+investigate"
+    r"|(?:cause|motive|circumstances|toll|number|extent|reason|details?|"
+    r"identit(?:y|ies)|origin)\b[^.?!]{0,60}?"
+    r"(?:not\s+(?:yet\s+)?(?:been\s+)?(?:known|clear|confirmed|determined|"
+    r"established|disclosed|released|identified|available)|"
+    r"remain[s]?\s+(?:unknown|unclear|under)|unclear|unknown)"
+    r"|(?:no|not)\s+(?:immediate\s+)?(?:cause|explanation|comment|word|"
+    r"information|details?)\b[^.?!]{0,40}?"
+    r"(?:known|available|given|provided|released|yet)"
+    r"|authorities\s+(?:are\s+)?(?:still\s+)?(?:looking\s+into|investigating|"
+    r"working\s+to\s+determine)"
+    r"|it\s+(?:is|remains)\s+(?:not\s+(?:yet\s+)?clear|unclear|unknown)"
+    r")",
+    _re.IGNORECASE,
+)
+
+# 3e: age assertions. Group 1 (when present) is the numeric age.
+_AGE_YEAR_OLD_RE = _re.compile(r"\b(\d{1,3})[- ]year[- ]old\b", _re.IGNORECASE)
+_AGE_AGED_RE = _re.compile(r"\baged\s+(\d{1,3})\b", _re.IGNORECASE)
+# "... is 80 ..." near a name — require it NOT be a measurement/unit to avoid
+# false positives ("is 80 percent", "is 80 million").
+_AGE_IS_RE = _re.compile(
+    r"\bis\s+(\d{2})\b(?!\s*(?:percent|per\s?cent|%|million|billion|thousand|"
+    r"hundred|point|points|degree|degrees|dollar|dollars|euro|euros|pound|"
+    r"pounds|kilomet|mile|miles|metre|meter|feet|foot|inch|kg|km|years?))",
+    _re.IGNORECASE,
+)
+
+
+def _split_sentences(text: str) -> list[str]:
+    """Split into sentences on terminal punctuation. Shares the regex the
+    existing dedupe uses so behavior is consistent across the module."""
+    if not text or not text.strip():
+        return []
+    return [p.strip() for p in _re.split(r"(?<=[.!?])\s+", text.strip()) if p.strip()]
+
+
+def _content_words(sentence: str) -> set[str]:
+    """Specific content tokens of a sentence: 3+ char alphanumerics (numbers
+    kept, e.g. "102"), minus grammatical stopwords. Used for the subset (3b) and
+    Jaccard (3d) comparisons so they key on names / numbers / actions."""
+    return {
+        w for w in _re.findall(r"[a-z0-9]{3,}", (sentence or "").lower())
+        if w not in _POSTCHECK_STOPWORDS
+    }
+
+
+def _jaccard(a: set[str], b: set[str]) -> float:
+    if not a or not b:
+        return 0.0
+    inter = len(a & b)
+    if not inter:
+        return 0.0
+    return inter / len(a | b)
+
+
+def _trim_summary_to_word_cap(summary: str, cap: int = _SUMMARY_WORD_CAP) -> str:
+    """3a: hard-trim an over-length summary to the last complete sentence at or
+    under `cap` words. No-op when already within cap. If even the first sentence
+    exceeds the cap, hard-truncate that sentence to `cap` words and close it."""
+    if not summary or not summary.strip():
+        return summary
+    words = summary.split()
+    if len(words) <= cap:
+        return summary
+    parts = _split_sentences(summary)
+    out: list[str] = []
+    count = 0
+    for p in parts:
+        wc = len(p.split())
+        if count + wc <= cap:
+            out.append(p)
+            count += wc
+        else:
+            break
+    if out:
+        return " ".join(out)
+    # First sentence alone blows the cap: keep the first `cap` words, close it.
+    trimmed = " ".join(parts[0].split()[:cap]).rstrip(",;:") if parts else ""
+    if trimmed and trimmed[-1] not in ".!?":
+        trimmed += "."
+    return trimmed or summary
+
+
+def _drop_terminal_restatement(summary: str) -> str:
+    """3b: drop the FINAL sentence when its content words are a subset of the
+    union of content words in the earlier sentences (it adds no new fact, only
+    restates the lead). Conservative: needs >= 3 sentences (never reduces a two-
+    sentence summary to one), the final sentence must have >= 1 content word, and
+    every one of those words must already appear earlier."""
+    parts = _split_sentences(summary)
+    if len(parts) < 3:
+        return summary
+    last_words = _content_words(parts[-1])
+    if not last_words:
+        return summary
+    earlier: set[str] = set()
+    for p in parts[:-1]:
+        earlier |= _content_words(p)
+    if last_words <= earlier:
+        return " ".join(parts[:-1])
+    return summary
+
+
+def _collapse_unknown_padding(summary: str) -> str:
+    """3c: within a run of CONSECUTIVE "unknown / ongoing investigation"
+    sentences, keep only the first. Non-consecutive such sentences are each
+    kept (the spec targets consecutive padding). Conservative: only touches
+    sentences the padding regex matches."""
+    parts = _split_sentences(summary)
+    if len(parts) < 2:
+        return summary
+    kept: list[str] = []
+    prev_unknown = False
+    dropped = False
+    for p in parts:
+        is_unknown = bool(_UNKNOWN_PADDING_RE.search(p))
+        if is_unknown and prev_unknown:
+            dropped = True
+            continue  # consecutive unknown sentence — collapse away
+        kept.append(p)
+        prev_unknown = is_unknown
+    return " ".join(kept) if dropped else summary
+
+
+def _drop_repeated_claim_sentences(summary: str) -> str:
+    """3d: drop a sentence whose content-word set is a near-duplicate (Jaccard
+    >= 0.7) of an EARLIER kept sentence. Conservative: only judges substantial
+    sentences (>= 4 content words), so short factual lines are never removed."""
+    parts = _split_sentences(summary)
+    if len(parts) < 2:
+        return summary
+    kept: list[str] = []
+    kept_sets: list[set[str]] = []
+    dropped = False
+    for p in parts:
+        w = _content_words(p)
+        if len(w) >= 4 and any(_jaccard(w, prev) >= 0.7 for prev in kept_sets):
+            dropped = True
+            continue
+        kept.append(p)
+        kept_sets.append(w)
+    return " ".join(kept) if dropped else summary
+
+
+def _concat_source_text(articles: list[dict]) -> str:
+    """Concatenate all available member text (title + summary + full_text) into
+    one lowercase blob used to ground the age post-check (3e). Broad on purpose:
+    an age is only dropped when it appears in NO member text, minimizing false
+    drops of a legitimately reported age."""
+    parts: list[str] = []
+    for a in articles or []:
+        for k in ("title", "summary", "full_text"):
+            v = a.get(k)
+            if v:
+                parts.append(str(v))
+    return " ".join(parts).lower()
+
+
+def _excise_age_phrase(sentence: str, number: str) -> str:
+    """Cleanly remove an age phrase carrying `number` from a sentence, preferring
+    excision of just the phrase (with any leading article) over dropping the
+    whole sentence. Handles "an 80-year-old", "aged 80", ", aged 80,"."""
+    n = _re.escape(number)
+    s = sentence
+    # ", aged 80," / ", aged 80" -> drop the parenthetical age clause.
+    s = _re.sub(r",\s*aged\s+" + n + r"\b\s*,?", ", ", s, flags=_re.IGNORECASE)
+    s = _re.sub(r"\baged\s+" + n + r"\b", "", s, flags=_re.IGNORECASE)
+    # "an/a/the 80-year-old " -> drop article + adjective together.
+    s = _re.sub(r"\b(?:an|a|the)\s+" + n + r"[- ]year[- ]old\b\s*", "", s,
+                flags=_re.IGNORECASE)
+    # bare "80-year-old " adjective.
+    s = _re.sub(r"\b" + n + r"[- ]year[- ]old\b\s*", "", s, flags=_re.IGNORECASE)
+    # punctuation / whitespace cleanup after excision.
+    s = _re.sub(r"\s+([.,;:!?])", r"\1", s)
+    s = _re.sub(r",\s*,", ",", s)
+    s = _re.sub(r"\(\s*\)", "", s)
+    s = _re.sub(r"\s{2,}", " ", s).strip()
+    s = _re.sub(r"^[,;:\s]+", "", s)
+    # Recapitalize a sentence start left lowercase by removing a leading article.
+    if s and s[0].islower():
+        s = s[0].upper() + s[1:]
+    return s
+
+
+def _drop_ungrounded_ages(summary: str, source_text: str) -> str:
+    """3e: remove any person-age assertion whose number does NOT appear in the
+    concatenated source article text. Prefer excising just the age phrase; when
+    it cannot be cleanly excised (e.g. "X is 80"), drop the whole sentence.
+    Conservative: an age is kept whenever its number appears anywhere in the
+    source text, so legitimately reported ages are never dropped."""
+    if not summary or not summary.strip():
+        return summary
+    src = source_text or ""
+
+    def grounded(num: str) -> bool:
+        return _re.search(r"\b" + _re.escape(num) + r"\b", src) is not None
+
+    parts = _split_sentences(summary)
+    if not parts:
+        return summary
+    out: list[str] = []
+    for sent in parts:
+        # Collect ungrounded ages in this sentence.
+        excisable = {m.group(1) for m in _AGE_YEAR_OLD_RE.finditer(sent)}
+        excisable |= {m.group(1) for m in _AGE_AGED_RE.finditer(sent)}
+        non_excisable = {m.group(1) for m in _AGE_IS_RE.finditer(sent)}
+        ung_excisable = {n for n in excisable if not grounded(n)}
+        ung_isform = {n for n in non_excisable if not grounded(n)}
+        if not ung_excisable and not ung_isform:
+            out.append(sent)
+            continue
+        if ung_isform:
+            # "X is 80" cannot be cleanly excised — drop the whole sentence.
+            continue
+        new = sent
+        for n in ung_excisable:
+            new = _excise_age_phrase(new, n)
+        # If excision failed to remove the age (still ungrounded), drop sentence.
+        residual = {m.group(1) for m in _AGE_YEAR_OLD_RE.finditer(new)}
+        residual |= {m.group(1) for m in _AGE_AGED_RE.finditer(new)}
+        if any(not grounded(n) for n in residual):
+            continue
+        if new.strip():
+            out.append(new.strip())
+    cleaned = " ".join(out).strip()
+    cleaned = _re.sub(r"\s{2,}", " ", cleaned)
+    # Safety: never blank a card. If every sentence was dropped, keep original.
+    return cleaned if cleaned else summary
+
+
+def _apply_summary_postchecks(summary: str, source_text: str = "") -> str:
+    """Run the Phase-3 hygiene chain on a summary. Deterministic, order matters:
+    content-level drops first (exact dup, near-dup, unknown padding, ungrounded
+    age, terminal restatement), then the hard 90-word trim last so the cap is
+    measured on the cleaned text. Every step is a no-op on already-clean input.
+    Used by BOTH the LLM path and the rule-based floor."""
+    if not summary or not summary.strip():
+        return summary
+    s = _dedupe_summary_sentences(summary)        # exact duplicate sentences
+    s = _drop_repeated_claim_sentences(s)          # 3d near-duplicate claims
+    s = _collapse_unknown_padding(s)               # 3c unknown/ongoing padding
+    if source_text:
+        s = _drop_ungrounded_ages(s, source_text)  # 3e ungrounded ages
+    s = _drop_terminal_restatement(s)              # 3b terminal restatement
+    s = _trim_summary_to_word_cap(s)               # 3a hard 90-word trim
+    return s.strip()
+
+
 def _detect_summary_source_refs(summary: str, source_names: list[str]) -> list[str]:
     """
     Warning-only: flag outlet names or media-attribution phrasing in the SUMMARY.
@@ -568,7 +852,7 @@ def _check_quality(result: dict, cluster_id: str | int = "") -> None:
     """
     Log quality warnings for out-of-spec generated content.
 
-    Checks headline word count (8-12), summary word count (250-350),
+    Checks headline word count (8-12), summary word count (<= 90 words),
     consensus/divergence item counts, and scans all text fields for
     prohibited sensationalist or value-laden terms.
 
@@ -585,13 +869,13 @@ def _check_quality(result: dict, cluster_id: str | int = "") -> None:
             f"{headline!r}"
         )
 
-    # Summary word count (target: 250-350, warn outside 200-400 range)
+    # Summary word count (target: <= 90 words; a little slack before warning).
     summary = result.get("summary", "")
     summary_wc = len(summary.split())
-    if summary_wc > 0 and not (200 <= summary_wc <= 400):
+    if summary_wc > _SUMMARY_WORD_CAP + 5:
         print(
-            f"  [quality]{cid_str} Summary word count {summary_wc} (expected 250-350): "
-            f"first 80 chars: {summary[:80]!r}"
+            f"  [quality]{cid_str} Summary word count {summary_wc} (expected <= "
+            f"{_SUMMARY_WORD_CAP}): first 80 chars: {summary[:80]!r}"
         )
 
     # Consensus/divergence item counts
@@ -1226,6 +1510,12 @@ def summarize_cluster(articles: list[dict],
     # "[The article cuts off here]", "...not detailed in the reporting") that the
     # smaller models leak despite the system-instruction ban.
     summary = _strip_source_meta_commentary(summary)
+    # Phase-3 hygiene: drop near-duplicate claims, collapse unknown/ongoing
+    # padding, strip ungrounded ages (checked against the FULL member text, not
+    # the on-topic-filtered subset, so a legitimately reported age is never
+    # dropped), drop a terminal restatement of the lead, then hard-trim to <= 90
+    # words at a sentence boundary. Deterministic; a no-op on already-clean text.
+    summary = _apply_summary_postchecks(summary, _concat_source_text(articles))
     _summary_src_refs = _detect_summary_source_refs(
         summary, [a.get("source_name", "") for a in articles]
     )
@@ -1499,11 +1789,11 @@ def summarize_clusters_batch(clusters: list[dict],
         avg_h = sum(headline_lens) / len(headline_lens)
         avg_s = sum(summary_lens) / len(summary_lens)
         out_of_range_h = sum(1 for wc in headline_lens if not (8 <= wc <= 12))
-        out_of_range_s = sum(1 for wc in summary_lens if not (200 <= wc <= 400))
+        over_cap_s = sum(1 for wc in summary_lens if wc > _SUMMARY_WORD_CAP + 5)
         print(f"  Headline avg {avg_h:.1f} words, "
               f"{out_of_range_h}/{len(headline_lens)} out of 8-12 range")
         print(f"  Summary avg {avg_s:.1f} words, "
-              f"{out_of_range_s}/{len(summary_lens)} out of 250-350 range")
+              f"{over_cap_s}/{len(summary_lens)} over the {_SUMMARY_WORD_CAP}-word cap")
 
     # Return only pool-1 indices that were attempted but failed — circuit-breaker
     # skipped indices are NOT cleared (their rule-based summaries stay as fallback).
@@ -1991,6 +2281,14 @@ def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = 50
         else:
             clean_summary = sanitize_summary(row.get("summary", "") or "")
         clean_summary = (clean_summary or "").strip()
+
+        # Phase-3 hygiene on the rule-based text too (same chain as the LLM path):
+        # near-dup / unknown-padding / ungrounded-age / terminal-restatement drops
+        # then a hard <= 90-word trim. Ages are grounded against the member text.
+        if clean_summary:
+            clean_summary = _apply_summary_postchecks(
+                clean_summary, _concat_source_text(articles)
+            ).strip()
 
         # POST-CHECK: the (re)generated text must not ITSELF be a raw excerpt the
         # frontend would blank (a broken member excerpt can survive the rule-based
