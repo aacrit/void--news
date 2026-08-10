@@ -28,13 +28,12 @@ const BUCKETS: LeanBucket[] = [
   { label: "Right",  cssClass: "comp-view__col--right",  min: 61, max: 100 },
 ];
 
-function getFaviconUrl(url: string): string {
-  try {
-    const domain = new URL(url.startsWith("http") ? url : `https://${url}`).hostname;
-    return `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
-  } catch {
-    return "";
-  }
+function getFaviconUrl(_url: string): string {
+  // Privacy: never call an external favicon service. Fetching a third-party
+  // favicon would leak the reader's IP and which publisher they are viewing to
+  // that host. The wire-ticker shows the full source name, so no logo is shown
+  // when this returns empty.
+  return "";
 }
 
 function AgreementIcon({ type }: { type: "agree" | "diverge" }) {

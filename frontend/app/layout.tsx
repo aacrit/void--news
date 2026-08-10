@@ -10,6 +10,7 @@ import AudioProvider from "./components/AudioProvider";
 import MobileNav from "./components/MobileNav";
 import ExperimentalBanner from "./components/ExperimentalBanner";
 import { BASE_PATH } from "./lib/utils";
+import { getInitialBrief } from "./lib/serverBrief";
 
 /* ---------------------------------------------------------------------------
    Four Voices of Type
@@ -112,11 +113,16 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Prerender the daily brief at build time so The Brief (TL;DR + Opinion) ships
+  // in the served HTML instead of a client-only "Loading today's brief…". The
+  // AudioProvider seeds its state with this and skips the first-mount refetch, so
+  // first paint is deterministic (no React #418). Null degrades to client fetch.
+  const initialBrief = await getInitialBrief();
   return (
     <html
       lang="en"
@@ -218,7 +224,7 @@ export default function RootLayout({
           Skip to main content
         </a>
         <ExperimentalBanner />
-        <AudioProvider>
+        <AudioProvider initialBrief={initialBrief}>
           {children}
           <MobileNav />
         </AudioProvider>
