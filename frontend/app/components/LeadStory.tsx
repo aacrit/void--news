@@ -53,7 +53,7 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, t
             2026-08-06 (the accented divider + position #1 carry the signal),
             but the semantic cue is preserved for assistive tech. */}
         {isTop && <span className="sr-only">Top story. </span>}
-        <span className={useSplit ? undefined : "lead-story__headline-text"}>{story.title}</span>
+        <span className={useSplit ? "lead-headline__text" : "lead-story__headline-text"}>{story.title}</span>
         <Sigil data={story.sigilData} size={twin ? "lg" : "xl"} storyId={story.id} />
         <CaretRight
           size={16}

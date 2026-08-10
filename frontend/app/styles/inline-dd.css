@@ -193,11 +193,12 @@
    the classic 60-75ch line length. The Spread band below is a separate
    full-width section, so this does not affect the 2-col spectrum layout. */
 .inline-dd__story .dd-summary-text {
-  /* 2026-08-10: widened 46rem -> 60rem. The inline panel's story column is
-     ~1088px on desktop, so a 736px (46rem) measure left a large empty right
-     edge that read as a truncated / misaligned summary. 60rem fills the column
-     comfortably while keeping the line length readable. */
-  max-width: 60rem;
+  /* 2026-08-10: the summary now fills the full story column (max-width:none),
+     matching the headline and the section rules above/below it. A capped
+     measure (46rem, then 60rem) still ended short of the canvas edge, which
+     read as a truncated summary next to the full-width headline + rules. The
+     feed canvas itself is capped (--canvas-max), so this stays bounded. */
+  max-width: none;
 }
 
 /* The spectrum spans the full content column as a landscape band. */
