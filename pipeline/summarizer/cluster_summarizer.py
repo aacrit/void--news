@@ -365,9 +365,15 @@ Classify into exactly one type:
 political crisis) where no single news cycle contains the entire story. Choose \
 this when articles primarily describe the state of an ongoing situation.
 - "incremental_update": a specific narrow development on a story that has already \
-been reported. Choose this when articles primarily describe a reaction, a minor \
-announcement, or a scheduled event within a larger story. Example: spokesperson \
-declining comment, scheduled hearing update.
+been reported. Choose this ONLY when articles primarily describe a reaction, a \
+minor announcement, a procedural step, or a scheduled event within a larger \
+continuing story. Examples: a spokesperson declining comment, a scheduled hearing \
+date, a routine status update. Do NOT choose this for a DECISIVE one-time outcome \
+that resolves a question, even when it caps a longer-running story: an election or \
+referendum RESULT, a court VERDICT or sentencing, an extradition or arrest, a \
+confirmed appointment or resignation, a major accident or disaster, or a signed \
+agreement. Those ARE the event, not an update to it; classify them by their nature \
+(policy_action, breaking_crisis, investigation, etc.).
 - "human_interest": individual-focused story without policy implications
 - "ceremonial": commemorative events, symbolic actions, awards, anniversaries
 - "entertainment": arts, culture, sports, celebrity

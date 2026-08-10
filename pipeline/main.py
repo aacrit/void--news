@@ -3295,7 +3295,8 @@ def main():
         print("\n[8d.5] Final feed ordering (fresh story_type / ei / titles)...")
         _fo_res = supabase.table("story_clusters").select(
             "id,title,headline_rank,rank_world,story_type,content_type,"
-            "category,source_count,editorial_importance,sections"
+            "category,source_count,editorial_importance,sections,"
+            "first_published,coverage_velocity"
         ).contains("sections", ["world"]).order(
             "rank_world", desc=True
         ).limit(80).execute()

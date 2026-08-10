@@ -21,6 +21,8 @@ Imported by pipeline/main.py and pipeline/rerank.py.
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
+
 # ---------------------------------------------------------------------------
 # Configuration — single source of truth
 # ---------------------------------------------------------------------------
@@ -34,6 +36,35 @@ STORY_TYPE_GATES = {
     "ceremonial": 0.82,
     "entertainment": 0.78,
 }
+
+# Incremental-update gate guardrails (2026-08-10 Phase-2 ranking audit, 1a).
+# The 0.75x incremental_update gate is meant for a genuine footnote to an
+# ongoing thread (a scheduled hearing date, a spokesperson declining comment).
+# In practice Gemini frequently mis-tags a DECISIVE one-time outcome (an
+# election result, a verdict, an extradition, an appointment, an accident) as
+# incremental_update, and the gate then buries it: the 2026-08-10 feed dropped
+# the 33-source El-Sayed Michigan primary result about 12 positions on this gate
+# alone. A decisive result is the event itself, not an update to it. So the gate
+# is SUPPRESSED (not applied) whenever the cluster looks like a genuinely major
+# or still-breaking story on ANY of three orthogonal, purely-quantitative
+# signals:
+#   - FRESH: first article < INCREMENTAL_FRESH_HOURS old. A result that only
+#     just broke has not had time to become a re-tread of an old story.
+#   - BROAD: source_count >= INCREMENTAL_BROAD_SOURCES. A heavily-covered story
+#     is a main event, whatever the tag; this alone catches El-Sayed (33) and
+#     the Sydney near-miss (21) on the 2026-08-10 pool.
+#   - GROWING: coverage_velocity >= INCREMENTAL_VELOCITY_MIN. A story still
+#     pulling a large batch of fresh sources inside the 24h velocity window is
+#     actively developing, not settling. 7 is the point at which the ranker's
+#     own diminishing-returns velocity score 100*(1-e^-v/4) first clears ~0.82;
+#     on the 2026-08-10 pool it cleanly separates still-growing decisive events
+#     (Scharf 7, Kinahan 8, El-Sayed 28) from settled ongoing items that keep
+#     the gate (Houthis 2, Nagasaki 3, Messi 3). The prompt fix in
+#     cluster_summarizer stops the mis-tag at the source; these are the
+#     downstream safety net for when it slips through on a clearly-major story.
+INCREMENTAL_FRESH_HOURS = 12.0
+INCREMENTAL_BROAD_SOURCES = 20
+INCREMENTAL_VELOCITY_MIN = 7
 
 # Opinion / op-ed demotion. Opinion columns are not reporting and should sit
 # below hard news. Applied in addition to the story-type gate. (2026-06-28, O7)
@@ -238,6 +269,17 @@ LEAD_BREADTH_SCAN = 5
 MAX_SAME_CAT_DEFAULT = 2
 MAX_SAME_CAT_SOFT = 1
 TOP_N = 10
+
+# Rank-aware cap correction tolerance (2026-08-10 Phase-2 ranking audit, 1a-Q4).
+# The top-10 category cap defers a 3rd-in-category cluster below the fold for
+# topic variety, but the deferral (plus the coverage guard reclaiming a slot)
+# could stamp a HIGHER-base story below a LOWER-base one with no visible reason:
+# 2026-08-10 sat Zelenskyy (base 54.53, 7th-highest base in the feed) at rank 11,
+# below Tupac (base 42.62) at rank 10. Diversity is preserved, but a cap deferral
+# must never invert the base ordering by more than this many points. A deferred
+# story is pulled back up to just above the highest-positioned story it out-bases
+# by more than CAP_RANK_TOLERANCE.
+CAP_RANK_TOLERANCE = 8.0
 FEED_CATEGORY_CAP = 12  # cap each category at this across positions TOP_N..FEED_CAP_END
 FEED_CAP_END = 50
 
@@ -341,7 +383,13 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
     for c in clusters:
         st = c.get("story_type")
         if st and st in STORY_TYPE_GATES:
-            c["rank_world"] = round(c["rank_world"] * STORY_TYPE_GATES[st], 2)
+            # incremental_update is the most error-prone gate (2026-08-10 audit):
+            # suppress it for a story that is clearly major or still breaking so a
+            # mis-tagged decisive outcome is not buried.
+            if st == "incremental_update" and _incremental_gate_suppressed(c):
+                pass
+            else:
+                c["rank_world"] = round(c["rank_world"] * STORY_TYPE_GATES[st], 2)
         # Opinion columns are demoted below hard news (O7). Kept separate from
         # the story-type gate so a future opinion story_type still composes.
         if _is_opinion(c):
@@ -504,6 +552,11 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
     # promoted tier (a clamped thin cluster can still outrank the deeper
     # eligible candidates the partition falls through to).
     if len(pool) > TOP_N:
+        # Snapshot the pre-partition rank (all gates/caps/nudges applied, but not
+        # yet the diversity encoding) so 4b can measure base-score inversions the
+        # cap introduces.
+        for c in pool:
+            c["_base_rank"] = c.get("rank_world", 0)
         gate_active = (
             sum(1 for c in pool if c.get("source_count", 0) >= FEED_LEAD_MIN)
             >= FEED_LEAD_SLOTS
@@ -604,6 +657,34 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
                 mid_deferred.append(c)
 
         pool = promoted + mid_promoted + mid_deferred
+
+        # 4b. Rank-aware cap correction (see CAP_RANK_TOLERANCE). The category cap
+        # can defer a high-base cluster below a lower-base filler (2026-08-10:
+        # Zelenskyy base 54.53 landed at rank 11, below Tupac base 42.62). Topic
+        # diversity is otherwise preserved, but such a deferral must not invert
+        # the base ordering by more than the tolerance: pull each cap-deferred
+        # cluster up to just above the earliest-positioned story it out-bases by
+        # more than CAP_RANK_TOLERANCE. Highest-base deferral first so a chain of
+        # deferrals resolves top-down. The strictly-decreasing encoding below then
+        # re-stamps rank_world along the corrected order.
+        still_capped = [c for c in overcap_deferred if c not in promoted]
+        for c in sorted(
+            still_capped, key=lambda x: x.get("_base_rank", 0), reverse=True
+        ):
+            try:
+                ci = pool.index(c)
+            except ValueError:
+                continue
+            base_c = c.get("_base_rank", c.get("rank_world", 0))
+            target = None
+            for k in range(ci):
+                base_k = pool[k].get("_base_rank", pool[k].get("rank_world", 0))
+                if base_c - base_k > CAP_RANK_TOLERANCE:
+                    target = k
+                    break
+            if target is not None:
+                pool.pop(ci)
+                pool.insert(target, c)
 
         # 5. Lead-breadth gate (see constants): if the current #1 lacks
         # breadth, promote the highest-ranked top-5 story that has it.
@@ -738,6 +819,47 @@ def _contest_anchor_conflict(stems_a: set[str], stems_b: set[str]) -> bool:
     oa = stems_a & anchors
     ob = stems_b & anchors
     return bool(oa and ob and not (oa & ob))
+
+
+def _cluster_age_hours(cluster: dict) -> float | None:
+    """Hours since the cluster's FIRST article, from first_published.
+
+    Returns None when first_published is missing or unparseable, so a caller can
+    treat "unknown age" as "do not fire the freshness guardrail" rather than
+    guessing. Accepts either an ISO string or a datetime."""
+    fp = cluster.get("first_published")
+    if not fp:
+        return None
+    try:
+        dt = (
+            datetime.fromisoformat(fp.replace("Z", "+00:00"))
+            if isinstance(fp, str)
+            else fp
+        )
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+        return max(0.0, (datetime.now(timezone.utc) - dt).total_seconds() / 3600.0)
+    except (ValueError, TypeError, AttributeError):
+        return None
+
+
+def _incremental_gate_suppressed(cluster: dict) -> bool:
+    """True when the 0.75x incremental_update gate should NOT be applied.
+
+    See the INCREMENTAL_* constants: the gate is suppressed for a story that is
+    clearly major or still breaking (broad coverage, fast growth, or freshly
+    broken), because Gemini frequently mis-tags a decisive one-time outcome as an
+    incremental_update. Each signal is independent; any one suppresses the gate.
+    Missing fields fail safe (that signal simply does not fire)."""
+    if cluster.get("source_count", 0) >= INCREMENTAL_BROAD_SOURCES:
+        return True
+    vel = cluster.get("coverage_velocity")
+    if isinstance(vel, (int, float)) and vel >= INCREMENTAL_VELOCITY_MIN:
+        return True
+    age = _cluster_age_hours(cluster)
+    if age is not None and age < INCREMENTAL_FRESH_HOURS:
+        return True
+    return False
 
 
 def _detect_event(title: str) -> str | None:
