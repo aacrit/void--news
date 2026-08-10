@@ -266,6 +266,12 @@ export interface Story {
   imageUrl?: string | null;
   /** Supabase Storage URL — pipeline-cached image, no hotlink protection */
   cachedImageUrl?: string | null;
+  /** Site-absolute permalink to this story's standalone Deep Dive page
+   *  (e.g. "/story/<uuid>/"). Present when the cluster was archived into
+   *  printed_stories (today's feed always is); absent on an archive miss.
+   *  Crawlable + shareable; the in-app click still opens the inline/full-page
+   *  Deep Dive via preventDefault on plain left-click. */
+  permalink?: string;
 }
 
 export type Category =

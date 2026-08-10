@@ -16,6 +16,7 @@ import {
 import type { Story, StorySource, DeepDiveData, ThreeLensData, OpinionLabel, SigilData, DisputedClaim } from "../lib/types";
 import { fetchDeepDiveData, fetchLastPipelineRun } from "../lib/supabase";
 import { timeAgo, BASE_PATH } from "../lib/utils";
+import { SITE_URL } from "../lib/siteMeta";
 import { hapticLight, hapticMicro } from "../lib/haptics";
 import { findHistoryContext } from "../lib/historyContext";
 import { leanLabel, getLeanColor, leanToBucket } from "../lib/biasColors";
@@ -608,7 +609,11 @@ export default function DeepDive({
   /* Share — native sheet, clipboard fallback with a brief toast. */
   const handleShare = useCallback(async () => {
     hapticLight();
-    const url = typeof window !== "undefined" ? window.location.href : "";
+    // Prefer the story's canonical standalone permalink so a shared link opens
+    // the permanent /story page, not whatever route the reader is on.
+    const url = story.permalink
+      ? `${SITE_URL}${story.permalink}`
+      : (typeof window !== "undefined" ? window.location.href : "");
     try {
       if (typeof navigator !== "undefined" && navigator.share) {
         await navigator.share({ title: story.title, url });
@@ -625,7 +630,7 @@ export default function DeepDive({
     } catch {
       /* clipboard blocked — silent no-op */
     }
-  }, [story.title]);
+  }, [story.title, story.permalink]);
 
   useEffect(() => () => { if (shareTimer.current) clearTimeout(shareTimer.current); }, []);
 

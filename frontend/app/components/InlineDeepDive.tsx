@@ -20,6 +20,7 @@ import type {
 } from "../lib/types";
 import { fetchDeepDiveData } from "../lib/supabase";
 import { timeAgo } from "../lib/utils";
+import { SITE_URL } from "../lib/siteMeta";
 import { hapticLight } from "../lib/haptics";
 import DeepDiveSpectrum from "./DeepDiveSpectrum";
 import type { DeepDiveSpectrumSource } from "./DeepDiveSpectrum";
@@ -471,7 +472,11 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
   /* Share — native share sheet, clipboard fallback with a brief toast. */
   const handleShare = useCallback(async () => {
     hapticLight();
-    const url = typeof window !== "undefined" ? window.location.href : "";
+    // Prefer the story's canonical standalone permalink so a shared link opens
+    // the permanent /story page, not the homepage the reader is browsing.
+    const url = story.permalink
+      ? `${SITE_URL}${story.permalink}`
+      : (typeof window !== "undefined" ? window.location.href : "");
     try {
       if (typeof navigator !== "undefined" && navigator.share) {
         await navigator.share({ title: story.title, url });
@@ -487,7 +492,7 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
     } catch {
       /* clipboard blocked — silent no-op */
     }
-  }, [story.title]);
+  }, [story.title, story.permalink]);
 
   return (
     <article ref={articleRef} className="inline-dd" aria-label={`Deep dive: ${story.title}`}>

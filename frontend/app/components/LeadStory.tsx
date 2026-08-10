@@ -5,6 +5,7 @@ import type { Story } from "../lib/types";
 import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
+import { BASE_PATH } from "../lib/utils";
 
 interface LeadStoryProps {
   story: Story;
@@ -80,25 +81,49 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, t
       data-story-id={story.id}
       className={`lead-story${useSplit ? " lead-split" : ""}${twin ? " lead-story--twin" : ""} ${rank === 0 ? "anim-lead-primary" : "anim-lead-secondary"}${kbdFocused ? " story-card--kbd-focus" : ""}`}
     >
-      {/* Stretched link — invisible button covers the article for click + a11y */}
-      <button
-        type="button"
-        className="story-card__stretch-link"
-        aria-label={`Open deep dive for: ${story.title}`}
-        onClick={() => {
-          if (cardRef.current && onStoryClick) {
-            hapticLight();
-            onStoryClick(story, cardRef.current.getBoundingClientRect());
-          }
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
+      {/* Stretched link — covers the article for click + a11y. Progressive
+          enhancement: a real <a href> when the story is archived (crawlable,
+          middle-click, copy-link); plain left-click still opens the inline Deep
+          Dive via preventDefault. Archive miss falls back to the button. */}
+      {story.permalink ? (
+        <a
+          href={`${BASE_PATH}${story.permalink}`}
+          className="story-card__stretch-link"
+          aria-label={`Open deep dive for: ${story.title}`}
+          onClick={(e) => {
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
             e.preventDefault();
             hapticLight();
-            onStoryClick?.(story, new DOMRect());
-          }
-        }}
-      />
+            onStoryClick?.(story, cardRef.current?.getBoundingClientRect() ?? new DOMRect());
+          }}
+          onKeyDown={(e) => {
+            if (e.key === " ") {
+              e.preventDefault();
+              hapticLight();
+              onStoryClick?.(story, cardRef.current?.getBoundingClientRect() ?? new DOMRect());
+            }
+          }}
+        />
+      ) : (
+        <button
+          type="button"
+          className="story-card__stretch-link"
+          aria-label={`Open deep dive for: ${story.title}`}
+          onClick={() => {
+            if (cardRef.current && onStoryClick) {
+              hapticLight();
+              onStoryClick(story, cardRef.current.getBoundingClientRect());
+            }
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              hapticLight();
+              onStoryClick?.(story, new DOMRect());
+            }
+          }}
+        />
+      )}
 
       {textContent}
     </article>
