@@ -5,6 +5,7 @@ import type { Story } from "../lib/types";
 import Sigil from "./Sigil";
 import MobilePerspectivePeek from "./MobilePerspectivePeek";
 import { hapticLight, hapticMedium } from "../lib/haptics";
+import { BASE_PATH } from "../lib/utils";
 import { useInView } from "../lib/sharedObserver";
 
 interface MobileStoryCardProps {
@@ -62,25 +63,50 @@ export default function MobileStoryCard({
       className={`msc msc--${variant}${twin ? " msc--twin" : ""}${isHero ? " anim-cold-open-hero" : " anim-stagger"}${!isHero && visible ? " anim-stagger--visible" : ""}${kbdFocused ? " story-card--kbd-focus" : ""}`}
       style={{ animationDelay: isHero ? "0ms" : `${Math.min(index * 40, 200)}ms` }}
     >
-      {/* Stretched link covers entire card */}
-      <button
-        type="button"
-        className="story-card__stretch-link"
-        aria-label={`Open deep dive for: ${story.title}`}
-        onClick={() => {
-          if (cardRef.current && onStoryClick) {
-            hapticLight();
-            onStoryClick(story, cardRef.current.getBoundingClientRect());
-          }
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
+      {/* Stretched link covers entire card. Progressive enhancement: a real
+          <a href> when the story is archived (crawlable, copy-link); plain tap
+          still opens the full-page Deep Dive via preventDefault. Archive miss
+          falls back to the button. The long-press Sigil peek is unaffected —
+          it lives on the inner Sigil wrapper, not this overlay. */}
+      {story.permalink ? (
+        <a
+          href={`${BASE_PATH}${story.permalink}`}
+          className="story-card__stretch-link"
+          aria-label={`Open deep dive for: ${story.title}`}
+          onClick={(e) => {
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
             e.preventDefault();
             hapticLight();
-            onStoryClick?.(story, new DOMRect());
-          }
-        }}
-      />
+            onStoryClick?.(story, cardRef.current?.getBoundingClientRect() ?? new DOMRect());
+          }}
+          onKeyDown={(e) => {
+            if (e.key === " ") {
+              e.preventDefault();
+              hapticLight();
+              onStoryClick?.(story, cardRef.current?.getBoundingClientRect() ?? new DOMRect());
+            }
+          }}
+        />
+      ) : (
+        <button
+          type="button"
+          className="story-card__stretch-link"
+          aria-label={`Open deep dive for: ${story.title}`}
+          onClick={() => {
+            if (cardRef.current && onStoryClick) {
+              hapticLight();
+              onStoryClick(story, cardRef.current.getBoundingClientRect());
+            }
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              hapticLight();
+              onStoryClick?.(story, new DOMRect());
+            }
+          }}
+        />
+      )}
 
       {isHero ? (
         /* Hero layout: headline + xl Sigil (72px, Phase 3) + summary.

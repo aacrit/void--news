@@ -22,6 +22,7 @@ import {
   FEED_ENRICHED_FIELDS,
   FEED_BASE_FIELDS,
 } from "./feedMapping";
+import { getLatestPermalinkMap } from "./archive";
 import type { Story } from "./types";
 
 const FETCH_LIMIT = 100;
@@ -111,6 +112,25 @@ export async function fetchInitialFeed(): Promise<InitialFeed> {
 
   const clusters = res.data ?? [];
   const stories = mapClustersToStories(clusters, usingEnriched);
+
+  // Attach shareable permalinks from the latest printed edition. Today's
+  // displayed clusters are archived at pipeline step 8f BEFORE this deploy, so
+  // today's feed maps 1:1 to the newest printed_stories rows (keyed by
+  // source_cluster_id == cluster.id == Story.id). An archive miss simply leaves
+  // permalink undefined and the card falls back to the button behavior.
+  try {
+    const permalinkMap = await getLatestPermalinkMap();
+    if (permalinkMap.size > 0) {
+      for (const s of stories) {
+        const link = permalinkMap.get(s.id);
+        if (link) s.permalink = link;
+      }
+    }
+  } catch (e) {
+    // Never fail the front-page build on the archive lookup — permalinks are a
+    // progressive enhancement, not a requirement for the feed to render.
+    console.warn(`[serverFeed] permalink map unavailable: ${e}`);
+  }
 
   // Fail loud: the displayed feed applies a >=3-source quality floor. Count
   // only stories that would actually render; a short/empty page must not ship.

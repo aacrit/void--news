@@ -6,6 +6,7 @@ import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
 import LeanCoverageBar from "./LeanCoverageBar";
 import { hapticLight } from "../lib/haptics";
+import { BASE_PATH } from "../lib/utils";
 import { useInView } from "../lib/sharedObserver";
 
 interface StoryCardProps {
@@ -47,26 +48,53 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
       className={`story-card anim-stagger${visible ? " anim-stagger--visible" : ""}${kbdFocused ? " story-card--kbd-focus" : ""}${family ? " story-card--family-member" : ""}`}
       style={{ animationDelay: `${Math.round(40 * Math.log2(index + 2))}ms` }}
     >
-      {/* Stretched link — invisible button covers the entire article
-          while preserving <article> semantics for screen readers */}
-      <button
-        type="button"
-        className="story-card__stretch-link"
-        aria-label={`Open deep dive for: ${story.title}`}
-        onClick={() => {
-          if (cardRef.current && onStoryClick) {
-            hapticLight();
-            onStoryClick(story, cardRef.current.getBoundingClientRect());
-          }
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
+      {/* Stretched link — covers the entire article while preserving <article>
+          semantics for screen readers. Progressive enhancement: when the story
+          has been archived it renders a real <a href> (crawlable, middle-click,
+          copy-link), but a plain left-click still opens the inline Deep Dive
+          via preventDefault. An archive miss falls back to the button. */}
+      {story.permalink ? (
+        <a
+          href={`${BASE_PATH}${story.permalink}`}
+          className="story-card__stretch-link"
+          aria-label={`Open deep dive for: ${story.title}`}
+          onClick={(e) => {
+            // Let modified clicks (new tab / window) fall through to the browser.
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
             e.preventDefault();
             hapticLight();
-            onStoryClick?.(story, new DOMRect());
-          }
-        }}
-      />
+            onStoryClick?.(story, cardRef.current?.getBoundingClientRect() ?? new DOMRect());
+          }}
+          onKeyDown={(e) => {
+            // Enter already fires click on an <a>; only intercept Space so it
+            // opens in-app (parity with the button) instead of scrolling.
+            if (e.key === " ") {
+              e.preventDefault();
+              hapticLight();
+              onStoryClick?.(story, cardRef.current?.getBoundingClientRect() ?? new DOMRect());
+            }
+          }}
+        />
+      ) : (
+        <button
+          type="button"
+          className="story-card__stretch-link"
+          aria-label={`Open deep dive for: ${story.title}`}
+          onClick={() => {
+            if (cardRef.current && onStoryClick) {
+              hapticLight();
+              onStoryClick(story, cardRef.current.getBoundingClientRect());
+            }
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              hapticLight();
+              onStoryClick?.(story, new DOMRect());
+            }
+          }}
+        />
+      )}
       {/* Family relationship chip — visible only when this card shares
           a stemmed-title-Jaccard family with another top-10 card. Tells
           the reader "this is one of N angles on the same event" rather
