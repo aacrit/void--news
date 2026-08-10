@@ -1,26 +1,26 @@
 "use client";
 
-// Route-scoped CSS — bundled with Deep Dive chunk, ships only when this
-// component loads (lazily on the homepage). Removes ~50KB gzipped from
-// the initial homepage bundle.
+// Route-scoped CSS. verify.css carries the Claim Consensus / ComparativeView
+// styles; deep-dive-page.css adds the mobile full-page shell (masthead bar,
+// compact segmented switch). Bundled with the lazy Deep Dive chunk.
 import "../styles/verify.css";
+import "../styles/deep-dive-page.css";
 
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   ArrowLeft,
   CaretLeft,
   CaretRight,
-  X,
+  ShareNetwork,
 } from "@phosphor-icons/react";
 import type { Story, StorySource, DeepDiveData, ThreeLensData, OpinionLabel, SigilData, DisputedClaim } from "../lib/types";
-import { fetchDeepDiveData } from "../lib/supabase";
+import { fetchDeepDiveData, fetchLastPipelineRun } from "../lib/supabase";
 import { timeAgo, BASE_PATH } from "../lib/utils";
-import { hapticMedium, hapticLight, hapticMicro } from "../lib/haptics";
-import { generateShareCardImage, generateSquareCardImage, generateStoryCardImage } from "../lib/shareCardRenderer";
+import { hapticLight, hapticMicro } from "../lib/haptics";
 import { findHistoryContext } from "../lib/historyContext";
 import { leanLabel, getLeanColor } from "../lib/biasColors";
 import Sigil from "./Sigil";
-import LogoIcon from "./LogoIcon";
+import NavBar from "./NavBar";
 import DeepDiveSpectrum from "./DeepDiveSpectrum";
 import BiasSnapshot from "./BiasSnapshot";
 import type { DeepDiveSpectrumSource } from "./DeepDiveSpectrum";
@@ -30,25 +30,26 @@ import ClaimMark from "./ClaimMark";
 import LazyOnView from "./LazyOnView";
 
 /* ---------------------------------------------------------------------------
-   DeepDive — Centered popup overlay showing unified summary of a story cluster.
-   Desktop (1024px+): centered modal (75vw, max-width 920px–1080px, 80vh) with
-   cinematic shadow and backdrop blur.
-   Mobile: full-screen modal sliding up from the bottom.
+   DeepDive — Mobile full-page "next screen" (phones only).
+
+   This is NOT a modal, backdrop, or bottom sheet. It fills the viewport as its
+   own page and REPLACES the feed (HomeContent renders it instead of MobileFeed
+   on the mobile branch). It mounts the Void News masthead (<NavBar/>) at the
+   top exactly like /onair, pushes a history entry on open so the hardware Back
+   button returns to the feed, and offers Story / Spread as two compact pages
+   plus prev/next story walkers.
+
+   Desktop uses InlineDeepDive (in-feed accordion) instead — this component is
+   never rendered above 767px.
    --------------------------------------------------------------------------- */
 
-// Press Analysis arrow bounce plays once per session — after the user has seen
-// it, repeating the animation on every popup open is visual noise.
-let hasSeenPressHint = false;
-
 // History is hidden pre-launch (the /history routes 301 away), so the archival
-// cross-link must never render or link into a dead route. The render path below
-// stays intact and reachable for when History returns: flip HISTORY_HIDDEN to
-// false to re-enable it, no other change needed.
+// cross-link must never render or link into a dead route. Flip HISTORY_HIDDEN to
+// false to re-enable it when History returns.
 const HISTORY_HIDDEN: boolean = true;
 
 // Human-readable outlet tier for the Sources roster. Never fabricates a tier;
-// an unknown value falls through to the Independent floor (the credibility
-// default for untiered sources).
+// an unknown value falls through to the Independent floor.
 function tierLabel(tier: string | undefined): string {
   if (tier === "us_major") return "US Major";
   if (tier === "international") return "International";
@@ -58,14 +59,16 @@ function tierLabel(tier: string | undefined): string {
 interface DeepDiveProps {
   story: Story;
   onClose: () => void;
-  /** Card's DOMRect at click time — drives FLIP morph. Null = slide-in fallback. */
-  originRect?: DOMRect | null;
-  /** Navigate to previous/next story in the feed */
+  /** Navigate to previous/next story in the feed. */
   onNavigate?: (direction: "prev" | "next") => void;
-  /** Current story index in filtered list (for counter display) */
+  /** Current story index in the visible feed (for the counter). */
   storyIndex?: number;
-  /** Total stories in filtered list */
+  /** Total stories in the visible feed. */
   totalStories?: number;
+  /** Pipeline completed_at for the NavBar "as of" dateline. */
+  editionBuiltAt?: string | null;
+  /** Accepted for call-site compatibility (desktop FLIP origin). Unused here. */
+  originRect?: DOMRect | null;
 }
 
 /* --- Six Lenses — ink-stamp 6-axis bias scores --------------------------- */
@@ -82,7 +85,6 @@ const SIX_AXES: { id: string; name: string; key: keyof SigilData }[] = [
 function SixLenses({ sigilData, visible }: { sigilData: SigilData; visible: boolean }) {
   const [activeAxis, setActiveAxis] = useState<string | null>(null);
   const [isMobileLens, setIsMobileLens] = useState(false);
-  // Phase 2 redesign: All lenses hidden by default on mobile behind single button
   const [showAllLenses, setShowAllLenses] = useState(false);
 
   useEffect(() => {
@@ -93,11 +95,6 @@ function SixLenses({ sigilData, visible }: { sigilData: SigilData; visible: bool
     return () => mq.removeEventListener("change", handler);
   }, []);
 
-  /* Priority order per memory rule: lean is hero, rigor second, opinion third */
-  const PRIMARY_IDS = new Set(["lean", "rigor", "opinion"]);
-  const primaryAxes = SIX_AXES.filter(a => PRIMARY_IDS.has(a.id));
-  const secondaryAxes = SIX_AXES.filter(a => !PRIMARY_IDS.has(a.id));
-
   const renderAxis = (axis: typeof SIX_AXES[0], i: number) => {
     const score = sigilData[axis.key] as number;
     const dotCount = Math.max(1, Math.round((score / 100) * 5));
@@ -106,7 +103,7 @@ function SixLenses({ sigilData, visible }: { sigilData: SigilData; visible: bool
       <button
         key={axis.id}
         className={`dd-lens${isActive ? " dd-lens--active" : ""}${visible ? " dd-lens--visible" : ""}`}
-        style={{ "--lens-delay": `${450 + i * 50}ms` } as React.CSSProperties}
+        style={{ "--lens-delay": `${i * 40}ms` } as React.CSSProperties}
         onClick={() => { hapticMicro(); setActiveAxis(isActive ? null : axis.id); }}
         aria-expanded={isActive}
         aria-label={`${axis.name}: ${score} out of 100`}
@@ -126,7 +123,6 @@ function SixLenses({ sigilData, visible }: { sigilData: SigilData; visible: bool
     <div className="dd-lenses">
       {isMobileLens ? (
         <>
-          {/* Phase 2 redesign: All lenses hidden behind single "Bias Analysis" button */}
           <button
             className={`dd-bias-toggle text-meta${showAllLenses ? " dd-bias-toggle--open" : ""}`}
             onClick={() => { hapticLight(); setShowAllLenses(!showAllLenses); }}
@@ -169,11 +165,8 @@ function SixLenses({ sigilData, visible }: { sigilData: SigilData; visible: bool
 
 /* --- History Context Link — subtle archival cross-link -------------------- */
 
-function HistoryContextLink({ title, summary, visible }: { title: string; summary: string; visible: boolean }) {
+function HistoryContextLink({ title, summary }: { title: string; summary: string }) {
   const match = findHistoryContext(title, summary);
-  // History is hidden pre-launch: never render the cross-link (it would deep
-  // link into /history, which 301s to the homepage). Keep the render path below
-  // for when History returns.
   if (HISTORY_HIDDEN || !match) return null;
 
   const perspText = match.perspectiveCount > 0
@@ -181,7 +174,7 @@ function HistoryContextLink({ title, summary, visible }: { title: string; summar
     : "Explore this event in the archive";
 
   return (
-    <div className={`dd-history-context anim-dd-section dd-cascade-5${visible ? " anim-dd-section--visible" : ""}`}>
+    <div className="dd-history-context">
       <hr className="ink-rule" style={{ margin: "0 0 var(--space-3) 0" }} aria-hidden="true" />
       <span className="dd-history-context__label text-meta" aria-hidden="true">Historical Context</span>
       <a
@@ -254,117 +247,47 @@ function renderSummaryWithContradictions(
   return <>{nodes}</>;
 }
 
-/* --- Main DeepDive component --------------------------------------------- */
+/* --- Main DeepDive component (mobile full-page) --------------------------- */
 
-export default function DeepDive({ story, onClose, originRect, onNavigate, storyIndex = -1, totalStories = 0 }: DeepDiveProps) {
-  const [isVisible, setIsVisible] = useState(false);
-  const [contentVisible, setContentVisible] = useState(false);
-  // Read once at mount (client-only component). Drives an instant, transform-free
-  // open/close so reduced-motion users never see the FLIP morph or slide.
-  const [prefersReducedMotion] = useState(
-    () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-  );
+export default function DeepDive({
+  story,
+  onClose,
+  onNavigate,
+  storyIndex = -1,
+  totalStories = 0,
+  editionBuiltAt = null,
+}: DeepDiveProps) {
   const [liveData, setLiveData] = useState<DeepDiveData | null>(null);
   const [isLoadingData, setIsLoadingData] = useState(false);
   const [fetchError, setFetchError] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(false);
-  const [summaryExpanded, setSummaryExpanded] = useState(() => {
-    if (typeof window !== "undefined" && window.innerWidth < 1024) return true;
-    return false;
-  });
+  const [retryCount, setRetryCount] = useState(0);
   const [analysisExpanded, setAnalysisExpanded] = useState(false);
-  const [summaryOverflows, setSummaryOverflows] = useState(false);
-  const summaryInnerRef = useRef<HTMLDivElement>(null);
-  /* Lede view tabs — phones (<768px) only. Default "story" so the summary is
-     the first thing readers see. Both panels always render (hydration-safe):
-     CSS hides the inactive one only inside the <768px media query, keyed on the
-     wrapper's data-lede-view. At >=768px both show and the tab bar is hidden, so
-     the initializer must stay window-free for SSR/first-paint to match. */
-  const [ledeView, setLedeView] = useState<"story" | "spread">("story");
-  const ledeTablistRef = useRef<HTMLDivElement>(null);
-  const handleLedeTabKey = useCallback((e: React.KeyboardEvent) => {
-    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight" && e.key !== "Home" && e.key !== "End") return;
-    e.preventDefault();
-    const next: "story" | "spread" =
-      e.key === "Home" ? "story"
-        : e.key === "End" ? "spread"
-          : ledeView === "story" ? "spread" : "story";
-    setLedeView(next);
-    hapticMicro();
-    const id = next === "story" ? "dd-lede-tab-story" : "dd-lede-tab-spread";
-    ledeTablistRef.current?.querySelector<HTMLElement>(`#${id}`)?.focus();
-  }, [ledeView]);
-  /** Null = normal slide-in style (isVisible-driven). Object = FLIP morph phase. */
-  const [morphStyle, setMorphStyle] = useState<React.CSSProperties | null>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
-  const previousFocusRef = useRef<HTMLElement | null>(null);
-  // Stable ref for onNavigate — avoids stale closure in keyboard handler
-  // without adding it to the useEffect deps (which would re-focus the panel).
-  const onNavigateRef = useRef(onNavigate);
-  onNavigateRef.current = onNavigate;
-
-  /* ---- Swipe gesture state (mobile only) -------------------------------- */
-  const [dragOffset, setDragOffset] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [isDismissing, setIsDismissing] = useState(false);
-  const touchStartRef = useRef<{ x: number; y: number; time: number; scrollTop: number; direction: "none" | "vertical" | "horizontal"; hapticFired: boolean } | null>(null);
-
-  /** Cross-fade opacity for horizontal story swipe navigation */
-  const [swipeNavOpacity, setSwipeNavOpacity] = useState(1);
-
-  /* ---- Hero image state -------------------------------------------------- */
-  const [heroImageUrl, setHeroImageUrl] = useState<string | null>(null);
-  const [heroImgLoaded, setHeroImgLoaded] = useState(false);
-  const [heroImgError, setHeroImgError] = useState(false);
-
-  /* ---- Share button state ------------------------------------------------ */
   const [shareCopied, setShareCopied] = useState(false);
-  const [shareToastText, setShareToastText] = useState("Link copied");
-  const shareCopiedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const shareTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  /* Reset swipe gesture state when the parent navigates to a different story
-     without unmounting this component (handleDeepDiveNav changes story prop). */
+  /* Story / Spread pages. Default "story" so the summary is what readers see. */
+  const [ledeView, setLedeView] = useState<"story" | "spread">("story");
+  const segRef = useRef<HTMLDivElement>(null);
+
+  /* NavBar "as of" dateline. Seeded from the prop (HomeContent already knows the
+     pipeline time); fetches as a fallback so the masthead matches Home. */
+  const [builtAt, setBuiltAt] = useState<string | null>(editionBuiltAt);
   useEffect(() => {
-    setIsDismissing(false);
-    setIsDragging(false);
-    setDragOffset(0);
-    setShareCopied(false);
-    setLedeView("story"); // prev/next lands on The Story, not a leftover Spread tab
-    setHeroImageUrl(null);
-    setHeroImgLoaded(false);
-    setHeroImgError(false);
-    touchStartRef.current = null;
-    if (shareCopiedTimer.current) clearTimeout(shareCopiedTimer.current);
-  }, [story.id]);
+    if (builtAt) return;
+    let alive = true;
+    fetchLastPipelineRun().then((run) => {
+      if (alive && run?.completed_at) setBuiltAt(run.completed_at);
+    });
+    return () => { alive = false; };
+  }, [builtAt]);
 
-  /* ---- One-time swipe hint (mobile only) -------------------------------- */
-  const [showSwipeHint, setShowSwipeHint] = useState(false);
-
-  useEffect(() => {
-    if (isDesktop || !isVisible || !onNavigate || totalStories <= 1) return;
-    try {
-      if (sessionStorage.getItem("dd-swipe-hint-seen")) return;
-    } catch { return; }
-
-    let hideTimer: ReturnType<typeof setTimeout> | null = null;
-    const showTimer = setTimeout(() => {
-      setShowSwipeHint(true);
-      hideTimer = setTimeout(() => {
-        setShowSwipeHint(false);
-        try { sessionStorage.setItem("dd-swipe-hint-seen", "1"); } catch { /* ignore */ }
-      }, 4000);
-    }, 500);
-    return () => {
-      clearTimeout(showTimer);
-      if (hideTimer) clearTimeout(hideTimer);
-    };
-  }, [isDesktop, isVisible, onNavigate, totalStories]);
+  // Stable ref for onClose — used by the popstate listener without re-binding.
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
 
   const deepDive: DeepDiveData | undefined = liveData ?? story.deepDive;
-
   const sources = useMemo(() => deepDive?.sources ?? [], [deepDive]);
 
-  /* ---- Map sources for mini-spectrum component ---- */
   const spectrumSources: DeepDiveSpectrumSource[] = useMemo(
     () =>
       sources
@@ -378,23 +301,12 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           factualRigor: src.biasScores?.factualRigor,
           confidence: src.confidence,
         })),
-    [sources]
+    [sources],
   );
 
-  /* Lede has a Sigil/Spectrum panel to pair with the summary — drives whether
-     the phone tab bar ("The Story" / "The Spread") and the second column render. */
+  /* Spread page makes sense only when there is a Sigil or scored sources. */
   const hasLedeSpectrum = Boolean(story.sigilData) || spectrumSources.length > 0;
 
-  /* ---- Trust score helper — for trust badge computation ---- */
-  // tierScore + factualRigor * 0.4 + confidence * 0.2 (0–100 scale)
-  function computeTrustScore(src: StorySource): number {
-    const tierScore = src.tier === "us_major" ? 60 : src.tier === "international" ? 50 : 40;
-    const rigor = src.biasScores?.factualRigor ?? 50;
-    const conf = (src.confidence ?? 0.5) * 100;
-    return Math.round(tierScore * 0.4 + rigor * 0.4 + conf * 0.2);
-  }
-
-  /* ---- Check if sources span 2+ lean buckets (for Read All Sides button) ---- */
   const hasCrossLeanSources = useMemo(() => {
     const buckets = new Set<string>();
     for (const src of sources) {
@@ -407,23 +319,13 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
     return false;
   }, [sources]);
 
-  /* ---- Detect desktop vs mobile for animation choreography ------------- */
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 1024px)");
-    setIsDesktop(mq.matches);
+  /* Genuinely-waiting flag: the summary + Sigil are already on the story and
+     render immediately; only the full source roster / spectrum are still being
+     fetched. Drives the subtle inline loading line (never a full-panel skeleton,
+     never blanks already-available content). */
+  const sourcesPending = isLoadingData && sources.length === 0;
 
-    function handleChange(e: MediaQueryListEvent) {
-      setIsDesktop(e.matches);
-    }
-
-    mq.addEventListener("change", handleChange);
-    return () => mq.removeEventListener("change", handleChange);
-  }, []);
-
-  /* ---- Retry counter — incrementing triggers re-fetch ------------------- */
-  const [retryCount, setRetryCount] = useState(0);
-
-  /* ---- Fetch live data from Supabase ----------------------------------- */
+  /* ---- Fetch live cluster data from Supabase ---------------------------- */
   useEffect(() => {
     let cancelled = false;
 
@@ -444,7 +346,6 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           if (!article) continue;
 
           const source = article.source;
-          // bias_scores may be object (one-to-one) or array (one-to-many)
           const biasRaw = article.bias_scores;
           const bias = Array.isArray(biasRaw)
             ? (biasRaw.length > 0 ? biasRaw[0] : null)
@@ -454,8 +355,6 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           const opinionVal = (bias?.opinion_fact as number) ?? 25;
           const rigor = (bias?.factual_rigor as number) ?? 75;
 
-          // Parse rationale if available — pipeline stores snake_case keys,
-          // frontend types use camelCase, so we map here.
           let rationale: Record<string, unknown> | null = null;
           if (bias?.rationale && typeof bias.rationale === "object") {
             rationale = bias.rationale;
@@ -535,13 +434,11 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
             framing: typeof rawGemini.framing === "string" ? rawGemini.framing : undefined,
           } : undefined;
 
-          // Derive opinion label
           let opinionLabel: OpinionLabel = "Reporting";
           if (opinionVal > 75) opinionLabel = "Editorial";
           else if (opinionVal > 50) opinionLabel = "Opinion";
           else if (opinionVal > 25) opinionLabel = "Analysis";
 
-          // Per-article coverage: based on rigor + confidence (no cluster source count)
           const confidence = (bias?.confidence as number) ?? 0.5;
           const coverageScore = Math.round((rigor / 100) * 60 + confidence * 40);
 
@@ -562,8 +459,6 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           storySourceList.push({
             name: (source?.name as string) ?? "Unknown",
             url: (article.url as string) ?? (source?.url as string) ?? "#",
-            // Untiered sources default to the Independent credibility floor,
-            // never us_major — an unknown outlet must not inherit top-tier trust.
             tier: ((source?.tier as string) as StorySource["tier"]) ?? "independent",
             biasScores: {
               politicalLean: lean,
@@ -579,30 +474,7 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
           });
         }
 
-        // Extract best hero image from cluster articles (prefer highest-tier source)
-        {
-          const tierRank: Record<string, number> = { us_major: 3, international: 2, independent: 1 };
-          let bestImg: { url: string; rank: number } | null = null;
-          for (const row of raw!) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const a = row.article as any;
-            if (!a?.image_url) continue;
-            const url = a.image_url as string;
-            if (url.startsWith('data:') || url.length < 20 || /logo|icon|favicon|pixel|spacer|tracker|1x1|blank|placeholder|default-og|brand/i.test(url)) continue;
-            const tier = (a.source?.tier as string) ?? "independent";
-            const rank = tierRank[tier] ?? 0;
-            if (!bestImg || rank > bestImg.rank) bestImg = { url, rank };
-          }
-          if (!cancelled) {
-            setHeroImageUrl(bestImg?.url ?? null);
-            setHeroImgLoaded(false);
-            setHeroImgError(false);
-          }
-        }
-
         // Deduplicate: keep only the first article per source name.
-        // Multiple articles from the same outlet in a cluster would otherwise
-        // produce duplicate entries in the spectrum and source count display.
         const seenSourceNames = new Set<string>();
         const dedupedSourceList = storySourceList.filter((s) => {
           const key = s.name.toLowerCase().trim();
@@ -612,10 +484,6 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
         });
 
         if (!cancelled && dedupedSourceList.length > 0) {
-          // Use ONLY pipeline-generated consensus/divergence from the cluster.
-          // When the arrays are empty we leave them empty and omit those
-          // sections downstream rather than fabricating agreement the data does
-          // not support (no "Sources broadly agree..." placeholder).
           const consensus = Array.isArray(story.deepDive?.consensus) ? story.deepDive.consensus : [];
           const divergenceData = Array.isArray(story.deepDive?.divergence) ? story.deepDive.divergence : [];
 
@@ -637,975 +505,340 @@ export default function DeepDive({ story, onClose, originRect, onNavigate, story
     return () => { cancelled = true; };
   }, [story.id, story.deepDive, retryCount]);
 
-  /* ---- Open animation — FLIP morph or slide-in fallback ----------------- */
+  /* ---- Reset transient page state when the parent walks to another story
+     (prev/next does NOT remount — HomeContent renders this without a per-story
+     key so the page persists and just re-fetches). ------------------------ */
   useEffect(() => {
-    previousFocusRef.current = document.activeElement as HTMLElement;
+    setLedeView("story");
+    setAnalysisExpanded(false);
+    setShareCopied(false);
+    if (shareTimer.current) clearTimeout(shareTimer.current);
+    window.scrollTo(0, 0);
+  }, [story.id]);
 
-    // iOS Safari ignores overflow:hidden on body — position:fixed is required
-    // to actually prevent background scroll. Save scrollY so we can restore it.
-    const scrollY = window.scrollY;
-    const originalOverflow = document.body.style.overflow;
-    const originalPosition = document.body.style.position;
-    const originalWidth = document.body.style.width;
-    const originalTop = document.body.style.top;
-
-    document.body.style.overflow = "hidden";
-    document.body.style.position = "fixed";
-    document.body.style.width = "100%";
-    document.body.style.top = `-${scrollY}px`;
-
-    // Global state: allows CSS to disable expensive backdrop-filters on
-    // elements hidden behind the Deep Dive overlay (mobile GPU budget).
-    document.documentElement.classList.add('deep-dive-active');
-
-    // Feed recession: page-main scales down 0.3%, creating physical depth
-    // — the feed recedes as the Deep Dive approaches the viewer.
-    const pageMain = document.querySelector('.page-main');
-    pageMain?.classList.remove('page-main--deep-dive-closing');
-    pageMain?.classList.add('page-main--deep-dive-open');
-
-    hapticMedium();
-    const isDesktopForMorph = window.innerWidth >= 1024;
-    const hasMorph = originRect && originRect.width > 0 && panelRef.current && isDesktopForMorph;
-
-    if (prefersReducedMotion) {
-      /* ═══ Reduced motion: instant, transform-free reveal ═══ */
-      setIsVisible(true);
-      requestAnimationFrame(() => {
-        setContentVisible(true);
-        panelRef.current?.setAttribute('data-settled', '');
-      });
-    } else if (hasMorph) {
-      /* ═══ SCENE 4: MATCH CUT — Card expands into Deep Dive panel ═══
-         Cinematic reference: Kubrick match cuts (2001 bone → satellite).
-         The headline maintains visual continuity from its card position
-         to its panel position — the viewer's eye never loses the subject.
-
-         Choreography (L-cut timing — content begins before morph settles):
-         1. Backdrop blur fades in → feed goes shallow DoF (Deakins chiaroscuro)
-         2. Panel snaps to card's exact rect (first frame of the match cut)
-         3. Panel morphs card → final rect via spring-bouncy (500ms)
-            - Shadow depth increases during morph (dolly in: approaching)
-            - Border-radius transitions (card edge → panel edge)
-            - Box-shadow ramps from e0 → cinematic-dramatic
-         4. Content cascades in at ~40% morph completion (L-cut: new scene
-            audio starts before old scene visual completes)
-         5. Studio reflection ::before fades in after panel settles
-
-         The L-cut offset (content at 180ms into a 500ms morph = 36%) is
-         motivated: the viewer needs to see the content "behind" the panel
-         before the panel finishes its physical movement. This creates the
-         sensation that the Deep Dive was always there — the camera merely
-         revealed it. */
-
-      const isDesktopNow = window.innerWidth >= 1024;
-
-      // Step 1: Backdrop blur starts immediately
-      setIsVisible(true);
-
-      // Step 2: Measure the panel's final position
-      requestAnimationFrame(() => {
-        const panel = panelRef.current;
-        if (!panel) return;
-
-        // On desktop the panel is centered via left:50%;top:50% + translate(-50%,-50%).
-        // We must measure with that centering transform applied to get the true final rect.
-        const centeringTransform = isDesktopNow ? "translate(-50%, -50%)" : "none";
-        panel.style.opacity = "1";
-        panel.style.transform = centeringTransform;
-        const finalRect = panel.getBoundingClientRect();
-
-        if (finalRect.width === 0) {
-          const delay = isDesktopNow ? 120 : 30;
-          setTimeout(() => setContentVisible(true), delay);
-          return;
-        }
-
-        // Compute inverse transform: final → card origin
-        const MORPH_SCALE_MIN = 0.15;
-        const scaleX = Math.max(MORPH_SCALE_MIN, originRect.width / finalRect.width);
-        const scaleY = Math.max(MORPH_SCALE_MIN, originRect.height / finalRect.height);
-        const dx = (originRect.left + originRect.width / 2) - (finalRect.left + finalRect.width / 2);
-        const dy = (originRect.top + originRect.height / 2) - (finalRect.top + finalRect.height / 2);
-
-        const snapTransform = isDesktopNow
-          ? `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${scaleX}, ${scaleY})`
-          : `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`;
-        const finalTransform = isDesktopNow
-          ? "translate(-50%, -50%) scale(1, 1)"
-          : "translate(0, 0) scale(1, 1)";
-
-        // Step 3: Snap panel to card position (no transition)
-        setMorphStyle({
-          transform: snapTransform,
-          borderRadius: "8px",
-          opacity: 1,
-          boxShadow: "var(--shadow-e0)",
-          transition: "none",
-        });
-
-        // Step 4: Match cut morph — card position → final panel position.
-        // Double rAF guarantees the browser paints the snap frame before
-        // the transition begins. The first rAF commits the snap to the DOM,
-        // the browser paints it, then the second rAF starts the spring.
-        // This is more reliable than setTimeout(0) which can fire before
-        // the browser paints, collapsing snap + transition into one frame.
-        requestAnimationFrame(() => {
-          setMorphStyle({
-            transform: finalTransform,
-            borderRadius: isDesktopNow ? "16px" : "16px 16px 0 0",
-            opacity: 1,
-            boxShadow: "var(--shadow-cinematic-lifted)",
-            transition: [
-              "transform 200ms var(--spring-bouncy)",
-              "border-radius 120ms cubic-bezier(0.16, 1, 0.3, 1)",
-              "opacity 200ms cubic-bezier(0.16, 1, 0.3, 1)",
-              "box-shadow 150ms cubic-bezier(0.16, 1, 0.3, 1)",
-            ].join(", "),
-          });
-
-          // L-cut: content cascades in while morph is still settling.
-          setTimeout(() => setContentVisible(true), isDesktopNow ? 80 : 50);
-
-          // Clear morph style after transition settles
-          setTimeout(() => {
-            setMorphStyle(null);
-            panelRef.current?.setAttribute('data-settled', '');
-          }, 220);
-        });
-      });
-    } else {
-      /* ═══ FALLBACK: directional slide-in (keyboard nav, no rect) ═══ */
-      requestAnimationFrame(() => {
-        setIsVisible(true);
-        const delay = window.innerWidth >= 768 ? 200 : 120;
-        setTimeout(() => {
-          setContentVisible(true);
-          panelRef.current?.setAttribute('data-settled', '');
-        }, delay);
-      });
-    }
-
-    return () => {
-      document.body.style.overflow = originalOverflow;
-      document.body.style.position = originalPosition;
-      document.body.style.width = originalWidth;
-      document.body.style.top = originalTop;
-      // Restore scroll position that was frozen by position:fixed
-      window.scrollTo(0, scrollY);
-      // Remove feed recession + global state classes
-      document.documentElement.classList.remove('deep-dive-active');
-      const pm = document.querySelector('.page-main');
-      pm?.classList.remove('page-main--deep-dive-open', 'page-main--deep-dive-closing');
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  /* ---- History integration: push a state entry on open so the hardware /
+     browser Back button returns to the feed instead of leaving the site. --- */
+  useEffect(() => {
+    window.history.pushState({ voidDeepDive: true }, "");
+    const onPop = () => { onCloseRef.current(); };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+    // mount-only: one entry per open (prev/next keeps the same entry).
   }, []);
 
-  /* ---- Focus trap + Escape key ----------------------------------------- */
-  useEffect(() => {
-    if (!isVisible) return;
-    panelRef.current?.focus();
+  /* Back to feed — pop the pushed entry (fires popstate -> onClose). */
+  const handleBack = useCallback(() => {
+    hapticLight();
+    window.history.back();
+  }, []);
 
-    function handleKeyDown(e: KeyboardEvent) {
+  /* Keyboard: Escape returns to feed, arrows walk stories. */
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault();
-        handleClose();
-        return;
-      }
-
-      // Arrow keys for inter-story navigation (read from ref to avoid stale closure)
-      if (onNavigateRef.current && (e.key === "ArrowLeft" || e.key === "ArrowRight")) {
+        handleBack();
+      } else if (onNavigate && (e.key === "ArrowLeft" || e.key === "ArrowRight")) {
         e.preventDefault();
-        onNavigateRef.current(e.key === "ArrowLeft" ? "prev" : "next");
-        return;
+        onNavigate(e.key === "ArrowLeft" ? "prev" : "next");
       }
-
-      if (e.key === "Tab" && panelRef.current) {
-        const focusable = panelRef.current.querySelectorAll<HTMLElement>(
-          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
-        );
-        if (focusable.length === 0) return;
-
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
-      }
-    }
-
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isVisible]);
-
-  /* ---- Detect summary overflow — show "Read more" only when text is clipped ---- */
-  useEffect(() => {
-    const el = summaryInnerRef.current;
-    if (!el || summaryExpanded) return;
-
-    const check = () => {
-      setSummaryOverflows(el.scrollHeight > el.clientHeight + 2);
     };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [handleBack, onNavigate]);
 
-    check();
-    const ro = new ResizeObserver(check);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [summaryExpanded, story.summary, contentVisible]);
+  /* Segmented-control keyboard support (roving tabs). */
+  const handleSegKey = useCallback((e: React.KeyboardEvent) => {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight" && e.key !== "Home" && e.key !== "End") return;
+    e.preventDefault();
+    const next: "story" | "spread" =
+      e.key === "Home" ? "story"
+        : e.key === "End" ? "spread"
+          : ledeView === "story" ? "spread" : "story";
+    setLedeView(next);
+    hapticMicro();
+    const id = next === "story" ? "dd-seg-story" : "dd-seg-spread";
+    segRef.current?.querySelector<HTMLElement>(`#${id}`)?.focus();
+  }, [ledeView]);
 
-  /* ---- Share handler ------------------------------------------------------ */
+  /* Share — native sheet, clipboard fallback with a brief toast. */
   const handleShare = useCallback(async () => {
     hapticLight();
     const url = typeof window !== "undefined" ? window.location.href : "";
-
-    /** Show a transient toast under the share button. */
-    const showToast = (msg: string) => {
-      setShareToastText(msg);
+    try {
+      if (typeof navigator !== "undefined" && navigator.share) {
+        await navigator.share({ title: story.title, url });
+        return;
+      }
+    } catch {
+      /* cancelled or unsupported — fall through to clipboard */
+    }
+    try {
+      await navigator.clipboard.writeText(`${story.title}\n${url}`);
       setShareCopied(true);
-      if (shareCopiedTimer.current) clearTimeout(shareCopiedTimer.current);
-      shareCopiedTimer.current = setTimeout(() => setShareCopied(false), 2400);
-    };
-
-    /* 1. Generate Evidence Card — 9:16 story card (primary), fallback to square/OG */
-    const isMobileShare = typeof window !== "undefined" && window.innerWidth < 768;
-    const deepDiveSources = (liveData?.sources ?? story.deepDive?.sources) || [];
-    let blob: Blob | null = null;
-    try {
-      blob = await generateStoryCardImage(story, deepDiveSources, url);
+      if (shareTimer.current) clearTimeout(shareTimer.current);
+      shareTimer.current = setTimeout(() => setShareCopied(false), 2000);
     } catch {
-      // 9:16 card failed — fall back to legacy formats
-      try {
-        blob = isMobileShare
-          ? await generateSquareCardImage(story)
-          : await generateShareCardImage(story);
-      } catch {
-        // Canvas rendering failed — fall back to URL-only sharing below
-      }
+      /* clipboard blocked — silent no-op */
     }
+  }, [story.title]);
 
-    /* 2a. Mobile with file-sharing support: share card image + URL */
-    if (blob && typeof navigator !== "undefined" && navigator.share && navigator.canShare) {
-      const file = new File([blob], "void-news-evidence-card.png", { type: "image/png" });
-      const shareData = { files: [file], title: story.title, url };
-      try {
-        if (navigator.canShare(shareData)) {
-          await navigator.share(shareData);
-          return; // OS share sheet handled feedback
-        }
-      } catch {
-        // User cancelled or share failed — fall through to download
-      }
-    }
+  useEffect(() => () => { if (shareTimer.current) clearTimeout(shareTimer.current); }, []);
 
-    /* 2b. Mobile without file support: share URL via native sheet */
-    if (!blob && typeof navigator !== "undefined" && navigator.share) {
-      try {
-        await navigator.share({ url, title: story.title });
-        return;
-      } catch {
-        // User cancelled — fall through
-      }
-    }
-
-    /* 3. Desktop (or file-share not supported): download the PNG */
-    if (blob) {
-      try {
-        const blobUrl = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = blobUrl;
-        a.download = "void-news-evidence-card.png";
-        a.style.display = "none";
-        document.body.appendChild(a);
-        a.click();
-        // Cleanup after a tick so the download starts
-        setTimeout(() => {
-          document.body.removeChild(a);
-          URL.revokeObjectURL(blobUrl);
-        }, 100);
-        // Also copy URL to clipboard for easy pasting
-        try { await navigator.clipboard.writeText(url); } catch { /* ok */ }
-        showToast("Card saved");
-        return;
-      } catch {
-        // Download failed — fall through to clipboard-only
-      }
-    }
-
-    /* 4. Last resort: copy URL to clipboard */
-    try {
-      await navigator.clipboard.writeText(url);
-      showToast("Link copied");
-    } catch {
-      // Clipboard API not available — silent fail
-    }
-  }, [story, liveData]);
-
-  /* ---- Close — reverse FLIP morph (panel shrinks back into the card) ---- */
-  const handleClose = useCallback(() => {
-    hapticLight();
-    // Remove settled state — hides studio reflection ::before immediately
-    panelRef.current?.removeAttribute('data-settled');
-    // Phase 1: Content fades out quickly
-    setContentVisible(false);
-
-    // Feed recession: swap open → closing (scale returns with snappy spring)
-    const pageMain = document.querySelector('.page-main');
-    pageMain?.classList.remove('page-main--deep-dive-open');
-    pageMain?.classList.add('page-main--deep-dive-closing');
-
-    // Backdrop rack-out: blur clears (feed refocuses) via CSS animation
-    const backdrop = document.querySelector('.deep-dive-backdrop');
-    backdrop?.classList.add('deep-dive-backdrop--closing');
-
-    // Reduced motion: dismiss instantly with no reverse morph or slide. The
-    // open effect's unmount cleanup restores the frozen scroll position.
-    if (prefersReducedMotion) {
-      setIsVisible(false);
-      pageMain?.classList.remove('page-main--deep-dive-closing');
-      previousFocusRef.current?.focus();
-      onClose();
-      return;
-    }
-
-    /* ═══ SCENE 5: REVERSE SHOT — Panel collapses back into its card ═══
-       Find the actual card in the DOM at close time rather than relying on
-       the stale originRect from open time. This handles arrow-key navigation
-       between stories (story changes but originRect still pointed at the
-       original card) and any layout shifts.
-
-       The panel stays fully opaque until the final 80ms — the viewer's eye
-       tracks the panel all the way back into the card, then it vanishes
-       into the card surface like a match cut in reverse. */
-
-    // Fresh rect: query the DOM for the current story's card element.
-    // Falls back to originRect (still valid when body is position:fixed),
-    // then to null (graceful center-close fallback).
-    const cardEl = document.querySelector(`[data-story-id="${story.id}"]`);
-    const targetRect = cardEl ? cardEl.getBoundingClientRect() : (originRect?.width ? originRect : null);
-
-    if (targetRect && targetRect.width > 0 && panelRef.current) {
-      const panel = panelRef.current;
-      if (!panel) { previousFocusRef.current?.focus(); onClose(); return; }
-
-      const currentRect = panel.getBoundingClientRect();
-      const MORPH_SCALE_MIN = 0.15;
-      const scaleX = Math.max(MORPH_SCALE_MIN, targetRect.width / currentRect.width);
-      const scaleY = Math.max(MORPH_SCALE_MIN, targetRect.height / currentRect.height);
-      const dx = (targetRect.left + targetRect.width / 2) - (currentRect.left + currentRect.width / 2);
-      const dy = (targetRect.top + targetRect.height / 2) - (currentRect.top + currentRect.height / 2);
-
-      const isDesktopNow = window.innerWidth >= 1024;
-      const closeTransform = isDesktopNow
-        ? `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(${scaleX}, ${scaleY})`
-        : `translate(${dx}px, ${dy}px) scale(${scaleX}, ${scaleY})`;
-
-      // Reverse match cut — panel physically returns to the card.
-      // 320ms with smooth deceleration: fast departure, gentle arrival.
-      // Opacity holds for first 220ms then fades in final 100ms.
-      setMorphStyle({
-        transform: closeTransform,
-        borderRadius: "8px",
-        opacity: 0,
-        boxShadow: "var(--shadow-e0)",
-        transition: [
-          "transform 150ms cubic-bezier(0.32, 0.72, 0, 1)",
-          "border-radius 100ms cubic-bezier(0.32, 0.72, 0, 1)",
-          "opacity 80ms cubic-bezier(0.16, 1, 0.3, 1) 70ms",
-          "box-shadow 100ms cubic-bezier(0.32, 0.72, 0, 1)",
-        ].join(", "),
-      });
-
-      // L-cut — backdrop fades early so feed sharpens while panel mid-flight
-      setTimeout(() => setIsVisible(false), 50);
-
-      // Cleanup — after panel has visually merged with the card
-      setTimeout(() => {
-        pageMain?.classList.remove('page-main--deep-dive-closing');
-        previousFocusRef.current?.focus();
-        onClose();
-      }, 180);
-    } else {
-      /* ═══ FALLBACK: fast slide-out ═══ */
-      setIsVisible(false);
-      setTimeout(() => {
-        pageMain?.classList.remove('page-main--deep-dive-closing');
-        previousFocusRef.current?.focus();
-        onClose();
-      }, 300);
-    }
-  }, [onClose, originRect, story.id, prefersReducedMotion]);
-
-  /* ---- Swipe-to-dismiss touch handlers (mobile only) -------------------- */
-
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    if (isDesktop) return;
-    const panel = panelRef.current;
-    if (!panel) return;
-
-    const touch = e.touches[0];
-    const scrollTop = panel.scrollTop;
-
-    touchStartRef.current = {
-      x: touch.clientX,
-      y: touch.clientY,
-      time: Date.now(),
-      scrollTop,
-      direction: "none",
-      hapticFired: false,
-    };
-  }, [isDesktop]);
-
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    if (isDesktop || !touchStartRef.current) return;
-
-    const touch = e.touches[0];
-    const deltaX = touch.clientX - touchStartRef.current.x;
-    const deltaY = touch.clientY - touchStartRef.current.y;
-    const absX = Math.abs(deltaX);
-    const absY = Math.abs(deltaY);
-
-    // Determine direction on first significant movement (20px dead zone)
-    if (touchStartRef.current.direction === "none" && (absX > 20 || absY > 20)) {
-      touchStartRef.current.direction = absX > absY * 2 ? "horizontal" : "vertical";
-    }
-
-    // --- Horizontal swipe (story navigation) ---
-    if (touchStartRef.current.direction === "horizontal" && onNavigateRef.current) {
-      // Haptic detent at threshold crossing (once per gesture)
-      if (absX > 60 && !touchStartRef.current.hapticFired) {
-        hapticMicro();
-        touchStartRef.current.hapticFired = true;
-      }
-      return;
-    }
-
-    // --- Vertical swipe (dismiss) ---
-    if (touchStartRef.current.direction !== "vertical") return;
-    if (deltaY <= 0) return;
-
-    // Guard: if user started scrolling from mid-content, don't intercept
-    const target = e.target as Node;
-    const dragIndicator = panelRef.current?.querySelector(".dd-drag-indicator");
-    const isOnDragIndicator = dragIndicator?.contains(target) ?? false;
-    if (touchStartRef.current.scrollTop > 5 && !isOnDragIndicator) return;
-
-    // Prevent page scroll while we're handling the drag
-    e.preventDefault();
-
-    // Rubber-band resistance — dampened feel
-    const offset = deltaY * 0.6;
-    setDragOffset(offset);
-    setIsDragging(true);
-  }, [isDesktop]);
-
-  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
-    if (isDesktop || !touchStartRef.current) return;
-
-    const start = touchStartRef.current;
-    const touch = e.changedTouches[0];
-    touchStartRef.current = null;
-
-    // --- Horizontal swipe end → navigate stories ---
-    if (start.direction === "horizontal" && onNavigateRef.current) {
-      const deltaX = touch.clientX - start.x;
-      const elapsed = Date.now() - start.time;
-      const velocity = elapsed > 0 ? Math.abs(deltaX) / elapsed : 0;
-
-      if (Math.abs(deltaX) > 60 || velocity > 0.3) {
-        const dir = deltaX < 0 ? "next" : "prev";
-        hapticLight();
-        // Cross-fade content
-        setSwipeNavOpacity(0);
-        setTimeout(() => {
-          onNavigateRef.current?.(dir);
-          setSwipeNavOpacity(1);
-        }, 150);
-        return;
-      }
-    }
-
-    // --- Vertical swipe end → dismiss ---
-    if (!isDragging) return;
-
-    const elapsed = Date.now() - start.time;
-    const velocity = elapsed > 0 ? dragOffset / elapsed : 0;
-    const shouldDismiss = dragOffset > 120 || velocity > 0.5;
-
-    if (shouldDismiss) {
-      hapticMedium();
-      setIsDismissing(true);
-      setIsDragging(false);
-      setDragOffset(window.innerHeight);
-      setTimeout(() => {
-        previousFocusRef.current?.focus();
-        onClose();
-      }, 300);
-    } else {
-      setIsDragging(false);
-      setDragOffset(0);
-    }
-  }, [isDesktop, isDragging, dragOffset, onClose]);
+  const sourceCount = sources.length > 0 ? sources.length : story.source.count;
+  const hasNav = Boolean(onNavigate) && totalStories > 1;
 
   return (
-    <>
-      {/* Backdrop */}
-      <div
-        aria-hidden="true"
-        onClick={handleClose}
-        className="deep-dive-backdrop"
-        style={{
-          opacity: isVisible ? Math.max(0, 1 - dragOffset / 400) : 0,
-          transition: isDragging
-            ? "none"
-            : isVisible
-              ? "opacity 300ms cubic-bezier(0.16, 1, 0.3, 1)"
-              : "opacity 250ms cubic-bezier(0.16, 1, 0.3, 1)",
-        }}
-      />
+    <div className="page-container">
+      {/* Void News masthead — same top bar as Home / On Air. Search is omitted
+          (the overlay searches the feed, which this page has replaced). */}
+      <NavBar editionBuiltAt={builtAt} />
 
-      {/* Panel */}
-      <div
-        ref={panelRef}
-        role="dialog"
-        aria-modal="true"
-        aria-label={`Deep dive: ${story.title}`}
-        tabIndex={-1}
-        className={`deep-dive-panel${isDragging ? " deep-dive-panel--dragging" : ""}`}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        style={morphStyle ?? {
-          /* Default open/close when no FLIP morph is active.
-             Desktop: subtle appear in place. Mobile: slide from bottom.
-             Close animation (spring-snappy 350ms) is kept as-is. */
-          transform: isVisible
-            ? isDesktop
-              ? "translate(-50%, -50%) scale(1)"
-              : `translateY(${dragOffset}px)`
-            : isDesktop
-              ? "translate(-50%, -50%) scale(0.98)"
-              : "translateY(100%)",
-          opacity: isVisible ? 1 : 0,
-          boxShadow: isVisible ? "var(--shadow-cinematic-dramatic)" : "none",
-          transition: prefersReducedMotion
-            ? "none"
-            : isDragging
-            ? "none"
-            : isDismissing
-              ? "transform 280ms cubic-bezier(0.2, 1, 0.3, 1)"
-              : !isVisible
-                ? "transform 350ms var(--spring-snappy), opacity 180ms cubic-bezier(0.16, 1, 0.3, 1) 150ms, box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1)"
-                : contentVisible
-                  ? "none"
-                  : "transform 220ms ease-out, opacity 180ms ease-out, box-shadow 220ms ease-out",
-        }}
-      >
-        {/* Mobile drag indicator — pill handle at top of bottom sheet */}
-        <div className={`dd-drag-indicator${isDragging ? " dd-drag-indicator--grabbed" : ""}`} aria-hidden="true" />
+      <main id="main-content" className="dd-page" aria-label={`Deep dive: ${story.title}`}>
+        {/* Top toolbar — Back to feed + prev/next + share. */}
+        <div className="dd-page__bar">
+          <button type="button" className="dd-page__back" onClick={handleBack} aria-label="Back to feed">
+            <ArrowLeft size={18} weight="regular" aria-hidden="true" />
+            <span className="dd-page__back-label">Back to feed</span>
+          </button>
 
-        {/* ---- Header --------------------------------------------------- */}
-        <header className="deep-dive-panel__header">
-          <div className="deep-dive-header-bar">
-            <button onClick={handleClose} aria-label="Back to feed" className="deep-dive-back">
-              <ArrowLeft size={18} weight="regular" aria-hidden="true" />
-              <span className="deep-dive-back-label">Back to feed</span>
-            </button>
-            <span className="dd-brand-label" aria-hidden="true">Deep Dive</span>
-
-            {/* Inter-story navigation */}
-            {onNavigate && totalStories > 1 && (
-              <div className="dd-story-nav">
+          <div className="dd-page__bar-right">
+            {hasNav && (
+              <div className="dd-page__nav">
                 <button
-                  className="dd-story-nav__btn"
-                  onClick={() => { hapticLight(); onNavigate("prev"); }}
+                  type="button"
+                  className="dd-page__nav-btn"
+                  onClick={() => { hapticLight(); onNavigate!("prev"); }}
                   disabled={storyIndex <= 0}
                   aria-label="Previous story"
                 >
-                  <CaretLeft size={14} weight="bold" />
+                  <CaretLeft size={16} weight="bold" aria-hidden="true" />
                 </button>
-                <span className="dd-story-nav__counter">
-                  {storyIndex + 1}/{totalStories}
-                </span>
+                <span className="dd-page__counter">{storyIndex + 1}/{totalStories}</span>
                 <button
-                  className="dd-story-nav__btn"
-                  onClick={() => { hapticLight(); onNavigate("next"); }}
+                  type="button"
+                  className="dd-page__nav-btn"
+                  onClick={() => { hapticLight(); onNavigate!("next"); }}
                   disabled={storyIndex >= totalStories - 1}
                   aria-label="Next story"
                 >
-                  <CaretRight size={14} weight="bold" />
-                </button>
-                {/* One-time swipe hint for mobile users */}
-                {showSwipeHint && (
-                  <span
-                    className="dd-swipe-hint"
-                    style={{
-                      opacity: showSwipeHint ? 1 : 0,
-                      transition: "opacity 300ms ease-out",
-                    }}
-                    aria-hidden="true"
-                  >
-                    swipe for next story
-                  </span>
-                )}
-              </div>
-            )}
-            {/* Share button */}
-            <button onClick={handleShare} aria-label="Share this story" className="deep-dive-share">
-              {shareCopied ? (
-                /* Checkmark icon — confirms clipboard copy */
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-                  <path d="M4 9.5L7.5 13L14 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              ) : (
-                /* Share icon — arrow up from box */
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-                  <path d="M6 7L9 4L12 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  <path d="M9 4V12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                  <path d="M4 11V14H14V11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              )}
-              {shareCopied && <span className="dd-share-toast">{shareToastText}</span>}
-            </button>
-            {/* Accessible announcement for screen readers */}
-            <div aria-live="polite" className="sr-only">
-              {shareCopied ? shareToastText : ""}
-            </div>
-
-            <button onClick={handleClose} aria-label="Close deep dive" className="deep-dive-close">
-              <X size={20} weight="regular" aria-hidden="true" />
-            </button>
-          </div>
-
-          {/* Hero image removed 2026-04-29: the user already saw it on the
-              homepage card before clicking through. In Deep Dive it stole top
-              fold from the actual moat (summary + bias breakdown) and added
-              no analytical value. Image fetch state retained but unused — the
-              fetch is cheap enough to leave in place for a possible future
-              "open photo on click" affordance. */}
-
-          <h2 className="dd-headline">
-            {story.title}
-          </h2>
-
-          <div className="deep-dive-meta">
-            <span className="category-tag">{story.category}</span>
-            <span className="dot-separator" aria-hidden="true" />
-            <span className="dd-meta-sources text-data">
-              {sources.length > 0 ? sources.length : story.source.count} sources
-            </span>
-            <span className="dot-separator" aria-hidden="true" />
-            <span className="time-tag">{timeAgo(story.publishedAt)}</span>
-          </div>
-
-          {/* Inline bias snapshot — keeps the moat above the fold by surfacing
-              the three primary axes (lean / rigor / opinion) immediately under
-              the headline, without claiming the sigil+spectrum's full block. */}
-          {story.sigilData && !story.sigilData.pending && (
-            <div id="dd-panel-press">
-              <BiasSnapshot
-                data={story.sigilData}
-                sourceCount={sources.length > 0 ? sources.length : story.source.count}
-                variant="inline"
-              />
-            </div>
-          )}
-        </header>
-
-        {/* Six-Lenses meta-nav row removed per CEO 2026-05-15 — the labels
-            (Story / Spectrum / Press / Sources / Claims / Reasoning) blurred
-            together (Press vs Sources; Spectrum vs Press) and the row added
-            interior chrome inside an already-modal-like panel. Section IDs
-            below remain (`dd-panel-*`) for direct deep-link anchors and the
-            screen-reader outline; readers scroll the panel naturally. */}
-
-        {/* ---- Content (fades in after panel, fades out faster on close) ---- */}
-        <div
-          className="deep-dive-panel__content"
-          style={{
-            opacity: contentVisible ? swipeNavOpacity : 0,
-            transition: `opacity ${swipeNavOpacity < 1 ? 120 : contentVisible ? 450 : 150}ms cubic-bezier(0.16, 1, 0.3, 1)`,
-          }}
-        >
-          {/* Loading skeleton — structured placeholders while Supabase fetches data.
-               Check sources.length rather than !deepDive because the homepage query
-               populates deepDive with an empty sources array. */}
-          {isLoadingData && sources.length === 0 && (
-            <div className="dd-loading-skeleton" role="status" aria-label="Loading analysis">
-              <span className="dd-loading-skeleton__status text-meta" style={{ color: "var(--fg-muted)" }}>
-                Loading analysis...
-              </span>
-
-              {/* Spectrum bar placeholder */}
-              <div className="dd-loading-skeleton__section">
-                <div className="shimmer-line dd-loading-skeleton__bar" />
-              </div>
-
-              {/* Source perspective placeholders */}
-              <div className="dd-loading-skeleton__section">
-                <div className="shimmer-line dd-loading-skeleton__line dd-loading-skeleton__line--short" />
-                <div className="dd-loading-skeleton__perspectives">
-                  <div className="shimmer-line dd-loading-skeleton__perspective-card" />
-                  <div className="shimmer-line dd-loading-skeleton__perspective-card" />
-                  <div className="shimmer-line dd-loading-skeleton__perspective-card" />
-                </div>
-              </div>
-
-              {/* Bias inspector score placeholders */}
-              <div className="dd-loading-skeleton__section">
-                <div className="shimmer-line dd-loading-skeleton__line dd-loading-skeleton__line--short" />
-                <div className="dd-loading-skeleton__scores">
-                  <div className="shimmer-line dd-loading-skeleton__score" />
-                  <div className="shimmer-line dd-loading-skeleton__score" />
-                  <div className="shimmer-line dd-loading-skeleton__score" />
-                  <div className="shimmer-line dd-loading-skeleton__score" />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* ---- Lede: Sigil/Spectrum + summary. The Spectrum leads in DOM so the
-               desktop float (>=1024px) wraps the summary around AND under it (no dead
-               column); the tablet stack uses flex order to keep the summary first, and
-               the phone tabs (data-lede-view, <768px) default to the story. ---- */}
-          <div className="dd-lede" data-lede-view={ledeView}>
-            {hasLedeSpectrum && (
-              <div
-                className="dd-lede__tabs"
-                role="tablist"
-                aria-label="Story or bias spread"
-                ref={ledeTablistRef}
-                onKeyDown={handleLedeTabKey}
-              >
-                <button
-                  type="button"
-                  role="tab"
-                  id="dd-lede-tab-story"
-                  aria-selected={ledeView === "story"}
-                  aria-controls="dd-panel-story"
-                  tabIndex={ledeView === "story" ? 0 : -1}
-                  className={`dd-lede__tab${ledeView === "story" ? " dd-lede__tab--active" : ""}`}
-                  onClick={() => { hapticLight(); setLedeView("story"); }}
-                >
-                  The Story
-                </button>
-                <button
-                  type="button"
-                  role="tab"
-                  id="dd-lede-tab-spread"
-                  aria-selected={ledeView === "spread"}
-                  aria-controls="dd-panel-spectrum"
-                  tabIndex={ledeView === "spread" ? 0 : -1}
-                  className={`dd-lede__tab${ledeView === "spread" ? " dd-lede__tab--active" : ""}`}
-                  onClick={() => { hapticLight(); setLedeView("spread"); }}
-                >
-                  The Spread
+                  <CaretRight size={16} weight="bold" aria-hidden="true" />
                 </button>
               </div>
             )}
+            <button type="button" className="dd-page__share" onClick={handleShare} aria-label="Share this story">
+              <ShareNetwork size={18} weight="regular" aria-hidden="true" />
+              {shareCopied && <span className="dd-page__share-toast" role="status">Link copied</span>}
+            </button>
+          </div>
+        </div>
 
-            {/* ---- Sigil + Spectrum (lede context) — first in DOM so the desktop
-                 float wraps the summary around and under it ---- */}
-            {hasLedeSpectrum && (
-              <section
-                id="dd-panel-spectrum"
-                role="tabpanel"
-                aria-labelledby="dd-lede-tab-spread"
-                className={`dd-lede__spectrum anim-dd-section dd-cascade-2${contentVisible ? " anim-dd-section--visible" : ""}`}
-              >
-                {story.sigilData && (
-                  <div className="dd-analysis-block__sigil">
-                    <Sigil data={story.sigilData} size="xl" storyId={story.id} />
-                  </div>
-                )}
-                {spectrumSources.length > 0 && (
-                  <div className="dd-analysis-block__spectrum">
-                    <DeepDiveSpectrum sources={spectrumSources} />
-                  </div>
-                )}
+        {/* Headline + meta + primary bias snapshot */}
+        <h1 className="dd-headline dd-page__headline">{story.title}</h1>
+        <div className="deep-dive-meta">
+          <span className="category-tag">{story.category}</span>
+          <span className="dot-separator" aria-hidden="true" />
+          <span className="dd-meta-sources text-data">
+            {sourceCount} {sourceCount === 1 ? "source" : "sources"}
+          </span>
+          <span className="dot-separator" aria-hidden="true" />
+          <span className="time-tag">{timeAgo(story.publishedAt)}</span>
+        </div>
 
-                {/* ---- All Sources — scrollable roster directly under The Spread.
-                     A fixed-height, independently scrolling list of every source
-                     that fed this cluster (name + lean signal + tier). No
-                     truncation, no "+N more"; long names ellipsize within the
-                     row and never cause page-level horizontal scroll. Mirrors the
-                     Sources page's scrollable source list. ---- */}
-                {sources.length > 0 && (
-                  <div className="dd-source-list-wrap">
-                    <h4 className="dd-section-label text-meta dd-source-list__label">
-                      Sources <span className="text-data dd-source-list__count">({sources.length})</span>
-                    </h4>
-                    <ul className="dd-source-list" role="list">
-                      {sources.map((src, i) => {
-                        const lean = src.biasScores?.politicalLean ?? 50;
-                        const label = `${src.name}. ${leanLabel(lean)}. ${tierLabel(src.tier)}.`;
-                        const inner = (
-                          <>
-                            <span
-                              className="dd-source-list__dot"
-                              style={{ backgroundColor: getLeanColor(lean) }}
-                              aria-hidden="true"
-                            />
-                            <span className="dd-source-list__name">{src.name}</span>
-                            <span className="dd-source-list__lean text-meta" aria-hidden="true">{leanLabel(lean)}</span>
-                            <span className="dd-source-list__tier text-data" aria-hidden="true">{tierLabel(src.tier)}</span>
-                          </>
-                        );
-                        return (
-                          <li key={`${src.name}-${i}`} className="dd-source-list__row">
-                            {src.url && src.url !== "#" ? (
-                              <a
-                                href={src.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="dd-source-list__link"
-                                aria-label={label}
-                              >
-                                {inner}
-                              </a>
-                            ) : (
-                              <span className="dd-source-list__link dd-source-list__link--static" aria-label={label}>
-                                {inner}
-                              </span>
-                            )}
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                )}
+        {story.sigilData && !story.sigilData.pending && (
+          <BiasSnapshot
+            data={story.sigilData}
+            sourceCount={sourceCount}
+            variant="inline"
+            hideCoverageBar={spectrumSources.length > 0}
+          />
+        )}
+
+        {/* Compact Story / Spread segmented switch */}
+        {hasLedeSpectrum && (
+          <div
+            className="dd-seg"
+            role="tablist"
+            aria-label="Story or bias spread"
+            ref={segRef}
+            onKeyDown={handleSegKey}
+          >
+            <button
+              type="button"
+              role="tab"
+              id="dd-seg-story"
+              aria-selected={ledeView === "story"}
+              aria-controls="dd-panel-story"
+              tabIndex={ledeView === "story" ? 0 : -1}
+              className={`dd-seg__btn${ledeView === "story" ? " dd-seg__btn--active" : ""}`}
+              onClick={() => { hapticMicro(); setLedeView("story"); }}
+            >
+              Story
+            </button>
+            <button
+              type="button"
+              role="tab"
+              id="dd-seg-spread"
+              aria-selected={ledeView === "spread"}
+              aria-controls="dd-panel-spread"
+              tabIndex={ledeView === "spread" ? 0 : -1}
+              className={`dd-seg__btn${ledeView === "spread" ? " dd-seg__btn--active" : ""}`}
+              onClick={() => { hapticMicro(); setLedeView("spread"); }}
+            >
+              Spread
+            </button>
+          </div>
+        )}
+
+        <div className="dd-page__content anim-dd-page">
+          {/* ---- Story page: summary + claim consensus ---- */}
+          <section
+            id="dd-panel-story"
+            role={hasLedeSpectrum ? "tabpanel" : undefined}
+            aria-labelledby={hasLedeSpectrum ? "dd-seg-story" : undefined}
+            hidden={hasLedeSpectrum && ledeView !== "story"}
+            className="dd-page__panel"
+          >
+            <h2 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-2)" }}>The Story</h2>
+            <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
+              {renderSummaryWithContradictions(story.summary, deepDive?.claimConsensus?.disputed_details)}
+            </p>
+
+            {deepDive?.claimConsensus && (
+              <section className="dd-page__section" aria-label="Claim Consensus verification">
+                <hr className="ink-rule" style={{ margin: "var(--space-5) 0 var(--space-4)" }} aria-hidden="true" />
+                <LazyOnView rootMargin="300px 0px" minHeight={120}>
+                  <ClaimConsensusSection consensus={deepDive.claimConsensus} />
+                </LazyOnView>
               </section>
             )}
 
-            {/* ---- Summary (lede subject) — flows around/under the float on desktop ---- */}
+            <HistoryContextLink title={story.title} summary={story.summary} />
+          </section>
+
+          {/* ---- Spread page: Sigil + spectrum + sources roster + lenses ---- */}
+          {hasLedeSpectrum && (
             <section
-              id="dd-panel-story"
-              role={hasLedeSpectrum ? "tabpanel" : undefined}
-              aria-labelledby={hasLedeSpectrum ? "dd-lede-tab-story" : undefined}
-              className={`dd-lede__story anim-dd-section dd-cascade-1${contentVisible ? " anim-dd-section--visible" : ""}`}
+              id="dd-panel-spread"
+              role="tabpanel"
+              aria-labelledby="dd-seg-spread"
+              hidden={ledeView !== "spread"}
+              className="dd-page__panel"
             >
-              <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-2)" }}>The Story</h3>
-              <div className={`dd-collapsible${summaryExpanded ? " dd-collapsible--expanded" : ""}${!summaryOverflows && !summaryExpanded ? " dd-collapsible--fits" : ""}`}>
-                <div className="dd-collapsible__inner" ref={summaryInnerRef}>
-                  <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
-                    {renderSummaryWithContradictions(story.summary, deepDive?.claimConsensus?.disputed_details)}
-                  </p>
+              {story.sigilData && (
+                <div className="dd-analysis-block__sigil">
+                  <Sigil data={story.sigilData} size="xl" storyId={story.id} />
                 </div>
-              </div>
-              {summaryOverflows && !summaryExpanded && (
-                <button className="dd-read-more" onClick={() => { hapticLight(); setSummaryExpanded(true); }}>Read more</button>
+              )}
+
+              {spectrumSources.length > 0 && (
+                <div className="dd-analysis-block__spectrum">
+                  <DeepDiveSpectrum sources={spectrumSources} />
+                </div>
+              )}
+
+              {/* Subtle inline loading — only while the roster is genuinely still
+                  being fetched. Never a full-panel skeleton; the Sigil above is
+                  already live from the story. */}
+              {sourcesPending && (
+                <p className="dd-page__loading text-meta" role="status">Gathering the full source list</p>
+              )}
+
+              {/* All Sources — scrollable roster under The Spread. */}
+              {sources.length > 0 && (
+                <div className="dd-source-list-wrap">
+                  <h3 className="dd-section-label text-meta dd-source-list__label">
+                    Sources <span className="text-data dd-source-list__count">({sources.length})</span>
+                  </h3>
+                  <ul className="dd-source-list" role="list">
+                    {sources.map((src, i) => {
+                      const lean = src.biasScores?.politicalLean ?? 50;
+                      const label = `${src.name}. ${leanLabel(lean)}. ${tierLabel(src.tier)}.`;
+                      const inner = (
+                        <>
+                          <span
+                            className="dd-source-list__dot"
+                            style={{ backgroundColor: getLeanColor(lean) }}
+                            aria-hidden="true"
+                          />
+                          <span className="dd-source-list__name">{src.name}</span>
+                          <span className="dd-source-list__lean text-meta" aria-hidden="true">{leanLabel(lean)}</span>
+                          <span className="dd-source-list__tier text-data" aria-hidden="true">{tierLabel(src.tier)}</span>
+                        </>
+                      );
+                      return (
+                        <li key={`${src.name}-${i}`} className="dd-source-list__row">
+                          {src.url && src.url !== "#" ? (
+                            <a
+                              href={src.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="dd-source-list__link"
+                              aria-label={label}
+                            >
+                              {inner}
+                            </a>
+                          ) : (
+                            <span className="dd-source-list__link dd-source-list__link--static" aria-label={label}>
+                              {inner}
+                            </span>
+                          )}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              )}
+
+              {/* Six Lenses — full 6-axis bias breakdown. */}
+              {story.sigilData && !story.sigilData.pending && (
+                <section className="dd-page__section" aria-label="Six Lenses">
+                  <hr className="ink-rule" style={{ margin: "var(--space-5) 0 var(--space-4)" }} aria-hidden="true" />
+                  <SixLenses
+                    sigilData={{ ...story.sigilData, agreement: Math.round(story.sigilData.agreement) }}
+                    visible={true}
+                  />
+                </section>
+              )}
+
+              {/* Source Perspectives — progressive disclosure (lazy). */}
+              {hasCrossLeanSources && !analysisExpanded && (
+                <button
+                  className="dd-read-more dd-analysis-trigger"
+                  onClick={() => { hapticLight(); setAnalysisExpanded(true); }}
+                >
+                  Show source breakdown
+                </button>
+              )}
+              {analysisExpanded && hasCrossLeanSources && (
+                <section className="dd-page__section" aria-label="Source Perspectives" style={{ marginTop: "var(--space-4)" }}>
+                  <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
+                  <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>Source Perspectives</h3>
+                  <LazyOnView rootMargin="400px 0px" minHeight={200}>
+                    <ComparativeView
+                      sources={sources}
+                      consensusPoints={deepDive?.consensus}
+                      divergencePoints={deepDive?.divergence}
+                    />
+                  </LazyOnView>
+                </section>
               )}
             </section>
-          </div>
-
-          {/* ---- Claim Consensus — cross-source verification (lazy-rendered) ---- */}
-          {deepDive?.claimConsensus && (
-            <section
-              id="dd-panel-claims"
-              className={`anim-dd-section dd-cascade-3${contentVisible ? " anim-dd-section--visible" : ""}`}
-              style={{ marginBottom: "var(--space-5)" }}
-              aria-label="Claim Consensus verification"
-            >
-              <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
-              <LazyOnView rootMargin="300px 0px" minHeight={120}>
-                <ClaimConsensusSection consensus={deepDive.claimConsensus} />
-              </LazyOnView>
-            </section>
           )}
 
-          {/* ---- Progressive disclosure trigger (Source Perspectives + Six Lenses) ---- */}
-          {(hasCrossLeanSources || (story.sigilData && !story.sigilData.pending)) && !analysisExpanded && (
-            <button
-              className={`dd-read-more dd-analysis-trigger anim-dd-section dd-cascade-trigger${contentVisible ? " anim-dd-section--visible" : ""}`}
-              onClick={() => { hapticLight(); setAnalysisExpanded(true); }}
-            >
-              Show source breakdown
-            </button>
-          )}
-
-          {/* ---- Source Perspectives (collapsed by default, lazy-rendered) ---- */}
-          {analysisExpanded && hasCrossLeanSources && (
-            <section id="dd-panel-perspectives" aria-label="Source Perspectives" className={`anim-dd-section dd-cascade-3${contentVisible ? " anim-dd-section--visible" : ""}`} style={{ marginBottom: "var(--space-5)" }}>
-              <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
-              <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>Source Perspectives</h3>
-              <LazyOnView rootMargin="400px 0px" minHeight={200}>
-                <ComparativeView
-                  sources={sources}
-                  consensusPoints={deepDive?.consensus}
-                  divergencePoints={deepDive?.divergence}
-                />
-              </LazyOnView>
-            </section>
-          )}
-
-          {/* ---- Six Lenses — ink stamp bias scores (collapsed by default, lazy-rendered) ---- */}
-          {analysisExpanded && story.sigilData && !story.sigilData.pending && (
-            <section
-              id="dd-panel-reasoning"
-              className={`anim-dd-section dd-cascade-4${contentVisible ? " anim-dd-section--visible" : ""}`}
-              style={{ marginBottom: "var(--space-4)" }}
-              aria-label="Six Lenses bias analysis"
-            >
-              <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
-              <LazyOnView rootMargin="300px 0px" minHeight={150}>
-                <SixLenses sigilData={story.sigilData} visible={contentVisible} />
-              </LazyOnView>
-            </section>
-          )}
-
-          {/* ---- Historical Context cross-link (only when keyword matches) ---- */}
-          <HistoryContextLink title={story.title} summary={story.summary} visible={contentVisible} />
-
-          {/* Fetch error — retry UI */}
+          {/* Fetch error — retry (only when nothing loaded). */}
           {fetchError && !isLoadingData && sources.length === 0 && (
             <div className="dd-fetch-error">
               <p className="text-base empty-state__body" style={{ color: "var(--fg-muted)", lineHeight: 1.6 }}>
-                Failed to load analysis.
+                Failed to load the full source list.
               </p>
-              <button
-                className="dd-read-more"
-                onClick={() => setRetryCount((c) => c + 1)}
-              >
+              <button className="dd-read-more" onClick={() => setRetryCount((c) => c + 1)}>
                 Retry
               </button>
             </div>
           )}
-
-          {/* No deep dive data at all (no error) */}
-          {sources.length === 0 && !isLoadingData && !fetchError && (
-            <div className="dd-empty-data">
-              <p className="text-base empty-state__body--no-margin" style={{ lineHeight: 1.6 }}>
-                Detailed coverage data is not yet available for this story.
-                Check back after the next pipeline run.
-              </p>
-            </div>
-          )}
         </div>
-
-        {/* Mobile sticky footer — "Read All Sides" CTA */}
-        {!isDesktop && sources.length > 0 && hasCrossLeanSources && (
-          <div className="dd-cta-footer">
-            <button
-              className="dd-read-more dd-cta-footer__btn"
-              onClick={() => {
-                hapticLight();
-                if (!analysisExpanded) setAnalysisExpanded(true);
-                const perspectives = document.getElementById("dd-panel-perspectives");
-                if (perspectives) {
-                  perspectives.scrollIntoView({ behavior: "smooth", block: "start" });
-                }
-              }}
-            >
-              Read All Sides ({sources.length} sources)
-            </button>
-          </div>
-        )}
-      </div>
-    </>
+      </main>
+    </div>
   );
 }

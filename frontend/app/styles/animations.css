@@ -208,12 +208,24 @@
   transform: translateY(0) scale(1);
 }
 
-/* Deep Dive cascade sections — staggered reveal delays (snap tier) */
-.dd-cascade-1 { transition-delay: 50ms; }
-.dd-cascade-2 { transition-delay: 120ms; }
-.dd-cascade-3 { transition-delay: 190ms; }
-.dd-cascade-4 { transition-delay: 260ms; }
-.dd-cascade-trigger { transition-delay: 160ms; }
+/* Deep Dive cascade sections — the staggered one-by-one reveal was removed
+   2026-08-09 (it read as slowness). Delays are zeroed so every section appears
+   at once with the single short .anim-dd-section fade. Classes are retained so
+   existing markup keeps working without churn. */
+.dd-cascade-1,
+.dd-cascade-2,
+.dd-cascade-3,
+.dd-cascade-4,
+.dd-cascade-trigger { transition-delay: 0ms; }
+
+/* Reduced motion: no section entrance transition at all — content is instant. */
+@media (prefers-reduced-motion: reduce) {
+  .anim-dd-section {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
 
 /* Filter chip active spring press feedback — elastic for snappy toggle feel */
 .filter-chip--active {
