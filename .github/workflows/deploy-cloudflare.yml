@@ -17,6 +17,16 @@ on:
     # so a failed pipeline never publishes a stale or empty page.
     workflows: ["Auto-merge Claude branches", "News Pipeline"]
     types: [completed]
+  # Deterministic daily backstop. The "News Pipeline" workflow_run above is the
+  # fast path (redeploys ~right after the run completes), but GitHub's
+  # workflow_run event is known to lag or silently drop (it failed to fire on
+  # 2026-08-10, leaving the prerendered feed a day stale until a manual deploy).
+  # The daily pipeline is scheduled 11:00 UTC and finishes by ~13:35 even with
+  # GitHub's scheduling delay + the 150-min job cap, so a 15:00 UTC rebuild
+  # always publishes that day's fresh feed + archive pages. The build's
+  # fail-loud guard (<20 stories) still blocks an empty deploy.
+  schedule:
+    - cron: '0 15 * * *'
   workflow_dispatch:
 
 permissions:
@@ -33,6 +43,7 @@ jobs:
     if: >-
       github.event_name == 'push' ||
       github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'schedule' ||
       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     steps:
       - uses: actions/checkout@v4

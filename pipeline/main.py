@@ -3609,7 +3609,17 @@ def main():
         print(f"  [warn] cleanup_stale_clusters failed: {e}")
 
     try:
-        result = supabase.rpc("cleanup_stuck_pipeline_runs").execute()
+        # max_minutes MUST exceed the real pipeline runtime (~100 min; the GH
+        # Actions timeout caps a legit run at 150 min). This cleanup runs during
+        # the current run's own cleanup phase, ~100 min after start, so the old
+        # 30-minute default flagged the STILL-RUNNING current run as "stuck",
+        # writing a spurious "timed out (stuck in running state)" error that
+        # persisted even though the run then completed successfully. 180 min is
+        # safely above any legit run, so only a genuinely hung/killed prior-day
+        # run (which sits at 'running' for hours) is cleaned.
+        result = supabase.rpc(
+            "cleanup_stuck_pipeline_runs", {"max_minutes": 180}
+        ).execute()
         cleaned = result.data if result.data else 0
         print(f"  Stuck pipeline runs cleaned: {cleaned}")
     except Exception as e:
