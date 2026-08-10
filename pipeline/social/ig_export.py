@@ -281,7 +281,8 @@ def _render_index(date_str: str, posts: list[dict]) -> str:
     cards = []
     for p in posts:
         thumbs = "".join(
-            f'<img src="{esc(rel)}" alt="slide {i + 1}" loading="lazy">'
+            f'<a href="{esc(rel)}" target="_blank" rel="noopener" title="Open full-size slide">'
+            f'<img src="{esc(rel)}" alt="slide {i + 1}" loading="lazy"></a>'
             for i, rel in enumerate(p["slide_rels"])
         ) or '<p class="warn">No slide images bundled.</p>'
 
@@ -349,9 +350,11 @@ def _render_index(date_str: str, posts: list[dict]) -> str:
   .intent {{ background: #fbf5e6; border-left: 3px solid {BRASS}; padding: .6rem .9rem;
     margin: 0 0 1rem; font-style: italic; }}
   .intent strong {{ font-style: normal; color: {BRASS}; letter-spacing: .06em; margin-right: .4rem; }}
-  .thumbs {{ display: flex; gap: .6rem; flex-wrap: wrap; margin-bottom: 1.1rem; }}
-  .thumbs img {{ width: 168px; height: 210px; object-fit: cover; border: 1px solid #ddd2bf;
-    border-radius: 6px; background: #efe7d6; }}
+  .thumbs {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; margin-bottom: 1.1rem; }}
+  .thumbs a {{ display: block; }}
+  .thumbs img {{ width: 100%; height: auto; object-fit: contain; display: block; border: 1px solid #ddd2bf;
+    border-radius: 6px; background: #efe7d6; cursor: zoom-in; }}
+  @media (max-width: 620px) {{ .thumbs {{ grid-template-columns: repeat(2, 1fr); }} }}
   .platforms {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }}
   .col h3 {{ font-size: .85rem; margin: 0 0 .4rem; display: flex; justify-content: space-between;
     align-items: baseline; border-bottom: 1px solid #eadfce; padding-bottom: .3rem; }}
