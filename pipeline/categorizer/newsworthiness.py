@@ -12,6 +12,17 @@ Motivation (2026-08-06): the feed surfaced two non-stories at story rank:
                                                        (live market-ticker page)
 Neither is a dated news event. Both are structurally detectable from the title.
 
+Motivation (2026-08-10): the Nature journal RSS feed (nature.rss mixes research
+papers + corrections with actual Nature journalism) leaked academic errata into
+the feed. In the 2026-08-10 run seven Nature items ("Author Correction: ...",
+"Publisher Correction: ...", "Editorial Expression of Concern: ...") were
+ingested as news and landed in a story cluster. A journal correction / erratum /
+retraction notice is never a news event. These are matched as TITLE PREFIXES
+only, so a real news story that merely contains the word "correction" /
+"retraction" is NOT dropped: Retraction Watch's "...anesthesiologists earning
+retractions..." and "Police issue correction to earlier statement" both survive
+(the marker is not at the start of the title).
+
 Design principles
 -----------------
 * Rule-based, deterministic, $0 (no LLM, no network).
@@ -70,6 +81,63 @@ _STRONG_PATTERNS: list[tuple[re.Pattern, str]] = [
     (re.compile(r"\b(?:winning numbers|lucky numbers)\b", re.I), "lottery-numbers"),
     (re.compile(r"\bdaily horoscope\b", re.I), "daily-horoscope"),
 ]
+
+# -- Academic-journal artifacts (DECISIVE, prefix-anchored) -----------------
+# Journal corrections / errata / retraction notices / peer-review byproducts are
+# never news. They are matched ONLY as a title PREFIX (optionally after a bracket
+# or quote), so a real news story that merely CONTAINS "correction"/"retraction"
+# mid-title survives:
+#   DROP  "Author Correction: Nucleolar URB1 ensures ..."      (Nature erratum)
+#   DROP  "Publisher Correction: Progressive plasticity ..."   (Nature erratum)
+#   DROP  "Editorial Expression of Concern: Tumour exosome ..."
+#   KEEP  "High-profile anesthesiologists earning retractions for data ..."
+#   KEEP  "JU forms probe body over research paper retractions"
+#   KEEP  "Police issue correction to earlier statement"
+# This is a decisive, veto-proof drop: a title starting with one of these markers
+# is an academic artifact regardless of any news-verb elsewhere in the title.
+_ACADEMIC_ARTIFACT_PATTERNS: list[tuple[re.Pattern, str]] = [
+    (re.compile(r"^[\[\('\"\s]*author\s+correction\b", re.I),
+     "author-correction"),
+    (re.compile(r"^[\[\('\"\s]*publisher\s+correction\b", re.I),
+     "publisher-correction"),
+    (re.compile(r"^[\[\('\"\s]*(?:editorial\s+)?expression\s+of\s+concern\b",
+                re.I), "expression-of-concern"),
+    # Single-word decisive markers require a following colon / whitespace / end
+    # (NOT a hyphen), so "Erratum-free reporting ..." is not caught.
+    (re.compile(r"^[\[\('\"\s]*erratum(?=[:\s]|$)", re.I), "erratum"),
+    (re.compile(r"^[\[\('\"\s]*corrigend(?:um|a)(?=[:\s]|$)", re.I),
+     "corrigendum"),
+    # "Retraction:" / "Retraction of ..." / "Retraction Note" / "Retracted
+    # Article" — but NOT "Retraction Watch" or a headline that merely opens with
+    # the word (guarded by the required following token).
+    (re.compile(r"^[\[\('\"\s]*retraction\s*(?::|of\b|note\b)", re.I),
+     "retraction-notice"),
+    (re.compile(r"^[\[\('\"\s]*retracted\s+article\b", re.I),
+     "retracted-article"),
+    (re.compile(r"^[\[\('\"\s]*author\s+response\s+to\b", re.I),
+     "author-response"),
+    (re.compile(r"^[\[\('\"\s]*reviewer\s+acknowledge?ments?\b", re.I),
+     "reviewer-acknowledgements"),
+    (re.compile(r"^[\[\('\"\s]*matters\s+arising\b", re.I), "matters-arising"),
+    # Bare "Correction:" prefix (a stand-alone correction notice). Requires the
+    # colon so "Correction to X" news phrasing mid-sentence never matches, and
+    # the prefix anchor keeps "issue a correction" out.
+    (re.compile(r"^[\[\('\"\s]*correction\s*:", re.I), "correction-prefix"),
+]
+
+
+def _academic_artifact_signal(title: str) -> str | None:
+    """Return the reason label if the title is a journal correction/erratum.
+
+    Prefix-anchored and decisive: a matching title is dropped regardless of the
+    news-event veto (an "Author Correction: ..." is never a news event).
+    Returns None when no academic-artifact prefix is present.
+    """
+    for pat, reason in _ACADEMIC_ARTIFACT_PATTERNS:
+        if pat.search(title):
+            return reason
+    return None
+
 
 # -- Guides / how-to / evergreen explainer (weight 2) -----------------------
 _GUIDE_PATTERNS: list[tuple[re.Pattern, str]] = [
@@ -256,6 +324,16 @@ def newsworthiness(article: dict) -> dict:
         return {"score": 0, "threshold": DROP_THRESHOLD, "news_event": False,
                 "signals": [], "is_junk": False}
 
+    # Academic-journal artifact (correction/erratum/retraction notice) — a
+    # decisive, veto-proof drop. Checked FIRST so a correction whose title also
+    # contains a news verb (e.g. "Author Correction: ... shows durable
+    # response ...") is still dropped.
+    artifact = _academic_artifact_signal(title)
+    if artifact:
+        return {"score": VETO_THRESHOLD, "threshold": DROP_THRESHOLD,
+                "news_event": False, "academic_artifact": True,
+                "signals": [(artifact, VETO_THRESHOLD)], "is_junk": True}
+
     signals: dict[str, int] = {}
 
     def add(reason: str, weight: int) -> None:
@@ -328,6 +406,7 @@ def newsworthiness(article: dict) -> dict:
         "score": score,
         "threshold": threshold,
         "news_event": news_event,
+        "academic_artifact": False,
         "signals": sorted(signals.items(), key=lambda kv: -kv[1]),
         "is_junk": is_junk,
     }
