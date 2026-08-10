@@ -12,8 +12,9 @@ const ROUTES: { path: string; changeFrequency: MetadataRoute.Sitemap[number]["ch
   { path: "/sources/", changeFrequency: "weekly", priority: 0.8 },
   { path: "/about/", changeFrequency: "monthly", priority: 0.7 },
   { path: "/onair/", changeFrequency: "daily", priority: 0.7 },
-  { path: "/paper/", changeFrequency: "daily", priority: 0.6 },
-  { path: "/games/", changeFrequency: "weekly", priority: 0.5 },
+  // /paper and /games are 301-redirected to home in public/_redirects (hidden
+  // for launch), so they are deliberately NOT listed here: a sitemap must not
+  // advertise redirecting URLs. Restore them when those sections go live.
   { path: "/ship/", changeFrequency: "monthly", priority: 0.4 },
 ];
 
