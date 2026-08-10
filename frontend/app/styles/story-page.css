@@ -23,7 +23,11 @@
    reading view (NOT the inline-expand). Mobile fills the width. */
 .story-page__inner {
   width: 100%;
-  max-width: 720px;
+  /* 2026-08-10: widened 720px -> 900px. A shared Deep Dive link opened cold
+     felt cramped in a 720px column with wide empty margins on desktop; 900px
+     gives the story, spectrum, and Left/Center/Right source columns more room
+     while staying centered. Mobile is unaffected (width:100% below 900px). */
+  max-width: 900px;
   margin: 0 auto;
 }
 
