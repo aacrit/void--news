@@ -1,7 +1,13 @@
 "use client";
 
 import type { SigilData } from "../lib/types";
-import { getLeanColor, leanLabel } from "../lib/biasColors";
+import {
+  getLeanColor,
+  leanLabel,
+  leanLabelState,
+  NO_CLEAR_LEAN_LABEL,
+  CONTESTED_LABEL,
+} from "../lib/biasColors";
 import LeanCoverageBar from "./LeanCoverageBar";
 
 interface BiasSnapshotProps {
@@ -28,8 +34,22 @@ interface BiasSnapshotProps {
    --------------------------------------------------------------------------- */
 
 export default function BiasSnapshot({ data, sourceCount, variant = "inline", hideCoverageBar = false }: BiasSnapshotProps) {
-  const leanColor = getLeanColor(data.politicalLean);
-  const lean = leanLabel(data.politicalLean);
+  // False-center band suppression: inside [48,52] the confident "Center" label
+  // overstates the signal. "Contested" when both wings are present, else "No
+  // clear lean"; the dot goes neutral (or contested red). Outside the band the
+  // existing directional label + color stand. (BiasSnapshot shows the label
+  // text, not a numeric lean, so there is no separate score to withhold.)
+  const leanState = leanLabelState(data.politicalLean, data.biasSpread);
+  const leanColor = leanState === "contested"
+    ? "var(--sense-high)"
+    : leanState === "no-clear-lean"
+      ? "var(--fg-tertiary)"
+      : getLeanColor(data.politicalLean);
+  const lean = leanState === "no-clear-lean"
+    ? NO_CLEAR_LEAN_LABEL
+    : leanState === "contested"
+      ? CONTESTED_LABEL
+      : leanLabel(data.politicalLean);
   const opinion = data.opinionLabel;
   const rigor = Math.round(data.factualRigor);
 
