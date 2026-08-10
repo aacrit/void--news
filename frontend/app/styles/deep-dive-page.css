@@ -186,3 +186,116 @@
   .anim-dd-page { animation: none; }
   .dd-page__loading::after { animation: none; content: "..."; }
 }
+
+/* ===========================================================================
+   Spectrum-aligned source columns (Spread page)
+
+   Replaces the old flat "Sources (N)" roster. Sources are bucketed into Left /
+   Center / Right and rendered in three equal-width columns that line up under
+   the <DeepDiveSpectrum> Left/Center/Right thirds, so the reader sees which
+   outlets form each cluster. Each column scrolls independently (fixed
+   max-height + overflow-y), mirroring the Sources page's scrollable lists.
+   Because the column already encodes the lean, rows carry no per-row lean dot:
+   only the outlet name (ellipsized) and a compact monospace tier glyph.
+   =========================================================================== */
+
+.dd-src-cols-wrap { margin-top: var(--space-4); }
+.dd-src-cols__label { margin-bottom: var(--space-2); }
+.dd-src-cols__count { color: var(--fg-muted); margin-left: var(--space-1); }
+
+/* Three equal tracks. minmax(0, 1fr) lets each column shrink below its content
+   width so long names ellipsize instead of forcing page-level x-scroll. */
+.dd-src-cols {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-2);
+  align-items: start;
+}
+
+.dd-src-col {
+  min-width: 0;
+  border: var(--rule-thin);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header: lean name + count, with a lean-colored accent rule underneath that
+   matches the spectrum gradient (blue → green → red). --col-lean is set inline
+   from getLeanColor so it stays theme-reactive. */
+.dd-src-col__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background: var(--bg-secondary);
+  border-bottom: 2px solid var(--col-lean, var(--fg-muted));
+}
+.dd-src-col__name {
+  color: var(--fg-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.dd-src-col__count {
+  color: var(--fg-muted);
+  font-size: var(--text-xs);
+}
+
+/* Independently scrollable list — its own scrollbar, contained overscroll so a
+   flick inside one column never scrolls the page. */
+.dd-src-col__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 240px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+.dd-src-col__row { border-bottom: var(--rule-thin); }
+.dd-src-col__row:last-child { border-bottom: none; }
+
+.dd-src-col__link {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 44px; /* WCAG 2.5.5 tap target */
+  padding: var(--space-1) var(--space-2);
+  color: var(--fg-primary);
+  text-decoration: none;
+  transition: background-color var(--dur-fast) var(--ease-cinematic);
+}
+.dd-src-col__link:hover { background-color: var(--bg-secondary); }
+.dd-src-col__link:focus-visible {
+  outline: 2px solid var(--accent-warm);
+  outline-offset: -2px;
+}
+.dd-src-col__link--static { cursor: default; }
+
+.dd-src-col__srcname {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  line-height: 1.3;
+}
+.dd-src-col__tier {
+  color: var(--fg-muted);
+  white-space: nowrap;
+  font-size: var(--text-xs);
+}
+
+/* Empty side — keeps the 3-column alignment instead of collapsing. */
+.dd-src-col__empty {
+  margin: 0;
+  padding: var(--space-3) var(--space-2);
+  color: var(--fg-tertiary);
+  text-align: center;
+}
