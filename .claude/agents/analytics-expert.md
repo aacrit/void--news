@@ -59,12 +59,14 @@ You are the Chief Analytics Officer for void --news, with expertise in computati
 | Story maturity | 16% | Recent + well-reported > stale OR new-and-sparse |
 | Tier diversity | 13% | Mixed-tier clusters rank above single-tier |
 | Consequentiality | 10% | Action/outcome verbs boost ranking |
+| Perspective diversity | 9% | Editorial viewpoint spread rewarded (absorbs old lean_diversity) |
 | Institutional authority | 8% | Heads of state, supreme courts rank high |
 | Factual density | 8% | Avg rigor < 30 gets 0.88x penalty |
 | Divergence | 7% | Source disagreement surfaces stories |
-| Perspective diversity | 6% | Editorial viewpoint spread rewarded |
 | Geographic impact | 6% | G20/P5 nations score 3x |
-| Coverage velocity | 6% | Diminishing returns on rapid updates |
+| Coverage velocity | 3% | Sources added in last 24h; diminishing returns |
+
+Note: coverage breadth (20%), story maturity (16%), and tier diversity (13%), about 49% combined, all derive from source_count. They are three signals over one shared input.
 
 Plus: Gemini editorial importance (12% when available, deterministic signals scale to 88%).
 

@@ -498,6 +498,11 @@ function SignalChart({ signals }: { signals: Signal[] }) {
         + 7 multiplicative gates (recency, source count, maturity, dupe, stale,
         short, orphan)
       </div>
+      <div className="pf-signals__note">
+        Coverage breadth (20%), story maturity (16%), and tier diversity (13%),
+        about 49% combined, all derive from source_count. Shown as three signals,
+        they key off one shared input: how many outlets carry the story.
+      </div>
     </div>
   );
 }

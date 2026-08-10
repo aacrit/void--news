@@ -48,7 +48,9 @@ Reference for every intelligent system in the pipeline: bias, clustering, rankin
                                       threshold 0.45, agglomerative linkage.
        Phase 2  ENTITY-OVERLAP MERGE  Post-cluster pass merges sub-clusters sharing 2+ named
                                       entities (NER union).
-       Phase 2.6 ANCHOR-TERM REJECT   Production N≈200 retune: IDF-fraction floor 0.70 (was
+       Phase 2.6 ANCHOR-TERM REJECT   PARKED / OPT-IN ONLY (behind enable_anchor_merge=False,
+                                      no production caller; runs only in diagnostic replays).
+                                      Production N≈200 retune: IDF-fraction floor 0.70 (was
                                       0.60), doc-frequency cap 2.5% (was 5%), title-Jaccard
                                       floor 0.22 (was 0.15). Blocks "Trump"-style anchor
                                       tokens from collapsing unrelated stories.
@@ -98,7 +100,15 @@ Reference for every intelligent system in the pipeline: bias, clustering, rankin
        | Velocity                                 |   3%   |   sources added in last 24h
        +-----------------------------------------+--------+
 
+       SHARED INPUT: coverage breadth (20%) + story maturity (16%) + tier diversity
+       (13%), about 49% of the score, all derive from source_count. They are shown as
+       three signals but key off one input (how many outlets carry the story).
+
        ADDITIVE: cross-spectrum bonus 0-4 pts (left<38 AND right>62); Gemini editorial ±6.7
+       KNOWN DUPLICATION: editorial_importance is applied TWICE. The additive ±6.7 here
+       (importance_ranker.py:1382-1388) is followed by a SECOND, multiplicative pass in
+       feed_ranker.py:350-354 (±3%/point, clamped [0.88, 1.12]). The ranking-guardrails
+       branch will collapse it to one application; documented here, no engine change.
        MULTIPLICATIVE GATES (sequential):
          confidence: 0.65 + 0.35×conf (floor 0.85 if 15+ src AND rigor>40)
          longevity: 1.0 → 0.50 over 48h (stepped)
@@ -212,13 +222,13 @@ Every article scored 0-100 on 5 axes. All NLP, no LLM.
 
 ### 2. Clustering Engine
 
-7 phases in `story_cluster.py`, all subject to `MERGE_HARD_CEILING = 120` (every merge pass calls `_would_exceed_ceiling()` and skips merges that would breach it).
+Production runs 5 phases in `story_cluster.py` (1, 2, 3, 4, 5), all subject to `MERGE_HARD_CEILING = 120` (every merge pass calls `_would_exceed_ceiling()` and skips merges that would breach it). Phase 2.6 (anchor-term reject) is OPT-IN / DIAGNOSTIC ONLY: it is parked behind `enable_anchor_merge=False` with no production caller and runs only in diagnostic replays.
 
 | Phase | File | Technique |
 |---|---|---|
 | 1. TF-IDF + Cosine | `story_cluster.py` | Titles + first 500 words vectorized, cosine threshold 0.45, agglomerative linkage |
 | 2. Entity-Overlap Merge | `story_cluster.py` | Post-clustering: merges sub-clusters sharing 2+ named entities |
-| 2.6 Anchor-Term Reject | `story_cluster.py` | Production N≈200 retune: IDF-fraction floor 0.70 (was 0.60), doc-frequency cap 2.5% (was 5%), title-Jaccard floor 0.22 (was 0.15). Blocks "Trump"-style anchor tokens from collapsing unrelated stories. |
+| 2.6 Anchor-Term Reject | `story_cluster.py` | PARKED / OPT-IN ONLY (behind `enable_anchor_merge=False`, no production caller; diagnostic replays only). Production N≈200 retune: IDF-fraction floor 0.70 (was 0.60), doc-frequency cap 2.5% (was 5%), title-Jaccard floor 0.22 (was 0.15). Blocks "Trump"-style anchor tokens from collapsing unrelated stories. |
 | 3. Head-of-State + Summit | `story_cluster.py` | Substring match in `merge_related_clusters` (Trump-Xi anti-split) |
 | 4. Disjoint-Country Split | `story_cluster.py` | `split_disjoint_country_clusters`: title-only NER union-find. Splits cluster when exactly 2 groups of ≥2 articles emerge with pairwise-disjoint country sets |
 | 5. Sanity Guard | `story_cluster.py` | `avg_articles_per_sub < 1.5` heuristic (replaces `max_sane_sub = max(2, sc // 2)` which rejected legitimate 200+ source splits). Flips `mega_cluster_capped = TRUE` on the cluster row when the cap fires; ranker applies 0.65x penalty downstream |
@@ -234,8 +244,8 @@ Every article scored 0-100 on 5 axes. All NLP, no LLM.
 
 Ranking is **BIAS-BLIND**. Bias analysis belongs in display layer (BiasLens, Sigil, Deep Dive), not story selection. Never boost/penalize for political lean.
 
-- 10 weighted signals summing to 1.00
-- Additive: cross-spectrum bonus, Gemini editorial
+- 10 weighted signals summing to 1.00. Coverage breadth (20%), story maturity (16%), and tier diversity (13%), about 49% combined, all derive from source_count; they are three signals over one shared input.
+- Additive: cross-spectrum bonus, Gemini editorial (NOTE: editorial_importance is also applied a second time multiplicatively in feed_ranker.py:350-354, a known duplication the ranking-guardrails branch will resolve)
 - 8 multiplicative gates: confidence, longevity, consequentiality, soft-news, tabloid, sensationalism, factual rigor, single-source, mega_cluster_capped (0.65x when clustering Phase 5 sanity guard fires)
 - Direction-blind but diversity-sensitive (~12% of ranking influenced by political lean *spread*, not direction)
 
