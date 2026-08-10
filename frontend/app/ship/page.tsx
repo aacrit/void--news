@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import FeedbackForm from "../components/FeedbackForm";
+import { pageMetadata } from "../lib/siteMeta";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Feedback | Void News",
   description:
     "Tell us what to build or what is broken. Every note lands with the team. No account required.",
-};
+  path: "/ship/",
+});
 
 /* Ship board reverted to the simple feedback form for launch (2026-08-05).
    ShipBoard.tsx is intact and un-rendered; restore it here when the

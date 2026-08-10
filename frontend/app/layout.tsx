@@ -56,18 +56,14 @@ const ibmPlexMono = IBM_Plex_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://news.voidvision.org"),
+  // Fallback title/description for routes that do not set their own metadata.
+  // The seven primary routes (/, /sources, /about, /ship, /onair, /paper,
+  // /games) each export a DISTINCT title + description + canonical. `keywords`
+  // was removed 2026-08-09: search engines have ignored the meta keywords tag
+  // for over a decade, so it was dead weight.
   title: "Void News. See through the void.",
   description:
     "An experimental newsroom: free per-article bias analysis across 1,016 sources. Six axes. No paywall. No feed tuned to you. Just the news, dissected.",
-  keywords: [
-    "news",
-    "bias analysis",
-    "media literacy",
-    "journalism",
-    "political bias",
-    "news aggregation",
-    "fact checking",
-  ],
   authors: [{ name: "Void News" }],
   openGraph: {
     title: "Void News. See through the void.",
@@ -75,6 +71,8 @@ export const metadata: Metadata = {
       "An experimental newsroom: free per-article bias analysis across 1,016 sources. Six axes. No paywall. No feed tuned to you. Just the news, dissected.",
     type: "website",
     siteName: "Void News",
+    // Static site-wide share image. Per-story OG images (a generated card per
+    // Deep Dive) are a Phase-2 follow-up, landing with the Deep Dive routes.
     images: [
       {
         url: `${BASE_PATH}/og-image.png`,

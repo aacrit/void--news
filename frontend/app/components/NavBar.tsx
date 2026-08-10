@@ -18,6 +18,12 @@ interface NavBarProps {
       dateline + timestamp so they reflect when THIS edition was built, not the
       reader's current clock. Falls back to now when absent. */
   editionBuiltAt?: string | null;
+  /** Deterministic, preformatted masthead strings computed once at build time
+      (prerendered front page). When BOTH are provided they render directly on
+      first paint (server + client match exactly, no #418), bypassing the
+      client-local mounted gate below. Absent on client-only routes. */
+  editionDateline?: string;
+  editionTimestamp?: string;
 }
 
 /* ---------------------------------------------------------------------------
@@ -42,6 +48,8 @@ function formatDateCompact(d: Date): string {
 export default function NavBar({
   onSearchClick,
   editionBuiltAt,
+  editionDateline,
+  editionTimestamp,
   hasAudio,
   isAudioPlaying,
   onOnairClick,
@@ -57,8 +65,14 @@ export default function NavBar({
     editionBuiltAt && !isNaN(Date.parse(editionBuiltAt))
       ? new Date(editionBuiltAt)
       : new Date();
-  const dateline = mounted ? formatDateCompact(editionDate) : "            ";
-  const timestamp = mounted ? getEditionTimestamp(editionBuiltAt) : "     ";
+  // Preformatted build-time strings win when supplied (front-page prerender):
+  // they are deterministic, so server and client first paint are identical and
+  // the "as of" block renders immediately. Otherwise fall back to the
+  // client-local mounted-gate path. Before mount (and when no build value is
+  // available) BOTH resolve to empty and the time block below is omitted
+  // entirely, never a doubled "as of     as of" placeholder pre-hydration.
+  const dateline = editionDateline ?? (mounted ? formatDateCompact(editionDate) : "");
+  const timestamp = editionTimestamp ?? (mounted ? getEditionTimestamp(editionBuiltAt) : "");
 
   /* ── Scroll-compact masthead (NYT-style): wires --scroll-nav-compact-* tokens.
      Adds data-scroll-compact="true" past 80px, removes at ≤40px (hysteresis
@@ -126,15 +140,21 @@ export default function NavBar({
 
         <span className="nav-dateline-inline" aria-hidden="true" suppressHydrationWarning>
           {dateline}
-          <span className="nav-dateline-inline__sep">&middot;</span>
-          <span className="nav-dateline-inline__time"><span className="nav-asof">as of </span>{timestamp}</span>
+          {timestamp && (
+            <>
+              <span className="nav-dateline-inline__sep">&middot;</span>
+              <span className="nav-dateline-inline__time"><span className="nav-asof">as of </span>{timestamp}</span>
+            </>
+          )}
         </span>
         {/* Mobile dateline — compact freshness signal. Time (with zone) is the
             priority in the tight row; the date shows only when the row is wide
             enough (>=400px, via CSS). */}
         <span className="nav-dateline-mobile" aria-hidden="true" suppressHydrationWarning>
           <span className="nav-dateline-mobile__date">{dateline}</span>
-          <span className="nav-dateline-mobile__time"><span className="nav-asof">as of </span>{timestamp}</span>
+          {timestamp && (
+            <span className="nav-dateline-mobile__time"><span className="nav-asof">as of </span>{timestamp}</span>
+          )}
         </span>
 
         {/* Spinoff product family (Void History + Void Weekly) HIDDEN for launch
