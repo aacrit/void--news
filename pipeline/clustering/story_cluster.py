@@ -564,32 +564,53 @@ MIN_DISTINGUISHING_SHARED = 1
 # cluster absorbed a Flagstar Bank 2021 data-breach story AND a US Senate-panel
 # story, all three stitched into one summary.
 #
-# Guard: a merge on only ONE distinguishing shared entity now also requires the
-# two cluster titles to share a MINIMAL amount of stemmed content (they must
-# name the same story). Two or more distinguishing shared entities remain strong
-# enough on their own (this preserves multi-desk consolidations like Trump-Iran,
-# whose sibling clusters each name a different secondary detail). The floor is
-# deliberately far below Phase 3's TITLE_JACCARD_THRESHOLD (0.22) so genuine
-# multi-desk title diversity is not refused — it only rejects the near-zero
-# overlap of a genuinely cross-topic bridge.
-PHASE2_STRONG_DISTINGUISHING = 2      # >= this many → title check waived
-PHASE2_TITLE_SANITY_FLOOR = 0.08      # single-entity bridge must clear this
+# Guard: EVERY entity-overlap merge must clear a MINIMAL stemmed-title overlap
+# (the two clusters must name the same story). The floor is deliberately far
+# below Phase 3's TITLE_JACCARD_THRESHOLD (0.22) so genuine multi-desk title
+# diversity is not refused — it only rejects the near-zero overlap of a
+# genuinely cross-topic bridge.
+#
+# 2026-08-10 (editorial-audit 1b): PHASE2_STRONG_DISTINGUISHING (the old
+# "2+ shared distinguishing entities waive the title check" bypass) is RETIRED.
+# It was the specific hole that let two GPEs bridge unrelated same-region events
+# (two Assam stories, two Trump items) straight past the only content check.
+# The title floor now applies to all bridges with no exception, so the constant
+# is no longer read anywhere; it is kept defined at its historical value purely
+# so any external import does not break.
+PHASE2_STRONG_DISTINGUISHING = 2      # RETIRED 2026-08-10 (no longer read; see note)
+PHASE2_TITLE_SANITY_FLOOR = 0.08      # every entity bridge must clear this
 
 # Data-driven common-word over-merge guard (2026-08-07, CEO-directed). A shared
 # entity may only DRIVE a Phase-2 merge when it is DISCRIMINATIVE: its document-
-# frequency across the day's post-Phase-1 clusters is low (equivalently, high
-# IDF). A generic word (an institution like "military" / "supreme court", a bare
-# country/nationality name, or ANY future high-frequency term such as
-# "summit" / "election" / "festival") has high df BY DEFINITION and therefore
-# can never be the sole merge driver — no hand-maintained stop-list required.
-# This is the PRIMARY, catch-all mechanism; _LOW_SPECIFICITY_ENTITIES /
-# _ENTITY_STOP_TOKENS are now belt-and-suspenders, not the mechanism. Mirrors
-# the Phase-2.6 anchor df gate. The absolute floor keeps small fixtures workable
-# (a shared entity that appears in only the 2 clusters being merged always
-# clears df<=floor); the percentage bites at production scale where a generic
-# term shows up across many clusters.
-PHASE2_ANCHOR_DF_FLOOR = 5
-PHASE2_ANCHOR_DF_PCT = 0.05           # <= 5% of the day's clusters
+# frequency across the day's post-Phase-1 clusters is low. A generic word (an
+# institution like "military" / "supreme court", a bare country/nationality
+# name, or ANY future high-frequency term such as "summit" / "election" /
+# "festival") has high df BY DEFINITION and therefore can never be the sole
+# merge driver — no hand-maintained stop-list required.
+#
+# 2026-08-10 (SCALE-STABLE FIX, editorial-audit 1b). The prior bound was
+# `max(5, int(n * 0.05))`. At production scale (n ~= 1,945 post-Phase-1
+# clusters on the 2026-08-10 run) that collapsed to `max(5, 97) = 97`, so an
+# entity counted as discriminative unless it appeared in >97 clusters. Ordinary
+# GPEs that HOST several distinct same-region stories then qualified as rare
+# anchors and bridged unrelated events: Assam (df 5: a border-firing AND a
+# flood AND state politics), Kazakhstan (df 6: Comic Con AND finance AND a
+# tiger release), South Africa (df 10, the Cape Town bag), Hong Kong (df 10).
+# The measured df split is unambiguous: genuinely story-specific anchors on the
+# same run sit at df 2-3 (Nizhnekamsk 2, Tatarstan 3, Rezaei 3, Kumamoto 3,
+# Banerjee 2, Andhra 2) while multi-story GPEs sit at df 5-10. A story-specific
+# named entity appears only in the handful of clusters covering its one event,
+# so its ABSOLUTE df stays small (2-4) at ANY corpus size; a region/institution
+# that hosts many stories has df that grows with news volume. A FIXED small df
+# cap is therefore genuinely scale-stable, whereas the old `n * 0.05` term made
+# "discriminative" mean "in up to 5% of all clusters" (~97 at scale).
+#
+# IDF (log(N/df)) was considered and REJECTED: on this corpus the contaminating
+# GPEs (df 5-10 of N=1,945) score IDF 5.3-6.0 — HIGH IDF — so an IDF threshold
+# would still admit them. Corpus-rarity is the wrong axis; absolute df is right,
+# because the defect is entities shared across a FEW distinct stories, not
+# entities that are globally common. Hence a fixed absolute df cap.
+PHASE2_ANCHOR_DF_ABS = 3              # discriminative iff df <= this (fixed, scale-stable)
 
 
 # ---------------------------------------------------------------------------
@@ -1090,7 +1111,10 @@ def merge_related_clusters(
     for ents in cluster_entities:
         for e in ents:
             entity_df[e] += 1
-    phase2_max_df = max(PHASE2_ANCHOR_DF_FLOOR, int(n * PHASE2_ANCHOR_DF_PCT))
+    # SCALE-STABLE: a fixed absolute df cap, independent of n (see
+    # PHASE2_ANCHOR_DF_ABS note). Does not grow with corpus size, so ordinary
+    # multi-story GPEs never sneak in as "rare" anchors on a busy news day.
+    phase2_max_df = PHASE2_ANCHOR_DF_ABS
 
     parent = list(range(n))
     group_size = [len(c.get("articles", []) or []) for c in clusters]
@@ -1149,16 +1173,28 @@ def merge_related_clusters(
             if not discriminative:
                 continue
 
-            # Cross-topic sanity floor — a bridge driven by only ONE
-            # discriminative entity must be confirmed by a minimal stemmed-title
-            # overlap so a lone coincidental / roundup-injected entity cannot
-            # union two disjoint stories (2026-08-04 Korea-heatwave / Flagstar /
-            # Senate contamination). Two or more discriminative shared entities
-            # are strong enough alone and skip the title check (preserves
-            # multi-desk consolidation).
-            if len(discriminative) < PHASE2_STRONG_DISTINGUISHING:
-                if _stemmed_title_jaccard(titles[i], titles[j]) < PHASE2_TITLE_SANITY_FLOOR:
-                    continue
+            # Cross-topic sanity floor — EVERY entity bridge must be confirmed by
+            # a minimal stemmed-title overlap so a coincidental / roundup-injected
+            # entity cannot union two disjoint stories.
+            #
+            # 2026-08-10 (editorial-audit 1b): the old code WAIVED this title
+            # check whenever two or more discriminative entities were shared
+            # (PHASE2_STRONG_DISTINGUISHING = 2), on the theory that two shared
+            # anchors prove a same-event merge. With the loose df bound that was
+            # the specific hole that bridged unrelated events: two different
+            # Assam stories, or two Trump items, routinely co-share a secondary
+            # named entity, so a 2-entity overlap skipped straight past the only
+            # content check and merged. The bypass is removed: an entity bridge
+            # NEVER substitutes for title agreement. The floor is deliberately
+            # low (0.08, far below Phase 3's 0.22 TITLE_JACCARD_THRESHOLD), so a
+            # genuine multi-desk consolidation — whose sibling titles still share
+            # the event's core noun (e.g. "Iran"/"Hormuz", "Pentagon"/"weapons")
+            # — clears it easily, while a cross-topic bridge sharing ~0 title
+            # stems is refused. The df cap now doing the heavy lifting means the
+            # surviving bridges are already strong; the title floor is the
+            # content backstop that must always hold.
+            if _stemmed_title_jaccard(titles[i], titles[j]) < PHASE2_TITLE_SANITY_FLOOR:
+                continue
 
             # Time gate — don't merge stories far apart in time.
             ti, tj = timestamps[i], timestamps[j]
@@ -2346,14 +2382,38 @@ def _cluster_cohesion(
 
 # Phase 3 discriminative-stem gate (2026-08-07, CEO-directed). A title-Jaccard
 # merge must be driven by at least one DISCRIMINATIVE shared stem — one whose df
-# across the day's cluster titles is low (high IDF). Two clusters that share only
-# generic headline stems ("suprem", "court", "militari", a country stem) never
-# merge on that alone, no matter how high the raw Jaccard: those stems appear
-# across many titles that day. This is the title-path analogue of the Phase-2
-# discriminative-anchor gate and directly kills the "Supreme Court" India-vs-US
-# over-merge. Same floor/pct rationale as Phase 2.
-PHASE3_STEM_DF_FLOOR = 5
-PHASE3_STEM_DF_PCT = 0.08             # <= 8% of the day's cluster titles
+# across the day's cluster titles is low. Two clusters that share only generic
+# headline stems ("suprem", "court", "militari", a country stem) never merge on
+# that alone, no matter how high the raw Jaccard: those stems appear across many
+# titles that day. This is the title-path analogue of the Phase-2 discriminative-
+# anchor gate and directly kills the "Supreme Court" India-vs-US over-merge.
+#
+# 2026-08-10 (SCALE-STABLE FIX, editorial-audit 1b). Same defect as the Phase-2
+# gate: the bound was `max(5, int(n * 0.08))`, which at production scale
+# (n ~= 1,945) collapsed to `max(5, 155) = 155`, so a stem counted as
+# discriminative unless it appeared in >155 cluster titles. Phase 3 then
+# compounded Phase 2's contamination on the largest, entity-dense clusters
+# (Netanyahu grew from 50 to 103 articles at Phase 3 in the audit replay). A
+# story-specific title stem appears in only the few titles about that one event,
+# so its ABSOLUTE df stays small at any corpus size; a generic headline word's
+# df grows with the day's volume. A FIXED absolute df cap is therefore scale-
+# stable. IDF rejected for the same reason as Phase 2.
+#
+# The cap is set to 5 (the historical FLOOR, one above the Phase-2 entity cap of
+# 3). Two reasons the stem cap is looser than the entity cap: (a) titles are
+# short, so a genuine event's own place/name stem legitimately recurs across a
+# few more same-event sibling titles than a body-extracted entity does; the
+# over-split guard fixture 041 (a real 8-outlet typhoon) merges on "Cebu" /
+# "Philippines" which sit at title-df 5 there, and a cap of 4 fragments it. (b)
+# Phase 3 also gates on the 0.22 raw title-Jaccard THRESHOLD, which is far higher
+# than the Phase-2 title floor of 0.08, so two DIFFERENT same-region stories
+# (e.g. an Assam firing vs an Assam flood, title-Jaccard ~0.11) are already
+# refused by the Jaccard threshold and never reach this stem gate. The Phase-2
+# entity df cap (3) is what blocks that cross-topic pair; the Phase-3 stem cap
+# only needs to exclude genuinely GENERIC headline words (institutions, bare
+# country names), whose title df runs into the dozens/hundreds at scale and is
+# nowhere near 5.
+PHASE3_STEM_DF_ABS = 5               # discriminative iff title-stem df <= this (fixed, scale-stable)
 
 
 def merge_duplicate_title_clusters(
@@ -2386,7 +2446,9 @@ def merge_duplicate_title_clusters(
     for st in title_stems:
         for s in st:
             stem_df[s] += 1
-    phase3_max_df = max(PHASE3_STEM_DF_FLOOR, int(n * PHASE3_STEM_DF_PCT))
+    # SCALE-STABLE: fixed absolute df cap, independent of n (see
+    # PHASE3_STEM_DF_ABS note). Does not grow with the day's title volume.
+    phase3_max_df = PHASE3_STEM_DF_ABS
 
     parent, find, union, _uf_exceeds = _ceiling_union_find(clusters)
 
