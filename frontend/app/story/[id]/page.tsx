@@ -8,7 +8,7 @@ import {
   archiveMembersToStorySources,
   rowHasBiasData,
 } from "../../lib/archive";
-import { SITE_URL } from "../../lib/siteMeta";
+import { SITE_URL, OG_IMAGE, OG_IMAGE_URL } from "../../lib/siteMeta";
 import StandaloneDeepDive from "../../components/StandaloneDeepDive";
 
 /* ---------------------------------------------------------------------------
@@ -55,9 +55,40 @@ function clip(text: string, max: number): string {
 }
 
 /** ISO datetime for datePublished — prefer first_published, else midnight UTC
- *  of the printed date. */
+ *  of the printed date. This is the story's FIRST-seen moment. */
 function publishedIso(row: { first_published: string | null; printed_on: string }): string {
   return row.first_published || `${row.printed_on}T00:00:00Z`;
+}
+
+/** ISO datetime for the DISPLAYED dateline — the most recent article in the
+ *  cluster, not first-seen. `first_published` is the earliest member (a story
+ *  running Aug 9-10 that first broke Aug 8 would otherwise mis-date as Aug 8).
+ *  Best-available "most recent" signal: the latest member `published_at`, else
+ *  the printed edition date, else the first-published fallback. */
+function mostRecentIso(
+  row: {
+    first_published: string | null;
+    printed_on: string;
+    members: { published_at?: string | null }[] | null;
+  },
+): string {
+  let latestMs = -Infinity;
+  let latestIso = "";
+  if (Array.isArray(row.members)) {
+    for (const m of row.members) {
+      if (!m.published_at) continue;
+      const ms = new Date(m.published_at).getTime();
+      if (!Number.isNaN(ms) && ms > latestMs) {
+        latestMs = ms;
+        latestIso = m.published_at;
+      }
+    }
+  }
+  if (latestIso) return latestIso;
+  // No dated members: the edition date (printed_on) is the next-best recency
+  // signal, always >= first_published.
+  if (row.printed_on) return `${row.printed_on}T00:00:00Z`;
+  return publishedIso(row);
 }
 
 // Sentinel id used ONLY when the archive is empty. Next 16 + output: export
@@ -91,12 +122,13 @@ export async function generateMetadata(
     160,
   );
   const url = `${SITE_URL}/story/${row.id}/`;
+  // Until per-story OG cards ship, every story shares the site brand card. It
+  // MUST be declared here explicitly: a route that sets its own openGraph does
+  // NOT inherit openGraph.images from the root layout, so an omitted image left
+  // twitter:card=summary_large_image pointing at nothing (a broken share card).
   return {
     title,
     description,
-    // Per-story OG images are a documented follow-up: og:image currently
-    // inherits the site default from the root layout. When per-story cards are
-    // generated, set openGraph.images / twitter.images here.
     alternates: { canonical: url },
     openGraph: {
       title,
@@ -104,11 +136,13 @@ export async function generateMetadata(
       url,
       type: "article",
       siteName: "Void News",
+      images: [OG_IMAGE],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
+      images: [OG_IMAGE_URL],
     },
   };
 }
@@ -126,7 +160,10 @@ export default async function StoryPage(
   const hasBiasData = rowHasBiasData(row);
 
   const iso = publishedIso(row);
-  const datelineLabel = formatDatelineUTC(iso);
+  // The DISPLAYED dateline reflects the most recent article in the cluster, not
+  // the first-seen date, so a story about today's events never reads as days old.
+  const displayIso = mostRecentIso(row);
+  const datelineLabel = formatDatelineUTC(displayIso);
   const url = `${SITE_URL}/story/${row.id}/`;
 
   // schema.org NewsArticle. datePublished from first_published (ISO). Publisher
@@ -141,7 +178,7 @@ export default async function StoryPage(
       200,
     ),
     datePublished: iso,
-    dateModified: iso,
+    dateModified: displayIso,
     url,
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
     author: { "@type": "Organization", name: "Void News", url: SITE_URL },
@@ -164,7 +201,7 @@ export default async function StoryPage(
         spectrumSources={spectrumSources}
         columnSources={columnSources}
         hasBiasData={hasBiasData}
-        builtAt={iso}
+        builtAt={displayIso}
         datelineLabel={datelineLabel}
         shareUrl={url}
       />

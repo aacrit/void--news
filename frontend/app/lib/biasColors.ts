@@ -192,7 +192,7 @@ export function sigilLabelInfo(
   divergenceFlag?: "divergent" | "consensus" | null,
   unscored?: boolean,
 ): { text: string; color: string } {
-  if (unscored) return { text: "\u2014", color: "var(--fg-tertiary)" };
+  if (unscored) return { text: "Unscored", color: "var(--fg-tertiary)" };
 
   const isBalanced = lean >= 47 && lean <= 53;
 

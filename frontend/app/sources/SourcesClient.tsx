@@ -367,12 +367,11 @@ function timeAgo(dateStr: string): string {
   return `${days}d ago`;
 }
 
-function getFaviconUrlMeth(sourceUrl: string): string {
-  if (!sourceUrl) return "";
-  try {
-    const domain = new URL(sourceUrl.startsWith("http") ? sourceUrl : `https://${sourceUrl}`).hostname;
-    return `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
-  } catch { return ""; }
+function getFaviconUrlMeth(_sourceUrl: string): string {
+  // Privacy: never call an external favicon service. Fetching a third-party
+  // favicon would leak the reader's IP and which publisher they are viewing to
+  // that host. The self-contained letter monogram fallback renders instead.
+  return "";
 }
 
 /* ---------------------------------------------------------------------------

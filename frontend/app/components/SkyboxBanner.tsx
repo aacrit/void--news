@@ -15,6 +15,14 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
   const [expandedSection, setExpandedSection] = useState<ExpandedSection>(null);
   const [announcement, setAnnouncement] = useState("");
   const hasExpandedOnce = useRef(false);
+  // timeAgo() depends on the wall clock, which differs between the build-time
+  // server render (the brief is now prerendered) and client hydration. Gate it
+  // behind mount so server + first client paint agree (no React #418); the
+  // relative time appears immediately after mount.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Focus management refs
   const collapseRef = useRef<HTMLButtonElement>(null);
@@ -118,7 +126,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                     <LogoIcon size={16} animation="idle" className="skb__compact-logo" />
                     <span className="skb__compact-cmd">The Brief</span>
                     <span className="skb__compact-desc">&middot; Today&rsquo;s top stories, in one read</span>
-                    {brief.created_at && <span className="skb__compact-time">{timeAgo(brief.created_at)}</span>}
+                    {mounted && brief.created_at && <span className="skb__compact-time">{timeAgo(brief.created_at)}</span>}
                   </div>
                   {brief.tldr_headline && <h3 className="skb__compact-hl skb__compact-hl--tldr">{String(brief.tldr_headline)}</h3>}
                   <p className="skb__compact-preview skb__compact-preview--tldr">{String(brief.tldr_text)}</p>
@@ -163,7 +171,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                   <LogoIcon size={16} animation="idle" />
                   <span className="skb__section-label-cmd">The Brief</span>
                   <span className="skb__section-desc">&middot; Today&rsquo;s top stories, in one read</span>
-                  {brief.created_at && <span className="skb__section-label-time">{timeAgo(brief.created_at)}</span>}
+                  {mounted && brief.created_at && <span className="skb__section-label-time">{timeAgo(brief.created_at)}</span>}
                   <button
                     ref={collapseRef}
                     className="skb__collapse-inline"

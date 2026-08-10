@@ -102,9 +102,21 @@ export function useAudio(): AudioState {
   return ctx;
 }
 
-export default function AudioProvider({ children }: { children: ReactNode }) {
+export default function AudioProvider({
+  children,
+  initialBrief = null,
+}: {
+  children: ReactNode;
+  /** Build-time prerendered daily brief (from the root layout). Seeds the
+   *  first paint so The Brief renders real text server-side, and suppresses the
+   *  first-mount refetch that would otherwise flash "Loading" / risk #418. */
+  initialBrief?: DailyBriefData | null;
+}) {
   const [edition, setEditionState] = useState<string>("world");
-  const [brief, setBrief] = useState<DailyBriefData | null>(null);
+  const [brief, setBrief] = useState<DailyBriefData | null>(initialBrief);
+  // True until the seeded brief has satisfied the first edition-fetch effect
+  // run, so we keep the build-time brief instead of clearing + refetching it.
+  const seededRef = useRef<boolean>(initialBrief != null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -155,6 +167,23 @@ export default function AudioProvider({ children }: { children: ReactNode }) {
     if (contentTypeRef.current !== "daily") return;
 
     let cancelled = false;
+
+    // First mount with a build-time seeded brief: keep it. Refetching here would
+    // clear the brief to null (flashing "Loading today's brief…") and could
+    // produce a hydration-time first paint that differs from the server render
+    // (React #418). We still load the audio playlist. Any later edition change
+    // (or return from a weekly/history load) falls through to a normal refetch.
+    if (seededRef.current) {
+      seededRef.current = false;
+      if (AUDIO_ENABLED) {
+        fetchPreviousEpisodes(edition).then((data) => {
+          if (!cancelled) setPreviousEpisodes(data);
+        });
+      }
+      return () => {
+        cancelled = true;
+      };
+    }
 
     // Pause and detach audio before switching briefs. No-ops when audio is
     // parked (the <audio> element is never mounted, so audioRef is null).
