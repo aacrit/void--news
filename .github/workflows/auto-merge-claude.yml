@@ -29,6 +29,16 @@ jobs:
         # the gate. The old `|| echo "Build flaky but proceeding"` made this
         # job exit 0 on a broken build, so unbuildable code auto-merged to
         # main and deployed.
+        #
+        # Supabase creds mirror deploy-cloudflare.yml: since 2026-08-10 the
+        # front page + /sources prerender at build time and serverFeed.ts
+        # fail-loud throws if the feed query returns nothing, so build-check
+        # must run the SAME data-backed build the deploy does, or it would
+        # false-fail on the fail-loud guard.
+        env:
+          NEXT_PUBLIC_BASE_PATH: ""
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
         run: |
           cd frontend && npm ci
           npx next build || npx next build || npx next build
