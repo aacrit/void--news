@@ -193,7 +193,15 @@ export default function RootLayout({
                 document.documentElement.setAttribute('data-viewport', m ? 'mobile' : 'desktop');
               })();
               if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('${BASE_PATH}/sw.js').catch(function() {});
+                // updateViaCache:'none' forces the browser to bypass the HTTP
+                // cache when checking sw.js for updates. The custom-domain
+                // Cloudflare zone rewrites /sw.js to a 4h browser TTL (it caches
+                // .js by default and _headers can't override that), which would
+                // otherwise delay a new SW being picked up. 'none' fetches sw.js
+                // fresh on every load so a new deploy's SW activates promptly.
+                navigator.serviceWorker.register('${BASE_PATH}/sw.js', { updateViaCache: 'none' })
+                  .then(function(reg) { reg.update(); })
+                  .catch(function() {});
               }
             `,
           }}
