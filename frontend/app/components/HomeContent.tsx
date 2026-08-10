@@ -2,9 +2,9 @@
 
 import React, { Component, type ReactNode, useState, useEffect, useMemo, useCallback, useRef } from "react";
 import dynamic from "next/dynamic";
-import type { Edition, Category, Story, BiasScores, BiasSpread, ThreeLensData, OpinionLabel, SigilData } from "../lib/types";
+import type { Edition, Category, Story } from "../lib/types";
 import { EDITIONS } from "../lib/types";
-import { isUnscoredTilt } from "../lib/biasColors";
+import { mapClustersToStories, FEED_ENRICHED_FIELDS, FEED_BASE_FIELDS } from "../lib/feedMapping";
 import { supabase, supabaseError } from "../lib/supabase";
 import { cacheGet, cacheSet } from "../lib/feedCache";
 import { cleanFeedSummary } from "../lib/summaryHygiene";
@@ -70,70 +70,9 @@ import MobileFeed from "./MobileFeed";
 // WorldDivider removed 2026-06-02 — no overflow split in single-feed mode.
 const SearchOverlay = dynamic(() => import("./SearchOverlay"), { ssr: false });
 
-/** Map pipeline category slugs (both fine-grained and desk) to display names.
- *  Fine-grained slugs from old pipeline runs are merged to their desk names. */
-function capitalize(s: string): string {
-  if (!s) return s;
-  const map: Record<string, string> = {
-    // Desk slugs (current pipeline output)
-    politics: "Politics", conflict: "Conflict", economy: "Economy",
-    science: "Science", health: "Health", environment: "Environment",
-    culture: "Culture",
-    // Legacy fine-grained slugs (old data in DB) → desk names
-    tech: "Science", technology: "Science", sports: "Culture",
-  };
-  return map[s.toLowerCase()] || s.charAt(0).toUpperCase() + s.slice(1);
-}
-
-/**
- * Runtime guard for bias_diversity JSONB from Supabase.
- * Returns null if the value is not a plain object — guards against malformed
- * JSONB (strings, arrays, unexpected types) that would cause property-access
- * errors downstream. Accepts null/undefined as a valid "no data" signal.
- */
-function parseBiasDiversity(raw: unknown): Record<string, unknown> | null {
-  if (raw == null) return null;
-  if (typeof raw !== "object" || Array.isArray(raw)) return null;
-  return raw as Record<string, unknown>;
-}
-
-/**
- * Safely coerce a bias_diversity field value to number, returning fallback
- * if the field is missing, null, not a number, or NaN.
- */
-function safeNum(bd: Record<string, unknown>, key: string, fallback: number): number {
-  const v = bd[key];
-  if (typeof v === "number" && !Number.isNaN(v)) return v;
-  return fallback;
-}
-
-/**
- * Safely extract tier_breakdown as Record<string, number> — only keeps
- * entries where the value is a finite number.
- */
-function safeTierBreakdown(bd: Record<string, unknown>): Record<string, number> | undefined {
-  const raw = bd["tier_breakdown"];
-  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return undefined;
-  const result: Record<string, number> = {};
-  for (const [k, v] of Object.entries(raw as Record<string, unknown>)) {
-    if (typeof v === "number" && Number.isFinite(v)) result[k] = v;
-  }
-  return Object.keys(result).length > 0 ? result : undefined;
-}
-
-function deriveOpinionLabel(score: number): OpinionLabel {
-  if (score <= 25) return "Reporting";
-  if (score <= 50) return "Analysis";
-  if (score <= 75) return "Opinion";
-  return "Editorial";
-}
-
-function deriveCoverageScore(sourceCount: number, factualRigor: number, confidence: number): number {
-  const sourceNorm = Math.min(1.0, sourceCount / 10.0);
-  const rigorNorm = factualRigor / 100.0;
-  const confNorm = Math.min(1.0, confidence);
-  return Math.round((sourceNorm * 0.35 + 0.2 + confNorm * 0.20 + rigorNorm * 0.25) * 100);
-}
+/* The cluster -> Story mapping and its bias_diversity helpers now live in
+   ../lib/feedMapping (isomorphic, pure) so the build-time server fetch and the
+   client retry path produce identical Story objects. */
 
 /* ---------------------------------------------------------------------------
    Editorial feed constants — newspaper-principle (same feed for all readers)
@@ -153,6 +92,15 @@ const FETCH_LIMIT = 100;
 
 interface HomeContentProps {
   initialEdition?: Edition;
+  /** Build-time top-50 feed (prerendered front page). When present, the feed
+   *  renders immediately from these and is NOT refetched on mount. */
+  initialStories?: Story[];
+  /** Edition build time (pipeline completed_at, ISO) captured at build. */
+  initialBuiltAt?: string | null;
+  /** Deterministic, build-time-formatted masthead strings (UTC). Rendered
+   *  directly by NavBar so server and client first paint match exactly. */
+  editionDateline?: string;
+  editionTimestamp?: string;
 }
 
 /* ---------------------------------------------------------------------------
@@ -167,13 +115,22 @@ interface HomeContentProps {
 // (which now redirect to /), but unused — the feed is always "world".
 const activeEdition = "world" as const;
 
-function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeContentProps) {
+function HomeContentInner({
+  initialEdition: _initialEdition = "world",
+  initialStories,
+  initialBuiltAt = null,
+  editionDateline,
+  editionTimestamp,
+}: HomeContentProps) {
   void _initialEdition;
 
-  const [stories, setStories] = useState<Story[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // Prerendered front page: seed the feed from build-time data so the served
+  // HTML (and the client's first paint) render the real top-50 immediately.
+  const hasInitialData = useRef<boolean>(!!(initialStories && initialStories.length > 0));
+  const [stories, setStories] = useState<Story[]>(initialStories ?? []);
+  const [isLoading, setIsLoading] = useState(!hasInitialData.current);
   const [error, setError] = useState<string | null>(null);
-  const [lastUpdated, setLastUpdated] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<string | null>(initialBuiltAt);
   // retryKey: incrementing triggers the data-fetch useEffect without a full
   // page reload — gives users a clean retry path from the error state.
   const [retryKey, setRetryKey] = useState(0);
@@ -453,6 +410,15 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
   }
 
   useEffect(() => {
+    // Prerendered path (front page): the top-50 feed is baked into the HTML at
+    // build time and seeded into state above. Do NOT refetch on mount — the
+    // feed changes once a day, and a mount refetch is exactly what reintroduced
+    // the React #418 hydration mismatch this file shipped before. retryKey>0
+    // (Retry button / pull-to-refresh) still fetches fresh data on demand.
+    if (retryKey === 0 && hasInitialData.current) {
+      return;
+    }
+
     const controller = new AbortController();
 
     // Stale-while-revalidate via IndexedDB: show cached stories instantly
@@ -494,8 +460,8 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
         // non-international (no World overflow rendered).
         // 2026-05-24 v2 — added is_headline + headline_confidence (migration 059).
         // Used to render the HEADLINE badge and to prioritize sort on /world.
-        const enrichedFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points,rank_world,claim_consensus,cached_image_url,is_international,is_headline,headline_confidence`;
-        const baseFields = `id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated`;
+        const enrichedFields = FEED_ENRICHED_FIELDS;
+        const baseFields = FEED_BASE_FIELDS;
 
         // Single daily feed — rank_world is the sole rank column (the other
         // per-edition rank columns were dropped by migration 061).
@@ -591,165 +557,8 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
 
         if (controller.signal.aborted) return;
 
-        /* eslint-disable @typescript-eslint/no-explicit-any */
-        const mappedStories: Story[] = clusters.map(
-          (cluster: any) => {
-            // M002: Runtime-validate bias_diversity JSONB before any property access.
-            // parseBiasDiversity returns null for strings, arrays, or non-plain-objects.
-            const bd = usingEnriched ? parseBiasDiversity(cluster.bias_diversity) : null;
-            const hasBiasData = !!(bd && bd["avg_political_lean"] != null);
-
-            const biasScores: BiasScores = hasBiasData
-              ? {
-                  politicalLean: safeNum(bd!, "avg_political_lean", 50),
-                  sensationalism: safeNum(bd!, "avg_sensationalism", 30),
-                  opinionFact: safeNum(bd!, "avg_opinion_fact", 25),
-                  factualRigor: safeNum(bd!, "avg_factual_rigor", 75),
-                  framing: safeNum(bd!, "avg_framing", 40),
-                }
-              : {
-                  politicalLean: 50,
-                  sensationalism: 30,
-                  opinionFact: 25,
-                  factualRigor: 75,
-                  framing: 40,
-                };
-
-            const biasSpread: BiasSpread | undefined = bd && bd["lean_spread"] != null
-              ? {
-                  leanSpread: safeNum(bd, "lean_spread", 0),
-                  framingSpread: safeNum(bd, "framing_spread", 0),
-                  leanRange: safeNum(bd, "lean_range", 0),
-                  sensationalismSpread: safeNum(bd, "sensationalism_spread", 0),
-                  opinionSpread: safeNum(bd, "opinion_spread", 0),
-                  aggregateConfidence: safeNum(bd, "aggregate_confidence", 0),
-                  analyzedCount: safeNum(bd, "analyzed_count", 0),
-                  polarization: safeNum(bd, "polarization", 0),
-                  leanLeftCount: safeNum(bd, "lean_left_count", 0),
-                  leanCenterCount: safeNum(bd, "lean_center_count", 0),
-                  leanRightCount: safeNum(bd, "lean_right_count", 0),
-                }
-              : undefined;
-
-            // Use nullish coalescing so a genuine 0 is preserved rather than
-            // defaulting to 1. The pending flag on lensData/sigilData already
-            // handles the no-bias-data display state.
-            const sourceCount = cluster.source_count ?? 0;
-            const opinionLabel = (bd?.["avg_opinion_label"] as OpinionLabel) ?? deriveOpinionLabel(biasScores.opinionFact);
-            const lensData: ThreeLensData = {
-              lean: biasScores.politicalLean,
-              coverage: bd ? safeNum(bd, "coverage_score", deriveCoverageScore(
-                sourceCount, biasScores.factualRigor, biasSpread?.aggregateConfidence ?? 0.5,
-              )) : deriveCoverageScore(sourceCount, biasScores.factualRigor, 0.5),
-              sourceCount,
-              tierBreakdown: bd ? safeTierBreakdown(bd) : undefined,
-              opinion: biasScores.opinionFact,
-              opinionLabel,
-              pending: !hasBiasData,
-            };
-            const claimCon = cluster.claim_consensus;
-            const sigilData: SigilData = {
-              politicalLean: biasScores.politicalLean,
-              sensationalism: biasScores.sensationalism,
-              opinionFact: biasScores.opinionFact,
-              factualRigor: biasScores.factualRigor,
-              framing: biasScores.framing,
-              agreement: cluster.divergence_score || 0,
-              sourceCount,
-              tierBreakdown: bd ? safeTierBreakdown(bd) : undefined,
-              biasSpread,
-              pending: !hasBiasData,
-              unscored: hasBiasData && isUnscoredTilt(
-                biasScores.politicalLean,
-                sourceCount,
-                biasSpread?.leanSpread ?? 0,
-                biasSpread?.leanRange ?? 0,
-                biasSpread?.aggregateConfidence ?? 0,
-              ),
-              opinionLabel,
-              consensusCorroborated: claimCon?.corroborated,
-              consensusTotal: claimCon?.total_claims,
-            };
-
-            const rawConsensus = usingEnriched ? cluster.consensus_points : null;
-            const rawDivergence = usingEnriched ? cluster.divergence_points : null;
-            const consensusPoints: string[] = Array.isArray(rawConsensus)
-              ? rawConsensus.map((p: unknown) => typeof p === "string" ? p : String(p ?? ""))
-              : [];
-            const divergencePoints: string[] = Array.isArray(rawDivergence)
-              ? rawDivergence.map((p: unknown) => typeof p === "string" ? p : String(p ?? ""))
-              : [];
-
-            // Defensive: coerce title/summary to string — JSONB fields or
-            // corrupted data can return objects, crashing React (#310).
-            const safeTitle = typeof cluster.title === "string" ? cluster.title : String(cluster.title ?? "");
-            // Guard against a raw scraped excerpt slipping onto a card: if the
-            // summary fails the hygiene check it is blanked, and the card falls
-            // back to its neutral "N sources reporting" pending line.
-            const safeSummary = cleanFeedSummary(
-              typeof cluster.summary === "string" ? cluster.summary : String(cluster.summary ?? ""),
-              safeTitle,
-            );
-
-            return {
-              id: cluster.id,
-              title: safeTitle,
-              summary: safeSummary,
-              source: {
-                name: "Multiple Sources",
-                count: sourceCount,
-              },
-              category: capitalize(typeof cluster.category === "string" ? cluster.category : "politics") as Category,
-              publishedAt:
-                cluster.first_published ||
-                cluster.last_updated ||
-                new Date().toISOString(),
-              biasScores,
-              biasSpread,
-              lensData,
-              sigilData,
-              section: (cluster.section || "world") as Edition,
-              sections: (cluster.sections || [cluster.section || "world"]) as Edition[],
-              importance: cluster.rank_world || cluster.headline_rank || cluster.importance_score || 50,
-              divergenceScore: cluster.divergence_score || 0,
-              headlineRank: cluster.rank_world || cluster.headline_rank || cluster.importance_score || 50,
-              coverageVelocity: cluster.coverage_velocity || 0,
-              deepDive: consensusPoints.length > 0 || divergencePoints.length > 0 || cluster.claim_consensus
-                ? {
-                    consensus: consensusPoints,
-                    divergence: divergencePoints,
-                    sources: [],
-                    claimConsensus: cluster.claim_consensus || undefined,
-                  }
-                : undefined,
-              cachedImageUrl: cluster.cached_image_url ?? null,
-              // is_international flag: true when the story belongs to the World
-              // overflow section. Defensive Boolean cast — older schemas without
-              // the column return undefined → falsy, no overflow rendered.
-              // Cast through unknown to bypass Story interface (extra field).
-              is_international: Boolean(cluster.is_international),
-            } as unknown as Story;
-          }
-        );
-
-        // Compute divergence percentiles (p10/p90) and flag top/bottom 10%
-        const divScores = mappedStories
-          .map((s) => s.divergenceScore)
-          .filter((d) => d > 0)
-          .sort((a, b) => a - b);
-        if (divScores.length >= 5) {
-          const p10 = divScores[Math.floor(divScores.length * 0.1)];
-          const p90 = divScores[Math.floor(divScores.length * 0.9)];
-          for (const s of mappedStories) {
-            if (s.divergenceScore > 0) {
-              if (s.divergenceScore >= p90) {
-                s.sigilData.divergenceFlag = "divergent";
-              } else if (s.divergenceScore <= p10) {
-                s.sigilData.divergenceFlag = "consensus";
-              }
-            }
-          }
-        }
+        // Shared, isomorphic mapping (identical to the build-time server fetch).
+        const mappedStories: Story[] = mapClustersToStories(clusters, usingEnriched);
 
         setStories(mappedStories);
         setIsLoading(false);
@@ -994,6 +803,8 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
       <NavBar
         onSearchClick={() => setSearchOpen(true)}
         editionBuiltAt={lastUpdated}
+        editionDateline={editionDateline}
+        editionTimestamp={editionTimestamp}
         hasAudio={!!dailyBriefState.brief?.audio_url}
         isAudioPlaying={dailyBriefState.isPlaying}
         onOnairClick={() => {
@@ -1242,10 +1053,22 @@ function HomeContentInner({ initialEdition: _initialEdition = "world" }: HomeCon
   );
 }
 
-export default function HomeContent({ initialEdition = "world" }: HomeContentProps) {
+export default function HomeContent({
+  initialEdition = "world",
+  initialStories,
+  initialBuiltAt = null,
+  editionDateline,
+  editionTimestamp,
+}: HomeContentProps) {
   return (
     <ErrorBoundary>
-      <HomeContentInner initialEdition={initialEdition} />
+      <HomeContentInner
+        initialEdition={initialEdition}
+        initialStories={initialStories}
+        initialBuiltAt={initialBuiltAt}
+        editionDateline={editionDateline}
+        editionTimestamp={editionTimestamp}
+      />
     </ErrorBoundary>
   );
 }
