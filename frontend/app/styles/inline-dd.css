@@ -193,7 +193,11 @@
    the classic 60-75ch line length. The Spread band below is a separate
    full-width section, so this does not affect the 2-col spectrum layout. */
 .inline-dd__story .dd-summary-text {
-  max-width: 46rem;
+  /* 2026-08-10: widened 46rem -> 60rem. The inline panel's story column is
+     ~1088px on desktop, so a 736px (46rem) measure left a large empty right
+     edge that read as a truncated / misaligned summary. 60rem fills the column
+     comfortably while keeping the line length readable. */
+  max-width: 60rem;
 }
 
 /* The spectrum spans the full content column as a landscape band. */
