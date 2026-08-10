@@ -57,8 +57,11 @@ export default function AboutFaq() {
         <div className="faq__item" ref={register(3 + QA.length)} style={{ opacity: 0 }}>
           <dt className="faq__q">Is a person deciding what I see?</dt>
           <dd className="faq__a">
-            No. Void is not a human editorial board, and it is not an AI judging the news. It is an experimental,
-            rule-based engine reading language by fixed rules. The rules are open, imperfect, and improving.
+            No human editorial board picks the stories, and the bias analysis is rule-based with no AI: fixed rules
+            read each article's words, and every score shows its work. The feed's ordering does use one small AI
+            signal, a story-type tag from Gemini, alongside source breadth and other measures, but it is bounded by
+            published guardrails and cannot down-weight a story that is under 12 hours old, has 20 or more sources, or
+            is still gaining coverage.
           </dd>
         </div>
       </dl>
