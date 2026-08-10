@@ -91,13 +91,13 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
     try:
         clusters = _fetch_all_clusters(
             "id,title,category,section,sections,content_type,headline_rank,source_count,"
-            "editorial_importance,story_type,mega_cluster_capped"
+            "editorial_importance,story_type,mega_cluster_capped,first_published"
         )
     except Exception:
         try:
             clusters = _fetch_all_clusters(
                 "id,title,category,section,sections,content_type,headline_rank,source_count,"
-                "mega_cluster_capped"
+                "mega_cluster_capped,first_published"
             )
         except Exception:
             clusters = _fetch_all_clusters(
@@ -408,6 +408,9 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
             "category": category,
             "story_type": story_type,
             "editorial_importance": cluster.get("editorial_importance"),
+            # first_published feeds feed_ranker's incremental_update freshness
+            # guardrail (2026-08-10). Diagnostic/ordering only; NOT written back.
+            "first_published": cluster.get("first_published"),
             "source_count": db_source_count,  # for diagnostic print only; NOT written back
             "_articles": articles,
             "_bias_scores": bias_scores,

@@ -1101,7 +1101,17 @@ def _longevity_penalty(
         30+ sources: floor 0.75 (major international story)
         15+ sources: floor 0.65 (significant multi-source story)
 
-    Returns multiplier 0.50-1.0.
+    v6.4 (2026-08-10 Phase-2 ranking audit, 1a-Q2): birth-age component. The
+    recency curve above keys off the MOST-RECENT article, so a story that keeps
+    getting fresh updates pays penalty 1.0 no matter how old its first article
+    is. That let mature, continuously-refreshed stories permanently monopolize
+    the top while same-day breaks were locked out. A gentle secondary decay now
+    also keys off the FIRST article's age so a story that has been running for
+    days pays a small toll a fresh break does not. Deliberately conservative
+    (at most -10%, and floored for well-sourced developing stories) so a
+    legitimately-developing major story is not over-penalized.
+
+    Returns multiplier ~0.45-1.0.
     """
     if not timestamps:
         return 0.70  # no timestamps = probably stale (lowered from 0.85)
@@ -1128,6 +1138,24 @@ def _longevity_penalty(
         decay = max(decay, 0.75)
     elif source_count >= 15:
         decay = max(decay, 0.65)
+
+    # v6.4: Birth-age component — how long has this story been running, measured
+    # from its FIRST article (min timestamp), independent of how fresh its most
+    # recent update is. A same-day break pays nothing; a multi-day-old story pays
+    # a small, capped toll even when continuously refreshed. Floored for 30+
+    # source developing stories so a genuine ongoing mega-story keeps most of it.
+    birth_hours = max(0, (now - min(timestamps)).total_seconds() / 3600.0)
+    if birth_hours >= 48:
+        birth_decay = 0.90
+    elif birth_hours >= 36:
+        birth_decay = 0.93
+    elif birth_hours >= 24:
+        birth_decay = 0.96
+    else:
+        birth_decay = 1.0
+    if source_count >= 30:
+        birth_decay = max(birth_decay, 0.95)  # major developing story: gentle
+    decay *= birth_decay
 
     return decay
 
@@ -1290,9 +1318,14 @@ def rank_importance(
     elif authority >= 50.0 and consequentiality < 5.0:
         consequentiality = 18.0
 
-    # Gemini editorial importance: normalize 1-10 to 0-100
-    editorial_signal = ((editorial_importance - 1) * (100.0 / 9.0)
-                        if editorial_importance is not None else None)
+    # v6.4 (2026-08-10 Phase-2 ranking audit, 1a-Q4): editorial_importance no
+    # longer feeds headline_rank here. It used to be double-counted: once
+    # additively in this function (+/-6.7 pts) and again multiplicatively in
+    # feed_ranker (x0.88..x1.12). We keep the single feed_ranker nudge (its clamp
+    # bounds how far one uncalibrated per-cluster score can move a story) and drop
+    # the additive term, so headline_rank is now ei-neutral and each story feels
+    # the ei signal exactly once. `editorial_importance` is still accepted for
+    # backward compatibility but no longer affects the deterministic score.
 
     # v5.1: US-only divergence damper.
     # Domestic US stories often score high divergence (partisan framing) even
@@ -1373,19 +1406,10 @@ def rank_importance(
     else:
         cross_spectrum_fired = False
 
-    # v5.0: Gemini editorial adjustment (additive, not scaling)
-    # When editorial_importance is available, apply a ±10% adjustment
-    # based on how Gemini's judgment differs from the deterministic score.
-    # ei=10 → up to +10 points; ei=1 → up to -5 points; ei=5 → neutral.
-    # This avoids bloating: deterministic base is never scaled down.
-    # Clusters without Gemini data score identically to v4.0.
-    if editorial_signal is not None:
-        # editorial_signal is 0-100 (mapped from 1-10)
-        # Compute adjustment: positive for ei>=6, negative for ei<=4, ~0 for ei=5
-        # Max boost: +10 points at ei=10; max penalty: -5 at ei=1
-        midpoint = 55.6  # corresponds to ei ≈ 6 (slightly generous neutral)
-        adjustment = (editorial_signal - midpoint) * 0.15  # ±6.7 max
-        headline_rank += adjustment
+    # v6.4: The former additive Gemini editorial adjustment (+/-6.7 pts) was
+    # removed here. editorial_importance is now applied ONCE, as the
+    # multiplicative nudge in feed_ranker.apply_feed_ordering (see the
+    # editorial_signal comment above). headline_rank is intentionally ei-neutral.
 
     # Confidence multiplier: discount low-confidence clusters.
     # v5.5: For high-source clusters (15+), raise the floor to 0.85.
