@@ -59,7 +59,6 @@ export default function StandaloneDeepDive({
   spectrumSources,
   columnSources,
   hasBiasData,
-  builtAt,
   datelineLabel,
   shareUrl,
 }: StandaloneDeepDiveProps) {
@@ -112,8 +111,11 @@ export default function StandaloneDeepDive({
 
   return (
     <div className="page-container">
-      {/* Void News masthead — same top bar as Home / On Air. */}
-      <NavBar editionBuiltAt={builtAt} />
+      {/* Void News masthead — same top bar as Home / On Air. An archived story
+          is a permanent snapshot, so we show its edition DATE only and suppress
+          the live "as of <time>" freshness signal (passing an empty timestamp;
+          NavBar renders no time block when it is empty). */}
+      <NavBar editionDateline={datelineLabel} editionTimestamp="" />
 
       <main
         id="main-content"

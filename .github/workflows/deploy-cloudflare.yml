@@ -8,7 +8,14 @@ on:
   push:
     branches: [main]
   workflow_run:
-    workflows: ["Auto-merge Claude branches"]
+    # "Auto-merge Claude branches" -> redeploy after code lands on main.
+    # "News Pipeline" -> redeploy after the daily 11:00 UTC run so the
+    # build-time-prerendered front page + the new day's archived /story/<id>
+    # pages pick up fresh data (the pipeline writes the DB + archives via step
+    # 8f but never pushes code, so without this the prerendered feed goes
+    # stale). The `if:` guard below only deploys when conclusion == 'success',
+    # so a failed pipeline never publishes a stale or empty page.
+    workflows: ["Auto-merge Claude branches", "News Pipeline"]
     types: [completed]
   workflow_dispatch:
 
