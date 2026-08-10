@@ -27,24 +27,26 @@ export const metadata: Metadata = pageMetadata({
 export default async function Home() {
   const feed = await fetchInitialFeed();
 
-  // schema.org ItemList of the day's top stories. Deep Dive routes are Phase 2;
-  // until then each item points at the front page's ?story deep link (opens the
-  // story's analysis inline). Extend `itemListElement` with per-story canonical
-  // URLs when Deep Dive pages exist.
+  // schema.org ItemList of the day's top stories. Each item points at the
+  // story's canonical prerendered Deep Dive page (/story/<permalink>/) so
+  // crawlers follow the list straight into a real, indexable page. Falls back
+  // to the in-app ?story deep link only if a card has no archive permalink yet.
   const displayable = feed.stories.filter(
     (s) => (s.sigilData?.sourceCount ?? s.source?.count ?? 0) >= 3,
   );
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
-    name: "Void News — Today's Top Stories",
+    name: "Void News: Today's Top Stories",
     itemListOrder: "https://schema.org/ItemListOrderDescending",
     numberOfItems: Math.min(displayable.length, 30),
     itemListElement: displayable.slice(0, 30).map((s, i) => ({
       "@type": "ListItem",
       position: i + 1,
       name: s.title,
-      url: `${SITE_URL}/?story=${encodeURIComponent(s.id)}`,
+      url: s.permalink
+        ? `${SITE_URL}${s.permalink}`
+        : `${SITE_URL}/?story=${encodeURIComponent(s.id)}`,
     })),
   };
 
