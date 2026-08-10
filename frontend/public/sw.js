@@ -1,9 +1,14 @@
 // void --news Service Worker
 // Enables offline reading, asset caching, and background sync
 
-const CACHE_NAME = 'void-news-v4';
-const ASSET_CACHE = 'void-news-assets-v4';
-const API_CACHE = 'void-news-api-v4';
+// Bump these on any deploy that must invalidate cached shells/assets. The
+// activate handler below deletes every cache whose name is not in this set,
+// so a version bump purges the previous deploy's cached bundle. Paired with
+// the `no-cache` header on /sw.js (see public/_headers), a new SW is picked
+// up on the next load instead of after the browser's 24h update check.
+const CACHE_NAME = 'void-news-v5';
+const ASSET_CACHE = 'void-news-assets-v5';
+const API_CACHE = 'void-news-api-v5';
 
 const OFFLINE_URL = '/offline.html';
 
@@ -100,8 +105,12 @@ self.addEventListener('fetch', (event) => {
   const isNavigation =
     request.mode === 'navigate' || request.destination === 'document';
 
+  // `cache: 'reload'` bypasses the browser HTTP cache so this network-first
+  // fetch reaches the edge for the freshest shell. Without it the shell's own
+  // max-age=120 / stale-while-revalidate could feed a stale HTML document to
+  // a "network-first" handler, keeping an old deploy on screen after a push.
   event.respondWith(
-    fetch(request)
+    fetch(request, { cache: 'reload' })
       .then((response) => {
         if (response.ok) {
           caches.open(CACHE_NAME).then((cache) => cache.put(request, response.clone()));

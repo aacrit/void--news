@@ -51,6 +51,18 @@
 # rule: /*.woff2 overlapped /_next/static/* and emitted a duplicate
 # Cache-Control on every font, which defeats the immutable long-cache.
 
+# ── Service worker — never cache, always revalidate ─────────────────────
+# The browser MUST fetch the freshest sw.js on every load so a new deploy's
+# service worker is detected and installed promptly. Without this, a stale
+# edge/browser-cached sw.js keeps the previous bundle alive (readers had to
+# hard-refresh to see updates). no-cache = revalidate every load; the SW's
+# activate handler then purges old caches on the version bump. manifest.json
+# gets the same treatment so PWA metadata refreshes too.
+/sw.js
+  Cache-Control: no-cache, must-revalidate
+/manifest.json
+  Cache-Control: no-cache, must-revalidate
+
 # ── HTML routes — short browser cache + stale-while-revalidate ──────────
 # 2026-06-01 egress fix: HomeContent.tsx fetches Supabase JSON on every
 # page load. Browser caching the HTML response means repeated visits
