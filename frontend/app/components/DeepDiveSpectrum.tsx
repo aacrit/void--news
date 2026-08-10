@@ -315,8 +315,9 @@ function SourceFaviconRow({
     });
   }, [visibleSources, isMobile]);
 
-  // Show "+N more" indicator on mobile if sources were filtered
-  const hiddenCount = isMobile ? Math.max(0, sources.length - visibleSources.length) : 0;
+  // The mobile "+N more" dot-overflow indicator was removed 2026-08-10: the
+  // mobile Deep Dive Spread page now lists every source in the Left/Center/Right
+  // columns beneath the spectrum, so the label was redundant.
 
   return (
     <>
@@ -339,11 +340,6 @@ function SourceFaviconRow({
           </a>
         ))}
       </div>
-      {hiddenCount > 0 && (
-        <div className="dd-sv-sources-more" style={{ fontSize: "11px", color: "var(--fg-tertiary)", marginTop: "4px" }}>
-          +{hiddenCount} more source{hiddenCount !== 1 ? 's' : ''}
-        </div>
-      )}
     </>
   );
 }
