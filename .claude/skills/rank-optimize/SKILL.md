@@ -121,13 +121,16 @@ Deliver a structured report to the CEO:
 | Story maturity | 16% | recency * log2(1 + source_count) |
 | Tier diversity | 13% | Composition-aware, us_major presence rewarded |
 | Consequentiality | 10% | Outcome/action verbs + high-authority floor |
+| Perspective diversity | 9% | Editorial viewpoint spread, bias-blind (absorbs old lean_diversity) |
 | Institutional authority | 8% | Heads of state, courts, central banks, UN |
 | Factual density | 8% | Average factual rigor; <30 gets 0.88x gate |
 | Divergence score | 7% | Framing-weighted source disagreement |
-| Perspective diversity | 6% | Editorial viewpoint spread (bias-blind) |
 | Geographic impact | 6% | Geopolitically weighted NER GPEs |
+| Coverage velocity | 3% | Sources added in last 24h; diminishing returns |
 | Confidence multiplier | - | 0.65 + 0.35 * conf (applied to final score) |
 | Soft-news gate | - | sports/entertainment/culture get 0.78x |
+
+Note: coverage breadth (20%), story maturity (16%), and tier diversity (13%), about 49% combined, all derive from source_count. They are three signals over one shared input.
 
 ## Constraints
 
