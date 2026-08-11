@@ -11,9 +11,6 @@ import { getEditionTimestamp, getEditionDatelineUTC } from "../lib/utils";
 
 interface NavBarProps {
   onSearchClick?: () => void;
-  hasAudio?: boolean;
-  isAudioPlaying?: boolean;
-  onOnairClick?: () => void;
   /** Edition build time (pipeline completed_at, ISO). Drives the masthead
       dateline + timestamp so they reflect when THIS edition was built, not the
       reader's current clock. Falls back to now when absent. */
@@ -42,9 +39,6 @@ export default function NavBar({
   editionBuiltAt,
   editionDateline,
   editionTimestamp,
-  hasAudio,
-  isAudioPlaying,
-  onOnairClick,
 }: NavBarProps) {
   const [mounted, setMounted] = useState(false);
   // SSR-safe hydration pattern — defer dateline/timestamp render until after
@@ -157,20 +151,9 @@ export default function NavBar({
               still resolve at /games and /paper for direct URL access. */}
           <nav className="nav-pages" aria-label="Pages">
             <PageToggle activePage="feed" />
-            {/* On Air — desktop affordance for the daily broadcast. Only shown
-                when a brief with audio is available (hasAudio); tapping opens the
-                player and starts playback via onOnairClick. */}
-            {onOnairClick && hasAudio && (
-              <button
-                type="button"
-                className={`nav-page nav-page--onair${isAudioPlaying ? " nav-page--onair-live" : ""}`}
-                onClick={onOnairClick}
-                aria-label={isAudioPlaying ? "On Air, playing" : "On Air"}
-                title="On Air"
-              >
-                On Air
-              </button>
-            )}
+            {/* On Air reaches the daily broadcast from the docked/floating
+                player and the footer On Air pill on desktop, so the duplicate
+                top-nav On Air button was removed 2026-08-10 (nav-onair-dedup). */}
             <Link href="/ship" className="nav-page" aria-label="Feedback: tell us what to build or fix" title="Feedback">
               Feedback
             </Link>
