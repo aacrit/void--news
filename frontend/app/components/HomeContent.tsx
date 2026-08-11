@@ -805,12 +805,6 @@ function HomeContentInner({
         editionBuiltAt={lastUpdated}
         editionDateline={editionDateline}
         editionTimestamp={editionTimestamp}
-        hasAudio={!!dailyBriefState.brief?.audio_url}
-        isAudioPlaying={dailyBriefState.isPlaying}
-        onOnairClick={() => {
-          dailyBriefState.setPlayerVisible(true);
-          if (!dailyBriefState.isPlaying) dailyBriefState.handlePlayPause();
-        }}
       />
 
       <main
