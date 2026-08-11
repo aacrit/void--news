@@ -79,6 +79,70 @@ def _smart_generate_json(prompt: str,
 _MAX_SUMMARY_ARTICLES = 25
 _SUMMARY_PROMPT_VERSION = "2026-08-11-longform"
 
+# Below this many usable articles a cluster is "thin": the prompt's length band
+# relaxes to a 100-word floor so the model is never pressured to invent facts
+# to reach the full 200-300-word brief (CEO 2026-08-11).
+_THIN_CLUSTER_ARTICLES = 5
+
+
+def _article_sort_key(a: dict) -> tuple:
+    """Newest-first sort key shared by selection, hash, and prompt block:
+    (published_at, id) with id as the deterministic tiebreak."""
+    return (a.get("published_at") or "", str(a.get("id") or a.get("article_id") or ""))
+
+
+def _lean_bucket_of(art: dict) -> str:
+    """Left/center/right bucket from the article's source lean baseline label
+    (7-point strings like 'far-left', 'center-left', 'center', 'right').
+    Missing/unknown labels bucket as center — never a hard failure."""
+    label = str(art.get("source_lean_baseline") or "").strip().lower()
+    if "left" in label:
+        return "left"
+    if "right" in label:
+        return "right"
+    return "center"
+
+
+def _tier_weight(art: dict) -> int:
+    """Outlet-reputation weight for selection: wires/majors first."""
+    t = (art.get("tier") or "").strip().lower().replace("-", "_")
+    return {"us_major": 2, "international": 1, "independent": 0}.get(t, 0)
+
+
+def _select_articles_for_summary(articles: list[dict],
+                                 max_articles: int = _MAX_SUMMARY_ARTICLES) -> list[dict]:
+    """Pick the articles that feed the summary prompt (CEO spec 2026-08-11):
+    when a cluster exceeds max_articles, select for SPREAD and REPUTATION,
+    not just recency — bucket by source lean (left/center/right), round-robin
+    across the buckets so all covered sides are represented, and rank within
+    a bucket by outlet tier (us_major > international > independent) then
+    recency. Clusters at or under the cap use ALL articles. The returned list
+    is newest-first (the prompt opens on the freshest development), and the
+    same selection feeds _content_hash so cache-key semantics track exactly
+    what the model saw. Deterministic: stable sort keys, id tiebreaks."""
+    arts = [a for a in articles if a]
+    if len(arts) <= max_articles:
+        return sorted(arts, key=_article_sort_key, reverse=True)
+    buckets: dict[str, list[dict]] = {"left": [], "center": [], "right": []}
+    for a in arts:
+        buckets[_lean_bucket_of(a)].append(a)
+    for b in buckets.values():
+        b.sort(key=lambda a: (_tier_weight(a),) + _article_sort_key(a), reverse=True)
+    picked: list[dict] = []
+    idx = {k: 0 for k in buckets}
+    while len(picked) < max_articles:
+        progressed = False
+        for k in ("left", "center", "right"):
+            if len(picked) >= max_articles:
+                break
+            if idx[k] < len(buckets[k]):
+                picked.append(buckets[k][idx[k]])
+                idx[k] += 1
+                progressed = True
+        if not progressed:
+            break
+    return sorted(picked, key=_article_sort_key, reverse=True)
+
 
 def _content_hash(articles: list[dict]) -> str:
     """
@@ -93,15 +157,11 @@ def _content_hash(articles: list[dict]) -> str:
     cluster. Cache hit rate on stable days lifts from ~70% to ~88%,
     saving ~9 Sonnet calls/day on the post-rerank top-50 pass.
     """
-    # Newest-first by published_at (matches _build_articles_block ordering);
-    # ties broken by article id for determinism. Fall back to natural order
-    # when published_at is missing on either side.
-    def _sort_key(a: dict) -> tuple:
-        pub = a.get("published_at") or ""
-        return (pub, str(a.get("id") or a.get("article_id") or ""))
-
-    newest = sorted([a for a in articles if a], key=_sort_key, reverse=True)[:_MAX_SUMMARY_ARTICLES]
-    ids = [str(a.get("id") or a.get("article_id") or "") for a in newest]
+    # Hash the SAME stratified selection the prompt block uses (spread + tier +
+    # recency, via _select_articles_for_summary) so the cache key always tracks
+    # exactly what the model saw. IDs sorted for order-independence.
+    selected = _select_articles_for_summary(articles)
+    ids = sorted(str(a.get("id") or a.get("article_id") or "") for a in selected)
     # Include total membership count so going from 5→6 articles still
     # invalidates, plus the prompt-policy version so a length/format policy
     # change (the 2026-08-11 restore to 200-300 word briefs) regenerates every
@@ -1360,7 +1420,9 @@ def _build_source_names_line(articles: list[dict]) -> str:
     source-agnostic), instead of generic tier labels.
     """
     names = []
-    for i, art in enumerate(articles[:10]):
+    # Same stratified selection + order as _build_articles_block, so the
+    # [n] indices here point at the same articles the block numbers.
+    for i, art in enumerate(_select_articles_for_summary(articles)):
         source_name = (art.get("source_name", "") or "").strip()
         if source_name:
             names.append(f"[{i + 1}] {source_name}")
@@ -1433,19 +1495,11 @@ def _build_articles_block(articles: list[dict], max_articles: int = _MAX_SUMMARY
         "independent": "Independent Source",
     }
 
-    # Sort newest-first across the WHOLE membership, then slice. Slicing
-    # first fed the prompt an arbitrary 10 of a larger cluster while
-    # _content_hash() keyed the cache on the true newest 10 — the prompt
-    # inputs and the cache key diverged. Sort key matches _content_hash
-    # (published_at, id) for full determinism.
-    sorted_articles = sorted(
-        articles,
-        key=lambda a: (
-            a.get("published_at") or "",
-            str(a.get("id") or a.get("article_id") or ""),
-        ),
-        reverse=True,
-    )[:max_articles]
+    # Stratified selection (spread + tier + recency) shared with _content_hash
+    # and _build_source_names_line, so the prompt inputs, the outlet-name
+    # indices, and the cache key all describe the same article set in the same
+    # newest-first order.
+    sorted_articles = _select_articles_for_summary(articles, max_articles)
 
     lines = []
     for i, art in enumerate(sorted_articles):
@@ -1591,6 +1645,14 @@ def summarize_cluster(articles: list[dict],
         source_names_line=source_names_line,
         articles_block=articles_block,
     )
+
+    # Thin-material adaptation (CEO 2026-08-11): a cluster with only a few
+    # usable articles cannot honestly support a 200-300-word brief. All its
+    # articles are already fed (selection only strat-samples ABOVE the cap);
+    # relax the band to a 100-word floor so length pressure never turns into
+    # invention. Grounding rules are unchanged either way.
+    if len(summ_articles) < _THIN_CLUSTER_ARTICLES:
+        prompt = prompt.replace("200 to 300 words", "100 to 250 words")
 
     # Inject claims task before the final "Return JSON only" line
     if claims_block:
@@ -2082,7 +2144,7 @@ def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 
         try:
             src_res = (
                 supabase.table("sources")
-                .select("id, name, tier")
+                .select("id, name, tier, political_lean_baseline")
                 .in_("id", batch)
                 .execute()
             )
@@ -2095,6 +2157,8 @@ def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 
         src = src_info_by_id.get(art.get("source_id") or "", {})
         art.setdefault("source_name", src.get("name", ""))
         art.setdefault("tier", src.get("tier", ""))
+        # Drives the stratified lean-spread selection of prompt articles.
+        art.setdefault("source_lean_baseline", src.get("political_lean_baseline", ""))
 
     # `rows` is ordered by rank_{edition} DESC. Window accounting mirrors the
     # homepage: only rows with source_count >= 3 occupy display slots, and we
@@ -2424,14 +2488,17 @@ def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = 50
             print(f"  [warn] ensure_top50_summary_floor: articles batch fetch failed: {e}")
             continue
 
-    # Backfill source_name + tier so a re-summarize gets proper attribution.
+    # Backfill source_name + tier + lean baseline so a re-summarize gets proper
+    # attribution and the stratified lean-spread article selection.
     src_ids = sorted({a.get("source_id") for a in articles_by_id.values() if a.get("source_id")})
     src_info_by_id: dict[str, dict] = {}
     for i in range(0, len(src_ids), 200):
         batch = src_ids[i:i + 200]
         try:
             src_res = (
-                supabase.table("sources").select("id, name, tier").in_("id", batch).execute()
+                supabase.table("sources")
+                .select("id, name, tier, political_lean_baseline")
+                .in_("id", batch).execute()
             )
             for s in (src_res.data or []):
                 src_info_by_id[s["id"]] = s
@@ -2441,6 +2508,7 @@ def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = 50
         src = src_info_by_id.get(art.get("source_id") or "", {})
         art.setdefault("source_name", src.get("name", ""))
         art.setdefault("tier", src.get("tier", ""))
+        art.setdefault("source_lean_baseline", src.get("political_lean_baseline", ""))
 
     # =====================================================================
     # PASS 1 (fast, NO LLM): guarantee non-null coverage for the WHOLE
@@ -2708,7 +2776,9 @@ def reconcile_flash_top10(supabase, edition: str = "world", top_n: int = 10,
         batch = src_ids[i:i + 200]
         try:
             src_res = (
-                supabase.table("sources").select("id, name, tier").in_("id", batch).execute()
+                supabase.table("sources")
+                .select("id, name, tier, political_lean_baseline")
+                .in_("id", batch).execute()
             )
             for s in (src_res.data or []):
                 src_info_by_id[s["id"]] = s
@@ -2718,6 +2788,7 @@ def reconcile_flash_top10(supabase, edition: str = "world", top_n: int = 10,
         src = src_info_by_id.get(art.get("source_id") or "", {})
         art.setdefault("source_name", src.get("name", ""))
         art.setdefault("tier", src.get("tier", ""))
+        art.setdefault("source_lean_baseline", src.get("political_lean_baseline", ""))
 
     for row in candidates:
         # Stop cleanly if the budget is spent or Gemini went unavailable mid-pass
