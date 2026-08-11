@@ -157,7 +157,7 @@ export default async function RootLayout({
             also gets the header from _headers (accumulates). */}
         <meta
           httpEquiv="Content-Security-Policy"
-          content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; media-src 'self' https://*.supabase.co; base-uri 'self'; form-action 'self';"
+          content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://cloudflareinsights.com; media-src 'self' https://*.supabase.co; base-uri 'self'; form-action 'self';"
         />
         <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
         {/* X-Frame-Options is NOT valid via <meta> (Chrome logs a console
