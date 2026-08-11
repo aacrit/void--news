@@ -192,7 +192,10 @@
   line-height: 1;
   letter-spacing: 0.02em;
   position: relative;
-  animation: tiltLabelStamp 350ms var(--spring-snappy) 450ms both;
+  /* 120ms delay (was 450ms): the lean label is the product's signature
+     signal — `both` fill kept it invisible for nearly half a second on
+     every card mount. The beam-settle → stamp L-cut survives at 120ms. */
+  animation: tiltLabelStamp 250ms var(--spring-snappy) 120ms both;
   transition: color 400ms var(--ease-cinematic);
 }
 
@@ -220,7 +223,7 @@
   line-height: 1;
   letter-spacing: 0.03em;
   color: var(--fg-muted);
-  transition: opacity 400ms var(--ease-cinematic) 500ms;
+  transition: opacity 300ms var(--ease-cinematic) 200ms;
 }
 
 /* Inside headlines: tighter, dimmer */
@@ -1666,8 +1669,9 @@
   );
   pointer-events: none;
   opacity: 1;
-  /* GPU compositing — will-change prevents per-frame paint on drag */
-  will-change: left, width;
+  /* NOTE: left/width are LAYOUT properties — will-change cannot composite
+     them (removed 2026-08-11; it only burned VRAM). Drag still re-layouts;
+     a future pass should position this strip with transform: translateX/scaleX. */
   /* Glass shimmer layer on top of the gradient */
   box-shadow:
     inset 0 1px 0 var(--glass-inset),
@@ -1704,8 +1708,8 @@
   cursor: grab;
   z-index: var(--z-card);
   padding: 0;
-  /* GPU compositing — will-change prevents per-frame paint on drag */
-  will-change: left;
+  /* NOTE: `left` is a layout property — will-change cannot composite it
+     (removed 2026-08-11). Future pass: position thumbs via translateX. */
   transition:
     border-color var(--dur-fast) var(--ease-cinematic),
     box-shadow var(--dur-fast) var(--ease-cinematic),
@@ -1888,14 +1892,19 @@
   pointer-events: none;
 }
 /* Motion: settle on state swap using rack-focus ease.
-   --dur-settle is intentionally unset; fallback 240ms applies.            */
-.nav-inner,
-.nav-logo,
+   --dur-settle is intentionally unset; fallback 240ms applies.
+   2026-08-11: the padding transition on .nav-inner was removed — animating
+   the sticky header's height reflowed the whole document every frame for
+   240ms on each compact toggle. The padding now snaps (one reflow); the
+   logo scale + dateline fade carry the visual settle. */
+.nav-inner {
+  transition: none;
+}
+.nav-logo {
+  transition: transform var(--dur-settle, 240ms) var(--ease-rack, ease-in-out);
+}
 .nav-dateline-inline {
   transition:
-    padding-top var(--dur-settle, 240ms) var(--ease-rack, ease-in-out),
-    padding-bottom var(--dur-settle, 240ms) var(--ease-rack, ease-in-out),
-    transform var(--dur-settle, 240ms) var(--ease-rack, ease-in-out),
     opacity var(--dur-settle, 240ms) var(--ease-rack, ease-in-out),
     max-width var(--dur-settle, 240ms) var(--ease-rack, ease-in-out);
 }
@@ -7227,12 +7236,12 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   pointer-events: none;
   background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0.36 0.34 0.28 0 0.010 0.34 0.34 0.28 0 0.006 0.28 0.28 0.32 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.15'/%3E%3C/svg%3E");
   mix-blend-mode: overlay;
-  /* Cold-open: grain fades in at 700ms, then drifts perpetually.
+  /* Cold-open: grain fades in at 700ms.
      cinGrainEntrance sets final opacity to --cin-grain-opacity via `both`.
-     The drift starts 1200ms in (after grain has faded in). */
-  animation:
-    cinGrainEntrance 500ms var(--ease-cinematic) 700ms both,
-    cin-grain-drift 8s steps(4, end) 1200ms infinite;
+     The perpetual cin-grain-drift was removed 2026-08-11: steps(4) over 8s
+     of sub-0.5px movement is imperceptible, but each step forced the
+     compositor to re-blend the full viewport. Static grain, same look. */
+  animation: cinGrainEntrance 500ms var(--ease-cinematic) 700ms both;
 }
 
 /* Dark mode: soft-light blend for gentler grain on dark surfaces */
@@ -7240,14 +7249,12 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   mix-blend-mode: soft-light;
 }
 
-/* ── Page Warmth During Audio Playback ──
-   When audio is playing, the entire page receives an imperceptible
-   warmth shift (sepia 0.01) — the motivated lighting from the
-   "practical" OnAir source warming the scene. The existing color
-   grade in --cin-grade is preserved; sepia(0.01) layers on top. */
+/* ── Page Warmth During Audio Playback — RETIRED 2026-08-11 ──
+   The sepia(0.01) shift was imperceptible but re-rasterized the entire
+   page layer on every play/pause. The practical-light warmth lives on
+   in the player + skybox glow, which have a visible radius. */
 .page-main--audio-playing {
-  filter: var(--cin-grade) sepia(0.01);
-  transition: filter 800ms var(--ease-cinematic);
+  filter: var(--cin-grade);
 }
 
 /* Deep Dive no longer applies a filter to .page-main — the backdrop-filter
@@ -7383,15 +7390,23 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   .deep-dive-backdrop {
     animation-duration: 250ms;
   }
+  /* Film grain hidden on phones: the mix-blend-mode overlay layer forced a
+     full-viewport re-blend on every scroll frame — the single biggest mobile
+     scroll cost after the page grade. The warm paper texture (body::before)
+     still carries the print identity. */
   .page-container::after {
-    animation: none;
-    opacity: var(--cin-grain-opacity);
+    display: none;
   }
   .page-container::before {
     animation: cinVignetteEntranceMobile 500ms var(--ease-cinematic) 600ms both;
   }
-  .anim-lens-breathe {
-    animation: none;
+  /* Page color grade off on phones: contrast/saturate/sepia over the whole
+     scrolling document is invisible at 390px but taxes every repaint on
+     mid-range devices. Desktop keeps the grade. */
+  .page-main,
+  .nav-header,
+  .page-main--audio-playing {
+    filter: none;
   }
 }
 
@@ -7989,26 +8004,20 @@ a.footer-products__item:hover { color: var(--accent-warm); }
    inter-story nav) plus the scrollable Sources roster under The Spread.
    ═══════════════════════════════════════════════════════════════════════════ */
 
-/* ── Backdrop rack-focus keyframes ── */
-@keyframes backdropRackIn {
-  from {
-    backdrop-filter: blur(0px) saturate(1) brightness(1);
-    -webkit-backdrop-filter: blur(0px) saturate(1) brightness(1);
-  }
-  to {
-    backdrop-filter: var(--cin-backdrop-blur);
-    -webkit-backdrop-filter: var(--cin-backdrop-blur);
-  }
+/* ── Backdrop keyframes ──
+   2026-08-11: the old backdropRackIn/Out animated backdrop-filter itself —
+   every frame of the ramp re-blurred the entire viewport at a new radius,
+   the most expensive thing a browser can animate, exactly at click time.
+   The blur is now STATIC at its final value and the element's opacity
+   fades instead: identical look (the blur arrives with the layer), one
+   blur computation instead of ~12. */
+@keyframes backdropFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }
-@keyframes backdropRackOut {
-  from {
-    backdrop-filter: var(--cin-backdrop-blur);
-    -webkit-backdrop-filter: var(--cin-backdrop-blur);
-  }
-  to {
-    backdrop-filter: blur(0px) saturate(1) brightness(1);
-    -webkit-backdrop-filter: blur(0px) saturate(1) brightness(1);
-  }
+@keyframes backdropFadeOut {
+  from { opacity: 1; }
+  to   { opacity: 0; }
 }
 
 /* ── Backdrop ── */
@@ -8020,10 +8029,10 @@ a.footer-products__item:hover { color: var(--accent-warm); }
   cursor: pointer;
   backdrop-filter: var(--cin-backdrop-blur);
   -webkit-backdrop-filter: var(--cin-backdrop-blur);
-  animation: backdropRackIn var(--cin-backdrop-ramp-dur, 200ms) var(--ease-cinematic) both;
+  animation: backdropFadeIn var(--cin-backdrop-ramp-dur, 200ms) var(--ease-cinematic) both;
 }
 .deep-dive-backdrop--closing {
-  animation: backdropRackOut var(--cin-backdrop-rack-out-dur, 120ms) var(--ease-whip) both;
+  animation: backdropFadeOut var(--cin-backdrop-rack-out-dur, 120ms) var(--ease-whip) both;
 }
 .deep-dive-backdrop::after {
   content: "";
@@ -8141,7 +8150,9 @@ a.footer-products__item:hover { color: var(--accent-warm); }
     transform var(--dur-step) var(--spring);
 }
 .deep-dive-back:hover { background-color: var(--bg-secondary); }
-.deep-dive-back:active { transform: scale(0.94); }
+/* Press-down must attack in <100ms — the base 260ms spring only shapes the
+   release bounce-back (same asymmetry as .story-card:active). */
+.deep-dive-back:active { transform: scale(0.94); transition-duration: 60ms; }
 .deep-dive-back:focus-visible {
   outline: 2px solid var(--accent-warm);
   outline-offset: 2px;
@@ -8160,7 +8171,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
     transform var(--dur-step) var(--spring);
 }
 .deep-dive-close:hover { background-color: var(--bg-secondary); }
-.deep-dive-close:active { transform: scale(0.90); }
+.deep-dive-close:active { transform: scale(0.90); transition-duration: 60ms; }
 .deep-dive-close:focus-visible {
   outline: 2px solid var(--accent-warm);
   outline-offset: 2px;

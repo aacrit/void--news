@@ -38,6 +38,11 @@ interface StoryCardProps {
 export default function StoryCard({ story, index, onStoryClick, globalIndex, kbdFocused, variant, family }: StoryCardProps) {
   const [cardRef, visible] = useInView<HTMLElement>();
 
+  // Log-stagger only for the initial above-fold band (index < 10). Deep-feed
+  // cards enter via IntersectionObserver as the user scrolls — an index-scaled
+  // delay there (~230ms at card 50) made the feed visibly trail the thumb.
+  const staggerDelay = index < 10 ? `${Math.round(40 * Math.log2(index + 2))}ms` : "0ms";
+
   return (
     <article
       ref={cardRef}
@@ -46,7 +51,7 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
       data-variant={variant}
       data-family-id={family?.familyId}
       className={`story-card anim-stagger${visible ? " anim-stagger--visible" : ""}${kbdFocused ? " story-card--kbd-focus" : ""}${family ? " story-card--family-member" : ""}`}
-      style={{ animationDelay: `${Math.round(40 * Math.log2(index + 2))}ms` }}
+      style={{ animationDelay: staggerDelay }}
     >
       {/* Stretched link — covers the entire article while preserving <article>
           semantics for screen readers. Progressive enhancement: when the story

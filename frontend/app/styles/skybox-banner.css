@@ -746,11 +746,14 @@
    --------------------------------------------------------------------------- */
 
 /* ── Cold open: broadsheet unfolding — columns spread from center ── */
+/* Delays halved 2026-08-11 (280/360 → 120/160ms) and duration 400 → 280ms:
+   the brief's columns were settling ~760ms after load — content-bearing text
+   should never trail the establishing shot by that much. */
 .anim-cold-open-skybox .skb__compact-col--tldr {
-  animation: skbColSlideLeft 400ms var(--ease-unfold, var(--ease-cinematic)) 280ms both;
+  animation: skbColSlideLeft 280ms var(--ease-unfold, var(--ease-cinematic)) 120ms both;
 }
 .anim-cold-open-skybox .skb__compact-col--opinion {
-  animation: skbColSlideRight 400ms var(--ease-unfold, var(--ease-cinematic)) 360ms both;
+  animation: skbColSlideRight 280ms var(--ease-unfold, var(--ease-cinematic)) 160ms both;
 }
 
 @keyframes skbColSlideLeft {

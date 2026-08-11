@@ -247,8 +247,13 @@ function HomeContentInner({
   const handleInlineCollapse = useCallback(() => {
     const restore = scrollBeforeDeepDive.current;
     setSelectedStory(null);
+    // CSS `scroll-behavior` reduced-motion overrides do not apply to
+    // JS-initiated smooth scrolls — honor the preference explicitly.
+    const smooth = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     requestAnimationFrame(() =>
-      requestAnimationFrame(() => window.scrollTo({ top: restore, behavior: "smooth" })),
+      requestAnimationFrame(() =>
+        window.scrollTo({ top: restore, behavior: smooth ? "smooth" : "auto" }),
+      ),
     );
   }, []);
 
