@@ -847,12 +847,17 @@ export function BiasInspectorPanel({
     return () => mq.removeEventListener("change", handleChange);
   }, []);
 
-  /* ---- Stagger content reveal after panel slides in ------------------- */
+  /* ---- Content rides the panel slide (continuity, 2026-08-11) ----------
+     The reveal used to wait 200ms so content "staggered after the panel" —
+     a second beat. It now starts on the frame after the slide begins, so the
+     content fades in WITH the panel as one continuous motion. */
   useEffect(() => {
     if (isOpen) {
-      // Panel slides in for ~300ms, then content staggers
-      const t = setTimeout(() => setContentVisible(true), 200);
-      return () => clearTimeout(t);
+      let raf2 = 0;
+      const raf1 = requestAnimationFrame(() => {
+        raf2 = requestAnimationFrame(() => setContentVisible(true));
+      });
+      return () => { cancelAnimationFrame(raf1); cancelAnimationFrame(raf2); };
     } else {
       setContentVisible(false);
     }

@@ -357,6 +357,11 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
      prefers-reduced-motion: skip the height tween and reveal instantly. */
   const articleRef = useRef<HTMLElement>(null);
   const headlineRef = useRef<HTMLButtonElement>(null);
+  /* Disarm hook for the open animation: if the reader collapses while the open
+     transition is still running, the open's own release (height:auto on the
+     height transitionend) must never fire mid-collapse — it would snap the
+     collapsing block back to full height. */
+  const cancelOpenRef = useRef<(() => void) | null>(null);
 
   /* Scroll the open story's headline to just under the sticky nav. Driven from
      the accordion effect (once the block has reached full height) so a story low
@@ -379,32 +384,57 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
       scrollHeadlineToTop("auto");
       return;
     }
-    // Keep the accordion height-expand short so the panel opens quickly and is
-    // never gated behind the Supabase fetch — the summary + bias are already on
-    // the story and render at once inside the growing block.
-    const natural = el.scrollHeight;
+    // ONE continuous open: height, padding, margin, and opacity all ride the
+    // same 380ms timeline. Content crossfades in WITH the expansion (opacity on
+    // the block itself) instead of appearing as a second beat after the height
+    // settles. Padding + margins start at 0 too, so the block occupies zero
+    // space at frame 0 (with border-box, height:0 alone still left the padding
+    // visible as an instant ~48px pop).
+    const natural = el.scrollHeight; // content + padding (border-box)
     el.style.overflow = "hidden";
     el.style.height = "0px";
-    void el.offsetHeight; // commit the 0 start before transitioning
-    el.style.transition = "height 380ms var(--ease-cinematic)";
+    el.style.paddingBlock = "0px";
+    el.style.marginBlock = "0px";
+    el.style.opacity = "0";
+    void el.offsetHeight; // commit the collapsed start before transitioning
+    el.style.transition =
+      "height 380ms var(--ease-cinematic), padding 380ms var(--ease-cinematic), margin 380ms var(--ease-cinematic), opacity 380ms var(--ease-cinematic)";
     el.style.height = `${natural}px`;
+    el.style.paddingBlock = ""; // transitions back to the stylesheet value
+    el.style.marginBlock = "";
+    el.style.opacity = "1";
     scrollHeadlineToTop("smooth"); // best-effort start (may clamp low in the feed)
 
+    let released = false;
+    let fallback = 0;
     const release = () => {
+      if (released) return;
+      released = true;
+      window.clearTimeout(fallback);
+      el.removeEventListener("transitionend", onEnd);
       el.style.height = "auto";
       el.style.overflow = "";
       el.style.transition = "";
-      scrollHeadlineToTop("smooth"); // authoritative: full height now, so it seats at the top
-    };
-    const onEnd = (e: TransitionEvent) => {
-      if (e.target === el && e.propertyName === "height") {
-        el.removeEventListener("transitionend", onEnd);
-        release();
+      el.style.opacity = "";
+      // Re-seat only when the best-effort start scroll clamped short (a story
+      // low in the feed). When the block is already seated, a second smooth
+      // scroll would read as a separate beat after the expansion.
+      if (Math.abs(el.getBoundingClientRect().top - 64) > 8) {
+        scrollHeadlineToTop("smooth");
       }
     };
+    const onEnd = (e: TransitionEvent) => {
+      if (e.target === el && e.propertyName === "height") release();
+    };
     el.addEventListener("transitionend", onEnd);
-    const fallback = window.setTimeout(release, 460); // safety if transitionend misses
+    fallback = window.setTimeout(release, 420); // tight safety net if transitionend misses
+    cancelOpenRef.current = () => {
+      released = true;
+      window.clearTimeout(fallback);
+      el.removeEventListener("transitionend", onEnd);
+    };
     return () => {
+      cancelOpenRef.current = null;
       el.removeEventListener("transitionend", onEnd);
       window.clearTimeout(fallback);
     };
@@ -426,25 +456,36 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
     }
     if (collapsingRef.current) return;
     collapsingRef.current = true;
-    const current = el.scrollHeight;
-    el.style.height = `${current}px`;
+    cancelOpenRef.current?.(); // disarm the open release if still pending
+    // ONE continuous close: the block collapses to a true zero footprint
+    // (height, padding, margins, borders all animate to 0 on the same timeline)
+    // while the content fades with it. Collapsing only the height used to stop
+    // at the padding + margins (border-box), so the unmount snapped the last
+    // ~80px away as a visible pop right at the end of the motion.
+    el.style.height = `${el.offsetHeight}px`;
     el.style.overflow = "hidden";
     void el.offsetHeight;
     el.style.transition =
-      "height 480ms var(--ease-cinematic), opacity 420ms var(--ease-cinematic)";
+      "height 480ms var(--ease-cinematic), padding 480ms var(--ease-cinematic), margin 480ms var(--ease-cinematic), border-width 480ms var(--ease-cinematic), opacity 420ms var(--ease-cinematic)";
     el.style.height = "0px";
+    el.style.paddingBlock = "0px";
+    el.style.marginBlock = "0px";
+    el.style.borderBlockWidth = "0px";
     el.style.opacity = "0";
     let done = false;
+    let fallback = 0;
     const finish = () => {
       if (done) return;
       done = true;
-      onCollapse();
+      window.clearTimeout(fallback);
+      el.removeEventListener("transitionend", onEnd);
+      onCollapse(); // unmount causes no shift: the block already occupies zero space
     };
     const onEnd = (e: TransitionEvent) => {
       if (e.target === el && e.propertyName === "height") finish();
     };
     el.addEventListener("transitionend", onEnd);
-    window.setTimeout(finish, 560); // safety if transitionend misses
+    fallback = window.setTimeout(finish, 520); // tight safety net if transitionend misses
   }, [onCollapse]);
 
   /* Esc collapses the inline block (parity with the modal's Escape-to-close). */
@@ -600,7 +641,10 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
             <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
             <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>The Spread</h3>
             <div className="inline-dd__spectrum">
-              <DeepDiveSpectrum sources={spectrumSources} />
+              {/* settled: inside the inline accordion the spectrum appears
+                  already-drawn and fades in with its section — it must not run
+                  its own multi-beat entrance after the expansion has finished. */}
+              <DeepDiveSpectrum sources={spectrumSources} settled />
             </div>
           </section>
         )}

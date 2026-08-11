@@ -314,6 +314,14 @@
 
 .mbp--skybox {
   padding: var(--space-3) var(--space-4) var(--space-4);
+  /* Continuity (2026-08-11): the expanded brief crossfades in DURING the
+     pill's height morph (useHeightMorph in MobileBriefPill) — one continuous
+     expand, not a one-frame height jump followed by a pop of new content. */
+  animation: fadeIn 240ms var(--ease-cinematic) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mbp--skybox { animation: none; }
 }
 
 .mbp--skybox .mbp__header {

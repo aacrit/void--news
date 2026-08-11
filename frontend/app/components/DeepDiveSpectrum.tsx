@@ -549,12 +549,15 @@ function detectDeadZones(
    Expand toggle: source pins on curve + label strip + scrub line.
    ═══════════════════════════════════════════════════════════════════════ */
 
-function SpectrumView({ sources, isMobile = false }: { sources: DeepDiveSpectrumSource[]; isMobile?: boolean }) {
+function SpectrumView({ sources, isMobile = false, settled = false }: { sources: DeepDiveSpectrumSource[]; isMobile?: boolean; settled?: boolean }) {
   const fillRef = useRef<SVGPathElement>(null);
   const strokeRef = useRef<SVGPathElement>(null);
   const riseRafRef = useRef<number>(0);
   const svgWrapRef = useRef<HTMLDivElement>(null);
-  const [animated, setAnimated] = useState(false);
+  // settled: the spectrum mounts already-drawn (no entrance choreography).
+  // Used inside the inline Deep Dive, where the accordion expansion is the one
+  // continuous open motion and the chart must not add a second beat.
+  const [animated, setAnimated] = useState(settled);
   // Ink-wash filter (feTurbulence + feDisplacementMap) is CPU-rasterized —
   // re-running it on every rAF frame of the 450ms rise caused a visible hitch
   // on phones. The filter attaches only after the rise settles.
@@ -651,19 +654,23 @@ function SpectrumView({ sources, isMobile = false }: { sources: DeepDiveSpectrum
     }));
   }, [densities, sources, peakH, svgH]);
 
-  // Trigger entrance
+  // Trigger entrance (skipped when settled — the chart mounts already-drawn)
   useEffect(() => {
+    if (settled) return;
     const timer = setTimeout(() => setAnimated(true), 50);
     return () => clearTimeout(timer);
-  }, []);
+  }, [settled]);
 
-  // Beat 1 (0ms): fill rises from flat via rAF — 450ms ease-out cubic
+  // Fill rises from flat via rAF — 450ms ease-out cubic. The stroke draw,
+  // contours, mean line, and labels all arrive INSIDE this same 450ms window
+  // (see spectrum.css), so the whole entrance reads as one continuous breath
+  // rather than a chain of beats. settled: final path immediately, no rAF.
   useEffect(() => {
     if (!animated || !fillRef.current || !densities || !paths) return;
     const el = fillRef.current;
     const finalD = densities.map((d) => d * (peakH / (svgH - 12)));
 
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (settled || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       el.setAttribute("d", kdeToCubicPath(finalD, svgH, W, 12).fillPath);
       setRiseDone(true);
       return;
@@ -685,12 +692,16 @@ function SpectrumView({ sources, isMobile = false }: { sources: DeepDiveSpectrum
     }
     riseRafRef.current = requestAnimationFrame(step);
     return () => cancelAnimationFrame(riseRafRef.current);
-  }, [animated, densities, paths, svgH, peakH]);
+  }, [animated, densities, paths, svgH, peakH, settled]);
 
-  // Beat 2 (150ms): stroke draws via CSS transition on dashoffset
+  // Stroke draws via CSS transition on dashoffset, starting on the next frame
+  // so it rides the same timeline as the rise (the old 150ms gate made it a
+  // separate second beat). settled: full stroke immediately, no draw-on.
   useEffect(() => {
     if (!animated || !strokeRef.current || !paths) return;
     const el = strokeRef.current;
+
+    if (settled) return; // untouched dasharray = fully drawn stroke
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       const len = el.getTotalLength();
@@ -703,9 +714,12 @@ function SpectrumView({ sources, isMobile = false }: { sources: DeepDiveSpectrum
     el.style.strokeDasharray = `${len}`;
     el.style.strokeDashoffset = `${len}`;
     void el.getBoundingClientRect();
-    const timer = setTimeout(() => { el.style.strokeDashoffset = "0"; }, 150);
-    return () => clearTimeout(timer);
-  }, [animated, paths]);
+    let raf2 = 0;
+    const raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => { el.style.strokeDashoffset = "0"; });
+    });
+    return () => { cancelAnimationFrame(raf1); cancelAnimationFrame(raf2); };
+  }, [animated, paths, settled]);
 
   return (
     <div className={`dd-sv-view${animated ? " dd-sv-view--animated" : ""}`}>
@@ -811,7 +825,7 @@ function SpectrumView({ sources, isMobile = false }: { sources: DeepDiveSpectrum
             </>
           )}
 
-          {/* Beat 1: Ink wash fill — rises first, soft organic texture */}
+          {/* Ink wash fill — rises via rAF, soft organic texture */}
           {paths && (
             <path
               ref={fillRef}
@@ -822,7 +836,8 @@ function SpectrumView({ sources, isMobile = false }: { sources: DeepDiveSpectrum
             />
           )}
 
-          {/* Beat 3 (350ms): Contour lines — topographic depth, dashed */}
+          {/* Contour lines — topographic depth, dashed. Delays sit inside the
+              450ms rise window so the whole entrance is one continuous motion. */}
           {contours.map((contour, ci) =>
             contour.segments.map((seg, si) => (
               <line
@@ -832,12 +847,12 @@ function SpectrumView({ sources, isMobile = false }: { sources: DeepDiveSpectrum
                 strokeWidth="0.5"
                 strokeDasharray="4 3"
                 className="dd-sv-view__contour"
-                style={{ transitionDelay: `${350 + ci * 80}ms` }}
+                style={{ transitionDelay: `${120 + ci * 60}ms` }}
               />
             ))
           )}
 
-          {/* Beat 2 (150ms): Stroke — chromatic curve, blue→green→red spectrum */}
+          {/* Stroke — chromatic curve, blue→green→red spectrum */}
           {paths && (
             <path
               ref={strokeRef}
@@ -897,7 +912,7 @@ function SpectrumView({ sources, isMobile = false }: { sources: DeepDiveSpectrum
             );
           })}
 
-          {/* Beat 4 (400ms): Amber plumb line — weighted mean */}
+          {/* Amber plumb line — weighted mean, fades during the rise */}
           {!isFlat && (
             <line
               x1={(mean / 100) * W} y1={4}
@@ -909,7 +924,7 @@ function SpectrumView({ sources, isMobile = false }: { sources: DeepDiveSpectrum
             />
           )}
 
-          {/* Beat 5 (500ms): Bimodal peak dots — only when split detected */}
+          {/* Bimodal peak dots — only when split detected */}
           {bimodal && bimodal.peaks.map((peak, pi) => {
             const x = (peak.lean / 100) * W;
             const scaledD = densities!.map((d) => d * (peakH / (svgH - 12)));
@@ -964,9 +979,13 @@ function SpectrumView({ sources, isMobile = false }: { sources: DeepDiveSpectrum
 
 interface DeepDiveSpectrumProps {
   sources: DeepDiveSpectrumSource[];
+  /** Mount already-drawn: no rise / stroke-draw / reveal choreography. Used
+      where a parent container owns the one continuous open motion (the inline
+      Deep Dive accordion) and the chart must not add a second beat. */
+  settled?: boolean;
 }
 
-export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
+export default function DeepDiveSpectrum({ sources, settled = false }: DeepDiveSpectrumProps) {
   const [tooltip, setTooltip] = useState<TooltipData | null>(null);
   const [isMobile, setIsMobile] = useState(false);
   const mean = useMemo(() => weightedMeanLean(sources), [sources]);
@@ -989,7 +1008,7 @@ export default function DeepDiveSpectrum({ sources }: DeepDiveSpectrumProps) {
 
   return (
     <div className="dd-sv" role="img" aria-label="Source political lean spectrum">
-      <SpectrumView sources={sources} isMobile={isMobile} />
+      <SpectrumView sources={sources} isMobile={isMobile} settled={settled} />
       {/* Mobile: hide TiltRow (mean needle + label) to reduce clutter.
           Desktop: show weighted mean needle and label for additional context. */}
       {!isMobile && <TiltRow mean={mean} />}

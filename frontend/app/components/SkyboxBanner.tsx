@@ -6,6 +6,7 @@ import type { DailyBriefState } from "./DailyBrief";
 import LogoIcon from "./LogoIcon";
 import { hapticLight } from "../lib/haptics";
 import { timeAgo } from "../lib/utils";
+import { useHeightMorph } from "../lib/useHeightMorph";
 
 type ExpandedSection = null | "tldr" | "opinion";
 
@@ -15,6 +16,13 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
   const [expandedSection, setExpandedSection] = useState<ExpandedSection>(null);
   const [announcement, setAnnouncement] = useState("");
   const hasExpandedOnce = useRef(false);
+  /* Continuity (2026-08-11): expanding/collapsing swaps the compact columns for
+     the full section (a remount), which used to jump the banner's height in one
+     frame and then fade the new content in as a second beat. The height morph
+     animates the banner between its two natural heights on the SAME timeline
+     the incoming content fades in on — one continuous unfold/refold. */
+  const { ref: morphRef, capture: captureHeight } =
+    useHeightMorph<HTMLDivElement>(expandedSection);
   // timeAgo() depends on the wall clock, which differs between the build-time
   // server render (the brief is now prerendered) and client hydration. Gate it
   // behind mount so server + first client paint agree (no React #418); the
@@ -49,6 +57,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
   // previous render" when brief transitioned from null to loaded.
   const toggleSection = useCallback((section: "tldr" | "opinion") => {
     hapticLight();
+    captureHeight();
     setExpandedSection(prev => {
       const next = prev === section ? null : section;
       if (next) {
@@ -59,13 +68,14 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
       }
       return next;
     });
-  }, []);
+  }, [captureHeight]);
 
   const collapseAll = useCallback(() => {
     hapticLight();
+    captureHeight();
     setExpandedSection(null);
     setAnnouncement("Daily brief collapsed.");
-  }, []);
+  }, [captureHeight]);
 
   if (!brief) return (
     <div className="skb skb--compact" role="complementary" aria-label="Daily brief: a summary of today's top stories">
@@ -102,7 +112,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
     <>
       <div aria-live="polite" className="sr-only">{announcement}</div>
 
-      <div className={rootClass} role="complementary" aria-label="Daily brief: a summary of today's top stories">
+      <div ref={morphRef} className={rootClass} role="complementary" aria-label="Daily brief: a summary of today's top stories">
 
         {/* ── COMPACT MODE ── */}
         {isCompact && (

@@ -489,10 +489,12 @@
   /* No max-height cap — panel grows to full content height, no internal scroll */
   position: relative;
   z-index: 1;
+  /* Continuity (2026-08-11): the incoming section crossfades in DURING the
+     banner's height morph (useHeightMorph in SkyboxBanner) — one continuous
+     unfold, not a jump followed by a fade. Mirrors skbCompactRestore (280ms)
+     on the refold side. */
+  animation: skbFadeIn 260ms var(--ease-cinematic) both;
 }
-
-/* Section content appears instantly — no loading animation on expand.
-   Content is already loaded, just reveal it. */
 
 @keyframes skbSwapFromRight {
   from { opacity: 0; transform: translateX(8px) scale(0.985); }

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { DailyBriefState } from "./DailyBrief";
+import { useHeightMorph } from "../lib/useHeightMorph";
 import type { EpisodeMeta } from "./AudioProvider";
 import { ScaleIcon } from "./ScaleIcon";
 import LogoIcon from "./LogoIcon";
@@ -52,6 +53,12 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
   // Tap the chevron (or any pill row) to expand.
   const [isExpanded, setIsExpanded] = useState(false);
   const [episodesExpanded, setEpisodesExpanded] = useState(false);
+  /* Continuity (2026-08-11): teaser <-> full brief is a remount swap, which
+     used to jump the pill's height in a single frame. The height morph animates
+     the container between its two natural heights while the incoming content
+     fades on the same timeline — one continuous expand/collapse. */
+  const { ref: morphRef, capture: captureHeight } =
+    useHeightMorph<HTMLDivElement>(isExpanded, 260);
 
   if (!brief) return (
     <div className={`mbp${className ? ` ${className}` : ""}`} role="complementary" aria-label="Daily brief: a summary of today's top stories">
@@ -98,11 +105,11 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
      a richer brief teaser. Tap anywhere to expand into full skybox brief. */
   if (!isExpanded) {
     return (
-      <div className={`mbp mbp--teaser${className ? ` ${className}` : ""}`} role="complementary" aria-label="Daily brief: a summary of today's top stories">
+      <div ref={morphRef} className={`mbp mbp--teaser${className ? ` ${className}` : ""}`} role="complementary" aria-label="Daily brief: a summary of today's top stories">
         <button
           className="mbp__teaser"
           type="button"
-          onClick={() => { hapticLight(); setIsExpanded(true); }}
+          onClick={() => { hapticLight(); captureHeight(); setIsExpanded(true); }}
           aria-expanded={false}
           aria-label="Expand daily brief"
         >
@@ -127,7 +134,7 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
   }
 
   return (
-    <div className={`mbp mbp--skybox${className ? ` ${className}` : ""}`} role="complementary" aria-label="Daily brief: a summary of today's top stories">
+    <div ref={morphRef} className={`mbp mbp--skybox${className ? ` ${className}` : ""}`} role="complementary" aria-label="Daily brief: a summary of today's top stories">
       {/* Header row: branding + OnAir button */}
       <div className="mbp__header">
         <LogoIcon size={14} animation="idle" />
@@ -137,7 +144,7 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
           <button
             className="mbp__pill-chevron-btn"
             type="button"
-            onClick={() => { hapticLight(); setIsExpanded(false); }}
+            onClick={() => { hapticLight(); captureHeight(); setIsExpanded(false); }}
             aria-label="Collapse daily brief"
           >
             <span className="mbp__pill-chevron mbp__pill--open" aria-hidden="true">&#9662;</span>
