@@ -180,7 +180,7 @@ const PHASES: Phase[] = [
         num: "6c",
         title: "Gemini Reasoning",
         detail:
-          "Contextual bias score adjustments \u00b7 story type flags: incremental_update (0.75\u00d7) and ceremonial (0.82\u00d7) \u00b7 has_binding_consequences flag",
+          "Optional contextual bias adjustments (parked, off in production). Ranking uses no Gemini signal: order comes from fixed rules only.",
         file: "gemini_reasoning.py",
         badge: "25 calls/run",
         badgeDisabled: true,
