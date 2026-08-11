@@ -4,7 +4,6 @@ import type { Story } from "../lib/types";
 import type { FamilyInfo } from "../lib/storyFamilies";
 import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
-import LeanCoverageBar from "./LeanCoverageBar";
 import { hapticLight } from "../lib/haptics";
 import { BASE_PATH } from "../lib/utils";
 import { useInView } from "../lib/sharedObserver";
@@ -133,9 +132,12 @@ export default function StoryCard({ story, index, onStoryClick, globalIndex, kbd
         </p>
       )}
 
-      {/* Contested-coverage reveal — shows the left/right split the mean lean
-          hides (only when both wings are present). */}
-      <LeanCoverageBar spread={story.biasSpread} />
+      {/* LeanCoverageBar removed from feed cards 2026-08-11 (CEO): the
+          blue/green/red segmented strip appeared on only the both-wings
+          stories, adding a second multicolor element to an otherwise quiet
+          surface. The Sigil's divergence fan already flags contested
+          coverage on every card; the full split lives in the Deep Dive
+          BiasSnapshot + spectrum, where it has room to be understood. */}
     </article>
   );
 }
