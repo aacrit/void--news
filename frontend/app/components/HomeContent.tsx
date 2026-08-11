@@ -332,6 +332,38 @@ function HomeContentInner({
     };
   }, []);
 
+  /* ---- Stale-edition self-heal on resume (2026-08-11) ----
+     Since rev 62 the top-50 feed is BAKED into the prerendered HTML and never
+     refetched on the client, so an installed PWA / background tab resumed from
+     memory shows yesterday's edition indefinitely (observed live: yesterday's
+     summaries under a today-looking masthead). On visibility resume, if the
+     baked edition is older than 20h a newer edition almost certainly exists;
+     reload to pick up the fresh prerender. sessionStorage debounce (1h) makes
+     a reload loop impossible if the server itself is still serving the old
+     build. Normal same-day resumes never trigger this. */
+  useEffect(() => {
+    if (!initialBuiltAt) return;
+    const builtMs = Date.parse(initialBuiltAt);
+    if (Number.isNaN(builtMs)) return;
+    const EDITION_STALE_MS = 20 * 60 * 60 * 1000;
+    const RELOAD_DEBOUNCE_MS = 60 * 60 * 1000;
+    const KEY = "void-news-stale-reload-at";
+    const onResume = () => {
+      if (document.visibilityState !== "visible") return;
+      if (Date.now() - builtMs < EDITION_STALE_MS) return;
+      try {
+        const last = Number(sessionStorage.getItem(KEY) ?? 0);
+        if (Date.now() - last < RELOAD_DEBOUNCE_MS) return;
+        sessionStorage.setItem(KEY, String(Date.now()));
+      } catch {
+        /* storage unavailable — still reload once per resume */
+      }
+      window.location.reload();
+    };
+    document.addEventListener("visibilitychange", onResume);
+    return () => document.removeEventListener("visibilitychange", onResume);
+  }, [initialBuiltAt]);
+
   // Cmd+K / Ctrl+K to open search
   useEffect(() => {
     function handleCmdK(e: KeyboardEvent) {
