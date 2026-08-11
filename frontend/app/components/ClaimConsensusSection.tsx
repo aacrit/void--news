@@ -164,10 +164,15 @@ export default function ClaimConsensusSection({
   const [singleExpanded, setSingleExpanded] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
 
-  // Trigger bar animation after mount
+  // Trigger the bar fill on the frame after first paint so it rides the same
+  // timeline as the section's dolly-in (the old 80ms gate made it a separate
+  // second beat after the section had already arrived).
   useEffect(() => {
-    const t = setTimeout(() => setMounted(true), 80);
-    return () => clearTimeout(t);
+    let raf2 = 0;
+    const raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => setMounted(true));
+    });
+    return () => { cancelAnimationFrame(raf1); cancelAnimationFrame(raf2); };
   }, []);
 
   const corroboratedClaims = consensus.highlighted_claims.filter(

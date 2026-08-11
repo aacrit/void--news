@@ -201,9 +201,18 @@
   max-width: none;
 }
 
-/* The spectrum spans the full content column as a landscape band. */
+/* The spectrum spans the full content column as a landscape band.
+   The band mounts only once the Supabase source fetch resolves — often after
+   the accordion has finished expanding — so it fades in as one short arrival
+   (the chart itself mounts already-drawn via the `settled` prop; this fade is
+   the only motion). */
 .inline-dd__spread {
   margin-top: var(--space-5);
+  animation: fadeIn 240ms var(--ease-cinematic) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .inline-dd__spread { animation: none; }
 }
 .inline-dd__spectrum {
   width: 100%;

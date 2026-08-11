@@ -205,24 +205,16 @@
    ClaimConsensusSection — full breakdown in Deep Dive
    -------------------------------------------------------------------------- */
 
-/* [V16] Section dolly-in entrance stagger */
+/* [V16] Section dolly-in entrance — ONE motion for the whole section.
+   Continuity (2026-08-11): the old per-child 80ms stagger stretched the reveal
+   to ~880ms of sequential beats after the section mounted; the section now
+   arrives as a single 400ms dolly-in. */
 .cc-section {
   padding-top: var(--space-3);
-}
-
-.cc-section > * {
   opacity: 0;
   transform: translateY(8px);
   animation: ccSectionReveal 400ms var(--ease-cinematic) forwards;
 }
-
-.cc-section > :nth-child(1) { animation-delay: 0ms; }
-.cc-section > :nth-child(2) { animation-delay: 80ms; }
-.cc-section > :nth-child(3) { animation-delay: 160ms; }
-.cc-section > :nth-child(4) { animation-delay: 240ms; }
-.cc-section > :nth-child(5) { animation-delay: 320ms; }
-.cc-section > :nth-child(6) { animation-delay: 400ms; }
-.cc-section > :nth-child(7) { animation-delay: 480ms; }
 
 .cc-header {
   display: flex;
@@ -836,7 +828,7 @@
     transition-duration: 0ms;
   }
 
-  .cc-section > * {
+  .cc-section {
     animation: none;
     opacity: 1;
     transform: none;
@@ -872,6 +864,19 @@
    =========================================================================== */
 .spread-disagree {
   margin: var(--space-5) 0;
+  /* The panel self-omits until the cluster fetch resolves, so it can mount
+     seconds after the Deep Dive opened. One short fade makes that async
+     arrival a smooth crossfade instead of a pop (continuity, 2026-08-11). */
+  animation: spreadDisagreeIn 240ms var(--ease-cinematic) both;
+}
+
+@keyframes spreadDisagreeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spread-disagree { animation: none; }
 }
 
 .spread-disagree__rule {
