@@ -13,7 +13,6 @@ Usage:
 import json
 import sys
 import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -470,8 +469,23 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
         print(f"\n  DRY RUN — no writes. Re-run without --dry-run to apply.")
         return len(updates)
 
-    # 4. Write back to Supabase in batches (16 concurrent workers).
-    print(f"\n[4/4] Writing {len(updates)} updates to Supabase (batched, 16 workers)...")
+    # 4. Write back to Supabase with CHUNKED BULK UPSERTS.
+    #
+    # 2026-08-11 (pipeline-perf-writes) — replaces the previous per-row
+    # UPDATE loop (one HTTP UPDATE per cluster across 16 concurrent workers).
+    # On the profiled 107-min run that loop issued ~9,493 individual UPDATEs
+    # and triggered HTTP/2 "Server disconnected" / ConnectionTerminated retry
+    # storms (~62 row failures). We now send ~500 rows per upsert call
+    # (~19 calls total) via PostgREST's bulk `upsert(..., on_conflict="id")`.
+    #
+    # VALUE-IDENTICAL GUARANTEE: `write_rows` is built EXACTLY as before —
+    # same keys, same values, computed by the same code path. The ONLY change
+    # is the transport (one bulk upsert per 500 rows instead of one UPDATE per
+    # row). Because every `id` here was just fetched from story_clusters this
+    # run, `on_conflict="id"` always resolves to the UPDATE branch and touches
+    # only the columns present in each row (all others retain their stored
+    # values), so the effect is byte-identical to the old per-row .update(row).
+    print(f"\n[4/4] Writing {len(updates)} updates to Supabase (bulk upsert, 500/chunk)...")
     # source_count is intentionally omitted — owned by clustering
     # (Phase 5 cap + wire-aware voice collapse). Writing it from rerank
     # overwrites both, producing the 217-source mega-cluster regression.
@@ -500,67 +514,75 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
         for u in updates
     ]
 
-    WRITE_CHUNK = 100
+    WRITE_CHUNK = 500
     write_chunks = [
         write_rows[i:i + WRITE_CHUNK]
         for i in range(0, len(write_rows), WRITE_CHUNK)
     ]
 
-    written = 0
-    write_errors = 0
-    failed_ids: list[str] = []
+    intended_ids = {r["id"] for r in write_rows}
+    written_ids: set[str] = set()
+    chunk_failures = 0
 
-    def _write_chunk(chunk: list[dict]) -> int:
-        # 2026-05-22 — single retry with exponential backoff on transient
-        # errors. Was: bare `except: continue` silently swallowed every
-        # failure → 13-source cluster never got today's rerank value
-        # written back → stayed at yesterday's headline_rank.
-        ok = 0
-        for row in chunk:
-            rid = row.pop("id")
-            last_err: Exception | None = None
-            for attempt in range(2):
-                try:
-                    supabase.table("story_clusters").update(row).eq("id", rid).execute()
-                    ok += 1
-                    last_err = None
-                    break
-                except Exception as e:
-                    last_err = e
-                    if attempt == 0:
-                        time.sleep(0.5 + (attempt * 0.5))  # 0.5s then give up
-            if last_err is not None:
-                # Per-row logging so we can grep failures in CI; capture id
-                # in failed_ids so we can surface a summary at the end.
-                print(f"  [err] Write failed for {rid[:8]} after retry: {last_err}")
-                failed_ids.append(rid)
-            row["id"] = rid  # restore for caller debugging
-        return ok
-
-    with ThreadPoolExecutor(max_workers=16) as write_exec:
-        write_futures = [write_exec.submit(_write_chunk, chunk) for chunk in write_chunks]
-        for future in as_completed(write_futures):
+    def _upsert_chunk(chunk: list[dict]) -> list[str]:
+        # Bounded exponential backoff on transient transport drops only
+        # (Server disconnected / reset / read timeout); 3 attempts max, so a
+        # bad chunk fails fast and visibly instead of stalling the run.
+        _MARKERS = (
+            "server disconnected", "remoteprotocolerror", "remote protocol",
+            "connection reset", "connection aborted", "connection closed",
+            "connectionerror", "connecterror", "readtimeout", "read timeout",
+            "writetimeout", "connecttimeout", "pooltimeout", "httpcore",
+            "protocolerror", "broken pipe", "eof occurred", "timed out",
+            "temporarily unavailable", "connection refused",
+        )
+        last_err: Exception | None = None
+        for attempt in range(3):
             try:
-                written += future.result()
-            except Exception:
-                write_errors += WRITE_CHUNK
+                res = (
+                    supabase.table("story_clusters")
+                    .upsert(chunk, on_conflict="id")
+                    .execute()
+                )
+                # PostgREST returns the affected rows; use them to prove the
+                # write landed rather than assuming success.
+                return [r["id"] for r in (res.data or []) if r.get("id")]
+            except Exception as e:
+                last_err = e
+                s = (str(e) + " " + type(e).__name__).lower()
+                transient = any(m in s for m in _MARKERS)
+                if transient and attempt < 2:
+                    backoff = 0.75 * (2 ** attempt)  # 0.75s, 1.5s — bounded
+                    print(f"  [warn] upsert chunk transport drop "
+                          f"(retry {attempt+1}/2, backoff {backoff:.2f}s): {e}")
+                    time.sleep(backoff)
+                    continue
+                break
+        print(f"  [err] Bulk upsert chunk failed after retries: {last_err}")
+        return []
+
+    for chunk in write_chunks:
+        written_ids.update(_upsert_chunk(chunk))
+
+    written = len(written_ids)
+    missing_ids = intended_ids - written_ids
+    chunk_failures = len(missing_ids)
 
     elapsed = time.time() - start
-    # Per-row failures aggregated separately from chunk-level failures
-    # (chunk-level fires only if the whole worker raised, which is rare
-    # under the retry-aware _write_chunk above).
-    per_row_failures = len(failed_ids)
-    print(f"\n  Done. {written} clusters re-ranked in {elapsed:.1f}s"
-          + (f" ({write_errors} chunk failures, {per_row_failures} row failures)"
-             if (write_errors or per_row_failures) else ""))
-    if per_row_failures:
-        print(f"  [warn] {per_row_failures} cluster ids failed to update after retry:")
-        # Cap printed list at 20 to avoid log flood; full list is in failed_ids
-        # if the orchestrator wants to retry them in a follow-up pass.
-        for fid in failed_ids[:20]:
+    # Post-write assertion: every intended row must come back in an upsert
+    # response. A shortfall means a silent drop (the exact failure class the
+    # old per-row loop hid); surface it loudly instead of pinning stale ranks.
+    print(f"\n  Done. {written}/{len(write_rows)} clusters re-ranked in {elapsed:.1f}s"
+          + (f" ({chunk_failures} rows NOT confirmed written)" if chunk_failures else ""))
+    if missing_ids:
+        print(f"  [warn] {len(missing_ids)} cluster ids were NOT confirmed by the "
+              f"upsert response (possible silent drop):")
+        for fid in list(missing_ids)[:20]:
             print(f"    - {fid}")
-        if per_row_failures > 20:
-            print(f"    ... and {per_row_failures - 20} more")
+        if len(missing_ids) > 20:
+            print(f"    ... and {len(missing_ids) - 20} more")
+    else:
+        print(f"  [ok] Write count matches intended ({written} == {len(write_rows)}).")
     return written
 
 

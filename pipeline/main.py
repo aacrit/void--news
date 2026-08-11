@@ -556,7 +556,12 @@ def _db_call_with_retry(fn, label: str, retries: int = 3, base_backoff: float = 
             raise
 
 
-def enrich_cluster(cluster_id: str, skip_text: bool = False) -> None:
+def enrich_cluster(
+    cluster_id: str,
+    skip_text: bool = False,
+    retries: int = 2,
+    base_backoff: float = 0.75,
+) -> None:
     """
     Call the Supabase RPC to refresh enrichment data for a cluster,
     then run client-side consensus/divergence generation unless skip_text
@@ -570,6 +575,13 @@ def enrich_cluster(cluster_id: str, skip_text: bool = False) -> None:
         cluster_id: UUID of the cluster to enrich.
         skip_text: If True, skip rule-based consensus/divergence generation
             (used when Gemini has already provided these).
+        retries / base_backoff: transient-drop retry budget for the RPC call.
+            2026-08-11 (pipeline-perf-writes) — defaulted DOWN from the old
+            3 x 1.5s exponential (up to ~10.5s of dead-time per failing call)
+            to 2 x 0.75s (0.75s, 1.5s; ~2.25s max) so a flaky-connection burst
+            fails fast instead of stalling the store step in retry dead-time.
+            All callers share the single module-level keep-alive `supabase`
+            client, so the HTTP/2 connection pool is reused across workers.
     """
     rpc_succeeded = False
     try:
@@ -578,6 +590,8 @@ def enrich_cluster(cluster_id: str, skip_text: bool = False) -> None:
                 "refresh_cluster_enrichment", {"p_cluster_id": cluster_id}
             ).execute(),
             label=f"Cluster enrichment {cluster_id}",
+            retries=retries,
+            base_backoff=base_backoff,
         )
         rpc_succeeded = True
     except Exception as e:
@@ -3092,12 +3106,17 @@ def main():
         # Enrich clusters with aggregated bias data (Step 9)
         # For Gemini-enriched clusters, only run numeric aggregation (RPC),
         # skip rule-based consensus/divergence text generation.
-        # Run enrichment in parallel (8 workers) — each call is an independent
-        # Supabase RPC + optional text generation with no shared state.
-        # This reduces N*~150ms sequential RPCs to ceil(N/8)*~150ms.
+        # Run enrichment in parallel. 2026-08-11 (pipeline-perf-writes) —
+        # concurrency lowered 8 -> 4. On the profiled 107-min run, 8 workers of
+        # per-row RPC writes over one HTTP/2 connection spent most of the 14-min
+        # step in "Server disconnected"/ConnectionTerminated retry dead-time;
+        # fewer concurrent streams over the shared keep-alive client, plus the
+        # shorter bounded backoff (enrich_cluster defaults 2 x 0.75s), removes
+        # that dead-time. All workers reuse the single module-level `supabase`
+        # client (its connection pool), so the pool is kept warm across calls.
         if cluster_ids_to_enrich:
-            print(f"  Enriching {len(cluster_ids_to_enrich)} clusters (parallel, 8 workers)...")
-            with ThreadPoolExecutor(max_workers=8) as enrich_executor:
+            print(f"  Enriching {len(cluster_ids_to_enrich)} clusters (parallel, 4 workers)...")
+            with ThreadPoolExecutor(max_workers=4) as enrich_executor:
                 enrich_futures = {
                     enrich_executor.submit(
                         enrich_cluster,
@@ -3136,7 +3155,10 @@ def main():
             ]
             if _backfill:
                 print(f"  Backfilling enrichment for {len(_backfill)} carried-over clusters...")
-                with ThreadPoolExecutor(max_workers=8) as _bf_ex:
+                # 2026-08-11 (pipeline-perf-writes) — same 8 -> 4 concurrency
+                # cut as the main enrich loop above; identical per-row RPC write
+                # path over the shared keep-alive client.
+                with ThreadPoolExecutor(max_workers=4) as _bf_ex:
                     _bf = {_bf_ex.submit(enrich_cluster, _cid, True): _cid for _cid in _backfill}
                     for _fut in as_completed(_bf):
                         try:
