@@ -48,29 +48,76 @@ def slug_of(domain: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", domain).strip("-")
 
 
-def fetch_icon(domain: str, dest: str) -> bool:
-    """Fetch a 64px favicon for `domain` to `dest`. Returns True on a real icon.
+def _get(url: str, timeout: int = 12) -> bytes:
+    req = Request(url, headers={"User-Agent": UA})
+    with urlopen(req, timeout=timeout) as resp:
+        return resp.read()
 
-    Uses Google's favicon service at build time (server-side, not reader-side, so
-    no reader privacy leak). Rejects the tiny default globe by size heuristic.
+
+def _save_as_png(data: bytes, dest: str) -> bool:
+    """Write icon bytes to dest as PNG. Non-PNG payloads (ICO/JPEG/GIF/WebP)
+    are converted via Pillow when available; without Pillow they are skipped
+    (never write a mis-labeled format behind a .png path)."""
+    if data.startswith(b"\x89PNG"):
+        try:
+            with open(dest, "wb") as fh:
+                fh.write(data)
+            return True
+        except Exception:
+            return False
+    try:
+        from io import BytesIO
+
+        from PIL import Image  # pipeline dep (Pillow ~=11)
+
+        img = Image.open(BytesIO(data))
+        # ICO containers: pick the largest frame.
+        if getattr(img, "n_frames", 1) > 1 or img.format == "ICO":
+            try:
+                img.size = max(img.info.get("sizes", {img.size}))  # type: ignore[attr-defined]
+            except Exception:
+                pass
+        img = img.convert("RGBA")
+        if max(img.size) > 64:
+            img.thumbnail((64, 64))
+        img.save(dest, format="PNG")
+        return True
+    except Exception:
+        return False
+
+
+def fetch_icon(domain: str, dest: str) -> bool:
+    """Fetch a favicon for `domain` to `dest`. Returns True on a real icon.
+
+    All fetches happen at BUILD time (server-side, not reader-side, so no
+    reader privacy leak). Fallback chain (2026-08-11 — was Google-only, which
+    left ~240 of 1,016 outlets on letter monograms):
+      1. Google s2 favicon service (64px PNG; tiny default globe rejected)
+      2. DuckDuckGo ip3 icon service
+      3. The site's own /favicon.ico
     """
-    url = f"https://www.google.com/s2/favicons?domain={domain}&sz=64"
+    # 1. Google s2 — rejects the ~16px default globe by size heuristic.
     try:
-        req = Request(url, headers={"User-Agent": UA})
-        with urlopen(req, timeout=12) as resp:
-            data = resp.read()
+        data = _get(f"https://www.google.com/s2/favicons?domain={domain}&sz=64")
+        if data and len(data) >= 500 and _save_as_png(data, dest):
+            return True
     except Exception:
-        return False
-    # Google returns a ~16px default globe (a few hundred bytes) for unknown
-    # domains; a real 64px icon is meaningfully larger. Drop the obvious defaults.
-    if not data or len(data) < 500:
-        return False
+        pass
+    # 2. DuckDuckGo ip3 — serves PNG/ICO; its default placeholder is tiny.
     try:
-        with open(dest, "wb") as fh:
-            fh.write(data)
+        data = _get(f"https://icons.duckduckgo.com/ip3/{domain}.ico")
+        if data and len(data) >= 500 and _save_as_png(data, dest):
+            return True
     except Exception:
-        return False
-    return True
+        pass
+    # 3. Direct favicon.ico from the outlet itself.
+    try:
+        data = _get(f"https://{domain}/favicon.ico", timeout=10)
+        if data and len(data) >= 300 and _save_as_png(data, dest):
+            return True
+    except Exception:
+        pass
+    return False
 
 
 def main() -> int:
