@@ -3022,7 +3022,10 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  border: 1.5px solid;
+  /* No lean-colored ring: the axis position already encodes lean, so the logo
+     stands on its own. A subtle card backing keeps transparent or white-bg
+     favicons and the letter-monogram fallback from floating on the canvas. */
+  border: none;
   background: var(--bg-card);
   display: flex;
   align-items: center;
