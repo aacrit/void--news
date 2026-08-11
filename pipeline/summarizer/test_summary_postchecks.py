@@ -21,30 +21,32 @@ def _wc(s):
 
 
 # ---------------------------------------------------------------------------
-# 3a — hard 90-word trim to a sentence boundary
+# 3a — hard runaway-cap trim to a sentence boundary (cap is a safety guard now,
+# not an editorial target; house length policy is 200-300 words)
 # ---------------------------------------------------------------------------
 def test_trim_over_cap_to_sentence_boundary():
-    # 5 sentences of 30 words each = 150 words; cap should keep whole sentences.
-    sent = " ".join(["word"] * 29) + " end."
-    long = " ".join([sent] * 5)
-    assert _wc(long) == 150
+    # Sentences of 30 words each, total well over the runaway cap so the trim
+    # fires and keeps only whole sentences at or under the cap.
+    sent = " ".join(["word"] * 29) + " end."       # 30 words per sentence
+    n = c._SUMMARY_WORD_CAP // 30 + 6
+    long = " ".join([sent] * n)
+    assert _wc(long) > c._SUMMARY_WORD_CAP
     out = c._trim_summary_to_word_cap(long)
-    assert _wc(out) <= 90, _wc(out)
+    assert _wc(out) <= c._SUMMARY_WORD_CAP, _wc(out)
     # Kept only complete sentences (each ends with "end.").
     assert out.strip().endswith("end.")
-    # Trimmed to the last complete sentence at or under cap -> 3 sentences (90w).
-    assert out.count("end.") == 3, out.count("end.")
 
 
 def test_trim_noop_when_within_cap():
+    # A normal full-length brief (well under the runaway cap) is untouched.
     clean = "The senate passed the bill Tuesday. 60 members voted yes."
     assert c._trim_summary_to_word_cap(clean) == clean
 
 
 def test_trim_first_sentence_exceeds_cap():
-    huge = " ".join(["token"] * 200) + "."
+    huge = " ".join(["token"] * (c._SUMMARY_WORD_CAP + 60)) + "."
     out = c._trim_summary_to_word_cap(huge)
-    assert _wc(out) <= 90
+    assert _wc(out) <= c._SUMMARY_WORD_CAP
     assert out.rstrip().endswith(".")
 
 
@@ -189,7 +191,7 @@ def test_apply_chain_repairs_multiple_defects():
     assert "80-year-old" not in out               # 3e
     assert out.lower().count("not yet known") + out.lower().count(
         "still investigating") <= 1               # 3c
-    assert _wc(out) <= 90                          # 3a
+    assert _wc(out) <= c._SUMMARY_WORD_CAP         # 3a runaway guard
     assert "Dana Reyes" in out                     # substance preserved
 
 
@@ -199,45 +201,48 @@ def test_apply_chain_empty_and_none_safe():
 
 
 # ---------------------------------------------------------------------------
-# Length-calibration fix (2026-08-10): the 90-word cap must apply on the flash
-# path (top-10 flash AND ranks 11-50 flash-lite), and the prompt/band must no
-# longer request sub-40-word output.
+# Runaway guard (length policy restored 2026-08-11 to 200-300 words): the cap is
+# now only a safety ceiling. A normal 200-300 word brief must pass through
+# untouched; only a runaway (> _SUMMARY_WORD_CAP) is trimmed at the storage
+# boundary on both the flash and flash-lite write paths.
 # ---------------------------------------------------------------------------
-def test_flash_path_over_90_words_trimmed_to_cap():
-    """(i) A >90-word LLM summary is trimmed to <= 90 on the flash storage path.
-
-    Every stored-summary boundary in the flash top-10 write path and the
-    reconcile-flash-top10 write path wraps result["summary"] in
-    _trim_summary_to_word_cap. Simulate that boundary here (no DB) and confirm
-    an over-length summary is capped exactly as those callers would store it.
-    """
+def test_full_brief_passes_through_uncapped():
+    """A 200-300 word brief (the house target) is NOT trimmed."""
     sent = " ".join(["fact"] * 24) + " landed."   # 25 words each
-    long_summary = " ".join([sent] * 10)           # 250 words, 10 sentences
-    assert _wc(long_summary) == 250
-    stored = c._trim_summary_to_word_cap(long_summary)   # the storage-boundary call
+    brief = " ".join([sent] * 10)                  # 250 words, well within cap
+    assert _wc(brief) == 250
+    stored = c._trim_summary_to_word_cap(brief)
+    assert stored == brief                          # untouched, no cap applied
+
+
+def test_runaway_summary_trimmed_to_cap():
+    """A runaway (> cap) summary is trimmed at the storage boundary."""
+    sent = " ".join(["fact"] * 24) + " landed."   # 25 words each
+    long_summary = " ".join([sent] * (c._SUMMARY_WORD_CAP // 25 + 4))  # over cap
+    assert _wc(long_summary) > c._SUMMARY_WORD_CAP
+    stored = c._trim_summary_to_word_cap(long_summary)
     assert _wc(stored) <= c._SUMMARY_WORD_CAP, _wc(stored)
     assert stored.strip().endswith("landed.")            # whole-sentence boundary
 
 
-def test_cached_over_cap_summary_would_be_trimmed():
-    """A summary cached from before the cap (175+ words) is caught by the same
-    deterministic trim the 8d cache-hit branch now applies in place."""
-    cached = " ".join(["word"] * 174) + " end."   # 175 words
+def test_cached_over_cap_runaway_would_be_trimmed():
+    """A runaway summary over the safety cap is caught by the same deterministic
+    trim the 8d cache-hit branch applies in place."""
+    cached = " ".join(["word"] * (c._SUMMARY_WORD_CAP + 19)) + " end."
     assert _wc(cached) > c._SUMMARY_WORD_CAP
     assert _wc(c._trim_summary_to_word_cap(cached)) <= c._SUMMARY_WORD_CAP
 
 
-def test_prompt_targets_a_band_not_sub_40_output():
-    """(ii) TASK 2 asks for a 55-to-90-word band in 2-4 sentences and never
-    instructs the model to compress below the soft floor."""
+def test_prompt_targets_full_brief_length():
+    """TASK 2 asks for a 200-to-300-word full brief (restored 2026-08-11) and no
+    longer caps output at the short 55-90 band."""
     tmpl = c._USER_PROMPT_TEMPLATE
-    # Band + sentence-count guidance present.
-    assert "55 to 90 words" in tmpl
-    assert "2 to 4" in tmpl
-    # The old brevity-maximizing instruction is gone (it drove over-compression).
+    assert "200 to 300 words" in tmpl
+    # The old short-band + brevity-maximizing instructions are gone.
+    assert "55 to 90 words" not in tmpl
     assert "shorter, denser summary always beats" not in tmpl
     assert "AT MOST 90 words" not in tmpl
-    # Soft floor is defined below the band and above zero.
+    # Soft floor sits below the runaway cap and above zero.
     assert 0 < c._SUMMARY_WORD_FLOOR < c._SUMMARY_WORD_CAP
 
 
