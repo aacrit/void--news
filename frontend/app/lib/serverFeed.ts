@@ -110,7 +110,53 @@ export async function fetchInitialFeed(): Promise<InitialFeed> {
     );
   }
 
-  const clusters = res.data ?? [];
+  let clusters = res.data ?? [];
+
+  // Ghost-cluster guard (cheap, batched — NOT per-cluster): a cluster whose
+  // stale source_count still ranks it into the feed but whose cluster_articles
+  // links were all cascade-dropped by article retention renders as a real card
+  // with an empty Deep Dive. The pipeline cleanup sweep removes these on its
+  // next run; this guard keeps one from reaching the prerender in the meantime.
+  // Cost is a SINGLE .in_() query over the already-fetched top-100 ids (paged
+  // for the 1000-row cap), not one query per cluster. Fail-open: any error, or
+  // an empty result set, leaves the feed untouched so a transient read problem
+  // can never blank the front page.
+  try {
+    const ids = clusters
+      .map((c: { id?: string }) => c.id)
+      .filter((id: string | undefined): id is string => !!id);
+    if (ids.length > 0) {
+      const withArticles = new Set<string>();
+      let from = 0;
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const { data, error } = await supabase
+          .from("cluster_articles")
+          .select("cluster_id")
+          .in("cluster_id", ids)
+          .range(from, from + 999);
+        if (error || !data || data.length === 0) break;
+        for (const row of data as { cluster_id?: string }[]) {
+          if (row.cluster_id) withArticles.add(row.cluster_id);
+        }
+        if (data.length < 1000) break;
+        from += 1000;
+      }
+      // Only filter when we actually found links; an empty set means the read
+      // failed or the table is empty, and we must not drop the whole feed.
+      if (withArticles.size > 0) {
+        const before = clusters.length;
+        clusters = clusters.filter((c: { id?: string }) => c.id && withArticles.has(c.id));
+        const dropped = before - clusters.length;
+        if (dropped > 0) {
+          console.warn(`[serverFeed] dropped ${dropped} ghost cluster(s) with zero cluster_articles`);
+        }
+      }
+    }
+  } catch (e) {
+    console.warn(`[serverFeed] ghost-cluster guard skipped: ${e}`);
+  }
+
   const stories = mapClustersToStories(clusters, usingEnriched);
 
   // Attach shareable permalinks from the latest printed edition. Today's
