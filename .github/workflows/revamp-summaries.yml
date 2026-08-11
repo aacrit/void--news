@@ -1,0 +1,51 @@
+name: Revamp Top50 Summaries
+
+# One-off, manual: regenerate the CURRENT displayed top-50 cluster summaries in
+# place using the merged summarizer (full article bodies, 55-to-90 word band,
+# temperature 0, 90-word cap), without waiting for the next daily pipeline run.
+# Runs pipeline/admin/revamp_top50_summaries.py. After it succeeds, run the
+# "Deploy to Cloudflare Pages" workflow so the prerendered feed picks up the new
+# summaries.
+
+on:
+  workflow_dispatch: {}
+
+concurrency:
+  group: revamp-summaries
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  revamp:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: pipeline/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r pipeline/requirements.txt
+
+      - name: Cache spaCy model
+        id: spacy-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/spacy_models
+          key: spacy-en_core_web_sm-${{ hashFiles('pipeline/requirements.txt') }}
+
+      - name: Download spaCy model
+        run: python -m spacy download en_core_web_sm
+
+      - name: Revamp top-50 summaries in place
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python pipeline/admin/revamp_top50_summaries.py
