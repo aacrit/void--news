@@ -515,7 +515,9 @@
 
 /* ── Per-section inline expand ── */
 
-/* GPU-compositable expand: grid-template-rows 0fr→1fr avoids layout recalc */
+/* grid-template-rows 0fr→1fr expand: still LAYOUT-animated (not composited),
+   but avoids the max-height overshoot/guillotine problems — the right trick,
+   wrong old comment (it claimed GPU compositing). */
 .mbp__expand {
   display: grid;
   grid-template-rows: 0fr;

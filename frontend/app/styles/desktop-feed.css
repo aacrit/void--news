@@ -288,9 +288,11 @@
   padding-left: var(--space-5);
 }
 
-/* Broadsheet unfold: stories materialize in place */
+/* Broadsheet unfold: stories materialize in place.
+   320ms (was 500ms): the reader clicked to read — the unfold character
+   survives, the wait does not. */
 .anim-broadsheet-unfold {
-  animation: broadsheetUnfold 500ms var(--spring-bouncy) both;
+  animation: broadsheetUnfold 320ms var(--spring-bouncy) both;
 }
 
 @keyframes broadsheetUnfold {

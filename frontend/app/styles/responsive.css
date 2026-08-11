@@ -67,16 +67,10 @@
   }
 }
 
-/* ---- Tablet film grain: half-rate drift (16s vs desktop 8s) ----------- */
-/* Per VFX artist spec: tablet gets drift at reduced frequency to save GPU.
-   Desktop (1024px+) uses the base rule from components.css (8s full-rate). */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .page-container::after {
-    animation:
-      cinGrainEntrance 500ms var(--ease-cinematic) 700ms both,
-      cin-grain-drift 16s steps(2, end) 1200ms infinite;
-  }
-}
+/* ---- Tablet film grain -------------------------------------------------- */
+/* 2026-08-11: grain drift removed everywhere (see components.css) — the
+   sub-pixel shimmer was imperceptible but re-blended the full viewport on
+   every step. Tablet now inherits the static-grain base rule; no override. */
 
 /* ---- Justified text guard: left-align on narrow 2-col (768-1023px) ---- */
 @media (max-width: 1023px) {

@@ -411,7 +411,9 @@ export default function FloatingPlayer() {
       </div>
       <div className="fp__seek-bar-wrap">
         <div className="fp__seek-bar">
-          <div className="fp__seek-buffer" style={{ width: `${buffered}%` }} />
+          {/* scaleX (not width): width transitions re-layout the bar on every
+              timeupdate for the whole life of the player; transform composites. */}
+          <div className="fp__seek-buffer" style={{ transform: `scaleX(${buffered / 100})` }} />
           <div className="fp__seek-fill" style={{ width: `${progress}%` }} />
           {hasOpinionSection && <span className="fp__seek-mark" style={{ left: `${opinionPct}%` }} aria-hidden="true" />}
         </div>
@@ -476,7 +478,7 @@ export default function FloatingPlayer() {
           </span>
 
           <div className="fp__mini-progress" aria-hidden="true">
-            <div className="fp__mini-progress-fill" style={{ width: `${progress}%` }} />
+            <div className="fp__mini-progress-fill" style={{ transform: `scaleX(${progress / 100})` }} />
           </div>
         </div>
       )}

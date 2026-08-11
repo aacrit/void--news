@@ -250,8 +250,13 @@ body:has(.mms--open) .fp {
 
 .fp__mini-progress-fill {
   height: 100%;
+  width: 100%;
   background: var(--voice-accent);
-  transition: width 100ms linear;
+  /* Driven by transform: scaleX() from the component — compositor-only,
+     no per-timeupdate layout (was width + transition). */
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 100ms linear;
 }
 
 /* ---------------------------------------------------------------------------
@@ -693,10 +698,19 @@ body:has(.mms--open) .fp {
 
 .fp__seek-buffer {
   position: absolute; top: 0; left: 0; height: 100%;
+  width: 100%;
   background: color-mix(in srgb, var(--voice-accent) 18%, transparent);
   border-radius: 2px;
-  transition: width 300ms linear;
+  /* transform: scaleX() from the component — compositor-only. */
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform 300ms linear;
 }
+
+/* .fp__seek-fill intentionally KEEPS width%: its ::after playhead nub is
+   anchored to the fill's right edge and would be distorted by scaleX. The
+   100ms width transition below is contained to a 4px absolutely-positioned
+   bar — acceptable cost for a correct nub. */
 
 .fp__seek-fill {
   position: absolute; top: 0; left: 0; height: 100%;

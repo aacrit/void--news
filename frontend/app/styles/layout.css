@@ -57,13 +57,16 @@
 @media (min-width: 1024px) {
   html[data-onair-pane] .page-container {
     padding-left: clamp(320px, calc(100vw - 1400px - 80px), 480px);
-    transition: padding-left 420ms var(--ease-cinematic, ease);
-    will-change: padding-left;
+    /* padding-left is a layout property: every transition frame reflows the
+       document. 250ms (was 420ms + a meaningless will-change) keeps the
+       glide but pays 40% fewer thrash frames. A future pass could move the
+       push to transform on an inner wrapper. */
+    transition: padding-left 250ms var(--ease-cinematic, ease);
   }
 
   /* Smooth return when pane closes */
   .page-container {
-    transition: padding-left 350ms var(--ease-cinematic, ease);
+    transition: padding-left 250ms var(--ease-cinematic, ease);
   }
 
   /* /weekly uses .wk-page (not .page-container) as its outer container, so the
@@ -71,12 +74,11 @@
      weekly canvas. Mirrors the .page-container values exactly. */
   html[data-onair-pane] .wk-page {
     padding-left: clamp(320px, calc(100vw - 1400px - 80px), 480px);
-    transition: padding-left 420ms var(--ease-cinematic, ease);
-    will-change: padding-left;
+    transition: padding-left 250ms var(--ease-cinematic, ease);
   }
 
   .wk-page {
-    transition: padding-left 350ms var(--ease-cinematic, ease);
+    transition: padding-left 250ms var(--ease-cinematic, ease);
   }
 }
 

@@ -555,6 +555,10 @@ function SpectrumView({ sources, isMobile = false }: { sources: DeepDiveSpectrum
   const riseRafRef = useRef<number>(0);
   const svgWrapRef = useRef<HTMLDivElement>(null);
   const [animated, setAnimated] = useState(false);
+  // Ink-wash filter (feTurbulence + feDisplacementMap) is CPU-rasterized —
+  // re-running it on every rAF frame of the 450ms rise caused a visible hitch
+  // on phones. The filter attaches only after the rise settles.
+  const [riseDone, setRiseDone] = useState(false);
 
   const n = sources.length;
   const leans = sources.map((s) => s.politicalLean);
@@ -661,6 +665,7 @@ function SpectrumView({ sources, isMobile = false }: { sources: DeepDiveSpectrum
 
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       el.setAttribute("d", kdeToCubicPath(finalD, svgH, W, 12).fillPath);
+      setRiseDone(true);
       return;
     }
 
@@ -672,7 +677,11 @@ function SpectrumView({ sources, isMobile = false }: { sources: DeepDiveSpectrum
       const t = 1 - Math.pow(1 - progress, 3);
       const interp = flatD.map((f, i) => f + (finalD[i] - f) * t);
       el.setAttribute("d", kdeToCubicPath(interp, svgH, W, 12).fillPath);
-      if (progress < 1) riseRafRef.current = requestAnimationFrame(step);
+      if (progress < 1) {
+        riseRafRef.current = requestAnimationFrame(step);
+      } else {
+        setRiseDone(true);
+      }
     }
     riseRafRef.current = requestAnimationFrame(step);
     return () => cancelAnimationFrame(riseRafRef.current);
@@ -808,7 +817,7 @@ function SpectrumView({ sources, isMobile = false }: { sources: DeepDiveSpectrum
               ref={fillRef}
               d={paths.fillPath}
               fill="url(#sv-lean-grad)"
-              filter={n >= 8 ? "url(#sv-ink-wash)" : undefined}
+              filter={riseDone && n >= 8 ? "url(#sv-ink-wash)" : undefined}
               className="dd-sv-view__fill"
             />
           )}

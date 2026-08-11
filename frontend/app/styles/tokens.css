@@ -891,9 +891,10 @@
   --dur-fast:     150ms;
   --dur-normal:   300ms;
   --dur-morph:    400ms;   /* FLIP morph, panel transitions */
-  --dur-step:     450ms;   /* stagger cascade steps */
+  --dur-step:     260ms;   /* stagger cascade steps — a filter change is a user
+                              command; the reshuffle is a quick cut (was 450ms) */
   --dur-slow:     600ms;
-  --dur-reveal:   500ms;   /* progressive disclosure reveals */
+  --dur-reveal:   350ms;   /* progressive disclosure reveals (was 500ms) */
 
   /* Easing */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);

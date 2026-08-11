@@ -17,17 +17,8 @@
   }
 }
 
-/* Story card spring entrance — subtle translateY with spring overshoot */
-@keyframes springEntranceCard {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+/* springEntranceCard removed 2026-08-11 — it was byte-identical to fadeInUp.
+   .anim-filter-card now uses fadeInUp directly. */
 
 @keyframes fadeIn {
   from { opacity: 0; }
@@ -139,7 +130,9 @@
 .anim-stagger {
   opacity: 0;
   transform: translateY(12px);
-  animation: staggerUnfold 440ms var(--ease-unfold, cubic-bezier(0.25, 0.1, 0.25, 1)) both;
+  /* 260ms (was 440ms): scroll-triggered entries must keep pace with the
+     thumb — a 440ms fade read as the feed lagging the scroll. */
+  animation: staggerUnfold 260ms var(--ease-unfold, cubic-bezier(0.25, 0.1, 0.25, 1)) both;
   animation-play-state: paused;
 }
 
@@ -152,7 +145,7 @@
    animationDelay is set via inline style for per-card stagger (max 50ms gap).
    Re-mount via React key triggers re-play on every filter change. */
 .anim-filter-card {
-  animation: springEntranceCard var(--dur-step) var(--spring) both;
+  animation: fadeInUp var(--dur-step) var(--spring) both;
 }
 
 /* Lead story stagger — primary lead fades in first, secondary 120ms later.
@@ -471,18 +464,9 @@
   to { opacity: 1; }
 }
 
-/* ── Film Grain Drift ──
-   Subtle sub-pixel translation that creates "living grain" — the slight
-   inter-frame registration error of a film print. 4 positions over 8s
-   = 0.5fps effective gate rate (matches 500T at native speed).
-   Drift stays under 0.5px to avoid conscious perception. */
-@keyframes cin-grain-drift {
-  0%   { transform: translate(0, 0); }
-  25%  { transform: translate(0.3px, -0.4px); }
-  50%  { transform: translate(-0.35px, 0.25px); }
-  75%  { transform: translate(0.2px, 0.35px); }
-  100% { transform: translate(0, 0); }
-}
+/* Film grain drift removed 2026-08-11 — the sub-0.5px "living grain" was
+   below conscious perception but each step re-blended the whole viewport
+   (the grain layer is mix-blend-mode overlay). Grain is now static. */
 
 /* ── Anamorphic Flare ── */
 @keyframes cin-flare-in {
@@ -915,10 +899,8 @@
    .parallax-bg child element should be added to the DOM rather than
    reusing the pseudo-elements. For now, the static paper texture on
    .page-container's background provides the depth layer. */
-@keyframes scrollParallaxBg {
-  from { transform: translateY(0); }
-  to   { transform: translateY(-20vh); }
-}
+/* scrollParallaxBg keyframe removed 2026-08-11 — defined but never attached
+   (see the note above about not parallaxing the fixed pseudo-elements). */
 
 /* ── Scroll Dolly — Cards approach as they enter viewport ──
    Cards scale from 0.98 to 1 as they scroll into view,
@@ -1095,18 +1077,9 @@
    Removed duplicate declaration here to avoid conflicting timing/easing values.
    See desktop-feed.css .page-main--deep-dive-open for the active rule. */
 
-/* ── Scroll direction lens breathing ──
-   When scroll direction reverses, content micro-pulses scale
-   to simulate a camera refocusing. Applied via JS class toggle. */
-@keyframes lensBreathing {
-  0%   { transform: scale(1); }
-  50%  { transform: scale(1.003); }
-  100% { transform: scale(1); }
-}
-
-.anim-lens-breathe {
-  animation: lensBreathing 600ms var(--ease-cinematic) both;
-}
+/* Lens breathing removed 2026-08-11 — tokens.css declared it removed
+   (imperceptible pulse, GPU cost for zero effect) but the keyframe and
+   utility class had survived here as dead code. No JS ever toggled it. */
 
 /* ── Section boundary divider ──
    When crossing importance tiers (lead->medium->compact), a subtle
@@ -1189,9 +1162,6 @@
   /* Backdrop rack animations: instant state, no ramp */
   .deep-dive-backdrop,
   .deep-dive-backdrop--closing {
-    animation: none;
-  }
-  .anim-lens-breathe {
     animation: none;
   }
   .anim-scene-divider {
