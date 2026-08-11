@@ -57,11 +57,11 @@ export default function AboutFaq() {
         <div className="faq__item" ref={register(3 + QA.length)} style={{ opacity: 0 }}>
           <dt className="faq__q">Is a person deciding what I see?</dt>
           <dd className="faq__a">
-            No human editorial board picks the stories, and the bias analysis is rule-based with no AI: fixed rules
-            read each article's words, and every score shows its work. The feed's ordering does use one small AI
-            signal, a story-type tag from Gemini, alongside source breadth and other measures, but it is bounded by
-            published guardrails and cannot down-weight a story that is under 12 hours old, has 20 or more sources, or
-            is still gaining coverage.
+            No human editorial board picks the stories, and no AI decides what leads. The order of the feed, how
+            stories are grouped, and every bias score all come from fixed rules that run the same way for every
+            reader, and each score shows its work. The only place we use AI is to write the words: the short summary
+            under each story and the daily brief, and it is told to use only what the source articles say. The rules
+            are open, imperfect, and improving.
           </dd>
         </div>
       </dl>
