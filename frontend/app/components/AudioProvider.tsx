@@ -114,6 +114,9 @@ export default function AudioProvider({
 }) {
   const [edition, setEditionState] = useState<string>("world");
   const [brief, setBrief] = useState<DailyBriefData | null>(initialBrief);
+  // Timestamp of the last successful brief fetch — drives the resume-refetch
+  // staleness check (see the visibilitychange effect below).
+  const briefFetchedAtRef = useRef<number>(0);
   // True until the seeded brief has satisfied the first edition-fetch effect
   // run, so we keep the build-time brief instead of clearing + refetching it.
   const seededRef = useRef<boolean>(initialBrief != null);
@@ -208,7 +211,10 @@ export default function AudioProvider({
     // Coupling this fetch to the kill switch left SkyboxBanner / MobileBriefPill
     // stuck on "Loading today's brief…" whenever audio was disabled.
     fetchDailyBrief(edition).then((data) => {
-      if (!cancelled) setBrief(data);
+      if (!cancelled) {
+        setBrief(data);
+        briefFetchedAtRef.current = Date.now();
+      }
     });
 
     if (AUDIO_ENABLED) {
@@ -313,6 +319,26 @@ export default function AudioProvider({
     document.addEventListener("visibilitychange", handleVisibility);
     return () => document.removeEventListener("visibilitychange", handleVisibility);
   }, []);
+
+  /* ---- Stale-brief self-heal on resume (2026-08-11) ----
+     The brief is fetched once on mount, but installed PWAs / background tabs
+     are resumed from memory for hours or days without a remount — observed
+     live: a reader resumed a yesterday session and saw yesterday's TL;DR
+     under today's dateline. On visibility resume, if the last brief fetch is
+     older than 15 minutes, refetch. Data-only; playback state untouched. */
+  useEffect(() => {
+    const BRIEF_STALE_MS = 15 * 60 * 1000;
+    const handleResumeRefetch = () => {
+      if (document.visibilityState !== "visible") return;
+      if (Date.now() - briefFetchedAtRef.current < BRIEF_STALE_MS) return;
+      briefFetchedAtRef.current = Date.now(); // debounce concurrent resumes
+      fetchDailyBrief(edition).then((data) => {
+        if (data) setBrief(data);
+      });
+    };
+    document.addEventListener("visibilitychange", handleResumeRefetch);
+    return () => document.removeEventListener("visibilitychange", handleResumeRefetch);
+  }, [edition]);
 
   const handlePlayPause = useCallback(() => {
     const audio = getAudio();
