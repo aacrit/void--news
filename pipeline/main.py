@@ -4016,6 +4016,91 @@ def main():
     except Exception as e:
         print(f"  [warn] article retention failed: {e}")
 
+    # Ghost-cluster sweep: remove story_clusters that have ZERO cluster_articles.
+    #
+    # ROOT CAUSE (prod P0): the article retention above deletes stale articles
+    # and cascade-drops their cluster_articles links (migration 047), but the
+    # parent story_clusters row survives with a STALE source_count and a valid
+    # rank_world. If it still ranks it renders as a real feed card whose Deep
+    # Dive source fetch (the cluster_articles join) returns nothing. A
+    # continuing story with zero articles left in the retention window is no
+    # longer active news and must not be in the feed. Observed live with
+    # source_count 74/52/44 clusters carrying 0 cluster_articles.
+    #
+    # This MUST run AFTER every article-deleting step above (the RPC AND the
+    # legacy block) so the cluster<->article state is final and we catch the
+    # clusters orphaned by THIS run. Hard-delete is safe and mirrors the 2-day
+    # retention block, which already hard-deletes story_clusters rows:
+    # cluster_articles is already empty, story_memory.cluster_id cascades
+    # (migration 022), and daily_briefs.opinion_cluster_id / article_claims.
+    # cluster_id are ON DELETE SET NULL (migrations 029/041).
+    #
+    # GUARD: a cluster is a ghost ONLY when its id is absent from the set of
+    # cluster_ids that appear in cluster_articles, i.e. it has EXACTLY zero
+    # links. Any cluster with >=1 article is in `has_articles` and can never be
+    # selected for deletion. A second guard bails the whole sweep if the
+    # cluster_articles scan comes back empty (abnormal state) so we never
+    # mistake a failed/empty read for "every cluster is a ghost".
+    try:
+        # Page every cluster_id that still has at least one linked article.
+        # Robust to PostgREST's 1000-row page cap; a Python set dedupes.
+        has_articles: set[str] = set()
+        offset = 0
+        while True:
+            page = supabase.table("cluster_articles").select("cluster_id").range(
+                offset, offset + 999
+            ).execute()
+            if not page.data:
+                break
+            for row in page.data:
+                cid = row.get("cluster_id")
+                if cid:
+                    has_articles.add(cid)
+            if len(page.data) < 1000:
+                break
+            offset += 1000
+
+        if not has_articles:
+            # No links found at all. Either cluster_articles is genuinely empty
+            # (abnormal) or the scan failed silently. Never treat that as
+            # "delete every cluster" — bail out of the sweep entirely.
+            print(
+                "  [warn] ghost-cluster sweep skipped: cluster_articles scan "
+                "returned zero links (refusing to treat all clusters as ghosts)"
+            )
+        else:
+            # Page every story_cluster id; a ghost is one absent from the set.
+            ghost_ids: list[str] = []
+            offset = 0
+            while True:
+                page = supabase.table("story_clusters").select("id").range(
+                    offset, offset + 999
+                ).execute()
+                if not page.data:
+                    break
+                for row in page.data:
+                    cid = row.get("id")
+                    if cid and cid not in has_articles:
+                        ghost_ids.append(cid)
+                if len(page.data) < 1000:
+                    break
+                offset += 1000
+
+            if ghost_ids:
+                for i in range(0, len(ghost_ids), 100):
+                    batch = ghost_ids[i:i + 100]
+                    supabase.table("story_clusters").delete().in_(
+                        "id", batch
+                    ).execute()
+                print(
+                    f"  Ghost-cluster sweep: removed {len(ghost_ids)} cluster(s) "
+                    f"with zero cluster_articles (orphaned by article retention)"
+                )
+            else:
+                print("  Ghost-cluster sweep: no zero-article clusters found")
+    except Exception as e:
+        print(f"  [warn] ghost-cluster sweep failed: {e}")
+
     # Archive retention: prune entries older than 10 days (buffer past Sunday
     # weekly digest). BATCHED: the single-statement DELETE hit the Free-Plan
     # statement timeout (57014, 2026-07-04/05 runs) once the backlog grew,
