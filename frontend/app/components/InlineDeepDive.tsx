@@ -677,8 +677,13 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
           </div>
         )}
 
-        {/* No deep dive data at all (no error) */}
-        {sources.length === 0 && !isLoadingData && !fetchError && (
+        {/* No deep dive data AND no summary/Sigil to fall back on = genuinely
+            empty. A continuing story whose member articles aged out of the 2-day
+            retention keeps its summary + aggregate Sigil, so it still reads as a
+            full Deep Dive; only the per-source spread is quietly omitted. We
+            never show the alarming "check back" message in that common case. */}
+        {sources.length === 0 && !isLoadingData && !fetchError
+          && !story.summary && (!story.sigilData || story.sigilData.pending) && (
           <div className="dd-empty-data">
             <p className="text-base empty-state__body--no-margin" style={{ lineHeight: 1.6 }}>
               Detailed coverage data is not yet available for this story.
