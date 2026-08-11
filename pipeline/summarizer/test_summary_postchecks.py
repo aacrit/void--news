@@ -241,6 +241,98 @@ def test_prompt_targets_a_band_not_sub_40_output():
     assert 0 < c._SUMMARY_WORD_FLOOR < c._SUMMARY_WORD_CAP
 
 
+# ---------------------------------------------------------------------------
+# Grounding hardening (2026-08-10): (3f) warn-only grounding audit flags figures
+# and proper nouns absent from the source text; the prompt block now feeds the
+# real full_text body, sentence-bounded (no mid-sentence "..." severing a fact).
+# ---------------------------------------------------------------------------
+def test_grounding_flags_absent_number():
+    """(i) A number in the summary that is NOT in the source text is flagged."""
+    summary = "The council approved the plan by a vote of 55 to 12 on Tuesday."
+    src = "The council approved the plan on Tuesday after a lengthy debate."
+    flagged = c._flag_ungrounded_tokens(summary, src)
+    assert "55" in flagged, flagged
+    assert "12" in flagged, flagged
+
+
+def test_grounding_does_not_flag_grounded_number():
+    """(ii) A number present in the source text is NOT flagged."""
+    summary = "The council approved the plan 55 to 12 on Tuesday."
+    src = "Officials confirmed the 55 to 12 vote taken on Tuesday afternoon."
+    flagged = c._flag_ungrounded_tokens(summary, src)
+    assert "55" not in flagged, flagged
+    assert "12" not in flagged, flagged
+
+
+def test_grounding_flags_absent_proper_noun_not_grounded_one():
+    # An invented multi-word entity is flagged; a grounded one is not.
+    summary = "Dana Reyes met Victor Almeida in Geneva to sign the accord."
+    src = "Dana Reyes traveled to Geneva to sign the accord."
+    flagged = c._flag_ungrounded_tokens(summary, src)
+    assert "Victor Almeida" in flagged, flagged
+    assert "Dana Reyes" not in flagged, flagged
+
+
+def test_grounding_thousands_separator_grounds():
+    # "12,000" in source grounds "12000" digits in the summary token.
+    summary = "Officials ordered 12,000 residents to evacuate."
+    src = "The order covered 12,000 residents in the valley."
+    assert c._flag_ungrounded_tokens(summary, src) == []
+
+
+def test_grounding_empty_source_is_noop():
+    assert c._flag_ungrounded_tokens("55 people, Jane Doe.", "") == []
+    assert c._flag_ungrounded_tokens("", "some source text") == []
+
+
+def test_articles_block_uses_full_text_sentence_bounded():
+    """(iii) The prompt block feeds full_text (not the 400-char summary excerpt)
+    and cuts on a sentence boundary with no trailing mid-sentence ellipsis."""
+    # Body > _ARTICLE_BODY_MAX_CHARS so it must be sliced. Compose whole
+    # sentences; the slice must end on one of them, not mid-word/mid-fact.
+    sentence = ("Investigators traced the outage to a single failed relay near "
+                "the north substation and confirmed no foul play was involved. ")
+    body = sentence * 40  # well over 1800 chars
+    marker = "UNIQUEBODYMARKER the relay was replaced within the hour."
+    art = {
+        "title": "Grid outage explained",
+        "full_text": marker + " " + body,
+        "summary": "SHORTRSSEXCERPT that must not be used when full_text exists.",
+        "tier": "us_major",
+        "published_at": "2026-08-10T09:00",
+        "id": "a1",
+    }
+    block = c._build_articles_block([art])
+    # full_text body is used, RSS summary is not.
+    assert "UNIQUEBODYMARKER" in block
+    assert "SHORTRSSEXCERPT" not in block
+    # Sentence-bounded: the emitted body ends each sentence with a period and
+    # never appends a mid-sentence "..." (the old summary[:397] + "..." path).
+    assert "..." not in block
+    # The excerpt helper itself is sentence-bounded and within budget.
+    excerpt = c._sentence_bounded_excerpt(marker + " " + body)
+    assert len(excerpt) <= c._ARTICLE_BODY_MAX_CHARS
+    assert excerpt.rstrip().endswith((".", "!", "?"))
+
+
+def test_sentence_bounded_excerpt_returns_short_text_whole():
+    short = "One short sentence that fits. And a second one."
+    assert c._sentence_bounded_excerpt(short) == short
+
+
+def test_articles_block_falls_back_to_summary_without_full_text():
+    art = {
+        "title": "No body here",
+        "full_text": "",
+        "summary": "RSSFALLBACK excerpt stands in for a missing body.",
+        "tier": "international",
+        "published_at": "2026-08-10T08:00",
+        "id": "b1",
+    }
+    block = c._build_articles_block([art])
+    assert "RSSFALLBACK" in block
+
+
 def _run():
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     passed = 0

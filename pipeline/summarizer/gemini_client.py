@@ -154,6 +154,7 @@ def generate_json(
     count_call: bool = True,
     max_output_tokens: int = 8192,
     model: str | None = None,
+    temperature: float = 0.2,
 ) -> dict | None:
     """
     Send a prompt to Gemini Flash and parse the JSON response.
@@ -176,6 +177,10 @@ def generate_json(
         max_output_tokens: Maximum output tokens including thinking tokens.
             Default 8192 for cluster summaries. Use 65536 for briefs which
             produce TL;DR + audio script (~1200 words of output).
+        temperature: Sampling temperature. Default 0.2 (unchanged for the daily
+            brief path). The summary router passes 0 so cluster summaries do not
+            invent facts through sampling and stay reproducible run-to-run (a
+            better content-hash cache value).
 
     Returns parsed JSON dict, or None on failure (caller falls back
     to rule-based generation).
@@ -199,7 +204,7 @@ def generate_json(
 
     config = types.GenerateContentConfig(
         response_mime_type="application/json",
-        temperature=0.2,
+        temperature=temperature,
         max_output_tokens=max_output_tokens,
         system_instruction=system_instruction,  # None = no system turn (backward-compatible)
     )
