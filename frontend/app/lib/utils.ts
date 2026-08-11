@@ -16,35 +16,47 @@ export function getEditionTimeOfDay(): "Morning" | "Evening" {
   return new Date().getHours() < 12 ? "Morning" : "Evening";
 }
 
+const EDITION_MONTHS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+];
+
 /**
  * Compact dateline timestamp for the masthead: the edition's BUILD time
- * (the pipeline's completed_at), rendered in the reader's LOCAL zone and
- * ROUNDED TO THE NEAREST HOUR, with a short zone label (e.g. "13:00 CDT").
- * Rounding to the hour signals a once-a-day edition rather than a live clock.
+ * (the pipeline's completed_at), rendered in UTC and ROUNDED TO THE NEAREST
+ * HOUR, with an explicit "UTC" label (e.g. "11:00 UTC"). Rounding to the hour
+ * signals a once-a-day edition rather than a live clock.
+ *
+ * UTC (never the reader's local zone) is the single source of truth. The
+ * prerendered front page computes the identical string at build time via
+ * app/lib/serverFeed.ts (formatTimestampUTC); every detail surface (Deep Dive
+ * masthead, Menu drawer, /onair, /sources) routes through THIS function, so the
+ * "as of" time is byte-identical across the whole app and never depends on the
+ * viewer's timezone. Keep this in lockstep with serverFeed's formatter.
+ *
  * Pass the pipeline completed_at ISO string; with no (or an invalid) argument
- * it falls back to the current hour. Client-only (local zone), so callers
- * render it after mount.
+ * it falls back to the current hour. Output is deterministic for a given ISO
+ * input, so it is safe to render on both server and client (no hydration drift).
  */
 export function getEditionTimestamp(builtAtISO?: string | null): string {
   const src = builtAtISO ? new Date(builtAtISO) : new Date();
   if (isNaN(src.getTime())) return "";
-  // Round to the nearest hour in local time. >= 30 min rounds up; setHours
-  // overflow rolls the date correctly (23:45 -> next day 00:00).
-  const d = new Date(src);
-  d.setMinutes(0, 0, 0);
-  if (src.getMinutes() >= 30) d.setHours(d.getHours() + 1);
-  const h = String(d.getHours()).padStart(2, "0");
-  // Local timezone short label ("CDT", "GMT+2", ...); degrade to bare time.
-  let tz = "";
-  try {
-    const parts = new Intl.DateTimeFormat("en-US", {
-      timeZoneName: "short",
-    }).formatToParts(d);
-    tz = parts.find((p) => p.type === "timeZoneName")?.value ?? "";
-  } catch {
-    /* Intl unavailable — show time without a zone label. */
-  }
-  return tz ? `${h}:00 ${tz}` : `${h}:00`;
+  // Round to the nearest hour in UTC. >= 30 min rounds up; wrap at 24h.
+  let hour = src.getUTCHours();
+  if (src.getUTCMinutes() >= 30) hour = (hour + 1) % 24;
+  return `${String(hour).padStart(2, "0")}:00 UTC`;
+}
+
+/**
+ * Compact UTC dateline for the masthead (e.g. "Aug 9, 2026"), matching the
+ * prerendered front page (serverFeed.formatDatelineUTC). Deterministic for a
+ * given ISO input, so it is safe on both server and client and never shifts
+ * with the reader's timezone. Falls back to "now" when the arg is absent.
+ */
+export function getEditionDatelineUTC(builtAtISO?: string | null): string {
+  const d = builtAtISO ? new Date(builtAtISO) : new Date();
+  if (isNaN(d.getTime())) return "";
+  return `${EDITION_MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`;
 }
 
 /**
