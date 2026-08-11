@@ -116,6 +116,13 @@ const LEAN_GRADIENT_STOPS: Array<{ offset: string; color: string }> = [
 /* ── Min gap for 2-row source collision detection (% of container width) ── */
 const MIN_GAP_PCT = 5.5;
 
+/* ── Row cap for the source pin strip ────────────────────────────────────
+   A dense cluster (30+ sources) packs into many greedy rows and the strip
+   grows very tall. Show only the first ROW_CAP rows by default; a subtle
+   "Show all N sources" toggle expands the rest in place. Pins in hidden rows
+   are never rendered, so nothing off-screen is a stray tab stop. */
+const ROW_CAP = 8;
+
 /* ── Tooltip shared ──────────────────────────────────────────────────── */
 
 interface TooltipData {
@@ -247,6 +254,14 @@ function FaviconAvatar({
    pins ever overlap, so a ~30-source cluster simply grows a few rows tall and
    every source stays tappable.
 
+   Row cap: a very dense cluster would make the strip too tall, so only the
+   first ROW_CAP rows show by default. When the greedy pass produces more than
+   ROW_CAP rows, a Barlow small-caps "Show all N sources" text button appears
+   below the strip; it expands the container height in place (no inner scroll)
+   to reveal every row, and collapses back to ROW_CAP ("Show fewer"). Pins in
+   the hidden rows are not rendered while collapsed, so nothing off-screen is a
+   focusable tab stop.
+
    Naming:
      - Fine pointer (desktop): pins are <a> links. Hover shows the tooltip
        (name + lean + score + "Open article"); click opens the article.
@@ -267,6 +282,8 @@ function SourceFaviconRow({
   const [isCoarse, setIsCoarse] = useState(false);
   // Coarse-pointer only: which source's tooltip is currently pinned open.
   const [pinnedName, setPinnedName] = useState<string | null>(null);
+  // Row cap: strip shows the first ROW_CAP rows until the reader expands it.
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     const mqW = window.matchMedia("(max-width: 767px)");
@@ -338,9 +355,28 @@ function SourceFaviconRow({
     setTooltip({ source, x: rect.left + rect.width / 2, y: rect.top });
   };
 
+  const capped = rowCount > ROW_CAP;
+  const visibleRows = expanded ? rowCount : Math.min(rowCount, ROW_CAP);
+  // Only render pins whose row is currently visible. Hidden-row pins are never
+  // mounted, so they are neither painted nor part of the tab order.
+  const visiblePlaced = capped && !expanded
+    ? placed.filter((p) => p.row < ROW_CAP)
+    : placed;
+
+  const toggleExpanded = () => {
+    if (expanded) {
+      // Collapsing: a coarse-tap tooltip may be pinned to a row that is about
+      // to disappear, so dismiss it.
+      setPinnedName(null);
+      setTooltip(null);
+    }
+    setExpanded((v) => !v);
+  };
+
   return (
-    <div className="dd-sv-sources" style={{ height: rowH * rowCount }}>
-      {placed.map(({ source, leftPct, row }, i) => {
+    <>
+      <div className="dd-sv-sources" style={{ height: rowH * visibleRows }}>
+      {visiblePlaced.map(({ source, leftPct, row }, i) => {
         const posStyle: React.CSSProperties = { left: `${leftPct}%`, top: `${row * rowH}px` };
 
         if (isCoarse) {
@@ -384,7 +420,21 @@ function SourceFaviconRow({
           </a>
         );
       })}
-    </div>
+      </div>
+      {capped && (
+        <button
+          type="button"
+          className="dd-sv-sources__toggle"
+          aria-expanded={expanded}
+          onClick={toggleExpanded}
+        >
+          {expanded ? "Show fewer" : `Show all ${sources.length} sources`}
+          <span className="dd-sv-sources__toggle-caret" aria-hidden="true">
+            ›
+          </span>
+        </button>
+      )}
+    </>
   );
 }
 
