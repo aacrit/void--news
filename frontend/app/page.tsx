@@ -64,7 +64,6 @@ export default async function Home() {
         initialStories={feed.stories}
         initialBuiltAt={feed.builtAt}
         editionDateline={feed.editionDateline}
-        editionTimestamp={feed.editionTimestamp}
       />
     </>
   );

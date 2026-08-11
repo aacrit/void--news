@@ -7,7 +7,7 @@ import ThemeToggle from "./ThemeToggle";
 import PageToggle from "./PageToggle";
 import LogoFull from "./LogoFull";
 import ExperimentalBadge from "./ExperimentalBadge";
-import { getEditionTimestamp, getEditionDatelineUTC } from "../lib/utils";
+import { getEditionTimestampLocal, getEditionDatelineUTC } from "../lib/utils";
 
 interface NavBarProps {
   onSearchClick?: () => void;
@@ -15,11 +15,17 @@ interface NavBarProps {
       dateline + timestamp so they reflect when THIS edition was built, not the
       reader's current clock. Falls back to now when absent. */
   editionBuiltAt?: string | null;
-  /** Deterministic, preformatted masthead strings computed once at build time
-      (prerendered front page). When BOTH are provided they render directly on
-      first paint (server + client match exactly, no #418), bypassing the
-      client-local mounted gate below. Absent on client-only routes. */
+  /** Deterministic, preformatted edition DATE, computed once at build time in
+      UTC (prerendered front page). When supplied it renders directly on first
+      paint (server + client match exactly, no #418), bypassing the client-local
+      mounted gate below. Absent on client-only routes. The TIME is NEVER passed
+      this way: local time is machine-dependent, so it is always computed after
+      mount from editionBuiltAt (see below). */
   editionDateline?: string;
+  /** Explicit literal override for the "as of" TIME node. Normally left
+      undefined so the time is computed in the viewer's local zone after mount.
+      Pass "" to SUPPRESS the time entirely (e.g. an archived StandaloneDeepDive
+      snapshot shows its edition DATE only, no live "as of" clock). */
   editionTimestamp?: string;
 }
 
@@ -45,18 +51,26 @@ export default function NavBar({
   // mount so server HTML matches client HTML on first paint (avoids React #418).
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setMounted(true); }, []);
-  // Preformatted build-time strings win when supplied (front-page prerender):
-  // they are deterministic UTC, so server and client first paint are identical
-  // and the "as of" block renders immediately. Otherwise fall back to the
-  // client-fetched build time, formatted through the SAME UTC formatters the
-  // front page uses (getEditionDatelineUTC / getEditionTimestamp), so every
-  // detail surface shows the identical UTC "as of" value and never the reader's
-  // local zone. The mounted gate only defers the client-fetched path so an
-  // absent build time (which falls back to "now") can't mismatch on first paint.
-  // Before mount (and when no build value is available) BOTH resolve to empty
-  // and the time block below is omitted entirely, never a doubled placeholder.
+  // DATE: the preformatted build-time UTC string wins when supplied (front-page
+  // prerender) so it renders immediately and byte-identically on server +
+  // client. Otherwise fall back to the client-fetched build time formatted UTC,
+  // mount-gated so an absent build time (which falls back to "now") can't
+  // mismatch on first paint. The date stays UTC across every surface.
   const dateline = editionDateline ?? (mounted ? getEditionDatelineUTC(editionBuiltAt) : "");
-  const timestamp = editionTimestamp ?? (mounted ? getEditionTimestamp(editionBuiltAt) : "");
+  // TIME: rendered in the VIEWER'S LOCAL zone (e.g. "4:00 PM CDT") so it is
+  // relevant to each reader. Local time is machine-dependent and MUST NOT be
+  // baked into the prerendered HTML, so it is ALWAYS computed after mount from
+  // the raw ISO editionBuiltAt. Server HTML and the first client render both
+  // resolve to "" (mounted === false), so there is no hydration mismatch; the
+  // local time paints in only after the mount effect fires. An explicit
+  // editionTimestamp prop (e.g. "" from an archived snapshot) overrides the
+  // local computation, letting a permalink page suppress the live clock.
+  const timestamp =
+    editionTimestamp !== undefined
+      ? editionTimestamp
+      : mounted
+        ? getEditionTimestampLocal(editionBuiltAt)
+        : "";
 
   /* ── Scroll-compact masthead (NYT-style): wires --scroll-nav-compact-* tokens.
      Adds data-scroll-compact="true" past 80px, removes at ≤40px (hysteresis
