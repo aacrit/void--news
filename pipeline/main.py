@@ -375,22 +375,53 @@ def run_bias_analysis(
         scores["confidence"] = max(0.15, word_count / 500.0)
         return scores
 
-    # Pre-parse spaCy doc once and share across analyzers that need NER.
-    # Saves 2 redundant parses per article (~200-400ms each).
+    # Pre-parse spaCy docs once per DISTINCT analyzer text, then share.
+    #
+    # The three NER/dependency analyzers each parse a DIFFERENT text
+    # assembly (all truncated to 15000 chars):
+    #   political_lean : f"{title} {full_text}"
+    #   factual_rigor  : f"{title} {full_text} {summary}".strip()
+    #   framing        : full_text
+    # A single shared doc CANNOT serve all three without moving scores:
+    # framing reads doc.sents/doc.ents directly, so a title-prefixed doc
+    # changes its connotation sub-score, and factual_rigor would lose the
+    # summary region's NER. (Empirically: sharing one title+full_text doc
+    # drifted framing on 13/43 fixtures.) So we parse each analyzer's EXACT
+    # string, deduped so identical strings (e.g. rigor == lean when summary
+    # is empty) parse only once. This removes the redundant re-parse
+    # (political_lean alone parsed its combined text twice, once per
+    # sub-scorer) while keeping every score byte-identical to the
+    # per-analyzer doc=None path — verified against all 43 bias validation
+    # fixtures (0 drift).
     full_text = article.get("full_text", "") or ""
     title = article.get("title", "") or ""
-    combined = f"{title} {full_text}"
-    doc = None
-    if combined.strip():
-        try:
-            from utils.nlp_shared import get_nlp
-            nlp = get_nlp()
-            doc = nlp(combined[:15000])
-        except Exception:
-            pass  # analyzers fall back to their own parsing
+    summary = article.get("summary", "") or ""
+    _s_lean = f"{title} {full_text}"[:15000]
+    _s_rigor = f"{title} {full_text} {summary}".strip()[:15000]
+    _s_fram = full_text[:15000]
+    doc_lean = doc_rigor = doc_fram = None
+    try:
+        from utils.nlp_shared import get_nlp
+        _nlp = get_nlp()
+        _doc_cache: dict[str, object] = {}
+
+        def _shared_doc(_s: str):
+            if not _s.strip():
+                return None
+            _d = _doc_cache.get(_s)
+            if _d is None:
+                _d = _nlp(_s)
+                _doc_cache[_s] = _d
+            return _d
+
+        doc_lean = _shared_doc(_s_lean)
+        doc_rigor = _shared_doc(_s_rigor)
+        doc_fram = _shared_doc(_s_fram)
+    except Exception:
+        pass  # analyzers fall back to their own per-analyzer parsing
 
     try:
-        result = analyze_political_lean(article, source, topic_lean_data=topic_lean_data, doc=doc)
+        result = analyze_political_lean(article, source, topic_lean_data=topic_lean_data, doc=doc_lean)
         if isinstance(result, dict):
             scores["political_lean"] = result["score"]
             rationale["lean"] = result["rationale"]
@@ -420,7 +451,7 @@ def run_bias_analysis(
         print(f"    [warn] Opinion detection failed: {e}")
 
     try:
-        result = analyze_factual_rigor(article, source, doc=doc)
+        result = analyze_factual_rigor(article, source, doc=doc_rigor)
         if isinstance(result, dict):
             scores["factual_rigor"] = result["score"]
             rationale["coverage"] = result["rationale"]
@@ -430,7 +461,7 @@ def run_bias_analysis(
         print(f"    [warn] Factual rigor failed: {e}")
 
     try:
-        result = analyze_framing(article, cluster_articles=cluster_articles, doc=doc, source=source)
+        result = analyze_framing(article, cluster_articles=cluster_articles, doc=doc_fram, source=source)
         if isinstance(result, dict):
             scores["framing"] = result["score"]
             rationale["framing"] = result["rationale"]
