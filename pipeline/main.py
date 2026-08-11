@@ -1048,6 +1048,142 @@ class _ReclusterSkip(Exception):
     pass
 
 
+def run_editorial_stage(force_resummarize: bool = False) -> None:
+    """Stage B "Editorial" standalone (2026-08-11 pipeline split, Phase 1).
+
+    Re-runs the DB-backed editorial half — 8c holistic re-rank → 8d top-50
+    summarization → 8d.1/8d.5/8d.6/8d.7 ordering + floor + reconcile → 8f
+    print archive — WITHOUT the slow ingest half (fetch/scrape/bias/cluster).
+    Every step here reads exclusively from Supabase, so it operates on
+    whatever the last full pipeline run wrote. ~15-25 min vs ~107 for a full
+    run; dispatched via .github/workflows/editorial.yml after a summarizer /
+    ranking change that should reach the live feed today.
+
+    Deliberately NOT here: the daily brief (refresh_brief.py / pipeline.yml
+    brief_only own it), retention/cleanup and full_text truncation (the daily
+    run owns retention), and the memory/analytics tail (needs ingest-time
+    in-memory maps).
+    """
+    start_time = time.time()
+    print("=" * 60)
+    print("VOID NEWS — EDITORIAL STAGE (8c → 8f standalone)")
+    if force_resummarize:
+        print("  force-resummarize: ON (summary cache bypassed)")
+    print("=" * 60)
+
+    sources = load_sources(editions=None)
+    print(f"  {len(sources)} sources loaded")
+
+    # ── 8c: holistic re-rank (identical to the full run's step 8c) ──
+    print("\n[8c] Holistic re-rank (all clusters, v6.0 engine)...")
+    try:
+        _pipeline_dir = str(Path(__file__).parent)
+        if _pipeline_dir not in sys.path:
+            sys.path.insert(0, _pipeline_dir)
+        from rerank import rerank_all_clusters
+        rerank_all_clusters(sources)
+    except Exception as e:
+        import traceback
+        print(f"  [warn] Holistic re-rank failed: {e}")
+        traceback.print_exc()
+
+    if not SUMMARIZER_AVAILABLE:
+        print("  [warn] Summarizer unavailable — editorial stage is rerank-only.")
+        return
+
+    # ── 8d: post-rerank top-50 summarization ──
+    if llm_is_available() and calls_remaining() > 0:
+        print("\n[8d] Post-rerank top-50 Gemini summarization (top-10 flash, rest flash-lite)...")
+        try:
+            summary_metrics = summarize_top50_after_rerank(
+                supabase, edition="world", limit=50, prefer_provider="gemini",
+                flash_top_n=10, force_resummarize=force_resummarize)
+            print(
+                f"  Top-50: {summary_metrics['summarized']} summarized, "
+                f"{summary_metrics['cached']} cache hits, "
+                f"{summary_metrics['skipped']} skipped, "
+                f"{summary_metrics['failed']} failed"
+            )
+        except Exception as e:
+            print(f"  [warn] Post-rerank summarization failed: {e}")
+
+    # ── 8d.1: pre-order title clean ──
+    print("\n[8d.1] Pre-order title clean (null-tier top-pool cards)...")
+    try:
+        tc_metrics = ensure_top50_summary_floor(
+            supabase, edition="world", limit=50, title_only=True)
+        print(f"  Title clean: {tc_metrics['checked']} null-tier cards, "
+              f"{tc_metrics['titles_cleaned']} titles normalized")
+    except Exception as e:
+        print(f"  [warn] Pre-order title clean failed: {e}")
+
+    # ── 8d.5: final feed ordering (mirrors the full run's step 8d.5) ──
+    try:
+        print("\n[8d.5] Final feed ordering (fresh story_type / ei / titles)...")
+        _fo_res = supabase.table("story_clusters").select(
+            "id,title,headline_rank,rank_world,content_type,"
+            "category,source_count,sections,"
+            "first_published,coverage_velocity"
+        ).contains("sections", ["world"]).order(
+            "rank_world", desc=True
+        ).limit(80).execute()
+        _fo_rows = _fo_res.data or []
+        if _fo_rows:
+            _old_rank = {r["id"]: r.get("rank_world") for r in _fo_rows}
+            apply_feed_ordering(_fo_rows, sources)
+            _changed = 0
+            for r in _fo_rows:
+                new_rw = r.get("rank_world", 0)
+                old_rw = _old_rank.get(r["id"]) or 0
+                if abs(new_rw - old_rw) > 0.01:
+                    supabase.table("story_clusters").update(
+                        {"rank_world": new_rw}
+                    ).eq("id", r["id"]).execute()
+                    _changed += 1
+            print(f"  Final ordering: {_changed} rank_world updates")
+    except Exception as e:
+        print(f"  [warn] Final feed ordering failed (keeping 8c order): {e}")
+
+    # ── 8d.6: final-order summary floor ──
+    print("\n[8d.6] Final-order summary floor (guarantee top-50 coverage)...")
+    try:
+        floor_metrics = ensure_top50_summary_floor(
+            supabase, edition="world", limit=50, prefer_provider="gemini")
+        print(f"  Summary floor: {floor_metrics['checked']} cards needed a summary → "
+              f"{floor_metrics['resummarized']} re-summarized, "
+              f"{floor_metrics['sanitized']} rule-based, "
+              f"{floor_metrics['still_null']} still null")
+    except Exception as e:
+        print(f"  [warn] Final-order summary floor failed: {e}")
+
+    # ── 8d.7: flash-tier reconciliation ──
+    if llm_is_available() and calls_remaining() > 0:
+        print("\n[8d.7] Final top-10 flash-tier reconciliation...")
+        try:
+            recon_metrics = reconcile_flash_top10(
+                supabase, edition="world", top_n=10, prefer_provider="gemini")
+            print(f"  Flash reconcile: {recon_metrics['upgraded']} upgraded, "
+                  f"{recon_metrics['skipped']} skipped, {recon_metrics['failed']} failed")
+        except Exception as e:
+            print(f"  [warn] Flash-tier reconciliation failed: {e}")
+
+    # ── 8f: print archive (non-fatal, same as the full run) ──
+    try:
+        print("\n[8f] Printing the record (permanent top-50 archive)...")
+        from archive.print_archive import archive_printed_edition
+        _sources_by_id = {s.get("db_id"): s for s in sources if s.get("db_id")}
+        pa = archive_printed_edition(
+            supabase, sources_by_id=_sources_by_id,
+            edition_date=datetime.now(timezone.utc).date(),
+            pipeline_run_id=None)
+        print(f"  Printed {pa['stories']} stories")
+    except Exception as e:
+        print(f"  [warn] Print archive failed (non-fatal): {e}")
+
+    elapsed = time.time() - start_time
+    print(f"\n[editorial] Done in {elapsed / 60:.1f} minutes.")
+
+
 def main():
     """Run the full news ingestion + analysis pipeline."""
     import argparse
@@ -1076,7 +1212,26 @@ def main():
         default=48,
         help="Article freshness window when --recluster-only is set. Default 48h.",
     )
+    parser.add_argument(
+        "--editorial-only",
+        action="store_true",
+        help="Stage B standalone (pipeline split, 2026-08-11): skip ingest "
+             "(fetch/scrape/bias/cluster) entirely and re-run only the "
+             "DB-backed editorial half — 8c re-rank, 8d top-50 summaries, "
+             "final ordering + floor + flash reconcile, 8f archive. "
+             "~15-25 min. Dispatched via editorial.yml.",
+    )
+    parser.add_argument(
+        "--force-resummarize",
+        action="store_true",
+        help="With --editorial-only: bypass the summary cache so every "
+             "displayed top-50 summary regenerates under the current prompt.",
+    )
     args = parser.parse_args()
+
+    if getattr(args, "editorial_only", False):
+        run_editorial_stage(force_resummarize=bool(getattr(args, "force_resummarize", False)))
+        return
 
     editions = None  # 2026-06-02 single-feed — `editions` filter removed; load_sources call sites keep arg for back-compat.
     recluster_only = bool(getattr(args, "recluster_only", False))

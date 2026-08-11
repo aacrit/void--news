@@ -2037,7 +2037,8 @@ def _tier_for_label(label: str) -> str:
 
 def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 50,
                                  prefer_provider: str | None = "gemini",
-                                 flash_top_n: int = 10) -> dict:
+                                 flash_top_n: int = 10,
+                                 force_resummarize: bool = False) -> dict:
     """
     Single-pass post-rerank summarization for the final feed top N.
 
@@ -2202,7 +2203,12 @@ def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 
         # (The old gate required tier=='sonnet', which never hit after Claude
         # retired and forced a full re-summarize of all ~50 clusters/run.)
         cacheable_tiers = ("sonnet", "flash") if is_premium else ("sonnet", "flash", "flash-lite")
-        if h == row.get("summary_article_hash") and row.get("summary_tier") in cacheable_tiers:
+        # force_resummarize (editorial re-run, 2026-08-11): bypass the cache
+        # entirely so a standalone editorial-stage dispatch can regenerate
+        # every displayed summary regardless of stored hash/tier.
+        if (not force_resummarize
+                and h == row.get("summary_article_hash")
+                and row.get("summary_tier") in cacheable_tiers):
             metrics["cached"] += 1
             # Belt-and-suspenders: a summary cached from BEFORE the 90-word cap
             # existed (or any over-cap stored value from any path) never re-runs
