@@ -189,14 +189,14 @@ export function isUnscoredTilt(
      - both wings genuinely present (left>0 AND right>0 AND total>=3): the story
        is a balanced-but-divergent standoff, so surface the existing "Contested"
        marker rather than hiding it.
-     - otherwise: "No clear lean" (with no confident numeric score beside it).
+     - otherwise: "Flat" (with no confident numeric score beside it).
    Outside the band the caller keeps its existing confident label + score.
    This changes label TEXT and numeric-score visibility ONLY; the Sigil beam
    angle, color, and fan geometry are untouched.                              ── */
 
 export const LEAN_BAND_LOW = 48;
 export const LEAN_BAND_HIGH = 52;
-export const NO_CLEAR_LEAN_LABEL = "No clear lean";
+export const NO_CLEAR_LEAN_LABEL = "Flat";
 export const CONTESTED_LABEL = "Contested";
 
 export type LeanLabelState = "confident" | "contested" | "no-clear-lean";
@@ -221,7 +221,7 @@ export function bothWingsPresent(spread?: WingCounts | null): boolean {
  * Decide how a story's lean LABEL should render:
  *   "confident"      lean outside [48, 52] -> keep the existing directional label.
  *   "contested"      lean in band AND both wings present -> "Contested".
- *   "no-clear-lean"  lean in band, wings not both present -> "No clear lean".
+ *   "no-clear-lean"  lean in band, wings not both present -> "Flat".
  */
 export function leanLabelState(lean: number, spread?: WingCounts | null): LeanLabelState {
   if (lean < LEAN_BAND_LOW || lean > LEAN_BAND_HIGH) return "confident";
