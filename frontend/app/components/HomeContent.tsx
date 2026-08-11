@@ -81,10 +81,6 @@ const SearchOverlay = dynamic(() => import("./SearchOverlay"), { ssr: false });
 /** Hard cap: maximum stories in the main edition feed when fully expanded. */
 const EDITION_FEED_SIZE = 50;
 
-/** Default visible window before the reader expands the feed. After 30 the
- *  page invites a one-click reveal of stories 31..50. */
-const EDITION_FEED_DEFAULT = 30;
-
 /** Total fetched from Supabase — main feed + headroom + buffer for the
  *  ≥3-source quality floor. Server-side ranker enforces topic diversity. */
 const FETCH_LIMIT = 100;
@@ -328,26 +324,6 @@ function HomeContentInner({
     return () => {
       mql.removeEventListener("change", handler);
       window.removeEventListener("pageshow", onPageShow);
-    };
-  }, []);
-
-  // Active desktop grid column count (matches responsive.css breakpoints:
-  // 768->2, 1024->3, 1440->4; mobile is single-column). Used by F15 to balance
-  // the collapsed grid so the last row never leaves a single-card orphan.
-  const [gridColumns, setGridColumns] = useState(1);
-  useEffect(() => {
-    const q4 = window.matchMedia("(min-width: 1440px)");
-    const q3 = window.matchMedia("(min-width: 1024px)");
-    const q2 = window.matchMedia("(min-width: 768px)");
-    const compute = () => setGridColumns(q4.matches ? 4 : q3.matches ? 3 : q2.matches ? 2 : 1);
-    compute();
-    q4.addEventListener("change", compute);
-    q3.addEventListener("change", compute);
-    q2.addEventListener("change", compute);
-    return () => {
-      q4.removeEventListener("change", compute);
-      q3.removeEventListener("change", compute);
-      q2.removeEventListener("change", compute);
     };
   }, []);
 
@@ -618,13 +594,8 @@ function HomeContentInner({
     return stories.filter((s) => (s.sigilData?.sourceCount ?? s.source?.count ?? 0) >= 3);
   }, [stories]);
 
-  // Main feed = top 50 by rank. World overflow = remaining international
-  // stories not already in the main feed, capped at 30. Defensive Boolean
-  // cast on is_international handles missing-column case (older schemas
-  // produce no overflow, page renders cleanly without the divider).
-  // Full main pool (capped at 50). Visible window starts at 30 and expands
-  // to 50 on reader request. Server-side ranker is the editorial source of
-  // truth; no client-side reordering.
+  // Main feed = top 50 by rank, all rendered at once. Server-side ranker is
+  // the editorial source of truth; no client-side reordering.
   const mainPool = useMemo(
     () => filteredStories.slice(0, EDITION_FEED_SIZE),
     [filteredStories],
@@ -650,18 +621,9 @@ function HomeContentInner({
     window.history.replaceState({}, "", url.toString());
   }, [filteredStories, handleStoryClick]);
 
-  // Reader-controlled disclosure: default to 30, click "Show 20 more" to
-  // reveal 31..50 BEFORE the World section. Pure curation principle —
-  // editor sorts; reader paces. Resets to collapsed on edition switch.
-  const [feedExpanded, setFeedExpanded] = useState(false);
-  useEffect(() => {
-    setFeedExpanded(false);
-  }, [activeEdition]);
-
-  const mainStories = useMemo(
-    () => mainPool.slice(0, feedExpanded ? EDITION_FEED_SIZE : EDITION_FEED_DEFAULT),
-    [mainPool, feedExpanded],
-  );
+  // All curated stories render at once (top 50). Lightweight text cards, so
+  // there is no progressive-disclosure gate. Editor sorts; the full feed shows.
+  const mainStories = mainPool;
 
   /* Same-Story Cluster Family detection. When two or more top-10 cards
      are angles on the same event (Beijing summit, Iran ceasefire collapse),
@@ -673,31 +635,15 @@ function HomeContentInner({
     () => computeStoryFamilies(mainStories, { topN: 10, jaccardFloor: 0.30 }),
     [mainStories],
   );
-  const hiddenMainCount = mainPool.length - mainStories.length;
 
   // 2026-06-02 single-feed — the /world overflow split is gone; the homepage
   // now shows a single 50-story flow. The legacy world-overflow scaffolding
   // (WORLD_OVERFLOW_SIZE / worldOverflow / mainIds) was removed 2026-08-08.
 
-  // v3 (2026-05-14): twin top stories — ranks 0 and 1 share the hero canvas
-  // as co-equal "Top Story" leads. Grid below holds ranks 2..N where N is
-  // the visible-window size (30 or 50).
+  // v3 (2026-05-14): twin top stories, ranks 0 and 1 share the hero canvas
+  // as co-equal "Top Story" leads. Grid below holds ranks 2..49 (all shown).
   const twinLeads = mainStories.slice(0, 2);
   const gridStories = mainStories.slice(2);
-
-  // F15: in the collapsed default view, avoid a single-card orphan on the last
-  // grid row (which leaves 2 empty cells + a lopsided seam at 1024/3-col). When
-  // the grid would end with exactly one card alone for the active column count,
-  // hold that one card back until the reader expands the feed. Only a lone
-  // orphan (remainder of 1) is trimmed; a 2-card tail reads as balanced and is
-  // left intact. Never trims when expanded or on mobile (single column). This is
-  // a prefix slice, so each card keeps its true index (rank = idx + 2).
-  const displayGridStories = useMemo(() => {
-    if (feedExpanded || isMobile || gridColumns < 2) return gridStories;
-    if (gridStories.length % gridColumns === 1) return gridStories.slice(0, -1);
-    return gridStories;
-  }, [gridStories, feedExpanded, isMobile, gridColumns]);
-  const orphanHeldBack = gridStories.length - displayGridStories.length;
 
   // --- Desktop inline Deep Dive split -------------------------------------
   // When a story is open on desktop the feed splits around it so the expanded
@@ -969,30 +915,9 @@ function HomeContentInner({
                       </React.Fragment>
                     ) : (
                       <section key={`grid-${filterKey}`} aria-label="Stories" className="feed-grid">
-                        {displayGridStories.map((story, idx) => renderGridCard(story, idx))}
+                        {gridStories.map((story, idx) => renderGridCard(story, idx))}
                       </section>
                     )
-                  )}
-
-                  {/* Expand-to-50 affordance — sits between the default
-                      30-story window and the World section. Reader-controlled
-                      disclosure of the remaining curated stories before the
-                      international overflow. Hidden when already expanded
-                      or when there's nothing more to reveal. */}
-                  {!feedExpanded && (hiddenMainCount + orphanHeldBack) > 0 && (
-                    <div className="feed-expand">
-                      <button
-                        type="button"
-                        className="feed-expand__btn"
-                        onClick={() => {
-                          hapticLight();
-                          setFeedExpanded(true);
-                        }}
-                        aria-label={`Show ${hiddenMainCount + orphanHeldBack} more stories`}
-                      >
-                        Show {hiddenMainCount + orphanHeldBack} more
-                      </button>
-                    </div>
                   )}
 
                   {/* World overflow removed 2026-06-02 single-feed. */}
