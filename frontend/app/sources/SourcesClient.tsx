@@ -798,8 +798,9 @@ function SourcesPageInner({ initialSources }: { initialSources: SpectrumSource[]
   const [error, setError] = useState<string | null>(null);
 
   // Edition build time (pipeline completed_at) — drives the NavBar masthead
-  // "as of" dateline so it shows the same UTC edition time as the home feed
-  // (formatted by NavBar via getEditionTimestamp), not the reader's clock.
+  // "as of" dateline so it shows the same edition time as the home feed. NavBar
+  // formats the DATE in UTC and the TIME in the viewer's LOCAL zone after mount
+  // (getEditionTimestampLocal), so every surface agrees on the same instant.
   const [editionBuiltAt, setEditionBuiltAt] = useState<string | null>(null);
   useEffect(() => {
     let alive = true;

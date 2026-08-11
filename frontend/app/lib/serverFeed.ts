@@ -11,9 +11,12 @@
    route handler, no middleware. Supabase creds come from the build env
    (NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY).
 
-   Determinism: all date formatting here is UTC and computed ONCE at build,
-   then passed to the client as preformatted strings. Never call new Date()
-   during React render on either server or client for the initial paint.
+   Determinism: the edition DATE is formatted in UTC ONCE at build and passed
+   to the client as a preformatted string. The edition TIME is deliberately
+   NOT baked here: it is rendered in the viewer's LOCAL zone, computed on the
+   client after mount from the raw builtAt ISO (NavBar), so the build box's
+   timezone never leaks into the HTML. Never call new Date() for a rendered
+   value during React render on either server or client for the initial paint.
    --------------------------------------------------------------------------- */
 
 import { supabase } from "./supabase";
@@ -33,11 +36,15 @@ const MIN_STORIES = 20;
 
 export interface InitialFeed {
   stories: Story[];
-  /** Pipeline completed_at ISO string (edition build time), or null. */
+  /** Pipeline completed_at ISO string (edition build time), or null. This raw
+   *  ISO is what the client uses to render the masthead "as of" TIME in the
+   *  viewer's LOCAL zone after mount. */
   builtAt: string | null;
-  /** Build-time-formatted, UTC, deterministic masthead strings. */
-  editionDateline: string; // e.g. "Aug 9, 2026"
-  editionTimestamp: string; // e.g. "11:00 UTC"
+  /** Build-time-formatted, UTC, deterministic edition DATE (e.g. "Aug 9, 2026").
+   *  The masthead TIME is NOT baked here: it is machine-local and computed
+   *  client-side after mount from builtAt (see NavBar), so nothing that would
+   *  mismatch the reader's zone ever lands in the prerendered HTML. */
+  editionDateline: string;
 }
 
 const MONTHS = [
@@ -45,21 +52,14 @@ const MONTHS = [
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 ];
 
-/** UTC dateline, deterministic: "Aug 9, 2026". */
+/** UTC dateline, deterministic: "Aug 9, 2026". Safe to bake into the
+ *  prerendered HTML because it never depends on the viewer's timezone. The
+ *  edition TIME is intentionally NOT formatted here: local time is computed
+ *  on the client after mount (NavBar) so no zone-specific string is baked. */
 function formatDatelineUTC(iso: string | null): string {
   const d = iso ? new Date(iso) : new Date();
   if (isNaN(d.getTime())) return "";
   return `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`;
-}
-
-/** UTC edition time, rounded to the nearest hour: "11:00 UTC".
- *  Signals a once-a-day edition rather than a live clock. */
-function formatTimestampUTC(iso: string | null): string {
-  const src = iso ? new Date(iso) : new Date();
-  if (isNaN(src.getTime())) return "";
-  let hour = src.getUTCHours();
-  if (src.getUTCMinutes() >= 30) hour = (hour + 1) % 24;
-  return `${String(hour).padStart(2, "0")}:00 UTC`;
 }
 
 /**
@@ -160,6 +160,5 @@ export async function fetchInitialFeed(): Promise<InitialFeed> {
     stories,
     builtAt,
     editionDateline: formatDatelineUTC(builtAt),
-    editionTimestamp: formatTimestampUTC(builtAt),
   };
 }

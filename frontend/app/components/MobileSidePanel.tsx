@@ -7,7 +7,7 @@ import LogoWordmark from "./LogoWordmark";
 import ThemeToggle from "./ThemeToggle";
 import ScaleIcon from "./ScaleIcon";
 import { hapticLight } from "../lib/haptics";
-import { BASE_PATH, getEditionTimestamp } from "../lib/utils";
+import { BASE_PATH, getEditionTimestampLocal } from "../lib/utils";
 import { fetchLastPipelineRun } from "../lib/supabase";
 
 /* ---------------------------------------------------------------------------
@@ -390,7 +390,7 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
         <div className="msp__infobar" data-msp-cascade="5">
           <div className="msp__info-lines">
             <span className="msp__info-line" suppressHydrationWarning>
-              {mounted ? `Edition as of ${getEditionTimestamp(editionBuiltAt)}` : " "}
+              {mounted ? `Edition as of ${getEditionTimestampLocal(editionBuiltAt)}` : " "}
             </span>
             <span className="msp__info-line msp__info-line--muted">
               1,016 sources across 158 countries

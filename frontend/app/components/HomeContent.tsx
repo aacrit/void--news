@@ -97,10 +97,11 @@ interface HomeContentProps {
   initialStories?: Story[];
   /** Edition build time (pipeline completed_at, ISO) captured at build. */
   initialBuiltAt?: string | null;
-  /** Deterministic, build-time-formatted masthead strings (UTC). Rendered
-   *  directly by NavBar so server and client first paint match exactly. */
+  /** Deterministic, build-time-formatted edition DATE (UTC). Rendered directly
+   *  by NavBar so server and client first paint match exactly. The masthead
+   *  TIME is NOT passed here: it is computed in the viewer's local zone after
+   *  mount from initialBuiltAt (see NavBar), so no local string is ever baked. */
   editionDateline?: string;
-  editionTimestamp?: string;
 }
 
 /* ---------------------------------------------------------------------------
@@ -120,7 +121,6 @@ function HomeContentInner({
   initialStories,
   initialBuiltAt = null,
   editionDateline,
-  editionTimestamp,
 }: HomeContentProps) {
   void _initialEdition;
 
@@ -804,7 +804,6 @@ function HomeContentInner({
         onSearchClick={() => setSearchOpen(true)}
         editionBuiltAt={lastUpdated}
         editionDateline={editionDateline}
-        editionTimestamp={editionTimestamp}
       />
 
       <main
@@ -1052,7 +1051,6 @@ export default function HomeContent({
   initialStories,
   initialBuiltAt = null,
   editionDateline,
-  editionTimestamp,
 }: HomeContentProps) {
   return (
     <ErrorBoundary>
@@ -1061,7 +1059,6 @@ export default function HomeContent({
         initialStories={initialStories}
         initialBuiltAt={initialBuiltAt}
         editionDateline={editionDateline}
-        editionTimestamp={editionTimestamp}
       />
     </ErrorBoundary>
   );
