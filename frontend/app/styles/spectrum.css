@@ -2166,6 +2166,14 @@
   font-size: clamp(1.25rem, 3vw, 1.75rem);
 }
 
+/* Formula-style stat value ("r < 0.70") is wider than a bare number, so it must
+   shrink to sit inside the ~90px dashed ring instead of spilling past it. */
+.meth-stats-strip__number--formula {
+  font-size: var(--text-base, 1.05rem);
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+}
+
 .meth-stats-strip__label {
   font-family: var(--font-meta);
   font-size: clamp(0.6rem, 1.3vw, 0.7rem);

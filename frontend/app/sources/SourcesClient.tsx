@@ -701,7 +701,7 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
               <span className="meth-stats-strip__label">scores wrong</span>
             </div>
             <div className="meth-stats-strip__item" role="listitem">
-              <span className="meth-stats-strip__number">r{"\u2009<\u2009"}0.70</span>
+              <span className="meth-stats-strip__number meth-stats-strip__number--formula">r{"\u2009<\u2009"}0.70</span>
               <span className="meth-stats-strip__label">cross-axis</span>
             </div>
           </div>
