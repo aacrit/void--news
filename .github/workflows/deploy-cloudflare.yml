@@ -32,6 +32,7 @@ on:
 permissions:
   contents: read
   deployments: write
+  actions: read  # guard step lists News Pipeline run status
 
 concurrency:
   group: cloudflare-pages
@@ -46,20 +47,49 @@ jobs:
       github.event_name == 'schedule' ||
       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     steps:
+      # ── Mid-pipeline staleness guard (2026-08-11) ──
+      # The front page is PRERENDERED from Supabase at build time. A code push
+      # that lands while the daily News Pipeline is still writing (11:00-13:35
+      # UTC window) builds a page with a FRESH build timestamp but YESTERDAY'S
+      # summaries — observed live on 2026-08-11 when auto-merge deploys at
+      # 13:32-13:34 raced the 8d summary pass (13:27-13:35). If the pipeline is
+      # queued or running, skip this deploy: the pipeline-success workflow_run
+      # deploy publishes the same commit (builds from main HEAD) WITH fresh
+      # data minutes later, and the 15:00 UTC scheduled backstop + manual
+      # workflow_dispatch (which bypasses the guard) cover pipeline failure.
+      - name: Guard — skip while the News Pipeline is running
+        id: guard
+        if: github.event_name != 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          active=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow=pipeline.yml \
+            --json status --jq '[.[] | select(.status=="in_progress" or .status=="queued")] | length' || echo 0)
+          if [ "${active:-0}" -gt 0 ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "News Pipeline is queued/running — skipping to avoid a fresh-timestamp/stale-data build. The post-pipeline workflow_run deploy will carry this commit."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/checkout@v4
+        if: steps.guard.outputs.skip != 'true'
         with:
           ref: main
 
       - uses: actions/setup-node@v4
+        if: steps.guard.outputs.skip != 'true'
         with:
           node-version: 20
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
+        if: steps.guard.outputs.skip != 'true'
         run: cd frontend && npm ci
 
       - name: Build (Cloudflare target — no basePath)
+        if: steps.guard.outputs.skip != 'true'
         env:
           # Empty basePath = root deploy (e.g. void-news.pages.dev/ instead
           # of /void--news/). Read by next.config.ts and lib/utils.ts.
@@ -76,6 +106,7 @@ jobs:
       # Pre-create it idempotently — `continue-on-error` swallows the
       # "already exists" error on every run after the first.
       - name: Ensure Cloudflare Pages project exists
+        if: steps.guard.outputs.skip != 'true'
         continue-on-error: true
         uses: cloudflare/wrangler-action@v3
         with:
@@ -84,6 +115,7 @@ jobs:
           command: pages project create void-news --production-branch main
 
       - name: Deploy to Cloudflare Pages
+        if: steps.guard.outputs.skip != 'true'
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
