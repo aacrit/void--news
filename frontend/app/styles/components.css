@@ -664,7 +664,8 @@
   opacity: 0.45;
   margin: 0 0.18em;
 }
-.lean-coverage--compact .lean-coverage__tag { display: none; }
+/* Compact (inline Deep Dive header): keep the "Coverage"/"Contested" label so
+   the L/C/R split reads as a labeled meta item, not a floating "13·40·16". */
 
 
 .story-card__byline,

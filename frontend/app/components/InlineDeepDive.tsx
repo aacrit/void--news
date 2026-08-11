@@ -28,7 +28,6 @@ import BiasSnapshot from "./BiasSnapshot";
 import ComparativeView from "./ComparativeView";
 import SpreadDisagreement from "./SpreadDisagreement";
 import ClaimConsensusSection from "./ClaimConsensusSection";
-import SixLenses from "./SixLenses";
 import SummaryWithContradictions from "./SummaryWithContradictions";
 import { findHistoryContext } from "../lib/historyContext";
 import LazyOnView from "./LazyOnView";
@@ -615,22 +614,9 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
           divergence={deepDive?.divergence}
         />
 
-        {/* ---- Six Lenses — 6-axis ink-stamp bias breakdown ---- */}
-        {story.sigilData && !story.sigilData.pending && (
-          <section
-            className={`anim-dd-section dd-cascade-3${contentVisible ? " anim-dd-section--visible" : ""}`}
-            aria-label="Six Lenses"
-          >
-            <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
-            {/* Round agreement for display parity with the other integer axes
-                (F14: the stored value can be fractional, e.g. 30.88). Display
-                only — the underlying story.sigilData is left untouched. */}
-            <SixLenses
-              sigilData={{ ...story.sigilData, agreement: Math.round(story.sigilData.agreement) }}
-              visible={contentVisible}
-            />
-          </section>
-        )}
+        {/* Six Lenses callout removed 2026-08-11 (CEO): the 6-axis breakdown is
+            a secondary stat; the Deep Dive stays clean (spectrum + agree/dispute
+            carry the primary bias signal). */}
 
         {/* ---- Claim Consensus — cross-source verification (lazy) -------- */}
         {deepDive?.claimConsensus && (

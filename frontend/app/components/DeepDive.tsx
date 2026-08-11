@@ -13,11 +13,11 @@ import {
   CaretRight,
   ShareNetwork,
 } from "@phosphor-icons/react";
-import type { Story, StorySource, DeepDiveData, ThreeLensData, OpinionLabel, SigilData, DisputedClaim } from "../lib/types";
+import type { Story, StorySource, DeepDiveData, ThreeLensData, OpinionLabel, DisputedClaim } from "../lib/types";
 import { fetchDeepDiveData, fetchLastPipelineRun } from "../lib/supabase";
-import { timeAgo, BASE_PATH } from "../lib/utils";
+import { timeAgo } from "../lib/utils";
 import { SITE_URL } from "../lib/siteMeta";
-import { hapticLight, hapticMicro } from "../lib/haptics";
+import { hapticLight } from "../lib/haptics";
 import { findHistoryContext } from "../lib/historyContext";
 import Sigil from "./Sigil";
 import NavBar from "./NavBar";
@@ -37,8 +37,11 @@ import LazyOnView from "./LazyOnView";
    own page and REPLACES the feed (HomeContent renders it instead of MobileFeed
    on the mobile branch). It mounts the Void News masthead (<NavBar/>) at the
    top exactly like /onair, pushes a history entry on open so the hardware Back
-   button returns to the feed, and offers Story / Spread as two compact pages
-   plus prev/next story walkers.
+   button returns to the feed, and offers prev/next story walkers.
+
+   One scrollable page (2026-08-11): the old Story / Spread segmented switch was
+   removed; the summary, spectrum, coverage meta, and source columns now stack in
+   a single flow that mirrors the desktop InlineDeepDive order.
 
    Desktop uses InlineDeepDive (in-feed accordion) instead — this component is
    never rendered above 767px.
@@ -67,97 +70,9 @@ interface DeepDiveProps {
   originRect?: DOMRect | null;
 }
 
-/* --- Six Lenses — ink-stamp 6-axis bias scores --------------------------- */
-
-const SIX_AXES: { id: string; name: string; key: keyof SigilData }[] = [
-  { id: "lean",           name: "Political Lean",  key: "politicalLean" },
-  { id: "sensationalism", name: "Sensationalism",   key: "sensationalism" },
-  { id: "opinion",        name: "Opinion",           key: "opinionFact" },
-  { id: "rigor",          name: "Factual Rigor",     key: "factualRigor" },
-  { id: "framing",        name: "Framing",           key: "framing" },
-  { id: "tracking",       name: "Agreement",         key: "agreement" },
-];
-
-function SixLenses({ sigilData, visible }: { sigilData: SigilData; visible: boolean }) {
-  const [activeAxis, setActiveAxis] = useState<string | null>(null);
-  const [isMobileLens, setIsMobileLens] = useState(false);
-  const [showAllLenses, setShowAllLenses] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(max-width: 767px)");
-    setIsMobileLens(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setIsMobileLens(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
-
-  const renderAxis = (axis: typeof SIX_AXES[0], i: number) => {
-    const score = sigilData[axis.key] as number;
-    const dotCount = Math.max(1, Math.round((score / 100) * 5));
-    const isActive = activeAxis === axis.id;
-    return (
-      <button
-        key={axis.id}
-        className={`dd-lens${isActive ? " dd-lens--active" : ""}${visible ? " dd-lens--visible" : ""}`}
-        style={{ "--lens-delay": `${i * 40}ms` } as React.CSSProperties}
-        onClick={() => { hapticMicro(); setActiveAxis(isActive ? null : axis.id); }}
-        aria-expanded={isActive}
-        aria-label={`${axis.name}: ${score} out of 100`}
-      >
-        <span className="dd-lens__score">{score}</span>
-        <span className="dd-lens__dots" aria-hidden="true">
-          {Array.from({ length: 5 }, (_, di) => (
-            <span key={di} className={`dd-lens__pip${di < dotCount ? " dd-lens__pip--filled" : ""}`} />
-          ))}
-        </span>
-        <span className="dd-lens__name">{axis.name}</span>
-      </button>
-    );
-  };
-
-  return (
-    <div className="dd-lenses">
-      {isMobileLens ? (
-        <>
-          <button
-            className={`dd-bias-toggle text-meta${showAllLenses ? " dd-bias-toggle--open" : ""}`}
-            onClick={() => { hapticLight(); setShowAllLenses(!showAllLenses); }}
-            aria-expanded={showAllLenses}
-            aria-controls="dd-lenses-collapsible"
-          >
-            <span className="dd-bias-toggle__label">
-              {showAllLenses ? "Hide analysis" : "Bias Analysis"}
-            </span>
-            <span className="dd-bias-toggle__caret" aria-hidden="true">
-              {showAllLenses ? "▾" : "▸"}
-            </span>
-          </button>
-
-          <div
-            id="dd-lenses-collapsible"
-            className={`dd-lenses__collapsible${showAllLenses ? " dd-lenses__collapsible--open" : ""}`}
-            aria-hidden={!showAllLenses}
-          >
-            <h3 className="dd-section-label text-meta dd-lenses__collapsible-label">Six Lenses</h3>
-            <div className={`dd-lenses__grid${activeAxis ? " dd-lenses__grid--has-active" : ""}`}>
-              {SIX_AXES.map((axis, i) => renderAxis(axis, i))}
-            </div>
-          </div>
-        </>
-      ) : (
-        <>
-          <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>Six Lenses</h3>
-          <div className={`dd-lenses__grid${activeAxis ? " dd-lenses__grid--has-active" : ""}`}>
-            {SIX_AXES.map((axis, i) => renderAxis(axis, i))}
-          </div>
-        </>
-      )}
-      <a href={`${BASE_PATH}/sources/#methodology`} className="dd-lenses__link text-meta">
-        How we score
-      </a>
-    </div>
-  );
-}
+/* Six Lenses removed 2026-08-11 (CEO): the 6-axis breakdown was a secondary
+   stat; the mobile Deep Dive stays clean (spectrum + agree/dispute carry the
+   primary bias signal). */
 
 /* --- History Context Link — subtle archival cross-link -------------------- */
 
@@ -260,10 +175,6 @@ export default function DeepDive({
   const [analysisExpanded, setAnalysisExpanded] = useState(false);
   const [shareCopied, setShareCopied] = useState(false);
   const shareTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  /* Story / Spread pages. Default "story" so the summary is what readers see. */
-  const [ledeView, setLedeView] = useState<"story" | "spread">("story");
-  const segRef = useRef<HTMLDivElement>(null);
 
   /* NavBar "as of" dateline. Seeded from the prop (HomeContent already knows the
      pipeline time); fetches as a fallback so the masthead matches Home. */
@@ -505,7 +416,6 @@ export default function DeepDive({
      (prev/next does NOT remount — HomeContent renders this without a per-story
      key so the page persists and just re-fetches). ------------------------ */
   useEffect(() => {
-    setLedeView("story");
     setAnalysisExpanded(false);
     setShareCopied(false);
     if (shareTimer.current) clearTimeout(shareTimer.current);
@@ -542,20 +452,6 @@ export default function DeepDive({
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
   }, [handleBack, onNavigate]);
-
-  /* Segmented-control keyboard support (roving tabs). */
-  const handleSegKey = useCallback((e: React.KeyboardEvent) => {
-    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight" && e.key !== "Home" && e.key !== "End") return;
-    e.preventDefault();
-    const next: "story" | "spread" =
-      e.key === "Home" ? "story"
-        : e.key === "End" ? "spread"
-          : ledeView === "story" ? "spread" : "story";
-    setLedeView(next);
-    hapticMicro();
-    const id = next === "story" ? "dd-seg-story" : "dd-seg-spread";
-    segRef.current?.querySelector<HTMLElement>(`#${id}`)?.focus();
-  }, [ledeView]);
 
   /* Share — native sheet, clipboard fallback with a brief toast. */
   const handleShare = useCallback(async () => {
@@ -654,77 +550,30 @@ export default function DeepDive({
           />
         )}
 
-        {/* Compact Story / Spread segmented switch */}
-        {hasLedeSpectrum && (
-          <div
-            className="dd-seg"
-            role="tablist"
-            aria-label="Story or bias spread"
-            ref={segRef}
-            onKeyDown={handleSegKey}
-          >
-            <button
-              type="button"
-              role="tab"
-              id="dd-seg-story"
-              aria-selected={ledeView === "story"}
-              aria-controls="dd-panel-story"
-              tabIndex={ledeView === "story" ? 0 : -1}
-              className={`dd-seg__btn${ledeView === "story" ? " dd-seg__btn--active" : ""}`}
-              onClick={() => { hapticMicro(); setLedeView("story"); }}
-            >
-              Story
-            </button>
-            <button
-              type="button"
-              role="tab"
-              id="dd-seg-spread"
-              aria-selected={ledeView === "spread"}
-              aria-controls="dd-panel-spread"
-              tabIndex={ledeView === "spread" ? 0 : -1}
-              className={`dd-seg__btn${ledeView === "spread" ? " dd-seg__btn--active" : ""}`}
-              onClick={() => { hapticMicro(); setLedeView("spread"); }}
-            >
-              Spread
-            </button>
-          </div>
-        )}
-
+        {/* One scrollable flow (2026-08-11): the Story / Spread segmented switch
+            was removed. Summary, spectrum, coverage meta, and source columns now
+            stack in the same order as the desktop InlineDeepDive. */}
         <div className="dd-page__content anim-dd-page">
-          {/* ---- Story page: summary + claim consensus ---- */}
-          <section
-            id="dd-panel-story"
-            role={hasLedeSpectrum ? "tabpanel" : undefined}
-            aria-labelledby={hasLedeSpectrum ? "dd-seg-story" : undefined}
-            hidden={hasLedeSpectrum && ledeView !== "story"}
-            className="dd-page__panel"
-          >
+          {/* ---- The Story — summary in a reading-measure column ---- */}
+          <section className="dd-page__panel" aria-label="The story">
             <h2 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-2)" }}>The Story</h2>
             <p className="text-base dd-summary-text" style={{ lineHeight: 1.75, margin: 0 }}>
               {renderSummaryWithContradictions(story.summary, deepDive?.claimConsensus?.disputed_details)}
             </p>
-
-            {deepDive?.claimConsensus && (
-              <section className="dd-page__section" aria-label="Claim Consensus verification">
-                <hr className="ink-rule" style={{ margin: "var(--space-5) 0 var(--space-4)" }} aria-hidden="true" />
-                <LazyOnView rootMargin="300px 0px" minHeight={120}>
-                  <ClaimConsensusSection consensus={deepDive.claimConsensus} />
-                </LazyOnView>
-              </section>
-            )}
-
-            <HistoryContextLink title={story.title} summary={story.summary} />
           </section>
 
-          {/* ---- Spread page: Sigil + spectrum + sources roster + lenses ---- */}
+          {/* Subtle inline loading — only while the full source spread is still
+              being fetched. The summary + Sigil above stay visible. */}
+          {sourcesPending && (
+            <p className="dd-page__loading text-meta" role="status">Gathering the full source list</p>
+          )}
+
+          {/* ---- The Spread — Sigil + source-lean spectrum ---- */}
           {hasLedeSpectrum && (
-            <section
-              id="dd-panel-spread"
-              role="tabpanel"
-              aria-labelledby="dd-seg-spread"
-              hidden={ledeView !== "spread"}
-              className="dd-page__panel"
-            >
+            <section className="dd-page__panel dd-page__section" aria-label="The spread">
+              <hr className="ink-rule" style={{ margin: "var(--space-5) 0 var(--space-4)" }} aria-hidden="true" />
+              <h2 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>The Spread</h2>
+
               {story.sigilData && (
                 <div className="dd-analysis-block__sigil">
                   <Sigil data={story.sigilData} size="xl" storyId={story.id} />
@@ -736,58 +585,52 @@ export default function DeepDive({
                   <DeepDiveSpectrum sources={spectrumSources} />
                 </div>
               )}
-
-              {/* Subtle inline loading — only while the spectrum sources are
-                  genuinely still being fetched. Never a full-panel skeleton; the
-                  Sigil above is already live from the story. */}
-              {sourcesPending && (
-                <p className="dd-page__loading text-meta" role="status">Gathering the full source list</p>
-              )}
-
-              {/* Agree / Dispute — the promoted centerpiece. What the sources
-                  broadly agree on vs where they split, pulled up from the old
-                  buried ComparativeView disclosure. Self-omits when empty. */}
-              <SpreadDisagreement
-                consensus={deepDive?.consensus}
-                divergence={deepDive?.divergence}
-              />
-
-              {/* Six Lenses — full 6-axis bias breakdown. */}
-              {story.sigilData && !story.sigilData.pending && (
-                <section className="dd-page__section" aria-label="Six Lenses">
-                  <hr className="ink-rule" style={{ margin: "var(--space-5) 0 var(--space-4)" }} aria-hidden="true" />
-                  <SixLenses
-                    sigilData={{ ...story.sigilData, agreement: Math.round(story.sigilData.agreement) }}
-                    visible={true}
-                  />
-                </section>
-              )}
-
-              {/* Source Perspectives — progressive disclosure (lazy). */}
-              {hasCrossLeanSources && !analysisExpanded && (
-                <button
-                  className="dd-read-more dd-analysis-trigger"
-                  onClick={() => { hapticLight(); setAnalysisExpanded(true); }}
-                >
-                  Show source breakdown
-                </button>
-              )}
-              {analysisExpanded && hasCrossLeanSources && (
-                <section className="dd-page__section" aria-label="Source Perspectives" style={{ marginTop: "var(--space-4)" }}>
-                  <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
-                  <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>Source Perspectives</h3>
-                  <LazyOnView rootMargin="400px 0px" minHeight={200}>
-                    <ComparativeView
-                      sources={sources}
-                      consensusPoints={deepDive?.consensus}
-                      divergencePoints={deepDive?.divergence}
-                      hideInsights
-                    />
-                  </LazyOnView>
-                </section>
-              )}
             </section>
           )}
+
+          {/* ---- Agree / Dispute — what the sources broadly agree on vs where
+              they split. Self-omits when the pipeline supplied neither. ---- */}
+          <SpreadDisagreement
+            consensus={deepDive?.consensus}
+            divergence={deepDive?.divergence}
+          />
+
+          {/* ---- Claim Consensus — cross-source verification (lazy) ---- */}
+          {deepDive?.claimConsensus && (
+            <section className="dd-page__section" aria-label="Claim Consensus verification">
+              <hr className="ink-rule" style={{ margin: "var(--space-5) 0 var(--space-4)" }} aria-hidden="true" />
+              <LazyOnView rootMargin="300px 0px" minHeight={120}>
+                <ClaimConsensusSection consensus={deepDive.claimConsensus} />
+              </LazyOnView>
+            </section>
+          )}
+
+          {/* ---- Source Perspectives — progressive disclosure (lazy) ---- */}
+          {hasCrossLeanSources && !analysisExpanded && (
+            <button
+              className="dd-read-more dd-analysis-trigger"
+              onClick={() => { hapticLight(); setAnalysisExpanded(true); }}
+            >
+              Show source breakdown
+            </button>
+          )}
+          {analysisExpanded && hasCrossLeanSources && (
+            <section className="dd-page__section" aria-label="Source Perspectives" style={{ marginTop: "var(--space-4)" }}>
+              <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
+              <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>Source Perspectives</h3>
+              <LazyOnView rootMargin="400px 0px" minHeight={200}>
+                <ComparativeView
+                  sources={sources}
+                  consensusPoints={deepDive?.consensus}
+                  divergencePoints={deepDive?.divergence}
+                  hideInsights
+                />
+              </LazyOnView>
+            </section>
+          )}
+
+          {/* ---- Historical Context cross-link (only when keyword matches) ---- */}
+          <HistoryContextLink title={story.title} summary={story.summary} />
 
           {/* Fetch error — retry (only when nothing loaded). */}
           {fetchError && !isLoadingData && sources.length === 0 && (
