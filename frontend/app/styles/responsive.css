@@ -687,6 +687,28 @@
     margin-bottom: calc(52px + 44px + var(--space-5) + env(safe-area-inset-bottom, 0px));
   }
 
+  /* === INSTALL PROMPT: reserve its height so it never covers a card ===
+     InstallPrompt sets data-install-prompt="true" on <body> when visible and
+     publishes its measured height in --install-prompt-clearance. The scroll
+     padding grows so the last story cards and the footer clear the banner.
+     When audio is active the prompt is hidden (F07), so the higher-specificity
+     audio+install rules drop the clearance and keep only the mini-player gap. */
+  body[data-install-prompt="true"] .page-main {
+    padding-bottom: calc(52px + var(--space-5) + env(safe-area-inset-bottom, 0px) + var(--install-prompt-clearance, 72px));
+  }
+
+  body[data-audio-active="true"][data-install-prompt="true"] .page-main {
+    padding-bottom: calc(52px + 44px + var(--space-5) + env(safe-area-inset-bottom, 0px));
+  }
+
+  body[data-install-prompt="true"] .site-footer {
+    margin-bottom: calc(52px + var(--space-5) + env(safe-area-inset-bottom, 0px) + var(--install-prompt-clearance, 72px));
+  }
+
+  body[data-audio-active="true"][data-install-prompt="true"] .site-footer {
+    margin-bottom: calc(52px + 44px + var(--space-5) + env(safe-area-inset-bottom, 0px));
+  }
+
   /* === META TAGS — bump readability on mobile === */
 
   .category-tag {
