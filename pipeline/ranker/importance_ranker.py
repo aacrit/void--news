@@ -1227,10 +1227,12 @@ def rank_importance(
           importance. Bonus only applies when the cluster has 3+ articles
           with scored lean.
 
-    v5.0 formula: 10 deterministic signals + optional Gemini editorial
-    importance. When editorial_importance is available, it gets 12% weight
-    and all deterministic signals scale to 88%. When unavailable, pure
-    deterministic v4.0 scoring is used (backward-compatible).
+    v6.4 formula: 10 deterministic signals only. headline_rank is fully
+    deterministic and ei-neutral (2026-08-10 deterministic-ranking): the
+    Gemini editorial_importance signal was removed from the score entirely
+    (it used to add +/-6.7 pts here and was double-counted against the
+    feed_ranker nudge, which is also now gone). editorial_importance is still
+    accepted for backward compatibility but no longer affects any output.
 
     Args:
         cluster_articles: List of article dicts belonging to this cluster,
@@ -1245,7 +1247,8 @@ def rank_importance(
         category: Optional category label (e.g., "sports", "politics").
             Used for soft-news gate.
         editorial_importance: Optional Gemini-assigned 1-10 score.
-            When available, blended into ranking as 12% weight signal.
+            Accepted for backward compatibility only; since v6.4 it does not
+            affect headline_rank or any other output (fully deterministic).
         sections: Optional list of edition strings this cluster belongs to
             (e.g., ["us"] or ["us", "world"]). Used for US-only divergence
             damper. Defaults to None (no damper applied).

@@ -90,8 +90,11 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
 
     try:
         clusters = _fetch_all_clusters(
+            # story_type / editorial_importance intentionally NOT selected
+            # (2026-08-10 deterministic-ranking): nothing in the ranking path
+            # reads them anymore.
             "id,title,category,section,sections,content_type,headline_rank,source_count,"
-            "editorial_importance,story_type,mega_cluster_capped,first_published"
+            "mega_cluster_capped,first_published"
         )
     except Exception:
         try:
@@ -342,9 +345,11 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
         except Exception:
             category = cluster.get("category", "politics")
 
-        # Read editorial intelligence from DB (Gemini-generated, may be NULL)
-        editorial_importance = cluster.get("editorial_importance")
-        story_type = cluster.get("story_type")
+        # 2026-08-10 (deterministic-ranking): the Gemini editorial_importance
+        # and story_type fields are NO LONGER read into the ranking path.
+        # rank_importance is ei-neutral (v6.4) and apply_feed_ordering dropped
+        # its story_type gates + ei nudge, so nothing downstream would consume
+        # them. They are left in the DB for other (non-ordering) consumers.
 
         # Run v5.1 ranker — pass sections for US-only divergence damper
         cluster_sections = cluster.get("sections") or [cluster.get("section", "world")]
@@ -361,7 +366,7 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
                 articles, sources, bias_scores,
                 cluster_confidence=cluster_confidence,
                 category=category,
-                editorial_importance=editorial_importance,
+                editorial_importance=None,  # severed 2026-08-10 (ei-neutral)
                 sections=cluster_sections,
                 mega_capped=mega_capped,
                 cluster=cluster,
@@ -383,10 +388,10 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
                 print(f"  [err] Cluster {cid[:8]}: {e}")
             continue
 
-        # Story-type gates are applied ONCE, by apply_feed_ordering on
-        # rank_world — story_type is threaded through the update dict below.
-        # Pre-gating headline_rank here double-applied the incremental /
-        # ceremonial penalty and never covered entertainment at all.
+        # 2026-08-10 (deterministic-ranking): the story_type gates were removed
+        # from apply_feed_ordering, so story_type is no longer threaded into the
+        # update dict below. rank_world is now a pure function of the
+        # deterministic headline_rank + the deterministic feed-ordering guards.
 
         old_rank = cluster.get("headline_rank") or 0
         new_rank = result["headline_rank"]
@@ -406,10 +411,11 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
             "coverage_velocity": result["coverage_velocity"],
             "content_type": content_type,
             "category": category,
-            "story_type": story_type,
-            "editorial_importance": cluster.get("editorial_importance"),
-            # first_published feeds feed_ranker's incremental_update freshness
-            # guardrail (2026-08-10). Diagnostic/ordering only; NOT written back.
+            # story_type / editorial_importance intentionally NOT threaded here
+            # (2026-08-10 deterministic-ranking): apply_feed_ordering no longer
+            # reads them, so passing them would be dead weight.
+            # first_published feeds the deterministic longevity signal only;
+            # diagnostic/ordering, NOT written back.
             "first_published": cluster.get("first_published"),
             "source_count": db_source_count,  # for diagnostic print only; NOT written back
             "_articles": articles,
