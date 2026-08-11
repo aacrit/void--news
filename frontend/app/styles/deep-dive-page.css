@@ -355,6 +355,19 @@
   margin-top: var(--space-3);
 }
 
+/* Desktop: the three bands sit side by side as columns aligned under the
+   spectrum's Left / Center / Right thirds (the roster reads under the point on
+   the axis, like the Sources page). Full-height, no inner scroll, names wrap
+   rather than truncate. Mobile keeps the vertical stack above. */
+@media (min-width: 768px) {
+  .dd-ledger__bands {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-5);
+    align-items: start;
+  }
+}
+
 /* Band header: small-caps label + count + a lean-colored full-width hairline */
 .dd-ledger__band-head {
   display: flex;

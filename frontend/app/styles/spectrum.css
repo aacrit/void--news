@@ -385,6 +385,10 @@
   border-radius: 2px;
 }
 
+/* Self-hosted outlet favicon inside the list-row + detail-sheet monogram tiles */
+.spectrum-list__logo { width: 18px; height: 18px; object-fit: contain; display: block; border-radius: 2px; }
+.spectrum-sheet__logo { width: 22px; height: 22px; object-fit: contain; display: block; border-radius: 2px; }
+
 .spectrum-logo__fallback {
   font-family: var(--font-data);
   font-size: var(--text-xs);

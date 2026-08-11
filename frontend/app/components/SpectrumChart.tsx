@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import type { SourceAccuracy } from "../lib/types";
 import CredibilityArc from "./CredibilityArc";
+import { sourceLogoUrl } from "../lib/sourceLogos";
 
 /* ---------------------------------------------------------------------------
    SpectrumChart — Political lean spectrum visualization
@@ -74,13 +75,6 @@ function tierLabel(tier: string): string {
   return "Independent";
 }
 
-function getFaviconUrl(_sourceUrl: string): string {
-  // Privacy: never call an external favicon service. Fetching a third-party
-  // favicon would leak the reader's IP and which publisher they are viewing to
-  // that host. The self-contained letter monogram fallback renders instead.
-  return "";
-}
-
 /* ---------------------------------------------------------------------------
    SourceLogo — favicon circle with overlap + fan-out on zone hover
    Desktop: hover/focus shows the fixed tooltip.
@@ -95,7 +89,8 @@ function SourceLogo({
   onTooltip: (source: SpectrumSource | null, el: HTMLElement | null) => void;
   onSelect: (source: SpectrumSource) => void;
 }) {
-  const favicon = source.url ? getFaviconUrl(source.url) : "";
+  // Self-hosted first-party outlet favicon (see sourceLogoUrl); "" -> letter.
+  const favicon = sourceLogoUrl(source.name);
 
   return (
     <button
@@ -419,7 +414,19 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
                           data-lean={normalizeLean(s.political_lean_baseline)}
                           aria-hidden="true"
                         >
-                          {s.name.charAt(0)}
+                          {sourceLogoUrl(s.name) ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={sourceLogoUrl(s.name)}
+                              alt=""
+                              width={18}
+                              height={18}
+                              loading="lazy"
+                              className="spectrum-list__logo"
+                            />
+                          ) : (
+                            s.name.charAt(0)
+                          )}
                         </span>
                         <span className="spectrum-list__body">
                           <span className="spectrum-list__name">{s.name}</span>
@@ -498,7 +505,18 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
                 data-lean={sheetLean}
                 aria-hidden="true"
               >
-                {sheetSource.name.charAt(0)}
+                {sourceLogoUrl(sheetSource.name) ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={sourceLogoUrl(sheetSource.name)}
+                    alt=""
+                    width={22}
+                    height={22}
+                    className="spectrum-sheet__logo"
+                  />
+                ) : (
+                  sheetSource.name.charAt(0)
+                )}
               </span>
               <p className="spectrum-sheet__name">{sheetSource.name}</p>
             </div>
