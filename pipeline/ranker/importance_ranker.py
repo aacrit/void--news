@@ -287,6 +287,230 @@ _HIGH_AUTHORITY_EO_PATTERN: re.Pattern = re.compile(
 )
 
 # ---------------------------------------------------------------------------
+# Breaking mass-casualty disaster signal (v6.5, 2026-08-10 disaster-weight)
+#
+# Deterministic, $0. With the LLM editorial_importance boost removed from
+# ranking (2026-08-10 deterministic-ranking), a deadly 31-source typhoon fell
+# to about #12 below a 33-source human-interest story purely on source breadth.
+# A mass-casualty breaking disaster deserves more weight on DETERMINISTIC
+# grounds than raw coverage math grants it while the story is still gaining
+# sources.
+#
+# This is a BOUNDED, CLAMPED multiplicative lift on headline_rank (max +
+# DISASTER_MAX_LIFT), applied in the same spirit as the other headline_rank
+# signals. It NEVER lets a single keyword hijack a non-disaster story: the lift
+# only fires when a disaster/hazard NOUN co-occurs with a casualty CUE inside
+# ONE article, or when a genuine mass-casualty death-toll NUMBER (>= the
+# standalone floor) is bound to a fatal word. So "killer deal", "dead heat", a
+# metaphorical "political earthquake" with no casualties, or a routine policy
+# headline all score zero and get no lift.
+# ---------------------------------------------------------------------------
+
+# Disaster / hazard nouns. Their presence + any casualty cue in the SAME
+# article marks a deadly breaking event. Ambiguous-but-common nouns
+# (explosion, blast, flood) are safe here because the casualty-cue co-occurrence
+# requirement gates them: "population explosion" / "flood of migrants" carry no
+# death cue and never trigger on their own.
+_DISASTER_NOUNS: list[str] = [
+    "earthquake", "quake", "aftershock", "tremor",
+    "typhoon", "hurricane", "cyclone", "tornado", "twister",
+    "tsunami", "wildfire", "wildfires", "bushfire", "bushfires",
+    "landslide", "mudslide", "rockslide", "avalanche",
+    "volcano", "volcanic", "eruption",
+    "flood", "floods", "flooding", "floodwaters", "deluge", "inundation",
+    "monsoon", "superstorm", "storm surge", "blizzard",
+    "famine", "drought", "heatwave", "heat wave",
+    "stampede", "derailment", "capsized", "capsize", "shipwreck",
+    "plane crash", "air crash", "ferry sank", "ferry capsized",
+    "building collapse", "bridge collapse", "mine collapse",
+    "explosion", "blast", "gas leak",
+]
+
+# Casualty cues: words that signal death, injury, or mass displacement.
+# "killer" is deliberately EXCLUDED (metaphor: "killer deal"). Bare "dead" is
+# included but only ever triggers alongside a disaster noun (co-occurrence),
+# so "dead heat" / "dead end" cannot fire on their own.
+_CASUALTY_WORDS: list[str] = [
+    "killed", "kills", "dead", "deaths", "death toll", "died", "dies",
+    "fatalities", "fatal", "casualties", "perished", "feared dead",
+    "mass casualty", "mass casualties",
+    "injured", "wounded", "missing", "trapped", "displaced",
+]
+
+_DISASTER_NOUN_PATTERN: re.Pattern = re.compile(
+    r"|".join(
+        rf"\b{re.escape(t)}\b" if " " not in t else re.escape(t)
+        for t in _DISASTER_NOUNS
+    ),
+    re.IGNORECASE,
+)
+
+_CASUALTY_WORD_PATTERN: re.Pattern = re.compile(
+    r"|".join(
+        rf"\b{re.escape(t)}\b" if " " not in t else re.escape(t)
+        for t in _CASUALTY_WORDS
+    ),
+    re.IGNORECASE,
+)
+
+# Death-toll number patterns: each binds a NUMBER to a fatal word so a bare
+# integer ("Group of 20", "111th Congress") can never be read as a toll.
+_DEATH_TOLL_PATTERNS: list[re.Pattern] = [
+    re.compile(
+        r"\bkill(?:s|ed)?\s+(?:at\s+least\s+|more\s+than\s+|nearly\s+|over\s+"
+        r"|up\s+to\s+|some\s+|around\s+|about\s+)?(\d[\d,]{0,6})",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"\b(\d[\d,]{0,6})\s+(?:people\s+|persons\s+|villagers\s+|residents\s+"
+        r"|worshippers\s+|passengers\s+|migrants\s+|children\s+)?"
+        r"(?:killed|dead|died|feared\s+dead|confirmed\s+dead)\b",
+        re.IGNORECASE,
+    ),
+    re.compile(r"death\s+toll[^.\d]{0,25}(\d[\d,]{0,6})", re.IGNORECASE),
+    re.compile(r"\bleav\w*\s+(?:at\s+least\s+)?(\d[\d,]{0,6})\s+dead\b", re.IGNORECASE),
+    re.compile(
+        r"\bclaim\w*\s+(?:the\s+lives\s+of\s+|at\s+least\s+)?(\d[\d,]{0,6})\s+"
+        r"(?:lives|dead|people)\b",
+        re.IGNORECASE,
+    ),
+]
+
+_INJURY_COUNT_PATTERNS: list[re.Pattern] = [
+    re.compile(
+        r"\b(\d[\d,]{0,6})\s+(?:injured|wounded|hurt|hospitali[sz]ed"
+        r"|missing|displaced|trapped)\b",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"\b(?:injur|wound)\w*\s+(?:at\s+least\s+|more\s+than\s+|over\s+"
+        r"|nearly\s+)?(\d[\d,]{0,6})",
+        re.IGNORECASE,
+    ),
+]
+
+# Tuning constants.
+DISASTER_MAX_LIFT = 0.13            # cap: a maxed disaster signal lifts headline_rank +13%
+DISASTER_STANDALONE_TOLL_MIN = 10  # min death toll to fire WITHOUT a named disaster noun
+# Corroboration: an over-merged bag can carry ONE stray disaster article (a
+# 62-member Michigan-primary cluster held a lone "wildfire pilots dead" wire
+# item). Require the cluster's CANONICAL TITLE to itself read as a disaster, OR
+# a real share of members to corroborate, so one off-topic member cannot hijack
+# a non-disaster cluster.
+DISASTER_MIN_CORROBORATING = 3     # members that must fire when the title itself doesn't
+DISASTER_MIN_FRACTION = 0.34       # ...and this share of members must fire
+
+
+def _parse_count(raw: str) -> int:
+    try:
+        return int(raw.replace(",", ""))
+    except (ValueError, AttributeError):
+        return 0
+
+
+def _score_disaster_text(text: str) -> tuple[float, dict]:
+    """Severity 0-100 for a single article's title+summary text.
+
+    Fires only on a disaster-noun + casualty-cue co-occurrence, or a
+    mass-casualty death toll bound to a fatal word. Returns (0.0, {}) otherwise.
+    """
+    if not text:
+        return 0.0, {}
+
+    has_noun = bool(_DISASTER_NOUN_PATTERN.search(text))
+    has_casualty = bool(_CASUALTY_WORD_PATTERN.search(text))
+
+    toll = 0
+    for pat in _DEATH_TOLL_PATTERNS:
+        for m in pat.findall(text):
+            toll = max(toll, _parse_count(m))
+    injuries = 0
+    for pat in _INJURY_COUNT_PATTERNS:
+        for m in pat.findall(text):
+            injuries = max(injuries, _parse_count(m))
+
+    # Trigger: a named hazard reported with casualties, OR a genuine
+    # mass-casualty toll even without a named natural-disaster noun (bombing,
+    # stampede, crash). Conservative on false positives; a lone disaster noun
+    # (metaphor) or a lone casualty word never fires.
+    triggered = (has_noun and has_casualty) or (toll >= DISASTER_STANDALONE_TOLL_MIN)
+    if not triggered:
+        return 0.0, {}
+
+    sev = 40.0
+    if has_noun:
+        sev += 15.0
+    if toll > 0:
+        sev += min(45.0, 15.0 * math.log10(toll + 1))
+    elif injuries > 0:
+        sev += min(20.0, 8.0 * math.log10(injuries + 1))
+
+    sev = max(0.0, min(100.0, sev))
+    return sev, {
+        "has_noun": has_noun,
+        "has_casualty": has_casualty,
+        "death_toll": toll,
+        "injuries": injuries,
+        "severity": round(sev, 1),
+    }
+
+
+def _breaking_disaster_score(
+    cluster_articles: list[dict],
+    canonical_title: str = "",
+) -> tuple[float, dict]:
+    """Deadly-disaster severity (0-100) for a cluster, robust to over-merge.
+
+    Each article's title+summary is scored INDEPENDENTLY (a hazard noun and a
+    casualty cue must co-occur within one article, never paired across two).
+    The cluster earns the boost only when corroborated:
+      (A) the cluster's CANONICAL TITLE itself reads as a disaster, OR
+      (B) at least DISASTER_MIN_CORROBORATING members fire AND they are at
+          least DISASTER_MIN_FRACTION of the cluster.
+    This blocks the over-merge hijack: one stray disaster wire item inside a
+    62-member primary bag (1/62 ~ 2%) fails (B), and (A) is false for a
+    primary headline. Returns (severity, meta_of_strongest_firing_article).
+    Severity 0.0 means "no boost".
+    """
+    title_sev, title_meta = _score_disaster_text(canonical_title or "")
+
+    best = title_sev
+    best_meta = title_meta
+    fires = 0
+    scanned = 0
+    for article in cluster_articles[:20]:
+        scanned += 1
+        title = (article.get("title", "") or "")
+        summary = (article.get("summary", "") or "")
+        sev, meta = _score_disaster_text(f"{title}. {summary}")
+        if sev > 0.0:
+            fires += 1
+        if sev > best:
+            best, best_meta = sev, meta
+
+    title_fires = title_sev > 0.0
+    corroborated = (
+        fires >= DISASTER_MIN_CORROBORATING
+        and scanned > 0
+        and (fires / scanned) >= DISASTER_MIN_FRACTION
+    )
+    if not (title_fires or corroborated):
+        return 0.0, {}
+    return best, best_meta
+
+
+def _breaking_disaster_multiplier(
+    cluster_articles: list[dict],
+    canonical_title: str = "",
+) -> tuple[float, float, dict]:
+    """Bounded multiplicative lift for headline_rank. Returns
+    (multiplier in [1.0, 1.0+DISASTER_MAX_LIFT], severity, meta)."""
+    sev, meta = _breaking_disaster_score(cluster_articles, canonical_title)
+    mult = 1.0 + DISASTER_MAX_LIFT * (sev / 100.0)
+    return mult, sev, meta
+
+
+# ---------------------------------------------------------------------------
 # Institutional authority lexicon (v4.0) — detects WHO is involved.
 # Tier 1 (score 80-100): heads of state, supreme courts, central banks,
 #     UN Security Council, constitutional bodies.
@@ -1209,6 +1433,7 @@ def rank_importance(
     mega_capped: bool = False,
     cluster: dict | None = None,
     corpus_size: int | None = None,  # ACCEPTED for backwards compat, IGNORED
+    apply_disaster_boost: bool = True,
 ) -> dict:
     """
     Score the importance of a story cluster for feed ranking.
@@ -1408,6 +1633,24 @@ def rank_importance(
             cross_spectrum_fired = False
     else:
         cross_spectrum_fired = False
+
+    # v6.5 (2026-08-10 disaster-weight): Breaking mass-casualty disaster lift.
+    # DETERMINISTIC, $0. A deadly earthquake/typhoon/flood that is still gaining
+    # sources ranks below a higher-source-count human-interest story on raw
+    # coverage math alone. A bounded, clamped multiplicative lift (max +
+    # DISASTER_MAX_LIFT) gives such a story front-page weight on its own merit,
+    # without an LLM. Applied multiplicatively BEFORE conf_mult/longevity/gates,
+    # so it behaves like a signal and every downstream multiplicative gate
+    # scales it identically to the un-boosted case (the lift is the clean
+    # AFTER/BEFORE ratio). Fires only on a hazard-noun + casualty co-occurrence
+    # or a real mass-casualty toll; "killer deal" / "dead heat" score zero.
+    _canonical_title = (cluster.get("title", "") or "") if cluster else ""
+    disaster_mult, disaster_sev, disaster_meta = (
+        _breaking_disaster_multiplier(cluster_articles, _canonical_title)
+        if apply_disaster_boost
+        else (1.0, 0.0, {})
+    )
+    headline_rank *= disaster_mult
 
     # v6.4: The former additive Gemini editorial adjustment (+/-6.7 pts) was
     # removed here. editorial_importance is now applied ONCE, as the
@@ -1648,6 +1891,9 @@ def rank_importance(
             "consequentiality": round(consequentiality, 2),
             "authority": round(authority, 2),
             "longevity_mult": round(longevity_mult, 2),
+            "disaster_severity": round(disaster_sev, 1),
+            "disaster_mult": round(disaster_mult, 4),
+            "disaster_death_toll": disaster_meta.get("death_toll", 0),
             "is_headline_src_count": src_count,
             "is_headline_src_pts": round(src_pts, 1),
             "is_headline_rank_pts": round(rank_pts, 1),
