@@ -22,7 +22,7 @@ import SixLenses from "./SixLenses";
 import SummaryWithContradictions from "./SummaryWithContradictions";
 import ClaimConsensusSection from "./ClaimConsensusSection";
 import ComparativeView from "./ComparativeView";
-import SourceLeanColumns from "./SourceLeanColumns";
+import SourceLedger from "./SourceLedger";
 
 /* ---------------------------------------------------------------------------
    StandaloneDeepDive — the shareable /story/[id] page.
@@ -204,7 +204,7 @@ export default function StandaloneDeepDive({
               )}
 
               {columnSources.length > 0 && (
-                <SourceLeanColumns sources={columnSources} />
+                <SourceLedger sources={columnSources} defaultOpen />
               )}
             </section>
           )}

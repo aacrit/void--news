@@ -9,6 +9,7 @@ import {
   leanLabelAbbr,
   leanToBucket,
 } from "../lib/biasColors";
+import { sourceLogoUrl } from "../lib/sourceLogos";
 import {
   computeKDE,
   robustBandwidth,
@@ -40,14 +41,6 @@ export interface DeepDiveSpectrumSource {
 // (single organic view — no toggle)
 
 /* ── Helpers ────────────────────────────────────────────────────────────── */
-
-function getFaviconUrl(_sourceUrl: string): string {
-  // Privacy: never call an external favicon service. Fetching a third-party
-  // favicon would leak the reader's IP and which publisher they are viewing to
-  // that host. We render a self-contained lean-colored letter monogram instead
-  // (the `url` empty path below).
-  return "";
-}
 
 function tierLabel(tier: string): string {
   if (tier === "us_major") return "US Major";
@@ -210,7 +203,8 @@ function FaviconAvatar({
   onPointerLeave?: (e: React.PointerEvent) => void;
 }) {
   const [failed, setFailed] = useState(false);
-  const url = getFaviconUrl(source.sourceUrl);
+  // Self-hosted first-party outlet favicon (see sourceLogoUrl); "" -> monogram.
+  const url = sourceLogoUrl(source.name);
   // Use data-lean for border/letter color — CSS vars are theme-reactive, no inline getLeanColor()
   const leanBucket = leanToBucket(source.politicalLean);
 
@@ -267,41 +261,23 @@ function SourceFaviconRow({
   const avatarSize = isMobile ? 14 : 20;
   const rowH = avatarSize + 4; // 4px gap between rows
 
-  // Mobile: limit to top 5 sources by confidence; single-row layout.
-  // Desktop: show all sources with 2-row collision detection.
-  const visibleSources = isMobile
-    ? sources.sort((a, b) => (b.confidence ?? 0) - (a.confidence ?? 0)).slice(0, 5)
-    : sources;
+  // Every source is placed at its real lean, on both breakpoints, so the mobile
+  // portal shows the same "logos under the point" density as desktop and the
+  // Sources page (the old mobile top-5 cap is gone; the ledger below carries the
+  // complete roster either way). A slightly larger min-gap on mobile keeps the
+  // smaller 14px tiles from stacking too tightly.
+  const minGap = isMobile ? 6 : MIN_GAP_PCT;
 
-  // Sort by lean, assign row
+  // Sort by lean, assign to one of two rows via collision detection.
   const placed: Array<{ source: DeepDiveSpectrumSource; leftPct: number; row: 0 | 1 }> = useMemo(() => {
-    const sorted = [...visibleSources].sort((a, b) => a.politicalLean - b.politicalLean);
-
-    // Mobile: single-row layout with larger minimum gap
-    if (isMobile) {
-      const MIN_GAP_MOBILE = 8; // 8% gap to fit fewer icons
-      const lastRight = [-Infinity];
-      return sorted
-        .map((s) => {
-          const leftPct = 2 + (s.politicalLean / 100) * 96;
-          // Force single row; skip icons that overlap
-          if (leftPct - lastRight[0] < MIN_GAP_MOBILE) {
-            return null; // Skip overlapping icons on mobile
-          }
-          lastRight[0] = leftPct;
-          return { source: s, leftPct, row: 0 as const };
-        })
-        .filter((x): x is { source: DeepDiveSpectrumSource; leftPct: number; row: 0 } => x !== null);
-    }
-
-    // Desktop: 2-row collision detection
+    const sorted = [...sources].sort((a, b) => a.politicalLean - b.politicalLean);
     const lastRight: [number, number] = [-Infinity, -Infinity];
     return sorted.map((s) => {
       const leftPct = 2 + (s.politicalLean / 100) * 96;
       let row: 0 | 1;
-      if (leftPct - lastRight[0] >= MIN_GAP_PCT) {
+      if (leftPct - lastRight[0] >= minGap) {
         row = 0;
-      } else if (leftPct - lastRight[1] >= MIN_GAP_PCT) {
+      } else if (leftPct - lastRight[1] >= minGap) {
         row = 1;
       } else {
         row = 1;
@@ -309,7 +285,7 @@ function SourceFaviconRow({
       lastRight[row] = leftPct;
       return { source: s, leftPct, row };
     });
-  }, [visibleSources, isMobile]);
+  }, [sources, minGap]);
 
   // The mobile "+N more" dot-overflow indicator was removed 2026-08-10: the
   // mobile Deep Dive Spread page now lists every source in the Left/Center/Right
@@ -317,7 +293,7 @@ function SourceFaviconRow({
 
   return (
     <>
-      <div className="dd-sv-sources" style={{ height: isMobile ? rowH : rowH * 2 }}>
+      <div className="dd-sv-sources" style={{ height: rowH * 2 }}>
         {placed.map(({ source, leftPct, row }, i) => (
           <a
             key={`pin-${i}`}
