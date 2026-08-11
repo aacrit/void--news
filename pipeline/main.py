@@ -3240,7 +3240,9 @@ def main():
                 flash_top_n=10)
             print(
                 f"  Top-50: {summary_metrics['summarized']} summarized, "
-                f"{summary_metrics['cached']} cache hits, "
+                f"{summary_metrics['cached']} cache hits "
+                f"({summary_metrics.get('trimmed_cached', 0)} over-cap cached "
+                f"summaries trimmed in place), "
                 f"{summary_metrics['skipped']} skipped (op-ed / <3 sources), "
                 f"{summary_metrics['failed']} failed"
             )

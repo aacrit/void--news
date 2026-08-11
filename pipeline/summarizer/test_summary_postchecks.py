@@ -198,6 +198,49 @@ def test_apply_chain_empty_and_none_safe():
     assert c._apply_summary_postchecks("   ", "") == "   "
 
 
+# ---------------------------------------------------------------------------
+# Length-calibration fix (2026-08-10): the 90-word cap must apply on the flash
+# path (top-10 flash AND ranks 11-50 flash-lite), and the prompt/band must no
+# longer request sub-40-word output.
+# ---------------------------------------------------------------------------
+def test_flash_path_over_90_words_trimmed_to_cap():
+    """(i) A >90-word LLM summary is trimmed to <= 90 on the flash storage path.
+
+    Every stored-summary boundary in the flash top-10 write path and the
+    reconcile-flash-top10 write path wraps result["summary"] in
+    _trim_summary_to_word_cap. Simulate that boundary here (no DB) and confirm
+    an over-length summary is capped exactly as those callers would store it.
+    """
+    sent = " ".join(["fact"] * 24) + " landed."   # 25 words each
+    long_summary = " ".join([sent] * 10)           # 250 words, 10 sentences
+    assert _wc(long_summary) == 250
+    stored = c._trim_summary_to_word_cap(long_summary)   # the storage-boundary call
+    assert _wc(stored) <= c._SUMMARY_WORD_CAP, _wc(stored)
+    assert stored.strip().endswith("landed.")            # whole-sentence boundary
+
+
+def test_cached_over_cap_summary_would_be_trimmed():
+    """A summary cached from before the cap (175+ words) is caught by the same
+    deterministic trim the 8d cache-hit branch now applies in place."""
+    cached = " ".join(["word"] * 174) + " end."   # 175 words
+    assert _wc(cached) > c._SUMMARY_WORD_CAP
+    assert _wc(c._trim_summary_to_word_cap(cached)) <= c._SUMMARY_WORD_CAP
+
+
+def test_prompt_targets_a_band_not_sub_40_output():
+    """(ii) TASK 2 asks for a 55-to-90-word band in 2-4 sentences and never
+    instructs the model to compress below the soft floor."""
+    tmpl = c._USER_PROMPT_TEMPLATE
+    # Band + sentence-count guidance present.
+    assert "55 to 90 words" in tmpl
+    assert "2 to 4" in tmpl
+    # The old brevity-maximizing instruction is gone (it drove over-compression).
+    assert "shorter, denser summary always beats" not in tmpl
+    assert "AT MOST 90 words" not in tmpl
+    # Soft floor is defined below the band and above zero.
+    assert 0 < c._SUMMARY_WORD_FLOOR < c._SUMMARY_WORD_CAP
+
+
 def _run():
     fns = [v for k, v in sorted(globals().items()) if k.startswith("test_")]
     passed = 0
