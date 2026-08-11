@@ -1694,15 +1694,37 @@ def summarize_cluster(articles: list[dict],
     if not result:
         return None
 
+    # Validation + hygiene are shared with the batched path so both apply an
+    # identical chain (_finalize_cluster_result). `articles` is the FULL member
+    # list so grounding (3e/3f) and the outlet-leak scan see every source.
+    return _finalize_cluster_result(result, articles, _generator_label)
+
+
+def _finalize_cluster_result(result: dict, articles: list[dict],
+                             generator_label: str) -> dict | None:
+    """Validate + clean ONE cluster's raw LLM JSON into the stored schema.
+
+    Shared by the single-cluster path (summarize_cluster) and the batched path
+    (_summarize_cluster_batch) so a batched story receives byte-for-byte the same
+    hygiene as a solo one: shape validation, exact/near-duplicate sentence drops,
+    em-dash + significance-word sanitize, source-material meta-commentary strip,
+    the Phase-3 postcheck chain (grounded against the FULL member text), the
+    source-agnostic outlet-leak warning, consensus/divergence sanitize, and the
+    editorial-intelligence field extraction. `articles` is the cluster's FULL
+    membership (not the on-topic-filtered prompt subset) so a legitimately
+    reported age / figure is never dropped as "ungrounded". Returns the validated
+    dict (with `_generator` set to `generator_label`) or None when the headline
+    or summary is missing/empty."""
+    if not result or not isinstance(result, dict):
+        return None
+
     # Show-don't-tell post-check: assertions of significance ("notable",
     # "significantly", "crucially", etc.) violate the Cardinal Rule.
     #
     # 2026-05-21 nlp-engineer cost-cut: the forbidden-word list is now
     # encoded directly in _SYSTEM_INSTRUCTION (FORBIDDEN SIGNIFICANCE-
-    # ASSERTIONS section). Sonnet 4.6 follows it without needing a retry
-    # call on every violation. The retry burned ~5-10 calls/day; with the
-    # constraint baked into the prompt-cached system instruction, that
-    # cost drops to zero. We keep the post-check as a warning log only so
+    # ASSERTIONS section). The model follows it without needing a retry
+    # call on every violation. We keep the post-check as a warning log only so
     # we can detect drift if the model starts ignoring the constraint.
     violations = _detect_show_dont_tell_violations(result)
     if violations:
@@ -1739,8 +1761,8 @@ def summarize_cluster(articles: list[dict],
     # Phase-3 hygiene: drop near-duplicate claims, collapse unknown/ongoing
     # padding, strip ungrounded ages (checked against the FULL member text, not
     # the on-topic-filtered subset, so a legitimately reported age is never
-    # dropped), drop a terminal restatement of the lead, then hard-trim to <= 90
-    # words at a sentence boundary. Deterministic; a no-op on already-clean text.
+    # dropped), drop a terminal restatement of the lead, then hard-trim to the
+    # runaway ceiling at a sentence boundary. Deterministic; a no-op on clean text.
     summary = _apply_summary_postchecks(summary, _concat_source_text(articles))
     _summary_src_refs = _detect_summary_source_refs(
         summary, [a.get("source_name", "") for a in articles]
@@ -1808,9 +1830,8 @@ def summarize_cluster(articles: list[dict],
         "consensus_ratio": consensus_ratio_val,
         "consensus_summary": consensus_summary_val,
         # Which provider answered ("gemini-flash" | "gemini-flash-lite").
-        # Callers map this to summary_tier so the step-8d cache only
-        # freezes genuine Sonnet output.
-        "_generator": _generator_label,
+        # Callers map this to summary_tier.
+        "_generator": generator_label,
     }
 
     # Quality gate: log warnings for out-of-spec output (no discards).
@@ -1818,6 +1839,370 @@ def summarize_cluster(articles: list[dict],
     _check_quality(validated)
 
     return validated
+
+
+# ===========================================================================
+# Batched summarization (2026-08-11) — fit the top-50 into the free-tier cap.
+# ===========================================================================
+# Gemini free tier is bound by REQUESTS/DAY (RPD), not tokens: flash AND
+# flash-lite each allow 20 requests/DAY, while TPM (250K INPUT tokens/min) has
+# huge headroom (a real run peaked ~30K). One-request-per-cluster (~50/run) blew
+# the 20 RPD cap after ~20 stories, dropping the tail to raw excerpts. Batching
+# many clusters into ONE request cuts the top-50 to ~8 requests, all on
+# gemini-2.5-flash (the premium tier); flash-lite is used only as overflow.
+#
+# SHARED FLASH BUDGET: flash's 20 requests/DAY is shared across the WHOLE
+# pipeline. Daily summaries (~8, this schedule) + the daily brief TL;DR +
+# opinion (~3) = ~11, leaving ~9 of 20 as buffer for retries and the Sunday
+# weekly / Saturday monthly marquee calls. This summarizer MUST stay near 8
+# flash requests and must not balloon: the graduated schedule FIXES the flash
+# request count at (at most) len(schedule) regardless of how many stories fail,
+# and the failure retry path spends flash-lite (its own separate 20/day), never
+# more flash, and is itself bounded (_MAX_OVERFLOW_RETRY_REQUESTS).
+#
+# GRADUATED BATCH SIZES (single tunable constant). Summary quality dips as
+# stories-per-call rises (attention dilution / lost-in-the-middle / output-token
+# squeeze); that dip matters most for the top stories readers actually read, so
+# the lead stories get small (even solo) batches and the tail packs denser.
+# Sizes are consumed IN ORDER over the cache-MISS clusters (rank order); cached
+# clusters are skipped and never consume a slot, so a run with cache hits just
+# packs the remaining misses into the next group's size and the schedule
+# degrades gracefully. Sum = 50, so a full miss run = exactly 8 flash requests:
+#   rank 1 -> solo, rank 2 -> solo, ranks 3-6 -> 4, ranks 7-14 -> 8,
+#   ranks 15-24 -> 10, ranks 25-34 -> 10, ranks 35-44 -> 10, ranks 45-50 -> 6.
+_SUMMARY_BATCH_SCHEDULE = [1, 1, 4, 8, 10, 10, 10, 6]
+
+# Per-batch INPUT-token budget. TPM (250K input tokens/min) is the loose ceiling;
+# keep every request well under it, split the budget across the batch's clusters,
+# and let per-cluster article DEPTH graduate: a solo lead gets the full 25-article
+# stratified selection, a batch of 8 gets ~21 each, a batch of 10 ~17 each. So the
+# top stories are sourced deepest and no batch can breach TPM.
+_BATCH_INPUT_TOKEN_BUDGET = 120_000
+_BATCH_TOKEN_CEILING = 150_000        # hard per-request input ceiling; shrink depth
+_TPM_INPUT_LIMIT = 250_000
+_TPM_SAFE_CEILING = 230_000           # pace so no rolling 60s window's input exceeds this
+_APPROX_CHARS_PER_TOKEN = 4           # rough English char:token ratio for estimation
+_APPROX_TOKENS_PER_ARTICLE = 700      # ~_ARTICLE_BODY_MAX_CHARS body + header per article
+_BATCH_MIN_ARTICLES_PER_CLUSTER = 6   # floor: keep enough grounding even when dense
+_SOLO_INPUT_TOKEN_EST = 22_000        # ~25 articles + template, for TPM accounting only
+_MAX_OVERFLOW_RETRY_REQUESTS = 2      # BOUNDED flash-lite retries for failed stories
+
+
+def _estimate_tokens(text: str) -> int:
+    """Rough token count from character length (English ~4 chars/token). Used only
+    to keep a batch under the input-token ceiling / TPM window; never billed."""
+    return max(1, len(text or "") // _APPROX_CHARS_PER_TOKEN)
+
+
+def _batch_article_cap(n_clusters: int) -> int:
+    """Per-cluster article depth for a batch of `n_clusters`: split the input-token
+    budget across the batch and convert to an article count, clamped to
+    [_BATCH_MIN_ARTICLES_PER_CLUSTER, _MAX_SUMMARY_ARTICLES]. Solo -> 25; batch of
+    8 -> ~21; batch of 10 -> ~17. Deterministic."""
+    n = max(1, n_clusters)
+    per_cluster_budget = _BATCH_INPUT_TOKEN_BUDGET / n
+    cap = int(per_cluster_budget / _APPROX_TOKENS_PER_ARTICLE)
+    return max(_BATCH_MIN_ARTICLES_PER_CLUSTER, min(_MAX_SUMMARY_ARTICLES, cap))
+
+
+def _schedule_chunks(records: list, schedule: list[int] = _SUMMARY_BATCH_SCHEDULE) -> list[list]:
+    """Chunk `records` (cache-MISS clusters, already in rank order) by consuming
+    `schedule` sizes IN ORDER. After the schedule is exhausted the LAST size
+    repeats (so an unexpectedly large miss set still packs into full-width tail
+    batches). Cached clusters are absent from `records`, so a cache-heavy run
+    simply packs the remaining misses into the next group's size."""
+    chunks: list[list] = []
+    i = 0
+    si = 0
+    n = len(records)
+    while i < n:
+        size = schedule[si] if si < len(schedule) else schedule[-1]
+        size = max(1, size)
+        chunks.append(records[i:i + size])
+        i += size
+        si += 1
+    return chunks
+
+
+# --- batch prompt assembly ------------------------------------------------
+# Reuse the SINGLE-cluster template's TASK 1-7 block verbatim as the one source
+# of truth for the editorial task rules; only the wrapper (multi-story delimiters
+# + JSON-array output spec) differs. Sliced once at module load.
+_TASKS_START_IDX = _USER_PROMPT_TEMPLATE.find("TASK 1 —")
+_TASKS_END_IDX = _USER_PROMPT_TEMPLATE.find("Return JSON only", _TASKS_START_IDX)
+_BATCH_TASKS_BLOCK = _USER_PROMPT_TEMPLATE[_TASKS_START_IDX:_TASKS_END_IDX].rstrip()
+if _BATCH_TASKS_BLOCK.endswith("---"):
+    _BATCH_TASKS_BLOCK = _BATCH_TASKS_BLOCK[:-3].rstrip()
+
+_BATCH_SEPARATION_RULE = (
+    "ABSOLUTE SEPARATION RULE: treat every story in complete isolation. A fact, "
+    "name, number, figure, quote, date, or place from one story must NEVER appear "
+    "in another story's output. Each story's brief is grounded ONLY in that "
+    "story's own ARTICLES. Never merge, compare, or cross-reference two stories. "
+    "If two stories look related, they are still separate: keep them separate."
+)
+
+
+def _build_batch_story_block(articles: list[dict], title: str | None,
+                             k: int, cap: int) -> str:
+    """Render ONE delimited story block for the batch prompt. Applies the same
+    on-topic member filter as the single path, then a stratified selection capped
+    at `cap` articles (graduated depth). All four line builders receive the SAME
+    selected list so the [n] SOURCE NAMES indices align with the ARTICLES block.
+    Thin clusters get a per-story length relaxation note (the shared TASK text
+    can't be per-story edited)."""
+    summ = _filter_ontopic_articles(articles, cluster_title=title)
+    selected = _select_articles_for_summary(summ, cap)
+    dominant = _build_dominant_topic_line(selected, title)
+    context = _build_context_line(selected)
+    names = _build_source_names_line(selected)
+    block = _build_articles_block(selected, max_articles=cap)
+
+    parts = [f"===== STORY {k} =====", ""]
+    if dominant:
+        parts.append(dominant.rstrip("\n"))
+    parts.append(context.rstrip("\n"))
+    if names:
+        parts.append(names.rstrip("\n"))
+    if len(selected) < _THIN_CLUSTER_ARTICLES:
+        parts.append(
+            f"NOTE: STORY {k} has limited source material; a 100 to 250 word brief "
+            f"is acceptable for THIS story only (do not pad to reach 200)."
+        )
+    parts.append("ARTICLES:")
+    parts.append(block)
+    parts.append("")
+    return "\n".join(parts)
+
+
+def _build_batch_prompt(story_blocks: list[str], n: int) -> str:
+    """Assemble the full multi-story prompt: separation-first header, the N
+    delimited story blocks, the shared TASK 1-7 rules, and a JSON-array output
+    spec keyed by story index. String-concatenated (not str.format) so the JSON
+    braces in the output spec need no escaping."""
+    header = (
+        f"You are given {n} SEPARATE news stories below, each delimited by a "
+        f'"===== STORY k =====" banner and running until the next banner. For '
+        f"EACH story, INDEPENDENTLY perform the full analysis described in the "
+        f"TASKS section that follows the stories.\n\n"
+        f"{_BATCH_SEPARATION_RULE}\n\n"
+    )
+    stories = "\n".join(story_blocks)
+    tail = (
+        "\n===== END OF STORIES =====\n\n"
+        "TASKS (apply INDEPENDENTLY to every story above, using ONLY that "
+        "story's own ARTICLES):\n\n"
+        + _BATCH_TASKS_BLOCK
+        + "\n\n---\n\n"
+        "Return JSON only. No markdown fences. No text outside the JSON object. "
+        f"Return a single JSON object with a \"stories\" array holding EXACTLY {n} "
+        "entries, one per story, in the SAME ORDER as the stories above. Each "
+        "entry carries its story number as \"index\" plus the seven fields:\n\n"
+        '{"stories": [{"index": 1, "headline": "...", "summary": "...", '
+        '"consensus": ["..."], "divergence": ["..."], "editorial_importance": N, '
+        '"story_type": "...", "has_binding_consequences": true/false}, ...]}'
+    )
+    return header + stories + tail
+
+
+def _extract_batch_entries(raw: dict, n: int) -> list[dict | None]:
+    """Split a batched JSON response into an ordered list of N per-story entries
+    (None where a story is missing). Tolerant of shape drift: prefers a
+    "stories"/"results"/"summaries" array (mapping each entry by its explicit
+    1-based "index" when present, else by array position), and falls back to
+    numeric / "story_k" top-level keys. A missing story yields None so the caller
+    can retry it rather than silently dropping a card."""
+    out: list[dict | None] = [None] * n
+    if not isinstance(raw, dict):
+        return out
+    seq = None
+    for key in ("stories", "results", "summaries", "briefs"):
+        if isinstance(raw.get(key), list):
+            seq = raw[key]
+            break
+    if seq is not None:
+        for pos, entry in enumerate(seq):
+            if not isinstance(entry, dict):
+                continue
+            idx = entry.get("index")
+            if isinstance(idx, bool):
+                idx = None
+            if isinstance(idx, int) and 1 <= idx <= n:
+                out[idx - 1] = entry
+            elif pos < n and out[pos] is None:
+                out[pos] = entry
+        return out
+    # Fallback: object keyed by "1".."N" or "story_1".. / "STORY 1"..
+    for k in range(1, n + 1):
+        for key in (str(k), f"story_{k}", f"story{k}", f"STORY {k}", f"story {k}"):
+            v = raw.get(key)
+            if isinstance(v, dict):
+                out[k - 1] = v
+                break
+    return out
+
+
+def _tpm_wait(window: list[tuple[float, int]], need: int) -> None:
+    """Rolling-60s input-token pacer. `window` is a shared list of (sent_at,
+    input_tokens); before sending a request needing `need` input tokens, prune
+    entries older than 60s and sleep until the window plus `need` fits under
+    _TPM_SAFE_CEILING, so no 60s span's input tokens breach the 250K TPM limit.
+    Then record this send. Real runtime only sleeps on genuinely large back-to-
+    back batches; small/spaced calls never wait (tests stay instant)."""
+    import time
+    now = time.time()
+    window[:] = [(t, tok) for (t, tok) in window if now - t < 60.0]
+    guard = 0
+    while window and sum(tok for _, tok in window) + need > _TPM_SAFE_CEILING and guard < 120:
+        oldest_t = window[0][0]
+        sleep_for = 60.0 - (now - oldest_t) + 0.05
+        if sleep_for > 0:
+            time.sleep(sleep_for)
+        now = time.time()
+        window[:] = [(t, tok) for (t, tok) in window if now - t < 60.0]
+        guard += 1
+    window.append((time.time(), need))
+
+
+def _send_one_batch(records: list[dict], model: str | None,
+                    prefer_provider: str | None,
+                    tpm_window: list) -> tuple[dict[str, dict], list[dict]]:
+    """Send EXACTLY ONE LLM request for `records` (each {cid, articles, title,...})
+    and return (results_by_cid, failed_records). A solo batch uses the proven
+    single-cluster path (full template, 25 articles); a multi-story batch uses the
+    batched prompt. Graduated per-cluster article depth keeps the request under
+    the input-token ceiling (depth is shrunk once, never split into more requests,
+    so the flash request count stays fixed by the schedule). Missing / invalid
+    per-story entries are returned as failures for the caller's bounded retry."""
+    if not records:
+        return {}, []
+
+    # Solo: the lead stories get the single-cluster path unchanged (deepest
+    # sourcing, most-proven prompt). Still exactly one request.
+    if len(records) == 1:
+        rec = records[0]
+        _tpm_wait(tpm_window, _SOLO_INPUT_TOKEN_EST)
+        r = summarize_cluster(rec["articles"], model=model,
+                              prefer_provider=prefer_provider,
+                              cluster_title=rec.get("title"))
+        return ({rec["cid"]: r}, []) if r else ({}, [rec])
+
+    n = len(records)
+    cap = _batch_article_cap(n)
+    story_blocks = [
+        _build_batch_story_block(r["articles"], r.get("title"), i + 1, cap)
+        for i, r in enumerate(records)
+    ]
+    prompt = _build_batch_prompt(story_blocks, n)
+    input_est = _estimate_tokens(prompt) + len(_SYSTEM_INSTRUCTION) // _APPROX_CHARS_PER_TOKEN
+
+    # Ceiling guard: shrink per-cluster article depth (ONE rebuild) rather than
+    # splitting into more requests, so the schedule's flash request count holds.
+    if input_est > _BATCH_TOKEN_CEILING and cap > _BATCH_MIN_ARTICLES_PER_CLUSTER:
+        shrunk = max(_BATCH_MIN_ARTICLES_PER_CLUSTER,
+                     int(cap * (_BATCH_TOKEN_CEILING / input_est)))
+        if shrunk < cap:
+            cap = shrunk
+            story_blocks = [
+                _build_batch_story_block(r["articles"], r.get("title"), i + 1, cap)
+                for i, r in enumerate(records)
+            ]
+            prompt = _build_batch_prompt(story_blocks, n)
+            input_est = (_estimate_tokens(prompt)
+                         + len(_SYSTEM_INSTRUCTION) // _APPROX_CHARS_PER_TOKEN)
+
+    max_out = min(65000, 8000 + 4500 * n)
+    _tpm_wait(tpm_window, input_est)
+    result, label = _smart_generate_json(
+        prompt, system_instruction=_SYSTEM_INSTRUCTION,
+        max_output_tokens=max_out, model=model, prefer_provider=prefer_provider,
+    )
+    if not result:
+        return {}, list(records)
+
+    entries = _extract_batch_entries(result, n)
+    got: dict[str, dict] = {}
+    failed: list[dict] = []
+    for i, rec in enumerate(records):
+        entry = entries[i] if i < len(entries) else None
+        validated = (_finalize_cluster_result(entry, rec["articles"], label)
+                     if entry else None)
+        if validated:
+            got[rec["cid"]] = validated
+        else:
+            failed.append(rec)
+    return got, failed
+
+
+def _run_summary_batches(records: list[dict],
+                         prefer_provider: str | None = "gemini") -> dict[str, dict]:
+    """Summarize all cache-MISS clusters (in rank order) via the graduated
+    schedule, entirely on gemini-2.5-flash (flash-lite is the automatic overflow
+    inside _smart_generate_json when flash's daily cap is spent). Returns a dict
+    cid -> validated summary result.
+
+    Flash request budget is FIXED by the schedule (at most len(schedule) requests
+    for a full miss run); it never inflates on failure. Stories the batched JSON
+    omits or that fail validation are collected and retried ONCE on flash-lite in
+    at most _MAX_OVERFLOW_RETRY_REQUESTS requests (protecting the shared flash
+    20/day), never rule-based. Anything still unresolved keeps its prior summary
+    and is picked up by the floor pass / next run."""
+    results: dict[str, dict] = {}
+    if not records:
+        return results
+    tpm_window: list[tuple[float, int]] = []
+    overflow: list[dict] = []
+
+    for chunk in _schedule_chunks(records):
+        if calls_remaining() <= 0:
+            overflow.extend(chunk)   # flash budget spent — divert to flash-lite
+            continue
+        got, failed = _send_one_batch(chunk, GEMINI_FLASH_MODEL,
+                                      prefer_provider, tpm_window)
+        results.update(got)
+        overflow.extend(failed)
+
+    if overflow:
+        results.update(_retry_overflow(overflow, prefer_provider, tpm_window))
+    return results
+
+
+# Cap the per-overflow-group cluster count so a group never needs deeper packing
+# than a normal tail batch. 10 mirrors the schedule's max group size.
+_MAX_OVERFLOW_GROUP_CLUSTERS = 10
+
+
+def _pack_overflow(overflow: list[dict], max_requests: int) -> list[list[dict]]:
+    """Pack failed stories into at most `max_requests` groups (each still bounded
+    by _batch_article_cap depth). Fewer, fuller groups so the retry spends the
+    minimum number of requests."""
+    if not overflow:
+        return []
+    import math
+    groups = min(max_requests,
+                 max(1, math.ceil(len(overflow) / _MAX_OVERFLOW_GROUP_CLUSTERS)))
+    size = max(1, math.ceil(len(overflow) / groups))
+    return [overflow[i:i + size] for i in range(0, len(overflow), size)]
+
+
+def _retry_overflow(overflow: list[dict], prefer_provider: str | None,
+                    tpm_window: list) -> dict[str, dict]:
+    """BOUNDED retry for stories the flash batches missed. Spends flash-lite
+    (model=None -> flash-lite, its own 20/day), NOT more flash, in at most
+    _MAX_OVERFLOW_RETRY_REQUESTS requests. Never rule-based; unresolved stories
+    keep their prior summary (the floor pass guarantees display safety)."""
+    results: dict[str, dict] = {}
+    if not overflow:
+        return results
+    print(f"  [batch] {len(overflow)} story(ies) missing from flash batches — "
+          f"bounded flash-lite retry (<= {_MAX_OVERFLOW_RETRY_REQUESTS} requests)")
+    for chunk in _pack_overflow(overflow, _MAX_OVERFLOW_RETRY_REQUESTS):
+        if calls_remaining() <= 0:
+            break
+        # model=None routes to flash-lite only (no flash spend on the retry).
+        got, _failed = _send_one_batch(chunk, None, prefer_provider, tpm_window)
+        results.update(got)
+    return results
 
 
 def summarize_clusters_batch(clusters: list[dict],
@@ -2035,26 +2420,70 @@ def _tier_for_label(label: str) -> str:
     return "flash-lite"          # gemini-2.5-flash-lite
 
 
+def _store_cluster_summary(supabase, cid: str, result: dict, h: str,
+                           metrics: dict) -> None:
+    """Persist one summarize result to story_clusters + record it in `metrics`.
+    Shared by the batched write loop so the update payload (title, hard-capped
+    summary, content-hash, tier from the provider that answered, consensus /
+    divergence / editorial fields) is identical to the pre-batch inline path."""
+    update_payload = {
+        "title": result["headline"],
+        # Storage-boundary hard cap (runaway guard). summarize/finalize already
+        # trim (no-op here); wrapping the stored value guarantees the invariant
+        # regardless of which path produced result.
+        "summary": _trim_summary_to_word_cap(result["summary"]),
+        "summary_article_hash": h,
+        # Stamp the tier that ACTUALLY answered (migration 063): 'flash' for
+        # gemini-2.5-flash, 'flash-lite' when a batch fell back to flash-lite
+        # (flash's daily cap spent) so the next run retries the flash upgrade.
+        "summary_tier": _tier_for_label(result.get("_generator") or ""),
+    }
+    if result.get("consensus"):
+        update_payload["consensus_points"] = result["consensus"]
+    if result.get("divergence"):
+        update_payload["divergence_points"] = result["divergence"]
+    if result.get("editorial_importance") is not None:
+        update_payload["editorial_importance"] = result["editorial_importance"]
+    if result.get("story_type") is not None:
+        update_payload["story_type"] = result["story_type"]
+    if result.get("has_binding_consequences") is not None:
+        update_payload["has_binding_consequences"] = result["has_binding_consequences"]
+    try:
+        supabase.table("story_clusters").update(update_payload).eq("id", cid).execute()
+        metrics["summarized"] += 1
+        metrics["updated_ids"].append(cid)
+        metrics["updated_summaries"][cid] = result
+    except Exception as e:
+        print(f"  [warn] summarize_top50_after_rerank: DB update failed for {cid}: {e}")
+        metrics["failed"] += 1
+
+
 def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 50,
                                  prefer_provider: str | None = "gemini",
                                  flash_top_n: int = 10,
                                  force_resummarize: bool = False) -> dict:
     """
-    Single-pass post-rerank summarization for the final feed top N.
+    Post-rerank summarization for the final feed top N — BATCHED (2026-08-11).
 
-    Reads the top-N clusters by rank_{edition} from Supabase (rank DESC),
-    fetches their article membership, and summarizes via a Gemini quality
-    hierarchy: the top `flash_top_n` highest-impact stories run on
-    gemini-2.5-flash (premium); the rest on gemini-2.5-flash-lite. There is no
-    Groq fallback (retired 2026-06-24); premium slots degrade flash → flash-lite.
+    Reads the top-N clusters by rank_{edition} (rank DESC), fetches their article
+    membership, and summarizes every cache MISS on gemini-2.5-flash in GRADUATED
+    BATCHES (_SUMMARY_BATCH_SCHEDULE): the lead stories get solo / small batches,
+    the tail packs denser. Batching drops the whole top-50 from ~50 requests to
+    ~8, so it fits inside flash's shared 20-requests/DAY free-tier cap (the binding
+    limit; TPM has huge headroom). flash-lite is used ONLY as overflow — the
+    automatic flash → flash-lite fallback inside _smart_generate_json when flash's
+    daily cap is spent, plus a bounded flash-lite retry for stories a batch omits
+    (never rule-based). See the _SUMMARY_BATCH_SCHEDULE block for the request-budget
+    reasoning.
 
-    Cache logic (upgrade-aware, migration 063):
-        - flash-lite slot: hash matches AND prior tier in
-          ('sonnet','flash','flash-lite') → skip (no API call).
-        - flash (premium) slot: hash matches AND prior tier in ('sonnet','flash')
-          → skip; a 'flash-lite' prior is a miss so the story is UPGRADED to
-          flash when it enters the top `flash_top_n`.
-        - else → call LLM, write summary + consensus + divergence + hash + tier.
+    Cache logic (upgrade-aware, migration 063): a cluster is a cache HIT when its
+    article-membership hash is unchanged AND its stored summary_tier is 'sonnet'
+    or 'flash' (already flash-quality); a legacy 'flash-lite' row is a MISS so it
+    is regenerated / UPGRADED to flash. force_resummarize bypasses the cache.
+
+    `flash_top_n` is retained for signature compatibility but no longer selects a
+    tier band: all summaries now target flash (the schedule + shared-budget math
+    make a per-story tier split unnecessary).
 
     Op-eds (content_type=opinion) and clusters with <3 articles are skipped —
     both preserve original voice or lack the source diversity for synthesis.
@@ -2083,8 +2512,8 @@ def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 
     try:
         rank_res = (
             supabase.table("story_clusters")
-            .select("id, content_type, source_count, summary_article_hash, "
-                    "summary_tier, summary")
+            .select("id, title, content_type, source_count, "
+                    "summary_article_hash, summary_tier, summary")
             .contains("sections", [edition])
             .order(rank_col, desc=True)
             .limit(fetch_limit)
@@ -2163,11 +2592,12 @@ def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 
 
     # `rows` is ordered by rank_{edition} DESC. Window accounting mirrors the
     # homepage: only rows with source_count >= 3 occupy display slots, and we
-    # stop once `limit` displayed slots are covered. The premium flash band is
-    # the first `flash_top_n` SUMMARIZABLE stories (op-eds / thin clusters do
-    # not consume a flash slot; the band extends past them).
+    # stop once `limit` displayed slots are covered. Cache HITS are handled
+    # inline (below); cache MISSES are COLLECTED in rank order and summarized in
+    # graduated BATCHES on gemini-2.5-flash (_run_summary_batches) so the whole
+    # displayed top-50 fits inside flash's shared 20-requests/DAY cap.
+    misses: list[dict] = []   # {cid, articles, title, hash} in rank order
     window_used = 0
-    premium_used = 0
     for row in rows:
         if window_used >= limit:
             break
@@ -2190,34 +2620,22 @@ def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 
             metrics["skipped"] += 1
             continue
 
-        is_premium = premium_used < flash_top_n
-        premium_used += 1 if is_premium else 0
-        target_model = GEMINI_FLASH_MODEL if is_premium else None
-
         h = _content_hash(articles)
-        # Skip re-summarization when the cluster's article membership is
-        # unchanged AND a prior summary already meets this slot's quality tier.
-        # A flash-lite target accepts any prior tier. A premium (flash) target
-        # rejects a 'flash-lite' cache row so a story rising into the top 5 is
-        # UPGRADED to flash; it accepts 'flash'/'sonnet' (already >= flash).
-        # (The old gate required tier=='sonnet', which never hit after Claude
-        # retired and forced a full re-summarize of all ~50 clusters/run.)
-        cacheable_tiers = ("sonnet", "flash") if is_premium else ("sonnet", "flash", "flash-lite")
-        # force_resummarize (editorial re-run, 2026-08-11): bypass the cache
-        # entirely so a standalone editorial-stage dispatch can regenerate
-        # every displayed summary regardless of stored hash/tier.
+        # Cache: every displayed summary now targets flash quality (all batches
+        # run on gemini-2.5-flash), so a prior 'sonnet'/'flash' summary of
+        # unchanged membership is a hit; a legacy 'flash-lite' row is a MISS so it
+        # is UPGRADED to flash. force_resummarize (editorial re-run) bypasses the
+        # cache entirely.
         if (not force_resummarize
                 and h == row.get("summary_article_hash")
-                and row.get("summary_tier") in cacheable_tiers):
+                and row.get("summary_tier") in ("sonnet", "flash")):
             metrics["cached"] += 1
-            # Belt-and-suspenders: a summary cached from BEFORE the 90-word cap
+            # Belt-and-suspenders: a summary cached from BEFORE the runaway cap
             # existed (or any over-cap stored value from any path) never re-runs
-            # the trim, because a cache hit skips regeneration. This is exactly
-            # how the day's most stable stories (the flash top-10) kept 175-243
-            # word summaries after the cap shipped. Deterministically trim an
-            # over-cap cached summary in place here: NO LLM call, and the cache
-            # KEY (summary_article_hash + summary_tier) is unchanged, so cache
-            # semantics are preserved. Only the summary text length is corrected.
+            # the trim, because a cache hit skips regeneration. Deterministically
+            # trim an over-cap cached summary in place here: NO LLM call, and the
+            # cache KEY (summary_article_hash + summary_tier) is unchanged, so
+            # cache semantics are preserved. Only the summary text is corrected.
             cached_summary = (row.get("summary") or "").strip()
             if cached_summary and len(cached_summary.split()) > _SUMMARY_WORD_CAP:
                 trimmed = _trim_summary_to_word_cap(cached_summary)
@@ -2232,46 +2650,24 @@ def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 
                               f"trim write failed for {cid}: {e}")
             continue
 
-        result = summarize_cluster(articles, prefer_provider=prefer_provider,
-                                   model=target_model,
-                                   cluster_title=row.get("title"))
-        if not result:
-            metrics["failed"] += 1
-            continue
+        misses.append({"cid": cid, "articles": articles,
+                       "title": row.get("title"), "hash": h})
 
-        update_payload = {
-            "title": result["headline"],
-            # Storage-boundary hard cap. summarize_cluster already trims (this is
-            # a no-op on that output), but wrapping the stored value guarantees
-            # the invariant "every stored summary is <= 90 words" holds no matter
-            # which path produced result, on BOTH the flash top-10 and flash-lite.
-            "summary": _trim_summary_to_word_cap(result["summary"]),
-            "summary_article_hash": h,
-            # Stamp the tier that ACTUALLY answered (migration 063): 'flash' for
-            # gemini-2.5-flash, 'flash-lite' for flash-lite. A premium slot
-            # that fell back to flash-lite (flash exhausted) is stamped
-            # 'flash-lite', so the next run retries the flash upgrade.
-            "summary_tier": _tier_for_label(result.get("_generator") or ""),
-        }
-        if result.get("consensus"):
-            update_payload["consensus_points"] = result["consensus"]
-        if result.get("divergence"):
-            update_payload["divergence_points"] = result["divergence"]
-        if result.get("editorial_importance") is not None:
-            update_payload["editorial_importance"] = result["editorial_importance"]
-        if result.get("story_type") is not None:
-            update_payload["story_type"] = result["story_type"]
-        if result.get("has_binding_consequences") is not None:
-            update_payload["has_binding_consequences"] = result["has_binding_consequences"]
-
-        try:
-            supabase.table("story_clusters").update(update_payload).eq("id", cid).execute()
-            metrics["summarized"] += 1
-            metrics["updated_ids"].append(cid)
-            metrics["updated_summaries"][cid] = result
-        except Exception as e:
-            print(f"  [warn] summarize_top50_after_rerank: DB update failed for {cid}: {e}")
-            metrics["failed"] += 1
+    # Batched flash summarization of every cache miss, in rank order (the lead
+    # stories get solo / small batches, the tail packs denser — see the graduated
+    # _SUMMARY_BATCH_SCHEDULE). Flash request count is fixed by the schedule;
+    # failures retry on flash-lite (bounded), never rule-based.
+    if misses:
+        batch_results = _run_summary_batches(misses, prefer_provider=prefer_provider)
+        for m in misses:
+            result = batch_results.get(m["cid"])
+            if not result:
+                # No LLM summary this run (parse miss survived the bounded
+                # retry, or flash+flash-lite both spent). Keep the prior summary;
+                # the floor pass (8d.6) guarantees the card is never a raw excerpt.
+                metrics["failed"] += 1
+                continue
+            _store_cluster_summary(supabase, m["cid"], result, m["hash"], metrics)
 
     return metrics
 
