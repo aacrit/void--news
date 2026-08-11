@@ -1905,6 +1905,47 @@ MEGA_OVERMERGE_FEED_DUMP_JACCARD_FLOOR = 0.15
 MEGA_OVERMERGE_COHERENT_ENTITY_FLOOR = 0.80
 MEGA_OVERMERGE_COHERENT_COVERAGE_FLOOR = 0.50
 
+# O6 (2026-08-10, CEO-directed): two residual over-merge classes verified on a
+# live run and SEPARATE from the Branch-B Phase-2/3 df-gate work (those only
+# guard the entity / title MERGE paths; a bag that forms in Phase 1 TF-IDF never
+# reaches them). Both bags survive every existing split trigger because
+# topic_coherence is BLIND to them (it reported 1.00 on a genuinely 0.25-coherent
+# live bag), so the coherent-override exempts them. NEITHER new rule reads
+# topic_coherence for its decision; both lean on entity_convergence (NER-based,
+# reliable) and title agreement, and every split is still confirmed by
+# _force_split_cluster's collapse-to-1 guard.
+#
+# RULE A - single-publisher feed dump (the live "Will Scharf" bag). One outlet's
+# feed of DISTINCT stories about a recurring subject (a person / org named in
+# every item) collapses into one cluster: entity_convergence is high (the subject
+# recurs) so the coherent-override would exempt it, yet the headlines barely
+# agree (distinct events). The tell is single-publisher dominance PLUS low title
+# agreement. A genuine well-covered event is carried by MANY outlets
+# (dom_pub_share low) OR its sibling headlines repeat the event's vocabulary
+# (title_jac high), so neither floor is met. Checked BEFORE the coherent-override
+# because such a pile can be entity-saturated. Measured margins: every genuine
+# good-merge reference sits at dom_pub_share <= 0.33; the bag at 1.00.
+SINGLE_PUB_DOMINANCE_FLOOR = 0.80
+SINGLE_PUB_TITLE_JAC_CEIL = 0.25
+# RULE B - generic-topic-token bridge (the live "Supreme Court" bag). Two
+# genuinely distinct events (a mail-in-ballot plea and a redistricting-map
+# ruling) merge on shared GENERIC institutional / procedural HEADLINE vocabulary
+# ("Supreme Court Weighs Emergency Application ...") while their bodies name
+# entirely different actors (Pennsylvania / ballots vs Louisiana / gerrymander).
+# The signature is a HIGH title-Jaccard (generic headlines strongly overlap) with
+# NO single dominant actor unifying the pile. entity_convergence (any-of-top-3)
+# is USELESS here: each sub-event contributes a top-3 entity, so every article
+# matches at least one and entity_conv pins to ~1.0. entity_dominant_share (the
+# SINGLE most-common entity's coverage) is the honest signal: a real event names
+# one actor across most members (measured: every genuine good-merge reference
+# >= 0.60), a two-topic bag's top entity only spans its own half (the SCOTUS bag
+# at 0.50). The high title-Jaccard floor is the second guard: no genuine
+# good-merge reference reaches 0.45, the bag sits at 0.64. Checked BEFORE the
+# coherent-override (which entity_conv=1.0 would otherwise satisfy). A genuine
+# event fails BOTH floors, and _force_split_cluster's collapse-to-1 is the net.
+GENERIC_BRIDGE_TITLE_JAC_FLOOR = 0.45    # generic headlines strongly overlap
+GENERIC_BRIDGE_DOMINANT_CEIL = 0.60      # no single actor covers most members
+
 
 def _overmerge_split_reason(
     entity_conv: float,
@@ -1912,16 +1953,46 @@ def _overmerge_split_reason(
     title_cov: float,
     dom_pub_share: float,
     src_ratio: float,
+    entity_dominant_share: float = 1.0,
 ) -> str | None:
     """Decide whether an over-size cluster should be force-split, and why.
 
     Pure/deterministic so it is unit-testable without building real clusters.
-    Returns the trigger name ('gross' | 'title-minority' | 'feed-dump') or None.
+    Returns the trigger name ('single-publisher' | 'generic-bridge' | 'gross' |
+    'title-minority' | 'feed-dump') or None.
 
     All triggers are coherence-gated; the coherent-override short-circuits any
     entity-saturated + title-representative (i.e. genuinely coherent) pile so a
-    real large single-event story can never match a trigger.
+    real large single-event story can never match a trigger. The exceptions are
+    the O6 rules (single-publisher, generic-bridge), checked FIRST because both
+    bag shapes pin entity_conv to ~1.0 and would otherwise be wrongly exempted.
     """
+    # (O6 RULE A) single-publisher feed dump: one outlet dominates AND the
+    # headlines barely agree => a feed of DISTINCT stories about a recurring
+    # subject, not one event. Checked BEFORE the coherent-override because such a
+    # pile is often entity-saturated (the subject recurs) and would otherwise be
+    # wrongly exempted. A genuine well-covered event has many voices
+    # (dom_pub_share low) OR high title agreement, so neither floor is met.
+    if (
+        dom_pub_share >= SINGLE_PUB_DOMINANCE_FLOOR
+        and title_jac < SINGLE_PUB_TITLE_JAC_CEIL
+    ):
+        return "single-publisher"
+
+    # (O6 RULE B) generic-topic-token bridge: generic headlines strongly overlap
+    # (title_jac high) but NO single actor unifies the pile
+    # (entity_dominant_share low) => two distinct events bridged on institutional
+    # headline vocabulary. Checked BEFORE the coherent-override because
+    # entity_conv (any-of-top-3) pins to ~1.0 when each sub-event contributes a
+    # top entity. A real event names one actor across most members (high
+    # dominant share) AND does not reach the high title-Jaccard floor, so it
+    # fails both.
+    if (
+        title_jac >= GENERIC_BRIDGE_TITLE_JAC_FLOOR
+        and entity_dominant_share < GENERIC_BRIDGE_DOMINANT_CEIL
+    ):
+        return "generic-bridge"
+
     # Coherent single-event: entity-saturated AND title represents the members.
     if (
         entity_conv >= MEGA_OVERMERGE_COHERENT_ENTITY_FLOOR
@@ -1956,6 +2027,73 @@ def _overmerge_split_reason(
         return "feed-dump"
 
     return None
+
+
+def _overmerge_split_reason_smallbag(
+    entity_conv: float,
+    title_jac: float,
+    title_cov: float,
+    dom_pub_share: float,
+    entity_dominant_share: float,
+) -> str | None:
+    """Small-bag (n < MEGA_OVERMERGE_ARTICLE_FLOOR) split decision.
+
+    Conservative subset of _overmerge_split_reason: only the three
+    size-independent, topic_coherence-robust triggers -- single-publisher (O6
+    RULE A), generic-topic-bridge (O6 RULE B), gross. The title-minority and
+    feed-dump triggers are DELIBERATELY excluded here: both lean on
+    topic_coherence / wire-amplification statistics that are noisy at small n,
+    and the CEO audit flagged topic_coherence as blind to these bags. Every
+    trigger below decides from entity signals (NER-based) and title agreement,
+    and the split is still confirmed by _force_split_cluster.
+    """
+    # RULE A -- single-publisher feed dump. Checked first (see the >=30 twin).
+    if (
+        dom_pub_share >= SINGLE_PUB_DOMINANCE_FLOOR
+        and title_jac < SINGLE_PUB_TITLE_JAC_CEIL
+    ):
+        return "single-publisher"
+    # RULE B -- generic-topic-token bridge: generic headlines strongly overlap
+    # but no single actor unifies the pile. Also before the coherent-override.
+    if (
+        title_jac >= GENERIC_BRIDGE_TITLE_JAC_FLOOR
+        and entity_dominant_share < GENERIC_BRIDGE_DOMINANT_CEIL
+    ):
+        return "generic-bridge"
+    # Coherent single-event override: entity-saturated AND title-representative.
+    if (
+        entity_conv >= MEGA_OVERMERGE_COHERENT_ENTITY_FLOOR
+        and title_cov >= MEGA_OVERMERGE_COHERENT_COVERAGE_FLOOR
+    ):
+        return None
+    # Gross garbage: near-zero shared entities AND near-zero titles (unchanged
+    # from the historical small-bag gate).
+    if (
+        entity_conv < MEGA_OVERMERGE_ENTITY_CONV_FLOOR
+        and title_jac < MEGA_OVERMERGE_TITLE_JACCARD_FLOOR
+    ):
+        return "gross"
+    return None
+
+
+def _cheap_dominant_publisher_share(articles: list[dict], sample_cap: int = 30) -> float:
+    """Dominant publisher's share of the cluster's articles, with NO spaCy NER.
+
+    A cheap prefilter twin to _cheap_avg_title_jaccard so the small-bag path can
+    detect the single-publisher shape (O6 RULE A) before paying for full
+    cohesion. Mirrors _cluster_cohesion's dominant_publisher_share exactly.
+    Returns 1.0 when no publisher slugs are present (conservative: treated as a
+    single-publisher candidate so the full cohesion pass makes the real call)."""
+    arts = articles[:sample_cap]
+    pub_counts: dict[str, int] = {}
+    for a in arts:
+        slug = a.get("source_slug") or a.get("source_id", "")
+        if slug:
+            pub_counts[slug] = pub_counts.get(slug, 0) + 1
+    n = len(arts)
+    if not pub_counts or n == 0:
+        return 1.0
+    return max(pub_counts.values()) / n
 
 
 def _cheap_avg_title_jaccard(articles: list[dict], sample_cap: int = 20) -> float:
@@ -2036,6 +2174,7 @@ def split_mega_clusters(
             title_jac = coh.get("avg_title_jaccard", 1.0)
             cohesion = coh.get("cohesion_score", 100.0)
             dom_pub_share = coh.get("dominant_publisher_share", 1.0)
+            entity_dominant_share = coh.get("entity_dominant_share", 1.0)
             # Title-vs-content coverage (Fix 1): computed over ALL members (not
             # the cohesion sample) since it is a cheap keyword-set operation.
             title_cov = topic_coherence(
@@ -2049,6 +2188,7 @@ def split_mega_clusters(
                 title_cov=title_cov,
                 dom_pub_share=dom_pub_share,
                 src_ratio=src_ratio,
+                entity_dominant_share=entity_dominant_share,
             )
 
             if reason:
@@ -2100,36 +2240,55 @@ def split_mega_clusters(
             and not c.get("mega_cluster_capped")
         ):
             # Small-bag catch-all (Layer 2). A grab-bag is a grab-bag at ANY
-            # size: force-split when the pile is GROSSLY incoherent (shares
-            # almost no entities AND almost no title words). Cheap title-jaccard
-            # prefilter first so full spaCy cohesion (entity convergence) is only
-            # computed on clusters whose headlines barely overlap — a small
-            # COHERENT story clears the prefilter and never pays for NER.
-            if (
-                _cheap_avg_title_jaccard(c.get("articles") or [])
-                < MEGA_OVERMERGE_TITLE_JACCARD_FLOOR
-            ):
+            # size. Three shapes are caught here via the conservative
+            # _overmerge_split_reason_smallbag: gross incoherence (historical),
+            # single-publisher feed dump (O6 RULE A), and the generic-topic-token
+            # bridge (O6 RULE B). Cheap NER-free prefilters gate the expensive
+            # spaCy cohesion pass so a small COHERENT story never pays for NER:
+            #   * cheap title-Jaccard < gross floor        -> gross candidate
+            #   * cheap dom-publisher-share high + low tj   -> single-pub candidate
+            #   * cheap title-Jaccard >= bridge floor       -> generic-bridge candidate
+            # (the middle title-Jaccard band is a mildly-overlapping pile with no
+            # clear bag signal; it is left untouched, as before.)
+            arts = c.get("articles") or []
+            cheap_tj = _cheap_avg_title_jaccard(arts)
+            cheap_dom = _cheap_dominant_publisher_share(arts)
+            admit = (
+                cheap_tj < MEGA_OVERMERGE_TITLE_JACCARD_FLOOR
+                or (cheap_dom >= SINGLE_PUB_DOMINANCE_FLOOR
+                    and cheap_tj < SINGLE_PUB_TITLE_JAC_CEIL)
+                or cheap_tj >= GENERIC_BRIDGE_TITLE_JAC_FLOOR
+            )
+            if admit:
                 coh = _cluster_cohesion(c, source_map=c.get("_source_map"))
                 entity_conv = coh.get("entity_convergence", 1.0)
                 title_jac = coh.get("avg_title_jaccard", 1.0)
-                # GROSS AND-gate only. A small coherent story scores high
-                # entity_convergence (its members share the event's actors) and
-                # is exempt; the two floors are the same ones the >=30 gross
-                # trigger uses, so the split reason is identical, just size-
-                # independent. _force_split_cluster's collapse-to-1 guard is the
-                # final backstop for a borderline pile.
-                if (
-                    entity_conv < MEGA_OVERMERGE_ENTITY_CONV_FLOOR
-                    and title_jac < MEGA_OVERMERGE_TITLE_JACCARD_FLOOR
-                ):
+                dom_pub_share = coh.get("dominant_publisher_share", 1.0)
+                entity_dominant_share = coh.get("entity_dominant_share", 1.0)
+                # title_cov feeds ONLY the coherent-override exemption (never a
+                # positive split decision), so its known blindness cannot cause a
+                # false split here -- at worst it fails to exempt, and the split
+                # is still arbitrated by _force_split_cluster's collapse-to-1.
+                title_cov = topic_coherence(
+                    c.get("title", "") or "", arts
+                )
+                reason = _overmerge_split_reason_smallbag(
+                    entity_conv=entity_conv,
+                    title_jac=title_jac,
+                    title_cov=title_cov,
+                    dom_pub_share=dom_pub_share,
+                    entity_dominant_share=entity_dominant_share,
+                )
+                if reason:
                     sub = _force_split_cluster(c)
                     if len(sub) > 1:
                         if verbose:
                             print(
-                                f"  [Phase5/smallbag-split:gross] "
+                                f"  [Phase5/smallbag-split:{reason}] "
                                 f"'{c.get('title','')[:55]!r}' (art={n_articles}, "
                                 f"src={sc}, ent_conv={entity_conv:.2f}, "
-                                f"title_jac={title_jac:.2f}) force-split into "
+                                f"title_jac={title_jac:.2f}, "
+                                f"pub_share={dom_pub_share:.2f}) force-split into "
                                 f"{len(sub)} sub-clusters"
                             )
                         out.extend(sub)
@@ -2282,6 +2441,7 @@ def _cluster_cohesion(
     if n == 0:
         return {
             "avg_title_jaccard": 0.0, "entity_convergence": 0.0,
+            "entity_dominant_share": 0.0,
             "wire_amp_ratio": 0.0, "tier_concentration": 1.0,
             "dominant_publisher_share": 1.0, "cohesion_score": 0.0,
         }
@@ -2314,19 +2474,33 @@ def _cluster_cohesion(
     # Reuses _extract_cluster_entities (already capped at 10 articles
     # internally for cost), then computes a separate per-article entity
     # set on the same sample.
+    #
+    # ALSO computes entity_dominant_share (O6): the coverage of the SINGLE most
+    # common entity. entity_convergence (any-of-top-3) is fooled to ~1.0 by a
+    # two-topic bag where each sub-event contributes a top-3 entity (every
+    # article then matches at least one), so it cannot see a generic-topic
+    # bridge of two entity-rich events. The dominant single entity's coverage
+    # does: one real event has one actor named across most members (high share),
+    # whereas a two-topic bag's top entity only covers its own half (~0.5).
     cluster_entities = _extract_cluster_entities(articles)
     if not cluster_entities:
         entity_conv = 0.0
+        entity_dominant_share = 0.0
     else:
         top3 = sorted(cluster_entities.items(), key=lambda kv: -kv[1])[:3]
         top3_keys = {k for k, _ in top3}
+        top1_key = top3[0][0]
         # Per-article entity sets via the SAME normalisation as cluster ents
         per_art_hits = 0
+        top1_hits = 0
         for art in articles:
             ents = _extract_cluster_entities([art])
             if any(k in ents for k in top3_keys):
                 per_art_hits += 1
+            if top1_key in ents:
+                top1_hits += 1
         entity_conv = per_art_hits / n
+        entity_dominant_share = top1_hits / n
 
     # ── wire-amp ratio: articles / unique source voices ─────────────────
     sc = int(cluster.get("source_count", 0) or 0)
@@ -2373,6 +2547,7 @@ def _cluster_cohesion(
     return {
         "avg_title_jaccard": round(jaccard, 3),
         "entity_convergence": round(entity_conv, 3),
+        "entity_dominant_share": round(entity_dominant_share, 3),
         "wire_amp_ratio": round(amp_ratio, 2),
         "tier_concentration": round(tier_concentration, 3),
         "dominant_publisher_share": round(dom_pub_share, 3),

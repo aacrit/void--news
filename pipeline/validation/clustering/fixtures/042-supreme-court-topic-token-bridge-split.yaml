@@ -1,0 +1,106 @@
+id: supreme-court-topic-token-bridge-split-2026-08-10
+name: "Two distinct SCOTUS matters bridged on generic 'Supreme Court' headlines must SPLIT (O6 RULE B)"
+failure_date: "2026-08-10"
+failure_kind: generic-topic-bridge
+articles:
+  # Story A -- a Pennsylvania mail-in ballot emergency plea. Distinct actors:
+  # Pennsylvania, Republicans, mail-in ballots, election deadline.
+  - id: sc-ballot-1
+    title: "Supreme Court Weighs Emergency Application at High Court"
+    summary: "Republicans asked the Supreme Court to halt a Pennsylvania mail-in ballot count."
+    full_text: >
+      Republicans asked the Supreme Court to halt the count of late-arriving
+      Pennsylvania mail-in ballots past the state election deadline. The
+      Pennsylvania secretary of state defended the mail-in ballot count as
+      lawyers for the Republican Party sought an emergency stay of the
+      Pennsylvania ballot tally.
+    source: { slug: ap-news, country: US, tier: us_major }
+    published_at: "2026-08-09T09:00Z"
+  - id: sc-ballot-2
+    title: "Justices Weigh Emergency Application Before Supreme Court"
+    summary: "The justices weighed an emergency plea over Pennsylvania mail-in ballots."
+    full_text: >
+      Republicans asked the Supreme Court to halt the count of late-arriving
+      Pennsylvania mail-in ballots past the state election deadline. The
+      Pennsylvania secretary of state defended the mail-in ballot count as
+      lawyers for the Republican Party sought an emergency stay of the
+      Pennsylvania ballot tally.
+    source: { slug: reuters, country: US, tier: us_major }
+    published_at: "2026-08-09T09:30Z"
+  - id: sc-ballot-3
+    title: "Supreme Court Weighs Emergency Application in New Case"
+    summary: "The Supreme Court considered a Pennsylvania mail-in ballot deadline case."
+    full_text: >
+      Republicans asked the Supreme Court to halt the count of late-arriving
+      Pennsylvania mail-in ballots past the state election deadline. The
+      Pennsylvania secretary of state defended the mail-in ballot count as
+      lawyers for the Republican Party sought an emergency stay of the
+      Pennsylvania ballot tally.
+    source: { slug: npr, country: US, tier: us_major }
+    published_at: "2026-08-09T10:00Z"
+
+  # Story B -- a Louisiana congressional redistricting-map ruling. Distinct
+  # actors: Louisiana, Black voters, gerrymander, Voting Rights Act. Shares ONLY
+  # the generic "Supreme Court Weighs Emergency Application ..." headline frame
+  # with Story A; no specific actor in common.
+  - id: sc-map-1
+    title: "Supreme Court Weighs Emergency Application at High Court Again"
+    summary: "The Supreme Court weighed a Louisiana redistricting map challenge."
+    full_text: >
+      Black voters asked the Supreme Court to strike the Louisiana congressional
+      redistricting map as an illegal racial gerrymander under the Voting Rights
+      Act. The Louisiana attorney general defended the redistricting map as
+      lawyers for the voters sought to redraw the Louisiana district lines.
+    source: { slug: cnn, country: US, tier: us_major }
+    published_at: "2026-08-09T09:10Z"
+  - id: sc-map-2
+    title: "Justices Weigh Emergency Application Before Supreme Court Today"
+    summary: "The justices considered the Louisiana voting-map gerrymander challenge."
+    full_text: >
+      Black voters asked the Supreme Court to strike the Louisiana congressional
+      redistricting map as an illegal racial gerrymander under the Voting Rights
+      Act. The Louisiana attorney general defended the redistricting map as
+      lawyers for the voters sought to redraw the Louisiana district lines.
+    source: { slug: nytimes, country: US, tier: us_major }
+    published_at: "2026-08-09T09:40Z"
+  - id: sc-map-3
+    title: "Supreme Court Weighs Emergency Application in Another Case"
+    summary: "The Supreme Court heard the Louisiana congressional-map dispute."
+    full_text: >
+      Black voters asked the Supreme Court to strike the Louisiana congressional
+      redistricting map as an illegal racial gerrymander under the Voting Rights
+      Act. The Louisiana attorney general defended the redistricting map as
+      lawyers for the voters sought to redraw the Louisiana district lines.
+    source: { slug: washington-post, country: US, tier: us_major }
+    published_at: "2026-08-09T10:10Z"
+expectation:
+  type: should_split
+  member_ids: [sc-ballot-1, sc-map-1]
+  min_clusters: 2
+rationale: |
+  Live over-merge (2026-08-10), verified SEPARATE from the Branch-B Phase-2/3
+  df-gate work. Two genuinely distinct Supreme Court matters (a Pennsylvania
+  mail-in ballot emergency plea and a Louisiana redistricting-map ruling) merge
+  because their headlines share the generic institutional frame "Supreme Court
+  Weighs Emergency Application ...", which crosses the Phase-3 title-Jaccard
+  threshold. Their BODIES name entirely different actors (Pennsylvania / ballots
+  / Republicans vs Louisiana / gerrymander / Voting Rights Act).
+
+  This bag defeats every prior split trigger:
+    * topic_coherence reports 1.00 (BLIND to the defect -- do NOT use it as the
+      success measure), so the coherent-override would exempt the pile.
+    * entity_convergence (any-of-top-3) pins to ~1.0 because each sub-event
+      contributes a top-3 entity, so every article matches at least one.
+    * dominant_publisher_share is low (0.17, six outlets), so the single-source
+      feed-dump trigger never fires.
+
+  O6 RULE B keys on the two honest signals: a HIGH title-Jaccard (0.64 here;
+  measured, no genuine good-merge reference reaches the 0.45 floor) with a LOW
+  entity_dominant_share (0.50 -- the single most-common entity spans only its
+  own half; every genuine good-merge reference is >= 0.60). _force_split_cluster
+  then re-clusters the distinct bodies at the stricter gate and recovers the two
+  real stories (Pennsylvania ballots vs Louisiana map). Its collapse-to-1 guard
+  is the backstop that keeps a real single event whole.
+
+  Success measure: hand-labeled split (ballot article and map article land in
+  different clusters), NOT topic_coherence.
