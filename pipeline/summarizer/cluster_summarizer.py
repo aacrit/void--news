@@ -30,6 +30,7 @@ def _smart_generate_json(prompt: str,
                           max_output_tokens: int = 8192,
                           prefer_provider: str | None = None,
                           model: str | None = None,
+                          temperature: float = 0.0,
                           ) -> tuple[dict | None, str]:
     """Route a summary call to Gemini. Returns (result, label).
 
@@ -46,6 +47,11 @@ def _smart_generate_json(prompt: str,
 
     prefer_provider is retained for signature compatibility; every value now
     routes to Gemini.
+
+    temperature defaults to 0.0 here (the summary path): summaries are grounded
+    extraction, not creative writing, so greedy decoding removes sampling-induced
+    invention and makes output reproducible for the content-hash cache. The daily
+    brief path calls gemini_client.generate_json directly and keeps its 0.2.
     """
     if gemini_is_available():
         # Premium requests try flash first, then degrade to flash-lite within
@@ -57,7 +63,7 @@ def _smart_generate_json(prompt: str,
             result = gemini_generate_json(
                 prompt, system_instruction=system_instruction,
                 count_call=True, max_output_tokens=max_output_tokens,
-                model=m,
+                model=m, temperature=temperature,
             )
             if result and isinstance(result, dict):
                 label = "gemini-flash" if m == GEMINI_FLASH_MODEL else "gemini-flash-lite"
@@ -624,6 +630,66 @@ _AGE_IS_RE = _re.compile(
     _re.IGNORECASE,
 )
 
+# Grounding audit (3f, warning-only). Numeric tokens: integers, decimals,
+# percentages, money, 4-digit years, with optional thousands separators and a
+# leading $ / trailing %. Candidate proper nouns: runs of two or more
+# capitalized words (a leading determiner is stripped before the check so
+# "The Strait" tests as "Strait"). A word ends at any period, so a run can never
+# span a sentence boundary ("Tuesday. Reyes" is two separate words, not a run).
+_GROUNDING_NUMBER_RE = _re.compile(r"\$?\d[\d,]*(?:\.\d+)?%?")
+_GROUNDING_PROPER_NOUN_RE = _re.compile(
+    r"\b[A-Z][a-zA-Z'-]+(?:\s+[A-Z][a-zA-Z'-]+)+\b"
+)
+_GROUNDING_LEADING_DETERMINERS = {
+    "the", "a", "an", "this", "that", "these", "those",
+    "his", "her", "its", "their", "our", "your", "my",
+}
+
+
+def _flag_ungrounded_tokens(summary: str, source_text: str) -> list[str]:
+    """Warning-only grounding audit. Generalizes _drop_ungrounded_ages from the
+    person-age case to ALL figures and named entities. Returns a sorted list of
+    tokens that appear in the summary but NOT in the concatenated source article
+    text: numeric tokens (integers, decimals, percentages, money, 4-digit years)
+    and candidate proper nouns (capitalized multi-word runs).
+
+    Never mutates the summary — the hit rate is logged so we can measure the
+    hallucination rate over a few runs before escalating to sentence drops.
+    Conservative (a token counts as grounded whenever it appears anywhere in the
+    source), matching the age check, so the warning under-reports rather than
+    cries wolf. Deterministic."""
+    if not summary or not summary.strip() or not source_text:
+        return []
+    src = source_text.lower()
+    # Source digits with thousands separators removed so "1,200" grounds "1200".
+    src_num = _re.sub(r"(?<=\d),(?=\d)", "", src)
+    flagged: set[str] = set()
+
+    # --- numeric tokens ---
+    for m in _GROUNDING_NUMBER_RE.finditer(summary):
+        raw = m.group(0).strip()
+        digits = _re.sub(r"[^0-9]", "", raw)
+        if not digits:
+            continue
+        # Grounded if the exact digit run (no adjacent digits) appears in source.
+        if _re.search(r"(?<!\d)" + _re.escape(digits) + r"(?!\d)", src_num):
+            continue
+        flagged.add(raw)
+
+    # --- candidate proper nouns (capitalized multi-word runs) ---
+    for m in _GROUNDING_PROPER_NOUN_RE.finditer(summary):
+        words = m.group(0).split()
+        if words and words[0].lower() in _GROUNDING_LEADING_DETERMINERS:
+            words = words[1:]
+        if len(words) < 2:
+            continue  # a determiner + single name is not a multi-word entity run
+        phrase = " ".join(words)
+        if phrase.lower() in src:
+            continue
+        flagged.add(phrase)
+
+    return sorted(flagged)
+
 
 def _split_sentences(text: str) -> list[str]:
     """Split into sentences on terminal punctuation. Shares the regex the
@@ -842,7 +908,18 @@ def _apply_summary_postchecks(summary: str, source_text: str = "") -> str:
         s = _drop_ungrounded_ages(s, source_text)  # 3e ungrounded ages
     s = _drop_terminal_restatement(s)              # 3b terminal restatement
     s = _trim_summary_to_word_cap(s)               # 3a hard 90-word trim
-    return s.strip()
+    s = s.strip()
+    # 3f grounding audit (warning-only, no drops yet). Logs figures / proper
+    # nouns in the FINAL summary that are absent from the source text so we can
+    # measure the hallucination hit rate before escalating to sentence removal.
+    if source_text:
+        ungrounded = _flag_ungrounded_tokens(s, source_text)
+        if ungrounded:
+            print(
+                f"  [grounding] tokens not found in source text "
+                f"(warning only, no drop): {ungrounded}"
+            )
+    return s
 
 
 def _detect_summary_source_refs(summary: str, source_names: list[str]) -> list[str]:
@@ -1279,6 +1356,41 @@ def _build_source_names_line(articles: list[dict]) -> str:
     return label + ", ".join(names) + "\n"
 
 
+# Per-article body budget in the prompt. ~1800 chars is roughly 300-350 words
+# of real reporting per source; 10 sources keep the whole cluster a few thousand
+# tokens, well within a single free-tier request (the free-tier cap is
+# REQUESTS/day, not input tokens), so feeding real bodies stays $0 and adds no
+# extra call.
+_ARTICLE_BODY_MAX_CHARS = 1800
+
+
+def _sentence_bounded_excerpt(text: str, max_chars: int = _ARTICLE_BODY_MAX_CHARS) -> str:
+    """Return a leading slice of `text` no longer than ~max_chars, cut on the
+    LAST sentence terminator ('.', '!' or '?') at or before the limit so no
+    sentence is severed mid-fact. Returns the whole text when already within the
+    limit. No trailing ellipsis is added, so the summarizer never mistakes a hard
+    cut for a mid-sentence continuation. Deterministic."""
+    t = (text or "").strip()
+    if not t:
+        return ""
+    if len(t) <= max_chars:
+        return t
+    window = t[:max_chars]
+    # Prefer a terminator followed by whitespace (a real sentence break) over a
+    # bare period, which may sit inside an abbreviation ("U.S.") or a decimal.
+    cut = max(
+        window.rfind(". "), window.rfind("! "), window.rfind("? "),
+        window.rfind(".\n"), window.rfind("!\n"), window.rfind("?\n"),
+    )
+    if cut == -1:
+        cut = max(window.rfind("."), window.rfind("!"), window.rfind("?"))
+    # Only honor the sentence cut when it keeps a substantial excerpt; otherwise
+    # fall back to the hard character window (still no ellipsis).
+    if cut != -1 and cut >= max_chars // 2:
+        return window[: cut + 1].strip()
+    return window.strip()
+
+
 def _build_articles_block(articles: list[dict], max_articles: int = 10) -> str:
     """
     Build the articles context block for the prompt.
@@ -1292,8 +1404,11 @@ def _build_articles_block(articles: list[dict], max_articles: int = 10) -> str:
     its publication timestamp so Gemini can distinguish fresh developments
     from older background.
 
-    Limits to max_articles and includes summaries up to 400 chars to give
-    Gemini sufficient material for comprehensive synthesis.
+    Limits to max_articles and feeds the article BODY (full_text), sentence-
+    bounded to ~_ARTICLE_BODY_MAX_CHARS, so the model summarizes real reporting
+    rather than a 400-char RSS excerpt. Falls back to the RSS `summary` field
+    when full_text is empty. Grounds the summary in the actual articles, which
+    the grounding post-check (_flag_ungrounded_tokens) then audits.
     """
     _TIER_LABEL_MAP = {
         "us_major": "US Source",
@@ -1318,6 +1433,7 @@ def _build_articles_block(articles: list[dict], max_articles: int = 10) -> str:
     lines = []
     for i, art in enumerate(sorted_articles):
         title = (art.get("title", "") or "").strip()
+        full_text = (art.get("full_text", "") or "").strip()
         summary = (art.get("summary", "") or "").strip()
         pub_date = (art.get("published_at", "") or "")[:16]  # YYYY-MM-DDTHH:MM
 
@@ -1330,12 +1446,18 @@ def _build_articles_block(articles: list[dict], max_articles: int = 10) -> str:
         if pub_date:
             header += f"  ({pub_date})"
 
-        if len(summary) > 400:
-            summary = summary[:397] + "..."
+        # Feed the actual article BODY when we have it (sentence-bounded so no
+        # fact is severed), falling back to the RSS summary excerpt otherwise.
+        # This is the grounding win: the model summarizes real reporting instead
+        # of a 400-char RSS teaser it has to extrapolate from.
+        if full_text:
+            body = _sentence_bounded_excerpt(full_text)
+        else:
+            body = summary
 
         lines.append(header)
-        if summary:
-            lines.append(f"    {summary}")
+        if body:
+            lines.append(f"    {body}")
         lines.append("")
 
     return "\n".join(lines)
