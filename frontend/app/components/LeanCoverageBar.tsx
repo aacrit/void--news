@@ -71,7 +71,7 @@ export default function LeanCoverageBar({ spread, compact }: LeanCoverageBarProp
         )}
       </span>
       <span className="lean-coverage__counts" aria-hidden="true">
-        {left}<span className="lean-coverage__counts-sep">·</span>{center}<span className="lean-coverage__counts-sep">·</span>{right}
+        L&nbsp;{left}<span className="lean-coverage__counts-sep">·</span>C&nbsp;{center}<span className="lean-coverage__counts-sep">·</span>R&nbsp;{right}
       </span>
     </div>
   );

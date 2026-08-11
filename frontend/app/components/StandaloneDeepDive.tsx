@@ -18,7 +18,6 @@ import NavBar from "./NavBar";
 import Sigil from "./Sigil";
 import DeepDiveSpectrum from "./DeepDiveSpectrum";
 import BiasSnapshot from "./BiasSnapshot";
-import SixLenses from "./SixLenses";
 import SummaryWithContradictions from "./SummaryWithContradictions";
 import ClaimConsensusSection from "./ClaimConsensusSection";
 import ComparativeView from "./ComparativeView";
@@ -217,16 +216,8 @@ export default function StandaloneDeepDive({
             </section>
           ) : null}
 
-          {/* ---- Six Lenses — full 6-axis bias breakdown ---- */}
-          {story.sigilData && !story.sigilData.pending && (
-            <section className="story-page__section" aria-label="Six Lenses">
-              <hr className="ink-rule" style={{ margin: "var(--space-5) 0 var(--space-4)" }} aria-hidden="true" />
-              <SixLenses
-                sigilData={{ ...story.sigilData, agreement: Math.round(story.sigilData.agreement) }}
-                visible={true}
-              />
-            </section>
-          )}
+          {/* Six Lenses callout removed 2026-08-11 (CEO) — kept clean; the
+              spectrum + agree/dispute panel carry the primary bias signal. */}
 
           {/* ---- Source Perspectives — consensus/divergence + read-all-sides.
               Reuses ComparativeView, gated on cross-lean sources exactly like

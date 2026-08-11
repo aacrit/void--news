@@ -8,7 +8,12 @@ Scores each article on a 0-100 political lean spectrum:
 
 Uses rule-based NLP heuristics (no LLM API calls):
     - Partisan keyword lexicons (90+ terms per side)
-    - Length-adaptive baseline blending (0.50/0.50 short → 0.90/0.10 long)
+    - Baseline-anchored calibration: score = baseline + clamp(text - baseline,
+      +/-DELTA) * length_confidence. The outlet's reputation (baseline) is the
+      anchor; the article's own words calibrate around it within a bounded
+      delta and can never fully erase the baseline (collapse-to-center fix,
+      2026-08). Calm copy moves a partisan outlet TOWARD center; partisan copy
+      pushes it FURTHER out.
     - Entity sentiment via spaCy NER + TextBlob
     - Framing phrase detection
 """
@@ -471,6 +476,22 @@ BASELINE_MAP: dict[str, int] = {
 }
 
 # ---------------------------------------------------------------------------
+# Baseline-anchored calibration model (2026-08 collapse-to-center fix).
+#
+# The outlet's reputation (baseline) is the ANCHOR; the article's own words
+# CALIBRATE around it within a bounded delta. Reputation is never erased.
+#
+#     score = baseline + clamp(text_score - baseline, -DELTA, +DELTA) * confidence
+#
+# DELTA bounds how far text may move the score off the baseline; confidence
+# scales that movement by article length so a thin RSS stub barely calibrates.
+# ---------------------------------------------------------------------------
+_TEXT_DELTA_MAX = 10          # max points article text may move a non-state outlet off baseline
+_STATE_TEXT_DELTA_MAX = 8     # tighter for state-affiliated: their non-Western vocab makes
+                              # text less reliable, so government alignment anchors harder
+_LENGTH_FULL_CONFIDENCE = 150  # words at which text earns full calibration authority
+
+# ---------------------------------------------------------------------------
 # Option A: Quote/attribution context detection for keyword scoring.
 #
 # Keywords inside quotation marks or near attribution verbs are likely
@@ -866,45 +887,19 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None, do
     # editorial alignment exerts stronger pull toward the calibrated baseline.
     is_state_affiliated = bool(source.get("state_affiliated"))
 
-    # Length-adaptive baseline blending.
-    #
-    # Most RSS-sourced articles arrive as 30-80 word summaries.  With so little
-    # text, the keyword scorer rarely accumulates enough total weight (>=4) to
-    # move the sigmoid past 50%, so the text score stays near 50 regardless of
-    # the source's actual lean.  The source baseline — which encodes calibrated
-    # editorial lean from data/sources.json — should carry proportionally more
-    # weight when text evidence is thin.
-    #
-    # Word-count buckets (based on combined title + full_text):
-    #   <50 words   → 0.50 text / 0.50 baseline  (almost no evidence)
-    #   50-150 words → 0.70 text / 0.30 baseline  (RSS summary range)
-    #   150-500 words → 0.85 text / 0.15 baseline (current default, enough for signal)
-    #   500+ words   → 0.90 text / 0.10 baseline  (full article, trust text)
-    #
-    # For state-affiliated sources, the baseline weight floors at 0.30 (the
-    # existing state-media correction) so that correction is never weakened by
-    # long articles that happen to use neutral geopolitical vocabulary.
+    # Article length (combined title + full_text). Drives calibration
+    # confidence: thin text earns little movement off the outlet baseline.
     _wc = len(combined.split())
-    if _wc < 50:
-        text_weight, baseline_weight = 0.50, 0.50
-    elif _wc < 150:
-        text_weight, baseline_weight = 0.70, 0.30
-    elif _wc < 500:
-        text_weight, baseline_weight = 0.85, 0.15
-    else:
-        text_weight, baseline_weight = 0.90, 0.10
-
-    if is_state_affiliated:
-        # State-media correction: baseline weight never falls below 0.30.
-        baseline_weight = max(baseline_weight, 0.30)
-        text_weight = 1.0 - baseline_weight
 
     if not combined.strip():
         return {
-            "score": source_baseline,
+            "score": int(round(source_baseline)),
             "rationale": {"keyword_score": 50, "framing_shift": 0, "entity_shift": 0,
-                          "sentence_direction": 0,
-                          "source_baseline": source_baseline, "top_left_keywords": [],
+                          "sentence_direction": 0, "text_score": 50,
+                          "source_baseline": round(source_baseline, 1),
+                          "text_shift": 0, "delta_max": (_STATE_TEXT_DELTA_MAX
+                          if is_state_affiliated else _TEXT_DELTA_MAX), "confidence": 0.0,
+                          "top_left_keywords": [],
                           "top_right_keywords": [], "framing_phrases_found": [],
                           "entity_sentiments": {}, "state_affiliated": is_state_affiliated},
         }
@@ -933,42 +928,37 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None, do
     text_score = kw_score + framing_shift + entity_shift + sentence_direction
     text_score = max(0.0, min(100.0, text_score))
 
-    # Fix 11: Sparsity-weighted baseline blending.
-    # When NO keywords are found, lean more heavily on the source baseline.
-    # A 600-word Fox News article with no keywords should score ~70-75, not 53.
-    # sparsity_factor: 1.0 at zero keywords, 0.0 at 4+ distinct keywords.
-    # The 0.8 multiplier prevents pure-baseline scores (keeps some text signal).
-    sparsity_factor = 1.0 - min(1.0, total_distinct / 4.0)
-    baseline_weight = baseline_weight + (1.0 - baseline_weight) * sparsity_factor * 0.8
-    text_weight = 1.0 - baseline_weight
-
-    # Divergence guard: when text_score diverges >30 points from source_baseline
-    # AND word_count < 150, the keyword evidence is thin (short articles can
-    # saturate on 1-2 incidental keyword hits).  Raise baseline_weight to at
-    # least 0.60 so the calibrated source baseline anchors the final score more
-    # strongly.  This corrects short AP/Reuters articles that pick up one
-    # partisan keyword in a quote and score 30 points away from their baseline.
-    # (bias-auditor fix)
-    if _wc < 150 and abs(text_score - source_baseline) > 30:
-        baseline_weight = max(baseline_weight, 0.60)
-        text_weight = 1.0 - baseline_weight
-
-    # Extremity dampener: when text_score saturates at the floor (<=5) or
-    # ceiling (>=95), the keyword/framing signals have maxed out and the
-    # article's measured text is at the partisan extreme.  In this regime,
-    # the source baseline should provide meaningful anchoring to prevent
-    # over-saturation — an NYT (center-left, baseline=35) opinion piece
-    # with dense left keywords should not score identically to a Jacobin
-    # (left, baseline=20) piece with the same vocabulary.  Raise baseline
-    # weight to at least 0.30 so the calibrated editorial lean of the
-    # outlet tempers the extreme text signal.
-    # (nlp-engineer fix — NYT Opinion Rhetorical AllSides alignment)
-    if text_score <= 5 or text_score >= 95:
-        baseline_weight = max(baseline_weight, 0.30)
-        text_weight = 1.0 - baseline_weight
-
-    # 4. Blend with source baseline (length-adaptive weights computed above).
-    final_score = text_weight * text_score + baseline_weight * source_baseline
+    # ------------------------------------------------------------------
+    # Baseline-anchored calibration (replaces length-adaptive blending).
+    #
+    # The prior model BLENDED text_score and baseline with length-adaptive
+    # weights (text up to 0.90). On a full-length article written in calm,
+    # non-partisan language the text component scores ~50, and a 0.10 weight
+    # on the outlet baseline could not hold a known-partisan outlet off
+    # center: reputation was ERASED whenever an article tripped >=4 incidental
+    # keywords (which disabled the old sparsity rescue). A Newsmax (baseline
+    # 80) or Jacobin (baseline 20) piece then read ~53/47 (center).
+    #
+    # New model (CEO direction: "an outlet's reputation precedes it and that
+    # can't be avoided; the article calibrates around the baseline"):
+    #
+    #     score = baseline + clamp(text_score - baseline, -DELTA, +DELTA) * conf
+    #
+    #   - The score can never move more than DELTA off the calibrated baseline,
+    #     so reputation is structurally preserved (an 80-baseline outlet reads
+    #     in [65, 95], never center).
+    #   - Calm / non-partisan copy (text_score -> ~50) pulls a partisan outlet
+    #     TOWARD center by up to DELTA, but never across it.
+    #   - Sensational / aligned copy pushes the score FURTHER out from center.
+    #   - confidence scales movement by article length: a 40-word RSS stub
+    #     barely calibrates (stays near baseline); a full article (>=150 words)
+    #     earns the full DELTA of calibration authority.
+    # ------------------------------------------------------------------
+    delta_max = _STATE_TEXT_DELTA_MAX if is_state_affiliated else _TEXT_DELTA_MAX
+    confidence = min(1.0, _wc / _LENGTH_FULL_CONFIDENCE)
+    raw_shift = text_score - source_baseline
+    text_shift = max(-delta_max, min(delta_max, raw_shift)) * confidence
+    final_score = source_baseline + text_shift
     score = max(0, min(100, int(round(final_score))))
 
     # Unscored flag: minimal text signal against a center-baseline source.
@@ -977,9 +967,13 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None, do
     # not a finding.  Flag it so the UI can render "unscored" instead of
     # implying we analyzed the article and concluded center.
     #
-    # Gate widened (2026-05-13): production sample (1,984 articles / 24h) showed
-    # zero firings — the all-zero gate was unreachable.  Allow up to 2 incidental
-    # keyword hits, shifts under 2.0 points each, and 40-60 baseline range.
+    # Under the baseline-anchored model, a thin-text article of ANY outlet
+    # already resolves to (approximately) the outlet baseline rather than a
+    # fake 50 — an unscored Newsmax stub reads ~80 (its baseline), not center.
+    # The flag stays scoped to 40-60 (center) baselines because that is the
+    # only regime where a near-baseline score is genuinely indistinguishable
+    # from "no signal"; for a partisan baseline the score IS the finding
+    # (the reputation), so it should not be labelled unscored.
     unscored = (
         total_distinct <= 2
         and abs(framing_shift) < 2.0
@@ -996,7 +990,11 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None, do
             "framing_shift": round(framing_shift, 1),
             "entity_shift": round(entity_shift, 1),
             "sentence_direction": round(sentence_direction, 1),
-            "source_baseline": source_baseline,
+            "text_score": round(text_score, 1),
+            "source_baseline": round(source_baseline, 1),
+            "text_shift": round(text_shift, 1),
+            "delta_max": delta_max,
+            "confidence": round(confidence, 2),
             "top_left_keywords": top_left,
             "top_right_keywords": top_right,
             "framing_phrases_found": framing_phrases,
