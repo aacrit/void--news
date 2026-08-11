@@ -9,62 +9,43 @@ regional editions. All that machinery was removed.
 
 What survives is the only thing the feed actually needs:
     rank_world = headline_rank
-                 × STORY_TYPE_GATES (incremental_update / ceremonial / entertainment)
                  × OPINION_GATE
-                 × editorial-importance nudge (Gemini 1-10, ±3%/point clamped)
                  × same-event cap (MAX_SAME_EVENT events get decayed)
                  × near-duplicate story guard (unmerged same-story clusters)
                  × topic-diversity tie-breaking
+
+2026-08-10 (deterministic-ranking): every LLM-derived ordering signal was
+removed from rank_world. The Gemini editorial_importance nudge (Signal A) and
+the Gemini story_type gates (incremental_update / ceremonial / entertainment,
+Signal B) are gone. Diverse story types now land organically through the
+deterministic topic-diversity partition + category caps, and soft news is
+demoted by the deterministic soft-news category gate + tabloid gate that live
+in importance_ranker (headline_rank), not by an LLM label. rank_world is now a
+pure function of the deterministic signals: no clustering, DB schema, or bias
+model change accompanies this.
 
 Imported by pipeline/main.py and pipeline/rerank.py.
 """
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
-
 # ---------------------------------------------------------------------------
 # Configuration — single source of truth
 # ---------------------------------------------------------------------------
 
-# Story-type multipliers applied to every cluster's rank.
-# entertainment (sports results, celebrity items) is soft news and must not
-# occupy premium hard-news slots; Gemini tags it as story_type="entertainment",
-# which is reliable even when the category vote mislabels it (2026-06-28, O7).
-STORY_TYPE_GATES = {
-    "incremental_update": 0.75,
-    "ceremonial": 0.82,
-    "entertainment": 0.78,
-}
-
-# Incremental-update gate guardrails (2026-08-10 Phase-2 ranking audit, 1a).
-# The 0.75x incremental_update gate is meant for a genuine footnote to an
-# ongoing thread (a scheduled hearing date, a spokesperson declining comment).
-# In practice Gemini frequently mis-tags a DECISIVE one-time outcome (an
-# election result, a verdict, an extradition, an appointment, an accident) as
-# incremental_update, and the gate then buries it: the 2026-08-10 feed dropped
-# the 33-source El-Sayed Michigan primary result about 12 positions on this gate
-# alone. A decisive result is the event itself, not an update to it. So the gate
-# is SUPPRESSED (not applied) whenever the cluster looks like a genuinely major
-# or still-breaking story on ANY of three orthogonal, purely-quantitative
-# signals:
-#   - FRESH: first article < INCREMENTAL_FRESH_HOURS old. A result that only
-#     just broke has not had time to become a re-tread of an old story.
-#   - BROAD: source_count >= INCREMENTAL_BROAD_SOURCES. A heavily-covered story
-#     is a main event, whatever the tag; this alone catches El-Sayed (33) and
-#     the Sydney near-miss (21) on the 2026-08-10 pool.
-#   - GROWING: coverage_velocity >= INCREMENTAL_VELOCITY_MIN. A story still
-#     pulling a large batch of fresh sources inside the 24h velocity window is
-#     actively developing, not settling. 7 is the point at which the ranker's
-#     own diminishing-returns velocity score 100*(1-e^-v/4) first clears ~0.82;
-#     on the 2026-08-10 pool it cleanly separates still-growing decisive events
-#     (Scharf 7, Kinahan 8, El-Sayed 28) from settled ongoing items that keep
-#     the gate (Houthis 2, Nagasaki 3, Messi 3). The prompt fix in
-#     cluster_summarizer stops the mis-tag at the source; these are the
-#     downstream safety net for when it slips through on a clearly-major story.
-INCREMENTAL_FRESH_HOURS = 12.0
-INCREMENTAL_BROAD_SOURCES = 20
-INCREMENTAL_VELOCITY_MIN = 7
+# Story-type gates (Gemini story_type -> multiplier) were REMOVED on
+# 2026-08-10 (deterministic-ranking). The incremental_update / ceremonial /
+# entertainment multipliers depended on an LLM label and are gone:
+#   - incremental_update mainly mis-ranked decisive one-time outcomes (an
+#     election result tagged as an "update"); its net historical effect was a
+#     bug, and every genuinely thin/old/slow story is already demoted by the
+#     deterministic longevity + thin-cluster penalties in importance_ranker.
+#   - ceremonial could not tell a minor gala from a major state funeral, so a
+#     flat demotion was as likely to bury real news as soft news.
+#   - entertainment is redundant with the deterministic soft-news category gate
+#     (importance_ranker, 0.78x for sports/entertainment/culture) + tabloid gate.
+# Story-type diversity now emerges from the topic-diversity partition + category
+# caps below, not from an LLM tag.
 
 # Opinion / op-ed demotion. Opinion columns are not reporting and should sit
 # below hard news. Applied in addition to the story-type gate. (2026-06-28, O7)
@@ -107,16 +88,11 @@ def _is_opinion(cluster: dict) -> bool:
 MAX_SAME_EVENT = 2
 EVENT_DECAY = 0.80
 
-# Gemini's per-cluster editorial_importance (1-10, from 7b/8d) nudges rank.
-# 2026-07-05 regression: a 26-source bridge-fire spectacle (ei=5) led the
-# feed over the 69-source Khamenei funeral (ei=6) and the SCOTUS ruling
-# (ei=8) because velocity/recency outweighed breadth and the ranker ignored
-# the model's own judgment. Deliberately a NUDGE, not a takeover: +/-3% per
-# point around the pivot, clamped, so an uncalibrated per-cluster score can
-# reorder near-ties but cannot bury a heavily-covered story.
-EDITORIAL_IMPORTANCE_PIVOT = 6
-EDITORIAL_IMPORTANCE_WEIGHT = 0.03
-EDITORIAL_IMPORTANCE_CLAMP = (0.88, 1.12)
+# The Gemini editorial_importance multiplicative nudge (Signal A) was REMOVED
+# on 2026-08-10 (deterministic-ranking). An uncalibrated per-cluster LLM score
+# no longer touches rank_world; editorial prominence is carried entirely by the
+# deterministic coverage / maturity / authority / consequentiality signals in
+# importance_ranker's headline_rank.
 
 # Near-duplicate story guard — clustering occasionally ships the SAME story
 # as two clusters (2026-07-05: the transgender-ruling story sat at #3 AND #4;
@@ -357,7 +333,7 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
 
     Pipeline:
       1. Initialize rank_world = headline_rank.
-      2. Apply STORY_TYPE_GATES.
+      2. Apply the opinion / tabloid demotion gate (OPINION_GATE).
       3. Same-event cap: if more than MAX_SAME_EVENT clusters share an event
          keyword group, the excess get rank_world × EVENT_DECAY.
       3.5. Feed-lead gate: clusters with source_count < FEED_LEAD_MIN cannot
@@ -379,27 +355,15 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
     for c in clusters:
         c["rank_world"] = round(float(c.get("headline_rank", 0) or 0), 2)
 
-    # 2. Story-type + editorial gates.
+    # 2. Deterministic opinion / tabloid demotion. The Gemini story_type gates
+    #    and the editorial_importance nudge were removed on 2026-08-10, so this
+    #    is now the ONLY per-cluster multiplier applied here; every other
+    #    signal already lives in headline_rank. Opinion columns and scare-quote
+    #    tabloid framing sit below hard news (O7); detection is purely
+    #    title/content_type based (see _is_opinion), no LLM label involved.
     for c in clusters:
-        st = c.get("story_type")
-        if st and st in STORY_TYPE_GATES:
-            # incremental_update is the most error-prone gate (2026-08-10 audit):
-            # suppress it for a story that is clearly major or still breaking so a
-            # mis-tagged decisive outcome is not buried.
-            if st == "incremental_update" and _incremental_gate_suppressed(c):
-                pass
-            else:
-                c["rank_world"] = round(c["rank_world"] * STORY_TYPE_GATES[st], 2)
-        # Opinion columns are demoted below hard news (O7). Kept separate from
-        # the story-type gate so a future opinion story_type still composes.
         if _is_opinion(c):
             c["rank_world"] = round(c["rank_world"] * OPINION_GATE, 2)
-        # Editorial-importance nudge (see constants above).
-        ei = c.get("editorial_importance")
-        if isinstance(ei, (int, float)) and ei:
-            lo, hi = EDITORIAL_IMPORTANCE_CLAMP
-            factor = 1.0 + EDITORIAL_IMPORTANCE_WEIGHT * (float(ei) - EDITORIAL_IMPORTANCE_PIVOT)
-            c["rank_world"] = round(c["rank_world"] * max(lo, min(hi, factor)), 2)
 
     # Sort by current rank.
     pool = sorted(clusters, key=lambda c: c.get("rank_world", 0), reverse=True)
@@ -819,47 +783,6 @@ def _contest_anchor_conflict(stems_a: set[str], stems_b: set[str]) -> bool:
     oa = stems_a & anchors
     ob = stems_b & anchors
     return bool(oa and ob and not (oa & ob))
-
-
-def _cluster_age_hours(cluster: dict) -> float | None:
-    """Hours since the cluster's FIRST article, from first_published.
-
-    Returns None when first_published is missing or unparseable, so a caller can
-    treat "unknown age" as "do not fire the freshness guardrail" rather than
-    guessing. Accepts either an ISO string or a datetime."""
-    fp = cluster.get("first_published")
-    if not fp:
-        return None
-    try:
-        dt = (
-            datetime.fromisoformat(fp.replace("Z", "+00:00"))
-            if isinstance(fp, str)
-            else fp
-        )
-        if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=timezone.utc)
-        return max(0.0, (datetime.now(timezone.utc) - dt).total_seconds() / 3600.0)
-    except (ValueError, TypeError, AttributeError):
-        return None
-
-
-def _incremental_gate_suppressed(cluster: dict) -> bool:
-    """True when the 0.75x incremental_update gate should NOT be applied.
-
-    See the INCREMENTAL_* constants: the gate is suppressed for a story that is
-    clearly major or still breaking (broad coverage, fast growth, or freshly
-    broken), because Gemini frequently mis-tags a decisive one-time outcome as an
-    incremental_update. Each signal is independent; any one suppresses the gate.
-    Missing fields fail safe (that signal simply does not fire)."""
-    if cluster.get("source_count", 0) >= INCREMENTAL_BROAD_SOURCES:
-        return True
-    vel = cluster.get("coverage_velocity")
-    if isinstance(vel, (int, float)) and vel >= INCREMENTAL_VELOCITY_MIN:
-        return True
-    age = _cluster_age_hours(cluster)
-    if age is not None and age < INCREMENTAL_FRESH_HOURS:
-        return True
-    return False
 
 
 def _detect_event(title: str) -> str | None:

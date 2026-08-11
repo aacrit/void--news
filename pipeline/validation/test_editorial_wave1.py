@@ -16,9 +16,9 @@ Run: python -m pipeline.validation.test_editorial_wave1   (or via pytest)
 from utils.prohibited_terms import sanitize_editorial_text as sanitize
 from ranker.feed_ranker import (
     _is_opinion,
-    STORY_TYPE_GATES,
     OPINION_GATE,
 )
+import ranker.feed_ranker as _fr
 
 
 def test_em_and_en_dash_become_comma():
@@ -64,9 +64,34 @@ def test_opinion_poll_is_not_opinion():
     assert not _is_opinion({"title": "Court weighs the opinion of three justices"})
 
 
-def test_entertainment_and_opinion_gates_present():
-    assert STORY_TYPE_GATES.get("entertainment") == 0.78
+def test_story_type_gates_removed_opinion_gate_present():
+    # 2026-08-10 (deterministic-ranking): the Gemini story_type gates were
+    # removed. STORY_TYPE_GATES no longer exists; only the deterministic
+    # opinion/tabloid gate remains as a per-cluster multiplier in feed_ranker.
+    assert not hasattr(_fr, "STORY_TYPE_GATES")
     assert 0.0 < OPINION_GATE < 1.0
+
+
+def test_story_type_and_ei_do_not_affect_ordering():
+    # A story_type label and an editorial_importance score must NOT change
+    # rank_world (they are severed from the ranking path).
+    from ranker.feed_ranker import apply_feed_ordering
+    base = [
+        {"title": f"Filler {i}", "headline_rank": 80 - i, "source_count": 6}
+        for i in range(15)
+    ]
+    tagged = [dict(c) for c in base]
+    # Tag one cluster as entertainment/incremental/ceremonial with a low ei.
+    tagged[5]["story_type"] = "incremental_update"
+    tagged[5]["editorial_importance"] = 1
+    tagged[6]["story_type"] = "entertainment"
+    tagged[6]["editorial_importance"] = 10
+    apply_feed_ordering(base)
+    apply_feed_ordering(tagged)
+    for b, t in zip(base, tagged):
+        assert b["rank_world"] == t["rank_world"], (
+            f"story_type/ei changed rank_world: {b['title']}"
+        )
 
 
 def test_same_event_cap_never_decays_canonical():

@@ -2259,11 +2259,12 @@ def main():
                         for cid in incr_flags:
                             for c in top_30:
                                 if (c.get("_db_id", "") or str(id(c))) == cid:
-                                    # Flag only — the 0.75 penalty is applied
-                                    # once by STORY_TYPE_GATES in
-                                    # apply_feed_ordering. Multiplying
-                                    # headline_rank here too compounded it
-                                    # to 0.5625x.
+                                    # Flag only, stored for non-ordering
+                                    # consumers. 2026-08-10 (deterministic-
+                                    # ranking): the STORY_TYPE_GATES that once
+                                    # consumed this label were removed, so this
+                                    # no longer affects rank_world. (Triage is
+                                    # env-disabled by default anyway.)
                                     c["story_type"] = c.get("story_type") or "incremental_update"
                         if incr_flags:
                             print(f"  Incremental updates flagged: {len(incr_flags)}")
@@ -3303,9 +3304,13 @@ def main():
     # gate exactly once.
     try:
         print("\n[8d.5] Final feed ordering (fresh story_type / ei / titles)...")
+        # 2026-08-10 (deterministic-ranking): story_type / editorial_importance
+        # are no longer selected here. apply_feed_ordering dropped the story_type
+        # gates and the ei nudge, so the final ordering is a pure function of the
+        # deterministic headline_rank + the deterministic feed-ordering guards.
         _fo_res = supabase.table("story_clusters").select(
-            "id,title,headline_rank,rank_world,story_type,content_type,"
-            "category,source_count,editorial_importance,sections,"
+            "id,title,headline_rank,rank_world,content_type,"
+            "category,source_count,sections,"
             "first_published,coverage_velocity"
         ).contains("sections", ["world"]).order(
             "rank_world", desc=True
@@ -3328,7 +3333,7 @@ def main():
             for _i, r in enumerate(_fo_rows[:5], 1):
                 _dup = " [near-dup demoted]" if r.get("_near_dup_of") else ""
                 print(f"   {_i}. [{r.get('rank_world', 0):5.1f}] src={r.get('source_count', 0):3} "
-                      f"ei={r.get('editorial_importance')} {r.get('title', '')[:60]}{_dup}")
+                      f"{r.get('title', '')[:60]}{_dup}")
             _dups = [r for r in _fo_rows if r.get("_near_dup_of")]
             for r in _dups[:5]:
                 print(f"  [near-dup] demoted \"{r.get('title', '')[:55]}\" -> kept \"{r['_near_dup_of'][:55]}\"")
