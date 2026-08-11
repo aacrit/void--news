@@ -237,15 +237,18 @@ Bad: "US Senate Could Pass Immigration Bill as Talks Continue"
 
 ---
 
-TASK 2 — summary (string, AT MOST 90 words)
-Write a tight, specific briefing of NO MORE THAN 90 words. Count the words. Every \
-sentence must carry a new concrete fact: a name, a number, a date, a place, or an \
-action. SHOW, DON'T TELL: juxtapose facts and let the reader see the pattern; \
-never assert that something is significant. The house standard for compression is \
-this: "A lawyer who'd never been to India drew the border in five weeks. 15 \
-million crossed it." Two sentences, no wasted words, the weight lands on its own. \
-That density is the target. A shorter, denser summary always beats a longer, \
-padded one.
+TASK 2 — summary (string, 55 to 90 words, 2 to 4 sentences)
+Write a tight, specific briefing of 55 to 90 words, in 2 to 4 complete sentences. \
+Count the words. Every sentence must carry a new concrete fact: a name, a number, \
+a date, a place, or an action. SHOW, DON'T TELL: juxtapose facts and let the \
+reader see the pattern; never assert that something is significant. The house \
+standard for density is this: "A lawyer who'd never been to India drew the border \
+in five weeks. 15 million crossed it." No wasted words, the weight lands on its \
+own. That density is the target WITHIN the band: use 2 to 4 sentences to give the \
+reader the freshest development, the context a reader genuinely needs, and the \
+sharpest point of contention. A single clipped sentence is not a summary; do not \
+stop short of conveying the story. Do not pad to reach the ceiling either. Aim for \
+the middle of the 55-to-90-word band.
 
 IMPORTANT: Articles are sorted newest-first and include publication timestamps. \
 Open on the MOST RECENT development, the freshest reported fact: who, what, when, \
@@ -266,7 +269,11 @@ context and the sharpest point of disagreement between the principal actors. Sto
 when the facts are stated.
 
 HARD RULES for the summary (a reader sees violations instantly):
-- AT MOST 90 words. This is a ceiling, not a target. Do not pad to reach it.
+- TARGET 55 to 90 words in 2 to 4 sentences. 90 words is a hard ceiling: never \
+exceed it, and do not pad to reach it. But do not under-write either: a single \
+clipped sentence, or a sub-40-word summary that drops the essential context or the \
+point of contention, is a failure. Give the story room to land across 2 to 4 \
+sentences.
 - NO TERMINAL RESTATEMENT. Never close on a sentence that repeats the opening in \
 other words ("Firefighters continue to battle the fires day and night.", \
 "Authorities are continuing their investigation.", "The campaign continues."). \
@@ -555,9 +562,13 @@ def _strip_source_meta_commentary(summary: str) -> str:
 #   3e  drop an ungrounded age (not present verbatim in the source article text)
 # ---------------------------------------------------------------------------
 
-# House standard: summaries are tight (<= 90 words). Shared by the trim,
-# _check_quality, and the batch instrumentation so the number lives in one place.
+# House standard: summaries sit in a 55-to-90-word band. The cap is a HARD ceiling
+# (enforced by the deterministic trim); the floor is a SOFT target (enforced by the
+# prompt only — a post-check can never invent grounded facts to lengthen a summary,
+# so under-length output is surfaced as a warning, not padded). Shared by the trim,
+# _check_quality, and the batch instrumentation so the numbers live in one place.
 _SUMMARY_WORD_CAP = 90
+_SUMMARY_WORD_FLOOR = 40  # soft: below this a summary is likely a clipped fragment
 
 # Stopwords for the content-word comparisons in 3b/3d. Deliberately broad
 # (articles, auxiliaries, prepositions, pronouns, continuation verbs) so that a
@@ -875,13 +886,21 @@ def _check_quality(result: dict, cluster_id: str | int = "") -> None:
             f"{headline!r}"
         )
 
-    # Summary word count (target: <= 90 words; a little slack before warning).
+    # Summary word count (target band: 55-90 words; a little slack before warning).
     summary = result.get("summary", "")
     summary_wc = len(summary.split())
     if summary_wc > _SUMMARY_WORD_CAP + 5:
         print(
             f"  [quality]{cid_str} Summary word count {summary_wc} (expected <= "
             f"{_SUMMARY_WORD_CAP}): first 80 chars: {summary[:80]!r}"
+        )
+    elif summary and summary_wc < _SUMMARY_WORD_FLOOR:
+        # Under-length: the model over-compressed to a clipped fragment. Surface
+        # it so drift toward one-sentence summaries is visible (warning only — a
+        # deterministic pass cannot pad without inventing ungrounded facts).
+        print(
+            f"  [quality]{cid_str} Summary word count {summary_wc} under the "
+            f"{_SUMMARY_WORD_FLOOR}-word soft floor: {summary[:80]!r}"
         )
 
     # Consensus/divergence item counts
@@ -1847,6 +1866,7 @@ def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 
     metrics = {
         "summarized": 0,
         "cached": 0,
+        "trimmed_cached": 0,
         "skipped": 0,
         "failed": 0,
         "updated_ids": [],
@@ -1861,7 +1881,8 @@ def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 
     try:
         rank_res = (
             supabase.table("story_clusters")
-            .select("id, content_type, source_count, summary_article_hash, summary_tier")
+            .select("id, content_type, source_count, summary_article_hash, "
+                    "summary_tier, summary")
             .contains("sections", [edition])
             .order(rank_col, desc=True)
             .limit(fetch_limit)
@@ -1980,6 +2001,26 @@ def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 
         cacheable_tiers = ("sonnet", "flash") if is_premium else ("sonnet", "flash", "flash-lite")
         if h == row.get("summary_article_hash") and row.get("summary_tier") in cacheable_tiers:
             metrics["cached"] += 1
+            # Belt-and-suspenders: a summary cached from BEFORE the 90-word cap
+            # existed (or any over-cap stored value from any path) never re-runs
+            # the trim, because a cache hit skips regeneration. This is exactly
+            # how the day's most stable stories (the flash top-10) kept 175-243
+            # word summaries after the cap shipped. Deterministically trim an
+            # over-cap cached summary in place here: NO LLM call, and the cache
+            # KEY (summary_article_hash + summary_tier) is unchanged, so cache
+            # semantics are preserved. Only the summary text length is corrected.
+            cached_summary = (row.get("summary") or "").strip()
+            if cached_summary and len(cached_summary.split()) > _SUMMARY_WORD_CAP:
+                trimmed = _trim_summary_to_word_cap(cached_summary)
+                if trimmed and trimmed != cached_summary:
+                    try:
+                        supabase.table("story_clusters").update(
+                            {"summary": trimmed}
+                        ).eq("id", cid).execute()
+                        metrics["trimmed_cached"] += 1
+                    except Exception as e:
+                        print(f"  [warn] summarize_top50_after_rerank: cached-summary "
+                              f"trim write failed for {cid}: {e}")
             continue
 
         result = summarize_cluster(articles, prefer_provider=prefer_provider,
@@ -1991,7 +2032,11 @@ def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 
 
         update_payload = {
             "title": result["headline"],
-            "summary": result["summary"],
+            # Storage-boundary hard cap. summarize_cluster already trims (this is
+            # a no-op on that output), but wrapping the stored value guarantees
+            # the invariant "every stored summary is <= 90 words" holds no matter
+            # which path produced result, on BOTH the flash top-10 and flash-lite.
+            "summary": _trim_summary_to_word_cap(result["summary"]),
             "summary_article_hash": h,
             # Stamp the tier that ACTUALLY answered (migration 063): 'flash' for
             # gemini-2.5-flash, 'flash-lite' for flash-lite. A premium slot
@@ -2567,7 +2612,9 @@ def reconcile_flash_top10(supabase, edition: str = "world", top_n: int = 10,
 
         payload = {
             "title": result["headline"],
-            "summary": result["summary"],
+            # Storage-boundary hard cap (no-op on summarize_cluster's already-
+            # trimmed output; guarantees the invariant on the flash top-10).
+            "summary": _trim_summary_to_word_cap(result["summary"]),
             "summary_article_hash": _content_hash(articles),
             "summary_tier": tier,
         }

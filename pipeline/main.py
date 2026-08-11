@@ -150,6 +150,12 @@ if os.environ.get("VOID_VERIFY", "").strip() in ("1", "true", "yes"):
 # pipeline.utils.editions so worker modules (cluster_summarizer Pool 2,
 # edition_ranker, etc.) can import it without depending on main.py.
 from utils.editions import ACTIVE_EDITIONS, ALL_EDITIONS as _ALL_EDITIONS  # noqa: F401,E402
+# Branch G: shared per-cluster bias aggregation (single source of truth for the
+# Python fallback; the SQL RPC in migration 076 mirrors the same two formulas).
+from utils.bias_aggregation import (  # noqa: E402
+    compute_aggregate_confidence,
+    compute_lean_histogram,
+)
 
 SOURCES_PATH = Path(__file__).parent.parent / "data" / "sources.json"
 
@@ -686,7 +692,7 @@ def _enrich_cluster_fallback(cluster_id: str, skip_text: bool = False) -> None:
 
         scores_result = (
             supabase.table("bias_scores")
-            .select("political_lean,sensationalism,opinion_fact,factual_rigor,framing")
+            .select("political_lean,sensationalism,opinion_fact,factual_rigor,framing,confidence")
             .in_("article_id", article_ids)
             .execute()
         )
@@ -709,6 +715,10 @@ def _enrich_cluster_fallback(cluster_id: str, skip_text: bool = False) -> None:
         of_values = [s["opinion_fact"] for s in scores]
         fr_values = [s["factual_rigor"] for s in scores]
         frm_values = [s["framing"] for s in scores]
+        conf_values = [
+            s.get("confidence") if s.get("confidence") is not None else 0.5
+            for s in scores
+        ]
 
         # Weighted average political lean (weight by factual rigor, matching the view)
         total_rigor = sum(fr_values)
@@ -735,23 +745,15 @@ def _enrich_cluster_fallback(cluster_id: str, skip_text: bool = False) -> None:
         # when it is in fact highly contested. Compute an explicit per-bucket
         # histogram + a polarization index so the frontend can reveal the
         # split the mean conceals (Layer 2). Buckets match biasColors.ts
-        # leanToBucket boundaries so the UI and pipeline agree.
-        lean_buckets = {
-            "far_left": sum(1 for v in pl_values if v <= 20),
-            "left": sum(1 for v in pl_values if 20 < v <= 35),
-            "center_left": sum(1 for v in pl_values if 35 < v <= 45),
-            "center": sum(1 for v in pl_values if 45 < v <= 55),
-            "center_right": sum(1 for v in pl_values if 55 < v <= 65),
-            "right": sum(1 for v in pl_values if 65 < v <= 80),
-            "far_right": sum(1 for v in pl_values if v > 80),
-        }
-        # 3-segment collapse for the at-a-glance coverage bar.
-        lean_left_count = lean_buckets["far_left"] + lean_buckets["left"] + lean_buckets["center_left"]
-        lean_center_count = lean_buckets["center"]
-        lean_right_count = lean_buckets["center_right"] + lean_buckets["right"] + lean_buckets["far_right"]
-        # Polarization: 0 when one-sided / all-center, 100 when a perfect L/R
-        # split. minority = the smaller wing; both wings large ⇒ contested.
-        polarization = round(100.0 * (2.0 * min(lean_left_count, lean_right_count) / count)) if count else 0
+        # leanToBucket boundaries so the UI and pipeline agree. The primary
+        # SQL RPC (migration 076) mirrors this exact shape, so the histogram
+        # is present whether the RPC or this fallback did the work.
+        _hist = compute_lean_histogram(pl_values)
+        lean_buckets = _hist["lean_buckets"]
+        lean_left_count = _hist["lean_left_count"]
+        lean_center_count = _hist["lean_center_count"]
+        lean_right_count = _hist["lean_right_count"]
+        polarization = _hist["polarization"]
 
         # Divergence score
         divergence = min(100.0,
@@ -796,7 +798,13 @@ def _enrich_cluster_fallback(cluster_id: str, skip_text: bool = False) -> None:
 
         tier_count = len([v for v in tier_breakdown.values() if v > 0])
         source_count_val = sum(tier_breakdown.values()) or count
-        agg_confidence = min(1.0, count / 5.0)
+        # Branch G: real confidence from the rigor-weighted mean of per-article
+        # bias_scores.confidence, lifted by breadth and damped by lean spread.
+        # Replaces the old LEAST(1.0, count/5.0) count proxy that pinned to 1.0
+        # at 5+ articles and never varied. Mirrors migration 076's RPC formula.
+        agg_confidence = compute_aggregate_confidence(
+            conf_values, fr_values, lean_spread
+        )
 
         # Coverage score: composite of source breadth, tier diversity, confidence, rigor
         coverage_score = round(
@@ -895,7 +903,7 @@ def _generate_cluster_consensus_divergence(cluster_id: str) -> None:
 
         scores_result = (
             supabase.table("bias_scores")
-            .select("political_lean,sensationalism,opinion_fact,factual_rigor,framing")
+            .select("political_lean,sensationalism,opinion_fact,factual_rigor,framing,confidence")
             .in_("article_id", article_ids)
             .execute()
         )
@@ -3240,7 +3248,9 @@ def main():
                 flash_top_n=10)
             print(
                 f"  Top-50: {summary_metrics['summarized']} summarized, "
-                f"{summary_metrics['cached']} cache hits, "
+                f"{summary_metrics['cached']} cache hits "
+                f"({summary_metrics.get('trimmed_cached', 0)} over-cap cached "
+                f"summaries trimmed in place), "
                 f"{summary_metrics['skipped']} skipped (op-ed / <3 sources), "
                 f"{summary_metrics['failed']} failed"
             )

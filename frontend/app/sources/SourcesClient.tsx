@@ -6,7 +6,7 @@ import "../styles/spectrum.css";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
-import { supabase, supabaseError, fetchMethodologyArticles } from "../lib/supabase";
+import { supabase, supabaseError, fetchMethodologyArticles, fetchLastPipelineRun } from "../lib/supabase";
 import {
   leanLabel,
   senseLabel,
@@ -797,6 +797,20 @@ function SourcesPageInner({ initialSources }: { initialSources: SpectrumSource[]
   const [isLoading, setIsLoading] = useState(!hasInitial);
   const [error, setError] = useState<string | null>(null);
 
+  // Edition build time (pipeline completed_at) — drives the NavBar masthead
+  // "as of" dateline so it shows the same UTC edition time as the home feed
+  // (formatted by NavBar via getEditionTimestamp), not the reader's clock.
+  const [editionBuiltAt, setEditionBuiltAt] = useState<string | null>(null);
+  useEffect(() => {
+    let alive = true;
+    fetchLastPipelineRun().then((run) => {
+      if (alive && run?.completed_at) setEditionBuiltAt(run.completed_at as string);
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
   useEffect(() => {
     const controller = new AbortController();
 
@@ -861,7 +875,7 @@ function SourcesPageInner({ initialSources }: { initialSources: SpectrumSource[]
       </Link>
       {/* Shared masthead — identical top chrome to the home feed (tagline,
           edition timestamp, experimental badge, page links, theme toggle). */}
-      <NavBar />
+      <NavBar editionBuiltAt={editionBuiltAt} />
 
       <main id="main-content" className="page-main sources-page">
         {/* ---- Toolbar: title ---- */}

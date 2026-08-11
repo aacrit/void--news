@@ -7,13 +7,10 @@ import ThemeToggle from "./ThemeToggle";
 import PageToggle from "./PageToggle";
 import LogoFull from "./LogoFull";
 import ExperimentalBadge from "./ExperimentalBadge";
-import { getEditionTimestamp } from "../lib/utils";
+import { getEditionTimestamp, getEditionDatelineUTC } from "../lib/utils";
 
 interface NavBarProps {
   onSearchClick?: () => void;
-  hasAudio?: boolean;
-  isAudioPlaying?: boolean;
-  onOnairClick?: () => void;
   /** Edition build time (pipeline completed_at, ISO). Drives the masthead
       dateline + timestamp so they reflect when THIS edition was built, not the
       reader's current clock. Falls back to now when absent. */
@@ -37,41 +34,28 @@ interface NavBarProps {
    server-side ranker enforces topic diversity and source-count quality floor.
    --------------------------------------------------------------------------- */
 
-function formatDateCompact(d: Date): string {
-  return d.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  });
-}
-
 export default function NavBar({
   onSearchClick,
   editionBuiltAt,
   editionDateline,
   editionTimestamp,
-  hasAudio,
-  isAudioPlaying,
-  onOnairClick,
 }: NavBarProps) {
   const [mounted, setMounted] = useState(false);
   // SSR-safe hydration pattern — defer dateline/timestamp render until after
   // mount so server HTML matches client HTML on first paint (avoids React #418).
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => { setMounted(true); }, []);
-  // Masthead reflects the edition's build time (pipeline completed_at), not the
-  // reader's current clock; falls back to now when the build time is absent.
-  const editionDate =
-    editionBuiltAt && !isNaN(Date.parse(editionBuiltAt))
-      ? new Date(editionBuiltAt)
-      : new Date();
   // Preformatted build-time strings win when supplied (front-page prerender):
-  // they are deterministic, so server and client first paint are identical and
-  // the "as of" block renders immediately. Otherwise fall back to the
-  // client-local mounted-gate path. Before mount (and when no build value is
-  // available) BOTH resolve to empty and the time block below is omitted
-  // entirely, never a doubled "as of     as of" placeholder pre-hydration.
-  const dateline = editionDateline ?? (mounted ? formatDateCompact(editionDate) : "");
+  // they are deterministic UTC, so server and client first paint are identical
+  // and the "as of" block renders immediately. Otherwise fall back to the
+  // client-fetched build time, formatted through the SAME UTC formatters the
+  // front page uses (getEditionDatelineUTC / getEditionTimestamp), so every
+  // detail surface shows the identical UTC "as of" value and never the reader's
+  // local zone. The mounted gate only defers the client-fetched path so an
+  // absent build time (which falls back to "now") can't mismatch on first paint.
+  // Before mount (and when no build value is available) BOTH resolve to empty
+  // and the time block below is omitted entirely, never a doubled placeholder.
+  const dateline = editionDateline ?? (mounted ? getEditionDatelineUTC(editionBuiltAt) : "");
   const timestamp = editionTimestamp ?? (mounted ? getEditionTimestamp(editionBuiltAt) : "");
 
   /* ── Scroll-compact masthead (NYT-style): wires --scroll-nav-compact-* tokens.
@@ -167,20 +151,9 @@ export default function NavBar({
               still resolve at /games and /paper for direct URL access. */}
           <nav className="nav-pages" aria-label="Pages">
             <PageToggle activePage="feed" />
-            {/* On Air — desktop affordance for the daily broadcast. Only shown
-                when a brief with audio is available (hasAudio); tapping opens the
-                player and starts playback via onOnairClick. */}
-            {onOnairClick && hasAudio && (
-              <button
-                type="button"
-                className={`nav-page nav-page--onair${isAudioPlaying ? " nav-page--onair-live" : ""}`}
-                onClick={onOnairClick}
-                aria-label={isAudioPlaying ? "On Air, playing" : "On Air"}
-                title="On Air"
-              >
-                On Air
-              </button>
-            )}
+            {/* On Air reaches the daily broadcast from the docked/floating
+                player and the footer On Air pill on desktop, so the duplicate
+                top-nav On Air button was removed 2026-08-10 (nav-onair-dedup). */}
             <Link href="/ship" className="nav-page" aria-label="Feedback: tell us what to build or fix" title="Feedback">
               Feedback
             </Link>
