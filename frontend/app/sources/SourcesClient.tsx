@@ -696,10 +696,6 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
               <span className="meth-stats-strip__number">9</span>
               <span className="meth-stats-strip__label">categories</span>
             </div>
-            <div className="meth-stats-strip__item meth-stats-strip__item--hero" role="listitem">
-              <span className="meth-stats-strip__number">0</span>
-              <span className="meth-stats-strip__label">scores wrong</span>
-            </div>
             <div className="meth-stats-strip__item" role="listitem">
               <span className="meth-stats-strip__number meth-stats-strip__number--formula">r{"\u2009<\u2009"}0.70</span>
               <span className="meth-stats-strip__label">cross-axis</span>
