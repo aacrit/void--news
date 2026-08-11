@@ -19,11 +19,11 @@ import { timeAgo, BASE_PATH } from "../lib/utils";
 import { SITE_URL } from "../lib/siteMeta";
 import { hapticLight, hapticMicro } from "../lib/haptics";
 import { findHistoryContext } from "../lib/historyContext";
-import { leanLabel, getLeanColor, leanToBucket } from "../lib/biasColors";
 import Sigil from "./Sigil";
 import NavBar from "./NavBar";
 import DeepDiveSpectrum from "./DeepDiveSpectrum";
 import BiasSnapshot from "./BiasSnapshot";
+import SourceLedger from "./SourceLedger";
 import type { DeepDiveSpectrumSource } from "./DeepDiveSpectrum";
 import ComparativeView from "./ComparativeView";
 import ClaimConsensusSection from "./ClaimConsensusSection";
@@ -49,32 +49,7 @@ import LazyOnView from "./LazyOnView";
 // false to re-enable it when History returns.
 const HISTORY_HIDDEN: boolean = true;
 
-// Human-readable outlet tier for the Sources roster. Never fabricates a tier;
-// an unknown value falls through to the Independent floor.
-function tierLabel(tier: string | undefined): string {
-  if (tier === "us_major") return "US Major";
-  if (tier === "international") return "International";
-  return "Independent";
-}
-
-// Compact tier badge for the narrow lean columns. Same never-fabricate floor
-// as tierLabel — unknown → Independent ("Ind"). Data voice (mono), no color:
-// tier is not bias data, so the Dot Matrix Rule keeps it a plain glyph.
-function tierAbbr(tier: string | undefined): string {
-  if (tier === "us_major") return "US";
-  if (tier === "international") return "Intl";
-  return "Ind";
-}
-
-// The three lean columns that line up under the DeepDiveSpectrum's
-// Left / Center / Right thirds. `anchor` is a representative lean value fed to
-// getLeanColor so each column header's accent rule matches the spectrum
-// gradient (blue → green → red, left → right).
-const LEAN_COLUMNS: { key: "left" | "center" | "right"; label: string; anchor: number }[] = [
-  { key: "left", label: "Left", anchor: 28 },
-  { key: "center", label: "Center", anchor: 50 },
-  { key: "right", label: "Right", anchor: 72 },
-];
+// Source roster + tier vocabulary now live in the shared SourceLedger component.
 
 interface DeepDiveProps {
   story: Story;
@@ -323,31 +298,6 @@ export default function DeepDive({
         })),
     [sources],
   );
-
-  /* Bucket every source into Left / Center / Right so the roster lines up under
-     the spectrum's thirds. Collapses the 7-way leanToBucket: far-left/left/
-     center-left → Left, center → Center, center-right/right/far-right → Right.
-     Each column is sorted by lean so the ordering reads outward from center. */
-  const bucketedSources = useMemo(() => {
-    const groups: { left: StorySource[]; center: StorySource[]; right: StorySource[] } = {
-      left: [],
-      center: [],
-      right: [],
-    };
-    for (const src of sources) {
-      const lean = src.biasScores?.politicalLean ?? 50;
-      const bucket = leanToBucket(lean);
-      if (bucket === "center") groups.center.push(src);
-      else if (bucket === "far-left" || bucket === "left" || bucket === "center-left") groups.left.push(src);
-      else groups.right.push(src);
-    }
-    const byLean = (a: StorySource, b: StorySource) =>
-      (a.biasScores?.politicalLean ?? 50) - (b.biasScores?.politicalLean ?? 50);
-    groups.left.sort(byLean);
-    groups.center.sort(byLean);
-    groups.right.sort(byLean);
-    return groups;
-  }, [sources]);
 
   /* Spread page makes sense only when there is a Sigil or scored sources. */
   const hasLedeSpectrum = Boolean(story.sigilData) || spectrumSources.length > 0;
@@ -793,74 +743,12 @@ export default function DeepDive({
                 <p className="dd-page__loading text-meta" role="status">Gathering the full source list</p>
               )}
 
-              {/* Sources — bucketed into Left / Center / Right columns that line
-                  up under the spectrum's thirds. Each column scrolls on its own
-                  (fixed max-height + overflow), so the reader sees which outlets
-                  form the left cluster, which the center, which the right. The
-                  column already encodes the lean, so a row shows only the outlet
-                  name (ellipsized) + a compact tier glyph — no per-row lean dot. */}
-              {sources.length > 0 && (
-                <div className="dd-src-cols-wrap">
-                  <h3 className="dd-section-label text-meta dd-src-cols__label">
-                    Sources <span className="text-data dd-src-cols__count">({sources.length})</span>
-                  </h3>
-                  <div className="dd-src-cols" role="group" aria-label="Sources grouped by political lean">
-                    {LEAN_COLUMNS.map((col) => {
-                      const colSources = bucketedSources[col.key];
-                      return (
-                        <div className="dd-src-col" key={col.key}>
-                          <div
-                            className="dd-src-col__head"
-                            style={{ "--col-lean": getLeanColor(col.anchor) } as React.CSSProperties}
-                          >
-                            <span className="dd-src-col__name text-meta">{col.label}</span>
-                            <span className="dd-src-col__count text-data" aria-hidden="true">{colSources.length}</span>
-                          </div>
-                          {colSources.length === 0 ? (
-                            <p className="dd-src-col__empty text-meta">None</p>
-                          ) : (
-                            <ul
-                              className="dd-src-col__list"
-                              role="list"
-                              aria-label={`${col.label} sources (${colSources.length})`}
-                            >
-                              {colSources.map((src, i) => {
-                                const lean = src.biasScores?.politicalLean ?? 50;
-                                const label = `${src.name}. ${leanLabel(lean)}. ${tierLabel(src.tier)}.`;
-                                const inner = (
-                                  <>
-                                    <span className="dd-src-col__srcname">{src.name}</span>
-                                    <span className="dd-src-col__tier text-data" aria-hidden="true">{tierAbbr(src.tier)}</span>
-                                  </>
-                                );
-                                return (
-                                  <li key={`${src.name}-${i}`} className="dd-src-col__row">
-                                    {src.url && src.url !== "#" ? (
-                                      <a
-                                        href={src.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="dd-src-col__link"
-                                        aria-label={label}
-                                      >
-                                        {inner}
-                                      </a>
-                                    ) : (
-                                      <span className="dd-src-col__link dd-src-col__link--static" aria-label={label}>
-                                        {inner}
-                                      </span>
-                                    )}
-                                  </li>
-                                );
-                              })}
-                            </ul>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+              {/* Sources — the full roster as one spectrum-ordered ledger
+                  (Left band, then Center, then Right). Full-width rows, no inner
+                  scroll, no truncation; each row carries the outlet logo (or a
+                  lean-colored monogram). Collapsed behind an "All N sources"
+                  disclosure here on mobile. */}
+              {sources.length > 0 && <SourceLedger sources={sources} />}
 
               {/* Six Lenses — full 6-axis bias breakdown. */}
               {story.sigilData && !story.sigilData.pending && (

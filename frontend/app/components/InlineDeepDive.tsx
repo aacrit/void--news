@@ -23,6 +23,7 @@ import { timeAgo } from "../lib/utils";
 import { SITE_URL } from "../lib/siteMeta";
 import { hapticLight } from "../lib/haptics";
 import DeepDiveSpectrum from "./DeepDiveSpectrum";
+import SourceLedger from "./SourceLedger";
 import type { DeepDiveSpectrumSource } from "./DeepDiveSpectrum";
 import BiasSnapshot from "./BiasSnapshot";
 import ComparativeView from "./ComparativeView";
@@ -600,6 +601,7 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
             <div className="inline-dd__spectrum">
               <DeepDiveSpectrum sources={spectrumSources} />
             </div>
+            {sources.length > 0 && <SourceLedger sources={sources} defaultOpen />}
           </section>
         )}
 
