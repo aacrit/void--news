@@ -23,9 +23,9 @@ import Sigil from "./Sigil";
 import NavBar from "./NavBar";
 import DeepDiveSpectrum from "./DeepDiveSpectrum";
 import BiasSnapshot from "./BiasSnapshot";
-import SourceLedger from "./SourceLedger";
 import type { DeepDiveSpectrumSource } from "./DeepDiveSpectrum";
 import ComparativeView from "./ComparativeView";
+import SpreadDisagreement from "./SpreadDisagreement";
 import ClaimConsensusSection from "./ClaimConsensusSection";
 import ClaimMark from "./ClaimMark";
 import LazyOnView from "./LazyOnView";
@@ -49,7 +49,8 @@ import LazyOnView from "./LazyOnView";
 // false to re-enable it when History returns.
 const HISTORY_HIDDEN: boolean = true;
 
-// Source roster + tier vocabulary now live in the shared SourceLedger component.
+// The separate source roster is gone (2026-08-10): the DeepDiveSpectrum's
+// positioned logos are the sole source display (tap/hover a logo for its name).
 
 interface DeepDiveProps {
   story: Story;
@@ -736,19 +737,20 @@ export default function DeepDive({
                 </div>
               )}
 
-              {/* Subtle inline loading — only while the roster is genuinely still
-                  being fetched. Never a full-panel skeleton; the Sigil above is
-                  already live from the story. */}
+              {/* Subtle inline loading — only while the spectrum sources are
+                  genuinely still being fetched. Never a full-panel skeleton; the
+                  Sigil above is already live from the story. */}
               {sourcesPending && (
                 <p className="dd-page__loading text-meta" role="status">Gathering the full source list</p>
               )}
 
-              {/* Sources — the full roster as one spectrum-ordered ledger
-                  (Left band, then Center, then Right). Full-width rows, no inner
-                  scroll, no truncation; each row carries the outlet logo (or a
-                  lean-colored monogram). Collapsed behind an "All N sources"
-                  disclosure here on mobile. */}
-              {sources.length > 0 && <SourceLedger sources={sources} />}
+              {/* Agree / Dispute — the promoted centerpiece. What the sources
+                  broadly agree on vs where they split, pulled up from the old
+                  buried ComparativeView disclosure. Self-omits when empty. */}
+              <SpreadDisagreement
+                consensus={deepDive?.consensus}
+                divergence={deepDive?.divergence}
+              />
 
               {/* Six Lenses — full 6-axis bias breakdown. */}
               {story.sigilData && !story.sigilData.pending && (
@@ -779,6 +781,7 @@ export default function DeepDive({
                       sources={sources}
                       consensusPoints={deepDive?.consensus}
                       divergencePoints={deepDive?.divergence}
+                      hideInsights
                     />
                   </LazyOnView>
                 </section>

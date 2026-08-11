@@ -22,7 +22,7 @@ import SixLenses from "./SixLenses";
 import SummaryWithContradictions from "./SummaryWithContradictions";
 import ClaimConsensusSection from "./ClaimConsensusSection";
 import ComparativeView from "./ComparativeView";
-import SourceLedger from "./SourceLedger";
+import SpreadDisagreement from "./SpreadDisagreement";
 
 /* ---------------------------------------------------------------------------
    StandaloneDeepDive — the shareable /story/[id] page.
@@ -185,7 +185,9 @@ export default function StandaloneDeepDive({
             )}
           </section>
 
-          {/* ---- The Spread — Sigil + spectrum + source columns + lenses ---- */}
+          {/* ---- The Spread — Sigil + spectrum. The spectrum's positioned logos
+              ARE the source display now (hover a logo for its name); the
+              separate source roster was removed. ---- */}
           {hasSpread && (
             <section className="story-page__section" aria-label="The spread">
               <hr className="ink-rule" style={{ margin: "var(--space-5) 0 var(--space-4)" }} aria-hidden="true" />
@@ -202,12 +204,18 @@ export default function StandaloneDeepDive({
                   <DeepDiveSpectrum sources={spectrumSources} />
                 </div>
               )}
-
-              {columnSources.length > 0 && (
-                <SourceLedger sources={columnSources} defaultOpen />
-              )}
             </section>
           )}
+
+          {/* ---- Agree / Dispute — the promoted centerpiece, right after the
+              spectrum. Self-omits when the archive row carries no
+              consensus/divergence points. ---- */}
+          {(consensus?.length || divergence?.length) ? (
+            <section className="story-page__section" aria-label="What sources agree on and where they split">
+              <hr className="ink-rule" style={{ margin: "var(--space-5) 0 var(--space-4)" }} aria-hidden="true" />
+              <SpreadDisagreement consensus={consensus} divergence={divergence} />
+            </section>
+          ) : null}
 
           {/* ---- Six Lenses — full 6-axis bias breakdown ---- */}
           {story.sigilData && !story.sigilData.pending && (
@@ -231,6 +239,7 @@ export default function StandaloneDeepDive({
                 sources={columnSources}
                 consensusPoints={consensus}
                 divergencePoints={divergence}
+                hideInsights
               />
             </section>
           )}

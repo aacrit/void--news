@@ -254,9 +254,8 @@ export function archiveMembersToSpectrumSources(
 }
 
 /**
- * Build `StorySource[]` for the source roster from the archive members. Same
- * source-lean data as the spectrum, in the shape the shared SourceLedger
- * component consumes.
+ * Build `StorySource[]` from the archive members. Same source-lean data as the
+ * spectrum, in the shape the shared source components (ComparativeView) consume.
  */
 export function archiveMembersToStorySources(
   members: PrintedMember[] | null,

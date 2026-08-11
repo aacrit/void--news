@@ -237,8 +237,23 @@ function FaviconAvatar({
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
-   SourceFaviconRow — continuous lean% positioning, 2-row collision
-   Each source placed at its actual lean value. No zone buckets.
+   SourceFaviconRow — continuous lean% positioning, GREEDY MULTI-ROW placement.
+
+   With the separate Source Ledger removed (2026-08-10), the spectrum's
+   positioned logos ARE the source display: every source must stay individually
+   hittable and nameable, no matter how many pile at the same lean. So placement
+   is no longer capped at 2 rows: each source drops into the first row where it
+   clears its neighbour by `minGap`, adding a new row when none fits. No two
+   pins ever overlap, so a ~30-source cluster simply grows a few rows tall and
+   every source stays tappable.
+
+   Naming:
+     - Fine pointer (desktop): pins are <a> links. Hover shows the tooltip
+       (name + lean + score + "Open article"); click opens the article.
+     - Coarse pointer (mobile): pins are <button>s. A tap does NOT navigate; it
+       toggles that source's tooltip (name + lean + score + an explicit
+       "Open article" link inside). Tapping elsewhere, another pin, or Escape
+       dismisses it.
    ═══════════════════════════════════════════════════════════════════════ */
 
 function SourceFaviconRow({
@@ -249,70 +264,127 @@ function SourceFaviconRow({
   setTooltip: (t: TooltipData | null) => void;
 }) {
   const [isMobile, setIsMobile] = useState(false);
+  const [isCoarse, setIsCoarse] = useState(false);
+  // Coarse-pointer only: which source's tooltip is currently pinned open.
+  const [pinnedName, setPinnedName] = useState<string | null>(null);
 
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 767px)");
-    setIsMobile(mq.matches);
-    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
+    const mqW = window.matchMedia("(max-width: 767px)");
+    const mqP = window.matchMedia("(pointer: coarse)");
+    setIsMobile(mqW.matches);
+    setIsCoarse(mqP.matches);
+    const hW = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    const hP = (e: MediaQueryListEvent) => setIsCoarse(e.matches);
+    mqW.addEventListener("change", hW);
+    mqP.addEventListener("change", hP);
+    return () => {
+      mqW.removeEventListener("change", hW);
+      mqP.removeEventListener("change", hP);
+    };
   }, []);
 
   const avatarSize = isMobile ? 14 : 20;
   const rowH = avatarSize + 4; // 4px gap between rows
 
-  // Every source is placed at its real lean, on both breakpoints, so the mobile
-  // portal shows the same "logos under the point" density as desktop and the
-  // Sources page (the old mobile top-5 cap is gone; the ledger below carries the
-  // complete roster either way). A slightly larger min-gap on mobile keeps the
-  // smaller 14px tiles from stacking too tightly.
+  // A slightly larger min-gap on mobile keeps the smaller 14px tiles from
+  // stacking too tightly.
   const minGap = isMobile ? 6 : MIN_GAP_PCT;
 
-  // Sort by lean, assign to one of two rows via collision detection.
-  const placed: Array<{ source: DeepDiveSpectrumSource; leftPct: number; row: 0 | 1 }> = useMemo(() => {
+  // Greedy multi-row placement. Sort by lean, then for each source pick the
+  // first row whose last-placed pin clears it by minGap; open a new row when
+  // none fits. Guarantees no overlap -> every source individually hittable.
+  const { placed, rowCount } = useMemo(() => {
     const sorted = [...sources].sort((a, b) => a.politicalLean - b.politicalLean);
-    const lastRight: [number, number] = [-Infinity, -Infinity];
-    return sorted.map((s) => {
+    const rowsLast: number[] = []; // last leftPct placed per row
+    const out = sorted.map((s) => {
       const leftPct = 2 + (s.politicalLean / 100) * 96;
-      let row: 0 | 1;
-      if (leftPct - lastRight[0] >= minGap) {
-        row = 0;
-      } else if (leftPct - lastRight[1] >= minGap) {
-        row = 1;
+      let row = rowsLast.findIndex((last) => leftPct - last >= minGap);
+      if (row === -1) {
+        row = rowsLast.length;
+        rowsLast.push(leftPct);
       } else {
-        row = 1;
+        rowsLast[row] = leftPct;
       }
-      lastRight[row] = leftPct;
       return { source: s, leftPct, row };
     });
+    return { placed: out, rowCount: Math.max(1, rowsLast.length) };
   }, [sources, minGap]);
 
-  // The mobile "+N more" dot-overflow indicator was removed 2026-08-10: the
-  // mobile Deep Dive Spread page now lists every source in the Left/Center/Right
-  // columns beneath the spectrum, so the label was redundant.
+  // Coarse: dismiss the pinned tooltip on an outside tap or Escape.
+  useEffect(() => {
+    if (!pinnedName) return;
+    const onDown = (e: PointerEvent) => {
+      const t = e.target as HTMLElement | null;
+      if (t && (t.closest(".dd-sv-sources__pin") || t.closest(".dd-sv__tooltip"))) return;
+      setPinnedName(null);
+      setTooltip(null);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setPinnedName(null);
+        setTooltip(null);
+      }
+    };
+    document.addEventListener("pointerdown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [pinnedName, setTooltip]);
+
+  const showTip = (el: HTMLElement, source: DeepDiveSpectrumSource) => {
+    const rect = el.getBoundingClientRect();
+    setTooltip({ source, x: rect.left + rect.width / 2, y: rect.top });
+  };
 
   return (
-    <>
-      <div className="dd-sv-sources" style={{ height: rowH * 2 }}>
-        {placed.map(({ source, leftPct, row }, i) => (
+    <div className="dd-sv-sources" style={{ height: rowH * rowCount }}>
+      {placed.map(({ source, leftPct, row }, i) => {
+        const posStyle: React.CSSProperties = { left: `${leftPct}%`, top: `${row * rowH}px` };
+
+        if (isCoarse) {
+          const isPinned = pinnedName === source.name;
+          return (
+            <button
+              key={`pin-${i}`}
+              type="button"
+              className="dd-sv-sources__pin"
+              style={posStyle}
+              aria-label={`${source.name}, ${leanLabel(source.politicalLean)}. Show details.`}
+              aria-expanded={isPinned}
+              onClick={(e) => {
+                e.preventDefault();
+                if (isPinned) {
+                  setPinnedName(null);
+                  setTooltip(null);
+                } else {
+                  setPinnedName(source.name);
+                  showTip(e.currentTarget, source);
+                }
+              }}
+            >
+              <FaviconAvatar source={source} size={avatarSize} />
+            </button>
+          );
+        }
+
+        return (
           <a
             key={`pin-${i}`}
             href={source.articleUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="dd-sv-sources__pin"
-            style={{ left: `${leftPct}%`, top: `${row * rowH}px` }}
-            onPointerEnter={(e) => {
-              const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-              setTooltip({ source, x: rect.left + rect.width / 2, y: rect.top });
-            }}
+            style={posStyle}
+            onPointerEnter={(e) => showTip(e.currentTarget, source)}
             onPointerLeave={() => setTooltip(null)}
           >
             <FaviconAvatar source={source} size={avatarSize} />
           </a>
-        ))}
-      </div>
-    </>
+        );
+      })}
+    </div>
   );
 }
 
