@@ -71,6 +71,15 @@ def _smart_generate_json(prompt: str,
     return None, "none"
 
 
+# Summarizer length policy. Restored 2026-08-11: the 2026-08-10 hygiene commit
+# had shrunk summaries from the original 250-350 word standard to a 90-word cap;
+# this restores a 200-300 word full-brief target. _SUMMARY_PROMPT_VERSION is
+# folded into the content hash so a policy change regenerates every summary
+# instead of serving one written under the old (short) policy.
+_MAX_SUMMARY_ARTICLES = 25
+_SUMMARY_PROMPT_VERSION = "2026-08-11-longform"
+
+
 def _content_hash(articles: list[dict]) -> str:
     """
     Hash of cluster's article membership. Used to skip re-summarization
@@ -91,12 +100,14 @@ def _content_hash(articles: list[dict]) -> str:
         pub = a.get("published_at") or ""
         return (pub, str(a.get("id") or a.get("article_id") or ""))
 
-    newest = sorted([a for a in articles if a], key=_sort_key, reverse=True)[:10]
+    newest = sorted([a for a in articles if a], key=_sort_key, reverse=True)[:_MAX_SUMMARY_ARTICLES]
     ids = [str(a.get("id") or a.get("article_id") or "") for a in newest]
     # Include total membership count so going from 5→6 articles still
-    # invalidates (we may switch from per-article to summarized prose).
+    # invalidates, plus the prompt-policy version so a length/format policy
+    # change (the 2026-08-11 restore to 200-300 word briefs) regenerates every
+    # summary rather than serving one written under the old policy.
     return hashlib.sha256(
-        ("|".join(ids) + f"|n={len(articles)}").encode("utf-8")
+        ("|".join(ids) + f"|n={len(articles)}|p={_SUMMARY_PROMPT_VERSION}").encode("utf-8")
     ).hexdigest()
 
 
@@ -243,23 +254,26 @@ Bad: "US Senate Could Pass Immigration Bill as Talks Continue"
 
 ---
 
-TASK 2 — summary (string, 55 to 90 words, 2 to 4 sentences)
-Write a tight, specific briefing of 55 to 90 words, in 2 to 4 complete sentences. \
-Count the words. Every sentence must carry a new concrete fact: a name, a number, \
-a date, a place, or an action. SHOW, DON'T TELL: juxtapose facts and let the \
-reader see the pattern; never assert that something is significant. The house \
-standard for density is this: "A lawyer who'd never been to India drew the border \
-in five weeks. 15 million crossed it." No wasted words, the weight lands on its \
-own. That density is the target WITHIN the band: use 2 to 4 sentences to give the \
-reader the freshest development, the context a reader genuinely needs, and the \
-sharpest point of contention. A single clipped sentence is not a summary; do not \
-stop short of conveying the story. Do not pad to reach the ceiling either. Aim for \
-the middle of the 55-to-90-word band.
+TASK 2 — summary (string, 200 to 300 words)
+Write a comprehensive factual briefing of 200 to 300 words that reads like a \
+complete news intelligence brief: structured as an inverted pyramid (most \
+important first) and dense with concrete specifics. Every sentence must carry a \
+new concrete fact: a name, a number, a date, a place, or an action. SHOW, DON'T \
+TELL: juxtapose facts and let the reader see the pattern; never assert that \
+something is significant. The house standard for density is this: "A lawyer who'd \
+never been to India drew the border in five weeks. 15 million crossed it." Every \
+sentence should carry that weight; length is never an excuse to pad. Give the \
+reader, in order: the freshest development, what happened with its full scale \
+(names, numbers, places), how it developed, the essential background, the sharpest \
+points of contention between the principal actors, and what remains unresolved. A \
+well-covered story earns the full 200 to 300 words; write what the coverage \
+genuinely supports rather than padding, but never stop at a wire line when the \
+reporting carries a full brief.
 
 IMPORTANT: Articles are sorted newest-first and include publication timestamps. \
 Open on the MOST RECENT development, the freshest reported fact: who, what, when, \
-where. Older articles are context; use only the background a reader genuinely \
-needs, and give it in one sentence.
+where. Older articles are context; use the background a reader genuinely needs to \
+understand the development, and give it the space it warrants.
 
 DOMINANT STORY ONLY: Summarize ONLY the single story about the entities named in \
 the DOMINANT TOPIC / ENTITIES line above; ignore any article whose subject is a \
@@ -270,16 +284,17 @@ event that does not belong to the dominant story.
 
 ARRIVE LATE: start inside the action. Do not open with "In a move that...", \
 "Following weeks of...", or "As tensions grew..." The first sentence should name a \
-concrete action, actor, or figure. Then, in one or two more sentences, add the \
-context and the sharpest point of disagreement between the principal actors. Stop \
-when the facts are stated.
+concrete action, actor, or figure. Then build out the context and the range of \
+disagreement between the principal actors. Stop when the facts are stated, not \
+before the story is told.
 
 HARD RULES for the summary (a reader sees violations instantly):
-- TARGET 55 to 90 words in 2 to 4 sentences. 90 words is a hard ceiling: never \
-exceed it, and do not pad to reach it. But do not under-write either: a single \
-clipped sentence, or a sub-40-word summary that drops the essential context or the \
-point of contention, is a failure. Give the story room to land across 2 to 4 \
-sentences.
+- TARGET 200 to 300 words. Give a reader who came for depth the full picture: the \
+development, its scale, the background, the range of stated positions, and what is \
+still unresolved. Do not pad with filler, repetition, or restatement to reach the \
+length; every sentence must add a new fact. A one or two sentence summary of a \
+well-covered story is a failure. (350 words is a hard runaway ceiling, not a \
+target.)
 - NO TERMINAL RESTATEMENT. Never close on a sentence that repeats the opening in \
 other words ("Firefighters continue to battle the fires day and night.", \
 "Authorities are continuing their investigation.", "The campaign continues."). \
@@ -573,8 +588,10 @@ def _strip_source_meta_commentary(summary: str) -> str:
 # prompt only — a post-check can never invent grounded facts to lengthen a summary,
 # so under-length output is surfaced as a warning, not padded). Shared by the trim,
 # _check_quality, and the batch instrumentation so the numbers live in one place.
-_SUMMARY_WORD_CAP = 90
-_SUMMARY_WORD_FLOOR = 40  # soft: below this a summary is likely a clipped fragment
+_SUMMARY_WORD_CAP = 350  # runaway guard ONLY, not an editorial target: a model
+                         # failure must never dump 1000 words into a card.
+_SUMMARY_WORD_FLOOR = 150  # soft: a well-covered story should be a full brief,
+                           # not a clipped wire line (restored 2026-08-11)
 
 # Stopwords for the content-word comparisons in 3b/3d. Deliberately broad
 # (articles, auxiliaries, prepositions, pronouns, continuation verbs) so that a
@@ -1361,7 +1378,7 @@ def _build_source_names_line(articles: list[dict]) -> str:
 # tokens, well within a single free-tier request (the free-tier cap is
 # REQUESTS/day, not input tokens), so feeding real bodies stays $0 and adds no
 # extra call.
-_ARTICLE_BODY_MAX_CHARS = 1800
+_ARTICLE_BODY_MAX_CHARS = 2200
 
 
 def _sentence_bounded_excerpt(text: str, max_chars: int = _ARTICLE_BODY_MAX_CHARS) -> str:
@@ -1391,7 +1408,7 @@ def _sentence_bounded_excerpt(text: str, max_chars: int = _ARTICLE_BODY_MAX_CHAR
     return window.strip()
 
 
-def _build_articles_block(articles: list[dict], max_articles: int = 10) -> str:
+def _build_articles_block(articles: list[dict], max_articles: int = _MAX_SUMMARY_ARTICLES) -> str:
     """
     Build the articles context block for the prompt.
 
