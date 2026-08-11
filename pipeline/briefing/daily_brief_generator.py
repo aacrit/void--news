@@ -330,11 +330,14 @@ Examples: "Tariffs Bite, Courts Push Back, Markets Shrug" / \
 TL;DR INSTRUCTIONS (the written body after the headline):
 REGISTER: Newspaper editorial page. No contractions. No spoken fragments. \
 Declarative sentences. Every clause load-bearing.
-16-20 sentences. Aim for exactly 400 words. \
-Acceptable range: 360-480 words. Density over length — if a sentence restates \
-rather than advances, cut it. \
+24-30 sentences. Aim for exactly 600 words. \
+Acceptable range: 540-720 words. (CEO 2026-08-11: lengthened 1.5x from the \
+old 400-word target — the brief is the day's editorial spine and was reading \
+thin.) Density over length — if a sentence restates rather than advances, \
+cut it; reach the length with MORE stories and MORE concrete facts per \
+story, never with padding. \
 FORMAT: put ONE sentence per line — press Enter after every sentence so the \
-body is 16-20 separate lines, never a single flowing paragraph. \
+body is 24-30 separate lines, never a single flowing paragraph. \
 Write in the voice of today's lead host:
 {LEAD_HOST_BLOCK}
 
@@ -475,7 +478,7 @@ NEVER use: "This isn't just...", "Here's the thing...", "The bigger picture...",
 OUTPUT FORMAT — PLAIN TEXT, exactly this shape (no JSON, no markdown fences):
 
 Line 1: the TL;DR headline (6-10 words, no label, no quotes).
-Then a blank line, then the TL;DR body: 16-20 sentences, ONE sentence per \
+Then a blank line, then the TL;DR body: 24-30 sentences, ONE sentence per \
 line (a real line break after every sentence — never one flowing paragraph).
 Then a line containing exactly:
 ===AUDIO SCRIPT===
@@ -513,12 +516,12 @@ def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
     words = len(tldr.split())
     report["metrics"]["tldr_lines"] = len(lines)
     report["metrics"]["tldr_words"] = words
-    if len(lines) < 10 or len(lines) > 25:
-        msg = f"TL;DR has {len(lines)} lines (expected 16-20)"
+    if len(lines) < 15 or len(lines) > 36:
+        msg = f"TL;DR has {len(lines)} lines (expected 24-30)"
         report["warnings"].append(msg)
         print(f"  [quality][brief:{edition}] {msg}")
-    if words < 240 or words > 560:
-        msg = f"TL;DR has {words} words (expected 360-480)"
+    if words < 360 or words > 840:
+        msg = f"TL;DR has {words} words (expected 540-720)"
         report["warnings"].append(msg)
         print(f"  [quality][brief:{edition}] {msg}")
 
@@ -1292,7 +1295,7 @@ Section contents:
 Not a news headline. A declarative statement of the editorial thesis. \
 Concrete nouns and active verbs. No "slams," "blasts," "rips." \
 Example: "Europe's energy bet just got called" or "The court ruling nobody wanted to write."
-2. Opinion text — 300-500 words. A focused editorial argument on THIS story, \
+2. Opinion text — 450-750 words. A focused editorial argument on THIS story, \
 from the {LEAN_UPPER} ideological lens. Follow the structure: \
 opening → thesis → evidence → turn → close. \
 Never reference outlet names, "coverage," "sources," or "reporting." \
@@ -1538,13 +1541,13 @@ def _generate_opinion(cluster: dict, lean: str, date_str: str, edition: str = "w
         can_retry = attempt == 0 and _brief_calls_remaining() > 0
 
         # Hard-ish gate: too short. Spend the retry on it instead of bailing.
-        if words < 100:
+        if words < 150:
             print(f"  [opinion] Too short ({words} words) — "
                   f"{'retrying' if can_retry else 'discarding'}")
             if can_retry:
                 continue
             break
-        if words > 700:
+        if words > 1000:
             print(f"  [opinion] Long ({words} words) — keeping but flagged")
 
         # Soft gates: prohibited terms / audio shape. On attempt 0, stash the
