@@ -13,6 +13,11 @@ interface ComparativeViewProps {
   sources: StorySource[];
   consensusPoints?: string[];
   divergencePoints?: string[];
+  /** Suppress the embedded "Key agreements & disagreements" disclosure. Set
+   *  true where the shared SpreadDisagreement panel already surfaces the same
+   *  consensus/divergence up top, so this deeper "read all sides" view doesn't
+   *  restate it. Defaults false (standalone callers keep the disclosure). */
+  hideInsights?: boolean;
 }
 
 interface LeanBucket {
@@ -55,7 +60,7 @@ function AgreementIcon({ type }: { type: "agree" | "diverge" }) {
 
 const VISIBLE_LIMIT = 3;
 
-export default function ComparativeView({ sources, consensusPoints, divergencePoints }: ComparativeViewProps) {
+export default function ComparativeView({ sources, consensusPoints, divergencePoints, hideInsights = false }: ComparativeViewProps) {
   const [expandedBuckets, setExpandedBuckets] = useState<Record<string, boolean>>({});
   const [showInsights, setShowInsights] = useState(false);
 
@@ -189,8 +194,9 @@ export default function ComparativeView({ sources, consensusPoints, divergencePo
         })}
       </div>
 
-      {/* Convergence & Divergence — collapsed by default, below the grid */}
-      {(hasConsensus || hasDivergence) && (
+      {/* Convergence & Divergence — collapsed by default, below the grid.
+          Suppressed when the SpreadDisagreement panel already shows this up top. */}
+      {!hideInsights && (hasConsensus || hasDivergence) && (
         <div className="comp-view__insights-disclosure">
           <button
             className="comp-view__insights-trigger"

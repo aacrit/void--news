@@ -23,10 +23,10 @@ import { timeAgo } from "../lib/utils";
 import { SITE_URL } from "../lib/siteMeta";
 import { hapticLight } from "../lib/haptics";
 import DeepDiveSpectrum from "./DeepDiveSpectrum";
-import SourceLedger from "./SourceLedger";
 import type { DeepDiveSpectrumSource } from "./DeepDiveSpectrum";
 import BiasSnapshot from "./BiasSnapshot";
 import ComparativeView from "./ComparativeView";
+import SpreadDisagreement from "./SpreadDisagreement";
 import ClaimConsensusSection from "./ClaimConsensusSection";
 import SixLenses from "./SixLenses";
 import SummaryWithContradictions from "./SummaryWithContradictions";
@@ -590,7 +590,9 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
           </p>
         )}
 
-        {/* ---- The Spread — source-lean spectrum as a full-width band ---- */}
+        {/* ---- The Spread — source-lean spectrum as a full-width band. The
+            spectrum's positioned logos ARE the source display now (hover a logo
+            for its name); the separate roster was removed. ---- */}
         {spectrumSources.length > 0 && (
           <section
             aria-label="Source spectrum"
@@ -601,9 +603,17 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
             <div className="inline-dd__spectrum">
               <DeepDiveSpectrum sources={spectrumSources} />
             </div>
-            {sources.length > 0 && <SourceLedger sources={sources} defaultOpen />}
           </section>
         )}
+
+        {/* ---- Agree / Dispute — the promoted centerpiece, right after the
+            spectrum. Pulled up from the old buried ComparativeView disclosure.
+            The component self-omits (renders nothing) when the pipeline supplied
+            no consensus/divergence, so it is mounted unconditionally. ---- */}
+        <SpreadDisagreement
+          consensus={deepDive?.consensus}
+          divergence={deepDive?.divergence}
+        />
 
         {/* ---- Six Lenses — 6-axis ink-stamp bias breakdown ---- */}
         {story.sigilData && !story.sigilData.pending && (
@@ -660,6 +670,7 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
                 sources={sources}
                 consensusPoints={deepDive?.consensus}
                 divergencePoints={deepDive?.divergence}
+                hideInsights
               />
             </LazyOnView>
           </section>

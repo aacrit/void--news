@@ -859,3 +859,77 @@
     transition-duration: 0ms;
   }
 }
+
+/* ===========================================================================
+   SpreadDisagreement (.spread-disagree) — the promoted "agree vs split" panel.
+
+   Sits right after the spectrum, before Six Lenses. Two editorial tracks
+   (agree / split) with a hairline ink rule between them; each point is a short
+   editorial line with a leading colored tick (agree = calm sense-low, split =
+   alert sense-high, semantic not decorative). Barlow small-caps labels, Inter
+   body, hairline dividers for newspaper rhythm. Light + dark via existing vars.
+   Shared by all three Deep Dive shells (they all import verify.css).
+   =========================================================================== */
+.spread-disagree {
+  margin: var(--space-5) 0;
+}
+
+.spread-disagree__rule {
+  margin: var(--space-4) 0;
+}
+
+.spread-disagree__track {
+  /* per-track color for the point ticks */
+  --point-mark: var(--fg-tertiary);
+}
+.spread-disagree__track--agree { --point-mark: var(--sense-low); }
+.spread-disagree__track--split { --point-mark: var(--sense-high); }
+
+.spread-disagree__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.spread-disagree__mark {
+  flex-shrink: 0;
+  display: block;
+}
+
+.spread-disagree__label {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--fg-secondary);
+}
+
+.spread-disagree__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.spread-disagree__point {
+  position: relative;
+  padding: var(--space-2) 0 var(--space-2) var(--space-4);
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  line-height: 1.55;
+  color: var(--fg-primary);
+  border-bottom: var(--rule-thin);
+}
+.spread-disagree__point:last-child { border-bottom: none; }
+
+/* Leading colored tick — a short hairline dash in the track's semantic color. */
+.spread-disagree__point::before {
+  content: "";
+  position: absolute;
+  left: var(--space-1);
+  top: calc(var(--space-2) + 0.72em);
+  width: 9px;
+  height: 0;
+  border-top: 2px solid var(--point-mark);
+  border-radius: 1px;
+  opacity: 0.9;
+}
