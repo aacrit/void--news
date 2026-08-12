@@ -2681,6 +2681,9 @@ def main():
                                 brief["audio_script"], voices, edition,
                                 opinion_audio_script=brief.get("opinion_audio_script"),
                                 opinion_lean=brief.get("opinion_lean"),
+                                # One host reads the news, the other the opinion —
+                                # the per-line A/B alternation read as jittery.
+                                news_single_voice=True,
                             )
                             if audio_result:
                                 brief_row["audio_url"] = audio_result["audio_url"]
