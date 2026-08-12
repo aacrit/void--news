@@ -41,6 +41,14 @@ on:
           - vision-series   # fable's six debut Vision posts, captions pre-filled
           - history
           - weekly
+      source:
+        description: 'generate mode only: gemini (Gemini writes captions) | opus (Opus-authored data/social/opus_batch.json, NO Gemini)'
+        required: false
+        default: 'gemini'
+        type: choice
+        options:
+          - gemini
+          - opus
       note:
         description: 'Optional steer for this batch: angle / tone / focus / theme (shapes captions + intent, never the facts)'
         required: false
@@ -71,9 +79,12 @@ jobs:
           if [ -z "$MODE" ]; then MODE="generate"; fi
           TRACK="${{ inputs.track }}"
           if [ -z "$TRACK" ]; then TRACK="void"; fi
+          SOURCE="${{ inputs.source }}"
+          if [ -z "$SOURCE" ]; then SOURCE="gemini"; fi
           echo "mode=$MODE" >> "$GITHUB_OUTPUT"
           echo "track=$TRACK" >> "$GITHUB_OUTPUT"
-          echo "Mode: $MODE | Track: $TRACK"
+          echo "source=$SOURCE" >> "$GITHUB_OUTPUT"
+          echo "Mode: $MODE | Track: $TRACK | Source: $SOURCE"
 
       # ---- Setup ----------------------------------------------------------
       - uses: actions/setup-python@v5
@@ -126,14 +137,24 @@ jobs:
         if: steps.mode.outputs.mode == 'generate'
         run: echo "GEN_SINCE=$(date -u -d '-2 minutes' +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
 
-      - name: Generate next draft
-        if: steps.mode.outputs.mode == 'generate'
+      - name: Generate next draft (Gemini source)
+        if: steps.mode.outputs.mode == 'generate' && steps.mode.outputs.source != 'opus'
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
           SOCIAL_NOTE: ${{ inputs.note }}
           SOCIAL_VISION_HOOK: ${{ inputs.vision_hook }}
         run: python -m pipeline.social.ig_generator --track ${{ steps.mode.outputs.track }}
+
+      # Opus source: the copy is already written (data/social/opus_batch.json).
+      # Ingest inserts the rows with captions pre-filled; the Gemini caption step
+      # below is skipped for this source.
+      - name: Ingest Opus batch (Opus source, NO Gemini)
+        if: steps.mode.outputs.mode == 'generate' && steps.mode.outputs.source == 'opus'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python -m pipeline.social.ig_opus_ingest
 
       - name: Capture slides (Playwright)
         if: steps.mode.outputs.mode == 'generate'
@@ -143,8 +164,10 @@ jobs:
           RENDER_BASE_URL: 'http://localhost:3000'
         run: python -m pipeline.social.ig_capture --wait-server
 
+      # Skipped for source=opus: the Opus batch already carries every caption +
+      # variant + intent on the row, so there is nothing (and no Gemini) to run.
       - name: Generate captions (Gemini flash-lite) + per-platform variants
-        if: steps.mode.outputs.mode == 'generate'
+        if: steps.mode.outputs.mode == 'generate' && steps.mode.outputs.source != 'opus'
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
