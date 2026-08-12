@@ -264,6 +264,7 @@ def generate_claude_brief(
             script, voices, edition,
             opinion_audio_script=brief.get("opinion_audio_script"),
             opinion_lean=brief.get("opinion_lean"),
+            news_single_voice=True,  # one host reads news, other the opinion
         )
 
         if audio_result:

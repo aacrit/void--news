@@ -842,6 +842,7 @@ def produce_audio(
     opinion_audio_script: str | None = None,
     opinion_lean: str | None = None,
     tts_preamble_override: str | None = None,
+    news_single_voice: bool = False,
 ) -> Optional[dict]:
     """
     Synthesize the full broadcast via Gemini Flash TTS.
@@ -862,6 +863,13 @@ def produce_audio(
         tts_preamble_override: If provided, replaces the auto-generated TTS
             preamble entirely. Used by weekly broadcast for magazine-pace
             direction that differs from the daily bulletin style.
+        news_single_voice: When True, the news bulletin is read by ONE host
+            (a monologue) instead of the two-host A/B dialogue. The single
+            news voice is the one NOT used by the opinion segment, so "news
+            host" and "opinion host" stay distinct (e.g. Brian reads the news,
+            Ava delivers the opinion). The daily brief sets this True — the
+            per-line A/B alternation read as jittery. Weekly keeps the two-
+            anchor dialogue (leaves this False).
     """
     # CEO 2026-05-13 — void --onair parked. Single env gate disables every
     # audio code path (TTS calls, Supabase upload, podcast feed). Frontend
@@ -906,12 +914,30 @@ def produce_audio(
                 f"Speaker Two: {host_b_preamble}"
             )
 
-    # --- Step 1: Synthesize news dialogue (2 speakers via edge-tts) ---
+    # Opinion timbre for this edition, resolved up front so single-voice news
+    # can claim the OTHER of the two voices (news host != opinion host).
+    opinion_voice_name = voices.get("opinion", voices["host_a"])["id"]
+    opinion_voice_edge = _edge_voice(opinion_voice_name)
+
+    # --- Step 1: Synthesize news bulletin via edge-tts ---
     dialogue = _script_to_dialogue(audio_script)
     word_count = len(dialogue.split())
-    voice_a_edge = _edge_voice(voice_a_name)
-    voice_b_edge = _edge_voice(voice_b_name)
-    print(f"  [audio] News TTS: {word_count} words, {voice_a_edge} + {voice_b_edge}")
+    if news_single_voice:
+        # One host reads the whole bulletin. The per-line A/B alternation read
+        # as jittery; a single measured voice is cleaner. Use whichever of the
+        # two voices the opinion is NOT using, so the news host and the opinion
+        # host are always distinct (Brian reads news, Ava delivers opinion, or
+        # vice-versa depending on the edition's opinion timbre).
+        news_voice_edge = (
+            _FEMALE_EDGE_VOICE if opinion_voice_edge == _MALE_EDGE_VOICE
+            else _MALE_EDGE_VOICE
+        )
+        voice_a_edge = voice_b_edge = news_voice_edge
+        print(f"  [audio] News TTS (single voice): {word_count} words, {news_voice_edge}")
+    else:
+        voice_a_edge = _edge_voice(voice_a_name)
+        voice_b_edge = _edge_voice(voice_b_name)
+        print(f"  [audio] News TTS: {word_count} words, {voice_a_edge} + {voice_b_edge}")
 
     pcm_data = _synthesize_edge_tts(dialogue, voice_a_edge, voice_b_edge)
     if not pcm_data:
@@ -927,8 +953,7 @@ def produce_audio(
     # --- Step 2: Synthesize opinion monologue (1 speaker via edge-tts) ---
     opinion_seg = None
     if opinion_audio_script:
-        opinion_voice_name = voices.get("opinion", voices["host_a"])["id"]
-        opinion_voice_edge = _edge_voice(opinion_voice_name)
+        # opinion_voice_name / opinion_voice_edge resolved up front (Step 1).
         opinion_words = len(opinion_audio_script.split())
         print(f"  [audio] Opinion TTS: {opinion_words} words, {opinion_voice_edge}")
 

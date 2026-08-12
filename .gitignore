@@ -70,3 +70,17 @@ audit_output.txt
 pipeline_run*.log
 scripts/top50_export*.json
 scripts/review_result.json
+
+# Social bundle download artifacts (local only)
+opus_social_out/
+opus_social_out2/
+social_bundle/
+social_out/
+*.png
+
+# Social bundle download artifacts (local only)
+opus_social_out/
+opus_social_out2/
+social_bundle/
+social_out/
+mobile-dd-check.png
