@@ -46,6 +46,7 @@ import math
 import re
 from collections import Counter
 from datetime import datetime, timezone
+from functools import lru_cache
 
 import numpy as np
 from sklearn.cluster import AgglomerativeClustering
@@ -255,6 +256,70 @@ _SYNONYM_NORMALISATION: list[tuple[str, str]] = [
 # Cluster title / summary generation
 # ---------------------------------------------------------------------------
 
+# P0-6 (2026-08-11) — contested-policy headline neutrality. The cluster title is
+# EXTRACTIVE: _generate_cluster_title picks the best member headline. On
+# contested-policy stories (abortion, immigration, gun policy, gender-related
+# legislation) member outlets phrase the SAME procedural event with opposed
+# advocacy framing ("Allows Abortion Through All Nine Months of Pregnancy" vs
+# the neutral "Removes 24-Week Gestational Limit"). When the topic is contested,
+# candidate headlines carrying a loaded/advocacy construction are PENALISED and
+# ones using neutral procedural/legal construction are PREFERRED, so the feed
+# surfaces the least-loaded existing headline. This only RE-RANKS the extractive
+# candidates; it never fabricates a headline. The lexicon is deliberately
+# SYMMETRIC — it neutralises both left-loaded and right-loaded phrasings.
+_CONTESTED_POLICY_TOPICS = (
+    "abortion", "reproductive", "immigration", "immigrant", "migrant",
+    "deportation", "deport", "asylum", "border",
+    "gun", "firearm", "assault weapon", "second amendment",
+    "transgender", "trans ", "gender-affirming", "gender affirming",
+    "gender identity", "puberty blocker",
+)
+# Loaded / advocacy phrasings, both directions. Substring-matched on the
+# lowercased headline (all entries are specific enough that they only appear in
+# an advocacy frame). Right-loaded and left-loaded terms are BOTH listed so the
+# penalty is symmetric.
+_LOADED_HEADLINE_PHRASES = (
+    # abortion — right-loaded
+    "through all nine months", "all nine months", "nine months of pregnancy",
+    "partial-birth", "partial birth", "born alive", "born-alive",
+    "baby killing", "baby-killing", "kill babies", "abortion on demand",
+    "abortion up to birth", "up to birth", "dismemberment abortion",
+    # abortion — left-loaded
+    "forced birth", "forced-birth", "forced pregnancy", "forced-pregnancy",
+    "war on women", "handmaid", "reproductive slavery", "abortion ban zealots",
+    # immigration — right-loaded
+    "illegals", "illegal aliens", "amnesty", "open borders", "open-borders",
+    "anchor baby", "anchor babies", "invasion", "criminal aliens", "invaders",
+    # immigration — left-loaded
+    "kids in cages", "caged children", "concentration camp", "kidnapping migrants",
+    "ethnic cleansing", "mass deportation machine",
+    # guns — right-loaded
+    "gun grab", "gun-grab", "confiscation", "tyranny", "jackbooted",
+    # guns — left-loaded
+    "weapons of war", "weapon of war", "gun lobby bloodbath", "blood money",
+    "child killing machine",
+    # gender — right-loaded
+    "mutilation", "genital mutilation", "chemical castration", "castrate",
+    "grooming", "groomers", "sterilizing children", "trans agenda",
+    # gender — left-loaded
+    "erasing trans", "trans genocide", "eradicate transgender", "hateful ban",
+)
+# Neutral procedural / legal construction cues — PREFERRED on contested topics.
+# Word-boundary matched.
+_PROCEDURAL_HEADLINE_CUES = (
+    "removes", "remove", "repeals", "repeal", "amends", "amend", "amended",
+    "legalizes", "legalize", "legalise", "legalises", "bans", "ban", "banned",
+    "restricts", "restrict", "restricted", "limit", "limits", "gestational",
+    "lifts", "lift", "overturns", "overturn", "strikes down", "struck down",
+    "enacts", "enact", "passes", "passed", "signs", "signed", "vetoes", "vetoed",
+    "expands", "expand", "narrows", "narrow", "codifies", "codify", "rules",
+    "upholds", "uphold", "blocks", "block", "approves", "approve", "authorizes",
+    "authorize", "prohibits", "prohibit", "requires", "require",
+)
+_CONTESTED_LOADED_PENALTY = 4.0   # per loaded phrase present
+_CONTESTED_PROCEDURAL_BONUS = 2.0  # per procedural cue (capped at 2)
+
+
 def _generate_cluster_title(articles: list[dict]) -> str:
     """Pick the most representative headline across articles in a cluster."""
     raw_titles = [a.get("title", "") or "" for a in articles]
@@ -290,6 +355,15 @@ def _generate_cluster_title(articles: list[dict]) -> str:
         if ent_counter else set()
     )
 
+    # P0-6: is this a contested-policy story? Detected once over the pooled
+    # candidate headlines (word-boundary), then used to gate the loaded-phrase
+    # penalty / procedural-cue bonus below.
+    _pooled_lower = " ".join(valid_titles).lower()
+    _contested_policy = any(
+        re.search(rf"\b{re.escape(kw.strip())}", _pooled_lower)
+        for kw in _CONTESTED_POLICY_TOPICS
+    )
+
     def _score(title: str) -> float:
         score = 0.0
         length = len(title)
@@ -313,6 +387,18 @@ def _generate_cluster_title(articles: list[dict]) -> str:
             score -= 1.5
         if ": " in title or " - " in title:
             score += 0.5
+        # P0-6: on contested-policy topics, penalise advocacy/loaded phrasing
+        # and prefer neutral procedural/legal construction. Only re-ranks the
+        # existing extractive candidates; never fabricates a headline.
+        if _contested_policy:
+            tl2 = title.lower()
+            loaded_hits = sum(1 for p in _LOADED_HEADLINE_PHRASES if p in tl2)
+            score -= _CONTESTED_LOADED_PENALTY * loaded_hits
+            proc_hits = sum(
+                1 for p in _PROCEDURAL_HEADLINE_CUES
+                if re.search(rf"\b{re.escape(p)}", tl2)
+            )
+            score += _CONTESTED_PROCEDURAL_BONUS * min(proc_hits, 2)
         return score
 
     scored = [(t, _score(t)) for t in valid_titles]
@@ -2757,6 +2843,142 @@ def _apply_wire_aware_source_count(cluster: dict) -> None:
 
 
 # ---------------------------------------------------------------------------
+# Phase 6 — headline/body contamination guard (salient-coherence split)
+# ---------------------------------------------------------------------------
+# 2026-08-11 (P0-3). Phase 1 (TfidfVectorizer, ngram (1,2), cosine >=
+# STORY_TFIDF_THRESHOLD) has NO domain stop-list and NO document-frequency gate,
+# so high-frequency bridge bigrams ("supreme court", "extreme heat", "muslim",
+# "army", "youth") survive TF-IDF and chain thin low-source articles that share
+# nothing else. topic_coherence() is fooled because it rewards ANY shared word.
+# Worst live offender: cluster 9673f352 ("Supreme Court ... Mail-In Ballot")
+# fused five different countries' supreme courts into one #63.5 bag.
+#
+# Phase 6 runs LAST (after Phase 5). For each cluster it extracts the chosen
+# headline's SALIENT anchors — title stems, minus the generic government /
+# wire-service / hot-spot stop-vocabulary (_LOW_SPECIFICITY_ENTITIES +
+# _ENTITY_STOP_TOKENS, stemmed), minus any stem whose document-frequency across
+# the day's cluster titles is high (the same absolute-df discriminativeness
+# signal Phases 2 and 3 use). That yields the low-df distinguishing anchors
+# ({mail-in, ballot} NOT {supreme, court}). salient_coherence = fraction of
+# members whose own title+lead carries >= 1 salient anchor. When that is < 0.5
+# on a >= 3-member cluster the cluster is over-merged: the published cluster is
+# rebuilt from ONLY the coherent core (so the summary is generated from members
+# that actually match the headline), and the off-anchor members are re-clustered
+# on their own (any coherent sub-story reforms; incoherent leftovers fall to
+# low-source singletons that the feed naturally drops). Nothing is fabricated.
+#
+# A GENUINE multi-source event is untouched: it keeps a low-df person/place
+# anchor that most members share, so salient_coherence stays high.
+PHASE6_SALIENT_COHERENCE_FLOOR = 0.5   # flag below this (with >= 3 members)
+PHASE6_MIN_MEMBERS = 3                  # only assess clusters this large
+PHASE6_ANCHOR_DF_ABS = PHASE3_STEM_DF_ABS  # salient iff title-stem df <= this
+
+
+@lru_cache(maxsize=1)
+def _generic_anchor_stop_stems() -> frozenset[str]:
+    """Porter-stems of every token in the generic government / wire-service /
+    geopolitical-hotspot stop vocabularies. A salient headline anchor must not
+    be one of these, so an institution ("supreme court") or a bare hot-spot
+    country name can never count as a distinguishing anchor even when its
+    corpus df happens to be low on a given day."""
+    stems: set[str] = set()
+    for phrase in (_LOW_SPECIFICITY_ENTITIES | _ENTITY_STOP_TOKENS):
+        for tok in re.findall(r"[a-z0-9](?:[a-z0-9'-]*[a-z0-9])?", phrase.lower()):
+            if len(tok) < 2 or tok in _TITLE_STOPWORDS:
+                continue
+            stems.add(_stem_word(tok))
+    return frozenset(stems)
+
+
+def _reset_cluster_from_members(cluster: dict, members: list[dict]) -> None:
+    """Rebuild a cluster's derived fields from a coherent subset of members.
+    The extractive title is KEPT (it is the coherent core's headline); the
+    summary is regenerated from the retained members only."""
+    cluster["articles"] = members
+    cluster["article_ids"] = [a.get("id", "") for a in members]
+    src = list({a.get("source_id", "") for a in members if a.get("source_id")})
+    cluster["source_ids"] = src
+    cluster["source_count"] = len(src)
+    pub = [a.get("published_at", "") for a in members if a.get("published_at")]
+    if pub:
+        cluster["first_published"] = min(pub)
+    cluster["summary"] = _generate_cluster_summary(members, cluster.get("title", ""))
+    _apply_wire_aware_source_count(cluster)
+
+
+def split_incoherent_clusters(
+    clusters: list[dict],
+    coherence_floor: float = PHASE6_SALIENT_COHERENCE_FLOOR,
+    source_map: dict[str, dict] | None = None,
+) -> list[dict]:
+    """Phase 6: salient-coherence contamination guard. See section header."""
+    if not clusters:
+        return clusters
+
+    # Document-frequency of each title stem across the day's cluster titles —
+    # the same absolute-df discriminativeness signal Phase 3 uses. A generic
+    # institutional word ("supreme"/"court") recurs across many distinct
+    # clusters' titles at production scale (high df); a story-specific anchor
+    # ("mail-in"/"ballot") stays low-df.
+    title_stems = [_title_word_stems(c.get("title", "")) for c in clusters]
+    stem_df: Counter = Counter()
+    for st in title_stems:
+        for s in st:
+            stem_df[s] += 1
+    stop_stems = _generic_anchor_stop_stems()
+
+    out: list[dict] = []
+    for idx, c in enumerate(clusters):
+        arts = c.get("articles", []) or []
+        if len(arts) < PHASE6_MIN_MEMBERS:
+            out.append(c)
+            continue
+
+        anchors = {
+            s for s in title_stems[idx]
+            if s not in stop_stems
+            and stem_df.get(s, 0) <= PHASE6_ANCHOR_DF_ABS
+        }
+        if not anchors:
+            # Headline carries no low-df distinguishing anchor — cannot assess
+            # coherence, so leave the cluster whole (safe / no false split).
+            out.append(c)
+            continue
+
+        def _carries_anchor(a: dict) -> bool:
+            text = f"{a.get('title', '') or ''} {a.get('summary', '') or ''}"
+            return bool(anchors & _title_word_stems(text))
+
+        core = [a for a in arts if _carries_anchor(a)]
+        off = [a for a in arts if not _carries_anchor(a)]
+        coherence = len(core) / len(arts)
+
+        if coherence >= coherence_floor or not core or not off:
+            out.append(c)
+            continue
+
+        # FLAG: rebuild the published cluster from the coherent core so its
+        # summary is generated only from members that match the headline.
+        _reset_cluster_from_members(c, core)
+        c["salient_coherence"] = round(coherence, 3)
+        c["coherence_split"] = True
+        out.append(c)
+
+        # Re-cluster the off-anchor members on their own. apply_coherence_check
+        # is False on the recursive call so Phase 6 cannot re-enter (no
+        # unbounded recursion); a coherent off-story reforms, incoherent
+        # leftovers fall to low-source singletons the feed naturally drops.
+        sub = cluster_stories(
+            off,
+            source_map=source_map,
+            apply_coherence_check=False,
+        )
+        out.extend(sub)
+
+    return out
+
+
+# ---------------------------------------------------------------------------
 # Main entry: cluster_stories
 # ---------------------------------------------------------------------------
 
@@ -2766,6 +2988,7 @@ def cluster_stories(
     run_merge_pass: bool = True,
     source_map: dict[str, dict] | None = None,
     enable_anchor_merge: bool = False,
+    apply_coherence_check: bool = True,
 ) -> list[dict]:
     """Group articles into story clusters.
 
@@ -2980,5 +3203,11 @@ def cluster_stories(
         for c in clusters:
             if not c.get("mega_cluster_capped"):
                 _apply_wire_aware_source_count(c)
+
+    # Phase 6 — headline/body contamination guard (salient-coherence split).
+    # Runs LAST so it sees the final merged clusters. apply_coherence_check is
+    # False on the recursive re-cluster of off-anchor members (no re-entry).
+    if run_merge_pass and apply_coherence_check and clusters:
+        clusters = split_incoherent_clusters(clusters, source_map=source_map)
 
     return clusters
