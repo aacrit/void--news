@@ -271,6 +271,15 @@ attribute statements only to the people and institutions in the news who made \
 them. In the consensus and divergence fields only, you may name actual outlets \
 (e.g., "Reuters," "according to The Washington Post") where it clarifies how \
 coverage differs.
+- ATTRIBUTION (mandatory): Any claim about a named individual's conduct, \
+character, statements, or beliefs that is contested, criminal, or reputationally \
+damaging MUST carry in-text attribution to the reporting outlet or official \
+source named in the provided articles (for example: "according to the New York \
+Post", "prosecutors said"). Never state such a claim as fact in void --news's \
+own voice. If the provided articles contain no such attribution for the claim, \
+omit the claim entirely. This mandatory attribution is a deliberate exception to \
+the outlet-naming limits above: for a reputationally damaging claim about a named \
+person, naming the reporting outlet or official source is REQUIRED, not optional.
 - NEVER use bracketed citations, footnotes, or reference markers like [1], [2,5], \
 [Source], (1), etc. This is a news briefing, not an academic paper. Attribute \
 inline using natural language ("according to...", "...X reported").
