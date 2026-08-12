@@ -511,3 +511,108 @@
     var(--palette-news) 100%
   );
 }
+
+/* ── Lean-label legend — info affordance in the feed header ────────────────
+   A small "i" button beside "Today's Top Stories" that opens a popover
+   defining the coverage descriptors (Lean vs Agreement). Kept quiet: it does
+   not stretch the flex rules, and the panel floats above the feed.          */
+.lean-legend {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+}
+
+.lean-legend__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--fg-tertiary);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: color 160ms var(--ease-out), background 160ms var(--ease-out);
+}
+
+/* Coarse pointers get a full 44px hit target without changing the visual. */
+@media (pointer: coarse) {
+  .lean-legend__btn {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+.lean-legend__btn:hover,
+.lean-legend__btn:focus-visible {
+  color: var(--palette-news-ink);
+  background: var(--bg-subtle, rgba(127, 127, 127, 0.1));
+}
+
+.lean-legend__panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 40;
+  width: min(320px, 84vw);
+  padding: var(--space-4);
+  background: var(--bg-elevated, var(--bg-primary));
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  text-align: left;
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 400;
+  color: var(--fg-secondary);
+  cursor: default;
+  user-select: text;
+}
+
+.lean-legend__intro {
+  margin: 0 0 var(--space-3);
+  font-family: var(--font-body, inherit);
+  font-size: var(--text-xs);
+  line-height: 1.45;
+  color: var(--fg-secondary);
+}
+
+.lean-legend__group-title {
+  margin: var(--space-3) 0 var(--space-1);
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--palette-news-ink);
+}
+
+.lean-legend__group-title:first-of-type {
+  margin-top: 0;
+}
+
+.lean-legend__list {
+  margin: 0;
+}
+
+.lean-legend__row {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-1);
+  font-size: var(--text-xxs);
+  line-height: 1.4;
+}
+
+.lean-legend__row dt {
+  font-weight: 600;
+  color: var(--fg-primary);
+}
+
+.lean-legend__row dd {
+  margin: 0;
+  color: var(--fg-tertiary);
+}

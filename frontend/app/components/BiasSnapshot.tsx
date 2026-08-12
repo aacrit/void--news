@@ -39,7 +39,7 @@ export default function BiasSnapshot({ data, sourceCount, variant = "inline", hi
   // clear lean"; the dot goes neutral (or contested red). Outside the band the
   // existing directional label + color stand. (BiasSnapshot shows the label
   // text, not a numeric lean, so there is no separate score to withhold.)
-  const leanState = leanLabelState(data.politicalLean, data.biasSpread);
+  const leanState = leanLabelState(data.politicalLean, data.biasSpread, sourceCount);
   const leanColor = leanState === "contested"
     ? "var(--sense-high)"
     : leanState === "no-clear-lean"
@@ -51,6 +51,10 @@ export default function BiasSnapshot({ data, sourceCount, variant = "inline", hi
       ? CONTESTED_LABEL
       : leanLabel(data.politicalLean);
   const opinion = data.opinionLabel;
+  // "Reporting" is the default classification for most stories, so the pill is
+  // redundant noise there. Show the Type pill ONLY for the meaningful values
+  // (Analysis / Opinion / Editorial).
+  const showOpinion = opinion !== "Reporting";
   const rigor = Math.round(data.factualRigor);
 
   if (variant === "rail") {
@@ -68,10 +72,12 @@ export default function BiasSnapshot({ data, sourceCount, variant = "inline", hi
           </span>
           <span className="bias-snapshot__value">{rigor}</span>
         </div>
-        <div className="bias-snapshot__row">
-          <span className="bias-snapshot__label">Type</span>
-          <span className="bias-snapshot__pill">{opinion}</span>
-        </div>
+        {showOpinion && (
+          <div className="bias-snapshot__row">
+            <span className="bias-snapshot__label">Type</span>
+            <span className="bias-snapshot__pill">{opinion}</span>
+          </div>
+        )}
         <div className="bias-snapshot__row bias-snapshot__row--sources">
           <span className="bias-snapshot__label">Sources</span>
           <span className="bias-snapshot__value bias-snapshot__value--strong">{sourceCount}</span>
@@ -95,8 +101,12 @@ export default function BiasSnapshot({ data, sourceCount, variant = "inline", hi
         </span>
         <span className="bias-snapshot__value">Rigor {rigor}</span>
       </span>
-      <span className="bias-snapshot__sep" aria-hidden="true">·</span>
-      <span className="bias-snapshot__pill">{opinion}</span>
+      {showOpinion && (
+        <>
+          <span className="bias-snapshot__sep" aria-hidden="true">·</span>
+          <span className="bias-snapshot__pill">{opinion}</span>
+        </>
+      )}
       <span className="bias-snapshot__sep" aria-hidden="true">·</span>
       <span className="bias-snapshot__sources">{sourceCount} {sourceCount === 1 ? "source" : "sources"}</span>
       {!hideCoverageBar && <LeanCoverageBar spread={data.biasSpread} compact />}

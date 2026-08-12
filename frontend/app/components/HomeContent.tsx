@@ -14,6 +14,7 @@ import LogoWordmark from "./LogoWordmark";
 import NavBar from "./NavBar";
 import LeadStory from "./LeadStory";
 import StoryCard from "./StoryCard";
+import LeanLabelLegend from "./LeanLabelLegend";
 import { computeStoryFamilies } from "../lib/storyFamilies";
 // Deep Dive is split by breakpoint (2026-08-09):
 //   Desktop (>=768px): InlineDeepDive — an in-feed accordion that expands in
@@ -900,8 +901,12 @@ function HomeContentInner({
                   </div>
 
                   {/* Boundary line — marks where "about the day" (the brief) ends
-                      and "the day" (the story feed) begins. */}
-                  <div className="feed-start" aria-hidden="true">Today&rsquo;s Top Stories</div>
+                      and "the day" (the story feed) begins. The decorative label
+                      is aria-hidden; the legend button beside it stays reachable. */}
+                  <div className="feed-start">
+                    <span aria-hidden="true">Today&rsquo;s Top Stories</span>
+                    <LeanLabelLegend />
+                  </div>
 
                   {/* Twin top stories — ranks 0 and 1, co-equal "Top Story"
                       leads side-by-side in a 50/50 split (vertical stack on

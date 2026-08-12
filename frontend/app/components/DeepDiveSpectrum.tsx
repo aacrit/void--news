@@ -425,6 +425,36 @@ function TiltRow({ mean }: { mean: number }) {
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
+   MobileLCR — at-a-glance Left/Center/Right source counts for mobile.
+
+   The desktop TiltRow (mean needle + label) is hidden on mobile, so a phone
+   reader gets no split without hovering each pin. This compact L/C/R line
+   restores that glance: how many sources sit left, center, and right. Buckets
+   match the spectrum's center band (46-55 = center).
+   ═══════════════════════════════════════════════════════════════════════ */
+
+function MobileLCR({ sources }: { sources: DeepDiveSpectrumSource[] }) {
+  let left = 0, center = 0, right = 0;
+  for (const s of sources) {
+    const v = s.politicalLean;
+    if (v <= 45) left++;
+    else if (v >= 56) right++;
+    else center++;
+  }
+  return (
+    <div
+      className="dd-sv__lcr"
+      role="img"
+      aria-label={`Source split: ${left} left, ${center} center, ${right} right`}
+    >
+      <span className="dd-sv__lcr-seg dd-sv__lcr-seg--left" aria-hidden="true">L&nbsp;{left}</span>
+      <span className="dd-sv__lcr-seg dd-sv__lcr-seg--center" aria-hidden="true">C&nbsp;{center}</span>
+      <span className="dd-sv__lcr-seg dd-sv__lcr-seg--right" aria-hidden="true">R&nbsp;{right}</span>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
    Bimodal detection — two significant peaks with deep valley between them
    ═══════════════════════════════════════════════════════════════════════ */
 
@@ -865,9 +895,10 @@ export default function DeepDiveSpectrum({ sources, settled = false, aggregateLe
   return (
     <div className="dd-sv" role="img" aria-label="Source political lean spectrum">
       <SpectrumView sources={sources} isMobile={isMobile} settled={settled} aggregateLean={aggregateLean} />
-      {/* Mobile: hide TiltRow (mean needle + label) to reduce clutter.
-          Desktop: show weighted mean needle and label for additional context. */}
-      {!isMobile && <TiltRow mean={mean} />}
+      {/* Desktop: mean needle + label (TiltRow). Mobile: TiltRow is too much
+          clutter, so show a compact L/C/R source-count readout instead so the
+          split is glanceable without hovering each pin. */}
+      {!isMobile ? <TiltRow mean={mean} /> : <MobileLCR sources={sources} />}
       <SpectrumAxis />
       <SourceFaviconRow sources={sources} setTooltip={setTooltip} />
       {tooltip && <SpectrumTooltip data={tooltip} />}

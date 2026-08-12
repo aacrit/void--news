@@ -2930,6 +2930,30 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* ---- Mobile at-a-glance L/C/R source-count readout (replaces TiltRow) ---- */
+.dd-sv__lcr {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-4);
+  margin-top: 3px;
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  opacity: 0.9;
+}
+
+.dd-sv__lcr-seg {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  color: var(--fg-tertiary);
+}
+
+.dd-sv__lcr-seg--left { color: var(--bias-left); }
+.dd-sv__lcr-seg--center { color: var(--fg-muted); }
+.dd-sv__lcr-seg--right { color: var(--bias-right); }
+
 /* ---- Source favicon row — continuous lean% positioning, greedy multi-row ---- */
 .dd-sv-sources {
   position: relative;
@@ -3008,6 +3032,23 @@
   font: inherit;
   color: inherit;
   line-height: 0;
+}
+
+/* Coarse-pointer touch target: the avatar stays 14px, but a transparent
+   pseudo-element expands the tappable area to the 44px WCAG 2.5.5 minimum.
+   Absolutely positioned + centered on the pin, so it enlarges the hit area
+   without shifting the visual layout of any pin. */
+@media (pointer: coarse) {
+  .dd-sv-sources__pin::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+    /* transparent — purely a hit area */
+  }
 }
 
 .dd-sv-sources__pin:hover {

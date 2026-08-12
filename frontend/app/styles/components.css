@@ -2536,6 +2536,58 @@ button:focus-visible .sigil-word__beam {
   color: var(--fg-primary);
 }
 
+/* ── Single responsive wordmark (.nav-logo-mark) ──────────────────────────
+   Replaces the former three CSS-toggled copies (30 / 22 / 18). The wordmark
+   is em-sized internally (SigilWordmark `responsive`), so setting font-size
+   here scales the whole lockup. Default (>=1024) is the full 30px mark; the
+   768-1023 tablet band drops to 22px; phones use 18px. One DOM node -> the
+   "VOID NEWS" glyphs serialize exactly once. */
+.nav-logo-mark {
+  font-size: 30px;
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  .nav-logo-mark {
+    font-size: 22px;
+  }
+}
+@media (max-width: 767px) {
+  .nav-logo-mark {
+    font-size: 18px;
+  }
+}
+
+/* ── Single dateline element (.nav-dateline-line) ─────────────────────────
+   Replaces the two mutually-exclusive .nav-dateline-inline / -mobile spans
+   that both carried the date (duplicating it in the served DOM). Behavior is
+   preserved: hidden in the 768-1279 band, centered inline >=1280, right-
+   aligned on phones with the date hidden under 400px. */
+.nav-dateline-line {
+  display: none;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  letter-spacing: 0.03em;
+  font-feature-settings: "tnum" 1;
+  white-space: nowrap;
+  overflow: hidden;
+}
+@media (min-width: 1280px) {
+  .nav-dateline-line {
+    display: block;
+    flex: 1;
+    text-align: center;
+    text-overflow: ellipsis;
+    padding: 0 var(--space-2);
+  }
+}
+.nav-dateline-line__sep {
+  margin: 0 var(--space-1);
+  opacity: 0.4;
+}
+.nav-dateline-line__time {
+  opacity: 0.7;
+}
+
 /* ---- Dateline inline (Tier 3) — between logo and utility buttons -------- */
 /* JetBrains Mono, very subtle. Fills remaining flex space, right-aligned.
    Shown only >=1280px: narrower desktop rows leave it so little room it
