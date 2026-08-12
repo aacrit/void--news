@@ -999,6 +999,158 @@ def _apply_summary_postchecks(summary: str, source_text: str = "") -> str:
     return s
 
 
+# ---------------------------------------------------------------------------
+# P0 LEGAL SAFETY (2026-08-11): defamation attribution post-check + CSAM gate.
+# Durable, deterministic guards that run at GENERATION time so the stored
+# story_clusters.summary is fixed in the DB, not merely masked at render (the
+# frontend render-time half is committed separately on this branch). Regexes
+# ported verbatim from the validated frontend logic (JS -> Python, IGNORECASE).
+#
+# (1) DEFAMATION: any claim about a NAMED individual's conduct, character, or
+#     beliefs that is reputationally damaging, criminal, or a criminal
+#     allegation must carry in-text attribution to a reporting outlet / official
+#     source, or a direct quote. A sentence that makes such a claim WITHOUT an
+#     attribution cue or a quote is DROPPED; the rest of the summary is kept.
+#     If dropping empties the summary, "" is stored (the frontend drops an
+#     empty-summary body).
+#
+# (2) CSAM: a cluster about child sexual abuse material renders headline +
+#     sources ONLY. Its article bodies are NEVER sent to the LLM and no body
+#     summary is generated; the stored summary is forced to "".
+# ---------------------------------------------------------------------------
+
+_REPUTATIONAL_HARM_RE = _re.compile(
+    r"\b(celebrat|applaud|prais|laud|endors|glorif|justif|condon|cheer|support|"
+    r"back|defend|champion)\w*\s+(?:\w+\s+){0,4}"
+    r"(terror|terrorism|terrorist|attack|massacre|genocide|jihad|extremis|"
+    r"antisemit|nazism|nazi|hamas|hezbollah|rape|molest|p(?:a?e)dophil|abuse|"
+    r"assault|insurrection)",
+    _re.IGNORECASE,
+)
+_CRIMINAL_FACT_RE = _re.compile(
+    r"\b(?:is|was|are|were)\s+(?:a\s+|an\s+|the\s+)?"
+    r"(?:convicted\s+|alleged\s+|suspected\s+)?"
+    r"(terrorist|rapist|p(?:a?e)dophile|murderer|fraudster|abuser|molester|"
+    r"criminal|extremist)\b",
+    _re.IGNORECASE,
+)
+_CRIMINAL_ALLEGATION_RE = _re.compile(
+    r"\b(accused of|charged with|indicted (?:for|on)|convicted of|"
+    r"found guilty of|arrested for|perpetrat(?:ed|or))\b",
+    _re.IGNORECASE,
+)
+_ATTRIBUTION_CUE_RE = _re.compile(
+    r"\b(accord(?:ing) to|reported by|as reported|reportedly|said|says|stated|"
+    r"told\s+[A-Z]|per\s+[A-Z]|alleged by|prosecutors|indictment|police said|"
+    r"court (?:documents|filings|records)|lawsuit|complaint|according)\b",
+    _re.IGNORECASE,
+)
+_QUOTE_PRESENT_RE = _re.compile(r'["“][^"”]{3,}["”]')
+
+
+def _sentence_makes_reputational_claim(sentence: str) -> bool:
+    """True if the sentence asserts a reputational-harm, criminal-status, or
+    criminal-allegation claim (about a named individual)."""
+    return bool(
+        _REPUTATIONAL_HARM_RE.search(sentence)
+        or _CRIMINAL_FACT_RE.search(sentence)
+        or _CRIMINAL_ALLEGATION_RE.search(sentence)
+    )
+
+
+def _sentence_has_attribution(sentence: str) -> bool:
+    """True if the sentence carries an attribution cue or a direct quote."""
+    return bool(
+        _ATTRIBUTION_CUE_RE.search(sentence) or _QUOTE_PRESENT_RE.search(sentence)
+    )
+
+
+def _strip_unattributed_reputational_claims(summary: str) -> tuple[str, list[str]]:
+    """Defamation post-check. Split the summary into sentences and DROP any
+    sentence that makes a reputational-harm / criminal claim without an
+    attribution cue or a direct quote; keep every other sentence verbatim.
+    Returns (cleaned_summary, dropped_sentences). When nothing is dropped the
+    input is returned unchanged. When every sentence is dropped the cleaned
+    summary is "" (the frontend drops an empty body). Deterministic; $0."""
+    if not summary or not summary.strip():
+        return summary, []
+    sentences = _re.findall(r"[^.!?]+[.!?]*", summary)
+    kept: list[str] = []
+    dropped: list[str] = []
+    for s in sentences:
+        if not s.strip():
+            continue
+        if _sentence_makes_reputational_claim(s) and not _sentence_has_attribution(s):
+            dropped.append(s.strip())
+            continue
+        kept.append(s)
+    if not dropped:
+        return summary, []
+    cleaned = _re.sub(r"\s{2,}", " ", "".join(kept)).strip()
+    return cleaned, dropped
+
+
+_CSAM_TOPIC_RE = _re.compile(
+    r"\b(child (?:sexual abuse|sex abuse|pornography|porn|exploitation)|csam|"
+    r"sexually explicit (?:video|image|photo|material|content)s?\s+"
+    r"(?:involving|of|depicting)\s+(?:a\s+)?minors?|"
+    r"minors?\b[^.]{0,40}\b(?:sexual(?:ly)?\s+(?:abus|explicit|exploit)|molest|"
+    r"raped|sexually abused)|"
+    r"underage\s+(?:sex|porn|nude|explicit))",
+    _re.IGNORECASE,
+)
+
+
+def is_csam_topic(text: str) -> bool:
+    """True if `text` describes child sexual abuse material. Drives the CSAM gate:
+    a matching cluster renders headline + sources only, never sends article
+    bodies to the LLM, and stores an empty body summary. Deterministic; $0."""
+    if not text:
+        return False
+    return bool(_CSAM_TOPIC_RE.search(text))
+
+
+def _cluster_is_csam(cluster_title: str | None, articles: list[dict]) -> bool:
+    """A cluster is CSAM-topic when its title OR any member article's title /
+    summary / full_text matches is_csam_topic."""
+    if is_csam_topic(cluster_title or ""):
+        return True
+    for a in articles or []:
+        for k in ("title", "summary", "full_text"):
+            if is_csam_topic(str(a.get(k) or "")):
+                return True
+    return False
+
+
+def _csam_blocked_result(cluster_title: str | None, articles: list[dict]) -> dict:
+    """The stored result for a CSAM cluster: keep the existing news headline,
+    FORCE the body summary to "". No LLM call is made and no article body is
+    sent to any model. Stamped with a flash-tier generator so the content-hash
+    cache treats the cluster as done (it is not re-summarized every run)."""
+    headline = (cluster_title or "").strip()
+    if not headline:
+        for a in articles or []:
+            t = str(a.get("title") or "").strip()
+            if t:
+                headline = t
+                break
+    return {
+        "headline": (headline or "News")[:500],
+        "summary": "",
+        "consensus": [],
+        "divergence": [],
+        "editorial_importance": None,
+        "story_type": None,
+        "has_binding_consequences": None,
+        "claims": None,
+        "consensus_ratio": None,
+        "consensus_summary": None,
+        # tier 'flash' -> the cache marks it done, so the block is not re-run.
+        "_generator": "gemini-flash",
+        "_csam_blocked": True,
+    }
+
+
 def _detect_summary_source_refs(summary: str, source_names: list[str]) -> list[str]:
     """
     Warning-only: flag outlet names or media-attribution phrasing in the SUMMARY.
@@ -1623,6 +1775,17 @@ def summarize_cluster(articles: list[dict],
     if not articles:
         return None
 
+    # CSAM GATE (P0 legal): a cluster about child sexual abuse material renders
+    # headline + sources ONLY. Never build a prompt from its article bodies and
+    # never call the LLM; return a forced empty-summary result. This is the
+    # single-cluster chokepoint (solo batches, the floor upgrade, and the flash
+    # reconcile all reach the LLM through here); the multi-story batch path is
+    # gated separately in _send_one_batch before any body enters a shared prompt.
+    if _cluster_is_csam(cluster_title, articles):
+        print("  [csam-gate] cluster blocked from LLM summarization "
+              "(headline + sources only)")
+        return _csam_blocked_result(cluster_title, articles)
+
     # Summary coherence gate (Option 1): drop off-topic members so the prompt
     # inputs describe ONE story. Deterministic given (membership, title); the
     # callers key the content-hash cache on FULL membership, so this narrowing
@@ -1764,6 +1927,15 @@ def _finalize_cluster_result(result: dict, articles: list[dict],
     # dropped), drop a terminal restatement of the lead, then hard-trim to the
     # runaway ceiling at a sentence boundary. Deterministic; a no-op on clean text.
     summary = _apply_summary_postchecks(summary, _concat_source_text(articles))
+    # P0 DEFAMATION GUARD: drop any sentence that asserts a reputational-harm or
+    # criminal claim about a named individual WITHOUT in-text attribution or a
+    # direct quote (Void must never state such a claim in its own voice). Keeps
+    # every other sentence; if this empties the summary, "" is stored and the
+    # frontend drops the empty body (headline + sources remain).
+    summary, _defam_dropped = _strip_unattributed_reputational_claims(summary)
+    if _defam_dropped:
+        print(f"  [defamation-guard] dropped unattributed reputational claim(s): "
+              f"{_defam_dropped}")
     _summary_src_refs = _detect_summary_source_refs(
         summary, [a.get("source_name", "") for a in articles]
     )
@@ -2077,6 +2249,24 @@ def _send_one_batch(records: list[dict], model: str | None,
     if not records:
         return {}, []
 
+    # CSAM GATE (P0 legal): partition out any CSAM cluster BEFORE it can enter a
+    # batch prompt (its article bodies must never be sent to the LLM). Each
+    # blocked cluster gets a forced headline+sources-only (empty-summary) result;
+    # the remaining clean records proceed to the LLM as normal.
+    csam_results: dict[str, dict] = {}
+    clean_records: list[dict] = []
+    for rec in records:
+        if _cluster_is_csam(rec.get("title"), rec.get("articles") or []):
+            print(f"  [csam-gate] story {rec.get('cid')} blocked from batch "
+                  f"(headline + sources only)")
+            csam_results[rec["cid"]] = _csam_blocked_result(
+                rec.get("title"), rec.get("articles") or [])
+        else:
+            clean_records.append(rec)
+    records = clean_records
+    if not records:
+        return csam_results, []
+
     # Solo: the lead stories get the single-cluster path unchanged (deepest
     # sourcing, most-proven prompt). Still exactly one request.
     if len(records) == 1:
@@ -2085,7 +2275,9 @@ def _send_one_batch(records: list[dict], model: str | None,
         r = summarize_cluster(rec["articles"], model=model,
                               prefer_provider=prefer_provider,
                               cluster_title=rec.get("title"))
-        return ({rec["cid"]: r}, []) if r else ({}, [rec])
+        got = {rec["cid"]: r} if r else {}
+        got.update(csam_results)
+        return got, ([] if r else [rec])
 
     n = len(records)
     cap = _batch_article_cap(n)
@@ -2118,7 +2310,7 @@ def _send_one_batch(records: list[dict], model: str | None,
         max_output_tokens=max_out, model=model, prefer_provider=prefer_provider,
     )
     if not result:
-        return {}, list(records)
+        return dict(csam_results), list(records)
 
     entries = _extract_batch_entries(result, n)
     got: dict[str, dict] = {}
@@ -2131,6 +2323,7 @@ def _send_one_batch(records: list[dict], model: str | None,
             got[rec["cid"]] = validated
         else:
             failed.append(rec)
+    got.update(csam_results)
     return got, failed
 
 
@@ -2931,6 +3124,21 @@ def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = 50
         article_ids = by_cluster.get(cid, [])
         articles = [articles_by_id[aid] for aid in article_ids if aid in articles_by_id]
 
+        # CSAM GATE (P0 legal): a CSAM cluster renders headline + sources ONLY.
+        # Never rebuild a body from the member article text (which would surface
+        # the abuse description on the card) and never queue it for the LLM
+        # upgrade. Force the stored summary to "" and move on.
+        if _cluster_is_csam(title, articles):
+            print(f"  [csam-gate] floor: blanking summary for {cid} "
+                  f"(headline + sources only)")
+            try:
+                supabase.table("story_clusters").update(
+                    {"summary": ""}).eq("id", cid).execute()
+            except Exception as e:
+                print(f"  [warn] ensure_top50_summary_floor: CSAM blank write "
+                      f"failed for {cid}: {e}")
+            continue
+
         prior_summary = (row.get("summary") or "").strip()
         prior_was_raw = bool(prior_summary) and _is_raw_excerpt(prior_summary)
 
@@ -2949,6 +3157,15 @@ def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = 50
             clean_summary = _apply_summary_postchecks(
                 clean_summary, _concat_source_text(articles)
             ).strip()
+            # P0 defamation guard on the rule-based text too: drop an
+            # unattributed reputational-harm / criminal claim a member excerpt
+            # may carry, so the deterministic floor never surfaces one either.
+            clean_summary, _floor_defam = _strip_unattributed_reputational_claims(
+                clean_summary)
+            if _floor_defam:
+                print(f"  [defamation-guard] floor dropped unattributed "
+                      f"reputational claim(s) for {cid}: {_floor_defam}")
+            clean_summary = clean_summary.strip()
 
         # POST-CHECK: the (re)generated text must not ITSELF be a raw excerpt the
         # frontend would blank (a broken member excerpt can survive the rule-based
@@ -3248,3 +3465,81 @@ def reconcile_flash_top10(supabase, edition: str = "world", top_n: int = 10,
             metrics["failed"] += 1
 
     return metrics
+
+
+# ---------------------------------------------------------------------------
+# P0 legal audit (read-only). Runs the defamation post-check + CSAM gate over
+# the STORED summaries of today's displayed feed and reports every offending
+# cluster. Never mutates the DB.
+# ---------------------------------------------------------------------------
+def audit_p0_legal(supabase, edition: str = "world", limit: int = 50) -> dict:
+    """Read-only report over the displayed top-`limit` clusters. For each cluster
+    whose STORED summary (a) has a sentence the defamation post-check would drop,
+    or (b) is CSAM-topic, print the cluster title and the exact offending
+    sentence(s). Returns {defamation: [...], csam: [...]} for programmatic use."""
+    rank_col = f"rank_{edition.replace('-', '_')}"
+    findings = {"defamation": [], "csam": []}
+    try:
+        res = (
+            supabase.table("story_clusters")
+            .select("id, title, summary, source_count")
+            .contains("sections", [edition])
+            .order(rank_col, desc=True)
+            .limit(60)
+            .execute()
+        )
+    except Exception as e:
+        print(f"  [audit] fetch failed: {e}")
+        return findings
+
+    rows = [r for r in (res.data or []) if (r.get("source_count") or 0) >= 3][:limit]
+    print(f"\n=== P0 LEGAL AUDIT: edition={edition}, {len(rows)} displayed clusters ===")
+    for r in rows:
+        title = (r.get("title") or "").strip()
+        summary = r.get("summary") or ""
+        _cleaned, dropped = _strip_unattributed_reputational_claims(summary)
+        is_csam = is_csam_topic(title) or is_csam_topic(summary)
+        if dropped:
+            findings["defamation"].append({"id": r["id"], "title": title,
+                                           "sentences": dropped})
+            print(f"\n[DEFAMATION] {title!r}")
+            for s in dropped:
+                print(f"    offending: {s!r}")
+        if is_csam:
+            findings["csam"].append({"id": r["id"], "title": title})
+            print(f"\n[CSAM] {title!r}")
+    if not findings["defamation"] and not findings["csam"]:
+        print("  clean: no defamation drops, no CSAM matches.")
+    print("=== END AUDIT ===\n")
+    return findings
+
+
+if __name__ == "__main__":
+    # Offline self-test for the P0 defamation post-check. Proves the live Duwaji
+    # case is dropped (unattributed) and an attributed version is kept.
+    _duwaji = ("Rama Duwaji celebrated the October 7 terror attacks. "
+               "The city council met on Tuesday to discuss the budget.")
+    _cleaned, _dropped = _strip_unattributed_reputational_claims(_duwaji)
+    assert len(_dropped) == 1, f"expected 1 drop, got {_dropped}"
+    assert "celebrated the October 7 terror attacks" in _dropped[0]
+    assert "celebrated the October 7 terror attacks" not in _cleaned
+    assert "city council met on Tuesday" in _cleaned
+
+    _attributed = ("Rama Duwaji celebrated the October 7 terror attacks, "
+                   "according to the New York Post. "
+                   "The city council met on Tuesday to discuss the budget.")
+    _cleaned2, _dropped2 = _strip_unattributed_reputational_claims(_attributed)
+    assert not _dropped2, f"attributed sentence must be kept, dropped {_dropped2}"
+    assert "New York Post" in _cleaned2
+
+    # A quoted claim is also kept (quote counts as attribution).
+    _quoted = 'The mayor said the suspect "is a terrorist" during the briefing.'
+    _c3, _d3 = _strip_unattributed_reputational_claims(_quoted)
+    assert not _d3, f"quoted/attributed claim must be kept, dropped {_d3}"
+
+    # CSAM topic detection.
+    assert is_csam_topic("Police seize child sexual abuse material from suspect")
+    assert is_csam_topic("Report describes a sexually explicit video involving minors")
+    assert not is_csam_topic("Senate passes infrastructure bill after weekend vote")
+
+    print("cluster_summarizer P0 self-test: OK")
