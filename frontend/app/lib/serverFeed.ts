@@ -22,6 +22,7 @@
 import { supabase } from "./supabase";
 import {
   mapClustersToStories,
+  clusterHasRealSummary,
   FEED_ENRICHED_FIELDS,
   FEED_BASE_FIELDS,
 } from "./feedMapping";
@@ -31,8 +32,14 @@ import type { Story } from "./types";
 const FETCH_LIMIT = 100;
 const ACTIVE_EDITION = "world" as const;
 
-/** Minimum displayable stories (>=3 sources) for a valid front page. */
-const MIN_STORIES = 20;
+/** Minimum displayable, REAL-SUMMARY stories (>=3 sources) for a valid front
+ *  page. mapClustersToStories drops every unsummarized cluster (raw scraped
+ *  text) before we get here, so this count is of genuinely-summarized cards.
+ *  Below this we fail the build loudly rather than ship a raw or gutted feed
+ *  (P0, 2026-08-11). If a healthy run genuinely cannot cover this many, that is
+ *  a signal to lower the displayed feed size deliberately, not to pad with raw
+ *  excerpts. */
+const MIN_STORIES = 30;
 
 export interface InitialFeed {
   stories: Story[];
@@ -157,6 +164,22 @@ export async function fetchInitialFeed(): Promise<InitialFeed> {
     console.warn(`[serverFeed] ghost-cluster guard skipped: ${e}`);
   }
 
+  // P0 (2026-08-11): never render an unsummarized cluster. A cluster with a
+  // null summary_tier was never summarized (its `summary` is raw scraped article
+  // text, which shipped one outlet's opinion column under Void's byline), and a
+  // summary that reads as a raw excerpt is dropped too. Truncate the feed to the
+  // summarized set here (before mapping) rather than pad it with raw copy.
+  {
+    const before = clusters.length;
+    clusters = clusters.filter((c: Record<string, unknown>) =>
+      clusterHasRealSummary(c, usingEnriched),
+    );
+    const dropped = before - clusters.length;
+    if (dropped > 0) {
+      console.warn(`[serverFeed] dropped ${dropped} unsummarized/raw cluster(s) from the feed`);
+    }
+  }
+
   const stories = mapClustersToStories(clusters, usingEnriched);
 
   // Attach shareable permalinks from the latest printed edition. Today's
@@ -178,16 +201,19 @@ export async function fetchInitialFeed(): Promise<InitialFeed> {
     console.warn(`[serverFeed] permalink map unavailable: ${e}`);
   }
 
-  // Fail loud: the displayed feed applies a >=3-source quality floor. Count
-  // only stories that would actually render; a short/empty page must not ship.
+  // Fail loud: the displayed feed applies a >=3-source quality floor, and
+  // mapClustersToStories has already dropped every unsummarized cluster. Count
+  // the stories that would actually render; too few REAL-summary stories means
+  // a coverage failure upstream, and we refuse to ship a raw or gutted feed.
   const displayable = stories.filter(
     (s) => (s.sigilData?.sourceCount ?? s.source?.count ?? 0) >= 3,
   ).length;
   if (displayable < MIN_STORIES) {
     throw new Error(
-      `[serverFeed] Only ${displayable} displayable stories (>=3 sources) returned; ` +
-        `expected at least ${MIN_STORIES}. Refusing to build an empty front page. ` +
-        `Total clusters fetched: ${clusters.length}.`,
+      `[serverFeed] Only ${displayable} displayable stories with a real summary ` +
+        `(>=3 sources, non-null summary_tier) survived; expected at least ${MIN_STORIES}. ` +
+        `Refusing to build a raw or gutted front page. ${clusters.length} clusters were ` +
+        `fetched, so the gap is a summarization-coverage failure, not an empty DB.`,
     );
   }
 

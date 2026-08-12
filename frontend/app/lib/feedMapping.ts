@@ -79,9 +79,40 @@ export function deriveCoverageScore(sourceCount: number, factualRigor: number, c
 
 /** Field sets for the story_clusters feed query. Shared with serverFeed. */
 export const FEED_ENRICHED_FIELDS =
-  "id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points,rank_world,claim_consensus,cached_image_url,is_international,is_headline,headline_confidence";
+  "id,title,summary,summary_tier,category,section,sections,importance_score,source_count,first_published,last_updated,divergence_score,headline_rank,coverage_velocity,bias_diversity,consensus_points,divergence_points,rank_world,claim_consensus,cached_image_url,is_international,is_headline,headline_confidence";
 export const FEED_BASE_FIELDS =
   "id,title,summary,category,section,sections,importance_score,source_count,first_published,last_updated";
+
+/**
+ * True when a cluster carries a REAL generated summary and is safe to render.
+ *
+ * P0 (2026-08-11): the feed must NEVER show raw scraped article text. Two ways
+ * a cluster fails:
+ *   1. `summary_tier` is null/empty -> the cluster was never summarized, so its
+ *      `summary` is raw scraped copy (this was the entire unsummarized tail that
+ *      shipped one outlet's opinion column under Void's byline).
+ *   2. The summary text itself reads as a raw excerpt (CMS artifacts, byline
+ *      credit, broken-extraction glue) -> cleanFeedSummary blanks it to "".
+ * A cluster that fails either is DROPPED from the feed, never padded in with raw
+ * text. The base-field fallback lacks `summary_tier`, so there we fail open on
+ * the tier check and rely on the text heuristic alone (never blank a whole feed
+ * because an older schema omitted the column).
+ */
+export function clusterHasRealSummary(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  cluster: any,
+  usingEnriched: boolean,
+): boolean {
+  const rawSummary = typeof cluster.summary === "string" ? cluster.summary : "";
+  const title = typeof cluster.title === "string" ? cluster.title : "";
+  // Empty after hygiene = raw excerpt or genuinely blank -> not a real summary.
+  if (cleanFeedSummary(rawSummary, title).trim().length === 0) return false;
+  if (usingEnriched) {
+    const tier = cluster.summary_tier;
+    if (tier == null || String(tier).trim() === "") return false; // never summarized
+  }
+  return true;
+}
 
 /**
  * Map raw story_clusters rows to Story[] and stamp divergence percentile
@@ -97,6 +128,12 @@ export function mapClustersToStories(
   usingEnriched: boolean,
 ): Story[] {
   /* eslint-disable @typescript-eslint/no-explicit-any */
+  // NOTE: this mapper stays strictly 1:1 (one input row -> one output Story).
+  // The P0 "drop unsummarized clusters" filter (clusterHasRealSummary) is applied
+  // by the FEED call sites (serverFeed + HomeContent) BEFORE calling this, NOT
+  // here: the archive /story path maps a single synthetic cluster and destructures
+  // exactly one story back (`const [story] = mapClustersToStories([...])`), so a
+  // filter inside here would return [] and crash on `story.permalink`.
   const mappedStories: Story[] = clusters.map((cluster: any) => {
     const bd = usingEnriched ? parseBiasDiversity(cluster.bias_diversity) : null;
     const hasBiasData = !!(bd && bd["avg_political_lean"] != null);

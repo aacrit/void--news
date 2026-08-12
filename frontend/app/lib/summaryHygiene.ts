@@ -29,6 +29,12 @@ const RAW_EXCERPT_PATTERNS: RegExp[] = [
   /\([^)]*\/\s*(?:AFP|AP|Reuters|Getty|EPA|Bloomberg|Anadolu|Xinhua|AAP)\b/i,
   // Trailing outlet-domain suffix like " - reuters.com" / " — bbc.co.uk".
   /[\s\-–—]+[a-z0-9-]+\.(?:com|org|net|gov|co\.[a-z]{2})\s*$/i,
+  // Broken-extraction glue that carries NO camel seam (so the longCamel check
+  // below misses it): a digit fused to a word by "=" ("43=second"), or a close
+  // paren fused directly to the next word ("(MEE)Off"). Real prose puts a space
+  // after ")" and never writes "n=word" without spaces.
+  /[a-z0-9]=[a-z]/i,
+  /\)[A-Za-z]/,
 ];
 
 /** True when a non-empty summary looks like a raw scraped excerpt, not prose. */
