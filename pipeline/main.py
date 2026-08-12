@@ -58,6 +58,17 @@ try:
 except ImportError as e:
     print(f"[warn] Analysis modules not available ({e}). Running fetch-only mode.")
 
+# Cross-run purge config (P0-4, 2026-08-11). When the pipeline runs more than
+# once in a day the earlier run's clusters coexist with this run's in one feed.
+# Step 8b.6 deletes prior-run clusters created within the last
+# CROSS_RUN_PURGE_LOOKBACK_HOURS before this run began (12h < the 24h daily
+# cron gap, so a single-run day never reaches yesterday's continuing stories),
+# but only when this run itself produced at least CROSS_RUN_PURGE_MIN_DISPLAYABLE
+# displayable clusters (fail-safe: a thin/failed run can never blank the feed by
+# deleting the prior run — serverFeed's floor is 20 displayable).
+CROSS_RUN_PURGE_LOOKBACK_HOURS = 12
+CROSS_RUN_PURGE_MIN_DISPLAYABLE = 30
+
 # Gemini summarizer — optional (requires google-generativeai + API key)
 SUMMARIZER_AVAILABLE = False
 try:
@@ -1137,7 +1148,7 @@ def run_editorial_stage(force_resummarize: bool = False) -> None:
         _fo_res = supabase.table("story_clusters").select(
             "id,title,headline_rank,rank_world,content_type,"
             "category,source_count,sections,"
-            "first_published,coverage_velocity"
+            "first_published,coverage_velocity,disaster_severity"
         ).contains("sections", ["world"]).order(
             "rank_world", desc=True
         ).limit(80).execute()
@@ -1342,6 +1353,10 @@ def main():
     print("\n[2/9] Creating pipeline run record...")
     pipeline_run = create_pipeline_run()
     run_id = pipeline_run["id"] if pipeline_run else None
+    # Wall-clock boundary for the cross-run purge (step 8b.6). Every cluster
+    # THIS run inserts (at step 8, well after this point) gets a DB created_at
+    # later than this; any cluster with created_at before it is a prior run's.
+    _run_start_utc = datetime.now(timezone.utc)
     if run_id:
         print(f"  Pipeline run ID: {run_id}")
     else:
@@ -2376,12 +2391,21 @@ def main():
                 cluster["headline_rank"] = rank_result["headline_rank"]
                 cluster["is_headline"] = bool(rank_result.get("is_headline", False))
                 cluster["headline_confidence"] = int(rank_result.get("headline_confidence", 0))
+                # P0-4: surface the already-computed mass-casualty disaster
+                # severity so feed_ranker's ordering floor can protect a
+                # well-sourced disaster from being buried under a lower-base
+                # non-disaster. Persisted at step 8 (migration 077) so the
+                # 8d.5 final ordering pass reads it back from the DB.
+                cluster["disaster_severity"] = (
+                    rank_result.get("component_scores", {}).get("disaster_severity", 0.0)
+                )
             except Exception as e:
                 print(f"  [warn] Ranking failed: {e}")
                 cluster["importance_score"] = 20.0
                 cluster["divergence_score"] = 0.0
                 cluster["coverage_velocity"] = 0
                 cluster["headline_rank"] = 20.0
+                cluster["disaster_severity"] = 0.0
 
         # Rank separately within each content_type so opinion #1 doesn't
         # compete with facts #1 for headline_rank position.
@@ -2855,6 +2879,12 @@ def main():
                 # 2026-05-24 v2 — first-class headline signal (migration 059)
                 "is_headline": bool(cluster.get("is_headline", False)),
                 "headline_confidence": int(cluster.get("headline_confidence", 0)),
+                # P0-4: persist the mass-casualty severity so the 8d.5 final
+                # ordering pass (which re-reads clusters from the DB) can apply
+                # feed_ranker's disaster ordering floor. Migration 077.
+                "disaster_severity": round(
+                    float(cluster.get("disaster_severity", 0.0) or 0.0), 1
+                ),
             }
 
             # v5.0: editorial intelligence columns (nullable — NULL = no Gemini)
@@ -3373,6 +3403,81 @@ def main():
         except Exception as e:
             print(f"  [warn] Title-based dedup failed: {e}")
 
+        # Step 8b.6: Cross-run purge (P0-4). On a normal day the pipeline runs
+        # ONCE and the 8b article-overlap (>30%) + title (>=40%) dedup above
+        # clear yesterday's re-clustered rows. But when the pipeline runs TWICE
+        # in one day (2026-08-11: clusters created 13:05 + 15:37 UTC), the
+        # earlier run's clusters COEXIST with this run's in a single ranked feed:
+        # the near-dup guard then only DEMOTES the fresher tellings (Colombia
+        # earthquake stranded at #20, a double "Top story", the top-10 category
+        # cap busted) because the two runs' titles/articles diverge past the 40%
+        # dedup floors. This purge removes the residue those floors miss by RUN
+        # IDENTITY, not similarity: any cluster created earlier TODAY (before this
+        # run began) that is NOT one of this run's freshly-inserted clusters is a
+        # stale prior-run row and is deleted, so the feed holds exactly one run.
+        #
+        # SAFE on a single-run day: the window is bounded to the last
+        # CROSS_RUN_PURGE_LOOKBACK_HOURS (12h) before this run began, well inside
+        # the 24h daily-cron gap, so it never reaches yesterday's continuing
+        # stories; with only one run today there are simply no rows in the window
+        # and it is a no-op. Run identity is the id-set (new_cluster_ids), so this
+        # run's own clusters can never be deleted even under clock skew.
+        # FAIL-SAFE: runs only when THIS run produced a healthy displayable feed
+        # (>= CROSS_RUN_PURGE_MIN_DISPLAYABLE clusters with >=3 sources), so a
+        # thin/failed run can never blank the feed by deleting the prior run.
+        try:
+            _this_run_displayable = sum(
+                1 for c in clusters
+                if c.get("_db_id") and (c.get("source_count", 0) or 0) >= 3
+            )
+            if _this_run_displayable < CROSS_RUN_PURGE_MIN_DISPLAYABLE:
+                print(
+                    f"  [8b.6] Cross-run purge SKIPPED (this run only "
+                    f"{_this_run_displayable} displayable clusters < "
+                    f"{CROSS_RUN_PURGE_MIN_DISPLAYABLE} floor; not deleting prior run)"
+                )
+            else:
+                _purge_lower = (
+                    _run_start_utc
+                    - timedelta(hours=CROSS_RUN_PURGE_LOOKBACK_HOURS)
+                ).isoformat()
+                _purge_upper = _run_start_utc.isoformat()
+                _prior = supabase.table("story_clusters").select(
+                    "id,title,created_at,source_count"
+                ).gte("created_at", _purge_lower).lt(
+                    "created_at", _purge_upper
+                ).execute()
+                _prior_rows = [
+                    r for r in (_prior.data or [])
+                    if r.get("id") and r["id"] not in new_cluster_ids
+                ]
+                _prior_ids = [r["id"] for r in _prior_rows]
+                if _prior_ids:
+                    _sample = [(r.get("title") or "")[:50] for r in _prior_rows[:5]]
+                    for i in range(0, len(_prior_ids), 100):
+                        batch = _prior_ids[i:i + 100]
+                        try:
+                            supabase.table("cluster_articles").delete().in_(
+                                "cluster_id", batch
+                            ).execute()
+                            supabase.table("story_clusters").delete().in_(
+                                "id", batch
+                            ).execute()
+                        except Exception as _pe:
+                            print(f"  [warn] cross-run purge delete failed: {_pe}")
+                    print(
+                        f"  [8b.6] Cross-run purge: removed {len(_prior_ids)} stale "
+                        f"prior-run clusters created earlier today "
+                        f"(window {CROSS_RUN_PURGE_LOOKBACK_HOURS}h). Sample: {_sample}"
+                    )
+                else:
+                    print(
+                        "  [8b.6] Cross-run purge: no prior-run clusters in window "
+                        "(single run today)"
+                    )
+        except Exception as e:
+            print(f"  [warn] Cross-run purge failed (non-fatal): {e}")
+
     # Step 8c: Holistic re-rank — re-score ALL clusters in DB with the
     # current ranking engine so old and new clusters compete on equal footing.
     # Without this, old clusters keep stale scores from previous pipeline runs
@@ -3522,7 +3627,7 @@ def main():
         _fo_res = supabase.table("story_clusters").select(
             "id,title,headline_rank,rank_world,content_type,"
             "category,source_count,sections,"
-            "first_published,coverage_velocity"
+            "first_published,coverage_velocity,disaster_severity"
         ).contains("sections", ["world"]).order(
             "rank_world", desc=True
         ).limit(80).execute()
@@ -3650,6 +3755,42 @@ def main():
             print(f"  [warn] Memory engine update failed: {e}")
     elif not MEMORY_AVAILABLE:
         print("\n[9a] Skipping memory engine (not installed)")
+
+    # Step 9a.1: Single-top-story reconciliation (P0-4). The memory engine
+    # denormalizes is_top_story onto the top TOP_STORY_COUNT (=2) clusters, so
+    # two rows carry the flag by design. On the 2026-08-11 double-run day the
+    # top 2 by rank_world were BOTH Colombia-earthquake tellings, so the same
+    # story wore the "Top story" flag twice. Guarantee exactly ONE is_top_story
+    # in the final feed: the true #1 by the FINAL DB rank_world (post-8d.5).
+    # Deterministic, no LLM. Idempotent and non-fatal.
+    if ANALYSIS_AVAILABLE:
+        try:
+            _top_res = supabase.table("story_clusters").select(
+                "id,title,rank_world,is_top_story"
+            ).contains("sections", ["world"]).order(
+                "rank_world", desc=True
+            ).limit(1).execute()
+            _top_rows = _top_res.data or []
+            _top_id = _top_rows[0]["id"] if _top_rows else None
+            # Clear the flag on every OTHER cluster that still carries it.
+            _clear_q = supabase.table("story_clusters").update(
+                {"is_top_story": False}
+            ).eq("is_top_story", True)
+            if _top_id:
+                _clear_q = _clear_q.neq("id", _top_id)
+            _clear_q.execute()
+            if _top_id:
+                # Ensure the true #1 carries it (memory may have flagged #2 only
+                # if its in-memory order diverged from the final DB rank_world).
+                supabase.table("story_clusters").update(
+                    {"is_top_story": True}
+                ).eq("id", _top_id).execute()
+                print(
+                    f"  [9a.1] Single top story: "
+                    f"\"{(_top_rows[0].get('title') or '')[:55]}\""
+                )
+        except Exception as e:
+            print(f"  [warn] Single-top-story reconciliation failed (non-fatal): {e}")
 
     # Step 9b: Populate article_categories junction table
     if ANALYSIS_AVAILABLE and article_categories_map:
