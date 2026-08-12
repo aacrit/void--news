@@ -24,7 +24,7 @@ import type {
   SigilData,
 } from "./types";
 import { isUnscoredTilt } from "./biasColors";
-import { cleanFeedSummary } from "./summaryHygiene";
+import { cleanFeedSummary, isCSAMTopic } from "./summaryHygiene";
 
 /** Map pipeline category slugs (both fine-grained and desk) to display names. */
 export function capitalize(s: string): string {
@@ -105,6 +105,10 @@ export function clusterHasRealSummary(
 ): boolean {
   const rawSummary = typeof cluster.summary === "string" ? cluster.summary : "";
   const title = typeof cluster.title === "string" ? cluster.title : "";
+  // CSAM stories render as headline + source list ONLY (the body is blanked in
+  // the mapper). They stay in the feed for news value, so keep the card even
+  // when its summary is raw/unsummarized -- we never emit its body regardless.
+  if (isCSAMTopic(`${title} ${rawSummary}`)) return true;
   // Empty after hygiene = raw excerpt or genuinely blank -> not a real summary.
   if (cleanFeedSummary(rawSummary, title).trim().length === 0) return false;
   if (usingEnriched) {
@@ -217,10 +221,13 @@ export function mapClustersToStories(
       : [];
 
     const safeTitle = typeof cluster.title === "string" ? cluster.title : String(cluster.title ?? "");
-    const safeSummary = cleanFeedSummary(
-      typeof cluster.summary === "string" ? cluster.summary : String(cluster.summary ?? ""),
-      safeTitle,
-    );
+    const rawSummaryText =
+      typeof cluster.summary === "string" ? cluster.summary : String(cluster.summary ?? "");
+    // CSAM gate: a child-sexual-abuse story renders headline + sources only. The
+    // body (generated OR scraped) is never emitted, so blank it entirely here.
+    const safeSummary = isCSAMTopic(`${safeTitle} ${rawSummaryText}`)
+      ? ""
+      : cleanFeedSummary(rawSummaryText, safeTitle);
 
     return {
       id: cluster.id,

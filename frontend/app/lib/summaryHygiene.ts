@@ -64,15 +64,80 @@ export function isRawExcerpt(summary: string): boolean {
   return false;
 }
 
+/* ---------------------------------------------------------------------------
+   Defamation guard (P0, 2026-08-11)
+   ----------------------------------------------------------------------------
+   A contested, criminal, or reputationally damaging claim about a NAMED person,
+   stated in Void's own voice with no attribution to the reporting outlet, is a
+   defamation exposure (a live summary asserted, unattributed, that a named
+   individual "celebrated the October 7 terror attacks"). We drop any sentence
+   that pairs a reputational-harm predicate with NO attribution cue. Conservative
+   by design: only clear harm phrasings fire, and an attributed sentence
+   ("according to the New York Post, ...") is kept. When in doubt we drop the
+   sentence, never the other way. This is a render-time last line of defence; the
+   pipeline prompt + post-check are the durable fix.
+   --------------------------------------------------------------------------- */
+
+// A reputational-harm verb aimed at a terror/atrocity/abuse object, e.g.
+// "celebrated the October 7 terror attacks", "applauded Islamic terror".
+const REPUTATIONAL_HARM =
+  /\b(celebrat|applaud|prais|laud|endors|glorif|justif|condon|cheer|support|back|defend|champion)\w*\s+(?:\w+\s+){0,4}(terror|terrorism|terrorist|attack|massacre|genocide|jihad|extremis|antisemit|nazism|nazi|hamas|hezbollah|rape|molest|p(?:a?e)dophil|abuse|assault|insurrection)/i;
+// A criminal/atrocity identity stated as bare fact, e.g. "is a convicted rapist".
+const CRIMINAL_FACT =
+  /\b(?:is|was|are|were)\s+(?:a\s+|an\s+|the\s+)?(?:convicted\s+|alleged\s+|suspected\s+)?(terrorist|rapist|p(?:a?e)dophile|murderer|fraudster|abuser|molester|criminal|extremist)\b/i;
+// Direct criminal allegations that must carry a source ("charged with", etc.).
+const CRIMINAL_ALLEGATION =
+  /\b(accused of|charged with|indicted (?:for|on)|convicted of|found guilty of|arrested for|perpetrat(?:ed|or))\b/i;
+// In-text attribution to a reporting outlet, official source, or a direct quote.
+const ATTRIBUTION_CUE =
+  /\b(accord(?:ing) to|reported by|as reported|reportedly|said|says|stated|told\s+[A-Z]|per\s+[A-Z]|alleged by|prosecutors|indictment|police said|court (?:documents|filings|records)|lawsuit|complaint|according)\b/i;
+const QUOTE_PRESENT = /["“][^"”]{3,}["”]/;
+
+/**
+ * Drop any sentence that makes a reputational-harm claim about a person with no
+ * attribution. Returns the summary with such sentences removed (possibly empty,
+ * in which case the card is dropped by the caller's real-summary filter).
+ */
+export function stripUnattributedReputationalClaims(summary: string): string {
+  const s = (summary ?? "").trim();
+  if (!s) return "";
+  const sentences = s.match(/[^.!?]+[.!?]*/g) ?? [s];
+  const kept = sentences.filter((sent) => {
+    const harm =
+      REPUTATIONAL_HARM.test(sent) ||
+      CRIMINAL_FACT.test(sent) ||
+      CRIMINAL_ALLEGATION.test(sent);
+    if (!harm) return true; // no reputational-harm claim -> keep
+    // Keep only if the sentence attributes the claim to a source or quotes it.
+    return ATTRIBUTION_CUE.test(sent) || QUOTE_PRESENT.test(sent);
+  });
+  return kept.join(" ").replace(/\s+/g, " ").trim();
+}
+
+/* ---------------------------------------------------------------------------
+   CSAM gate (P0, 2026-08-11)
+   ----------------------------------------------------------------------------
+   A story about child sexual abuse material must never emit a generated or
+   scraped description of the material. Such a cluster renders as headline +
+   source list ONLY; the caller blanks the body when this returns true.
+   --------------------------------------------------------------------------- */
+const CSAM_TOPIC =
+  /\b(child (?:sexual abuse|sex abuse|pornography|porn|exploitation)|csam|sexually explicit (?:video|image|photo|material|content)s?\s+(?:involving|of|depicting)\s+(?:a\s+)?minors?|minors?\b[^.]{0,40}\b(?:sexual(?:ly)?\s+(?:abus|explicit|exploit)|molest|raped|sexually abused)|underage\s+(?:sex|porn|nude|explicit))/i;
+
+/** True when the text is about child sexual abuse material. */
+export function isCSAMTopic(text: string): boolean {
+  return CSAM_TOPIC.test(text ?? "");
+}
+
 /**
  * Return a display-safe summary. Empty or raw-excerpt input yields "" so the
  * card renders its neutral "N sources reporting" pending line (a clean,
- * headline-independent fallback) rather than the raw text. Clean prose passes
- * through untouched.
+ * headline-independent fallback) rather than the raw text. Otherwise clean prose
+ * passes through with any unattributed reputational-harm sentence removed.
  */
 export function cleanFeedSummary(summary: string, _title?: string): string {
   const s = (summary ?? "").trim();
   if (!s) return "";
   if (isRawExcerpt(s)) return "";
-  return summary;
+  return stripUnattributedReputationalClaims(s);
 }
