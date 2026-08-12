@@ -617,23 +617,15 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
           </p>
         </section>
 
-        {/* Subtle inline loading — only while the full source spread is genuinely
-            still being fetched. Sits where the spectrum will render; the summary
-            above stays fully visible. */}
-        {isLoadingData && sources.length === 0 && (
-          <p
-            className="text-meta"
-            role="status"
-            style={{ color: "var(--fg-muted)", padding: "var(--space-3) 0", margin: 0 }}
-          >
-            Gathering the full source list
-          </p>
-        )}
-
-        {/* ---- The Spread — source-lean spectrum as a full-width band. The
-            spectrum's positioned logos ARE the source display now (hover a logo
-            for its name); the separate roster was removed. ---- */}
-        {spectrumSources.length > 0 && (
+        {/* ---- The Spread — source-lean spectrum as a full-width band. The slot
+            is reserved from the first frame (rendered while the Supabase source
+            fetch is still running, with a calm placeholder) so the KDE fades into
+            a stable box IN PLACE, instead of inserting above the panels below and
+            shoving them down when the fetch resolves a beat later. The chart
+            itself mounts already-drawn (settled); a soft opacity-only settle is
+            the sole motion, so there is no second "agree first, then the spread"
+            entrance. ---- */}
+        {(spectrumSources.length > 0 || (isLoadingData && sources.length === 0)) && (
           <section
             aria-label="Source spectrum"
             className={`inline-dd__spread anim-dd-section dd-cascade-2${contentVisible ? " anim-dd-section--visible" : ""}`}
@@ -641,10 +633,13 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
             <hr className="ink-rule" style={{ marginBottom: "var(--space-4)" }} aria-hidden="true" />
             <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>The Spread</h3>
             <div className="inline-dd__spectrum">
-              {/* settled: inside the inline accordion the spectrum appears
-                  already-drawn and fades in with its section — it must not run
-                  its own multi-beat entrance after the expansion has finished. */}
-              <DeepDiveSpectrum sources={spectrumSources} settled aggregateLean={story.sigilData?.politicalLean} />
+              {spectrumSources.length > 0 ? (
+                <DeepDiveSpectrum sources={spectrumSources} settled aggregateLean={story.sigilData?.politicalLean} />
+              ) : (
+                <p className="inline-dd__spectrum-loading" role="status">
+                  Gathering the full source list
+                </p>
+              )}
             </div>
           </section>
         )}
