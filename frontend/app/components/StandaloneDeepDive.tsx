@@ -200,7 +200,7 @@ export default function StandaloneDeepDive({
 
               {spectrumSources.length > 0 && (
                 <div className="dd-analysis-block__spectrum">
-                  <DeepDiveSpectrum sources={spectrumSources} />
+                  <DeepDiveSpectrum sources={spectrumSources} aggregateLean={story.sigilData?.politicalLean} />
                 </div>
               )}
             </section>
