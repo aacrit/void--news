@@ -1,0 +1,108 @@
+{
+  "_comment": "Opus-authored Void News social batch, ingested by pipeline.social.ig_opus_ingest and rendered through the existing IG slide templates. NO Gemini touches this path: captions + intent are pre-filled verbatim. Vision + method render via Vision.tsx (kind='vision', hook/stance/cta); example posts render via Example.tsx (kind='example', hook/spectrum/cta) with the spectrum outlets fetched live from the cluster_id. On-slide text is fit to the template budgets the way ig_generator does; the FULL prose always survives in the caption. Do not add em or en dashes.",
+  "posts": [
+    {
+      "slug": "vision-never-read-the-news",
+      "pillar": "vision",
+      "hook": {
+        "kicker": "VOID NEWS",
+        "headline": "You have never read the news."
+      },
+      "stance": {
+        "kicker": "A front page, not a feed",
+        "body": "The same 50 stories, in the same order, for every reader. No account. No algorithm. No paywall. Every source scored for bias, out in the open."
+      },
+      "cta": {
+        "headline": "See through the void.",
+        "url": "news.voidvision.org"
+      },
+      "caption_instagram": "You have never read the news. You have read a feed built to keep you scrolling.\n\nVoid News is a front page, not a feed. The same 50 stories, in the same order, for every reader. No account. No algorithm. No paywall.\n\nEvery source is scored on six axes of bias, by fixed rules, out in the open. You see where each outlet stands before you read a word.\n\nThe news, dissected. See through the void.\nnews.voidvision.org\n\n#VoidNews #MediaBias #NewsLiteracy #IndependentMedia #SeeThroughTheVoid",
+      "caption_x": "You have never read the news. You have read a feed built to keep you scrolling. Void News is a front page, not a feed: same 50 stories, same order, for everyone. No account, no algorithm, no paywall. Every source scored for bias, in the open. news.voidvision.org",
+      "caption_bluesky": "You have never read the news. You have read a feed built to keep you scrolling. Void News is a front page, not a feed: same 50 stories, same order, for everyone. No account, no algorithm, no paywall. Every source scored for bias, out in the open. news.voidvision.org",
+      "intent": "Plant the founding belief. The antidote to the algorithmic feed. Calm, confident, a little provocative."
+    },
+    {
+      "slug": "method-what-leads",
+      "pillar": "method",
+      "hook": {
+        "kicker": "VOID NEWS",
+        "headline": "How do we decide what leads?"
+      },
+      "stance": {
+        "kicker": "We don't",
+        "body": "No editor picks the front page. No AI judges the news. The feed order, the story grouping, and every bias score come from fixed rules, the same for every reader. Six axes per article, and every score shows its work."
+      },
+      "cta": {
+        "headline": "Rules you can read.",
+        "url": "news.voidvision.org"
+      },
+      "caption_instagram": "How does Void News decide what leads?\n\nIt does not. No editor picks the front page. No AI judges the news. The order of the feed, the way stories are grouped, and every bias score come from fixed rules that run the same way for every reader.\n\nSix axes per article: political lean, sensationalism, opinion vs reporting, factual rigor, framing, and how each outlet tracks over time. Every score weighs both the outlet's record and the article's own words, and every score shows its work.\n\nThe one place we use a language model is the short summary under each story, and it is told to use only what the articles say.\n\nRules you can read. See through the void.\nnews.voidvision.org\n\n#VoidNews #MediaBias #NewsTransparency #AlgorithmicBias #NewsLiteracy",
+      "caption_x": "How does Void News decide what leads? It does not. No editor, no AI judge. Feed order, story grouping, and every bias score are fixed rules, the same for everyone. Six axes per article, each score shows its work. news.voidvision.org",
+      "caption_bluesky": "How does Void News decide what leads? It does not. No editor, no AI judge. Feed order, story grouping, and every bias score are fixed rules, the same for everyone. Six axes per article, each score shows its work. news.voidvision.org",
+      "intent": "Trust through transparency. The differentiator is determinism: no human or AI gatekeeper decides what you see."
+    },
+    {
+      "slug": "example-trump-vaccine-order",
+      "pillar": "example",
+      "cluster_id": "9bf5ab67-b1a4-4e0e-95b7-a46e0c3403dc",
+      "outlet_count": 52,
+      "hook": {
+        "kicker": "CONTESTED / 52 OUTLETS",
+        "headline": "One order. Two countries reading it."
+      },
+      "spectrum": {
+        "body": "Trump cut the recommended childhood vaccine schedule from 18 immunizations to 11, calling it parental choice. The WHO defended the schedules within hours."
+      },
+      "cta": {
+        "headline": "See where it splits.",
+        "url": "news.voidvision.org"
+      },
+      "caption_instagram": "One order. Two countries reading it.\n\nTrump signed an executive order Monday cutting the recommended childhood vaccine schedule from 18 immunizations to 11. He called it parental choice. The World Health Organization defended the schedules within hours.\n\n52 outlets covered it. On Void News you see the split at a glance: the coverage does not agree, and the page shows you exactly where it divides instead of averaging it into a calm gray middle.\n\nRead the same event from every side, then decide. See through the void. news.voidvision.org\n\n#VoidNews #Vaccines #MediaBias #PublicHealth #NewsLiteracy",
+      "caption_x": "One order, two countries reading it. Trump cut the recommended childhood vaccine schedule 18 to 11 immunizations, calling it parental choice. The WHO defended the schedules within hours. 52 outlets, and Void shows you exactly where the coverage splits. news.voidvision.org",
+      "caption_bluesky": "One order, two countries reading it. Trump cut the recommended childhood vaccine schedule 18 to 11 immunizations, calling it parental choice. The WHO defended the schedules within hours. 52 outlets, and Void shows you exactly where the coverage splits. news.voidvision.org",
+      "intent": "Prove the tool on a live, genuinely contested policy story. Show, do not claim, that Void surfaces disagreement."
+    },
+    {
+      "slug": "example-libya-zawiya-refinery",
+      "pillar": "example",
+      "cluster_id": "081c8cbb-c87a-442f-8726-f5d1a7a83f63",
+      "outlet_count": 12,
+      "hook": {
+        "kicker": "THE SECOND NEWS / 12 OUTLETS",
+        "headline": "12 outlets covered this. You probably saw none of them."
+      },
+      "spectrum": {
+        "body": "A drone strike set Libya's Zawiya refinery ablaze and killed an intelligence chief. Who launched it, and what it means, splits the reporting."
+      },
+      "cta": {
+        "headline": "The second news, from every side.",
+        "url": "news.voidvision.org"
+      },
+      "caption_instagram": "12 outlets covered this. You probably saw none of them.\n\nA drone strike set Libya's Zawiya refinery ablaze and killed an intelligence chief. Who launched it, and what it means, divides the reporting sharply.\n\nThe stories under the headlines get the same scrutiny as the headlines. See through the void. news.voidvision.org\n\n#VoidNews #Libya #MediaBias #NewsLiteracy",
+      "caption_x": "12 outlets covered this, and you probably saw none of them. A drone strike set Libya's Zawiya refinery ablaze and killed an intelligence chief. The coverage splits on who and why. The second news, from every side. news.voidvision.org",
+      "caption_bluesky": "12 outlets covered this, and you probably saw none of them. A drone strike set Libya's Zawiya refinery ablaze and killed an intelligence chief. The coverage splits on who and why. The second news, from every side. news.voidvision.org",
+      "intent": "Champion the buried, contested story. Void gives the second news the same scrutiny as the headline."
+    },
+    {
+      "slug": "example-aoc-egg-freezing",
+      "pillar": "example",
+      "cluster_id": "cd1a681c-b8aa-4e95-a76f-c03b2604988f",
+      "outlet_count": 30,
+      "hook": {
+        "kicker": "CONTESTED / 30 OUTLETS",
+        "headline": "A private decision. A public fight."
+      },
+      "spectrum": {
+        "body": "Alexandria Ocasio-Cortez said she froze her eggs. 30 outlets covered it, and the framing splits hard along the aisle."
+      },
+      "cta": {
+        "headline": "See who framed it, and how.",
+        "url": "news.voidvision.org"
+      },
+      "caption_instagram": "A private decision, and a very public fight.\n\nAlexandria Ocasio-Cortez said she froze her eggs. 30 outlets covered it, and the framing splits hard along the aisle: personal health for some, political theater for others.\n\nSame facts, two readings. Void shows you both. news.voidvision.org\n\n#VoidNews #AOC #MediaBias #NewsLiteracy",
+      "caption_x": "A private decision, a public fight. AOC said she froze her eggs; 30 outlets covered it and the framing splits hard along the aisle. Same facts, two readings, and Void shows you both. news.voidvision.org",
+      "caption_bluesky": "A private decision, a public fight. AOC said she froze her eggs; 30 outlets covered it and the framing splits hard along the aisle. Same facts, two readings, and Void shows you both. news.voidvision.org",
+      "intent": "Show the same fact getting opposite framings; the tool reveals the split."
+    }
+  ]
+}
