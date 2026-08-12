@@ -4,7 +4,7 @@ import React, { Component, type ReactNode, useState, useEffect, useMemo, useCall
 import dynamic from "next/dynamic";
 import type { Edition, Category, Story } from "../lib/types";
 import { EDITIONS } from "../lib/types";
-import { mapClustersToStories, FEED_ENRICHED_FIELDS, FEED_BASE_FIELDS } from "../lib/feedMapping";
+import { mapClustersToStories, clusterHasRealSummary, FEED_ENRICHED_FIELDS, FEED_BASE_FIELDS } from "../lib/feedMapping";
 import { supabase, supabaseError } from "../lib/supabase";
 import { cacheGet, cacheSet } from "../lib/feedCache";
 import { cleanFeedSummary } from "../lib/summaryHygiene";
@@ -570,8 +570,14 @@ function HomeContentInner({
 
         if (controller.signal.aborted) return;
 
+        // P0 (2026-08-11): drop unsummarized clusters (raw scraped text) before
+        // mapping, identical to the build-time server fetch, so the client retry
+        // / "show more" path can never render an unsummarized card either.
+        const summarizedClusters = clusters.filter((c: Record<string, unknown>) =>
+          clusterHasRealSummary(c, usingEnriched),
+        );
         // Shared, isomorphic mapping (identical to the build-time server fetch).
-        const mappedStories: Story[] = mapClustersToStories(clusters, usingEnriched);
+        const mappedStories: Story[] = mapClustersToStories(summarizedClusters, usingEnriched);
 
         setStories(mappedStories);
         setIsLoading(false);
