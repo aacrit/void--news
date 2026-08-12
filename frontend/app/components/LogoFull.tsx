@@ -21,8 +21,11 @@ interface LogoFullProps {
   className?: string;
   /** Swappable product word after VOID (e.g. "VISION"). Default "NEWS". */
   product?: string;
+  /** Responsive sizing: let CSS font-size on `className` drive the size (one
+   *  instance can scale across breakpoints instead of rendering copies). */
+  responsive?: boolean;
 }
 
-export default function LogoFull({ height = 28, className, product = "NEWS" }: LogoFullProps) {
-  return <SigilWordmark height={height} className={className} product={product} accent={"var(--palette-news)"} />;
+export default function LogoFull({ height = 28, className, product = "NEWS", responsive }: LogoFullProps) {
+  return <SigilWordmark height={height} className={className} product={product} responsive={responsive} accent={"var(--palette-news)"} />;
 }

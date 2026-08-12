@@ -200,17 +200,32 @@
 
   /* Mobile dateline: time (with zone) always visible; date appears >=400px.
      display:flex so the sub-spans align; pushed to the right edge of the row. */
-  .nav-dateline-mobile {
+  .nav-dateline-mobile,
+  .nav-dateline-line {
     display: flex;
     flex: 1;
     justify-content: flex-end;
     padding: 0 var(--space-2);
+    max-width: 52vw;
+  }
+  /* Priority is the freshness time; the date + separator show only >=400px. */
+  .nav-dateline-line__date,
+  .nav-dateline-line__sep {
+    display: none;
+  }
+  .nav-dateline-line__time {
+    color: var(--fg-secondary);
+    opacity: 0.9;
   }
 
   /* Date shows once the row is wide enough to carry both without squeezing the
      time off the edge (iPhone 14 = 390px shows time only; >=400px adds date). */
   @media (min-width: 400px) {
-    .nav-dateline-mobile__date {
+    .nav-dateline-mobile__date,
+    .nav-dateline-line__date {
+      display: inline;
+    }
+    .nav-dateline-line__sep {
       display: inline;
     }
   }
@@ -254,7 +269,8 @@
     padding-top: var(--space-1);
     padding-bottom: var(--space-1);
   }
-  .nav-header[data-scroll-compact="true"] .nav-dateline-mobile {
+  .nav-header[data-scroll-compact="true"] .nav-dateline-mobile,
+  .nav-header[data-scroll-compact="true"] .nav-dateline-line {
     opacity: 0;
     max-width: 0;
     max-height: 0;
@@ -268,7 +284,8 @@
     padding-bottom: var(--space-1);
   }
 
-  .nav-dateline-mobile {
+  .nav-dateline-mobile,
+  .nav-dateline-line {
     transition:
       opacity var(--dur-settle, 240ms) var(--ease-rack, ease-in-out),
       max-width var(--dur-settle, 240ms) var(--ease-rack, ease-in-out),
@@ -277,7 +294,8 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .nav-dateline-mobile {
+    .nav-dateline-mobile,
+    .nav-dateline-line {
       transition: none;
     }
   }

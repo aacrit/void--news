@@ -588,12 +588,12 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
             data={story.sigilData}
             sourceCount={sourceCount}
             variant="inline"
-            /* The Spread section below plots the full L->R distribution via
-               DeepDiveSpectrum (gated on spectrumSources.length > 0). When that
-               renders, the small segmented LeanCoverageBar restates it, so hide
-               it; keep it as the only coverage signal when the spectrum is
-               absent (too few scored sources). */
-            hideCoverageBar={spectrumSources.length > 0}
+            /* Always hide the header coverage bar in the Deep Dive: the Spread
+               section below IS the coverage view. Gating on
+               spectrumSources.length (empty until the async fetch resolves) made
+               the bar render on first paint and then vanish, a flash right under
+               the headline. It restates the spectrum, so it is pure noise here. */
+            hideCoverageBar={true}
           />
         )}
       </header>

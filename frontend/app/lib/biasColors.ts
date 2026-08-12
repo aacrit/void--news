@@ -181,23 +181,47 @@ export function isUnscoredTilt(
   return false;
 }
 
-/* ── Lean-label band suppression (Phase 2 Branch D) ────────────────────────
-   The aggregated cluster lean is a rigor-weighted mean, so genuinely two-sided
-   coverage and high-rigor wires bunch most stories in a false-center band. A
-   confident directional or "Balanced" label there overstates the signal. Inside
-   the band [48, 52] the label is suppressed:
-     - both wings genuinely present (left>0 AND right>0 AND total>=3): the story
-       is a balanced-but-divergent standoff, so surface the existing "Contested"
-       marker rather than hiding it.
-     - otherwise: "Flat" (with no confident numeric score beside it).
-   Outside the band the caller keeps its existing confident label + score.
+/* ── Lean-label suppression — meaningful AND well-supported gate ────────────
+   The aggregated cluster lean is a rigor-weighted mean. It bunches genuinely
+   two-sided coverage and high-rigor wires in a false-center band, AND it drifts
+   modestly off 50 on the WORD CHOICE of otherwise apolitical stories (a product
+   recall, a wine harvest, a dead eagle), so a low-source / low-polarization
+   story can read as a deliberate "Right" or "Left" editorial judgment when it is
+   nothing of the sort.
+
+   A glanceable partisan label is therefore asserted ONLY when the tilt is both
+   MEANINGFUL (large enough magnitude) and WELL-SUPPORTED (enough sources, enough
+   analytical confidence, and either a real left/right split or a strong-enough
+   tilt to stand alone). The gate is fully symmetric: Left and Right are judged
+   by the same magnitude/support thresholds. When a tilt fails the gate:
+     - genuinely split (both wings present AND high polarization) -> "Contested".
+     - otherwise -> "Flat" (no clear lean, and no confident numeric score).
    This changes label TEXT and numeric-score visibility ONLY; the Sigil beam
-   angle, color, and fan geometry are untouched.                              ── */
+   angle, color, and fan geometry are untouched, and the Deep Dive spectrum still
+   plots the full true distribution.                                          ── */
 
 export const LEAN_BAND_LOW = 48;
 export const LEAN_BAND_HIGH = 52;
 export const NO_CLEAR_LEAN_LABEL = "Flat";
 export const CONTESTED_LABEL = "Contested";
+
+/** A directional partisan label needs at least this many sources behind it —
+ *  a tilt carried by a handful of outlets is not a trustworthy editorial read. */
+export const LABEL_MIN_SOURCES = 8;
+/** ...and at least this much aggregate analytical confidence. */
+export const LABEL_MIN_CONFIDENCE = 0.5;
+/** ...and a magnitude clear of dead center: |lean-50| must exceed this
+ *  (i.e. lean <= 42 or >= 58), wider than the old false-center band. */
+export const LABEL_MEANINGFUL_MARGIN = 8;
+/** A very strong tilt (|lean-50| >= this) stands on its own without needing a
+ *  measured left/right split behind it. */
+export const LABEL_STRONG_MARGIN = 18;
+/** Otherwise a directional label needs genuine left/right divergence: the
+ *  coverage's polarization must reach this. */
+export const LABEL_MIN_SUPPORT_POLARIZATION = 35;
+/** Polarization at/above which a suppressed tilt is surfaced as "Contested"
+ *  rather than "Flat" — matches LeanCoverageBar's contested threshold. */
+export const CONTESTED_MIN_POLARIZATION = 50;
 
 export type LeanLabelState = "confident" | "contested" | "no-clear-lean";
 
@@ -205,6 +229,10 @@ interface WingCounts {
   leanLeftCount?: number;
   leanCenterCount?: number;
   leanRightCount?: number;
+  /** Contestedness 0-100 (0 = one-sided/all-center, 100 = perfect L/R split). */
+  polarization?: number;
+  /** Aggregate analytical confidence 0-1. */
+  aggregateConfidence?: number;
 }
 
 /** Both wings genuinely present: left AND right coverage, with >=3 total.
@@ -219,13 +247,36 @@ export function bothWingsPresent(spread?: WingCounts | null): boolean {
 
 /**
  * Decide how a story's lean LABEL should render:
- *   "confident"      lean outside [48, 52] -> keep the existing directional label.
- *   "contested"      lean in band AND both wings present -> "Contested".
- *   "no-clear-lean"  lean in band, wings not both present -> "Flat".
+ *   "confident"      meaningful AND well-supported tilt -> keep the directional label + score.
+ *   "contested"      failed gate but genuinely split (both wings + high polarization) -> "Contested".
+ *   "no-clear-lean"  failed gate, not genuinely split -> "Flat" (score withheld).
+ *
+ * `sourceCount` defaults to +Infinity so callers that omit it keep the pre-gate
+ * behavior for the source-count factor; pass the cluster's real source count to
+ * suppress the arbitrary low-source tails.
  */
-export function leanLabelState(lean: number, spread?: WingCounts | null): LeanLabelState {
-  if (lean < LEAN_BAND_LOW || lean > LEAN_BAND_HIGH) return "confident";
-  return bothWingsPresent(spread) ? "contested" : "no-clear-lean";
+export function leanLabelState(
+  lean: number,
+  spread?: WingCounts | null,
+  sourceCount = Number.POSITIVE_INFINITY,
+): LeanLabelState {
+  const margin = Math.abs(lean - 50);
+  const pol = spread?.polarization ?? 0;
+  const conf = spread?.aggregateConfidence ?? 1;
+
+  // Symmetric "meaningful AND well-supported" test — the SAME thresholds decide
+  // Left and Right, so a dead-eagle drift and an eclipse-glasses recall are
+  // suppressed exactly the way the false center is.
+  const wellSupportedTilt =
+    margin >= LABEL_MEANINGFUL_MARGIN &&
+    sourceCount >= LABEL_MIN_SOURCES &&
+    conf >= LABEL_MIN_CONFIDENCE &&
+    (pol >= LABEL_MIN_SUPPORT_POLARIZATION || margin >= LABEL_STRONG_MARGIN);
+  if (wellSupportedTilt) return "confident";
+
+  const genuinelyContested =
+    bothWingsPresent(spread) && pol >= CONTESTED_MIN_POLARIZATION;
+  return genuinelyContested ? "contested" : "no-clear-lean";
 }
 
 /* ── Sigil label — lean + divergence combined ──────────────────────────────

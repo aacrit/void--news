@@ -115,19 +115,12 @@ export default function NavBar({
       <nav className="nav-inner" aria-label="Main navigation">
         <div className="nav-left">
           <Link href="/" aria-label="Void News home" className="nav-logo si-hoverable">
-            <span className="nav-logo-desktop">
-              <LogoFull height={30} />
-            </span>
-            {/* Tablet / landscape-phone band (768-1023): a compact wordmark so the
-                masthead reads as a masthead, not a stray icon. Full mark won't fit
-                once History + Weekly join the row; the phone mark (18px) is too
-                small for this width. See components.css tablet-band block. */}
-            <span className="nav-logo-tablet">
-              <LogoFull height={22} />
-            </span>
-            <span className="nav-logo-mobile">
-              <LogoFull height={18} />
-            </span>
+            {/* Single responsive wordmark. Previously three copies (desktop 30 /
+                tablet 22 / mobile 18) rendered and were CSS-toggled, which
+                triplicated the "VOID NEWS" glyph text in the served DOM. One
+                em-sized instance now scales via .nav-logo-mark font-size at each
+                breakpoint (see components.css), so the mark serializes once. */}
+            <LogoFull responsive className="nav-logo-mark" />
           </Link>
           <ExperimentalBadge />
           {/* Masthead tagline — lives inline in the top bar (desktop only). The
@@ -136,22 +129,18 @@ export default function NavBar({
           <span className="nav-tagline" aria-hidden="true">See through the void.</span>
         </div>
 
-        <span className="nav-dateline-inline" aria-hidden="true" suppressHydrationWarning>
-          {dateline}
+        {/* Single dateline element (was two mutually-exclusive spans that both
+            carried the date, duplicating it in the served DOM as
+            "Aug 11, 2026Aug 11, 2026"). One node now renders the date + time
+            once; CSS positions it inline on desktop and right-aligned on mobile,
+            and hides the date under 400px. See components.css/responsive.css. */}
+        <span className="nav-dateline-line" aria-hidden="true" suppressHydrationWarning>
+          <span className="nav-dateline-line__date">{dateline}</span>
           {timestamp && (
             <>
-              <span className="nav-dateline-inline__sep">&middot;</span>
-              <span className="nav-dateline-inline__time"><span className="nav-asof">as of </span>{timestamp}</span>
+              <span className="nav-dateline-line__sep">&middot;</span>
+              <span className="nav-dateline-line__time"><span className="nav-asof">as of </span>{timestamp}</span>
             </>
-          )}
-        </span>
-        {/* Mobile dateline — compact freshness signal. Time (with zone) is the
-            priority in the tight row; the date shows only when the row is wide
-            enough (>=400px, via CSS). */}
-        <span className="nav-dateline-mobile" aria-hidden="true" suppressHydrationWarning>
-          <span className="nav-dateline-mobile__date">{dateline}</span>
-          {timestamp && (
-            <span className="nav-dateline-mobile__time"><span className="nav-asof">as of </span>{timestamp}</span>
           )}
         </span>
 

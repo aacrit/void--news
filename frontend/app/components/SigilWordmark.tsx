@@ -29,7 +29,8 @@ import type { CSSProperties } from "react";
    --------------------------------------------------------------------------- */
 
 interface SigilWordmarkProps {
-  /** Target rendered height in px. Everything scales from this. */
+  /** Target rendered height in px. Sets the wrapper font-size that everything
+   *  scales from (in em). Ignored for sizing when `responsive` is set. */
   height: number;
   className?: string;
   /** Swappable product word after VOID. Defaults to "NEWS". */
@@ -41,6 +42,13 @@ interface SigilWordmarkProps {
    * product word stays currentColor.
    */
   accent?: string;
+  /**
+   * Responsive sizing: do NOT bake a px font-size inline. Internal geometry is
+   * all em-relative, so the caller's CSS (font-size on `className`) drives the
+   * rendered size and can change it per breakpoint. Lets a single wordmark
+   * scale across breakpoints instead of rendering multiple copies.
+   */
+  responsive?: boolean;
 }
 
 export default function SigilWordmark({
@@ -48,15 +56,19 @@ export default function SigilWordmark({
   className,
   product = "NEWS",
   accent,
+  responsive = false,
 }: SigilWordmarkProps) {
   const fontSize = height;
+  // Internal geometry is expressed in EM so a single instance can be scaled by
+  // CSS font-size (responsive) with no separate copies. At the default
+  // wrapper font-size = height px, these resolve to exactly the prior px values.
   // The ring's visible outer edge is inset ~5% inside the 100x100 viewBox, so
   // markSize is sized up from cap height (~0.72em for these serifs) to make the
   // ring read as a true cap-height O; overshoot then re-centers it on the cap
   // band with a round-letter overshoot so the ring bottom sits on/just below
   // the baseline (foot hanging below like a descender via overflow:visible).
-  const markSize = fontSize * 0.81;
-  const overshoot = fontSize * 0.08;
+  const markSize = "0.81em";
+  const overshoot = "0.08em";
 
   const letter: CSSProperties = { display: "inline-block" };
 
@@ -67,10 +79,13 @@ export default function SigilWordmark({
   return (
     <span
       className={className ? `sigil-word ${className}` : "sigil-word"}
-      /* Decorative: consumers (NavBar link, Footer, error pages) supply the
-         accessible name, and NavBar renders three responsive copies — a label
-         here would announce three times. Matches the prior LogoFull behavior. */
-      aria-hidden="true"
+      /* Single accessible name for the whole lockup: the letters + Sigil-O are
+         decorative layers (each aria-hidden below), so the mark announces
+         "VOID NEWS" exactly once as an image and never serializes as the raw
+         "VIDNEWS" glyph text. A labelling wrapper (e.g. NavBar's home link with
+         its own aria-label) still overrides this, so it is never double-read. */
+      role="img"
+      aria-label={`VOID ${product}`}
       style={{
         display: "inline-flex",
         alignItems: "baseline",
@@ -79,7 +94,8 @@ export default function SigilWordmark({
         fontFamily: "var(--font-editorial, 'Playfair Display', Georgia, serif)",
         fontWeight: 700,
         fontStyle: "normal",
-        fontSize: `${fontSize}px`,
+        // Responsive: let CSS own the font-size; otherwise bake it from height.
+        ...(responsive ? {} : { fontSize: `${fontSize}px` }),
         lineHeight: 1,
         letterSpacing: "0.02em",
         color: "currentColor",
@@ -96,11 +112,11 @@ export default function SigilWordmark({
         viewBox="0 0 100 100"
         aria-hidden="true"
         style={{
-          height: `${markSize}px`,
-          width: `${markSize}px`,
+          height: markSize,
+          width: markSize,
           display: "inline-block",
           margin: "0 0.035em",
-          transform: `translateY(${overshoot}px)`,
+          transform: `translateY(${overshoot})`,
           flexShrink: 0,
           overflow: "visible",
         }}

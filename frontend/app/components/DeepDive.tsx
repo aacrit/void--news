@@ -546,7 +546,10 @@ export default function DeepDive({
             data={story.sigilData}
             sourceCount={sourceCount}
             variant="inline"
-            hideCoverageBar={spectrumSources.length > 0}
+            /* Always hidden: the Spread spectrum below is the coverage view.
+               Gating on spectrumSources (empty until the async fetch resolves)
+               flashed the bar under the headline, then removed it. */
+            hideCoverageBar={true}
           />
         )}
 

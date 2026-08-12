@@ -310,7 +310,7 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
   // overstate the signal. "Contested" when both wings are present, else "No clear
   // lean" (and the numeric score is withheld). Outside the band, behavior is
   // unchanged. The KDE spectrum below still plots the true distribution.
-  const popupState = leanLabelState(lean, data.biasSpread);
+  const popupState = leanLabelState(lean, data.biasSpread, data.sourceCount);
   const popupSuppressed = popupState !== "confident";
   // Color consistent with the mark (expanded position; neutral for a
   // balanced-but-divergent standoff). The numeric score + label stay TRUE
@@ -586,7 +586,7 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
   // False-center band suppression (label TEXT only; beam/color geometry below is
   // untouched). Inside [48,52]: "Contested" when both wings are present, else
   // "No clear lean". Outside the band the existing directional label stands.
-  const labelState = leanLabelState(data.politicalLean, data.biasSpread);
+  const labelState = leanLabelState(data.politicalLean, data.biasSpread, data.sourceCount);
   const displayLabel = labelState === "no-clear-lean"
     ? { text: NO_CLEAR_LEAN_LABEL, color: "var(--fg-tertiary)" }
     : labelState === "contested"
