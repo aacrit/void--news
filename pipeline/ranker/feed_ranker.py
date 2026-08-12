@@ -278,6 +278,21 @@ COVERAGE_GUARD_RATIO = 0.6
 FEED_LEAD_MIN = 3
 FEED_LEAD_SLOTS = 10
 
+# Mass-casualty ordering floor (2026-08-11, P0-4). importance_ranker already
+# lifts a mass-casualty disaster (DISASTER_MAX_LIFT) on its own merit, but the
+# diversity partition + category caps could still sort a well-sourced disaster
+# below a lower-base NON-disaster (a 61-source earthquake stranded beneath a
+# 37-source product recall). This deterministic guardrail runs AFTER every
+# gate/cap and BEFORE the final strictly-decreasing re-encode: a cluster whose
+# disaster_severity >= DISASTER_FLOOR_SEVERITY AND source_count >=
+# DISASTER_FLOOR_MIN_SOURCES may never be ordered below a non-disaster cluster
+# that carries a strictly lower headline_rank; it is repositioned just above the
+# highest such cluster (mirrors the 4b CAP_RANK_TOLERANCE reorder). No LLM, no
+# weight change — it only surfaces the already-computed disaster_severity signal
+# (threaded onto the cluster dict in main.py, persisted via migration 077).
+DISASTER_FLOOR_SEVERITY = 60.0
+DISASTER_FLOOR_MIN_SOURCES = 8
+
 
 # ---------------------------------------------------------------------------
 # Same-event keyword groups (will go stale — TODO: dynamic extraction)
@@ -665,6 +680,36 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
                         )
                         break
 
+        # 5b. Mass-casualty ordering floor (see DISASTER_FLOOR_* constants).
+        # Runs AFTER every gate/cap/diversity pass and BEFORE the final
+        # strictly-decreasing re-encode. A well-sourced mass-casualty disaster
+        # may not sit below a NON-disaster cluster with a strictly lower
+        # headline_rank; lift it to just above the highest such cluster.
+        # Mirrors the 4b CAP_RANK_TOLERANCE reorder: highest-base disaster
+        # first so a chain resolves top-down; pool.index recomputed each pass
+        # because a lift shifts positions.
+        disasters = [c for c in pool if _qualifies_mass_casualty(c)]
+        for c in sorted(
+            disasters, key=lambda x: (x.get("headline_rank", 0) or 0), reverse=True
+        ):
+            try:
+                ci = pool.index(c)
+            except ValueError:
+                continue
+            hd = c.get("headline_rank", 0) or 0
+            target = None
+            for k in range(ci):
+                pk = pool[k]
+                if not _qualifies_mass_casualty(pk) and (
+                    (pk.get("headline_rank", 0) or 0) < hd
+                ):
+                    target = k
+                    break
+            if target is not None:
+                pool.pop(ci)
+                pool.insert(target, c)
+                c["_mass_casualty_floor"] = True
+
         # Encode the final pool order into rank_world. Every consumer (the
         # DB write, main's diagnostics, the frontend) sorts by rank_world
         # alone, so the partition above only takes effect if ranks are
@@ -783,6 +828,16 @@ def _contest_anchor_conflict(stems_a: set[str], stems_b: set[str]) -> bool:
     oa = stems_a & anchors
     ob = stems_b & anchors
     return bool(oa and ob and not (oa & ob))
+
+
+def _qualifies_mass_casualty(cluster: dict) -> bool:
+    """True when a cluster is a well-sourced mass-casualty disaster that the
+    ordering floor protects. Guards against a NULL/absent disaster_severity
+    (older DB rows read the column as None, which would raise on `>=`)."""
+    return (
+        (cluster.get("disaster_severity") or 0) >= DISASTER_FLOOR_SEVERITY
+        and (cluster.get("source_count") or 0) >= DISASTER_FLOOR_MIN_SOURCES
+    )
 
 
 def _detect_event(title: str) -> str | None:
