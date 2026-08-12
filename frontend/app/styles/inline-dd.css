@@ -280,29 +280,28 @@
    Sibling rack-focus — other stories recede "backstage" when one is expanded
    ----------------------------------------------------------------------------
    When a story is open inline, the remaining cards (both split feed-grids and
-   the twin-lead block) dim and scale down a touch, leaving the expanded .inline-dd
-   block (which sits OUTSIDE these containers) as the one sharp subject.
-   PERF: this uses ONLY opacity + transform (compositor-cheap). An earlier version
-   animated filter: blur() across all ~50 cards at once, which is GPU/paint-heavy
-   and caused jank on open; the extra dim compensates for dropping the blur.
-   ========================================================================== */
+   the twin-lead block) dim, leaving the expanded .inline-dd block (which sits
+   OUTSIDE these containers) as the one sharp subject.
+   PERF: this is now opacity-ONLY. The path has NEVER used blur on the live
+   experience (an even older version animated filter: blur() across ~50 cards
+   and was dropped for being GPU/paint-heavy). The interim replacement added a
+   scale(0.985) to every card, which transformed all ~50 at once WHILE the
+   accordion animated its height (a layout every frame) — that combined per-frame
+   work read as jitter on open. A plain dim is compositor-cheap and reads
+   cleaner and subtler; the slightly deeper dim carries the depth on its own. */
 .feed-grid__item,
 .lead-twin {
-  transition:
-    opacity var(--dur-normal, 300ms) var(--ease-rack, ease),
-    transform var(--dur-normal, 300ms) var(--ease-rack, ease);
+  transition: opacity var(--dur-normal, 300ms) var(--ease-rack, ease);
 }
 
 .feed-grid--recede .feed-grid__item,
 .lead-twin--recede {
-  opacity: 0.42;
-  transform: scale(0.985);
+  opacity: 0.4;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .feed-grid--recede .feed-grid__item,
   .lead-twin--recede {
-    transform: none;
-    opacity: 0.6;                /* dim only — no scale */
+    opacity: 0.6;                /* gentler dim, no motion */
   }
 }
