@@ -48,41 +48,6 @@ function tierLabel(tier: string): string {
   return "Independent";
 }
 
-/* ── Hover fan-out clustering ─────────────────────────────────────────────
-   Groups source pins whose x-coordinates are within `threshold` SVG units
-   of each other, so a hover-expand can fan overlapping circles into a
-   readable arc and each one can be clicked through to its article. */
-function clusterPinsByX<T extends { x: number }>(pins: T[], threshold = 8): T[][] {
-  if (pins.length === 0) return [];
-  const sorted = pins
-    .map((p, i) => ({ p, i }))
-    .sort((a, b) => a.p.x - b.p.x);
-  const groups: T[][] = [[sorted[0].p]];
-  for (let k = 1; k < sorted.length; k++) {
-    const last = groups[groups.length - 1];
-    if (sorted[k].p.x - last[last.length - 1].x <= threshold) {
-      last.push(sorted[k].p);
-    } else {
-      groups.push([sorted[k].p]);
-    }
-  }
-  return groups;
-}
-
-/* Pre-compute each pin's hover-translate offset so we can drive the fan-out
-   purely with a CSS transition (no React state per hover). Pins are
-   distributed along a 140° upward arc centered above their cluster. */
-function fanOffsets(count: number, radius = 22): { dx: number; dy: number }[] {
-  if (count <= 1) return [{ dx: 0, dy: 0 }];
-  const span = Math.PI * 0.78; // ~140°
-  const start = -Math.PI / 2 - span / 2;
-  return Array.from({ length: count }, (_, i) => {
-    const t = i / (count - 1);
-    const angle = start + t * span;
-    return { dx: Math.cos(angle) * radius, dy: Math.sin(angle) * radius };
-  });
-}
-
 function computeTrustScore(source: DeepDiveSpectrumSource): number {
   const tierScore = source.tier === "us_major" ? 60 : source.tier === "international" ? 50 : 40;
   const rigor = source.factualRigor ?? 50;
@@ -549,7 +514,7 @@ function detectDeadZones(
    Expand toggle: source pins on curve + label strip + scrub line.
    ═══════════════════════════════════════════════════════════════════════ */
 
-function SpectrumView({ sources, isMobile = false, settled = false }: { sources: DeepDiveSpectrumSource[]; isMobile?: boolean; settled?: boolean }) {
+function SpectrumView({ sources, isMobile = false, settled = false, aggregateLean }: { sources: DeepDiveSpectrumSource[]; isMobile?: boolean; settled?: boolean; aggregateLean?: number }) {
   const fillRef = useRef<SVGPathElement>(null);
   const strokeRef = useRef<SVGPathElement>(null);
   const riseRafRef = useRef<number>(0);
@@ -565,13 +530,18 @@ function SpectrumView({ sources, isMobile = false, settled = false }: { sources:
 
   const n = sources.length;
   const leans = sources.map((s) => s.politicalLean);
-  const mean = weightedMeanLean(sources);
+  // Plumb line / mean: prefer the Sigil's aggregate lean (same value the Sigil
+  // renders) so the spectrum's center line agrees with the tilt shown alongside
+  // it. Fall back to the tier-weighted mean only when no aggregate is supplied.
+  const mean = aggregateLean ?? weightedMeanLean(sources);
 
   const W = 400;
   const svgH = isMobile ? 52 : 60;  // Slightly reduced on mobile to fit safe area
-  const isFlat = n <= 3;  // dot strip — only for ≤3 sources
-  const isLow = n >= 4 && n <= 7; // tight bandwidth + source dots overlay
-  const peakH = isFlat ? 0 : isLow ? 26 : 48;
+  // Small clusters (n <= 7) get a fixed bandwidth so the KDE is a soft, non
+  // degenerate mound instead of a spike; every count renders the SAME way (KDE
+  // wave + favicon pins below), regardless of source count.
+  const smallN = n <= 7;
+  const peakH = 48;
 
   // Standard deviation of lean — used for divergence classification
   const std = useMemo(() => {
@@ -581,12 +551,13 @@ function SpectrumView({ sources, isMobile = false, settled = false }: { sources:
   }, [leans]);
 
   const densities = useMemo(() => {
-    if (isFlat) return null;
-    // isLow: fixed bw=6 (Silverman at n=5 gives ~12 — obliterates two clusters)
-    const bw = isLow ? 6 : robustBandwidth(leans);
+    // Fixed bw=6 for small clusters (Silverman at n=5 gives ~12 and obliterates
+    // two clusters; for n=1 or 2 it yields a gentle single mound). Robust
+    // bandwidth, floored at 6, for larger clusters.
+    const bw = smallN ? 6 : Math.max(6, robustBandwidth(leans));
     const raw = computeKDE(leans, bw, 100);
     return normalizeKDE(raw);
-  }, [leans, isFlat, isLow]);
+  }, [leans, smallN]);
 
   // Paths
   const paths = useMemo(() => {
@@ -597,7 +568,9 @@ function SpectrumView({ sources, isMobile = false, settled = false }: { sources:
 
   // Contour lines: 1 at 50%; 2 (33%+66%) for 16+ sources
   const contours = useMemo(() => {
-    if (!densities || isFlat || isLow) return [];
+    // Topographic contours only add signal on denser clusters; keep them off
+    // for small n (the single soft mound reads fine without them).
+    if (!densities || n <= 7) return [];
     const thresholds = n >= 16 ? [0.33, 0.66] : [0.5];
     return thresholds.map((thresh) => {
       const segments: Array<{ x1: number; x2: number; y: number }> = [];
@@ -616,18 +589,18 @@ function SpectrumView({ sources, isMobile = false, settled = false }: { sources:
       }
       return { thresh, segments };
     });
-  }, [densities, n, svgH, peakH, isFlat, isLow]);
+  }, [densities, n, svgH, peakH]);
 
   // Bimodal & dead-zone detection
   const bimodal = useMemo(() => {
-    if (!densities || isFlat || n < 5) return null;
+    if (!densities || n < 5) return null;
     return detectBimodal(densities);
-  }, [densities, isFlat, n]);
+  }, [densities, n]);
 
   const deadZones = useMemo(() => {
-    if (!densities || isFlat || n < 4) return [];
+    if (!densities || n < 4) return [];
     return detectDeadZones(densities);
-  }, [densities, isFlat, n]);
+  }, [densities, n]);
 
   // 4-state coverage classification
   // consensus (silent) / leaning / divergent / split
@@ -640,19 +613,6 @@ function SpectrumView({ sources, isMobile = false, settled = false }: { sources:
   }, [bimodal, std, mean]);
 
   const gradStops = LEAN_GRADIENT_STOPS;
-
-  // Source pins — each source mapped to its KDE curve (x,y) position
-  const sourcePins = useMemo(() => {
-    const scaledD = densities
-      ? densities.map((d) => d * (peakH / (svgH - 12)))
-      : null;
-    return sources.map((s) => ({
-      source: s,
-      x: (s.politicalLean / 100) * W,
-      y: scaledD ? getYOnCurve(s.politicalLean, scaledD, svgH, 12) : svgH - 8,
-      leanBucket: leanToBucket(s.politicalLean),
-    }));
-  }, [densities, sources, peakH, svgH]);
 
   // Trigger entrance (skipped when settled — the chart mounts already-drawn)
   useEffect(() => {
@@ -763,68 +723,6 @@ function SpectrumView({ sources, isMobile = false, settled = false }: { sources:
             )}
           </defs>
 
-          {/* Dot strip — ≤3 sources: honest dots, no KDE curve.
-              Clustered so overlapping circles fan out + become clickable on hover. */}
-          {isFlat && (
-            <>
-              <line
-                x1="10" y1={svgH - 8} x2={W - 10} y2={svgH - 8}
-                stroke="url(#sv-lean-stroke-grad)" strokeWidth="0.75" opacity="0.4"
-              />
-              {clusterPinsByX(
-                sources.map((s) => ({
-                  source: s,
-                  x: (s.politicalLean / 100) * W,
-                  y: svgH - 8,
-                  leanBucket: leanToBucket(s.politicalLean),
-                })),
-                10
-              ).map((cluster, ci) => {
-                // Subtle fan radius — user feels the resolve, doesn't see the move.
-                const offsets = fanOffsets(cluster.length, 10);
-                const overlap = cluster.length > 1;
-                return (
-                  <g
-                    key={`flat-cluster-${ci}`}
-                    className={`dd-sv-view__cluster${overlap ? " dd-sv-view__cluster--overlap" : ""}`}
-                  >
-                    {cluster.map((pin, i) => (
-                      <g
-                        key={`flat-pin-${ci}-${i}`}
-                        className="dd-sv-view__pin"
-                        style={{
-                          ["--fan-dx" as string]: `${offsets[i].dx}px`,
-                          ["--fan-dy" as string]: `${offsets[i].dy}px`,
-                          transformBox: "fill-box",
-                          transformOrigin: "center",
-                        }}
-                      >
-                        <a
-                          href={pin.source.articleUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="dd-sv-view__pin-anchor"
-                          aria-label={`${pin.source.name}, open article`}
-                        >
-                          <circle
-                            cx={pin.x}
-                            cy={pin.y}
-                            r="5"
-                            fill="none"
-                            strokeWidth="1.5"
-                            className="dd-sv-view__dot"
-                            data-lean={pin.leanBucket}
-                          />
-                          <title>{pin.source.name}</title>
-                        </a>
-                      </g>
-                    ))}
-                  </g>
-                );
-              })}
-            </>
-          )}
-
           {/* Ink wash fill — rises via rAF, soft organic texture */}
           {paths && (
             <path
@@ -864,65 +762,15 @@ function SpectrumView({ sources, isMobile = false, settled = false }: { sources:
             />
           )}
 
-          {/* Source dots overlay — n=4-7 only.
-              Clustered + fan-out on hover so overlapping pins become readable
-              and each one resolves to its article on click. */}
-          {isLow && densities && clusterPinsByX(sourcePins, 8).map((cluster, ci) => {
-            // Subtle fan radius — half of the original 22px arc so the
-            // movement reads as "barely shifting" rather than "popping out".
-            const offsets = fanOffsets(cluster.length, 12);
-            const overlap = cluster.length > 1;
-            return (
-              <g
-                key={`pin-cluster-${ci}`}
-                className={`dd-sv-view__cluster${overlap ? " dd-sv-view__cluster--overlap" : ""}`}
-              >
-                {cluster.map((pin, i) => (
-                  <g
-                    key={`pin-${ci}-${i}`}
-                    className="dd-sv-view__pin"
-                    style={{
-                      ["--fan-dx" as string]: `${offsets[i].dx}px`,
-                      ["--fan-dy" as string]: `${offsets[i].dy}px`,
-                      transformBox: "fill-box",
-                      transformOrigin: "center",
-                    }}
-                  >
-                    <a
-                      href={pin.source.articleUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="dd-sv-view__pin-anchor"
-                      aria-label={`${pin.source.name} — open article`}
-                    >
-                      <circle
-                        cx={pin.x}
-                        cy={pin.y}
-                        r="2.5"
-                        fill="none"
-                        strokeWidth="1.5"
-                        className="dd-sv-view__src-dot"
-                        data-lean={pin.leanBucket}
-                      />
-                      <title>{pin.source.name}</title>
-                    </a>
-                  </g>
-                ))}
-              </g>
-            );
-          })}
-
-          {/* Amber plumb line — weighted mean, fades during the rise */}
-          {!isFlat && (
-            <line
-              x1={(mean / 100) * W} y1={4}
-              x2={(mean / 100) * W} y2={svgH - 4}
-              stroke="var(--cin-amber)"
-              strokeWidth="0.75"
-              strokeDasharray="3 2"
-              className="dd-sv-view__mean"
-            />
-          )}
+          {/* Amber plumb line — aggregate lean (Sigil tilt), fades during rise */}
+          <line
+            x1={(mean / 100) * W} y1={4}
+            x2={(mean / 100) * W} y2={svgH - 4}
+            stroke="var(--cin-amber)"
+            strokeWidth="0.75"
+            strokeDasharray="3 2"
+            className="dd-sv-view__mean"
+          />
 
           {/* Bimodal peak dots — only when split detected */}
           {bimodal && bimodal.peaks.map((peak, pi) => {
@@ -983,12 +831,20 @@ interface DeepDiveSpectrumProps {
       where a parent container owns the one continuous open motion (the inline
       Deep Dive accordion) and the chart must not add a second beat. */
   settled?: boolean;
+  /** The Sigil's aggregate political lean (0-100). When supplied it drives the
+      amber plumb line AND the TiltRow label, so the spectrum's center line
+      lands exactly where the Sigil's tilt says. The per-source pins still show
+      the true distribution. Falls back to the tier-weighted mean when absent. */
+  aggregateLean?: number;
 }
 
-export default function DeepDiveSpectrum({ sources, settled = false }: DeepDiveSpectrumProps) {
+export default function DeepDiveSpectrum({ sources, settled = false, aggregateLean }: DeepDiveSpectrumProps) {
   const [tooltip, setTooltip] = useState<TooltipData | null>(null);
   const [isMobile, setIsMobile] = useState(false);
-  const mean = useMemo(() => weightedMeanLean(sources), [sources]);
+  const mean = useMemo(
+    () => aggregateLean ?? weightedMeanLean(sources),
+    [sources, aggregateLean],
+  );
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 767px)");
@@ -1008,7 +864,7 @@ export default function DeepDiveSpectrum({ sources, settled = false }: DeepDiveS
 
   return (
     <div className="dd-sv" role="img" aria-label="Source political lean spectrum">
-      <SpectrumView sources={sources} isMobile={isMobile} settled={settled} />
+      <SpectrumView sources={sources} isMobile={isMobile} settled={settled} aggregateLean={aggregateLean} />
       {/* Mobile: hide TiltRow (mean needle + label) to reduce clutter.
           Desktop: show weighted mean needle and label for additional context. */}
       {!isMobile && <TiltRow mean={mean} />}

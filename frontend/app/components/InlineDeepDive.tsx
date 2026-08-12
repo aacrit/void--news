@@ -644,7 +644,7 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
               {/* settled: inside the inline accordion the spectrum appears
                   already-drawn and fades in with its section — it must not run
                   its own multi-beat entrance after the expansion has finished. */}
-              <DeepDiveSpectrum sources={spectrumSources} settled />
+              <DeepDiveSpectrum sources={spectrumSources} settled aggregateLean={story.sigilData?.politicalLean} />
             </div>
           </section>
         )}
