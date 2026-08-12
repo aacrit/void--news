@@ -201,21 +201,47 @@
   max-width: none;
 }
 
-/* The spectrum spans the full content column as a landscape band.
-   The band mounts only once the Supabase source fetch resolves — often after
-   the accordion has finished expanding — so it fades in as one short arrival
-   (the chart itself mounts already-drawn via the `settled` prop; this fade is
-   the only motion). */
+/* The spectrum spans the full content column as a landscape band. Its slot is
+   reserved from the first frame (min-height below) even while the Supabase
+   source fetch is still running, so when the data lands the chart settles into
+   a STABLE box in place. That kills the old behaviour where the whole section
+   mounted late, inserted above the panels below, and played a 240ms fade as a
+   separate beat ("what they agree on first, then the spread"). The section
+   itself no longer animates; only the chart does a soft opacity settle. */
 .inline-dd__spread {
   margin-top: var(--space-5);
-  animation: fadeIn 240ms var(--ease-cinematic) both;
+}
+
+.inline-dd__spectrum {
+  width: 100%;
+  /* Hold the band height from the first paint so the placeholder -> chart swap
+     does not shove the agree/dispute panel below. Matches a ~1-row chart
+     (svg + tilt row + axis + one pin row). */
+  min-height: 132px;
+}
+
+/* Soft in-place arrival for the chart — opacity only, no transform or layout
+   shift, so it reads as a calm settle rather than a pop-in beat. The chart
+   mounts already-drawn via the `settled` prop; this fade is the sole motion. */
+.inline-dd__spectrum > .dd-sv {
+  animation: fadeIn 200ms var(--ease-cinematic) both;
+}
+
+/* Calm placeholder occupying the reserved band while the source fetch runs. */
+.inline-dd__spectrum-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 132px;
+  margin: 0;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .inline-dd__spread { animation: none; }
-}
-.inline-dd__spectrum {
-  width: 100%;
+  .inline-dd__spectrum > .dd-sv { animation: none; }
 }
 
 /* The SVG scales uniformly to the band width (~2.7x at full width). Keep the
