@@ -44,10 +44,10 @@
     {
       "slug": "example-trump-vaccine-order",
       "pillar": "example",
-      "cluster_id": "9bf5ab67-b1a4-4e0e-95b7-a46e0c3403dc",
-      "outlet_count": 52,
+      "cluster_id": "20dd80aa-ae81-4208-840b-8de972094f72",
+      "outlet_count": 50,
       "hook": {
-        "kicker": "CONTESTED / 52 OUTLETS",
+        "kicker": "CONTESTED / 50 OUTLETS",
         "headline": "One order. Two countries reading it."
       },
       "spectrum": {
@@ -57,36 +57,36 @@
         "headline": "See where it splits.",
         "url": "news.voidvision.org"
       },
-      "caption_instagram": "One order. Two countries reading it.\n\nTrump signed an executive order Monday cutting the recommended childhood vaccine schedule from 18 immunizations to 11. He called it parental choice. The World Health Organization defended the schedules within hours.\n\n52 outlets covered it. On Void News you see the split at a glance: the coverage does not agree, and the page shows you exactly where it divides instead of averaging it into a calm gray middle.\n\nRead the same event from every side, then decide. See through the void. news.voidvision.org\n\n#VoidNews #Vaccines #MediaBias #PublicHealth #NewsLiteracy",
-      "caption_x": "One order, two countries reading it. Trump cut the recommended childhood vaccine schedule 18 to 11 immunizations, calling it parental choice. The WHO defended the schedules within hours. 52 outlets, and Void shows you exactly where the coverage splits. news.voidvision.org",
-      "caption_bluesky": "One order, two countries reading it. Trump cut the recommended childhood vaccine schedule 18 to 11 immunizations, calling it parental choice. The WHO defended the schedules within hours. 52 outlets, and Void shows you exactly where the coverage splits. news.voidvision.org",
+      "caption_instagram": "One order. Two countries reading it.\n\nTrump signed an executive order Monday cutting the recommended childhood vaccine schedule from 18 immunizations to 11. He called it parental choice. The World Health Organization defended the schedules within hours.\n\n50 outlets covered it. On Void News you see the split at a glance: the coverage does not agree, and the page shows you exactly where it divides instead of averaging it into a calm gray middle.\n\nRead the same event from every side, then decide. See through the void. news.voidvision.org\n\n#VoidNews #Vaccines #MediaBias #PublicHealth #NewsLiteracy",
+      "caption_x": "One order, two countries reading it. Trump cut the recommended childhood vaccine schedule 18 to 11 immunizations, calling it parental choice. The WHO defended the schedules within hours. 50 outlets, and Void shows you exactly where the coverage splits. news.voidvision.org",
+      "caption_bluesky": "One order, two countries reading it. Trump cut the recommended childhood vaccine schedule 18 to 11 immunizations, calling it parental choice. The WHO defended the schedules within hours. 50 outlets, and Void shows you exactly where the coverage splits. news.voidvision.org",
       "intent": "Prove the tool on a live, genuinely contested policy story. Show, do not claim, that Void surfaces disagreement."
     },
     {
-      "slug": "example-libya-zawiya-refinery",
+      "slug": "example-farage-reform-uk",
       "pillar": "example",
-      "cluster_id": "081c8cbb-c87a-442f-8726-f5d1a7a83f63",
-      "outlet_count": 12,
+      "cluster_id": "e9f77c30-297c-4e82-b7aa-18e625a0db9c",
+      "outlet_count": 15,
       "hook": {
-        "kicker": "THE SECOND NEWS / 12 OUTLETS",
-        "headline": "12 outlets covered this. You probably saw none of them."
+        "kicker": "THE SECOND NEWS / 15 OUTLETS",
+        "headline": "15 outlets covered this. You probably saw none of them."
       },
       "spectrum": {
-        "body": "A drone strike set Libya's Zawiya refinery ablaze and killed an intelligence chief. Who launched it, and what it means, splits the reporting."
+        "body": "Nigel Farage rebuked a Reform UK spokesperson after a colleague was called a traitor. The coverage splits on whether it reads as discipline or disarray."
       },
       "cta": {
         "headline": "The second news, from every side.",
         "url": "news.voidvision.org"
       },
-      "caption_instagram": "12 outlets covered this. You probably saw none of them.\n\nA drone strike set Libya's Zawiya refinery ablaze and killed an intelligence chief. Who launched it, and what it means, divides the reporting sharply.\n\nThe stories under the headlines get the same scrutiny as the headlines. See through the void. news.voidvision.org\n\n#VoidNews #Libya #MediaBias #NewsLiteracy",
-      "caption_x": "12 outlets covered this, and you probably saw none of them. A drone strike set Libya's Zawiya refinery ablaze and killed an intelligence chief. The coverage splits on who and why. The second news, from every side. news.voidvision.org",
-      "caption_bluesky": "12 outlets covered this, and you probably saw none of them. A drone strike set Libya's Zawiya refinery ablaze and killed an intelligence chief. The coverage splits on who and why. The second news, from every side. news.voidvision.org",
+      "caption_instagram": "15 outlets covered this. You probably saw none of them.\n\nNigel Farage rebuked a Reform UK spokesperson after a colleague was called a traitor. Is it discipline or disarray? The coverage does not agree.\n\nThe stories under the headlines get the same scrutiny as the headlines. See through the void. news.voidvision.org\n\n#VoidNews #ReformUK #MediaBias #NewsLiteracy",
+      "caption_x": "15 outlets covered this, and you probably saw none of them. Nigel Farage rebuked a Reform UK spokesperson after a colleague was called a traitor. Discipline or disarray? The coverage splits. The second news, from every side. news.voidvision.org",
+      "caption_bluesky": "15 outlets covered this, and you probably saw none of them. Nigel Farage rebuked a Reform UK spokesperson after a colleague was called a traitor. Discipline or disarray? The coverage splits. The second news, from every side. news.voidvision.org",
       "intent": "Champion the buried, contested story. Void gives the second news the same scrutiny as the headline."
     },
     {
       "slug": "example-aoc-egg-freezing",
       "pillar": "example",
-      "cluster_id": "cd1a681c-b8aa-4e95-a76f-c03b2604988f",
+      "cluster_id": "556f5141-d339-47e8-8fde-870fb168f5dd",
       "outlet_count": 30,
       "hook": {
         "kicker": "CONTESTED / 30 OUTLETS",
