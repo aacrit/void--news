@@ -130,6 +130,10 @@ def run_bias_analysis(article: dict, source: dict,
         "factual_rigor": 50,
         "framing": 15,
         "confidence": 0.7,
+        # Mirrors main.py: a backfill must write this too, or rescoring an
+        # article would silently reset it to the column default and put an
+        # unmeasured 50 back into the cluster mean (migration 078).
+        "lean_unscored": False,
     }
     rationale: dict = {}
 
@@ -138,6 +142,7 @@ def run_bias_analysis(article: dict, source: dict,
         if isinstance(result, dict):
             scores["political_lean"] = result["score"]
             rationale["lean"] = result["rationale"]
+            scores["lean_unscored"] = bool(result["rationale"].get("unscored"))
         else:
             scores["political_lean"] = result
     except Exception as exc:

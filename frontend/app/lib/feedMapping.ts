@@ -171,6 +171,11 @@ export function mapClustersToStories(
           leanLeftCount: safeNum(bd, "lean_left_count", 0),
           leanCenterCount: safeNum(bd, "lean_center_count", 0),
           leanRightCount: safeNum(bd, "lean_right_count", 0),
+          // Defaults to analyzed_count so a cluster written before migration
+          // 078 reads "measured from all of them" — its old aggregate really
+          // was computed over every article, so that stays truthful.
+          leanMeasuredCount: safeNum(bd, "lean_measured_count", safeNum(bd, "analyzed_count", 0)),
+          leanTotalCount: safeNum(bd, "lean_total_count", safeNum(bd, "analyzed_count", 0)),
         }
       : undefined;
 

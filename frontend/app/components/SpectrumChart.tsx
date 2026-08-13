@@ -37,16 +37,26 @@ type LeanCategory =
   | "center"
   | "center-right"
   | "right"
-  | "far-right";
+  | "far-right"
+  // Not placed on the left/right axis. Distinct from "center", which is a
+  // positive finding of centrism (a wire cooperative, a broadcaster under an
+  // impartiality charter). Most of the international/independent tail sits
+  // here: a US-shaped spectrum does not describe a Kenyan daily or a Japanese
+  // business paper, and showing them as "Center" would claim a measurement we
+  // have not made. Their articles are scored from their own words instead.
+  | "unrated";
 
 export function normalizeLean(raw: string | null): LeanCategory {
   if (!raw) return "center";
   const s = raw.toLowerCase().trim().replace(/\s+/g, "-");
   const valid: LeanCategory[] = [
     "far-left", "left", "center-left", "center",
-    "center-right", "right", "far-right",
+    "center-right", "right", "far-right", "unrated",
   ];
-  return valid.includes(s as LeanCategory) ? (s as LeanCategory) : "center";
+  // Unknown values fall through to "unrated", NOT "center" — an unrecognised
+  // value is an absent rating, and claiming centrism for it is exactly the
+  // false-center problem this split exists to remove.
+  return valid.includes(s as LeanCategory) ? (s as LeanCategory) : "unrated";
 }
 
 const LEAN_ZONES: { key: LeanCategory; label: string; shortLabel: string }[] = [
@@ -59,6 +69,11 @@ const LEAN_ZONES: { key: LeanCategory; label: string; shortLabel: string }[] = [
   { key: "far-right", label: "Far Right", shortLabel: "Far R" },
 ];
 
+// Rendered as its own group in the list, deliberately NOT as an eighth cell on
+// the gradient bar: the bar IS the left-right axis, and these outlets are not
+// on it. Sitting them past "Far Right" would read as an extreme-right rating.
+const UNRATED_ZONE = { key: "unrated" as LeanCategory, label: "Not Placed on This Axis" };
+
 const LEAN_LABELS: Record<LeanCategory, string> = {
   "far-left": "Far Left",
   "left": "Left",
@@ -67,6 +82,7 @@ const LEAN_LABELS: Record<LeanCategory, string> = {
   "center-right": "Center Right",
   "right": "Right",
   "far-right": "Far Right",
+  "unrated": "Not Rated",
 };
 
 function tierLabel(tier: string): string {
@@ -162,6 +178,7 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
     const q = query.trim().toLowerCase();
     const map = new Map<LeanCategory, SpectrumSource[]>();
     for (const zone of LEAN_ZONES) map.set(zone.key, []);
+    map.set(UNRATED_ZONE.key, []);
     for (const s of sources) {
       if (q && !s.name.toLowerCase().includes(q)) continue;
       const lean = normalizeLean(s.political_lean_baseline);
@@ -382,7 +399,7 @@ export default function SpectrumChart({ sources }: SpectrumChartProps) {
                 : `${matchCount} source${matchCount === 1 ? "" : "s"} match "${query}"`}
             </p>
           )}
-          {LEAN_ZONES.map((zone) => {
+          {[...LEAN_ZONES, UNRATED_ZONE].map((zone) => {
             const srcs = zones.get(zone.key) || [];
             if (srcs.length === 0) return null;
             return (

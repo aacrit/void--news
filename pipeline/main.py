@@ -367,6 +367,9 @@ def run_bias_analysis(
         "factual_rigor": 50,
         "framing": 15,
         "confidence": 0.7,
+        # Default False: if the lean analyzer throws, the fallback 50 is treated
+        # as measured rather than silently dropped from every cluster aggregate.
+        "lean_unscored": False,
     }
     rationale = {}
 
@@ -436,6 +439,11 @@ def run_bias_analysis(
         if isinstance(result, dict):
             scores["political_lean"] = result["score"]
             rationale["lean"] = result["rationale"]
+            # Persist the "no measurement here" judgment (migration 078). The
+            # analyzer has always computed it; it lived only in the rationale
+            # blob, so cluster aggregation averaged unmeasured 50s in as though
+            # they were measured centrism. See _update_cluster_bias_aggregates.
+            scores["lean_unscored"] = bool(result["rationale"].get("unscored"))
         else:
             scores["political_lean"] = result
     except Exception as e:
@@ -748,7 +756,7 @@ def _enrich_cluster_fallback(cluster_id: str, skip_text: bool = False) -> None:
 
         scores_result = (
             supabase.table("bias_scores")
-            .select("political_lean,sensationalism,opinion_fact,factual_rigor,framing,confidence")
+            .select("political_lean,sensationalism,opinion_fact,factual_rigor,framing,confidence,lean_unscored")
             .in_("article_id", article_ids)
             .execute()
         )
@@ -766,7 +774,26 @@ def _enrich_cluster_fallback(cluster_id: str, skip_text: bool = False) -> None:
             mean = sum(vals) / len(vals)
             return math.sqrt(sum((v - mean) ** 2 for v in vals) / len(vals))
 
-        pl_values = [s["political_lean"] for s in scores]
+        # ── Lean aggregates over MEASURED articles only ───────────────────
+        # An article from an outlet not placed on the left/right axis, writing
+        # copy with no partisan signal, scores 50 as the ABSENCE of a
+        # measurement. Averaging those in is what pinned every cluster mean to
+        # ~50 (2026-08-13: 86.2% of feed articles in the 46-55 bucket, every
+        # card rendering "Flat"). They stay full coverage -- still counted in
+        # source_count, tier breakdown and the coverage score -- they just do
+        # not get to vote on which way the coverage leans.
+        # Falls back to the whole set when nothing is measured, so a cluster
+        # covered entirely by unrated outlets still reports a lean instead of
+        # dividing by zero; lean_measured_count tells the UI how far to trust it.
+        _measured = [s for s in scores if not s.get("lean_unscored")]
+        _lean_rows = _measured or scores
+        lean_measured_count = len(_measured)
+        lean_total_count = len(scores)
+
+        pl_values = [s["political_lean"] for s in _lean_rows]
+        # Rigor weights MUST come from the same rows as pl_values or the zip
+        # below pairs a lean with another article's rigor.
+        pl_rigor = [s["factual_rigor"] for s in _lean_rows]
         sens_values = [s["sensationalism"] for s in scores]
         of_values = [s["opinion_fact"] for s in scores]
         fr_values = [s["factual_rigor"] for s in scores]
@@ -777,11 +804,11 @@ def _enrich_cluster_fallback(cluster_id: str, skip_text: bool = False) -> None:
         ]
 
         # Weighted average political lean (weight by factual rigor, matching the view)
-        total_rigor = sum(fr_values)
+        total_rigor = sum(pl_rigor)
         if total_rigor > 0:
-            avg_pl = round(sum(p * r for p, r in zip(pl_values, fr_values)) / total_rigor)
+            avg_pl = round(sum(p * r for p, r in zip(pl_values, pl_rigor)) / total_rigor)
         else:
-            avg_pl = round(sum(pl_values) / count) if count else 50
+            avg_pl = round(sum(pl_values) / len(pl_values)) if pl_values else 50
 
         avg_sens = round(sum(sens_values) / count) if count else 30
         avg_of = round(sum(of_values) / count) if count else 25
@@ -902,6 +929,13 @@ def _enrich_cluster_fallback(cluster_id: str, skip_text: bool = False) -> None:
             "lean_center_count": lean_center_count,
             "lean_right_count": lean_right_count,
             "polarization": polarization,
+            # How much of this cluster's coverage the lean is actually measured
+            # from. analyzed_count above is total coverage; these two say how
+            # many of those articles carried a lean signal, so the UI can be
+            # honest ("lean measured from 9 of 34 sources") instead of implying
+            # the whole roster voted on it.
+            "lean_measured_count": lean_measured_count,
+            "lean_total_count": lean_total_count,
         }
 
         # Classify as reporting vs opinion based on avg opinion score
@@ -959,7 +993,7 @@ def _generate_cluster_consensus_divergence(cluster_id: str) -> None:
 
         scores_result = (
             supabase.table("bias_scores")
-            .select("political_lean,sensationalism,opinion_fact,factual_rigor,framing,confidence")
+            .select("political_lean,sensationalism,opinion_fact,factual_rigor,framing,confidence,lean_unscored")
             .in_("article_id", article_ids)
             .execute()
         )
@@ -977,17 +1011,36 @@ def _generate_cluster_consensus_divergence(cluster_id: str) -> None:
             mean = sum(vals) / len(vals)
             return math.sqrt(sum((v - mean) ** 2 for v in vals) / len(vals))
 
-        pl_values = [s["political_lean"] for s in scores]
+        # ── Lean aggregates over MEASURED articles only ───────────────────
+        # An article from an outlet not placed on the left/right axis, writing
+        # copy with no partisan signal, scores 50 as the ABSENCE of a
+        # measurement. Averaging those in is what pinned every cluster mean to
+        # ~50 (2026-08-13: 86.2% of feed articles in the 46-55 bucket, every
+        # card rendering "Flat"). They stay full coverage -- still counted in
+        # source_count, tier breakdown and the coverage score -- they just do
+        # not get to vote on which way the coverage leans.
+        # Falls back to the whole set when nothing is measured, so a cluster
+        # covered entirely by unrated outlets still reports a lean instead of
+        # dividing by zero; lean_measured_count tells the UI how far to trust it.
+        _measured = [s for s in scores if not s.get("lean_unscored")]
+        _lean_rows = _measured or scores
+        lean_measured_count = len(_measured)
+        lean_total_count = len(scores)
+
+        pl_values = [s["political_lean"] for s in _lean_rows]
+        # Rigor weights MUST come from the same rows as pl_values or the zip
+        # below pairs a lean with another article's rigor.
+        pl_rigor = [s["factual_rigor"] for s in _lean_rows]
         sens_values = [s["sensationalism"] for s in scores]
         of_values = [s["opinion_fact"] for s in scores]
         fr_values = [s["factual_rigor"] for s in scores]
         frm_values = [s["framing"] for s in scores]
 
-        total_rigor = sum(fr_values)
+        total_rigor = sum(pl_rigor)
         if total_rigor > 0:
-            avg_pl = round(sum(p * r for p, r in zip(pl_values, fr_values)) / total_rigor)
+            avg_pl = round(sum(p * r for p, r in zip(pl_values, pl_rigor)) / total_rigor)
         else:
-            avg_pl = round(sum(pl_values) / count) if count else 50
+            avg_pl = round(sum(pl_values) / len(pl_values)) if pl_values else 50
 
         avg_sens = round(sum(sens_values) / count) if count else 30
         avg_of = round(sum(of_values) / count) if count else 25

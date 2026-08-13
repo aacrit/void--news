@@ -474,7 +474,20 @@ BASELINE_MAP: dict[str, int] = {
     "center": 50,
     "center-right": 65, "right": 80, "far-right": 90,
     "varies": 50,
+    # "unrated" — the outlet has NOT been placed on the left/right axis. Distinct
+    # from "center", which is a positive finding of centrism (a wire cooperative,
+    # a public broadcaster under an impartiality charter). Most of the roster's
+    # international/independent tail sits here: a Kenyan daily or a Japanese
+    # business paper is not measurable on a US-shaped spectrum, and inventing a
+    # position for it would be fabricating the measurement this product exists to
+    # provide honestly. It anchors at 50 like center, but an unrated outlet whose
+    # article shows no textual signal is flagged `unscored` and kept OUT of the
+    # cluster lean aggregate rather than counted as measured centrism.
+    "unrated": 50,
 }
+
+#: Baselines that represent NO placement on the left/right axis.
+UNRATED_BASELINES = frozenset({"unrated", "varies", ""})
 
 # ---------------------------------------------------------------------------
 # Baseline-anchored DEVIATION model (2026-08-13 collapse-to-center fix, v2).
@@ -519,13 +532,33 @@ _CENTER_BASELINE_HI = 60
 _LENGTH_FULL_CONFIDENCE = 150  # words at which text earns full calibration authority
 
 
-def _delta_max_for(source_baseline: float, is_state_affiliated: bool) -> int:
-    """Text's movement budget, by how much reputation there is to preserve."""
+def _delta_max_for(
+    source_baseline: float, is_state_affiliated: bool, is_unrated: bool = False
+) -> int:
+    """Text's movement budget, by how much reputation there is to preserve.
+
+    An UNRATED outlet has no placement to preserve, so its article's own words
+    are all we have and they get the widest budget. An outlet assessed AS
+    centrist (a wire cooperative, an impartiality-chartered broadcaster) is a
+    real reading and anchors like any other rating.
+    """
     if is_state_affiliated:
         return _STATE_TEXT_DELTA_MAX
-    if _CENTER_BASELINE_LO <= source_baseline <= _CENTER_BASELINE_HI:
+    if is_unrated:
         return _CENTER_TEXT_DELTA_MAX
     return _TEXT_DELTA_MAX
+
+
+def _is_unrated_source(source: dict) -> bool:
+    """True when the outlet has NOT been placed on the left/right axis.
+
+    Distinct from an outlet assessed as centrist: "center" is a finding,
+    "unrated" is the absence of one. See BASELINE_MAP.
+    """
+    baseline = source.get("political_lean_baseline", "center")
+    if isinstance(baseline, (int, float)):
+        return False
+    return str(baseline).lower().strip() in UNRATED_BASELINES
 
 # ---------------------------------------------------------------------------
 # Option A: Quote/attribution context detection for keyword scoring.
@@ -912,6 +945,7 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None, do
     # a center-left outlet nudged into the 40-60 band by a topic EMA is still a
     # rated outlet, not an unrated one.
     rated_baseline = source_baseline
+    is_unrated = _is_unrated_source(source)
 
     # Fix 20: Topic-specific source prior from Axis 6 EMA data.
     # Blend source baseline with topic-specific lean before text blending,
@@ -940,7 +974,7 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None, do
                           "sentence_direction": 0, "text_score": 50,
                           "source_baseline": round(source_baseline, 1),
                           "text_shift": 0,
-                          "delta_max": _delta_max_for(rated_baseline, is_state_affiliated),
+                          "delta_max": _delta_max_for(rated_baseline, is_state_affiliated, is_unrated),
                           "confidence": 0.0,
                           "top_left_keywords": [],
                           "top_right_keywords": [], "framing_phrases_found": [],
@@ -995,32 +1029,37 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None, do
     #     barely calibrates (stays at baseline); a full article (>=150 words)
     #     earns the full DELTA of calibration authority.
     # ------------------------------------------------------------------
-    delta_max = _delta_max_for(rated_baseline, is_state_affiliated)
+    delta_max = _delta_max_for(rated_baseline, is_state_affiliated, is_unrated)
     confidence = min(1.0, _wc / _LENGTH_FULL_CONFIDENCE)
     raw_shift = (text_score - _TEXT_NEUTRAL_PIVOT) * _TEXT_AUTHORITY
     text_shift = max(-delta_max, min(delta_max, raw_shift)) * confidence
     final_score = source_baseline + text_shift
     score = max(0, min(100, int(round(final_score))))
 
-    # Unscored flag: minimal text signal against a center-baseline source.
-    # An AP wire story with ~no partisan keywords, ~no framing shift, ~no entity
-    # sentiment, and a 40-60 baseline produces a 50 that is measurement noise,
-    # not a finding.  Flag it so the UI can render "unscored" instead of
-    # implying we analyzed the article and concluded center.
+    # Unscored flag: this article carries NO lean measurement at all.
     #
-    # Under the baseline-anchored model, a thin-text article of ANY outlet
-    # already resolves to (approximately) the outlet baseline rather than a
-    # fake 50 — an unscored Newsmax stub reads ~80 (its baseline), not center.
-    # The flag stays scoped to 40-60 (center) baselines because that is the
-    # only regime where a near-baseline score is genuinely indistinguishable
-    # from "no signal"; for a partisan baseline the score IS the finding
-    # (the reputation), so it should not be labelled unscored.
+    # Two things have to be absent at once. The OUTLET must be unrated (not
+    # placed on the left/right axis), and the ARTICLE must show no textual
+    # signal. When both hold, the resulting 50 is the absence of a measurement,
+    # not a finding of centrism, and the cluster aggregate must not average it
+    # in as though it were one.
+    #
+    # Keyed on placement, not on the 40-60 numeric band, because those are not
+    # the same thing. An outlet ASSESSED as centrist — a wire cooperative, a
+    # broadcaster under an impartiality charter — also sits at 50, but there the
+    # 50 IS the finding and belongs in the aggregate. Under the deviation model
+    # a thin-text article from a rated partisan outlet likewise resolves to its
+    # baseline (a Newsmax stub reads ~80), which is also a finding.
+    #
+    # Measured 2026-08-13: 52% of live article volume comes from unrated
+    # outlets, and 98% of a real sample from them scored text_score exactly 50.
+    # Averaging that majority in is what pinned every cluster mean to ~50.
     unscored = (
-        total_distinct <= 2
+        is_unrated
+        and total_distinct <= 2
         and abs(framing_shift) < 2.0
         and abs(entity_shift) < 2.0
         and abs(sentence_direction) < 2.0
-        and 40 <= source_baseline <= 60
         and not is_state_affiliated
     )
 

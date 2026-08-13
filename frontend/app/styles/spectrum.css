@@ -1084,6 +1084,10 @@
 .spectrum-sheet__lean-dot[data-lean="right"]        { background-color: var(--bias-right); }
 .spectrum-list__group-dot[data-lean="far-right"],
 .spectrum-sheet__lean-dot[data-lean="far-right"]    { background-color: var(--bias-far-right); }
+/* Not placed on the left/right axis. Deliberately neutral ink, never a point on
+   the blue-to-red ramp: any hue here would assert a placement we have not made. */
+.spectrum-list__group-dot[data-lean="unrated"],
+.spectrum-sheet__lean-dot[data-lean="unrated"]      { background-color: var(--fg-tertiary); }
 
 .spectrum-list__mono[data-lean="far-left"],
 .spectrum-sheet__mono[data-lean="far-left"]     { border-color: var(--bias-far-left);     color: var(--bias-far-left); }

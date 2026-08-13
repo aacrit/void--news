@@ -27,6 +27,14 @@ export interface BiasSpread {
   leanLeftCount?: number;
   leanCenterCount?: number;
   leanRightCount?: number;
+  /** How many of this story's analyzed articles actually carried a lean
+   *  measurement, and how many were analyzed in total. An article from an
+   *  outlet not placed on the left/right axis, writing copy with no partisan
+   *  signal, is full coverage but not a lean reading, so it is excluded from
+   *  the mean (migration 078). These let the UI say how much of the coverage
+   *  the lean is measured from instead of implying the whole roster voted. */
+  leanMeasuredCount?: number;
+  leanTotalCount?: number;
 }
 
 export interface Source {
