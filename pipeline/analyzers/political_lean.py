@@ -8,12 +8,13 @@ Scores each article on a 0-100 political lean spectrum:
 
 Uses rule-based NLP heuristics (no LLM API calls):
     - Partisan keyword lexicons (90+ terms per side)
-    - Baseline-anchored calibration: score = baseline + clamp(text - baseline,
-      +/-DELTA) * length_confidence. The outlet's reputation (baseline) is the
-      anchor; the article's own words calibrate around it within a bounded
-      delta and can never fully erase the baseline (collapse-to-center fix,
-      2026-08). Calm copy moves a partisan outlet TOWARD center; partisan copy
-      pushes it FURTHER out.
+    - Baseline-anchored deviation calibration:
+      score = baseline + clamp((text - 50) * AUTHORITY, +/-DELTA) * length_conf.
+      The outlet's reputation (baseline) is the anchor; the article's own words
+      are read as a deviation from neutral and applied to it, within a bounded
+      delta that can never erase the baseline. Calm copy leaves an outlet AT
+      its reputation; left/right-coded copy moves it off that anchor
+      accordingly (collapse-to-center fix v2, 2026-08-13).
     - Entity sentiment via spaCy NER + TextBlob
     - Framing phrase detection
 """
@@ -476,20 +477,55 @@ BASELINE_MAP: dict[str, int] = {
 }
 
 # ---------------------------------------------------------------------------
-# Baseline-anchored calibration model (2026-08 collapse-to-center fix).
+# Baseline-anchored DEVIATION model (2026-08-13 collapse-to-center fix, v2).
 #
 # The outlet's reputation (baseline) is the ANCHOR; the article's own words
-# CALIBRATE around it within a bounded delta. Reputation is never erased.
+# are read as a DEVIATION FROM NEUTRAL and applied to that anchor:
 #
-#     score = baseline + clamp(text_score - baseline, -DELTA, +DELTA) * confidence
+#     score = baseline + clamp((text_score - 50) * AUTHORITY, +/-DELTA) * confidence
 #
-# DELTA bounds how far text may move the score off the baseline; confidence
-# scales that movement by article length so a thin RSS stub barely calibrates.
+# Why the deviation, and not the text's absolute position: the previous model
+# used ``clamp(text_score - baseline, +/-DELTA)``. Because calm, non-partisan
+# copy scores text_score ~= 50, that difference always POINTED AT CENTER, so
+# every non-center outlet was dragged the full DELTA inward on ordinary
+# reporting. Measured on straight wire-style copy it moved Jacobin 10 -> 20,
+# CNN 20 -> 30, Fox 80 -> 70 and Newsmax 90 -> 80 — a uniform 10-point squeeze.
+# Since most articles in most clusters ARE calm reporting, the whole corpus
+# collapsed on center (87.8% of live feed articles landed in the 46-55 bucket)
+# and every cluster mean landed on ~50.
+#
+# Under the deviation model neutral copy leaves the outlet AT its baseline
+# (CEO direction: match the outlet's reputation for the most part, and vary by
+# article accordingly). Left-coded copy moves the score left of that baseline,
+# right-coded copy moves it right, bounded by DELTA so reputation is never
+# erased and confidence-scaled by length so a thin RSS stub barely moves.
 # ---------------------------------------------------------------------------
-_TEXT_DELTA_MAX = 10          # max points article text may move a non-state outlet off baseline
+_TEXT_NEUTRAL_PIVOT = 50.0    # text_score of genuinely non-partisan copy
+_TEXT_AUTHORITY = 1.0         # how much of the text's deviation carries through
+
+# How far the article's own words may move the score off the outlet baseline.
+_TEXT_DELTA_MAX = 10          # outlet has a known partisan reputation: it anchors, text modulates.
+                              # Held at 10 by ground truth: the national-review-analysis-regulation
+                              # fixture (baseline 80, heavily right-coded copy) expects <= 90.
+_CENTER_TEXT_DELTA_MAX = 24   # outlet is baselined "center" (62.6% of the roster, mostly the
+                              # international/independent long tail where "center" means
+                              # UNRATED rather than measured-centrist). There is no reputation
+                              # signal to preserve, so the article's own words are all we have
+                              # and they get correspondingly more authority.
 _STATE_TEXT_DELTA_MAX = 8     # tighter for state-affiliated: their non-Western vocab makes
                               # text less reliable, so government alignment anchors harder
+_CENTER_BASELINE_LO = 40      # inclusive bounds of the "no reputation signal" baseline band
+_CENTER_BASELINE_HI = 60
 _LENGTH_FULL_CONFIDENCE = 150  # words at which text earns full calibration authority
+
+
+def _delta_max_for(source_baseline: float, is_state_affiliated: bool) -> int:
+    """Text's movement budget, by how much reputation there is to preserve."""
+    if is_state_affiliated:
+        return _STATE_TEXT_DELTA_MAX
+    if _CENTER_BASELINE_LO <= source_baseline <= _CENTER_BASELINE_HI:
+        return _CENTER_TEXT_DELTA_MAX
+    return _TEXT_DELTA_MAX
 
 # ---------------------------------------------------------------------------
 # Option A: Quote/attribution context detection for keyword scoring.
@@ -897,8 +933,9 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None, do
             "rationale": {"keyword_score": 50, "framing_shift": 0, "entity_shift": 0,
                           "sentence_direction": 0, "text_score": 50,
                           "source_baseline": round(source_baseline, 1),
-                          "text_shift": 0, "delta_max": (_STATE_TEXT_DELTA_MAX
-                          if is_state_affiliated else _TEXT_DELTA_MAX), "confidence": 0.0,
+                          "text_shift": 0,
+                          "delta_max": _delta_max_for(source_baseline, is_state_affiliated),
+                          "confidence": 0.0,
                           "top_left_keywords": [],
                           "top_right_keywords": [], "framing_phrases_found": [],
                           "entity_sentiments": {}, "state_affiliated": is_state_affiliated},
@@ -929,34 +966,32 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None, do
     text_score = max(0.0, min(100.0, text_score))
 
     # ------------------------------------------------------------------
-    # Baseline-anchored calibration (replaces length-adaptive blending).
+    # Baseline-anchored DEVIATION calibration.
     #
-    # The prior model BLENDED text_score and baseline with length-adaptive
-    # weights (text up to 0.90). On a full-length article written in calm,
-    # non-partisan language the text component scores ~50, and a 0.10 weight
-    # on the outlet baseline could not hold a known-partisan outlet off
-    # center: reputation was ERASED whenever an article tripped >=4 incidental
-    # keywords (which disabled the old sparsity rescue). A Newsmax (baseline
-    # 80) or Jacobin (baseline 20) piece then read ~53/47 (center).
+    # CEO direction: the score should match the outlet's reputation for the
+    # most part, and vary by article accordingly.
     #
-    # New model (CEO direction: "an outlet's reputation precedes it and that
-    # can't be avoided; the article calibrates around the baseline"):
+    #     score = baseline + clamp((text_score - 50) * AUTHORITY, +/-DELTA) * conf
     #
-    #     score = baseline + clamp(text_score - baseline, -DELTA, +DELTA) * conf
-    #
+    #   - The article's words are measured as a deviation from NEUTRAL (50),
+    #     not as an absolute position competing with the baseline. Calm copy
+    #     (text_score ~= 50) therefore leaves the outlet AT its baseline
+    #     instead of dragging it to center. This is the whole fix: the prior
+    #     ``text_score - baseline`` form always pointed at center on calm copy,
+    #     so ordinary reporting squeezed every outlet the full DELTA inward.
+    #   - Left-coded copy moves the score left OF THE BASELINE; right-coded
+    #     copy moves it right. A partisan outlet writing against type moves
+    #     toward (and past) center only as far as DELTA allows.
     #   - The score can never move more than DELTA off the calibrated baseline,
     #     so reputation is structurally preserved (an 80-baseline outlet reads
-    #     in [65, 95], never center).
-    #   - Calm / non-partisan copy (text_score -> ~50) pulls a partisan outlet
-    #     TOWARD center by up to DELTA, but never across it.
-    #   - Sensational / aligned copy pushes the score FURTHER out from center.
+    #     in [66, 94], never center).
     #   - confidence scales movement by article length: a 40-word RSS stub
-    #     barely calibrates (stays near baseline); a full article (>=150 words)
+    #     barely calibrates (stays at baseline); a full article (>=150 words)
     #     earns the full DELTA of calibration authority.
     # ------------------------------------------------------------------
-    delta_max = _STATE_TEXT_DELTA_MAX if is_state_affiliated else _TEXT_DELTA_MAX
+    delta_max = _delta_max_for(source_baseline, is_state_affiliated)
     confidence = min(1.0, _wc / _LENGTH_FULL_CONFIDENCE)
-    raw_shift = text_score - source_baseline
+    raw_shift = (text_score - _TEXT_NEUTRAL_PIVOT) * _TEXT_AUTHORITY
     text_shift = max(-delta_max, min(delta_max, raw_shift)) * confidence
     final_score = source_baseline + text_shift
     score = max(0, min(100, int(round(final_score))))

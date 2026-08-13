@@ -50,13 +50,24 @@ jobs:
     # observed healthy runs range ~70-141 min (Jul 29: 127m, Jul 31: 141m, both
     # succeeded). The 90-min ceiling set 2026-08-03 was BELOW the normal runtime,
     # so every run since was cancelled mid step-7b (summarization) and the feed
-    # went stale. Restored to 150 (the pre-Aug-3 value that let healthy runs
-    # finish; Jul 24/30 hitting exactly 150 were genuine runaways). The 40-min
-    # in-code scrape budget + per-source fetch budget cap a true hang so it fails
-    # visibly (alert-on-failure.yml). TODO: the 127-150m long-tail days are worth
-    # trimming in the fetch/scrape phase (PYTHONUNBUFFERED below now exposes the
-    # per-phase timing) so this ceiling can come back down.
-    timeout-minutes: 150
+    # went stale. Restored to 150; corpus growth then outgrew that too, and the
+    # 08-12 and 08-13 scheduled runs were both cancelled at exactly 150 min.
+    #
+    # Measured phase timing from the cancelled 08-13 run (5,434 articles):
+    #     fetch 1m | scrape 19m | BIAS ANALYSIS 83m | cluster 16m |
+    #     rank 9m | brief 2m | -> step 8 (store) reached at 130m, needed ~20m+
+    # i.e. a healthy run now needs ~160-175 min end to end and 150 cannot fit it.
+    # Raised to 240 for real headroom, still well under the 360-min hosted-runner
+    # cap. The 40-min in-code scrape budget + per-source fetch budget still cap a
+    # true hang so it fails visibly (alert-on-failure.yml).
+    #
+    # This ceiling is a stopgap, not the cure. Bias analysis is 83 of those 130
+    # minutes: step 5 fans 5,434 articles across ThreadPoolExecutor(max_workers=8)
+    # running spaCy, which is CPU-bound under the GIL on a 4-vCPU runner, so the
+    # extra threads buy far less than 8x. Moving that phase to a process pool (or
+    # spaCy nlp.pipe batching with n_process) is the work that lets this number
+    # come back down.
+    timeout-minutes: 240
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
