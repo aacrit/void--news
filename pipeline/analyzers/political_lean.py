@@ -906,6 +906,12 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None, do
     title = article.get("title", "") or ""
     combined = f"{title} {full_text}"
     source_baseline = _get_source_baseline(source)
+    # Keep the outlet's OWN rating: it decides how much text authority to grant
+    # (see _delta_max_for). That is a property of how much reputation signal we
+    # have for the outlet, so the topic blend below must not change the tier —
+    # a center-left outlet nudged into the 40-60 band by a topic EMA is still a
+    # rated outlet, not an unrated one.
+    rated_baseline = source_baseline
 
     # Fix 20: Topic-specific source prior from Axis 6 EMA data.
     # Blend source baseline with topic-specific lean before text blending,
@@ -934,7 +940,7 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None, do
                           "sentence_direction": 0, "text_score": 50,
                           "source_baseline": round(source_baseline, 1),
                           "text_shift": 0,
-                          "delta_max": _delta_max_for(source_baseline, is_state_affiliated),
+                          "delta_max": _delta_max_for(rated_baseline, is_state_affiliated),
                           "confidence": 0.0,
                           "top_left_keywords": [],
                           "top_right_keywords": [], "framing_phrases_found": [],
@@ -989,7 +995,7 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None, do
     #     barely calibrates (stays at baseline); a full article (>=150 words)
     #     earns the full DELTA of calibration authority.
     # ------------------------------------------------------------------
-    delta_max = _delta_max_for(source_baseline, is_state_affiliated)
+    delta_max = _delta_max_for(rated_baseline, is_state_affiliated)
     confidence = min(1.0, _wc / _LENGTH_FULL_CONFIDENCE)
     raw_shift = (text_score - _TEXT_NEUTRAL_PIVOT) * _TEXT_AUTHORITY
     text_shift = max(-delta_max, min(delta_max, raw_shift)) * confidence
