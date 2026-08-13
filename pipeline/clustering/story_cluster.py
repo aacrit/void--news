@@ -2998,11 +2998,25 @@ def split_incoherent_clusters(
         # is False on the recursive call so Phase 6 cannot re-enter (no
         # unbounded recursion); a coherent off-story reforms, incoherent
         # leftovers fall to low-source singletons the feed naturally drops.
-        sub = cluster_stories(
-            off,
-            source_map=source_map,
-            apply_coherence_check=False,
-        )
+        # Belt-and-braces: this recursion re-enters the full phase stack on a
+        # small, odd sub-corpus, which is exactly where the 2026-08-13 run blew
+        # up ("After pruning, no terms remain" out of Phase 1's vectorizer).
+        # That exception escaped cluster_stories and cost the whole day's
+        # clustering -- main.py caught it with `clusters` still [], and the
+        # orphan backstop wrapped every article as a 1-source cluster. Phase 6
+        # is a refinement, so a failure here must degrade to "leave the
+        # off-anchor members alone", never take the run's clustering with it.
+        try:
+            sub = cluster_stories(
+                off,
+                source_map=source_map,
+                apply_coherence_check=False,
+            )
+        except Exception as exc:
+            print(f"  [warn] Phase 6 re-cluster failed, keeping off-anchor "
+                  f"members unsplit: {exc}")
+            sub = []
+            _reset_cluster_from_members(c, core + off)
         out.extend(sub)
 
     return out
@@ -3131,25 +3145,52 @@ def cluster_stories(
     # corpora (fixtures) where min_df=2 would empty the vocabulary.
     # (2026-06-28, Wave 3 / O1)
     _phase1_min_df = 2 if len(valid_docs) >= 30 else 1
-    vectorizer = TfidfVectorizer(
-        max_features=5000,
-        stop_words="english",
-        ngram_range=(1, 2),
-        min_df=_phase1_min_df,
-        max_df=0.95,
-    )
-    tfidf_matrix = vectorizer.fit_transform(valid_docs)
-    sim_matrix = cosine_similarity(tfidf_matrix)
-    distance_matrix = np.clip(1.0 - sim_matrix, 0.0, 2.0)
 
-    distance_threshold = 1.0 - similarity_threshold
-    clustering = AgglomerativeClustering(
-        n_clusters=None,
-        distance_threshold=distance_threshold,
-        metric="precomputed",
-        linkage="average",
-    )
-    labels = clustering.fit_predict(distance_matrix)
+    def _vectorize(min_df: int, max_df: float):
+        return TfidfVectorizer(
+            max_features=5000,
+            stop_words="english",
+            ngram_range=(1, 2),
+            min_df=min_df,
+            max_df=max_df,
+        ).fit_transform(valid_docs)
+
+    # min_df/max_df pruning can empty the vocabulary outright on a degenerate
+    # corpus ("After pruning, no terms remain"), and fit_transform RAISES rather
+    # than returning an empty matrix. That escaped cluster_stories entirely on
+    # 2026-08-13 and cost the whole day's clustering: main.py caught it with
+    # `clusters` still [], the orphan backstop then wrapped every single article
+    # as a 1-source cluster, and the ranked feed came out with 1src on nearly
+    # every top entry. The trigger was Phase 6's recursive call re-entering here
+    # with a small off-anchor sub-corpus.
+    #
+    # Degrade instead of raising: relax the pruning, then fall back to raw
+    # counts. Only if even that yields nothing do we give up on Phase 1 and hand
+    # the articles back as singletons for the later phases to merge.
+    tfidf_matrix = None
+    for _min_df, _max_df in ((_phase1_min_df, 0.95), (1, 1.0)):
+        try:
+            tfidf_matrix = _vectorize(_min_df, _max_df)
+            break
+        except ValueError:
+            continue
+
+    if tfidf_matrix is not None and tfidf_matrix.shape[1] > 0:
+        sim_matrix = cosine_similarity(tfidf_matrix)
+        distance_matrix = np.clip(1.0 - sim_matrix, 0.0, 2.0)
+        distance_threshold = 1.0 - similarity_threshold
+        clustering = AgglomerativeClustering(
+            n_clusters=None,
+            distance_threshold=distance_threshold,
+            metric="precomputed",
+            linkage="average",
+        )
+        labels = clustering.fit_predict(distance_matrix)
+    else:
+        # No usable vocabulary even unpruned. Seed one label per article and let
+        # the entity/title phases below do the merging, rather than raising out
+        # of cluster_stories and losing the entire run's clustering.
+        labels = list(range(len(valid_articles)))
 
     # Group articles by label
     cluster_map: dict[int, list[int]] = {}
