@@ -513,7 +513,7 @@
     "tier": "international",
     "country": "DE",
     "type": "broadcast",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Germany's international broadcaster, funded by German federal tax revenue. Publishes in 30 languages. Known for balanced European perspective."
   },
   {
@@ -524,7 +524,7 @@
     "tier": "international",
     "country": "FR",
     "type": "broadcast",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "French international news channel. Part of France Medias Monde (state-funded). Strong Africa and Middle East coverage."
   },
   {
@@ -590,7 +590,7 @@
     "tier": "international",
     "country": "FR",
     "type": "broadcast",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Pan-European news network broadcasting in multiple languages. Headquartered in Lyon, France. Provides European perspective on global events."
   },
   {
@@ -646,7 +646,7 @@
     "tier": "international",
     "country": "HK",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Hong Kong's leading English-language newspaper, founded 1903. Owned by Alibaba. Valuable window into China/Asia, though editorial independence under scrutiny."
   },
   {
@@ -668,7 +668,7 @@
     "tier": "international",
     "country": "SG",
     "type": "broadcast",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Singapore's international news channel. Owned by Mediacorp (state-linked). Strong Asia-Pacific coverage. Generally factual though reflects Singapore's media environment."
   },
   {
@@ -679,7 +679,7 @@
     "tier": "international",
     "country": "JP",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language arm of Nikkei Inc., Japan's premier business media company. Strong on Asian business, economics, and geopolitics. Paywalled; ToS restricts redistribution — use RSS summaries only"
   },
   {
@@ -690,7 +690,7 @@
     "tier": "international",
     "country": "SG",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Singapore's newspaper of record, founded 1845. Strong on Southeast Asian affairs. Operates within Singapore's press framework."
   },
   {
@@ -723,7 +723,7 @@
     "tier": "international",
     "country": "AR",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Relaunched English-language Argentine newspaper. Original (1876-2017) was famous for covering Dirty War disappearances. Now digital-only."
   },
   {
@@ -745,7 +745,7 @@
     "tier": "international",
     "country": "KE",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Regional weekly covering Kenya, Uganda, Tanzania, Rwanda, Burundi, and South Sudan. Published by Nation Media Group, East Africa's largest media company. RSS via Google News filter (site blocks direct RSS; when:7d changed to when:24h 2026-03-19)"
   },
   {
@@ -778,7 +778,7 @@
     "tier": "international",
     "country": "MX",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language digital outlet covering Mexican news, politics, and culture. Founded 2016. Fills critical Latin America coverage gap. Added 2026-03-18 to address geographic gap."
   },
   {
@@ -847,7 +847,7 @@
     "tier": "international",
     "country": "PK",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Pakistan's most widely read English-language newspaper, founded 1941. Generally independent with strong accountability journalism. Essential source for South Asian geopolitics."
   },
   {
@@ -858,7 +858,7 @@
     "tier": "international",
     "country": "IN",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "World's most-read English-language newspaper by circulation. Bennett, Coleman & Co. owned. Broad national coverage across Indian subcontinent. Center to center-right editorial slant."
   },
   {
@@ -902,7 +902,7 @@
     "tier": "international",
     "country": "JP",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Japan's oldest English-language newspaper, founded 1897. Majority-owned by News2u Holdings. Editorially independent with a centrist perspective on Japanese and Asian affairs."
   },
   {
@@ -935,7 +935,7 @@
     "tier": "independent",
     "country": "NL",
     "type": "investigative",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Pioneering open-source intelligence (OSINT) investigative outlet. Based in Netherlands. Known for exposing MH17 shootdown, Navalny poisoning, and war crimes."
   },
   {
@@ -1155,7 +1155,7 @@
     "tier": "independent",
     "country": "NG",
     "type": "independent",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Leading Nigerian independent investigative newspaper, founded 2011. Known for anti-corruption and accountability journalism. Won multiple awards including the Wole Soyinka Award for Investigative Reporting."
   },
   {
@@ -1706,7 +1706,7 @@
     "tier": "international",
     "country": "FR",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Pan-African English-language news outlet, covering politics, business, and culture across the continent. Owned by Groupe Jeune Afrique (Tunis-based). Centrist analytical perspective."
   },
   {
@@ -1728,7 +1728,7 @@
     "tier": "international",
     "country": "BE",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Leading English-language outlet covering EU policy, Brussels politics, and European affairs. Strong editorial standards, corrections policy, and original reporting. Essential for EU institutional coverage. Owned by Axel Springer."
   },
   {
@@ -1750,7 +1750,7 @@
     "tier": "international",
     "country": "HK",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Digital news outlet covering Asian geopolitics, finance, and culture. Successor to the original Asia Times (1995-2016). Centrist perspective on Asian affairs with expert commentary from across the region."
   },
   {
@@ -1761,7 +1761,7 @@
     "tier": "international",
     "country": "CZ",
     "type": "broadcast",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "US government-funded broadcaster targeting authoritarian countries in Europe and Asia. Editorially independent and professional. Considered credible for Eastern Europe/former Soviet region coverage. Maintains journalistic standards."
   },
   {
@@ -1783,7 +1783,7 @@
     "tier": "international",
     "country": "UA",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Ukrainian English-language digital news outlet, founded 2021 after journalists left the Kyiv Post over editorial independence concerns. Primary English-language source for Ukrainian war coverage. Pro-Ukraine perspective (as expected from within Ukraine). RSS via Google News filter (native /feed/ returned 404 in 2026 after Next.js redesign; Google News mirror returns 87 items in 24h, verified 2026-05-15)."
   },
   {
@@ -1805,7 +1805,7 @@
     "tier": "international",
     "country": "RS",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Balkan Investigative Reporting Network. Covers Southeast European politics, war crimes, and governance. Founded 2004. Independent, factual investigative journalism in the Balkans."
   },
   {
@@ -1816,7 +1816,7 @@
     "tier": "international",
     "country": "JP",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Digital magazine covering geopolitics and society in the Asia-Pacific region. Founded 2002. Expert commentary on Indo-Pacific affairs, security, and diplomacy. Centrist analytical perspective."
   },
   {
@@ -1960,7 +1960,7 @@
     "tier": "international",
     "country": "IN",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "India's second-largest English-language daily, founded 1924. HT Media owned. Strong national political coverage. Broad readership across northern India. Centrist editorial line."
   },
   {
@@ -1993,7 +1993,7 @@
     "tier": "international",
     "country": "IN",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "India's largest financial daily, founded 1961. Part of Times Group. Business, markets, and economic policy focus. Centrist editorial line on economic issues."
   },
   {
@@ -2004,7 +2004,7 @@
     "tier": "international",
     "country": "IN",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "India's leading independent business newspaper, founded 1975. Known for credible economic journalism. Relatively independent from political ownership. Strong on policy and markets."
   },
   {
@@ -2015,7 +2015,7 @@
     "tier": "international",
     "country": "IN",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Digital news outlet founded 2017 by veteran journalist Shekhar Gupta. Strong on policy, defense, and political analysis. Editorially independent. Centrist-liberal editorial perspective."
   },
   {
@@ -2059,7 +2059,7 @@
     "tier": "international",
     "country": "IN",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language business newspaper by HT Media, launched 2007 in association with Wall Street Journal. Strong on economic policy, markets, and corporate news. Centrist editorial line."
   },
   {
@@ -2081,7 +2081,7 @@
     "tier": "international",
     "country": "IN",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Chandigarh-based English daily, founded 1881 in Lahore. Trust-owned (no corporate proprietor). Strong on northern India, Punjab, Haryana politics. Centrist editorial line. RSS via Google News."
   },
   {
@@ -2246,7 +2246,7 @@
     "tier": "independent",
     "country": "IN",
     "type": "fact_check",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Independent fact-checking organization, founded 2014. IFCN signatory. Fact-checks claims across the Indian political spectrum. Transparent methodology, reader-funded. Native RSS stale since 2022; Google News fallback."
   },
   {
@@ -2290,7 +2290,7 @@
     "tier": "international",
     "country": "BD",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Bangladesh's prominent English-language daily, founded 2013. Independent editorial stance. Covers Bangladeshi politics, economy, and South Asian affairs. RSS via Google News."
   },
   {
@@ -2301,7 +2301,7 @@
     "tier": "international",
     "country": "LK",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Sri Lanka's leading English-language daily, published by Wijeya Newspapers. Covers Sri Lankan politics, economy, and South Asian affairs. Centrist editorial line. RSS via Google News."
   },
   {
@@ -2334,7 +2334,7 @@
     "tier": "international",
     "country": "NG",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Independent, credible Nigerian broadsheet. Founded 1983. MBFC: Center, High Credibility. Essential for West African coverage."
   },
   {
@@ -2356,7 +2356,7 @@
     "tier": "international",
     "country": "ID",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Indonesia's leading English-language daily. Founded 1983. Independent editorial identity. Indonesia is the 4th most populous nation with zero prior coverage."
   },
   {
@@ -2367,7 +2367,7 @@
     "tier": "international",
     "country": "TH",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Thailand's oldest English-language daily. Founded 1946. Newspaper of record. Comprehensive Thai and regional SE Asian coverage."
   },
   {
@@ -2389,7 +2389,7 @@
     "tier": "international",
     "country": "KR",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "South Korea's largest English-language daily. Founded 1953. Sole South Korean member of Asia News Network. Newspaper perspective alongside Yonhap wire."
   },
   {
@@ -2400,7 +2400,7 @@
     "tier": "international",
     "country": "IL",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Centrist English-language Israeli digital outlet. Large international readership. Founded 2012. Fills center gap between Haaretz (left) and Jerusalem Post (right)."
   },
   {
@@ -2411,7 +2411,7 @@
     "tier": "international",
     "country": "CD",
     "type": "broadcast",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Pan-African news channel. Euronews sister channel. 40M household reach across 35 African countries. Editorial charter guarantees independence."
   },
   {
@@ -2422,7 +2422,7 @@
     "tier": "international",
     "country": "KE",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Kenya's largest media group. Oldest English-language daily in East Africa. Nation Media Group. Covers Kenya and broader African affairs."
   },
   {
@@ -2455,7 +2455,7 @@
     "tier": "international",
     "country": "BD",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Bangladesh's most widely read English-language daily. MBFC: Center, High Credibility. Bangladesh (170M people) had zero coverage. Covers garment industry, Rohingya crisis, climate displacement."
   },
   {
@@ -2466,7 +2466,7 @@
     "tier": "independent",
     "country": "ZA",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Africa's first independent fact-checking organization. MBFC: Least Biased, Very High Factual. IFCN certified. Offices in South Africa, Kenya, Nigeria, Senegal."
   },
   {
@@ -2532,7 +2532,7 @@
     "tier": "international",
     "country": "MY",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Independent Malaysian online newspaper. MBFC: Center. Adds Malaysia (33M people) to SE Asian coverage."
   },
   {
@@ -2565,7 +2565,7 @@
     "tier": "international",
     "country": "KE",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Kenya's second-largest newspaper. The Standard Group. Alternative perspective alongside Nation Africa for East African coverage."
   },
   {
@@ -2576,7 +2576,7 @@
     "tier": "international",
     "country": "GH",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "State-owned daily, founded 1958. Ghana's newspaper of record."
   },
   {
@@ -2587,7 +2587,7 @@
     "tier": "international",
     "country": "GH",
     "type": "broadcast",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Ghana's leading independent digital news platform. Commercial ownership."
   },
   {
@@ -2609,7 +2609,7 @@
     "tier": "international",
     "country": "NG",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "One of Nigeria's oldest dailies, founded 1984. Independent ownership."
   },
   {
@@ -2620,7 +2620,7 @@
     "tier": "international",
     "country": "NG",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Nigeria's most-read newspaper. Founded 1971. Strong investigative tradition."
   },
   {
@@ -2631,7 +2631,7 @@
     "tier": "international",
     "country": "GH",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Ghana's highest-circulation daily. State-owned but editorially credible."
   },
   {
@@ -2642,7 +2642,7 @@
     "tier": "independent",
     "country": "LR",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Liberia's leading independent investigative newspaper. Founded 2003."
   },
   {
@@ -2686,7 +2686,7 @@
     "tier": "international",
     "country": "TZ",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Tanzania's leading independent English daily."
   },
   {
@@ -2709,7 +2709,7 @@
     "tier": "independent",
     "country": "ZW",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Zimbabwe's leading independent daily. Alpha Media Holdings."
   },
   {
@@ -2720,7 +2720,7 @@
     "tier": "independent",
     "country": "ZW",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Zimbabwe's leading independent weekly. Critical of Mnangagwa government."
   },
   {
@@ -2753,7 +2753,7 @@
     "tier": "international",
     "country": "ZA",
     "type": "nonprofit",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "African arm of The Conversation. Academic-to-public analysis by African researchers."
   },
   {
@@ -2775,7 +2775,7 @@
     "tier": "international",
     "country": "JO",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Jordan's leading English-language daily, founded 1975."
   },
   {
@@ -2798,7 +2798,7 @@
     "tier": "international",
     "country": "MA",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Morocco's leading English-language digital outlet. Founded 2011."
   },
   {
@@ -2820,7 +2820,7 @@
     "tier": "international",
     "country": "IQ",
     "type": "broadcast",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language outlet for Kurdistan Region of Iraq and Kurdish affairs."
   },
   {
@@ -2842,7 +2842,7 @@
     "tier": "international",
     "country": "EG",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English arm of Al-Masry Al-Youm, Egypt's largest independent newspaper."
   },
   {
@@ -2898,7 +2898,7 @@
     "tier": "international",
     "country": "PK",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Pakistan's largest English-language daily. Jang Group."
   },
   {
@@ -2920,7 +2920,7 @@
     "tier": "international",
     "country": "AF",
     "type": "broadcast",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Afghanistan's leading independent TV/digital news. Maintained operations through Taliban takeover."
   },
   {
@@ -2954,7 +2954,7 @@
     "tier": "international",
     "country": "CN",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "China's leading financial news company. More editorially independent than state media."
   },
   {
@@ -2987,7 +2987,7 @@
     "tier": "international",
     "country": "KH",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Cambodia's oldest English-language newspaper (1992)."
   },
   {
@@ -2998,7 +2998,7 @@
     "tier": "international",
     "country": "VN",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English arm of Vietnam's largest news website."
   },
   {
@@ -3042,7 +3042,7 @@
     "tier": "independent",
     "country": "HK",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Expert analysis of Chinese media and propaganda. University of Hong Kong."
   },
   {
@@ -3119,7 +3119,7 @@
     "tier": "international",
     "country": "CZ",
     "type": "broadcast",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Czech Radio's international English service. Since 1936."
   },
   {
@@ -3130,7 +3130,7 @@
     "tier": "independent",
     "country": "FR",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Paris-based covering Central and Eastern European affairs."
   },
   {
@@ -3163,7 +3163,7 @@
     "tier": "independent",
     "country": "NL",
     "type": "investigative",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Organized Crime and Corruption Reporting Project. Network of 40+ investigative centers."
   },
   {
@@ -3174,7 +3174,7 @@
     "tier": "international",
     "country": "GE",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Georgian newspaper. South Caucasus affairs."
   },
   {
@@ -3196,7 +3196,7 @@
     "tier": "international",
     "country": "CH",
     "type": "broadcast",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Swiss Broadcasting Corporation's international service. Covers UN, WTO, Red Cross in Geneva."
   },
   {
@@ -3207,7 +3207,7 @@
     "tier": "international",
     "country": "NL",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "The Netherlands' leading English-language news site."
   },
   {
@@ -3218,7 +3218,7 @@
     "tier": "international",
     "country": "BE",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "EU policy media network. Essential for EU legislative process. Brussels-based."
   },
   {
@@ -3229,7 +3229,7 @@
     "tier": "independent",
     "country": "VE",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Independent outlet covering Venezuelan politics under Maduro."
   },
   {
@@ -3251,7 +3251,7 @@
     "tier": "independent",
     "country": "PE",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language coverage of Peruvian politics."
   },
   {
@@ -3262,7 +3262,7 @@
     "tier": "independent",
     "country": "CR",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Costa Rica's English-language newspaper, founded 1956."
   },
   {
@@ -3284,7 +3284,7 @@
     "tier": "independent",
     "country": "CO",
     "type": "investigative",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Leading independent organization studying organized crime in Latin America."
   },
   {
@@ -3295,7 +3295,7 @@
     "tier": "international",
     "country": "JM",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Jamaica's newspaper of record, founded 1834. Oldest Anglophone Caribbean paper."
   },
   {
@@ -3306,7 +3306,7 @@
     "tier": "international",
     "country": "TT",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Trinidad and Tobago's most-read newspaper."
   },
   {
@@ -3713,7 +3713,7 @@
     "tier": "independent",
     "country": "SG",
     "type": "independent",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Singapore's premier SE Asian studies institute. ASEAN focus."
   },
   {
@@ -3768,7 +3768,7 @@
     "tier": "independent",
     "country": "CH",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Independent global health policy news from Geneva, Switzerland. Editorially independent reporting on WHO, GAVI, vaccine equity, outbreak response. Founded 2018 as Geneva Solutions spinoff. Verified 2026-05-15."
   },
   {
@@ -3845,7 +3845,7 @@
     "tier": "independent",
     "country": "DE",
     "type": "investigative",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Cross-border European investigative journalism. Nonprofit."
   },
   {
@@ -3856,7 +3856,7 @@
     "tier": "independent",
     "country": "FR",
     "type": "investigative",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Continues reporting of killed/jailed journalists. Behind Pegasus Project."
   },
   {
@@ -3900,7 +3900,7 @@
     "tier": "independent",
     "country": "NL",
     "type": "investigative",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Amsterdam-based cross-border investigative. Migration and border policy."
   },
   {
@@ -3933,7 +3933,7 @@
     "tier": "independent",
     "country": "NG",
     "type": "investigative",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Nigeria-based data journalism. Tracks public spending. Award-winning."
   },
   {
@@ -4506,7 +4506,7 @@
     "tier": "international",
     "country": "TR",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Turkey's oldest English-language newspaper, founded 1961. Provides centrist perspective alongside TRT World (state) and Daily Sabah (pro-government). Demirören Holding. RSS via Google News (native feed unreliable)."
   },
   {
@@ -4595,7 +4595,7 @@
     "tier": "independent",
     "country": "FR",
     "type": "fact_check",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "AFP's global fact-checking arm. IFCN signatory. 80+ countries, 25 languages."
   },
   {
@@ -4617,7 +4617,7 @@
     "tier": "independent",
     "country": "PH",
     "type": "fact_check",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Philippine independent fact-checking. IFCN signatory."
   },
   {
@@ -4738,7 +4738,7 @@
     "tier": "international",
     "country": "BE",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Brussels-based independent EU affairs outlet. Nonprofit. Founded 2000."
   },
   {
@@ -4760,7 +4760,7 @@
     "tier": "international",
     "country": "RO",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Romania's leading English-language outlet. Founded 2009."
   },
   {
@@ -4771,7 +4771,7 @@
     "tier": "independent",
     "country": "BG",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Bulgaria's English-language news outlet."
   },
   {
@@ -4782,7 +4782,7 @@
     "tier": "international",
     "country": "HR",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Croatia's English-language news outlet."
   },
   {
@@ -4793,7 +4793,7 @@
     "tier": "international",
     "country": "BE",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language daily covering Belgium and EU affairs. Founded 2019."
   },
   {
@@ -4804,7 +4804,7 @@
     "tier": "international",
     "country": "DE",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language news covering Germany. EU's largest economy."
   },
   {
@@ -4815,7 +4815,7 @@
     "tier": "international",
     "country": "FR",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language news covering France. P5 power and EU co-leader."
   },
   {
@@ -4826,7 +4826,7 @@
     "tier": "international",
     "country": "ES",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language news covering Spain. EU's fourth-largest economy."
   },
   {
@@ -5024,7 +5024,7 @@
     "tier": "international",
     "country": "ZA",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "South Africa's largest digital news platform. Media24/Naspers. Founded 1998."
   },
   {
@@ -5035,7 +5035,7 @@
     "tier": "independent",
     "country": "NG",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Nigerian digital news and investigative outlet. Founded 2014."
   },
   {
@@ -5070,7 +5070,7 @@
     "tier": "international",
     "country": "PH",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Philippines' oldest broadsheet, founded 1900. Complements Rappler."
   },
   {
@@ -5081,7 +5081,7 @@
     "tier": "international",
     "country": "TH",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Thai English-language newspaper. Complements Bangkok Post."
   },
   {
@@ -5092,7 +5092,7 @@
     "tier": "independent",
     "country": "MM",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Independent Myanmar news. Post-coup coverage. Complements Irrawaddy and Myanmar Now."
   },
   {
@@ -5114,7 +5114,7 @@
     "tier": "international",
     "country": "MY",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Malaysia's largest English-language newspaper. Star Media Group."
   },
   {
@@ -5125,7 +5125,7 @@
     "tier": "international",
     "country": "CL",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Chile's English-language news outlet. Fills Chile coverage gap."
   },
   {
@@ -5136,7 +5136,7 @@
     "tier": "international",
     "country": "KE",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Nairobi-focused news from Nation Media Group. Complements The East African."
   },
   {
@@ -5158,7 +5158,7 @@
     "tier": "independent",
     "country": "ZA",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Pan-African weekly newsletter/newspaper. Founded 2020. Distributed via WhatsApp across Africa."
   },
   {
@@ -5169,7 +5169,7 @@
     "tier": "international",
     "country": "SE",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language news covering Sweden. EU member, NATO member since 2024. Essential for Europe edition."
   },
   {
@@ -5180,7 +5180,7 @@
     "tier": "international",
     "country": "IT",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language news covering Italy. G7 economy, EU co-founder. Essential for Europe edition."
   },
   {
@@ -5191,7 +5191,7 @@
     "tier": "international",
     "country": "DK",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language news covering Denmark. EU member, NATO member. Essential for Europe edition."
   },
   {
@@ -5202,7 +5202,7 @@
     "tier": "international",
     "country": "NO",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language news covering Norway. NATO member, major energy exporter. Essential for Europe edition."
   },
   {
@@ -5213,7 +5213,7 @@
     "tier": "international",
     "country": "AT",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language news covering Austria. EU member, hosts IAEA/OPEC/OSCE headquarters."
   },
   {
@@ -5224,7 +5224,7 @@
     "tier": "international",
     "country": "PT",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Portugal's leading English-language newspaper. Founded 1988. EU member."
   },
   {
@@ -5235,7 +5235,7 @@
     "tier": "international",
     "country": "IS",
     "type": "magazine",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Iceland's English-language magazine. Founded 1963. NATO member, Arctic affairs."
   },
   {
@@ -5246,7 +5246,7 @@
     "tier": "international",
     "country": "CH",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language news covering Switzerland. Hosts UN, WTO, Red Cross, WHO."
   },
   {
@@ -5257,7 +5257,7 @@
     "tier": "international",
     "country": "KW",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Kuwait's oldest English-language daily, founded 1961. Independent ownership."
   },
   {
@@ -5291,7 +5291,7 @@
     "tier": "independent",
     "country": "GT",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Guatemala's English-language news outlet."
   },
   {
@@ -5302,7 +5302,7 @@
     "tier": "international",
     "country": "NG",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Northern Nigeria's leading newspaper. Provides counterweight to Lagos-based outlets. Essential for understanding Nigeria's Muslim north."
   },
   {
@@ -5325,7 +5325,7 @@
     "tier": "international",
     "country": "GY",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Guyana's leading independent newspaper. Essential: Guyana is now the world's fastest-growing economy (oil discovery). Founded 1986."
   },
   {
@@ -6062,7 +6062,7 @@
     "tier": "international",
     "country": "FR",
     "type": "nonprofit",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "OECD's AI policy monitoring platform. Tracks AI policies across 60+ countries. Intergovernmental authority."
   },
   {
@@ -6131,7 +6131,7 @@
     "tier": "international",
     "country": "GR",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Greek news outlet. Covers Greece, Cyprus, and the Greek diaspora. Founded 2008."
   },
   {
@@ -6142,7 +6142,7 @@
     "tier": "international",
     "country": "LT",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language newspaper covering Estonia, Latvia, and Lithuania. Independent. Covers NATO Baltic security."
   },
   {
@@ -6153,7 +6153,7 @@
     "tier": "international",
     "country": "UA",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Major Ukrainian news site, founded 2000. Independent. Key source for Ukraine conflict coverage."
   },
   {
@@ -6164,7 +6164,7 @@
     "tier": "international",
     "country": "CY",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Cyprus's oldest English-language newspaper, founded 1945. Independent. Covers Cyprus and Eastern Mediterranean."
   },
   {
@@ -6175,7 +6175,7 @@
     "tier": "international",
     "country": "MT",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Malta's leading independent news portal. Covers Mediterranean and EU affairs. Founded 1999."
   },
   {
@@ -6186,7 +6186,7 @@
     "tier": "international",
     "country": "NL",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "European visa and migration policy news. Covers Schengen Zone, EU border policy, and travel regulation."
   },
   {
@@ -6197,7 +6197,7 @@
     "tier": "international",
     "country": "DK",
     "type": "broadcast",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Denmark's largest commercial broadcaster. Independent. Strong Danish and Scandinavian coverage."
   },
   {
@@ -6241,7 +6241,7 @@
     "tier": "international",
     "country": "MX",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Mexico's oldest newspaper, founded 1916. Compania Periodistica Nacional. Major Mexican political coverage."
   },
   {
@@ -6263,7 +6263,7 @@
     "tier": "international",
     "country": "CL",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Latin American business intelligence platform. Chile-based. Covers infrastructure, mining, energy, and tech."
   },
   {
@@ -6274,7 +6274,7 @@
     "tier": "international",
     "country": "PA",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Panamanian news. Covers Canal, banking sector, and Central American affairs."
   },
   {
@@ -6285,7 +6285,7 @@
     "tier": "international",
     "country": "CR",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Costa Rican news outlet. Covers Central American politics and expat community."
   },
   {
@@ -6296,7 +6296,7 @@
     "tier": "international",
     "country": "DO",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Dominican Republic news. Covers Caribbean politics and tourism economy."
   },
   {
@@ -6319,7 +6319,7 @@
     "tier": "international",
     "country": "HT",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Haitian news portal. Independent. Covers Haiti's political crisis and security situation."
   },
   {
@@ -6342,7 +6342,7 @@
     "tier": "international",
     "country": "PE",
     "type": "broadcast",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Peru's largest radio and digital news network. Grupo RPP. Covers Peruvian politics and Andean region."
   },
   {
@@ -6353,7 +6353,7 @@
     "tier": "international",
     "country": "ZA",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Pan-African news aggregator and publisher. Largest distributor of African news. Washington DC and Cape Town."
   },
   {
@@ -6376,7 +6376,7 @@
     "tier": "international",
     "country": "BW",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Major Botswanan weekly newspaper. Independent. Covers Southern African affairs."
   },
   {
@@ -6387,7 +6387,7 @@
     "tier": "international",
     "country": "LS",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Major Lesotho weekly newspaper. Independent. Covers mountain kingdom politics and Southern Africa."
   },
   {
@@ -6398,7 +6398,7 @@
     "tier": "international",
     "country": "ZA",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Major South African tabloid-broadsheet. Caxton & CTP. Covers Johannesburg and national politics."
   },
   {
@@ -6409,7 +6409,7 @@
     "tier": "international",
     "country": "ZA",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Independent Online, major South African news portal. Independent Media group. Broad national coverage."
   },
   {
@@ -6420,7 +6420,7 @@
     "tier": "international",
     "country": "NG",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Major Nigerian broadsheet. Leaders & Company Ltd. Strong business and political coverage."
   },
   {
@@ -6431,7 +6431,7 @@
     "tier": "international",
     "country": "NG",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Nigeria's leading business newspaper. Independent. Financial markets and economic policy coverage."
   },
   {
@@ -6442,7 +6442,7 @@
     "tier": "international",
     "country": "ET",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Major Ethiopian English-language newspaper. Independent. Covers Horn of Africa politics."
   },
   {
@@ -6453,7 +6453,7 @@
     "tier": "international",
     "country": "SD",
     "type": "broadcast",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Independent Sudanese radio and news outlet. Netherlands-based. Key source for Sudan conflict coverage."
   },
   {
@@ -6476,7 +6476,7 @@
     "tier": "international",
     "country": "SY",
     "type": "nonprofit",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Nonprofit Syrian news outlet. Bilingual Arabic/English. Covers Syrian conflict and reconstruction."
   },
   {
@@ -6487,7 +6487,7 @@
     "tier": "international",
     "country": "IQ",
     "type": "broadcast",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Kurdistan Region-based media network. Covers Kurdish affairs across Iraq, Syria, Turkey, and Iran."
   },
   {
@@ -6498,7 +6498,7 @@
     "tier": "international",
     "country": "JO",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Amman-based pan-Arab digital news platform. Founded 2000. Covers MENA region in English and Arabic."
   },
   {
@@ -6533,7 +6533,7 @@
     "tier": "international",
     "country": "IQ",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Iraqi news outlet. Independent. Covers Iraqi politics, security, and reconstruction."
   },
   {
@@ -6613,7 +6613,7 @@
     "tier": "international",
     "country": "BN",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Brunei's only English-language daily. Brunei Press. Covers Borneo and Southeast Asian affairs."
   },
   {
@@ -6636,7 +6636,7 @@
     "tier": "international",
     "country": "PH",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Major Philippine broadsheet. PhilStar Media Group. Strong national and political coverage."
   },
   {
@@ -6647,7 +6647,7 @@
     "tier": "international",
     "country": "PH",
     "type": "broadcast",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Philippines' largest broadcast network (franchise renewal denied 2020, continues online). Lopez Group."
   },
   {
@@ -6658,7 +6658,7 @@
     "tier": "international",
     "country": "ID",
     "type": "magazine",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Indonesia's leading newsweekly. Known for investigative journalism. Tempo Media Group."
   },
   {
@@ -6669,7 +6669,7 @@
     "tier": "international",
     "country": "MV",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Maldivian news outlet. Covers Indian Ocean politics and climate vulnerability."
   },
   {
@@ -6692,7 +6692,7 @@
     "tier": "international",
     "country": "LK",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Sri Lankan English-language daily. Rivira Media Corporation. Covers Sri Lankan economy and politics."
   },
   {
@@ -6703,7 +6703,7 @@
     "tier": "independent",
     "country": "IN",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Major English-language newspaper from Srinagar. Independent. Covers Kashmir conflict and J&K politics."
   },
   {
@@ -6714,7 +6714,7 @@
     "tier": "independent",
     "country": "IN",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Northeast India news portal. Covers Assam, Meghalaya, Nagaland, and India's seven sisters region."
   },
   {
@@ -6725,7 +6725,7 @@
     "tier": "international",
     "country": "BS",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Bahamas' oldest newspaper, founded 1844. Independent. Covers Caribbean politics and tourism economy."
   },
   {
@@ -6748,7 +6748,7 @@
     "tier": "international",
     "country": "WS",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Samoa's major English-language newspaper. Independent. Covers Pacific Islands and climate issues."
   },
   {
@@ -6759,7 +6759,7 @@
     "tier": "international",
     "country": "BB",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Caribbean-wide digital news platform. Loop Media. Covers Caribbean islands, tourism, and regional politics."
   },
   {
@@ -7177,7 +7177,7 @@
     "tier": "international",
     "country": "CO",
     "type": "investigative",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Latin American investigative journalism platform. Based in Bogota. Cross-border investigations."
   },
   {
@@ -7188,7 +7188,7 @@
     "tier": "international",
     "country": "JO",
     "type": "investigative",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Jordan-based investigative journalism network. Trains Arab journalists. Covers corruption and governance."
   },
   {
@@ -7199,7 +7199,7 @@
     "tier": "international",
     "country": "ZA",
     "type": "investigative",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Pan-African investigative journalism network. Cross-border African investigations. Founded 2020."
   },
   {
@@ -7287,7 +7287,7 @@
     "tier": "international",
     "country": "FI",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Finland's largest newspaper. Sanoma Group. Nordic quality broadsheet. NATO expansion coverage."
   },
   {
@@ -7387,7 +7387,7 @@
     "tier": "international",
     "country": "TW",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Taiwanese news portal. Independent. Covers Taiwan-China tensions and East Asian security."
   },
   {
@@ -7398,7 +7398,7 @@
     "tier": "international",
     "country": "PH",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Philippines' oldest newspaper, founded 1898. The Manila Times Publishing Corp. Political and business coverage."
   },
   {
@@ -7409,7 +7409,7 @@
     "tier": "international",
     "country": "BD",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Bangladeshi English-language daily. Independent. Progressive editorial line on South Asian affairs."
   },
   {
@@ -7431,7 +7431,7 @@
     "tier": "international",
     "country": "MA",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language North African news portal. Covers Morocco, Algeria, Tunisia, Libya. Independent."
   },
   {
@@ -7442,7 +7442,7 @@
     "tier": "international",
     "country": "KE",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "East African business and economy news portal. Covers Kenya, Tanzania, Uganda, and regional trade."
   },
   {
@@ -7453,7 +7453,7 @@
     "tier": "international",
     "country": "MM",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Major Myanmar English-language newspaper. Covers Myanmar political crisis and Southeast Asian affairs."
   },
   {
@@ -7717,7 +7717,7 @@
     "tier": "international",
     "country": "NO",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Global shipping industry news. NHST Media Group (Norway). Covers maritime trade and logistics."
   },
   {
@@ -7785,7 +7785,7 @@
     "tier": "international",
     "country": "SK",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Slovak Spectator. English-language Slovak news. Petit Press. Covers Slovak and Central European affairs."
   },
   {
@@ -7807,7 +7807,7 @@
     "tier": "international",
     "country": "GH",
     "type": "broadcast",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Major Ghanaian broadcast outlet. Citi FM. Independent. Covers West African affairs."
   },
   {
@@ -7818,7 +7818,7 @@
     "tier": "international",
     "country": "GM",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Major Gambian newspaper. Independent. Covers Gambia and West African affairs."
   },
   {
@@ -7829,7 +7829,7 @@
     "tier": "international",
     "country": "SL",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Sierra Leonean English-language news outlet. Independent. Covers West African governance."
   },
   {
@@ -7840,7 +7840,7 @@
     "tier": "international",
     "country": "AR",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Argentine news outlet. Independent. Covers Argentine politics and economy."
   },
   {
@@ -7862,7 +7862,7 @@
     "tier": "international",
     "country": "UG",
     "type": "magazine",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Ugandan news magazine. Independent. Covers Ugandan politics and East African affairs."
   },
   {
@@ -7873,7 +7873,7 @@
     "tier": "international",
     "country": "KE",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Major Kenyan daily newspaper. Radio Africa Group. Covers Kenyan politics and East African affairs."
   },
   {
@@ -7884,7 +7884,7 @@
     "tier": "international",
     "country": "JO",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "MENA financial and business news. Jordan-based. Covers Gulf economies and North African markets."
   },
   {
@@ -7895,7 +7895,7 @@
     "tier": "international",
     "country": "JO",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Major Jordanian news portal. Independent. Covers Jordan, Levant, and Middle Eastern affairs."
   },
   {
@@ -7906,7 +7906,7 @@
     "tier": "independent",
     "country": "IN",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "South Asian affairs analysis platform. Covers India, Pakistan, Bangladesh, Sri Lanka, Nepal geopolitics."
   },
   {
@@ -7917,7 +7917,7 @@
     "tier": "international",
     "country": "LK",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Sri Lankan English-language news portal. Independent. Covers Sri Lankan politics and Indian Ocean affairs."
   },
   {
@@ -7928,7 +7928,7 @@
     "tier": "international",
     "country": "FJ",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Fiji's oldest newspaper, founded 1869. Independent. Covers Pacific Islands and climate issues."
   },
   {
@@ -7939,7 +7939,7 @@
     "tier": "international",
     "country": "PG",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Papua New Guinea's major daily. Covers Pacific politics, mining, and Melanesian affairs."
   },
   {
@@ -7972,7 +7972,7 @@
     "tier": "international",
     "country": "BB",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Major Barbadian news outlet. Independent. Covers Barbados politics and CARICOM affairs."
   },
   {
@@ -7983,7 +7983,7 @@
     "tier": "international",
     "country": "JM",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Major Jamaican newspaper. Independent. Covers Jamaican politics and Caribbean affairs."
   },
   {
@@ -8093,7 +8093,7 @@
     "tier": "international",
     "country": "IL",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Major Israeli digital news portal. Bezeq ownership. Covers Israeli politics and Middle East security."
   },
   {
@@ -8104,7 +8104,7 @@
     "tier": "international",
     "country": "AE",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Major UAE English-language daily. Galadari Group. Covers Gulf business and regional affairs."
   },
   {
@@ -8237,7 +8237,7 @@
     "tier": "international",
     "country": "BN",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Bruneian news outlet covering Southeast Asian affairs. Independent digital platform."
   },
   {
@@ -8248,7 +8248,7 @@
     "tier": "international",
     "country": "LA",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Laotian news. Independent. Covers Southeast Asian affairs and Mekong region."
   },
   {
@@ -8259,7 +8259,7 @@
     "tier": "international",
     "country": "MN",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Mongolia's English-language newspaper. Covers Mongolian politics and Central Asian affairs."
   },
   {
@@ -8270,7 +8270,7 @@
     "tier": "international",
     "country": "KH",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Cambodian English-language daily. Covers Cambodian politics and Mekong region development."
   },
   {
@@ -8281,7 +8281,7 @@
     "tier": "international",
     "country": "PK",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Arab News Pakistan edition. Saudi Research and Media Group. Covers Pakistan-Gulf relations."
   },
   {
@@ -8292,7 +8292,7 @@
     "tier": "international",
     "country": "AF",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Independent Afghan news outlet. Covers Afghanistan under Taliban rule and Central Asian affairs."
   },
   {
@@ -8303,7 +8303,7 @@
     "tier": "international",
     "country": "KE",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Kenya's business newspaper. Nation Media Group. Covers East African business and markets."
   },
   {
@@ -8325,7 +8325,7 @@
     "tier": "independent",
     "country": "IN",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Mumbai-based daily newspaper. Indian National Press. Covers Maharashtra and national politics."
   },
   {
@@ -8424,7 +8424,7 @@
     "tier": "international",
     "country": "FR",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Global naval defense industry news. France-based. Covers warships, submarines, and maritime security."
   },
   {
@@ -8754,7 +8754,7 @@
     "tier": "independent",
     "country": "DK",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Denmark's English-language newspaper. Covers Danish politics and Nordic affairs. Independent publication."
   },
   {
@@ -8765,7 +8765,7 @@
     "tier": "independent",
     "country": "IS",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language service of Morgunbladid, Iceland's largest newspaper. Covers Icelandic affairs."
   },
   {
@@ -8776,7 +8776,7 @@
     "tier": "independent",
     "country": "BA",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language news from Bosnia and Herzegovina. Covers Balkan politics and post-conflict affairs."
   },
   {
@@ -8787,7 +8787,7 @@
     "tier": "independent",
     "country": "GI",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "World's second-oldest English-language newspaper, founded 1801. Covers Gibraltar affairs, Brexit impact."
   },
   {
@@ -8798,7 +8798,7 @@
     "tier": "independent",
     "country": "MD",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language news portal covering Moldova. Relevant for EU accession and post-Soviet politics."
   },
   {
@@ -8809,7 +8809,7 @@
     "tier": "independent",
     "country": "DE",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Berlin-based English-language outlet covering South Caucasus (Armenia, Azerbaijan, Georgia) affairs."
   },
   {
@@ -8820,7 +8820,7 @@
     "tier": "independent",
     "country": "NO",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Norwegian news aggregator and original reporting. Covers Nordic politics and society."
   },
   {
@@ -8831,7 +8831,7 @@
     "tier": "independent",
     "country": "SI",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Slovenia's English-language news outlet. Covers Slovenian politics and Central European affairs."
   },
   {
@@ -8877,7 +8877,7 @@
     "tier": "international",
     "country": "IT",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Italy's largest daily newspaper, English edition. Center-liberal editorial line. RCS MediaGroup."
   },
   {
@@ -8900,7 +8900,7 @@
     "tier": "independent",
     "country": "AL",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Albania's English-language daily newspaper. Covers Albanian politics and Balkan integration with EU/NATO."
   },
   {
@@ -8923,7 +8923,7 @@
     "tier": "independent",
     "country": "GH",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Major Ghanaian private newspaper. Independent voice in West African media landscape."
   },
   {
@@ -8934,7 +8934,7 @@
     "tier": "independent",
     "country": "SL",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Sierra Leone daily newspaper. Covers West African politics and post-conflict development."
   },
   {
@@ -8945,7 +8945,7 @@
     "tier": "independent",
     "country": "MW",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Malawi's largest online news outlet. Covers Southern African politics and development."
   },
   {
@@ -8956,7 +8956,7 @@
     "tier": "independent",
     "country": "MZ",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language news aggregator for Mozambique. Covers Southern African energy, conflict, and development."
   },
   {
@@ -8979,7 +8979,7 @@
     "tier": "independent",
     "country": "BW",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Major independent newspaper in Botswana. Covers Southern African democracy and development."
   },
   {
@@ -8990,7 +8990,7 @@
     "tier": "independent",
     "country": "ET",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Ethiopia's leading English-language business newspaper. Covers Horn of Africa economics and development."
   },
   {
@@ -9001,7 +9001,7 @@
     "tier": "independent",
     "country": "SO",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language news covering Somalia and the Horn of Africa. Independent outlet."
   },
   {
@@ -9012,7 +9012,7 @@
     "tier": "independent",
     "country": "SO",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Leading Somali English-language news site. Covers Horn of Africa politics, security, and development."
   },
   {
@@ -9023,7 +9023,7 @@
     "tier": "independent",
     "country": "BW",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Independent Botswana newspaper known for investigative journalism and press freedom advocacy."
   },
   {
@@ -9034,7 +9034,7 @@
     "tier": "independent",
     "country": "SS",
     "type": "broadcast",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "South Sudan's independent media outlet. Covers conflict, governance, and humanitarian issues in the world's youngest nation."
   },
   {
@@ -9045,7 +9045,7 @@
     "tier": "independent",
     "country": "NG",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Nigeria's oldest private newspaper. Founded 1949 by Obafemi Awolowo. Independent voice in West African media."
   },
   {
@@ -9067,7 +9067,7 @@
     "tier": "independent",
     "country": "ZA",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Cape Town weekend newspaper. Part of Independent Media SA. Covers Western Cape politics and culture."
   },
   {
@@ -9078,7 +9078,7 @@
     "tier": "independent",
     "country": "AR",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Argentina's English-language newspaper. Covers Argentine and South American politics and economy."
   },
   {
@@ -9089,7 +9089,7 @@
     "tier": "independent",
     "country": "EC",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Ecuadorian news outlet. Covers Andean politics and economy."
   },
   {
@@ -9100,7 +9100,7 @@
     "tier": "independent",
     "country": "BZ",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Belize's leading newspaper. Independent, covers Central American and Caribbean affairs. Founded 1969."
   },
   {
@@ -9111,7 +9111,7 @@
     "tier": "independent",
     "country": "PA",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Panama news outlet. Covers Panama Canal, Central American affairs."
   },
   {
@@ -9122,7 +9122,7 @@
     "tier": "independent",
     "country": "BS",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "The Bahamas' oldest newspaper. Independent, covers Caribbean politics and tourism economy. Founded 1903."
   },
   {
@@ -9133,7 +9133,7 @@
     "tier": "independent",
     "country": "TT",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Major Trinidad and Tobago daily newspaper. Covers Caribbean energy politics and economy."
   },
   {
@@ -9144,7 +9144,7 @@
     "tier": "independent",
     "country": "DM",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Leading online news source for the Commonwealth of Dominica. Covers Eastern Caribbean affairs."
   },
   {
@@ -9155,7 +9155,7 @@
     "tier": "independent",
     "country": "HN",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Honduran news outlet. Covers Central American politics and migration."
   },
   {
@@ -9177,7 +9177,7 @@
     "tier": "independent",
     "country": "BO",
     "type": "magazine",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Bolivian magazine. Covers culture, politics, and society in Bolivia."
   },
   {
@@ -9188,7 +9188,7 @@
     "tier": "independent",
     "country": "BH",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Independent Bahraini news outlet. Covers Gulf politics and human rights. Opposition-leaning perspective."
   },
   {
@@ -9211,7 +9211,7 @@
     "tier": "independent",
     "country": "YE",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Yemen's first independent English-language newspaper. Covers Yemeni conflict and Gulf affairs."
   },
   {
@@ -9222,7 +9222,7 @@
     "tier": "independent",
     "country": "IQ",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Specialized Iraq energy and politics outlet. Used by industry and policy analysts. Independent, US-based."
   },
   {
@@ -9233,7 +9233,7 @@
     "tier": "independent",
     "country": "LY",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Libya's English-language independent newspaper. Covers North African politics and post-conflict governance."
   },
   {
@@ -9244,7 +9244,7 @@
     "tier": "independent",
     "country": "KG",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Central Asian Bureau for Analytical Reporting. Covers all five Central Asian states. IWPR-supported investigative outlet."
   },
   {
@@ -9255,7 +9255,7 @@
     "tier": "independent",
     "country": "UZ",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Uzbekistan news outlet. Covers Central Asian reform and geopolitics."
   },
   {
@@ -9266,7 +9266,7 @@
     "tier": "independent",
     "country": "AZ",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language news covering Caspian region energy, politics, and trade. Azerbaijan-based."
   },
   {
@@ -9277,7 +9277,7 @@
     "tier": "independent",
     "country": "TM",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Independent English-language news on Turkmenistan. One of few non-state media sources on the country. Rights-focused."
   },
   {
@@ -9288,7 +9288,7 @@
     "tier": "independent",
     "country": "KG",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Kyrgyz independent investigative journalism outlet. Covers Central Asian politics and corruption. OCCRP partner."
   },
   {
@@ -9299,7 +9299,7 @@
     "tier": "independent",
     "country": "CK",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Cook Islands daily newspaper. Covers Pacific Island politics and climate change impacts."
   },
   {
@@ -9310,7 +9310,7 @@
     "tier": "independent",
     "country": "VU",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Vanuatu's main daily newspaper. Covers Melanesian politics and Pacific climate issues."
   },
   {
@@ -9321,7 +9321,7 @@
     "tier": "independent",
     "country": "SB",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Solomon Islands' largest newspaper. Covers Pacific geopolitics and China-Pacific relations."
   },
   {
@@ -9332,7 +9332,7 @@
     "tier": "independent",
     "country": "TO",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Tonga's leading online news source. Covers Pacific Island affairs, climate, and Polynesian culture."
   },
   {
@@ -9343,7 +9343,7 @@
     "tier": "independent",
     "country": "MH",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Marshall Islands weekly newspaper. Covers Pacific geopolitics, US military presence, and nuclear legacy. Founded 1970."
   },
   {
@@ -9929,7 +9929,7 @@
     "tier": "independent",
     "country": "IN",
     "type": "nonprofit",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Academic experts writing for the public. Indian edition covers South Asian policy and research. Nonprofit."
   },
   {
@@ -9940,7 +9940,7 @@
     "tier": "independent",
     "country": "ID",
     "type": "nonprofit",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Academic experts writing for the public. Indonesian edition covers Southeast Asian affairs. Nonprofit."
   },
   {
@@ -9984,7 +9984,7 @@
     "tier": "independent",
     "country": "CZ",
     "type": "nonprofit",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Global commentary platform. Op-eds by world leaders, Nobel laureates, policy experts. Prague-based nonprofit. Founded 1994."
   },
   {
@@ -10039,7 +10039,7 @@
     "tier": "independent",
     "country": "CH",
     "type": "investigative",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Geneva-based network of experts on organized crime. Research and investigations across 6 continents. Founded 2013."
   },
   {
@@ -10083,7 +10083,7 @@
     "tier": "independent",
     "country": "IN",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Major Indian digital news platform. Hindi-first with English content. India Today Group. Large YouTube presence."
   },
   {
@@ -10094,7 +10094,7 @@
     "tier": "independent",
     "country": "IN",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Indian business and policy journalism. Subscription-based. Deep reporting on Indian tech, finance, and policy."
   },
   {
@@ -10105,7 +10105,7 @@
     "tier": "independent",
     "country": "IN",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language outlet covering South Asian geopolitics, economy, and regional affairs."
   },
   {
@@ -10116,7 +10116,7 @@
     "tier": "independent",
     "country": "IN",
     "type": "magazine",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Weekend magazine of Mint (HT Media). Covers Indian culture, arts, and long-form features. Complement to LiveMint news."
   },
   {
@@ -10259,7 +10259,7 @@
     "tier": "independent",
     "country": "TO",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Tongan news outlet covering Pacific affairs and Tongan diaspora. NZ-based."
   },
   {
@@ -10270,7 +10270,7 @@
     "tier": "independent",
     "country": "AG",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Antigua and Barbuda news outlet. Covers Eastern Caribbean affairs."
   },
   {
@@ -10281,7 +10281,7 @@
     "tier": "independent",
     "country": "LC",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "St. Lucia's leading online newspaper. Covers Eastern Caribbean politics and economy."
   },
   {
@@ -10304,7 +10304,7 @@
     "tier": "independent",
     "country": "TG",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Togo business and economy news. Covers West African markets."
   },
   {
@@ -10315,7 +10315,7 @@
     "tier": "independent",
     "country": "MG",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Madagascar news outlet. French-language with English summaries. Covers Indian Ocean politics."
   },
   {
@@ -10326,7 +10326,7 @@
     "tier": "independent",
     "country": "SR",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Suriname's English-language news outlet. Covers South American and Caribbean affairs."
   },
   {
@@ -10481,7 +10481,7 @@
     "tier": "independent",
     "country": "NP",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Major Nepali English-language daily. Nagarik Network. Covers South Asian politics."
   },
   {
@@ -10492,7 +10492,7 @@
     "tier": "independent",
     "country": "CR",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Costa Rica news. Covers Central American politics and expat affairs."
   },
   {
@@ -10503,7 +10503,7 @@
     "tier": "independent",
     "country": "CU",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Independent Cuba news in English. Covers Cuban politics, economy, and US-Cuba relations from non-state perspective."
   },
   {
@@ -10514,7 +10514,7 @@
     "tier": "independent",
     "country": "AS",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "American Samoa's daily newspaper. Covers Pacific Island affairs and US territory governance."
   },
   {
@@ -10525,7 +10525,7 @@
     "tier": "independent",
     "country": "PG",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "PNG's second major daily newspaper. Covers Melanesian politics and Pacific geopolitics."
   },
   {
@@ -10536,7 +10536,7 @@
     "tier": "independent",
     "country": "MM",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Myanmar independent news outlet. Covers Myanmar politics, military coup, and Southeast Asian affairs. Founded by exiles in 1998."
   },
   {
@@ -10558,7 +10558,7 @@
     "tier": "international",
     "country": "HU",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Hungarian news portal. Covers Hungarian politics, economy, and Central European affairs. Independent editorial line."
   },
   {
@@ -10569,7 +10569,7 @@
     "tier": "independent",
     "country": "HU",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Hungarian business news. Founded 1992. Covers Hungarian economy, investment, and Central European business. Part of Absolute Media group."
   },
   {
@@ -10591,7 +10591,7 @@
     "tier": "independent",
     "country": "IT",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Italian news outlet. Covers Italian politics, economy, and Mediterranean affairs."
   },
   {
@@ -10602,7 +10602,7 @@
     "tier": "independent",
     "country": "IT",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Italian-based EU affairs news outlet with English edition. Covers European institutions, EU policy, and Italian-EU relations."
   },
   {
@@ -10624,7 +10624,7 @@
     "tier": "independent",
     "country": "ES",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Spanish news outlet. Covers Spain and Mediterranean region. Large expat readership. Founded 1998."
   },
   {
@@ -10690,7 +10690,7 @@
     "tier": "international",
     "country": "BG",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Bulgaria's leading English-language news portal. Sofia-based. Comprehensive coverage of Bulgarian politics, economy, and Balkan affairs."
   },
   {
@@ -10701,7 +10701,7 @@
     "tier": "independent",
     "country": "HR",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Croatian news outlet. Covers Croatian politics, tourism, economy, and Adriatic affairs."
   },
   {
@@ -10734,7 +10734,7 @@
     "tier": "independent",
     "country": "CZ",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Czech news outlet. Covers Prague and Czech politics, economy, and culture."
   },
   {
@@ -10745,7 +10745,7 @@
     "tier": "international",
     "country": "SK",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Slovakia's English-language newspaper of record. Part of Petit Press group. Covers Slovak politics, economy, and Visegrad affairs. Founded 1995."
   },
   {
@@ -10756,7 +10756,7 @@
     "tier": "independent",
     "country": "GR",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Greek news and culture outlet. Covers Greek politics, diaspora, Eastern Mediterranean affairs, and Greek-Turkish relations."
   },
   {
@@ -10767,7 +10767,7 @@
     "tier": "international",
     "country": "AT",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Austria's oldest newspaper, founded 1703. Former official government gazette. Restructured 2023 as digital-first public interest outlet. RSS via Google News filter."
   },
   {
@@ -10778,7 +10778,7 @@
     "tier": "independent",
     "country": "EE",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Estonian news magazine. Covers Estonian politics, tech sector (e-governance, digital society), Baltic affairs, and NATO eastern flank."
   },
   {
@@ -10789,7 +10789,7 @@
     "tier": "international",
     "country": "LT",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Lithuania's largest online news portal. Part of Ekspress Grupp. English edition covers Lithuanian, Baltic, and EU affairs."
   },
   {
@@ -10800,7 +10800,7 @@
     "tier": "independent",
     "country": "LU",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Luxembourg news. Part of Maison Moderne. Covers Luxembourg politics, EU institutions, and financial sector."
   },
   {
@@ -10811,7 +10811,7 @@
     "tier": "independent",
     "country": "IS",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English-language Icelandic and Nordic news. Covers Nordic politics, environment, Arctic affairs, and Icelandic governance."
   },
   {
@@ -10822,7 +10822,7 @@
     "tier": "independent",
     "country": "GE",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Georgia's premier English-language news outlet. Founded 2001 by UN Association of Georgia. Independent coverage of Georgian politics, EU/NATO aspirations, and South Caucasus affairs."
   },
   {
@@ -10833,7 +10833,7 @@
     "tier": "independent",
     "country": "XK",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Kosovo's English-language investigative news outlet. Covers Kosovo politics, Serbia-Kosovo dialogue, and Western Balkans affairs. Independent journalism."
   },
   {
@@ -10844,7 +10844,7 @@
     "tier": "international",
     "country": "FR",
     "type": "broadcast",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "France's 24-hour public news channel (France Televisions). National reference for breaking French news. RSS via Google News filter."
   },
   {
@@ -10855,7 +10855,7 @@
     "tier": "international",
     "country": "DE",
     "type": "broadcast",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Deutsche Welle Europe-focused feed. German public international broadcaster. Dedicated European affairs coverage including EU politics and policy."
   },
   {
@@ -10877,7 +10877,7 @@
     "tier": "independent",
     "country": "BE",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Independent Brussels-based news outlet covering EU policy, institutions, and European affairs."
   },
   {
@@ -10888,7 +10888,7 @@
     "tier": "independent",
     "country": "BE",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Brussels-based online news outlet covering EU institutions and European policy. Regular coverage of European Parliament and Commission affairs."
   },
   {
@@ -10899,7 +10899,7 @@
     "tier": "independent",
     "country": "BE",
     "type": "nonprofit",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Brussels-based economic policy think tank. Founded 2005. Research-driven analysis of EU economic governance, trade, and fiscal policy. Funded by EU governments and institutions."
   },
   {
@@ -10932,7 +10932,7 @@
     "tier": "international",
     "country": "IN",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Major Indian English daily, founded 1932 in Chennai. Covers national politics, South India. Express Publications. RSS via Google News filter (native RSS deprecated)."
   },
   {
@@ -10943,7 +10943,7 @@
     "tier": "international",
     "country": "IN",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Historic Kolkata-based English daily, founded 1875. Known for editorial independence. Strong Eastern India and international coverage. RSS via Google News filter."
   },
   {
@@ -10954,7 +10954,7 @@
     "tier": "international",
     "country": "IN",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "India's largest financial news platform. Network18 group. Covers markets, economy, personal finance. Data-driven business journalism. RSS via Google News filter."
   },
   {
@@ -10965,7 +10965,7 @@
     "tier": "international",
     "country": "IN",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Hyderabad-based English daily, founded 1938. Strong Telangana and Andhra Pradesh coverage. Deccan Chronicle Holdings. Maintains editorial corrections policy."
   },
   {
@@ -10987,7 +10987,7 @@
     "tier": "independent",
     "country": "IN",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Indian internet news portal, founded 1996. Pioneer of Indian online news. Mix of original reporting and curated content. Listed on NASDAQ. Mumbai-based."
   },
   {
@@ -11009,7 +11009,7 @@
     "tier": "independent",
     "country": "IN",
     "type": "nonprofit",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "India's first data journalism initiative, founded 2011. Nonprofit. Uses government data to produce accountability journalism on public policy. Winner of multiple data journalism awards."
   },
   {
@@ -11020,7 +11020,7 @@
     "tier": "independent",
     "country": "IN",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Odisha-based English/Odia news outlet, founded 1972. Largest circulated Odia daily with English digital edition. Strong Eastern India regional coverage filling geographic gap."
   },
   {
@@ -11042,7 +11042,7 @@
     "tier": "international",
     "country": "PK",
     "type": "broadcast",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Pakistan's largest private TV news network, founded 2002. Jang Group. Extensive political and security coverage. Has faced government pressure but maintains editorial independence."
   },
   {
@@ -11086,7 +11086,7 @@
     "tier": "international",
     "country": "PK",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Pakistani English daily, founded 2010. Independently owned. Covers politics, economy, and social issues. Lahore-based. RSS via Google News filter."
   },
   {
@@ -11108,7 +11108,7 @@
     "tier": "international",
     "country": "PK",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Pakistan's premier financial daily, founded 1965. Covers markets, economy, trade policy. Data-driven business journalism. Karachi-based."
   },
   {
@@ -11119,7 +11119,7 @@
     "tier": "international",
     "country": "BD",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "English edition of Bangladesh's highest-circulation daily. Founded 1998. Mediastar Ltd. Independent editorial stance. Covers Bangladesh politics, economy, and South Asian affairs."
   },
   {
@@ -11130,7 +11130,7 @@
     "tier": "international",
     "country": "BD",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Bangladesh's first online news portal, founded 2006. Pioneer of digital journalism in Bangladesh. Covers politics, business, sports. Independently operated."
   },
   {
@@ -11141,7 +11141,7 @@
     "tier": "independent",
     "country": "BD",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Bangladeshi business and news outlet. Covers economy, markets, trade, and policy. Digital-first with original business journalism focused on Bangladesh and South Asia."
   },
   {
@@ -11152,7 +11152,7 @@
     "tier": "international",
     "country": "BD",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Bangladesh's leading financial daily, founded 1993. International Publications Ltd. Covers economy, trade, banking, and South Asian business. RSS via Google News filter."
   },
   {
@@ -11174,7 +11174,7 @@
     "tier": "international",
     "country": "LK",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Major Sri Lankan English daily, founded 1981. Upali Newspapers Ltd. Covers politics, defense, and economy. Known for independent editorial stance. Colombo-based."
   },
   {
@@ -11185,7 +11185,7 @@
     "tier": "independent",
     "country": "NP",
     "type": "digital",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Nepal's most-visited news website, English edition. Founded 2012. Digital-first with original reporting on Nepali politics, economy, and social issues. Kathmandu-based."
   },
   {
@@ -11196,7 +11196,7 @@
     "tier": "international",
     "country": "NP",
     "type": "broadsheet",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Nepal's largest-selling English daily, founded 2001. International Media Network. Covers national politics, economy, and South Asian affairs. RSS via Google News filter."
   },
   {
@@ -11218,7 +11218,7 @@
     "tier": "international",
     "country": "LK",
     "type": "broadcast",
-    "political_lean_baseline": "center",
+    "political_lean_baseline": "unrated",
     "credibility_notes": "Sri Lankan broadcast news platform by Capital Maharaja Group. English-language TV news and digital. Covers politics, economy, and security. RSS via Google News filter."
   }
 ]

@@ -331,6 +331,20 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
         : tiltLabel(lean);
   const full = isFullDetail(size);
 
+  // "Lean measured from 9 of 34 analyzed articles." Shown only when some
+  // coverage was genuinely excluded, so the common fully-measured case stays
+  // uncluttered. Hidden entirely when nothing was measured — the label is
+  // already "Flat"/"Unscored" there and a "0 of N" line would just be noise.
+  const measured = data.biasSpread?.leanMeasuredCount;
+  const measuredTotal = data.biasSpread?.leanTotalCount;
+  const measuredNote =
+    typeof measured === "number" &&
+    typeof measuredTotal === "number" &&
+    measured > 0 &&
+    measured < measuredTotal
+      ? `Lean measured from ${measured} of ${measuredTotal} analyzed articles`
+      : null;
+
   /** Real per-source lean values — loaded on first popup open, cached by storyId */
   const [sourceLeans, setSourceLeans] = useState<number[] | null>(null);
 
@@ -439,6 +453,14 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
                   ? "Not enough analytical signal to determine lean"
                   : tiltDescriptor(lean)}
           </p>
+        )}
+        {/* Measurement coverage. Most outlets in the roster are not placed on
+            the left/right axis, and their calm copy carries no partisan signal,
+            so they are real coverage but not a lean reading and are excluded
+            from the mean (migration 078). Say so rather than implying the whole
+            roster voted on this number. */}
+        {stage >= 2 && measuredNote && (
+          <p className="sigil-popup__measured">{measuredNote}</p>
         )}
         {/* KDE spectrum — real shape when source leans are loaded, Gaussian fallback */}
         <div className="sigil-popup__spectrum">

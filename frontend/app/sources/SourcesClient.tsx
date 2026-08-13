@@ -51,7 +51,7 @@ const AXES_DATA: {
     range: "0 to 100",
     low: "Far Left",
     high: "Far Right",
-    what: "Where an article falls on the left-right spectrum, read from two things: the outlet\u2019s track record and the article\u2019s own words. On a short item the record weighs more; on a full article the words weigh more.",
+    what: "Where an article falls on the left-right spectrum. The outlet\u2019s track record sets the anchor and the article\u2019s own words move it from there, within bounds, so calm copy from a partisan outlet stays near its record and partisan copy moves further out. Where an outlet has no placement on this axis, the article is read from its words alone, and if they carry no signal the article counts as coverage without voting on the lean.",
     signals: [
       "Keyword frequency against curated left/right phrase lists",
       "Positive or negative tone around named political figures",
@@ -566,10 +566,22 @@ function Methodology({ sources }: { sources: SpectrumSource[] }) {
             things instead: what the outlet has published before, and what this
             specific article actually says. Both, across six axes, by rule-based
             NLP. No LLM calls. The same text always produces the same scores.
-            On a short wire item there is little text to read, so the outlet&rsquo;s
-            track record carries more of the score. On a full article, the words
-            carry more. Sensationalism, opinion, and framing are read from the
-            words of a full article. Every score discloses how it was reached.
+            On political lean the track record sets the anchor and the words
+            move the score from there, within bounds, so an outlet&rsquo;s
+            reputation is never erased by a single calm article and never
+            overrides one that reads against type. A short wire item has little
+            text to move it, so it sits close to the record.
+            Sensationalism, opinion, and framing are read from the words of a
+            full article. Every score discloses how it was reached.
+            <br /><br />
+            Not every outlet is placed on a left-right axis. It describes
+            American and British politics well and describes much of the world
+            badly, so a national daily in Nairobi or Tokyo is marked{" "}
+            <em>not placed on this axis</em> rather than assigned a position we
+            cannot defend. Those articles are still read for their own words,
+            and still count as coverage. What they do not do is vote on which
+            way a story leans, because inventing a placement would put a
+            measurement in front of you that we never made.
           </p>
         </div>
         <div className="meth-scene__viz" ref={dotRef}>
