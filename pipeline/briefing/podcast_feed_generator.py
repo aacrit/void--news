@@ -39,7 +39,7 @@ SHOW_META = {
     "world": {
         "title": "void --onair: World Brief",
         "description": (
-            "Twice-daily world news briefing. Two journalists, 419 curated sources, "
+            "Daily world news briefing. 1,016 curated sources, "
             "every story scored for bias on six axes. No ads. No paywall."
         ),
     },
