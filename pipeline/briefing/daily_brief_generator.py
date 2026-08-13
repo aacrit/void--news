@@ -1385,15 +1385,19 @@ def _select_opinion_cluster(clusters: list[dict], edition: str) -> dict | None:
                 edition_clusters.append(c)
 
     if not edition_clusters:
-        # Last resort: any cluster with a summary or title, regardless of source count
-        for c in clusters:
-            sections = c.get("sections") or [c.get("section", "world")]
-            if edition in sections and ((c.get("summary") or "").strip() or (c.get("title") or "").strip()):
-                edition_clusters.append(c)
-        if edition_clusters:
-            print(f"  [opinion] Using last-resort cluster selection (no multi-source clusters found)")
-
-    if not edition_clusters:
+        # No third tier. There used to be a last-resort pass that accepted ANY
+        # cluster "regardless of source count", and on 2026-08-13 it fired:
+        #   [opinion] Using last-resort cluster selection (no multi-source clusters found)
+        #   [opinion] Generated LEFT editorial on "Fox News Host Calls BS on
+        #             Trump's Big Brag" (373 words, 1 sources, ...)
+        # That publishes a lean-labelled editorial under the masthead arguing
+        # from a SINGLE outlet's account of an event, which is precisely the
+        # thing this product exists to counter. Two sources is the floor (the
+        # relax pass above); below it the honest output is no opinion column at
+        # all. The caller treats None as "skip opinion" and still ships the
+        # brief, so the degradation is graceful.
+        print(f"  [opinion:{edition}] No cluster with 2+ sources — skipping "
+              f"opinion rather than arguing from a single source")
         return None
 
     # Score: per-edition rank * (1 + divergence_bonus) * locality_bonus

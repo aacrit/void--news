@@ -1920,6 +1920,27 @@ MEGA_OVERMERGE_ARTICLE_FLOOR = 30
 # whose headlines barely overlap pay for NER).
 MEGA_OVERMERGE_SMALLBAG_ARTICLE_FLOOR = 3
 
+# ...but the GROSS trigger specifically needs more members than that before its
+# statistics mean anything, because entity_convergence is a COARSE RATIO k/n.
+# At n=3 it can only be 0.33, 0.67 or 1.0 against a 0.40 floor, so a genuinely
+# coherent 3-article story is force-split the moment spaCy NER misses the shared
+# entity in 2 of its 3 members — which is NER noise, not evidence of a bag.
+#
+# Measured on the 2026-08-13 run, which force-split 289 clusters:
+#     115 gross splits, 103 of them on clusters with >=3 SOURCES (i.e. stories
+#     that met the frontend's display threshold and were destroyed anyway);
+#     52 of the 115 had entity_conv of exactly 0.33 (the n=3 quantization) and
+#     23 more had exactly 0.25 (the n=4 case); 32 splits were on n=3 alone.
+# The ranked feed that run came out with 1src on nearly every top entry.
+#
+# Gate the gross AND-gate at 8 members, where the floor corresponds to "top
+# entity absent from more than half the pile" rather than to a single NER miss.
+# The exact-shape triggers keep the lower floor: single-publisher reads
+# dominant_publisher_share, which is counted from publisher slugs (no NER, no
+# quantization problem), and it splits genuine one-outlet feed dumps -- of its
+# 169 splits that run, only 14 touched a cluster with >=3 sources.
+MEGA_OVERMERGE_GROSS_ARTICLE_FLOOR = 8
+
 # O4 (2026-08-05): over-merge FORCE-SPLIT gate. The 2026-06-28 O3 path only
 # FLAGGED (rank penalty) and only fired when source_count >= 40 — so the
 # wire-collapsed "desk bag" over-merges live in production (16-38 source, ~50-
@@ -2121,6 +2142,7 @@ def _overmerge_split_reason_smallbag(
     title_cov: float,
     dom_pub_share: float,
     entity_dominant_share: float,
+    n_articles: int = 0,
 ) -> str | None:
     """Small-bag (n < MEGA_OVERMERGE_ARTICLE_FLOOR) split decision.
 
@@ -2152,10 +2174,14 @@ def _overmerge_split_reason_smallbag(
         and title_cov >= MEGA_OVERMERGE_COHERENT_COVERAGE_FLOOR
     ):
         return None
-    # Gross garbage: near-zero shared entities AND near-zero titles (unchanged
-    # from the historical small-bag gate).
+    # Gross garbage: near-zero shared entities AND near-zero titles. Gated at
+    # MEGA_OVERMERGE_GROSS_ARTICLE_FLOOR because entity_conv is a coarse k/n
+    # ratio: below that, one spaCy NER miss is indistinguishable from a real
+    # grab-bag and the rule shreds coherent 3-6 article stories (see the
+    # constant's note for the measured 2026-08-13 damage).
     if (
-        entity_conv < MEGA_OVERMERGE_ENTITY_CONV_FLOOR
+        n_articles >= MEGA_OVERMERGE_GROSS_ARTICLE_FLOOR
+        and entity_conv < MEGA_OVERMERGE_ENTITY_CONV_FLOOR
         and title_jac < MEGA_OVERMERGE_TITLE_JACCARD_FLOOR
     ):
         return "gross"
@@ -2340,7 +2366,10 @@ def split_mega_clusters(
             cheap_tj = _cheap_avg_title_jaccard(arts)
             cheap_dom = _cheap_dominant_publisher_share(arts)
             admit = (
-                cheap_tj < MEGA_OVERMERGE_TITLE_JACCARD_FLOOR
+                # gross candidate — only worth NER above the gross floor, since
+                # below it the gross trigger can no longer fire (coarse k/n).
+                (n_articles >= MEGA_OVERMERGE_GROSS_ARTICLE_FLOOR
+                 and cheap_tj < MEGA_OVERMERGE_TITLE_JACCARD_FLOOR)
                 or (cheap_dom >= SINGLE_PUB_DOMINANCE_FLOOR
                     and cheap_tj < SINGLE_PUB_TITLE_JAC_CEIL)
                 or cheap_tj >= GENERIC_BRIDGE_TITLE_JAC_FLOOR
@@ -2364,6 +2393,7 @@ def split_mega_clusters(
                     title_cov=title_cov,
                     dom_pub_share=dom_pub_share,
                     entity_dominant_share=entity_dominant_share,
+                    n_articles=n_articles,
                 )
                 if reason:
                     sub = _force_split_cluster(c)
