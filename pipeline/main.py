@@ -1668,7 +1668,23 @@ def main():
         chunk_pairs = new_article_rows[i:i + 200]
         chunk_rows = [row for row, _ in chunk_pairs]
         try:
-            result = supabase.table("articles").insert(chunk_rows).execute()
+            # upsert(ignore_duplicates) instead of insert: a chunk carries 200
+            # rows and ONE already-present URL used to abort the whole chunk
+            # with 23505 (duplicate key ... "articles_url_key"), dropping it
+            # into the per-row fallback below. On 2026-08-13 that fired on 31
+            # chunks, turning 31 batch calls into ~6,200 individual PostgREST
+            # requests. That amplification is what exhausted the connection's
+            # HTTP/2 stream budget and killed the run at step 8 (see
+            # utils/supabase_client._harden_http_session). Step 3b's known-URL
+            # filter cannot prevent it: duplicates also arrive WITHIN a single
+            # fetch (the same story surfacing through two feeds, Google News
+            # aliases), so the collision is inside the chunk, not against the DB.
+            # Postgres resolves it server-side now and the batch survives.
+            result = (
+                supabase.table("articles")
+                .upsert(chunk_rows, on_conflict="url", ignore_duplicates=True)
+                .execute()
+            )
             if result.data:
                 # Map returned IDs back to original article dicts
                 url_to_id = {r["url"]: r["id"] for r in result.data if r.get("url")}
