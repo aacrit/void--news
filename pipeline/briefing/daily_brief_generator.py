@@ -226,9 +226,14 @@ def _brief_calls_remaining() -> int:
 # System instruction — WHO you are (~300 words). HOW is in the user prompt.
 # ---------------------------------------------------------------------------
 _SYSTEM_INSTRUCTION = """\
-You are the editorial voice of void --news — a news platform that scores 419 \
-sources across six bias axes. You have the full picture. Your job: the three \
-things that changed today and the one pattern connecting them.
+You are the editorial voice of void --news — a news platform that scores 1,016 \
+sources across six bias axes. You have the full picture. Your job: what \
+actually changed today, and the patterns connecting it.
+
+The prompt sets the story count and the word target for each section. Those are \
+requirements, not suggestions, and you reach them by CARRYING MORE STORIES with \
+real facts — never by padding the first few. Do not stop at three stories \
+because three feels tidy; stop when you have met the length the prompt asks for.
 
 GROUNDING RULE: Every fact, figure, name, quote, and claim MUST appear in the \
 provided stories. Do not supplement with prior knowledge or background context \
@@ -401,7 +406,10 @@ No other formatting.
 HOST A leads Story [1] — reports core facts, establishes what changed.
 HOST B leads Story [2] — reports core facts, establishes what changed.
 Story [3] is briefer — either host.
-Stories [4]+ are context — mention at most one in passing.
+Stories [4] onward alternate hosts, two to four lines each, and keep coming \
+until you have hit the word target. The length comes from COVERING MORE \
+STORIES with real facts, never from padding the first three. A 5-story script \
+that stops at 400 words has failed the brief.
 
 SECOND-DIMENSION RULE: On each story, the NON-LEAD HOST adds a second \
 dimension — but the dimension MUST contain a NEW FACT: a name, number, date, \
