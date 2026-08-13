@@ -189,11 +189,20 @@ export function isUnscoredTilt(
    story can read as a deliberate "Right" or "Left" editorial judgment when it is
    nothing of the sort.
 
-   A glanceable partisan label is therefore asserted ONLY when the tilt is both
-   MEANINGFUL (large enough magnitude) and WELL-SUPPORTED (enough sources, enough
-   analytical confidence, and either a real left/right split or a strong-enough
-   tilt to stand alone). The gate is fully symmetric: Left and Right are judged
-   by the same magnitude/support thresholds. When a tilt fails the gate:
+   A glanceable partisan label is therefore asserted ONLY when it is
+   WELL-SUPPORTED (enough sources, enough analytical confidence) AND the tilt
+   shows up in one of two independent ways:
+     1. the MEAN is clearly off center (large magnitude, backed by a real
+        left/right split or strong enough to stand alone); or
+     2. the ROSTER of coverage is lopsided (wing-share imbalance), with the mean
+        agreeing in sign.
+   Route 2 exists because route 1 alone is not reachable for the stories it is
+   shown on. The mean averages sources sitting on both sides, so it is
+   compressed toward 50 by construction: on 2026-08-13 the entire live top-50
+   sat within |lean-50| <= 6 against a threshold of 8, and 52 of 52 cards
+   rendered "Flat". The wing counts are not compressed that way, so they carry
+   the direction the mean loses. The gate stays fully symmetric: Left and Right
+   are judged by the same thresholds on both routes. When a tilt fails the gate:
      - genuinely split (both wings present AND high polarization) -> "Contested".
      - otherwise -> "Flat" (no clear lean, and no confident numeric score).
    This changes label TEXT and numeric-score visibility ONLY; the Sigil beam
@@ -216,6 +225,17 @@ export const LABEL_MEANINGFUL_MARGIN = 8;
 /** A very strong tilt (|lean-50| >= this) stands on its own without needing a
  *  measured left/right split behind it. */
 export const LABEL_STRONG_MARGIN = 18;
+/** Signed wing-share imbalance |R-L|/(L+C+R) at which the ROSTER of coverage is
+ *  lopsided enough to assert a direction on its own.
+ *
+ *  Why a second route at all: the cluster lean is a MEAN, and a mean over
+ *  sources that sit on both sides is compressed toward 50 by construction. It
+ *  is the wrong statistic to threshold for "which way does this story lean" —
+ *  a story carried 3:1 by right-leaning outlets can still average 55. The wing
+ *  counts are not compressed that way, so they carry the direction the mean
+ *  loses. The mean still has to AGREE in sign, so this only ever confirms a
+ *  tilt the score already shows; it never invents one. */
+export const LABEL_MIN_SHARE_TILT = 0.2;
 /** Otherwise a directional label needs genuine left/right divergence: the
  *  coverage's polarization must reach this. */
 export const LABEL_MIN_SUPPORT_POLARIZATION = 35;
@@ -246,8 +266,24 @@ export function bothWingsPresent(spread?: WingCounts | null): boolean {
 }
 
 /**
+ * Signed wing-share imbalance in [-1, +1]: negative = coverage roster tilts
+ * left, positive = tilts right, 0 = symmetric or all-center. Returns 0 when
+ * there are too few analyzed articles to read anything from the split.
+ */
+export function leanShareTilt(spread?: WingCounts | null): number {
+  if (!spread) return 0;
+  const left = spread.leanLeftCount ?? 0;
+  const center = spread.leanCenterCount ?? 0;
+  const right = spread.leanRightCount ?? 0;
+  const total = left + center + right;
+  if (total < 3) return 0;
+  return (right - left) / total;
+}
+
+/**
  * Decide how a story's lean LABEL should render:
- *   "confident"      meaningful AND well-supported tilt -> keep the directional label + score.
+ *   "confident"      well-supported tilt, shown either by the mean's magnitude
+ *                    or by a lopsided coverage roster -> keep the directional label + score.
  *   "contested"      failed gate but genuinely split (both wings + high polarization) -> "Contested".
  *   "no-clear-lean"  failed gate, not genuinely split -> "Flat" (score withheld).
  *
@@ -263,16 +299,30 @@ export function leanLabelState(
   const margin = Math.abs(lean - 50);
   const pol = spread?.polarization ?? 0;
   const conf = spread?.aggregateConfidence ?? 1;
+  const shareTilt = leanShareTilt(spread);
 
-  // Symmetric "meaningful AND well-supported" test — the SAME thresholds decide
-  // Left and Right, so a dead-eagle drift and an eclipse-glasses recall are
-  // suppressed exactly the way the false center is.
-  const wellSupportedTilt =
+  // Support is common to both routes below: enough outlets behind the read, and
+  // enough analytical confidence in it.
+  const wellSupported =
+    sourceCount >= LABEL_MIN_SOURCES && conf >= LABEL_MIN_CONFIDENCE;
+
+  // Route 1 — the MEAN itself is clearly off center. Symmetric: the SAME
+  // thresholds decide Left and Right, so a dead-eagle drift and an
+  // eclipse-glasses recall are suppressed exactly the way the false center is.
+  const meanIsMeaningful =
     margin >= LABEL_MEANINGFUL_MARGIN &&
-    sourceCount >= LABEL_MIN_SOURCES &&
-    conf >= LABEL_MIN_CONFIDENCE &&
     (pol >= LABEL_MIN_SUPPORT_POLARIZATION || margin >= LABEL_STRONG_MARGIN);
-  if (wellSupportedTilt) return "confident";
+
+  // Route 2 — the ROSTER of coverage is lopsided. A mean over sources on both
+  // sides is compressed toward 50 by construction, so a genuinely one-sided
+  // story can sit at 55 and never clear Route 1. The wing counts still show it.
+  // Requires the mean to agree in sign, so this confirms direction rather than
+  // inventing it.
+  const rosterIsLopsided =
+    Math.abs(shareTilt) >= LABEL_MIN_SHARE_TILT &&
+    Math.sign(shareTilt) === Math.sign(lean - 50);
+
+  if (wellSupported && (meanIsMeaningful || rosterIsLopsided)) return "confident";
 
   const genuinelyContested =
     bothWingsPresent(spread) && pol >= CONTESTED_MIN_POLARIZATION;

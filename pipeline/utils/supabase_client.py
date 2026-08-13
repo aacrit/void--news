@@ -8,6 +8,7 @@ functions for common database operations.
 import os
 from datetime import datetime, timezone
 
+import httpx
 from dotenv import load_dotenv
 from supabase import create_client, Client
 
@@ -23,6 +24,70 @@ if not SUPABASE_URL or not SUPABASE_KEY:
     )
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+
+# ---------------------------------------------------------------------------
+# HTTP/2 stream exhaustion guard.
+#
+# postgrest-py and storage3 both hardcode ``http2=True`` on their httpx session
+# (postgrest/_sync/client.py, storage3/_sync/client.py), and this module hands
+# out ONE module-level client that every pipeline module imports by name and
+# reuses for the whole run. A full daily run issues far more than 10,000
+# PostgREST requests across ~2.5 hours, all multiplexed onto that single
+# long-lived HTTP/2 connection. Client-initiated HTTP/2 streams are numbered
+# 1, 3, 5, ..., so request ~10,000 lands on stream 19999 — at which point the
+# edge sends GOAWAY and every subsequent request on that connection dies:
+#
+#   2026-08-13T14:18:56  [error] Failed to insert cluster:
+#     <ConnectionTerminated error_code:0, last_stream_id:19999>
+#
+# That is what has been killing the daily pipeline: the 08-12 and 08-13
+# scheduled runs both reached step 8 (storing clusters), lost the connection
+# mid-write, and were cancelled at the job timeout having stored nothing. The
+# feed went stale.
+#
+# Fix: move the session to HTTP/1.1, where httpx's connection pool transparently
+# opens a fresh connection whenever the server closes one, so there is no
+# per-connection request ceiling to exhaust. Add transport-level retries for
+# connect failures on top. Throughput is unaffected in practice: PostgREST calls
+# here are sequential-ish and pool-limited, not stream-multiplexed.
+#
+# Deliberately fail-open — if a future postgrest/storage3 release moves these
+# internals, warn and keep the stock client rather than break the pipeline.
+# ---------------------------------------------------------------------------
+def _harden_http_session(api, label: str) -> bool:
+    """Rebuild ``api.session`` on HTTP/1.1 with connect retries. Returns success."""
+    old = getattr(api, "session", None)
+    if old is None:
+        return False
+    try:
+        new = type(old)(
+            base_url=old.base_url,
+            headers=old.headers,
+            timeout=old.timeout,
+            follow_redirects=True,
+            http2=False,
+            transport=httpx.HTTPTransport(retries=3),
+        )
+    except Exception as exc:  # pragma: no cover - defensive
+        print(f"  [warn] Could not harden {label} HTTP session ({exc}); "
+              f"leaving HTTP/2 session in place")
+        return False
+    api.session = new
+    try:
+        old.close()
+    except Exception:
+        pass
+    return True
+
+
+for _api_attr, _label in (("postgrest", "postgrest"), ("storage", "storage")):
+    try:
+        _api = getattr(supabase, _api_attr, None)
+        if _api is not None:
+            _harden_http_session(_api, _label)
+    except Exception as _exc:  # pragma: no cover - defensive
+        print(f"  [warn] Skipped {_label} HTTP hardening: {_exc}")
 
 
 def insert_article(article: dict) -> dict | None:
