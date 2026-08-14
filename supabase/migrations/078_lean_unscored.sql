@@ -32,6 +32,29 @@ CREATE INDEX IF NOT EXISTS idx_bias_scores_measured_lean
     WHERE lean_unscored = FALSE;
 
 -- ============================================================================
+-- Widen the sources CHECK constraint to admit 'unrated'.
+--
+-- MUST land before the next pipeline run. main.py step 1 upserts data/sources.json
+-- into the sources table on every run, and 294 rows now carry
+-- political_lean_baseline = 'unrated'. The 7-point constraint from migration 007
+-- does not list it, so without this the upsert fails on those rows at the very
+-- first step of the pipeline.
+--
+-- 'unrated' is NOT an eighth point on the spectrum. It records that the outlet
+-- has not been placed on the left/right axis at all -- distinct from 'center',
+-- which is a positive finding of centrism. See BASELINE_MAP in
+-- pipeline/analyzers/political_lean.py.
+-- ============================================================================
+
+ALTER TABLE sources DROP CONSTRAINT IF EXISTS sources_political_lean_baseline_check;
+
+ALTER TABLE sources ADD CONSTRAINT sources_political_lean_baseline_check
+  CHECK (political_lean_baseline IN (
+    'far-left', 'left', 'center-left', 'center',
+    'center-right', 'right', 'far-right', 'varies', 'unrated'
+  ));
+
+-- ============================================================================
 -- Redefine cluster_bias_summary so every LEAN aggregate is computed over the
 -- MEASURED subset only.
 --
