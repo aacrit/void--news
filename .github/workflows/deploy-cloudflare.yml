@@ -20,13 +20,24 @@ on:
   # Deterministic daily backstop. The "News Pipeline" workflow_run above is the
   # fast path (redeploys ~right after the run completes), but GitHub's
   # workflow_run event is known to lag or silently drop (it failed to fire on
-  # 2026-08-10, leaving the prerendered feed a day stale until a manual deploy).
-  # The daily pipeline is scheduled 11:00 UTC and finishes by ~13:35 even with
-  # GitHub's scheduling delay + the 150-min job cap, so a 15:00 UTC rebuild
-  # always publishes that day's fresh feed + archive pages. The build's
-  # fail-loud guard (<20 stories) still blocks an empty deploy.
+  # 2026-08-10, leaving the prerendered feed a day stale until a manual deploy;
+  # it dropped again on 2026-08-14).
+  #
+  # This MUST stay behind the pipeline's worst-case finish or it publishes the
+  # PREVIOUS day's data and the fast path never corrects it. On 2026-08-14 it
+  # did exactly that: the pipeline started 11:48 (GitHub scheduling delay off
+  # the 11:00 cron) and ran 238 min to 15:46, while this backstop fired at
+  # 15:44 and rebuilt from yesterday's feed. The old 15:00 slot assumed the
+  # pipeline "finishes by ~13:35 ... with the 150-min job cap"; that cap is now
+  # 240 min, which invalidated the assumption.
+  #
+  # Worst case now: 11:00 cron + ~60 min GitHub delay + 240 min job cap = 16:00.
+  # 17:00 leaves an hour of margin. The step-5 process pool should pull real
+  # runs back to ~140 min (finishing ~14:10), but this backstop is sized for the
+  # ceiling, not the expected case. The build's fail-loud guard (<20 stories)
+  # still blocks an empty deploy.
   schedule:
-    - cron: '0 15 * * *'
+    - cron: '0 17 * * *'
   workflow_dispatch:
 
 permissions:
