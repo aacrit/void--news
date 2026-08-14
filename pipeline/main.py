@@ -512,6 +512,80 @@ def run_bias_analysis(
     return scores
 
 
+def _bias_worker(payload: tuple) -> dict:
+    """Score one article. MODULE-LEVEL so a process pool can pickle it.
+
+    Returns everything the parent needs rather than mutating shared state:
+    across processes, a mutation to `article` inside the worker is invisible to
+    the parent, so `category` (which step 7 reads back off the article) is
+    returned explicitly and re-applied caller-side.
+    """
+    article, source, topic_lean_data = payload
+    category = article.get("category") or categorize_early(article)
+    scores = run_bias_analysis(article, source, topic_lean_data=topic_lean_data)
+    article_id = article.get("id", "")
+    scores["article_id"] = article_id
+    return {"article_id": article_id, "scores": scores, "category": category}
+
+
+def _run_bias_pool(payloads: list[tuple], total: int) -> list[dict]:
+    """Run step 5's per-article scoring across PROCESSES, not threads.
+
+    Step 5 used ThreadPoolExecutor(max_workers=8). The docstring claimed spaCy
+    releases the GIL so threads win; measured on a 4-vCPU box (same shape as
+    ubuntu-latest), the opposite is true by a wide margin -- eight threads
+    thrash on the shared spaCy model:
+
+        serial                172.8 ms/article    1.00x
+        threads(8) [old]     1185.9 ms/article    0.15x   <- 6.9x SLOWER
+        processes(4)           46.2 ms/article    3.74x
+
+    That 1185.9 ms extrapolates to 67.6 min for the 3,422-article run whose
+    step 5 actually took 71 min, so the model matches production closely. The
+    same phase should now cost ~3 min, which is most of the reason a healthy run
+    sat at 205 of its 240-minute ceiling.
+
+    Falls back to SERIAL on any pool failure -- never back to threads, which are
+    the slowest option available. Serial is ~10 min at production volume, still
+    far better than the 71 min this replaces. Set VOID_BIAS_SERIAL=1 to force it.
+    """
+    results: list[dict] = []
+
+    def _serial(reason: str = "") -> list[dict]:
+        if reason:
+            print(f"  [warn] process pool unavailable ({reason}); scoring serially")
+        out = []
+        for i, payload in enumerate(payloads, 1):
+            try:
+                out.append(_bias_worker(payload))
+            except Exception as exc:
+                print(f"  [warn] Bias analysis task failed: {exc}")
+            if i % 250 == 0:
+                print(f"  Analyzed {i}/{total}...")
+        return out
+
+    if os.getenv("VOID_BIAS_SERIAL") == "1":
+        return _serial()
+
+    try:
+        import multiprocessing as _mp
+        from concurrent.futures import ProcessPoolExecutor
+        # Explicit fork: the default start method re-imports __main__ under
+        # spawn, which would re-enter this script in every worker.
+        ctx = _mp.get_context("fork")
+        workers = max(1, min(4, (os.cpu_count() or 2)))
+        with ProcessPoolExecutor(max_workers=workers, mp_context=ctx) as pool:
+            done = 0
+            for res in pool.map(_bias_worker, payloads, chunksize=16):
+                results.append(res)
+                done += 1
+                if done % 250 == 0:
+                    print(f"  Analyzed {done}/{total}...")
+        return results
+    except Exception as exc:
+        return _serial(f"{type(exc).__name__}: {str(exc)[:80]}")
+
+
 def _batch_upsert(table: str, rows: list[dict], chunk_size: int = 200,
                   on_conflict: str | None = None) -> int:
     """
@@ -1855,11 +1929,11 @@ def main():
     if not ANALYSIS_AVAILABLE:
         print("\n[5-9] Skipping analysis/clustering (NLP deps not installed). Fetch-only mode.")
     else:
-        # Step 5: Bias analysis with computed confidence + batch DB insert
-        # Parallelised with 4 workers — spaCy releases the GIL during C-extension
-        # parsing, so concurrent threads provide real throughput gains.
-        # 4 workers balances CPU throughput against memory (each thread holds a
-        # full spaCy parse + 5 analyzer passes per article).
+        # Step 5: Bias analysis with computed confidence + batch DB insert.
+        # Runs across PROCESSES (see _run_bias_pool). This used a thread pool on
+        # the theory that spaCy releases the GIL so threads win; measured, eight
+        # threads run 6.9x SLOWER than a plain serial loop and ~26x slower than
+        # four processes, which is where most of step 5's 71 minutes went.
         # 2026-05-24 — when --recluster-only is set, skip the analysis (the
         # article_bias_map was preloaded from DB at the top of main()) and
         # proceed directly into step 6 clustering with the existing scores.
@@ -1868,7 +1942,8 @@ def main():
             print(f"\n[5/9] Bias analysis SKIPPED (--recluster-only) — "
                   f"using {len(article_bias_map)} preloaded score rows.")
         else:
-            print(f"\n[5/9] Running bias analysis on {len(stored_articles)} articles (8 workers)...")
+            print(f"\n[5/9] Running bias analysis on {len(stored_articles)} articles "
+                  f"({'serial' if os.getenv('VOID_BIAS_SERIAL') == '1' else 'process pool'})...")
         # 2026-05-24 — recluster-only fast path: bias analysis body is
         # bypassed via a single-iteration loop guarded by recluster_only.
         # `break` jumps past the body without re-indenting the existing
@@ -1877,8 +1952,6 @@ def main():
             if recluster_only:
                 articles_analyzed = len(article_bias_map)
                 break
-            _analysis_lock = __import__("threading").Lock()
-            _analyzed_count = [0]
 
             # Fix 20 (Axis 6 wire-in): Fetch source_topic_lean EMA data so the
             # political lean analyzer can blend in longitudinal per-source-per-topic
@@ -1913,40 +1986,38 @@ def main():
             except Exception as _tl_err:
                 print(f"    [warn] Could not fetch source_topic_lean: {_tl_err}")
 
-            def _analyze_one(article: dict) -> dict:
+            # Build the payloads up front. Axis 6 needs the article's category,
+            # so early-categorize here (URL+section regex, ~5us) rather than in
+            # the worker: with processes, a category assigned inside the worker
+            # would not be visible to this list, and step 7 reads it back off
+            # these very dicts.
+            _by_id: dict[str, dict] = {}
+            _payloads: list[tuple] = []
+            for article in stored_articles:
                 source_slug = article.get("source_slug", "") or article.get("source_id", "")
                 source = source_map.get(source_slug, {"political_lean_baseline": "center"})
-                # Axis 6: look up topic lean for this article's source + category.
-                # Early-categorize via URL+section; stash on the article so step 7
-                # can use it as a hint (or override with full NLP categorization).
                 source_id = source.get("db_id", "")
                 category = article.get("category") or categorize_early(article)
                 if category:
                     article["category"] = category  # persist for step 7
-                topic_lean_data = topic_lean_map.get((source_id, category)) if source_id and category else None
-                bias_scores = run_bias_analysis(article, source, topic_lean_data=topic_lean_data)
-                bias_scores["article_id"] = article.get("id", "")
-                with _analysis_lock:
-                    _analyzed_count[0] += 1
-                    if _analyzed_count[0] % 50 == 0 or _analyzed_count[0] == 1:
-                        print(f"  Analyzed {_analyzed_count[0]}/{len(stored_articles)}...")
-                return bias_scores
+                topic_lean_data = (
+                    topic_lean_map.get((source_id, category))
+                    if source_id and category else None
+                )
+                _payloads.append((article, source, topic_lean_data))
+                _by_id[article.get("id", "")] = article
 
-            with ThreadPoolExecutor(max_workers=8) as analysis_executor:
-                analysis_futures = {
-                    analysis_executor.submit(_analyze_one, article): article
-                    for article in stored_articles
+            for res in _run_bias_pool(_payloads, len(stored_articles)):
+                bias_scores = res["scores"]
+                art_id = res["article_id"]
+                # Re-apply the worker's category: across processes the worker
+                # mutated its own copy of the article, not ours.
+                if res.get("category") and art_id in _by_id:
+                    _by_id[art_id]["category"] = res["category"]
+                article_bias_map[art_id] = {
+                    k: v for k, v in bias_scores.items() if k != "article_id"
                 }
-                for future in as_completed(analysis_futures):
-                    try:
-                        bias_scores = future.result()
-                        art_id = bias_scores.get("article_id", "")
-                        article_bias_map[art_id] = {
-                            k: v for k, v in bias_scores.items() if k != "article_id"
-                        }
-                        bias_rows_to_insert.append(bias_scores)
-                    except Exception as e:
-                        print(f"  [warn] Bias analysis task failed: {e}")
+                bias_rows_to_insert.append(bias_scores)
 
             # Batch-insert bias scores (200 per chunk vs N individual HTTP calls)
             print(f"  Batch-inserting {len(bias_rows_to_insert)} bias score rows...")
