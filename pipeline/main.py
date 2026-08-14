@@ -44,7 +44,11 @@ from utils.supabase_client import (
 # Phase 2: Bias analyzers — optional (require spaCy/NLTK)
 ANALYSIS_AVAILABLE = False
 try:
-    from analyzers.political_lean import analyze_political_lean
+    from analyzers.political_lean import (
+        analyze_political_lean,
+        BASELINE_MAP as _LEAN_BASELINE_MAP,
+        _is_unrated_source,
+    )
     from analyzers.sensationalism import analyze_sensationalism
     from analyzers.opinion_detector import analyze_opinion
     from analyzers.factual_rigor import analyze_factual_rigor
@@ -380,13 +384,22 @@ def run_bias_analysis(
     full_text_raw = article.get("full_text", "") or ""
     word_count = len(full_text_raw.split())
     if word_count < 150:
-        # Use source baseline for political_lean if available
+        # Use source baseline for political_lean if available. Shares the
+        # analyzer's BASELINE_MAP so a stub and a full article from the same
+        # outlet agree; the old local map here was compressed toward center
+        # (Jacobin 15 vs 10, Fox 75 vs 80), quietly reintroducing on stubs the
+        # same pull to the middle the deviation model removed.
         baseline = str(source.get("political_lean_baseline", "center")).lower()
-        lean_map = {"far-left": 15, "left": 25, "center-left": 38,
-                    "center": 50, "center-right": 62, "right": 75,
-                    "far-right": 85, "varies": 50}
-        scores["political_lean"] = lean_map.get(baseline, 50)
+        scores["political_lean"] = _LEAN_BASELINE_MAP.get(baseline, 50)
         scores["confidence"] = max(0.15, word_count / 500.0)
+        # No analyzer ran on this text at all, so for an outlet with no
+        # placement on the left/right axis there is nothing behind the 50 —
+        # it must not be averaged into the cluster lean as measured centrism.
+        # Stubs are common (RSS excerpts, paywalls, scrape failures), so
+        # leaving this unflagged would leak the false center back in through
+        # the word-count gate. A RATED outlet keeps the flag clear: there the
+        # baseline IS the finding, exactly as in the analyzer.
+        scores["lean_unscored"] = _is_unrated_source(source)
         return scores
 
     # Pre-parse spaCy docs once per DISTINCT analyzer text, then share.
