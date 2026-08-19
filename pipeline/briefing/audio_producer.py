@@ -693,6 +693,27 @@ def _place_proportional_elements(
 # Upload
 # ---------------------------------------------------------------------------
 
+def _fresh_supabase_client():
+    """Create a NEW Supabase client for an end-of-run storage upload, independent
+    of the shared module-level singleton in ``utils.supabase_client``.
+
+    The shared singleton multiplexes 10k+ PostgREST calls across a full ~90-min
+    daily run; by the time audio uploads (~50 min in) its storage session has
+    been closed / exhausted and raises "Cannot send a request, as the client has
+    been closed". The upload then fails silently and the brief carries forward
+    yesterday's audio (this froze On Air at 2026-08-13 for days). A fresh client
+    for the handful of end-of-run uploads sidesteps that entirely — a couple of
+    uploads can never exhaust a new connection."""
+    import os
+    from supabase import create_client
+    url = os.environ.get("SUPABASE_URL")
+    key = os.environ.get("SUPABASE_KEY")
+    if not url or not key:
+        raise EnvironmentError(
+            "SUPABASE_URL / SUPABASE_KEY not set for audio upload")
+    return create_client(url, key)
+
+
 def _upload_to_supabase(audio_bytes: bytes, edition: str) -> Optional[str]:
     """Upload MP3 to Supabase Storage.
 
@@ -704,7 +725,7 @@ def _upload_to_supabase(audio_bytes: bytes, edition: str) -> Optional[str]:
     always points to a stable file that podcast directories can reference.
     """
     try:
-        from utils.supabase_client import supabase
+        supabase = _fresh_supabase_client()  # NOT the shared singleton (closed mid-run)
         from datetime import datetime, timezone
         import hashlib
 
@@ -1179,7 +1200,7 @@ def _upload_history_to_supabase(audio_bytes: bytes, slug: str) -> Optional[str]:
     Returns public URL with cache fingerprint, or None on failure.
     """
     try:
-        from utils.supabase_client import supabase
+        supabase = _fresh_supabase_client()  # NOT the shared singleton (closed mid-run)
         import hashlib
 
         path = f"history/{slug}.mp3"
