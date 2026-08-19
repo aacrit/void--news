@@ -893,6 +893,66 @@ def _drop_repeated_claim_sentences(summary: str) -> str:
     return " ".join(kept) if dropped else summary
 
 
+def _sentence_word_seq(sentence: str) -> list[str]:
+    """Ordered lowercase word tokens of a sentence (dotted initialisms split to
+    their letters: "U.S." -> ["u", "s"]). Used by the contiguous key-phrase
+    dedup, which keys on word ORDER rather than the unordered content-word set."""
+    return _re.findall(r"[a-z0-9']+", (sentence or "").lower())
+
+
+def _shares_long_run(a: list[str], b: list[str], n: int = 5) -> bool:
+    """True when word sequences `a` and `b` share a contiguous run of >= n words.
+    A 5-word verbatim run almost never recurs by chance across two DISTINCT facts,
+    so it is a reliable restatement signal."""
+    if len(a) < n or len(b) < n:
+        return False
+    a_grams = {tuple(a[i:i + n]) for i in range(len(a) - n + 1)}
+    return any(tuple(b[i:i + n]) in a_grams for i in range(len(b) - n + 1))
+
+
+def _drop_repeated_keyphrase_sentences(summary: str) -> str:
+    """3d-bis: drop a later sentence that repeats a >= 5-word CONTIGUOUS phrase
+    from an earlier kept sentence. Catches restatements the content-word Jaccard
+    (3d) misses when the two sentences wrap the same verbatim clause in different
+    filler, e.g. "Hundreds of people have been killed in the year since ..." vs
+    "... Hundreds of people have been killed in the interim." (Jaccard ~0.6, under
+    the 0.7 gate). A 5-word verbatim run is the conservative floor; single-sentence
+    summaries are never touched."""
+    parts = _split_sentences(summary)
+    if len(parts) < 2:
+        return summary
+    kept: list[str] = []
+    kept_seqs: list[list[str]] = []
+    dropped = False
+    for p in parts:
+        seq = _sentence_word_seq(p)
+        if any(_shares_long_run(prev, seq) for prev in kept_seqs):
+            dropped = True
+            continue
+        kept.append(p)
+        kept_seqs.append(seq)
+    return " ".join(kept) if dropped else summary
+
+
+def _normalize_abbrev_spacing(text: str) -> str:
+    """Collapse a spaced dotted initialism ("U. S.", "U. N.", "E. U.") back to its
+    tight form ("U.S."). Some source excerpts and model outputs carry the spaced
+    form, which both reads poorly AND fragments the sentence splitter (each "X."
+    looks like a sentence end). Only touches a run of single capital letters each
+    followed by a period, so ordinary sentence boundaries ("... left. She arrived.")
+    are never affected. Run FIRST in the chain so downstream splits see the glued
+    form."""
+    if not text:
+        return text
+    prev = None
+    out = text
+    # Iterate so chained initialisms (U. S. A.) fully collapse.
+    while prev != out:
+        prev = out
+        out = _re.sub(r"\b([A-Z]\.)\s+(?=[A-Z]\.)", r"\1", out)
+    return out
+
+
 def _concat_source_text(articles: list[dict]) -> str:
     """Concatenate all available member text (title + summary + full_text) into
     one lowercase blob used to ground the age post-check (3e). Broad on purpose:
@@ -987,8 +1047,10 @@ def _apply_summary_postchecks(summary: str, source_text: str = "") -> str:
     Used by BOTH the LLM path and the rule-based floor."""
     if not summary or not summary.strip():
         return summary
-    s = _dedupe_summary_sentences(summary)        # exact duplicate sentences
+    s = _normalize_abbrev_spacing(summary)        # glue "U. S." -> "U.S." first
+    s = _dedupe_summary_sentences(s)              # exact duplicate sentences
     s = _drop_repeated_claim_sentences(s)          # 3d near-duplicate claims
+    s = _drop_repeated_keyphrase_sentences(s)      # 3d-bis verbatim key-phrase repeat
     s = _collapse_unknown_padding(s)               # 3c unknown/ongoing padding
     if source_text:
         s = _drop_ungrounded_ages(s, source_text)  # 3e ungrounded ages
