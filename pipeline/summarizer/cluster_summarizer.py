@@ -1039,6 +1039,49 @@ def _drop_ungrounded_ages(summary: str, source_text: str) -> str:
     return cleaned if cleaned else summary
 
 
+def _tail_ends_in_abbrev(chunk: str) -> bool:
+    """Delegate to the sanitizer's abbreviation test; fall back to a small local
+    check if the import is unavailable (keeps this module importable standalone)."""
+    try:
+        from utils.text_sanitizer import _ends_in_abbrev
+        return _ends_in_abbrev(chunk)
+    except Exception:
+        m = _re.search(r"([A-Za-z][A-Za-z.'\-]*)\.[\"')\]]?\s*$", chunk or "")
+        if not m:
+            return False
+        w = m.group(1).lower().rsplit("-", 1)[-1].rsplit(".", 1)[-1]
+        return w in {"rep", "sen", "gov", "gen", "st", "mr", "mrs", "ms", "dr",
+                     "jr", "sr", "no", "vs", "inc", "ltd", "co", "corp"} or bool(
+            _re.fullmatch(r"[a-z](?:\.[a-z])*", m.group(1).lower()))
+
+
+def _trim_incomplete_tail_sentence(summary: str) -> str:
+    """3g completeness gate: drop a trailing INCOMPLETE final sentence so a
+    token-limit-truncated LLM summary never ships a dangling fragment. Two
+    signatures, both conservative to avoid trimming a genuinely complete sentence:
+
+      * the tail has NO terminal punctuation at all (cut mid-clause), or
+      * the tail is SHORT (<= 4 words) and ends on an abbreviation period that is
+        not a real sentence end ('...Florida Rep.', 'primary. Rep.').
+
+    A long sentence that legitimately ends on an abbreviation ('...met at the
+    U.N.') is left alone. Never drops the ONLY sentence, and never returns empty:
+    a fully-degenerate row is left for the raw-excerpt / pending guards."""
+    s = (summary or "").strip()
+    if not s:
+        return summary
+    parts = _split_sentences(s)
+    if len(parts) <= 1:
+        return s
+    tail = parts[-1].rstrip()
+    terminated = tail.endswith((".", "!", "?", "”", '"', "’", "'", ")"))
+    short_abbrev = (len(tail.split()) <= 4) and _tail_ends_in_abbrev(tail)
+    if terminated and not short_abbrev:
+        return s  # tail is a complete sentence
+    trimmed = " ".join(parts[:-1]).strip()
+    return trimmed if trimmed else s
+
+
 def _apply_summary_postchecks(summary: str, source_text: str = "") -> str:
     """Run the Phase-3 hygiene chain on a summary. Deterministic, order matters:
     content-level drops first (exact dup, near-dup, unknown padding, ungrounded
@@ -1056,6 +1099,7 @@ def _apply_summary_postchecks(summary: str, source_text: str = "") -> str:
         s = _drop_ungrounded_ages(s, source_text)  # 3e ungrounded ages
     s = _drop_terminal_restatement(s)              # 3b terminal restatement
     s = _trim_summary_to_word_cap(s)               # 3a hard 90-word trim
+    s = _trim_incomplete_tail_sentence(s)          # 3g completeness (drop truncation)
     s = s.strip()
     # 3f grounding audit (warning-only, no drops yet). Logs figures / proper
     # nouns in the FINAL summary that are absent from the source text so we can
