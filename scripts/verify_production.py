@@ -301,6 +301,27 @@ def check_count_match(p: Page) -> list[str]:
     return []
 
 
+# The Sigil aria-label is the feed card's ONLY lean label ("Coverage tilt:
+# <label> (<raw lean>). N sources."). Its extreme tiers must agree with the
+# canonical raw-lean bands leanLabel/BiasSnapshot use elsewhere: "Far Right"
+# requires raw >= 81, "Far Left" requires raw <= 20. A card that says "Far Right"
+# for raw 73-80 while the Deep Dive says "Right" is the card-vs-Sigil split (P0-6).
+_SIGIL_ARIA_RE = re.compile(r'aria-label="Coverage tilt:\s*([^"(]+?)\s*\((\d+)\)')
+
+
+def check_card_sigil_label(p: Page) -> list[str]:
+    out = []
+    for m in _SIGIL_ARIA_RE.finditer(p.raw):
+        label = m.group(1).strip()
+        low = label.lower()
+        val = int(m.group(2))
+        if "far right" in low and val < 81:
+            out.append(f'card/Sigil "{label}" but raw lean {val} is canonical Right (Far Right needs >= 81)')
+        elif "far left" in low and val > 20:
+            out.append(f'card/Sigil "{label}" but raw lean {val} is canonical Left (Far Left needs <= 20)')
+    return out[:8]
+
+
 CHECKS = [
     ("structural: single Top story", check_top_story),
     ("structural: wordmark not doubled", check_wordmark),
@@ -315,6 +336,7 @@ CHECKS = [
     ("integrity: no orphan numeric fragment", check_orphan_numeral),
     ("duplication: no duplicate headlines", check_duplicate_headlines),
     ("count: header matches rendered", check_count_match),
+    ("consistency: card lean label == canonical (Sigil)", check_card_sigil_label),
 ]
 
 
