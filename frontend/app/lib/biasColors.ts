@@ -354,10 +354,18 @@ export function sigilLabelInfo(
     return { text: "Balanced", color: "var(--bias-center)" };
   }
 
-  // Tilted — lean direction is primary info
-  const dir = lean <= 29 ? "Far Left"
+  // Tilted — lean direction is primary info. The OUTERMOST tiers use the SAME
+  // raw-lean boundaries as leanLabel (Far Left <= 20, Far Right >= 81) so the
+  // Sigil (feed card) and BiasSnapshot (Deep Dive) never disagree on an extreme:
+  // the old >72 Far-Right / <=29 Far-Left cutoffs labeled a raw-73-80 story
+  // "Far Right" on the card while the Deep Dive called the same story "Right"
+  // (P0-6 / card-vs-Sigil, 2026-08-18: WNBA at raw 80 read "Far Right" on 8
+  // sources). The coarse Left/Right middle (no Center-Left/Right split) is a
+  // deliberate glanceable simplification, unchanged. Label derives from RAW lean;
+  // the perceptual expansion drives only pin position + color, never the tier.
+  const dir = lean <= 20 ? "Far Left"
     : lean <= 46 ? "Left"
-    : lean <= 72 ? "Right"
+    : lean <= 80 ? "Right"
     : "Far Right";
 
   if (divergenceFlag === "divergent") {
