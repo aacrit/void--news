@@ -1118,6 +1118,48 @@ _ATTRIBUTION_CUE_RE = _re.compile(
 )
 _QUOTE_PRESENT_RE = _re.compile(r'["“][^"”]{3,}["”]')
 
+# Reputational-harm ASSOCIATION terms (nouns/phrases), distinct from the verb-led
+# claims above. These impute wrongdoing by association ("terror ties", "linked to
+# al-Qaeda", "blacklisted", "designated a terrorist") and are dangerous when they
+# float in a subject-less truncation fragment. Bare org names (Hamas, Taliban) are
+# NOT listed on their own — they appear constantly in legitimate reporting ("Hamas
+# affirmed its commitment") — only their wrongdoing-association phrasings are.
+_REPUTATIONAL_TERM_RE = _re.compile(
+    r"\b(?:"
+    r"blacklist(?:ed|ing)?|"
+    r"(?:terror|terrorist|al[\s-]?qaeda|taliban|hamas|hezbollah|isis|isil|jihad|"
+    r"militant|extremist)\s+(?:ties|links?|affiliation|connections?)|"
+    r"(?:ties|links?|affiliation|connections?)\s+to\s+(?:terror|terrorist|"
+    r"al[\s-]?qaeda|taliban|hamas|hezbollah|isis|isil|jihad|militants?|extremis)|"
+    r"link(?:ed|s)?\s+to\s+(?:terror|al[\s-]?qaeda|taliban|hamas|hezbollah|isis|"
+    r"jihad|extremis)|"
+    r"designat(?:ed|ion)\s+(?:as\s+)?(?:a\s+)?(?:foreign\s+)?terrorist|"
+    r"sympath(?:iser|izer)|radicali[sz]ed"
+    r")\b",
+    _re.IGNORECASE,
+)
+
+# A plausible grammatical subject opens the sentence: a proper noun or subject
+# pronoun / article-led noun phrase. FAILS on a bare-numeral or lowercase /
+# dangling-preposition opening ("375 million into ... blacklisted ..."), which is
+# the truncation fingerprint that strips a claim of its subject and attribution.
+_SUBJECT_START_RE = _re.compile(
+    r"^[\"'“(]*\s*(?:He|She|They|It|The|A|An|This|That|Those|These|His|Her|Their|"
+    r"[A-Z][A-Za-z][A-Za-z.'’-]*)\b"
+)
+
+
+def _has_identifiable_subject(sentence: str) -> bool:
+    """True if the sentence opens on a plausible subject (proper noun / pronoun /
+    article-led noun phrase). A sentence that opens on a bare numeral or a
+    lowercase dangling preposition has been severed from its subject."""
+    s = (sentence or "").strip()
+    if not s:
+        return False
+    if _re.match(r"^[\"'“(]*\s*\$?\d", s):  # opens on a figure -> no subject
+        return False
+    return bool(_SUBJECT_START_RE.match(s))
+
 
 def _sentence_makes_reputational_claim(sentence: str) -> bool:
     """True if the sentence asserts a reputational-harm, criminal-status, or
@@ -1151,7 +1193,17 @@ def _strip_unattributed_reputational_claims(summary: str) -> tuple[str, list[str
     for s in sentences:
         if not s.strip():
             continue
+        # (1) Verb-led reputational/criminal claim: drop unless attributed.
         if _sentence_makes_reputational_claim(s) and not _sentence_has_attribution(s):
+            dropped.append(s.strip())
+            continue
+        # (2) Reputational-harm ASSOCIATION term (e.g. "blacklisted over alleged
+        # al-Qaeda ... ties"): a truncation can strip such a claim of BOTH its
+        # subject and its attribution and leave it dangling next to a named
+        # person. Require an identifiable subject AND attribution, else drop.
+        if _REPUTATIONAL_TERM_RE.search(s) and not (
+            _has_identifiable_subject(s) and _sentence_has_attribution(s)
+        ):
             dropped.append(s.strip())
             continue
         kept.append(s)
