@@ -238,6 +238,10 @@ Production runs 5 phases in `story_cluster.py` (1, 2, 3, 4, 5), all subject to `
 
 **Schema support**: Migration 054 added `mega_cluster_capped BOOLEAN` + sparse partial index on `story_clusters`. Migration 055 added `is_wire_copy BOOLEAN` + `wire_origin_publisher_id TEXT` on `articles` with sparse index.
 
+**Near-duplicate REMOVAL (feed_ranker.py 3.6, 2026-08-20).** When two of the top-50 titles share >= 4 content-word stems (or the specific-stem rule fires), they are the SAME story that clustering failed to merge. The higher-sourced telling is kept; the other is REMOVED from the displayed feed (`rank_world = NEAR_DUP_REMOVED_RANK = -1.0`, sorts below the top-N cut). This replaced a ×0.72 decay that only reordered the re-telling, so a near-dup that started high (e.g. the 2026-08-18 Korea drill pair at 48 and 35 sources) survived at ranks 2 and 10.
+
+> **KNOWN LIMITATION.** Removing the 35-source telling discards its 35 sources from the coverage view of the surviving 48-source card, so the headline UNDERSTATES its own coverage breadth on a product whose central claim IS coverage breadth. Removal is the interim guard; the correct long-term fix is MERGING the two clusters upstream (their source rosters would combine), not hiding one. The guard is also blind to same-event pairs whose titles diverge below the 4-stem threshold (e.g. an "Earthquake Death Toll Rises to 68" vs "Flores Region Hit by 5.9 Quake; Death Toll Reaches 54" pair sharing only {death, toll}); those remain a clustering-fragmentation gap, deliberately NOT patched by loosening clustering thresholds (that risks re-introducing the contamination Phase 2/6 fixed).
+
 **Validation**: 33-fixture clustering suite (31 CORRECT / 1 ACCEPTABLE / 1 WRONG, 97.0%). New fixtures `032-anchor-overreach-rejection.yaml` + `033-size-cap-property.yaml` added during the 2026-05-18 hardening pass. `validate-clustering.yml` CI gate mirrors `validate-bias.yml`, blocks merge on CATASTROPHIC or WRONG-count regression.
 
 ### 3. Importance Ranking Engine (v6.0, bias-blind)

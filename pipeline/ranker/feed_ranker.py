@@ -130,7 +130,12 @@ EVENT_DECAY = 0.80
 # primari, win} identically to a genuine dup) stay separate. The HARD/SOFT rules
 # on RAW stems are untouched, so nothing that collapsed before stops collapsing.
 NEAR_DUP_SCAN = 50
-NEAR_DUP_DECAY = 0.72
+NEAR_DUP_DECAY = 0.72  # retained for reference; near-dups are now REMOVED, not decayed
+# Sentinel rank for a near-duplicate re-telling that is REMOVED from the displayed
+# feed (Option 1, 2026-08-20). Negative so it sorts strictly below every genuine
+# (non-negative) rank_world and the frontend top-N cut drops it. A near-dup that
+# was merely decayed x0.72 used to survive in the top 50.
+NEAR_DUP_REMOVED_RANK = -1.0
 NEAR_DUP_SHARED_HARD = 4
 NEAR_DUP_SHARED_SOFT = 3
 NEAR_DUP_CONTAINMENT = 0.65
@@ -445,17 +450,29 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
                     shared >= NEAR_DUP_SHARED_SOFT
                     and shared / smaller >= NEAR_DUP_CONTAINMENT
                 ):
-                    # Keep the higher-sourced telling; demote the other.
+                    # Keep the higher-sourced telling; REMOVE the other from the
+                    # displayed feed. Decay (x0.72, the prior behavior) only
+                    # reordered the re-telling; a near-dup that started high stayed
+                    # in the top 50 after the decay (2026-08-18: a 48-source and a
+                    # 35-source telling of the same Korea drill story both shipped,
+                    # ranks 2 and 10). A literal second cluster of the same story
+                    # adds nothing, so we push it below the display cut with the
+                    # NEAR_DUP_REMOVED_RANK sentinel (negative, so it sorts last and
+                    # a legitimate non-negative rank never collides).
+                    #
+                    # KNOWN LIMITATION (see docs/PIPELINE-BRAIN.md): removing the
+                    # 35-source telling discards its 35 sources from the coverage
+                    # view of the 48-source card, so the surviving headline
+                    # UNDERSTATES its own coverage breadth. The correct long-term
+                    # answer is MERGING the two clusters upstream (their sources
+                    # would combine), not hiding one. Removal is the interim guard;
+                    # merging is tracked as the real fix.
                     keep, drop = (i, j) if (
                         scan[i].get("source_count", 0) >= scan[j].get("source_count", 0)
                     ) else (j, i)
-                    scan[drop]["rank_world"] = round(
-                        min(
-                            scan[drop].get("rank_world", 0),
-                            scan[keep].get("rank_world", 0) * NEAR_DUP_DECAY,
-                        ), 2,
-                    )
+                    scan[drop]["rank_world"] = NEAR_DUP_REMOVED_RANK
                     scan[drop]["_near_dup_of"] = scan[keep].get("title", "")[:60]
+                    scan[drop]["_near_dup_removed"] = True
                     demoted.add(drop)
                     if drop == i:
                         break  # the anchor itself was demoted; stop pairing it
