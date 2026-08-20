@@ -101,7 +101,13 @@ const QUOTE_PRESENT = /["“][^"”]{3,}["”]/;
 export function stripUnattributedReputationalClaims(summary: string): string {
   const s = (summary ?? "").trim();
   if (!s) return "";
-  const sentences = s.match(/[^.!?]+[.!?]*/g) ?? [s];
+  // Split into sentence chunks that CAPTURE their own trailing whitespace, so a
+  // faithful reconstruction is just a concatenation. The naive split+join(" ")
+  // this replaced broke every abbreviation and decimal in the feed: it cut
+  // "U.S." into "U." + "S." on the period and the space-join reinserted a space
+  // ("U. S.", "$22. 9", 'hear. "'). Sitewide, because this runs on every card.
+  const sentences = s.match(/[^.!?]+[.!?]*\s*/g) ?? [s];
+  let dropped = false;
   const kept = sentences.filter((sent) => {
     const harm =
       REPUTATIONAL_HARM.test(sent) ||
@@ -109,9 +115,16 @@ export function stripUnattributedReputationalClaims(summary: string): string {
       CRIMINAL_ALLEGATION.test(sent);
     if (!harm) return true; // no reputational-harm claim -> keep
     // Keep only if the sentence attributes the claim to a source or quotes it.
-    return ATTRIBUTION_CUE.test(sent) || QUOTE_PRESENT.test(sent);
+    const attributed = ATTRIBUTION_CUE.test(sent) || QUOTE_PRESENT.test(sent);
+    if (!attributed) dropped = true;
+    return attributed;
   });
-  return kept.join(" ").replace(/\s+/g, " ").trim();
+  // No sentence removed: return the ORIGINAL text untouched. Never reformat a
+  // clean summary — that is what corrupted the spacing before.
+  if (!dropped) return s;
+  // A sentence was dropped: chunks already carry their own spacing, so a plain
+  // concatenation preserves "U.S." / decimals; only collapse seams left behind.
+  return kept.join("").replace(/\s+/g, " ").trim();
 }
 
 /* ---------------------------------------------------------------------------
