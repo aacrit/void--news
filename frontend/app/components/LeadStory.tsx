@@ -40,8 +40,10 @@ export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, t
   // Top-story signal now lives in the accented "Today's Top Stories" divider
   // above the feed plus position #1, so the per-card "Top Story" badge was
   // removed (2026-08-06) — it was a third redundant marker that pushed the
-  // headline down. `isTop` drives only a screen-reader-only label now.
-  const isTop = rank === 0 || twin;
+  // headline down. `isTop` drives only a screen-reader-only label now, and it
+  // belongs to rank 0 ALONE: the second twin lead is a co-equal layout slot, not
+  // a second "Top story" (two badges shipped to production, flagged P0 2026-08-18).
+  const isTop = rank === 0;
 
   // Headline is <h1> for the primary lead (rank 0 OR first twin) to satisfy
   // SEO/a11y "one h1 per page." A second twin lead uses <h2>.
