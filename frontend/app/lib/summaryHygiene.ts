@@ -92,6 +92,23 @@ const CRIMINAL_ALLEGATION =
 const ATTRIBUTION_CUE =
   /\b(accord(?:ing) to|reported by|as reported|reportedly|said|says|stated|told\s+[A-Z]|per\s+[A-Z]|alleged by|prosecutors|indictment|police said|court (?:documents|filings|records)|lawsuit|complaint|according)\b/i;
 const QUOTE_PRESENT = /["“][^"”]{3,}["”]/;
+// Reputational-harm ASSOCIATION terms (nouns/phrases). Dangerous when they float
+// in a subject-less truncation fragment next to a named person ("375 million into
+// ... blacklisted over alleged al-Qaeda, Taliban, and Hamas ties."). Bare org
+// names are excluded so legitimate reporting ("Hamas affirmed ...") is untouched.
+const REPUTATIONAL_TERM =
+  /\b(?:blacklist(?:ed|ing)?|(?:terror|terrorist|al[\s-]?qaeda|taliban|hamas|hezbollah|isis|isil|jihad|militant|extremist)\s+(?:ties|links?|affiliation|connections?)|(?:ties|links?|affiliation|connections?)\s+to\s+(?:terror|terrorist|al[\s-]?qaeda|taliban|hamas|hezbollah|isis|isil|jihad|militants?|extremis)|link(?:ed|s)?\s+to\s+(?:terror|al[\s-]?qaeda|taliban|hamas|hezbollah|isis|jihad|extremis)|designat(?:ed|ion)\s+(?:as\s+)?(?:a\s+)?(?:foreign\s+)?terrorist|sympath(?:iser|izer)|radicali[sz]ed)\b/i;
+// A plausible subject opens the sentence (proper noun / pronoun / article-led
+// noun phrase). Fails on a bare-numeral or dangling-preposition opening.
+const SUBJECT_START =
+  /^["'“(]*\s*(?:He|She|They|It|The|A|An|This|That|Those|These|His|Her|Their|[A-Z][A-Za-z][A-Za-z.'’-]*)\b/;
+
+function hasIdentifiableSubject(sentence: string): boolean {
+  const s = (sentence ?? "").trim();
+  if (!s) return false;
+  if (/^["'“(]*\s*\$?\d/.test(s)) return false; // opens on a figure -> no subject
+  return SUBJECT_START.test(s);
+}
 
 /**
  * Drop any sentence that makes a reputational-harm claim about a person with no
@@ -109,15 +126,24 @@ export function stripUnattributedReputationalClaims(summary: string): string {
   const sentences = s.match(/[^.!?]+[.!?]*\s*/g) ?? [s];
   let dropped = false;
   const kept = sentences.filter((sent) => {
+    const attributed = ATTRIBUTION_CUE.test(sent) || QUOTE_PRESENT.test(sent);
+    // (1) Verb-led reputational/criminal claim: keep only if attributed.
     const harm =
       REPUTATIONAL_HARM.test(sent) ||
       CRIMINAL_FACT.test(sent) ||
       CRIMINAL_ALLEGATION.test(sent);
-    if (!harm) return true; // no reputational-harm claim -> keep
-    // Keep only if the sentence attributes the claim to a source or quotes it.
-    const attributed = ATTRIBUTION_CUE.test(sent) || QUOTE_PRESENT.test(sent);
-    if (!attributed) dropped = true;
-    return attributed;
+    if (harm && !attributed) {
+      dropped = true;
+      return false;
+    }
+    // (2) Reputational-harm association term in a fragment (e.g. a truncated
+    // "375 million into ... blacklisted over alleged al-Qaeda ... ties"): require
+    // BOTH an identifiable subject AND attribution, else drop.
+    if (REPUTATIONAL_TERM.test(sent) && !(hasIdentifiableSubject(sent) && attributed)) {
+      dropped = true;
+      return false;
+    }
+    return true;
   });
   // No sentence removed: return the ORIGINAL text untouched. Never reformat a
   // clean summary — that is what corrupted the spacing before.
