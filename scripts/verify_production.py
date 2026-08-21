@@ -175,7 +175,11 @@ def check_h1(p: Page) -> list[str]:
 # matched (only the known broken initialisms + decimals + quote-hugging period).
 _ABBREV_RE = re.compile(r'\bU\. S\.|\bU\. K\.|\bU\. N\.|\bE\. U\.')
 _DECIMAL_RE = re.compile(r'\d\. \d')
-_QUOTE_PERIOD_RE = re.compile(r'\. [”"’\']')
+# Space between a sentence period and a CLOSING curly quote ("hear. ”") is the
+# P0-1 splitter corruption. Only closing curly quotes are flagged: a straight "
+# or an opening curly “ after ". " is legitimately a new sentence that opens on a
+# quotation ('politician. "The Houses of Ireland" ...'), so those must NOT fire.
+_QUOTE_PERIOD_RE = re.compile(r'\. [”’]')
 _DIGIT_WORD_RE = re.compile(r'\d=[A-Za-z]')
 # Missing-space concatenation: lowercase directly fused to Uppercase. Allowlist
 # the handful of legitimate intercaps that appear in news copy.
