@@ -37,6 +37,15 @@ on:
   # ceiling, not the expected case. The build's fail-loud guard (<20 stories)
   # still blocks an empty deploy.
   schedule:
+    # Early backstop: the post-pipeline workflow_run fast path dropped again on
+    # 2026-08-21 (pipeline succeeded 11:30, finished ~13:00, no deploy fired),
+    # leaving the feed a day stale until a manual deploy. This 15:00 run refreshes
+    # normal days ~2h earlier. It is POSITIVELY gated in the guard step: it deploys
+    # ONLY when today's News Pipeline has a `success` conclusion and nothing is
+    # running, so on a slow/failed run (e.g. the 238-min 2026-08-14 run) it skips
+    # and the 17:00 backstop below still covers the worst case. This is why the
+    # old un-gated 15:00 slot was unsafe and this one is not.
+    - cron: '0 15 * * *'
     - cron: '0 17 * * *'
   workflow_dispatch:
 
@@ -79,9 +88,26 @@ jobs:
           if [ "${active:-0}" -gt 0 ]; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
             echo "News Pipeline is queued/running — skipping to avoid a fresh-timestamp/stale-data build. The post-pipeline workflow_run deploy will carry this commit."
-          else
-            echo "skip=false" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
+          # The 15:00 EARLY backstop must POSITIVELY confirm today's pipeline
+          # succeeded before it publishes, so it can never rebuild yesterday's
+          # feed (the 2026-08-14 failure mode). The 17:00 backstop keeps the
+          # looser guard so it still publishes to cover a workflow_run drop even
+          # if the pipeline itself failed (the build's <20-story fail-loud guard
+          # blocks a truly empty deploy).
+          if [ "${{ github.event.schedule }}" = "0 15 * * *" ]; then
+            today=$(date -u +%Y-%m-%d)
+            ok=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow=pipeline.yml \
+              --json conclusion,createdAt \
+              --jq "[.[] | select(.createdAt | startswith(\"$today\")) | select(.conclusion==\"success\")] | length" || echo 0)
+            if [ "${ok:-0}" -lt 1 ]; then
+              echo "skip=true" >> "$GITHUB_OUTPUT"
+              echo "Early (15:00) backstop: today's News Pipeline has not succeeded yet — skipping. The 17:00 backstop will cover a slow or failed run."
+              exit 0
+            fi
+          fi
+          echo "skip=false" >> "$GITHUB_OUTPUT"
 
       - uses: actions/checkout@v4
         if: steps.guard.outputs.skip != 'true'
