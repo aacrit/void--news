@@ -3,24 +3,29 @@
 import { useRef, useEffect } from "react";
 
 /* ---------------------------------------------------------------------------
-   ScaleIcon — "Void Circle + Scale Beam" hybrid brand icon
+   ScaleIcon — the Sigil-O brand glyph
 
-   The void circle is the primary mark — a hollow ring representing emptiness,
-   neutrality, the analytical lens. A scale beam passes through it, using the
-   circle as a natural fulcrum/pivot point. The beam tips with animations.
+   The FULL standalone Sigil: the same coverage ring (the analytical lens) with
+   a level balance beam + end ticks as the wordmark's "O", now carrying the
+   scale FOOT (post + base) so it reads as a complete balance-scale instrument.
+   To keep the SQUARE aspect (consumers render at size=16/22/24/28), the ring is
+   lifted and shrunk from the wordmark's full-box O so the ring + beam + ticks +
+   post + base all fit centered within viewBox 0 0 100 100:
+     ring   cx50 cy40 r30 strokeWidth 8
+     beam   x12->x88 y40 strokeWidth 6 round
+     ticks  x13,33->x12,47 and x87,33->x88,47 strokeWidth 5 round
+     post   x50 y70->y86 strokeWidth 6 round      (static)
+     base   M36 93 C44 88 56 88 64 93 strokeWidth 6 round (static)
+   Stroked in --sigil-brass.
 
-   At rest/small sizes: the circle dominates.
-   At larger sizes and during animations: the scale beam becomes visible
-   and tips, revealing the balance/weighing metaphor.
+   At rest the mark is LEVEL and static. The animation prop tips the BEAM group
+   (beam + ticks) around the ring center (50,40) for loading / analyzing /
+   broadcast states; the FOOT never tips (it is the ground the scale stands on).
+   animation="none" shows the full mark, static (no tilt). All motion is
+   suppressed under prefers-reduced-motion, leaving the level brass mark.
 
-   animation="none": Only the void circle (pure favicon mark).
-   animation="idle"+: Circle + beam + post + base, with tipping.
-
-   Pure CSS keyframe animations scoped with `si-` prefix.
-   Styles injected once into <head>.
-   All animations respect `prefers-reduced-motion: reduce`.
-   Uses `stroke="currentColor"` for automatic light/dark mode.
-   Add `.si-hoverable` to any ancestor to get hover animation on the icon.
+   Pure CSS keyframe animations scoped with `si-` prefix, injected once into
+   <head>. Add `.si-hoverable` to any ancestor to get hover animation.
    --------------------------------------------------------------------------- */
 
 export type ScaleAnimation =
@@ -31,6 +36,7 @@ export type ScaleAnimation =
   | "balanced"
   | "pulse"
   | "draw"
+  | "broadcast"
   | "none";
 
 export interface ScaleIconProps {
@@ -40,22 +46,14 @@ export interface ScaleIconProps {
   style?: React.CSSProperties;
 }
 
-/* ---- Approximate stroke-dasharray lengths for draw animation ---- */
-// Void circle:      circumference ~= 2 * PI * 9 ~= 57
-// Beam:             ~22 (from x1=5 to x2=27)
-// Left tick:        ~4
-// Right tick:       ~4
-// Center post:      ~14 (from y1=19 to y2=27)
-// Base:             ~8
-
 const STYLES = `
-/* === ScaleIcon keyframes === */
+/* === ScaleIcon (Sigil-O) keyframes === */
 
-/* idle — gentle tipping */
+/* idle — gentle level settle */
 @keyframes si-idle {
   0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(2.5deg); }
-  75% { transform: rotate(-2.5deg); }
+  25% { transform: rotate(1.2deg); }
+  75% { transform: rotate(-1.2deg); }
 }
 
 /* loading — dramatic tipping */
@@ -69,7 +67,7 @@ const STYLES = `
 @keyframes si-hover {
   0% { transform: rotate(0deg); }
   35% { transform: rotate(-5deg); }
-  65% { transform: rotate(1.5deg); }
+  65% { transform: rotate(1deg); }
   100% { transform: rotate(0deg); }
 }
 
@@ -93,6 +91,15 @@ const STYLES = `
   100% { transform: rotate(0deg); }
 }
 
+/* broadcast — VU meter needle oscillation, asymmetric amplitude */
+@keyframes si-broadcast {
+  0%, 100% { transform: rotate(0deg); }
+  15% { transform: rotate(4deg); }
+  35% { transform: rotate(-3deg); }
+  55% { transform: rotate(3.5deg); }
+  75% { transform: rotate(-2deg); }
+}
+
 /* pulse — whole-icon scale pulse */
 @keyframes si-pulse {
   0% { transform: scale(1); }
@@ -107,40 +114,43 @@ const STYLES = `
   to { stroke-dashoffset: 0; }
 }
 
-/* void-pulse — subtle lens activation on hover */
+/* ring-pulse — subtle lens activation on hover */
 @keyframes si-void-pulse {
   0% { transform: scale(1); opacity: 1; }
-  40% { transform: scale(1.08); opacity: 0.7; }
+  40% { transform: scale(1.06); opacity: 0.75; }
   100% { transform: scale(1); opacity: 1; }
 }
 
-/* === Animation classes === */
-
-/* Beam pivot = circle center at (16, 13) */
+/* === Animation classes — beam pivots around the ring center (50,50) === */
 
 .si-beam--idle {
-  transform-origin: 16px 13px;
-  animation: si-idle 4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  transform-origin: 50px 40px;
+  animation: si-idle 5.5s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .si-beam--loading {
-  transform-origin: 16px 13px;
+  transform-origin: 50px 40px;
   animation: si-loading 1.5s cubic-bezier(0.16, 1, 0.3, 1) infinite;
 }
 
 .si-beam--hover {
-  transform-origin: 16px 13px;
+  transform-origin: 50px 40px;
   animation: si-hover 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .si-beam--analyzing {
-  transform-origin: 16px 13px;
+  transform-origin: 50px 40px;
   animation: si-analyzing 2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
 }
 
 .si-beam--balanced {
-  transform-origin: 16px 13px;
+  transform-origin: 50px 40px;
   animation: si-balanced 600ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.si-beam--broadcast {
+  transform-origin: 50px 40px;
+  animation: si-broadcast 3s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }
 
 .si-root--pulse {
@@ -148,63 +158,47 @@ const STYLES = `
 }
 
 /* === Hover — activated by .si-hoverable ancestor === */
-.si-void { transform-origin: 16px 13px; }
+.si-void { transform-origin: 50px 40px; }
 
 .si-hoverable:hover .si-beam--idle {
-  animation: si-hover 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: si-hover 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .si-hoverable:hover .si-void {
-  animation: si-void-pulse 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: si-void-pulse 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* === Draw animation — staggered per element === */
 .si-draw-void {
-  --si-len: 57;
-  stroke-dasharray: 57;
-  stroke-dashoffset: 57;
-  animation: si-draw 350ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --si-len: 189;
+  stroke-dasharray: 189;
+  stroke-dashoffset: 189;
+  animation: si-draw 400ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
   animation-delay: 0ms;
 }
 
 .si-draw-beam {
-  --si-len: 22;
-  stroke-dasharray: 22;
-  stroke-dashoffset: 22;
-  animation: si-draw 180ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  animation-delay: 280ms;
+  --si-len: 76;
+  stroke-dasharray: 76;
+  stroke-dashoffset: 76;
+  animation: si-draw 220ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 300ms;
 }
 
 .si-draw-left-tick {
-  --si-len: 4;
-  stroke-dasharray: 4;
-  stroke-dashoffset: 4;
-  animation: si-draw 120ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  animation-delay: 400ms;
-}
-
-.si-draw-right-tick {
-  --si-len: 4;
-  stroke-dasharray: 4;
-  stroke-dashoffset: 4;
-  animation: si-draw 120ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  animation-delay: 400ms;
-}
-
-.si-draw-post {
   --si-len: 14;
   stroke-dasharray: 14;
   stroke-dashoffset: 14;
-  animation: si-draw 180ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  animation-delay: 480ms;
+  animation: si-draw 140ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 460ms;
 }
 
-.si-draw-base {
-  --si-len: 8;
-  stroke-dasharray: 8;
-  stroke-dashoffset: 8;
-  animation: si-draw 150ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  animation-delay: 600ms;
+.si-draw-right-tick {
+  --si-len: 14;
+  stroke-dasharray: 14;
+  stroke-dashoffset: 14;
+  animation: si-draw 140ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation-delay: 460ms;
 }
 
 /* === Reduced motion === */
@@ -214,14 +208,13 @@ const STYLES = `
   .si-beam--hover,
   .si-beam--analyzing,
   .si-beam--balanced,
+  .si-beam--broadcast,
   .si-root--pulse,
   .si-void,
   .si-draw-void,
   .si-draw-beam,
   .si-draw-left-tick,
-  .si-draw-right-tick,
-  .si-draw-post,
-  .si-draw-base {
+  .si-draw-right-tick {
     animation: none !important;
     stroke-dashoffset: 0 !important;
     transform: none !important;
@@ -274,79 +267,69 @@ export function ScaleIcon({
             ? "si-beam--analyzing"
             : animation === "balanced"
               ? "si-beam--balanced"
-              : undefined;
+              : animation === "broadcast"
+                ? "si-beam--broadcast"
+                : undefined;
 
   const rootClass = animation === "pulse" ? "si-root--pulse" : undefined;
   const isDraw = animation === "draw";
-  const isNone = animation === "none";
 
-  /* When animation="none", show only the void circle (pure favicon mark).
-     For all other states, show the full scale apparatus. */
-  const showScale = !isNone;
+  /* The full footed Sigil renders in every state — ring + beam + ticks + foot.
+     animation="none" simply applies no animation class, leaving the mark static
+     (the complete favicon-style mark, not a bare ring). */
 
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 32 32"
+      viewBox="0 0 100 100"
       fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      stroke="var(--sigil-brass)"
       role="img"
       aria-hidden="true"
       className={[rootClass, className].filter(Boolean).join(" ") || undefined}
       style={{
         height: size,
-        width: "auto",
+        width: size,
         display: "block",
         flexShrink: 0,
+        overflow: "visible",
         ...style,
       }}
     >
-      {/* Void circle — the primary mark, the analytical lens, the void.
-          Centered at (16, 13), radius 9. Hollow ring, no fill.
-          This is what you see at favicon size (animation="none"). */}
+      {/* Coverage ring — the analytical lens, the void. Hollow, no fill.
+          Lifted to cy40 / r30 so the foot fits below within the square box. */}
       <circle
-        cx="16" cy="13" r="9"
+        cx="50"
+        cy="40"
+        r="30"
+        strokeWidth={8}
         className={isDraw ? "si-draw-void" : "si-void"}
       />
 
-      {showScale && (
-        <>
-          {/* Beam group — horizontal beam through the circle + weight ticks.
-              The circle is the fulcrum. Pivots around (16, 13). */}
-          <g className={beamClass}>
-            {/* Beam — extends beyond circle edges */}
-            <line
-              x1="3" y1="13" x2="29" y2="13"
-              className={isDraw ? "si-draw-beam" : undefined}
-            />
-            {/* Left weight tick */}
-            <line
-              x1="5" y1="11" x2="5" y2="15"
-              className={isDraw ? "si-draw-left-tick" : undefined}
-            />
-            {/* Right weight tick */}
-            <line
-              x1="27" y1="11" x2="27" y2="15"
-              className={isDraw ? "si-draw-right-tick" : undefined}
-            />
-          </g>
+      {/* Balance beam + weight ticks — level at rest, tips on animation.
+          The ring is the fulcrum; the group pivots around (50,40). */}
+      <g className={beamClass}>
+        <line
+          x1="12" y1="40" x2="88" y2="40"
+          strokeWidth={6} strokeLinecap="round"
+          className={isDraw ? "si-draw-beam" : undefined}
+        />
+        <line
+          x1="12" y1="32" x2="12" y2="48"
+          strokeWidth={5} strokeLinecap="round"
+          className={isDraw ? "si-draw-left-tick" : undefined}
+        />
+        <line
+          x1="88" y1="32" x2="88" y2="48"
+          strokeWidth={5} strokeLinecap="round"
+          className={isDraw ? "si-draw-right-tick" : undefined}
+        />
+      </g>
 
-          {/* Center post — from bottom of circle to base */}
-          <line
-            x1="16" y1="22" x2="16" y2="29"
-            className={isDraw ? "si-draw-post" : undefined}
-          />
-
-          {/* Base */}
-          <line
-            x1="12" y1="29" x2="20" y2="29"
-            className={isDraw ? "si-draw-base" : undefined}
-          />
-        </>
-      )}
+      {/* Scale foot — post + base. Static: it is the ground the scale stands on
+          and never tips with the beam. Outside the beam group by design. */}
+      <line x1="50" y1="70" x2="50" y2="86" strokeWidth={6} strokeLinecap="round" />
+      <path d="M36 93 C44 88 56 88 64 93" fill="none" strokeWidth={6} strokeLinecap="round" />
     </svg>
   );
 }

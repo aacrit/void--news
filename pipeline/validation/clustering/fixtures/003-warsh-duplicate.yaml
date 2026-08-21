@@ -1,0 +1,139 @@
+id: warsh-fed-chair-2026-05
+name: "Warsh Fed Chair confirmation duplicate (must merge into 1)"
+failure_date: "2026-05-15"
+failure_kind: fragmentation
+articles:
+  - id: war-1
+    title: "Kevin Warsh confirmed as Federal Reserve Chair"
+    summary: "Kevin Warsh has been confirmed as the next chair of the Federal Reserve following a 54-46 Senate vote on Wednesday afternoon."
+    full_text: >
+      Kevin Warsh has been confirmed as the next chair of the Federal Reserve following a
+      54-46 Senate vote on Wednesday afternoon. Warsh, a former Fed governor and Morgan
+      Stanley executive, will succeed Jerome Powell when Powell's term expires May 31. The
+      vote split largely along party lines, with three centrist Democrats joining
+      Republicans in support. Treasury yields rose 6 basis points immediately after the
+      vote. Warsh has long argued for a more rules-based approach to monetary policy and
+      has criticized the Fed's expanded balance sheet. He pledged in his confirmation
+      hearing to "restore the Fed's analytical rigor" and to publish more detailed dot
+      plots. Senate Majority Leader said the confirmation marks a "return to monetary
+      discipline." Powell will deliver his farewell address Friday.
+    source: { slug: ap-news, country: US, tier: wire }
+    published_at: "2026-05-13T19:00Z"
+  - id: war-2
+    title: "Warsh confirmed Fed Chair, succeeds Powell May 31"
+    summary: "Senate has confirmed Kevin Warsh to chair the Federal Reserve. He succeeds Jerome Powell on May 31."
+    full_text: >
+      The Senate confirmed Kevin Warsh to chair the Federal Reserve on Wednesday in a 54-46
+      vote, with three Democrats crossing the aisle. Warsh succeeds Jerome Powell on May
+      31, becoming the 17th chair in the central bank's 113-year history. Reuters reported
+      that Warsh's transition team has already begun briefings with the regional Fed
+      presidents. The dollar firmed against the euro and yen on the result. Warsh, 56, is
+      regarded by markets as more hawkish than Powell on inflation but more dovish than
+      Powell on bank capital requirements. Investors will scrutinize his first FOMC meeting
+      on June 18 for guidance on the rate path. Senate Banking Chair Tim Scott called the
+      vote a "vote for credibility."
+    source: { slug: reuters, country: US, tier: wire }
+    published_at: "2026-05-13T19:15Z"
+  - id: war-3
+    title: "Senate confirms Warsh as Fed Chair in 54-46 vote"
+    summary: "The Senate has confirmed Kevin Warsh as Federal Reserve Chair on a 54-46 vote, ending months of speculation about Powell's successor."
+    full_text: >
+      The Senate has confirmed Kevin Warsh as Federal Reserve Chair on a 54-46 vote on
+      Wednesday, ending months of speculation about Jerome Powell's successor. Warsh, who
+      served as a Fed governor from 2006 to 2011, becomes the first chair to have
+      previously sat on the board since Alan Greenspan. The Wall Street Journal noted
+      Warsh's well-documented preference for a smaller balance sheet and a more
+      transparent rate-setting framework. Treasury Secretary Scott Bessent welcomed the
+      vote in a brief statement, calling Warsh "the right leader for a delicate moment."
+      Senate Democrats Brown, Sanders and Warren all voted no. Markets had largely priced
+      in the confirmation by Tuesday's close.
+    source: { slug: wsj, country: US, tier: international }
+    published_at: "2026-05-13T19:30Z"
+  - id: war-4
+    title: "Powell's successor: Senate confirms Kevin Warsh as Fed Chair"
+    summary: "After a contentious confirmation battle, the Senate confirmed Kevin Warsh as the next Federal Reserve Chair Wednesday."
+    full_text: >
+      After a contentious confirmation battle stretching back to February, the Senate
+      confirmed Kevin Warsh as the next Federal Reserve Chair Wednesday. The 54-46 vote
+      came after a four-hour floor debate in which Warsh's critics argued his Wall Street
+      ties pose conflicts and his supporters countered that his crisis-era experience is
+      indispensable. Warsh will be sworn in on June 1, the first business day after
+      Powell's term ends. Bloomberg reported Warsh has already begun assembling a senior
+      team and has held informal meetings with regional bank presidents. The yield curve
+      steepened modestly on the news. Bank stocks finished the session up 1.2 percent.
+      Powell will deliver one final FOMC press conference on May 28.
+    source: { slug: bloomberg, country: US, tier: international }
+    published_at: "2026-05-13T20:00Z"
+  - id: war-5
+    title: "Kevin Warsh wins Senate confirmation as next Fed Chair"
+    summary: "Former Federal Reserve Governor Kevin Warsh won Senate confirmation Wednesday to become the next Fed chair, replacing Jerome Powell at month's end."
+    full_text: >
+      Former Federal Reserve Governor Kevin Warsh won Senate confirmation Wednesday to
+      become the next Fed chair, replacing Jerome Powell when Powell's term expires May 31.
+      The 54-46 vote was the closest Fed Chair confirmation in modern history. CNBC's
+      market analysts said the immediate read-through is for slightly tighter policy,
+      slightly looser regulation. Warsh, who has been a fellow at the Hoover Institution,
+      will inherit a balance sheet of roughly 7.4 trillion dollars and a federal funds rate
+      target of 4.25 to 4.50 percent. The Fed's June meeting will be his first as chair.
+      Senate Banking ranking member Elizabeth Warren said the result was "a tragedy for
+      financial stability." Warsh has not yet announced staff hires.
+    source: { slug: cnbc, country: US, tier: international }
+    published_at: "2026-05-13T20:30Z"
+  - id: war-6
+    title: "Warsh approved as Federal Reserve Chair after Senate vote"
+    summary: "The US Senate approved Kevin Warsh as Federal Reserve Chair after a closely-watched 54-46 vote on Wednesday afternoon."
+    full_text: >
+      The US Senate approved Kevin Warsh as Federal Reserve Chair after a closely-watched
+      54-46 vote on Wednesday afternoon. Warsh, 56, replaces Jerome Powell on May 31 and
+      will hold a four-year term. The Financial Times noted that bond markets initially
+      sold off on the result before recovering most losses by the close. Warsh's first
+      challenge will be navigating the June 18 FOMC meeting amid stubborn services
+      inflation and softening labor data. Senate Republican leadership called the result
+      "a victory for monetary credibility." Several incumbent regional Fed presidents have
+      praised Warsh in recent weeks, including Cleveland's Beth Hammack. Warsh's swearing-
+      in ceremony will be held in the Eccles Building.
+    source: { slug: ft, country: GB, tier: international }
+    published_at: "2026-05-13T21:00Z"
+  - id: war-7
+    title: "Warsh sworn in as Fed Chair next month after Senate green-light"
+    summary: "Kevin Warsh will be sworn in as the 17th chair of the Federal Reserve on June 1, after winning Senate confirmation Wednesday."
+    full_text: >
+      Kevin Warsh will be sworn in as the 17th chair of the Federal Reserve on June 1,
+      after winning Senate confirmation Wednesday on a 54-46 vote. The transition closes a
+      months-long contest that began when President Trump nominated Warsh in March. The
+      Washington Post reported the administration had originally considered four
+      candidates, with Stanford economist John Cochrane and former St Louis Fed President
+      Jim Bullard rounding out the shortlist. Warsh's confirmation followed a careful
+      whip-count by Senate Majority Whip John Barrasso. Markets are bracing for Warsh's
+      first major communication, expected at the Jackson Hole symposium in August.
+      Powell will return to private life after a decade leading the central bank.
+    source: { slug: washington-post, country: US, tier: international }
+    published_at: "2026-05-13T22:00Z"
+  - id: war-8
+    title: "Senate's 54-46 vote installs Warsh atop Federal Reserve"
+    summary: "A 54-46 Senate vote on Wednesday installed Kevin Warsh atop the Federal Reserve, succeeding Jerome Powell at the end of the month."
+    full_text: >
+      A 54-46 Senate vote on Wednesday installed Kevin Warsh atop the Federal Reserve,
+      succeeding Jerome Powell at the end of the month. Warsh, a Republican economist who
+      served as a Fed governor during the 2008 financial crisis, has signalled he will
+      pursue a steady-as-she-goes June meeting before laying out a longer-term framework
+      review at Jackson Hole in August. New York Times reporting suggests Warsh's first
+      personnel move will be to elevate Vice Chair Philip Jefferson to a more visible
+      communications role. The dollar index closed up 0.3 percent. Treasury yields gave
+      back morning gains. The President called the confirmation "a great day for sound
+      money." Powell will not attend the swearing-in.
+    source: { slug: nytimes, country: US, tier: international }
+    published_at: "2026-05-13T23:00Z"
+expectation:
+  type: should_merge
+  expected_member_ids: [war-1, war-2, war-3, war-4, war-5, war-6, war-7, war-8]
+  min_clusters: 1
+  max_clusters: 1
+  min_source_count: 7
+rationale: |
+  Same-event duplicate: ALL 8 articles describe the identical 54-46 Senate
+  vote confirming Warsh as Fed Chair. Production split them into two
+  clusters appearing at #1 and #41 on 2026-05-15. The duplicate detector
+  fails because (a) titles use both "confirms" and "confirmed", and (b)
+  the title-Jaccard merge in Phase 3 has a 0.45 threshold that misses
+  pairs sharing only "warsh" + "fed" + "chair" + "senate" (Jaccard ~0.40).

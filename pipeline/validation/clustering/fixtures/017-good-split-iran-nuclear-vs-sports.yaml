@@ -1,0 +1,90 @@
+id: iran-nuclear-vs-sports-good-split-2026-04
+name: "Iran nuclear talks vs Iran football victory (must split — different domains)"
+failure_date: "2026-04-23"
+failure_kind: known-good-split
+articles:
+  # ---- Nuclear track ----
+  - id: irn-nuc-1
+    title: "Iran nuclear talks resume in Vienna after six-month hiatus"
+    summary: "Iran nuclear talks resumed in Vienna Wednesday after a six-month hiatus, with Tehran demanding sanctions relief in exchange for IAEA access."
+    full_text: >
+      Iran nuclear talks resumed in Vienna on Wednesday after a six-month hiatus, with
+      Tehran demanding sanctions relief in exchange for IAEA inspector access at Natanz.
+      The European Union's chief negotiator Enrique Mora opened the proceedings at the
+      Hotel Imperial. Iranian foreign minister Abbas Araghchi led the Tehran delegation.
+      The US team is participating indirectly through European mediators. The talks are
+      expected to last three days. Russian and Chinese diplomats are also at the table.
+    source: { slug: reuters, country: AT, tier: wire }
+    published_at: "2026-04-22T10:00Z"
+  - id: irn-nuc-2
+    title: "Vienna: Iran nuclear talks resume, sanctions relief central"
+    summary: "Vienna: Iran nuclear talks resumed Wednesday with sanctions relief central to the agenda, the AP reports."
+    full_text: >
+      Vienna: Iran nuclear talks resumed Wednesday with sanctions relief central to the
+      agenda, the AP reports. The talks, the first since October, will run three days.
+      Iranian and European negotiators met in plenary at the Hotel Imperial. The US is
+      participating indirectly. The IAEA Director General Rafael Grossi will brief the
+      participants on Thursday afternoon.
+    source: { slug: ap-news, country: AT, tier: wire }
+    published_at: "2026-04-22T11:00Z"
+  - id: irn-nuc-3
+    title: "Iran-EU nuclear talks: IAEA Natanz access on the table"
+    summary: "Iran-EU nuclear talks resumed in Vienna Wednesday, with IAEA Natanz access at the centre of the discussions."
+    full_text: >
+      Iran-EU nuclear talks resumed in Vienna on Wednesday, with IAEA Natanz access at
+      the centre of the discussions, the BBC's Vienna correspondent reports. EU foreign-
+      policy chief Kaja Kallas described the resumption as "constructive but
+      preliminary." Tehran is seeking the unfreezing of approximately 6 billion dollars
+      in central-bank reserves currently held in Switzerland. The next session is
+      scheduled for Friday morning.
+    source: { slug: bbc, country: GB, tier: international }
+    published_at: "2026-04-22T13:00Z"
+  # ---- Sports track ----
+  - id: irn-spt-1
+    title: "Iran football team beats Saudi Arabia 2-0 in World Cup qualifier"
+    summary: "Iran's football team beat Saudi Arabia 2-0 in a World Cup qualifier in Tehran Wednesday, securing a critical group lead."
+    full_text: >
+      Iran's football team beat Saudi Arabia 2-0 in a World Cup qualifier at Azadi
+      Stadium in Tehran on Wednesday, securing a critical group lead. Mehdi Taremi
+      scored both goals, the first a header from a corner in the 23rd minute and the
+      second a counter-attacking finish in the 71st. Coach Amir Ghalenoei called the
+      performance "the best of the cycle." Iran now sits top of Group A with 14 points
+      from six matches. The match drew a sellout 78,000 crowd. Saudi Arabia drops to
+      second.
+    source: { slug: ifc-sport, country: IR, tier: domestic }
+    published_at: "2026-04-22T18:00Z"
+  - id: irn-spt-2
+    title: "Taremi double sinks Saudi Arabia as Iran tops World Cup qualifier group"
+    summary: "Mehdi Taremi's double sank Saudi Arabia 2-0 as Iran topped the World Cup qualifier group at Azadi Stadium Wednesday night."
+    full_text: >
+      Mehdi Taremi's double sank Saudi Arabia 2-0 as Iran topped the World Cup
+      qualifier group at Azadi Stadium on Wednesday night, the AP Sport wire reports.
+      Taremi, who plays his club football for Inter Milan, brought his international
+      tally to 51 goals. The result effectively guarantees Iran's qualification for the
+      2026 World Cup with two matches to spare. The home crowd of 78,000 set a
+      qualifier attendance record. Saudi Arabia coach Roberto Mancini called it "a
+      painful but instructive evening."
+    source: { slug: ap-news, country: IR, tier: wire }
+    published_at: "2026-04-22T19:00Z"
+  - id: irn-spt-3
+    title: "Iran 2-0 Saudi Arabia: Tehran erupts as Taremi seals World Cup berth"
+    summary: "Iran 2-0 Saudi Arabia: Tehran erupted as Mehdi Taremi sealed an effective World Cup berth at Azadi Stadium Wednesday night."
+    full_text: >
+      Iran 2-0 Saudi Arabia: Tehran erupted as Mehdi Taremi sealed an effective World
+      Cup berth at Azadi Stadium on Wednesday night, the Guardian reports from the
+      Iranian capital. Iran's qualification means a likely group draw with the United
+      States, England or France in the 2026 tournament. Iranian President Masoud
+      Pezeshkian congratulated the team in a statement.
+    source: { slug: guardian, country: GB, tier: international }
+    published_at: "2026-04-22T20:30Z"
+expectation:
+  type: should_split
+  member_ids: [irn-nuc-1, irn-nuc-2, irn-nuc-3, irn-spt-1, irn-spt-2, irn-spt-3]
+  min_clusters: 2
+rationale: |
+  Known-good split. Two distinct stories sharing only the GPE "Iran" /
+  "Tehran" — different domains entirely (Vienna nuclear talks vs Azadi
+  Stadium football). _OVERLY_COMMON_ENTITIES blacklist filters out Iran,
+  Iranian, Tehran, Saudi Arabia, so the Phase-2 entity merge will not
+  fire. Phase-1 TF-IDF separates them cleanly. Regression fixture: this
+  must remain split into 2 clusters.

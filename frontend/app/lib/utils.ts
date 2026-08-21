@@ -1,75 +1,69 @@
 /**
- * Returns "Morning" or "Evening" based on the edition's regional time zone.
- * US → America/New_York, India → Asia/Kolkata, World → UTC.
+ * Base path for the deployed site — must match next.config.ts basePath.
+ *
+ * Defaults to /void--news (GitHub Pages project-repo path). Cloudflare
+ * Pages and custom-domain deployments set NEXT_PUBLIC_BASE_PATH="" in the
+ * build env, which Next.js inlines at compile time so the browser bundle
+ * sees the empty string at runtime.
  */
-export function getEditionTimeOfDay(edition: string): "Morning" | "Evening" {
-  const now = new Date();
-  let hour: number;
+export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "/void--news";
 
-  const editionTimezones: Record<string, string> = {
-    us: "America/New_York",
-    india: "Asia/Kolkata",
-    uk: "Europe/London",
-    canada: "America/Toronto",
-  };
+/**
+ * Morning/Evening shorthand from the reader's LOCAL time.
+ * Only rendered client-side (after mount) so the local clock is the reader's.
+ */
+export function getEditionTimeOfDay(): "Morning" | "Evening" {
+  return new Date().getHours() < 12 ? "Morning" : "Evening";
+}
 
-  const tz = editionTimezones[edition];
-  if (tz) {
-    hour = parseInt(
-      now.toLocaleString("en-US", {
-        hour: "numeric",
-        hour12: false,
-        timeZone: tz,
-      }),
-      10,
-    );
-  } else {
-    // World edition — UTC
-    hour = now.getUTCHours();
-  }
+const EDITION_MONTHS = [
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+];
 
-  return hour < 12 ? "Morning" : "Evening";
+/**
+ * Compact dateline timestamp for the masthead: the edition's BUILD time
+ * (the pipeline's completed_at), rendered in the VIEWER'S LOCAL zone and
+ * ROUNDED TO THE NEAREST HOUR, with a short zone label (e.g. "4:00 PM CDT").
+ * Rounding to the hour signals a once-a-day edition rather than a live clock;
+ * the local zone makes the "as of" time relevant to each reader.
+ *
+ * HYDRATION: local time depends on the viewer's machine, so this string can
+ * NEVER be baked into the prerendered HTML (the build box's zone is not the
+ * reader's). Every surface calls this ONLY after mount (a `mounted` gate), so
+ * the server HTML and the first client render agree (empty), then the real
+ * local time paints in. Do not call it during the initial React render.
+ *
+ * The raw ISO input is the single source of truth; every surface (front-page
+ * masthead, Deep Dive masthead, Menu drawer, /onair, /sources) formats the
+ * SAME pipeline completed_at through THIS one helper so they never diverge.
+ * With no (or an invalid) argument it falls back to the current hour.
+ */
+export function getEditionTimestampLocal(builtAtISO?: string | null): string {
+  const src = builtAtISO ? new Date(builtAtISO) : new Date();
+  if (isNaN(src.getTime())) return "";
+  // Round to the nearest hour in the viewer's LOCAL zone. >= 30 min rounds up.
+  const d = new Date(src.getTime());
+  if (d.getMinutes() >= 30) d.setHours(d.getHours() + 1);
+  d.setMinutes(0, 0, 0);
+  // e.g. "4:00 PM CDT" (locale + zone come from the viewer's runtime).
+  return d.toLocaleTimeString(undefined, {
+    hour: "numeric",
+    minute: "2-digit",
+    timeZoneName: "short",
+  });
 }
 
 /**
- * Returns a compact regional timestamp string for the dateline.
- * US: "9 AM ET"  World: "14:05 UTC"  India: "19:35 IST"
+ * Compact UTC dateline for the masthead (e.g. "Aug 9, 2026"), matching the
+ * prerendered front page (serverFeed.formatDatelineUTC). Deterministic for a
+ * given ISO input, so it is safe on both server and client and never shifts
+ * with the reader's timezone. Falls back to "now" when the arg is absent.
  */
-export function getEditionTimestamp(edition: string): string {
-  const now = new Date();
-
-  const editionFormats: Record<string, { tz: string; label: string; h12: boolean }> = {
-    us: { tz: "America/New_York", label: "ET", h12: true },
-    india: { tz: "Asia/Kolkata", label: "IST", h12: false },
-    uk: { tz: "Europe/London", label: "GMT", h12: false },
-    canada: { tz: "America/Toronto", label: "ET", h12: true },
-  };
-
-  const fmt = editionFormats[edition];
-  if (fmt) {
-    if (fmt.h12) {
-      const ts = now
-        .toLocaleString("en-US", {
-          hour: "numeric",
-          hour12: true,
-          timeZone: fmt.tz,
-        })
-        .replace(" AM", " AM")
-        .replace(" PM", " PM");
-      return `${ts} ${fmt.label}`;
-    }
-    const ts = now.toLocaleString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
-      hour12: false,
-      timeZone: fmt.tz,
-    });
-    return `${ts} ${fmt.label}`;
-  }
-
-  const h = String(now.getUTCHours()).padStart(2, "0");
-  const m = String(now.getUTCMinutes()).padStart(2, "0");
-  return `${h}:${m} UTC`;
+export function getEditionDatelineUTC(builtAtISO?: string | null): string {
+  const d = builtAtISO ? new Date(builtAtISO) : new Date();
+  if (isNaN(d.getTime())) return "";
+  return `${EDITION_MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`;
 }
 
 /**

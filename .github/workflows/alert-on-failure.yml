@@ -1,0 +1,40 @@
+name: Alert on Failure
+
+# Centralized failure alerting. Watches the launch-critical workflows and posts
+# to a webhook when any of them fails, so a broken pipeline, a skipped deploy, or
+# a failed backup is not invisible. Set the repo secret ALERT_WEBHOOK_URL to a
+# Slack incoming webhook (or a Discord webhook URL with a /slack suffix, which
+# accepts the same {"text": ...} payload). Until the secret is set, this no-ops.
+on:
+  workflow_run:
+    workflows:
+      - "News Pipeline"
+      - "Auto-merge Claude branches"
+      - "Weekly DB Backup"
+      - "Weekly Digest"
+      - "Deploy to Cloudflare Pages"
+    types: [completed]
+
+permissions:
+  contents: read
+
+jobs:
+  alert:
+    if: github.event.workflow_run.conclusion == 'failure'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify
+        env:
+          WEBHOOK: ${{ secrets.ALERT_WEBHOOK_URL }}
+          WF: ${{ github.event.workflow_run.name }}
+          URL: ${{ github.event.workflow_run.html_url }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+        run: |
+          if [ -z "$WEBHOOK" ]; then
+            echo "ALERT_WEBHOOK_URL not set; skipping notification."
+            echo "Set the repo secret to a Slack/Discord webhook to enable alerts."
+            exit 0
+          fi
+          payload=$(printf '{"text":":red_circle: void --news: *%s* FAILED on `%s`\n%s"}' "$WF" "$BRANCH" "$URL")
+          curl -fsS -X POST -H 'Content-Type: application/json' -d "$payload" "$WEBHOOK" \
+            || echo "alert POST failed (webhook unreachable)"

@@ -1,0 +1,238 @@
+id: overflow-classification-2026-05
+name: "is_international classification cohort (5 US, 5 world, 5 mixed)"
+failure_date: "2026-05-15"
+failure_kind: overflow-classification
+articles:
+  # ---- US-domestic cluster #1: Trump rally ----
+  - id: us-1a
+    title: "Trump rally in Pennsylvania draws 18,000 supporters"
+    summary: "President Trump rallied 18,000 supporters in suburban Pennsylvania Wednesday, focusing on tariff and immigration policy."
+    full_text: >
+      President Trump rallied 18,000 supporters in suburban Pennsylvania on Wednesday,
+      focusing on tariff and immigration policy. Treasury Secretary Bessent spoke first,
+      praising the administration's economic record. The Pentagon and the White House
+      coordinated security with Pennsylvania State Police. Senator Casey did not attend.
+      Senate Majority Leader Thune sent a recorded greeting. The event ran two hours.
+    source: { slug: ap-news, country: US, tier: wire }
+    published_at: "2026-05-14T19:00Z"
+  # ---- US-domestic cluster #2: SCOTUS Texas voting case ----
+  - id: us-2a
+    title: "SCOTUS hears Texas voting-rights case, conservatives signal sympathy"
+    summary: "The Supreme Court heard the Texas voting-rights case Wednesday, with conservative justices signaling sympathy for the state."
+    full_text: >
+      The Supreme Court heard the Texas voting-rights case on Wednesday, with conservative
+      justices signaling sympathy for the state's argument that federal review of redistricting
+      is no longer warranted. Chief Justice John Roberts pressed both sides on the
+      Capitol Hill record. The Justice Department argued for the federal government. Senate
+      Judiciary Chair Chuck Grassley said the case was about "states' rights." A ruling is
+      expected by June. Texas Attorney General Ken Paxton attended oral arguments.
+    source: { slug: washington-post, country: US, tier: international }
+    published_at: "2026-05-14T16:00Z"
+  # ---- US-domestic cluster #3: Fed Chair Warsh transition ----
+  - id: us-3a
+    title: "Fed Chair-elect Warsh meets White House staff on transition"
+    summary: "Federal Reserve Chair-elect Kevin Warsh met White House staff Wednesday on transition coordination."
+    full_text: >
+      Federal Reserve Chair-elect Kevin Warsh met White House staff on Wednesday for
+      transition coordination ahead of his June 1 swearing-in. Treasury Secretary
+      Bessent and National Economic Council Director Kevin Hassett both attended. The
+      Wall Street Journal noted Warsh discussed his Federal Reserve communications
+      strategy with senior White House aides. The current Fed chair Jerome Powell will
+      hold his final press conference on May 28.
+    source: { slug: wsj, country: US, tier: international }
+    published_at: "2026-05-14T13:00Z"
+  # ---- US-domestic cluster #4: Texas governor border ----
+  - id: us-4a
+    title: "Texas governor signs new border-security funding bill"
+    summary: "Texas Governor Greg Abbott signed a new 2.4-billion-dollar border-security funding bill in Austin Wednesday."
+    full_text: >
+      Texas Governor Greg Abbott signed a new 2.4-billion-dollar border-security funding
+      bill in Austin on Wednesday, expanding state National Guard deployment along the
+      Rio Grande. The state legislature passed the bill 86-58. Texas Attorney General
+      Ken Paxton praised the signing. The Department of Homeland Security under
+      Secretary Kristi Noem said it would coordinate with state assets but would not
+      cede federal authority. The American Civil Liberties Union announced an
+      immediate legal challenge.
+    source: { slug: dallas-news, country: US, tier: domestic }
+    published_at: "2026-05-14T18:00Z"
+  # ---- US-domestic cluster #5: NYC mayor budget ----
+  - id: us-5a
+    title: "NYC mayor presents 115-billion-dollar budget to City Council"
+    summary: "NYC Mayor Eric Adams presented a 115-billion-dollar budget to the City Council Wednesday, with significant cuts to NYPD overtime."
+    full_text: >
+      NYC Mayor Eric Adams presented a 115-billion-dollar budget to the New York City
+      Council on Wednesday, with significant cuts to NYPD overtime offset by increased
+      capital spending on subway accessibility. The Council Speaker called the proposal
+      "a starting point." The budget is a 2.3-percent increase year-over-year. The
+      proposed FDNY hiring freeze drew sharp criticism from the firefighters' union.
+      State Comptroller Tom DiNapoli said the city's debt service was within prudent
+      limits.
+    source: { slug: ny-post, country: US, tier: domestic }
+    published_at: "2026-05-14T17:00Z"
+  # ---- International cluster #1: EU summit ----
+  - id: intl-1a
+    title: "EU summit in Brussels: leaders agree on Ukraine reconstruction package"
+    summary: "EU leaders at the Brussels summit agreed Wednesday on a 50-billion-euro Ukraine reconstruction package."
+    full_text: >
+      EU leaders at the Brussels summit agreed Wednesday on a 50-billion-euro Ukraine
+      reconstruction package, drawing on frozen Russian central-bank assets. European
+      Council President Antonio Costa called it "a milestone for European solidarity."
+      Ukrainian President Volodymyr Zelensky thanked the bloc by video link. The
+      European Commission will administer disbursement. The package was approved by
+      qualified majority over Hungarian Prime Minister Viktor Orban's objections.
+      Polish Prime Minister Donald Tusk said the bloc had "stepped up at a critical
+      moment."
+    source: { slug: politico-eu, country: BE, tier: international }
+    published_at: "2026-05-14T16:30Z"
+  # ---- International cluster #2: Brazil floods ----
+  - id: intl-2a
+    title: "Rio Grande do Sul floods: 38 dead, 80,000 displaced in Brazil"
+    summary: "Rio Grande do Sul floods in southern Brazil have killed 38 and displaced 80,000, the state government reported Wednesday."
+    full_text: >
+      Rio Grande do Sul floods in southern Brazil have killed 38 and displaced 80,000
+      from the state's interior cities, the state government reported Wednesday. Brazilian
+      President Lula declared a state of emergency. Brazilian Air Force C-130
+      transports were ferrying supplies to Porto Alegre. Argentine and Uruguayan
+      governments offered assistance. The European Union's civil-protection mechanism
+      pledged emergency tents. The Inter-American Development Bank approved a 200-
+      million-dollar emergency loan.
+    source: { slug: globo, country: BR, tier: domestic }
+    published_at: "2026-05-14T14:00Z"
+  # ---- International cluster #3: India election ----
+  - id: intl-3a
+    title: "Karnataka assembly election: Congress holds majority over BJP"
+    summary: "Karnataka assembly election: Congress held its majority over the BJP, retaining the Bengaluru-anchored state."
+    full_text: >
+      Karnataka assembly election: the Congress party held its majority over the
+      Bharatiya Janata Party in voting tabulated Wednesday, retaining the Bengaluru-
+      anchored state. Chief Minister Siddaramaiah claimed credit for welfare schemes
+      including free electricity. The BJP state president called the result "a
+      temporary setback." India's Election Commission certified the count by midday.
+      Prime Minister Modi did not immediately comment. Congress now governs three of
+      India's four southern states.
+    source: { slug: hindu, country: IN, tier: domestic }
+    published_at: "2026-05-14T12:00Z"
+  # ---- International cluster #4: Japan economy ----
+  - id: intl-4a
+    title: "Japan Q1 GDP: 0.4 percent expansion as services rebound"
+    summary: "Japan Q1 GDP expanded 0.4 percent quarter-over-quarter, the cabinet office said Wednesday, on a services rebound."
+    full_text: >
+      Japan Q1 GDP expanded 0.4 percent quarter-over-quarter, the cabinet office said
+      Wednesday, on a services rebound that beat the 0.2-percent consensus. The yen
+      strengthened to 138 against the dollar following the data. Bank of Japan
+      Governor Kazuo Ueda said the result was "consistent with the gradual normalization
+      path." Prime Minister Shigeru Ishiba said the expansion validated the
+      government's growth strategy. The Nikkei 225 closed 0.6 percent higher.
+    source: { slug: nikkei, country: JP, tier: international }
+    published_at: "2026-05-14T07:00Z"
+  # ---- International cluster #5: Russia Ukraine ----
+  - id: intl-5a
+    title: "Russia steps up Donbas offensive, Ukraine reports heavy fighting"
+    summary: "Russia stepped up its Donbas offensive Wednesday, with Ukraine reporting heavy fighting around Pokrovsk and Toretsk."
+    full_text: >
+      Russia stepped up its Donbas offensive on Wednesday, with Ukraine reporting heavy
+      fighting around Pokrovsk and Toretsk. Ukrainian general staff said Russian forces
+      committed two additional motorized rifle brigades. The European Council scheduled
+      an emergency session. NATO Secretary General Mark Rutte said the alliance "stands
+      with Ukraine." Russian foreign minister Sergei Lavrov dismissed Western
+      condemnation. Ukrainian President Volodymyr Zelensky called for accelerated air-
+      defense delivery.
+    source: { slug: kyiv-independent, country: UA, tier: domestic }
+    published_at: "2026-05-14T15:30Z"
+  # ---- Mixed cluster #1: Trump-Xi summit (US story but covered abroad) ----
+  - id: mix-1a
+    title: "Trump and Xi to meet in Beijing September: White House announcement"
+    summary: "President Trump and President Xi Jinping will meet in Beijing in September, the White House announced Wednesday."
+    full_text: >
+      President Trump and Chinese President Xi Jinping will meet in Beijing in September,
+      the White House announced Wednesday. Treasury Secretary Bessent and US Trade
+      Representative Greer will attend. Senate leadership briefed. The agenda includes
+      trade and Taiwan. South China Morning Post reports Beijing has begun preparation
+      ceremonies. Reuters confirmed the dates as September 22-24.
+    source: { slug: south-china-morning-post, country: CN, tier: international }
+    published_at: "2026-05-14T14:00Z"
+  # ---- Mixed cluster #2: G7 finance meeting ----
+  - id: mix-2a
+    title: "G7 finance ministers meet in Stresa: Treasury Secretary Bessent leads US"
+    summary: "G7 finance ministers met in Stresa, Italy Wednesday, with US Treasury Secretary Scott Bessent leading the American delegation."
+    full_text: >
+      G7 finance ministers met in Stresa, Italy on Wednesday, with US Treasury Secretary
+      Scott Bessent leading the American delegation. The agenda included frozen Russian
+      assets, Chinese overcapacity, and an Indo-Pacific reconstruction framework.
+      European Commissioner for Economic Affairs Valdis Dombrovskis chaired one session.
+      Italian Finance Minister Giancarlo Giorgetti hosted the gathering at the Hotel
+      Regina Palace. The communique is expected Friday.
+    source: { slug: ft, country: GB, tier: international }
+    published_at: "2026-05-14T11:00Z"
+  # ---- Mixed cluster #3: Hegseth NATO visit ----
+  - id: mix-3a
+    title: "Defense Secretary Hegseth at NATO HQ: rebalancing burden"
+    summary: "US Defense Secretary Pete Hegseth at NATO HQ in Brussels Wednesday, pressing allies on burden-sharing."
+    full_text: >
+      US Defense Secretary Pete Hegseth was at NATO HQ in Brussels on Wednesday,
+      pressing allies on burden-sharing in his first ministerial-level visit since
+      confirmation. NATO Secretary General Mark Rutte welcomed him at the Boulevard
+      Leopold III headquarters. Hegseth told a press briefing that "the era of America
+      carrying the alliance's deficit is over." European defense ministers responded
+      with budget commitments. The German defense minister Boris Pistorius pledged 2.4
+      percent of GDP by 2027.
+    source: { slug: politico-eu, country: BE, tier: international }
+    published_at: "2026-05-14T13:30Z"
+  # ---- Mixed cluster #4: Xi-Putin Moscow visit ----
+  - id: mix-4a
+    title: "Xi visits Moscow: Putin pledges deeper economic partnership"
+    summary: "Chinese President Xi Jinping visited Moscow Wednesday, with Russian President Vladimir Putin pledging deeper economic partnership."
+    full_text: >
+      Chinese President Xi Jinping visited Moscow on Wednesday, with Russian President
+      Vladimir Putin pledging deeper economic partnership amid Western sanctions
+      pressure. The two leaders signed bilateral agreements on energy and aerospace
+      cooperation. Russian foreign minister Sergei Lavrov hosted the closing
+      reception. Pentagon spokeswoman Sabrina Singh said the US is "watching closely."
+      Senator Marco Rubio criticized the embrace.
+    source: { slug: tass, country: RU, tier: international }
+    published_at: "2026-05-14T16:00Z"
+  # ---- Mixed cluster #5: IMF review of Argentina with US backing ----
+  - id: mix-5a
+    title: "IMF approves 12-billion-dollar Argentina program; US Treasury backs review"
+    summary: "The IMF approved a 12-billion-dollar Argentina program Wednesday, with US Treasury support for the review framework."
+    full_text: >
+      The International Monetary Fund approved a 12-billion-dollar Argentina program on
+      Wednesday, with US Treasury support for the review framework. President Javier
+      Milei welcomed the decision. Treasury Secretary Bessent issued a statement
+      praising the structural reforms. The IMF managing director Kristalina Georgieva
+      said Argentina "has earned this support through difficult choices." The Argentine
+      peso strengthened modestly. Brazilian finance minister Fernando Haddad said the
+      program would "stabilize the regional outlook."
+    source: { slug: clarin, country: AR, tier: domestic }
+    published_at: "2026-05-14T20:00Z"
+expectation:
+  type: should_tag_each
+  cases:
+    # 5 US-domestic — should_tag section=us
+    - { key_phrase: "Trump rally Pennsylvania", expected_section: us }
+    - { key_phrase: "Supreme Court Texas voting", expected_section: us }
+    - { key_phrase: "Fed Chair Warsh transition", expected_section: us }
+    - { key_phrase: "Texas governor border bill", expected_section: us }
+    - { key_phrase: "NYC mayor budget City Council", expected_section: us }
+    # 5 international — should_tag section=world
+    - { key_phrase: "EU summit Brussels Ukraine package", expected_section: world }
+    - { key_phrase: "Rio Grande Sul floods Brazil", expected_section: world }
+    - { key_phrase: "Karnataka assembly Congress BJP", expected_section: world }
+    - { key_phrase: "Japan GDP services rebound", expected_section: world }
+    - { key_phrase: "Russia Donbas offensive Pokrovsk", expected_section: world }
+    # 5 mixed — covered by both US and international sources, edition policy = world
+    - { key_phrase: "Trump Xi Beijing September", expected_section: world }
+    - { key_phrase: "G7 finance ministers Stresa", expected_section: world }
+    - { key_phrase: "Hegseth NATO Brussels burden-sharing", expected_section: world }
+    - { key_phrase: "Xi Moscow Putin partnership", expected_section: world }
+    - { key_phrase: "IMF Argentina program Treasury", expected_section: world }
+rationale: |
+  Cohort classification health: cluster_stories.is_international logic
+  must distinguish (a) US-only domestic clusters, (b) clearly
+  international clusters, and (c) mixed-coverage stories that are
+  globally relevant despite a US source mix. Production on 2026-05-15
+  showed systematic over-tagging of (c) as `us` (the asymmetric
+  threshold US:>=4, INT:>=3 in _determine_section produces this when
+  US markers like "trump", "treasury", "senate" outnumber international
+  ones). Edition policy says edition=world only ships, so mixed must
+  resolve to world.

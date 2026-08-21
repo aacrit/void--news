@@ -8,6 +8,7 @@ functions for common database operations.
 import os
 from datetime import datetime, timezone
 
+import httpx
 from dotenv import load_dotenv
 from supabase import create_client, Client
 
@@ -23,6 +24,70 @@ if not SUPABASE_URL or not SUPABASE_KEY:
     )
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+
+# ---------------------------------------------------------------------------
+# HTTP/2 stream exhaustion guard.
+#
+# postgrest-py and storage3 both hardcode ``http2=True`` on their httpx session
+# (postgrest/_sync/client.py, storage3/_sync/client.py), and this module hands
+# out ONE module-level client that every pipeline module imports by name and
+# reuses for the whole run. A full daily run issues far more than 10,000
+# PostgREST requests across ~2.5 hours, all multiplexed onto that single
+# long-lived HTTP/2 connection. Client-initiated HTTP/2 streams are numbered
+# 1, 3, 5, ..., so request ~10,000 lands on stream 19999 — at which point the
+# edge sends GOAWAY and every subsequent request on that connection dies:
+#
+#   2026-08-13T14:18:56  [error] Failed to insert cluster:
+#     <ConnectionTerminated error_code:0, last_stream_id:19999>
+#
+# That is what has been killing the daily pipeline: the 08-12 and 08-13
+# scheduled runs both reached step 8 (storing clusters), lost the connection
+# mid-write, and were cancelled at the job timeout having stored nothing. The
+# feed went stale.
+#
+# Fix: move the session to HTTP/1.1, where httpx's connection pool transparently
+# opens a fresh connection whenever the server closes one, so there is no
+# per-connection request ceiling to exhaust. Add transport-level retries for
+# connect failures on top. Throughput is unaffected in practice: PostgREST calls
+# here are sequential-ish and pool-limited, not stream-multiplexed.
+#
+# Deliberately fail-open — if a future postgrest/storage3 release moves these
+# internals, warn and keep the stock client rather than break the pipeline.
+# ---------------------------------------------------------------------------
+def _harden_http_session(api, label: str) -> bool:
+    """Rebuild ``api.session`` on HTTP/1.1 with connect retries. Returns success."""
+    old = getattr(api, "session", None)
+    if old is None:
+        return False
+    try:
+        new = type(old)(
+            base_url=old.base_url,
+            headers=old.headers,
+            timeout=old.timeout,
+            follow_redirects=True,
+            http2=False,
+            transport=httpx.HTTPTransport(retries=3),
+        )
+    except Exception as exc:  # pragma: no cover - defensive
+        print(f"  [warn] Could not harden {label} HTTP session ({exc}); "
+              f"leaving HTTP/2 session in place")
+        return False
+    api.session = new
+    try:
+        old.close()
+    except Exception:
+        pass
+    return True
+
+
+for _api_attr, _label in (("postgrest", "postgrest"), ("storage", "storage")):
+    try:
+        _api = getattr(supabase, _api_attr, None)
+        if _api is not None:
+            _harden_http_session(_api, _label)
+    except Exception as _exc:  # pragma: no cover - defensive
+        print(f"  [warn] Skipped {_label} HTTP hardening: {_exc}")
 
 
 def insert_article(article: dict) -> dict | None:
@@ -136,6 +201,7 @@ def update_pipeline_run(
     clusters_created: int = 0,
     errors: list | None = None,
     duration_seconds: float | None = None,
+    llm_metrics: dict | None = None,
 ) -> dict | None:
     """
     Update a pipeline run record with final results.
@@ -148,6 +214,8 @@ def update_pipeline_run(
         clusters_created: Total story clusters formed.
         errors: List of error dicts [{source, error, timestamp}].
         duration_seconds: Total pipeline duration.
+        llm_metrics: Optional dict with per-run LLM telemetry (call counts,
+            cache hits, cost estimate). Persisted to pipeline_runs.llm_metrics.
 
     Returns:
         The updated row as a dict, or None on failure.
@@ -158,10 +226,15 @@ def update_pipeline_run(
         "articles_fetched": articles_fetched,
         "articles_analyzed": articles_analyzed,
         "clusters_created": clusters_created,
-        "errors": errors or [],
+        # Merge, never clobber: claude_client failure latches and the step-8
+        # insert-failure marker append to this column mid-run; a finalize
+        # that overwrites with fetch_errors erases those signals.
+        "errors": _merge_run_errors(run_id, errors or []),
     }
     if duration_seconds is not None:
         update_data["duration_seconds"] = duration_seconds
+    if llm_metrics is not None:
+        update_data["llm_metrics"] = llm_metrics
 
     try:
         result = (
@@ -175,6 +248,41 @@ def update_pipeline_run(
     except Exception as e:
         print(f"  [error] Failed to update pipeline run: {e}")
     return None
+
+
+def _merge_run_errors(run_id: str, new_errors: list, cap: int = 50) -> list:
+    """Return existing pipeline_runs.errors with new_errors appended (deduped,
+    capped). Best-effort: on any read failure, fall back to new_errors alone."""
+    try:
+        prev = (
+            supabase.table("pipeline_runs")
+            .select("errors")
+            .eq("id", run_id)
+            .limit(1)
+            .execute()
+        )
+        existing = (prev.data[0].get("errors") or []) if prev.data else []
+    except Exception:
+        existing = []
+    merged = list(existing)
+    for err in new_errors:
+        if err not in merged:
+            merged.append(err)
+    return merged[:cap]
+
+
+def append_pipeline_run_errors(run_id: str, new_errors: list) -> None:
+    """Append error dicts to pipeline_runs.errors without clobbering what
+    other writers (claude_client latch reports, step markers) already put
+    there. Best-effort; never raises."""
+    if not run_id or not new_errors:
+        return
+    try:
+        supabase.table("pipeline_runs").update(
+            {"errors": _merge_run_errors(run_id, new_errors)}
+        ).eq("id", run_id).execute()
+    except Exception as e:
+        print(f"  [warn] append_pipeline_run_errors failed: {e}")
 
 
 def get_active_sources() -> list[dict]:

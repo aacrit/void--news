@@ -1,0 +1,96 @@
+id: scotus-mifepristone-2026-05
+name: "SCOTUS preserves mifepristone access (must be present in top 50)"
+failure_date: "2026-05-15"
+failure_kind: missing
+articles:
+  - id: scotus-1
+    title: "Supreme Court preserves nationwide mifepristone access in 6-3 ruling"
+    summary: "The Supreme Court ruled 6-3 on Wednesday to preserve nationwide access to mifepristone, the abortion-pill, throwing out a Fifth Circuit injunction."
+    full_text: >
+      The Supreme Court ruled 6-3 on Wednesday to preserve nationwide access to
+      mifepristone, the most common abortion-pill, throwing out a Fifth Circuit injunction
+      that would have rolled back FDA approvals dating to 2016. Justice Kavanaugh wrote
+      the majority opinion, which held that the plaintiff doctors lacked standing.
+      Justices Alito and Thomas dissented, joined by Justice Barrett, who said standing
+      should have been recognized. The decision restores the FDA's authority to approve
+      mail-order distribution of the drug. President Trump declined to comment immediately.
+      The pharmaceutical industry's trade group called the ruling "a win for regulatory
+      science." Reproductive-rights groups described it as "necessary but not sufficient"
+      and said state-level challenges remain a primary battleground.
+    source: { slug: ap-news, country: US, tier: wire }
+    published_at: "2026-05-14T14:00Z"
+  - id: scotus-2
+    title: "SCOTUS rules 6-3 mifepristone access stands"
+    summary: "The U.S. Supreme Court ruled 6-3 Wednesday that mifepristone access stands, rejecting a challenge from anti-abortion physicians."
+    full_text: >
+      The U.S. Supreme Court ruled 6-3 Wednesday that mifepristone access stands across
+      all fifty states, rejecting a challenge from a group of anti-abortion physicians.
+      Justice Brett Kavanaugh wrote that the plaintiffs had not demonstrated a concrete,
+      particularized injury sufficient to grant standing under Article III. The opinion
+      reverses the Fifth Circuit Court of Appeals. The Justice Department welcomed the
+      ruling. Senate Majority Leader Chuck Schumer called it "a victory for women, for
+      science, and for the rule of law." Senate Minority Leader Mitch McConnell said the
+      court "rightly addressed the standing question without reaching the merits." Future
+      challenges to mifepristone are expected to focus on state-level dispensing rules.
+    source: { slug: reuters, country: US, tier: wire }
+    published_at: "2026-05-14T14:30Z"
+  - id: scotus-3
+    title: "Mifepristone ruling: court tosses FDA challenge"
+    summary: "The Supreme Court has tossed a challenge to the FDA's approval of mifepristone, preserving the abortion pill's nationwide availability."
+    full_text: >
+      The Supreme Court has tossed a challenge to the Food and Drug Administration's
+      approval of mifepristone, preserving the abortion pill's nationwide availability.
+      The unsigned per curiam release, issued at 10:00 a.m., redirected reporters to the
+      majority opinion authored by Justice Kavanaugh. Reproductive Freedom Project
+      attorneys said the ruling "removes immediate uncertainty for the millions of women
+      who rely on this medication." The American Civil Liberties Union noted that the
+      ruling "does not address the merits of state restrictions." The New York Times
+      Editorial Board called the ruling "a procedural reprieve, not a substantive
+      victory." Anti-abortion groups vowed to refile with state attorneys general as
+      plaintiffs. Pharmaceutical analysts said the decision removes near-term regulatory
+      risk for Danco Laboratories.
+    source: { slug: nytimes, country: US, tier: international }
+    published_at: "2026-05-14T15:00Z"
+  - id: scotus-4
+    title: "Abortion pill stays available: SCOTUS rejects challenge"
+    summary: "The abortion pill mifepristone will remain available nationwide after the Supreme Court rejected a challenge to its FDA approval Wednesday."
+    full_text: >
+      The abortion pill mifepristone will remain available nationwide after the Supreme
+      Court rejected a challenge to its FDA approval on standing grounds Wednesday. The
+      6-3 ruling, with Chief Justice Roberts joining the majority, marks the second time
+      in two years the high court has declined to disturb the drug's regulatory status.
+      Washington Post analysis: the opinion takes pains to limit its reach, leaving
+      future state-led challenges open. The Catholic Health Association called the ruling
+      "a profound disappointment." Senator Lindsey Graham said the court should have ruled
+      on the merits. Demonstrations outside the court remained orderly through the
+      afternoon. The case originated with the Alliance for Hippocratic Medicine in 2022.
+    source: { slug: washington-post, country: US, tier: international }
+    published_at: "2026-05-14T15:30Z"
+  - id: scotus-5
+    title: "Supreme Court keeps mifepristone available, dismissing standing"
+    summary: "The Supreme Court kept mifepristone available across the United States, dismissing the anti-abortion physicians' lawsuit on standing grounds."
+    full_text: >
+      The Supreme Court kept mifepristone available across the United States Wednesday,
+      dismissing the anti-abortion physicians' lawsuit on standing grounds in a 6-3
+      ruling. The decision is a significant blow to anti-abortion legal strategy that has
+      relied on plaintiff doctors. Bloomberg's Supreme Court reporter noted the ruling
+      could foreshadow tighter standing analysis in future religious-liberty cases. The
+      Susan B. Anthony Pro-Life America issued a statement calling for state legislatures
+      to "step into the breach." White House counsel said the administration would
+      "continue to defend the FDA's regulatory authority on every front." Mifepristone
+      accounts for nearly two-thirds of US abortions following the 2022 Dobbs decision.
+    source: { slug: bloomberg, country: US, tier: international }
+    published_at: "2026-05-14T16:00Z"
+expectation:
+  type: should_be_present
+  key_phrase: "Supreme Court mifepristone abortion"
+  in_top_n: 50
+  min_overlap: 0.5
+rationale: |
+  Missing-story failure: SCOTUS preserved mifepristone access (5+ source
+  cluster, major US event) but the cluster did not appear in the top 50
+  on 2026-05-15. Likely cause: title-keyword variation ("mifepristone"
+  vs "abortion pill" vs "FDA challenge") splits the TF-IDF baseline,
+  and the resulting micro-clusters each have source_count below the
+  thresholds the importance ranker expects. Test asserts at minimum that
+  some matched cluster lands within the visible feed.

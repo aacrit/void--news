@@ -1,9 +1,8 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import type { Edition } from "../lib/types";
-import type { OpinionArticle } from "../lib/types";
-import { type LeanChip, LEAN_RANGES } from "./FilterBar";
+import type { Edition, OpinionArticle, LeanChip } from "../lib/types";
+import { LEAN_RANGES } from "../lib/types";
 import { fetchOpinionArticles } from "../lib/supabase";
 import OpinionCard from "./OpinionCard";
 import LoadingSkeleton from "./LoadingSkeleton";
@@ -65,7 +64,7 @@ export default function OpEdPage({ edition, activeLean = "All" }: OpEdPageProps)
         <div className="oped-page__header-inner">
           <h2 className="oped-page__title">The Op-Ed Page</h2>
           <p className="oped-page__subtitle">
-            Opinion, analysis, and editorial &mdash; ranked by recency, balanced across the spectrum.
+            Opinion, analysis, and editorial. Ranked by recency, balanced across the spectrum.
           </p>
         </div>
         <div className="oped-page__header-rule" />
@@ -121,7 +120,7 @@ export default function OpEdPage({ edition, activeLean = "All" }: OpEdPageProps)
       {!isLoading && filteredArticles.length > 0 && (
         <p className="oped-page__count">
           {filteredArticles.length} opinion piece{filteredArticles.length !== 1 ? "s" : ""}
-          {activeLean !== "All" ? " (filtered)" : ""} &mdash; curated from {edition === "world" ? "world" : "US"} sources
+          {activeLean !== "All" ? " (filtered)" : ""} · curated from {edition === "world" ? "world" : "US"} sources
         </p>
       )}
     </div>

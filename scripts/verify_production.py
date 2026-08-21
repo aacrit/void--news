@@ -1,0 +1,384 @@
+#!/usr/bin/env python3
+"""Production output verification gate for Void News.
+
+Fetch-and-assert on what the LIVE site actually SERVES, not on a diff. This is
+the check that was missing: correctness was being judged against the code change
+instead of against the rendered HTML, so regressions that only appear in the
+served output (a doubled Top story badge, sitewide "U. S." corruption) shipped
+while every unit gate stayed green.
+
+Usage:
+    python verify_production.py <html_file> [--url <origin>]
+
+Exit code 0 => all hard checks pass. Exit code 1 => at least one failed; every
+failure prints the offending string with surrounding context so the operator can
+act without re-fetching. This script does exactly ZERO network I/O — the wrapper
+verify-production.sh curls the URL and hands the file in, so the same logic runs
+identically in CI, locally, and against a Pages preview URL.
+
+Parsing is deliberately regex-over-rendered-DOM (stdlib only, no bs4): the story
+text is server-rendered into `story-card__summary` / `lead-summary` nodes, so we
+verify precisely the bytes a reader receives.
+"""
+
+from __future__ import annotations
+
+import argparse
+import html as _html
+import re
+import sys
+
+# ---------------------------------------------------------------------------
+# Tunables calibrated against a correct render. A check that would fire on a
+# KNOWN-GOOD page is a false gate; each constant here is set so the gate passes
+# on a clean fixture and fails only on real corruption.
+# ---------------------------------------------------------------------------
+MIN_SUMMARY_CHARS = 40
+DUP_STEM_OVERLAP = 4          # >= this many shared title stems => same story
+WORDMARK_MAX = 3             # header + footer + one mobile-nav variant
+DATELINE_MAX = 2             # nav + footer
+
+# ---------------------------------------------------------------------------
+# Title stemming — VENDORED from pipeline/clustering/story_cluster.py so the gate
+# and the ranker agree on what "same story" means. KEEP _TITLE_STOPWORDS in sync
+# with that file (currently story_cluster.py:2420). Porter stem via nltk when
+# available (the ranker's primary path); a light suffix stripper otherwise so the
+# gate never hard-depends on nltk being installed.
+# ---------------------------------------------------------------------------
+_TITLE_STOPWORDS = frozenset({
+    "a", "an", "the", "and", "or", "but", "in", "on", "at", "to", "for",
+    "of", "with", "by", "from", "is", "are", "was", "were", "be", "been",
+    "has", "have", "had", "its", "it", "as", "after", "over", "up", "that",
+    "this", "not", "no", "says", "said", "new", "amid", "more", "than",
+    "about", "how", "what", "why", "who", "when", "where", "which",
+    "will", "would", "could", "should", "may", "might", "can",
+    "reports", "report", "sources", "according", "also", "first",
+    "two", "one", "three", "us", "announces", "while",
+})
+
+try:
+    from nltk.stem import PorterStemmer  # type: ignore
+    _STEMMER = PorterStemmer()
+
+    def _stem(w: str) -> str:
+        try:
+            return _STEMMER.stem(w)
+        except Exception:
+            return w
+except Exception:  # pragma: no cover - nltk missing
+    def _stem(w: str) -> str:
+        for suf in ("ations", "ation", "ing", "ies", "edly", "ed", "es", "s"):
+            if len(w) > len(suf) + 2 and w.endswith(suf):
+                return w[: -len(suf)]
+        return w
+
+
+def _title_word_stems(title: str) -> set[str]:
+    """Tokenise + stopword-filter + Porter-stem a title's content words. Mirrors
+    clustering/story_cluster.py::_title_word_stems (minus the wire-prefix cleaner,
+    which does not change stem OVERLAP for feed headlines)."""
+    words = re.findall(r"[a-z0-9](?:[a-z0-9'-]*[a-z0-9])?", (title or "").lower())
+    out: set[str] = set()
+    for w in words:
+        if w in _TITLE_STOPWORDS or len(w) < 2:
+            continue
+        out.add(_stem(w))
+    return out
+
+
+# ---------------------------------------------------------------------------
+# DOM extraction
+# ---------------------------------------------------------------------------
+def _decode(s: str) -> str:
+    return _html.unescape(s or "").strip()
+
+
+def _extract(pattern: str, doc: str) -> list[str]:
+    return [_decode(m) for m in re.findall(pattern, doc, re.DOTALL)]
+
+
+class Page:
+    def __init__(self, doc: str):
+        self.raw = doc
+        # Rendered story text nodes (text-only until the closing tag).
+        self.card_summaries = _extract(r'class="story-card__summary"[^>]*>([^<]*)<', doc)
+        self.lead_summaries = _extract(r'class="lead-summary"[^>]*>([^<]*)<', doc)
+        self.card_headlines = _extract(r'class="story-card__headline-text"[^>]*>([^<]*)<', doc)
+        # The real lead headline text is in the __text span; the lead-headline
+        # element itself opens with an sr-only "Top story." span we must skip.
+        self.lead_headlines = _extract(r'class="lead-headline__text"[^>]*>([^<]*)<', doc)
+        self.summaries = self.lead_summaries + self.card_summaries
+        self.headlines = self.lead_headlines + self.card_headlines
+
+    @property
+    def header_story_count(self) -> int | None:
+        m = re.search(r'(\d+)\s+stories\s+loaded', self.raw)
+        return int(m.group(1)) if m else None
+
+    @property
+    def rendered_card_count(self) -> int:
+        return len(self.headlines)
+
+    def top_story_badges(self) -> int:
+        return len(re.findall(r'sr-only">Top story', self.raw))
+
+    def wordmark_count(self) -> int:
+        return len(re.findall(r'aria-label="VOID NEWS"', self.raw))
+
+    def dateline_count(self) -> int:
+        return len(re.findall(r'class="nav-dateline-line"', self.raw))
+
+    def h1_count(self) -> int:
+        return len(re.findall(r'<h1[\s>]', self.raw))
+
+
+# ---------------------------------------------------------------------------
+# Checks — each returns list[str] of failure messages (empty => pass)
+# ---------------------------------------------------------------------------
+def _ctx(text: str, needle: str, pad: int = 45) -> str:
+    i = text.find(needle)
+    if i < 0:
+        return needle
+    a = max(0, i - pad)
+    b = min(len(text), i + len(needle) + pad)
+    return ("..." if a else "") + text[a:b].replace("\n", " ") + ("..." if b < len(text) else "")
+
+
+# --- structural -------------------------------------------------------------
+def check_top_story(p: Page) -> list[str]:
+    n = p.top_story_badges()
+    return [] if n <= 1 else [f'"Top story" badge appears {n} times (max 1). Two lead cards rendered.']
+
+
+def check_wordmark(p: Page) -> list[str]:
+    n = p.wordmark_count()
+    if n == 0:
+        return ['wordmark aria-label="VOID NEWS" not found (expected header + footer)']
+    if n > WORDMARK_MAX:
+        return [f'wordmark appears {n} times (max {WORDMARK_MAX}) — likely doubled']
+    return []
+
+
+def check_dateline(p: Page) -> list[str]:
+    n = p.dateline_count()
+    return [] if 1 <= n <= DATELINE_MAX else [f'dateline appears {n} times (expected 1..{DATELINE_MAX})']
+
+
+def check_h1(p: Page) -> list[str]:
+    n = p.h1_count()
+    return [] if n == 1 else [f'<h1> appears {n} times (expected exactly 1)']
+
+
+# --- text corruption --------------------------------------------------------
+# Space injected after a period inside an abbreviation / decimal / before a
+# closing quote. "E. Jean" and "St. Louis" are legitimate and deliberately NOT
+# matched (only the known broken initialisms + decimals + quote-hugging period).
+_ABBREV_RE = re.compile(r'\bU\. S\.|\bU\. K\.|\bU\. N\.|\bE\. U\.')
+_DECIMAL_RE = re.compile(r'\d\. \d')
+# Space between a sentence period and a CLOSING curly quote ("hear. ”") is the
+# P0-1 splitter corruption. Only closing curly quotes are flagged: a straight "
+# or an opening curly “ after ". " is legitimately a new sentence that opens on a
+# quotation ('politician. "The Houses of Ireland" ...'), so those must NOT fire.
+_QUOTE_PERIOD_RE = re.compile(r'\. [”’]')
+_DIGIT_WORD_RE = re.compile(r'\d=[A-Za-z]')
+# Missing-space concatenation: lowercase directly fused to Uppercase. Allowlist
+# the handful of legitimate intercaps that appear in news copy.
+_CONCAT_ALLOW = {
+    "iphone", "ipad", "youtube", "openai", "mcdonald", "mcdonalds", "mckinsey",
+    "macbook", "deepmind", "wework", "tiktok", "tiktok", "linkedin", "playstation",
+    "ebay", "paypal", "airbnb", "spacex", "biontech", "msnow", "msnbc", "foxnews",
+}
+_CONCAT_RE = re.compile(r'\b([a-z]{3,})([A-Z][a-z]{2,})\b')
+_KNOWN_CONCATS = ("Israelisettler", "Senateconfirmed", "policeofficer", "primeminister")
+
+
+def _corruption_hits(regex: re.Pattern, texts: list[str], label: str, limit: int = 6) -> list[str]:
+    hits: list[str] = []
+    for t in texts:
+        for m in regex.finditer(t):
+            hits.append(f'{label}: "{_ctx(t, m.group(0))}"')
+            if len(hits) >= limit:
+                return hits
+    return hits
+
+
+def check_abbrev(p: Page) -> list[str]:
+    texts = p.summaries + p.headlines
+    return (_corruption_hits(_ABBREV_RE, texts, "broken abbreviation")
+            + _corruption_hits(_QUOTE_PERIOD_RE, texts, "space before closing quote"))
+
+
+def check_decimal(p: Page) -> list[str]:
+    return _corruption_hits(_DECIMAL_RE, p.summaries + p.headlines, "broken decimal")
+
+
+def check_digit_word(p: Page) -> list[str]:
+    return _corruption_hits(_DIGIT_WORD_RE, p.summaries + p.headlines, "digit=word artifact")
+
+
+def check_concatenation(p: Page) -> list[str]:
+    texts = p.summaries + p.headlines
+    hits: list[str] = []
+    for known in _KNOWN_CONCATS:
+        for t in texts:
+            if known.lower() in t.lower():
+                hits.append(f'known concatenation "{known}": "{_ctx(t, known)}"')
+    for t in texts:
+        for m in _CONCAT_RE.finditer(t):
+            whole = (m.group(1) + m.group(2)).lower()
+            if whole in _CONCAT_ALLOW:
+                continue
+            hits.append(f'missing-space seam "{m.group(0)}": "{_ctx(t, m.group(0))}"')
+            if len(hits) >= 6:
+                return hits
+    return hits
+
+
+# --- summary integrity ------------------------------------------------------
+_TERMINAL = tuple('.!?”"’\')')
+
+
+def check_summary_terminal(p: Page) -> list[str]:
+    out = []
+    for s in p.summaries:
+        if s and not s.endswith(_TERMINAL):
+            out.append(f'summary not terminated: "...{s[-60:]}"')
+    return out[:6]
+
+
+def check_summary_length(p: Page) -> list[str]:
+    out = []
+    for s in p.summaries:
+        if 0 < len(s) < MIN_SUMMARY_CHARS:
+            out.append(f'summary under {MIN_SUMMARY_CHARS} chars ({len(s)}): "{s}"')
+    return out[:6]
+
+
+# Orphan subject-less numeric fragment: a sentence that opens on a bare figure and
+# runs straight into a preposition / conjunction / dangling participle. Catches
+# "375 million into Saddam-era Iraq and blacklisted over alleged ... ties." while
+# leaving real leads ("54 people died in the quake") alone.
+_ORPHAN_RE = re.compile(
+    r'^\$?\d[\d,.]*\s*(?:million|billion|trillion|thousand|percent|%)?\s+'
+    r'(?:into|over|and|for|to|with|by|from|blacklisted|accused|linked|tied|amid)\b',
+    re.IGNORECASE,
+)
+
+
+def _sentences(text: str) -> list[str]:
+    return [s.strip() for s in re.split(r'(?<=[.!?])\s+', text) if s.strip()]
+
+
+def check_orphan_numeral(p: Page) -> list[str]:
+    out = []
+    for s in p.summaries:
+        for sent in _sentences(s):
+            if _ORPHAN_RE.match(sent):
+                out.append(f'orphan numeric fragment: "{sent[:110]}"')
+                break
+    return out[:6]
+
+
+# --- duplication ------------------------------------------------------------
+def check_duplicate_headlines(p: Page) -> list[str]:
+    stems = [(_title_word_stems(h), h) for h in p.headlines]
+    out = []
+    for i in range(len(stems)):
+        for j in range(i + 1, len(stems)):
+            shared = stems[i][0] & stems[j][0]
+            if len(shared) >= DUP_STEM_OVERLAP:
+                out.append(
+                    f'duplicate story ({len(shared)} shared stems '
+                    f'{sorted(shared)}):\n      - "{stems[i][1]}"\n      - "{stems[j][1]}"'
+                )
+    return out[:8]
+
+
+# --- count ------------------------------------------------------------------
+def check_count_match(p: Page) -> list[str]:
+    hdr = p.header_story_count
+    rendered = p.rendered_card_count
+    if hdr is None:
+        return ['could not find "N stories loaded" header count']
+    if hdr != rendered:
+        return [f'header says {hdr} stories but {rendered} cards rendered']
+    return []
+
+
+# The Sigil aria-label is the feed card's ONLY lean label ("Coverage tilt:
+# <label> (<raw lean>). N sources."). Its extreme tiers must agree with the
+# canonical raw-lean bands leanLabel/BiasSnapshot use elsewhere: "Far Right"
+# requires raw >= 81, "Far Left" requires raw <= 20. A card that says "Far Right"
+# for raw 73-80 while the Deep Dive says "Right" is the card-vs-Sigil split (P0-6).
+_SIGIL_ARIA_RE = re.compile(r'aria-label="Coverage tilt:\s*([^"(]+?)\s*\((\d+)\)')
+
+
+def check_card_sigil_label(p: Page) -> list[str]:
+    out = []
+    for m in _SIGIL_ARIA_RE.finditer(p.raw):
+        label = m.group(1).strip()
+        low = label.lower()
+        val = int(m.group(2))
+        if "far right" in low and val < 81:
+            out.append(f'card/Sigil "{label}" but raw lean {val} is canonical Right (Far Right needs >= 81)')
+        elif "far left" in low and val > 20:
+            out.append(f'card/Sigil "{label}" but raw lean {val} is canonical Left (Far Left needs <= 20)')
+    return out[:8]
+
+
+CHECKS = [
+    ("structural: single Top story", check_top_story),
+    ("structural: wordmark not doubled", check_wordmark),
+    ("structural: single dateline", check_dateline),
+    ("structural: exactly one h1", check_h1),
+    ("corruption: abbreviations / quotes", check_abbrev),
+    ("corruption: decimals", check_decimal),
+    ("corruption: digit=word", check_digit_word),
+    ("corruption: missing-space concatenation", check_concatenation),
+    ("integrity: summaries terminated", check_summary_terminal),
+    ("integrity: summary min length", check_summary_length),
+    ("integrity: no orphan numeric fragment", check_orphan_numeral),
+    ("duplication: no duplicate headlines", check_duplicate_headlines),
+    ("count: header matches rendered", check_count_match),
+    ("consistency: card lean label == canonical (Sigil)", check_card_sigil_label),
+]
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("html_file")
+    ap.add_argument("--url", default="(local file)")
+    args = ap.parse_args()
+
+    with open(args.html_file, encoding="utf-8", errors="replace") as fh:
+        doc = fh.read()
+
+    p = Page(doc)
+    print(f"Verifying: {args.url}")
+    print(f"  parsed {len(p.headlines)} headlines, {len(p.summaries)} summaries, "
+          f"header count {p.header_story_count}\n")
+
+    total_fail = 0
+    for name, fn in CHECKS:
+        try:
+            failures = fn(p)
+        except Exception as e:  # a check crashing must not mask a real problem
+            failures = [f"check raised {type(e).__name__}: {e}"]
+        if failures:
+            total_fail += len(failures)
+            print(f"[FAIL] {name}")
+            for f in failures:
+                print(f"    - {f}")
+        else:
+            print(f"[ ok ] {name}")
+
+    print()
+    if total_fail:
+        print(f"GATE FAILED: {total_fail} issue(s) in served output at {args.url}")
+        return 1
+    print(f"GATE PASSED: served output at {args.url} clean")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
