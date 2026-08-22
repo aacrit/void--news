@@ -199,6 +199,16 @@ export async function fetchInitialFeed(): Promise<InitialFeed> {
     // Never fail the front-page build on the archive lookup — permalinks are a
     // progressive enhancement, not a requirement for the feed to render.
     console.warn(`[serverFeed] permalink map unavailable: ${e}`);
+  } finally {
+    // Guarantee EVERY card has an href (2026-08-21: four cards near the archive
+    // boundary rendered as a bare <button> with no story URL, so no Deep Dive
+    // link, no share target, nothing to index). An archived card keeps its
+    // canonical /story/<id>/ permalink; any archive miss falls back to the
+    // in-app deep link ?story=<id>, which HomeContent opens on load. Never leaves
+    // a card link-less.
+    for (const s of stories) {
+      if (!s.permalink && s.id) s.permalink = `/?story=${s.id}`;
+    }
   }
 
   // Fail loud: the displayed feed applies a >=3-source quality floor, and

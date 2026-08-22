@@ -313,6 +313,17 @@ def check_count_match(p: Page) -> list[str]:
 _SIGIL_ARIA_RE = re.compile(r'aria-label="Coverage tilt:\s*([^"(]+?)\s*\((\d+)\)')
 
 
+# Every story card's stretch-link must be a crawlable <a href>, never a bare
+# <button> (2026-08-21: cards near the archive boundary rendered as buttons with
+# no story URL, so no Deep Dive link, no share target, nothing to index).
+_CARD_BUTTON_RE = re.compile(r'<button[^>]*class="[^"]*story-card__stretch-link')
+
+
+def check_every_card_has_href(p: Page) -> list[str]:
+    n = len(_CARD_BUTTON_RE.findall(p.raw))
+    return [] if n == 0 else [f'{n} story card(s) render as a <button> with no href (must be <a href>)']
+
+
 def check_card_sigil_label(p: Page) -> list[str]:
     out = []
     for m in _SIGIL_ARIA_RE.finditer(p.raw):
@@ -341,6 +352,7 @@ CHECKS = [
     ("duplication: no duplicate headlines", check_duplicate_headlines),
     ("count: header matches rendered", check_count_match),
     ("consistency: card lean label == canonical (Sigil)", check_card_sigil_label),
+    ("structural: every card has an href", check_every_card_has_href),
 ]
 
 
