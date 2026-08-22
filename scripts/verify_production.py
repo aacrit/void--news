@@ -341,6 +341,24 @@ def check_every_card_has_href(p: Page) -> list[str]:
     return [] if n == 0 else [f'{n} story card(s) render as a <button> with no href (must be <a href>)']
 
 
+# Regression lock for the aggregate_confidence read path. The real rev-49 formula
+# (migration 076 RPC + main.py fallback) varies per cluster; the superseded proxy
+# (migration 002's LEAST(1.0, COUNT/5.0)) pins every >=5-source cluster to exactly
+# 1.0. If the feed's confidence values are ALL pinned high, the dead proxy path
+# has leaked back in and rev-49 damping is off on the live site.
+_CONF_RE = re.compile(r'\\?"aggregateConfidence\\?":([0-9.]+)')
+
+
+def check_confidence_not_proxy(p: Page) -> list[str]:
+    vals = [float(x) for x in _CONF_RE.findall(p.raw)]
+    if len(vals) < 5:
+        return []  # too few to judge
+    if all(v >= 0.999 for v in vals):
+        return [f'all {len(vals)} aggregateConfidence values are ~1.0 — the dead '
+                f'COUNT/5 proxy (migration 002) has leaked back; rev-49 damping is off']
+    return []
+
+
 def check_card_sigil_label(p: Page) -> list[str]:
     out = []
     for m in _SIGIL_ARIA_RE.finditer(p.raw):
@@ -371,6 +389,7 @@ CHECKS = [
     ("count: header matches rendered", check_count_match),
     ("consistency: card lean label == canonical (Sigil)", check_card_sigil_label),
     ("structural: every card has an href", check_every_card_has_href),
+    ("integrity: confidence is real (not COUNT/5 proxy)", check_confidence_not_proxy),
 ]
 
 
