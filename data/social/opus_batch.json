@@ -1,108 +1,110 @@
 {
-  "_comment": "Opus-authored Void News social batch, ingested by pipeline.social.ig_opus_ingest and rendered through the existing IG slide templates. NO Gemini touches this path: captions + intent are pre-filled verbatim. Vision + method render via Vision.tsx (kind='vision', hook/stance/cta); example posts render via Example.tsx (kind='example', hook/spectrum/cta) with the spectrum outlets fetched live from the cluster_id. On-slide text is fit to the template budgets the way ig_generator does; the FULL prose always survives in the caption. Do not add em or en dashes.",
+  "_comment": "Void News social batch: 3 vision + 3 method + 3 example carousel posts. Fresh angles; no em/en dashes; example facts sourced from provided cluster briefs only.",
   "posts": [
     {
-      "slug": "vision-never-read-the-news",
+      "slug": "vision-the-page-ends",
       "pillar": "vision",
-      "hook": {
-        "kicker": "VOID NEWS",
-        "headline": "You have never read the news."
-      },
-      "stance": {
-        "kicker": "A front page, not a feed",
-        "body": "The same 50 stories, in the same order, for every reader. No account. No algorithm. No paywall. Every source scored for bias, out in the open."
-      },
-      "cta": {
-        "headline": "See through the void.",
-        "url": "news.voidvision.org"
-      },
-      "caption_instagram": "You have never read the news. You have read a feed built to keep you scrolling.\n\nVoid News is a front page, not a feed. The same 50 stories, in the same order, for every reader. No account. No algorithm. No paywall.\n\nEvery source is scored on six axes of bias, by fixed rules, out in the open. You see where each outlet stands before you read a word.\n\nThe news, dissected. See through the void.\nnews.voidvision.org\n\n#VoidNews #MediaBias #NewsLiteracy #IndependentMedia #SeeThroughTheVoid",
-      "caption_x": "You have never read the news. You have read a feed built to keep you scrolling. Void News is a front page, not a feed: same 50 stories, same order, for everyone. No account, no algorithm, no paywall. Every source scored for bias, in the open. news.voidvision.org",
-      "caption_bluesky": "You have never read the news. You have read a feed built to keep you scrolling. Void News is a front page, not a feed: same 50 stories, same order, for everyone. No account, no algorithm, no paywall. Every source scored for bias, out in the open. news.voidvision.org",
-      "intent": "Plant the founding belief. The antidote to the algorithmic feed. Calm, confident, a little provocative."
+      "hook": { "kicker": "VOID NEWS", "headline": "The front page ends. The feed never does." },
+      "stance": { "kicker": "Fifty stories. Done.", "body": "Void News publishes 50 stories a day, ranked once, in one order. When you reach the bottom, you are finished. No refresh, no infinite scroll, no algorithm feeding you one more." },
+      "cta": { "headline": "Read the page", "url": "news.voidvision.org" },
+      "caption_instagram": "A newspaper had a last page. You could finish it, fold it, and go on with your day. Feeds removed the ending on purpose; an ending is where you leave.\n\nVoid News brings the ending back. Fifty stories, ranked once a day by how widely each one is covered, in the same order for every reader. When you reach story 50, the news is over.\n\nNo accounts. No infinite scroll. No algorithm deciding you need one more.\n\nSee through the void.\n\nnews.voidvision.org\n#VoidNews #MediaBias #NewsLiteracy #SlowNews #FrontPage #NoAlgorithm",
+      "caption_x": "A newspaper had a last page. You could finish it. Feeds removed the ending on purpose. Void News brings it back: 50 stories, ranked once a day, same order for everyone. Story 50 is the end. news.voidvision.org",
+      "caption_bluesky": "A newspaper had a last page. You could finish it, fold it, and go on with your day. Feeds removed the ending on purpose. Void News brings it back: 50 stories, ranked once a day, same order for everyone. Story 50 is the end. news.voidvision.org",
+      "intent": "Relief, not scolding; the calm satisfaction of finishing something."
     },
     {
-      "slug": "method-what-leads",
+      "slug": "vision-same-page",
+      "pillar": "vision",
+      "hook": { "kicker": "VOID NEWS", "headline": "Every reader. Same fifty stories. Same order." },
+      "stance": { "kicker": "Common ground", "body": "There are no versions of this front page. No login, no profile, no feed tuned to you. Two strangers who open Void News today see the exact same 50 stories, top to bottom." },
+      "cta": { "headline": "Open the page", "url": "news.voidvision.org" },
+      "caption_instagram": "Two people argue about the news. They are usually arguing about two different feeds, each one assembled privately, for an audience of one.\n\nVoid News has one front page. The top 50 stories, in the same order, for every reader on Earth. No accounts, no login, no personalization, no paywall.\n\nYou can still disagree. But you will be disagreeing about the same page.\n\nSee through the void.\n\nnews.voidvision.org\n#VoidNews #MediaBias #FilterBubble #SharedReality #NewsLiteracy #OneFrontPage",
+      "caption_x": "Two people argue about the news. They are usually arguing about two different feeds, built privately for an audience of one. Void News has one front page: 50 stories, same order, for everyone. No accounts. No versions. news.voidvision.org",
+      "caption_bluesky": "Two people argue about the news. They are usually arguing about two different feeds, each built privately for an audience of one. Void News has one front page: the top 50 stories, in the same order, for every reader. No accounts, no versions. news.voidvision.org",
+      "intent": "Quiet civic idealism; the warmth of standing on common ground."
+    },
+    {
+      "slug": "vision-outrage-earns-nothing",
+      "pillar": "vision",
+      "hook": { "kicker": "VOID NEWS", "headline": "Your anger is worth nothing to us." },
+      "stance": { "kicker": "No engagement math", "body": "Feeds rank by clicks, so outrage wins; it is the cheapest click there is. Void News ranks once a day by how widely a story is covered. Your reaction never touches the order." },
+      "cta": { "headline": "Read it calm", "url": "news.voidvision.org" },
+      "caption_instagram": "Outrage is not an accident of modern news. It is a ranking strategy. When a feed is sorted by engagement, the story that makes you furious beats the story that matters.\n\nVoid News does not measure engagement. The front page is ranked once a day, by one signal: how widely each story is covered. Nothing you click, share, or rage at changes the order.\n\nWhen anger stops being profitable, the page gets quieter. That is the point.\n\nSee through the void.\n\nnews.voidvision.org\n#VoidNews #MediaBias #OutrageEconomy #AttentionEconomy #NewsLiteracy #CalmNews",
+      "caption_x": "Outrage is a ranking strategy. Feeds sorted by engagement reward the story that makes you furious. Void News ranks once a day by how widely a story is covered. Nothing you click or rage at changes the order. news.voidvision.org",
+      "caption_bluesky": "Outrage is a ranking strategy. When feeds sort by engagement, the story that makes you furious beats the story that matters. Void News ranks once a day by how widely a story is covered. Your reaction never touches the order. news.voidvision.org",
+      "intent": "Cool defiance; deny the outrage economy its fuel without raising your voice."
+    },
+    {
+      "slug": "method-scores-show-their-work",
       "pillar": "method",
-      "hook": {
-        "kicker": "VOID NEWS",
-        "headline": "How do we decide what leads?"
-      },
-      "stance": {
-        "kicker": "We don't",
-        "body": "No editor picks the front page. No AI judges the news. The feed order, the story grouping, and every bias score come from fixed rules, the same for every reader. Six axes per article, and every score shows its work."
-      },
-      "cta": {
-        "headline": "Rules you can read.",
-        "url": "news.voidvision.org"
-      },
-      "caption_instagram": "How does Void News decide what leads?\n\nIt does not. No editor picks the front page. No AI judges the news. The order of the feed, the way stories are grouped, and every bias score come from fixed rules that run the same way for every reader.\n\nSix axes per article: political lean, sensationalism, opinion vs reporting, factual rigor, framing, and how each outlet tracks over time. Every score weighs both the outlet's record and the article's own words, and every score shows its work.\n\nThe one place we use a language model is the short summary under each story, and it is told to use only what the articles say.\n\nRules you can read. See through the void.\nnews.voidvision.org\n\n#VoidNews #MediaBias #NewsTransparency #AlgorithmicBias #NewsLiteracy",
-      "caption_x": "How does Void News decide what leads? It does not. No editor, no AI judge. Feed order, story grouping, and every bias score are fixed rules, the same for everyone. Six axes per article, each score shows its work. news.voidvision.org",
-      "caption_bluesky": "How does Void News decide what leads? It does not. No editor, no AI judge. Feed order, story grouping, and every bias score are fixed rules, the same for everyone. Six axes per article, each score shows its work. news.voidvision.org",
-      "intent": "Trust through transparency. The differentiator is determinism: no human or AI gatekeeper decides what you see."
+      "hook": { "kicker": "VOID NEWS", "headline": "Every bias score shows its work." },
+      "stance": { "kicker": "Deterministic, not vibes", "body": "Each score on Void News comes with a written rationale: which words, which patterns, which track record moved it. Same article in, same score out, every single time. You can check the math." },
+      "cta": { "headline": "Check the math", "url": "news.voidvision.org" },
+      "caption_instagram": "Most bias ratings are verdicts. A panel or a model decides, a label appears, and you are asked to trust it.\n\nVoid News scores every source with fixed, rule-based NLP. No AI judging the news. Each score arrives with a deterministic rationale: the words, the patterns, and the track record that produced it.\n\nRun the same article through twice and you get the same score twice. A judgment you cannot reproduce is just an opinion.\n\nSee through the void.\n\nnews.voidvision.org\n#VoidNews #MediaBias #ShowYourWork #NewsLiteracy #Transparency #MediaLiteracy",
+      "caption_x": "Most bias ratings are verdicts: a label appears, you are asked to trust it. Void News scores every source with fixed rules, and every score ships with its rationale. Same article in, same score out, every time. news.voidvision.org",
+      "caption_bluesky": "Most bias ratings are verdicts: a label appears and you are asked to trust it. Void News scores every source with fixed, rule-based NLP, and every score ships with a written rationale. Same article in, same score out, every time. news.voidvision.org",
+      "intent": "Earned trust; the confidence of an engineer handing over the blueprints."
     },
     {
-      "slug": "example-trump-vaccine-order",
-      "pillar": "example",
-      "cluster_id": "20dd80aa-ae81-4208-840b-8de972094f72",
-      "outlet_count": 50,
-      "hook": {
-        "kicker": "CONTESTED / 50 OUTLETS",
-        "headline": "One order. Two countries reading it."
-      },
-      "spectrum": {
-        "body": "Trump cut the recommended childhood vaccine schedule from 18 immunizations to 11, calling it parental choice. The WHO defended the schedules within hours."
-      },
-      "cta": {
-        "headline": "See where it splits.",
-        "url": "news.voidvision.org"
-      },
-      "caption_instagram": "One order. Two countries reading it.\n\nTrump signed an executive order Monday cutting the recommended childhood vaccine schedule from 18 immunizations to 11. He called it parental choice. The World Health Organization defended the schedules within hours.\n\n50 outlets covered it. On Void News you see the split at a glance: the coverage does not agree, and the page shows you exactly where it divides instead of averaging it into a calm gray middle.\n\nRead the same event from every side, then decide. See through the void. news.voidvision.org\n\n#VoidNews #Vaccines #MediaBias #PublicHealth #NewsLiteracy",
-      "caption_x": "One order, two countries reading it. Trump cut the recommended childhood vaccine schedule 18 to 11 immunizations, calling it parental choice. The WHO defended the schedules within hours. 50 outlets, and Void shows you exactly where the coverage splits. news.voidvision.org",
-      "caption_bluesky": "One order, two countries reading it. Trump cut the recommended childhood vaccine schedule 18 to 11 immunizations, calling it parental choice. The WHO defended the schedules within hours. 50 outlets, and Void shows you exactly where the coverage splits. news.voidvision.org",
-      "intent": "Prove the tool on a live, genuinely contested policy story. Show, do not claim, that Void surfaces disagreement."
+      "slug": "method-lean-is-one-of-six",
+      "pillar": "method",
+      "hook": { "kicker": "VOID NEWS", "headline": "Left or right is one axis of six." },
+      "stance": { "kicker": "Six axes", "body": "Political lean tells you where an outlet stands, not how it behaves. Void News also scores sensationalism, opinion versus reporting, factual rigor, framing, and a per-topic track record over time." },
+      "cta": { "headline": "See all six", "url": "news.voidvision.org" },
+      "caption_instagram": "Ask where an outlet sits, left or right, and you have asked one question out of six.\n\nVoid News scores every source on six axes: political lean, sensationalism, opinion versus reporting, factual rigor, framing, and a track record kept topic by topic over time. A calm outlet can lean hard. A centrist one can sensationalize.\n\nEvery score weighs both the outlet's history and the words in the specific article, and every score explains itself.\n\nSee through the void.\n\nnews.voidvision.org\n#VoidNews #MediaBias #SixAxes #NewsLiteracy #MediaLiteracy #BiasTransparency",
+      "caption_x": "Left or right is one question out of six. Void News scores every source on political lean, sensationalism, opinion vs reporting, factual rigor, framing, and a per-topic track record. One number flattens a newsroom. Six describe it. news.voidvision.org",
+      "caption_bluesky": "Left or right answers one question out of six. Void News scores every source on political lean, sensationalism, opinion vs reporting, factual rigor, framing, and a per-topic track record over time. One number flattens a newsroom. Six describe it. news.voidvision.org",
+      "intent": "Curiosity; the small thrill of a richer instrument replacing a crude one."
     },
     {
-      "slug": "example-farage-reform-uk",
-      "pillar": "example",
-      "cluster_id": "e9f77c30-297c-4e82-b7aa-18e625a0db9c",
-      "outlet_count": 15,
-      "hook": {
-        "kicker": "THE SECOND NEWS / 15 OUTLETS",
-        "headline": "15 outlets covered this. You probably saw none of them."
-      },
-      "spectrum": {
-        "body": "Nigel Farage rebuked a Reform UK spokesperson after a colleague was called a traitor. The coverage splits on whether it reads as discipline or disarray."
-      },
-      "cta": {
-        "headline": "The second news, from every side.",
-        "url": "news.voidvision.org"
-      },
-      "caption_instagram": "15 outlets covered this. You probably saw none of them.\n\nNigel Farage rebuked a Reform UK spokesperson after a colleague was called a traitor. Is it discipline or disarray? The coverage does not agree.\n\nThe stories under the headlines get the same scrutiny as the headlines. See through the void. news.voidvision.org\n\n#VoidNews #ReformUK #MediaBias #NewsLiteracy",
-      "caption_x": "15 outlets covered this, and you probably saw none of them. Nigel Farage rebuked a Reform UK spokesperson after a colleague was called a traitor. Discipline or disarray? The coverage splits. The second news, from every side. news.voidvision.org",
-      "caption_bluesky": "15 outlets covered this, and you probably saw none of them. Nigel Farage rebuked a Reform UK spokesperson after a colleague was called a traitor. Discipline or disarray? The coverage splits. The second news, from every side. news.voidvision.org",
-      "intent": "Champion the buried, contested story. Void gives the second news the same scrutiny as the headline."
+      "slug": "method-no-gray-middle",
+      "pillar": "method",
+      "hook": { "kicker": "VOID NEWS", "headline": "We refuse to average a disagreement." },
+      "stance": { "kicker": "Show the split", "body": "Average far-left and far-right coverage and you get a number that looks neutral and describes nobody. On contested stories, Void News shows the real left, center, right split instead." },
+      "cta": { "headline": "See the split", "url": "news.voidvision.org" },
+      "caption_instagram": "Here is a trick averages play: take coverage from the far left and the far right, add it up, divide, and call the result balanced. The number sits at dead center. Nobody who wrote about the story is standing there.\n\nOn contested stories, Void News refuses the average. The page shows the actual split: how many outlets covered it from the left, the center, the right.\n\nA fight is not a compromise. It should not be displayed as one.\n\nSee through the void.\n\nnews.voidvision.org\n#VoidNews #MediaBias #FalseBalance #NewsLiteracy #MediaLiteracy #ContestedNews",
+      "caption_x": "Average far-left and far-right coverage and you get a number that looks neutral and describes nobody. On contested stories, Void News shows the real left, center, right split instead. A fight is not a compromise. news.voidvision.org",
+      "caption_bluesky": "Average far-left and far-right coverage and you get a number that looks neutral and describes nobody. On contested stories, Void News shows the real left, center, right split instead of a manufactured middle. A fight is not a compromise. news.voidvision.org",
+      "intent": "Principled refusal; the firmness of declining a comfortable lie."
     },
     {
-      "slug": "example-aoc-egg-freezing",
+      "slug": "example-turkey-netanyahu-warrant",
       "pillar": "example",
-      "cluster_id": "556f5141-d339-47e8-8fde-870fb168f5dd",
-      "outlet_count": 30,
-      "hook": {
-        "kicker": "CONTESTED / 30 OUTLETS",
-        "headline": "A private decision. A public fight."
-      },
-      "spectrum": {
-        "body": "Alexandria Ocasio-Cortez said she froze her eggs. 30 outlets covered it, and the framing splits hard along the aisle."
-      },
-      "cta": {
-        "headline": "See who framed it, and how.",
-        "url": "news.voidvision.org"
-      },
-      "caption_instagram": "A private decision, and a very public fight.\n\nAlexandria Ocasio-Cortez said she froze her eggs. 30 outlets covered it, and the framing splits hard along the aisle: personal health for some, political theater for others.\n\nSame facts, two readings. Void shows you both. news.voidvision.org\n\n#VoidNews #AOC #MediaBias #NewsLiteracy",
-      "caption_x": "A private decision, a public fight. AOC said she froze her eggs; 30 outlets covered it and the framing splits hard along the aisle. Same facts, two readings, and Void shows you both. news.voidvision.org",
-      "caption_bluesky": "A private decision, a public fight. AOC said she froze her eggs; 30 outlets covered it and the framing splits hard along the aisle. Same facts, two readings, and Void shows you both. news.voidvision.org",
-      "intent": "Show the same fact getting opposite framings; the tool reveals the split."
+      "cluster_id": "64fa600e-4e0c-478b-9692-0b0725bf2082",
+      "outlet_count": 17,
+      "hook": { "kicker": "CONTESTED / 17 OUTLETS", "headline": "Turkey seeks an Interpol red notice for Netanyahu" },
+      "spectrum": { "body": "Turkey is seeking an international arrest warrant for Israeli PM Netanyahu over the interception of a Gaza-bound aid flotilla, charging genocide. Netanyahu's office called Erdogan an \"antisemitic dictator\"; Turkey called the response a \"groundless rant.\" 17 outlets, no shared frame." },
+      "cta": { "headline": "See every stance", "url": "news.voidvision.org" },
+      "caption_instagram": "Turkey is seeking an Interpol Red Notice for Israeli Prime Minister Benjamin Netanyahu, charging genocide and crimes against humanity over the interception of the Gaza-bound Global Sumud Flotilla.\n\nNetanyahu's office called Erdogan an \"antisemitic dictator.\" Turkey called that response a \"groundless rant\" and a \"cheap political ploy.\"\n\n17 outlets are covering this story, and they do not agree on what it is. Void News shows where each one stands: left, center, right, with every bias score explained.\n\nSee through the void.\n\nnews.voidvision.org\n#VoidNews #MediaBias #Turkey #Netanyahu #Interpol #NewsLiteracy",
+      "caption_x": "Turkey seeks an Interpol Red Notice for Netanyahu, charging genocide over the Gaza flotilla interception. His office called Erdogan an \"antisemitic dictator\"; Turkey called that a \"cheap political ploy.\" 17 outlets, every stance mapped. news.voidvision.org",
+      "caption_bluesky": "Turkey is seeking an Interpol Red Notice for Netanyahu, charging genocide over the interception of a Gaza-bound aid flotilla. His office called Erdogan an antisemitic dictator; Turkey called that a cheap political ploy. 17 outlets, every stance mapped. news.voidvision.org",
+      "intent": "Gravity without heat; let the diplomatic escalation speak in its own words."
+    },
+    {
+      "slug": "example-tiktok-coppa-settlement",
+      "pillar": "example",
+      "cluster_id": "edb6d7fe-0867-423c-b2d4-be22e8b72ed1",
+      "outlet_count": 29,
+      "hook": { "kicker": "CONTESTED / 29 OUTLETS", "headline": "TikTok pays $400 million over children's privacy" },
+      "spectrum": { "body": "TikTok will pay $400 million to settle a US DOJ children's privacy lawsuit, one of the largest COPPA recoveries: $300M now, $100M later, no admission of wrongdoing. Coverage splits between a major victory for children and regulatory overreach." },
+      "cta": { "headline": "Map the coverage", "url": "news.voidvision.org" },
+      "caption_instagram": "TikTok agreed to pay $400 million to settle a US Department of Justice lawsuit over children's privacy, one of the largest recoveries in COPPA history. $300 million now, $100 million later. No admission of wrongdoing.\n\nThe case began under Biden in 2024. TikTok's US operations are now 81% investor-owned; ByteDance holds 19%.\n\n29 outlets covered it. Some call it a major victory for children. Some call it regulatory overreach or political. Void News shows the split instead of averaging it away.\n\nSee through the void.\n\nnews.voidvision.org\n#VoidNews #MediaBias #TikTok #COPPA #Privacy #NewsLiteracy",
+      "caption_x": "TikTok will pay $400M to settle a US DOJ children's privacy suit, among the largest COPPA recoveries. $300M now, $100M later, no admission of wrongdoing. 29 outlets split: victory for children, or regulatory overreach. See the map. news.voidvision.org",
+      "caption_bluesky": "TikTok will pay $400 million to settle a US DOJ children's privacy lawsuit, one of the largest COPPA recoveries. $300M now, $100M later, no admission of wrongdoing. 29 outlets split between victory for children and regulatory overreach. news.voidvision.org",
+      "intent": "Even-handed scrutiny; a big number, two honest readings, no verdict."
+    },
+    {
+      "slug": "example-fagersta-school-attack",
+      "pillar": "example",
+      "cluster_id": "88f9497f-13ca-4af1-ae4f-7e187ea86872",
+      "outlet_count": 29,
+      "hook": { "kicker": "CONTESTED / 29 OUTLETS", "headline": "One attack in Fagersta. Four different stories." },
+      "spectrum": { "body": "An 18-year-old killed a 17-year-old girl and injured two boys in a sword attack at a high school in Fagersta, Sweden. Police are examining a TikTok account posted 20 minutes before, referencing mass murderer Anders Behring Breivik. 29 outlets, four frames: terrorism, mental health, radicalization, immigration." },
+      "cta": { "headline": "See all four", "url": "news.voidvision.org" },
+      "caption_instagram": "An 18-year-old killed a 17-year-old girl and injured two teenage boys in a sword attack at Brinellskolan high school in Fagersta, Sweden. Police are investigating a TikTok account posted 20 minutes before the attack that referenced past mass-violence attacks and the far-right mass murderer Anders Behring Breivik.\n\n29 outlets covered the same facts. The framings diverge: terrorism, mental health, online radicalization, immigration.\n\nThe frame you meet first tends to become the story you remember. Void News puts all four side by side, with each outlet's bias scores shown and explained.\n\nSee through the void.\n\nnews.voidvision.org\n#VoidNews #MediaBias #Sweden #Fagersta #MediaFraming #NewsLiteracy",
+      "caption_x": "A sword attack at a Fagersta, Sweden school killed a 17-year-old girl. Police are examining a TikTok post from 20 minutes before that referenced Breivik. 29 outlets, four frames: terrorism, mental health, radicalization, immigration. news.voidvision.org",
+      "caption_bluesky": "A sword attack at a school in Fagersta, Sweden killed a 17-year-old girl. Police are examining a TikTok account posted 20 minutes earlier that referenced Breivik. 29 outlets, four frames: terrorism, mental health, radicalization, immigration. news.voidvision.org",
+      "intent": "Restraint and care; a tragedy handled without exploitation, focused on how frames shape memory."
     }
   ]
 }
