@@ -86,12 +86,14 @@ ASSETS_DIR = Path(__file__).parent / "assets"
 # ---------------------------------------------------------------------------
 
 # 2026-06-27 (CEO ear-test): collapsed from 4 Multilingual voices to TWO.
-# Every male persona → Brian, every female persona → Ava — the two most natural
-# of Microsoft's newest *free* generation ("Multilingual Neural"). Andrew + Emma
-# dropped. News desk pairs are always male+female, so every TL;DR reads as
-# Brian + Ava; the world opinion (Sulafat) is Ava. (Dragon HD voices are paid
-# Azure, not in free edge-tts, so we stay on the Multilingual tier.)
-_MALE_EDGE_VOICE = "en-US-BrianMultilingualNeural"
+# 2026-08-22 (CEO ear-test): the male voice moves Brian -> Andrew. Brian read as
+# jittery on the news brief; Andrew is Ava's direct male counterpart in the same
+# flagship "Multilingual Neural" pair, so the male news read now matches the
+# naturalness of the Ava opinion read the CEO liked. Female stays Ava. Both are
+# Microsoft's newest *free* generation; Dragon HD voices are paid Azure, not in
+# free edge-tts, so we stay on the Multilingual tier. (To make the news brief use
+# Ava too, set _MALE_EDGE_VOICE = _FEMALE_EDGE_VOICE.)
+_MALE_EDGE_VOICE = "en-US-AndrewMultilingualNeural"
 _FEMALE_EDGE_VOICE = "en-US-AvaMultilingualNeural"
 _GEMINI_TO_EDGE_VOICE: dict[str, str] = {
     # History pair — The Chronicler (male) + The Witness (female)
