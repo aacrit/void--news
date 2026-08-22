@@ -174,9 +174,42 @@ export function isCSAMTopic(text: string): boolean {
  * headline-independent fallback) rather than the raw text. Otherwise clean prose
  * passes through with any unattributed reputational-harm sentence removed.
  */
+/* ---------------------------------------------------------------------------
+   Orphan-fragment guard (3d, 2026-08-22)
+   ----------------------------------------------------------------------------
+   A truncation or a broken sentence boundary can leave a dependent clause
+   standing as its own "sentence": "...Progressive Caucus PAC. when she won a
+   Hayward City Council seat in 2018." A well-formed sentence never opens on a
+   lowercase subordinating conjunction / relative pronoun. Drop any non-first
+   sentence that does. Also strip a malformed stray straight quote left by a
+   dropped figure ('announced a " investment').
+   --------------------------------------------------------------------------- */
+const ORPHAN_SUBORDINATE =
+  /^(?:when|where|which|who|whom|whose|that|because|although|though|while|since|unless|whereas|wherein|whereby|after|before|as|if)\b/;
+
+export function dropOrphanFragments(summary: string): string {
+  const s = (summary ?? "").trim();
+  if (!s) return "";
+  // Strip a stray straight quote that has a space on at least one side and is
+  // not a real quotation ('a " investment' -> 'a investment'); collapse spaces.
+  let cleaned = s.replace(/\s"\s+/g, " ").replace(/\s"(?=[a-z])/g, " ");
+  const sentences = cleaned.match(/[^.!?]+[.!?]*\s*/g) ?? [cleaned];
+  let dropped = false;
+  const kept = sentences.filter((sent, i) => {
+    if (i === 0) return true; // never drop the lead sentence
+    if (ORPHAN_SUBORDINATE.test(sent.trimStart())) {
+      dropped = true;
+      return false;
+    }
+    return true;
+  });
+  cleaned = (dropped ? kept.join("") : cleaned).replace(/\s+/g, " ").trim();
+  return cleaned;
+}
+
 export function cleanFeedSummary(summary: string, _title?: string): string {
   const s = (summary ?? "").trim();
   if (!s) return "";
   if (isRawExcerpt(s)) return "";
-  return stripUnattributedReputationalClaims(s);
+  return dropOrphanFragments(stripUnattributedReputationalClaims(s));
 }
