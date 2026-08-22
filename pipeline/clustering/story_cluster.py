@@ -3281,4 +3281,13 @@ def cluster_stories(
     if run_merge_pass and apply_coherence_check and clusters:
         clusters = split_incoherent_clusters(clusters, source_map=source_map)
 
+    # Phase 7 — late-stage same-event merge (2026-08-22). Runs AFTER Phase 6's
+    # split so it coalesces clean fragments, never contaminated ones. Top-N only,
+    # conjunctive high-precision gate, uses the geopolitical common entities that
+    # Phase 2 blacklists (safe at N=50). Gated to the top-level pass so Phase 6's
+    # recursive re-cluster (apply_coherence_check=False) never re-enters it.
+    if run_merge_pass and apply_coherence_check and len(clusters) > 1:
+        from .same_event_merge import merge_same_event_clusters
+        clusters = merge_same_event_clusters(clusters)
+
     return clusters
