@@ -269,6 +269,23 @@ def _sentences(text: str) -> list[str]:
     return [s.strip() for s in re.split(r'(?<=[.!?])\s+', text) if s.strip()]
 
 
+# A summary sentence that opens on a lowercase subordinating conjunction is a
+# dependent clause left standing by a truncation ("...PAC. when she won a seat").
+_ORPHAN_SUBORDINATE_RE = re.compile(
+    r'(?<=[.!?]\s)(?:when|where|which|who|whom|whose|that|because|although|'
+    r'though|while|since|unless|whereas|after|before|if)\b', re.MULTILINE,
+)
+
+
+def check_orphan_subordinate(p: Page) -> list[str]:
+    out = []
+    for s in p.summaries:
+        m = _ORPHAN_SUBORDINATE_RE.search(s)
+        if m:
+            out.append(f'orphan subordinate-clause sentence: "{_ctx(s, m.group(0))}"')
+    return out[:6]
+
+
 def check_orphan_numeral(p: Page) -> list[str]:
     out = []
     for s in p.summaries:
@@ -349,6 +366,7 @@ CHECKS = [
     ("integrity: summaries terminated", check_summary_terminal),
     ("integrity: summary min length", check_summary_length),
     ("integrity: no orphan numeric fragment", check_orphan_numeral),
+    ("integrity: no orphan subordinate clause", check_orphan_subordinate),
     ("duplication: no duplicate headlines", check_duplicate_headlines),
     ("count: header matches rendered", check_count_match),
     ("consistency: card lean label == canonical (Sigil)", check_card_sigil_label),

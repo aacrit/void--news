@@ -1082,6 +1082,37 @@ def _trim_incomplete_tail_sentence(summary: str) -> str:
     return trimmed if trimmed else s
 
 
+_ORPHAN_SUBORDINATE_RE = _re.compile(
+    r"^(?:when|where|which|who|whom|whose|that|because|although|though|while|"
+    r"since|unless|whereas|wherein|whereby|after|before|as|if)\b"
+)
+
+
+def _drop_orphan_fragments(summary: str) -> str:
+    """3h: drop a non-first sentence that opens on a lowercase subordinating
+    conjunction / relative pronoun (a dependent clause left standing as a
+    "sentence" by a truncation or a broken boundary: '...PAC. when she won a
+    seat in 2018.'), and strip a stray straight quote left by a dropped figure
+    ('announced a " investment')."""
+    s = (summary or "").strip()
+    if not s:
+        return summary
+    cleaned = _re.sub(r'\s"\s+', " ", s)
+    cleaned = _re.sub(r'\s"(?=[a-z])', " ", cleaned)
+    parts = _split_sentences(cleaned)
+    if len(parts) < 2:
+        return cleaned.strip()
+    kept = [parts[0]]
+    dropped = False
+    for p in parts[1:]:
+        if _ORPHAN_SUBORDINATE_RE.match(p.lstrip()):
+            dropped = True
+            continue
+        kept.append(p)
+    out = " ".join(kept) if dropped else cleaned
+    return _re.sub(r"\s{2,}", " ", out).strip()
+
+
 def _apply_summary_postchecks(summary: str, source_text: str = "") -> str:
     """Run the Phase-3 hygiene chain on a summary. Deterministic, order matters:
     content-level drops first (exact dup, near-dup, unknown padding, ungrounded
@@ -1100,6 +1131,7 @@ def _apply_summary_postchecks(summary: str, source_text: str = "") -> str:
     s = _drop_terminal_restatement(s)              # 3b terminal restatement
     s = _trim_summary_to_word_cap(s)               # 3a hard 90-word trim
     s = _trim_incomplete_tail_sentence(s)          # 3g completeness (drop truncation)
+    s = _drop_orphan_fragments(s)                  # 3h orphan subordinate-clause + stray quote
     s = s.strip()
     # 3f grounding audit (warning-only, no drops yet). Logs figures / proper
     # nouns in the FINAL summary that are absent from the source text so we can
