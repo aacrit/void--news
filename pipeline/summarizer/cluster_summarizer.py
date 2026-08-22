@@ -1237,6 +1237,31 @@ def _has_identifiable_subject(sentence: str) -> bool:
     return bool(_SUBJECT_START_RE.match(s))
 
 
+# Broader negative-association signal used ONLY to arm the 3b verification/relative
+# rules below (not the existing attributed-claim logic). Catches reputational
+# associations the harm-verb patterns miss ("worked for a group that funded Bin
+# Laden", "juvenile record", "racist").
+_NEGATIVE_ASSOCIATION_RE = _re.compile(
+    r"\b(?:bin\s+laden|al[-\s]?qaeda|taliban|hamas|hezbollah|isis|isil|jihad|"
+    r"terror|terrorist|extremis|militant|funded|financed|bankrolled|blacklist|"
+    r"accused|alleged|indicted|convicted|criminal|felony|racist|neo[-\s]?nazi|"
+    r"juvenile\s+record|rap\s+sheet|ties\s+to|linked\s+to)\b",
+    _re.IGNORECASE,
+)
+_VERIFICATION_ASSERTION_RE = _re.compile(
+    r"\b(?:verified|confirmed|corroborated|substantiated|proven|proved)\s+by\b|"
+    r"\b(?:independently|separately)\s+(?:verified|confirmed|corroborated|substantiated)\b",
+    _re.IGNORECASE,
+)
+_RELATIVE_OF_PERSON_RE = _re.compile(
+    r"\b(?:birth\s+|step[-\s]?|half[-\s]?|adoptive\s+|foster\s+)?"
+    r"(?:mother|father|mom|dad|parent|son|daughter|child|brother|sister|sibling|"
+    r"wife|husband|spouse|cousin|aunt|uncle|nephew|niece|"
+    r"grand(?:mother|father|son|daughter)|in[-\s]?law)\b",
+    _re.IGNORECASE,
+)
+
+
 def _sentence_makes_reputational_claim(sentence: str) -> bool:
     """True if the sentence asserts a reputational-harm, criminal-status, or
     criminal-allegation claim (about a named individual)."""
@@ -1268,6 +1293,20 @@ def _strip_unattributed_reputational_claims(summary: str) -> tuple[str, list[str
     dropped: list[str] = []
     for s in sentences:
         if not s.strip():
+            continue
+        reputational = bool(
+            _sentence_makes_reputational_claim(s)
+            or _REPUTATIONAL_TERM_RE.search(s)
+            or _NEGATIVE_ASSOCIATION_RE.search(s)
+        )
+        # (3b-1) A reputational claim the summary VOUCHES for ("verified by ...").
+        # Corroborating a smear is worse than asserting one; drop it outright.
+        if reputational and _VERIFICATION_ASSERTION_RE.search(s):
+            dropped.append(s.strip())
+            continue
+        # (3b-3) A reputational claim about a relative (a private individual).
+        if reputational and _RELATIVE_OF_PERSON_RE.search(s):
+            dropped.append(s.strip())
             continue
         # (1) Verb-led reputational/criminal claim: drop unless attributed.
         if _sentence_makes_reputational_claim(s) and not _sentence_has_attribution(s):
