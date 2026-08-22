@@ -103,6 +103,23 @@ const REPUTATIONAL_TERM =
 const SUBJECT_START =
   /^["'“(]*\s*(?:He|She|They|It|The|A|An|This|That|Those|These|His|Her|Their|[A-Z][A-Za-z][A-Za-z.'’-]*)\b/;
 
+// Broader negative-association signal used ONLY to arm the 3b verification /
+// relative rules (catches associations the harm-verb patterns miss: "worked for
+// a group that funded Bin Laden", "juvenile record", "racist").
+const NEGATIVE_ASSOCIATION =
+  /\b(?:bin\s+laden|al[-\s]?qaeda|taliban|hamas|hezbollah|isis|isil|jihad|terror|terrorist|extremis|militant|funded|financed|bankrolled|blacklist|accused|alleged|indicted|convicted|criminal|felony|racist|neo[-\s]?nazi|juvenile\s+record|rap\s+sheet|ties\s+to|linked\s+to)\b/i;
+// 3b rule 1: a corroboration assertion attached to a reputational claim. Void
+// then asserts, in its own voice, that a smear is TRUE ("a claim verified by The
+// Jerusalem Post"). Attribution is not a shield when the sentence vouches for the
+// claim, so this forces a drop rather than counting as attribution.
+const VERIFICATION_ASSERTION =
+  /\b(?:verified|confirmed|corroborated|substantiated|proven|proved)\s+by\b|\b(?:independently|separately)\s+(?:verified|confirmed|corroborated|substantiated)\b/i;
+// 3b rule 3: a relative of a public figure is a private individual. A
+// reputational claim about someone's mother/father/child/sibling/spouse is
+// dropped outright ("El-Sayed's birth mother worked for a group that funded ...").
+const RELATIVE_OF_PERSON =
+  /\b(?:birth\s+|step[-\s]?|half[-\s]?|adoptive\s+|foster\s+)?(?:mother|father|mom|dad|parent|son|daughter|child|brother|sister|sibling|wife|husband|spouse|cousin|aunt|uncle|nephew|niece|grand(?:mother|father|son|daughter)|in[-\s]?law)\b/i;
+
 function hasIdentifiableSubject(sentence: string): boolean {
   const s = (sentence ?? "").trim();
   if (!s) return false;
@@ -132,6 +149,19 @@ export function stripUnattributedReputationalClaims(summary: string): string {
       REPUTATIONAL_HARM.test(sent) ||
       CRIMINAL_FACT.test(sent) ||
       CRIMINAL_ALLEGATION.test(sent);
+    const reputational =
+      harm || REPUTATIONAL_TERM.test(sent) || NEGATIVE_ASSOCIATION.test(sent);
+    // (3b-1) A reputational claim the summary VOUCHES for ("verified by ...").
+    // Corroboration of a smear is worse than an adjective; drop it outright.
+    if (reputational && VERIFICATION_ASSERTION.test(sent)) {
+      dropped = true;
+      return false;
+    }
+    // (3b-3) A reputational claim about a relative (a private individual).
+    if (reputational && RELATIVE_OF_PERSON.test(sent)) {
+      dropped = true;
+      return false;
+    }
     if (harm && !attributed) {
       dropped = true;
       return false;
