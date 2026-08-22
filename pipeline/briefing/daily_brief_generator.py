@@ -1150,16 +1150,23 @@ def _fetch_last_successful_brief(edition: str) -> dict | None:
 
 
 # ---------------------------------------------------------------------------
-# Lean rotation — cycles left → center → right daily.
-# Based on ideological principles, not party allegiance.
+# Lean rotation. Based on ideological principles, not party allegiance.
+#
+# The old cycle was `day_of_year % 3`, period 3. Any two days a multiple of 3
+# apart got the SAME lens (2026-08-18 and 2026-08-21, both "right"), so a reader
+# on a 3-day rhythm saw one lens forever. A 7-day cycle would be worse: period 7
+# ALIGNS with the week, pinning each weekday to a fixed lens. This cycle has
+# PERIOD 6, which is coprime with 7 (so a given weekday drifts through all leans
+# over 6 weeks), keeps the three leans balanced (2 each per cycle), and never
+# repeats a lens at a 3-day interval (index i and i+3 always differ).
 # ---------------------------------------------------------------------------
-_LEAN_CYCLE = ["left", "center", "right"]
+_LEAN_CYCLE = ["left", "center", "right", "center", "right", "left"]
 
 
 def _get_today_lean() -> str:
-    """Return today's editorial lean based on UTC day-of-year mod 3."""
+    """Return today's editorial lean. Period-6, weekday-drifting, balanced."""
     day = datetime.now(timezone.utc).timetuple().tm_yday
-    return _LEAN_CYCLE[day % 3]
+    return _LEAN_CYCLE[day % len(_LEAN_CYCLE)]
 
 
 # ---------------------------------------------------------------------------
