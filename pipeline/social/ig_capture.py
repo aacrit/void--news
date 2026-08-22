@@ -33,11 +33,31 @@ from typing import Any
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from utils.supabase_client import supabase  # noqa: E402
+from utils.supabase_client import supabase  # noqa: E402  (DB reads/writes only)
 
 RENDER_BASE_URL = os.environ.get("RENDER_BASE_URL", "http://localhost:3000")
 BUCKET = "ig-renders"
 VIEWPORT = (1080, 1350)
+
+# Slide STORAGE uploads go through a fresh client, NOT the shared singleton.
+# The shared client's storage session is closed mid-run ("Cannot send a request,
+# as the client has been closed"), which on 2026-08-22 marked every slide
+# render_failed and produced an EMPTY social bundle (same root cause as the On
+# Air audio-upload freeze). A fresh client created once per capture run is
+# immune. DB state writes still use the shared singleton (postgrest, hardened).
+_STORAGE_SB = None
+
+
+def _storage():
+    """A fresh Supabase client for ig-renders uploads (see note above)."""
+    global _STORAGE_SB
+    if _STORAGE_SB is None:
+        from supabase import create_client
+        url, key = os.environ.get("SUPABASE_URL"), os.environ.get("SUPABASE_KEY")
+        if not url or not key:
+            raise EnvironmentError("SUPABASE_URL / SUPABASE_KEY not set for slide upload")
+        _STORAGE_SB = create_client(url, key)
+    return _STORAGE_SB
 
 
 def _ensure_bucket() -> None:
@@ -47,7 +67,7 @@ def _ensure_bucket() -> None:
         from storage3.types import CreateOrUpdateBucketOptions  # type: ignore
         opts = CreateOrUpdateBucketOptions(public=True)
         try:
-            supabase.storage.create_bucket(BUCKET, options=opts)
+            _storage().storage.create_bucket(BUCKET, options=opts)
             print(f"  [capture] created bucket {BUCKET}")
         except Exception:
             pass  # already exists
@@ -56,7 +76,7 @@ def _ensure_bucket() -> None:
 
 
 def _public_url(path: str) -> str:
-    base = supabase.storage.from_(BUCKET).get_public_url(path)
+    base = _storage().storage.from_(BUCKET).get_public_url(path)
     if isinstance(base, str):
         return base
     return f"{os.environ.get('SUPABASE_URL', '').rstrip('/')}/storage/v1/object/public/{BUCKET}/{path}"
@@ -65,11 +85,11 @@ def _public_url(path: str) -> str:
 def _upload_png(post_id: str, slide_index: int, png_bytes: bytes) -> str | None:
     path = f"{post_id}/slide-{slide_index}.png"
     try:
-        supabase.storage.from_(BUCKET).remove([path])
+        _storage().storage.from_(BUCKET).remove([path])
     except Exception:
         pass
     try:
-        supabase.storage.from_(BUCKET).upload(
+        _storage().storage.from_(BUCKET).upload(
             path,
             png_bytes,
             {"content-type": "image/png", "x-upsert": "true"},
@@ -78,7 +98,7 @@ def _upload_png(post_id: str, slide_index: int, png_bytes: bytes) -> str | None:
         msg = str(e).lower()
         if "duplicate" in msg or "already exists" in msg or "resource already exists" in msg:
             try:
-                supabase.storage.from_(BUCKET).update(
+                _storage().storage.from_(BUCKET).update(
                     path, png_bytes, {"content-type": "image/png"}
                 )
             except Exception as e2:
