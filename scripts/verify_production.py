@@ -286,6 +286,36 @@ def check_orphan_subordinate(p: Page) -> list[str]:
     return out[:6]
 
 
+def _quote_orphans(text: str) -> bool:
+    """True if `text` has an unpaired double quote (an orphan closer or an
+    unclosed opener), using the same left-to-right pairing as the repair."""
+    t = text.replace("“", '"').replace("”", '"')
+    pending = False
+    for i, ch in enumerate(t):
+        if ch != '"':
+            continue
+        before = t[i - 1] if i > 0 else " "
+        after = t[i + 1] if i + 1 < len(t) else " "
+        looks_open = (not before.isalnum()) and after.strip() != ""
+        if not pending:
+            if looks_open:
+                pending = True
+            else:
+                return True  # closer with no opener
+        else:
+            pending = False
+    return pending  # unclosed opener
+
+
+def check_quote_balance(p: Page) -> list[str]:
+    out = []
+    for s in p.summaries:
+        if _quote_orphans(s):
+            m = re.search(r'\S*"\S*', s)
+            out.append(f'unbalanced quote (orphan): "{_ctx(s, m.group(0)) if m else s[:60]}"')
+    return out[:6]
+
+
 def check_orphan_numeral(p: Page) -> list[str]:
     out = []
     for s in p.summaries:
@@ -385,6 +415,7 @@ CHECKS = [
     ("integrity: summary min length", check_summary_length),
     ("integrity: no orphan numeric fragment", check_orphan_numeral),
     ("integrity: no orphan subordinate clause", check_orphan_subordinate),
+    ("integrity: quotes are balanced", check_quote_balance),
     ("duplication: no duplicate headlines", check_duplicate_headlines),
     ("count: header matches rendered", check_count_match),
     ("consistency: card lean label == canonical (Sigil)", check_card_sigil_label),

@@ -375,6 +375,10 @@ sentences saying the investigation is ongoing or the cause is not yet known.
 - NO REPETITION. State each fact, figure, name, and quote exactly once. Do not \
 restate a claim in different words later in the summary (for example, do not say \
 three times that a strait stays closed until conditions are met).
+- BALANCED QUOTES. Every quotation mark must be paired: if you open a quote with \
+a double quote, you MUST close it with a double quote. Never leave a dangling \
+quote (for example, never write: words like genocide" and apartheid"). When in \
+doubt, paraphrase without quotation marks rather than emit an unbalanced quote.
 - NEVER state a person's age, title, rank, or tenure unless it appears VERBATIM in \
 the article text above. Do not infer, estimate, or round an age. If the articles \
 do not give the age, the summary does not give the age.
@@ -1113,6 +1117,41 @@ def _drop_orphan_fragments(summary: str) -> str:
     return _re.sub(r"\s{2,}", " ", out).strip()
 
 
+def _repair_orphan_quotes(summary: str) -> str:
+    """3i: repair unbalanced double quotes. The generator drops opening quotes,
+    leaving orphan closers ("...words like genocide" and apartheid"). Pair quotes
+    left to right and REMOVE the unpaired ones (an orphan closer, or an unclosed
+    opener); balanced quotations survive. Deterministic; mirrors the frontend
+    repairOrphanQuotes so both agree with the quote-balance gate."""
+    s = summary or ""
+    if '"' not in s and "“" not in s and "”" not in s:
+        return summary
+    t = s.replace("“", '"').replace("”", '"')
+    remove: set[int] = set()
+    pending_open = None
+    for i, ch in enumerate(t):
+        if ch != '"':
+            continue
+        before = t[i - 1] if i > 0 else " "
+        after = t[i + 1] if i + 1 < len(t) else " "
+        looks_open = (not before.isalnum()) and after.strip() != ""
+        if pending_open is None:
+            if looks_open:
+                pending_open = i
+            else:
+                remove.add(i)
+        else:
+            pending_open = None
+    if pending_open is not None:
+        remove.add(pending_open)
+    if not remove:
+        return summary
+    out = "".join(ch for i, ch in enumerate(t) if not (ch == '"' and i in remove))
+    out = _re.sub(r"\s{2,}", " ", out)
+    out = _re.sub(r"\s+([,.!?;:])", r"\1", out)
+    return out.strip()
+
+
 def _apply_summary_postchecks(summary: str, source_text: str = "") -> str:
     """Run the Phase-3 hygiene chain on a summary. Deterministic, order matters:
     content-level drops first (exact dup, near-dup, unknown padding, ungrounded
@@ -1132,6 +1171,7 @@ def _apply_summary_postchecks(summary: str, source_text: str = "") -> str:
     s = _trim_summary_to_word_cap(s)               # 3a hard 90-word trim
     s = _trim_incomplete_tail_sentence(s)          # 3g completeness (drop truncation)
     s = _drop_orphan_fragments(s)                  # 3h orphan subordinate-clause + stray quote
+    s = _repair_orphan_quotes(s)                    # 3i balance unpaired double quotes
     s = s.strip()
     # 3f grounding audit (warning-only, no drops yet). Logs figures / proper
     # nouns in the FINAL summary that are absent from the source text so we can

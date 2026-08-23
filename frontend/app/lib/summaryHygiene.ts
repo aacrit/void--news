@@ -237,9 +237,49 @@ export function dropOrphanFragments(summary: string): string {
   return cleaned;
 }
 
+/* ---------------------------------------------------------------------------
+   Quote balancer (P0-A, 2026-08-23)
+   ----------------------------------------------------------------------------
+   The generator emits unbalanced double quotes: a dropped opening quote leaves
+   an orphan closer ("...words like genocide" and apartheid"). Every summary hit
+   several, and a reader who meets three broken quotes in the first paragraph
+   concludes the software is broken. This is not a render transform (nothing
+   strips U+201C); the stored summary already carries the break. We repair it
+   deterministically here (and in the pipeline) by pairing quotes left to right
+   and REMOVING the ones that do not pair: an orphan closer, or an unclosed
+   opener. Balanced quotations survive untouched.
+   --------------------------------------------------------------------------- */
+export function repairOrphanQuotes(summary: string): string {
+  const s = summary ?? "";
+  if (!s.includes('"') && !s.includes("“") && !s.includes("”")) return s;
+  const t = s.replace(/[“”]/g, '"');
+  const remove = new Set<number>();
+  let pendingOpen: number | null = null;
+  for (let i = 0; i < t.length; i++) {
+    if (t[i] !== '"') continue;
+    const before = i > 0 ? t[i - 1] : " ";
+    const after = i + 1 < t.length ? t[i + 1] : " ";
+    const looksOpen = !/[a-z0-9]/i.test(before) && after.trim() !== "";
+    if (pendingOpen === null) {
+      if (looksOpen) pendingOpen = i;
+      else remove.add(i); // closer with no opener
+    } else {
+      pendingOpen = null; // this closes the pending pair
+    }
+  }
+  if (pendingOpen !== null) remove.add(pendingOpen); // unclosed opener
+  if (remove.size === 0) return s;
+  let out = "";
+  for (let i = 0; i < t.length; i++) {
+    if (t[i] === '"' && remove.has(i)) continue;
+    out += t[i];
+  }
+  return out.replace(/\s{2,}/g, " ").replace(/\s+([,.!?;:])/g, "$1").trim();
+}
+
 export function cleanFeedSummary(summary: string, _title?: string): string {
   const s = (summary ?? "").trim();
   if (!s) return "";
   if (isRawExcerpt(s)) return "";
-  return dropOrphanFragments(stripUnattributedReputationalClaims(s));
+  return repairOrphanQuotes(dropOrphanFragments(stripUnattributedReputationalClaims(s)));
 }
