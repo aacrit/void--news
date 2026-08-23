@@ -233,6 +233,27 @@ _COUNTRY_EDITION_MAP: dict[str, str] = {
 }
 
 
+def _classify_content_type(op_values: list) -> str:
+    """Opinion vs reporting from per-member opinion-vs-fact scores (0-100).
+
+    The old rule (mean > 50) let a clear op-ed run as a news card when a few
+    reporting members averaged it down: "Edward Williams States American Democracy
+    Has Been Killed", 4 sources, whose whole summary was a columnist's argument,
+    shipped as content_type=reporting on 2026-08-23. A single dominant op-ed in a
+    small cluster is outvoted by the mean. So also flag opinion when a clear op-ed
+    dominates a small cluster, or a majority of members read as opinion."""
+    vals = [v for v in (op_values or []) if v is not None]
+    if not vals:
+        return "reporting"
+    if (sum(vals) / len(vals)) > 50:
+        return "opinion"
+    if len(vals) <= 6 and max(vals) >= 70:          # dominant op-ed, small cluster
+        return "opinion"
+    if sum(1 for v in vals if v > 55) >= max(2, len(vals) * 0.5):  # opinion majority
+        return "opinion"
+    return "reporting"
+
+
 def _has_us_domestic_signal(article_data: dict) -> bool:
     """
     Return True if the article's title + summary contains clear US domestic
@@ -1026,7 +1047,7 @@ def _enrich_cluster_fallback(cluster_id: str, skip_text: bool = False) -> None:
         }
 
         # Classify as reporting vs opinion based on avg opinion score
-        content_type = "opinion" if avg_of > 50 else "reporting"
+        content_type = _classify_content_type(of_values)
 
         # Build the update payload — always include numeric aggregates
         update_payload = {
@@ -2508,7 +2529,8 @@ def main():
                     ) / len(cluster_bias_scores)
                 else:
                     avg_opinion = 25.0
-                cluster["content_type"] = "opinion" if avg_opinion > 50 else "reporting"
+                cluster["content_type"] = _classify_content_type(
+                    [bs.get("opinion_fact", 25) for bs in cluster_bias_scores])
 
             # Compute cluster confidence: 25th-percentile confidence across
             # articles. Using p25 instead of min() so one bad article doesn't
