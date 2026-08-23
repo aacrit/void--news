@@ -131,6 +131,12 @@ class Page:
     def h1_count(self) -> int:
         return len(re.findall(r'<h1[\s>]', self.raw))
 
+    def footer_wordmark_count(self) -> int:
+        m = re.search(r'<footer[^>]*class="[^"]*site-footer[^"]*"[^>]*>(.*?)</footer>',
+                      self.raw, re.DOTALL)
+        seg = m.group(1) if m else ""
+        return len(re.findall(r'aria-label="VOID NEWS"', seg))
+
 
 # ---------------------------------------------------------------------------
 # Checks — each returns list[str] of failure messages (empty => pass)
@@ -157,6 +163,13 @@ def check_wordmark(p: Page) -> list[str]:
     if n > WORDMARK_MAX:
         return [f'wordmark appears {n} times (max {WORDMARK_MAX}) — likely doubled']
     return []
+
+
+def check_footer_wordmark(p: Page) -> list[str]:
+    n = p.footer_wordmark_count()
+    if n == 1:
+        return []
+    return [f'footer wordmark appears {n} times (expected exactly 1)']
 
 
 def check_dateline(p: Page) -> list[str]:
@@ -423,6 +436,7 @@ CHECKS = [
     ("structural: single Top story", check_top_story),
     ("structural: wordmark not doubled", check_wordmark),
     ("structural: single dateline", check_dateline),
+    ("structural: footer wordmark exactly once", check_footer_wordmark),
     ("structural: exactly one h1", check_h1),
     ("corruption: abbreviations / quotes", check_abbrev),
     ("corruption: decimals", check_decimal),
