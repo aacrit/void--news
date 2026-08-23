@@ -55,30 +55,36 @@ from .story_cluster import (
 # Tunables. Deliberately conservative: contamination (a wrong merge) is worse
 # than duplication (a missed merge), so every gate is on the strict side.
 # ---------------------------------------------------------------------------
+# RE-TIGHTENED 2026-08-23 after the first version over-merged unrelated events
+# (Sweden sword attack + Congo Ebola + Texas court fused into one 73-source
+# cluster). Two changes make the gate strict and CONJUNCTIVE:
+#   1. The numeric-metric branch is GONE. "Both mention killed/dead" merged any
+#      two same-day casualty stories; it was the primary contamination path.
+#   2. A merge now requires BOTH >= 2 shared SALIENT entities AND >= 2 shared
+#      title stems (not an OR). Salient = the cluster's named entities MINUS the
+#      low-specificity set (countries, "trump"/"iran"/"police"/... that appear in
+#      unrelated stories). Two clusters must share two specific entities AND two
+#      specific title words AND be same-day. Precision over recall: a missed
+#      merge stays a duplicate (the P0-2 removal backstop handles it); a wrong
+#      merge is contamination.
 MERGE_TOP_N = 50               # candidate set = top-N clusters by source_count
 MERGE_TEMPORAL_HOURS = 48      # same-event coverage clusters within ~2 days
-MERGE_MIN_SHARED_STEMS = 2     # the loosest branch (Russia-UK cleared here)
-MERGE_MIN_SHARED_ENTITIES = 1  # >= 1 shared salient entity (incl. blacklisted)
-MERGE_CEILING = 6              # a single merged cluster may absorb at most this
-                               # many sub-clusters (mega-merge guard)
-
-# A shared numeric-metric branch: both clusters assert the SAME metric TYPE
-# (a casualty count / money figure). Values need not match; fragmentation is
-# exactly what makes them differ (17 vs 12 dead). The entity + temporal
-# conjunction anchors it so two unrelated death tolls do not merge.
-_METRIC_RE = re.compile(
-    r"\b(?:killed|dead|deaths?|death\s+toll|fatalities|injured|wounded|"
-    r"casualties|magnitude)\b",
-    re.IGNORECASE,
-)
+MERGE_MIN_SHARED_STEMS = 2     # AND >= this many shared specific title stems
+MERGE_MIN_SHARED_ENTITIES = 2  # AND >= this many shared SALIENT entities
+MERGE_CEILING = 4              # a single merged cluster may absorb at most this
+                               # many sub-clusters (tightened from 6)
 
 
-def _cluster_blob(cluster: dict) -> str:
-    """Title + a few members' text, for the numeric-metric test."""
-    parts = [cluster.get("title", "") or ""]
-    for art in (cluster.get("articles", []) or [])[:6]:
-        parts.append(((art.get("title") or "") + " " + (art.get("summary") or "")).strip())
-    return " ".join(parts)
+def _salient_entities(articles: list[dict]) -> set:
+    """A cluster's named entities minus the low-specificity ones, so a single
+    common token ('trump', a country, 'police') can never anchor a merge."""
+    try:
+        from .story_cluster import _LOW_SPECIFICITY_ENTITIES, _ENTITY_STOP_TOKENS
+        stop = set(_LOW_SPECIFICITY_ENTITIES) | set(_ENTITY_STOP_TOKENS)
+    except Exception:
+        stop = set()
+    ents = set(_expand_entities_with_tokens(_extract_cluster_entities(articles or [])))
+    return {e for e in ents if len(e) >= 4 and e.lower() not in stop}
 
 
 def _article_key(art: dict) -> str:
@@ -110,13 +116,7 @@ def merge_same_event_clusters(
     combined article set. Returns the reduced cluster list. Never raises; on any
     unexpected error it logs and returns the input unchanged."""
     log = log_fn or (lambda m: print(m))
-    # DISABLED 2026-08-23: the conjunctive gate over-merged unrelated events on
-    # live data (Sweden sword attack + Congo Ebola + Texas court fused into one
-    # 73-source cluster via the too-loose shared-entity + numeric-metric branch).
-    # Contamination corrupts the bias distribution, so the pass is OFF until the
-    # gate is tightened and validated on real 50-cluster feeds, not just fixtures.
-    return clusters
-    if not clusters or len(clusters) < 2:  # pragma: no cover (unreachable while disabled)
+    if not clusters or len(clusters) < 2:
         return clusters
     try:
         order = sorted(
@@ -124,13 +124,9 @@ def merge_same_event_clusters(
             key=lambda i: clusters[i].get("source_count", 0) or 0,
             reverse=True,
         )[:top_n]
-        ents = [
-            set(_expand_entities_with_tokens(_extract_cluster_entities(clusters[i].get("articles", []) or [])))
-            for i in order
-        ]
+        ents = [_salient_entities(clusters[i].get("articles", []) or []) for i in order]
         stems = [_title_word_stems(clusters[i].get("title", "") or "") for i in order]
         ts = [_parse_first_pub(clusters[i]) for i in order]
-        metric = [bool(_METRIC_RE.search(_cluster_blob(clusters[i]))) for i in order]
 
         # Union-find over positions in `order`.
         parent = list(range(len(order)))
@@ -150,19 +146,17 @@ def merge_same_event_clusters(
                     continue
                 if load[ra] + load[rb] > MERGE_CEILING:
                     continue  # mega-merge guard
+                # Strict CONJUNCTION: >= 2 shared salient entities AND >= 2
+                # shared title stems AND same-day. No numeric branch.
                 shared_ent = ents[a] & ents[b]
                 if len(shared_ent) < MERGE_MIN_SHARED_ENTITIES:
                     continue
+                shared_stems = stems[a] & stems[b]
+                if len(shared_stems) < MERGE_MIN_SHARED_STEMS:
+                    continue
                 if ts[a] and ts[b] and abs((ts[a] - ts[b]).total_seconds()) > MERGE_TEMPORAL_HOURS * 3600:
                     continue
-                shared_stems = len(stems[a] & stems[b])
-                branch = None
-                if shared_stems >= MERGE_MIN_SHARED_STEMS:
-                    branch = f"stems({shared_stems})"
-                elif metric[a] and metric[b]:
-                    branch = "numeric"
-                if not branch:
-                    continue
+                branch = f"ent({len(shared_ent)})+stems({len(shared_stems)})"
                 parent[rb] = ra
                 load[ra] += load[rb]
                 merge_log.append((order[a], order[b], branch, sorted(shared_ent)[:4]))
