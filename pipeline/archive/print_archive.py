@@ -176,7 +176,7 @@ def _cap_members(members: list[dict], member_cap: int) -> list[dict]:
 # ─────────────────────────────── main API ───────────────────────────────
 
 def archive_printed_edition(supabase, sources_by_id: dict, edition_date,
-                            pipeline_run_id=None, limit: int = 70,
+                            pipeline_run_id=None, limit: int = 100,
                             member_cap: int = 60,
                             thread_lookback_days: int = 7) -> dict:
     """Snapshot the day's display window into the permanent print archive.
