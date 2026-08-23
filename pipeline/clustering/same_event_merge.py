@@ -110,7 +110,13 @@ def merge_same_event_clusters(
     combined article set. Returns the reduced cluster list. Never raises; on any
     unexpected error it logs and returns the input unchanged."""
     log = log_fn or (lambda m: print(m))
-    if not clusters or len(clusters) < 2:
+    # DISABLED 2026-08-23: the conjunctive gate over-merged unrelated events on
+    # live data (Sweden sword attack + Congo Ebola + Texas court fused into one
+    # 73-source cluster via the too-loose shared-entity + numeric-metric branch).
+    # Contamination corrupts the bias distribution, so the pass is OFF until the
+    # gate is tightened and validated on real 50-cluster feeds, not just fixtures.
+    return clusters
+    if not clusters or len(clusters) < 2:  # pragma: no cover (unreachable while disabled)
         return clusters
     try:
         order = sorted(
