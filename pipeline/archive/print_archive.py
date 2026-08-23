@@ -176,10 +176,18 @@ def _cap_members(members: list[dict], member_cap: int) -> list[dict]:
 # ─────────────────────────────── main API ───────────────────────────────
 
 def archive_printed_edition(supabase, sources_by_id: dict, edition_date,
-                            pipeline_run_id=None, limit: int = 50,
+                            pipeline_run_id=None, limit: int = 70,
                             member_cap: int = 60,
                             thread_lookback_days: int = 7) -> dict:
-    """Snapshot today's displayed top-``limit`` into the permanent print archive.
+    """Snapshot the day's display window into the permanent print archive.
+
+    The homepage shows the top 50, but serverFeed drops ghost + unsummarized
+    clusters from the top ranks and BACKFILLS from below, so a displayed card can
+    sit at raw rank 51+ . If the archive stops at 50, those backfilled cards have
+    no printed_stories row and the frontend falls back to a `/?story=` link
+    instead of the canonical `/story/<id>/` (P0-B, 2026-08-23). Archiving a buffer
+    of 70 covers the backfill so EVERY displayed card gets a real permalink; the
+    extra ~20 rows/day are permalink coverage only (the feed still shows 50).
 
     Returns {stories, threads_new, threads_continued, stats}. Non-fatal: on any
     internal failure it returns partial metrics rather than raising.

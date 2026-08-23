@@ -371,6 +371,23 @@ def check_every_card_has_href(p: Page) -> list[str]:
     return [] if n == 0 else [f'{n} story card(s) render as a <button> with no href (must be <a href>)']
 
 
+# Every story card link must be the canonical /story/<uuid>/ shape. A "/?story="
+# link loads the homepage instead of the story page and is not indexable (P0-B):
+# it means the card missed the print archive and fell back. Extract the stretch
+# link hrefs and flag any that are not /story/<uuid>/.
+_STRETCH_HREF_RE = re.compile(r'<a[^>]*class="[^"]*(?:story-card|lead)__stretch-link[^"]*"[^>]*href="([^"]+)"|<a[^>]*href="([^"]+)"[^>]*class="[^"]*(?:story-card|lead)__stretch-link')
+_STORY_SHAPE_RE = re.compile(r'/story/[0-9a-f-]{36}/?$')
+
+
+def check_href_shape(p: Page) -> list[str]:
+    hrefs = [a or b for a, b in _STRETCH_HREF_RE.findall(p.raw)]
+    out = []
+    for h in hrefs:
+        if not _STORY_SHAPE_RE.search(h):
+            out.append(f'malformed story href (must be /story/<uuid>/): "{h}"')
+    return out[:6]
+
+
 # Regression lock for the aggregate_confidence read path. The real rev-49 formula
 # (migration 076 RPC + main.py fallback) varies per cluster; the superseded proxy
 # (migration 002's LEAST(1.0, COUNT/5.0)) pins every >=5-source cluster to exactly
@@ -420,6 +437,7 @@ CHECKS = [
     ("count: header matches rendered", check_count_match),
     ("consistency: card lean label == canonical (Sigil)", check_card_sigil_label),
     ("structural: every card has an href", check_every_card_has_href),
+    ("structural: story hrefs are /story/<uuid>/", check_href_shape),
     ("integrity: confidence is real (not COUNT/5 proxy)", check_confidence_not_proxy),
 ]
 
