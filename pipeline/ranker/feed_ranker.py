@@ -129,7 +129,21 @@ EVENT_DECAY = 0.80
 # Governor), so two distinct races in the same state (which share {state,
 # primari, win} identically to a genuine dup) stay separate. The HARD/SOFT rules
 # on RAW stems are untouched, so nothing that collapsed before stops collapsing.
-NEAR_DUP_SCAN = 50
+# Scan the FULL working pool, not just the top 50. apply_feed_ordering fetches
+# the top 80 (main.py step 8d.5) and mutates rank_world in-place across its earlier
+# stages (story-type gates, same-event cap), which reorders the pool BEFORE the
+# near-dup guard runs. A cluster that ends up DISPLAYED (final position <= 50) can
+# therefore sit beyond position 50 in the working pool at scan time and escape a
+# 50-wide scan. That is exactly why the 2026-08-24 feed shipped both "Humanoid
+# Robots Beat Usain Bolt's 100m Record in Beijing" (18 src) and "Humanoid Robots
+# Break Human Sprint Records at Beijing Games" (8 src): they share 4 raw stems
+# (>= the HARD floor) and the guard WOULD have removed one, but the 8-source
+# telling was outside the top 50 of the working pool when 3.6 ran. Widening the
+# scan to 80 covers every candidate that can reach the displayed feed. The
+# demotion CRITERIA are unchanged (same strict stem test), so no new pair
+# collapses that would not have collapsed inside the top 50; this only stops a
+# displayed re-telling from slipping through on pool churn.
+NEAR_DUP_SCAN = 80
 NEAR_DUP_DECAY = 0.72  # retained for reference; near-dups are now REMOVED, not decayed
 # Sentinel rank for a near-duplicate re-telling that is REMOVED from the displayed
 # feed (Option 1, 2026-08-20). Negative so it sorts strictly below every genuine
