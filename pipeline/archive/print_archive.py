@@ -176,22 +176,37 @@ def _cap_members(members: list[dict], member_cap: int) -> list[dict]:
 # ─────────────────────────────── main API ───────────────────────────────
 
 def archive_printed_edition(supabase, sources_by_id: dict, edition_date,
-                            pipeline_run_id=None, limit: int = 100,
+                            pipeline_run_id=None, limit: int = 50,
                             member_cap: int = 60,
                             thread_lookback_days: int = 7) -> dict:
     """Snapshot the day's display window into the permanent print archive.
 
     The homepage shows the top 50, but serverFeed drops ghost + unsummarized
     clusters from the top ranks and BACKFILLS from below, so a displayed card can
-    sit at raw rank 51+ . If the archive stops at 50, those backfilled cards have
-    no printed_stories row and the frontend falls back to a `/?story=` link
-    instead of the canonical `/story/<id>/` (P0-B, 2026-08-23). Archiving a buffer
-    of 70 covers the backfill so EVERY displayed card gets a real permalink; the
-    extra ~20 rows/day are permalink coverage only (the feed still shows 50).
+    sit at raw rank 51+ . If the archive selected the raw top-50 (source_count
+    filter only), those backfilled cards would have no printed_stories row and the
+    frontend would fall back to a `/?story=` link instead of the canonical
+    `/story/<id>/` (P0-B, 2026-08-23).
+
+    So the selection MIRRORS serverFeed exactly: fetch the top-100 by rank, drop
+    ghost clusters (no cluster_articles) and unsummarized clusters (null/empty
+    summary_tier or blank summary) and source_count < 3, then take the first
+    `limit` survivors. That survivor set IS the displayed 50, so every displayed
+    card gets a permalink AND every edition_position lands in 1..50.
+
+    `limit` is HARD-CAPPED at 50: printed_stories.edition_position carries a
+    `CHECK (edition_position BETWEEN 1 AND 50)` (migration 075). An earlier
+    attempt to over-archive a 70/100-row buffer (to cover the backfill) wrote
+    position 51+, which violated the CHECK and aborted the ENTIRE upsert, so the
+    edition came out EMPTY and the whole feed fell back to `/?story=` (the
+    2026-08-24 regression). Covering the backfill is done by matching the display
+    FILTERS above, never by writing more than 50 positions.
 
     Returns {stories, threads_new, threads_continued, stats}. Non-fatal: on any
     internal failure it returns partial metrics rather than raising.
     """
+    # Hard cap: edition_position CHECK is BETWEEN 1 AND 50. Never exceed it.
+    limit = min(limit, 50)
     metrics: dict = {"stories": 0, "threads_new": 0, "threads_continued": 0,
                      "stats": {}}
     if isinstance(edition_date, str):
@@ -212,11 +227,58 @@ def archive_printed_edition(supabase, sources_by_id: dict, edition_date,
         print(f"    [warn] print-archive cluster select failed: {e}")
         return metrics
 
+    # Ghost-cluster guard (mirrors serverFeed): a cluster whose stale
+    # source_count still ranks it in but whose cluster_articles links were all
+    # cascade-dropped renders as an empty card the frontend drops. One batched
+    # membership query over the top-100 ids (fail-open: an empty/failed read
+    # leaves the set empty so we never drop the whole edition on a transient
+    # error).
+    candidate_ids = [r["id"] for r in rows if r.get("id")]
+    with_articles: set = set()
+    if candidate_ids:
+        try:
+            for i in range(0, len(candidate_ids), 150):
+                chunk = candidate_ids[i:i + 150]
+                off = 0
+                while True:
+                    lr = (
+                        supabase.table("cluster_articles")
+                        .select("cluster_id")
+                        .in_("cluster_id", chunk)
+                        .range(off, off + 999)
+                        .execute()
+                    )
+                    data = lr.data or []
+                    for row in data:
+                        if row.get("cluster_id"):
+                            with_articles.add(row["cluster_id"])
+                    if len(data) < 1000:
+                        break
+                    off += 1000
+        except Exception as e:
+            print(f"    [warn] print-archive ghost guard skipped: {e}")
+            with_articles = set()
+
+    def _has_real_summary(row: dict) -> bool:
+        """Mirror serverFeed.clusterHasRealSummary: an unsummarized cluster (null
+        or empty summary_tier, or a blank summary) is dropped from the feed, so it
+        must not occupy a printed edition slot either."""
+        tier = (row.get("summary_tier") or "").strip()
+        summary = (row.get("summary") or "").strip()
+        return bool(tier and summary)
+
     printed: list[dict] = []
     for row in rows:
         if len(printed) >= limit:
             break
         if (row.get("source_count") or 0) < 3:
+            continue
+        # Mirror the displayed feed's ghost + unsummarized drops so the archived
+        # set == the displayed set (only fire the ghost drop when we actually read
+        # membership; an empty set means the read failed, so fail open).
+        if with_articles and row.get("id") not in with_articles:
+            continue
+        if not _has_real_summary(row):
             continue
         printed.append(row)
     if not printed:
