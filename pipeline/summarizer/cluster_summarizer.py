@@ -2492,6 +2492,39 @@ def _extract_batch_entries(raw: dict, n: int) -> list[dict | None]:
     return out
 
 
+def _summary_matches_cluster(summary: str | None, articles: list[dict],
+                             cluster_title: str | None) -> bool:
+    """True when a BATCH-returned summary is topically grounded in THIS cluster's
+    own material (its member-article titles + the cluster title).
+
+    Guards against the batched LLM cross-assigning one story's brief onto another
+    cluster's slot. Confirmed live on 2026-08-24: the "Sailor's Father Detained"
+    cluster (17 sailor/ICE articles) shipped a summary entirely about the
+    Paramount/Warner merger, byte-identical to the Paramount cluster's own summary
+    (the model emitted the Paramount brief twice inside one batch of four, and
+    _extract_batch_entries mapped a copy onto the sailor slot). Shape validation
+    (_finalize_cluster_result) does not catch this, so this is the content check.
+
+    A correctly-assigned summary shares MANY salient content stems with its own
+    member titles; a cross-assigned one shares ~none. Fail-OPEN: if the cluster
+    yields too few salient anchor tokens to judge, ACCEPT (never reject on thin
+    signal). Only the multi-story batch path calls this — the solo path takes one
+    cluster in and one summary out, so it cannot cross-assign."""
+    summ = (summary or "").strip()
+    if not summ:
+        return True  # empty/blocked results are handled by the caller's retry
+    generic = _generic_topic_tokens()
+    anchor: set[str] = set()
+    for a in (articles or []):
+        anchor |= _ontopic_title_tokens(a.get("title") or "")
+    anchor |= _ontopic_title_tokens(cluster_title or "")
+    anchor -= generic
+    if len(anchor) < 3:
+        return True  # too little signal to judge safely -> accept
+    summ_tokens = _ontopic_title_tokens(summ) - generic
+    return len(anchor & summ_tokens) >= 2
+
+
 def _tpm_wait(window: list[tuple[float, int]], need: int) -> None:
     """Rolling-60s input-token pacer. `window` is a shared list of (sent_at,
     input_tokens); before sending a request needing `need` input tokens, prune
@@ -2597,6 +2630,17 @@ def _send_one_batch(records: list[dict], model: str | None,
         entry = entries[i] if i < len(entries) else None
         validated = (_finalize_cluster_result(entry, rec["articles"], label)
                      if entry else None)
+        if validated and not _summary_matches_cluster(
+                validated.get("summary"), rec["articles"], rec.get("title")):
+            # Cross-assignment guard: the batched model returned a brief that is
+            # topically ungrounded in THIS cluster's OWN articles (story-A brief
+            # landed on cluster-B's slot; see _summary_matches_cluster). Reject so
+            # the story is retried (solo / flash-lite); if it fails again it keeps
+            # its prior summary and the floor pass guarantees display safety. It
+            # must never ship a wrong-story summary.
+            print(f"  [batch-guard] story {rec['cid']} summary ungrounded in its "
+                  f"own articles (batch cross-assignment) -> reject + retry")
+            validated = None
         if validated:
             got[rec["cid"]] = validated
         else:
