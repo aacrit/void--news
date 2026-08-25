@@ -93,6 +93,13 @@ def _decode(s: str) -> str:
     return _html.unescape(s or "").strip()
 
 
+# Document-order scan of the four feed text classes (both lead + card variants),
+# used to pair each headline with its own summary (Page.card_pairs).
+_PAIR_SCAN_RE = re.compile(
+    r'class="(lead-headline__text|story-card__headline-text|lead-summary|story-card__summary)"[^>]*>([^<]*)<'
+)
+
+
 def _extract(pattern: str, doc: str) -> list[str]:
     return [_decode(m) for m in re.findall(pattern, doc, re.DOTALL)]
 
@@ -109,6 +116,24 @@ class Page:
         self.lead_headlines = _extract(r'class="lead-headline__text"[^>]*>([^<]*)<', doc)
         self.summaries = self.lead_summaries + self.card_summaries
         self.headlines = self.lead_headlines + self.card_headlines
+
+    def card_pairs(self) -> list[tuple[str, str]]:
+        """(headline, summary) pairs in document order. Each card renders its
+        headline-text span first, then (past the Sigil) its summary span, so we
+        walk the four text classes in DOM order and pair every headline with the
+        NEXT summary. Pairing by position (not parallel-list index) survives a
+        card that is missing one element, so a title never gets matched to the
+        WRONG card's summary. Used by the title<->summary consistency check."""
+        pairs: list[tuple[str, str]] = []
+        pending: str | None = None
+        for m in _PAIR_SCAN_RE.finditer(self.raw):
+            cls, text = m.group(1), _decode(m.group(2))
+            if "headline" in cls:
+                pending = text
+            elif "summary" in cls and pending is not None:
+                pairs.append((pending, text))
+                pending = None
+        return pairs
 
     @property
     def header_story_count(self) -> int | None:
@@ -354,6 +379,36 @@ def check_duplicate_headlines(p: Page) -> list[str]:
     return out[:8]
 
 
+# --- consistency: a card's summary must be ABOUT its own headline -----------
+# Backstop for a batched-summarizer cross-assignment (2026-08-24: the "Sailor's
+# Father Detained" card shipped a summary entirely about the Paramount/Warner
+# merger). A genuine feed summary restates its headline's subject, so it shares
+# several salient stems with the title; a cross-assigned summary shares ~none.
+# Fires ONLY on the egregious zero-overlap case, and only when both sides carry
+# enough signal to judge (title >= 3 salient stems, summary >= 5), so a legit
+# paraphrase or a thin headline never trips it. This complements the pipeline
+# guard (_summary_matches_cluster) at the served-HTML layer, catching a mismatch
+# from ANY source (batch, cache, future path), not just the batch prompt.
+_TS_MIN_TITLE_STEMS = 3
+_TS_MIN_SUMMARY_STEMS = 5
+
+
+def check_title_summary_consistency(p: Page) -> list[str]:
+    out: list[str] = []
+    for title, summary in p.card_pairs():
+        t = _title_word_stems(title)
+        s = _title_word_stems(summary)
+        if len(t) < _TS_MIN_TITLE_STEMS or len(s) < _TS_MIN_SUMMARY_STEMS:
+            continue  # too little signal — fail open
+        if not (t & s):
+            out.append(
+                f'summary shares NO salient word with its headline '
+                f'(likely cross-assigned):\n      headline: "{title}"'
+                f'\n      summary: "{summary[:130]}..."'
+            )
+    return out[:6]
+
+
 # --- count ------------------------------------------------------------------
 def check_count_match(p: Page) -> list[str]:
     hdr = p.header_story_count
@@ -448,6 +503,7 @@ CHECKS = [
     ("integrity: no orphan subordinate clause", check_orphan_subordinate),
     ("integrity: quotes are balanced", check_quote_balance),
     ("duplication: no duplicate headlines", check_duplicate_headlines),
+    ("consistency: summary matches its headline", check_title_summary_consistency),
     ("count: header matches rendered", check_count_match),
     ("consistency: card lean label == canonical (Sigil)", check_card_sigil_label),
     ("structural: every card has an href", check_every_card_has_href),
