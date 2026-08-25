@@ -263,6 +263,15 @@ prose. Use periods, commas, semicolons, colons, or parentheses instead. Two \
 short sentences beat one long sentence with an em dash. Hyphens in compound \
 words ("twenty-four-hour," "fact-check") are fine — em dashes (—) and en \
 dashes (–) are not.
+- THIRD-PERSON VOICE (mandatory). void --news never speaks in the first person. \
+When you paraphrase a source's statement as indirect speech, CONVERT its \
+first-person pronouns to the third person: "our" becomes "their," "us" becomes \
+"them," "we" becomes "they," "my" becomes "their." A first-person pronoun (I, we, \
+our, us, my) may appear ONLY inside a verbatim direct quotation carrying quotation \
+marks. Wrong: SouthCom described the operation as a demonstration of our lethal \
+precision. Right: SouthCom described the operation as a demonstration of its \
+lethal precision. Also right: SouthCom called it "a powerful demonstration of our \
+lethal precision."
 - ATTRIBUTION IS FIELD-SPECIFIC. In the headline and summary, name no news \
 outlets, wire services, or aggregators, and never write "sources report," \
 "according to reports," "multiple outlets," "as reported," or tier labels ("US \
@@ -1175,6 +1184,59 @@ def _collapse_doubled_words(summary: str) -> str:
     return s
 
 
+# First-person pronoun conversion (3k). The model sometimes embeds a source's
+# statement as INDIRECT speech but leaves the source's first-person pronoun intact,
+# so Void appears to speak as the subject (2026-08-25: "SouthCom described the
+# operation as a powerful demonstration of our lethal precision", "al-Sharaa
+# thanked the nations that stood by us"). Confirmed to be the model writing bare
+# indirect speech, not the sanitizer stripping quotes (the stored summaries have
+# balanced, intact quotations and the phrases sit cleanly OUTSIDE any quote). Void
+# speaks in the third person, so ANY first-person pronoun OUTSIDE a quotation is an
+# error: convert it (our->their, us->them, we->they, my->their). A pronoun INSIDE a
+# verbatim quote is legitimate and left untouched. Case-sensitive on "us" so the
+# country "US" is never touched; contractions handled before the bare forms.
+_FIRST_PERSON_SUBS = [
+    (_re.compile(r"\bWe're\b"), "They're"), (_re.compile(r"\bwe're\b"), "they're"),
+    (_re.compile(r"\bWe've\b"), "They've"), (_re.compile(r"\bwe've\b"), "they've"),
+    (_re.compile(r"\bWe'll\b"), "They'll"), (_re.compile(r"\bwe'll\b"), "they'll"),
+    (_re.compile(r"\bWe'd\b"), "They'd"), (_re.compile(r"\bwe'd\b"), "they'd"),
+    (_re.compile(r"\bWe\b"), "They"), (_re.compile(r"\bwe\b"), "they"),
+    (_re.compile(r"\bOur\b"), "Their"), (_re.compile(r"\bour\b"), "their"),
+    (_re.compile(r"\bOurs\b"), "Theirs"), (_re.compile(r"\bours\b"), "theirs"),
+    (_re.compile(r"\bOurselves\b"), "Themselves"),
+    (_re.compile(r"\bourselves\b"), "themselves"),
+    (_re.compile(r"\bus\b"), "them"),                 # lowercase only (US = country)
+    (_re.compile(r"\bMy\b"), "Their"), (_re.compile(r"\bmy\b"), "their"),
+]
+# A balanced quoted span (straight or curly). After 3i (_repair_orphan_quotes)
+# quotes are balanced, so these spans are well-formed and pronouns inside them
+# (legitimate verbatim quotes) are preserved.
+_QUOTED_SPAN_RE = _re.compile(r'["“][^"”“]*["”]')
+
+
+def _sub_first_person(text: str) -> str:
+    for pat, rep in _FIRST_PERSON_SUBS:
+        text = pat.sub(rep, text)
+    return text
+
+
+def _convert_first_person_outside_quotes(summary: str) -> str:
+    """3k: convert first-person pronouns to third person OUTSIDE quoted spans, so
+    Void never speaks in the first person while verbatim quotes keep their exact
+    wording. Deterministic; no-op on a summary with no bare first-person pronoun."""
+    s = summary or ""
+    if not s:
+        return summary
+    out: list[str] = []
+    last = 0
+    for m in _QUOTED_SPAN_RE.finditer(s):
+        out.append(_sub_first_person(s[last:m.start()]))
+        out.append(m.group(0))            # quoted span left verbatim
+        last = m.end()
+    out.append(_sub_first_person(s[last:]))
+    return "".join(out)
+
+
 def _apply_summary_postchecks(summary: str, source_text: str = "") -> str:
     """Run the Phase-3 hygiene chain on a summary. Deterministic, order matters:
     content-level drops first (exact dup, near-dup, unknown padding, ungrounded
@@ -1196,6 +1258,7 @@ def _apply_summary_postchecks(summary: str, source_text: str = "") -> str:
     s = _trim_incomplete_tail_sentence(s)          # 3g completeness (drop truncation)
     s = _drop_orphan_fragments(s)                  # 3h orphan subordinate-clause + stray quote
     s = _repair_orphan_quotes(s)                    # 3i balance unpaired double quotes
+    s = _convert_first_person_outside_quotes(s)     # 3k third-person voice outside quotes
     s = s.strip()
     # 3f grounding audit (warning-only, no drops yet). Logs figures / proper
     # nouns in the FINAL summary that are absent from the source text so we can

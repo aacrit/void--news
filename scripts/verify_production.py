@@ -432,6 +432,48 @@ def check_title_summary_consistency(p: Page) -> list[str]:
     return out[:6]
 
 
+# --- first-person voice -----------------------------------------------------
+# Void speaks in the third person. A first-person pronoun (I, we, our, us, my)
+# OUTSIDE a quotation means the model embedded a source's words as indirect speech
+# without converting the pronoun, so Void appears to speak as the subject
+# (2026-08-25: "...a demonstration of our lethal precision", "...nations that stood
+# by us"). A pronoun INSIDE a verbatim quote is legitimate. "us" is matched
+# case-sensitively so the country "US"/"U.S." never trips it; bare "I" is excluded
+# (Roman numerals: "Part I", "World War I"), but the unambiguous contractions
+# "I'm/I've/I'll/I'd" are flagged.
+_QUOTED_SPAN_GATE_RE = re.compile(r'["“][^"”“]*["”]')
+_FIRST_PERSON_GATE = [
+    re.compile(r"\b(?:we|our|ours|ourselves|my)\b", re.I),
+    re.compile(r"\bus\b"),                       # lowercase only (US = country)
+    re.compile(r"\b(?:we|I)'(?:m|re|ve|ll|d)\b", re.I),
+]
+
+
+def _outside_quote_gaps(s: str) -> list[str]:
+    gaps: list[str] = []
+    last = 0
+    for m in _QUOTED_SPAN_GATE_RE.finditer(s):
+        gaps.append(s[last:m.start()])
+        last = m.end()
+    gaps.append(s[last:])
+    return gaps
+
+
+def check_first_person_outside_quotes(p: Page) -> list[str]:
+    out: list[str] = []
+    for s in p.summaries:
+        for gap in _outside_quote_gaps(s):
+            for rx in _FIRST_PERSON_GATE:
+                m = rx.search(gap)
+                if m:
+                    out.append(
+                        f'first-person "{m.group(0)}" outside quotes '
+                        f'(Void speaks third person): "{_ctx(gap, m.group(0))}"'
+                    )
+                    break  # one hit per gap is enough
+    return out[:6]
+
+
 # --- count ------------------------------------------------------------------
 def check_count_match(p: Page) -> list[str]:
     hdr = p.header_story_count
@@ -528,6 +570,7 @@ CHECKS = [
     ("integrity: quotes are balanced", check_quote_balance),
     ("duplication: no duplicate headlines", check_duplicate_headlines),
     ("consistency: summary matches its headline", check_title_summary_consistency),
+    ("voice: no first-person pronoun outside quotes", check_first_person_outside_quotes),
     ("count: header matches rendered", check_count_match),
     ("consistency: card lean label == canonical (Sigil)", check_card_sigil_label),
     ("structural: every card has an href", check_every_card_has_href),
