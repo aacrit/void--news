@@ -1152,6 +1152,29 @@ def _repair_orphan_quotes(summary: str) -> str:
     return out.strip()
 
 
+# A generation stutter can repeat a capitalized word with no space at a sentence
+# boundary (2026-08-25 rank-1 SCOTUS summary: "...separate legal case. TheThe
+# conservative majority ..."). Two IDENTICAL Capitalized halves is a form no real
+# English word or brand takes (PayPal / MacBook have DIFFERENT halves), so
+# collapsing it never mangles a real token. Runs a couple of passes so a triple
+# ("TheTheThe") also fully collapses.
+_DOUBLED_CAP_WORD_RE = _re.compile(r"\b([A-Z][a-z]+)\1\b")
+
+
+def _collapse_doubled_words(summary: str) -> str:
+    """3j: collapse an immediately-repeated identical Capitalized word with no
+    separator ('TheThe' -> 'The'). Deterministic; no-op on clean input."""
+    s = summary or ""
+    if not s:
+        return summary
+    for _ in range(3):
+        new = _DOUBLED_CAP_WORD_RE.sub(r"\1", s)
+        if new == s:
+            break
+        s = new
+    return s
+
+
 def _apply_summary_postchecks(summary: str, source_text: str = "") -> str:
     """Run the Phase-3 hygiene chain on a summary. Deterministic, order matters:
     content-level drops first (exact dup, near-dup, unknown padding, ungrounded
@@ -1161,6 +1184,7 @@ def _apply_summary_postchecks(summary: str, source_text: str = "") -> str:
     if not summary or not summary.strip():
         return summary
     s = _normalize_abbrev_spacing(summary)        # glue "U. S." -> "U.S." first
+    s = _collapse_doubled_words(s)                 # 3j "TheThe" -> "The"
     s = _dedupe_summary_sentences(s)              # exact duplicate sentences
     s = _drop_repeated_claim_sentences(s)          # 3d near-duplicate claims
     s = _drop_repeated_keyphrase_sentences(s)      # 3d-bis verbatim key-phrase repeat
