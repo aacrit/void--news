@@ -386,6 +386,22 @@ def check_duplicate_headlines(p: Page) -> list[str]:
     return out[:8]
 
 
+# --- doubled word (no space) ------------------------------------------------
+# A generation stutter repeats a capitalized word with no separator (2026-08-25
+# rank-1: "...separate legal case. TheThe conservative majority..."). Two IDENTICAL
+# capitalized halves is a form no real word or brand takes, so this never fires on
+# legitimate copy (PayPal / MacBook have different halves).
+_DOUBLED_WORD_RE = re.compile(r"\b([A-Z][a-z]+)\1\b")
+
+
+def check_doubled_words(p: Page) -> list[str]:
+    out: list[str] = []
+    for s in p.summaries + p.headlines:
+        for m in _DOUBLED_WORD_RE.finditer(s):
+            out.append(f'doubled word, no space: "{_ctx(s, m.group(0))}"')
+    return out[:6]
+
+
 # --- consistency: a card's summary must be ABOUT its own headline -----------
 # Backstop for a batched-summarizer cross-assignment (2026-08-24: the "Sailor's
 # Father Detained" card shipped a summary entirely about the Paramount/Warner
@@ -504,6 +520,7 @@ CHECKS = [
     ("corruption: decimals", check_decimal),
     ("corruption: digit=word", check_digit_word),
     ("corruption: missing-space concatenation", check_concatenation),
+    ("corruption: doubled word (no space)", check_doubled_words),
     ("integrity: summaries terminated", check_summary_terminal),
     ("integrity: summary min length", check_summary_length),
     ("integrity: no orphan numeric fragment", check_orphan_numeral),
