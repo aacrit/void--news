@@ -33,7 +33,14 @@ import sys
 # KNOWN-GOOD page is a false gate; each constant here is set so the gate passes
 # on a clean fixture and fails only on real corruption.
 # ---------------------------------------------------------------------------
-MIN_SUMMARY_CHARS = 40
+# A real news summary runs multiple sentences. Two failures (2026-08-22 "Edward
+# Williams States American Democracy Has Been Killed", a columnist's argument;
+# 2026-08-25 "Israel Wants Rods From God", a Haaretz satire column rendered as a
+# weapons story) each shipped as TWO sentences. On the 08-25 feed the single sub
+# -300 summary was 286 chars while the next shortest was 1037 (p10), so 300 is a
+# wide, clean floor: it catches a satire/opinion stub that slipped in as news and
+# clears every real story by a 700+ char margin.
+MIN_SUMMARY_CHARS = 300
 DUP_STEM_OVERLAP = 4          # >= this many shared title stems => same story
 WORDMARK_MAX = 3             # header + footer + one mobile-nav variant
 DATELINE_MAX = 2             # nav + footer
