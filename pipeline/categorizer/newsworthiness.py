@@ -126,6 +126,51 @@ _ACADEMIC_ARTIFACT_PATTERNS: list[tuple[re.Pattern, str]] = [
 ]
 
 
+# -- Roundup / digest container pages (DECISIVE, prefix-anchored) ------------
+# A daily/regional DIGEST is a container that names many unrelated stories at
+# once ("All of Africa Today - August 24, 2026", AllAfrica.com). It is not a
+# story, and because its text spans many countries/events it BRIDGES otherwise
+# unrelated clusters in the Phase-1/2 merge: on 2026-08-25 an "All of Africa
+# Today" digest fused a ~32-article bag (Guinea landfill + Sudan + South Sudan +
+# Chad + DRC + Haiti + even "Beijing robot games") behind one "Two UN
+# Peacekeepers Killed" headline, burying a real Guinea-landslide story inside.
+# Dropping the digest at ingestion removes the bridge so the real stories cluster
+# on their own. Prefix-anchored + specific so a real headline that merely contains
+# one of these words mid-title survives (mirrors the academic-artifact approach):
+#   DROP  "All of Africa Today - August 24, 2026"
+#   DROP  "Africa: All of Africa Today"
+#   DROP  "Morning Briefing: ..."   "News Roundup: ..."   "Week in Review"
+#   KEEP  "White House briefing on tariffs turns tense"
+#   KEEP  "Ukraine news: UK PM Burnham arrives in Kyiv"   (live-blog, real story)
+_ROUNDUP_DIGEST_PATTERNS: list[tuple[re.Pattern, str]] = [
+    # "All of Africa Today", "All Africa Today", optionally after a "Region:" tag.
+    (re.compile(r"^[\[\('\"\s]*(?:[A-Za-z ]{1,20}:\s*)?all\s+(?:of\s+)?[a-z]+\s+today\b",
+                re.I), "all-x-today-digest"),
+    # "Morning/Evening/Weekend/Daily/Weekly Briefing|Digest|Roundup|Bulletin|Wrap".
+    (re.compile(r"^[\[\('\"\s]*(?:the\s+)?(?:morning|evening|weekend|daily|weekly)\s+"
+                r"(?:briefing|digest|round-?up|rundown|bulletin|wrap|recap)\b", re.I),
+     "periodic-digest"),
+    # "News Roundup|Digest|Bulletin|in Brief|Wrap".
+    (re.compile(r"^[\[\('\"\s]*news\s+(?:round-?up|digest|bulletin|in\s+brief|wrap|recap)\b",
+                re.I), "news-roundup"),
+    # "Week in Review" / "The Week in Review".
+    (re.compile(r"^[\[\('\"\s]*(?:the\s+)?week\s+in\s+review\b", re.I), "week-in-review"),
+    # "News in Brief" / "In Brief:".
+    (re.compile(r"^[\[\('\"\s]*(?:news\s+)?in\s+brief\s*:", re.I), "in-brief"),
+]
+
+
+def _roundup_digest_signal(title: str) -> str | None:
+    """Return the reason label if the title is a roundup/digest CONTAINER page
+    (prefix-anchored, decisive), else None. A digest bridges unrelated clusters,
+    so it is dropped at ingestion regardless of any news verb elsewhere."""
+    t = title or ""
+    for pat, reason in _ROUNDUP_DIGEST_PATTERNS:
+        if pat.search(t):
+            return reason
+    return None
+
+
 def _academic_artifact_signal(title: str) -> str | None:
     """Return the reason label if the title is a journal correction/erratum.
 
@@ -333,6 +378,15 @@ def newsworthiness(article: dict) -> dict:
         return {"score": VETO_THRESHOLD, "threshold": DROP_THRESHOLD,
                 "news_event": False, "academic_artifact": True,
                 "signals": [(artifact, VETO_THRESHOLD)], "is_junk": True}
+
+    # Roundup / digest container page (bridges unrelated clusters) — a decisive,
+    # veto-proof drop. Checked here so a digest whose title also carries a news
+    # verb ("All of Africa Today: Sudan army downs drone ...") is still dropped.
+    digest = _roundup_digest_signal(title)
+    if digest:
+        return {"score": VETO_THRESHOLD, "threshold": DROP_THRESHOLD,
+                "news_event": False, "roundup_digest": True,
+                "signals": [(digest, VETO_THRESHOLD)], "is_junk": True}
 
     signals: dict[str, int] = {}
 
