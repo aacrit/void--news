@@ -103,26 +103,66 @@ let _rowsPromise: Promise<PrintedStoryRow[]> | null = null;
  * empty archive is a normal pre-first-run state, not a build failure (distinct
  * from the front page's fail-loud, which guards the live feed).
  */
+// Egress guard 1 (2026-08-26): skip the whole archive read in the CI build-check.
+// Reading EVERY printed_stories row (heavy `members`/bias JSONB, ~10-15 MB and
+// growing ~50 rows/day) on every branch push was a primary driver of the Supabase
+// free-tier egress-quota exhaustion. The build-check only needs to prove the build
+// compiles and the front page renders; it does NOT need the /story archive. Set
+// SKIP_ARCHIVE_PRERENDER=1 in the build-check env (NOT in the real deploy) so the
+// /story pages + sitemap archive rows are skipped there. generateStaticParams then
+// returns the empty sentinel and no archive egress is spent on a branch push.
+const _SKIP_ARCHIVE = process.env.SKIP_ARCHIVE_PRERENDER === "1";
+
+// Egress guard 2: bound the prerendered window so per-build archive egress stays
+// FLAT as the permanent archive grows (it is deliberately not retention-capped).
+// Default 90 days; override with ARCHIVE_PRERENDER_DAYS. 0/blank = no cap. A story
+// older than the window stops prerendering (its /story/<id> 404s under static
+// export); the front-page permalink map is a SEPARATE latest-edition read, so
+// current cards are unaffected. The window only bites once the archive exceeds it.
+const _WINDOW_DAYS = (() => {
+  const raw = process.env.ARCHIVE_PRERENDER_DAYS;
+  if (raw === undefined) return 90;
+  const n = Number(raw);
+  return Number.isFinite(n) && n > 0 ? n : 0;
+})();
+
 export function getArchiveRows(): Promise<PrintedStoryRow[]> {
   if (_rowsPromise) return _rowsPromise;
   _rowsPromise = (async () => {
+    if (_SKIP_ARCHIVE) {
+      console.warn(
+        "[archive] SKIP_ARCHIVE_PRERENDER=1: skipping the printed_stories read " +
+          "(no /story pages this build; egress saved).",
+      );
+      return [];
+    }
     if (!supabase) {
       console.warn(
         "[archive] Supabase client unavailable at build time; no /story pages will be generated.",
       );
       return [];
     }
+    // Bound the window (egress guard 2). Uses the build-time clock; a story older
+    // than the cutoff is not prerendered so the per-build read cannot grow without
+    // limit as the archive accumulates.
+    let cutoff: string | null = null;
+    if (_WINDOW_DAYS > 0) {
+      const d = new Date();
+      d.setUTCDate(d.getUTCDate() - _WINDOW_DAYS);
+      cutoff = d.toISOString().slice(0, 10);
+    }
     const out: PrintedStoryRow[] = [];
     let offset = 0;
     // Hard ceiling so a runaway/unbounded archive can never hang the build.
     const MAX_ROWS = 100000;
     while (offset < MAX_ROWS) {
-      const res = await supabase
+      let query = supabase
         .from("printed_stories")
         .select(ARCHIVE_COLS)
         .order("printed_on", { ascending: false })
-        .order("edition_position", { ascending: true })
-        .range(offset, offset + PAGE - 1);
+        .order("edition_position", { ascending: true });
+      if (cutoff) query = query.gte("printed_on", cutoff);
+      const res = await query.range(offset, offset + PAGE - 1);
       if (res.error) {
         console.warn(
           `[archive] printed_stories fetch failed at offset ${offset}: ${res.error.message ?? res.error}. ` +
