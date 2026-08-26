@@ -1,12 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import LogoIcon from "./LogoIcon";
 import LogoWordmark from "./LogoWordmark";
 
 /* ---------------------------------------------------------------------------
    Footer — Newspaper-style footer
-   Uses LogoIcon (idle animation) + LogoWordmark for branding.
+   Uses LogoWordmark for branding (the Sigil-O IS the "O" in VOID NEWS, so the
+   wordmark already carries the mark; a separate LogoIcon would render the ring
+   twice, which read as a doubled footer wordmark).
    Shows source count with last pipeline run time.
    --------------------------------------------------------------------------- */
 
@@ -32,7 +33,6 @@ export default function Footer({ lastUpdated }: FooterProps) {
             maxWidth: "100%",
           }}
         >
-          <LogoIcon size={22} animation="idle" />
           <LogoWordmark height={16} />
         </div>
         <p className="footer-tagline">See through the void.</p>
