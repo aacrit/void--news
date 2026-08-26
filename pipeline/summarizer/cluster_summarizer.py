@@ -1214,8 +1214,23 @@ _FIRST_PERSON_SUBS = [
 _QUOTED_SPAN_RE = _re.compile(r'["“][^"”“]*["”]')
 
 
+# Contested-terminology neutralization (applied OUTSIDE quotes, alongside the
+# pronoun conversion). Void must not adopt a charged framing in its own voice when
+# a consensus-neutral form exists (2026-08-25: the WNBA summary wrote
+# "transgender-identifying people" where the sources said "transgender people").
+# Bar for adding a pair: the charged form must have a CLEAR consensus-neutral
+# equivalent that preserves meaning, so neutralizing can never introduce the
+# opposite framing. A term inside a verbatim quote is a source's words and is left
+# untouched (this runs only in the outside-quote segments).
+_CONTESTED_TERM_SUBS = [
+    (_re.compile(r"\btransgender[-\s]identifying\b", _re.I), "transgender"),
+]
+
+
 def _sub_first_person(text: str) -> str:
     for pat, rep in _FIRST_PERSON_SUBS:
+        text = pat.sub(rep, text)
+    for pat, rep in _CONTESTED_TERM_SUBS:
         text = pat.sub(rep, text)
     return text
 
