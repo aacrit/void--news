@@ -19,18 +19,13 @@
    value during React render on either server or client for the initial paint.
    --------------------------------------------------------------------------- */
 
-import { supabase } from "./supabase";
+import { readFileSync } from "fs";
+import { join } from "path";
 import {
   mapClustersToStories,
   clusterHasRealSummary,
-  FEED_ENRICHED_FIELDS,
-  FEED_BASE_FIELDS,
 } from "./feedMapping";
-import { getLatestPermalinkMap } from "./archive";
 import type { Story } from "./types";
-
-const FETCH_LIMIT = 100;
-const ACTIVE_EDITION = "world" as const;
 
 /** Minimum displayable, REAL-SUMMARY stories (>=3 sources) for a valid front
  *  page. mapClustersToStories drops every unsummarized cluster (raw scraped
@@ -75,168 +70,70 @@ function formatDatelineUTC(iso: string | null): string {
  * stories come back so a blank / short front page can never deploy.
  */
 export async function fetchInitialFeed(): Promise<InitialFeed> {
-  if (!supabase) {
-    throw new Error(
-      "[serverFeed] Supabase client unavailable at build time. " +
-        "NEXT_PUBLIC_SUPABASE_URL / NEXT_PUBLIC_SUPABASE_ANON_KEY must be set in the build env.",
-    );
-  }
-
-  // Tiered field fallback, mirroring the client: enriched -> enriched-minus-
-  // is_international (older schema) -> base.
-  let usingEnriched = true;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let res: any = await supabase
-    .from("story_clusters")
-    .select(FEED_ENRICHED_FIELDS)
-    .contains("sections", [ACTIVE_EDITION])
-    .order("rank_world", { ascending: false })
-    .limit(FETCH_LIMIT);
-
-  if (res.error) {
-    res = await supabase
-      .from("story_clusters")
-      .select(FEED_ENRICHED_FIELDS.replace(",is_international", ""))
-      .contains("sections", [ACTIVE_EDITION])
-      .order("rank_world", { ascending: false })
-      .limit(FETCH_LIMIT);
-  }
-  if (res.error) {
-    usingEnriched = false;
-    res = await supabase
-      .from("story_clusters")
-      .select(FEED_BASE_FIELDS)
-      .contains("sections", [ACTIVE_EDITION])
-      .order("first_published", { ascending: false })
-      .limit(FETCH_LIMIT);
-  }
-
-  if (res.error) {
-    throw new Error(
-      `[serverFeed] Feed query failed at build time: ${res.error.message ?? res.error}`,
-    );
-  }
-
-  let clusters = res.data ?? [];
-
-  // Ghost-cluster guard (cheap, batched — NOT per-cluster): a cluster whose
-  // stale source_count still ranks it into the feed but whose cluster_articles
-  // links were all cascade-dropped by article retention renders as a real card
-  // with an empty Deep Dive. The pipeline cleanup sweep removes these on its
-  // next run; this guard keeps one from reaching the prerender in the meantime.
-  // Cost is a SINGLE .in_() query over the already-fetched top-100 ids (paged
-  // for the 1000-row cap), not one query per cluster. Fail-open: any error, or
-  // an empty result set, leaves the feed untouched so a transient read problem
-  // can never blank the front page.
+  // Static export (2026-08-30 Cloudflare migration): the front-page feed is
+  // emitted as build-data/feed.json by the pipeline (was a build-time Supabase
+  // read). The file carries the same story_clusters rows the enriched query
+  // returned (summary_tier + bias_diversity + consensus/divergence points), plus
+  // the edition builtAt. The pipeline emits a clean, summarized set, so the old
+  // ghost-cluster guard and null-tier filter that needed live Supabase reads are
+  // gone; clusterHasRealSummary still runs as a belt-and-suspenders text check.
+  let clusters: Record<string, unknown>[] = [];
+  let builtAt: string | null = null;
   try {
-    const ids = clusters
-      .map((c: { id?: string }) => c.id)
-      .filter((id: string | undefined): id is string => !!id);
-    if (ids.length > 0) {
-      const withArticles = new Set<string>();
-      let from = 0;
-      // eslint-disable-next-line no-constant-condition
-      while (true) {
-        const { data, error } = await supabase
-          .from("cluster_articles")
-          .select("cluster_id")
-          .in("cluster_id", ids)
-          .range(from, from + 999);
-        if (error || !data || data.length === 0) break;
-        for (const row of data as { cluster_id?: string }[]) {
-          if (row.cluster_id) withArticles.add(row.cluster_id);
-        }
-        if (data.length < 1000) break;
-        from += 1000;
-      }
-      // Only filter when we actually found links; an empty set means the read
-      // failed or the table is empty, and we must not drop the whole feed.
-      if (withArticles.size > 0) {
-        const before = clusters.length;
-        clusters = clusters.filter((c: { id?: string }) => c.id && withArticles.has(c.id));
-        const dropped = before - clusters.length;
-        if (dropped > 0) {
-          console.warn(`[serverFeed] dropped ${dropped} ghost cluster(s) with zero cluster_articles`);
-        }
-      }
-    }
-  } catch (e) {
-    console.warn(`[serverFeed] ghost-cluster guard skipped: ${e}`);
-  }
-
-  // P0 (2026-08-11): never render an unsummarized cluster. A cluster with a
-  // null summary_tier was never summarized (its `summary` is raw scraped article
-  // text, which shipped one outlet's opinion column under Void's byline), and a
-  // summary that reads as a raw excerpt is dropped too. Truncate the feed to the
-  // summarized set here (before mapping) rather than pad it with raw copy.
-  {
-    const before = clusters.length;
-    clusters = clusters.filter((c: Record<string, unknown>) =>
-      clusterHasRealSummary(c, usingEnriched),
+    const raw = readFileSync(
+      join(process.cwd(), "build-data", "feed.json"),
+      "utf-8",
     );
-    const dropped = before - clusters.length;
-    if (dropped > 0) {
-      console.warn(`[serverFeed] dropped ${dropped} unsummarized/raw cluster(s) from the feed`);
-    }
+    const parsed = JSON.parse(raw) as {
+      clusters?: Record<string, unknown>[];
+      builtAt?: string | null;
+    };
+    clusters = Array.isArray(parsed.clusters) ? parsed.clusters : [];
+    builtAt = parsed.builtAt ?? null;
+  } catch (e) {
+    throw new Error(
+      `[serverFeed] build-data/feed.json unavailable at build time (${e}). ` +
+        `The pipeline emits it each run; refusing to build a blank front page.`,
+    );
   }
 
-  const stories = mapClustersToStories(clusters, usingEnriched);
+  // Belt-and-suspenders: never render a raw-excerpt/unsummarized cluster.
+  clusters = clusters.filter((c) => clusterHasRealSummary(c, true));
 
-  // Attach shareable permalinks from the latest printed edition. Today's
-  // displayed clusters are archived at pipeline step 8f BEFORE this deploy, so
-  // today's feed maps 1:1 to the newest printed_stories rows (keyed by
-  // source_cluster_id == cluster.id == Story.id). An archive miss simply leaves
-  // permalink undefined and the card falls back to the button behavior.
+  const stories = mapClustersToStories(clusters, true);
+
+  // Attach shareable permalinks from the latest printed edition (build-data/
+  // archiveMap.json: { source_cluster_id -> "/story/<id>/" }). An archive miss
+  // falls back to the in-app deep link ?story=<id>, so no card is ever link-less.
   try {
-    const permalinkMap = await getLatestPermalinkMap();
-    if (permalinkMap.size > 0) {
-      for (const s of stories) {
-        const link = permalinkMap.get(s.id);
-        if (link) s.permalink = link;
-      }
-    }
-  } catch (e) {
-    // Never fail the front-page build on the archive lookup — permalinks are a
-    // progressive enhancement, not a requirement for the feed to render.
-    console.warn(`[serverFeed] permalink map unavailable: ${e}`);
-  } finally {
-    // Guarantee EVERY card has an href (2026-08-21: four cards near the archive
-    // boundary rendered as a bare <button> with no story URL, so no Deep Dive
-    // link, no share target, nothing to index). An archived card keeps its
-    // canonical /story/<id>/ permalink; any archive miss falls back to the
-    // in-app deep link ?story=<id>, which HomeContent opens on load. Never leaves
-    // a card link-less.
+    const rawMap = readFileSync(
+      join(process.cwd(), "build-data", "archiveMap.json"),
+      "utf-8",
+    );
+    const map = JSON.parse(rawMap) as Record<string, string>;
     for (const s of stories) {
-      if (!s.permalink && s.id) s.permalink = `/?story=${s.id}`;
+      const link = map[s.id];
+      if (link) s.permalink = link;
     }
+  } catch (e) {
+    console.warn(`[serverFeed] permalink map unavailable: ${e}`);
+  }
+  for (const s of stories) {
+    if (!s.permalink && s.id) s.permalink = `/?story=${s.id}`;
   }
 
-  // Fail loud: the displayed feed applies a >=3-source quality floor, and
-  // mapClustersToStories has already dropped every unsummarized cluster. Count
-  // the stories that would actually render; too few REAL-summary stories means
-  // a coverage failure upstream, and we refuse to ship a raw or gutted feed.
+  // Fail loud: too few real-summary, >=3-source stories means an upstream
+  // coverage failure. Refuse to ship a raw or gutted front page.
   const displayable = stories.filter(
     (s) => (s.sigilData?.sourceCount ?? s.source?.count ?? 0) >= 3,
   ).length;
   if (displayable < MIN_STORIES) {
     throw new Error(
-      `[serverFeed] Only ${displayable} displayable stories with a real summary ` +
-        `(>=3 sources, non-null summary_tier) survived; expected at least ${MIN_STORIES}. ` +
-        `Refusing to build a raw or gutted front page. ${clusters.length} clusters were ` +
-        `fetched, so the gap is a summarization-coverage failure, not an empty DB.`,
+      `[serverFeed] Only ${displayable} displayable stories (>=3 sources, real ` +
+        `summary) in build-data/feed.json; expected at least ${MIN_STORIES}. ` +
+        `${clusters.length} clusters were emitted, so the gap is a coverage failure.`,
     );
   }
-
-  // Edition build time — the latest completed pipeline run.
-  let builtAt: string | null = null;
-  const { data: run } = await supabase
-    .from("pipeline_runs")
-    .select("completed_at")
-    .eq("status", "completed")
-    .order("completed_at", { ascending: false })
-    .limit(1)
-    .single();
-  if (run?.completed_at) builtAt = run.completed_at as string;
 
   return {
     stories,
