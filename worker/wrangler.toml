@@ -1,0 +1,23 @@
+# void-api — Cloudflare Worker fronting D1 for the live user-write path
+# (ship board / feedback). This is the ONLY live database in the Cloudflare
+# stack; every read is static JSON on the CDN. See ../migration/PORT_NOTES.md.
+#
+# Provisioning (filled in by `wrangler d1 create void-live`):
+#   database_id below is a placeholder until the D1 database is created.
+
+name = "void-api"
+main = "src/index.ts"
+compatibility_date = "2026-08-01"
+workers_dev = true
+
+# Comma-free allow-list of site origins permitted to call the API (CORS).
+[vars]
+ALLOWED_ORIGINS = "https://news.voidvision.org,https://void-news.pages.dev"
+# Salt for hashing the client IP into ip_hash. Override with a secret in prod:
+#   wrangler secret put IP_SALT
+IP_SALT = "void-news-dev-salt-change-me"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "void-live"
+database_id = "ce47791c-ea80-4007-bfbf-f9ec4070107a"

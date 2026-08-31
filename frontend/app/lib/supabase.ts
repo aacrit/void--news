@@ -1,6 +1,6 @@
-import { createClient, type SupabaseClient, type RealtimeChannel } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type { Edition, ShipRequest, ShipReply } from './types';
-import { BASE_PATH } from './utils';
+import { BASE_PATH, API_BASE } from './utils';
 
 // ---------------------------------------------------------------------------
 // Static-JSON reads (2026-08-30 Cloudflare migration).
@@ -281,22 +281,49 @@ export function generateFingerprint(): string {
   return (h >>> 0).toString(16).padStart(8, '0');
 }
 
-/** Fetch all ship requests */
-export async function fetchShipRequests(): Promise<ShipRequest[]> {
-  if (!_client) return [];
-  // Explicit column list (omits device_info + ip_hash, which are revoked from
-  // anon in migration 068 — they are collected for rate limiting only).
-  const { data, error } = await _client
-    .from('ship_requests')
-    .select(
-      'id,title,description,category,area,edition_context,status,priority,votes,ceo_response,claude_branch,shipped_commit,shipped_diff_summary,created_at,triaged_at,shipped_at,updated_at'
-    )
-    .order('created_at', { ascending: false });
-  if (error || !data) return [];
-  return data as ShipRequest[];
+/* ---------------------------------------------------------------------------
+   void --ship — backed by the void-api Cloudflare Worker (D1), not Supabase.
+   Reads and writes go to `${API_BASE}/api/ship/*`. When API_BASE is unset the
+   board degrades to empty reads / no-op writes. Supabase realtime is replaced
+   by client polling in ShipBoard; the subscribe* helpers are now no-ops.
+   The Worker enforces the old RLS/trigger/RPC logic (submit hardening, per-ip
+   and global rate limits, and the sync_ship_votes recount). See
+   ../../worker/src/index.ts and migration/PORT_NOTES.md.
+   --------------------------------------------------------------------------- */
+
+async function apiGet<T>(path: string, fallback: T): Promise<T> {
+  if (!API_BASE) return fallback;
+  try {
+    const res = await fetch(`${API_BASE}${path}`, { cache: 'no-store' });
+    if (!res.ok) return fallback;
+    return (await res.json()) as T;
+  } catch {
+    return fallback;
+  }
 }
 
-/** Submit a new ship request */
+async function apiPost<T>(path: string, payload: unknown): Promise<T | null> {
+  if (!API_BASE) return null;
+  try {
+    const res = await fetch(`${API_BASE}${path}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) return null;
+    return (await res.json()) as T;
+  } catch {
+    return null;
+  }
+}
+
+/** Fetch all ship requests (privileged columns are omitted server-side). */
+export async function fetchShipRequests(): Promise<ShipRequest[]> {
+  return apiGet<ShipRequest[]>('/api/ship/requests', []);
+}
+
+/** Submit a new ship request. The Worker forces status/votes and derives
+ *  ip_hash from the edge; client-supplied privileged fields are ignored. */
 export async function submitShipRequest(req: {
   title: string;
   description: string;
@@ -306,109 +333,53 @@ export async function submitShipRequest(req: {
   device_info?: string | null;
   ip_hash?: string | null;
 }): Promise<ShipRequest | null> {
-  if (!_client) return null;
-  const { data, error } = await _client
-    .from('ship_requests')
-    .insert([req])
-    .select()
-    .single();
-  if (error || !data) return null;
-  return data as ShipRequest;
+  return apiPost<ShipRequest>('/api/ship/requests', req);
 }
 
-/** Vote on a ship request. Returns the authoritative new vote count, or null
- *  if the vote did not count.
- *  F07: vote dedup is enforced server-side by unique(request_id, fingerprint)
- *  on ship_votes. The previous read-then-write on ship_requests.votes was
- *  silently blocked by RLS (migration 037 grants UPDATE to service_role only),
- *  so the counter never incremented for anon voters. sync_ship_votes (migration
- *  062) is a SECURITY DEFINER function that recounts ship_votes for the request,
- *  writes the count to ship_requests.votes, and returns the new count. */
+/** Vote on a ship request. Returns the authoritative new vote count, or null.
+ *  The Worker inserts the vote (deduped by UNIQUE(request_id,fingerprint)) then
+ *  recounts and persists ship_requests.votes (the old sync_ship_votes RPC). */
 export async function voteOnShipRequest(requestId: string, fingerprint: string): Promise<number | null> {
-  if (!_client) return null;
-  const { error: voteError } = await _client
-    .from('ship_votes')
-    .insert([{ request_id: requestId, fingerprint }]);
-  if (voteError) return null;
-  // Recount + persist server-side (bypasses the service_role-only UPDATE RLS).
-  const { data: newCount, error: rpcError } = await _client
-    .rpc('sync_ship_votes', { p_request_id: requestId });
-  if (rpcError) return null;
-  return typeof newCount === 'number' ? newCount : null;
+  const d = await apiPost<{ votes: number }>('/api/ship/vote', {
+    request_id: requestId,
+    fingerprint,
+  });
+  return d && typeof d.votes === 'number' ? d.votes : null;
 }
 
-/** Subscribe to realtime changes on ship_requests */
+/** Realtime removed with Supabase; ShipBoard polls fetchShipRequests instead. */
 export function subscribeToShipRequests(
-  onUpdate: (payload: { eventType: string; new: ShipRequest; old: Partial<ShipRequest> }) => void
+  _onUpdate: (payload: { eventType: string; new: ShipRequest; old: Partial<ShipRequest> }) => void
 ): (() => void) {
-  if (!_client) return () => {};
-  const channel: RealtimeChannel = _client
-    .channel('ship-requests-realtime')
-    .on(
-      'postgres_changes',
-      { event: '*', schema: 'public', table: 'ship_requests' },
-      (payload) => {
-        onUpdate({
-          eventType: payload.eventType,
-          new: payload.new as ShipRequest,
-          old: payload.old as Partial<ShipRequest>,
-        });
-      }
-    )
-    .subscribe();
-  return () => { channel.unsubscribe(); };
+  return () => {};
 }
 
-/** Fetch ship request counts by status (for Command Center) */
+/** Fetch ship request counts by status (for Command Center). */
 export async function fetchShipStats(): Promise<Record<string, number>> {
-  if (!_client) return {};
-  const { data, error } = await _client
-    .from('ship_requests')
-    .select('status');
-  if (error || !data) return {};
-  const counts: Record<string, number> = { submitted: 0, triaged: 0, building: 0, shipped: 0, wontship: 0 };
-  for (const row of data) {
-    counts[row.status] = (counts[row.status] || 0) + 1;
-  }
-  return counts;
+  return apiGet<Record<string, number>>('/api/ship/stats', {});
 }
 
-/** Fetch replies for a ship request */
+/** Fetch replies for a ship request. */
 export async function fetchShipReplies(requestId: string): Promise<ShipReply[]> {
-  if (!_client) return [];
-  const { data, error } = await _client
-    .from('ship_replies')
-    .select('*')
-    .eq('request_id', requestId)
-    .order('created_at', { ascending: true });
-  if (error || !data) return [];
-  return data as ShipReply[];
+  return apiGet<ShipReply[]>(
+    `/api/ship/replies?request_id=${encodeURIComponent(requestId)}`,
+    [],
+  );
 }
 
-/** Submit a reply to a ship request */
+/** Submit a reply to a ship request (Worker applies per-fingerprint + global
+ *  hourly rate limits). */
 export async function submitShipReply(requestId: string, body: string, fingerprint: string): Promise<ShipReply | null> {
-  if (!_client) return null;
-  const { data, error } = await _client
-    .from('ship_replies')
-    .insert([{ request_id: requestId, body, fingerprint }])
-    .select()
-    .single();
-  if (error || !data) return null;
-  return data as ShipReply;
+  return apiPost<ShipReply>('/api/ship/reply', {
+    request_id: requestId,
+    body,
+    fingerprint,
+  });
 }
 
-/** Subscribe to realtime changes on ship_replies */
+/** Realtime removed with Supabase; ShipBoard polls fetchShipReplies instead. */
 export function subscribeToShipReplies(
-  onInsert: (reply: ShipReply) => void
+  _onInsert: (reply: ShipReply) => void
 ): (() => void) {
-  if (!_client) return () => {};
-  const channel: RealtimeChannel = _client
-    .channel('ship-replies-realtime')
-    .on(
-      'postgres_changes',
-      { event: 'INSERT', schema: 'public', table: 'ship_replies' },
-      (payload) => { onInsert(payload.new as ShipReply); }
-    )
-    .subscribe();
-  return () => { channel.unsubscribe(); };
+  return () => {};
 }

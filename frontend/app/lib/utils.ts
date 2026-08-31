@@ -9,6 +9,14 @@
 export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "/void--news";
 
 /**
+ * Base URL of the void-api Cloudflare Worker (D1-backed ship board / feedback
+ * write path). Set NEXT_PUBLIC_API_BASE in the build env to the deployed Worker
+ * URL (e.g. https://void-api.<subdomain>.workers.dev or https://api.voidvision.org).
+ * When empty, the ship board degrades gracefully to read-empty / write-noop.
+ */
+export const API_BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
+
+/**
  * Morning/Evening shorthand from the reader's LOCAL time.
  * Only rendered client-side (after mount) so the local clock is the reader's.
  */

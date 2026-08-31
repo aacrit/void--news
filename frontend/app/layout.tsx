@@ -131,10 +131,10 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        {/* Preconnect to Supabase — eliminates DNS + TLS handshake latency
-            on first client-side query (~100-300ms savings on cold load) */}
-        <link rel="preconnect" href="https://xryzskhgfuafyotrcdvj.supabase.co" />
-        <link rel="dns-prefetch" href="https://xryzskhgfuafyotrcdvj.supabase.co" />
+        {/* Preconnect to the void-api Worker (D1-backed ship board) — the only
+            runtime data host now that reads are static JSON on this origin. */}
+        <link rel="preconnect" href="https://void-api.aacrit.workers.dev" />
+        <link rel="dns-prefetch" href="https://void-api.aacrit.workers.dev" />
         {/* Fonts loaded via next/font/google above — no additional font loads needed.
             Chomsky, IM Fell English, Old Standard TT, and Lora were removed:
             none are referenced in CSS. Saves 4 network requests. */}
@@ -157,7 +157,7 @@ export default async function RootLayout({
             also gets the header from _headers (accumulates). */}
         <meta
           httpEquiv="Content-Security-Policy"
-          content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; font-src 'self' data:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://cloudflareinsights.com; media-src 'self' https://*.supabase.co; base-uri 'self'; form-action 'self';"
+          content="default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; font-src 'self' data:; connect-src 'self' https://void-api.aacrit.workers.dev https://cloudflareinsights.com; media-src 'self' https:; base-uri 'self'; form-action 'self';"
         />
         <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
         {/* X-Frame-Options is NOT valid via <meta> (Chrome logs a console
