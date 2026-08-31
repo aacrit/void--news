@@ -1,4 +1,10 @@
 name: Run Migration
+# DISABLED (2026-08-31, Cloudflare migration): the app runs on SQLite, not
+# Supabase, so there is no live Postgres schema to migrate. The auto-apply push
+# trigger is removed; this workflow is manual-only and kept solely so a final
+# Supabase migration could be applied by hand before the project is cancelled.
+# Schema for the live stack lives in migration/schema_pipeline.sql (pipeline) and
+# worker/schema.sql (D1), applied idempotently, not through supabase/migrations.
 on:
   workflow_dispatch:
     inputs:
@@ -6,17 +12,6 @@ on:
         description: 'Migration file (e.g., 007_expand_lean_spectrum.sql) or "all" to run all pending'
         required: true
         default: 'all'
-  # Auto-apply pending migrations on direct pushes to main only. The old
-  # 'claude/**' trigger let any unmerged, unvalidated branch mutate the
-  # production schema before the auto-merge gates ran. Auto-merged claude
-  # branches are covered by the post-merge `migrate` job inside
-  # auto-merge-claude.yml (the merge push uses GITHUB_TOKEN, which cannot
-  # trigger this workflow). Tracking in _migrations keeps every path
-  # idempotent.
-  push:
-    branches: ['main']
-    paths:
-      - 'supabase/migrations/*.sql'
 
 permissions: {}
 
