@@ -140,10 +140,21 @@ jobs:
           git add frontend/build-data frontend/public/data frontend/public/audio
           if git diff --cached --quiet; then
             echo "No static-data changes to commit."
-          else
-            git commit -m "Pipeline: refresh static feed data ($(date -u +%F))"
-            git push origin HEAD:main
+            exit 0
           fi
+          git commit -m "Pipeline: refresh static feed data ($(date -u +%F))"
+          # main can advance (an auto-merge landing) during the ~1h run, so a plain
+          # push would be a non-fast-forward reject. Rebase onto the latest main and
+          # retry. The data commit only touches build-data/public — it never
+          # conflicts with code merges, so the rebase is clean.
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            git rebase origin/main || { git rebase --abort; echo "rebase failed"; exit 1; }
+            if git push origin HEAD:main; then echo "pushed on attempt $attempt"; exit 0; fi
+            echo "push rejected (attempt $attempt); refetching and retrying"
+            sleep 5
+          done
+          echo "could not push refreshed data after 5 attempts"; exit 1
 
       - name: Save pipeline state DB to cache
         if: always()
