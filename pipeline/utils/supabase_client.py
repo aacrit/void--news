@@ -7,23 +7,61 @@ functions for common database operations.
 
 import os
 from datetime import datetime, timezone
+from pathlib import Path
 
-import httpx
 from dotenv import load_dotenv
-from supabase import create_client, Client
 
 load_dotenv()
 
-SUPABASE_URL = os.environ.get("SUPABASE_URL")
-SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+# ---------------------------------------------------------------------------
+# Backend selection (Cloudflare migration, 2026-08-30).
+#
+# When VOID_SQLITE_PATH is set, the ENTIRE pipeline runs against a local SQLite
+# file (synced to Cloudflare R2 between runs) through a PostgREST-compatible
+# shim, instead of the Supabase REST API. Every module imports `supabase` from
+# here, so flipping this one factory moves the whole pipeline off Supabase with
+# no change to the ~40 call-site files. See pgrest_sqlite.py + PORT_NOTES.md.
+#
+# When it is unset, the legacy Supabase REST client is used (kept for rollback).
+# ---------------------------------------------------------------------------
+_SQLITE_PATH = os.environ.get("VOID_SQLITE_PATH")
 
-if not SUPABASE_URL or not SUPABASE_KEY:
-    raise EnvironmentError(
-        "SUPABASE_URL and SUPABASE_KEY must be set in the environment. "
-        "Create a .env file or set them as GitHub Actions secrets."
-    )
+if _SQLITE_PATH:
+    import sqlite3
 
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+    try:
+        from utils.pgrest_sqlite import create_client as _create_sqlite_client
+    except ImportError:  # imported as pipeline.utils.supabase_client
+        from .pgrest_sqlite import create_client as _create_sqlite_client
+
+    # Ensure the consolidated schema exists (idempotent; a fresh DB or one pulled
+    # from R2 both end up correct). CREATE TABLE/INDEX IF NOT EXISTS throughout.
+    _schema = Path(__file__).resolve().parents[2] / "migration" / "schema_pipeline.sql"
+    if _schema.exists():
+        _c = sqlite3.connect(_SQLITE_PATH)
+        _c.executescript(_schema.read_text(encoding="utf-8"))
+        _c.commit()
+        _c.close()
+
+    supabase = _create_sqlite_client(_SQLITE_PATH)
+    SUPABASE_URL = f"sqlite://{_SQLITE_PATH}"
+    SUPABASE_KEY = "local"
+    print(f"  [db] SQLite backend: {_SQLITE_PATH}")
+else:
+    import httpx
+    from supabase import create_client, Client
+
+    SUPABASE_URL = os.environ.get("SUPABASE_URL")
+    SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+
+    if not SUPABASE_URL or not SUPABASE_KEY:
+        raise EnvironmentError(
+            "SUPABASE_URL and SUPABASE_KEY must be set in the environment "
+            "(or set VOID_SQLITE_PATH to use the local SQLite backend). "
+            "Create a .env file or set them as GitHub Actions secrets."
+        )
+
+    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
 # ---------------------------------------------------------------------------
@@ -81,13 +119,16 @@ def _harden_http_session(api, label: str) -> bool:
     return True
 
 
-for _api_attr, _label in (("postgrest", "postgrest"), ("storage", "storage")):
-    try:
-        _api = getattr(supabase, _api_attr, None)
-        if _api is not None:
-            _harden_http_session(_api, _label)
-    except Exception as _exc:  # pragma: no cover - defensive
-        print(f"  [warn] Skipped {_label} HTTP hardening: {_exc}")
+# Only the Supabase REST client has an httpx session to harden; the SQLite
+# shim has no network layer, so skip this entirely in SQLite mode.
+if not _SQLITE_PATH:
+    for _api_attr, _label in (("postgrest", "postgrest"), ("storage", "storage")):
+        try:
+            _api = getattr(supabase, _api_attr, None)
+            if _api is not None:
+                _harden_http_session(_api, _label)
+        except Exception as _exc:  # pragma: no cover - defensive
+            print(f"  [warn] Skipped {_label} HTTP hardening: {_exc}")
 
 
 def insert_article(article: dict) -> dict | None:
