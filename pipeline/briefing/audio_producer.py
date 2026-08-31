@@ -716,16 +716,53 @@ def _fresh_supabase_client():
     return create_client(url, key)
 
 
+def _write_audio_static(audio_bytes: bytes, edition: str) -> Optional[str]:
+    """Cloudflare stack: write the MP3 into the deployed static site instead of
+    Supabase Storage. Served from the Pages CDN at /audio/... (zero egress); the
+    pipeline commits frontend/public/audio alongside the other static data.
+
+    Keeps a date-stamped file (podcast-friendly) + latest.mp3, and rotates so the
+    working tree holds only the last few days. Returns a site-relative URL for
+    daily_briefs.audio_url. (Follow-up: move this + archive.json to R2 to keep
+    binaries out of git history.)"""
+    import os
+    from pathlib import Path
+    from datetime import datetime, timezone
+    import hashlib
+
+    try:
+        now = datetime.now(timezone.utc)
+        slot = "am" if now.hour < 12 else "pm"
+        out_dir = Path(__file__).resolve().parents[2] / "frontend" / "public" / "audio" / edition
+        out_dir.mkdir(parents=True, exist_ok=True)
+        # Rotate: keep only the last 2 date-stamped files (bounds the working tree;
+        # the web player uses latest.mp3, so the back-catalogue is not needed here).
+        for old in sorted(out_dir.glob("20??-??-??-??.mp3"))[:-2]:
+            try:
+                old.unlink()
+            except OSError:
+                pass
+        fname = f"{now.strftime('%Y-%m-%d')}-{slot}.mp3"
+        (out_dir / fname).write_bytes(audio_bytes)
+        (out_dir / "latest.mp3").write_bytes(audio_bytes)
+        fp = hashlib.md5(audio_bytes[:1024]).hexdigest()[:8]
+        print(f"  [audio] wrote static /audio/{edition}/{fname} ({len(audio_bytes)//1024} KB)")
+        return f"/audio/{edition}/{fname}?v={fp}"
+    except Exception as e:
+        print(f"  [warn][audio] static audio write failed for {edition}: {e}")
+        return None
+
+
 def _upload_to_supabase(audio_bytes: bytes, edition: str) -> Optional[str]:
-    """Upload MP3 to Supabase Storage.
+    """Upload MP3 to storage and return its public URL for daily_briefs.audio_url.
 
-    Uploads twice:
-      1. ``{edition}/{YYYY-MM-DD}-{am|pm}.mp3`` — persistent URL for podcast feeds
-      2. ``{edition}/latest.mp3`` — overwritten each run for web player
-
-    Returns the persistent URL (with cache-bust param) so ``daily_briefs.audio_url``
-    always points to a stable file that podcast directories can reference.
+    On the Cloudflare/SQLite stack (VOID_SQLITE_PATH set) this writes to the static
+    site (see _write_audio_static). Otherwise it uses the legacy Supabase Storage
+    path below (kept for rollback).
     """
+    import os as _os
+    if _os.environ.get("VOID_SQLITE_PATH"):
+        return _write_audio_static(audio_bytes, edition)
     try:
         supabase = _fresh_supabase_client()  # NOT the shared singleton (closed mid-run)
         from datetime import datetime, timezone
