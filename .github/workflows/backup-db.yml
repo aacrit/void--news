@@ -20,14 +20,13 @@
 name: Weekly DB Backup
 
 on:
-  schedule:
-    # 06:00 UTC — deliberately clear of the daily news pipeline (11:00 UTC)
-    # and the Sunday weekly digest (12:00 UTC).
-    # Weekly (Sunday 06:00 UTC), not nightly: a full ~272 MB dump is Supabase
-    # EGRESS, and the free tier allows ~5 GB/month; nightly (~8 GB/mo) would
-    # exceed it. Weekly (~1.1 GB/mo) plus the automatic pre-migration dumps
-    # (auto-merge migrate job) is ample DR for this app's slow-changing data.
-    - cron: '0 6 * * 0'
+  # Schedule DISABLED (2026-08-31, Cloudflare migration): the live DB is now the
+  # SQLite state file, and the pipeline uploads a durable gzipped snapshot
+  # (void-state-snapshot artifact) every run — that is the DR backup now. This
+  # workflow pg_dumps Supabase, which is frozen/being decommissioned, so a
+  # scheduled run would just back up stale data. Kept as manual-only so a final
+  # Supabase dump can be taken by hand before the project is cancelled.
+  # - cron: '0 6 * * 0'
   workflow_dispatch:
 
 permissions: {}

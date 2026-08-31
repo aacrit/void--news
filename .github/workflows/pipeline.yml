@@ -69,25 +69,39 @@ jobs:
           key: void-state-v1-${{ github.run_id }}
           restore-keys: |
             void-state-v1-
-      - name: Bootstrap state DB from latest backup (cold cache only)
+      - name: Bootstrap state DB (cold cache — durable snapshot, else legacy backup)
         if: hashFiles('pipeline_state.db') == ''
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -e
-          echo "No cached state DB; bootstrapping from the latest DB backup artifact."
-          BID=$(gh run list --workflow=backup-db.yml --status success \
-                  --json databaseId --jq '.[0].databaseId')
-          if [ -z "$BID" ]; then echo "No backup run found"; exit 1; fi
-          echo "Downloading backup artifacts from run $BID"
-          gh run download "$BID" --dir _bootstrap
-          GZ=$(find _bootstrap -name '*.sql.gz' | head -1)
-          if [ -z "$GZ" ]; then echo "No .sql.gz in backup"; exit 1; fi
-          echo "Staging $GZ -> void_local.db"
-          python migration/stage_dump.py "$GZ" void_local.db
-          echo "Building typed state DB"
-          python migration/create_state_db.py migration/schema_pipeline.sql void_local.db pipeline_state.db
-          rm -rf _bootstrap void_local.db
+          echo "No cached state DB; restoring from the latest durable state snapshot."
+          restored=""
+          # Primary (Supabase-free): the gzipped SQLite state each prior run uploads.
+          for rid in $(gh run list --workflow=pipeline.yml --status success -L 12 \
+                         --json databaseId --jq '.[].databaseId'); do
+            if gh run download "$rid" -n void-state-snapshot --dir _snap 2>/dev/null; then
+              echo "Restored state snapshot from pipeline run $rid"; restored=1; break
+            fi
+          done
+          if [ -n "$restored" ] && [ -f _snap/pipeline_state.db.gz ]; then
+            gunzip -c _snap/pipeline_state.db.gz > pipeline_state.db
+            rm -rf _snap
+          else
+            # Legacy one-time fallback: the Supabase pg_dump backup. Only reachable
+            # before the first snapshot exists; delete once snapshots are flowing
+            # (and required for Supabase decommission).
+            echo "No state snapshot yet; falling back to the legacy Supabase DB backup."
+            BID=$(gh run list --workflow=backup-db.yml --status success \
+                    --json databaseId --jq '.[0].databaseId')
+            if [ -z "$BID" ]; then echo "No snapshot and no backup found"; exit 1; fi
+            gh run download "$BID" --dir _bootstrap
+            GZ=$(find _bootstrap -name '*.sql.gz' | head -1)
+            if [ -z "$GZ" ]; then echo "No .sql.gz in backup"; exit 1; fi
+            python migration/stage_dump.py "$GZ" void_local.db
+            python migration/create_state_db.py migration/schema_pipeline.sql void_local.db pipeline_state.db
+            rm -rf _bootstrap void_local.db
+          fi
 
       - name: Run pipeline
         env:
@@ -137,3 +151,23 @@ jobs:
         with:
           path: pipeline_state.db
           key: void-state-v1-${{ github.run_id }}
+
+      # Durable, Supabase-free backup of the whole state (schema + all data,
+      # including the permanent printed_stories archive). The Actions cache is the
+      # fast primary; this artifact is the resilience floor the cold-cache
+      # bootstrap restores from, replacing the Supabase pg_dump. Gzipped ~40 MB.
+      - name: Snapshot state DB
+        if: always()
+        run: |
+          if [ -f pipeline_state.db ]; then
+            gzip -c pipeline_state.db > pipeline_state.db.gz
+            ls -lh pipeline_state.db.gz
+          fi
+      - name: Upload state snapshot
+        if: always() && hashFiles('pipeline_state.db.gz') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: void-state-snapshot
+          path: pipeline_state.db.gz
+          retention-days: 90
+          if-no-files-found: warn
