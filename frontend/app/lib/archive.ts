@@ -18,7 +18,8 @@
    render boundary). Same rows in, same Story out.
    --------------------------------------------------------------------------- */
 
-import { supabase } from "./supabase";
+import { readFileSync } from "fs";
+import { join } from "path";
 import {
   parseBiasDiversity,
   mapClustersToStories,
@@ -77,18 +78,6 @@ export interface PrintedStoryRow {
   continues_printed_id: string | null;
 }
 
-/** Explicit column list — everything the standalone Deep Dive + metadata need.
- *  Ordered newest edition first, strongest position first within a day. */
-const ARCHIVE_COLS =
-  "id,printed_on,edition_position,source_cluster_id,title,summary,category," +
-  "content_type,story_type,editorial_importance,summary_tier,rank_world," +
-  "headline_rank,source_count,divergence_score,first_published,consensus_points," +
-  "divergence_points,claim_consensus,bias_diversity,mean_lean,polarization," +
-  "lean_spread,aggregate_confidence,members,member_count,story_thread_id," +
-  "continues_printed_id";
-
-const PAGE = 1000;
-
 /* ── Module-level memoized fetch ───────────────────────────────────────── */
 
 let _rowsPromise: Promise<PrintedStoryRow[]> | null = null;
@@ -106,36 +95,23 @@ let _rowsPromise: Promise<PrintedStoryRow[]> | null = null;
 export function getArchiveRows(): Promise<PrintedStoryRow[]> {
   if (_rowsPromise) return _rowsPromise;
   _rowsPromise = (async () => {
-    if (!supabase) {
+    // Static export (2026-08-30 Cloudflare migration): the permanent archive is
+    // emitted as build-data/archive.json by the pipeline (was a paginated
+    // Supabase read). Read the whole file once; callers share this in-memory
+    // copy. An unavailable file resolves to [] (no /story pages), never throws.
+    try {
+      const raw = readFileSync(
+        join(process.cwd(), "build-data", "archive.json"),
+        "utf-8",
+      );
+      const rows = JSON.parse(raw) as PrintedStoryRow[];
+      return Array.isArray(rows) ? rows : [];
+    } catch (e) {
       console.warn(
-        "[archive] Supabase client unavailable at build time; no /story pages will be generated.",
+        `[archive] build-data/archive.json unavailable at build time (${e}); no /story pages will be generated.`,
       );
       return [];
     }
-    const out: PrintedStoryRow[] = [];
-    let offset = 0;
-    // Hard ceiling so a runaway/unbounded archive can never hang the build.
-    const MAX_ROWS = 100000;
-    while (offset < MAX_ROWS) {
-      const res = await supabase
-        .from("printed_stories")
-        .select(ARCHIVE_COLS)
-        .order("printed_on", { ascending: false })
-        .order("edition_position", { ascending: true })
-        .range(offset, offset + PAGE - 1);
-      if (res.error) {
-        console.warn(
-          `[archive] printed_stories fetch failed at offset ${offset}: ${res.error.message ?? res.error}. ` +
-            `Returning ${out.length} rows collected so far.`,
-        );
-        break;
-      }
-      const data = (res.data ?? []) as unknown as PrintedStoryRow[];
-      out.push(...data);
-      if (data.length < PAGE) break;
-      offset += PAGE;
-    }
-    return out;
   })();
   return _rowsPromise;
 }

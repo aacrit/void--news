@@ -16,7 +16,8 @@
    build guard.
    --------------------------------------------------------------------------- */
 
-import { fetchDailyBrief } from "./supabase";
+import { readFileSync } from "fs";
+import { join } from "path";
 import type { DailyBriefData } from "./types";
 
 let _briefPromise: Promise<DailyBriefData | null> | null = null;
@@ -24,8 +25,17 @@ let _briefPromise: Promise<DailyBriefData | null> | null = null;
 export function getInitialBrief(): Promise<DailyBriefData | null> {
   if (_briefPromise) return _briefPromise;
   _briefPromise = (async () => {
+    // Static export (2026-08-30 Cloudflare migration): the brief is emitted as
+    // public/data/brief.json by the pipeline (was a build-time Supabase read).
+    // Read it directly from disk at build. Unavailable -> null (UI degrades to
+    // the client fetch of the same file); never throws.
     try {
-      return (await fetchDailyBrief("world")) as DailyBriefData | null;
+      const raw = readFileSync(
+        join(process.cwd(), "public", "data", "brief.json"),
+        "utf-8",
+      );
+      const brief = JSON.parse(raw);
+      return (brief ?? null) as DailyBriefData | null;
     } catch (e) {
       console.warn(`[serverBrief] daily brief unavailable at build time: ${e}`);
       return null;

@@ -131,10 +131,10 @@ jobs:
           # Empty basePath = root deploy (e.g. void-news.pages.dev/ instead
           # of /void--news/). Read by next.config.ts and lib/utils.ts.
           NEXT_PUBLIC_BASE_PATH: ""
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
-          # void --onair re-enabled — mirrors pipeline.yml DISABLE_AUDIO=0.
-          # Flip both back to "1" together to re-park audio. See CLAUDE.md.
+          # Cloudflare migration (2026-08-30): the build reads its data from
+          # build-data/*.json + public/data/*.json (emitted by the pipeline),
+          # NOT Supabase. No Supabase env at build; its absence forces the
+          # static-JSON path. The Supabase read dependency is fully retired.
           NEXT_PUBLIC_DISABLE_AUDIO: "0"
         run: cd frontend && npm run build
 

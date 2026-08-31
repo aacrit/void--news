@@ -1,5 +1,28 @@
 import { createClient, type SupabaseClient, type RealtimeChannel } from '@supabase/supabase-js';
 import type { Edition, ShipRequest, ShipReply } from './types';
+import { BASE_PATH } from './utils';
+
+// ---------------------------------------------------------------------------
+// Static-JSON reads (2026-08-30 Cloudflare migration).
+//
+// All READ data (feed, brief, deep dive, weekly, sources methodology) is now
+// regenerated as static JSON by the pipeline each run and served from the CDN,
+// so the browser never hits a metered database. These helpers replace the old
+// supabase-js read queries. The Supabase client below is retained ONLY for the
+// ship board write path, which moves to a Cloudflare Worker in a later step.
+// ---------------------------------------------------------------------------
+
+/** Fetch a static JSON snapshot from /data/<relPath>. Returns null on any error
+ *  (missing file, offline, parse failure) so callers degrade gracefully. */
+async function getStaticJson<T>(relPath: string): Promise<T | null> {
+  try {
+    const res = await fetch(`${BASE_PATH}/data/${relPath}`, { cache: 'no-cache' });
+    if (!res.ok) return null;
+    return (await res.json()) as T;
+  } catch {
+    return null;
+  }
+}
 
 // Supabase project credentials — must be set via environment variables.
 // Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in .env.local
@@ -34,41 +57,15 @@ export const supabase: SupabaseClient | null = _client;
 export const supabaseError: string | null = _clientError;
 
 export async function fetchDeepDiveData(clusterId: string) {
-  if (!_client) return null;
-  const { data, error } = await _client
-    .from('cluster_articles')
-    .select(`
-      article:articles (
-        id,
-        title,
-        url,
-        summary,
-        published_at,
-        image_url,
-        source:sources (
-          name,
-          tier,
-          url
-        ),
-        bias_scores (
-          political_lean,
-          sensationalism,
-          opinion_fact,
-          factual_rigor,
-          framing,
-          confidence,
-          rationale
-        )
-      )
-    `)
-    .eq('cluster_id', clusterId);
+  // Static export: per-cluster deep-dive roster emitted as
+  // /data/deepdive/<clusterId>.json (same shape the old cluster_articles join
+  // returned). Clusters outside the emitted displayed set resolve to null.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const data = await getStaticJson<any[]>(`deepdive/${clusterId}.json`);
+  if (!data) return null;
 
-  if (error) return null;
-
-  // The rationale column may be stored as a JSON string (text) rather than
-  // jsonb, so PostgREST returns it as a raw string that needs JSON.parse().
-  // Parse it client-side on each bias_score to ensure the rationale object
-  // is accessible for BiasLens popups in the Deep Dive view.
+  // The rationale may be stored as a JSON string; parse it client-side so the
+  // rationale object is accessible for BiasLens popups in the Deep Dive view.
   if (data) {
     for (const row of data) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -102,12 +99,10 @@ export async function fetchDeepDiveData(clusterId: string) {
  *  Used by the Sigil popup to compute real KDE matching the DeepDive spectrum.
  *  Much cheaper than fetchDeepDiveData — only the lean column, no joins on sources/rationale. */
 export async function fetchSourceLeans(clusterId: string): Promise<number[]> {
-  if (!_client) return [];
-  const { data, error } = await _client
-    .from("cluster_articles")
-    .select("article:articles(bias_scores(political_lean))")
-    .eq("cluster_id", clusterId);
-  if (error || !data) return [];
+  // Derived from the same static deep-dive roster as fetchDeepDiveData.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const data = await getStaticJson<any[]>(`deepdive/${clusterId}.json`);
+  if (!data) return [];
   const leans: number[] = [];
   for (const row of data) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -126,33 +121,13 @@ export async function fetchSourceLeans(clusterId: string): Promise<number[]> {
  *  Priority 2: og:image from articles, tier-ranked (us_major > international > independent).
  *  cached_image_url is populated by the pipeline's step 8e (cluster_image_cacher.py). */
 export async function fetchClusterLeadImage(clusterId: string): Promise<string | null> {
-  if (!_client) return null;
+  // Static export: derive the best og:image from the deep-dive roster, tier-
+  // ranked (us_major > international > independent). The retired cluster_image
+  // cacher means there is no cached_image_url to prefer.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const data = await getStaticJson<any[]>(`deepdive/${clusterId}.json`);
+  if (!data) return null;
 
-  // Check cached Supabase Storage image first — guaranteed no hotlink protection
-  const { data: clusterRow } = await _client
-    .from('story_clusters')
-    .select('cached_image_url')
-    .eq('id', clusterId)
-    .single();
-
-  if (clusterRow?.cached_image_url) {
-    return clusterRow.cached_image_url as string;
-  }
-
-  // Fallback: og:image from cluster articles (may be blocked by CDN hotlinking)
-  const { data, error } = await _client
-    .from('cluster_articles')
-    .select(`
-      article:articles (
-        image_url,
-        source:sources ( tier )
-      )
-    `)
-    .eq('cluster_id', clusterId);
-
-  if (error || !data) return null;
-
-  // Rank by source tier: us_major > international > independent
   const tierRank: Record<string, number> = { us_major: 3, international: 2, independent: 1 };
   let best: { url: string; rank: number } | null = null;
 
@@ -178,18 +153,15 @@ export async function fetchOpinionArticles(_section: Edition): Promise<any[]> {
   return [];
 }
 
-export async function fetchLastPipelineRun() {
-  if (!_client) return null;
-  const { data, error } = await _client
-    .from('pipeline_runs')
-    .select('completed_at, articles_fetched, status')
-    .eq('status', 'completed')
-    .order('completed_at', { ascending: false })
-    .limit(1)
-    .single();
-
-  if (error) return null;
-  return data;
+export async function fetchLastPipelineRun(): Promise<{
+  completed_at: string;
+  articles_fetched?: number;
+  status?: string;
+} | null> {
+  // Static export: the edition build time is prerendered into the page from
+  // build-data/feed.json (serverFeed). The client no longer queries pipeline_runs;
+  // callers that used this for a "last updated" line receive it server-side.
+  return null;
 }
 
 /**
@@ -198,15 +170,10 @@ export async function fetchLastPipelineRun() {
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function fetchMethodologyArticles(): Promise<any[]> {
-  if (!_client) return [];
-  const { data, error } = await _client
-    .from('articles')
-    .select('id, title, published_at, summary, source:sources(name, slug, url), bias_scores(political_lean, sensationalism, opinion_fact, factual_rigor, framing, rationale)')
-    .not('bias_scores', 'is', null)
-    .order('published_at', { ascending: false })
-    .limit(10);
-
-  if (error || !data) return [];
+  // Static export: 10 recent bias-scored articles emitted as /data/methodology.json.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const data = await getStaticJson<any[]>('methodology.json');
+  if (!data) return [];
 
   // Parse rationale strings into objects (same pattern as fetchDeepDiveData)
   for (const row of data) {
@@ -231,35 +198,14 @@ export async function fetchMethodologyArticles(): Promise<any[]> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function fetchDailyBrief(edition: string): Promise<any | null> {
-  if (!_client) return null;
+export async function fetchDailyBrief(_edition: string): Promise<any | null> {
+  // Static export: the latest daily brief is emitted as /data/brief.json.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const d = await getStaticJson<any>('brief.json');
+  if (!d) return null;
 
-  const cols = 'id, edition, tldr_headline, tldr_text, opinion_text, opinion_headline, opinion_lean, audio_url, audio_duration_seconds, opinion_start_seconds, audio_voice_label, audio_voice, audio_script, top_cluster_ids, created_at';
-
-  // Try requested edition first, then fall back to any edition
-  let res = await _client
-    .from('daily_briefs')
-    .select(cols)
-    .eq('edition', edition)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .single();
-
-  if (res.error || !res.data) {
-    // No brief for this edition — fall back to most recent brief from any edition
-    res = await _client
-      .from('daily_briefs')
-      .select(cols)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single();
-  }
-
-  if (res.error || !res.data) return null;
-
-  // Defensive: coerce text fields to strings — Supabase JSONB or corrupted
-  // data can return objects, which crash React when rendered as children (#310).
-  const d = res.data;
+  // Defensive: coerce text fields to strings — a corrupted/JSONB field can be an
+  // object, which crashes React when rendered as children (#310).
   if (d.tldr_text && typeof d.tldr_text !== "string") d.tldr_text = String(d.tldr_text);
   if (d.opinion_text && typeof d.opinion_text !== "string") d.opinion_text = String(d.opinion_text);
   if (d.tldr_headline && typeof d.tldr_headline !== "string") d.tldr_headline = String(d.tldr_headline);
@@ -268,25 +214,11 @@ export async function fetchDailyBrief(edition: string): Promise<any | null> {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function fetchPreviousEpisodes(edition: string, limit = 9): Promise<any[]> {
-  if (!_client) return [];
-
-  const cols = 'id, edition, tldr_headline, tldr_text, opinion_headline, opinion_text, opinion_lean, audio_url, audio_duration_seconds, opinion_start_seconds, audio_voice_label, audio_voice, created_at';
-
-  // Fetch last 3 days: up to `limit` briefs with audio for this edition
-  const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString();
-
-  const { data, error } = await _client
-    .from('daily_briefs')
-    .select(cols)
-    .eq('edition', edition)
-    .not('audio_url', 'is', null)
-    .gte('created_at', threeDaysAgo)
-    .order('created_at', { ascending: false })
-    .limit(limit);
-
-  if (error || !data) return [];
-  return data;
+export async function fetchPreviousEpisodes(_edition: string, _limit = 9): Promise<any[]> {
+  // Static export: only the latest edition is snapshotted (/data/brief.json).
+  // A rolling multi-day audio archive can be reintroduced by emitting an
+  // episodes.json list from the pipeline if the On Air back-catalogue returns.
+  return [];
 }
 
 /* ---------------------------------------------------------------------------
@@ -298,41 +230,19 @@ export async function fetchPreviousEpisodes(edition: string, limit = 9): Promise
  * Falls back to any edition if none exists for the requested one.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function fetchWeeklyDigest(edition: string): Promise<any | null> {
-  if (!_client) return null;
-
-  const cols = 'id, edition, week_start, week_end, issue_number, cover_headline, cover_text, cover_image_url, cover_image_attribution, cover_image_source, recap_stories, opinion_left, opinion_center, opinion_right, opinion_headlines, opinion_topic, bias_report_text, bias_report_data, audio_url, audio_duration_seconds, opinion_text, opinion_headline, opinion_lean, opinion_start_seconds, audio_voice, audio_voice_label, total_articles, total_clusters, created_at';
-
-  let res = await _client
-    .from('weekly_digests')
-    .select(cols)
-    .eq('edition', edition)
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .single();
-
-  if (res.error || !res.data) {
-    // Fall back to most recent from any edition
-    res = await _client
-      .from('weekly_digests')
-      .select(cols)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single();
-  }
-
-  if (res.error || !res.data) return null;
-
-  // Parse JSONB fields that may arrive as strings
+export async function fetchWeeklyDigest(_edition: string): Promise<any | null> {
+  // Static export: latest weekly digest emitted as /data/weekly.json (JSONB
+  // fields already parsed by the emitter).
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const d = res.data as Record<string, any>;
+  const d = await getStaticJson<Record<string, any>>('weekly.json');
+  if (!d) return null;
+  // Belt-and-suspenders: parse any JSONB field that arrived as a string.
   const jsonFields = ['cover_text', 'recap_stories', 'opinion_left', 'opinion_center', 'opinion_right', 'opinion_headlines', 'bias_report_data'];
   for (const field of jsonFields) {
     if (typeof d[field] === 'string') {
       try { d[field] = JSON.parse(d[field]); } catch { d[field] = null; }
     }
   }
-
   return d;
 }
 
@@ -341,27 +251,12 @@ export async function fetchWeeklyDigest(edition: string): Promise<any | null> {
  * Returns id, edition, week_start, week_end, issue_number, created_at.
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function fetchWeeklyArchive(edition?: string): Promise<any[]> {
-  if (!_client) return [];
-
-  const cols = 'id, edition, week_start, week_end, issue_number, cover_headline, audio_url, audio_duration_seconds, created_at';
-
-  let query = _client
-    .from('weekly_digests')
-    .select(cols)
-    // Prod launched at issue_number 19; hide the earlier dev issues (and their
-    // broken archive entries) from the public archive.
-    .gte('issue_number', 19)
-    .order('created_at', { ascending: false })
-    .limit(52);
-
-  if (edition) {
-    query = query.eq('edition', edition);
-  }
-
-  const { data, error } = await query;
-  if (error || !data) return [];
-  return data;
+export async function fetchWeeklyArchive(_edition?: string): Promise<any[]> {
+  // Static export: only the latest issue is snapshotted (/data/weekly.json). A
+  // full weekly archive list can be emitted as weekly_archive.json if needed.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const d = await getStaticJson<Record<string, any>>('weekly.json');
+  return d ? [d] : [];
 }
 
 /* ---------------------------------------------------------------------------
