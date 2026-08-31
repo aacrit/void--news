@@ -96,9 +96,10 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           DISABLE_GEMINI_REASONING: "1"
           DISABLE_EDITORIAL_TRIAGE: "1"
-          # Audio parked for the first migrated run (fewer moving parts). Audio
-          # returns via R2/Pages-static in a follow-up.
-          DISABLE_AUDIO: "1"
+          # Audio ON: edge-tts synthesizes the brief, written to the static site
+          # (frontend/public/audio, served from the Pages CDN) via
+          # audio_producer._write_audio_static. Set to "1" to re-park.
+          DISABLE_AUDIO: "0"
           DISABLE_ANTHROPIC: "1"
         run: |
           ARGS=""
@@ -122,7 +123,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add frontend/build-data frontend/public/data
+          git add frontend/build-data frontend/public/data frontend/public/audio
           if git diff --cached --quiet; then
             echo "No static-data changes to commit."
           else
