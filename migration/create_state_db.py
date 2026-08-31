@@ -41,6 +41,20 @@ src_tables = {
     r[0] for r in src.execute("SELECT name FROM sqlite_master WHERE type='table'").fetchall()
 }
 
+def _conv(v):
+    """Normalize Postgres boolean literals ('t'/'f') to SQLite 1/0.
+
+    pg_dump writes booleans as the single chars 't'/'f'; copied verbatim into a
+    typed column they stay TEXT, so `WHERE is_active = 1` (or = TRUE, bound as 1)
+    never matches and e.g. get_active_sources() returns 0. Convert here. Only the
+    exact single-char forms are touched, so real text values are untouched."""
+    if v == "t":
+        return 1
+    if v == "f":
+        return 0
+    return v
+
+
 copied = {}
 skipped_rows = {}
 for table, dcols in dst_tables.items():
@@ -57,7 +71,7 @@ for table, dcols in dst_tables.items():
     n_skip = 0
     batch = []
     for row in src.execute(f'SELECT {collist} FROM "{table}"'):
-        batch.append(tuple(row[c] for c in use))
+        batch.append(tuple(_conv(row[c]) for c in use))
         if len(batch) >= 2000:
             try:
                 dst.executemany(ins, batch)
