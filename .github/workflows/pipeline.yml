@@ -143,13 +143,18 @@ jobs:
             exit 0
           fi
           git commit -m "Pipeline: refresh static feed data ($(date -u +%F))"
+          # The run leaves incidental unstaged edits to other tracked files (not
+          # part of the emitted feed data); discard them so the rebase below has a
+          # clean working tree. Only the committed data dirs matter; untracked
+          # files (pipeline_state.db) are left alone and do not block rebase.
+          git checkout -- . 2>/dev/null || true
           # main can advance (an auto-merge landing) during the ~1h run, so a plain
           # push would be a non-fast-forward reject. Rebase onto the latest main and
-          # retry. The data commit only touches build-data/public — it never
-          # conflicts with code merges, so the rebase is clean.
+          # retry. The data commit only touches build-data/public, so it never
+          # conflicts with code merges and the rebase is clean.
           for attempt in 1 2 3 4 5; do
             git fetch origin main
-            git rebase origin/main || { git rebase --abort; echo "rebase failed"; exit 1; }
+            git rebase origin/main || { git rebase --abort 2>/dev/null || true; echo "rebase failed"; exit 1; }
             if git push origin HEAD:main; then echo "pushed on attempt $attempt"; exit 0; fi
             echo "push rejected (attempt $attempt); refetching and retrying"
             sleep 5

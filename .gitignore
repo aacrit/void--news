@@ -84,3 +84,9 @@ opus_social_out2/
 social_bundle/
 social_out/
 mobile-dd-check.png
+
+# Cloudflare migration: local SQLite pipeline state (persisted via Actions cache/artifact, never committed)
+pipeline_state.db
+pipeline_state.db-*
+void_local.db
+*.sql.gz
