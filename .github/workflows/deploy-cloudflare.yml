@@ -135,6 +135,9 @@ jobs:
           # build-data/*.json + public/data/*.json (emitted by the pipeline),
           # NOT Supabase. No Supabase env at build; its absence forces the
           # static-JSON path. The Supabase read dependency is fully retired.
+          #
+          # The ship board / feedback write path is the void-api Worker (D1).
+          NEXT_PUBLIC_API_BASE: "https://void-api.aacrit.workers.dev"
           NEXT_PUBLIC_DISABLE_AUDIO: "0"
         run: cd frontend && npm run build
 
