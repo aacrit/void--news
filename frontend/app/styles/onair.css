@@ -575,6 +575,10 @@
   hyphens: auto;
 }
 
+.onair__note-body p + p {
+  margin-top: var(--space-3);
+}
+
 /* ===========================================================================
    ARCHIVE — previous broadcasts (dense secondary list)
    =========================================================================== */

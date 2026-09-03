@@ -8,6 +8,7 @@ import { ScaleIcon } from "./ScaleIcon";
 import LogoIcon from "./LogoIcon";
 import { hapticLight, hapticConfirm } from "../lib/haptics";
 import { timeAgo } from "../lib/utils";
+import { splitBriefParagraphs } from "../lib/briefText";
 import { AUDIO_ENABLED } from "../lib/audioGate";
 
 const PlayIcon = () => (
@@ -77,10 +78,17 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
 
   const hasAudio = !!brief.audio_url;
 
+  // One story per paragraph, blank-line separated (see lib/briefText).
+  const tldrParagraphs = splitBriefParagraphs(brief.tldr_text);
   const tldrSentences = String(brief.tldr_text).split(/(?<=[.!?])\s+/).filter(Boolean);
-  // Collapsed-teaser preview (CSS clamps it to one line). The expanded brief
-  // renders brief.tldr_text in full, so there is no preview/"read more" split.
-  const tldrPreview = tldrSentences.slice(0, 3).join(" ");
+  // Collapsed-teaser preview (CSS clamps it to one line). Take it from the
+  // FIRST paragraph so the teaser is the lead story rather than a sentence
+  // that has run on into the second story.
+  const tldrPreview = (tldrParagraphs[0] || String(brief.tldr_text))
+    .split(/(?<=[.!?])\s+/)
+    .filter(Boolean)
+    .slice(0, 3)
+    .join(" ");
 
   const handleOnairClick = () => {
     hapticConfirm();
@@ -167,7 +175,9 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
 
       {/* TL;DR — full text once the pill is expanded (no inner "Read more"). */}
       {brief.tldr_headline && <h3 className="mbp__hl mbp__hl--tldr">{brief.tldr_headline}</h3>}
-      <p className="mbp__preview mbp__preview--tldr">{brief.tldr_text}</p>
+      <div className="mbp__preview mbp__preview--tldr">
+        {tldrParagraphs.map((para, i) => <p key={i}>{para}</p>)}
+      </div>
 
       {/* Opinion — re-introduced for mobile expanded brief (CEO 2026-05-13).
           User can collapse the whole brief; in expanded state TL;DR + Opinion
@@ -180,7 +190,9 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
             <span className="mbp__cmd mbp__cmd--opinion">Opinion</span>
             <p className="mbp__desc mbp__desc--opinion">The day&rsquo;s coverage, argued from one lens</p>
             {opinionHeadline && <h3 className="mbp__hl mbp__hl--opinion">{opinionHeadline}</h3>}
-            <p className="mbp__preview mbp__preview--opinion">{brief.opinion_text}</p>
+            <div className="mbp__preview mbp__preview--opinion">
+              {splitBriefParagraphs(brief.opinion_text).map((para, i) => <p key={i}>{para}</p>)}
+            </div>
           </div>
         </>
       )}

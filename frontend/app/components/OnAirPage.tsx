@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useAudio, type EpisodeMeta } from "./AudioProvider";
 import { hapticLight, hapticMicro } from "../lib/haptics";
+import { splitBriefParagraphs } from "../lib/briefText";
 import { fetchLastPipelineRun } from "../lib/supabase";
 import NavBar from "./NavBar";
 import ScaleIcon from "./ScaleIcon";
@@ -338,7 +339,9 @@ export default function OnAirPage() {
                   {brief.tldr_headline && (
                     <p className="onair__note-lead">{brief.tldr_headline}</p>
                   )}
-                  <p className="onair__note-body">{brief.tldr_text}</p>
+                  <div className="onair__note-body">
+                    {splitBriefParagraphs(brief.tldr_text).map((para, i) => <p key={i}>{para}</p>)}
+                  </div>
                 </div>
               )}
               {brief?.opinion_text && (
@@ -350,7 +353,9 @@ export default function OnAirPage() {
                   {brief.opinion_headline && (
                     <p className="onair__note-lead">{brief.opinion_headline}</p>
                   )}
-                  <p className="onair__note-body">{brief.opinion_text}</p>
+                  <div className="onair__note-body">
+                    {splitBriefParagraphs(brief.opinion_text).map((para, i) => <p key={i}>{para}</p>)}
+                  </div>
                 </div>
               )}
             </section>

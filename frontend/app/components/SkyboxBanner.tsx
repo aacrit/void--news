@@ -6,6 +6,7 @@ import type { DailyBriefState } from "./DailyBrief";
 import LogoIcon from "./LogoIcon";
 import { hapticLight } from "../lib/haptics";
 import { timeAgo } from "../lib/utils";
+import { splitBriefParagraphs } from "../lib/briefText";
 import { useHeightMorph } from "../lib/useHeightMorph";
 
 type ExpandedSection = null | "tldr" | "opinion";
@@ -194,7 +195,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                 </div>
                 {brief.tldr_headline && <h3 className="skb__section-hl skb__section-hl--tldr">{String(brief.tldr_headline)}</h3>}
                 <div className="skb__section-body skb__section-body--tldr">
-                  {String(brief.tldr_text).split(/\n\n+/).map((para, i) => <p key={i}>{para}</p>)}
+                  {splitBriefParagraphs(String(brief.tldr_text)).map((para, i) => <p key={i}>{para}</p>)}
                 </div>
               </div>
             )}
@@ -218,7 +219,7 @@ export default function SkyboxBanner({ state }: { state: DailyBriefState }) {
                 </div>
                 {brief.opinion_headline && <h3 className="skb__section-hl skb__section-hl--opinion">{String(brief.opinion_headline)}</h3>}
                 <div className="skb__section-body skb__section-body--opinion">
-                  {String(brief.opinion_text || "").split(/\n\n+/).map((para, i) => <p key={i}>{para}</p>)}
+                  {splitBriefParagraphs(String(brief.opinion_text || "")).map((para, i) => <p key={i}>{para}</p>)}
                 </div>
               </div>
             )}

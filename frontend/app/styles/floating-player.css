@@ -1182,6 +1182,10 @@ body:has(.mms--open) .fp {
   hyphens: auto;
 }
 
+.fp__bcast-text p + p {
+  margin-top: var(--space-2);
+}
+
 /* Episode notes — collapsible disclosure */
 .fp__bcast-details {
   border-top: 1px solid color-mix(in srgb, var(--fp-accent) 8%, transparent);
