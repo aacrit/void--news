@@ -13,6 +13,7 @@ import type {
   SigilData,
 } from "../lib/types";
 import { supabase, fetchClusterLeadImage } from "../lib/supabase";
+import { splitBriefParagraphs } from "../lib/briefText";
 import { BASE_PATH } from "../lib/utils";
 import {
   type ArticleTier,
@@ -626,7 +627,9 @@ export default function PaperContent({ edition }: { edition: Edition }) {
       {!isLoading && tldr && (
         <div className="np-brief">
           <p className="np-brief__label">Today&rsquo;s Brief</p>
-          <p className="np-brief__text">{tldr}</p>
+          <div className="np-brief__text">
+            {splitBriefParagraphs(tldr).map((para, i) => <p key={i}>{para}</p>)}
+          </div>
         </div>
       )}
 

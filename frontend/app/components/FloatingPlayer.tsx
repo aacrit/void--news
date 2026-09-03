@@ -6,6 +6,7 @@ import { CaretRight } from "@phosphor-icons/react";
 import LogoIcon from "./LogoIcon";
 import ScaleIcon from "./ScaleIcon";
 import { hapticLight, hapticMedium, hapticConfirm } from "../lib/haptics";
+import { splitBriefParagraphs } from "../lib/briefText";
 
 const PlayIcon = () => (
   <svg width="11" height="13" viewBox="0 0 11 13" fill="currentColor" aria-hidden="true">
@@ -625,7 +626,9 @@ export default function FloatingPlayer() {
             <div className="fp__bcast-content">
               <div className="fp__bcast-section">
                 <span className="fp__bcast-section-label">Summary</span>
-                <p className="fp__bcast-text">{brief.tldr_text}</p>
+                <div className="fp__bcast-text">
+                  {splitBriefParagraphs(brief.tldr_text).map((para, i) => <p key={i}>{para}</p>)}
+                </div>
               </div>
 
               {brief.opinion_text && (
@@ -640,7 +643,9 @@ export default function FloatingPlayer() {
                         </span>
                       )}
                     </div>
-                    <p className="fp__bcast-text">{brief.opinion_text}</p>
+                    <div className="fp__bcast-text">
+                      {splitBriefParagraphs(brief.opinion_text).map((para, i) => <p key={i}>{para}</p>)}
+                    </div>
                   </div>
                 </>
               )}

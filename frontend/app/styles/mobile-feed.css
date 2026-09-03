@@ -513,6 +513,13 @@
   /* Full TL;DR text. The pill is the gate (tap to expand); no inner clamp. */
 }
 
+/* One story per paragraph (see lib/briefText). The wrapper keeps the type
+   rules; the children carry the rhythm. */
+.mbp__preview--tldr p + p,
+.mbp__preview--opinion p + p {
+  margin-top: var(--space-3);
+}
+
 .mbp__preview--opinion {
   font-family: var(--font-editorial);
   font-size: var(--text-sm);

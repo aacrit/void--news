@@ -244,7 +244,9 @@ def main():
                     brief["audio_script"], voices, edition,
                     opinion_audio_script=brief.get("opinion_audio_script"),
                     opinion_lean=brief.get("opinion_lean"),
-                    news_single_voice=True,  # one host reads news, other the opinion
+                    # A anchors, B takes alternate stories and reads the opinion
+                    news_single_voice=False,
+                    news_voice_b_from_opinion=True,
                 )
                 if audio_result:
                     print(f"  Audio: {audio_result['duration_seconds']}s, "

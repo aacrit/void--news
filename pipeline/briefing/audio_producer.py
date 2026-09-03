@@ -114,6 +114,12 @@ _GEMINI_TO_EDGE_VOICE: dict[str, str] = {
 _DEFAULT_EDGE_VOICE_A = _MALE_EDGE_VOICE
 _DEFAULT_EDGE_VOICE_B = _FEMALE_EDGE_VOICE
 
+# Silence between speaker turns. Within a story the turns belong to one
+# continuous thought, so the beat stays short; at a story boundary the pause
+# carries the hand-off from one host to the other.
+_TURN_PAUSE_MS = 60
+_STORY_PAUSE_MS = 350
+
 
 def _edge_voice(gemini_id: str) -> str:
     """Map a Gemini voice name to an edge-tts Microsoft Neural voice name."""
@@ -151,11 +157,19 @@ def _script_to_dialogue(audio_script: str) -> str:
 
     Maps A→One, B→Two. Strips structural markers (case-insensitive) and Gemini
     artifacts so edge-tts never voices a stage direction like "[short pause]".
+
+    Blank lines are PRESERVED as story boundaries (2026-09-03). The daily brief
+    separates stories with a blank line, and _synthesize_edge_tts uses them to
+    place a longer pause at the host hand-off. Runs collapse to one, and there
+    is never a leading or trailing blank. Scripts without blank lines (weekly,
+    revolt, history) are unaffected and produce no boundaries.
     """
-    lines = []
+    lines: list[str] = []
     for line in audio_script.splitlines():
         stripped = line.strip()
         if not stripped:
+            if lines and lines[-1] != "":
+                lines.append("")
             continue
 
         # Skip pure marker lines (e.g. "[SECTION]", "[short pause]")
@@ -185,6 +199,8 @@ def _script_to_dialogue(audio_script: str) -> str:
         if text:
             lines.append(f"{speaker}: {text}")
 
+    while lines and lines[-1] == "":
+        lines.pop()
     return "\n".join(lines)
 
 
@@ -219,12 +235,20 @@ def _synthesize_edge_tts(
         print("  [warn][audio] pydub not installed — skipping")
         return None
 
-    # Parse speaker turns
-    turns: list[tuple[str, str]] = []
+    # Parse speaker turns. A blank line marks a story boundary (see
+    # _script_to_dialogue): the turn that follows one opens a new story and
+    # gets the longer hand-off pause instead of the within-story beat.
+    turns: list[tuple[str, str, bool]] = []
+    pending_boundary = False
     for line in dialogue.strip().splitlines():
-        m = re.match(r"^(One|Two):\s*(.+)$", line.strip())
+        stripped = line.strip()
+        if not stripped:
+            pending_boundary = True
+            continue
+        m = re.match(r"^(One|Two):\s*(.+)$", stripped)
         if m and m.group(2).strip():
-            turns.append((m.group(1), m.group(2).strip()))
+            turns.append((m.group(1), m.group(2).strip(), pending_boundary))
+            pending_boundary = False
 
     if not turns:
         print("  [warn][audio] edge-tts: no dialogue turns to synthesize")
@@ -232,18 +256,19 @@ def _synthesize_edge_tts(
 
     # Pre-allocate one tempfile per turn so we can synthesize in parallel
     # while preserving original turn order for downstream concatenation.
-    turn_specs: list[tuple[int, str, str, str]] = []  # (idx, speaker, text, tmp_path)
-    for idx, (speaker, text) in enumerate(turns):
+    # (idx, voice, text, tmp_path, is_story_start)
+    turn_specs: list[tuple[int, str, str, str, bool]] = []
+    for idx, (speaker, text, is_story_start) in enumerate(turns):
         voice = voice_a_edge if speaker == "One" else voice_b_edge
         with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as tmp:
-            turn_specs.append((idx, voice, text, tmp.name))
+            turn_specs.append((idx, voice, text, tmp.name, is_story_start))
 
     async def _synth_one(voice: str, text: str, path: str) -> None:
         comm = _edge_tts_module.Communicate(text, voice)
         await comm.save(path)
 
     async def _synth_all() -> list:
-        tasks = [_synth_one(v, t, p) for (_idx, v, t, p) in turn_specs]
+        tasks = [_synth_one(v, t, p) for (_idx, v, t, p, _b) in turn_specs]
         return await asyncio.gather(*tasks, return_exceptions=True)
 
     loop = asyncio.new_event_loop()
@@ -254,20 +279,32 @@ def _synthesize_edge_tts(
 
     # Decode results in original turn order
     segments: list["AudioSegment"] = []
+    # Parallel to `segments`, NOT to `turns` — a failed turn is dropped from
+    # both, so indexing boundaries against the original turn list would slide
+    # every pause after the first failure onto the wrong seam.
+    seg_story_start: list[bool] = []
+    carried_boundary = False
     failed = 0
-    for (idx, voice, _text, tmp_path), result in zip(turn_specs, synth_results):
+    for (idx, voice, _text, tmp_path, is_story_start), result in zip(turn_specs, synth_results):
+        # A dropped turn must not swallow the boundary it was carrying — hand
+        # it to whichever turn actually makes it into the output next.
+        is_story_start = is_story_start or carried_boundary
         try:
             if isinstance(result, BaseException):
                 print(f"  [warn][audio] edge-tts turn failed ({voice}): {result}")
                 failed += 1
+                carried_boundary = is_story_start
                 continue
             seg = AudioSegment.from_mp3(tmp_path)
             # Normalise to 24 kHz mono 16-bit (same as Gemini TTS output)
             seg = seg.set_frame_rate(24000).set_channels(1).set_sample_width(2)
             segments.append(seg)
+            seg_story_start.append(is_story_start)
+            carried_boundary = False
         except Exception as e:
             print(f"  [warn][audio] edge-tts turn failed ({voice}): {e}")
             failed += 1
+            carried_boundary = is_story_start
         finally:
             try:
                 Path(tmp_path).unlink(missing_ok=True)
@@ -281,11 +318,21 @@ def _synthesize_edge_tts(
     if failed:
         print(f"  [warn][audio] edge-tts: {failed}/{len(turns)} turns failed")
 
-    # Stitch turns with a brief natural pause (60 ms)
-    pause = AudioSegment.silent(duration=60, frame_rate=24000)
+    # Stitch turns: a brief beat within a story, a real pause at a story
+    # boundary. 60 ms between two DIFFERENT voices reads as a hard cut; the
+    # longer gap is what lets the hand-off land.
+    pause = AudioSegment.silent(duration=_TURN_PAUSE_MS, frame_rate=24000)
+    story_pause = AudioSegment.silent(duration=_STORY_PAUSE_MS, frame_rate=24000)
     combined = segments[0]
-    for seg in segments[1:]:
-        combined = combined + pause + seg
+    boundaries = 0
+    for i, seg in enumerate(segments[1:], start=1):
+        if i < len(seg_story_start) and seg_story_start[i]:
+            combined = combined + story_pause + seg
+            boundaries += 1
+        else:
+            combined = combined + pause + seg
+    if boundaries:
+        print(f"  [audio] {boundaries} story hand-offs ({_STORY_PAUSE_MS} ms pause)")
 
     return combined.raw_data
 
@@ -903,6 +950,7 @@ def produce_audio(
     opinion_lean: str | None = None,
     tts_preamble_override: str | None = None,
     news_single_voice: bool = False,
+    news_voice_b_from_opinion: bool = False,
 ) -> Optional[dict]:
     """
     Synthesize the full broadcast via Gemini Flash TTS.
@@ -927,9 +975,16 @@ def produce_audio(
             (a monologue) instead of the two-host A/B dialogue. The single
             news voice is the one NOT used by the opinion segment, so "news
             host" and "opinion host" stay distinct (e.g. Brian reads the news,
-            Ava delivers the opinion). The daily brief sets this True — the
-            per-line A/B alternation read as jittery. Weekly keeps the two-
-            anchor dialogue (leaves this False).
+            Ava delivers the opinion). The daily brief set this True while the
+            script alternated hosts per LINE, which read as jittery; it now
+            alternates per STORY and uses news_voice_b_from_opinion instead.
+            Weekly keeps the two-anchor dialogue (leaves this False).
+        news_voice_b_from_opinion: When True (and news_single_voice is False),
+            host B is the OPINION voice, and host A is the other of the two.
+            So the show runs on two voices total: A anchors, B takes alternate
+            stories and then delivers the opinion. Ignored when
+            news_single_voice is True. Daily brief sets this True
+            (CEO 2026-09-03); weekly leaves it False and keeps its own pair.
     """
     # CEO 2026-05-13 — void --onair parked. Single env gate disables every
     # audio code path (TTS calls, Supabase upload, podcast feed). Frontend
@@ -983,17 +1038,31 @@ def produce_audio(
     dialogue = _script_to_dialogue(audio_script)
     word_count = len(dialogue.split())
     if news_single_voice:
-        # One host reads the whole bulletin. The per-line A/B alternation read
-        # as jittery; a single measured voice is cleaner. Use whichever of the
-        # two voices the opinion is NOT using, so the news host and the opinion
-        # host are always distinct (Brian reads news, Ava delivers opinion, or
-        # vice-versa depending on the edition's opinion timbre).
+        # One host reads the whole bulletin. Use whichever of the two voices the
+        # opinion is NOT using, so the news host and the opinion host stay
+        # distinct. Superseded for the daily brief by news_voice_b_from_opinion
+        # below: single-voice was a workaround for per-LINE A/B ping-pong, and
+        # the script now alternates per STORY, which is what it wanted.
         news_voice_edge = (
             _FEMALE_EDGE_VOICE if opinion_voice_edge == _MALE_EDGE_VOICE
             else _MALE_EDGE_VOICE
         )
         voice_a_edge = voice_b_edge = news_voice_edge
         print(f"  [audio] News TTS (single voice): {word_count} words, {news_voice_edge}")
+    elif news_voice_b_from_opinion:
+        # Two voices across the whole show: A anchors the news, B takes the
+        # alternate stories AND delivers the opinion. The section change is
+        # carried by the transition sting and the lean line, not by a voice
+        # the listener has not heard yet (CEO 2026-09-03).
+        voice_b_edge = opinion_voice_edge
+        voice_a_edge = (
+            _FEMALE_EDGE_VOICE if opinion_voice_edge == _MALE_EDGE_VOICE
+            else _MALE_EDGE_VOICE
+        )
+        print(
+            f"  [audio] News TTS (per-story alternation): {word_count} words, "
+            f"A={voice_a_edge} B={voice_b_edge} (B also reads opinion)"
+        )
     else:
         voice_a_edge = _edge_voice(voice_a_name)
         voice_b_edge = _edge_voice(voice_b_name)

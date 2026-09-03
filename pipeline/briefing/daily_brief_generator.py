@@ -124,16 +124,33 @@ _ABBREV_END_RE = re.compile(
 )
 
 
-def _ensure_sentence_lines(text: str, min_lines: int = 6) -> str:
-    """The TL;DR renders one sentence per line. If the model returned a
-    flowing paragraph (observed 2026-07-04: '1 lines' shipped), re-split
-    deterministically on sentence boundaries. No-op when the text already
-    has line structure."""
+# Sentences per paragraph in the last-resort repair below. Only used when the
+# model returned no paragraph breaks at all.
+_FALLBACK_SENTENCES_PER_PARA = 4
+
+
+def _ensure_paragraph_structure(text: str) -> str:
+    """The TL;DR renders one STORY PER PARAGRAPH, paragraphs separated by a
+    blank line. The model marks those breaks itself (see the FORMAT block in
+    _USER_PROMPT_TEMPLATE), so the common path here is a no-op.
+
+    Last-resort repair only: if the model returned no blank-line break at all,
+    sentence-split and regroup into fixed-size paragraphs so the renderer gets
+    some rhythm instead of one wall of text. Story boundaries cannot be
+    recovered deterministically, so this is a degradation, not a substitute --
+    _check_quality warns on it so the retry can ask the model again.
+
+    NOTE (2026-09-03): the previous version keyed off a raw newline count and
+    dropped blank lines while re-splitting, so a brief with few newlines would
+    have its paragraph structure permanently flattened. Blank-line presence is
+    now the explicit no-op test.
+    """
     if not text or not isinstance(text, str):
         return text
-    if text.count("\n") >= min_lines - 1:
-        return text
-    out: list[str] = []
+    if "\n\n" in text:
+        return text  # model honored the contract — never touch it
+
+    sentences: list[str] = []
     for para in text.split("\n"):
         para = para.strip()
         if not para:
@@ -145,11 +162,15 @@ def _ensure_sentence_lines(text: str, min_lines: int = 6) -> str:
             buf.append(tok)
             if _ABBREV_END_RE.search(tok.rstrip()):
                 continue  # don't break after "U.S." / "Gen." etc.
-            out.append(" ".join(buf))
+            sentences.append(" ".join(buf))
             buf = []
         if buf:
-            out.append(" ".join(buf))
-    return "\n".join(out)
+            sentences.append(" ".join(buf))
+
+    n = _FALLBACK_SENTENCES_PER_PARA
+    return "\n\n".join(
+        " ".join(sentences[i:i + n]) for i in range(0, len(sentences), n)
+    )
 
 
 def _parse_brief_sections(raw: str) -> dict:
@@ -351,8 +372,10 @@ old 400-word target — the brief is the day's editorial spine and was reading \
 thin.) Density over length — if a sentence restates rather than advances, \
 cut it; reach the length with MORE stories and MORE concrete facts per \
 story, never with padding. \
-FORMAT: put ONE sentence per line — press Enter after every sentence so the \
-body is 24-30 separate lines, never a single flowing paragraph. \
+FORMAT: ONE STORY PER PARAGRAPH. Separate every paragraph with a BLANK LINE. \
+When you move to a different story, start a new paragraph. Never run two \
+stories together in one paragraph, and never split one story across two. \
+24-30 sentences total, grouped into 6-12 paragraphs. \
 Write in the voice of today's lead host:
 {LEAD_HOST_BLOCK}
 
@@ -405,29 +428,46 @@ breaks): A says it plainly — "From void news. Today is {DATE_SPOKEN}." A singl
 beat. Then the headline rundown.
 LAST LINE: The last speaker says "This was void news." with finality.
 
-Two senior journalists briefing each other as co-anchors. 4-5 minutes. \
-Target 850-1000 words. You MUST produce at least 800 words — the broadcast \
+Two senior journalists briefing each other as co-anchors. 5-6 minutes. \
+Target 950-1150 words. You MUST produce at least 900 words — the broadcast \
 needs this length for proper pacing. Each line starts with "A:" or "B:". \
 No other formatting.
 
 {HOST_A_BLOCK}
 {HOST_B_BLOCK}
 
-HOST A leads Story [1] — reports core facts, establishes what changed.
-HOST B leads Story [2] — reports core facts, establishes what changed.
-Story [3] is briefer — either host.
-Stories [4] onward alternate hosts, two to four lines each, and keep coming \
-until you have hit the word target. The length comes from COVERING MORE \
-STORIES with real facts, never from padding the first three. A 5-story script \
-that stops at 400 words has failed the brief.
+STORY TURNS — THE VOICE CHANGES ONLY BETWEEN STORIES, NEVER INSIDE ONE.
+Each story is ONE host's turn. That host reports the whole story, 3-5 lines, \
+then hands off. Hosts alternate story by story: A takes Story [1], B takes \
+Story [2], A takes Story [3], and so on down the rundown. \
+Separate every story with a BLANK LINE. \
+Keep stories coming until you have hit the word target. The length comes from \
+COVERING MORE STORIES with real facts, never from padding the first three. \
+A 5-story script that stops at 400 words has failed the brief.
 
-SECOND-DIMENSION RULE: On each story, the NON-LEAD HOST adds a second \
-dimension — but the dimension MUST contain a NEW FACT: a name, number, date, \
-or quoted statement the lead did not provide. Counter-data, historical \
-parallel, or structural context from a different angle on the same story. \
+Do NOT ping-pong the speaker tag line by line within a story. A host who has \
+the story keeps it until the story is done.
+
+SECOND-DIMENSION RULE: within a story, the NON-LEAD HOST may add ONE line, \
+and only to deliver a NEW FACT the lead did not give: a name, number, date, \
+or quoted statement. Counter-data, historical parallel, or structural context \
+from a different angle on the same story. \
 "But that contradicts the Q3 numbers — 2.1% contraction" is a second \
 dimension. "Which tells you something about the administration's priorities" \
-is a TELL — banned. The listener infers priorities from the contradiction.
+is a TELL — banned. The listener infers priorities from the contradiction. \
+If you have no new fact, do not interrupt. Silence beats filler.
+
+HAND-OFFS: open each new story with a short bridge, ONE CLAUSE, before the \
+first fact. The bridge orients the listener in place, time, or subject. It \
+never characterizes the story and never tells the listener what to think.
+GOOD: "Meanwhile, in Madrid." / "Staying in the region." / "To Ukraine now." \
+/ "Also Wednesday." / "Turning to markets." / "One more from Washington." \
+/ "Back to the Gulf."
+BANNED: "In a troubling development." / "Perhaps most significantly." / \
+"This next one matters." / "Which brings us to the real question." / \
+"In a sign of things to come." Any bridge carrying an adjective ABOUT the \
+story is rejected. Orient, then report.
+The FIRST story takes no bridge. It follows the headline rundown directly.
 
 Each host's EDITORIAL INSTINCT shapes what facts they gravitate toward — \
 what costs they cite, what patterns they notice, what data they surface. \
@@ -436,24 +476,31 @@ ask about the budget line while another asks about who bears the cost. \
 Let each host's instinct come through in their choice of facts, not in \
 any stated position.
 
-WRONG: A reports. B reacts. A reports. B reacts.
-RIGHT: A reports Story 1. B adds a dimension. B reports Story 2. A adds a dimension.
+WRONG: A reports. B reacts. A reports. B reacts. (line-by-line ping-pong)
+RIGHT: A reports Story 1 through to the end. B adds one new fact. \
+Blank line. B opens Story 2 with a bridge and reports it through. A adds one \
+new fact. Blank line. A opens Story 3.
 
-Story [1] gets the most depth — at least 6 exchanges between hosts. \
-Story [2] gets 4 exchanges. Story [3] gets 2. \
-After that grounding beat, the headline rundown — maximum 3 headlines, maximum 8 words each. \
-"US strikes inside Iran. NATO's future in doubt. Oil at $103." — that terse. \
-B enters IMMEDIATELY after the headline rundown with a NEW FACT or counter-data \
-— not a reaction, not a framing comment. The listener must hear both voices \
-in the first 20 seconds. Close with the single FACT the listener will still \
-be thinking about tomorrow — not what it means, not a meta-narrative summary, \
-not "these are not separate stories." A concrete fact: a name, a number, an \
-unresolved outcome. Then "This was void news."
+ORDER OF THE BROADCAST:
+1. A's grounding line: "From void news. Today is {DATE_SPOKEN}."
+2. The headline rundown — maximum 3 headlines, maximum 8 words each. \
+"US strikes inside Iran. NATO's future in doubt. Oil at $103." — that terse.
+3. Story [1], led by A, no bridge. It gets the most depth: 5 lines. \
+B enters once inside it with a NEW FACT or counter-data — not a reaction, not \
+a framing comment. The listener must hear both voices in the first 20 seconds.
+4. Story [2] onward, alternating hosts, each opening with a bridge, \
+3-5 lines each, blank line between every story. Story [2] gets 4 lines; \
+later stories 3.
+5. Close with the single FACT the listener will still be thinking about \
+tomorrow — not what it means, not a meta-narrative summary, not "these are \
+not separate stories." A concrete fact: a name, a number, an unresolved \
+outcome. Then "This was void news."
 
 WRITING FOR THE EAR:
 - Em dashes (—) for pivots and before key numbers. These create natural breath points.
 - Ellipses (...) for deliberation.
-- Use paragraph breaks between stories — the TTS reads these as natural pauses.
+- A BLANK LINE between stories. The TTS reads it as a real pause, and it is \
+what marks the hand-off from one host to the other.
 - Short sentences carry the most weight. "That changed Tuesday." "The math doesn't work."
 - Contractions fine. Fragments for emphasis. Professional broadcast cadence.
 - Names, numbers, places, dates always. Attribute facts to institutions and officials — \
@@ -496,11 +543,12 @@ NEVER use: "This isn't just...", "Here's the thing...", "The bigger picture...",
 OUTPUT FORMAT — PLAIN TEXT, exactly this shape (no JSON, no markdown fences):
 
 Line 1: the TL;DR headline (6-10 words, no label, no quotes).
-Then a blank line, then the TL;DR body: 24-30 sentences, ONE sentence per \
-line (a real line break after every sentence — never one flowing paragraph).
+Then a blank line, then the TL;DR body: 24-30 sentences grouped into 6-12 \
+paragraphs, ONE STORY PER PARAGRAPH, paragraphs separated by a blank line.
 Then a line containing exactly:
 ===AUDIO SCRIPT===
-Then the full broadcast dialogue script (A:/B: speaker lines).\
+Then the full broadcast dialogue script (A:/B: speaker lines, with a BLANK \
+LINE between stories).\
 """
 
 # ---------------------------------------------------------------------------
@@ -530,12 +578,31 @@ def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
     report: dict = {"edition": edition, "warnings": [], "failures": [], "metrics": {}}
 
     tldr = result.get("tldr_text", "")
-    lines = [l.strip() for l in tldr.split("\n") if l.strip()]
+    # One story per paragraph, blank-line separated (2026-09-03). Sentences and
+    # paragraphs are now distinct measures: before the paragraph contract the
+    # body was one sentence per line, so a line count doubled as a sentence
+    # count. It no longer does -- a line is a whole story.
+    paragraphs = [p.strip() for p in re.split(r"\n\s*\n", tldr) if p.strip()]
+    sentences = [
+        s for p in paragraphs for s in _SENT_SPLIT_RE.split(p) if s and s.strip()
+    ]
     words = len(tldr.split())
-    report["metrics"]["tldr_lines"] = len(lines)
+    report["metrics"]["tldr_paragraphs"] = len(paragraphs)
+    report["metrics"]["tldr_sentences"] = len(sentences)
     report["metrics"]["tldr_words"] = words
-    if len(lines) < 15 or len(lines) > 36:
-        msg = f"TL;DR has {len(lines)} lines (expected 24-30)"
+    if len(sentences) < 15 or len(sentences) > 36:
+        msg = f"TL;DR has {len(sentences)} sentences (expected 24-30)"
+        report["warnings"].append(msg)
+        print(f"  [quality][brief:{edition}] {msg}")
+    if len(paragraphs) < 2:
+        # The model ignored the paragraph contract and returned one block.
+        # _ensure_paragraph_structure will have regrouped it on fixed size,
+        # which loses the real story boundaries -- ask for it again.
+        msg = "TL;DR has no paragraph breaks (expected one story per paragraph)"
+        report["warnings"].append(msg)
+        print(f"  [quality][brief:{edition}] {msg}")
+    elif len(paragraphs) < 6 or len(paragraphs) > 12:
+        msg = f"TL;DR has {len(paragraphs)} paragraphs (expected 6-12)"
         report["warnings"].append(msg)
         print(f"  [quality][brief:{edition}] {msg}")
     if words < 360 or words > 840:
@@ -593,13 +660,13 @@ def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
     script_words = len(script.split()) if script.strip() else 0
     report["metrics"]["script_words"] = script_words
     if script.strip():
-        if script_words < 700:
-            msg = f"Audio script too short: {script_words} words (minimum 700)"
+        if script_words < 800:
+            msg = f"Audio script too short: {script_words} words (minimum 800)"
             report["failures"].append(msg)
             found.append(f"short_script({script_words}w)")
             print(f"  [quality][brief:{edition}] {msg}")
-        elif script_words > 1200:
-            msg = f"Audio script too long: {script_words} words (expected 800-1200)"
+        elif script_words > 1350:
+            msg = f"Audio script too long: {script_words} words (expected 950-1150)"
             report["warnings"].append(msg)
             print(f"  [quality][brief:{edition}] {msg}")
 
@@ -644,11 +711,27 @@ def _check_quality(result: dict, edition: str) -> tuple[bool, dict]:
             else:
                 current_speaker = speaker
                 current_consecutive = 1
-        if max_consecutive > 5:
-            msg = f"Monologue detected: {max_consecutive} consecutive lines by same speaker (max 5)"
+        # Threshold raised 5 -> 7 (2026-09-03): a host now holds a whole story
+        # for 3-5 lines by design, plus one interjection, so 5 consecutive
+        # lines is the normal shape rather than a monologue.
+        if max_consecutive > 7:
+            msg = f"Monologue detected: {max_consecutive} consecutive lines by same speaker (max 7)"
             report["warnings"].append(msg)
             print(f"  [quality][brief:{edition}] {msg}")
     report["metrics"]["monologue_max"] = max_consecutive
+
+    # Story-boundary structure: blank lines separate stories and mark the
+    # host hand-off. audio_producer._script_to_dialogue carries them through
+    # to the synthesizer, which uses them to place the longer pause.
+    story_breaks = len([b for b in re.split(r"\n\s*\n", script) if b.strip()]) - 1
+    report["metrics"]["script_story_breaks"] = max(story_breaks, 0)
+    if script.strip() and story_breaks < 5:
+        msg = (
+            f"Script has {max(story_breaks, 0)} story breaks (expected 5+ blank-line "
+            "separated stories)"
+        )
+        report["warnings"].append(msg)
+        print(f"  [quality][brief:{edition}] {msg}")
 
     # Banned filler scan — standalone lines only (filler as prefix to substance is OK)
     _BANNED_FILLER = [
@@ -1664,11 +1747,15 @@ def _build_retry_suffix(quality_report: dict | None) -> str:
         "sees the connection."
     )
     # And the output shape (the 2026-07-04 retry collapsed the body to one
-    # paragraph): repeat the plain-text three-section contract.
+    # paragraph): repeat the plain-text three-section contract. This used to
+    # say "16-20 separate lines, ONE sentence per line", contradicting the main
+    # prompt's 24-30 and predating the paragraph contract entirely.
     parts.append(
         "- OUTPUT SHAPE (plain text, no JSON): line 1 = headline; blank line; "
-        "TL;DR body as 16-20 separate lines, ONE sentence per line; then a line "
-        "reading exactly ===AUDIO SCRIPT===; then the A:/B: dialogue script."
+        "TL;DR body as 24-30 sentences grouped into 6-12 paragraphs, ONE STORY "
+        "PER PARAGRAPH, paragraphs separated by a BLANK LINE; then a line "
+        "reading exactly ===AUDIO SCRIPT===; then the A:/B: dialogue script "
+        "with a BLANK LINE between stories."
     )
     return "\n".join(parts)
 
@@ -1826,7 +1913,7 @@ def generate_daily_briefs(
                         # Enforce line-per-sentence structure before the
                         # quality gate AND storage: a flowing paragraph
                         # shipped as "1 lines" on 2026-07-04.
-                        "tldr_text": _ensure_sentence_lines(_sections["body"]),
+                        "tldr_text": _ensure_paragraph_structure(_sections["body"]),
                         "audio_script": _sections["audio"],
                     }
                 if raw and isinstance(raw, dict):

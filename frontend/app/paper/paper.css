@@ -543,6 +543,12 @@ html:has(.np-root) body { background: transparent; }
   -webkit-hyphens: auto;
 }
 
+/* One story per paragraph. Broadsheet convention: indent, don't space. */
+.np-brief__text p + p {
+  margin-top: 0.25rem;
+  text-indent: 1em;
+}
+
 /* ==========================================================================
    FILLER ITEMS
    ========================================================================== */
