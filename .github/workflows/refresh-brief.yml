@@ -1,5 +1,20 @@
 name: "Refresh: Daily Brief"
-permissions: {}
+
+# Regenerates ONLY the daily brief (TL;DR + opinion + audio) against the state
+# DB the last pipeline run left behind, then re-emits the static JSON and
+# commits it so Cloudflare redeploys. Use it to ship a brief change without
+# waiting for the 11:00 UTC pipeline.
+#
+# NOTE: it does NOT fetch new articles. The brief is regenerated from the
+# clusters the most recent pipeline run produced, so re-running it the same day
+# gives you the same stories in whatever the current prompt/format is.
+#
+# Migrated to the SQLite/Cloudflare stack 2026-09-04 (was still pointed at the
+# decommissioned Supabase, which made it a no-op).
+
+permissions:
+  contents: write
+  actions: read
 
 on:
   workflow_dispatch:
@@ -31,10 +46,38 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - name: Install dependencies
         run: pip install -r pipeline/requirements.txt
+      # ── Pipeline state DB (SQLite) — same restore path as pipeline.yml ──
+      - name: Restore pipeline state DB
+        id: state
+        uses: actions/cache/restore@v4
+        with:
+          path: pipeline_state.db
+          key: void-state-v1-${{ github.run_id }}
+          restore-keys: |
+            void-state-v1-
+      - name: Bootstrap state DB from the latest run snapshot (cold cache)
+        if: hashFiles('pipeline_state.db') == ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          for rid in $(gh run list --workflow=pipeline.yml --status success -L 12 \
+                         --json databaseId --jq '.[].databaseId'); do
+            if gh run download "$rid" -n void-state-snapshot --dir _snap 2>/dev/null; then
+              gunzip -c _snap/pipeline_state.db.gz > pipeline_state.db
+              rm -rf _snap
+              echo "Restored state snapshot from pipeline run $rid"
+              break
+            fi
+          done
+          if [ ! -f pipeline_state.db ]; then
+            echo "::error::No pipeline state DB available (no cache, no snapshot artifact)."
+            exit 1
+          fi
+
       - name: Refresh Daily Brief
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          VOID_SQLITE_PATH: pipeline_state.db
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           # $0 posture: Gemini Flash handles the brief (Groq retired 2026-06-24).
@@ -59,3 +102,26 @@ jobs:
               python pipeline/refresh_brief.py --opinion-only
               ;;
           esac
+
+      - name: Re-emit static JSON
+        env:
+          VOID_SQLITE_PATH: pipeline_state.db
+        run: python pipeline/export_static.py
+
+      - name: Commit refreshed brief
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add frontend/public/data frontend/public/audio
+          if git diff --staged --quiet; then
+            echo "No brief changes to commit."
+            exit 0
+          fi
+          git commit -m "Refresh: daily brief ($(date -u +%F))"
+          git checkout -- . || true
+          for i in 1 2 3 4 5; do
+            git fetch origin main && git rebase origin/main && \
+              git push origin HEAD:main && break
+            echo "push attempt $i failed; retrying"; sleep $((2**i))
+          done

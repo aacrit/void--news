@@ -1226,7 +1226,15 @@ def produce_audio(
     print(f"  [audio] Assembled {duration_seconds}s total for {edition}")
 
     # 6. Export to MP3 — 96kbps mono, fallback to 64kbps if file too large
-    _MAX_FILE_SIZE = 8 * 1024 * 1024  # 8MB Supabase limit
+    # Cap rationale (2026-09-04): this was 8 MB and labelled "Supabase limit".
+    # Audio has gone to Pages static since 188caa3, so that number tracked
+    # nothing. Cloudflare Pages allows 25 MiB/file; the real cost is git
+    # history, since every run commits the MP3. 12 MB keeps a runaway script
+    # bounded while clearing a normal show with room to spare: the 2026-09-03
+    # brief was 6.1 MB at 807 news words, and the 950-1150 word target
+    # projects to ~7.2 MB, which would have sat at 90% of the old cap and
+    # silently dropped the Opinion segment on any longer-than-usual day.
+    _MAX_FILE_SIZE = 12 * 1024 * 1024
 
     def _export_mp3(segment: "AudioSegment", bitrate: str = "96k") -> Optional[bytes]:
         with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as tmp:
@@ -1280,7 +1288,7 @@ def produce_audio(
     if not audio_bytes:
         return None
 
-    print(f"  [audio] Exported {file_size / 1024:.1f} KB MP3 — uploading to Supabase")
+    print(f"  [audio] Exported {file_size / 1024:.1f} KB MP3 — publishing")
 
     public_url = _upload_to_supabase(audio_bytes, edition)
     if not public_url:
