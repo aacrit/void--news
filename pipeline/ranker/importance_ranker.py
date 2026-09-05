@@ -1,5 +1,5 @@
 """
-Importance/impact ranker v5.1 for the void --news pipeline.
+Importance/impact ranker v6.0 for the void --news pipeline.
 
 Scores story clusters by importance for feed ordering on the homepage.
 Higher scores appear first in the news feed.
@@ -49,6 +49,35 @@ v4.0 calibration changes (2026-03-20):
     - Perspective diversity: 10% → 6% (partially redundant with tier diversity)
     - Recency + velocity merged into maturity (14% + 9% → 16%)
     - Confidence multiplier: unchanged (0.65 + 0.35 * conf)
+
+v5.5 calibration changes (2026-03-31):
+    - ADD: kidnapping/hostage/seizure consequentiality terms (15 new terms).
+      Benchmark found "American Journalist Kidnapped" scoring 0 consequentiality.
+    - FIX: Confidence floor 0.85 for 15+ source clusters. Brief wire articles
+      in large clusters dragged p25 confidence down, penalizing major stories.
+    - FIX: Cross-spectrum bonus threshold relaxed from 35/65 to 38/62.
+      35-source Iran cluster missed bonus with min_lean=36 (1 point above cutoff).
+    - FIX: Tier concentration penalty exempts clusters with all 3 tiers
+      represented. 89% international on global stories is natural, not inflation.
+
+v5.6 calibration changes (2026-04-01):
+    - FIX: Confidence floor quality gate — requires factual_rigor > 40.
+      Without this, tabloid clusters at 16+ sources got unintended boost.
+
+v6.0 ranking engine audit (2026-04-05):
+    - REMOVE: Thin cluster gate (v5.9 Gate 1b). The 0.08-0.35x multipliers
+      solved an edition-layer problem in the base scorer, burying 2-4 source
+      breaking stories. Lead gates in the edition ranker handle this.
+    - MERGE: lean_diversity (3%) absorbed into perspective_diversity (6%→9%).
+      Reduces redundant lean-spread signals from 4 to 3. Weights still sum 1.0.
+    - PURIFY: Divergence signal no longer includes lean-range component (was 20%
+      of divergence). Now pure framing (62.5%) + sensationalism (37.5%).
+      Combined lean-spread influence: ~18% → ~12%.
+    - ADD: Consequentiality floor for high-authority stories. When institutional
+      authority >= 80 and consequentiality < 5, floor set to 30. Fixes "Fed holds
+      rates steady" scoring zero consequentiality + getting 0.82x gate penalty.
+    - EXTRACT: Edition ranking (v5.7/v5.8) into shared edition_ranker.py.
+      Eliminates parameter drift between main.py and rerank.py.
 
 v3.1 optimizations (retained):
     - Source map built once, shared across all sub-functions
@@ -165,6 +194,20 @@ _CONSEQUENTIALITY_TERMS: list[str] = [
     "struck", "strikes", "devastated", "devastates",
     "erupted", "erupts", "declared emergency", "declares emergency",
     "state of emergency",
+    # Protests/civil unrest — missing from original lexicon; a 24-source
+    # nationwide protest cluster scored 0 consequentiality without these.
+    # Carefully scoped to action verbs — excludes "protest" as noun-only
+    # (the verb forms and past tenses cover actual events).
+    "protests", "protested", "protest",
+    "rally", "rallied", "rallies",
+    # NB: bare "march" deliberately omitted — collides with month name
+    # "March" on time-anchored stories ("killed since March", "elections
+    # in March"). Use "marched" / "marches" (verb forms) only.
+    "marched", "marches",
+    "demonstration", "demonstrations",
+    "shutdown", "shut down",
+    "riot", "rioted", "riots",
+    "uprising", "uprisings",
     # Agreements/diplomacy
     "ceasefire", "peace deal", "trade deal", "agreement reached",
     "treaty signed", "broke off", "severed ties", "severs ties",
@@ -173,6 +216,14 @@ _CONSEQUENTIALITY_TERMS: list[str] = [
     "suspends", "suspended", "freezes", "froze",
     "launches", "launched", "declares", "declared",
     "indicted", "indicts",
+    # v5.5: kidnapping/hostage + seizure verbs (ranker benchmark finding:
+    # "American Journalist Kidnapped in Baghdad" scored 0 consequentiality)
+    "kidnapped", "kidnaps", "kidnapping",
+    "abducted", "abducts", "abduction",
+    "hostage", "taken hostage", "held hostage",
+    "seized", "seizes", "seizure",
+    "confiscated", "confiscates",
+    "nationalized", "nationalizes",
 ]
 
 # Pre-compile regex with word boundaries to prevent false matches
@@ -236,6 +287,230 @@ _HIGH_AUTHORITY_EO_PATTERN: re.Pattern = re.compile(
 )
 
 # ---------------------------------------------------------------------------
+# Breaking mass-casualty disaster signal (v6.5, 2026-08-10 disaster-weight)
+#
+# Deterministic, $0. With the LLM editorial_importance boost removed from
+# ranking (2026-08-10 deterministic-ranking), a deadly 31-source typhoon fell
+# to about #12 below a 33-source human-interest story purely on source breadth.
+# A mass-casualty breaking disaster deserves more weight on DETERMINISTIC
+# grounds than raw coverage math grants it while the story is still gaining
+# sources.
+#
+# This is a BOUNDED, CLAMPED multiplicative lift on headline_rank (max +
+# DISASTER_MAX_LIFT), applied in the same spirit as the other headline_rank
+# signals. It NEVER lets a single keyword hijack a non-disaster story: the lift
+# only fires when a disaster/hazard NOUN co-occurs with a casualty CUE inside
+# ONE article, or when a genuine mass-casualty death-toll NUMBER (>= the
+# standalone floor) is bound to a fatal word. So "killer deal", "dead heat", a
+# metaphorical "political earthquake" with no casualties, or a routine policy
+# headline all score zero and get no lift.
+# ---------------------------------------------------------------------------
+
+# Disaster / hazard nouns. Their presence + any casualty cue in the SAME
+# article marks a deadly breaking event. Ambiguous-but-common nouns
+# (explosion, blast, flood) are safe here because the casualty-cue co-occurrence
+# requirement gates them: "population explosion" / "flood of migrants" carry no
+# death cue and never trigger on their own.
+_DISASTER_NOUNS: list[str] = [
+    "earthquake", "quake", "aftershock", "tremor",
+    "typhoon", "hurricane", "cyclone", "tornado", "twister",
+    "tsunami", "wildfire", "wildfires", "bushfire", "bushfires",
+    "landslide", "mudslide", "rockslide", "avalanche",
+    "volcano", "volcanic", "eruption",
+    "flood", "floods", "flooding", "floodwaters", "deluge", "inundation",
+    "monsoon", "superstorm", "storm surge", "blizzard",
+    "famine", "drought", "heatwave", "heat wave",
+    "stampede", "derailment", "capsized", "capsize", "shipwreck",
+    "plane crash", "air crash", "ferry sank", "ferry capsized",
+    "building collapse", "bridge collapse", "mine collapse",
+    "explosion", "blast", "gas leak",
+]
+
+# Casualty cues: words that signal death, injury, or mass displacement.
+# "killer" is deliberately EXCLUDED (metaphor: "killer deal"). Bare "dead" is
+# included but only ever triggers alongside a disaster noun (co-occurrence),
+# so "dead heat" / "dead end" cannot fire on their own.
+_CASUALTY_WORDS: list[str] = [
+    "killed", "kills", "dead", "deaths", "death toll", "died", "dies",
+    "fatalities", "fatal", "casualties", "perished", "feared dead",
+    "mass casualty", "mass casualties",
+    "injured", "wounded", "missing", "trapped", "displaced",
+]
+
+_DISASTER_NOUN_PATTERN: re.Pattern = re.compile(
+    r"|".join(
+        rf"\b{re.escape(t)}\b" if " " not in t else re.escape(t)
+        for t in _DISASTER_NOUNS
+    ),
+    re.IGNORECASE,
+)
+
+_CASUALTY_WORD_PATTERN: re.Pattern = re.compile(
+    r"|".join(
+        rf"\b{re.escape(t)}\b" if " " not in t else re.escape(t)
+        for t in _CASUALTY_WORDS
+    ),
+    re.IGNORECASE,
+)
+
+# Death-toll number patterns: each binds a NUMBER to a fatal word so a bare
+# integer ("Group of 20", "111th Congress") can never be read as a toll.
+_DEATH_TOLL_PATTERNS: list[re.Pattern] = [
+    re.compile(
+        r"\bkill(?:s|ed)?\s+(?:at\s+least\s+|more\s+than\s+|nearly\s+|over\s+"
+        r"|up\s+to\s+|some\s+|around\s+|about\s+)?(\d[\d,]{0,6})",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"\b(\d[\d,]{0,6})\s+(?:people\s+|persons\s+|villagers\s+|residents\s+"
+        r"|worshippers\s+|passengers\s+|migrants\s+|children\s+)?"
+        r"(?:killed|dead|died|feared\s+dead|confirmed\s+dead)\b",
+        re.IGNORECASE,
+    ),
+    re.compile(r"death\s+toll[^.\d]{0,25}(\d[\d,]{0,6})", re.IGNORECASE),
+    re.compile(r"\bleav\w*\s+(?:at\s+least\s+)?(\d[\d,]{0,6})\s+dead\b", re.IGNORECASE),
+    re.compile(
+        r"\bclaim\w*\s+(?:the\s+lives\s+of\s+|at\s+least\s+)?(\d[\d,]{0,6})\s+"
+        r"(?:lives|dead|people)\b",
+        re.IGNORECASE,
+    ),
+]
+
+_INJURY_COUNT_PATTERNS: list[re.Pattern] = [
+    re.compile(
+        r"\b(\d[\d,]{0,6})\s+(?:injured|wounded|hurt|hospitali[sz]ed"
+        r"|missing|displaced|trapped)\b",
+        re.IGNORECASE,
+    ),
+    re.compile(
+        r"\b(?:injur|wound)\w*\s+(?:at\s+least\s+|more\s+than\s+|over\s+"
+        r"|nearly\s+)?(\d[\d,]{0,6})",
+        re.IGNORECASE,
+    ),
+]
+
+# Tuning constants.
+DISASTER_MAX_LIFT = 0.13            # cap: a maxed disaster signal lifts headline_rank +13%
+DISASTER_STANDALONE_TOLL_MIN = 10  # min death toll to fire WITHOUT a named disaster noun
+# Corroboration: an over-merged bag can carry ONE stray disaster article (a
+# 62-member Michigan-primary cluster held a lone "wildfire pilots dead" wire
+# item). Require the cluster's CANONICAL TITLE to itself read as a disaster, OR
+# a real share of members to corroborate, so one off-topic member cannot hijack
+# a non-disaster cluster.
+DISASTER_MIN_CORROBORATING = 3     # members that must fire when the title itself doesn't
+DISASTER_MIN_FRACTION = 0.34       # ...and this share of members must fire
+
+
+def _parse_count(raw: str) -> int:
+    try:
+        return int(raw.replace(",", ""))
+    except (ValueError, AttributeError):
+        return 0
+
+
+def _score_disaster_text(text: str) -> tuple[float, dict]:
+    """Severity 0-100 for a single article's title+summary text.
+
+    Fires only on a disaster-noun + casualty-cue co-occurrence, or a
+    mass-casualty death toll bound to a fatal word. Returns (0.0, {}) otherwise.
+    """
+    if not text:
+        return 0.0, {}
+
+    has_noun = bool(_DISASTER_NOUN_PATTERN.search(text))
+    has_casualty = bool(_CASUALTY_WORD_PATTERN.search(text))
+
+    toll = 0
+    for pat in _DEATH_TOLL_PATTERNS:
+        for m in pat.findall(text):
+            toll = max(toll, _parse_count(m))
+    injuries = 0
+    for pat in _INJURY_COUNT_PATTERNS:
+        for m in pat.findall(text):
+            injuries = max(injuries, _parse_count(m))
+
+    # Trigger: a named hazard reported with casualties, OR a genuine
+    # mass-casualty toll even without a named natural-disaster noun (bombing,
+    # stampede, crash). Conservative on false positives; a lone disaster noun
+    # (metaphor) or a lone casualty word never fires.
+    triggered = (has_noun and has_casualty) or (toll >= DISASTER_STANDALONE_TOLL_MIN)
+    if not triggered:
+        return 0.0, {}
+
+    sev = 40.0
+    if has_noun:
+        sev += 15.0
+    if toll > 0:
+        sev += min(45.0, 15.0 * math.log10(toll + 1))
+    elif injuries > 0:
+        sev += min(20.0, 8.0 * math.log10(injuries + 1))
+
+    sev = max(0.0, min(100.0, sev))
+    return sev, {
+        "has_noun": has_noun,
+        "has_casualty": has_casualty,
+        "death_toll": toll,
+        "injuries": injuries,
+        "severity": round(sev, 1),
+    }
+
+
+def _breaking_disaster_score(
+    cluster_articles: list[dict],
+    canonical_title: str = "",
+) -> tuple[float, dict]:
+    """Deadly-disaster severity (0-100) for a cluster, robust to over-merge.
+
+    Each article's title+summary is scored INDEPENDENTLY (a hazard noun and a
+    casualty cue must co-occur within one article, never paired across two).
+    The cluster earns the boost only when corroborated:
+      (A) the cluster's CANONICAL TITLE itself reads as a disaster, OR
+      (B) at least DISASTER_MIN_CORROBORATING members fire AND they are at
+          least DISASTER_MIN_FRACTION of the cluster.
+    This blocks the over-merge hijack: one stray disaster wire item inside a
+    62-member primary bag (1/62 ~ 2%) fails (B), and (A) is false for a
+    primary headline. Returns (severity, meta_of_strongest_firing_article).
+    Severity 0.0 means "no boost".
+    """
+    title_sev, title_meta = _score_disaster_text(canonical_title or "")
+
+    best = title_sev
+    best_meta = title_meta
+    fires = 0
+    scanned = 0
+    for article in cluster_articles[:20]:
+        scanned += 1
+        title = (article.get("title", "") or "")
+        summary = (article.get("summary", "") or "")
+        sev, meta = _score_disaster_text(f"{title}. {summary}")
+        if sev > 0.0:
+            fires += 1
+        if sev > best:
+            best, best_meta = sev, meta
+
+    title_fires = title_sev > 0.0
+    corroborated = (
+        fires >= DISASTER_MIN_CORROBORATING
+        and scanned > 0
+        and (fires / scanned) >= DISASTER_MIN_FRACTION
+    )
+    if not (title_fires or corroborated):
+        return 0.0, {}
+    return best, best_meta
+
+
+def _breaking_disaster_multiplier(
+    cluster_articles: list[dict],
+    canonical_title: str = "",
+) -> tuple[float, float, dict]:
+    """Bounded multiplicative lift for headline_rank. Returns
+    (multiplier in [1.0, 1.0+DISASTER_MAX_LIFT], severity, meta)."""
+    sev, meta = _breaking_disaster_score(cluster_articles, canonical_title)
+    mult = 1.0 + DISASTER_MAX_LIFT * (sev / 100.0)
+    return mult, sev, meta
+
+
+# ---------------------------------------------------------------------------
 # Institutional authority lexicon (v4.0) — detects WHO is involved.
 # Tier 1 (score 80-100): heads of state, supreme courts, central banks,
 #     UN Security Council, constitutional bodies.
@@ -256,6 +531,14 @@ _AUTHORITY_TIER1: list[str] = [
     # UN top-level bodies
     "un security council", "united nations security council",
     "un general assembly", "international court of justice",
+    # Global health authority: WHO PHEIC declarations are tier-1 institutional
+    # events. Only 7 PHEIC declarations have ever been made (H1N1 2009, polio
+    # 2014, Ebola 2014, Zika 2016, Ebola 2019, COVID 2020, Mpox 2022/2024).
+    # Today's DRC Ebola declaration would rank #3 instead of #2 without this.
+    "world health organization",
+    "director-general of the who", "director general of the who",
+    "who declares", "who declared",
+    "public health emergency of international concern", "pheic",
     # Constitutional / sovereignty events
     "constitution", "constitutional amendment", "impeachment",
     "declaration of independence", "sovereignty",
@@ -283,6 +566,19 @@ _AUTHORITY_TIER2: list[str] = [
     "senate voted", "house voted", "congress passed",
     "parliament voted", "parliament passed",
     "bundestag", "lok sabha", "rajya sabha", "diet voted",
+    # NGOs with primary-source authority (NewsGuard explicitly cites these
+    # as high-credibility institutional sources). Pre-2026-05-20, NGO
+    # reports scored zero on authority — Amnesty's "global executions"
+    # annual report ranked behind tier-2 stories despite multi-country
+    # G20-weighted scope. Recurring blindspot, 30-50 reports/year.
+    "amnesty international",
+    "human rights watch",
+    "doctors without borders", "médecins sans frontières", "msf ",
+    "international committee of the red cross", "icrc ",
+    "international crisis group",
+    "reporters without borders", "rsf ",
+    "transparency international",
+    "human rights council", "unhcr ", "ohchr ",
 ]
 
 _AUTHORITY_TIER1_PATTERN: re.Pattern = re.compile(
@@ -303,6 +599,25 @@ _SOFT_NEWS_CATEGORIES: frozenset[str] = frozenset({
     "celebrity", "music", "film", "television", "gaming",
     "food", "travel", "fashion", "arts",
 })
+
+
+def _voice_id(article: dict) -> str:
+    """Voice-collapsed identity for cluster math.
+
+    Wire copies fold to their origin publisher so that 10 AP republications
+    of one story count as a single voice. Falls back to source_id when the
+    wire fields are absent (backward-compat: older clusters fetched before
+    migration 055 won't carry is_wire_copy / wire_origin_publisher_id).
+
+    Mirrors the helper at story_cluster.py:1670 so the ranker's coverage
+    math matches the cluster's display source_count.
+    """
+    if article.get("is_wire_copy"):
+        return (
+            article.get("wire_origin_publisher_id")
+            or article.get("source_id", "")
+        )
+    return article.get("source_id", "")
 
 
 def _build_source_map(sources: list[dict]) -> dict[str, dict]:
@@ -342,9 +657,53 @@ def _parse_timestamps(cluster_articles: list[dict]) -> list[datetime]:
     return timestamps
 
 
+_US_TOKENS = frozenset({
+    "us", "u.s.", "u.s.a.", "usa", "united states", "america", "american",
+    "washington", "washington d.c.", "d.c.",
+})
+
+
+# O9 (2026-06-28): cluster topic-coherence for the source-count discount.
+# Fraction of member titles sharing a content keyword with the cluster headline.
+# On production data this cleanly separates genuine big stories (>0.8) from
+# over-merged bags (<0.25); the graduated discount barely touches the former.
+_COH_STOPWORDS = frozenset(
+    "the a an of in on at to for and or but with from by as is are was were be "
+    "been this that those it its their his her our your we they you he she them "
+    "us over under after before during into out up down off about above below "
+    "between through against amid new news say says said will would could should "
+    "may might can has have had do does did not no nor so than then here there "
+    "what which who when where why how all any both each more most other some "
+    "such only own same too very just also back even still way get got make made "
+    "latest live update day days week year years world cup".split()
+)
+
+
+def _coherence_keywords(text: str) -> set[str]:
+    return {
+        w for w in re.findall(r"[a-z][a-z']{3,}", (text or "").lower())
+        if w not in _COH_STOPWORDS
+    }
+
+
+def _coherence_factor(title: str, cluster_articles: list[dict]) -> float:
+    """Fraction of member titles sharing a content keyword with the cluster
+    headline. Returns 1.0 (no discount) when too little to assess."""
+    kw = _coherence_keywords(title)
+    if not kw or not cluster_articles:
+        return 1.0
+    on = sum(
+        1 for a in cluster_articles
+        if kw & _coherence_keywords(a.get("title", "") or "")
+    )
+    return on / len(cluster_articles)
+
+
 def _source_coverage_score(
     cluster_articles: list[dict],
     source_map: dict[str, dict],
+    cluster_countries: set[str] | None = None,
+    coherence: float = 1.0,
 ) -> float:
     """
     Score based on number of unique sources with diminishing returns.
@@ -352,6 +711,13 @@ def _source_coverage_score(
     international 1.2x, us_major 1.0x. This reduces inflation from
     wire service roundups (10 AP republications ≠ 10 independent reports).
     Going from 1→5 sources matters more than 15→20.
+    v6.1 (2026-05-14): US-wire pile-on penalty. When >70% of unique
+    sources are US-based AND fewer than 2 distinct non-US countries
+    appear in article-level NER, apply 0.80x. Targets domestic US
+    procedural stories (SC redistricting, NYC budget) that accumulate
+    25+ US sources but have zero global relevance for world-edition
+    readers. Genuinely global US-origin stories (Fed chair, US strikes
+    on Iran) carry foreign country mentions and escape the penalty.
     Returns 0-100.
     """
     if not cluster_articles:
@@ -362,29 +728,70 @@ def _source_coverage_score(
 
     seen_sources: set[str] = set()
     tier_counts: dict[str, int] = {}
+    country_counts: dict[str, int] = {}
     weighted_count = 0.0
     for a in cluster_articles:
-        sid = a.get("source_id", "")
+        # Voice-collapse wire syndicates: 10 AP republications = 1 voice,
+        # not 10. Without this the ranker over-counts wire-heavy stories
+        # (Ukraine drone strike, Iran ceasefire, Meta layoffs).
+        sid = _voice_id(a)
         if sid and sid not in seen_sources:
             seen_sources.add(sid)
             src = source_map.get(sid, {})
             tier = src.get("tier", "us_major")
+            country = (src.get("country") or "").upper()
             weighted_count += tier_weights.get(tier, 1.0)
             tier_counts[tier] = tier_counts.get(tier, 0) + 1
+            if country:
+                country_counts[country] = country_counts.get(country, 0) + 1
 
     raw_count = len(seen_sources)
 
-    # v5.1: Tier concentration penalty — when >70% of sources are from
-    # the same tier, the coverage is likely wire roundup inflation
-    # (9 us_major outlets all running the same AP story).
-    # Apply 0.85x to weighted count to deflate the score.
+    # v5.5: Tier concentration penalty — fire only when coverage is
+    # genuinely single-tier dominated. Exempt clusters with 3 tiers
+    # (all tiers represented = genuine cross-tier coverage, even if
+    # one tier dominates by count). Benchmark finding: 89% international
+    # on a 35-source geopolitical story is natural, not inflation.
     if raw_count >= 4:
         max_tier_pct = max(tier_counts.values()) / raw_count if tier_counts else 0
-        if max_tier_pct > 0.70:
+        num_tiers = len(tier_counts)
+        if max_tier_pct > 0.70 and num_tiers < 3:
             weighted_count *= 0.85
 
-    # Diminishing returns: 100 * (1 - e^(-weighted_count/5))
-    return 100.0 * (1.0 - math.exp(-weighted_count / 5.0))
+    # v6.2 (2026-05-15): US-wire pile-on penalty, two-tier severity.
+    # The original 0.80× penalty (v6.1) wasn't enough to expel Mamdani-class
+    # stories — 14 US sources × 0.80 still beat 7-source genuine global news.
+    # The 2026-05-15 audit recommended ratcheting to 0.60× when the cluster
+    # is *entirely* US sources AND carries *zero* foreign GPE mentions; keep
+    # 0.80× for the partial case (>70% US OR a single foreign mention).
+    if raw_count >= 6 and country_counts.get("US", 0) / raw_count > 0.70:
+        foreign_mentions = 0
+        if cluster_countries:
+            for c in cluster_countries:
+                c_norm = c.lower().strip()
+                if c_norm and c_norm not in _US_TOKENS:
+                    foreign_mentions += 1
+        if foreign_mentions == 0 and country_counts.get("US", 0) == raw_count:
+            # Pure US-domestic insular story: harder penalty.
+            weighted_count *= 0.60
+        elif foreign_mentions < 2:
+            # Partial US-dominant: keep the v6.1 tone.
+            weighted_count *= 0.80
+
+    # O9: discount the effective source count by topic coherence so an
+    # over-merged bag (many unrelated articles) cannot buy coverage credit it
+    # has not earned. Graduated and self-targeting: coherence ~1.0 (a genuine
+    # big story) leaves weighted_count essentially unchanged; coherence ~0.2 (a
+    # garbage bag) halves it. Clusters already flagged mega_capped pass
+    # coherence=1.0 here (the caller skips the discount — they take the 0.65x
+    # mega penalty instead, no double-count).
+    weighted_count *= 0.5 + 0.5 * max(0.0, min(1.0, coherence))
+
+    # Diminishing returns with extended dynamic range: 100 * (1 - e^(-x/10))
+    # Old curve (/5) flattened at 15 sources — a 40-source story scored only
+    # 1 point more than a 15-source story. New curve (/10) preserves separation:
+    #   5 src → 39.3,  10 → 63.2,  15 → 77.7,  20 → 86.5,  40 → 98.2
+    return 100.0 * (1.0 - math.exp(-weighted_count / 10.0))
 
 
 def _perspective_diversity_score(
@@ -420,7 +827,7 @@ def _perspective_diversity_score(
     # Fall back to source baselines
     if not lean_values:
         for article in cluster_articles:
-            sid = article.get("source_id", "")
+            sid = _voice_id(article)
             src = source_map.get(sid, {})
             baseline = str(src.get("political_lean_baseline", "center")).lower()
             lean_values.append(float(LEAN_NUMERIC.get(baseline, 50)))
@@ -487,8 +894,10 @@ def _divergence_score(
     framing_score = min(100.0, (_stddev(framing_values) / 25.0) * 100.0) if len(framing_values) >= 2 else 0.0
     sens_score = min(100.0, (_stddev(sens_values) / 20.0) * 100.0) if len(sens_values) >= 2 else 0.0
 
-    # Framing-heavy weighting to reduce overlap with spectrum signal
-    return range_score * 0.20 + framing_score * 0.50 + sens_score * 0.30
+    # v6.0: Pure framing + sensationalism divergence. Lean-range component
+    # removed — lean spread is fully captured by perspective_diversity (9%).
+    # Renormalized: framing 62.5% + sensationalism 37.5%.
+    return framing_score * 0.625 + sens_score * 0.375
 
 
 def _recency_score(
@@ -543,12 +952,13 @@ def _story_maturity_score(
     """
     recency = _recency_score(timestamps, source_count)
 
-    # Cap source count to prevent wire roundup inflation
-    effective_sources = min(source_count, 20)
+    # v6.0: Cap raised from 20 to 40. A 60-source story should get more
+    # depth credit than a 20-source story. log2 diminishing returns still
+    # prevent runaway: 20src=4.39, 30src=4.95, 40src=5.36 (vs max 5.36).
+    effective_sources = min(source_count, 40)
 
     # Depth multiplier: log curve with diminishing returns
-    # log2(1+1)=1.0, log2(1+3)=2.0, log2(1+7)=3.0, log2(1+15)=4.0
-    max_depth = math.log2(1 + 15)  # ≈ 4.0
+    max_depth = math.log2(1 + 40)  # ≈ 5.36
     depth_mult = math.log2(1 + effective_sources) / max_depth
 
     # Combined: recency weighted by depth
@@ -571,14 +981,21 @@ def _factual_density_score(
     return sum(rigor_values) / len(rigor_values)
 
 
-def _geographic_impact_score(cluster_articles: list[dict]) -> float:
+def _geographic_impact_score(
+    cluster_articles: list[dict],
+    return_countries: bool = False,
+):
     """
     Score based on geographic scope via NER.
     v4.0: geopolitically weighted — G20/P5 nations score 3x, mid-tier 2x,
     others 1x. Prevents "5 small countries" beating "US + China".
     v3.1: runs NER on titles first (fast). Only processes full text
     if title-only NER finds fewer than 2 GPEs.
-    Returns 0-100.
+    v6.1: when return_countries=True, returns (score, countries_set) so
+    the caller can reuse the NER work (e.g., for US-wire pile-on detection
+    in _source_coverage_score). Backward-compatible: default returns score
+    only.
+    Returns 0-100, or (0-100, set[str]) when return_countries=True.
     """
     nlp = get_nlp()
 
@@ -624,7 +1041,10 @@ def _geographic_impact_score(cluster_articles: list[dict]) -> float:
     geo_score = min(60.0, geo_weighted * 10.0)
     keyword_bonus = min(40.0, global_keyword_count * 5.0)
 
-    return min(100.0, geo_score + keyword_bonus)
+    score = min(100.0, geo_score + keyword_bonus)
+    if return_countries:
+        return score, countries_mentioned
+    return score
 
 
 def _tier_diversity_score(
@@ -654,7 +1074,7 @@ def _tier_diversity_score(
     """
     tiers_covered: set[str] = set()
     for article in cluster_articles:
-        sid = article.get("source_id", "")
+        sid = _voice_id(article)
         src = source_map.get(sid, {})
         tier = src.get("tier", "")
         if tier:
@@ -721,7 +1141,7 @@ def _coverage_velocity_score(
             if ts_dt.tzinfo is None:
                 ts_dt = ts_dt.replace(tzinfo=timezone.utc)
             if (now - ts_dt).total_seconds() / 3600.0 <= window_hours:
-                recent_sources.add(article.get("source_id", ""))
+                recent_sources.add(_voice_id(article))
         except (ValueError, TypeError):
             continue
 
@@ -877,41 +1297,91 @@ def compute_coverage_velocity(
                 ts_dt = ts_dt.replace(tzinfo=timezone.utc)
             hours_ago = (now - ts_dt).total_seconds() / 3600.0
             if hours_ago <= window_hours:
-                recent_sources.add(article.get("source_id", ""))
+                recent_sources.add(_voice_id(article))
         except (ValueError, TypeError):
             continue
 
     return len(recent_sources)
 
 
-def _longevity_penalty(timestamps: list[datetime]) -> float:
+def _longevity_penalty(
+    timestamps: list[datetime],
+    source_count: int = 1,
+) -> float:
     """
-    v5.3: Time-decay penalty for old stories.
+    v5.4: Steepened time-decay penalty for old stories.
+    v6.0: Source-count floor — mega-stories (30+ sources) decay slower.
+          A 60-source geopolitical crisis is still front-page after 36h.
 
-    After 72 hours, reduce score. After 7 days, 0.70x.
-    Prevents "consensus noise" from drowning out breaking news —
-    a 7-day-old story with 50 sources shouldn't dominate a 4-hour-old
-    story with 8 sources just because it has more sources.
+    New curve (v5.4):
+        0-6h:   no penalty (1.0) — breaking news window
+        6-12h:  mild decay (1.0 → 0.95) — still developing
+        12-24h: moderate decay (0.95 → 0.85) — maturing story
+        24-36h: significant decay (0.85 → 0.70) — aging out
+        36-48h: heavy decay (0.70 → 0.55) — stale unless major
+        48h+:   floor at 0.50 — old news, hard cap
 
-    Returns multiplier 0.70-1.0.
+    v6.0 source-count floors:
+        30+ sources: floor 0.75 (major international story)
+        15+ sources: floor 0.65 (significant multi-source story)
+
+    v6.4 (2026-08-10 Phase-2 ranking audit, 1a-Q2): birth-age component. The
+    recency curve above keys off the MOST-RECENT article, so a story that keeps
+    getting fresh updates pays penalty 1.0 no matter how old its first article
+    is. That let mature, continuously-refreshed stories permanently monopolize
+    the top while same-day breaks were locked out. A gentle secondary decay now
+    also keys off the FIRST article's age so a story that has been running for
+    days pays a small toll a fresh break does not. Deliberately conservative
+    (at most -10%, and floored for well-sourced developing stories) so a
+    legitimately-developing major story is not over-penalized.
+
+    Returns multiplier ~0.45-1.0.
     """
     if not timestamps:
-        return 0.85  # no timestamps = probably stale
+        return 0.70  # no timestamps = probably stale (lowered from 0.85)
 
     now = datetime.now(timezone.utc)
     most_recent = max(timestamps)
     hours_old = max(0, (now - most_recent).total_seconds() / 3600.0)
 
-    if hours_old < 24:
-        return 1.0
-    elif hours_old < 72:
-        # Gentle decay: 1.0 → 0.90 over 24-72h
-        return 1.0 - 0.10 * ((hours_old - 24) / 48)
-    elif hours_old < 168:  # 7 days
-        # Steeper decay: 0.90 → 0.70 over 72h-168h
-        return 0.90 - 0.20 * ((hours_old - 72) / 96)
+    if hours_old < 6:
+        decay = 1.0
+    elif hours_old < 12:
+        decay = 1.0 - 0.05 * ((hours_old - 6) / 6)
+    elif hours_old < 24:
+        decay = 0.95 - 0.10 * ((hours_old - 12) / 12)
+    elif hours_old < 36:
+        decay = 0.85 - 0.15 * ((hours_old - 24) / 12)
+    elif hours_old < 48:
+        decay = 0.70 - 0.15 * ((hours_old - 36) / 12)
     else:
-        return 0.70
+        decay = 0.50
+
+    # v6.0: Source-count floor — mega-stories resist decay
+    if source_count >= 30:
+        decay = max(decay, 0.75)
+    elif source_count >= 15:
+        decay = max(decay, 0.65)
+
+    # v6.4: Birth-age component — how long has this story been running, measured
+    # from its FIRST article (min timestamp), independent of how fresh its most
+    # recent update is. A same-day break pays nothing; a multi-day-old story pays
+    # a small, capped toll even when continuously refreshed. Floored for 30+
+    # source developing stories so a genuine ongoing mega-story keeps most of it.
+    birth_hours = max(0, (now - min(timestamps)).total_seconds() / 3600.0)
+    if birth_hours >= 48:
+        birth_decay = 0.90
+    elif birth_hours >= 36:
+        birth_decay = 0.93
+    elif birth_hours >= 24:
+        birth_decay = 0.96
+    else:
+        birth_decay = 1.0
+    if source_count >= 30:
+        birth_decay = max(birth_decay, 0.95)  # major developing story: gentle
+    decay *= birth_decay
+
+    return decay
 
 
 def _lean_diversity_score(
@@ -960,6 +1430,10 @@ def rank_importance(
     category: str | None = None,
     editorial_importance: int | None = None,
     sections: list[str] | None = None,
+    mega_capped: bool = False,
+    cluster: dict | None = None,
+    corpus_size: int | None = None,  # ACCEPTED for backwards compat, IGNORED
+    apply_disaster_boost: bool = True,
 ) -> dict:
     """
     Score the importance of a story cluster for feed ranking.
@@ -973,14 +1447,17 @@ def rank_importance(
         - NEW: Cross-spectrum interest bonus — when per-article bias scores
           show genuine left-right split (min lean < 35 AND max lean > 65),
           the story is contested across the spectrum. AllSides surfaces
-          these explicitly; we add a small bonus (+2.5 pts max) to reflect
-          that contested stories have multi-audience importance. Bonus only
-          applies when the cluster has 3+ articles with scored lean.
+          these explicitly; we add a bonus (+4.0 pts max, raised from 2.5
+          in v5.4) to reflect that contested stories have multi-audience
+          importance. Bonus only applies when the cluster has 3+ articles
+          with scored lean.
 
-    v5.0 formula: 10 deterministic signals + optional Gemini editorial
-    importance. When editorial_importance is available, it gets 12% weight
-    and all deterministic signals scale to 88%. When unavailable, pure
-    deterministic v4.0 scoring is used (backward-compatible).
+    v6.4 formula: 10 deterministic signals only. headline_rank is fully
+    deterministic and ei-neutral (2026-08-10 deterministic-ranking): the
+    Gemini editorial_importance signal was removed from the score entirely
+    (it used to add +/-6.7 pts here and was double-counted against the
+    feed_ranker nudge, which is also now gone). editorial_importance is still
+    accepted for backward compatibility but no longer affects any output.
 
     Args:
         cluster_articles: List of article dicts belonging to this cluster,
@@ -995,10 +1472,15 @@ def rank_importance(
         category: Optional category label (e.g., "sports", "politics").
             Used for soft-news gate.
         editorial_importance: Optional Gemini-assigned 1-10 score.
-            When available, blended into ranking as 12% weight signal.
+            Accepted for backward compatibility only; since v6.4 it does not
+            affect headline_rank or any other output (fully deterministic).
         sections: Optional list of edition strings this cluster belongs to
             (e.g., ["us"] or ["us", "world"]). Used for US-only divergence
             damper. Defaults to None (no damper applied).
+        mega_capped: When True, clustering's Phase 5 stamped this cluster
+            as a likely over-merge that couldn't be cleanly re-split.
+            Apply a 0.65x multiplier so the cluster competes on actual
+            signal rather than inflated coverage.
 
     Returns:
         Dict with:
@@ -1020,14 +1502,27 @@ def rank_importance(
     # Build shared lookups once
     source_map = _build_source_map(sources)
     timestamps = _parse_timestamps(cluster_articles)
-    source_count = len({a.get("source_id", "") for a in cluster_articles})
+    # Voice-collapse: wire copies fold to origin publisher. Without this,
+    # a story with 10 AP republications is counted as 10 sources and
+    # inflates maturity/longevity/coverage math.
+    source_count = len({_voice_id(a) for a in cluster_articles if _voice_id(a)})
 
     # Compute all sub-scores (shared source_map + timestamps)
-    coverage = _source_coverage_score(cluster_articles, source_map)
+    # v6.1: geographic + cluster_countries computed together to avoid double NER work.
+    geographic, cluster_countries = _geographic_impact_score(
+        cluster_articles, return_countries=True
+    )
+    # O9: discount coverage by topic coherence (skip mega_capped — those already
+    # take the 0.65x mega penalty below, so don't double-count).
+    _coh = 1.0
+    if not mega_capped and cluster is not None:
+        _coh = _coherence_factor(cluster.get("title", "") or "", cluster_articles)
+    coverage = _source_coverage_score(
+        cluster_articles, source_map, cluster_countries, coherence=_coh
+    )
     spectrum = _perspective_diversity_score(cluster_articles, source_map, bias_scores)
     divergence = _divergence_score(bias_scores)
     factual = _factual_density_score(bias_scores)
-    geographic = _geographic_impact_score(cluster_articles)
     tier_div = _tier_diversity_score(cluster_articles, source_map)
     velocity, velocity_raw = _coverage_velocity_score(
         cluster_articles, timestamps
@@ -1035,12 +1530,30 @@ def rank_importance(
     consequentiality = _consequentiality_score(cluster_articles)
     authority = _institutional_authority_score(cluster_articles)
     maturity = _story_maturity_score(timestamps, source_count)
-    lean_diversity = _lean_diversity_score(bias_scores, source_count)
-    longevity_mult = _longevity_penalty(timestamps)
+    longevity_mult = _longevity_penalty(timestamps, source_count)
 
-    # Gemini editorial importance: normalize 1-10 to 0-100
-    editorial_signal = ((editorial_importance - 1) * (100.0 / 9.0)
-                        if editorial_importance is not None else None)
+    # v6.0 P5: High-authority consequentiality floor — "Fed holds rates steady"
+    # has zero action verbs but is front-page news. When institutional authority
+    # is tier-1 (>= 80) and consequentiality is near zero, grant a floor of 30
+    # so the 0.82x gate doesn't fire and the 10% signal contributes.
+    if authority >= 80.0 and consequentiality < 5.0:
+        consequentiality = 30.0
+    # v6.3 (2026-05-20): Same pattern for tier-2 NGO reports. Amnesty's
+    # "global executions" annual report is statistical (zero action verbs)
+    # but represents a major institutional finding. Softer floor of 18
+    # (vs tier-1's 30) keeps the 0.82x conseq gate from firing without
+    # equating an NGO report with a Fed rate decision.
+    elif authority >= 50.0 and consequentiality < 5.0:
+        consequentiality = 18.0
+
+    # v6.4 (2026-08-10 Phase-2 ranking audit, 1a-Q4): editorial_importance no
+    # longer feeds headline_rank here. It used to be double-counted: once
+    # additively in this function (+/-6.7 pts) and again multiplicatively in
+    # feed_ranker (x0.88..x1.12). We keep the single feed_ranker nudge (its clamp
+    # bounds how far one uncalibrated per-cluster score can move a story) and drop
+    # the additive term, so headline_rank is now ei-neutral and each story feels
+    # the ei signal exactly once. `editorial_importance` is still accepted for
+    # backward compatibility but no longer affects the deterministic score.
 
     # v5.1: US-only divergence damper.
     # Domestic US stories often score high divergence (partisan framing) even
@@ -1057,12 +1570,10 @@ def rank_importance(
     )
     effective_divergence = divergence * (0.85 if _is_us_only else 1.0)
 
-    # v5.3 weighted combination
-    # Deterministic base score (always computed, sum = 1.00)
-    # v5.3 changes: +lean_diversity (3% from velocity 6%→3%, coverage preserved at 20%)
-    # Velocity reduced because it already overlaps with maturity signal.
-    # lean_diversity partially overlaps with perspective_diversity and cross-spectrum
-    # bonus but targets a distinct dimension: whether left+right BOTH cover the story.
+    # v6.0 weighted combination (sum = 1.00)
+    # v6.0 changes: lean_diversity (3%) merged into perspective_diversity (6%→9%).
+    # Divergence purified to framing+sensationalism only (lean component removed).
+    # Reduces hidden lean-spread influence from ~18% to ~12%.
     headline_rank = (
         coverage * 0.20
         + maturity * 0.16
@@ -1071,18 +1582,18 @@ def rank_importance(
         + authority * 0.08
         + factual * 0.08
         + effective_divergence * 0.07
-        + spectrum * 0.06
+        + spectrum * 0.09
         + geographic * 0.06
         + velocity * 0.03
-        + lean_diversity * 0.03
     )
 
-    # v5.1: Cross-spectrum interest bonus.
+    # v5.4: Cross-spectrum interest bonus (raised from +2.5 to +4.0).
     # When per-article bias scores show genuine left-right split (at least
     # one article lean < 35 AND at least one > 65), the story is actively
     # contested across the political spectrum. AllSides surfaces these
-    # explicitly as their core value proposition. We add a small bonus
-    # (max +2.5 pts) to reflect cross-spectrum newsworthiness.
+    # explicitly as their core value proposition. The original +2.5 cap
+    # was too modest to meaningfully lift multi-perspective stories;
+    # raised to +4.0 so genuinely contested stories compete better.
     # Guard: requires 3+ articles with lean scores to avoid noise from
     # 2-article clusters. Does not apply to US-only domestic stories
     # (where left-right split is more about partisan reaction than genuine
@@ -1094,41 +1605,140 @@ def rank_importance(
             if bs.get("political_lean") is not None
         ]
         if len(lean_vals) >= 3:
-            has_left = any(v < 35.0 for v in lean_vals)
-            has_right = any(v > 65.0 for v in lean_vals)
-            if has_left and has_right:
-                # Scale bonus by how far apart the extremes are (0–2.5 pts)
+            # v5.5: Relaxed from 35/65 to 38/62 (benchmark finding: 35-source
+            # Iran cluster missed bonus with min_lean=36, one point above cutoff)
+            has_left = any(v < 38.0 for v in lean_vals)
+            has_right = any(v > 62.0 for v in lean_vals)
+            # v6.3 (2026-05-20): Tightened guard. Predictable partisan
+            # reactions to identical AP wire facts (Al Jazeera lean ~30 +
+            # Fox News lean ~75) were getting the "genuine contestation"
+            # bonus that AllSides reserves for stories actively contested
+            # across the spectrum. Require:
+            #   (a) at least one CENTER article (45 ≤ lean ≤ 55) —
+            #       wire-service / Reuters / AP grounding, not just
+            #       opposing-team reactions; AND
+            #   (b) ≥3 articles actually outside the 40-60 neutral band —
+            #       a single Mother Jones piece in a Reuters-heavy
+            #       cluster should not unlock +4.0.
+            has_center = any(45.0 <= v <= 55.0 for v in lean_vals)
+            partisan_count = sum(1 for v in lean_vals if v < 40.0 or v > 60.0)
+            cross_spectrum_fired = (
+                has_left and has_right and has_center and partisan_count >= 3
+            )
+            if cross_spectrum_fired:
+                # Scale bonus by how far apart the extremes are (0-4.0 pts)
                 lean_spread = max(lean_vals) - min(lean_vals)
-                headline_rank += min(2.5, lean_spread * 0.025)
+                headline_rank += min(4.0, lean_spread * 0.04)
+        else:
+            cross_spectrum_fired = False
+    else:
+        cross_spectrum_fired = False
 
-    # v5.0: Gemini editorial adjustment (additive, not scaling)
-    # When editorial_importance is available, apply a ±10% adjustment
-    # based on how Gemini's judgment differs from the deterministic score.
-    # ei=10 → up to +10 points; ei=1 → up to -5 points; ei=5 → neutral.
-    # This avoids bloating: deterministic base is never scaled down.
-    # Clusters without Gemini data score identically to v4.0.
-    if editorial_signal is not None:
-        # editorial_signal is 0-100 (mapped from 1-10)
-        # Compute adjustment: positive for ei>=6, negative for ei<=4, ~0 for ei=5
-        # Max boost: +10 points at ei=10; max penalty: -5 at ei=1
-        midpoint = 55.6  # corresponds to ei ≈ 6 (slightly generous neutral)
-        adjustment = (editorial_signal - midpoint) * 0.15  # ±6.7 max
-        headline_rank += adjustment
+    # v6.5 (2026-08-10 disaster-weight): Breaking mass-casualty disaster lift.
+    # DETERMINISTIC, $0. A deadly earthquake/typhoon/flood that is still gaining
+    # sources ranks below a higher-source-count human-interest story on raw
+    # coverage math alone. A bounded, clamped multiplicative lift (max +
+    # DISASTER_MAX_LIFT) gives such a story front-page weight on its own merit,
+    # without an LLM. Applied multiplicatively BEFORE conf_mult/longevity/gates,
+    # so it behaves like a signal and every downstream multiplicative gate
+    # scales it identically to the un-boosted case (the lift is the clean
+    # AFTER/BEFORE ratio). Fires only on a hazard-noun + casualty co-occurrence
+    # or a real mass-casualty toll; "killer deal" / "dead heat" score zero.
+    _canonical_title = (cluster.get("title", "") or "") if cluster else ""
+    disaster_mult, disaster_sev, disaster_meta = (
+        _breaking_disaster_multiplier(cluster_articles, _canonical_title)
+        if apply_disaster_boost
+        else (1.0, 0.0, {})
+    )
+    headline_rank *= disaster_mult
+
+    # v6.4: The former additive Gemini editorial adjustment (+/-6.7 pts) was
+    # removed here. editorial_importance is now applied ONCE, as the
+    # multiplicative nudge in feed_ranker.apply_feed_ordering (see the
+    # editorial_signal comment above). headline_rank is intentionally ei-neutral.
 
     # Confidence multiplier: discount low-confidence clusters.
-    # v3.3: softened curve — 0.65 + 0.35 * confidence.
-    # Maps: 0.0→0.65, 0.5→0.825, 0.7→0.895, 1.0→1.0
+    # v5.5: For high-source clusters (15+), raise the floor to 0.85.
+    # Brief wire articles in large clusters drag down p25 confidence,
+    # but 15+ sources covering a story is itself a confidence signal.
+    # (Benchmark finding: 35-source Iran story got 0.797 mult vs 0.902
+    # for a 10-source story, a 12.5% swing that undervalued major news.)
+    # v5.6: Quality gate — only apply floor when factual rigor > 40.
+    # Without this, tabloid/celebrity clusters that go viral (16+ sources)
+    # get the same confidence floor as major geopolitical stories.
+    # (Tiger Woods DUI at 16 sources got an unintended +3.7% boost in v5.5.)
     conf_mult = 0.65 + 0.35 * max(0.0, min(1.0, cluster_confidence))
+    if source_count >= 15 and factual > 40:
+        conf_mult = max(conf_mult, 0.85)
     headline_rank *= conf_mult
+
+    # v6.2.1: Mega-cluster cap penalty. Clustering's Phase 5 stamps
+    # mega_cluster_capped=True on clusters that hit the 75-source soft cap
+    # and could not be cleanly re-split (likely over-merges, not genuine
+    # mega-events). Without this penalty the cluster still maxes out
+    # coverage + maturity and locks into the homepage top.
+    #
+    # v6.3 (2026-05-20): Replaced flat 0.65x with conditional 0.70-0.85x
+    # based on two over-merge signals computed from the cluster's own
+    # articles + source map. The flat penalty correctly buried the
+    # 217-source AI-deployment over-merge but would also crush a
+    # legitimate Xi-Putin-scale mega-event if it tripped Phase 5.
+    #
+    # Signals:
+    #   wire_amplification = total_articles / unique_voices. A ratio of
+    #     2.5+ means heavy syndication (one Reuters story republished
+    #     widely), characteristic of over-merge or wire-roundup pollution.
+    #   country_concentration = max country share of articles. 0.80+
+    #     means a "local event" framed as global (80% US sources on a
+    #     domestic primary). Genuine global mega-events span 4+ countries.
+    if mega_capped:
+        # Default: gentle penalty for any flagged cluster.
+        penalty = 0.85
+        # Compute wire amplification from articles.
+        total_articles = len(cluster_articles)
+        voices = {_voice_id(a) for a in cluster_articles if _voice_id(a)}
+        wire_amp = total_articles / max(len(voices), 1)
+        # Compute source-country concentration from source_map.
+        src_country_counts: dict[str, int] = {}
+        for a in cluster_articles:
+            sid = _voice_id(a)
+            src = source_map.get(sid, {})
+            country = (src.get("country") or "").upper()
+            if country:
+                src_country_counts[country] = src_country_counts.get(country, 0) + 1
+        total_country_articles = sum(src_country_counts.values()) or 1
+        country_concentration = (
+            max(src_country_counts.values()) / total_country_articles
+            if src_country_counts else 0.0
+        )
+        # Sharpen penalty when either signal indicates over-merge.
+        if wire_amp >= 2.5:
+            penalty = 0.70  # heavy syndication-driven inflation
+        if country_concentration > 0.80:
+            penalty = min(penalty, 0.72)  # geographically insular "mega"
+        headline_rank *= penalty
 
     # v5.3: Longevity penalty — old stories decay to prevent "consensus noise"
     # from drowning out breaking news. Applied after confidence but before gates.
     headline_rank *= longevity_mult
 
+    # v6.0.1: Capture pre-gate score for compound gate floor
+    pre_gate_rank = headline_rank
+
     # Gate 1: Consequentiality gate — stories with zero consequentiality
     # score have no outcome/action verbs. Apply 0.82x multiplier.
     if consequentiality < 5.0:
         headline_rank *= 0.82
+
+    # v6.0.1: Gentle thin-cluster dampening. The v5.9 gate (0.08-0.35x) was
+    # too aggressive, burying breaking news. But removing it entirely (v6.0)
+    # let 2-source clusters dominate the top 30 (40% in benchmark). This
+    # lighter version prevents 2-source inflation without crushing 3-4 source
+    # breaking stories. 5+ source clusters are unaffected.
+    if source_count == 2:
+        headline_rank *= 0.85
+    elif source_count <= 4:
+        headline_rank *= 0.92
 
     # Gate 2: Soft-news category gate (v4.0) — sports/entertainment/culture
     # stories get demoted. This is belt-and-suspenders with the
@@ -1136,6 +1746,66 @@ def rank_importance(
     # ("won", "defeated") but are still soft news.
     if category and category.lower() in _SOFT_NEWS_CATEGORIES:
         headline_rank *= 0.78
+
+    # Gate 2b: Tabloid gate (v5.4) — tabloid-grade political stories
+    # (e.g., "JD Vance says aliens are demons") leak through the soft-news
+    # gate because they're categorized as "politics". Detect via title keywords.
+    _TABLOID_KEYWORDS = {
+        "ufo", "ufos", "alien", "aliens", "ghost", "ghosts", "bigfoot",
+        "conspiracy", "psychic", "astrology", "horoscope", "zodiac",
+        "demon", "demons", "exorcism", "paranormal", "supernatural",
+        "reality tv", "love island", "bachelor", "bachelorette",
+        "scandal", "affair", "cheating", "divorce", "pregnant",
+        "wardrobe malfunction", "bikini", "shirtless",
+    }
+    # 2026-05-28 — word-boundary tokenisation instead of `in` substring.
+    # The old substring scan false-positived on 'alien'→'alienation',
+    # 'affair'→'laissez-faire', 'scandal'→'scandalize',
+    # 'divorce'→'divorced (from reality)', etc., penalising legitimate
+    # political vocabulary by 0.75x and pushing real top stories below
+    # the is_headline rank_floor.
+    _cluster_titles_lower = " ".join(
+        (a.get("title", "") or "") for a in cluster_articles
+    ).lower()
+    _cluster_tokens = set(re.findall(r"[a-z]+", _cluster_titles_lower))
+    tabloid_hits = 0
+    for kw in _TABLOID_KEYWORDS:
+        if " " in kw:
+            # Multi-word phrases — substring scan is fine (kw already
+            # contains its own word boundaries).
+            if kw in _cluster_titles_lower:
+                tabloid_hits += 1
+        else:
+            # Single tokens — strict tokenset match prevents
+            # 'alien' from hitting 'alienation'.
+            if kw in _cluster_tokens:
+                tabloid_hits += 1
+    if tabloid_hits >= 1:
+        headline_rank *= 0.75
+
+    # Gate 2c: Sensationalism gate (v5.8) — clusters with high average
+    # sensationalism get demoted. Catches tabloid "conflict" stories like
+    # "Rapper kidnapped" that pass the soft-news and tabloid keyword gates
+    # because kidnapping is semantically conflict, not entertainment.
+    # The bias engine already scores sensationalism — use it.
+    #
+    # v6.3 (2026-05-20): Factual-rigor exemption. Real war/casualty
+    # reporting hits TextBlob negative polarity hard ("drone strike",
+    # "killed", "ceasefire collapse"), so well-sourced breaking news
+    # (Beirut airstrikes, Ukraine drone strike, Iran ceasefire) lands
+    # in the 40-60 sensationalism band. The gate cannot tell tabloid
+    # inflammation from accurate violent-event lexicon. Factual rigor
+    # is the proxy: above 55 indicates AP/Reuters-grade sourcing and
+    # the sensationalism reading is the event itself, not editorial
+    # priming. Tabloid stubs (factual ~30-40 + sens ~70) still demote.
+    if bias_scores:
+        sens_vals = [bs.get("sensationalism", 0) for bs in bias_scores if bs.get("sensationalism") is not None]
+        if sens_vals and factual <= 55:
+            avg_sens = sum(sens_vals) / len(sens_vals)
+            if avg_sens > 65:
+                headline_rank *= 0.80
+            elif avg_sens > 55:
+                headline_rank *= 0.90
 
     # Gate 3: Low factual rigor gate (v4.0) — clusters with poor sourcing
     # and attribution get penalized. Rewards AP/Reuters/ProPublica-style
@@ -1155,13 +1825,60 @@ def rank_importance(
         else:
             headline_rank *= 0.65
 
+    # v6.0.1: Compound gate floor — no story should be mathematically
+    # invisible after surviving 1,013-source RSS ingestion + clustering.
+    # The worst-case gate stack could produce 0.006x (9 gates multiplied).
+    # Floor at 40% of pre-gate score ensures every clustered story has a
+    # non-trivial rank, even if every quality gate fires.
+    headline_rank = max(headline_rank, pre_gate_rank * 0.40)
+
     headline_rank = round(max(0.0, min(100.0, headline_rank)), 2)
+
+    # 2026-05-31 simplification — is_headline rebuilt around 3 signals.
+    # The Era 7 elaborations (three-tier corpus-volume scaling, Hill-curve
+    # saturating src_pts, authority-or-spectrum bonus, headline_confidence
+    # blend) tried to encode "is this important enough" via many gates.
+    # Production data showed they over-fitted to the test corpus while
+    # missing real top stories.
+    #
+    # New formula:
+    #   is_headline = (source_count >= 8)
+    #                 AND (headline_rank >= 40)
+    #                 AND (not mega_cluster_capped)
+    #
+    # headline_confidence is a derived display signal — not used to gate
+    # is_headline. Linear blend so the frontend can render badge intensity.
+    src_count = 0
+    if cluster is not None:
+        try:
+            src_count = int(cluster.get("source_count", 0) or 0)
+        except (TypeError, ValueError):
+            src_count = 0
+    if src_count == 0 and cluster_articles:
+        # Fallback to unique article-level source_id when cluster.source_count
+        # is 0/missing. Wire-syndicated stories still benefit from the
+        # cluster-side wire-collapsed count when it's set upstream.
+        src_count = len({a.get("source_id") for a in cluster_articles if a.get("source_id")})
+
+    is_headline = bool(
+        src_count >= 8
+        and headline_rank >= 40
+        and not mega_capped
+    )
+
+    # Display-only confidence (0..100) — 50% source_count saturating
+    # at sc=20, 50% headline_rank clamped 0..100.
+    src_pts = 100.0 * min(src_count, 20) / 20.0 if src_count > 0 else 0.0
+    rank_pts = max(0.0, min(100.0, headline_rank))
+    headline_confidence = round(0.5 * src_pts + 0.5 * rank_pts, 1)
 
     return {
         "importance_score": headline_rank,
         "divergence_score": round(divergence, 2),
         "coverage_velocity": velocity_raw,
         "headline_rank": headline_rank,
+        "is_headline": is_headline,
+        "headline_confidence": int(round(headline_confidence)),
         "component_scores": {
             "coverage": round(coverage, 2),
             "maturity": round(maturity, 2),
@@ -1173,7 +1890,12 @@ def rank_importance(
             "velocity": round(velocity, 2),
             "consequentiality": round(consequentiality, 2),
             "authority": round(authority, 2),
-            "lean_diversity": round(lean_diversity, 2),
             "longevity_mult": round(longevity_mult, 2),
+            "disaster_severity": round(disaster_sev, 1),
+            "disaster_mult": round(disaster_mult, 4),
+            "disaster_death_toll": disaster_meta.get("death_toll", 0),
+            "is_headline_src_count": src_count,
+            "is_headline_src_pts": round(src_pts, 1),
+            "is_headline_rank_pts": round(rank_pts, 1),
         },
     }

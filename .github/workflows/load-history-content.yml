@@ -1,0 +1,30 @@
+name: Load void --history content
+
+# Loads data/history/events/*.yaml into the history_* Supabase tables via
+# pipeline/history/content_loader.py. Idempotent (upsert on slug +
+# delete-then-insert children), so safe to re-run after editing the event
+# YAML. Manual trigger only. Runs in CI because the `supabase` client cannot
+# import locally (the repo-root supabase/ migrations dir shadows the package).
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: load-history-content
+  cancel-in-progress: false
+
+jobs:
+  load:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: pip install pyyaml supabase python-dotenv requests
+      - name: Load history content
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: python -m pipeline.history.content_loader

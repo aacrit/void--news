@@ -8,7 +8,13 @@ Scores each article on a 0-100 political lean spectrum:
 
 Uses rule-based NLP heuristics (no LLM API calls):
     - Partisan keyword lexicons (90+ terms per side)
-    - Length-adaptive baseline blending (0.50/0.50 short → 0.90/0.10 long)
+    - Baseline-anchored deviation calibration:
+      score = baseline + clamp((text - 50) * AUTHORITY, +/-DELTA) * length_conf.
+      The outlet's reputation (baseline) is the anchor; the article's own words
+      are read as a deviation from neutral and applied to it, within a bounded
+      delta that can never erase the baseline. Calm copy leaves an outlet AT
+      its reputation; left/right-coded copy moves it off that anchor
+      accordingly (collapse-to-center fix v2, 2026-08-13).
     - Entity sentiment via spaCy NER + TextBlob
     - Framing phrase detection
 """
@@ -142,6 +148,31 @@ LEFT_KEYWORDS: dict[str, int] = {
     "for the wealthy": 2,
     "struggling families": 2,
     "trickle-down economics": 3,
+    # -----------------------------------------------------------------------
+    # Subtle register markers (weight 1) — Gentzkow & Shapiro methodology.
+    # These are everyday vocabulary items that appear 3x+ more frequently in
+    # left-coded outlets (MSNBC, Vox, Guardian, HuffPost) than in wire copy
+    # (AP/Reuters). Each term passed the false-positive gate: AP/Reuters do
+    # NOT routinely use it in neutral reporting. Paired with right register
+    # markers below to maintain L:R balance.
+    # Evidence levels: B (frequency-differential), C (MBFC/AllSides methodology)
+    # (computational-linguist expansion 2026-04-03)
+    # -----------------------------------------------------------------------
+    # Social/identity register
+    "stakeholders": 1,              # B — progressive governance register
+    "underserved": 1,               # B — left public-health/education register
+    "disparities": 1,               # B — left health/economic equity register
+    "inequities": 1,                # B — left public-health register
+    "centering": 1,                 # B — progressive activist register ("centering voices")
+    "uplift communities": 2,        # B — progressive policy register
+    "vulnerable populations": 1,    # B — left public-health register
+    # Economic register
+    "working people": 1,            # B — Gentzkow-Shapiro: Dem 4x Rep in Congress
+    "corporate power": 2,           # B — progressive economic critique register
+    "economic justice": 2,          # B — progressive economic register
+    # Governance register
+    "civil liberties": 1,           # B — left governance/ACLU register
+    "accountability measures": 1,   # B — progressive governance register
 }
 
 RIGHT_KEYWORDS: dict[str, int] = {
@@ -158,18 +189,35 @@ RIGHT_KEYWORDS: dict[str, int] = {
     "open borders": 3, "migrant crime": 3, "criminal aliens": 3,
     "chain migration": 3, "anchor baby": 3, "catch and release": 2,
     # Economic
-    "free market": 2, "tax cuts": 2, "trickle down": 2,
-    "job creators": 3, "deregulation": 2,
+    # NOTE: "free market" and "deregulation" reduced from 2->1. Both appear
+    # routinely in neutral WSJ/Bloomberg/Economist economic analysis pieces.
+    # At weight=2 with 4 distinct types the sigmoid saturates, pushing WSJ
+    # analysis to lean=85 (AllSides "lean right" expects [55,75]). At weight=1
+    # the same article scores ~72-75, correctly reflecting mild right framing
+    # without overshoot. Genuine partisan economic terms ("government overreach",
+    # "nanny state", "job creators") retain weight 2-3.
+    # (nlp-engineer P2 fix — WSJ lean=82 vs AllSides [55,75])
+    "free market": 1, "tax cuts": 2, "trickle down": 2,
+    "job creators": 3, "deregulation": 1,
     # NOTE: "small business": 1 removed — standard institutional vocabulary
     # that causes AP/Reuters to drift rightward. (nlp-engineer fix)
-    "energy independence": 2, "war on coal": 3,
+    # NOTE: "energy independence" reduced from 2->1. Used neutrally in energy
+    # policy reporting across the spectrum. "war on coal" (3) remains as the
+    # genuinely partisan formulation. (nlp-engineer P2 fix)
+    "energy independence": 1, "war on coal": 3,
     "fiscal responsibility": 2, "welfare state": 3, "entitlements": 2,
     # NOTE: "government spending": 1 removed — standard policy/reporting term
     # used across the full spectrum. (nlp-engineer fix)
     # NOTE: "balanced budget": 1 removed — standard policy/reporting term
     # used across the full spectrum. (nlp-engineer fix)
     "government overreach": 3, "nanny state": 3, "tax burden": 2,
-    "free enterprise": 2, "economic freedom": 1,
+    "free enterprise": 2,
+    # NOTE: "economic freedom" removed — generic term used in mainstream
+    # economic discourse (World Bank "Economic Freedom Index", Heritage
+    # Foundation rankings, academic papers). Not reliably partisan.
+    # At weight=1 it still saturated WSJ analysis pieces to lean=85 because
+    # it added a 4th distinct right keyword with zero left keywords to
+    # balance. (nlp-engineer P2 fix)
     "esg agenda": 3, "esg": 2, "woke capitalism": 3,
     # Social / culture
     "traditional values": 2, "traditional family": 3, "family values": 2,
@@ -260,6 +308,61 @@ RIGHT_KEYWORDS: dict[str, int] = {
     # NOTE: "parental rights": 2 removed here — duplicate of line ~164 (Social/culture
     # section). Keeping only the first occurrence. (Cycle 3 fix)
     "america first": 2,
+    # Geopolitical / state-media right-coded vocabulary
+    # Chinese and Russian state media deploy these terms as pro-government
+    # alignment signals that map to the authoritarian-right end of the
+    # political spectrum (AllSides "right"). They are absent from Western
+    # L/R vocabulary but carry the same directional meaning as "radical
+    # left" or "deep state" in domestic partisan content.  Without these,
+    # CGTN/RT articles with zero Western keywords score 50 (center) from
+    # text alone, dragging the blended score below their calibrated baseline.
+    # (nlp-engineer P1 fix — CGTN lean=63 vs AllSides "right" [70,100])
+    "reunification": 2,           # CCP framing of Taiwan/territories
+    "separatist forces": 3,       # CCP term for independence movements
+    "splittist": 3,               # CCP term for Tibet/Taiwan activists
+    "splittists": 3,              # plural form
+    "territorial integrity": 1,   # neutral in isolation but state-media anchor term
+    "interference in internal affairs": 3,  # CCP/Russia dismissal of human rights critique
+    "hostile forces": 2,          # CCP catch-all for opposition
+    "anti-china forces": 3,       # CGTN/Global Times adversarial frame
+    "century of humiliation": 2,  # CCP nationalist historical framing
+    "western hegemony": 3,        # RT/Sputnik/CGTN anti-Western frame
+    "cold war mentality": 3,      # CCP/Russia delegitimization of Western policy
+    "so-called human rights": 3,  # state-media dismissal of human rights
+    "historical inevitability": 2, # CCP deterministic framing of reunification
+    "denazification": 3,          # Kremlin justification for Ukraine war
+    "special military operation": 3, # Kremlin euphemism for Ukraine invasion
+    "collective west": 2,         # RT/Sputnik us-vs-them framing
+    "western aggression": 3,      # state-media adversarial frame
+    "proxy war": 2,               # RT/Sputnik framing of Ukraine conflict
+    "puppet regime": 3,           # state-media delegitimization
+    "russophobia": 3,             # RT anti-Western framing
+    "nato aggression": 3,         # state-media adversarial frame
+    "western smear": 3,           # CGTN dismissive framing
+    # -----------------------------------------------------------------------
+    # Subtle register markers (weight 1) — paired with left register markers.
+    # These are everyday vocabulary items that appear 3x+ more frequently in
+    # right-coded outlets (Fox, Daily Wire, NY Post, Newsmax) than in wire
+    # copy (AP/Reuters). Each term passed the false-positive gate.
+    # Evidence levels: B (frequency-differential), C (MBFC/AllSides methodology)
+    # (computational-linguist expansion 2026-04-03)
+    # -----------------------------------------------------------------------
+    # Economic register
+    "bureaucrats": 1,               # B — right anti-government register
+    "overregulation": 2,            # B — right economic register
+    "red tape": 1,                  # B — right anti-regulatory register
+    "out-of-touch": 1,              # B — right populist register
+    "hardworking americans": 2,     # B — Gentzkow-Shapiro: Rep 3x Dem in Congress
+    "job-killing policies": 2,      # B — right economic register (phrase-scoped)
+    "bloated bureaucracy": 2,       # B — right anti-government register
+    # Social/culture register
+    "unelected bureaucrats": 2,     # B — right governance register
+    "government intrusion": 2,      # B — right anti-government register
+    "special interests": 1,         # B — right populist register
+    # Governance register
+    "regulatory burden": 1,         # B — right economic/governance register
+    "government waste": 1,          # B — right fiscal register
+    "runaway spending": 2,          # B — right fiscal register
 }
 
 # ---------------------------------------------------------------------------
@@ -371,7 +474,155 @@ BASELINE_MAP: dict[str, int] = {
     "center": 50,
     "center-right": 65, "right": 80, "far-right": 90,
     "varies": 50,
+    # "unrated" — the outlet has NOT been placed on the left/right axis. Distinct
+    # from "center", which is a positive finding of centrism (a wire cooperative,
+    # a public broadcaster under an impartiality charter). Most of the roster's
+    # international/independent tail sits here: a Kenyan daily or a Japanese
+    # business paper is not measurable on a US-shaped spectrum, and inventing a
+    # position for it would be fabricating the measurement this product exists to
+    # provide honestly. It anchors at 50 like center, but an unrated outlet whose
+    # article shows no textual signal is flagged `unscored` and kept OUT of the
+    # cluster lean aggregate rather than counted as measured centrism.
+    "unrated": 50,
 }
+
+#: Baselines that represent NO placement on the left/right axis.
+UNRATED_BASELINES = frozenset({"unrated", "varies", ""})
+
+# ---------------------------------------------------------------------------
+# Baseline-anchored DEVIATION model (2026-08-13 collapse-to-center fix, v2).
+#
+# The outlet's reputation (baseline) is the ANCHOR; the article's own words
+# are read as a DEVIATION FROM NEUTRAL and applied to that anchor:
+#
+#     score = baseline + clamp((text_score - 50) * AUTHORITY, +/-DELTA) * confidence
+#
+# Why the deviation, and not the text's absolute position: the previous model
+# used ``clamp(text_score - baseline, +/-DELTA)``. Because calm, non-partisan
+# copy scores text_score ~= 50, that difference always POINTED AT CENTER, so
+# every non-center outlet was dragged the full DELTA inward on ordinary
+# reporting. Measured on straight wire-style copy it moved Jacobin 10 -> 20,
+# CNN 20 -> 30, Fox 80 -> 70 and Newsmax 90 -> 80 — a uniform 10-point squeeze.
+# Since most articles in most clusters ARE calm reporting, the whole corpus
+# collapsed on center (87.8% of live feed articles landed in the 46-55 bucket)
+# and every cluster mean landed on ~50.
+#
+# Under the deviation model neutral copy leaves the outlet AT its baseline
+# (CEO direction: match the outlet's reputation for the most part, and vary by
+# article accordingly). Left-coded copy moves the score left of that baseline,
+# right-coded copy moves it right, bounded by DELTA so reputation is never
+# erased and confidence-scaled by length so a thin RSS stub barely moves.
+# ---------------------------------------------------------------------------
+_TEXT_NEUTRAL_PIVOT = 50.0    # text_score of genuinely non-partisan copy
+_TEXT_AUTHORITY = 1.0         # how much of the text's deviation carries through
+
+# How far the article's own words may move the score off the outlet baseline.
+_TEXT_DELTA_MAX = 10          # outlet has a known partisan reputation: it anchors, text modulates.
+                              # Held at 10 by ground truth: the national-review-analysis-regulation
+                              # fixture (baseline 80, heavily right-coded copy) expects <= 90.
+_CENTER_TEXT_DELTA_MAX = 24   # outlet is baselined "center" (62.6% of the roster, mostly the
+                              # international/independent long tail where "center" means
+                              # UNRATED rather than measured-centrist). There is no reputation
+                              # signal to preserve, so the article's own words are all we have
+                              # and they get correspondingly more authority.
+_STATE_TEXT_DELTA_MAX = 8     # tighter for state-affiliated: their non-Western vocab makes
+                              # text less reliable, so government alignment anchors harder
+_CENTER_BASELINE_LO = 40      # inclusive bounds of the "no reputation signal" baseline band
+_CENTER_BASELINE_HI = 60
+_LENGTH_FULL_CONFIDENCE = 150  # words at which text earns full calibration authority
+
+
+def _delta_max_for(
+    source_baseline: float, is_state_affiliated: bool, is_unrated: bool = False
+) -> int:
+    """Text's movement budget, by how much reputation there is to preserve.
+
+    An UNRATED outlet has no placement to preserve, so its article's own words
+    are all we have and they get the widest budget. An outlet assessed AS
+    centrist (a wire cooperative, an impartiality-chartered broadcaster) is a
+    real reading and anchors like any other rating.
+    """
+    if is_state_affiliated:
+        return _STATE_TEXT_DELTA_MAX
+    if is_unrated:
+        return _CENTER_TEXT_DELTA_MAX
+    return _TEXT_DELTA_MAX
+
+
+def _is_unrated_source(source: dict) -> bool:
+    """True when the outlet has NOT been placed on the left/right axis.
+
+    Distinct from an outlet assessed as centrist: "center" is a finding,
+    "unrated" is the absence of one. See BASELINE_MAP.
+    """
+    baseline = source.get("political_lean_baseline", "center")
+    if isinstance(baseline, (int, float)):
+        return False
+    return str(baseline).lower().strip() in UNRATED_BASELINES
+
+# ---------------------------------------------------------------------------
+# Option A: Quote/attribution context detection for keyword scoring.
+#
+# Keywords inside quotation marks or near attribution verbs are likely
+# REPORTED speech, not the author's own framing. These hits receive 0.5x
+# weight — an outlet's choice to INCLUDE a quote still reflects editorial
+# selection bias, but weaker than direct authorship.
+#
+# Keywords that ONLY appear in quoted/attributed context count as 0.5
+# distinct types for the sigmoid confidence calculation. This is the
+# critical lever: a reporter quoting one partisan phrase should produce
+# lower confidence than the author using it directly.
+# ---------------------------------------------------------------------------
+_ATTRIBUTION_CONTEXT_VERBS: tuple[str, ...] = (
+    "said", "says", "stated", "told", "according to", "announced",
+    "declared", "wrote", "tweeted", "posted", "argued", "claimed",
+    "contended", "testified", "explained", "noted", "added",
+    "responded", "replied", "insisted", "warned",
+)
+
+_QUOTE_PATTERN = re.compile(
+    r'["\u201c](.*?)["\u201d]|[\'\u2018](.*?)[\'\u2019]',
+    re.DOTALL,
+)
+
+
+def _precompute_context(text_lower: str) -> tuple[list[tuple[int, int]], list[int]]:
+    """
+    Pre-compute quote spans and attribution verb positions ONCE per article.
+    Returns (quote_spans, attr_positions) for O(1) lookups per keyword hit.
+    """
+    quote_spans = [(m.start(), m.end()) for m in _QUOTE_PATTERN.finditer(text_lower)]
+    attr_positions = []
+    for verb in _ATTRIBUTION_CONTEXT_VERBS:
+        start = 0
+        while True:
+            idx = text_lower.find(verb, start)
+            if idx == -1:
+                break
+            attr_positions.append(idx)
+            start = idx + 1
+    attr_positions.sort()
+    return quote_spans, attr_positions
+
+
+def _context_discount_fast(
+    match_start: int, match_end: int,
+    quote_spans: list[tuple[int, int]],
+    attr_positions: list[int],
+    radius: int = 120,
+) -> float:
+    """
+    Return 0.5 if match is inside a quote or near an attribution verb, else 1.0.
+    Uses pre-computed spans/positions for O(quotes + log(attrs)) per hit instead
+    of O(text_length) full rescans.
+    """
+    for q_start, q_end in quote_spans:
+        if match_start >= q_start and match_end <= q_end:
+            return 0.5
+    for pos in attr_positions:
+        if abs(match_start - pos) <= radius:
+            return 0.5
+    return 1.0
 
 
 def _keyword_score(text: str) -> tuple[float, list[str], list[str], int]:
@@ -413,40 +664,57 @@ def _keyword_score(text: str) -> tuple[float, list[str], list[str], int]:
     critic from scoring 100 (pure right).
     """
     text_lower = text.lower()
-    left_total = 0
-    right_total = 0
+    left_total = 0.0
+    right_total = 0.0
     left_distinct = 0
     right_distinct = 0
     left_hits: dict[str, float] = {}
     right_hits: dict[str, float] = {}
+    left_has_unquoted: dict[str, bool] = {}
+    right_has_unquoted: dict[str, bool] = {}
 
+    # Pre-compute quote spans and attribution positions ONCE for this article.
+    # Avoids O(text_length) rescans per keyword hit — 10x speedup on hot path.
+    quote_spans, attr_positions = _precompute_context(text_lower)
+
+    # Quote-aware keyword counting (Option A).
     for phrase, weight in LEFT_KEYWORDS.items():
         if " " not in phrase:
-            count = len(re.findall(r'\b' + re.escape(phrase) + r'\b', text_lower))
+            matches = list(re.finditer(r'\b' + re.escape(phrase) + r'\b', text_lower))
         else:
-            count = text_lower.count(phrase)
-        if count > 0:
-            left_total += count * weight
+            matches = list(re.finditer(re.escape(phrase), text_lower))
+        if matches:
+            has_unquoted = False
+            weighted_count = 0.0
+            for m in matches:
+                discount = _context_discount_fast(m.start(), m.end(), quote_spans, attr_positions)
+                weighted_count += weight * discount
+                if discount == 1.0:
+                    has_unquoted = True
+            left_total += weighted_count
             left_distinct += 1
-            left_hits[phrase] = count * weight
+            left_hits[phrase] = weighted_count
+            left_has_unquoted[phrase] = has_unquoted
 
     for phrase, weight in RIGHT_KEYWORDS.items():
         if " " not in phrase:
-            count = len(re.findall(r'\b' + re.escape(phrase) + r'\b', text_lower))
+            matches = list(re.finditer(r'\b' + re.escape(phrase) + r'\b', text_lower))
         else:
-            count = text_lower.count(phrase)
-        if count > 0:
-            right_total += count * weight
+            matches = list(re.finditer(re.escape(phrase), text_lower))
+        if matches:
+            has_unquoted = False
+            weighted_count = 0.0
+            for m in matches:
+                discount = _context_discount_fast(m.start(), m.end(), quote_spans, attr_positions)
+                weighted_count += weight * discount
+                if discount == 1.0:
+                    has_unquoted = True
+            right_total += weighted_count
             right_distinct += 1
-            right_hits[phrase] = count * weight
+            right_hits[phrase] = weighted_count
+            right_has_unquoted[phrase] = has_unquoted
 
-    # NOTE: Supplemental "second amendment" regex removed — it double-counts every
-    # phrase-scoped hit already captured by RIGHT_KEYWORDS ("second amendment rights",
-    # "second amendment protection", "second amendment supporters", "second amendment
-    # advocates"). Those phrase-scoped forms handle all legitimate US gun-rights uses.
-    # (nlp-engineer Fix 1)
-
-    # Top keywords by weighted impact (unchanged)
+    # Top keywords by weighted impact
     top_left = sorted(left_hits, key=left_hits.get, reverse=True)[:5]
     top_right = sorted(right_hits, key=right_hits.get, reverse=True)[:5]
 
@@ -458,10 +726,19 @@ def _keyword_score(text: str) -> tuple[float, list[str], list[str], int]:
     # Direction: weighted ratio (high-weight terms count more than low-weight fillers)
     right_ratio = right_total / total_weight
 
-    # Confidence: sigmoid on DISTINCT keyword count (k=0.9, x0=3).
-    # This is independent of article length and repetition, so short articles
-    # with 1-2 keyword hits no longer saturate the sigmoid.
-    sigmoid_weight = 1.0 / (1.0 + math.exp(-0.9 * (total_distinct - 3.0)))
+    # Effective distinct count: keywords that ONLY appear in quoted/attributed
+    # context count as 0.5 instead of 1.0 for sigmoid confidence.
+    quoted_only_left = sum(1 for v in left_has_unquoted.values() if not v)
+    quoted_only_right = sum(1 for v in right_has_unquoted.values() if not v)
+    effective_distinct = (
+        (left_distinct - quoted_only_left) + quoted_only_left * 0.5
+        + (right_distinct - quoted_only_right) + quoted_only_right * 0.5
+    )
+
+    # Confidence: sigmoid on EFFECTIVE distinct keyword count (k=0.7, x0=4).
+    # (bias-audit 2026-04-01 — lean right-side saturation fix)
+    # (contextual-keyword-scoring 2026-04-03 — effective_distinct for quote-awareness)
+    sigmoid_weight = 1.0 / (1.0 + math.exp(-0.7 * (effective_distinct - 4.0)))
 
     score = 50.0 + (right_ratio - 0.5) * sigmoid_weight * 100.0
     return score, top_left, top_right, total_distinct
@@ -493,13 +770,14 @@ def _framing_score(text: str) -> tuple[float, list[str]]:
     return max(-15.0, min(15.0, shift * 1.5)), phrases_found
 
 
-def _entity_sentiment_score(text: str) -> tuple[float, dict[str, float]]:
+def _entity_sentiment_score(text: str, doc=None) -> tuple[float, dict[str, float]]:
     """
     Use spaCy NER + TextBlob to gauge sentiment toward politically coded entities.
     Returns (lean_shift, entity_sentiments_dict).
     """
-    nlp = get_nlp()
-    doc = nlp(text[:15000])
+    if doc is None:
+        nlp = get_nlp()
+        doc = nlp(text[:15000])
 
     left_sentiment = 0.0
     right_sentiment = 0.0
@@ -555,6 +833,85 @@ def _entity_sentiment_score(text: str) -> tuple[float, dict[str, float]]:
     return max(-15.0, min(15.0, shift)), avg_sentiments
 
 
+def _sentence_direction_score(text: str, doc=None) -> float:
+    """
+    Sentence-level directional analysis (Option B).
+
+    Analyzes partisan keywords IN CONTEXT at the sentence level using TextBlob
+    polarity. When an article uses right-coded keywords with NEGATIVE sentiment,
+    the author is likely criticizing the right (left signal), and vice versa.
+
+    Returns a lean shift from -5 to +5:
+        Negative = shift left (author critical of right / sympathetic to left)
+        Positive = shift right (author critical of left / sympathetic to right)
+
+    Conservative range (±5): a gentle contextual nudge, not a dominant signal.
+    Combined with quote-aware discounting (Option A), provides contextual
+    awareness without overriding the proven keyword + source baseline scoring.
+
+    GATE: Only called when the article has keywords from BOTH sides (see
+    analyze_political_lean). When an article only has one side's keywords,
+    the keyword scorer is already correct and sentence direction would
+    misinterpret attack rhetoric's negative polarity.
+    """
+    if doc is None:
+        nlp = get_nlp()
+        doc = nlp(text[:15000])
+
+    left_kw_set = set(LEFT_KEYWORDS.keys())
+    right_kw_set = set(RIGHT_KEYWORDS.keys())
+
+    right_signal = 0.0
+    left_signal = 0.0
+    scored_sentences = 0
+
+    for sent in doc.sents:
+        sent_lower = sent.text.lower()
+        if len(sent_lower.split()) < 5:
+            continue
+
+        has_left_kw = any(
+            (re.search(r'\b' + re.escape(kw) + r'\b', sent_lower) if " " not in kw else kw in sent_lower)
+            for kw in left_kw_set
+        )
+        has_right_kw = any(
+            (re.search(r'\b' + re.escape(kw) + r'\b', sent_lower) if " " not in kw else kw in sent_lower)
+            for kw in right_kw_set
+        )
+
+        if not has_left_kw and not has_right_kw:
+            continue
+        if has_left_kw and has_right_kw:
+            continue  # both sides in one sentence → balanced, skip
+
+        blob = TextBlob(sent.text)
+        polarity = blob.sentiment.polarity
+
+        if has_right_kw:
+            if polarity > 0.1:
+                right_signal += polarity
+            elif polarity < -0.1:
+                left_signal += abs(polarity)
+        elif has_left_kw:
+            if polarity > 0.1:
+                left_signal += polarity
+            elif polarity < -0.1:
+                right_signal += abs(polarity)
+
+        scored_sentences += 1
+
+    if scored_sentences == 0:
+        return 0.0
+
+    total_signal = right_signal + left_signal
+    if total_signal == 0:
+        return 0.0
+
+    net_right_ratio = right_signal / total_signal
+    shift = (net_right_ratio - 0.5) * 10.0
+    return max(-5.0, min(5.0, shift))
+
+
 def _get_source_baseline(source: dict) -> int:
     """Extract numeric baseline from source dict."""
     baseline_str = source.get("political_lean_baseline", "center")
@@ -563,7 +920,7 @@ def _get_source_baseline(source: dict) -> int:
     return BASELINE_MAP.get(str(baseline_str).lower().strip(), 50)
 
 
-def analyze_political_lean(article: dict, source: dict, topic_lean_data=None) -> dict:
+def analyze_political_lean(article: dict, source: dict, topic_lean_data=None, doc=None) -> dict:
     """
     Score the political lean of an article.
 
@@ -582,6 +939,13 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None) ->
     title = article.get("title", "") or ""
     combined = f"{title} {full_text}"
     source_baseline = _get_source_baseline(source)
+    # Keep the outlet's OWN rating: it decides how much text authority to grant
+    # (see _delta_max_for). That is a property of how much reputation signal we
+    # have for the outlet, so the topic blend below must not change the tier —
+    # a center-left outlet nudged into the 40-60 band by a topic EMA is still a
+    # rated outlet, not an unrated one.
+    rated_baseline = source_baseline
+    is_unrated = _is_unrated_source(source)
 
     # Fix 20: Topic-specific source prior from Axis 6 EMA data.
     # Blend source baseline with topic-specific lean before text blending,
@@ -599,84 +963,105 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None) ->
     # editorial alignment exerts stronger pull toward the calibrated baseline.
     is_state_affiliated = bool(source.get("state_affiliated"))
 
-    # Length-adaptive baseline blending.
-    #
-    # Most RSS-sourced articles arrive as 30-80 word summaries.  With so little
-    # text, the keyword scorer rarely accumulates enough total weight (>=4) to
-    # move the sigmoid past 50%, so the text score stays near 50 regardless of
-    # the source's actual lean.  The source baseline — which encodes calibrated
-    # editorial lean from data/sources.json — should carry proportionally more
-    # weight when text evidence is thin.
-    #
-    # Word-count buckets (based on combined title + full_text):
-    #   <50 words   → 0.50 text / 0.50 baseline  (almost no evidence)
-    #   50-150 words → 0.70 text / 0.30 baseline  (RSS summary range)
-    #   150-500 words → 0.85 text / 0.15 baseline (current default, enough for signal)
-    #   500+ words   → 0.90 text / 0.10 baseline  (full article, trust text)
-    #
-    # For state-affiliated sources, the baseline weight floors at 0.30 (the
-    # existing state-media correction) so that correction is never weakened by
-    # long articles that happen to use neutral geopolitical vocabulary.
+    # Article length (combined title + full_text). Drives calibration
+    # confidence: thin text earns little movement off the outlet baseline.
     _wc = len(combined.split())
-    if _wc < 50:
-        text_weight, baseline_weight = 0.50, 0.50
-    elif _wc < 150:
-        text_weight, baseline_weight = 0.70, 0.30
-    elif _wc < 500:
-        text_weight, baseline_weight = 0.85, 0.15
-    else:
-        text_weight, baseline_weight = 0.90, 0.10
-
-    if is_state_affiliated:
-        # State-media correction: baseline weight never falls below 0.30.
-        baseline_weight = max(baseline_weight, 0.30)
-        text_weight = 1.0 - baseline_weight
 
     if not combined.strip():
         return {
-            "score": source_baseline,
+            "score": int(round(source_baseline)),
             "rationale": {"keyword_score": 50, "framing_shift": 0, "entity_shift": 0,
-                          "source_baseline": source_baseline, "top_left_keywords": [],
+                          "sentence_direction": 0, "text_score": 50,
+                          "source_baseline": round(source_baseline, 1),
+                          "text_shift": 0,
+                          "delta_max": _delta_max_for(rated_baseline, is_state_affiliated, is_unrated),
+                          "confidence": 0.0,
+                          "top_left_keywords": [],
                           "top_right_keywords": [], "framing_phrases_found": [],
                           "entity_sentiments": {}, "state_affiliated": is_state_affiliated},
         }
 
     # 1. Keyword-based score (0-100) + top keywords + distinct keyword count
+    #    Now quote-aware (Option A): keywords in quoted/attributed context
+    #    receive 0.5x weight and 0.5x distinct count.
     kw_score, top_left, top_right, total_distinct = _keyword_score(combined)
 
     # 2. Framing shift (-15 to +15) + phrases found
     framing_shift, framing_phrases = _framing_score(combined)
 
     # 3. Entity sentiment shift (-15 to +15) + sentiments
-    entity_shift, entity_sentiments = _entity_sentiment_score(combined)
+    entity_shift, entity_sentiments = _entity_sentiment_score(combined, doc=doc)
+
+    # 4. Sentence-level directional scoring (Option B, ±5).
+    # GATE: Only fires when the article has keywords from BOTH sides.
+    # Prevents misinterpretation of one-sided attack rhetoric.
+    has_both_sides = bool(top_left) and bool(top_right)
+    if _wc >= 150 and has_both_sides:
+        sentence_direction = _sentence_direction_score(combined, doc=doc)
+    else:
+        sentence_direction = 0.0
 
     # Combine text-based score
-    text_score = kw_score + framing_shift + entity_shift
+    text_score = kw_score + framing_shift + entity_shift + sentence_direction
     text_score = max(0.0, min(100.0, text_score))
 
-    # Fix 11: Sparsity-weighted baseline blending.
-    # When NO keywords are found, lean more heavily on the source baseline.
-    # A 600-word Fox News article with no keywords should score ~70-75, not 53.
-    # sparsity_factor: 1.0 at zero keywords, 0.0 at 4+ distinct keywords.
-    # The 0.8 multiplier prevents pure-baseline scores (keeps some text signal).
-    sparsity_factor = 1.0 - min(1.0, total_distinct / 4.0)
-    baseline_weight = baseline_weight + (1.0 - baseline_weight) * sparsity_factor * 0.8
-    text_weight = 1.0 - baseline_weight
-
-    # Divergence guard: when text_score diverges >30 points from source_baseline
-    # AND word_count < 150, the keyword evidence is thin (short articles can
-    # saturate on 1-2 incidental keyword hits).  Raise baseline_weight to at
-    # least 0.60 so the calibrated source baseline anchors the final score more
-    # strongly.  This corrects short AP/Reuters articles that pick up one
-    # partisan keyword in a quote and score 30 points away from their baseline.
-    # (bias-auditor fix)
-    if _wc < 150 and abs(text_score - source_baseline) > 30:
-        baseline_weight = max(baseline_weight, 0.60)
-        text_weight = 1.0 - baseline_weight
-
-    # 4. Blend with source baseline (length-adaptive weights computed above).
-    final_score = text_weight * text_score + baseline_weight * source_baseline
+    # ------------------------------------------------------------------
+    # Baseline-anchored DEVIATION calibration.
+    #
+    # CEO direction: the score should match the outlet's reputation for the
+    # most part, and vary by article accordingly.
+    #
+    #     score = baseline + clamp((text_score - 50) * AUTHORITY, +/-DELTA) * conf
+    #
+    #   - The article's words are measured as a deviation from NEUTRAL (50),
+    #     not as an absolute position competing with the baseline. Calm copy
+    #     (text_score ~= 50) therefore leaves the outlet AT its baseline
+    #     instead of dragging it to center. This is the whole fix: the prior
+    #     ``text_score - baseline`` form always pointed at center on calm copy,
+    #     so ordinary reporting squeezed every outlet the full DELTA inward.
+    #   - Left-coded copy moves the score left OF THE BASELINE; right-coded
+    #     copy moves it right. A partisan outlet writing against type moves
+    #     toward (and past) center only as far as DELTA allows.
+    #   - The score can never move more than DELTA off the calibrated baseline,
+    #     so reputation is structurally preserved (an 80-baseline outlet reads
+    #     in [66, 94], never center).
+    #   - confidence scales movement by article length: a 40-word RSS stub
+    #     barely calibrates (stays at baseline); a full article (>=150 words)
+    #     earns the full DELTA of calibration authority.
+    # ------------------------------------------------------------------
+    delta_max = _delta_max_for(rated_baseline, is_state_affiliated, is_unrated)
+    confidence = min(1.0, _wc / _LENGTH_FULL_CONFIDENCE)
+    raw_shift = (text_score - _TEXT_NEUTRAL_PIVOT) * _TEXT_AUTHORITY
+    text_shift = max(-delta_max, min(delta_max, raw_shift)) * confidence
+    final_score = source_baseline + text_shift
     score = max(0, min(100, int(round(final_score))))
+
+    # Unscored flag: this article carries NO lean measurement at all.
+    #
+    # Two things have to be absent at once. The OUTLET must be unrated (not
+    # placed on the left/right axis), and the ARTICLE must show no textual
+    # signal. When both hold, the resulting 50 is the absence of a measurement,
+    # not a finding of centrism, and the cluster aggregate must not average it
+    # in as though it were one.
+    #
+    # Keyed on placement, not on the 40-60 numeric band, because those are not
+    # the same thing. An outlet ASSESSED as centrist — a wire cooperative, a
+    # broadcaster under an impartiality charter — also sits at 50, but there the
+    # 50 IS the finding and belongs in the aggregate. Under the deviation model
+    # a thin-text article from a rated partisan outlet likewise resolves to its
+    # baseline (a Newsmax stub reads ~80), which is also a finding.
+    #
+    # Measured 2026-08-13: 52% of live article volume comes from unrated
+    # outlets, and 98% of a real sample from them scored text_score exactly 50.
+    # Averaging that majority in is what pinned every cluster mean to ~50.
+    unscored = (
+        is_unrated
+        and total_distinct <= 2
+        and abs(framing_shift) < 2.0
+        and abs(entity_shift) < 2.0
+        and abs(sentence_direction) < 2.0
+        and not is_state_affiliated
+    )
 
     return {
         "score": score,
@@ -684,11 +1069,17 @@ def analyze_political_lean(article: dict, source: dict, topic_lean_data=None) ->
             "keyword_score": round(kw_score, 1),
             "framing_shift": round(framing_shift, 1),
             "entity_shift": round(entity_shift, 1),
-            "source_baseline": source_baseline,
+            "sentence_direction": round(sentence_direction, 1),
+            "text_score": round(text_score, 1),
+            "source_baseline": round(source_baseline, 1),
+            "text_shift": round(text_shift, 1),
+            "delta_max": delta_max,
+            "confidence": round(confidence, 2),
             "top_left_keywords": top_left,
             "top_right_keywords": top_right,
             "framing_phrases_found": framing_phrases,
             "entity_sentiments": entity_sentiments,
             "state_affiliated": is_state_affiliated,
+            "unscored": unscored,
         },
     }

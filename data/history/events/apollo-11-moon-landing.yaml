@@ -1,0 +1,442 @@
+slug: apollo-11-moon-landing
+title: Apollo 11 and the Space Race
+subtitle: A nation that could not integrate its own schools put two men on the Moon in eight years
+date_display: July 20, 1969
+date_sort: 1969
+date_precision: day
+era: contemporary
+region: americas
+country: United States
+category: cultural
+severity: critical
+death_toll: 3 (Apollo 1 crew, January 27, 1967 launch-pad fire)
+affected_population: An estimated 600 million watched the landing live, roughly one sixth of humanity
+duration: May 25, 1961 (Kennedy's commitment) to July 24, 1969 (splashdown)
+hero_image_url: https://commons.wikimedia.org/wiki/File:Aldrin_Apollo_11_original.jpg
+hero_image_attribution: Neil Armstrong, NASA, 1969, public domain via Wikimedia Commons
+summary: 'At 20:17:40 UTC on July 20, 1969, a spidery aluminum craft with legs settled onto a plain of basalt on the Moon. "Houston, Tranquility Base here. The Eagle has landed." In Mission Control, a flight
+  controller keyed his microphone: "You got a bunch of guys about to turn blue. We''re breathing again."
+
+
+  Neil Armstrong and Buzz Aldrin had flown the Lunar Module the final descent by hand after the guidance computer threw 1202 alarms and the automatic system steered them toward a boulder field. They touched
+  down with about 25 seconds of fuel remaining. Michael Collins orbited overhead in the Command Module, alone, passing behind the Moon on each revolution into a radio silence no human had experienced.
+
+
+  Six and a half hours later, at 02:56 UTC on July 21, Armstrong climbed down the ladder and pressed a boot into the regolith. "That''s one small step for man, one giant leap for mankind." The transmission
+  came from 239,000 miles away on a signal weaker than a refrigerator bulb, relayed through a dish outside Canberra to an audience of roughly 600 million people.
+
+
+  The reaching had cost 25.4 billion dollars in then-year money, drawn from a workforce that peaked near 400,000: engineers, seamstresses who sewed the 21-layer spacesuits, technicians who hand-wound the
+  guidance computer''s rope memory. It had also cost three lives. On January 27, 1967, a fire swept the pure-oxygen cabin of Apollo 1 during a ground test, killing Gus Grissom, Ed White, and Roger Chaffee
+  in seconds behind a hatch that took 90 seconds to open.
+
+
+  Eight years earlier the United States had not put a single person into orbit. The Soviet Union had launched the first satellite, the first man, the first woman, the first spacewalk. On May 25, 1961, three
+  weeks after a chimpanzee-tested capsule carried Alan Shepard on a 15-minute hop, President Kennedy told Congress the nation should land a man on the Moon before the decade was out. He was proposing to win
+  a race the country was losing.
+
+
+  Two hundred miles from Tranquility Base, a Soviet robot named Luna 15 was circling the same Moon. It had launched three days before Apollo 11, sent to scoop lunar soil and rush it home first. On July 21,
+  hours before the astronauts lifted off to return, Luna 15 fired its retrorocket, descended toward the Sea of Crises, and struck a mountainside. British astronomers at Jodrell Bank recorded the signal going
+  silent.
+
+  '
+significance: 'The landing settled the central technological contest of the Cold War in America''s favor and reframed the Soviet Union, which had led every prior milestone, as second. It validated a management
+  model, systems engineering across 20,000 contractor firms, that reshaped how governments and corporations run large projects. The integrated circuit, ordered by the thousands for the Apollo Guidance Computer,
+  found its first mass buyer in the space program and seeded the semiconductor industry. The photograph of Earth from lunar distance, a blue marble in black vacuum, became the emblem of the environmental
+  movement founded the same decade. And the estimated 25.4 billion dollars spent to reach the Moon, at a moment when Ralph Abernathy drove mule carts to the launch gate to protest American poverty, opened
+  a debate about national priorities that has never closed: whether a society proves its greatness by what it can build or by whom it leaves behind. No human has returned to the Moon since December 1972.
+
+  '
+key_figures:
+- name: Neil Armstrong
+  role: Apollo 11 commander, first person to walk on the Moon
+  wikidata: Q1615
+  born: 1930
+  died: 2012
+  wikipedia: https://en.wikipedia.org/wiki/Neil_Armstrong
+- name: Buzz Aldrin
+  role: Apollo 11 Lunar Module pilot, second person to walk on the Moon
+  wikidata: Q2252
+  born: 1930
+  wikipedia: https://en.wikipedia.org/wiki/Buzz_Aldrin
+- name: Michael Collins
+  role: Apollo 11 Command Module pilot, orbited the Moon alone during the landing
+  wikidata: Q2069
+  born: 1930
+  died: 2021
+  wikipedia: https://en.wikipedia.org/wiki/Michael_Collins_(astronaut)
+- name: John F. Kennedy
+  role: US President who committed the nation to a lunar landing on May 25, 1961
+  wikidata: Q9696
+  born: 1917
+  died: 1963
+  wikipedia: https://en.wikipedia.org/wiki/John_F._Kennedy
+- name: Sergei Korolev
+  role: Chief Designer of the Soviet space program, architect of Sputnik and Vostok, died 1966
+  wikidata: Q78776
+  born: 1907
+  died: 1966
+  wikipedia: https://en.wikipedia.org/wiki/Sergei_Korolev
+- name: Wernher von Braun
+  role: Director of Marshall Space Flight Center, designed the Saturn V; former Nazi V-2 engineer
+  wikidata: Q57057
+  born: 1912
+  died: 1977
+  wikipedia: https://en.wikipedia.org/wiki/Wernher_von_Braun
+- name: Gil Scott-Heron
+  role: Poet whose 'Whitey on the Moon' (1970) became the enduring critique of Apollo's priorities
+  wikidata: Q311715
+  born: 1949
+  died: 2011
+  wikipedia: https://en.wikipedia.org/wiki/Gil_Scott-Heron
+- name: Ralph Abernathy
+  role: Civil rights leader who led the Poor People's Campaign to the Apollo 11 launch gate
+  wikidata: Q633539
+  born: 1926
+  died: 1990
+  wikipedia: https://en.wikipedia.org/wiki/Ralph_Abernathy
+legacy_points:
+- Ended the Space Race the US had been losing since Sputnik in 1957, with a landing before the decade closed
+- Cost 25.4 billion dollars and a peak workforce near 400,000 across roughly 20,000 contractor firms
+- Bought the integrated circuit at scale, seeding the modern semiconductor and computing industries
+- Produced the 'Earthrise' and 'Blue Marble' images that became icons of the environmental movement
+- Left a debate over national priorities that Abernathy and Gil Scott-Heron voiced at the launch itself
+primary_source_excerpts:
+- text: I believe that this nation should commit itself to achieving the goal, before this decade is out, of landing a man on the Moon and returning him safely to the Earth.
+  author: John F. Kennedy
+  work: Special Message to Congress on Urgent National Needs
+  date: May 25, 1961
+- text: Houston, Tranquility Base here. The Eagle has landed.
+  author: Neil Armstrong
+  work: Apollo 11 air-to-ground transcript
+  date: July 20, 1969
+- text: That's one small step for man, one giant leap for mankind.
+  author: Neil Armstrong
+  work: Apollo 11 air-to-ground transcript, first step onto the lunar surface
+  date: July 21, 1969
+- text: We choose to go to the Moon in this decade and do the other things, not because they are easy, but because they are hard.
+  author: John F. Kennedy
+  work: Address at Rice University
+  date: September 12, 1962
+coordinates:
+  lat: 0.6741
+  lng: 23.473
+related_event_slugs:
+- cuban-missile-crisis
+- fall-of-berlin-wall
+- soviet-union-collapse
+- civil-rights-movement
+perspectives:
+- viewpoint: American Triumph / Cold War Victory
+  viewpoint_type: victor
+  region_origin: americas
+  narrative: 'The American narrative frames Apollo 11 as the moment a free society outbuilt a closed one under an open deadline set eight years in advance. The context was defeat. On October 4, 1957, the Soviet
+    Union launched Sputnik, a 184-pound sphere that beeped over American cities every 96 minutes and shattered the assumption of US technological supremacy. On April 12, 1961, Yuri Gagarin orbited the Earth,
+    the first human in space, and the Soviets held every first that mattered. Three weeks later Alan Shepard flew a 15-minute suborbital arc, and on May 25, 1961, Kennedy told a joint session of Congress
+    that the nation would land a man on the Moon before the decade was out. It was a promise to overtake a rival from behind, in public, with the timetable printed in the Congressional Record.
+
+
+    The achievement rested on scale and openness. NASA''s budget peaked at 4.4 percent of the federal budget in 1966. The program drew a workforce near 400,000 across some 20,000 firms and universities, and,
+    unlike the secret Soviet effort, it did so in the open: launches were televised, failures were public, and the Apollo 1 fire that killed Grissom, White, and Chaffee on January 27, 1967 was investigated
+    before Congress and the press. The Saturn V, 363 feet tall and designed under Wernher von Braun at Marshall Space Flight Center, generated 7.6 million pounds of thrust and never lost a crew in flight.
+
+
+    The landing itself became the argument. When Armstrong took manual control to fly past a boulder field and set down with about 25 seconds of fuel to spare, then radioed "The Eagle has landed," the United
+    States had done in public what the Soviet Union could not do at all. The plaque left on the descent stage read: "We came in peace for all mankind." President Nixon called it the greatest week since the
+    Creation. In this telling, Apollo proved that a democracy could summon the discipline of a command economy without becoming one, and that the decisive Cold War contest was won not on a battlefield but
+    on a plain called Tranquility.
+
+    '
+  key_arguments:
+  - A democracy overtook a rival that had led every prior milestone, on a public deadline set in 1961
+  - The program ran in the open: televised launches, public failures, a congressional Apollo 1 inquiry
+  - The Saturn V and the systems-engineering model executed a national goal without a command economy
+  - '"We came in peace for all mankind" framed the victory as a human achievement, not only an American one'
+  sources:
+  - title: 'A Man on the Moon: The Voyages of the Apollo Astronauts'
+    author: Andrew Chaikin
+    year: '1994'
+    type: book
+    archive_url: https://archive.org/details/manonmoonvoyages0000chai
+  - title: Special Message to the Congress on Urgent National Needs
+    author: John F. Kennedy
+    year: '1961'
+    type: document
+  - title: 'Apollo: The Race to the Moon'
+    author: Charles Murray and Catherine Bly Cox
+    year: '1989'
+    type: book
+    archive_url: https://archive.org/details/apolloracetomoon0000murr
+  notable_quotes:
+  - text: We choose to go to the Moon in this decade and do the other things, not because they are easy, but because they are hard.
+    speaker: John F. Kennedy
+    context: Address at Rice University, September 12, 1962
+  - text: Here men from the planet Earth first set foot upon the Moon. We came in peace for all mankind.
+    speaker: Plaque on the Apollo 11 descent stage
+    context: Left on the Moon, July 1969
+  emphasized:
+  - The recovery from Sputnik-era defeat to first-place finish in eight years
+  - Openness of the program versus Soviet secrecy
+  - Engineering scale and the flawless flight record of the Saturn V
+  omitted:
+  - The domestic poverty and civil rights struggles unfolding at the same moment
+  - Wernher von Braun's origins in the Nazi V-2 program and its slave labor
+  - How much the deadline was driven by Cold War prestige rather than science
+- viewpoint: Soviet Space Program
+  viewpoint_type: vanquished
+  region_origin: europe
+  narrative: 'From Moscow, the Space Race looked like a contest the Soviet Union led for a decade and then lost in the final lap, for reasons that were as much organizational as technical. The Soviets launched
+    the first satellite (Sputnik, October 1957), the first animal in orbit (Laika, November 1957), the first man (Gagarin, April 1961), the first woman (Valentina Tereshkova, 1963), the first spacewalk (Alexei
+    Leonov, 1965), and the first probes to reach the Moon and photograph its far side. Each first was announced only after it succeeded; failures vanished. The public heard of triumphs and never of the pad
+    explosions.
+
+
+    The engine of those firsts was one man, Chief Designer Sergei Korolev, whose identity was a state secret until his death. Korolev had survived the Gulag, arrested in 1938 and sent to a labor camp before
+    being pulled back to build rockets. He held the rival design bureaus together by force of will. When he died on the operating table in January 1966, aged 59, the Soviet lunar effort lost the only figure
+    who could reconcile its feuding chief designers. Valentin Glushko refused to build engines for Korolev''s giant N1 rocket, so the design used 30 smaller engines clustered on the first stage, choreographed
+    by an analog control system that could not keep pace with American digital computing. The N1 flew four times between 1969 and 1972 and failed every time; its second launch, in July 1969, fell back onto
+    the pad in one of the largest non-nuclear explosions in history, weeks before Apollo 11.
+
+
+    Even in defeat the Soviets raced. Luna 15, an unmanned sample-return probe, launched on July 13, 1969, three days ahead of Apollo 11, aiming to scoop lunar soil and return it to Earth before the astronauts
+    got home, which would have let Moscow claim it had retrieved Moon rocks robotically, without risking lives. It reached lunar orbit but crashed into the Sea of Crises on July 21, hours before Eagle lifted
+    off. Afterward the official line held that the Soviet Union had never intended to send people to the Moon at all, that robotic exploration was safer and wiser. The N1 program was cancelled in 1974 and
+    its existence denied until the Soviet collapse. In this framing, the loss was real but the ledger longer: the country that lost the Moon had opened the entire road to space.
+
+    '
+  key_arguments:
+  - The USSR held nearly every space first from 1957 to 1965, from Sputnik to the first spacewalk
+  - Korolev's death in 1966 removed the one designer who could unify the feuding lunar effort
+  - The N1 rocket failed all four flights; clustered engines and analog control could not match US computing
+  - Luna 15 raced to return lunar soil robotically first and crashed hours before Apollo 11 departed
+  sources:
+  - title: 'Challenge to Apollo: The Soviet Union and the Space Race, 1945-1974'
+    author: Asif A. Siddiqi
+    year: '2000'
+    type: book
+    archive_url: https://archive.org/details/challengetoapoll0000sidd
+  - title: 'Korolev: How One Man Masterminded the Soviet Drive to Beat America to the Moon'
+    author: James Harford
+    year: '1997'
+    type: book
+    archive_url: https://archive.org/details/korolevhowonemna0000harf
+  - title: 'Red Moon Rising: Sputnik and the Hidden Rivalries That Ignited the Space Age'
+    author: Matthew Brzezinski
+    year: '2007'
+    type: book
+    archive_url: https://archive.org/details/redmoonrisingspu0000brze
+  notable_quotes:
+  - text: Poyekhali! (Let's go!)
+    speaker: Yuri Gagarin
+    context: At the launch of Vostok 1, the first human spaceflight, April 12, 1961
+  - text: There was no lunar race. We were not competing with the Americans.
+    speaker: Official Soviet position after 1969
+    context: The N1 rocket program remained a state secret until the USSR's collapse
+  emphasized:
+  - The decade of Soviet firsts that opened the space age
+  - Organizational feuds and Korolev's death as causes of the lunar defeat
+  - Robotic sample return as a stated safer alternative to crewed landings
+  omitted:
+  - The scale and consistency of the American effort that ultimately won
+  - The propaganda function of concealing the N1 failures for two decades
+  - The degree to which the Moon goal genuinely mattered to Soviet planners before 1964
+- viewpoint: Domestic Critique / Civil Rights and Poverty
+  viewpoint_type: revisionist
+  region_origin: americas
+  narrative: 'For millions of Americans the Moon landing was a question, not an answer: how a nation that could spend 25.4 billion dollars to reach the Moon could not house, feed, or school its own poor.
+    The critique came not from the sidelines but from the launch gate. On July 15, 1969, the day before liftoff, Ralph Abernathy, successor to Martin Luther King Jr. at the Southern Christian Leadership
+    Conference, led several hundred marchers and four mule-drawn wagons to the gates of Cape Kennedy. He asked to be admitted, was met by NASA administrator Thomas Paine, and told the press his Poor People''s
+    Campaign had come not to stop the launch but to protest a country''s distorted priorities. He asked NASA''s scientists to turn their genius on hunger and poverty. Then he watched the rocket rise and,
+    by his own account, prayed for the astronauts.
+
+
+    The sharpest statement came a year later. In 1970 the poet and musician Gil Scott-Heron recorded "Whitey on the Moon," a spoken word piece that set a Black family''s medical debt, rat bites, and rising
+    rent against the spectacle overhead: "A rat done bit my sister Nell, with Whitey on the Moon. Her face and arms began to swell, and Whitey''s on the Moon." The refrain named a redistribution that ran
+    uphill: taxes drawn from people who could not afford a doctor, spent to plant a flag on a dead world. Black newspapers, including the New York Amsterdam News, ran the arithmetic through the decade.
+
+
+    The objection was not anti-science. It was about sequence and justice. In 1969 the United States was fighting in Vietnam, cities had burned in 1967 and again after King''s assassination in 1968, and
+    the median Black family earned about 60 percent of what white families did. Whitney Young of the Urban League said the money that went to the Moon could have built housing and schools. The critics did
+    not deny the achievement. They asked why the achievement had been chosen first, and by whom, and who had paid for it while going without. That question outlived the Apollo program itself, and NASA''s
+    own later outreach adopted the challenge Abernathy had issued at the gate.
+
+    '
+  key_arguments:
+  - Ralph Abernathy led the Poor People's Campaign to the launch gate to protest distorted priorities
+  - Gil Scott-Heron's 'Whitey on the Moon' set Black poverty against the cost of the spectacle
+  - The 25.4 billion dollars was spent amid Vietnam, urban unrest, and deep racial income gaps
+  - The critique targeted sequence and justice, not science itself
+  sources:
+  - title: While NASA Was Landing on the Moon, Many African Americans Sought Economic Justice Instead
+    author: Charles Fishman (Smithsonian Magazine)
+    year: '2019'
+    type: article
+  - title: Whitey on the Moon (recording, Small Talk at 125th and Lenox)
+    author: Gil Scott-Heron
+    year: '1970'
+    type: other
+  - title: One Giant Leap for Mankind, but Where Was Everybody Else? (Why Civil Rights Activists Protested the Moon Landing)
+    author: History.com / A&E
+    year: '2019'
+    type: article
+  notable_quotes:
+  - text: A rat done bit my sister Nell, with Whitey on the Moon. Her face and arms began to swell, and Whitey's on the Moon.
+    speaker: Gil Scott-Heron
+    context: Whitey on the Moon, 1970
+  - text: I want NASA scientists to tackle the problems we face in society.
+    speaker: Ralph Abernathy
+    context: At the gates of Cape Kennedy, July 15, 1969
+  emphasized:
+  - The moral arithmetic of spending on the Moon amid domestic poverty
+  - Protest coming from within the civil rights movement at the launch itself
+  - The uneven distribution of who paid for the program and who benefited
+  omitted:
+  - The technological and economic spinoffs that later reached ordinary Americans
+  - The jobs the program created, including for some Black engineers and mathematicians
+  - The genuine scientific returns of lunar exploration
+- viewpoint: Scientific and Engineering Legacy
+  viewpoint_type: academic
+  region_origin: global
+  narrative: 'Historians of science and technology read Apollo less as a Cold War trophy than as the largest peacetime engineering project ever attempted, and trace its longest shadows in laboratories and
+    factories rather than on the Moon. The central object was the Apollo Guidance Computer, built at the MIT Instrumentation Laboratory under Charles Stark Draper, with software led by Margaret Hamilton,
+    who coined the term "software engineering" to force her discipline to be taken seriously. The AGC ran on integrated circuits at a time when the chip was a laboratory curiosity. To build the guidance
+    computers, NASA and the military bought so many that in 1963 the space program consumed a large share of all integrated circuits produced in the United States, driving prices down and pulling the semiconductor
+    industry from novelty to mass production. The line from Apollo runs through that purchasing decision to the microprocessor.
+
+
+    The samples matter to science on their own terms. The Apollo missions returned 382 kilograms of lunar rock and soil. Analysis of those samples produced the giant-impact hypothesis, the now-standard theory
+    that the Moon formed when a Mars-sized body struck the early Earth, and refined the dating of the inner solar system through the record of ancient impacts preserved on an airless world. Lunar samples
+    are still being opened: NASA deliberately sealed some for future instruments, and opened one such container in 2019, fifty years on.
+
+
+    The management method proved as influential as the hardware. Apollo systematized what became known as systems engineering and program management: coordinating some 20,000 contractors, tracking millions
+    of parts, and computing reliability across a machine with a failure tolerance measured in single digits. That method migrated into aerospace, software, and civil megaprojects. Margaret Hamilton''s asynchronous,
+    priority-scheduled flight software is why Eagle landed at all: when the 1202 alarms fired during descent, the computer shed low-priority tasks and kept the guidance running, a design choice that turned
+    a potential abort into a landing. In this reading, the durable legacy of Apollo is not the footprints, which no wind will erase but no one has revisited since 1972, but the computing, materials, and methods
+    it forced into being decades ahead of schedule.
+
+    '
+  key_arguments:
+  - Apollo's demand for integrated circuits helped pull the semiconductor industry into mass production
+  - Margaret Hamilton's priority-scheduled flight software saved the landing during the 1202 alarms
+  - 382 kilograms of returned samples produced the giant-impact theory of the Moon's origin
+  - Systems engineering and program management were systematized across roughly 20,000 contractors
+  sources:
+  - title: 'Digital Apollo: Human and Machine in Spaceflight'
+    author: David A. Mindell
+    year: '2008'
+    type: book
+    archive_url: https://archive.org/details/digitalapollohum0000mind
+  - title: 'The Apollo Guidance Computer: Architecture and Operation'
+    author: Frank O'Brien
+    year: '2010'
+    type: book
+  - title: The Difficulty of Getting to the Moon (Apollo sample science and the giant-impact hypothesis)
+    author: NASA / Lunar and Planetary Institute
+    year: '2019'
+    type: report
+  notable_quotes:
+  - text: There was no second chance. We knew that.
+    speaker: Margaret Hamilton
+    context: On writing the Apollo flight software, MIT Instrumentation Laboratory
+  - text: The computer was programmed to recognize that error and respond to it. It threw away the low-priority tasks and kept the ones that mattered.
+    speaker: Margaret Hamilton
+    context: On the 1202 alarms during Eagle's descent
+  emphasized:
+  - The semiconductor and computing legacy that outlasted the flights
+  - Software engineering as a discipline forged by the guidance computer
+  - The scientific yield of returned lunar samples
+  omitted:
+  - The Cold War prestige motive that funded the science in the first place
+  - The abandonment of crewed lunar exploration after 1972
+  - The human and political costs debated in the same years
+- viewpoint: Global South / Third World
+  viewpoint_type: revisionist
+  region_origin: global
+  narrative: 'From the newly independent nations of Africa, Asia, and Latin America, the Moon landing read as the crowning spectacle of a bipolar order in which the two superpowers spent the wealth of the
+    planet performing their rivalry above it. In 1969 much of the world had been decolonized for less than a decade. India, Nigeria, Indonesia, and dozens of other states were building their first universities,
+    fighting famine, and choosing sides in a Cold War not of their making. The 25.4 billion dollars the United States spent to reach the Moon, and the comparable sums the Soviet Union poured into the N1,
+    were, in this view, a monument to misallocation on a global scale.
+
+
+    The critique had defenders and dissenters within the Global South itself. Some leaders read the achievement as proof that human capacity was unbounded and that their own nations could one day reach as
+    far; India and Brazil would later build space programs that argued exactly this, framing satellites as tools for weather, communication, and development rather than prestige. Others saw the race as a
+    distraction the poor world could not afford to admire. A widely retold anecdote from the period captured the tension: a Zambian nun, Sister Mary Jucunda, wrote to a NASA scientist asking how he could
+    justify spending billions on Mars research while children starved on Earth. The scientist''s published reply argued that basic research had always, indirectly, fed the hungry by advancing the tools of
+    civilization. The exchange became a parable precisely because both sides were sincere.
+
+
+    The deeper objection was about authorship and audience. The plaque on the Moon read "for all mankind," but mankind had not been consulted, funded the effort, or shared in its direction. Two powers had
+    claimed the sky on humanity''s behalf. The technology that reached the Moon was the same technology, the intercontinental ballistic missile, that could deliver a warhead to any capital in the developing
+    world, and the launch vehicles of both programs descended directly from weapons. For much of the Global South, Apollo was neither villain nor miracle but evidence: that the resources to end poverty existed,
+    that they were spent instead on a race for prestige, and that the phrase "all mankind" would have to be earned rather than announced.
+
+    '
+  key_arguments:
+  - Superpower spending on the Moon race read as global misallocation amid post-colonial poverty
+  - Some Global South leaders drew inspiration; later Indian and Brazilian programs stressed development over prestige
+  - The Sister Mary Jucunda exchange framed the sincere clash between research and immediate need
+  - '"For all mankind" rang hollow to nations that neither funded nor directed the effort'
+  sources:
+  - title: The Astronautical Imagination and the Global South (in Spacefaring and the Postcolonial)
+    author: various (Modern American History symposium)
+    year: '2019'
+    type: journal
+  - title: Why Explore Space? (letter to Sister Mary Jucunda)
+    author: Ernst Stuhlinger
+    year: '1970'
+    type: document
+  - title: 'The Global History of the Space Age'
+    author: Alexander C. T. Geppert (ed.)
+    year: '2018'
+    type: book
+  notable_quotes:
+  - text: How could you suggest spending billions of dollars on a voyage to Mars, when many children on this Earth are starving to death?
+    speaker: Sister Mary Jucunda
+    context: Letter to NASA, 1970 (as recounted in Ernst Stuhlinger's published reply)
+  - text: The space program does not take food from hungry children, but it does help to build the tools with which hunger can be fought.
+    speaker: Ernst Stuhlinger
+    context: Reply to Sister Mary Jucunda, 1970
+  emphasized:
+  - The opportunity cost of the race set against post-colonial poverty
+  - The shared missile lineage of both superpowers' launch vehicles
+  - The gap between the rhetoric of 'all mankind' and who actually decided
+  omitted:
+  - The genuine inspiration Apollo provided to future non-Western space programs
+  - The eventual global spread of satellite technology for weather and communication
+  - The scientific knowledge shared openly through returned samples and data
+media:
+- media_type: photograph
+  title: Buzz Aldrin on the Moon, 20 July 1969
+  description: Astronaut Edwin "Buzz" Aldrin stands on the Sea of Tranquility. Neil Armstrong, who took the photograph, is reflected in Aldrin's gold visor along with the lunar module Eagle. It is the most reproduced image of the first Moon landing.
+  source_url: https://commons.wikimedia.org/wiki/File:Aldrin_Apollo_11_original.jpg
+  attribution: Neil Armstrong, NASA, 1969, public domain via Wikimedia Commons
+  license: public-domain
+  creator: Neil Armstrong
+  creation_date: July 20, 1969
+  width: 3912
+  height: 3936
+- media_type: photograph
+  title: Launch of Apollo 11, 16 July 1969
+  description: The Saturn V rocket lifts off from Launch Complex 39A at the Kennedy Space Center carrying Armstrong, Aldrin, and Collins. The vehicle stood 363 feet tall and burned through 20 tons of fuel per second at liftoff.
+  source_url: https://commons.wikimedia.org/wiki/File:Apollo_11_Launch_-_GPN-2000-000630.jpg
+  attribution: NASA, 1969, public domain via Wikimedia Commons
+  license: public-domain
+  creator: NASA
+  creation_date: July 16, 1969
+  width: 2400
+  height: 3000
+connections:
+- target_slug: cuban-missile-crisis
+  connection_type: parallel
+  description: The R-7 that carried Sputnik and Gagarin was an intercontinental ballistic missile, the same weapon class that put Soviet warheads in Cuba in 1962. The rockets of the Space Race were the rockets of the arms race, flying peaceful payloads on military spines
+- target_slug: civil-rights-movement
+  connection_type: parallel
+  description: Ralph Abernathy led the Poor People's Campaign to the Apollo 11 launch gate on July 15, 1969, one year after he succeeded the assassinated Martin Luther King Jr. The same nation that landed on the Moon had not yet housed or schooled its own poor
+- target_slug: fall-of-berlin-wall
+  connection_type: influenced
+  description: Apollo settled the Cold War's technological contest in America's favor in 1969; twenty years later the system it had outbuilt collapsed at the Berlin Wall. The Space Race was one front of a rivalry the Soviet Union would ultimately lose
+- target_slug: soviet-union-collapse
+  connection_type: influenced
+  description: The Moon race was one front of the superpower contest, and the Soviet Union lost it. Korolev was dead by 1966, the N1 rocket exploded on all four flights, and the lunar program was hidden and then denied. Twenty-two years after Tranquility, the state that came second dissolved itself.

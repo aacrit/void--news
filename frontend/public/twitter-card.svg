@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 512" fill="none">
   <!--
-    void --news — Twitter Card Image (1024x512)
-    Minimal. Dark background. Void circle mark centered with wordmark.
-    Clean enough to work at small sizes in Twitter feed.
+    VOID NEWS Twitter Card Image (1024x512)
+    Minimal. Dark walnut. Brass footed Sigil hero + "VOID NEWS" lockup.
+    Clean enough to work at small sizes in the feed.
   -->
 
   <!-- Background — dark walnut -->
@@ -18,39 +18,41 @@
   <line x1="100" y1="60" x2="924" y2="60" stroke="#4A4540" stroke-width="1"/>
   <line x1="100" y1="64" x2="924" y2="64" stroke="#4A4540" stroke-width="2.5"/>
 
-  <!-- Void circle + scale mark (centered, prominent) -->
-  <g transform="translate(430, 95)" stroke="#EDE8E0" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none">
-    <!-- Void circle -->
-    <circle cx="82" cy="60" r="42"/>
-    <!-- Beam -->
-    <line x1="18" y1="60" x2="146" y2="60"/>
-    <!-- Left tick -->
-    <line x1="28" y1="51" x2="28" y2="69"/>
-    <!-- Right tick -->
-    <line x1="136" y1="51" x2="136" y2="69"/>
-    <!-- Post -->
-    <line x1="82" y1="102" x2="82" y2="132"/>
-    <!-- Base -->
-    <line x1="63" y1="132" x2="101" y2="132"/>
+  <!-- Hero: footed Sigil (standalone square geometry) -->
+  <g transform="translate(448,86) scale(1.28)" stroke="#D4A574" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <circle cx="50" cy="40" r="30"/>
+    <line x1="12" y1="40" x2="88" y2="40"/>
+    <line x1="13" y1="33" x2="12" y2="47" stroke-width="5"/>
+    <line x1="87" y1="33" x2="88" y2="47" stroke-width="5"/>
+    <line x1="50" y1="70" x2="50" y2="86"/>
+    <path d="M36 93 C44 88 56 88 64 93"/>
   </g>
 
-  <!-- Wordmark -->
-  <text x="360" y="310" fill="#EDE8E0"
-        font-family="Georgia, 'Times New Roman', serif"
-        font-size="60" font-weight="700" letter-spacing="0.02em">
-    void
-  </text>
-  <text x="560" y="310" fill="#8A8278"
-        font-family="'JetBrains Mono', Menlo, Consolas, monospace"
-        font-size="46" font-weight="400" letter-spacing="0.02em">
-    --news
-  </text>
+  <!-- Wordmark: "V[Sigil-O]ID  NEWS" — caps cream serif, Sigil-O brass -->
+  <!-- baseline Y = 300; font-size 60 -->
+  <text x="340" y="300" fill="#EDE8E0"
+        font-family="'Playfair Display', Georgia, 'Times New Roman', serif"
+        font-size="60" font-weight="700" letter-spacing="0.02em">V</text>
+  <g transform="translate(382,229.7) scale(0.486)" fill="none" stroke="#D4A574" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="50" cy="50" r="41" stroke-width="8"/>
+    <line x1="8" y1="50" x2="92" y2="50" stroke-width="6"/>
+    <line x1="9" y1="43" x2="8" y2="57" stroke-width="5"/>
+    <line x1="91" y1="43" x2="92" y2="57" stroke-width="5"/>
+    <line x1="50" y1="91" x2="50" y2="112" stroke-width="6"/>
+    <path d="M35 118 C43 113 57 113 65 118" stroke-width="6"/>
+  </g>
+  <text x="428" y="300" fill="#EDE8E0"
+        font-family="'Playfair Display', Georgia, 'Times New Roman', serif"
+        font-size="60" font-weight="700" letter-spacing="0.02em">ID</text>
+  <text x="520" y="300" fill="#EDE8E0"
+        font-family="'Playfair Display', Georgia, 'Times New Roman', serif"
+        font-size="60" font-weight="700" letter-spacing="0.02em">NEWS</text>
 
   <!-- Tagline -->
-  <text x="512" y="370" text-anchor="middle" fill="#B8B0A5"
+  <text x="512" y="360" text-anchor="middle" fill="#B8B0A5"
         font-family="'Inter', 'Helvetica Neue', Arial, sans-serif"
         font-size="20" font-weight="400" letter-spacing="0.04em">
-    See every side of the story
+    See through the void.
   </text>
 
   <!-- Small bias spectrum dots -->
@@ -72,7 +74,7 @@
 
   <!-- Footer -->
   <text x="512" y="480" text-anchor="middle" fill="#5A5550"
-        font-family="'JetBrains Mono', Menlo, monospace" font-size="12" letter-spacing="0.06em">
-    200 SOURCES  ·  6-AXIS BIAS ANALYSIS  ·  FREE
+        font-family="'IBM Plex Mono', Menlo, monospace" font-size="12" letter-spacing="0.06em">
+    1,016 SOURCES  ·  6-AXIS BIAS ANALYSIS  ·  FREE
   </text>
 </svg>

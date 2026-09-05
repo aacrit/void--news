@@ -1,0 +1,219 @@
+slug: georgia-eu-protests
+title: Georgia's Europe Protests
+subtitle: A ruling party pauses EU accession and meets nightly crowds in Tbilisi
+date_display: 2024 to present
+date_start: 2024
+date_precision: year
+era: square-revolutions
+region: europe
+country: Georgia
+revolt_type: democratic-uprising
+status: active
+summary: Georgian Dream, in power since 2012 and founded by billionaire Bidzina Ivanishvili, passed a foreign agents law in 2024 modeled on Russian legislation used to suppress civil society, over months of street protest. It then won a disputed October 2024 election that international monitors said was marred by irregularities, and on 28 November 2024 announced it was suspending EU accession talks until 2028. Nightly protests have continued in Tbilisi since, met with mass arrests and, rights monitors say, systematic beatings of detained protesters.
+significance: Georgia tests whether a governing party can walk back a constitutionally referenced goal, EU membership, that opinion polling puts above 80 percent support, without losing power. It is also a case study in a foreign agent law migrating from Russia to a formal candidate country for EU membership.
+analytical_outlook: 'President Salome Zourabichvili, whose term the government says expired in December 2024, and the opposition contest the government''s legitimacy but have not forced new elections or a change of government. Protests have persisted for months without the security-force break that historically precedes a government''s fall, and the government controls the courts and the electoral commission. Placement on the arc: sustained nonviolent protest that has not yet reached dual power or extracted a reversal from the state.'
+grievances:
+  - kind: political
+    intensity: 85
+    evidence: The October 2024 parliamentary election, which Georgian Dream said it won with 54 percent, was called neither free nor fair by the OSCE's monitoring mission and disputed by President Zourabichvili and the opposition.
+  - kind: civil-society
+    intensity: 80
+    evidence: A 2024 foreign agents law requires organizations receiving more than 20 percent of funding from abroad to register as agents of foreign influence, echoing a 2012 Russian law used there to shut down independent media and NGOs.
+  - kind: geopolitical
+    intensity: 82
+    evidence: EU candidate status, granted to Georgia in December 2023, was suspended by the government's own announcement on 28 November 2024 that accession talks would be shelved until 2028.
+repression_level: high
+actors:
+  - actor_type: masses
+    name: Nightly Tbilisi protesters
+    description: A cross-generational movement centered on Rustaveli Avenue outside parliament, sustained through winter 2024 into 2025.
+    role_in_arc: Kept continuous, largely spontaneous street pressure on the government for months rather than a single mass mobilization.
+    defected: false
+  - actor_type: students-youth
+    name: Student and youth groups
+    description: University students who organized boycotts and sustained the nightly demonstrations after the initial crowds thinned.
+    role_in_arc: Provided organizational continuity as protest fatigue set in among the broader public.
+    defected: false
+  - actor_type: old-regime
+    name: Georgian Dream and Bidzina Ivanishvili
+    description: The ruling party, founded and informally guided by billionaire Bidzina Ivanishvili, in power since 2012.
+    role_in_arc: Passed the foreign agents law, won the disputed election and suspended EU accession talks.
+    defected: false
+  - actor_type: regime
+    name: The Georgian riot police
+    description: Interior ministry security forces deployed nightly against protesters.
+    role_in_arc: Used water cannon, tear gas and, rights monitors say, beatings of detainees; no reported unit-level defections.
+    defected: false
+  - actor_type: diaspora
+    name: President Salome Zourabichvili
+    description: The formally pro-European president, whose term the government says expired in December 2024, while she disputes the legitimacy of her replacement.
+    role_in_arc: Refused to leave the presidential residence and continues to describe herself as the country's legitimate representative abroad.
+    defected: false
+tactics:
+  - tactic_type: mass-demonstration
+    description: Nightly protests outside parliament on Rustaveli Avenue, sustained for months.
+    prominence: high
+  - tactic_type: civil-disobedience
+    description: Strikes and boycotts by university students and some private-sector workers.
+    prominence: medium
+  - tactic_type: digital-mobilization
+    description: Decentralized organizing over Telegram and social media after the two main opposition coalitions struggled to unify a single leadership.
+    prominence: medium
+resistance_type: nonviolent
+phases:
+  - phase: old-regime-crisis
+    label: A withdrawn bill returns
+    date_start: 2024-04
+    t_start: 0
+    t_end: 0.12
+    intensity: 40
+    reached: true
+    summary: Georgian Dream reintroduces a foreign agents bill it had withdrawn in 2023 after protests, reigniting street opposition months before the election.
+    key_events:
+      - Reintroduction of the foreign agents bill
+      - Spring 2024 protests
+  - phase: the-spark
+    label: Accession talks suspended
+    date_start: '2024-11-28'
+    t_start: 0.22
+    t_end: 0.34
+    intensity: 75
+    reached: true
+    summary: Prime Minister Irakli Kobakhidze announces the suspension of EU accession talks until 2028. Protests begin the same night and continue nightly afterward.
+    key_events:
+      - Suspension of EU accession talks announced
+      - First night of continuous Tbilisi protests
+  - phase: radical-phase
+    label: A prolonged standoff
+    date_start: 2025-01
+    t_start: 0.6
+    t_end: 0.72
+    intensity: 65
+    reached: true
+    summary: Mass arrests and documented beatings of detained protesters draw condemnation from EU institutions without changing the government's course; protest numbers ebb from their peak but do not stop.
+    key_events:
+      - Mass detentions
+      - EU parliament resolutions condemning the crackdown
+outcome: ongoing-unresolved
+peak_participation_pct: null
+peak_participation_display: Crowds in the tens of thousands filled Rustaveli Avenue at the protest's November-December 2024 peak in a country of about 3.7 million; nightly turnout has since fallen to the hundreds to low thousands.
+crossed_participation_threshold: false
+military_defection: none
+foreign_intervention: diplomatic
+duration_days: null
+death_toll: No confirmed protester deaths as of the last review; documented injuries from mass detentions and alleged beatings are extensive.
+death_toll_low: null
+death_toll_high: null
+regime_before: democracy
+regime_after: unresolved
+democratization_delta: -1
+success_factors:
+  - factor_key: resistance_method
+    label: Method of struggle
+    framework: chenoweth
+    status: Nonviolent protest sustained over months rather than a single mobilization.
+    direction: favors-movement
+    base_rate: About 53 percent of nonviolent campaigns from 1900 to 2006 succeeded, versus about 26 percent for armed ones.
+    rationale: Method keeps the historically favorable odds available, though duration without escalation can also signal a stalemate.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+    as_of: '2026'
+    confidence: medium
+  - factor_key: peak_participation
+    label: Peak participation
+    framework: chenoweth
+    status: Large for Tbilisi's size at the November-December 2024 peak, but nightly turnout has fallen well short of a sustained mass mobilization.
+    direction: favors-regime
+    base_rate: No nonviolent campaign that mobilized at least 3.5 percent of the population at its peak has failed to achieve its stated aim.
+    rationale: Georgia's protests have not been independently estimated to have crossed that share, and the crowds have thinned through the winter.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+    as_of: '2026'
+    confidence: medium
+  - factor_key: security_defection
+    label: Did the security forces defect
+    framework: chenoweth
+    status: None reported. Riot police have carried out the crackdown without visible unit-level refusals.
+    direction: favors-regime
+    base_rate: Defection of the security forces is the single strongest predictor of a nonviolent campaign's success.
+    rationale: Without a break in the interior ministry's forces, the government has been able to sustain nightly detentions for months.
+    sources:
+      - Nepstad, Nonviolent Revolutions (2011)
+    as_of: '2026'
+    confidence: high
+  - factor_key: elite_fracture
+    label: Did the ruling elite split
+    framework: goldstone
+    status: Partial. The presidency disputes the government's legitimacy, but Georgian Dream's parliamentary majority and the judiciary have not split.
+    direction: indeterminate
+    base_rate: Revolutions and forced political openings rarely succeed until the ruling elite itself fractures.
+    rationale: A dissenting president without control of the security services or the courts is a symbolic, not a structural, crack in the ruling bloc.
+    sources:
+      - Goldstone, Revolution and Rebellion in the Early Modern World (1991)
+    as_of: '2026'
+    confidence: medium
+key_figures:
+  - name: Bidzina Ivanishvili
+    role: Founder and honorary chairman of Georgian Dream, the country's richest man
+    wikipedia: https://en.wikipedia.org/wiki/Bidzina_Ivanishvili
+  - name: Salome Zourabichvili
+    role: President whose term the government says ended in December 2024; she disputes her successor's legitimacy
+    wikipedia: https://en.wikipedia.org/wiki/Salome_Zourabichvili
+legacy_points:
+  - Turned a single law modeled on Russian legislation into the most sustained protest movement in Georgia's post-Soviet history.
+  - Made EU candidacy, granted in December 2023, a live domestic fault line rather than a settled national consensus within a year.
+  - Showed how a governing party can win a disputed election and absorb months of nightly protest without a visible crack in its coalition.
+related_revolt_slugs:
+  - belarus-2020
+related_history_slugs: []
+live_query:
+  strong:
+    - Georgian Dream
+    - Ivanishvili
+    - foreign agent law
+    - Zourabichvili
+  context:
+    - Georgia
+    - Tbilisi
+  exclude:
+    - Georgia state
+    - Atlanta
+    - US state
+analysis_reviewed_at: '2026-07-01'
+prediction_confidence: low
+is_published: true
+perspectives:
+  - viewpoint: The Tbilisi protesters
+    viewpoint_type: movement
+    region_origin: Tbilisi
+    narrative: Eighty percent of this country wants to be in Europe. That has been written into our constitution since 2017. A government that shelves that goal by announcement, then wins a disputed vote and jails the people who object, is not disagreeing with us. It is overriding us.
+    key_arguments:
+      - EU accession has explicit constitutional and public-opinion backing that the government's decision bypassed.
+      - The foreign agents law and the election dispute are one story, not two.
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - Constitutional EU commitment
+      - Documented detainee beatings
+    omitted:
+      - Divisions between the two main opposition coalitions
+  - viewpoint: Georgian Dream's position
+    viewpoint_type: regime
+    region_origin: Tbilisi
+    narrative: We paused accession talks, we did not renounce Europe, and a multi-year pause is not unlike timelines floated for the EU's own next enlargement round. The protests are real but so is the mandate we won in October, and foreign-funded organizations have spent a decade building networks we are entitled to regulate.
+    key_arguments:
+      - The suspension is framed by the government as a timeline adjustment, not a withdrawal from the EU path.
+      - The foreign agents law mirrors disclosure requirements the government says exist elsewhere.
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - The October 2024 election result
+      - Foreign funding of civil society
+    omitted:
+      - The OSCE monitoring mission's findings
+      - Documented treatment of detained protesters
+media: []
+connections:
+  - target_slug: belarus-2020
+    connection_type: parallel
+    description: Both movements followed a disputed election in a post-Soviet state, faced a security apparatus that held together, and settled into a prolonged standoff rather than a fast resolution.

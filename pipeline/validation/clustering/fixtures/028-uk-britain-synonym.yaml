@@ -1,0 +1,81 @@
+id: uk-britain-synonym-2026-05-15
+name: "UK ⇔ Britain synonym pair (Streeting resignation across UK/Britain framings)"
+failure_date: "2026-05-15"
+failure_kind: synonym-fragmentation
+articles:
+  - id: streeting-rte
+    title: "Streeting quits UK govt, paving way to challenge Starmer"
+    summary: "Wes Streeting has quit as UK Secretary of Health, paving the way for a potential leadership challenge against Prime Minister Keir Starmer."
+    full_text: >
+      Wes Streeting has quit as UK Secretary of Health, paving the way for a
+      potential leadership challenge against Prime Minister Keir Starmer.
+      In his resignation letter, Streeting said: "Where we need vision, we
+      have a vacuum." Backbench MPs from the Soft Left Caucus tabled an
+      emergency-budget amendment within an hour of the news. Cabinet
+      Secretary Simon Case is reportedly managing the transition. The
+      Treasury rejected a counter-proposal late Sunday. Westminster
+      bookmakers installed Liz Kendall as the favourite for the vacant
+      brief. Sterling fell briefly on the news.
+    source: { slug: rte, country: IE, tier: international }
+    published_at: "2026-05-14T13:58Z"
+  - id: streeting-france24
+    title: "UK health secretary Wes Streeting resigns and is expected to challenge Keir Starmer's leadership"
+    summary: "In Britain, Prime Minister Keir Starmer is under renewed pressure after his Health Secretary Wes Streeting resigned today and is expected to launch a leadership bid."
+    full_text: >
+      In Britain, Prime Minister Keir Starmer is under renewed pressure after
+      his Health Secretary Wes Streeting resigned today and is expected to
+      launch a leadership bid. Former Deputy leader Angela Rayner might
+      also announce a bid for the leadership today after she announced that
+      she has been cleared in a probe into her tax affairs. Starmer says he
+      will not resign and is likely to fight any leadership challenges. The
+      Labour NEC will meet on Friday to consider the procedural framework.
+    source: { slug: france24, country: FR, tier: international }
+    published_at: "2026-05-14T15:30Z"
+  - id: streeting-straits
+    title: "UK health minister Streeting preparing to resign, Times says"
+    summary: "Britain's health minister Wes Streeting is preparing to resign and could quit as early as Thursday, the Times reported on Wednesday, adding that he is likely to mount a formal challenge for the party leadership."
+    full_text: >
+      Britain's health minister Wes Streeting is preparing to resign and
+      could quit as early as Thursday, the Times reported on Wednesday,
+      adding that he is likely to mount a formal challenge for the party
+      leadership. Treasury Secretary Rachel Reeves is reported to have
+      argued in a closed cabinet meeting. Streeting allies cited a
+      counter-proposal that would have ring-fenced winter funding for
+      emergency departments. Sterling fell 0.4 percent against the dollar
+      on the report.
+    source: { slug: straits-times, country: SG, tier: international }
+    published_at: "2026-05-13T17:00Z"
+  - id: streeting-ft
+    title: "Wes Streeting resigns from government"
+    summary: "Health secretary says he has 'lost confidence' in Starmer but stops short of launching leadership challenge"
+    full_text: >
+      Britain's health secretary Wes Streeting has resigned from government,
+      saying he has "lost confidence" in Prime Minister Keir Starmer but
+      stopping short of launching a formal leadership challenge. Cabinet
+      Office Minister Pat McFadden has been touring Labour backbench offices
+      in Portcullis House to soothe nerves. Treasury sources told the FT
+      the flashpoint was a draft autumn-budget plan to extend the NHS pay-
+      rise freeze. Whitehall briefings hint at a reshuffle within 48 hours.
+    source: { slug: financial-times, country: GB, tier: international }
+    published_at: "2026-05-14T12:00Z"
+expectation:
+  type: should_merge
+  expected_member_ids: [streeting-rte, streeting-france24, streeting-straits, streeting-ft]
+  min_clusters: 1
+  max_clusters: 1
+  min_source_count: 3
+rationale: |
+  Production failure 2026-05-15: Wes Streeting resignation articles
+  fragmented because some headlines used "UK" (RTE, Straits Times),
+  others used "Britain" (France 24, FT). TF-IDF Phase 1 saw the
+  vocabularies as distinct enough to split them. Phase 2.55 synonym-pair
+  pass enumerates ("uk", "britain") and ("uk", "united kingdom") with
+  the title Jaccard floor of 0.20 — the shared "Streeting" + "Starmer"
+  + "resigns/resign" tokens easily cross the floor. Should collapse all
+  4 articles into one cluster.
+
+  Real production article IDs (Supabase, May 14, 2026):
+    - 67e31a27-4a3b-4536-9237-7d756cc53c0b (RTE — UK govt)
+    - 0c2811b1-4bab-46ac-9fe2-df510a8d3165 (France 24 — Britain framing)
+    - 5cf941d0-91bc-4d97-86d3-d9b5c1a87cf9 (Straits Times — UK + Britain mix)
+    - a95dad0a-86ba-447b-a3f7-371c8f73e58d (FT — health secretary)

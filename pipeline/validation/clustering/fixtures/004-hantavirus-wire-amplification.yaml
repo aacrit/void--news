@@ -1,0 +1,195 @@
+id: hantavirus-cruise-2026-05
+name: "Hantavirus cruise outbreak (must dampen — wire amplification)"
+failure_date: "2026-05-15"
+failure_kind: wire-amplification
+articles:
+  # ---- 8 byline-identical AP wire copies ----
+  - id: han-ap-1
+    title: "CDC investigates hantavirus outbreak on Caribbean cruise"
+    summary: "The CDC is investigating a hantavirus outbreak on a Caribbean cruise that has sickened at least 15 passengers, the agency said Wednesday."
+    full_text: >
+      The Centers for Disease Control and Prevention is investigating a hantavirus outbreak
+      on a Caribbean cruise that has sickened at least 15 passengers, the agency said
+      Wednesday. The Royal Caribbean ship "Liberty of the Seas" docked early in San Juan,
+      Puerto Rico, after the cruise line reported respiratory illness clusters across two
+      decks. Hantavirus is a rodent-borne pathogen that can cause severe lung disease.
+      Royal Caribbean said it is fully sanitizing affected cabins and has notified the FDA
+      and Puerto Rico health authorities. No deaths have been reported. The CDC said it
+      will conduct interviews with all 4,200 passengers and 1,500 crew. AP exclusive.
+    source: { slug: ap-news, country: US, tier: wire }
+    published_at: "2026-05-14T09:00Z"
+  - id: han-ap-2
+    title: "AP: CDC probes hantavirus on Liberty of the Seas Caribbean cruise"
+    summary: "The CDC is investigating a hantavirus outbreak on a Caribbean cruise that has sickened at least 15 passengers, the agency said Wednesday."
+    full_text: >
+      The Centers for Disease Control and Prevention is investigating a hantavirus outbreak
+      on a Caribbean cruise that has sickened at least 15 passengers, the agency said
+      Wednesday. The Royal Caribbean ship "Liberty of the Seas" docked early in San Juan,
+      Puerto Rico, after the cruise line reported respiratory illness clusters across two
+      decks. Hantavirus is a rodent-borne pathogen that can cause severe lung disease.
+      Royal Caribbean said it is fully sanitizing affected cabins and has notified the FDA
+      and Puerto Rico health authorities. No deaths have been reported. The CDC said it
+      will conduct interviews with all 4,200 passengers and 1,500 crew. AP exclusive.
+    source: { slug: yahoo-news, country: US, tier: domestic }
+    published_at: "2026-05-14T09:30Z"
+  - id: han-ap-3
+    title: "Hantavirus outbreak on Royal Caribbean cruise — CDC investigates"
+    summary: "The CDC is investigating a hantavirus outbreak on a Caribbean cruise that has sickened at least 15 passengers, the agency said Wednesday."
+    full_text: >
+      The Centers for Disease Control and Prevention is investigating a hantavirus outbreak
+      on a Caribbean cruise that has sickened at least 15 passengers, the agency said
+      Wednesday. The Royal Caribbean ship "Liberty of the Seas" docked early in San Juan,
+      Puerto Rico, after the cruise line reported respiratory illness clusters across two
+      decks. Hantavirus is a rodent-borne pathogen that can cause severe lung disease.
+      Royal Caribbean said it is fully sanitizing affected cabins and has notified the FDA
+      and Puerto Rico health authorities. No deaths have been reported. The CDC said it
+      will conduct interviews with all 4,200 passengers and 1,500 crew. AP exclusive.
+    source: { slug: abc-news, country: US, tier: domestic }
+    published_at: "2026-05-14T09:35Z"
+  - id: han-ap-4
+    title: "CDC investigates hantavirus on Caribbean cruise — AP"
+    summary: "The CDC is investigating a hantavirus outbreak on a Caribbean cruise that has sickened at least 15 passengers, the agency said Wednesday."
+    full_text: >
+      The Centers for Disease Control and Prevention is investigating a hantavirus outbreak
+      on a Caribbean cruise that has sickened at least 15 passengers, the agency said
+      Wednesday. The Royal Caribbean ship "Liberty of the Seas" docked early in San Juan,
+      Puerto Rico, after the cruise line reported respiratory illness clusters across two
+      decks. Hantavirus is a rodent-borne pathogen that can cause severe lung disease.
+      Royal Caribbean said it is fully sanitizing affected cabins and has notified the FDA
+      and Puerto Rico health authorities. No deaths have been reported. The CDC said it
+      will conduct interviews with all 4,200 passengers and 1,500 crew. AP exclusive.
+    source: { slug: nbc-news, country: US, tier: domestic }
+    published_at: "2026-05-14T09:40Z"
+  - id: han-ap-5
+    title: "Hantavirus probe on Royal Caribbean Caribbean ship — Associated Press"
+    summary: "The CDC is investigating a hantavirus outbreak on a Caribbean cruise that has sickened at least 15 passengers, the agency said Wednesday."
+    full_text: >
+      The Centers for Disease Control and Prevention is investigating a hantavirus outbreak
+      on a Caribbean cruise that has sickened at least 15 passengers, the agency said
+      Wednesday. The Royal Caribbean ship "Liberty of the Seas" docked early in San Juan,
+      Puerto Rico, after the cruise line reported respiratory illness clusters across two
+      decks. Hantavirus is a rodent-borne pathogen that can cause severe lung disease.
+      Royal Caribbean said it is fully sanitizing affected cabins and has notified the FDA
+      and Puerto Rico health authorities. No deaths have been reported. The CDC said it
+      will conduct interviews with all 4,200 passengers and 1,500 crew. AP exclusive.
+    source: { slug: usa-today, country: US, tier: domestic }
+    published_at: "2026-05-14T09:45Z"
+  - id: han-ap-6
+    title: "Hantavirus outbreak: CDC investigates Caribbean cruise"
+    summary: "The CDC is investigating a hantavirus outbreak on a Caribbean cruise that has sickened at least 15 passengers, the agency said Wednesday."
+    full_text: >
+      The Centers for Disease Control and Prevention is investigating a hantavirus outbreak
+      on a Caribbean cruise that has sickened at least 15 passengers, the agency said
+      Wednesday. The Royal Caribbean ship "Liberty of the Seas" docked early in San Juan,
+      Puerto Rico, after the cruise line reported respiratory illness clusters across two
+      decks. Hantavirus is a rodent-borne pathogen that can cause severe lung disease.
+      Royal Caribbean said it is fully sanitizing affected cabins and has notified the FDA
+      and Puerto Rico health authorities. No deaths have been reported. The CDC said it
+      will conduct interviews with all 4,200 passengers and 1,500 crew. AP exclusive.
+    source: { slug: cbs-news, country: US, tier: domestic }
+    published_at: "2026-05-14T10:00Z"
+  - id: han-ap-7
+    title: "CDC studies hantavirus cluster aboard Caribbean cruise — AP"
+    summary: "The CDC is investigating a hantavirus outbreak on a Caribbean cruise that has sickened at least 15 passengers, the agency said Wednesday."
+    full_text: >
+      The Centers for Disease Control and Prevention is investigating a hantavirus outbreak
+      on a Caribbean cruise that has sickened at least 15 passengers, the agency said
+      Wednesday. The Royal Caribbean ship "Liberty of the Seas" docked early in San Juan,
+      Puerto Rico, after the cruise line reported respiratory illness clusters across two
+      decks. Hantavirus is a rodent-borne pathogen that can cause severe lung disease.
+      Royal Caribbean said it is fully sanitizing affected cabins and has notified the FDA
+      and Puerto Rico health authorities. No deaths have been reported. The CDC said it
+      will conduct interviews with all 4,200 passengers and 1,500 crew. AP exclusive.
+    source: { slug: pbs-newshour, country: US, tier: domestic }
+    published_at: "2026-05-14T10:15Z"
+  - id: han-ap-8
+    title: "AP: hantavirus aboard Royal Caribbean cruise; CDC steps in"
+    summary: "The CDC is investigating a hantavirus outbreak on a Caribbean cruise that has sickened at least 15 passengers, the agency said Wednesday."
+    full_text: >
+      The Centers for Disease Control and Prevention is investigating a hantavirus outbreak
+      on a Caribbean cruise that has sickened at least 15 passengers, the agency said
+      Wednesday. The Royal Caribbean ship "Liberty of the Seas" docked early in San Juan,
+      Puerto Rico, after the cruise line reported respiratory illness clusters across two
+      decks. Hantavirus is a rodent-borne pathogen that can cause severe lung disease.
+      Royal Caribbean said it is fully sanitizing affected cabins and has notified the FDA
+      and Puerto Rico health authorities. No deaths have been reported. The CDC said it
+      will conduct interviews with all 4,200 passengers and 1,500 crew. AP exclusive.
+    source: { slug: kpix, country: US, tier: domestic }
+    published_at: "2026-05-14T10:30Z"
+  # ---- 4 independent reports ----
+  - id: han-ind-1
+    title: "Liberty of the Seas hantavirus: timeline from passenger texts"
+    summary: "Investigation by passenger interviews and on-ship texts shows hantavirus symptoms emerged on day two of the cruise, four days before CDC notification."
+    full_text: >
+      A passenger-led investigation reconstructed from group-chat texts and email
+      receipts shows hantavirus symptoms emerged on day two of the Liberty of the Seas
+      cruise, four days before the CDC was notified. ProPublica reviewed messages from
+      sixteen passengers, three of whom were hospitalized in San Juan. The texts indicate
+      the cruise's medical bay was understaffed by the second night. Royal Caribbean did
+      not respond to ProPublica's request for the medical-incident log. Two virologists
+      consulted said the symptom timeline is consistent with the rodent-borne hantavirus
+      strain HCPS, which has a 4 to 14 day incubation. The full chronology, with
+      anonymized texts, is published in our long-form companion piece tomorrow.
+    source: { slug: propublica, country: US, tier: international }
+    published_at: "2026-05-14T16:00Z"
+  - id: han-ind-2
+    title: "Why this Caribbean cruise hantavirus outbreak alarms epidemiologists"
+    summary: "Independent reporting and interviews with five epidemiologists explain why this Caribbean cruise hantavirus cluster, while small, is unusual."
+    full_text: >
+      Five epidemiologists interviewed by STAT explain why this Caribbean cruise
+      hantavirus cluster, while small, is unusual. Hantaviruses are typically associated
+      with land-based rodent exposure in the Americas, not maritime contexts. STAT obtained
+      cargo-manifest data showing the ship had recently bunkered grain stocks in
+      Cartagena, raising questions about rodent-borne contamination of food storage.
+      Royal Caribbean said all food storage areas pass weekly inspections. The CDC's port
+      inspector said the agency is awaiting genome-sequencing results from the Puerto Rico
+      Department of Health, expected within 72 hours. STAT's reporting includes 11
+      interviews and a review of three years of CDC vessel-sanitation logs.
+    source: { slug: stat-news, country: US, tier: international }
+    published_at: "2026-05-14T17:30Z"
+  - id: han-ind-3
+    title: "Cruise hantavirus outbreak: passenger lawsuits already filed"
+    summary: "Three passenger lawsuits have been filed against Royal Caribbean over the hantavirus outbreak, with attorneys citing the cruise line's delayed notification."
+    full_text: >
+      Three passenger lawsuits have already been filed in Florida federal court against
+      Royal Caribbean over the Liberty of the Seas hantavirus outbreak, attorneys said
+      Wednesday evening. The lawsuits, filed by separate firms, all cite the cruise line's
+      delayed notification of the CDC and a failure to disinfect the ship's grain stores.
+      Maritime lawyer Michael Winkleman, who represents one plaintiff, told the Miami
+      Herald: "This was preventable, and the timeline shows it." Royal Caribbean's general
+      counsel said the company "categorically rejects" the lawsuits. The Florida law firm
+      Lipcon, Margulies has invited additional passengers to join a class action. The
+      Cruise Lines International Association declined to comment.
+    source: { slug: miami-herald, country: US, tier: international }
+    published_at: "2026-05-14T19:00Z"
+  - id: han-ind-4
+    title: "Inside the cruise hantavirus probe: CDC's two-day response"
+    summary: "An inside look at the CDC's two-day response to the cruise hantavirus probe, drawing on interviews with three federal officials."
+    full_text: >
+      The CDC's two-day response to the Liberty of the Seas hantavirus probe drew on
+      interviews with three federal officials and a review of the agency's Maritime
+      Illness Surveillance Program records. The Washington Post reports the agency was
+      first notified of "respiratory clusters" by the cruise line at 2:00 a.m. local time
+      on Tuesday and dispatched a four-person team to San Juan within nine hours. Internal
+      emails show the team initially considered Legionnaires' disease before tissue
+      samples returned hantavirus-positive overnight Tuesday into Wednesday. The CDC
+      director will brief the House Oversight Committee on Friday. Royal Caribbean has
+      offered all passengers a 75-percent refund and a future-cruise credit.
+    source: { slug: washington-post, country: US, tier: international }
+    published_at: "2026-05-14T20:30Z"
+expectation:
+  type: should_dampen
+  key_phrase: "hantavirus Caribbean cruise CDC"
+  wire_share_max: 0.6
+  rank_floor: 5
+  min_overlap: 0.4
+rationale: |
+  Wire-amplification failure: 8 of 12 articles are byline-identical AP
+  wire copies redistributed across 8 outlets, inflating the cluster's
+  source_count to 12 and pushing the story to rank 1-3 on 2026-05-15.
+  An ideal dampener would compute wire_share, recognize the AP-byline
+  duplication, and either weight the wire copies as a single voice OR
+  push the cluster down the rank list to where its true distinct-voice
+  count (4) belongs. wire_share_max=0.6 means at most 60% of articles
+  can be wire copies; rank_floor=5 means the cluster should land at
+  rank #5 or lower (not in top 4).

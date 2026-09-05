@@ -2,8 +2,8 @@
 News Memory Engine — Live Poller
 
 Lightweight daemon that runs every 30 minutes via GitHub Actions.
-Polls only the sources covering the current top story for new articles,
-generates delta summaries via Gemini, and inserts them into live_updates.
+Polls the top 2 stories' sources for new articles, generates wire-style
+one-liner summaries via Gemini, and inserts them into live_updates.
 
 Usage:
     python pipeline/memory/live_poller.py [--json] [--verbose]
@@ -21,100 +21,118 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from utils.supabase_client import supabase
 
-# Max Gemini calls per poll run (rate limiting)
-MAX_GEMINI_CALLS = 10
+# Gemini calls split across all tracked stories
+MAX_GEMINI_CALLS_TOTAL = 10
 
-# Max articles to process per run
-MAX_ARTICLES_PER_RUN = 15
+# Max articles per story per run
+MAX_ARTICLES_PER_STORY = 8
 
 
-def live_poll_for_top_story(verbose: bool = False) -> dict:
+def live_poll(verbose: bool = False) -> dict:
     """
-    Main entry point. Polls the top story's sources for new articles.
+    Main entry point. Polls all active top stories' sources for new articles.
 
     Returns:
-        Summary dict with status, articles found, etc.
+        Summary dict with status and per-story results.
     """
     start = time.time()
 
-    # 1. Get active top story from story_memory
-    top_story = _get_active_top_story()
-    if not top_story:
-        return {"status": "skip", "reason": "no active top story"}
-
-    memory_id = top_story["id"]
-    headline = top_story["headline"]
-    source_slugs = top_story.get("source_slugs", [])
+    # 1. Get all active top stories
+    top_stories = _get_active_top_stories()
+    if not top_stories:
+        return {"status": "skip", "reason": "no active top stories"}
 
     if verbose:
-        print(f"[poll] Top story: {headline[:80]}")
-        print(f"[poll] Tracking {len(source_slugs)} sources: {', '.join(source_slugs[:5])}...")
+        print(f"[poll] Tracking {len(top_stories)} stories")
 
-    if not source_slugs:
-        return {"status": "skip", "reason": "no source slugs"}
+    # Split Gemini budget evenly across stories
+    gemini_per_story = MAX_GEMINI_CALLS_TOTAL // max(1, len(top_stories))
 
-    # 2. Look up source details (rss_url, name) from the sources table
-    sources = _get_sources_by_slug(source_slugs)
-    if not sources:
-        return {"status": "skip", "reason": "no sources found in DB"}
-
-    if verbose:
-        print(f"[poll] Found {len(sources)} sources with RSS URLs")
-
-    # 3. Fetch RSS from those sources
-    new_articles = _fetch_new_articles(sources, memory_id, verbose)
-
-    if verbose:
-        print(f"[poll] Found {len(new_articles)} new articles")
-
-    if not new_articles:
-        _update_polled_timestamp(memory_id)
-        return {
-            "status": "ok",
-            "top_story": headline[:80],
-            "new_articles": 0,
-            "duration_s": round(time.time() - start, 1),
-        }
-
-    # 4. Limit articles per run
-    new_articles = new_articles[:MAX_ARTICLES_PER_RUN]
-
-    # 5. Try to generate delta summaries via Gemini
-    gemini_count = _summarize_articles(new_articles, headline, verbose)
-
-    # 6. Insert into live_updates
-    inserted = _insert_live_updates(new_articles, memory_id)
-
-    # 7. Update story_memory timestamp and counts
-    _update_memory_counts(memory_id, inserted)
-
-    # 8. Denormalize onto cluster
-    cluster_id = top_story.get("cluster_id")
-    if cluster_id:
-        _denormalize_live_updates(cluster_id, memory_id)
+    results = []
+    for story in top_stories:
+        result = _poll_single_story(story, gemini_per_story, verbose)
+        results.append(result)
 
     elapsed = round(time.time() - start, 1)
 
     return {
         "status": "ok",
-        "top_story": headline[:80],
-        "new_articles": inserted,
-        "gemini_summaries": gemini_count,
+        "stories_polled": len(results),
+        "results": results,
         "duration_s": elapsed,
     }
 
 
-def _get_active_top_story() -> dict | None:
-    """Fetch the currently active top story from story_memory."""
+def _poll_single_story(
+    story: dict, gemini_budget: int, verbose: bool = False
+) -> dict:
+    """Poll a single story's sources for new articles."""
+    memory_id = story["id"]
+    headline = story["headline"]
+    rank = story.get("rank", 1)
+    source_slugs = story.get("source_slugs", [])
+
+    if verbose:
+        print(f"\n[poll] Story #{rank}: {headline[:80]}")
+        print(f"[poll]   Sources: {', '.join(source_slugs[:5])}{'...' if len(source_slugs) > 5 else ''}")
+
+    if not source_slugs:
+        return {"rank": rank, "headline": headline[:80], "status": "skip", "reason": "no sources"}
+
+    # Look up source details
+    sources = _get_sources_by_slug(source_slugs)
+    if not sources:
+        return {"rank": rank, "headline": headline[:80], "status": "skip", "reason": "no RSS URLs"}
+
+    # Fetch new articles from RSS
+    new_articles = _fetch_new_articles(sources, memory_id, verbose)
+
+    if verbose:
+        print(f"[poll]   Found {len(new_articles)} new articles")
+
+    if not new_articles:
+        _update_polled_timestamp(memory_id)
+        return {
+            "rank": rank,
+            "headline": headline[:80],
+            "new_articles": 0,
+        }
+
+    # Limit per story
+    new_articles = new_articles[:MAX_ARTICLES_PER_STORY]
+
+    # Generate one-liner summaries via Gemini
+    gemini_count = _summarize_articles(new_articles, headline, gemini_budget, verbose)
+
+    # Insert into live_updates
+    inserted = _insert_live_updates(new_articles, memory_id)
+
+    # Update counts
+    _update_memory_counts(memory_id, inserted)
+
+    # Denormalize onto cluster
+    cluster_id = story.get("cluster_id")
+    if cluster_id:
+        _denormalize_live_updates(cluster_id, memory_id)
+
+    return {
+        "rank": rank,
+        "headline": headline[:80],
+        "new_articles": inserted,
+        "gemini_summaries": gemini_count,
+    }
+
+
+def _get_active_top_stories() -> list[dict]:
+    """Fetch all active top stories from story_memory, ordered by rank."""
     try:
         result = supabase.table("story_memory").select("*").eq(
             "is_active", True
-        ).eq("is_top_story", True).limit(1).execute()
-        if result.data:
-            return result.data[0]
+        ).order("rank").limit(2).execute()
+        return result.data or []
     except Exception as e:
-        print(f"[poll] Error fetching top story: {e}")
-    return None
+        print(f"[poll] Error fetching top stories: {e}")
+        return []
 
 
 def _get_sources_by_slug(slugs: list[str]) -> list[dict]:
@@ -138,15 +156,11 @@ def _fetch_new_articles(
     Fetch RSS from tracked sources, filter to only new articles not already
     in live_updates or the main articles table.
     """
-    # Get existing URLs to avoid duplicates
     existing_urls = _get_existing_urls(memory_id)
-
-    from fetchers.rss_fetcher import _fetch_single_feed, _parse_entry
 
     all_new = []
 
     def _fetch_source(source: dict) -> list[dict]:
-        """Fetch a single source's RSS and filter new articles."""
         rss_url = source.get("rss_url")
         if not rss_url:
             return []
@@ -165,7 +179,7 @@ def _fetch_new_articles(
                 return []
 
             articles = []
-            for entry in feed.entries[:10]:  # Only check recent 10
+            for entry in feed.entries[:10]:
                 url = entry.get("link", "")
                 title = entry.get("title", "")
                 if not url or not title or len(title.strip()) < 10:
@@ -190,10 +204,9 @@ def _fetch_new_articles(
             return articles
         except Exception as e:
             if verbose:
-                print(f"[poll] RSS error for {source.get('name', '?')}: {e}")
+                print(f"[poll]   RSS error for {source.get('name', '?')}: {e}")
             return []
 
-    # Fetch in parallel (lightweight — only 5-20 sources)
     with ThreadPoolExecutor(max_workers=5) as executor:
         futures = {executor.submit(_fetch_source, s): s for s in sources}
         for future in as_completed(futures):
@@ -221,15 +234,12 @@ def _get_existing_urls(memory_id: str) -> set[str]:
     """Get URLs already in live_updates for this story + recent articles table."""
     urls = set()
     try:
-        # URLs already tracked as live updates
         result = supabase.table("live_updates").select("article_url").eq(
             "story_memory_id", memory_id
         ).execute()
         if result.data:
             urls.update(r["article_url"] for r in result.data)
 
-        # Also check against main articles table (last 24h) to avoid duplication
-        # with the main pipeline. Only check recent to keep the query fast.
         from datetime import timedelta
         cutoff = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
         result = supabase.table("articles").select("url").gt(
@@ -245,33 +255,37 @@ def _get_existing_urls(memory_id: str) -> set[str]:
 def _summarize_articles(
     articles: list[dict],
     story_headline: str,
+    max_calls: int,
     verbose: bool = False,
 ) -> int:
     """
-    Generate delta summaries for new articles using Gemini.
+    Generate wire-style one-liner summaries for new articles using Gemini.
     Returns number of articles summarized.
     """
     try:
         from summarizer.gemini_client import generate_json, is_available
         if not is_available():
             if verbose:
-                print("[poll] Gemini not available, skipping summaries")
+                print("[poll]   Gemini not available, skipping summaries")
             return 0
     except ImportError:
         return 0
 
     summarized = 0
-    for article in articles[:MAX_GEMINI_CALLS]:
+    for article in articles[:max_calls]:
         try:
             prompt = (
-                f"Summarize the KEY UPDATE in this article. "
-                f"What is NEW compared to prior reporting on: {story_headline}? "
-                f"Focus on new facts, quotes, or developments — not context. "
-                f"Write 1-2 sentences max.\n\n"
-                f"Title: {article['title']}\n"
-                f"Source: {article['source_name']}\n"
-                f"Summary: {article.get('summary', '')[:1500]}\n\n"
-                f'Return JSON: {{"update_summary": "your 1-2 sentence summary"}}'
+                f"You are a wire editor. Write ONE sentence (max 25 words) "
+                f"capturing the single newest fact from this article.\n\n"
+                f"Story context: {story_headline}\n"
+                f"Article: \"{article['title']}\" by {article['source_name']}\n"
+                f"Summary: {article.get('summary', '')[:500]}\n\n"
+                f"Rules:\n"
+                f"- One sentence only, max 25 words\n"
+                f"- Lead with the new fact, not context\n"
+                f"- Use specific numbers, names, actions\n"
+                f"- No editorializing — just the fact\n\n"
+                f'Return JSON: {{"update_summary": "your one sentence"}}'
             )
             result = generate_json(prompt, count_call=False)
             if result and result.get("update_summary"):
@@ -280,7 +294,7 @@ def _summarize_articles(
                 summarized += 1
         except Exception as e:
             if verbose:
-                print(f"[poll] Gemini summary failed for {article['title'][:50]}: {e}")
+                print(f"[poll]   Gemini summary failed for {article['title'][:50]}: {e}")
     return summarized
 
 
@@ -303,7 +317,6 @@ def _insert_live_updates(articles: list[dict], memory_id: str) -> int:
             supabase.table("live_updates").insert(row).execute()
             inserted += 1
         except Exception as e:
-            # Duplicate URL — skip silently
             if "duplicate" not in str(e).lower() and "unique" not in str(e).lower():
                 print(f"[poll] Insert error: {e}")
     return inserted
@@ -322,7 +335,6 @@ def _update_polled_timestamp(memory_id: str) -> None:
 def _update_memory_counts(memory_id: str, new_count: int) -> None:
     """Update polling timestamp and live update count on story_memory."""
     try:
-        # Fetch current count to increment
         current = supabase.table("story_memory").select(
             "live_update_count"
         ).eq("id", memory_id).single().execute()
@@ -340,7 +352,6 @@ def _update_memory_counts(memory_id: str, new_count: int) -> None:
 def _denormalize_live_updates(cluster_id: str, memory_id: str) -> None:
     """Sync live_update_count and last_live_update_at to the cluster row."""
     try:
-        # Count live updates for this memory
         result = supabase.table("live_updates").select(
             "id", count="exact"
         ).eq("story_memory_id", memory_id).is_(
@@ -356,25 +367,26 @@ def _denormalize_live_updates(cluster_id: str, memory_id: str) -> None:
         print(f"[poll] Warning: failed to denormalize live updates: {e}")
 
 
+# Legacy alias for backward compatibility
+live_poll_for_top_story = live_poll
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="void --news live poller")
     parser.add_argument("--json", action="store_true", help="JSON output")
     parser.add_argument("--verbose", action="store_true", help="Verbose logging")
     args = parser.parse_args()
 
-    result = live_poll_for_top_story(verbose=args.verbose or not args.json)
+    result = live_poll(verbose=args.verbose or not args.json)
 
     if args.json:
         print(json.dumps(result, indent=2, default=str))
     else:
         print(f"\n{'=' * 40}")
-        print(f"Live Poll Result: {result.get('status', 'unknown')}")
-        if result.get("top_story"):
-            print(f"  Top story: {result['top_story']}")
-        if result.get("new_articles") is not None:
-            print(f"  New articles: {result['new_articles']}")
-        if result.get("gemini_summaries") is not None:
-            print(f"  Gemini summaries: {result['gemini_summaries']}")
-        if result.get("duration_s") is not None:
+        print(f"Live Poll: {result.get('status', 'unknown')}")
+        for r in result.get("results", []):
+            print(f"  #{r.get('rank', '?')} {r.get('headline', '?')}")
+            print(f"     New articles: {r.get('new_articles', 0)}, Gemini: {r.get('gemini_summaries', 0)}")
+        if result.get("duration_s"):
             print(f"  Duration: {result['duration_s']}s")
         print(f"{'=' * 40}")

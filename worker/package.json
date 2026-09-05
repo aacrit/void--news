@@ -1,0 +1,16 @@
+{
+  "name": "void-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cloudflare Worker fronting D1 for the Void News ship board / feedback write path.",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:init": "wrangler d1 execute void-live --file=./schema.sql",
+    "db:init:local": "wrangler d1 execute void-live --local --file=./schema.sql"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240909.0",
+    "wrangler": "^3.78.0"
+  }
+}

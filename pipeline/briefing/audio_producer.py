@@ -1,15 +1,18 @@
 """
 Audio producer for the void --news daily brief.
 
-Uses Gemini 2.5 Flash TTS for native LLM-powered multi-speaker dialogue.
-Both speakers generated in a single API call — no per-turn stitching.
+Uses edge-tts (Microsoft Neural voices, $0) for two-speaker dialogue.
+Each speaker turn is synthesized separately and stitched with pydub.
+Gemini TTS is NOT used — it is not on the free tier and costs ~$3/day.
 
 Post-processing via pydub:
   - Intro: ~2s D major 9th bloom chord (Glass & Gravity sonic identity)
-  - Story transitions: glass-bell dyad at detected silence gaps
+  - Section breaks: glass-bell chimes overlaid at detected silence gaps
+    between stories (gaps >= 800ms at <= -45dB)
+  - News-to-opinion: deliberate editorial page-turn transition
   - Outro: ~1.8s resolving chord — intro bloom returning to root
-  - No background bed — the voices carry the broadcast
-  - MP3 192k mono export → Supabase Storage
+  - Subharmonic presence layer (D2/D3/A3 at -34 to -42 dB)
+  - MP3 96k mono export → Supabase Storage (voice-optimized)
 """
 
 import io
@@ -17,17 +20,36 @@ import os
 import re
 import sys
 import tempfile
+import time
 import wave
 from pathlib import Path
 from typing import Optional
 
-GEMINI_TTS_AVAILABLE = False
+EDGE_TTS_AVAILABLE = False
 PYDUB_AVAILABLE = False
 
+# ── Parked Gemini-TTS globals ───────────────────────────────────────────
+# The legacy _synthesize_gemini_tts / _synthesize_opinion_monologue path
+# references these names. The path is PARKED (Gemini TTS is ~$3/day, not
+# free tier) but must stay importable: without module-level definitions,
+# re-enabling it raises NameError on the first call. GEMINI_TTS_AVAILABLE
+# stays False unless google-genai imports AND VOID_ENABLE_GEMINI_TTS=1.
+GEMINI_TTS_AVAILABLE = False
+genai = None
+types = None
+_TTS_MODEL = "gemini-2.5-flash-preview-tts"
+_tts_quota_exhausted = False
+if os.environ.get("VOID_ENABLE_GEMINI_TTS", "").strip() in ("1", "true", "yes"):
+    try:
+        from google import genai  # type: ignore[no-redef]
+        from google.genai import types  # type: ignore[no-redef]
+        GEMINI_TTS_AVAILABLE = True
+    except ImportError:
+        pass
+
 try:
-    from google import genai
-    from google.genai import types
-    GEMINI_TTS_AVAILABLE = True
+    import edge_tts as _edge_tts_module
+    EDGE_TTS_AVAILABLE = True
 except ImportError:
     pass
 
@@ -37,34 +59,125 @@ try:
 except ImportError:
     pass
 
+try:
+    from briefing.generate_assets import generate_headline_underscore
+except ImportError:
+    try:
+        from pipeline.briefing.generate_assets import generate_headline_underscore
+    except ImportError:
+        generate_headline_underscore = None
+
+try:
+    from briefing.voice_rotation import get_opinion_host
+except ImportError:
+    try:
+        from pipeline.briefing.voice_rotation import get_opinion_host
+    except ImportError:
+        get_opinion_host = None
+
 # Allow running from pipeline root
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 ASSETS_DIR = Path(__file__).parent / "assets"
-_TTS_MODEL = "gemini-2.5-flash-preview-tts"
+
+# ---------------------------------------------------------------------------
+# edge-tts voice mapping — Gemini voice name → Microsoft Neural voice name
+# Chosen for character match: tone, gender, and delivery style.
+# ---------------------------------------------------------------------------
+
+# 2026-06-27 (CEO ear-test): collapsed from 4 Multilingual voices to TWO.
+# 2026-08-22 (CEO ear-test): the male voice moves Brian -> Andrew. Brian read as
+# jittery on the news brief; Andrew is Ava's direct male counterpart in the same
+# flagship "Multilingual Neural" pair, so the male news read now matches the
+# naturalness of the Ava opinion read the CEO liked. Female stays Ava. Both are
+# Microsoft's newest *free* generation; Dragon HD voices are paid Azure, not in
+# free edge-tts, so we stay on the Multilingual tier. (To make the news brief use
+# Ava too, set _MALE_EDGE_VOICE = _FEMALE_EDGE_VOICE.)
+_MALE_EDGE_VOICE = "en-US-AndrewMultilingualNeural"
+_FEMALE_EDGE_VOICE = "en-US-AvaMultilingualNeural"
+_GEMINI_TO_EDGE_VOICE: dict[str, str] = {
+    # History pair — The Chronicler (male) + The Witness (female)
+    "Sadaltager":   _MALE_EDGE_VOICE,    # male
+    "Achernar":     _FEMALE_EDGE_VOICE,  # female
+    # News host rotation — 6 personas, 2 voices (pairs always gender-split)
+    "Kore":         _FEMALE_EDGE_VOICE,  # correspondent — female
+    "Charon":       _MALE_EDGE_VOICE,    # structuralist — male
+    "Orus":         _MALE_EDGE_VOICE,    # investigator — male
+    "Gacrux":       _FEMALE_EDGE_VOICE,  # pragmatist — female
+    # Opinion voices by edition
+    "Sulafat":      _FEMALE_EDGE_VOICE,  # world opinion — female
+    "Schedar":      _MALE_EDGE_VOICE,    # us opinion — male
+    "Despina":      _FEMALE_EDGE_VOICE,  # india opinion — female
+    "Rasalgethi":   _MALE_EDGE_VOICE,    # uk opinion — male
+    "Vindemiatrix": _FEMALE_EDGE_VOICE,  # canada opinion — female
+}
+_DEFAULT_EDGE_VOICE_A = _MALE_EDGE_VOICE
+_DEFAULT_EDGE_VOICE_B = _FEMALE_EDGE_VOICE
+
+# Silence between speaker turns. Within a story the turns belong to one
+# continuous thought, so the beat stays short; at a story boundary the pause
+# carries the hand-off from one host to the other.
+_TURN_PAUSE_MS = 60
+_STORY_PAUSE_MS = 350
+
+
+def _edge_voice(gemini_id: str) -> str:
+    """Map a Gemini voice name to an edge-tts Microsoft Neural voice name."""
+    return _GEMINI_TO_EDGE_VOICE.get(gemini_id, _DEFAULT_EDGE_VOICE_A)
 
 
 # ---------------------------------------------------------------------------
 # Script conversion
 # ---------------------------------------------------------------------------
 
+# Parenthetical stage directions to drop (pause/beat keywords). Parentheses can
+# hold real speech, so we only strip the ones that read as a direction.
+_STAGE_DIRECTION_PAREN = re.compile(
+    r"\([^)]*\b(?:pause|beat|sighs?|laughs?|chuckles?|breath|silence|aside)\b[^)]*\)",
+    re.IGNORECASE,
+)
+
+
+def _strip_stage_directions(text: str) -> str:
+    """Remove non-spoken stage directions so edge-tts never reads them aloud.
+
+    edge-tts is not an LLM: a literal "[short pause]" or "(beat)" gets spoken
+    verbatim. Bracketed tokens are always markers in our scripts, so strip every
+    "[...]" (any case, anywhere); parentheses may hold real speech, so only strip
+    the ones that read as a stage direction. Em dashes and ellipses are left
+    intact — they are the working pause cues.
+    """
+    text = re.sub(r"\[[^\]]*\]", "", text)        # any bracketed marker, any case
+    text = _STAGE_DIRECTION_PAREN.sub("", text)   # parenthetical stage directions
+    return re.sub(r"  +", " ", text).strip()
+
+
 def _script_to_dialogue(audio_script: str) -> str:
     """Convert broadcast script (A:/B: + [MARKER]) to Gemini TTS dialogue format.
 
-    Maps A→One, B→Two. Strips structural markers and Gemini artifacts.
+    Maps A→One, B→Two. Strips structural markers (case-insensitive) and Gemini
+    artifacts so edge-tts never voices a stage direction like "[short pause]".
+
+    Blank lines are PRESERVED as story boundaries (2026-09-03). The daily brief
+    separates stories with a blank line, and _synthesize_edge_tts uses them to
+    place a longer pause at the host hand-off. Runs collapse to one, and there
+    is never a leading or trailing blank. Scripts without blank lines (weekly,
+    revolt, history) are unaffected and produce no boundaries.
     """
-    lines = []
+    lines: list[str] = []
     for line in audio_script.splitlines():
         stripped = line.strip()
         if not stripped:
+            if lines and lines[-1] != "":
+                lines.append("")
             continue
 
-        # Skip pure marker lines
-        if re.match(r"^\[([A-Z_0-9]+)\]$", stripped):
+        # Skip pure marker lines (e.g. "[SECTION]", "[short pause]")
+        if re.match(r"^\[[^\]]*\]$", stripped):
             continue
 
-        # Strip inline markers
-        stripped = re.sub(r"^\[([A-Z_0-9]+)\]\s*", "", stripped)
+        # Strip a leading marker so the A:/B: speaker tag can be matched
+        stripped = re.sub(r"^\[[^\]]*\]\s*", "", stripped)
 
         # Map speaker tags
         sp_match = re.match(r"^([AB]):\s*(.+)$", stripped)
@@ -76,28 +189,163 @@ def _script_to_dialogue(audio_script: str) -> str:
             text = stripped
 
         # Clean artifacts
-        text = re.sub(r"\*+", "", text)
-        text = re.sub(r"\[(\d+)\]", "", text)
-        text = re.sub(r"#{1,6}\s*", "", text)
-        text = re.sub(r"`+", "", text)
-        text = re.sub(r"\(\s*\)", "", text)
+        text = re.sub(r"\*+", "", text)            # asterisks / markdown bold
+        text = re.sub(r"#{1,6}\s*", "", text)      # markdown headers
+        text = re.sub(r"`+", "", text)             # backticks
+        text = _strip_stage_directions(text)       # [..] markers + (pause) directions
+        text = re.sub(r"\(\s*\)", "", text)        # leftover empty parens
         text = re.sub(r"  +", " ", text).strip()
 
         if text:
             lines.append(f"{speaker}: {text}")
 
+    while lines and lines[-1] == "":
+        lines.pop()
     return "\n".join(lines)
 
 
 # ---------------------------------------------------------------------------
-# Gemini TTS synthesis
+# edge-tts synthesis ($0 — Microsoft Neural voices)
 # ---------------------------------------------------------------------------
 
-def _chunk_dialogue(dialogue: str, max_words: int = 350) -> list[str]:
+def _synthesize_edge_tts(
+    dialogue: str,
+    voice_a_edge: str,
+    voice_b_edge: str,
+) -> Optional[bytes]:
+    """Generate two-speaker audio via edge-tts (Microsoft Neural, $0).
+
+    Synthesizes each One:/Two: speaker turn separately then stitches
+    segments into a single continuous stream. Returns raw PCM bytes
+    (24 kHz 16-bit mono) for compatibility with _pcm_to_wav().
+
+    Args:
+        dialogue: Two-speaker dialogue in One:/Two: format.
+        voice_a_edge: edge-tts voice name for speaker One (e.g. en-US-AriaNeural).
+        voice_b_edge: edge-tts voice name for speaker Two.
+
+    Returns raw PCM bytes (24 kHz 16-bit mono), or None on failure.
+    """
+    import asyncio
+
+    if not EDGE_TTS_AVAILABLE:
+        print("  [warn][audio] edge-tts not installed — skipping")
+        return None
+    if not PYDUB_AVAILABLE:
+        print("  [warn][audio] pydub not installed — skipping")
+        return None
+
+    # Parse speaker turns. A blank line marks a story boundary (see
+    # _script_to_dialogue): the turn that follows one opens a new story and
+    # gets the longer hand-off pause instead of the within-story beat.
+    turns: list[tuple[str, str, bool]] = []
+    pending_boundary = False
+    for line in dialogue.strip().splitlines():
+        stripped = line.strip()
+        if not stripped:
+            pending_boundary = True
+            continue
+        m = re.match(r"^(One|Two):\s*(.+)$", stripped)
+        if m and m.group(2).strip():
+            turns.append((m.group(1), m.group(2).strip(), pending_boundary))
+            pending_boundary = False
+
+    if not turns:
+        print("  [warn][audio] edge-tts: no dialogue turns to synthesize")
+        return None
+
+    # Pre-allocate one tempfile per turn so we can synthesize in parallel
+    # while preserving original turn order for downstream concatenation.
+    # (idx, voice, text, tmp_path, is_story_start)
+    turn_specs: list[tuple[int, str, str, str, bool]] = []
+    for idx, (speaker, text, is_story_start) in enumerate(turns):
+        voice = voice_a_edge if speaker == "One" else voice_b_edge
+        with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as tmp:
+            turn_specs.append((idx, voice, text, tmp.name, is_story_start))
+
+    async def _synth_one(voice: str, text: str, path: str) -> None:
+        comm = _edge_tts_module.Communicate(text, voice)
+        await comm.save(path)
+
+    async def _synth_all() -> list:
+        tasks = [_synth_one(v, t, p) for (_idx, v, t, p, _b) in turn_specs]
+        return await asyncio.gather(*tasks, return_exceptions=True)
+
+    loop = asyncio.new_event_loop()
+    try:
+        synth_results = loop.run_until_complete(_synth_all())
+    finally:
+        loop.close()
+
+    # Decode results in original turn order
+    segments: list["AudioSegment"] = []
+    # Parallel to `segments`, NOT to `turns` — a failed turn is dropped from
+    # both, so indexing boundaries against the original turn list would slide
+    # every pause after the first failure onto the wrong seam.
+    seg_story_start: list[bool] = []
+    carried_boundary = False
+    failed = 0
+    for (idx, voice, _text, tmp_path, is_story_start), result in zip(turn_specs, synth_results):
+        # A dropped turn must not swallow the boundary it was carrying — hand
+        # it to whichever turn actually makes it into the output next.
+        is_story_start = is_story_start or carried_boundary
+        try:
+            if isinstance(result, BaseException):
+                print(f"  [warn][audio] edge-tts turn failed ({voice}): {result}")
+                failed += 1
+                carried_boundary = is_story_start
+                continue
+            seg = AudioSegment.from_mp3(tmp_path)
+            # Normalise to 24 kHz mono 16-bit (same as Gemini TTS output)
+            seg = seg.set_frame_rate(24000).set_channels(1).set_sample_width(2)
+            segments.append(seg)
+            seg_story_start.append(is_story_start)
+            carried_boundary = False
+        except Exception as e:
+            print(f"  [warn][audio] edge-tts turn failed ({voice}): {e}")
+            failed += 1
+            carried_boundary = is_story_start
+        finally:
+            try:
+                Path(tmp_path).unlink(missing_ok=True)
+            except Exception:
+                pass
+
+    if not segments:
+        print("  [warn][audio] edge-tts: all turns failed")
+        return None
+
+    if failed:
+        print(f"  [warn][audio] edge-tts: {failed}/{len(turns)} turns failed")
+
+    # Stitch turns: a brief beat within a story, a real pause at a story
+    # boundary. 60 ms between two DIFFERENT voices reads as a hard cut; the
+    # longer gap is what lets the hand-off land.
+    pause = AudioSegment.silent(duration=_TURN_PAUSE_MS, frame_rate=24000)
+    story_pause = AudioSegment.silent(duration=_STORY_PAUSE_MS, frame_rate=24000)
+    combined = segments[0]
+    boundaries = 0
+    for i, seg in enumerate(segments[1:], start=1):
+        if i < len(seg_story_start) and seg_story_start[i]:
+            combined = combined + story_pause + seg
+            boundaries += 1
+        else:
+            combined = combined + pause + seg
+    if boundaries:
+        print(f"  [audio] {boundaries} story hand-offs ({_STORY_PAUSE_MS} ms pause)")
+
+    return combined.raw_data
+
+
+# ---------------------------------------------------------------------------
+# Legacy Gemini TTS helpers (chunking — reused by edge-tts path if needed)
+# ---------------------------------------------------------------------------
+
+def _chunk_dialogue(dialogue: str, max_words: int = 400) -> list[str]:
     """Split dialogue into chunks at natural speaker-turn boundaries.
 
-    Gemini TTS can truncate long inputs. Splitting at ~350 words per chunk
-    keeps each call well within limits. Chunks split between speaker turns
+    Gemini TTS can truncate long inputs. Splitting at ~400 words per chunk
+    keeps each call within limits. Chunks split between speaker turns
     so no line is cut mid-sentence.
     """
     lines = dialogue.strip().splitlines()
@@ -126,12 +374,16 @@ def _synthesize_single_chunk(
     dialogue_chunk: str,
     voice_a: str,
     voice_b: str,
+    tts_preamble: str = "",
 ) -> Optional[bytes]:
     """Synthesize a single dialogue chunk via Gemini TTS. Returns raw PCM or None."""
+    # Prepend style preamble (director's notes) if provided.
+    # Gemini TTS uses this to adjust pacing, tone, and delivery.
+    content = f"{tts_preamble}\n\n{dialogue_chunk}" if tts_preamble else dialogue_chunk
     try:
         response = client.models.generate_content(
             model=_TTS_MODEL,
-            contents=dialogue_chunk,
+            contents=content,
             config=types.GenerateContentConfig(
                 response_modalities=["AUDIO"],
                 speech_config=types.SpeechConfig(
@@ -164,7 +416,13 @@ def _synthesize_single_chunk(
             if hasattr(part, "inline_data") and part.inline_data:
                 return part.inline_data.data
     except Exception as e:
-        print(f"  [warn][audio] Gemini TTS chunk failed: {e}")
+        global _tts_quota_exhausted
+        err_str = str(e)
+        if "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
+            _tts_quota_exhausted = True
+            print(f"  [warn][audio] TTS quota exhausted — skipping all remaining TTS this run")
+        else:
+            print(f"  [warn][audio] Gemini TTS chunk failed: {e}")
 
     return None
 
@@ -173,15 +431,26 @@ def _synthesize_gemini_tts(
     dialogue: str,
     voice_a: str,
     voice_b: str,
+    tts_preamble: str = "",
 ) -> Optional[bytes]:
     """Generate two-speaker audio via Gemini 2.5 Flash TTS.
 
     Chunks long dialogues to avoid TTS truncation. Each chunk is synthesized
     separately and the raw PCM bytes are concatenated (same sample rate/format).
 
+    Args:
+        dialogue: Two-speaker dialogue (One:/Two: format).
+        voice_a: Gemini voice ID for speaker One.
+        voice_b: Gemini voice ID for speaker Two.
+        tts_preamble: Director's notes for TTS style (pacing, tone, cadence).
+
     Returns raw PCM audio bytes (24kHz 16-bit mono), or None on failure.
     """
     if not GEMINI_TTS_AVAILABLE:
+        return None
+
+    if _tts_quota_exhausted:
+        print("  [warn][audio] TTS quota exhausted — skipping (fail-fast)")
         return None
 
     api_key = os.getenv("GEMINI_API_KEY")
@@ -193,14 +462,29 @@ def _synthesize_gemini_tts(
     chunks = _chunk_dialogue(dialogue)
 
     if len(chunks) == 1:
-        return _synthesize_single_chunk(client, chunks[0], voice_a, voice_b)
+        return _synthesize_single_chunk(client, chunks[0], voice_a, voice_b, tts_preamble)
 
     print(f"  [audio] Long script — synthesizing in {len(chunks)} chunks")
     all_pcm = bytearray()
     for i, chunk in enumerate(chunks):
-        pcm = _synthesize_single_chunk(client, chunk, voice_a, voice_b)
+        if i > 0:
+            time.sleep(5)  # Rate-limit buffer between TTS chunks
+        # Send preamble with every chunk to maintain voice direction consistency
+        preamble = tts_preamble
+        pcm = None
+        for attempt in range(3):
+            if _tts_quota_exhausted:
+                break
+            if attempt > 0:
+                wait = 20 * attempt
+                print(f"  [audio] Chunk {i+1}/{len(chunks)} retry {attempt+1}/3 after {wait}s...")
+                time.sleep(wait)
+            pcm = _synthesize_single_chunk(client, chunk, voice_a, voice_b, preamble)
+            if pcm is not None:
+                break
         if pcm is None:
-            print(f"  [warn][audio] Chunk {i+1}/{len(chunks)} failed — aborting")
+            reason = "quota exhausted" if _tts_quota_exhausted else "3 attempts failed"
+            print(f"  [warn][audio] Chunk {i+1}/{len(chunks)} failed ({reason}) — aborting")
             return None
         all_pcm.extend(pcm)
         chunk_dur = len(pcm) / (24000 * 2)
@@ -240,21 +524,314 @@ def _load_asset(filename: str) -> Optional["AudioSegment"]:
 
 
 # ---------------------------------------------------------------------------
+# Silence detection & section break overlay
+# ---------------------------------------------------------------------------
+
+def _detect_silence_gaps(
+    audio: "AudioSegment",
+    min_gap_ms: int = 800,
+    silence_thresh_db: float = -45.0,
+    chunk_ms: int = 50,
+    min_spacing_ms: int = 45000,
+    max_breaks: int = 4,
+) -> list[int]:
+    """Find silence gaps in audio suitable for section break insertion.
+
+    Scans the audio in fixed-size chunks and identifies contiguous silent
+    regions that last at least `min_gap_ms`. Returns the midpoint (in ms)
+    of each detected gap.
+
+    Parameters:
+        audio: The AudioSegment to scan.
+        min_gap_ms: Minimum gap duration to qualify as a section boundary.
+        silence_thresh_db: dBFS threshold below which audio is "silent."
+            -45dB is strict — only true silence, not low-level speech.
+        chunk_ms: Scanning granularity. Smaller = more precise, slower.
+        min_spacing_ms: Minimum distance between section breaks (default 45s).
+        max_breaks: Maximum number of breaks to return.
+
+    Returns:
+        List of midpoint positions (ms) for each detected gap, sorted ascending.
+    """
+    raw_midpoints: list[int] = []
+    in_silence = False
+    silence_start = 0
+
+    total_ms = len(audio)
+    pos = 0
+
+    while pos + chunk_ms <= total_ms:
+        chunk = audio[pos : pos + chunk_ms]
+        if chunk.dBFS < silence_thresh_db or chunk.dBFS == float("-inf"):
+            if not in_silence:
+                in_silence = True
+                silence_start = pos
+        else:
+            if in_silence:
+                gap_duration = pos - silence_start
+                if gap_duration >= min_gap_ms:
+                    midpoint = silence_start + gap_duration // 2
+                    raw_midpoints.append(midpoint)
+                in_silence = False
+        pos += chunk_ms
+
+    # Handle trailing silence
+    if in_silence:
+        gap_duration = total_ms - silence_start
+        if gap_duration >= min_gap_ms:
+            midpoint = silence_start + gap_duration // 2
+            raw_midpoints.append(midpoint)
+
+    # Enforce minimum spacing between breaks
+    spaced: list[int] = []
+    for mp in raw_midpoints:
+        if not spaced or (mp - spaced[-1]) >= min_spacing_ms:
+            spaced.append(mp)
+
+    # Cap total count
+    return spaced[:max_breaks]
+
+
+def _overlay_section_breaks(
+    audio: "AudioSegment",
+    section_break: "AudioSegment",
+) -> "AudioSegment":
+    """Detect silence gaps in speech audio and overlay section break chimes.
+
+    The section break asset is centered at the midpoint of each detected
+    silence gap. This creates natural "next topic" markers without
+    interrupting the speech flow.
+
+    Returns the audio with section breaks overlaid. If no gaps are found
+    or the section break asset is None, returns the original audio unchanged.
+    """
+    if section_break is None:
+        return audio
+
+    gaps = _detect_silence_gaps(audio)
+    if not gaps:
+        print("  [audio] No silence gaps detected for section breaks")
+        return audio
+
+    print(f"  [audio] Detected {len(gaps)} silence gap(s) — overlaying section breaks")
+
+    break_half_len = len(section_break) // 2
+    result = audio
+
+    for midpoint in gaps:
+        # Center the break asset at the gap midpoint
+        overlay_start = max(0, midpoint - break_half_len)
+        # Don't overlay past the end of the audio
+        if overlay_start + len(section_break) > len(result):
+            continue
+        result = result.overlay(section_break, position=overlay_start)
+
+    return result
+
+
+# ---------------------------------------------------------------------------
+# Word-count proportional placement (replaces silence detection)
+# ---------------------------------------------------------------------------
+
+def _snap_to_quiet(
+    audio: "AudioSegment",
+    target_ms: int,
+    window_ms: int = 3000,
+    grain_ms: int = 200,
+) -> int:
+    """Find the quietest grain_ms chunk within +/- window_ms of target_ms.
+
+    Instead of scanning the entire audio for silence (which fails on
+    continuous Gemini TTS), this searches a narrow window around a known
+    approximate boundary position to find the best placement point.
+
+    Returns the midpoint (ms) of the quietest chunk in the window.
+    """
+    start = max(0, target_ms - window_ms)
+    end = min(len(audio), target_ms + window_ms)
+
+    best_pos = target_ms
+    best_rms = float('inf')
+
+    pos = start
+    while pos + grain_ms <= end:
+        chunk = audio[pos : pos + grain_ms]
+        if chunk.rms < best_rms:
+            best_rms = chunk.rms
+            best_pos = pos + grain_ms // 2
+        pos += grain_ms // 2  # 50% overlap for precision
+
+    return best_pos
+
+
+def _place_proportional_elements(
+    news_seg: "AudioSegment",
+    dialogue: str,
+) -> "AudioSegment":
+    """Place section breaks and headline sting using word-count proportional positions.
+
+    Uses the known script structure (deterministic percentages from the system
+    prompt) to estimate boundary positions in the TTS audio, then snaps each
+    estimate to the nearest quiet point for clean placement.
+
+    Falls back to silence-based _overlay_section_breaks if the dialogue is
+    too short (<200 words) or audio too brief (<60s) to estimate reliably.
+
+    Returns the news audio with musical elements overlaid.
+    """
+    total_words = len(dialogue.split())
+    total_ms = len(news_seg)
+
+    # Fallback guard: if script is too short, use silence detection
+    if total_words < 200 or total_ms < 60000:
+        print(f"  [audio] Short script ({total_words}w, {total_ms}ms) — falling back to silence detection")
+        section_break = _load_asset("section_break.wav")
+        return _overlay_section_breaks(news_seg, section_break)
+
+    # Cumulative proportional positions from script structure
+    headlines_end_pct = 0.08
+    story1_end_pct = 0.38
+    story2_end_pct = 0.63
+
+    # Compute raw ms positions
+    raw_headlines_end = int(total_ms * headlines_end_pct)
+    raw_story1_end = int(total_ms * story1_end_pct)
+    raw_story2_end = int(total_ms * story2_end_pct)
+
+    # Snap to quiet points
+    headlines_end = _snap_to_quiet(news_seg, raw_headlines_end)
+    story1_end = _snap_to_quiet(news_seg, raw_story1_end)
+    story2_end = _snap_to_quiet(news_seg, raw_story2_end)
+
+    # Enforce 30s minimum spacing between adjacent placements
+    placements = [("headline_sting", headlines_end)]
+
+    if story1_end - headlines_end >= 30000:
+        placements.append(("section_break_1", story1_end))
+
+    if len(placements) >= 2:
+        last_pos = placements[-1][1]
+    else:
+        last_pos = headlines_end
+
+    if story2_end - last_pos >= 30000:
+        placements.append(("section_break_2", story2_end))
+
+    # Load assets
+    headline_sting = _load_asset("headline_sting.wav")
+    section_break = _load_asset("section_break.wav")
+
+    result = news_seg
+    for label, pos_ms in placements:
+        if label == "headline_sting" and headline_sting:
+            overlay_start = max(0, pos_ms - len(headline_sting) // 2)
+            if overlay_start + len(headline_sting) <= len(result):
+                result = result.overlay(headline_sting, position=overlay_start)
+                print(f"  [audio] Headline sting at {pos_ms}ms (raw {raw_headlines_end}ms)")
+        elif label.startswith("section_break") and section_break:
+            overlay_start = max(0, pos_ms - len(section_break) // 2)
+            if overlay_start + len(section_break) <= len(result):
+                result = result.overlay(section_break, position=overlay_start)
+                print(f"  [audio] Section break at {pos_ms}ms (raw {raw_story1_end if '1' in label else raw_story2_end}ms)")
+
+    print(f"  [audio] Placed {len(placements)} musical element(s) via proportional positioning")
+    return result
+
+
+# ---------------------------------------------------------------------------
 # Upload
 # ---------------------------------------------------------------------------
 
-def _upload_to_supabase(audio_bytes: bytes, edition: str) -> Optional[str]:
-    """Upload MP3 to Supabase Storage. Returns public URL or None."""
-    try:
-        from utils.supabase_client import supabase
+def _fresh_supabase_client():
+    """Create a NEW Supabase client for an end-of-run storage upload, independent
+    of the shared module-level singleton in ``utils.supabase_client``.
 
-        path = f"{edition}/latest.mp3"
-        supabase.storage.from_("audio-briefs").upload(
-            path,
-            audio_bytes,
-            {"content-type": "audio/mpeg", "upsert": "true"},
-        )
-        return supabase.storage.from_("audio-briefs").get_public_url(path)
+    The shared singleton multiplexes 10k+ PostgREST calls across a full ~90-min
+    daily run; by the time audio uploads (~50 min in) its storage session has
+    been closed / exhausted and raises "Cannot send a request, as the client has
+    been closed". The upload then fails silently and the brief carries forward
+    yesterday's audio (this froze On Air at 2026-08-13 for days). A fresh client
+    for the handful of end-of-run uploads sidesteps that entirely — a couple of
+    uploads can never exhaust a new connection."""
+    import os
+    from supabase import create_client
+    url = os.environ.get("SUPABASE_URL")
+    key = os.environ.get("SUPABASE_KEY")
+    if not url or not key:
+        raise EnvironmentError(
+            "SUPABASE_URL / SUPABASE_KEY not set for audio upload")
+    return create_client(url, key)
+
+
+def _write_audio_static(audio_bytes: bytes, edition: str) -> Optional[str]:
+    """Cloudflare stack: write the MP3 into the deployed static site instead of
+    Supabase Storage. Served from the Pages CDN at /audio/... (zero egress); the
+    pipeline commits frontend/public/audio alongside the other static data.
+
+    Keeps a date-stamped file (podcast-friendly) + latest.mp3, and rotates so the
+    working tree holds only the last few days. Returns a site-relative URL for
+    daily_briefs.audio_url. (Follow-up: move this + archive.json to R2 to keep
+    binaries out of git history.)"""
+    import os
+    from pathlib import Path
+    from datetime import datetime, timezone
+    import hashlib
+
+    try:
+        now = datetime.now(timezone.utc)
+        slot = "am" if now.hour < 12 else "pm"
+        out_dir = Path(__file__).resolve().parents[2] / "frontend" / "public" / "audio" / edition
+        out_dir.mkdir(parents=True, exist_ok=True)
+        # Rotate: keep only the last 2 date-stamped files (bounds the working tree;
+        # the web player uses latest.mp3, so the back-catalogue is not needed here).
+        for old in sorted(out_dir.glob("20??-??-??-??.mp3"))[:-2]:
+            try:
+                old.unlink()
+            except OSError:
+                pass
+        fname = f"{now.strftime('%Y-%m-%d')}-{slot}.mp3"
+        (out_dir / fname).write_bytes(audio_bytes)
+        (out_dir / "latest.mp3").write_bytes(audio_bytes)
+        fp = hashlib.md5(audio_bytes[:1024]).hexdigest()[:8]
+        print(f"  [audio] wrote static /audio/{edition}/{fname} ({len(audio_bytes)//1024} KB)")
+        return f"/audio/{edition}/{fname}?v={fp}"
+    except Exception as e:
+        print(f"  [warn][audio] static audio write failed for {edition}: {e}")
+        return None
+
+
+def _upload_to_supabase(audio_bytes: bytes, edition: str) -> Optional[str]:
+    """Upload MP3 to storage and return its public URL for daily_briefs.audio_url.
+
+    On the Cloudflare/SQLite stack (VOID_SQLITE_PATH set) this writes to the static
+    site (see _write_audio_static). Otherwise it uses the legacy Supabase Storage
+    path below (kept for rollback).
+    """
+    import os as _os
+    if _os.environ.get("VOID_SQLITE_PATH"):
+        return _write_audio_static(audio_bytes, edition)
+    try:
+        supabase = _fresh_supabase_client()  # NOT the shared singleton (closed mid-run)
+        from datetime import datetime, timezone
+        import hashlib
+
+        now = datetime.now(timezone.utc)
+        slot = "am" if now.hour < 12 else "pm"
+        persistent_path = f"{edition}/{now.strftime('%Y-%m-%d')}-{slot}.mp3"
+        latest_path = f"{edition}/latest.mp3"
+
+        opts = {"content-type": "audio/mpeg", "upsert": "true"}
+
+        # 1. Persistent copy (podcast feeds reference this)
+        supabase.storage.from_("audio-briefs").upload(persistent_path, audio_bytes, opts)
+
+        # 2. Latest copy (web player uses this)
+        supabase.storage.from_("audio-briefs").upload(latest_path, audio_bytes, opts)
+
+        base_url = supabase.storage.from_("audio-briefs").get_public_url(persistent_path)
+        fingerprint = hashlib.md5(audio_bytes[:1024]).hexdigest()[:8]
+        sep = "&" if "?" in base_url else "?"
+        return f"{base_url}{sep}v={fingerprint}"
     except Exception as e:
         print(f"  [warn][audio] Supabase upload failed for {edition}: {e}")
         return None
@@ -267,10 +844,13 @@ def _upload_to_supabase(audio_bytes: bytes, edition: str) -> Optional[str]:
 def _synthesize_opinion_monologue(
     opinion_audio_script: str,
     voice: str,
+    opinion_tts_preamble: str = "",
 ) -> Optional[bytes]:
     """Synthesize a single-voice opinion editorial monologue.
 
     Uses the same Gemini TTS but with a single speaker format.
+    The opinion_tts_preamble provides scene-setting / director's notes
+    that shape the voice delivery (pace, conviction, dynamics).
     Returns raw PCM bytes or None.
     """
     if not GEMINI_TTS_AVAILABLE:
@@ -295,38 +875,71 @@ def _synthesize_opinion_monologue(
     if not dialogue:
         return None
 
+    # Chunk long monologues to avoid Gemini TTS truncation (same as news)
+    chunks = _chunk_dialogue(dialogue)
     client = genai.Client(api_key=api_key)
-    try:
-        response = client.models.generate_content(
-            model=_TTS_MODEL,
-            contents=dialogue,
-            config=types.GenerateContentConfig(
-                response_modalities=["AUDIO"],
-                speech_config=types.SpeechConfig(
-                    multi_speaker_voice_config=types.MultiSpeakerVoiceConfig(
-                        speaker_voice_configs=[
-                            types.SpeakerVoiceConfig(
-                                speaker="One",
-                                voice_config=types.VoiceConfig(
-                                    prebuilt_voice_config=types.PrebuiltVoiceConfig(
-                                        voice_name=voice,
-                                    )
+
+    def _synth_opinion_chunk(chunk_content: str) -> Optional[bytes]:
+        try:
+            response = client.models.generate_content(
+                model=_TTS_MODEL,
+                contents=chunk_content,
+                config=types.GenerateContentConfig(
+                    response_modalities=["AUDIO"],
+                    speech_config=types.SpeechConfig(
+                        multi_speaker_voice_config=types.MultiSpeakerVoiceConfig(
+                            speaker_voice_configs=[
+                                types.SpeakerVoiceConfig(
+                                    speaker="One",
+                                    voice_config=types.VoiceConfig(
+                                        prebuilt_voice_config=types.PrebuiltVoiceConfig(
+                                            voice_name=voice,
+                                        )
+                                    ),
                                 ),
-                            ),
-                        ]
-                    )
+                                # Gemini requires exactly 2 speakers in multi_speaker config.
+                                # "Two" is never referenced — silent placeholder.
+                                types.SpeakerVoiceConfig(
+                                    speaker="Two",
+                                    voice_config=types.VoiceConfig(
+                                        prebuilt_voice_config=types.PrebuiltVoiceConfig(
+                                            voice_name=voice,
+                                        )
+                                    ),
+                                ),
+                            ]
+                        )
+                    ),
                 ),
-            ),
-        )
+            )
+            if response.candidates and response.candidates[0].content.parts:
+                part = response.candidates[0].content.parts[0]
+                if hasattr(part, "inline_data") and part.inline_data:
+                    return part.inline_data.data
+        except Exception as e:
+            print(f"  [warn][audio] Opinion TTS chunk failed: {e}")
+        return None
 
-        if response.candidates and response.candidates[0].content.parts:
-            part = response.candidates[0].content.parts[0]
-            if hasattr(part, "inline_data") and part.inline_data:
-                return part.inline_data.data
-    except Exception as e:
-        print(f"  [warn][audio] Opinion TTS failed: {e}")
+    if len(chunks) == 1:
+        content = f"{opinion_tts_preamble}\n\n{chunks[0]}" if opinion_tts_preamble else chunks[0]
+        return _synth_opinion_chunk(content)
 
-    return None
+    print(f"  [audio] Opinion long script — synthesizing in {len(chunks)} chunks")
+    all_pcm = bytearray()
+    for i, chunk in enumerate(chunks):
+        if i > 0:
+            time.sleep(5)
+        preamble = opinion_tts_preamble if i == 0 else ""
+        content = f"{preamble}\n\n{chunk}" if preamble else chunk
+        pcm = _synth_opinion_chunk(content)
+        if pcm is None:
+            print(f"  [warn][audio] Opinion chunk {i+1}/{len(chunks)} failed — aborting")
+            return None
+        all_pcm.extend(pcm)
+        chunk_dur = len(pcm) / (24000 * 2)
+        print(f"  [audio] Opinion chunk {i+1}/{len(chunks)}: {chunk_dur:.1f}s")
+
+    return bytes(all_pcm) if all_pcm else None
 
 
 def produce_audio(
@@ -334,23 +947,55 @@ def produce_audio(
     voices: dict,
     edition: str,
     opinion_audio_script: str | None = None,
+    opinion_lean: str | None = None,
+    tts_preamble_override: str | None = None,
+    news_single_voice: bool = False,
+    news_voice_b_from_opinion: bool = False,
 ) -> Optional[dict]:
     """
-    Synthesize a two-voice news update via Gemini Flash TTS.
+    Synthesize the full broadcast via Gemini Flash TTS.
 
     Pipeline:
-      1. Script → dialogue format (One:/Two:)
-      2. Gemini Flash TTS → PCM output (chunked if long)
+      1. News script → dialogue format (One:/Two:) → Gemini TTS (2 speakers)
+      2. Opinion script → dialogue format (One:) → Gemini TTS (1 speaker, separate call)
       3. PCM → WAV → AudioSegment
-      4. Assemble: ident + news dialogue + [transition + opinion] + outro
+      4. Assemble: ident + news + transition + opinion + outro
       5. Export MP3 → Supabase upload
 
-    The opinion segment is appended AFTER the main news, separated by the
-    transition asset (glass-bell pulse). This makes it clearly optional —
-    the main broadcast is complete, then void --opinion begins.
+    News and opinion use SEPARATE TTS calls because Gemini multi-speaker
+    TTS only supports 2 speakers. Opinion uses its own dedicated voice.
+
+    Args:
+        opinion_lean: The editorial lean ("left"/"center"/"right"). Used to
+            look up the opinion host's TTS preamble for voice direction.
+        tts_preamble_override: If provided, replaces the auto-generated TTS
+            preamble entirely. Used by weekly broadcast for magazine-pace
+            direction that differs from the daily bulletin style.
+        news_single_voice: When True, the news bulletin is read by ONE host
+            (a monologue) instead of the two-host A/B dialogue. The single
+            news voice is the one NOT used by the opinion segment, so "news
+            host" and "opinion host" stay distinct (e.g. Brian reads the news,
+            Ava delivers the opinion). The daily brief set this True while the
+            script alternated hosts per LINE, which read as jittery; it now
+            alternates per STORY and uses news_voice_b_from_opinion instead.
+            Weekly keeps the two-anchor dialogue (leaves this False).
+        news_voice_b_from_opinion: When True (and news_single_voice is False),
+            host B is the OPINION voice, and host A is the other of the two.
+            So the show runs on two voices total: A anchors, B takes alternate
+            stories and then delivers the opinion. Ignored when
+            news_single_voice is True. Daily brief sets this True
+            (CEO 2026-09-03); weekly leaves it False and keeps its own pair.
     """
-    if not GEMINI_TTS_AVAILABLE:
-        print("  [audio] google-genai SDK not installed — skipping")
+    # CEO 2026-05-13 — void --onair parked. Single env gate disables every
+    # audio code path (TTS calls, Supabase upload, podcast feed). Frontend
+    # has NEXT_PUBLIC_DISABLE_AUDIO mirror. Flip to re-enable: see CLAUDE.md
+    # Parking Lot.
+    if os.environ.get("DISABLE_AUDIO", "").strip() in ("1", "true", "yes"):
+        print("  [audio] DISABLE_AUDIO=1 — skipping TTS")
+        return None
+
+    if not EDGE_TTS_AVAILABLE:
+        print("  [audio] edge-tts not installed — skipping")
         return None
 
     if not PYDUB_AVAILABLE:
@@ -360,103 +1005,460 @@ def produce_audio(
     voice_a_name = voices["host_a"]["id"]
     voice_b_name = voices["host_b"]["id"]
 
-    # 1. Convert script to Gemini dialogue format
+    # Build TTS style preamble from host personality data.
+    # Weekly broadcast can override with magazine-pace direction.
+    if tts_preamble_override:
+        tts_preamble = tts_preamble_override
+    else:
+        host_a_preamble = voices["host_a"].get("tts_preamble", "")
+        host_b_preamble = voices["host_b"].get("tts_preamble", "")
+        tts_preamble = ""
+        if host_a_preamble or host_b_preamble:
+            tts_preamble = (
+                f"Audio Profile: Two veteran broadcast journalists delivering a live "
+                f"news bulletin. Professional, authoritative, precise.\n\n"
+                f"Scene: A glass-walled broadcast studio, mid-morning. Monitors show "
+                f"live feeds. Both journalists sit across a desk with notes. The energy "
+                f"is focused — they are here to inform, not entertain.\n\n"
+                f"Director's Notes: Measured authority. Clipped delivery. Neither speaker "
+                f"rushes, but neither wastes a syllable. Emphasis lands on names, numbers, "
+                f"and dates — these are the load-bearing words. Em dashes create brief "
+                f"pivot pauses. Paragraph breaks between stories produce a full breath "
+                f"beat. Speaker transitions are clean — no overlapping, no rushing.\n\n"
+                f"Speaker One: {host_a_preamble}\n\n"
+                f"Speaker Two: {host_b_preamble}"
+            )
+
+    # Opinion timbre for this edition, resolved up front so single-voice news
+    # can claim the OTHER of the two voices (news host != opinion host).
+    opinion_voice_name = voices.get("opinion", voices["host_a"])["id"]
+    opinion_voice_edge = _edge_voice(opinion_voice_name)
+
+    # --- Step 1: Synthesize news bulletin via edge-tts ---
     dialogue = _script_to_dialogue(audio_script)
     word_count = len(dialogue.split())
-    print(f"  [audio] Gemini TTS: {word_count} words, voices {voice_a_name}+{voice_b_name}")
+    if news_single_voice:
+        # One host reads the whole bulletin. Use whichever of the two voices the
+        # opinion is NOT using, so the news host and the opinion host stay
+        # distinct. Superseded for the daily brief by news_voice_b_from_opinion
+        # below: single-voice was a workaround for per-LINE A/B ping-pong, and
+        # the script now alternates per STORY, which is what it wanted.
+        news_voice_edge = (
+            _FEMALE_EDGE_VOICE if opinion_voice_edge == _MALE_EDGE_VOICE
+            else _MALE_EDGE_VOICE
+        )
+        voice_a_edge = voice_b_edge = news_voice_edge
+        print(f"  [audio] News TTS (single voice): {word_count} words, {news_voice_edge}")
+    elif news_voice_b_from_opinion:
+        # Two voices across the whole show: A anchors the news, B takes the
+        # alternate stories AND delivers the opinion. The section change is
+        # carried by the transition sting and the lean line, not by a voice
+        # the listener has not heard yet (CEO 2026-09-03).
+        voice_b_edge = opinion_voice_edge
+        voice_a_edge = (
+            _FEMALE_EDGE_VOICE if opinion_voice_edge == _MALE_EDGE_VOICE
+            else _MALE_EDGE_VOICE
+        )
+        print(
+            f"  [audio] News TTS (per-story alternation): {word_count} words, "
+            f"A={voice_a_edge} B={voice_b_edge} (B also reads opinion)"
+        )
+    else:
+        voice_a_edge = _edge_voice(voice_a_name)
+        voice_b_edge = _edge_voice(voice_b_name)
+        print(f"  [audio] News TTS: {word_count} words, {voice_a_edge} + {voice_b_edge}")
 
-    # 2. Synthesize via Gemini Flash TTS
-    pcm_data = _synthesize_gemini_tts(dialogue, voice_a_name, voice_b_name)
+    pcm_data = _synthesize_edge_tts(dialogue, voice_a_edge, voice_b_edge)
     if not pcm_data:
-        print("  [warn][audio] Gemini TTS synthesis failed — no audio")
+        print("  [warn][audio] News TTS synthesis failed — no audio")
         return None
 
-    dialogue_duration = len(pcm_data) / (24000 * 2)
-    print(f"  [audio] Gemini TTS returned {dialogue_duration:.1f}s of dialogue")
+    news_duration = len(pcm_data) / (24000 * 2)
+    print(f"  [audio] News TTS: {news_duration:.1f}s")
 
-    # 3. PCM → WAV → AudioSegment
     wav_data = _pcm_to_wav(pcm_data)
-    dialogue_seg = AudioSegment.from_wav(io.BytesIO(wav_data))
+    news_seg = AudioSegment.from_wav(io.BytesIO(wav_data))
 
-    # 4. Assemble: ident + breath + news dialogue + breath + [transition + opinion] + outro
+    # --- Step 2: Synthesize opinion monologue (1 speaker via edge-tts) ---
+    opinion_seg = None
+    if opinion_audio_script:
+        # opinion_voice_name / opinion_voice_edge resolved up front (Step 1).
+        opinion_words = len(opinion_audio_script.split())
+        print(f"  [audio] Opinion TTS: {opinion_words} words, {opinion_voice_edge}")
+
+        # Convert to One: lines (monologue — single speaker for all turns)
+        opinion_lines = []
+        for line in opinion_audio_script.splitlines():
+            stripped = line.strip()
+            if stripped:
+                stripped = re.sub(r"^(One|Two|A|B):\s*", "", stripped)
+                stripped = _strip_stage_directions(stripped)
+                if stripped:
+                    opinion_lines.append(f"One: {stripped}")
+        opinion_dialogue = "\n".join(opinion_lines)
+
+        opinion_pcm = _synthesize_edge_tts(opinion_dialogue, opinion_voice_edge, opinion_voice_edge)
+        if opinion_pcm:
+            opinion_wav = _pcm_to_wav(opinion_pcm)
+            opinion_seg = AudioSegment.from_wav(io.BytesIO(opinion_wav))
+            dur = len(opinion_pcm) / (24000 * 2)
+            print(f"  [audio] Opinion TTS: {dur:.1f}s")
+        else:
+            print("  [WARN][audio] Opinion TTS FAILED — NO OPINION IN BROADCAST")
+    else:
+        print("  [audio] No opinion_audio_script — broadcast ends after news")
+
+    # --- Step 3: Section breaks + headline sting REMOVED ---
+    # _place_proportional_elements overlaid headline_sting.wav and section_break.wav
+    # at proportional positions. CEO found these distracting — background bed and
+    # structural transitions (ident, news_to_opinion, outro) are retained.
+
+    # --- Step 3b: Headline underscore REMOVED ---
+    # The rhythmic D3 pulse bed under opening headlines was distracting.
+    # Background bed provides sufficient sonic texture.
+
+    # --- Step 4: Assemble final audio ---
     combined = AudioSegment.empty()
 
     ident = _load_asset("ident.wav")
     if ident:
-        combined += ident
+        # Crossfade ident into speech — ident fades out as speech fades in
+        # over 200ms for a smooth handoff (inspired by The Daily's overlap)
+        news_with_fadein = news_seg.fade_in(150)
+        combined = ident.append(news_with_fadein, crossfade=200)
+    else:
+        combined += AudioSegment.silent(duration=250)
+        combined += news_seg
 
-    combined += AudioSegment.silent(duration=250)
-    combined += dialogue_seg
-    combined += AudioSegment.silent(duration=350)
+    # Deliberate silence after "This was void news." — editorial page-turn beat
+    combined += AudioSegment.silent(duration=600)
 
-    # --- Opinion segment (optional, after main news) ---
-    if opinion_audio_script:
-        # Use host_a voice for the editorial monologue
-        print(f"  [audio] Synthesizing opinion monologue ({len(opinion_audio_script.split())} words, voice {voice_a_name})")
-        opinion_pcm = _synthesize_opinion_monologue(opinion_audio_script, voice_a_name)
-        if opinion_pcm:
-            opinion_duration = len(opinion_pcm) / (24000 * 2)
-            print(f"  [audio] Opinion TTS: {opinion_duration:.1f}s")
-            opinion_wav = _pcm_to_wav(opinion_pcm)
-            opinion_seg = AudioSegment.from_wav(io.BytesIO(opinion_wav))
-
-            # Insert transition asset between news and opinion
+    # Opinion section (after editorial page-turn transition music)
+    opinion_start_ms = None
+    if opinion_seg:
+        transition = _load_asset("news_to_opinion.wav")
+        if transition is None:
             transition = _load_asset("transition.wav")
-            if transition:
-                combined += transition
-            else:
-                combined += AudioSegment.silent(duration=800)
-
-            combined += AudioSegment.silent(duration=200)
-            combined += opinion_seg
-            combined += AudioSegment.silent(duration=350)
+        if transition:
+            combined += transition
         else:
-            print("  [audio] Opinion TTS failed — main broadcast unaffected")
+            # Longer silence if no transition asset — the gap IS the transition
+            combined += AudioSegment.silent(duration=1200)
+        # Breath after transition before opinion voice enters
+        combined += AudioSegment.silent(duration=300)
+        opinion_start_ms = len(combined)
+        combined += opinion_seg
+
+        # Opinion kicker: chord stab after editorial
+        opinion_kicker = _load_asset("opinion_kicker.wav")
+        if opinion_kicker:
+            combined += AudioSegment.silent(duration=100)
+            combined += opinion_kicker
+            combined += AudioSegment.silent(duration=200)
+        else:
+            combined += AudioSegment.silent(duration=350)
 
     # Outro: the resolve
     outro = _load_asset("outro.wav")
     if outro:
         combined += outro
 
+    # --- Step 5: Overlay background bed with RMS-based dynamic ducking ---
+    bed_seg = _load_asset("background_bed.wav")
+    if bed_seg and len(combined) > 0:
+        total_len = len(combined)
+        # Tile the bed with crossfade at seams to avoid volume dips
+        tiled_bed = bed_seg
+        while len(tiled_bed) < total_len + 500:
+            tiled_bed = tiled_bed.append(bed_seg, crossfade=500)
+        tiled_bed = tiled_bed[:total_len]
+
+        # RMS-based ducking: lower bed during speech, breathe up in pauses
+        grain_ms = 200
+        speech_threshold_rms = 200  # Typical Gemini TTS speech RMS
+        duck_db = -6.0  # Additional attenuation during speech
+
+        # Build gain envelope
+        gains = []
+        pos = 0
+        while pos < total_len:
+            end = min(pos + grain_ms, total_len)
+            speech_rms = combined[pos:end].rms
+            gains.append(duck_db if speech_rms > speech_threshold_rms else 0.0)
+            pos += grain_ms
+
+        # Smooth gain curve (3-point moving average to avoid pumping)
+        smoothed = []
+        for i in range(len(gains)):
+            window = gains[max(0, i - 1):min(len(gains), i + 2)]
+            smoothed.append(sum(window) / len(window))
+
+        # Apply smoothed gains per grain
+        chunks = []
+        for i, g in enumerate(smoothed):
+            start = i * grain_ms
+            end = min(start + grain_ms, total_len)
+            chunk = tiled_bed[start:end]
+            if g < -0.5:
+                chunk = chunk.apply_gain(g)
+            chunks.append(chunk)
+
+        ducked_bed = chunks[0]
+        for c in chunks[1:]:
+            ducked_bed = ducked_bed + c
+
+        # Edge fades
+        bed_fade_in = 1500
+        bed_fade_out = 2000
+        ducked_bed = ducked_bed.fade_in(bed_fade_in).fade_out(bed_fade_out)
+        combined = combined.overlay(ducked_bed)
+        duck_pct = sum(1 for g in smoothed if g < -0.5) / max(len(smoothed), 1) * 100
+        print(f"  [audio] Dynamic bed overlaid ({total_len}ms, ducked {duck_pct:.0f}% of grains)")
+
     if len(combined) == 0:
         print("  [warn][audio] Combined audio is empty — aborting")
         return None
 
+    has_opinion = opinion_seg is not None
+    print(f"  [audio] OPINION IN FINAL AUDIO: {'YES' if has_opinion else 'NO'}")
+
     duration_seconds = round(len(combined) / 1000.0, 1)
     print(f"  [audio] Assembled {duration_seconds}s total for {edition}")
 
-    # 6. Export to MP3 192kbps mono
-    with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as tmp:
-        tmp_path = tmp.name
+    # 6. Export to MP3 — 96kbps mono, fallback to 64kbps if file too large
+    # Cap rationale (2026-09-04): this was 8 MB and labelled "Supabase limit".
+    # Audio has gone to Pages static since 188caa3, so that number tracked
+    # nothing. Cloudflare Pages allows 25 MiB/file; the real cost is git
+    # history, since every run commits the MP3. 12 MB keeps a runaway script
+    # bounded while clearing a normal show with room to spare: the 2026-09-03
+    # brief was 6.1 MB at 807 news words, and the 950-1150 word target
+    # projects to ~7.2 MB, which would have sat at 90% of the old cap and
+    # silently dropped the Opinion segment on any longer-than-usual day.
+    _MAX_FILE_SIZE = 12 * 1024 * 1024
 
-    try:
-        combined.export(
-            tmp_path,
-            format="mp3",
-            bitrate="192k",
-            parameters=["-ac", "1"],
-        )
-        with open(tmp_path, "rb") as f:
-            audio_bytes = f.read()
-    except Exception as e:
-        print(f"  [warn][audio] MP3 export failed: {e}")
-        return None
-    finally:
+    def _export_mp3(segment: "AudioSegment", bitrate: str = "96k") -> Optional[bytes]:
+        with tempfile.NamedTemporaryFile(suffix=".mp3", delete=False) as tmp:
+            tmp_path = tmp.name
         try:
-            Path(tmp_path).unlink(missing_ok=True)
-        except Exception:
-            pass
+            segment.export(tmp_path, format="mp3", bitrate=bitrate, parameters=["-ac", "1"])
+            with open(tmp_path, "rb") as f:
+                return f.read()
+        except Exception as e:
+            print(f"  [warn][audio] MP3 export failed: {e}")
+            return None
+        finally:
+            try:
+                Path(tmp_path).unlink(missing_ok=True)
+            except Exception:
+                pass
+
+    audio_bytes = _export_mp3(combined)
+    if not audio_bytes:
+        return None
 
     file_size = len(audio_bytes)
-    print(f"  [audio] Exported {file_size / 1024:.1f} KB MP3 — uploading to Supabase")
+
+    # If too large at 96k, try 64k
+    if file_size > _MAX_FILE_SIZE:
+        print(f"  [audio] {file_size / 1024:.0f} KB exceeds {_MAX_FILE_SIZE // 1024 // 1024}MB — re-exporting at 64kbps")
+        audio_bytes = _export_mp3(combined, bitrate="64k")
+        if audio_bytes:
+            file_size = len(audio_bytes)
+
+    # Still too large — drop opinion and re-export at 96k
+    if audio_bytes and file_size > _MAX_FILE_SIZE and opinion_seg:
+        print(f"  [warn][audio] Still {file_size / 1024:.0f} KB — dropping opinion to fit size limit")
+        news_only = AudioSegment.empty()
+        # Rebuild without opinion: everything up to opinion_start_ms
+        if opinion_start_ms and opinion_start_ms < len(combined):
+            news_only = combined[:opinion_start_ms]
+        else:
+            news_only = combined
+        outro = _load_asset("outro.wav")
+        if outro:
+            news_only += outro
+        audio_bytes = _export_mp3(news_only)
+        if audio_bytes:
+            file_size = len(audio_bytes)
+            opinion_start_ms = None
+            has_opinion = False
+            duration_seconds = round(len(news_only) / 1000.0, 1)
+            print(f"  [audio] Re-assembled {duration_seconds}s (news only) for {edition}")
+
+    if not audio_bytes:
+        return None
+
+    print(f"  [audio] Exported {file_size / 1024:.1f} KB MP3 — publishing")
 
     public_url = _upload_to_supabase(audio_bytes, edition)
     if not public_url:
         return None
 
     print(f"  [audio] Uploaded: {public_url}")
+    opinion_start_seconds = round(opinion_start_ms / 1000.0, 1) if opinion_start_ms else None
+    return {
+        "audio_url": public_url,
+        "duration_seconds": duration_seconds,
+        "file_size": file_size,
+        "opinion_start_seconds": opinion_start_seconds,
+    }
+
+
+# ---------------------------------------------------------------------------
+# void --history companion audio — produce_history_audio()
+# ---------------------------------------------------------------------------
+
+def _upload_history_to_supabase(audio_bytes: bytes, slug: str) -> Optional[str]:
+    """Upload history MP3 to Supabase Storage.
+
+    Path: audio-briefs/history/{slug}.mp3
+    No 'latest' copy — history audio is permanent, not ephemeral.
+    Returns public URL with cache fingerprint, or None on failure.
+    """
+    try:
+        supabase = _fresh_supabase_client()  # NOT the shared singleton (closed mid-run)
+        import hashlib
+
+        path = f"history/{slug}.mp3"
+        opts = {"content-type": "audio/mpeg", "upsert": "true"}
+
+        supabase.storage.from_("audio-briefs").upload(path, audio_bytes, opts)
+
+        base_url = supabase.storage.from_("audio-briefs").get_public_url(path)
+        fingerprint = hashlib.md5(audio_bytes[:1024]).hexdigest()[:8]
+        sep = "&" if "?" in base_url else "?"
+        return f"{base_url}{sep}v={fingerprint}"
+    except Exception as e:
+        print(f"  [warn][history-audio] Supabase upload failed for {slug}: {e}")
+        return None
+
+
+def produce_history_audio(
+    audio_script: str,
+    slug: str,
+) -> Optional[dict]:
+    """Synthesize a void --history companion audio MP3.
+
+    Uses the dedicated HISTORY_VOICES pair (Sadaltager + Achernar) and
+    HISTORY_TTS_PREAMBLE director's notes for archival library ambience.
+    Post-processing: ident + dialogue + outro + background bed.
+    No section breaks (single continuous topic).
+    No opinion segment.
+
+    Args:
+        audio_script: The A:/B: dialogue script from audio_script_generator.
+        slug: Event slug (used for storage path and logging).
+
+    Returns:
+        Dict with audio_url, duration_seconds, file_size — or None on failure.
+    """
+    if not EDGE_TTS_AVAILABLE:
+        print(f"  [history-audio:{slug}] edge-tts not installed — skipping")
+        return None
+
+    if not PYDUB_AVAILABLE:
+        print(f"  [history-audio:{slug}] pydub not installed — skipping")
+        return None
+
+    try:
+        from briefing.voice_rotation import HISTORY_VOICES, HISTORY_TTS_PREAMBLE
+    except ImportError:
+        try:
+            from pipeline.briefing.voice_rotation import HISTORY_VOICES, HISTORY_TTS_PREAMBLE
+        except ImportError:
+            print(f"  [error][history-audio:{slug}] Cannot import HISTORY_VOICES")
+            return None
+
+    voice_a_gemini = HISTORY_VOICES["host_a"]["id"]   # Sadaltager → The Chronicler
+    voice_b_gemini = HISTORY_VOICES["host_b"]["id"]   # Achernar  → The Witness
+    voice_a_edge = _edge_voice(voice_a_gemini)
+    voice_b_edge = _edge_voice(voice_b_gemini)
+
+    # Convert A:/B: script to One:/Two: for edge-tts parser
+    dialogue = _script_to_dialogue(audio_script)
+    word_count = len(dialogue.split())
+    print(f"  [history-audio:{slug}] TTS: {word_count} words, {voice_a_edge} + {voice_b_edge}")
+
+    pcm_data = _synthesize_edge_tts(dialogue, voice_a_edge, voice_b_edge)
+    if not pcm_data:
+        print(f"  [warn][history-audio:{slug}] TTS synthesis failed — no audio")
+        return None
+
+    dialogue_duration = len(pcm_data) / (24000 * 2)
+    print(f"  [history-audio:{slug}] TTS synthesized: {dialogue_duration:.1f}s")
+
+    # Post-processing: ident + dialogue + outro + background bed
+    wav_data = _pcm_to_wav(pcm_data)
+    dialogue_seg = AudioSegment.from_wav(io.BytesIO(wav_data))
+
+    ident = _load_asset("ident.wav")
+    outro = _load_asset("outro.wav")
+    background_bed = _load_asset("background_bed.wav")
+
+    # Assembly: ident (400ms gap) + dialogue + (500ms gap) + outro
+    combined = AudioSegment.empty()
+
+    if ident:
+        combined += ident
+        combined += AudioSegment.silent(duration=400)
+
+    combined += dialogue_seg
+
+    if outro:
+        combined += AudioSegment.silent(duration=500)
+        combined += outro
+
+    # Subharmonic presence layer — same bed as news, full duration
+    if background_bed:
+        # Loop bed to match combined length
+        bed_len = len(combined)
+        if len(background_bed) < bed_len:
+            loops_needed = (bed_len // len(background_bed)) + 2
+            looped_bed = background_bed * loops_needed
+        else:
+            looped_bed = background_bed
+        bed_trimmed = looped_bed[:bed_len]
+        # Bed at -36 dBFS (voice-first balance — same as news)
+        bed_ducked = bed_trimmed - 36
+        combined = combined.overlay(bed_ducked, position=0)
+
+    duration_seconds = round(len(combined) / 1000.0, 1)
+    print(f"  [history-audio:{slug}] Assembled: {duration_seconds:.1f}s total")
+
+    # Export MP3
+    _MAX_FILE_SIZE = 8 * 1024 * 1024
+
+    def _export_hist_mp3(segment: "AudioSegment", bitrate: str = "96k") -> Optional[bytes]:
+        buf = io.BytesIO()
+        try:
+            segment.export(buf, format="mp3", bitrate=bitrate, parameters=["-ac", "1"])
+            return buf.getvalue()
+        except Exception as e:
+            print(f"  [warn][history-audio:{slug}] MP3 export failed: {e}")
+            return None
+
+    audio_bytes = _export_hist_mp3(combined)
+    if not audio_bytes:
+        return None
+
+    file_size = len(audio_bytes)
+    if file_size > _MAX_FILE_SIZE:
+        print(f"  [history-audio:{slug}] {file_size / 1024:.0f} KB > 8MB — re-exporting at 64k")
+        audio_bytes = _export_hist_mp3(combined, bitrate="64k")
+        if not audio_bytes:
+            return None
+        file_size = len(audio_bytes)
+
+    print(f"  [history-audio:{slug}] Exported {file_size / 1024:.1f} KB — uploading...")
+
+    public_url = _upload_history_to_supabase(audio_bytes, slug)
+    if not public_url:
+        return None
+
+    print(f"  [history-audio:{slug}] Uploaded: {public_url}")
     return {
         "audio_url": public_url,
         "duration_seconds": duration_seconds,
         "file_size": file_size,
     }
+

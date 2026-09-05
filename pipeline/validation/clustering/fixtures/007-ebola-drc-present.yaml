@@ -1,0 +1,84 @@
+id: ebola-drc-2026-05
+name: "Ebola outbreak DRC (must be present in top 50)"
+failure_date: "2026-05-15"
+failure_kind: missing
+articles:
+  - id: ebola-1
+    title: "Ebola outbreak in eastern DRC kills 65, WHO warns"
+    summary: "An Ebola outbreak in eastern Democratic Republic of Congo has killed 65 people, the World Health Organization warned Wednesday, calling for urgent international assistance."
+    full_text: >
+      An Ebola outbreak in eastern Democratic Republic of Congo has killed 65 people, the
+      World Health Organization warned Wednesday, calling for urgent international
+      assistance. The outbreak, centered in the North Kivu province town of Beni, has
+      already infected 102 confirmed cases and 38 probable cases. WHO Director-General
+      Tedros Adhanom Ghebreyesus said the agency had deployed 70 additional staff and
+      activated three new vaccination centers. Médecins Sans Frontières set up two
+      treatment units. The Congolese health ministry has imposed a temporary travel
+      restriction on the affected territory. The Ervebo vaccine, used in previous
+      outbreaks, has been shipped from Geneva. The DRC has battled twelve previous Ebola
+      outbreaks since 1976. Past outbreaks in the same region were complicated by armed
+      conflict involving M23 rebels and other militias.
+    source: { slug: who, country: CH, tier: international }
+    published_at: "2026-05-14T11:00Z"
+  - id: ebola-2
+    title: "DRC Ebola: 65 dead as health ministry calls for international aid"
+    summary: "The death toll from the Ebola outbreak in the Democratic Republic of Congo has reached 65, the health ministry said, appealing for international support."
+    full_text: >
+      The death toll from the Ebola outbreak in the Democratic Republic of Congo has
+      reached 65, the health ministry said Wednesday, appealing for international support.
+      Health Minister Roger Kamba told a press conference in Kinshasa that contact tracers
+      had identified 1,300 contacts, of whom 240 were under daily monitoring. Reuters
+      witnesses in Beni reported soldiers staffing checkpoints around hospitals.
+      Vaccination of frontline health workers began Tuesday with 8,000 doses of the
+      Ervebo vaccine flown in from Geneva. The European Centre for Disease Prevention and
+      Control issued an "elevated" risk assessment for travelers from the affected
+      region. Ebola has a fatality rate of roughly 50 percent without treatment, falling
+      to 35 percent with current monoclonal-antibody therapy. The outbreak strain has been
+      genetically identified as Zaire ebolavirus.
+    source: { slug: reuters, country: CD, tier: wire }
+    published_at: "2026-05-14T13:00Z"
+  - id: ebola-3
+    title: "Ebola DRC: outbreak overshadowed by ongoing M23 fighting"
+    summary: "The DRC Ebola outbreak is being complicated by ongoing M23 rebel fighting in North Kivu, which is hampering containment efforts."
+    full_text: >
+      The Ebola outbreak in eastern Democratic Republic of Congo is being complicated by
+      ongoing M23 rebel fighting in North Kivu, which is hampering containment efforts in
+      the affected zone, the BBC reports from Beni. Two WHO teams have been temporarily
+      withdrawn after a contact-tracing convoy came under fire on Monday. The Beni
+      bishop's residence is being used as a temporary triage site. UN Office for the
+      Coordination of Humanitarian Affairs warns that vaccination coverage may stall if
+      front-line transit corridors remain insecure. The outbreak is the country's
+      thirteenth and the largest in North Kivu since 2018. The earlier outbreak killed
+      2,300 over two years. UN mediator says talks with M23 leaders for a humanitarian
+      pause are "in early stages."
+    source: { slug: bbc, country: GB, tier: international }
+    published_at: "2026-05-14T15:00Z"
+  - id: ebola-4
+    title: "Congo Ebola death toll climbs to 65 in WHO bulletin"
+    summary: "The Congo Ebola death toll climbed to 65 in a WHO bulletin Wednesday afternoon, as new vaccination centers opened in North Kivu."
+    full_text: >
+      The Congo Ebola death toll climbed to 65 in a World Health Organization bulletin
+      released late Wednesday afternoon, as three new vaccination centers opened in North
+      Kivu. The bulletin notes 38 additional probable cases beyond the 102 confirmed,
+      raising total infections to 140. Three of the dead are health workers. Médecins
+      Sans Frontières has dispatched two treatment teams from its emergency pool in
+      Brussels. The African Union's Africa CDC director called for "an immediate, well-
+      resourced regional response." Le Monde Afrique reports France will contribute 12
+      million euros in emergency funding. The US Agency for International Development
+      said it had pre-positioned protective equipment in Kinshasa pending congressional
+      authorization to release additional funds.
+    source: { slug: le-monde, country: FR, tier: international }
+    published_at: "2026-05-14T17:00Z"
+expectation:
+  type: should_be_present
+  key_phrase: "Ebola outbreak DRC Congo"
+  in_top_n: 50
+  min_overlap: 0.5
+rationale: |
+  Missing-story failure: a 65-dead Ebola outbreak in the DRC with WHO,
+  MSF, AU, EU and US response is unambiguously a top-50 international
+  story but did not appear in production output 2026-05-15. Likely cause:
+  the four-source cluster sits at the lower edge of the source-count
+  threshold the importance ranker uses to gate visibility, and the
+  presence of conflict (M23) in one article confuses the categorizer
+  away from "world" toward something the ranker deprioritizes.

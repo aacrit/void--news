@@ -1,0 +1,376 @@
+slug: chinese-civil-war
+title: The Chinese Civil War and the Founding of the People's Republic
+subtitle: A peasant army walked out of the mountains and built the country now shaping the century
+date_display: 1927-1949
+date_sort: 1949
+date_precision: year
+era: contemporary
+region: east-asia
+country: China
+category: revolution
+severity: catastrophic
+death_toll: 6 million or more (combat and atrocities, 1927-1949)
+affected_population: About 2 million soldiers and civilians fled to Taiwan in 1949
+duration: Two phases across 22 years (1927-1937 and 1946-1949), interrupted by the war against Japan 1937-1945
+hero_image_url: https://upload.wikimedia.org/wikipedia/commons/1/12/Mao_proclaiming_establishment_of_PRC.jpg
+hero_image_attribution: Mao Zedong proclaiming the founding of the People's Republic of China from Tiananmen, October 1, 1949, public domain via Wikimedia Commons
+summary: |
+  On April 12, 1927, in Shanghai, gunmen of the Green Gang and soldiers loyal to Chiang Kai-shek moved through the workers' districts before dawn. Union halls were surrounded. Between 5,000 and 10,000 Communists, labor organizers, and suspected sympathizers were shot, beheaded, or thrown into the Huangpu River within days. The First United Front between the Nationalists (Kuomintang) and the Chinese Communist Party (CCP), which had helped reunify much of China only months earlier, was finished. The two parties would fight, on and off, for the next 22 years.
+
+  The CCP, driven from the cities, rebuilt in the countryside. Encircled in the Jiangxi hills, roughly 86,000 Red Army soldiers broke out in October 1934 and began the Long March, a fighting retreat of some 6,000 miles across a year. At the Xiang River, 40,000 died in a single crossing. At the Zunyi Conference in January 1935, Mao Zedong took control of the Party. Fewer than 10,000 reached the loess caves of Yan'an in the northwest. Those survivors became the founding generation of a state.
+
+  The war against Japan (1937-1945) forced a Second United Front and froze the civil war. When Japan surrendered, the freeze broke. From 1946 the Nationalist armies, better armed and backed by the United States, held the cities; the CCP, backed by a land reform that handed peasants the fields of their landlords, held the villages. In 1948 and 1949 three campaigns decided the war: Liaoshen in Manchuria, Huaihai around Xuzhou where 550,000 Nationalist troops were destroyed, and Pingjin at Beijing and Tianjin. In under a year the People's Liberation Army destroyed roughly 1.5 million Nationalist soldiers.
+
+  On September 21, 1949, opening the Chinese People's Political Consultative Conference, Mao told the delegates that the Chinese people, one quarter of humanity, had stood up. On October 1, from the Gate of Heavenly Peace above Tiananmen Square, he proclaimed the People's Republic of China. Chiang Kai-shek, his government, some 2 million soldiers and civilians, and the gold reserves of the central bank had already begun crossing the strait to Taiwan, where the Republic of China survives to this day.
+
+  The dead were never fully counted. Estimates for the full 1927-1949 conflict run past 6 million, with 1.8 to 3.5 million attributed to atrocities against civilians. Two governments emerged, each claiming to be China. One question left open in 1949 is still open in 2026.
+significance: |
+  The People's Republic founded in 1949 is now the world's second-largest economy and the central rival to American power. The Communist Party that won the civil war has governed without interruption for more than 75 years, longer than the Soviet Communist Party ever lasted. The victory also fixed the shape of the Cold War in Asia: within a year the new PRC crossed the Yalu into the Korean War against the United States (1950), and its land-reform model was carried into North Korea and North Vietnam. The revolution's second act, run by the same men who won in 1949, killed tens of millions more in the Great Leap Forward famine (1959-1961) and the Cultural Revolution (1966-1976). And the war never formally ended. Chiang's retreat created the "two Chinas," a split sovereignty that in the 2020s is the single most dangerous flashpoint between nuclear-armed states. The line drawn across 110 miles of the Taiwan Strait remains the most consequential unfinished border of the twentieth century.
+key_figures:
+- name: Mao Zedong
+  role: Chairman of the Chinese Communist Party; proclaimed the People's Republic on October 1, 1949
+  wikidata: Q5816
+  born: 1893
+  died: 1976
+  wikipedia: https://en.wikipedia.org/wiki/Mao_Zedong
+- name: Chiang Kai-shek
+  role: Leader of the Kuomintang and the Republic of China; retreated to Taiwan in 1949
+  wikidata: Q16574
+  born: 1887
+  died: 1975
+  wikipedia: https://en.wikipedia.org/wiki/Chiang_Kai-shek
+- name: Zhou Enlai
+  role: Chief CCP negotiator with the Nationalists and the United States; first Premier of the PRC
+  wikidata: Q16478
+  born: 1898
+  died: 1976
+  wikipedia: https://en.wikipedia.org/wiki/Zhou_Enlai
+- name: Zhu De
+  role: Commander-in-chief of the Red Army and the People's Liberation Army
+  born: 1886
+  died: 1976
+  wikipedia: https://en.wikipedia.org/wiki/Zhu_De
+- name: Lin Biao
+  role: PLA general who took Manchuria in the Liaoshen Campaign of 1948
+  born: 1907
+  died: 1971
+  wikipedia: https://en.wikipedia.org/wiki/Lin_Biao
+- name: Peng Dehuai
+  role: PLA commander in the northwest; later led Chinese forces in the Korean War
+  born: 1898
+  died: 1974
+  wikipedia: https://en.wikipedia.org/wiki/Peng_Dehuai
+- name: Wang Jingwei
+  role: Leader of the Kuomintang left at Wuhan in 1927; later headed the Japanese-backed collaborationist government
+  born: 1883
+  died: 1944
+  wikipedia: https://en.wikipedia.org/wiki/Wang_Jingwei
+- name: Song Qingling
+  role: Widow of Sun Yat-sen who broke with Chiang's Kuomintang and became a vice-chair of the PRC
+  born: 1893
+  died: 1981
+  wikipedia: https://en.wikipedia.org/wiki/Soong_Ching-ling
+legacy_points:
+- Brought the Chinese Communist Party to power, a single-party rule unbroken for more than 75 years
+- Long March survivors became the founding elite: Mao, Zhou Enlai, Zhu De, Deng Xiaoping, Lin Biao
+- Created the "two Chinas" question that remains the most dangerous flashpoint between nuclear powers
+- Land reform redistributed the fields of an estimated 10 percent of the rural population to the poor, at a cost of hundreds of thousands of landlord deaths
+- Triggered China's entry into the Korean War in 1950 and set the Cold War frontier across Asia
+primary_source_excerpts:
+- text: The Chinese people, comprising one quarter of humanity, have now stood up.
+  author: Mao Zedong
+  work: Opening address to the Chinese People's Political Consultative Conference, Beijing
+  date: September 21, 1949
+- text: The Central People's Government of the People's Republic of China is today established.
+  author: Mao Zedong
+  work: Proclamation from the Gate of Heavenly Peace, Tiananmen Square
+  date: October 1, 1949
+- text: The unfortunate but inescapable fact is that the ominous result of the civil war in China was beyond the control of the government of the United States.
+  author: Dean Acheson
+  work: Letter of transmittal, United States Relations with China (the China White Paper)
+  date: August 1949
+- text: The Japanese are a disease of the skin. The Communists are a disease of the heart.
+  author: Chiang Kai-shek
+  work: Statement on strategic priorities, justifying anti-Communist campaigns before resisting Japan
+  date: '1934'
+coordinates:
+  lat: 39.9087
+  lng: 116.3975
+related_event_slugs:
+- chinese-cultural-revolution
+- korean-war
+- nanjing-massacre
+- taiping-rebellion
+- russian-revolution
+perspectives:
+- viewpoint: CCP / Maoist Liberation
+  viewpoint_type: victor
+  region_origin: east-asia
+  narrative: |
+    In the official history taught in the People's Republic, 1949 is Liberation. The story runs from the workers slaughtered in Shanghai in 1927 to the flag raised over Tiananmen 22 years later, and its moral is that only the Communist Party could end a century of foreign humiliation and warlord chaos that began with the Opium Wars.
+
+    The Party's survival is told as an epic of endurance. When Chiang's five encirclement campaigns closed on the Jiangxi Soviet, the Red Army broke out and marched. The Long March of 1934-1935 covered some 6,000 miles and crossed 24 rivers and 18 mountain ranges; of the roughly 86,000 who set out, fewer than one in ten reached Yan'an. The march is remembered not as a defeat but as a seeding: the Party scattered cadres across eleven provinces and forged the leaders who would run China for the next half century. At Zunyi in January 1935, Mao displaced the Soviet-trained leadership and set the line that peasants, not the urban proletariat, would make the Chinese revolution.
+
+    The decisive claim is that the Party won because the people chose it. In the "liberated areas" the CCP redistributed land, cut rents and interest, taught literacy, and disciplined its soldiers under the Three Rules and Eight Points of Attention that forbade looting and abuse of villagers. The Nationalist regime, in this telling, rotted from corruption, hyperinflation that reached over 1,000 percent, and dependence on American arms. The three great campaigns of 1948-1949 are presented as the verdict of history: the People's Liberation Army destroyed 1.5 million of Chiang's best troops, many of whom defected or surrendered en masse.
+
+    Mao supplied the framing that still defines the state. On September 21, 1949 he told the Consultative Conference that "the Chinese people, comprising one quarter of humanity, have now stood up." The phrase compressed the entire narrative: a nation once carved into foreign concessions had reclaimed itself. October 1 is National Day, celebrated every year in Tiananmen Square, the founding act of a country that would defy the United States in Korea within twelve months.
+  key_arguments:
+  - The revolution ended a century of foreign humiliation and warlord fragmentation
+  - The Party won peasant support through land reform, disciplined troops, and social programs
+  - Nationalist defeat came from corruption, hyperinflation, and dependence on foreign arms
+  - 1949 restored Chinese sovereignty and dignity after the Opium Wars and Japanese invasion
+  sources:
+  - title: Red Star Over China
+    author: Edgar Snow
+    year: '1937'
+    type: book
+  - title: Mao Zedong and China in the Twentieth-Century World
+    author: Rebecca E. Karl
+    year: '2010'
+    type: book
+  - title: Selected Works of Mao Tse-tung (Volumes III-IV)
+    author: Mao Zedong
+    year: 1945-1949
+    type: archive
+  notable_quotes:
+  - text: The Chinese people, comprising one quarter of humanity, have now stood up.
+    speaker: Mao Zedong
+    context: Opening the Chinese People's Political Consultative Conference, September 21, 1949
+  - text: The Central People's Government of the People's Republic of China is today established.
+    speaker: Mao Zedong
+    context: Proclamation atop the Gate of Heavenly Peace, October 1, 1949
+  emphasized:
+  - Endurance and sacrifice of the Long March generation
+  - Popular support won through land reform and disciplined conduct
+  - National liberation from foreign domination and civil chaos
+  - The founding of a strong central state after a century of weakness
+  omitted:
+  - Coercion and killings during land-reform struggle sessions
+  - Soviet material and territorial support in Manchuria after 1945
+  - The famines and campaigns that followed 1949 under the same leadership
+  - Nationalist contributions to resisting Japan from 1937 to 1945
+- viewpoint: Kuomintang / Republic of China (Taiwan)
+  viewpoint_type: vanquished
+  region_origin: east-asia
+  narrative: |
+    From Taipei, the war is not a liberation but a catastrophe with foreign fingerprints. The Republic of China, founded in 1912 and led after 1928 by Chiang Kai-shek's Kuomintang, sees itself as the legitimate government of China, driven from the mainland but never dissolved. Its capital moved to Taipei in December 1949; it kept China's seat at the United Nations until 1971.
+
+    In this account Chiang's government carried the main burden of the war against Japan from 1937 to 1945, losing its best armies and an estimated 3 million soldiers while the Communists conserved strength in the rural northwest. When Japan surrendered, the Nationalists were exhausted, overextended, and financially ruined, tasked with governing a devastated country while the Soviet Union handed the Communists the arsenals of the defeated Japanese army in Manchuria. Chiang argued for the rest of his life that he lost the mainland less to Mao than to Moscow's aid and Washington's abandonment. His 1957 memoir was titled, pointedly, Soviet Russia in China.
+
+    The record of grievance is specific. General George Marshall's mediation mission of 1946 imposed a ceasefire and an arms embargo on the Nationalists at the moment their military position was strongest, then blamed both sides when it failed. The 1949 China White Paper, in the Nationalist reading, was an American attempt to wash its hands of an ally it had stopped supplying. Runaway inflation, corruption among officials, and the desertion of demoralized conscripts are acknowledged, but framed as symptoms of a state fighting two total wars back to back with dwindling support.
+
+    Taiwan's founding creed became the vow to return. "Counterattack the mainland" was the official goal of the Republic of China for decades, printed on textbooks and stamped on coins. That project failed, but under martial law and then democracy the island Chiang held became one of the wealthiest and freest societies in Asia, an alternative Chinese modernity that the mainland narrative prefers to ignore. The unfinished civil war is why Beijing still calls reunification an internal matter and why Taipei's status is contested to this day.
+  key_arguments:
+  - The Republic of China remained the legitimate government, relocated rather than defeated
+  - The Nationalists bore the main cost of resisting Japan, which drained their armies
+  - Soviet aid in Manchuria and the American arms embargo determined the outcome
+  - Taiwan built a prosperous, eventually democratic Chinese society after 1949
+  sources:
+  - title: 'The Generalissimo: Chiang Kai-shek and the Struggle for Modern China'
+    author: Jay Taylor
+    year: '2009'
+    type: book
+  - title: Soviet Russia in China
+    author: Chiang Kai-shek
+    year: '1957'
+    type: book
+  - title: 'Accidental State: Chiang Kai-shek, the United States, and the Making of Taiwan'
+    author: Hsiao-ting Lin
+    year: '2016'
+    type: book
+  notable_quotes:
+  - text: The Japanese are a disease of the skin. The Communists are a disease of the heart.
+    speaker: Chiang Kai-shek
+    context: Framing the anti-Communist campaigns of the 1930s as the deeper threat
+  - text: Counterattack the mainland.
+    speaker: Kuomintang government slogan
+    context: The founding vow of the Republic of China on Taiwan after 1949
+  emphasized:
+  - Nationalist sacrifice in the war against Japan, 1937-1945
+  - Soviet material support to the Communists and American disengagement
+  - The continuity and legitimacy of the Republic of China
+  - Taiwan's later prosperity and democratization as a Chinese alternative
+  omitted:
+  - The scale of Nationalist corruption and hyperinflation that alienated the cities
+  - The White Terror and martial law imposed on Taiwan after 1947
+  - Peasant grievances that land reform addressed and the KMT did not
+  - Mass desertion and surrender of demoralized Nationalist conscripts
+- viewpoint: Peasant Experience / Social History of Land Reform
+  viewpoint_type: vanquished
+  region_origin: east-asia
+  narrative: |
+    William Hinton arrived in Long Bow village in Shanxi in the spring of 1948 and stayed to watch land reform take place house by house. His book Fanshen took its title from the word peasants used for what was happening to them. "Literally," he wrote, "it means to turn the body, or to turn over." For a tenant who had never owned the ground he worked, fanshen meant to stand up, throw off the landlord, and take a share of land, tools, and dignity.
+
+    Below the campaigns and the generals, the civil war was decided in tens of thousands of villages like Long Bow. The CCP's method was the "speak bitterness" meeting: peasants were gathered to voice, out loud and in public, the accumulated humiliations of rent, debt, forced labor, and hunger. Class categories were assigned, landlord, rich peasant, middle peasant, poor peasant, and the land, animals, and grain of the top categories were divided among the rest. For families who had eaten bark in famine years, this was the moment the revolution became real and worth fighting for. It is why PLA ranks swelled with village recruits who had a stake in a Communist victory and everything to lose from a Nationalist return.
+
+    The same meetings had another face. The "struggle sessions" that followed could turn from redistribution into violence: landlords beaten, paraded, driven to suicide, or executed by their own villagers. Quotas and cadre zeal produced killings of people whose only crime was owning a few extra acres. Hinton himself recorded the excesses and the later "correction" campaigns that tried to rein them in. Estimates of landlords and rich peasants killed in land reform during and just after the civil war run into the hundreds of thousands, some far higher.
+
+    The peasant perspective refuses both the heroic and the purely condemnatory version. For many at the bottom of rural society, land reform delivered something no previous Chinese government had: a title, a plot, a vote in the village. For the accused and their families, it delivered terror. Both were true in the same courtyard, often on the same afternoon. This is the ground-level texture that the slogans of Liberation and the lamentations of the exiles both flatten.
+  key_arguments:
+  - The war was decided village by village through land redistribution, not only on battlefields
+  - Land reform gave the rural poor a concrete material stake in a Communist victory
+  - Speak-bitterness meetings converted private grievance into political mobilization
+  - The same process produced hundreds of thousands of coerced deaths of the landlord class
+  sources:
+  - title: 'Fanshen: A Documentary of Revolution in a Chinese Village'
+    author: William Hinton
+    year: '1966'
+    type: book
+  - title: China Shakes the World
+    author: Jack Belden
+    year: '1949'
+    type: book
+  - title: 'Decisive Encounters: The Chinese Civil War, 1946-1950'
+    author: Odd Arne Westad
+    year: '2003'
+    type: book
+  notable_quotes:
+  - text: Every revolution creates new words. A most important word was fanshen. Literally, it means to turn the body, or to turn over.
+    speaker: William Hinton
+    context: Opening of Fanshen, on the meaning of land reform to peasants, 1966
+  - text: A revolution is not a dinner party. A revolution is an insurrection, an act of violence by which one class overthrows another.
+    speaker: Mao Zedong
+    context: Report on an Investigation of the Peasant Movement in Hunan, 1927
+  emphasized:
+  - The lived experience of tenants and the rural poor
+  - Land redistribution as the engine of Communist recruitment and support
+  - Both the empowerment and the violence of struggle sessions
+  - The local and human scale beneath the national campaigns
+  omitted:
+  - High diplomacy and the Cold War context of the war
+  - The strategic and logistical decisions of the competing armies
+  - The urban, industrial, and intellectual dimensions of the conflict
+- viewpoint: Western Cold War / "Loss of China"
+  viewpoint_type: bystander
+  region_origin: north-america
+  narrative: |
+    In the United States, 1949 was not the founding of a nation but the "loss of China," and it detonated a political crisis at home. A country Americans had regarded as a wartime ally and a future democratic partner had, seemingly overnight, become the largest Communist state on earth. The question that consumed Washington was not why the Chinese revolution succeeded but who in America was to blame for letting it.
+
+    The Truman administration's defense was the China White Paper of August 1949, a 1,054-page compilation released as Mao's armies neared Beijing. Its thesis, in Secretary of State Dean Acheson's words, was that "the ominous result of the civil war in China was beyond the control of the government of the United States." Washington had poured some 3 billion dollars into Chiang's government and could not, it argued, save a regime that would not save itself. Critics read the same document as an alibi for abandonment.
+
+    The backlash created the "China Lobby" and fueled McCarthyism. Senator Joseph McCarthy and his allies charged that the State Department's "China Hands," the diplomats who had reported Nationalist corruption and Communist strength honestly from the field, had engineered the defeat. John Paton Davies, John Stewart Service, and others were investigated, smeared, and driven from the Foreign Service. The purge stripped the United States of its most knowledgeable China experts on the eve of the wars in Korea and Vietnam, a loss historians link to later American misjudgments across Asia.
+
+    The strategic reading hardened into the domino theory: if China could fall, so could Korea, Indochina, and beyond. When Chinese troops crossed the Yalu in late 1950, the "loss of China" seemed confirmed as a Communist tide, and containment became the organizing doctrine of American policy in Asia for a generation. In this frame the Chinese revolution is less a domestic upheaval than the opening move of the Cold War in the East, and the tragedy is measured in Washington's failures rather than China's.
+  key_arguments:
+  - The Communist victory was a strategic defeat for the United States in the emerging Cold War
+  - The China White Paper argued the outcome was beyond American power to prevent
+  - The "loss" triggered McCarthyism and the purge of the State Department's China experts
+  - 1949 hardened the domino theory that shaped US policy in Korea and Vietnam
+  sources:
+  - title: United States Relations with China, with Special Reference to the Period 1944-1949 (the China White Paper)
+    author: United States Department of State
+    year: '1949'
+    type: document
+  - title: Stilwell and the American Experience in China, 1911-1945
+    author: Barbara W. Tuchman
+    year: '1971'
+    type: book
+  - title: The China Hands
+    author: E. J. Kahn Jr.
+    year: '1975'
+    type: book
+  notable_quotes:
+  - text: The unfortunate but inescapable fact is that the ominous result of the civil war in China was beyond the control of the government of the United States.
+    speaker: Dean Acheson
+    context: Letter of transmittal, the China White Paper, August 1949
+  - text: Who lost China?
+    speaker: The China Lobby
+    context: The political charge that fueled McCarthyism after 1949
+  emphasized:
+  - The revolution as a Cold War strategic loss for the West
+  - American domestic politics and the search for scapegoats
+  - The purge of the China Hands and its long consequences
+  - The domino theory and the road to Korea and Vietnam
+  omitted:
+  - The internal Chinese causes of the revolution and its popular support
+  - The devastation of the war against Japan on the Nationalist state
+  - Chinese agency, treating 1949 as something done to the United States
+  - The lived experience of Chinese peasants and soldiers
+- viewpoint: Revisionist Scholarship / Weighing Liberation Against Its Cost
+  viewpoint_type: revisionist
+  region_origin: global
+  narrative: |
+    A later generation of historians, working in newly opened Chinese archives, has asked what the word Liberation actually meant for those who lived through it. Their answer complicates both the triumphal story taught in Beijing and the geopolitical story told in Washington.
+
+    Frank Dikotter's The Tragedy of Liberation (2013) reconstructs the years around 1949 as an era of "calculated terror and systematic violence." Drawing on provincial archives, he documents land-reform killings, urban campaigns against "counterrevolutionaries" with official death quotas, and the mass mobilization of fear as a tool of rule. In his account the first decade of the People's Republic sent at least 5 million civilians to early graves, before the far greater catastrophes of the Great Leap Forward. This scholarship insists that the violence of 1949 was not an aberration but the method by which the new state was built.
+
+    Other historians resist reducing the revolution to a body count. Diana Lary's social history, China's Civil War (2015), maps the war's toll in displacement, famine, conscription, and shattered families across the whole society, Nationalist and Communist alike, and shows how ordinary people navigated a conflict most had no wish to fight. Odd Arne Westad argues that the Communist victory was neither inevitable nor purely popular, but the product of specific choices, foreign interventions, and Nationalist blunders, and that its consequences reached far beyond China. Suzanne Pepper's earlier work traced how Nationalist misrule in the recovered cities squandered the goodwill of 1945.
+
+    What unites this perspective is a refusal to let either founding myth stand unexamined. The revolution genuinely lifted hundreds of millions of peasants out of a landlord order that had ground them for generations. It also inaugurated a party-state that would, within a decade, preside over the deadliest famine in human history. The revisionist project holds both truths at once: that 1949 was a real liberation for many, and that liberation was purchased with terror, and that the same men who stood up the Chinese people in October went on to break them in ways no one on that gate could yet see.
+  key_arguments:
+  - Newly opened archives reveal systematic violence and death quotas around 1949
+  - Dikotter estimates at least 5 million civilian deaths in the PRC's first decade
+  - Social historians measure the war in displacement, famine, and shattered families across all sides
+  - The revolution was both a genuine liberation for peasants and the birth of a terror-driven party-state
+  sources:
+  - title: 'The Tragedy of Liberation: A History of the Chinese Revolution, 1945-1957'
+    author: Frank Dikotter
+    year: '2013'
+    type: book
+    archive_url: https://archive.org/details/tragedyofliberat0000diko
+  - title: 'China''s Civil War: A Social History, 1945-1949'
+    author: Diana Lary
+    year: '2015'
+    type: book
+  - title: 'Civil War in China: The Political Struggle, 1945-1949'
+    author: Suzanne Pepper
+    year: '1978'
+    type: book
+  notable_quotes:
+  - text: An era of calculated terror and systematic violence.
+    speaker: Frank Dikotter
+    context: The Tragedy of Liberation, describing the founding years of the PRC, 2013
+  - text: The revolution was a real liberation for many, and it was purchased with terror.
+    speaker: Revisionist synthesis
+    context: The central tension of post-archival scholarship on 1949
+  emphasized:
+  - Archival evidence of coercion, terror, and death quotas
+  - The human cost of land reform and the campaigns against "counterrevolutionaries"
+  - Continuity between the violence of 1949 and the later Maoist catastrophes
+  - Holding liberation and its price in the same frame
+  omitted:
+  - The genuine popularity and social gains of the early revolution for the poor
+  - The Nationalist and Japanese violence that preceded and shaped the Communist state
+  - The geopolitical achievement of reunifying a fragmented country
+  - The perspective of peasants for whom land reform was an unambiguous gain
+media:
+- media_type: photograph
+  title: Chiang Kai-shek
+  description: Chiang Kai-shek, leader of the Nationalist Kuomintang, photographed around October 1943. His 1927 purge of the Communists in Shanghai opened the civil war; his defeat in 1949 drove his government to Taiwan.
+  source_url: https://upload.wikimedia.org/wikipedia/commons/3/38/Chiang_Kai-shek%EF%BC%88%E8%94%A3%E4%B8%AD%E6%AD%A3%EF%BC%89.jpg
+  attribution: Unknown author, circa October 1943, public domain via Wikimedia Commons
+  license: public-domain
+  creator: Unknown
+  creation_date: circa 1943
+- media_type: photograph
+  title: Chiang Kai-shek during the Northern Expedition
+  description: Chiang Kai-shek in the late 1920s during the Northern Expedition, the campaign that nominally reunified China under the Kuomintang and set the stage for his break with the Communists.
+  source_url: https://upload.wikimedia.org/wikipedia/commons/3/39/Chiang_Kaishek_during_Northern_Expedition.jpg
+  attribution: Unknown author, before 1929, public domain via Wikimedia Commons
+  license: public-domain
+  creator: Unknown
+  creation_date: before 1929
+- media_type: photograph
+  title: The Chinese Red Army in the Encirclement Campaigns
+  description: Communist Red Army troops during the first anti-encirclement campaign around 1930, when Chiang's Nationalist forces tried and failed to destroy the rural soviets, a prelude to the Long March.
+  source_url: https://upload.wikimedia.org/wikipedia/commons/8/85/Chinese_Red_Army_in_the_first_anti-encirclement.jpg
+  attribution: Unknown author, circa 1930, public domain via Wikimedia Commons
+  license: public-domain
+  creator: Unknown
+  creation_date: circa 1930
+connections:
+- target_slug: chinese-cultural-revolution
+  connection_type: caused
+  description: The men who proclaimed the republic in 1949 turned on their own party in 1966. Mao, judging the revolution stalled, unleashed the Red Guards, and the founding generation devoured itself
+- target_slug: korean-war
+  connection_type: caused
+  description: China was one year old when its army crossed the Yalu River in October 1950. More than 180,000 Chinese soldiers died fighting the United States to a standstill in Korea, among them Mao's own son
+- target_slug: nanjing-massacre
+  connection_type: influenced
+  description: The Japanese invasion that froze the civil war in 1937 also gutted the Nationalist army in its capital. Chiang's best divisions bled at Shanghai and Nanjing while the Communists rebuilt in the rural interior
+- target_slug: opium-wars
+  connection_type: influenced
+  description: Mao dated the humiliation to 1842 and the first Opium War. Standing above Tiananmen in 1949, he was closing a century that began when British gunboats forced the treaty ports open
+- target_slug: taiping-rebellion
+  connection_type: parallel
+  description: A peasant army marching out of the south to topple a dynasty from the countryside was not new. The Taiping took Nanjing in 1853 and held it eleven years. The Communists took it in 1949 and kept it

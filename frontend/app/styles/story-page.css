@@ -1,0 +1,64 @@
+/* ===========================================================================
+   story-page.css — standalone /story/[id] Deep Dive shell.
+
+   The archive Deep Dive is a real PAGE (not the in-feed overlay): masthead on
+   top, a centered max-width reading column on desktop, full-page on mobile. It
+   reuses the shared dd-* content vocabulary (dd-headline, dd-summary-text,
+   dd-src-cols, dd-section-label, dd-page__bar/back/share) from
+   deep-dive-page.css + components.css; this file only adds the centered wrapper
+   and a few standalone-specific rhythm rules.
+
+   Theme-agnostic: every value is a design token, so light ("Morning Edition")
+   and dark ("Evening Edition") both resolve correctly.
+   =========================================================================== */
+
+.story-page {
+  display: block;
+  min-height: 100vh;
+  /* Room for the mobile tab bar; harmless on desktop. */
+  padding: 0 var(--space-4) calc(env(safe-area-inset-bottom, 0px) + 96px);
+}
+
+/* Centered reading column. On desktop the standalone page is a one-page
+   reading view (NOT the inline-expand). Mobile fills the width. */
+.story-page__inner {
+  width: 100%;
+  /* 2026-08-10: widened 720px -> 900px. A shared Deep Dive link opened cold
+     felt cramped in a 720px column with wide empty margins on desktop; 900px
+     gives the story, spectrum, and Left/Center/Right source columns more room
+     while staying centered. Mobile is unaffected (width:100% below 900px). */
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.story-page__headline {
+  margin: var(--space-4) 0 var(--space-3);
+}
+
+.story-page__section {
+  margin-top: var(--space-5);
+}
+
+.story-page__block {
+  margin-top: var(--space-4);
+}
+
+/* Center the Sigil in its own breathing room above the spectrum. */
+.story-page__sigil {
+  display: flex;
+  justify-content: center;
+  margin: var(--space-3) 0 var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .story-page {
+    padding-bottom: var(--space-8);
+  }
+  .story-page__headline {
+    margin-top: var(--space-6);
+  }
+}
+
+/* Reduced motion: the reused sub-components already honor
+   prefers-reduced-motion internally (spectrum rise, consensus bar, lens
+   stamps). Nothing new to disable here — this shell has no entrance motion. */

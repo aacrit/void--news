@@ -1,0 +1,163 @@
+name: Deploy to Cloudflare Pages
+
+# Parallel deploy alongside the existing GitHub Pages workflow. Both run on
+# every push to main and after auto-merge. The GH Pages deploy stays as a
+# safety net during the migration; once the *.pages.dev URL is verified,
+# the GH workflow can be disabled or removed in a follow-up.
+on:
+  push:
+    branches: [main]
+  workflow_run:
+    # "Auto-merge Claude branches" -> redeploy after code lands on main.
+    # "News Pipeline" -> redeploy after the daily 11:00 UTC run so the
+    # build-time-prerendered front page + the new day's archived /story/<id>
+    # pages pick up fresh data (the pipeline writes the DB + archives via step
+    # 8f but never pushes code, so without this the prerendered feed goes
+    # stale). The `if:` guard below only deploys when conclusion == 'success',
+    # so a failed pipeline never publishes a stale or empty page.
+    workflows: ["Auto-merge Claude branches", "News Pipeline"]
+    types: [completed]
+  # Deterministic daily backstop. The "News Pipeline" workflow_run above is the
+  # fast path (redeploys ~right after the run completes), but GitHub's
+  # workflow_run event is known to lag or silently drop (it failed to fire on
+  # 2026-08-10, leaving the prerendered feed a day stale until a manual deploy;
+  # it dropped again on 2026-08-14).
+  #
+  # This MUST stay behind the pipeline's worst-case finish or it publishes the
+  # PREVIOUS day's data and the fast path never corrects it. On 2026-08-14 it
+  # did exactly that: the pipeline started 11:48 (GitHub scheduling delay off
+  # the 11:00 cron) and ran 238 min to 15:46, while this backstop fired at
+  # 15:44 and rebuilt from yesterday's feed. The old 15:00 slot assumed the
+  # pipeline "finishes by ~13:35 ... with the 150-min job cap"; that cap is now
+  # 240 min, which invalidated the assumption.
+  #
+  # Worst case now: 11:00 cron + ~60 min GitHub delay + 240 min job cap = 16:00.
+  # 17:00 leaves an hour of margin. The step-5 process pool should pull real
+  # runs back to ~140 min (finishing ~14:10), but this backstop is sized for the
+  # ceiling, not the expected case. The build's fail-loud guard (<20 stories)
+  # still blocks an empty deploy.
+  schedule:
+    # Early backstop: the post-pipeline workflow_run fast path dropped again on
+    # 2026-08-21 (pipeline succeeded 11:30, finished ~13:00, no deploy fired),
+    # leaving the feed a day stale until a manual deploy. This 15:00 run refreshes
+    # normal days ~2h earlier. It is POSITIVELY gated in the guard step: it deploys
+    # ONLY when today's News Pipeline has a `success` conclusion and nothing is
+    # running, so on a slow/failed run (e.g. the 238-min 2026-08-14 run) it skips
+    # and the 17:00 backstop below still covers the worst case. This is why the
+    # old un-gated 15:00 slot was unsafe and this one is not.
+    - cron: '0 15 * * *'
+    - cron: '0 17 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  deployments: write
+  actions: read  # guard step lists News Pipeline run status
+
+concurrency:
+  group: cloudflare-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'push' ||
+      github.event_name == 'workflow_dispatch' ||
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+    steps:
+      # ── Mid-pipeline staleness guard (2026-08-11) ──
+      # The front page is PRERENDERED from Supabase at build time. A code push
+      # that lands while the daily News Pipeline is still writing (11:00-13:35
+      # UTC window) builds a page with a FRESH build timestamp but YESTERDAY'S
+      # summaries — observed live on 2026-08-11 when auto-merge deploys at
+      # 13:32-13:34 raced the 8d summary pass (13:27-13:35). If the pipeline is
+      # queued or running, skip this deploy: the pipeline-success workflow_run
+      # deploy publishes the same commit (builds from main HEAD) WITH fresh
+      # data minutes later, and the 15:00 UTC scheduled backstop + manual
+      # workflow_dispatch (which bypasses the guard) cover pipeline failure.
+      - name: Guard — skip while the News Pipeline is running
+        id: guard
+        if: github.event_name != 'workflow_dispatch'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          active=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow=pipeline.yml \
+            --json status --jq '[.[] | select(.status=="in_progress" or .status=="queued")] | length' || echo 0)
+          if [ "${active:-0}" -gt 0 ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "News Pipeline is queued/running — skipping to avoid a fresh-timestamp/stale-data build. The post-pipeline workflow_run deploy will carry this commit."
+            exit 0
+          fi
+          # The 15:00 EARLY backstop must POSITIVELY confirm today's pipeline
+          # succeeded before it publishes, so it can never rebuild yesterday's
+          # feed (the 2026-08-14 failure mode). The 17:00 backstop keeps the
+          # looser guard so it still publishes to cover a workflow_run drop even
+          # if the pipeline itself failed (the build's <20-story fail-loud guard
+          # blocks a truly empty deploy).
+          if [ "${{ github.event.schedule }}" = "0 15 * * *" ]; then
+            today=$(date -u +%Y-%m-%d)
+            ok=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow=pipeline.yml \
+              --json conclusion,createdAt \
+              --jq "[.[] | select(.createdAt | startswith(\"$today\")) | select(.conclusion==\"success\")] | length" || echo 0)
+            if [ "${ok:-0}" -lt 1 ]; then
+              echo "skip=true" >> "$GITHUB_OUTPUT"
+              echo "Early (15:00) backstop: today's News Pipeline has not succeeded yet — skipping. The 17:00 backstop will cover a slow or failed run."
+              exit 0
+            fi
+          fi
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        if: steps.guard.outputs.skip != 'true'
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v4
+        if: steps.guard.outputs.skip != 'true'
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        if: steps.guard.outputs.skip != 'true'
+        run: cd frontend && npm ci
+
+      - name: Build (Cloudflare target — no basePath)
+        if: steps.guard.outputs.skip != 'true'
+        env:
+          # Empty basePath = root deploy (e.g. void-news.pages.dev/ instead
+          # of /void--news/). Read by next.config.ts and lib/utils.ts.
+          NEXT_PUBLIC_BASE_PATH: ""
+          # Cloudflare migration (2026-08-30): the build reads its data from
+          # build-data/*.json + public/data/*.json (emitted by the pipeline),
+          # NOT Supabase. No Supabase env at build; its absence forces the
+          # static-JSON path. The Supabase read dependency is fully retired.
+          #
+          # The ship board / feedback write path is the void-api Worker (D1).
+          NEXT_PUBLIC_API_BASE: "https://void-api.aacrit.workers.dev"
+          NEXT_PUBLIC_DISABLE_AUDIO: "0"
+        run: cd frontend && npm run build
+
+      # wrangler 3.x in non-TTY mode does NOT auto-create Pages projects;
+      # `pages deploy` errors with code 8000007 if the project is missing.
+      # Pre-create it idempotently — `continue-on-error` swallows the
+      # "already exists" error on every run after the first.
+      - name: Ensure Cloudflare Pages project exists
+        if: steps.guard.outputs.skip != 'true'
+        continue-on-error: true
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages project create void-news --production-branch main
+
+      - name: Deploy to Cloudflare Pages
+        if: steps.guard.outputs.skip != 'true'
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy frontend/out --project-name=void-news --branch=main --commit-dirty=true

@@ -1,0 +1,79 @@
+id: india-state-election-good-merge-2026-04
+name: "India Maharashtra state election results — known-good merge across 5 sources"
+failure_date: "2026-04-15"
+failure_kind: known-good-merge
+articles:
+  - id: ind-1
+    title: "BJP wins Maharashtra state election in landslide"
+    summary: "The BJP won the Maharashtra state election in a landslide Friday, securing 158 of 288 assembly seats."
+    full_text: >
+      The Bharatiya Janata Party won the Maharashtra state election in a landslide on
+      Friday, securing 158 of 288 assembly seats and ending five years of opposition
+      Congress-NCP rule. BJP state leader Devendra Fadnavis is expected to be sworn in
+      as chief minister Monday morning. Counting concluded shortly after midnight Friday.
+      Voter turnout was 65.8 percent, marginally lower than the 2019 election.
+      Congress conceded defeat at 9 p.m. Friday. PM Narendra Modi addressed party
+      workers in Mumbai by video link, calling the result "a vote for Maharashtra's
+      future." The opposition Maha Vikas Aghadi alliance won only 88 seats.
+    source: { slug: hindustan-times, country: IN, tier: domestic }
+    published_at: "2026-04-15T07:00Z"
+  - id: ind-2
+    title: "Maharashtra: BJP-led NDA sweeps assembly election"
+    summary: "Maharashtra: the BJP-led NDA swept the state assembly election Friday, with the Congress alliance trailing badly."
+    full_text: >
+      The Bharatiya Janata Party-led National Democratic Alliance swept the Maharashtra
+      state assembly election Friday, with the Congress-led Maha Vikas Aghadi alliance
+      trailing badly. The Times of India counted 232 NDA seats versus 88 for the
+      opposition. Devendra Fadnavis is the front-runner for chief minister. The result
+      consolidates BJP control over India's most economically powerful state.
+    source: { slug: times-of-india, country: IN, tier: domestic }
+    published_at: "2026-04-15T07:30Z"
+  - id: ind-3
+    title: "Modi's BJP wins big in Maharashtra state polls"
+    summary: "Prime Minister Narendra Modi's BJP won big in the Maharashtra state polls, securing a clear mandate, Reuters reports."
+    full_text: >
+      Prime Minister Narendra Modi's Bharatiya Janata Party won big in the Maharashtra
+      state polls, securing a clear mandate to govern India's wealthiest state, Reuters
+      reports. The BJP and its allies took 232 of 288 seats. Modi welcomed the result
+      from a cabinet meeting in New Delhi. Devendra Fadnavis is expected to take the
+      chief minister's oath on Monday. The result marks the BJP's third consecutive
+      Maharashtra victory at the state level. The Sensex opened up 0.8 percent.
+    source: { slug: reuters, country: IN, tier: wire }
+    published_at: "2026-04-15T08:00Z"
+  - id: ind-4
+    title: "Fadnavis to be sworn in as Maharashtra CM after BJP landslide"
+    summary: "Devendra Fadnavis will be sworn in as Maharashtra Chief Minister Monday after the BJP's landslide in Friday's state election."
+    full_text: >
+      Devendra Fadnavis will be sworn in as Maharashtra Chief Minister on Monday morning
+      after the Bharatiya Janata Party's landslide in Friday's state election. The Indian
+      Express reports the swearing-in will be held at Raj Bhavan with both Prime
+      Minister Narendra Modi and Home Minister Amit Shah expected to attend. Fadnavis
+      previously served as chief minister from 2014 to 2019. The new cabinet is
+      expected to be sworn in within seven days.
+    source: { slug: indian-express, country: IN, tier: domestic }
+    published_at: "2026-04-15T08:30Z"
+  - id: ind-5
+    title: "Mumbai's BJP victory: chief-minister race already decided"
+    summary: "Mumbai: the BJP's victory in Maharashtra has been all but coronated, with Fadnavis emerging as the consensus pick for chief minister."
+    full_text: >
+      Mumbai: the BJP's Maharashtra victory has been all but coronated, with Devendra
+      Fadnavis emerging as the consensus pick for chief minister. The BBC's correspondent
+      in Mumbai reports the swearing-in is being prepared for Monday morning at Raj
+      Bhavan. The opposition Congress-NCP alliance has begun internal recriminations,
+      with senior NCP leaders demanding a leadership review. Fadnavis previously served
+      from 2014 to 2019 and briefly returned as deputy CM in 2022. Modi will speak in
+      Pune on Sunday at a victory rally.
+    source: { slug: bbc, country: GB, tier: international }
+    published_at: "2026-04-15T09:00Z"
+expectation:
+  type: should_merge
+  expected_member_ids: [ind-1, ind-2, ind-3, ind-4, ind-5]
+  min_clusters: 1
+  max_clusters: 1
+  min_source_count: 4
+rationale: |
+  Known-good baseline. State-election coverage from five sources sharing
+  entities (BJP, Modi, Maharashtra, Fadnavis) merges cleanly under the
+  current algorithm. Phase-1 TF-IDF picks them up because vocabulary
+  overlap is dense; Phase-2 entity merge would also fire if needed.
+  Regression-detection fixture for the rewrite.

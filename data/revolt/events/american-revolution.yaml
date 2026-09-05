@@ -1,0 +1,230 @@
+slug: american-revolution
+title: The American Revolution
+subtitle: Thirteen colonies fought an eight-year war over taxation without representation
+date_display: 1765 to 1783
+date_start: 1765
+date_end: 1783
+date_precision: year
+era: atlantic
+region: americas
+country: United States (Thirteen Colonies)
+revolt_type: political
+status: concluded
+summary: Parliament's 1765 Stamp Act, the first direct tax levied on the American colonies, triggered a decade of escalating protest under the slogan 'no taxation without representation.' The Boston Tea Party of December 1773 and the punitive Coercive Acts that followed hardened positions on both sides. Fighting began at Lexington and Concord in April 1775; the Continental Congress declared independence on July 4, 1776. French military and naval support, formalized by treaty in 1778, proved decisive at the October 1781 siege of Yorktown, where a combined American and French force compelled the surrender of over 7,000 British troops under Cornwallis. The 1783 Treaty of Paris recognized American independence.
+significance: Established the first large-scale republic founded explicitly on Enlightenment principles of popular sovereignty and constitutional government, directly influencing the French Revolution six years later.
+analytical_outlook: A political-rights movement that escalated into an eight-year war, won primarily through foreign military intervention rather than an internal collapse of British authority.
+grievances:
+  - kind: Taxation without representation
+    intensity: 85
+    evidence: The 1765 Stamp Act and 1767 Townshend Acts imposed direct taxes on the colonies, which held no seats in the Parliament that levied them.
+  - kind: Restriction of colonial self-governance
+    intensity: 75
+    evidence: The 1774 Coercive Acts (Intolerable Acts) suspended Massachusetts's colonial charter and closed the port of Boston in response to the Tea Party.
+  - kind: Standing army quartering
+    intensity: 55
+    evidence: The Quartering Acts required colonies to house British troops, a grievance later written directly into the Declaration of Independence's list of charges against George III.
+  - kind: Trade restriction
+    intensity: 60
+    evidence: Navigation Acts restricted colonial trade to British ships and markets, angering merchants across New England and the Mid-Atlantic ports.
+actors:
+  - actor_type: masses
+    name: Continental Congress
+    description: Delegate body representing the thirteen colonies, first convened 1774, issued the Declaration of Independence in 1776.
+    role_in_arc: Coordinated colonial resistance and formal independence, later governed under the Articles of Confederation
+    defected: false
+  - actor_type: vanguard
+    name: Continental Army
+    description: Colonial fighting force under George Washington's command, alongside state militias, numbering roughly 20,000 to 30,000 at various points.
+    role_in_arc: Fought the eight-year war against British regulars, ultimately forcing the Yorktown surrender
+    defected: false
+  - actor_type: old-regime
+    name: Kingdom of Great Britain
+    description: Governed the thirteen colonies through royal governors and Parliament; deployed roughly 50,000 troops to North America over the war's course.
+    role_in_arc: Suppressed early protest, then fought and ultimately lost the war, recognizing independence in 1783
+    defected: false
+  - actor_type: foreign-backer
+    name: Kingdom of France
+    description: Formal ally of the United States from the 1778 Treaty of Alliance, providing troops, a fleet, and financing.
+    role_in_arc: French naval blockade and roughly 8,000 French troops were decisive at the 1781 siege of Yorktown
+    defected: false
+  - actor_type: counter-revolutionaries
+    name: American Loyalists
+    description: An estimated 15 to 20 percent of the colonial population who remained loyal to the Crown; roughly 60,000 to 100,000 emigrated after the war.
+    role_in_arc: Fought alongside British forces and provided intelligence; largely resettled in Canada and Britain after 1783
+    defected: false
+tactics:
+  - tactic_type: boycott-noncooperation
+    description: Colonial merchants organized boycotts of British goods following the Stamp Act and Townshend Acts, coordinated through Committees of Correspondence.
+    prominence: primary, pre-war phase
+  - tactic_type: armed-insurgency
+    description: The Continental Army and state militias fought a mix of set-piece battles (Saratoga, Yorktown) and irregular engagements (Lexington, Concord, the Southern partisan campaign) across an eight-year war.
+    prominence: primary, war phase
+  - tactic_type: parallel-institutions
+    description: Benjamin Franklin's mission to Paris secured the 1778 Franco-American alliance, bringing French naval and land forces directly into the conflict.
+    prominence: secondary, decisive at Yorktown
+resistance_type: armed
+phases:
+  - phase: old-regime-crisis
+    label: Taxation Without Representation
+    t_start: 0
+    t_end: 0.12
+    intensity: 30
+    reached: true
+    summary: A decade of British taxation measures without colonial representation builds organized resistance from the Stamp Act onward.
+    key_events:
+      - Stamp Act, 1765
+      - Townshend Acts, 1767
+      - Boston Massacre, March 1770
+  - phase: the-spark
+    label: Tea Party and Coercive Acts
+    t_start: 0.22
+    t_end: 0.34
+    intensity: 45
+    reached: true
+    summary: The Boston Tea Party provokes Parliament's punitive Coercive Acts, uniting colonial opposition and prompting the First Continental Congress.
+    key_events:
+      - Boston Tea Party, December 1773
+      - Coercive Acts, 1774
+      - First Continental Congress convenes, September 1774
+  - phase: moderate-phase
+    label: Lexington to Declaration
+    t_start: 0.34
+    t_end: 0.48
+    intensity: 55
+    reached: true
+    summary: Fighting breaks out at Lexington and Concord; the Continental Congress moves from petitioning the Crown to declaring independence.
+    key_events:
+      - Battles of Lexington and Concord, April 1775
+      - Declaration of Independence adopted, July 4, 1776
+  - phase: radical-phase
+    label: War and the French Alliance
+    t_start: 0.6
+    t_end: 0.72
+    intensity: 80
+    reached: true
+    summary: The war grinds through years of contested campaigns until the 1778 French alliance brings decisive naval and land support.
+    key_events:
+      - American victory at Saratoga, October 1777
+      - Treaty of Alliance with France, February 1778
+  - phase: consolidation
+    label: Yorktown and Peace
+    t_start: 0.92
+    t_end: 1
+    intensity: 60
+    reached: true
+    summary: A combined American and French force compels Cornwallis's surrender at Yorktown, and the Treaty of Paris formally ends the war.
+    key_events:
+      - Siege of Yorktown, September-October 1781, over 7,000 British troops surrender
+      - Treaty of Paris signed, September 1783
+outcome: independence
+peak_participation_pct: null
+peak_participation_display: roughly 200,000 total individuals served in the Continental Army and state militias over the course of the war
+crossed_participation_threshold: null
+military_defection: none
+foreign_intervention: direct-military
+duration_days: 2922
+death_toll: an estimated 25,000 American deaths (combat and disease combined) out of a population near 2.5 million; British and allied losses added several thousand more
+death_toll_low: 25000
+death_toll_high: 25000
+regime_before: colonial
+regime_after: democracy
+democratization_delta: 2
+success_factors:
+  - factor_key: foreign-intervention
+    label: Direct foreign military intervention
+    framework: tilly
+    status: French troops, naval forces, and financing were decisive at the 1781 Yorktown siege that ended major combat operations
+    direction: favors-movement
+    base_rate: Comparative studies of independence wars find that direct foreign military intervention on the side of an insurgency substantially raises the odds of success relative to insurgencies fighting alone
+    rationale: The Continental Army alone had not defeated British forces decisively in six years of fighting; the French fleet blocking Chesapeake Bay and roughly 8,000 French troops at Yorktown were what forced Cornwallis's surrender.
+    sources:
+      - Dull, A Diplomatic History of the American Revolution (1985)
+  - factor_key: armed-campaign-rate
+    label: Armed campaign base rate
+    framework: chenoweth
+    status: An eight-year armed campaign combining colonial forces with a foreign ally achieved independence
+    direction: favors-movement
+    base_rate: Chenoweth and Stephan find armed campaigns succeed in roughly 26 percent of cases historically, versus roughly 53 percent for primarily nonviolent campaigns
+    rationale: The American case succeeded as an armed campaign in part because it secured a great-power ally rather than relying on domestic mobilization alone, a combination not present in most armed campaigns in the broader historical dataset.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+  - factor_key: geographic-distance
+    label: Distance and logistics burden on the imperial power
+    framework: tilly
+    status: Britain supplied and reinforced its army across roughly 3,000 miles of Atlantic Ocean for eight years
+    direction: favors-movement
+    base_rate: Historians of colonial and imperial warfare widely identify overextended supply lines as a recurring structural disadvantage for distant occupying powers fighting local or allied-supported insurgencies
+    rationale: Troop and supply convoys took six to eight weeks to cross the Atlantic, delaying reinforcement and decision-making relative to the Continental Army and its French allies operating on or near home territory.
+    sources:
+      - Comparative colonial warfare historiography
+key_figures:
+  - name: George Washington
+    role: Commander-in-Chief of the Continental Army, later first US President
+    born: 1732
+    died: 1799
+    wikipedia: https://en.wikipedia.org/wiki/George_Washington
+  - name: Thomas Jefferson
+    role: Principal author of the Declaration of Independence
+    born: 1743
+    died: 1826
+    wikipedia: https://en.wikipedia.org/wiki/Thomas_Jefferson
+  - name: Benjamin Franklin
+    role: Diplomat who secured the 1778 French alliance
+    born: 1706
+    died: 1790
+    wikipedia: https://en.wikipedia.org/wiki/Benjamin_Franklin
+  - name: King George III
+    role: Monarch of Great Britain during the war
+    born: 1738
+    died: 1820
+    wikipedia: https://en.wikipedia.org/wiki/George_III
+legacy_points:
+  - Established the United States as an independent republic under a written constitution, ratified 1788, with a Bill of Rights added 1791.
+  - Directly inspired the French Revolution's own Declaration of the Rights of Man in 1789, with Lafayette drafting a version informed by his American service.
+  - Left slavery intact and expanding in the new republic even as the Declaration of Independence asserted that all men are created equal, a contradiction historians continue to examine.
+  - Established a template of written constitutionalism and codified individual rights that influenced independence and constitutional movements across the Americas in the following century.
+related_revolt_slugs:
+  - french-revolution
+  - haitian-revolution
+related_history_slugs: []
+is_published: true
+perspectives:
+  - viewpoint: Patriot colonist
+    viewpoint_type: revolutionary
+    region_origin: americas
+    narrative: Patriots framed the conflict as a defense of English rights denied to colonial subjects, escalating from petition to boycott to arms only after Parliament repeatedly refused representation and imposed increasingly punitive measures like the 1774 Coercive Acts.
+    key_arguments:
+      - Parliament taxed the colonies without seating colonial representatives, violating a principle patriots traced to English constitutional tradition
+      - A decade of peaceful petition and boycott preceded the resort to arms in 1775
+    sources: []
+    notable_quotes:
+      - text: We hold these truths to be self-evident, that all men are created equal
+        speaker: Declaration of Independence
+        context: Adopted by the Continental Congress, July 4, 1776
+    emphasized:
+      - The escalating pattern of British punitive legislation from 1765 to 1774
+      - The colonies' prior record of self-governance through elected assemblies
+    omitted:
+      - The continuation and expansion of chattel slavery under the new republic the Declaration's language of equality did not extend to
+  - viewpoint: British Loyalist
+    viewpoint_type: counter-revolutionary
+    region_origin: americas
+    narrative: Loyalists, an estimated 15 to 20 percent of the colonial population, viewed the rebellion as an illegal armed insurrection against lawful Parliamentary authority, disruptive to trade and social order, and warned that independence would fracture the stability the empire provided.
+    key_arguments:
+      - Parliament held sovereign authority over the colonies as established by charter and precedent
+      - Armed rebellion against the Crown, not the underlying tax grievances, was the illegitimate escalation
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - Property and trade disruption caused by boycotts and mob actions
+      - The risks of political instability under an untested republican government
+    omitted:
+      - The scale and duration of colonial petitioning that preceded the resort to boycott and eventually arms
+media: []
+connections:
+  - target_slug: french-revolution
+    connection_type: inspired
+    description: American constitutional and rights-based language, along with the direct experience of French officers like Lafayette who served in the war, fed directly into French revolutionary thought in 1789.
+  - target_slug: haitian-revolution
+    connection_type: counter-example
+    description: The American republic's founding preserved and expanded slavery for another eight decades, in direct contrast to Haiti's revolution, which made abolition the condition of independence itself.

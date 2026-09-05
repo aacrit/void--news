@@ -1,0 +1,238 @@
+slug: arab-spring
+title: The Arab Spring
+subtitle: One street vendor's self-immolation set off uprisings in a dozen countries with a dozen different endings
+date_display: December 2010 to 2012 (initial wave)
+date_start: 2010
+date_end: 2012
+date_precision: year
+era: square-revolutions
+region: middle-east
+country: Tunisia, Egypt, Libya, Syria, Yemen, Bahrain (regional)
+revolt_type: democratic-uprising
+status: concluded
+summary: 'Street vendor Mohamed Bouazizi set himself on fire in Sidi Bouzid, Tunisia on December 17, 2010 after municipal officials confiscated his cart, a single act that detonated protests across a region where median age was under 25 and youth unemployment often exceeded 25 percent. Tunisia''s Ben Ali fled within four weeks. Egypt''s Hosni Mubarak resigned after eighteen days of Tahrir Square occupation in February 2011. From there national trajectories diverged sharply: Libya and Yemen''s uprisings turned into prolonged armed conflict, Syria''s protest movement became a civil war that by the 2020s had killed several hundred thousand people and displaced roughly half the country''s pre-war population, Bahrain''s uprising was suppressed with the direct military assistance of neighboring Gulf states, and Egypt''s own democratic opening was reversed by a 2013 military coup.'
+significance: The largest simultaneous wave of popular uprisings in the Arab world's modern history, and a widely studied case for how a single regional cascade can produce outcomes as divergent as Tunisia's fragile democracy and Syria's prolonged civil war from broadly similar starting grievances.
+analytical_outlook: 'A regional cascade whose national branches diverged almost entirely on a single variable: whether the security apparatus fractured (Tunisia, Egypt) or held together and used force (Syria, Bahrain, Libya after early defections reversed into civil war).'
+grievances:
+  - kind: Youth unemployment
+    intensity: 85
+    evidence: Regional youth unemployment exceeded 25 percent in several countries in 2010, against a median population age under 25 across much of the Arab world.
+  - kind: Authoritarian rule and corruption
+    intensity: 80
+    evidence: Tunisia's Ben Ali and Egypt's Mubarak had each held power for roughly two and three decades respectively; WikiLeaks cables published in 2010 detailed documented Ben Ali family corruption that fueled early protest anger.
+  - kind: Police brutality and state violence
+    intensity: 75
+    evidence: Bouazizi's confrontation with a municipal inspector and subsequent self-immolation became a symbol of routine humiliation by local officials; Egypt's protests were partly catalyzed by the June 2010 police beating death of Khaled Said in Alexandria.
+  - kind: Food price inflation
+    intensity: 65
+    evidence: Global wheat prices roughly doubled between mid-2010 and early 2011 following a Russian export ban after a severe drought, sharply raising bread costs across food-importing Arab states.
+actors:
+  - actor_type: masses
+    name: Mohamed Bouazizi and the street protests
+    description: Tunisian street vendor whose self-immolation on December 17, 2010 in Sidi Bouzid became the movement's founding act, and the mass protests that followed.
+    role_in_arc: His death on January 4, 2011 triggered protests that spread nationally within days
+    defected: false
+  - actor_type: students-youth
+    name: Social-media-organized youth networks
+    description: Loosely organized activist networks across Tunisia and Egypt, including Egypt's April 6 Youth Movement, that used social media to coordinate protests largely outside formal opposition parties.
+    role_in_arc: Provided early organizational capacity in Tunisia and Egypt's uprisings
+    defected: false
+  - actor_type: military-defectors
+    name: Egyptian Armed Forces
+    description: Egypt's military, a central economic and political institution under Mubarak.
+    role_in_arc: Declined to fire on Tahrir Square protesters and eased Mubarak out in February 2011, then led a 2013 coup against his elected successor
+    defected: true
+  - actor_type: old-regime
+    name: Bashar al-Assad government
+    description: Syria's ruling government since 2000, backed by Russia and Iran.
+    role_in_arc: Met protests with sustained lethal force starting in 2011, precipitating a civil war that continued for over a decade
+    defected: false
+  - actor_type: foreign-intervener
+    name: Gulf Cooperation Council states
+    description: Saudi Arabia and allied Gulf monarchies, which sent troops into Bahrain in March 2011 under a GCC mutual-defense framework.
+    role_in_arc: Directly suppressed Bahrain's uprising and backed counter-revolutionary outcomes elsewhere in the region
+    defected: false
+tactics:
+  - tactic_type: occupation
+    description: Sustained mass occupation of central public squares, most prominently Cairo's Tahrir Square for eighteen days in January-February 2011, became the movement's signature tactic and namesake.
+    prominence: primary
+  - tactic_type: digital-mobilization
+    description: Facebook, Twitter, and YouTube were used to organize protests, document security force abuses, and spread footage internationally in real time, notably by Egypt's We Are All Khaled Said page.
+    prominence: primary
+  - tactic_type: general-strike
+    description: Coordinated labor strikes, particularly in Egypt's Mahalla textile sector and Tunisia's UGTT-affiliated unions, added economic pressure alongside street protest.
+    prominence: secondary
+resistance_type: hybrid
+phases:
+  - phase: old-regime-crisis
+    label: Youth Unemployment and Food Prices
+    t_start: 0
+    t_end: 0.12
+    intensity: 40
+    reached: true
+    summary: High youth unemployment and a global wheat price spike build pressure across authoritarian Arab states through 2010.
+    key_events:
+      - Global wheat prices roughly double, mid-2010 to early 2011
+      - WikiLeaks Tunisia cables published, late 2010
+  - phase: the-spark
+    label: Bouazizi and the Tunisian Spark
+    t_start: 0.22
+    t_end: 0.34
+    intensity: 70
+    reached: true
+    summary: Mohamed Bouazizi's self-immolation ignites protests that force Ben Ali to flee Tunisia within four weeks and spread the model regionally.
+    key_events:
+      - Bouazizi self-immolates, December 17, 2010; dies January 4, 2011
+      - Ben Ali flees Tunisia, January 14, 2011
+  - phase: moderate-phase
+    label: Tahrir Square
+    t_start: 0.34
+    t_end: 0.48
+    intensity: 75
+    reached: true
+    summary: Eighteen days of occupation in Cairo's Tahrir Square end with Mubarak's resignation, while protests spread to Libya, Yemen, Syria, and Bahrain.
+    key_events:
+      - Egyptian protests begin, January 25, 2011
+      - Mubarak resigns, February 11, 2011
+  - phase: dual-power
+    label: National Divergence
+    t_start: 0.48
+    t_end: 0.6
+    intensity: 80
+    reached: true
+    summary: 'National trajectories split sharply: Bahrain''s uprising is crushed with GCC military assistance, Libya''s escalates toward armed conflict, and Syria''s protest movement meets sustained lethal repression.'
+    key_events:
+      - GCC troops enter Bahrain, March 2011
+      - Syrian security forces fire on Deraa protesters, March 2011
+  - phase: radical-phase
+    label: Civil Wars Emerge
+    t_start: 0.6
+    t_end: 0.72
+    intensity: 95
+    reached: true
+    summary: Libya and Syria descend into prolonged civil war; Yemen's transition collapses into fragmented conflict over the following years.
+    key_events:
+      - Libyan civil war and NATO intervention, 2011
+      - Syrian conflict escalates into full civil war through 2012
+  - phase: consolidation
+    label: Divergent National Outcomes
+    t_start: 0.92
+    t_end: 1
+    intensity: 60
+    reached: true
+    summary: By 2012 to 2013, outcomes range from Tunisia's fragile new democracy to Egypt's 2013 military coup to ongoing war in Syria, Libya, and Yemen.
+    key_events:
+      - Egypt's Mohamed Morsi ousted by military coup, July 2013
+      - Syrian civil war continues past the initial uprising period
+outcome: ongoing-unresolved
+peak_participation_pct: null
+peak_participation_display: Cairo's Tahrir Square drew crowds estimated up to roughly 2 million on its largest single day, February 8, 2011
+crossed_participation_threshold: null
+military_defection: partial
+foreign_intervention: direct-military
+duration_days: 730
+death_toll: varies enormously by country; Tunisia and Egypt's initial uprisings killed roughly 300 and 800 respectively, while the Syrian civil war alone had documented several hundred thousand deaths by the following decade
+death_toll_low: 1000
+death_toll_high: 500000
+regime_before: personalist
+regime_after: unresolved
+democratization_delta: 0
+success_factors:
+  - factor_key: military-defection
+    label: Security force defection as the branch point
+    framework: chenoweth
+    status: Tunisia's and Egypt's militaries declined to fire on protesters and eased their presidents out; Syria's, Bahrain's, and (initially) Libya's security forces did not fracture and used sustained force
+    direction: indeterminate
+    base_rate: Security force defection or non-cooperation is the strongest single predictor of movement success across the historical record, and its absence is equally predictive of prolonged violent conflict or suppression
+    rationale: 'The Arab Spring is frequently cited as a natural experiment: near-identical protest repertoires and grievances produced opposite outcomes depending almost entirely on whether the military stayed loyal to the regime, cleanly separating Tunisia and Egypt''s relatively fast transitions from Syria, Bahrain, and Libya''s violent trajectories.'
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+  - factor_key: external-intervention-divergence
+    label: Divergent foreign intervention
+    framework: skocpol
+    status: Bahrain's uprising was suppressed by GCC troop intervention on the regime's side; Libya's saw NATO intervention on the opposition's side; Syria's saw Russian and Iranian intervention on the regime's side
+    direction: indeterminate
+    base_rate: Comparative studies of the 2011 uprisings identify the direction and presence of external military intervention as one of the clearest explanatory variables for why otherwise similar uprisings produced opposite outcomes
+    rationale: Unlike 1989's relatively uniform external environment, the Arab Spring saw external powers intervene on both sides across different countries within the same regional wave, a key reason outcomes diverged so sharply from broadly similar starting conditions.
+    sources:
+      - Brownlee, Masoud and Reynolds, The Arab Spring (2015)
+  - factor_key: participation-threshold
+    label: 3.5 percent participation rule
+    framework: chenoweth
+    status: Egypt's peak Tahrir crowds, estimated up to roughly 2 million against a population near 82 million in 2011, fall short of 3.5 percent nationally even though they proved sufficient given the concurrent military defection
+    direction: indeterminate
+    base_rate: Chenoweth's 3.5 percent finding is drawn primarily from national-level participation figures; sub-national concentrated mobilization, as in Tahrir Square, complicates direct application of the rule
+    rationale: Egypt succeeded with concentrated capital-city mobilization well under the national 3.5 percent mark, illustrating that the threshold interacts with, rather than substitutes for, elite and security-force response.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+key_figures:
+  - name: Mohamed Bouazizi
+    role: Tunisian street vendor whose self-immolation catalyzed the regional uprisings
+    born: 1984
+    died: 2011
+    wikipedia: https://en.wikipedia.org/wiki/Mohamed_Bouazizi
+  - name: Hosni Mubarak
+    role: President of Egypt 1981-2011, resigned after eighteen days of protest
+    born: 1928
+    died: 2020
+    wikipedia: https://en.wikipedia.org/wiki/Hosni_Mubarak
+  - name: Zine El Abidine Ben Ali
+    role: President of Tunisia 1987-2011, fled the country January 14, 2011
+    born: 1936
+    died: 2019
+    wikipedia: https://en.wikipedia.org/wiki/Zine_El_Abidine_Ben_Ali
+  - name: Bashar al-Assad
+    role: President of Syria since 2000, whose government's crackdown produced the Syrian civil war
+    born: 1965
+    wikipedia: https://en.wikipedia.org/wiki/Bashar_al-Assad
+legacy_points:
+  - Tunisia produced the wave's one durable democratic transition, adopting a new constitution in 2014, though a 2021 presidential self-coup later concentrated power again.
+  - Syria's uprising became one of the 21st century's deadliest civil wars, with the UN documenting several hundred thousand deaths and roughly half the pre-war population displaced internally or abroad by the following decade.
+  - Egypt's initial democratic opening was reversed by a July 2013 military coup that removed elected president Mohamed Morsi, restoring military-linked rule.
+  - Demonstrated to subsequent movements worldwide, including Sudan's 2018-2019 uprising, both the mobilizing power of social media and the decisive importance of security-force behavior in determining outcomes.
+related_revolt_slugs:
+  - sudan-civil-war
+  - fall-of-communism-1989
+related_history_slugs:
+  - arab-spring
+is_published: true
+perspectives:
+  - viewpoint: Tunisian pro-democracy activist
+    viewpoint_type: movement
+    region_origin: middle-east
+    narrative: Tunisian activists who organized after Bouazizi's death describe a genuine, broad-based democratic aspiration rooted in specific, documented grievances, unemployment, corruption, and police abuse, that succeeded because Tunisia's military, unlike Syria's or Bahrain's, declined to fire on its own citizens.
+    key_arguments:
+      - Tunisia's relatively professional, less politically entrenched military made the crucial difference between its outcome and the region's other uprisings
+      - The UGTT labor union's institutional weight gave Tunisia's transition an organizing backbone many other countries' uprisings lacked
+    sources: []
+    notable_quotes:
+      - text: The people want the fall of the regime
+        speaker: Regional protest chant, 2011
+        context: Used across Tunisia, Egypt, Libya, Syria, Yemen, and Bahrain
+    emphasized:
+      - The specific, documented corruption detailed in the 2010 WikiLeaks cables
+      - The 2014 constitution as a concrete democratic achievement
+    omitted:
+      - The fragility of the 2014 settlement, later undone in part by the 2021 presidential self-coup
+  - viewpoint: Displaced Syrian civilian
+    viewpoint_type: diaspora
+    region_origin: middle-east
+    narrative: For Syrians displaced by the ensuing civil war, the 2011 protests are remembered as a peaceful movement for basic reforms that a government willing to use sustained lethal force, backed by Russian and Iranian intervention, turned into over a decade of war and displacement rather than the fast transitions seen in Tunisia or Egypt.
+    key_arguments:
+      - The initial 2011 protests in Deraa and elsewhere were peaceful and locally specific before the government's crackdown escalated the conflict
+      - External military backing for the Assad government, absent in Tunisia's case, prevented the kind of negotiated or forced exit seen elsewhere in the region
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - The peaceful character of the movement's first months
+      - The scale of civilian displacement and casualties over the following decade
+    omitted:
+      - The subsequent fragmentation of the Syrian opposition into competing armed factions, including groups later designated as extremist by multiple governments
+media: []
+connections:
+  - target_slug: sudan-civil-war
+    connection_type: inspired
+    description: Sudan's 2018-2019 protest movement against Omar al-Bashir explicitly drew on Arab Spring tactics and framing, including sustained square occupation, before its own post-transition trajectory fractured into conflict.
+  - target_slug: fall-of-communism-1989
+    connection_type: parallel
+    description: Both were regional cascades triggered by a single catalytic event spreading rapidly across neighboring states, though 1989's outcomes converged toward democracy while the Arab Spring's diverged sharply by country.
