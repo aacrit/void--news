@@ -161,3 +161,21 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy frontend/out --project-name=void-news --branch=main --commit-dirty=true
+
+      # Served-output gate, inline (2026-09-06). verify-production.yml chains
+      # off this workflow via workflow_run, but that chain never fired after the
+      # scheduled backstop deploys, so the gate missed every daily data deploy
+      # from 09-04 on. Running the same script here makes a bad served page turn
+      # THIS run red immediately. No rollback (an older broken page is worse);
+      # the tracking issue is still owned by verify-production.yml.
+      - uses: actions/setup-python@v5
+        if: steps.guard.outputs.skip != 'true'
+        with:
+          python-version: "3.11"
+
+      - name: Verify served output (same gate as verify-production.yml)
+        if: steps.guard.outputs.skip != 'true'
+        run: |
+          pip install --quiet nltk
+          sleep 30
+          bash scripts/verify-production.sh "https://news.voidvision.org/"

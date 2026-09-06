@@ -464,3 +464,150 @@ class TestStorageStub(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
+
+
+class TestUpsertMergeSemantics(unittest.TestCase):
+    """2026-09-06: upsert must behave like PostgREST merge-duplicates.
+
+    The old port issued INSERT ... ON CONFLICT DO UPDATE, which SQLite rejects
+    on a partial row when the table has a NOT NULL column the row omits (the
+    NOT NULL check runs before the conflict arbiter). rerank.py's partial
+    {id, headline_rank, rank_world, ...} rows therefore failed every chunk
+    and the holistic re-rank wrote 0 rows per run. It also reset created_at.
+    """
+
+    def setUp(self):
+        fd, self.path = tempfile.mkstemp(suffix=".db")
+        os.close(fd)
+        conn = sqlite3.connect(self.path)
+        conn.executescript(
+            """
+            CREATE TABLE story_clusters (
+                id TEXT PRIMARY KEY,
+                title TEXT NOT NULL,
+                headline_rank REAL,
+                rank_world REAL,
+                created_at TEXT,
+                updated_at TEXT
+            );
+            CREATE TABLE cluster_articles (
+                cluster_id TEXT,
+                article_id TEXT,
+                PRIMARY KEY (cluster_id, article_id)
+            );
+            CREATE TABLE printed_stories (
+                id TEXT PRIMARY KEY,
+                printed_on TEXT NOT NULL,
+                source_cluster_id TEXT NOT NULL,
+                title TEXT NOT NULL,
+                edition_position INTEGER,
+                UNIQUE (printed_on, source_cluster_id)
+            );
+            """
+        )
+        conn.commit()
+        conn.close()
+        self.sb = pg.create_client(self.path)
+
+    def tearDown(self):
+        self.sb.close()
+        try:
+            os.remove(self.path)
+        except OSError:
+            pass
+
+    def test_partial_row_updates_existing_and_keeps_created_at(self):
+        self.sb.table("story_clusters").insert(
+            {"id": "c1", "title": "Original title", "headline_rank": 10.0,
+             "rank_world": 10.0, "created_at": "2026-09-01T00:00:00+00:00"}
+        ).execute()
+        res = (
+            self.sb.table("story_clusters")
+            .upsert([{"id": "c1", "headline_rank": 55.5, "rank_world": 54.0}],
+                    on_conflict="id")
+            .execute()
+        )
+        self.assertEqual([r["id"] for r in res.data], ["c1"])
+        back = self.sb.table("story_clusters").select("*").eq("id", "c1").single().execute()
+        self.assertEqual(back.data["title"], "Original title")
+        self.assertEqual(float(back.data["headline_rank"]), 55.5)
+        self.assertEqual(float(back.data["rank_world"]), 54.0)
+        self.assertEqual(back.data["created_at"], "2026-09-01T00:00:00+00:00")
+        self.assertTrue(back.data["updated_at"])
+
+    def test_new_key_inserts_with_defaults(self):
+        res = (
+            self.sb.table("story_clusters")
+            .upsert({"id": "c2", "title": "Fresh", "rank_world": 1.0}, on_conflict="id")
+            .execute()
+        )
+        self.assertEqual(res.data[0]["id"], "c2")
+        back = self.sb.table("story_clusters").select("*").eq("id", "c2").single().execute()
+        self.assertTrue(back.data["created_at"])
+
+    def test_partial_row_for_missing_key_still_fails_not_null(self):
+        with self.assertRaises(Exception):
+            self.sb.table("story_clusters").upsert(
+                {"id": "ghost", "rank_world": 2.0}, on_conflict="id"
+            ).execute()
+
+    def test_ignore_duplicates_skips_existing(self):
+        self.sb.table("story_clusters").insert(
+            {"id": "c3", "title": "Keep me", "rank_world": 3.0}
+        ).execute()
+        self.sb.table("story_clusters").upsert(
+            {"id": "c3", "title": "Overwrite attempt", "rank_world": 99.0},
+            on_conflict="id", ignore_duplicates=True,
+        ).execute()
+        back = self.sb.table("story_clusters").select("*").eq("id", "c3").single().execute()
+        self.assertEqual(back.data["title"], "Keep me")
+        self.assertEqual(float(back.data["rank_world"]), 3.0)
+
+    def test_composite_conflict_key(self):
+        self.sb.table("printed_stories").insert(
+            {"id": "p1", "printed_on": "2026-09-06", "source_cluster_id": "c1",
+             "title": "Day one", "edition_position": 7}
+        ).execute()
+        self.sb.table("printed_stories").upsert(
+            {"printed_on": "2026-09-06", "source_cluster_id": "c1",
+             "title": "Day one, retitled", "edition_position": 3},
+            on_conflict="printed_on,source_cluster_id",
+        ).execute()
+        rows = self.sb.table("printed_stories").select("*").execute().data
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["id"], "p1")
+        self.assertEqual(rows[0]["title"], "Day one, retitled")
+        self.assertEqual(int(rows[0]["edition_position"]), 3)
+
+    def test_bulk_chunk_mixes_update_and_insert(self):
+        self.sb.table("story_clusters").insert(
+            {"id": "c4", "title": "Existing", "rank_world": 4.0}
+        ).execute()
+        res = self.sb.table("story_clusters").upsert(
+            [{"id": "c4", "rank_world": 40.0},
+             {"id": "c5", "title": "Brand new", "rank_world": 5.0}],
+            on_conflict="id",
+        ).execute()
+        self.assertEqual(sorted(r["id"] for r in res.data), ["c4", "c5"])
+
+    def test_cleanup_stale_clusters_deletes_zero_link_clusters_only(self):
+        self.sb.table("story_clusters").insert([
+            {"id": "linked", "title": "Has articles", "rank_world": 1.0,
+             "created_at": "2020-01-01T00:00:00+00:00"},
+            {"id": "ghost", "title": "No articles", "rank_world": 1.0},
+        ]).execute()
+        self.sb.table("cluster_articles").insert(
+            {"cluster_id": "linked", "article_id": "a1"}
+        ).execute()
+        res = self.sb.rpc("cleanup_stale_clusters", {}).execute()
+        self.assertEqual(res.data, 1)
+        left = [r["id"] for r in self.sb.table("story_clusters").select("id").execute().data]
+        self.assertEqual(left, ["linked"])
+
+    def test_cleanup_stale_clusters_noops_when_no_links_at_all(self):
+        self.sb.table("story_clusters").insert(
+            {"id": "lonely", "title": "Only cluster", "rank_world": 1.0}
+        ).execute()
+        res = self.sb.rpc("cleanup_stale_clusters", {}).execute()
+        self.assertEqual(res.data, 0)
+        self.assertEqual(len(self.sb.table("story_clusters").select("id").execute().data), 1)

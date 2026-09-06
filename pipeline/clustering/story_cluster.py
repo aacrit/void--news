@@ -3033,6 +3033,7 @@ def cluster_stories(
     source_map: dict[str, dict] | None = None,
     enable_anchor_merge: bool = False,
     apply_coherence_check: bool = True,
+    enable_same_event_merge: bool = False,
 ) -> list[dict]:
     """Group articles into story clusters.
 
@@ -3286,7 +3287,19 @@ def cluster_stories(
     # conjunctive high-precision gate, uses the geopolitical common entities that
     # Phase 2 blacklists (safe at N=50). Gated to the top-level pass so Phase 6's
     # recursive re-cluster (apply_coherence_check=False) never re-enters it.
-    if run_merge_pass and apply_coherence_check and len(clusters) > 1:
+    # DISABLED BY DEFAULT (2026-09-06). Despite the strict conjunctive gate it
+    # kept fusing unrelated events on live runs (09-05: "IDF strikes Hezbollah"
+    # absorbed two "Russian drone strikes Ukraine's SBU" clusters, a Tesla
+    # Cybercab probe absorbed "Alcaraz, Sabalenka into US Open last 16";
+    # 09-06: the Putin 72-hour pause absorbed a judge's order and Trump's
+    # "small potatoes" remark), and it never updated `article_ids`, so every
+    # survivor shipped an inflated source_count while the absorbed articles
+    # vanished from cluster_articles (4 of 100 exported clusters on 09-06 had
+    # source_count > link count). Same-event merging moves to the Stage 2
+    # candidate pass over the displayed window (pipeline/editorial/). The
+    # switch stays so a replay can A/B the old pass; the fixture runner uses
+    # the defaults, so production and the suite flip together.
+    if enable_same_event_merge and run_merge_pass and apply_coherence_check and len(clusters) > 1:
         from .same_event_merge import merge_same_event_clusters
         clusters = merge_same_event_clusters(clusters)
 

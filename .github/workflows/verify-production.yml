@@ -13,6 +13,14 @@ on:
   workflow_run:
     workflows: ["Deploy to Cloudflare Pages"]
     types: [completed]
+  # Scheduled backstops (2026-09-06). The Actions history showed that no verify
+  # run followed any of the five scheduled 15:00/17:00 UTC backstop deploys
+  # between 09-04 and 09-06: the workflow_run chain only fired after push-driven
+  # deploys, so the gate went blind for the exact deploys that carry each day's
+  # pipeline data. These run 30 minutes after each backstop deploy slot.
+  schedule:
+    - cron: '30 15 * * *'
+    - cron: '30 17 * * *'
   workflow_dispatch:
     inputs:
       url:
@@ -31,7 +39,7 @@ permissions:
 jobs:
   verify:
     # Only verify a deploy that actually succeeded (or a manual dispatch).
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event_name == 'schedule' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

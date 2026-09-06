@@ -765,36 +765,63 @@ class _QueryBuilder:
 
     # -- UPSERT ------------------------------------------------------------
     def _exec_upsert(self) -> _Result:
+        """PostgREST merge-duplicates semantics (2026-09-06 fix).
+
+        A row whose conflict key already exists is UPDATED on the supplied
+        columns only; every other column, including created_at, keeps its
+        stored value. A new key is INSERTED with the usual defaults. The old
+        port issued a single INSERT ... ON CONFLICT DO UPDATE, but SQLite (and
+        Postgres) check NOT NULL on the candidate INSERT row BEFORE the conflict
+        arbiter runs, so a partial row such as rerank's {id, headline_rank,
+        rank_world, ...} (no title) raised "NOT NULL constraint failed:
+        story_clusters.title" on every chunk. The holistic re-rank therefore
+        wrote 0 rows per run from the 2026-08-11 bulk-upsert rewrite until this
+        fix (log: "0/N clusters re-ranked ... rows NOT confirmed written").
+        The same statement also reset created_at on every existing row.
+        ignore_duplicates=True keeps its "exists, skip" meaning."""
         rows = self._normalize_rows(self._payload)
         conflict_cols = [c.strip() for c in (self._on_conflict or "id").split(",") if c.strip()]
         cols_known = self._cols()
         result_rows: list[dict] = []
         cur = self._client._conn.cursor()
-        for raw in rows:
-            prepared = self._prepare_row_for_write(raw, is_insert=True)
-            insert_cols = list(prepared.keys())
-            placeholders = ",".join("?" for _ in insert_cols)
-            col_sql = ",".join(f'"{c}"' for c in insert_cols)
-            conflict_sql = ",".join(f'"{c}"' for c in conflict_cols)
-            if self._ignore_duplicates:
-                action = "DO NOTHING"
-            else:
-                update_targets = [c for c in insert_cols if c not in conflict_cols]
-                if update_targets:
-                    set_sql = ",".join(f'"{c}" = excluded."{c}"' for c in update_targets)
-                    action = f"DO UPDATE SET {set_sql}"
-                else:
-                    action = "DO NOTHING"
-            sql = (
-                f'INSERT INTO "{self._table}" ({col_sql}) VALUES ({placeholders}) '
-                f'ON CONFLICT ({conflict_sql}) {action}'
-            )
-            try:
-                cur.execute(sql, [prepared[c] for c in insert_cols])
-            except sqlite3.IntegrityError as e:
-                self._client._conn.rollback()
-                raise _wrap_integrity(e)
-            result_rows.append(self._read_back_upsert(cur, prepared, conflict_cols))
+        where_sql = " AND ".join(f'"{c}" = ?' for c in conflict_cols)
+        try:
+            for raw in rows:
+                key_vals = [_encode_for_storage(raw.get(c)) for c in conflict_cols]
+                exists = False
+                if all(v is not None for v in key_vals):
+                    cur.execute(
+                        f'SELECT 1 FROM "{self._table}" WHERE {where_sql} LIMIT 1',
+                        key_vals,
+                    )
+                    exists = cur.fetchone() is not None
+                if exists:
+                    prepared = self._prepare_row_for_write(raw, is_insert=False)
+                    if not self._ignore_duplicates:
+                        targets = [c for c in prepared if c not in conflict_cols]
+                        if "updated_at" in cols_known and "updated_at" not in prepared:
+                            prepared["updated_at"] = datetime.now(timezone.utc).isoformat()
+                            targets.append("updated_at")
+                        if targets:
+                            set_sql = ", ".join(f'"{c}" = ?' for c in targets)
+                            cur.execute(
+                                f'UPDATE "{self._table}" SET {set_sql} WHERE {where_sql}',
+                                [prepared[c] for c in targets] + key_vals,
+                            )
+                    result_rows.append(self._read_back_upsert(cur, prepared, conflict_cols))
+                    continue
+                prepared = self._prepare_row_for_write(raw, is_insert=True)
+                insert_cols = list(prepared.keys())
+                placeholders = ",".join("?" for _ in insert_cols)
+                col_sql = ",".join(f'"{c}"' for c in insert_cols)
+                cur.execute(
+                    f'INSERT INTO "{self._table}" ({col_sql}) VALUES ({placeholders})',
+                    [prepared[c] for c in insert_cols],
+                )
+                result_rows.append(self._read_back_upsert(cur, prepared, conflict_cols))
+        except sqlite3.IntegrityError as e:
+            self._client._conn.rollback()
+            raise _wrap_integrity(e)
         self._client._conn.commit()
         return _Result(result_rows, count=len(result_rows))
 
@@ -1029,10 +1056,23 @@ def _rpc_refresh_cluster_enrichment(client: SqliteClient, params: dict) -> _Resu
 
 
 def _rpc_cleanup_stale_clusters(client: SqliteClient, params: dict) -> _Result:
-    days = int(params.get("max_age_days", params.get("days", 7)) or 7)
-    cutoff = _iso_days_ago(days)
+    """Delete story_clusters rows with ZERO cluster_articles links.
+
+    main.py calls this as "Delete empty clusters (no articles linked)"; the
+    earlier port deleted every cluster with first_published older than 7 days,
+    a retention policy the caller never asked for and that ran twice per run.
+    Guard: if cluster_articles is empty (abnormal state or a failed read) do
+    nothing, mirroring the ghost-cluster sweep's refusal to treat every
+    cluster as a ghost."""
     cur = client._conn.cursor()
-    cur.execute("DELETE FROM story_clusters WHERE first_published < ?", [cutoff])
+    cur.execute("SELECT COUNT(*) FROM cluster_articles")
+    links = cur.fetchone()[0]
+    if not links:
+        return _Result(0, count=0)
+    cur.execute(
+        "DELETE FROM story_clusters WHERE id NOT IN "
+        "(SELECT DISTINCT cluster_id FROM cluster_articles WHERE cluster_id IS NOT NULL)"
+    )
     n = cur.rowcount
     client._conn.commit()
     return _Result(n, count=n)
