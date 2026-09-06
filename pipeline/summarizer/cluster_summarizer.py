@@ -2381,8 +2381,9 @@ def _finalize_cluster_result(result: dict, articles: list[dict],
 # ===========================================================================
 # Batched summarization (2026-08-11) — fit the top-50 into the free-tier cap.
 # ===========================================================================
-# Gemini free tier is bound by REQUESTS/DAY (RPD), not tokens: flash AND
-# flash-lite each allow 20 requests/DAY, while TPM (250K INPUT tokens/min) has
+# Gemini free tier is bound by REQUESTS/DAY (RPD), not tokens: flash allows 20
+# requests/DAY (flash-lite's daily cap is far higher: the 2026-09-05 run made 44
+# flash-lite requests with no 429), while TPM (250K INPUT tokens/min) has
 # huge headroom (a real run peaked ~30K). One-request-per-cluster (~50/run) blew
 # the 20 RPD cap after ~20 stories, dropping the tail to raw excerpts. Batching
 # many clusters into ONE request cuts the top-50 to ~8 requests, all on
@@ -2394,7 +2395,7 @@ def _finalize_cluster_result(result: dict, articles: list[dict],
 # weekly / Saturday monthly marquee calls. This summarizer MUST stay near 8
 # flash requests and must not balloon: the graduated schedule FIXES the flash
 # request count at (at most) len(schedule) regardless of how many stories fail,
-# and the failure retry path spends flash-lite (its own separate 20/day), never
+# and the failure retry path spends flash-lite (a far higher daily cap), never
 # more flash, and is itself bounded (_MAX_OVERFLOW_RETRY_REQUESTS).
 #
 # GRADUATED BATCH SIZES (single tunable constant). Summary quality dips as

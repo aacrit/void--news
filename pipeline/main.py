@@ -1279,7 +1279,7 @@ def run_editorial_stage(force_resummarize: bool = False) -> None:
 
     # ── 8d: post-rerank top-50 summarization ──
     if llm_is_available() and calls_remaining() > 0:
-        print("\n[8d] Post-rerank top-50 Gemini summarization (top-10 flash, rest flash-lite)...")
+        print("\n[8d] Post-rerank top-50 Gemini summarization (batched, all on flash)...")
         try:
             summary_metrics = summarize_top50_after_rerank(
                 supabase, edition="world", limit=50, prefer_provider="gemini",
@@ -3160,6 +3160,15 @@ def main():
                 cluster_ids_to_enrich.append(cluster_id)
                 if has_gemini:
                     gemini_enriched_ids.add(cluster_id)
+                # Tripwire (2026-09-06): the link table is written from
+                # article_ids while source_count comes from articles. Phase 7
+                # mutated one and not the other, shipping source_count 46 on 26
+                # links. Any merge path that desyncs them must announce itself.
+                _n_ids = len(cluster.get("article_ids", []) or [])
+                _n_arts = len(cluster.get("articles", []) or [])
+                if _n_arts and _n_ids != _n_arts:
+                    print(f"  [warn] cluster {str(cluster_id)[:8]} article_ids={_n_ids} "
+                          f"!= articles={_n_arts}: link table will not match source_count")
                 for article_id in cluster.get("article_ids", []):
                     if article_id:
                         all_cluster_article_links.append({
@@ -3669,7 +3678,7 @@ def main():
             if _pipeline_dir not in _sys.path:
                 _sys.path.insert(0, _pipeline_dir)
             from rerank import rerank_all_clusters
-            rerank_all_clusters(sources)
+            rerank_all_clusters(sources, run_id=run_id)
         except Exception as e:
             import traceback
             print(f"  [warn] Holistic re-rank failed: {e}")
@@ -3728,7 +3737,7 @@ def main():
     # in-memory `clusters` list so downstream consumers see the post-rerank text.
     summary_metrics = {"summarized": 0, "cached": 0, "skipped": 0, "failed": 0}
     if SUMMARIZER_AVAILABLE and llm_is_available() and calls_remaining() > 0:
-        print("\n[8d] Post-rerank top-50 Gemini summarization (top-10 flash, rest flash-lite)...")
+        print("\n[8d] Post-rerank top-50 Gemini summarization (batched, all on flash)...")
         try:
             # Summarize the full displayed top-50 (post-rerank, rank_world order)
             # so the summarized set == exactly what the homepage renders. Quality
@@ -4508,7 +4517,20 @@ def main():
         f"({llm_metrics['summaries_total']} new, {llm_metrics['cached_skips']} cached) | "
         f"~${estimated_cost_usd:.2f}"
     )
-    print(f"  Errors: {len(fetch_errors)}")
+    # "Errors:" used to count RSS fetch errors only, so a dead re-rank (8c wrote
+    # 0 rows for weeks) printed "Errors: 0". Count the stage errors attached to
+    # pipeline_runs.errors (append_pipeline_run_errors) separately.
+    _pipeline_err_count = 0
+    if run_id:
+        try:
+            _pr = supabase.table("pipeline_runs").select("errors").eq(
+                "id", run_id).limit(1).execute()
+            _errs = (_pr.data[0].get("errors") or []) if _pr.data else []
+            _pipeline_err_count = sum(
+                1 for e in _errs if isinstance(e, dict) and e.get("stage"))
+        except Exception:
+            pass
+    print(f"  Errors: {len(fetch_errors)} fetch, {_pipeline_err_count} pipeline")
     print("=" * 60)
 
 

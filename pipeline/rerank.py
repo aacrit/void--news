@@ -45,7 +45,8 @@ def sync_source_ids(sources: list[dict]) -> list[dict]:
     return sources
 
 
-def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
+def rerank_all_clusters(sources: list[dict], dry_run: bool = False,
+                        run_id: str | None = None) -> int:
     """
     Re-rank ALL clusters in Supabase with the current ranking engine.
 
@@ -581,6 +582,21 @@ def rerank_all_clusters(sources: list[dict], dry_run: bool = False) -> int:
             print(f"    - {fid}")
         if len(missing_ids) > 20:
             print(f"    ... and {len(missing_ids) - 20} more")
+        # A silent re-rank drop is a pipeline error, not a warning: from
+        # 2026-08-11 to 2026-09-06 every run printed this block while the end
+        # of run summary said "Errors: 0" (that counter only counted RSS fetch
+        # errors), so the dead re-rank went unnoticed for weeks.
+        if run_id:
+            try:
+                from utils.supabase_client import append_pipeline_run_errors
+                append_pipeline_run_errors(run_id, [{
+                    "stage": "8c-rerank",
+                    "error": (f"{len(missing_ids)} of {len(write_rows)} re-ranked rows "
+                              f"not confirmed written (bulk upsert failed)"),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                }])
+            except Exception as _e:
+                print(f"  [warn] could not record re-rank error on the run: {_e}")
     else:
         print(f"  [ok] Write count matches intended ({written} == {len(write_rows)}).")
     return written
