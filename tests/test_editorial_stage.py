@@ -21,6 +21,7 @@ Run: python tests/test_editorial_stage.py
 import json
 import os
 import shutil
+import sqlite3
 import subprocess
 import sys
 import tempfile
@@ -58,6 +59,16 @@ def main() -> int:
         }
         env.pop("GEMINI_API_KEY", None)
 
+        def membership() -> dict:
+            conn = sqlite3.connect(db)
+            conn.row_factory = sqlite3.Row
+            out: dict = {}
+            for r in conn.execute("SELECT cluster_id, article_id FROM cluster_articles"):
+                out.setdefault(r["cluster_id"], set()).add(r["article_id"])
+            conn.close()
+            return out
+
+        before = membership()
         stage = run([sys.executable, "pipeline/main.py", "--editorial-only"], env)
         if stage.returncode != 0:
             print("FAIL: editorial stage exited non-zero")
@@ -121,6 +132,23 @@ def main() -> int:
             ok = False
         else:
             print("PASS: bench lifted clear of the non-candidates")
+
+        # 3c. The merge invariant: ONLY a merge survivor gains articles, and it
+        #     gains exactly its donor's. A clean cluster that was in no merge
+        #     must end the run with the membership it started with. This is the
+        #     contamination the disabled Phase 7 pass shipped.
+        merges = out.count("[merge] KEEP")
+        after = membership()
+        gained = {k for k, v in after.items() if v - before.get(k, set())}
+        if len(gained) != merges:
+            print(f"FAIL: {len(gained)} clusters gained articles but only "
+                  f"{merges} merges were logged")
+            ok = False
+        elif merges:
+            print(f"PASS: {merges} merge(s), and only the {merges} survivor(s) "
+                  f"gained articles")
+        else:
+            print("PASS: no merges, no cluster gained a foreign article")
 
         export = run([sys.executable, "pipeline/export_static.py"], env)
         if export.returncode != 0:

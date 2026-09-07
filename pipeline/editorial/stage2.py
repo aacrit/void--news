@@ -372,6 +372,33 @@ def run_stage2(supabase, sources, *,
     started = time.time()
     metrics: dict = {"summary": {}, "editorial": {}, "printed": 0}
     candidate_ids = select_bench(supabase)
+
+    # 8c.6: same-event merge, over the bench. Runs BEFORE summarization so a
+    # merged story is written once, from the union of its coverage, rather than
+    # twice from two halves of it.
+    if candidate_ids:
+        print("\n[8c.6] Same-event merge (over the candidate bench)...")
+        try:
+            from editorial.same_event import merge_candidates
+            mm = merge_candidates(supabase, candidate_ids)
+            metrics["merge"] = mm
+            if mm["merged"]:
+                absorbed = set(mm["absorbed"])
+                candidate_ids = [c for c in candidate_ids if c not in absorbed]
+                # Refill the bench from the pool so a merge does not cost the
+                # page a story: two cards became one, and the next-ranked
+                # cluster takes the freed slot.
+                for cid in select_bench(supabase, verbose=False):
+                    if len(candidate_ids) >= CANDIDATES:
+                        break
+                    if cid not in candidate_ids and cid not in absorbed:
+                        candidate_ids.append(cid)
+            print(f"  Merged {mm['merged']} pair(s) of {mm['examined']} examined; "
+                  f"{mm['rejected']} near miss(es) logged; bench now "
+                  f"{len(candidate_ids)}")
+        except Exception as e:
+            print(f"  [warn] Same-event merge failed (bench unchanged): {e}")
+
     bench = candidate_ids or None
 
     # 8d: the one and only LLM summarization pass.
