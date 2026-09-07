@@ -44,61 +44,23 @@ except ImportError as _err:
 
 
 # ---------------------------------------------------------------------------
-# Confidence formula (verbatim copy from main.py so rescore stays consistent)
+# Confidence
 # ---------------------------------------------------------------------------
+# This file used to carry its own compute_confidence, described in its own
+# docstring as a "verbatim copy from main.py". It was not: main.py was
+# recalibrated on 2026-05-13 and the copy here never received any of it, so a
+# rescored article's confidence sat on a different scale from a pipeline-scored
+# one, in the same column. Both now call the same function.
+#
+# The one real difference is a parameter, not a fork: by the time rescore runs,
+# step 10 has truncated full_text to 300 characters, so the text term is
+# derived from the pre-truncation word_count instead.
+
+from utils.confidence import compute_confidence as _compute_confidence
+
 
 def compute_confidence(article: dict, scores: dict) -> float:
-    """
-    Compute per-article analysis confidence based on text quality and signal
-    strength.  Mirrors main.py compute_confidence() with one important
-    adjustment for the rescore context:
-
-    During a live pipeline run full_text is the complete scraped article body,
-    so `len(full_text)` is a valid proxy for text richness.  In rescore.py the
-    DB has already had full_text truncated to 300 chars (pipeline step 10, IP
-    compliance), so measuring `len(full_text)` would always give text_conf ≈ 0.3
-    regardless of the article's true length — causing a systematic confidence
-    regression (~19% observed in v5.0 rescore).
-
-    Fix: prefer word_count (stored pre-truncation in the articles table) to
-    derive text_conf.  150 words ≈ 1000 chars, so `word_count / 150` maps to
-    the same 0.1–1.0 range as the main.py `len(full_text) / 1000` ramp.
-    Fall back to the raw full_text length only when word_count is absent.
-
-    Factors:
-        - Word count:        short articles have less signal      (30%)
-        - Text availability: no full text = very low confidence  (30%)
-        - Signal variance:   scores near defaults = low confidence (40%)
-    """
-    word_count = article.get("word_count", 0) or 0
-    full_text = article.get("full_text", "") or ""
-
-    length_conf = min(1.0, word_count / 500.0) if word_count > 0 else 0.1
-
-    # Use word_count (pre-truncation) instead of len(full_text) (post-truncation)
-    # to avoid systematic underestimation of text richness in rescore context.
-    if word_count > 0:
-        # 150 words ≈ 1000 chars; same 0.1–1.0 ramp as main.py
-        text_conf = min(1.0, max(0.1, word_count / 150.0))
-    elif full_text:
-        # Fallback: article has text but no word_count stored (legacy rows)
-        text_conf = min(1.0, max(0.1, len(full_text) / 1000.0))
-    else:
-        text_conf = 0.1
-
-    defaults = {
-        "political_lean": 50, "sensationalism": 10,
-        "opinion_fact": 25, "factual_rigor": 50, "framing": 15,
-    }
-    deviations = 0
-    for key, default_val in defaults.items():
-        actual = scores.get(key, default_val)
-        if abs(actual - default_val) > 5:
-            deviations += 1
-    signal_conf = 0.3 + (deviations / 5.0) * 0.7
-
-    confidence = (length_conf * 0.30) + (text_conf * 0.30) + (signal_conf * 0.40)
-    return round(max(0.1, min(1.0, confidence)), 2)
+    return _compute_confidence(article, scores, text_truncated=True)
 
 
 # ---------------------------------------------------------------------------

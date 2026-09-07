@@ -426,11 +426,11 @@ def archive_printed_edition(supabase, sources_by_id: dict, edition_date,
             "consensus_points": row.get("consensus_points"),
             "divergence_points": row.get("divergence_points"),
             "claim_consensus": row.get("claim_consensus"),
+            # bias_diversity IS the bias record. The four scalar columns that
+            # used to be written alongside it (mean_lean, polarization,
+            # lean_spread, aggregate_confidence) were copies of four of its
+            # keys, equal on all 1,297 archived rows, and read by nothing.
             "bias_diversity": bd or None,
-            "mean_lean": bd.get("avg_political_lean"),
-            "polarization": bd.get("polarization"),
-            "lean_spread": bd.get("lean_spread"),
-            "aggregate_confidence": bd.get("aggregate_confidence"),
             "members": capped,
             "member_count": member_count,
             "title_keywords": kw_list,

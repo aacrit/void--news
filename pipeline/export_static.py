@@ -214,8 +214,7 @@ for r in prows:
         if k in d and d[k] is not None and str(d[k]).lstrip()[:1] in ("{", "["):
             d[k] = pjson(r[k])
     for k in ("edition_position", "editorial_importance", "rank_world",
-              "headline_rank", "source_count", "divergence_score", "mean_lean",
-              "polarization", "lean_spread", "aggregate_confidence", "member_count"):
+              "headline_rank", "source_count", "divergence_score", "member_count"):
         if k in d:
             d[k] = pnum(r[k])
     archive.append(d)

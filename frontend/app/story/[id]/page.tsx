@@ -7,6 +7,7 @@ import {
   archiveMembersToSpectrumSources,
   archiveMembersToStorySources,
   rowHasBiasData,
+  storyHref,
 } from "../../lib/archive";
 import { SITE_URL, OG_IMAGE, OG_IMAGE_URL } from "../../lib/siteMeta";
 import StandaloneDeepDive from "../../components/StandaloneDeepDive";
@@ -121,7 +122,7 @@ export async function generateMetadata(
     row.summary || `Cross-source bias analysis of "${row.title}" across ${row.source_count} outlets.`,
     160,
   );
-  const url = `${SITE_URL}/story/${row.id}/`;
+  const url = `${SITE_URL}${storyHref(row.id)}`;
   // Until per-story OG cards ship, every story shares the site brand card. It
   // MUST be declared here explicitly: a route that sets its own openGraph does
   // NOT inherit openGraph.images from the root layout, so an omitted image left
@@ -164,7 +165,7 @@ export default async function StoryPage(
   // the first-seen date, so a story about today's events never reads as days old.
   const displayIso = mostRecentIso(row);
   const datelineLabel = formatDatelineUTC(displayIso);
-  const url = `${SITE_URL}/story/${row.id}/`;
+  const url = `${SITE_URL}${storyHref(row.id)}`;
 
   // schema.org NewsArticle. datePublished from first_published (ISO). Publisher
   // + author are the Void News organization. og:image intentionally omitted
