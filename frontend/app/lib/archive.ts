@@ -68,10 +68,6 @@ export interface PrintedStoryRow {
   claim_consensus: ClaimConsensus | null;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   bias_diversity: any;
-  mean_lean: number | null;
-  polarization: number | null;
-  lean_spread: number | null;
-  aggregate_confidence: number | null;
   members: PrintedMember[] | null;
   member_count: number;
   story_thread_id: string | null;
@@ -124,30 +120,18 @@ export async function getArchiveRowById(
   return rows.find((r) => r.id === id) ?? null;
 }
 
-/* ── Latest-edition permalink map (for feed cards) ─────────────────────── */
+/* ── The story permalink ───────────────────────────────────────────────────
+   ONE construction, used by the archive mapper, the sitemap and the standalone
+   page. The pipeline writes the same shape into archiveMap.json (export_static)
+   and the served-output gate asserts it (S-01), so a change here has to be made
+   in exactly two places rather than the six it used to live in.
 
-/**
- * Build `{ source_cluster_id -> "/story/<id>/" }` for the LATEST printed
- * edition (max printed_on). Today's displayed clusters are archived at step 8f
- * before the deploy, so today's feed cards get permalinks. Reads the shared
- * cache — no extra query.
- */
-export async function getLatestPermalinkMap(): Promise<Map<string, string>> {
-  const rows = await getArchiveRows();
-  const map = new Map<string, string>();
-  if (rows.length === 0) return map;
-  // Rows are ordered printed_on DESC already; the first row's date is latest.
-  const latest = rows[0].printed_on;
-  for (const r of rows) {
-    if (r.printed_on !== latest) break; // ordered DESC — done once the date drops
-    if (r.source_cluster_id && r.id) {
-      // First write wins (strongest edition_position, since ordered ASC within a day).
-      if (!map.has(r.source_cluster_id)) {
-        map.set(r.source_cluster_id, `/story/${r.id}/`);
-      }
-    }
-  }
-  return map;
+   getLatestPermalinkMap was deleted 2026-09-07: it built the same map a second
+   way, from the archive rows rather than from archiveMap.json, and had no
+   caller left after serverFeed moved to the emitted map.                    ── */
+
+export function storyHref(printedStoryId: string): string {
+  return `/story/${printedStoryId}/`;
 }
 
 /* ── Row -> Story mapping (reuses the shared feed mapping) ─────────────── */
@@ -193,7 +177,7 @@ export function archiveRowToStory(row: PrintedStoryRow): Story {
     is_international: false,
   };
   const [story] = mapClustersToStories([syntheticCluster], true);
-  story.permalink = `/story/${row.id}/`;
+  story.permalink = storyHref(row.id);
   return story;
 }
 

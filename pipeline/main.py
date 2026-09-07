@@ -32,6 +32,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from fetchers.rss_fetcher import fetch_from_rss
 from fetchers.web_scraper import scrape_article
 from utils.feed_config import CANDIDATES, DISPLAYED
+from utils.confidence import compute_confidence as _compute_confidence
 from utils.supabase_client import (
     create_pipeline_run,
     insert_article,
@@ -307,52 +308,12 @@ def load_sources(editions: list[str] | None = None) -> list[dict]:
 
 
 def compute_confidence(article: dict, scores: dict) -> float:
-    """
-    Compute per-article analysis confidence based on text quality
-    and signal strength.
-
-    Factors:
-        - Word count saturation at 800 (25%)
-        - Text availability saturation at 1600 chars (25%)
-        - Signal magnitude: continuous distance from defaults (50%)
-
-    Recalibration (2026-05-13): production sample (1,984 articles / 24h) showed
-    median confidence stuck at 0.70 — almost no variance.  Two causes:
-      1. length_conf and text_conf both saturated at 1.0 for any article > 500
-         words / 1000 chars, leaving only signal_conf to vary.
-      2. signal_conf used a binary >5 threshold per axis, producing only 6
-         discrete values (0..5 deviations).
-
-    Fix: raise saturation points (500→800 words, 1000→1600 chars) so typical
-    news copy varies through the 0.50-0.85 band; replace the binary threshold
-    with a continuous per-axis distance metric.  Floor lowered 0.30→0.20 so
-    weak-signal articles land in the 0.40-0.55 band as intended.
-    """
-    word_count = article.get("word_count", 0) or 0
-    full_text = article.get("full_text", "") or ""
-
-    # Length: 100 words = 0.125, 400 = 0.50, 800+ = 1.0
-    length_conf = min(1.0, word_count / 800.0) if word_count > 0 else 0.05
-
-    # Text availability: 200 chars = 0.125, 800 = 0.50, 1600+ = 1.0
-    text_conf = min(1.0, max(0.05, len(full_text) / 1600.0)) if full_text else 0.05
-
-    # Signal magnitude: continuous per-axis distance from defaults.
-    defaults = {
-        "political_lean": 50, "sensationalism": 10,
-        "opinion_fact": 25, "factual_rigor": 50, "framing": 15,
-    }
-    total_distance = 0.0
-    for key, default_val in defaults.items():
-        actual = scores.get(key, default_val)
-        # Per-axis contribution clamped at 25-point deviation.
-        per_axis = min(1.0, abs(actual - default_val) / 25.0)
-        total_distance += per_axis
-    # 0 axes off-default = 0.20 (floor); all 5 maxed = 1.0.
-    signal_conf = 0.20 + (total_distance / 5.0) * 0.80
-
-    confidence = (length_conf * 0.25) + (text_conf * 0.25) + (signal_conf * 0.50)
-    return round(max(0.05, min(1.0, confidence)), 2)
+    """Per-article analysis confidence. The formula lives in utils.confidence,
+    which rescore.py also calls: it used to carry a stale fork of this function
+    that never received the 2026-05-13 recalibration, so a rescored article's
+    confidence sat on a different scale from a pipeline-scored one in the same
+    column."""
+    return _compute_confidence(article, scores)
 
 
 def run_bias_analysis(
@@ -943,12 +904,20 @@ def _enrich_cluster_fallback(cluster_id: str, skip_text: bool = False) -> None:
         lean_right_count = _hist["lean_right_count"]
         polarization = _hist["polarization"]
 
-        # Divergence score
-        divergence = min(100.0,
-            (min(lean_range / 60.0, 1.0) * 40.0) +
-            (min(lean_spread / 20.0, 1.0) * 30.0) +
-            (min(framing_spread / 25.0, 1.0) * 30.0)
-        )
+        # divergence_score is OWNED by importance_ranker._divergence_score
+        # (framing 62.5%, sensationalism 37.5%; the lean-range term was removed
+        # in v6.0 because perspective_diversity already carries lean spread).
+        # This function used to compute a SECOND, older formula here (lean range
+        # 40%, lean spread 30%, framing 30%) and write it into the same column.
+        # It looked harmless because step 8c overwrote it later the same run,
+        # but the merge and coherence passes call this function AFTER 8c, so the
+        # obsolete formula would have won on exactly the clusters whose bias had
+        # just been recomputed. One owner, called here on the same bias rows.
+        try:
+            from ranker.importance_ranker import _divergence_score
+            divergence = _divergence_score(scores)
+        except Exception:
+            divergence = 0.0
 
         # Compute tier breakdown for 3-lens coverage score
         tier_breakdown = {"us_major": 0, "international": 0, "independent": 0}

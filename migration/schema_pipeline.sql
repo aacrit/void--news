@@ -1024,10 +1024,6 @@ CREATE TABLE IF NOT EXISTS printed_stories (
   divergence_points    TEXT,   -- JSON
   claim_consensus      TEXT,   -- JSON
   bias_diversity       TEXT,   -- JSON
-  mean_lean            REAL,
-  polarization         INTEGER,
-  lean_spread          REAL,
-  aggregate_confidence REAL,
   members              TEXT NOT NULL DEFAULT '[]',   -- JSON
   member_count         INTEGER NOT NULL DEFAULT 0,
   title_keywords       TEXT NOT NULL DEFAULT '[]',   -- JSON array string (was text[])

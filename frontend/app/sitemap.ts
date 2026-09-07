@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "./lib/siteMeta";
-import { getArchiveRows } from "./lib/archive";
+import { getArchiveRows, storyHref } from "./lib/archive";
 
 /* Static sitemap, emitted at build time as /sitemap.xml. Compatible with
    output:"export" (runs once at build, no request-time work). */
@@ -38,7 +38,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     storyEntries = rows.map((r) => {
       const isLatest = r.printed_on === latest;
       return {
-        url: `${SITE_URL}/story/${r.id}/`,
+        url: `${SITE_URL}${storyHref(r.id)}`,
         lastModified: new Date(`${r.printed_on}T00:00:00Z`),
         changeFrequency: (isLatest ? "daily" : "monthly") as MetadataRoute.Sitemap[number]["changeFrequency"],
         priority: isLatest ? 0.6 : 0.3,
