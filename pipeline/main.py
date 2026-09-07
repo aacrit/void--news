@@ -31,7 +31,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from fetchers.rss_fetcher import fetch_from_rss
 from fetchers.web_scraper import scrape_article
-from utils.feed_config import DISPLAYED, CANDIDATES, LEAD_BAND, ARCHIVE_CAP
+from utils.feed_config import CANDIDATES
 from utils.supabase_client import (
     create_pipeline_run,
     insert_article,
@@ -78,11 +78,7 @@ CROSS_RUN_PURGE_MIN_DISPLAYABLE = 30  # a fail-safe for deleting the prior run, 
 SUMMARIZER_AVAILABLE = False
 try:
     from summarizer.cluster_summarizer import (
-        summarize_clusters_batch,
         summarize_cluster,
-        summarize_top50_after_rerank,
-        ensure_top50_summary_floor,
-        reconcile_flash_top10,
         _content_hash,
     )
     from summarizer.cluster_summarizer import is_available as llm_is_available
@@ -1531,94 +1527,12 @@ def run_editorial_stage(force_resummarize: bool = False) -> None:
         print("  [warn] Summarizer unavailable — editorial stage is rerank-only.")
         return
 
-    # ── 8d: post-rerank top-50 summarization ──
-    if llm_is_available() and calls_remaining() > 0:
-        print("\n[8d] Post-rerank top-50 Gemini summarization (batched, all on flash)...")
-        try:
-            summary_metrics = summarize_top50_after_rerank(
-                supabase, edition="world", limit=CANDIDATES, prefer_provider="gemini",
-                flash_top_n=10, force_resummarize=force_resummarize)
-            print(
-                f"  Top-50: {summary_metrics['summarized']} summarized, "
-                f"{summary_metrics['cached']} cache hits, "
-                f"{summary_metrics['skipped']} skipped, "
-                f"{summary_metrics['failed']} failed"
-            )
-        except Exception as e:
-            print(f"  [warn] Post-rerank summarization failed: {e}")
-
-    # ── 8d.1: pre-order title clean ──
-    print("\n[8d.1] Pre-order title clean (null-tier top-pool cards)...")
-    try:
-        tc_metrics = ensure_top50_summary_floor(
-            supabase, edition="world", limit=CANDIDATES, title_only=True)
-        print(f"  Title clean: {tc_metrics['checked']} null-tier cards, "
-              f"{tc_metrics['titles_cleaned']} titles normalized")
-    except Exception as e:
-        print(f"  [warn] Pre-order title clean failed: {e}")
-
-    # ── 8d.5: final feed ordering (mirrors the full run's step 8d.5) ──
-    try:
-        print("\n[8d.5] Final feed ordering (fresh story_type / ei / titles)...")
-        _fo_res = supabase.table("story_clusters").select(
-            "id,title,headline_rank,rank_world,content_type,"
-            "category,source_count,sections,"
-            "first_published,coverage_velocity,disaster_severity"
-        ).contains("sections", ["world"]).order(
-            "rank_world", desc=True
-        ).limit(80).execute()
-        _fo_rows = _fo_res.data or []
-        if _fo_rows:
-            _old_rank = {r["id"]: r.get("rank_world") for r in _fo_rows}
-            apply_feed_ordering(_fo_rows, sources)
-            _changed = 0
-            for r in _fo_rows:
-                new_rw = r.get("rank_world", 0)
-                old_rw = _old_rank.get(r["id"]) or 0
-                if abs(new_rw - old_rw) > 0.01:
-                    supabase.table("story_clusters").update(
-                        {"rank_world": new_rw}
-                    ).eq("id", r["id"]).execute()
-                    _changed += 1
-            print(f"  Final ordering: {_changed} rank_world updates")
-    except Exception as e:
-        print(f"  [warn] Final feed ordering failed (keeping 8c order): {e}")
-
-    # ── 8d.6: final-order summary floor ──
-    print("\n[8d.6] Final-order summary floor (guarantee top-50 coverage)...")
-    try:
-        floor_metrics = ensure_top50_summary_floor(
-            supabase, edition="world", limit=CANDIDATES, prefer_provider="gemini")
-        print(f"  Summary floor: {floor_metrics['checked']} cards needed a summary → "
-              f"{floor_metrics['resummarized']} re-summarized, "
-              f"{floor_metrics['sanitized']} rule-based, "
-              f"{floor_metrics['still_null']} still null")
-    except Exception as e:
-        print(f"  [warn] Final-order summary floor failed: {e}")
-
-    # ── 8d.7: flash-tier reconciliation ──
-    if llm_is_available() and calls_remaining() > 0:
-        print("\n[8d.7] Final top-10 flash-tier reconciliation...")
-        try:
-            recon_metrics = reconcile_flash_top10(
-                supabase, edition="world", top_n=LEAD_BAND, prefer_provider="gemini")
-            print(f"  Flash reconcile: {recon_metrics['upgraded']} upgraded, "
-                  f"{recon_metrics['skipped']} skipped, {recon_metrics['failed']} failed")
-        except Exception as e:
-            print(f"  [warn] Flash-tier reconciliation failed: {e}")
-
-    # ── 8f: print archive (non-fatal, same as the full run) ──
-    try:
-        print("\n[8f] Printing the record (permanent top-50 archive)...")
-        from archive.print_archive import archive_printed_edition
-        _sources_by_id = {s.get("db_id"): s for s in sources if s.get("db_id")}
-        pa = archive_printed_edition(
-            supabase, sources_by_id=_sources_by_id,
-            edition_date=datetime.now(timezone.utc).date(),
-            pipeline_run_id=None)
-        print(f"  Printed {pa['stories']} stories")
-    except Exception as e:
-        print(f"  [warn] Print archive failed (non-fatal): {e}")
+    # ── 8c.5 through 8f: the shared Stage 2 sequence ──
+    # This used to be a second copy of the full run's steps and it had already
+    # drifted (its own ordering limit, a null print run id, no near-dup log).
+    from editorial.stage2 import run_stage2
+    run_stage2(supabase, sources, run_id=None,
+               force_resummarize=force_resummarize)
 
     elapsed = time.time() - start_time
     print(f"\n[editorial] Done in {elapsed / 60:.1f} minutes.")
@@ -2139,6 +2053,9 @@ def main():
             src_info = source_map.get(src_slug, {})
             art["tier"] = src_info.get("tier", "")
             art["source_name"] = src_info.get("name", "")
+            # Drives the summarizer's stratified lean-spread selection, and
+            # through it the summary cache key seeded at step 8.
+            art["source_lean_baseline"] = src_info.get("political_lean_baseline", "")
 
         deduplicate_articles(stored_articles)
         wire_copies = sum(1 for a in stored_articles if a.get("is_wire_copy"))
@@ -2347,6 +2264,8 @@ def main():
                     art["tier"] = src_info.get("tier", "")
                     art["source_slug"] = src_info.get("id", "")
                     art["source_name"] = src_info.get("name", "")
+                    art["source_lean_baseline"] = src_info.get(
+                        "political_lean_baseline", "")
                     recent_articles.append(art)
             print(f"  Current batch: {len(stored_articles)}, 36h lookback: {len(recent_articles)}")
         except Exception as e:
@@ -2943,67 +2862,15 @@ def main():
         # brief/image-cache saw a double-capped order the homepage never
         # showed. Deleted 2026-07-04; same pattern as topic diversity.
 
-        # Step 7b: Summarize clusters with Gemini Flash (runs after ranking so
-        # Gemini calls are spent on the clusters that will actually appear on the
-        # frontend, not merely the ones with the most raw sources).
-        # Gemini generates headlines + summaries for the top 30 clusters only.
-        # Clusters that fail Gemini KEEP their rule-based summary (better a
-        # plain excerpt than a blank card); step 8d retries them post-rerank.
-        gemini_results: dict[int, dict] = {}
-        # 7b runs on the flash-lite default tier (see summary_tier stamping
-        # below); Gemini is the sole LLM (Claude retired 2026-06-22).
-        _summary_tier_used = "flash-lite" if gemini_is_available() else None
-        if SUMMARIZER_AVAILABLE and llm_is_available():
-            print(f"\n[7b] Summarizing top 30 clusters (tier={_summary_tier_used})...")
-            try:
-                # 2026-06-20 cost-cut: top-30 only. The regional/topic fill pools
-                # (parked editions + topic desks) burned ~15 LLM calls/day with no
-                # homepage consumer; ranks beyond 30 keep rule-based summaries.
-                gemini_results, gemini_failed = summarize_clusters_batch(
-                    clusters, cluster_consensus=cluster_consensus,
-                    top_n=30, regional_fill=0, topic_fill=0,
-                )
-                for idx, result in gemini_results.items():
-                    clusters[idx]["title"] = result["headline"]
-                    clusters[idx]["summary"] = result["summary"]
-                    clusters[idx]["consensus_points"] = result["consensus"]
-                    clusters[idx]["divergence_points"] = result["divergence"]
-                    clusters[idx]["_gemini_enriched"] = True
-                    # Cache fields persisted at step 8 cluster insert so the
-                    # post-rerank top-50 pass can skip unchanged clusters.
-                    clusters[idx]["summary_article_hash"] = _content_hash(
-                        clusters[idx].get("articles", [])
-                    )
-                    # Stamp the tier that ACTUALLY answered so the step-8d cache
-                    # is upgrade-aware. 7b runs on the flash-lite default, so its
-                    # Gemini output is tier 'flash-lite', NOT 'flash'. Labeling it
-                    # 'flash' would make 8d cache-hit the post-rerank top-10 and
-                    # never upgrade them to real flash. Map by generator label
-                    # (migration 063 allows 'sonnet'/'flash'/'flash-lite').
-                    _gen = result.get("_generator")
-                    clusters[idx]["summary_tier"] = (
-                        "flash" if _gen == "gemini-flash" else "flash-lite"
-                    )
-                    if result.get("editorial_importance") is not None:
-                        clusters[idx]["editorial_importance"] = result["editorial_importance"]
-                    if result.get("story_type") is not None:
-                        clusters[idx]["story_type"] = result["story_type"]
-                    if result.get("has_binding_consequences") is not None:
-                        clusters[idx]["has_binding_consequences"] = result["has_binding_consequences"]
-                    if result.get("claims"):
-                        clusters[idx]["_gemini_claims"] = result["claims"]
-                    if result.get("consensus_ratio") is not None:
-                        clusters[idx]["_gemini_consensus_ratio"] = result["consensus_ratio"]
-                    if result.get("consensus_summary"):
-                        clusters[idx]["_gemini_consensus_summary"] = result["consensus_summary"]
-                if gemini_failed:
-                    print(f"  [info] {len(gemini_failed)} pool-1 cluster(s) keeping rule-based summary (LLM failed)")
-            except Exception as e:
-                print(f"  [warn] LLM summarization failed: {e}")
-        elif SUMMARIZER_AVAILABLE:
-            print("\n[7b] Skipping LLM summarization (no API key set)")
-        else:
-            print("\n[7b] Skipping LLM summarization (SDKs not installed)")
+        # Step 7b DELETED 2026-09-07 (Stage 2 restructure). It summarized a
+        # pre-rerank top 30 on flash-lite, chosen by an ordering the homepage
+        # never showed, and step 8d then re-summarized the post-rerank set on
+        # flash. Its rows were never cache-hits (7b stamped 'flash-lite', 8d's
+        # cache demands flash quality: 0 hits on 09-06, 4 on 09-05), so it was
+        # 30 sequential LLM calls a run whose only surviving output was the
+        # Gemini claims overlay. Expensive work now happens ONCE, downstream,
+        # over the candidate bench selected at step 8c.5. The claim overlay
+        # falls back to the NLP consensus path at step 8 (`nlp_consensus`).
 
         # Topic diversity lives in feed_ranker.apply_feed_ordering() — the
         # in-line copy that used to sit here mutated nothing the consumers
@@ -3264,7 +3131,6 @@ def main():
         print("\n[8/9] Storing clusters with enrichment data...")
         all_cluster_article_links: list[dict] = []  # batch insert
         cluster_ids_to_enrich: list[str] = []
-        gemini_enriched_ids: set[str] = set()  # clusters with Gemini text
         # 2026-05-24 fix 5 — surface aggregate insert failures.
         # Previously insert_cluster() returned None on exception with only
         # a print line. If schema drift caused every row to fail, the loop
@@ -3327,38 +3193,37 @@ def main():
             if cluster.get("has_binding_consequences") is not None:
                 cluster_row["has_binding_consequences"] = cluster["has_binding_consequences"]
 
-            # Include Gemini-generated consensus/divergence in the initial insert
-            has_gemini = cluster.get("_gemini_enriched", False)
-            if has_gemini:
-                cluster_row["consensus_points"] = cluster.get("consensus_points", [])
-                cluster_row["divergence_points"] = cluster.get("divergence_points", [])
+            # No LLM text exists at insert time any more (step 7b is gone), so
+            # consensus_points / divergence_points / summary_tier are written
+            # downstream: the rule-based enrichment below, then Stage 2 at 8d.
+            #
+            # The cache KEY is seeded here for every cluster (7b seeded the top
+            # 30 only). The row carries no summary and no tier, so 8d still
+            # treats it as a MISS; the key exists so step 8b can tell whether
+            # yesterday's summary still describes this exact membership and
+            # carry the whole editorial payload across the row swap.
+            if SUMMARIZER_AVAILABLE:
+                try:
+                    cluster_row["summary_article_hash"] = _content_hash(
+                        cluster.get("articles", []) or [])
+                except Exception as _ch_e:
+                    if ci == 0:
+                        print(f"  [warn] summary cache key seed failed: {_ch_e}")
 
-            # Summary cache fields — populated by step 7b for clusters that
-            # received an LLM summary; consumed by step 8d (post-rerank pass)
-            # to skip clusters whose article membership hasn't changed.
-            if cluster.get("summary_article_hash"):
-                cluster_row["summary_article_hash"] = cluster["summary_article_hash"]
-            if cluster.get("summary_tier"):
-                cluster_row["summary_tier"] = cluster["summary_tier"]
-
-            # void --verify: claim_consensus JSONB
-            # Prefer Gemini-deduplicated claims; fall back to NLP-only
+            # void --verify: claim_consensus JSONB, from the rule-based NLP
+            # claim pass (step 6a). The Gemini overlay came from step 7b and
+            # died with it.
             ci_key = str(ci)
             nlp_consensus = cluster_consensus.get(ci_key)
-            if cluster.get("_gemini_claims") or nlp_consensus:
-                cc_data: dict = {}
-                if nlp_consensus:
-                    cc_data = {
-                        "total_claims": nlp_consensus.total_claims,
-                        "corroborated": nlp_consensus.corroborated,
-                        "single_source": nlp_consensus.single_source,
-                        "disputed": nlp_consensus.disputed,
-                        "consensus_ratio": nlp_consensus.consensus_ratio,
-                    }
-                # Overlay Gemini deduplication if available
-                if cluster.get("_gemini_claims"):
-                    cc_data["highlighted_claims"] = cluster["_gemini_claims"]
-                elif nlp_consensus and nlp_consensus.claims:
+            if nlp_consensus:
+                cc_data: dict = {
+                    "total_claims": nlp_consensus.total_claims,
+                    "corroborated": nlp_consensus.corroborated,
+                    "single_source": nlp_consensus.single_source,
+                    "disputed": nlp_consensus.disputed,
+                    "consensus_ratio": nlp_consensus.consensus_ratio,
+                }
+                if nlp_consensus.claims:
                     cc_data["highlighted_claims"] = [
                         {
                             "text": vc.claim_text,
@@ -3370,16 +3235,12 @@ def main():
                         for vc in nlp_consensus.claims
                         if vc.highlight or vc.status == "disputed"
                     ][:10]
-                if cluster.get("_gemini_consensus_ratio") is not None:
-                    cc_data["consensus_ratio"] = cluster["_gemini_consensus_ratio"]
-                if cluster.get("_gemini_consensus_summary"):
-                    cc_data["consensus_summary"] = cluster["_gemini_consensus_summary"]
-                elif nlp_consensus and nlp_consensus.disputed_details:
+                if nlp_consensus.disputed_details:
                     cc_data["consensus_summary"] = (
                         f"{nlp_consensus.corroborated} claims corroborated, "
                         f"{nlp_consensus.disputed} disputed across sources"
                     )
-                if nlp_consensus and nlp_consensus.disputed_details:
+                if nlp_consensus.disputed_details:
                     cc_data["disputed_details"] = [
                         {
                             "topic": dd.topic,
@@ -3412,8 +3273,6 @@ def main():
                 cluster["_db_id"] = cluster_id
                 cluster["id"] = cluster_id
                 cluster_ids_to_enrich.append(cluster_id)
-                if has_gemini:
-                    gemini_enriched_ids.add(cluster_id)
                 # Tripwire (2026-09-06): the link table is written from
                 # article_ids while source_count comes from articles. Phase 7
                 # mutated one and not the other, shipping source_count 46 on 26
@@ -3592,11 +3451,7 @@ def main():
             print(f"  Enriching {len(cluster_ids_to_enrich)} clusters (parallel, 4 workers)...")
             with ThreadPoolExecutor(max_workers=4) as enrich_executor:
                 enrich_futures = {
-                    enrich_executor.submit(
-                        enrich_cluster,
-                        cluster_id,
-                        cluster_id in gemini_enriched_ids,
-                    ): cluster_id
+                    enrich_executor.submit(enrich_cluster, cluster_id): cluster_id
                     for cluster_id in cluster_ids_to_enrich
                 }
                 for future in as_completed(enrich_futures):
@@ -3700,21 +3555,28 @@ def main():
                     stale_to_new[old_cid] = new_cid
                     break
 
-        # Carry the summary cache forward across the row swap. Every
-        # re-clustered story gets a brand-new row whose tier is 7b's
-        # 'flash-lite' stamp, so without this the 8d premium cache could
-        # never hit across runs (yesterday's 'flash' tier died with the
-        # deleted row) and the top-10 re-burned ~10 flash calls every run.
-        # If the old row's summary_article_hash equals the new row's (same
-        # membership → 8d would produce the same input) and the old tier is
-        # higher, promote the new row's tier so 8d cache-hits.
+        # Carry the whole editorial payload across the row swap. Every
+        # re-clustered story gets a brand-new row, and since step 7b died
+        # (2026-09-07) that row holds a rule-based excerpt and no tier. The old
+        # row holds yesterday's LLM summary. When the two rows describe the SAME
+        # article membership (equal summary_article_hash, the key seeded at
+        # step 8), yesterday's summary is exactly what Stage 2 would generate
+        # again, so it moves over whole and step 8d cache-hits.
+        #
+        # Copying the tier ALONE is a defect: it would stamp 'flash' on a
+        # rule-based excerpt, which then reads as a real summary to the display
+        # window, the print archive and the frontend alike.
         if stale_ids:
             _TIER_RANK = {"sonnet": 3, "flash": 2, "flash-lite": 1}
+            _CARRIED = ("summary", "title", "consensus_points", "divergence_points",
+                        "summary_article_hash", "summary_tier", "editorial_importance",
+                        "story_type")
+            _SELECT = "id,source_count," + ",".join(_CARRIED)
             try:
                 _old_rows: dict[str, dict] = {}
                 for i in range(0, len(stale_ids), 100):
                     res = supabase.table("story_clusters").select(
-                        "id,summary_article_hash,summary_tier"
+                        _SELECT
                     ).in_("id", stale_ids[i:i + 100]).execute()
                     for r in (res.data or []):
                         _old_rows[r["id"]] = r
@@ -3722,39 +3584,50 @@ def main():
                 _new_rows: dict[str, dict] = {}
                 for i in range(0, len(_new_ids), 100):
                     res = supabase.table("story_clusters").select(
-                        "id,summary_article_hash,summary_tier"
+                        _SELECT
                     ).in_("id", _new_ids[i:i + 100]).execute()
                     for r in (res.data or []):
                         _new_rows[r["id"]] = r
-                _promoted = 0
-                _best_for_new: dict[str, str] = {}
+                # One new row can absorb several old ones. Pick the best donor
+                # per new row: highest tier, then most sources (`old_src` was
+                # fetched and never read before this).
+                _best: dict[str, dict] = {}
                 for old_cid, new_cid in stale_to_new.items():
                     old_r = _old_rows.get(old_cid)
                     new_r = _new_rows.get(new_cid)
                     if not old_r or not new_r:
                         continue
-                    if not old_r.get("summary_article_hash"):
+                    old_hash = old_r.get("summary_article_hash")
+                    if not old_hash or old_hash != new_r.get("summary_article_hash"):
                         continue
-                    if old_r.get("summary_article_hash") != new_r.get("summary_article_hash"):
+                    if _TIER_RANK.get(old_r.get("summary_tier") or "", 0) <= 0:
+                        continue  # nothing worth carrying (rule_based or null)
+                    if not (old_r.get("summary") or "").strip():
                         continue
-                    old_tier = old_r.get("summary_tier") or ""
-                    cur_best = _best_for_new.get(new_cid) or (new_r.get("summary_tier") or "")
-                    if _TIER_RANK.get(old_tier, 0) > _TIER_RANK.get(cur_best, 0):
-                        _best_for_new[new_cid] = old_tier
-                for new_cid, tier in _best_for_new.items():
-                    if tier == (_new_rows.get(new_cid, {}).get("summary_tier") or ""):
+                    cur = _best.get(new_cid)
+                    key = (_TIER_RANK.get(old_r.get("summary_tier") or "", 0),
+                           old_r.get("source_count") or 0)
+                    if cur is None or key > cur["_key"]:
+                        _best[new_cid] = {"_key": key, "row": old_r}
+                _carried = 0
+                for new_cid, pick in _best.items():
+                    old_r = pick["row"]
+                    payload = {k: old_r.get(k) for k in _CARRIED
+                               if old_r.get(k) is not None}
+                    if not payload:
                         continue
                     try:
                         supabase.table("story_clusters").update(
-                            {"summary_tier": tier}
+                            payload
                         ).eq("id", new_cid).execute()
-                        _promoted += 1
+                        _carried += 1
                     except Exception as _te:
-                        print(f"  [warn] tier carry-forward update failed: {_te}")
-                if _promoted:
-                    print(f"  Summary-tier carry-forward: promoted {_promoted} new rows")
+                        print(f"  [warn] editorial carry-forward update failed: {_te}")
+                if _carried:
+                    print(f"  Editorial carry-forward: {_carried} new rows kept "
+                          f"yesterday's summary (unchanged membership)")
             except Exception as e:
-                print(f"  [warn] summary-tier carry-forward failed: {e}")
+                print(f"  [warn] editorial carry-forward failed: {e}")
 
         if stale_ids:
             for i in range(0, len(stale_ids), 100):
@@ -3984,44 +3857,21 @@ def main():
               f"Skipping LLM editorial steps (8d, brief, weekly).")
         return
 
-    # Step 8d: Post-rerank single-pass summarization of the DISPLAYED top-50
-    # (exactly the set the homepage renders: top 50 by rank_world). For each
-    # cluster, in rank order:
-    #   - hash its current article membership
-    #   - skip if the hash matches AND the cached tier already meets this slot
-    #     (premium top-10 want 'flash'; ranks 11-50 accept 'flash-lite'+)
-    #   - else → summarize on Gemini (flash for the top-10, flash-lite for the
-    #     rest), write summary + consensus/divergence + hash + tier.
-    # Op-eds (content_type='opinion') and clusters with <3 articles skipped.
-    # Self-caches across runs (8d writes the hash it later reads). Updates the
-    # in-memory `clusters` list so downstream consumers see the post-rerank text.
+    # ── Steps 8c.5 through 8f: Stage 2 ───────────────────────────────────
+    # Everything from here to the print archive is the EXPENSIVE, NARROW half
+    # of the pipeline, and it lives in editorial/stage2.py because the
+    # standalone --editorial-only path runs the identical sequence. The two
+    # used to be separate copies and they had already drifted.
     summary_metrics = {"summarized": 0, "cached": 0, "skipped": 0, "failed": 0}
-    if SUMMARIZER_AVAILABLE and llm_is_available() and calls_remaining() > 0:
-        print("\n[8d] Post-rerank top-50 Gemini summarization (batched, all on flash)...")
-        try:
-            # Summarize the full displayed top-50 (post-rerank, rank_world order)
-            # so the summarized set == exactly what the homepage renders. Quality
-            # hierarchy: the top 10 highest-impact stories → gemini-2.5-flash
-            # (premium); ranks 11-50 → gemini-2.5-flash-lite (high-RPD tier).
-            # flash stays at ~10 calls/run (+ the brief), under its 20/day cap.
-            # Most ranks 11-50 cache-hit from step 7b's brief-input pass; the
-            # post-rerank top-10 upgrade flash-lite → flash. Groq retired.
-            # See summarize_top50_after_rerank / migration 063.
-            summary_metrics = summarize_top50_after_rerank(
-                supabase, edition="world", limit=CANDIDATES, prefer_provider="gemini",
-                flash_top_n=10)
-            print(
-                f"  Top-50: {summary_metrics['summarized']} summarized, "
-                f"{summary_metrics['cached']} cache hits "
-                f"({summary_metrics.get('trimmed_cached', 0)} over-cap cached "
-                f"summaries trimmed in place), "
-                f"{summary_metrics['skipped']} skipped (op-ed / <3 sources), "
-                f"{summary_metrics['failed']} failed"
-            )
-            # Sync in-memory clusters with the freshly written summaries so any
-            # downstream consumer (brief regen, audio) sees the post-rerank text.
+    editorial_metrics: dict = {}
+    try:
+        from editorial.stage2 import run_stage2
+
+        def _sync_in_memory(updated: dict) -> None:
+            # Downstream consumers (the daily brief, audio) read the in-memory
+            # cluster list, so the freshly written text has to land there too.
             id_to_idx = {c.get("id"): i for i, c in enumerate(clusters) if c.get("id")}
-            for cid, result in summary_metrics.get("updated_summaries", {}).items():
+            for cid, result in (updated or {}).items():
                 idx = id_to_idx.get(cid)
                 if idx is None:
                     continue
@@ -4031,138 +3881,15 @@ def main():
                     clusters[idx]["consensus_points"] = result["consensus"]
                 if result.get("divergence"):
                     clusters[idx]["divergence_points"] = result["divergence"]
-                clusters[idx]["_gemini_enriched"] = True
-        except Exception as e:
-            print(f"  [warn] Post-rerank summarization failed: {e}")
 
-    # Step 8d.1: Lightweight PRE-ORDERING title clean. The full summary-coverage
-    # floor moved to step 8d.6 (AFTER the final ordering) so it covers every card
-    # 8d.5 PROMOTES into the displayed top-50 — running it here (before 8d.5)
-    # judged an INTERMEDIATE top-50, so any newly-promoted card was never floored
-    # and shipped a raw excerpt (the root cause of the 15/50 tier=None cards).
-    # This pass only normalizes the headlines of the still-null top-pool cards
-    # (no article fetch, no LLM) so 8d.5's near-duplicate guard + story-type
-    # gates still judge cleaned titles. The summary guarantee is 8d.6's job.
-    if SUMMARIZER_AVAILABLE:
-        print("\n[8d.1] Pre-order title clean (null-tier top-pool cards)...")
-        try:
-            tc_metrics = ensure_top50_summary_floor(
-                supabase, edition="world", limit=CANDIDATES, title_only=True)
-            print(
-                f"  Title clean: {tc_metrics['checked']} null-tier cards, "
-                f"{tc_metrics['titles_cleaned']} titles normalized"
-            )
-        except Exception as e:
-            print(f"  [warn] Pre-order title clean failed: {e}")
-
-    # Step 8d.5: FINAL feed ordering on fresh 8d signals. 8c's rerank applied
-    # feed ordering using YESTERDAY'S (or 7b's) story_type / editorial
-    # importance / titles — 8d then rewrote all three for the displayed top-50,
-    # so the gates and the near-duplicate guard were judging stale data (the
-    # 2026-07-05 feed led with a 26-source ei=5 spectacle over the 69-source
-    # funeral, kept an ungated incremental_update at #2, and sat the same
-    # SCOTUS story at #3 AND #4). Re-run apply_feed_ordering over the DB top
-    # pool with the fresh metadata and write rank_world back. headline_rank is
-    # written UNGATED by rerank, so re-initializing from it re-applies every
-    # gate exactly once.
-    try:
-        print("\n[8d.5] Final feed ordering (fresh story_type / ei / titles)...")
-        # 2026-08-10 (deterministic-ranking): story_type / editorial_importance
-        # are no longer selected here. apply_feed_ordering dropped the story_type
-        # gates and the ei nudge, so the final ordering is a pure function of the
-        # deterministic headline_rank + the deterministic feed-ordering guards.
-        _fo_res = supabase.table("story_clusters").select(
-            "id,title,headline_rank,rank_world,content_type,"
-            "category,source_count,sections,"
-            "first_published,coverage_velocity,disaster_severity"
-        ).contains("sections", ["world"]).order(
-            "rank_world", desc=True
-        ).limit(80).execute()
-        _fo_rows = _fo_res.data or []
-        if _fo_rows:
-            _old_rank = {r["id"]: r.get("rank_world") for r in _fo_rows}
-            apply_feed_ordering(_fo_rows, sources)
-            _changed = 0
-            for r in _fo_rows:
-                new_rw = r.get("rank_world", 0)
-                old_rw = _old_rank.get(r["id"]) or 0
-                if abs(new_rw - old_rw) > 0.01:
-                    supabase.table("story_clusters").update(
-                        {"rank_world": new_rw}
-                    ).eq("id", r["id"]).execute()
-                    _changed += 1
-            _fo_rows.sort(key=lambda r: r.get("rank_world", 0), reverse=True)
-            print(f"  Final ordering: {_changed} rank_world updates. New top 5:")
-            for _i, r in enumerate(_fo_rows[:5], 1):
-                _dup = " [near-dup demoted]" if r.get("_near_dup_of") else ""
-                print(f"   {_i}. [{r.get('rank_world', 0):5.1f}] src={r.get('source_count', 0):3} "
-                      f"{r.get('title', '')[:60]}{_dup}")
-            _dups = [r for r in _fo_rows if r.get("_near_dup_of")]
-            for r in _dups[:5]:
-                print(f"  [near-dup] demoted \"{r.get('title', '')[:55]}\" -> kept \"{r['_near_dup_of'][:55]}\"")
+        _s2 = run_stage2(supabase, sources, run_id=run_id,
+                         on_summaries=_sync_in_memory)
+        summary_metrics = _s2.get("summary") or summary_metrics
+        editorial_metrics = _s2.get("editorial") or {}
     except Exception as e:
-        print(f"  [warn] Final feed ordering failed (keeping 8c order): {e}")
-
-    # Step 8d.6: Summary-coverage FLOOR on the FINAL displayed top-50. Runs AFTER
-    # 8d.5 so it covers every card the final ordering PROMOTED into view (8d/8d.1
-    # only saw the intermediate order, so a promoted flash-lite/null card would
-    # otherwise ship a raw scraped excerpt — the 15/50 tier=None cards). For each
-    # still-null displayed card: one Gemini re-summarize (flash-lite), else a
-    # clean, on-topic rule-based summary stamped tier='rule_based' (migration
-    # 071). Idempotent: no-ops on cards already summarized by 8d. Guarantees no
-    # displayed top-50 card renders a raw excerpt.
-    if SUMMARIZER_AVAILABLE:
-        print("\n[8d.6] Final-order summary floor (guarantee top-50 coverage)...")
-        try:
-            floor_metrics = ensure_top50_summary_floor(
-                supabase, edition="world", limit=CANDIDATES, prefer_provider="gemini")
-            print(
-                f"  Summary floor: {floor_metrics['checked']} final top-50 cards "
-                f"needed a summary (null OR raw excerpt) → "
-                f"{floor_metrics['resummarized']} re-summarized (LLM), "
-                f"{floor_metrics['sanitized']} cleaned (rule-based), "
-                f"{floor_metrics.get('raw_excerpts_replaced', 0)} raw excerpts "
-                f"replaced, {floor_metrics['still_null']} still without a summary"
-            )
-        except Exception as e:
-            print(f"  [warn] Final-order summary floor failed: {e}")
-
-    # Step 8d.7: Flash-tier reconciliation. 8d assigned the premium 'flash' tier
-    # to the INTERMEDIATE top-10; 8d.5 may have promoted a 'flash-lite' card into
-    # the FINAL top-10. Upgrade those to flash (budget permitting) so the premium
-    # tier follows the final rank rather than yesterday's intermediate one.
-    # Budget-safe: no-ops when Gemini is unavailable / the per-run cap is spent,
-    # caps upgrades, and degrades gracefully (a spent flash daily-cap leaves the
-    # card at flash-lite, retried next run).
-    if SUMMARIZER_AVAILABLE and llm_is_available() and calls_remaining() > 0:
-        print("\n[8d.7] Final top-10 flash-tier reconciliation...")
-        try:
-            recon_metrics = reconcile_flash_top10(
-                supabase, edition="world", top_n=LEAD_BAND, prefer_provider="gemini")
-            print(
-                f"  Flash reconcile: {recon_metrics['checked']} final top-10 "
-                f"cards below flash → {recon_metrics['upgraded']} upgraded, "
-                f"{recon_metrics['skipped']} skipped, {recon_metrics['failed']} failed"
-            )
-        except Exception as e:
-            print(f"  [warn] Flash-tier reconciliation failed: {e}")
-
-    # Step 8f: Newspaper of Record — permanent print archive (post-8d.7 final
-    # state, the first point where rank_world + summaries + tiers are all final).
-    # Additive + NON-FATAL: this can never fail the daily run.
-    try:
-        print("\n[8f] Printing the record (permanent top-50 archive)...")
-        from archive.print_archive import archive_printed_edition
-        _sources_by_id = {s.get("db_id"): s for s in sources if s.get("db_id")}
-        pa = archive_printed_edition(
-            supabase, sources_by_id=_sources_by_id,
-            edition_date=datetime.now(timezone.utc).date(),
-            pipeline_run_id=run_id)
-        print(f"  Printed {pa['stories']} stories ({pa['threads_continued']} continuing, "
-              f"{pa['threads_new']} new threads); archive {pa.get('stats',{}).get('total_mb')} MB, "
-              f"{pa.get('stats',{}).get('kb_per_day')} KB/day")
-    except Exception as e:
-        print(f"  [warn] Print archive failed (non-fatal): {e}")
+        import traceback
+        print(f"  [warn] Stage 2 failed: {e}")
+        traceback.print_exc()
 
     # Step 8e: RETIRED 2026-08-05 (copyright compliance). The cacher downloaded,
     # re-encoded (stripping EXIF/IPTC copyright-management info), and re-hosted
@@ -4516,9 +4243,12 @@ def main():
         "llm_calls_gemini": _gemini_calls,
         "llm_calls_total": _claude_calls + _gemini_calls,
         "estimated_cost_usd": estimated_cost_usd,
-        "top50_coverage_pct": round(
+        "candidate_coverage_pct": round(
             100 * (summary_metrics["summarized"] + summary_metrics["cached"]) / CANDIDATES, 1
         ),
+        # 6a: the editorial standard's pass rate, per run, so "how often does a
+        # candidate ship clean" is a number in the record and not an impression.
+        "editorial": editorial_metrics,
     }
 
     if run_id:
@@ -4541,10 +4271,25 @@ def main():
     print(
         f"  LLM: {llm_metrics['llm_calls_total']} calls "
         f"(claude={_claude_calls}, gemini={_gemini_calls}) | "
-        f"top50: {llm_metrics['top50_coverage_pct']}% covered "
+        f"candidates: {llm_metrics['candidate_coverage_pct']}% covered "
         f"({llm_metrics['summaries_total']} new, {llm_metrics['cached_skips']} cached) | "
         f"~${estimated_cost_usd:.2f}"
     )
+    if editorial_metrics.get("candidates"):
+        _em = editorial_metrics
+        _rate = 100 * _em.get("passed", 0) / _em["candidates"]
+        from editorial import standard as _std
+        _worst = ", ".join(
+            f"{k} x{v}" + (" (advisory)"
+                           if (_std.VALIDATORS_BY_ID.get(k)
+                               and _std.VALIDATORS_BY_ID[k].status == _std.ADVISORY)
+                           else "")
+            for k, v in (_em.get("worst") or [])) or "none"
+        print(
+            f"  Editorial: {_em.get('passed', 0)}/{_em['candidates']} candidates "
+            f"clean ({_rate:.1f}%) | {_em.get('regenerated', 0)} regenerated, "
+            f"{len(_em.get('dropped') or [])} dropped | worst: {_worst}"
+        )
     # "Errors:" used to count RSS fetch errors only, so a dead re-rank (8c wrote
     # 0 rows for weeks) printed "Errors: 0". Count the stage errors attached to
     # pipeline_runs.errors (append_pipeline_run_errors) separately.
