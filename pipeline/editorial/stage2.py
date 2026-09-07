@@ -257,10 +257,12 @@ def review_bench(supabase, candidate_ids: list[str],
             continue
         try:
             from summarizer.cluster_summarizer import _content_hash
-            _store_cluster_summary(supabase, cid, result,
-                                   _content_hash(arts), {"summarized": 0,
-                                                         "updated_ids": [],
-                                                         "updated_summaries": {}})
+            # _store_cluster_summary records into `metrics`, including a
+            # "failed" bump on its own exception path, so the dict has to carry
+            # every key it touches.
+            _store_cluster_summary(supabase, cid, result, _content_hash(arts),
+                                   {"summarized": 0, "failed": 0,
+                                    "updated_ids": [], "updated_summaries": {}})
             regenerated += 1
             survivors.append(cid)
             print("    regenerated, clean")

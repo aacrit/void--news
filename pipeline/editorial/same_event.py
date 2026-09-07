@@ -64,6 +64,7 @@ a 55 and a 42 become one number computed from all the articles.
 from __future__ import annotations
 
 import re
+import sys
 from datetime import datetime, timezone
 from typing import Callable, Optional
 
@@ -186,6 +187,27 @@ def masthead_tokens(source_names: list[str]) -> set[str]:
     for name in source_names or []:
         out |= title_word_stems(name)
     return {_norm(s) for s in out}
+
+
+def _bias_reaggregator():
+    """main._enrich_cluster_fallback, resolved without importing main.
+
+    `from main import ...` is wrong here. Under `python pipeline/main.py` the
+    orchestrator is the module `__main__`, so importing `main` would load
+    main.py a SECOND time under a different name and re-run its top level. Look
+    it up in whichever module object is already loaded instead.
+
+    Returns None when neither is present (a unit test importing this module on
+    its own), and the caller then leaves the pre-merge bias in place rather
+    than writing an average of two clusters, which is the one thing this pass
+    must never do.
+    """
+    for name in ("main", "__main__"):
+        mod = sys.modules.get(name)
+        fn = getattr(mod, "_enrich_cluster_fallback", None)
+        if callable(fn):
+            return fn
+    return None
 
 
 def _parse_ts(value) -> Optional[datetime]:
@@ -371,10 +393,14 @@ def merge_candidates(supabase, candidate_ids: list[str],
         if absorbed:
             # Bias from the MERGED set, computed by the pipeline's own
             # aggregation. Never (55 + 42) / 2.
-            from main import _enrich_cluster_fallback
+            enrich = _bias_reaggregator()
             for cid in {c for c in order if c not in absorbed and load[c] > 1}:
+                if enrich is None:
+                    log("  [warn][merge] bias re-aggregation unavailable; the "
+                        "survivor keeps the pre-merge numbers until the next run")
+                    break
                 try:
-                    _enrich_cluster_fallback(cid, skip_text=False)
+                    enrich(cid, skip_text=False)
                     log(f"  [merge] re-aggregated bias for {cid[:8]} "
                         f"from {len(info[cid]['articles'])} merged articles")
                 except Exception as e:
@@ -548,8 +574,9 @@ def split_incoherent_candidates(supabase, candidate_ids: list[str],
             log(f"  [coherence] \"{head}\": {len(keep)} members, "
                 f"{len(srcs)} sources, summary invalidated")
             try:
-                from main import _enrich_cluster_fallback
-                _enrich_cluster_fallback(cid, skip_text=False)
+                enrich = _bias_reaggregator()
+                if enrich is not None:
+                    enrich(cid, skip_text=False)
             except Exception as e:
                 log(f"  [warn][coherence] bias re-aggregation failed for {cid[:8]}: {e}")
         return metrics
