@@ -27,6 +27,7 @@ import argparse
 import html as _html
 import re
 import sys
+from pathlib import Path
 
 # ---------------------------------------------------------------------------
 # Tunables calibrated against a correct render. A check that would fire on a
@@ -46,11 +47,26 @@ WORDMARK_MAX = 3             # header + footer + one mobile-nav variant
 DATELINE_MAX = 2             # nav + footer
 
 # ---------------------------------------------------------------------------
-# Title stemming — VENDORED from pipeline/clustering/story_cluster.py so the gate
-# and the ranker agree on what "same story" means. KEEP _TITLE_STOPWORDS in sync
-# with that file (currently story_cluster.py:2420). Porter stem via nltk when
-# available (the ranker's primary path); a light suffix stripper otherwise so the
-# gate never hard-depends on nltk being installed.
+# The editorial standard (2026-09-06). Every per-card TEXT rule now lives in
+# pipeline/editorial/standard.py and is called from here, so the pipeline and
+# this gate cannot disagree about what a publishable story is. The gate keeps
+# only the HTML parsing and the page-structure rules. The stemmer and stopword
+# set moved into the shared module too, retiring the vendored copy that carried
+# a "keep in sync by hand" note.
+#
+# stdlib-only by construction: the module imports nothing heavier than nltk
+# (optional), which is what verify-production.yml installs.
+# ---------------------------------------------------------------------------
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from pipeline.editorial import standard as std  # noqa: E402
+
+_title_word_stems = std.title_word_stems
+MIN_SUMMARY_CHARS = std.MIN_SUMMARY_CHARS
+DUP_STEM_OVERLAP = std.DUP_STEM_OVERLAP
+
+# ---------------------------------------------------------------------------
+# Legacy vendored stemmer, retained only for reference by the checks below that
+# have not moved yet.
 # ---------------------------------------------------------------------------
 _TITLE_STOPWORDS = frozenset({
     "a", "an", "the", "and", "or", "but", "in", "on", "at", "to", "for",
@@ -287,20 +303,21 @@ def check_concatenation(p: Page) -> list[str]:
 _TERMINAL = tuple('.!?”"’\')')
 
 
+def _run_std(fn, values, limit: int = 6) -> list[str]:
+    """Adapter: run a shared-standard validator over parsed page text."""
+    out: list[str] = []
+    for v in values:
+        for finding in fn(v):
+            out.append(f"[{finding.id}] {finding.message}")
+    return out[:limit]
+
+
 def check_summary_terminal(p: Page) -> list[str]:
-    out = []
-    for s in p.summaries:
-        if s and not s.endswith(_TERMINAL):
-            out.append(f'summary not terminated: "...{s[-60:]}"')
-    return out[:6]
+    return _run_std(std.s03_terminal_punctuation, p.summaries)
 
 
 def check_summary_length(p: Page) -> list[str]:
-    out = []
-    for s in p.summaries:
-        if 0 < len(s) < MIN_SUMMARY_CHARS:
-            out.append(f'summary under {MIN_SUMMARY_CHARS} chars ({len(s)}): "{s}"')
-    return out[:6]
+    return _run_std(std.s02_summary_length, p.summaries)
 
 
 # Orphan subject-less numeric fragment: a sentence that opens on a bare figure and
@@ -398,7 +415,7 @@ def check_duplicate_headlines(p: Page) -> list[str]:
 _DOUBLED_WORD_RE = re.compile(r"\b([A-Z][a-z]+)\1\b")
 
 
-def check_doubled_words(p: Page) -> list[str]:
+def check_doubled_words_legacy(p: Page) -> list[str]:
     out: list[str] = []
     for s in p.summaries + p.headlines:
         for m in _DOUBLED_WORD_RE.finditer(s):
@@ -464,18 +481,51 @@ def _outside_quote_gaps(s: str) -> list[str]:
 
 
 def check_first_person_outside_quotes(p: Page) -> list[str]:
-    out: list[str] = []
-    for s in p.summaries:
-        for gap in _outside_quote_gaps(s):
-            for rx in _FIRST_PERSON_GATE:
-                m = rx.search(gap)
-                if m:
-                    out.append(
-                        f'first-person "{m.group(0)}" outside quotes '
-                        f'(Void speaks third person): "{_ctx(gap, m.group(0))}"'
-                    )
-                    break  # one hit per gap is enough
-    return out[:6]
+    return _run_std(std.e03_first_person_outside_quotes, p.summaries)
+
+
+def check_doubled_words(p: Page) -> list[str]:
+    return _run_std(std.s05_doubled_words, p.summaries + p.headlines)
+
+
+def check_orphan_subordinate_std(p: Page) -> list[str]:
+    return _run_std(std.e04_orphan_subordinate, p.summaries)
+
+
+def check_quote_balance_std(p: Page) -> list[str]:
+    return _run_std(std.s04_quote_balance, p.summaries)
+
+
+def check_duplicate_headlines_std(p: Page) -> list[str]:
+    return [f"[{f.id}] {f.message}"
+            for f in std.f02_duplicate_headlines(p.headlines)][:6]
+
+
+# --- ADVISORY: implemented and reported, not yet failing the build ---------
+# These are the rules the CEO has not signed off on yet (docs/EDITORIAL-
+# STANDARD.md). They run on every deploy so the review has real numbers, and
+# --strict promotes them to hard failures. Against the 2026-09-06 feed they
+# flag exactly the cards the review flagged by hand: the Mamdani card (E-05
+# and E-07), the Hezbollah tunnels card (E-07 twice), the Spain card (E-08
+# twice) and the Bolivia card (E-09).
+def check_reputational_attribution(p: Page) -> list[str]:
+    return _run_std(std.e05_reputational_attribution, p.summaries, limit=8)
+
+
+def check_contested_terminology(p: Page) -> list[str]:
+    return _run_std(std.e07_contested_terminology, p.summaries, limit=8)
+
+
+def check_passive_evaluation(p: Page) -> list[str]:
+    return _run_std(std.e08_passive_evaluation, p.summaries, limit=8)
+
+
+def check_absence_of_information(p: Page) -> list[str]:
+    return _run_std(std.e09_absence_of_information, p.summaries, limit=8)
+
+
+def check_second_person(p: Page) -> list[str]:
+    return _run_std(std.e11_second_person_outside_quotes, p.summaries, limit=8)
 
 
 # --- count ------------------------------------------------------------------
@@ -590,19 +640,29 @@ CHECKS = [
     ("corruption: decimals", check_decimal),
     ("corruption: digit=word", check_digit_word),
     ("corruption: missing-space concatenation", check_concatenation),
-    ("corruption: doubled word (no space)", check_doubled_words),
-    ("integrity: summaries terminated", check_summary_terminal),
-    ("integrity: summary min length", check_summary_length),
+    ("corruption: doubled word (S-05)", check_doubled_words),
+    ("integrity: summaries terminated (S-03)", check_summary_terminal),
+    ("integrity: summary min length (S-02)", check_summary_length),
     ("integrity: no orphan numeric fragment", check_orphan_numeral),
-    ("integrity: no orphan subordinate clause", check_orphan_subordinate),
-    ("integrity: quotes are balanced", check_quote_balance),
-    ("duplication: no duplicate headlines", check_duplicate_headlines),
+    ("integrity: no orphan subordinate clause (E-04)", check_orphan_subordinate_std),
+    ("integrity: quotes are balanced (S-04)", check_quote_balance_std),
+    ("duplication: no duplicate headlines (F-02)", check_duplicate_headlines_std),
     ("consistency: summary matches its headline", check_title_summary_consistency),
-    ("voice: no first-person pronoun outside quotes", check_first_person_outside_quotes),
+    ("voice: no first-person pronoun outside quotes (E-03)", check_first_person_outside_quotes),
     ("count: header matches rendered", check_count_match),
     ("consistency: card lean label == canonical (Sigil)", check_card_sigil_label),
     ("structural: every card links to /story/<uuid>/", check_card_anchor_coverage),
     ("integrity: confidence is real (not COUNT/5 proxy)", check_confidence_not_proxy),
+]
+
+# Reported on every run, promoted to hard failures by --strict once the
+# editorial standard is signed off. See docs/EDITORIAL-STANDARD.md.
+ADVISORY_CHECKS = [
+    ("editorial: reputational claims carry attribution (E-05)", check_reputational_attribution),
+    ("editorial: no contested terminology in Void's voice (E-07)", check_contested_terminology),
+    ("editorial: no unattributed passive evaluation (E-08)", check_passive_evaluation),
+    ("editorial: not mostly absence of information (E-09)", check_absence_of_information),
+    ("editorial: no second-person pronoun outside quotes (E-11)", check_second_person),
 ]
 
 
@@ -610,6 +670,11 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("html_file")
     ap.add_argument("--url", default="(local file)")
+    ap.add_argument(
+        "--strict", action="store_true",
+        help="promote the ADVISORY editorial checks to hard failures "
+             "(see docs/EDITORIAL-STANDARD.md)",
+    )
     ap.add_argument(
         "--expect-count", type=int, default=None,
         help="intended feed size (frontend/config/feed.json displayed); when "
@@ -626,7 +691,8 @@ def main() -> int:
           f"header count {p.header_story_count}\n")
 
     total_fail = 0
-    for name, fn in CHECKS:
+    checks = list(CHECKS) + (list(ADVISORY_CHECKS) if args.strict else [])
+    for name, fn in checks:
         try:
             failures = fn(p)
         except Exception as e:  # a check crashing must not mask a real problem
@@ -638,6 +704,27 @@ def main() -> int:
                 print(f"    - {f}")
         else:
             print(f"[ ok ] {name}")
+
+    if not args.strict:
+        advisory = 0
+        lines = []
+        for name, fn in ADVISORY_CHECKS:
+            try:
+                failures = fn(p)
+            except Exception as e:  # never let an advisory check break the gate
+                failures = [f"check raised {type(e).__name__}: {e}"]
+            if failures:
+                advisory += len(failures)
+                lines.append(f"[warn] {name}")
+                lines.extend(f"    - {f}" for f in failures)
+        print()
+        if lines:
+            print(f"ADVISORY ({advisory} finding(s), not failing the build "
+                  f"until the editorial standard is signed off; --strict to enforce):")
+            for line in lines:
+                print(line)
+        else:
+            print("ADVISORY: no editorial findings")
 
     print()
     if total_fail:

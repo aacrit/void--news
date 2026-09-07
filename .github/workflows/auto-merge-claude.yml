@@ -53,6 +53,7 @@ jobs:
           pip install --quiet nltk
           python tests/test_verify_gate.py
           python tests/test_feed_config.py
+          python tests/test_editorial_standard.py
 
   # Mirrors validate-bias.yml — duplicated here because branch protection is
   # not configured and the merge job below can only `needs:` jobs in this
