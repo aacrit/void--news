@@ -3034,12 +3034,21 @@ def summarize_clusters_batch(clusters: list[dict],
 
 
 def _tier_for_label(label: str) -> str:
-    """Map a provider label to the persisted summary_tier (migration 063)."""
+    """Map a provider label to the persisted summary_tier (migration 063).
+
+    The tier stopped being a QUALITY BAND on 2026-09-07: every candidate goes to
+    flash in one batched pass, so there is no top-10-gets-better split to record.
+    What the column still has to answer, for the 8d cache and the floor and the
+    print archive, is narrower and load-bearing: did a model write this, or did
+    the floor. 'flash' and 'flash-lite' record which model answered (flash-lite
+    means flash's daily cap was spent, so next run retries), 'rule_based' means
+    no model did.
+    """
     if label == "claude-sonnet":
-        return "sonnet"
+        return "sonnet"          # historical; Claude retired 2026-06-22
     if label == "gemini-flash":
-        return "flash"          # premium gemini-2.5-flash
-    return "flash-lite"          # gemini-2.5-flash-lite
+        return "flash"
+    return "flash-lite"
 
 
 def _store_cluster_summary(supabase, cid: str, result: dict, h: str,
@@ -3082,7 +3091,6 @@ def _store_cluster_summary(supabase, cid: str, result: dict, h: str,
 
 def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = _FEED_CANDIDATES,
                                  prefer_provider: str | None = "gemini",
-                                 flash_top_n: int = 10,
                                  force_resummarize: bool = False,
                                  candidate_ids: list[str] | None = None) -> dict:
     """
@@ -3110,10 +3118,6 @@ def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 
     article-membership hash is unchanged AND its stored summary_tier is 'sonnet'
     or 'flash' (already flash-quality); a legacy 'flash-lite' row is a MISS so it
     is regenerated / UPGRADED to flash. force_resummarize bypasses the cache.
-
-    `flash_top_n` is retained for signature compatibility but no longer selects a
-    tier band: all summaries now target flash (the schedule + shared-budget math
-    make a per-story tier split unnecessary).
 
     Op-eds (content_type=opinion) and clusters with <3 articles are skipped —
     both preserve original voice or lack the source diversity for synthesis.
@@ -3770,177 +3774,13 @@ def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = _F
 # budget-safe: it only fires while Gemini is available and the per-run cap has
 # headroom, caps the number of upgrades, and degrades gracefully (never raises).
 
-def reconcile_flash_top10(supabase, edition: str = "world", top_n: int = _FEED_LEAD_BAND,
-                          prefer_provider: str | None = "gemini",
-                          max_upgrades: int = 5) -> dict:
-    """Upgrade the FINAL top-`top_n` displayed cards from flash-lite → flash.
-
-    Runs after step 8d.5 (final feed ordering). For each of the final top-`top_n`
-    DISPLAYED (source_count>=3), non-op-ed, summarizable clusters whose cached
-    summary_tier is not already 'flash'/'sonnet', re-summarize on gemini-2.5-flash
-    and write the result + tier='flash' — but only while flash actually answers
-    (if the flash daily cap is spent the call degrades to flash-lite; that is NOT
-    written, so no equivalent-quality churn and the row is retried next run).
-
-    Budget-safe: no-ops when Gemini is unavailable or the per-run cap is spent,
-    caps upgrades at `max_upgrades`, and never raises.
-
-    Returns {checked, upgraded, skipped, failed}.
-    """
-    metrics = {"checked": 0, "upgraded": 0, "skipped": 0, "failed": 0}
-    if not is_available() or calls_remaining() <= 0:
-        return metrics
-
-    rank_col = f"rank_{edition.replace('-', '_')}"
-    fetch_limit = top_n + 20
-    try:
-        rank_res = (
-            supabase.table("story_clusters")
-            .select("id, content_type, source_count, summary_tier")
-            .contains("sections", [edition])
-            .order(rank_col, desc=True)
-            .limit(fetch_limit)
-            .execute()
-        )
-    except Exception as e:
-        print(f"  [warn] reconcile_flash_top10: top-{top_n} fetch failed: {e}")
-        return metrics
-
-    rows = rank_res.data or []
-    if not rows:
-        return metrics
-
-    # Window the displayed premium band exactly like the homepage / 8d: only
-    # source_count>=3 rows occupy display slots; op-eds keep original voice and
-    # do not consume a flash slot (the band extends past them).
-    window_used = 0
-    candidates: list[dict] = []
-    for row in rows:
-        if window_used >= top_n:
-            break
-        if (row.get("source_count") or 0) < 3:
-            continue
-        window_used += 1
-        if (row.get("content_type") or "").lower() == "opinion":
-            continue
-        if (row.get("summary_tier") or "") in ("flash", "sonnet"):
-            continue  # already premium — nothing to upgrade
-        candidates.append(row)
-
-    metrics["checked"] = len(candidates)
-    if not candidates:
-        return metrics
-
-    # Fetch article membership for the upgrade candidates only.
-    cand_ids = [r["id"] for r in candidates]
-    by_cluster: dict[str, list[str]] = {}
-    try:
-        link_res = (
-            supabase.table("cluster_articles")
-            .select("cluster_id, article_id")
-            .in_("cluster_id", cand_ids)
-            .execute()
-        )
-        for link in (link_res.data or []):
-            by_cluster.setdefault(link["cluster_id"], []).append(link["article_id"])
-    except Exception as e:
-        print(f"  [warn] reconcile_flash_top10: cluster_articles fetch failed: {e}")
-        return metrics
-
-    all_article_ids = sorted({aid for ids in by_cluster.values() for aid in ids})
-    articles_by_id: dict[str, dict] = {}
-    for i in range(0, len(all_article_ids), 200):
-        batch = all_article_ids[i:i + 200]
-        try:
-            art_res = (
-                supabase.table("articles")
-                .select("id, title, summary, full_text, source_id, published_at, url")
-                .in_("id", batch)
-                .execute()
-            )
-            for art in (art_res.data or []):
-                articles_by_id[art["id"]] = art
-        except Exception as e:
-            print(f"  [warn] reconcile_flash_top10: articles batch fetch failed: {e}")
-            continue
-
-    # Backfill source_name + tier so the flash prompt gets proper attribution.
-    src_ids = sorted({a.get("source_id") for a in articles_by_id.values() if a.get("source_id")})
-    src_info_by_id: dict[str, dict] = {}
-    for i in range(0, len(src_ids), 200):
-        batch = src_ids[i:i + 200]
-        try:
-            src_res = (
-                supabase.table("sources")
-                .select("id, name, tier, political_lean_baseline")
-                .in_("id", batch).execute()
-            )
-            for s in (src_res.data or []):
-                src_info_by_id[s["id"]] = s
-        except Exception:
-            continue
-    for art in articles_by_id.values():
-        src = src_info_by_id.get(art.get("source_id") or "", {})
-        art.setdefault("source_name", src.get("name", ""))
-        art.setdefault("tier", src.get("tier", ""))
-        art.setdefault("source_lean_baseline", src.get("political_lean_baseline", ""))
-
-    for row in candidates:
-        # Stop cleanly if the budget is spent or Gemini went unavailable mid-pass
-        # (e.g. a flash 429 disabled the client), or we hit the upgrade cap.
-        if (metrics["upgraded"] >= max_upgrades
-                or calls_remaining() <= 0 or not is_available()):
-            metrics["skipped"] += 1
-            continue
-
-        cid = row["id"]
-        article_ids = by_cluster.get(cid, [])
-        articles = [articles_by_id[aid] for aid in article_ids if aid in articles_by_id]
-        if len(articles) < 3:
-            metrics["skipped"] += 1
-            continue
-
-        result = summarize_cluster(
-            articles, prefer_provider=prefer_provider, model=GEMINI_FLASH_MODEL,
-            cluster_title=row.get("title"))
-        if not result:
-            metrics["failed"] += 1
-            continue
-
-        tier = _tier_for_label(result.get("_generator") or "")
-        if tier not in ("flash", "sonnet"):
-            # flash's daily cap is spent; the call degraded to flash-lite. Don't
-            # overwrite the existing (equivalent) flash-lite summary — the row is
-            # re-attempted for the flash upgrade next run.
-            metrics["skipped"] += 1
-            continue
-
-        payload = {
-            "title": result["headline"],
-            # Storage-boundary hard cap (no-op on summarize_cluster's already-
-            # trimmed output; guarantees the invariant on the flash top-10).
-            "summary": _trim_summary_to_word_cap(result["summary"]),
-            "summary_article_hash": _content_hash(articles),
-            "summary_tier": tier,
-        }
-        if result.get("consensus"):
-            payload["consensus_points"] = result["consensus"]
-        if result.get("divergence"):
-            payload["divergence_points"] = result["divergence"]
-        if result.get("editorial_importance") is not None:
-            payload["editorial_importance"] = result["editorial_importance"]
-        if result.get("story_type") is not None:
-            payload["story_type"] = result["story_type"]
-        if result.get("has_binding_consequences") is not None:
-            payload["has_binding_consequences"] = result["has_binding_consequences"]
-        try:
-            supabase.table("story_clusters").update(payload).eq("id", cid).execute()
-            metrics["upgraded"] += 1
-        except Exception as e:
-            print(f"  [warn] reconcile_flash_top10: write failed for {cid}: {e}")
-            metrics["failed"] += 1
-
-    return metrics
+# reconcile_flash_top10 DELETED 2026-09-07 (Stage 2). It existed because step
+# 8d assigned the premium flash tier to an INTERMEDIATE top-10 and 8d.5 could
+# then promote a flash-lite card into the final one, so a tier band had to
+# follow the final rank. There is no tier band any more: every candidate is
+# summarized on flash in one batched pass, and the only sub-flash card left is
+# one the floor wrote, which the floor's own pass 2 already retries on the LLM.
+# The step it backed (8d.7) is gone with it.
 
 
 # ---------------------------------------------------------------------------
