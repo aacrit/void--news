@@ -53,7 +53,10 @@ News aggregation, 6-axis rule-based NLP bias analysis. 1,016 sources / 158 count
 | Daily brief, audio, edge-tts, voice rotation | `docs/GEMINI-VOICE-PLAN.md` (header still says "Sonnet 4.6 primary" — Claude retired 2026-06-22) |
 | **Supabase -> SQLite/D1 migration — what Postgres did that SQLite cannot** | `migration/PORT_NOTES.md` (authoritative) |
 | Cloudflare Worker + D1 (ship board / feedback, the only live DB) | `worker/wrangler.toml`, `worker/schema.sql`, `worker/src/index.ts` |
-| Served-output quality gates (post-deploy, ~22 checks vs the live page) | `scripts/verify_production.py`, `.github/workflows/verify-production.yml`, `tests/test_verify_gate.py` |
+| **Editorial standard (rule IDs, one implementation, two consumers)** | `docs/EDITORIAL-STANDARD.md`, `pipeline/editorial/standard.py`, `tests/test_editorial_standard.py` |
+| Served-output quality gates (post-deploy, vs the live page) | `scripts/verify_production.py`, `.github/workflows/verify-production.yml`, `tests/test_verify_gate.py` |
+| Voice and brand (the prose statement the rules serve) | `docs/VOICE-BRAND.md` |
+| Feed size (one source of truth: pipeline, frontend, gate, CI) | `frontend/config/feed.json`, `pipeline/utils/feed_config.py`, `frontend/app/lib/feedConfig.ts`, `tests/test_feed_config.py` |
 | DB schema, audits | `docs/DB-REVIEWER-GUIDE.md`, `docs/DB-AUDIT-FRAMEWORK.md` (both PRE-migration: they describe the retired Postgres schema) |
 | Performance | `docs/PERF-REPORT-2026-04-29.md` (Lighthouse polish), `docs/PERF-REPORT-2026-03-22.md` (Vol I baseline) |
 | Deploy, basePath, CF migration | `docs/DEPLOYMENT.md` — **STALE**: its "Current State" diagram still says the pipeline writes Supabase and the site polls the same DB, and the auto-merge flow still shows applying Supabase migrations. Trust the Architecture section above instead. |
