@@ -246,6 +246,49 @@ def _news_event_signal(title: str) -> bool:
     return bool(_NEWS_VERB.search(title) or _CASUALTY_NUM.search(title))
 
 
+# ---------------------------------------------------------------------------
+# Desk furniture (2026-09-07)
+# ---------------------------------------------------------------------------
+# A newsroom's own scaffolding: the morning recap, the day's final word, the TV
+# listings. These carry no event, so a clusterer has nothing to place them by
+# and they land wherever the TF-IDF noise points. On 2026-09-06 "Morning recap"
+# shipped inside the Trump / Pickaxe Mountain cluster, "Saturday's Final Word"
+# inside a murder trial, and a local paper's TV-and-radio listing inside a BYU
+# football card. Dropping them at ingestion costs nothing and touches no
+# clustering threshold.
+#
+# Deliberately narrow. "Iran war latest: Iranian oil tanker targeted in US
+# strike" is a real story with a real headline after the colon, so the
+# furniture pattern must MATCH THE START of a SHORT title, not appear anywhere
+# in a long one. Measured against the 1,237 article titles of the 09-06 feed:
+# 3 matches, all three genuine furniture.
+_FURNITURE_TITLE = re.compile(
+    r"^(?:the\s+)?(?:morning|evening|weekend|daily|weekly|saturday'?s?|"
+    r"sunday'?s?|today'?s?|tonight'?s?)?\s*"
+    r"(?:news\s+)?(?:recap|roundup|round-?up|briefing|digest|rundown|"
+    r"final\s+word|top\s+stories|headlines|newsletter|open\s+thread)\b", re.I)
+_FURNITURE_MAX_WORDS = 6
+
+_LISTING_TITLE = re.compile(
+    r"\b(?:on\s+the\s+air|what'?s\s+on\s+tv|tv\s+and\s+radio|"
+    r"here'?s\s+what\s+games|photos?\s+of\s+the\s+(?:day|week)|"
+    r"in\s+pictures|your\s+(?:morning|evening)\s+briefing|"
+    r"the\s+week\s+ahead|what\s+to\s+watch\s+(?:today|this\s+week|on\s+tv))\b", re.I)
+
+
+def _furniture_signals(title: str) -> list[tuple[str, int]]:
+    """Newsroom scaffolding with no event in it. Weight 3: a hard drop on its
+    own, and still under the raised bar a real news verb would set."""
+    t = (title or "").strip()
+    if not t:
+        return []
+    if _FURNITURE_TITLE.match(t) and len(t.split()) <= _FURNITURE_MAX_WORDS:
+        return [("desk-furniture", 3)]
+    if _LISTING_TITLE.search(t):
+        return [("listing-page", 3)]
+    return []
+
+
 def _ticker_signals(title: str, url: str) -> list[tuple[str, int]]:
     """Collect live-ticker / index-page signals (weight 2 each)."""
     out: list[tuple[str, int]] = []
@@ -376,6 +419,10 @@ def newsworthiness(article: dict) -> dict:
                 overflow -= take
                 if signals[reason] <= 0:
                     del signals[reason]
+
+    # Newsroom scaffolding: recaps, final words, TV listings.
+    for reason, weight in _furniture_signals(title):
+        add(reason, weight)
 
     # Live market-ticker / index pages.
     for reason, weight in _ticker_signals(title, url):

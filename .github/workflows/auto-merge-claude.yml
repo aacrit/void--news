@@ -55,6 +55,8 @@ jobs:
           python tests/test_feed_config.py
           python tests/test_editorial_standard.py
           python tests/test_same_event_merge.py
+          python pipeline/validation/test_desk_furniture_filter.py
+          python pipeline/validation/test_academic_artifact_filter.py
 
   # End-to-end run of the editorial half of the pipeline (8c through 8f plus
   # the static export) against a synthetic state DB built from the committed
