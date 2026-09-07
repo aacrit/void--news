@@ -40,6 +40,7 @@ jobs:
         run: |
           cd frontend && npm ci
           npx next build || npx next build || npx next build
+          node test/labels.test.mjs
 
       # 2026-09-06: tests/ was run by nothing. test_verify_gate.py was RED
       # (its clean fixture predated MIN_SUMMARY_CHARS=300) and nobody knew,
@@ -57,6 +58,7 @@ jobs:
           python tests/test_same_event_merge.py
           python pipeline/validation/test_desk_furniture_filter.py
           python pipeline/validation/test_academic_artifact_filter.py
+          python tests/test_summary_hygiene_parity.py
 
   # End-to-end run of the editorial half of the pipeline (8c through 8f plus
   # the static export) against a synthetic state DB built from the committed

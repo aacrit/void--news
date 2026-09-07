@@ -74,54 +74,36 @@ export function coverageLabel(v: number): string {
   return "Lightly sourced";
 }
 
-/* ── Tilt vocabulary — story/cluster-level lean ────────────────────────────
-   Distinct from source lean labels (leanLabel). "Tilt" describes a
-   measurement of aggregate text lean, not an editorial identity.
-   Boundaries are data-driven from production score distribution:
-   53.6% at 50, 21.6% at 37-38, 9.5% at 62, 6.1% at 75-79.            ── */
+/* ── One lean ladder ───────────────────────────────────────────────────────
+   There used to be three. leanToBucket / leanLabel cut at 20/35/45/55/65/80,
+   tiltLabel cut at 29/46/53/72, and sigilLabelInfo had a fourth set of cuts of
+   its own at 20/46/80. One number therefore produced three answers: a story at
+   lean 60 read "Right" on the feed card, "Right Tilt" in the Sigil popup and
+   "Center-Right" in the Deep Dive; at lean 30 it read "Left", "Far Left Tilt"
+   and "Left". On the 2026-09-06 feed every confidently-labelled story
+   disagreed with itself across surfaces.
 
-export type TiltCategory =
-  | "far-left-tilt"
-  | "left-tilt"
-  | "balanced"
-  | "right-tilt"
-  | "far-right-tilt";
+   leanToBucket is now the only ladder. Everything below derives from it, so a
+   surface may abbreviate the answer but can never give a different one.     ── */
 
-export function tiltToBucket(v: number): TiltCategory {
-  if (v <= 29) return "far-left-tilt";
-  if (v <= 46) return "left-tilt";
-  if (v <= 53) return "balanced";
-  if (v <= 72) return "right-tilt";
-  return "far-right-tilt";
-}
+export type TiltCategory = LeanCategory;
 
-export function tiltLabel(v: number): string {
-  if (v <= 29) return "Far Left Tilt";
-  if (v <= 46) return "Left Tilt";
-  if (v <= 53) return "Balanced";
-  if (v <= 72) return "Right Tilt";
-  return "Far Right Tilt";
-}
+/** @deprecated Use leanToBucket. Kept as an alias so no caller silently
+ *  switches ladders while the call sites are migrated. */
+export const tiltToBucket = leanToBucket;
 
-export function tiltLabelAbbr(v: number): string {
-  if (v <= 29) return "FL";
-  if (v <= 46) return "LT";
-  if (v <= 53) return "BAL";
-  if (v <= 72) return "RT";
-  return "FR";
-}
-
-/** Human-readable descriptor for the Sigil popup — explains what the score means */
+/** Human-readable descriptor for the Sigil popup. Derived from leanToBucket,
+ *  so it cannot describe a band the label does not name. */
 export function tiltDescriptor(v: number): string {
-  if (v <= 15) return "Strong left lean in coverage language";
-  if (v <= 29) return "Clear left lean in coverage framing";
-  if (v <= 38) return "Moderate left lean detected";
-  if (v <= 46) return "Slight left lean in text analysis";
-  if (v <= 53) return "Balanced coverage from multiple perspectives";
-  if (v <= 60) return "Slight right lean in text analysis";
-  if (v <= 72) return "Moderate right lean detected";
-  if (v <= 85) return "Clear right lean in coverage framing";
-  return "Strong right lean in coverage language";
+  switch (leanToBucket(v)) {
+    case "far-left": return "Strong left lean in coverage language";
+    case "left": return "Clear left lean in coverage framing";
+    case "center-left": return "Slight left lean in text analysis";
+    case "center": return "Balanced coverage from multiple perspectives";
+    case "center-right": return "Slight right lean in text analysis";
+    case "right": return "Clear right lean in coverage framing";
+    default: return "Strong right lean in coverage language";
+  }
 }
 
 /* ── Perceptual scale expansion — DISPLAY POSITION ONLY ────────────────────
@@ -219,6 +201,21 @@ export const CONTESTED_LABEL = "Contested";
 export const LABEL_MIN_SOURCES = 8;
 /** ...and at least this much aggregate analytical confidence. */
 export const LABEL_MIN_CONFIDENCE = 0.5;
+/** ...and the lean must be MEASURED from at least this many articles.
+ *
+ *  Derived, not guessed. Per-article lean within a cluster has a standard
+ *  deviation of 12 to 14 at every rank of the feed. A 7-point band is 10 points
+ *  wide, so keeping the mean inside its own band with reasonable confidence
+ *  asks for a standard error under 4, and at sd 12.5 that needs 10 measured
+ *  articles (SE <= 3 would need 17). Below the top 20 the median cluster has
+ *  10 to 15 measured articles and a maximum SE of 8 to 13, which is more than
+ *  a band wide: those labels were noise wearing a direction.
+ *
+ *  Note this counts MEASURED articles, not sources. An article from an outlet
+ *  with no left/right placement writing copy with no partisan signal scores 50
+ *  as the ABSENCE of a measurement, and the pipeline already excludes those
+ *  from the mean; they must not count toward its reliability either. */
+export const LABEL_MIN_MEASURED = 10;
 /** ...and a magnitude clear of dead center: |lean-50| must exceed this
  *  (i.e. lean <= 42 or >= 58), wider than the old false-center band. */
 export const LABEL_MEANINGFUL_MARGIN = 8;
@@ -253,6 +250,8 @@ interface WingCounts {
   polarization?: number;
   /** Aggregate analytical confidence 0-1. */
   aggregateConfidence?: number;
+  /** Articles the lean was actually measured from (see LABEL_MIN_MEASURED). */
+  leanMeasuredCount?: number;
 }
 
 /** Both wings genuinely present: left AND right coverage, with >=3 total.
@@ -301,10 +300,17 @@ export function leanLabelState(
   const conf = spread?.aggregateConfidence ?? 1;
   const shareTilt = leanShareTilt(spread);
 
-  // Support is common to both routes below: enough outlets behind the read, and
-  // enough analytical confidence in it.
+  // Support is common to both routes below: enough outlets behind the read,
+  // enough analytical confidence in it, and enough MEASURED articles for the
+  // mean to be worth a direction at all. measured is undefined on payloads
+  // written before the field existed; those keep the old behaviour rather than
+  // being suppressed wholesale.
+  const measured = spread?.leanMeasuredCount;
+  const enoughMeasured = measured === undefined || measured >= LABEL_MIN_MEASURED;
   const wellSupported =
-    sourceCount >= LABEL_MIN_SOURCES && conf >= LABEL_MIN_CONFIDENCE;
+    sourceCount >= LABEL_MIN_SOURCES &&
+    conf >= LABEL_MIN_CONFIDENCE &&
+    enoughMeasured;
 
   // Route 1 — the MEAN itself is clearly off center. Symmetric: the SAME
   // thresholds decide Left and Right, so a dead-eagle drift and an
@@ -329,52 +335,55 @@ export function leanLabelState(
   return genuinelyContested ? "contested" : "no-clear-lean";
 }
 
-/* ── Sigil label — lean + divergence combined ──────────────────────────────
-   For balanced stories: label communicates divergence state (the lean is neutral,
-   so divergence IS the useful information). For tilted stories: lean direction
-   remains primary, with divergence flag suffix when top/bottom 10%.          ── */
+/* ── The one label a story gets ────────────────────────────────────────────
+   Every surface that names a story's lean calls this: the feed card's Sigil,
+   the Sigil popup, the Deep Dive's BiasSnapshot, the standalone /story page.
+   Before it, three functions with three sets of cut points answered the same
+   question three ways from the same number.
 
-export function sigilLabelInfo(
+   The gate (leanLabelState) and the ladder (leanToBucket) are both applied
+   here, so a caller cannot accidentally take one without the other, which is
+   how the card once showed a confident direction for a story the Deep Dive was
+   already calling Flat.                                                     ── */
+
+export interface StoryLeanLabel {
+  /** "Center-Right", or "Contested" / "Flat" / "Unscored" when suppressed. */
+  text: string;
+  /** "CR", or the same suppressed text (there is no abbreviation for Flat). */
+  abbr: string;
+  color: string;
+  state: LeanLabelState | "unscored";
+  /** True when the numeric score must NOT be shown alongside the label. */
+  suppressed: boolean;
+}
+
+export function storyLeanLabel(
   lean: number,
-  agreement: number,
-  divergenceFlag?: "divergent" | "consensus" | null,
-  unscored?: boolean,
-): { text: string; color: string } {
-  if (unscored) return { text: "Unscored", color: "var(--fg-tertiary)" };
-
-  const isBalanced = lean >= 47 && lean <= 53;
-
-  if (isBalanced) {
-    if (divergenceFlag === "divergent" || agreement > 60) {
-      return { text: "Divergent", color: "var(--sense-high)" };
-    }
-    if (divergenceFlag === "consensus" || agreement < 20) {
-      return { text: "Aligned", color: "var(--sense-low)" };
-    }
-    return { text: "Balanced", color: "var(--bias-center)" };
+  spread?: WingCounts & { leanSpread?: number } | null,
+  sourceCount = Number.POSITIVE_INFINITY,
+  unscored = false,
+): StoryLeanLabel {
+  if (unscored) {
+    return { text: "Unscored", abbr: "Unscored", color: "var(--fg-tertiary)",
+             state: "unscored", suppressed: true };
   }
-
-  // Tilted — lean direction is primary info. The OUTERMOST tiers use the SAME
-  // raw-lean boundaries as leanLabel (Far Left <= 20, Far Right >= 81) so the
-  // Sigil (feed card) and BiasSnapshot (Deep Dive) never disagree on an extreme:
-  // the old >72 Far-Right / <=29 Far-Left cutoffs labeled a raw-73-80 story
-  // "Far Right" on the card while the Deep Dive called the same story "Right"
-  // (P0-6 / card-vs-Sigil, 2026-08-18: WNBA at raw 80 read "Far Right" on 8
-  // sources). The coarse Left/Right middle (no Center-Left/Right split) is a
-  // deliberate glanceable simplification, unchanged. Label derives from RAW lean;
-  // the perceptual expansion drives only pin position + color, never the tier.
-  const dir = lean <= 20 ? "Far Left"
-    : lean <= 46 ? "Left"
-    : lean <= 80 ? "Right"
-    : "Far Right";
-
-  if (divergenceFlag === "divergent") {
-    return { text: `${dir} · Split`, color: getLeanColor(lean) };
+  const state = leanLabelState(lean, spread, sourceCount);
+  if (state === "no-clear-lean") {
+    return { text: NO_CLEAR_LEAN_LABEL, abbr: NO_CLEAR_LEAN_LABEL,
+             color: "var(--fg-tertiary)", state, suppressed: true };
   }
-  if (divergenceFlag === "consensus") {
-    return { text: `${dir} · Agreed`, color: getLeanColor(lean) };
+  if (state === "contested") {
+    return { text: CONTESTED_LABEL, abbr: CONTESTED_LABEL,
+             color: "var(--sense-high)", state, suppressed: true };
   }
-  return { text: dir, color: getLeanColor(lean) };
+  return {
+    text: leanLabel(lean),
+    abbr: leanLabelAbbr(lean),
+    color: getSigilLeanColor(lean, spread?.leanSpread ?? 0,
+                             spread?.aggregateConfidence ?? 1),
+    state,
+    suppressed: false,
+  };
 }
 
 /* ── CSS variable cache — single observer ───────────────────────────────── */
