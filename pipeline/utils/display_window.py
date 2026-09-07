@@ -92,3 +92,52 @@ def fetch_display_pool_sqlite(conn, pool: int = 100) -> list[dict]:
         "ORDER BY CAST(rank_world AS REAL) DESC LIMIT ?", (pool,)
     ).fetchall()
     return [dict(r) for r in rows]
+
+
+# ---------------------------------------------------------------------------
+# The candidate bench (Stage 2 input)
+# ---------------------------------------------------------------------------
+# is_displayable cannot select candidates: a candidate is precisely a cluster
+# that has not been summarized yet, so the summary and tier tests would reject
+# every one of them. The bench is the cheap half of the predicate (enough
+# sources to be worth the expensive half) applied to the post-rerank order.
+
+
+def is_candidate(row: dict, with_articles: Optional[set] = None) -> bool:
+    """True when a cluster is eligible for the expensive Stage 2 passes."""
+    if (row.get("source_count") or 0) < MIN_SOURCES:
+        return False
+    if with_articles and row.get("id") not in with_articles:
+        return False
+    return True
+
+
+def select_candidates(rows: Iterable[dict], limit: int,
+                      with_articles: Optional[set] = None) -> list[dict]:
+    """The first `limit` candidate rows of `rows` (already in rank order)."""
+    out: list[dict] = []
+    for row in rows:
+        if len(out) >= limit:
+            break
+        if is_candidate(row, with_articles):
+            out.append(row)
+    return out
+
+
+def fetch_cluster_membership(supabase, cluster_ids: list) -> set:
+    """Ids among `cluster_ids` that still have at least one linked article.
+
+    Returns an EMPTY set on failure so callers fail open (see filter_displayable).
+    """
+    have: set = set()
+    ids = [c for c in cluster_ids if c]
+    for i in range(0, len(ids), 100):
+        batch = ids[i:i + 100]
+        try:
+            res = supabase.table("cluster_articles").select(
+                "cluster_id").in_("cluster_id", batch).execute()
+            for r in (res.data or []):
+                have.add(r["cluster_id"])
+        except Exception:
+            return set()
+    return have

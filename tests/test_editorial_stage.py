@@ -98,6 +98,30 @@ def main() -> int:
             print("FAIL: Phase 7 same-event merge ran")
             ok = False
 
+        # 3b. Stage 2 ran as one sequence: a bench was chosen, the bench was
+        #     validated, and the ordering was lifted clear of the non-candidates.
+        m = re.search(r"Candidate bench: (\d+) of \d+ pooled", out)
+        if not m:
+            print("FAIL: no candidate bench line (step 8c.5 did not run)")
+            ok = False
+        else:
+            bench_n = int(m.group(1))
+            if bench_n < DISPLAYED:
+                print(f"FAIL: bench of {bench_n} cannot fill {DISPLAYED} slots")
+                ok = False
+            else:
+                print(f"PASS: bench of {bench_n} for {DISPLAYED} slots")
+        if not re.search(r"Editorial: \d+/\d+ candidates clean", out):
+            print("FAIL: no editorial pass-rate line (step 8d.3 did not run)")
+            ok = False
+        else:
+            print("PASS: editorial validation reported a pass rate")
+        if "Bench lifted" not in out:
+            print("FAIL: the bench was not lifted clear of the non-candidates")
+            ok = False
+        else:
+            print("PASS: bench lifted clear of the non-candidates")
+
         export = run([sys.executable, "pipeline/export_static.py"], env)
         if export.returncode != 0:
             print("FAIL: static export exited non-zero")
@@ -131,6 +155,19 @@ def main() -> int:
             ok = False
         else:
             print("PASS: every permalink is /story/<uuid>/")
+
+        # 6b. Displayed is a subset of what Stage 2 examined. This is the
+        #     invariant the whole restructure exists for: no card reaches the
+        #     page without having been summarized, critiqued and validated.
+        # The bench is not printed id by id, so assert the checkable form:
+        # every displayed card carries a summary tier, and only the Stage 2
+        # passes write one.
+        untiered = [c["title"][:40] for c in displayed if not (c.get("summary_tier") or "").strip()]
+        if untiered:
+            print(f"FAIL: {len(untiered)} displayed cards were never summarized: {untiered[:3]}")
+            ok = False
+        else:
+            print(f"PASS: all {len(displayed)} displayed cards carry a summary tier")
 
         # 7. The export carries the fields the offline replay harness needs.
         for field in ("content_type", "disaster_severity"):

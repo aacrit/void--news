@@ -2124,7 +2124,8 @@ def summarize_cluster(articles: list[dict],
                       claims_consensus=None,
                       prefer_provider: str | None = None,
                       model: str | None = None,
-                      cluster_title: str | None = None) -> dict | None:
+                      cluster_title: str | None = None,
+                      revision_notes: list[str] | None = None) -> dict | None:
     """
     Generate headline, summary, consensus, and divergence for a cluster.
 
@@ -2134,6 +2135,10 @@ def summarize_cluster(articles: list[dict],
     `cluster_title` (optional) is the cluster's stored headline; it strengthens
     the summary coherence gate's dominant-topic vote. When omitted the gate
     votes on member titles alone, so no caller is forced to pass it.
+    `revision_notes` (2026-09-07) are the findings the validators and the
+    critique pass raised against a FIRST attempt at this card. They are appended
+    to the prompt as the specific faults to fix, which is the difference between
+    a regeneration and a re-roll: the model is told what was wrong.
     Returns None if no provider is configured, the call fails, or the chosen
     provider's per-run cap is reached (each client enforces its own cap and
     returns None, so no cross-provider budget gate here).
@@ -2213,6 +2218,16 @@ def summarize_cluster(articles: list[dict],
             '"has_binding_consequences": true/false, '
             '"claims": [...], "consensus_ratio": 0.0, '
             '"consensus_summary": "..."}',
+        )
+
+    if revision_notes:
+        _notes = "\n".join(f"  - {n}" for n in revision_notes[:8])
+        prompt = prompt.replace(
+            "Return JSON only. No markdown fences.",
+            "A previous attempt at this card was rejected for the faults below. "
+            "Write it again from the same articles and fix every one of them. "
+            "Do not mention the faults, the rejection, or this instruction.\n"
+            f"{_notes}\n\n---\n\nReturn JSON only. No markdown fences.",
         )
 
     # Call the smart router directly (not the generate_json alias, which
@@ -3068,9 +3083,17 @@ def _store_cluster_summary(supabase, cid: str, result: dict, h: str,
 def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = _FEED_CANDIDATES,
                                  prefer_provider: str | None = "gemini",
                                  flash_top_n: int = 10,
-                                 force_resummarize: bool = False) -> dict:
+                                 force_resummarize: bool = False,
+                                 candidate_ids: list[str] | None = None) -> dict:
     """
     Post-rerank summarization for the final feed top N — BATCHED (2026-08-11).
+
+    `candidate_ids` (2026-09-07, Stage 2): the explicit bench chosen once at step
+    8c.5. When given, THIS is the set summarized, in the order given, and the
+    window derivation below is skipped entirely; the caller owns the predicate.
+    When None the function derives its own window as before (source_count >= 3
+    over the top limit+20 by rank), which is what the --editorial-only path and
+    the standalone re-run scripts rely on.
 
     Reads the top-N clusters by rank_{edition} (rank DESC), fetches their article
     membership, and summarizes every cache MISS on gemini-2.5-flash in GRADUATED
@@ -3115,22 +3138,39 @@ def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 
     # AFTER filtering source_count >= 3 (HomeContent fetches 100, filters, then
     # slices 50), so thin rows in the raw DB top-50 must not consume window
     # slots or the last displayed cards fall outside the summarized set.
-    fetch_limit = limit + 20
-    try:
-        rank_res = (
-            supabase.table("story_clusters")
-            .select("id, title, content_type, source_count, "
-                    "summary_article_hash, summary_tier, summary")
-            .contains("sections", [edition])
-            .order(rank_col, desc=True)
-            .limit(fetch_limit)
-            .execute()
-        )
-    except Exception as e:
-        print(f"  [warn] summarize_top50_after_rerank: top-{limit} fetch failed: {e}")
-        return metrics
-
-    rows = rank_res.data or []
+    _COLS = ("id, title, content_type, source_count, "
+             "summary_article_hash, summary_tier, summary")
+    rows: list[dict] = []
+    if candidate_ids:
+        by_id: dict[str, dict] = {}
+        for i in range(0, len(candidate_ids), 100):
+            batch = candidate_ids[i:i + 100]
+            try:
+                res = supabase.table("story_clusters").select(
+                    _COLS).in_("id", batch).execute()
+                for r in (res.data or []):
+                    by_id[r["id"]] = r
+            except Exception as e:
+                print(f"  [warn] summarize_top50_after_rerank: candidate fetch failed: {e}")
+                return metrics
+        # Caller order is rank order; preserve it (the batch schedule spends its
+        # small, high-attention batches on the lead stories).
+        rows = [by_id[cid] for cid in candidate_ids if cid in by_id]
+    else:
+        fetch_limit = limit + 20
+        try:
+            rank_res = (
+                supabase.table("story_clusters")
+                .select(_COLS)
+                .contains("sections", [edition])
+                .order(rank_col, desc=True)
+                .limit(fetch_limit)
+                .execute()
+            )
+        except Exception as e:
+            print(f"  [warn] summarize_top50_after_rerank: top-{limit} fetch failed: {e}")
+            return metrics
+        rows = rank_res.data or []
     if not rows:
         return metrics
 
@@ -3205,12 +3245,14 @@ def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 
     # displayed top-50 fits inside flash's shared 20-requests/DAY cap.
     misses: list[dict] = []   # {cid, articles, title, hash} in rank order
     window_used = 0
+    _explicit = bool(candidate_ids)
     for row in rows:
-        if window_used >= limit:
+        if not _explicit and window_used >= limit:
             break
         cid = row["id"]
         if (row.get("source_count") or 0) < 3:
             # Filtered out by the frontend — not displayed, no window slot.
+            # (An explicit bench has already applied this test at 8c.5.)
             metrics["skipped"] += 1
             continue
         window_used += 1
@@ -3319,8 +3361,12 @@ def _floor_needs_summary(summary, tier, raw_check) -> bool:
 
 def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = _FEED_CANDIDATES,
                                prefer_provider: str | None = "gemini",
-                               title_only: bool = False) -> dict:
+                               title_only: bool = False,
+                               candidate_ids: list[str] | None = None) -> dict:
     """Guarantee no DISPLAYED top-50 card is left showing a raw scraped excerpt.
+
+    `candidate_ids` (2026-09-07, Stage 2): the bench chosen at step 8c.5. When
+    given it IS the window, in the order given; the rank query below is skipped.
 
     Run this AFTER the final feed ordering (step 8d.5) so it covers every card
     the final ordering promoted into the displayed top-50. It is idempotent —
@@ -3401,30 +3447,46 @@ def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = _F
     except ImportError:
         _generate_cluster_summary = None  # type: ignore
 
-    fetch_limit = limit + 20
-    try:
-        rank_res = (
-            supabase.table("story_clusters")
-            .select("id, content_type, source_count, summary, title, summary_tier")
-            .contains("sections", [edition])
-            .order(rank_col, desc=True)
-            .limit(fetch_limit)
-            .execute()
-        )
-    except Exception as e:
-        print(f"  [warn] ensure_top50_summary_floor: top-{limit} fetch failed: {e}")
-        return metrics
-
-    rows = rank_res.data or []
+    _COLS = "id, content_type, source_count, summary, title, summary_tier"
+    rows: list[dict] = []
+    if candidate_ids:
+        by_id: dict[str, dict] = {}
+        for i in range(0, len(candidate_ids), 100):
+            try:
+                res = supabase.table("story_clusters").select(
+                    _COLS).in_("id", candidate_ids[i:i + 100]).execute()
+                for r in (res.data or []):
+                    by_id[r["id"]] = r
+            except Exception as e:
+                print(f"  [warn] ensure_top50_summary_floor: candidate fetch failed: {e}")
+                return metrics
+        rows = [by_id[cid] for cid in candidate_ids if cid in by_id]
+    else:
+        fetch_limit = limit + 20
+        try:
+            rank_res = (
+                supabase.table("story_clusters")
+                .select(_COLS)
+                .contains("sections", [edition])
+                .order(rank_col, desc=True)
+                .limit(fetch_limit)
+                .execute()
+            )
+        except Exception as e:
+            print(f"  [warn] ensure_top50_summary_floor: top-{limit} fetch failed: {e}")
+            return metrics
+        rows = rank_res.data or []
     if not rows:
         return metrics
 
     # Window accounting mirrors summarize_top50_after_rerank / the homepage:
     # only source_count>=3 rows occupy display slots; stop once `limit` covered.
+    # An explicit bench has already applied both tests.
     window_used = 0
+    _explicit = bool(candidate_ids)
     null_rows: list[dict] = []
     for row in rows:
-        if window_used >= limit:
+        if not _explicit and window_used >= limit:
             break
         if (row.get("source_count") or 0) < 3:
             continue
@@ -3957,3 +4019,156 @@ if __name__ == "__main__":
     assert not is_csam_topic("Senate passes infrastructure bill after weekend vote")
 
     print("cluster_summarizer P0 self-test: OK")
+
+
+# ---------------------------------------------------------------------------
+# The critique pass (step 8d.2, 2026-09-07)
+# ---------------------------------------------------------------------------
+# The defects that reach the front page are not prose defects. A summary about
+# the wrong story, a quote in the wrong person's mouth, a card that is an
+# advertisement, an age nobody sourced: better writing does not catch any of
+# these, and neither does a regex. A second model reading the finished card
+# against the articles does.
+#
+# It runs on flash-lite, batched, AFTER the summaries exist and BEFORE the feed
+# is ordered, and it only REPORTS. The regeneration decision belongs to the
+# caller (editorial.stage2), which pairs these findings with the deterministic
+# validators and gives a failing card exactly one rewrite.
+#
+# Rule IDs are the L-xx set defined in pipeline/editorial/standard.py. The
+# prompt below is the only place their text is spelled out for a model; the
+# standard document is the definition.
+
+_CRITIQUE_BATCH_SCHEDULE = [8, 10, 10, 10]
+_CRITIQUE_ARTICLE_CAP = 6          # grounding depth per story in a critique batch
+_CRITIQUE_LEAD_CHARS = 700         # per-article body sent for the check
+
+_CRITIQUE_SYSTEM = (
+    "You are a copy desk chief checking finished news cards against the source "
+    "articles they were written from. You do not rewrite. You report only what "
+    "you can prove from the articles given. If a card is sound you say so. "
+    "Return JSON only."
+)
+
+_CRITIQUE_RULES = [
+    ("L-01", "The first sentence states the event itself, not a reaction to it, "
+             "not scene-setting, not a quote."),
+    ("L-02", "Every quotation is verbatim from an article, pronouns and all. "
+             "Report any quoted text that does not appear in the articles, or "
+             "appears there with different words."),
+    ("L-03", "The card describes ONE event. Report a card that fuses two "
+             "unrelated events."),
+    ("L-04", "The card is news. Report opinion presented as reporting, satire, "
+             "a product listing, a horoscope, a live ticker or promotional copy."),
+    ("L-05", "No internal contradiction, and every age, title, number and date "
+             "in the summary appears in the articles."),
+    ("L-06", "When the card criticises a named living person, it carries that "
+             "person's response, or states that none was given."),
+    ("L-07", "A place named in the headline is not contradicted or left "
+             "unexplained by the summary."),
+]
+
+
+def _build_critique_prompt(records: list[dict]) -> str:
+    rules = "\n".join(f"{rid}: {text}" for rid, text in _CRITIQUE_RULES)
+    blocks = []
+    for i, rec in enumerate(records, 1):
+        arts = _select_articles_for_summary(
+            rec.get("articles") or [], max_articles=_CRITIQUE_ARTICLE_CAP)
+        src_lines = []
+        for a in arts:
+            body = (a.get("full_text") or a.get("summary") or "").strip()
+            src_lines.append(
+                f"  - [{a.get('source_name') or 'source'}] "
+                f"{(a.get('title') or '').strip()}\n"
+                f"    {body[:_CRITIQUE_LEAD_CHARS]}")
+        blocks.append(
+            f"STORY {i}\n"
+            f"HEADLINE: {(rec.get('title') or '').strip()}\n"
+            f"SUMMARY: {(rec.get('summary') or '').strip()}\n"
+            f"SOURCE ARTICLES:\n" + "\n".join(src_lines))
+    return (
+        f"Check {len(records)} finished news cards against their source articles.\n\n"
+        f"RULES\n{rules}\n\n"
+        "For each story report every rule it breaks. Report a rule ONLY when the "
+        "source articles prove the break; when in doubt, do not report it. Quote "
+        "the offending words so an editor can find them.\n\n"
+        f"{chr(10).join(blocks)}\n\n"
+        "Return JSON with this exact shape and nothing else:\n"
+        '{"stories": [{"story": 1, "findings": [{"rule": "L-01", '
+        '"detail": "the offending words"}]}]}\n'
+        "A sound card returns an empty findings list."
+    )
+
+
+def _parse_critique(result: dict, n: int) -> dict[int, list[tuple[str, str]]]:
+    """{story index (0-based) -> [(rule id, detail)]}. Tolerant of shape drift."""
+    out: dict[int, list[tuple[str, str]]] = {}
+    if not isinstance(result, dict):
+        return out
+    stories = result.get("stories")
+    if not isinstance(stories, list):
+        return out
+    valid = {rid for rid, _ in _CRITIQUE_RULES}
+    for i, entry in enumerate(stories):
+        if not isinstance(entry, dict):
+            continue
+        try:
+            idx = int(entry.get("story", i + 1)) - 1
+        except (TypeError, ValueError):
+            idx = i
+        if not 0 <= idx < n:
+            continue
+        found: list[tuple[str, str]] = []
+        for f in (entry.get("findings") or []):
+            if not isinstance(f, dict):
+                continue
+            rule = str(f.get("rule") or "").strip().upper()
+            if rule not in valid:
+                continue
+            found.append((rule, str(f.get("detail") or "").strip()[:200]))
+        if found:
+            out[idx] = found
+    return out
+
+
+def critique_cards(records: list[dict],
+                   prefer_provider: str | None = "gemini") -> dict[str, list[tuple[str, str]]]:
+    """Read every finished card against its articles. Returns cid -> findings.
+
+    `records`: [{cid, title, summary, articles}]. Batched on flash-lite (the
+    critique is a checking task, not a writing one, and flash-lite has the RPD
+    headroom that flash's 20-requests-a-day does not). A failed request costs
+    that batch its findings and nothing else: an unread card is treated as
+    clean, never as failed, because a checker that cannot run must not start
+    dropping stories.
+    """
+    findings: dict[str, list[tuple[str, str]]] = {}
+    records = [r for r in records if (r.get("summary") or "").strip()]
+    if not records or not is_available():
+        return findings
+    tpm_window: list[tuple[float, int]] = []
+    for chunk in _schedule_chunks(records, _CRITIQUE_BATCH_SCHEDULE):
+        if calls_remaining() <= 0:
+            print("  [critique] per-run LLM budget spent; remaining cards unread")
+            break
+        # CSAM clusters never enter an LLM prompt, here or anywhere.
+        chunk = [r for r in chunk
+                 if not _cluster_is_csam(r.get("title"), r.get("articles") or [])]
+        if not chunk:
+            continue
+        prompt = _build_critique_prompt(chunk)
+        _tpm_wait(tpm_window, _estimate_tokens(prompt))
+        result, _label = _smart_generate_json(
+            prompt, system_instruction=_CRITIQUE_SYSTEM,
+            max_output_tokens=min(16000, 1200 * len(chunk)),
+            model=None, prefer_provider=prefer_provider,
+        )
+        if not result:
+            print(f"  [critique] batch of {len(chunk)} returned nothing; "
+                  f"treating those cards as unread")
+            continue
+        parsed = _parse_critique(result, len(chunk))
+        for idx, found in parsed.items():
+            findings[chunk[idx]["cid"]] = found
+    return findings
