@@ -127,9 +127,30 @@ def _norm(stem: str) -> str:
 
 
 def specific_stems(title: str) -> set[str]:
-    """Title stems that could identify a story, demonyms normalized."""
-    return {_norm(s) for s in title_word_stems(title)
-            if _norm(s) not in GENERIC_STEMS and len(s) > 2}
+    """Title stems that could identify a story, demonyms normalized.
+
+    Hyphenated tokens are NOT split here. The merge gate's error preference is
+    precision: splitting "Nepal-Tibet Flood" into nepal and flood is enough to
+    merge a Singapore xenophobia story into the Nepal rescue. The coherence
+    pass, whose error preference is the opposite, uses topic_stems instead.
+    """
+    return {_norm(x) for x in title_word_stems(title)
+            if _norm(x) not in GENERIC_STEMS and len(x) > 2}
+
+
+def topic_stems(title: str) -> set[str]:
+    """Like specific_stems, but a hyphenated token also contributes its parts.
+
+    For the coherence pass, where a false flag deletes real coverage: without
+    this a Bloomberg headline almost word for word the cluster's own title
+    ("Germany's Far Right Heads for Historic State Win" against a cluster
+    titled "Germany's Far-Right AfD Poised for Historic State Election
+    Victory") reads as off topic on a hyphen.
+    """
+    raw = set(title_word_stems(title))
+    for part in re.split(r"[-\u2010-\u2015]", (title or "").lower()):
+        raw |= title_word_stems(part)
+    return {_norm(x) for x in raw if _norm(x) not in GENERIC_STEMS and len(x) > 2}
 
 
 _PROPER = re.compile(r"\b[A-Z][a-zA-Z'’-]{2,}")
@@ -361,4 +382,177 @@ def merge_candidates(supabase, candidate_ids: list[str],
         return metrics
     except Exception as e:
         log(f"  [warn][merge] pass skipped ({type(e).__name__}: {e})")
+        return metrics
+
+
+# ---------------------------------------------------------------------------
+# Step 8c.7: candidate coherence
+# ---------------------------------------------------------------------------
+# Merging does not fix a contaminated cluster; it makes a bigger one. On
+# 2026-09-06 the feed carried "Russia Loads First Crude Oil on Arctic Tanker"
+# whose 6 members were 2 stories about the tanker and 4 about a NATO exercise,
+# EU energy policy, an Arctic power struggle and sea-ice observation, joined by
+# the single word "Arctic"; "Trump Threatens Iran's Pickaxe Mountain" carried a
+# member titled "Morning recap"; and a local paper's whole Saturday output rode
+# in on one BYU football card.
+#
+# The measure is the cluster's OWN modal vocabulary, not its title. Comparing
+# each member to the title reads a differently-worded report of the same event
+# as off topic: four members of the Putin ceasefire cluster say "Putin orders
+# three-day halt to strikes on Kiev" where the title says "Suspends Kyiv
+# Strikes for 72 Hours", and a title-based rule flags all four. Modal
+# vocabulary (stems in at least MODAL_MIN of member headlines, minus the broad
+# geographic terms that join anything) keeps them and still catches the tanker.
+#
+# topic_coherence is not used and never should be: it scores any shared word as
+# on topic and reported 1.00 on the Assam cluster at a true precision of 0.25.
+
+MODAL_MIN = 0.30          # a stem is modal at this share of member headlines
+MODAL_MIN_STEMS = 3       # below this the cluster has no vocabulary to judge by.
+                          # Three, not two: the 25-member Ukraine wire bag
+                          # spanning Mykolaiv, Kherson, Dnipropetrovsk and
+                          # Donetsk has a modal vocabulary of exactly {forces,
+                          # region}, and trimming 8 of its members would pick an
+                          # arbitrary half of a cluster that has no core at all.
+                          # That is a clustering defect; this pass abstains.
+
+# Regions and nationalities broad enough to join unrelated events. Kept small
+# and geographic ON PURPOSE: an earlier draft also listed the topic words
+# (strike, election, price, politics) and that flagged the Putin ceasefire
+# reports, the AfD election coverage and two on-topic fuel-price stories.
+BROAD_GEOGRAPHY = frozenset("""
+arctic africa asia europ american usa uk british britain china chines
+russia russian iran iranian israel israeli india indian pakistan japan japanes
+korea german germani franc french spain spanish itali ukrain ukrainian
+nato eu turkey turkish brazil mexico canada australia middl east west
+""".split())
+
+
+def modal_vocabulary(member_titles: list[str]) -> set[str]:
+    """Stems carried by at least MODAL_MIN of the member headlines."""
+    if not member_titles:
+        return set()
+    counts: dict[str, int] = {}
+    for t in member_titles:
+        for s in topic_stems(t):
+            counts[s] = counts.get(s, 0) + 1
+    n = len(member_titles)
+    return {s for s, k in counts.items()
+            if k / n >= MODAL_MIN and s not in BROAD_GEOGRAPHY}
+
+
+def incoherent_members(member_titles: list[str]) -> tuple[list[int], set[str]]:
+    """Indices of members sharing NO modal stem, plus the modal vocabulary.
+
+    Returns ([], vocabulary) when the cluster has fewer than MODAL_MIN_STEMS
+    modal stems: with no vocabulary of its own there is nothing to be off topic
+    against, and guessing there would delete real coverage.
+    """
+    vocab = modal_vocabulary(member_titles)
+    if len(vocab) < MODAL_MIN_STEMS:
+        return [], vocab
+    return [i for i, t in enumerate(member_titles)
+            if not (topic_stems(t) & vocab)], vocab
+
+
+MIN_MEMBERS_TO_TRIM = 6   # below this one removal is a large share of a small
+                          # cluster, and the borderline calls (a wire stub with
+                          # a generic headline) cost more than they fix.
+
+
+def split_incoherent_candidates(supabase, candidate_ids: list[str],
+                                log_fn: Optional[Callable[[str], None]] = None) -> dict:
+    """Step 8c.7: remove members that share no vocabulary with their cluster.
+
+    A trimmed cluster has its source_count recomputed from the DISTINCT sources
+    that remain, its bias re-aggregated over the cleaned membership, and its
+    summary cache INVALIDATED, so step 8d rewrites the headline and summary from
+    what the cluster actually contains rather than serving yesterday's text
+    about a membership that no longer exists.
+
+    A removed article is only unlinked, never deleted. It stays in the 36-hour
+    window and is re-clustered on the next run.
+
+    Reports, but does not trim, when the cluster is small or when more than half
+    its members are off vocabulary: at that point there is no core to keep and
+    trimming would choose an arbitrary half.
+    """
+    log = log_fn or (lambda m: print(m))
+    metrics = {"trimmed": 0, "removed": 0, "reported": 0, "abstained": 0}
+    if not candidate_ids:
+        return metrics
+    try:
+        links: dict[str, list[str]] = {}
+        for i in range(0, len(candidate_ids), 100):
+            res = supabase.table("cluster_articles").select(
+                "cluster_id,article_id").in_(
+                "cluster_id", candidate_ids[i:i + 100]).execute()
+            for r in (res.data or []):
+                links.setdefault(r["cluster_id"], []).append(r["article_id"])
+        all_ids = sorted({a for v in links.values() for a in v})
+        arts: dict[str, dict] = {}
+        for i in range(0, len(all_ids), 200):
+            res = supabase.table("articles").select("id,title,source_id").in_(
+                "id", all_ids[i:i + 200]).execute()
+            for a in (res.data or []):
+                arts[a["id"]] = a
+        titles_by_cluster: dict[str, dict] = {}
+        for i in range(0, len(candidate_ids), 100):
+            res = supabase.table("story_clusters").select("id,title").in_(
+                "id", candidate_ids[i:i + 100]).execute()
+            for r in (res.data or []):
+                titles_by_cluster[r["id"]] = r.get("title") or ""
+
+        for cid in candidate_ids:
+            aids = [a for a in links.get(cid, []) if a in arts]
+            if len(aids) < 3:
+                continue
+            member_titles = [arts[a].get("title") or "" for a in aids]
+            idx, vocab = incoherent_members(member_titles)
+            if len(vocab) < MODAL_MIN_STEMS:
+                metrics["abstained"] += 1
+                continue
+            if not idx:
+                continue
+            head = titles_by_cluster.get(cid, "")[:44]
+            if len(aids) < MIN_MEMBERS_TO_TRIM or len(idx) * 2 > len(aids):
+                metrics["reported"] += 1
+                log(f"  [coherence-report] \"{head}\": {len(idx)} of {len(aids)} "
+                    f"members share none of {sorted(vocab)[:4]}, not trimmed "
+                    f"({'too small' if len(aids) < MIN_MEMBERS_TO_TRIM else 'no core'})")
+                continue
+
+            drop = [aids[i] for i in idx]
+            try:
+                for aid in drop:
+                    supabase.table("cluster_articles").delete().eq(
+                        "cluster_id", cid).eq("article_id", aid).execute()
+                keep = [a for a in aids if a not in set(drop)]
+                srcs = {arts[a].get("source_id") for a in keep} - {None, ""}
+                supabase.table("story_clusters").update({
+                    "source_count": len(srcs),
+                    # The stored summary was written from the contaminated
+                    # membership. Clearing the cache key and the tier makes 8d
+                    # treat this as a miss and rewrite the card.
+                    "summary_tier": None,
+                    "summary_article_hash": None,
+                }).eq("id", cid).execute()
+            except Exception as e:
+                log(f"  [warn][coherence] write failed for {cid[:8]}: {e}")
+                continue
+            metrics["trimmed"] += 1
+            metrics["removed"] += len(drop)
+            for i in idx:
+                log(f"  [coherence] \"{head}\" -> removed "
+                    f"\"{member_titles[i][:58]}\"")
+            log(f"  [coherence] \"{head}\": {len(keep)} members, "
+                f"{len(srcs)} sources, summary invalidated")
+            try:
+                from main import _enrich_cluster_fallback
+                _enrich_cluster_fallback(cid, skip_text=False)
+            except Exception as e:
+                log(f"  [warn][coherence] bias re-aggregation failed for {cid[:8]}: {e}")
+        return metrics
+    except Exception as e:
+        log(f"  [warn][coherence] pass skipped ({type(e).__name__}: {e})")
         return metrics

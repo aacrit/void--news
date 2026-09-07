@@ -373,11 +373,31 @@ def run_stage2(supabase, sources, *,
     metrics: dict = {"summary": {}, "editorial": {}, "printed": 0}
     candidate_ids = select_bench(supabase)
 
-    # 8c.6: same-event merge, over the bench. Runs BEFORE summarization so a
-    # merged story is written once, from the union of its coverage, rather than
-    # twice from two halves of it.
+    # 8c.6: candidate coherence. It runs BEFORE the merge, not after. Run the
+    # other way round, the merge widens a cluster on purpose and the coherence
+    # pass then judges the widened cluster against a modal vocabulary the
+    # smaller half cannot reach: merging the Hegseth purge cluster into the
+    # Pentagon polygraph cluster took it to 19 sources and the coherence pass
+    # immediately removed 6 of the 8 it had just absorbed. Clean each cluster on
+    # its own terms first, then decide which clean clusters are one event.
     if candidate_ids:
-        print("\n[8c.6] Same-event merge (over the candidate bench)...")
+        print("\n[8c.6] Candidate coherence (members that share no vocabulary)...")
+        try:
+            from editorial.same_event import split_incoherent_candidates
+            cm = split_incoherent_candidates(supabase, candidate_ids)
+            metrics["coherence"] = cm
+            print(f"  Trimmed {cm['trimmed']} cluster(s), {cm['removed']} members "
+                  f"removed; {cm['reported']} reported not trimmed; "
+                  f"{cm['abstained']} had no vocabulary to judge by")
+        except Exception as e:
+            print(f"  [warn] Coherence pass failed (bench unchanged): {e}")
+
+    # 8c.7: same-event merge, over the cleaned bench. Runs BEFORE summarization
+    # so a merged story is written once, from the union of its coverage, rather
+    # than twice from two halves of it. A survivor is not re-examined for
+    # coherence on this run: the merge widened it deliberately.
+    if candidate_ids:
+        print("\n[8c.7] Same-event merge (over the candidate bench)...")
         try:
             from editorial.same_event import merge_candidates
             mm = merge_candidates(supabase, candidate_ids)
