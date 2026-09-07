@@ -36,18 +36,26 @@ _FIXTURES_PATH = Path(__file__).parent / "briefing" / "test_clusters.json"
 
 
 def _fetch_clusters_db(editions: list[str]) -> list[dict]:
-    """Fetch current clusters from live DB."""
+    """The published feed, as the daily run's step 7d reads it.
+
+    This used to order by headline_rank and take 25, which is neither the
+    ordering nor the size of the page: headline_rank is written UNGATED, so a
+    story the feed guards demoted still led the refreshed brief. Same ordering,
+    same window as main.generate_and_store_briefs.
+    """
     from utils.supabase_client import supabase
+    from utils.feed_config import DISPLAYED
 
     all_clusters = []
     seen_ids = set()
     for edition in editions:
         res = supabase.table("story_clusters").select(
             "id,title,summary,category,section,sections,source_count,"
-            "headline_rank,consensus_points,divergence_points,divergence_score"
+            "rank_world,headline_rank,consensus_points,divergence_points,"
+            "divergence_score"
         ).contains("sections", [edition]).order(
-            "headline_rank", desc=True
-        ).limit(25).execute()
+            "rank_world", desc=True
+        ).limit(DISPLAYED).execute()
 
         if res.data:
             for c in res.data:

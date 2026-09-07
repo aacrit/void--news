@@ -31,7 +31,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from fetchers.rss_fetcher import fetch_from_rss
 from fetchers.web_scraper import scrape_article
-from utils.feed_config import CANDIDATES
+from utils.feed_config import CANDIDATES, DISPLAYED
 from utils.supabase_client import (
     create_pipeline_run,
     insert_article,
@@ -1484,6 +1484,227 @@ def run_retention_and_ghost_sweep() -> None:
 
 
 
+def generate_and_store_briefs(clusters: list[dict], source_map: dict,
+                              run_id: str | None) -> dict[str, dict]:
+    """Step 7d, moved AFTER Stage 2 (2026-09-07).
+
+    The brief used to be written from the pre-insert, pre-summarization cluster
+    list: it described a running order the reader never saw, with headlines and
+    summaries that were about to be rewritten, and it could not link a single
+    story because none of them had a database id yet (top_cluster_ids shipped
+    empty every run, patched afterwards by a backfill that is now deleted).
+
+    `clusters` is the published feed, read back from story_clusters in
+    rank_world order, so the brief describes exactly what is on the page.
+    Returns {edition: brief}.
+    """
+    # ── Step 7d: Generate Daily Brief (TL;DR + audio broadcast) ──
+    brief_results: dict[str, dict] = {}
+    if BRIEFING_AVAILABLE:
+        print("\n[7d] Generating Daily Briefs...")
+        start_7d = time.time()
+        try:
+            brief_results = generate_daily_briefs(
+                clusters, source_map,
+                edition_sections=ACTIVE_EDITIONS,
+            )
+
+            for edition, brief in brief_results.items():
+                brief_row = {
+                    "edition": edition,
+                    "pipeline_run_id": run_id,
+                    "tldr_headline": brief.get("tldr_headline"),
+                    "tldr_text": brief["tldr_text"],
+                    "opinion_text": brief.get("opinion_text"),
+                    "opinion_headline": brief.get("opinion_headline"),
+                    "opinion_lean": brief.get("opinion_lean"),
+                    "opinion_cluster_id": brief.get("opinion_cluster_id"),
+                    "opinion_audio_script": brief.get("opinion_audio_script"),
+                    "audio_script": brief.get("audio_script"),
+                    "top_cluster_ids": brief.get("top_cluster_ids", []),
+                    "generator": brief.get("generator"),
+                }
+
+                # Fallback: if this run produced an empty/placeholder brief,
+                # carry forward the previous brief so the frontend always has
+                # real content. "No stories available" is the placeholder text.
+                is_empty_brief = (
+                    not brief.get("audio_script")
+                    and brief.get("tldr_text", "").startswith("No stories")
+                )
+                if is_empty_brief:
+                    try:
+                        # tldr_headline NOT NULL mirrors the generator's
+                        # _fetch_last_successful_brief filter: without it a
+                        # prior stub row ("Daily brief unavailable...",
+                        # headline null) gets resurrected as today's brief.
+                        prev = supabase.table("daily_briefs").select(
+                            "tldr_headline,tldr_text,opinion_text,opinion_headline,opinion_lean,opinion_cluster_id,"
+                            "audio_script,audio_url,audio_duration_seconds,"
+                            "audio_voice_label,audio_voice,audio_file_size,"
+                            "opinion_audio_script,top_cluster_ids,opinion_start_seconds"
+                        ).eq("edition", edition).not_.is_(
+                            "tldr_headline", "null"
+                        ).order(
+                            "created_at", desc=True
+                        ).limit(1).execute()
+                        if prev.data and prev.data[0].get("tldr_text"):
+                            p = prev.data[0]
+                            brief_row["tldr_headline"] = p.get("tldr_headline")
+                            brief_row["tldr_text"] = p["tldr_text"]
+                            brief_row["opinion_text"] = p.get("opinion_text")
+                            brief_row["opinion_headline"] = p.get("opinion_headline")
+                            brief_row["opinion_lean"] = p.get("opinion_lean")
+                            brief_row["opinion_cluster_id"] = p.get("opinion_cluster_id")
+                            brief_row["audio_script"] = p.get("audio_script")
+                            brief_row["audio_url"] = p.get("audio_url")
+                            brief_row["audio_duration_seconds"] = p.get("audio_duration_seconds")
+                            brief_row["audio_voice_label"] = p.get("audio_voice_label")
+                            brief_row["audio_voice"] = p.get("audio_voice")
+                            brief_row["audio_file_size"] = p.get("audio_file_size")
+                            brief_row["opinion_start_seconds"] = p.get("opinion_start_seconds")
+                            brief_row["top_cluster_ids"] = p.get("top_cluster_ids", [])
+                            print(f"  [brief:{edition}] Empty brief — carried forward previous brief")
+                    except Exception as e:
+                        print(f"  [warn] Could not fetch previous brief for {edition}: {e}")
+                    # Skip audio generation — we're using the previous brief's audio
+                else:
+                    # Generate two-host audio via Gemini Flash TTS — every run
+                    if brief.get("audio_script"):
+                        voices = get_voices_for_today(edition)
+                        audio_result = produce_audio(
+                            brief["audio_script"], voices, edition,
+                            opinion_audio_script=brief.get("opinion_audio_script"),
+                            opinion_lean=brief.get("opinion_lean"),
+                            # Two voices: A anchors, B takes alternate
+                            # stories and also reads the opinion. The
+                            # script alternates per STORY (not per line,
+                            # which is what read as jittery).
+                            news_single_voice=False,
+                            news_voice_b_from_opinion=True,
+                        )
+                        if audio_result:
+                            brief_row["audio_url"] = audio_result["audio_url"]
+                            brief_row["audio_duration_seconds"] = audio_result["duration_seconds"]
+                            brief_row["audio_file_size"] = audio_result["file_size"]
+                            brief_row["opinion_start_seconds"] = audio_result.get("opinion_start_seconds")
+                            has_opinion = bool(brief.get("opinion_audio_script"))
+                            brief_row["audio_voice"] = f"{voices['host_a']['id']}+{voices['host_b']['id']}" + (
+                                f"+{voices['opinion']['id']}" if has_opinion else ""
+                            )
+                            brief_row["audio_voice_label"] = "Three voices" if has_opinion else "Two voices"
+                        else:
+                            # TTS failed — carry forward previous audio so
+                            # frontend always has something to play.
+                            try:
+                                prev = supabase.table("daily_briefs").select(
+                                    "audio_url,audio_duration_seconds,audio_voice_label,audio_voice,audio_file_size,opinion_start_seconds"
+                                ).eq("edition", edition).order(
+                                    "created_at", desc=True
+                                ).limit(1).execute()
+                                if prev.data and prev.data[0].get("audio_url"):
+                                    p = prev.data[0]
+                                    brief_row["audio_url"] = p["audio_url"]
+                                    brief_row["audio_duration_seconds"] = p.get("audio_duration_seconds")
+                                    brief_row["audio_voice_label"] = p.get("audio_voice_label")
+                                    brief_row["audio_voice"] = p.get("audio_voice")
+                                    brief_row["audio_file_size"] = p.get("audio_file_size")
+                                    brief_row["opinion_start_seconds"] = p.get("opinion_start_seconds")
+                                    print(f"  [brief:{edition}] TTS failed — carried forward previous audio")
+                            except Exception as e:
+                                print(f"  [warn] Could not fetch previous audio for {edition}: {e}")
+                    else:
+                        # No audio script (rule-based fallback) — carry forward
+                        # previous audio so frontend always has audio available.
+                        try:
+                            prev = supabase.table("daily_briefs").select(
+                                "audio_url,audio_duration_seconds,audio_voice_label,audio_script,audio_voice,audio_file_size,opinion_start_seconds"
+                            ).eq("edition", edition).order(
+                                "created_at", desc=True
+                            ).limit(1).execute()
+                            if prev.data and prev.data[0].get("audio_url"):
+                                p = prev.data[0]
+                                brief_row["audio_url"] = p["audio_url"]
+                                brief_row["audio_duration_seconds"] = p.get("audio_duration_seconds")
+                                brief_row["audio_voice_label"] = p.get("audio_voice_label")
+                                brief_row["audio_voice"] = p.get("audio_voice")
+                                brief_row["audio_file_size"] = p.get("audio_file_size")
+                                brief_row["opinion_start_seconds"] = p.get("opinion_start_seconds")
+                                if not brief_row.get("audio_script"):
+                                    brief_row["audio_script"] = p.get("audio_script")
+                                print(f"  [brief:{edition}] No audio script — carried forward previous audio")
+                        except Exception as e:
+                            print(f"  [warn] Could not fetch previous audio for {edition}: {e}")
+
+                try:
+                    supabase.table("daily_briefs").upsert(
+                        brief_row, on_conflict="edition,pipeline_run_id"
+                    ).execute()
+                except Exception as e:
+                    # If the error is a missing column (e.g. opinion_start_seconds
+                    # before migration 028), strip the unknown column and retry.
+                    err_msg = str(e)
+                    if "PGRST204" in err_msg or "does not exist" in err_msg.lower() or "schema cache" in err_msg.lower():
+                        # Extract column name from error if possible, or strip known optional cols
+                        for optional_col in ("opinion_start_seconds",):
+                            brief_row.pop(optional_col, None)
+                        try:
+                            supabase.table("daily_briefs").upsert(
+                                brief_row, on_conflict="edition,pipeline_run_id"
+                            ).execute()
+                            print(f"  [brief:{edition}] Stored (stripped missing column)")
+                        except Exception as e2:
+                            print(f"  [warn] Failed to store brief for {edition} (retry): {e2}")
+                    else:
+                        print(f"  [warn] Failed to store brief for {edition}: {e}")
+
+            elapsed_7d = time.time() - start_7d
+            print(f"  Daily briefs: {len(brief_results)} editions (with audio, {elapsed_7d:.1f}s)")
+
+            # Generate podcast RSS feeds (only when audio is enabled)
+            if not os.environ.get("DISABLE_AUDIO", "").strip() in ("1", "true", "yes"):
+                try:
+                    from briefing.podcast_feed_generator import generate_podcast_feeds
+                    feed_results = generate_podcast_feeds(ACTIVE_EDITIONS)
+                    if feed_results:
+                        print(f"  Podcast feeds: {', '.join(feed_results.keys())}")
+                except Exception as e:
+                    print(f"  [warn] Podcast feed generation failed: {e}")
+        except Exception as e:
+            print(f"  [warn] Daily brief generation failed: {e}")
+            # P0 fix (UAT 2026-05-13): on total generator failure we MUST
+            # still write a stub row per edition so the homepage doesn't
+            # serve yesterday's audio indefinitely. tldr_text is a safe
+            # placeholder; frontend already handles null audio_url.
+            for edition in ACTIVE_EDITIONS:
+                try:
+                    stub_row = {
+                        "edition": edition,
+                        "pipeline_run_id": run_id,
+                        "tldr_headline": None,
+                        "tldr_text": "Daily brief unavailable — see top stories.",
+                        "opinion_text": None,
+                        "opinion_headline": None,
+                        "opinion_lean": None,
+                        "opinion_cluster_id": None,
+                        "opinion_audio_script": None,
+                        "audio_script": None,
+                        "audio_url": None,
+                        "top_cluster_ids": [],
+                        "generator": f"stub-on-failure:{type(e).__name__}",
+                    }
+                    supabase.table("daily_briefs").upsert(
+                        stub_row, on_conflict="edition,pipeline_run_id"
+                    ).execute()
+                    print(f"  [brief:{edition}] >>> WROTE STUB ROW (generator crash) <<<")
+                except Exception as e2:
+                    print(f"  [warn] Failed to write stub brief for {edition}: {e2}")
+    else:
+        print("\n[7d] Skipping daily briefs (modules not installed)")
+
+    return brief_results
+
+
 def run_editorial_stage(force_resummarize: bool = False) -> None:
     """Stage B "Editorial" standalone (2026-08-11 pipeline split, Phase 1).
 
@@ -2923,209 +3144,6 @@ def main():
                 f"{c.get('source_count', 0):2}src {title}"
             )
 
-        # ── Step 7d: Generate Daily Brief (TL;DR + audio broadcast) ──
-        brief_results: dict[str, dict] = {}
-        if BRIEFING_AVAILABLE:
-            print("\n[7d] Generating Daily Briefs...")
-            start_7d = time.time()
-            try:
-                brief_results = generate_daily_briefs(
-                    clusters, source_map,
-                    edition_sections=ACTIVE_EDITIONS,
-                )
-
-                for edition, brief in brief_results.items():
-                    brief_row = {
-                        "edition": edition,
-                        "pipeline_run_id": run_id,
-                        "tldr_headline": brief.get("tldr_headline"),
-                        "tldr_text": brief["tldr_text"],
-                        "opinion_text": brief.get("opinion_text"),
-                        "opinion_headline": brief.get("opinion_headline"),
-                        "opinion_lean": brief.get("opinion_lean"),
-                        "opinion_cluster_id": brief.get("opinion_cluster_id"),
-                        "opinion_audio_script": brief.get("opinion_audio_script"),
-                        "audio_script": brief.get("audio_script"),
-                        "top_cluster_ids": brief.get("top_cluster_ids", []),
-                        "generator": brief.get("generator"),
-                    }
-
-                    # Fallback: if this run produced an empty/placeholder brief,
-                    # carry forward the previous brief so the frontend always has
-                    # real content. "No stories available" is the placeholder text.
-                    is_empty_brief = (
-                        not brief.get("audio_script")
-                        and brief.get("tldr_text", "").startswith("No stories")
-                    )
-                    if is_empty_brief:
-                        try:
-                            # tldr_headline NOT NULL mirrors the generator's
-                            # _fetch_last_successful_brief filter: without it a
-                            # prior stub row ("Daily brief unavailable...",
-                            # headline null) gets resurrected as today's brief.
-                            prev = supabase.table("daily_briefs").select(
-                                "tldr_headline,tldr_text,opinion_text,opinion_headline,opinion_lean,opinion_cluster_id,"
-                                "audio_script,audio_url,audio_duration_seconds,"
-                                "audio_voice_label,audio_voice,audio_file_size,"
-                                "opinion_audio_script,top_cluster_ids,opinion_start_seconds"
-                            ).eq("edition", edition).not_.is_(
-                                "tldr_headline", "null"
-                            ).order(
-                                "created_at", desc=True
-                            ).limit(1).execute()
-                            if prev.data and prev.data[0].get("tldr_text"):
-                                p = prev.data[0]
-                                brief_row["tldr_headline"] = p.get("tldr_headline")
-                                brief_row["tldr_text"] = p["tldr_text"]
-                                brief_row["opinion_text"] = p.get("opinion_text")
-                                brief_row["opinion_headline"] = p.get("opinion_headline")
-                                brief_row["opinion_lean"] = p.get("opinion_lean")
-                                brief_row["opinion_cluster_id"] = p.get("opinion_cluster_id")
-                                brief_row["audio_script"] = p.get("audio_script")
-                                brief_row["audio_url"] = p.get("audio_url")
-                                brief_row["audio_duration_seconds"] = p.get("audio_duration_seconds")
-                                brief_row["audio_voice_label"] = p.get("audio_voice_label")
-                                brief_row["audio_voice"] = p.get("audio_voice")
-                                brief_row["audio_file_size"] = p.get("audio_file_size")
-                                brief_row["opinion_start_seconds"] = p.get("opinion_start_seconds")
-                                brief_row["top_cluster_ids"] = p.get("top_cluster_ids", [])
-                                print(f"  [brief:{edition}] Empty brief — carried forward previous brief")
-                        except Exception as e:
-                            print(f"  [warn] Could not fetch previous brief for {edition}: {e}")
-                        # Skip audio generation — we're using the previous brief's audio
-                    else:
-                        # Generate two-host audio via Gemini Flash TTS — every run
-                        if brief.get("audio_script"):
-                            voices = get_voices_for_today(edition)
-                            audio_result = produce_audio(
-                                brief["audio_script"], voices, edition,
-                                opinion_audio_script=brief.get("opinion_audio_script"),
-                                opinion_lean=brief.get("opinion_lean"),
-                                # Two voices: A anchors, B takes alternate
-                                # stories and also reads the opinion. The
-                                # script alternates per STORY (not per line,
-                                # which is what read as jittery).
-                                news_single_voice=False,
-                                news_voice_b_from_opinion=True,
-                            )
-                            if audio_result:
-                                brief_row["audio_url"] = audio_result["audio_url"]
-                                brief_row["audio_duration_seconds"] = audio_result["duration_seconds"]
-                                brief_row["audio_file_size"] = audio_result["file_size"]
-                                brief_row["opinion_start_seconds"] = audio_result.get("opinion_start_seconds")
-                                has_opinion = bool(brief.get("opinion_audio_script"))
-                                brief_row["audio_voice"] = f"{voices['host_a']['id']}+{voices['host_b']['id']}" + (
-                                    f"+{voices['opinion']['id']}" if has_opinion else ""
-                                )
-                                brief_row["audio_voice_label"] = "Three voices" if has_opinion else "Two voices"
-                            else:
-                                # TTS failed — carry forward previous audio so
-                                # frontend always has something to play.
-                                try:
-                                    prev = supabase.table("daily_briefs").select(
-                                        "audio_url,audio_duration_seconds,audio_voice_label,audio_voice,audio_file_size,opinion_start_seconds"
-                                    ).eq("edition", edition).order(
-                                        "created_at", desc=True
-                                    ).limit(1).execute()
-                                    if prev.data and prev.data[0].get("audio_url"):
-                                        p = prev.data[0]
-                                        brief_row["audio_url"] = p["audio_url"]
-                                        brief_row["audio_duration_seconds"] = p.get("audio_duration_seconds")
-                                        brief_row["audio_voice_label"] = p.get("audio_voice_label")
-                                        brief_row["audio_voice"] = p.get("audio_voice")
-                                        brief_row["audio_file_size"] = p.get("audio_file_size")
-                                        brief_row["opinion_start_seconds"] = p.get("opinion_start_seconds")
-                                        print(f"  [brief:{edition}] TTS failed — carried forward previous audio")
-                                except Exception as e:
-                                    print(f"  [warn] Could not fetch previous audio for {edition}: {e}")
-                        else:
-                            # No audio script (rule-based fallback) — carry forward
-                            # previous audio so frontend always has audio available.
-                            try:
-                                prev = supabase.table("daily_briefs").select(
-                                    "audio_url,audio_duration_seconds,audio_voice_label,audio_script,audio_voice,audio_file_size,opinion_start_seconds"
-                                ).eq("edition", edition).order(
-                                    "created_at", desc=True
-                                ).limit(1).execute()
-                                if prev.data and prev.data[0].get("audio_url"):
-                                    p = prev.data[0]
-                                    brief_row["audio_url"] = p["audio_url"]
-                                    brief_row["audio_duration_seconds"] = p.get("audio_duration_seconds")
-                                    brief_row["audio_voice_label"] = p.get("audio_voice_label")
-                                    brief_row["audio_voice"] = p.get("audio_voice")
-                                    brief_row["audio_file_size"] = p.get("audio_file_size")
-                                    brief_row["opinion_start_seconds"] = p.get("opinion_start_seconds")
-                                    if not brief_row.get("audio_script"):
-                                        brief_row["audio_script"] = p.get("audio_script")
-                                    print(f"  [brief:{edition}] No audio script — carried forward previous audio")
-                            except Exception as e:
-                                print(f"  [warn] Could not fetch previous audio for {edition}: {e}")
-
-                    try:
-                        supabase.table("daily_briefs").upsert(
-                            brief_row, on_conflict="edition,pipeline_run_id"
-                        ).execute()
-                    except Exception as e:
-                        # If the error is a missing column (e.g. opinion_start_seconds
-                        # before migration 028), strip the unknown column and retry.
-                        err_msg = str(e)
-                        if "PGRST204" in err_msg or "does not exist" in err_msg.lower() or "schema cache" in err_msg.lower():
-                            # Extract column name from error if possible, or strip known optional cols
-                            for optional_col in ("opinion_start_seconds",):
-                                brief_row.pop(optional_col, None)
-                            try:
-                                supabase.table("daily_briefs").upsert(
-                                    brief_row, on_conflict="edition,pipeline_run_id"
-                                ).execute()
-                                print(f"  [brief:{edition}] Stored (stripped missing column)")
-                            except Exception as e2:
-                                print(f"  [warn] Failed to store brief for {edition} (retry): {e2}")
-                        else:
-                            print(f"  [warn] Failed to store brief for {edition}: {e}")
-
-                elapsed_7d = time.time() - start_7d
-                print(f"  Daily briefs: {len(brief_results)} editions (with audio, {elapsed_7d:.1f}s)")
-
-                # Generate podcast RSS feeds (only when audio is enabled)
-                if not os.environ.get("DISABLE_AUDIO", "").strip() in ("1", "true", "yes"):
-                    try:
-                        from briefing.podcast_feed_generator import generate_podcast_feeds
-                        feed_results = generate_podcast_feeds(ACTIVE_EDITIONS)
-                        if feed_results:
-                            print(f"  Podcast feeds: {', '.join(feed_results.keys())}")
-                    except Exception as e:
-                        print(f"  [warn] Podcast feed generation failed: {e}")
-            except Exception as e:
-                print(f"  [warn] Daily brief generation failed: {e}")
-                # P0 fix (UAT 2026-05-13): on total generator failure we MUST
-                # still write a stub row per edition so the homepage doesn't
-                # serve yesterday's audio indefinitely. tldr_text is a safe
-                # placeholder; frontend already handles null audio_url.
-                for edition in ACTIVE_EDITIONS:
-                    try:
-                        stub_row = {
-                            "edition": edition,
-                            "pipeline_run_id": run_id,
-                            "tldr_headline": None,
-                            "tldr_text": "Daily brief unavailable — see top stories.",
-                            "opinion_text": None,
-                            "opinion_headline": None,
-                            "opinion_lean": None,
-                            "opinion_cluster_id": None,
-                            "opinion_audio_script": None,
-                            "audio_script": None,
-                            "audio_url": None,
-                            "top_cluster_ids": [],
-                            "generator": f"stub-on-failure:{type(e).__name__}",
-                        }
-                        supabase.table("daily_briefs").upsert(
-                            stub_row, on_conflict="edition,pipeline_run_id"
-                        ).execute()
-                        print(f"  [brief:{edition}] >>> WROTE STUB ROW (generator crash) <<<")
-                    except Exception as e2:
-                        print(f"  [warn] Failed to write stub brief for {edition}: {e2}")
-        else:
-            print("\n[7d] Skipping daily briefs (modules not installed)")
 
         # Step 8: Store clusters with enrichment data
         print("\n[8/9] Storing clusters with enrichment data...")
@@ -3317,46 +3335,11 @@ def main():
             except Exception:
                 pass
 
-        # Brief linkage backfill — step 7d runs BEFORE these inserts, so the
-        # generator saw no _db_id and persisted top_cluster_ids=[] and a NULL
-        # opinion_cluster_id. The generator keeps references to the cluster
-        # dicts it used (_top_cluster_refs / _opinion_cluster_ref); those
-        # same dicts now carry _db_id, so patch the stored rows.
-        if brief_results and run_id:
-            for _bf_edition, _bf_brief in brief_results.items():
-                _bf_patch: dict = {}
-                # TL;DR linkage only when the text was generated from THIS
-                # run's clusters (a carried-forward brief describes a
-                # previous run's stories).
-                if not _bf_brief.get("_carried"):
-                    _bf_top_ids = [
-                        c.get("_db_id")
-                        for c in (_bf_brief.get("_top_cluster_refs") or [])
-                        if c.get("_db_id")
-                    ]
-                    if _bf_top_ids:
-                        _bf_patch["top_cluster_ids"] = _bf_top_ids
-                else:
-                    _bf_top_ids = []
-                # Opinion linkage whenever THIS run generated the opinion
-                # (a carried brief can still receive a fresh opinion).
-                _bf_op_ref = _bf_brief.get("_opinion_cluster_ref")
-                _bf_op_id = (_bf_op_ref or {}).get("_db_id")
-                if _bf_op_id and _bf_brief.get("_fresh_opinion"):
-                    _bf_patch["opinion_cluster_id"] = _bf_op_id
-                if not _bf_patch:
-                    continue
-                try:
-                    supabase.table("daily_briefs").update(_bf_patch).eq(
-                        "edition", _bf_edition
-                    ).eq("pipeline_run_id", run_id).execute()
-                    print(
-                        f"  [brief:{_bf_edition}] Linkage backfilled: "
-                        f"{len(_bf_top_ids)} top clusters"
-                        + (", opinion" if _bf_patch.get("opinion_cluster_id") else "")
-                    )
-                except Exception as _bf_e:
-                    print(f"  [warn] Brief linkage backfill failed ({_bf_edition}): {_bf_e}")
+        # Brief linkage backfill DELETED 2026-09-07. It existed because step 7d
+        # ran BEFORE these inserts, so the generator saw no _db_id and stored
+        # top_cluster_ids=[] and a null opinion_cluster_id every run. The brief
+        # now runs after Stage 2 and reads the stored rows, so the ids are real
+        # at generation time and there is nothing to patch afterwards.
 
         # Batch-insert cluster_articles links (instead of one per article)
         if all_cluster_article_links:
@@ -3890,6 +3873,27 @@ def main():
         import traceback
         print(f"  [warn] Stage 2 failed: {e}")
         traceback.print_exc()
+
+    # ── Step 7d: the daily brief, from the PUBLISHED feed ────────────────
+    # 7d used to run before step 8, on the pre-insert cluster list. It
+    # described a running order the reader never saw, quoted headlines and
+    # summaries Stage 2 was about to rewrite, and linked nothing (no cluster
+    # had a database id yet, so top_cluster_ids shipped empty and a backfill
+    # patched it afterwards). Read the published feed back and brief on that.
+    try:
+        _brief_rows = supabase.table("story_clusters").select(
+            "id,title,summary,category,sections,source_count,rank_world,"
+            "headline_rank,consensus_points,divergence_points,divergence_score"
+        ).contains("sections", ["world"]).order(
+            "rank_world", desc=True).limit(DISPLAYED).execute().data or []
+        for _r in _brief_rows:
+            _r["_db_id"] = _r["id"]
+        if _brief_rows:
+            generate_and_store_briefs(_brief_rows, source_map, run_id)
+        else:
+            print("\n[7d] Skipping daily briefs (no published feed to brief on)")
+    except Exception as _bf_e:
+        print(f"\n[7d] [warn] daily brief failed: {_bf_e}")
 
     # Step 8e: RETIRED 2026-08-05 (copyright compliance). The cacher downloaded,
     # re-encoded (stripping EXIF/IPTC copyright-management info), and re-hosted

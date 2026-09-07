@@ -4,7 +4,7 @@ Runs at the END of a pipeline run (Cloudflare migration): the browser and the
 `next build` never touch a database, they read these files. Splits output into:
 
   frontend/build-data/  (read via fs at build, NOT shipped to the client)
-      feed.json         {clusters:[...top-100 world by rank_world...], builtAt}
+      feed.json         {clusters:[...the Stage 2 bench, by rank_world...], builtAt}
       archive.json      all printed_stories rows (generateStaticParams + /story)
       archiveMap.json   {source_cluster_id: "/story/<id>/"} latest edition
 
@@ -27,7 +27,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[1]
 if str(REPO / "pipeline") not in sys.path:
     sys.path.insert(0, str(REPO / "pipeline"))
-from utils.feed_config import POOL, MIN_DISPLAYABLE  # noqa: E402
+from utils.feed_config import CANDIDATES, MIN_DISPLAYABLE  # noqa: E402
 from utils.display_window import is_displayable  # noqa: E402
 DB = (
     sys.argv[1]
@@ -127,9 +127,14 @@ FEED_COLS = [
     # reads both; without them an offline replay guesses).
     "content_type", "disaster_severity",
 ]
+# The bench, not the pool. Stage 2 summarizes, critiques and validates exactly
+# CANDIDATES clusters and step 8d.5 lifts them clear of everything below, so
+# emitting the top CANDIDATES is emitting the set that was examined. Exporting
+# the top 100 shipped 65 rows a reader could never see, any of which the
+# frontend would have rendered had the ordering shifted under it.
 rows = c.execute(
     "SELECT * FROM story_clusters WHERE sections LIKE '%world%' "
-    f"ORDER BY CAST(rank_world AS REAL) DESC LIMIT {int(POOL)}"
+    f"ORDER BY CAST(rank_world AS REAL) DESC LIMIT {int(CANDIDATES)}"
 ).fetchall()
 clusters = []
 for r in rows:
