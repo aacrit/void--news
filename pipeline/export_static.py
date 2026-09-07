@@ -34,8 +34,12 @@ DB = (
     if len(sys.argv) > 1
     else os.environ.get("VOID_SQLITE_PATH", str(REPO / "pipeline_state.db"))
 )
-BUILD_DIR = REPO / "frontend" / "build-data"
-PUBLIC_DIR = REPO / "frontend" / "public" / "data"
+# Output roots. Overridable so a test can export a synthetic run without
+# overwriting the committed production snapshots (tests/test_editorial_stage.py).
+BUILD_DIR = Path(os.environ.get("VOID_EXPORT_BUILD_DIR")
+                 or REPO / "frontend" / "build-data")
+PUBLIC_DIR = Path(os.environ.get("VOID_EXPORT_PUBLIC_DIR")
+                  or REPO / "frontend" / "public" / "data")
 BUILD_DIR.mkdir(parents=True, exist_ok=True)
 _DD = PUBLIC_DIR / "deepdive"
 _DD.mkdir(parents=True, exist_ok=True)
