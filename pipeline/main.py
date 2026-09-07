@@ -2301,6 +2301,11 @@ def main():
     # Step 5: Run bias analysis on each article
     articles_analyzed = 0
     clusters_created = 0
+    # Bound here, not only inside the ANALYSIS_AVAILABLE branch: Stage 2
+    # runs outside that branch and syncs freshly written summaries back
+    # onto this list, so a fetch-only run must find an empty list rather
+    # than a NameError.
+    clusters: list[dict] = []
     # Collect per-article bias scores keyed by article_id for ranking.
     # 2026-05-24 — preserve preloaded map when --recluster-only is set.
     if not recluster_only:
