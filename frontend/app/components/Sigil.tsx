@@ -8,13 +8,9 @@ import {
   getLeanColor as leanColor,
   getSigilLeanColor,
   DIVERGENT_SPREAD_MIN,
-  tiltLabel,
   tiltDescriptor,
-  sigilLabelInfo,
+  storyLeanLabel,
   leanToDisplayPos,
-  leanLabelState,
-  NO_CLEAR_LEAN_LABEL,
-  CONTESTED_LABEL,
   lerpColor as lerp,
 } from "../lib/biasColors";
 import MicroSpectrum from "./MicroSpectrum";
@@ -310,25 +306,10 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
   // overstate the signal. "Contested" when both wings are present, else "No clear
   // lean" (and the numeric score is withheld). Outside the band, behavior is
   // unchanged. The KDE spectrum below still plots the true distribution.
-  const popupState = leanLabelState(lean, data.biasSpread, data.sourceCount);
-  const popupSuppressed = popupState !== "confident";
-  // Color consistent with the mark (expanded position; neutral for a
-  // balanced-but-divergent standoff). The numeric score + label stay TRUE
-  // outside the band; inside it the label reflects the suppression decision.
-  const lc = popupState === "no-clear-lean"
-    ? "var(--fg-tertiary)"
-    : popupState === "contested"
-      ? "var(--sense-high)"
-      : popupUnscored
-        ? "var(--fg-tertiary)"
-        : getSigilLeanColor(lean, data.biasSpread?.leanSpread ?? 0, data.biasSpread?.aggregateConfidence ?? 1);
-  const ll = popupState === "no-clear-lean"
-    ? NO_CLEAR_LEAN_LABEL
-    : popupState === "contested"
-      ? CONTESTED_LABEL
-      : popupUnscored
-        ? "Unscored"
-        : tiltLabel(lean);
+  const popupInfo = storyLeanLabel(lean, data.biasSpread, data.sourceCount, popupUnscored);
+  const popupSuppressed = popupInfo.suppressed;
+  const lc = popupInfo.color;
+  const ll = popupInfo.text;
   const full = isFullDetail(size);
 
   // "Lean measured from 9 of 34 analyzed articles." Shown only when some
@@ -445,9 +426,9 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
         {/* Contextual descriptor — explains what the score means */}
         {stage >= 2 && (
           <p className="sigil-popup__descriptor">
-            {popupState === "no-clear-lean"
+            {popupInfo.state === "no-clear-lean"
               ? "No clear lean in the aggregated coverage"
-              : popupState === "contested"
+              : popupInfo.state === "contested"
                 ? "Left and right sources both cover this; coverage is contested"
                 : popupUnscored
                   ? "Not enough analytical signal to determine lean"
@@ -513,9 +494,9 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
         }}>
           {/* Human sentence: what the data actually says */}
           <p className="sigil-popup__compact-sentence">
-            {popupState === "no-clear-lean"
+            {popupInfo.state === "no-clear-lean"
               ? `No clear lean across ${data.sourceCount} source${data.sourceCount !== 1 ? "s" : ""}.`
-              : popupState === "contested"
+              : popupInfo.state === "contested"
                 ? `Coverage is contested across ${data.sourceCount} source${data.sourceCount !== 1 ? "s" : ""}.`
                 : popupUnscored
                   ? `Balanced coverage across ${data.sourceCount} source${data.sourceCount !== 1 ? "s" : ""}.`
@@ -604,16 +585,24 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
   const tooltipId = `sigil-${useId()}`;
 
   const unscored = !!data.unscored;
-  const labelInfo = sigilLabelInfo(data.politicalLean, data.agreement, data.divergenceFlag, unscored);
-  // False-center band suppression (label TEXT only; beam/color geometry below is
-  // untouched). Inside [48,52]: "Contested" when both wings are present, else
-  // "No clear lean". Outside the band the existing directional label stands.
-  const labelState = leanLabelState(data.politicalLean, data.biasSpread, data.sourceCount);
-  const displayLabel = labelState === "no-clear-lean"
-    ? { text: NO_CLEAR_LEAN_LABEL, color: "var(--fg-tertiary)" }
-    : labelState === "contested"
-      ? { text: CONTESTED_LABEL, color: "var(--sense-high)" }
-      : labelInfo;
+  // One label, one code path. The card, the popup and the Deep Dive all read
+  // storyLeanLabel, so a story cannot be "Right" here, "Right Tilt" in the
+  // popup and "Center-Right" in the Deep Dive, which is what it was.
+  const info = storyLeanLabel(data.politicalLean, data.biasSpread,
+                              data.sourceCount, unscored);
+  // Divergence is the card's own annotation ON that label, not a second
+  // ladder: a confident direction gains a Split / Agreed suffix, and a
+  // suppressed label ("Contested", "Flat") already says what divergence
+  // would have said, so it gains nothing.
+  const suffix = info.suppressed
+    ? ""
+    : data.divergenceFlag === "divergent"
+      ? " · Split"
+      : data.divergenceFlag === "consensus"
+        ? " · Agreed"
+        : "";
+  const labelState = info.state;
+  const displayLabel = { text: `${info.text}${suffix}`, color: info.color };
   const lc = unscored ? "var(--fg-tertiary)" : getSigilLeanColor(data.politicalLean, data.biasSpread?.leanSpread ?? 0, data.biasSpread?.aggregateConfidence ?? 1);
   const full = isFullDetail(size);
 
@@ -623,7 +612,7 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
     ? `Coverage tilt: Unscored (insufficient signal). ${data.sourceCount} sources. Press Enter for details.`
     : labelState !== "confident"
       ? `Coverage tilt: ${displayLabel.text}. ${data.sourceCount} sources. Press Enter for details.`
-      : `Coverage tilt: ${labelInfo.text} (${data.politicalLean}). ${data.sourceCount} sources. Press Enter for details.`;
+      : `Coverage tilt: ${displayLabel.text} (${data.politicalLean}). ${data.sourceCount} sources. Press Enter for details.`;
 
   const ringClass = data.divergenceFlag === "divergent"
     ? " sigil--divergent"

@@ -1,13 +1,7 @@
 "use client";
 
 import type { SigilData } from "../lib/types";
-import {
-  getLeanColor,
-  leanLabel,
-  leanLabelState,
-  NO_CLEAR_LEAN_LABEL,
-  CONTESTED_LABEL,
-} from "../lib/biasColors";
+import { storyLeanLabel } from "../lib/biasColors";
 import LeanCoverageBar from "./LeanCoverageBar";
 
 interface BiasSnapshotProps {
@@ -34,22 +28,13 @@ interface BiasSnapshotProps {
    --------------------------------------------------------------------------- */
 
 export default function BiasSnapshot({ data, sourceCount, variant = "inline", hideCoverageBar = false }: BiasSnapshotProps) {
-  // False-center band suppression: inside [48,52] the confident "Center" label
-  // overstates the signal. "Contested" when both wings are present, else "No
-  // clear lean"; the dot goes neutral (or contested red). Outside the band the
-  // existing directional label + color stand. (BiasSnapshot shows the label
-  // text, not a numeric lean, so there is no separate score to withhold.)
-  const leanState = leanLabelState(data.politicalLean, data.biasSpread, sourceCount);
-  const leanColor = leanState === "contested"
-    ? "var(--sense-high)"
-    : leanState === "no-clear-lean"
-      ? "var(--fg-tertiary)"
-      : getLeanColor(data.politicalLean);
-  const lean = leanState === "no-clear-lean"
-    ? NO_CLEAR_LEAN_LABEL
-    : leanState === "contested"
-      ? CONTESTED_LABEL
-      : leanLabel(data.politicalLean);
+  // One label, one code path: storyLeanLabel applies the suppression gate and
+  // the ladder together, so this surface cannot name a band the feed card and
+  // the Sigil popup do not also name.
+  const leanInfo = storyLeanLabel(data.politicalLean, data.biasSpread,
+                                  sourceCount, data.unscored);
+  const leanColor = leanInfo.color;
+  const lean = leanInfo.text;
   const opinion = data.opinionLabel;
   // "Reporting" is the default classification for most stories, so the pill is
   // redundant noise there. Show the Type pill ONLY for the meaningful values

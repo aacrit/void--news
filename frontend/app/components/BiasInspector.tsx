@@ -15,7 +15,7 @@ import {
   getSenseColor,
   getRigorColor,
   getFramingColor,
-  tiltLabel,
+  leanLabel,
   senseLabel,
   rigorLabel,
 } from "../lib/biasColors";
@@ -427,7 +427,7 @@ function LeanAxis({
       label="Coverage Tilt"
       score={score}
       color={color}
-      scoreLabel={tiltLabel(score)}
+      scoreLabel={leanLabel(score)}
       gradient={gradient}
       isExpanded={isExpanded}
       onToggle={onToggle}
