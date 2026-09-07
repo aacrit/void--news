@@ -17,6 +17,11 @@ Env:    SUPABASE_URL, SUPABASE_KEY
 """
 from __future__ import annotations
 
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(_Path(__file__).resolve().parent.parent / "pipeline"))
+from utils.feed_config import DISPLAYED  # noqa: E402
+
 import argparse
 import json
 import os
@@ -28,7 +33,7 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--date", default=None, help="UTC date stamp (default: today)")
     ap.add_argument("--out", default="data/feed-snapshots")
-    ap.add_argument("--limit", type=int, default=50)
+    ap.add_argument("--limit", type=int, default=DISPLAYED)
     args = ap.parse_args()
 
     try:

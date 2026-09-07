@@ -63,6 +63,7 @@ import SkyboxBanner from "./SkyboxBanner";
 // FloatingPlayer is now mounted globally in MobileNav (layout.tsx) so it renders
 // on every route, including /weekly. It reads the global AudioProvider directly.
 import { hapticConfirm, hapticLight } from "../lib/haptics";
+import { FEED_DISPLAYED, FEED_LEAD_BAND } from "../lib/feedConfig";
 const UnifiedOnboarding = dynamic(() => import("./UnifiedOnboarding"), { ssr: false });
 import { useStoryKeyboardNav } from "./KeyboardShortcuts";
 const KeyboardShortcutsOverlay = dynamic(() => import("./KeyboardShortcuts").then(m => ({ default: m.KeyboardShortcutsOverlay })), { ssr: false });
@@ -79,12 +80,15 @@ const SearchOverlay = dynamic(() => import("./SearchOverlay"), { ssr: false });
    Editorial feed constants — newspaper-principle (same feed for all readers)
    --------------------------------------------------------------------------- */
 
-/** Hard cap: maximum stories in the main edition feed when fully expanded. */
-const EDITION_FEED_SIZE = 50;
+/** Hard cap: stories rendered in the main edition feed.
+ *  2026-09-06: 50 -> 20 (CEO decision), read from frontend/config/feed.json so
+ *  the pipeline's summary window, the build guard, the JSON-LD list and this
+ *  slice can never drift apart again (they were four independent literals). */
+const EDITION_FEED_SIZE = FEED_DISPLAYED;
 
-/** Total fetched from Supabase — main feed + headroom + buffer for the
- *  ≥3-source quality floor. Server-side ranker enforces topic diversity. */
-const FETCH_LIMIT = 100;
+/** Total fetched by the legacy client refetch path (dead since the Cloudflare
+ *  migration: `supabase` is null without build env). Kept derived, not literal. */
+const FETCH_LIMIT = FEED_DISPLAYED * 5;
 
 
 interface HomeContentProps {
@@ -638,8 +642,8 @@ function HomeContentInner({
     return stories.filter((s) => (s.sigilData?.sourceCount ?? s.source?.count ?? 0) >= 3);
   }, [stories]);
 
-  // Main feed = top 50 by rank, all rendered at once. Server-side ranker is
-  // the editorial source of truth; no client-side reordering.
+  // Main feed = the top EDITION_FEED_SIZE by rank, all rendered at once.
+  // Server-side ranker is the editorial source of truth; no client reordering.
   const mainPool = useMemo(
     () => filteredStories.slice(0, EDITION_FEED_SIZE),
     [filteredStories],
@@ -676,16 +680,16 @@ function HomeContentInner({
      the rare cases where the hardened clustering engine (rev 44) keeps
      legitimately-related sub-stories apart. */
   const storyFamilies = useMemo(
-    () => computeStoryFamilies(mainStories, { topN: 10, jaccardFloor: 0.30 }),
+    () => computeStoryFamilies(mainStories, { topN: FEED_LEAD_BAND, jaccardFloor: 0.30 }),
     [mainStories],
   );
 
   // 2026-06-02 single-feed — the /world overflow split is gone; the homepage
-  // now shows a single 50-story flow. The legacy world-overflow scaffolding
-  // (WORLD_OVERFLOW_SIZE / worldOverflow / mainIds) was removed 2026-08-08.
+  // shows a single flow of EDITION_FEED_SIZE stories. The legacy world-overflow
+  // scaffolding (WORLD_OVERFLOW_SIZE / worldOverflow / mainIds) went 2026-08-08.
 
   // v3 (2026-05-14): twin top stories, ranks 0 and 1 share the hero canvas
-  // as co-equal "Top Story" leads. Grid below holds ranks 2..49 (all shown).
+  // as co-equal "Top Story" leads. The grid below holds every remaining rank.
   const twinLeads = mainStories.slice(0, 2);
   const gridStories = mainStories.slice(2);
 
@@ -932,9 +936,9 @@ function HomeContentInner({
                     )
                   )}
 
-                  {/* Grid below twin leads — ranks 2-49 (digest at 2-9, wire
-                      at 10-49). Slot math: 8 digest + 40 wire = 48 grid cards,
-                      plus 2 twin leads above = 50 total.
+                  {/* Grid below twin leads. The first 8 grid cards render as
+                      digest, the rest as wire. At the 20-story feed that is
+                      2 twin leads + 8 digest + 10 wire = 20 cards.
                       Inline mode: when a grid card is open, the grid is split
                       into two sub-grids with the full-width InlineDeepDive
                       between them (one <section> each avoids the empty-cell gap

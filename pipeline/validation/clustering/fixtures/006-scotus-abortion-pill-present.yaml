@@ -84,7 +84,6 @@ articles:
 expectation:
   type: should_be_present
   key_phrase: "Supreme Court mifepristone abortion"
-  in_top_n: 50
   min_overlap: 0.5
 rationale: |
   Missing-story failure: SCOTUS preserved mifepristone access (5+ source

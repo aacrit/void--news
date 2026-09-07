@@ -312,16 +312,18 @@ _HIGH_AUTHORITY_EO_PATTERN: re.Pattern = re.compile(
 # requirement gates them: "population explosion" / "flood of migrants" carry no
 # death cue and never trigger on their own.
 _DISASTER_NOUNS: list[str] = [
-    "earthquake", "quake", "aftershock", "tremor",
-    "typhoon", "hurricane", "cyclone", "tornado", "twister",
+    "earthquake", "earthquakes", "quake", "quakes", "aftershock", "aftershocks", "tremor",
+    "typhoon", "typhoons", "hurricane", "hurricanes", "cyclone", "cyclones",
+    "tornado", "tornadoes", "twister",
     "tsunami", "wildfire", "wildfires", "bushfire", "bushfires",
-    "landslide", "mudslide", "rockslide", "avalanche",
+    "landslide", "landslides", "mudslide", "mudslides", "rockslide", "avalanche",
     "volcano", "volcanic", "eruption",
     "flood", "floods", "flooding", "floodwaters", "deluge", "inundation",
     "monsoon", "superstorm", "storm surge", "blizzard",
     "famine", "drought", "heatwave", "heat wave",
     "stampede", "derailment", "capsized", "capsize", "shipwreck",
-    "plane crash", "air crash", "ferry sank", "ferry capsized",
+    "plane crash", "air crash", "bus crash", "train crash", "car crash",
+    "ferry sank", "ferry capsized",
     "building collapse", "bridge collapse", "mine collapse",
     "explosion", "blast", "gas leak",
 ]

@@ -23,6 +23,11 @@ Helpers:
 """
 from __future__ import annotations
 
+try:
+    from utils.feed_config import DISPLAYED as _DISPLAYED, LEAD_BAND as _LEAD_BAND
+except ImportError:  # imported as pipeline.validation.clustering.assertions
+    from pipeline.utils.feed_config import DISPLAYED as _DISPLAYED, LEAD_BAND as _LEAD_BAND
+
 import re
 import statistics
 from typing import Any, Iterable
@@ -293,7 +298,7 @@ def should_split(
 def should_be_present(
     clusters: list[dict],
     key_phrase: str,
-    in_top_n: int = 50,
+    in_top_n: int = _DISPLAYED,
     min_overlap: float = 0.5,
 ) -> tuple[str, str]:
     """At least one cluster matches key_phrase semantically and lands in top N.
@@ -491,7 +496,7 @@ def should_have_signal(
     clusters: list[dict],
     signal_name: str,
     nonzero_min_fraction: float = 0.30,
-    top_n: int = 10,
+    top_n: int = _LEAD_BAND,
 ) -> tuple[str, str]:
     """Cohort signal-health check.
 

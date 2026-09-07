@@ -112,8 +112,12 @@ def _extract(pattern: str, doc: str) -> list[str]:
 
 
 class Page:
-    def __init__(self, doc: str):
+    def __init__(self, doc: str, expect_count: int | None = None):
         self.raw = doc
+        # Intended feed size (frontend/config/feed.json -> --expect-count).
+        # Without it the count check is only self-consistent: a page that
+        # rendered 12 of 20 cards and said "12 stories loaded" passed.
+        self.expect_count = expect_count
         # Rendered story text nodes (text-only until the closing tag).
         self.card_summaries = _extract(r'class="story-card__summary"[^>]*>([^<]*)<', doc)
         self.lead_summaries = _extract(r'class="lead-summary"[^>]*>([^<]*)<', doc)
@@ -478,11 +482,17 @@ def check_first_person_outside_quotes(p: Page) -> list[str]:
 def check_count_match(p: Page) -> list[str]:
     hdr = p.header_story_count
     rendered = p.rendered_card_count
+    out = []
     if hdr is None:
         return ['could not find "N stories loaded" header count']
     if hdr != rendered:
-        return [f'header says {hdr} stories but {rendered} cards rendered']
-    return []
+        out.append(f'header says {hdr} stories but {rendered} cards rendered')
+    if p.expect_count is not None and rendered != p.expect_count:
+        out.append(
+            f'{rendered} cards rendered but the configured feed size is '
+            f'{p.expect_count} (frontend/config/feed.json)'
+        )
+    return out
 
 
 # The Sigil aria-label is the feed card's ONLY lean label ("Coverage tilt:
@@ -493,32 +503,50 @@ def check_count_match(p: Page) -> list[str]:
 _SIGIL_ARIA_RE = re.compile(r'aria-label="Coverage tilt:\s*([^"(]+?)\s*\((\d+)\)')
 
 
-# Every story card's stretch-link must be a crawlable <a href>, never a bare
-# <button> (2026-08-21: cards near the archive boundary rendered as buttons with
-# no story URL, so no Deep Dive link, no share target, nothing to index).
+# Every story card's stretch-link must be a crawlable <a href> pointing at the
+# canonical /story/<uuid>/ page. Two failure modes, one check (2026-09-06):
+#
+#   * a bare <button> with no story URL (2026-08-21: cards near the archive
+#     boundary), and
+#   * an "/?story=<uuid>" homepage query link, which is what serverFeed used to
+#     fall back to when a displayed card missed the printed edition. That
+#     shipped on the last two to four cards for six consecutive editions.
+#
+# The old pair could pass VACUOUSLY: check_every_card_has_href only counted
+# <button> fallbacks (zero once the fallback always produced an <a>), and
+# check_href_shape returned [] when it found no anchors at all, so renaming the
+# stretch-link class would have silently disabled both. Tying the anchor COUNT
+# to the card count closes that.
 _CARD_BUTTON_RE = re.compile(r'<button[^>]*class="[^"]*story-card__stretch-link')
+_STRETCH_HREF_RE = re.compile(
+    r'<a[^>]*class="[^"]*(?:story-card|lead)__stretch-link[^"]*"[^>]*href="([^"]+)"'
+    r'|<a[^>]*href="([^"]+)"[^>]*class="[^"]*(?:story-card|lead)__stretch-link'
+)
+# Full match, basePath-aware, real UUID shape (the old [0-9a-f-]{36} accepted
+# any 36 hex-or-dash characters, and .search with only an end anchor accepted
+# "/anything/story/<uuid>/").
+_STORY_HREF_STRICT_RE = re.compile(
+    r'^(?:/void--news)?/story/'
+    r'[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/$'
+)
 
 
-def check_every_card_has_href(p: Page) -> list[str]:
-    n = len(_CARD_BUTTON_RE.findall(p.raw))
-    return [] if n == 0 else [f'{n} story card(s) render as a <button> with no href (must be <a href>)']
-
-
-# Every story card link must be the canonical /story/<uuid>/ shape. A "/?story="
-# link loads the homepage instead of the story page and is not indexable (P0-B):
-# it means the card missed the print archive and fell back. Extract the stretch
-# link hrefs and flag any that are not /story/<uuid>/.
-_STRETCH_HREF_RE = re.compile(r'<a[^>]*class="[^"]*(?:story-card|lead)__stretch-link[^"]*"[^>]*href="([^"]+)"|<a[^>]*href="([^"]+)"[^>]*class="[^"]*(?:story-card|lead)__stretch-link')
-_STORY_SHAPE_RE = re.compile(r'/story/[0-9a-f-]{36}/?$')
-
-
-def check_href_shape(p: Page) -> list[str]:
+def check_card_anchor_coverage(p: Page) -> list[str]:
     hrefs = [a or b for a, b in _STRETCH_HREF_RE.findall(p.raw)]
+    cards = p.rendered_card_count
+    buttons = len(_CARD_BUTTON_RE.findall(p.raw))
+    bad = [h for h in hrefs if not _STORY_HREF_STRICT_RE.match(h)]
     out = []
-    for h in hrefs:
-        if not _STORY_SHAPE_RE.search(h):
-            out.append(f'malformed story href (must be /story/<uuid>/): "{h}"')
-    return out[:6]
+    if buttons:
+        out.append(f'{buttons} story card(s) render as a <button> with no href (must be <a href>)')
+    if cards and len(hrefs) != cards:
+        out.append(f'{cards} cards rendered but {len(hrefs)} stretch-link anchors found')
+    if bad:
+        out.append(
+            f'{len(bad)} of {cards} cards do not link to a canonical /story/<uuid>/ '
+            f'page; offending: {bad[:5]}'
+        )
+    return out
 
 
 # Regression lock for the aggregate_confidence read path. The real rev-49 formula
@@ -573,8 +601,7 @@ CHECKS = [
     ("voice: no first-person pronoun outside quotes", check_first_person_outside_quotes),
     ("count: header matches rendered", check_count_match),
     ("consistency: card lean label == canonical (Sigil)", check_card_sigil_label),
-    ("structural: every card has an href", check_every_card_has_href),
-    ("structural: story hrefs are /story/<uuid>/", check_href_shape),
+    ("structural: every card links to /story/<uuid>/", check_card_anchor_coverage),
     ("integrity: confidence is real (not COUNT/5 proxy)", check_confidence_not_proxy),
 ]
 
@@ -583,12 +610,17 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("html_file")
     ap.add_argument("--url", default="(local file)")
+    ap.add_argument(
+        "--expect-count", type=int, default=None,
+        help="intended feed size (frontend/config/feed.json displayed); when "
+             "given, the count check asserts the page rendered exactly this many cards",
+    )
     args = ap.parse_args()
 
     with open(args.html_file, encoding="utf-8", errors="replace") as fh:
         doc = fh.read()
 
-    p = Page(doc)
+    p = Page(doc, expect_count=args.expect_count)
     print(f"Verifying: {args.url}")
     print(f"  parsed {len(p.headlines)} headlines, {len(p.summaries)} summaries, "
           f"header count {p.header_story_count}\n")

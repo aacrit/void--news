@@ -33,13 +33,26 @@ jobs:
         # Cloudflare migration (2026-08-30): the build reads its data from the
         # committed build-data/*.json + public/data/*.json snapshots (emitted by
         # the pipeline), NOT Supabase. No Supabase env, no egress. serverFeed
-        # still fail-loud throws on <30 displayable stories, now against the
+        # still fail-loud throws below the configured minimum, now against the
         # static feed.json.
         env:
           NEXT_PUBLIC_BASE_PATH: ""
         run: |
           cd frontend && npm ci
           npx next build || npx next build || npx next build
+
+      # 2026-09-06: tests/ was run by nothing. test_verify_gate.py was RED
+      # (its clean fixture predated MIN_SUMMARY_CHARS=300) and nobody knew,
+      # so the served-output checkers had no working self-test. Both suites
+      # are stdlib-only apart from nltk and take seconds.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Gate self-test + feed-config consistency
+        run: |
+          pip install --quiet nltk
+          python tests/test_verify_gate.py
+          python tests/test_feed_config.py
 
   # Mirrors validate-bias.yml — duplicated here because branch protection is
   # not configured and the merge job below can only `needs:` jobs in this

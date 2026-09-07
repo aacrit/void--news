@@ -97,3 +97,24 @@ def clean_feed_summary(summary: str, _title: str | None = None) -> str:
     if is_raw_excerpt(s):
         return ""
     return summary
+
+
+# ---------------------------------------------------------------------------
+# CSAM gate: port of summaryHygiene.ts isCSAMTopic (2026-09-06). A story about
+# child sexual abuse material renders as headline + source list only; the
+# frontend KEEPS such a card even with an empty summary, so every Python
+# "displayable" predicate must apply the same exemption or the printed edition
+# and the served page disagree by one slot.
+# ---------------------------------------------------------------------------
+_CSAM_TOPIC = re.compile(
+    r"\b(child (?:sexual abuse|sex abuse|pornography|porn|exploitation)|csam|"
+    r"sexually explicit (?:video|image|photo|material|content)s?\s+(?:involving|of|depicting)\s+(?:a\s+)?minors?|"
+    r"minors?\b[^.]{0,40}\b(?:sexual(?:ly)?\s+(?:abus|explicit|exploit)|molest|raped|sexually abused)|"
+    r"underage\s+(?:sex|porn|nude|explicit))",
+    re.I,
+)
+
+
+def is_csam_topic(text: str) -> bool:
+    """True when the text is about child sexual abuse material (TS parity)."""
+    return bool(_CSAM_TOPIC.search(text or ""))

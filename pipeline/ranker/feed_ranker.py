@@ -213,6 +213,22 @@ _CONTEST_ANCHOR_WORDS = frozenset({
 DYN_EVENT_MIN_CLUSTERS = 3
 DYN_EVENT_DECAY = 0.72
 DYN_EVENT_MIN_STEM_LEN = 3
+# 2026-09-06: a group needs TWO shared salient stems between the anchor and
+# each member, not one. On a single token the cap demoted a base-top-20 story
+# in 7 of the last six runs' displacements: "kill" (Yemen clashes), "order"
+# (wolf protections), "oil" (Venezuela oil), "murder" (mosque teen), "leak"
+# (Hegseth), "crash" (Cape Verde bus crash grouped with a jet crash and an F1
+# crash), "prime" (Burnham). Incident nouns are also barred from anchoring.
+DYN_EVENT_MIN_SHARED = 2
+_INCIDENT_NOUNS = frozenset({
+    "crash", "crashes", "crashed", "kill", "kills", "killed", "killing",
+    "dead", "death", "deaths", "die", "dies", "died", "strike", "strikes",
+    "struck", "attack", "attacks", "attacked", "fire", "fires", "blast",
+    "blasts", "explosion", "explosions", "leak", "leaks", "order", "orders",
+    "oil", "murder", "shooting", "shot", "shoot", "injured", "wounded",
+    "missing", "rescue", "rescued", "rescuers", "protest", "protests",
+    "arrest", "arrested", "charge", "charged", "charges", "probe", "prime",
+})
 
 # Generic geopolitical / institutional / role / wire words that name WHERE or
 # WHO but never WHICH event. Removed before a stem is allowed to anchor a
@@ -261,9 +277,19 @@ LEAD_BREADTH_FRACTION = 0.45
 LEAD_BREADTH_SCAN = 5
 
 # Topic diversity
-MAX_SAME_CAT_DEFAULT = 2
+try:
+    from utils.feed_config import DISPLAYED as _FEED_DISPLAYED, LEAD_BAND as _FEED_LEAD_BAND
+except ImportError:  # imported as pipeline.ranker.feed_ranker (validation runner, evals)
+    from pipeline.utils.feed_config import DISPLAYED as _FEED_DISPLAYED, LEAD_BAND as _FEED_LEAD_BAND
+
+# 2026-09-06 (feed to 20): 3 per category in the lead band (2 forced >= 5
+# distinct categories into 10 slots on a day with 12 of the base top-20 in
+# `general`); `general` is the residual bucket ("an accident headline
+# deliberately resolves to general", 12 to 17 of 50 a day) and is never capped.
+MAX_SAME_CAT_DEFAULT = 3
 MAX_SAME_CAT_SOFT = 1
-TOP_N = 10
+TOP_N = _FEED_LEAD_BAND
+_UNCAPPED_CATS: frozenset[str] = frozenset({"general"})
 
 # Rank-aware cap correction tolerance (2026-08-10 Phase-2 ranking audit, 1a-Q4).
 # The top-10 category cap defers a 3rd-in-category cluster below the fold for
@@ -274,9 +300,14 @@ TOP_N = 10
 # must never invert the base ordering by more than this many points. A deferred
 # story is pulled back up to just above the highest-positioned story it out-bases
 # by more than CAP_RANK_TOLERANCE.
-CAP_RANK_TOLERANCE = 8.0
-FEED_CATEGORY_CAP = 12  # cap each category at this across positions TOP_N..FEED_CAP_END
-FEED_CAP_END = 50
+# 2026-09-06: 8 points licensed a 9-slot inversion at the top-20 base gradient
+# of 0.9 points per slot (half a 20-story feed). 4 points is 4 to 5 slots.
+CAP_RANK_TOLERANCE = 4.0
+# Positions TOP_N..FEED_CAP_END: with FEED_CAP_END = the displayed size (20)
+# the window is 10 slots, so the old cap of 12 could never bind; 4 keeps any
+# category at or under 7 of 20 (3 from the lead band + 4 here).
+FEED_CATEGORY_CAP = 4
+FEED_CAP_END = _FEED_DISPLAYED
 
 # Coverage guard on the TOP_N diversity swap (2026-08-06). The category cap can
 # defer a 3rd-in-category cluster in favour of a lower-ranked, DIFFERENT-category
@@ -294,8 +325,11 @@ FEED_CAP_END = 50
 COVERAGE_GUARD_RATIO = 0.6
 
 # Feed lead gate — top positions require this many sources.
-FEED_LEAD_MIN = 3
-FEED_LEAD_SLOTS = 10
+# 2026-09-06: the gate now covers the whole displayed feed, and 5 aligns with
+# the derived lean-label floor (10 scored articles) better than 3 did. The min
+# source_count in the top 20 was 7 to 10 on every one of the last six runs.
+FEED_LEAD_MIN = 5
+FEED_LEAD_SLOTS = _FEED_DISPLAYED
 
 # Mass-casualty ordering floor (2026-08-11, P0-4). importance_ranker already
 # lifts a mass-casualty disaster (DISASTER_MAX_LIFT) on its own merit, but the
@@ -310,7 +344,9 @@ FEED_LEAD_SLOTS = 10
 # weight change — it only surfaces the already-computed disaster_severity signal
 # (threaded onto the cluster dict in main.py, persisted via migration 077).
 DISASTER_FLOOR_SEVERITY = 60.0
-DISASTER_FLOOR_MIN_SOURCES = 8
+# 2026-09-06: 8 was exactly the Cape Verde bus crash's source count (25 dead,
+# mostly students); a 7-source, 40-dead event got no floor at all.
+DISASTER_FLOOR_MIN_SOURCES = 6
 
 
 # ---------------------------------------------------------------------------
@@ -334,9 +370,11 @@ EVENT_KEYWORDS: dict[str, set[str]] = {
         "joint statement", "bilateral talks", "trilateral talks",
         "trump-xi summit", "xi-trump summit",
     },
+    # 2026-09-06: "hegseth", "f-15", "f-35", "warplane", "fighter jet" removed.
+    # They made every Hegseth story (Driscoll resignation, the polygraph leak
+    # hunt) and every jet crash an "iran" event and decayed the third onward.
     "iran": {
-        "iran", "iranian", "tehran", "hormuz", "persian gulf", "irgc",
-        "hegseth", "isfahan", "f-15", "f-35", "warplane", "fighter jet",
+        "iran", "iranian", "tehran", "hormuz", "persian gulf", "irgc", "isfahan",
     },
     "ukraine": {
         "ukraine", "ukrainian", "kyiv", "zelenskyy", "zelensky",
@@ -346,10 +384,14 @@ EVENT_KEYWORDS: dict[str, set[str]] = {
         "gaza", "hamas", "west bank", "netanyahu", "idf", "hezbollah",
         "israeli protest",
     },
-    "china_taiwan": {"taiwan", "taipei", "strait", "xi jinping", "pla"},
-    "us_scotus": {
-        "supreme court", "scotus", "constitutional", "alito", "justice",
-    },
+    # 2026-09-06: "pla" and "strait" removed. Matched as substrings, "pla"
+    # grouped "Volkswagen Board Approves Plan", "Prince Harry Plans Film",
+    # "Ted Cruz ... Downplays" and "Supreme Court Rejects Bid to Place" as one
+    # china_taiwan event on 09-04 and decayed two of them below rank 20.
+    "china_taiwan": {"taiwan", "taipei", "taiwan strait", "xi jinping"},
+    # 2026-09-06: "justice" and "constitutional" removed (Justice Department,
+    # constitutional amendment: not one event).
+    "us_scotus": {"supreme court", "scotus", "alito"},
 }
 
 _SOFT_CATS: frozenset[str] = frozenset({
@@ -501,12 +543,18 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
     if _stems is not None and len(pool) > TOP_N:
         scan = pool[:NEAR_DUP_SCAN]
         salient_sets = [_salient_title_stems(c.get("title", "") or "") for c in scan]
-        token_members: dict[str, list[int]] = {}
-        for idx, sset in enumerate(salient_sets):
-            for tok in sset:
-                token_members.setdefault(tok, []).append(idx)
         capped: set[int] = set()
-        for tok, members in token_members.items():
+        # 2026-09-06: groups form around an ANCHOR cluster and admit a member
+        # only when it shares >= DYN_EVENT_MIN_SHARED salient stems with that
+        # anchor (per-anchor, never transitive). One shared token ("kill",
+        # "order", "oil", "crash") is a word collision, not an event.
+        for i in range(len(scan)):
+            if len(salient_sets[i]) < DYN_EVENT_MIN_SHARED:
+                continue
+            members = [i] + [
+                j for j in range(len(scan))
+                if j != i and len(salient_sets[i] & salient_sets[j]) >= DYN_EVENT_MIN_SHARED
+            ]
             if len(members) < DYN_EVENT_MIN_CLUSTERS:
                 continue
             # Keep the MAX_SAME_EVENT most-sourced (breadth = canonical
@@ -531,7 +579,10 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
                 )
                 if target < scan[k].get("rank_world", 0):
                     scan[k]["rank_world"] = target
-                    scan[k].setdefault("_same_event_anchor", tok)
+                    scan[k].setdefault(
+                        "_same_event_anchor",
+                        "+".join(sorted(salient_sets[i] & salient_sets[k])[:3]),
+                    )
                     capped.add(k)
         if capped:
             pool.sort(key=lambda c: c.get("rank_world", 0), reverse=True)
@@ -587,6 +638,8 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
             cat_limit = (
                 MAX_SAME_CAT_SOFT if cat in _SOFT_CATS else MAX_SAME_CAT_DEFAULT
             )
+            if cat in _UNCAPPED_CATS:
+                cat_limit = len(pool)  # the residual bucket is never capped
             if cat_counts.get(cat, 0) < cat_limit:
                 promoted.append(c)
                 cat_counts[cat] = cat_counts.get(cat, 0) + 1
@@ -655,16 +708,22 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
         mid_cat_counts: dict[str, int] = dict(cat_counts)
         slots_remaining = max(0, FEED_CAP_END - TOP_N)
 
+        mid_overcap: list[dict] = []  # deferred by the CAP, not by running out of slots
         for c in deferred:
             cat = c.get("category", "general")
-            if (
-                len(mid_promoted) < slots_remaining
-                and mid_cat_counts.get(cat, 0) < FEED_CATEGORY_CAP
-            ):
+            over_cap = not (
+                cat in _UNCAPPED_CATS or mid_cat_counts.get(cat, 0) < FEED_CATEGORY_CAP
+            )
+            if len(mid_promoted) < slots_remaining and not over_cap:
                 mid_promoted.append(c)
                 mid_cat_counts[cat] = mid_cat_counts.get(cat, 0) + 1
             else:
                 mid_deferred.append(c)
+                # Only a CAP deferral is a candidate for the 4b correction; a
+                # cluster deferred because the window is full is simply ranked
+                # out and must stay where the score put it.
+                if over_cap and len(mid_promoted) < slots_remaining:
+                    mid_overcap.append(c)
 
         pool = promoted + mid_promoted + mid_deferred
 
@@ -677,7 +736,14 @@ def apply_feed_ordering(clusters: list[dict], sources: list[dict] | None = None)
         # more than CAP_RANK_TOLERANCE. Highest-base deferral first so a chain of
         # deferrals resolves top-down. The strictly-decreasing encoding below then
         # re-stamps rank_world along the corrected order.
-        still_capped = [c for c in overcap_deferred if c not in promoted]
+        # 2026-09-06: mid-feed cap deferrals join the correction. At
+        # FEED_CAP_END = 50 the mid-feed cap never bound, so nobody noticed it
+        # had no rank-aware guard at all; at 20 slots it binds every day and a
+        # six-run replay showed it pushing a 42-source murder-trial verdict
+        # (base rank 13) and a 33-source Hague ruling (base 14) off the page
+        # for topic variety. Diversity may reorder the feed; it may not evict a
+        # story that out-bases its replacement by more than the tolerance.
+        still_capped = [c for c in (overcap_deferred + mid_overcap) if c not in promoted]
         for c in sorted(
             still_capped, key=lambda x: x.get("_base_rank", 0), reverse=True
         ):
@@ -810,6 +876,16 @@ def _contest_anchor_stems() -> frozenset:
     return _CONTEST_ANCHOR_STEMS_CACHED
 
 
+_INCIDENT_STEMS_CACHED = _UNSET
+
+
+def _incident_stems() -> frozenset:
+    global _INCIDENT_STEMS_CACHED
+    if _INCIDENT_STEMS_CACHED is _UNSET:
+        _INCIDENT_STEMS_CACHED = _stemmed_word_set(_INCIDENT_NOUNS)
+    return _INCIDENT_STEMS_CACHED
+
+
 def _generic_event_stems() -> frozenset:
     """Porter-stemmed generic-word set (lazy). Stemming with clustering's own
     stemmer keeps the set comparable to _title_word_stems output; falls back
@@ -833,7 +909,7 @@ def _salient_title_stems(title: str) -> set[str]:
     stems_fn = _dup_title_stems_fn()
     if stems_fn is None:
         return set()
-    generic = _generic_event_stems()
+    generic = _generic_event_stems() | _incident_stems()
     return {
         s for s in stems_fn(title)
         if len(s) >= DYN_EVENT_MIN_STEM_LEN and s not in generic
@@ -871,9 +947,19 @@ def _qualifies_mass_casualty(cluster: dict) -> bool:
     )
 
 
+_EVENT_KEYWORD_RES: dict[str, list] = {
+    key: [_re.compile(r"(?<![a-z0-9])" + _re.escape(kw) + r"(?![a-z0-9])") for kw in kws]
+    for key, kws in EVENT_KEYWORDS.items()
+}
+
+
 def _detect_event(title: str) -> str | None:
-    """Return event key if title matches a known event, else None."""
-    for event_key, keywords in EVENT_KEYWORDS.items():
-        if any(kw in title for kw in keywords):
+    """Return event key if the (lowercased) title contains a known event
+    keyword as a whole word or phrase, else None. Whole-word matching
+    (2026-09-06): the old substring test let "pla" match "downplays" and
+    "plan", and "strait" match "straits", grouping unrelated stories as one
+    event and decaying the third onward below the fold."""
+    for event_key, patterns in _EVENT_KEYWORD_RES.items():
+        if any(p.search(title) for p in patterns):
             return event_key
     return None
