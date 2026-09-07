@@ -54,7 +54,6 @@ articles:
 expectation:
   type: should_be_present
   key_phrase: "Latvian Prime Minister Silina resigns"
-  in_top_n: 50
   min_overlap: 0.5
 rationale: |
   Missing-story failure. A NATO-member head of government resigning over

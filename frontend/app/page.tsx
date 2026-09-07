@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import HomeContent from "./components/HomeContent";
 import { fetchInitialFeed } from "./lib/serverFeed";
 import { pageMetadata, SITE_URL } from "./lib/siteMeta";
+import { FEED_DISPLAYED } from "./lib/feedConfig";
 
 /* ---------------------------------------------------------------------------
    Front page — PRERENDERED at build time (static export).
@@ -39,8 +40,10 @@ export default async function Home() {
     "@type": "ItemList",
     name: "Void News: Today's Top Stories",
     itemListOrder: "https://schema.org/ItemListOrderDescending",
-    numberOfItems: Math.min(displayable.length, 30),
-    itemListElement: displayable.slice(0, 30).map((s, i) => ({
+    // Exactly the rendered feed: advertising 30 items on a 20-story page would
+    // point crawlers at 10 stories that are not on it (2026-09-06).
+    numberOfItems: Math.min(displayable.length, FEED_DISPLAYED),
+    itemListElement: displayable.slice(0, FEED_DISPLAYED).map((s, i) => ({
       "@type": "ListItem",
       position: i + 1,
       name: s.title,

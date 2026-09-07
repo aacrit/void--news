@@ -28,6 +28,13 @@ import uuid
 from datetime import date, datetime, timedelta, timezone
 from typing import Any
 
+try:
+    from utils.feed_config import ARCHIVE_CAP as _ARCHIVE_CAP
+    from utils.display_window import filter_displayable
+except ImportError:  # imported as pipeline.archive.print_archive
+    from pipeline.utils.feed_config import ARCHIVE_CAP as _ARCHIVE_CAP
+    from pipeline.utils.display_window import filter_displayable
+
 
 # Tier fill order when a huge cluster is capped to `member_cap` members.
 _TIER_ORDER = {"us_major": 0, "international": 1, "independent": 2}
@@ -176,7 +183,7 @@ def _cap_members(members: list[dict], member_cap: int) -> list[dict]:
 # ─────────────────────────────── main API ───────────────────────────────
 
 def archive_printed_edition(supabase, sources_by_id: dict, edition_date,
-                            pipeline_run_id=None, limit: int = 50,
+                            pipeline_run_id=None, limit: int = _ARCHIVE_CAP,
                             member_cap: int = 60,
                             thread_lookback_days: int = 7) -> dict:
     """Snapshot the day's display window into the permanent print archive.
@@ -259,28 +266,12 @@ def archive_printed_edition(supabase, sources_by_id: dict, edition_date,
             print(f"    [warn] print-archive ghost guard skipped: {e}")
             with_articles = set()
 
-    def _has_real_summary(row: dict) -> bool:
-        """Mirror serverFeed.clusterHasRealSummary: an unsummarized cluster (null
-        or empty summary_tier, or a blank summary) is dropped from the feed, so it
-        must not occupy a printed edition slot either."""
-        tier = (row.get("summary_tier") or "").strip()
-        summary = (row.get("summary") or "").strip()
-        return bool(tier and summary)
-
-    printed: list[dict] = []
-    for row in rows:
-        if len(printed) >= limit:
-            break
-        if (row.get("source_count") or 0) < 3:
-            continue
-        # Mirror the displayed feed's ghost + unsummarized drops so the archived
-        # set == the displayed set (only fire the ghost drop when we actually read
-        # membership; an empty set means the read failed, so fail open).
-        if with_articles and row.get("id") not in with_articles:
-            continue
-        if not _has_real_summary(row):
-            continue
-        printed.append(row)
+    # ONE selector shared with export_static, evals and Stage 2 (2026-09-06):
+    # utils.display_window mirrors the frontend rule exactly (source_count >= 3,
+    # CSAM exemption, clean_feed_summary emptiness incl. the raw-excerpt test,
+    # non-blank tier). The local approximation this replaced lacked the raw
+    # excerpt and CSAM rules, which shifted the printed window by one card.
+    printed: list[dict] = filter_displayable(rows, limit, with_articles=with_articles or None)
     if not printed:
         print("    [8f] no clusters in display window; nothing to print")
         return metrics

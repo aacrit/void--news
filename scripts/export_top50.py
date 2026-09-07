@@ -1,5 +1,9 @@
 """Export the live top-50 feed exactly as the dashboard renders it, plus the
 articles linked to each cluster, for offline multi-perspective review."""
+import sys as _sys
+from pathlib import Path as _Path
+_sys.path.insert(0, str(_Path(__file__).resolve().parent.parent / "pipeline"))
+from utils.feed_config import DISPLAYED  # noqa: E402
 import json
 import os
 import sys
@@ -23,7 +27,7 @@ res = (sb.table("story_clusters")
        .limit(100)
        .execute())
 clusters = res.data or []
-top = clusters[:50]
+top = clusters[:DISPLAYED]
 print(f"fetched {len(clusters)} clusters; taking top {len(top)}", file=sys.stderr)
 
 out = []

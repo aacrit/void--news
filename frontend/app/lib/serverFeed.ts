@@ -25,6 +25,7 @@ import {
   mapClustersToStories,
   clusterHasRealSummary,
 } from "./feedMapping";
+import { FEED_DISPLAYED, FEED_MIN_DISPLAYABLE } from "./feedConfig";
 import type { Story } from "./types";
 
 /** Minimum displayable, REAL-SUMMARY stories (>=3 sources) for a valid front
@@ -34,7 +35,7 @@ import type { Story } from "./types";
  *  (P0, 2026-08-11). If a healthy run genuinely cannot cover this many, that is
  *  a signal to lower the displayed feed size deliberately, not to pad with raw
  *  excerpts. */
-const MIN_STORIES = 30;
+const MIN_STORIES = FEED_MIN_DISPLAYABLE;
 
 export interface InitialFeed {
   stories: Story[];
@@ -105,12 +106,14 @@ export async function fetchInitialFeed(): Promise<InitialFeed> {
   // Attach shareable permalinks from the latest printed edition (build-data/
   // archiveMap.json: { source_cluster_id -> "/story/<id>/" }). An archive miss
   // falls back to the in-app deep link ?story=<id>, so no card is ever link-less.
+  let permalinkCount = 0;
   try {
     const rawMap = readFileSync(
       join(process.cwd(), "build-data", "archiveMap.json"),
       "utf-8",
     );
     const map = JSON.parse(rawMap) as Record<string, string>;
+    permalinkCount = Object.keys(map).length;
     for (const s of stories) {
       const link = map[s.id];
       if (link) s.permalink = link;
@@ -118,6 +121,29 @@ export async function fetchInitialFeed(): Promise<InitialFeed> {
   } catch (e) {
     console.warn(`[serverFeed] permalink map unavailable: ${e}`);
   }
+
+  // Fail loud on an archive miss inside the DISPLAYED window (2026-09-06).
+  // The `/?story=` fallback below is silent, so for six consecutive editions
+  // the last two to four cards shipped a homepage query link instead of the
+  // canonical /story/<uuid>/ page: not indexable, no share target, and the
+  // served-output gate flagged it after the fact every time. A miss now stops
+  // the build. Guarded on a non-empty map so a cold bootstrap (no archive yet)
+  // still degrades to the fallback instead of bricking the deploy.
+  if (permalinkCount > 0) {
+    const missing = stories
+      .slice(0, FEED_DISPLAYED)
+      .filter((s) => !s.permalink);
+    if (missing.length > 0) {
+      throw new Error(
+        `[serverFeed] ${missing.length} of the top ${FEED_DISPLAYED} displayed ` +
+          `stories have no /story/ permalink (archiveMap.json holds ` +
+          `${permalinkCount} entries). The printed edition and the displayed ` +
+          `feed have diverged; refusing to ship "/?story=" links. Missing: ` +
+          missing.slice(0, 5).map((s) => `${s.id} "${s.title}"`).join("; "),
+      );
+    }
+  }
+
   for (const s of stories) {
     if (!s.permalink && s.id) s.permalink = `/?story=${s.id}`;
   }

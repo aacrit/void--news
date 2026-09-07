@@ -68,7 +68,10 @@ DIMENSIONS = ("coverage", "contamination", "agreement", "duplication",
               "junk", "cohesion", "hygiene")
 
 # Tunables (documented where they mirror a repo constant).
-TOP10 = 10                       # front-page band; findings here escalate to P0
+try:
+    from utils.feed_config import LEAD_BAND as TOP10  # front-page band; findings here escalate to P0
+except ImportError:
+    TOP10 = 10
 MIN_COHESION_MEMBERS = 8         # cohesion RF-5 only judged on clusters this big
 _FALLBACK_ENTITY_CONV_FLOOR = 0.40   # mirrors MEGA_OVERMERGE_ENTITY_CONV_FLOOR
 _FALLBACK_TITLE_JACCARD_FLOOR = 0.12  # mirrors MEGA_OVERMERGE_TITLE_JACCARD_FLOOR

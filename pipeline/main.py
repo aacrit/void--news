@@ -31,6 +31,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from fetchers.rss_fetcher import fetch_from_rss
 from fetchers.web_scraper import scrape_article
+from utils.feed_config import DISPLAYED, CANDIDATES, LEAD_BAND, ARCHIVE_CAP
 from utils.supabase_client import (
     create_pipeline_run,
     insert_article,
@@ -71,7 +72,7 @@ except ImportError as e:
 # displayable clusters (fail-safe: a thin/failed run can never blank the feed by
 # deleting the prior run — serverFeed's floor is 20 displayable).
 CROSS_RUN_PURGE_LOOKBACK_HOURS = 12
-CROSS_RUN_PURGE_MIN_DISPLAYABLE = 30
+CROSS_RUN_PURGE_MIN_DISPLAYABLE = 30  # a fail-safe for deleting the prior run, NOT the display size (feed_config.DISPLAYED)
 
 # Gemini summarizer — optional (requires google-generativeai + API key)
 SUMMARIZER_AVAILABLE = False
@@ -1234,6 +1235,259 @@ class _ReclusterSkip(Exception):
     pass
 
 
+def run_retention_and_ghost_sweep() -> None:
+    """Cluster + article retention and the ghost-cluster sweep.
+
+    MOVED (2026-09-06) out of the end-of-run cleanup tail and called right
+    after the holistic re-rank, BEFORE the displayed window is chosen.
+
+    It used to run after step 10, i.e. after step 8f had already printed the
+    edition, and `export_static.py` runs later still as its own workflow step.
+    So every printed slot spent on a cluster that retention then deleted was a
+    permalink the exported feed could not resolve, and serverFeed silently fell
+    back to "/?story=<uuid>". That shipped on the last two to four cards of six
+    consecutive editions (2026-09-01 to 09-06; the 09-04 edition printed a
+    45-source Zelensky cluster at position 6 that no longer existed at export).
+
+    Running it here means the summary window, the final ordering, the summary
+    floor, the daily brief, the printed edition and the exported feed all see
+    exactly one set of clusters. It also stops the summarizer spending LLM
+    calls on clusters that are about to be deleted.
+    """
+    # Retention: archive then delete clusters older than 2 days,
+    # delete orphaned articles older than 7 days (CASCADE cleans
+    # bias_scores + article_categories), prune archive after 30 days.
+    try:
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=2)).isoformat()
+        # Paginate to get all old cluster IDs
+        old_ids: list[str] = []
+        offset = 0
+        while True:
+            page = supabase.table("story_clusters").select("id").lt(
+                "first_published", cutoff
+            ).range(offset, offset + 999).execute()
+            if not page.data:
+                break
+            old_ids.extend(c["id"] for c in page.data)
+            if len(page.data) < 1000:
+                break
+            offset += 1000
+
+        if old_ids:
+            # Archive: copy key fields to cluster_archive before deletion
+            # (preserves Gemini summaries for weekly/monthly trend reports)
+            for i in range(0, len(old_ids), 100):
+                batch = old_ids[i:i + 100]
+                # Fetch full cluster data for archive
+                to_archive = supabase.table("story_clusters").select(
+                    "id,title,summary,section,sections,category,source_count,"
+                    "first_published,headline_rank,divergence_score,bias_diversity,"
+                    "consensus_points,divergence_points"
+                ).in_("id", batch).execute()
+                if to_archive.data:
+                    # Upsert into archive table (created by migration 016)
+                    try:
+                        supabase.table("cluster_archive").upsert(
+                            to_archive.data, on_conflict="id"
+                        ).execute()
+                    except Exception:
+                        pass  # Archive table may not exist yet — still delete
+
+                supabase.table("cluster_articles").delete().in_(
+                    "cluster_id", batch
+                ).execute()
+                supabase.table("story_clusters").delete().in_(
+                    "id", batch
+                ).execute()
+            print(f"  Retention: archived + removed {len(old_ids)} clusters older than 2 days")
+        else:
+            print(f"  Retention: no clusters older than 2 days")
+
+        # Delete empty clusters (no articles linked)
+        empty = supabase.rpc("cleanup_stale_clusters").execute()
+
+        # Fix NULL first_published clusters (never caught by retention)
+        supabase.table("story_clusters").update(
+            {"first_published": datetime.now(timezone.utc).isoformat()}
+        ).is_("first_published", "null").execute()
+
+    except Exception as e:
+        print(f"  [warn] cluster retention failed: {e}")
+
+    # Article retention via RPC (migration 050). Atomic, indexed, cascades
+    # through FKs from migration 046. Falls back to the legacy paginated
+    # SELECT/DELETE block below if the RPC is missing (e.g., migration 050
+    # not yet applied to this environment).
+    try:
+        # 2026-06-01 egress fix — tightened 8 → 7 days. Weekly digest needs
+        # exactly 7 full days of articles to compute its picks; 8 was a
+        # one-day buffer that no longer earns its keep given the Free-Plan
+        # cap pressure.
+        result = supabase.rpc('cleanup_stale_articles', {'days': 7}).execute()
+        pruned = result.data if (result and result.data is not None) else 0
+        print(f"  Article retention RPC: pruned {pruned} stale articles (>7 days)")
+    except Exception as e:
+        err_msg = str(e).lower()
+        if "does not exist" in err_msg or "function" in err_msg and "not" in err_msg:
+            print(f"  [info] cleanup_stale_articles RPC not yet applied — using legacy path")
+        else:
+            print(f"  [warn] cleanup_stale_articles RPC failed: {e} — using legacy path")
+
+    # Diagnostic-table retention via cleanup_diagnostic_tables RPC (migration 060).
+    # Prunes engine_snapshots (3 days), engine_runs (14 days), sandbox_runs
+    # (7 days) in one call. Critical for Free-Plan projects with a 0.5 GB cap.
+    # The 2026-06-01 outage was caused by engine_snapshots accumulating ~100 MB
+    # of JSONB payloads with no retention policy. Non-fatal: pipeline continues
+    # if the RPC is missing (migration 060 not yet applied).
+    try:
+        diag_result = supabase.rpc('cleanup_diagnostic_tables', {}).execute()
+        d = diag_result.data if (diag_result and diag_result.data is not None) else {}
+        if isinstance(d, dict):
+            _snap = d.get('engine_snapshots_pruned', 0)
+            _runs = d.get('engine_runs_pruned', 0)
+            _sand = d.get('sandbox_runs_pruned', 0)
+            _size = d.get('db_size_mb', 0)
+            print(
+                f"  Diagnostic retention RPC: pruned {_snap} snapshot(s), "
+                f"{_runs} engine run(s), {_sand} sandbox run(s); "
+                f"DB size now {_size} MB"
+            )
+            # Warn at 80% of Free-Plan cap (500 MB).
+            try:
+                if float(_size) > 400.0:
+                    print(
+                        f"  [WARN] DB size {_size} MB is above 80% of the 500 MB "
+                        f"Free-Plan cap. Either upgrade to Pro or tighten retention."
+                    )
+            except (TypeError, ValueError):
+                pass
+        else:
+            print(f"  Diagnostic retention RPC returned: {d}")
+    except Exception as e:
+        err_msg = str(e).lower()
+        if "does not exist" in err_msg or ("function" in err_msg and "not" in err_msg):
+            print(f"  [info] cleanup_diagnostic_tables RPC not yet applied (migration 060)")
+        else:
+            print(f"  [warn] cleanup_diagnostic_tables RPC failed: {e}")
+
+    # Legacy article retention: delete articles older than 7 days (kept as
+    # a defensive fallback in case the RPC above is missing or partial).
+    # 7 days ensures the weekly digest's Sunday run has the full week of
+    # data. ON DELETE CASCADE removes bias_scores, cluster_articles, and
+    # article_categories. Daily briefs are PERMANENT.
+    try:
+        article_cutoff = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
+        old_article_ids: list[str] = []
+        offset = 0
+        while True:
+            page = supabase.table("articles").select("id").lt(
+                "published_at", article_cutoff
+            ).range(offset, offset + 999).execute()
+            if not page.data:
+                break
+            old_article_ids.extend(a["id"] for a in page.data)
+            if len(page.data) < 1000:
+                break
+            offset += 1000
+
+        if old_article_ids:
+            for i in range(0, len(old_article_ids), 100):
+                batch = old_article_ids[i:i + 100]
+                supabase.table("articles").delete().in_("id", batch).execute()
+            print(f"  Retention: removed {len(old_article_ids)} articles older than 7 days"
+                  f" (+ cascaded bias_scores, article_categories)")
+        else:
+            print(f"  Retention: no articles older than 7 days")
+    except Exception as e:
+        print(f"  [warn] article retention failed: {e}")
+
+    # Ghost-cluster sweep: remove story_clusters that have ZERO cluster_articles.
+    #
+    # ROOT CAUSE (prod P0): the article retention above deletes stale articles
+    # and cascade-drops their cluster_articles links (migration 047), but the
+    # parent story_clusters row survives with a STALE source_count and a valid
+    # rank_world. If it still ranks it renders as a real feed card whose Deep
+    # Dive source fetch (the cluster_articles join) returns nothing. A
+    # continuing story with zero articles left in the retention window is no
+    # longer active news and must not be in the feed. Observed live with
+    # source_count 74/52/44 clusters carrying 0 cluster_articles.
+    #
+    # This MUST run AFTER every article-deleting step above (the RPC AND the
+    # legacy block) so the cluster<->article state is final and we catch the
+    # clusters orphaned by THIS run. Hard-delete is safe and mirrors the 2-day
+    # retention block, which already hard-deletes story_clusters rows:
+    # cluster_articles is already empty, story_memory.cluster_id cascades
+    # (migration 022), and daily_briefs.opinion_cluster_id / article_claims.
+    # cluster_id are ON DELETE SET NULL (migrations 029/041).
+    #
+    # GUARD: a cluster is a ghost ONLY when its id is absent from the set of
+    # cluster_ids that appear in cluster_articles, i.e. it has EXACTLY zero
+    # links. Any cluster with >=1 article is in `has_articles` and can never be
+    # selected for deletion. A second guard bails the whole sweep if the
+    # cluster_articles scan comes back empty (abnormal state) so we never
+    # mistake a failed/empty read for "every cluster is a ghost".
+    try:
+        # Page every cluster_id that still has at least one linked article.
+        # Robust to PostgREST's 1000-row page cap; a Python set dedupes.
+        has_articles: set[str] = set()
+        offset = 0
+        while True:
+            page = supabase.table("cluster_articles").select("cluster_id").range(
+                offset, offset + 999
+            ).execute()
+            if not page.data:
+                break
+            for row in page.data:
+                cid = row.get("cluster_id")
+                if cid:
+                    has_articles.add(cid)
+            if len(page.data) < 1000:
+                break
+            offset += 1000
+
+        if not has_articles:
+            # No links found at all. Either cluster_articles is genuinely empty
+            # (abnormal) or the scan failed silently. Never treat that as
+            # "delete every cluster" — bail out of the sweep entirely.
+            print(
+                "  [warn] ghost-cluster sweep skipped: cluster_articles scan "
+                "returned zero links (refusing to treat all clusters as ghosts)"
+            )
+        else:
+            # Page every story_cluster id; a ghost is one absent from the set.
+            ghost_ids: list[str] = []
+            offset = 0
+            while True:
+                page = supabase.table("story_clusters").select("id").range(
+                    offset, offset + 999
+                ).execute()
+                if not page.data:
+                    break
+                for row in page.data:
+                    cid = row.get("id")
+                    if cid and cid not in has_articles:
+                        ghost_ids.append(cid)
+                if len(page.data) < 1000:
+                    break
+                offset += 1000
+
+            if ghost_ids:
+                for i in range(0, len(ghost_ids), 100):
+                    batch = ghost_ids[i:i + 100]
+                    supabase.table("story_clusters").delete().in_(
+                        "id", batch
+                    ).execute()
+                print(
+                    f"  Ghost-cluster sweep: removed {len(ghost_ids)} cluster(s) "
+                    f"with zero cluster_articles (orphaned by article retention)"
+                )
+            else:
+                print("  Ghost-cluster sweep: no zero-article clusters found")
+    except Exception as e:
+        print(f"  [warn] ghost-cluster sweep failed: {e}")
+
+
+
 def run_editorial_stage(force_resummarize: bool = False) -> None:
     """Stage B "Editorial" standalone (2026-08-11 pipeline split, Phase 1).
 
@@ -1282,7 +1536,7 @@ def run_editorial_stage(force_resummarize: bool = False) -> None:
         print("\n[8d] Post-rerank top-50 Gemini summarization (batched, all on flash)...")
         try:
             summary_metrics = summarize_top50_after_rerank(
-                supabase, edition="world", limit=50, prefer_provider="gemini",
+                supabase, edition="world", limit=CANDIDATES, prefer_provider="gemini",
                 flash_top_n=10, force_resummarize=force_resummarize)
             print(
                 f"  Top-50: {summary_metrics['summarized']} summarized, "
@@ -1297,7 +1551,7 @@ def run_editorial_stage(force_resummarize: bool = False) -> None:
     print("\n[8d.1] Pre-order title clean (null-tier top-pool cards)...")
     try:
         tc_metrics = ensure_top50_summary_floor(
-            supabase, edition="world", limit=50, title_only=True)
+            supabase, edition="world", limit=CANDIDATES, title_only=True)
         print(f"  Title clean: {tc_metrics['checked']} null-tier cards, "
               f"{tc_metrics['titles_cleaned']} titles normalized")
     except Exception as e:
@@ -1334,7 +1588,7 @@ def run_editorial_stage(force_resummarize: bool = False) -> None:
     print("\n[8d.6] Final-order summary floor (guarantee top-50 coverage)...")
     try:
         floor_metrics = ensure_top50_summary_floor(
-            supabase, edition="world", limit=50, prefer_provider="gemini")
+            supabase, edition="world", limit=CANDIDATES, prefer_provider="gemini")
         print(f"  Summary floor: {floor_metrics['checked']} cards needed a summary → "
               f"{floor_metrics['resummarized']} re-summarized, "
               f"{floor_metrics['sanitized']} rule-based, "
@@ -1347,7 +1601,7 @@ def run_editorial_stage(force_resummarize: bool = False) -> None:
         print("\n[8d.7] Final top-10 flash-tier reconciliation...")
         try:
             recon_metrics = reconcile_flash_top10(
-                supabase, edition="world", top_n=10, prefer_provider="gemini")
+                supabase, edition="world", top_n=LEAD_BAND, prefer_provider="gemini")
             print(f"  Flash reconcile: {recon_metrics['upgraded']} upgraded, "
                   f"{recon_metrics['skipped']} skipped, {recon_metrics['failed']} failed")
         except Exception as e:
@@ -3684,6 +3938,12 @@ def main():
             print(f"  [warn] Holistic re-rank failed: {e}")
             traceback.print_exc()
 
+    # Retention + ghost sweep (moved here 2026-09-06 — see the function
+    # docstring). Everything downstream (candidate window, ordering, floor,
+    # brief, printed edition, static export) now sees one set of clusters.
+    print("\n[8c.1] Retention + ghost sweep (before the display window is chosen)...")
+    run_retention_and_ghost_sweep()
+
     # Step 8c.5 REMOVED (2026-06-02 collapse-editions). World-tag
     # reconciliation was only needed when /world was a separate overflow
     # surface filtered by `sections @> ['world']`. With the single feed
@@ -3748,7 +4008,7 @@ def main():
             # post-rerank top-10 upgrade flash-lite → flash. Groq retired.
             # See summarize_top50_after_rerank / migration 063.
             summary_metrics = summarize_top50_after_rerank(
-                supabase, edition="world", limit=50, prefer_provider="gemini",
+                supabase, edition="world", limit=CANDIDATES, prefer_provider="gemini",
                 flash_top_n=10)
             print(
                 f"  Top-50: {summary_metrics['summarized']} summarized, "
@@ -3787,7 +4047,7 @@ def main():
         print("\n[8d.1] Pre-order title clean (null-tier top-pool cards)...")
         try:
             tc_metrics = ensure_top50_summary_floor(
-                supabase, edition="world", limit=50, title_only=True)
+                supabase, edition="world", limit=CANDIDATES, title_only=True)
             print(
                 f"  Title clean: {tc_metrics['checked']} null-tier cards, "
                 f"{tc_metrics['titles_cleaned']} titles normalized"
@@ -3855,7 +4115,7 @@ def main():
         print("\n[8d.6] Final-order summary floor (guarantee top-50 coverage)...")
         try:
             floor_metrics = ensure_top50_summary_floor(
-                supabase, edition="world", limit=50, prefer_provider="gemini")
+                supabase, edition="world", limit=CANDIDATES, prefer_provider="gemini")
             print(
                 f"  Summary floor: {floor_metrics['checked']} final top-50 cards "
                 f"needed a summary (null OR raw excerpt) → "
@@ -3878,7 +4138,7 @@ def main():
         print("\n[8d.7] Final top-10 flash-tier reconciliation...")
         try:
             recon_metrics = reconcile_flash_top10(
-                supabase, edition="world", top_n=10, prefer_provider="gemini")
+                supabase, edition="world", top_n=LEAD_BAND, prefer_provider="gemini")
             print(
                 f"  Flash reconcile: {recon_metrics['checked']} final top-10 "
                 f"cards below flash → {recon_metrics['upgraded']} upgraded, "
@@ -4200,238 +4460,6 @@ def main():
     except Exception as e:
         print(f"  [warn] Daily brief cleanup failed: {e}")
 
-    # Retention: archive then delete clusters older than 2 days,
-    # delete orphaned articles older than 7 days (CASCADE cleans
-    # bias_scores + article_categories), prune archive after 30 days.
-    try:
-        cutoff = (datetime.now(timezone.utc) - timedelta(days=2)).isoformat()
-        # Paginate to get all old cluster IDs
-        old_ids: list[str] = []
-        offset = 0
-        while True:
-            page = supabase.table("story_clusters").select("id").lt(
-                "first_published", cutoff
-            ).range(offset, offset + 999).execute()
-            if not page.data:
-                break
-            old_ids.extend(c["id"] for c in page.data)
-            if len(page.data) < 1000:
-                break
-            offset += 1000
-
-        if old_ids:
-            # Archive: copy key fields to cluster_archive before deletion
-            # (preserves Gemini summaries for weekly/monthly trend reports)
-            for i in range(0, len(old_ids), 100):
-                batch = old_ids[i:i + 100]
-                # Fetch full cluster data for archive
-                to_archive = supabase.table("story_clusters").select(
-                    "id,title,summary,section,sections,category,source_count,"
-                    "first_published,headline_rank,divergence_score,bias_diversity,"
-                    "consensus_points,divergence_points"
-                ).in_("id", batch).execute()
-                if to_archive.data:
-                    # Upsert into archive table (created by migration 016)
-                    try:
-                        supabase.table("cluster_archive").upsert(
-                            to_archive.data, on_conflict="id"
-                        ).execute()
-                    except Exception:
-                        pass  # Archive table may not exist yet — still delete
-
-                supabase.table("cluster_articles").delete().in_(
-                    "cluster_id", batch
-                ).execute()
-                supabase.table("story_clusters").delete().in_(
-                    "id", batch
-                ).execute()
-            print(f"  Retention: archived + removed {len(old_ids)} clusters older than 2 days")
-        else:
-            print(f"  Retention: no clusters older than 2 days")
-
-        # Delete empty clusters (no articles linked)
-        empty = supabase.rpc("cleanup_stale_clusters").execute()
-
-        # Fix NULL first_published clusters (never caught by retention)
-        supabase.table("story_clusters").update(
-            {"first_published": datetime.now(timezone.utc).isoformat()}
-        ).is_("first_published", "null").execute()
-
-    except Exception as e:
-        print(f"  [warn] cluster retention failed: {e}")
-
-    # Article retention via RPC (migration 050). Atomic, indexed, cascades
-    # through FKs from migration 046. Falls back to the legacy paginated
-    # SELECT/DELETE block below if the RPC is missing (e.g., migration 050
-    # not yet applied to this environment).
-    try:
-        # 2026-06-01 egress fix — tightened 8 → 7 days. Weekly digest needs
-        # exactly 7 full days of articles to compute its picks; 8 was a
-        # one-day buffer that no longer earns its keep given the Free-Plan
-        # cap pressure.
-        result = supabase.rpc('cleanup_stale_articles', {'days': 7}).execute()
-        pruned = result.data if (result and result.data is not None) else 0
-        print(f"  Article retention RPC: pruned {pruned} stale articles (>7 days)")
-    except Exception as e:
-        err_msg = str(e).lower()
-        if "does not exist" in err_msg or "function" in err_msg and "not" in err_msg:
-            print(f"  [info] cleanup_stale_articles RPC not yet applied — using legacy path")
-        else:
-            print(f"  [warn] cleanup_stale_articles RPC failed: {e} — using legacy path")
-
-    # Diagnostic-table retention via cleanup_diagnostic_tables RPC (migration 060).
-    # Prunes engine_snapshots (3 days), engine_runs (14 days), sandbox_runs
-    # (7 days) in one call. Critical for Free-Plan projects with a 0.5 GB cap.
-    # The 2026-06-01 outage was caused by engine_snapshots accumulating ~100 MB
-    # of JSONB payloads with no retention policy. Non-fatal: pipeline continues
-    # if the RPC is missing (migration 060 not yet applied).
-    try:
-        diag_result = supabase.rpc('cleanup_diagnostic_tables', {}).execute()
-        d = diag_result.data if (diag_result and diag_result.data is not None) else {}
-        if isinstance(d, dict):
-            _snap = d.get('engine_snapshots_pruned', 0)
-            _runs = d.get('engine_runs_pruned', 0)
-            _sand = d.get('sandbox_runs_pruned', 0)
-            _size = d.get('db_size_mb', 0)
-            print(
-                f"  Diagnostic retention RPC: pruned {_snap} snapshot(s), "
-                f"{_runs} engine run(s), {_sand} sandbox run(s); "
-                f"DB size now {_size} MB"
-            )
-            # Warn at 80% of Free-Plan cap (500 MB).
-            try:
-                if float(_size) > 400.0:
-                    print(
-                        f"  [WARN] DB size {_size} MB is above 80% of the 500 MB "
-                        f"Free-Plan cap. Either upgrade to Pro or tighten retention."
-                    )
-            except (TypeError, ValueError):
-                pass
-        else:
-            print(f"  Diagnostic retention RPC returned: {d}")
-    except Exception as e:
-        err_msg = str(e).lower()
-        if "does not exist" in err_msg or ("function" in err_msg and "not" in err_msg):
-            print(f"  [info] cleanup_diagnostic_tables RPC not yet applied (migration 060)")
-        else:
-            print(f"  [warn] cleanup_diagnostic_tables RPC failed: {e}")
-
-    # Legacy article retention: delete articles older than 7 days (kept as
-    # a defensive fallback in case the RPC above is missing or partial).
-    # 7 days ensures the weekly digest's Sunday run has the full week of
-    # data. ON DELETE CASCADE removes bias_scores, cluster_articles, and
-    # article_categories. Daily briefs are PERMANENT.
-    try:
-        article_cutoff = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
-        old_article_ids: list[str] = []
-        offset = 0
-        while True:
-            page = supabase.table("articles").select("id").lt(
-                "published_at", article_cutoff
-            ).range(offset, offset + 999).execute()
-            if not page.data:
-                break
-            old_article_ids.extend(a["id"] for a in page.data)
-            if len(page.data) < 1000:
-                break
-            offset += 1000
-
-        if old_article_ids:
-            for i in range(0, len(old_article_ids), 100):
-                batch = old_article_ids[i:i + 100]
-                supabase.table("articles").delete().in_("id", batch).execute()
-            print(f"  Retention: removed {len(old_article_ids)} articles older than 7 days"
-                  f" (+ cascaded bias_scores, article_categories)")
-        else:
-            print(f"  Retention: no articles older than 7 days")
-    except Exception as e:
-        print(f"  [warn] article retention failed: {e}")
-
-    # Ghost-cluster sweep: remove story_clusters that have ZERO cluster_articles.
-    #
-    # ROOT CAUSE (prod P0): the article retention above deletes stale articles
-    # and cascade-drops their cluster_articles links (migration 047), but the
-    # parent story_clusters row survives with a STALE source_count and a valid
-    # rank_world. If it still ranks it renders as a real feed card whose Deep
-    # Dive source fetch (the cluster_articles join) returns nothing. A
-    # continuing story with zero articles left in the retention window is no
-    # longer active news and must not be in the feed. Observed live with
-    # source_count 74/52/44 clusters carrying 0 cluster_articles.
-    #
-    # This MUST run AFTER every article-deleting step above (the RPC AND the
-    # legacy block) so the cluster<->article state is final and we catch the
-    # clusters orphaned by THIS run. Hard-delete is safe and mirrors the 2-day
-    # retention block, which already hard-deletes story_clusters rows:
-    # cluster_articles is already empty, story_memory.cluster_id cascades
-    # (migration 022), and daily_briefs.opinion_cluster_id / article_claims.
-    # cluster_id are ON DELETE SET NULL (migrations 029/041).
-    #
-    # GUARD: a cluster is a ghost ONLY when its id is absent from the set of
-    # cluster_ids that appear in cluster_articles, i.e. it has EXACTLY zero
-    # links. Any cluster with >=1 article is in `has_articles` and can never be
-    # selected for deletion. A second guard bails the whole sweep if the
-    # cluster_articles scan comes back empty (abnormal state) so we never
-    # mistake a failed/empty read for "every cluster is a ghost".
-    try:
-        # Page every cluster_id that still has at least one linked article.
-        # Robust to PostgREST's 1000-row page cap; a Python set dedupes.
-        has_articles: set[str] = set()
-        offset = 0
-        while True:
-            page = supabase.table("cluster_articles").select("cluster_id").range(
-                offset, offset + 999
-            ).execute()
-            if not page.data:
-                break
-            for row in page.data:
-                cid = row.get("cluster_id")
-                if cid:
-                    has_articles.add(cid)
-            if len(page.data) < 1000:
-                break
-            offset += 1000
-
-        if not has_articles:
-            # No links found at all. Either cluster_articles is genuinely empty
-            # (abnormal) or the scan failed silently. Never treat that as
-            # "delete every cluster" — bail out of the sweep entirely.
-            print(
-                "  [warn] ghost-cluster sweep skipped: cluster_articles scan "
-                "returned zero links (refusing to treat all clusters as ghosts)"
-            )
-        else:
-            # Page every story_cluster id; a ghost is one absent from the set.
-            ghost_ids: list[str] = []
-            offset = 0
-            while True:
-                page = supabase.table("story_clusters").select("id").range(
-                    offset, offset + 999
-                ).execute()
-                if not page.data:
-                    break
-                for row in page.data:
-                    cid = row.get("id")
-                    if cid and cid not in has_articles:
-                        ghost_ids.append(cid)
-                if len(page.data) < 1000:
-                    break
-                offset += 1000
-
-            if ghost_ids:
-                for i in range(0, len(ghost_ids), 100):
-                    batch = ghost_ids[i:i + 100]
-                    supabase.table("story_clusters").delete().in_(
-                        "id", batch
-                    ).execute()
-                print(
-                    f"  Ghost-cluster sweep: removed {len(ghost_ids)} cluster(s) "
-                    f"with zero cluster_articles (orphaned by article retention)"
-                )
-            else:
-                print("  Ghost-cluster sweep: no zero-article clusters found")
-    except Exception as e:
-        print(f"  [warn] ghost-cluster sweep failed: {e}")
-
     # Archive retention: prune entries older than 10 days (buffer past Sunday
     # weekly digest). BATCHED: the single-statement DELETE hit the Free-Plan
     # statement timeout (57014, 2026-07-04/05 runs) once the backlog grew,
@@ -4489,7 +4517,7 @@ def main():
         "llm_calls_total": _claude_calls + _gemini_calls,
         "estimated_cost_usd": estimated_cost_usd,
         "top50_coverage_pct": round(
-            100 * (summary_metrics["summarized"] + summary_metrics["cached"]) / 50, 1
+            100 * (summary_metrics["summarized"] + summary_metrics["cached"]) / CANDIDATES, 1
         ),
     }
 

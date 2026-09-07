@@ -25,6 +25,10 @@ import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
+if str(REPO / "pipeline") not in sys.path:
+    sys.path.insert(0, str(REPO / "pipeline"))
+from utils.feed_config import POOL, MIN_DISPLAYABLE  # noqa: E402
+from utils.display_window import is_displayable  # noqa: E402
 DB = (
     sys.argv[1]
     if len(sys.argv) > 1
@@ -114,10 +118,14 @@ FEED_COLS = [
     "importance_score", "source_count", "first_published", "last_updated",
     "divergence_score", "headline_rank", "coverage_velocity", "rank_world",
     "cached_image_url", "is_international", "is_headline", "headline_confidence",
+    # 2026-09-06: content_type + disaster_severity make each snapshot a
+    # self-contained input for evals/replay_ordering.py (apply_feed_ordering
+    # reads both; without them an offline replay guesses).
+    "content_type", "disaster_severity",
 ]
 rows = c.execute(
     "SELECT * FROM story_clusters WHERE sections LIKE '%world%' "
-    "ORDER BY CAST(rank_world AS REAL) DESC LIMIT 100"
+    f"ORDER BY CAST(rank_world AS REAL) DESC LIMIT {int(POOL)}"
 ).fetchall()
 clusters = []
 for r in rows:
@@ -125,7 +133,7 @@ for r in rows:
     d = {k: (r[k] if k in keys else None) for k in FEED_COLS}
     for k in ("importance_score", "source_count", "divergence_score",
               "headline_rank", "coverage_velocity", "rank_world",
-              "headline_confidence"):
+              "headline_confidence", "disaster_severity"):
         d[k] = pnum(r[k]) if k in keys else None
     d["is_international"] = pbool(r["is_international"]) if "is_international" in keys else None
     d["is_headline"] = pbool(r["is_headline"]) if "is_headline" in keys else None
@@ -287,11 +295,8 @@ wj(PUBLIC_DIR / "methodology.json", meth)
 print(f"methodology.json: {len(meth)} articles")
 
 # Fail loud if the feed is too thin to ship (mirrors serverFeed's guard).
-displayable = sum(
-    1 for d in clusters
-    if (d.get("source_count") or 0) >= 3 and d.get("summary_tier")
-)
-print(f"displayable (>=3 sources, real summary): {displayable}")
-if displayable < 30:
-    print("WARNING: fewer than 30 displayable stories; serverFeed will fail the build.")
+displayable = sum(1 for d in clusters if is_displayable(d))
+print(f"displayable (frontend rule, utils.display_window): {displayable}")
+if displayable < MIN_DISPLAYABLE:
+    print(f"WARNING: fewer than {MIN_DISPLAYABLE} displayable stories; serverFeed will fail the build.")
 c.close()

@@ -35,8 +35,7 @@ if str(_PIPELINE_DIR) not in sys.path:
 from evals import checks  # noqa: E402  (after sys.path bootstrap)
 
 # Homepage window constants (mirror HomeContent + ensure_top50_summary_floor).
-FETCH_LIMIT = 100      # HomeContent.FETCH_LIMIT
-EDITION_FEED_SIZE = 50  # HomeContent.EDITION_FEED_SIZE (displayed top-50)
+from utils.feed_config import POOL as FETCH_LIMIT, DISPLAYED as EDITION_FEED_SIZE  # noqa: E402  one source of truth
 MIN_SOURCE_COUNT = 3    # only source_count>=3 rows occupy display slots
 EDITION = "world"       # single daily feed
 

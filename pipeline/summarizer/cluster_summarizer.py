@@ -16,6 +16,10 @@ since their last Gemini summary are skipped (no API call).
 
 import hashlib
 import re
+try:
+    from utils.feed_config import CANDIDATES as _FEED_CANDIDATES, LEAD_BAND as _FEED_LEAD_BAND
+except ImportError:  # imported as pipeline.summarizer.cluster_summarizer
+    from pipeline.utils.feed_config import CANDIDATES as _FEED_CANDIDATES, LEAD_BAND as _FEED_LEAD_BAND
 
 from .gemini_client import (
     generate_json as gemini_generate_json,
@@ -3061,7 +3065,7 @@ def _store_cluster_summary(supabase, cid: str, result: dict, h: str,
         metrics["failed"] += 1
 
 
-def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = 50,
+def summarize_top50_after_rerank(supabase, edition: str = "world", limit: int = _FEED_CANDIDATES,
                                  prefer_provider: str | None = "gemini",
                                  flash_top_n: int = 10,
                                  force_resummarize: bool = False) -> dict:
@@ -3313,7 +3317,7 @@ def _floor_needs_summary(summary, tier, raw_check) -> bool:
     return not (tier and summary and not raw_check(summary))
 
 
-def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = 50,
+def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = _FEED_CANDIDATES,
                                prefer_provider: str | None = "gemini",
                                title_only: bool = False) -> dict:
     """Guarantee no DISPLAYED top-50 card is left showing a raw scraped excerpt.
@@ -3704,7 +3708,7 @@ def ensure_top50_summary_floor(supabase, edition: str = "world", limit: int = 50
 # budget-safe: it only fires while Gemini is available and the per-run cap has
 # headroom, caps the number of upgrades, and degrades gracefully (never raises).
 
-def reconcile_flash_top10(supabase, edition: str = "world", top_n: int = 10,
+def reconcile_flash_top10(supabase, edition: str = "world", top_n: int = _FEED_LEAD_BAND,
                           prefer_provider: str | None = "gemini",
                           max_upgrades: int = 5) -> dict:
     """Upgrade the FINAL top-`top_n` displayed cards from flash-lite → flash.
