@@ -125,6 +125,63 @@ COHERENCE = [
         "Gloria Steinem Was the Godmother of Neoliberal Feminism - TheWire.in",
         "Look back: Gloria Steinem on the founding of Ms. Magazine",
     ], set()),
+    # ---- the 2026-09-09 production over-trim ---------------------------------
+    # A big cluster's modal vocabulary SHRINKS as it grows: 62 members of the
+    # Iran strike cluster produced exactly three modal stems, so every report
+    # phrased differently read as foreign. The cluster HEADLINE does not shrink,
+    # which is why removal now needs both signals. Each member below was really
+    # deleted from the live feed that day.
+    ("iran strike, real over-trim", [
+        "US Destroys Five Iranian Tankers in Strait of Hormuz",
+        "Oil surges as US destroys five Iranian tankers",
+        "Tankers ablaze after US strike, oil markets react",
+        "Five tankers destroyed in US strike on Iranian oil fleet",
+        "Oil above $100 after tankers destroyed in Hormuz strike",
+        "US strike destroys Iranian tankers, oil jumps",
+        # These four were really deleted from this cluster on 2026-09-09.
+        # Each is the same story in different words, and each shares a stem
+        # with the cluster headline even though it shares none of the three
+        # modal stems the 62-member cluster produced.
+        "US Targets Iranian Ships Near Kharg Island in Response to Attack",
+        "War in the Middle East: Iran attacks US base in Jordan, 10 wounded",
+        "U.S. denies claims Iran struck two American vessels in retaliation",
+        "Iran's retaliatory missiles: sound and fury, signifying nothing",
+        # Genuine contamination: must still go.
+        "Makinde: Blockade of Obi's convoy confirms APC's desperation",
+        "Tuesday's Final Word",
+    ], {10, 11}, "US Destroys Five Iranian Tankers; Iran Strikes Jordan, Oil Surges"),
+
+    # "Trump hails 'really big night' for populists in German elections" was
+    # deleted from a cluster titled "Trump hails AfD win in Germany's
+    # Saxony-Anhalt". They are the same sentence twice.
+    ("afd win, real over-trim", [
+        "Trump hails AfD win in Germany's Saxony-Anhalt election",
+        "Trump hails 'really big night' for populists in German elections",
+        "German economy frets about Saxony-Anhalt election results",
+        "German Establishment Responds To Its Ballot Box Drubbing",
+        "AfD sweeps Saxony-Anhalt in historic state election win",
+        "Far-right AfD takes Saxony-Anhalt, Merz under pressure",
+        "Liam Rooney gives an instant reaction to FSU's 27-24 loss",
+    ], {6}, "Trump hails AfD win in Germany's Saxony-Anhalt"),
+
+    # The guard must not resurrect genuine contamination: a plane-crash cluster
+    # keeps its own coverage and still sheds a college football recap.
+    ("amazon crash keeps its own, sheds the rest", [
+        "Amazon Cargo Jet Crashes on Approach to Miami",
+        "Miami crash: NTSB opens investigation into Amazon cargo jet",
+        "Amazon cargo plane down near Miami, three crew aboard",
+        "Cargo jet crash in Miami kills three, Amazon confirms",
+        "Amazon cargo jet crash: what we know about the Miami disaster",
+        "Investigators comb Miami site of Amazon cargo jet crash",
+        # Really deleted from this cluster on 2026-09-09, and really the
+        # same story.
+        "Amazon freighter in crash was transporting contact lenses",
+        "Pilot of Amazon cargo jet told wife his career was over",
+        # Genuine contamination: must still go.
+        "Liam Rooney gives an instant reaction to FSU's 27-24 loss",
+        "Green groups file complaint over EU water protection review",
+    ], {8, 9}, "Amazon Cargo Jet Pilot Reportedly Told Wife Career Over After Miami Crash"),
+
     # A hyphen must not make a near-identical headline read as foreign.
     ("hyphen artifact", [
         "Germany's Far-Right AfD Poised for Historic State Election Victory",
@@ -137,8 +194,10 @@ COHERENCE = [
 
 def check_coherence() -> int:
     failed = 0
-    for name, titles, want in COHERENCE:
-        idx, vocab = incoherent_members(titles)
+    for case in COHERENCE:
+        name, titles, want = case[0], case[1], case[2]
+        head = case[3] if len(case) > 3 else ""
+        idx, vocab = incoherent_members(titles, head)
         got = set(idx)
         if len(vocab) < MODAL_MIN_STEMS:
             got = set()

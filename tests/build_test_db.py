@@ -62,7 +62,8 @@ def build(out: Path, commit: str | None = None, clusters_limit: int = 100) -> di
 
     cluster_cols = {r[1] for r in conn.execute("PRAGMA table_info(story_clusters)")}
     stats = {"clusters": 0, "articles": 0, "sources": 0, "bias": 0, "links": 0,
-             "printed": 0}
+             "printed": 0, "non_candidates": 0}
+    seen_cluster_ids: set[str] = {c["id"] for c in clusters}
     seen_sources: dict[str, str] = {}
     seen_articles: set[str] = set()
 
@@ -133,6 +134,55 @@ def build(out: Path, commit: str | None = None, clusters_limit: int = 100) -> di
             conn.execute("INSERT OR IGNORE INTO cluster_articles VALUES (?,?)",
                          (c["id"], aid))
             stats["links"] += 1
+
+    # Non-candidate tail. feed.json holds ONLY the 35-cluster Stage 2 bench
+    # (export_static emits the bench, not the pool), so a DB built from it has
+    # no clusters BELOW the bench. Step 8d.5 lifts the bench clear of the
+    # non-candidates, and with none present that path never runs and the
+    # harness silently stopped covering it.
+    #
+    # Synthesize the tail from older archived editions: real titles and real
+    # source counts, ranked below everything in the bench, with no articles
+    # linked (they are ghosts to the bench selector, which is exactly what a
+    # rank-36-and-below cluster looks like to Stage 2).
+    try:
+        archive = json.loads(_read("frontend/build-data/archive.json", commit))
+        bench_ids = {c["id"] for c in clusters}
+        floor = min((c.get("rank_world") or 0) for c in clusters) if clusters else 10.0
+        tail = 0
+        for r in archive:
+            if tail >= 20:
+                break
+            cid = r.get("source_cluster_id")
+            if not cid or cid in bench_ids or cid in seen_cluster_ids:
+                continue
+            row = {
+                "id": cid,
+                "title": r.get("title") or "untitled",
+                "summary": r.get("summary"),
+                "summary_tier": r.get("summary_tier"),
+                "category": r.get("category"),
+                "content_type": r.get("content_type") or "reporting",
+                "section": "world",
+                "sections": "{world}",
+                "source_count": r.get("source_count") or 0,
+                "rank_world": round(floor - 1.0 - tail, 2),
+                "headline_rank": round(floor - 1.0 - tail, 2),
+                "importance_score": 1.0,
+                "last_updated": built_at,
+            }
+            row = {k: v for k, v in row.items() if k in cluster_cols}
+            cols = ",".join(f'"{k}"' for k in row)
+            try:
+                conn.execute(f"INSERT INTO story_clusters ({cols}) VALUES "
+                             f"({','.join('?' for _ in row)})", list(row.values()))
+            except sqlite3.Error:
+                continue
+            seen_cluster_ids.add(cid)
+            stats["non_candidates"] += 1
+            tail += 1
+    except Exception as e:
+        print(f"  [warn] non-candidate tail not built: {e}")
 
     # printed_stories for the latest edition, so the archive and permalink map
     # have a prior day to reconcile against.
