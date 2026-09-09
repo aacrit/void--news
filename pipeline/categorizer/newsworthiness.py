@@ -158,7 +158,25 @@ _GUIDE_PATTERNS: list[tuple[re.Pattern, str]] = [
     (re.compile(r"\btips (?:and|&) tricks\b", re.I), "tips-and-tricks"),
     (re.compile(r"\b(?:explained|explainer)\b", re.I), "explainer"),  # weak; see WEAK set
     (re.compile(r"\bwhat you need to know about\b", re.I), "what-you-need-to-know"),
+    # 2026-09-09: the rank-17 card was a five-member cluster joined on the word
+    # "hair", built from a Daily Mail service guide ("The dos and don'ts of body
+    # hair: Experts reveal how to flaunt your fuzz"), an NBC Select affiliate
+    # commerce page, and a Page Six photo gallery. Its summary quoted an
+    # aesthetician and a cosmetic-clinic director advising the reader how to
+    # groom. None of the four scored as junk at ingestion.
+    (re.compile(r"\bdos and don'?ts\b", re.I), "dos-and-donts"),
+    (re.compile(r"\bhow to\s+(?:flaunt|style|wear|pull off|rock|dress)\b", re.I),
+     "how-to-style"),
+    (re.compile(r"\bhere'?s why (?:it|this|that|they|your)\b", re.I), "heres-why-service"),
+    (re.compile(r"\bstar snaps\b", re.I), "star-snaps-gallery"),
 ]
+
+# Affiliate-commerce and gallery URL sections. A path segment is a publisher's
+# own declaration of what a page is for, and it is far more reliable than the
+# headline: NBC Select lives at /select/shopping/ and sells things.
+_COMMERCE_URL = re.compile(
+    r"/(?:select/shopping|shop(?:ping)?/deals|affiliate|commerce|"
+    r"best-deals|product-reviews)/", re.I)
 # "explainer" alone is common in real news framing; demote it to weight 1.
 _WEAK_REASONS = {"explainer"}
 
@@ -319,9 +337,21 @@ def _ticker_signals(title: str, url: str) -> list[tuple[str, int]]:
     if len(set(m.group(0).lower() for m in _INDEX_NAMES.finditer(title))) >= 2 \
             and (has_generic or has_live):
         out.append(("multi-index-catalog", 2))
+    if _COMMERCE_URL.search(url or ""):
+        out.append(("commerce-url-section", 3))
     if "/markets/live" in url.lower() or "/market-live" in url.lower():
         out.append(("url-market-live", 1))
     return out
+
+
+# An agency dateline. AFP, Reuters and AP prefix copy with "PARIS, Sept 8, 2026
+# (AFP) - " and some feeds leave it in the title, which is three commas before
+# the headline even begins.
+_AGENCY_DATELINE = re.compile(
+    r"^[^,]{2,40}(?:,\s*[^,]{2,40}){0,2},\s*"
+    r"(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]*\.?\s+\d{1,2},?\s*"
+    r"\d{4}\s*\((?:AFP|AP|Reuters|PTI|IANS|ANI|dpa|EFE|Xinhua|Yonhap|Kyodo|"
+    r"Bernama|TASS|Anadolu|Sputnik)\)\s*[-\u2013\u2014:]?\s*", re.I)
 
 
 def _comma_catalog_signal(title: str) -> list[tuple[str, int]]:
@@ -330,8 +360,16 @@ def _comma_catalog_signal(title: str) -> list[tuple[str, int]]:
     e.g. 'Latest Stock and Share Market News, Sensex, Nifty, NSE, BSE Live News'
     (4 commas, no sentence verb). Requires >=3 commas to avoid catching a
     normal headline with a couple of appositive commas.
+
+    An agency dateline is stripped first. It is three commas of pure metadata,
+    so without this a real AFP story counts as a catalog on its provenance
+    alone: "Washington, United States, Sept 8, 2026 (AFP) - Smithsonian
+    secretary to retire as Trump..." was one of exactly two false positives
+    when this filter was swept over the 955 article titles behind the
+    2026-09-09 feed.
     """
-    if title.count(",") >= 3 and not _NEWS_VERB.search(title):
+    body = _AGENCY_DATELINE.sub("", title or "", count=1)
+    if body.count(",") >= 3 and not _NEWS_VERB.search(body):
         return [("comma-catalog", 2)]
     return []
 
