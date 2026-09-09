@@ -3909,7 +3909,12 @@ _CRITIQUE_GROUNDED = [
              "Report any quoted text that does not appear in the articles, or "
              "appears there with different words."),
     ("L-05", "No internal contradiction, and every age, title, number and date "
-             "in the summary appears in the articles."),
+             "in the summary appears in the articles. Check the HEADLINE "
+             "against the SUMMARY as well as the summary against itself: if "
+             "the headline says a person defended, backed, rejected or denied "
+             "something, the summary must not report them doing the opposite. "
+             "Attributed positions are the highest-risk case, because a single "
+             "flipped word reverses what a named person said."),
     ("L-06", "When the card criticises a named living person, it carries that "
              "person's response, or states that none was given."),
 ]
