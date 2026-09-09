@@ -262,9 +262,13 @@ def _news_event_signal(title: str) -> bool:
 # furniture pattern must MATCH THE START of a SHORT title, not appear anywhere
 # in a long one. Measured against the 1,237 article titles of the 09-06 feed:
 # 3 matches, all three genuine furniture.
+# 2026-09-09: the first list named only saturday and sunday, so Monday through
+# Friday furniture sailed straight through. "Tuesday's Final Word" reached the
+# Iran strike cluster on the 09-09 feed and the coherence pass had to remove it.
 _FURNITURE_TITLE = re.compile(
-    r"^(?:the\s+)?(?:morning|evening|weekend|daily|weekly|saturday'?s?|"
-    r"sunday'?s?|today'?s?|tonight'?s?)?\s*"
+    r"^(?:the\s+)?(?:morning|evening|weekend|daily|weekly|nightly|"
+    r"monday|tuesday|wednesday|thursday|friday|saturday|sunday|"
+    r"today|tonight)?(?:'?s)?\s*"
     r"(?:news\s+)?(?:recap|roundup|round-?up|briefing|digest|rundown|"
     r"final\s+word|top\s+stories|headlines|newsletter|open\s+thread)\b", re.I)
 _FURNITURE_MAX_WORDS = 6
@@ -273,7 +277,12 @@ _LISTING_TITLE = re.compile(
     r"\b(?:on\s+the\s+air|what'?s\s+on\s+tv|tv\s+and\s+radio|"
     r"here'?s\s+what\s+games|photos?\s+of\s+the\s+(?:day|week)|"
     r"in\s+pictures|your\s+(?:morning|evening)\s+briefing|"
-    r"the\s+week\s+ahead|what\s+to\s+watch\s+(?:today|this\s+week|on\s+tv))\b", re.I)
+    r"the\s+week\s+ahead|what\s+to\s+watch\s+(?:today|this\s+week|on\s+tv)|"
+    # "Today in Germany: A roundup of the latest news on Wednesday" reached a
+    # cluster on 09-09. The phrase is distinctive enough to match anywhere in
+    # the title; a real story does not describe itself as a roundup of news.
+    r"a\s+round-?up\s+of\s+the\s+latest|"
+    r"round-?up\s+of\s+(?:the\s+)?(?:latest|today'?s?|this\s+week'?s?)\s+news)\b", re.I)
 
 
 def _furniture_signals(title: str) -> list[tuple[str, int]]:
