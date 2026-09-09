@@ -3906,8 +3906,11 @@ _CRITIQUE_SYSTEM = (
 # repatriation shipped at rank 19. L-03 and L-04 should have caught both.
 _CRITIQUE_GROUNDED = [
     ("L-02", "Every quotation is verbatim from an article, pronouns and all. "
-             "Report any quoted text that does not appear in the articles, or "
-             "appears there with different words."),
+             "This includes quotation marks in the HEADLINE, which are the most "
+             "visible quotes on the page: a headline that clips 'My career is "
+             "over' down to \"Career Over\" is presenting words nobody said as "
+             "though they were said. Report any quoted text that does not "
+             "appear in the articles, or appears there with different words."),
     ("L-05", "No internal contradiction, and every age, title, number and date "
              "in the summary appears in the articles. Check the HEADLINE "
              "against the SUMMARY as well as the summary against itself: if "
