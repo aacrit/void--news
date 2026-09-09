@@ -75,7 +75,7 @@ article corroboration and are reported only when the articles prove the break.
 
 | ID | Rule |
 |---|---|
-| L-02 | Every quotation appears verbatim in a source article, pronouns included (E-02) |
+| L-02 | Every quotation appears verbatim in a source article, pronouns included (E-02). Headline quotation marks count, and are the most visible quotes on the page |
 | L-05 | The card does not contradict itself, and every age, title and number is sourced. The HEADLINE counts as part of the card: if it says a person defended or rejected something, the summary must not report the opposite |
 | L-06 | Criticism of a named living person carries their response or notes its absence (E-06) |
 
@@ -99,6 +99,15 @@ central-bank gold repatriation at rank 19.
 | L-03 | The card describes one event. A development and its direct consequence are one event; a second story that merely shares a word with the first is not |
 | L-04 | The card is news: something happened, to someone, somewhere. Not a roundup of loosely related items, a lifestyle or celebrity-appearance piece, grooming or product advice, a listicle, opinion presented as reporting, satire or commerce |
 | L-07 | The summary does not contradict a location named in the headline (E-10) |
+
+L-02 gained its headline clause the same day, for the same reason. Rank 16 was
+headlined `Amazon Cargo Jet Pilot Reportedly Told Wife "Career Over" After
+Miami Crash`. The source says he told her "My career is over". The substance
+survived the clipping, but the quotation marks assert that those two words were
+spoken, and they were not. A deterministic version of this check is possible
+and is the better home for it, since the pipeline holds the article text at
+summarization time: it needs the source corpus threaded into
+validate_candidate, which today receives only the title, summary and href.
 
 L-05 gained its headline clause on 2026-09-09. The card at rank 18 was
 headlined "Ted Cruz Defends Trump's 9/11 Claims" and its summary read "Cruz
