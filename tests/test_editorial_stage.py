@@ -137,6 +137,19 @@ def main() -> int:
         else:
             print("PASS: bench lifted clear of the non-candidates")
 
+        # The lift must be measured from the lowest GENUINE candidate, not from
+        # a near-duplicate's negative sentinel. On 2026-09-09 it was not, and a
+        # lift of 48.04 instead of 0.32 carried a cluster the guard had removed
+        # to +47.04, above every non-candidate. A lift far larger than the
+        # spread of the bench is the signature.
+        m = re.search(r"Bench lifted ([\d.]+) points clear", out)
+        if m and float(m.group(1)) > 40:
+            print(f"FAIL: bench lift of {m.group(1)} looks like a near-dup "
+                  f"sentinel leaked into the minimum")
+            ok = False
+        elif m:
+            print(f"PASS: bench lift of {m.group(1)} is measured from a real candidate")
+
         # 3c. The merge invariant: ONLY a merge survivor gains articles, and it
         #     gains exactly its donor's. A clean cluster that was in no merge
         #     must end the run with the membership it started with. This is the

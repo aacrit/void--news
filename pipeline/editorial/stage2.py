@@ -318,15 +318,32 @@ def order_feed(supabase, sources, survivors: list[str], verbose: bool = True) ->
     old = {r["id"]: r.get("rank_world") for r in rows}
     apply_feed_ordering(rows, sources)
     if keep and others:
-        floor = max((r.get("rank_world") or 0) for r in others)
-        low = min((r.get("rank_world") or 0) for r in rows)
-        lift = (floor + 1.0) - low
-        if lift > 0:
-            for r in rows:
-                r["rank_world"] = round((r.get("rank_world") or 0) + lift, 2)
-            if verbose:
-                print(f"  Bench lifted {lift:.1f} points clear of "
-                      f"{len(others)} non-candidates (highest {floor:.1f})")
+        # A near-duplicate the guard just removed carries NEAR_DUP_REMOVED_RANK,
+        # a NEGATIVE sentinel chosen so it sorts below every genuine rank and
+        # falls out of the top-N cut. It must be excluded from the lift on both
+        # sides, and the reason is arithmetic rather than tidiness.
+        #
+        # On 2026-09-09 it was not, and the sentinel became the minimum: floor
+        # 46.04, low -1.0, so lift = 48.04 instead of the intended 0.32. Adding
+        # 48.04 to a -1.0 sentinel produces +47.04, which puts the cluster the
+        # guard had just REMOVED above all 65 non-candidates and ships it into
+        # feed.json as row 35. The lift is meant to preserve an invariant and
+        # instead it inverted one.
+        removed = [r for r in rows if r.get("_near_dup_removed")
+                   or (r.get("rank_world") or 0) < 0]
+        genuine = [r for r in rows if r not in removed]
+        if genuine:
+            floor = max((r.get("rank_world") or 0) for r in others)
+            low = min((r.get("rank_world") or 0) for r in genuine)
+            lift = (floor + 1.0) - low
+            if lift > 0:
+                for r in genuine:
+                    r["rank_world"] = round((r.get("rank_world") or 0) + lift, 2)
+                if verbose:
+                    print(f"  Bench lifted {lift:.1f} points clear of "
+                          f"{len(others)} non-candidates (highest {floor:.1f})"
+                          + (f"; {len(removed)} near-duplicate(s) left at their "
+                             f"sentinel" if removed else ""))
     changed = 0
     for r in rows:
         new = r.get("rank_world", 0)

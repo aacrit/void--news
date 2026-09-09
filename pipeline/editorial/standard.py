@@ -198,11 +198,25 @@ def s06_abbrev_spacing(text: str) -> list[Finding]:
 # ---------------------------------------------------------------------------
 # E: editorial
 # ---------------------------------------------------------------------------
+# NOTE the apostrophe. Summaries carry the typographic U+2019, not the straight
+# ASCII quote, so a pattern written with ' silently matches nothing in real
+# copy. On 2026-09-09 card 12 shipped "at a certain point, I'd like to wake up
+# in the morning and not look at their cellphone" with a curly apostrophe, and
+# the post-deploy gate printed "[ ok ] voice: no first-person pronoun outside
+# quotes (E-03)". e03 normalises the character before matching, so both forms
+# are seen; bare "I" is matched too, which is how that sentence announces
+# itself once "my" has already been rewritten to "their".
 _FIRST_PERSON = [
     re.compile(r"\b(?:we|our|ours|ourselves|my|mine|myself)\b", re.I),
     re.compile(r"\bus\b"),                       # lowercase only: "US" is a country
     re.compile(r"\b(?:we|I)'(?:m|re|ve|ll|d)\b", re.I),
+    re.compile(r"\bI\b"),                        # case-sensitive: the pronoun only
 ]
+
+
+def _straight(text: str) -> str:
+    """Typographic apostrophes and quotes normalised to their ASCII forms."""
+    return (text or "").replace("\u2019", "'").replace("\u2018", "'")
 _SECOND_PERSON = re.compile(r"\b(?:your|yours|yourself|yourselves)\b", re.I)
 # Scanned over the RAW text, not per sentence: `sentences()` splits only before
 # a capital letter, so a lowercase orphan clause stays glued to the sentence
@@ -221,7 +235,7 @@ _SUBORDINATING_START = re.compile(
 
 def e03_first_person_outside_quotes(summary: str) -> list[Finding]:
     out: list[Finding] = []
-    for gap in outside_quote_spans(summary or ""):
+    for gap in outside_quote_spans(_straight(summary or "")):
         for rx in _FIRST_PERSON:
             m = rx.search(gap)
             if m:
