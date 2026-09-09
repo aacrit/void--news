@@ -59,6 +59,7 @@ jobs:
           python pipeline/validation/test_desk_furniture_filter.py
           python pipeline/validation/test_academic_artifact_filter.py
           python tests/test_summary_hygiene_parity.py
+          python pipeline/validation/test_disaster_severity.py
 
   # End-to-end run of the editorial half of the pipeline (8c through 8f plus
   # the static export) against a synthetic state DB built from the committed

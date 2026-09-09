@@ -318,6 +318,16 @@ _DISASTER_NOUNS: list[str] = [
     "tsunami", "wildfire", "wildfires", "bushfire", "bushfires",
     "landslide", "landslides", "mudslide", "mudslides", "rockslide", "avalanche",
     "volcano", "volcanic", "eruption",
+    # Epidemics. A slow mass-casualty event is still a mass-casualty event, and
+    # the list had no disease term at all: "Bangladesh Measles Outbreak Kills
+    # Over 1,000 Children Since March" scored disaster_severity 0.0 on the
+    # 2026-09-09 feed and got no lift, landing at slot 14 below a story about a
+    # television network denying a cancellation rumour. The casualty-cue
+    # co-occurrence requirement below keeps the metaphors out, so "outbreak of
+    # optimism" and "viral video" cannot trigger on their own.
+    "outbreak", "outbreaks", "epidemic", "epidemics", "pandemic",
+    "cholera", "ebola", "measles", "dengue", "malaria", "diphtheria",
+    "famine", "starvation",
     "flood", "floods", "flooding", "floodwaters", "deluge", "inundation",
     "monsoon", "superstorm", "storm surge", "blizzard",
     "famine", "drought", "heatwave", "heat wave",
@@ -369,7 +379,11 @@ _DEATH_TOLL_PATTERNS: list[re.Pattern] = [
         r"(?:killed|dead|died|feared\s+dead|confirmed\s+dead)\b",
         re.IGNORECASE,
     ),
-    re.compile(r"death\s+toll[^.\d]{0,25}(\d[\d,]{0,6})", re.IGNORECASE),
+    # The gap was 25 characters, which is shorter than real wire phrasing:
+    # NPR's "The death toll among children just surpassed 1,000" needs 31 and
+    # was one of the misses that left the Bangladesh measles cluster below the
+    # corroboration fraction on 2026-09-09.
+    re.compile(r"death\s+toll[^.\d]{0,60}(\d[\d,]{0,6})", re.IGNORECASE),
     re.compile(r"\bleav\w*\s+(?:at\s+least\s+)?(\d[\d,]{0,6})\s+dead\b", re.IGNORECASE),
     re.compile(
         r"\bclaim\w*\s+(?:the\s+lives\s+of\s+|at\s+least\s+)?(\d[\d,]{0,6})\s+"
