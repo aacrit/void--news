@@ -411,33 +411,6 @@ def run_stage2(supabase, sources, *,
         except Exception as e:
             print(f"  [warn] Coherence pass failed (bench unchanged): {e}")
 
-    # 8c.7: same-event merge, over the cleaned bench. Runs BEFORE summarization
-    # so a merged story is written once, from the union of its coverage, rather
-    # than twice from two halves of it. A survivor is not re-examined for
-    # coherence on this run: the merge widened it deliberately.
-    if candidate_ids:
-        print("\n[8c.7] Same-event merge (over the candidate bench)...")
-        try:
-            from editorial.same_event import merge_candidates
-            mm = merge_candidates(supabase, candidate_ids)
-            metrics["merge"] = mm
-            if mm["merged"]:
-                absorbed = set(mm["absorbed"])
-                candidate_ids = [c for c in candidate_ids if c not in absorbed]
-                # Refill the bench from the pool so a merge does not cost the
-                # page a story: two cards became one, and the next-ranked
-                # cluster takes the freed slot.
-                for cid in select_bench(supabase, verbose=False):
-                    if len(candidate_ids) >= CANDIDATES:
-                        break
-                    if cid not in candidate_ids and cid not in absorbed:
-                        candidate_ids.append(cid)
-            print(f"  Merged {mm['merged']} pair(s) of {mm['examined']} examined; "
-                  f"{mm['rejected']} near miss(es) logged; bench now "
-                  f"{len(candidate_ids)}")
-        except Exception as e:
-            print(f"  [warn] Same-event merge failed (bench unchanged): {e}")
-
     bench = candidate_ids or None
 
     # 8d: the one and only LLM summarization pass.
@@ -471,6 +444,49 @@ def run_stage2(supabase, sources, *,
               f"{tc['titles_cleaned']} titles normalized")
     except Exception as e:
         print(f"  [warn] Pre-order title clean failed: {e}")
+
+    # 8d.15: same-event merge, AFTER the titles are normalized.
+    #
+    # It used to run at 8c.7, before summarization, on whichever outlet headline
+    # the cluster happened to carry. Step 8d then overwrites every title with
+    # the LLM headline, so the gate was judging one set of words while the
+    # near-duplicate guard at 8d.5 and the reader saw another.
+    #
+    # On 2026-09-09 that cost the feed its only real duplicate pair. The gate
+    # saw "Republicans kick off a 'Trumpapalooza' of a midterm convention" and
+    # rejected it; replaying the SAME gate over all 595 bench pairs using the
+    # 8d titles yields exactly one merge and zero false positives, and it is
+    # that pair: "Republicans Kick Off First Midterm Convention in Dallas,
+    # Texas" (17 sources) and "Republicans Gather in Dallas for Trump-Centered
+    # Midterm Convention" (9 sources), which share no outlet at all. Instead of
+    # uniting 26 sources the near-dup guard demoted one and threw its nine away.
+    #
+    # The gate function is unchanged. It was never too strict; it was reading
+    # the wrong input.
+    if candidate_ids:
+        print("\n[8d.15] Same-event merge (over the normalized headlines)...")
+        try:
+            from editorial.same_event import merge_candidates
+            mm = merge_candidates(supabase, candidate_ids)
+            metrics["merge"] = mm
+            if mm["merged"]:
+                absorbed = set(mm["absorbed"])
+                candidate_ids = [c for c in candidate_ids if c not in absorbed]
+                bench = candidate_ids or None
+                # Refill the bench from the pool so a merge does not cost the
+                # page a story: two cards became one, and the next-ranked
+                # cluster takes the freed slot.
+                for cid in select_bench(supabase, verbose=False):
+                    if len(candidate_ids) >= CANDIDATES:
+                        break
+                    if cid not in candidate_ids and cid not in absorbed:
+                        candidate_ids.append(cid)
+                bench = candidate_ids or None
+            print(f"  Merged {mm['merged']} pair(s) of {mm['examined']} examined; "
+                  f"{mm['rejected']} near miss(es) logged; bench now "
+                  f"{len(candidate_ids)}")
+        except Exception as e:
+            print(f"  [warn] Same-event merge failed (bench unchanged): {e}")
 
     # 8d.2 + 8d.3.
     survivors = list(candidate_ids)
