@@ -3890,27 +3890,55 @@ _CRITIQUE_SYSTEM = (
     "Return JSON only."
 )
 
-_CRITIQUE_RULES = [
-    ("L-01", "The first sentence states the event itself, not a reaction to it, "
-             "not scene-setting, not a quote."),
+# Two KINDS of rule, and the difference decides how each is judged.
+#
+# GROUNDED rules are claims about whether the card matches its sources, so they
+# need article corroboration: a quote is verbatim or it is not.
+#
+# EDITORIAL rules are judgments about the card itself. No article can "prove"
+# that a card is a beauty roundup rather than news, so requiring article proof
+# for them silences the check entirely. That is what happened on the 2026-09-09
+# feed: the prompt demanded article proof for every rule, the critique found
+# only 2 findings across 35 cards, and a grooming-advice roundup fusing Anna
+# Camp's haircut, Phoebe Bridgers' leg hair, two cosmetic-clinic quotes,
+# Trump's hair colour and Alec Baldwin's salon visit shipped at rank 17, while
+# a card fusing Pakistani gold prices with Spain's central-bank gold
+# repatriation shipped at rank 19. L-03 and L-04 should have caught both.
+_CRITIQUE_GROUNDED = [
     ("L-02", "Every quotation is verbatim from an article, pronouns and all. "
              "Report any quoted text that does not appear in the articles, or "
              "appears there with different words."),
-    ("L-03", "The card describes ONE event. Report a card that fuses two "
-             "unrelated events."),
-    ("L-04", "The card is news. Report opinion presented as reporting, satire, "
-             "a product listing, a horoscope, a live ticker or promotional copy."),
     ("L-05", "No internal contradiction, and every age, title, number and date "
              "in the summary appears in the articles."),
     ("L-06", "When the card criticises a named living person, it carries that "
              "person's response, or states that none was given."),
+]
+
+_CRITIQUE_EDITORIAL = [
+    ("L-01", "The first sentence states the event itself, not a reaction to it, "
+             "not scene-setting, not a quote."),
+    ("L-03", "The card describes ONE event. Report it when the summary moves on "
+             "to a different subject with different people in a different place, "
+             "however smoothly it transitions. A development and its direct "
+             "consequence are ONE event; a second story that merely shares a "
+             "word with the first is not."),
+    ("L-04", "The card is news: something happened, to someone, somewhere. "
+             "Report it when the card is instead a roundup of loosely related "
+             "items, a lifestyle or celebrity-appearance piece, grooming or "
+             "product advice, a listicle, an opinion column presented as "
+             "reporting, satire, a horoscope, a live ticker, or promotional "
+             "copy. A quote from a clinic, salon, brand or consultant advising "
+             "the reader is a strong signal that this is not news."),
     ("L-07", "A place named in the headline is not contradicted or left "
              "unexplained by the summary."),
 ]
 
+_CRITIQUE_RULES = _CRITIQUE_GROUNDED + _CRITIQUE_EDITORIAL
+
 
 def _build_critique_prompt(records: list[dict]) -> str:
-    rules = "\n".join(f"{rid}: {text}" for rid, text in _CRITIQUE_RULES)
+    grounded = "\n".join(f"{rid}: {text}" for rid, text in _CRITIQUE_GROUNDED)
+    editorial = "\n".join(f"{rid}: {text}" for rid, text in _CRITIQUE_EDITORIAL)
     blocks = []
     for i, rec in enumerate(records, 1):
         arts = _select_articles_for_summary(
@@ -3928,11 +3956,16 @@ def _build_critique_prompt(records: list[dict]) -> str:
             f"SUMMARY: {(rec.get('summary') or '').strip()}\n"
             f"SOURCE ARTICLES:\n" + "\n".join(src_lines))
     return (
-        f"Check {len(records)} finished news cards against their source articles.\n\n"
-        f"RULES\n{rules}\n\n"
-        "For each story report every rule it breaks. Report a rule ONLY when the "
-        "source articles prove the break; when in doubt, do not report it. Quote "
-        "the offending words so an editor can find them.\n\n"
+        f"Check {len(records)} finished news cards.\n\n"
+        f"RULES ABOUT THE SOURCES\n{grounded}\n"
+        "Judge these against the source articles below. Report one ONLY when the "
+        "articles prove the break; when in doubt, do not report it.\n\n"
+        f"RULES ABOUT THE CARD\n{editorial}\n"
+        "Judge these from the HEADLINE and SUMMARY alone. No article can prove or "
+        "disprove them, so do not look for corroboration and do not withhold one "
+        "for lack of it. Read the card as a reader would and say what it is.\n\n"
+        "For each story report every rule it breaks. Quote the offending words so "
+        "an editor can find them.\n\n"
         f"{chr(10).join(blocks)}\n\n"
         "Return JSON with this exact shape and nothing else:\n"
         '{"stories": [{"story": 1, "findings": [{"rule": "L-01", '
