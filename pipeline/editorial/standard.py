@@ -473,12 +473,18 @@ VALIDATORS_BY_ID = {v.id: v for v in VALIDATORS}
 
 # Declared, implemented in the Block 2 critique pass (see the standard doc).
 LLM_RULES = {
-    "L-01": "the first sentence states the event, not a reaction",
+    # GROUNDED: judged against the source articles.
     "L-02": "every quotation is verbatim, pronouns included",
-    "L-03": "the card describes one event",
-    "L-04": "the card is news, not opinion, satire or commerce",
     "L-05": "no internal contradiction; ages, titles and numbers are sourced",
     "L-06": "criticism of a named living person carries their response",
+    # EDITORIAL: judged from the card alone. Requiring article corroboration
+    # for these silences them, which is how a grooming-advice roundup shipped
+    # at rank 17 on the 2026-09-09 feed. See _CRITIQUE_EDITORIAL in
+    # summarizer/cluster_summarizer.py, which holds the text the model reads.
+    "L-01": "the first sentence states the event, not a reaction",
+    "L-03": "the card describes one event",
+    "L-04": "the card is news, not a roundup, lifestyle piece, product advice, "
+            "opinion, satire or commerce",
     "L-07": "a location named in the headline is not contradicted by the summary",
 }
 

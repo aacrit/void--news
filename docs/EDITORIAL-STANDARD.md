@@ -68,15 +68,47 @@ These cannot be settled by regex. They run in the Block 2 critique pass, one
 batched flash-lite request per group of candidates, with the article set in the
 prompt.
 
+These rules come in two kinds, and the difference decides how each is judged.
+
+**Grounded** rules ask whether the card matches its sources, so they need
+article corroboration and are reported only when the articles prove the break.
+
+| ID | Rule |
+|---|---|
+| L-02 | Every quotation appears verbatim in a source article, pronouns included (E-02) |
+| L-05 | The card does not contradict itself, and every age, title and number is sourced |
+| L-06 | Criticism of a named living person carries their response or notes its absence (E-06) |
+
+**Editorial** rules are judgments about the card itself, made from the headline
+and summary alone. No article can prove that a card is a beauty roundup rather
+than news, so demanding corroboration for these does not make them strict, it
+silences them.
+
+That is not hypothetical. Until 2026-09-09 the critique prompt carried a single
+instruction, "report a rule ONLY when the source articles prove the break", over
+all seven rules. On the first production feed after the restructure it returned
+2 findings across 35 cards, and two cards shipped that L-03 and L-04 describe
+exactly: a grooming-advice roundup fusing Anna Camp's haircut, Phoebe Bridgers'
+leg hair, two cosmetic-clinic quotes, Trump's hair colour and Alec Baldwin's
+salon visit at rank 17, and a card fusing Pakistani gold prices with Spain's
+central-bank gold repatriation at rank 19.
+
 | ID | Rule |
 |---|---|
 | L-01 | The first sentence states the event, not a reaction (E-01) |
-| L-02 | Every quotation appears verbatim in a source article, pronouns included (E-02) |
-| L-03 | The card describes one event |
-| L-04 | The card is news, not opinion, satire or commerce |
-| L-05 | The card does not contradict itself, and every age, title and number is sourced |
-| L-06 | Criticism of a named living person carries their response or notes its absence (E-06) |
+| L-03 | The card describes one event. A development and its direct consequence are one event; a second story that merely shares a word with the first is not |
+| L-04 | The card is news: something happened, to someone, somewhere. Not a roundup of loosely related items, a lifestyle or celebrity-appearance piece, grooming or product advice, a listicle, opinion presented as reporting, satire or commerce |
 | L-07 | The summary does not contradict a location named in the headline (E-10) |
+
+A deterministic version of L-03 was tried and rejected. Splitting a headline on
+a semicolon and asking whether the two halves share a subject flags both of the
+cards above, but run across all 96 semicolon headlines in the archive it flags
+84 of them, because "development; consequence" is ordinary headline grammar:
+"Minneapolis Shooting Leaves Two Dead, Three Officers Injured; Gunman
+Identified" is one story, so is "Nepal Flood Death Toll Rises to 1,127;
+Thousands Still Missing". As an enforced rule it would have dropped most of the
+feed. L-03 stays a model judgment because the question it asks is a semantic
+one.
 
 ## Thresholds, and where they come from
 
