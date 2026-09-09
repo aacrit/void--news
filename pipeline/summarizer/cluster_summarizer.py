@@ -1224,20 +1224,46 @@ def _sub_first_person(text: str) -> str:
     return text
 
 
+# A first-person SUBJECT the substitution table cannot convert. _FIRST_PERSON_SUBS
+# handles we/our/us/my, and has no rule for "I" or "me", because converting them
+# needs a referent the table does not have.
+_UNCONVERTIBLE_FIRST_PERSON = _re.compile(
+    r"\b(?:I|I['\u2019](?:m|ve|ll|d)|me)\b")
+
+
 def _convert_first_person_outside_quotes(summary: str) -> str:
     """3k: convert first-person pronouns to third person OUTSIDE quoted spans, so
     Void never speaks in the first person while verbatim quotes keep their exact
-    wording. Deterministic; no-op on a summary with no bare first-person pronoun."""
+    wording. Deterministic; no-op on a summary with no bare first-person pronoun.
+
+    A segment carrying a first-person subject the table cannot convert is left
+    ALONE rather than half-converted. On 2026-09-09 card 12 shipped "at a
+    certain point, I'd like to wake up in the morning and not look at their
+    cellphone": "my" became "their" while "I'd" stayed, leaving one sentence in
+    two voices and, because the referent flipped mid-clause, saying something
+    the speaker did not say. Half a conversion is worse than either end state.
+
+    Leaving it intact also makes the defect VISIBLE: E-03 fails a first-person
+    sentence outside quotes, so the card goes to regeneration at 8d.3 instead of
+    shipping a mangled one. (Whether this scrubber should exist at all is the
+    open Block 5a question; this only stops it corrupting what it cannot fix.)
+    """
     s = summary or ""
     if not s:
         return summary
+
+    def _convert(segment: str) -> str:
+        if _UNCONVERTIBLE_FIRST_PERSON.search(segment):
+            return segment
+        return _sub_first_person(segment)
+
     out: list[str] = []
     last = 0
     for m in _QUOTED_SPAN_RE.finditer(s):
-        out.append(_sub_first_person(s[last:m.start()]))
+        out.append(_convert(s[last:m.start()]))
         out.append(m.group(0))            # quoted span left verbatim
         last = m.end()
-    out.append(_sub_first_person(s[last:]))
+    out.append(_convert(s[last:]))
     return "".join(out)
 
 
