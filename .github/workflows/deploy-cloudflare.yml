@@ -165,9 +165,18 @@ jobs:
       # Served-output gate, inline (2026-09-06). verify-production.yml chains
       # off this workflow via workflow_run, but that chain never fired after the
       # scheduled backstop deploys, so the gate missed every daily data deploy
-      # from 09-04 on. Running the same script here makes a bad served page turn
-      # THIS run red immediately. No rollback (an older broken page is worse);
+      # from 09-04 on. Running the same script here surfaces a bad served page
+      # on THIS run immediately. No rollback (an older broken page is worse);
       # the tracking issue is still owned by verify-production.yml.
+      #
+      # continue-on-error is load-bearing (2026-09-09). Without it this step
+      # failing marks the whole deploy job failed, and verify-production.yml
+      # gates on `workflow_run.conclusion == 'success'`, so a content defect
+      # silently suppressed the very run that opens the tracking issue. The
+      # 09-09 E-03 defect proved it: the gate caught it here, the deploy went
+      # red, and verify-production skipped twice, so nothing was recorded.
+      # The step still shows red in the UI, which is the signal we want; the
+      # deploy itself already succeeded by this point and must report as such.
       - uses: actions/setup-python@v5
         if: steps.guard.outputs.skip != 'true'
         with:
@@ -175,6 +184,7 @@ jobs:
 
       - name: Verify served output (same gate as verify-production.yml)
         if: steps.guard.outputs.skip != 'true'
+        continue-on-error: true
         run: |
           pip install --quiet nltk
           sleep 30
