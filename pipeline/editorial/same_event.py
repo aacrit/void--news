@@ -370,7 +370,17 @@ def merge_candidates(supabase, candidate_ids: list[str],
                         "cluster_id", drop).execute()
                     merged_sources = info[keep]["sources"] | info[drop]["sources"]
                     supabase.table("story_clusters").update(
-                        {"source_count": len(merged_sources)}).eq("id", keep).execute()
+                        {
+                            "source_count": len(merged_sources),
+                            # The stored summary was written from HALF this
+                            # story. Invalidate it the same way the coherence
+                            # pass does, so the 8d.6 floor rewrites the card
+                            # from the merged article set in THIS run rather
+                            # than shipping a summary of one half under a
+                            # headline now covering both.
+                            "summary_tier": None,
+                            "summary_article_hash": None,
+                        }).eq("id", keep).execute()
                     supabase.table("story_clusters").delete().eq("id", drop).execute()
                 except Exception as e:
                     log(f"  [warn][merge] write failed, pair skipped: {e}")
@@ -384,6 +394,9 @@ def merge_candidates(supabase, candidate_ids: list[str],
                 absorbed.add(drop)
                 metrics["merged"] += 1
                 metrics["absorbed"].append(drop)
+                log(f"  [merge] survivor summary invalidated; the floor will "
+                    f"rewrite it from {len(info[keep]['articles'] | info[drop]['articles'])} "
+                    f"merged articles")
                 log(f"  [merge] KEEP[{rows[keep].get('source_count')}src lean={lean_k}] "
                     f"\"{info[keep]['title'][:44]}\" <- "
                     f"ABSORB[{rows[drop].get('source_count')}src lean={lean_d}] "
