@@ -76,7 +76,7 @@ article corroboration and are reported only when the articles prove the break.
 | ID | Rule |
 |---|---|
 | L-02 | Every quotation appears verbatim in a source article, pronouns included (E-02) |
-| L-05 | The card does not contradict itself, and every age, title and number is sourced |
+| L-05 | The card does not contradict itself, and every age, title and number is sourced. The HEADLINE counts as part of the card: if it says a person defended or rejected something, the summary must not report the opposite |
 | L-06 | Criticism of a named living person carries their response or notes its absence (E-06) |
 
 **Editorial** rules are judgments about the card itself, made from the headline
@@ -99,6 +99,13 @@ central-bank gold repatriation at rank 19.
 | L-03 | The card describes one event. A development and its direct consequence are one event; a second story that merely shares a word with the first is not |
 | L-04 | The card is news: something happened, to someone, somewhere. Not a roundup of loosely related items, a lifestyle or celebrity-appearance piece, grooming or product advice, a listicle, opinion presented as reporting, satire or commerce |
 | L-07 | The summary does not contradict a location named in the headline (E-10) |
+
+L-05 gained its headline clause on 2026-09-09. The card at rank 18 was
+headlined "Ted Cruz Defends Trump's 9/11 Claims" and its summary read "Cruz
+responded that he had every doubt that what he's conveying there is what he
+experienced." Every source article had Cruz defending Trump; the summary
+reversed a sitting senator's stated position by one word, and contradicted its
+own headline doing it. The critique pass read that card and reported nothing.
 
 A deterministic version of L-03 was tried and rejected. Splitting a headline on
 a semicolon and asking whether the two halves share a subject flags both of the
