@@ -81,10 +81,23 @@ except Exception:  # pragma: no cover - nltk missing
         return word
 
 
+# A possessive is the same word. The token regex keeps the apostrophe inside
+# the word, so "Germany's" stems to "germany'" and never matches "German" or
+# "Germany"; "Iran's" never matches "Iran". Strip it before stemming.
+#
+# This is the same defect the daily brief's continuing-story matcher had in
+# rev 57 ("iran's"/"leader's" never matched "iran"/"leader", so every brief
+# reported 0 continuing stories). It was fixed there and reintroduced here,
+# which is the argument for one tokenizer rather than three.
+_POSSESSIVE = re.compile(r"['\u2019]s?$")
+
+
 def title_word_stems(title: str) -> set[str]:
     """Content-word stems of a headline (stopwords removed, Porter-stemmed)."""
     out: set[str] = set()
-    for w in re.findall(r"[a-z0-9](?:[a-z0-9'-]*[a-z0-9])?", (title or "").lower()):
+    for w in re.findall(r"[a-z0-9](?:[a-z0-9'\u2019-]*[a-z0-9])?",
+                        (title or "").lower().replace("\u2019", "'")):
+        w = _POSSESSIVE.sub("", w)
         if w in TITLE_STOPWORDS or len(w) < 2:
             continue
         out.add(_stem(w))

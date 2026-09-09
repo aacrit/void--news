@@ -48,8 +48,12 @@ def main() -> int:
     try:
         db = tmp / "state.db"
         stats = build(db)
-        print(f"built harness DB: {stats['clusters']} clusters, "
+        print(f"built harness DB: {stats['clusters']} clusters "
+              f"(+{stats.get('non_candidates', 0)} non-candidate tail), "
               f"{stats['articles']} articles, {stats['printed']} printed rows")
+        if not stats.get("non_candidates"):
+            print("FAIL: no non-candidate tail, so the 8d.5 lift path is uncovered")
+            return 1
 
         env = {
             "VOID_SQLITE_PATH": str(db),

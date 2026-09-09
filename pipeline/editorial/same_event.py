@@ -467,8 +467,43 @@ def modal_vocabulary(member_titles: list[str]) -> set[str]:
             if k / n >= MODAL_MIN and s not in BROAD_GEOGRAPHY}
 
 
-def incoherent_members(member_titles: list[str]) -> tuple[list[int], set[str]]:
-    """Indices of members sharing NO modal stem, plus the modal vocabulary.
+def incoherent_members(member_titles: list[str],
+                       cluster_title: str = "") -> tuple[list[int], set[str]]:
+    """Indices of members foreign to the cluster, plus the modal vocabulary.
+
+    TWO independent signals must agree before a member is removed: it shares no
+    modal stem AND no stem with the cluster's own headline. Deleting an article
+    destroys coverage, so one signal is not enough to justify it.
+
+    That second signal exists because of what the first one does on a BIG
+    cluster. modal_vocabulary keeps stems carried by MODAL_MIN of the headlines,
+    and a large cluster covering one event from many angles has enormous
+    phrasing diversity, so almost no stem clears the share. Measured on the
+    2026-09-09 production feed:
+
+        rank 1   62 members, 57 sources -> modal vocabulary of 3 stems
+                 {destroy, oil, tanker}
+        rank 7   75 members, 58 sources -> 3 stems {arabia, houthi, saudi}
+        rank 2   73 members, 61 sources -> 6 stems
+
+    The vocabulary SHRINKS as the cluster grows, so the biggest and most
+    important stories are judged against the weakest possible test, and any
+    legitimate report phrased differently is deleted. That run removed 55
+    members across 17 clusters; 17 of the 55 were the same story in different
+    words, including "War in the Middle East: Iran attacks US base in Jordan"
+    dropped from the Iran strike cluster and "Trump hails 'really big night' for
+    populists in German elections" dropped from a cluster titled "Trump hails
+    AfD win in Germany's Saxony-Anhalt".
+
+    The cluster headline does not shrink with size, so it catches exactly those.
+    Re-running the same 55 removals with this guard keeps all 17 and still
+    removes all 38 genuine ones, including "Makinde: Blockade of Obi's convoy"
+    from the Iran cluster and a college football recap from a plane crash.
+
+    The failure directions are not symmetric, which is why the guard is
+    conjunctive rather than a tuned threshold: keeping a marginal member costs a
+    slightly noisier Deep Dive roster, deleting a real one destroys journalism
+    and understates source_count on the story that most deserves it.
 
     Returns ([], vocabulary) when the cluster has fewer than MODAL_MIN_STEMS
     modal stems: with no vocabulary of its own there is nothing to be off topic
@@ -477,8 +512,9 @@ def incoherent_members(member_titles: list[str]) -> tuple[list[int], set[str]]:
     vocab = modal_vocabulary(member_titles)
     if len(vocab) < MODAL_MIN_STEMS:
         return [], vocab
+    head = topic_stems(cluster_title) if cluster_title else set()
     return [i for i, t in enumerate(member_titles)
-            if not (topic_stems(t) & vocab)], vocab
+            if not (topic_stems(t) & vocab) and not (topic_stems(t) & head)], vocab
 
 
 MIN_MEMBERS_TO_TRIM = 6   # below this one removal is a large share of a small
@@ -534,7 +570,8 @@ def split_incoherent_candidates(supabase, candidate_ids: list[str],
             if len(aids) < 3:
                 continue
             member_titles = [arts[a].get("title") or "" for a in aids]
-            idx, vocab = incoherent_members(member_titles)
+            idx, vocab = incoherent_members(
+                member_titles, titles_by_cluster.get(cid, ""))
             if len(vocab) < MODAL_MIN_STEMS:
                 metrics["abstained"] += 1
                 continue

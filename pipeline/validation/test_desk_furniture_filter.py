@@ -29,6 +29,17 @@ _DROP = [
     "The Weekend Digest",
     "News rundown",
     "Sports on the air: Here's what games are on TV and radio for the week of Sept. 6-12",
+    # Every weekday, not just the weekend. "Tuesday's Final Word" reached the
+    # Iran strike cluster on the 2026-09-09 production feed because the first
+    # version of this rule named only saturday and sunday.
+    "Tuesday's Final Word",
+    "Monday Briefing",
+    "Wednesday roundup",
+    "Thursday recap",
+    "Friday's Final Word",
+    "Nightly Digest",
+    # Also reached a cluster on 09-09.
+    "Today in Germany: A roundup of the latest news on Wednesday",
     "In pictures: the week that was",
     "Photos of the day",
     "What to watch on TV tonight",
@@ -48,6 +59,12 @@ _KEEP = [
     "Passenger Duct-Taped to Seat After Mid-Flight Outburst Identified",
     # the words appear, but the title is long and carries an event
     "Government headlines new investment package for coastal towns",
+    # A weekday name in a real headline must survive. These are the cases the
+    # weekday addition could plausibly have broken.
+    "Friday deadline passes as union rejects final offer",
+    "Wednesday trading halted after circuit breaker triggers",
+    "Sunday Times investigation reveals offshore accounts",
+    "Election night roundup shows AfD leading in three eastern states",
 ]
 
 
