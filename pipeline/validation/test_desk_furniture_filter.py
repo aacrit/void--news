@@ -40,6 +40,14 @@ _DROP = [
     "Nightly Digest",
     # Also reached a cluster on 09-09.
     "Today in Germany: A roundup of the latest news on Wednesday",
+    # The three members of the rank-17 card on the 2026-09-09 feed: a service
+    # guide, an affiliate-commerce page and a photo gallery, clustered on the
+    # word "hair" and published as news with a cosmetic clinic quoted in the
+    # summary. Dropping these three leaves the cluster below the 3-source
+    # display minimum, so the card cannot form.
+    "The dos and don'ts of body hair: Experts reveal how to flaunt your fuzz "
+    "without looking scruffy as stars make it a red carpet trend",
+    "Alec Baldwin refreshes his hair color and more star snaps",
     "In pictures: the week that was",
     "Photos of the day",
     "What to watch on TV tonight",
@@ -66,6 +74,47 @@ _KEEP = [
     "Sunday Times investigation reveals offshore accounts",
     "Election night roundup shows AfD leading in three eastern states",
 ]
+
+
+# (title, url) cases where the URL carries the signal.
+_DROP_BY_URL = [
+    ("Does it feel like your hair is always greasy? Here's why it could be happening",
+     "https://www.nbcnews.com/select/shopping/why-hair-greasy-how-fix-rcna596612"),
+]
+
+# An agency dateline is three commas of metadata before the headline begins.
+# Without stripping it, the comma-catalog rule reads a real AFP story as a
+# catalog on its provenance alone. This was one of exactly two false positives
+# when the filter was swept over the 955 article titles behind the 09-09 feed.
+_KEEP_DATELINED = [
+    "Washington, United States, Sept 8, 2026 (AFP) - Smithsonian secretary to "
+    "retire as Trump pressures institution",
+    "PARIS, Sept 9, 2026 (AFP) - French unions call third strike over pensions",
+    "NEW DELHI, Sep 9, 2026 (PTI) - Parliament passes finance bill after debate",
+]
+
+# The catalog rule must still catch an actual catalog.
+_DROP_CATALOG = [
+    "Latest Stock and Share Market News, Sensex, Nifty, NSE, BSE Live News",
+    "Gold rate today, silver price, forex, commodities, market wrap",
+]
+
+
+def test_commerce_and_gallery_urls_are_dropped():
+    for t, u in _DROP_BY_URL:
+        assert is_evergreen_junk({"title": t, "url": u}) is True, f"should DROP: {u!r}"
+
+
+def test_agency_datelines_survive():
+    for t in _KEEP_DATELINED:
+        v = newsworthiness({"title": t})
+        assert v["is_junk"] is False, (
+            f"agency dateline read as a catalog: {t[:60]!r} {v['signals']}")
+
+
+def test_real_catalogs_still_drop():
+    for t in _DROP_CATALOG:
+        assert is_evergreen_junk({"title": t}) is True, f"should DROP: {t!r}"
 
 
 def test_furniture_is_dropped():
@@ -98,6 +147,9 @@ def _run() -> int:
     for fn in (test_furniture_is_dropped,
                test_real_stories_are_kept,
                test_furniture_survives_a_news_verb,
+               test_commerce_and_gallery_urls_are_dropped,
+               test_agency_datelines_survive,
+               test_real_catalogs_still_drop,
                test_missing_title_fails_open):
         try:
             fn()
