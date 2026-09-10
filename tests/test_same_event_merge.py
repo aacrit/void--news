@@ -18,6 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "pipeline"))
 
 from editorial.same_event import (  # noqa: E402
     MODAL_MIN_STEMS,
+    ambient_stems,
     incoherent_members,
     should_merge,
 )
@@ -192,6 +193,124 @@ COHERENCE = [
 ]
 
 
+# ---------------------------------------------------------------------------
+# The 2026-09-10 run: six merges, five of them wrong
+# ---------------------------------------------------------------------------
+# The first day 8d.15 ran on normalized headlines. Every decision below is one
+# the run really made, recovered from its log, and the anchors it recorded are
+# the whole diagnosis: the five wrong merges anchored on the day's own ambient
+# vocabulary or on a cardinal number, and the one correct merge anchored on
+# `assassin` and `anniversari`, words nothing else that day used.
+#
+# These need the bench, because "ambient" is only meaningful relative to the
+# headlines the gate is comparing. The bench below is the 35 candidates plus
+# the six absorbed headlines, as it stood at 8d.15.
+
+BENCH_0910 = [
+    "Trump Promises $5,000 Dividend to Americans if Republicans Win Midterms",
+    "Trump Predicts Oil Prices Will Fall After Midterm Elections",
+    "US Crude Oil Tops $100 Per Barrel Amid Escalating Middle East Conflict",
+    "Trump Rolls Back Some Tariffs, Escalates Trade War With Canada",
+    "Supreme Court Blocks Missouri's GOP-Favored Congressional Map",
+    "Houthis Seize Yemen's Strategic Mocha Port, Threaten Bab al-Mandab",
+    "India Hosts BRICS Summit; China's Xi Jinping Attends",
+    "Colombian President Lifts Gun Carry Ban, Reversing 2015 Restriction",
+    "Israel Orders UK to Close East Jerusalem Consulate in 30 Days",
+    "August 2026 Ties as Hottest Month Ever Recorded Globally",
+    # the six the run absorbed
+    "Cargo Ship Fire at Chinese Port Kills 25, Injures Five",
+    "German Far-Right AfD Wins Saxony-Anhalt; Merz Under Pressure",
+    "Trump Predicts Iran War Ends After Midterms; Tehran Ready to Escalate",
+    "Trump Honors Charlie Kirk on Assassination Anniversary",
+    "Trump Pledges $5,000 Payments to Adults if GOP Wins",
+    "Trump Touts US as Top Oil Producer After Venezuela Deal",
+]
+
+# (name, survivor, absorbed, bench, should merge)
+BENCH_CASES = [
+    # An industrial fire in a Qingdao shipyard and a naval exchange in the
+    # Strait of Hormuz, joined on a cardinal number and a maritime noun, and
+    # printed at rank 1 under a semicolon headline.
+    ("qingdao fire vs hormuz strikes",
+     "US Destroys Five Iranian Tankers; Iran Strikes 10 Ships Near Hormuz",
+     "Cargo Ship Fire at Chinese Port Kills 25, Injures Five",
+     BENCH_0910, False),
+    # A German state election absorbed into a US dividend promise on (trump,
+    # win). The AfD story left the feed entirely.
+    ("us dividend vs german state election",
+     "Trump Promises $5,000 Dividend to Americans if Republicans Win Midterms",
+     "German Far-Right AfD Wins Saxony-Anhalt; Merz Under Pressure",
+     BENCH_0910, False),
+    ("us dividend vs iran war forecast",
+     "Trump Promises $5,000 Dividend to Americans if Republicans Win Midterms",
+     "Trump Predicts Iran War Ends After Midterms; Tehran Ready to Escalate",
+     BENCH_0910, False),
+    ("oil forecast vs dividend pledge",
+     "Trump Predicts Oil Prices Will Fall After Midterm Elections",
+     "Trump Pledges $5,000 Payments to Adults if GOP Wins",
+     BENCH_0910, False),
+    ("oil forecast vs oil production boast",
+     "Trump Predicts Oil Prices Will Fall After Midterm Elections",
+     "Trump Touts US as Top Oil Producer After Venezuela Deal",
+     BENCH_0910, False),
+    # The one the run got right, and the one this must not break.
+    ("kirk anniversary, genuinely one story",
+     "Turning Point USA Snubs RNC Convention on Charlie Kirk Anniversary",
+     "Trump Honors Charlie Kirk on Assassination Anniversary",
+     BENCH_0910, True),
+    # Two unrelated cases on one docket day: the only shared vocabulary is the
+    # court and the word `plea`.
+    ("two supreme court pleas, one day",
+     "Supreme Court Declines Plea for Mandatory Ethanol Labeling at Pump",
+     "Supreme Court Rejects Uzma Khan's Plea for Early Contempt Hearing",
+     [], False),
+    # A fixed institution counted twice. Six false merges over 30 printed days
+    # came from `white` plus `house`.
+    ("white house is one phrase, not two stems",
+     "Trump Asks Supreme Court to Allow White House Ballroom Construction",
+     "White House Press Secretary Karoline Leavitt Resigns to Spend Time",
+     [], False),
+    ("prime minister is one phrase, not two stems",
+     "Young Scots Urge Prime Minister to Rethink Under-16 Social Media Ban",
+     "New Zealand Prime Minister Luxon Survives Second Leadership Challenge",
+     [], False),
+    # ... and the phrase rule must not eat a real merge whose shared phrase is
+    # only part of the evidence.
+    ("saudi arabia collapses, defense pact still carries it",
+     "Saudi Arabia, Turkey, Pakistan Sign Mecca Joint Defense Pact",
+     "Saudi Arabia, Turkey, Pakistan Sign NATO-Style Defense Pact",
+     [], True),
+    # Recall backstop: a story split three ways pushes its own vocabulary to
+    # ambient, and only raw headline overlap can still see the duplicate.
+    ("indonesia quake, near-identical headlines",
+     "Indonesia Earthquake Kills 51, Displaces Thousands on Flores Island",
+     "Indonesia Magnitude 7.7 Earthquake Kills 51, Displaces Thousands on Flores",
+     ["Indonesia Earthquake Toll Rises as Rescuers Reach Flores Villages",
+      "Indonesia Earthquake Survivors Await Aid on Flores",
+      "Indonesia Earthquake Kills 51, Displaces Thousands on Flores Island",
+      "Indonesia Magnitude 7.7 Earthquake Kills 51, Displaces Thousands on Flores"],
+     True),
+]
+
+
+def check_bench() -> int:
+    failed = 0
+    for name, a, b, bench, want in BENCH_CASES:
+        amb = ambient_stems(bench)
+        got, why = should_merge(
+            {"title": a, "first_published": T0},
+            {"title": b, "first_published": T1}, ambient=amb)
+        mark = "ok  " if got == want else "FAIL"
+        if got != want:
+            failed += 1
+        verb = "merge" if want else "keep apart"
+        print(f"  [{mark}] {name:<44} want {verb:<10} got "
+              f"{'merge' if got else 'keep apart':<10} {why}")
+    print(f"\n{len(BENCH_CASES) - failed}/{len(BENCH_CASES)} bench-conditioned "
+          f"fixtures correct\n")
+    return failed
+
+
 def check_coherence() -> int:
     failed = 0
     for case in COHERENCE:
@@ -223,6 +342,7 @@ def main() -> int:
         print(f"  [{mark}] {name:<32} want {verb:<10} got "
               f"{'merge' if got else 'keep apart':<10} {why}")
     print(f"\n{len(CASES) - failed}/{len(CASES)} merge fixtures correct\n")
+    failed += check_bench()
     failed += check_coherence()
     return 1 if failed else 0
 

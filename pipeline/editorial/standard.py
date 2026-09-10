@@ -92,16 +92,28 @@ except Exception:  # pragma: no cover - nltk missing
 _POSSESSIVE = re.compile(r"['\u2019]s?$")
 
 
-def title_word_stems(title: str) -> set[str]:
-    """Content-word stems of a headline (stopwords removed, Porter-stemmed)."""
-    out: set[str] = set()
+def title_stem_sequence(title: str) -> list[str]:
+    """Content-word stems of a headline IN ORDER, stopwords removed.
+
+    Same tokenizer as title_word_stems, which is the point: the merge gate
+    needs to know whether two shared stems are adjacent words of one phrase
+    ("White House", "Prime Minister"), and a set cannot answer that. Deriving
+    both from one loop keeps the possessive and hyphen handling identical, the
+    defect rev 65 recorded when three tokenizers drifted apart.
+    """
+    out: list[str] = []
     for w in re.findall(r"[a-z0-9](?:[a-z0-9'\u2019-]*[a-z0-9])?",
                         (title or "").lower().replace("\u2019", "'")):
         w = _POSSESSIVE.sub("", w)
         if w in TITLE_STOPWORDS or len(w) < 2:
             continue
-        out.add(_stem(w))
+        out.append(_stem(w))
     return out
+
+
+def title_word_stems(title: str) -> set[str]:
+    """Content-word stems of a headline (stopwords removed, Porter-stemmed)."""
+    return set(title_stem_sequence(title))
 
 
 # ---------------------------------------------------------------------------
