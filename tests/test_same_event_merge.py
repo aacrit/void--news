@@ -21,6 +21,7 @@ from editorial.same_event import (  # noqa: E402
     ambient_stems,
     incoherent_members,
     should_merge,
+    specific_stems,
 )
 
 T0 = "2026-09-05T02:00:00+00:00"
@@ -293,6 +294,47 @@ BENCH_CASES = [
 ]
 
 
+# Surface words that must resolve to one anchor. Asserted as PAIRS OF WORDS,
+# not as key spellings: _DEMONYM is keyed on stems, and a key that is already a
+# stem can be stemmed again, so checking "is this key what the tokenizer emits"
+# misreads `chines`, `japanes`, `nepales`, `sudanes` and `vietnames` as broken
+# when they are exactly right. Only `israeli` really was dead ("Israeli" stems
+# to `isra`), and it cost the merge gate every Israel pair.
+DEMONYM_PAIRS = [
+    ("Israeli Settlements Sanctioned", "Israel Orders Closure", "Israeli/Israel"),
+    ("Chinese Port Fire Kills 25", "China Halts Shipyard Work", "Chinese/China"),
+    ("Japanese Yen Slides", "Japan Raises Rates", "Japanese/Japan"),
+    ("Nepalese Rescuers Reach Village", "Nepal Landslide Toll Rises", "Nepalese/Nepal"),
+    ("Russian Drones Hit Kyiv", "Russia Denies Strike", "Russian/Russia"),
+    ("Ukrainian Forces Advance", "Ukraine Signs Deal", "Ukrainian/Ukraine"),
+    ("Iranian Tankers Struck", "Iran Vows Response", "Iranian/Iran"),
+    ("German Coalition Talks Stall", "Germany Calls Election", "German/Germany"),
+]
+
+
+def check_demonyms() -> int:
+    """A demonym and its country must resolve to one anchor.
+
+    The map is applied to STEMMED tokens, so a key written as an ordinary word
+    is dead on arrival, and dead silently: the gate simply stops seeing that
+    two headlines are about the same country. On 2026-09-10 "Nations Impose
+    Sanctions on Israeli Settlements" and "Israel Orders UK to Close East
+    Jerusalem Consulate" shared ZERO stems, because "Israeli" reaches the
+    lookup as `isra`.
+    """
+    failed = 0
+    for a, b, what in DEMONYM_PAIRS:
+        if not (specific_stems(a) & specific_stems(b)):
+            print(f"  [FAIL] {what} do not share a stem: "
+                  f"{sorted(specific_stems(a))} vs {sorted(specific_stems(b))}")
+            failed += 1
+    if not failed:
+        print(f"  [ok  ] {len(DEMONYM_PAIRS)} demonym/country pairs resolve "
+              f"to one anchor")
+    print()
+    return failed
+
+
 def check_bench() -> int:
     failed = 0
     for name, a, b, bench, want in BENCH_CASES:
@@ -342,6 +384,7 @@ def main() -> int:
         print(f"  [{mark}] {name:<32} want {verb:<10} got "
               f"{'merge' if got else 'keep apart':<10} {why}")
     print(f"\n{len(CASES) - failed}/{len(CASES)} merge fixtures correct\n")
+    failed += check_demonyms()
     failed += check_bench()
     failed += check_coherence()
     return 1 if failed else 0
