@@ -411,6 +411,66 @@ def e09_absence_of_information(summary: str) -> list[Finding]:
     return []
 
 
+# E-12: a sentence that shares no vocabulary with any other sentence.
+#
+# On 2026-09-10 the Colombia gun-permit card carried, between a Rubio quote and
+# the Daily Caller no-comment line: "The judge ruled the images could be
+# harmful to minors." No judge, no images and no minors appear anywhere else in
+# that summary or that story. It is a recurring class, not a one-off: "when she
+# won a Hayward City Council seat in 2018" on 08-21, "375 million into
+# Saddam-era Iraq" on 08-18, "We're making history," on 08-25.
+#
+# The obvious rule, flagging a sentence whose NAMED ENTITIES appear nowhere
+# else, was measured over all 1,375 archived summaries and rejected. It misses
+# this defect outright, because "The judge ruled the images could be harmful to
+# minors" contains no named entity at all, and it fires on 2,844 sentences,
+# 2.07 per summary, almost all of them ordinary reporting: "Chip Roy, R-Texas,
+# questioned how the proposal would be funded" introduces a new name because
+# that is what a news sentence does. Recorded so it is not retried.
+#
+# Shared vocabulary catches it. Over the same 1,375 summaries this fires 218
+# times, 0.16 per summary, and it does catch the Colombia sentence.
+#
+# It is ADVISORY, and the reason matters. Of those 218, roughly half are real
+# and half are on-topic sentences that happen to be worded in isolation ("A
+# minute's silence was observed throughout the country" on the Norway funeral
+# card). Grounding each sentence against the source articles was tried as a
+# second signal and does not separate them: the Colombia sentence scores 0.60
+# grounded, because `judge`, `ruled` and `harmful` all appear SOMEWHERE across
+# fourteen articles. Deciding whether a sentence belongs needs the meaning, not
+# the words, so the enforcing check is L-08 in the critique pass, which reads
+# the articles. This one is the deterministic tripwire that measures the rate
+# for free and runs in the served-output gate, where no article text exists.
+ORPHAN_MIN_STEMS = 3          # below this a sentence has too little vocabulary
+ORPHAN_MIN_SENTENCES = 5      # below this "the rest of the summary" is too thin
+                              # to judge against. Real cards run 8 sentences or
+                              # more; over the archive this costs 13 of 218
+                              # flags and still catches the Colombia sentence.
+
+
+def e12_isolated_sentence(summary: str) -> list[Finding]:
+    sents = sentences(summary or "")
+    if len(sents) < ORPHAN_MIN_SENTENCES:
+        return []
+    stems = [title_word_stems(s) for s in sents]
+    out: list[Finding] = []
+    for i, sent in enumerate(sents):
+        # The opening sentence introduces the story, so it has nothing to
+        # echo yet and can never be the orphan.
+        if i == 0 or len(stems[i]) < ORPHAN_MIN_STEMS:
+            continue
+        rest: set = set()
+        for j in range(len(sents)):
+            if j != i:
+                rest |= stems[j]
+        if not (stems[i] & rest):
+            out.append(Finding(
+                "E-12",
+                f"sentence {i + 1} of {len(sents)} shares no word with the "
+                f"rest of the summary: \"{sent[:90]}\""))
+    return out
+
+
 # E-10 (a location named in the headline appears in the summary) is NOT
 # implemented here. A regex cannot tell a place from any other capitalised
 # opener: the first draft flagged "Mudslides Kill Dozens..." as a headline
@@ -481,6 +541,7 @@ VALIDATORS: list[Validator] = [
     Validator("E-08", "no unattributed passive evaluation", ADVISORY, e08_passive_evaluation, "summary"),
     Validator("E-09", "not mostly absence of information", ADVISORY, e09_absence_of_information, "summary"),
     Validator("E-11", "no second-person pronoun outside quotes", ADVISORY, e11_second_person_outside_quotes, "summary"),
+    Validator("E-12", "no sentence isolated from the rest of the summary", ADVISORY, e12_isolated_sentence, "summary"),
 ]
 
 VALIDATORS_BY_ID = {v.id: v for v in VALIDATORS}
@@ -491,6 +552,7 @@ LLM_RULES = {
     "L-02": "every quotation is verbatim, pronouns included",
     "L-05": "no internal contradiction; ages, titles and numbers are sourced",
     "L-06": "criticism of a named living person carries their response",
+    "L-08": "every sentence belongs to this story, judged against the articles",
     # EDITORIAL: judged from the card alone. Requiring article corroboration
     # for these silences them, which is how a grooming-advice roundup shipped
     # at rank 17 on the 2026-09-09 feed. See _CRITIQUE_EDITORIAL in
