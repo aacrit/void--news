@@ -51,6 +51,7 @@ them. `L-*` rules need the model in the loop and are wired in Block 2.
 | E-09 | Sentences asserting absence of information are not the substance of the card | ADVISORY | The 09-06 Bolivia card carried two facts in eight sentences; five said some version of "details have not been released". Threshold: three or more absence sentences, or a quarter of a card of six or more sentences. Across six runs no other displayed card exceeded one. |
 | E-10 | A location named in the headline is not contradicted by the summary | L-07 | "Malvinas Islands" led a story headlined "Falkland Islands". A regex cannot tell a place from any other capitalised opener: the first draft flagged "Mudslides Kill Dozens". |
 | E-11 | No second-person pronoun outside quotation marks | ADVISORY | "Vance also told El-Sayed to keep their wife's name the hell out of your mouth" shipped: the scrubber rewrote `my` and had no rule for `your`, so Void addressed the reader. |
+| E-12 | No sentence shares zero vocabulary with the rest of the summary | ADVISORY | The 09-10 Colombia gun-permit card carried "The judge ruled the images could be harmful to minors" between a Rubio quote and a request for comment. Recurring: a Hayward City Council seat on 08-21, Saddam-era Iraq on 08-18. **The obvious rule was measured and rejected**: flagging a sentence whose NAMED ENTITIES appear nowhere else misses this sentence entirely (it has none) and fires 2,844 times over 1,375 archived summaries. Shared vocabulary fires 205 times, 0.15 per summary, and catches it. ADVISORY because roughly half its hits are on-topic sentences worded in isolation ("A minute's silence was observed throughout the country"), and grounding each sentence against the articles does not separate them: the Colombia sentence scores 0.60 grounded because `judge`, `ruled` and `harmful` each appear somewhere across fourteen articles. The enforcing check is L-08, which reads meaning rather than words. |
 
 ### Feed level
 
@@ -99,6 +100,7 @@ central-bank gold repatriation at rank 19.
 | L-03 | The card describes one event. A development and its direct consequence are one event; a second story that merely shares a word with the first is not |
 | L-04 | The card is news: something happened, to someone, somewhere. Not a roundup of loosely related items, a lifestyle or celebrity-appearance piece, grooming or product advice, a listicle, opinion presented as reporting, satire or commerce |
 | L-07 | The summary does not contradict a location named in the headline (E-10) |
+| L-08 | Every sentence belongs to this story, judged against the articles. GROUNDED: a sentence whose subject matter appears in none of the source articles is named. Distinct from L-03, which is about a card that changes subject; L-08 is about one foreign sentence inside an otherwise sound card (E-12) |
 
 L-02 gained its headline clause the same day, for the same reason. Rank 16 was
 headlined `Amazon Cargo Jet Pilot Reportedly Told Wife "Career Over" After

@@ -3946,6 +3946,16 @@ _CRITIQUE_GROUNDED = [
              "flipped word reverses what a named person said."),
     ("L-06", "When the card criticises a named living person, it carries that "
              "person's response, or states that none was given."),
+    ("L-08", "Every sentence belongs to THIS story. Read the summary one "
+             "sentence at a time and report any single sentence whose subject "
+             "matter appears in none of the articles: a stray line about "
+             "different people, a different place or a different dispute, "
+             "dropped into an otherwise sound card. On 2026-09-10 a card about "
+             "a Colombian gun-permit decree carried \"The judge ruled the "
+             "images could be harmful to minors\" between a Rubio quote and a "
+             "request for comment. This is NOT L-03: the card as a whole is "
+             "about one event and only one sentence is foreign to it, so name "
+             "the sentence."),
 ]
 
 _CRITIQUE_EDITORIAL = [

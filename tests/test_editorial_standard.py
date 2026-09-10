@@ -69,6 +69,22 @@ CASES = [
     ("E-11", {"title": CLEAN_TITLE,
               "summary": CLEAN_SUMMARY + " Adeyemi told the committee to keep your projections conservative."},
      "second-person pronoun outside quotes"),
+    # Verbatim from the 2026-09-10 Colombia gun-permit card, where this
+    # sentence sat between a Rubio quote and the request for comment.
+    ("E-12", {"title": "Colombian President Lifts Gun Carry Ban",
+              "summary": (
+                  "Colombian President Abelardo de la Espriella signed an order on Tuesday "
+                  "ending regulations that prohibited law-abiding citizens from carrying "
+                  "legally-owned firearms. "
+                  "The decree reversed a ban set in place in 2015 by then-President Juan "
+                  "Manuel Santos and renewed annually by his successors. "
+                  "The decree was signed while US Secretary of State Marco Rubio was "
+                  "visiting Colombia. "
+                  "Rubio stressed the need for security across the region. "
+                  "The judge ruled the images could be harmful to minors. "
+                  "The Colombian embassy did not respond to a request for comment about "
+                  "the gun law change.")},
+     "a sentence that belongs to a different story"),
 ]
 
 
