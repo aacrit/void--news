@@ -114,14 +114,28 @@ AMBIGUOUS_ANCHORS = frozenset({
 
 # Demonym and adjectival forms that must resolve to one anchor. Keyed by the
 # STEM the tokenizer produces.
+# Keyed on the stems the TOKENIZER produces, not on the words. The lookup runs
+# AFTER stemming, so a key written as an ordinary spelling never fires. Two
+# were: "Israeli" arrives as `isra`, so "Nations Impose Sanctions on ISRAELI
+# Settlements" and "ISRAEL Orders UK to Close East Jerusalem Consulate" shared
+# no stem at all on 2026-09-10; and "US" is a title stopword, so `us` never
+# reached the lookup and is simply gone. The -ese demonyms were already right
+# (`chines`, `japanes`, `nepales` are what the stemmer emits).
+#
+# This is the third appearance of one defect. Rev 57 fixed possessives in the
+# brief's continuing-story matcher, rev 65 found `germany'` failing to match
+# `German` in this module, and this is the same shape one layer down. The test
+# below asserts on WORD PAIRS rather than on key spellings, because a key that
+# is already a stem can be stemmed again and a naive check misreads five of
+# these as broken.
 _DEMONYM = {
     "nepali": "nepal", "nepales": "nepal",
-    "israeli": "israel", "palestinian": "palestin",
+    "isra": "israel", "palestinian": "palestin",
     "russian": "russia", "ukrainian": "ukrain", "ukrain": "ukrain",
     "chines": "china", "japanes": "japan", "indian": "india",
     "iranian": "iran", "iraqi": "iraq", "syrian": "syria",
     "german": "germani", "french": "franc", "spanish": "spain",
-    "britain": "british", "uk": "british", "american": "usa", "us": "usa",
+    "britain": "british", "uk": "british", "american": "usa",
     "mexican": "mexico", "brazilian": "brazil", "turkish": "turkey",
     "pakistani": "pakistan", "afghan": "afghanistan", "egyptian": "egypt",
     "nigerian": "nigeria", "kenyan": "kenya", "sudanes": "sudan",
