@@ -35,6 +35,7 @@ them. `L-*` rules need the model in the loop and are wired in Block 2.
 | S-04 | Quotation marks are balanced | ENFORCED | An orphan quote mark changes who said what. |
 | S-05 | No doubled capitalized word (`TheThe`) | ENFORCED | Concatenation artifact from the summarizer's sentence joining. |
 | S-06 | No broken spacing in abbreviations or decimals (`U. S.`, `3. 5`) | ENFORCED | A sitewide corruption shipped this way once. |
+| S-07 | The indefinite article agrees with the SOUND of the next word | ENFORCED | "an Ukrainian plot" and "an Ukrainian contact" shipped on 09-10, third report of the shape. The article follows sound, not spelling, so no rule over vowel letters can decide it: "an umbrella" is right and "an Ukrainian" is wrong and both start with u. Implemented as two explicit word lists, the /juː/ and /w/ onsets on one side and the silent h on the other. Over the archive it fires 22 times, 15 on "an Ukrainian" and 7 on "an unanimous", with no false positives. **Letter-named acronyms are deliberately not judged**: telling "an FBI agent" from "a NATO ally" needs a pronunciation dictionary, and an onset-letter rule flagged "a NATO ally" 9 times, "a FIFA spokesperson" twice and "a MAGA incumbent", all correct, catching nothing real. |
 
 ### Editorial
 

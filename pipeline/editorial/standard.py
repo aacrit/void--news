@@ -197,6 +197,64 @@ def s04_quote_balance(summary: str) -> list[Finding]:
     return []
 
 
+# S-07: "an" before a consonant SOUND, or "a" before a vowel sound.
+#
+# "Russia Foils an Ukrainian plot" shipped on 2026-09-10, and "an Ukrainian
+# contact" in the same card. Third report of the same shape.
+#
+# The article is chosen by the SOUND of the next word, not its first letter, so
+# no regex over vowel letters can decide this. "an umbrella" is right and "an
+# Ukrainian" is wrong, and both start with u. The only honest implementation is
+# a list of the words where letter and sound disagree, which is short because
+# the disagreement is systematic: the /juː/ onset (Ukrainian, European, united,
+# unique, university, user), the /w/ onset (one, once), and on the other side
+# the silent h (hour, honest, heir) and the letter-named acronyms (FBI, MP).
+#
+# Kept deliberately narrow. A word not on either list is not judged, because a
+# wrong flag here trains the desk to ignore S-rules, and these are the words
+# that actually recur in wire copy.
+_A_NOT_AN = frozenset("""
+ukraine ukrainian ukrainians european europeans euro euros eurozone
+eulogy euphemism eucalyptus united unified unique union unions unit units
+uniform uniformed universal universe university universities usage use used
+useful useless user users usual usually utility utilities utopia utopian
+uranium urinal ubiquitous unilateral unilaterally unanimous unanimously
+one once
+""".split())
+
+# Vowel sound behind a consonant letter, or a letter-named acronym onset.
+_AN_NOT_A = frozenset("""
+hour hours hourly honest honestly honesty honor honors honorable honour
+honours honourable heir heirs heiress
+""".split())
+# Letter-named acronyms ("an FBI agent", "an MP") are NOT judged. Deciding
+# between them and acronyms said as a word needs a pronunciation dictionary
+# this module may not carry: over the archive, an onset-letter rule flagged
+# "a NATO ally" 9 times, "a FIFA spokesperson" twice, and "a MAGA incumbent",
+# all of them correct English, against no true positives at all. Recorded so
+# it is not retried. The vowel-sound side is the explicit list above.
+
+_ARTICLE_PAIR = re.compile(r"\b([Aa]n?)\s+([A-Za-z][A-Za-z.'\u2019-]*)")
+
+
+def s07_article_agreement(text: str) -> list[Finding]:
+    out: list[Finding] = []
+    for m in _ARTICLE_PAIR.finditer(text or ""):
+        art, word = m.group(1), m.group(2)
+        low = word.lower().strip(".'\u2019-")
+        if art.lower() == "an" and low in _A_NOT_AN:
+            out.append(Finding(
+                "S-07",
+                f'"an {word}" should be "a {word}": '
+                f'"{_ctx(text, m.group(0))}"'))
+        elif art.lower() == "a" and low in _AN_NOT_A:
+            out.append(Finding(
+                "S-07",
+                f'"a {word}" should be "an {word}": '
+                f'"{_ctx(text, m.group(0))}"'))
+    return out
+
+
 def s05_doubled_words(text: str) -> list[Finding]:
     return [Finding("S-05", f'doubled word "{m.group(0)}": "{_ctx(text, m.group(0))}"')
             for m in _DOUBLED_WORD.finditer(text or "")]
@@ -546,6 +604,7 @@ VALIDATORS: list[Validator] = [
     Validator("S-04", "quotes are balanced", ENFORCED, s04_quote_balance, "summary"),
     Validator("S-05", "no doubled word", ENFORCED, s05_doubled_words, "text"),
     Validator("S-06", "no broken abbreviation or decimal spacing", ENFORCED, s06_abbrev_spacing, "text"),
+    Validator("S-07", "indefinite article agrees with the following sound", ENFORCED, s07_article_agreement, "text"),
     Validator("E-03", "no first-person pronoun outside quotes", ENFORCED, e03_first_person_outside_quotes, "summary"),
     Validator("E-04", "no orphan subordinate clause", ENFORCED, e04_orphan_subordinate, "summary"),
     Validator("E-05", "reputational claims carry attribution", ENFORCED, e05_reputational_attribution, "summary"),

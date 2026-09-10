@@ -66,6 +66,11 @@ CASES = [
                   "Investigations are ongoing to determine the sequence of events. "
                   "The full extent of the damage is still being evaluated.")},
      "a card that is mostly absence of information"),
+    # Verbatim from the 2026-09-10 feed, third report of this shape.
+    ("S-07", {"title": "Russia Foils Ukrainian Plot Against British Ambassador",
+              "summary": CLEAN_SUMMARY + " The FSB said it had foiled an Ukrainian plot "
+                                         "against the ambassador."},
+     "\"an\" before a consonant sound"),
     ("E-11", {"title": CLEAN_TITLE,
               "summary": CLEAN_SUMMARY + " Adeyemi told the committee to keep your projections conservative."},
      "second-person pronoun outside quotes"),
@@ -88,8 +93,30 @@ CASES = [
 ]
 
 
+S07_MUST_STAY_QUIET = [
+    "Turkey is a NATO ally and hosted the talks.",
+    "A FIFA spokesperson confirmed the schedule on Monday.",
+    "The vote followed a MAGA incumbent's defeat in the primary.",
+    "Crews reached the site within an hour of the collapse.",
+    "She called it an honest account of what happened.",
+    "Protesters carried an umbrella against the rain.",
+    "The council approved a unanimous resolution.",
+]
+
+
 def main() -> int:
     ok = True
+
+    # S-07 must stay silent on correct English. An onset-letter rule for
+    # letter-named acronyms flagged the first three of these over the archive
+    # and caught nothing real, so it was removed rather than tuned.
+    for line in S07_MUST_STAY_QUIET:
+        found = std.s07_article_agreement(line)
+        if found:
+            print(f"FAIL: S-07 fired on correct English: {line!r} -> {found}")
+            ok = False
+    if ok:
+        print(f"PASS: S-07 quiet on {len(S07_MUST_STAY_QUIET)} correct constructions")
 
     # Clean control: a good card trips nothing.
     clean = std.validate_candidate({

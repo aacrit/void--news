@@ -193,6 +193,18 @@ class Page:
 # ---------------------------------------------------------------------------
 # Checks — each returns list[str] of failure messages (empty => pass)
 # ---------------------------------------------------------------------------
+def _visible_text(html: str) -> str:
+    """What a reader sees: tags, scripts and styles removed, spacing collapsed.
+
+    Structural checks that count markup can miss a defect the reader cannot,
+    which is how the doubled wordmark survived seven reports.
+    """
+    out = re.sub(r"<(script|style)[^>]*>.*?</\1>", " ", html, flags=re.DOTALL | re.I)
+    out = re.sub(r"<!--.*?-->", " ", out, flags=re.DOTALL)
+    out = re.sub(r"<[^>]+>", " ", out)
+    return re.sub(r"\s+", " ", out).strip()
+
+
 def _ctx(text: str, needle: str, pad: int = 45) -> str:
     i = text.find(needle)
     if i < 0:
@@ -222,6 +234,51 @@ def check_footer_wordmark(p: Page) -> list[str]:
     if n == 1:
         return []
     return [f'footer wordmark appears {n} times (expected exactly 1)']
+
+
+# Minimum visible characters that must separate two wordmarks on the page.
+# The header and the footer have an entire feed between them. The defect this
+# catches had literally nothing.
+WORDMARK_MIN_GAP_CHARS = 40
+
+# The wordmark as the READER sees it. Its O is an SVG sigil rather than a
+# letter, so stripping tags leaves "V ID NEWS": that is why a copy of the page
+# text reads "20 storiesVIDNEWS VIDNEWS" and why counting markup missed it.
+# The O is optional because it is not always a letter: in the live page it is
+# an SVG sigil, so tag-stripping yields "V ID NEWS", while a plain render of
+# the same brand yields "VOID NEWS". Both are one wordmark.
+_RENDERED_WORDMARK = re.compile(r"V\s*O?\s*ID\s*NEWS")
+
+
+def check_wordmark_adjacency(p: Page) -> list[str]:
+    """No two wordmarks may render back to back.
+
+    Reported seven times, and passed by both existing wordmark checks every
+    time, because neither was looking where the defect was. The page carried
+    THREE wordmarks: the header, one closing the feed in .edition-line, and one
+    in the footer. check_wordmark counts the page total against a maximum of
+    three, so three passes. check_footer_wordmark counts inside <footer> and
+    finds exactly one, so that passes too. The duplication was two ADJACENT
+    elements, each innocent on its own, and the page ended:
+
+        20 stories VOID NEWS VOID NEWS See through the void.
+
+    The rendered text is what the reader sees, so that is what this measures:
+    the visible characters between consecutive wordmarks, across element
+    boundaries rather than within any one of them.
+    """
+    vis = _visible_text(p.raw)
+    marks = [(m.start(), m.end()) for m in _RENDERED_WORDMARK.finditer(vis)]
+    out: list[str] = []
+    for (_, end_a), (start_b, _) in zip(marks, marks[1:]):
+        gap = start_b - end_a
+        if gap < WORDMARK_MIN_GAP_CHARS:
+            out.append(
+                f'two wordmarks render {gap} visible characters apart '
+                f'(min {WORDMARK_MIN_GAP_CHARS}): '
+                f'"...{vis[max(0, end_a - 30):start_b + 40]}..." '
+                f'the wordmark is printed twice in a row')
+    return out
 
 
 def check_dateline(p: Page) -> list[str]:
@@ -635,6 +692,7 @@ CHECKS = [
     ("structural: wordmark not doubled", check_wordmark),
     ("structural: single dateline", check_dateline),
     ("structural: footer wordmark exactly once", check_footer_wordmark),
+    ("structural: no two wordmarks render back to back", check_wordmark_adjacency),
     ("structural: exactly one h1", check_h1),
     ("corruption: abbreviations / quotes", check_abbrev),
     ("corruption: decimals", check_decimal),

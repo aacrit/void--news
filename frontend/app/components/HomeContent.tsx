@@ -10,7 +10,6 @@ import { cacheGet, cacheSet } from "../lib/feedCache";
 import { cleanFeedSummary } from "../lib/summaryHygiene";
 import { BASE_PATH } from "../lib/utils";
 import LogoIcon from "./LogoIcon";
-import LogoWordmark from "./LogoWordmark";
 import NavBar from "./NavBar";
 import LeadStory from "./LeadStory";
 import StoryCard from "./StoryCard";
@@ -973,12 +972,16 @@ function HomeContentInner({
 
                   {/* World overflow removed 2026-06-02 single-feed. */}
 
+                  {/* The wordmark used to render in this line as well as in
+                      the footer immediately below it, with nothing between the
+                      two, so the page ended "20 stories VOID NEWS VOID NEWS".
+                      Reported seven times. The footer owns the wordmark; this
+                      line owns the count. */}
                   {visibleStories.length > 0 && (
                     <div className="edition-line">
                       <span className="edition-meta">
                         {mainStories.length} stories
                       </span>
-                      <LogoWordmark height={14} />
                     </div>
                   )}
                 </>
