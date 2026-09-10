@@ -62,6 +62,13 @@ def main() -> int:
         ("tail_missing_anchor_feed.html",
          "cards rendered but 2 stretch-link anchors found",
          "card rendered with no stretch-link anchor"),
+        # Reported seven times and passed by both existing wordmark checks
+        # every time. The page total was 3, within the max of 3, and the count
+        # inside <footer> was exactly 1. The duplication was two ADJACENT
+        # elements, each innocent alone, so only the gap between them sees it.
+        ("doubled_wordmark_feed.html",
+         "two wordmarks render 1 visible characters apart",
+         "wordmark printed twice in a row at the end of the feed"),
     ]
     for fixture, needle, what in cases:
         res = run(fixture)
@@ -69,11 +76,11 @@ def main() -> int:
             print(f"FAIL: {what} should be rejected (got exit 0)")
             ok = False
         elif needle not in res.stdout:
-            print(f"FAIL: {what} rejected, but not by the anchor-coverage check.")
+            print(f"FAIL: {what} rejected, but not by the check that should name it.")
             print(f"      expected to see: {needle}")
             ok = False
         else:
-            print(f"PASS: {what} rejected by the anchor-coverage check")
+            print(f"PASS: {what} rejected by the check that names it")
 
     # The count assertion must notice a short render even when the page is
     # self-consistent (header count == cards rendered).
