@@ -42,6 +42,7 @@ try:
 except ImportError:
     _sanitize_editorial = lambda t: t
 from briefing.voice_rotation import get_voices_for_today, get_opinion_host
+from editorial.standard import title_word_stems
 
 # Groq + Claude retired; Gemini Flash is the sole brief LLM (carry-forward on fail).
 
@@ -1468,6 +1469,41 @@ def _rule_based_opinion(cluster: dict, lean: str) -> dict:
     }
 
 
+def _joins_two_subjects(title: str) -> bool:
+    """True if a headline joins two subjects that share no vocabulary.
+
+    A semicolon in a headline is normally innocent. Of the 1,377 titles in the
+    printed archive, 94 carry one and splitting them on it flags 85, because
+    "development; consequence" is ordinary headline grammar: "Russia Resumes
+    Kyiv Strikes After US Envoys Visit; Talks Possible". Rev 65 measured that
+    and rejected the rule as a validator, and it still measures the same. It is
+    NOT used to drop or flag a card.
+
+    It is used HERE, where the economics invert. Choosing the opinion subject
+    is a choice among about thirty-five candidates, so a false skip costs an
+    editorial about a different story and nothing else, while a false accept
+    costs an argued column reasoning from a cluster that is two stories. On
+    2026-09-10 that is what shipped: "Cargo Ship Fire Kills 25 in China; US,
+    Iran Trade Strikes" became "Maritime flashpoints multiply, trade routes
+    narrow", a column that noticed the two events did not belong together
+    ("Some might argue that an industrial accident, however tragic, is distinct
+    from military action") and argued past its own objection.
+
+    The merge gate is the real fix and stops that cluster forming at all. This
+    is the second line, because the brief inherits cluster boundaries whole and
+    a model handed two events in one summary will always find a thesis.
+    """
+    for sep in (";", " \u2014 ", " -- "):
+        if sep not in title:
+            continue
+        head, tail = title.split(sep, 1)
+        if not head.strip() or not tail.strip():
+            continue
+        if not (title_word_stems(head) & title_word_stems(tail)):
+            return True
+    return False
+
+
 def _select_opinion_cluster(clusters: list[dict], edition: str) -> dict | None:
     """Select the single best cluster for today's opinion piece.
 
@@ -1524,6 +1560,16 @@ def _select_opinion_cluster(clusters: list[dict], edition: str) -> dict | None:
         return base
 
     edition_clusters.sort(key=_score, reverse=True)
+    for c in edition_clusters:
+        if not _joins_two_subjects(c.get("title") or ""):
+            return c
+        print(f"  [opinion:{edition}] skipping \"{(c.get('title') or '')[:60]}\": "
+              f"the headline joins two subjects that share no vocabulary, which "
+              f"is a contaminated cluster more often than it is a real story")
+    # Every candidate looked contaminated. That is a clustering problem, not a
+    # reason to ship no column, so take the top one and say so loudly.
+    print(f"  [warn][opinion:{edition}] every candidate headline joins two "
+          f"subjects; arguing from the highest-ranked one anyway")
     return edition_clusters[0]
 
 

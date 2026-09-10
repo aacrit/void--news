@@ -68,11 +68,19 @@ import sys
 from datetime import datetime, timezone
 from typing import Callable, Optional
 
-from editorial.standard import title_word_stems
+from editorial.standard import title_stem_sequence, title_word_stems
 
 MERGE_TEMPORAL_HOURS = 48
 MERGE_MIN_SHARED_STEMS = 2
 MERGE_CEILING = 3
+
+# A stem carried by this many SEPARATE bench headlines is the day's ambient
+# vocabulary, not an identifier (see ambient_stems).
+AMBIENT_MIN_DF = 3
+
+# A pair this alike in raw headline vocabulary is the same story told twice,
+# and may merge on ONE independent signal instead of two (see should_merge).
+MERGE_NEAR_IDENTICAL_JACCARD = 0.33
 
 # Vocabulary any two same-day news stories share. A stem in here can never be
 # one of the two specific stems, and can never be the anchor.
@@ -123,6 +131,166 @@ _DEMONYM = {
 }
 
 
+# Quantities. A number is the most portable word in a headline: every day
+# carries a dozen unrelated stories that each count something. On 2026-09-10
+# "US Destroys FIVE Iranian Tankers" absorbed "Cargo Ship Fire at Chinese Port
+# Kills 25, Injures FIVE" on the pair (five, ship), putting an industrial fire
+# in a Qingdao shipyard and a naval exchange in the Strait of Hormuz on one
+# card at rank 1; on 2026-08-10 a Chinese typhoon and a British Columbia
+# wildfire shared (000, evacu).
+#
+# The module docstring already refused a numeric BRANCH ("both mention a death
+# toll") because it was Phase 7's primary contamination path. That refusal was
+# incomplete: numbers still entered through the ordinary stem path, where a
+# spelled-out cardinal is just a word. A quantity can never identify an event,
+# so it is barred from the stem count and from the anchor alike.
+_DIGIT = re.compile(r"\d")
+_CARDINALS = frozenset("""
+one two three four five six seven eight nine ten eleven twelv
+thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenti
+thirti forti fifti sixti seventi eighti nineti hundr thousand
+million billion trillion dozen percent
+""".split())
+
+
+def _is_quantity(stem: str) -> bool:
+    return bool(_DIGIT.search(stem)) or stem in _CARDINALS
+
+
+# Process vocabulary: words that describe what happened to a story rather than
+# which story it is. Kept SEPARATE from GENERIC_STEMS, which the coherence pass
+# also reads. The two passes have opposite error preferences, and widening the
+# shared list would silently make coherence delete more real coverage: a member
+# whose headline says "Supreme Court" and nothing else in the vocabulary would
+# stop matching its own cluster. This set is subtracted by should_merge only.
+#
+# Every entry here anchored a false merge in the 30-day replay:
+#   mak      Typhoon Dolphin MAKES landfall / Delta flight MAKES emergency landing
+#   includ   Zimbabwe ferry toll INCLUDING 18 / Kentucky shooting INCLUDING two
+#   leave    China mudslides LEAVE hundreds missing / Bolivia blast LEAVES two dead
+#   launch   North Korea LAUNCHES missiles / South Korean bank LAUNCHES Vietnam unit
+#   off      Altalena shipwreck OFF the coast / tanker struck OFF Oman
+#   plea     two unrelated Supreme Court PLEAS on one docket day
+#   murder   Lindsay Clancy MURDER TRIAL / Charlie Kirk MURDER suspect
+#   primari  Minnesota Senate PRIMARY / Minnesota GOP governor PRIMARY
+#   evacu    Typhoon Dolphin prompts EVACUATIONS / Delta flight EVACUATED
+#   report   Pentagon fires a Stars and Stripes editor / Pentagon REPORTS
+#            increased sexual assault REPORTING
+MERGE_GENERIC_STEMS = frozenset({
+    # process verbs and the prepositions the tokenizer keeps
+    "make", "includ", "leav", "launch", "miss", "still", "off",
+    "evacu", "report",
+    # judicial and electoral process: the docket, not the case. `supreme` and
+    # `murder` are deliberately NOT here. Barring `supreme` also rejected the
+    # real pair "Supreme Court Rules on Transgender Care Ban in 6-3 Decision"
+    # / "Supreme Court Upholds Tennessee Law Restricting Care for Minors",
+    # which rev 59 identified as one story printed twice. Barring the docket
+    # word `plea` is enough to separate two unrelated cases heard the same day
+    # while leaving a shared SUBJECT like `care` to carry a genuine pair.
+    "plea", "trial", "juri", "verdict", "primari",
+})
+
+
+def independent_signals(shared: set, title_a: str, title_b: str) -> set:
+    """Collapse shared stems that are adjacent words of one phrase.
+
+    MERGE_MIN_SHARED_STEMS asks for two shared stems on the theory that two
+    stems are two independent pieces of evidence. For a fixed multi-word name
+    they are not. "White House" is one institution, and a gate counting `white`
+    and `house` believes a ballroom lawsuit and a press secretary's resignation
+    agree on two things when they agree on one. Measured over 30 printed days
+    that single phrase carried SIX false merges, more than any other cause, and
+    `prime minister`, `vice president`, `justice department` and `democratic
+    senate` carried the rest of that class.
+
+    Measured over the 30-day printed archive, the gate proposed 131 merges
+    before these filters and 35 after, and the six real decisions of the
+    2026-09-10 run all come out right.
+
+    Adjacency is checked in BOTH headlines, which is what makes this safe
+    without a lexicon of institutions. Two words that happen to sit side by side
+    once are not a phrase; two that sit side by side in both headlines are the
+    same name written twice. "Saudi Arabia, Turkey, Pakistan Sign Mecca Joint
+    Defense Pact" against "...Sign NATO-Style Defense Pact" still merges,
+    because collapsing `saudi arabia` leaves `defense` and `pact` behind.
+
+    Returns one representative per phrase, so the caller keeps counting stems.
+    """
+    seq_a, seq_b = title_stem_sequence(title_a), title_stem_sequence(title_b)
+
+    def pairs(seq):
+        return {(x, y) for x, y in zip(seq, seq[1:])}
+
+    both = pairs(seq_a) & pairs(seq_b)
+    parent = {s: s for s in shared}
+
+    def find(x):
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    for x, y in both:
+        if x in parent and y in parent and find(x) != find(y):
+            parent[find(y)] = find(x)
+    return {find(s) for s in shared}
+
+
+def title_jaccard(title_a: str, title_b: str) -> float:
+    """Raw content-stem overlap of two headlines, before any merge filter.
+
+    Deliberately computed on unfiltered specific_stems: its job is to be
+    independent evidence about whether two headlines describe one event, so
+    subtracting the day's ambient vocabulary from it would couple it to the
+    very filter it exists to backstop.
+    """
+    A, B = specific_stems(title_a), specific_stems(title_b)
+    return len(A & B) / len(A | B) if (A | B) else 0.0
+
+
+def ambient_stems(titles: list[str], min_df: int = AMBIENT_MIN_DF) -> frozenset:
+    """Stems that appear in at least min_df of the bench's OWN headlines.
+
+    GENERIC_STEMS is a hand-written list, so it can only exclude vocabulary
+    somebody thought of in advance. It cannot know that on 2026-09-10 the word
+    that joined four unrelated cards was `trump`, or that on an election week
+    it is `midterm`, or that on the day oil passes $100 it is `oil`. That run
+    made six merges and five were wrong, every one of them anchored on the
+    day's ambient vocabulary:
+
+        Trump Promises $5,000 Dividend  <- German Far-Right AfD Wins
+                                           Saxony-Anhalt      (trump, win)
+        Trump Promises $5,000 Dividend  <- Trump Predicts Iran War Ends
+                                           After Midterms  (midterm, trump)
+        Trump Predicts Oil Prices Fall  <- Trump Pledges $5,000 Payments
+                                                          (midterm, trump)
+        Trump Predicts Oil Prices Fall  <- Trump Touts US as Top Oil
+                                           Producer            (oil, trump)
+
+    The sixth merge, the only correct one, anchored on `assassin` and
+    `anniversari`: words no other story that day had any use for. That is the
+    whole signal, and it is measurable without a lexicon.
+
+    min_df is 3 and not 2 on purpose. A genuine duplicate pair contributes a
+    document frequency of exactly 2 to its own shared vocabulary, so a floor of
+    2 would bar every true merge from its own evidence. A stem reaching 3 means
+    a THIRD headline, on the bench because the ranker judged it a different
+    story, also uses the word. At that point the word describes the news day
+    rather than the event.
+
+    The error preference is precision, and deliberately so. A false merge
+    deletes a story: on 2026-09-10 the AfD win in Saxony-Anhalt was absorbed
+    into a card about US dividend cheques and left the feed entirely. A missed
+    merge leaves two cards on one thread, which is visible, recoverable and
+    costs the reader one slot.
+    """
+    df: dict[str, int] = {}
+    for t in titles or []:
+        for stem in specific_stems(t):
+            df[stem] = df.get(stem, 0) + 1
+    return frozenset(s for s, k in df.items() if k >= min_df)
+
+
 def _norm(stem: str) -> str:
     return _DEMONYM.get(stem, stem)
 
@@ -136,7 +304,8 @@ def specific_stems(title: str) -> set[str]:
     pass, whose error preference is the opposite, uses topic_stems instead.
     """
     return {_norm(x) for x in title_word_stems(title)
-            if _norm(x) not in GENERIC_STEMS and len(x) > 2}
+            if _norm(x) not in GENERIC_STEMS and len(x) > 2
+            and not _is_quantity(_norm(x))}
 
 
 def topic_stems(title: str) -> set[str]:
@@ -221,7 +390,8 @@ def _parse_ts(value) -> Optional[datetime]:
         return None
 
 
-def should_merge(a: dict, b: dict) -> tuple[bool, str]:
+def should_merge(a: dict, b: dict,
+                 ambient: frozenset = frozenset()) -> tuple[bool, str]:
     """The gate, as a pure function of two cluster dicts.
 
     Each dict needs: title, first_published, and optionally entities (a set of
@@ -229,12 +399,47 @@ def should_merge(a: dict, b: dict) -> tuple[bool, str]:
     (merge, reason); `reason` names the branch on a pass and the FAILING
     conjunct on a reject, which is what the run log records for every rejected
     pair that shared a stem.
+
+    `ambient` is the day's own vocabulary from ambient_stems, excluded from
+    both the stem count and the anchor. It defaults to empty so a caller
+    reasoning about one pair in isolation gets the unconditioned answer, but
+    merge_candidates always supplies it: without the bench there is no way to
+    tell an identifier from a word every third headline happens to use.
     """
-    stems_a = specific_stems(a.get("title") or "")
-    stems_b = specific_stems(b.get("title") or "")
+    title_a, title_b = a.get("title") or "", b.get("title") or ""
+    drop = ambient | MERGE_GENERIC_STEMS
+    stems_a = specific_stems(title_a) - drop
+    stems_b = specific_stems(title_b) - drop
     shared_stems = stems_a & stems_b
-    if len(shared_stems) < MERGE_MIN_SHARED_STEMS:
-        return False, f"stems({len(shared_stems)}<{MERGE_MIN_SHARED_STEMS})"
+    signals = independent_signals(shared_stems, title_a, title_b)
+    # Two independent signals, OR one signal plus two headlines that are
+    # near-copies of each other. The three filters above are deliberately
+    # blunt, and on a story covered by several fragments they can take away
+    # the story's own vocabulary: the Indonesia quake was split three ways on
+    # 2026-08-16, which pushed `earthquake` and `indonesia` to a document
+    # frequency of 3 and marked them ambient, so "Indonesia Earthquake Kills
+    # 51, Displaces Thousands on Flores Island" stopped matching "Indonesia
+    # Magnitude 7.7 Earthquake Kills 51, Displaces Thousands on Flores".
+    #
+    # Raw headline overlap is independent of every filter above and separates
+    # those cleanly. Measured over the 30-day replay, genuine duplicates the
+    # filters had started to miss score 0.30 to 0.67; every pair that must
+    # stay apart scores 0.07 to 0.23, the highest being an unrelated pair of
+    # White House stories. The threshold sits above that ceiling with margin
+    # rather than midway, because the cost of the two errors is not equal. One
+    # known duplicate stays missed at 0.30 ("Trump Warns Data Center
+    # Opposition Leads to Poverty"); that is the price of the margin.
+    #
+    # A surviving signal is still REQUIRED: similarity relaxes how much
+    # specific evidence is needed, never whether any is needed.
+    near = title_jaccard(title_a, title_b)
+    enough = (len(signals) >= MERGE_MIN_SHARED_STEMS
+              or (signals and near >= MERGE_NEAR_IDENTICAL_JACCARD))
+    if not enough:
+        collapsed = len(shared_stems) - len(signals)
+        note = f", {collapsed} collapsed into a phrase" if collapsed else ""
+        return False, (f"stems({len(signals)}<{MERGE_MIN_SHARED_STEMS}{note}, "
+                       f"jaccard {near:.2f}<{MERGE_NEAR_IDENTICAL_JACCARD})")
 
     ts_a, ts_b = _parse_ts(a.get("first_published")), _parse_ts(b.get("first_published"))
     if ts_a and ts_b:
@@ -249,9 +454,13 @@ def should_merge(a: dict, b: dict) -> tuple[bool, str]:
     anchors = {x for x in anchors
                if x not in mast
                and x not in GENERIC_STEMS
-               and x not in AMBIGUOUS_ANCHORS}
+               and x not in AMBIGUOUS_ANCHORS
+               and x not in ambient
+               and x not in MERGE_GENERIC_STEMS
+               and not _is_quantity(x)}
     if not anchors:
-        return False, "anchor(none outside mastheads and ambiguous words)"
+        return False, ("anchor(none outside mastheads, ambiguous words, "
+                       "quantities and the day's ambient vocabulary)")
     # The two shared stems have to include the anchor. Two clusters that agree
     # on WHAT happened but not on WHO or WHERE are two stories.
     if not (anchors & shared_stems):
@@ -330,6 +539,14 @@ def merge_candidates(supabase, candidate_ids: list[str],
                 "entities": set(),
             }
 
+        # The bench's own vocabulary, measured once over the same headlines
+        # the gate is about to compare. Computed BEFORE any merge so a merge
+        # cannot change the denominator half way through the pass.
+        ambient = ambient_stems([info[cid]["title"] for cid in order])
+        if ambient:
+            log(f"  [merge] ambient vocabulary ({len(order)} headlines, "
+                f"df>={AMBIENT_MIN_DF}): {sorted(ambient)}")
+
         absorbed: set[str] = set()
         load: dict[str, int] = {cid: 1 for cid in order}
         for i, a in enumerate(order):
@@ -343,7 +560,7 @@ def merge_candidates(supabase, candidate_ids: list[str],
                 # clusters that would never have merged with each other.
                 if load[a] + 1 > MERGE_CEILING:
                     break
-                ok, reason = should_merge(info[a], info[b])
+                ok, reason = should_merge(info[a], info[b], ambient=ambient)
                 metrics["examined"] += 1
                 if not ok:
                     # Only log a near miss: a pair with nothing in common is
@@ -418,6 +635,25 @@ def merge_candidates(supabase, candidate_ids: list[str],
                         f"from {len(info[cid]['articles'])} merged articles")
                 except Exception as e:
                     log(f"  [warn][merge] bias re-aggregation failed for {cid[:8]}: {e}")
+
+        # Canary, not a gate. A semicolon joining two subjects is a symptom of
+        # exactly this pass going wrong, and the CEO asked whether it could be
+        # flagged automatically. As a general rule it cannot: 94 of the 1,377
+        # printed headlines carry a semicolon and splitting them on it flags 85,
+        # because "development; consequence" is ordinary headline grammar
+        # ("Russia Resumes Kyiv Strikes After US Envoys Visit; Talks Possible").
+        # Rev 65 measured that and rejected it, and it still measures the same.
+        #
+        # Narrowed to survivors THIS pass just merged, the set is a handful a
+        # day and every hit is worth a human glance, so it is logged and
+        # nothing more. It costs one string scan and it is how the next
+        # unforeseen contamination path announces itself.
+        for cid in {c for c in order if c not in absorbed and load[c] > 1}:
+            if ";" in (info[cid].get("title") or ""):
+                log(f"  [merge][audit] survivor {cid[:8]} carries a semicolon "
+                    f"headline after absorbing {load[cid] - 1}: "
+                    f"\"{info[cid]['title'][:70]}\". Check that the two "
+                    f"halves are one story")
         return metrics
     except Exception as e:
         log(f"  [warn][merge] pass skipped ({type(e).__name__}: {e})")
