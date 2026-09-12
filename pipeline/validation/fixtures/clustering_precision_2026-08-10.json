@@ -1,0 +1,3426 @@
+{
+ "run_date": "2026-08-10",
+ "description": "Hand-labeled on/off-topic precision fixture for the 2026-08-10 top-30 clusters. Reproduces the audit doc (EDITORIAL-AUDIT-2026-08-10.md section 1b) hand precisions.",
+ "clusters": [
+  {
+   "rank": 1,
+   "cluster_id": "1a51107b-0627-4a65-a944-2af14ea3bf54",
+   "title": "Netanyahu Publicly Rejects Trump's 15-Point Gaza Peace Plan",
+   "source_count": 33,
+   "n_articles": 50,
+   "on_topic_count": 40,
+   "precision": 0.8,
+   "members": [
+    {
+     "article_id": "1695517a-5932-4cf7-bc53-0851dbc3bbc7",
+     "title": "Netanyahu rejects Trump plan, ties Gaza exit to disarming Hamas",
+     "on_topic": true
+    },
+    {
+     "article_id": "16a132b6-e3d6-49f4-b214-267d557d882c",
+     "title": "Netanyahu nixes Trump\u2019s Gaza peace plan (VIDEO)",
+     "on_topic": true
+    },
+    {
+     "article_id": "199b34b2-8dcf-4b07-adc7-23778d3ecc38",
+     "title": "FM affirms necessity of continuing efforts aimed to stabilize Gaza",
+     "on_topic": true
+    },
+    {
+     "article_id": "1c7eba77-bbd6-4ca9-8f66-1b9439112730",
+     "title": "Israeli army evicts Palestinian family, turns West Bank home into military post",
+     "on_topic": false
+    },
+    {
+     "article_id": "24d8a5d4-0b72-409f-98b2-ced2d9b14d17",
+     "title": "Israel Revokes Entry Permits For Jewish Americans Who Protected Palestinians From Settler Violence",
+     "on_topic": false
+    },
+    {
+     "article_id": "2a551876-b259-410b-b710-fb72f436bde9",
+     "title": "Israel rejects Trump's Gaza plan, more details emerge on the Strait of Hormuz and other Mideast news",
+     "on_topic": true
+    },
+    {
+     "article_id": "2ae1ec93-2db6-438f-b582-526e7b9840f0",
+     "title": "Watch: Netanyahu says Israel 'rejects' Trump's 15-point plan for Gaza",
+     "on_topic": true
+    },
+    {
+     "article_id": "2debebf7-bb51-44b9-b252-12a48f959f1f",
+     "title": "Israel Rejects Trump's 15-point Plan for Gaza, PM Netanyahu Says - Newsmax",
+     "on_topic": true
+    },
+    {
+     "article_id": "2f499017-42c3-4a67-b7c1-eafd9842392b",
+     "title": "Israel rejects Trump's 15-point plan for Gaza, Netanyahu says",
+     "on_topic": true
+    },
+    {
+     "article_id": "3175fa81-1aa6-47d4-8d85-6dfd999f80e0",
+     "title": "Israel rejects Trump's 15-point plan for Gaza, says Netanyahu",
+     "on_topic": true
+    },
+    {
+     "article_id": "379fd041-a6e2-4958-91ea-52ff839a8309",
+     "title": "Netanyahu rejects Trump\u2019s plan for disarming Hamas",
+     "on_topic": true
+    },
+    {
+     "article_id": "3dbd29be-4b97-402d-9268-62694d07c9a3",
+     "title": "Netanyahu rejects US-led 15-point Gaza peace plan in rare public break with Trump",
+     "on_topic": true
+    },
+    {
+     "article_id": "4077532d-1310-415e-82fb-1c647189f510",
+     "title": "Inflation pressures Tehran, Houthis attack Mokha port, and Netanyahu rejects Gaza plan",
+     "on_topic": true
+    },
+    {
+     "article_id": "4541d562-72ec-4df1-9c75-485411deef05",
+     "title": "Anti-Hamas Gaza clans inflict heavy losses, pose 'day after' dilemma for Israel",
+     "on_topic": true
+    },
+    {
+     "article_id": "48629b34-15b8-41fd-8134-aa25f85e6c81",
+     "title": "Netanyahu willing to give Trump's Gaza plan a chance, IDF retreating to Yellow Line - report",
+     "on_topic": true
+    },
+    {
+     "article_id": "4f363466-dee3-4679-92ff-14dbcd65b4ea",
+     "title": "Israel rejects 15-point plan for Gaza, Netanyahu says",
+     "on_topic": true
+    },
+    {
+     "article_id": "71e904fe-dcbe-4321-81cb-2a59ee891a4b",
+     "title": "Trump shares Clinton defence of Gaza plan after Netanyahu rejects roadmap",
+     "on_topic": true
+    },
+    {
+     "article_id": "73818edc-8643-4354-9b04-241f2a24bda5",
+     "title": "Board of Peace envoy says Gaza plan will guarantee no repeat of October 7 onslaught",
+     "on_topic": true
+    },
+    {
+     "article_id": "74a2d0f0-b77a-4922-8fd4-cd08ed81265d",
+     "title": "'The Yellow Line is a quiet thief': How Israel's moving border is erasing Gazans' lives",
+     "on_topic": false
+    },
+    {
+     "article_id": "768b9b83-ff4b-4888-b2f4-963342e5fac5",
+     "title": "Inside Story: Why Israel rejected the Board of Peace's plan for Gaza",
+     "on_topic": true
+    },
+    {
+     "article_id": "7c53bd19-be77-49d1-9953-da2a77ffc1a3",
+     "title": "Hamas reiterates commitment to holding up Trump's Gaza plan",
+     "on_topic": true
+    },
+    {
+     "article_id": "8ad3320b-a533-406d-aa2d-44d714002beb",
+     "title": "Netanyahu rejects plan to disarm Hamas in rare break with Trump",
+     "on_topic": true
+    },
+    {
+     "article_id": "931e0d9a-aa51-42dc-b771-92e23a8a9f3d",
+     "title": "Netanyahu Rejects Trump\u2019s Gaza Plan: No Withdrawal Until Hamas Gives Up \u2018All Weaponry\u2019",
+     "on_topic": true
+    },
+    {
+     "article_id": "93cf80c7-59a3-4d9c-9069-a74037fc1c7a",
+     "title": "Netanyahu: Israel rejects Board of Peace roadmap on Hamas disarmament",
+     "on_topic": true
+    },
+    {
+     "article_id": "9740f842-5cc6-471b-94a7-92e0effef211",
+     "title": "Hamas says still ready to go ahead with Gaza plan - Al Arabiya English",
+     "on_topic": true
+    },
+    {
+     "article_id": "a06fe7e9-50dd-41ad-89a4-ade52a02f252",
+     "title": "Israel officially rejects BoP 15-point plan for Gaza's reconstruction, Netanyahu announces",
+     "on_topic": true
+    },
+    {
+     "article_id": "a09a2ed6-0cf1-4b37-8974-b8cf4f359c9e",
+     "title": "Israel rejects Trump\u2019s peace plan for Gaza",
+     "on_topic": true
+    },
+    {
+     "article_id": "a6623f66-a7de-46d9-a029-957fafcf66de",
+     "title": "\"Israel rejects 15-point Board of Peace plan, the IDF will not withdraw from Gaza until Hamas is disarmed\" - i24NEWS",
+     "on_topic": true
+    },
+    {
+     "article_id": "a6629b90-af6e-44b8-94de-ce86fea63d56",
+     "title": "Mladenov: Gaza tunnels could take decade to clear",
+     "on_topic": true
+    },
+    {
+     "article_id": "a7c1e996-be66-4f6d-b0ec-8f2d4cfff598",
+     "title": "Israel rejects Trump's 15-point plan for Gaza, PM Netanyahu says",
+     "on_topic": true
+    },
+    {
+     "article_id": "a82002aa-058c-4853-ba24-545172ebddbf",
+     "title": "Special Report: UN data counts Palestinian terror as \u2018settler violence\u2019",
+     "on_topic": false
+    },
+    {
+     "article_id": "b9ec1866-306c-46a0-a73a-05175cf6012b",
+     "title": "Israel rejects Donald Trump's 15-point plan for Gaza",
+     "on_topic": true
+    },
+    {
+     "article_id": "bd9a8682-a138-4ad6-aec1-93d4a9de7ced",
+     "title": "Israeli settlers set fire to Palestinian property in West Bank",
+     "on_topic": false
+    },
+    {
+     "article_id": "c05b4cd2-866f-4387-bea8-9e12d58ec1ee",
+     "title": "How Many Israelis Must Die Before Calls for Israeli Restraint Finally Stop?",
+     "on_topic": false
+    },
+    {
+     "article_id": "c67d75e5-8ed8-4141-9690-885201aa5848",
+     "title": "Israel considers partial Gaza withdrawal, multinational force deployment: Report",
+     "on_topic": true
+    },
+    {
+     "article_id": "c723ebc5-0da9-4b7e-852a-9fb8e95b9bad",
+     "title": "Israel rejects Trump's Gaza plan, more details emerge on Strait of Hormuz and other Mideast news",
+     "on_topic": true
+    },
+    {
+     "article_id": "c8cfd8a1-05fe-4f7c-960d-94d603e3324b",
+     "title": "Netanyahu says Trump's new Gaza plan is unacceptable",
+     "on_topic": true
+    },
+    {
+     "article_id": "c9631bd4-0a3a-4172-b410-3324b9255811",
+     "title": "Netanyahu, at odds with Trump, rejects Gaza peace plan",
+     "on_topic": true
+    },
+    {
+     "article_id": "cb5e1a55-6c89-43ba-bc3c-90f3bc474505",
+     "title": "Netanyahu Publicly Rejects Trump\u2019s 15-Point Gaza Peace Plan",
+     "on_topic": true
+    },
+    {
+     "article_id": "d29cd69a-81c0-4a56-8b2a-5518bf75724c",
+     "title": "Netanyahu rejects Gaza plan in new break from Trump",
+     "on_topic": true
+    },
+    {
+     "article_id": "d2b51fad-ae16-4aaa-8a28-4313e6df1ca0",
+     "title": "Israeli settler attacks rise as West Bank residents lose land",
+     "on_topic": false
+    },
+    {
+     "article_id": "d530f7da-1077-418f-9ab9-ccf537ab385e",
+     "title": "Israeli military closes Palestinian Christian village Taybeh, citing settler attacks",
+     "on_topic": false
+    },
+    {
+     "article_id": "dc204c33-6825-48f5-a6d6-1f4cd1251ac1",
+     "title": "Netanyahu says Israel rejects Trump's Gaza peace plan, IDF won't withdraw until Hamas disarms",
+     "on_topic": true
+    },
+    {
+     "article_id": "dca0e22f-3f8a-47e2-b083-4c770bbbe985",
+     "title": "Netanyahu eyes election base as friction with Trump grows over Gaza deal",
+     "on_topic": true
+    },
+    {
+     "article_id": "df85d011-5dc6-4885-844a-7ad33531444b",
+     "title": "Netanyahu rejects Trump's Board of Peace plan for Gaza",
+     "on_topic": true
+    },
+    {
+     "article_id": "e3c97507-7e5a-4fb6-a4ef-6ca34f18ead0",
+     "title": "Hamas says ready to go ahead with Gaza plan",
+     "on_topic": true
+    },
+    {
+     "article_id": "ed2e7030-0a0a-4653-b5ca-1661db7a28f0",
+     "title": "Gaza mourns during 'largest collective funeral in Palestinian history'",
+     "on_topic": false
+    },
+    {
+     "article_id": "f2dfff97-6aa4-4c1f-986b-3b16c36c46ca",
+     "title": "'Lords of the land': Israeli soldiers reveal how Jewish settlers call the shots in the West Bank",
+     "on_topic": false
+    },
+    {
+     "article_id": "f98fcdad-a3de-403d-ae8d-58a2e39bc4a3",
+     "title": "Israel opposes Gaza peace plan \u2018in its current form,\u2019 minister says",
+     "on_topic": true
+    },
+    {
+     "article_id": "fc7ea2ff-28f4-4223-895d-9db88362021b",
+     "title": "Netanyahu calculates upsetting Trump is his least-bad option",
+     "on_topic": true
+    }
+   ]
+  },
+  {
+   "rank": 2,
+   "cluster_id": "8d22ecb5-df40-478f-a102-84a00178a60d",
+   "title": "Ukrainian Drone Strike Kills 13 in Russia's Tatarstan Region",
+   "source_count": 35,
+   "n_articles": 49,
+   "on_topic_count": 20,
+   "precision": 0.408,
+   "members": [
+    {
+     "article_id": "06ab86b8-e986-4417-8b39-02c0de344ecd",
+     "title": "Zelensky\u2019s Belgrade Visit Tests Serbia\u2019s EU-Russia Balancing Act",
+     "on_topic": false
+    },
+    {
+     "article_id": "085290bb-a6ca-4e0c-9eff-e7279b62ac7f",
+     "title": "Ukrainian drone kills 12, injured 39 in Russia's Tatarstan",
+     "on_topic": true
+    },
+    {
+     "article_id": "0a05081f-a298-4d7c-88c4-18124939f7aa",
+     "title": "Five killed in Ukrainian drone attack on Belgorod, Russian authorities say",
+     "on_topic": false
+    },
+    {
+     "article_id": "0f999982-ea21-4ece-96db-1f0354d015ce",
+     "title": "\u2018How can we help you kill more Russians?\u2019 German reporter asks Zelensky (VIDEO)",
+     "on_topic": false
+    },
+    {
+     "article_id": "0fcc7040-0d84-4a86-b77a-99d49023db95",
+     "title": "Ukraine kills 12 in drone strikes on Russian city of Nizhnekamsk, state media reports",
+     "on_topic": true
+    },
+    {
+     "article_id": "10f1c43f-e1c0-4afc-b378-6777d60f401d",
+     "title": "Vucic considers changing course of Ibar river, Kosovo minister Pacolli reacts",
+     "on_topic": false
+    },
+    {
+     "article_id": "144ed9f6-d7f6-4c78-8500-a0aac1b7bf7e",
+     "title": "Ukraine drone strike kills 12, wounds 39 in central Russia",
+     "on_topic": true
+    },
+    {
+     "article_id": "17b79946-d719-4979-b9f5-51e5e733a5a6",
+     "title": "I never imagined I\u2019d have no social life in my 20s \u2013 but I\u2019m fine with it",
+     "on_topic": false
+    },
+    {
+     "article_id": "236a035b-c2a5-4303-b143-e85268ac4cdb",
+     "title": "Millions of burnt books show how \u2018war of endurance\u2019 is hurting Ukraine",
+     "on_topic": false
+    },
+    {
+     "article_id": "2997a85b-d7b6-46ff-9393-853637d0b6ba",
+     "title": "Inside Russia\u2019s New Gulag",
+     "on_topic": false
+    },
+    {
+     "article_id": "2cb6d1dd-8af8-4a12-8b84-2233cfb17b96",
+     "title": "NBS: No fees on tax payments by DinaCard",
+     "on_topic": false
+    },
+    {
+     "article_id": "37e312aa-83fa-4001-9240-07805d38fba9",
+     "title": "I tried a \u00a3180 hydration tracker for a week \u2013 this is what I learned",
+     "on_topic": false
+    },
+    {
+     "article_id": "37e44164-f221-45d9-8d75-e99a303be58b",
+     "title": "Ukraine-Russia war latest: Putin told he \u2018must stop\u2019 after Russian strike destroys WHO warehouse in Ukraine",
+     "on_topic": false
+    },
+    {
+     "article_id": "47de52ef-8bab-4ae0-8f33-a4c26ce83157",
+     "title": "Ukraine: Russia Pounds Kyiv as Zelenskyy Visits Serbia - Tempo.co English",
+     "on_topic": false
+    },
+    {
+     "article_id": "4adffbf2-95da-4df4-aa3c-c52bc5a9141d",
+     "title": "Zelenskyy makes first official visit to Serbia - nhk.or.jp",
+     "on_topic": false
+    },
+    {
+     "article_id": "4e9b926d-4c26-4e0b-b3e0-856bb33d7aad",
+     "title": "Ukrainian drone attack on a Russian city kills 13, officials say, with a refinery reportedly hit",
+     "on_topic": true
+    },
+    {
+     "article_id": "56b4f149-3a38-49fd-8164-9c388308c237",
+     "title": "Ukraine and Russia exchange attacks as Kyiv buys new ATACMS",
+     "on_topic": false
+    },
+    {
+     "article_id": "5c0e559e-11a5-4f5d-ac8e-85443da25aa6",
+     "title": "Ukraine hits Putin with one of its deadliest attacks of the war, killing 13 Russians and wounding dozens more in new oil facility attack",
+     "on_topic": true
+    },
+    {
+     "article_id": "6216291a-e8b9-4b63-8e2f-f1d87746a45d",
+     "title": "Russia and Ukraine exchange overnight strikes, WHO confirms warehouse destroyed",
+     "on_topic": false
+    },
+    {
+     "article_id": "659bbf15-4cc2-4553-85b5-da8ad20de09f",
+     "title": "One of Kyiv's deadliest single attacks kills 13 in central Russia while five are killed in Ukraine",
+     "on_topic": true
+    },
+    {
+     "article_id": "6697119e-2a6f-49ce-859f-d563c42c20dc",
+     "title": "Ukraine launches drone attack on Russian oil refining facilities \u2013 Europe live",
+     "on_topic": true
+    },
+    {
+     "article_id": "6fc2c64b-eae8-4e28-b886-c5853cd0e9f3",
+     "title": "Ukrainian drone attack on the Russian city of Nizhnekamsk kills 12, authorities say",
+     "on_topic": true
+    },
+    {
+     "article_id": "7048a267-5f5d-4312-96f3-9df1d6af7d5a",
+     "title": "Ukrainian drone strike on Central Russian region of Tatarstan kills 12 people, several injured",
+     "on_topic": true
+    },
+    {
+     "article_id": "75b52f59-ea9c-493b-a768-b096def00937",
+     "title": "Ukrainian strikes 750 miles inside Russia kill at least 13, authorities say",
+     "on_topic": true
+    },
+    {
+     "article_id": "857f2096-6333-4926-add5-52548a6b23eb",
+     "title": "Millions of burnt books show how 'war of endurance' is hurting Ukraine, economy continues to slow",
+     "on_topic": false
+    },
+    {
+     "article_id": "859b37b8-8e89-4dde-88a6-2e461464524e",
+     "title": "Latvian Security Service detains Russian war supporter",
+     "on_topic": false
+    },
+    {
+     "article_id": "8e745b11-60b3-4cb6-a1c7-c58aa43e0dac",
+     "title": "Ukraine-Russia war latest: Odesa hit in \u2018massive\u2019 strike as Putin\u2019s troops unleash 200 missiles and drones",
+     "on_topic": false
+    },
+    {
+     "article_id": "92b044f8-7719-41cc-9e3d-7a80f77d0998",
+     "title": "I left the US for Serbia. My rent dropped from $2,000 to $650, and my income rose.",
+     "on_topic": false
+    },
+    {
+     "article_id": "9c13ba16-8cfa-45dc-81a5-dd2e96030365",
+     "title": "At least 13 killed in Ukrainian strike on Russia's Tatarstan region, officials say",
+     "on_topic": true
+    },
+    {
+     "article_id": "9f946767-4ba2-4a31-8eaa-8cf5480d4187",
+     "title": "Ukraine: Russian bombs injure five civilians in Sumy, authorities say",
+     "on_topic": false
+    },
+    {
+     "article_id": "a17ecceb-3beb-4f70-a2be-0fdf9e61829b",
+     "title": "Russia rules out Ukraine conflict \u2018freeze\u2019",
+     "on_topic": false
+    },
+    {
+     "article_id": "aaa41074-ce7f-4592-8c9f-0685ea78b622",
+     "title": "Five killed in Ukrainian drone attack on Belgorod, Russian authorities say - Reuters",
+     "on_topic": false
+    },
+    {
+     "article_id": "af05b802-fa10-4676-82c3-493d778aa98a",
+     "title": "Firefighters contain wildfire in nature reserve",
+     "on_topic": false
+    },
+    {
+     "article_id": "bbfded28-8b4c-4919-adc0-8ae1a7de4fca",
+     "title": "Ukraine too corrupt to join EU \u2013 diplomat to FT",
+     "on_topic": false
+    },
+    {
+     "article_id": "bdee4808-aa60-4921-b156-978d56664637",
+     "title": "At least 13 killed in Ukrainian drone attack on Russia\u2019s Nizhnekamsk",
+     "on_topic": true
+    },
+    {
+     "article_id": "bedf276b-0697-43c8-a2d2-a4d3af852d14",
+     "title": "Ukrainian drone attack kills at least 13 in central Russia",
+     "on_topic": true
+    },
+    {
+     "article_id": "c42e9d83-8c3a-4523-81d3-dcf3cabfbf89",
+     "title": "Ukrainian drone strike on oil-refining city in central Russia kills 13",
+     "on_topic": true
+    },
+    {
+     "article_id": "c61f5775-a350-432c-be2d-deebfabfda35",
+     "title": "Ukraine kills 13, including child, in drone attack on Russian city of Nizhnekamsk, officials say",
+     "on_topic": true
+    },
+    {
+     "article_id": "c96cd9ac-5d9a-4d97-b4cd-b8f839779250",
+     "title": "Ukraine drone strike kills 13 in central Russia - mayor",
+     "on_topic": true
+    },
+    {
+     "article_id": "ccfadbd1-eacf-4d1d-b5dc-d6f91c4c7b7a",
+     "title": "Ukrainian drone attack on the Russian city of Nizhnekamsk kills 12, authorities say",
+     "on_topic": true
+    },
+    {
+     "article_id": "d21054ac-3e0d-42c8-9dc9-897c30ebf52b",
+     "title": "Ukraine carries out 1 of war's biggest strikes in Russia, killing 13",
+     "on_topic": true
+    },
+    {
+     "article_id": "d36d9c8d-5f94-4bc7-8992-96fd970abea2",
+     "title": "Zelenskyy visits Moscow-friendly Serbia as Russian attacks on Kyiv region kill 4 - The Korea Herald",
+     "on_topic": false
+    },
+    {
+     "article_id": "d98184e0-ba4b-42f8-b789-46d4eb66a9a6",
+     "title": "Russian drones strike Ukrainian troops at key Donbass stronghold (GRAPHIC VIDEO)",
+     "on_topic": false
+    },
+    {
+     "article_id": "de316460-b497-4dac-8c7e-ea7790216de2",
+     "title": "Ukraine Drone Attack on Industrial City in Russia Kills at Least 13",
+     "on_topic": true
+    },
+    {
+     "article_id": "e267af7d-96e6-4f79-8eb4-e9c0071f6825",
+     "title": "Ukraine\u2019s gamification of killing is \u2018macabre\u2019 \u2013 UK defense chief",
+     "on_topic": false
+    },
+    {
+     "article_id": "e6512174-7a46-49c0-af32-d9b473467aeb",
+     "title": "13 killed in Ukrainian drone raid on Russia\u2019s Tatarstan",
+     "on_topic": true
+    },
+    {
+     "article_id": "ec08f9df-bc4d-4ed0-9d78-07d8f24c01af",
+     "title": "The 15 best toys to keep children entertained in summer, chosen by experts",
+     "on_topic": false
+    },
+    {
+     "article_id": "efca6079-1d8e-4aae-845e-65d7cea3c90e",
+     "title": "Fires seen in Russia's Belgorod amid reported Ukrainian drone attack - The Kyiv Independent",
+     "on_topic": false
+    },
+    {
+     "article_id": "fb27c465-9ea1-4dce-8b4c-a285683133b4",
+     "title": "3 Killed in Ukrainian Drone Attack on Belgorod,\u00a0Russia Says",
+     "on_topic": false
+    }
+   ]
+  },
+  {
+   "rank": 3,
+   "cluster_id": "86f2e025-a682-4474-93b0-7b6e66558f39",
+   "title": "Trump Says US \"Semi-Negotiating\" With Iran as Tehran Sets New Demands",
+   "source_count": 41,
+   "n_articles": 60,
+   "on_topic_count": 59,
+   "precision": 0.983,
+   "members": [
+    {
+     "article_id": "0753e8af-cb7f-4685-bf3a-08e5c70e32a4",
+     "title": "Iran issues demands for reopening of Hormuz",
+     "on_topic": true
+    },
+    {
+     "article_id": "09cab9e8-7272-4100-92a4-b3449f707cf8",
+     "title": "Tehran says won\u2019t reopen Hormuz until US accepts Iran\u2019s conditions - Arab News",
+     "on_topic": true
+    },
+    {
+     "article_id": "0a36bf43-df8d-4fd0-8266-2ab4a847426b",
+     "title": "Iran war latest: Oman condemns attacks on vessels in Strait of Hormuz",
+     "on_topic": true
+    },
+    {
+     "article_id": "19ad59d6-e707-44b7-b857-9eed93f8b987",
+     "title": "Iran, Oman 'very close' to reaching deal, Araghchi says",
+     "on_topic": true
+    },
+    {
+     "article_id": "1df41bc3-36e3-4da5-8f90-847219023c36",
+     "title": "Iran conditions opening the Strait of Hormuz on US meeting its demands",
+     "on_topic": true
+    },
+    {
+     "article_id": "1eefd6f5-9160-49e1-a7a8-2d65fc5f57a3",
+     "title": "US-Israel-Iran War Live News: Iran Seeks Way Out of \u2018Neither War Nor Peace\u2019 Stalemate With US \u2013 Sets 6 Conditions to Reopen Strait of Hormuz - The Sunday Guardian",
+     "on_topic": true
+    },
+    {
+     "article_id": "26c26358-d640-400c-875d-8cb90452be06",
+     "title": "Iran-US war latest: Trump says \u2018it always works out\u2019 as plan to reopen Strait of Hormuz stalls and oil prices rise",
+     "on_topic": true
+    },
+    {
+     "article_id": "291bb8dc-dcc5-4bed-b308-73b43a3ba70a",
+     "title": "Trump to Axios: \"We are low-keying it\" with Iran",
+     "on_topic": true
+    },
+    {
+     "article_id": "2bcfb311-2d2d-494c-bbc9-622bd643ca27",
+     "title": "Iran: US compensation a condition for reopening Strait of Hormuz - nhk.or.jp",
+     "on_topic": true
+    },
+    {
+     "article_id": "36820bc3-fecd-452f-8217-299479491916",
+     "title": "Trump repeats chilling phrase as admin loses control of Iran war: report",
+     "on_topic": true
+    },
+    {
+     "article_id": "43e16aa7-4f9f-4090-854d-8283cbac61bd",
+     "title": "Iran insists US must meet demands to reopen Hormuz, mulls fees",
+     "on_topic": true
+    },
+    {
+     "article_id": "477c812a-3f90-4c90-98b1-b07f0e4ed082",
+     "title": "Iran Insists Strait of Hormuz Will Stay Closed Until Trump Agrees to Demands",
+     "on_topic": true
+    },
+    {
+     "article_id": "47bdc41e-9385-4b51-9afc-afa439572f2e",
+     "title": "What\u2019s behind Trump\u2019s shift to economic pressure on Iran? Will it work?",
+     "on_topic": true
+    },
+    {
+     "article_id": "50b127fb-a737-47c5-8ede-9b98d483c238",
+     "title": "Japan PM calls for free, safe passage of Hormuz in phone talks with Oman",
+     "on_topic": true
+    },
+    {
+     "article_id": "52b757df-d130-44de-b6a6-31551d82fec1",
+     "title": "Iran's list of demands to reopen Hormuz: A capitulation document?",
+     "on_topic": true
+    },
+    {
+     "article_id": "54e9715f-9c41-4748-8978-27c83d4e6306",
+     "title": "Iran Guards say won't reopen Hormuz without US meeting all Tehran's conditions - H\u00fcrriyet Daily News",
+     "on_topic": true
+    },
+    {
+     "article_id": "560fc9e6-f1a2-4b65-b72f-c436ed227975",
+     "title": "Trump claims he\u2019s \u2018low-keying it\u2019 with Iran after report he could walk away without nuclear deal",
+     "on_topic": true
+    },
+    {
+     "article_id": "588d2498-d2a5-4f64-9ac0-e3bc07c927d3",
+     "title": "As Trump Shows 'Desperation,' Iran Says Strait of Hormuz Will Not Open 'Until America Corrects Its Behavior'",
+     "on_topic": true
+    },
+    {
+     "article_id": "5c3d2216-7f8b-4887-85b4-4662cc34094f",
+     "title": "Iran-aligned Houthis claim they attacked oil refinery in Saudi Arabia",
+     "on_topic": false
+    },
+    {
+     "article_id": "63e858f4-6abd-4adf-96e9-ddfdb4dcd973",
+     "title": "Trump Says U.S. Is \u2018Low Keying\u2019 Iran as Economic Pressure Mounts",
+     "on_topic": true
+    },
+    {
+     "article_id": "646133f9-6f61-4937-b3a1-d469e35f8b83",
+     "title": "Iran ties Hormuz reopening to US concessions on several demands",
+     "on_topic": true
+    },
+    {
+     "article_id": "6c7f4a01-c627-4556-94bc-0611c9291d44",
+     "title": "Iran ties Hormuz reopening to US concessions on demands",
+     "on_topic": true
+    },
+    {
+     "article_id": "722f26cb-8aab-47a7-b670-e046c28af645",
+     "title": "Iran says deal with Oman is close \u2014 but its demands leave Hormuz opening uncertain - The Washington Post",
+     "on_topic": true
+    },
+    {
+     "article_id": "76c0b131-cbdc-4c04-92ad-2ac023ebac1e",
+     "title": "Iran Guards say won't reopen Hormuz without US meeting Tehran's demands",
+     "on_topic": true
+    },
+    {
+     "article_id": "76d30a53-dea7-47c6-8a86-1fdbedebb2bd",
+     "title": "Iran war latest: Trump says US is 'low-keying' talks with Iran",
+     "on_topic": true
+    },
+    {
+     "article_id": "76fee6ec-20b5-474d-86bd-bc4b526aaa80",
+     "title": "Iran \u2018will not reopen\u2019 Strait of Hormuz without US concessions",
+     "on_topic": true
+    },
+    {
+     "article_id": "7abf5a73-ccd3-48cf-a264-d777ce154cdb",
+     "title": "Iran live updates: US 'low-keying' negotiations with Iran, Trump says",
+     "on_topic": true
+    },
+    {
+     "article_id": "7c043414-0758-4a86-84c2-f81c567a3029",
+     "title": "Oil prices rise as traders assess US-Iran talks on Strait of Hormuz deal",
+     "on_topic": true
+    },
+    {
+     "article_id": "7fff232c-7a86-4525-b5f2-cd15c9bcb81a",
+     "title": "Many of Iran\u2019s demands \u2018already agreed to\u2019 by the US in June MoU",
+     "on_topic": true
+    },
+    {
+     "article_id": "827ebb44-216c-4c9e-a174-1dfbb1ede0dc",
+     "title": "Trump says U.S. \"semi-negotiating\" with Iran after Tehran sets new demands",
+     "on_topic": true
+    },
+    {
+     "article_id": "86db5c05-9a4a-4c25-9295-ee72b1881116",
+     "title": "Where things stand on the Strait of Hormuz and the day\u2019s other top stories",
+     "on_topic": true
+    },
+    {
+     "article_id": "8a85e999-dd58-41da-9e1f-2ff8713d6e0a",
+     "title": "Iran sets tough terms to reopen Strait of Hormuz",
+     "on_topic": true
+    },
+    {
+     "article_id": "8cbd5b37-8986-4c44-8792-25182e8efd78",
+     "title": "Iran ties Hormuz reopening to US concessions on several demands",
+     "on_topic": true
+    },
+    {
+     "article_id": "96bdb4fe-8ed0-4040-a24e-a4122df3014d",
+     "title": "Iran shakes up security team after saying Oman deal \u2018very close\u2019",
+     "on_topic": true
+    },
+    {
+     "article_id": "96ec039c-6fcd-4ad9-9bdc-2a14c561020e",
+     "title": "Trump reportedly prepared to declare victory on Iran if Hormuz reopened",
+     "on_topic": true
+    },
+    {
+     "article_id": "9f35cfdd-d44d-4fc8-b4ee-d6e994f23d49",
+     "title": "Iran says deal on Strait of Hormuz is close but not enough to open the waterway",
+     "on_topic": true
+    },
+    {
+     "article_id": "9fe55865-d4e7-40d0-8fc2-ce955b9a3254",
+     "title": "Iran vows to keep Strait of Hormuz closed until US meets demands",
+     "on_topic": true
+    },
+    {
+     "article_id": "a144fcd1-d06c-4f06-99c7-0911e4f004a6",
+     "title": "Trump foe vows he\u2019s \u2018prepared to support a bad deal\u2019 to end war in Iran",
+     "on_topic": true
+    },
+    {
+     "article_id": "a1c12d78-c9a7-41f6-80fc-4db3b42ffa25",
+     "title": "Iranians are professional chess players, says ministry in response to Trump analogy",
+     "on_topic": true
+    },
+    {
+     "article_id": "a2b56dd1-11e2-4f75-ba52-4d733f4e280e",
+     "title": "Trump 'low-keying' talks with Iran, opts for economic pressure",
+     "on_topic": true
+    },
+    {
+     "article_id": "a3ec1f67-0b90-4a77-9a8d-74d8dd8c7869",
+     "title": "US senator says Trump has \u2018lost\u2019 Iran war",
+     "on_topic": true
+    },
+    {
+     "article_id": "a7b0fd4c-b6ef-4a7b-8277-88798bcec688",
+     "title": "Iran says Oman deal is in 'final stages' but US must act to open Hormuz",
+     "on_topic": true
+    },
+    {
+     "article_id": "b0ec6a2f-5940-4ec5-b41c-4e324a4bd2ae",
+     "title": "Iran says deal on Strait of Hormuz is close but not enough to open the waterway - The Jakarta Post",
+     "on_topic": true
+    },
+    {
+     "article_id": "b13ffd41-2669-409a-bf82-46c344d68dba",
+     "title": "Trump\u2019s Secret Nuclear Admission to Aides Is Leaked",
+     "on_topic": true
+    },
+    {
+     "article_id": "b294a98a-9e23-4c21-9fdb-810da373c560",
+     "title": "Iran makes new Hormuz demands as missile hits Emirati ship",
+     "on_topic": true
+    },
+    {
+     "article_id": "b9faf598-3115-462f-9853-28272004075e",
+     "title": "Iran issues demands for reopening of Hormuz",
+     "on_topic": true
+    },
+    {
+     "article_id": "c5db2f31-f810-4700-8800-085c3c706a06",
+     "title": "IRGC says won't reopen Hormuz until US accepts all Iran's conditions",
+     "on_topic": true
+    },
+    {
+     "article_id": "d1024f4f-a2e8-4471-a315-f2fe3265b746",
+     "title": "Iran says \u2018no direct negotiations\u2019 underway with US, only exchanging messages via mediators",
+     "on_topic": true
+    },
+    {
+     "article_id": "d223bdcf-c24c-402c-8596-2bfc260ffddb",
+     "title": "Trump signals shift to economic pressure as Iran hardens stance over Strait of Hormuz",
+     "on_topic": true
+    },
+    {
+     "article_id": "e4aa4ad8-5b63-41e8-9767-0ee86b4990a2",
+     "title": "Iran Guards say won't reopen Hormuz without US meeting all Tehran's conditions",
+     "on_topic": true
+    },
+    {
+     "article_id": "ebeadd83-22ee-4941-9fe0-026b684e787a",
+     "title": "Middle East live: Iran Guards say Hormuz will not reopen until US accepts all of Tehran's demands",
+     "on_topic": true
+    },
+    {
+     "article_id": "ec823f78-9cff-4bf3-8166-276bed3df45b",
+     "title": "Iran seeks way out of \u2018neither war nor peace\u2019 stalemate with US",
+     "on_topic": true
+    },
+    {
+     "article_id": "ed3be301-1aed-496a-ab86-9355c07e964e",
+     "title": "Iran issues demands for reopening of Strait of Hormuz",
+     "on_topic": true
+    },
+    {
+     "article_id": "f1ae88f6-bbdb-46af-8bb8-7b0dfe24d3b6",
+     "title": "Iran issues demands for reopening of Strait of Hormuz - Al Arabiya English",
+     "on_topic": true
+    },
+    {
+     "article_id": "f1e8bf18-e383-443b-a6a8-58bede1eb196",
+     "title": "Iran issues demands for the reopening of Hormuz - Oman Observer",
+     "on_topic": true
+    },
+    {
+     "article_id": "f48533ed-0e0d-428b-9b10-bbbb0fa02724",
+     "title": "Oil prices rise as Iran sets conditions for reopening Strait of Hormuz",
+     "on_topic": true
+    },
+    {
+     "article_id": "f4f09a38-7893-439d-8d48-9095c5c1fe72",
+     "title": "Iran says deal on Strait of Hormuz close - The Express Tribune",
+     "on_topic": true
+    },
+    {
+     "article_id": "f81c6683-27a8-49db-ae74-ce1c75321cab",
+     "title": "Iran issues demands for reopening of Hormuz",
+     "on_topic": true
+    },
+    {
+     "article_id": "fb3d53e4-a89e-48e1-9e85-9017e9976e52",
+     "title": "Iran\u00a0ties Hormuz reopening to US concessions on several demands",
+     "on_topic": true
+    },
+    {
+     "article_id": "ff49ceeb-6b03-402e-89c8-3165bd79ef2c",
+     "title": "Iranian leaders demand U.S. pay for war damage or will keep Strait of Hormuz closed",
+     "on_topic": true
+    }
+   ]
+  },
+  {
+   "rank": 4,
+   "cluster_id": "fd754040-12f0-4ea7-a2d4-908c4730b7e2",
+   "title": "Pentagon Pushes Defense Companies to Boost Weapons Production Amid Drained Stocks",
+   "source_count": 20,
+   "n_articles": 28,
+   "on_topic_count": 14,
+   "precision": 0.5,
+   "members": [
+    {
+     "article_id": "032d5639-5adb-4ca8-b663-c9726a3852bb",
+     "title": "Pentagon pushes defense companies to boost weapons production after concerns of depleted stocks - apnews.com",
+     "on_topic": true
+    },
+    {
+     "article_id": "0f4e615d-7ec0-49e4-bcca-b80bc8a136ef",
+     "title": "Pentagon pushes arms makers to boost output as Iran war drains stocks \u2013 WaPo",
+     "on_topic": true
+    },
+    {
+     "article_id": "125e02a8-2d45-4a73-a194-43726ecdc849",
+     "title": "A new contract is needed between the Israelis who stayed and the liberals who left",
+     "on_topic": false
+    },
+    {
+     "article_id": "2538ad1a-3de5-4d6a-b32c-31d380a21a43",
+     "title": "Pentagon presses defense companies to boost weapons production",
+     "on_topic": true
+    },
+    {
+     "article_id": "25fb6a02-2301-4e28-9494-16173be89fb6",
+     "title": "Iran-US war latest: Trump\u2019s military chiefs \u2018push to speed up weapons production\u2019 amid Hormuz deal deadlock",
+     "on_topic": true
+    },
+    {
+     "article_id": "2b37b820-2784-4cb0-a4f8-5538a564ba6e",
+     "title": "Patriot interceptors \u2018on the way\u2019 to Ukraine: another Trump con",
+     "on_topic": false
+    },
+    {
+     "article_id": "3618d6c6-020f-467a-b8cd-aa0daf292c02",
+     "title": "Russian family denied asylum in Finland fear reprisals for pro-Ukraine activism",
+     "on_topic": false
+    },
+    {
+     "article_id": "372a4d9b-bdb8-4051-b262-14e0e6380aa2",
+     "title": "Exclusive: China's maritime court settles Strait of Hormuz vessel collision dispute as foreign shipowners turn to Chinese law - Global Times",
+     "on_topic": false
+    },
+    {
+     "article_id": "4d261a84-4998-4097-93dd-d6f8e3ec99a6",
+     "title": "Pentagon presses defense firms to build weapons as Iran war depletes stocks - The Washington Post",
+     "on_topic": true
+    },
+    {
+     "article_id": "4fa0d8d9-9a76-45cc-81bf-f2fae06bf443",
+     "title": "Arms manufacturers fear Ukraine outcompeting US Patriot missile production",
+     "on_topic": true
+    },
+    {
+     "article_id": "53d11702-c934-4407-afe8-d95f2b8b569a",
+     "title": "Meme factories are churning out hard right AI slop on Facebook | First Dog on the Moon",
+     "on_topic": false
+    },
+    {
+     "article_id": "5996b93c-1ee6-4dd8-bd3e-ed3e2dd4e9da",
+     "title": "Report: Pentagon presses U.S. arms makers to boost production amid Iran war shortages",
+     "on_topic": true
+    },
+    {
+     "article_id": "5ca80525-be31-433d-a21f-43ee924b9c73",
+     "title": "Pentagon orders plan for rapid weapons production as US munitions stockpiles dwindle - report",
+     "on_topic": true
+    },
+    {
+     "article_id": "5f521b02-90f0-47c6-95b9-90b3251b6d00",
+     "title": "Pentagon asks US defence companies to boost weapons production amid concerns over depleting stockpile",
+     "on_topic": true
+    },
+    {
+     "article_id": "69064d77-ef88-4763-b046-f7eec3a26aba",
+     "title": "Pentagon pushes defense companies to boost weapons production after concerns of depleted stocks",
+     "on_topic": true
+    },
+    {
+     "article_id": "6b773a46-74a2-4029-914a-2ebc375f0aa9",
+     "title": "How Ukraine Became a \u2018Model Ally\u2019",
+     "on_topic": false
+    },
+    {
+     "article_id": "6c3c6786-3b35-41d4-80c5-7c6a88bb787a",
+     "title": "Pentagon presses defense firms to speed up weapons production amid Iran war shortages - report | LIVE BLOG - i24NEWS",
+     "on_topic": true
+    },
+    {
+     "article_id": "8cda21d1-bc06-48b9-8dd2-6439d0faf07d",
+     "title": "US military pushes companies to \u2018dramatically accelerate\u2019 weapons production as Iran war burns through supply, memo says",
+     "on_topic": true
+    },
+    {
+     "article_id": "a219c9fb-3080-4a29-b90b-53b47b12d535",
+     "title": "Nearly one-fifth of citizens considered leaving Israel over past two years, KAN poll finds",
+     "on_topic": false
+    },
+    {
+     "article_id": "a632b2f0-e6ac-4c76-964c-35d8390197c7",
+     "title": "Costa Rican diplomat emerges as strong contender to be first female head of UN",
+     "on_topic": false
+    },
+    {
+     "article_id": "b6cdcde0-337b-460e-ba26-c374446836f5",
+     "title": "Nearly 20% of Israelis have considered emigrating in past two years, poll shows",
+     "on_topic": false
+    },
+    {
+     "article_id": "be63e5b3-f026-40a8-bc87-d103a9995751",
+     "title": "Who should get to vote? Plans for 70,000 Israelis abroad to fly home for election sparks debate",
+     "on_topic": false
+    },
+    {
+     "article_id": "c522e0aa-e5b0-4d23-a632-2497c56c0309",
+     "title": "ADNOC Vessel Attacked in Strait of Hormuz, UAE Says Iran Fired Missile - Daily Pioneer",
+     "on_topic": false
+    },
+    {
+     "article_id": "ca4b4eb9-2ebc-4e7f-b8ab-17e4ba749171",
+     "title": "Most Israelis fear upcoming election could be compromised, new poll finds",
+     "on_topic": false
+    },
+    {
+     "article_id": "d87b946e-766e-43e1-b7c4-9880cced3fb4",
+     "title": "Somali pirates are back",
+     "on_topic": false
+    },
+    {
+     "article_id": "edd62e60-44db-4a5c-b5af-873c2e0e4ffc",
+     "title": "NATO nation rebuffs Ukraine\u2019s missile plea",
+     "on_topic": false
+    },
+    {
+     "article_id": "ee7ca5bf-edd3-4961-8160-cc160672561c",
+     "title": "Pentagon pushes defense companies to boost weapons production - Al Arabiya English",
+     "on_topic": true
+    },
+    {
+     "article_id": "fdc36c93-a8bc-4d2b-bc4f-cb1d88a9660f",
+     "title": "Pentagon Pushes Defense Companies To Boost Weapons Production After Concerns Of Depleted Stocks - HuffPost",
+     "on_topic": true
+    }
+   ]
+  },
+  {
+   "rank": 5,
+   "cluster_id": "13c8f387-cf54-42da-8a68-00f2c72cfbc2",
+   "title": "Typhoon Dolphin Causes Flooding, Cancels 1,500 Flights in Eastern China",
+   "source_count": 30,
+   "n_articles": 41,
+   "on_topic_count": 38,
+   "precision": 0.927,
+   "members": [
+    {
+     "article_id": "062e3ca2-09b8-41e8-aa66-26604f08d11d",
+     "title": "China: Typhoon Dolphin prompts mass evacuation, canceled flights",
+     "on_topic": true
+    },
+    {
+     "article_id": "0fbb3836-4775-4996-a373-982abc9776bb",
+     "title": "Eastern China braces for Typhoon Dolphin, shutting schools and tourist activities - Dallas News",
+     "on_topic": true
+    },
+    {
+     "article_id": "10ae20b4-b886-4e0e-9d9c-3f442114baa1",
+     "title": "Typhoon Dolphin set to hit China's east coast, triggering flood warnings - The Express Tribune",
+     "on_topic": true
+    },
+    {
+     "article_id": "18de2bfc-ec80-44da-a9e3-5da88191c259",
+     "title": "Storms from Typhoon Dolphin soak China's east",
+     "on_topic": true
+    },
+    {
+     "article_id": "197c2ea3-1426-401e-9b31-26b76e5669c9",
+     "title": "Typhoon Dolphin lands in Zhejiang on China's eastern coast - Global Times",
+     "on_topic": true
+    },
+    {
+     "article_id": "1cbcbb23-1d06-4511-83c2-4e4795f5b0ca",
+     "title": "Shanghai cancels 1,300 flights as China prepares for Typhoon Dolphin - Dallas News",
+     "on_topic": true
+    },
+    {
+     "article_id": "2adc549c-c260-4c8d-82f4-4dcadf7b72b8",
+     "title": "Typhoon Dolphin set to hit China's east coast, triggering flood warnings",
+     "on_topic": true
+    },
+    {
+     "article_id": "2e7a48eb-696c-4f49-a07e-58b46533436c",
+     "title": "Typhoon Dolphin approaches China's eastern coast - news.cgtn.com",
+     "on_topic": true
+    },
+    {
+     "article_id": "32662994-ed9a-4d66-98e6-93de68c9de9f",
+     "title": "Typhoon Dolphin makes landfall in China as its strongest storm this year",
+     "on_topic": true
+    },
+    {
+     "article_id": "33cfbcfa-4237-40c2-8c83-dace558859b6",
+     "title": "China evacuates one million from homes as massive storm arrives",
+     "on_topic": true
+    },
+    {
+     "article_id": "39e79316-69e8-4aa9-b46e-7ed30f7b2f51",
+     "title": "Typhoon Dolphin Makes Landfall in East China After Red Alert",
+     "on_topic": true
+    },
+    {
+     "article_id": "45691425-5082-4d86-8f2c-89a5485a96d3",
+     "title": "Red alert: Shanghai cancels 80% of flights as Typhoon Dolphin makes landfall",
+     "on_topic": true
+    },
+    {
+     "article_id": "4f82040d-315d-481a-89f7-57ff55feb9ac",
+     "title": "Typhoon Dolphin hits China's east coast, over 1 million evacuated - Reuters",
+     "on_topic": true
+    },
+    {
+     "article_id": "56b9f802-5775-436f-9efe-270c0995e874",
+     "title": "Shanghai cancels over 1,300 flights as Typhoon Dolphin hits China's eastern coast",
+     "on_topic": true
+    },
+    {
+     "article_id": "620572e7-a51a-46b6-9274-13cabb6ce33d",
+     "title": "Typhoon Dolphin set to hit China's east coast, triggering flood warnings - The Jakarta Post",
+     "on_topic": true
+    },
+    {
+     "article_id": "69ff2387-9f8d-4c77-8ab0-0c0f58348640",
+     "title": "Shanghai cancels 1,300 flights as China prepares for Typhoon Dolphin - \u6bce\u65e5\u65b0\u805e",
+     "on_topic": true
+    },
+    {
+     "article_id": "6bfeccf9-6dc7-4d89-9b88-8d5b4c432fa5",
+     "title": "China Issues Red Alert, Airports Cancel Flights as Typhoon Nears - Bloomberg.com",
+     "on_topic": true
+    },
+    {
+     "article_id": "71a85a0c-5a47-4ccf-a396-2b76fc6427b5",
+     "title": "Stored value",
+     "on_topic": false
+    },
+    {
+     "article_id": "7d629244-cf80-4802-b8ad-60ba8c7999ae",
+     "title": "Sea warning for Typhoon Dolphin likely to be lifted early Monday: CWA - Focus Taiwan",
+     "on_topic": true
+    },
+    {
+     "article_id": "800895df-dc61-4eaf-a143-03e400add42f",
+     "title": "Hundreds of flights cancelled as Typhoon Dolphin hits China",
+     "on_topic": true
+    },
+    {
+     "article_id": "85ce6908-8a76-4b56-b7ff-3a6ce186584e",
+     "title": "China coastal regions relocate 100,000 residents, suspend railway services and cancel flights as Typhoon Dolphin brings rainstorm and gales - Global Times",
+     "on_topic": true
+    },
+    {
+     "article_id": "85dfc6ba-0488-4feb-aeb1-92a6d25d2c02",
+     "title": "China: Tropical storm Dolphin causes floodings",
+     "on_topic": true
+    },
+    {
+     "article_id": "90232c31-432b-4358-b009-c19c68aa1161",
+     "title": "Typhoon Dolphin makes landfall on China's eastern coast",
+     "on_topic": true
+    },
+    {
+     "article_id": "90370fbc-5085-4db2-bd40-b51f211a8e56",
+     "title": "China evacuates a million from homes as Typhoon Dolphin arrives",
+     "on_topic": true
+    },
+    {
+     "article_id": "94778bef-6d12-4d47-9cbc-761ee5258b49",
+     "title": "China Issues Red Alert, Airports Cancel Flights as Typhoon Nears",
+     "on_topic": true
+    },
+    {
+     "article_id": "9eaa9fda-0b4e-4886-8559-a0ccd68f982d",
+     "title": "Shanghai cancels at least 1,300 flights as Typhoon Dolphin hits China's eastern coast",
+     "on_topic": true
+    },
+    {
+     "article_id": "a621d542-a238-40dd-9b65-df30388ecddd",
+     "title": "Tropical storm causes some flooding in eastern China",
+     "on_topic": true
+    },
+    {
+     "article_id": "ad14e26c-a896-461a-9a47-1f869470b43f",
+     "title": "Can CATL\u2019s battery breakthrough push flying cars closer to a commercial reality in China?",
+     "on_topic": false
+    },
+    {
+     "article_id": "af84457a-fba9-4caf-a115-55bf4a68ccb6",
+     "title": "Tropical Storm Dolphin batters eastern China with heavy rain, strong winds",
+     "on_topic": true
+    },
+    {
+     "article_id": "b452cde0-816d-4a27-b685-5e456ab2c069",
+     "title": "China issues red alert as Typhoon Dolphin approaches - news.cgtn.com",
+     "on_topic": true
+    },
+    {
+     "article_id": "c20671b4-8c7d-40d0-bdbb-4c2ccf2d50e7",
+     "title": "China issues red alert as Typhoon Dolphin approaches - The Peninsula Qatar",
+     "on_topic": true
+    },
+    {
+     "article_id": "c64f1a64-e5bb-4cb9-98f0-44639615ccf4",
+     "title": "Flight cancellations, evacuations as China braces for Typhoon Dolphin",
+     "on_topic": true
+    },
+    {
+     "article_id": "d28ac3d8-9d04-4bf3-9e4f-e7bce1d5a0a3",
+     "title": "Typhoon Dolphin set to hit China\u2019s east coast, triggering flood warnings",
+     "on_topic": true
+    },
+    {
+     "article_id": "d2e6cd38-539d-4503-bdd3-7f3f752fd9d8",
+     "title": "Arsenal, China share U17 title after Typhoon Dolphin scuppers Shanghai final - Global Times",
+     "on_topic": false
+    },
+    {
+     "article_id": "da8461a6-8f61-44a7-933d-ba1ab904e0f2",
+     "title": "Typhoon Dolphin: more than a million people evacuated in China as record rainfall dumped on Shanghai",
+     "on_topic": true
+    },
+    {
+     "article_id": "dc58e0e4-0b86-4c6a-bb0d-32c0e14422bf",
+     "title": "China cancels flights, issues evacuation orders as Typhoon Dolphin makes landfall",
+     "on_topic": true
+    },
+    {
+     "article_id": "dc62f9e2-1a8c-43cf-a969-62b5df7b183a",
+     "title": "Typhoon Dolphin causes damage across northern Taiwan - Focus Taiwan",
+     "on_topic": true
+    },
+    {
+     "article_id": "e9175028-830f-4564-a57a-35e4f611838b",
+     "title": "Over 1,000 flights cancelled in China as Typhoon Dolphin looms - Gulf News",
+     "on_topic": true
+    },
+    {
+     "article_id": "eb54cadc-9801-4e83-867f-c2d5c52a8dd0",
+     "title": "Shanghai cancels 1,300 flights as China prepares for Typhoon Dolphin - apnews.com",
+     "on_topic": true
+    },
+    {
+     "article_id": "ec2fccb2-0996-4c44-92f7-259d4de85329",
+     "title": "Flight cancellations, evacuations in China as Typhoon Dolphin looms - standardmedia.co.ke",
+     "on_topic": true
+    },
+    {
+     "article_id": "f9b5feb4-e39b-4282-89fe-39daa34d9e11",
+     "title": "Typhoon Dolphin disrupts flights and rail services in eastern China - Nation Thailand",
+     "on_topic": true
+    }
+   ]
+  },
+  {
+   "rank": 6,
+   "cluster_id": "634035e9-f299-4b51-a428-f212bda80632",
+   "title": "British Columbia Wildfires Force 20,000 Evacuations, Destroy Homes Near Okanagan Lake",
+   "source_count": 12,
+   "n_articles": 14,
+   "on_topic_count": 13,
+   "precision": 0.929,
+   "members": [
+    {
+     "article_id": "2cae9cec-9096-45f1-84f7-fd46306da34a",
+     "title": "Canada: British Columbia wildfires burning out of control",
+     "on_topic": true
+    },
+    {
+     "article_id": "45c3fe78-3da8-454f-a0b7-f4f8e38d0cef",
+     "title": "Raging wildfire forces 20,000 to flee in Canada (VIDEO)",
+     "on_topic": true
+    },
+    {
+     "article_id": "4b9c9db8-4484-4c26-8cc8-e8518040ac49",
+     "title": "Canadian government steps in as \u2018out of control\u2019 wildfires force thousands to flee",
+     "on_topic": true
+    },
+    {
+     "article_id": "55266ddc-1c3c-4e4b-8249-b3369a32a014",
+     "title": "A fast-moving wildfire forces more than 20,000 people to evacuate in western Canada",
+     "on_topic": true
+    },
+    {
+     "article_id": "7855bb88-551d-4af9-bae1-331484068e07",
+     "title": "Wildfires in western Canada forces more than 20,000 people to evacuate",
+     "on_topic": true
+    },
+    {
+     "article_id": "994a11fe-fde1-4e66-a487-27a25d8ae3d8",
+     "title": "Canada: British Columbia Declares Emergency as Fires Spread - Tempo.co English",
+     "on_topic": true
+    },
+    {
+     "article_id": "b84aacd6-b378-4939-b127-5e646b06d67a",
+     "title": "Canada's British Columbia declares state of emergency as more than 20,000 flee wildfires",
+     "on_topic": true
+    },
+    {
+     "article_id": "bbe9b734-e1f7-435f-8123-fed5de90a9bf",
+     "title": "British Columbia declares state of emergency as more than 20,000 flee wildfires",
+     "on_topic": true
+    },
+    {
+     "article_id": "cea01562-80f5-4457-a21b-622cbcb15bc0",
+     "title": "Thousands evacuated as wildfires burn across western US and Canada",
+     "on_topic": true
+    },
+    {
+     "article_id": "d2a7564e-5e7d-4125-b383-1af2c664c347",
+     "title": "Wildfires force 20,000 to flee as British Columbia declares state of emergency",
+     "on_topic": true
+    },
+    {
+     "article_id": "d35bb5e0-d02c-403d-a58b-350dc02414ed",
+     "title": "Canada: British Columbia declares emergency as fires spread",
+     "on_topic": true
+    },
+    {
+     "article_id": "e780f345-d14d-4d69-95c0-aa22fb133a60",
+     "title": "What is a state of emergency?",
+     "on_topic": false
+    },
+    {
+     "article_id": "fe66b035-8620-4fdf-9e91-a1cbe76e6c56",
+     "title": "Tens of thousands flee British Columbia wildfire as state of emergency declared",
+     "on_topic": true
+    },
+    {
+     "article_id": "ff60ffb1-3e39-4b1a-90da-96456d32560b",
+     "title": "Wildfires force 20,000 to flee as British Columbia declares state of emergency",
+     "on_topic": true
+    }
+   ]
+  },
+  {
+   "rank": 7,
+   "cluster_id": "b5ffb5a3-9bf7-4708-ad6e-dac4c8437ec0",
+   "title": "Houthis Launch Missile and Drone Attacks on Saudi-Backed Forces, Saudi Refinery",
+   "source_count": 13,
+   "n_articles": 14,
+   "on_topic_count": 14,
+   "precision": 1.0,
+   "members": [
+    {
+     "article_id": "19fd6c53-47d2-45ab-89f2-b135b3921b04",
+     "title": "Yemen's Houthis claim attack on Saudi Arabia refinery",
+     "on_topic": true
+    },
+    {
+     "article_id": "23b4873f-52fe-4d2b-8e8b-7e689d3009fe",
+     "title": "Houthi attacks kill 11 in Yemen, target Saudi oil refinery",
+     "on_topic": true
+    },
+    {
+     "article_id": "2907dbd4-e912-4873-a385-0de76ef15c5d",
+     "title": "Yemen\u2019s Houthis claim attack on Aramco oil facility in Saudi Arabia, and other Middle East news - San Antonio Express-News",
+     "on_topic": true
+    },
+    {
+     "article_id": "30ac2ddd-5924-4979-ba23-9c561f65ee82",
+     "title": "Houthis unleash missile barrage on Saudi-backed troops (VIDEOS)",
+     "on_topic": true
+    },
+    {
+     "article_id": "3c855e07-ecd9-45d1-a109-72d91f7641db",
+     "title": "Yemen\u2019s Houthis claim attack on Aramco oil facility in Saudi Arabia, and other Middle East news",
+     "on_topic": true
+    },
+    {
+     "article_id": "5ab27217-dab7-4557-a6d2-14a09e596725",
+     "title": "Fire extinguished at Aramco refinery in Jazan, Saudi Arabia says",
+     "on_topic": true
+    },
+    {
+     "article_id": "649dce0c-4a99-4461-b108-eae877ace59b",
+     "title": "Yemen\u2019s Houthis claim attack on Aramco oil facility in Saudi Arabia, and other Middle East news - Houston Chronicle",
+     "on_topic": true
+    },
+    {
+     "article_id": "831e4c5e-d231-424b-a468-2d9a502f692d",
+     "title": "Yemen's Houthis attack Saudi refinery after kingdom signs defence pact",
+     "on_topic": true
+    },
+    {
+     "article_id": "97de3c14-dc17-4dad-a5a6-8ba2d0b1a5b4",
+     "title": "Yemen's Houthis attack Saudi refinery after kingdom signs defence pact - Reuters",
+     "on_topic": true
+    },
+    {
+     "article_id": "b1bafb45-5ddc-4a60-adff-9d88de42af55",
+     "title": "Fire extinguished at Aramco refinery in Jazan, Saudi Arabia says - Al Arabiya English",
+     "on_topic": true
+    },
+    {
+     "article_id": "cb646cda-77ac-49f1-8240-b7696c1bbad3",
+     "title": "Saudi refinery on Red Sea coast hit by reported Houthi attack",
+     "on_topic": true
+    },
+    {
+     "article_id": "eddc44ee-a9f5-4b87-8113-6d29093650b4",
+     "title": "Houthis say they targeted 'Saudi enemy' forces and equipment in Yemen",
+     "on_topic": true
+    },
+    {
+     "article_id": "f6d11092-9a6e-4afc-915f-b673184205e3",
+     "title": "Yemen's Houthis claim attack on Aramco oil facility in Saudi Arabia, and other Middle East news",
+     "on_topic": true
+    },
+    {
+     "article_id": "fd039836-5eaf-402f-82cb-476271ee800a",
+     "title": "Yemen's Houthis attack Saudi refinery after kingdom signs defence pact - The Express Tribune",
+     "on_topic": true
+    }
+   ]
+  },
+  {
+   "rank": 8,
+   "cluster_id": "19ae9ca7-a09f-49d5-aa13-a97ae2ec5c26",
+   "title": "Supreme Court Allows Abhishek Banerjee Foreign Travel for Eye Treatment",
+   "source_count": 10,
+   "n_articles": 25,
+   "on_topic_count": 6,
+   "precision": 0.24,
+   "members": [
+    {
+     "article_id": "08ac26cb-7e8d-47fb-b61b-9d2f5d479ce8",
+     "title": "SC asks authorities to set up to 2 special courts to deal with Manipur violence cases probed by CBI, NIA",
+     "on_topic": false
+    },
+    {
+     "article_id": "154647d7-d207-47c8-80c8-f95e6075239b",
+     "title": "SC asks panel to verify claims of Manipur violence-hit families yet to get rehabilitation benefits",
+     "on_topic": false
+    },
+    {
+     "article_id": "18e46ce9-58bf-47af-a9d5-9151ae97fe3a",
+     "title": "Calcutta High Court tells police to give former TMC MLA Asit Majumder list of pending cases, if any",
+     "on_topic": false
+    },
+    {
+     "article_id": "22e0a517-8326-41ba-aaf7-54289e046dc4",
+     "title": "Supreme Court allows Abhishek Banerjee's foreign trip for eye treatment, sets aside Calcutta HC order",
+     "on_topic": true
+    },
+    {
+     "article_id": "328e3c25-3e98-436c-baa9-49fac0352f08",
+     "title": "Hyderabad law university students object to CJI being chief guest at convocation ceremony over NEET row - Zee News",
+     "on_topic": false
+    },
+    {
+     "article_id": "35138699-a62c-4fcd-8690-8db31f3c2ec8",
+     "title": "Dharmendra Pradhan explains resignation, says Gen Z was \u2018misled\u2019 - The News Minute",
+     "on_topic": false
+    },
+    {
+     "article_id": "445434d5-9440-46d6-821b-38e11dd8f5db",
+     "title": "SC allows TMC leader Abhishek Banerjee to travel abroad for eye surgery",
+     "on_topic": true
+    },
+    {
+     "article_id": "4ce9922d-0649-4830-9779-6e0513a4ab4f",
+     "title": "450 Hyderabad law university students oppose CJI's convocation chief guest invite",
+     "on_topic": false
+    },
+    {
+     "article_id": "4de85b16-15f6-4c01-af50-3cb7456da5ca",
+     "title": "\u2018Stones, shoes thrown at my car\u2019: Mamata faces protest at TMC worker\u2019s home",
+     "on_topic": false
+    },
+    {
+     "article_id": "58cbe28b-ee9d-4f49-b55e-c9b1596cf870",
+     "title": "\u2018Suvendu executed it\u2019: Abhishek Banerjee's \u2018state-sponsored\u2019 claim after Mamata's car attacked",
+     "on_topic": false
+    },
+    {
+     "article_id": "8a710aba-01e6-42c2-94b1-f66bffcd3b5c",
+     "title": "'All Of Us Could've Died': Mamata Says Stones Pelted At Her During Visit To Deceased TMC Workers' Home",
+     "on_topic": false
+    },
+    {
+     "article_id": "8b46170a-290a-4d82-a722-f22bafb638a3",
+     "title": "NALSAR students object to CJI Surya Kant as convocation chief guest - The News Minute",
+     "on_topic": false
+    },
+    {
+     "article_id": "92bfd396-0b08-40c2-976f-c0d36b8c1cc7",
+     "title": "Over 3000 turn up for 150 HYDRAA posts, triggering stampede-like situation - The News Minute",
+     "on_topic": false
+    },
+    {
+     "article_id": "93d5869f-d00f-46bd-939d-6823d5297edb",
+     "title": "Mamata visits residence of Trinamool worker who died in police custody, faces protests",
+     "on_topic": false
+    },
+    {
+     "article_id": "a537701a-d450-4be5-89f2-5e85be0f22c0",
+     "title": "Supreme Court allows Abhishek Banerjee to travel abroad for eye treatment",
+     "on_topic": true
+    },
+    {
+     "article_id": "ac921530-70f3-489b-a840-e73c1c008de0",
+     "title": "SC allows Abhishek Banerjee's foreign trip for treatment, cancels High Court order",
+     "on_topic": true
+    },
+    {
+     "article_id": "b9fa3682-91c5-49ad-af98-7a7cae5efd81",
+     "title": "Abhishek Banerjee gets Supreme Court nod to travel abroad for 3 weeks for eye treatment",
+     "on_topic": true
+    },
+    {
+     "article_id": "baaaa1db-a424-40b0-a420-cb58e2c0b541",
+     "title": "Ram temple donation row: SC urged to adjourn hearing on pleas due to unavailability of SG",
+     "on_topic": false
+    },
+    {
+     "article_id": "bb6de1e0-8eb2-457d-9e86-37e0852ca350",
+     "title": "'Everyone Has Right To Choose...': SC Allows Abhishek Banerjee To Travel Abroad For Eye Treatment",
+     "on_topic": true
+    },
+    {
+     "article_id": "bd02223b-86c1-4743-8296-c1705b40378c",
+     "title": "'Could have been killed': Mamata Banerjee alleges car pelted with stones; protesters raise 'chor' slogan",
+     "on_topic": false
+    },
+    {
+     "article_id": "c32f4c12-84b8-4250-b7e1-efd03b864141",
+     "title": "Hyderabad-based NALSAR students urge university not to invite CJI Surya Kant as convocation chief guest. Here's why",
+     "on_topic": false
+    },
+    {
+     "article_id": "cc176b81-959a-4ef4-9a9d-54fba77cb044",
+     "title": "From \u2018Tata go back\u2019 to \u2018Tata come back\u2019: Bengal begins undoing Mamata\u2019s Singur disaster",
+     "on_topic": false
+    },
+    {
+     "article_id": "e965e992-3c29-454e-825d-5b0d86e4bf92",
+     "title": "Mamata Banerjee's convoy attacked, shoes and stones thrown, mud smeared on cars",
+     "on_topic": false
+    },
+    {
+     "article_id": "ee7988b9-be19-45d1-8deb-d267d03621bc",
+     "title": "Students at Nalsar oppose CJI as chief guest for convocation",
+     "on_topic": false
+    },
+    {
+     "article_id": "f6b4c4c0-a978-45fd-81d7-165c95e99015",
+     "title": "Feminist alliance asks RSS to sever ties with TG Mohandas over Jantar Mantar remarks - The News Minute",
+     "on_topic": false
+    }
+   ]
+  },
+  {
+   "rank": 9,
+   "cluster_id": "585d3785-4fbe-4e8d-b727-5be288a4f77a",
+   "title": "Former Thai MP Chalong Riewrang Shoots Official, Confesses on YouTube",
+   "source_count": 10,
+   "n_articles": 11,
+   "on_topic_count": 11,
+   "precision": 1.0,
+   "members": [
+    {
+     "article_id": "142918a5-d505-4843-9d0a-7865c1d774e6",
+     "title": "Former Thailand MP shoots local official, informs YouTube show presenter: Here's what we know",
+     "on_topic": true
+    },
+    {
+     "article_id": "25390df3-4c3d-4243-9b98-38048d4e2b8e",
+     "title": "Former MP arrested after PAO president slain",
+     "on_topic": true
+    },
+    {
+     "article_id": "32203267-88bc-4f4f-a8df-9f2a0d146312",
+     "title": "Ex-Thai MP fatally shoots local official over money row",
+     "on_topic": true
+    },
+    {
+     "article_id": "32a4a617-4420-4f1f-8fa7-ce793fdabb1f",
+     "title": "Thailand shooting: 71-year-old former MP opens fire outside govt building",
+     "on_topic": true
+    },
+    {
+     "article_id": "4cde7ae1-a822-4fad-a3a1-606bb96a0b75",
+     "title": "Former Thai lawmaker arrested after allegedly shooting government official",
+     "on_topic": true
+    },
+    {
+     "article_id": "87d36005-a5fd-4359-af37-b9d2d07118db",
+     "title": "Thai ex-lawmaker shoots local official dead over loan",
+     "on_topic": true
+    },
+    {
+     "article_id": "9dc13161-441e-483f-be17-f81970b1e433",
+     "title": "Former Thai MP allegedly kills official and confesses on YouTube",
+     "on_topic": true
+    },
+    {
+     "article_id": "ab663a1e-8a4c-45e6-8502-730a97ab1866",
+     "title": "Thailand Shooting at Government Office Announced During YouTube Live Stream",
+     "on_topic": true
+    },
+    {
+     "article_id": "e170bd10-a4cf-4449-bc0e-225755008ebf",
+     "title": "2 injured in Thai government office shooting, ex-MP arrested",
+     "on_topic": true
+    },
+    {
+     "article_id": "e8611fe2-b451-401b-9f1e-10f3bd9faa7f",
+     "title": "Former MP blames debt dispute for shooting of PAO president",
+     "on_topic": true
+    },
+    {
+     "article_id": "e9bdbdc8-21b4-4589-ba99-ee0d268da815",
+     "title": "Gunman fires inside Thai government office as country reels from school shooting",
+     "on_topic": true
+    }
+   ]
+  },
+  {
+   "rank": 10,
+   "cluster_id": "aba185a4-c2e3-4c93-b916-979d50bc0419",
+   "title": "Trial Opens for Ex-Gang Leader in Tupac Shakur 1996 Murder",
+   "source_count": 11,
+   "n_articles": 11,
+   "on_topic_count": 8,
+   "precision": 0.727,
+   "members": [
+    {
+     "article_id": "3c424529-975a-489c-a802-5ca41a5e492c",
+     "title": "Thirty years on, man accused of orchestrating Tupac Shakur's murder goes on trial",
+     "on_topic": true
+    },
+    {
+     "article_id": "4833284e-5fd6-411f-93a1-a8f6345c140c",
+     "title": "A California Program Is Bringing Down the Cost of Heat Pumps by Buying Bulk",
+     "on_topic": false
+    },
+    {
+     "article_id": "5a3a279e-c002-4d7c-91b5-a76cef27f331",
+     "title": "A man accused of orchestrating Tupac\u2019s killing is on trial. Here\u2019s everything you need to know",
+     "on_topic": true
+    },
+    {
+     "article_id": "5e39b040-2aa9-4dc2-8fd2-119981156b5d",
+     "title": "Man to go on trial over murder of rapper Tupac Shakur",
+     "on_topic": true
+    },
+    {
+     "article_id": "771e40a6-0f75-4124-9e17-f781a42b9f07",
+     "title": "Tupac Shakur murder suspect takes center stage at trial nearly 30 years after shooting shocked music world",
+     "on_topic": true
+    },
+    {
+     "article_id": "8cc65077-3463-4ac5-b184-1a425beaa471",
+     "title": "Trial of former gang leader to begin over Tupac Shakur murder",
+     "on_topic": true
+    },
+    {
+     "article_id": "965e92e1-3616-42b7-b27c-52cb39e2e4f3",
+     "title": "Suge Knight speaks out ahead of Tupac Shakur murder suspect's trial",
+     "on_topic": true
+    },
+    {
+     "article_id": "9a7e75dd-4b11-4eb1-b53f-340f73b96b4f",
+     "title": "Trial opens for ex-gang leader charged with\u00a0Tupac\u00a0Shakur\u2019s 1996 murder",
+     "on_topic": true
+    },
+    {
+     "article_id": "9ac41290-ade2-442e-92df-ca91599db7f2",
+     "title": "The 108-Degree Eviction",
+     "on_topic": false
+    },
+    {
+     "article_id": "a787cd7d-d644-43ff-83ae-227866c2b57c",
+     "title": "World\u2019s oldest cheddar-maker slashes energy bills with novel heat pumps",
+     "on_topic": false
+    },
+    {
+     "article_id": "ab67e796-cbb4-4e89-8a83-bde11554a1ea",
+     "title": "Man who allegedly arranged Tupac Shakur's 1996 killing going on trial in Las Vegas",
+     "on_topic": true
+    }
+   ]
+  },
+  {
+   "rank": 11,
+   "cluster_id": "e4e12e46-5b82-41be-bec6-3b7cc9d62419",
+   "title": "Zelenskyy Claims North Korea to Deploy 50,000 Troops to Russia",
+   "source_count": 8,
+   "n_articles": 11,
+   "on_topic_count": 5,
+   "precision": 0.455,
+   "members": [
+    {
+     "article_id": "184967ba-7958-4867-9e61-2792a05074e7",
+     "title": "Kamchatka Braces for Near-Total Internet Shutdown Amid Undersea Cable Repairs",
+     "on_topic": false
+    },
+    {
+     "article_id": "1bde0621-6eb9-4c7b-9380-315655718fc6",
+     "title": "Poland and Baltics shield infrastructure, fearing a Russian false-flag strike",
+     "on_topic": false
+    },
+    {
+     "article_id": "21f38ad6-80df-4e36-9cdf-faf97fb59d7c",
+     "title": "North Korea preparing to deploy another 50,000 soldiers to fight for Russia in Ukraine, Zelensky claims",
+     "on_topic": true
+    },
+    {
+     "article_id": "49425418-f8a5-4a3f-ad0a-0de54a33ee21",
+     "title": "Russia-Ukraine war: Zelenskyy claims 30,000-50,000 North Korean troops to be deployed to advance Moscow's fight",
+     "on_topic": true
+    },
+    {
+     "article_id": "53ce7dfd-2e3a-4cf8-a7b8-15d5305a7438",
+     "title": "Russia-Ukraine war: Zelenskyy says domestically made ballistic missiles to be ready soon; could hit Moscow in fall",
+     "on_topic": false
+    },
+    {
+     "article_id": "7e82fb52-11fd-411b-852c-147f98aac8cf",
+     "title": "Zelensky says up to 50,000 North Korean soldiers could be deployed to Russia",
+     "on_topic": true
+    },
+    {
+     "article_id": "84813bd8-592d-4558-88e7-4d1e5c439a0d",
+     "title": "Russia Denies It Held Official Peace Talks With Germany in Azerbaijan",
+     "on_topic": false
+    },
+    {
+     "article_id": "869b2815-626d-43b3-989d-499a61f5f68e",
+     "title": "30,000-50,000 N. Koreans to be deployed in Russia: Zelenskyy",
+     "on_topic": true
+    },
+    {
+     "article_id": "8c84c6e1-f5b4-49ca-990c-6490f7491612",
+     "title": "13 Killed in Ukrainian Attack on Republic of Tatarstan",
+     "on_topic": false
+    },
+    {
+     "article_id": "c9390224-b4c9-47d1-9294-a5ea5b811404",
+     "title": "Zelenskyy: Up to 50,000 North Korean troops will be sent to Russia - nhk.or.jp",
+     "on_topic": true
+    },
+    {
+     "article_id": "fde55310-8049-43db-8b39-91f3bfa1ca04",
+     "title": "LIVE: Key morning headlines from Armenia, Azerbaijan and Georgia",
+     "on_topic": false
+    }
+   ]
+  },
+  {
+   "rank": 12,
+   "cluster_id": "db8cecca-eb24-44a9-b57c-5174a691bf35",
+   "title": "Jharkhand Police Use Tear Gas Against Exam Protesters",
+   "source_count": 16,
+   "n_articles": 50,
+   "on_topic_count": 44,
+   "precision": 0.88,
+   "members": [
+    {
+     "article_id": "08642efc-2214-4d8e-a4ae-100c3722617a",
+     "title": "Jharkhand Student Protests | Students Push Past Barricades, March Towards Assembly Over Exam Reforms",
+     "on_topic": true
+    },
+    {
+     "article_id": "0bbf84da-7269-4053-8969-06f3bdad92f8",
+     "title": "Protesting Jharkhand students face lathi charge, tear gas, water cannon during march to assembly",
+     "on_topic": true
+    },
+    {
+     "article_id": "0f194a38-c578-4563-a742-34d165807d17",
+     "title": "Jharkhand protesters to hold 'Vidhan Sabha Gherao' march today, Ranchi police say \u2018pellet guns strictly for...\u2019",
+     "on_topic": true
+    },
+    {
+     "article_id": "197586e8-7f3c-4dc5-bcff-2f4ad7c7bb68",
+     "title": "Jharkhand protest LIVE: Police resort to lathi charge, use water canons; students breach barbed-wire barricades",
+     "on_topic": true
+    },
+    {
+     "article_id": "1d73aba3-d155-412d-89d7-111370d0d463",
+     "title": "Jharkhand govt likely to cancel 14th JPSC PT; CBI probe, reforms among key discussion points: Sources",
+     "on_topic": true
+    },
+    {
+     "article_id": "200ff02b-0909-4b49-bc4a-54f8f4fff07d",
+     "title": "Jharkhand govt ready to cancel JPSC exam after students' protest, CBI probe still in deadlock",
+     "on_topic": true
+    },
+    {
+     "article_id": "2116e9dd-cacf-43b5-a981-e27ba140a3e8",
+     "title": "Jharkhand Protest Sees Round 2 Of Talks: CID Probe To Reforms, Govt's 7-Point Proposal To Students",
+     "on_topic": true
+    },
+    {
+     "article_id": "232d564d-395e-4ae4-b83c-52b342945993",
+     "title": "'Like Sonam Wangchuk': Students allege bid to remove Devendra Mahato amid JPSC-JSSC exam protest",
+     "on_topic": true
+    },
+    {
+     "article_id": "25d65e35-3d72-480a-bd37-a8e05b03b8f2",
+     "title": "JPSC Exam Row: Former Chairman L Khiyangte Taken Into Custody After Over 7 Rounds Of CID Questioning",
+     "on_topic": true
+    },
+    {
+     "article_id": "293a5815-8717-41d5-809b-e25c75619625",
+     "title": "Jharkhand students protest LIVE updates: Committed to justice for protesting youth; those guilty of irregularities to face strict action, says Jharkhand CM",
+     "on_topic": true
+    },
+    {
+     "article_id": "2b714fe5-ef5a-4704-81d0-6040928c97a0",
+     "title": "Devendra Nath Mahato's Health Deteriorates | JPSC Protest Intensifies Over CBI Probe | News18",
+     "on_topic": true
+    },
+    {
+     "article_id": "3239891c-57bf-47d0-9f5b-3ef9c42b0015",
+     "title": "Indian students march on Jharkhand assembly, escalate hunger strike over exam fraud claims",
+     "on_topic": true
+    },
+    {
+     "article_id": "331a48f5-e07c-4a7f-89ad-601dfa94ad2c",
+     "title": "Jharkhand Protest Intensifies | Students Demand 14th Exam Cancellation & CBI Probe | News18",
+     "on_topic": true
+    },
+    {
+     "article_id": "33d642f5-0b71-442d-8c27-16297e08cc5f",
+     "title": "Jharkhand erupts over exam row: Students clash with police, tear gas fired",
+     "on_topic": true
+    },
+    {
+     "article_id": "347a1ece-f73b-4ed6-9671-cd4b0eda2763",
+     "title": "BJP vs Muslim League: \u2018Don\u2019t provoke us,\u2019 Rajeev Chandrasekhar warns IUML over Savarkar row",
+     "on_topic": false
+    },
+    {
+     "article_id": "34e8de44-b9bd-47e1-b4c9-c4988f36c18f",
+     "title": "\u2018Bid to saffronise': Question on VD Savarkar in primary level quiz triggers row in Kerala | What we know",
+     "on_topic": false
+    },
+    {
+     "article_id": "36b27cd3-b7c5-4618-b082-ba2427afa315",
+     "title": "JPSC ex-chairman L Khiangte arrested amid protests over paper leak",
+     "on_topic": true
+    },
+    {
+     "article_id": "418f7a1b-fe91-4b0f-b1ee-8c16c4df01e1",
+     "title": "Ex-JPSC chairperson arrested amid student protests over alleged irregularities",
+     "on_topic": true
+    },
+    {
+     "article_id": "4c080791-7d06-46f5-8878-8c25f1a1c3e1",
+     "title": "India news: Jharkhand police use water cannons to disperse student protesters",
+     "on_topic": true
+    },
+    {
+     "article_id": "4fc9c19f-8757-4e93-a8b4-6548d71f6219",
+     "title": "'Spider-Man' joins JPSC-JSSC protest in Ranchi, says students' voices reached 'America' but not Jharkhand govt",
+     "on_topic": true
+    },
+    {
+     "article_id": "5073de07-d5ac-4d4c-9305-7e07e5f59aee",
+     "title": "Jharkhand students protest LIVE: Protestors reach State Assembly premises; police use tear gas, water cannons",
+     "on_topic": true
+    },
+    {
+     "article_id": "557133a9-5a73-4819-9a70-14af80094864",
+     "title": "JPSC Row: Blacklisted In Jharkhand & UP, TDPL Didn't Bid, Was \u2018Nominated\u2019 To Conduct Exam",
+     "on_topic": true
+    },
+    {
+     "article_id": "6c4a3ae2-fa63-4a9f-8a28-8bffa974a681",
+     "title": "Watch: Jharkhand protesters echo Bihar, dance as police turn water cannons on them",
+     "on_topic": true
+    },
+    {
+     "article_id": "6f54080f-f124-4b6b-b554-70c31aa3d140",
+     "title": "Delays, paper leaks and years of waiting: Jharkhand protesters tell what's really behind hunger strike",
+     "on_topic": true
+    },
+    {
+     "article_id": "730ce3a4-7408-40f5-b2fd-ae67d2efcc58",
+     "title": "Protesters rally in India\u2019s Jharkhand over alleged exam irregularities",
+     "on_topic": true
+    },
+    {
+     "article_id": "75015a47-7d4d-46e9-8511-e96adb2e8047",
+     "title": "Jharkhand CID arrests former PSC Chairman L.Khiangte: Sources",
+     "on_topic": true
+    },
+    {
+     "article_id": "76e6f58b-d4d4-48ed-b44e-628d976bdc62",
+     "title": "Jharkhand students protest Live Updates: Ranchi braces for students march to assembly today over job scam",
+     "on_topic": true
+    },
+    {
+     "article_id": "7de4ae32-5701-4d87-bc55-23440e50648f",
+     "title": "Jharkhand JPSC Row: JLKM Student Leaders Meet Govt Over CBI Probe & Exam Cancellation | News18",
+     "on_topic": true
+    },
+    {
+     "article_id": "87e92490-7253-4984-94d0-8fc02259855e",
+     "title": "A rare tornado in Taiwan - CNN",
+     "on_topic": false
+    },
+    {
+     "article_id": "91a555cc-ce51-4594-8758-e2f75d997ec4",
+     "title": "Indian students step up exam protests in Jharkhand, march towards state assembly",
+     "on_topic": true
+    },
+    {
+     "article_id": "a29e8a79-e674-489b-929e-d42554840d5f",
+     "title": "Collectorate staff\u2019s death and doctor\u2019s illness take a political turn in Kerala after Pinarayi Vijayan\u2019s social media post",
+     "on_topic": false
+    },
+    {
+     "article_id": "a5fa8dc1-3d14-4dd5-9a79-acd52de38a7a",
+     "title": "SPCX Stock Quote Price and Forecast - CNN",
+     "on_topic": false
+    },
+    {
+     "article_id": "a8528a7a-c313-4b68-90ee-10f6af89f938",
+     "title": "Fresh talks with govt today, protesters on hunger strike \u2018stable\u2019: Latest updates on Jharkhand protests",
+     "on_topic": true
+    },
+    {
+     "article_id": "a89f4202-c068-4254-877c-9e6140e938c9",
+     "title": "Jharkhand Students Face Water Cannons, Lathis \u2014 Then 'Pushpa' Walks In With 'Flower Nahi, Fire Hai' Vibe: 'Jhukega Nahi'",
+     "on_topic": true
+    },
+    {
+     "article_id": "b6a18741-f851-4391-b5e1-c8ed68b29da9",
+     "title": "Sitemap - August 2026 - CNN",
+     "on_topic": false
+    },
+    {
+     "article_id": "b6ddbb90-ccbe-4803-afbe-dfca26f2f2f9",
+     "title": "Police use water cannons, tear gas, batons as exam protesters try to reach Jharkhand assembly",
+     "on_topic": true
+    },
+    {
+     "article_id": "ba40787a-32fb-4107-9ffd-d1b626553292",
+     "title": "JPSC-JSSC Exam Row: Ex-JPSC Chairman L Khiangte arrested as students intensify protest",
+     "on_topic": true
+    },
+    {
+     "article_id": "c3228fc5-b353-4811-965e-1eaa84a69133",
+     "title": "Dancing in the rain: Jharkhand student protesters take a leaf out of Bihar",
+     "on_topic": true
+    },
+    {
+     "article_id": "c72502b8-29a6-4797-89d4-ab1f30f5a579",
+     "title": "Jharkhand CID arrests ex-JPSC chairperson over alleged irregularities in recruitment exams",
+     "on_topic": true
+    },
+    {
+     "article_id": "c7d55558-0627-451b-a7f0-8de8368e9632",
+     "title": "JPSC Row Escalates! Students Divided Over CBI vs CID Probe | 14th JPSC Exam Under Fire | News18",
+     "on_topic": true
+    },
+    {
+     "article_id": "cd70537c-45e1-4c3b-9283-0b1bd1eb6a48",
+     "title": "Exam protesters set to march to Jharkhand Assembly even as govt says '98 pc demands fulfilled'",
+     "on_topic": true
+    },
+    {
+     "article_id": "d2c650a3-d1ab-4b1a-b7ac-86cd50a9abf5",
+     "title": "Jharkhand JPSC-JSSC Protest Turns Political | Protesters' Health Deteriorates | CBI Probe | News18",
+     "on_topic": true
+    },
+    {
+     "article_id": "d3e8220f-1d3e-4152-8492-381ed2c89b15",
+     "title": "Congress in dilemma over Jharkhand students' protest; BJP questions Rahul Gandhi's silence",
+     "on_topic": true
+    },
+    {
+     "article_id": "e1740caf-9d39-4cc4-8c1b-8905e2b26ae4",
+     "title": "'They Can\u2019t Stop Us': Devendra Nath Mahato Arrives In Ambulance To Join JPSC-JSSC March In Ranchi",
+     "on_topic": true
+    },
+    {
+     "article_id": "e3679343-aff7-401c-8e71-2605e0491622",
+     "title": "Journalist detained at breakfast table, questioned over 'Jharkhand protest' coverage",
+     "on_topic": true
+    },
+    {
+     "article_id": "e6ccd891-4d05-484b-aac1-3d018e5ae5e3",
+     "title": "Indian students step up exam protests in Jharkhand",
+     "on_topic": true
+    },
+    {
+     "article_id": "ec6a3ebd-8d8e-49fc-a93f-5114b0f95279",
+     "title": "Jharkhand protest: ED files case to probe irregularities in JPSC examinations",
+     "on_topic": true
+    },
+    {
+     "article_id": "ec7e18b1-e715-49b1-a797-7f97f26f9ef3",
+     "title": "Ranchi Protest: Police Deployment, Water Cannons & Barbed Wire As Students March | Jharkhand Protest",
+     "on_topic": true
+    },
+    {
+     "article_id": "f3b5545a-f8e7-45fb-8607-aa2f588d3f3e",
+     "title": "From pellet guns, lathicharge, to media intimidation, everything dubbed wrong during Delhi\u2019s CJP protest becomes \u2018normal\u2019 during Jharkhand student protest: The Left-Liberal hypocrisy",
+     "on_topic": true
+    },
+    {
+     "article_id": "fd09ae41-b527-46d6-9057-c3ced2af7ecd",
+     "title": "Ex-JPSC head arrested, police vs protesters in Jharkhand assembly march: 5 key developments amid student stir",
+     "on_topic": true
+    }
+   ]
+  },
+  {
+   "rank": 13,
+   "cluster_id": "be78a1cf-ae9b-44fd-9103-9689badf1aa2",
+   "title": "Syria Reclaims Control of Russian Mediterranean Bases in Deal",
+   "source_count": 7,
+   "n_articles": 8,
+   "on_topic_count": 8,
+   "precision": 1.0,
+   "members": [
+    {
+     "article_id": "05403400-39e0-43c3-9b7d-c2db7c243b77",
+     "title": "Syria reclaims control of key coastal sites in deal with Russia",
+     "on_topic": true
+    },
+    {
+     "article_id": "3cb01129-abdd-41af-b87d-71e4d3cd2006",
+     "title": "Syria says reached deal with Moscow on fate of Russian bases",
+     "on_topic": true
+    },
+    {
+     "article_id": "47c897da-456f-42f8-a0f2-648601afc6ad",
+     "title": "Syria says deal agreed with Russia on future of military bases",
+     "on_topic": true
+    },
+    {
+     "article_id": "6aa61789-85f9-47c8-8999-d66e96a4b7fe",
+     "title": "Syria and Russia Reach Deal on Future of Tartus and Khmeimim Bases After 18 Months of Talks",
+     "on_topic": true
+    },
+    {
+     "article_id": "76651b02-f597-459d-b6eb-dbad1b7df2b5",
+     "title": "Syria, Russia agree to end military use of key Mediterranean bases",
+     "on_topic": true
+    },
+    {
+     "article_id": "afee8c68-0450-46a9-ac31-1297854cd70b",
+     "title": "Syria and Russia reach deal on future of Tartous and Hmeimim bases after 18 months of talks",
+     "on_topic": true
+    },
+    {
+     "article_id": "ddc5717b-644a-4784-8497-03e8e9521616",
+     "title": "Syria, Russia seal deal on future of Moscow's Mediterranean bases",
+     "on_topic": true
+    },
+    {
+     "article_id": "f0a3a42c-a19a-494c-aaa9-e3fe94c4fc56",
+     "title": "Russia to hand over control of two key Mediterranean bases to Syria",
+     "on_topic": true
+    }
+   ]
+  },
+  {
+   "rank": 14,
+   "cluster_id": "f1c635b2-8927-4b2a-af1f-f9bac9f496e3",
+   "title": "Eleven Killed in Cape Town Shootings; Police Investigate",
+   "source_count": 11,
+   "n_articles": 12,
+   "on_topic_count": 2,
+   "precision": 0.167,
+   "members": [
+    {
+     "article_id": "1c73c154-2801-41cb-ae93-e3564ebd1701",
+     "title": "Springbok Women cruise past Fijiana XV in Suva",
+     "on_topic": false
+    },
+    {
+     "article_id": "21eacc12-92bd-4fed-8496-6618b9e122d1",
+     "title": "Healthcare professionals implicated in South Africa's illicit pharmaceutical market - IOL",
+     "on_topic": false
+    },
+    {
+     "article_id": "235549b6-5d9d-4928-a5a5-3c96118d9c0c",
+     "title": "South Africa coach pleased with players' form ahead of All Blacks test",
+     "on_topic": false
+    },
+    {
+     "article_id": "33b29e54-dd67-4cb7-97c9-a429bbbdb768",
+     "title": "Women\u2019s Day in South Africa turns 70 with equality still out of reach",
+     "on_topic": false
+    },
+    {
+     "article_id": "4f81fef5-8735-4312-9faa-bd3ad1cf334e",
+     "title": "11 killed in separate shootings in South Africa's Cape Town",
+     "on_topic": true
+    },
+    {
+     "article_id": "8b73973d-0310-48fa-8ab1-84686cbd1815",
+     "title": "Evidence that South African special forces murdered top detective shared with BBC",
+     "on_topic": false
+    },
+    {
+     "article_id": "8d646fa1-d4cc-4145-8e38-fbc792e6007f",
+     "title": "Bolgatanga Municipal Health Director wants new hospital to tackle overcrowding",
+     "on_topic": false
+    },
+    {
+     "article_id": "8e71b380-e447-4229-ba25-38cf826c1cee",
+     "title": "11 killed in three separate overnight shootings across Cape Town - News24",
+     "on_topic": true
+    },
+    {
+     "article_id": "9de7582e-ef25-4982-9d00-3c77452be0ec",
+     "title": "Operation Ubuntu: A united stand against xenophobia in South Africa - IOL",
+     "on_topic": false
+    },
+    {
+     "article_id": "ae0da1e7-ebbd-47c8-8696-c4e443c61d58",
+     "title": "LOCAL ELECTIONS 2026: Manifesto test: The revolution promised, the record questioned",
+     "on_topic": false
+    },
+    {
+     "article_id": "c04308c0-652f-4d0c-9d41-5af4da478750",
+     "title": "South Africa: Ramaphosa Calls on Men to Fight GBV - South African News Briefs - August 10, 2026",
+     "on_topic": false
+    },
+    {
+     "article_id": "fc063362-ca7e-4fd9-8784-c41d6f1a03c4",
+     "title": "Plastic waste is harming livestock in South Africa: smallholder farmers using communal land set out the support they need",
+     "on_topic": false
+    }
+   ]
+  },
+  {
+   "rank": 15,
+   "cluster_id": "89ce9d8f-d441-4fe2-82b7-c6715b9a5f59",
+   "title": "Trump Names Will Scharf White House Counsel Replacing David Warrington",
+   "source_count": 7,
+   "n_articles": 9,
+   "on_topic_count": 8,
+   "precision": 0.889,
+   "members": [
+    {
+     "article_id": "031bac96-042a-4154-949b-402ac886ac06",
+     "title": "Lawyer Behind Trump\u2019s Immunity Win Named White House Counsel",
+     "on_topic": true
+    },
+    {
+     "article_id": "1e2e2937-ca2f-480b-9930-7dae0fc1884e",
+     "title": "Trump names Will Scharf as White House counsel",
+     "on_topic": true
+    },
+    {
+     "article_id": "7b43fd75-ae6d-4577-b39b-9616e60ade88",
+     "title": "Top Trump Lawyer Ditches the White House",
+     "on_topic": true
+    },
+    {
+     "article_id": "7f329423-bf44-4dbd-b9c7-69fc501a170d",
+     "title": "Bizarre Way Susie Wiles Was \u2018Blindsided\u2019 by Controversial Trump Pick",
+     "on_topic": true
+    },
+    {
+     "article_id": "999d9d94-aabe-42b6-b59a-6e804689d7f6",
+     "title": "Trump says Will Scharf will replace David Warrington as White House counsel in September",
+     "on_topic": true
+    },
+    {
+     "article_id": "a0bcad11-ff59-4d0e-8b25-377c9c9ff6c4",
+     "title": "Trump names Will Scharf as new White House counsel",
+     "on_topic": true
+    },
+    {
+     "article_id": "b85c2dd2-58e7-438b-9c2b-592fc23db7bc",
+     "title": "Blonde Companion, 34, Spotted With Trump on Day Off",
+     "on_topic": false
+    },
+    {
+     "article_id": "c73baed7-f161-480a-97c4-2b0bd2b9e09a",
+     "title": "Trump names Will Scharf as White House counsel ahead of midterms",
+     "on_topic": true
+    },
+    {
+     "article_id": "dac418fc-21ec-428f-b66a-8881ea549266",
+     "title": "Trump announces staff secretary Will Scharf will be his new White House counsel",
+     "on_topic": true
+    }
+   ]
+  },
+  {
+   "rank": 16,
+   "cluster_id": "5099eb1d-e138-41aa-8990-2f684810de25",
+   "title": "Iran Appoints Hardliner Mohsen Rezaei to Top Security Council",
+   "source_count": 7,
+   "n_articles": 8,
+   "on_topic_count": 7,
+   "precision": 0.875,
+   "members": [
+    {
+     "article_id": "1be28283-e077-4e0b-b54e-0f09de0dc77a",
+     "title": "Who is Iran's Mohsen Rezaei, the hardliner appointed to key security role?",
+     "on_topic": true
+    },
+    {
+     "article_id": "2f6e1734-a3e2-46e3-bc21-d86989ca8433",
+     "title": "Mohsen Rezaei appointed as secretary of Iran\u2019s top security body",
+     "on_topic": true
+    },
+    {
+     "article_id": "3c20b477-67ac-4993-a689-ecd9c0768460",
+     "title": "How significant is Mohsen Rezaei\u2019s appointment as Iran\u2019s security chief?",
+     "on_topic": true
+    },
+    {
+     "article_id": "65e55844-03c7-4c79-9a5b-288bc0427bb2",
+     "title": "Iran's Power Shake-Up: Khamenei makes surprise security appointment",
+     "on_topic": true
+    },
+    {
+     "article_id": "a746bb87-e870-4758-b6cb-a5ed7e8dbe88",
+     "title": "Mohsen Rezaei appointed as secretary of Iran's top security body",
+     "on_topic": true
+    },
+    {
+     "article_id": "d6b1c4a7-4842-4b2e-abdb-64939cc508ac",
+     "title": "Gasoline, diesel prices down by over P4 this week",
+     "on_topic": false
+    },
+    {
+     "article_id": "dcc5276e-6a22-453c-b25d-32a596bd89ad",
+     "title": "Former IRGC commander Mohsen Rezaei appointed Supreme National Security Council chief: All you need to know",
+     "on_topic": true
+    },
+    {
+     "article_id": "f78d77b9-3b89-4bc4-9e22-4583acb1b975",
+     "title": "The veteran IRGC commander who\u2019s now Iran\u2019s top security official",
+     "on_topic": true
+    }
+   ]
+  },
+  {
+   "rank": 17,
+   "cluster_id": "f2714b05-6eee-47e6-89ed-33a5081d819a",
+   "title": "Daniel Kinahan Extradited to Dublin, Charged with Directing Criminal Organization",
+   "source_count": 9,
+   "n_articles": 10,
+   "on_topic_count": 10,
+   "precision": 1.0,
+   "members": [
+    {
+     "article_id": "08ac6990-ab88-4f0d-a747-8b7b86321c84",
+     "title": "Suspected crime boss Daniel Kinahan lands in Dublin after extradition from Dubai",
+     "on_topic": true
+    },
+    {
+     "article_id": "2bcfc74d-a081-4c02-83c4-5e5953928a0e",
+     "title": "Alleged crime boss Daniel Kinahan appears in Irish court after extradition from Dubai",
+     "on_topic": true
+    },
+    {
+     "article_id": "503ff69a-434e-48da-874f-21737e487122",
+     "title": "Alleged Irish Organized Crime Boss Daniel Kinahan Extradited to Dublin from Dubai",
+     "on_topic": true
+    },
+    {
+     "article_id": "7df183b9-56ab-4ef9-8cc3-cae3b10acb16",
+     "title": "Kinahan being extradited as Government jet leaves UAE",
+     "on_topic": true
+    },
+    {
+     "article_id": "92164175-d0d4-4c15-b543-4ba5fe99ba15",
+     "title": "Alleged Irish crime boss Kinahan charged with directing criminal organisation",
+     "on_topic": true
+    },
+    {
+     "article_id": "958b7afe-462a-40b5-9e0b-47b4060d7060",
+     "title": "'If I hang myself, it didn't happen. I'm not suicidal': Daniel Kinahan reveals murder fears as Ireland's toughest prison holding notorious killers ramps up security",
+     "on_topic": true
+    },
+    {
+     "article_id": "a2161700-c258-4038-b0f7-8184d474bed8",
+     "title": "Suspected Irish crime boss extradited from Dubai",
+     "on_topic": true
+    },
+    {
+     "article_id": "b1e7dace-ff99-49fb-af84-7b2afa596c32",
+     "title": "Alleged Irish crime boss Kinahan charged with directing criminal organization",
+     "on_topic": true
+    },
+    {
+     "article_id": "f1652cc4-d22a-4e9a-8115-ee7d5657a459",
+     "title": "Alleged Irish crime boss Kinahan charged with directing criminal organisation",
+     "on_topic": true
+    },
+    {
+     "article_id": "f368e973-02bf-41ca-882b-fda60c96c3e4",
+     "title": "Alleged Irish crime boss Kinahan charged with directing criminal organisation",
+     "on_topic": true
+    }
+   ]
+  },
+  {
+   "rank": 18,
+   "cluster_id": "fc1493d2-4011-4e05-a441-768c79846911",
+   "title": "Indonesian School Safety Fears Rise After Weapons Discovery",
+   "source_count": 7,
+   "n_articles": 13,
+   "on_topic_count": 4,
+   "precision": 0.308,
+   "members": [
+    {
+     "article_id": "074dce30-295b-4318-88b1-e4fe43cbc274",
+     "title": "Experts divided on whether Lindsay Clancy\u2019s symptoms pointed to postpartum psychosis",
+     "on_topic": false
+    },
+    {
+     "article_id": "0af3affa-34aa-49b4-8eb4-a20ab3875a7a",
+     "title": "Social media\u2019s hottest topic: The Lindsay Clancy trial",
+     "on_topic": false
+    },
+    {
+     "article_id": "16e2ad03-75b0-43a4-81d5-625875f47374",
+     "title": "This trial is forcing a difficult conversation far beyond the courtroom",
+     "on_topic": false
+    },
+    {
+     "article_id": "29239bb8-5e59-4db8-8b0f-97b204074eac",
+     "title": "Is it wrong to send your kid to private school?",
+     "on_topic": false
+    },
+    {
+     "article_id": "356febae-5a13-45c0-af99-8e7a53b8e8bb",
+     "title": "Miscommunication blamed for sacked foreign teacher's threatening post",
+     "on_topic": true
+    },
+    {
+     "article_id": "57515a14-0d9a-45b6-bcfc-f7cc43903e7d",
+     "title": "Who gets to decide what belongs in school libraries?",
+     "on_topic": false
+    },
+    {
+     "article_id": "71670c00-8878-4d2b-8f48-9df5fe0ffeca",
+     "title": "School closes classes after sacked foreign teacher\u2019s threat",
+     "on_topic": true
+    },
+    {
+     "article_id": "92fbb4e4-3e2d-4e56-9fb1-92e46cf4bbfc",
+     "title": "Indonesian minister urges student protection after weapons, narcotics found at school",
+     "on_topic": true
+    },
+    {
+     "article_id": "95d59670-5333-42dd-ada2-485636dfe7c4",
+     "title": "\u2018Hum don hain\u2019: Raipur student assaulted at school, video posted online",
+     "on_topic": false
+    },
+    {
+     "article_id": "a6e3d5c3-4f10-4d21-95c1-b5fd452cd5c2",
+     "title": "When school stops feeling safe",
+     "on_topic": false
+    },
+    {
+     "article_id": "d0276ff0-ef93-435d-b5e2-00dfdf88f06d",
+     "title": "Discovery of almost 1,000 weapons in Indonesian school fuels safety fears",
+     "on_topic": true
+    },
+    {
+     "article_id": "d699cfe6-26a9-4d6e-95ad-d81f8502d87d",
+     "title": "Key psychiatrist faces questioning from Lindsay Clancy\u2019s defense in murder trial",
+     "on_topic": false
+    },
+    {
+     "article_id": "ffec13ce-6fe4-4dc8-836c-271ae6fe43fd",
+     "title": "We shouldn\u2019t have this many big trucks operating in our cities",
+     "on_topic": false
+    }
+   ]
+  },
+  {
+   "rank": 19,
+   "cluster_id": "54adb56a-e8e2-4907-825b-6d481b20731a",
+   "title": "Trump Claims Witness Saw Olympian Vandalize Reflecting Pool",
+   "source_count": 6,
+   "n_articles": 8,
+   "on_topic_count": 8,
+   "precision": 1.0,
+   "members": [
+    {
+     "article_id": "3227242d-3cd3-412b-b383-deca88816d9b",
+     "title": "Trump Smears Olympian Who Was Framed in Green Slime Vendetta",
+     "on_topic": true
+    },
+    {
+     "article_id": "75ae4ae4-2278-4c11-a558-5101a5a47e9e",
+     "title": "Trump says there was \u2018some contractor error\u2019 during Reflecting Pool renovation",
+     "on_topic": true
+    },
+    {
+     "article_id": "84f120b4-dc51-40d1-8eb8-37de361c06ea",
+     "title": "Trump trolls Jeanine Pirro with odd posts of \u2018vandalism\u2019 after belittling her over Reflecting Pool case",
+     "on_topic": true
+    },
+    {
+     "article_id": "a126d217-8ba8-4fcf-813b-4f4fb1e90a88",
+     "title": "John Oliver Exposes Trump\u2019s Green Slime Meltdown \u2018Fiasco\u2019",
+     "on_topic": true
+    },
+    {
+     "article_id": "b119173b-220b-4994-af10-8ad044fa7ebd",
+     "title": "Trump doubles down on Reflecting Pool vandalism claim against ex-Olympian David Hearn, admits \u2018some contractor error\u2019",
+     "on_topic": true
+    },
+    {
+     "article_id": "b3c1f9c5-8d73-41fd-ba35-3cc8d161bf7a",
+     "title": "Trump drags former FBI director James Comey into Reflecting Pool debacle",
+     "on_topic": true
+    },
+    {
+     "article_id": "b5652386-2348-465c-a6d7-0606878d8ff8",
+     "title": "Puzzling Trump 'alert' claims 'highly credible witness' came forward in embattled case",
+     "on_topic": true
+    },
+    {
+     "article_id": "d54e6e86-bfb1-4f0d-b077-b0457a08aa70",
+     "title": "Trump Claims \u2018Highly Credible\u2019 Source Witnessed Ex-Olympian \u2018Violently\u2019 Vandalizing Reflecting Pool \u2014 Right After Case Was Dropped",
+     "on_topic": true
+    }
+   ]
+  },
+  {
+   "rank": 20,
+   "cluster_id": "6aa6068b-1095-404e-bcb2-f2b2c4a2161e",
+   "title": "Bus and Truck Plunge Off Andhra Pradesh Bridge, Injuring Dozens",
+   "source_count": 6,
+   "n_articles": 7,
+   "on_topic_count": 2,
+   "precision": 0.286,
+   "members": [
+    {
+     "article_id": "0e6bc94c-6184-429f-aa77-8eff05d93829",
+     "title": "23 hurt as bus, truck plunges off bridge in Andhra - Daily Pioneer",
+     "on_topic": true
+    },
+    {
+     "article_id": "6443b19b-7193-4a36-81cd-5fb17c289266",
+     "title": "I sold my two-bed house \u2013 and bought an \u00a318,000 double decker bus to live in",
+     "on_topic": false
+    },
+    {
+     "article_id": "80486c56-5a5f-44e9-a042-8be9d28eb6dc",
+     "title": "The \u2018Furthur\u2019 Bus\u2019s Long, Strange Trip, and Why It\u2019s Returning to San Francisco",
+     "on_topic": false
+    },
+    {
+     "article_id": "a1be0baf-5f9d-4563-8dc1-420686ee70d1",
+     "title": "Tragedy Accident between a bus \u201cfull of people\u201d and a garbage truck leaves a fatal outcome in Punta Cana",
+     "on_topic": false
+    },
+    {
+     "article_id": "c1d3b80c-0ef4-4e8f-a868-7990453c0806",
+     "title": "Several injured as German tourist bus overturns in Norway",
+     "on_topic": false
+    },
+    {
+     "article_id": "c8cada8d-54cd-4991-8d40-03eaad35f2e2",
+     "title": "Several injured as German tourist bus overturns in Norway",
+     "on_topic": false
+    },
+    {
+     "article_id": "f4dc7ef8-c378-460e-8184-d5a905911c4a",
+     "title": "40 people injured as bus collides with truck, falls off bridge in Andhra Pradesh",
+     "on_topic": true
+    }
+   ]
+  },
+  {
+   "rank": 21,
+   "cluster_id": "6e2c33ce-69dc-4dad-918a-03cf541a03f9",
+   "title": "Abdul El-Sayed Wins Michigan Senate Primary, Faces GOP Attacks",
+   "source_count": 33,
+   "n_articles": 50,
+   "on_topic_count": 33,
+   "precision": 0.66,
+   "members": [
+    {
+     "article_id": "000b81ba-62c5-4a66-84d1-d88bd1012d03",
+     "title": "Centrist Democrats dismiss Abdul El-Sayed as a freak radical. Do they want to win in 2028 or not? | Nesrine Malik",
+     "on_topic": true
+    },
+    {
+     "article_id": "001364d4-4346-423c-bd55-777c4a1ed6d6",
+     "title": "Abdul El-Sayed Brags That He and His Wife \u2018Actually Like Each Other \u2014 Unlike Trump and Melania'",
+     "on_topic": true
+    },
+    {
+     "article_id": "00c65766-b9c8-4d45-9fa2-fb35934300d8",
+     "title": "DSA Dial-Up: Dem Michigan Senate Hopeful Abdul El-Sayed Says Obama Called, May Campaign for Him",
+     "on_topic": true
+    },
+    {
+     "article_id": "04fa58e4-3cde-4ba3-9d3f-e9a2fd004e05",
+     "title": "Peter Laffin says it\u2019s not \u2018Islamophobic\u2019 to question el Sayed\u2019s ties to Hasan Piker",
+     "on_topic": true
+    },
+    {
+     "article_id": "06335e56-ab5a-436a-8874-bd74a58a57fd",
+     "title": "'It\u2019s Not Radical to Believe You Should Have Healthcare': El-Sayed Hits Back at Trump, GOP Attacks",
+     "on_topic": true
+    },
+    {
+     "article_id": "12353c39-8cc0-41a5-be7f-03e76635e864",
+     "title": "El-Sayed spoke with Obama as Michigan Democrats look to unite after a bitter Senate primary",
+     "on_topic": true
+    },
+    {
+     "article_id": "16524b91-7fd8-4a6c-823b-1ab0b6e86323",
+     "title": "Zack Polanski and Andrew Neil clash after 'word salad' wealth tax interview",
+     "on_topic": false
+    },
+    {
+     "article_id": "1790f4d4-3d8f-46d7-b2a0-60e723e3079e",
+     "title": "Property-Tax Wars",
+     "on_topic": false
+    },
+    {
+     "article_id": "1d328708-263a-42df-bfe4-edf7df32a52b",
+     "title": "\u2018America deserved 9/11?\u2019: Meet the Press host pushes El-Sayed on Hasan Piker",
+     "on_topic": true
+    },
+    {
+     "article_id": "209abd10-eebb-4b0a-84eb-4b26fdca0521",
+     "title": "Abdul el Sayed supported strict COVID-19 lockdowns and school closures",
+     "on_topic": true
+    },
+    {
+     "article_id": "234e34aa-5a1a-42ce-a449-a3fdb6704734",
+     "title": "Right on Cue: Spotlight Chaser Gavin Newsom All in on Toxic Abdul El-Sayed, Because of Course He Is",
+     "on_topic": true
+    },
+    {
+     "article_id": "2ce96940-d34c-4ee0-9b7b-858dec3d1802",
+     "title": "Pardoned Jan. 6 rioter arrested on felony gun charges in Upstate NY",
+     "on_topic": false
+    },
+    {
+     "article_id": "33b66ba1-d59c-4738-a94d-fe0fa4ef9f56",
+     "title": "How One Wisconsin Paper Is Normalizing Gun Ownership",
+     "on_topic": false
+    },
+    {
+     "article_id": "35dc6ff0-360b-4eb9-847a-ef0dea205e06",
+     "title": "Maine Second District Race Heating Up As Both Candidates Claim to Back Gun Rights",
+     "on_topic": false
+    },
+    {
+     "article_id": "38c19ab3-1139-4167-9202-366f463b7708",
+     "title": "Just one OECD country taxes companies more than Australia",
+     "on_topic": false
+    },
+    {
+     "article_id": "396f4ece-503b-4e36-b844-5347aefc92c9",
+     "title": "Abdul El-Sayed says he hopes to campaign with Obama after \u2018warm and inspiring\u2019 call",
+     "on_topic": true
+    },
+    {
+     "article_id": "39933301-548c-4089-b371-e72e389fc10e",
+     "title": "No 'good Muslims' in America",
+     "on_topic": true
+    },
+    {
+     "article_id": "445c7797-fc61-4d56-8631-c3899770108c",
+     "title": "'This Ain't IT, Hamas': Abdul El-Sayed's Mackinac Hate BOMBED, but His Backpedal BOMBS Even MORE",
+     "on_topic": true
+    },
+    {
+     "article_id": "44f50f33-8f9f-4dd0-93bb-1b6bb1d6b97d",
+     "title": "Spencer Pratt: Communists aren\u2019t just \u2018evil\u2019 they\u2019re \u2019embarrassingly cringe\u2019",
+     "on_topic": false
+    },
+    {
+     "article_id": "482aca6d-7845-489b-882e-4a5dc3931944",
+     "title": "'He's full of s**t': Trump RIPS INTO Abdul El-Sayed after his narrow victory in Democratic primary - Blaze Media",
+     "on_topic": true
+    },
+    {
+     "article_id": "567d40af-7af7-4b26-972d-acce64681fa9",
+     "title": "CNN\u2019s Manu Raju Confronts Tim Scott on Controversial El-Sayed Attack Ads: Are You Trying to Say, \u2018Hint, Hint\u2026He\u2019s Muslim?\u2019",
+     "on_topic": true
+    },
+    {
+     "article_id": "5d24f69f-86a6-46c9-937b-78eea5aaf71b",
+     "title": "Israel marks 25 years since Sbarro pizzeria bombing",
+     "on_topic": false
+    },
+    {
+     "article_id": "5fb308a6-d943-4eae-bdb5-3cd964019f61",
+     "title": "Father Of Woman Killed By Illegal Alien Warns Badger State Voters: Don\u2019t Let Wisconsin Become Illinois",
+     "on_topic": false
+    },
+    {
+     "article_id": "61b6f0ee-0b2b-4af4-9bf9-24a66fee1658",
+     "title": "El-Sayed Calls Trump an 'Overlord' in Tirade About President's 'Rocky Road' Marriage",
+     "on_topic": true
+    },
+    {
+     "article_id": "65fdb1e1-5200-4136-89ff-fdc343e261fc",
+     "title": "El-Sayed defends opposing Israel aid as he woos Jewish voters",
+     "on_topic": true
+    },
+    {
+     "article_id": "74267a00-4d3a-4dfd-a153-0d22e0321adf",
+     "title": "El-Sayed Got a Thrill Up His Leg Talking to Obama, 'Pines For' That Kind of 'Class and Elegance'",
+     "on_topic": true
+    },
+    {
+     "article_id": "75b26379-8c2a-49cd-ace4-f50a598dd2cd",
+     "title": "El-Sayed reveals he spoke with Obama after Michigan Senate primary win",
+     "on_topic": true
+    },
+    {
+     "article_id": "85379d78-8fc3-4436-856a-a4774aa55beb",
+     "title": "What Happens When an Election Denier Runs a Crucial Swing State?",
+     "on_topic": false
+    },
+    {
+     "article_id": "85b2cb98-1ebb-49a3-8093-3f37831d31a2",
+     "title": "El-Sayed blasts Trump over \u2018Two VERY DIFFERENT America\u2019s\u2019 post",
+     "on_topic": true
+    },
+    {
+     "article_id": "88954043-35cd-4831-87d8-cc8968d3942d",
+     "title": "El-Sayed Shrugs Off Hasan Piker\u2019s 9/11 Comments",
+     "on_topic": true
+    },
+    {
+     "article_id": "8f3a595d-a9ff-46cb-86b2-7f24415d05ac",
+     "title": "Israel elections for dummies: How to read the polls",
+     "on_topic": false
+    },
+    {
+     "article_id": "9367b5cb-8238-4fd6-8c00-75c420a38e7c",
+     "title": "El-Sayed: I Care About Hasan Piker's Audience Not His Comments",
+     "on_topic": true
+    },
+    {
+     "article_id": "96c06629-1640-4a9a-9f34-d91befe37a57",
+     "title": "Centrist Dems Dismiss Abdul El-Sayed at Their Peril",
+     "on_topic": true
+    },
+    {
+     "article_id": "9783d3aa-4812-419a-b484-ed0c35053d02",
+     "title": "MAGA Actor\u2019s Attack on Dem Star Immediately Backfires",
+     "on_topic": true
+    },
+    {
+     "article_id": "99eb1c08-f6eb-4990-a3a7-e03ecfc866ea",
+     "title": "The \u2018Common Good\u2019 Right Wants To Raise Taxes On The Common Man",
+     "on_topic": false
+    },
+    {
+     "article_id": "9ef05547-9d19-4b67-af66-ac52948d0f48",
+     "title": "Calls to tax billionaires are growing. Is there a better way to tax the\u00a0rich?",
+     "on_topic": false
+    },
+    {
+     "article_id": "a0a2ffd5-6f5d-4902-868f-d1534e06b321",
+     "title": "Abdul El-Sayed hits back after Trump compares himself and Melania to Michigan Democrat and his wife",
+     "on_topic": true
+    },
+    {
+     "article_id": "a2bb8b68-ee6c-45a9-9db5-88fc191eb7f1",
+     "title": "Notorious Wisconsin Election Official At Center Of Zuckbucks Scandal Resigns",
+     "on_topic": false
+    },
+    {
+     "article_id": "b34eeea0-5fa1-4a70-a00a-5e366ba7afe6",
+     "title": "The green energy group disrupting GOP primaries this cycle",
+     "on_topic": false
+    },
+    {
+     "article_id": "b503e41c-8c1c-414b-ab5f-8fc052bb46ad",
+     "title": "Vulnerable battleground Dem embraces 'no tax on tips' after voting against Trump bill",
+     "on_topic": false
+    },
+    {
+     "article_id": "bdf5cc8c-ee70-4b90-b768-2251f9e2fb4e",
+     "title": "'America Deserved 9/11': El-Sayed Won't Cut Off the Streamer Who Said It",
+     "on_topic": true
+    },
+    {
+     "article_id": "c585ee17-579f-4938-9461-1d4d5fb9c3d2",
+     "title": "Shabbat protests outside Jerusalem cafe show no sign of abating",
+     "on_topic": false
+    },
+    {
+     "article_id": "c8285503-6336-451f-b59e-b4fec4c02703",
+     "title": "Tim Scott says El-Sayed \u2018making it easier\u2019 for GOP",
+     "on_topic": true
+    },
+    {
+     "article_id": "cc752987-8460-4f6c-bd04-4e2f5ef65e63",
+     "title": "Trump ally pressed on Obama and El-Sayed trend: \u2018Trying to say, hint hint, he\u2019s Muslim?\u2019",
+     "on_topic": true
+    },
+    {
+     "article_id": "cdceb9bc-c6bf-434f-895b-06d6f43b557b",
+     "title": "Senate hopeful slaps back at 'overlord' Trump and his 'rocky road' marriage",
+     "on_topic": true
+    },
+    {
+     "article_id": "e4bf254f-dea4-4b1b-ab5e-c98956ce2d56",
+     "title": "Whoops: Abdul El-Sayed Slips Up, Makes Revealing Admission About Taxes, Healthcare",
+     "on_topic": true
+    },
+    {
+     "article_id": "e4f36469-8a44-49f2-8741-6d7e38f82b83",
+     "title": "Clean Up in Aisle 4! Abdul El-Sayed Makes a Mess on \u2018Meet the Press\u2019",
+     "on_topic": true
+    },
+    {
+     "article_id": "e7b2cb88-b953-4015-83f3-1d7b0bc42550",
+     "title": "Hot Takes: El-Sayed Gets Shredded As He Makes His Mackinac Blunder Even Worse",
+     "on_topic": true
+    },
+    {
+     "article_id": "f2c183f6-e098-4e62-a02d-dd847e71171e",
+     "title": "Feud Escalation: Fetterman Slams El-Sayed\u2019s 'Weird Little Man Syndrome Energy'",
+     "on_topic": true
+    },
+    {
+     "article_id": "f94c5c2e-8563-4425-bba8-17d7c3e220c5",
+     "title": "El-Sayed spoke with Obama as Michigan Democrats look to unite",
+     "on_topic": true
+    }
+   ]
+  },
+  {
+   "rank": 22,
+   "cluster_id": "491e9062-120a-4afb-a91b-16aded257c42",
+   "title": "Eighteen Injured in Assam-Arunachal Border Firing",
+   "source_count": 5,
+   "n_articles": 8,
+   "on_topic_count": 2,
+   "precision": 0.25,
+   "members": [
+    {
+     "article_id": "0e2e502c-b83c-46e3-9f2c-ff5177b72e5d",
+     "title": "18 Injured In Firing Along Assam-Arunachal Border Over Encroachment Dispute, Security Beefed Up",
+     "on_topic": true
+    },
+    {
+     "article_id": "1b76c04b-e98d-429f-a48d-c7417eeb99f4",
+     "title": "18 injured, 4 critical after unidentified men open fire along Assam-Arunachal border",
+     "on_topic": true
+    },
+    {
+     "article_id": "2ed5e04b-42aa-48be-8d61-a547f8bb2f6b",
+     "title": "Assam floods: Death toll reaches 99, over 1.47 lakh people remain affected - NE NOW",
+     "on_topic": false
+    },
+    {
+     "article_id": "302d15fa-c507-4e2d-8206-4c8865bf9a7f",
+     "title": "Assam: Minister Kaushik Rai reviews civic projects, PDS, paddy procurement in Dibrugarh - NE NOW",
+     "on_topic": false
+    },
+    {
+     "article_id": "66267a98-67de-42c0-a201-ee961eca7812",
+     "title": "Comedian Samay Raina donates  \u20b910 lakh for Assam flood relief, CM Himanta Biswa Sarma thanks him",
+     "on_topic": false
+    },
+    {
+     "article_id": "6652d38b-4e93-42cb-bce3-4c6c4bdb5eb0",
+     "title": "Manipur: UNLF-P cadres arrest in Assam sparks protests in Jiribam - NE NOW",
+     "on_topic": false
+    },
+    {
+     "article_id": "9d8ec53e-4d6e-4087-8be6-5486caec07e6",
+     "title": "Death toll from floods in India\u2019s Assam state rises to 100",
+     "on_topic": false
+    },
+    {
+     "article_id": "9f70bf6c-b821-41b2-bad7-7c61eadf94b3",
+     "title": "Kartik Aaryan, Anupam Kher, Randeep Hooda: Celebrities who supported Assam flood victims",
+     "on_topic": false
+    }
+   ]
+  },
+  {
+   "rank": 23,
+   "cluster_id": "c5bae2f5-6f2e-4029-9a35-89137b73b100",
+   "title": "Nagasaki Marks 81st Atomic Bomb Anniversary With Nuclear War Warnings",
+   "source_count": 14,
+   "n_articles": 25,
+   "on_topic_count": 20,
+   "precision": 0.8,
+   "members": [
+    {
+     "article_id": "024a3e91-b320-4e49-813d-2028bdb2193c",
+     "title": "Japan eyes using cutting-edge AI under preemptive cyber defense policy",
+     "on_topic": false
+    },
+    {
+     "article_id": "124737ee-54bd-42d8-89a8-eaa42474c8ae",
+     "title": "Nagasaki marks 81st atomic bomb anniversary as mayor says nuclear deterrence only increases risk",
+     "on_topic": true
+    },
+    {
+     "article_id": "224e0d1e-bf4b-4510-b140-ffbcc1caf498",
+     "title": "Takaichi doubles down on ambiguity over nonnuclear principles at Nagasaki ceremony",
+     "on_topic": true
+    },
+    {
+     "article_id": "2414df93-1c84-4b95-b46f-306dc761b3a9",
+     "title": "Nagasaki Marks 81 Years Since Atomic Bombing Amid Nuclear Deterrence Debate - Tempo.co English",
+     "on_topic": true
+    },
+    {
+     "article_id": "27fb68a3-6a18-4692-b409-352ed29bf20b",
+     "title": "A-bomb victims' group calls for world free of nukes on its 70th anniversary",
+     "on_topic": true
+    },
+    {
+     "article_id": "2ae40709-67e6-4d7b-8ce7-cc3b26cce851",
+     "title": "UAE thwarts cyber attacks on aviation, energy and education sectors",
+     "on_topic": false
+    },
+    {
+     "article_id": "2d4d913a-9339-4f12-92ad-8321aea13fd8",
+     "title": "Nagasaki mayor says \u2018humanity and nuclear weapons cannot coexist\u2019",
+     "on_topic": true
+    },
+    {
+     "article_id": "3327bceb-6695-4ba2-bc7d-646cdd0c309c",
+     "title": "Landslide in central Japan leaves nearly 400 people stranded - \u6bce\u65e5\u65b0\u805e",
+     "on_topic": false
+    },
+    {
+     "article_id": "3fac235d-be91-4ed2-9799-bce758b7878b",
+     "title": "Football: Nagasaki win opener on 81st anniversary of atomic bombing",
+     "on_topic": false
+    },
+    {
+     "article_id": "490d74ae-b24f-4af9-87ef-3f778a0cb99d",
+     "title": "Nagasaki marks 81st anniversary of US atomic bombing amid rising geopolitical tensions",
+     "on_topic": true
+    },
+    {
+     "article_id": "565873f8-01b9-4862-b73b-41ca12714bc4",
+     "title": "Nihon Hidankyo renews call for world without nuclear weapons",
+     "on_topic": true
+    },
+    {
+     "article_id": "5c5752f9-775b-4900-b584-6f8e27a7580d",
+     "title": "Nagasaki warns of risk of nuclear war on 81st A-bomb anniversary",
+     "on_topic": true
+    },
+    {
+     "article_id": "5e8fb080-a2a7-46b1-9628-d58fd6c70518",
+     "title": "Takaichi avoids clear commitment to non-nuclear principles again at Nagasaki memorial - Global Times",
+     "on_topic": true
+    },
+    {
+     "article_id": "5fddf56b-7846-489c-8df0-86e440dee081",
+     "title": "Japan marks 81st anniversary of the atomic bombing of Nagasaki",
+     "on_topic": true
+    },
+    {
+     "article_id": "61d8a2d4-d434-41eb-8d00-8023fa16ab8f",
+     "title": "Landslide in central Japan left nearly 400 people temporarily stranded",
+     "on_topic": false
+    },
+    {
+     "article_id": "66f6c7eb-650f-4b55-8cfb-6b4272f1c0da",
+     "title": "Japan marks 81 years since atomic bombing of Nagasaki - nhk.or.jp",
+     "on_topic": true
+    },
+    {
+     "article_id": "7246bd95-5d9d-45e7-af41-8d15e1a2ff1d",
+     "title": "Prime Minister Takaichi urged to recognize more hibakusha",
+     "on_topic": true
+    },
+    {
+     "article_id": "8ca193d9-a39f-4f5c-a808-7ac327db0001",
+     "title": "Full text of Pledge for Peace from A-bomb survivor on 81st anniv. of Nagasaki bombing - \u6bce\u65e5\u65b0\u805e",
+     "on_topic": true
+    },
+    {
+     "article_id": "ab6e258a-99f3-44e6-b3dd-ae72ed49dbad",
+     "title": "Pearl Harbor attack witness, atomic bomb survivor reunite in Nagasaki",
+     "on_topic": true
+    },
+    {
+     "article_id": "c7c5f9be-5462-45fa-8581-d009fa0cb2db",
+     "title": "Nagasaki 81st atomic bomb anniversary unnerves proponents of pacifism",
+     "on_topic": true
+    },
+    {
+     "article_id": "d18bd305-55d0-475d-b68a-34b622c3d232",
+     "title": "Japan marks Nagasaki bombing anniversary as PM Takaichi rattles pacifists with nuclear debate",
+     "on_topic": true
+    },
+    {
+     "article_id": "d1ccd0dc-92c7-4a62-86e8-08fcde92fd3d",
+     "title": "Nagasaki commemorates 81 years since WWII atomic bombing",
+     "on_topic": true
+    },
+    {
+     "article_id": "edbcfd44-95f3-4788-9e7b-314a4be08180",
+     "title": "Today in History: August 9, U.S. bombs Nagasaki",
+     "on_topic": true
+    },
+    {
+     "article_id": "f27ce60b-3cad-4551-990a-046a239da5bf",
+     "title": "Nagasaki hibakusha urges pursuit of peace, not war preparations",
+     "on_topic": true
+    },
+    {
+     "article_id": "fb232c84-57a8-474a-8fbb-933821780cba",
+     "title": "Full text of Nagasaki Peace Declaration on 81st anniversary of atomic bombing - \u6bce\u65e5\u65b0\u805e",
+     "on_topic": true
+    }
+   ]
+  },
+  {
+   "rank": 24,
+   "cluster_id": "a6209db9-53df-4235-a433-0465a6e91563",
+   "title": "Bengaluru Hotels Face Raids Over Rotten Food, Fungus",
+   "source_count": 5,
+   "n_articles": 6,
+   "on_topic_count": 4,
+   "precision": 0.667,
+   "members": [
+    {
+     "article_id": "26010e56-9365-4dc6-821d-60c5f85419b2",
+     "title": "IAS officer Tukaram Mundhe gets hero's welcome as audience gives FDA chief a standing ovation | WATCH",
+     "on_topic": false
+    },
+    {
+     "article_id": "48c2adb4-cdc9-42f9-9115-af29050809aa",
+     "title": "Viral: Standing ovation for Tukaram Mundhe, Maharashtra's feared food cop",
+     "on_topic": false
+    },
+    {
+     "article_id": "5cf11ee1-a2a4-4f8f-9967-f0f0de5ecf9e",
+     "title": "After 5-star hotels, food safety raid at Bengaluru pub, 45-kg rotten meat found",
+     "on_topic": true
+    },
+    {
+     "article_id": "7674615e-a894-4b5d-9e0a-fa2f856c6008",
+     "title": "Bengaluru hotels raided: 132 kg rotten food, fungus-infected meat, expired curd seized in Karnataka's food safety drive",
+     "on_topic": true
+    },
+    {
+     "article_id": "e140525e-2c47-4038-bca3-6afe30991e4d",
+     "title": "Meat with fungus, rotten veggies found at 5 Bengaluru hotels during Karnataka FDA checks | See list",
+     "on_topic": true
+    },
+    {
+     "article_id": "f168d04d-804a-4b2c-8764-81bebfdb07dd",
+     "title": "Bengaluru 5 hotels raided, Mumbai eateries face action",
+     "on_topic": true
+    }
+   ]
+  },
+  {
+   "rank": 25,
+   "cluster_id": "9e9057ce-8e25-4fc5-8570-95ed68437519",
+   "title": "Jetstar and Qatar Airways Planes In Near-Miss at Sydney Airport",
+   "source_count": 21,
+   "n_articles": 28,
+   "on_topic_count": 15,
+   "precision": 0.536,
+   "members": [
+    {
+     "article_id": "08d01321-6d89-405f-911e-12d9a5b1bdbd",
+     "title": "Sydney airport near-collision: Two planes almost collided on tarmac, flights delayed at Australia's busiest airport",
+     "on_topic": true
+    },
+    {
+     "article_id": "0ab8d1cd-991a-42e5-8193-f6f26aff1331",
+     "title": "Pauline Hanson vs anti-capitalist students",
+     "on_topic": false
+    },
+    {
+     "article_id": "0af8ad5e-f15f-4c78-b04b-6aca5267ea8a",
+     "title": "NRL clubs split on playing Alameddine brothers over gang war concerns",
+     "on_topic": false
+    },
+    {
+     "article_id": "1e03c187-1201-4069-8336-26b20cf76623",
+     "title": "Australia: Jetstar, Qatar Airways planes almost collide on Sydney Airport tarmac",
+     "on_topic": true
+    },
+    {
+     "article_id": "21c11849-9baa-453a-b673-0386d568d404",
+     "title": "Australian police close case after \u2018body\u2019 found in suitcase turns out to be lifelike doll",
+     "on_topic": false
+    },
+    {
+     "article_id": "2474ced3-a95c-4abe-b932-980dbf8d4e71",
+     "title": "Raiders bemoan 'f***ing brain explosion' as their season ends",
+     "on_topic": false
+    },
+    {
+     "article_id": "26d6ce3a-3972-4287-a786-48d612f3d95b",
+     "title": "'Near collision' at Sydney Airport triggers investigation",
+     "on_topic": true
+    },
+    {
+     "article_id": "28a135ff-7dc8-4cad-a47d-0f85e3bc6a47",
+     "title": "'Body in suitcase' found in Australia turns out to be lifelike doll",
+     "on_topic": false
+    },
+    {
+     "article_id": "2b9770ba-7d25-40bd-9b36-9dd2a9a8128a",
+     "title": "Why did it take the ABC 25 days to say \u2018sorry\u2019 for torture fantasy?",
+     "on_topic": false
+    },
+    {
+     "article_id": "40a2e8b3-7f6e-4708-b9aa-d521f8614950",
+     "title": "\u2018Not enough air traffic controllers\u2019: safety concerns at Sydney airport after Jetstar and Qatar planes involved in near-miss",
+     "on_topic": true
+    },
+    {
+     "article_id": "426827cd-b5be-4d21-ba8e-81d7c132d124",
+     "title": "Jetstar and Qatar Airways planes in near-miss collision at Sydney airport",
+     "on_topic": true
+    },
+    {
+     "article_id": "44c6a557-12f8-4a17-9b94-ed1b4fec4b73",
+     "title": "\u2018Body\u2019 found in suitcase near Goulburn was actually lifelike doll with \u2018bruises and grazes\u2019",
+     "on_topic": false
+    },
+    {
+     "article_id": "461a30e3-ee4d-42ac-b529-0b5f1d209e7e",
+     "title": "Australian police get murder victim report, discover sex doll instead",
+     "on_topic": false
+    },
+    {
+     "article_id": "4abf4853-8359-4808-ba8e-ace9c230c1fa",
+     "title": "Australia probes near-miss collision of two planes on tarmac at Sydney airport - Reuters",
+     "on_topic": true
+    },
+    {
+     "article_id": "4c1374f2-1683-46f8-89bf-10a9faeb6ad3",
+     "title": "Jetstar, Qatar Airways planes narrowly avoid collision at Sydney airport, 1 crew member injured",
+     "on_topic": true
+    },
+    {
+     "article_id": "5797b99c-9598-45e7-a22a-bc3e758b692f",
+     "title": "Yeo learns fate on pec in seismic moment for Panthers",
+     "on_topic": false
+    },
+    {
+     "article_id": "59378236-2dc4-428b-b490-cfdf1ea3accf",
+     "title": "Two workers temporarily stood down after near-miss collision at Sydney airport",
+     "on_topic": true
+    },
+    {
+     "article_id": "59e32eb4-5d2f-4d13-a8a6-c06578065f92",
+     "title": "'Near collision' at Sydney Airport triggers investigation",
+     "on_topic": true
+    },
+    {
+     "article_id": "5cb3bea6-f147-4883-bf7e-eb81cd90ad07",
+     "title": "Jetstar plane narrowly avoids crashing into Qatar Airways flight at Sydney airport",
+     "on_topic": true
+    },
+    {
+     "article_id": "5fa796be-21fc-428c-b1d3-7af9552991f0",
+     "title": "Chiefs sign premiership winger To'o away from Panthers",
+     "on_topic": false
+    },
+    {
+     "article_id": "75fe03fa-6b78-405e-95b0-1ee909cb7be7",
+     "title": "'Near collision' at Sydney Airport triggers investigation - Gulf News",
+     "on_topic": true
+    },
+    {
+     "article_id": "ae8b8d88-b281-491c-853c-ef9e5412287e",
+     "title": "Jetstar crew member injured in Sydney Airport taxiway near-miss - The Australian",
+     "on_topic": true
+    },
+    {
+     "article_id": "ce59d16a-d8ce-4d93-a0e1-8990050da7c3",
+     "title": "NRL match review committee inflicts more pain on Panthers as Yeo sweats on scan results",
+     "on_topic": false
+    },
+    {
+     "article_id": "d5a23b67-ac9f-4a64-9af7-bd51d2d36867",
+     "title": "Mississippi Lottery Mississippi Match 5, Cash 3 results for Aug. 8, 2026 - The Clarion-Ledger",
+     "on_topic": false
+    },
+    {
+     "article_id": "d72c5f33-6feb-4aad-96c6-75715c54796c",
+     "title": "Munster free to play after dangerous contact charge downgraded",
+     "on_topic": false
+    },
+    {
+     "article_id": "e7207470-579c-4093-ac34-6fe917c1accc",
+     "title": "'Near collision' at Sydney Airport triggers investigation - Oman Observer",
+     "on_topic": true
+    },
+    {
+     "article_id": "f2290357-2443-4848-92d7-181064410fb5",
+     "title": "Australia Probes Near-miss Collision of 2 Planes on Tarmac at Sydney Airport - ASHARQ AL-AWSAT English",
+     "on_topic": true
+    },
+    {
+     "article_id": "ff42745e-76e4-4e1d-9883-ce927eb4cb41",
+     "title": "Jetstar Plane Narrowly Avoids Collision at Sydney Airport - Bloomberg.com",
+     "on_topic": true
+    }
+   ]
+  },
+  {
+   "rank": 26,
+   "cluster_id": "a19c7e2e-d317-444c-ad5f-63e530e1e1f5",
+   "title": "Kumamoto Evacuees Prepare for Hotel Moves Amid Ongoing Quake Recovery",
+   "source_count": 8,
+   "n_articles": 15,
+   "on_topic_count": 6,
+   "precision": 0.4,
+   "members": [
+    {
+     "article_id": "0e7ea6ee-12cb-4a2a-94a6-3f7da275f2b8",
+     "title": "12-year-old Kumamoto violinist performs at New York\u2019s Carnegie Hall",
+     "on_topic": false
+    },
+    {
+     "article_id": "2dd481ed-d77d-43f5-8934-ee65914cb5c8",
+     "title": "U.S. forces airlift drinking water to quake-hit Kumamoto",
+     "on_topic": true
+    },
+    {
+     "article_id": "2ff95d3f-8a49-4b1a-87c2-2553e235e0a0",
+     "title": "Mobile toilets set up at evacuation shelters in quake-hit city in Kumamoto Pref. - nhk.or.jp",
+     "on_topic": true
+    },
+    {
+     "article_id": "3838b7dc-d1ae-41c1-853f-b4e78515a8ce",
+     "title": "Update: Ridge Fire in Los Angeles County remains at 54% containment by Saturday evening - sacbee.com",
+     "on_topic": false
+    },
+    {
+     "article_id": "3b6ad2e4-c304-4345-9863-27611bba4126",
+     "title": "Basketball: Kawamura inks training camp deal to join Hachimura at Clippers",
+     "on_topic": false
+    },
+    {
+     "article_id": "417f9f5b-5e76-4bcc-8184-ef3d229a65ae",
+     "title": "FEATURE: Ainu musician brings tradition and global sounds to New York",
+     "on_topic": false
+    },
+    {
+     "article_id": "443626f4-6a6f-4ea6-b22c-ead5a9b6d06c",
+     "title": "Post-quake crime and scams compound misery for Kumamoto residents",
+     "on_topic": true
+    },
+    {
+     "article_id": "5d5c4ae5-5518-41e3-8a98-b7ee393b4e51",
+     "title": "World's biggest chipmaker TSMC's sales surge 45% amid buoyant AI demand",
+     "on_topic": false
+    },
+    {
+     "article_id": "88f8a16a-3954-4361-8cf7-86c1541b54c8",
+     "title": "Over 1,200 disaster relief volunteers enter quake-hit Kumamoto",
+     "on_topic": true
+    },
+    {
+     "article_id": "8f5805aa-07e8-4499-8fb8-3cdc4ac22176",
+     "title": "Sony, TSMC to invest $6.3bn in advanced image sensor plant in Kumamoto",
+     "on_topic": false
+    },
+    {
+     "article_id": "96784b25-97e9-4a43-bca4-212e2cbd179c",
+     "title": "What Big Bug \u201cAttacked\u201d An ESPN Reporter At Rams Camp?",
+     "on_topic": false
+    },
+    {
+     "article_id": "a94b67ab-3c84-44cd-811b-da70a657fc4d",
+     "title": "Tech giants TSMC and Sony to invest billions in advanced chip sensor plant",
+     "on_topic": false
+    },
+    {
+     "article_id": "acf11eae-3f61-4f49-b7a9-4ac03ce361f5",
+     "title": "Children with disabilities offered places to feel at ease in quake-hit Kumamoto",
+     "on_topic": true
+    },
+    {
+     "article_id": "e2bc1b71-4c90-4946-97b4-899bbbf249af",
+     "title": "Cancellation of 3-city simultaneous fireworks in Japan causes confusion",
+     "on_topic": false
+    },
+    {
+     "article_id": "ecf5c3fc-d48a-49fa-bb61-c1f88b02e8c4",
+     "title": "Over 6,000 still living in evacuation centers two weeks after Kumamoto quake",
+     "on_topic": true
+    }
+   ]
+  },
+  {
+   "rank": 27,
+   "cluster_id": "2f8fe39a-c00f-4eed-9d2a-66572160db55",
+   "title": "Kazakhstan Hosts Comic Con Astana, Releases Tiger Into Wild",
+   "source_count": 4,
+   "n_articles": 9,
+   "on_topic_count": 2,
+   "precision": 0.222,
+   "members": [
+    {
+     "article_id": "1ca06426-efbf-44b5-995d-bd02aa748693",
+     "title": "Comic Con Astana brings global stars and thousands of cosplay fans to Kazakhstan",
+     "on_topic": true
+    },
+    {
+     "article_id": "1edc36a1-6d8f-4c60-bdac-a06f154dd637",
+     "title": "Comic Con Astana 2026: How Kazakhstan Turns Pop Culture into Creative Industries",
+     "on_topic": true
+    },
+    {
+     "article_id": "20dd3b8e-4883-48f6-8de1-0f636fd3cb97",
+     "title": "How PSG Academy\u2019s Arrival Reflects Kazakhstan\u2019s Rise as Football Talent Hub",
+     "on_topic": false
+    },
+    {
+     "article_id": "2722b186-9b95-417d-b6c1-740a9a1054f3",
+     "title": "Kazakhstan Emerges as Firebird AI Market With Data Center Valley Project in Ekibastuz",
+     "on_topic": false
+    },
+    {
+     "article_id": "3c5091f0-7a18-4b32-9d59-5c93d8db03dc",
+     "title": "AIFC Governor Renat Bekturov on How AIFC is Preparing for Next Era of Finance",
+     "on_topic": false
+    },
+    {
+     "article_id": "a41651fe-d3f9-4f40-83f0-07ab74bf5d85",
+     "title": "Kazakhstan Household Deposits Near $54 Billion as Savings Rise 20.9%",
+     "on_topic": false
+    },
+    {
+     "article_id": "b2d30175-68da-4694-847a-c33c0ce8cd00",
+     "title": "Bengaluru woman rants about sky-rocketing rents, hefty deposits \u2014 \u2018Not everybody works in IT, not earning in lakhs\u2019",
+     "on_topic": false
+    },
+    {
+     "article_id": "ced44b17-c221-447c-bbca-d3aa3e9ba057",
+     "title": "Abai\u2019s Legacy Endures as Nearly 19,000 Kazakh Citizens Carry His Name",
+     "on_topic": false
+    },
+    {
+     "article_id": "e368db80-d719-4746-9a3b-054732973584",
+     "title": "Kazakhstan releases first tiger into the wild in 70 years",
+     "on_topic": false
+    }
+   ]
+  },
+  {
+   "rank": 28,
+   "cluster_id": "eb53a94b-7af5-459f-a1a5-4fe8d0f4df37",
+   "title": "Man Arrested After Boat Capsizes Near Statue of Liberty Killing Two",
+   "source_count": 3,
+   "n_articles": 3,
+   "on_topic_count": 3,
+   "precision": 1.0,
+   "members": [
+    {
+     "article_id": "4f600849-6e35-480b-8aa0-837d4d1f4bb5",
+     "title": "Boat capsizes in New York Harbor, woman and 5-month-old baby die",
+     "on_topic": true
+    },
+    {
+     "article_id": "845a7439-fcfd-44b8-8d33-7af6076d3185",
+     "title": "Statue Of Liberty Tragedy: Woman And Baby Dead After Boat Capsizes",
+     "on_topic": true
+    },
+    {
+     "article_id": "ac039460-8f25-4014-9ac2-e3131262c52b",
+     "title": "Man arrested after boat capsizes near Statue of Liberty killing woman and infant",
+     "on_topic": true
+    }
+   ]
+  },
+  {
+   "rank": 29,
+   "cluster_id": "2cf22b11-ccef-439c-ad1e-30653f882141",
+   "title": "Lionel Messi Attends Father's Funeral in Argentina",
+   "source_count": 13,
+   "n_articles": 13,
+   "on_topic_count": 13,
+   "precision": 1.0,
+   "members": [
+    {
+     "article_id": "1e3791ef-f6df-48a4-97b0-68b152029751",
+     "title": "Inter Miami, MLS mourn death of Lionel Messi's father - usatoday.com",
+     "on_topic": true
+    },
+    {
+     "article_id": "1e7c57ac-52a0-4517-97a9-ab7ebedce8b2",
+     "title": "Messi's father laid to rest in private ceremony",
+     "on_topic": true
+    },
+    {
+     "article_id": "4f388818-2800-4397-8e55-7e2d5c89d1db",
+     "title": "Messi absent after father\u2019s death as Miami lose in Leagues Cup - Arab News",
+     "on_topic": true
+    },
+    {
+     "article_id": "5922f1e2-0b8b-4e2c-971b-6b2eb2ae00ff",
+     "title": "Messi missing after father's death as Miami lose in Leagues Cup - Gulf News",
+     "on_topic": true
+    },
+    {
+     "article_id": "6ee2bfb1-b8b9-46cb-92be-aed710178a39",
+     "title": "Lionel Messi's father, Jorge, dies at 68 - Oman Observer",
+     "on_topic": true
+    },
+    {
+     "article_id": "77077770-0c94-4333-8677-a6b744a285f7",
+     "title": "Diego Rossi\u2019s Late Winner Punishes Messi-less Inter Miami In Dramatic Leagues Cup Clash - Outlook India",
+     "on_topic": true
+    },
+    {
+     "article_id": "8321b62a-3312-4156-9add-8e2cb7575d53",
+     "title": "Messi flies in for final goodbye to father, guiding light Jorge",
+     "on_topic": true
+    },
+    {
+     "article_id": "8d051225-f849-4281-a227-6036e9817c6d",
+     "title": "Lionel Messi\u2019s Father, Jorge Dies at 68 - THISDAYLIVE",
+     "on_topic": true
+    },
+    {
+     "article_id": "9d40ddfe-ec5e-48df-84fa-7d48b0f6181f",
+     "title": "Argentina footballer Lionel Messi travels home to attend his father's funeral",
+     "on_topic": true
+    },
+    {
+     "article_id": "a5efcab1-2ef8-451b-a65a-b7c5137673d1",
+     "title": "Jorge\u00a0Messi, father of football superstar, dies at 68",
+     "on_topic": true
+    },
+    {
+     "article_id": "cb5e17f2-e377-42ed-8b78-a3524848a3b3",
+     "title": "Lionel Messi returns to Argentina after father Jorge\u2019s death",
+     "on_topic": true
+    },
+    {
+     "article_id": "cbef51ce-4be4-4066-9c0a-467c094514fb",
+     "title": "Lionel Messi bids farewell to father who guided his glittering career",
+     "on_topic": true
+    },
+    {
+     "article_id": "efb577dd-0345-4522-892d-4858220de5fe",
+     "title": "Jorge Messi, Lionel Messi\u2019s father and longtime agent, dies at 68 - Orlando Sentinel",
+     "on_topic": true
+    }
+   ]
+  },
+  {
+   "rank": 30,
+   "cluster_id": "17f9f5be-d508-4f1f-a84b-8194ae0b5f9f",
+   "title": "Hong Kong democrats granted permission to appeal jailing in national security case",
+   "source_count": 8,
+   "n_articles": 22,
+   "on_topic_count": 1,
+   "precision": 0.045,
+   "members": [
+    {
+     "article_id": "00a50ac5-46ef-440a-9ad6-e8fbbc8f7a51",
+     "title": "Hong Kong street food moved indoors",
+     "on_topic": false
+    },
+    {
+     "article_id": "24d3300d-8a6b-450c-92fb-ce119e6f596e",
+     "title": "Author Correction: Nucleolar URB1 ensures 3\u2032 ETS rRNA removal to prevent exosome surveillance",
+     "on_topic": false
+    },
+    {
+     "article_id": "27b24577-871a-4430-ad4f-7fac3e3c6048",
+     "title": "Tai Po fire interim report details circumstances of firefighter death; finds cigarette butt likely cause",
+     "on_topic": false
+    },
+    {
+     "article_id": "39fdfc75-b8b3-4454-8623-e079c3bbeb91",
+     "title": "Man jailed for accidentally killing girlfriend during abusive \u2018weight-loss\u2019 regime",
+     "on_topic": false
+    },
+    {
+     "article_id": "3b550a9f-ddea-4319-a066-d1f58476cc55",
+     "title": "8% of owners at fire-hit Hong Kong estate yet to accept buy-back as deadline nears",
+     "on_topic": false
+    },
+    {
+     "article_id": "4dba4f22-8881-4f8d-9171-67811d8efe9f",
+     "title": "Ex-Observatory chief slams \u2018decorative\u2019 heat stress warning system after record temp. only triggers lowest alert",
+     "on_topic": false
+    },
+    {
+     "article_id": "657dce72-1847-4033-8e23-1482771b51d9",
+     "title": "Author Correction: Cooperation conflicts with equality when allocating public goods",
+     "on_topic": false
+    },
+    {
+     "article_id": "71afc9b1-5294-4825-8373-6a832a2da556",
+     "title": "How are Hong Kong restaurants faring 1 month into the dog-friendly scheme?",
+     "on_topic": false
+    },
+    {
+     "article_id": "83dd9da7-1b74-4ad7-a42f-92462d9b5d13",
+     "title": "Ng Wei Aik - Malaysiakini",
+     "on_topic": false
+    },
+    {
+     "article_id": "9e92e1c5-b0e7-42d3-b249-e41278c0b7f8",
+     "title": "Barrister group asks court to overturn decision clearing democrat Margaret Ng of misconduct linked to 2019 protest conviction",
+     "on_topic": false
+    },
+    {
+     "article_id": "a0e16dbe-3729-460c-9cf9-7e5d5f0fd3cc",
+     "title": "Tropical Cyclone Dolphin: Hong Kong sees hottest day on record as Observatory HQ records 36.9\u00b0C",
+     "on_topic": false
+    },
+    {
+     "article_id": "a28877c4-1907-4db4-be66-6911e8c40a68",
+     "title": "Author Correction: Durable all-inorganic perovskite tandem photovoltaics",
+     "on_topic": false
+    },
+    {
+     "article_id": "aa39fd72-7dad-4542-9384-9e16e8dc57df",
+     "title": "Bar Association challenges decision to clear ex-lawmaker Margaret Ng of misconduct",
+     "on_topic": false
+    },
+    {
+     "article_id": "affaa58b-6de3-405a-964c-bfa880c02be5",
+     "title": "Hong Kong weather observatory posts record high temperature",
+     "on_topic": false
+    },
+    {
+     "article_id": "bd1842b5-2559-49a2-854c-d570950a5dea",
+     "title": "Moore Threads plans Hong Kong listing after posting 147% jump in first-half revenue",
+     "on_topic": false
+    },
+    {
+     "article_id": "be9586d3-cdb6-481d-8a37-ec94453ae11f",
+     "title": "Hong Kong records hottest day ever as Typhoon Dolphin fuels heatwave",
+     "on_topic": false
+    },
+    {
+     "article_id": "cb125f41-330b-4dda-b36a-eb49ce448afc",
+     "title": "\u2018Like a fridge\u2019: families cool off in snow parks, malls as helpers struggle in record heat",
+     "on_topic": false
+    },
+    {
+     "article_id": "d12bfc72-4f09-45d7-a66a-90e7debc362e",
+     "title": "AgiBot overtakes Unitree as top global humanoid robot vendor in first half amid IPO push",
+     "on_topic": false
+    },
+    {
+     "article_id": "d5eb2066-efc0-4a36-9aa3-19c9b538bc89",
+     "title": "Hong Kong\u2019s 5-year plan needs ambition to match Beijing\u2019s expectations",
+     "on_topic": false
+    },
+    {
+     "article_id": "da483087-a4f9-42bd-b4a1-4fee992f31cf",
+     "title": "Hiker collapses, dies on Hong Kong trail as city swelters in record-breaking heat",
+     "on_topic": false
+    },
+    {
+     "article_id": "dec9416f-7a8d-4af3-b6fa-3e9da13450c5",
+     "title": "Smartphone shipments fall as higher memory costs reshape market",
+     "on_topic": false
+    },
+    {
+     "article_id": "f932ff3d-55d2-40e9-95ec-668462f0c40e",
+     "title": "Hong Kong 47: 11 jailed democrats granted permission to appeal to top court",
+     "on_topic": true
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,203 @@
+# =============================================================================
+# void --news  ·  Codemagic CI/CD  ·  Capacitor mobile app builds
+# =============================================================================
+#
+# WHAT THIS DOES
+#   Two cloud workflows that turn the Next.js static export (frontend/out) into
+#   signed native apps and ship them to the stores' test tracks:
+#     - ios-capacitor     -> builds an .ipa on a cloud Mac, uploads to TestFlight
+#     - android-capacitor  -> builds a signed .aab, uploads to Play internal track
+#
+#   The CEO is on Windows and cannot run Xcode locally, so iOS MUST build in the
+#   cloud. Codemagic gives a macOS instance plus automatic App Store Connect
+#   signing, which is the lowest-friction path for a solo Windows dev.
+#   (See docs/LAUNCH-PLAN.md Workstream D and docs/MOBILE-RELEASE.md.)
+#
+# HOW TO USE
+#   1. Sign in at https://codemagic.io with the GitHub account that owns this repo.
+#   2. Add this repository as an app. Codemagic auto-detects codemagic.yaml.
+#   3. Create the integrations and variable groups referenced below (names must
+#      match EXACTLY). Full step-by-step in docs/MOBILE-RELEASE.md.
+#   4. Start a build, pick a workflow. Nothing here contains a secret value:
+#      every credential is pulled from a Codemagic integration or variable group.
+#
+# THINGS YOU MUST CREATE IN CODEMAGIC (referenced by name below)
+#   Integrations (Codemagic UI -> Teams/User settings -> Integrations):
+#     - "app_store_connect"  : App Store Connect API key (Issuer ID, Key ID, .p8).
+#     - Google Play          : a service-account JSON, exposed as the
+#                              GCLOUD_SERVICE_ACCOUNT_CREDENTIALS variable inside
+#                              the "google_play_credentials" group (see below).
+#   Variable groups (Codemagic UI -> app -> Environment variables):
+#     - "appstore_credentials"   : APP_STORE_CONNECT_* + bundle id (iOS).
+#     - "android_keystore"       : the release keystore + passwords (Android).
+#     - "google_play_credentials": GCLOUD_SERVICE_ACCOUNT_CREDENTIALS (Android).
+#
+# BUNDLE / APP ID NOTE (decision item)
+#   frontend/capacitor.config.ts and both native projects currently use
+#   appId: 'void.news'. Apple and Google both expect a reverse-DNS id such as
+#   'com.void.news'. 'void.news' is NOT reverse-DNS and App Store Connect will
+#   likely reject it. RECOMMENDATION: change appId to 'com.void.news' in
+#   capacitor.config.ts, re-run `npx cap sync`, and update the bundle id in the
+#   Xcode project + android applicationId, THEN set BUNDLE_ID / package name
+#   in the variable groups to match. Until that decision is made, the
+#   BUNDLE_ID below is left as a variable so nothing is hard-coded to the wrong id.
+# =============================================================================
+
+workflows:
+
+  # ---------------------------------------------------------------------------
+  # iOS  ·  build .ipa on a cloud Mac -> TestFlight
+  # ---------------------------------------------------------------------------
+  ios-capacitor:
+    name: iOS (Capacitor) -> TestFlight
+    instance_type: mac_mini_m2      # Codemagic macOS instance (required for Xcode)
+    max_build_duration: 60          # minutes; a Capacitor build is ~15-25 min
+
+    environment:
+      # Pull secrets from the groups you created in the Codemagic UI.
+      groups:
+        - appstore_credentials      # APP_STORE_CONNECT_* + BUNDLE_ID
+      vars:
+        # The reverse-DNS bundle id. Define BUNDLE_ID in the appstore_credentials
+        # group. Recommended value: com.void.news  (see BUNDLE / APP ID NOTE above).
+        BUNDLE_ID: $BUNDLE_ID
+        XCODE_WORKSPACE: "frontend/ios/App/App.xcworkspace"
+        XCODE_SCHEME: "App"         # Capacitor's default iOS scheme is "App"
+      node: 20                      # matches the project's Node 18+ requirement
+      xcode: latest
+      cocoapods: default            # Capacitor iOS uses CocoaPods for native deps
+
+      # Automatic code signing via the App Store Connect API key integration.
+      # `integration: app_store_connect` must match the integration name you add
+      # in the Codemagic UI. Codemagic fetches/creates the signing certificate
+      # and provisioning profile for BUNDLE_ID automatically.
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: $BUNDLE_ID
+
+    integrations:
+      app_store_connect: app_store_connect   # <- name of the ASC API key integration
+
+    scripts:
+      - name: Install web dependencies
+        script: |
+          cd frontend
+          npm ci
+
+      - name: Build Next.js static export
+        script: |
+          cd frontend
+          npm run build       # writes the static site to frontend/out (webDir)
+
+      - name: Sync web assets into the iOS project
+        script: |
+          cd frontend
+          npx cap sync ios    # copies out/ into ios/ and installs pods
+
+      - name: Set up provisioning profiles from App Store Connect
+        script: |
+          # Fetches signing files for BUNDLE_ID and installs them on the machine.
+          xcode-project use-profiles
+
+      - name: Bump build number (use Codemagic's monotonic counter)
+        script: |
+          cd frontend/ios/App
+          # $BUILD_NUMBER is Codemagic's per-app incrementing counter. TestFlight
+          # requires a unique build number for every upload; MARKETING_VERSION
+          # (the user-facing version) is still managed in Xcode / project.pbxproj.
+          agvtool new-version -all $(($BUILD_NUMBER + 1))
+
+      - name: Build and archive the .ipa
+        script: |
+          xcode-project build-ipa \
+            --workspace "$XCODE_WORKSPACE" \
+            --scheme "$XCODE_SCHEME"
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+
+    publishing:
+      # Uploads the .ipa to TestFlight. Uses the same app_store_connect
+      # integration; no App Store review is needed to reach TestFlight testers.
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
+        # Leave submit_to_app_store off until you are ready for public review
+        # (Guideline 4.2 risk; see docs/MOBILE-RELEASE.md).
+        # beta_groups:
+        #   - "Friends & Family"     # create this internal group in App Store Connect
+
+  # ---------------------------------------------------------------------------
+  # Android  ·  build signed .aab -> Google Play internal testing track
+  # ---------------------------------------------------------------------------
+  android-capacitor:
+    name: Android (Capacitor) -> Play internal
+    instance_type: linux_x2         # Linux is fine (and cheaper) for Android
+    max_build_duration: 60
+
+    environment:
+      groups:
+        - android_keystore          # keystore file + passwords + alias
+        - google_play_credentials   # GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+      vars:
+        # The Play package name (Android applicationId). Recommended com.void.news
+        # (see BUNDLE / APP ID NOTE). Define it in google_play_credentials.
+        PACKAGE_NAME: $PACKAGE_NAME
+      node: 20
+      java: 17                      # Capacitor Android needs JDK 17
+
+      # Codemagic exposes a keystore you upload once in the UI. The reference
+      # `keystore_reference: android_keystore` maps to the keystore you add under
+      # Codemagic -> app -> Code signing identities -> Android keystores.
+      android_signing:
+        - android_keystore          # <- name of the uploaded keystore reference
+
+    scripts:
+      - name: Install web dependencies
+        script: |
+          cd frontend
+          npm ci
+
+      - name: Build Next.js static export
+        script: |
+          cd frontend
+          npm run build
+
+      - name: Sync web assets into the Android project
+        script: |
+          cd frontend
+          npx cap sync android
+
+      - name: Write keystore properties for Gradle
+        script: |
+          # Our frontend/android/app/build.gradle release signingConfig reads
+          # these env vars (or a keystore.properties file) at build time. Codemagic
+          # provides CM_KEYSTORE_PATH + the passwords from the uploaded keystore
+          # reference; we re-export them under the names our build.gradle expects.
+          # If you named your keystore variables differently in the UI, adjust here.
+          echo "VOID_KEYSTORE_PATH=$CM_KEYSTORE_PATH"          >> $CM_ENV
+          echo "VOID_KEYSTORE_PASSWORD=$CM_KEYSTORE_PASSWORD"  >> $CM_ENV
+          echo "VOID_KEY_ALIAS=$CM_KEY_ALIAS"                  >> $CM_ENV
+          echo "VOID_KEY_PASSWORD=$CM_KEY_PASSWORD"            >> $CM_ENV
+
+      - name: Build signed release AAB
+        script: |
+          cd frontend/android
+          # Gradle picks up the release signingConfig (see app/build.gradle).
+          # Remember to bump versionCode/versionName in app/build.gradle before
+          # each Play upload (Play rejects a duplicate versionCode).
+          ./gradlew bundleRelease
+
+    artifacts:
+      - frontend/android/app/build/outputs/**/*.aab
+      - frontend/android/app/build/outputs/**/mapping.txt
+
+    publishing:
+      # Uploads the .aab to the Google Play internal testing track. Requires the
+      # google_play service-account JSON in GCLOUD_SERVICE_ACCOUNT_CREDENTIALS.
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal             # invite testers by email; no public review
+        submit_as_draft: false

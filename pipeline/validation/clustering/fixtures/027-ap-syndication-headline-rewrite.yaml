@@ -1,0 +1,122 @@
+id: ap-syndication-headline-rewrite-2026-05-15
+name: "AP wire copy with publisher-rewritten headlines (must merge — wire syndication)"
+failure_date: "2026-05-15"
+failure_kind: wire-syndication-fragmentation
+articles:
+  # All five carry the same AP wire copy on the Ebola outbreak. Headlines
+  # have been rewritten by each publisher's desk. The lead paragraph is
+  # near-identical across copies (same AP byline pattern: "KINSHASA, Congo
+  # (AP) —"). This is the canonical AP-syndication-with-headline-rewrite
+  # failure mode the bias auditor flagged on 2026-05-15.
+  - id: ap-courthouse
+    title: "A new Ebola outbreak is confirmed in a remote Congo province, with 65 deaths recorded"
+    summary: "The latest outbreak comes around five months after Congo's last Ebola outbreak was declared over after 43 deaths."
+    full_text: >
+      KINSHASA, Congo (AP) — Africa's top public health body on Friday
+      confirmed a new Ebola outbreak in Congo's remote Ituri province, with
+      246 suspected cases and 65 deaths recorded so far. Uganda later
+      reported one death in an Ebola case it said was imported from
+      neighboring Congo. The deaths include three health workers. The
+      Africa Centres for Disease Control and Prevention said samples have
+      tested positive for the Zaire strain. Health Minister Roger Kamba
+      briefed reporters in Kinshasa. The latest outbreak comes around
+      five months after Congo's last Ebola outbreak was declared over
+      after 43 deaths.
+    source: { slug: courthouse-news, country: US, tier: independent }
+    published_at: "2026-05-15T18:31Z"
+  - id: ap-border
+    title: "New Ebola outbreak confirmed in remote Congo province; 65 deaths recorded"
+    summary: "The latest outbreak comes around five months after Congo's last Ebola outbreak was declared over after 43 deaths."
+    full_text: >
+      KINSHASA, Congo (AP) — Africa's top public health body on Friday
+      confirmed a new Ebola outbreak in Congo's remote Ituri province, with
+      246 suspected cases and 65 deaths recorded so far. Uganda later
+      reported one death in an Ebola case it said was imported from
+      neighboring Congo. The deaths include three health workers. The
+      Africa Centres for Disease Control and Prevention said samples have
+      tested positive for the Zaire strain. Health Minister Roger Kamba
+      briefed reporters in Kinshasa. The latest outbreak comes around
+      five months after Congo's last Ebola outbreak was declared over
+      after 43 deaths.
+    source: { slug: border-report, country: US, tier: independent }
+    published_at: "2026-05-15T16:06Z"
+  - id: ap-just-the-news
+    title: "Ebola outbreak in Africa kills 65 with hundreds infected with potentially deadly virus - Just The News"
+    summary: "An Ebola outbreak in Africa has killed 65 people with hundreds infected with the potentially deadly virus, according to Africa CDC."
+    full_text: >
+      KINSHASA, Congo (AP) — Africa's top public health body on Friday
+      confirmed a new Ebola outbreak in Congo's remote Ituri province, with
+      246 suspected cases and 65 deaths recorded so far. Uganda later
+      reported one death in an Ebola case it said was imported from
+      neighboring Congo. The deaths include three health workers. The
+      Africa Centres for Disease Control and Prevention said samples have
+      tested positive for the Zaire strain. Health Minister Roger Kamba
+      briefed reporters in Kinshasa. The latest outbreak comes around
+      five months after Congo's last Ebola outbreak was declared over
+      after 43 deaths.
+    source: { slug: just-the-news, country: US, tier: independent }
+    published_at: "2026-05-15T13:11Z"
+  - id: ap-omaha
+    title: "Confirmed Ebola Outbreak in DR Congo Surpasses 200 Suspected Infections"
+    summary: "An Ebola outbreak in DR Congo's Ituri province has surpassed 200 suspected infections with 65 deaths so far, Africa CDC said."
+    full_text: >
+      KINSHASA, Congo (AP) — Africa's top public health body on Friday
+      confirmed a new Ebola outbreak in Congo's remote Ituri province, with
+      246 suspected cases and 65 deaths recorded so far. The outbreak has
+      surpassed 200 suspected infections in the first week of detection.
+      Uganda later reported one death in an Ebola case it said was imported
+      from neighboring Congo. The deaths include three health workers. The
+      Africa Centres for Disease Control and Prevention said samples have
+      tested positive for the Zaire strain. Health Minister Roger Kamba
+      briefed reporters in Kinshasa. The latest outbreak comes around
+      five months after Congo's last Ebola outbreak was declared over
+      after 43 deaths.
+    source: { slug: omaha-world-herald, country: US, tier: independent }
+    published_at: "2026-05-15T16:04Z"
+  - id: ap-ap-news
+    title: "What to know about new Ebola outbreak that has killed 65 people in Congo - AP News"
+    summary: "What to know about new Ebola outbreak that has killed 65 people in Congo (AP News)"
+    full_text: >
+      KINSHASA, Congo (AP) — Africa's top public health body on Friday
+      confirmed a new Ebola outbreak in Congo's remote Ituri province, with
+      246 suspected cases and 65 deaths recorded so far. Uganda later
+      reported one death in an Ebola case it said was imported from
+      neighboring Congo. The deaths include three health workers. The
+      Africa Centres for Disease Control and Prevention said samples have
+      tested positive for the Zaire strain. Health Minister Roger Kamba
+      briefed reporters in Kinshasa. The latest outbreak comes around
+      five months after Congo's last Ebola outbreak was declared over
+      after 43 deaths. Here is what to know about the outbreak.
+    source: { slug: ap-news, country: US, tier: us_major }
+    published_at: "2026-05-15T13:13Z"
+expectation:
+  type: should_merge
+  expected_member_ids: [ap-courthouse, ap-border, ap-just-the-news, ap-omaha, ap-ap-news]
+  min_clusters: 1
+  max_clusters: 1
+  min_source_count: 3
+rationale: |
+  Production failure 2026-05-15: AP wire copy on the DRC Ebola outbreak
+  was syndicated to ~15 publishers (Just The News, Border Report,
+  Courthouse News, Omaha World-Herald, AP News itself, etc.), each of
+  which rewrote the headline ("Ebola outbreak kills 65 in Africa" /
+  "Confirmed Ebola Outbreak Surpasses 200 Infections" / "New Ebola
+  outbreak kills 65 in Congo"). The body text is near-identical, but
+  Phase 1 TF-IDF saw the rewritten titles as different vocabularies.
+  Phase 2 entity-overlap should fire on shared rare entities (Kinshasa,
+  Roger Kamba, Africa CDC, Ituri, Mongwalu) but in production this
+  cluster fragmented into 2 clusters of 3 articles each.
+
+  Path A's Phase 2.55 (DRC↔Congo synonym pair) plus Phase 2 entity
+  overlap on the rare-Africa proper nouns should collapse all 5 articles.
+  This is the realistic test for the wire-syndication-with-headline-
+  rewrite pattern that Phase 0 wire fingerprinting (in deduplicator.py)
+  catches at intake — the validation runner doesn't invoke deduplicator,
+  so we test the downstream merge passes' ability to recover.
+
+  Real production article IDs (Supabase 2026-05-15):
+    - e0bd7bac-5374-4082-a44d-fb5d321a13d6 (Courthouse News)
+    - ca88f02c-3d57-437a-b9e3-d34a6fb398bb (Border Report)
+    - b9b77f48-bcf4-4cbd-b4d1-fed4542465d0 (Just The News)
+    - 843831af-244c-4a9f-b6d7-04b1c67fb679 (Omaha World-Herald)
+    - 99fbedac-bc3d-48d7-975e-8c6e0672a5d5 (AP News)

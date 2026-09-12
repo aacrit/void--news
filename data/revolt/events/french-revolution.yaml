@@ -1,0 +1,373 @@
+slug: french-revolution
+title: The French Revolution
+subtitle: A bankrupt monarchy, a hungry city, and the invention of modern politics
+date_display: 1789 to 1799
+date_start: 1789
+date_end: 1799
+date_precision: year
+era: atlantic
+region: europe
+country: France
+revolt_type: social
+status: concluded
+
+summary: >
+  In the spring of 1789 the French crown could not pay its debts. A king who
+  ruled by divine right summoned an assembly he had not called in 175 years,
+  hoping to tax his way out of ruin. The Third Estate refused to be counted as
+  one vote against two. Within weeks a locksmith king was a prisoner of the
+  nation, feudalism was abolished in a single night, and a document declared
+  that men are born free and equal in rights. Within five years the same
+  revolution was guillotining its own founders at a rate of one every hour.
+significance: >
+  The French Revolution set the template every later revolution would argue
+  with. It proved a determined urban crowd could topple Europe's oldest
+  monarchy, and it proved that a revolution devours the people who make it. The
+  words liberty, the nation, the left and the right, terror as a policy: all
+  entered modern politics here. Napoleon ended the republic in 1799, but the
+  question the Bastille asked was never closed again.
+
+grievances:
+  - kind: fiscal
+    intensity: 95
+    evidence: State debt consumed roughly half of annual revenue; the 1788 harvest failed and bread reached 88 percent of a laborer's wage.
+  - kind: political
+    intensity: 80
+    evidence: An absolute monarchy with no representative check; the Estates-General had not met since 1614.
+  - kind: inequality
+    intensity: 85
+    evidence: The clergy and nobility, two percent of the population, held most land and paid almost no direct tax.
+  - kind: subsistence
+    intensity: 90
+    evidence: A cold winter and grain speculation left Paris hungry; bread riots preceded every political turn.
+
+structural_pressures:
+  fiscal_crisis: { score: 3, note: "Near-total state insolvency after backing the American Revolution." }
+  elite_fracture: { score: 3, note: "Liberal nobles and clergy defected to the Third Estate at the Tennis Court Oath." }
+  mass_immiseration: { score: 3, note: "Harvest failure and bread prices at famine levels." }
+  repression: { score: 2, note: "Royal troops massed at Versailles but the Paris garrison would not fire." }
+  external_shock: { score: 1, note: "War debt from aiding the American colonies against Britain." }
+  legitimacy_collapse: { score: 3, note: "Divine-right monarchy could not survive being told it needed permission to tax." }
+
+structural_indicators:
+  bread_price_wage_share: { value: 88, unit: "percent of daily wage", year: 1789, source: "Rude, The Crowd in the French Revolution" }
+  state_debt_revenue_ratio: { value: 0.5, unit: "share of annual revenue serviced as debt", year: 1788, source: "Doyle, Oxford History of the French Revolution" }
+
+fiscal_crisis: true
+elite_fracture: true
+youth_bulge: true
+repression_level: moderate
+external_shock: War debt from French support of the American Revolution, later the War of the First Coalition.
+
+actors:
+  - actor_type: masses
+    name: The Paris sans-culottes
+    description: Artisans, shopkeepers and wage workers who supplied the revolution's crowd power and, later, its radical edge.
+    role_in_arc: Stormed the Bastille, marched on Versailles, and pushed the revolution leftward.
+    defected: false
+  - actor_type: vanguard
+    name: The Jacobin Club
+    description: A network of political clubs that moved from constitutional reform to revolutionary dictatorship.
+    role_in_arc: Organized the radical phase and administered the Terror.
+    defected: false
+  - actor_type: military-defectors
+    name: The Gardes Francaises
+    description: Royal guardsmen in Paris who refused to fire on the crowd and joined it.
+    role_in_arc: Their defection made the storming of the Bastille possible.
+    defected: true
+  - actor_type: old-regime
+    name: Louis XVI and the court
+    description: A monarch who conceded slowly, plotted escape, and was executed as Citizen Capet.
+    role_in_arc: The target; his failed flight to Varennes destroyed the case for a constitutional monarchy.
+    defected: false
+  - actor_type: foreign-intervener
+    name: The First Coalition
+    description: Austria, Prussia, Britain and allies who invaded to restore the monarchy.
+    role_in_arc: External war radicalized the revolution and justified emergency government.
+    defected: false
+
+tactics:
+  - tactic_type: urban-uprising
+    description: The storming of the Bastille and the insurrections of August 1792 and 1793.
+    prominence: high
+  - tactic_type: mass-demonstration
+    description: The Women's March on Versailles that brought the king back to Paris.
+    prominence: high
+  - tactic_type: parallel-institutions
+    description: The National Assembly, the Commune, and the network of Jacobin clubs.
+    prominence: high
+  - tactic_type: armed-insurgency
+    description: Revolutionary armies and the levee en masse that mobilized the nation for war.
+    prominence: medium
+
+resistance_type: hybrid
+
+phases:
+  - phase: old-regime-crisis
+    label: The crown runs out of money
+    date_start: "1788-08"
+    t_start: 0.00
+    t_end: 0.10
+    intensity: 30
+    reached: true
+    summary: Insolvency forces the king to summon the Estates-General for the first time since 1614.
+    key_events: ["Harvest failure of 1788", "Convocation of the Estates-General"]
+  - phase: intellectual-desertion
+    label: The Third Estate refuses to be outvoted
+    date_start: "1789-06"
+    t_start: 0.10
+    t_end: 0.20
+    intensity: 45
+    reached: true
+    summary: The commons declare themselves the National Assembly and swear the Tennis Court Oath. Liberal nobles and clergy cross over.
+    key_events: ["Tennis Court Oath", "Formation of the National Assembly"]
+  - phase: the-spark
+    label: The Bastille falls
+    date_start: "1789-07-14"
+    t_start: 0.20
+    t_end: 0.28
+    intensity: 65
+    reached: true
+    summary: A crowd storms the fortress-prison. Royal troops will not fire. The king learns he no longer controls his capital.
+    key_events: ["Storming of the Bastille", "Great Fear in the countryside"]
+  - phase: moderate-phase
+    label: A constitutional monarchy is tried
+    date_start: "1789-08"
+    t_start: 0.28
+    t_end: 0.45
+    intensity: 55
+    reached: true
+    summary: Feudalism abolished overnight; the Declaration of the Rights of Man proclaimed. A constitution keeps the king as a limited executive.
+    key_events: ["Abolition of feudalism", "Declaration of the Rights of Man and of the Citizen"]
+  - phase: dual-power
+    label: The king flees and is caught
+    date_start: "1791-06"
+    t_start: 0.45
+    t_end: 0.58
+    intensity: 60
+    reached: true
+    summary: The flight to Varennes exposes the monarch as an enemy of the revolution. War with Austria begins. Power splits between Assembly and street.
+    key_events: ["Flight to Varennes", "War of the First Coalition begins"]
+  - phase: radical-phase
+    label: The monarchy is overthrown, the republic declared
+    date_start: "1792-08"
+    t_start: 0.58
+    t_end: 0.70
+    intensity: 80
+    reached: true
+    summary: The Tuileries is stormed, the king suspended, the First Republic proclaimed. Louis XVI is tried and executed in January 1793.
+    key_events: ["Insurrection of 10 August 1792", "Execution of Louis XVI"]
+  - phase: terror-virtue
+    label: The Terror
+    date_start: "1793-09"
+    t_start: 0.70
+    t_end: 0.82
+    intensity: 100
+    reached: true
+    summary: The Committee of Public Safety governs by guillotine. Roughly 17000 are formally executed and tens of thousands more die in the Vendee and the prisons.
+    key_events: ["Committee of Public Safety", "Law of Suspects", "Execution of Danton and the Girondins"]
+  - phase: thermidor
+    label: The revolution eats Robespierre
+    date_start: "1794-07"
+    t_start: 0.82
+    t_end: 0.90
+    intensity: 70
+    reached: true
+    summary: Robespierre is guillotined by colleagues who fear they are next. The Terror ends; a corrupt Directory takes over.
+    key_events: ["Fall of Robespierre", "The Thermidorian Reaction", "The Directory"]
+  - phase: consolidation
+    label: A general takes the republic
+    date_start: "1799-11"
+    t_start: 0.90
+    t_end: 1.00
+    intensity: 60
+    reached: true
+    summary: Napoleon Bonaparte seizes power in the coup of 18 Brumaire. The republic survives in name; the revolution as a popular force is over.
+    key_events: ["Coup of 18 Brumaire", "The Consulate"]
+
+ate_its_children: true
+
+outcome: consolidated-autocracy
+peak_participation_pct: null
+peak_participation_display: Tens of thousands in Paris at the decisive journees; participation was urban and intense rather than a measured national share.
+crossed_participation_threshold: null
+military_defection: partial
+foreign_intervention: direct-military
+duration_days: 3765
+death_toll: Roughly 17000 formally executed in the Terror; total deaths including the Vendee and revolutionary wars run far higher.
+death_toll_low: 17000
+death_toll_high: 40000
+regime_before: monarchy
+regime_after: personalist
+democratization_delta: 0
+
+success_factors:
+  - factor_key: resistance_method
+    label: Method of struggle
+    framework: chenoweth
+    status: Hybrid. Mass urban uprising fused with armed revolutionary war.
+    direction: indeterminate
+    base_rate: "Across 1900 to 2006, nonviolent campaigns succeeded about 53 percent of the time versus about 26 percent for armed ones (Chenoweth and Stephan)."
+    rationale: The French case predates the dataset, but its slide into armed terror and foreign war illustrates why violence correlates with harder consolidation.
+    sources: ["Chenoweth and Stephan, Why Civil Resistance Works (2011)"]
+    as_of: "1799"
+    confidence: n/a
+  - factor_key: security_defection
+    label: Did the security forces defect
+    framework: chenoweth
+    status: Partial. The Paris garrison would not fire in July 1789, which was decisive; the wider army stayed contested.
+    direction: favors-movement
+    base_rate: "Security-force defection is the single strongest predictor of campaign success in the resistance literature."
+    rationale: The refusal of royal troops to fire on the Bastille crowd removed the monarchy's last coercive advantage in its capital.
+    sources: ["Nepstad, Nonviolent Revolutions (2011)"]
+    as_of: "1789"
+    confidence: high
+  - factor_key: elite_fracture
+    label: Did the ruling elite split
+    framework: goldstone
+    status: Yes. Liberal nobles and parish clergy joined the Third Estate.
+    direction: favors-movement
+    base_rate: "Elite defection is a core precondition of state breakdown in structural theories of revolution."
+    rationale: The Tennis Court Oath only held because a bloc of the privileged orders crossed over.
+    sources: ["Skocpol, States and Social Revolutions (1979)", "Goldstone, Revolution and Rebellion in the Early Modern World (1991)"]
+    as_of: "1789"
+    confidence: high
+
+key_figures:
+  - name: Maximilien Robespierre
+    role: Jacobin leader and architect of the Terror, later its victim
+    born: 1758
+    died: 1794
+    wikipedia: https://en.wikipedia.org/wiki/Maximilien_Robespierre
+  - name: Louis XVI
+    role: King of France, executed as Citizen Louis Capet
+    born: 1754
+    died: 1793
+    wikipedia: https://en.wikipedia.org/wiki/Louis_XVI
+  - name: Georges Danton
+    role: Revolutionary orator, guillotined by his former allies
+    born: 1759
+    died: 1794
+    wikipedia: https://en.wikipedia.org/wiki/Georges_Danton
+  - name: Napoleon Bonaparte
+    role: General who ended the revolution in the coup of 18 Brumaire
+    born: 1769
+    died: 1821
+    wikipedia: https://en.wikipedia.org/wiki/Napoleon
+
+legacy_points:
+  - The left and the right are named for where deputies sat in the National Assembly.
+  - The metric system, civil marriage and the abolition of feudal dues outlived the republic.
+  - Terror as deliberate state policy entered the modern political vocabulary here.
+  - Every later revolution measured itself against 1789, in hope or in warning.
+
+primary_source_excerpts:
+  - text: Men are born and remain free and equal in rights.
+    author: National Constituent Assembly
+    work: Declaration of the Rights of Man and of the Citizen
+    date: "1789"
+  - text: Terror is nothing other than justice, prompt, severe, inflexible.
+    author: Maximilien Robespierre
+    work: On the Principles of Political Morality
+    date: "1794"
+
+coordinates: { lat: 48.8534, lng: 2.3488 }
+
+hero_image_url: https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Prise_de_la_Bastille.jpg/1280px-Prise_de_la_Bastille.jpg
+hero_image_attribution: Jean-Pierre Houel, Storming of the Bastille (1789), Bibliotheque nationale de France, public domain.
+
+related_revolt_slugs: ["haitian-revolution", "russian-revolution"]
+related_history_slugs: ["french-revolution"]
+
+display_order: 1
+is_published: true
+
+perspectives:
+  - viewpoint: The Jacobin republican
+    viewpoint_type: revolutionary
+    region_origin: Paris
+    narrative: >
+      The revolution had enemies within and armies without. A republic fighting
+      for its life could not extend the rights of man to those plotting its
+      destruction. The guillotine was not cruelty, it was the republic defending
+      itself. Better a hard year of virtue than a restored throne on a hundred
+      thousand graves.
+    key_arguments:
+      - The Terror was a wartime emergency, not a program.
+      - Foreign invasion and internal revolt forced centralized power.
+    emphasized: ["Foreign invasion", "Royalist plots", "The levee en masse"]
+    omitted: ["The scale of executions without trial", "The drownings at Nantes"]
+    notable_quotes:
+      - text: The republic owes its enemies nothing but death.
+        speaker: A Jacobin deputy
+        context: Debates on the Law of Suspects, 1793
+  - viewpoint: The liberal constitutionalist
+    viewpoint_type: moderate
+    region_origin: France
+    narrative: >
+      1789 was the achievement. A constitution, a limited monarch, the rights of
+      man. What followed was the betrayal. The radicals mistook the crowd for the
+      nation and the guillotine for justice. The revolution could have ended in a
+      constitutional monarchy and instead ended in a dictatorship of virtue and
+      then a dictatorship of a general.
+    key_arguments:
+      - The moderate phase, not the Terror, was the revolution's real gift.
+      - Radicalization was a choice, not a necessity.
+    emphasized: ["The Declaration of Rights", "Rule of law"]
+    omitted: ["Why the constitutional monarchy failed to hold"]
+    notable_quotes:
+      - text: They have made a desert and called it liberty.
+        speaker: A Girondin, before the scaffold
+        context: The purge of the moderates, 1793
+  - viewpoint: The historian
+    viewpoint_type: academic
+    region_origin: Global
+    narrative: >
+      The French Revolution is the case that structural theories of revolution
+      were built to explain. Fiscal crisis, elite defection, a subsistence
+      emergency, and a state that could no longer coerce its own capital. Once
+      those aligned, the outcome was open. Whether it had to end in Terror and
+      Bonaparte is the argument that has never stopped.
+    key_arguments:
+      - Preconditions made a revolution likely; contingency shaped its course.
+      - The Terror is better read as a product of war and dual power than of ideology alone.
+    emphasized: ["State breakdown", "Contingency"]
+    omitted: []
+    notable_quotes:
+      - text: The revolution devours its children.
+        speaker: Attributed to Jacques Mallet du Pan
+        context: On the fall of the Girondins, 1793
+
+media:
+  - media_type: painting
+    title: Storming of the Bastille
+    description: Jean-Pierre Houel's contemporary watercolor of 14 July 1789.
+    source_url: https://commons.wikimedia.org/wiki/File:Prise_de_la_Bastille.jpg
+    attribution: Jean-Pierre Houel, 1789, Bibliotheque nationale de France
+    license: public-domain
+    creator: Jean-Pierre Houel
+    creation_date: "1789"
+
+connections:
+  - target_slug: haitian-revolution
+    connection_type: inspired
+    description: The Declaration of the Rights of Man was read in Saint-Domingue and turned against the slaveholders who wrote it.
+  - target_slug: russian-revolution
+    connection_type: provided-model
+    description: The Bolsheviks studied 1789 closely, casting themselves as Jacobins who would not stop at Thermidor.
+
+metrics:
+  - metric_key: terror_executions
+    label: Formal executions during the Terror
+    category: process
+    unit: people
+    numeric_value: 16594
+    display_value: About 17000 guillotined
+    source: Donald Greer, The Incidence of the Terror
+    source_url: https://en.wikipedia.org/wiki/Reign_of_Terror
+  - metric_key: duration_years
+    label: Duration
+    category: outcome
+    unit: years
+    numeric_value: 10
+    display_value: 1789 to 1799

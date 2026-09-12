@@ -1,0 +1,222 @@
+slug: bangladesh-july-revolution
+title: Bangladesh's July Revolution
+subtitle: A civil-service hiring quota lit five weeks that ended Sheikh Hasina's fifteen years in power
+date_display: 2024 to present
+date_start: 2024
+date_precision: year
+era: square-revolutions
+region: south-asia
+country: Bangladesh
+revolt_type: democratic-uprising
+status: consolidating
+summary: In July 2024 university students in Dhaka marched against a reinstated quota reserving 30 percent of civil service jobs for descendants of 1971 war veterans. Police and ruling-party activists killed protesters within days, and the demand changed overnight from quota reform to accountability. By early August the movement's only remaining demand was Sheikh Hasina's resignation. On 5 August the army told her to go. She resigned and flew to India within hours, ending fifteen years of Awami League rule. An interim government led by Nobel laureate Muhammad Yunus now governs while institutions are rebuilt and elections are scheduled.
+significance: Bangladesh shows how a narrow administrative grievance can become regime change once a government answers it with lethal force. Hasina had survived three consecutive elections that observers and the opposition called neither free nor fair; a hiring quota, not the ballot box, is what finally moved the army to withdraw its backing.
+analytical_outlook: 'The interim government faces the harder half of the arc: reforming courts, police and the electoral commission before a vote, while the Awami League''s local machine and parts of the bureaucracy remain in place. History suggests the period after a ruler falls, not the fall itself, is when revolutions are most often recaptured by the institutions that survive them. Placement on the arc: the old regime has collapsed and a transitional government is trying to consolidate, with no election yet held to test whether reform outlasts the crisis that produced it.'
+grievances:
+  - kind: political
+    intensity: 85
+    evidence: Sheikh Hasina had governed since 2009 through three elections international observers and the opposition called neither free nor fair, the last held in January 2024 with no genuine opposition on the ballot.
+  - kind: employment
+    intensity: 75
+    evidence: A reinstated quota reserved 30 percent of civil service posts for descendants of 1971 war veterans, in a country where the World Bank estimated roughly one in five young people were neither in school nor working.
+  - kind: repression
+    intensity: 90
+    evidence: A UN human rights office review released in February 2025 estimated as many as 1,400 people were killed in the July-August 2024 crackdown, most by security forces.
+repression_level: severe
+actors:
+  - actor_type: students-youth
+    name: Students Against Discrimination
+    description: A student coalition that organized the original quota-reform marches at Dhaka University.
+    role_in_arc: Turned a court ruling over civil-service quotas into a nationwide one-point demand for Hasina's resignation.
+    defected: false
+  - actor_type: masses
+    name: Nationwide protesters
+    description: Garment workers, rickshaw pullers and the urban middle class who joined the students after the July crackdown.
+    role_in_arc: Broadened a campus dispute into a mass uprising within two weeks.
+    defected: false
+  - actor_type: military-defectors
+    name: The Bangladesh Army
+    description: The armed forces under General Waker-uz-Zaman.
+    role_in_arc: Declined to continue enforcing the crackdown on 5 August 2024 and told Hasina to resign.
+    defected: true
+  - actor_type: old-regime
+    name: Sheikh Hasina and the Awami League
+    description: The party that had governed Bangladesh since 2009, built around the Hasina family's legacy of the 1971 independence war.
+    role_in_arc: Ordered the crackdown, then collapsed within days of losing the army's backing.
+    defected: false
+tactics:
+  - tactic_type: mass-demonstration
+    description: Marches and blockades that began at Dhaka University and spread to every major city.
+    prominence: high
+  - tactic_type: general-strike
+    description: A nationwide non-cooperation call in early August shut down transport, garment factories and government offices.
+    prominence: high
+  - tactic_type: digital-mobilization
+    description: Coordination continued over mobile data and diaspora social media even after a nationwide internet shutdown lasting about ten days in July.
+    prominence: medium
+resistance_type: nonviolent
+phases:
+  - phase: old-regime-crisis
+    label: Fifteen years, three disputed elections
+    date_start: 2024-01
+    t_start: 0
+    t_end: 0.12
+    intensity: 30
+    reached: true
+    summary: Hasina wins a fourth consecutive term in a January election the main opposition boycotts and observers call neither free nor fair.
+    key_events:
+      - January 2024 election
+      - Reinstatement of the civil-service quota by a High Court ruling
+  - phase: the-spark
+    label: Quota protests turn deadly
+    date_start: '2024-07-16'
+    t_start: 0.22
+    t_end: 0.34
+    intensity: 70
+    reached: true
+    summary: Police and ruling-party activists kill protesters on university campuses. The demand shifts overnight from quota reform to accountability for the dead.
+    key_events:
+      - Deaths of student protesters at Rangpur
+      - Nationwide internet shutdown
+  - phase: radical-phase
+    label: The one-point movement
+    date_start: '2024-08-03'
+    t_start: 0.6
+    t_end: 0.72
+    intensity: 90
+    reached: true
+    summary: 'Organizers drop every demand but one: Hasina''s resignation. On 5 August the army tells her to go; she resigns and flies to India within hours.'
+    key_events:
+      - The one-point demand announced
+      - Sheikh Hasina resigns and departs for India, 5 August 2024
+  - phase: consolidation
+    label: An interim government tries to hold
+    date_start: 2024-08
+    t_start: 0.92
+    t_end: 1
+    intensity: 55
+    reached: true
+    summary: Muhammad Yunus is sworn in to lead an interim administration tasked with reforming institutions and scheduling elections; the Awami League's registration is later suspended by the Election Commission pending trial.
+    key_events:
+      - Muhammad Yunus sworn in as chief adviser
+      - Awami League's registration suspended
+outcome: ongoing-unresolved
+peak_participation_pct: null
+peak_participation_display: Hundreds of thousands marched in Dhaka in the final week; no verified figure exists for peak share of the national population.
+crossed_participation_threshold: null
+military_defection: partial
+foreign_intervention: diplomatic
+duration_days: null
+death_toll: A UN human rights office review released in February 2025 estimated up to 1,400 people killed in the July-August crackdown; Bangladeshi authorities have cited lower but still substantial figures.
+death_toll_low: 800
+death_toll_high: 1400
+regime_before: personalist
+regime_after: unresolved
+democratization_delta: null
+success_factors:
+  - factor_key: resistance_method
+    label: Method of struggle
+    framework: chenoweth
+    status: Overwhelmingly nonviolent marches and strikes, despite lethal state violence against protesters.
+    direction: favors-movement
+    base_rate: About 53 percent of nonviolent campaigns from 1900 to 2006 succeeded, versus about 26 percent for armed ones.
+    rationale: The movement kept its nonviolent discipline even as the death toll rose, preserving broad participation across class lines.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+    as_of: '2024'
+    confidence: high
+  - factor_key: security_defection
+    label: Did the security forces defect
+    framework: chenoweth
+    status: Partial to decisive. The army stopped enforcing the curfew and told Hasina to resign rather than fire on crowds a second week running.
+    direction: favors-movement
+    base_rate: Defection of the security forces is the single strongest predictor of a nonviolent campaign's success.
+    rationale: The army's refusal, not protest size alone, is what ended Hasina's government within hours.
+    sources:
+      - Nepstad, Nonviolent Revolutions (2011)
+    as_of: '2024'
+    confidence: high
+  - factor_key: peak_participation
+    label: Peak participation
+    framework: chenoweth
+    status: Broad and cross-class by early August, though no reliable population-share estimate exists.
+    direction: indeterminate
+    base_rate: No nonviolent campaign that mobilized at least 3.5 percent of the population at its peak has failed to achieve its stated aim.
+    rationale: The crowds were large enough to shut down the capital, but the 3.5 percent threshold has not been independently verified for this case.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+    as_of: '2024'
+    confidence: low
+  - factor_key: transition_capture
+    label: Surviving the transition
+    framework: skocpol
+    status: Untested. The old ruling party's local machine and parts of the bureaucracy remain in place under the interim government.
+    direction: indeterminate
+    base_rate: Revolutions are most fragile in the period after the ruler falls, when the old state's institutions survive and can reassert themselves.
+    rationale: Bangladesh's next election, and whether the Awami League is allowed to contest it, will show whether the July uprising reformed the state or simply changed its leadership.
+    sources:
+      - Skocpol, States and Social Revolutions (1979)
+    as_of: '2026'
+    confidence: medium
+key_figures:
+  - name: Sheikh Hasina
+    role: Prime Minister from 2009 until her resignation and departure for India in August 2024
+    wikipedia: https://en.wikipedia.org/wiki/Sheikh_Hasina
+  - name: Muhammad Yunus
+    role: Nobel Peace Prize laureate and microfinance pioneer, sworn in as chief adviser of the interim government
+    born: 1940
+    wikipedia: https://en.wikipedia.org/wiki/Muhammad_Yunus
+legacy_points:
+  - Ended the Awami League's fifteen-year hold on government inside a single month of sustained protest.
+  - Showed how a narrow administrative grievance can escalate into regime change once the state answers it with lethal force.
+  - Left open whether Bangladesh gets a freer election than the one that triggered the crisis, or a different party running the same institutions.
+related_revolt_slugs:
+  - people-power-1986
+related_history_slugs: []
+live_query:
+  strong:
+    - Sheikh Hasina
+    - Yunus
+    - Awami League
+    - quota protest
+    - Anti-Discrimination Student Movement
+  context:
+    - Bangladesh
+    - Dhaka
+  exclude: []
+analysis_reviewed_at: '2026-07-01'
+prediction_confidence: medium
+is_published: true
+perspectives:
+  - viewpoint: The student organizers
+    viewpoint_type: movement
+    region_origin: Dhaka
+    narrative: We asked for merit in hiring and they answered with bullets. After that the quota was never the point. A government that shoots students to keep a job scheme does not deserve to keep anything else either.
+    key_arguments:
+      - The killings, not the quota, made Hasina's resignation the only acceptable outcome.
+      - The uprising was student-led but became genuinely national within two weeks.
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - The July crackdown deaths
+      - Fifteen years without a credible election
+    omitted:
+      - Divisions among student factions over what comes after Hasina
+  - viewpoint: The analyst
+    viewpoint_type: academic
+    region_origin: Global
+    narrative: Bangladesh removed a leader in weeks partly because the army chose the crowd over the palace. That is the same variable that decided 1986 in Manila and 2019 in Khartoum. It does not decide what an interim government does next.
+    key_arguments:
+      - Security-force defection, not protest size alone, explains the speed of the collapse.
+      - The harder test is institutional reform after the ouster.
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - Comparative base rates
+      - The transition period
+    omitted: []
+media: []
+connections:
+  - target_slug: people-power-1986
+    connection_type: parallel
+    description: Both movements ended with a long-ruling leader flying into exile within hours of losing the military's backing, Marcos to Hawaii, Hasina to India.

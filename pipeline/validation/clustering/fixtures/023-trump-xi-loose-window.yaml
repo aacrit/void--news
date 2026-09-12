@@ -1,0 +1,116 @@
+id: trump-xi-loose-window-2026-05-15
+name: "Trump-Xi summit (loose-window co-occurrence — names separated by 20+ chars)"
+failure_date: "2026-05-15"
+failure_kind: loose-cooccurrence
+articles:
+  - id: tx-mercury
+    title: "Musk, Cook set to join Trump for Xi Summit, White House says - The Mercury News"
+    summary: "Elon Musk and Apple CEO Tim Cook will join President Trump's delegation for the September Xi Summit in Beijing, the White House announced."
+    full_text: >
+      Elon Musk and Apple chief executive Tim Cook will join President Trump's
+      delegation for the upcoming September Xi summit in Beijing, the White
+      House said Wednesday. The presence of two of America's most prominent
+      tech CEOs underscores the technology-trade dimension of the bilateral
+      agenda. National Security Adviser Mike Waltz said the inclusion was
+      coordinated with Beijing protocol officers. Treasury Secretary Scott
+      Bessent and US Trade Representative Jamieson Greer will also attend.
+      Senate Foreign Relations Committee staff have been briefed. Tesla and
+      Apple both maintain extensive supply-chain operations in China.
+    source: { slug: mercury-news, country: US, tier: independent }
+    published_at: "2026-05-11T15:49Z"
+  - id: tx-daily-mirror-sl
+    title: "Trump says he doesn't need Xi's help on Iran war as he heads to China - Daily Mirror - Sri Lanka"
+    summary: "President Trump says he doesn't need Chinese President Xi Jinping's help on the Iran war as he heads to Beijing for next month's summit."
+    full_text: >
+      President Trump said Wednesday he does not need Chinese President Xi
+      Jinping's help on the Iran war as he heads to Beijing for next month's
+      summit. Speaking to reporters at the White House, Trump said American
+      sanctions on Iranian oil exports were "the only leverage that has ever
+      mattered." Trump said the Beijing visit would focus on trade and
+      Taiwan rather than Iran specifically. The summit is scheduled for
+      September 22-24. Treasury Secretary Bessent will accompany Trump.
+      Senator Tom Cotton praised the framing.
+    source: { slug: daily-mirror-sri-lanka, country: LK, tier: independent }
+    published_at: "2026-05-13T04:03Z"
+  - id: tx-honolulu
+    title: "Trump and China's Xi set for talks about Iran, nuclear, trade and AI - Honolulu Star-Advertiser"
+    summary: "President Trump and Chinese President Xi Jinping are set for talks about Iran, nuclear, trade and AI at the September Beijing summit."
+    full_text: >
+      President Trump and Chinese President Xi Jinping are set for talks about
+      Iran sanctions enforcement, nuclear non-proliferation, trade frictions,
+      and AI export controls at the September Beijing summit, the White House
+      announced Wednesday. National Security Adviser Mike Waltz said the
+      agenda was finalized in a phone call between the two leaders Tuesday
+      morning. The summit is set for September 22-24. Treasury Secretary
+      Scott Bessent and US Trade Representative Jamieson Greer will travel
+      as part of the delegation. Senate leadership briefed in closed
+      session. House Speaker Mike Johnson called the agenda "an
+      opportunity to drive a wedge between Beijing and Tehran." Apple CEO
+      Tim Cook and Tesla chief Elon Musk are also expected to join.
+    source: { slug: honolulu-star, country: US, tier: independent }
+    published_at: "2026-05-10T23:00Z"
+  - id: tx-omaha
+    title: "Trump, XI set to discuss Iran, trade, more - Omaha World-Herald"
+    summary: "Trump and Xi are set to discuss Iran, trade, and more at the September Beijing summit, the White House said."
+    full_text: >
+      Trump and Xi are set to discuss Iran sanctions enforcement, trade
+      frictions, and other bilateral issues at the September Beijing summit,
+      the White House announced. The summit will be Trump's third meeting
+      with Xi this year. Press Secretary Karoline Leavitt confirmed the
+      September 22-24 dates. Treasury Secretary Scott Bessent and US Trade
+      Representative Jamieson Greer will accompany Trump. Senate Foreign
+      Relations Chair Jim Risch praised the bilateral framing.
+    source: { slug: omaha-world-herald, country: US, tier: independent }
+    published_at: "2026-05-10T23:41Z"
+  - id: tx-newhaven
+    title: "What to know about Trump-Xi summit with trade, Taiwan and Iran on the agenda - New Haven Register"
+    summary: "Here's what to know about the upcoming Trump-Xi summit, with trade, Taiwan, and Iran on the agenda."
+    full_text: >
+      Here's what to know about the upcoming Trump-Xi summit in Beijing,
+      scheduled for September 22-24. The agenda spans trade tariffs, Taiwan
+      arms-sales policy, Iran sanctions enforcement, and AI export controls.
+      President Trump leads the US delegation, accompanied by Treasury
+      Secretary Scott Bessent and US Trade Representative Jamieson Greer.
+      The Chinese side is led by President Xi Jinping. National Security
+      Adviser Mike Waltz briefed reporters. The summit will be Trump's third
+      meeting with Xi this year.
+    source: { slug: new-haven-register, country: US, tier: independent }
+    published_at: "2026-05-12T01:17Z"
+  - id: tx-newsweek
+    title: "China Confirms Trump Visit, Teasing 'In-Depth Exchanges' with Xi Jinping"
+    summary: "China confirmed President Trump's September visit to Beijing, teasing 'in-depth exchanges' with President Xi Jinping."
+    full_text: >
+      China's Ministry of Foreign Affairs on Tuesday confirmed President Trump's
+      September visit to Beijing, teasing "in-depth exchanges" with President
+      Xi Jinping. Chinese spokeswoman Mao Ning said the visit would be "of
+      strategic significance for the bilateral relationship." The summit
+      agenda will include trade, Taiwan, Iran sanctions, and AI export
+      controls. Treasury Secretary Bessent and US Trade Representative Greer
+      will accompany Trump. The summit dates are September 22-24.
+    source: { slug: newsweek, country: US, tier: us_major }
+    published_at: "2026-05-11T17:16Z"
+expectation:
+  type: should_merge
+  expected_member_ids: [tx-mercury, tx-daily-mirror-sl, tx-honolulu, tx-omaha, tx-newhaven, tx-newsweek]
+  min_clusters: 1
+  max_clusters: 2
+  min_source_count: 4
+rationale: |
+  Production failure 2026-05-15: Trump-Xi September Beijing summit articles
+  fragmented because in some titles ("Musk, Cook set to join Trump for Xi
+  Summit", "Trump says he doesn't need Xi's help on Iran war as he heads to
+  China") the names "Trump" and "Xi" are separated by 20+ characters of
+  intervening text — and the prior loose-cooccurrence detector required
+  the names within a small window. The Phase 2.55 synonym-pair pass
+  ("xi", "xi jinping") + ("trump", "donald trump") combined with normal
+  entity overlap on Beijing/September/Iran/Bessent should still merge them
+  via Phase 2 entity-IDF. Allow up to 2 clusters since Daily Mirror SL is
+  a thinner story but still co-clusters via the shared agenda entities.
+
+  Real production article IDs (Supabase, sample):
+    - 9da48400-4bb2-4a68-b3fe-2cdf6bf45d45 (Mercury News — Musk/Cook)
+    - 2a84fbdd-0a27-4a9a-af0b-e2d4d6ac9c03 (Daily Mirror SL — Iran framing)
+    - 213a9264-7bd4-48c0-a928-42d37f590e0f (Honolulu Star)
+    - 3f8e3f74-b734-471c-a554-ba48e5228464 (Omaha World-Herald)
+    - bf509431-299d-4970-b322-bc57953dad7c (New Haven Register)
+    - 6d136079-6d6d-4bf1-98ee-aa67a41ecd9b (Newsweek)

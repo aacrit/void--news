@@ -1,0 +1,113 @@
+/* ==========================================================================
+   Void - Brand Color System
+   Portable token sheet. Mirrors frontend/app/styles/tokens.css (the live
+   source of truth) so the brand pack and the product never drift.
+
+   Layers:
+     1. Brand accents  - one per product (news / history / weekly / vision)
+     2. Bias spectrum   - the 7-point political-lean scale (earned by data)
+     3. Ink & paper     - editorial neutrals, light + dark
+     4. Sigil sweep     - the animated beam's lean colors
+
+   Light = "Morning Edition" (warm newsprint). Dark = "Evening Edition"
+   (walnut broadsheet). Every foreground neutral clears WCAG AA 4.5:1 on its
+   own ground; brand accents are decorative marks (large logo use) and are not
+   bound by the small-text contrast rule - use the *-ink shades for small bold
+   labels on paper.
+   ========================================================================== */
+
+:root,
+:root[data-mode="light"] {
+  /* --- 1. Brand accents (light / Morning Edition) --- */
+  --brand-news:         #B26F52;  /* terracotta - flagship */
+  --brand-news-ink:     #9A5638;  /* deeper terracotta for small AA labels */
+  --brand-history:      #5C4033;  /* umber */
+  --brand-history-alt:  #8B7355;  /* light umber - secondary/meta */
+  --brand-weekly:       #B91C1C;  /* editorial red */
+  --brand-weekly-alt:   #EF5350;  /* bright red - accents on dark */
+  --brand-vision:       #946B15;  /* brass - umbrella + YouTube */
+  --brand-vision-alt:   #B8872A;  /* lifted brass - hover/snap */
+
+  /* --- 2. Bias spectrum (constant across modes here; app dims for dark) --- */
+  --bias-far-left:      #0E2E70;
+  --bias-left:          #1B5298;
+  --bias-center-left:   #2E78B4;
+  --bias-center:        #2B784A;  /* green = center ONLY */
+  --bias-center-right:  #C4503E;
+  --bias-right:         #9C2C22;
+  --bias-far-right:     #6E1610;
+
+  /* --- 3. Ink & paper (light) --- */
+  --paper-primary:      #F0EBDD;
+  --paper-secondary:    #E8E2D4;
+  --paper-card:         #F5F0E4;
+  --ink-primary:        #1A1A1A;
+  --ink-secondary:      #4A4540;
+  --ink-muted:          #52504A;
+  --divider:            #D4CCC2;
+
+  /* --- 4. Sigil sweep lean colors (light) --- */
+  --sigil-brass:        #946B15;
+  --sigil-lean-left:    #3F72B0;
+  --sigil-lean-center:  #3E7C57;
+  --sigil-lean-right:   #B0433B;
+
+  /* Print / neutral treatments */
+  --one-color-black:    #111111;
+  --reversed-white:     #FFFFFF;
+  --reversed-paper:     #FBF6EC;
+}
+
+:root[data-mode="dark"] {
+  /* --- 1. Brand accents (dark / Evening Edition) --- */
+  --brand-news:         #D89A7C;  /* terracotta lifts on walnut */
+  --brand-news-ink:     #D89A7C;  /* already clears contrast on dark */
+  --brand-history:      #8B7355;  /* umber -> pale on dark */
+  --brand-history-alt:  #A8906F;
+  --brand-weekly:       #EF5350;  /* red brightens on dark */
+  --brand-weekly-alt:   #F27B78;
+  --brand-vision:       #D4A574;  /* aged brass reads as pale gold */
+  --brand-vision-alt:   #E8C48A;
+
+  /* --- 2. Bias spectrum (dark overrides - AA on walnut) --- */
+  --bias-far-left:      #5088D0;
+  --bias-left:          #6498D8;
+  --bias-center-left:   #78AEDE;
+  --bias-center:        #48B870;
+  --bias-center-right:  #D05C48;
+  --bias-right:         #CC3E34;
+  --bias-far-right:     #B02E26;
+
+  /* --- 3. Ink & paper (dark) --- */
+  --paper-primary:      #1C1A17;
+  --paper-secondary:    #252320;
+  --paper-card:         #2A2725;
+  --ink-primary:        #EDE8E0;
+  --ink-secondary:      #B8B0A5;
+  --ink-muted:          #9A938B;
+  --divider:            #403B35;
+
+  /* --- 4. Sigil sweep lean colors (dark) --- */
+  --sigil-brass:        #D4A574;
+  --sigil-lean-left:    #6098D8;
+  --sigil-lean-center:  #6FB98C;
+  --sigil-lean-right:   #D46A62;
+}
+
+/* Prefers-color-scheme fallback for consumers that do not stamp data-mode. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-mode="light"]) {
+    --brand-news: #D89A7C; --brand-news-ink: #D89A7C;
+    --brand-history: #8B7355; --brand-history-alt: #A8906F;
+    --brand-weekly: #EF5350; --brand-weekly-alt: #F27B78;
+    --brand-vision: #D4A574; --brand-vision-alt: #E8C48A;
+    --bias-far-left: #5088D0; --bias-left: #6498D8; --bias-center-left: #78AEDE;
+    --bias-center: #48B870; --bias-center-right: #D05C48; --bias-right: #CC3E34;
+    --bias-far-right: #B02E26;
+    --paper-primary: #1C1A17; --paper-secondary: #252320; --paper-card: #2A2725;
+    --ink-primary: #EDE8E0; --ink-secondary: #B8B0A5; --ink-muted: #9A938B;
+    --divider: #403B35;
+    --sigil-brass: #D4A574; --sigil-lean-left: #6098D8;
+    --sigil-lean-center: #6FB98C; --sigil-lean-right: #D46A62;
+  }
+}

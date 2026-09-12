@@ -1,0 +1,241 @@
+slug: english-civil-war
+title: The English Civil War
+subtitle: Parliament tries a king for treason against his own kingdom
+date_display: 1642-1651
+date_start: 1642
+date_end: 1651
+date_precision: year
+era: atlantic
+region: europe
+country: England
+revolt_type: political
+status: concluded
+summary: Three linked wars between Charles I and Parliament ended in regicide, an eleven-year republic under Cromwell, and then a restoration in 1660 that put Charles's son back on the same throne the war had been fought to constrain.
+significance: 'The first time an English king was tried and publicly executed by his own subjects. The monarchy returned within a generation, but it returned changed: never again would a king rule for eleven years without Parliament.'
+grievances:
+  - kind: Unilateral taxation without Parliament
+    intensity: 80
+    evidence: Charles ruled for eleven years, 1629 to 1640, without summoning Parliament, funding his government through expedients like ship money extended to inland counties that had never paid it before.
+  - kind: Religious imposition
+    intensity: 72
+    evidence: Archbishop Laud's 1637 attempt to impose a new prayer book on Scotland triggered the Bishops' Wars, forcing Charles to recall Parliament to raise funds.
+  - kind: Attempted arrest of sitting MPs
+    intensity: 85
+    evidence: On January 4, 1642, Charles entered the House of Commons with armed men to arrest five members, finding they had already fled; the breach of parliamentary privilege made compromise nearly impossible.
+actors:
+  - actor_type: old-regime
+    name: Charles I
+    description: King of England, Scotland, and Ireland since 1625.
+    role_in_arc: Raised his standard at Nottingham in August 1642, was defeated in two wars, tried, and executed in January 1649.
+    defected: false
+  - actor_type: vanguard
+    name: Oliver Cromwell
+    description: Member of Parliament turned cavalry commander, then Lord Protector.
+    role_in_arc: Built the New Model Army's disciplined cavalry, pushed the regicide through, and ruled as Protector from 1653 until his death in 1658.
+    defected: false
+  - actor_type: military-defectors
+    name: The New Model Army
+    description: Parliament's reorganized 1645 fighting force, recruited and promoted on merit rather than aristocratic rank.
+    role_in_arc: Won the war for Parliament, then turned on Parliament itself, purging it in 1648 to clear the way for the king's trial.
+    defected: false
+  - actor_type: counter-revolutionaries
+    name: Levellers
+    description: A radical faction within the army and London demanding wider suffrage and legal equality.
+    role_in_arc: Pushed the revolution further than its own leadership wanted; suppressed by Cromwell at Burford in 1649.
+    defected: false
+  - actor_type: old-regime
+    name: Charles II
+    description: Son of Charles I, exiled after his father's execution.
+    role_in_arc: Restored to the throne in 1660 after the Protectorate collapsed under his cousin Richard Cromwell.
+    defected: false
+tactics:
+  - tactic_type: armed-insurgency
+    description: Set-piece battles across three linked wars, Edgehill, Marston Moor, Naseby, decided the conflict on the battlefield rather than through negotiation.
+    prominence: primary
+  - tactic_type: parallel-institutions
+    description: Parliament raised its own taxes, army, and administration in direct competition with the king's court, functioning as a rival government years before the war ended.
+    prominence: primary
+  - tactic_type: mass-demonstration
+    description: London crowds and petitions, including the 1641 Root and Branch petition against bishops, pressured Parliament toward confrontation before fighting began.
+    prominence: secondary
+resistance_type: armed
+phases:
+  - phase: old-regime-crisis
+    label: Eleven years without Parliament
+    t_start: 0
+    t_end: 0.12
+    intensity: 45
+    reached: true
+    summary: Charles governs without Parliament from 1629, funding the crown through prerogative revenue until the Bishops' Wars force him to recall it in 1640.
+    key_events:
+      - Personal Rule begins, 1629
+      - Bishops' Wars begin, 1639
+      - Long Parliament summoned, November 1640
+  - phase: the-spark
+    label: The five members
+    date_start: '1642-01-04'
+    t_start: 0.22
+    t_end: 0.34
+    intensity: 65
+    reached: true
+    summary: Charles's failed attempt to arrest five MPs in the Commons chamber destroys any remaining trust between crown and Parliament.
+    key_events:
+      - Charles attempts to arrest five MPs, January 4, 1642
+      - Charles raises his standard at Nottingham, August 22, 1642
+  - phase: moderate-phase
+    label: The first civil war
+    t_start: 0.34
+    t_end: 0.48
+    intensity: 70
+    reached: true
+    summary: Parliament fights to force concessions from the king rather than to remove him outright, forming the New Model Army to professionalize the effort.
+    key_events:
+      - Battle of Marston Moor, July 1644
+      - New Model Army formed, 1645
+      - Battle of Naseby, June 1645
+  - phase: dual-power
+    label: King in captivity, army in the streets
+    t_start: 0.48
+    t_end: 0.6
+    intensity: 60
+    reached: true
+    summary: Charles, defeated but still king, negotiates simultaneously with Parliament, the army, and the Scots, while the New Model Army grows radicalized and unpaid.
+    key_events:
+      - Charles surrenders to the Scots, 1646
+      - Charles handed to Parliament, 1647
+      - Second Civil War, 1648
+  - phase: radical-phase
+    label: Pride's Purge and the trial
+    date_start: '1648-12-06'
+    t_start: 0.6
+    t_end: 0.72
+    intensity: 90
+    reached: true
+    summary: Colonel Pride's soldiers physically bar MPs unwilling to try the king from entering Parliament, and the remaining Rump tries and executes Charles weeks later.
+    key_events:
+      - Pride's Purge, December 6, 1648
+      - Charles I tried, January 1649
+      - Charles I executed, January 30, 1649
+  - phase: thermidor
+    label: Protectorate to Restoration
+    t_start: 0.84
+    t_end: 0.92
+    intensity: 55
+    reached: true
+    summary: Cromwell's Commonwealth hardens into a personal Protectorate that looks increasingly like the monarchy it replaced, and collapses within two years of his death.
+    key_events:
+      - Cromwell becomes Lord Protector, 1653
+      - Cromwell dies, 1658
+      - Charles II restored, May 1660
+ate_its_children: true
+outcome: restored-old-regime
+peak_participation_pct: null
+crossed_participation_threshold: null
+military_defection: partial
+foreign_intervention: direct-military
+duration_days: 3305
+death_toll: Estimated 200,000 dead across England, Scotland, and Ireland once disease and famine are counted, a higher proportional death toll than World War One inflicted on England alone.
+death_toll_low: 190000
+death_toll_high: 250000
+regime_before: monarchy
+regime_after: monarchy
+democratization_delta: 0
+success_factors:
+  - factor_key: armed-campaign-base-rate
+    label: Armed campaigns win at lower and less durable rates
+    framework: chenoweth
+    status: partial
+    direction: indeterminate
+    base_rate: Armed campaigns succeed in imposing lasting change in roughly 26% of historical cases, well under nonviolent campaigns' 53%
+    rationale: Parliament's army won every battle that mattered, yet the republic it produced lasted barely a decade before the monarchy it fought to constrain returned largely intact.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+  - factor_key: revolution-consumes-radicals
+    label: Revolutionary coalitions purge their own radical wing
+    framework: brinton
+    status: confirmed
+    direction: favors-regime
+    base_rate: Crane Brinton's comparative model identifies a recurring terror-and-virtue phase in which a revolution turns on its own extremists before a Thermidorian reaction restores order
+    rationale: Cromwell suppressed the Levellers at Burford in 1649, the same year he helped execute the king, and the Protectorate he then built drifted back toward one-man rule.
+    sources:
+      - Brinton, The Anatomy of Revolution (1938)
+  - factor_key: elite-fracture
+    label: Elite fracture opens the crisis, elite reunification closes it
+    framework: skocpol
+    status: confirmed
+    direction: indeterminate
+    base_rate: Skocpol's structural model treats a split ruling class as the trigger for state breakdown and its reunification as the marker of consolidation, in either direction
+    rationale: The gentry and merchant class that split from the crown in 1642 was largely the same class that invited Charles II home in 1660, having concluded a republic without a king was less stable than a king with limits.
+    sources:
+      - Skocpol, States and Social Revolutions (1979)
+key_figures:
+  - name: Charles I
+    role: Executed King of England, Scotland, and Ireland
+    born: 1600
+    died: 1649
+  - name: Oliver Cromwell
+    role: Parliamentary general, later Lord Protector
+    born: 1599
+    died: 1658
+  - name: Thomas Fairfax
+    role: Commander in chief of the New Model Army
+    born: 1612
+    died: 1671
+  - name: Charles II
+    role: Restored King of England, Scotland, and Ireland
+    born: 1630
+    died: 1685
+legacy_points:
+  - Charles I's trial and execution established, for the first time in English history, that a king could be held legally accountable to his own subjects, a precedent the Restoration could not fully erase.
+  - The New Model Army's promotion-by-merit model influenced military organization well beyond England.
+  - The 1660 Restoration settlement quietly preserved Parliament's wartime gains, including control over taxation, leaving the argument 1688 would settle more permanently already half won.
+  - Republican and regicide arguments circulated by Leveller pamphleteers resurfaced over a century later in French and American revolutionary rhetoric.
+related_revolt_slugs:
+  - glorious-revolution-1688
+  - french-revolution
+related_history_slugs: []
+is_published: true
+perspectives:
+  - viewpoint: Parliamentary constitutionalist
+    viewpoint_type: revolutionary
+    region_origin: England
+    narrative: Charles's claim to rule by divine right without Parliament's consent was itself the illegal act; the war and the trial enforced a law the king had already broken.
+    key_arguments:
+      - Eleven years of taxation without consent violated ancient parliamentary privilege
+      - The king's attempted arrest of MPs in their own chamber was the true rupture
+      - Trying the king held the crown accountable to law for the first time
+    sources: []
+    notable_quotes:
+      - text: I am a martyr of the people.
+        speaker: Charles I
+        context: Reported final words on the scaffold, January 30, 1649
+    emphasized:
+      - ship money and prerogative taxation
+      - the five members
+    omitted:
+      - the scale of civilian death from disease and requisition
+      - Leveller demands the Parliamentary leadership itself suppressed
+  - viewpoint: Royalist and later Restoration apologist
+    viewpoint_type: counter-revolutionary
+    region_origin: England
+    narrative: The war destroyed a functioning constitutional balance and replaced it with a decade of military rule under Cromwell no more accountable than the king it deposed, vindicating the 1660 return to monarchy.
+    key_arguments:
+      - Regicide was an unprecedented and unlawful act regardless of Charles's failings
+      - The Protectorate's rule by major-generals was itself a military dictatorship
+      - Popular relief at the Restoration shows the republic had lost its own legitimacy
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - the disorder and taxation of the Protectorate years
+      - the popular welcome given Charles II in 1660
+    omitted:
+      - Charles I's own record of ruling without Parliament for eleven years
+      - the durable gains Parliament kept even after 1660
+media: []
+connections:
+  - target_slug: glorious-revolution-1688
+    connection_type: provided-model
+    description: The unresolved argument over prerogative power that started the civil war was finally settled, this time without a war, by the Bill of Rights forty years later.
+  - target_slug: french-revolution
+    connection_type: parallel
+    description: Both revolutions moved from limiting a monarch to trying and executing him, then cycled through a radical phase before a reaction restored a more conservative order.

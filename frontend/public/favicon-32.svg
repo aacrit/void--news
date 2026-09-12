@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="Void News">
+  <!-- Void News 32px favicon — TRANSPARENT (no tile), brass footed Sigil.
+       Theme-aware: light-brass #946B15 on light tabs, dark-brass #D4A574 on
+       dark tabs. -->
+  <style>
+    .sig { stroke: #946B15; }
+    @media (prefers-color-scheme: dark) { .sig { stroke: #D4A574; } }
+  </style>
+  <g class="sig" transform="translate(3.2,3.2) scale(0.256)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="50" cy="40" r="30" stroke-width="8"/>
+    <line x1="12" y1="40" x2="88" y2="40" stroke-width="6"/>
+    <line x1="13" y1="33" x2="12" y2="47" stroke-width="5"/>
+    <line x1="87" y1="33" x2="88" y2="47" stroke-width="5"/>
+    <line x1="50" y1="70" x2="50" y2="86" stroke-width="6"/>
+    <path d="M36 93 C44 88 56 88 64 93" stroke-width="6"/>
+  </g>
+</svg>

@@ -1,0 +1,58 @@
+name: Site Freshness Check
+
+# Catches SILENT staleness: a pipeline run can "succeed" but write nothing (or be
+# killed), leaving the public site serving day-old content with no error. This
+# checks the newest story_clusters.last_updated a few hours after the daily
+# window and alerts + fails if the feed is older than 30h.
+on:
+  schedule:
+    - cron: '0 15 * * *'   # 15:00 UTC, ~4h after the 11:00 daily pipeline window
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: pip install psycopg2-binary
+      - name: Check feed freshness
+        env:
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+          WEBHOOK: ${{ secrets.ALERT_WEBHOOK_URL }}
+        run: |
+          python3 << 'PYEOF'
+          import psycopg2, os, json, urllib.request, datetime as dt
+
+          ref = os.environ['SUPABASE_PROJECT_REF']
+          pw = os.environ['SUPABASE_DB_PASSWORD']
+          dsn = f'postgresql://postgres.{ref}:{pw}@aws-0-us-west-2.pooler.supabase.com:5432/postgres?sslmode=require'
+
+          conn = psycopg2.connect(dsn, connect_timeout=20)
+          cur = conn.cursor()
+          cur.execute("SELECT max(last_updated) FROM story_clusters")
+          newest = cur.fetchone()[0]
+          age_h = (dt.datetime.now(dt.timezone.utc) - newest).total_seconds() / 3600 if newest else 1e9
+          print(f'newest story_clusters.last_updated = {newest} ({age_h:.1f}h ago)')
+
+          if age_h > 30:
+              msg = (f':large_orange_diamond: void --news feed is STALE: newest story is '
+                     f'{age_h:.0f}h old (last_updated {newest}). The daily pipeline likely failed to refresh.')
+              print(msg)
+              wh = os.environ.get('WEBHOOK')
+              if wh:
+                  try:
+                      req = urllib.request.Request(wh, data=json.dumps({'text': msg}).encode(),
+                                                   headers={'Content-Type': 'application/json'})
+                      urllib.request.urlopen(req, timeout=15)
+                  except Exception as e:
+                      print('webhook POST failed:', e)
+              raise SystemExit(1)   # fail the job so it also shows red in Actions
+          print('Feed is fresh.')
+          PYEOF

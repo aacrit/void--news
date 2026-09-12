@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"
+     role="img" aria-label="Void News animated Sigil">
+  <style>
+    .void-static { fill: none; stroke: #B26F52; stroke-linecap: round; }
+    .void-beam {
+      fill: none;
+      stroke: #B26F52;
+      stroke-linecap: round;
+      transform-box: view-box;
+      transform-origin: 50px 40px;
+      animation: void-beam-sweep 4.4s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+    }
+    @keyframes void-beam-sweep {
+      0%, 100% { transform: rotate(0deg);   stroke: #B26F52; }
+      20%      { transform: rotate(-15deg); stroke: #3F72B0; }
+      45%      { transform: rotate(0deg);   stroke: #3E7C57; }
+      70%      { transform: rotate(15deg);  stroke: #B0433B; }
+      88%      { transform: rotate(0deg);   stroke: #B26F52; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .void-beam { animation: none; stroke: #B26F52; transform: none; }
+    }
+  </style>
+
+  <!-- Coverage ring + foot: the ground the scale stands on. Static. -->
+  <circle class="void-static" cx="50" cy="40" r="30" stroke-width="8"/>
+  <line class="void-static" x1="50" y1="70" x2="50" y2="86" stroke-width="6"/>
+  <path class="void-static" d="M36 93 C44 88 56 88 64 93" stroke-width="6"/>
+
+  <!-- Balance beam + |-| weight ticks: the bias measurement. Sweeps. -->
+  <g class="void-beam">
+    <line x1="12" y1="40" x2="88" y2="40" stroke-width="6"/>
+    <line x1="12" y1="32" x2="12" y2="48" stroke-width="5"/>
+    <line x1="88" y1="32" x2="88" y2="48" stroke-width="5"/>
+  </g>
+</svg>

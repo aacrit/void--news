@@ -161,6 +161,64 @@ All spacing via `var(--space-N)` tokens with `clamp()`:
 - Between body and metadata: `var(--space-3)` (visual separation)
 - Page margins: `var(--space-7)` (newspaper tradition — generous outer margins)
 
+## Organic Ink Design Language — "Editor's Desk"
+
+The ink design language extends Press & Precision with hand-drawn, editorial personality. Think: an editor's desk where stamps, circles, and pen marks annotate the news. Implemented as SVG pseudo-elements with organic paths, spring physics, and rack-focus depth.
+
+### Ink Elements
+
+| Element | Implementation | Where Used |
+|---------|---------------|------------|
+| **Ink circles** | SVG `::before` pseudo-element, hand-drawn path (not `<circle>`), stroke-only | Axis stamps (methodology, Deep Dive Six Lenses) |
+| **Ink underlines** | Wavy SVG path beneath text, pressure variation (thick→thin) | Sigil divergence/consensus indicators |
+| **Ink brackets** | Wavy vertical SVG stroke as left border | Detail panels, annotation callouts |
+| **Ink stamps** | Circular ink marks with rotation variety, stamp-press physics | Validation stats, tier counts, category badges |
+
+### Ink Circle SVG Template (reuse everywhere)
+```
+M60 6 C98 4 116 22 114 52 C112 78 92 96 60 94 C28 96 8 78 6 52 C4 22 22 4 60 6
+```
+ViewBox: `0 0 120 100`. Light mode stroke: `#52504A` at 30% opacity. Dark mode: `#9CA3AF` at 20%. Active: `--accent-warm` at 60%.
+
+### Ink Physics
+
+| Interaction | Motion | Timing |
+|-------------|--------|--------|
+| Stamp hover | `translateY(-4px) scale(1.03)` | `--spring-snappy` (200ms) |
+| Stamp click | `scale(0.92)` → spring back to 1.0 | 80ms compress, 400ms spring |
+| Rack focus | Siblings: `opacity: 0.4; filter: blur(0.5px)` | `--ease-rack` (300ms) |
+| Entrance | `translateY(8-16px)` + `opacity: 0→1` | `--ease-cinematic` (250ms, staggered) |
+| Warm pulse | `box-shadow` with `--accent-warm` ghost | 2s infinite alternate |
+
+### Rotation Variety
+Each ink shape gets a unique rotation via `nth-child`:
+```css
+:nth-child(1)::before { /* default, no rotation */ }
+:nth-child(2)::before { transform: rotate(3deg) scaleX(-1); }
+:nth-child(3)::before { transform: rotate(-2deg); }
+:nth-child(4)::before { transform: rotate(4deg) scaleY(-1); }
+:nth-child(5)::before { transform: rotate(-3deg) scaleX(-1); }
+:nth-child(6)::before { transform: rotate(2deg) scaleX(-1) scaleY(-1); }
+```
+
+### Accent Rules for Ink
+- Default ink strokes: `var(--fg-muted)` at low opacity (decorative, not attention-grabbing)
+- Active/selected ink: `var(--accent-warm)` at 60% (earned emphasis)
+- Hero elements (100% accuracy, active stamp): warm accent glow pulse
+- Never use bias colors for ink strokes — ink is neutral editorial annotation
+
+### Where to Apply (Priority Order)
+1. **Methodology infographic** — 6 axis stamps, stat stamps, tier stamps, favicon river (DONE)
+2. **Deep Dive Six Lenses** — per-article 6-axis scores as ink stamps (DONE)
+3. **Section dividers** — wavy ink strokes replacing rigid `border-bottom`
+4. **"Top Story" badge** — ink stamp circle replacing rectangular pill
+5. **Story card hover** — ink circles behind card on hover
+6. **Category tags** — micro ink stamps behind text labels
+7. **Loading states** — hand-drawn outline doodles replacing shimmer blocks
+
+### Reduced Motion
+All ink rotations, spring physics, sway animations, and entrance staggers → disabled under `prefers-reduced-motion: reduce`. Ink shapes remain visible as static decorations.
+
 ## Motion Grammar
 
 Adapted from DondeAI's Ink & Momentum motion system.

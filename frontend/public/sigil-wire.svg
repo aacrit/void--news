@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" role="img" aria-label="THE WIRE">
+  <!--
+    THE WIRE Sigil — horizontal baseline with signal pulse.
+    Flat line that spikes into a sharp EKG/radio pulse at center.
+    The signal in the noise.
+  -->
+  <style>
+    .tw-stroke { stroke: #EDE8E0; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    @media (prefers-color-scheme: light) {
+      .tw-stroke { stroke: #1A1A1A; }
+    }
+  </style>
+
+  <!-- Flat line with sharp signal pulse -->
+  <polyline class="tw-stroke" points="3,16 10,16 13,16 15,8 17,24 19,12 21,16 22,16 29,16" />
+</svg>

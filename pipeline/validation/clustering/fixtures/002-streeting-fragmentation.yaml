@@ -1,0 +1,108 @@
+id: streeting-resigns-2026-05
+name: "Streeting health-secretary resignation (must merge across resign/resignation stem)"
+failure_date: "2026-05-15"
+failure_kind: fragmentation
+articles:
+  - id: str-1
+    title: "Wes Streeting resigns as UK health secretary"
+    summary: "Wes Streeting has resigned as UK health secretary, citing irreconcilable differences with Prime Minister Keir Starmer over NHS reform."
+    full_text: >
+      Wes Streeting has resigned as UK health secretary, citing irreconcilable differences
+      with Prime Minister Keir Starmer over NHS reform. In a letter posted to social media
+      shortly after midday, Streeting said the cabinet was "no longer capable of delivering
+      the structural change the health service needs." Treasury sources told the BBC the
+      flashpoint was a draft autumn-budget plan to extend the NHS pay-rise freeze. Starmer
+      did not immediately name a replacement. Cabinet Secretary Simon Case is reportedly
+      managing the transition. Streeting was seen as a leadership rival to Starmer; his
+      departure removes a Blairite voice from the government's domestic team and is likely
+      to embolden the Labour left ahead of the autumn conference.
+    source: { slug: bbc, country: GB, tier: international }
+    published_at: "2026-05-12T13:00Z"
+  - id: str-2
+    title: "UK health secretary Streeting resigns over NHS dispute"
+    summary: "Britain's health secretary Wes Streeting has resigned amid a deepening dispute over National Health Service funding."
+    full_text: >
+      Britain's health secretary Wes Streeting has resigned amid a deepening dispute over
+      National Health Service funding, the government confirmed on Monday afternoon. The
+      announcement came hours after Streeting and Chancellor Rachel Reeves were reported to
+      have argued in a closed cabinet meeting. Streeting, in his resignation letter
+      released by his office, said: "I cannot in good conscience defend a strategy that
+      asks frontline staff to absorb a fourth real-terms pay cut." Sterling fell 0.4
+      percent against the dollar on the news. The Conservative shadow chancellor demanded
+      an emergency parliamentary statement. Reuters could not immediately reach Reeves's
+      office for comment. Streeting was first elected to parliament in 2015.
+    source: { slug: reuters, country: GB, tier: wire }
+    published_at: "2026-05-12T13:30Z"
+  - id: str-3
+    title: "Streeting walks out of cabinet citing NHS funding row"
+    summary: "Wes Streeting has dramatically walked out of cabinet, his resignation as UK health secretary throwing the Starmer administration into its first major crisis."
+    full_text: >
+      Wes Streeting has dramatically walked out of cabinet, his resignation as UK health
+      secretary throwing the Starmer administration into its first major crisis. The Guardian
+      understands Streeting and Health Minister Karin Smyth had been preparing a counter-
+      proposal that would have ring-fenced winter funding for emergency departments, but
+      the Treasury rejected it on Sunday night. "Wes felt he had no alternative," a senior
+      Streeting ally told this newspaper. Downing Street described the resignation as
+      "regrettable" and said the prime minister wished him well. Backbench MPs from the
+      Soft Left Caucus tabled an emergency-budget amendment within an hour of the news.
+    source: { slug: guardian, country: GB, tier: international }
+    published_at: "2026-05-12T14:00Z"
+  - id: str-4
+    title: "Starmer accepts Streeting resignation amid NHS budget crisis"
+    summary: "Prime Minister Keir Starmer has accepted the resignation of health secretary Wes Streeting, ending a 24-hour stand-off over the NHS budget."
+    full_text: >
+      Prime Minister Keir Starmer has accepted the resignation of health secretary Wes
+      Streeting, ending a 24-hour stand-off over the NHS budget. In a brief statement
+      issued from Downing Street, Starmer said he had "reluctantly accepted" the
+      resignation and would announce a successor before the close of business Tuesday.
+      Cabinet Office sources said Streeting had been offered the leveling-up brief in
+      compensation but declined. The pound recovered earlier losses against the euro
+      following the Number 10 statement. The Spectator's political editor wrote that the
+      resignation marks the end of the Starmer-Streeting axis that drove Labour's manifesto
+      drafting. Whitehall briefings hint at a reshuffle within 48 hours.
+    source: { slug: telegraph, country: GB, tier: international }
+    published_at: "2026-05-12T15:30Z"
+  - id: str-5
+    title: "Number 10 confirms Starmer accepted health-secretary resignation"
+    summary: "Number 10 has confirmed Prime Minister Keir Starmer accepted Wes Streeting's resignation as health secretary on Monday afternoon."
+    full_text: >
+      Number 10 has confirmed Prime Minister Keir Starmer accepted Wes Streeting's
+      resignation as health secretary on Monday afternoon, with a successor to be announced
+      Tuesday morning. The Press Association understands that Cabinet Office Minister Pat
+      McFadden has been touring backbench offices in Portcullis House to soothe nerves on
+      the Labour benches. Streeting himself will not return to the Department of Health
+      this week and has cancelled all departmental engagements. The resignation is the
+      first cabinet-rank departure under Starmer since his July 2024 election victory.
+      Westminster bookmakers installed Liz Kendall as the favourite for the vacant brief
+      at 6/4. Junior minister Stephen Kinnock is at 5/2.
+    source: { slug: pa-media, country: GB, tier: wire }
+    published_at: "2026-05-12T16:00Z"
+  - id: str-6
+    title: "PM Starmer to name new health secretary after Streeting resignation"
+    summary: "Prime Minister Keir Starmer will name a new health secretary on Tuesday after accepting Wes Streeting's resignation, Sky News understands."
+    full_text: >
+      Prime Minister Keir Starmer will name a new health secretary on Tuesday after
+      accepting Wes Streeting's resignation, Sky News understands. The shortlist is
+      believed to consist of three names: Liz Kendall, Stephen Kinnock and Andrew Gwynne,
+      according to two Whitehall sources who spoke on condition of anonymity. The
+      resignation arrives at a politically punishing moment for Labour, with junior doctors
+      due to vote on fresh strike action this week. The British Medical Association said it
+      would meet the new health secretary "as a matter of urgency." Cabinet sources
+      conceded the resignation would dominate Wednesday's PMQs. Streeting is expected to
+      return to the backbenches and chair the all-party parliamentary group on cancer.
+    source: { slug: sky-news, country: GB, tier: international }
+    published_at: "2026-05-12T17:30Z"
+expectation:
+  type: should_merge
+  expected_member_ids: [str-1, str-2, str-3, str-4, str-5, str-6]
+  min_clusters: 1
+  max_clusters: 1
+  min_source_count: 5
+rationale: |
+  Stem-mismatch failure mode: "resign" vs "resignation" should collapse
+  under PorterStemmer but currently doesn't because the TF-IDF vectorizer
+  uses sklearn's English stop-words list without a stemmer. Articles share
+  entities Streeting + Starmer + NHS + Labour, but the Phase-2 entity merge
+  blacklist filters out "starmer" indirectly via the head-of-state list,
+  leaving only Streeting + NHS. Production split this story into two
+  clusters at ranks #9 and #13 on 2026-05-15.

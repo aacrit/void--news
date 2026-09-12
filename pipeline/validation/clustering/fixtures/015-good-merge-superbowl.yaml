@@ -1,0 +1,85 @@
+id: super-bowl-good-merge-2026-02
+name: "Super Bowl LX winner — known-good merge across 5 sources"
+failure_date: "2026-02-09"
+failure_kind: known-good-merge
+articles:
+  - id: sb-1
+    title: "Kansas City Chiefs win Super Bowl LX 31-28 over San Francisco 49ers"
+    summary: "The Kansas City Chiefs won Super Bowl LX 31-28 over the San Francisco 49ers Sunday night in a thriller decided by a last-second field goal."
+    full_text: >
+      The Kansas City Chiefs won Super Bowl LX 31-28 over the San Francisco 49ers on
+      Sunday night in a thriller decided by a 53-yard Harrison Butker field goal as time
+      expired. Quarterback Patrick Mahomes threw for 308 yards and three touchdowns,
+      earning his fourth Super Bowl MVP and tying Joe Montana's record. Travis Kelce
+      caught two touchdown passes. The Chiefs trailed by 11 at halftime before a
+      third-quarter surge tied the game. 49ers QB Brock Purdy threw for 290 yards but
+      was sacked five times in the second half. The Allegiant Stadium crowd of 65,000
+      witnessed the third Super Bowl decided by 3 points or fewer in five seasons.
+      Travis Kelce's two scores brought his playoff total to 21, surpassing Jerry Rice.
+    source: { slug: espn, country: US, tier: international }
+    published_at: "2026-02-09T05:00Z"
+  - id: sb-2
+    title: "Mahomes wins fourth Super Bowl MVP as Chiefs edge 49ers 31-28"
+    summary: "Patrick Mahomes won his fourth Super Bowl MVP as the Kansas City Chiefs edged the San Francisco 49ers 31-28 at Allegiant Stadium."
+    full_text: >
+      Patrick Mahomes won his fourth Super Bowl MVP as the Kansas City Chiefs edged the
+      San Francisco 49ers 31-28 at Allegiant Stadium on Sunday night. The AP reports
+      Mahomes finished 28-of-39 for 308 yards and three touchdowns. He tied Joe
+      Montana's record for Super Bowl MVPs and is now widely regarded as the
+      best quarterback to have played professional football. Travis Kelce caught both
+      of Mahomes' touchdowns to him for a total of 21 career playoff receiving
+      touchdowns, surpassing Jerry Rice. The Chiefs are the first team since the
+      1979 Pittsburgh Steelers to win four Super Bowls in seven seasons.
+    source: { slug: ap-news, country: US, tier: wire }
+    published_at: "2026-02-09T05:15Z"
+  - id: sb-3
+    title: "Super Bowl LX: Butker's 53-yard field goal seals Chiefs win"
+    summary: "Super Bowl LX: Harrison Butker's 53-yard field goal as time expired sealed the Kansas City Chiefs' 31-28 win over the San Francisco 49ers."
+    full_text: >
+      Super Bowl LX: Harrison Butker's 53-yard field goal as time expired sealed the
+      Kansas City Chiefs' 31-28 win over the San Francisco 49ers on Sunday night,
+      Reuters reports from Las Vegas. The Chiefs scored 14 unanswered points in the
+      third quarter to tie the game at 24, before a defensive standoff in the fourth.
+      Butker was perfect on the night, going 3-for-3 on field goals and 4-for-4 on
+      extra points. The game-winning kick traveled 53 yards but was struck with such
+      velocity it would have been good from 60. Coach Andy Reid called it "the cleanest
+      striker in the league for 18 years and counting."
+    source: { slug: reuters, country: US, tier: wire }
+    published_at: "2026-02-09T05:30Z"
+  - id: sb-4
+    title: "Kelce ties Jerry Rice's playoff TD record in Chiefs Super Bowl win"
+    summary: "Travis Kelce tied Jerry Rice's career playoff receiving-touchdown record as the Chiefs won Super Bowl LX 31-28."
+    full_text: >
+      Travis Kelce tied and then surpassed Jerry Rice's career playoff receiving-
+      touchdown record as the Kansas City Chiefs won Super Bowl LX 31-28 over the San
+      Francisco 49ers Sunday night, the New York Times sports desk reports. Kelce
+      caught both Mahomes touchdowns to bring his career playoff total to 21, eclipsing
+      Rice's longstanding mark. The 36-year-old tight end called his career an "even
+      better dream than the dream itself" in a post-game interview with Erin Andrews.
+      Kelce and Mahomes will return to Kansas City Monday morning.
+    source: { slug: nytimes, country: US, tier: international }
+    published_at: "2026-02-09T05:45Z"
+  - id: sb-5
+    title: "Las Vegas Super Bowl LX: Chiefs 31, 49ers 28"
+    summary: "Las Vegas Super Bowl LX: Chiefs 31, 49ers 28. Mahomes won his fourth MVP; Butker's late field goal won the game."
+    full_text: >
+      Las Vegas Super Bowl LX: Chiefs 31, 49ers 28. Patrick Mahomes won his fourth MVP
+      and Harrison Butker's late 53-yard field goal won the game, CNN Sports reports
+      from Allegiant Stadium. The Chiefs' fourth Super Bowl in seven seasons cements
+      head coach Andy Reid's case as the most accomplished coach of the modern era.
+      Reid said in the post-game press conference: "This group has heart that doesn't
+      fade." Mahomes will turn 31 next season and is signed through 2032. The Chiefs
+      will receive their championship rings in late June at Arrowhead Stadium.
+    source: { slug: cnn, country: US, tier: international }
+    published_at: "2026-02-09T06:00Z"
+expectation:
+  type: should_merge
+  expected_member_ids: [sb-1, sb-2, sb-3, sb-4, sb-5]
+  min_clusters: 1
+  max_clusters: 1
+  min_source_count: 4
+rationale: |
+  Known-good baseline. Sports-championship coverage with extremely dense
+  shared vocabulary (Chiefs, 49ers, Mahomes, Kelce, Butker, Super Bowl,
+  31-28) merges cleanly under TF-IDF Phase 1. Regression-detection
+  fixture for the rewrite — sports-event clustering must not break.

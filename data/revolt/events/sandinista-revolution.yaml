@@ -1,0 +1,229 @@
+slug: sandinista-revolution
+title: The Sandinista Revolution
+subtitle: A forty-three-year dynasty falls in eighteen months, then loses the ballot a decade later
+date_display: 1961-1990
+date_start: 1961
+date_end: 1990
+date_precision: year
+era: people-power
+region: americas
+country: Nicaragua
+revolt_type: social
+status: concluded
+summary: The Sandinista National Liberation Front, founded in 1961 against the Somoza family dynasty, fought an on-and-off guerrilla war for eighteen years before a broad coalition of guerrillas, striking businesses, and outraged citizens finally drove Anastasio Somoza Debayle from power in 1979. The Sandinistas then governed through a decade of Contra war before losing Nicaragua's 1990 election at the ballot box.
+significance: A rare case of an armed revolutionary movement that won power by force and then, a decade later, peacefully relinquished it after losing a free election, though its founding generation would return to government by ballot years afterward.
+grievances:
+  - kind: Dynastic rule
+    intensity: 82
+    evidence: The Somoza family had governed Nicaragua for 43 years by 1979, with Anastasio Somoza Debayle the third family member to hold the presidency since his father seized power in 1936.
+  - kind: Earthquake relief corruption
+    intensity: 78
+    evidence: The National Guard diverted a substantial share of international relief aid following the 1972 Managua earthquake, which killed an estimated 10,000 people, deepening public anger even among the business elite.
+  - kind: Assassination of a leading dissident journalist
+    intensity: 80
+    evidence: The January 1978 assassination of newspaper editor Pedro Joaquin Chamorro, a prominent Somoza critic, triggered nationwide strikes and riots that widened the opposition far beyond the FSLN's guerrilla base.
+actors:
+  - actor_type: vanguard
+    name: The FSLN
+    description: The Sandinista National Liberation Front, founded in 1961 by Carlos Fonseca and allies.
+    role_in_arc: Fought an intermittent guerrilla campaign for eighteen years before leading the final 1978-79 insurrection.
+    defected: false
+  - actor_type: old-regime
+    name: Anastasio Somoza Debayle
+    description: President of Nicaragua and commander of the National Guard.
+    role_in_arc: Fled Nicaragua in July 1979 as FSLN forces and allied insurgents closed in on Managua.
+    defected: false
+  - actor_type: religious-clergy
+    name: Liberation theology clergy
+    description: Catholic priests and lay organizers influenced by liberation theology.
+    role_in_arc: Provided organizing networks and moral legitimacy to the anti-Somoza movement in rural and poor urban communities.
+    defected: false
+  - actor_type: foreign-backer
+    name: Cuba
+    description: Cuba's government, which trained and armed FSLN fighters from the 1960s onward.
+    role_in_arc: Supplied material and ideological support that sustained FSLN operations through repeated setbacks.
+    defected: false
+  - actor_type: old-regime
+    name: The National Guard
+    description: Nicaragua's US-trained security force and the Somoza family's chief instrument of control.
+    role_in_arc: Remained loyal to Somoza almost to the very end, but collapsed once conscript morale broke in the final weeks of the 1979 offensive.
+    defected: true
+tactics:
+  - tactic_type: guerrilla-warfare
+    description: FSLN columns fought an intermittent rural and mountain campaign from the early 1960s, absorbing repeated defeats before building a sustainable base by the mid-1970s.
+    prominence: primary
+  - tactic_type: general-strike
+    description: Business-sector strikes following Chamorro's 1978 assassination brought even Somoza's former commercial allies into open opposition.
+    prominence: primary
+  - tactic_type: urban-uprising
+    description: Coordinated insurrections in Managua, Leon, and Esteli during the 1979 final offensive stretched the National Guard's forces past their breaking point.
+    prominence: secondary
+resistance_type: armed
+phases:
+  - phase: old-regime-crisis
+    label: Dynasty and earthquake corruption
+    t_start: 0
+    t_end: 0.12
+    intensity: 50
+    reached: true
+    summary: Four decades of Somoza rule and the diversion of 1972 earthquake relief funds erode support across Nicaraguan society, including the business elite.
+    key_events:
+      - FSLN founded, 1961
+      - Managua earthquake and relief corruption, 1972
+  - phase: the-spark
+    label: Chamorro's assassination
+    date_start: '1978-01-10'
+    t_start: 0.22
+    t_end: 0.34
+    intensity: 75
+    reached: true
+    summary: The assassination of newspaper editor Pedro Joaquin Chamorro triggers nationwide strikes and riots that widen anti-Somoza opposition far beyond the FSLN's existing base.
+    key_events:
+      - Chamorro assassinated, January 10, 1978
+      - Nationwide strikes and riots follow
+  - phase: moderate-phase
+    label: A broad coalition forms
+    t_start: 0.34
+    t_end: 0.48
+    intensity: 55
+    reached: true
+    summary: Business associations, clergy, and opposition parties join the FSLN in a broad anti-Somoza front through 1978.
+    key_events:
+      - Business-sector strikes, 1978
+      - Broad opposition front forms
+  - phase: dual-power
+    label: Liberated zones expand
+    t_start: 0.48
+    t_end: 0.6
+    intensity: 60
+    reached: true
+    summary: FSLN-controlled territory expands through late 1978 and early 1979 even as Somoza's National Guard still holds Managua and the major cities.
+    key_events:
+      - FSLN territorial gains expand, 1978-79
+  - phase: radical-phase
+    label: The final offensive
+    date_start: '1979-06-01'
+    t_start: 0.6
+    t_end: 0.72
+    intensity: 88
+    reached: true
+    summary: A coordinated final offensive combines urban insurrection with FSLN's rural columns, and Somoza flees the country weeks later.
+    key_events:
+      - Final offensive begins, June 1979
+      - Somoza flees, July 17, 1979
+  - phase: thermidor
+    label: Coalition fractures and the Contra war
+    t_start: 0.84
+    t_end: 0.92
+    intensity: 65
+    reached: true
+    summary: The broad coalition that toppled Somoza splits over land, press, and economic policy through the 1980s, while US-backed Contra forces wage a decade-long insurgency against the new government.
+    key_events:
+      - Contra war begins, 1981
+      - Mixed-economy and press-policy disputes intensify through the 1980s
+outcome: ongoing-unresolved
+peak_participation_pct: null
+crossed_participation_threshold: null
+military_defection: partial
+foreign_intervention: material
+duration_days: null
+death_toll: An estimated 30,000 to 50,000 killed in the 1978-79 insurrection alone; the subsequent 1980s Contra war killed a further estimated 30,000.
+death_toll_low: 30000
+death_toll_high: 50000
+regime_before: personalist
+regime_after: unresolved
+democratization_delta: 1
+success_factors:
+  - factor_key: hybrid-tactics
+    label: Combining guerrilla warfare with general strikes can outperform either alone
+    framework: chenoweth
+    status: confirmed
+    direction: favors-movement
+    base_rate: Armed campaigns succeed in roughly 26% of historical cases versus 53% for nonviolent ones; hybrid campaigns pairing armed struggle with mass economic pressure can outperform either tactic alone
+    rationale: Business-sector strikes after Chamorro's assassination brought pressure on Somoza from a constituency the FSLN's guerrilla campaign alone could never have reached.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+  - factor_key: foreign-backing-tradeoff
+    label: Heavy foreign backing to a challenger correlates with weaker post-victory consolidation
+    framework: goldstone
+    status: atypical
+    direction: indeterminate
+    base_rate: Heavy foreign material backing to a challenger correlates in the comparative literature with weaker post-victory democratic consolidation
+    rationale: Cuban backing sustained FSLN operations through the 1960s and 70s, and the pattern arguably bears out in the 1990 electoral defeat and the later Ortega-era consolidation of power the new government underwent.
+    sources:
+      - 'Goldstone, Revolutions: A Very Short Introduction (2014)'
+  - factor_key: broad-coalition-mobilization
+    label: Uniting normally opposed social classes against a common target increases the odds of rapid collapse
+    framework: skocpol
+    status: confirmed
+    direction: favors-movement
+    base_rate: Skocpol's comparative work finds that coalitions spanning class lines, not narrow single-class movements, more often produce rapid regime collapse
+    rationale: The 1978 strikes brought commercial and professional Nicaraguans who had never supported the FSLN into the same anti-Somoza front as its guerrilla fighters.
+    sources:
+      - Skocpol, States and Social Revolutions (1979)
+key_figures:
+  - name: Anastasio Somoza Debayle
+    role: Deposed President of Nicaragua
+    born: 1925
+    died: 1980
+  - name: Carlos Fonseca
+    role: Founder of the FSLN
+    born: 1936
+    died: 1976
+  - name: Daniel Ortega
+    role: FSLN commander, later President of Nicaragua
+    born: 1945
+  - name: Violeta Chamorro
+    role: Opposition candidate, won the 1990 presidential election
+    born: 1929
+legacy_points:
+  - The FSLN's 1979 victory ended a Somoza family dynasty that had ruled Nicaragua for 43 years.
+  - The 1980s Contra war, backed by covert US funding, killed an estimated 30,000 Nicaraguans on top of the insurrection's own death toll.
+  - Violeta Chamorro's 1990 election victory marked one of the few instances of a revolutionary armed movement peacefully ceding power at the ballot box.
+  - Daniel Ortega's later return to the presidency through elections revived debate over how much of the original revolution's democratic promise survived its own founding generation's later consolidation of power.
+related_revolt_slugs:
+  - cuban-revolution
+  - chinese-revolution-1949
+related_history_slugs: []
+is_published: true
+perspectives:
+  - viewpoint: Sandinista founding-generation view
+    viewpoint_type: revolutionary
+    region_origin: Nicaragua
+    narrative: A popular armed movement ended dynastic dictatorship and delivered land and literacy gains to a population long excluded from both, even if its own later leadership drew criticism for consolidating power.
+    key_arguments:
+      - The FSLN united guerrilla fighters, clergy, and business elites against a common dynastic enemy
+      - Land reform and a 1980 literacy campaign reached millions of rural Nicaraguans within two years of victory
+      - The 1990 election loss demonstrated the movement's own willingness to accept a democratic verdict
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - the literacy campaign
+      - the 1990 peaceful transfer of power
+    omitted:
+      - internal FSLN dissent over the Contra war's economic toll
+      - later criticism of Ortega-era power consolidation
+  - viewpoint: Opposition and Chamorro-era view
+    viewpoint_type: moderate
+    region_origin: Nicaragua
+    narrative: The FSLN's economic mismanagement and a drawn-out Contra war exhausted a population that voted decisively for change in 1990, rejecting continued armed conflict and centralized economic control.
+    key_arguments:
+      - Hyperinflation and war exhaustion had devastated household incomes by the late 1980s
+      - The FSLN's own land expropriations alienated segments of its founding coalition
+      - Chamorro's 1990 victory reflected a broad desire to end both the war and one-party dominance
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - 1980s economic collapse
+      - war fatigue among the electorate
+    omitted:
+      - the scale of Somoza-era repression the revolution originally responded to
+      - the Sandinistas' later return to power via subsequent elections
+media: []
+connections:
+  - target_slug: cuban-revolution
+    connection_type: inspired
+    description: Cuban training, arms, and ideological example directly shaped the FSLN's guerrilla strategy from the 1960s onward.
+  - target_slug: chinese-revolution-1949
+    connection_type: parallel
+    description: Both mobilized a rural guerrilla base against a personalist regime over a protracted, multi-decade campaign before final victory.

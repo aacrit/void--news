@@ -1,0 +1,237 @@
+slug: myanmar-spring-revolution
+title: The Myanmar Spring Revolution
+subtitle: A stolen election answered with rifles
+date_display: 2021 to present
+date_start: 2021
+date_precision: year
+era: square-revolutions
+region: southeast-asia
+country: Myanmar
+revolt_type: democratic-uprising
+status: active
+summary: On 1 February 2021 the Myanmar military annulled an election it had lost in a landslide and jailed the civilian leadership. Nonviolent strikes filled the streets for weeks. When the army answered with live fire, much of the movement took up arms. A parallel National Unity Government and a patchwork of People's Defence Forces now hold ground the junta cannot retake.
+significance: 'Myanmar is a live test of the hardest question in the study of revolution: what a movement does when nonviolent resistance is met with mass killing. It began nonviolent and became one of the largest armed uprisings of the century.'
+analytical_outlook: 'The junta has lost control of much of the country’s periphery but holds the core cities. The historical record on armed insurgencies against an entrenched military is mixed, and foreign patrons on both sides prolong the stalemate. Placement on the arc: a contested dual-power phase with no thermidor in sight.'
+grievances:
+  - kind: political
+    intensity: 90
+    evidence: The military voided the November 2020 election, which the National League for Democracy won with about 80 percent of contested seats.
+  - kind: repression
+    intensity: 88
+    evidence: Security forces killed more than 1500 people in the first year and detained thousands.
+  - kind: ethnic
+    intensity: 75
+    evidence: Decades of conflict with ethnic armed organizations gave the new resistance ready-made allies and training.
+repression_level: severe
+actors:
+  - actor_type: masses
+    name: The Civil Disobedience Movement
+    description: Doctors, teachers and civil servants who walked off the job to deny the junta a functioning state.
+    role_in_arc: Opened the revolution nonviolently and paralyzed public administration.
+    defected: false
+  - actor_type: vanguard
+    name: The National Unity Government
+    description: A parallel government formed by ousted lawmakers and ethnic representatives.
+    role_in_arc: Claims legitimate authority and coordinates the armed resistance.
+    defected: false
+  - actor_type: military-defectors
+    name: Defecting soldiers and police
+    description: Members of the security forces who crossed to the resistance.
+    role_in_arc: A steady but partial trickle of defections rather than a decisive break.
+    defected: true
+  - actor_type: security-forces
+    name: The Tatmadaw
+    description: The Myanmar armed forces under Min Aung Hlaing.
+    role_in_arc: Holds the cities and air power; has lost much of the countryside.
+    defected: false
+tactics:
+  - tactic_type: general-strike
+    description: The Civil Disobedience Movement shut down hospitals, banks and railways.
+    prominence: high
+  - tactic_type: armed-insurgency
+    description: People's Defence Forces and allied ethnic armies contest territory.
+    prominence: high
+  - tactic_type: parallel-institutions
+    description: The National Unity Government runs courts, schools and taxation in liberated areas.
+    prominence: medium
+resistance_type: hybrid
+phases:
+  - phase: old-regime-crisis
+    label: A managed transition curdles
+    date_start: 2020-11
+    t_start: 0
+    t_end: 0.12
+    intensity: 35
+    reached: true
+    summary: The military loses an election it expected to control and refuses the result.
+    key_events:
+      - NLD landslide
+      - Fraud claims rejected by the election commission
+  - phase: the-spark
+    label: The coup
+    date_start: '2021-02-01'
+    t_start: 0.22
+    t_end: 0.34
+    intensity: 70
+    reached: true
+    summary: The army detains the civilian leadership and declares a state of emergency. Mass protest follows within days.
+    key_events:
+      - 1 February coup
+      - Civil Disobedience Movement begins
+  - phase: radical-phase
+    label: From strikes to rifles
+    date_start: 2021-05
+    t_start: 0.6
+    t_end: 0.72
+    intensity: 85
+    reached: true
+    summary: After mass killings of protesters, the movement forms armed defence forces. The revolution becomes a war.
+    key_events:
+      - Formation of the PDFs
+      - Alliance with ethnic armies
+  - phase: dual-power
+    label: Two governments, one country
+    date_start: 2023-10
+    t_start: 0.48
+    t_end: 0.6
+    intensity: 75
+    reached: true
+    summary: A coordinated offensive takes towns and border posts. Neither side can dislodge the other from its base.
+    key_events:
+      - Operation 1027
+      - NUG administration expands
+  - phase: terror-virtue
+    label: Radicalization and reprisal
+    t_start: 0.72
+    t_end: 0.84
+    intensity: 0
+    reached: false
+    summary: Not reached.
+    key_events: []
+  - phase: consolidation
+    label: A settled order
+    t_start: 0.92
+    t_end: 1
+    intensity: 0
+    reached: false
+    summary: Not reached.
+    key_events: []
+outcome: ongoing-unresolved
+peak_participation_pct: null
+peak_participation_display: Millions joined the early strikes; the armed phase involves tens of thousands under arms.
+crossed_participation_threshold: true
+military_defection: partial
+foreign_intervention: material
+duration_days: null
+death_toll_low: null
+death_toll_high: null
+regime_before: military
+regime_after: unresolved
+democratization_delta: null
+success_factors:
+  - factor_key: resistance_method
+    label: Method of struggle
+    framework: chenoweth
+    status: Now primarily armed after beginning nonviolent.
+    direction: favors-regime
+    base_rate: About 53 percent of nonviolent campaigns from 1900 to 2006 succeeded, versus about 26 percent of armed ones.
+    rationale: The shift to arms was forced by mass killing, but the base rate for armed campaigns is markedly lower.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+    as_of: '2024'
+    confidence: medium
+  - factor_key: security_defection
+    label: Did the security forces defect
+    framework: chenoweth
+    status: Partial. A steady trickle of defectors, but no unit-level break.
+    direction: indeterminate
+    base_rate: Defection of the security forces is the single strongest predictor of a campaign’s success.
+    rationale: The Tatmadaw’s cohesion, built on economic self-interest and isolation, has largely held.
+    sources:
+      - Nepstad, Nonviolent Revolutions (2011)
+    as_of: '2024'
+    confidence: medium
+  - factor_key: external_support
+    label: Foreign backing
+    framework: chenoweth
+    status: Both sides receive material foreign support.
+    direction: favors-regime
+    base_rate: Foreign sponsorship correlates with lower, not higher, long-run campaign success.
+    rationale: Arms flows to the junta from major neighbors help it outlast a fragmented resistance.
+    sources:
+      - Chenoweth and Stephan, Why Civil Resistance Works (2011)
+    as_of: '2024'
+    confidence: low
+  - factor_key: coalition_breadth
+    label: Breadth of the coalition
+    framework: goldstone
+    status: Broad. Bamar majority pro-democracy forces allied with ethnic armed organizations.
+    direction: favors-movement
+    base_rate: Revolutions rarely succeed until a broad cross-class, cross-region coalition forms against the ruler.
+    rationale: The 2021 uprising bridged a historic divide between the majority and the ethnic peripheries.
+    sources:
+      - Goldstone, Revolution and Rebellion in the Early Modern World (1991)
+    as_of: '2024'
+    confidence: medium
+key_figures:
+  - name: Min Aung Hlaing
+    role: Commander-in-chief who led the coup
+    wikipedia: https://en.wikipedia.org/wiki/Min_Aung_Hlaing
+  - name: Aung San Suu Kyi
+    role: Ousted civilian leader, imprisoned since the coup
+    wikipedia: https://en.wikipedia.org/wiki/Aung_San_Suu_Kyi
+legacy_points:
+  - The revolution began nonviolent and turned armed only after mass killings of protesters.
+  - A parallel government administers territory the junta no longer controls.
+  - It fused the Bamar democracy movement with long-standing ethnic insurgencies for the first time.
+related_revolt_slugs:
+  - arab-spring
+related_history_slugs: []
+live_query:
+  strong:
+    - Min Aung Hlaing
+    - National Unity Government
+    - People's Defence Force
+    - Tatmadaw
+    - Arakan Army
+    - Operation 1027
+  context:
+    - Myanmar
+    - Burma
+    - Naypyidaw
+    - Rakhine
+    - Rohingya
+  exclude: []
+analysis_reviewed_at: '2026-07-01'
+prediction_confidence: low
+is_published: true
+perspectives:
+  - viewpoint: The resistance
+    viewpoint_type: movement
+    region_origin: Myanmar
+    narrative: We tried the streets and they answered with bullets. Taking up arms was not a choice we wanted. It was the only door the generals left open.
+    key_arguments:
+      - The turn to arms was defensive.
+      - The NUG, not the junta, holds legitimate authority.
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - The stolen election
+      - The scale of killings
+    omitted:
+      - Civilian harm from resistance operations
+  - viewpoint: The analyst
+    viewpoint_type: academic
+    region_origin: Global
+    narrative: Myanmar shows why the nonviolent advantage is not a law of nature. A regime willing to kill at scale can force even a broad movement into a war it is statistically less likely to win, then wait it out with foreign arms.
+    key_arguments:
+      - Regime brutality can invert the resistance advantage.
+      - Fragmentation is the resistance’s central weakness.
+    sources: []
+    notable_quotes: []
+    emphasized:
+      - Base rates
+      - Security-force cohesion
+    omitted: []
+media: []
+connections: []

@@ -1,0 +1,183 @@
+id: bias-diversity-cohort-2026-05
+name: "Bias diversity non-zero across top-10 clusters (cohort signal-health)"
+failure_date: "2026-05-15"
+failure_kind: dead-signal
+articles:
+  # ---- Cluster A: Trump cabinet pick (left/center/right per article) ----
+  - id: divA-1
+    title: "Trump nominates Marco Rubio for State Department reshuffle"
+    summary: "President Trump on Wednesday nominated Marco Rubio to lead a structural reshuffle of the State Department, expanding his secretarial portfolio."
+    full_text: >
+      President Trump on Wednesday nominated Marco Rubio to lead a structural reshuffle
+      of the State Department, expanding the secretarial portfolio to include refugee
+      affairs and consular operations. The Senate confirmation process is expected within
+      three weeks. Rubio will retain his current secretary of state title.
+    source: { slug: nytimes, country: US, tier: international }
+    published_at: "2026-05-14T10:00Z"
+    bias_score: { political_lean: 38 }
+  - id: divA-2
+    title: "Rubio gets State Department portfolio expansion under Trump"
+    summary: "Senator Marco Rubio is getting a State Department portfolio expansion under the Trump administration, with new oversight of refugee affairs."
+    full_text: >
+      Senator Marco Rubio is getting a State Department portfolio expansion under the
+      Trump administration, with new oversight of refugee affairs and consular
+      operations, the White House confirmed. The expanded mandate will include
+      coordination with USAID's transition office.
+    source: { slug: ap-news, country: US, tier: wire }
+    published_at: "2026-05-14T10:30Z"
+    bias_score: { political_lean: 50 }
+  - id: divA-3
+    title: "Trump's Rubio expansion: a serious upgrade for diplomatic muscle"
+    summary: "President Trump's expansion of Secretary Rubio's portfolio is a serious upgrade for American diplomatic muscle, conservatives argue."
+    full_text: >
+      President Trump's expansion of Secretary Rubio's portfolio is a serious upgrade for
+      American diplomatic muscle, conservative analysts argue. The move signals a
+      determination to push back against bureaucratic resistance and restore mission
+      clarity to a department long captured by progressive priorities.
+    source: { slug: fox-news, country: US, tier: international }
+    published_at: "2026-05-14T11:00Z"
+    bias_score: { political_lean: 70 }
+
+  # ---- Cluster B: SCOTUS environmental ruling ----
+  - id: divB-1
+    title: "Supreme Court limits EPA Clean Water Act jurisdiction in 5-4 ruling"
+    summary: "The Supreme Court on Wednesday limited EPA Clean Water Act jurisdiction in a 5-4 ruling along ideological lines."
+    full_text: >
+      The Supreme Court on Wednesday limited EPA Clean Water Act jurisdiction in a 5-4
+      ruling along ideological lines. The opinion, authored by Justice Alito, narrows
+      "waters of the United States" to streams with continuous surface flow. Justice
+      Kagan dissented, joined by Sotomayor and Jackson.
+    source: { slug: guardian, country: GB, tier: international }
+    published_at: "2026-05-14T11:30Z"
+    bias_score: { political_lean: 30 }
+  - id: divB-2
+    title: "SCOTUS narrows Clean Water Act in 5-4 vote"
+    summary: "The Supreme Court narrowed Clean Water Act jurisdiction in a 5-4 vote, the EPA said it was reviewing the ruling."
+    full_text: >
+      The Supreme Court narrowed Clean Water Act jurisdiction in a 5-4 vote on
+      Wednesday, with the EPA saying it was reviewing the ruling. The decision affects
+      jurisdiction over millions of acres of intermittent streams and wetlands.
+    source: { slug: reuters, country: US, tier: wire }
+    published_at: "2026-05-14T12:00Z"
+    bias_score: { political_lean: 50 }
+  - id: divB-3
+    title: "Court restores common-sense limits on EPA's Clean Water Act overreach"
+    summary: "The Supreme Court restored common-sense limits on EPA Clean Water Act overreach, conservative legal experts said."
+    full_text: >
+      The Supreme Court restored common-sense limits on EPA Clean Water Act overreach,
+      conservative legal experts said following Wednesday's 5-4 ruling. The Pacific
+      Legal Foundation called the decision "a generational win for property rights."
+    source: { slug: daily-wire, country: US, tier: domestic }
+    published_at: "2026-05-14T12:30Z"
+    bias_score: { political_lean: 78 }
+
+  # ---- Cluster C: Trump tariffs (mixed lean) ----
+  - id: divC-1
+    title: "Trump announces 30 percent tariff on Chinese EV components"
+    summary: "President Trump announced a 30 percent tariff on Chinese electric-vehicle components Wednesday, citing national security."
+    full_text: >
+      President Trump announced a 30 percent tariff on Chinese electric-vehicle components
+      Wednesday, citing national security and unfair trade practices by Chinese state-
+      owned manufacturers. The tariff takes effect August 1.
+    source: { slug: bloomberg, country: US, tier: international }
+    published_at: "2026-05-14T13:00Z"
+    bias_score: { political_lean: 48 }
+  - id: divC-2
+    title: "China hits back: 30 percent Trump tariff on EV components called reckless"
+    summary: "China called the 30 percent Trump tariff on EV components 'reckless' and warned of retaliation as economists fear inflation impact."
+    full_text: >
+      China called the 30 percent Trump tariff on EV components "reckless" and warned of
+      retaliation Wednesday, as economists fear an inflation impact for American
+      consumers and a global supply-chain disruption. The Chinese commerce ministry
+      vowed proportionate countermeasures.
+    source: { slug: msnbc, country: US, tier: domestic }
+    published_at: "2026-05-14T13:30Z"
+    bias_score: { political_lean: 28 }
+  - id: divC-3
+    title: "Trump tariff on Chinese EV parts — the right move for American workers"
+    summary: "Trump's tariff on Chinese EV parts is the right move for American workers and a long-overdue correction to globalist trade policy."
+    full_text: >
+      Trump's tariff on Chinese EV parts is the right move for American workers and a
+      long-overdue correction to globalist trade policy that has hollowed out the
+      domestic manufacturing base.
+    source: { slug: breitbart, country: US, tier: domestic }
+    published_at: "2026-05-14T14:00Z"
+    bias_score: { political_lean: 82 }
+
+  # ---- Cluster D: COP30 climate (mixed lean) ----
+  - id: divD-1
+    title: "COP30 closes with watered-down fossil-fuel transition language"
+    summary: "COP30 closed in Belem with watered-down fossil-fuel transition language, disappointing climate advocates and delighting petrostates."
+    full_text: >
+      COP30 closed in Belem on Wednesday evening with watered-down fossil-fuel transition
+      language, disappointing climate advocates and delighting petrostates. The final
+      text replaces "phase out" with "ramp down responsibly", a change the EU's
+      negotiator called "regrettable but acceptable".
+    source: { slug: jacobin, country: US, tier: domestic }
+    published_at: "2026-05-14T14:30Z"
+    bias_score: { political_lean: 18 }
+  - id: divD-2
+    title: "COP30 final text approved with fossil-fuel transition language"
+    summary: "COP30's final text was approved Wednesday with fossil-fuel transition language, marking the first such commitment in a UN climate accord."
+    full_text: >
+      COP30's final text was approved Wednesday with fossil-fuel transition language,
+      marking the first such commitment in a UN climate accord. The text was the product
+      of three days of overtime negotiation in Belem, Brazil.
+    source: { slug: reuters, country: BR, tier: wire }
+    published_at: "2026-05-14T15:00Z"
+    bias_score: { political_lean: 50 }
+  - id: divD-3
+    title: "COP30: dose of realism finally injected into climate diplomacy"
+    summary: "COP30 finally injected a dose of realism into climate diplomacy, conservative commentators argued, as the final text replaced 'phase out' with 'ramp down'."
+    full_text: >
+      COP30 finally injected a dose of realism into climate diplomacy, conservative
+      commentators argued Wednesday, as the final text replaced "phase out" with "ramp
+      down responsibly" and dropped a binding 2030 target.
+    source: { slug: national-review, country: US, tier: domestic }
+    published_at: "2026-05-14T15:30Z"
+    bias_score: { political_lean: 72 }
+
+  # ---- Cluster E: Israel-Hamas (mixed lean) ----
+  - id: divE-1
+    title: "Israel resumes Gaza strikes after collapse of ceasefire talks"
+    summary: "Israel resumed Gaza strikes Wednesday after the collapse of ceasefire talks in Doha, drawing international condemnation."
+    full_text: >
+      Israel resumed Gaza strikes on Wednesday after the collapse of ceasefire talks in
+      Doha, drawing international condemnation and renewed humanitarian alarm. The Gaza
+      health ministry reported 36 dead in overnight bombardment.
+    source: { slug: al-jazeera, country: QA, tier: international }
+    published_at: "2026-05-14T16:00Z"
+    bias_score: { political_lean: 25 }
+  - id: divE-2
+    title: "Israel renews Gaza operations after Doha ceasefire talks fail"
+    summary: "Israel renewed Gaza operations Wednesday after Doha ceasefire talks failed, with the IDF citing Hamas refusal of bridging proposals."
+    full_text: >
+      Israel renewed Gaza operations on Wednesday after Doha ceasefire talks failed, with
+      the IDF citing Hamas refusal of bridging proposals on hostage releases. Mediators
+      from Qatar and Egypt called for a 48-hour cooling-off period.
+    source: { slug: ap-news, country: US, tier: wire }
+    published_at: "2026-05-14T16:30Z"
+    bias_score: { political_lean: 50 }
+  - id: divE-3
+    title: "Israel right to resume Gaza ops after Hamas blew up Doha talks"
+    summary: "Israel was right to resume Gaza operations after Hamas blew up Doha talks, conservative analysts said, defending the IDF's renewed campaign."
+    full_text: >
+      Israel was right to resume Gaza operations after Hamas blew up the Doha talks,
+      conservative analysts said Wednesday, defending the IDF's renewed campaign against
+      what they called "intolerable hostage-stalling tactics."
+    source: { slug: jerusalem-post, country: IL, tier: international }
+    published_at: "2026-05-14T17:00Z"
+    bias_score: { political_lean: 75 }
+expectation:
+  type: should_have_signal
+  signal_name: bias_diversity
+  nonzero_min_fraction: 0.30
+  top_n: 5
+rationale: |
+  Cohort signal-health failure: in production on 2026-05-15, 50/50 of
+  the top stories had bias_diversity = 0 (or {} dict) because per-article
+  bias_score.political_lean was either missing or all sources in each
+  cluster shared the same baseline. This fixture seeds five clusters,
+  each containing one left-of-center, one center, and one right-of-center
+  source for the same event — the pipeline must propagate non-zero lean
+  spread across at least 30% of the top-5 produced clusters.
