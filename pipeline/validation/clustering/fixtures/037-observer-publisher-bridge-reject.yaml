@@ -1,0 +1,154 @@
+id: observer-publisher-bridge-reject-2026-05-22
+name: "Eight '* Observer' outlets covering different stories — publisher-name bridge must NOT merge"
+failure_date: "2026-05-22"
+failure_kind: publisher-bridge-false-merge
+articles:
+  - id: obs-london-rail
+    title: "London commuter rail strike enters second week as ASLEF rejects pay offer"
+    summary: "London commuter rail services faced disruption for a seventh day as train drivers' union ASLEF rejected the latest pay offer from Network Rail."
+    full_text: >
+      London commuter rail services faced significant disruption for a seventh day
+      as train drivers' union ASLEF rejected the latest pay offer from Network Rail.
+      The union said the 4.5 percent uplift fell short of the 7 percent its members
+      had voted to demand. Transport Secretary Louise Haigh urged both sides back to
+      arbitration. South Western and Southeastern operators issued limited timetables
+      with services running every 90 minutes on most affected routes. The dispute
+      began over rest-day working and rostering practices and has expanded to cover
+      pay and shift differentials. ACAS facilitated three rounds of talks last week
+      without producing a draft settlement.
+    source: { slug: london-observer, country: GB, tier: domestic }
+    published_at: "2026-05-22T09:30Z"
+  - id: obs-nairobi-tea
+    title: "Kenyan tea exporters face EU regulatory hurdle on residue limits"
+    summary: "Kenyan tea exporters confronting new European Union maximum residue limits on pesticides risk losing market share if compliance costs cannot be absorbed."
+    full_text: >
+      Kenyan tea exporters confronting new European Union maximum residue limits on
+      pesticides risk losing market share to Sri Lankan and Indian competitors if
+      compliance costs cannot be absorbed across the value chain. The Tea Board of
+      Kenya estimates 200 million dollars in annual export revenue is exposed. EU
+      regulation 396/2005 was amended last quarter to tighten thresholds on
+      glyphosate, chlorpyrifos and three organophosphate residues. Smallholder
+      farmers, who supply more than 60 percent of Kenya's tea, lack the residue-
+      testing infrastructure necessary to meet the new limits. The Agriculture
+      Ministry has requested a 36-month transition period from Brussels.
+    source: { slug: nairobi-observer, country: KE, tier: domestic }
+    published_at: "2026-05-22T10:15Z"
+  - id: obs-toronto-housing
+    title: "Toronto housing starts decline 12 percent year-on-year, CMHC reports"
+    summary: "Toronto-area housing starts declined 12 percent year-on-year in the first quarter, according to data from the Canada Mortgage and Housing Corporation."
+    full_text: >
+      Toronto-area housing starts declined 12 percent year-on-year in the first
+      quarter, according to data from the Canada Mortgage and Housing Corporation.
+      Multi-unit residential starts dropped 18 percent while single-family declines
+      were milder at 5 percent. Industry analysts attributed the slowdown to a
+      combination of elevated borrowing costs, development-charge increases and
+      construction labour shortages. The Ontario Construction Association said
+      mid-rise condominium projects had been the most affected segment. Mayor
+      Olivia Chow's housing acceleration plan now faces pressure on its 65,000-unit
+      target through 2031. Provincial Minister of Municipal Affairs Paul Calandra
+      said the province would announce supplementary measures within 60 days.
+    source: { slug: toronto-observer, country: CA, tier: domestic }
+    published_at: "2026-05-22T11:00Z"
+  - id: obs-jakarta-floods
+    title: "Jakarta flash floods displace 8,000 as authorities warn of mudslides"
+    summary: "Flash floods triggered by overnight rainfall displaced approximately 8,000 residents across four East Jakarta sub-districts, authorities said."
+    full_text: >
+      Flash floods triggered by overnight rainfall displaced approximately 8,000
+      residents across four East Jakarta sub-districts, the National Disaster
+      Mitigation Agency said. Search-and-rescue teams deployed inflatable boats to
+      reach stranded families in Kampung Melayu and adjacent neighbourhoods. The
+      Indonesian Meteorological Agency warned of further rainfall and the risk of
+      mudslides in upland areas of Bogor regency. Governor Anies Baswedan ordered
+      schools in affected sub-districts closed and instructed civil-service offices
+      to operate on reduced hours. Indonesia's disaster agency BNPB raised the
+      provincial alert level to siaga-2. Two confirmed fatalities and a dozen
+      injuries were reported by midday.
+    source: { slug: jakarta-observer, country: ID, tier: domestic }
+    published_at: "2026-05-22T11:45Z"
+  - id: obs-melbourne-arts
+    title: "Melbourne arts festival opens with 200-piece Aboriginal retrospective"
+    summary: "The Melbourne International Arts Festival opened with a 200-piece retrospective of contemporary Aboriginal art assembled from public and private collections."
+    full_text: >
+      The Melbourne International Arts Festival opened Thursday evening with a
+      200-piece retrospective of contemporary Aboriginal art assembled from public
+      and private collections across Australia. Curator Gabrielle Sullivan called
+      the exhibition the largest representation of contemporary Indigenous
+      Australian practice ever assembled in Victoria. The retrospective includes
+      works by Emily Kame Kngwarreye, Rover Thomas and a generation of younger
+      artists from the Tjala Arts collective in the APY Lands. State Premier
+      Jacinta Allan opened the festival with remarks emphasising arts funding
+      restoration. The festival runs through June 16 across nine venues, with
+      ticketed and free events.
+    source: { slug: melbourne-observer, country: AU, tier: domestic }
+    published_at: "2026-05-22T12:30Z"
+  - id: obs-lima-mining
+    title: "Peru copper exports decline 6.3 percent as community blockades persist"
+    summary: "Peruvian copper exports declined 6.3 percent in April as community blockades around several mining sites continued to disrupt production."
+    full_text: >
+      Peruvian copper exports declined 6.3 percent in April as community blockades
+      around several mining sites continued to disrupt production. The Ministry of
+      Energy and Mines reported that Las Bambas and Antapaccay operations together
+      lost 11 days of production due to road closures by community associations
+      demanding revised royalty distribution. The Sociedad Nacional de Mineria
+      called for the government to facilitate a tripartite dialogue including the
+      mining companies, community representatives, and regional governments. Peru
+      is the world's second-largest copper producer; declines exceeding 5 percent
+      typically move LME futures within a session.
+    source: { slug: lima-observer, country: PE, tier: domestic }
+    published_at: "2026-05-22T13:15Z"
+  - id: obs-istanbul-currency
+    title: "Turkish lira weakens 2.1 percent against dollar amid CBRT rate expectations"
+    summary: "The Turkish lira weakened 2.1 percent against the US dollar as markets repriced expectations for the Central Bank's next monetary policy meeting."
+    full_text: >
+      The Turkish lira weakened 2.1 percent against the US dollar in Istanbul
+      morning trading as markets repriced expectations for the Central Bank of the
+      Republic of Turkey's next monetary policy meeting. Bloomberg consensus had
+      anticipated a 200-basis-point cut, but recent inflation prints and lira
+      pressure prompted economists at major Turkish banks to flag the prospect of
+      a smaller move or a hold. Garanti BBVA's chief economist Ebru Aydin said the
+      currency move had largely priced a 100-basis-point cut. The lira has lost
+      8.2 percent year-to-date against the dollar.
+    source: { slug: istanbul-observer, country: TR, tier: domestic }
+    published_at: "2026-05-22T14:00Z"
+  - id: obs-cape-town-energy
+    title: "South African load-shedding eases to stage 2 as Eskom returns units"
+    summary: "South African power utility Eskom reduced load-shedding to stage 2 as five generation units returned to service across the Mpumalanga fleet."
+    full_text: >
+      South African power utility Eskom reduced load-shedding from stage 4 to
+      stage 2 as five generation units returned to service across the Mpumalanga
+      coal-fired fleet. The Energy Action Plan office said the improvement
+      reflected accelerated unit-returns at Kusile and Medupi power stations.
+      National Treasury figures released earlier this week estimated load-shedding
+      had cost the South African economy 1.6 percent of GDP in the prior fiscal
+      year. Mineral Resources and Energy Minister Gwede Mantashe said additional
+      generation capacity from two combined-cycle gas turbines would be available
+      by August.
+    source: { slug: cape-town-observer, country: ZA, tier: domestic }
+    published_at: "2026-05-22T14:45Z"
+expectation:
+  type: should_split
+  member_ids: [obs-london-rail, obs-nairobi-tea, obs-toronto-housing, obs-jakarta-floods, obs-melbourne-arts, obs-lima-mining, obs-istanbul-currency, obs-cape-town-energy]
+  min_clusters: 8
+rationale: |
+  This is the 2026-05-22 "Observer" publisher-bridge case that motivated
+  the cohesion-gated mega-cap. Eight different outlets all carrying
+  "Observer" in their slug (London-Observer, Nairobi-Observer, ...) cover
+  eight completely unrelated domestic stories. Pre-rewrite, the engine
+  handled this naturally — set-intersection finds zero shared entities
+  between (e.g.) Toronto housing and Jakarta floods, no merge.
+
+  The May 15 rewrite added _LOW_SPECIFICITY_ENTITIES to prevent transitive
+  bridges via political vocabulary, but introduced a separate failure mode:
+  the source-slug "Observer" extracted as a low-IDF entity by an over-broad
+  named-entity extractor. The Era 7 cohesion-gated mega-cap was a band-aid
+  for this band-aid.
+
+  Post-simplification: simple set-intersection on Phase 2 plus the
+  publisher-name stopword list (already present, line 377-381 of
+  story_cluster.py) means zero shared entities between these eight
+  unrelated stories. Each stays its own cluster. No mega, no force-split,
+  no cohesion gate needed.
+
+  This is the negative-case fixture that prevents future rewrites from
+  reintroducing publisher-bridge merges via subtle changes to entity
+  extraction.

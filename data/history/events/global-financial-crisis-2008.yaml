@@ -1,0 +1,390 @@
+slug: global-financial-crisis-2008
+title: The 2008 Global Financial Crisis
+subtitle: A bank that survived the Civil War, two world wars, and the Great Depression died on a Monday, and the credit that runs the planet froze within the week
+date_display: September 15, 2008 (Lehman Brothers collapse)
+date_sort: 2008
+date_precision: day
+era: contemporary
+region: global
+country: United States
+category: economic
+severity: catastrophic
+death_toll: No mass casualties; a 2014 BMJ study linked the recession to more than 10,000 excess suicides across North America and Europe (2008-2010)
+affected_population: About 8.7 million US jobs lost, roughly 10 million US home foreclosures, an estimated 19.2 trillion dollars in US household wealth erased; global unemployment rose by more than 30 million
+duration: Acute phase August 2007 - March 2009; the US Great Recession, dated by the NBER, ran December 2007 - June 2009
+hero_image_url: https://commons.wikimedia.org/wiki/File:Lehman_Brothers_Times_Square_by_David_Shankbone.jpg
+hero_image_attribution: David Shankbone, 2007, CC BY-SA 3.0, via Wikimedia Commons
+summary: |
+  The bankruptcy petition was filed in a Manhattan federal court at 1:45 on the morning of September 15, 2008. Lehman Brothers, founded in 1850, having survived the Civil War, two world wars, and the Great Depression, listed 639 billion dollars in assets and 619 billion dollars in debt. It was the largest bankruptcy filing in United States history. By the time markets opened in Asia, the short-term credit that moves through the global economy every day had begun to freeze.
+
+  The machine that broke had been built over a decade. Mortgage brokers wrote home loans to borrowers who could not document their income. Investment banks bought those loans by the thousand, bundled them into mortgage-backed securities, sliced the securities into collateralized debt obligations, and sold the pieces to pension funds, town councils, and banks from Dusseldorf to Reykjavik. Credit rating agencies stamped much of this paper AAA, the same grade as United States Treasury bonds. On top of it all sat credit default swaps, a market of side bets on whether the mortgages would pay that had grown into the tens of trillions of dollars. Warren Buffett had called such instruments "financial weapons of mass destruction" in 2002. Almost no one stopped buying them.
+
+  The dominoes fell for eighteen months. In March 2008 the Federal Reserve backstopped the fire sale of Bear Stearns to JPMorgan with a roughly 29 billion dollar guarantee. On September 7 the Treasury seized Fannie Mae and Freddie Mac, which stood behind about half of all American mortgages. Lehman fell on September 15. The next day the government lent 85 billion dollars to the insurer AIG, which had written credit default swaps it could not honor; the commitment eventually reached 182 billion. That same day a large money market fund "broke the buck," its shares falling below one dollar, and a quiet run began on the 3.5 trillion dollar money market that businesses use to make payroll.
+
+  On September 29, 2008, the House of Representatives rejected a 700 billion dollar bank rescue. The Dow Jones Industrial Average fell 777.68 points that afternoon, its largest single-day point drop to that date, erasing more than 1 trillion dollars in value. Four days later Congress reversed itself and passed the Troubled Asset Relief Program. Treasury Secretary Henry Paulson, a former chief executive of Goldman Sachs, and Federal Reserve Chairman Ben Bernanke, a scholar of the Great Depression, injected capital directly into the banks. Bernanke later testified that twelve of the thirteen most important American financial institutions had been at risk of failing within weeks.
+
+  The contagion did not respect borders. Iceland's three largest banks, holding assets nearly ten times the size of the country's economy, collapsed within a single week in October 2008. World trade fell roughly 12 percent in 2009, the steepest drop since the 1930s. The International Labour Organization estimated that global unemployment rose by more than 30 million. In the United States alone about 8.7 million jobs disappeared, unemployment reached 10 percent, and roughly 10 million families lost their homes to foreclosure. No senior Wall Street executive went to prison for the crisis. Treasury eventually recovered its bank investments at a profit. The distance between those two facts became the politics of the next decade.
+significance: |
+  The crisis rewrote the rules of global finance and the politics of the democracies at its center. The Dodd-Frank Act of 2010 was the largest overhaul of American financial regulation since the 1930s; the international Basel III accords raised the capital that banks must hold against losses. Central banks cut interest rates to near zero and held them there for a decade, turning quantitative easing from an emergency measure into a standing tool. In Europe, a banking crisis became a sovereign-debt crisis: Greece's economy contracted by roughly a quarter, and the austerity imposed as the price of bailouts pushed unemployment above 25 percent. The Financial Crisis Inquiry Commission concluded in 2011 that the disaster had been avoidable, the product of human action and inaction; its finding did not settle the argument. Occupy Wall Street put "the 99 percent" into ordinary speech in 2011, and within five years the loss of trust in banks, experts, and governments had helped carry Brexit and Donald Trump to victory and lifted nationalist parties across Europe. The 2008 crisis began as a question about mortgage bonds. It ended as a question about whether the system was rigged.
+key_figures:
+- name: Henry Paulson
+  role: US Treasury Secretary (2006-2009), former CEO of Goldman Sachs; architect of TARP
+  born: 1946
+  wikipedia: https://en.wikipedia.org/wiki/Henry_Paulson
+- name: Ben Bernanke
+  role: Chairman of the Federal Reserve (2006-2014); Great Depression scholar who led the emergency response
+  born: 1953
+  wikipedia: https://en.wikipedia.org/wiki/Ben_Bernanke
+- name: Timothy Geithner
+  role: President of the New York Fed during the crisis, later Treasury Secretary (2009-2013); ran the 2009 bank stress tests
+  born: 1961
+  wikipedia: https://en.wikipedia.org/wiki/Timothy_Geithner
+- name: Richard S. Fuld Jr.
+  role: Chairman and CEO of Lehman Brothers; presided over the largest bankruptcy in US history
+  born: 1946
+  wikipedia: https://en.wikipedia.org/wiki/Richard_S._Fuld_Jr.
+- name: Alan Greenspan
+  role: Chairman of the Federal Reserve (1987-2006); champion of self-regulation who later admitted "a flaw"
+  born: 1926
+  wikipedia: https://en.wikipedia.org/wiki/Alan_Greenspan
+- name: Phil Angelides
+  role: Chairman of the Financial Crisis Inquiry Commission, which concluded the crisis was avoidable
+  born: 1953
+  wikipedia: https://en.wikipedia.org/wiki/Phil_Angelides
+- name: Raghuram Rajan
+  role: IMF chief economist who warned of a "catastrophic meltdown" in 2005; author of Fault Lines
+  born: 1963
+  wikipedia: https://en.wikipedia.org/wiki/Raghuram_Rajan
+legacy_points:
+- The Financial Crisis Inquiry Commission (2011) reviewed millions of documents, interviewed more than 700 witnesses, held 19 days of hearings, and concluded in a 545-page report that the crisis was "avoidable"
+- The US Treasury estimated Americans lost 19.2 trillion dollars in household wealth; roughly 8.7 million jobs and 10 million homes were lost
+- TARP's bank investments were repaid at a profit to taxpayers, yet not one senior Wall Street executive was criminally convicted for the crisis
+- The Dodd-Frank Act (2010) and Basel III rewrote financial regulation, while central banks held interest rates near zero for a decade
+- Austerity and lost trust after 2008 fueled the eurozone debt crisis, Occupy Wall Street, Brexit, and a wave of populist politics across the West
+primary_source_excerpts:
+- text: We conclude this financial crisis was avoidable. The crisis was the result of human action and inaction, not of Mother Nature or computer models gone haywire.
+  author: Financial Crisis Inquiry Commission
+  work: The Financial Crisis Inquiry Report, Conclusions
+  date: January 2011
+  archive_url: https://fcic-static.law.stanford.edu/cdn_media/fcic-reports/fcic_final_report_full.pdf
+- text: Those of us who have looked to the self-interest of lending institutions to protect shareholders' equity, myself included, are in a state of shocked disbelief.
+  author: Alan Greenspan
+  work: Testimony to the House Committee on Oversight and Government Reform
+  date: October 23, 2008
+- text: September and October of 2008 was the worst financial crisis in global history, including the Great Depression.
+  author: Ben Bernanke
+  work: Testimony to the Financial Crisis Inquiry Commission
+  date: '2009'
+- text: In our view, derivatives are financial weapons of mass destruction, carrying dangers that, while now latent, are potentially lethal.
+  author: Warren Buffett
+  work: Berkshire Hathaway Chairman's Letter to Shareholders
+  date: '2002'
+- text: Why did nobody notice it?
+  author: Queen Elizabeth II
+  work: Remark at the opening of a new building at the London School of Economics
+  date: November 5, 2008
+coordinates:
+  lat: 40.7069
+  lng: -74.0113
+related_event_slugs:
+- great-depression
+- september-11-attacks
+- arab-spring
+perspectives:
+- viewpoint: Deregulation and Wall Street Failure
+  viewpoint_type: academic
+  region_origin: north-america
+  narrative: |
+    The majority report of the Financial Crisis Inquiry Commission, released January 27, 2011, located the cause in a system that had been deregulated, over-leveraged, and left to police itself. The Commission traced a chain: mortgage lending standards collapsed, the securitization pipeline carried the bad loans across the world, over-the-counter derivatives multiplied the bets, and the credit rating agencies waved it all through. Its verdict was blunt. The crisis was avoidable. It was not a storm or a computer error. It was the result of human choices.
+
+    Deregulation set the stage. The 1999 repeal of the Glass-Steagall Act tore down the wall between deposit-taking banks and investment banks. The Commodity Futures Modernization Act of 2000 exempted credit default swaps from regulation. The Securities and Exchange Commission's 2004 decision to loosen leverage limits let the five big investment banks borrow more than 30 dollars for every dollar of their own capital. When the mortgages soured, a small loss on the underlying assets was enough to wipe out the firms holding them.
+
+    The rating agencies were, in the Commission's words, "essential cogs in the wheel of financial destruction." Moody's had rated tens of thousands of mortgage-related products; when it downgraded much of that paper in 2007, the market for it vanished overnight. Alan Greenspan, who had chaired the Federal Reserve for nineteen years and championed self-regulation, told a congressional committee in October 2008 that he had found "a flaw" in his understanding of how markets worked. The regulatory-failure account holds that the tools to prevent the crisis existed and were deliberately set aside.
+  key_arguments:
+  - Repeal of Glass-Steagall (1999) and the exemption of derivatives (2000) dismantled the regulatory guardrails
+  - The SEC's 2004 leverage rule let investment banks borrow more than 30 dollars for every dollar of capital
+  - Credit rating agencies stamped AAA on mortgage securities that were quietly deteriorating
+  - The FCIC concluded the crisis was avoidable, a product of human action and inaction
+  sources:
+  - title: The Financial Crisis Inquiry Report
+    author: Financial Crisis Inquiry Commission
+    year: '2011'
+    type: document
+    archive_url: https://fcic-static.law.stanford.edu/cdn_media/fcic-reports/fcic_final_report_full.pdf
+  - title: 'Too Big to Fail: The Inside Story of How Wall Street and Washington Fought to Save the Financial System'
+    author: Andrew Ross Sorkin
+    year: '2009'
+    type: book
+    archive_url: https://archive.org/details/toobigtofailhows0000sork
+  - title: 'The Big Short: Inside the Doomsday Machine'
+    author: Michael Lewis
+    year: '2010'
+    type: book
+    archive_url: https://archive.org/details/bigshortinsidedo0000lewi
+  - title: '13 Bankers: The Wall Street Takeover and the Next Financial Meltdown'
+    author: Simon Johnson and James Kwak
+    year: '2010'
+    type: book
+    archive_url: https://archive.org/details/13bankerswallstr0000john
+  notable_quotes:
+  - text: The greatest tragedy would be to accept the refrain that no one could have seen this coming and thus nothing could have been done.
+    speaker: Financial Crisis Inquiry Commission
+    context: The Financial Crisis Inquiry Report, 2011
+  - text: The line between gambling and investing is artificial and thin.
+    speaker: Michael Lewis
+    context: The Big Short, 2010
+  emphasized:
+  - Deregulation as the deliberate removal of safeguards
+  - Extreme leverage at the major investment banks
+  - Conflicts of interest at the credit rating agencies
+  - The crisis as foreseeable and preventable
+  omitted:
+  - Borrowers and brokers who falsified mortgage applications
+  - Global capital flows and the savings glut driving down interest rates
+  - Government housing mandates on Fannie Mae and Freddie Mac
+  - That the acute panic was halted by the same officials the account faults
+- viewpoint: The Firefighters and Bailout Defenders
+  viewpoint_type: victor
+  region_origin: north-america
+  narrative: |
+    Henry Paulson, Ben Bernanke, and Timothy Geithner, the three officials most identified with the rescue, later wrote a joint book titled Firefighting. Their argument is that they were handed a burning building, not the matches. By September 2008 the panic was self-fulfilling: healthy institutions were failing because lenders, terrified of the next Lehman, refused to lend to anyone. The choice, in their telling, was not between bailout and justice. It was between bailout and depression.
+
+    They point to the counterfactual. Bernanke, who had spent his academic career studying how the Federal Reserve's passivity turned the 1929 crash into the Great Depression, testified that twelve of the thirteen largest American financial firms were within weeks of collapse. TARP, the Federal Reserve's emergency lending, the guarantee of the money market funds, and the stress tests of 2009 stopped the run. Unemployment peaked at 10 percent, painful but far short of the 25 percent of the 1930s. The banks repaid TARP with interest, and Treasury booked a profit on the bank programs.
+
+    The defenders concede the political cost. Rescuing the firms that caused the crisis, while millions lost homes and jobs, was, in Geithner's phrase, deeply unfair, and it left a lasting bitterness. But they insist that letting the system fail in order to punish the guilty would have punished everyone. "Plan beats no plan," was Geithner's mantra through the worst weeks. The measure of success, they argue, is the depression that did not happen.
+  key_arguments:
+  - The panic was systemic; healthy firms were failing alongside insolvent ones
+  - Bernanke testified that 12 of the 13 largest US financial firms were near collapse within weeks
+  - TARP and Federal Reserve action prevented a second Great Depression; bank funds were repaid at a profit
+  - Letting the system fail to punish bankers would have punished ordinary people most
+  sources:
+  - title: 'Firefighting: The Financial Crisis and Its Lessons'
+    author: Ben Bernanke, Timothy Geithner, and Henry Paulson
+    year: '2019'
+    type: book
+    archive_url: https://archive.org/details/firefightingfina0000bern
+  - title: 'On the Brink: Inside the Race to Stop the Collapse of the Global Financial System'
+    author: Henry M. Paulson Jr.
+    year: '2010'
+    type: book
+    archive_url: https://archive.org/details/onbrinkinsiderac0000paul
+  - title: 'Stress Test: Reflections on Financial Crises'
+    author: Timothy F. Geithner
+    year: '2014'
+    type: book
+    archive_url: https://archive.org/details/stresstestreflec0000geit
+  - title: 'The Courage to Act: A Memoir of a Crisis and Its Aftermath'
+    author: Ben S. Bernanke
+    year: '2015'
+    type: book
+    archive_url: https://archive.org/details/couragetoactmemo0000bern
+  notable_quotes:
+  - text: Out of maybe the 13 most important financial institutions in the United States, 12 were at risk of failure within a period of a week or two.
+    speaker: Ben Bernanke
+    context: Testimony to the Financial Crisis Inquiry Commission, 2009
+  - text: Plan beats no plan.
+    speaker: Timothy Geithner
+    context: Stress Test, 2014
+  emphasized:
+  - The counterfactual depression that was avoided
+  - The systemic, self-fulfilling nature of the panic
+  - Taxpayers repaid with a profit on the bank programs
+  - Speed of action as the decisive variable
+  omitted:
+  - Moral hazard and the entrenchment of too-big-to-fail
+  - Homeowners receiving far less help than banks under HAMP
+  - The absence of accountability for those who caused the crisis
+  - The officials' own regulatory roles before the crisis
+- viewpoint: Main Street and Occupy - No Accountability
+  viewpoint_type: vanquished
+  region_origin: north-america
+  narrative: |
+    On September 17, 2011, a few hundred people occupied Zuccotti Park, a block from Wall Street. Their slogan, "We are the 99 percent," named a grievance that TARP had crystallized: the banks that crashed the economy had been rescued with public money, and no one had gone to jail. Neil Barofsky, the inspector general appointed to oversee TARP, wrote that the suspicions the system was rigged in favor of the largest banks were, in a word, true.
+
+    The numbers behind the anger were concrete. While Treasury injected capital into the banks within weeks, the main program for homeowners, HAMP, was designed, in Barofsky's account, to "foam the runway" for the banks rather than to keep families in their homes; it reached a fraction of those it promised. Roughly 10 million families lost homes to foreclosure. Executives who had steered their firms into collapse left with fortunes intact: Richard Fuld had taken home close to 500 million dollars in the years before Lehman filed for bankruptcy.
+
+    The economist Joseph Stiglitz and others argued that the bailouts socialized the losses of a boom whose gains had been private. The gap between the recovery of asset prices, which restored the wealth at the top, and the long stagnation of wages, which did not, became the defining inequality of the 2010s. Occupy dissolved within months, but its vocabulary did not. "The 1 percent" entered ordinary speech, and the demand for accountability, unmet, curdled into a distrust of elites that reshaped politics on the left and the right.
+  key_arguments:
+  - The banks were rescued while roughly 10 million families lost their homes
+  - Not one senior Wall Street executive was criminally convicted for the crisis
+  - Homeowner relief under HAMP reached only a fraction of those it promised
+  - The bailout privatized the boom's gains and socialized its losses, widening inequality
+  sources:
+  - title: 'Bailout: An Inside Account of How Washington Abandoned Main Street While Rescuing Wall Street'
+    author: Neil Barofsky
+    year: '2012'
+    type: book
+    archive_url: https://archive.org/details/bailoutinsideacc0000baro
+  - title: 'The Price of Inequality: How Today''s Divided Society Endangers Our Future'
+    author: Joseph E. Stiglitz
+    year: '2012'
+    type: book
+    archive_url: https://archive.org/details/priceofinequalit0000stig
+  - title: 'Griftopia: Bubble Machines, Vampire Squids, and the Long Con That Is Breaking America'
+    author: Matt Taibbi
+    year: '2010'
+    type: book
+    archive_url: https://archive.org/details/griftopiabubblem0000taib
+  - title: 'The Democracy Project: A History, a Crisis, a Movement'
+    author: David Graeber
+    year: '2013'
+    type: book
+    archive_url: https://archive.org/details/democracyproject0000grae
+  notable_quotes:
+  - text: We are the 99 percent.
+    speaker: Occupy Wall Street
+    context: Movement slogan, Zuccotti Park, New York, 2011
+  - text: The suspicions that the system is rigged in favor of the largest banks and their elites are true.
+    speaker: Neil Barofsky
+    context: Bailout, 2012
+  emphasized:
+  - The absence of criminal accountability for Wall Street
+  - Homeowners abandoned while banks were made whole
+  - Executive pay preserved through the collapse
+  - Widening inequality and the erosion of trust in elites
+  omitted:
+  - The systemic case for stabilizing the financial system
+  - The legal difficulty of prosecuting recklessness rather than fraud
+  - That TARP's bank investments were repaid at a profit
+  - The roles of borrowers, Congress, and regulators over the preceding decade
+- viewpoint: The Global Periphery and Emerging Markets
+  viewpoint_type: revisionist
+  region_origin: global
+  narrative: |
+    The crisis was made in the mortgage markets of the United States and Europe, but the bill arrived everywhere. When Western banks pulled money home to cover their losses, capital fled the developing world. Currencies from Seoul to Sao Paulo dropped; stock markets crashed on continents that had never traded a subprime bond. A study for the Asian Development Bank estimated that developing Asia alone lost 9.6 trillion dollars in financial assets in 2008, more than a full year of its output.
+
+    The transmission ran through trade and remittances, not derivatives. Demand in the rich world collapsed, and world trade fell about 12 percent in 2009. Commodity exporters watched prices swing violently. Migrant workers sent home less money. Countries that had followed the deregulation advice of the Washington institutions, from Latvia to Ukraine, needed IMF rescues, and the conditions attached often demanded the same austerity that had deepened earlier crises. Brazil's president, Luiz Inacio Lula da Silva, standing beside Britain's prime minister in 2009, said the crisis had been caused by the irrational behaviour of "white people with blue eyes."
+
+    The response reordered the global economy. China met the collapse of its export markets with a stimulus of 4 trillion yuan, roughly 586 billion dollars, that pulled commodity exporters through the downturn and accelerated its rise as an economic power. The G20, a forum that seated China, India, and Brazil at the table, replaced the G7 as the venue where the crisis was managed. For much of the Global South the lesson of 2008 was not the danger of too little regulation but the danger of depending on a Northern financial system that could export its failures and then dictate the terms of recovery.
+  key_arguments:
+  - The crisis originated in the North but capital flight and trade collapse struck the developing world hard
+  - Developing Asia lost an estimated 9.6 trillion dollars in financial assets in 2008
+  - IMF rescues in the periphery again arrived with austerity conditions attached
+  - China's stimulus and the rise of the G20 shifted global economic power
+  sources:
+  - title: 'This Time Is Different: Eight Centuries of Financial Folly'
+    author: Carmen M. Reinhart and Kenneth S. Rogoff
+    year: '2009'
+    type: book
+    archive_url: https://archive.org/details/thistimeisdiffer0000rein
+  - title: World Economic Outlook - Crisis and Recovery
+    author: International Monetary Fund
+    year: '2009'
+    type: document
+  - title: 'The Globalization Paradox: Democracy and the Future of the World Economy'
+    author: Dani Rodrik
+    year: '2011'
+    type: book
+    archive_url: https://archive.org/details/globalizationpar0000rodr
+  - title: 'Crisis Economics: A Crash Course in the Future of Finance'
+    author: Nouriel Roubini and Stephen Mihm
+    year: '2010'
+    type: book
+    archive_url: https://archive.org/details/crisiseconomicsc0000roub
+  notable_quotes:
+  - text: This crisis was caused by the irrational behaviour of white people with blue eyes, who before the crisis appeared to know everything and now demonstrate that they know nothing.
+    speaker: Luiz Inacio Lula da Silva
+    context: Press conference with UK Prime Minister Gordon Brown, March 2009
+  - text: This time is different.
+    speaker: Carmen Reinhart and Kenneth Rogoff
+    context: Ironic title of their 2009 study of eight centuries of financial crises
+  emphasized:
+  - The North-to-South transmission of a crisis the periphery did not create
+  - The trade and remittance channel rather than exotic securities
+  - Austerity conditions imposed on emerging-market rescues
+  - The shift of economic power toward China and the G20
+  omitted:
+  - Domestic vulnerabilities in some emerging economies before the crisis
+  - That many emerging markets recovered faster than the West
+  - The debt buildup that China's own stimulus set in motion
+- viewpoint: The Causes Debate - Deregulation, Imbalances, or Government
+  viewpoint_type: academic
+  region_origin: global
+  narrative: |
+    Historians and economists agree on the sequence of the collapse and disagree, still, on its root. Three explanations compete. The first blames deregulation and Wall Street excess, the account the FCIC majority endorsed. The second, associated with Ben Bernanke, blames a "global saving glut": surpluses from China, oil exporters, and aging economies poured into American assets, drove down long-term interest rates, and inflated the housing bubble from the outside. In this reading the flood of foreign money, not just lax rules, made the boom.
+
+    The third explanation blames government. Peter Wallison, in a solo dissent from the FCIC report, argued that the "sine qua non of the financial crisis was U.S. government housing policy," specifically the affordable-housing mandates on Fannie Mae and Freddie Mac that, he wrote, produced 27 million risky loans. Critics answered that mortgages packaged by private Wall Street firms defaulted at many times the rate of those bought by Fannie and Freddie, and that the worst subprime lenders were unregulated firms operating outside those mandates. The economist John Taylor added a fourth thread: the Federal Reserve held interest rates too low for too long after 2001, feeding the bubble.
+
+    Raghuram Rajan had warned of the danger in 2005, at a conference honoring the retiring Alan Greenspan, arguing that financial innovation had exposed the system to a small but real probability of a catastrophic meltdown; he was, by his own account, received as a Luddite. His later book Fault Lines argued that the deepest cause was political: decades of stagnant wages had been papered over with cheap credit, so that a housing boom stood in for rising incomes. The debate is not academic in its stakes. Whether one blames the banks, the world's savers, the government, or the Fed determines what one thinks should be regulated next.
+  key_arguments:
+  - Deregulation and Wall Street risk-taking (FCIC majority) versus a global saving glut of foreign capital (Bernanke)
+  - Wallison's dissent blamed government affordable-housing mandates on Fannie Mae and Freddie Mac
+  - Critics note that private-label subprime defaulted at far higher rates than government-backed loans
+  - Rajan's Fault Lines argues that cheap credit substituted for stagnant wages, a political root
+  sources:
+  - title: 'Fault Lines: How Hidden Fractures Still Threaten the World Economy'
+    author: Raghuram G. Rajan
+    year: '2010'
+    type: book
+    archive_url: https://archive.org/details/faultlineshowhid0000raja
+  - title: The Global Saving Glut and the U.S. Current Account Deficit
+    author: Ben S. Bernanke
+    year: '2005'
+    type: document
+  - title: 'Hidden in Plain Sight: What Really Caused the World''s Worst Financial Crisis and Why It Could Happen Again'
+    author: Peter J. Wallison
+    year: '2015'
+    type: book
+    archive_url: https://archive.org/details/hiddeninplainsig0000wall
+  - title: 'Getting Off Track: How Government Actions and Interventions Caused, Prolonged, and Worsened the Financial Crisis'
+    author: John B. Taylor
+    year: '2009'
+    type: book
+    archive_url: https://archive.org/details/gettingofftrackh0000tayl
+  notable_quotes:
+  - text: Over the past decade a combination of diverse forces has created a significant increase in the global supply of saving, a global saving glut.
+    speaker: Ben Bernanke
+    context: Sandridge Lecture, Richmond, Virginia, March 2005
+  - text: The sine qua non of the financial crisis was U.S. government housing policy.
+    speaker: Peter Wallison
+    context: Dissent from the Financial Crisis Inquiry Report, 2011
+  emphasized:
+  - Competing causal frameworks that survive the same facts
+  - The savings-glut account of externally driven low interest rates
+  - The government-policy dissent centered on Fannie Mae and Freddie Mac
+  - Rajan's argument that inequality and cheap credit were the deeper cause
+  omitted:
+  - The broad consensus on the mechanics of the panic itself
+  - The possibility that several causes were jointly necessary
+  - Behavioral and outright fraud dimensions at the loan level
+media:
+- media_type: photograph
+  title: Lehman Brothers headquarters, Times Square, New York
+  description: The Lehman Brothers tower on Seventh Avenue. On 15 September 2008 the 158-year-old investment bank filed the largest bankruptcy in U.S. history, with 613 billion dollars in debt, tipping the credit crunch into a global panic.
+  source_url: https://commons.wikimedia.org/wiki/File:Lehman_Brothers_Times_Square_by_David_Shankbone.jpg
+  attribution: David Shankbone, 2007, CC BY-SA 3.0, via Wikimedia Commons
+  license: cc-by-sa
+  creator: David Shankbone
+  creation_date: '2007'
+  width: 2448
+  height: 3264
+- media_type: photograph
+  title: Bank run at Northern Rock, September 2007
+  description: Customers queue to withdraw their savings from a Northern Rock branch in Brighton, England. It was the first run on a British bank in over a century, an early tremor of the crisis that would peak a year later.
+  source_url: https://commons.wikimedia.org/wiki/File:Northern_Rock_Queue.jpg
+  attribution: Dominic Alves, CC BY 2.0, via Wikimedia Commons
+  license: cc-by
+  creator: Dominic Alves
+  creation_date: September 2007
+  width: 2592
+  height: 1944
+- media_type: photograph
+  title: Onlookers outside Lehman Brothers, 15 September 2008
+  description: People gather and film outside the Lehman Brothers headquarters on the day of the bankruptcy filing. Staff carried boxes of belongings onto the street as the firm collapsed.
+  source_url: https://commons.wikimedia.org/wiki/File:Lehman_Brothers-20080915.jpg
+  attribution: Robert Scoble, CC BY 2.0, via Wikimedia Commons
+  license: cc-by
+  creator: Robert Scoble
+  creation_date: September 15, 2008
+  width: 2666
+  height: 4000
+connections:
+- target_slug: great-depression
+  connection_type: parallel
+  description: The 1930s were the disaster every later crash is measured against. Ben Bernanke, a scholar of how the Federal Reserve let the money supply collapse after 1929, flooded the banks with cash in 2008 to keep the panic from becoming a second Depression.
+- target_slug: september-11-attacks
+  connection_type: influenced
+  description: After September 2001, the Federal Reserve cut its benchmark rate to 1 percent, the lowest since 1958, and held it there through the recovery. Cheap money poured into housing. Economists still argue over how much of the 2008 bubble was inflated in the rubble of 2001
+- target_slug: arab-spring
+  connection_type: influenced
+  description: The crisis spiked global food and fuel prices and gutted youth employment across North Africa and the Middle East. When a Tunisian fruit vendor set himself on fire in December 2010, the economic tinder had been drying since 2008

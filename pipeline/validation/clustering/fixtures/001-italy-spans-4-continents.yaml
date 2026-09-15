@@ -1,0 +1,92 @@
+id: italy-spans-4-continents-2026-05
+name: "Italy GPE over-merge: Pope + Giro + Sinner + Ancelotti + recycling (must split)"
+failure_date: "2026-05-15"
+failure_kind: over-merge
+articles:
+  - id: it-pope-1
+    title: "Pope Leo concludes Italy pastoral visit with Mass in Naples"
+    summary: "Pope Leo XIV celebrated an outdoor Mass in Naples on Wednesday, drawing roughly 80,000 worshippers as he wrapped up a four-day pastoral tour of southern Italy."
+    full_text: >
+      Pope Leo XIV celebrated an outdoor Mass in Naples on Wednesday, drawing roughly 80,000
+      worshippers as he wrapped up a four-day pastoral tour of southern Italy. The pontiff
+      addressed migration policy, climate displacement, and the role of parish priests in
+      Mediterranean port communities. "We are called to be a Church of the docks, not a
+      Church of the towers," Leo told the crowd at Piazza del Plebiscito. The Vatican said
+      Leo will return to Rome on Thursday before resuming general audiences next week.
+      Italian President Sergio Mattarella attended the closing ceremony alongside Naples
+      Mayor Gaetano Manfredi. The visit marks Leo's third domestic trip since his election.
+      Italian bishops praised his focus on regional poverty and the southern Mezzogiorno.
+    source: { slug: vatican-news, country: VA, tier: international }
+    published_at: "2026-05-14T18:00Z"
+  - id: it-giro-1
+    title: "Giro d'Italia stage 11 won by Tim Merlier in bunch sprint"
+    summary: "Belgian rider Tim Merlier took stage 11 of the Giro d'Italia in a chaotic sprint finish in Viareggio, his second win of this year's race."
+    full_text: >
+      Belgian rider Tim Merlier took stage 11 of the Giro d'Italia in a chaotic sprint finish
+      in Viareggio on Wednesday, his second win of this year's race. Merlier edged out
+      Jonathan Milan and Kaden Groves on the Tuscan coast after a 207-kilometre flat stage
+      from Foiano della Chiana. "I had to come from far back, the lead-out went too early,"
+      Merlier told RAI Sport at the line. The maglia rosa, Slovenia's Primoz Roglic,
+      finished safely in the main bunch. The race heads into the mountains on Thursday with
+      a brutal climb up Monte Grappa. Merlier now has 12 career grand-tour stage wins.
+      Italy's Filippo Ganna remains second overall, 14 seconds behind Roglic.
+    source: { slug: rai-sport, country: IT, tier: domestic }
+    published_at: "2026-05-14T17:00Z"
+  - id: it-sinner-1
+    title: "Jannik Sinner advances to Italian Open quarterfinals"
+    summary: "World number one Jannik Sinner beat Casper Ruud 6-4, 6-2 in Rome to reach the Italian Open quarterfinals, his first competitive match on Italian soil this season."
+    full_text: >
+      World number one Jannik Sinner beat Casper Ruud 6-4, 6-2 at the Foro Italico on
+      Wednesday to reach the Italian Open quarterfinals, his first competitive match on
+      Italian soil this season. Sinner, returning from a three-month suspension, was greeted
+      by sustained chants of "Jan-nik, Jan-nik" from the home crowd. "Playing at home is
+      everything to me, this is where I dreamed of holding a trophy as a kid," Sinner told
+      Sky Sport Italia courtside. He next faces Stefanos Tsitsipas. The South Tyrolean is
+      seeking his first Italian Open title and would close the gap to retiring rival Carlos
+      Alcaraz with a deep run in Rome. Sinner's coach Darren Cahill called the performance "tidy".
+    source: { slug: ansa-sport, country: IT, tier: domestic }
+    published_at: "2026-05-14T20:30Z"
+  - id: it-ancelotti-1
+    title: "Carlo Ancelotti named manager of Italy national football team"
+    summary: "Carlo Ancelotti will manage the Italian national football team, the FIGC announced Wednesday, taking over from Luciano Spalletti."
+    full_text: >
+      Carlo Ancelotti will manage the Italian national football team, the FIGC announced
+      Wednesday, taking over from Luciano Spalletti. The 65-year-old, fresh from winning
+      his sixth Champions League with Real Madrid, signed a contract through the 2027
+      European Championship. "Coaching the Azzurri is the proudest moment of my career,"
+      Ancelotti said at a press conference in Coverciano. FIGC president Gabriele Gravina
+      called the appointment "a homecoming." Italy missed qualification for two consecutive
+      World Cups and will compete in a critical UEFA Nations League playoff against Belgium
+      in June. Ancelotti's first squad list is expected later this month. He becomes the
+      first manager to win the European Cup as both player and Italy coach.
+    source: { slug: gazzetta, country: IT, tier: domestic }
+    published_at: "2026-05-14T15:00Z"
+  - id: it-recycle-1
+    title: "Italy hits 75 percent municipal recycling rate, leads EU"
+    summary: "Italy's national environmental institute reported that municipal recycling reached 75 percent in 2025, the highest rate in the European Union."
+    full_text: >
+      Italy's national environmental institute ISPRA reported Wednesday that municipal
+      recycling reached 75 percent in 2025, the highest rate in the European Union and well
+      above the bloc's 65-percent 2030 target. Northern regions led the figures, with
+      Trentino at 87 percent and Veneto at 82 percent. Sicily and Calabria still lag at 42
+      and 39 percent respectively. The environment minister called the result "evidence
+      that the circular economy is no longer a slogan." Italy now exports certified
+      recovered paper to Germany and France. The Confindustria business federation
+      cautioned that small textile recyclers face a profitability squeeze from imported
+      Chinese feedstock. ISPRA will publish a regional breakdown in July.
+    source: { slug: corriere, country: IT, tier: domestic }
+    published_at: "2026-05-14T11:00Z"
+expectation:
+  type: should_split
+  member_ids: [it-pope-1, it-giro-1, it-sinner-1, it-ancelotti-1, it-recycle-1]
+  min_clusters: 5
+rationale: |
+  Failure mode: GPE-only over-merge. All five articles share the GPE "italy"
+  but NO other entities — different actors (Pope Leo / Merlier / Sinner /
+  Ancelotti / ISPRA), different topics, different publication times spread
+  across the day. The current entity-overlap merge pass shouldn't fire
+  because "italy" is in _OVERLY_COMMON_ENTITIES, but the TF-IDF Phase-1
+  step at threshold 0.2 sometimes catches them on shared Italian
+  vocabulary (italian, italy's, rome, etc.) when bodies are short.
+  Expected: 5 clearly-distinct clusters. Current behaviour: merges into
+  1-2 clusters in production (audit 2026-05-15).

@@ -1,0 +1,137 @@
+id: latvia-silina-anchor-entity-2026-05-15
+name: "Latvian PM Siliņa resignation (anchor-entity merge — diacritic + ASCII variants)"
+failure_date: "2026-05-15"
+failure_kind: anchor-entity-fragmentation
+articles:
+  - id: latv-bbc
+    title: "Latvian PM resigns after row over stray Ukrainian drones"
+    summary: "Drones bound for Russia crashed down in Latvia last week, prompting a political fallout."
+    full_text: >
+      Latvian Prime Minister Evika Silina has resigned following a political
+      crisis over Russia-bound Ukrainian drones straying into Latvian
+      territory. She had fired her Defence Minister Andris Spruds last week
+      after two drones crashed down in eastern Latvia, criticising his
+      response. The Progressives Party, the coalition partner Spruds belongs
+      to, withdrew from the government in retaliation. President Edgars
+      Rinkevics will hold consultations with Saeima factions. Silina led the
+      ruling coalition since 2023. Her New Unity party will attempt to
+      nominate a successor before October parliamentary elections.
+    source: { slug: bbc-news, country: GB, tier: international }
+    published_at: "2026-05-14T10:53Z"
+  - id: latv-aljazeera
+    title: "Latvian PM resigns over handling of stray Ukrainian drones"
+    summary: "Latvia's Prime Minister Evika Silina resigned following criticism of her government's handling of stray drones"
+    full_text: >
+      Latvia's Prime Minister Evika Silina resigned following criticism of her
+      government's handling of stray drones, believed to be Ukrainian, crossing
+      into Latvian territory. The controversy deepened divisions within the
+      ruling coalition, causing the left-leaning Progressives Party to
+      withdraw support. President Edgars Rinkevics has 14 days to consult
+      coalition partners on a successor. NATO Secretary General Mark Rutte
+      praised "Latvia's institutional resilience." Defence Minister Andris
+      Spruds had been dismissed by Silina before her own resignation.
+    source: { slug: al-jazeera, country: QA, tier: international }
+    published_at: "2026-05-14T16:00Z"
+  - id: latv-newsweek
+    title: "Latvia Prime Minister Quits Over Drones Breach"
+    summary: "Ukraine has repeatedly targeted Russian facilities near NATO borders, and says Russian defenses have caused its drones to stray."
+    full_text: >
+      Latvia's prime minister has resigned after Ukrainian drones veered into
+      the Baltic state's airspace last week. Ukraine has repeatedly targeted
+      Russian facilities near NATO borders, and says Russian defenses have
+      caused its drones to stray. Prime Minister Evika Silina announced her
+      resignation Thursday after losing the support of her coalition partner.
+      President Edgars Rinkevics will name a successor within two weeks. The
+      Latvian Saeima will then schedule a confidence vote. NATO foreign
+      ministers were briefed.
+    source: { slug: newsweek, country: US, tier: us_major }
+    published_at: "2026-05-15T12:22Z"
+  - id: latv-lsm-1
+    title: "Latvian Prime Minister Evika Siliņa steps down"
+    summary: "Prime Minister Evika Siliņa (New Unity) has resigned, New Unity's faction leader Edmunds Jurēvics confirmed to Latvian Television on Thursday, May 14. Evika Siliņa also announced this in a media briefing shortly after."
+    full_text: >
+      Prime Minister Evika Siliņa (New Unity) has resigned, New Unity's
+      faction leader Edmunds Jurēvics confirmed to Latvian Television on
+      Thursday, May 14. Evika Siliņa also announced this in a media briefing
+      shortly after. The resignation follows a coalition rupture with the
+      Progressives Party over the Defence Minister Andris Spruds dismissal.
+      President Edgars Rinkevics will begin coalition consultations
+      immediately. Saeima Speaker Daiga Mierina will manage the transition.
+    source: { slug: lsm-latvia, country: LV, tier: international }
+    published_at: "2026-05-14T08:46Z"
+  - id: latv-lsm-2
+    title: "Latvian MPs comment on Evika Siliņa's resignation"
+    summary: "Prime Minister Evika Siliņa's (New Unity) resignation was the right decision, long overdue, and inevitable, according to statements made by representatives of the Saeima factions during a special news broadcast by Latvian Public Media."
+    full_text: >
+      Prime Minister Evika Siliņa's (New Unity) resignation was the right
+      decision, long overdue, and inevitable, according to statements made
+      by representatives of the Saeima factions during a special news
+      broadcast by Latvian Public Media. Several MPs from National Alliance
+      and Progressives factions said the coalition crisis had been
+      foreseeable since the Defence Minister Andris Spruds dismissal earlier
+      in the week. Edmunds Jurēvics defended Siliņa's record on defence
+      procurement.
+    source: { slug: lsm-latvia, country: LV, tier: international }
+    published_at: "2026-05-14T11:13Z"
+  - id: latv-euronews
+    title: "Latvian Prime Minister Evika Siliņa announces shock resignation after week of scandals"
+    summary: "Latvian Prime Minister Evika Siliņa announced on Thursday she will resign, triggering the collapse of the country's governing coalition ahead of key October parliamentary elections. On top of this, two senior Latvian politicians have been detained during a corruption investigation."
+    full_text: >
+      Latvia's centre-right Prime Minister Evika Siliņa announced on Thursday
+      she will resign from the top job following coalition controversy and a
+      drone incident, effectively triggering the collapse of the country's
+      governing alliance. "Today, I have made the difficult but honest
+      decision — to step down," Siliņa said in a televised statement.
+      President Edgars Rinkevics will host coalition consultations. Saeima
+      Speaker Daiga Mierina will manage the transition. Two senior Latvian
+      politicians have separately been detained during an unrelated
+      corruption investigation, deepening the political crisis.
+    source: { slug: euronews, country: FR, tier: international }
+    published_at: "2026-05-14T08:53Z"
+  - id: latv-myjoyonline
+    title: "Latvian PM resigns after row over stray Ukrainian drones"
+    summary: "Latvian Prime Minister Evika Silina has resigned following a political crisis over Russia-bound Ukrainian drones straying into Latvian territory."
+    full_text: >
+      Latvian Prime Minister Evika Silina has resigned following a political
+      crisis over Russia-bound Ukrainian drones straying into Latvian
+      territory. She had fired her Defence Minister Andris Spruds last week
+      after two drones crashed down in eastern Latvia, criticising his
+      response. President Edgars Rinkevics is expected to nominate an
+      interim PM within days. The Progressives Party withdrew from the
+      coalition. Latvia's October parliamentary elections will proceed on
+      schedule.
+    source: { slug: myjoyonline, country: GH, tier: international }
+    published_at: "2026-05-14T12:50Z"
+expectation:
+  type: should_merge
+  expected_member_ids: [latv-bbc, latv-aljazeera, latv-newsweek, latv-lsm-1, latv-lsm-2, latv-euronews, latv-myjoyonline]
+  min_clusters: 1
+  max_clusters: 2
+  min_source_count: 4
+rationale: |
+  Production failure 2026-05-15: NATO-member head of government resigning
+  is unambiguously a top story, but the cluster fragmented across four
+  separate clusters because of two related issues:
+
+  1. Diacritic split: Latvian-language sources (LSM, Euronews, the Sunday
+     Guardian) used "Siliņa" with diacritic, while US/UK/international
+     sources used the ASCII "Silina". TF-IDF treats these as different
+     tokens, so the Phase 1 cosine missed the same-entity link.
+
+  2. Source-count gating: Each fragment had only 1-3 sources and didn't
+     reach the importance ranker's promotion floor.
+
+  Path A's Phase 2.6 anchor-entity merge should fire on "siliņa" /
+  "silina" (rare proper noun, only present in this story across the corpus,
+  meets ANCHOR_IDF_FRACTION_OF_MAX≥0.85 and ANCHOR_MAX_DOC_FREQ≤3) plus
+  the title-Jaccard floor of 0.15 (resign + Latvia + drones share across
+  variants). Should collapse all 7 articles into 1-2 clusters.
+
+  Real production article IDs (Supabase 2026-05-15):
+    - 02be2e3e-1478-47fb-9678-ad080d2c6233 (BBC News)
+    - aa050d45-2bf6-4448-bf6e-ed329cc2e919 (Al Jazeera)
+    - f12af7b3-11ff-40e8-8417-1208dace48bd (Newsweek)
+    - ff31ca1b-b828-4560-b1ec-94eb4a28a391 (LSM Latvia — diacritic)
+    - 64c99d45-1ff5-40a9-b3aa-504a28ee313d (LSM Latvia — diacritic)
+    - b5c7efaa-475b-484c-b964-05ca9085f468 (Euronews — diacritic)
+    - 7d9f45dc-89a5-4d59-9aa9-5a8beb727586 (MyJoyOnline)

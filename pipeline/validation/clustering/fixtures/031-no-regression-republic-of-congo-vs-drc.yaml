@@ -1,0 +1,133 @@
+id: republic-of-congo-vs-drc-2026-05-15
+name: "Republic of Congo (Brazzaville) vs DR Congo (Kinshasa) — must SPLIT (synonym safety guard)"
+failure_date: "2026-05-15"
+failure_kind: synonym-over-fire
+articles:
+  # ---- Republic of Congo (Brazzaville) story: oil pipeline pact ----
+  # Different country than DRC. Capital is Brazzaville. President is
+  # Denis Sassou Nguesso. The "(drc, congo)" synonym pair would over-fire
+  # WITHOUT the title-Jaccard safety guard.
+  - id: roc-1
+    title: "Republic of Congo signs oil pipeline pact with Equatorial Guinea in Brazzaville"
+    summary: "Republic of Congo signed an oil pipeline pact with Equatorial Guinea in Brazzaville, the energy ministry said."
+    full_text: >
+      Republic of Congo signed an oil pipeline pact with Equatorial Guinea
+      in Brazzaville Wednesday, the energy ministry said. The 380-kilometre
+      pipeline will connect the Pointe-Noire refinery to Bata. Republic of
+      Congo President Denis Sassou Nguesso hosted the signing at the
+      Palais du Peuple. Equatorial Guinea's vice president Teodorin Obiang
+      represented the Malabo government. The deal is worth 1.4 billion
+      dollars over fifteen years. Total Energies and the Chinese state oil
+      company CNOOC are joint operators. The pact is the largest
+      hydrocarbon agreement signed by Brazzaville since 2019.
+    source: { slug: jeune-afrique, country: FR, tier: international }
+    published_at: "2026-05-15T13:00Z"
+  - id: roc-2
+    title: "Brazzaville-Bata oil pipeline: Sassou Nguesso, Obiang sign 1.4-billion-dollar deal"
+    summary: "Brazzaville and Bata signed a 1.4-billion-dollar oil pipeline deal between the Republic of Congo and Equatorial Guinea."
+    full_text: >
+      Brazzaville and Bata signed a 1.4-billion-dollar oil pipeline deal
+      between the Republic of Congo and Equatorial Guinea Wednesday.
+      Republic of Congo President Denis Sassou Nguesso and Equatorial
+      Guinea Vice President Teodorin Obiang attended the signing. The
+      380-kilometre pipeline will run from the Pointe-Noire refinery in
+      the Republic of Congo to Bata. Total Energies and the Chinese state
+      oil company CNOOC are joint operators. The pact is the largest
+      Brazzaville hydrocarbon agreement since 2019.
+    source: { slug: rfi, country: FR, tier: international }
+    published_at: "2026-05-15T15:00Z"
+  - id: roc-3
+    title: "Sassou Nguesso hosts Obiang for energy summit in Republic of Congo"
+    summary: "President Denis Sassou Nguesso hosted Equatorial Guinea's vice president Teodorin Obiang for an energy summit in the Republic of Congo."
+    full_text: >
+      Republic of Congo President Denis Sassou Nguesso hosted Equatorial
+      Guinea's vice president Teodorin Obiang for an energy summit in
+      Brazzaville Wednesday. The two countries signed a 1.4-billion-dollar
+      pipeline contract. The Brazzaville pipeline will run 380 kilometres
+      to Bata. Total Energies and the Chinese CNOOC are joint operators.
+      The Republic of Congo expects 12,000 construction jobs from the
+      project. Sassou Nguesso's government is pursuing the deal to
+      diversify export markets. The Brazzaville Stock Exchange opened
+      higher on the news.
+    source: { slug: africa-news, country: CD, tier: international }
+    published_at: "2026-05-15T17:00Z"
+  # ---- Democratic Republic of Congo (Kinshasa) story: Ebola outbreak ----
+  # Completely different country and topic. The (drc, congo) synonym pair
+  # WOULD over-fire WITHOUT the SYNONYM_TITLE_JACCARD_FLOOR safety guard
+  # (because both clusters carry the bare token "congo"). Floor of 0.20
+  # means the stem-Jaccard between titles must reach 0.20; "Ebola
+  # outbreak" stems share nothing with "oil pipeline pact" stems.
+  - id: drc-1
+    title: "Ebola outbreak in DR Congo Ituri province: 65 dead, 246 cases"
+    summary: "Ebola outbreak in DR Congo's Ituri province has killed 65 with 246 suspected cases, Africa CDC said."
+    full_text: >
+      Ebola outbreak in DR Congo's Ituri province has killed 65 with 246
+      suspected cases, the Africa Centres for Disease Control and
+      Prevention said. Health Minister Roger Kamba briefed reporters in
+      Kinshasa. The Ebola strain has been preliminarily identified as
+      Zaire ebolavirus. The Ervebo vaccine has been shipped from the WHO
+      stockpile in Geneva. Médecins Sans Frontières dispatched two
+      treatment teams. The outbreak is the country's fifteenth since
+      1976. Past outbreaks in Ituri have been complicated by M23 rebel
+      conflict.
+    source: { slug: nyt, country: US, tier: us_major }
+    published_at: "2026-05-15T15:55Z"
+  - id: drc-2
+    title: "DRC Ebola: Africa CDC confirms 65 deaths in Ituri"
+    summary: "Africa CDC confirmed 65 deaths from a new Ebola outbreak in the eastern DRC's Ituri province."
+    full_text: >
+      The Africa CDC confirmed 65 deaths from a new Ebola outbreak in the
+      eastern DRC's Ituri province. Health Minister Roger Kamba told a
+      press conference in Kinshasa that vaccination of frontline health
+      workers had begun. The Ervebo vaccine doses arrived from Geneva.
+      Médecins Sans Frontières dispatched two treatment teams from
+      Brussels. The outbreak strain is Zaire ebolavirus. Past Ituri
+      outbreaks have been complicated by M23 rebel conflict. The DRC's
+      health ministry called for international support.
+    source: { slug: cnn, country: US, tier: us_major }
+    published_at: "2026-05-15T13:15Z"
+  - id: drc-3
+    title: "Eastern DRC Ebola: Kamba briefs reporters from Kinshasa"
+    summary: "DRC Health Minister Roger Kamba briefed reporters from Kinshasa on the Ebola outbreak in the eastern Ituri province."
+    full_text: >
+      DRC Health Minister Roger Kamba briefed reporters from Kinshasa on
+      the Ebola outbreak in the eastern Ituri province, where 65 people
+      have died and 246 suspected cases have been identified. The Ervebo
+      vaccine has begun rollout to frontline health workers. Médecins
+      Sans Frontières dispatched two emergency teams. The outbreak
+      strain is Zaire ebolavirus. Past outbreaks in eastern DRC have
+      been complicated by M23 rebel conflict. The European Commission
+      pledged emergency aid.
+    source: { slug: euronews, country: FR, tier: international }
+    published_at: "2026-05-15T14:05Z"
+expectation:
+  type: should_split
+  member_ids: [roc-1, roc-2, roc-3, drc-1, drc-2, drc-3]
+  min_clusters: 2
+rationale: |
+  Synonym-pair NO-REGRESSION test: Republic of Congo (Brazzaville) and
+  Democratic Republic of Congo (Kinshasa) are two DIFFERENT countries
+  that both carry "Congo" in their names. The Phase 2.55 synonym-pair
+  pass enumerates ("drc", "congo") and ("drc", "democratic republic of
+  congo") — without the SYNONYM_TITLE_JACCARD_FLOOR=0.20 safety guard,
+  this pass would WRONGLY merge the Republic of Congo oil-pipeline
+  story with the DRC Ebola outbreak (both surface the bare token
+  "congo" via the entity NER).
+
+  The safety guard catches this: stem-Jaccard between
+    title set 1: {republic, congo, oil, pipeline, pact, brazzaville,
+                  bata, sassou, nguesso, obiang, equatorial, guinea}
+    title set 2: {ebola, outbreak, dr, congo, ituri, province, dead,
+                  cases, kinshasa, africa, cdc, kamba}
+  is far below 0.20 — only "congo" overlaps. So the synonym pair
+  refuses to fire.
+
+  Expected: 2+ clusters (Republic of Congo / Brazzaville pipeline +
+  DR Congo / Kinshasa Ebola). If the test fails by collapsing them
+  into one cluster, the safety guard has been removed or its threshold
+  has been lowered too far — a CATASTROPHIC over-fire.
+
+  This is the inverse of fixture 022 (where (drc, congo) MUST fire to
+  merge same-event articles). 022 + 031 together pin both directions of
+  the synonym-pair pass: it must merge true synonyms, must NOT merge
+  homonyms.

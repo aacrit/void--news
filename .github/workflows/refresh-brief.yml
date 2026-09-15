@@ -1,20 +1,39 @@
-name: Refresh Daily Brief
+name: "Refresh: Daily Brief"
+
+# Regenerates ONLY the daily brief (TL;DR + opinion + audio) against the state
+# DB the last pipeline run left behind, then re-emits the static JSON and
+# commits it so Cloudflare redeploys. Use it to ship a brief change without
+# waiting for the 11:00 UTC pipeline.
+#
+# NOTE: it does NOT fetch new articles. The brief is regenerated from the
+# clusters the most recent pipeline run produced, so re-running it the same day
+# gives you the same stories in whatever the current prompt/format is.
+#
+# Migrated to the SQLite/Cloudflare stack 2026-09-04 (was still pointed at the
+# decommissioned Supabase, which made it a no-op).
+
+permissions:
+  contents: write
+  actions: read
+
 on:
   workflow_dispatch:
     inputs:
-      editions:
-        description: 'Editions to refresh (comma-separated: world,us,india)'
+      mode:
+        description: 'Mode: full (TL;DR + opinion + audio), text (TL;DR + opinion, no audio), tldr (TL;DR only), opinion (opinion only)'
         required: false
-        default: 'world'
-      skip_audio:
-        description: 'Skip audio generation (TL;DR + opinion only)'
-        required: false
-        type: boolean
-        default: false
+        default: 'full'
+        type: choice
+        options:
+          - full
+          - text
+          - tldr
+          - opinion
 
 jobs:
   refresh-brief:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -23,83 +42,86 @@ jobs:
           cache: 'pip'
           cache-dependency-path: pipeline/requirements.txt
       - name: Install system dependencies
+        if: inputs.mode == 'full'
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - name: Install dependencies
         run: pip install -r pipeline/requirements.txt
-      - name: Cache spaCy model
-        id: spacy-cache
-        uses: actions/cache@v4
+      # ── Pipeline state DB (SQLite) — same restore path as pipeline.yml ──
+      - name: Restore pipeline state DB
+        id: state
+        uses: actions/cache/restore@v4
         with:
-          path: ~/.local/lib/python3.11/site-packages/en_core_web_sm
-          key: spacy-en_core_web_sm-${{ hashFiles('pipeline/requirements.txt') }}
-      - name: Download spaCy model
-        if: steps.spacy-cache.outputs.cache-hit != 'true'
-        run: python -m spacy download en_core_web_sm
+          path: pipeline_state.db
+          key: void-state-v1-${{ github.run_id }}
+          restore-keys: |
+            void-state-v1-
+      - name: Bootstrap state DB from the latest run snapshot (cold cache)
+        if: hashFiles('pipeline_state.db') == ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          for rid in $(gh run list --workflow=pipeline.yml --status success -L 12 \
+                         --json databaseId --jq '.[].databaseId'); do
+            if gh run download "$rid" -n void-state-snapshot --dir _snap 2>/dev/null; then
+              gunzip -c _snap/pipeline_state.db.gz > pipeline_state.db
+              rm -rf _snap
+              echo "Restored state snapshot from pipeline run $rid"
+              break
+            fi
+          done
+          if [ ! -f pipeline_state.db ]; then
+            echo "::error::No pipeline state DB available (no cache, no snapshot artifact)."
+            exit 1
+          fi
+
       - name: Refresh Daily Brief
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          VOID_SQLITE_PATH: pipeline_state.db
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # $0 posture: Gemini Flash handles the brief (Groq retired 2026-06-24).
+          # Claude is retired at the source (claude_client.is_available).
+          DISABLE_ANTHROPIC: "1"
+          DISABLE_AUDIO: "0"   # void --onair audio re-enabled (edge-tts, $0). Set "1" to re-park.
         run: |
-          EDITIONS="${{ inputs.editions }}"
-          SKIP_AUDIO="${{ inputs.skip_audio }}"
+          MODE="${{ inputs.mode }}"
+          echo "Mode: ${MODE}"
 
-          if [ "$SKIP_AUDIO" = "true" ]; then
-            echo "Refreshing TL;DR + opinion only (no audio) for: $EDITIONS"
-            python3 << PYEOF
-          import sys
-          sys.path.insert(0, "pipeline")
-          from utils.supabase_client import supabase
-          from briefing.daily_brief_generator import generate_daily_briefs
+          case "${MODE}" in
+            full)
+              python pipeline/refresh_brief.py
+              ;;
+            text)
+              python pipeline/refresh_brief.py --no-audio
+              ;;
+            tldr)
+              python pipeline/refresh_brief.py --tldr-only --no-audio
+              ;;
+            opinion)
+              python pipeline/refresh_brief.py --opinion-only
+              ;;
+          esac
 
-          editions = "$EDITIONS".split(",")
-          editions = [e.strip() for e in editions]
-          print(f"Editions: {editions}")
+      - name: Re-emit static JSON
+        env:
+          VOID_SQLITE_PATH: pipeline_state.db
+        run: python pipeline/export_static.py
 
-          # Fetch clusters
-          all_clusters = []
-          for edition in editions:
-              res = supabase.table("story_clusters").select(
-                  "id,title,summary,category,section,sections,source_count,"
-                  "headline_rank,consensus_points,divergence_points"
-              ).contains("sections", [edition]).order(
-                  "headline_rank", desc=True
-              ).limit(20).execute()
-              if res.data:
-                  for c in res.data:
-                      c["_db_id"] = c["id"]
-                  all_clusters.extend(res.data)
-                  print(f"  {edition}: {len(res.data)} clusters")
-
-          if not all_clusters:
-              print("No clusters found — exiting")
-              sys.exit(0)
-
-          briefs = generate_daily_briefs(all_clusters, {}, edition_sections=editions)
-
-          for edition, brief in briefs.items():
-              # Carry forward audio fields from existing brief
-              existing = supabase.table("daily_briefs").select("*").eq("edition", edition).limit(1).execute()
-              row = {
-                  "edition": edition,
-                  "tldr_text": brief["tldr_text"],
-                  "opinion_text": brief.get("opinion_text"),
-                  "opinion_lean": brief.get("opinion_lean"),
-                  "opinion_cluster_id": brief.get("opinion_cluster_id"),
-                  "top_cluster_ids": brief.get("top_cluster_ids", []),
-              }
-              # Preserve existing audio if skipping audio generation
-              if existing.data:
-                  old = existing.data[0]
-                  for key in ["audio_script", "audio_url", "audio_duration_seconds", "audio_file_size", "audio_voice"]:
-                      if old.get(key):
-                          row[key] = old[key]
-
-              supabase.table("daily_briefs").delete().eq("edition", edition).execute()
-              supabase.table("daily_briefs").insert(row).execute()
-              print(f"  {edition}: brief updated (audio preserved from previous)")
-          PYEOF
-          else
-            echo "Refreshing TL;DR + opinion + audio for: $EDITIONS"
-            python pipeline/refresh_audio.py --editions "$EDITIONS"
+      - name: Commit refreshed brief
+        run: |
+          set -e
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add frontend/public/data frontend/public/audio
+          if git diff --staged --quiet; then
+            echo "No brief changes to commit."
+            exit 0
           fi
+          git commit -m "Refresh: daily brief ($(date -u +%F))"
+          git checkout -- . || true
+          for i in 1 2 3 4 5; do
+            git fetch origin main && git rebase origin/main && \
+              git push origin HEAD:main && break
+            echo "push attempt $i failed; retrying"; sleep $((2**i))
+          done

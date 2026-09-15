@@ -1,0 +1,76 @@
+/* /admin/ig/inbox — engagement queue surfaces */
+
+.ig-inbox__dm,
+.ig-inbox__comment,
+.ig-inbox__mention,
+.ig-inbox__candidate {
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.ig-inbox__dm--press {
+  border-left: 4px solid var(--bias-right);
+  background: rgba(204, 62, 52, 0.04);
+}
+
+.ig-inbox__dm-hdr {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-family: var(--font-data);
+  font-size: 13px;
+  color: var(--fg-tertiary);
+}
+
+.ig-inbox__dm-hdr strong {
+  color: var(--fg-primary);
+  font-weight: 500;
+}
+
+.ig-inbox__dm-hdr a {
+  color: var(--fg-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.ig-inbox__dm-text {
+  font-family: var(--font-structural);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--fg-secondary);
+  margin: 0;
+}
+
+.ig-inbox__hint,
+.ig-inbox__draft {
+  font-family: var(--font-data);
+  font-size: 12px;
+  color: var(--fg-tertiary);
+  margin-top: 8px;
+}
+
+.ig-inbox__draft {
+  background: rgba(148, 107, 21, 0.06);
+  padding: 6px 8px;
+  border-left: 2px solid var(--fg-accent);
+}
+
+.ig-inbox__tag {
+  display: inline-block;
+  font-family: var(--font-data);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 3px 8px;
+  background: var(--bg-secondary);
+  color: var(--fg-secondary);
+}
+
+.ig-inbox__tag[data-hashtag] {
+  background: rgba(148, 107, 21, 0.12);
+  color: var(--cin-amber);
+}

@@ -1,0 +1,2105 @@
+/* ==========================================================================
+   void --ship v3 — "Mission Control"
+
+   Desktop (>=1024px): the page owns the viewport (100dvh minus the chrome above
+   it) and does NOT scroll. A 3-row grid (top bar / main / strip) holds a 3-column
+   main area (Submit / Board / Observations); only the inner panels scroll.
+   Mobile (<768px) + tablet (768-1023): the same content stacks in normal flow.
+
+   Graph-paper background, organic-ink accents, Press & Precision type retained.
+   All ShipCard / form / log / keyframe styles preserved from v2.
+   ========================================================================== */
+
+/* ---- Graph Paper Tokens ---- */
+:root,
+:root[data-mode="light"] {
+  --ship-grid-color: rgba(148, 107, 21, 0.06);
+
+  /* Ship-scoped RAG + info palette. Deliberately NOT the --bias-* tokens (those
+     stay reserved for political-lean data); these carry status / severity /
+     category meaning on the ship dashboard. All chosen for WCAG AA (>=4.5:1) as
+     text on the warm paper card backgrounds.
+     GREEN = working as intended, AMBER = in progress, ORANGE = queued,
+     RED = open limitation / bug, BLUE = feature / info, GREY = neutral. */
+  --ship-green:   #2E7D4F;
+  --ship-amber:   #8A6410;
+  --ship-orange:  #A65518;
+  --ship-red:     #BE3626;
+  --ship-blue:    #2B6AA8;
+  --ship-neutral: #6B6F78;
+}
+
+:root[data-mode="dark"] {
+  --ship-grid-color: rgba(77, 175, 160, 0.06);
+
+  /* Lighter tints for AA on the dark ground (#1C1A17 / #2A2725). */
+  --ship-green:   #6FC495;
+  --ship-amber:   #D9A64E;
+  --ship-orange:  #E39A5C;
+  --ship-red:     #E58873;
+  --ship-blue:    #7DB0E8;
+  --ship-neutral: #9AA0AA;
+}
+
+/* ==========================================================================
+   PAGE SHELL — mobile-first normal flow, desktop single-viewport grid
+   ========================================================================== */
+
+.ship-page {
+  box-sizing: border-box;
+  min-height: 100dvh;
+  max-width: var(--canvas-max);
+  margin: 0 auto;
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  background-image:
+    linear-gradient(var(--ship-grid-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--ship-grid-color) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+@media (min-width: 1024px) {
+  .ship-page {
+    max-width: min(1720px, 96vw);
+    /* No outer scroll: fill the viewport minus whatever chrome sits above the
+       page (the dismissible experimental banner). --ship-chrome-offset is set
+       by ShipBoard via a ResizeObserver, so this stays exact when the banner
+       is dismissed. minmax(0, 1fr) + min-height:0 let the grid children shrink. */
+    height: calc(100dvh - var(--ship-chrome-offset, 0px));
+    max-height: calc(100dvh - var(--ship-chrome-offset, 0px));
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-5);
+  }
+}
+
+
+/* ==========================================================================
+   TOP BAR — brand lockup + live metrics + sparkline + tools
+   ========================================================================== */
+
+.ship-topbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.ship-topbar__lead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.ship-topbar__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+  color: var(--fg-muted);
+  transition: color 0.15s var(--ease-cinematic);
+}
+
+.ship-topbar__back:hover { color: var(--fg-primary); }
+
+.ship-topbar__lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding-left: var(--space-4);
+  border-left: 1px solid var(--border-subtle);
+}
+
+.ship-topbar__logo {
+  display: inline-flex;
+  align-items: center;
+  opacity: 0.85;
+  transition: opacity 0.2s var(--ease-cinematic);
+}
+
+.ship-topbar__logo:hover { opacity: 1; }
+
+.ship-topbar__sep { color: var(--fg-muted); }
+
+.ship-topbar__suffix {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-secondary);
+}
+
+.ship-topbar__metrics-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-left: auto;
+  padding: var(--space-2) var(--space-4);
+  background: color-mix(in srgb, var(--bg-card) 70%, transparent);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+}
+
+.ship-topbar__tools {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+/* ---- Live metrics ---- */
+.ship-metrics {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.ship-metrics__item {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  color: var(--fg-secondary);
+  white-space: nowrap;
+}
+
+.ship-metrics__num {
+  font-family: var(--font-data);
+  font-weight: 600;
+  color: var(--fg-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.ship-metrics__item--gold .ship-metrics__num {
+  color: var(--cin-amber, var(--accent-warm));
+}
+
+.ship-metrics__item--landed {
+  animation: shipMetricLand 300ms var(--ease-cinematic);
+}
+
+.ship-metrics__sep {
+  color: var(--fg-muted);
+  font-size: var(--text-xs);
+}
+
+/* ---- Pulse Graph sparkline ---- */
+.ship-pulse-graph {
+  width: 120px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.ship-pulse-graph__submitted {
+  fill: none;
+  stroke: var(--fg-muted);
+  stroke-width: 1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: shipPulseGraphDraw 1.2s var(--ease-cinematic) 0.5s forwards;
+}
+
+.ship-pulse-graph__shipped {
+  fill: none;
+  stroke: var(--cin-amber, var(--accent-warm));
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: shipPulseGraphDraw 1.2s var(--ease-cinematic) 0.7s forwards;
+}
+
+
+/* ==========================================================================
+   MAIN GRID — Submit / Board / Observations
+   ========================================================================== */
+
+.ship-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+/* Left column wrapper: Submit stacked over the Board. */
+.ship-main__left {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .ship-main {
+    min-height: 0;
+    display: grid;
+    /* Two columns: a wide left (Submit over Board) and a fixed-ish right rail
+       (Known Observations). The right stays ~320-360px so the left is wide
+       enough for all 5 kanban columns to fit without horizontal scroll at
+       common desktop widths (>=1280). */
+    grid-template-columns: minmax(0, 1fr) clamp(320px, 26%, 360px);
+    gap: var(--space-4);
+  }
+
+  .ship-main__left {
+    min-width: 0;
+    min-height: 0;
+    gap: var(--space-4);
+  }
+
+  /* Submit sits on top as a compact panel; it takes only what it needs and is
+     capped so the Board always gets the majority of the column height. */
+  .ship-main__left .ship-col--submit {
+    flex: 0 1 auto;
+    max-height: 46%;
+  }
+
+  /* The Board fills whatever height is left under the form and scrolls inside. */
+  .ship-main__left .ship-col--board {
+    flex: 1 1 auto;
+  }
+}
+
+/* ---- Column / panel ---- */
+.ship-col {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  background: color-mix(in srgb, var(--bg-card) 82%, transparent);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: var(--space-4);
+}
+
+@media (min-width: 1024px) {
+  .ship-col {
+    min-height: 0;
+    overflow: hidden;
+  }
+}
+
+.ship-panel__head {
+  flex-shrink: 0;
+}
+
+.ship-panel__title {
+  font-family: var(--font-editorial);
+  font-size: clamp(1.1rem, 1.6vw, 1.4rem);
+  font-weight: 700;
+  line-height: 1.15;
+  color: var(--fg-primary);
+}
+
+.ship-panel__sub {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  color: var(--fg-secondary);
+  margin-top: 2px;
+}
+
+.ship-panel__scroll {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+@media (min-width: 1024px) {
+  .ship-panel__scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: var(--space-2);
+  }
+}
+
+
+/* ==========================================================================
+   SUBMIT FORM (canvas)
+   ========================================================================== */
+
+.ship-form-canvas__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ---- Category Pill Toggle ---- */
+.ship-category-toggle {
+  display: flex;
+  position: relative;
+  background: var(--bg-secondary);
+  border-radius: 3px;
+  padding: 2px;
+  width: fit-content;
+}
+
+.ship-category-toggle__pill {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  letter-spacing: 0.04em;
+  padding: var(--space-2) var(--space-5);
+  background: transparent;
+  border: none;
+  color: var(--fg-secondary);
+  cursor: pointer;
+  transition: color 0.2s var(--ease-cinematic);
+  border-radius: 2px;
+  min-width: 80px;
+  text-align: center;
+}
+
+.ship-category-toggle__pill--active {
+  color: var(--fg-primary);
+  font-weight: 600;
+}
+
+/* Category color: BUG = red, FEATURE = blue. The active pill reads its color. */
+.ship-category-toggle__pill--bug.ship-category-toggle__pill--active { color: var(--ship-red); }
+.ship-category-toggle__pill--feature.ship-category-toggle__pill--active { color: var(--ship-blue); }
+
+.ship-category-toggle__indicator {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: calc(50% - 2px);
+  height: calc(100% - 4px);
+  background: var(--bg-card);
+  border: 1px solid transparent;
+  border-radius: 2px;
+  box-shadow: var(--shadow-e1);
+  transition: transform 0.25s var(--ease-cinematic), background 0.25s var(--ease-cinematic), border-color 0.25s var(--ease-cinematic);
+  pointer-events: none;
+}
+
+/* The sliding indicator tints to match the active category. */
+.ship-category-toggle[data-active="bug"] .ship-category-toggle__indicator {
+  background: color-mix(in srgb, var(--ship-red) 12%, var(--bg-card));
+  border-color: color-mix(in srgb, var(--ship-red) 40%, transparent);
+}
+.ship-category-toggle[data-active="feature"] .ship-category-toggle__indicator {
+  background: color-mix(in srgb, var(--ship-blue) 12%, var(--bg-card));
+  border-color: color-mix(in srgb, var(--ship-blue) 40%, transparent);
+}
+
+/* ---- Title Input (underline style) ---- */
+.ship-form-canvas__field {
+  position: relative;
+}
+
+.ship-form-canvas__title-input {
+  width: 100%;
+  padding: var(--space-3) 0;
+  font-family: var(--font-editorial);
+  font-size: clamp(1.05rem, 2vw, 1.25rem);
+  font-weight: 600;
+  color: var(--fg-primary);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid var(--border-subtle);
+  outline: none;
+  background-image: linear-gradient(var(--cin-amber, var(--accent-warm)), var(--cin-amber, var(--accent-warm)));
+  background-size: 0% 2px;
+  background-repeat: no-repeat;
+  background-position: center bottom;
+  transition: background-size 0.3s var(--ease-cinematic), border-color 0.3s var(--ease-cinematic);
+}
+
+.ship-form-canvas__title-input:focus {
+  background-size: 100% 2px;
+  border-bottom-color: transparent;
+}
+
+.ship-form-canvas__title-input:focus-visible {
+  outline: none;
+}
+
+.ship-form-canvas__title-input::placeholder {
+  color: var(--fg-muted);
+  font-weight: 400;
+  opacity: 0.6;
+}
+
+/* ---- Description Textarea ---- */
+.ship-form-canvas__desc-input {
+  width: 100%;
+  min-height: 150px;
+  padding: var(--space-3);
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  color: var(--fg-primary);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s var(--ease-cinematic);
+}
+
+.ship-form-canvas__desc-input:focus {
+  border-color: var(--cin-amber, var(--accent-warm));
+}
+
+.ship-form-canvas__desc-input:focus-visible {
+  outline: 2px solid var(--cin-amber, var(--accent-warm));
+  outline-offset: 2px;
+}
+
+.ship-form-canvas__desc-input::placeholder {
+  color: var(--fg-muted);
+  opacity: 0.5;
+}
+
+/* ---- Char Count ---- */
+.ship-form-canvas__char-count {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  text-align: right;
+  margin-top: var(--space-1);
+}
+
+.ship-form-canvas__char-count--warn {
+  color: #C0392B;
+}
+
+/* ---- Submit Button ---- */
+.ship-form-canvas__submit {
+  width: 100%;
+  padding: var(--space-3) var(--space-5);
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  background: var(--fg-primary);
+  color: var(--bg-primary);
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  min-height: 44px;
+  transition: opacity 0.2s var(--ease-cinematic);
+}
+
+.ship-form-canvas__submit:hover:not(:disabled) { opacity: 0.85; }
+
+.ship-form-canvas__submit:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.ship-form-canvas__submit--loading {
+  position: relative;
+  pointer-events: none;
+}
+
+.ship-form-canvas__submit--loading::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  animation: shipFormBtnPulse 1.2s var(--ease-rack) infinite;
+  background: color-mix(in srgb, var(--bg-primary) 15%, transparent);
+}
+
+/* ---- Rate Limit ---- */
+.ship-form-canvas__rate-limit {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--cin-amber, var(--accent-warm));
+  text-align: center;
+  padding: var(--space-3);
+  background: color-mix(in srgb, var(--cin-amber, #946B15) 8%, transparent);
+  border-radius: 3px;
+}
+
+/* ---- Error ---- */
+.ship-form-canvas__error {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: #C0392B;
+}
+
+/* ---- Honeypot ---- */
+.ship-form__honeypot {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  opacity: 0;
+  height: 0;
+  width: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* ---- Success State ---- */
+.ship-form-canvas__success {
+  text-align: center;
+  padding: var(--space-6) var(--space-4);
+}
+
+.ship-form-canvas__success-icon {
+  font-size: 2rem;
+  margin-bottom: var(--space-3);
+}
+
+.ship-form-canvas__success-text {
+  font-family: var(--font-structural);
+  font-size: var(--text-base);
+  color: var(--fg-primary);
+  margin-bottom: var(--space-4);
+}
+
+.ship-form-canvas__reset-btn {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  letter-spacing: 0.04em;
+  padding: var(--space-2) var(--space-5);
+  min-height: 44px;
+  background: transparent;
+  color: var(--fg-secondary);
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.15s var(--ease-cinematic);
+}
+
+.ship-form-canvas__reset-btn:hover {
+  border-color: var(--fg-primary);
+  color: var(--fg-primary);
+}
+
+
+/* ==========================================================================
+   QUICK SUBMIT — "Suggest a fix" (inline) + "Got an idea?" (block)
+   ========================================================================== */
+
+.ship-idea {
+  margin-top: var(--space-2);
+  padding-top: var(--space-4);
+  border-top: 1px dashed var(--border-subtle);
+}
+
+.ship-quick {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.ship-quick--inline {
+  margin-top: var(--space-3);
+}
+
+.ship-quick__label {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.ship-quick__toggle {
+  align-self: flex-start;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  letter-spacing: 0.03em;
+  color: var(--cin-amber, var(--accent-warm));
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--cin-amber, #946B15) 40%, var(--border-subtle));
+  border-radius: 999px;
+  padding: var(--space-1) var(--space-3);
+  min-height: 32px;
+  cursor: pointer;
+  transition: all 0.15s var(--ease-cinematic);
+}
+
+.ship-quick__toggle:hover {
+  background: color-mix(in srgb, var(--cin-amber, #946B15) 8%, transparent);
+}
+
+.ship-quick__input {
+  width: 100%;
+  min-height: 76px;
+  padding: var(--space-2) var(--space-3);
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--fg-primary);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.15s var(--ease-cinematic);
+}
+
+.ship-quick__input:focus {
+  border-color: var(--cin-amber, var(--accent-warm));
+}
+
+.ship-quick__input:focus-visible {
+  outline: 2px solid var(--cin-amber, var(--accent-warm));
+  outline-offset: 1px;
+}
+
+.ship-quick__error {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: #C0392B;
+}
+
+.ship-quick__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.ship-quick__cancel {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  background: transparent;
+  border: none;
+  padding: var(--space-1) var(--space-2);
+  min-height: 32px;
+  cursor: pointer;
+  transition: color 0.15s var(--ease-cinematic);
+}
+
+.ship-quick__cancel:hover { color: var(--fg-secondary); }
+
+.ship-quick__send {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--bg-primary);
+  background: var(--fg-primary);
+  border: none;
+  border-radius: 3px;
+  padding: var(--space-2) var(--space-4);
+  min-height: 36px;
+  cursor: pointer;
+  transition: opacity 0.15s var(--ease-cinematic);
+}
+
+.ship-quick__send:hover:not(:disabled) { opacity: 0.85; }
+.ship-quick__send:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.ship-quick__done {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  color: var(--cin-amber, var(--accent-warm));
+}
+
+.ship-quick__again {
+  align-self: flex-start;
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  background: transparent;
+  border: none;
+  padding: var(--space-1) 0;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.ship-quick__again:hover { color: var(--fg-secondary); }
+
+
+/* ==========================================================================
+   THE BOARD — Kanban
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  /* The board panel no longer scrolls vertically as one unit: each column scrolls
+     its own card list. The panel itself only keeps the HORIZONTAL fallback so the
+     5 columns can slide sideways on narrow desktops (~1024-1200); at >=1280 the
+     wide left column fits all five without any horizontal scroll. */
+  .ship-board__scroll {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  /* Fill the panel height and give the single row a definite height so columns
+     stretch to it (align-items:stretch) instead of sizing to their content. */
+  .ship-board {
+    height: 100%;
+    min-height: 0;
+    align-items: stretch;
+    grid-template-rows: minmax(0, 1fr);
+  }
+
+  /* Each column is a fixed-height unit: header pinned as the non-scrolling top,
+     only its own card list scrolls. */
+  .ship-column {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    max-height: 100%;
+  }
+
+  .ship-column__header {
+    flex: 0 0 auto;
+    margin-bottom: 0;
+  }
+
+  .ship-column__cards {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    /* Keep scroll gestures inside the column; never chain to the page. */
+    overscroll-behavior: contain;
+    padding-top: var(--space-3);
+    padding-right: 2px;
+    /* Subtle, consistent, theme-aware scrollbars across all five columns. */
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+
+  .ship-column__cards::-webkit-scrollbar { width: 6px; }
+  .ship-column__cards::-webkit-scrollbar-track { background: transparent; }
+  .ship-column__cards::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 3px;
+  }
+}
+
+.ship-board {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(150px, 1fr));
+  gap: var(--space-3);
+  align-items: start;
+}
+
+.ship-column { min-width: 0; }
+
+.ship-column__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 2px solid var(--border-strong);
+}
+
+.ship-column__title {
+  font-family: var(--font-meta);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-secondary);
+  white-space: nowrap;
+}
+
+.ship-column__count {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  background: var(--bg-secondary);
+  padding: 1px 6px;
+  border-radius: 2px;
+}
+
+/* Status-colored header rule per column so the board reads with color:
+   Submitted = neutral, Triaged = blue, Building = amber, Shipped = green,
+   Resolved = muted. Kept as a 2px bottom rule + a whisper of header tint so it
+   stays editorial and graph-paper friendly in both themes. */
+.ship-column--submitted .ship-column__header { border-bottom-color: var(--ship-neutral); }
+.ship-column--triaged .ship-column__header { border-bottom-color: var(--ship-blue); }
+.ship-column--building .ship-column__header { border-bottom-color: var(--ship-amber); }
+.ship-column--shipped .ship-column__header { border-bottom-color: var(--ship-green); }
+.ship-column--resolved .ship-column__header {
+  border-bottom-color: var(--border-subtle);
+  opacity: 0.85;
+}
+
+.ship-column--triaged .ship-column__title { color: var(--ship-blue); }
+.ship-column--building .ship-column__title { color: var(--ship-amber); }
+.ship-column--shipped .ship-column__title { color: var(--ship-green); }
+
+.ship-column__cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+
+/* ==========================================================================
+   REQUEST CARD
+   ========================================================================== */
+
+.ship-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  padding: var(--space-3) var(--space-4);
+  transition: border-color 0.2s var(--ease-cinematic), box-shadow 0.2s var(--ease-cinematic);
+}
+
+.ship-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-e1);
+}
+
+.ship-card__top {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.ship-card__badge {
+  font-family: var(--font-data);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: 2px;
+  background: var(--bg-secondary);
+  color: var(--fg-secondary);
+  white-space: nowrap;
+}
+
+.ship-card__badge--bug {
+  background: color-mix(in srgb, var(--ship-red) 14%, transparent);
+  color: var(--ship-red);
+}
+
+.ship-card__badge--feature {
+  background: color-mix(in srgb, var(--ship-blue) 14%, transparent);
+  color: var(--ship-blue);
+}
+
+.ship-card__badge--enhancement {
+  background: color-mix(in srgb, var(--cin-amber, #946B15) 12%, transparent);
+  color: var(--cin-amber, var(--accent-warm));
+}
+
+.ship-card__priority {
+  font-family: var(--font-data);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.ship-card__priority--p0 { color: #C0392B; }
+.ship-card__priority--p1 { color: var(--cin-amber, var(--accent-warm)); }
+
+.ship-card__title {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--fg-primary);
+  margin-bottom: var(--space-1);
+}
+
+.ship-card__desc {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-secondary);
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-bottom: var(--space-2);
+}
+
+.ship-card__desc--expanded {
+  -webkit-line-clamp: unset;
+  display: block;
+}
+
+.ship-card__expand {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--fg-muted);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  margin-bottom: var(--space-2);
+  transition: color 0.15s var(--ease-cinematic);
+}
+
+.ship-card__expand:hover {
+  color: var(--fg-secondary);
+}
+
+/* ---- Ship Clock (Feature #1) ---- */
+.ship-card__clock {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--fg-muted);
+  margin-bottom: var(--space-2);
+  letter-spacing: 0.02em;
+}
+
+.ship-card__clock--frozen {
+  color: var(--cin-amber, var(--accent-warm));
+  transition: color 0.4s var(--ease-cinematic);
+}
+
+/* ---- Meta row ---- */
+.ship-card__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.ship-card__meta-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.ship-card__time {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--fg-muted);
+}
+
+.ship-card__reply-count {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--fg-muted);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: var(--space-1) var(--space-2);
+  transition: color 0.15s var(--ease-cinematic);
+}
+
+.ship-card__reply-count:hover {
+  color: var(--fg-secondary);
+}
+
+/* ---- Vote button ---- */
+.ship-card__vote {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-secondary);
+  cursor: pointer;
+  padding: var(--space-1) var(--space-2);
+  border-radius: 3px;
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  transition: all 0.15s var(--ease-cinematic);
+  user-select: none;
+  position: relative;
+}
+
+.ship-card__vote:hover {
+  border-color: var(--accent-warm);
+  color: var(--accent-warm);
+}
+
+.ship-card__vote--voted {
+  border-color: var(--cin-amber, var(--accent-warm));
+  color: var(--cin-amber, var(--accent-warm));
+  background: color-mix(in srgb, var(--cin-amber, #946B15) 8%, transparent);
+}
+
+.ship-card__vote-arrow {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.ship-card__vote-arrow--pop {
+  animation: shipVoteArrowPop 200ms var(--ease-cinematic);
+}
+
+/* ---- Vote ink splash micro-dots ---- */
+.ship-card__vote-splash {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--cin-amber, var(--accent-warm));
+  pointer-events: none;
+  opacity: 0;
+}
+
+.ship-card__vote--splashing .ship-card__vote-splash:nth-child(1) { animation: shipSplashUp 400ms var(--ease-cinematic, ease-out) forwards; }
+.ship-card__vote--splashing .ship-card__vote-splash:nth-child(2) { animation: shipSplashDown 400ms var(--ease-cinematic, ease-out) forwards; }
+.ship-card__vote--splashing .ship-card__vote-splash:nth-child(3) { animation: shipSplashLeft 400ms var(--ease-cinematic, ease-out) forwards; }
+.ship-card__vote--splashing .ship-card__vote-splash:nth-child(4) { animation: shipSplashRight 400ms var(--ease-cinematic, ease-out) forwards; }
+
+/* ---- Shipped Card ---- */
+.ship-card--shipped {
+  border-left: 3px solid var(--cin-amber, var(--accent-warm));
+}
+
+.ship-card--just-shipped {
+  animation: shipGoldenFlash 600ms var(--ease-cinematic, ease-out);
+}
+
+.ship-card__shipped-info {
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.ship-card__ship-time {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--cin-amber, var(--accent-warm));
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.ship-card__commit {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--fg-muted);
+  margin-top: 2px;
+  text-decoration: none;
+  transition: color 0.15s var(--ease-cinematic);
+}
+
+a.ship-card__commit:hover {
+  color: var(--fg-secondary);
+  text-decoration: underline;
+}
+
+/* ---- Ship Diff (Feature #4) ---- */
+.ship-card__diff {
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.ship-card__diff-toggle {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--fg-muted);
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  transition: color 0.15s var(--ease-cinematic);
+}
+
+.ship-card__diff-toggle:hover {
+  color: var(--fg-secondary);
+}
+
+.ship-card__diff-content {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-secondary);
+  line-height: 1.5;
+  margin-top: var(--space-2);
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--cin-amber, var(--accent-warm));
+  white-space: pre-wrap;
+}
+
+/* ---- Building Card ---- */
+.ship-card--building {
+  border-left: 3px solid var(--voice-accent, #4DAFA0);
+}
+
+.ship-card__branch {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--voice-accent, #4DAFA0);
+  margin-top: var(--space-2);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.ship-card--building .ship-card__branch {
+  animation: shipBuildingTextPulse 4s var(--ease-cinematic) infinite;
+}
+
+.ship-card__pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--voice-accent, #4DAFA0);
+  animation: shipBuildingHeartbeat 4s var(--ease-cinematic, ease-out) infinite;
+  flex-shrink: 0;
+}
+
+/* ---- Closed / terminal cards ---- */
+.ship-card--closed { opacity: 0.72; }
+
+.ship-card__status-tag {
+  font-family: var(--font-data);
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 1px 6px;
+  border-radius: 2px;
+  border: 1px solid var(--border-subtle);
+  color: var(--fg-secondary);
+  white-space: nowrap;
+}
+.ship-card__status-tag--wontship {
+  color: var(--fg-secondary);
+  border-color: var(--border-strong);
+}
+.ship-card__status-tag--deferred {
+  color: #9a6b13;
+  border-color: color-mix(in srgb, #9a6b13 45%, var(--border-subtle));
+}
+:root[data-mode="dark"] .ship-card__status-tag--deferred { color: #d4a24a; }
+.ship-card__status-tag--not_feasible {
+  color: #a24a3c;
+  border-color: color-mix(in srgb, #a24a3c 45%, var(--border-subtle));
+}
+:root[data-mode="dark"] .ship-card__status-tag--not_feasible { color: #d68a7c; }
+
+.ship-card__ceo-response {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  font-style: italic;
+  color: var(--fg-secondary);
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.ship-card__ceo-label {
+  font-family: var(--font-data);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  font-style: normal;
+  display: block;
+  margin-bottom: 2px;
+}
+
+/* ---- Thread Replies (Feature #5) ---- */
+.ship-card__thread {
+  margin-top: var(--space-3);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  animation: shipThreadExpand 300ms var(--ease-cinematic) both;
+}
+
+.ship-card__thread-empty {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  font-style: italic;
+}
+
+.ship-card__thread-reply {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-left: var(--space-3);
+  border-left: 1px solid var(--border-subtle);
+}
+
+.ship-card__thread-time {
+  font-family: var(--font-data);
+  font-size: 9px;
+  color: var(--fg-muted);
+}
+
+.ship-card__thread-body {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-secondary);
+  line-height: 1.4;
+}
+
+.ship-card__thread-input-row {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.ship-card__thread-input {
+  flex: 1;
+  padding: var(--space-2);
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-primary);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  outline: none;
+  transition: border-color 0.15s var(--ease-cinematic);
+}
+
+.ship-card__thread-input:focus {
+  border-color: var(--cin-amber, var(--accent-warm));
+}
+
+.ship-card__thread-input:focus-visible {
+  outline: 2px solid var(--cin-amber, var(--accent-warm));
+  outline-offset: 1px;
+}
+
+.ship-card__thread-send {
+  font-family: var(--font-data);
+  font-size: var(--text-sm);
+  color: var(--fg-secondary);
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  padding: var(--space-1) var(--space-3);
+  cursor: pointer;
+  min-width: 36px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s var(--ease-cinematic);
+}
+
+.ship-card__thread-send:hover:not(:disabled) {
+  border-color: var(--cin-amber, var(--accent-warm));
+  color: var(--cin-amber, var(--accent-warm));
+}
+
+.ship-card__thread-send:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ---- New Card Animation ---- */
+.ship-card--new {
+  animation: shipCardEnter 0.3s var(--ease-cinematic);
+}
+
+/* ---- Empty State ---- */
+.ship-column__empty {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+  text-align: center;
+  padding: var(--space-5) var(--space-2);
+  border: 1px dashed var(--border-subtle);
+  border-radius: 4px;
+}
+
+/* ---- Loading Skeleton ---- */
+.ship-board__loading {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(150px, 1fr));
+  gap: var(--space-3);
+}
+
+.ship-board__loading-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.ship-board__loading-header {
+  height: 14px;
+  width: 60%;
+  background: var(--bg-secondary);
+  border-radius: 2px;
+  margin-bottom: var(--space-3);
+  animation: shipSkeletonPulse 1.5s var(--ease-rack) infinite;
+}
+
+.ship-board__loading-card {
+  height: 80px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  animation: shipSkeletonPulse 1.5s var(--ease-rack) infinite;
+}
+
+.ship-board__loading-card--short {
+  height: 56px;
+  animation-delay: 200ms;
+}
+
+
+/* ==========================================================================
+   KNOWN OBSERVATIONS RAIL — expandable accordion list, fills the column
+   ========================================================================== */
+
+.ship-rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+@media (min-width: 1024px) {
+  .ship-rail {
+    flex: 1;
+    min-height: 0;
+  }
+}
+
+.ship-rail__controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.ship-rail__expand-all {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--fg-primary);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  padding: var(--space-2) var(--space-4);
+  min-height: 36px;
+  cursor: pointer;
+  transition: all 0.15s var(--ease-cinematic);
+}
+
+.ship-rail__expand-all:hover {
+  border-color: var(--cin-amber, var(--accent-warm));
+  color: var(--cin-amber, var(--accent-warm));
+}
+
+.ship-obs__note {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--fg-secondary);
+}
+
+.ship-obs__optimizing {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+  color: var(--fg-primary);
+  padding-left: var(--space-3);
+  border-left: 2px solid color-mix(in srgb, var(--voice-accent, #4DAFA0) 55%, transparent);
+}
+
+.ship-obs__optimizing-label {
+  display: block;
+  font-family: var(--font-data);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--voice-accent, #4DAFA0);
+  margin-bottom: 2px;
+}
+
+/* ---- Chip: RAG severity (red / amber / green) ---- */
+.ship-obs__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex-shrink: 0;
+  font-family: var(--font-data);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  padding: 2px 8px;
+  border-radius: 999px;
+  color: var(--chip-c, var(--fg-muted));
+  background: color-mix(in srgb, var(--chip-c, var(--fg-muted)) 12%, var(--bg-card));
+  border: 1px solid color-mix(in srgb, var(--chip-c, var(--fg-muted)) 38%, transparent);
+  margin-top: 2px;
+}
+
+.ship-obs__chip-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+/* RAG mapping: By design = green (working as intended), Actively tuning = amber
+   (in progress), On the roadmap = orange-amber (queued), Known = red (open
+   limitation). Tokens theme-swap, so light + dark are both covered. */
+.ship-obs__chip--by-design { --chip-c: var(--ship-green); }
+.ship-obs__chip--tuning    { --chip-c: var(--ship-amber); }
+.ship-obs__chip--roadmap   { --chip-c: var(--ship-orange); }
+.ship-obs__chip--known     { --chip-c: var(--ship-red); }
+
+/* ---- Observations list: expandable accordion, fills the column ---- */
+.ship-obs-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+@media (min-width: 1024px) {
+  .ship-obs-list {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: var(--space-1);
+  }
+}
+
+.ship-obs-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  overflow: hidden;
+  transition: border-color 0.2s var(--ease-cinematic);
+}
+
+.ship-obs-item:hover { border-color: var(--border-strong); }
+
+.ship-obs-item--open {
+  border-color: var(--border-strong);
+  border-left: 3px solid var(--cin-amber, var(--accent-warm));
+}
+
+.ship-obs-item__head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  min-height: 44px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s var(--ease-cinematic);
+}
+
+.ship-obs-item__head:hover {
+  background: color-mix(in srgb, var(--fg-primary) 4%, transparent);
+}
+
+.ship-obs-item__claim {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-editorial);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--fg-primary);
+}
+
+.ship-obs-item__caret {
+  flex-shrink: 0;
+  font-family: var(--font-data);
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--fg-muted);
+  width: 18px;
+  text-align: center;
+}
+
+.ship-obs-item--open .ship-obs-item__caret {
+  color: var(--cin-amber, var(--accent-warm));
+}
+
+/* Height animation via grid rows (0fr -> 1fr); the inner body is inert while
+   collapsed so its focusable controls leave the tab order. */
+.ship-obs-item__panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 260ms var(--ease-cinematic);
+}
+
+.ship-obs-item--open .ship-obs-item__panel {
+  grid-template-rows: 1fr;
+}
+
+/* The animated grid child must collapse to a TRUE zero when closed. Any
+   padding here keeps the min-content contribution above 0, so the 0fr track
+   never fully closes and a clipped first line of the note leaks under the
+   claim. Keep this element padding-free (just the overflow clip); all spacing
+   lives on the inner wrapper, which the overflow:hidden crops to nothing while
+   collapsed. */
+.ship-obs-item__body {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ship-obs-item__inner {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: 0 var(--space-4) var(--space-4);
+}
+
+
+/* ==========================================================================
+   OVERLAY — Expand all + Ship Log
+   ========================================================================== */
+
+.ship-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  background: color-mix(in srgb, #000 55%, transparent);
+  animation: shipOverlayFade 200ms var(--ease-cinematic) both;
+}
+
+.ship-overlay__panel {
+  width: 100%;
+  max-width: 680px;
+  max-height: min(85dvh, 900px);
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  box-shadow: var(--shadow-e2);
+  overflow: hidden;
+  animation: shipOverlayRise 260ms var(--ease-cinematic) both;
+}
+
+.ship-overlay__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.ship-overlay__title {
+  font-family: var(--font-editorial);
+  font-size: clamp(1.2rem, 2.4vw, 1.6rem);
+  font-weight: 700;
+  color: var(--fg-primary);
+}
+
+.ship-overlay__close {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  line-height: 1;
+  color: var(--fg-secondary);
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s var(--ease-cinematic);
+}
+
+.ship-overlay__close:hover {
+  color: var(--fg-primary);
+  border-color: var(--border-strong);
+}
+
+.ship-overlay__body {
+  padding: var(--space-5);
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.ship-overlay__intro {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+  color: var(--fg-secondary);
+  margin-bottom: var(--space-4);
+  max-width: 60ch;
+}
+
+
+/* ==========================================================================
+   SHIP LOG (rendered inside the overlay)
+   ========================================================================== */
+
+.ship-log__entries {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+}
+
+.ship-log__entries::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: var(--border-subtle);
+}
+
+.ship-log__entry {
+  display: flex;
+  gap: var(--space-4);
+  padding: var(--space-3) 0;
+  position: relative;
+}
+
+.ship-log__dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-strong);
+  flex-shrink: 0;
+  margin-top: 3px;
+  z-index: 1;
+}
+
+.ship-log__entry--shipped .ship-log__dot {
+  background: var(--cin-amber, var(--accent-warm));
+  border-color: var(--cin-amber, var(--accent-warm));
+}
+
+.ship-log__entry--building .ship-log__dot {
+  background: var(--voice-accent, #4DAFA0);
+  border-color: var(--voice-accent, #4DAFA0);
+}
+
+.ship-log__entry--wontship .ship-log__dot {
+  opacity: 0.5;
+}
+
+.ship-log__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.ship-log__header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: 2px;
+}
+
+.ship-log__status {
+  font-family: var(--font-data);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--fg-secondary);
+}
+
+.ship-log__status--shipped {
+  color: var(--cin-amber, var(--accent-warm));
+}
+
+.ship-log__status--building {
+  color: var(--voice-accent, #4DAFA0);
+}
+
+.ship-log__time {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--fg-muted);
+}
+
+.ship-log__request-title {
+  font-family: var(--font-structural);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--fg-primary);
+  line-height: 1.35;
+}
+
+.ship-log__meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+  flex-wrap: wrap;
+}
+
+.ship-log__badge {
+  font-family: var(--font-data);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 1px 5px;
+  border-radius: 2px;
+  background: var(--bg-secondary);
+  color: var(--fg-secondary);
+}
+
+.ship-log__badge--bug {
+  background: color-mix(in srgb, var(--ship-red) 14%, transparent);
+  color: var(--ship-red);
+}
+
+.ship-log__badge--feature {
+  background: color-mix(in srgb, var(--ship-blue) 14%, transparent);
+  color: var(--ship-blue);
+}
+
+.ship-log__votes {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--fg-muted);
+}
+
+.ship-log__ship-time {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--cin-amber, var(--accent-warm));
+}
+
+.ship-log__commit {
+  font-family: var(--font-data);
+  font-size: 10px;
+  color: var(--fg-muted);
+  text-decoration: none;
+  transition: color 0.15s var(--ease-cinematic);
+}
+
+.ship-log__commit:hover {
+  color: var(--fg-secondary);
+  text-decoration: underline;
+}
+
+.ship-log__response {
+  font-family: var(--font-structural);
+  font-size: var(--text-xs);
+  font-style: italic;
+  color: var(--fg-secondary);
+  margin-top: var(--space-1);
+}
+
+
+/* ==========================================================================
+   BOTTOM STRIP — slim utility bar (session stat + full-log access)
+   ========================================================================== */
+
+.ship-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+  padding: var(--space-2) var(--space-4);
+  background: color-mix(in srgb, var(--bg-card) 70%, transparent);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+}
+
+.ship-strip__you {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  color: var(--fg-secondary);
+  white-space: nowrap;
+}
+
+.ship-strip__you-label {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+}
+
+.ship-strip__you-num {
+  font-weight: 600;
+  color: var(--cin-amber, var(--accent-warm));
+  font-variant-numeric: tabular-nums;
+}
+
+.ship-strip__log-btn {
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  letter-spacing: 0.03em;
+  color: var(--fg-secondary);
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  padding: var(--space-2) var(--space-3);
+  min-height: 36px;
+  cursor: pointer;
+  transition: all 0.15s var(--ease-cinematic);
+}
+
+.ship-strip__log-btn:hover {
+  color: var(--fg-primary);
+  border-color: var(--border-strong);
+}
+
+/* ---- Observations column footer + Discord placeholder ---- */
+.ship-obs-foot {
+  flex-shrink: 0;
+  padding-top: var(--space-3);
+  margin-top: var(--space-1);
+  border-top: 1px dashed var(--border-subtle);
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* Disabled "coming soon" chip. No invite URL yet; wire one in ShipBoard.tsx. */
+.ship-discord {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-family: var(--font-data);
+  font-size: var(--text-xs);
+  letter-spacing: 0.03em;
+  color: var(--fg-muted);
+  background: var(--bg-secondary);
+  border: 1px dashed var(--border-strong);
+  border-radius: 999px;
+  padding: var(--space-1) var(--space-3);
+  white-space: nowrap;
+  cursor: default;
+  opacity: 0.85;
+}
+
+.ship-discord__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--voice-accent, #4DAFA0);
+  flex-shrink: 0;
+}
+
+
+/* ==========================================================================
+   KEYFRAMES
+   ========================================================================== */
+
+@keyframes shipCardEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shipVoteArrowPop {
+  from { transform: scale(1.35); }
+  to { transform: scale(1); }
+}
+
+@keyframes shipMetricLand {
+  from { transform: scale(1.04); }
+  to { transform: scale(1); }
+}
+
+@keyframes shipGoldenFlash {
+  0% { box-shadow: var(--shadow-e1); }
+  40% { box-shadow: 0 0 0 1px color-mix(in srgb, var(--cin-amber, #946B15) 40%, transparent), 0 0 24px color-mix(in srgb, var(--cin-amber, #946B15) 15%, transparent), var(--shadow-e2); }
+  100% { box-shadow: var(--shadow-e1); }
+}
+
+@keyframes shipBuildingHeartbeat {
+  0% { transform: scale(1); opacity: 0.5; box-shadow: 0 0 0 0 transparent; }
+  25% { transform: scale(1.4); opacity: 1; box-shadow: 0 0 0 3px color-mix(in srgb, var(--voice-accent, #4DAFA0) 30%, transparent); }
+  40% { transform: scale(1.3); opacity: 0.9; }
+  70% { transform: scale(1); opacity: 0.4; box-shadow: 0 0 0 0 transparent; }
+  100% { transform: scale(1); opacity: 0.5; }
+}
+
+@keyframes shipBuildingTextPulse {
+  0%, 100% { opacity: 0.8; }
+  25% { opacity: 1; }
+  70% { opacity: 0.6; }
+}
+
+@keyframes shipSkeletonPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes shipFormBtnPulse {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+@keyframes shipPulseGraphDraw {
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes shipThreadExpand {
+  from { opacity: 0; max-height: 0; }
+  to { opacity: 1; max-height: 500px; }
+}
+
+@keyframes shipSplashUp {
+  0% { transform: translateY(0) scale(0); opacity: 0; } 30% { transform: translateY(-8px) scale(1); opacity: 0.8; } 100% { transform: translateY(-14px) scale(0.3); opacity: 0; }
+}
+@keyframes shipSplashDown {
+  0% { transform: translateY(0) scale(0); opacity: 0; } 30% { transform: translateY(8px) scale(1); opacity: 0.8; } 100% { transform: translateY(14px) scale(0.3); opacity: 0; }
+}
+@keyframes shipSplashLeft {
+  0% { transform: translateX(0) scale(0); opacity: 0; } 30% { transform: translateX(-8px) scale(1); opacity: 0.8; } 100% { transform: translateX(-14px) scale(0.3); opacity: 0; }
+}
+@keyframes shipSplashRight {
+  0% { transform: translateX(0) scale(0); opacity: 0; } 30% { transform: translateX(8px) scale(1); opacity: 0.8; } 100% { transform: translateX(14px) scale(0.3); opacity: 0; }
+}
+
+/* Overlay */
+@keyframes shipOverlayFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes shipOverlayRise {
+  from { opacity: 0; transform: translateY(18px) scale(0.99); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+/* Tablet: board falls to fewer columns when stacked (normal flow). */
+@media (max-width: 1023px) {
+  .ship-board,
+  .ship-board__loading {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .ship-page {
+    padding: var(--space-4) var(--space-3);
+    gap: var(--space-4);
+  }
+
+  .ship-topbar {
+    gap: var(--space-3);
+  }
+
+  .ship-topbar__metrics-wrap {
+    margin-left: 0;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .ship-topbar__tools {
+    margin-left: auto;
+  }
+
+  .ship-board,
+  .ship-board__loading {
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+
+  .ship-column__header {
+    position: sticky;
+    top: 0;
+    background: var(--bg-primary);
+    z-index: 2;
+    padding-top: var(--space-2);
+  }
+
+  /* Touch targets */
+  .ship-card__vote {
+    min-height: 44px;
+    min-width: 44px;
+    justify-content: center;
+  }
+
+  .ship-card__reply-count {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .ship-card__thread-send {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .ship-category-toggle__pill {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ship-strip {
+    justify-content: space-between;
+  }
+}
+
+/* Coarse pointers: give the rail controls a full tap target. */
+@media (pointer: coarse) {
+  .ship-rail__expand-all,
+  .ship-quick__toggle {
+    min-height: 44px;
+  }
+}
+
+
+/* ==========================================================================
+   REDUCED MOTION
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .ship-card--new,
+  .ship-card--just-shipped,
+  .ship-metrics__item--landed,
+  .ship-overlay,
+  .ship-overlay__panel,
+  .ship-card__thread {
+    animation: none;
+  }
+
+  /* Expand/collapse of observation rows snaps instead of animating. */
+  .ship-obs-item__panel { transition: none; }
+
+  .ship-card__vote-arrow--pop { animation: none; }
+
+  .ship-card__pulse {
+    animation: none;
+    opacity: 1;
+  }
+
+  .ship-card--building .ship-card__branch { animation: none; }
+
+  .ship-form-canvas__submit--loading::after { animation: none; }
+
+  .ship-pulse-graph__submitted,
+  .ship-pulse-graph__shipped {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .ship-category-toggle__indicator { transition: none; }
+  .ship-form-canvas__title-input { transition: none; }
+  .ship-card__vote--splashing .ship-card__vote-splash { animation: none; }
+}

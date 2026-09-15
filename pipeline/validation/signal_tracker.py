@@ -14,16 +14,16 @@ from __future__ import annotations
 # ---------------------------------------------------------------------------
 
 # opinion_detector.py weights (sum = 1.00)
+# 2026-05-22: rhetorical removed (0.06), absorbed into absolutist 0.13 → 0.19.
 OPINION_WEIGHTS: dict[str, float] = {
     "pronoun":     0.12,
     "subjectivity": 0.18,
     "modal":       0.12,
-    "hedging":     0.08,
+    "hedging":     0.06,
     "attribution": 0.15,
     "metadata":    0.12,
-    "rhetorical":  0.04,
     "value_judg":  0.06,
-    "absolutist":  0.13,
+    "absolutist":  0.19,
 }
 
 # factual_rigor.py weights (sum = 1.00 before ref_bonus)
@@ -40,19 +40,19 @@ RIGOR_WEIGHTS: dict[str, float] = {
 RIGOR_REF_BONUS_MAX = 8.0
 
 # framing.py weights (dynamic: kw_emphasis > 60 shifts weights)
+# 2026-05-22: passive removed (0.10), redistributed: +0.05 keyword_emp,
+# +0.05 headline_div.
 FRAMING_WEIGHTS_NORMAL: dict[str, float] = {
     "connotation": 0.25,
-    "keyword_emp": 0.25,
-    "omission":    0.20,
-    "headline_div": 0.15,
-    "passive":     0.15,
+    "keyword_emp": 0.35,
+    "omission":    0.15,
+    "headline_div": 0.25,
 }
 FRAMING_WEIGHTS_HIGH_KW: dict[str, float] = {
     "connotation": 0.15,
-    "keyword_emp": 0.35,
-    "omission":    0.20,
-    "headline_div": 0.15,
-    "passive":     0.15,
+    "keyword_emp": 0.45,
+    "omission":    0.15,
+    "headline_div": 0.25,
 }
 
 
@@ -229,9 +229,9 @@ def decompose_sensationalism(rationale: dict, final_score: int) -> dict:
 def decompose_opinion(rationale: dict, final_score: int) -> dict:
     """
     Decompose opinion score using known weights:
-    pronoun(0.12) + subjectivity(0.18) + modal(0.12) + hedging(0.08)
-    + attribution(0.15) + metadata(0.12) + rhetorical(0.04)
-    + value_judg(0.06) + absolutist(0.13) = 1.00
+    pronoun(0.12) + subjectivity(0.18) + modal(0.12) + hedging(0.06)
+    + attribution(0.15) + metadata(0.12) + value_judg(0.06)
+    + absolutist(0.19) = 1.00
 
     Maps rationale keys to canonical signal names and computes weighted
     contributions. Note: metadata overrides (floor logic) are reflected
@@ -244,7 +244,6 @@ def decompose_opinion(rationale: dict, final_score: int) -> dict:
         "hedging":     rationale.get("hedging_score", 0.0),
         "attribution": rationale.get("attribution_score", 0.0),
         "metadata":    rationale.get("metadata_score", 0.0),
-        "rhetorical":  rationale.get("rhetorical_score", 0.0),
         "value_judg":  rationale.get("value_judgment_score", 0.0),
         "absolutist":  rationale.get("absolutist_assertion_score", 0.0),
     }
@@ -344,7 +343,6 @@ def decompose_framing(rationale: dict, final_score: int) -> dict:
     connotation = float(rationale.get("connotation_score", 0.0))
     omission = float(rationale.get("omission_score", 0.0))
     headline_div = float(rationale.get("headline_body_divergence", 0.0))
-    passive = float(rationale.get("passive_voice_score", 0.0))
     has_cluster = rationale.get("has_cluster_context", False)
 
     # Select weight set based on keyword_emphasis_score
@@ -358,7 +356,6 @@ def decompose_framing(rationale: dict, final_score: int) -> dict:
         "keyword_emp": kw_emp,
         "omission":    omission,
         "headline_div": headline_div,
-        "passive":     passive,
     }
 
     result = {}

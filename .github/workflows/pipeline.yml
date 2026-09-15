@@ -1,105 +1,189 @@
 name: News Pipeline
+
+# Cloudflare migration (2026-08-30): the pipeline runs against a local SQLite
+# state DB (persisted in the Actions cache, bootstrapped from the latest DB
+# backup on a cache miss) via the PostgREST-compatible shim, NOT Supabase. It
+# then emits the frontend static-JSON snapshots and commits them to main; the
+# existing deploy-cloudflare.yml (workflow_run on this workflow's success) builds
+# and deploys. No Supabase, no metered egress.
+
+permissions:
+  contents: write   # commit the refreshed static data to main
+  actions: read     # download the backup artifact on a cold cache
+
 on:
   schedule:
-    # 4x daily, every 6 hours — all editions each run.
-    # Covers morning + evening for US, India, and EU simultaneously.
-    - cron: '0 0 * * *'      # 00:00 UTC — US evening (7 PM ET), India morning (5:30 AM IST)
-    - cron: '0 6 * * *'      # 06:00 UTC — EU morning (7 AM CET), India midday (11:30 AM IST)
-    - cron: '0 12 * * *'     # 12:00 UTC — US morning (7 AM ET), India evening (5:30 PM IST)
-    - cron: '0 18 * * *'     # 18:00 UTC — US afternoon (1 PM ET), EU evening (7 PM CET)
+    - cron: '0 11 * * *'     # 11:00 UTC — 6 AM Chicago
   workflow_dispatch:
     inputs:
-      editions:
-        description: 'Edition filter (comma-separated: us,india,world). Empty = all.'
-        required: false
-        default: ''
-      brief_only:
-        description: 'Regenerate daily brief only (skip full pipeline)'
+      recluster_only:
+        description: 'Skip fetch+scrape+bias. Recluster + rerank existing articles only'
         type: boolean
         required: false
         default: false
-      no_audio:
-        description: 'Skip audio synthesis (brief_only mode)'
+      engine_only:
+        description: 'Fresh run with ALL LLMs disabled ($0)'
         type: boolean
         required: false
         default: false
 
+concurrency:
+  group: news-pipeline
+  cancel-in-progress: false
+
 jobs:
   run-pipeline:
     runs-on: ubuntu-latest
+    timeout-minutes: 240
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
           cache: 'pip'
           cache-dependency-path: pipeline/requirements.txt
       - name: Install system dependencies
-        if: ${{ !inputs.brief_only }}
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg
-      - name: Install system dependencies (brief only)
-        if: ${{ inputs.brief_only }}
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - name: Install dependencies
         run: pip install -r pipeline/requirements.txt
       - name: Install Playwright browser
-        if: ${{ !inputs.brief_only }}
         run: playwright install chromium --with-deps
       - name: Cache spaCy model
-        if: ${{ !inputs.brief_only }}
         id: spacy-cache
         uses: actions/cache@v4
         with:
           path: ~/.local/lib/python3.11/site-packages/en_core_web_sm
           key: spacy-en_core_web_sm-${{ hashFiles('pipeline/requirements.txt') }}
       - name: Download spaCy model
-        if: ${{ !inputs.brief_only && steps.spacy-cache.outputs.cache-hit != 'true' }}
+        if: steps.spacy-cache.outputs.cache-hit != 'true'
         run: python -m spacy download en_core_web_sm
-      - name: Determine editions from schedule
-        id: editions
+
+      # ── Pipeline state DB (SQLite) — restored from cache, else bootstrapped ──
+      - name: Restore pipeline state DB
+        id: state
+        uses: actions/cache/restore@v4
+        with:
+          path: pipeline_state.db
+          key: void-state-v1-${{ github.run_id }}
+          restore-keys: |
+            void-state-v1-
+      - name: Bootstrap state DB (cold cache — durable snapshot, else legacy backup)
+        if: hashFiles('pipeline_state.db') == ''
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          if [ -n "${{ inputs.editions }}" ]; then
-            echo "filter=${{ inputs.editions }}" >> $GITHUB_OUTPUT
+          set -e
+          echo "No cached state DB; restoring from the latest durable state snapshot."
+          restored=""
+          # Primary (Supabase-free): the gzipped SQLite state each prior run uploads.
+          for rid in $(gh run list --workflow=pipeline.yml --status success -L 12 \
+                         --json databaseId --jq '.[].databaseId'); do
+            if gh run download "$rid" -n void-state-snapshot --dir _snap 2>/dev/null; then
+              echo "Restored state snapshot from pipeline run $rid"; restored=1; break
+            fi
+          done
+          if [ -n "$restored" ] && [ -f _snap/pipeline_state.db.gz ]; then
+            gunzip -c _snap/pipeline_state.db.gz > pipeline_state.db
+            rm -rf _snap
           else
-            # All editions run on every scheduled trigger (4x daily)
-            echo "filter=" >> $GITHUB_OUTPUT
+            # Legacy one-time fallback: the Supabase pg_dump backup. Only reachable
+            # before the first snapshot exists; delete once snapshots are flowing
+            # (and required for Supabase decommission).
+            echo "No state snapshot yet; falling back to the legacy Supabase DB backup."
+            BID=$(gh run list --workflow=backup-db.yml --status success \
+                    --json databaseId --jq '.[0].databaseId')
+            if [ -z "$BID" ]; then echo "No snapshot and no backup found"; exit 1; fi
+            gh run download "$BID" --dir _bootstrap
+            GZ=$(find _bootstrap -name '*.sql.gz' | head -1)
+            if [ -z "$GZ" ]; then echo "No .sql.gz in backup"; exit 1; fi
+            python migration/stage_dump.py "$GZ" void_local.db
+            python migration/create_state_db.py migration/schema_pipeline.sql void_local.db pipeline_state.db
+            rm -rf _bootstrap void_local.db
           fi
-      - name: Setup Google Cloud TTS credentials
-        if: env.GOOGLE_CLOUD_TTS_KEY != ''
-        env:
-          GOOGLE_CLOUD_TTS_KEY: ${{ secrets.GOOGLE_CLOUD_TTS_KEY }}
-        run: |
-          echo "$GOOGLE_CLOUD_TTS_KEY" > /tmp/gcloud-tts-sa.json
-          echo "GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcloud-tts-sa.json" >> $GITHUB_ENV
-      - name: Regenerate daily brief only
-        if: ${{ inputs.brief_only }}
-        env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: |
-          EDITIONS="${{ steps.editions.outputs.filter }}"
-          ARGS=""
-          if [ -n "$EDITIONS" ]; then
-            ARGS="--editions $EDITIONS"
-          fi
-          if [ "${{ inputs.no_audio }}" = "true" ]; then
-            ARGS="$ARGS --no-audio"
-          fi
-          echo "Regenerating daily brief: $ARGS"
-          python pipeline/refresh_brief.py $ARGS
+
       - name: Run pipeline
-        if: ${{ !inputs.brief_only }}
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+          PYTHONUNBUFFERED: "1"
+          VOID_SQLITE_PATH: pipeline_state.db
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          DISABLE_GEMINI_REASONING: "1"
+          DISABLE_EDITORIAL_TRIAGE: "1"
+          # Audio ON: edge-tts synthesizes the brief, written to the static site
+          # (frontend/public/audio, served from the Pages CDN) via
+          # audio_producer._write_audio_static. Set to "1" to re-park.
+          DISABLE_AUDIO: "0"
+          DISABLE_ANTHROPIC: "1"
         run: |
-          EDITIONS="${{ steps.editions.outputs.filter }}"
-          if [ -n "$EDITIONS" ]; then
-            echo "Running pipeline for editions: $EDITIONS"
-            python pipeline/main.py --editions "$EDITIONS"
+          ARGS=""
+          if [ "${{ inputs.recluster_only }}" = "true" ]; then
+            ARGS="--recluster-only"
+            echo "Running RECLUSTER-ONLY"
+          elif [ "${{ inputs.engine_only }}" = "true" ]; then
+            ARGS="--engine-only"
+            echo "Running ENGINE-ONLY (LLMs disabled)"
           else
-            echo "Running full pipeline (all editions)"
-            python pipeline/main.py
+            echo "Running full pipeline (SQLite backend)"
           fi
+          python pipeline/main.py $ARGS
+
+      - name: Export static snapshots
+        env:
+          VOID_SQLITE_PATH: pipeline_state.db
+        run: python pipeline/export_static.py
+
+      - name: Commit refreshed static data to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add frontend/build-data frontend/public/data frontend/public/audio
+          if git diff --cached --quiet; then
+            echo "No static-data changes to commit."
+            exit 0
+          fi
+          git commit -m "Pipeline: refresh static feed data ($(date -u +%F))"
+          # The run leaves incidental unstaged edits to other tracked files (not
+          # part of the emitted feed data); discard them so the rebase below has a
+          # clean working tree. Only the committed data dirs matter; untracked
+          # files (pipeline_state.db) are left alone and do not block rebase.
+          git checkout -- . 2>/dev/null || true
+          # main can advance (an auto-merge landing) during the ~1h run, so a plain
+          # push would be a non-fast-forward reject. Rebase onto the latest main and
+          # retry. The data commit only touches build-data/public, so it never
+          # conflicts with code merges and the rebase is clean.
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            git rebase origin/main || { git rebase --abort 2>/dev/null || true; echo "rebase failed"; exit 1; }
+            if git push origin HEAD:main; then echo "pushed on attempt $attempt"; exit 0; fi
+            echo "push rejected (attempt $attempt); refetching and retrying"
+            sleep 5
+          done
+          echo "could not push refreshed data after 5 attempts"; exit 1
+
+      - name: Save pipeline state DB to cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: pipeline_state.db
+          key: void-state-v1-${{ github.run_id }}
+
+      # Durable, Supabase-free backup of the whole state (schema + all data,
+      # including the permanent printed_stories archive). The Actions cache is the
+      # fast primary; this artifact is the resilience floor the cold-cache
+      # bootstrap restores from, replacing the Supabase pg_dump. Gzipped ~40 MB.
+      - name: Snapshot state DB
+        if: always()
+        run: |
+          if [ -f pipeline_state.db ]; then
+            gzip -c pipeline_state.db > pipeline_state.db.gz
+            ls -lh pipeline_state.db.gz
+          fi
+      - name: Upload state snapshot
+        if: always() && hashFiles('pipeline_state.db.gz') != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: void-state-snapshot
+          path: pipeline_state.db.gz
+          retention-days: 90
+          if-no-files-found: warn

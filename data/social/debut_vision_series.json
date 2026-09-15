@@ -1,0 +1,71 @@
+{
+  "_comment": "Six debut Void Vision posts (fable). Rendered through frontend/app/ig/render/templates/Vision.tsx via pipeline.social.ig_generator --track vision-series. eyebrow/hook/substance/cta drive the slide_specs; caption_* + intent are pre-filled verbatim so the Gemini caption pass is skipped. Do not add em or en dashes.",
+  "posts": [
+    {
+      "slug": "manifesto",
+      "eyebrow": "WHY VOID EXISTS",
+      "hook": "The feed is not broken. It was built this way.",
+      "substance": "Every slot in an algorithmic feed is an auction, and the bid is your emotion. The story that spikes your anger beats the story that matters, because anger keeps you scrolling, and scrolling is the product. Nobody sat down to misinform you. They sat down to keep you.",
+      "cta": "We built a front page with nothing to win from your anger. 50 stories a day, every side, the words scored. news.voidvision.org",
+      "caption_instagram": "The feed is not broken. It was built this way.\n\nEvery slot is an auction, and the bid is your emotion. The story that spikes your anger beats the story that matters, because anger keeps you scrolling, and scrolling is the product. Nobody sat down to misinform you. They sat down to keep you.\n\nWe built the opposite: one front page, 50 stories, every side shown, every outlet's words scored for lean and heat. Nothing on it is optimized to keep you here.\n\nnews.voidvision.org\n\n#medialiteracy #newsliteracy #mediabias #attentioneconomy #slowjournalism #calmtech #readwidely #voidnews",
+      "caption_x": "The feed is not broken. It was built this way. Every slot is an auction, and the bid is your emotion. We built a front page with nothing to win from your anger: 50 stories, every side, the words themselves scored. news.voidvision.org #medialiteracy",
+      "caption_bluesky": "The feed is not broken. It was built this way. Every slot is an auction, and the bid is your emotion. Nobody sat down to misinform you. They sat down to keep you. We built the opposite: one front page, every side, the words scored. news.voidvision.org",
+      "intent": "Establish the enemy without naming a single outlet: the feed's incentive structure, not the people in it."
+    },
+    {
+      "slug": "same-front-page",
+      "eyebrow": "NO ALGORITHM",
+      "hook": "We don't know who you are. We'd like to keep it that way.",
+      "substance": "No account. No profile. No engine studying which headlines make you linger. The front page you open is the front page anyone opens: 50 stories, ranked once a day, same order for everyone. Your neighbor sees your page. The person you argue with sees your page.",
+      "cta": "Two people cannot argue honestly about the news if they never saw the same news. Now they can. news.voidvision.org",
+      "caption_instagram": "Somewhere in the last decade, \"the news\" became \"your news.\" Two people in the same house, on the same night, reading two different versions of the world, each tuned to what its reader already believed.\n\nWe removed the tuning. No account, no profile, no engine learning you. One front page, 50 stories, ranked once a day, identical for everyone who opens it.\n\nDisagree with someone about a story on our page, and at least you both read the same page.\n\nnews.voidvision.org\n\n#filterbubble #echochamber #medialiteracy #sharedreality #newsliteracy #noalgorithm #digitalminimalism #voidnews",
+      "caption_x": "No account. No profile. No engine learning which headlines make you linger. The front page you open is the front page anyone opens: 50 stories, ranked once a day, same order for everyone. Two people can't argue honestly about news they never both saw. news.voidvision.org #filterbubble",
+      "caption_bluesky": "We don't know who you are, and we'd like to keep it that way. No account, no profile, no engine learning you. One front page, 50 stories, ranked once a day, identical for everyone. Two people cannot argue honestly about news they never both saw. Now they can. news.voidvision.org",
+      "intent": "Make 'no personalization' feel like a privilege, not a missing feature; the shared-reality argument."
+    },
+    {
+      "slug": "calm-posture",
+      "eyebrow": "THE POSTURE",
+      "hook": "Outrage is a business model. It is not a news value.",
+      "substance": "The angrier headline wins the click. The click funds a still angrier headline. Run that loop for ten years and 'informed' starts to mean 'furious.' We publish at a steady pulse instead: what happened, who is saying what, and how they are saying it. When a story deserves alarm, the facts carry it there without our adjectives.",
+      "cta": "Read the news. Keep your pulse. news.voidvision.org",
+      "caption_instagram": "The angrier headline wins the click. The click funds a still angrier headline. Run that loop long enough and \"staying informed\" starts to feel like a cardio workout you never signed up for.\n\nWe opted out of the loop. Our front page reads at a steady pulse: what happened, who is saying what, how they are saying it. When a story deserves alarm, the facts will carry it there. They don't need our adjectives pushing from behind.\n\nRead the news. Keep your pulse.\n\nnews.voidvision.org\n\n#calmtech #doomscrolling #digitalwellbeing #slowjournalism #medialiteracy #mindfulmedia #newsliteracy #voidnews",
+      "caption_x": "Outrage is a business model. It is not a news value. The angrier headline wins the click; the click funds a still angrier headline. We publish at a steady pulse instead. When a story deserves alarm, the facts carry it there without our adjectives. news.voidvision.org #calmtech",
+      "caption_bluesky": "The angrier headline wins the click. The click funds a still angrier headline. Ten years of that loop and 'informed' starts to mean 'furious.' We publish at a steady pulse: what happened, who is saying what, how they are saying it. Read the news. Keep your pulse. news.voidvision.org",
+      "intent": "Reposition calm from boring to discipline; name the outrage loop and step outside it."
+    },
+    {
+      "slug": "method-message",
+      "eyebrow": "THE METHOD",
+      "hook": "We don't rate outlets. We read their sentences.",
+      "substance": "Most bias charts grade reputations. We grade the words on the page. Every article is scored by fixed, inspectable rules: lean, sensationalism, opinion dressed as reporting. A source you trust can write a loaded sentence. A source you avoid can write a straight one. The score follows the words.",
+      "cta": "Every story on our front page arrives with its receipts attached. news.voidvision.org",
+      "caption_instagram": "A bias chart tells you what an outlet usually does. It cannot tell you what this article just did.\n\nSo we read the sentences. Every article on our front page is scored by fixed, inspectable rules: lean, sensationalism, opinion dressed as reporting. The same rules apply to a wire service and a tabloid. A source you trust can write a loaded sentence. A source you avoid can write a straight one. The score follows the words.\n\nNo black box, no vibes, no panel of raters. Receipts, attached to every story.\n\nnews.voidvision.org\n\n#mediabias #medialiteracy #factchecking #newsliteracy #criticalthinking #journalism #transparency #voidnews",
+      "caption_x": "We don't rate outlets. We read their sentences. Every article, scored by fixed rules: lean, sensationalism, opinion dressed as reporting. A source you trust can write a loaded sentence. A source you avoid can write a straight one. The score follows the words. news.voidvision.org #mediabias",
+      "caption_bluesky": "A bias chart tells you what an outlet usually does. It cannot tell you what this article just did. So we read the sentences: lean, sensationalism, opinion dressed as reporting, scored by fixed rules. The score follows the words. Receipts on every story. news.voidvision.org",
+      "intent": "Differentiate from bias-chart competitors in one move: we grade sentences, not reputations."
+    },
+    {
+      "slug": "page-ends",
+      "eyebrow": "THE FORMAT",
+      "hook": "The page ends. That is the point.",
+      "substance": "50 stories. Ranked once, at the same hour, every day. Story 50 is the last story. There is no 51 loading underneath it, no spinner, no 'you might also like.' Newspapers ended, and readers finished them. Feeds never end, and nobody finishes anything.",
+      "cta": "Finish the news. Then go do something with your day. news.voidvision.org",
+      "caption_instagram": "There is a moment feeds deleted from the world: the moment you put the paper down, done.\n\nWe brought it back. 50 stories, ranked once a day, drawn from 1,016 sources in 158 countries. Story 50 is the last story. Nothing loads beneath it. No spinner, no \"you might also like,\" no bottom, because there is a bottom.\n\nFinish the news. Then go do something with your day.\n\nnews.voidvision.org\n\n#infinitescroll #doomscrolling #digitalminimalism #slowjournalism #attentioneconomy #newsliteracy #intentionalliving #voidnews",
+      "caption_x": "50 stories. Ranked once, same hour, every day. Story 50 is the last story. No 51 loading underneath, no spinner, no \"you might also like.\" Newspapers ended and readers finished them. Feeds never end and nobody finishes anything. news.voidvision.org #infinitescroll",
+      "caption_bluesky": "The page ends. That is the point. 50 stories, ranked once a day, from 1,016 sources in 158 countries. Story 50 is the last story. Nothing loads beneath it. Newspapers ended, and readers finished them. Feeds never end, and nobody finishes anything. news.voidvision.org",
+      "intent": "Turn the product's hardest constraint, that it ends, into its proudest feature."
+    },
+    {
+      "slug": "the-house",
+      "eyebrow": "THE HOUSE",
+      "hook": "Void News is the first instrument. Void is the workshop.",
+      "substance": "Void is one wager: your attention is the scarcest thing you own, and most of the internet is engineered to take it. So we build instruments that hand it back. The first is Void News, a daily front page drawn from 1,016 sources in 158 countries, every side shown, every word scored. Others are on the bench.",
+      "cta": "Start with the front page. news.voidvision.org",
+      "caption_instagram": "Most of what we've posted so far is about a news page. This one is about the house it came from.\n\nVoid is one wager: your attention is the scarcest thing you own, and most of the internet is engineered to take it. So we build instruments that hand it back. The first is Void News: a daily front page, 1,016 sources, 158 countries, every side shown, every word scored.\n\nIt won't be the last. Everything we build will obey the same house rule: clarity over volume.\n\nStart with the front page. news.voidvision.org\n\n#voidnews #medialiteracy #attentioneconomy #calmtech #newsliteracy #independentmedia #buildinpublic #seethroughthevoid",
+      "caption_x": "Void is one wager: your attention is the scarcest thing you own, and most of the internet is engineered to take it. Void News is our first instrument. Others are on the bench. All of them obey one house rule: clarity over volume. news.voidvision.org #voidnews",
+      "caption_bluesky": "Void is one wager: your attention is the scarcest thing you own, and most of the internet is engineered to take it. So we build instruments that hand it back. Void News, a daily front page with every side shown and every word scored, is the first. It will not be the last. news.voidvision.org",
+      "intent": "Widen from product to parent brand; plant 'first instrument, more coming' without announcing anything specific."
+    }
+  ]
+}
