@@ -1464,7 +1464,8 @@ def _produce_radio_edition(edition: str, clusters: list[dict], brief: dict, brie
                  reverse=True)[:DISPLAYED]
     editorial = brief.get("opinion_audio_script")
     print(f"  [radio:{edition}] rundown over the top {len(top)} (editorial: {'yes' if editorial else 'no'})")
-    rundown, report, label = generate_radio_rundown(top, has_editorial=bool(editorial))
+    rundown, report, label = generate_radio_rundown(
+        top, has_editorial=bool(editorial), editorial_cluster_id=brief.get("opinion_cluster_id"))
     if rundown is None:
         print(f"  [radio:{edition}] no usable rundown ({label}); legacy audio script will be used")
         return False

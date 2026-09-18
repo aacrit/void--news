@@ -71,7 +71,7 @@ _KINDS: tuple[str, ...] = ("OPEN", "MENU", "STORY", "BRIEFS", "FINALLY", "CLOSE"
 # plus a 500-700 word editorial ≈ 8.5-9.5 minutes with music.
 WORD_BUDGETS: dict[str, tuple[int, int]] = {
     "OPEN": (12, 35),
-    "MENU": (45, 80),
+    "MENU": (35, 80),
     "STORY1": (170, 260),
     "STORY": (130, 210),
     "BRIEFS": (90, 170),
@@ -201,6 +201,7 @@ class RundownContext:
     top20: list[dict]            # rank-ordered rows: id, title, disaster_severity
     has_editorial: bool = True
     date_spoken: str = ""
+    editorial_cluster_id: str | None = None   # the opinion's story: never the kicker
 
     def rank_of(self, cluster_id: str | None) -> int | None:
         if not cluster_id:
@@ -396,8 +397,10 @@ def validate_rundown(r: RadioRundown, ctx: RundownContext) -> ValidationReport:
             if s.kind != "MENU" or True:
                 speaker_words[t.speaker] += t.words
             # R-02 quotation marks
+            # Quote marks never reach the engine (spoken_text strips them),
+            # so this is advisory: the model should still write reported speech.
             if has_quotation_marks(t.text):
-                fail("R-02", label, f"quotation marks are never read aloud; use reported speech: {t.text[:70]!r}")
+                warn("R-02", label, f"quotation marks are never read aloud; use reported speech: {t.text[:70]!r}")
             # R-03 numerals (code normalises anyway; warn so the prompt learns)
             if has_numerals(t.text):
                 warn("R-03", label, f"numerals present (will be spoken by the normaliser): {t.text[:70]!r}")
@@ -481,6 +484,8 @@ def validate_rundown(r: RadioRundown, ctx: RundownContext) -> ValidationReport:
             fail("R-08", "FINALLY", f"cluster {fin.cluster_id} is not in today's feed")
         elif rk <= DEEP_STORIES:
             warn("R-08", "FINALLY", f"kicker is rank {rk}; pick from ranks {DEEP_STORIES + 1}-20")
+        if ctx.editorial_cluster_id and fin.cluster_id.lower() == ctx.editorial_cluster_id.lower():
+            fail("R-08", "FINALLY", "the kicker is the editorial's own story; the editorial follows it, pick another")
 
     # R-09 kicker suppression
     if fin and not ctx.kicker_allowed:
@@ -543,7 +548,7 @@ You write for the EAR, in the manner of a trained radio newsreader, not for the 
 - One idea per sentence. Under twenty words. Subject, verb, object. Never open a sentence with a subordinate clause.
 - Present tense or present perfect for what is happening: "The central bank has raised rates." Never "raised rates yesterday".
 - Attribution BEFORE the claim: "The Fed chair says inflation has run too high for too long." Never a trailing ", she said."
-- No quotation marks, ever. Report speech; never read a quote aloud. If one phrase matters, say "in his words" and then the phrase, without marks.
+- No quotation marks, ever, not even around a nickname or a slogan. Report speech: "the staff call her Yoko Ono", "he called the idea a hostile act". If one phrase matters, say "in his words" and then the phrase, without marks.
 - Numbers are words, rounded: "almost four billion dollars", "three and three-quarter percent", "about thirty-one tonnes". Never digits, never symbols.
 - No a.m. or p.m., no clock times unless they carry the story; say "this morning", "overnight", "on Wednesday".
 - No print datelines. "In Washington," not "WASHINGTON —".
@@ -617,7 +622,7 @@ RULES THAT FAIL THE SCRIPT IF BROKEN
 - Total news length 850 to 1,150 words. The length comes from covering the four lead stories properly, not from padding.
 {RETRY}"""
 
-_FINALLY_TEMPLATE = """## FINALLY | <id of a lighter story from ranks 5-{N}: culture, science, sport, an oddity; never a death, a war or a disaster> | <title>
+_FINALLY_TEMPLATE = """## FINALLY | <id of a lighter story from ranks 5-{N}: culture, science, sport, an oddity; never a death, a war, a disaster, and never the editorial's story{EXCLUDE}> | <title>
 B: <{KICKER_LEAD} then two to four sentences, 50-110 words, plainly told, ending on the fact rather than a joke>
 """
 
@@ -653,11 +658,14 @@ def build_radio_prompt(
     has_editorial: bool = True,
     previous_menu: list[str] | None = None,
     retry_findings: str = "",
+    editorial_cluster_id: str | None = None,
 ) -> tuple[str, str]:
-    ctx = RundownContext(top20=top20, has_editorial=has_editorial, date_spoken=date_spoken)
+    ctx = RundownContext(top20=top20, has_editorial=has_editorial, date_spoken=date_spoken,
+                         editorial_cluster_id=editorial_cluster_id)
     n = len(top20)
     if ctx.kicker_allowed and n > DEEP_STORIES:
-        finally_block = _FINALLY_TEMPLATE.format(N=n, KICKER_LEAD=KICKER_LEADS[0])
+        exclude = f" (id {editorial_cluster_id})" if editorial_cluster_id else ""
+        finally_block = _FINALLY_TEMPLATE.format(N=n, KICKER_LEAD=KICKER_LEADS[0], EXCLUDE=exclude)
     else:
         finally_block = "(No FINALLY segment today: the lead story is a mass-casualty event.)\n"
     prev = ""
@@ -699,6 +707,7 @@ def generate_radio_rundown(
     date: datetime | None = None,
     max_attempts: int = 2,
     generate_fn=None,
+    editorial_cluster_id: str | None = None,
 ) -> tuple[RadioRundown | None, ValidationReport | None, str]:
     """Return (rundown, report, generator_label); rundown is None on failure.
 
@@ -708,7 +717,8 @@ def generate_radio_rundown(
     generate_text, is_available, flash_model = _gemini()
     date = date or datetime.now(timezone.utc)
     date_spoken = spoken_date(date)
-    ctx = RundownContext(top20=top20, has_editorial=has_editorial, date_spoken=date_spoken)
+    ctx = RundownContext(top20=top20, has_editorial=has_editorial, date_spoken=date_spoken,
+                         editorial_cluster_id=editorial_cluster_id)
 
     if generate_fn is None:
         if not generate_text or not is_available():
@@ -723,7 +733,8 @@ def generate_radio_rundown(
     best: tuple[RadioRundown, ValidationReport] | None = None
     for attempt in range(max_attempts):
         system, user = build_radio_prompt(top20, date_spoken, has_editorial=has_editorial,
-                                          previous_menu=previous_menu, retry_findings=findings)
+                                          previous_menu=previous_menu, retry_findings=findings,
+                                          editorial_cluster_id=editorial_cluster_id)
         raw = generate_fn(system, user)
         if not raw or not raw.strip():
             print(f"  [radio] attempt {attempt + 1}: empty response")
