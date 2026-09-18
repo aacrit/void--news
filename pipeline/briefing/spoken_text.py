@@ -267,17 +267,34 @@ def apply_say(text: str, say: dict[str, str] | None) -> str:
 
 
 _DASHES_RE = re.compile(r"\s*[—–]\s*")
+_DOUBLE_QUOTES_RE = re.compile(r"[\"“”„‟«»]")
+_OPEN_SINGLE_RE = re.compile(r"(?<![\w])[‘'](?=\w)")
+_CLOSE_SINGLE_RE = re.compile(r"(?<=[\w.,!?])[’'](?![\w])")
+
+
+def strip_quotation_marks(text: str) -> str:
+    """Remove quotation marks; keep apostrophes (Carney's, isn't).
+
+    A reader never voices a quote mark, and engines differ on what they do
+    with one, so the script reaches the engine as reported speech either way.
+    """
+    text = _DOUBLE_QUOTES_RE.sub("", text)
+    text = _OPEN_SINGLE_RE.sub("", text)
+    text = _CLOSE_SINGLE_RE.sub("", text)
+    return re.sub(r"\s+([,.;:!?])", r"\1", text)
 
 
 def normalize_for_speech(text: str, say: dict[str, str] | None = None) -> str:
     """Everything the TTS should get: respellings, spoken numbers, initialisms.
 
     Em/en dashes become a comma-pause (engines read them inconsistently; a
-    comma is the one pause every engine honours). Double spaces collapse.
+    comma is the one pause every engine honours). Quotation marks are dropped.
+    Double spaces collapse.
     """
     text = apply_say(text, say)
     text = spoken_numbers(text)
     text = expand_initialisms(text, say)
+    text = strip_quotation_marks(text)
     text = _DASHES_RE.sub(", ", text)
     text = re.sub(r"\s*,\s*,", ",", text)
     return re.sub(r"[ \t]{2,}", " ", text).strip()

@@ -290,12 +290,14 @@ def main():
             if args.rundown_file:
                 rundown = parse_rundown(Path(args.rundown_file).read_text(encoding="utf-8"))
                 report = validate_rundown(rundown, RundownContext(top20=top, has_editorial=bool(editorial),
-                                                                  date_spoken=spoken_date(datetime.now(timezone.utc))))
+                                                                  date_spoken=spoken_date(datetime.now(timezone.utc)),
+                                                                  editorial_cluster_id=brief.get("opinion_cluster_id")))
                 print(f"  Rundown from file: {rundown.words} words, passed={report.passed}")
                 for f in report.findings:
                     print(f"    {f.id} {f.level:4} [{f.segment}] {f.detail[:110]}")
             else:
-                rundown, report, label = generate_radio_rundown(top, has_editorial=bool(editorial))
+                rundown, report, label = generate_radio_rundown(
+                    top, has_editorial=bool(editorial), editorial_cluster_id=brief.get("opinion_cluster_id"))
             edition_output["radio_rundown"] = rundown.to_text() if rundown else None
             edition_output["radio_report"] = report.as_dict() if report else None
             if rundown is not None and not (args.dry_run and not args.render_dir):

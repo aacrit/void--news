@@ -87,7 +87,6 @@ def test_clean_fixture() -> str:
 def test_planted_defects(raw: str) -> None:
     cases = {
         "R-01": raw.replace(f"A: {SIGN_ON_PREFIX}", "A: Good morning, and welcome."),
-        "R-02": raw.replace("has called the idea a hostile act", 'called it a "hostile act"'),
         "R-04": raw.replace("issued the order on Thursday", "issued the order at 4 p.m. Thursday"),
         "R-05": raw.replace("A: To South America.", "A: And finally, to South America.") if "A: To South America." in raw
                 else raw.replace("B: To South America.", "B: And finally, to South America."),
@@ -111,6 +110,12 @@ def test_planted_defects(raw: str) -> None:
     lopsided = raw.replace("\nB: ", "\nA: ")
     rep = validate_rundown(parse_rundown(lopsided), ctx())
     check("R-10" in ids_of(rep), "one voice reading everything fails R-10")
+    # R-02 quotation marks warn (the normaliser strips them), never fail
+    rep = validate_rundown(parse_rundown(raw.replace("has called the idea a hostile act", 'called it a "hostile act"')), ctx())
+    check(rep.passed and any(f.id == "R-02" for f in rep.findings), "quote marks warn but pass")
+    # R-08: the kicker must not be the editorial's own story
+    rep = validate_rundown(parse_rundown(raw), ctx(editorial_cluster_id="72de16f4-806b-4be1-a767-811ee56a6daf"))
+    check("R-08" in ids_of(rep), "kicker == editorial story fails R-08")
     # R-03 numerals are a warning, not a failure
     rep = validate_rundown(parse_rundown(raw.replace("thirty-one tonnes", "31 tonnes")), ctx())
     check(rep.passed and any(f.id == "R-03" for f in rep.findings), "numerals warn but pass")
@@ -155,6 +160,8 @@ def test_spoken_text() -> None:
         "the US and the EU, NATO and the FBI": "the U-S and the E-U, NATO and the F-B-I",
         "Mr. Smith at 11:00 GMT": "Mister Smith at eleven o'clock G-M-T",
         "a pause — then more": "a pause, then more",
+        'staff call her "Yoko Ono," a spokesperson says': "staff call her Yoko Ono, a spokesperson says",
+        "the ‘big night’ remark and Carney's plan isn't done": "the big night remark and Carney's plan isn't done",
     }
     for src, want in cases.items():
         got = normalize_for_speech(src)
@@ -186,13 +193,13 @@ def test_prompt_and_generation() -> None:
 
     def fake(system: str, user: str) -> str:
         calls.append(user)
-        # first attempt broken (a quote), second attempt clean
-        return clean.replace("has called the idea a hostile act", 'called it a "hostile act"') if len(calls) == 1 else clean
+        # first attempt broken (a clock time), second attempt clean
+        return clean.replace("issued the order on Thursday", "issued the order at 4 p.m. Thursday") if len(calls) == 1 else clean
 
     r, rep, label = generate_radio_rundown(rows, date=datetime.datetime(2026, 9, 18, tzinfo=datetime.timezone.utc),
                                            generate_fn=fake)
     check(r is not None and rep.passed and label == "gemini-flash", "retry recovers a fixable script")
-    check(len(calls) == 2 and "R-02" in calls[1], "retry prompt names the failed rule")
+    check(len(calls) == 2 and "R-04" in calls[1], "retry prompt names the failed rule")
 
     r, rep, label = generate_radio_rundown(rows, date=datetime.datetime(2026, 9, 18, tzinfo=datetime.timezone.utc),
                                            generate_fn=lambda s, u: "nonsense with no markers")
