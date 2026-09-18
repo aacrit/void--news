@@ -89,8 +89,16 @@ RADIO_GAPS: dict[str, int] = {
     "tail": 250,
 }
 
-# Music placement relative to the cues (ms) and levels (dB relative to the
-# asset as rendered: assets are pre-levelled by generate_assets).
+# Music placement relative to the cues (ms) and placement gains (dB applied
+# on top of the asset as rendered by generate_assets). Measured 2026-09-18 on
+# the first preview: speech masters at about -20 dBFS RMS, the beds were
+# rendered at -40 dBFS RMS, and the CEO heard no music at all. A bed that is
+# meant to be HEARD under a menu sits 8-12 dB under the voice, not 20.
+BED_MENU_GAIN_DB = float(os.environ.get("VOID_RADIO_BED_GAIN_DB", "10") or 10)
+BED_CLOSE_GAIN_DB = BED_MENU_GAIN_DB
+IDENT_GAIN_DB = 4.0
+OUTRO_GAIN_DB = 4.0
+STAB_GAIN_DB = 3.0
 BED_MENU_PRE = 1000
 BED_MENU_FADE_IN = 1500
 BED_MENU_FADE_OUT = 2000
@@ -382,8 +390,12 @@ def bed_envelope(tl: Timeline, menu_bed_ms: int, close_bed_ms: int) -> list[dict
     cues: list[dict] = []
     menu_first, menu_last = tl.first("MENU"), tl.last("MENU")
     story = tl.first("STORY")
+    open_first = tl.first("OPEN")
     if menu_first and menu_last and menu_bed_ms:
-        start = max(0, menu_first.start_ms - BED_MENU_PRE)
+        # The opening bed runs from the sign-on (it fades in under the ident
+        # tail) through the menu and is gone before story 1 begins.
+        anchor = open_first.start_ms if open_first else menu_first.start_ms
+        start = max(0, anchor - BED_MENU_PRE)
         end = (story.start_ms - BED_MENU_STOP_BEFORE_STORY) if story else menu_last.end_ms + 800
         cues.append({"asset": "menu_bed", "start": start, "end": max(start + 1000, end),
                      "fade_in": BED_MENU_FADE_IN, "fade_out": BED_MENU_FADE_OUT})
@@ -401,16 +413,17 @@ def render_music_bus(tl: Timeline) -> tuple["AudioSegment", dict]:
     ident, stab, outro = _asset("ident"), _asset("stab"), _asset("outro")
     menu_bed, close_bed, room = _asset("menu_bed"), _asset("close_bed"), _asset("room")
     if ident:
-        bus = bus.overlay(ident.set_channels(2), position=0)
+        bus = bus.overlay(ident.apply_gain(IDENT_GAIN_DB).set_channels(2), position=0)
         used["ident"] = len(ident)
     if stab and tl.stab_at_ms is not None:
-        bus = bus.overlay(stab.set_channels(2), position=tl.stab_at_ms)
+        bus = bus.overlay(stab.apply_gain(STAB_GAIN_DB).set_channels(2), position=tl.stab_at_ms)
         used["stab"] = tl.stab_at_ms
     if outro:
-        bus = bus.overlay(outro.set_channels(2), position=tl.outro_at_ms)
+        bus = bus.overlay(outro.apply_gain(OUTRO_GAIN_DB).set_channels(2), position=tl.outro_at_ms)
         used["outro"] = tl.outro_at_ms
     for env in bed_envelope(tl, len(menu_bed) if menu_bed else 0, len(close_bed) if close_bed else 0):
         asset = menu_bed if env["asset"] == "menu_bed" else close_bed
+        asset = asset.apply_gain(BED_MENU_GAIN_DB if env["asset"] == "menu_bed" else BED_CLOSE_GAIN_DB)
         length = env["end"] - env["start"]
         seg = _loop_to(asset, length) if len(asset) < length else asset[:length]
         seg = seg.fade_in(min(env["fade_in"], length // 2)) if env["fade_in"] else seg
