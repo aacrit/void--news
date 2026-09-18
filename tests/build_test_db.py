@@ -23,6 +23,7 @@ DB path given.
 from __future__ import annotations
 
 import argparse
+import datetime as dt
 import json
 import sqlite3
 import subprocess
@@ -47,6 +48,47 @@ def _deepdive(cluster_id: str, commit: str | None) -> list[dict]:
         return json.loads(_read(rel, commit))
     except Exception:
         return []
+
+
+def _rebase_article_times(conn, newest_age_hours: float = 3.0) -> None:
+    """Shift every article published_at so the newest is ~newest_age_hours before
+    now, preserving relative spacing between articles.
+
+    Why the harness needs this: the committed feed snapshot ages in wall-clock
+    (its newest article is whenever the last production run happened). The
+    importance ranker scores recency from article published_at, and an
+    ARTICLELESS cluster gets a fixed 15.0 recency floor
+    (importance_ranker._recency_score). Once the snapshot is more than ~a day
+    old the real bench's recency decays BELOW that floor, so the synthesized
+    ghost tail (no articles, fixed 15.0) reranks above the real cards and into
+    the top-20 display window. That silently breaks the "20 displayable" and
+    permalink assertions, and made this test a function of the calendar: green
+    on the day the data was committed, red once the daily pipeline skipped a run
+    (which is exactly what happened when the 2026-09-17 run hung and the data
+    went 40h stale). Rebasing to "now" makes the bench reliably fresh and the
+    harness deterministic and date-independent.
+    """
+    rows = conn.execute(
+        "SELECT id, published_at FROM articles "
+        "WHERE published_at IS NOT NULL AND published_at != ''"
+    ).fetchall()
+    parsed = []
+    for aid, ts in rows:
+        try:
+            d = dt.datetime.fromisoformat(str(ts).replace("Z", "+00:00"))
+        except ValueError:
+            continue
+        if d.tzinfo is None:
+            d = d.replace(tzinfo=dt.timezone.utc)
+        parsed.append((aid, d))
+    if not parsed:
+        return
+    newest = max(d for _, d in parsed)
+    target = dt.datetime.now(dt.timezone.utc) - dt.timedelta(hours=newest_age_hours)
+    shift = target - newest
+    for aid, d in parsed:
+        conn.execute("UPDATE articles SET published_at = ? WHERE id = ?",
+                     ((d + shift).isoformat(), aid))
 
 
 def build(out: Path, commit: str | None = None, clusters_limit: int = 100) -> dict:
@@ -224,6 +266,8 @@ def build(out: Path, commit: str | None = None, clusters_limit: int = 100) -> di
                          "WHERE id = ?", (cont, rid))
     except Exception as e:
         print(f"  [warn] printed_stories not loaded: {e}")
+
+    _rebase_article_times(conn)
 
     conn.execute(
         "INSERT INTO pipeline_runs (id, status, completed_at, started_at) VALUES (?,?,?,?)",

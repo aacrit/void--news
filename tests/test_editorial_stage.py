@@ -175,7 +175,19 @@ def main() -> int:
 
         feed = json.loads((tmp / "build-data" / "feed.json").read_text())["clusters"]
         amap = json.loads((tmp / "build-data" / "archiveMap.json").read_text())
-        displayed = filter_displayable(feed, DISPLAYED)
+        # "displayed" MUST mirror serverFeed exactly, and serverFeed drops ghost
+        # clusters (a stale source_count still ranks a cluster in, but all its
+        # cluster_articles links were cascade-dropped, so its Deep Dive is
+        # empty). The print archive applies the same ghost guard via
+        # `with_articles`, so without it here the test's window and the printed
+        # window differ by exactly the ghosts: the harness's synthesized
+        # non-candidate tail (real source counts, NO linked articles) can rerank
+        # into the top ranks, and those cards are correctly absent from the
+        # archive but a ghost-blind filter keeps them and demands a permalink
+        # they should never have. `after` is the post-run membership (clusters
+        # that still have >=1 article), which is exactly the ghost-guard set.
+        with_articles = set(after)
+        displayed = filter_displayable(feed, DISPLAYED, with_articles=with_articles)
 
         # 4. Enough stories to fill the page.
         if len(displayed) < DISPLAYED:
