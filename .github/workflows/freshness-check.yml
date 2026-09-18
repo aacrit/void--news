@@ -1,9 +1,17 @@
 name: Site Freshness Check
 
 # Catches SILENT staleness: a pipeline run can "succeed" but write nothing (or be
-# killed), leaving the public site serving day-old content with no error. This
-# checks the newest story_clusters.last_updated a few hours after the daily
-# window and alerts + fails if the feed is older than 30h.
+# killed), leaving the public site serving day-old content with no error. A few
+# hours after the daily window this reads the static data the site actually
+# serves (frontend/build-data/feed.json on main, committed by export_static at
+# the end of every successful pipeline run) and alerts + fails if it is older
+# than 30h.
+#
+# Post Cloudflare migration (2026-08): the pipeline runs on a local SQLite state
+# DB and commits static JSON to main; Supabase is decommissioned. This check
+# used to query story_clusters in Supabase, which is now frozen and made the job
+# a permanent false alarm. `feed.json.builtAt` is pipeline_runs.completed_at from
+# the last export, i.e. exactly when the site last refreshed.
 on:
   schedule:
     - cron: '0 15 * * *'   # 15:00 UTC, ~4h after the 11:00 daily pipeline window
@@ -17,42 +25,61 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: pip install psycopg2-binary
       - name: Check feed freshness
         env:
-          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
-          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
           WEBHOOK: ${{ secrets.ALERT_WEBHOOK_URL }}
         run: |
           python3 << 'PYEOF'
-          import psycopg2, os, json, urllib.request, datetime as dt
+          import json, os, urllib.request, datetime as dt
 
-          ref = os.environ['SUPABASE_PROJECT_REF']
-          pw = os.environ['SUPABASE_DB_PASSWORD']
-          dsn = f'postgresql://postgres.{ref}:{pw}@aws-0-us-west-2.pooler.supabase.com:5432/postgres?sslmode=require'
+          FEED = "frontend/build-data/feed.json"
+          try:
+              feed = json.load(open(FEED, encoding="utf-8"))
+          except Exception as e:
+              raise SystemExit(f"could not read {FEED}: {e}")
 
-          conn = psycopg2.connect(dsn, connect_timeout=20)
-          cur = conn.cursor()
-          cur.execute("SELECT max(last_updated) FROM story_clusters")
-          newest = cur.fetchone()[0]
-          age_h = (dt.datetime.now(dt.timezone.utc) - newest).total_seconds() / 3600 if newest else 1e9
-          print(f'newest story_clusters.last_updated = {newest} ({age_h:.1f}h ago)')
+          built = feed.get("builtAt")
+          # Fall back to the newest cluster last_updated if builtAt is missing.
+          if not built:
+              lus = [c.get("last_updated") for c in feed.get("clusters", [])
+                     if c.get("last_updated")]
+              built = max(lus) if lus else None
+
+          def parse(ts):
+              if not ts:
+                  return None
+              ts = ts.replace("Z", "+00:00")
+              try:
+                  d = dt.datetime.fromisoformat(ts)
+              except ValueError:
+                  return None
+              return d if d.tzinfo else d.replace(tzinfo=dt.timezone.utc)
+
+          newest = parse(built)
+          age_h = ((dt.datetime.now(dt.timezone.utc) - newest).total_seconds() / 3600
+                   if newest else 1e9)
+          print(f"feed.json builtAt = {built} ({age_h:.1f}h ago)")
 
           if age_h > 30:
-              msg = (f':large_orange_diamond: void --news feed is STALE: newest story is '
-                     f'{age_h:.0f}h old (last_updated {newest}). The daily pipeline likely failed to refresh.')
+              msg = (f":large_orange_diamond: Void News feed is STALE: static data is "
+                     f"{age_h:.0f}h old (builtAt {built}). The daily pipeline likely "
+                     f"failed to refresh + commit.")
               print(msg)
-              wh = os.environ.get('WEBHOOK')
+              wh = os.environ.get("WEBHOOK")
               if wh:
                   try:
-                      req = urllib.request.Request(wh, data=json.dumps({'text': msg}).encode(),
-                                                   headers={'Content-Type': 'application/json'})
+                      req = urllib.request.Request(
+                          wh, data=json.dumps({"text": msg}).encode(),
+                          headers={"Content-Type": "application/json"})
                       urllib.request.urlopen(req, timeout=15)
                   except Exception as e:
-                      print('webhook POST failed:', e)
+                      print("webhook POST failed:", e)
               raise SystemExit(1)   # fail the job so it also shows red in Actions
-          print('Feed is fresh.')
+          print("Feed is fresh.")
           PYEOF
