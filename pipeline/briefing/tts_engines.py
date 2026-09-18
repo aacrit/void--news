@@ -103,11 +103,19 @@ class KokoroEngine:
     name = "kokoro"
 
     def __init__(self, python: str | None = None, voices: dict[str, str] | None = None,
-                 speed: dict[str, float] | None = None, threads: int | None = None):
+                 speed: dict[str, float] | None = None, threads: int | None = None,
+                 workers: int | None = None):
         self.python = python or os.environ.get("VOID_KOKORO_PYTHON", "").strip() or self._find_python()
         self.voices = dict(voices or KOKORO_VOICES)
         self.speed = dict(speed or KOKORO_SPEED)
+        # ONNX intra-op threading scales poorly for this model: two worker
+        # processes with half the threads each finish a show sooner than one
+        # process with all of them (measured 2026-09-18, see tts_bench.py).
+        self.workers = max(1, workers if workers is not None else int(os.environ.get("VOID_KOKORO_WORKERS", "2") or 2))
+        cpu = os.cpu_count() or 4
         self.threads = threads if threads is not None else int(os.environ.get("VOID_KOKORO_THREADS", "0") or 0)
+        if self.threads <= 0:
+            self.threads = max(1, cpu // self.workers)
         self._worker = Path(__file__).parent / "tts_kokoro_worker.py"
 
     @staticmethod
@@ -154,37 +162,62 @@ class KokoroEngine:
                      "speed": t.speed or self.speed.get(t.role, 1.0),
                      "lang": "en-gb" if self.voice_id(t.role)[0] == "b" else "en-us"}
                     for t in turns]
-            (work / "jobs.json").write_text(json.dumps(jobs), encoding="utf-8")
-            cmd = [self.python, str(self._worker), "--jobs", str(work / "jobs.json"), "--out", str(work / "out"),
-                   "--model", str(self._model), "--voices", str(self._voices_bin),
-                   "--threads", str(self.threads), "--deadline-seconds", str(deadline_s),
-                   "--speed", str(self.speed.get("A", 1.0))]
+            # Round-robin the jobs over N workers so every process gets a
+            # similar amount of audio; each writes its own out dir + result.
+            n = min(self.workers, len(jobs))
+            procs = []
             t0 = time.time()
-            proc = subprocess.run(cmd, capture_output=True, text=True, timeout=deadline_s + 180)
+            for w in range(n):
+                share = jobs[w::n]
+                (work / f"jobs{w}.json").write_text(json.dumps(share), encoding="utf-8")
+                cmd = [self.python, str(self._worker), "--jobs", str(work / f"jobs{w}.json"),
+                       "--out", str(work / f"out{w}"), "--model", str(self._model),
+                       "--voices", str(self._voices_bin), "--threads", str(self.threads),
+                       "--deadline-seconds", str(deadline_s), "--speed", str(self.speed.get("A", 1.0))]
+                procs.append(subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True))
+            outs = []
+            for proc in procs:
+                try:
+                    out, err = proc.communicate(timeout=deadline_s + 180)
+                except subprocess.TimeoutExpired:
+                    proc.kill()
+                    out, err = "", "worker timeout"
+                outs.append((out, err))
             wall = time.time() - t0
-            if proc.stdout.strip():
-                print(f"  [tts] {proc.stdout.strip().splitlines()[-1]}")
-            result_path = work / "out" / "result.json"
-            if not result_path.exists():
-                err = (proc.stderr or "").strip()[-300:]
-                res.failed = {t.idx: f"worker produced no result ({err})" for t in turns}
-                return res
-            result = json.loads(result_path.read_text(encoding="utf-8"))
-            res.timing = dict(result.get("timing") or {}, wall_s=round(wall, 1), status=result.get("status"))
-            failed = result.get("failed") or {}
+            merged_ok: set[str] = set()
+            merged_failed: dict[str, str] = {}
+            timing = {"load_s": 0.0, "synth_s": 0.0, "audio_s": 0.0}
+            statuses = []
+            for w, (out, err) in enumerate(outs):
+                if out.strip():
+                    print(f"  [tts] worker {w}: {out.strip().splitlines()[-1]}")
+                result_path = work / f"out{w}" / "result.json"
+                if not result_path.exists():
+                    for job in jobs[w::n]:
+                        merged_failed[job["id"]] = f"worker {w} produced no result ({(err or '').strip()[-200:]})"
+                    statuses.append("no-result")
+                    continue
+                result = json.loads(result_path.read_text(encoding="utf-8"))
+                merged_ok.update(result.get("ok", []))
+                merged_failed.update(result.get("failed") or {})
+                statuses.append(result.get("status"))
+                for k in ("load_s", "synth_s", "audio_s"):
+                    timing[k] = max(timing[k], float((result.get("timing") or {}).get(k) or 0.0)) if k != "audio_s" \
+                        else timing[k] + float((result.get("timing") or {}).get(k) or 0.0)
+            timing["rtf"] = round(wall / timing["audio_s"], 3) if timing["audio_s"] else None
+            res.timing = dict(timing, wall_s=round(wall, 1), workers=n, threads=self.threads,
+                              status=",".join(str(s) for s in statuses))
             for t in turns:
                 jid = f"{t.idx:04d}"
-                wav = work / "out" / f"{jid}.wav"
-                if jid in result.get("ok", []) and wav.exists():
+                w = jobs.index(next(j for j in jobs if j["id"] == jid)) % n
+                wav = work / f"out{w}" / f"{jid}.wav"
+                if jid in merged_ok and wav.exists():
                     try:
                         res.audio[t.idx] = _to_24k_mono(AudioSegment.from_file(str(wav), format="wav"))
                     except Exception as e:  # pragma: no cover
                         res.failed[t.idx] = f"decode: {e}"
                 else:
-                    res.failed[t.idx] = failed.get(jid, result.get("status", "missing"))
-            return res
-        except subprocess.TimeoutExpired:
-            res.failed = {t.idx: "worker timeout" for t in turns}
+                    res.failed[t.idx] = merged_failed.get(jid, "missing")
             return res
         finally:
             shutil.rmtree(work, ignore_errors=True)
