@@ -38,10 +38,19 @@ export default function MobileMiniPlayer() {
     setExpanded,
     isPlayerVisible,
     contentType,
+    chapters,
+    currentChapterIndex,
   } = useAudio();
   const isWeekly = contentType === "weekly";
   const isHistory = contentType === "history";
   const productLabel = isHistory ? "History" : isWeekly ? "Weekly" : "On Air";
+
+  // On a chaptered broadcast the strip names what is on air right now instead
+  // of repeating the product word. Between chapters (ident, sign-off) it falls
+  // back to the product label rather than showing a stale title.
+  const currentChapter =
+    currentChapterIndex >= 0 ? chapters[currentChapterIndex] : null;
+  const stripLabel = currentChapter?.title || productLabel;
 
   // Set data-audio-active on body while the mini-player strip is visible —
   // CSS uses this to add bottom padding for the 44px strip. Visibility is now
@@ -90,8 +99,13 @@ export default function MobileMiniPlayer() {
         <LogoIcon size={16} animation={isPlaying ? "analyzing" : "idle"} />
       </div>
 
-      {/* Label */}
-      <span className="mmp__label">{productLabel}</span>
+      {/* Label — the live chapter when the episode has a running order */}
+      <span
+        className={`mmp__label${currentChapter ? " mmp__label--chapter" : ""}`}
+        title={currentChapter ? currentChapter.title : undefined}
+      >
+        {stripLabel}
+      </span>
 
       {/* Spacer */}
       <div className="mmp__spacer" />

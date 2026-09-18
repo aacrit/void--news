@@ -6,6 +6,8 @@ disable-model-invocation: false
 allowed-tools: Agent, Read, Grep, Glob, Bash, Edit, Write, TaskCreate, TaskUpdate, TaskList, SendMessage
 ---
 
+> **Current state (2026-09-18, read first).** On Air is the radio format (`docs/ON-AIR-RADIO.md`): Kokoro voices, a validated rundown with `## OPEN/MENU/STORY/BRIEFS/FINALLY/CLOSE` markers (not `[MARKER]`), chapters in `daily_briefs.audio_chapters` + `<stem>.chapters.json`, 128k stereo MP3 at -16 LUFS. Validate with `python tests/test_radio_script.py`, `python tests/test_radio_assembly.py`, `python scripts/verify_audio.py <site>` and the `[radio:world]` / `[tts]` log lines (rundown words, engine, rtf, wpm, loudness, chapter count). The Gemini-TTS / `[MARKER]` / 192k statements below are historical.
+
 # /audio-qa — Audio Quality Cycle
 
 You are the workflow orchestrator for the **Audio Quality Cycle** — ensuring void --news broadcast audio meets BBC World Service production standards. Covers the "void --onair" daily brief audio: Gemini 2.5 Flash TTS multi-speaker dialogue with Glass & Gravity sonic identity.

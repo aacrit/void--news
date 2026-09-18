@@ -1,5 +1,7 @@
 # void --news — Editorial LLM & Voice Plan
 
+> **2026-09-18: superseded for the daily show.** On Air is now the radio format in `docs/ON-AIR-RADIO.md` (Kokoro voices, separate rundown, chapters). Section 10 below describes the edge-tts path, which remains only as the automatic fallback (`VOID_RADIO_FORMAT=0` / `VOID_TTS_ENGINE=edge`).
+
 Last updated: 2026-04-29 (rev 2 — Sonnet 4.6 primary)
 
 **Version:** 5.0

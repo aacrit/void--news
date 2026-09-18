@@ -90,3 +90,6 @@ pipeline_state.db
 pipeline_state.db-*
 void_local.db
 *.sql.gz
+
+# Kokoro TTS worker virtualenv (numpy 2; built by the workflows, see pipeline/requirements-tts.txt)
+.venv-tts/

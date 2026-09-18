@@ -11,6 +11,7 @@ ingest new episodes automatically.
 Pure stdlib Python — no external dependencies.
 """
 
+import json
 import os
 import sys
 from datetime import datetime, timezone
@@ -29,18 +30,20 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 PODCAST_EDITIONS = ["world", "us"]
 EPISODES_PER_FEED = 50
 
-# Base URL where GitHub Pages serves the frontend.
-# Override with PODCAST_SITE_URL env var if using a custom domain.
+# Base URL of the live site (Cloudflare Pages, root basePath). audio_url is
+# site-relative since the 2026-09 static move, so enclosures are SITE_URL +
+# audio_url. Override with PODCAST_SITE_URL.
 SITE_URL = os.environ.get(
-    "PODCAST_SITE_URL", "https://aacrit.github.io/void--news"
-)
+    "PODCAST_SITE_URL", "https://news.voidvision.org"
+).rstrip("/")
 
 SHOW_META = {
     "world": {
-        "title": "void --onair: World Brief",
+        "title": "Void News: On Air",
         "description": (
-            "Daily world news briefing. 1,016 curated sources, "
-            "every story scored for bias on six axes. No ads. No paywall."
+            "The daily radio edition of Void News: the day's top stories read for the ear, "
+            "then the editorial. 1,016 curated sources, every story scored for bias on six axes. "
+            "No ads. No paywall."
         ),
     },
     "us": {
@@ -167,6 +170,8 @@ def _build_feed(edition: str, episodes: list[dict]) -> bytes:
 
         # Strip cache-bust param for podcast enclosure (some apps treat ?v= as different URL)
         clean_url = audio_url.split("?")[0] if "?" in audio_url else audio_url
+        if clean_url.startswith("/"):
+            clean_url = f"{SITE_URL}{clean_url}"
 
         item = SubElement(channel, "item")
         SubElement(item, "title").text = _episode_title(brief)
@@ -198,6 +203,20 @@ def _build_feed(edition: str, episodes: list[dict]) -> bytes:
         SubElement(item, f"{{{ITUNES_NS}}}summary").text = (
             brief.get("tldr_text", "")[:3999]
         )
+
+        # Podcasting 2.0 chapters: the radio show writes a JSON sidecar next to
+        # the MP3 (<stem>.chapters.json). Apple reads the ID3 CHAP frames instead.
+        chapters = brief.get("audio_chapters")
+        if isinstance(chapters, str):
+            try:
+                chapters = json.loads(chapters)
+            except (ValueError, TypeError):
+                chapters = None
+        if chapters and clean_url.endswith(".mp3"):
+            SubElement(item, f"{{{PODCAST_NS}}}chapters", {
+                "url": clean_url[:-4] + ".chapters.json",
+                "type": "application/json+chapters",
+            })
 
     # Serialize with XML declaration
     xml_bytes = tostring(rss, encoding="unicode", xml_declaration=False)
@@ -233,7 +252,8 @@ def generate_podcast_feeds(editions: list[str] | None = None) -> dict[str, str]:
         try:
             resp = supabase.table("daily_briefs").select(
                 "id,edition,created_at,tldr_headline,tldr_text,"
-                "audio_url,audio_duration_seconds,audio_file_size,audio_voice_label"
+                "audio_url,audio_duration_seconds,audio_file_size,audio_voice_label,"
+                "audio_chapters"
             ).eq(
                 "edition", edition
             ).not_.is_(

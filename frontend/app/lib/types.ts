@@ -299,6 +299,31 @@ export type Section = Edition;
 /** Editorial lean for the opinion piece — rotates daily */
 export type OpinionLean = "left" | "center" | "right";
 
+/** One chapter of the On Air daily broadcast.
+ *
+ *  The brief is produced as a radio show: ident and sign-on, a headlines menu,
+ *  one chapter per story, the "also today" briefs, the closer, the editorial.
+ *  The pipeline emits their marks so the player can present a rail instead of
+ *  a single undifferentiated hour. Legacy episodes, weekly issues and history
+ *  accounts carry no chapters (see `audio_chapters: null`). */
+export interface AudioChapter {
+  /** Seconds from the start of the MP3. */
+  startTime: number;
+  /** Seconds. Omitted when the chapter runs to the next one. */
+  endTime?: number;
+  /** e.g. "Fed raises rates" / "Headlines" / "Also today" / "The editorial" */
+  title: string;
+  kind: "headlines" | "story" | "briefs" | "finally" | "editorial";
+  /** story_clusters.id when kind is "story" or "finally" */
+  cluster_id?: string;
+  /** Feed rank when kind is "story" */
+  rank?: number;
+  /** Editorial: the opinion headline */
+  subtitle?: string;
+  /** Permalink to /story/<uuid>/ when the story is archived */
+  url?: string;
+}
+
 /** Daily Brief data from Supabase */
 export interface DailyBriefData {
   id: string;
@@ -315,6 +340,10 @@ export interface DailyBriefData {
   audio_voice_label: string | null;
   audio_voice: string | null;
   audio_script: string | null;
+  /** Radio-show chapter marks. null on legacy episodes, weekly and history. */
+  audio_chapters: AudioChapter[] | null;
+  /** Where STORY 1 begins, after the ident, sign-on and menu. null when unknown. */
+  news_start_seconds: number | null;
   top_cluster_ids: string[] | null;
   created_at: string;
 }

@@ -7,9 +7,11 @@ import {
   useRef,
   useCallback,
   useEffect,
+  useMemo,
   type ReactNode,
 } from "react";
-import type { DailyBriefData, Edition } from "../lib/types";
+import type { AudioChapter, DailyBriefData, Edition } from "../lib/types";
+import { findChapterIndex } from "../lib/chapters";
 import { fetchDailyBrief, fetchPreviousEpisodes } from "../lib/supabase";
 import { hapticLight, hapticTick } from "../lib/haptics";
 import { AUDIO_ENABLED } from "../lib/audioGate";
@@ -39,6 +41,10 @@ export interface EpisodeMeta {
   opinion_start_seconds: number | null;
   audio_voice_label: string | null;
   audio_voice: string | null;
+  /** Radio-show chapter marks. null on legacy episodes (and on weekly/history). */
+  audio_chapters: AudioChapter[] | null;
+  /** Where STORY 1 begins, after the ident, sign-on and menu. */
+  news_start_seconds: number | null;
   created_at: string;
 }
 
@@ -92,6 +98,18 @@ export interface AudioState {
   previousEpisodes: EpisodeMeta[];
   /** Load and play a specific episode by its audio URL */
   loadEpisode: (episode: EpisodeMeta) => void;
+  /* ---- Chapter rail (radio-show episodes) ----
+     Empty on legacy episodes, weekly issues and history accounts: every
+     consumer treats an empty rail as "keep the old News / Opinion transport". */
+  chapters: AudioChapter[];
+  /** Index into `chapters` for the current playhead, or -1 when between chapters. */
+  currentChapterIndex: number;
+  /** Seek to the start of chapter i (no-op when out of range). */
+  seekToChapter: (i: number) => void;
+  /** Jump to the next chapter. */
+  nextChapter: () => void;
+  /** Restart the current chapter, or step back when already near its start. */
+  prevChapter: () => void;
 }
 
 const AudioContext = createContext<AudioState | null>(null);
@@ -445,6 +463,68 @@ export default function AudioProvider({
     [isPlaying, audioError]
   );
 
+  /* ---- Chapter rail ----------------------------------------------------
+     The daily brief is a radio show with real chapters; weekly, history and
+     every legacy episode are one continuous read. `chapters` is empty in that
+     case and every surface falls back to the News / Opinion transport, so the
+     null guard lives here once rather than in each player view. */
+  const chapters = useMemo<AudioChapter[]>(
+    () => brief?.audio_chapters ?? [],
+    [brief?.audio_chapters]
+  );
+
+  const currentChapterIndex = useMemo(
+    () => findChapterIndex(chapters, currentTime),
+    [chapters, currentTime]
+  );
+
+  const seekToChapter = useCallback(
+    (i: number) => {
+      if (i < 0 || i >= chapters.length) return;
+      seekTo(chapters[i].startTime);
+    },
+    [chapters, seekTo]
+  );
+
+  // Next / previous work off the PLAYHEAD, not off currentChapterIndex, so
+  // they still do the obvious thing while the reader is in the ident, in the
+  // sign-off, or anywhere else that sits between two chapters.
+  const nextChapter = useCallback(() => {
+    if (chapters.length === 0) return;
+    let target = -1;
+    let bestStart = Infinity;
+    for (let i = 0; i < chapters.length; i++) {
+      const st = chapters[i].startTime;
+      if (st > currentTime + 0.25 && st < bestStart) {
+        bestStart = st;
+        target = i;
+      }
+    }
+    if (target >= 0) seekTo(chapters[target].startTime);
+  }, [chapters, currentTime, seekTo]);
+
+  /** Podcast convention: restart the chapter, unless we only just entered it. */
+  const RESTART_WINDOW = 3;
+  const prevChapter = useCallback(() => {
+    if (chapters.length === 0) return;
+    const idx = findChapterIndex(chapters, currentTime);
+    if (idx >= 0 && currentTime - chapters[idx].startTime > RESTART_WINDOW) {
+      seekTo(chapters[idx].startTime);
+      return;
+    }
+    const ref = idx >= 0 ? chapters[idx].startTime : currentTime;
+    let target = -1;
+    let bestStart = -Infinity;
+    for (let i = 0; i < chapters.length; i++) {
+      const st = chapters[i].startTime;
+      if (st < ref - 0.25 && st > bestStart) {
+        bestStart = st;
+        target = i;
+      }
+    }
+    seekTo(target >= 0 ? chapters[target].startTime : 0);
+  }, [chapters, currentTime, seekTo]);
+
   // Auto-show player when brief has audio — DESKTOP ONLY. On mobile (<768px)
   // the auto-show is suppressed so nothing audio-related appears until the
   // reader taps the On Air tab. The brief TEXT (TL;DR / Opinion pill) still
@@ -484,6 +564,8 @@ export default function AudioProvider({
       opinion_start_seconds: episode.opinion_start_seconds,
       audio_voice_label: episode.audio_voice_label,
       audio_voice: episode.audio_voice,
+      audio_chapters: episode.audio_chapters ?? null,
+      news_start_seconds: episode.news_start_seconds ?? null,
       created_at: episode.created_at,
     }));
     setCurrentTime(0);
@@ -533,6 +615,10 @@ export default function AudioProvider({
         audio_voice_label: digest.audio_voice_label ?? null,
         audio_voice: digest.audio_voice ?? null,
         audio_script: null,
+        // Weekly is one continuous read: no chapter rail, so the player keeps
+        // the original News / Opinion transport.
+        audio_chapters: null,
+        news_start_seconds: null,
         top_cluster_ids: null,
         created_at: digest.created_at,
       });
@@ -577,6 +663,9 @@ export default function AudioProvider({
       audio_voice_label: null,
       audio_voice: null,
       audio_script: null,
+      // History is a single narrated account: unchaptered.
+      audio_chapters: null,
+      news_start_seconds: null,
       top_cluster_ids: null,
       created_at: new Date().toISOString(),
     });
@@ -588,6 +677,15 @@ export default function AudioProvider({
     setIsPlaying(false);
     setPlayerVisible(true);
   }, []);
+
+  /* Chapter navigation changes identity on every timeupdate (it reads the
+     playhead), so the Media Session effect must NOT depend on it: rebuilding
+     MediaMetadata four times a second flickers the lock screen and is pure
+     waste. The handlers call through this ref instead. */
+  const chapterNavRef = useRef({ next: nextChapter, prev: prevChapter });
+  useEffect(() => {
+    chapterNavRef.current = { next: nextChapter, prev: prevChapter };
+  }, [nextChapter, prevChapter]);
 
   /* ---- Media Session API — iOS lock screen + notification controls ---- */
   useEffect(() => {
@@ -602,11 +700,35 @@ export default function AudioProvider({
     };
     const editionLabel = editionLabels[edition] || "World";
 
-    navigator.mediaSession.metadata = new MediaMetadata({
-      title: "On Air",
-      artist: "Void News",
-      album: editionLabel + " Edition",
-    });
+    // On a chaptered episode the lock screen reads like a radio show: the
+    // chapter is the track, the edition and date are the album. Between
+    // chapters (ident, sign-off) it falls back to the show name rather than
+    // freezing on whichever chapter ran last.
+    const chapter =
+      currentChapterIndex >= 0 ? chapters[currentChapterIndex] : null;
+    const dateLabel = brief?.created_at
+      ? new Date(brief.created_at).toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        })
+      : "";
+
+    navigator.mediaSession.metadata = new MediaMetadata(
+      chapters.length > 0
+        ? {
+            title: chapter?.title || "On Air",
+            artist: "Void News \u00b7 On Air",
+            album: dateLabel
+              ? `${editionLabel} Edition \u00b7 ${dateLabel}`
+              : `${editionLabel} Edition`,
+          }
+        : {
+            title: "On Air",
+            artist: "Void News",
+            album: editionLabel + " Edition",
+          }
+    );
 
     navigator.mediaSession.setActionHandler("play", () => {
       if (!isPlaying) handlePlayPause();
@@ -621,15 +743,71 @@ export default function AudioProvider({
       skipForward();
     });
 
+    // Track skip = chapter skip, but only on a chaptered episode. Registering
+    // a no-op handler would put dead next/previous buttons on the lock screen
+    // of every legacy episode, so unchaptered audio clears them instead.
+    if (chapters.length > 0) {
+      try {
+        navigator.mediaSession.setActionHandler("nexttrack", () => {
+          chapterNavRef.current.next();
+        });
+        navigator.mediaSession.setActionHandler("previoustrack", () => {
+          chapterNavRef.current.prev();
+        });
+      } catch {
+        // Browser does not support track actions.
+      }
+    } else {
+      try {
+        navigator.mediaSession.setActionHandler("nexttrack", null);
+        navigator.mediaSession.setActionHandler("previoustrack", null);
+      } catch {}
+    }
+
     return () => {
       try {
         navigator.mediaSession.setActionHandler("play", null);
         navigator.mediaSession.setActionHandler("pause", null);
         navigator.mediaSession.setActionHandler("seekbackward", null);
         navigator.mediaSession.setActionHandler("seekforward", null);
+        navigator.mediaSession.setActionHandler("nexttrack", null);
+        navigator.mediaSession.setActionHandler("previoustrack", null);
       } catch {}
     };
-  }, [edition, isPlaying, handlePlayPause, skipForward, skipBackward]);
+    // Deliberately NOT depending on nextChapter / prevChapter: see chapterNavRef.
+  }, [
+    edition,
+    isPlaying,
+    handlePlayPause,
+    skipForward,
+    skipBackward,
+    chapters,
+    currentChapterIndex,
+    brief?.created_at,
+  ]);
+
+  /* ---- Media Session position state ----
+     Throttled to ~1/s: currentTime updates about four times a second and
+     setPositionState is not free. Guarded for browsers without it. */
+  const lastPositionPush = useRef(0);
+  useEffect(() => {
+    if (typeof navigator === "undefined" || !("mediaSession" in navigator)) return;
+    if (typeof navigator.mediaSession.setPositionState !== "function") return;
+    const total = brief?.audio_duration_seconds || duration;
+    if (!total || !isFinite(total) || total <= 0) return;
+    const now = Date.now();
+    if (now - lastPositionPush.current < 1000) return;
+    lastPositionPush.current = now;
+    try {
+      navigator.mediaSession.setPositionState({
+        duration: total,
+        playbackRate: playbackSpeed,
+        position: Math.min(Math.max(currentTime, 0), total),
+      });
+    } catch {
+      // Safari throws when position exceeds duration mid-load.
+    }
+  }, [currentTime, duration, playbackSpeed, brief?.audio_duration_seconds]);
 
   const value: AudioState = {
     brief,
@@ -660,6 +838,11 @@ export default function AudioProvider({
     hasEverPlayed,
     previousEpisodes,
     loadEpisode,
+    chapters,
+    currentChapterIndex,
+    seekToChapter,
+    nextChapter,
+    prevChapter,
   };
 
   return (

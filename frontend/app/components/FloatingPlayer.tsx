@@ -7,6 +7,12 @@ import LogoIcon from "./LogoIcon";
 import ScaleIcon from "./ScaleIcon";
 import { hapticLight, hapticMedium, hapticConfirm } from "../lib/haptics";
 import { splitBriefParagraphs } from "../lib/briefText";
+import {
+  chapterKindLabel,
+  chapterMarks,
+  findEditorialIndex,
+  formatChapterTime,
+} from "../lib/chapters";
 
 const PlayIcon = () => (
   <svg width="11" height="13" viewBox="0 0 11 13" fill="currentColor" aria-hidden="true">
@@ -20,21 +26,6 @@ const PauseIcon = () => (
     <rect x="6.5" y="1" width="2.5" height="10" rx="0.5" />
   </svg>
 );
-
-/* ---- Host lookup: maps Gemini voice IDs to newsroom personas ---- */
-const HOSTS: Record<string, { name: string; trait: string }> = {
-  Charon:      { name: "The Correspondent",  trait: "Measured authority, lets facts land" },
-  Kore:        { name: "The Structuralist",   trait: "Sees systems, connects policy to outcome" },
-  Gacrux:      { name: "The Pragmatist",      trait: "Institutional memory, fiscal instinct" },
-  Orus:        { name: "The Investigator",    trait: "Follows the money, the paper trail" },
-  Achernar:    { name: "The Realist",         trait: "Challenges consensus with data" },
-  Sadaltager:  { name: "The Editor",          trait: "Synthesizes, contextualizes, finds the arc" },
-};
-
-function parseHosts(audioVoice: string | null | undefined): { name: string; trait: string }[] {
-  if (!audioVoice) return [];
-  return audioVoice.split("+").map(id => HOSTS[id.trim()]).filter(Boolean);
-}
 
 function formatTime(seconds: number): string {
   const s = Math.floor(seconds);
@@ -77,6 +68,7 @@ export default function FloatingPlayer() {
     isPlayerVisible, setPlayerVisible,
     isExpanded, setExpanded,
     previousEpisodes, loadEpisode, contentType,
+    chapters, currentChapterIndex, seekToChapter,
   } = state;
   const isWeekly = contentType === "weekly";
   const isHistory = contentType === "history";
@@ -226,8 +218,10 @@ export default function FloatingPlayer() {
   const dragYRef = useRef<{ startY: number; current: number } | null>(null);
   const [dragOffset, setDragOffset] = useState(0);
 
-  /* ---- Derived host/episode metadata ---- */
-  const hosts = useMemo(() => parseHosts(brief?.audio_voice), [brief?.audio_voice]);
+  /* ---- Derived episode metadata. Hosts are no longer named: the dateline
+     carries the stored voice label instead. ---- */
+  const voiceLabel = brief?.audio_voice_label || null;
+  const editorialIndex = useMemo(() => findEditorialIndex(chapters), [chapters]);
   const editionLabel = brief?.edition ? brief.edition.charAt(0).toUpperCase() + brief.edition.slice(1) : "World";
   const episodeDate = brief?.created_at ? formatDate(brief.created_at) : "";
 
@@ -275,13 +269,23 @@ export default function FloatingPlayer() {
   const durationMin = displayDuration ? Math.ceil(displayDuration / 60) : null;
   const speedLabel = `${playbackSpeed}x`;
 
+  /* Opinion transport (legacy, unchaptered episodes only).
+     There is no fabricated mark: the old code guessed the editorial began at
+     60% of the episode whenever opinion_start_seconds was missing, which drew
+     a seek mark and an Opinion tab pointing at a moment nobody had measured.
+     A null start now means no mark and no tab. */
   const opinionStart = brief.opinion_start_seconds ?? null;
-  const effectiveOpinionStart = opinionStart ?? (brief.opinion_text ? displayDuration * 0.6 : null);
-  const hasOpinionSection = brief.opinion_text != null;
+  const hasOpinionSection = brief.opinion_text != null && opinionStart !== null;
   const opinionPct = opinionStart !== null && displayDuration > 0
     ? (opinionStart / displayDuration) * 100
-    : hasOpinionSection ? 60 : 100;
-  const inOpinion = hasOpinionSection && effectiveOpinionStart !== null && currentTime >= effectiveOpinionStart;
+    : null;
+  const inOpinion = opinionStart !== null && currentTime >= opinionStart;
+
+  /* Chapter rail. Empty on legacy episodes, weekly and history: those keep the
+     News / Opinion transport exactly as it was. */
+  const hasChapters = chapters.length > 0;
+  const currentChapter = currentChapterIndex >= 0 ? chapters[currentChapterIndex] : null;
+  const marks = chapterMarks(chapters, displayDuration);
 
   /* Flow: pill → pane (direct). Floating is an option from pane. */
   const openPane = () => {
@@ -401,22 +405,56 @@ export default function FloatingPlayer() {
   /* ---- Shared seek bar ---- */
   const renderSeek = () => (
     <div className="fp__seek">
-      <div className="fp__seek-sections">
-        <button className={`fp__seek-sec${!inOpinion ? " fp__seek-sec--active" : ""}`}
-          onClick={() => seekTo(0)} type="button">{isHistory ? "Account" : "News"}</button>
-        {hasOpinionSection && (
-          <button className={`fp__seek-sec${inOpinion ? " fp__seek-sec--active" : ""}`}
-            onClick={() => effectiveOpinionStart != null ? seekTo(effectiveOpinionStart) : null}
-            type="button">Opinion</button>
-        )}
-      </div>
+      {hasChapters ? (
+        <div className="fp__rail">
+          <span className="fp__rail-now">
+            {currentChapter ? currentChapter.title : "On air"}
+          </span>
+          <span
+            className="fp__rail-count"
+            aria-label={`Chapter ${currentChapterIndex + 1} of ${chapters.length}`}
+          >
+            {currentChapterIndex >= 0 ? currentChapterIndex + 1 : "\u2013"} / {chapters.length}
+          </span>
+          {editorialIndex >= 0 && (
+            <button
+              className={`fp__rail-jump${currentChapterIndex === editorialIndex ? " fp__rail-jump--active" : ""}`}
+              onClick={() => seekToChapter(editorialIndex)}
+              type="button"
+            >
+              Editorial
+            </button>
+          )}
+        </div>
+      ) : (
+        <div className="fp__seek-sections">
+          <button className={`fp__seek-sec${!inOpinion ? " fp__seek-sec--active" : ""}`}
+            onClick={() => seekTo(0)} type="button">{isHistory ? "Account" : "News"}</button>
+          {hasOpinionSection && opinionStart !== null && (
+            <button className={`fp__seek-sec${inOpinion ? " fp__seek-sec--active" : ""}`}
+              onClick={() => seekTo(opinionStart)}
+              type="button">Opinion</button>
+          )}
+        </div>
+      )}
       <div className="fp__seek-bar-wrap">
         <div className="fp__seek-bar">
           {/* scaleX (not width): width transitions re-layout the bar on every
               timeupdate for the whole life of the player; transform composites. */}
           <div className="fp__seek-buffer" style={{ transform: `scaleX(${buffered / 100})` }} />
           <div className="fp__seek-fill" style={{ width: `${progress}%` }} />
-          {hasOpinionSection && <span className="fp__seek-mark" style={{ left: `${opinionPct}%` }} aria-hidden="true" />}
+          {hasChapters
+            ? marks.map((m) => (
+                <span
+                  key={m.index}
+                  className={`fp__seek-mark${m.index === currentChapterIndex ? " fp__seek-mark--active" : ""}${m.chapter.kind === "editorial" ? " fp__seek-mark--ed" : ""}`}
+                  style={{ left: `${m.pct}%` }}
+                  aria-hidden="true"
+                />
+              ))
+            : opinionPct !== null && (
+                <span className="fp__seek-mark" style={{ left: `${opinionPct}%` }} aria-hidden="true" />
+              )}
         </div>
         <input type="range" className="fp__seek-input" min={0} max={displayDuration || 100}
           value={currentTime} step={0.5} onChange={handleSeek} aria-label="Seek"
@@ -471,7 +509,14 @@ export default function FloatingPlayer() {
           <div className="fp__info">
             {isPlaying && <span className="fp__rec-dot" aria-hidden="true" />}
             <span className="fp__title">{productLabel}</span>
-            <span className="fp__section">{isHistory ? "Account" : isWeekly ? "Issue" : inOpinion ? "Opinion" : "News"}</span>
+            <span
+              className={`fp__section${hasChapters ? " fp__section--chapter" : ""}`}
+              title={hasChapters && currentChapter ? currentChapter.title : undefined}
+            >
+              {hasChapters
+                ? currentChapter?.title ?? "On air"
+                : isHistory ? "Account" : isWeekly ? "Issue" : inOpinion ? "Opinion" : "News"}
+            </span>
           </div>
 
           <span className="fp__time">
@@ -595,19 +640,9 @@ export default function FloatingPlayer() {
                 {episodeDate && <span className="fp__bcast-date">{episodeDate}</span>}
               </>
             )}
+            {voiceLabel && <span className="fp__bcast-voices">{voiceLabel}</span>}
             {durationMin && <span className="fp__bcast-duration">{durationMin} min</span>}
           </div>
-
-          {/* Host pair — subdued inline */}
-          {hosts.length > 0 && (
-            <div className="fp__bcast-hosts">
-              {hosts.slice(0, 2).map((host, i) => (
-                <span key={i} className="fp__bcast-host-inline">
-                  {host.name}
-                </span>
-              ))}
-            </div>
-          )}
 
           {/* VU meter — hero element in broadcast pane */}
           <div ref={vuHeroRef} className={`fp__vu fp__vu--hero${isPlaying ? " fp__vu--active" : ""}${vuLive ? " fp__vu--live" : ""}`} aria-hidden="true">
@@ -616,6 +651,41 @@ export default function FloatingPlayer() {
 
           {renderTransport()}
           {renderSeek()}
+
+          {/* Running order — the chapters, in play order. The ROW seeks; an
+              archived story carries a separate small link to its Deep Dive, so
+              a tap on the row never navigates the reader away mid-broadcast. */}
+          {hasChapters && (
+            <ol className="fp__chaps" aria-label="Running order">
+              {chapters.map((c, i) => {
+                const on = i === currentChapterIndex;
+                const kind = chapterKindLabel(c);
+                return (
+                  <li key={`${c.startTime}-${i}`} className={`fp__chap${on ? " fp__chap--on" : ""}`}>
+                    <button
+                      className="fp__chap-seek"
+                      type="button"
+                      onClick={() => { hapticLight(); seekToChapter(i); }}
+                      aria-current={on ? "true" : undefined}
+                    >
+                      <span className="fp__chap-time">{formatChapterTime(c.startTime)}</span>
+                      <span className="fp__chap-body">
+                        <span className="fp__chap-title">{c.title}</span>
+                        {c.subtitle && <span className="fp__chap-sub">{c.subtitle}</span>}
+                      </span>
+                      {kind && <span className="fp__chap-kind">{kind}</span>}
+                    </button>
+                    {c.url && (
+                      <a className="fp__chap-link" href={c.url}>
+                        Read
+                        <span className="sr-only"> the full story: {c.title}</span>
+                      </a>
+                    )}
+                  </li>
+                );
+              })}
+            </ol>
+          )}
 
           {/* Episode notes — collapsed by default, "Read more" disclosure */}
           <details className="fp__bcast-details">
@@ -666,7 +736,6 @@ export default function FloatingPlayer() {
                       {eps.map((ep) => {
                         const isCurrent = brief.audio_url === ep.audio_url;
                         const epDuration = ep.audio_duration_seconds ? Math.ceil(ep.audio_duration_seconds / 60) : null;
-                        const epHosts = parseHosts(ep.audio_voice);
                         const timeStr = formatEpisodeTime(ep.created_at);
                         const hasOpinion = !!ep.opinion_text;
                         return (
@@ -711,9 +780,7 @@ export default function FloatingPlayer() {
                               <div className="fp__track-sub">
                                 <span>{timeStr}</span>
                                 {epDuration && <span>{epDuration} min</span>}
-                                {epHosts.length > 0 && (
-                                  <span>{epHosts.map(h => h.name).join(" & ")}</span>
-                                )}
+                                {ep.audio_voice_label && <span>{ep.audio_voice_label}</span>}
                               </div>
                             </div>
                             {isCurrent && <span className="fp__track-badge">Now playing</span>}

@@ -1453,6 +1453,41 @@ def run_retention_and_ghost_sweep() -> None:
 
 
 
+def _produce_radio_edition(edition: str, clusters: list[dict], brief: dict, brief_row: dict) -> bool:
+    """On Air radio show for one edition. Writes the audio fields into
+    brief_row and returns True; False means the caller should fall back to the
+    legacy audio path (rundown rejected twice, or synthesis failed)."""
+    from briefing.radio_script_generator import generate_radio_rundown
+    from briefing.radio_producer import produce_radio_show, permalinks_from_archive
+
+    top = sorted(clusters, key=lambda c: c.get("rank_world") or c.get("headline_rank") or 0,
+                 reverse=True)[:DISPLAYED]
+    editorial = brief.get("opinion_audio_script")
+    print(f"  [radio:{edition}] rundown over the top {len(top)} (editorial: {'yes' if editorial else 'no'})")
+    rundown, report, label = generate_radio_rundown(top, has_editorial=bool(editorial))
+    if rundown is None:
+        print(f"  [radio:{edition}] no usable rundown ({label}); legacy audio script will be used")
+        return False
+    if report is not None:
+        print(f"  [radio:{edition}] rundown {rundown.words} words, ~{report.metrics.get('est_minutes')} min news, "
+              f"A share {report.metrics.get('speaker_share_a')}")
+    result = produce_radio_show(
+        rundown, editorial, edition,
+        opinion_headline=brief.get("opinion_headline"),
+        permalinks=permalinks_from_archive(),
+    )
+    if result is None:
+        print(f"  [radio:{edition}] show not produced; legacy audio will be used")
+        return False
+    brief_row["audio_script"] = result.audio_script
+    brief_row.update(result.as_row_fields())
+    brief_row["generator"] = f"{brief.get('generator') or ''}+radio:{label}:{result.engine}".strip("+")
+    print(f"  [radio:{edition}] {result.duration_seconds:.0f}s, {len(result.chapters)} chapters, "
+          f"engine {result.engine}, {result.timing.get('wpm')} wpm, news at {result.news_start_seconds}s, "
+          f"editorial at {result.opinion_start_seconds}s")
+    return True
+
+
 def generate_and_store_briefs(clusters: list[dict], source_map: dict,
                               run_id: str | None) -> dict[str, dict]:
     """Step 7d, moved AFTER Stage 2 (2026-09-07).
@@ -1511,7 +1546,8 @@ def generate_and_store_briefs(clusters: list[dict], source_map: dict,
                             "tldr_headline,tldr_text,opinion_text,opinion_headline,opinion_lean,opinion_cluster_id,"
                             "audio_script,audio_url,audio_duration_seconds,"
                             "audio_voice_label,audio_voice,audio_file_size,"
-                            "opinion_audio_script,top_cluster_ids,opinion_start_seconds"
+                            "opinion_audio_script,top_cluster_ids,opinion_start_seconds,"
+                            "audio_chapters,news_start_seconds"
                         ).eq("edition", edition).not_.is_(
                             "tldr_headline", "null"
                         ).order(
@@ -1532,14 +1568,26 @@ def generate_and_store_briefs(clusters: list[dict], source_map: dict,
                             brief_row["audio_voice"] = p.get("audio_voice")
                             brief_row["audio_file_size"] = p.get("audio_file_size")
                             brief_row["opinion_start_seconds"] = p.get("opinion_start_seconds")
+                            brief_row["audio_chapters"] = p.get("audio_chapters")
+                            brief_row["news_start_seconds"] = p.get("news_start_seconds")
                             brief_row["top_cluster_ids"] = p.get("top_cluster_ids", [])
                             print(f"  [brief:{edition}] Empty brief — carried forward previous brief")
                     except Exception as e:
                         print(f"  [warn] Could not fetch previous brief for {edition}: {e}")
                     # Skip audio generation — we're using the previous brief's audio
                 else:
-                    # Generate two-host audio via Gemini Flash TTS — every run
-                    if brief.get("audio_script"):
+                    # On Air radio show (2026-09-18): a separately generated
+                    # rundown over the top 20, Kokoro voices, original music,
+                    # chapters. VOID_RADIO_FORMAT=0 restores the legacy path.
+                    radio_done = False
+                    if os.environ.get("VOID_RADIO_FORMAT", "1").strip().lower() not in ("0", "false", "no"):
+                        try:
+                            radio_done = _produce_radio_edition(edition, clusters, brief, brief_row)
+                        except Exception as _re:
+                            print(f"  [radio:{edition}] failed, falling back to the legacy audio: {_re}")
+                            traceback.print_exc()
+                    # Legacy two-host audio (edge-tts) from the brief's own script
+                    if not radio_done and brief.get("audio_script"):
                         voices = get_voices_for_today(edition)
                         audio_result = produce_audio(
                             brief["audio_script"], voices, edition,
@@ -1615,7 +1663,7 @@ def generate_and_store_briefs(clusters: list[dict], source_map: dict,
                     err_msg = str(e)
                     if "PGRST204" in err_msg or "does not exist" in err_msg.lower() or "schema cache" in err_msg.lower():
                         # Extract column name from error if possible, or strip known optional cols
-                        for optional_col in ("opinion_start_seconds",):
+                        for optional_col in ("opinion_start_seconds", "audio_chapters", "news_start_seconds"):
                             brief_row.pop(optional_col, None)
                         try:
                             supabase.table("daily_briefs").upsert(
@@ -3857,7 +3905,8 @@ def main():
     try:
         _brief_rows = supabase.table("story_clusters").select(
             "id,title,summary,category,sections,source_count,rank_world,"
-            "headline_rank,consensus_points,divergence_points,divergence_score"
+            "headline_rank,consensus_points,divergence_points,divergence_score,"
+            "disaster_severity"
         ).contains("sections", ["world"]).order(
             "rank_world", desc=True).limit(DISPLAYED).execute().data or []
         for _r in _brief_rows:

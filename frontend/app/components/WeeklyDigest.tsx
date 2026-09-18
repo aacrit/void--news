@@ -829,6 +829,9 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
         opinion_start_seconds: null,
         audio_voice_label: null,
         audio_voice: null,
+        // Weekly issues are one continuous read: no chapter rail.
+        audio_chapters: null,
+        news_start_seconds: null,
         created_at: issue.created_at,
       }));
     playWeekly(digest, archiveIssues);

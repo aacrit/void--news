@@ -134,11 +134,13 @@ if not b:
 brief = None
 if b:
     brief = {k: b[k] for k in b.keys()}
-    for k in ("audio_duration_seconds", "opinion_start_seconds"):
+    for k in ("audio_duration_seconds", "opinion_start_seconds", "news_start_seconds"):
         if k in brief:
             brief[k] = pnum(b[k])
     if "top_cluster_ids" in brief:
         brief["top_cluster_ids"] = parr(b["top_cluster_ids"])
+    if "audio_chapters" in brief:
+        brief["audio_chapters"] = pjson(b["audio_chapters"])
 json.dump(brief, open(os.path.join(OUT, "brief.json"), "w", encoding="utf-8"),
           ensure_ascii=False)
 print(f"brief.json: {'ok' if brief else 'MISSING'}  headline={brief.get('tldr_headline','')[:50] if brief else ''}")

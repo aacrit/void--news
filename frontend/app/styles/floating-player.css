@@ -228,6 +228,22 @@ body:has(.mms--open) .fp {
   white-space: nowrap;
 }
 
+/* Chaptered episodes name what is on air instead of the section word. It is
+   the only elastic item in the pill, so it truncates rather than pushing the
+   clock off the end. */
+.fp__section--chapter {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: var(--text-xs);
+  color: color-mix(in srgb, var(--fp-accent) 80%, transparent);
+  min-width: 0;
+  max-width: 22ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .fp__time {
   font-family: var(--font-data);
   font-size: 11px;
@@ -681,6 +697,73 @@ body:has(.mms--open) .fp {
   background: var(--voice-accent-ghost, rgba(77, 175, 160, 0.08));
 }
 
+/* ---- Chapter rail (radio-show episodes) ----
+   Replaces the News / Opinion chips when the episode carries a running order:
+   what is on air, the position in the show, and a standing editorial jump. */
+.fp__rail {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  min-height: 24px;
+}
+
+.fp__rail-now {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: var(--text-sm);
+  line-height: 1.25;
+  color: var(--fp-accent);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fp__rail-count {
+  flex: none;
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in srgb, var(--fp-accent) 55%, transparent);
+  white-space: nowrap;
+}
+
+.fp__rail-jump {
+  flex: none;
+  position: relative;
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: color-mix(in srgb, var(--fp-accent) 55%, transparent);
+  padding: 2px 8px;
+  min-height: 24px;
+  border: 1px solid color-mix(in srgb, var(--fp-accent) 12%, transparent);
+  border-radius: 3px;
+  background: none;
+  cursor: pointer;
+  transition: color 150ms var(--ease-cinematic), border-color 150ms var(--ease-cinematic);
+}
+
+/* Expand the jump target to 44px without moving the chip — WCAG 2.5.5 */
+.fp__rail-jump::after { content: ""; position: absolute; inset: -10px -6px; }
+
+.fp__rail-jump:hover { color: var(--voice-accent); }
+
+.fp__rail-jump--active {
+  color: var(--fp-amber, var(--accent-warm));
+  border-color: color-mix(in srgb, var(--fp-amber, var(--accent-warm)) 40%, transparent);
+  background: color-mix(in srgb, var(--fp-amber, var(--accent-warm)) 10%, transparent);
+}
+
+.fp__rail-jump:focus-visible {
+  outline: 2px solid var(--fp-accent);
+  outline-offset: 2px;
+}
+
 .fp__seek-bar-wrap {
   position: relative;
   height: 20px;
@@ -735,6 +818,18 @@ body:has(.mms--open) .fp {
   background: color-mix(in srgb, var(--voice-accent) 45%, transparent);
   border-radius: 0.75px;
   z-index: 1;
+}
+
+/* Chapter marks. The live chapter is the taller, brighter tick; the editorial
+   keeps the amber filament colour so the firewall reads at a glance. */
+.fp__seek-mark--active {
+  height: 14px;
+  width: 2px;
+  background: var(--voice-accent);
+}
+
+.fp__seek-mark--ed {
+  background: color-mix(in srgb, var(--fp-amber, var(--accent-warm)) 70%, transparent);
 }
 
 .fp__seek-input {
@@ -1005,7 +1100,7 @@ body:has(.mms--open) .fp {
   opacity: 0;
   animation: fadeInUp 280ms var(--ease-cinematic, ease) 120ms both;
 }
-.fp--broadcast .fp__bcast-hosts {
+.fp--broadcast .fp__bcast-voices {
   opacity: 0;
   animation: fadeInUp 280ms var(--ease-cinematic, ease) 160ms both;
 }
@@ -1119,27 +1214,16 @@ body:has(.mms--open) .fp {
   margin-left: auto;
 }
 
-/* Host pair — subdued inline */
-.fp__bcast-hosts {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
+/* Voice count — hosts are no longer named; the dateline carries the stored
+   audio_voice_label ("Two voices") and nothing more. */
+.fp__bcast-voices {
   font-family: var(--font-meta);
   font-size: 9px;
   font-weight: 500;
-  color: color-mix(in srgb, var(--fp-accent) 40%, transparent);
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  padding: 0;
-}
-
-.fp__bcast-host-inline {
+  color: color-mix(in srgb, var(--fp-accent) 45%, transparent);
   white-space: nowrap;
-}
-
-.fp__bcast-host-inline + .fp__bcast-host-inline::before {
-  content: " · ";
-  color: color-mix(in srgb, var(--fp-accent) 25%, transparent);
 }
 
 /* Episode content */
@@ -1187,6 +1271,135 @@ body:has(.mms--open) .fp {
 }
 
 /* Episode notes — collapsible disclosure */
+/* ---- Running order (broadcast panel) ----
+   A contents column, not a menu: mono timecode gutter, editorial title,
+   condensed kind label. The row seeks; only the "Read" anchor navigates. */
+.fp__chaps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid color-mix(in srgb, var(--fp-accent) 12%, transparent);
+}
+
+.fp__chap {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-1);
+  border-bottom: 1px solid color-mix(in srgb, var(--fp-accent) 10%, transparent);
+}
+
+.fp__chap-seek {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-2);
+  min-height: 40px;
+  background: none;
+  border: none;
+  border-radius: 3px;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  transition: background 150ms var(--ease-cinematic);
+}
+
+.fp__chap-seek:hover {
+  background: color-mix(in srgb, var(--fp-accent) 7%, transparent);
+}
+
+.fp__chap-seek:focus-visible {
+  outline: 2px solid var(--fp-accent);
+  outline-offset: -2px;
+}
+
+.fp__chap--on {
+  background: var(--voice-accent-ghost, rgba(77, 175, 160, 0.08));
+}
+
+.fp__chap-time {
+  flex: none;
+  font-family: var(--font-data);
+  font-size: var(--text-xxs);
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in srgb, var(--fp-accent) 50%, transparent);
+  min-width: 3.1ch;
+}
+
+.fp__chap--on .fp__chap-time { color: var(--voice-accent); }
+
+.fp__chap-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.fp__chap-title {
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: var(--text-sm);
+  line-height: 1.3;
+  color: var(--fp-accent);
+}
+
+.fp__chap-sub {
+  font-family: var(--font-structural);
+  font-size: var(--text-xxs);
+  line-height: 1.35;
+  color: color-mix(in srgb, var(--fp-accent) 60%, transparent);
+}
+
+.fp__chap-kind {
+  flex: none;
+  align-self: center;
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fp-accent) 45%, transparent);
+  white-space: nowrap;
+}
+
+.fp__chap-link {
+  flex: none;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 var(--space-2);
+  min-height: 40px;
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--fp-accent) 55%, transparent);
+  text-decoration: none;
+  border-left: 1px solid color-mix(in srgb, var(--fp-accent) 12%, transparent);
+}
+
+.fp__chap-link:hover {
+  color: var(--voice-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.fp__chap-link:focus-visible {
+  outline: 2px solid var(--fp-accent);
+  outline-offset: 2px;
+}
+
+/* Coarse pointers: every chapter control is a real target (WCAG 2.5.5). */
+@media (pointer: coarse) {
+  .fp__chap-seek { min-height: 44px; }
+  .fp__chap-link { min-height: 44px; min-width: 44px; justify-content: center; }
+  .fp__rail-jump { min-height: 44px; }
+  .fp__rail { min-height: 44px; }
+}
+
 .fp__bcast-details {
   border-top: 1px solid color-mix(in srgb, var(--fp-accent) 8%, transparent);
 }
@@ -1460,7 +1673,7 @@ body:has(.mms--open) .fp {
   .fp--broadcast .fp__bcast-dateline {
     animation-name: fadeInLeft;
   }
-  .fp--broadcast .fp__bcast-hosts {
+  .fp--broadcast .fp__bcast-voices {
     animation-name: fadeInLeft;
   }
   .fp--broadcast .fp__vu {
@@ -1727,6 +1940,9 @@ body:has(.mms--open) .fp {
    --------------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
+  .fp__chap-seek,
+  .fp__rail-jump { transition: none; }
+  .fp--broadcast .fp__bcast-voices { animation: none; opacity: 1; transform: none; }
   .fp--compact { animation: none; opacity: 1; transform: none; }
   .fp--expanded { animation: none; opacity: 1; transform: none; }
   .fp--broadcast { animation: none; opacity: 1; transform: none !important; }
@@ -1736,7 +1952,7 @@ body:has(.mms--open) .fp {
   .fp--expanded .fp__seek { animation: none; opacity: 1; transform: none; }
   .fp--broadcast .fp__bcast-header,
   .fp--broadcast .fp__bcast-dateline,
-  .fp--broadcast .fp__bcast-hosts,
+  .fp--broadcast .fp__bcast-voices,
   .fp--broadcast .fp__vu,
   .fp--broadcast .fp__transport,
   .fp--broadcast .fp__seek,

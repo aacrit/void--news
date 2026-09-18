@@ -1,6 +1,7 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type { Edition, ShipRequest, ShipReply } from './types';
 import { BASE_PATH, API_BASE } from './utils';
+import { coerceChapters } from './chapters';
 
 // ---------------------------------------------------------------------------
 // Static-JSON reads (2026-08-30 Cloudflare migration).
@@ -210,6 +211,14 @@ export async function fetchDailyBrief(_edition: string): Promise<any | null> {
   if (d.opinion_text && typeof d.opinion_text !== "string") d.opinion_text = String(d.opinion_text);
   if (d.tldr_headline && typeof d.tldr_headline !== "string") d.tldr_headline = String(d.tldr_headline);
   if (d.opinion_headline && typeof d.opinion_headline !== "string") d.opinion_headline = String(d.opinion_headline);
+
+  // audio_chapters is a JSONB column: depending on the export path it arrives
+  // as a real array, as a JSON string, or absent on every legacy episode.
+  // Normalize to an array or null so the player only ever tests for null.
+  d.audio_chapters = coerceChapters(d.audio_chapters);
+  if (typeof d.news_start_seconds !== "number" || !isFinite(d.news_start_seconds)) {
+    d.news_start_seconds = null;
+  }
   return d;
 }
 
