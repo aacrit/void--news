@@ -146,7 +146,7 @@ def main() -> None:
     assets = {e["asset"]: e for e in env}
     check(set(assets) == {"menu_bed", "close_bed"}, f"beds {set(assets)}")
     mb = assets["menu_bed"]
-    check(mb["start"] == menu[0].start_ms - rp.BED_MENU_PRE, "menu bed starts before the menu")
+    check(mb["start"] == max(0, by_kind["OPEN"][0].start_ms - rp.BED_MENU_PRE), "opening bed starts under the sign-on")
     check(mb["end"] == story[0].start_ms - rp.BED_MENU_STOP_BEFORE_STORY, "menu bed gone before story 1")
     cb = assets["close_bed"]
     check(cb["start"] == close[0].start_ms - rp.BED_CLOSE_PRE and cb["end"] == tl.total_ms, "close bed under the sign-off")
