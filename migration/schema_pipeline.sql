@@ -356,7 +356,9 @@ CREATE TABLE IF NOT EXISTS daily_briefs (
   opinion_headline       TEXT,                 -- 024
   tldr_headline          TEXT,                 -- 027
   opinion_start_seconds  REAL,                 -- 028
-  generator              TEXT                  -- 030
+  generator              TEXT,                 -- 030
+  audio_chapters         TEXT,                 -- radio show chapters (JSON array), 2026-09-18
+  news_start_seconds     REAL                  -- where STORY 1 begins in the MP3, 2026-09-18
 );
 CREATE UNIQUE INDEX IF NOT EXISTS idx_daily_briefs_edition_run     ON daily_briefs(edition, pipeline_run_id);
 CREATE INDEX IF NOT EXISTS        idx_daily_briefs_edition_created ON daily_briefs(edition, created_at DESC);

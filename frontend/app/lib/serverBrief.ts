@@ -19,6 +19,7 @@
 import { readFileSync } from "fs";
 import { join } from "path";
 import type { DailyBriefData } from "./types";
+import { coerceChapters } from "./chapters";
 
 let _briefPromise: Promise<DailyBriefData | null> | null = null;
 
@@ -35,7 +36,14 @@ export function getInitialBrief(): Promise<DailyBriefData | null> {
         "utf-8",
       );
       const brief = JSON.parse(raw);
-      return (brief ?? null) as DailyBriefData | null;
+      if (!brief) return null;
+      // Normalize the chapter rail exactly as the client fetch does, so the
+      // prerendered HTML and the first client render agree (React #418).
+      brief.audio_chapters = coerceChapters(brief.audio_chapters);
+      if (typeof brief.news_start_seconds !== "number" || !isFinite(brief.news_start_seconds)) {
+        brief.news_start_seconds = null;
+      }
+      return brief as DailyBriefData;
     } catch (e) {
       console.warn(`[serverBrief] daily brief unavailable at build time: ${e}`);
       return null;

@@ -14,10 +14,17 @@ Usage:
     python pipeline/refresh_brief.py --dry-run --output /tmp/brief.json
     python pipeline/refresh_brief.py --fixtures --dry-run --output /tmp/brief.json
     python pipeline/refresh_brief.py --snapshot-fixtures           # save current DB → test_clusters.json
+
+    # On Air radio show (default audio path since 2026-09-18; --legacy-audio for edge-tts + old script):
+    python pipeline/refresh_brief.py --radio-only                  # regenerate ONLY the radio rundown + audio
+    python pipeline/refresh_brief.py --radio-only --dry-run        # rundown + validator report, no audio, no DB
+    python pipeline/refresh_brief.py --radio-only --rundown-file tests/fixtures/radio_rundown_2026-09-18.txt \
+        --render-dir /tmp/onair                                    # render a fixture rundown to a folder (no Gemini, no DB)
 """
 
 import argparse
 import json
+import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -104,6 +111,13 @@ def _snapshot_fixtures(editions: list[str]) -> None:
     print(f"Saved {len(clean)} clusters to {_FIXTURES_PATH}")
 
 
+def use_radio_only_dry(args) -> bool:
+    """--radio-only never falls back to the legacy synthesis: the caller asked
+    for the radio show specifically, and a silent edge-tts render would hide
+    a Kokoro/rundown failure."""
+    return bool(getattr(args, "radio_only", False))
+
+
 def _get_current_brief(edition: str) -> dict | None:
     """Fetch the current brief for an edition."""
     from utils.supabase_client import supabase
@@ -126,6 +140,14 @@ def main():
                         help="Load clusters from test_clusters.json instead of live DB")
     parser.add_argument("--output", type=str, default=None,
                         help="Write output + quality report to this JSON file (implies --dry-run)")
+    parser.add_argument("--radio-only", action="store_true",
+                        help="Only regenerate the On Air rundown + audio (keeps TL;DR + opinion)")
+    parser.add_argument("--legacy-audio", action="store_true",
+                        help="Use the legacy edge-tts path (brief's own audio script) instead of the radio show")
+    parser.add_argument("--rundown-file", type=str, default=None,
+                        help="Use this rundown text instead of calling Gemini (fixtures / offline renders)")
+    parser.add_argument("--render-dir", type=str, default=None,
+                        help="Render the radio show into this folder instead of the static site (implies no DB write)")
     parser.add_argument("--snapshot-fixtures", action="store_true",
                         help="Save current DB clusters to test_clusters.json and exit")
     args = parser.parse_args()
@@ -174,7 +196,15 @@ def main():
         current = None if args.dry_run else _get_current_brief(edition)
 
         # --- TL;DR + Audio ---
-        if not args.opinion_only:
+        if args.radio_only:
+            brief = {}
+            if current:
+                for k in ("tldr_headline", "tldr_text", "audio_script", "top_cluster_ids", "opinion_text",
+                          "opinion_headline", "opinion_audio_script", "opinion_lean", "opinion_cluster_id"):
+                    brief[k] = current.get(k)
+            elif not args.dry_run and not args.render_dir:
+                print("  No current brief to attach the radio show to")
+        elif not args.opinion_only:
             print("\n[2/4] Generating TL;DR + audio script via Gemini...")
             briefs = generate_daily_briefs(all_clusters, {}, edition_sections=[edition])
             brief = briefs.get(edition, {})
@@ -202,7 +232,7 @@ def main():
                 brief["top_cluster_ids"] = current.get("top_cluster_ids", [])
 
         # --- Opinion ---
-        if not args.tldr_only:
+        if not args.tldr_only and not args.radio_only:
             print(f"\n[3/4] Generating {today_lean.upper()} opinion editorial...")
             opinion_cluster = _select_opinion_cluster(all_clusters, edition)
             if opinion_cluster:
@@ -243,8 +273,43 @@ def main():
 
         # --- Audio ---
         audio_result = None
-        if not args.no_audio and not args.opinion_only and not args.dry_run and brief.get("audio_script"):
-            print("\n[4/4] Synthesizing audio via Gemini Flash TTS...")
+        radio_result = None
+        use_radio = not args.legacy_audio and os.environ.get("VOID_RADIO_FORMAT", "1").strip().lower() not in ("0", "false", "no")
+        if use_radio and not args.no_audio and not args.opinion_only and (not args.dry_run or args.render_dir or args.rundown_file):
+            print("\n[4/4] On Air radio show...")
+            from briefing.radio_script_generator import generate_radio_rundown, parse_rundown, validate_rundown, RundownContext
+            from briefing.radio_producer import produce_radio_show, permalinks_from_archive
+            from briefing.spoken_text import spoken_date
+            top = [c for c in all_clusters if edition in (c.get("sections") or [edition])][:20]
+            editorial = brief.get("opinion_audio_script")
+            if args.rundown_file:
+                rundown = parse_rundown(Path(args.rundown_file).read_text(encoding="utf-8"))
+                report = validate_rundown(rundown, RundownContext(top20=top, has_editorial=bool(editorial),
+                                                                  date_spoken=spoken_date(datetime.now(timezone.utc))))
+                print(f"  Rundown from file: {rundown.words} words, passed={report.passed}")
+                for f in report.findings:
+                    print(f"    {f.id} {f.level:4} [{f.segment}] {f.detail[:110]}")
+            else:
+                rundown, report, label = generate_radio_rundown(top, has_editorial=bool(editorial))
+            edition_output["radio_rundown"] = rundown.to_text() if rundown else None
+            edition_output["radio_report"] = report.as_dict() if report else None
+            if rundown is not None and not (args.dry_run and not args.render_dir):
+                radio_result = produce_radio_show(
+                    rundown, editorial, edition, opinion_headline=brief.get("opinion_headline"),
+                    permalinks=permalinks_from_archive(), out_dir=args.render_dir,
+                )
+                if radio_result:
+                    print(f"  Radio: {radio_result.duration_seconds}s, {len(radio_result.chapters)} chapters, "
+                          f"{radio_result.file_size / 1024:.0f} KB, engine {radio_result.engine} -> {radio_result.audio_url}")
+                    brief["audio_script"] = radio_result.audio_script
+                    edition_output["radio_chapters"] = radio_result.chapters
+                    edition_output["radio_timing"] = radio_result.timing
+                else:
+                    print("  Radio show failed; falling back to the legacy audio path")
+            elif rundown is None:
+                print("  No usable rundown; falling back to the legacy audio path")
+        if radio_result is None and not use_radio_only_dry(args) and not args.no_audio and not args.opinion_only and not args.dry_run and brief.get("audio_script"):
+            print("\n[4/4] Synthesizing audio (legacy edge-tts path)...")
             try:
                 from briefing.audio_producer import produce_audio
                 voices = get_voices_for_today(edition)
@@ -266,7 +331,7 @@ def main():
             print(f"\n[4/4] Audio: {reason}")
 
         # --- Store to DB (skip in dry-run) ---
-        if args.dry_run:
+        if args.dry_run or args.render_dir:
             print("\n  DB write: skipped (dry-run)")
             continue
 
@@ -290,6 +355,9 @@ def main():
                           "audio_voice", "audio_voice_label", "opinion_start_seconds"):
                 if current.get(field):
                     row[field] = current[field]
+        if radio_result:
+            row.update(radio_result.as_row_fields())
+            row["audio_script"] = radio_result.audio_script
         elif audio_result:
             voices = get_voices_for_today(edition)
             row["audio_url"] = audio_result["audio_url"]

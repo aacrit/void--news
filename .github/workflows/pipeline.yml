@@ -45,9 +45,26 @@ jobs:
           cache: 'pip'
           cache-dependency-path: pipeline/requirements.txt
       - name: Install system dependencies
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg espeak-ng
       - name: Install dependencies
         run: pip install -r pipeline/requirements.txt
+      # ── On Air voices: Kokoro-82M in its own venv (numpy 2) + pinned model files ──
+      - name: Cache Kokoro model files
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/void-kokoro
+          key: kokoro-${{ hashFiles('pipeline/briefing/kokoro.lock.json') }}
+      - name: Cache TTS venv
+        id: tts-venv
+        uses: actions/cache@v4
+        with:
+          path: .venv-tts
+          key: venv-tts-py3.11-${{ hashFiles('pipeline/requirements-tts.txt') }}
+      - name: Build TTS venv (cache miss)
+        if: steps.tts-venv.outputs.cache-hit != 'true'
+        run: python -m venv .venv-tts && .venv-tts/bin/pip install -q -r pipeline/requirements-tts.txt
+      - name: Fetch Kokoro model files (verified against kokoro.lock.json)
+        run: python pipeline/briefing/kokoro_assets.py
       - name: Install Playwright browser
         run: playwright install chromium --with-deps
       - name: Cache spaCy model
@@ -115,6 +132,14 @@ jobs:
           # audio_producer._write_audio_static. Set to "1" to re-park.
           DISABLE_AUDIO: "0"
           DISABLE_ANTHROPIC: "1"
+          # On Air radio show (2026-09-18): Kokoro voices via the worker venv,
+          # edge-tts only as automatic fallback. VOID_RADIO_FORMAT=0 restores
+          # the legacy single-script edge-tts path; VOID_TTS_ENGINE=edge keeps
+          # the radio format on edge-tts.
+          VOID_RADIO_FORMAT: "1"
+          VOID_TTS_ENGINE: kokoro
+          VOID_KOKORO_PYTHON: .venv-tts/bin/python
+          VOID_TTS_DEADLINE_SECONDS: "1500"
         run: |
           ARGS=""
           if [ "${{ inputs.recluster_only }}" = "true" ]; then
@@ -137,7 +162,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add frontend/build-data frontend/public/data frontend/public/audio
+          git add frontend/build-data frontend/public/data frontend/public/audio frontend/public/podcast-*.xml
           if git diff --cached --quiet; then
             echo "No static-data changes to commit."
             exit 0

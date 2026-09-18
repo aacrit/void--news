@@ -451,6 +451,95 @@
   background: var(--voice-accent-ghost);
 }
 
+/* -- Chapter rail (radio-show episodes) -----------------------------------
+   Replaces the News / Opinion chips when the episode carries a running order.
+   One line inside the console: what is on air, where we are in the show, and
+   a standing jump to the editorial. The rail lives on the console surface, so
+   it reads --console-fg, not the page foreground. */
+.onair__rail {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 34px;
+  min-width: 0;
+}
+.onair__rail-now {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  min-width: 0;
+  flex: 1;
+}
+.onair__rail-kind {
+  font-family: var(--font-barlow), sans-serif;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--console-fg) 45%, transparent);
+  white-space: nowrap;
+  flex: none;
+}
+.onair__rail-title {
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: 0.9rem;
+  line-height: 1.25;
+  font-weight: 700;
+  color: var(--console-fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+.onair__rail-title--between {
+  font-family: var(--font-barlow), sans-serif;
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--console-fg) 55%, transparent);
+}
+.onair__rail-count {
+  font-family: var(--font-ibm-mono), monospace;
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
+  color: color-mix(in srgb, var(--console-fg) 55%, transparent);
+  white-space: nowrap;
+  flex: none;
+}
+.onair__rail-jump {
+  flex: none;
+  min-height: 30px;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid color-mix(in srgb, var(--console-fg) 16%, transparent);
+  border-radius: 8px;
+  background: transparent;
+  color: color-mix(in srgb, var(--console-fg) 62%, transparent);
+  font-family: var(--font-barlow), sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.onair__rail-jump:hover { color: var(--oa-accent); }
+.onair__rail-jump--on {
+  color: var(--oa-amber);
+  border-color: color-mix(in srgb, var(--oa-amber) 45%, transparent);
+  background: color-mix(in srgb, var(--oa-amber) 10%, transparent);
+}
+.onair__rail-jump:focus-visible {
+  outline: 2px solid var(--oa-accent);
+  outline-offset: 2px;
+}
+
+/* Coarse pointers: the rail jump is a real target (WCAG 2.5.5). */
+@media (pointer: coarse) {
+  .onair__rail-jump { min-height: 44px; min-width: 44px; }
+  .onair__rail { min-height: 44px; }
+}
+
 .onair__seek {
   position: relative;
   height: 20px;
@@ -496,6 +585,17 @@
   z-index: 1;
   pointer-events: none;
 }
+/* Chapter marks. The current chapter's mark is the taller, brighter one; the
+   editorial keeps the amber filament colour so the firewall reads at a glance.
+   Bias colours are never used here — this is audio structure, not lean. */
+.onair__seek-mark--on {
+  height: 16px;
+  width: 2.5px;
+  background: var(--oa-accent);
+  box-shadow: 0 0 6px var(--voice-accent-glow);
+}
+.onair__seek-mark--ed { background: var(--oa-amber); }
+
 .onair__seek-input {
   position: absolute;
   inset: 0;
@@ -580,6 +680,122 @@
 }
 
 /* ===========================================================================
+   RUNNING ORDER — the show's chapters, as a seekable list
+   Reads as a newspaper contents column: mono timecode gutter, editorial
+   headline, condensed kind label. The row seeks; the "Read" anchor is the only
+   thing that navigates.
+   =========================================================================== */
+.onair__runorder { margin-top: 1.75rem; }
+.onair__runorder-h {
+  font-family: var(--font-barlow), sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 1.1rem;
+  margin: 0 0 0.5rem;
+}
+.onair__chaps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.onair__chap {
+  display: flex;
+  align-items: stretch;
+  gap: 0.4rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.onair__chap:last-child { border-bottom: none; }
+.onair__chap-seek {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  padding: 0.6rem 0.4rem;
+  min-height: 44px;
+  background: none;
+  border: none;
+  border-radius: 6px;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.15s var(--ease-cinematic, ease);
+}
+.onair__chap-seek:hover { background: var(--bg-elevated); }
+.onair__chap-seek:focus-visible {
+  outline: 2px solid var(--oa-accent);
+  outline-offset: -2px;
+}
+.onair__chap--on { background: var(--voice-accent-ghost); }
+.onair__chap-time {
+  flex: none;
+  font-family: var(--font-ibm-mono), monospace;
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--fg-muted);
+  min-width: 3.1ch;
+}
+.onair__chap--on .onair__chap-time { color: var(--oa-accent); }
+.onair__chap-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+}
+.onair__chap-title {
+  font-family: var(--font-playfair), Georgia, serif;
+  font-size: 0.92rem;
+  line-height: 1.3;
+  font-weight: 700;
+  color: var(--fg-primary);
+}
+.onair__chap-sub {
+  font-size: 0.75rem;
+  line-height: 1.35;
+  color: var(--fg-tertiary);
+}
+.onair__chap-kind {
+  flex: none;
+  align-self: center;
+  font-family: var(--font-barlow), sans-serif;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  white-space: nowrap;
+}
+.onair__chap-link {
+  flex: none;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 0.5rem;
+  min-height: 44px;
+  font-family: var(--font-barlow), sans-serif;
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--fg-tertiary);
+  text-decoration: none;
+  border-left: 1px solid var(--border-subtle);
+}
+.onair__chap-link:hover {
+  color: var(--oa-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.onair__chap-link:focus-visible {
+  outline: 2px solid var(--oa-accent);
+  outline-offset: 2px;
+}
+
+/* ===========================================================================
    ARCHIVE — previous broadcasts (dense secondary list)
    =========================================================================== */
 .onair__archive { margin-top: 2rem; }
@@ -659,6 +875,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .onair__chap-seek,
+  .onair__rail-jump { transition: none; }
+  .onair__seek-mark--on { box-shadow: none; }
   .onair__dot--live { animation: none; }
   .onair__status--live .onair__status-dot { animation: none; opacity: 1; }
   .onair__vu--active .onair__vu-bar { animation: none !important; height: 32%; opacity: 0.55; }

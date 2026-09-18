@@ -59,7 +59,13 @@ jobs:
         id: verify
         run: |
           bash scripts/verify-production.sh "${{ github.event.inputs.url || 'https://news.voidvision.org/' }}" | tee verify_output.txt
-          echo "exit=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+          page_exit=${PIPESTATUS[0]}
+          # On Air served-audio gate (2026-09-18): the MP3 resolves, chapters are
+          # real and monotonic, the sidecar matches, the sign-on is Void's own.
+          echo "--- On Air audio ---" | tee -a verify_output.txt
+          python scripts/verify_audio.py "${{ github.event.inputs.url || 'https://news.voidvision.org/' }}" | tee -a verify_output.txt
+          audio_exit=${PIPESTATUS[0]}
+          if [ "$page_exit" != "0" ] || [ "$audio_exit" != "0" ]; then echo "exit=1" >> "$GITHUB_OUTPUT"; else echo "exit=0" >> "$GITHUB_OUTPUT"; fi
 
       - name: Open / refresh tracking issue on failure
         if: ${{ steps.verify.outputs.exit != '0' }}

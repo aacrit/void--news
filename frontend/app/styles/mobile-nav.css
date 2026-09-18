@@ -882,6 +882,22 @@
     flex-shrink: 0;
   }
 
+  /* On a chaptered broadcast the strip names what is on air. It is the only
+     elastic item in the 44px strip, so it truncates instead of pushing the
+     play button off the edge. */
+  .mmp__label--chapter {
+    font-family: var(--font-editorial);
+    font-weight: 700;
+    font-size: var(--text-sm);
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--fg-secondary);
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .mmp__spacer {
     flex: 1;
   }

@@ -40,7 +40,7 @@ jobs:
         run: |
           cd frontend && npm ci
           npx next build || npx next build || npx next build
-          node test/labels.test.mjs
+          npm test
 
       # 2026-09-06: tests/ was run by nothing. test_verify_gate.py was RED
       # (its clean fixture predated MIN_SUMMARY_CHARS=300) and nobody knew,
@@ -60,6 +60,7 @@ jobs:
           python pipeline/validation/test_academic_artifact_filter.py
           python tests/test_summary_hygiene_parity.py
           python pipeline/validation/test_disaster_severity.py
+          python tests/test_radio_script.py
 
   # End-to-end run of the editorial half of the pipeline (8c through 8f plus
   # the static export) against a synthetic state DB built from the committed
@@ -89,6 +90,48 @@ jobs:
         run: python -m spacy download en_core_web_sm
       - name: Run editorial-stage harness
         run: python tests/test_editorial_stage.py
+
+  # On Air radio show: assembly with a fake engine (timeline, chapters, music
+  # placement, ID3 + sidecar, loudness via ffmpeg) and a real Kokoro timing
+  # bench so a slow or broken voice engine is caught here, not by the 11:00
+  # UTC show. ~3 min warm (venv + model cached).
+  radio-audio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg espeak-ng
+      - name: Install audio dependencies
+        run: pip install --quiet "numpy~=1.26.4" pydub mutagen "edge-tts>=6.1.0"
+      # ── On Air voices: Kokoro-82M in its own venv (numpy 2) + pinned model files ──
+      - name: Cache Kokoro model files
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/void-kokoro
+          key: kokoro-${{ hashFiles('pipeline/briefing/kokoro.lock.json') }}
+      - name: Cache TTS venv
+        id: tts-venv
+        uses: actions/cache@v4
+        with:
+          path: .venv-tts
+          key: venv-tts-py3.11-${{ hashFiles('pipeline/requirements-tts.txt') }}
+      - name: Build TTS venv (cache miss)
+        if: steps.tts-venv.outputs.cache-hit != 'true'
+        run: python -m venv .venv-tts && .venv-tts/bin/pip install -q -r pipeline/requirements-tts.txt
+      - name: Fetch Kokoro model files (verified against kokoro.lock.json)
+        run: python pipeline/briefing/kokoro_assets.py
+      - name: Assembly harness (fake engine)
+        run: python tests/test_radio_assembly.py
+      - name: Kokoro timing bench
+        env:
+          VOID_TTS_ENGINE: kokoro-only
+          VOID_KOKORO_PYTHON: .venv-tts/bin/python
+          VOID_TTS_RTF_BUDGET: "2.0"
+        run: python pipeline/briefing/tts_bench.py --engine kokoro-only
 
   # Mirrors validate-bias.yml — duplicated here because branch protection is
   # not configured and the merge job below can only `needs:` jobs in this
@@ -162,7 +205,7 @@ jobs:
           fi
 
   auto-merge:
-    needs: [build-check, validate-bias, validate-clustering, editorial-stage]
+    needs: [build-check, validate-bias, validate-clustering, editorial-stage, radio-audio]
     runs-on: ubuntu-latest
     timeout-minutes: 10
     # Serialize ALL merges to main across branches.

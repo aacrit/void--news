@@ -763,7 +763,8 @@ def _fresh_supabase_client():
     return create_client(url, key)
 
 
-def _write_audio_static(audio_bytes: bytes, edition: str) -> Optional[str]:
+def _write_audio_static(audio_bytes: bytes, edition: str,
+                        sidecars: dict[str, bytes] | None = None) -> Optional[str]:
     """Cloudflare stack: write the MP3 into the deployed static site instead of
     Supabase Storage. Served from the Pages CDN at /audio/... (zero egress); the
     pipeline commits frontend/public/audio alongside the other static data.
@@ -789,9 +790,20 @@ def _write_audio_static(audio_bytes: bytes, edition: str) -> Optional[str]:
                 old.unlink()
             except OSError:
                 pass
-        fname = f"{now.strftime('%Y-%m-%d')}-{slot}.mp3"
+        stem = f"{now.strftime('%Y-%m-%d')}-{slot}"
+        fname = f"{stem}.mp3"
         (out_dir / fname).write_bytes(audio_bytes)
         (out_dir / "latest.mp3").write_bytes(audio_bytes)
+        # Sidecars (e.g. ".chapters.json") ride next to the MP3 under the same
+        # stem + a latest.* copy, rotated on the same 2-file window.
+        for suffix, data in (sidecars or {}).items():
+            for old in sorted(out_dir.glob(f"20??-??-??-??{suffix}"))[:-2]:
+                try:
+                    old.unlink()
+                except OSError:
+                    pass
+            (out_dir / f"{stem}{suffix}").write_bytes(data)
+            (out_dir / f"latest{suffix}").write_bytes(data)
         fp = hashlib.md5(audio_bytes[:1024]).hexdigest()[:8]
         print(f"  [audio] wrote static /audio/{edition}/{fname} ({len(audio_bytes)//1024} KB)")
         return f"/audio/{edition}/{fname}?v={fp}"

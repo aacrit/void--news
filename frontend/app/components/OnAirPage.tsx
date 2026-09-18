@@ -4,6 +4,12 @@ import { useEffect, useMemo, useState } from "react";
 import { useAudio, type EpisodeMeta } from "./AudioProvider";
 import { hapticLight, hapticMicro } from "../lib/haptics";
 import { splitBriefParagraphs } from "../lib/briefText";
+import {
+  chapterKindLabel,
+  chapterMarks,
+  findEditorialIndex,
+  formatChapterTime,
+} from "../lib/chapters";
 import { fetchLastPipelineRun } from "../lib/supabase";
 import NavBar from "./NavBar";
 import ScaleIcon from "./ScaleIcon";
@@ -115,10 +121,10 @@ export default function OnAirPage() {
   const inOpinion = opinionStart != null && a.currentTime >= opinionStart;
 
   const episodes = a.previousEpisodes;
-  // The roster is locked to two voices (Brian + Ava). The stored
-  // audio_voice_label can carry a stale count from the old three-voice era
-  // ("Three voices"). Render the truthful count instead of trusting that field.
-  const voiceLabel = "Two voices";
+  // The stored label is the truth about who read the episode; "Two voices" is
+  // only the fallback for a row that predates the field. Hosts are no longer
+  // named, so the count is all the dateline carries.
+  const voiceLabel = brief?.audio_voice_label || "Two voices";
 
   const editionLabel = brief?.edition
     ? brief.edition.charAt(0).toUpperCase() + brief.edition.slice(1)
@@ -127,6 +133,20 @@ export default function OnAirPage() {
 
   const leanKey = (brief?.opinion_lean || "").toLowerCase();
   const leanLabel = LEAN_LABEL[leanKey] || null;
+
+  /* ---- Chapter rail ----
+     A chaptered episode replaces the two-tab News / Opinion group with the
+     show's real running order. Legacy episodes (and weekly / history) carry no
+     chapters and keep the original tabs untouched. */
+  const chapters = a.chapters;
+  const hasChapters = chapters.length > 0;
+  const chapIndex = a.currentChapterIndex;
+  const currentChapter = chapIndex >= 0 ? chapters[chapIndex] : null;
+  const marks = useMemo(
+    () => chapterMarks(chapters, displayDuration),
+    [chapters, displayDuration]
+  );
+  const editorialIndex = useMemo(() => findEditorialIndex(chapters), [chapters]);
 
   const vuBars = useMemo(() => Array.from({ length: VU_BARS }, (_, i) => i), []);
 
@@ -278,39 +298,84 @@ export default function OnAirPage() {
                 </button>
               </div>
 
-              {/* Seek — News / Opinion chapters + bar + chapter mark */}
+              {/* Seek — the running order when the episode is chaptered, the
+                  legacy News / Opinion pair when it is not. */}
               <div className="onair__seekwrap">
-                {opinionStart != null && (
-                  <div className="onair__sections" role="group" aria-label="Chapters">
-                    <button
-                      type="button"
-                      className={`onair__section${!inOpinion ? " onair__section--on" : ""}`}
-                      onClick={() => {
-                        hapticMicro();
-                        a.seekTo(0);
-                      }}
-                    >
-                      News
-                    </button>
-                    <button
-                      type="button"
-                      className={`onair__section${inOpinion ? " onair__section--on" : ""}`}
-                      onClick={() => {
-                        hapticMicro();
-                        a.seekTo(opinionStart);
-                      }}
-                    >
-                      Opinion
-                    </button>
+                {hasChapters ? (
+                  <div className="onair__rail">
+                    <span className="onair__rail-now" title={currentChapter?.title || undefined}>
+                      {currentChapter ? (
+                        <>
+                          {chapterKindLabel(currentChapter) && (
+                            <span className="onair__rail-kind">
+                              {chapterKindLabel(currentChapter)}
+                            </span>
+                          )}
+                          <span className="onair__rail-title">{currentChapter.title}</span>
+                        </>
+                      ) : (
+                        <span className="onair__rail-title onair__rail-title--between">
+                          On air
+                        </span>
+                      )}
+                    </span>
+                    <span className="onair__rail-count" aria-label={`Chapter ${chapIndex + 1} of ${chapters.length}`}>
+                      {chapIndex >= 0 ? chapIndex + 1 : "\u2013"} / {chapters.length}
+                    </span>
+                    {editorialIndex >= 0 && (
+                      <button
+                        type="button"
+                        className={`onair__rail-jump${chapIndex === editorialIndex ? " onair__rail-jump--on" : ""}`}
+                        onClick={() => {
+                          hapticMicro();
+                          a.seekToChapter(editorialIndex);
+                        }}
+                      >
+                        Editorial
+                      </button>
+                    )}
                   </div>
+                ) : (
+                  opinionStart != null && (
+                    <div className="onair__sections" role="group" aria-label="Chapters">
+                      <button
+                        type="button"
+                        className={`onair__section${!inOpinion ? " onair__section--on" : ""}`}
+                        onClick={() => {
+                          hapticMicro();
+                          a.seekTo(0);
+                        }}
+                      >
+                        News
+                      </button>
+                      <button
+                        type="button"
+                        className={`onair__section${inOpinion ? " onair__section--on" : ""}`}
+                        onClick={() => {
+                          hapticMicro();
+                          a.seekTo(opinionStart);
+                        }}
+                      >
+                        Opinion
+                      </button>
+                    </div>
+                  )
                 )}
 
                 <div className="onair__seek">
                   <div className="onair__seek-bar" aria-hidden="true">
                     <div className="onair__seek-fill" style={{ width: `${progress}%` }} />
-                    {opinionPct != null && (
-                      <span className="onair__seek-mark" style={{ left: `${opinionPct}%` }} />
-                    )}
+                    {hasChapters
+                      ? marks.map((m) => (
+                          <span
+                            key={m.index}
+                            className={`onair__seek-mark${m.index === chapIndex ? " onair__seek-mark--on" : ""}${m.chapter.kind === "editorial" ? " onair__seek-mark--ed" : ""}`}
+                            style={{ left: `${m.pct}%` }}
+                          />
+                        ))
+                      : opinionPct != null && (
+                          <span className="onair__seek-mark" style={{ left: `${opinionPct}%` }} />
+                        )}
                   </div>
                   <input
                     className="onair__seek-input"
@@ -330,6 +395,55 @@ export default function OnAirPage() {
                 </div>
               </div>
             </section>
+
+            {/* Running order — the show's chapters, in play order. Clicking a
+                row seeks; a story that has been archived carries a small
+                secondary link to its Deep Dive so the row itself stays a seek
+                control rather than becoming a navigation trap. */}
+            {hasChapters && (
+              <section className="onair__runorder" aria-label="Running order">
+                <h3 className="onair__runorder-h">Running order</h3>
+                <ol className="onair__chaps">
+                  {chapters.map((c, i) => {
+                    const on = i === chapIndex;
+                    const kind = chapterKindLabel(c);
+                    return (
+                      <li
+                        key={`${c.startTime}-${i}`}
+                        className={`onair__chap${on ? " onair__chap--on" : ""}`}
+                      >
+                        <button
+                          type="button"
+                          className="onair__chap-seek"
+                          onClick={() => {
+                            hapticMicro();
+                            a.seekToChapter(i);
+                          }}
+                          aria-current={on ? "true" : undefined}
+                        >
+                          <span className="onair__chap-time">
+                            {formatChapterTime(c.startTime)}
+                          </span>
+                          <span className="onair__chap-body">
+                            <span className="onair__chap-title">{c.title}</span>
+                            {c.subtitle && (
+                              <span className="onair__chap-sub">{c.subtitle}</span>
+                            )}
+                          </span>
+                          {kind && <span className="onair__chap-kind">{kind}</span>}
+                        </button>
+                        {c.url && (
+                          <a className="onair__chap-link" href={c.url}>
+                            Read
+                            <span className="sr-only"> the full story: {c.title}</span>
+                          </a>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ol>
+              </section>
+            )}
 
             {/* Show notes */}
             <section className="onair__notes" aria-label="Show notes">

@@ -20,12 +20,14 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'Mode: full (TL;DR + opinion + audio), text (TL;DR + opinion, no audio), tldr (TL;DR only), opinion (opinion only)'
+        description: 'Mode: full (TL;DR + opinion + radio show), radio (radio rundown + audio only), radio-dry-run (rundown + validator report, no audio, no DB), text (TL;DR + opinion, no audio), tldr (TL;DR only), opinion (opinion only)'
         required: false
         default: 'full'
         type: choice
         options:
           - full
+          - radio
+          - radio-dry-run
           - text
           - tldr
           - opinion
@@ -42,10 +44,30 @@ jobs:
           cache: 'pip'
           cache-dependency-path: pipeline/requirements.txt
       - name: Install system dependencies
-        if: inputs.mode == 'full'
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+        if: inputs.mode == 'full' || inputs.mode == 'radio'
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg espeak-ng
       - name: Install dependencies
         run: pip install -r pipeline/requirements.txt
+      # ── On Air voices: Kokoro-82M in its own venv (numpy 2) + pinned model files ──
+      - name: Cache Kokoro model files
+        if: inputs.mode == 'full' || inputs.mode == 'radio'
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/void-kokoro
+          key: kokoro-${{ hashFiles('pipeline/briefing/kokoro.lock.json') }}
+      - name: Cache TTS venv
+        if: inputs.mode == 'full' || inputs.mode == 'radio'
+        id: tts-venv
+        uses: actions/cache@v4
+        with:
+          path: .venv-tts
+          key: venv-tts-py3.11-${{ hashFiles('pipeline/requirements-tts.txt') }}
+      - name: Build TTS venv (cache miss)
+        if: (inputs.mode == 'full' || inputs.mode == 'radio') && steps.tts-venv.outputs.cache-hit != 'true'
+        run: python -m venv .venv-tts && .venv-tts/bin/pip install -q -r pipeline/requirements-tts.txt
+      - name: Fetch Kokoro model files (verified against kokoro.lock.json)
+        if: inputs.mode == 'full' || inputs.mode == 'radio'
+        run: python pipeline/briefing/kokoro_assets.py
       # ── Pipeline state DB (SQLite) — same restore path as pipeline.yml ──
       - name: Restore pipeline state DB
         id: state
@@ -83,7 +105,15 @@ jobs:
           # $0 posture: Gemini Flash handles the brief (Groq retired 2026-06-24).
           # Claude is retired at the source (claude_client.is_available).
           DISABLE_ANTHROPIC: "1"
-          DISABLE_AUDIO: "0"   # void --onair audio re-enabled (edge-tts, $0). Set "1" to re-park.
+          DISABLE_AUDIO: "0"   # On Air audio (Kokoro, $0). Set "1" to re-park.
+          # On Air radio show (2026-09-18): Kokoro voices via the worker venv,
+          # edge-tts only as automatic fallback. VOID_RADIO_FORMAT=0 restores
+          # the legacy single-script edge-tts path; VOID_TTS_ENGINE=edge keeps
+          # the radio format on edge-tts.
+          VOID_RADIO_FORMAT: "1"
+          VOID_TTS_ENGINE: kokoro
+          VOID_KOKORO_PYTHON: .venv-tts/bin/python
+          VOID_TTS_DEADLINE_SECONDS: "1500"
         run: |
           MODE="${{ inputs.mode }}"
           echo "Mode: ${MODE}"
@@ -91,6 +121,13 @@ jobs:
           case "${MODE}" in
             full)
               python pipeline/refresh_brief.py
+              ;;
+            radio)
+              python pipeline/refresh_brief.py --radio-only
+              ;;
+            radio-dry-run)
+              python pipeline/refresh_brief.py --radio-only --dry-run --output radio-dry-run.json
+              cat radio-dry-run.json
               ;;
             text)
               python pipeline/refresh_brief.py --no-audio
@@ -113,7 +150,7 @@ jobs:
           set -e
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add frontend/public/data frontend/public/audio
+          git add frontend/public/data frontend/public/audio frontend/public/podcast-*.xml
           if git diff --staged --quiet; then
             echo "No brief changes to commit."
             exit 0

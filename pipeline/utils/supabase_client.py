@@ -41,6 +41,27 @@ if _SQLITE_PATH:
         _c = sqlite3.connect(_SQLITE_PATH)
         _c.executescript(_schema.read_text(encoding="utf-8"))
         _c.commit()
+        # CREATE TABLE IF NOT EXISTS never adds a column to a table the cached
+        # pipeline_state.db already has, so additive columns are applied here
+        # with a guarded ALTER (SQLite has no ADD COLUMN IF NOT EXISTS).
+        _ADDITIVE_COLUMNS = {
+            "daily_briefs": {
+                "audio_chapters": "TEXT",       # radio show chapters (JSON), 2026-09-18
+                "news_start_seconds": "REAL",   # where STORY 1 begins, 2026-09-18
+            },
+        }
+        for _table, _cols in _ADDITIVE_COLUMNS.items():
+            try:
+                _have = {r[1] for r in _c.execute(f'PRAGMA table_info("{_table}")').fetchall()}
+            except sqlite3.Error:
+                _have = set()
+            if not _have:
+                continue
+            for _col, _type in _cols.items():
+                if _col not in _have:
+                    _c.execute(f'ALTER TABLE "{_table}" ADD COLUMN "{_col}" {_type}')
+                    print(f"  [db] added {_table}.{_col}")
+        _c.commit()
         _c.close()
 
     supabase = _create_sqlite_client(_SQLITE_PATH)
