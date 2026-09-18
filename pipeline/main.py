@@ -4287,3 +4287,17 @@ def main():
 
 if __name__ == "__main__":
     main()
+    # Hard-exit the moment all work is done. The scrape phase (Playwright /
+    # headless Chromium) can leave a lingering child process or a non-daemon
+    # driver thread alive, which blocks normal interpreter shutdown. On
+    # 2026-09-17 this wedged the job for ~2h after main() had already printed
+    # its final summary: the "Run pipeline" step never returned, so the
+    # downstream Export + Commit steps never ran and the site went stale, then
+    # GitHub killed the run at the 4h cap. main() reaching this line means every
+    # stage completed, so flush and os._exit(0) to guarantee a clean, immediate
+    # process exit that a hung child/thread can never block.
+    import os
+    import sys
+    sys.stdout.flush()
+    sys.stderr.flush()
+    os._exit(0)
