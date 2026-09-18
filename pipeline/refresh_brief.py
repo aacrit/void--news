@@ -193,7 +193,12 @@ def main():
         print(f"EDITION: {edition.upper()}")
         print(f"{'='*60}")
 
-        current = None if args.dry_run else _get_current_brief(edition)
+        # Reading the current brief is harmless in a dry run and the radio
+        # dry-run needs it (the editorial script decides the running order).
+        if args.fixtures or (args.dry_run and not args.radio_only):
+            current = None
+        else:
+            current = _get_current_brief(edition)
 
         # --- TL;DR + Audio ---
         if args.radio_only:
@@ -275,8 +280,8 @@ def main():
         audio_result = None
         radio_result = None
         use_radio = not args.legacy_audio and os.environ.get("VOID_RADIO_FORMAT", "1").strip().lower() not in ("0", "false", "no")
-        if use_radio and not args.no_audio and not args.opinion_only and (not args.dry_run or args.render_dir or args.rundown_file):
-            print("\n[4/4] On Air radio show...")
+        if use_radio and not args.no_audio and not args.opinion_only:
+            print("\n[4/4] On Air radio show..." + (" (dry run: rundown + validators only)" if args.dry_run and not args.render_dir else ""))
             from briefing.radio_script_generator import generate_radio_rundown, parse_rundown, validate_rundown, RundownContext
             from briefing.radio_producer import produce_radio_show, permalinks_from_archive
             from briefing.spoken_text import spoken_date
