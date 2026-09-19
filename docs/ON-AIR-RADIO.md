@@ -93,7 +93,7 @@ nothing else, so the opinion firewall is audible the moment it starts.
 
 | Role | Voice | Speed | Pan | Why |
 |---|---|---|---|---|
-| A, the anchor | `am_michael` | 1.08 | -7 % | lowest and most even of the best-trained American male voices; 162 wpm |
+| A, the anchor | `am_puck` | 1.00 | -7 % | light American, 112 Hz; reads 164 wpm on real rundown copy, so it needs no slowdown. The one voice that hits the worker's -1 dBFS clamp |
 | B, alternate stories | `af_nova` | 0.98 | +7 % | low female (159 Hz), a register contrast to A without the brightness of `af_heart` |
 | C, the editorial only | `af_heart` | 0.97 | centre | the roster's one A-grade voice; centred, because it speaks alone |
 
@@ -102,8 +102,12 @@ nothing else, so the opinion firewall is audible the moment it starts.
 Measured pitch and brightness across the English roster (same line, 2026-09-19)
 live in this session's voice samplers; the useful facts: `af_sky` (147 Hz,
 1954 Hz centroid) is the darkest well-behaved female voice, `am_onyx` (85 Hz)
-and `bm_lewis` (86 Hz) are the two documentary-deep males, and speed must be
-calibrated per voice because the roster ranges from 111 to 216 wpm at speed 1.
+and `bm_lewis` (86 Hz) are the two documentary-deep males, `am_michael` (the
+anchor until 2026-09-19) is darker than `am_puck` and reads 157 wpm at 1.08.
+Speed must be calibrated per voice, and against REAL rundown copy: absolute
+wpm swings about 30 % with the passage, so the four long turns of
+`tests/fixtures/radio_bench_turns.json` are the reference (a single short line
+over-counts, because its leading silence does not scale with speed).
 A voice can also be a BLEND of roster voices (weights summed over
 `get_voice_style`), which keeps a dark timbre while borrowing stability from a
 better-trained voice.
