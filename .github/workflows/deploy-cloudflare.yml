@@ -15,7 +15,10 @@ on:
     # 8f but never pushes code, so without this the prerendered feed goes
     # stale). The `if:` guard below only deploys when conclusion == 'success',
     # so a failed pipeline never publishes a stale or empty page.
-    workflows: ["Auto-merge Claude branches", "News Pipeline"]
+    # "Refresh: Daily Brief" -> a regenerated brief/On Air episode is committed
+    # by github-actions[bot], and a GITHUB_TOKEN push fires no `push` event, so
+    # without this the new MP3 sat on main undeployed (2026-09-19).
+    workflows: ["Auto-merge Claude branches", "News Pipeline", "Refresh: Daily Brief"]
     types: [completed]
   # Deterministic daily backstop. The "News Pipeline" workflow_run above is the
   # fast path (redeploys ~right after the run completes), but GitHub's
