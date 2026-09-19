@@ -39,13 +39,24 @@ import type {
   Severity,
 } from "./types";
 import { MOCK_EVENTS, REDACTED_EVENTS } from "./mockData";
+import { withHistoryAudio, withHistoryAudioAll } from "./audio";
+
+/* ── The audio edition ──
+   Which events have a produced mini documentary is recorded in
+   public/data/history-audio.json, not in any event row: the episodes are
+   published by pipeline/history/publish_audio.py and the manifest is the
+   record of what actually reached the CDN. It is applied at the two points
+   every event passes through, the row mapper and the mock fallback, so the
+   Listen button appears on exactly the events that have something to play
+   whichever source the page is reading. */
+const MOCK_WITH_AUDIO = withHistoryAudioAll(MOCK_EVENTS);
 
 /* ── Perspective color assignment ── */
 const COLORS: PerspectiveColor[] = ["a", "b", "c", "d", "e"];
 
 /* ── Fetch all published events (for landing, era, region pages) ── */
 export async function fetchHistoryEvents(): Promise<HistoricalEvent[]> {
-  if (!supabase) return MOCK_EVENTS;
+  if (!supabase) return MOCK_WITH_AUDIO;
 
   /* Timeout: fall back to mock data if Supabase is unreachable (paused/slow) */
   const timeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), 5000));
@@ -56,10 +67,10 @@ export async function fetchHistoryEvents(): Promise<HistoricalEvent[]> {
     .order("date_sort", { ascending: true });
 
   const result = await Promise.race([query, timeout]);
-  if (!result) return MOCK_EVENTS; /* Timed out */
+  if (!result) return MOCK_WITH_AUDIO; /* Timed out */
 
   const { data: events, error } = result;
-  if (error || !events || events.length === 0) return MOCK_EVENTS;
+  if (error || !events || events.length === 0) return MOCK_WITH_AUDIO;
 
   /* Batch-fetch perspectives for all events */
   const eventIds = events.map((e) => e.id);
@@ -101,7 +112,7 @@ export async function fetchHistoryEvents(): Promise<HistoricalEvent[]> {
 /* ── Fetch single event by slug (for event detail page) ── */
 export async function fetchHistoryEvent(slug: string): Promise<HistoricalEvent | null> {
   if (!supabase) {
-    return MOCK_EVENTS.find((e) => e.slug === slug) ?? null;
+    return MOCK_WITH_AUDIO.find((e) => e.slug === slug) ?? null;
   }
 
   const { data: event, error } = await supabase
@@ -113,7 +124,7 @@ export async function fetchHistoryEvent(slug: string): Promise<HistoricalEvent |
     .single();
 
   if (error || !event) {
-    return MOCK_EVENTS.find((e) => e.slug === slug) ?? null;
+    return MOCK_WITH_AUDIO.find((e) => e.slug === slug) ?? null;
   }
 
   const [{ data: perspectives }, { data: media }, { data: fwdConn }, { data: revConn }] =
@@ -155,7 +166,7 @@ export async function fetchHistoryEvent(slug: string): Promise<HistoricalEvent |
 
 /* ── Fetch by era ── */
 export async function fetchHistoryEventsByEra(era: string): Promise<HistoricalEvent[]> {
-  if (!supabase) return MOCK_EVENTS.filter((e) => e.era === era);
+  if (!supabase) return MOCK_WITH_AUDIO.filter((e) => e.era === era);
 
   const { data, error } = await supabase
     .from("history_events")
@@ -165,7 +176,7 @@ export async function fetchHistoryEventsByEra(era: string): Promise<HistoricalEv
     .order("date_sort", { ascending: true });
 
   if (error || !data || data.length === 0) {
-    return MOCK_EVENTS.filter((e) => e.era === era);
+    return MOCK_WITH_AUDIO.filter((e) => e.era === era);
   }
 
   /* For listing pages, skip full relation fetch — use summary data */
@@ -175,7 +186,7 @@ export async function fetchHistoryEventsByEra(era: string): Promise<HistoricalEv
 /* ── Fetch by region ── */
 export async function fetchHistoryEventsByRegion(region: string): Promise<HistoricalEvent[]> {
   if (!supabase) {
-    return MOCK_EVENTS.filter((e) => e.regions.includes(region as HistoryRegion));
+    return MOCK_WITH_AUDIO.filter((e) => e.regions.includes(region as HistoryRegion));
   }
 
   const { data, error } = await supabase
@@ -186,7 +197,7 @@ export async function fetchHistoryEventsByRegion(region: string): Promise<Histor
     .order("date_sort", { ascending: true });
 
   if (error || !data || data.length === 0) {
-    return MOCK_EVENTS.filter((e) => e.regions.includes(region as HistoryRegion));
+    return MOCK_WITH_AUDIO.filter((e) => e.regions.includes(region as HistoryRegion));
   }
 
   return data.map((row) => mapEventWithRelations(row, [], [], [], []));
@@ -289,7 +300,7 @@ function mapEventWithRelations(
       }))
     : [];
 
-  return {
+  return withHistoryAudio({
     id: row.id,
     slug: row.slug,
     title: row.title,
@@ -318,5 +329,6 @@ function mapEventWithRelations(
     published: row.is_published ?? false,
     audioUrl: row.audio_url ?? null,
     audioDuration: row.audio_duration_seconds ? Number(row.audio_duration_seconds) : null,
-  };
+    audioChapters: null,
+  });
 }

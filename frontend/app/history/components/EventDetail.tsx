@@ -472,6 +472,7 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
                     subtitle: event.subtitle,
                     audioUrl: event.audioUrl!,
                     durationSeconds: event.audioDuration ?? 0,
+                    chapters: event.audioChapters ?? null,
                   })
                 }
                 aria-label={`Listen to ${event.title}, ${event.perspectives.length} perspectives`}

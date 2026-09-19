@@ -157,6 +157,44 @@ is the one decision in the build that is expensive to reverse. R2 was already
 the flagged follow-up in CLAUDE.md for exactly this reason, and it lets the
 catalogue keep full 128k stereo instead of being degraded to fit a repo.
 
+## Delivery: how an episode reaches a reader
+
+Rendering an episode is not shipping it. The path from a rendered file to a
+playing Listen button is three things, and only the first is audio:
+
+1. `pipeline/history/publish_audio.py <slug> --from <render dir>` copies the
+   MP3 and its chapter sidecar into `frontend/public/audio/history/` and
+   records the episode in `frontend/public/data/history-audio.json`.
+2. `frontend/app/history/audio.ts` imports that manifest at BUILD time (it is
+   committed with the audio it describes, so a fetch would only make the
+   Listen button arrive late) and fills `audioUrl` / `audioDuration` /
+   `audioChapters` onto every event, in the row mapper and the fallback alike.
+   It is the only module that knows where the audio lives.
+3. The player already handles it: `playHistory` passes the chapters through
+   `coerceChapters`, so an episode gets the same chapter rail as On Air. A
+   History chapter carries `kind: "segment"`, which draws the title alone with
+   no "No. 3" or "Opinion" badge beside it.
+
+**The staged catalogue ships on the Pages CDN, not R2.** R2 is still the right
+answer for 78 episodes (~750 MB cannot be un-committed from git), but the
+bucket is not provisioned, and holding the finished episodes back until it is
+would mean a History page with no audio on it. Ten episodes is ~110 MB, which
+git carries. The manifest is what keeps that decision cheap: every consumer
+reads its `url`, so moving to R2 changes the strings `publish_audio.py` writes
+and nothing else. **Make the move before stage 4** — that is the point where
+committing is no longer reversible.
+
+`tests/test_history_audio.py` is the gate (in `auto-merge-claude.yml`): every
+manifest entry has its MP3 committed at the size and duration claimed, under
+the 25 MiB Cloudflare Pages per-file limit, naming a real event, with ordered
+chapters starting at zero; and every MP3 in the deploy tree is in the manifest,
+so audio cannot sit in git unreferenced by any page.
+
+Two things this does NOT do, deliberately: it does not lift the `/history/*`
+301 in `_redirects`, and it does not change where History gets its events
+(still Supabase-or-mock; the static-JSON rewrite is the separate piece of work
+that un-hides the section). The audio is ready and reachable ahead of both.
+
 ## Staging
 
 Each stage answers a different question and must be signed off before the next.

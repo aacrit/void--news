@@ -63,6 +63,15 @@
 /manifest.json
   Cache-Control: no-cache, must-revalidate
 
+# ── History audio editions — one file per event, stable for its lifetime ─
+# Each /audio/history/<slug>.mp3 is a finished 8-15 minute documentary; a
+# re-render overwrites it in place and the manifest's ?v= fingerprint changes
+# with it, so a long browser cache costs nothing and saves a reader 10-15 MB
+# on every replay. NOT /audio/* : the daily brief's latest.mp3 is rewritten
+# under the same name every run and must stay on the default short cache.
+/audio/history/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=2592000
+
 # ── HTML routes — short browser cache + stale-while-revalidate ──────────
 # 2026-06-01 egress fix: HomeContent.tsx fetches Supabase JSON on every
 # page load. Browser caching the HTML response means repeated visits
