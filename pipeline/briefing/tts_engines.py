@@ -37,7 +37,7 @@ except ImportError:  # pragma: no cover
     PYDUB_AVAILABLE = False
 
 SAMPLE_RATE = 24000
-Role = Literal["A", "B"]
+Role = Literal["A", "B", "C"]
 
 # Kokoro v1.0 roster picks (hexgrad VOICES.md grades):
 #   am_michael  C+  lowest and most even of the three best-trained American
@@ -45,21 +45,27 @@ Role = Literal["A", "B"]
 #   af_heart    A   the only A-grade voice; warm, clear, a full register
 #               contrast to Michael -> alternate stories + the editorial
 # Ear-test alternates: am_fenrir (brighter), af_bella (A-), bf_emma (British).
+# Three roles since 2026-09-19 (CEO): A anchors the news, B takes alternate
+# stories, C reads ONLY the editorial, so the opinion firewall is audible the
+# moment the voice changes.
 KOKORO_VOICES: dict[str, str] = {
     "A": os.environ.get("VOID_KOKORO_VOICE_A", "am_michael"),
-    "B": os.environ.get("VOID_KOKORO_VOICE_B", "af_heart"),
+    "B": os.environ.get("VOID_KOKORO_VOICE_B", "af_nova"),
+    "C": os.environ.get("VOID_KOKORO_VOICE_C", "af_heart"),
 }
 # Measured 2026-09-18 on a 78-word news paragraph: am_michael reads 155 wpm at
 # speed 1.0 and 163 at 1.08; af_heart reads 168 at 1.0. Per-voice speeds put
 # both in the 160-170 wpm news band (VOID_KOKORO_SPEED_A / _B override).
 KOKORO_SPEED: dict[str, float] = {
     "A": float(os.environ.get("VOID_KOKORO_SPEED_A", "1.08") or 1.08),
-    "B": float(os.environ.get("VOID_KOKORO_SPEED_B", "1.0") or 1.0),
+    "B": float(os.environ.get("VOID_KOKORO_SPEED_B", "0.98") or 0.98),   # af_nova reads 172 wpm at 1.0
+    "C": float(os.environ.get("VOID_KOKORO_SPEED_C", "0.97") or 0.97),   # the editorial sits a touch under the news pace
 }
 
 EDGE_VOICES: dict[str, str] = {
     "A": "en-US-AndrewMultilingualNeural",
     "B": "en-US-AvaMultilingualNeural",
+    "C": "en-US-EmmaMultilingualNeural",
 }
 EDGE_RATE = os.environ.get("VOID_EDGE_RATE", "+8%")
 
@@ -334,7 +340,7 @@ def synthesize_with_fallback(turns: list[TurnSpec], *, engines: list | None = No
             print(f"  [tts] {eng.name}: unavailable ({why})")
             continue
         print(f"  [tts] {eng.name}: synthesising {len(turns)} turns "
-              f"(A={eng.voice_id('A')}, B={eng.voice_id('B')})")
+              f"(A={eng.voice_id('A')}, B={eng.voice_id('B')}, C={eng.voice_id('C')})")
         res = eng.synthesize_batch(turns, deadline_s=deadline_s)
         cov = res.coverage(turns)
         missing_required = [i for i in (required or set()) if i not in res.audio]

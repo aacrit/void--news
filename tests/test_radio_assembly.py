@@ -52,7 +52,7 @@ class FakeEngine:
         return True, "ok"
 
     def voice_id(self, role):
-        return {"A": "fake_a", "B": "fake_b"}[role]
+        return {"A": "fake_a", "B": "fake_b", "C": "fake_c"}[role]
 
     def synthesize_batch(self, turns, *, deadline_s=0.0):
         self.calls += 1
@@ -84,7 +84,8 @@ def main() -> None:
     check(kinds.index("EDITORIAL") > kinds.index("FINALLY"), "editorial after the kicker")
     throw = next(s for s, m in turns if m["kind"] == "THROW")
     check(throw.text == THROW_LINE and throw.role == "A", "throw line is the constant, voice A")
-    check(all(s.role == "B" for s, m in turns if m["kind"] == "EDITORIAL"), "editorial is voice B")
+    check(all(s.role == "C" for s, m in turns if m["kind"] == "EDITORIAL"), "editorial is its own voice C")
+    check(not any(s.role == "C" for s, m in turns if m["kind"] != "EDITORIAL"), "voice C reads nothing but the editorial")
     verdicts = [m for _, m in turns if m["kind"] == "EDITORIAL" and m.get("verdict")]
     check(len(verdicts) == 1, f"one one-sentence verdict paragraph detected ({len(verdicts)})")
     check(not any(ch.isdigit() for s, _ in turns for ch in s.text), "no digits reach the engine")
@@ -184,7 +185,7 @@ def main() -> None:
                 sc = json.loads(side.read_text(encoding="utf-8"))
                 check(sc["version"] == "1.2.0" and len(sc["chapters"]) == len(result.chapters), "sidecar round-trips")
                 check(all(ch["startTime"] == r["startTime"] for ch, r in zip(sc["chapters"], result.chapters)), "sidecar times match")
-            check(result.engine == "fake" and result.voices == "fake:fake_a+fake_b", f"voices label {result.voices}")
+            check(result.engine == "fake" and result.voices == "fake:fake_a+fake_b+fake_c", f"voices label {result.voices}")
             check(result.opinion_start_seconds == result.chapters[-1]["startTime"], "opinion_start = editorial chapter")
             check(abs(result.duration_seconds - tl.total_ms / 1000) < 0.2, f"duration {result.duration_seconds} vs {tl.total_ms / 1000}")
             try:

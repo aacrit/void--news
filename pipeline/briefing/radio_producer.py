@@ -6,7 +6,7 @@ original music cues, broadcast post-production, chapters.
 Running order (see radio_script_generator):
 
     ident → OPEN → MENU (menu bed) → STORY 1-4 → BRIEFS → FINALLY
-          → throw line → stab → EDITORIAL (voice B) → CLOSE (close bed) → outro
+          → throw line → stab → EDITORIAL (voice C, centred) → CLOSE (close bed) → outro
 
 Every spoken line is one synthesis job; the timeline is built from the audio
 lengths and a single table of gaps (RADIO_GAPS), so chapter offsets are exact
@@ -122,7 +122,7 @@ LEGACY_FALLBACK = {"ident": "ident.wav", "stab": "news_to_opinion.wav", "outro":
 LOUDNESS_I = -16.0
 LOUDNESS_TP = -1.0
 LOUDNESS_LRA = 11.0
-PAN = 0.07                      # A slightly left, B slightly right
+PAN = 0.07                      # A slightly left, B slightly right, C centred (it speaks alone)
 MAX_FILE_SIZE = 12 * 1024 * 1024
 BITRATE_LADDER = (("128k", 2), ("96k", 2), ("96k", 1))
 
@@ -188,7 +188,7 @@ class RadioResult:
             "news_start_seconds": self.news_start_seconds,
             "audio_chapters": self.chapters,
             "audio_voice": self.voices,
-            "audio_voice_label": "Two voices",
+            "audio_voice_label": "Three voices",
         }
 
 
@@ -238,7 +238,7 @@ def build_turns(rundown: RadioRundown, editorial_script: str | None) -> list[tup
         add("A", THROW_LINE, {"kind": "THROW", "segment_idx": si})
         for p in _editorial_paragraphs(editorial_script):
             verdict = len(_SENT_RE.findall(p)) <= 1 and len(p.split()) <= 18
-            add("B", p, {"kind": "EDITORIAL", "segment_idx": si + 1, "verdict": verdict})
+            add("C", p, {"kind": "EDITORIAL", "segment_idx": si + 1, "verdict": verdict})
     if close_seg:
         si = len(order) + 2
         for t in close_seg.turns:
@@ -379,7 +379,7 @@ def _asset(key: str) -> Optional["AudioSegment"]:
 
 
 def render_voice_buses(tl: Timeline, audio: dict[int, "AudioSegment"]) -> dict[str, "AudioSegment"]:
-    buses = {"A": _silent(tl.total_ms), "B": _silent(tl.total_ms)}
+    buses = {r: _silent(tl.total_ms) for r in ("A", "B", "C")}
     for c in tl.cues:
         buses[c.speaker] = buses[c.speaker].overlay(audio[c.idx], position=c.start_ms)
     return buses
@@ -678,9 +678,10 @@ def produce_radio_show(
         buses = render_voice_buses(tl, res.audio)
         a = process_voice_bus(buses["A"], -PAN, work, "A")
         b = process_voice_bus(buses["B"], +PAN, work, "B")
+        c = process_voice_bus(buses["C"], 0.0, work, "C")
         music, used = render_music_bus(tl)
         print(f"  [radio] music cues: {used}")
-        mix = _silent(tl.total_ms, channels=2).overlay(a).overlay(b).overlay(music)
+        mix = _silent(tl.total_ms, channels=2).overlay(a).overlay(b).overlay(c).overlay(music)
         mix_wav = work / "mix.wav"
         mix.export(str(mix_wav), format="wav")
         master_wav = work / "master.wav"
@@ -732,12 +733,12 @@ def produce_radio_show(
         voices = f"{res.engine}:{res.timing.get('voice_a', '')}"
         try:
             eng = next(e for e in (engines or []) if e.name == res.engine)
-            voices = f"{res.engine}:{eng.voice_id('A')}+{eng.voice_id('B')}"
+            voices = f"{res.engine}:{eng.voice_id('A')}+{eng.voice_id('B')}+{eng.voice_id('C')}"
         except StopIteration:
             from briefing.tts_engines import engine_chain
             eng = next((e for e in engine_chain() if e.name == res.engine), None)
             if eng:
-                voices = f"{res.engine}:{eng.voice_id('A')}+{eng.voice_id('B')}"
+                voices = f"{res.engine}:{eng.voice_id('A')}+{eng.voice_id('B')}+{eng.voice_id('C')}"
 
         return RadioResult(
             audio_url=audio_url, duration_seconds=duration_s, file_size=len(audio_bytes),

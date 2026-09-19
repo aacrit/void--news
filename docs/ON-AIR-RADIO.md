@@ -88,13 +88,29 @@ blessing) is the production engine. It runs on the CI runner's CPU inside its
 own virtualenv (`.venv-tts`, numpy 2) as a worker subprocess; model files are
 pinned by sha256 in `kokoro.lock.json` and cached between runs.
 
-| Role | Voice | Speed | Why |
-|---|---|---|---|
-| A, the anchor | `am_michael` | 1.08 | lowest and most even of the best-trained American male voices; 163 wpm |
-| B, alternate stories + the editorial | `af_heart` | 1.0 | the roster's one A-grade voice; a full register contrast; 168 wpm |
+Three roles since 2026-09-19 (CEO). The editorial has a voice that reads
+nothing else, so the opinion firewall is audible the moment it starts.
 
-Ear-test alternates: `am_fenrir` (brighter, but clips), `af_bella`, `bf_emma`
-(British). `VOID_KOKORO_VOICE_A/B` and `VOID_KOKORO_SPEED_A/B` override.
+| Role | Voice | Speed | Pan | Why |
+|---|---|---|---|---|
+| A, the anchor | `am_michael` | 1.08 | -7 % | lowest and most even of the best-trained American male voices; 162 wpm |
+| B, alternate stories | `af_nova` | 0.98 | +7 % | low female (159 Hz), a register contrast to A without the brightness of `af_heart` |
+| C, the editorial only | `af_heart` | 0.97 | centre | the roster's one A-grade voice; centred, because it speaks alone |
+
+`VOID_KOKORO_VOICE_A/B/C` and `VOID_KOKORO_SPEED_A/B/C` override any of them.
+
+Measured pitch and brightness across the English roster (same line, 2026-09-19)
+live in this session's voice samplers; the useful facts: `af_sky` (147 Hz,
+1954 Hz centroid) is the darkest well-behaved female voice, `am_onyx` (85 Hz)
+and `bm_lewis` (86 Hz) are the two documentary-deep males, and speed must be
+calibrated per voice because the roster ranges from 111 to 216 wpm at speed 1.
+A voice can also be a BLEND of roster voices (weights summed over
+`get_voice_style`), which keeps a dark timbre while borrowing stability from a
+better-trained voice.
+
+Not available: `af_jadzia`. It appears in third-party sample repos but is in no
+hexgrad release and no published embedding exists, so there are no weights to
+load.
 
 edge-tts (Andrew + Ava) remains only as the automatic fallback: it rides an
 unofficial Microsoft endpoint with a documented commercial terms-of-service risk
