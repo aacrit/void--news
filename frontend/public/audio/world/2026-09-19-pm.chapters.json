@@ -6,47 +6,47 @@
   {
    "startTime": 0.0,
    "title": "Headlines",
-   "endTime": 32.665
+   "endTime": 35.73
   },
   {
-   "startTime": 32.665,
+   "startTime": 35.73,
    "title": "White House Ban",
    "url": "https://news.voidvision.org/story/b4ddf22e-07d5-46b9-bec2-d772ad1aca52/",
-   "endTime": 82.81
+   "endTime": 87.68
   },
   {
-   "startTime": 82.81,
+   "startTime": 87.68,
    "title": "A-I Hacks Companies",
    "url": "https://news.voidvision.org/story/e58e01f6-7cfe-4f1b-9593-897cb41ac4f6/",
-   "endTime": 132.358
+   "endTime": 149.336
   },
   {
-   "startTime": 132.358,
+   "startTime": 149.336,
    "title": "Kennedy Center Protests",
    "url": "https://news.voidvision.org/story/7f5b9dbe-50da-492c-804d-2e8ba7e3806b/",
-   "endTime": 181.159
+   "endTime": 199.899
   },
   {
-   "startTime": 181.159,
+   "startTime": 199.899,
    "title": "Japan Rate Hike",
    "url": "https://news.voidvision.org/story/16e878ef-148d-4c02-9e84-6608bd0a0d8e/",
-   "endTime": 224.734
+   "endTime": 248.99
   },
   {
-   "startTime": 224.734,
+   "startTime": 248.99,
    "title": "Also today",
-   "endTime": 283.06
+   "endTime": 304.052
   },
   {
-   "startTime": 283.06,
+   "startTime": 304.052,
    "title": "India Payment Change",
    "url": "https://news.voidvision.org/story/d74af541-9a29-4a9e-85ce-2b173099f4ce/",
-   "endTime": 321.109
+   "endTime": 343.538
   },
   {
-   "startTime": 321.109,
-   "title": "Editorial",
-   "endTime": 506.428
+   "startTime": 343.538,
+   "title": "Opinion",
+   "endTime": 541.181
   }
  ]
 }

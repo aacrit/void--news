@@ -1574,8 +1574,17 @@ def generate_weekly_digest(editions=None, week_offset=0):
         editions = EDITIONS
 
     now = datetime.now(timezone.utc)
-    days_since_monday = now.weekday()
-    week_end = now - timedelta(days=days_since_monday - 6 + (week_offset * 7))
+    # week_offset counts weeks BACK from the most recently COMPLETED Monday-to-
+    # Sunday week: 0 is the week that just ended, 1 the week before it, and -1
+    # the current in-progress week (partial data, for a mid-week refresh).
+    #
+    # This sign was inverted until 2026-09-19: offset 0 resolved to the week
+    # CONTAINING today, so the Monday 12:00 UTC cron generated a digest for the
+    # week that had just started, off roughly twelve hours of coverage, while
+    # the cron comment and the --week-offset help both claimed it covered the
+    # week that had just ended. Issue #23 (week of 2026-08-24, generated
+    # 2026-08-24 12:48) is the last one that shipped that way.
+    week_end = now - timedelta(days=now.weekday() + 1 + (week_offset * 7))
     week_start = week_end - timedelta(days=6)
     week_start = week_start.replace(hour=0, minute=0, second=0, microsecond=0)
     week_end = week_end.replace(hour=23, minute=59, second=59, microsecond=0)
@@ -1881,7 +1890,10 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="void --weekly digest generator")
     parser.add_argument("--editions", type=str, default="", help="Comma-separated editions")
-    parser.add_argument("--week-offset", type=int, default=0, help="0=current, -1=last week")
+    parser.add_argument(
+        "--week-offset", type=int, default=0,
+        help="Weeks back from the week that just ended. "
+             "0=the completed week, 1=the one before it, -1=the current partial week")
     args = parser.parse_args()
 
     editions = [e.strip() for e in args.editions.split(",") if e.strip()] if args.editions else None

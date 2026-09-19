@@ -25,15 +25,19 @@ import { fetchLastPipelineRun } from "../lib/supabase";
                           same accent the bottom tab bar's Home anchor wears.
      On Air (/onair)    — PRIMARY. Teal broadcast glyph (--voice-accent), the
                           same accent the tab bar's On Air tab wears.
+     History (/history) — peer row, muted hourglass icon.
+     Weekly (/weekly)   — peer row, muted broadsheet icon.
      Sources (/sources) — peer row, muted layers icon.
      Feedback (/ship)   — peer row, muted chat icon.
      About · Press · Privacy — quiet inline utility trio, subordinate.
      Info bar — "Edition as of {time}", "1,016 sources across 158 countries",
                 ThemeToggle
 
-   History + Weekly are intentionally omitted (hidden for launch). The four main
-   rows share one layout: leading icon + command (editorial voice) + description
-   (structural voice), full-width tap target, accent rail on the active route.
+   History and Weekly are the drawer's share of the masthead .nav-spinoffs row,
+   which is shown from 768px up; below that this drawer is what replaces it.
+   Every main row shares one layout: leading icon + command (editorial voice) +
+   description (structural voice), full-width tap target, accent rail on the
+   active route.
 
    Accessibility / interaction:
    - role="dialog" aria-modal; focus moves into the drawer on open, Tab/Shift+Tab
@@ -50,7 +54,7 @@ interface MobileSidePanelProps {
   onClose: () => void;
 }
 
-type NavIcon = "feed" | "onair" | "sources" | "feedback";
+type NavIcon = "feed" | "onair" | "history" | "weekly" | "sources" | "feedback";
 
 interface NavItem {
   href: string;
@@ -59,15 +63,23 @@ interface NavItem {
   /** Drives --msp-accent (rail/wash) and --msp-icon (icon color) in CSS. */
   accent: "news" | "onair" | "neutral";
   icon: NavIcon;
+  /** Stagger group for the open cascade (data-msp-cascade). Primary rows
+   *  arrive together at 2, peer rows at 3. */
+  cascade: 2 | 3;
 }
 
-// One flat list. Two navbar-accented primary rows (Feed terracotta, On Air
-// teal — matching their MobileTabBar counterparts) then two muted peer rows.
+// One flat list, rendered by map. Two navbar-accented primary rows (Feed
+// terracotta, On Air teal — matching their MobileTabBar counterparts) then the
+// muted peer rows. The cascade group travels with the item: the render used to
+// call renderItem(MAIN_ITEMS[0..3]) by hardcoded index, so adding History and
+// Weekly in the middle silently dropped Sources and Feedback off the drawer.
 const MAIN_ITEMS: NavItem[] = [
-  { href: "/", label: "Today’s Feed", desc: "The front page, 50 stories.", accent: "news", icon: "feed" },
-  { href: "/onair", label: "On Air", desc: "The broadcast.", accent: "onair", icon: "onair" },
-  { href: "/sources", label: "Sources", desc: "1,016 sources, 158 countries.", accent: "neutral", icon: "sources" },
-  { href: "/ship", label: "Feedback", desc: "Tell us what to build or fix.", accent: "neutral", icon: "feedback" },
+  { href: "/", label: "Today’s Feed", desc: "The front page, 50 stories.", accent: "news", icon: "feed", cascade: 2 },
+  { href: "/onair", label: "On Air", desc: "The broadcast.", accent: "onair", icon: "onair", cascade: 2 },
+  { href: "/history", label: "History", desc: "78 events, told from every side.", accent: "neutral", icon: "history", cascade: 3 },
+  { href: "/weekly", label: "Weekly", desc: "The week, in one issue.", accent: "neutral", icon: "weekly", cascade: 3 },
+  { href: "/sources", label: "Sources", desc: "1,016 sources, 158 countries.", accent: "neutral", icon: "sources", cascade: 3 },
+  { href: "/ship", label: "Feedback", desc: "Tell us what to build or fix.", accent: "neutral", icon: "feedback", cascade: 3 },
 ];
 
 // Leading row glyphs. The Feed mark is the ScaleIcon Sigil-O (same mark the tab
@@ -97,6 +109,29 @@ function NavGlyph({ icon }: { icon: NavIcon }) {
         <path d="M12 3 4 7.5l8 4.5 8-4.5-8-4.5Z" />
         <path d="M4 12l8 4.5 8-4.5" />
         <path d="M4 16.5l8 4.5 8-4.5" />
+      </svg>
+    );
+  }
+  if (icon === "history") {
+    // Hourglass — time as the archive's organising axis.
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M6 2h12" />
+        <path d="M6 22h12" />
+        <path d="M6 2v5l6 5 6-5V2" />
+        <path d="M6 22v-5l6-5 6 5v5" />
+      </svg>
+    );
+  }
+  if (icon === "weekly") {
+    // Folded broadsheet — the weekly issue as a printed object.
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M4 5h11a1 1 0 0 1 1 1v13H5a1 1 0 0 1-1-1V5Z" />
+        <path d="M16 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1h-3" />
+        <path d="M7 9h5" />
+        <path d="M7 13h5" />
+        <path d="M7 16h3" />
       </svg>
     );
   }
@@ -345,10 +380,7 @@ export default function MobileSidePanel({ open, onClose }: MobileSidePanelProps)
             then two muted peer rows (Sources, Feedback), then a quiet utility
             trio subordinated below an organic ink divider. */}
         <nav className="msp__links" aria-label="Site navigation">
-          {renderItem(MAIN_ITEMS[0], 2)}
-          {renderItem(MAIN_ITEMS[1], 2)}
-          {renderItem(MAIN_ITEMS[2], 3)}
-          {renderItem(MAIN_ITEMS[3], 3)}
+          {MAIN_ITEMS.map((item) => renderItem(item, item.cascade))}
 
           <svg className="msp__divider" data-msp-cascade="4" viewBox="0 0 200 4" preserveAspectRatio="none" aria-hidden="true">
             <path d="M0,2 C25,0.5 50,3.5 75,2 C100,0.5 125,3 150,2 C175,1 200,3 200,2" />

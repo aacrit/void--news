@@ -65,7 +65,15 @@ jobs:
           echo "--- On Air audio ---" | tee -a verify_output.txt
           python scripts/verify_audio.py "${{ github.event.inputs.url || 'https://news.voidvision.org/' }}" | tee -a verify_output.txt
           audio_exit=${PIPESTATUS[0]}
-          if [ "$page_exit" != "0" ] || [ "$audio_exit" != "0" ]; then echo "exit=1" >> "$GITHUB_OUTPUT"; else echo "exit=0" >> "$GITHUB_OUTPUT"; fi
+          # History + Weekly served gate (2026-09-19): both sections degrade
+          # SILENTLY. History falls back to ten mock events when its catalog
+          # fetch returns nothing, and Weekly served Issue #23 for three weeks
+          # while its job wrote to a decommissioned database. Neither turned
+          # anything red.
+          echo "--- History + Weekly ---" | tee -a verify_output.txt
+          python scripts/verify_sections.py "${{ github.event.inputs.url || 'https://news.voidvision.org/' }}" | tee -a verify_output.txt
+          sections_exit=${PIPESTATUS[0]}
+          if [ "$page_exit" != "0" ] || [ "$audio_exit" != "0" ] || [ "$sections_exit" != "0" ]; then echo "exit=1" >> "$GITHUB_OUTPUT"; else echo "exit=0" >> "$GITHUB_OUTPUT"; fi
 
       - name: Open / refresh tracking issue on failure
         if: ${{ steps.verify.outputs.exit != '0' }}

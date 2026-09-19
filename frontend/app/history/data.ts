@@ -1,8 +1,15 @@
 /* ===========================================================================
    void --history — Data Fetching
-   Supabase queries with mock data fallback.
-   Fetches from 4 tables: history_events, history_perspectives,
-   history_media, history_connections.
+   Reads the static snapshot the pipeline emits at /data/history.json
+   (pipeline/history/export_history.py, built from data/history/events/*.yaml).
+   Rows carry the same shape PostgREST returned from the four history_* tables,
+   with perspectives/media/connections nested, so mapEventWithRelations below is
+   unchanged from the Supabase era.
+
+   Supabase was decommissioned 2026-09-01. The browser client has no credentials
+   in the Cloudflare build, so the old query path resolved to null on every call
+   and silently served MOCK_EVENTS; mock data is now only the last-resort
+   fallback for a missing or unparseable snapshot.
    =========================================================================== */
 
 /* ── Wikimedia Commons page URL → direct upload URL ──
@@ -24,7 +31,7 @@ function resolveMediaUrl(url: string): string {
   return `https://commons.wikimedia.org/wiki/Special:Redirect/file/${encoded}`;
 }
 
-import { supabase } from "../lib/supabase";
+import { BASE_PATH } from "../lib/utils";
 import type {
   HistoricalEvent,
   Perspective,
@@ -51,156 +58,94 @@ import { withHistoryAudio, withHistoryAudioAll } from "./audio";
    whichever source the page is reading. */
 const MOCK_WITH_AUDIO = withHistoryAudioAll(MOCK_EVENTS);
 
+/* ── Media type normalisation ──
+   The curated YAML uses the sourcing vocabulary ("photograph", "painting");
+   MediaItem["type"] is the rendering vocabulary. Unmapped values fall back to
+   "image" so a new source type can never render as an unhandled variant. */
+const MEDIA_TYPES: Record<string, MediaItem["type"]> = {
+  photograph: "image",
+  image: "image",
+  painting: "artwork",
+  artwork: "artwork",
+  map: "map",
+  document: "document",
+  video: "video",
+};
+
 /* ── Perspective color assignment ── */
 const COLORS: PerspectiveColor[] = ["a", "b", "c", "d", "e"];
 
+/* ── Static snapshot loader ──
+   One fetch per page load, memoised: the landing, era, region and event pages
+   all read the same file. A failed or empty fetch falls back to mock data so a
+   missing snapshot degrades to a visibly-placeholder archive instead of a
+   blank page. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type HistoryRow = any;
+
+let _snapshot: Promise<HistoryRow[] | null> | null = null;
+
+function loadSnapshot(): Promise<HistoryRow[] | null> {
+  if (!_snapshot) {
+    _snapshot = fetch(`${BASE_PATH}/data/history.json`, { cache: "no-cache" })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((rows) => (Array.isArray(rows) && rows.length > 0 ? rows : null))
+      .catch(() => null);
+  }
+  return _snapshot;
+}
+
+/* Rows arrive with their relations nested; mapEventWithRelations wants them
+   passed separately, exactly as the four Supabase queries returned them. */
+function mapRow(row: HistoryRow, allRows: HistoryRow[]): HistoricalEvent {
+  return mapEventWithRelations(
+    row,
+    row.perspectives ?? [],
+    row.media ?? [],
+    row.connections ?? [],
+    allRows,
+  );
+}
+
 /* ── Fetch all published events (for landing, era, region pages) ── */
 export async function fetchHistoryEvents(): Promise<HistoricalEvent[]> {
-  if (!supabase) return MOCK_WITH_AUDIO;
-
-  /* Timeout: fall back to mock data if Supabase is unreachable (paused/slow) */
-  const timeout = new Promise<null>((resolve) => setTimeout(() => resolve(null), 5000));
-  const query = supabase
-    .from("history_events")
-    .select("*")
-    .eq("is_published", true)
-    .order("date_sort", { ascending: true });
-
-  const result = await Promise.race([query, timeout]);
-  if (!result) return MOCK_WITH_AUDIO; /* Timed out */
-
-  const { data: events, error } = result;
-  if (error || !events || events.length === 0) return MOCK_WITH_AUDIO;
-
-  /* Batch-fetch perspectives for all events */
-  const eventIds = events.map((e) => e.id);
-  const { data: allPerspectives } = await supabase
-    .from("history_perspectives")
-    .select("*")
-    .in("event_id", eventIds)
-    .order("display_order", { ascending: true });
-
-  const { data: allMedia } = await supabase
-    .from("history_media")
-    .select("*")
-    .in("event_id", eventIds)
-    .order("display_order", { ascending: true });
-
-  const { data: allConnections } = await supabase
-    .from("history_connections")
-    .select("*, target:event_b_id(slug, title)")
-    .in("event_a_id", eventIds);
-
-  /* Also get reverse connections */
-  const { data: reverseConnections } = await supabase
-    .from("history_connections")
-    .select("*, source:event_a_id(slug, title)")
-    .in("event_b_id", eventIds);
-
-  return events.map((row) => mapEventWithRelations(
-    row,
-    (allPerspectives ?? []).filter((p) => p.event_id === row.id),
-    (allMedia ?? []).filter((m) => m.event_id === row.id),
-    [
-      ...((allConnections ?? []).filter((c) => c.event_a_id === row.id)),
-      ...((reverseConnections ?? []).filter((c) => c.event_b_id === row.id)),
-    ],
-    events,
-  ));
+  const rows = await loadSnapshot();
+  if (!rows) return MOCK_WITH_AUDIO;
+  return rows.map((row) => mapRow(row, rows));
 }
 
 /* ── Fetch single event by slug (for event detail page) ── */
 export async function fetchHistoryEvent(slug: string): Promise<HistoricalEvent | null> {
-  if (!supabase) {
-    return MOCK_WITH_AUDIO.find((e) => e.slug === slug) ?? null;
-  }
+  const rows = await loadSnapshot();
+  if (!rows) return MOCK_WITH_AUDIO.find((e) => e.slug === slug) ?? null;
 
-  const { data: event, error } = await supabase
-    .from("history_events")
-    .select("*")
-    .eq("slug", slug)
-    .eq("is_published", true)
-    .limit(1)
-    .single();
-
-  if (error || !event) {
-    return MOCK_WITH_AUDIO.find((e) => e.slug === slug) ?? null;
-  }
-
-  const [{ data: perspectives }, { data: media }, { data: fwdConn }, { data: revConn }] =
-    await Promise.all([
-      supabase
-        .from("history_perspectives")
-        .select("*")
-        .eq("event_id", event.id)
-        .order("display_order", { ascending: true }),
-      supabase
-        .from("history_media")
-        .select("*")
-        .eq("event_id", event.id)
-        .order("display_order", { ascending: true }),
-      supabase
-        .from("history_connections")
-        .select("*, target:event_b_id(slug, title)")
-        .eq("event_a_id", event.id),
-      supabase
-        .from("history_connections")
-        .select("*, source:event_a_id(slug, title)")
-        .eq("event_b_id", event.id),
-    ]);
-
-  /* Need all events for connection title lookups */
-  const { data: allEvents } = await supabase
-    .from("history_events")
-    .select("id, slug, title")
-    .eq("is_published", true);
-
-  return mapEventWithRelations(
-    event,
-    perspectives ?? [],
-    media ?? [],
-    [...(fwdConn ?? []), ...(revConn ?? [])],
-    allEvents ?? [],
-  );
+  const row = rows.find((r) => r.slug === slug);
+  if (!row) return MOCK_WITH_AUDIO.find((e) => e.slug === slug) ?? null;
+  return mapRow(row, rows);
 }
 
 /* ── Fetch by era ── */
 export async function fetchHistoryEventsByEra(era: string): Promise<HistoricalEvent[]> {
-  if (!supabase) return MOCK_WITH_AUDIO.filter((e) => e.era === era);
+  const rows = await loadSnapshot();
+  if (!rows) return MOCK_WITH_AUDIO.filter((e) => e.era === era);
 
-  const { data, error } = await supabase
-    .from("history_events")
-    .select("*")
-    .eq("era", era)
-    .eq("is_published", true)
-    .order("date_sort", { ascending: true });
-
-  if (error || !data || data.length === 0) {
-    return MOCK_WITH_AUDIO.filter((e) => e.era === era);
-  }
-
-  /* For listing pages, skip full relation fetch — use summary data */
-  return data.map((row) => mapEventWithRelations(row, [], [], [], []));
+  const matches = rows.filter((r) => r.era === era);
+  if (matches.length === 0) return MOCK_WITH_AUDIO.filter((e) => e.era === era);
+  return matches.map((row) => mapRow(row, rows));
 }
 
 /* ── Fetch by region ── */
 export async function fetchHistoryEventsByRegion(region: string): Promise<HistoricalEvent[]> {
-  if (!supabase) {
+  const rows = await loadSnapshot();
+  if (!rows) {
     return MOCK_WITH_AUDIO.filter((e) => e.regions.includes(region as HistoryRegion));
   }
 
-  const { data, error } = await supabase
-    .from("history_events")
-    .select("*")
-    .eq("region", region)
-    .eq("is_published", true)
-    .order("date_sort", { ascending: true });
-
-  if (error || !data || data.length === 0) {
+  const matches = rows.filter((r) => r.region === region);
+  if (matches.length === 0) {
     return MOCK_WITH_AUDIO.filter((e) => e.regions.includes(region as HistoryRegion));
   }
-
-  return data.map((row) => mapEventWithRelations(row, [], [], [], []));
+  return matches.map((row) => mapRow(row, rows));
 }
 
 /* ── Fetch redacted (coming-soon) stubs ── */
@@ -262,7 +207,7 @@ function mapEventWithRelations(
     }
     return {
       id: m.id,
-      type: m.media_type === "photograph" ? "image" : m.media_type,
+      type: MEDIA_TYPES[m.media_type as string] ?? "image",
       url: resolveMediaUrl(m.source_url),
       caption,
       attribution: m.attribution,
