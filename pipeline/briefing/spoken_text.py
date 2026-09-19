@@ -254,12 +254,29 @@ def expand_initialisms(text: str, table: dict[str, str] | None = None) -> str:
     return text
 
 
+_CAPS_RUN_RE = re.compile(r"[A-Z]{2,}")
+
+
+def speakable_respelling(val: str) -> str:
+    """Make a dictionary-style respelling safe for the phonemizer.
+
+    Models write the stressed syllable in capitals ("KAR-nee", "HEG-seth"),
+    and Kokoro's G2P reads any run of capitals as an acronym: "KAR-nee" came
+    out as "K, A, arnee" on the 2026-09-19 episode. Lowercase it; a hyphenated
+    lowercase respelling phonemizes as one word.
+    """
+    val = val.strip().strip("[]()/")
+    if _CAPS_RUN_RE.search(val):
+        val = val.lower()
+    return val
+
+
 def apply_say(text: str, say: dict[str, str] | None) -> str:
-    """Apply ``## SAY`` respellings (``Hormuz = hor-MOOZ``), longest key first."""
+    """Apply ``## SAY`` respellings (``Hormuz = hor-mooz``), longest key first."""
     if not say:
         return text
     for key in sorted(say, key=len, reverse=True):
-        val = say[key].strip()
+        val = speakable_respelling(say[key])
         if not key.strip() or not val:
             continue
         text = re.sub(_token_pattern(key.strip()), val, text)

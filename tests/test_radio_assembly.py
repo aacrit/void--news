@@ -10,6 +10,7 @@ from its word count, so the test knows every cue position in advance.
 from __future__ import annotations
 
 import datetime
+import re
 import json
 import shutil
 import sys
@@ -87,7 +88,9 @@ def main() -> None:
     verdicts = [m for _, m in turns if m["kind"] == "EDITORIAL" and m.get("verdict")]
     check(len(verdicts) == 1, f"one one-sentence verdict paragraph detected ({len(verdicts)})")
     check(not any(ch.isdigit() for s, _ in turns for ch in s.text), "no digits reach the engine")
-    check(any("ko-HAHT" in s.text for s, _ in turns), "SAY respelling applied before synthesis")
+    check(any("ko-haht" in s.text for s, _ in turns), "SAY respelling applied before synthesis")
+    check(not any(re.search(r"[A-Z]{2,}", s.text) for s, _ in turns if "U-" not in s.text and "E-" not in s.text and "C-" not in s.text and "J-" not in s.text),
+          "no all-caps runs reach the engine except spelled initialisms")
     check(any("U-S President" in s.text for s, _ in turns), "initialisms hyphenated")
 
     # timeline against the gap table
