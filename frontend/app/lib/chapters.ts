@@ -189,6 +189,11 @@ export function chapterKindLabel(c: AudioChapter): string {
     case "opinion":
     case "editorial":
       return "Opinion";
+    // A History documentary chapter is named by its title alone ("Twenty five
+    // seconds", "The Soviet programme"); a badge beside it would say nothing.
+    // Explicit rather than left to the default, so the silence is a decision.
+    case "segment":
+      return "";
     default:
       return "";
   }

@@ -313,7 +313,9 @@ export interface AudioChapter {
   endTime?: number;
   /** e.g. "Fed raises rates" / "Headlines" / "Also today" / "Opinion" */
   title: string;
-  kind: "headlines" | "story" | "briefs" | "finally" | "opinion" | "editorial";
+  /** "segment" is a History documentary chapter: it carries a title and
+   *  nothing else, so the rail draws no kind badge beside it. */
+  kind: "headlines" | "story" | "briefs" | "finally" | "opinion" | "editorial" | "segment";
   /** story_clusters.id when kind is "story" or "finally" */
   cluster_id?: string;
   /** Feed rank when kind is "story" */

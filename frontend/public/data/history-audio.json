@@ -1,0 +1,193 @@
+{
+ "generatedAt": "2026-09-19T23:09:20+00:00",
+ "episodes": {
+  "apollo-11-moon-landing": {
+   "url": "/audio/history/apollo-11-moon-landing.mp3?v=70d51e2f",
+   "chaptersUrl": "/audio/history/apollo-11-moon-landing.chapters.json?v=70d51e2f",
+   "title": "Apollo 11 and the Space Race",
+   "durationSeconds": 625.894,
+   "bytes": 10027383,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 38.781
+    },
+    {
+     "startTime": 38.781,
+     "title": "Twenty five seconds",
+     "kind": "segment",
+     "endTime": 96.0
+    },
+    {
+     "startTime": 96.0,
+     "title": "Eight years",
+     "kind": "segment",
+     "endTime": 139.8
+    },
+    {
+     "startTime": 139.8,
+     "title": "Four hundred thousand people",
+     "kind": "segment",
+     "endTime": 200.408
+    },
+    {
+     "startTime": 200.408,
+     "title": "A signal weaker than a refrigerator bulb",
+     "kind": "segment",
+     "endTime": 242.068
+    },
+    {
+     "startTime": 242.068,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 256.67
+    },
+    {
+     "startTime": 256.67,
+     "title": "American triumph",
+     "kind": "segment",
+     "endTime": 312.478
+    },
+    {
+     "startTime": 312.478,
+     "title": "The Soviet programme",
+     "kind": "segment",
+     "endTime": 364.244
+    },
+    {
+     "startTime": 364.244,
+     "title": "The domestic critique",
+     "kind": "segment",
+     "endTime": 410.771
+    },
+    {
+     "startTime": 410.771,
+     "title": "The engineers",
+     "kind": "segment",
+     "endTime": 458.811
+    },
+    {
+     "startTime": 458.811,
+     "title": "The Global South",
+     "kind": "segment",
+     "endTime": 508.848
+    },
+    {
+     "startTime": 508.848,
+     "title": "The shape of the disagreement",
+     "kind": "segment",
+     "endTime": 578.765
+    },
+    {
+     "startTime": 578.765,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 625.848
+    }
+   ],
+   "publishedAt": "2026-09-19T23:09:20+00:00"
+  },
+  "partition-of-india": {
+   "url": "/audio/history/partition-of-india.mp3?v=d8377c14",
+   "chaptersUrl": "/audio/history/partition-of-india.chapters.json?v=d8377c14",
+   "title": "The Partition of India",
+   "durationSeconds": 842.005,
+   "bytes": 13488759,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 38.822
+    },
+    {
+     "startTime": 38.822,
+     "title": "The bungalow in Delhi",
+     "kind": "segment",
+     "endTime": 116.687
+    },
+    {
+     "startTime": 116.687,
+     "title": "Seventy three days",
+     "kind": "segment",
+     "endTime": 177.918
+    },
+    {
+     "startTime": 177.918,
+     "title": "The columns",
+     "kind": "segment",
+     "endTime": 236.429
+    },
+    {
+     "startTime": 236.429,
+     "title": "The wells",
+     "kind": "segment",
+     "endTime": 292.064
+    },
+    {
+     "startTime": 292.064,
+     "title": "The force that was supposed to hold",
+     "kind": "segment",
+     "endTime": 327.899
+    },
+    {
+     "startTime": 327.899,
+     "title": "How many",
+     "kind": "segment",
+     "endTime": 415.553
+    },
+    {
+     "startTime": 415.553,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 435.553
+    },
+    {
+     "startTime": 435.553,
+     "title": "British Imperial",
+     "kind": "segment",
+     "endTime": 486.646
+    },
+    {
+     "startTime": 486.646,
+     "title": "Indian Nationalist",
+     "kind": "segment",
+     "endTime": 536.904
+    },
+    {
+     "startTime": 536.904,
+     "title": "Pakistani Nationalist",
+     "kind": "segment",
+     "endTime": 594.16
+    },
+    {
+     "startTime": 594.16,
+     "title": "Subaltern and displacement",
+     "kind": "segment",
+     "endTime": 643.7
+    },
+    {
+     "startTime": 643.7,
+     "title": "Women's history",
+     "kind": "segment",
+     "endTime": 691.143
+    },
+    {
+     "startTime": 691.143,
+     "title": "The shape of the disagreement",
+     "kind": "segment",
+     "endTime": 768.116
+    },
+    {
+     "startTime": 768.116,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 841.958
+    }
+   ],
+   "publishedAt": "2026-09-19T23:09:20+00:00"
+  }
+ }
+}
