@@ -174,7 +174,16 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
                                        "hears words without knowing whose they are"))
                 elif speaker:
                     named = [w for w in _norm(speaker).split() if len(w) > 3 and w != "anonymous"]
-                    if named and not any(w in before for w in named):
+                    # Match on WORDS, not on raw substrings. "king" is inside
+                    # "striking", and a segment that happens to use the word
+                    # striking is not a segment that named Martin Luther King.
+                    # A leading-edge match is still allowed in both directions
+                    # so a possessive ("Khomeini's") names Khomeini.
+                    words = before.split()
+                    def _names(w: str) -> bool:
+                        return any(x == w or x.startswith(w) or w.startswith(x)
+                                   for x in words if len(x) > 3)
+                    if named and not any(_names(w) for w in named):
                         out.append(Finding("H-04", "fail", label,
                                            f"the narration before this quote never names {speaker}"))
             # H-01: the quote must exist in the event's own sources.
