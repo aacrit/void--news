@@ -6,46 +6,47 @@
   {
    "startTime": 0.0,
    "title": "Headlines",
-   "endTime": 31.895
+   "endTime": 32.087
   },
   {
-   "startTime": 31.895,
+   "startTime": 32.087,
    "title": "Canada and the E-U",
    "url": "https://news.voidvision.org/story/49abf832-fb5a-45c2-95a3-cd81f24ad0fe/",
-   "endTime": 119.511
+   "endTime": 125.655
   },
   {
-   "startTime": 119.511,
-   "title": "Federal Reserve Rate Hike",
+   "startTime": 125.655,
+   "title": "Fed Raises Rates",
    "url": "https://news.voidvision.org/story/53db3676-04b7-492d-802d-2f8d5d18132b/",
-   "endTime": 181.356
+   "endTime": 198.003
   },
   {
-   "startTime": 181.356,
+   "startTime": 198.003,
    "title": "Kennedy Center Ruling",
    "url": "https://news.voidvision.org/story/3024b0c1-5996-48e7-81a3-c80e8edb2913/",
-   "endTime": 249.687
+   "endTime": 287.773
   },
   {
-   "startTime": 249.687,
+   "startTime": 287.773,
    "title": "Venezuela Gold Deal",
    "url": "https://news.voidvision.org/story/d4637611-4ef0-4063-929e-b38d43880afa/",
-   "endTime": 317.207
+   "endTime": 357.027
   },
   {
-   "startTime": 317.207,
+   "startTime": 357.027,
    "title": "Also today",
-   "endTime": 389.485
+   "endTime": 417.742
   },
   {
-   "startTime": 389.485,
-   "title": "Hong Kong's A-I Chief",
-   "endTime": 411.305
+   "startTime": 417.742,
+   "title": "Royal Family Claims",
+   "url": "https://news.voidvision.org/story/c0dd3ea0-5bd6-4634-840a-b123ead81c1f/",
+   "endTime": 444.234
   },
   {
-   "startTime": 411.305,
+   "startTime": 444.234,
    "title": "Editorial",
-   "endTime": 605.153
+   "endTime": 634.817
   }
  ]
 }
