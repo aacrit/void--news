@@ -42,10 +42,9 @@ Role = Literal["A", "B", "C"]
 # Kokoro v1.0 roster picks (hexgrad VOICES.md grades), cast by the CEO from a
 # 12-voice sampler on 2026-09-19:
 #   am_puck     C+  light American, 112 Hz median pitch, 2594 Hz centroid ->
-#               the anchor. Reads 164 wpm at speed 1.0 on real rundown copy,
-#               so it needs no slowdown, but it is the one voice that arrives
-#               at the worker's -1 dBFS clamp (raw peak > 1.0): the clamp in
-#               tts_kokoro_worker is what keeps A from reaching the bus hot.
+#               the anchor. The one voice that arrives at the worker's -1 dBFS
+#               clamp (raw peak > 1.0): the clamp in tts_kokoro_worker is what
+#               keeps A from reaching the bus hot.
 #   af_nova     C   low female (159 Hz) -> alternate stories. A register
 #               contrast to A without the brightness of af_heart.
 #   af_heart    A   the only A-grade voice; warm and clear -> the editorial,
@@ -60,15 +59,29 @@ KOKORO_VOICES: dict[str, str] = {
     "B": os.environ.get("VOID_KOKORO_VOICE_B", "af_nova"),
     "C": os.environ.get("VOID_KOKORO_VOICE_C", "af_heart"),
 }
-# Speed is calibrated per voice against the 160-170 wpm news band, measured on
-# the four long turns of tests/fixtures/radio_bench_turns.json (real rundown
-# copy: short lines over-count, because the leading silence does not scale).
-# 2026-09-19: am_puck 164 wpm at 1.0, am_michael 157 at 1.08, af_heart 168 at
-# 1.0. VOID_KOKORO_SPEED_A / _B / _C override.
+# Speed is calibrated per voice to ONE pace: about 156 wpm, a calm read (CEO
+# 2026-09-19, "should sound natural, calm"). The show is one programme, so the
+# three voices must not read at three speeds, and the old 160-170 band was
+# brisk-wire pace rather than the register this show wants.
+#
+# Measured on the four long turns of tests/fixtures/radio_bench_turns.json,
+# which is real rundown copy: a short line over-counts, because its leading
+# silence does not scale with speed, and absolute wpm swings about 30 % with
+# the passage, so only same-passage numbers compare. At speed 1.0 the roster
+# reads am_puck 164, af_heart 162, af_nova 181. Kokoro's speed knob scales
+# predicted phoneme durations before the decoder, so it re-synthesises at the
+# new rate rather than time-stretching; the response is near linear, about
+# 100 wpm per unit of speed for all three.
+#
+# Each speed is therefore the SMALLEST correction that voice needs to reach
+# the shared pace. af_nova needs by far the largest (0.82) because it is the
+# fastest voice on the roster; if it ever reads as dragged, the fix is a
+# naturally calmer B voice, not a smaller correction, since that would put it
+# a fifth faster than the anchor. VOID_KOKORO_SPEED_A / _B / _C override.
 KOKORO_SPEED: dict[str, float] = {
-    "A": float(os.environ.get("VOID_KOKORO_SPEED_A", "1.0") or 1.0),     # am_puck already reads 164 wpm
-    "B": float(os.environ.get("VOID_KOKORO_SPEED_B", "0.98") or 0.98),   # af_nova reads 172 wpm at 1.0
-    "C": float(os.environ.get("VOID_KOKORO_SPEED_C", "0.97") or 0.97),   # the editorial sits a touch under the news pace
+    "A": float(os.environ.get("VOID_KOKORO_SPEED_A", "0.92") or 0.92),   # am_puck  164 -> 156 wpm
+    "B": float(os.environ.get("VOID_KOKORO_SPEED_B", "0.82") or 0.82),   # af_nova  181 -> 157 wpm
+    "C": float(os.environ.get("VOID_KOKORO_SPEED_C", "0.93") or 0.93),   # af_heart 162 -> 155 wpm, a hair under the news
 }
 
 EDGE_VOICES: dict[str, str] = {

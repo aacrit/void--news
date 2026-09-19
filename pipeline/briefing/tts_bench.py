@@ -7,8 +7,9 @@ and measured words per minute per voice, and exits 1 when the engine is slower
 than the budget or takes longer than 30 s to load. Runs in CI (radio-audio job)
 so a Kokoro regression is caught before the 11:00 UTC show, not by it.
 
-Measured 2026-09-19 on a 4-core sandbox: Kokoro int8 rtf 1.6 (slow CPU),
-am_puck 164 wpm at speed 1.0, af_nova 172 at 1.0, af_heart 168 at 1.0.
+Measured 2026-09-19 on a 4-core sandbox: Kokoro int8 rtf 1.6 (slow CPU). At
+speed 1.0 the roster reads am_puck 164 wpm, af_heart 162, af_nova 181; the
+production speeds bring all three to about 156, the show's one pace.
 """
 
 from __future__ import annotations

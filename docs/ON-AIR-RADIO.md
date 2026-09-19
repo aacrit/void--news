@@ -55,7 +55,7 @@ with the findings named, then the legacy audio path; warn = logged):
 | R-03 | Numbers are words. Code normalises anyway (`spoken_text`), so this warns | warn |
 | R-04 | No a.m./p.m. clock forms, no print datelines | fail |
 | R-05 | No borrowed or AI-podcast phrases: "Up first", "Here's what we're covering", "First the headlines", "And that's the headlines", "these are our main stories", "Stay with us", "And finally", "Welcome", "Thanks", "Absolutely", "Wow", "Over to you" and the show never names or thanks a host | fail |
-| R-06 | Word budgets at 165 wpm per segment, five menu lines, six to eight brief items, 850-1150 news words | fail outside +-25 % |
+| R-06 | Word budgets at 156 wpm per segment, five menu lines, six to eight brief items, 850-1150 news words | fail outside +-25 % |
 | R-07 | Attribution before the claim ("The Fed chair says ..."), never trailing | warn |
 | R-08 | Exactly four STORY segments, ranks 1-4 in order; ids are bound from the feed by rank (the model never copies UUIDs: the first real run mis-copied two by one hex digit); the kicker must name a feed rank from 5 up, and never the editorial's story | fail |
 | R-09 | FINALLY absent when the lead's `disaster_severity` >= 0.6; present otherwise | fail / warn |
@@ -93,9 +93,21 @@ nothing else, so the opinion firewall is audible the moment it starts.
 
 | Role | Voice | Speed | Pan | Why |
 |---|---|---|---|---|
-| A, the anchor | `am_puck` | 1.00 | -7 % | light American, 112 Hz; reads 164 wpm on real rundown copy, so it needs no slowdown. The one voice that hits the worker's -1 dBFS clamp |
-| B, alternate stories | `af_nova` | 0.98 | +7 % | low female (159 Hz), a register contrast to A without the brightness of `af_heart` |
-| C, the editorial only | `af_heart` | 0.97 | centre | the roster's one A-grade voice; centred, because it speaks alone |
+| A, the anchor | `am_puck` | 0.92 | -7 % | light American, 112 Hz. The one voice that hits the worker's -1 dBFS clamp |
+| B, alternate stories | `af_nova` | 0.82 | +7 % | low female (159 Hz), a register contrast to A without the brightness of `af_heart` |
+| C, the editorial only | `af_heart` | 0.93 | centre | the roster's one A-grade voice; centred, because it speaks alone |
+
+**One pace, about 156 wpm.** The show is one programme, so the three voices do
+not read at three speeds, and 156 is a calm read rather than the brisk wire
+pace the first build shipped (CEO, 2026-09-19). Each speed above is the
+smallest correction that voice needs to reach it: at speed 1.0 the roster
+reads `am_puck` 164, `af_heart` 162 and `af_nova` 181. Kokoro's speed knob
+scales predicted phoneme durations before the decoder, so it re-synthesises at
+the new rate rather than time-stretching, and the response is near linear at
+about 100 wpm per unit of speed. `af_nova` needs by far the largest correction
+because it is the fastest voice on the roster; if it ever reads as dragged the
+answer is a naturally calmer B voice, not a smaller correction, which would
+leave B a fifth faster than the anchor.
 
 `VOID_KOKORO_VOICE_A/B/C` and `VOID_KOKORO_SPEED_A/B/C` override any of them.
 
@@ -176,4 +188,4 @@ No bed under any story. Both voices within the first sixty seconds. No names,
 no thanks. All numbers spoken as words. Kicker absent on a mass-casualty day.
 The stab reads as a page-turn, not a jingle. Room tone never audible as hiss.
 No clipping. Chapters show in the site player, in Apple Podcasts (ID3) and in a
-Podcasting 2.0 app (sidecar). Speech rate 160-170 wpm (printed in the log).
+Podcasting 2.0 app (sidecar). Speech rate about 156 wpm, the same in every voice (printed in the log).

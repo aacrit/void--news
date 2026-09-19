@@ -66,9 +66,14 @@ KICKER_SUPPRESS_SEVERITY = 0.6
 SegmentKind = Literal["OPEN", "MENU", "STORY", "BRIEFS", "FINALLY", "CLOSE"]
 _KINDS: tuple[str, ...] = ("OPEN", "MENU", "STORY", "BRIEFS", "FINALLY", "CLOSE")
 
-# Word budgets at ~165 wpm. (lo, hi); the validator fails outside ±25 % of the
-# band and warns inside it. Total news budget 850-1150 words ≈ 5.5-7 minutes,
-# plus a 500-700 word editorial ≈ 8.5-9.5 minutes with music.
+# The pace the show is actually read at (tts_engines.KOKORO_SPEED calibrates
+# every voice to it). Used for the length estimates the validators report, so
+# a rundown that reads long says so before it is synthesised.
+SPEECH_WPM = 156
+
+# Word budgets at SPEECH_WPM. (lo, hi); the validator fails outside ±25 % of
+# the band and warns inside it. Total news budget 850-1150 words ≈ 5.5-7.5
+# minutes, plus a 500-700 word editorial ≈ 9-11 minutes with music.
 WORD_BUDGETS: dict[str, tuple[int, int]] = {
     "OPEN": (12, 35),
     "MENU": (35, 80),
@@ -593,8 +598,8 @@ def validate_rundown(r: RadioRundown, ctx: RundownContext) -> ValidationReport:
 
     rep.metrics.update({
         "words": total,
-        "est_minutes": round(total / 165, 1),
-        "segments": [{"kind": _seg_label(s), "words": s.words, "est_seconds": round(s.words / 165 * 60)}
+        "est_minutes": round(total / SPEECH_WPM, 1),
+        "segments": [{"kind": _seg_label(s), "words": s.words, "est_seconds": round(s.words / SPEECH_WPM * 60)}
                      for s in r.segments],
         "stories": len(stories),
         "kicker": bool(fin),
