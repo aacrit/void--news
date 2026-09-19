@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-19T23:09:20+00:00",
+ "generatedAt": "2026-09-19T23:38:03+00:00",
  "episodes": {
   "apollo-11-moon-landing": {
    "url": "/audio/history/apollo-11-moon-landing.mp3?v=70d51e2f",
@@ -88,6 +88,182 @@
     }
    ],
    "publishedAt": "2026-09-19T23:09:20+00:00"
+  },
+  "chernobyl-disaster": {
+   "url": "/audio/history/chernobyl-disaster.mp3?v=46469463",
+   "chaptersUrl": "/audio/history/chernobyl-disaster.chapters.json?v=46469463",
+   "title": "The Chernobyl Disaster",
+   "durationSeconds": 673.176,
+   "bytes": 10784618,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 48.252
+    },
+    {
+     "startTime": 48.252,
+     "title": "Twenty three minutes past one",
+     "kind": "segment",
+     "endTime": 113.184
+    },
+    {
+     "startTime": 113.184,
+     "title": "The roof",
+     "kind": "segment",
+     "endTime": 178.56
+    },
+    {
+     "startTime": 178.56,
+     "title": "Thirty six hours",
+     "kind": "segment",
+     "endTime": 259.793
+    },
+    {
+     "startTime": 259.793,
+     "title": "The liquidators",
+     "kind": "segment",
+     "endTime": 300.525
+    },
+    {
+     "startTime": 300.525,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 311.493
+    },
+    {
+     "startTime": 311.493,
+     "title": "The Soviet state",
+     "kind": "segment",
+     "endTime": 353.097
+    },
+    {
+     "startTime": 353.097,
+     "title": "The liquidators and the evacuated",
+     "kind": "segment",
+     "endTime": 394.722
+    },
+    {
+     "startTime": 394.722,
+     "title": "The epidemiologists",
+     "kind": "segment",
+     "endTime": 472.729
+    },
+    {
+     "startTime": 472.729,
+     "title": "The reactor engineers",
+     "kind": "segment",
+     "endTime": 520.278
+    },
+    {
+     "startTime": 520.278,
+     "title": "Glasnost and the collapse",
+     "kind": "segment",
+     "endTime": 563.495
+    },
+    {
+     "startTime": 563.495,
+     "title": "The shape of the disagreement",
+     "kind": "segment",
+     "endTime": 621.472
+    },
+    {
+     "startTime": 621.472,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 673.142
+    }
+   ],
+   "publishedAt": "2026-09-19T23:38:03+00:00"
+  },
+  "haitian-revolution": {
+   "url": "/audio/history/haitian-revolution.mp3?v=710d4eeb",
+   "chaptersUrl": "/audio/history/haitian-revolution.chapters.json?v=710d4eeb",
+   "title": "The Haitian Revolution",
+   "durationSeconds": 725.995,
+   "bytes": 11630591,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 48.423
+    },
+    {
+     "startTime": 48.423,
+     "title": "The clearing",
+     "kind": "segment",
+     "endTime": 113.115
+    },
+    {
+     "startTime": 113.115,
+     "title": "What the colony was worth",
+     "kind": "segment",
+     "endTime": 181.531
+    },
+    {
+     "startTime": 181.531,
+     "title": "Toussaint",
+     "kind": "segment",
+     "endTime": 263.333
+    },
+    {
+     "startTime": 263.333,
+     "title": "The flag",
+     "kind": "segment",
+     "endTime": 323.78
+    },
+    {
+     "startTime": 323.78,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 330.823
+    },
+    {
+     "startTime": 330.823,
+     "title": "The enslaved revolutionaries",
+     "kind": "segment",
+     "endTime": 382.639
+    },
+    {
+     "startTime": 382.639,
+     "title": "The French colonial account",
+     "kind": "segment",
+     "endTime": 431.661
+    },
+    {
+     "startTime": 431.661,
+     "title": "The Haitian nationalist account",
+     "kind": "segment",
+     "endTime": 491.05
+    },
+    {
+     "startTime": 491.05,
+     "title": "The academic account",
+     "kind": "segment",
+     "endTime": 541.766
+    },
+    {
+     "startTime": 541.766,
+     "title": "The indemnity",
+     "kind": "segment",
+     "endTime": 597.649
+    },
+    {
+     "startTime": 597.649,
+     "title": "The shape of the disagreement",
+     "kind": "segment",
+     "endTime": 668.344
+    },
+    {
+     "startTime": 668.344,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 725.944
+    }
+   ],
+   "publishedAt": "2026-09-19T23:38:03+00:00"
   },
   "partition-of-india": {
    "url": "/audio/history/partition-of-india.mp3?v=d8377c14",
