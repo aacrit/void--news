@@ -52,7 +52,6 @@ B: One more before the editorial. Hong Kong plans to recruit a chief artificial 
 A: That's On Air from Void News. Thirty-one tonnes of gold, and a court order that buys the Kennedy Center thirty days. Every source, every story, at Void News.
 
 ## SAY
-Carney = KAR-nee
-Kohat = ko-HAHT
-Warsh = WORSH
-Merz = MERTS
+Kohat = ko-haht
+Warsh = worsh
+Merz = merts

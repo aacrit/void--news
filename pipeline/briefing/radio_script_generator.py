@@ -11,7 +11,7 @@ aloud) and a fixed running order the assembler turns into chapters:
     ## BRIEFS                    ranks 5-12 as one-liners
     ## FINALLY | <rank> | <title> a lighter last item (absent on a disaster day)
     ## CLOSE                     sign-off (voice A)
-    ## SAY                       Name = respelling  (applied before synthesis)
+    ## SAY                       Name = lowercase respelling (applied before synthesis)
 
 The throw into the editorial ("Next, the editorial.") is a code constant, and
 the editorial itself is the existing opinion_audio_script, so the model never
@@ -674,7 +674,7 @@ B: <rank 12, optional>
 A: {CLOSE_PREFIX} <one concrete detail from today's stories the listener will still be thinking about tomorrow: a number, a name, an unresolved outcome. Not a teaser, not a summary.> {CLOSE_TAG}
 
 ## SAY
-<zero to eight lines, only for names a reader could mispronounce, in the form>
+<zero to six lines, only for names a reader would otherwise get wrong. Lowercase syllables joined by hyphens, no capitals (capitals are read as initials): "Hormuz = hor-mooz", "Nunez = noo-nyez". Never respell a common English name.>
 Name = respelling
 {PREVIOUS_MENU}
 RULES THAT FAIL THE SCRIPT IF BROKEN

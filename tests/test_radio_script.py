@@ -76,7 +76,7 @@ def test_clean_fixture() -> str:
     check(r.get("FINALLY") is not None, "kicker present on a calm day")
     check(850 <= r.words <= 1150, f"news words in budget ({r.words})")
     check(0.35 <= rep.metrics["speaker_share_a"] <= 0.65, "speaker balance")
-    check(r.say.get("Carney") == "KAR-nee", "SAY parsed")
+    check(r.say.get("Kohat") == "ko-haht", "SAY parsed")
     # round-trip
     r2 = parse_rundown(r.to_text())
     check([s.kind for s in r2.segments] == [s.kind for s in r.segments], "to_text round-trips")
@@ -179,7 +179,9 @@ def test_spoken_text() -> None:
     for src, want in cases.items():
         got = normalize_for_speech(src)
         check(got == want, f"{src!r} -> {got!r} (want {want!r})")
-    check(apply_say("Kohat police", {"Kohat": "ko-HAHT"}) == "ko-HAHT police", "SAY substitution")
+    check(apply_say("Kohat police", {"Kohat": "ko-haht"}) == "ko-haht police", "SAY substitution")
+    check(apply_say("Mark Carney and Pete Hegseth", {"Carney": "KAR-nee", "Hegseth": "HEG-seth"}) == "Mark kar-nee and Pete heg-seth",
+          "capitalised respellings are lowercased (capitals are read as initials)")
     check(spoken_date(DATE) == "Friday, September eighteenth", "spoken date")
     check(ordinal_words(21) == "twenty-first" and ordinal_words(12) == "twelfth", "ordinals")
     check(year_words(1979) == "nineteen seventy-nine" and year_words(2005) == "two thousand five", "years")

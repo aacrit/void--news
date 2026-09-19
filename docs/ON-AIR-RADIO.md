@@ -62,7 +62,7 @@ with the findings named, then the legacy audio path; warn = logged):
 | R-10 | Each voice carries 35-65 % of the words | fail |
 | R-11 | Sentences under twenty words; one idea per sentence | warn |
 | R-12 | Lead voice alternates story by story; the second voice adds at most one line per story | fail |
-| R-13 | `## SAY` respellings are well formed and used | warn |
+| R-13 | `## SAY` respellings are well formed and used; they are lowercased before synthesis because the phonemizer reads a run of capitals as initials ("KAR-nee" came out as K, A, arnee on 2026-09-19) | warn |
 
 Before synthesis every line passes through `normalize_for_speech`: `## SAY`
 respellings, then numerals to words ("$4 billion" -> "four billion dollars",
