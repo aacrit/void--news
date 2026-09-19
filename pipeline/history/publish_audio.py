@@ -112,12 +112,33 @@ def publish(slug: str, src_dir: Path, manifest: dict) -> dict:
     return entry
 
 
+def pending(limit: int) -> list[str]:
+    """Events that have a script written and no published episode, in catalogue
+    order. This is what the render workflow fans out over, so "what is left to
+    make" is answered by the manifest rather than by a list somebody maintains
+    by hand and forgets to update."""
+    manifest = _load_manifest()
+    scripts = ROOT / "data" / "history" / "scripts"
+    out = [f.stem for f in sorted(scripts.glob("*.txt"))
+           if f.stem not in manifest["episodes"] and (EVENTS / f"{f.stem}.yaml").exists()]
+    return out[:limit] if limit > 0 else out
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("slugs", nargs="+")
-    ap.add_argument("--from", dest="src", required=True,
+    ap.add_argument("slugs", nargs="*")
+    ap.add_argument("--from", dest="src",
                     help="directory holding <slug>.mp3 and <slug>.chapters.json")
+    ap.add_argument("--pending", type=int, metavar="N",
+                    help="print, as JSON, the next N events with a script and no "
+                         "published episode, then exit (0 = all)")
     a = ap.parse_args()
+
+    if a.pending is not None:
+        print(json.dumps(pending(a.pending)))
+        return 0
+    if not a.slugs or not a.src:
+        ap.error("give one or more slugs and --from DIR (or use --pending N)")
 
     manifest = _load_manifest()
     for slug in a.slugs:
