@@ -2355,15 +2355,17 @@ button:focus-visible .sigil-word__beam {
    Measured fit at 768: ~690px content + ~38px gutter = ~728px, ~40px headroom,
    zero overflow. The full wordmark + wider gutter resume at 1024. Kept in one
    place so the levers stay coupled. */
+/* The three CSS-toggled logo copies this block used to swap between
+   (.nav-logo-desktop / -tablet / -mobile) were consolidated into ONE responsive
+   wordmark scaled by .nav-logo-mark font-size, so those selectors matched
+   nothing. Replaced 2026-09-19 with the rule the band actually needs: .nav-left
+   must not be shrunk below its content. The wordmark is flex-shrink:0 inline-
+   flex, so a shrunk .nav-left reported a 106px box while its glyphs rendered
+   134px wide, and the spinoff row was laid out 27px INSIDE the masthead —
+   "VOID NEWS" and "VOID HISTORY" overlapped at exactly 768px. */
 @media (min-width: 768px) and (max-width: 1023px) {
-  .nav-left .nav-logo-desktop {
-    display: none;
-  }
-  .nav-left .nav-logo-tablet {
-    display: block;
-  }
-  .nav-left .nav-logo-mobile {
-    display: none;
+  .nav-left {
+    flex-shrink: 0;
   }
   .nav-inner {
     padding-left: var(--space-5);
@@ -2566,6 +2568,23 @@ button:focus-visible .sigil-word__beam {
 @media (max-width: 767px) {
   .nav-logo-mark {
     font-size: 18px;
+  }
+}
+
+/* ── Spinoff wordmarks (.nav-spinoff-mark) ───────────────────────────────
+   Same mechanism as .nav-logo-mark: SigilWordmark `responsive` leaves the mark
+   em-sized so one node scales per breakpoint. 14px reads clearly secondary
+   against the 30px masthead; the 768-1023 band drops to 11px because that is
+   where the row is tightest (masthead 134 + spinoffs + pages/controls against
+   ~707px of content width). Below 768 the whole row is display:none and the
+   mobile side panel carries both destinations. */
+.nav-spinoff-mark {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .nav-spinoff-mark {
+    font-size: 11px;
   }
 }
 

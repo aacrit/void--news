@@ -43,6 +43,10 @@ export default function Footer({ lastUpdated }: FooterProps) {
         <nav className="footer-links" aria-label="Site pages">
           <Link href="/onair" className="footer-link">On Air</Link>
           <span className="footer-link__sep" aria-hidden="true">&middot;</span>
+          <Link href="/history" className="footer-link">History</Link>
+          <span className="footer-link__sep" aria-hidden="true">&middot;</span>
+          <Link href="/weekly" className="footer-link">Weekly</Link>
+          <span className="footer-link__sep" aria-hidden="true">&middot;</span>
           <Link href="/about" className="footer-link">About</Link>
           <span className="footer-link__sep" aria-hidden="true">&middot;</span>
           <Link href="/sources" className="footer-link">Sources</Link>

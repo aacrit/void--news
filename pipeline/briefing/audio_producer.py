@@ -1321,12 +1321,28 @@ def produce_audio(
 # ---------------------------------------------------------------------------
 
 def _upload_history_to_supabase(audio_bytes: bytes, slug: str) -> Optional[str]:
-    """Upload history MP3 to Supabase Storage.
+    """Store the history MP3 and return its URL.
+
+    Publishing a History episode is a SEPARATE, explicit step on the Cloudflare
+    stack: pipeline/history/publish_audio.py copies the render into
+    frontend/public/audio/history/ AND records it in public/data/history-audio.json,
+    which is what makes the Listen button appear. Writing the MP3 from here would
+    leave an episode on the CDN that the manifest does not list and no page can
+    reach, so this returns None and says where to go instead.
+
+    The Supabase branch below is legacy, kept for rollback only: that bucket was
+    decommissioned with the rest of the project on 2026-09-01.
 
     Path: audio-briefs/history/{slug}.mp3
     No 'latest' copy — history audio is permanent, not ephemeral.
     Returns public URL with cache fingerprint, or None on failure.
     """
+    import os as _os
+    if _os.environ.get("VOID_SQLITE_PATH"):
+        print(f"  [history-audio:{slug}] rendered; publish it with "
+              f"`python pipeline/history/publish_audio.py {slug} --from <dir>` "
+              f"so the manifest records it")
+        return None
     try:
         supabase = _fresh_supabase_client()  # NOT the shared singleton (closed mid-run)
         import hashlib

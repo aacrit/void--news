@@ -6,6 +6,7 @@ import { MagnifyingGlass } from "@phosphor-icons/react";
 import ThemeToggle from "./ThemeToggle";
 import PageToggle from "./PageToggle";
 import LogoFull from "./LogoFull";
+import SigilWordmark from "./SigilWordmark";
 import ExperimentalBadge from "./ExperimentalBadge";
 import { getEditionTimestampLocal, getEditionDatelineUTC } from "../lib/utils";
 
@@ -144,9 +145,22 @@ export default function NavBar({
           )}
         </span>
 
-        {/* Spinoff product family (Void History + Void Weekly) HIDDEN for launch
-            2026-08-05 — restore the .nav-spinoffs block when History/Weekly ship
-            as features. Links + SigilWordmark import removed, routes intact. */}
+        {/* Spinoff product family (Void History + Void Weekly). Hidden for the
+            2026-08-05 launch, restored 2026-09-19 when both sections shipped as
+            features. The Weekly link carries BOTH classes: .nav-history supplies
+            the layout, active/focus and underline-draw, .nav-weekly overrides
+            only --hist-nav-accent to magazine red. Shown from 768px up; below
+            that the mobile tab bar + side panel carry these destinations. */}
+        <div className="nav-spinoffs">
+          <span className="nav-spinoffs__divider" aria-hidden="true" />
+          <span className="nav-spinoffs__eyebrow">Also from Void</span>
+          <Link href="/history" className="nav-history" aria-label="Void History" title="History">
+            <SigilWordmark product="HISTORY" responsive className="nav-spinoff-mark" accent="var(--hist-nav-accent)" height={14} />
+          </Link>
+          <Link href="/weekly" className="nav-history nav-weekly" aria-label="Void Weekly" title="Weekly">
+            <SigilWordmark product="WEEKLY" responsive className="nav-spinoff-mark" accent="var(--hist-nav-accent)" height={14} />
+          </Link>
+        </div>
 
         <div className="nav-right">
           {/* Page navigation — destinations.

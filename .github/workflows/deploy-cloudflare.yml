@@ -18,7 +18,9 @@ on:
     # "Refresh: Daily Brief" -> a regenerated brief/On Air episode is committed
     # by github-actions[bot], and a GITHUB_TOKEN push fires no `push` event, so
     # without this the new MP3 sat on main undeployed (2026-09-19).
-    workflows: ["Auto-merge Claude branches", "News Pipeline", "Refresh: Daily Brief"]
+    # "Weekly Digest" -> same GITHUB_TOKEN-push blind spot for the Monday weekly
+    # snapshot + its MP3 (2026-09-19).
+    workflows: ["Auto-merge Claude branches", "News Pipeline", "Refresh: Daily Brief", "Weekly Digest"]
     types: [completed]
   # Deterministic daily backstop. The "News Pipeline" workflow_run above is the
   # fast path (redeploys ~right after the run completes), but GitHub's
