@@ -311,9 +311,9 @@ export interface AudioChapter {
   startTime: number;
   /** Seconds. Omitted when the chapter runs to the next one. */
   endTime?: number;
-  /** e.g. "Fed raises rates" / "Headlines" / "Also today" / "The editorial" */
+  /** e.g. "Fed raises rates" / "Headlines" / "Also today" / "Opinion" */
   title: string;
-  kind: "headlines" | "story" | "briefs" | "finally" | "editorial";
+  kind: "headlines" | "story" | "briefs" | "finally" | "opinion" | "editorial";
   /** story_clusters.id when kind is "story" or "finally" */
   cluster_id?: string;
   /** Feed rank when kind is "story" */

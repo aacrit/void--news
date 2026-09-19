@@ -696,12 +696,18 @@ try:  # numpy is in pipeline/requirements.txt; guard so audio_producer's
 except ImportError:  # pragma: no cover
     np = None
 
-# The six radio assets, in programme order.
+# The radio set, in programme order. Every cue from radio_theme onward is the
+# same motif (see THEME_PULSE_S / _theme_figure): one programme, one identity.
 RADIO_ASSETS = [
-    "radio_ident.wav",
+    "radio_ident.wav",          # legacy opener, kept as the theme's fallback
+    "radio_theme.wav",
     "radio_menu_bed.wav",
+    "radio_story_bed.wav",
+    "radio_transition.wav",
+    "radio_break.wav",
+    "radio_opinion_theme.wav",
+    "radio_opinion_bed.wav",
     "radio_close_bed.wav",
-    "radio_editorial_stab.wav",
     "radio_outro.wav",
     "radio_room_tone.wav",
 ]
@@ -1080,18 +1086,22 @@ def generate_radio_menu_bed():
 # ---------------------------------------------------------------------------
 
 def generate_radio_close_bed():
-    """12s bed under the sign-off, with a natural end. RMS -40 dBFS.
+    """24s bed under the sign-off, with a natural end. RMS -40 dBFS.
 
     The menu bed's family, moved down and warmed: the top is B3, there is no
     F#4 shimmer, and the B2 gives the stack a minor-key weight the opening
     bed does not have. Same breathing construction, so the two beds are
     audibly siblings.
 
-    It does not loop and does not need to. A 1.2s swell in, then from 9.0s a
-    3.0s raised-cosine fall to true digital silence, so the programme ends on
-    a decay rather than a cut.
+    It does not loop and must not be looped: it is a one-shot that falls to
+    silence, so a second pass would re-enter audibly. 24s because the sign-off
+    budget is 25-55 words, which is 10-21s of speech, and a 12s bed under it
+    opened a hole before the outro arrived.
+
+    A 1.2s swell in, a long hold, then a 3.0s raised-cosine fall to true
+    digital silence, so the programme ends on a decay rather than a cut.
     """
-    dur = 12.0
+    dur = 24.0
     t = _time(dur)
     sig = np.zeros_like(t)
 
@@ -1116,7 +1126,58 @@ def generate_radio_close_bed():
     sig += 0.026 * _breath(t, 0.06, 0.35, 3.0) * air
 
     # Swell in, hold, and fall to silence across the last 3 seconds.
-    sig *= _swell(t, 0.0, 1.2, 7.8, 3.0)
+    sig *= _swell(t, 0.0, 1.2, 19.8, 3.0)
+
+    sig = _norm_rms(sig, -40.0)
+    _write_radio_wav("radio_close_bed.wav", sig, "sign-off bed, fades to silence")
+
+
+# ---------------------------------------------------------------------------
+# 4. radio_editorial_stab.wav — "The Page Turn"
+# ---------------------------------------------------------------------------
+
+def generate_radio_close_bed():
+    """24s bed under the sign-off, with a natural end. RMS -40 dBFS.
+
+    The menu bed's family, moved down and warmed: the top is B3, there is no
+    F#4 shimmer, and the B2 gives the stack a minor-key weight the opening
+    bed does not have. Same breathing construction, so the two beds are
+    audibly siblings.
+
+    It does not loop and must not be looped: it is a one-shot that falls to
+    silence, so a second pass would re-enter audibly. 24s because the sign-off
+    budget is 25-55 words, which is 10-21s of speech, and a 12s bed under it
+    opened a hole before the outro arrived.
+
+    A 1.2s swell in, a long hold, then a 3.0s raised-cosine fall to true
+    digital silence, so the programme ends on a decay rather than a cut.
+    """
+    dur = 24.0
+    t = _time(dur)
+    sig = np.zeros_like(t)
+
+    voices = (
+        ("D2",  0.00, 0.62, 0.06, 0.25, 0.4),
+        ("D2",  0.30, 0.26, 0.08, 0.30, 2.7),
+        ("A2",  0.00, 0.36, 0.07, 0.30, 4.9),
+        ("B2",  0.00, 0.14, 0.05, 0.40, 1.1),   # the warm minor shade
+        ("D3",  0.00, 0.38, 0.09, 0.35, 3.5),
+        ("D3",  0.45, 0.15, 0.11, 0.40, 5.8),
+        ("F#3", 0.00, 0.20, 0.08, 0.45, 0.9),
+        ("A3",  0.00, 0.16, 0.10, 0.50, 2.2),
+        ("B3",  0.00, 0.07, 0.12, 0.55, 4.4),
+    )
+    for note, detune, amp, rate, depth, phase in voices:
+        sig += amp * _breath(t, rate, depth, phase) * _tone(t, _NOTE[note] + detune, phase)
+
+    for mult, amp, phase in ((2.0, 0.045, 1.8), (3.0, 0.020, 4.6)):
+        sig += amp * _breath(t, 0.07, 0.3, phase) * _tone(t, _NOTE["D2"] * mult, phase)
+
+    air = _shaped_noise(len(t), _pink_lp_hp(0.5, 850.0, 220.0, order=2), seed=303)
+    sig += 0.026 * _breath(t, 0.06, 0.35, 3.0) * air
+
+    # Swell in, hold, and fall to silence across the last 3 seconds.
+    sig *= _swell(t, 0.0, 1.2, 19.8, 3.0)
 
     sig = _norm_rms(sig, -40.0)
     _write_radio_wav("radio_close_bed.wav", sig, "sign-off bed, fades to silence")
@@ -1180,57 +1241,38 @@ def generate_radio_editorial_stab():
 # ---------------------------------------------------------------------------
 
 def generate_radio_outro():
-    """2.0s closing resolve: the ident inverted. Peak -12 dBFS.
+    """14.0s close. Peak -13 dBFS, ending at true digital silence.
 
-    The ident begins at the root and opens upward into the bright voicing.
-    This begins at the top of that same voicing and falls back down to the
-    root, one note every 140ms, each with a longer decay than the one above
-    it. Because the decays overlap heavily the ear hears a single settling
-    gesture rather than a descending scale, which is the point: a scale would
-    be a melodic tag, and a tag is a station signature.
+    The CEO asked for "music in the end as well, fading out to oblivion". So
+    the programme does not stop, it leaves: four bars of the theme's figure
+    with the bass thinning out, a low D landing on bar four, and then a 5.5s
+    raised-cosine fall to ZERO. The last 200ms are digital silence, asserted at
+    render time, so nothing is cut off and nothing lingers.
 
-    D5 -> A4 -> F#4 -> D4 -> A3 -> D3 -> D2. The last two arrive with slow
-    attacks and hold while everything above them dies, then a 0.65s master
-    release takes the whole thing to silence.
+    It starts under the last words of the sign-off (outro_overlap) and the file
+    ends `tail` ms after its final sample.
     """
-    dur = 2.0
-    t = _time(dur)
-    sig = np.zeros_like(t)
+    dur, t = 14.0, _time(14.0)
+    sig = _theme_figure(t, max_beats=16, bass_beats=8)
+    # The landing: low D with its detuned twin and body harmonics, the same
+    # pairing the ident opens with, so the close answers the open.
+    for note, det, amp, atk, dec in (("D2", 0.0, 0.62, 0.030, 2.40),
+                                     ("D2", 0.8, 0.24, 0.035, 2.20),
+                                     ("D3", 0.0, 0.46, 0.020, 1.80),
+                                     ("D3", 1.1, 0.18, 0.024, 1.60)):
+        sig += amp * _pluck(t, 8.0, atk, dec) * _tone(t, _NOTE[note] + det)
+    sig += 0.07 * _pluck(t, 8.0, 0.030, 1.40) * _tone(t, _NOTE["D2"] * 2.0, 0.6)
+    sig = _reverberate(sig, 0.18, _reverb_ir(0.90, 0.26, 3000.0, seed=606))
+    # Hold to 8.25s, then fall to nothing across 5.5s. _swell is exactly zero
+    # outside its window, so the tail is true silence, not a small number.
+    sig *= _swell(t, 0.0, 0.25, 8.0, 5.5)
+    sig = _edge_fade(sig, 3.0, 0.0)
+    sig = _norm_peak(sig, -13.0)
+    tail_rms = _rms_dbfs(sig[-int(0.2 * SAMPLE_RATE):])
+    if tail_rms > -80.0:
+        raise AssertionError(f"outro does not end in silence: last 200ms at {tail_rms:.1f} dBFS")
+    _write_radio_wav("radio_outro.wav", sig, "close, four bars falling to silence")
 
-    # (note, onset, amp, attack_tau, decay_tau, phase)
-    cascade = (
-        ("D5",  0.00, 0.19, 0.030, 0.45, 0.0),
-        ("A4",  0.14, 0.23, 0.030, 0.55, 1.6),
-        ("F#4", 0.28, 0.25, 0.035, 0.70, 3.0),
-        ("D4",  0.42, 0.27, 0.040, 0.85, 4.5),
-        ("A3",  0.56, 0.31, 0.050, 1.05, 5.9),
-        ("D3",  0.70, 0.52, 0.100, 1.60, 1.1),
-        ("D2",  0.78, 0.62, 0.160, 2.20, 2.4),
-    )
-    for note, onset, amp, atk, dec, phase in cascade:
-        sig += amp * _pluck(t, onset, atk, dec) * _tone(t, _NOTE[note], phase)
-
-    # Detuned twins on the two landing notes: the same 0.8 / 1.1 Hz breathing
-    # the ident opens with, so the close answers the open.
-    sig += 0.21 * _pluck(t, 0.70, 0.100, 1.60) * _tone(t, _NOTE["D3"] + 1.1, 4.0)
-    sig += 0.24 * _pluck(t, 0.78, 0.160, 2.20) * _tone(t, _NOTE["D2"] + 0.8, 5.3)
-    # Body harmonics on the root.
-    sig += 0.07 * _pluck(t, 0.78, 0.140, 1.30) * _tone(t, _NOTE["D2"] * 2.0, 0.6)
-    sig += 0.03 * _pluck(t, 0.78, 0.140, 0.90) * _tone(t, _NOTE["D2"] * 3.0, 2.8)
-
-    sig = _reverberate(sig, 0.20, _reverb_ir(0.90, 0.26, 3000.0, seed=606))
-
-    # Master release: the tail decays rather than being cut at 2.0s.
-    sig *= _swell(t, 0.0, 0.02, 1.33, 0.65)
-
-    sig = _edge_fade(sig, 3.0, 40.0)
-    sig = _norm_peak(sig, -12.0)
-    _write_radio_wav("radio_outro.wav", sig, "closing resolve, descending to low D")
-
-
-# ---------------------------------------------------------------------------
-# 6. radio_room_tone.wav — "The Room"
-# ---------------------------------------------------------------------------
 
 def generate_radio_room_tone():
     """10s loopable synthesized studio room tone. RMS -57 dBFS.
@@ -1269,8 +1311,213 @@ def generate_radio_room_tone():
 # Radio set entry point
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# 7. The Daily-shaped set (CEO 2026-09-19) — music that MOVES
+# ---------------------------------------------------------------------------
+# The six assets above are deliberately motionless: drones with no pulse and
+# no melody, made to sit under a menu and disappear. A scored programme needs
+# the opposite, a bed with a heartbeat that carries the reader between stories.
+# These four are placeholders with real motion, and they are what the show
+# uses until licensed tracks are supplied through VOID_RADIO_MUSIC_DIR. They
+# are still original and still synthesised here, so the repo stays clean.
+
+def _pulse(t, period_s: float, notes, decay_tau: float = 0.28, max_beats: int | None = None):
+    """A repeating plucked figure: the spine of every track below.
+
+    `max_beats` stops the figure after N plucks instead of filling the buffer,
+    which is how a cue resolves on its root and then lets the tail ring rather
+    than starting the cell again.
+    """
+    sig = np.zeros_like(t)
+    n = int(np.ceil(t[-1] / period_s)) + 1
+    if max_beats is not None:
+        n = min(n, max_beats)
+    for i in range(n):
+        onset = i * period_s
+        freq = _NOTE[notes[i % len(notes)]]
+        env = _pluck(t, onset, 0.004, decay_tau)
+        sig += env * (_tone(t, freq) + 0.30 * _tone(t, freq * 2.0)
+                      + 0.10 * _tone(t, freq * 3.0))
+    return sig
+
+
+# ---------------------------------------------------------------------------
+# The motif. Every cue in the programme is this figure at this tempo.
+# ---------------------------------------------------------------------------
+# The CEO kept the opening theme and asked for everything else to be built from
+# it ("make it the same musical theme as the intro, i like the calm beats
+# style"). So the theme's content lives here, and the theme, the story
+# transition, the mid-programme break, the opinion entrance and the outro are
+# all calls to _theme_figure with different cells, lengths and envelopes.
+#
+# No percussion layer is added. The "beats" the CEO likes ARE these plucks; a
+# kick on the transitions but not on the theme they are supposed to match would
+# split the family the brief asks us to keep together.
+THEME_PULSE_S = 0.50                                   # 120 bpm; the 4-note cell is a 2.0s bar
+THEME_CELL = ("D3", "A3", "D3", "F#3")
+THEME_BASS = ("D2", "D2", "A2", "D2")                  # half-time, 1.00s
+THEME_PAD = (("D3", 0.22, 0.10, 0.30, 0.0),            # (note, amp, breath rate, depth, phase)
+             ("A3", 0.16, 0.08, 0.35, 2.2),
+             ("F#4", 0.08, 0.12, 0.45, 4.1))
+
+
+def _theme_figure(t, *, period_s: float = THEME_PULSE_S, cell=THEME_CELL,
+                  bass=THEME_BASS, pad=THEME_PAD, pulse_amp: float = 0.42,
+                  bass_amp: float = 0.20, pulse_decay: float = 0.30,
+                  bass_decay: float = 0.55, max_beats: int | None = None,
+                  bass_beats: int | None = None, pad_env=None):
+    """The motif: plucked cell over a half-time bass under a breathing pad.
+
+    `pad_env` multiplies the pad only, so a cue can let the pad bloom and thin
+    out while the pulse runs underneath.
+    """
+    sig = pulse_amp * _pulse(t, period_s, cell, pulse_decay, max_beats)
+    sig += bass_amp * _pulse(t, period_s * 2.0, bass, bass_decay, bass_beats)
+    pad_sig = np.zeros_like(t)
+    for note, amp, rate, depth, phase in pad:
+        pad_sig += amp * _breath(t, rate, depth, phase) * _tone(t, _NOTE[note], phase)
+    return sig + (pad_sig * pad_env if pad_env is not None else pad_sig)
+
+
+def generate_radio_theme():
+    """8.0s opening theme. Peak -13 dBFS.
+
+    A pulse in D that states the show's two-note signature (D, A) and opens
+    into the same D-major stack the ident uses, so the new theme and the old
+    bookends are audibly the same family.
+    """
+    dur, t = 8.0, _time(8.0)
+    sig = _theme_figure(t)
+    sig *= _swell(t, 0.0, 0.25, dur - 2.4, 2.1)
+    sig = sig / (np.abs(sig).max() or 1.0) * 10 ** (-13 / 20)
+    _write_radio_wav("radio_theme.wav", sig, "opening theme, pulse in D")
+
+
+def generate_radio_story_bed():
+    """24.0s loopable bed under the news block. RMS -38 dBFS.
+
+    Motion without melody: a slow pulse on the root and fifth under a breathing
+    pad. It carries the reader across the seams between stories, and because
+    the duck in radio_producer pulls it down whenever a voice is up, it is only
+    fully present in the gaps.
+
+    Loop is exact: every frequency and breath rate is snapped by `_lock()` to a
+    multiple of 1/24 Hz, and the pulse period divides 24.0 exactly.
+    """
+    dur, t = 24.0, _time(24.0)
+    sig = 0.30 * _pulse(t, 1.50, ("D3", "A2", "D3", "F#3"), 0.42)
+    for note, amp, rate, depth, phase in (("D2", 0.55, 0.05, 0.25, 0.0),
+                                          ("A2", 0.30, 0.07, 0.30, 2.4),
+                                          ("D3", 0.22, 0.09, 0.35, 4.6),
+                                          ("A3", 0.12, 0.11, 0.40, 1.1)):
+        sig += amp * _breath(t, _lock(rate, dur), depth, phase) * _tone(t, _lock(_NOTE[note], dur), phase)
+    rms = float(np.sqrt(np.mean(sig ** 2))) or 1.0
+    sig *= 10 ** (-38 / 20) / rms
+    _write_radio_wav("radio_story_bed.wav", sig, "news bed, pulse + pad", loopable=True)
+
+
+def generate_radio_opinion_bed():
+    """20.0s loopable bed under the editorial. RMS -40 dBFS.
+
+    Darker and slower than the news bed, with the B-minor shading brought
+    forward: the editorial is an argument, not a report, and the bed says so
+    before the voice does. Quieter too, so the opinion stays legible as speech.
+    """
+    dur, t = 20.0, _time(20.0)
+    sig = 0.20 * _pulse(t, 2.50, ("D2", "B2", "D2", "A2"), 0.70)
+    for note, amp, rate, depth, phase in (("D2", 0.60, 0.05, 0.25, 0.7),
+                                          ("B2", 0.26, 0.06, 0.35, 3.1),
+                                          ("D3", 0.18, 0.08, 0.40, 5.0),
+                                          ("F#3", 0.09, 0.10, 0.45, 1.9)):
+        sig += amp * _breath(t, _lock(rate, dur), depth, phase) * _tone(t, _lock(_NOTE[note], dur), phase)
+    rms = float(np.sqrt(np.mean(sig ** 2))) or 1.0
+    sig *= 10 ** (-40 / 20) / rms
+    _write_radio_wav("radio_opinion_bed.wav", sig, "opinion bed, minor shading", loopable=True)
+
+
+def generate_radio_transition():
+    """2.9s transition between stories. Peak -13 dBFS.
+
+    The theme's own cell, four beats and then the root, so a seam in the
+    programme sounds like the programme. It replaced a three-note pluck that
+    shared nothing with the theme and which the CEO heard, accurately, as "a
+    digital ding".
+
+    It plays in the CLEAR: the timeline reserves transition_lead + this length
+    + transition_settle before the story it introduces, so nothing is spoken
+    over it.
+    """
+    dur, t = 2.9, _time(2.9)
+    sig = _theme_figure(t, cell=THEME_CELL, bass=("D2", "A2", "D2"),
+                        pad=(), max_beats=4, bass_beats=3)
+    # The resolving root, after the four-beat cell, with a longer decay.
+    sig += 0.46 * _pluck(t, 2.0, 0.004, 0.62) * (
+        _tone(t, _NOTE["D3"]) + 0.30 * _tone(t, _NOTE["D3"] * 2.0))
+    sig += 0.30 * _pluck(t, 2.0, 0.012, 0.85) * _tone(t, _NOTE["D2"])
+    sig *= _swell(t, 0.0, 0.01, 2.2, 0.65)
+    sig = _edge_fade(sig, 2.0, 40.0)
+    sig = _norm_peak(sig, -13.0)
+    _write_radio_wav("radio_transition.wav", sig, "story-to-story, the theme's cell")
+
+
+def generate_radio_break():
+    """9.0s mid-programme break. Peak -13 dBFS.
+
+    The CEO asked for a break "just to let the broadcast breathe halfway into
+    the news". It is the theme's figure over four bars: the pulse runs
+    throughout, the pad blooms across bars two and three and thins out again,
+    and bar four resolves to the root. Instrumental, in the clear, no speech.
+
+    It REPLACES the transition at its seam. A nine-second cue that resolves on
+    the root followed by a three-second cue that also resolves on the root is
+    two endings in a row.
+    """
+    dur, t = 9.0, _time(9.0)
+    pad_env = _swell(t, 1.5, 2.5, 1.0, 2.5)
+    sig = _theme_figure(t, max_beats=16, bass_beats=8, pad_env=pad_env)
+    sig += 0.44 * _pluck(t, 8.0, 0.006, 0.70) * (
+        _tone(t, _NOTE["D3"]) + 0.28 * _tone(t, _NOTE["D3"] * 2.0))
+    sig += 0.34 * _pluck(t, 8.0, 0.014, 0.95) * _tone(t, _NOTE["D2"])
+    sig *= _swell(t, 0.0, 0.02, 8.2, 0.75)
+    sig = _edge_fade(sig, 2.0, 40.0)
+    sig = _norm_peak(sig, -13.0)
+    _write_radio_wav("radio_break.wav", sig, "mid-programme break, four bars")
+
+
+def generate_radio_opinion_theme():
+    """6.5s entrance to Void Opinion. Peak -13 dBFS.
+
+    The open's figure in the opinion's own colour: the cell's fourth note moves
+    from F#3 to B2, which is the same minor shading the opinion bed carries,
+    and the pulse is dotted (0.75s) so the segment arrives slower than the news
+    does. It ends on an open fifth (D2 + A2 + D3, no third) held under a 2.0s
+    release, and the first sentence of the opinion starts over that tail, the
+    way the sign-on starts over the theme's.
+
+    This replaced a 0.7s stab. The CEO asked for "a similar entry music for
+    opinion", and an entrance is what tells the listener the news has ended and
+    an argument has begun: the opinion firewall, in sound.
+    """
+    dur, t = 6.5, _time(6.5)
+    pad = (("D3", 0.22, 0.10, 0.30, 0.0),
+           ("A3", 0.14, 0.08, 0.35, 2.2),
+           ("B3", 0.10, 0.12, 0.45, 4.1))
+    pad_env = _swell(t, 0.0, 0.25, 3.5, 0.75)
+    sig = _theme_figure(t, period_s=0.75, cell=("D3", "A3", "D3", "B2"),
+                        bass=("D2", "D2", "B2", "D2"), pad=pad,
+                        max_beats=6, bass_beats=3, pad_env=pad_env)
+    # The open fifth the first sentence speaks over. No third: unresolved, which
+    # is the right harmony for a column that is about to argue something.
+    for note, amp, dec in (("D2", 0.52, 1.35), ("A2", 0.34, 1.20), ("D3", 0.26, 1.05)):
+        sig += amp * _pluck(t, 4.5, 0.020, dec) * _tone(t, _NOTE[note])
+    sig *= _swell(t, 0.0, 0.25, 4.25, 2.0)
+    sig = _edge_fade(sig, 2.0, 40.0)
+    sig = _norm_peak(sig, -13.0)
+    _write_radio_wav("radio_opinion_theme.wav", sig, "Void Opinion entrance, minor shading")
+
+
 def render_radio_assets():
-    """Render the six radio-set assets into ASSETS_DIR.
+    """Render the eleven radio-set assets into ASSETS_DIR.
 
     Independent of the pydub set: nothing here overwrites ident.wav,
     outro.wav, background_bed.wav, news_to_opinion.wav or opinion_kicker.wav.
@@ -1283,9 +1530,14 @@ def render_radio_assets():
     ASSETS_DIR.mkdir(parents=True, exist_ok=True)
     print("Generating void --onair radio set (2026-09):")
     generate_radio_ident()
+    generate_radio_theme()
     generate_radio_menu_bed()
+    generate_radio_story_bed()
+    generate_radio_transition()
+    generate_radio_break()
+    generate_radio_opinion_theme()
+    generate_radio_opinion_bed()
     generate_radio_close_bed()
-    generate_radio_editorial_stab()
     generate_radio_outro()
     generate_radio_room_tone()
 

@@ -7,7 +7,7 @@ import { splitBriefParagraphs } from "../lib/briefText";
 import {
   chapterKindLabel,
   chapterMarks,
-  findEditorialIndex,
+  findOpinionIndex,
   formatChapterTime,
 } from "../lib/chapters";
 import { fetchLastPipelineRun } from "../lib/supabase";
@@ -146,7 +146,7 @@ export default function OnAirPage() {
     () => chapterMarks(chapters, displayDuration),
     [chapters, displayDuration]
   );
-  const editorialIndex = useMemo(() => findEditorialIndex(chapters), [chapters]);
+  const opinionIndex = useMemo(() => findOpinionIndex(chapters), [chapters]);
 
   const vuBars = useMemo(() => Array.from({ length: VU_BARS }, (_, i) => i), []);
 
@@ -322,13 +322,13 @@ export default function OnAirPage() {
                     <span className="onair__rail-count" aria-label={`Chapter ${chapIndex + 1} of ${chapters.length}`}>
                       {chapIndex >= 0 ? chapIndex + 1 : "\u2013"} / {chapters.length}
                     </span>
-                    {editorialIndex >= 0 && (
+                    {opinionIndex >= 0 && (
                       <button
                         type="button"
-                        className={`onair__rail-jump${chapIndex === editorialIndex ? " onair__rail-jump--on" : ""}`}
+                        className={`onair__rail-jump${chapIndex === opinionIndex ? " onair__rail-jump--on" : ""}`}
                         onClick={() => {
                           hapticMicro();
-                          a.seekToChapter(editorialIndex);
+                          a.seekToChapter(opinionIndex);
                         }}
                       >
                         Editorial
@@ -369,7 +369,7 @@ export default function OnAirPage() {
                       ? marks.map((m) => (
                           <span
                             key={m.index}
-                            className={`onair__seek-mark${m.index === chapIndex ? " onair__seek-mark--on" : ""}${m.chapter.kind === "editorial" ? " onair__seek-mark--ed" : ""}`}
+                            className={`onair__seek-mark${m.index === chapIndex ? " onair__seek-mark--on" : ""}${(m.chapter.kind === "opinion" || m.chapter.kind === "editorial") ? " onair__seek-mark--ed" : ""}`}
                             style={{ left: `${m.pct}%` }}
                           />
                         ))

@@ -54,8 +54,7 @@ except ImportError:  # pragma: no cover - package-relative import
 SIGN_ON_PREFIX = "From Void News, this is On Air."
 MENU_LEAD = "On the desk today."
 BRIEFS_LEAD = "Also on the desk."
-KICKER_LEADS = ("One more before the editorial.", "Last item.", "One more.")
-THROW_LINE = "Next, the editorial."
+KICKER_LEADS = ("One more before Void Opinion.", "Last item.", "One more.")
 CLOSE_PREFIX = "That's On Air from Void News."
 CLOSE_TAG = "Every source, every story, at Void News."
 
@@ -66,24 +65,27 @@ KICKER_SUPPRESS_SEVERITY = 0.6
 SegmentKind = Literal["OPEN", "MENU", "STORY", "BRIEFS", "FINALLY", "CLOSE"]
 _KINDS: tuple[str, ...] = ("OPEN", "MENU", "STORY", "BRIEFS", "FINALLY", "CLOSE")
 
-# The pace the show is actually read at (tts_engines.KOKORO_SPEED calibrates
-# every voice to it). Used for the length estimates the validators report, so
-# a rundown that reads long says so before it is synthesised.
-SPEECH_WPM = 156
+# The pace the show is actually read at. Each voice now reads at its own
+# natural rate rather than being stretched to a common one (see
+# tts_engines.KOKORO_SPEED), so this is the blend across the desk: am_puck 164,
+# af_bella 177, af_heart 162, weighted by how much each carries. Used for the
+# length estimates the validators report, so a rundown that reads long says so
+# before it is synthesised.
+SPEECH_WPM = 158
 
 # Word budgets at SPEECH_WPM. (lo, hi); the validator fails outside ±25 % of
-# the band and warns inside it. Total news budget 850-1150 words ≈ 5.5-7.5
-# minutes, plus a 500-700 word editorial ≈ 9-11 minutes with music.
+# the band and warns inside it. Total news budget 850-1150 words ≈ 5-7
+# minutes, plus a 500-700 word editorial ≈ 8.5-10 minutes with music.
 WORD_BUDGETS: dict[str, tuple[int, int]] = {
     "OPEN": (12, 35),
     "MENU": (35, 80),
-    "STORY1": (170, 260),
-    "STORY": (130, 210),
-    "BRIEFS": (90, 170),
-    "FINALLY": (50, 110),
+    "STORY1": (190, 280),
+    "STORY": (150, 230),
+    "BRIEFS": (100, 180),
+    "FINALLY": (60, 120),
     "CLOSE": (25, 55),
 }
-TOTAL_BUDGET = (850, 1150)
+TOTAL_BUDGET = (950, 1250)
 MENU_HEADLINE_MAX_WORDS = 12
 BRIEF_ITEM_MAX_WORDS = 22
 BRIEF_ITEMS = (6, 8)
@@ -554,7 +556,7 @@ def validate_rundown(r: RadioRundown, ctx: RundownContext) -> ValidationReport:
         elif rk <= DEEP_STORIES:
             fail("R-08", "FINALLY", f"kicker is rank {rk}, already told in depth; pick from ranks {DEEP_STORIES + 1}-{len(ctx.top20)}")
         if fin.cluster_id and ctx.editorial_cluster_id and fin.cluster_id.lower() == ctx.editorial_cluster_id.lower():
-            fail("R-08", "FINALLY", "the kicker is the editorial's own story; the editorial follows it, pick another")
+            fail("R-08", "FINALLY", "the kicker is the opinion's own story; the opinion follows it, pick another")
 
     # R-09 kicker suppression
     if fin and not ctx.kicker_allowed:
@@ -648,19 +650,19 @@ B: <headline for rank 4>
 A: <headline for rank 5>
 
 ## STORY 1 | <chapter title, at most six words>
-A: <the lead story in depth: 170-260 words over several A: lines, each line two to four sentences. Open on the newest fact. Then what happened, who says what, what is disputed, what happens next.>
+A: <the lead story in depth: {STORY1_LO}-{STORY1_HI} words over several A: lines, each line two to four sentences. Open on the newest fact. Then what happened, who says what, what is disputed, what happens next.>
 B: <exactly ONE line: a new fact the lead did not give (a number, a date, a counter-claim from a named source). Not a reaction.>
 
 ## STORY 2 | <title>
-B: <130-210 words over several B: lines. Open with a one-clause bridge that orients in place or subject ("In Washington," / "To the markets," / "Staying with Europe,"), then the facts.>
+B: <{STORY_LO}-{STORY_HI} words over several B: lines. Open with a one-clause bridge that orients in place or subject ("In Washington," / "To the markets," / "Staying with Europe,"), then the facts.>
 A: <ONE new-fact line, optional>
 
 ## STORY 3 | <title>
-A: <130-210 words>
+A: <{STORY_LO}-{STORY_HI} words>
 B: <ONE new-fact line, optional>
 
 ## STORY 4 | <title>
-B: <130-210 words>
+B: <{STORY_LO}-{STORY_HI} words>
 A: <ONE new-fact line, optional>
 
 ## BRIEFS
@@ -688,11 +690,11 @@ RULES THAT FAIL THE SCRIPT IF BROKEN
 - Voice B leads STORY 2 and STORY 4; voice A leads STORY 1 and STORY 3. Inside a story the other voice speaks at most once.
 - No quotation marks anywhere. No digits anywhere. No a.m./p.m.
 - Never these phrases: "Up first", "Here's what we're covering", "First the headlines", "And that's the headlines", "these are our main stories", "Stay with us", "And finally", "Welcome", "Thanks", "Absolutely", "Wow".
-- Total news length 850 to 1,150 words. The length comes from covering the four lead stories properly, not from padding.
+- Total news length {TOTAL_LO} to {TOTAL_HI} words. The length comes from covering the four lead stories properly, not from padding.
 {RETRY}"""
 
-_FINALLY_TEMPLATE = """## FINALLY | <the NUMBER of a lighter story from [5] to [{N}]: culture, science, sport, an oddity; never a death, a war, a disaster, and never the editorial's story{EXCLUDE}> | <title>
-B: <{KICKER_LEAD} then two to four sentences, 50-110 words, plainly told, ending on the fact rather than a joke>
+_FINALLY_TEMPLATE = """## FINALLY | <the NUMBER of a lighter story from [5] to [{N}]: culture, science, sport, an oddity; never a death, a war, a disaster, and never the opinion's story{EXCLUDE}> | <title>
+B: <{KICKER_LEAD} then two to four sentences, {FINALLY_LO}-{FINALLY_HI} words, plainly told, ending on the fact rather than a joke>
 """
 
 
@@ -737,7 +739,9 @@ def build_radio_prompt(
         if editorial_cluster_id:
             erank = ctx.rank_of(editorial_cluster_id)
             exclude = f" (story [{erank}])" if erank else ""
-        finally_block = _FINALLY_TEMPLATE.format(N=n, KICKER_LEAD=KICKER_LEADS[0], EXCLUDE=exclude)
+        finally_block = _FINALLY_TEMPLATE.format(N=n, KICKER_LEAD=KICKER_LEADS[0], EXCLUDE=exclude,
+                                                FINALLY_LO=WORD_BUDGETS["FINALLY"][0],
+                                                FINALLY_HI=WORD_BUDGETS["FINALLY"][1])
     else:
         finally_block = "(No FINALLY segment today: the lead story is a mass-casualty event.)\n"
     prev = ""
@@ -753,6 +757,14 @@ def build_radio_prompt(
         SIGN_ON=SIGN_ON_PREFIX, MENU_LEAD=MENU_LEAD, BRIEFS_LEAD=BRIEFS_LEAD,
         CLOSE_PREFIX=CLOSE_PREFIX, CLOSE_TAG=CLOSE_TAG,
         FINALLY_BLOCK=finally_block, PREVIOUS_MENU=prev, RETRY=retry,
+        # The prompt's word budgets used to be typed into the template by hand
+        # while the validator read WORD_BUDGETS, so the two drifted: the model
+        # was being asked for one length and marked against another. They now
+        # come from the same constants, and a test asserts the rendered prompt
+        # carries these numbers.
+        STORY1_LO=WORD_BUDGETS["STORY1"][0], STORY1_HI=WORD_BUDGETS["STORY1"][1],
+        STORY_LO=WORD_BUDGETS["STORY"][0], STORY_HI=WORD_BUDGETS["STORY"][1],
+        TOTAL_LO=f"{TOTAL_BUDGET[0]:,}", TOTAL_HI=f"{TOTAL_BUDGET[1]:,}",
     )
     return _SYSTEM, user
 

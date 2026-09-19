@@ -56,7 +56,7 @@ const SHOW = [
   { startTime: 366,  title: "Delhi air quality",    kind: "story", rank: 3 },
   { startTime: 498,  title: "Also today",           kind: "briefs" },
   { startTime: 612,  title: "And finally",          kind: "finally" },
-  { startTime: 690,  title: "The editorial",        kind: "editorial",
+  { startTime: 690,  title: "Opinion",              kind: "opinion",
     subtitle: "The deficit is a choice" },
 ];
 const DURATION = 840;
@@ -68,7 +68,7 @@ for (const empty of [null, undefined, []]) {
   check(`findChapterIndex(${tag}) is -1`, ch.findChapterIndex(empty, 30) === -1);
   check(`chapterProgress(${tag}) is 0`, ch.chapterProgress(empty, 0, 30) === 0);
   check(`chapterMarks(${tag}) is empty`, ch.chapterMarks(empty, DURATION).length === 0);
-  check(`findEditorialIndex(${tag}) is -1`, ch.findEditorialIndex(empty) === -1);
+  check(`findEditorialIndex(${tag}) is -1`, ch.findOpinionIndex(empty) === -1);
   check(`chapterEnd(${tag}) is null`, ch.chapterEnd(empty, 0, DURATION) === null);
 }
 
@@ -169,11 +169,17 @@ check("a chapter past the known duration is dropped, not stacked on the end",
 
 /* ---- 7. the editorial jump -------------------------------------------- */
 
-check("the editorial is found", ch.findEditorialIndex(SHOW) === 6);
-check("a show with no editorial reports -1",
-  ch.findEditorialIndex(SHOW.filter((c) => c.kind !== "editorial")) === -1);
-check("the editorial start is where opinion_start_seconds points",
-  SHOW[ch.findEditorialIndex(SHOW)].startTime === 690);
+check("the opinion chapter is found", ch.findOpinionIndex(SHOW) === 6);
+// Episodes rendered before 2026-09-19 carry kind "editorial"; the jump and the
+// label must keep resolving for them or the two shows already on the CDN lose
+// their Opinion button.
+const LEGACY = SHOW.map((c) => (c.kind === "opinion" ? { ...c, kind: "editorial", title: "Editorial" } : c));
+check("a legacy editorial chapter still resolves", ch.findOpinionIndex(LEGACY) === 6);
+check("legacy label reads Opinion", ch.chapterKindLabel(LEGACY[6]) === "Opinion");
+check("a show with no opinion reports -1",
+  ch.findOpinionIndex(SHOW.filter((c) => c.kind !== "opinion")) === -1);
+check("the opinion start is where opinion_start_seconds points",
+  SHOW[ch.findOpinionIndex(SHOW)].startTime === 690);
 
 /* ---- 8. labels and timecodes ------------------------------------------ */
 
@@ -183,7 +189,7 @@ check("a rankless story still has a label",
 check("headlines label", ch.chapterKindLabel(SHOW[0]) === "Headlines");
 check("briefs label", ch.chapterKindLabel(SHOW[4]) === "In brief");
 check("finally label", ch.chapterKindLabel(SHOW[5]) === "Finally");
-check("editorial label", ch.chapterKindLabel(SHOW[6]) === "Editorial");
+check("opinion label", ch.chapterKindLabel(SHOW[6]) === "Opinion");
 
 check("timecode pads the seconds", ch.formatChapterTime(690) === "11:30");
 check("timecode of zero", ch.formatChapterTime(0) === "0:00");

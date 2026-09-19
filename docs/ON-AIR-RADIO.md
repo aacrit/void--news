@@ -24,21 +24,38 @@ This document is the positive definition of the show. The code that enforces it:
 ## Running order
 
 ```
-ident (2.4 s)
-OPEN      voice A   "From Void News, this is On Air. It's Friday, September eighteenth." + one sentence
-MENU      A/B       "On the desk today." then five headlines, one line each        [menu bed underneath]
-STORY 1   A leads   rank 1 in depth, 170-260 words; B adds at most one new fact   (marker: ## STORY 1 | <title>; the id is bound from the feed by rank)
-STORY 2   B leads   rank 2, 130-210 words, opens with a one-clause bridge
+theme (8.0 s)                                                    [one motif: every cue below is this figure]
+OPEN      voice A   sign-on, starting 1.2 s before the theme ends, over its release
+MENU      A/B       "On the desk today." then five headlines                    [menu bed]
+STORY 1   A leads   rank 1 in depth
+transition (2.9 s)  the theme's cell, in the clear
+STORY 2   B leads   rank 2
+BREAK (9.0 s)       four bars, instrumental, the programme breathes
 STORY 3   A leads   rank 3
+transition
 STORY 4   B leads   rank 4
+transition
 BRIEFS    A/B       "Also on the desk." then ranks 5-12, one sentence each
-FINALLY   B         "One more before the editorial." a lighter item from ranks 5-20   (marker: ## FINALLY | <feed rank> | <title>; absent when the lead is a mass-casualty story)
-throw     A         "Next, the editorial."                                              (code constant)
-stab (0.7 s)
-EDITORIAL B         the existing opinion_audio_script, paragraph by paragraph
-CLOSE     A         "That's On Air from Void News." + one concrete fact + "Every source, every story, at Void News."   [close bed]
-outro (2.0 s)
+FINALLY   B         "One more before Void Opinion."                              (absent on a mass-casualty day)
+opinion entrance (6.5 s)  minor shading, dotted pulse, ends on an open fifth
+OPINION   C         the opinion script, starting over the entrance's tail        [opinion bed]
+CLOSE     A         "That's On Air from Void News." + a fact + the tag           [close bed]
+outro (14.0 s)      four bars resolving to low D, then a 5.5 s fall to TRUE silence
 ```
+
+There is no spoken throw. The entrance music announces the segment and the
+opinion script's own first line ("Now, void opinion.") does the naming; a voice
+saying "Next, the editorial." immediately before that was two names for one
+thing, back to back. The segment is **Opinion** everywhere: chapter kind
+`opinion`, chapter title `Opinion`, `opinion_start_seconds`. Episodes rendered
+before 2026-09-19 carry kind `editorial` and the player still resolves them.
+
+**One motif.** `generate_assets._theme_figure` holds the theme's musical
+content (120 bpm, cell D3-A3-D3-F#3 over a half-time D2 bass, breathing pad),
+and the transition, the break, the opinion entrance and the outro are all calls
+to it. The refactor is verified lossless by sha256: the theme is byte-identical
+to the one it replaced.
+
 
 Ranks 13-20 are context for the model and are not read. Nothing sits under the
 stories, the briefs or the editorial except synthesised room tone at -57 dBFS.
@@ -55,7 +72,7 @@ with the findings named, then the legacy audio path; warn = logged):
 | R-03 | Numbers are words. Code normalises anyway (`spoken_text`), so this warns | warn |
 | R-04 | No a.m./p.m. clock forms, no print datelines | fail |
 | R-05 | No borrowed or AI-podcast phrases: "Up first", "Here's what we're covering", "First the headlines", "And that's the headlines", "these are our main stories", "Stay with us", "And finally", "Welcome", "Thanks", "Absolutely", "Wow", "Over to you" and the show never names or thanks a host | fail |
-| R-06 | Word budgets at 156 wpm per segment, five menu lines, six to eight brief items, 850-1150 news words | fail outside +-25 % |
+| R-06 | Word budgets at ~165 wpm per segment, five menu lines, six to eight brief items, 850-1150 news words | fail outside +-25 % |
 | R-07 | Attribution before the claim ("The Fed chair says ..."), never trailing | warn |
 | R-08 | Exactly four STORY segments, ranks 1-4 in order; ids are bound from the feed by rank (the model never copies UUIDs: the first real run mis-copied two by one hex digit); the kicker must name a feed rank from 5 up, and never the editorial's story | fail |
 | R-09 | FINALLY absent when the lead's `disaster_severity` >= 0.6; present otherwise | fail / warn |
@@ -93,36 +110,34 @@ nothing else, so the opinion firewall is audible the moment it starts.
 
 | Role | Voice | Speed | Pan | Why |
 |---|---|---|---|---|
-| A, the anchor | `am_puck` | 0.92 | -7 % | light American, 112 Hz. The one voice that hits the worker's -1 dBFS clamp |
-| B, alternate stories | `af_nova` | 0.82 | +7 % | low female (159 Hz), a register contrast to A without the brightness of `af_heart` |
-| C, the editorial only | `af_heart` | 0.93 | centre | the roster's one A-grade voice; centred, because it speaks alone |
+| A, the anchor | `am_puck` | 1.00 | -7 % | light American, 112 Hz, 164 wpm. The one voice that hits the worker's -1 dBFS clamp |
+| B, alternate stories | `af_bella` | 1.00 | +7 % | A-grade, 177 wpm. Replaced `af_nova`, which was C-grade and the roster's fastest at 205 wpm |
+| C, the editorial only | `af_heart` | 1.00 | centre | the roster's other A-grade voice, 162 wpm; centred, because it speaks alone |
 
-**One pace, about 156 wpm.** The show is one programme, so the three voices do
-not read at three speeds, and 156 is a calm read rather than the brisk wire
-pace the first build shipped (CEO, 2026-09-19). Each speed above is the
-smallest correction that voice needs to reach it: at speed 1.0 the roster
-reads `am_puck` 164, `af_heart` 162 and `af_nova` 181. Kokoro's speed knob
-scales predicted phoneme durations before the decoder, so it re-synthesises at
-the new rate rather than time-stretching, and the response is near linear at
-about 100 wpm per unit of speed. `af_nova` needs by far the largest correction
-because it is the fastest voice on the roster; if it ever reads as dragged the
-answer is a naturally calmer B voice, not a smaller correction, which would
-leave B a fifth faster than the anchor.
+**Every voice reads at its own natural rate, and pace is a casting decision.**
+Kokoro's voices are trained at the pace of their training audio. The `speed`
+knob scales predicted phoneme durations away from that distribution, and the
+further it is pushed the more the read acquires the flat, stretched quality
+that gets heard as synthetic. So a voice whose natural rate is wrong for the
+show is REPLACED, never stretched, and two readers a few wpm apart is what a
+real desk sounds like.
 
-`VOID_KOKORO_VOICE_A/B/C` and `VOID_KOKORO_SPEED_A/B/C` override any of them.
+This reverses the one-pace calibration of earlier the same day, which had put
+all three at about 156 wpm. The correction it required of `af_nova` (0.82) was
+the largest on the desk, and `af_nova` was also the voice the CEO picked out
+as artificial: cause and effect, not coincidence.
 
-Measured pitch and brightness across the English roster (same line, 2026-09-19)
-live in this session's voice samplers; the useful facts: `af_sky` (147 Hz,
-1954 Hz centroid) is the darkest well-behaved female voice, `am_onyx` (85 Hz)
-and `bm_lewis` (86 Hz) are the two documentary-deep males, `am_michael` (the
-anchor until 2026-09-19) is darker than `am_puck` and reads 157 wpm at 1.08.
-Speed must be calibrated per voice, and against REAL rundown copy: absolute
-wpm swings about 30 % with the passage, so the four long turns of
-`tests/fixtures/radio_bench_turns.json` are the reference (a single short line
-over-counts, because its leading silence does not scale with speed).
-A voice can also be a BLEND of roster voices (weights summed over
-`get_voice_style`), which keeps a dark timbre while borrowing stability from a
-better-trained voice.
+Natural rates, measured on the four long turns of
+`tests/fixtures/radio_bench_turns.json` (real rundown copy: a short line
+over-counts because its leading silence does not scale, and absolute wpm
+swings about 30 % with the passage, so only same-passage numbers compare):
+`af_nicole` 114, `af_heart` 162, `am_puck` 164, `af_bella` 177, `af_kore` 181,
+`af_aoede` 183, `af_sarah` 188, `bf_emma` 196, `af_nova` 205. Grades from
+hexgrad's own table: `af_heart` A, `af_bella` A-, `af_nicole`/`bf_emma` B-,
+`af_sarah`/`af_aoede`/`af_kore` C+, `af_nova` C. `af_aoede` is the warmest
+timbre on the roster (1943 Hz centroid) if brightness is what reads as
+synthetic. `VOID_KOKORO_VOICE_A/B/C` and `VOID_KOKORO_SPEED_A/B/C` override
+any of it.
 
 Not available: `af_jadzia`. It appears in third-party sample repos but is in no
 hexgrad release and no published embedding exists, so there are no weights to
@@ -188,4 +203,4 @@ No bed under any story. Both voices within the first sixty seconds. No names,
 no thanks. All numbers spoken as words. Kicker absent on a mass-casualty day.
 The stab reads as a page-turn, not a jingle. Room tone never audible as hiss.
 No clipping. Chapters show in the site player, in Apple Podcasts (ID3) and in a
-Podcasting 2.0 app (sidecar). Speech rate about 156 wpm, the same in every voice (printed in the log).
+Podcasting 2.0 app (sidecar). Each voice at its own natural rate; no voice is stretched (wpm printed in the log).

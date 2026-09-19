@@ -10,7 +10,7 @@ import { splitBriefParagraphs } from "../lib/briefText";
 import {
   chapterKindLabel,
   chapterMarks,
-  findEditorialIndex,
+  findOpinionIndex,
   formatChapterTime,
 } from "../lib/chapters";
 
@@ -221,7 +221,7 @@ export default function FloatingPlayer() {
   /* ---- Derived episode metadata. Hosts are no longer named: the dateline
      carries the stored voice label instead. ---- */
   const voiceLabel = brief?.audio_voice_label || null;
-  const editorialIndex = useMemo(() => findEditorialIndex(chapters), [chapters]);
+  const opinionIndex = useMemo(() => findOpinionIndex(chapters), [chapters]);
   const editionLabel = brief?.edition ? brief.edition.charAt(0).toUpperCase() + brief.edition.slice(1) : "World";
   const episodeDate = brief?.created_at ? formatDate(brief.created_at) : "";
 
@@ -416,10 +416,10 @@ export default function FloatingPlayer() {
           >
             {currentChapterIndex >= 0 ? currentChapterIndex + 1 : "\u2013"} / {chapters.length}
           </span>
-          {editorialIndex >= 0 && (
+          {opinionIndex >= 0 && (
             <button
-              className={`fp__rail-jump${currentChapterIndex === editorialIndex ? " fp__rail-jump--active" : ""}`}
-              onClick={() => seekToChapter(editorialIndex)}
+              className={`fp__rail-jump${currentChapterIndex === opinionIndex ? " fp__rail-jump--active" : ""}`}
+              onClick={() => seekToChapter(opinionIndex)}
               type="button"
             >
               Editorial
@@ -447,7 +447,7 @@ export default function FloatingPlayer() {
             ? marks.map((m) => (
                 <span
                   key={m.index}
-                  className={`fp__seek-mark${m.index === currentChapterIndex ? " fp__seek-mark--active" : ""}${m.chapter.kind === "editorial" ? " fp__seek-mark--ed" : ""}`}
+                  className={`fp__seek-mark${m.index === currentChapterIndex ? " fp__seek-mark--active" : ""}${(m.chapter.kind === "opinion" || m.chapter.kind === "editorial") ? " fp__seek-mark--ed" : ""}`}
                   style={{ left: `${m.pct}%` }}
                   aria-hidden="true"
                 />
@@ -706,7 +706,7 @@ export default function FloatingPlayer() {
                   <div className="fp__bcast-firewall" aria-hidden="true" />
                   <div className="fp__bcast-section">
                     <div className="fp__bcast-section-head">
-                      <span className="fp__bcast-section-label">Editorial</span>
+                      <span className="fp__bcast-section-label">Opinion</span>
                       {brief.opinion_lean && (
                         <span className={`fp__bcast-lean fp__bcast-lean--${brief.opinion_lean}`}>
                           {brief.opinion_lean}
@@ -768,7 +768,7 @@ export default function FloatingPlayer() {
                                 <div className="fp__track-row fp__track-row--opinion">
                                   <span className="fp__track-label">Opinion</span>
                                   <span className="fp__track-hl">
-                                    {ep.opinion_headline || "Editorial"}
+                                    {ep.opinion_headline || "Opinion"}
                                   </span>
                                   {ep.opinion_lean && (
                                     <span className={`fp__track-lean fp__track-lean--${ep.opinion_lean}`}>
