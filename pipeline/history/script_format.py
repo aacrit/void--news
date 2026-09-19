@@ -30,7 +30,13 @@ from dataclasses import dataclass, field
 # cases that matter: Azad, Jucunda, anonymous testimony.
 SPEAKERS = ("N", "M", "F")
 QUOTE_SPEAKERS = ("M", "F")
-KINDS = ("OPEN", "TITLE", "SCENE", "DOCUMENT", "PERSPECTIVE", "ASIDE", "TURN", "CLOSE")
+KINDS = ("OPEN", "TITLE", "SCENE", "DOCUMENT", "PERSPECTIVE", "ASIDE", "TURN",
+         "REST", "CLOSE")
+# A REST carries no words. It is a held musical pause, placed by the writer
+# where the listener needs somewhere to put what they have just heard: after a
+# document that lands hard, before the accounts begin, before the close. A
+# documentary that never stops talking gives the audience no room to feel
+# anything, and the silence is part of the writing, not a gap in it.
 # Segments in which the document voice may speak: a primary source, or a
 # perspective quoting its own witness.
 QUOTING = ("DOCUMENT", "PERSPECTIVE", "ASIDE")

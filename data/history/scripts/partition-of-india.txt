@@ -43,6 +43,8 @@ N: In Lahore, fires burned for weeks. In Amritsar, mobs blocked the roads agains
 N: Some trains reached their destinations carrying no living passengers at all.
 N: The railway staff at Wagah had a term for those, and they wrote it in the log. Ghost trains.
 
+## REST
+
 ## SCENE 4 | The wells
 N: The violence was not only on the roads. It was inside villages where nothing had changed except the information.
 N: In border districts, neighbours who had shared wells for generations turned on each other within hours of learning which side of the line they had fallen on.
@@ -69,12 +71,16 @@ N: The reason is simple and it is bleak. Most of these deaths were never registe
 N: Mass graves found in the Punjab and in Bengal, decades afterwards, have kept revising the number upward.
 N: So the figure you will see, one to two million, is not a measurement. It is an estimate of an absence of records.
 
+## REST
+
 ## DOCUMENT | Mahatma Gandhi | prayer meeting address, Calcutta | August 1947
 N: In Calcutta that month, Gandhi was fasting against the killing. At a prayer meeting, he said this.
 M: I do not agree with what my Muslim friends say, that we cannot live together.
 
 ## ASIDE
 N: He was assassinated five months later, by a Hindu nationalist who believed he had conceded too much.
+
+## REST
 
 ## TURN | Five accounts
 N: Here is the part that does not resolve.
@@ -111,6 +117,8 @@ N: Its argument is that national narratives erase fourteen million people. That 
 N: From the Partition Archive, an oral history recorded in twenty thirteen, sixty six years afterwards.
 F: I still dream of the house. The courtyard, the neem tree. I am an old woman now, but in my dreams I am always going back.
 
+## REST | short
+
 ## PERSPECTIVE | Women's history | vanquished
 N: The fifth account is about the seventy five thousand to a hundred thousand women who were abducted, raped, forcibly converted and married during the violence.
 N: Then it is about what the two new governments did next. The Abducted Persons Act of nineteen forty nine recovered women across the border on the basis of religion, without asking the women. Some were returned to families who would not take them back. Some were moved twice.
@@ -127,6 +135,8 @@ N: The subaltern account leaves out the state building, the institutions, the Co
 N: The women's account, the most recent of the five, leaves out male victims, who were also killed and mutilated in enormous numbers.
 N: The holes are not random. Each account omits the thing that would cost its own side the most.
 N: That is not a reason to discard any of them. It is the reason to hear all five.
+
+## REST
 
 ## CLOSE
 N: The Radcliffe Line left a hundred and sixty two enclaves stranded on the wrong side of the border with what became Bangladesh. Villages inside a country they did not touch.

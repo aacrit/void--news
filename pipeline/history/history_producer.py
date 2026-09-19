@@ -37,15 +37,20 @@ SCRIPTS = Path(__file__).resolve().parents[2] / "data" / "history" / "scripts"
 # pauses are where the listener does the work.
 GAPS: dict[str, int] = {
     "theme_overlap": 1200,      # the first line starts inside the theme's release
-    "line": 320,                # between narrator lines in one segment
-    "to_document": 700,         # narrator -> the document voice: a beat to change who is speaking
-    "from_document": 900,       # and a longer one coming back, to let the words land
-    "scene": 1100,              # between scenes
-    "to_perspective": 1500,     # into an account: the longest pause in the programme
-    "to_turn": 1800,            # into the reckoning
-    "to_close": 1400,
+    "line": 420,                # between narrator lines in one segment
+    "to_document": 900,         # narrator -> a quoted voice: a beat to change who is speaking
+    "from_document": 1400,      # and a longer one coming back, to let the words land
+    "scene": 1600,              # between scenes
+    "to_perspective": 2200,     # into an account
+    "to_turn": 2400,            # into the reckoning
+    "to_close": 2000,
     "outro_overlap": 500,
     "tail": 600,
+    # A REST is a held pause with the bed alone in it. The duck recovers in
+    # 900ms, so across a rest this long the music comes fully up and then
+    # steps back under the next line: the "breath" of the programme.
+    "rest": 7500,
+    "rest_short": 4500,
 }
 # Segments that get a musical transition in the clear before them.
 TRANSITION_BEFORE = ("SCENE", "TURN")
@@ -71,6 +76,7 @@ class Timeline:
     total_ms: int
     opener_ms: int
     transition_at_ms: list[int] = field(default_factory=list)
+    rest_at_ms: list[tuple[int, int]] = field(default_factory=list)
     outro_at_ms: int = 0
 
 
@@ -101,6 +107,10 @@ def _gap(prev: dict | None, cur: dict) -> tuple[int, bool]:
     if prev["seg_idx"] == cur["seg_idx"]:
         return GAPS["line"], False
     kind = cur["kind"]
+    if prev["kind"] == "REST":
+        # The rest has already supplied the silence; do not add another gap
+        # on top of it or the programme stalls.
+        return GAPS["line"], False
     if kind == "TURN":
         return GAPS["to_turn"], True
     if kind == "PERSPECTIVE":
@@ -112,16 +122,31 @@ def _gap(prev: dict | None, cur: dict) -> tuple[int, bool]:
     return GAPS["scene"], False
 
 
-def build_timeline(turns, audio, *, opener_ms: int, transition_ms: int, outro_ms: int) -> Timeline:
+def build_timeline(turns, audio, *, opener_ms: int, transition_ms: int, outro_ms: int,
+                   rests: dict[int, str] | None = None, break_ms: int = 0) -> Timeline:
+    """`rests` maps a segment index to a rest length key; the pause is opened
+    before the first turn of that segment and the break cue plays inside it."""
     cues: list[Cue] = []
     pos = max(0, opener_ms - GAPS["theme_overlap"]) if opener_ms else 300
     transition_at: list[int] = []
+    rest_at: list[tuple[int, int]] = []
     prev: dict | None = None
+    seen_segs: set[int] = set()
     for spec, meta in turns:
         seg = audio.get(spec.idx)
         if seg is None:
             continue
         gap, wants_transition = _gap(prev, meta)
+        pending_rest = (rests or {}).get(meta["seg_idx"]) if meta["seg_idx"] not in seen_segs else None
+        seen_segs.add(meta["seg_idx"])
+        if pending_rest and prev is not None:
+            length = GAPS[pending_rest]
+            # The break cue plays inside the rest, starting a beat in, so the
+            # silence is heard as music arriving rather than as a dropout.
+            if break_ms:
+                rest_at.append((pos + 600, min(break_ms, length - 900)))
+            pos += length
+            gap, wants_transition = GAPS["line"], False
         if wants_transition and transition_ms:
             # The transition plays in the clear, so the gap has to hold it.
             gap = max(gap, 300) + transition_ms + 400
@@ -134,8 +159,10 @@ def build_timeline(turns, audio, *, opener_ms: int, transition_ms: int, outro_ms
         prev = meta
     outro_at = max(0, pos - GAPS["outro_overlap"])
     total = max(pos, outro_at + outro_ms) + GAPS["tail"]
-    return Timeline(cues=cues, total_ms=total, opener_ms=opener_ms,
-                    transition_at_ms=transition_at, outro_at_ms=outro_at)
+    tl = Timeline(cues=cues, total_ms=total, opener_ms=opener_ms,
+                  transition_at_ms=transition_at, outro_at_ms=outro_at)
+    tl.rest_at_ms = rest_at
+    return tl
 
 
 def chapters(tl: Timeline, script) -> list[dict]:
@@ -172,6 +199,12 @@ def music_bus(tl: Timeline, assets: dict):
         for at in tl.transition_at_ms:
             bus = bus.overlay(tr.apply_gain(rp.CUE_GAIN_DB).set_channels(2), position=at)
         used["transition"] = list(tl.transition_at_ms)
+    brk = assets.get("break")
+    if brk is not None and tl.rest_at_ms:
+        for at, length in tl.rest_at_ms:
+            cue = brk if len(brk) <= length else brk[:length].fade_out(600)
+            bus = bus.overlay(cue.apply_gain(rp.CUE_GAIN_DB).set_channels(2), position=at)
+        used["rest"] = [at for at, _ in tl.rest_at_ms]
     bed = assets.get("story_bed")
     if bed is not None:
         # One bed across the spoken body, ducked and darkened under every
@@ -229,14 +262,26 @@ def produce(slug: str, out_dir: Path) -> dict | None:
         return None
     turns = [(s, m) for s, m in turns if s.idx in res.audio]
 
-    assets = {k: rp._asset(k) for k in ("theme", "transition", "story_bed", "outro", "room")}
+    assets = {k: rp._asset(k) for k in ("theme", "transition", "break", "story_bed", "outro", "room")}
+    # A REST segment has no words, so it never becomes a turn. Its length is
+    # opened before whatever segment follows it.
+    rests: dict[int, str] = {}
+    for i, seg in enumerate(script.segments):
+        if seg.kind == "REST":
+            key = "rest_short" if (seg.title or "").strip().lower() == "short" else "rest"
+            nxt = next((j for j in range(i + 1, len(script.segments))
+                        if script.segments[j].kind != "REST"), None)
+            if nxt is not None:
+                rests[nxt] = key
     tl = build_timeline(turns, res.audio,
                         opener_ms=len(assets["theme"]) if assets["theme"] else 0,
                         transition_ms=len(assets["transition"]) if assets["transition"] else 0,
-                        outro_ms=len(assets["outro"]) if assets["outro"] else 0)
+                        outro_ms=len(assets["outro"]) if assets["outro"] else 0,
+                        rests=rests, break_ms=len(assets["break"]) if assets["break"] else 0)
     spoken = sum(c.end_ms - c.start_ms for c in tl.cues)
     print(f"  [history] timeline {tl.total_ms/1000:.1f}s, speech {spoken/1000:.1f}s, "
-          f"{script.words/(spoken/60000):.0f} wpm, {len(tl.transition_at_ms)} transitions")
+          f"{script.words/(spoken/60000):.0f} wpm, {len(tl.transition_at_ms)} transitions, "
+          f"{len(tl.rest_at_ms)} rests")
 
     work = Path(tempfile.mkdtemp(prefix="void-history-"))
     try:
