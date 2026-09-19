@@ -65,9 +65,28 @@ def load_events() -> list[dict]:
     return docs
 
 
+def is_renderable(url) -> bool:
+    """True when the url resolves to an actual image the browser can load.
+
+    A commons File: page is rewritten to Special:Redirect/file/ by the frontend
+    and served by Wikimedia; an upload.wikimedia.org path is already direct.
+    Everything else here is a landing page (unsplash.com/photos/..., a pexels
+    gallery, an en.wikipedia article anchor, a doi.org record) or a dead
+    Supabase Storage object.
+    """
+    u = str(url or "")
+    return (
+        u.startswith("https://commons.wikimedia.org/wiki/File:")
+        or u.startswith("https://upload.wikimedia.org/")
+    )
+
+
 def build_rows(docs: list[dict]) -> list[dict]:
     known = {d["slug"] for d in docs}
     rows: dict[str, dict] = {}
+    dropped_media: dict[str, int] = {}
+    heroes_substituted: list[str] = []
+    heroes_missing: list[str] = []
 
     for doc in docs:
         slug = doc["slug"]
@@ -97,6 +116,8 @@ def build_rows(docs: list[dict]) -> list[dict]:
             for i, p in enumerate(doc.get("perspectives") or [])
         ]
 
+        kept = [m for m in (doc.get("media") or []) if is_renderable(m.get("source_url"))]
+        dropped_media[slug] = len(doc.get("media") or []) - len(kept)
         row["media"] = [
             {
                 "id": f"{event_id(slug)}-m{i}",
@@ -117,9 +138,21 @@ def build_rows(docs: list[dict]) -> list[dict]:
                 "location": m.get("location"),
                 "embed_url": m.get("embed_url"),
             }
-            for i, m in enumerate(doc.get("media") or [])
-            if m.get("source_url")
+            for i, m in enumerate(kept)
         ]
+
+        # Hero: keep a live one, else adopt the first surviving media item and
+        # its credit. Events with no Wikimedia media at all keep no hero; the
+        # page already renders without one.
+        if not is_renderable(row.get("hero_image_url")):
+            if kept:
+                row["hero_image_url"] = kept[0].get("source_url")
+                row["hero_image_attribution"] = kept[0].get("attribution", "")
+                heroes_substituted.append(slug)
+            else:
+                row["hero_image_url"] = None
+                row["hero_image_attribution"] = None
+                heroes_missing.append(slug)
 
         row["connections"] = []
         rows[slug] = row
@@ -152,6 +185,13 @@ def build_rows(docs: list[dict]) -> list[dict]:
             })
     if dropped:
         print(f"  {dropped} connection(s) dropped: target has no event file")
+    total_dropped = sum(dropped_media.values())
+    if total_dropped:
+        print(f"  {total_dropped} media item(s) dropped: no directly renderable image url")
+    if heroes_substituted:
+        print(f"  {len(heroes_substituted)} hero(es) adopted from the event's own gallery")
+    if heroes_missing:
+        print(f"  {len(heroes_missing)} event(s) have NO hero: {heroes_missing}")
 
     return [rows[d["slug"]] for d in docs]
 
