@@ -39,9 +39,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
+      # No explicit ref: check out whatever triggered this run. The scheduled
+      # run resolves to the default branch; a workflow_dispatch from a branch
+      # checks out THAT branch, so a change to the generator can be exercised
+      # before it lands. Pinning ref: main here would have run main's code under
+      # this branch's workflow file, which is how a dispatch silently tests
+      # nothing.
       - uses: actions/checkout@v4
-        with:
-          ref: main
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -117,7 +121,7 @@ jobs:
           VOID_EXPORT_ONLY: weekly
         run: python pipeline/export_static.py
 
-      - name: Commit refreshed weekly data to main
+      - name: Commit refreshed weekly data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -130,10 +134,15 @@ jobs:
           fi
           git commit -m "Weekly: refresh digest snapshot ($(date -u +%F))"
           git checkout -- . 2>/dev/null || true
+          # Commit back to the branch this run checked out, never unconditionally
+          # to main: a dispatch from a feature branch must not push that branch's
+          # unreviewed commits onto the default branch.
+          BRANCH="${{ github.ref_name }}"
+          echo "committing to $BRANCH"
           for attempt in 1 2 3 4 5; do
-            git fetch origin main
-            git rebase origin/main || { git rebase --abort 2>/dev/null || true; echo "rebase failed"; exit 1; }
-            if git push origin HEAD:main; then echo "pushed on attempt $attempt"; exit 0; fi
+            git fetch origin "$BRANCH"
+            git rebase "origin/$BRANCH" || { git rebase --abort 2>/dev/null || true; echo "rebase failed"; exit 1; }
+            if git push origin "HEAD:$BRANCH"; then echo "pushed on attempt $attempt"; exit 0; fi
             echo "push rejected (attempt $attempt); refetching and retrying"
             sleep 5
           done
