@@ -19,6 +19,8 @@ M: Houston, Tranquility Base here. The Eagle has landed.
 ## ASIDE
 N: In Mission Control a flight controller keyed his microphone and said: you have got a bunch of guys about to turn blue. We are breathing again.
 
+## REST
+
 ## SCENE 2 | Eight years
 N: The promise had been made eight years earlier, by a president who did not live to see it, to a Congress that had to pay for it.
 N: At that point the United States had put a single astronaut into space, for fifteen minutes, on a suborbital hop. The Soviet Union had already orbited a man around the Earth.
@@ -35,6 +37,8 @@ N: It included women threading copper wire through magnetic cores to hand weave 
 N: The software that ran on that memory was led by Margaret Hamilton, who coined the term software engineering partly because nobody was taking the discipline seriously enough to name it.
 N: It cost three lives before it left the ground. On the twenty seventh of January, nineteen sixty seven, a fire swept the pure oxygen cabin of Apollo one during a test on the pad, and killed the crew inside it.
 
+## REST
+
 ## SCENE 4 | A signal weaker than a refrigerator bulb
 N: Six and a half hours after landing, Armstrong went down the ladder.
 N: The television signal came from two hundred and thirty nine thousand miles away, on a transmission weaker than the bulb inside a refrigerator, relayed through a dish outside Canberra.
@@ -43,6 +47,8 @@ N: About six hundred million people watched it. At that point, that was roughly 
 ## DOCUMENT | Neil Armstrong | Apollo 11 air-to-ground transcript, first step onto the lunar surface | July 21, 1969
 N: What Armstrong said as he stepped off is the most quoted sentence of the century, and he had thought about it.
 M: That's one small step for man, one giant leap for mankind.
+
+## REST
 
 ## TURN | Five accounts
 N: What that was worth is where the accounts separate.
@@ -75,6 +81,8 @@ M: I want NASA scientists to tackle the problems we face in society.
 N: The poet Gil Scott-Heron put the same argument in the first person, and it is the version people still know.
 M: A rat done bit my sister Nell, with Whitey on the Moon. Her face and arms began to swell, and Whitey's on the Moon.
 
+## REST | short
+
 ## PERSPECTIVE | The engineers | academic
 N: The fourth account is the one that gets made in laboratories, and its claim is that the spending bought more than a flag.
 N: Apollo needed integrated circuits in quantities nobody else was ordering, and became the first mass customer for the technology that the entire computing industry was then built on.
@@ -98,6 +106,8 @@ N: The domestic critique leaves out the jobs the programme created, including fo
 N: The engineers' account leaves out that Cold War prestige is what paid for the science, and that crewed lunar exploration was abandoned three years later and has not resumed.
 N: And the Global South account leaves out the inspiration that Apollo genuinely provided to space programmes later built in India and Brazil, on explicitly developmental terms.
 N: The holes are not random. Each account omits the part that would most complicate its own conclusion.
+
+## REST
 
 ## CLOSE
 N: The last people left in nineteen seventy two. Nobody has been back.
