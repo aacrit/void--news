@@ -39,25 +39,34 @@ except ImportError:  # pragma: no cover
 SAMPLE_RATE = 24000
 Role = Literal["A", "B", "C"]
 
-# Kokoro v1.0 roster picks (hexgrad VOICES.md grades):
-#   am_michael  C+  lowest and most even of the three best-trained American
-#               male voices (am_michael / am_fenrir / am_puck) -> the anchor
-#   af_heart    A   the only A-grade voice; warm, clear, a full register
-#               contrast to Michael -> alternate stories + the editorial
-# Ear-test alternates: am_fenrir (brighter), af_bella (A-), bf_emma (British).
+# Kokoro v1.0 roster picks (hexgrad VOICES.md grades), cast by the CEO from a
+# 12-voice sampler on 2026-09-19:
+#   am_puck     C+  light American, 112 Hz median pitch, 2594 Hz centroid ->
+#               the anchor. Reads 164 wpm at speed 1.0 on real rundown copy,
+#               so it needs no slowdown, but it is the one voice that arrives
+#               at the worker's -1 dBFS clamp (raw peak > 1.0): the clamp in
+#               tts_kokoro_worker is what keeps A from reaching the bus hot.
+#   af_nova     C   low female (159 Hz) -> alternate stories. A register
+#               contrast to A without the brightness of af_heart.
+#   af_heart    A   the only A-grade voice; warm and clear -> the editorial,
+#               and nothing else.
+# Ear-test alternates: am_michael (darker, the previous anchor), am_fenrir
+# (brighter), af_sky (147 Hz, the darkest well-behaved female), bf_emma.
 # Three roles since 2026-09-19 (CEO): A anchors the news, B takes alternate
 # stories, C reads ONLY the editorial, so the opinion firewall is audible the
 # moment the voice changes.
 KOKORO_VOICES: dict[str, str] = {
-    "A": os.environ.get("VOID_KOKORO_VOICE_A", "am_michael"),
+    "A": os.environ.get("VOID_KOKORO_VOICE_A", "am_puck"),
     "B": os.environ.get("VOID_KOKORO_VOICE_B", "af_nova"),
     "C": os.environ.get("VOID_KOKORO_VOICE_C", "af_heart"),
 }
-# Measured 2026-09-18 on a 78-word news paragraph: am_michael reads 155 wpm at
-# speed 1.0 and 163 at 1.08; af_heart reads 168 at 1.0. Per-voice speeds put
-# both in the 160-170 wpm news band (VOID_KOKORO_SPEED_A / _B override).
+# Speed is calibrated per voice against the 160-170 wpm news band, measured on
+# the four long turns of tests/fixtures/radio_bench_turns.json (real rundown
+# copy: short lines over-count, because the leading silence does not scale).
+# 2026-09-19: am_puck 164 wpm at 1.0, am_michael 157 at 1.08, af_heart 168 at
+# 1.0. VOID_KOKORO_SPEED_A / _B / _C override.
 KOKORO_SPEED: dict[str, float] = {
-    "A": float(os.environ.get("VOID_KOKORO_SPEED_A", "1.08") or 1.08),
+    "A": float(os.environ.get("VOID_KOKORO_SPEED_A", "1.0") or 1.0),     # am_puck already reads 164 wpm
     "B": float(os.environ.get("VOID_KOKORO_SPEED_B", "0.98") or 0.98),   # af_nova reads 172 wpm at 1.0
     "C": float(os.environ.get("VOID_KOKORO_SPEED_C", "0.97") or 0.97),   # the editorial sits a touch under the news pace
 }
