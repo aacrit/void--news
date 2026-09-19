@@ -23,9 +23,15 @@ import re
 from dataclasses import dataclass, field
 
 SPEAKERS = ("N", "D")
-KINDS = ("OPEN", "TITLE", "SCENE", "DOCUMENT", "ASIDE", "TURN", "CLOSE")
+KINDS = ("OPEN", "TITLE", "SCENE", "DOCUMENT", "PERSPECTIVE", "ASIDE", "TURN", "CLOSE")
+# Segments in which the document voice may speak: a primary source, or a
+# perspective quoting its own witness.
+QUOTING = ("DOCUMENT", "PERSPECTIVE", "ASIDE")
 WPM = 145.0                      # measured on the On Air cast, including pauses
-TARGET_MINUTES = (8.0, 12.0)
+# An event with five substantial perspectives cannot state all five fairly
+# inside ten minutes, and stating them fairly is the whole point of the
+# catalogue, so the band is wide enough to pay for the moat.
+TARGET_MINUTES = (8.0, 15.0)
 MUSIC_MINUTES = 1.1              # theme, scene stings, outro
 
 
@@ -131,25 +137,33 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
     for seg in script.segments:
         label = f"{seg.kind}{' ' + seg.title if seg.title else ''}"
         d_lines = [l for l in seg.lines if l.speaker == "D"]
-        if seg.kind != "DOCUMENT" and d_lines:
+        if seg.kind not in QUOTING and d_lines:
             out.append(Finding("H-02", "fail", label, "document voice speaks outside a DOCUMENT segment"))
-        if seg.kind == "DOCUMENT":
-            if not seg.author:
+        if seg.kind in ("DOCUMENT", "PERSPECTIVE", "ASIDE") and d_lines:
+            if seg.kind == "DOCUMENT" and not seg.author:
                 out.append(Finding("H-03", "fail", label, "DOCUMENT has no author in its marker"))
-            # H-04: the narrator must say who it is BEFORE the document reads.
-            first_d = next((i for i, l in enumerate(seg.lines) if l.speaker == "D"), None)
-            before = [l for l in seg.lines[:first_d or 0] if l.speaker == "N"]
-            if first_d is None:
-                out.append(Finding("H-03", "fail", label, "DOCUMENT segment with nothing read"))
-            elif not before:
-                out.append(Finding("H-04", "fail", label,
-                                   "no attribution spoken before the read: the listener hears a quote "
-                                   "without knowing whose it is"))
-            elif seg.author:
-                surname = seg.author.split()[-1].lower()
-                if surname not in " ".join(_norm(l.text) for l in before):
-                    out.append(Finding("H-04", "warn", label,
-                                       f"attribution line does not name {seg.author}"))
+            # H-04: the narrator must NAME THE SPEAKER before the voice reads.
+            # Checking merely that some narration came first is not enough: a
+            # perspective states its argument before it quotes, so that test
+            # passes even when nobody is named. The speaker's name is looked up
+            # from the data by matching the quote, so the rule holds wherever a
+            # quote appears and does not depend on the marker being filled in.
+            for i, l in enumerate(seg.lines):
+                if l.speaker != "D":
+                    continue
+                said = _norm(l.text)
+                speaker = next((who for src, who in sourced
+                                if src and (said in src or src in said or _overlap(said, src) > 0.6)), None)
+                before = " ".join(_norm(x.text) for x in seg.lines[:i] if x.speaker == "N")
+                if not before:
+                    out.append(Finding("H-04", "fail", label,
+                                       "a quote is read with no narration before it: the listener "
+                                       "hears words without knowing whose they are"))
+                elif speaker:
+                    named = [w for w in _norm(speaker).split() if len(w) > 3 and w != "anonymous"]
+                    if named and not any(w in before for w in named):
+                        out.append(Finding("H-04", "fail", label,
+                                           f"the narration before this quote never names {speaker}"))
             # H-01: the quote must exist in the event's own sources.
             for l in d_lines:
                 said = _norm(l.text)
@@ -158,6 +172,22 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
                     out.append(Finding("H-01", "fail", label,
                                        f"quotation not found in this event's primary sources: "
                                        f"{l.text[:70]!r}"))
+
+    # H-09 is the reason this catalogue is worth making. Void's claim is that
+    # it shows every side; an episode that quietly drops one is the single
+    # failure that would make the claim false. The data names the sides, so the
+    # script cannot silently omit one.
+    have = " ".join(_norm(s.title or "") for s in script.segments if s.kind == "PERSPECTIVE")
+    for persp in (event.get("perspectives") or []):
+        name = persp.get("viewpoint") or ""
+        stems = [w for w in _norm(name).split() if len(w) > 3]
+        if stems and not any(w in have for w in stems):
+            out.append(Finding("H-09", "fail", "PERSPECTIVE",
+                               f"the {name} account is in the data but never heard in the episode"))
+    heard = len([s for s in script.segments if s.kind == "PERSPECTIVE"])
+    if heard and heard < len(event.get("perspectives") or []):
+        out.append(Finding("H-09", "fail", "PERSPECTIVE",
+                           f"{heard} of {len(event['perspectives'])} accounts given their own case"))
 
     lo, hi = TARGET_MINUTES
     if not (lo <= script.minutes <= hi):

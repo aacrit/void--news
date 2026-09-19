@@ -78,14 +78,55 @@ N: He was assassinated five months later, by a Hindu nationalist who believed he
 
 ## TURN | Five accounts
 N: Here is the part that does not resolve.
-N: There are five standard accounts of Partition. They do not really disagree about the facts. They disagree about what is missing from them.
-N: The British account is administrative. A difficult handover, under time pressure, accepted by both Indian parties. It leaves out how arbitrary the line was. It leaves out a hundred and ninety years in which British administration hardened Hindu and Muslim into census categories and separate electorates.
-N: The Indian nationalist account holds that partition was a Muslim League demand, which Congress accepted to save independence. It leaves out Congress's own failure to accommodate the League, between nineteen thirty seven and nineteen forty six.
-N: The Pakistani account holds that a separate state was the only protection for a minority that would otherwise be permanently outvoted. It leaves out how thin the League's organisation was before nineteen forty. It leaves out Direct Action Day.
-N: The fourth account is not about states at all. It is about the fourteen million. From inside a refugee column, the constitutional achievements are not the story, and that account leaves them out entirely.
-N: The fifth is about the seventy five thousand women who were abducted. And about what the two new governments agreed to do next, which was to recover them and return them across the border. In many cases to families who no longer wanted them. In some cases against their own stated wishes.
-N: None of these five is a lie. Each one is a true account with a hole in it.
-N: And the holes are not random. Each account omits the part that would cost its own side the most.
+N: There are five standard accounts of what happened here. They mostly agree about the facts. They disagree about which facts are the story.
+N: Each one is going to be given its own case, in its own words, before anything is said against it.
+
+## PERSPECTIVE | British Imperial | victor
+N: The British account is administrative. Both Congress and the Muslim League accepted partition. The deadlock between them was real, and Radcliffe worked inside constraints that Indian politics had set, not Britain.
+N: On the accelerated timeline, the argument is uncomfortable but serious. Administrative collapse was already underway, and a slower handover might have killed more people, not fewer.
+N: Clement Attlee, the Prime Minister who ordered it, summarised his own role in retirement.
+D: I gave them their freedom.
+
+## ASIDE
+N: Mountbatten was less composed in private. After fixing the August date, he told his staff this.
+D: The date is fixed. And I have to tell you that I think it is the greatest gamble in history.
+
+## PERSPECTIVE | Indian Nationalist | victor
+N: The Indian nationalist account holds that Congress never wanted partition, and accepted it only to stop independence itself being delayed indefinitely.
+N: On this reading, British haste served London, which wanted out of an empire it could no longer afford, and not India, which needed time.
+N: It also points at something the violence tends to bury. In the same period, India integrated five hundred and sixty two princely states into a single country, and built a secular democracy that has held.
+N: Maulana Abul Kalam Azad, the Congress president who opposed partition to the end, wrote this.
+D: It is for India that I have worked all my life, and it is for India's freedom that I have gone to prison again and again.
+
+## PERSPECTIVE | Pakistani Nationalist | victor
+N: The Pakistani account begins with an election. In nineteen forty six, the Muslim League won four hundred and forty six of the four hundred and ninety five seats reserved for Muslim voters.
+N: That is close to a mandate, and it is the strongest fact in this case. After Congress took power in nineteen thirty seven and governed without the League, the argument that Muslims would be permanently outvoted in a united India stopped being hypothetical.
+N: Pakistan then built a state from almost no inherited infrastructure. The civil service, the army command, the treasury, were all on the other side of the line.
+N: And on what that state was supposed to be, Jinnah said this, three days before it existed.
+D: You are free; you are free to go to your temples, you are free to go to your mosques or to any other places of worship in this State of Pakistan.
+
+## PERSPECTIVE | Subaltern and displacement | vanquished
+N: The fourth account is not about states at all, and it is impatient with the other three.
+N: Its argument is that national narratives erase fourteen million people. That constitutional achievements are not the story from inside a refugee column. That caste hierarchies were rebuilt inside the rehabilitation camps. That Bengal's partition was not an event but a slow decades long unmaking, which is why it gets less attention than Punjab's sudden break.
+N: From the Partition Archive, an oral history recorded in twenty thirteen, sixty six years afterwards.
+D: I still dream of the house. The courtyard, the neem tree. I am an old woman now, but in my dreams I am always going back.
+
+## PERSPECTIVE | Women's history | vanquished
+N: The fifth account is about the seventy five thousand to a hundred thousand women who were abducted, raped, forcibly converted and married during the violence.
+N: Then it is about what the two new governments did next. The Abducted Persons Act of nineteen forty nine recovered women across the border on the basis of religion, without asking the women. Some were returned to families who would not take them back. Some were moved twice.
+N: At Thoa Khalsa, women died in a mass suicide that is still commemorated as an act of honour. They were not consulted about that either.
+N: One woman, being recovered by the state, said this to the people recovering her.
+D: You think you are saving us? You are tearing us apart again.
+
+## TURN | The shape of the disagreement
+N: None of those five is a lie. Each is a true account, and each has a hole in it.
+N: The British account leaves out how arbitrary the line was, and a hundred and ninety years in which British administration hardened Hindu and Muslim into census categories and separate electorates.
+N: The Indian account leaves out Congress's own failure to accommodate the League between nineteen thirty seven and nineteen forty six, and Hindu violence against Muslims in Delhi and Bihar.
+N: The Pakistani account leaves out how thin the League's organisation was before nineteen forty, and it leaves out Direct Action Day.
+N: The subaltern account leaves out the state building, the institutions, the Cold War pressure the new governments were under.
+N: The women's account, the most recent of the five, leaves out male victims, who were also killed and mutilated in enormous numbers.
+N: The holes are not random. Each account omits the thing that would cost its own side the most.
+N: That is not a reason to discard any of them. It is the reason to hear all five.
 
 ## CLOSE
 N: The Radcliffe Line left a hundred and sixty two enclaves stranded on the wrong side of the border with what became Bangladesh. Villages inside a country they did not touch.

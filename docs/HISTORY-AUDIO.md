@@ -54,12 +54,30 @@ CLOSE        N   from legacy_points. Ends on a particular, never on a moral
 outro (fading to silence)
 ```
 
-**The turn is Void's differentiator.** Every event carries five `perspectives`,
-each with `viewpoint_type` (victor / vanquished), `emphasized` and `omitted`.
-The episode does not adjudicate between them; it shows the shape of the
-disagreement, which is the same thing the feed does with a story's sources. An
-episode that ends "here are five accounts and here is what each leaves out" is
-a history programme nobody else is making.
+**Every side gets its own case. This is the moat, and it is enforced.**
+
+The first draft of the Partition script got this wrong in a way worth
+recording, because it is the failure this format will keep drifting toward.
+It summarised all five perspectives in about 280 words and characterised each
+one BY WHAT IT OMITS. That is a debunking format wearing a balance costume:
+every account is introduced only to be undercut, and the strongest fact in the
+Pakistani case (the Muslim League winning 446 of 495 Muslim seats in 1946) was
+left out entirely while the account was still called incomplete.
+
+So a `PERSPECTIVE` segment now gives each account its own hearing: its argument
+in its own terms, its strongest fact, and its own witness quoted by the
+document voice. Only after all five have spoken does a closing TURN name what
+each leaves out, and it names one for every side including the most recent and
+most sympathetic.
+
+`H-09` makes this structural rather than editorial: the event data names the
+sides, so an episode that quietly drops one does not render. The gate is
+verified against a script with the Pakistani account cut out.
+
+An episode that ends "here are five accounts, each true, each with a hole, and
+the holes are not random" is a history programme nobody else is making. An
+episode that ends "here is what everyone gets wrong" is one that many people
+make badly.
 
 **Attribution before the claim**, exactly as On Air does it: the narrator says
 who wrote it, where and when, and THEN the document voice reads. The listener
@@ -80,7 +98,14 @@ do not decide). The shape:
 | role | used for | selection |
 |---|---|---|
 | Narrator | the whole episode | cast per event from `severity` + `category` |
-| Document | primary sources ONLY | fixed per narrator, chosen to contrast (sex, register, accent) |
+| Document | primary sources and perspective witnesses ONLY | fixed per narrator, chosen to contrast (sex, register, accent) |
+
+The document voice is a READER OF RECORD, not an impersonator. It does not
+change per speaker and it is not accent-matched to the event's region: casting
+an Indian voice for Partition and a Russian one for Chernobyl is a short road
+to caricature, and one voice would still be reading Nehru, Gandhi and Jinnah
+regardless. Attribution before every read is what removes the ambiguity, so
+the voice never has to act.
 
 Constraints the mapping must satisfy:
 - A narrator and its document voice must never be confusable. The voice change
@@ -157,11 +182,20 @@ shards. Stage 3 exists to measure this.
 
 ## Verification
 
-- Script gates (per episode): attribution present before every DOCUMENT read;
-  no document read without a matching `primary_source_excerpts` entry (a
-  fabricated quotation is the one unrecoverable failure in a history
-  programme); word budget inside the 8-12 minute band; the turn names at least
-  three of the five perspectives; no em dashes in narration.
+- Script gates (`pipeline/history/script_format.py`), each verified against a
+  planted defect rather than merely written:
+  - `H-01` every quote exists in the event's own `primary_source_excerpts` or
+    `notable_quotes`, by word overlap so trimming for the ear is allowed and
+    inventing is not. A fabricated quotation is the one unrecoverable failure
+    in a history programme.
+  - `H-04` the narration NAMES THE SPEAKER before the voice reads. Checking
+    that some narration came first is not enough: a perspective argues before
+    it quotes, so that weaker test passes even when nobody is named. The
+    speaker is looked up from the data by matching the quote, which also
+    catches crediting the wrong person.
+  - `H-09` every perspective in the data is given its own case.
+  - `H-02` the document voice speaks only where a quote belongs.
+  - `H-06` the episode carries a TURN. `H-07` length inside 8-15 minutes.
 - Render gates: reuse the On Air assertions (gaps, arcs, fades landing under
   speech, loudness within tolerance, TP and LRA, chapters exact).
 - Served: episodes reachable from R2, chapters render, player resumes.
