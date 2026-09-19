@@ -53,7 +53,7 @@ def top20() -> list[dict]:
         rows = [{"id": i, "title": f"story {n}", "disaster_severity": 0} for n, i in enumerate(ids, 1)]
         rows += [{"id": f"00000000-0000-0000-0000-0000000000{n:02d}", "title": f"story {n}", "disaster_severity": 0}
                  for n in range(5, 15)]
-        rows.append({"id": "72de16f4-806b-4be1-a767-811ee56a6daf", "title": "Hong Kong AI chief", "disaster_severity": 0})
+        rows.append({"id": "72de16f4-806b-4be1-a767-811ee56a6daf", "title": "Hong Kong to recruit AI chief by mid-2027", "disaster_severity": 0})
         rows += [{"id": f"00000000-0000-0000-0000-0000000001{n:02d}", "title": f"story {n}", "disaster_severity": 0}
                  for n in range(16, 21)]
     return rows
@@ -90,7 +90,7 @@ def test_planted_defects(raw: str) -> None:
         "R-04": raw.replace("issued the order on Thursday", "issued the order at 4 p.m. Thursday"),
         "R-05": raw.replace("A: To South America.", "A: And finally, to South America.") if "A: To South America." in raw
                 else raw.replace("B: To South America.", "B: And finally, to South America."),
-        "R-08": raw.replace("955f8f75-26de-4c70-9f77-2ee838e2adc1", "e88cab6b-4e17-4e01-b0d5-349eb47f184e"),
+        "R-08": raw.replace("## FINALLY | 15 |", "## FINALLY | 2 |"),
         "R-12": raw.replace("B: To the markets.", "A: To the markets."),
     }
     for expect, text in cases.items():
@@ -113,6 +113,19 @@ def test_planted_defects(raw: str) -> None:
     # R-02 quotation marks warn (the normaliser strips them), never fail
     rep = validate_rundown(parse_rundown(raw.replace("has called the idea a hostile act", 'called it a "hostile act"')), ctx())
     check(rep.passed and any(f.id == "R-02" for f in rep.findings), "quote marks warn but pass")
+    # R-08: ids are bound by rank, so a mis-copied uuid in a STORY marker is harmless
+    legacy = raw.replace("## STORY 2 | The Fed raises rates", "## STORY 2 | b4a7fae8-a1cf-44fc-8496-6fa90ec4ea34 | The Fed raises rates")
+    r_leg = parse_rundown(legacy)
+    rep = validate_rundown(r_leg, ctx())
+    check(rep.passed and r_leg.story_segments()[1].cluster_id == "b4a7fae8-a1cf-44fc-8496-6fa90ec4aa34",
+          "mis-copied story uuid is re-bound to the rank's real id")
+    near = raw.replace("## FINALLY | 15 |", "## FINALLY | 72de16f4-806b-4be1-a767-811ee56a6dbf |")
+    r_near = parse_rundown(near)
+    rep = validate_rundown(r_near, ctx())
+    check(rep.passed and r_near.get("FINALLY").cluster_id == "72de16f4-806b-4be1-a767-811ee56a6daf", "near-miss kicker uuid resolves")
+    r_no = parse_rundown(raw.replace("## FINALLY | 15 |", "## FINALLY |"))
+    rep = validate_rundown(r_no, ctx())
+    check(rep.passed and r_no.get("FINALLY").cluster_id == "72de16f4-806b-4be1-a767-811ee56a6daf", "kicker resolves by title words when no rank is given")
     # R-08: the kicker must not be the editorial's own story
     rep = validate_rundown(parse_rundown(raw), ctx(editorial_cluster_id="72de16f4-806b-4be1-a767-811ee56a6daf"))
     check("R-08" in ids_of(rep), "kicker == editorial story fails R-08")
@@ -142,7 +155,7 @@ junk line
     check([s.kind for s in r.segments] == ["OPEN", "STORY"], f"kinds {[s.kind for s in r.segments]}")
     check(r.segments[0].turns[0].text.startswith(SIGN_ON_PREFIX), "bold A: tag parsed")
     st = r.segments[1]
-    check(st.cluster_id == "d3afa900-ea54-4eb8-b95e-f6ed157317a3", "uuid found even when fields are swapped")
+    check(st.cluster_id == "d3afa900-ea54-4eb8-b95e-f6ed157317a3" and st.title == "Canada turns", "uuid and title found whatever the field order")
     check(st.turns[0].text == "First line that wraps onto a second line.", f"wrapped line joined: {st.turns[0].text!r}")
     check(st.turns[1].speaker == "B" and st.turns[1].text == "one fact.", "B - dash tag parsed")
     check(r.say == {"Carney": "KAR-nee"}, "SAY junk ignored")

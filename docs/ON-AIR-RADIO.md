@@ -27,12 +27,12 @@ This document is the positive definition of the show. The code that enforces it:
 ident (2.4 s)
 OPEN      voice A   "From Void News, this is On Air. It's Friday, September eighteenth." + one sentence
 MENU      A/B       "On the desk today." then five headlines, one line each        [menu bed underneath]
-STORY 1   A leads   rank 1 in depth, 170-260 words; B adds at most one new fact
+STORY 1   A leads   rank 1 in depth, 170-260 words; B adds at most one new fact   (marker: ## STORY 1 | <title>; the id is bound from the feed by rank)
 STORY 2   B leads   rank 2, 130-210 words, opens with a one-clause bridge
 STORY 3   A leads   rank 3
 STORY 4   B leads   rank 4
 BRIEFS    A/B       "Also on the desk." then ranks 5-12, one sentence each
-FINALLY   B         "One more before the editorial." a lighter item from ranks 5-20   (absent when the lead is a mass-casualty story)
+FINALLY   B         "One more before the editorial." a lighter item from ranks 5-20   (marker: ## FINALLY | <feed rank> | <title>; absent when the lead is a mass-casualty story)
 throw     A         "Next, the editorial."                                              (code constant)
 stab (0.7 s)
 EDITORIAL B         the existing opinion_audio_script, paragraph by paragraph
@@ -57,7 +57,7 @@ with the findings named, then the legacy audio path; warn = logged):
 | R-05 | No borrowed or AI-podcast phrases: "Up first", "Here's what we're covering", "First the headlines", "And that's the headlines", "these are our main stories", "Stay with us", "And finally", "Welcome", "Thanks", "Absolutely", "Wow", "Over to you" and the show never names or thanks a host | fail |
 | R-06 | Word budgets at 165 wpm per segment, five menu lines, six to eight brief items, 850-1150 news words | fail outside +-25 % |
 | R-07 | Attribution before the claim ("The Fed chair says ..."), never trailing | warn |
-| R-08 | Exactly four STORY segments, ranks 1-4 in order, each marker carrying the story's id from today's feed | fail |
+| R-08 | Exactly four STORY segments, ranks 1-4 in order; ids are bound from the feed by rank (the model never copies UUIDs: the first real run mis-copied two by one hex digit); the kicker must name a feed rank from 5 up, and never the editorial's story | fail |
 | R-09 | FINALLY absent when the lead's `disaster_severity` >= 0.6; present otherwise | fail / warn |
 | R-10 | Each voice carries 35-65 % of the words | fail |
 | R-11 | Sentences under twenty words; one idea per sentence | warn |
