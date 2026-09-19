@@ -76,6 +76,50 @@ def _fetch_clusters_db(editions: list[str]) -> list[dict]:
     return all_clusters
 
 
+def _current_brief_static() -> dict | None:
+    """The published brief, read off disk, for the offline radio render.
+
+    The render needs the editorial script and the opinion cluster id, which
+    the daily run takes from the database. frontend/public/data/brief.json is
+    the same row after export, so the offline path reads the editorial Void
+    actually published rather than reaching for a database it is meant to do
+    without.
+    """
+    path = Path(__file__).resolve().parents[1] / "frontend" / "public" / "data" / "brief.json"
+    if not path.exists():
+        print(f"  Published brief not found: {path}")
+        return None
+    brief = json.loads(path.read_text(encoding="utf-8"))
+    print(f"  Editorial from the published brief ({brief.get('edition_date') or 'undated'})")
+    return brief
+
+
+def _fetch_clusters_feed_export(editions: list[str]) -> list[dict]:
+    """The published feed, read off disk. Used by the offline radio render.
+
+    A supplied rundown is bound to stories by RANK, and the ranked, published
+    top 20 is exactly what export_static wrote to frontend/build-data. Reading
+    it here is what makes --rundown-file --render-dir genuinely need no
+    database, as its usage line has always claimed, and it binds against the
+    same feed the daily run binds against rather than a second source.
+    """
+    path = Path(__file__).resolve().parents[1] / "frontend" / "build-data" / "feed.json"
+    if not path.exists():
+        print(f"  Feed export not found: {path}")
+        return []
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    clusters = payload.get("clusters", payload) if isinstance(payload, dict) else payload
+    out = []
+    for c in clusters:
+        if not any(e in (c.get("sections") or [c.get("section")]) for e in editions):
+            continue
+        c["_db_id"] = c.get("id", "")
+        out.append(c)
+    out.sort(key=lambda c: c.get("rank_world") or 0, reverse=True)
+    print(f"  Loaded {len(out)} clusters from the feed export (built {payload.get('builtAt') if isinstance(payload, dict) else 'unknown'})")
+    return out
+
+
 def _fetch_clusters_fixtures(editions: list[str]) -> list[dict]:
     """Load frozen test clusters from fixtures file."""
     if not _FIXTURES_PATH.exists():
@@ -144,6 +188,9 @@ def main():
                         help="Only regenerate the On Air rundown + audio (keeps TL;DR + opinion)")
     parser.add_argument("--legacy-audio", action="store_true",
                         help="Use the legacy edge-tts path (brief's own audio script) instead of the radio show")
+    parser.add_argument("--revoice", action="store_true",
+                        help="Re-render the rundown the current brief already carries, instead of "
+                             "asking Gemini for a new one (use after a voice, pace or mastering change)")
     parser.add_argument("--rundown-file", type=str, default=None,
                         help="Use this rundown text instead of calling Gemini (fixtures / offline renders)")
     parser.add_argument("--render-dir", type=str, default=None,
@@ -179,6 +226,8 @@ def main():
     print("[1/4] Fetching clusters...")
     if args.fixtures:
         all_clusters = _fetch_clusters_fixtures(editions)
+    elif args.rundown_file and args.render_dir:
+        all_clusters = _fetch_clusters_feed_export(editions)
     else:
         all_clusters = _fetch_clusters_db(editions)
     if not all_clusters:
@@ -197,6 +246,8 @@ def main():
         # dry-run needs it (the editorial script decides the running order).
         if args.fixtures or (args.dry_run and not args.radio_only):
             current = None
+        elif args.rundown_file and args.render_dir:
+            current = _current_brief_static()
         else:
             current = _get_current_brief(edition)
 
@@ -287,12 +338,18 @@ def main():
             from briefing.spoken_text import spoken_date
             top = [c for c in all_clusters if edition in (c.get("sections") or [edition])][:20]
             editorial = brief.get("opinion_audio_script")
-            if args.rundown_file:
-                rundown = parse_rundown(Path(args.rundown_file).read_text(encoding="utf-8"))
+            stored = (current or {}).get("audio_script") if args.revoice else None
+            if args.revoice and not stored:
+                print("  --revoice: the current brief carries no rundown to re-render")
+                rundown = report = None
+            elif args.rundown_file or stored:
+                source = Path(args.rundown_file).read_text(encoding="utf-8") if args.rundown_file else stored
+                rundown = parse_rundown(source)
                 report = validate_rundown(rundown, RundownContext(top20=top, has_editorial=bool(editorial),
                                                                   date_spoken=spoken_date(datetime.now(timezone.utc)),
                                                                   editorial_cluster_id=brief.get("opinion_cluster_id")))
-                print(f"  Rundown from file: {rundown.words} words, passed={report.passed}")
+                origin = "file" if args.rundown_file else "the current brief (no Gemini call)"
+                print(f"  Rundown from {origin}: {rundown.words} words, passed={report.passed}")
                 for f in report.findings:
                     print(f"    {f.id} {f.level:4} [{f.segment}] {f.detail[:110]}")
             else:

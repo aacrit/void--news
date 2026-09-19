@@ -20,13 +20,14 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'Mode: full (TL;DR + opinion + radio show), radio (radio rundown + audio only), radio-dry-run (rundown + validator report, no audio, no DB), text (TL;DR + opinion, no audio), tldr (TL;DR only), opinion (opinion only)'
+        description: 'Mode: full (TL;DR + opinion + radio show), radio (new rundown + audio), radio-revoice (re-render today rundown with the current voices, no Gemini call), radio-dry-run (rundown + validator report, no audio, no DB), text (TL;DR + opinion, no audio), tldr (TL;DR only), opinion (opinion only)'
         required: false
         default: 'full'
         type: choice
         options:
           - full
           - radio
+          - radio-revoice
           - radio-dry-run
           - text
           - tldr
@@ -44,29 +45,29 @@ jobs:
           cache: 'pip'
           cache-dependency-path: pipeline/requirements.txt
       - name: Install system dependencies
-        if: inputs.mode == 'full' || inputs.mode == 'radio'
+        if: inputs.mode == 'full' || inputs.mode == 'radio' || inputs.mode == 'radio-revoice'
         run: sudo apt-get update && sudo apt-get install -y ffmpeg espeak-ng
       - name: Install dependencies
         run: pip install -r pipeline/requirements.txt
       # ── On Air voices: Kokoro-82M in its own venv (numpy 2) + pinned model files ──
       - name: Cache Kokoro model files
-        if: inputs.mode == 'full' || inputs.mode == 'radio'
+        if: inputs.mode == 'full' || inputs.mode == 'radio' || inputs.mode == 'radio-revoice'
         uses: actions/cache@v4
         with:
           path: ~/.cache/void-kokoro
           key: kokoro-${{ hashFiles('pipeline/briefing/kokoro.lock.json') }}
       - name: Cache TTS venv
-        if: inputs.mode == 'full' || inputs.mode == 'radio'
+        if: inputs.mode == 'full' || inputs.mode == 'radio' || inputs.mode == 'radio-revoice'
         id: tts-venv
         uses: actions/cache@v4
         with:
           path: .venv-tts
           key: venv-tts-py3.11-${{ hashFiles('pipeline/requirements-tts.txt') }}
       - name: Build TTS venv (cache miss)
-        if: (inputs.mode == 'full' || inputs.mode == 'radio') && steps.tts-venv.outputs.cache-hit != 'true'
+        if: (inputs.mode == 'full' || inputs.mode == 'radio' || inputs.mode == 'radio-revoice') && steps.tts-venv.outputs.cache-hit != 'true'
         run: python -m venv .venv-tts && .venv-tts/bin/pip install -q -r pipeline/requirements-tts.txt
       - name: Fetch Kokoro model files (verified against kokoro.lock.json)
-        if: inputs.mode == 'full' || inputs.mode == 'radio'
+        if: inputs.mode == 'full' || inputs.mode == 'radio' || inputs.mode == 'radio-revoice'
         run: python pipeline/briefing/kokoro_assets.py
       # ── Pipeline state DB (SQLite) — same restore path as pipeline.yml ──
       - name: Restore pipeline state DB
@@ -124,6 +125,13 @@ jobs:
               ;;
             radio)
               python pipeline/refresh_brief.py --radio-only
+              ;;
+            radio-revoice)
+              # Re-render the rundown today's run already wrote, with whatever
+              # voices, pace and mastering the code now carries. No Gemini call,
+              # so it costs nothing against the 20-requests/day flash cap and
+              # the words are byte-identical to what shipped.
+              python pipeline/refresh_brief.py --radio-only --revoice
               ;;
             radio-dry-run)
               python pipeline/refresh_brief.py --radio-only --dry-run --output radio-dry-run.json
