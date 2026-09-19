@@ -1,0 +1,58 @@
+name: Validate Clustering Engine
+
+permissions: {}
+
+on:
+  push:
+    branches: ['claude/**']
+    paths:
+      - 'pipeline/clustering/**'
+      - 'pipeline/validation/clustering/**'
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+          cache-dependency-path: pipeline/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r pipeline/requirements.txt
+
+      - name: Cache spaCy model
+        id: spacy-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/lib/python3.11/site-packages/en_core_web_sm
+          key: spacy-en_core_web_sm-${{ hashFiles('pipeline/requirements.txt') }}
+
+      - name: Download spaCy model
+        if: steps.spacy-cache.outputs.cache-hit != 'true'
+        run: python -m spacy download en_core_web_sm
+
+      - name: Run clustering validation suite
+        run: |
+          result=$(python -m pipeline.validation.clustering.runner 2>&1)
+          echo "$result"
+          if echo "$result" | grep -qE "CATASTROPHIC:[[:space:]]+[1-9]"; then
+            echo "::error::Clustering validation found CATASTROPHIC failures"
+            exit 1
+          fi
+          # WRONG regressions (rising vs snapshot) — the runner itself
+          # exits non-zero in that case, so a clean exit here means
+          # no new WRONG cases were introduced.
+          # Print a soft warning if any WRONG cases remain so reviewers
+          # see the baseline state.
+          if echo "$result" | grep -qE "WRONG:[[:space:]]+[1-9]"; then
+            echo "::warning::Clustering suite has pre-existing WRONG cases (not a regression)"
+          fi

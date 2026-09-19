@@ -1,0 +1,114 @@
+id: coherent-typhoon-bigstory-stays-whole-2026-08-07
+name: "Coherent 8-source typhoon story must stay whole — the new over-merge gates must not fragment a real big story"
+failure_date: "2026-08-07"
+failure_kind: over-split-guard
+articles:
+  - id: rai1
+    title: "Typhoon Rai Slams Philippines, Dozens Dead in Cebu"
+    summary: "Dozens died in Cebu as Typhoon Rai slammed the Philippines."
+    full_text: >
+      Typhoon Rai made landfall in the central Philippines, tearing across Cebu
+      and Bohol provinces. The national disaster agency reported widespread
+      flooding, downed power lines, and evacuations as the storm barreled through
+      the Visayas region. The death toll reached 50 in Cebu province. President
+      Marcos ordered emergency relief.
+    source: { slug: abs-cbn, country: PH, tier: international }
+    published_at: "2026-08-05T06:00Z"
+  - id: rai2
+    title: "Rai Death Toll Climbs as Cebu and Bohol Reel"
+    summary: "The Typhoon Rai death toll climbed as Cebu and Bohol reeled."
+    full_text: >
+      Typhoon Rai made landfall in the central Philippines, tearing across Cebu
+      and Bohol provinces. The national disaster agency reported widespread
+      flooding, downed power lines, and evacuations as the storm barreled through
+      the Visayas region. Rescue teams searched Bohol as the toll rose past 60.
+      Marcos toured evacuation centers.
+    source: { slug: rappler, country: PH, tier: international }
+    published_at: "2026-08-05T08:00Z"
+  - id: rai3
+    title: "Philippines Declares Emergency After Typhoon Rai"
+    summary: "The Philippines declared an emergency after Typhoon Rai."
+    full_text: >
+      Typhoon Rai made landfall in the central Philippines, tearing across Cebu
+      and Bohol provinces. The national disaster agency reported widespread
+      flooding, downed power lines, and evacuations as the storm barreled through
+      the Visayas region. The government declared a state of calamity across the
+      Visayas after Rai. Marcos pledged funds.
+    source: { slug: inquirer, country: PH, tier: international }
+    published_at: "2026-08-05T09:30Z"
+  - id: rai4
+    title: "Red Cross Warns of Crisis After Typhoon Rai Hits Cebu"
+    summary: "The Red Cross warned of a crisis after Rai hit Cebu."
+    full_text: >
+      Typhoon Rai made landfall in the central Philippines, tearing across Cebu
+      and Bohol provinces. The national disaster agency reported widespread
+      flooding, downed power lines, and evacuations as the storm barreled through
+      the Visayas region. The Philippine Red Cross warned of a humanitarian
+      crisis in Cebu after Typhoon Rai.
+    source: { slug: reuters, country: US, tier: us_major }
+    published_at: "2026-08-05T10:00Z"
+  - id: rai5
+    title: "Typhoon Rai Knocks Out Power Across Central Philippines"
+    summary: "Typhoon Rai knocked out power across the central Philippines."
+    full_text: >
+      Typhoon Rai made landfall in the central Philippines, tearing across Cebu
+      and Bohol provinces. The national disaster agency reported widespread
+      flooding, downed power lines, and evacuations as the storm barreled through
+      the Visayas region. Two million lost power in the Visayas as Rai downed
+      lines. Marcos convened the disaster council.
+    source: { slug: ap-news, country: US, tier: us_major }
+    published_at: "2026-08-05T10:20Z"
+  - id: rai6
+    title: "Aid Rushes to Cebu as Typhoon Rai Aftermath Grips Philippines"
+    summary: "Aid rushed to Cebu after Typhoon Rai."
+    full_text: >
+      Typhoon Rai made landfall in the central Philippines, tearing across Cebu
+      and Bohol provinces. The national disaster agency reported widespread
+      flooding, downed power lines, and evacuations as the storm barreled through
+      the Visayas region. Relief goods reached Cebu as the Rai aftermath gripped
+      the Philippines. Marcos sought foreign aid.
+    source: { slug: aljazeera, country: QA, tier: international }
+    published_at: "2026-08-05T11:00Z"
+  - id: rai7
+    title: "Typhoon Rai Toll Passes 75 Across Visayas"
+    summary: "The Typhoon Rai toll passed 75 across the Visayas."
+    full_text: >
+      Typhoon Rai made landfall in the central Philippines, tearing across Cebu
+      and Bohol provinces. The national disaster agency reported widespread
+      flooding, downed power lines, and evacuations as the storm barreled through
+      the Visayas region. The death toll from Rai passed 75 across Cebu and Bohol.
+      Marcos declared three days of mourning.
+    source: { slug: bbc, country: GB, tier: international }
+    published_at: "2026-08-05T12:00Z"
+  - id: rai8
+    title: "Philippines Counts Cost of Typhoon Rai in Cebu and Bohol"
+    summary: "The Philippines counted the cost of Typhoon Rai."
+    full_text: >
+      Typhoon Rai made landfall in the central Philippines, tearing across Cebu
+      and Bohol provinces. The national disaster agency reported widespread
+      flooding, downed power lines, and evacuations as the storm barreled through
+      the Visayas region. Damage estimates from Typhoon Rai mounted in Cebu and
+      Bohol as Marcos toured the region.
+    source: { slug: gma-news, country: PH, tier: international }
+    published_at: "2026-08-05T13:00Z"
+expectation:
+  type: should_merge
+  expected_member_ids: [rai1, rai2, rai3, rai4, rai5, rai6, rai7, rai8]
+  min_clusters: 1
+  max_clusters: 2
+  min_source_count: 3
+rationale: |
+  Guard for the CEO-directed over-merge fixes (2026-08-07). The new
+  discriminative-anchor merge gates (Phase 2 / Phase 3) and the size-independent
+  small-bag cohesion force-split (Layer 2) must NEVER fragment a genuine,
+  well-covered single event.
+
+  Eight outlets cover ONE typhoon: shared discriminative entities (Rai, Cebu,
+  Bohol, Visayas, Marcos) run through every article, and the headlines overlap on
+  the storm name. entity_convergence is high, so the small-bag gross-incoherence
+  split is not triggered; the discriminative gates keep the story merged because
+  the shared anchors are rare (the storm name is not a generic word that day).
+
+  Expected: one merged cluster (two acceptable if a wire desk splits off a
+  sub-angle). Any result of 3+ clusters means a coherence gate over-fired and is
+  a regression — the mirror image of the 040 over-merge reject.

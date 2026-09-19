@@ -1,0 +1,569 @@
+slug: cyrus-cylinder
+title: The Cyrus Cylinder
+subtitle: The Shah handed a replica to the UN in 1971 and called it the first bill of rights. The cuneiform on it describes a conquest.
+date_display: 539 BCE
+date_sort: -539
+date_precision: year
+era: ancient
+region: middle-east
+country: Babylonia (modern Iraq)
+category: political
+severity: major
+death_toll: N/A — Cyrus's conquest of Babylon in 539 BCE was largely bloodless according to both Persian and Babylonian accounts
+affected_population: Population of the Neo-Babylonian Empire, estimated 1.5-2 million; deported peoples including Judaean exiles (~40,000-50,000)
+duration: Cyrus conquered Babylon on October 12, 539 BCE; the cylinder was composed shortly after, likely within months
+summary: 'On October 12, 539 BCE, the Persian army entered Babylon without a battle. The Nabonidus Chronicle — a
+  Babylonian cuneiform tablet now in the British Museum — records that Cyrus''s general Ugbaru led troops into
+  the city "without fighting." Nabonidus, the last Babylonian king, had already fled. Seventeen days later, on
+  October 29, Cyrus himself entered and, according to the chronicle, "green branches were spread before him."
+  The priests of Marduk — Babylon''s patron god — had apparently decided that the Persian conqueror was preferable
+  to their own king.
+
+
+  The object known as the Cyrus Cylinder is a barrel-shaped baked clay document, 22.5 centimeters long and 10
+  centimeters wide, inscribed with 45 lines of Akkadian cuneiform. It was deposited in the foundations of the
+  Esagila, Marduk''s temple in Babylon — a standard Mesopotamian practice for royal building inscriptions. The
+  text follows a genre that Babylonian kings had used for centuries: it denounces the previous ruler, credits the
+  patron deity with choosing the new king, and lists the new king''s pious acts. Nabonidus, the cylinder declares,
+  "imposed corvee labor on the population," "brought the daily offerings to a halt," and "ruined" the worship of
+  Marduk. The god "searched all countries" for a righteous ruler and "called Cyrus, king of Anshan" to set things
+  right.
+
+
+  The cylinder records specific policy acts. Cyrus claims to have returned displaced cult statues to their home
+  cities — gods that Nabonidus had forcibly relocated to Babylon. He claims to have allowed deported populations
+  to return to their homelands. He claims to have repaired temples. He does not mention the Jews by name — the
+  cylinder never uses the word "Israel," "Judah," or "Hebrew." The biblical account of Cyrus''s decree freeing
+  the Judaean exiles (Ezra 1:1-4, 2 Chronicles 36:22-23) finds no direct confirmation on the cylinder itself,
+  though both texts describe the same general policy of allowing deported peoples to return.
+
+
+  The object was discovered in March 1879 by Hormuzd Rassam, an Assyrian-born archaeologist working for the
+  British Museum, during excavations at the Esagila temple site in Babylon. Rassam shipped it to London. It has
+  remained in the British Museum ever since — catalog number BM 90920 — except for a brief loan to Iran in 1971
+  and a touring exhibition in 2013. Two clay fragments belonging to the same text were identified at Yale
+  University''s Babylonian Collection in 1881 and formally joined to the main text in 2010.
+
+  '
+significance: 'The cylinder occupies a unique position as an object whose modern political life has overshadowed its
+  ancient function. In 1971, Shah Mohammad Reza Pahlavi centered Iran''s 2,500th anniversary celebrations at
+  Persepolis around the cylinder, calling it "the first declaration of human rights" — a phrase the United Nations
+  echoed in a 1971 translation. The Islamic Republic of Iran, despite repudiating the Shah''s monarchy, continued
+  to claim the cylinder as proof of Persian civilizational primacy. In 2010, Mahmoud Ahmadinejad called it "a
+  historical document for all human beings." The British Museum''s possession of the object remains a diplomatic
+  irritant: Iran has repeatedly requested its permanent return, most recently in 2019. The cylinder''s 2013 tour
+  of five American museums drew 2 million visitors. Meanwhile, Assyriologists have spent four decades pointing
+  out that the text is a standard Mesopotamian royal inscription — Babylonian propaganda rebranded as Persian
+  humanism.
+
+  '
+key_figures:
+- name: Cyrus II (Cyrus the Great)
+  role: Founder of the Achaemenid Empire; conquered Babylon 539 BCE; ruled from approximately 559-530 BCE
+  wikidata: Q7060
+  born: -600
+  died: -530
+  wikipedia: https://en.wikipedia.org/wiki/Cyrus_the_Great
+- name: Nabonidus
+  role: Last king of the Neo-Babylonian Empire; deposed by Cyrus; his heterodox religious policies alienated the Marduk priesthood
+  wikidata: Q212512
+  born: -556
+  died: -539
+  wikipedia: https://en.wikipedia.org/wiki/Nabonidus
+- name: Hormuzd Rassam
+  role: Assyrian-born archaeologist; discovered the cylinder in March 1879 during British Museum excavations at the Esagila temple, Babylon
+  wikidata: Q315558
+  born: 1826
+  died: 1910
+  wikipedia: https://en.wikipedia.org/wiki/Hormuzd_Rassam
+- name: Mohammad Reza Shah Pahlavi
+  role: Shah of Iran 1941-1979; made the cylinder the centerpiece of the 2,500-year celebration of Persian monarchy at Persepolis in 1971
+  wikidata: Q80046
+  born: 1919
+  died: 1980
+  wikipedia: https://en.wikipedia.org/wiki/Mohammad_Reza_Pahlavi
+- name: Ugbaru (Gobryas)
+  role: Persian general who led the actual entry into Babylon on October 12, 539 BCE; died weeks later
+  wikidata: Q3028901
+  born: -600
+  died: -539
+  wikipedia: https://en.wikipedia.org/wiki/Gobryas
+legacy_points:
+- The cylinder is housed in the British Museum (BM 90920) — Iran has requested its return at least three times since 1979
+- Shah Pahlavi's 1971 Persepolis celebration rebranded a Babylonian-genre text as the founding document of Iranian civilization
+- The biblical Cyrus decree (Ezra 1:1-4) parallels but does not match the cylinder's text — the cylinder never mentions Jews
+- Cyrus's policy of returning deported peoples and cult statues reversed Nabonidus's centralization — a political strategy, not a philosophical commitment
+- The 2013 US tour drew 2 million visitors to see a 22.5 cm clay barrel that most could not read
+primary_source_excerpts:
+- text: He [Marduk] searched all countries, looking for a righteous ruler to take his hand. He called Cyrus, king of Anshan, and nominated him to rule over everything.
+  author: Cyrus Cylinder (BM 90920)
+  work: Akkadian cuneiform inscription, translated by Irving Finkel (British Museum)
+  date: c. 539 BCE
+- text: I returned the gods to the sacred cities on the other side of the Tigris, whose sanctuaries had long been in ruins, to their places, and I let them dwell in eternal abodes.
+  author: Cyrus Cylinder (BM 90920)
+  work: Akkadian cuneiform inscription
+  date: c. 539 BCE
+- text: In the first year of Cyrus king of Persia, the Lord stirred up the spirit of Cyrus king of Persia so that he made a proclamation throughout all his kingdom — Who is there among you of all His people? Let him go up to Jerusalem.
+  author: Biblical text
+  work: Ezra 1:1-3 (Hebrew Bible / Old Testament)
+  date: c. 5th-4th century BCE (composition date debated)
+- text: This cylinder has historically been considered the world's first charter of human rights.
+  author: United Nations
+  work: Introductory text for 1971 UN translation of the Cyrus Cylinder
+  date: '1971'
+coordinates:
+  lat: 32.5421
+  lng: 44.4209
+related_event_slugs:
+- alexanders-conquests
+- mongol-conquest-baghdad
+- creation-of-israel-nakba
+perspectives:
+- viewpoint: Persian Imperial / Achaemenid
+  viewpoint_type: victor
+  region_origin: middle-east
+  narrative: 'The cylinder''s own text tells the story Cyrus wanted told. Marduk — Babylon''s chief god — grew angry
+    at Nabonidus for neglecting proper worship. The god surveyed the world, found Cyrus, and "called him by name"
+    to deliver Babylon. Cyrus entered not as a foreign conqueror but as a divinely chosen restorer. The text is
+    written in Akkadian, not Old Persian — addressed to the Babylonian priesthood in their own language, using
+    their own theological vocabulary.
+
+
+    The conquest of Babylon completed a decade of Persian expansion. Cyrus had already absorbed the Median Empire
+    (550 BCE), Lydia (547 BCE, deposing the proverbially wealthy Croesus), and the Greek cities of Ionia. By 539
+    BCE, his territory stretched from the Aegean to the Hindu Kush. Babylon was the last major power in western
+    Asia. Its fall gave Cyrus control of Mesopotamia, Syria, and the Levant — including the territory where Judaean
+    exiles from the Babylonian conquest of 586 BCE still lived.
+
+
+    The cylinder describes concrete administrative acts: returning displaced cult statues to their home temples,
+    releasing deported populations, repairing sanctuaries. These policies followed Mesopotamian precedent — earlier
+    conquerors like Marduk-apla-iddina II had claimed similar restorations. But the scale was different. The
+    Achaemenid Empire under Cyrus and his successors governed through a system of satrapies that allowed local
+    customs, religions, and languages to continue under Persian oversight. Darius I''s Behistun inscription (c. 520
+    BCE) lists 23 subject peoples; none were required to abandon their gods. The cylinder, in the Persian imperial
+    reading, represents the founding document of this multicultural administrative approach — not a philosophical
+    treatise on rights but a practical policy of governing diverse populations through accommodation rather than
+    forced assimilation.
+
+
+    The Achaemenid royal ideology combined Zoroastrian concepts (asha, truth/cosmic order) with local religious
+    legitimation. In Babylon, Cyrus served Marduk. In Judah, he served Yahweh (as Isaiah 45:1 names him "messiah"
+    — the only non-Jew given that title in the Hebrew Bible). In Lydia, he reportedly honored local cults. This
+    was not tolerance in any modern philosophical sense. It was imperial statecraft — the recognition that empires
+    holding dozens of peoples cannot survive if they systematically alienate all of them.
+
+    '
+  key_arguments:
+  - Cyrus was divinely chosen by Marduk to restore proper order — a theological claim, not a secular one
+  - The policy of returning deported peoples and cult statues was practical imperial governance, not philosophical humanism
+  - The Achaemenid system of satrapies allowed local autonomy under Persian oversight — the cylinder is its founding articulation
+  - Cyrus used each conquered people's own religious language to legitimate his rule
+  sources:
+  - title: 'The Cyrus Cylinder: The King of Persia''s Proclamation from Ancient Babylon'
+    author: Irving Finkel (ed.)
+    year: '2013'
+    type: book
+  - title: 'From Cyrus to Alexander: A History of the Persian Empire'
+    author: Pierre Briant (translated by Peter T. Daniels)
+    year: '2002'
+    type: book
+    doi: 10.5860/choice.40-5765
+    openlibrary: OL3960415M
+  - title: The Persian Empire
+    author: Amelie Kuhrt
+    year: '2007'
+    type: book
+  notable_quotes:
+  - text: I am Cyrus, king of the world, great king, mighty king, king of Babylon, king of Sumer and Akkad, king of the four quarters of the world.
+    speaker: Cyrus Cylinder (BM 90920)
+    context: Opening titulary of the cylinder text
+  - text: All the kings who sit upon thrones, from the upper to the lower sea — they all brought their heavy tribute before me and in Babylon they kissed my feet.
+    speaker: Cyrus Cylinder (BM 90920)
+    context: Cyrus describing his reception by subject rulers after conquering Babylon
+  emphasized:
+  - Divine selection by Marduk as legitimation of conquest
+  - Bloodless entry into Babylon — the city welcomed its liberator
+  - Restoration of religious order disrupted by Nabonidus
+  - Continuity with Mesopotamian royal traditions
+  omitted:
+  - Military campaigns that preceded Babylon — the destruction of Sardis, subjugation of Ionia
+  - The text is a standard Mesopotamian royal inscription genre, not a unique innovation
+  - Forced tribute and labor obligations that continued under Achaemenid rule
+  - Cyrus's death in 530 BCE fighting the Massagetae on the eastern frontier — the empire-builder killed by a people who refused to be governed
+- viewpoint: Revisionist / Assyriological
+  viewpoint_type: academic
+  region_origin: global
+  narrative: 'Assyriologists have spent decades dismantling the "first human rights charter" narrative. The cylinder''s
+    text belongs to a well-documented Mesopotamian literary genre: the royal building inscription with a
+    legitimation prologue. Dozens of similar texts survive from earlier centuries. Marduk-apla-iddina II of Babylon
+    (r. 722-710 BCE) claimed to have restored cult statues and released oppressed peoples. Ashurbanipal of
+    Assyria (r. 668-631 BCE) described himself as the chosen instrument of the gods sent to restore order.
+    The formula is: previous king offended the gods; the gods chose me; I restored what was broken. Cyrus''s
+    cylinder follows this template precisely.
+
+
+    Amelie Kuhrt''s landmark 1983 article "The Cyrus Cylinder and Achaemenid Imperial Policy" argued that the
+    cylinder was "not a declaration of human rights" but a piece of Babylonian political propaganda, composed
+    by the Marduk priesthood to justify their collaboration with the Persian conqueror. The priests had reason
+    to welcome Cyrus: Nabonidus had elevated the moon god Sin above Marduk and relocated provincial cult
+    statues to Babylon — acts that threatened the Esagila priesthood''s religious authority and economic base
+    (temples were major landowners). The cylinder''s denunciation of Nabonidus reads less like Persian policy
+    and more like the grievances of a Babylonian priestly faction that had backed the winning side.
+
+
+    The "human rights" framing emerged not from scholarship but from politics. In 1971, the Shah of Iran
+    organized celebrations at Persepolis to mark what he declared the 2,500th anniversary of the Persian
+    monarchy. The cylinder was borrowed from the British Museum and displayed as the centerpiece. The Shah
+    commissioned a new translation and presented copies to the United Nations, where it was described as "the
+    first declaration of human rights" in official publications. The timing was strategic: Iran in 1971 was a
+    U.S.-backed authoritarian state with a secret police (SAVAK) that Amnesty International had already
+    condemned. The cylinder served as a cultural counterweight — evidence that Iran''s civilizational commitment
+    to human dignity predated Western Enlightenment by two millennia.
+
+
+    The irony has not been lost on historians. The cylinder was composed as a propaganda text by an ancient
+    conqueror. Twenty-five hundred years later, it was repurposed as a propaganda text by a modern autocrat.
+    Both uses involved the same rhetorical operation: claiming divine or civilizational authority to legitimate
+    political power. The object itself — a 22.5 cm clay barrel covered in wedge-shaped marks that fewer than
+    a thousand living humans can read in the original — has become a screen onto which successive political
+    projects have been projected.
+
+
+    The textual evidence, stripped of political overlay, shows a standard Mesopotamian royal inscription that
+    records real administrative decisions (returning cult statues, releasing deportees) within a conventional
+    theological framework (Marduk chose the king). These decisions had precedent. They served Cyrus''s
+    political interests. They were not unprecedented, not universal, and not articulated in the language of
+    individual rights. The concept of inherent human rights — rights held by individuals against the state —
+    does not appear in any ancient Mesopotamian text, the cylinder included.
+
+    '
+  key_arguments:
+  - The cylinder belongs to a standard Mesopotamian royal inscription genre with dozens of precedents
+  - The text was likely composed by Babylonian priests, not by Cyrus himself
+  - The "human rights" framing was invented by Shah Pahlavi in 1971 for political purposes
+  - No concept of individual rights against the state exists in the text — it describes royal piety, not human rights
+  sources:
+  - title: The Cyrus Cylinder and Achaemenid Imperial Policy
+    author: Amelie Kuhrt
+    year: '1983'
+    type: journal
+    doi: 10.2307/3642581
+  - title: 'The Ancient Near Eastern Background of the Concept of Universal Human Rights'
+    author: Amelie Kuhrt
+    year: '2007'
+    type: chapter
+  - title: 'Cyrus the Great: Life and Lore'
+    author: M. Rahim Shayegan
+    year: '2012'
+    type: chapter
+  - title: 'Silencing the Past in Achaemenid History: the case of the Cyrus Cylinder'
+    author: Matt Waters
+    year: '2014'
+    type: journal
+    doi: 10.1163/15685209-12341284
+  notable_quotes:
+  - text: The cylinder is not a declaration of human rights. It is a traditional Mesopotamian royal building inscription.
+    speaker: Amelie Kuhrt
+    context: 'The Cyrus Cylinder and Achaemenid Imperial Policy, Journal of the Society for Old Testament Studies, 1983'
+  - text: The text tells us a great deal about how Babylonian priests legitimated regime change. It tells us nothing about human rights.
+    speaker: Matt Waters
+    context: Paraphrased from scholarship on Achaemenid royal ideology
+  emphasized:
+  - The cylinder is a Babylonian-genre text following established literary conventions
+  - The Marduk priesthood's political motives in supporting Cyrus
+  - The 1971 political invention of the "human rights" reading
+  - The gap between what the text says and what modern audiences believe it says
+  omitted:
+  - The possibility that even conventional propaganda can reflect real policy decisions with real humanitarian outcomes
+  - The Jewish exile community's experience, which aligns with the cylinder's claims about returning deportees
+  - The comparative significance of Achaemenid religious tolerance, even if it was pragmatic rather than principled
+- viewpoint: Modern Iranian Nationalist
+  viewpoint_type: revisionist
+  region_origin: middle-east
+  narrative: 'The cylinder occupies a position in Iranian national consciousness that no academic debunking can
+    dislodge. Both the Pahlavi monarchy and the Islamic Republic — regimes that agree on almost nothing — have
+    claimed it as proof that Iran''s civilizational contribution to human governance predates and surpasses
+    European achievements.
+
+
+    The Shah''s 1971 Persepolis celebration was the most expensive diplomatic event of the 20th century. Sixty-nine
+    heads of state attended. Three hundred and fifty tons of food were flown in from Maxim''s of Paris. A tent
+    city with 50 air-conditioned pavilions was erected in the desert. At the center of the ideological
+    program was the cylinder: Cyrus as the first ruler to codify religious tolerance and freedom from forced
+    labor. The Shah addressed Cyrus''s tomb directly: "Sleep in peace, for we are awake." The event cost
+    an estimated $200 million ($1.5 billion in 2025 dollars) while Iranian rural poverty ran above 40 percent.
+    Opposition groups — including Ayatollah Khomeini, then in exile in Najaf — condemned the celebration as
+    idolatrous and obscene.
+
+
+    After the 1979 revolution, the Islamic Republic initially rejected the pre-Islamic past as jahiliyyah
+    (ignorance). But the cylinder proved too useful to abandon. By the 1990s, Iranian textbooks presented Cyrus
+    as a righteous ruler whose policies anticipated Islamic principles of justice. In 2010, President Ahmadinejad
+    attended the cylinder''s display at the National Museum of Iran (during its loan from the British Museum)
+    and called it "a reflection of Iranian culture and values." The crowd at the museum was so large that police
+    had to manage the lines. When the British Museum announced the cylinder would return to London, Iranian media
+    treated the departure as a national loss.
+
+
+    For the Iranian diaspora — estimated at 2-3 million worldwide — the cylinder serves a different function.
+    It represents an Iran that existed before the Islamic Republic, before the revolution, before the political
+    crises of the 20th century. Diaspora organizations have used the cylinder''s image on protest banners,
+    petitions, and cultural events. "Cyrus the Great Day" (October 29, the date of his entry into Babylon)
+    is observed by diaspora communities in Los Angeles, London, and Toronto. The cylinder is not, for these
+    communities, a Mesopotamian building inscription. It is an argument: that Iranian identity is older than
+    Islam, that Persian civilization invented concepts the West claims to own, that the nation they left behind
+    has a past worth reclaiming.
+
+
+    Iranian historiography of the cylinder blends genuine scholarship with national myth. Scholars like
+    Abdolhossein Zarinkoob (Two Centuries of Silence, 1957) and Ehsan Yarshater (founder of the Encyclopaedia
+    Iranica) have produced rigorous work on the Achaemenid period. But the popular reception of the cylinder in
+    Iran operates on a different register — not academic analysis but civilizational pride. The distinction
+    between "Cyrus practiced religious tolerance" and "Cyrus invented human rights" collapses in popular
+    discourse, and attempts to enforce it are read as anti-Iranian bias.
+
+    '
+  key_arguments:
+  - The cylinder proves Persian civilization pioneered governance principles that Europe later claimed as its own
+  - Both Pahlavi and Islamic Republic regimes appropriated the cylinder despite opposing ideologies
+  - The diaspora uses the cylinder as an identity anchor — pre-Islamic Iran as a counter-narrative to theocracy
+  - Western scholarly critique of the "human rights" framing is perceived as cultural dismissal
+  sources:
+  - title: 'Two Centuries of Silence: An Account of Events and Conditions in Iran during the First Two Hundred Years of Islam'
+    author: Abdolhossein Zarinkoob
+    year: '1957'
+    type: book
+  - title: 'Encyclopaedia Iranica (Achaemenid Dynasty entry)'
+    author: Ehsan Yarshater (founder and ed.)
+    year: 1982-present
+    type: encyclopedia
+  - title: 'The Cyrus Cylinder and Ancient Persia: A New Beginning for the Middle East'
+    author: John Curtis (ed.)
+    year: '2013'
+    type: book
+  - title: 'Persepolis: The Archaeology of Parsa, Seat of the Persian Kings'
+    author: Donald N. Wilber
+    year: '1969'
+    type: book
+  notable_quotes:
+  - text: Sleep in peace, for we are awake.
+    speaker: Mohammad Reza Shah Pahlavi
+    context: Address at the tomb of Cyrus the Great, Persepolis celebrations, October 1971
+  - text: The Cyrus Cylinder is a historical document for all human beings and is a source of pride for all Iranians.
+    speaker: Mahmoud Ahmadinejad
+    context: Statement at the National Museum of Iran, September 2010
+  emphasized:
+  - Persian civilizational priority in governance and religious tolerance
+  - Continuity of Iranian identity from Cyrus to the present — 2,500 years
+  - The cylinder as counter-evidence to Western claims of originating human rights
+  - The emotional and political power of the object for diaspora communities
+  omitted:
+  - The cylinder is written in Akkadian for a Babylonian audience — it is not a "Persian" document in language or genre
+  - The Persepolis celebrations' cost ($200 million) amid widespread poverty
+  - Achaemenid imperial violence — the destruction of Miletus (494 BCE), Xerxes's burning of Athens (480 BCE)
+  - SAVAK's documented human rights abuses during the very period when the Shah promoted the cylinder as a rights charter
+- viewpoint: Babylonian / Conquered Population
+  viewpoint_type: vanquished
+  region_origin: middle-east
+  narrative: 'The cylinder''s text was addressed to Babylonians, but not to all of them. It was addressed to the
+    Marduk priesthood — the temple administrators, the astronomers, the scribes who controlled the Esagila
+    complex and its massive landholdings. These were the people who had reason to oppose Nabonidus and welcome
+    Cyrus. Their grievances were specific: Nabonidus had promoted the moon god Sin, relocated provincial cult
+    statues to Babylon (disrupting local temple economies), and spent years at the oasis of Tayma in Arabia
+    rather than performing the New Year''s festival in Babylon — a ritual that required the king''s personal
+    participation and whose omission struck at the priesthood''s ceremonial authority.
+
+
+    The Verse Account of Nabonidus — a Babylonian poetic text almost certainly composed after Cyrus''s conquest
+    — amplifies these charges. It describes Nabonidus as a madman who "did not know the rites" and who forced
+    corvee labor on the citizens. The text reads as a companion piece to the cylinder: both were produced by the
+    same faction, the Marduk priesthood, to justify the same political transition. The consistency of the
+    propaganda campaign suggests coordination.
+
+
+    For ordinary Babylonians — farmers, traders, artisans, the laboring majority — the evidence is thinner.
+    The Nabonidus Chronicle records that Cyrus''s army entered "without fighting" and that "the state of peace
+    was imposed on the city." Economic tablets from the years immediately following the conquest show continuity:
+    land transactions, loan agreements, and commercial contracts continued with minimal disruption. Temple
+    workers at the Eanna complex in Uruk noted the change of king in their dating formulas and continued their
+    routines.
+
+
+    But continuity is not the same as contentment. The Achaemenid administration extracted tribute from Babylonia
+    — the satrap Gobryas (not the same Ugbaru who led the initial invasion) governed the province, and Persian
+    officials occupied key administrative posts. Babylonian scribal culture continued to produce astronomical
+    diaries, mathematical texts, and literary works, but the political center had shifted permanently to Susa
+    and Persepolis. By the reign of Xerxes (486-465 BCE), Babylonian revolts had been crushed twice, and
+    Xerxes reportedly destroyed part of the Esagila complex and removed the golden statue of Marduk. The
+    accommodation that the cylinder promised lasted, at most, two generations.
+
+
+    The Babylonian perspective on the cylinder, to the extent it can be reconstructed, is one of a conquered
+    people who collaborated with the conqueror because the alternative was worse — and who lost their political
+    autonomy permanently. Babylon remained a great city for centuries. But it was never again the capital of
+    its own state.
+
+    '
+  key_arguments:
+  - The cylinder was addressed to the Marduk priesthood, not the Babylonian population at large
+  - The priests had specific economic and religious motives to support Cyrus over Nabonidus
+  - Ordinary Babylonians experienced administrative continuity but permanent loss of political sovereignty
+  - Achaemenid tolerance lasted at most two generations — Xerxes crushed Babylonian revolts and desecrated the Esagila
+  sources:
+  - title: 'Babylon: City of Wonders'
+    author: Irving Finkel and Michael Seymour
+    year: '2008'
+    type: book
+  - title: 'Babylonia under Achaemenid Rule'
+    author: Paul-Alain Beaulieu
+    year: '2006'
+    type: chapter
+    doi: 10.1017/CHOL9780521780858.007
+  - title: 'The Reign of Nabonidus, King of Babylon, 556-539 BC'
+    author: Paul-Alain Beaulieu
+    year: '1989'
+    type: book
+    doi: 10.12987/yale/9780300043143.001.0001
+  notable_quotes:
+  - text: He [Nabonidus] did not know the rites, he ruined the regular offerings. He did evil against Marduk's city.
+    speaker: Verse Account of Nabonidus
+    context: Babylonian poetic text composed after Cyrus's conquest, likely by the Marduk priesthood
+  - text: Without fighting, he [Cyrus] entered Babylon. The state of peace was imposed upon the city.
+    speaker: Nabonidus Chronicle
+    context: Babylonian chronicle tablet, now in the British Museum (BM 35382)
+  emphasized:
+  - The priesthood's self-interested collaboration with the Persian conqueror
+  - Administrative continuity masking permanent political subordination
+  - The finite lifespan of Achaemenid tolerance — Xerxes destroyed what Cyrus built
+  - Ordinary Babylonians' experience of regime change as bureaucratic rather than liberatory
+  omitted:
+  - The possibility that the conquest genuinely improved conditions for some Babylonians
+  - The contributions of Babylonian astronomy and mathematics under Achaemenid rule
+  - The cylinder's wider context of returning deported peoples — the humanitarian outcomes, regardless of motive
+- viewpoint: Postcolonial / Museum Repatriation
+  viewpoint_type: revisionist
+  region_origin: global
+  narrative: 'Hormuzd Rassam found the cylinder in March 1879 during excavations funded by the British Museum at
+    the site of ancient Babylon, in territory then controlled by the Ottoman Empire. Rassam himself was born
+    in Mosul in 1826 to a Chaldean Catholic family; he had worked as an assistant to the legendary Austen
+    Henry Layard at Nineveh in the 1840s and later excavated independently at Nimrud, Nineveh, Sippar, and
+    Babylon. His career was shaped by the asymmetries of 19th-century archaeology: he did the fieldwork, the
+    British Museum held the objects, and European scholars took the credit. When Wallis Budge, Keeper of
+    Egyptian and Assyrian Antiquities, published translations of tablets Rassam had excavated, he credited
+    himself. Rassam sued for defamation in 1893 and lost.
+
+
+    The cylinder''s journey from Babylonian temple foundation to British Museum vitrine follows a pattern
+    replicated across thousands of objects: extraction during the age of European imperial expansion, housed
+    in metropolitan institutions that present themselves as custodians of universal heritage. The British Museum''s
+    position — articulated in its 2002 Declaration on the Importance and Value of Universal Museums, co-signed by
+    18 institutions — is that objects like the cylinder serve humanity best in collections where they can be
+    studied and displayed alongside objects from other cultures. The counter-position, articulated by Iraq, Iran,
+    and a growing number of scholars and cultural institutions, is that "universal" access is a euphemism for
+    colonial possession: the cylinder was taken from Ottoman Mesopotamia under a firman (permit) negotiated
+    between imperial powers, without any consultation with the people whose ancestors created it.
+
+
+    The repatriation question gained urgency after the 2003 Iraq War. The looting of the Iraq Museum in April
+    2003 — 15,000 objects stolen, of which roughly 7,000 have been recovered — highlighted the vulnerability
+    of cultural heritage in conflict zones. Defenders of Western museum holdings cited the looting as evidence
+    that objects are safer in London or New York. Critics responded that the instability was itself a product
+    of Western intervention, creating a circular argument: we destabilize your country, then cite the instability
+    as proof you cannot protect your own heritage.
+
+
+    Iran''s claim to the cylinder is complicated by the object''s own identity. It was made in Babylon (modern
+    Iraq), written in Akkadian (a Mesopotamian language), in a Mesopotamian literary genre, for a Mesopotamian
+    audience. Cyrus was Persian, but the object is Babylonian. Iraq has a stronger archaeological claim than
+    Iran, though Iraq has not formally requested the cylinder''s return. The British Museum''s loan of the
+    cylinder to Tehran in 1971 and again in 2010 — carefully limited, time-bound, and returned to London each
+    time — enacts the colonial dynamic in miniature: the former imperial power permits the colonized to view
+    their own heritage on a temporary visa.
+
+    '
+  key_arguments:
+  - The cylinder was extracted during 19th-century imperial archaeology under Ottoman permits — no local consent was obtained
+  - The British Museum's "universal museum" defense rebrands colonial possession as cosmopolitan stewardship
+  - Iran's claim is complicated — the object is Babylonian in language and genre, not Persian
+  - Temporary loans reproduce the power dynamic — the colony must borrow from the metropole to see its own heritage
+  sources:
+  - title: 'Whose Culture? The Promise of Museums and the Debate over Antiquities'
+    author: James Cuno (ed.)
+    year: '2009'
+    type: book
+    doi: 10.1515/9781400831708
+  - title: 'Asshur Is King! Asshur Is King! Religion in the Exercise of Power in the Neo-Assyrian Empire'
+    author: Hormuzd Rassam (primary source reference — Asshur and the Land of Nimrod, 1897)
+    year: '1897'
+    type: book
+    archive_url: https://archive.org/details/asshurandthelan00rassgoog
+  - title: 'The Rape of Mesopotamia: Behind the Looting of the Iraq Museum'
+    author: Lawrence Rothfield
+    year: '2009'
+    type: book
+    doi: 10.7208/chicago/9780226729480.001.0001
+  - title: 'Declaration on the Importance and Value of Universal Museums'
+    author: British Museum et al. (18 signatories)
+    year: '2002'
+    type: document
+  notable_quotes:
+  - text: The museum loans the cylinder to Iran as a gesture of goodwill. One does not typically loan to others what already belongs to them.
+    speaker: Paraphrased from Iranian diplomatic and media commentary
+    context: Responses to the 2010 loan of the cylinder to the National Museum of Iran
+  - text: Objects are safest in institutions that have the resources and expertise to preserve them.
+    speaker: British Museum position
+    context: 'Declaration on the Importance and Value of Universal Museums, 2002'
+  emphasized:
+  - Colonial archaeology as extraction — objects removed under imperial frameworks without local agency
+  - The "universal museum" argument as a post-hoc justification for retaining colonial acquisitions
+  - The loan-as-power-dynamic — temporary access granted by the possessor to the dispossessed
+  - Rassam's own marginalization within the system he served — an Iraqi doing British fieldwork, denied credit
+  omitted:
+  - The British Museum's genuine conservation expertise and public access record
+  - The political instability that has endangered heritage in Iraq and the broader Middle East
+  - The risk that repatriation to Iran would make the object an instrument of one nation's ideology rather than a shared Mesopotamian heritage
+  - The cylinder's scholarly accessibility in London — cuneiform researchers worldwide use the British Museum collection
+media:
+- media_type: image
+  title: The Cyrus Cylinder (BM 90920)
+  description: Barrel-shaped baked clay cylinder, 22.5 cm long by 10 cm wide, inscribed with 45 lines of Akkadian cuneiform. Deposited in the foundations of the Esagila temple in Babylon, c. 539 BCE. Discovered by Hormuzd Rassam in March 1879.
+  source_url: https://commons.wikimedia.org/wiki/File:Cyrus_Cylinder.jpg
+  attribution: Mike Peel, CC BY-SA 4.0, via Wikimedia Commons
+  license: cc-by-sa
+  creator: Mike Peel (photograph); original object c. 539 BCE
+  creation_date: c. 539 BCE
+- media_type: photograph
+  title: Ruins of ancient Babylon, Iraq
+  description: The archaeological site of Babylon in modern Hillah, Iraq, where Hormuzd Rassam excavated the cylinder in 1879. The visible reconstruction dates to Saddam Hussein's 1980s rebuilding project.
+  source_url: https://commons.wikimedia.org/wiki/File:Babylon_ruins.jpg
+  attribution: Public domain via Wikimedia Commons
+  license: public-domain
+  creator: Unknown
+  creation_date: Modern
+- media_type: document
+  title: Nabonidus Chronicle (BM 35382)
+  description: Babylonian chronicle tablet recording the fall of Babylon to Cyrus in 539 BCE. The text notes that Cyrus's army entered the city "without fighting" and that "the state of peace was imposed."
+  source_url: https://commons.wikimedia.org/wiki/File:Nabonidus_Chronicle.jpg
+  attribution: British Museum, public domain
+  license: public-domain
+  creator: Unknown
+  creation_date: c. 539 BCE
+- media_type: map
+  title: The Achaemenid Empire at its greatest extent under Darius I, c. 500 BCE
+  description: The empire Cyrus founded stretched from Libya to the Indus Valley. Babylon was one of its administrative capitals alongside Susa, Persepolis, and Ecbatana.
+  source_url: https://commons.wikimedia.org/wiki/File:Achaemenid_Empire_at_its_greatest_extent.svg
+  attribution: Wikimedia Commons, CC BY-SA 3.0
+  license: cc-by-sa
+  creator: Wikimedia contributors
+  creation_date: Modern
+connections:
+- target_slug: alexanders-conquests
+  connection_type: consequence
+  description: Alexander destroyed the Achaemenid Empire in 330 BCE — the system Cyrus founded lasted 200 years. Alexander reportedly visited Cyrus's tomb at Pasargadae and ordered its restoration after finding it looted.
+- target_slug: mongol-conquest-baghdad
+  connection_type: parallel
+  description: Both events ended Mesopotamian political orders — Cyrus ended the Neo-Babylonian Empire (539 BCE), the Mongols destroyed the Abbasid Caliphate (1258 CE). Both conquerors initially preserved local religious institutions before successors reversed course.
+- target_slug: creation-of-israel-nakba
+  connection_type: influenced
+  description: Cyrus's decree allowing Judaean exiles to return to Jerusalem (c. 538 BCE) — referenced in Ezra and 2 Chronicles — established the theological precedent of divinely ordained return to the promised land, a concept that shaped Zionist thought 2,500 years later.

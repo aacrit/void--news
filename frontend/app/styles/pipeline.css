@@ -1,0 +1,848 @@
+/* ==========================================================================
+   void --pipeline — Pipeline Flow Visualization
+   Dark walnut terminal aesthetic matching Command Center.
+   Static reference page: every step of the 3x-daily Python pipeline.
+   ========================================================================== */
+
+/* ---- Root Variables ---- */
+.pf-root {
+  --pf-bg: #0E0C0A;
+  --pf-surface: #141210;
+  --pf-surface2: #1C1A17;
+  --pf-surface3: #252320;
+  --pf-border: #252320;
+  --pf-border-dim: #1A1816;
+  --pf-text: #EDE8E0;
+  --pf-text-dim: #8A8278;
+  --pf-text-muted: #5A5450;
+  --pf-green: #22c55e;
+  --pf-font-mono: var(--font-ibm-mono), 'IBM Plex Mono', monospace;
+  --pf-font-editorial: var(--font-playfair), 'Playfair Display', Georgia, serif;
+  --pf-font-sans: var(--font-inter), 'Inter', system-ui, sans-serif;
+
+  /* Phase accent colors */
+  --pf-ingestion: #C47A2A;
+  --pf-analysis: #4A7FA5;
+  --pf-clustering: #5B8A5B;
+  --pf-ranking: #A05A20;
+  --pf-storage: #7060A0;
+  --pf-enrichment: #3A8A8A;
+  --pf-cleanup: #888880;
+}
+
+/* ---- Base ---- */
+.pf-root {
+  font-family: var(--pf-font-sans);
+  background: var(--pf-bg);
+  color: var(--pf-text);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Grain overlay */
+.pf-root::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.025'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+.pf-root > * {
+  position: relative;
+  z-index: 1;
+}
+
+
+/* ==========================================================================
+   1. STICKY HEADER BAR
+   ========================================================================== */
+
+.pf-header {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background: var(--pf-surface);
+  border-bottom: 1px solid var(--pf-border);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.pf-header__left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pf-header__title {
+  font-family: var(--pf-font-mono);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: var(--pf-text);
+  letter-spacing: 0.01em;
+}
+
+.pf-header__sep {
+  width: 1px;
+  height: 16px;
+  background: var(--pf-border);
+}
+
+.pf-header__meta {
+  font-family: var(--pf-font-mono);
+  font-size: 0.6875rem;
+  color: var(--pf-text-muted);
+}
+
+.pf-header__back {
+  font-family: var(--pf-font-mono);
+  font-size: 0.6875rem;
+  color: var(--pf-text-muted);
+  text-decoration: none;
+  transition: color 150ms;
+}
+
+.pf-header__back:hover {
+  color: var(--pf-text);
+}
+
+
+/* ==========================================================================
+   2. GEMINI RPD BUDGET BAR
+   ========================================================================== */
+
+.pf-rpd {
+  padding: 16px 24px;
+  background: var(--pf-surface);
+  border-bottom: 1px solid var(--pf-border);
+}
+
+.pf-rpd__inner {
+  max-width: 920px;
+  margin: 0 auto;
+}
+
+.pf-rpd__title {
+  font-family: var(--pf-font-mono);
+  font-size: 0.5625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--pf-text-muted);
+  margin-bottom: 8px;
+}
+
+.pf-rpd__bar {
+  display: flex;
+  gap: 1px;
+  height: 6px;
+  border-radius: 1px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.pf-rpd__segment {
+  border-radius: 1px;
+  min-width: 2px;
+}
+
+.pf-rpd__segment--summarization {
+  flex: 60;
+  background: var(--pf-green);
+}
+
+.pf-rpd__segment--briefs {
+  flex: 10.8;
+  background: #C8956C;
+}
+
+.pf-rpd__segment--triage {
+  flex: 6;
+  background: #3A3630;
+  opacity: 0.5;
+  border: 1px dashed var(--pf-text-muted);
+  /* Reduce height to account for border */
+  box-sizing: border-box;
+}
+
+.pf-rpd__segment--buffer {
+  flex: 23.2;
+  background: var(--pf-border-dim);
+}
+
+.pf-rpd__legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  font-family: var(--pf-font-mono);
+  font-size: 0.625rem;
+  color: var(--pf-text-dim);
+}
+
+.pf-rpd__legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.pf-rpd__legend-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+.pf-rpd__legend-disabled {
+  color: var(--pf-text-muted);
+  font-style: italic;
+}
+
+.pf-rpd__legend-total {
+  margin-left: auto;
+  color: var(--pf-text-dim);
+  font-family: var(--pf-font-mono);
+  font-size: 0.625rem;
+}
+
+
+/* ==========================================================================
+   3. PHASE FLOW (main content)
+   ========================================================================== */
+
+.pf-flow {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 24px 24px 64px;
+}
+
+/* ---- Phase arrow connector ---- */
+.pf-connector {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0;
+  font-family: var(--pf-font-mono);
+  font-size: 0.75rem;
+  color: var(--pf-text-muted);
+  user-select: none;
+}
+
+/* ---- Phase block ---- */
+.pf-phase {
+  border: 1px solid var(--pf-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+/* ---- Phase header ---- */
+.pf-phase__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-left: 3px solid var(--pf-text-muted);
+  font-family: var(--pf-font-mono);
+  font-size: 0.75rem;
+}
+
+/* Per-phase tint backgrounds + left border */
+.pf-phase--ingestion .pf-phase__header {
+  border-left-color: var(--pf-ingestion);
+  background: rgba(196, 122, 42, 0.06);
+}
+.pf-phase--analysis .pf-phase__header {
+  border-left-color: var(--pf-analysis);
+  background: rgba(74, 127, 165, 0.06);
+}
+.pf-phase--clustering .pf-phase__header {
+  border-left-color: var(--pf-clustering);
+  background: rgba(91, 138, 91, 0.06);
+}
+.pf-phase--ranking .pf-phase__header {
+  border-left-color: var(--pf-ranking);
+  background: rgba(160, 90, 32, 0.06);
+}
+.pf-phase--storage .pf-phase__header {
+  border-left-color: var(--pf-storage);
+  background: rgba(112, 96, 160, 0.06);
+}
+.pf-phase--enrichment .pf-phase__header {
+  border-left-color: var(--pf-enrichment);
+  background: rgba(58, 138, 138, 0.06);
+}
+.pf-phase--cleanup .pf-phase__header {
+  border-left-color: var(--pf-cleanup);
+  background: rgba(136, 136, 128, 0.06);
+}
+
+.pf-phase__icon {
+  font-size: 0.875rem;
+  line-height: 1;
+  opacity: 0.7;
+}
+
+.pf-phase__label {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 400;
+  color: var(--pf-text);
+}
+
+.pf-phase__desc {
+  margin-left: auto;
+  font-size: 0.6875rem;
+  color: var(--pf-text-dim);
+  text-align: right;
+}
+
+
+/* ==========================================================================
+   STEP ROW
+   ========================================================================== */
+
+.pf-step {
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  border-top: 1px solid var(--pf-border);
+  padding: 12px 16px 12px 0;
+}
+
+/* ---- Rail (step number badge) ---- */
+.pf-step__rail {
+  display: flex;
+  justify-content: center;
+  padding-top: 2px;
+}
+
+.pf-step__num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  height: 22px;
+  padding: 0 4px;
+  font-family: var(--pf-font-mono);
+  font-size: 0.625rem;
+  color: var(--pf-text-dim);
+  background: #252220;
+  border: 1px solid #3A3630;
+  border-radius: 2px;
+  line-height: 1;
+}
+
+/* Highlighted step badge (green) */
+.pf-step__num--highlight {
+  color: var(--pf-green);
+  border-color: var(--pf-green);
+}
+
+/* ---- Step body ---- */
+.pf-step__body {
+  min-width: 0;
+}
+
+.pf-step__title {
+  font-family: var(--pf-font-sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--pf-text);
+  line-height: 1.4;
+  margin-bottom: 2px;
+}
+
+/* Highlighted step title (green) */
+.pf-step__title--highlight {
+  color: var(--pf-green);
+}
+
+.pf-step__detail {
+  font-family: var(--pf-font-sans);
+  font-size: 0.6875rem;
+  color: var(--pf-text-dim);
+  line-height: 1.5;
+  margin-bottom: 6px;
+}
+
+/* ---- Step meta row (file badge + call badge) ---- */
+.pf-step__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.pf-step__file {
+  font-family: var(--pf-font-mono);
+  font-size: 0.5625rem;
+  color: var(--pf-text-dim);
+  background: var(--pf-border-dim);
+  padding: 2px 6px;
+  border-radius: 2px;
+  letter-spacing: 0.02em;
+}
+
+.pf-step__badge {
+  font-family: var(--pf-font-mono);
+  font-size: 0.5625rem;
+  padding: 2px 8px;
+  border-radius: 2px;
+  border: 1px solid;
+  letter-spacing: 0.02em;
+}
+
+.pf-step__badge--active {
+  color: var(--pf-green);
+  border-color: var(--pf-green);
+}
+
+.pf-step__badge--disabled {
+  color: var(--pf-text-muted);
+  border-color: var(--pf-text-muted);
+  text-decoration: line-through;
+}
+
+.pf-step__badge-suffix {
+  text-decoration: none;
+  font-style: italic;
+  color: var(--pf-text-muted);
+}
+
+
+/* ==========================================================================
+   5-AXIS EXPANSION (Step 5)
+   ========================================================================== */
+
+.pf-axes {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pf-axis {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 0.6875rem;
+  line-height: 1.5;
+}
+
+.pf-axis__num {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-family: var(--pf-font-mono);
+  font-size: 0.5625rem;
+  font-weight: 400;
+  color: var(--pf-bg);
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.pf-axis__name {
+  font-weight: 600;
+  color: var(--pf-text);
+  white-space: nowrap;
+}
+
+.pf-axis__detail {
+  color: var(--pf-text-dim);
+}
+
+
+/* ==========================================================================
+   3-POOL DIAGRAM (Step 7b)
+   ========================================================================== */
+
+.pf-pools {
+  margin-top: 12px;
+  border: 1px solid var(--pf-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.pf-pools__header {
+  font-family: var(--pf-font-mono);
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--pf-text-dim);
+  padding: 8px 12px;
+  background: var(--pf-surface2);
+  border-bottom: 1px solid var(--pf-border);
+}
+
+.pf-pool {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--pf-border);
+}
+
+.pf-pool:last-of-type {
+  border-bottom: none;
+}
+
+.pf-pool__top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.pf-pool__tag {
+  font-family: var(--pf-font-mono);
+  font-size: 0.5625rem;
+  font-weight: 400;
+  padding: 2px 6px;
+  border-radius: 2px;
+  color: var(--pf-bg);
+  letter-spacing: 0.04em;
+}
+
+.pf-pool__tag--p1 { background: var(--pf-green); }
+.pf-pool__tag--p2 { background: var(--pf-analysis); }
+.pf-pool__tag--p3 { background: var(--pf-ranking); }
+
+.pf-pool__name {
+  font-family: var(--pf-font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--pf-text);
+}
+
+.pf-pool__count {
+  font-family: var(--pf-font-mono);
+  font-size: 0.5625rem;
+  color: var(--pf-text-dim);
+  background: var(--pf-border-dim);
+  padding: 1px 6px;
+  border-radius: 2px;
+}
+
+/* Edition / topic chips */
+.pf-pool__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.pf-pool__chip {
+  font-family: var(--pf-font-mono);
+  font-size: 0.5rem;
+  color: var(--pf-text-dim);
+  background: var(--pf-surface2);
+  border: 1px solid var(--pf-border);
+  padding: 1px 5px;
+  border-radius: 2px;
+}
+
+/* Pool progress bar */
+.pf-pool__bar-wrap {
+  height: 4px;
+  background: var(--pf-border-dim);
+  border-radius: 1px;
+  margin-bottom: 6px;
+  overflow: hidden;
+}
+
+.pf-pool__bar {
+  height: 100%;
+  border-radius: 1px;
+}
+
+.pf-pool__bar--p1 { background: var(--pf-green); width: 60%; }
+.pf-pool__bar--p2 { background: var(--pf-analysis); width: 20%; }
+.pf-pool__bar--p3 { background: var(--pf-ranking); width: 20%; }
+
+.pf-pool__detail {
+  font-size: 0.6875rem;
+  color: var(--pf-text-dim);
+  line-height: 1.5;
+}
+
+/* ---- Pool total bar ---- */
+.pf-pools__total {
+  padding: 10px 12px;
+  background: var(--pf-surface2);
+  border-top: 1px solid var(--pf-border);
+}
+
+.pf-pools__total-bar {
+  display: flex;
+  gap: 1px;
+  height: 6px;
+  border-radius: 1px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.pf-pools__total-seg {
+  border-radius: 1px;
+}
+
+.pf-pools__total-seg--p1 { flex: 30; background: var(--pf-green); }
+.pf-pools__total-seg--p2 { flex: 10; background: var(--pf-analysis); }
+.pf-pools__total-seg--p3 { flex: 10; background: var(--pf-ranking); }
+
+.pf-pools__total-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--pf-font-mono);
+  font-size: 0.5625rem;
+  color: var(--pf-text-dim);
+}
+
+.pf-pools__total-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pf-pools__total-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+.pf-pools__total-arrow {
+  color: var(--pf-text-muted);
+}
+
+
+/* ==========================================================================
+   SIGNAL CHART (Step 7 — Ranker)
+   ========================================================================== */
+
+.pf-signals {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.pf-signal {
+  display: grid;
+  grid-template-columns: 150px 1fr 32px;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.6875rem;
+}
+
+.pf-signal__label {
+  font-family: var(--pf-font-sans);
+  font-size: 0.6875rem;
+  color: var(--pf-text-dim);
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pf-signal__bar-wrap {
+  height: 6px;
+  background: var(--pf-border-dim);
+  border-radius: 1px;
+  overflow: hidden;
+}
+
+.pf-signal__bar {
+  height: 100%;
+  border-radius: 1px;
+  background: var(--pf-ranking);
+}
+
+.pf-signal__pct {
+  font-family: var(--pf-font-mono);
+  font-size: 0.5625rem;
+  color: var(--pf-text-dim);
+  text-align: right;
+}
+
+.pf-signals__note {
+  font-family: var(--pf-font-mono);
+  font-size: 0.5625rem;
+  color: var(--pf-text-muted);
+  margin-top: 6px;
+  padding-left: 158px;
+}
+
+
+/* ==========================================================================
+   4. FRONTEND OUTPUT SECTION
+   ========================================================================== */
+
+.pf-output {
+  border: 1px solid var(--pf-border);
+  border-radius: 2px;
+  margin-top: 24px;
+  overflow: hidden;
+}
+
+.pf-output__header {
+  font-family: var(--pf-font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--pf-text);
+  padding: 10px 16px;
+  background: var(--pf-surface2);
+  border-bottom: 1px solid var(--pf-border);
+}
+
+/* ---- Hero slot ---- */
+.pf-output__hero {
+  padding: 16px;
+  border-bottom: 1px solid var(--pf-border);
+}
+
+.pf-output__hero-box {
+  border: 1px solid var(--pf-ranking);
+  border-radius: 2px;
+  padding: 16px;
+  position: relative;
+}
+
+.pf-output__hero-label {
+  font-family: var(--pf-font-mono);
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--pf-ranking);
+  margin-bottom: 6px;
+}
+
+.pf-output__hero-detail {
+  font-size: 0.6875rem;
+  color: var(--pf-text-dim);
+  line-height: 1.5;
+}
+
+/* ---- Grid mockup ---- */
+.pf-output__grid {
+  padding: 16px;
+}
+
+.pf-output__grid-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.pf-output__card {
+  background: var(--pf-surface2);
+  border: 1px solid var(--pf-border);
+  border-radius: 2px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pf-output__card-rank {
+  font-family: var(--pf-font-mono);
+  font-size: 0.5625rem;
+  color: var(--pf-text-muted);
+}
+
+.pf-output__card-label {
+  font-family: var(--pf-font-sans);
+  font-size: 0.6875rem;
+  color: var(--pf-text-dim);
+}
+
+/* Ellipsis card (spans full width) */
+.pf-output__card--ellipsis {
+  grid-column: 1 / -1;
+  justify-content: center;
+  padding: 6px 12px;
+}
+
+.pf-output__grid-note {
+  font-family: var(--pf-font-mono);
+  font-size: 0.5625rem;
+  color: var(--pf-text-muted);
+  text-align: center;
+  margin-top: 4px;
+}
+
+
+/* ==========================================================================
+   RESPONSIVE — Mobile (< 640px)
+   ========================================================================== */
+
+@media (max-width: 640px) {
+  .pf-header {
+    padding: 0 16px;
+    gap: 8px;
+  }
+
+  .pf-header__meta {
+    display: none;
+  }
+
+  .pf-header__sep {
+    display: none;
+  }
+
+  .pf-rpd {
+    padding: 12px 16px;
+  }
+
+  .pf-flow {
+    padding: 16px 16px 48px;
+  }
+
+  .pf-phase__desc {
+    display: none;
+  }
+
+  .pf-step {
+    grid-template-columns: 40px 1fr;
+    padding: 10px 12px 10px 0;
+  }
+
+  .pf-signal {
+    grid-template-columns: 100px 1fr 28px;
+  }
+
+  .pf-signals__note {
+    padding-left: 108px;
+  }
+
+  .pf-pool__chips {
+    margin-left: 0;
+    margin-top: 4px;
+  }
+
+  .pf-pool__top {
+    flex-wrap: wrap;
+  }
+
+  .pf-output__grid-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pf-rpd__legend {
+    gap: 10px;
+  }
+
+  .pf-rpd__legend-total {
+    margin-left: 0;
+    width: 100%;
+    margin-top: 4px;
+  }
+}

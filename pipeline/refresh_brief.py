@@ -1,23 +1,36 @@
 """
-Standalone brief regenerator — regenerates TL;DR + opinion from current DB
-without running the full pipeline. Uses Gemini for both calls.
+Standalone brief regenerator — single entry point for all Daily Brief refresh
+operations. Regenerates TL;DR, opinion, and/or audio from current DB (or
+frozen test fixtures) without running the full pipeline.
 
 Usage:
-    python pipeline/refresh_brief.py                        # world edition
+    python pipeline/refresh_brief.py                              # full: TL;DR + opinion + audio
     python pipeline/refresh_brief.py --editions world,us
-    python pipeline/refresh_brief.py --no-audio             # skip audio synthesis
-    python pipeline/refresh_brief.py --opinion-only         # only regenerate opinion
-    python pipeline/refresh_brief.py --tldr-only            # only regenerate TL;DR + audio
+    python pipeline/refresh_brief.py --no-audio                   # TL;DR + opinion, skip TTS
+    python pipeline/refresh_brief.py --opinion-only               # only regenerate opinion
+    python pipeline/refresh_brief.py --tldr-only --no-audio       # only regenerate TL;DR text
+
+    # Prompt iteration (no DB writes, deterministic input):
+    python pipeline/refresh_brief.py --dry-run --output /tmp/brief.json
+    python pipeline/refresh_brief.py --fixtures --dry-run --output /tmp/brief.json
+    python pipeline/refresh_brief.py --snapshot-fixtures           # save current DB → test_clusters.json
+
+    # On Air radio show (default audio path since 2026-09-18; --legacy-audio for edge-tts + old script):
+    python pipeline/refresh_brief.py --radio-only                  # regenerate ONLY the radio rundown + audio
+    python pipeline/refresh_brief.py --radio-only --dry-run        # rundown + validator report, no audio, no DB
+    python pipeline/refresh_brief.py --radio-only --rundown-file tests/fixtures/radio_rundown_2026-09-18.txt \
+        --render-dir /tmp/onair                                    # render a fixture rundown to a folder (no Gemini, no DB)
 """
 
 import argparse
+import json
+import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent))
 
-from utils.supabase_client import supabase
 from briefing.daily_brief_generator import (
     generate_daily_briefs,
     _get_today_lean,
@@ -26,18 +39,30 @@ from briefing.daily_brief_generator import (
 )
 from briefing.voice_rotation import get_voices_for_today
 
+_FIXTURES_PATH = Path(__file__).parent / "briefing" / "test_clusters.json"
 
-def _fetch_clusters(editions: list[str]) -> list[dict]:
-    """Fetch current clusters from DB."""
+
+def _fetch_clusters_db(editions: list[str]) -> list[dict]:
+    """The published feed, as the daily run's step 7d reads it.
+
+    This used to order by headline_rank and take 25, which is neither the
+    ordering nor the size of the page: headline_rank is written UNGATED, so a
+    story the feed guards demoted still led the refreshed brief. Same ordering,
+    same window as main.generate_and_store_briefs.
+    """
+    from utils.supabase_client import supabase
+    from utils.feed_config import DISPLAYED
+
     all_clusters = []
     seen_ids = set()
     for edition in editions:
         res = supabase.table("story_clusters").select(
             "id,title,summary,category,section,sections,source_count,"
-            "headline_rank,consensus_points,divergence_points,divergence_score"
+            "rank_world,headline_rank,consensus_points,divergence_points,"
+            "divergence_score"
         ).contains("sections", [edition]).order(
-            "headline_rank", desc=True
-        ).limit(25).execute()
+            "rank_world", desc=True
+        ).limit(DISPLAYED).execute()
 
         if res.data:
             for c in res.data:
@@ -51,8 +76,96 @@ def _fetch_clusters(editions: list[str]) -> list[dict]:
     return all_clusters
 
 
+def _current_brief_static() -> dict | None:
+    """The published brief, read off disk, for the offline radio render.
+
+    The render needs the editorial script and the opinion cluster id, which
+    the daily run takes from the database. frontend/public/data/brief.json is
+    the same row after export, so the offline path reads the editorial Void
+    actually published rather than reaching for a database it is meant to do
+    without.
+    """
+    path = Path(__file__).resolve().parents[1] / "frontend" / "public" / "data" / "brief.json"
+    if not path.exists():
+        print(f"  Published brief not found: {path}")
+        return None
+    brief = json.loads(path.read_text(encoding="utf-8"))
+    print(f"  Editorial from the published brief ({brief.get('edition_date') or 'undated'})")
+    return brief
+
+
+def _fetch_clusters_feed_export(editions: list[str]) -> list[dict]:
+    """The published feed, read off disk. Used by the offline radio render.
+
+    A supplied rundown is bound to stories by RANK, and the ranked, published
+    top 20 is exactly what export_static wrote to frontend/build-data. Reading
+    it here is what makes --rundown-file --render-dir genuinely need no
+    database, as its usage line has always claimed, and it binds against the
+    same feed the daily run binds against rather than a second source.
+    """
+    path = Path(__file__).resolve().parents[1] / "frontend" / "build-data" / "feed.json"
+    if not path.exists():
+        print(f"  Feed export not found: {path}")
+        return []
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    clusters = payload.get("clusters", payload) if isinstance(payload, dict) else payload
+    out = []
+    for c in clusters:
+        if not any(e in (c.get("sections") or [c.get("section")]) for e in editions):
+            continue
+        c["_db_id"] = c.get("id", "")
+        out.append(c)
+    out.sort(key=lambda c: c.get("rank_world") or 0, reverse=True)
+    print(f"  Loaded {len(out)} clusters from the feed export (built {payload.get('builtAt') if isinstance(payload, dict) else 'unknown'})")
+    return out
+
+
+def _fetch_clusters_fixtures(editions: list[str]) -> list[dict]:
+    """Load frozen test clusters from fixtures file."""
+    if not _FIXTURES_PATH.exists():
+        print(f"  Fixtures file not found: {_FIXTURES_PATH}")
+        print(f"  Run with --snapshot-fixtures first to create it.")
+        return []
+    with open(_FIXTURES_PATH) as f:
+        all_clusters = json.load(f)
+    # Filter to requested editions
+    filtered = []
+    for c in all_clusters:
+        sections = c.get("sections", [])
+        if any(e in sections for e in editions):
+            c["_db_id"] = c.get("id", c.get("_db_id", ""))
+            filtered.append(c)
+    print(f"  Loaded {len(filtered)} clusters from fixtures (editions: {editions})")
+    return filtered
+
+
+def _snapshot_fixtures(editions: list[str]) -> None:
+    """Save current DB clusters to test_clusters.json for deterministic iteration."""
+    clusters = _fetch_clusters_db(editions)
+    if not clusters:
+        print("No clusters to snapshot")
+        return
+    # Strip _db_id (will be re-added on load from "id" field)
+    clean = []
+    for c in clusters:
+        row = {k: v for k, v in c.items() if k != "_db_id"}
+        clean.append(row)
+    with open(_FIXTURES_PATH, "w") as f:
+        json.dump(clean, f, indent=2, default=str)
+    print(f"Saved {len(clean)} clusters to {_FIXTURES_PATH}")
+
+
+def use_radio_only_dry(args) -> bool:
+    """--radio-only never falls back to the legacy synthesis: the caller asked
+    for the radio show specifically, and a silent edge-tts render would hide
+    a Kokoro/rundown failure."""
+    return bool(getattr(args, "radio_only", False))
+
+
 def _get_current_brief(edition: str) -> dict | None:
     """Fetch the current brief for an edition."""
+    from utils.supabase_client import supabase
+
     res = supabase.table("daily_briefs").select("*").eq(
         "edition", edition
     ).order("created_at", desc=True).limit(1).execute()
@@ -60,37 +173,94 @@ def _get_current_brief(edition: str) -> dict | None:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Regenerate Daily Brief from current DB")
+    parser = argparse.ArgumentParser(description="Regenerate Daily Brief")
     parser.add_argument("--editions", default="world", help="Comma-separated editions")
     parser.add_argument("--no-audio", action="store_true", help="Skip audio synthesis")
     parser.add_argument("--opinion-only", action="store_true", help="Only regenerate opinion")
     parser.add_argument("--tldr-only", action="store_true", help="Only regenerate TL;DR + audio")
+    parser.add_argument("--dry-run", action="store_true",
+                        help="Generate but skip DB write. Use with --output for JSON dump.")
+    parser.add_argument("--fixtures", action="store_true",
+                        help="Load clusters from test_clusters.json instead of live DB")
+    parser.add_argument("--output", type=str, default=None,
+                        help="Write output + quality report to this JSON file (implies --dry-run)")
+    parser.add_argument("--radio-only", action="store_true",
+                        help="Only regenerate the On Air rundown + audio (keeps TL;DR + opinion)")
+    parser.add_argument("--legacy-audio", action="store_true",
+                        help="Use the legacy edge-tts path (brief's own audio script) instead of the radio show")
+    parser.add_argument("--revoice", action="store_true",
+                        help="Re-render the rundown the current brief already carries, instead of "
+                             "asking Gemini for a new one (use after a voice, pace or mastering change)")
+    parser.add_argument("--rundown-file", type=str, default=None,
+                        help="Use this rundown text instead of calling Gemini (fixtures / offline renders)")
+    parser.add_argument("--render-dir", type=str, default=None,
+                        help="Render the radio show into this folder instead of the static site (implies no DB write)")
+    parser.add_argument("--snapshot-fixtures", action="store_true",
+                        help="Save current DB clusters to test_clusters.json and exit")
     args = parser.parse_args()
 
     editions = [e.strip() for e in args.editions.split(",")]
+
+    # --output implies --dry-run
+    if args.output:
+        args.dry_run = True
+
+    # Snapshot mode: save fixtures and exit
+    if args.snapshot_fixtures:
+        print(f"Snapshotting clusters for editions: {editions}")
+        _snapshot_fixtures(editions)
+        return
+
     today_lean = _get_today_lean()
     date_str = datetime.now(timezone.utc).strftime("%A, %d %B %Y")
 
     print(f"Regenerating briefs for: {editions}")
     print(f"Today's opinion lean: {today_lean.upper()}")
+    if args.dry_run:
+        print("DRY RUN — no DB writes")
+    if args.fixtures:
+        print("FIXTURES MODE — using frozen test clusters")
     print()
 
     # Fetch clusters
-    print("[1/4] Fetching clusters from DB...")
-    all_clusters = _fetch_clusters(editions)
+    print("[1/4] Fetching clusters...")
+    if args.fixtures:
+        all_clusters = _fetch_clusters_fixtures(editions)
+    elif args.rundown_file and args.render_dir:
+        all_clusters = _fetch_clusters_feed_export(editions)
+    else:
+        all_clusters = _fetch_clusters_db(editions)
     if not all_clusters:
         print("No clusters — nothing to generate")
         return
+
+    # Collect all outputs for --output JSON dump
+    all_outputs = {}
 
     for edition in editions:
         print(f"\n{'='*60}")
         print(f"EDITION: {edition.upper()}")
         print(f"{'='*60}")
 
-        current = _get_current_brief(edition)
+        # Reading the current brief is harmless in a dry run and the radio
+        # dry-run needs it (the editorial script decides the running order).
+        if args.fixtures or (args.dry_run and not args.radio_only):
+            current = None
+        elif args.rundown_file and args.render_dir:
+            current = _current_brief_static()
+        else:
+            current = _get_current_brief(edition)
 
         # --- TL;DR + Audio ---
-        if not args.opinion_only:
+        if args.radio_only:
+            brief = {}
+            if current:
+                for k in ("tldr_headline", "tldr_text", "audio_script", "top_cluster_ids", "opinion_text",
+                          "opinion_headline", "opinion_audio_script", "opinion_lean", "opinion_cluster_id"):
+                    brief[k] = current.get(k)
+            elif not args.dry_run and not args.render_dir:
+                print("  No current brief to attach the radio show to")
+        elif not args.opinion_only:
             print("\n[2/4] Generating TL;DR + audio script via Gemini...")
             briefs = generate_daily_briefs(all_clusters, {}, edition_sections=[edition])
             brief = briefs.get(edition, {})
@@ -109,12 +279,16 @@ def main():
         else:
             brief = {}
             if current:
+                # Carry the headline too: writing tldr_headline=None here
+                # disqualified the new row from every future carry-forward
+                # (both fetchers filter tldr_headline NOT NULL).
+                brief["tldr_headline"] = current.get("tldr_headline")
                 brief["tldr_text"] = current.get("tldr_text", "")
                 brief["audio_script"] = current.get("audio_script")
                 brief["top_cluster_ids"] = current.get("top_cluster_ids", [])
 
         # --- Opinion ---
-        if not args.tldr_only:
+        if not args.tldr_only and not args.radio_only:
             print(f"\n[3/4] Generating {today_lean.upper()} opinion editorial...")
             opinion_cluster = _select_opinion_cluster(all_clusters, edition)
             if opinion_cluster:
@@ -125,6 +299,7 @@ def main():
                 opinion_result = _generate_opinion(opinion_cluster, today_lean, date_str)
                 if opinion_result:
                     brief["opinion_text"] = opinion_result["opinion_text"]
+                    brief["opinion_headline"] = opinion_result.get("opinion_headline")
                     brief["opinion_audio_script"] = opinion_result.get("opinion_audio_script")
                     brief["opinion_lean"] = opinion_result["opinion_lean"]
                     brief["opinion_cluster_id"] = opinion_result["opinion_cluster_id"]
@@ -138,16 +313,77 @@ def main():
             else:
                 print("  No suitable cluster for opinion")
 
+        # --- Collect output for JSON dump ---
+        edition_output = {
+            "edition": edition,
+            "tldr_headline": brief.get("tldr_headline"),
+            "tldr_text": brief.get("tldr_text", ""),
+            "opinion_text": brief.get("opinion_text"),
+            "opinion_headline": brief.get("opinion_headline"),
+            "opinion_lean": brief.get("opinion_lean"),
+            "audio_script": brief.get("audio_script"),
+            "opinion_audio_script": brief.get("opinion_audio_script"),
+            "quality_report": brief.get("quality_report"),
+        }
+        all_outputs[edition] = edition_output
+
         # --- Audio ---
         audio_result = None
-        if not args.no_audio and not args.opinion_only and brief.get("audio_script"):
-            print("\n[4/4] Synthesizing audio via Gemini Flash TTS...")
+        radio_result = None
+        use_radio = not args.legacy_audio and os.environ.get("VOID_RADIO_FORMAT", "1").strip().lower() not in ("0", "false", "no")
+        if use_radio and not args.no_audio and not args.opinion_only:
+            print("\n[4/4] On Air radio show..." + (" (dry run: rundown + validators only)" if args.dry_run and not args.render_dir else ""))
+            from briefing.radio_script_generator import generate_radio_rundown, parse_rundown, validate_rundown, RundownContext
+            from briefing.radio_producer import produce_radio_show, permalinks_from_archive
+            from briefing.spoken_text import spoken_date
+            top = [c for c in all_clusters if edition in (c.get("sections") or [edition])][:20]
+            editorial = brief.get("opinion_audio_script")
+            stored = (current or {}).get("audio_script") if args.revoice else None
+            if args.revoice and not stored:
+                print("  --revoice: the current brief carries no rundown to re-render")
+                rundown = report = None
+            elif args.rundown_file or stored:
+                source = Path(args.rundown_file).read_text(encoding="utf-8") if args.rundown_file else stored
+                rundown = parse_rundown(source)
+                report = validate_rundown(rundown, RundownContext(top20=top, has_editorial=bool(editorial),
+                                                                  date_spoken=spoken_date(datetime.now(timezone.utc)),
+                                                                  editorial_cluster_id=brief.get("opinion_cluster_id")))
+                origin = "file" if args.rundown_file else "the current brief (no Gemini call)"
+                print(f"  Rundown from {origin}: {rundown.words} words, passed={report.passed}")
+                for f in report.findings:
+                    print(f"    {f.id} {f.level:4} [{f.segment}] {f.detail[:110]}")
+            else:
+                rundown, report, label = generate_radio_rundown(
+                    top, has_editorial=bool(editorial), editorial_cluster_id=brief.get("opinion_cluster_id"))
+            edition_output["radio_rundown"] = rundown.to_text() if rundown else None
+            edition_output["radio_report"] = report.as_dict() if report else None
+            if rundown is not None and not (args.dry_run and not args.render_dir):
+                radio_result = produce_radio_show(
+                    rundown, editorial, edition, opinion_headline=brief.get("opinion_headline"),
+                    permalinks=permalinks_from_archive(), out_dir=args.render_dir,
+                )
+                if radio_result:
+                    print(f"  Radio: {radio_result.duration_seconds}s, {len(radio_result.chapters)} chapters, "
+                          f"{radio_result.file_size / 1024:.0f} KB, engine {radio_result.engine} -> {radio_result.audio_url}")
+                    brief["audio_script"] = radio_result.audio_script
+                    edition_output["radio_chapters"] = radio_result.chapters
+                    edition_output["radio_timing"] = radio_result.timing
+                else:
+                    print("  Radio show failed; falling back to the legacy audio path")
+            elif rundown is None:
+                print("  No usable rundown; falling back to the legacy audio path")
+        if radio_result is None and not use_radio_only_dry(args) and not args.no_audio and not args.opinion_only and not args.dry_run and brief.get("audio_script"):
+            print("\n[4/4] Synthesizing audio (legacy edge-tts path)...")
             try:
                 from briefing.audio_producer import produce_audio
                 voices = get_voices_for_today(edition)
                 audio_result = produce_audio(
                     brief["audio_script"], voices, edition,
                     opinion_audio_script=brief.get("opinion_audio_script"),
+                    opinion_lean=brief.get("opinion_lean"),
+                    # A anchors, B takes alternate stories and reads the opinion
+                    news_single_voice=False,
+                    news_voice_b_from_opinion=True,
                 )
                 if audio_result:
                     print(f"  Audio: {audio_result['duration_seconds']}s, "
@@ -155,14 +391,22 @@ def main():
             except ImportError:
                 print("  Audio producer not available — skipping")
         else:
-            print("\n[4/4] Audio: skipped")
+            reason = "dry-run" if args.dry_run else "skipped"
+            print(f"\n[4/4] Audio: {reason}")
 
-        # --- Store to DB ---
+        # --- Store to DB (skip in dry-run) ---
+        if args.dry_run or args.render_dir:
+            print("\n  DB write: skipped (dry-run)")
+            continue
+
         print("\n  Storing to DB...")
         row = {
             "edition": edition,
+            "tldr_headline": brief.get("tldr_headline"),
             "tldr_text": brief.get("tldr_text", current.get("tldr_text", "") if current else ""),
             "opinion_text": brief.get("opinion_text"),
+            "opinion_headline": brief.get("opinion_headline"),
+            "opinion_audio_script": brief.get("opinion_audio_script"),
             "opinion_lean": brief.get("opinion_lean"),
             "opinion_cluster_id": brief.get("opinion_cluster_id"),
             "audio_script": brief.get("audio_script", current.get("audio_script") if current else None),
@@ -172,31 +416,49 @@ def main():
         # Carry forward audio from current brief if not regenerated
         if not audio_result and current:
             for field in ("audio_url", "audio_duration_seconds", "audio_file_size",
-                          "audio_voice", "audio_voice_label"):
+                          "audio_voice", "audio_voice_label", "opinion_start_seconds"):
                 if current.get(field):
                     row[field] = current[field]
+        if radio_result:
+            row.update(radio_result.as_row_fields())
+            row["audio_script"] = radio_result.audio_script
         elif audio_result:
             voices = get_voices_for_today(edition)
             row["audio_url"] = audio_result["audio_url"]
             row["audio_duration_seconds"] = audio_result["duration_seconds"]
             row["audio_file_size"] = audio_result["file_size"]
-            row["audio_voice"] = f"{voices['host_a']['id']}+{voices['host_b']['id']}"
+            has_opinion = bool(brief.get("opinion_audio_script"))
+            row["audio_voice"] = f"{voices['host_a']['id']}+{voices['host_b']['id']}" + (
+                f"+{voices['opinion']['id']}" if has_opinion else ""
+            )
+            row["audio_voice_label"] = "Three voices" if has_opinion else "Two voices"
+            row["opinion_start_seconds"] = audio_result.get("opinion_start_seconds")
 
+        from utils.supabase_client import supabase
+        # Best-effort cleanup of stale manual-refresh rows (null run id) only.
+        # NEVER delete the edition's whole history: the old fallback wiped
+        # every brief for the edition and re-tried the same insert — a
+        # deterministic insert failure (FK violation, schema drift) left the
+        # table EMPTY and the homepage brief blank until the next pipeline run.
         try:
-            # Delete old and insert new (no pipeline_run_id for standalone)
             supabase.table("daily_briefs").delete().eq("edition", edition).is_(
                 "pipeline_run_id", "null"
             ).execute()
+        except Exception as e:
+            print(f"  [warn] stale-row cleanup failed (continuing): {e}")
+        try:
             supabase.table("daily_briefs").insert(row).execute()
             print(f"  Stored successfully")
         except Exception as e:
-            # Fallback: try upsert without pipeline_run_id constraint
-            try:
-                supabase.table("daily_briefs").delete().eq("edition", edition).execute()
-                supabase.table("daily_briefs").insert(row).execute()
-                print(f"  Stored (replaced existing)")
-            except Exception as e2:
-                print(f"  DB error: {e2}")
+            print(f"  DB error (history preserved, no rows deleted): {e}")
+
+    # --- Write JSON output ---
+    if args.output:
+        output_path = Path(args.output)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(output_path, "w") as f:
+            json.dump(all_outputs, f, indent=2, default=str)
+        print(f"\nOutput written to: {output_path}")
 
     print("\nDone.")
 

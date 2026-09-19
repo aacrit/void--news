@@ -2,9 +2,10 @@
 
 import { useRef } from "react";
 import type { Story } from "../lib/types";
-import { timeAgo } from "../lib/utils";
+import { CaretRight } from "@phosphor-icons/react";
 import Sigil from "./Sigil";
 import { hapticLight } from "../lib/haptics";
+import { BASE_PATH } from "../lib/utils";
 
 interface LeadStoryProps {
   story: Story;
@@ -13,98 +14,120 @@ interface LeadStoryProps {
   onStoryClick?: (story: Story, rect: DOMRect) => void;
   /** True when this card is focused via keyboard (J/K) navigation */
   kbdFocused?: boolean;
-  /** Called when the live badge is clicked — expands the timeline below */
-  onLiveBadgeClick?: () => void;
+  /** v3 (2026-05-14): when true, this lead is rendered in a side-by-side
+      twin layout sharing the hero canvas with another lead. Headline scales
+      down one notch (--type-twin-headline) and the card wears a modifier
+      class so layout-zones.css can apply twin-only styles. */
+  twin?: boolean;
 }
 
 /* ---------------------------------------------------------------------------
-   LeadStory — Hero treatment for the most important story
-   Larger typography, more prominent layout, bigger bias stamp.
+   LeadStory — Hero treatment for the most important story.
+   Text-only newspaper-front-page composition: badge → headline → summary.
+   Per CEO 2026-05-13: hero image removed. The visualization (Sigil) and
+   typography carry the editorial moment; no photograph.
    --------------------------------------------------------------------------- */
 
-export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, onLiveBadgeClick }: LeadStoryProps) {
+export default function LeadStory({ story, rank = 0, onStoryClick, kbdFocused, twin = false }: LeadStoryProps) {
   const cardRef = useRef<HTMLElement>(null);
+
+  // Twin and solo top-story rank-0 layouts both use the full-canvas .lead-split
+  // text composition. Twin reduces the headline scale via .lead-story--twin.
+  // For rank 1+ (legacy secondary leads — currently unused but kept for safety)
+  // we fall back to the smaller .lead-story__headline scale.
+  const useSplit = rank === 0 || twin;
+
+  // Top-story signal now lives in the accented "Today's Top Stories" divider
+  // above the feed plus position #1, so the per-card "Top Story" badge was
+  // removed (2026-08-06) — it was a third redundant marker that pushed the
+  // headline down. `isTop` drives only a screen-reader-only label now, and it
+  // belongs to rank 0 ALONE: the second twin lead is a co-equal layout slot, not
+  // a second "Top story" (two badges shipped to production, flagged P0 2026-08-18).
+  const isTop = rank === 0;
+
+  // Headline is <h1> for the primary lead (rank 0 OR first twin) to satisfy
+  // SEO/a11y "one h1 per page." A second twin lead uses <h2>.
+  const HeadingTag: "h1" | "h2" = rank === 0 ? "h1" : "h2";
+  const textContent = (
+    <div data-slot="text" className={useSplit ? "lead-split__text" : undefined}>
+      <HeadingTag className={useSplit ? "lead-headline" : "lead-story__headline"}>
+        {/* Screen-reader-only "Top story" — the visual badge was removed
+            2026-08-06 (the accented divider + position #1 carry the signal),
+            but the semantic cue is preserved for assistive tech. */}
+        {isTop && <span className="sr-only">Top story. </span>}
+        <span className={useSplit ? "lead-headline__text" : "lead-story__headline-text"}>{story.title}</span>
+        <Sigil data={story.sigilData} size={twin ? "lg" : "xl"} storyId={story.id} />
+        <CaretRight
+          size={16}
+          weight="bold"
+          aria-hidden="true"
+          className="story-card__headline-icon"
+        />
+      </HeadingTag>
+
+      {story.summary?.trim() && (
+        <p className={useSplit ? "lead-summary" : "lead-story__summary"}>{story.summary}</p>
+      )}
+      {!story.summary?.trim() && (
+        <p className={`${useSplit ? "lead-summary" : "lead-story__summary"} lead-story__summary--pending`}>
+          {story.source.count} source{story.source.count !== 1 ? 's' : ''} covering this story
+        </p>
+      )}
+
+    </div>
+  );
 
   return (
     <article
       ref={cardRef}
-      role="button"
-      tabIndex={0}
-      aria-label={`Open deep dive for: ${story.title}`}
-      onClick={() => {
-        if (cardRef.current && onStoryClick) {
-          hapticLight();
-          onStoryClick(story, cardRef.current.getBoundingClientRect());
-        }
-      }}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          hapticLight();
-          onStoryClick?.(story, new DOMRect());
-        }
-      }}
-      className={`lead-story ${rank === 0 ? "anim-lead-primary" : "anim-lead-secondary"}${kbdFocused ? " story-card--kbd-focus" : ""}`}
+      data-story-id={story.id}
+      className={`lead-story${useSplit ? " lead-split" : ""}${twin ? " lead-story--twin" : ""} ${rank === 0 ? "anim-lead-primary" : "anim-lead-secondary"}${kbdFocused ? " story-card--kbd-focus" : ""}`}
     >
-      {/* Live update badge — shows when memory engine is tracking this story.
-          Rendered as a <button> when onLiveBadgeClick is wired (primary lead
-          story with an active timeline below); plain <div> otherwise. */}
-      {story.isTopStory && story.liveUpdateCount != null && story.liveUpdateCount > 0 && (
-        onLiveBadgeClick ? (
-          <button
-            type="button"
-            className="lead-story__live-badge lead-story__live-badge--btn"
-            onClick={(e) => {
-              e.stopPropagation(); // prevent card click / DeepDive open
-              onLiveBadgeClick();
-            }}
-            aria-label={`View ${story.liveUpdateCount} live updates — click to expand timeline`}
-          >
-            <span className="live-badge__icon" aria-hidden="true">&#9679;</span>
-            <span className="live-badge__text">Live</span>
-            {story.lastLiveUpdateAt && (
-              <time className="live-badge__time" dateTime={story.lastLiveUpdateAt}>
-                Updated {timeAgo(story.lastLiveUpdateAt)}
-              </time>
-            )}
-            <span className="live-badge__count" aria-label={`${story.liveUpdateCount} live updates`}>
-              +{story.liveUpdateCount}
-            </span>
-          </button>
-        ) : (
-          <div className="lead-story__live-badge">
-            <span className="live-badge__icon" aria-hidden="true">&#9679;</span>
-            <span className="live-badge__text">Live</span>
-            {story.lastLiveUpdateAt && (
-              <time className="live-badge__time" dateTime={story.lastLiveUpdateAt}>
-                Updated {timeAgo(story.lastLiveUpdateAt)}
-              </time>
-            )}
-            <span className="live-badge__count" aria-label={`${story.liveUpdateCount} live updates`}>
-              +{story.liveUpdateCount}
-            </span>
-          </div>
-        )
+      {/* Stretched link — covers the article for click + a11y. Progressive
+          enhancement: a real <a href> when the story is archived (crawlable,
+          middle-click, copy-link); plain left-click still opens the inline Deep
+          Dive via preventDefault. Archive miss falls back to the button. */}
+      {story.permalink ? (
+        <a
+          href={`${BASE_PATH}${story.permalink}`}
+          className="story-card__stretch-link"
+          aria-label={`Open deep dive for: ${story.title}`}
+          onClick={(e) => {
+            if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+            e.preventDefault();
+            hapticLight();
+            onStoryClick?.(story, cardRef.current?.getBoundingClientRect() ?? new DOMRect());
+          }}
+          onKeyDown={(e) => {
+            if (e.key === " ") {
+              e.preventDefault();
+              hapticLight();
+              onStoryClick?.(story, cardRef.current?.getBoundingClientRect() ?? new DOMRect());
+            }
+          }}
+        />
+      ) : (
+        <button
+          type="button"
+          className="story-card__stretch-link"
+          aria-label={`Open deep dive for: ${story.title}`}
+          onClick={() => {
+            if (cardRef.current && onStoryClick) {
+              hapticLight();
+              onStoryClick(story, cardRef.current.getBoundingClientRect());
+            }
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              hapticLight();
+              onStoryClick?.(story, new DOMRect());
+            }
+          }}
+        />
       )}
 
-      {/* Category tag + time */}
-      <div className="lead-story__meta">
-        {rank === 0 && <span className="lead-story__badge">Top Story</span>}
-        <span className="category-tag category-tag--lead">{story.category}</span>
-        <span className="dot-separator" aria-hidden="true" />
-        <span className="time-tag">{timeAgo(story.publishedAt)}</span>
-      </div>
-
-      {/* Hero headline */}
-      <h2 className="lead-story__headline">{story.title}</h2>
-
-      {/* Extended summary */}
-      <p className="lead-story__summary">{story.summary}</p>
-
-      {/* Bias indicator */}
-      <div className="lead-story__footer">
-        <Sigil data={story.sigilData} size="lg" />
-      </div>
+      {textContent}
     </article>
   );
 }

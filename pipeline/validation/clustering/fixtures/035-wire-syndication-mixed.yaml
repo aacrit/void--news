@@ -1,0 +1,135 @@
+id: wire-syndication-mixed-with-unique-2026-05-20
+name: "Wire syndication mixed with unique reporting (collapse + voice count)"
+failure_date: "2026-05-20"
+failure_kind: wire-syndication-fragmentation
+articles:
+  - id: ap-ukraine-origin
+    title: "Ukrainian drone strike near Moscow kills 4, wounds 12"
+    summary: "A Ukrainian drone strike near Moscow killed four people and wounded a dozen others, local Russian authorities said Sunday."
+    full_text: >
+      A Ukrainian drone strike near Moscow killed four people and wounded
+      a dozen others, local Russian authorities said Sunday. The strike
+      targeted an industrial facility in the Ramenskoye district. Russian
+      air-defense forces shot down 12 of the 16 drones launched, according
+      to the Ministry of Defense in Moscow. President Vladimir Putin
+      condemned the strike as terrorism. Kyiv has not commented on the
+      operation. The drones reached deeper into Russian territory than
+      any prior Ukrainian strike. Putin met with Defense Minister Andrei
+      Belousov following the incident.
+    source: { slug: ap-news, country: US, tier: us_major }
+    published_at: "2026-05-19T18:00Z"
+  - id: ap-via-abc
+    title: "Ukrainian drone strike near Moscow kills 4, wounds 12"
+    summary: "A Ukrainian drone strike near Moscow killed four people and wounded a dozen others, local Russian authorities said Sunday."
+    full_text: >
+      A Ukrainian drone strike near Moscow killed four people and wounded
+      a dozen others, local Russian authorities said Sunday. The strike
+      targeted an industrial facility in the Ramenskoye district. Russian
+      air-defense forces shot down 12 of the 16 drones launched, according
+      to the Ministry of Defense in Moscow. President Vladimir Putin
+      condemned the strike as terrorism. Kyiv has not commented on the
+      operation. The drones reached deeper into Russian territory than
+      any prior Ukrainian strike. Putin met with Defense Minister Andrei
+      Belousov following the incident.
+    source: { slug: abc-news, country: US, tier: us_major }
+    published_at: "2026-05-19T18:30Z"
+  - id: ap-via-cbs
+    title: "Ukrainian drone strike near Moscow kills 4, wounds 12"
+    summary: "A Ukrainian drone strike near Moscow killed four people and wounded a dozen others, local Russian authorities said Sunday."
+    full_text: >
+      A Ukrainian drone strike near Moscow killed four people and wounded
+      a dozen others, local Russian authorities said Sunday. The strike
+      targeted an industrial facility in the Ramenskoye district. Russian
+      air-defense forces shot down 12 of the 16 drones launched, according
+      to the Ministry of Defense in Moscow. President Vladimir Putin
+      condemned the strike as terrorism. Kyiv has not commented on the
+      operation. The drones reached deeper into Russian territory than
+      any prior Ukrainian strike. Putin met with Defense Minister Andrei
+      Belousov following the incident.
+    source: { slug: cbs-news, country: US, tier: us_major }
+    published_at: "2026-05-19T18:45Z"
+  - id: ap-via-fox
+    title: "Ukrainian drone strike near Moscow kills 4, wounds 12"
+    summary: "A Ukrainian drone strike near Moscow killed four people and wounded a dozen others, local Russian authorities said Sunday."
+    full_text: >
+      A Ukrainian drone strike near Moscow killed four people and wounded
+      a dozen others, local Russian authorities said Sunday. The strike
+      targeted an industrial facility in the Ramenskoye district. Russian
+      air-defense forces shot down 12 of the 16 drones launched, according
+      to the Ministry of Defense in Moscow. President Vladimir Putin
+      condemned the strike as terrorism. Kyiv has not commented on the
+      operation. The drones reached deeper into Russian territory than
+      any prior Ukrainian strike. Putin met with Defense Minister Andrei
+      Belousov following the incident.
+    source: { slug: fox-news, country: US, tier: us_major }
+    published_at: "2026-05-19T19:00Z"
+  - id: reuters-unique
+    title: "Moscow drone strike marks deepest Ukrainian penetration of Russian airspace"
+    summary: "The Sunday drone strike near Moscow marks the deepest Ukrainian penetration of Russian airspace since the war began, military analysts said."
+    full_text: >
+      The Sunday drone strike near Moscow marks the deepest Ukrainian
+      penetration of Russian airspace since the war began, military
+      analysts told Reuters. The Ramenskoye facility hit overnight was an
+      electronics-manufacturing plant that supplied Russian Su-34 jets,
+      according to two European defense officials. Ukrainian Defense
+      Intelligence Directorate sources, speaking on condition of anonymity,
+      said the operation involved a new variant of long-range strike drone
+      developed domestically. NATO Secretary General Mark Rutte declined
+      to comment on the strike. Russia's Ministry of Defense said it
+      retains the right to retaliate proportionately.
+    source: { slug: reuters, country: US, tier: us_major }
+    published_at: "2026-05-19T20:00Z"
+  - id: ft-unique
+    title: "Ramenskoye facility hit by Ukrainian drones produced Su-34 components"
+    summary: "The industrial plant struck by Ukrainian drones overnight in the Moscow region produced critical electronic components for Russia's Su-34 fighter-bombers."
+    full_text: >
+      The industrial plant struck by Ukrainian drones overnight in the
+      Moscow region produced critical electronic components for Russia's
+      Su-34 fighter-bombers, according to satellite imagery analyzed by
+      the Financial Times. The Ramenskoye Instrument-Building Plant has
+      been a supplier to Russia's military-industrial complex since the
+      Soviet era. The strike disabled approximately 40% of the facility's
+      production capacity, two Western defense officials said. Russian
+      authorities have not confirmed the production impact.
+    source: { slug: financial-times, country: GB, tier: international }
+    published_at: "2026-05-19T22:00Z"
+expectation:
+  type: should_merge
+  expected_member_ids: [ap-ukraine-origin, ap-via-abc, ap-via-cbs, ap-via-fox, reuters-unique, ft-unique]
+  min_clusters: 1
+  max_clusters: 2
+  min_source_count: 1
+rationale: |
+  Materializes Test B from pipeline-tester's 2026-05-20 audit run.
+
+  Six articles, all about the same Ukrainian drone strike near Moscow.
+  Four are bit-identical to the AP wire copy (abc-news, cbs-news,
+  fox-news republications) — the deduplicator's SHA1 fingerprint on
+  the first 800 normalised bytes should detect this and stamp the
+  three reprints as is_wire_copy=True with wire_origin_publisher_id=
+  "ap-news". The two unique pieces of original reporting (Reuters and
+  Financial Times) should land in the same cluster via Phase 1+2
+  TF-IDF + entity-overlap merge.
+
+  Expected behavior:
+    • 1 cluster containing all 6 articles
+    • source_count = 3 (AP origin, Reuters, FT — wire copies collapse
+      to AP)
+    • wire_amplification = 6 / 3 = 2.0
+
+  This fixture locks in coverage against:
+    1. Phase 0 deduplicator regression — if the SHA1 fingerprint or
+       lead-cosine threshold changes, the 4 AP variants might not
+       collapse and source_count would inflate to 6 (the original
+       "217-source badge" class of bug).
+    2. _apply_wire_aware_source_count regression — if the voice-id
+       collapse logic in story_cluster.py:1670 changes, source_count
+       reflects the carrier count instead of the wire origin.
+    3. Ranker _voice_id regression — the v6.3 ranker fix added
+       wire-aware coverage math; if rerank.py reverts to fetching
+       articles without wire fields, coverage score would over-count.
+
+  The "wire-amplification" pre-existing WRONG fixture in the snapshot
+  tests a different (monolithic) shape; this fixture tests the mixed
+  case (4 wire copies + 2 unique pieces) that's most common in
+  production breaking-news clusters.
