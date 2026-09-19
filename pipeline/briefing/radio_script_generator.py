@@ -7,9 +7,9 @@ aloud) and a fixed running order the assembler turns into chapters:
 
     ## OPEN                      sign-on (voice A)
     ## MENU                      five headlines, alternating voices
-    ## STORY 1 | <uuid> | <title> ranks 1-4 in depth, lead voice alternates
+    ## STORY 1 | <title>         ranks 1-4 in depth, lead voice alternates
     ## BRIEFS                    ranks 5-12 as one-liners
-    ## FINALLY | <uuid> | <title> a lighter last item (absent on a disaster day)
+    ## FINALLY | <rank> | <title> a lighter last item (absent on a disaster day)
     ## CLOSE                     sign-off (voice A)
     ## SAY                       Name = respelling  (applied before synthesis)
 
@@ -137,9 +137,10 @@ class RadioTurn:
 @dataclass
 class RadioSegment:
     kind: str
-    rank: int | None = None
-    cluster_id: str | None = None
+    rank: int | None = None          # STORY n (running-order position)
+    cluster_id: str | None = None    # resolved from the feed by rank (see resolve_cluster_ids)
     title: str | None = None
+    source_rank: int | None = None   # feed rank named in the marker (FINALLY | 15 | title)
     turns: list[RadioTurn] = field(default_factory=list)
 
     @property
@@ -184,8 +185,12 @@ class RadioRundown:
             head = f"## {s.kind}"
             if s.kind == "STORY" and s.rank:
                 head += f" {s.rank}"
-            if s.cluster_id or s.title:
-                head += f" | {s.cluster_id or ''} | {s.title or ''}"
+            if s.kind == "FINALLY" and s.source_rank:
+                head += f" | {s.source_rank} | {s.title or ''}"
+            elif s.kind == "FINALLY" and s.cluster_id:
+                head += f" | {s.cluster_id} | {s.title or ''}"
+            elif s.title:
+                head += f" | {s.title}"
             out.append(head)
             out.extend(f"{t.speaker}: {t.text}" for t in s.turns)
             out.append("")
@@ -292,20 +297,33 @@ def parse_rundown(raw: str) -> RadioRundown:
                 continue
             in_say = False
             rank = int(m.group(2)) if m.group(2) else None
-            cid = (m.group(3) or "").strip() or None
-            title = (m.group(4) or "").strip() or None
-            if cid and not _UUID_RE.fullmatch(cid):
-                # Model put the title first or omitted the id.
-                if not title:
-                    title = cid
-                cid = None
+            # Fields after "|" in any order: a uuid (legacy), an integer feed
+            # rank, or the chapter title. Models mis-copy 36-character ids by
+            # a hex digit, so ids are RESOLVED from the rank, never trusted.
+            cid: str | None = None
+            source_rank: int | None = None
+            title_parts: list[str] = []
+            for fld in (m.group(3), m.group(4)):
+                f = (fld or "").strip().strip("*").strip()
+                if not f:
+                    continue
+                if _UUID_RE.fullmatch(f):
+                    cid = f.lower()
+                elif re.fullmatch(r"(?:rank\s*)?#?(\d{1,2})", f, re.IGNORECASE):
+                    source_rank = int(re.sub(r"\D", "", f))
+                else:
+                    title_parts.append(f)
+            title = " ".join(title_parts).strip() or None
+            if cid is None:
                 found = _UUID_RE.search(line)
                 if found:
-                    cid = found.group(0)
+                    cid = found.group(0).lower()
+                    if title and cid in title.lower():
+                        title = title.replace(found.group(0), "").strip(" |") or None
             if kind == "STORY" and rank is None:
                 rank = len([s for s in segments if s.kind == "STORY"]) + 1
-            current = RadioSegment(kind=kind, rank=rank, cluster_id=cid.lower() if cid else None,
-                                   title=title)
+            current = RadioSegment(kind=kind, rank=rank, cluster_id=cid, title=title,
+                                   source_rank=source_rank)
             segments.append(current)
             continue
         if in_say:
@@ -347,8 +365,60 @@ def _sentences(text: str) -> list[str]:
     return [x for x in _SENTENCE_SPLIT_RE.split(text.strip()) if x.strip()]
 
 
+def _hamming_close(a: str, b: str, max_diff: int = 3) -> bool:
+    if len(a) != len(b):
+        return False
+    return sum(1 for x, y in zip(a, b) if x != y) <= max_diff
+
+
+def resolve_cluster_ids(r: RadioRundown, ctx: RundownContext) -> list[str]:
+    """Bind every STORY/FINALLY segment to a feed cluster id.
+
+    STORY n is rank n by definition, so its id comes from the feed. FINALLY
+    names a feed rank (preferred), or an id that may be a near-miss copy of a
+    real one (models drop or flip a hex digit), or nothing usable. Returns
+    notes for the validator; never raises.
+    """
+    notes: list[str] = []
+    ids = [str(row.get("id") or row.get("_db_id") or "").lower() for row in ctx.top20]
+    for seg in r.segments:
+        if seg.kind == "STORY" and seg.rank and 1 <= seg.rank <= len(ids):
+            want = ids[seg.rank - 1]
+            if seg.cluster_id and seg.cluster_id != want:
+                notes.append(f"STORY {seg.rank}: marker id ignored, bound to rank {seg.rank}")
+            seg.cluster_id = want
+            seg.source_rank = seg.rank
+        elif seg.kind == "FINALLY":
+            if seg.source_rank and 1 <= seg.source_rank <= len(ids):
+                seg.cluster_id = ids[seg.source_rank - 1]
+            elif seg.cluster_id:
+                if seg.cluster_id not in ids:
+                    near = [i for i, x in enumerate(ids) if _hamming_close(x, seg.cluster_id)]
+                    if near:
+                        notes.append(f"FINALLY: id {seg.cluster_id[:8]} matched rank {near[0] + 1} by near-miss")
+                        seg.cluster_id = ids[near[0]]
+                if seg.cluster_id in ids:
+                    seg.source_rank = ids.index(seg.cluster_id) + 1
+            if seg.cluster_id not in ids and seg.title:
+                # Last resort: the marker title shares words with one feed title.
+                tw = {w.lower().strip(".,'") for w in seg.title.split() if len(w) > 3}
+                best, best_n = None, 0
+                for i, row in enumerate(ctx.top20):
+                    rw = {w.lower().strip(".,'") for w in str(row.get("title") or "").split() if len(w) > 3}
+                    n = len(tw & rw)
+                    if n > best_n:
+                        best, best_n = i, n
+                if best is not None and best_n >= 2:
+                    notes.append(f"FINALLY: bound to rank {best + 1} by title words")
+                    seg.cluster_id = ids[best]
+                    seg.source_rank = best + 1
+    return notes
+
+
 def validate_rundown(r: RadioRundown, ctx: RundownContext) -> ValidationReport:
     rep = ValidationReport()
+    for note in resolve_cluster_ids(r, ctx):
+        r.warnings.append(note)
     F = rep.findings
 
     def fail(id_: str, seg: str, detail: str) -> None:
@@ -466,25 +536,19 @@ def validate_rundown(r: RadioRundown, ctx: RundownContext) -> ValidationReport:
         if s.rank != i:
             fail("R-08", label, f"stories must run 1..{DEEP_STORIES} in rank order")
         if not s.cluster_id:
-            fail("R-08", label, "missing cluster id in the marker")
-        else:
-            rk = ctx.rank_of(s.cluster_id)
-            if rk is None:
-                fail("R-08", label, f"cluster {s.cluster_id} is not in today's feed")
-            elif rk != i:
-                fail("R-08", label, f"marker id is rank {rk}, expected rank {i}")
+            fail("R-08", label, f"no feed story at rank {i}")
         if not s.title:
             warn("R-08", label, "missing chapter title in the marker")
         elif len(s.title.split()) > 8:
             warn("R-08", label, f"chapter title over six words: {s.title!r}")
     fin = r.get("FINALLY")
-    if fin and fin.cluster_id:
-        rk = ctx.rank_of(fin.cluster_id)
+    if fin:
+        rk = ctx.rank_of(fin.cluster_id) if fin.cluster_id else None
         if rk is None:
-            fail("R-08", "FINALLY", f"cluster {fin.cluster_id} is not in today's feed")
+            fail("R-08", "FINALLY", "the kicker marker must name the story's feed rank (## FINALLY | <rank> | <title>)")
         elif rk <= DEEP_STORIES:
-            warn("R-08", "FINALLY", f"kicker is rank {rk}; pick from ranks {DEEP_STORIES + 1}-20")
-        if ctx.editorial_cluster_id and fin.cluster_id.lower() == ctx.editorial_cluster_id.lower():
+            fail("R-08", "FINALLY", f"kicker is rank {rk}, already told in depth; pick from ranks {DEEP_STORIES + 1}-{len(ctx.top20)}")
+        if fin.cluster_id and ctx.editorial_cluster_id and fin.cluster_id.lower() == ctx.editorial_cluster_id.lower():
             fail("R-08", "FINALLY", "the kicker is the editorial's own story; the editorial follows it, pick another")
 
     # R-09 kicker suppression
@@ -578,19 +642,19 @@ A: <headline for rank 3>
 B: <headline for rank 4>
 A: <headline for rank 5>
 
-## STORY 1 | <id of rank 1> | <chapter title, at most six words>
+## STORY 1 | <chapter title, at most six words>
 A: <the lead story in depth: 170-260 words over several A: lines, each line two to four sentences. Open on the newest fact. Then what happened, who says what, what is disputed, what happens next.>
 B: <exactly ONE line: a new fact the lead did not give (a number, a date, a counter-claim from a named source). Not a reaction.>
 
-## STORY 2 | <id of rank 2> | <title>
+## STORY 2 | <title>
 B: <130-210 words over several B: lines. Open with a one-clause bridge that orients in place or subject ("In Washington," / "To the markets," / "Staying with Europe,"), then the facts.>
 A: <ONE new-fact line, optional>
 
-## STORY 3 | <id of rank 3> | <title>
+## STORY 3 | <title>
 A: <130-210 words>
 B: <ONE new-fact line, optional>
 
-## STORY 4 | <id of rank 4> | <title>
+## STORY 4 | <title>
 B: <130-210 words>
 A: <ONE new-fact line, optional>
 
@@ -615,14 +679,14 @@ Name = respelling
 {PREVIOUS_MENU}
 RULES THAT FAIL THE SCRIPT IF BROKEN
 - The first spoken line is exactly "A: {SIGN_ON} It's {DATE_SPOKEN}." followed by at most one sentence.
-- Exactly four STORY segments, ranks 1 to 4, in order, each marker carrying the story's id from the list.
+- Exactly four STORY segments, ranks 1 to 4, in order: STORY 1 is story [1], STORY 2 is story [2], and so on. The FINALLY marker names the story's number from the list.
 - Voice B leads STORY 2 and STORY 4; voice A leads STORY 1 and STORY 3. Inside a story the other voice speaks at most once.
 - No quotation marks anywhere. No digits anywhere. No a.m./p.m.
 - Never these phrases: "Up first", "Here's what we're covering", "First the headlines", "And that's the headlines", "these are our main stories", "Stay with us", "And finally", "Welcome", "Thanks", "Absolutely", "Wow".
 - Total news length 850 to 1,150 words. The length comes from covering the four lead stories properly, not from padding.
 {RETRY}"""
 
-_FINALLY_TEMPLATE = """## FINALLY | <id of a lighter story from ranks 5-{N}: culture, science, sport, an oddity; never a death, a war, a disaster, and never the editorial's story{EXCLUDE}> | <title>
+_FINALLY_TEMPLATE = """## FINALLY | <the NUMBER of a lighter story from [5] to [{N}]: culture, science, sport, an oddity; never a death, a war, a disaster, and never the editorial's story{EXCLUDE}> | <title>
 B: <{KICKER_LEAD} then two to four sentences, 50-110 words, plainly told, ending on the fact rather than a joke>
 """
 
@@ -640,7 +704,7 @@ def build_stories_block(top20: list[dict]) -> str:
         sev = c.get("disaster_severity") or 0
         cid = c.get("id") or c.get("_db_id") or ""
         tier = "in depth" if i <= DEEP_STORIES else ("one line" if i <= BRIEF_RANKS[1] else "context only")
-        lines.append(f"[{i}] id={cid} ({c.get('source_count', 0)} sources, {cat}, severity {float(sev):.1f}) {tier}: {title}")
+        lines.append(f"[{i}] ({c.get('source_count', 0)} sources, {cat}, severity {float(sev):.1f}) {tier}: {title}")
         if summary:
             lines.append(f"    Summary: {summary}")
         if consensus and isinstance(consensus, list) and i <= BRIEF_RANKS[1]:
@@ -664,7 +728,10 @@ def build_radio_prompt(
                          editorial_cluster_id=editorial_cluster_id)
     n = len(top20)
     if ctx.kicker_allowed and n > DEEP_STORIES:
-        exclude = f" (id {editorial_cluster_id})" if editorial_cluster_id else ""
+        exclude = ""
+        if editorial_cluster_id:
+            erank = ctx.rank_of(editorial_cluster_id)
+            exclude = f" (story [{erank}])" if erank else ""
         finally_block = _FINALLY_TEMPLATE.format(N=n, KICKER_LEAD=KICKER_LEADS[0], EXCLUDE=exclude)
     else:
         finally_block = "(No FINALLY segment today: the lead story is a mass-casualty event.)\n"

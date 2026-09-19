@@ -68,6 +68,14 @@ class FakeEngine:
 def main() -> None:
     raw = FIXTURE.read_text(encoding="utf-8")
     rundown = parse_rundown(raw)
+    # Bind STORY/FINALLY ids from the feed the way the pipeline does (validator).
+    from briefing.radio_script_generator import validate_rundown, RundownContext
+    feed_path = ROOT / "frontend" / "build-data" / "feed.json"
+    rows = json.loads(feed_path.read_text(encoding="utf-8"))["clusters"][:20]
+    if rows[0]["id"] != "d3afa900-ea54-4eb8-b95e-f6ed157317a3":
+        rows = [{"id": "d3afa900-ea54-4eb8-b95e-f6ed157317a3", "title": "Canada"}] + [
+            {"id": f"00000000-0000-0000-0000-0000000000{n:02d}", "title": f"story {n}"} for n in range(2, 21)]
+    validate_rundown(rundown, RundownContext(top20=rows, has_editorial=True, date_spoken="Friday, September eighteenth"))
     turns = rp.build_turns(rundown, EDITORIAL)
     kinds = [m["kind"] for _, m in turns]
     check(kinds[0] == "OPEN" and kinds[-1] == "CLOSE", "OPEN first, CLOSE last")
