@@ -9,7 +9,7 @@ Checks, against the LIVE site (stdlib only, like verify_production.py):
   A-03  the chapters sidecar next to the MP3 exists and matches brief.json
   A-04  duration is a real show (5-14 minutes) and news_start/opinion_start sit inside it
   A-05  the rundown (audio_script) carries the Void sign-on, never a borrowed line
-  A-06  the editorial chapter and opinion_start_seconds come from the same render
+  A-06  the Opinion chapter and opinion_start_seconds come from the same render
   A-07  brief.json names the same episode the rotation kept as latest.mp3
 
 Exit 1 on any failure; prints one line per check. Run by verify-production.yml.
@@ -99,7 +99,7 @@ def main(base: str) -> int:
     ns, os_ = brief.get("news_start_seconds"), brief.get("opinion_start_seconds")
     report("A-04", 300 <= float(dur) <= 840 and ns is not None and 0 < float(ns) < float(dur)
            and (os_ is None or float(ns) < float(os_) < float(dur)),
-           f"duration {dur}s, news at {ns}s, editorial at {os_}s")
+           f"duration {dur}s, news at {ns}s, opinion at {os_}s")
 
     # A-06 exists because of a real production defect (2026-09-19): the pipeline
     # rendered today's show, then a carry-forward branch overwrote audio_url,
@@ -110,13 +110,13 @@ def main(base: str) -> int:
     # same render as opinion_start_seconds, so the two disagree only when the
     # fields come from different episodes.
     editorial = next((c for c in (chapters if isinstance(chapters, list) else [])
-                      if str(c.get("kind") or c.get("title") or "").lower().startswith("editorial")), None)
+                      if str(c.get("kind") or c.get("title") or "").lower().startswith(("opinion", "editorial"))), None)
     if editorial is None or os_ is None:
-        report("A-06", True, "no editorial chapter to cross-check (skipped)")
+        report("A-06", True, "no Opinion chapter to cross-check (skipped)")
     else:
         drift = abs(float(editorial.get("startTime", -1)) - float(os_))
         report("A-06", drift <= 1.0,
-               f"editorial chapter at {editorial.get('startTime')}s vs opinion_start_seconds {os_}s "
+               f"Opinion chapter at {editorial.get('startTime')}s vs opinion_start_seconds {os_}s "
                f"(drift {drift:.1f}s; > 1s means the audio fields and the chapters "
                f"came from different renders)")
 

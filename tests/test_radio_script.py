@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import datetime
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -18,7 +19,7 @@ sys.path.insert(0, str(ROOT / "pipeline"))
 
 from briefing.radio_script_generator import (  # noqa: E402
     RundownContext, parse_rundown, validate_rundown, build_radio_prompt,
-    generate_radio_rundown, SIGN_ON_PREFIX, CLOSE_PREFIX, THROW_LINE,
+    generate_radio_rundown, SIGN_ON_PREFIX, CLOSE_PREFIX, WORD_BUDGETS, TOTAL_BUDGET,
 )
 from briefing.spoken_text import (  # noqa: E402
     normalize_for_speech, spoken_numbers, expand_initialisms, apply_say, spoken_date,
@@ -201,7 +202,14 @@ def test_prompt_and_generation() -> None:
         # The only place a borrowed line may appear is the ban list itself.
         check(bad.lower() not in system.lower() and user.lower().count(bad.lower()) == 1 and "Never these phrases" in user,
               f"prompt never suggests {bad!r}")
-    check(THROW_LINE not in user, "throw line is a code constant, not model output")
+    # The prompt's word budgets and the validator's must be the SAME numbers.
+    # They were typed separately and had already drifted: the model was asked
+    # for one length and then marked against another.
+    for label in ("STORY1", "STORY", "FINALLY"):
+        lo, hi = WORD_BUDGETS[label]
+        check(f"{lo}-{hi}" in user, f"prompt states the {label} budget {lo}-{hi}")
+    check(f"{TOTAL_BUDGET[0]:,} to {TOTAL_BUDGET[1]:,}" in user, "prompt states the total budget")
+    check(not re.findall(r"\{[A-Z_]+\}", user), "every prompt placeholder is filled")
 
     clean = FIXTURE.read_text(encoding="utf-8")
     calls = []

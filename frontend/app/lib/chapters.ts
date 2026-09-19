@@ -164,12 +164,15 @@ export function chapterMarks(
   return marks;
 }
 
-/** Index of the editorial chapter, or -1. The "Editorial" jump reads this. */
-export function findEditorialIndex(
+/** Index of the Opinion chapter, or -1. The "Opinion" jump reads this.
+ * Episodes rendered before 2026-09-19 carry kind "editorial"; both resolve. */
+export function findOpinionIndex(
   chapters: AudioChapter[] | null | undefined
 ): number {
   if (!chapters) return -1;
-  return chapters.findIndex((c) => isUsable(c) && c.kind === "editorial");
+  return chapters.findIndex(
+    (c) => isUsable(c) && (c.kind === "opinion" || c.kind === "editorial"),
+  );
 }
 
 /** Short uppercase rail label for a chapter kind. Story rows show their rank. */
@@ -183,8 +186,9 @@ export function chapterKindLabel(c: AudioChapter): string {
       return "In brief";
     case "finally":
       return "Finally";
+    case "opinion":
     case "editorial":
-      return "Editorial";
+      return "Opinion";
     default:
       return "";
   }

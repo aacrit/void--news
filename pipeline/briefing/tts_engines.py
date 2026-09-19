@@ -45,43 +45,53 @@ Role = Literal["A", "B", "C"]
 #               the anchor. The one voice that arrives at the worker's -1 dBFS
 #               clamp (raw peak > 1.0): the clamp in tts_kokoro_worker is what
 #               keeps A from reaching the bus hot.
-#   af_nova     C   low female (159 Hz) -> alternate stories. A register
-#               contrast to A without the brightness of af_heart.
+#   af_bella    A-  -> alternate stories. Reads 177 wpm naturally, close
+#               enough to the anchor that the desk sounds like one programme,
+#               and the roster's second A-tier voice. It replaced af_nova,
+#               which the CEO heard as artificial: nova is C-grade AND the
+#               fastest voice on the roster at 205 wpm, so it was carrying the
+#               largest speed correction of the three.
 #   af_heart    A   the only A-grade voice; warm and clear -> the editorial,
 #               and nothing else.
-# Ear-test alternates: am_michael (darker, the previous anchor), am_fenrir
-# (brighter), af_sky (147 Hz, the darkest well-behaved female), bf_emma.
+# Ear-test alternates: am_michael (darker, the previous anchor), af_aoede
+# (C+, 183 wpm, the warmest female timbre at 1943 Hz centroid), af_kore
+# (C+, 181), af_sarah (C+, 188). af_nicole is well graded but reads 114 wpm,
+# which is a different programme.
 # Three roles since 2026-09-19 (CEO): A anchors the news, B takes alternate
 # stories, C reads ONLY the editorial, so the opinion firewall is audible the
 # moment the voice changes.
 KOKORO_VOICES: dict[str, str] = {
     "A": os.environ.get("VOID_KOKORO_VOICE_A", "am_puck"),
-    "B": os.environ.get("VOID_KOKORO_VOICE_B", "af_nova"),
+    "B": os.environ.get("VOID_KOKORO_VOICE_B", "af_bella"),
     "C": os.environ.get("VOID_KOKORO_VOICE_C", "af_heart"),
 }
-# Speed is calibrated per voice to ONE pace: about 156 wpm, a calm read (CEO
-# 2026-09-19, "should sound natural, calm"). The show is one programme, so the
-# three voices must not read at three speeds, and the old 160-170 band was
-# brisk-wire pace rather than the register this show wants.
+# Every voice reads at its OWN natural rate (CEO 2026-09-19). Kokoro's voices
+# are trained at the pace of their training audio, and the speed knob scales
+# predicted phoneme durations away from that distribution; the further it is
+# pushed, the more the read acquires the flat, stretched quality that gets
+# heard as synthetic. af_nova was carrying the largest correction on the desk
+# (0.82) and was also the voice the CEO picked out as artificial, which is
+# cause and effect rather than coincidence.
 #
-# Measured on the four long turns of tests/fixtures/radio_bench_turns.json,
-# which is real rundown copy: a short line over-counts, because its leading
-# silence does not scale with speed, and absolute wpm swings about 30 % with
-# the passage, so only same-passage numbers compare. At speed 1.0 the roster
-# reads am_puck 164, af_heart 162, af_nova 181. Kokoro's speed knob scales
-# predicted phoneme durations before the decoder, so it re-synthesises at the
-# new rate rather than time-stretching; the response is near linear, about
-# 100 wpm per unit of speed for all three.
+# So pace is a CASTING decision, not a post-processing one: a voice whose
+# natural rate is wrong for the show is replaced, never stretched. Two anchors
+# reading at slightly different speeds is what a real desk sounds like.
 #
-# Each speed is therefore the SMALLEST correction that voice needs to reach
-# the shared pace. af_nova needs by far the largest (0.82) because it is the
-# fastest voice on the roster; if it ever reads as dragged, the fix is a
-# naturally calmer B voice, not a smaller correction, since that would put it
-# a fifth faster than the anchor. VOID_KOKORO_SPEED_A / _B / _C override.
+# Natural rates, measured on the four long turns of radio_bench_turns.json:
+# am_puck 164 wpm, af_heart 162, af_bella 177, af_aoede 183, af_kore 181,
+# af_sarah 188, bf_emma 196, af_nova 205, af_nicole 114.
+# One house pace, applied EQUALLY: 0.95 (CEO 2026-09-19, "bring the speed down
+# to 0.95 or 0.9 without compromising quality"). This does not reopen the
+# per-voice stretching the natural-rate rule replaced. The rule was that a
+# voice whose natural rate is wrong is recast, not corrected, and it stands:
+# af_nova was dropped rather than slowed. A uniform 5 % is a house decision
+# about the programme's pace, it singles out no voice, and at 0.95 the scale
+# is far inside the range where Kokoro stays clean (the audible damage was at
+# 0.82). Most of the extra running time comes from the word budgets, not here.
 KOKORO_SPEED: dict[str, float] = {
-    "A": float(os.environ.get("VOID_KOKORO_SPEED_A", "0.92") or 0.92),   # am_puck  164 -> 156 wpm
-    "B": float(os.environ.get("VOID_KOKORO_SPEED_B", "0.82") or 0.82),   # af_nova  181 -> 157 wpm
-    "C": float(os.environ.get("VOID_KOKORO_SPEED_C", "0.93") or 0.93),   # af_heart 162 -> 155 wpm, a hair under the news
+    "A": float(os.environ.get("VOID_KOKORO_SPEED_A", "0.95") or 0.95),
+    "B": float(os.environ.get("VOID_KOKORO_SPEED_B", "0.95") or 0.95),
+    "C": float(os.environ.get("VOID_KOKORO_SPEED_C", "0.95") or 0.95),
 }
 
 EDGE_VOICES: dict[str, str] = {
