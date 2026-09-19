@@ -22,7 +22,14 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 
-SPEAKERS = ("N", "D")
+# N narrates. M and F read quoted speech, matched to the SPEAKER'S SEX: a
+# woman reading Nehru is jarring, and sex-matched readers are the documentary
+# convention the format is modelled on (Ken Burns narrates in one voice and
+# casts actors per source). The script declares it rather than the renderer
+# guessing from a name, because guessing sex from names fails on exactly the
+# cases that matter: Azad, Jucunda, anonymous testimony.
+SPEAKERS = ("N", "M", "F")
+QUOTE_SPEAKERS = ("M", "F")
 KINDS = ("OPEN", "TITLE", "SCENE", "DOCUMENT", "PERSPECTIVE", "ASIDE", "TURN", "CLOSE")
 # Segments in which the document voice may speak: a primary source, or a
 # perspective quoting its own witness.
@@ -37,7 +44,7 @@ MUSIC_MINUTES = 1.1              # theme, scene stings, outro
 
 @dataclass
 class Line:
-    speaker: str
+    speaker: str          # N | M | F
     text: str
 
 
@@ -136,7 +143,7 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
 
     for seg in script.segments:
         label = f"{seg.kind}{' ' + seg.title if seg.title else ''}"
-        d_lines = [l for l in seg.lines if l.speaker == "D"]
+        d_lines = [l for l in seg.lines if l.speaker in QUOTE_SPEAKERS]
         if seg.kind not in QUOTING and d_lines:
             out.append(Finding("H-02", "fail", label, "document voice speaks outside a DOCUMENT segment"))
         if seg.kind in ("DOCUMENT", "PERSPECTIVE", "ASIDE") and d_lines:
@@ -149,7 +156,7 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
             # from the data by matching the quote, so the rule holds wherever a
             # quote appears and does not depend on the marker being filled in.
             for i, l in enumerate(seg.lines):
-                if l.speaker != "D":
+                if l.speaker not in QUOTE_SPEAKERS:
                     continue
                 said = _norm(l.text)
                 speaker = next((who for src, who in sourced
@@ -180,8 +187,12 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
     have = " ".join(_norm(s.title or "") for s in script.segments if s.kind == "PERSPECTIVE")
     for persp in (event.get("perspectives") or []):
         name = persp.get("viewpoint") or ""
-        stems = [w for w in _norm(name).split() if len(w) > 3]
-        if stems and not any(w in have for w in stems):
+        # Compare on word PREFIXES, not whole words: a script may reasonably
+        # title the account "the engineers" where the data says "Scientific and
+        # Engineering Legacy", and those are plainly the same account. Six
+        # characters is enough to keep "engineer" from matching "engine".
+        stems = [w[:6] for w in _norm(name).split() if len(w) > 3]
+        if stems and not any(st in have for st in stems):
             out.append(Finding("H-09", "fail", "PERSPECTIVE",
                                f"the {name} account is in the data but never heard in the episode"))
     heard = len([s for s in script.segments if s.kind == "PERSPECTIVE"])

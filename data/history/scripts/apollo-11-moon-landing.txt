@@ -1,0 +1,115 @@
+## OPEN
+N: In the summer of nineteen sixty nine, a country that could not reliably integrate its own schools landed two men on the Moon.
+N: Both of those things were true in the same season, funded by the same government, reported in the same newspapers.
+N: This is usually told as a story about engineering. It is at least as much a story about what a country decides is worth doing first.
+
+## TITLE
+N: Apollo eleven. July, nineteen sixty nine.
+
+## SCENE 1 | Twenty five seconds
+N: Two hundred and forty thousand miles from Houston, a machine made of aluminium and foil is falling toward a plain of basalt, and its computer is complaining.
+N: Twelve oh two. The alarm means the guidance computer is being asked to do more than it can do at once.
+N: The automatic system is steering them into a field of boulders. Neil Armstrong takes the controls and flies the last of the descent by hand, looking for somewhere flat, while the fuel gauge runs down.
+N: They land with about twenty five seconds of fuel remaining.
+
+## DOCUMENT | Neil Armstrong | Apollo 11 air-to-ground transcript | July 20, 1969
+N: Armstrong's first words from the surface were an address and a fact.
+M: Houston, Tranquility Base here. The Eagle has landed.
+
+## ASIDE
+N: In Mission Control a flight controller keyed his microphone and said: you have got a bunch of guys about to turn blue. We are breathing again.
+
+## SCENE 2 | Eight years
+N: The promise had been made eight years earlier, by a president who did not live to see it, to a Congress that had to pay for it.
+N: At that point the United States had put a single astronaut into space, for fifteen minutes, on a suborbital hop. The Soviet Union had already orbited a man around the Earth.
+N: Kennedy was not promising to catch up. He was promising to skip ahead of the thing his country was currently losing.
+
+## DOCUMENT | John F. Kennedy | Special Message to Congress on Urgent National Needs | May 25, 1961
+N: To Congress, in May nineteen sixty one, Kennedy put it as a commitment with a deadline attached.
+M: I believe that this nation should commit itself to achieving the goal, before this decade is out, of landing a man on the Moon and returning him safely to the Earth.
+
+## SCENE 3 | Four hundred thousand people
+N: What that sentence bought was not mainly rockets. It was people. The workforce peaked near four hundred thousand, spread across roughly twenty thousand contractor firms.
+N: It included seamstresses, who sewed the spacesuits by hand, twenty one layers, to tolerances measured in fractions of an inch, because no machine could do it.
+N: It included women threading copper wire through magnetic cores to hand weave the guidance computer's memory, a bit at a time. If the wire went through the core, it was a one. Around it, a zero.
+N: The software that ran on that memory was led by Margaret Hamilton, who coined the term software engineering partly because nobody was taking the discipline seriously enough to name it.
+N: It cost three lives before it left the ground. On the twenty seventh of January, nineteen sixty seven, a fire swept the pure oxygen cabin of Apollo one during a test on the pad, and killed the crew inside it.
+
+## SCENE 4 | A signal weaker than a refrigerator bulb
+N: Six and a half hours after landing, Armstrong went down the ladder.
+N: The television signal came from two hundred and thirty nine thousand miles away, on a transmission weaker than the bulb inside a refrigerator, relayed through a dish outside Canberra.
+N: About six hundred million people watched it. At that point, that was roughly one in six human beings alive.
+
+## DOCUMENT | Neil Armstrong | Apollo 11 air-to-ground transcript, first step onto the lunar surface | July 21, 1969
+N: What Armstrong said as he stepped off is the most quoted sentence of the century, and he had thought about it.
+M: That's one small step for man, one giant leap for mankind.
+
+## TURN | Five accounts
+N: What that was worth is where the accounts separate.
+N: This disagreement is not about what happened. Everyone agrees what happened. It is about whether it should have.
+N: Five accounts, each given its own case first.
+
+## PERSPECTIVE | American triumph | victor
+N: The first account is that a democracy did this in the open, and that the openness is the point.
+N: The Soviet Union had led every prior milestone. The first satellite, the first man in orbit, the first spacewalk. The United States announced a deadline in nineteen sixty one, in public, and then had to meet it in public, with televised launches, public failures, and a congressional inquiry into the Apollo one fire.
+N: It did that without a command economy, by coordinating twenty thousand private firms toward one date.
+N: Kennedy had made the argument for difficulty itself, at Rice University, in nineteen sixty two.
+M: We choose to go to the Moon in this decade and do the other things, not because they are easy, but because they are hard.
+
+## ASIDE
+N: The plaque they left on the descent stage reads: here men from the planet Earth first set foot upon the Moon. We came in peace for all mankind.
+
+## PERSPECTIVE | The Soviet programme | vanquished
+N: The second account is Soviet, and it starts by pointing out that they were winning.
+N: From nineteen fifty seven to nineteen sixty five they held almost every first. What they lost was not a race of engineers but a single man: Sergei Korolev, the chief designer, who died in nineteen sixty six and was the only person able to hold the feuding lunar effort together.
+N: Their N one rocket failed all four times it flew. Thirty clustered engines under analogue control could not be made to work without the computing the Americans had.
+N: Days before Apollo eleven, an unmanned Soviet probe called Luna fifteen was racing to scoop lunar soil and return it first. It crashed into the Moon while Armstrong and Aldrin were still on the surface.
+N: The official position afterwards was simpler.
+M: There was no lunar race. We were not competing with the Americans.
+
+## PERSPECTIVE | The domestic critique | revisionist
+N: The third account was made at the launch gate itself, on the day.
+N: Ralph Abernathy brought the Poor People's Campaign to Cape Kennedy, with mule carts, to stand outside a rocket that cost twenty five point four billion dollars while Americans went hungry a few hundred miles away.
+N: His argument was about sequence, not about science.
+M: I want NASA scientists to tackle the problems we face in society.
+N: The poet Gil Scott-Heron put the same argument in the first person, and it is the version people still know.
+M: A rat done bit my sister Nell, with Whitey on the Moon. Her face and arms began to swell, and Whitey's on the Moon.
+
+## PERSPECTIVE | The engineers | academic
+N: The fourth account is the one that gets made in laboratories, and its claim is that the spending bought more than a flag.
+N: Apollo needed integrated circuits in quantities nobody else was ordering, and became the first mass customer for the technology that the entire computing industry was then built on.
+N: The three hundred and eighty two kilograms of rock they brought back produced the theory of how the Moon formed: an impact, early, with a body about the size of Mars.
+N: And the landing itself was saved by software design. Margaret Hamilton's flight programme was written to triage under overload, which is exactly what the twelve oh two alarms were.
+F: The computer was programmed to recognize that error and respond to it. It threw away the low-priority tasks and kept the ones that mattered.
+
+## PERSPECTIVE | The Global South | revisionist
+N: The fifth account came from outside both superpowers, and it was put most directly in a letter.
+N: Sister Mary Jucunda, a nun working in Zambia, wrote to NASA to ask a question that deserves to be quoted in full rather than dismissed.
+F: How could you suggest spending billions of dollars on a voyage to Mars, when many children on this Earth are starving to death?
+N: She got a serious reply, from the scientist Ernst Stuhlinger, who had it printed and sent widely.
+M: The space program does not take food from hungry children, but it does help to build the tools with which hunger can be fought.
+N: Both of them were arguing in good faith. That is what makes it the hardest version of the question.
+
+## TURN | The shape of the disagreement
+N: Each of those five is true, and each leaves something out.
+N: The triumph account leaves out the poverty and the civil rights struggle happening in the same month, and it leaves out Wernher von Braun, who designed the rocket, and who had built the V two for Nazi Germany using slave labour.
+N: The Soviet account leaves out the scale and the consistency of the effort that beat them, and the two decades they spent concealing that the N one had failed at all.
+N: The domestic critique leaves out the jobs the programme created, including for Black engineers and mathematicians, and the spinoffs that later reached ordinary people.
+N: The engineers' account leaves out that Cold War prestige is what paid for the science, and that crewed lunar exploration was abandoned three years later and has not resumed.
+N: And the Global South account leaves out the inspiration that Apollo genuinely provided to space programmes later built in India and Brazil, on explicitly developmental terms.
+N: The holes are not random. Each account omits the part that would most complicate its own conclusion.
+
+## CLOSE
+N: The last people left in nineteen seventy two. Nobody has been back.
+N: What stayed was less obvious than a flag. The integrated circuit found its first buyer at scale, and the industry that grew from that is the one you are probably listening to this on.
+N: And a photograph. On the way, someone pointed a camera back at the Earth, and it turned out to be small, and blue, and entirely surrounded by nothing.
+N: That picture became the emblem of the environmental movement. The most expensive journey ever made away from this planet is now best remembered for what it showed us when it looked back.
+
+## SAY
+Aldrin = ALL-drin
+Korolev = kuh-ruh-LYOV
+Abernathy = AB-er-nath-ee
+Jucunda = yoo-KOON-dah
+Stuhlinger = SHTOO-ling-er
+Wernher = VAIR-ner
+Braun = BROWN

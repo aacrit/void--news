@@ -50,7 +50,8 @@ GAPS: dict[str, int] = {
 # Segments that get a musical transition in the clear before them.
 TRANSITION_BEFORE = ("SCENE", "TURN")
 BED_UNDER = ("SCENE", "PERSPECTIVE", "OPEN", "TURN")
-NARRATOR, DOCUMENT = "A", "B"       # engine roles; the actual voices come from casting
+NARRATOR, DOC_M, DOC_F = "A", "B", "C"     # engine roles; voices come from casting
+ROLE_FOR = {"N": NARRATOR, "M": DOC_M, "F": DOC_F}
 
 
 @dataclass
@@ -81,7 +82,7 @@ def build_turns(script) -> list[tuple[TurnSpec, dict]]:
             spoken = normalize_for_speech(line.text, script.say)
             if not spoken:
                 continue
-            role = DOCUMENT if line.speaker == "D" else NARRATOR
+            role = ROLE_FOR.get(line.speaker, NARRATOR)
             out.append((TurnSpec(idx=idx, role=role, text=spoken),
                         {"kind": seg.kind, "seg_idx": si, "title": seg.title,
                          "speaker": line.speaker}))
@@ -93,9 +94,9 @@ def _gap(prev: dict | None, cur: dict) -> tuple[int, bool]:
     """(silence before this turn, whether a transition plays in it)."""
     if prev is None:
         return 0, False
-    if cur["speaker"] == "D" and prev["speaker"] == "N":
+    if cur["speaker"] in ("M", "F") and prev["speaker"] == "N":
         return GAPS["to_document"], False
-    if cur["speaker"] == "N" and prev["speaker"] == "D":
+    if cur["speaker"] == "N" and prev["speaker"] in ("M", "F"):
         return GAPS["from_document"], False
     if prev["seg_idx"] == cur["seg_idx"]:
         return GAPS["line"], False
@@ -215,10 +216,11 @@ def produce(slug: str, out_dir: Path) -> dict | None:
 
     voices = cast(event)
     print(f"  [history] {event['title']}: {script.words} words, ~{script.minutes:.1f} min")
-    print(f"  [history] narrator {voices['narrator']}, documents {voices['document']} ({voices['why']})")
+    print(f"  [history] narrator {voices['narrator']}, quotes {voices['document_m']}/"
+          f"{voices['document_f']} ({voices['why']})")
 
     turns = build_turns(script)
-    vmap = {NARRATOR: voices["narrator"], DOCUMENT: voices["document"], "C": voices["narrator"]}
+    vmap = {NARRATOR: voices["narrator"], DOC_M: voices["document_m"], DOC_F: voices["document_f"]}
     engines = [KokoroEngine(voices=vmap), EdgeTtsEngine()]
     t0 = time.time()
     res = synthesize_with_fallback([s for s, _ in turns], engines=engines)
@@ -238,16 +240,17 @@ def produce(slug: str, out_dir: Path) -> dict | None:
 
     work = Path(tempfile.mkdtemp(prefix="void-history-"))
     try:
-        buses = {r: rp._silent(tl.total_ms) for r in (NARRATOR, DOCUMENT)}
+        buses = {r: rp._silent(tl.total_ms) for r in (NARRATOR, DOC_M, DOC_F)}
         for c in tl.cues:
             buses[c.speaker] = buses[c.speaker].overlay(res.audio[c.idx], position=c.start_ms)
         # The narrator sits centre; the document voice is offset slightly, so
         # the change of speaker is felt in the room as well as in the timbre.
         n = rp.process_voice_bus(buses[NARRATOR], 0.0, work, "N")
-        d = rp.process_voice_bus(buses[DOCUMENT], 0.10, work, "D")
+        dm = rp.process_voice_bus(buses[DOC_M], 0.10, work, "M")
+        df = rp.process_voice_bus(buses[DOC_F], -0.10, work, "F")
         music, used = music_bus(tl, assets)
         print(f"  [history] music: {used}")
-        mix = rp._silent(tl.total_ms, channels=2).overlay(n).overlay(d).overlay(music)
+        mix = rp._silent(tl.total_ms, channels=2).overlay(n).overlay(dm).overlay(df).overlay(music)
         raw = work / "mix.wav"
         mix.export(str(raw), format="wav")
         mastered = work / "master.wav"

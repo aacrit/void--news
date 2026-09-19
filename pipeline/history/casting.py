@@ -34,18 +34,23 @@ _STATECRAFT = ("political", "empire", "revolution", "economic")
 # reader always crosses the register, and is a READER OF RECORD, never an
 # impersonator: it does not change per speaker and is never accent-matched to
 # the region of the event.
-_DOCUMENT_FOR = {
-    "bm_lewis": "af_aoede",
-    "am_michael": "af_aoede",
-    "bm_daniel": "af_aoede",
-    "bm_george": "af_aoede",
-    "af_aoede": "bm_daniel",
-    "af_nicole": "bm_george",
+# Quoted speech is read by a voice of the SPEAKER'S SEX, so every episode
+# carries two readers. The male reader must not be confusable with a male
+# narrator, so it is chosen far from the narrator in pitch: bm_lewis at 93 Hz
+# narrates against am_michael at 112, bm_george at 137 against bm_lewis. The
+# attribution spoken before every read does the rest of the work.
+_DOCUMENTS_FOR = {
+    "bm_lewis":   {"M": "bm_george",  "F": "af_aoede"},
+    "am_michael": {"M": "bm_daniel",  "F": "af_aoede"},
+    "bm_daniel":  {"M": "am_michael", "F": "af_aoede"},
+    "bm_george":  {"M": "bm_lewis",   "F": "af_aoede"},
+    "af_aoede":   {"M": "bm_daniel",  "F": "af_nicole"},
+    "af_nicole":  {"M": "bm_george",  "F": "af_aoede"},
 }
 
 
 def cast(event: dict) -> dict:
-    """Return {narrator, document, why} for an event."""
+    """Return {narrator, document_m, document_f, why} for an event."""
     sev = (event.get("severity") or "").lower()
     cat = (event.get("category") or "").lower()
 
@@ -60,4 +65,5 @@ def cast(event: dict) -> dict:
     else:
         narrator, why = "bm_george", f"{sev or 'unrated'} {cat or 'event'}: mid weight"
 
-    return {"narrator": narrator, "document": _DOCUMENT_FOR[narrator], "why": why}
+    docs = _DOCUMENTS_FOR[narrator]
+    return {"narrator": narrator, "document_m": docs["M"], "document_f": docs["F"], "why": why}
