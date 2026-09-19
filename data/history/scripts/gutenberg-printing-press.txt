@@ -1,0 +1,147 @@
+## OPEN
+N: Two things about the man whose name is on this.
+N: He did not invent printing. Chinese printers had been working from carved blocks since the ninth century. A man called Bi Sheng was setting movable ceramic characters around ten forty. Korean foundries were casting movable type in bronze by the twelve thirties, and the oldest surviving book printed that way came off a press at a Buddhist temple in thirteen seventy seven, seventy eight years before anything was printed in Mainz.
+N: And he did not keep it. Within months of finishing the Bible that carries his name, Johannes Gutenberg lost the press, the type and the unsold stock in a lawsuit, to the man who had lent him the money.
+
+## TITLE
+N: The Gutenberg revolution. Fourteen forty to fourteen fifty five.
+
+## SCENE 1 | The judgement
+N: Mainz, November fourteen fifty five. Johann Fust, a wealthy financier, goes to court against the printer he has been funding for five years.
+N: The first loan was eight hundred guilders, in fourteen fifty, secured against the printing equipment. Two years later, another eight hundred.
+N: Fust wants two thousand and twenty six guilders back, principal and compounded interest. He wins.
+N: He takes the workshop, the type and the inventory. He takes Gutenberg's foreman, Peter Schoffer, who is also his son in law.
+N: Fust and Schoffer become the first commercial publishers in Europe. They put their names in the books.
+N: Gutenberg is granted a small pension by the Archbishop about ten years later, and dies in fourteen sixty eight.
+
+## ASIDE
+N: The invention worked. That is why he lost it.
+N: A machine that turns three years of labour into a hundred and eighty identical books is collateral worth seizing, and the person who understood that first was the creditor.
+
+## SCENE 2 | The system
+N: What was actually invented in Mainz was not a machine. It was a set of four things that had to work together.
+N: An alloy of lead, tin and antimony that was soft enough to cast, hard enough to survive thousands of impressions, and that did not shrink as it cooled.
+N: A hand mould that let one worker cast hundreds of identical letters a day.
+N: An oil based ink, taken from what Flemish painters were doing, because the water based inks used for woodblocks simply slid off metal.
+N: And a press, adapted from the screw presses that the Rhine valley used for wine.
+N: Every one of those existed already. The combination did not.
+N: The forty two line Bible was the demonstration. Two columns, forty two lines a page, in a typeface cut to imitate the best handwriting of the day, using about two hundred and ninety different characters to reproduce the abbreviations and the ligatures a scribe would use.
+N: It took roughly three years. It used the skins of about a hundred and seventy calves per copy on the vellum editions.
+N: And early readers could not tell the pages from manuscript, which was the point.
+
+## DOCUMENT | Werner Rolewinck | Fasciculus Temporum | 1474
+N: Nineteen years later, a Carthusian monk called Werner Rolewinck put the invention into a world chronicle, which was itself printed.
+M: This art was discovered in Mainz, Germany. It is the art of arts, the science of sciences.
+
+## REST
+
+## SCENE 3 | Fifty years
+N: Now the numbers, because the speed is the whole story.
+N: By fourteen seventy there are presses in Italy, France, the Netherlands and England. By fourteen eighty, in a hundred and ten towns. By fifteen hundred there are print shops in two hundred cities.
+N: The output by fifteen hundred is about twenty seven thousand separate editions, somewhere near twenty million volumes.
+N: In fourteen fifty, all the manuscripts in Europe together are estimated at perhaps thirty thousand books.
+N: Within fifty years the price of a book falls by about eighty per cent. Over the next century and a half, literacy in western Europe goes from somewhere between five and ten in a hundred to thirty or forty.
+
+## SCENE 4 | Wittenberg
+N: The thirty first of October, fifteen seventeen. A theology professor in Wittenberg puts ninety five propositions about the sale of indulgences on a church door, in Latin, for other academics.
+N: Within a fortnight printers in Nuremberg, Leipzig and Basel have reprinted them. Within three months there are an estimated three hundred thousand copies in circulation, in German.
+N: Martin Luther did not translate them. Printers did, because there was a market.
+N: Between fifteen seventeen and fifteen twenty five, German presses turn out around six thousand pamphlet titles. Eight to sixteen pages, a few pfennigs, woodcut illustrations for people who could not read the text.
+N: Luther published thirty works in fifteen twenty alone. He knew exactly what he was holding.
+
+## DOCUMENT | Martin Luther | Table Talk | c. 1530
+N: Luther, at his own table, years later.
+M: Printing is the ultimate gift of God and the greatest one.
+
+## REST
+
+## TURN | Five accounts
+N: Five ways of telling this, and they disagree about what the invention even was.
+
+## PERSPECTIVE | The printers | victor
+N: The first account is the workshop's, and its claim is that the breakthrough was engineering, not ideas.
+N: Nobody needed to be told that copying books by hand was slow. What nobody had was an alloy that cast clean and stayed hard, a mould that made every letter the same height, and an ink that would stick to metal.
+N: The evidence for that reading is the speed of the spread. Once the system existed it was copied across a continent in thirty years, by workmen who took the trade with them out of Mainz.
+N: And the trade behaved like a trade. Aldus Manutius in Venice worked out in the fourteen nineties that a book could be made small enough to carry, printed the Greek and Latin classics in that format, and invented publishing as a business.
+
+## PERSPECTIVE | The Catholic Church | vanquished
+N: The second account belongs to the institution that was printing's first customer and then its first casualty.
+N: The Church welcomed the press. Hand copying introduced errors, and every diocese had drifted; a printed missal was the same in Mainz and in Marseilles. The earliest print runs in Europe were indulgences, psalters and Bibles.
+N: Then the arithmetic turned. Manuscript culture could be policed, because a heretical text could be found and burned before it travelled. A single press run could put five hundred copies into circulation in a week, and confiscating a book in one city meant nothing when it was being set in type in another.
+N: The response came in stages. In fifteen oh one a papal bull required every printed work to have a bishop's approval. The Fifth Lateran Council reinforced it in fifteen fifteen. The Index of Forbidden Books was established in fifteen fifty nine.
+N: A Dominican friar at the Council of Trent put the problem in one sentence.
+M: Let us break their bonds asunder and cast away their yokes from us, now the common people have the Bible, and the heretics will cite texts.
+
+## REST | short
+
+## PERSPECTIVE | The Chinese and Korean precedent | revisionist
+N: The third account says the priority is simply not European, and it has the objects to prove it.
+N: Bi Sheng's ceramic type is described in detail by Shen Kuo in ten eighty eight: characters set in an iron frame on resin and wax, heated to fix them, inked, pressed, then reheated to free the type for the next page.
+N: It worked, and it did not take over, for a reason that is arithmetic rather than culture. A literate reader of Chinese needs three or four thousand characters, and a full font wants forty thousand or more. Sorting and composing that is slower than carving the page as a single block. Movable type only pays on long runs with a small character set, and an alphabet of twenty six letters is the ideal case.
+N: The Korean court went further and cast type in bronze by about twelve thirty. The Jikji, a collection of Buddhist teaching printed at a temple in thirteen seventy seven, is the oldest surviving book made with metal movable type.
+N: It is in the national library in Paris. Korea has asked for it back more than once.
+
+## PERSPECTIVE | The pamphlet war | bystander
+N: The fourth account is about what the machine did to argument, and its central claim is uncomfortable: the difference between a heretic who is burned and a reformer who wins is not theology.
+N: Jan Hus made much the same case a century before Luther. He was burned at the stake in fourteen fifteen and his movement stayed inside Bohemia. John Wycliffe put the Bible into English in thirteen eighty two and his followers were hunted down.
+N: Luther said it in German, to printers who could sell it, in a format cheap enough to buy on a market day.
+N: And the machine had no loyalty. It printed the replies too, and the censors' lists, and the manuals of the counter attack. What it ended was not the Church's authority but its monopoly on reproduction.
+
+## PERSPECTIVE | The information theorists | academic
+N: The fifth account is the one that tries to explain all of the others at once.
+N: Elizabeth Eisenstein's argument, published in nineteen seventy nine, is that the decisive thing was not any book but the properties of print itself: reach, identical copies, and fixity.
+N: Fixity is the one that does the work. In manuscript culture every copy introduced errors, so a scholar reading Ptolemy was reading a copy of a copy, and the foundation shifted underneath every generation. Print froze the text.
+N: That is why the Scientific Revolution is in this story. Tycho Brahe's observations could be published in identical editions, checked by Kepler, and built on by Newton. Two botanists in different countries could hold the same page and argue about the same plant.
+N: On this reading the press did not create new ideas. It made existing ideas impossible to suppress and possible to accumulate.
+
+## REST
+
+## TURN | What each one leaves out
+N: And here is the shape of what each account is not saying.
+N: The printers' account leaves out that every component was borrowed, from the winemakers, the goldsmiths and the painters, and that the man who assembled them could not hold on to the result.
+N: The Church's account leaves out that it paid for the first presses and profited from them, and that the indulgences the Reformation attacked were among the first things Gutenberg printed.
+N: The Chinese and Korean account, which is right about priority, can let priority stand in for consequence. The Jikji proves who was first. It does not explain why the technology stayed local there and travelled here, which is the question the alphabet answers.
+N: The pamphlet account leaves out that the same presses served whoever paid, and that the Index of Forbidden Books is as much a child of printing as the Reformation is.
+N: And the theorists' account leaves out the people. It is a description of properties. There is no goldsmith in it, and no lawsuit.
+
+## REST
+
+## CLOSE
+N: Fust and Schoffer's books are the first with a printer's name, a date and a place on the last page. Gutenberg's Bible has none of that on it. It is anonymous.
+N: The Index of Forbidden Books was maintained for four hundred and seven years, and abolished in nineteen sixty six.
+N: The pension that kept Gutenberg was paid in grain, wine and cloth.
+N: And the oldest surviving book printed with metal type sits in a library in Paris, four and a half thousand miles from the temple that made it.
+
+## SAY
+Gutenberg = GOO-ten-berg
+Mainz = MYNTS
+Johann = YO-hahn
+Johannes = yo-HAH-nes
+Fust = FOOST
+Schoffer = SHER-fer
+guilders = GIL-ders
+antimony = AN-ti-moh-nee
+vellum = VEL-um
+Rolewinck = ROH-luh-vink
+Carthusian = kar-THOO-zhun
+Fasciculus = fas-IK-yoo-lus
+Wittenberg = VIT-en-berg
+Nuremberg = NYOOR-em-berg
+Leipzig = LYPE-tsig
+Basel = BAH-zul
+pfennigs = FEN-igz
+Aldus = AL-dus
+Manutius = mah-NOO-shus
+Lateran = LAT-er-an
+Trent = TRENT
+Bi Sheng = BEE SHUNG
+Shen Kuo = SHEN KWOH
+Jikji = JIK-jee
+Goryeo = go-RYUH
+Hus = HUSS
+Wycliffe = WIK-lif
+Bohemia = boh-HEE-mee-ah
+Eisenstein = EYE-zen-styne
+Ptolemy = TOL-em-ee
+Tycho Brahe = TY-koh BRAH
+Kepler = KEP-ler
