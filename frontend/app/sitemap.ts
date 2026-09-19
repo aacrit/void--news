@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { SITE_URL } from "./lib/siteMeta";
 import { getArchiveRows, storyHref } from "./lib/archive";
+import { getHistorySlugs } from "./lib/historyCatalog";
 
 /* Static sitemap, emitted at build time as /sitemap.xml. Compatible with
    output:"export" (runs once at build, no request-time work). */
@@ -12,6 +13,8 @@ const ROUTES: { path: string; changeFrequency: MetadataRoute.Sitemap[number]["ch
   { path: "/sources/", changeFrequency: "weekly", priority: 0.8 },
   { path: "/about/", changeFrequency: "monthly", priority: 0.7 },
   { path: "/onair/", changeFrequency: "daily", priority: 0.7 },
+  { path: "/history/", changeFrequency: "monthly", priority: 0.8 },
+  { path: "/weekly/", changeFrequency: "weekly", priority: 0.7 },
   // /paper and /games are 301-redirected to home in public/_redirects (hidden
   // for launch), so they are deliberately NOT listed here: a sitemap must not
   // advertise redirecting URLs. Restore them when those sections go live.
@@ -49,5 +52,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     storyEntries = [];
   }
 
-  return [...staticEntries, ...storyEntries];
+  // Every History event: /history/<slug>/. Curated, permanent, and the most
+  // link-worthy pages on the site, so they are listed individually rather than
+  // left to be discovered through the landing page alone.
+  const historyEntries: MetadataRoute.Sitemap = getHistorySlugs().map((slug) => ({
+    url: `${SITE_URL}/history/${slug}/`,
+    lastModified,
+    changeFrequency: "yearly" as MetadataRoute.Sitemap[number]["changeFrequency"],
+    priority: 0.5,
+  }));
+
+  return [...staticEntries, ...historyEntries, ...storyEntries];
 }

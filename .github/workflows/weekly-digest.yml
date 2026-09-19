@@ -1,20 +1,38 @@
 name: Weekly Digest
+
+# Cloudflare migration follow-up (2026-09-19). This job was left on the
+# decommissioned Supabase stack: it ran the generator with SUPABASE_* env and no
+# VOID_SQLITE_PATH, so it read an empty database, wrote its row nowhere the site
+# could see, and committed nothing. export_static.py reads weekly_digests from
+# the SQLite state DB, so /weekly served whatever the last pre-migration run had
+# left behind: Issue #23, week of 2026-08-24.
+#
+# It now mirrors the daily pipeline: restore the SQLite state DB, generate
+# against it, emit ONLY the weekly snapshot, commit it so the Pages CDN serves
+# it. The state DB is deliberately NOT saved back to the cache (see below).
+
+permissions:
+  contents: write   # commit the refreshed weekly snapshot to main
+  actions: read     # download the state snapshot artifact on a cold cache
+
 on:
   schedule:
-    # Sunday 12:00 UTC (6 AM CST) — weekly onair runs after the week's dailies.
-    # Sunday flash budget: ~13 daily + ~4 weekly (covers + recap + audio) < 20 RPD.
-    # Monday 12:00 UTC (was Sunday). Moved off the daily pipeline's day so the
-    # weekly's ~4 flash calls do not collide with the daily brief + top-10 on the
-    # shared Gemini flash key (20 req/day cap). Covers the week that just ended.
+    # Monday 12:00 UTC. Covers the week that just ended (Mon-Sun), which is what
+    # --week-offset 0 now means; before 2026-09-19 the offset sign was inverted
+    # and this cron generated the week that had just STARTED, off half a day of
+    # coverage. Sunday flash budget is not a concern on Monday: ~13 daily + ~4
+    # weekly stays under the shared 20 req/day flash cap.
     - cron: '0 12 * * 1'
   workflow_dispatch:
     inputs:
       week_offset:
-        description: '0=current week, -1=last week'
+        description: 'Weeks back from the week that just ended. 0=completed week, 1=the one before, -1=current partial week'
         required: false
         default: '0'
 
-permissions: {}
+concurrency:
+  group: weekly-digest
+  cancel-in-progress: false
 
 jobs:
   generate:
@@ -22,6 +40,8 @@ jobs:
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: main
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -34,18 +54,87 @@ jobs:
           pip install -r pipeline/requirements.txt
           python -m spacy download en_core_web_sm
 
+      # ── Pipeline state DB (SQLite) — RESTORE ONLY ──
+      # The weekly reads the week's clusters, bias scores and daily briefs out of
+      # the same state DB the daily pipeline writes. It restores the newest
+      # cached copy and never saves one back: the daily pipeline (11:00 UTC,
+      # 1.5-2h) is usually still running at 12:00, and a save here would push a
+      # pre-run copy of the state under a newer cache key and lose a day of work.
+      # Nothing is lost by not saving, because issue_number is derived from the
+      # week's date, not from the rows already stored.
+      - name: Restore pipeline state DB
+        uses: actions/cache/restore@v4
+        with:
+          path: pipeline_state.db
+          key: void-state-v1-weekly-${{ github.run_id }}
+          restore-keys: |
+            void-state-v1-
+
+      - name: Bootstrap state DB (cold cache — durable snapshot)
+        if: hashFiles('pipeline_state.db') == ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -e
+          echo "No cached state DB; restoring from the latest durable state snapshot."
+          for rid in $(gh run list --workflow=pipeline.yml --status success -L 12 \
+                         --json databaseId --jq '.[].databaseId'); do
+            if gh run download "$rid" -n void-state-snapshot --dir _snap 2>/dev/null; then
+              echo "Restored state snapshot from pipeline run $rid"; break
+            fi
+          done
+          if [ -f _snap/pipeline_state.db.gz ]; then
+            gunzip -c _snap/pipeline_state.db.gz > pipeline_state.db
+            rm -rf _snap
+          else
+            echo "No state snapshot available; cannot generate a weekly digest."
+            exit 1
+          fi
+
       - name: Generate weekly digest
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
-          SUPABASE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          PYTHONUNBUFFERED: "1"
+          VOID_SQLITE_PATH: pipeline_state.db
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           # $0 posture: Gemini Flash handles the digest (Groq retired); Claude off.
           DISABLE_ANTHROPIC: "1"
-          DISABLE_AUDIO: "0"   # void --onair weekly audio enabled (edge-tts, $0). Set "1" to re-park.
+          # Weekly On Air audio (edge-tts, $0). With VOID_SQLITE_PATH set,
+          # audio_producer writes the MP3 into frontend/public/audio/ for the
+          # Pages CDN instead of the decommissioned Supabase bucket. "1" re-parks.
+          DISABLE_AUDIO: "0"
         run: |
-          ARGS=""
-          if [ -n "${{ inputs.week_offset }}" ] && [ "${{ inputs.week_offset }}" != "0" ]; then
-            ARGS="--week-offset ${{ inputs.week_offset }}"
+          OFFSET="${{ inputs.week_offset }}"
+          python -m pipeline.briefing.weekly_digest_generator \
+            --week-offset "${OFFSET:-0}"
+
+      # ONLY the weekly snapshot. The restored state DB can be a day behind main
+      # (the daily pipeline commits its own export at ~13:00), so a full export
+      # here would rewrite feed.json and archive.json from stale rows and the
+      # commit below would publish yesterday's front page.
+      - name: Export weekly snapshot
+        env:
+          VOID_SQLITE_PATH: pipeline_state.db
+          VOID_EXPORT_ONLY: weekly
+        run: python pipeline/export_static.py
+
+      - name: Commit refreshed weekly data to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Scoped deliberately: this job owns the weekly snapshot and the weekly
+          # audio, nothing else under public/data.
+          git add frontend/public/data/weekly.json frontend/public/audio/weekly-* || true
+          if git diff --cached --quiet; then
+            echo "No weekly changes to commit."
+            exit 0
           fi
-          python -m pipeline.briefing.weekly_digest_generator $ARGS
+          git commit -m "Weekly: refresh digest snapshot ($(date -u +%F))"
+          git checkout -- . 2>/dev/null || true
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            git rebase origin/main || { git rebase --abort 2>/dev/null || true; echo "rebase failed"; exit 1; }
+            if git push origin HEAD:main; then echo "pushed on attempt $attempt"; exit 0; fi
+            echo "push rejected (attempt $attempt); refetching and retrying"
+            sleep 5
+          done
+          echo "could not push refreshed weekly data after 5 attempts"; exit 1
