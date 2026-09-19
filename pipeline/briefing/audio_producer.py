@@ -1320,35 +1320,17 @@ def produce_audio(
 # void --history companion audio — produce_history_audio()
 # ---------------------------------------------------------------------------
 
-def _write_history_audio_static(audio_bytes: bytes, slug: str) -> Optional[str]:
-    """Cloudflare stack: write the History MP3 into the deployed static site.
-
-    Served from the Pages CDN at /audio/history/<slug>.mp3. Unlike the daily
-    brief there is NO rotation and no latest.mp3: History audio is permanent
-    companion content for an event, not an ephemeral episode.
-    """
-    import hashlib
-    from pathlib import Path
-
-    try:
-        out_dir = Path(__file__).resolve().parents[2] / "frontend" / "public" / "audio" / "history"
-        out_dir.mkdir(parents=True, exist_ok=True)
-        (out_dir / f"{slug}.mp3").write_bytes(audio_bytes)
-        fp = hashlib.md5(audio_bytes[:1024]).hexdigest()[:8]
-        print(f"  [history-audio] wrote static /audio/history/{slug}.mp3 "
-              f"({len(audio_bytes)//1024} KB)")
-        return f"/audio/history/{slug}.mp3?v={fp}"
-    except Exception as e:
-        print(f"  [warn][history-audio] static write failed for {slug}: {e}")
-        return None
-
-
 def _upload_history_to_supabase(audio_bytes: bytes, slug: str) -> Optional[str]:
     """Store the history MP3 and return its URL.
 
-    On the Cloudflare/SQLite stack (VOID_SQLITE_PATH set) this writes to the
-    static site (see _write_history_audio_static). Otherwise it uses the legacy
-    Supabase Storage path below, kept for rollback only: that bucket was
+    Publishing a History episode is a SEPARATE, explicit step on the Cloudflare
+    stack: pipeline/history/publish_audio.py copies the render into
+    frontend/public/audio/history/ AND records it in public/data/history-audio.json,
+    which is what makes the Listen button appear. Writing the MP3 from here would
+    leave an episode on the CDN that the manifest does not list and no page can
+    reach, so this returns None and says where to go instead.
+
+    The Supabase branch below is legacy, kept for rollback only: that bucket was
     decommissioned with the rest of the project on 2026-09-01.
 
     Path: audio-briefs/history/{slug}.mp3
@@ -1357,7 +1339,10 @@ def _upload_history_to_supabase(audio_bytes: bytes, slug: str) -> Optional[str]:
     """
     import os as _os
     if _os.environ.get("VOID_SQLITE_PATH"):
-        return _write_history_audio_static(audio_bytes, slug)
+        print(f"  [history-audio:{slug}] rendered; publish it with "
+              f"`python pipeline/history/publish_audio.py {slug} --from <dir>` "
+              f"so the manifest records it")
+        return None
     try:
         supabase = _fresh_supabase_client()  # NOT the shared singleton (closed mid-run)
         import hashlib

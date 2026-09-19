@@ -11,7 +11,7 @@ import {
   type ReactNode,
 } from "react";
 import type { AudioChapter, DailyBriefData, Edition } from "../lib/types";
-import { findChapterIndex } from "../lib/chapters";
+import { coerceChapters, findChapterIndex } from "../lib/chapters";
 import { fetchDailyBrief, fetchPreviousEpisodes } from "../lib/supabase";
 import { hapticLight, hapticTick } from "../lib/haptics";
 import { AUDIO_ENABLED } from "../lib/audioGate";
@@ -57,6 +57,9 @@ export interface HistoryAudioPayload {
   subtitle?: string | null;
   audioUrl: string;
   durationSeconds: number;
+  /** Documentary chapter marks. Omitted on accounts recorded before the
+   *  audio edition, which keep the single undifferentiated transport. */
+  chapters?: AudioChapter[] | null;
 }
 
 export interface AudioState {
@@ -663,8 +666,10 @@ export default function AudioProvider({
       audio_voice_label: null,
       audio_voice: null,
       audio_script: null,
-      // History is a single narrated account: unchaptered.
-      audio_chapters: null,
+      // A produced History episode carries its own chapter marks (scenes,
+      // each perspective, the reckoning, the legacy). Accounts published
+      // before the audio edition pass none and keep the plain transport.
+      audio_chapters: coerceChapters(payload.chapters ?? null),
       news_start_seconds: null,
       top_cluster_ids: null,
       created_at: new Date().toISOString(),

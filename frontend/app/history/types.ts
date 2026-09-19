@@ -1,3 +1,5 @@
+import type { AudioChapter } from "../lib/types";
+
 /* ===========================================================================
    void --history — Types
    "Archival Cinema" — multi-perspective historical events
@@ -91,6 +93,8 @@ export interface HistoricalEvent {
   audioUrl?: string | null;
   /** Duration of the companion audio in seconds. */
   audioDuration?: number | null;
+  /** Chapter marks for the audio edition. Null on events with no episode. */
+  audioChapters?: AudioChapter[] | null;
 }
 
 export interface RedactedEvent {

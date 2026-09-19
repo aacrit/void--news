@@ -1,0 +1,121 @@
+## OPEN
+N: There has been one successful slave revolution in recorded history. Not one that won concessions. One that took the colony, beat three European armies, and founded a country.
+N: It happened in the richest place in the Americas, and the country it created spent the next hundred and twenty two years paying France compensation for it.
+N: Paying, that is, for the property that France considered itself to have lost. The property was the people doing the paying.
+
+## TITLE
+N: The Haitian Revolution. Seventeen ninety one to eighteen oh four.
+
+## SCENE 1 | The clearing
+N: The fourteenth of August, seventeen ninety one. A clearing at Bois Caiman, in the mountains of northern Saint-Domingue.
+N: A vodou priest named Boukman Dutty kills a black pig and passes its blood among the men and women assembled in the dark. The oath they take is specific. Kill every master. Burn every plantation. Take the colony.
+N: Eight days later the northern plain goes up. Within a week, a thousand sugar plantations are burning.
+N: The people doing the burning had been valued, taxed, branded and sold. They used what they had, which was the equipment of their own labour. Machetes. Cane knives. Torches.
+
+## DOCUMENT | Boukman Dutty | prayer at the Bois Caiman ceremony, recorded by Antoine Dalmas | August 14, 1791
+N: The words attributed to Boukman that night come down through oral tradition, written later by a French chronicler.
+M: Listen to the voice of liberty that speaks in the hearts of all.
+
+## REST
+
+## SCENE 2 | What the colony was worth
+N: It is hard to overstate what Saint-Domingue was to France.
+N: In seventeen eighty nine it produced more revenue than all thirteen American colonies combined. Forty per cent of the world's sugar. Sixty per cent of its coffee.
+N: That output rested on five hundred thousand enslaved people, worked under conditions that killed them faster than they could reproduce. The colony imported forty thousand new captives every year simply to keep the workforce at the same size.
+N: There was a law, the Code Noir, which in theory regulated how they could be treated. It was ignored. People were whipped with vines cut from the colony's own trees, locked into iron masks so they could not eat the sugarcane they were harvesting, and burned alive for running.
+N: In seventeen eighty eight a planter named Le Jeune was tried for torturing two enslaved women to death. He was acquitted by a jury of other planters.
+
+## REST
+
+## SCENE 3 | Toussaint
+N: The revolt found its general in a man who had been freed about fifteen years before it started, and who was in his late forties when it began.
+N: Toussaint Louverture turned a rising into an army. He fought the French, then the Spanish, then the British, and at various points allied with each of them against the others. He drove the British out after five years and around twenty thousand of their dead.
+N: By eighteen hundred he governed the colony in all but name. In eighteen oh one he wrote a constitution that abolished slavery permanently and named himself governor for life, and sent it to Paris as a fact rather than a request.
+N: Napoleon sent his brother-in-law and thirty thousand men. Toussaint was invited to negotiate, arrested, and shipped to a fortress in the French Alps, where he died of cold and neglect within a year.
+
+## DOCUMENT | Toussaint Louverture | spoken to his French captors upon deportation | June 1802
+N: What Toussaint Louverture said as they took him aboard has outlived everyone who was on that ship.
+M: In overthrowing me, you have done no more than cut down the trunk of the tree of black liberty in Saint-Domingue. It will spring back from the roots.
+
+## REST
+
+## SCENE 4 | The flag
+N: He was right, and it took two more years.
+N: The French intent had become clear: Napoleon had restored slavery in Guadeloupe, and everyone in Saint-Domingue understood what was coming. The war that followed was fought by people who knew exactly what defeat meant.
+N: Yellow fever did much of the work. It killed French soldiers faster than combat did, and it kept killing the reinforcements.
+N: On the first of January, eighteen oh four, Jean-Jacques Dessalines declared independence and took the French tricolour, and tore the white stripe out of the middle of it. The blue and the red were sewn back together, and that became the flag.
+
+## DOCUMENT | Jean-Jacques Dessalines | Declaration of Independence of Haiti | January 1, 1804
+N: The declaration Dessalines issued that day contains three words that are still argued about.
+M: I have avenged America.
+
+## REST
+
+## TURN | Five accounts
+N: What this was, and what it cost, is contested from five directions.
+
+## PERSPECTIVE | The enslaved revolutionaries | indigenous
+N: The first account belongs to the people who did it, and its central claim is about authorship.
+N: The revolution was organised through African networks: vodou, market days, drum communication. It did not wait for European permission or European ideas. Enslaved people applied the language of liberty and equality to their own condition before any European abolitionist had proposed doing so.
+N: Women fought at every stage. Marie-Jeanne Lamartiniere is the documented case, at the siege of Crete-a-Pierrot, and she is one among many who were not written down.
+N: Dessalines put the claim to self-authorship in a single sentence.
+M: We have dared to be free. Let us dare to be so by ourselves and for ourselves.
+
+## PERSPECTIVE | The French colonial account | vanquished
+N: The second account is French, and it is mostly about cost and contingency.
+N: Saint-Domingue's revenue was load-bearing for French imperial finance, and losing it redirected Napoleon's entire strategy. Within two years he sold Louisiana to the United States, having lost the Caribbean base that made a North American empire worth holding.
+N: On the war itself, the French argument is that they were beaten by disease rather than by soldiers: yellow fever destroyed army after army.
+N: Napoleon's own verdict on the whole colonial project, delivered later, was short.
+M: Damn sugar, damn coffee, damn colonies.
+
+## REST | short
+
+## PERSPECTIVE | The Haitian nationalist account | revisionist
+N: The third account is Haitian, and it makes a claim of moral precedence over both of the revolutions it is usually compared to.
+N: The American declaration was written by slaveholders. The French one coexisted with slavery in the colonies for years. Haiti's abolished it outright, and the constitution of eighteen oh five went further: it declared all Haitian citizens Black, regardless of skin colour, abolishing racial hierarchy by legal definition.
+N: On the poverty that followed, this account points outward, to the indemnity, to United States non-recognition for nearly sixty years, and to deliberate diplomatic isolation by every slaveholding power that feared the example.
+N: Its author, Louis Boisrond-Tonnerre, put the founding intention plainly.
+M: It is not enough to have expelled the barbarians who have bloodied our land for two centuries.
+
+## PERSPECTIVE | The academic account | academic
+N: The fourth account is about why you were probably not taught this.
+N: The historian Michel-Rolph Trouillot argued that the revolution was not merely ignored but unthinkable: it fell outside what Europeans of the period could conceive as possible, and so it was recorded as banditry, or as French politics happening elsewhere, or not recorded at all.
+M: The unthinkable is that which one cannot conceive within the range of possible alternatives.
+N: C.L.R. James, writing in nineteen thirty eight, made the opposite case about its significance.
+M: The slaves of San Domingo took the revolutionary slogans, liberty, equality, fraternity, and gave them a meaning that the makers of the slogans never intended.
+
+## PERSPECTIVE | The indemnity | revisionist
+N: The fifth account is a receipt.
+N: In eighteen twenty five, with French warships off the coast, Haiti agreed to pay one hundred and fifty million gold francs to compensate French planters for the loss of their property. The property was people. The sum was roughly ten times Haiti's annual revenue.
+N: Haiti paid it, and the loans taken to pay it, from eighteen twenty five until nineteen forty seven. One hundred and twenty two years. In the early decades it consumed between half and eighty per cent of all government revenue.
+N: The historian Laurent Dubois summarised the arrangement.
+M: France extorted Haiti into paying for its own freedom. Then it called the result poverty.
+
+## REST
+
+## TURN | The shape of the disagreement
+N: All five are true, and each is missing something.
+N: The revolutionaries' account leaves out what came after independence: Dessalines's massacre of the remaining French civilians in eighteen oh four, and the divisions between the formerly enslaved and the free people of colour that shaped the new state.
+N: The French account leaves out the plantation system that caused the whole thing, and it leaves out that Napoleon's intention to restore slavery is documented in his own correspondence.
+N: The Haitian nationalist account leaves out the internal record: twenty three heads of state in the first century, most removed by force.
+N: The academic account, in treating vodou as organising technology, tends to leave out that it was a religion, and that the people at Bois Caiman meant it.
+N: And the indemnity account leaves out Haitian authoritarianism and elite extraction, which compounded what the debt did.
+N: Each one omits the part that would most complicate its own conclusion. That is not a reason to pick one.
+
+## CLOSE
+N: In twenty twenty two, the New York Times worked out what the indemnity and its interest had actually cost, compounded across those hundred and twenty two years. Twenty one billion dollars.
+N: Haiti had calculated it too, to the cent, some years before. The figure they used was twenty one billion, six hundred and eighty five million, one hundred and thirty five thousand, five hundred and seventy one dollars and forty eight cents.
+N: They were precise on purpose. France had been precise when it worked out what they owed.
+N: There has been one successful slave revolution in recorded history, and the bill for it was settled in nineteen forty seven.
+
+## SAY
+Saint-Domingue = san doh-MANG
+Bois Caiman = bwah kai-MAHN
+Boukman = BOOK-mahn
+Dessalines = deh-sah-LEEN
+Louverture = loo-vair-TOOR
+Crete-a-Pierrot = krett ah pyair-OH
+Lamartiniere = lah-mar-tin-YAIR
+Trouillot = troo-YOH
+Dubois = doo-BWAH
+Guadeloupe = gwah-deh-LOOP
