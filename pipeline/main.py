@@ -1453,6 +1453,11 @@ def run_retention_and_ghost_sweep() -> None:
 
 
 
+class _AudioAlreadyFresh(Exception):
+    """Raised inside a carry-forward block when this run already produced
+    audio, so the previous episode must not be pulled forward over it."""
+
+
 def _produce_radio_edition(edition: str, clusters: list[dict], brief: dict, brief_row: dict) -> bool:
     """On Air radio show for one edition. Writes the audio fields into
     brief_row and returns True; False means the caller should fall back to the
@@ -1620,6 +1625,9 @@ def generate_and_store_briefs(clusters: list[dict], source_map: dict,
                                 ).eq("edition", edition).order(
                                     "created_at", desc=True
                                 ).limit(1).execute()
+                                if brief_row.get("audio_url"):
+                                    # This run produced audio; never replace it.
+                                    raise _AudioAlreadyFresh
                                 if prev.data and prev.data[0].get("audio_url"):
                                     p = prev.data[0]
                                     brief_row["audio_url"] = p["audio_url"]
@@ -1629,17 +1637,32 @@ def generate_and_store_briefs(clusters: list[dict], source_map: dict,
                                     brief_row["audio_file_size"] = p.get("audio_file_size")
                                     brief_row["opinion_start_seconds"] = p.get("opinion_start_seconds")
                                     print(f"  [brief:{edition}] TTS failed — carried forward previous audio")
+                            except _AudioAlreadyFresh:
+                                pass
                             except Exception as e:
                                 print(f"  [warn] Could not fetch previous audio for {edition}: {e}")
-                    else:
-                        # No audio script (rule-based fallback) — carry forward
-                        # previous audio so frontend always has audio available.
+                    elif not radio_done:
+                        # No audio at all this run (no rundown AND no legacy
+                        # script) — carry forward the previous episode so the
+                        # frontend always has something to play.
+                        #
+                        # `elif not radio_done` is load-bearing. This used to be
+                        # a plain `else` on "not radio_done and audio_script",
+                        # which is also taken when the RADIO PATH SUCCEEDED, so
+                        # every run that produced a show then overwrote its own
+                        # audio_url and audio_voice with the previous day's. The
+                        # 2026-09-19 run published a brief pointing at
+                        # 2026-09-18-pm.mp3 while carrying today's chapters, and
+                        # the next run's rotation deleted the file it named.
                         try:
                             prev = supabase.table("daily_briefs").select(
                                 "audio_url,audio_duration_seconds,audio_voice_label,audio_script,audio_voice,audio_file_size,opinion_start_seconds"
                             ).eq("edition", edition).order(
                                 "created_at", desc=True
                             ).limit(1).execute()
+                            if brief_row.get("audio_url"):
+                                # This run produced audio; never replace it.
+                                raise _AudioAlreadyFresh
                             if prev.data and prev.data[0].get("audio_url"):
                                 p = prev.data[0]
                                 brief_row["audio_url"] = p["audio_url"]
@@ -1651,6 +1674,8 @@ def generate_and_store_briefs(clusters: list[dict], source_map: dict,
                                 if not brief_row.get("audio_script"):
                                     brief_row["audio_script"] = p.get("audio_script")
                                 print(f"  [brief:{edition}] No audio script — carried forward previous audio")
+                        except _AudioAlreadyFresh:
+                            pass
                         except Exception as e:
                             print(f"  [warn] Could not fetch previous audio for {edition}: {e}")
 
