@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-19T23:38:03+00:00",
+ "generatedAt": "2026-09-19T23:59:58+00:00",
  "episodes": {
   "apollo-11-moon-landing": {
    "url": "/audio/history/apollo-11-moon-landing.mp3?v=70d51e2f",
@@ -264,6 +264,94 @@
     }
    ],
    "publishedAt": "2026-09-19T23:38:03+00:00"
+  },
+  "mali-empire-mansa-musa": {
+   "url": "/audio/history/mali-empire-mansa-musa.mp3?v=b583f053",
+   "chaptersUrl": "/audio/history/mali-empire-mansa-musa.chapters.json?v=b583f053",
+   "title": "The Mali Empire and Mansa Musa's Pilgrimage",
+   "durationSeconds": 848.771,
+   "bytes": 13597094,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 53.692
+    },
+    {
+     "startTime": 53.692,
+     "title": "July, thirteen twenty four",
+     "kind": "segment",
+     "endTime": 155.249
+    },
+    {
+     "startTime": 155.249,
+     "title": "The boy who could not walk",
+     "kind": "segment",
+     "endTime": 228.496
+    },
+    {
+     "startTime": 228.496,
+     "title": "Two thirds of the world's gold",
+     "kind": "segment",
+     "endTime": 294.042
+    },
+    {
+     "startTime": 294.042,
+     "title": "Timbuktu",
+     "kind": "segment",
+     "endTime": 370.821
+    },
+    {
+     "startTime": 370.821,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 395.115
+    },
+    {
+     "startTime": 395.115,
+     "title": "The Mande tradition",
+     "kind": "segment",
+     "endTime": 432.054
+    },
+    {
+     "startTime": 432.054,
+     "title": "The Songhai and the subject peoples",
+     "kind": "segment",
+     "endTime": 507.539
+    },
+    {
+     "startTime": 507.539,
+     "title": "The North African merchants",
+     "kind": "segment",
+     "endTime": 586.131
+    },
+    {
+     "startTime": 586.131,
+     "title": "The postcolonial historians",
+     "kind": "segment",
+     "endTime": 648.55
+    },
+    {
+     "startTime": 648.55,
+     "title": "The Egyptian economy",
+     "kind": "segment",
+     "endTime": 725.693
+    },
+    {
+     "startTime": 725.693,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 800.865
+    },
+    {
+     "startTime": 800.865,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 848.737
+    }
+   ],
+   "publishedAt": "2026-09-19T23:59:58+00:00"
   },
   "partition-of-india": {
    "url": "/audio/history/partition-of-india.mp3?v=d8377c14",
