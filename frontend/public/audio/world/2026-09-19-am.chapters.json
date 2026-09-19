@@ -1,0 +1,51 @@
+{
+ "version": "1.2.0",
+ "title": "On Air · Saturday 19 September 2026",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Headlines",
+   "endTime": 31.895
+  },
+  {
+   "startTime": 31.895,
+   "title": "Canada and the E-U",
+   "url": "https://news.voidvision.org/story/49abf832-fb5a-45c2-95a3-cd81f24ad0fe/",
+   "endTime": 119.511
+  },
+  {
+   "startTime": 119.511,
+   "title": "Federal Reserve Rate Hike",
+   "url": "https://news.voidvision.org/story/53db3676-04b7-492d-802d-2f8d5d18132b/",
+   "endTime": 181.356
+  },
+  {
+   "startTime": 181.356,
+   "title": "Kennedy Center Ruling",
+   "url": "https://news.voidvision.org/story/3024b0c1-5996-48e7-81a3-c80e8edb2913/",
+   "endTime": 249.687
+  },
+  {
+   "startTime": 249.687,
+   "title": "Venezuela Gold Deal",
+   "url": "https://news.voidvision.org/story/d4637611-4ef0-4063-929e-b38d43880afa/",
+   "endTime": 317.207
+  },
+  {
+   "startTime": 317.207,
+   "title": "Also today",
+   "endTime": 389.485
+  },
+  {
+   "startTime": 389.485,
+   "title": "Hong Kong's A-I Chief",
+   "endTime": 411.305
+  },
+  {
+   "startTime": 411.305,
+   "title": "Editorial",
+   "endTime": 605.153
+  }
+ ]
+}
