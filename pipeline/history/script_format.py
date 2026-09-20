@@ -43,26 +43,36 @@ KINDS = ("OPEN", "TITLE", "SCENE", "DOCUMENT", "PERSPECTIVE", "ASIDE", "TURN",
 QUOTING = ("DOCUMENT", "PERSPECTIVE", "ASIDE")
 WPM = 145.0                      # the catalogue average, used when the cast is unknown
 # Narrators do NOT read at one rate, and casting is deterministic from the
-# event, so the difference is predictable rather than noise. Measured over the
-# first 33 rendered episodes as words / (rendered minutes - MUSIC_MINUTES):
+# event, so the difference is predictable rather than noise. Measured over all
+# 39 rendered episodes as words / (rendered minutes - MUSIC_MINUTES):
 #
-#   am_michael  n=12  139.7 wpm (sd 4.6)      bm_lewis   n=9  148.0 (sd 2.7)
-#   bm_george   n= 9  145.0 wpm (sd 4.4)      bm_daniel  n=3  168.4 (sd 4.6)
+#   am_michael  n=15  139.4 wpm (sd 4.2)      bm_lewis   n=12  146.1 (sd 4.0)
+#   bm_george   n= 9  145.0 wpm (sd 4.4)      bm_daniel  n= 3  168.4 (sd 4.6)
+#
+# bm_lewis was 148.0 at n=9 and settled to 146.1 as three more of its episodes
+# landed, which is what a small sample does. The others moved by less than a
+# word.
 #
 # bm_daniel reads a fifth faster than am_michael. Against one constant that is
 # a two minute error at episode length, in opposite directions, so an
 # am_michael script written to the top of the band renders OVER the ceiling
 # while a bm_daniel script written the same way comes in two minutes short.
-# Using the cast rate takes the worst error on those 33 episodes from 2.1
-# minutes to 0.8, and it caught a written but unrendered script that would
+# Using the cast rate took the worst error, measured on the 33 episodes that
+# existed when the rule was written, from 2.1 minutes to 0.8, and it caught a
+# written but unrendered script that would
 # have come out at 15.1 minutes, before the nine minutes of rendering that
 # would have been the only other way to find out.
 #
-# bm_daniel is three episodes. Revisit the number as the catalogue fills.
+# bm_daniel rests on three episodes and always will: it is cast only for
+# `category: cultural`, all three of those events are already rendered, and
+# none of the events still to be written casts it. So this is not a number
+# waiting for more evidence. It is the number, on three samples, and a
+# cultural event added to the catalogue later is the only thing that would
+# change that.
 NARRATOR_WPM = {
     "am_michael": 140.0,
     "bm_george": 145.0,
-    "bm_lewis": 148.0,
+    "bm_lewis": 146.0,
     "bm_daniel": 168.0,
 }
 # An event with five substantial perspectives cannot state all five fairly
