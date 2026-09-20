@@ -53,7 +53,7 @@ function Column({ op, side }: { op: WeeklyOpinion; side?: "left" | "right" }) {
  * existed fall back to the `paired` flag, and before that to a left/right
  * match on one topic — so every vintage of the data still finds its argument.
  */
-function findPair(opinions: WeeklyOpinion[]): [WeeklyOpinion, WeeklyOpinion] | null {
+export function findPair(opinions: WeeklyOpinion[]): [WeeklyOpinion, WeeklyOpinion] | null {
   const byPairId = new Map<string, WeeklyOpinion[]>();
   for (const o of opinions) {
     if (!o.pair_id) continue;

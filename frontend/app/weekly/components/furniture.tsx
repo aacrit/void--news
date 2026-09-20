@@ -59,7 +59,13 @@ export function InkFlourish() {
 export function RevealFlourish() {
   const [ref, visible] = useScrollReveal(0.3);
   return (
-    <div ref={ref as React.RefObject<HTMLDivElement>} className={visible ? "wk-reveal--visible" : ""}>
+    /* `wk-reveal` as well as the visible modifier: without the base class the
+       observer toggled a class that matched no rule, so eight of these per page
+       ran an IntersectionObserver to accomplish nothing. */
+    <div
+      ref={ref as React.RefObject<HTMLDivElement>}
+      className={`wk-reveal${visible ? " wk-reveal--visible" : ""}`}
+    >
       <InkFlourish />
     </div>
   );

@@ -378,6 +378,58 @@ def test_class_parity():
 
 
 # ---------------------------------------------------------------------------
+# W-T08  Document structure: one h1, no skipped level, no dead contents anchor
+# ---------------------------------------------------------------------------
+def _strip_comments(src):
+    """Drop /* ... */ blocks. These files DISCUSS their heading levels, and a
+    comment reading "the issue's own <h1>" is not a rendered heading."""
+    return re.sub(r"/\*.*?\*/", "", src, flags=re.S)
+
+
+def _headings():
+    """Every heading the weekly tree renders, as (file, level)."""
+    out = []
+    for f in sorted(WEEKLY_TSX.rglob("*.tsx")):
+        for m in re.finditer(r"<h([1-6])[\s>]", _strip_comments(f.read_text())):
+            out.append((f.name, int(m.group(1))))
+    return out
+
+
+def test_document_structure():
+    """The audit found four structural defects here at once, none of them visible.
+
+    `CoverOpening` hard-coded <h1> and is rendered once per cover feature, so
+    the document had two; the cover headline, the largest text on the page, was
+    a <p>; the polarized label was an <h4> directly under an <h2> plate; and
+    Back Issues took a folio without ever being pushed into the contents, so
+    the contents claimed the issue ended a section early.
+
+    Source-level deliberately: it runs with no build, no browser and no
+    network, which is what lets it sit in front of a merge. The built page is
+    checked separately by the headless suite.
+    """
+    print("\nW-T08  document structure")
+    hs = _headings()
+    h1s = [f for f, lv in hs if lv == 1]
+    check("exactly one h1 in the weekly tree", len(h1s) == 1, ", ".join(h1s))
+
+    # Plates are h2 and each piece's own headline is h3. Anything deeper skips
+    # a level, since nothing in the tree renders an h3-level container.
+    deep = sorted({f"{f}:h{lv}" for f, lv in hs if lv > 3})
+    check("no heading below h3", not deep, ", ".join(deep))
+
+    # Every literal in-page anchor the contents offers must exist as an id.
+    src = (WEEKLY_TSX / "WeeklyIssue.tsx").read_text()
+    hrefs = set(re.findall(r'href:\s*"#(wk-[A-Za-z0-9_-]+)"', src))
+    ids = set()
+    for f in sorted(WEEKLY_TSX.rglob("*.tsx")):
+        ids.update(re.findall(r'id=[{"`\s]*"?(wk-[A-Za-z0-9_-]+)', f.read_text()))
+    dead = sorted(hrefs - ids)
+    check("every contents anchor names a real section", not dead, ", ".join(dead))
+    check("contents offers the back issues", "wk-archive" in hrefs)
+
+
+# ---------------------------------------------------------------------------
 # W-T07  The back-issue archive
 # ---------------------------------------------------------------------------
 ISSUES_JSON = ROOT / "frontend" / "build-data" / "weekly-issues.json"
@@ -457,6 +509,7 @@ def main():
     test_committed_snapshot()
     test_build_weekly_row()
     test_class_parity()
+    test_document_structure()
     test_archive()
     print()
     if _failures:
