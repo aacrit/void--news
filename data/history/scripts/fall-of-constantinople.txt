@@ -1,0 +1,147 @@
+## OPEN
+N: Ottoman cannon fired at the Theodosian Walls of Constantinople for fifty three days straight, walls that had turned back every siege for a thousand years, and the walls held.
+N: What let the army in was not the guns. It was a wounded commander carried off to the ships, and a small gate on the city's north side that somebody left open, or stopped defending, nobody agrees which.
+N: An empire that had called itself Rome for eleven hundred and twenty three years ended through that gate, in the last hour of a siege the biggest cannon ever built had not quite won.
+
+## TITLE
+N: The Fall of Constantinople. May twenty ninth, fourteen fifty three.
+
+## SCENE 1 | The engineer he could not afford
+N: In the months before the siege, a Hungarian engineer named Urban offers Constantine the Eleventh a cannon he says can break any wall in Christendom.
+N: The emperor wants it. The treasury cannot pay him.
+N: Urban crosses to Edirne instead, to a sultan who is twenty one years old and has been planning this siege since he was nineteen. Mehmed the Second pays him four times what he asked.
+N: The result is twenty seven feet of bronze, needing sixty oxen and two hundred men to move, firing stone balls of roughly six hundred kilograms. Each shot takes three hours to load.
+N: On the sixth of April, fourteen fifty three, that cannon, one of Mehmed's sixty nine guns, opens fire on the Theodosian Walls, six and a half kilometers of triple fortification built a thousand years earlier and never once broken.
+
+## REST
+
+## SCENE 2 | The hill behind Galata
+N: The twenty second of April. Mehmed orders seventy ships hauled out of the Bosphorus, dragged on greased logs over the hill behind Galata, and lowered into the Golden Horn on the other side.
+N: The chain the Byzantines had stretched across the harbor mouth is still there. It no longer matters. The fleet is already inside it.
+N: Constantine now faces the water from two directions at once, with seven thousand defenders, five thousand Greeks and two thousand foreign volunteers, to hold walls that once needed a garrison for a city of five hundred thousand.
+
+## ASIDE
+N: That city had shrunk to fewer than fifty thousand people. Seven thousand men, most of them not soldiers by trade, were being asked to hold miles of land wall and sea wall against an army estimated at eighty thousand to two hundred thousand.
+
+## SCENE 3 | The last liturgy
+N: The evening of the twenty eighth of May. Inside the Hagia Sophia, Orthodox and Catholic clergy hold a joint service for the first time since the two churches split apart four centuries earlier.
+N: Everyone in the building knows the walls will not hold until morning.
+N: Constantine takes communion, asks forgiveness of anyone he has wronged, and rides to the walls.
+
+## DOCUMENT | Nicolo Barbaro | Diary of the Siege of Constantinople | 1453
+N: Nicolo Barbaro was a Venetian surgeon inside the city that night, keeping a diary of what he saw.
+M: Nothing will ever equal the horror of this harrowing and terrible spectacle.
+
+## REST
+
+## SCENE 4 | The gate
+N: After midnight, the twenty ninth of May. Mehmed sends three waves at the walls in succession. Irregulars first, then Anatolian regulars, then the elite Janissaries.
+N: Around four in the morning, Giovanni Giustiniani, the Genoese commander whose seven hundred volunteers formed the backbone of the defense, is wounded and carried to the ships. The gap he leaves does not close.
+N: At almost the same hour, a group of Ottoman soldiers find the Kerkoporta, a small gate in the northern wall, either unlocked or simply undefended. Whether that was treachery, accident, or a story invented afterward is still argued. They go through it.
+N: Constantine throws off the imperial insignia and charges into the breach with the guards still beside him.
+
+## DOCUMENT | Constantine XI Palaiologos | Attributed last words | 1453
+N: Chroniclers who were not there, because no one who was there survived to tell it, recorded what Constantine is said to have shouted.
+M: The city is fallen and I am still alive.
+N: His body was never identified.
+
+## REST
+
+## SCENE 5 | The nave
+N: By dawn, Ottoman flags fly from the towers. Mehmed rides into the city on horseback, straight to the Hagia Sophia, and orders it converted for Muslim worship.
+N: The chronicler Tursun Beg, who was there, records that the sultan sat alone in the nave for a while and said nothing.
+N: He allows three days of plunder, the customary right of a conquering army, then stops it and starts rebuilding.
+
+## DOCUMENT | Mehmed II | Attributed verse upon entering the ruined Great Palace of Constantinople | 1453
+N: Surveying the ruined Great Palace, Mehmed is said to have spoken a verse of his own.
+M: The spider weaves the curtains in the palace of the Caesars. The owl calls the watches in the towers of Afrasiab.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts of the same siege, and only two of them are the two sides most retellings remember.
+
+## PERSPECTIVE | The Ottoman and Turkish account | victor
+N: This account starts with a hadith recorded generations earlier, in the Musnad of Ahmad ibn Hanbal, attributed to the Prophet Muhammad himself.
+M: Verily you shall conquer Constantinople. What a wonderful leader will he be, and what a wonderful army will that army be.
+N: Seven earlier sieges, by Arab and by Ottoman armies, had failed. Mehmed the Second succeeded at twenty one, after building the fortress of Rumeli Hisari across the strait in four months and nineteen days.
+N: He conceived of the city not as a replacement for Christian Constantinople but as a universal capital inheriting Rome. He called himself Kayser i Rum, Caesar of Rome. He spoke Greek, Persian, Arabic, and Turkish.
+N: Within weeks he issued a firman inviting the Greek population home.
+M: Let them return to their homes and their property. Let no one harm them.
+N: He personally handed the new Ecumenical Patriarch, Gennadios the Second, the staff of office, and guaranteed the Orthodox Church its own courts and schools. Within twenty five years the city was again one of Europe's largest.
+
+## PERSPECTIVE | The Byzantine and Greek Orthodox account | vanquished
+N: This account does not open with a battle. It opens with a number: eleven hundred and twenty three years, from Constantine the First's founding of the city in the year three thirty to Constantine's death on the walls.
+N: They did not call themselves Byzantine. That word was coined by a German historian a century later. They called themselves Romaioi, Romans, and on the twenty ninth of May, fourteen fifty three, Rome finally ended.
+N: Fourteen years earlier, at the Council of Florence, the previous emperor, John the Eighth Palaiologos, had accepted the Pope's authority in exchange for Western soldiers who never came.
+N: Loukas Notaras, the empire's last grand admiral, is said to have preferred the alternative.
+M: I would rather see the Turkish turban in the midst of the city than the Latin mitre.
+N: The legend that followed, the Marmoromenon Vasilias, the Marble King, held that an angel turned Constantine to marble at the moment of his death and hid him beneath the Golden Gate, to return one day and finish the fight. It carried Greek identity through three hundred and seventy years of Ottoman rule.
+
+## REST | short
+
+## PERSPECTIVE | The Western European and Latin Christian account | bystander
+N: This account's strongest claim is that the real damage was already two hundred and forty nine years old. In twelve hundred and four, the Fourth Crusade, meant for Jerusalem, sacked the city for three days and set up a Latin Empire that lasted until Michael the Eighth Palaiologos retook it in twelve sixty one.
+N: Byzantium never recovered the treasury, the fleet, or the fortified provinces that had made it defensible. By fourteen fifty three the walls were mostly intact. There were simply not enough people left to man them.
+N: When the city finally fell, the West's grief was genuine. France and England were finishing the Hundred Years War that very year.
+N: Pope Nicholas the Fifth wrote to every court in Christendom.
+M: The whole of Christendom has suffered a loss which no single country or kingdom can bear alone.
+N: A relief fleet did sail. It arrived on the day the city fell.
+
+## PERSPECTIVE | The Balkan Christian account | vanquished
+N: For Serbs, Bulgarians, Romanians, and Bosnians, fourteen fifty three finished a conquest that began in thirteen eighty nine, at Kosovo Polje, when the Serbian Empire was destroyed and every independent Balkan Christian state began falling in turn.
+N: What followed was the devshirme, a child levy that took Christian boys, usually between eight and eighteen, from their families every three to five years, converted them, and raised them as Janissaries or palace officials. Estimates of how many were taken run from five hundred thousand to one million.
+N: The same legend of the marble emperor beneath the Golden Gate passed into Serbian and Bulgarian tradition too, alongside Serbia's own story of Prince Lazar choosing a heavenly kingdom over an earthly one at Kosovo. It sustained five centuries of identity under Ottoman rule.
+N: It kept working. In nineteen eighty nine, on the six hundredth anniversary of that battle, Slobodan Milosevic stood at Kosovo Polje and used it to gather a crowd of one million.
+M: Six centuries later, we are again in battles and quarrels. They are not armed battles, though such things should not be excluded yet.
+
+## PERSPECTIVE | The Venetian and Genoese merchants | bystander
+N: This account starts from a different question than any of the others. Not who should rule the city, but what happens to the trade running through it.
+N: Venice had held commercial quarters in Constantinople since ten eighty two. Genoa held the district of Pera across the Golden Horn under a treaty from twelve sixty one. Both republics had more money invested in that trade than in any crusade, and pepper, cinnamon, and cloves moved through the city on their ships.
+N: Individual Venetians and Genoese fought and died at the walls, Giovanni Giustiniani's seven hundred among them. Genoa's own colony at Pera stayed formally neutral through the siege, then surrendered peacefully once it was over.
+N: Both cities negotiated trade treaties with Mehmed within a year of the conquest, Genoa in fourteen fifty three, Venice in fourteen fifty four. The overland spice routes now ran through Ottoman territory and Ottoman tariffs, and the far more expensive gamble of sailing around Africa began to look rational.
+N: Within forty years Bartolomeu Dias rounded the Cape of Good Hope, and Vasco da Gama reached Calicut and sailed home with a cargo of pepper that alone repaid sixty times the cost of the voyage.
+
+## TURN | What each one leaves out
+N: And here is what none of the five fully accounts for.
+N: The Ottoman account names the firman and the rebuilt city, and passes quickly over the sack, the thirty thousand enslaved, and the execution of Loukas Notaras, the same admiral heard moments ago preferring the Sultan's turban to Rome's mitre.
+N: The Byzantine account, the one most Western listeners already hold, treats the empire's death as a martyrdom from outside. It says far less about a city that had already lost ninety percent of its people, or the civil wars that brought Ottoman troops in as allies long before they came as conquerors.
+N: The Western European account is honest about twelve hundred and four, and quiet about the submission to Rome its own clergy had refused, the price of the help it says never came.
+N: The Balkan account is right that the devshirme took children by force. It says less about the viziers who rose through that system, and the elites who converted and prospered under it.
+N: And the merchants' account, counted in treaties and pepper margins, says nothing of the war Venice fought against that same empire within ten years of the peace.
+
+## REST
+
+## CLOSE
+N: The Hagia Sophia outlasted every argument made in its name. A cathedral for nine hundred and sixteen years. A mosque for four hundred and eighty one years, starting the year the city fell. A museum from nineteen thirty four. A mosque again from two thousand and twenty.
+
+## SAY
+Constantinople = kon-STAN-tin-OH-pul
+Mehmed = meh-MET
+Palaiologos = pah-lay-OL-oh-gohs
+Giustiniani = joo-stee-nee-AH-nee
+Genoese = jen-oh-EEZ
+Genoa = JEN-oh-ah
+Edirne = eh-DEER-neh
+Theodosian = thee-oh-DOH-shun
+Kerkoporta = ker-koh-POR-tah
+Tursun Beg = toor-SOON beg
+Afrasiab = af-RAH-see-ab
+Kayser i Rum = KAI-zer ee ROOM
+Barbaro = BAR-bah-roh
+Notaras = noh-TAH-rahs
+Romaioi = roh-MY-oy
+Gennadios = geh-NAH-dee-os
+Marmoromenon Vasilias = mar-mo-ro-MEH-non vah-see-LEE-as
+Kosovo Polje = KOH-soh-voh POL-yeh
+Lazar = LAH-zar
+Milosevic = mee-LOH-sheh-vich
+devshirme = dev-SHEER-meh
+Janissaries = JAN-ih-sair-eez
+viziers = vih-ZEERZ
+Pera = PEH-rah
+Galata = gah-LAH-tah
+Bosphorus = BOS-for-us
+Calicut = KAL-ih-kut
+Rumeli Hisari = ROO-meh-lee hih-SAH-ruh
+Hagia Sophia = HAH-yah so-FEE-ah
