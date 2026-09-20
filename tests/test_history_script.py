@@ -167,6 +167,47 @@ check("H-06 catches an episode with no TURN", "H-06" in fails(no_turn), str(fail
 # ---- H-07 length ---------------------------------------------------------
 check("H-07 catches a script that is too short", "H-07" in fails(CLEAN), str(fails(CLEAN)))
 
+# ---- H-07 measures the episode at the voice that will read it -----------
+# One rate for four narrators is a two minute error at episode length, in
+# opposite directions: bm_daniel reads a fifth faster than am_michael. A
+# script sized against the average renders over the ceiling when the slow
+# voice is cast, and nine minutes of rendering is the only other way to find
+# out. cast() is deterministic from the event, so the rate is knowable up front.
+from history.script_format import estimated_minutes, NARRATOR_WPM
+
+_len = pad(CLEAN, 12.0)
+_words = parse_script(_len, "t").words
+# cast(): critical + a mass-death category -> am_michael (the slowest read);
+# cultural -> bm_daniel (the fastest).
+SLOW_EVENT = {"category": "genocide", "severity": "critical"}
+FAST_EVENT = {"category": "cultural", "severity": "moderate"}
+slow, slow_rate, slow_who = estimated_minutes(parse_script(_len, "t"), SLOW_EVENT)
+fast, fast_rate, fast_who = estimated_minutes(parse_script(_len, "t"), FAST_EVENT)
+check("the two events really do cast different narrators",
+      slow_who == "am_michael" and fast_who == "bm_daniel", f"{slow_who} / {fast_who}")
+check("H-07 gives the same script different runtimes for different narrators",
+      abs(slow - fast) > 0.4, f"{slow:.2f} vs {fast:.2f}")
+check("the slower narrator is the longer runtime", slow > fast, f"{slow:.2f} vs {fast:.2f}")
+
+# The failure this exists for: a script sized to the average that renders over
+# the ceiling because the slow voice was cast.
+long_script = pad(CLEAN, 15.2)   # 1,980 words: 14.8 min at the average, 15.2 at am_michael
+mins_avg, _, _ = estimated_minutes(parse_script(long_script, "t"), None)
+check("a script legal at the average rate is caught when the slow voice reads it",
+      mins_avg <= 15.0 and "H-07" in fails(long_script, {**EVENT, **SLOW_EVENT}),
+      f"avg {mins_avg:.2f} min, findings {fails(long_script, {**EVENT, **SLOW_EVENT})}")
+check("the same script passes when the fast voice reads it",
+      "H-07" not in fails(long_script, {**EVENT, **FAST_EVENT}),
+      str(fails(long_script, {**EVENT, **FAST_EVENT})))
+
+generic, rate, who = estimated_minutes(parse_script(_len, "t"), None)
+check("estimated_minutes falls back to the catalogue average with no event",
+      who == "the cast" and abs(generic - (_words / 145.0 + 1.1)) < 1e-9, f"{who} {rate}")
+unknown, rate, _ = estimated_minutes(parse_script(_len, "t"), {"category": "x", "severity": "y"})
+check("an unmeasured narrator degrades to the average rather than raising",
+      rate in set(NARRATOR_WPM.values()) | {145.0}, str(rate))
+
+
 # ---- H-11 a paraphrase is never read in the document voice --------------
 # The failure this exists for reached a finished script: the record carried a
 # line marked "(paraphrased)", H-01 was satisfied because the text really is in

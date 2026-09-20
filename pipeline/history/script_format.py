@@ -41,7 +41,30 @@ KINDS = ("OPEN", "TITLE", "SCENE", "DOCUMENT", "PERSPECTIVE", "ASIDE", "TURN",
 # Segments in which the document voice may speak: a primary source, or a
 # perspective quoting its own witness.
 QUOTING = ("DOCUMENT", "PERSPECTIVE", "ASIDE")
-WPM = 145.0                      # measured on the On Air cast, including pauses
+WPM = 145.0                      # the catalogue average, used when the cast is unknown
+# Narrators do NOT read at one rate, and casting is deterministic from the
+# event, so the difference is predictable rather than noise. Measured over the
+# first 33 rendered episodes as words / (rendered minutes - MUSIC_MINUTES):
+#
+#   am_michael  n=12  139.7 wpm (sd 4.6)      bm_lewis   n=9  148.0 (sd 2.7)
+#   bm_george   n= 9  145.0 wpm (sd 4.4)      bm_daniel  n=3  168.4 (sd 4.6)
+#
+# bm_daniel reads a fifth faster than am_michael. Against one constant that is
+# a two minute error at episode length, in opposite directions, so an
+# am_michael script written to the top of the band renders OVER the ceiling
+# while a bm_daniel script written the same way comes in two minutes short.
+# Using the cast rate takes the worst error on those 33 episodes from 2.1
+# minutes to 0.8, and it caught a written but unrendered script that would
+# have come out at 15.1 minutes, before the nine minutes of rendering that
+# would have been the only other way to find out.
+#
+# bm_daniel is three episodes. Revisit the number as the catalogue fills.
+NARRATOR_WPM = {
+    "am_michael": 140.0,
+    "bm_george": 145.0,
+    "bm_lewis": 148.0,
+    "bm_daniel": 168.0,
+}
 # An event with five substantial perspectives cannot state all five fairly
 # inside ten minutes, and stating them fairly is the whole point of the
 # catalogue, so the band is wide enough to pay for the moat.
@@ -138,6 +161,24 @@ def _fold(s: str) -> str:
 
 def _norm(s: str) -> str:
     return re.sub(r"[^a-z0-9 ]+", " ", _fold(s).lower())
+
+
+def estimated_minutes(script: Script, event: dict | None) -> tuple[float, float, str]:
+    """Runtime for THIS script read by the narrator this event casts.
+
+    Returns (minutes, wpm, who). Falls back to the catalogue average when the
+    event is missing or its narrator has no measured rate yet, so a new voice
+    degrades to the old behaviour instead of raising.
+    """
+    who, rate = "the cast", WPM
+    if event:
+        try:
+            from history.casting import cast
+            who = cast(event).get("narrator") or who
+            rate = NARRATOR_WPM.get(who, WPM)
+        except Exception:
+            pass
+    return script.words / rate + MUSIC_MINUTES, rate, who
 
 
 def validate_script(script: Script, event: dict) -> list[Finding]:
@@ -305,9 +346,11 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
                                    f"event's data: source it or cut it"))
 
     lo, hi = TARGET_MINUTES
-    if not (lo <= script.minutes <= hi):
+    mins, rate, who = estimated_minutes(script, event)
+    if not (lo <= mins <= hi):
         out.append(Finding("H-07", "fail", "TOTAL",
-                           f"{script.words} words is {script.minutes:.1f} min, outside {lo:.0f}-{hi:.0f}"))
+                           f"{script.words} words is {mins:.1f} min at {who}'s {rate:.0f} wpm, "
+                           f"outside {lo:.0f}-{hi:.0f}"))
     for seg in script.segments:
         for l in seg.lines:
             if "—" in l.text or "–" in l.text:

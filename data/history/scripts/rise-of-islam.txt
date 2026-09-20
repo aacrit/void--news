@@ -26,7 +26,7 @@ N: Khadijah became the first Muslim, and spent twenty five years, until her deat
 ## SCENE 2 | Twelve years, and a road north
 N: For twelve years Muhammad preaches in Mecca, and Mecca does not want to hear it. The Quraysh elite run the Kaaba, and a single god with no room for the others threatens their pilgrim income.
 N: His followers stay in the dozens, then the low hundreds. In six hundred twenty two, facing an assassination plot, Muhammad leaves for a town called Yathrib, two hundred seventy miles north.
-N: It renames itself Medina, the City of the Prophet. The Islamic calendar begins counting from this year, not from the cave. The message needed the community it was about to build.
+N: It renames itself Medina, the City of the Prophet.
 
 ## SCENE 3 | The empire with no successor
 N: June eighth, six hundred thirty two. Muhammad dies in Medina at sixty two, having named no one to follow him.
