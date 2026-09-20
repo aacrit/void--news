@@ -668,7 +668,7 @@ function HomeContentInner({
     window.history.replaceState({}, "", url.toString());
   }, [filteredStories, handleStoryClick]);
 
-  // All curated stories render at once (top 50). Lightweight text cards, so
+  // All curated stories render at once (see FEED_DISPLAYED). Lightweight text cards, so
   // there is no progressive-disclosure gate. Editor sorts; the full feed shows.
   const mainStories = mainPool;
 

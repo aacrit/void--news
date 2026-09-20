@@ -1,5 +1,6 @@
 "use client";
 
+import { FEED_DISPLAYED } from "../lib/feedConfig";
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -74,7 +75,7 @@ interface NavItem {
 // call renderItem(MAIN_ITEMS[0..3]) by hardcoded index, so adding History and
 // Weekly in the middle silently dropped Sources and Feedback off the drawer.
 const MAIN_ITEMS: NavItem[] = [
-  { href: "/", label: "Today’s Feed", desc: "The front page, 50 stories.", accent: "news", icon: "feed", cascade: 2 },
+  { href: "/", label: "Today’s Feed", desc: `The front page, ${FEED_DISPLAYED} stories.`, accent: "news", icon: "feed", cascade: 2 },
   { href: "/onair", label: "On Air", desc: "The broadcast.", accent: "onair", icon: "onair", cascade: 2 },
   { href: "/history", label: "History", desc: "78 events, told from every side.", accent: "neutral", icon: "history", cascade: 3 },
   { href: "/weekly", label: "Weekly", desc: "The week, in one issue.", accent: "neutral", icon: "weekly", cascade: 3 },
