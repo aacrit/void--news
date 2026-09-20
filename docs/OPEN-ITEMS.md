@@ -97,15 +97,38 @@ treatment `history/data.ts` got in rev 69 before the 301 comes off.
 
 ## Watch on the next run
 
-**Weekly, Monday 12:00 UTC** — the first post-rebuild run, and the one thing in
-rev 71/72 unverified end to end. It is the run that first persists
-`departments` and `opinions`, first writes 55-75 word briefs with section
-kickers, and first appends to `build-data/weekly-issues.json`. Check that the
-guarded ALTER adds both columns, that `Tech brief` / `Sports page` land in
-`departments`, and that the commit step stages all three weekly artifacts.
+**Weekly — DISCHARGED 2026-09-20.** Vol. I, No. 1 ran on the new Sunday cadence
+and is live. Everything rev 71/72 left unverified now has evidence:
+`departments` carries Technology and Sports & Culture (the first departments
+the section has ever published), `opinions` carries five essays with the first
+two paired, `week_days` recorded seven days, every brief item carries a
+`cluster_id` and a section kicker, and `build-data/weekly-issues.json` took its
+append. Enforcement fired on six pieces, named each finding, regenerated all
+six, and shipped the cleaner attempt every time (opinion 4 went 310 to 354
+words; opinion 2 lost "crucial"). `_spread_over_week` logged "10 stories across
+3 day(s) of the week" against the old all-ten-from-one-date. All nine
+`verify_sections` W-checks pass against the served page, W-08 included, which
+was red on the live site before this branch.
 
-**Weekly audio** — the first episode has never been heard. The workflow carries
-the Kokoro venv and model cache, but nothing has run it.
+What it exposed, all now fixed: a `NameError` on the last line before
+persistence that discarded four minutes of paid generation (and the import-wall
+premise that had exempted the whole generator file from testing), and a brief
+length check that tested a ceiling with no floor, which passed a column with
+nine of ten items below the spec.
+
+**Still short of spec, and not yet solved:** the model undershoots every length
+target and regeneration narrows the gap without closing it. Cover 2 shipped at
+507 words against 800-1200, two opinions below the 400 floor, and the briefs at
+40-49 against 55-75. The enforcement is working as designed (measure,
+regenerate once naming the findings, ship the cleaner attempt); the prompts are
+what need strengthening. Three uses of "significant" also survived two attempts
+and are on the page. They are deliberately NOT stripped mechanically: deleting
+the word from "widespread protests and significant disruption" changes what the
+sentence says, so this needs a rewrite, not a regex.
+
+**No cover image** was found for the issue. W-03 treats that as acceptable
+(better than an unlicensed one) but a magazine cover with no photograph is a
+standing gap.
 
 **Daily pipeline, after rev 65** (the rev-64 list is DISCHARGED: 09-07/08/09
 were clean, `14208/14208 re-ranked`, `Errors: 0`, verify-production green):
