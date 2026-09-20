@@ -62,6 +62,8 @@ jobs:
           python pipeline/validation/test_disaster_severity.py
           python tests/test_radio_script.py
           python tests/test_history_audio.py
+          pip install --quiet pyyaml
+          python tests/test_history_script.py
 
   # End-to-end run of the editorial half of the pipeline (8c through 8f plus
   # the static export) against a synthetic state DB built from the committed
