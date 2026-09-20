@@ -3169,7 +3169,27 @@
   position: sticky;
   top: 0;
   width: 100%;
-  min-height: 100vh;
+  /* The hero is sticky at top:0 but it does NOT start at the top of the
+     screen: the history topbar sits above it (and, before it scrolls away,
+     the experimental banner). A full 100vh therefore puts the hero's bottom
+     one chrome-height BELOW the fold, and everything anchored down there
+     goes with it, because the content is justify-content: flex-end.
+     That is how the Listen button came to be invisible on every desktop
+     size while rendering perfectly in the DOM: measured on the deployed
+     build at 1440x760, the button ran 755 to 799 against a 760 fold, and
+     the scroll hint below it was entirely off-screen.
+     Subtracting the topbar leaves the hero the room it actually has. The
+     scroll hint's ~94px then acts as the buffer that keeps the CTA clear
+     even in the moment before the banner scrolls away. */
+  min-height: calc(100vh - var(--hist-topbar-height));
+  min-height: calc(100svh - var(--hist-topbar-height));
+  /* And a reserved strip at the hero's own bottom edge. The content is
+     flex-end, so this lifts the whole stack rather than padding a box: it
+     is what keeps the CTA clear in the first moments of a visit, while the
+     experimental banner is still on screen and stealing another 35px.
+     Without it the clearance measured 7px on a tablet, which is not a
+     margin, it is a coincidence. */
+  padding-bottom: var(--space-4);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
