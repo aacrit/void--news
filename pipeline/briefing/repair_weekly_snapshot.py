@@ -32,9 +32,18 @@ REPO = Path(__file__).resolve().parents[2]
 if str(REPO / "pipeline") not in sys.path:
     sys.path.insert(0, str(REPO / "pipeline"))
 
-from briefing.weekly_parse import _opinion_items, looks_like_headline  # noqa: E402
+from briefing.weekly_parse import (  # noqa: E402
+    _opinion_items, banned_terms, looks_like_headline, strip_dashes,
+)
 
 WEEKLY = REPO / "frontend" / "public" / "data" / "weekly.json"
+
+# THE DEPLOY TREE IS THE ARCHIVE OF RECORD, and since /weekly became a server
+# component it is also what the PAGE reads. Repairing weekly.json alone fixed a
+# file no component imports any more: the prose on the live page comes from
+# build-data. All three carry the same issues, so all three are repaired.
+ISSUES = REPO / "frontend" / "build-data" / "weekly-issues.json"
+ARCHIVE = REPO / "frontend" / "public" / "data" / "weekly-archive.json"
 
 
 def title_from_timeline(entries) -> str:
@@ -46,6 +55,66 @@ def title_from_timeline(entries) -> str:
         if e.get("title") and n > best_n:
             best, best_n = e["title"], n
     return best
+
+
+# Every field of the row that is EDITORIAL PROSE, and therefore dash-free by
+# the cardinal rule. Audio scripts are deliberately absent: there a dash is a
+# breath mark for the synthesiser, and the exporter drops them anyway.
+_PROSE_SCALARS = ("cover_headline", "opinion_text", "opinion_headline",
+                  "bias_report_text")
+_PROSE_IN_LISTS = {
+    "cover_text": ("headline", "text"),
+    "departments": ("headline", "text"),
+    "opinions": ("headline", "text", "topic"),
+    "opinion_left": ("headline", "text", "topic"),
+    "opinion_center": ("headline", "text", "topic"),
+    "opinion_right": ("headline", "text", "topic"),
+    "recap_stories": ("headline", "summary"),
+}
+
+
+def dedash(data) -> list[str]:
+    """Strip em and en dashes from every published prose field.
+
+    CLAUDE.md bans both as an AI tell, and the prompts said so, but only one of
+    six generators enforced anything — so the live page carries three in the
+    opinion columns alone. The generator checks now; this is the half that
+    takes effect today rather than on Monday.
+
+    Banned TERMS are deliberately not touched. "Crucially" cannot be removed
+    without rewriting the sentence around it, and a script guessing at that
+    would do more damage than the word does. Those nine hits stand until the
+    next run writes prose that was measured.
+    """
+    changes = []
+    n = 0
+
+    for k in _PROSE_SCALARS:
+        v = data.get(k)
+        if isinstance(v, str) and ("\u2014" in v or "\u2013" in v):
+            data[k] = strip_dashes(v)
+            n += 1
+            changes.append(f"{k}: dashes removed")
+
+    for key, fields in _PROSE_IN_LISTS.items():
+        for i, item in enumerate(data.get(key) or []):
+            if not isinstance(item, dict):
+                continue
+            for f in fields:
+                v = item.get(f)
+                if isinstance(v, str) and ("\u2014" in v or "\u2013" in v):
+                    item[f] = strip_dashes(v)
+                    n += 1
+                    changes.append(f"{key}[{i}].{f}: dashes removed")
+
+    if n:
+        left = sorted({t for key, fields in _PROSE_IN_LISTS.items()
+                       for item in (data.get(key) or []) if isinstance(item, dict)
+                       for f in fields for t in banned_terms(item.get(f))})
+        if left:
+            changes.append("banned terms still present and NOT rewritten: "
+                           + ", ".join(left) + " (the next run writes measured prose)")
+    return changes
 
 
 def repair(data) -> list[str]:
@@ -162,6 +231,11 @@ def normalize(data) -> list[str]:
     return changes
 
 
+def _fix(row) -> list[str]:
+    """normalize first: it parses the JSON columns that repair walks."""
+    return normalize(row) + repair(row) + dedash(row)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--dry-run", action="store_true", help="report without writing")
@@ -171,23 +245,49 @@ def main() -> int:
         print(f"no snapshot at {WEEKLY}")
         return 1
 
-    data = json.loads(WEEKLY.read_text(encoding="utf-8"))
-    print(f"issue #{data.get('issue_number')} ({data.get('week_start')})")
+    touched = 0
 
-    # normalize first: it parses the JSON columns that repair walks.
-    changes = normalize(data) + repair(data)
-    if not changes:
-        print("  snapshot already matches what the exporter emits")
-        return 0
+    # 1. The latest-issue snapshot.
+    data = json.loads(WEEKLY.read_text(encoding="utf-8"))
+    print(f"{WEEKLY.name}: issue #{data.get('issue_number')} ({data.get('week_start')})")
+    changes = _fix(data)
     for line in changes:
         print(f"  {line}")
+    if not changes:
+        print("  already matches what the exporter emits")
+    elif not args.dry_run:
+        # Match export_static.wj() exactly, so a repair is a small diff.
+        WEEKLY.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+        touched += 1
 
-    if args.dry_run:
-        return 0
+    # 2. The archive of record, and the copy served to the browser. EVERY issue
+    #    in them, because a back issue is a live page too.
+    for path in (ISSUES, ARCHIVE):
+        if not path.exists():
+            continue
+        rows = json.loads(path.read_text(encoding="utf-8"))
+        if not isinstance(rows, list):
+            continue
+        print(f"{path.name}: {len(rows)} issue(s)")
+        n = 0
+        for row in rows:
+            if not isinstance(row, dict):
+                continue
+            # The archive is a WeeklyIssueSummary list: eleven keys, no
+            # essays. Running the full repair on it invents columns it does
+            # not have, so a summary row only gets its prose cleaned.
+            fix = _fix if "cover_text" in row else dedash
+            for line in fix(row):
+                n += 1
+                print(f"  #{row.get('issue_number')}: {line}")
+        if not n:
+            print("  already clean")
+        elif not args.dry_run:
+            path.write_text(json.dumps(rows, ensure_ascii=False), encoding="utf-8")
+            touched += 1
 
-    # Match export_static.wj() exactly, so a repair is a small diff.
-    WEEKLY.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
-    print("  written")
+    if not args.dry_run and touched:
+        print(f"written ({touched} file(s))")
     return 0
 
 

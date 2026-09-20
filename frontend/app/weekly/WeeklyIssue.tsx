@@ -235,7 +235,8 @@ export default function WeeklyIssue({
               headline={coverHeadline}
               deck={deck}
               dateline={weekRange}
-              sources={lead.timeline?.reduce((n, e) => n + (e.source_count || 0), 0) || null}
+              sources={lead.week_sources ?? null}
+              days={lead.days_active ?? null}
             />
             <Feature story={lead} id="wk-feature-1" lead />
           </>
@@ -265,7 +266,8 @@ export default function WeeklyIssue({
                     : undefined
                 }
                 dateline={weekRange}
-                sources={second.timeline?.reduce((n, e) => n + (e.source_count || 0), 0) || null}
+                sources={second.week_sources ?? null}
+                days={second.days_active ?? null}
               />
               <Feature story={second} id="wk-feature-2" />
             </div>
