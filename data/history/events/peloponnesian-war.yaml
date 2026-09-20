@@ -78,8 +78,8 @@ key_figures:
 - name: Lysander
   role: Spartan navarch who secured Persian funding, destroyed the Athenian fleet at Aegospotami (405 BCE), and imposed the Thirty Tyrants
   wikidata: Q143559
-  born: 401
-  died: 395
+  born: null
+  died: -395
   wikipedia: https://en.wikipedia.org/wiki/Lysander
 - name: Brasidas
   role: Spartan general who broke the mold of cautious Spartan strategy by campaigning aggressively in Thrace; killed at Amphipolis in 422 BCE

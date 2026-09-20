@@ -547,8 +547,8 @@
     "name": "Lysander",
     "role": "Spartan navarch who secured Persian funding, destroyed the Athenian fleet at Aegospotami (405 BCE), and imposed the Thirty Tyrants",
     "wikidata": "Q143559",
-    "born": 401,
-    "died": 395,
+    "born": null,
+    "died": -395,
     "wikipedia": "https://en.wikipedia.org/wiki/Lysander"
    },
    {
@@ -14970,10 +14970,9 @@
    {
     "name": "John Ross",
     "role": "Principal Chief of the Cherokee Nation, opposed removal for two decades",
-    "wikidata": "Q456083",
-    "born": 1777,
-    "died": 1856,
-    "wikipedia": "https://en.wikipedia.org/wiki/John_Ross_(Royal_Navy_officer)"
+    "born": 1790,
+    "died": 1866,
+    "wikipedia": "https://en.wikipedia.org/wiki/John_Ross_(Cherokee_chief)"
    },
    {
     "name": "Winfield Scott",
@@ -15547,10 +15546,9 @@
    {
     "name": "Lord Elgin",
     "role": "British High Commissioner who ordered the burning of the Yuanmingyuan (Old Summer Palace)",
-    "wikidata": "Q335098",
-    "born": 1766,
-    "died": 1841,
-    "wikipedia": "https://en.wikipedia.org/wiki/Thomas_Bruce,_7th_Earl_of_Elgin"
+    "born": 1811,
+    "died": 1863,
+    "wikipedia": "https://en.wikipedia.org/wiki/James_Bruce,_8th_Earl_of_Elgin"
    },
    {
     "name": "Charles Elliot",
@@ -16112,10 +16110,9 @@
    {
     "name": "Henry Williams",
     "role": "Church Missionary Society missionary; translated the treaty into Te Reo Maori overnight on February 4-5, 1840 — later accused of deliberate mistranslation",
-    "wikidata": "Q993376",
-    "born": 1805,
-    "died": 1887,
-    "wikipedia": "https://en.wikipedia.org/wiki/Henry_Williams_(Massachusetts_politician)"
+    "born": 1792,
+    "died": 1867,
+    "wikipedia": "https://en.wikipedia.org/wiki/Henry_Williams_(missionary)"
    },
    {
     "name": "Tamati Waka Nene",
@@ -20587,7 +20584,7 @@
  {
   "slug": "russian-revolution",
   "title": "The Russian Revolution",
-  "subtitle": "The Tsar abdicated on a Wednesday. By Friday, two governments claimed to rule Russia. By October, neither did.",
+  "subtitle": "The Tsar abdicated on a Thursday. By Friday, two governments claimed to rule Russia. By October, neither did.",
   "date_display": "February-October 1917",
   "date_sort": 1917,
   "date_precision": "month",
@@ -23349,9 +23346,9 @@
    {
     "name": "Gareth Jones",
     "role": "Welsh journalist; walked through famine-stricken Ukraine in March 1933; published eyewitness accounts; murdered in Manchuria in 1935, age 29",
-    "wikidata": "Q15990091",
-    "born": 1951,
-    "wikipedia": "https://en.wikipedia.org/wiki/Gareth_Jones_(director)"
+    "born": 1905,
+    "died": 1935,
+    "wikipedia": "https://en.wikipedia.org/wiki/Gareth_Jones_(journalist)"
    },
    {
     "name": "Walter Duranty",
@@ -26195,7 +26192,7 @@
    {
     "text": "The division of India is, in my opinion, the greatest blunder in the whole history of the British Empire.",
     "author": "Sir Cyril Radcliffe",
-    "work": "Private correspondence, quoted inRead and Fisher, The Proudest Day",
+    "work": "Private correspondence, quoted in Read and Fisher, The Proudest Day",
     "date": "1947"
    },
    {
@@ -35949,7 +35946,7 @@
   "significance": "The Islamic Republic's 1979 constitution established velayat-e faqih — the guardianship of the jurist — as its governing principle: a senior cleric holds supreme authority over all branches of government. No Shia state had operated on this principle before. The constitution created a dual structure: an elected president and parliament, subordinate to an unelected Supreme Leader (Khomeini until 1989, Ali Khamenei from 1989 to 2026) and a Guardian Council of 12 jurists who vet all candidates and legislation.\n\nThe revolution's consequences radiated outward. Iraq's Saddam Hussein invaded Iran on September 22, 1980; the war lasted 8 years and killed between 500,000 and 1,000,000. Iran created Hezbollah in Lebanon in 1982, building a militia and political party that by 2006 had 25,000 fighters and controlled southern Lebanon. The US Embassy hostage crisis destroyed Jimmy Carter's presidency and defined US-Iran relations for the next 47 years. Iran's nuclear program, visible to Western intelligence by 2002, produced the Joint Comprehensive Plan of Action (JCPOA) in 2015 — which the United States withdrew from in 2018. The revolution demonstrated that Islamism was a viable political form capable of toppling a US-backed, oil-rich, nuclear-aspirant monarchy. Every Islamist movement since 1979 — Sunni and Shia — has operated in the shadow of that proof.\n",
   "death_toll": "Revolutionary phase (January 1978-February 1979): estimated 2,781 killed according to the Martyrs Foundation, 3,000-10,000 according to independent estimates. Post-revolutionary executions (1979-1989): 8,000-12,000, including the 1988 mass executions of an estimated 2,800-5,000 political prisoners in a few months following a fatwa issued by Khomeini on July 28, 1988.",
   "affected_population": "Iran's population in 1979: approximately 37 million. The revolution restructured the entire Middle East: it triggered the Iran-Iraq War (1980-1988, 500,000-1,000,000 dead), created Hezbollah (1982), and ended 26 years of US-Iranian alliance.",
-  "duration": "Revolutionary phase: January 9, 1978 (Qom protests) to February 11, 1979 (Islamic Republic established), 13 months. The Islamic Republic founded on that date continues to govern Iran in 2026.",
+  "duration": "Revolutionary phase: January 9, 1978 (Qom protests) to February 11, 1979 (the monarchy falls), 13 months. The Islamic Republic founded on that date continues to govern Iran in 2026.",
   "key_figures": [
    {
     "name": "Ayatollah Ruhollah Khomeini",
