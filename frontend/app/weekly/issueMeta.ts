@@ -13,6 +13,11 @@ import { clip, essayParagraphs, formatWeekRange, weeklyDisplayNo } from "./forma
  * published shared one title, one description and one OG card. An issue is a
  * distinct publication with its own cover story; it deserves its own.
  *
+ * The name in the title is "Weekly · Void News", not "Void Weekly": a shared
+ * link is often the first time someone meets the brand, and the section is a
+ * section of Void News rather than a product beside it (see
+ * components/SectionNameplate).
+ *
  * The cover art is the OG image when the issue has one. It is always from a
  * freely licensed source (Wikimedia Commons, or Unsplash/Pexels when a key is
  * configured) — a publisher's og:image is never used, because it is usually a
@@ -25,17 +30,17 @@ export function issueMetadata(issue: WeeklyDigestData, path: string): Metadata {
   const lede = essayParagraphs(issue.cover_text?.[0]?.text || "")[0] || "";
 
   const title = headline
-    ? `Issue #${no}: ${headline} · Void Weekly`
-    : `Issue #${no} · Void Weekly`;
+    ? `Issue #${no}: ${headline} · Weekly · Void News`
+    : `Issue #${no} · Weekly · Void News`;
   const description = lede
     ? clip(lede, 160)
-    : `Void Weekly, issue #${no}, covering ${range}.`;
+    : `Void News Weekly, issue #${no}, covering ${range}.`;
 
   const base = pageMetadata({ title, description, path });
   const cover = issue.cover_image_url;
   if (!cover) return base;
 
-  const image = { url: cover, alt: headline || `Void Weekly issue ${no}` };
+  const image = { url: cover, alt: headline || `Void News Weekly, issue ${no}` };
   return {
     ...base,
     openGraph: { ...base.openGraph, images: [image, OG_IMAGE] },

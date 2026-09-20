@@ -1,7 +1,8 @@
 # void --news — Design System: "Cinematic Press" (Press & Precision v2)
 
 **Version:** 2.5
-**Last updated:** 2026-05-03 (rev 22 — Mobile redesign Phase 1-4: spacing tokens, MobileBriefPill expansion, Sigil hierarchy, Six Lenses disclosure, DeepDive lazy-load, BiasInspector bottom-sheet)
+**Last updated:** 2026-09-20 (rev 75 — Brand architecture: sections of Void News stop taking the VOID <WORD> product lockup; one `SectionNameplate`; see §1b)
+**Previously:** 2026-05-03 (rev 22 — Mobile redesign Phase 1-4: spacing tokens, MobileBriefPill expansion, Sigil hierarchy, Six Lenses disclosure, DeepDive lazy-load, BiasInspector bottom-sheet)
 
 ---
 
@@ -13,6 +14,69 @@
 **On interaction:** The precision of a data terminal with rack focus, atmospheric haze, and cinematic shadows.
 
 The newspaper earns trust through restraint. The data layer earns trust through transparency. The cinematic layer earns emotion through light and texture.
+
+---
+
+## 1b. Brand Architecture — one product, many sections
+
+**Void** is the parent. **Void News** is a product of it, and **Void Vision**
+(the CEO's channel) is a coming sibling product. Everything else the reader can
+reach — History, Weekly, On Air, The Brief, Opinion, Deep Dive, Sources, Ship,
+Games, Revolt — is a **section of Void News**, not a brand beside it.
+
+### The rule
+
+> The `VOID [Sigil-O] <WORD>` lockup names a **product of Void**. A section
+> never takes it. A section is set in its plain name, in editorial italic, in
+> the section's own accent.
+
+This is why the rule exists rather than the taste behind it: the lockup is a
+*form*, and a form is read before a word is. "VOID HISTORY" beside "VOID NEWS"
+does not say "the history section" however small it is set, because it is the
+same shape as the thing it is meant to sit under. Between 2026-08-04 and rev 75
+the masthead carried two of these lockups under an eyebrow reading "Also from
+Void", and the History and Weekly pages each led with their own; three mastheads
+competed on one bar and two sections had quietly promoted themselves.
+
+### The three expressions
+
+| Where | What renders | Component |
+|---|---|---|
+| News masthead | `History`  `Weekly` — Playfair italic, `--text-sm`, ink until hovered, then the section accent + an underline that draws from the left | `NavBar` → `.nav-history` / `.nav-weekly` |
+| A section's own masthead | `VOID [O] NEWS │ History` — the masterbrand in its lockup, a hairline, the section in italic accent at the same cap height | `SectionNameplate` |
+| A magazine cover | The same nameplate at cover size (34px) | `SectionNameplate` via `CinematicCover` |
+
+`SectionNameplate` is the one implementation, used by History, Weekly, Revolt
+and Games. Both halves are links: the lockup goes home, the section word goes
+to the section's front page — which is what retired the separate "← back to
+VOID NEWS" mark each section page used to carry beside its own logo. A reader
+inside a section of the paper has not left the paper and does not need an exit.
+
+Sizing is one number (`height`), inherited by both halves, so a breakpoint
+scales the nameplate in CSS instead of rendering a second copy of it in the
+DOM. Under ~380px the section word steps out and the masterbrand stays: a
+reader already on `/history` knows which section they are in.
+
+### Section accents
+
+One accent per section, on every surface it appears: the masthead link, its own
+nameplate, and its row in the mobile drawer.
+
+| Section | Light | Dark | Token |
+|---|---|---|---|
+| History | `#5C4033` umber | `#8B7355` | `--palette-history` |
+| Weekly | `#B91C1C` | `#EF5350` | `--palette-weekly` |
+| Revolt | — | — | `--palette-revolt` |
+
+A cover photograph is the one place the token is not used directly: `#B91C1C`
+on a dark scrim is a red you can see is there and cannot read, so `.wk-cover`
+declares `--wk-cover-accent` and `.wk-cover--has-image` raises it to `#FF6B63`.
+
+### Naming in prose and metadata
+
+"Weekly · Void News", never "Void Weekly". A shared link is often where someone
+meets the brand, so the title carries the product and the section in the order
+they nest: `Issue #26: <headline> · Weekly · Void News`.
 
 ---
 

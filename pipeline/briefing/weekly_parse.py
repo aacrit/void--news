@@ -343,6 +343,25 @@ def _opinion_items(opinions, issue_number):
     return items
 
 
+# The slim back-issue index the browser gets: enough to list past issues and
+# fill the audio playlist, without shipping every past issue's prose. It lives
+# here, beside the row builder, so the exporter that WRITES the index and the
+# tools that REPAIR it cannot drift into disagreeing about what an index row is.
+#
+# The credit is not optional furniture. For a CC image it IS the licence
+# condition, so an index that carries the cover url and drops the photographer
+# publishes that picture unlicensed wherever the index is rendered.
+INDEX_COLS = ("id", "issue_number", "edition", "week_start", "week_end",
+              "cover_headline", "cover_image_url",
+              "cover_image_attribution", "cover_image_source",
+              "audio_url", "audio_duration_seconds", "created_at")
+
+
+def index_rows(issues):
+    """The served back-issue index, derived from the archive of record."""
+    return [{k: i.get(k) for k in INDEX_COLS} for i in issues]
+
+
 def build_weekly_row(*, edition, week_start, week_end, issue_number, cover_items,
                      opinions, tech, sports, recap_stories, bias_text, bias_data,
                      weekly_opinion, audio, cover_image, total_articles,

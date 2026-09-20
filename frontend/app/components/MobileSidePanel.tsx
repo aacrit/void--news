@@ -33,7 +33,7 @@ import { fetchLastPipelineRun } from "../lib/supabase";
      Info bar — "Edition as of {time}", "1,016 sources across 158 countries",
                 ThemeToggle
 
-   History and Weekly are the drawer's share of the masthead .nav-spinoffs row,
+   History and Weekly are the drawer's share of the masthead .nav-sections row,
    which is shown from 768px up; below that this drawer is what replaces it.
    Every main row shares one layout: leading icon + command (editorial voice) +
    description (structural voice), full-width tap target, accent rail on the
@@ -61,7 +61,7 @@ interface NavItem {
   label: string;
   desc: string;
   /** Drives --msp-accent (rail/wash) and --msp-icon (icon color) in CSS. */
-  accent: "news" | "onair" | "neutral";
+  accent: "news" | "onair" | "history" | "weekly" | "neutral";
   icon: NavIcon;
   /** Stagger group for the open cascade (data-msp-cascade). Primary rows
    *  arrive together at 2, peer rows at 3. */
@@ -76,8 +76,8 @@ interface NavItem {
 const MAIN_ITEMS: NavItem[] = [
   { href: "/", label: "Today’s Feed", desc: "The front page, 50 stories.", accent: "news", icon: "feed", cascade: 2 },
   { href: "/onair", label: "On Air", desc: "The broadcast.", accent: "onair", icon: "onair", cascade: 2 },
-  { href: "/history", label: "History", desc: "78 events, told from every side.", accent: "neutral", icon: "history", cascade: 3 },
-  { href: "/weekly", label: "Weekly", desc: "The week, in one issue.", accent: "neutral", icon: "weekly", cascade: 3 },
+  { href: "/history", label: "History", desc: "78 events, told from every side.", accent: "history", icon: "history", cascade: 3 },
+  { href: "/weekly", label: "Weekly", desc: "The week, in one issue.", accent: "weekly", icon: "weekly", cascade: 3 },
   { href: "/sources", label: "Sources", desc: "1,016 sources, 158 countries.", accent: "neutral", icon: "sources", cascade: 3 },
   { href: "/ship", label: "Feedback", desc: "Tell us what to build or fix.", accent: "neutral", icon: "feedback", cascade: 3 },
 ];

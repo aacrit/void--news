@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import SigilWordmark from "../components/SigilWordmark";
+import SectionNameplate from "../components/SectionNameplate";
 
 /* ==========================================================================
    GamesHub — void --games Landing Page
@@ -210,8 +210,15 @@ function VoidMascot() {
 
 function GamesWordmark() {
   return (
-    <div className="games-hub__wordmark-wrap" role="img" aria-label="Games">
-      <SigilWordmark product="GAMES" height={40} />
+    /* Games is a section of Void News, so it takes the section nameplate
+       (VOID NEWS | Games) rather than a VOID GAMES lockup of its own. */
+    <div className="games-hub__wordmark-wrap">
+      <SectionNameplate
+        section="Games"
+        href="/games"
+        height={30}
+        accent="var(--palette-games, var(--sigil-brass))"
+      />
     </div>
   );
 }

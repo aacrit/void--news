@@ -6,10 +6,18 @@ cluster` used to try the publisher's og:image first and reach Wikimedia only if
 that failed; that order is fixed now, but the fix only takes effect on the next
 weekly run, and a wire photograph should not sit on the live site until Monday.
 
-This re-picks the cover for the ALREADY PUBLISHED snapshot, in place: no LLM
-call, no database, no regeneration of a single word of the issue. It searches
-Wikimedia Commons for the cover headline and its topic words, and writes the
-result into frontend/public/data/weekly.json.
+This re-picks the cover for ALREADY PUBLISHED issues, in place: no LLM call, no
+database, no regeneration of a single word of any issue. It searches Wikimedia
+Commons for the cover headline and its topic words.
+
+It writes to BOTH places an issue lives, because they are not the same file and
+only one of them is served. `frontend/public/data/weekly.json` is the latest
+issue's snapshot; `frontend/build-data/weekly-issues.json` is the ARCHIVE OF
+RECORD that /weekly and /weekly/<week> actually render from. Fixing only the
+snapshot leaves the live page showing the picture you thought you had replaced,
+and leaves every BACK issue untouched for good: issue #23 sat in that archive
+hotlinking a photograph off theatlantic.com, on a page nothing was checking,
+because the gate read the snapshot alone.
 
 When a search runs and nothing licensed fits, the image is CLEARED rather than
 left: a weekly with no cover photograph is a design compromise, a weekly with
@@ -35,8 +43,26 @@ if str(REPO / "pipeline") not in sys.path:
     sys.path.insert(0, str(REPO / "pipeline"))
 
 from media.image_search import search_wikimedia, verify_image  # noqa: E402
+from history.resolve_commons import anchors, is_relevant  # noqa: E402
+from briefing.weekly_parse import index_rows  # noqa: E402
 
 WEEKLY = REPO / "frontend" / "public" / "data" / "weekly.json"
+ARCHIVE = REPO / "frontend" / "build-data" / "weekly-issues.json"
+# The slim index the BROWSER fetches, derived from the archive of record. It is
+# the third copy of a cover url and the one the served-output gate reads, so a
+# repair that skips it fixes the pages and leaves the evidence wrong.
+INDEX = REPO / "frontend" / "public" / "data" / "weekly-archive.json"
+
+# A cover url on one of these hosts is one Void may publish. Everything else is
+# somebody's CDN, which is how a wire photograph gets in.
+FREE_HOSTS = ("upload.wikimedia.org", "thumb.wikimedia.org",
+              "images.unsplash.com", "images.pexels.com")
+
+# A diagram is not a magazine cover, whatever its licence. These pass the
+# relevance filter honestly (a locator map of France and Saudi Arabia really is
+# about France and Saudi Arabia) and still must not run on a cover.
+_NOT_A_COVER = ("locator", "_map", "map_", "relief_location", "cgi_", "flag",
+                "blank_", "_svg", ".svg", "diagram", "chart")
 
 # Words that make a headline a headline rather than a search term.
 STOP = {
@@ -90,6 +116,10 @@ def pick(headline: str, cover_text) -> tuple[dict | None, bool]:
     this tool did to its own result twice before the distinction existed.
     """
     reached = False
+    anchor_set = anchors("", headline)
+    if not anchor_set:
+        print("  headline carries no distinctive word to anchor a picture on")
+        return None, False
     for term in search_terms(headline, cover_text):
         try:
             results = search_wikimedia(term, max_results=4)
@@ -103,8 +133,18 @@ def pick(headline: str, cover_text) -> tuple[dict | None, bool]:
         for r in results:
             # The rendered thumbnail, not the multi-megabyte original.
             url = r.thumbnail_url or r.url
-            low = url.lower()
-            if any(w in low for w in ("logo", "icon", "flag_of", "coat_of_arms", "symbol")):
+            # Commons search is keyword matching over file DESCRIPTIONS, so a
+            # hit can be free, real and about something else entirely: this
+            # search returned a photograph of a shepherd leading his camel for
+            # an issue about sanctions, because the file's metadata mentions
+            # Saudi Arabia. The same filter History uses applies here — the
+            # file's own NAME must carry a distinctive prefix from the headline,
+            # and maps, flags and locator diagrams are not covers. Better no
+            # cover than the wrong one. (Filter shared with resolve_commons so
+            # the two cannot drift.)
+            if not is_relevant(url, "image/", anchor_set):
+                continue
+            if any(w in url.lower() for w in _NOT_A_COVER):
                 continue
             if verify_image(url):
                 print(f"  matched on {term!r}")
@@ -112,43 +152,119 @@ def pick(headline: str, cover_text) -> tuple[dict | None, bool]:
     return None, reached
 
 
+def is_free(url) -> bool:
+    return any(h in str(url or "") for h in FREE_HOSTS)
+
+
+def apply(row: dict, chosen: dict | None) -> None:
+    row["cover_image_url"] = chosen["url"] if chosen else None
+    row["cover_image_attribution"] = chosen["attribution"] if chosen else None
+    row["cover_image_source"] = chosen["source"] if chosen else None
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--all", action="store_true",
+                    help="every issue in the archive, not only ones whose cover "
+                         "is already on a non-free host")
     args = ap.parse_args()
 
     if not WEEKLY.exists():
         print(f"no weekly snapshot at {WEEKLY}")
         return 1
 
-    data = json.loads(WEEKLY.read_text(encoding="utf-8"))
-    current = data.get("cover_image_url")
-    print(f"issue #{data.get('issue_number')} ({data.get('week_start')})")
-    print(f"  current: {str(current)[:96]}")
-    print(f"  credit : {data.get('cover_image_attribution')!r} "
-          f"(source {data.get('cover_image_source')!r})")
-
-    chosen, reached = pick(data.get("cover_headline", ""), data.get("cover_text"))
-    if chosen:
-        print(f"  new    : {chosen['url'][:96]}")
-        print(f"  credit : {chosen['attribution']}")
-    elif not reached:
-        print("  could NOT reach Commons; leaving the cover exactly as it is")
-        return 2
+    snapshot = json.loads(WEEKLY.read_text(encoding="utf-8"))
+    archive: list = []
+    if ARCHIVE.exists():
+        loaded = json.loads(ARCHIVE.read_text(encoding="utf-8"))
+        if isinstance(loaded, list):
+            archive = loaded
+        else:
+            print(f"  [warn] {ARCHIVE.name} is not a list; skipping the archive")
     else:
-        print("  nothing freely licensed matched; clearing the cover image")
+        print(f"  [warn] no {ARCHIVE.name}; only the latest snapshot will be updated")
+
+    # One entry per issue number, carrying every row that holds that issue so a
+    # single search result lands in both files at once.
+    issues: dict = {}
+    for row in [snapshot, *archive]:
+        no = row.get("issue_number")
+        issues.setdefault(no, []).append(row)
+
+    unreachable = False
+    changed = 0
+    for no, rows in sorted(issues.items(), key=lambda kv: kv[0] or 0, reverse=True):
+        head = rows[0]
+        current = head.get("cover_image_url")
+        print(f"issue #{no} ({head.get('week_start')})")
+        print(f"  current: {str(current)[:96]}")
+        print(f"  credit : {head.get('cover_image_attribution')!r} "
+              f"(source {head.get('cover_image_source')!r})")
+
+        # An issue already on a free host with a credit is left alone unless
+        # --all: re-rolling a good cover churns the archive for nothing. The
+        # check has to cover EVERY row that holds the issue, not just the first.
+        # The snapshot and the archive are separate files and can disagree about
+        # the same issue, and reading only the head is how a fixed snapshot hid
+        # an unfixed archive row — the row that is actually served.
+        settled = all(is_free(r.get("cover_image_url")) and r.get("cover_image_attribution")
+                      for r in rows)
+        agreed = len({r.get("cover_image_url") for r in rows}) == 1
+        if not args.all and settled and agreed:
+            print("  already on a freely licensed host; left as is")
+            continue
+        if settled and not agreed:
+            # Both free, so there is nothing to search for: copy the snapshot's
+            # (the freshest) across and move on.
+            print("  rows disagree; reconciling the archive to the snapshot")
+            if not args.dry_run:
+                for row in rows[1:]:
+                    apply(row, {"url": head["cover_image_url"],
+                                "attribution": head.get("cover_image_attribution"),
+                                "source": head.get("cover_image_source") or "wikimedia"})
+                changed += 1
+            continue
+
+        chosen, reached = pick(head.get("cover_headline", ""), head.get("cover_text"))
+        if chosen:
+            print(f"  new    : {chosen['url'][:96]}")
+            print(f"  credit : {chosen['attribution']}")
+        elif not reached:
+            # Leave THIS issue exactly as it is and keep going; an issue that
+            # could not be searched must never be mistaken for one with nothing
+            # to find, which is how this tool twice deleted its own good result.
+            print("  could NOT reach Commons; leaving this cover exactly as it is")
+            unreachable = True
+            continue
+        else:
+            print("  nothing freely licensed matched; clearing the cover image")
+
+        if args.dry_run:
+            continue
+        for row in rows:
+            apply(row, chosen)
+        changed += 1
 
     if args.dry_run:
-        return 0
+        return 2 if unreachable and not changed else 0
 
-    data["cover_image_url"] = chosen["url"] if chosen else None
-    data["cover_image_attribution"] = chosen["attribution"] if chosen else None
-    data["cover_image_source"] = chosen["source"] if chosen else None
-    # Match export_static.wj() exactly (json.dump defaults, ensure_ascii=False),
-    # so re-picking a cover is a three-key diff and not a whole-file reformat.
-    WEEKLY.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
-    print("  written")
-    return 0
+    if changed:
+        # Match export_static.wj() exactly (json.dump defaults, ensure_ascii=
+        # False), so re-picking a cover is a three-key diff per issue and not a
+        # whole-file reformat.
+        WEEKLY.write_text(json.dumps(snapshot, ensure_ascii=False), encoding="utf-8")
+        if archive:
+            ARCHIVE.write_text(json.dumps(archive, ensure_ascii=False), encoding="utf-8")
+            # Re-derive the served index rather than editing it: one definition
+            # of what an index row is (weekly_parse.index_rows), shared with the
+            # exporter that normally writes it.
+            INDEX.write_text(json.dumps(index_rows(archive), ensure_ascii=False),
+                             encoding="utf-8")
+        print(f"  written ({changed} issue(s))")
+    else:
+        print("  nothing to change")
+    return 2 if unreachable and not changed else 0
 
 
 if __name__ == "__main__":

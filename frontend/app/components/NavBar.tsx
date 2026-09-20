@@ -6,7 +6,6 @@ import { MagnifyingGlass } from "@phosphor-icons/react";
 import ThemeToggle from "./ThemeToggle";
 import PageToggle from "./PageToggle";
 import LogoFull from "./LogoFull";
-import SigilWordmark from "./SigilWordmark";
 import ExperimentalBadge from "./ExperimentalBadge";
 import { getEditionTimestampLocal, getEditionDatelineUTC } from "../lib/utils";
 
@@ -34,7 +33,7 @@ interface NavBarProps {
    NavBar — Single-row masthead
 
    Row 1 (Chrome — structural, about the app):
-     Logo | dateline · timestamp | Spinoffs | Pages | Theme | Search
+     Logo | dateline · timestamp | Sections | Pages | Theme | Search
 
    Filters (lean chips + topic dropdown) and the inline Row 2 lens were removed
    in 2026-05-15 redesign — pure curation, no client-side filtering. The
@@ -145,20 +144,21 @@ export default function NavBar({
           )}
         </span>
 
-        {/* Spinoff product family (Void History + Void Weekly). Hidden for the
-            2026-08-05 launch, restored 2026-09-19 when both sections shipped as
-            features. The Weekly link carries BOTH classes: .nav-history supplies
-            the layout, active/focus and underline-draw, .nav-weekly overrides
-            only --hist-nav-accent to magazine red. Shown from 768px up; below
-            that the mobile tab bar + side panel carry these destinations. */}
-        <div className="nav-spinoffs">
-          <span className="nav-spinoffs__divider" aria-hidden="true" />
-          <span className="nav-spinoffs__eyebrow">Also from Void</span>
-          <Link href="/history" className="nav-history" aria-label="Void History" title="History">
-            <SigilWordmark product="HISTORY" responsive className="nav-spinoff-mark" accent="var(--hist-nav-accent)" height={14} />
+        {/* Section links — History and Weekly are SECTIONS of Void News, not
+            products beside it, so they are set in plain words rather than in
+            their own VOID <WORD> lockups (see SectionNameplate for the rule).
+            Editorial italic in the section's accent distinguishes them from the
+            condensed-caps utility links on the right without claiming a
+            masthead of their own; the "Also from Void" eyebrow and the fencing
+            hairline are gone with the lockups, because both asserted a family
+            beside Void News. Shown from 768px up; below that the mobile tab bar
+            and side panel carry these destinations. */}
+        <div className="nav-sections">
+          <Link href="/history" className="nav-history" title="History">
+            History
           </Link>
-          <Link href="/weekly" className="nav-history nav-weekly" aria-label="Void Weekly" title="Weekly">
-            <SigilWordmark product="WEEKLY" responsive className="nav-spinoff-mark" accent="var(--hist-nav-accent)" height={14} />
+          <Link href="/weekly" className="nav-history nav-weekly" title="Weekly">
+            Weekly
           </Link>
         </div>
 

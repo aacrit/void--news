@@ -625,7 +625,7 @@
   .nav-ed,
   .nav-search-btn,
   .nav-page,
-  .nav-weekly,
+  .nav-history,
   .filter-chip,
   .lean-bar__seg,
   .topic-bar__chip,
@@ -656,7 +656,7 @@
   .story-card,
   .lead-story,
   .nav-page,
-  .nav-weekly,
+  .nav-history,
   .theme-toggle {
     -webkit-user-select: none;
     user-select: none;

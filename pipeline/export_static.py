@@ -276,11 +276,10 @@ if want("weekly"):
 
         # A slim index for the browser: enough to list the back issues and fill
         # the audio playlist, without shipping every past issue's prose.
-        INDEX_COLS = ("id", "issue_number", "edition", "week_start", "week_end",
-                      "cover_headline", "cover_image_url", "audio_url",
-                      "audio_duration_seconds", "created_at")
-        wj(PUBLIC_DIR / "weekly-archive.json",
-           [{k: i.get(k) for k in INDEX_COLS} for i in merged])
+        # Column list + shape live in weekly_parse, shared with the repair
+        # tools, so the written index and a repaired one cannot disagree.
+        from briefing.weekly_parse import index_rows
+        wj(PUBLIC_DIR / "weekly-archive.json", index_rows(merged))
         print(f"weekly-issues.json: {len(merged)} issue(s)")
 
 if want("archive"):

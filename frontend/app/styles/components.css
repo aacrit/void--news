@@ -2027,7 +2027,7 @@ button:focus-visible .sigil-word__beam {
 
 /* ── Masthead tagline — inline italic subline beside the wordmark ────────────
    Replaces the retired full-width ".home-flag" strip. Desktop only: shown at
-   >=1024px where the row has room; hidden below (the dateline + spinoffs win
+   >=1024px where the row has room; hidden below (the dateline + section links win
    the tight space). A thin leading rule separates it from the wordmark.       */
 .nav-tagline {
   display: none;
@@ -2044,7 +2044,7 @@ button:focus-visible .sigil-word__beam {
 }
 
 /* Shown only once the row is wide enough to carry the wordmark + badge +
-   tagline + dateline + spinoffs + pages without squeezing the dateline off.
+   tagline + dateline + section links + pages without squeezing the dateline off.
    Below this the dateline (functional) keeps the space; the tagline is
    decorative branding and degrades gracefully by hiding. */
 @media (min-width: 1180px) {
@@ -2191,7 +2191,7 @@ button:focus-visible .sigil-word__beam {
   font-weight: 500;
   letter-spacing: 0.03em;
   /* Title case (not uppercase) so nav labels read consistently with the
-     History/Weekly spinoffs — no mixed "History, Weekly, SOURCES, ABOUT". */
+     History/Weekly section links — no mixed "History, Weekly, SOURCES, ABOUT". */
   text-transform: none;
   color: var(--fg-tertiary);
   text-decoration: none;
@@ -2280,88 +2280,42 @@ button:focus-visible .sigil-word__beam {
   outline-offset: 3px;
 }
 
-/* The old "Row 2: Weekly" text-label block (--wk-accent, .nav-weekly__rule,
-   .nav-weekly__label + their hover/active/focus/dark rules) was removed
-   2026-08-04: Weekly now renders the VOID WEEKLY Sigil wordmark, matching
-   History. Its layout/active/focus come from the shared .nav-history block; its
-   red focus outline from the .nav-weekly accent override further below. */
+/* ── Section links — History + Weekly, center-left ───────────────────────
+   These are SECTIONS of Void News. They were rendered as VOID HISTORY / VOID
+   WEEKLY Sigil lockups from 2026-08-04, which gave each one the mark form that
+   names a PRODUCT of Void and put three mastheads in one bar; the fencing
+   hairline and the "Also from Void" eyebrow that came with them said the same
+   thing in words. All three are gone. What is left is what a newspaper does:
+   the section's plain name, set in the masthead's own serif.
 
-/* ── Spinoff product family container — History + Weekly, center-left ──
    Shown from 768px up. At 768-1023 (iPad portrait) the mobile tab bar (.mtb,
    <=767 only) is gone, so History/Weekly would otherwise be reachable only via
-   the footer — a tablet nav dead zone. The row has room here: the inline
-   dateline is hidden below 1280 and the tagline/badge below 1180/1320, so the
-   masthead carries only logo + spinoffs + pages + controls (the same proven
-   layout the 1024-1279 range already used). Below 768 the mobile tab bar +
-   side panel carry these destinations. */
-.nav-spinoffs {
+   the footer. The row has room: the inline dateline is hidden below 1280 and
+   the tagline/badge below 1180/1320. Below 768 the mobile tab bar + side panel
+   carry these destinations. */
+.nav-sections {
   display: none;
   align-items: center;
   gap: var(--space-1);
 }
 
 @media (min-width: 768px) {
-  .nav-spinoffs {
+  .nav-sections {
     display: inline-flex;
   }
 }
 
-/* ── Vertical hairline — fences the spinoff family off from the masthead /
-   dateline zone to its left, so VOID HISTORY / VOID WEEKLY read as a related
-   pair rather than three competing mastheads. ── */
-.nav-spinoffs__divider {
-  width: 1px;
-  height: 18px;
-  flex-shrink: 0;
-  background-color: var(--border-subtle);
-  margin-right: var(--space-1);
-}
+/* ── Tablet band (768-1023): keep the masthead row honest ───────────────────
+   History + Weekly join the bar at 768, so this band is where the row is
+   tightest. It stays inside 768 because the inline dateline is already hidden
+   here and the section links are two short words rather than the ~164px of
+   lockups they replaced; the gutter tightens to --space-5 for the margin.
 
-/* ── "Also from Void" eyebrow — the family label. Barlow Condensed, small,
-   letter-spaced, muted; a whisper, not a headline. Hidden below 1200px so the
-   tablet band (768-1023) and narrow desktop keep the two wordmarks + divider
-   without overflow; the size delta vs the 30px masthead already signals
-   "secondary" on its own there. ── */
-.nav-spinoffs__eyebrow {
-  display: none;
-  font-family: var(--font-meta);
-  font-size: 9.5px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.13em;
-  line-height: 1;
-  color: var(--fg-tertiary);
-  white-space: nowrap;
-  margin-right: var(--space-1);
-  user-select: none;
-}
-
-@media (min-width: 1200px) {
-  .nav-spinoffs__eyebrow {
-    display: inline-block;
-  }
-}
-
-/* ── Tablet band (768-1023): make the spinoff row fit ────────────────────────
-   Adding History + Weekly to the masthead at 768 would overflow the row: the
-   full wordmark (~255px) + spinoffs (~164px) + pages/controls (~373px) exceed
-   768px on their own. So in this band we swap to a COMPACT wordmark (the
-   dedicated .nav-logo-tablet, LogoFull at 22px — icon + "Void News", ~150px)
-   and tighten the gutter to --space-5. Without this the band showed a bare
-   44px .nav-logo box: the base ".nav-logo-mobile { display:none }" rule sits
-   LATER in source order than this block, so an unqualified override here lost
-   the cascade and BOTH logos vanished. The `.nav-left` prefix lifts specificity
-   (0,2,0 vs 0,1,0) so the compact wordmark wins regardless of source order.
-   Measured fit at 768: ~690px content + ~38px gutter = ~728px, ~40px headroom,
-   zero overflow. The full wordmark + wider gutter resume at 1024. Kept in one
-   place so the levers stay coupled. */
-/* The three CSS-toggled logo copies this block used to swap between
-   (.nav-logo-desktop / -tablet / -mobile) were consolidated into ONE responsive
-   wordmark scaled by .nav-logo-mark font-size, so those selectors matched
-   nothing. Replaced 2026-09-19 with the rule the band actually needs: .nav-left
-   must not be shrunk below its content. The wordmark is flex-shrink:0 inline-
-   flex, so a shrunk .nav-left reported a 106px box while its glyphs rendered
-   134px wide, and the spinoff row was laid out 27px INSIDE the masthead —
+   The rule below is the one the band actually needs. It used to toggle three
+   CSS-swapped logo copies (.nav-logo-desktop / -tablet / -mobile) that were
+   consolidated into ONE responsive wordmark in rev 69, so those selectors
+   matched nothing: .nav-left was left shrinkable, reported a 106px box around
+   134px of glyphs, and the section row was laid out 27px INSIDE the masthead.
    "VOID NEWS" and "VOID HISTORY" overlapped at exactly 768px. */
 @media (min-width: 768px) and (max-width: 1023px) {
   .nav-left {
@@ -2373,21 +2327,36 @@ button:focus-visible .sigil-word__beam {
   }
 }
 
-/* ── Spinoff brand links (History + Weekly) — the clickable wrapper around each
-   VOID <PRODUCT> Sigil wordmark. History carries the burnt-umber archival
-   accent; .nav-weekly (below) overrides only the accent to magazine red. The
-   accent now drives the focus ring + the Sigil-O (via the wordmark's `accent`
-   prop); the old italic text label + hairline rule were retired 2026-08-04. ── */
+/* ── Section links (History + Weekly) ────────────────────────────────────
+   Editorial italic, one step down from the masthead, in the reader's ink until
+   they are reached; the product accent arrives on hover as the underline and
+   the colour together. Italic serif against the condensed structural face of
+   .nav-page (Feedback, About) is the whole distinction being drawn: these are
+   places to READ, those are things to DO. .nav-weekly overrides only the
+   accent, so the two share every other rule. ── */
 .nav-history {
   --hist-nav-accent: #5C4033;
+  font-family: var(--font-editorial, "Playfair Display", Georgia, serif);
+  font-size: var(--text-sm);
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  color: var(--fg-secondary);
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
   text-decoration: none;
   padding: var(--space-1) var(--space-2);
   position: relative;
+  white-space: nowrap;
   border-radius: var(--radius-sm);
-  transition: transform 300ms var(--ease-unfold);
+  transition:
+    color 200ms var(--ease-cinematic),
+    transform 300ms var(--ease-unfold);
+}
+
+.nav-history:hover {
+  color: var(--hist-nav-accent);
 }
 
 .nav-history:active {
@@ -2400,11 +2369,11 @@ button:focus-visible .sigil-word__beam {
   outline-offset: 2px;
 }
 
-/* ── Deliberate hover/focus cue: an accent-colored underline that draws in from
-   the left, in each link's own product accent (umber for History, red for
-   Weekly via --hist-nav-accent). Signals "distinct destination" without any
-   external-link arrow (these stay internal routes). Sits inside the link's
-   horizontal padding so it underlines the wordmark, not the full hit box. ── */
+/* ── The hover/focus cue: an accent underline that draws in from the left, in
+   each section's own accent (umber for History, red for Weekly via
+   --hist-nav-accent). Signals "a distinct place" without an external-link
+   arrow, which these must not have: they are rooms in this house. Sits inside
+   the link's horizontal padding so it underlines the word, not the hit box. ── */
 .nav-history::after {
   content: "";
   position: absolute;
@@ -2426,21 +2395,13 @@ button:focus-visible .sigil-word__beam {
   opacity: 1;
 }
 
-/* Hovering anywhere on the link (including its padding) drives the Sigil-O
-   lean-sweep, so the whole tap target reacts, not just the mark glyph. */
-.nav-history:hover .sigil-word__beam {
-  animation: sigil-word-sweep 1.4s var(--ease-rack, ease-in-out) infinite;
-}
-
 :root[data-mode="dark"] .nav-history {
   --hist-nav-accent: #8B7355;
 }
 
-/* ── Weekly link — signature magazine red (matches the weekly masthead
-   --palette-weekly). Reuses the .nav-history structure, overriding only the
-   accent so the FOCUS RING reads red instead of umber (the VOID WEEKLY Sigil-O
-   itself is colored by the wordmark's `accent` prop). Placed after the dark
-   .nav-history block so the dark override below wins on source order. ── */
+/* ── Weekly — the magazine red of its own pages (--palette-weekly). Placed
+   after the dark .nav-history block so the dark override below wins on source
+   order. ── */
 .nav-weekly {
   --hist-nav-accent: var(--palette-weekly);
 }
@@ -2449,9 +2410,9 @@ button:focus-visible .sigil-word__beam {
   --hist-nav-accent: var(--palette-weekly);
 }
 
-/* Coarse pointers (touch tablets ≥768px, where the spinoffs are shown): keep a
-   ≥44px tap target per WCAG 2.5.5. The link is inline-flex + centered, so the
-   min-height grows the hit box without shifting the wordmark. */
+/* Coarse pointers (touch tablets >=768px, where these are shown): keep a 44px
+   tap target per WCAG 2.5.5. The link is inline-flex + centered, so the
+   min-height grows the hit box without shifting the word. */
 @media (pointer: coarse) {
   .nav-history {
     min-height: 44px;
@@ -2460,11 +2421,10 @@ button:focus-visible .sigil-word__beam {
 
 @media (prefers-reduced-motion: reduce) {
   .nav-history {
-    transition: none;
+    transition: color 200ms var(--ease-cinematic);
   }
-  /* Underline still appears on hover/focus, but snaps in (no left-to-right
-     draw); the Sigil-O lean-sweep is suppressed (handled by the .sigil-word
-     reduced-motion block above, which also covers this whole-link trigger). */
+  /* The underline still appears on hover/focus; it snaps in rather than
+     drawing left to right. */
   .nav-history::after {
     transition: opacity 160ms ease;
     transform: none;
@@ -2475,9 +2435,6 @@ button:focus-visible .sigil-word__beam {
   .nav-history:focus-visible::after {
     transform: none;
     opacity: 1;
-  }
-  .nav-history:hover .sigil-word__beam {
-    animation: none;
   }
 }
 
@@ -2571,20 +2528,106 @@ button:focus-visible .sigil-word__beam {
   }
 }
 
-/* ── Spinoff wordmarks (.nav-spinoff-mark) ───────────────────────────────
-   Same mechanism as .nav-logo-mark: SigilWordmark `responsive` leaves the mark
-   em-sized so one node scales per breakpoint. 14px reads clearly secondary
-   against the 30px masthead; the 768-1023 band drops to 11px because that is
-   where the row is tightest (masthead 134 + spinoffs + pages/controls against
-   ~707px of content width). Below 768 the whole row is display:none and the
-   mobile side panel carries both destinations. */
-.nav-spinoff-mark {
-  font-size: 14px;
+/* ── Section nameplate (.void-nameplate) ─────────────────────────────────
+   One definition, three callers: the History topbar, the Weekly topbar and the
+   Weekly cover. Renders "VOID [O] NEWS │ Section" — the masterbrand in its own
+   roman lockup, a hairline, then the section's name in editorial italic in the
+   section accent. The two halves share a cap height, so the pair reads as ONE
+   nameplate; what separates them is style, not size, which is the whole point:
+   a section is not a smaller brand, it is a different KIND of thing.
+
+   Sizing is inherited. The caller sets font-size once (the `height` prop) and a
+   breakpoint can override it here, so a narrow phone scales the nameplate
+   instead of rendering a second copy of it in the DOM — the defect rev 69 fixed
+   in the masthead and rev 75 removes from both topbars. ── */
+.void-nameplate {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.42em;
+  line-height: 1;
+  white-space: nowrap;
+  min-width: 0;
 }
 
-@media (min-width: 768px) and (max-width: 1023px) {
-  .nav-spinoff-mark {
-    font-size: 11px;
+.void-nameplate__parent {
+  display: inline-flex;
+  align-items: baseline;
+  text-decoration: none;
+  color: inherit;
+  transition: opacity 200ms var(--ease-cinematic);
+}
+
+.void-nameplate__parent:hover {
+  opacity: 0.72;
+}
+
+.void-nameplate__parent:focus-visible {
+  outline: 2px solid var(--nameplate-accent, var(--sigil-brass));
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* The hairline. Sized in em so it tracks the nameplate at any scale, and
+   translated down because the flex baseline puts a bare box on the text
+   baseline rather than across the cap band. */
+.void-nameplate__rule {
+  flex-shrink: 0;
+  width: 1px;
+  height: 0.92em;
+  transform: translateY(0.1em);
+  background-color: currentColor;
+  opacity: 0.28;
+}
+
+/* The section's own name. Italic is the signal: everything in the masthead
+   family that is set roman is a brand, and this is not one. */
+.void-nameplate__section {
+  font-family: var(--font-editorial, "Playfair Display", Georgia, serif);
+  font-size: 0.92em;
+  font-style: italic;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  color: var(--nameplate-accent, currentColor);
+  text-decoration: none;
+  position: relative;
+  transition: opacity 200ms var(--ease-cinematic);
+}
+
+.void-nameplate__section::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.14em;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  opacity: 0;
+  transition: transform 260ms var(--ease-unfold), opacity 160ms ease;
+}
+
+.void-nameplate__section:hover::after,
+.void-nameplate__section:focus-visible::after {
+  transform: scaleX(1);
+  opacity: 0.6;
+}
+
+.void-nameplate__section:focus-visible {
+  outline: 2px solid var(--nameplate-accent, currentColor);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .void-nameplate__section::after {
+    transition: opacity 160ms ease;
+    transform: none;
+  }
+  .void-nameplate__section:hover::after,
+  .void-nameplate__section:focus-visible::after {
+    transform: none;
+    opacity: 0.6;
   }
 }
 
@@ -2733,7 +2776,7 @@ button:focus-visible .sigil-word__beam {
 }
 
 /* Row 2 / nav-lens block deleted 2026-05-15 — filter UI removed in redesign.
-   The masthead is single-row chrome only (Logo + dateline + spinoffs + pages
+   The masthead is single-row chrome only (Logo + dateline + section links + pages
    + search button + theme toggle). Filtering responsibility moved to the
    server-side ranker. */
 
@@ -8492,7 +8535,7 @@ a.footer-products__item:hover { color: var(--accent-warm); }
     font-weight: 600;
   }
   .deep-dive-active .nav-page,
-  .deep-dive-active .nav-weekly {
+  .deep-dive-active .nav-history {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }

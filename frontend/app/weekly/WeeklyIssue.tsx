@@ -30,13 +30,12 @@
    --------------------------------------------------------------------------- */
 
 import { useEffect } from "react";
-import Link from "next/link";
 import type { WeeklyDigestData, WeeklyIssueSummary, WeeklyOpinion } from "./types";
 import { AUDIO_ENABLED } from "../lib/audioGate";
 import { useAudio, type EpisodeMeta } from "../components/AudioProvider";
 import Footer from "../components/Footer";
 import ThemeToggle from "../components/ThemeToggle";
-import SigilWordmark from "../components/SigilWordmark";
+import SectionNameplate from "../components/SectionNameplate";
 import { formatWeekRange, weeklyDisplayNo, clip, essayParagraphs } from "./format";
 import { InkRule, RevealFlourish } from "./components/furniture";
 import CinematicCover from "./components/CinematicCover";
@@ -181,7 +180,15 @@ export default function WeeklyIssue({
   return (
     <div className="wk-page">
       <CinematicCover
-        nameplate={<SigilWordmark product="WEEKLY" height={44} accent="var(--palette-weekly)" />}
+        nameplate={
+          <SectionNameplate
+            section="Weekly"
+            href="/weekly"
+            height={34}
+            accent="var(--wk-cover-accent, var(--palette-weekly))"
+            className="wk-cover__mark"
+          />
+        }
         issueLine={`Issue #${issueNo} · ${weekRange}`}
         headline={coverHeadline}
         coverlines={coverlines}
@@ -192,27 +199,21 @@ export default function WeeklyIssue({
 
       <div id="wk-page-1" className="wk-page-anchor" aria-hidden="true" />
 
-      {/* Compact sticky three-zone topbar, matching void --history:
-          back-to-parent mark, centred product logo, theme toggle. A <header>
-          outside <main> is the page's banner landmark; it was a bare <div>,
-          so a screen reader had no way to reach or skip it. */}
+      {/* Compact sticky topbar, matching History: the section nameplate and the
+          theme toggle. It ran three zones until rev 75 — a "back to VOID NEWS"
+          mark beside a centred VOID WEEKLY lockup — which gave a section the
+          mark form reserved for a product of Void and then offered a way back
+          from a place the reader had never left. A <header> outside <main> is
+          the page's banner landmark; it was a bare <div>, so a screen reader
+          had no way to reach or skip it. */}
       <header className="wk-topbar">
-        <nav className="wk-topbar__left" aria-label="Section">
-          <Link href="/" className="wk-back" aria-label="Back to Void News">
-            <span className="wk-back__arrow" aria-hidden="true">&larr;</span>
-            <span className="wk-back__word">
-              <SigilWordmark product="NEWS" height={14} />
-            </span>
-          </Link>
-        </nav>
-        <Link href="/weekly" className="wk-topbar__brand" aria-label="Void Weekly home">
-          <span className="wk-topbar__brand-lg">
-            <SigilWordmark product="WEEKLY" height={26} accent="var(--palette-weekly)" />
-          </span>
-          <span className="wk-topbar__brand-sm">
-            <SigilWordmark product="WEEKLY" height={21} accent="var(--palette-weekly)" />
-          </span>
-        </Link>
+        <SectionNameplate
+          section="Weekly"
+          href="/weekly"
+          height={22}
+          accent="var(--palette-weekly)"
+          className="wk-topbar__nameplate"
+        />
         <div className="wk-topbar__actions">
           <ThemeToggle />
         </div>
@@ -223,7 +224,7 @@ export default function WeeklyIssue({
 
         <IssueUtilities
           words={issueWords}
-          shareTitle={`Void Weekly · Issue #${issueNo}`}
+          shareTitle={`Weekly · Void News · Issue #${issueNo}`}
           weekStart={issue.week_start}
           archive={archive}
         />

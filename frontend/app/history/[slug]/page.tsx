@@ -25,7 +25,9 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const title = event?.title || slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
   const description = HOOKS[slug] || event?.subtitle || `One event. Every side. Decide for yourself.`;
   return {
-    title: `${title} | History`,
+    /* "History · Void News", not "Void History": the section belongs to the
+       product, and a shared link is often where a reader meets both. */
+    title: `${title} · History · Void News`,
     description,
   };
 }

@@ -203,20 +203,40 @@ def main(site: str) -> int:
            + ("" if not long_heads
               else f"  <- {len(long_heads)} cover headline(s) are paragraphs: {long_heads}"))
 
-    # W-03 — the cover image is Void's to publish, or there is none.
-    cover = str(weekly.get("cover_image_url") or "")
-    src = str(weekly.get("cover_image_source") or "")
-    if not cover:
-        report("W-03", True, "no cover image (acceptable; better than an unlicensed one)")
-    else:
-        licensed_host = any(h in cover for h in tuple(OK_HOSTS) + (
+    # W-03 — every cover image is Void's to publish, or there is none. This
+    # checks the BACK ISSUES too, not only the current one: issue #23 sat in
+    # the archive for a month hotlinking a photograph off theatlantic.com,
+    # served on its own permalink, because the gate read the latest snapshot
+    # alone and the latest snapshot had been fixed.
+    def cover_problem(row: dict) -> str:
+        url = str(row.get("cover_image_url") or "")
+        src = str(row.get("cover_image_source") or "")
+        if not url:
+            return ""   # no cover is acceptable; better than an unlicensed one
+        free = any(h in url for h in tuple(OK_HOSTS) + (
             "images.unsplash.com", "images.pexels.com",
         ))
-        report("W-03", licensed_host and src != "og_image",
-               f"cover from {src or 'unknown'}: {cover[:80]}"
-               + ("" if licensed_host and src != "og_image"
-                  else "  <- not a freely licensed source; a scraped publisher"
-                       " og:image is usually a wire photograph"))
+        if src == "og_image":
+            return f"#{row.get('issue_number')} from a scraped publisher og:image ({url[:60]})"
+        if not free:
+            return f"#{row.get('issue_number')} not on a free host: {url[:70]}"
+        if not str(row.get("cover_image_attribution") or "").strip():
+            # For CC the credit IS the licence condition, not a courtesy.
+            return f"#{row.get('issue_number')} carries no credit"
+        return ""
+
+    covers = [weekly]
+    try:
+        _, _, raw_idx = fetch(f"{base}/data/weekly-archive.json")
+        idx = json.loads(raw_idx) or []
+        covers += [r for r in idx if r.get("issue_number") != weekly.get("issue_number")]
+    except Exception:
+        pass   # W-05 reports an unreadable archive; do not double-fail here
+
+    bad = [m for m in (cover_problem(r) for r in covers) if m]
+    report("W-03", not bad,
+           f"{len(covers)} issue cover(s) checked, all freely licensed and credited"
+           if not bad else "; ".join(bad[:3]))
 
     if start is None:
         report("W-02", False, "skipped (no week_start)")

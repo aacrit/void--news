@@ -674,6 +674,11 @@
      Sources / Feedback stay neutral (default: ink rail, muted icon). */
   .msp__link[data-accent="news"]  { --msp-accent: var(--palette-news);  --msp-icon: var(--palette-news); }
   .msp__link[data-accent="onair"] { --msp-accent: var(--voice-accent);  --msp-icon: var(--voice-accent); }
+  /* Each section owns one accent across every surface it appears on: the
+     masthead link, its own nameplate, and this row. Umber for History, the
+     magazine red for Weekly. */
+  .msp__link[data-accent="history"] { --msp-accent: var(--palette-history); --msp-icon: var(--palette-history); }
+  .msp__link[data-accent="weekly"]  { --msp-accent: var(--palette-weekly);  --msp-icon: var(--palette-weekly); }
 
   /* Leading glyph — a fixed 24px optical box. Icons stroke in currentColor;
      the Sigil-O (ScaleIcon) reads --sigil-brass, pinned here to currentColor so

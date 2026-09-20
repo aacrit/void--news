@@ -114,18 +114,22 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Sticky topbar — back mark | product logo | theme
+   Sticky topbar — section nameplate | theme
+
+   Two zones since rev 75. It was three: a "back to VOID NEWS" mark, a centred
+   VOID WEEKLY lockup, the toggle. Weekly is a SECTION of Void News, so it does
+   not get the lockup form that names a product of Void, and a reader inside a
+   section of the paper does not need to be shown the exit. One nameplate
+   (VOID NEWS | Weekly) carries the brand, the section and the way home.
    --------------------------------------------------------------------------- */
 .wk-topbar {
   position: sticky;
   top: 0;
   z-index: 50;
-  /* Equal 1fr side columns keep the centred logo optically centred whatever
-     the side zones measure. */
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
   padding: var(--space-2) var(--space-4);
   min-height: var(--wk-topbar-h);
   background-color: color-mix(in srgb, var(--wk-paper) 85%, transparent);
@@ -137,46 +141,28 @@
   .wk-topbar { padding: var(--space-2) var(--space-6); }
 }
 
-.wk-topbar__left { display: flex; align-items: center; justify-self: start; }
 .wk-topbar__actions { display: flex; align-items: center; justify-self: end; }
 
-.wk-topbar__brand {
-  display: inline-flex;
-  align-items: center;
-  justify-self: center;
-  text-decoration: none;
-  /* The mark itself is 21-26px tall; the LINK has to be reachable. */
+/* The mark is 22px tall; the LINKS inside it have to be reachable. */
+.wk-topbar__nameplate {
+  justify-self: start;
+  min-width: 0;
   min-height: 44px;
-}
-
-.wk-topbar__brand-lg { display: inline-flex; }
-.wk-topbar__brand-sm { display: none; }
-
-.wk-back {
-  display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
-  text-decoration: none;
-  color: var(--fg-tertiary);
-  opacity: 0.75;
-  transition: opacity 0.2s var(--ease-cinematic, ease-out);
-  min-height: 44px;
 }
-
-.wk-back:hover { opacity: 1; }
-.wk-back__arrow { font-size: var(--text-sm); line-height: 1; }
-.wk-back__word { display: inline-flex; }
 
 @media (max-width: 599px) {
-  .wk-topbar__brand-lg { display: none; }
-  .wk-topbar__brand-sm { display: inline-flex; }
+  .wk-topbar__nameplate { font-size: 17px; }
 }
 
-@media (max-width: 419px) {
-  /* The word hides, so the arrow has to carry the whole target. Without the
-     min-width this collapses to a 12x44 hit area, well under WCAG 2.5.5. */
-  .wk-back__word { display: none; }
-  .wk-back { min-width: 44px; justify-content: center; }
+/* Under ~380px the pair would crowd the toggle. The section word steps out
+   rather than shrinking the nameplate to illegible: a reader on this page
+   already knows which section they are in. */
+@media (max-width: 379px) {
+  .wk-topbar__nameplate .void-nameplate__rule,
+  .wk-topbar__nameplate .void-nameplate__section {
+    display: none;
+  }
 }
 
 /* Anchor the cover's scroll cue lands on. */
@@ -1326,6 +1312,10 @@ a.wk-archive__item:hover { color: var(--wk-accent); }
   --wk-cover-fg: var(--fg-primary);
   --wk-cover-fg-dim: var(--fg-tertiary);
   --wk-cover-rule: var(--wk-accent-ink);
+  /* The nameplate's section word takes the magazine red. On paper that is the
+     ink red; over a photograph it has to be the lighter one, because #B91C1C
+     on a dark scrim is the kind of red you can see is there and cannot read. */
+  --wk-cover-accent: var(--wk-accent);
 }
 
 /* The typographic cover: no photograph, so the type IS the cover. A hairline
@@ -1351,6 +1341,7 @@ a.wk-archive__item:hover { color: var(--wk-accent); }
   --wk-cover-fg: #F6F1E6;
   --wk-cover-fg-dim: rgba(246, 241, 230, 0.72);
   --wk-cover-rule: rgba(246, 241, 230, 0.28);
+  --wk-cover-accent: #FF6B63;
 }
 
 .wk-cover__media { position: absolute; inset: 0; z-index: -1; }
@@ -1402,6 +1393,24 @@ a.wk-archive__item:hover { color: var(--wk-accent); }
 
 .wk-cover__top { display: flex; flex-direction: column; gap: var(--space-3); }
 .wk-cover__nameplate { display: inline-flex; max-width: 100%; }
+
+/* The cover nameplate: VOID NEWS | Weekly, at cover size. A magazine cover
+   earns a big nameplate; what it does not earn is a lockup of its own, which
+   is what VOID WEEKLY was. The masterbrand keeps the cover's ink (cream over a
+   photograph, ink on paper) and the section word takes the red. */
+.wk-cover__mark {
+  color: var(--wk-cover-fg);
+  max-width: 100%;
+}
+
+.wk-cover--has-image .wk-cover__mark .void-nameplate__parent:focus-visible,
+.wk-cover--has-image .wk-cover__mark .void-nameplate__section:focus-visible {
+  outline-color: var(--wk-cover-fg);
+}
+
+@media (max-width: 599px) {
+  .wk-cover__mark { font-size: 26px; }
+}
 
 .wk-cover__issue {
   font-family: var(--font-data);
