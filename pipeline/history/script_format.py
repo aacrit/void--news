@@ -200,19 +200,28 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
               # deserves to know Plutarch wrote it four centuries later. Six
               # such records exist across the 78 events.
               "recount", "as reported by", "as told to", "quoted in",
-              "quoted by", "via")
+              "quoted by", "via",
+              # Rendered or imagined in someone else's voice. Thucydides
+              # reconstructed the speeches he reports, and five of the eight
+              # such records in the catalogue are his; Mark Twain wrote a
+              # satire in Leopold's voice. Read in the document voice with no
+              # word said, both become a real person's quotation.
+              "(as ", "in the voice of", "imagin", "satir")
     # The same hedge, said out loud. A script that tells the listener the words
     # are attributed has done the honest thing, whether it says so in the
     # DOCUMENT marker or in the narration that introduces the quote.
-    SPOKEN_HEDGE = ("attribut", "paraphras", "said to", "reputed", "apocryph",
-                    "legend", "tradition holds", "by tradition", "is remembered",
-                    "remembered for", "later recorded", "recorded generations",
-                    # Secondhand, said out loud. The Great Depression script
-                    # wrote "Hoover later wrote down what Mellon told him",
-                    # which is exactly the disclosure this rule wants, in
-                    # words the first list did not know.
-                    "recount", "as reported", "as told", "quoted in",
-                    "quoted by", "wrote down what", "set down", "records that")
+    # Said out loud. Every term that marks a record as hedged counts here too:
+    # a script that uses the record's own word for the thing has disclosed it.
+    # Keeping the two lists separate meant three separate occasions where an
+    # honest script failed because the gate did not know the word it chose
+    # ("wrote down what Mellon told him", "a satire imagining what Leopold
+    # would say", "Sima Qian wrote his report down two generations later"), so
+    # the spoken list is now the marked list plus the ways people say it.
+    SPOKEN_HEDGE = tuple(h.strip(" (") for h in HEDGED) + (
+        "said to", "reputed", "tradition holds", "by tradition",
+        "is remembered", "remembered for", "later recorded",
+        "recorded generations", "as reported", "as told", "as recorded",
+        "recorded by", "rendered by", "wrote down", "set down", "records that")
 
     kinds = [s.kind for s in script.segments]
     for required in ("OPEN", "CLOSE"):
@@ -293,7 +302,11 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
                 who = (match[1] or "").lower()
 
                 def _marked(h: str) -> bool:
-                    tail = "(?![a-z])" if len(h) <= 4 else ""
+                    # Only a short BARE word needs the trailing guard ("via"
+                    # inside "Silvia"). A term carrying its own punctuation or
+                    # space is already bounded, and guarding it would stop
+                    # "(as " ever matching "(as leopold".
+                    tail = "(?![a-z])" if len(h) <= 4 and h.isalpha() else ""
                     return re.search(rf"(?<![a-z]){re.escape(h)}{tail}", who) is not None
 
                 if any(_marked(h) for h in HEDGED):
