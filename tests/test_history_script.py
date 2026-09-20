@@ -44,6 +44,9 @@ EVENT = {
          "author": "Martin Luther King Jr.", "work": "A Letter", "date": "1961"},
         {"text": "We were told the water would never reach the second floor.",
          "author": "Amara Okonjo", "work": "Testimony", "date": "1962"},
+        # The record's own speaker field says these are NOT the admiral's words.
+        {"text": "The tables were right and the messengers were slow.",
+         "author": "Admiral Rosa Vane (paraphrased)", "work": "Summary", "date": "1962"},
     ],
 }
 
@@ -164,6 +167,40 @@ check("H-06 catches an episode with no TURN", "H-06" in fails(no_turn), str(fail
 # ---- H-07 length ---------------------------------------------------------
 check("H-07 catches a script that is too short", "H-07" in fails(CLEAN), str(fails(CLEAN)))
 
+# ---- H-11 a paraphrase is never read in the document voice --------------
+# The failure this exists for reached a finished script: the record carried a
+# line marked "(paraphrased)", H-01 was satisfied because the text really is in
+# the data, and the episode introduced it with "her own summary was blunt" and
+# read it aloud. That puts sentences in a real person's mouth. The rule asks
+# only that the hedge be SAID, in the marker or in the narration.
+paraphrase_as_speech = pad(CLEAN.replace("""## CLOSE""", """## DOCUMENT | Admiral Rosa Vane | Summary | 1962
+N: Admiral Vane put it bluntly.
+F: The tables were right and the messengers were slow.
+
+## CLOSE"""))
+check("H-11 catches a paraphrase read as the speaker's own words",
+      "H-11" in fails(paraphrase_as_speech), str(fails(paraphrase_as_speech)))
+
+spoken_hedge = pad(CLEAN.replace("""## CLOSE""", """## DOCUMENT | Admiral Rosa Vane | Summary | 1962
+N: A line attributed to Admiral Vane puts it bluntly.
+F: The tables were right and the messengers were slow.
+
+## CLOSE"""))
+check("H-11 accepts the same line when the narration says it is attributed",
+      "H-11" not in fails(spoken_hedge), str(fails(spoken_hedge)))
+
+marker_hedge = pad(CLEAN.replace("""## CLOSE""", """## DOCUMENT | Admiral Rosa Vane | Attributed summary | 1962
+N: Admiral Vane put it bluntly.
+F: The tables were right and the messengers were slow.
+
+## CLOSE"""))
+check("H-11 accepts the hedge in the DOCUMENT marker",
+      "H-11" not in fails(marker_hedge), str(fails(marker_hedge)))
+
+check("H-11 leaves an ordinary sourced quote alone", "H-11" not in fails(pad(CLEAN)),
+      str(fails(pad(CLEAN))))
+
+
 # ---- H-09 every account gets its own case -------------------------------
 dropped = CLEAN_LEGAL.replace("## PERSPECTIVE | The Fishing Villages | vanquished",
                               "## ASIDE")
@@ -209,4 +246,4 @@ if failures:
     print("\n".join(f"FAIL  {f}" for f in failures))
     print(f"\n{len(failures)} History script failure(s)")
     raise SystemExit(1)
-print(f"PASS  H-01..H-09 against planted defects, and {len(scripts)} committed scripts")
+print(f"PASS  H-01..H-11 against planted defects, and {len(scripts)} committed scripts")

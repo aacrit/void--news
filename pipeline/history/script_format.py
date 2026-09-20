@@ -149,6 +149,18 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
     sourced = [(_norm(e.get("text", "")), e.get("author", "")) for e in excerpts]
     sourced += [(_norm(q.get("text", "")), q.get("speaker", "")) for q in quotes]
 
+    # A source whose own speaker field says the words are not verbatim. The
+    # record marks these; nothing read them before H-11. "summary" is NOT here:
+    # a record that calls its source a "reactor-safety summary" is describing
+    # what the document IS, not hedging whose words it carries.
+    HEDGED = ("paraphras", "attributed", "reconstruct", "apocryph", "legend")
+    # The same hedge, said out loud. A script that tells the listener the words
+    # are attributed has done the honest thing, whether it says so in the
+    # DOCUMENT marker or in the narration that introduces the quote.
+    SPOKEN_HEDGE = ("attribut", "paraphras", "said to", "reputed", "apocryph",
+                    "legend", "tradition holds", "by tradition", "is remembered",
+                    "remembered for", "later recorded", "recorded generations")
+
     kinds = [s.kind for s in script.segments]
     for required in ("OPEN", "CLOSE"):
         if required not in kinds:
@@ -198,11 +210,39 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
             # H-01: the quote must exist in the event's own sources.
             for l in d_lines:
                 said = _norm(l.text)
-                if not any(said in src or src in said or _overlap(said, src) > 0.6
-                           for src, _ in sourced if src):
+                match = next(((src, who) for src, who in sourced
+                               if src and (said in src or src in said
+                                           or _overlap(said, src) > 0.6)), None)
+                if match is None:
                     out.append(Finding("H-01", "fail", label,
                                        f"quotation not found in this event's primary sources: "
                                        f"{l.text[:70]!r}"))
+                    continue
+                # H-11: the record sometimes carries a line whose own speaker
+                # field says it is NOT that person's words: "Patricia Crone
+                # (paraphrased)", an attributed saying, a reconstructed
+                # address. H-01 is satisfied by such a line, because the text
+                # really is in the data. But the document voice is the one
+                # thing in this format that means "these are the words they
+                # said", so reading a paraphrase in it puts sentences in a
+                # real person's mouth, introduced by narration that names
+                # them. That is the worst failure available to this format
+                # and no rule caught it until an episode did it.
+                # The fact itself is never lost: it belongs in narration,
+                # which states a position rather than quoting one.
+                who = (match[1] or "").lower()
+                if any(h in who for h in HEDGED):
+                    # Said out loud, anywhere the listener will hear it before
+                    # the voice reads: the DOCUMENT marker, or the narration.
+                    aloud = " ".join([_norm(seg.author or ""), _norm(seg.title or ""),
+                                      _norm(seg.work or "")]
+                                     + [_norm(x.text) for x in seg.lines
+                                        if x.speaker == "N"])
+                    if not any(h in aloud for h in SPOKEN_HEDGE):
+                        out.append(Finding("H-11", "fail", label,
+                                           f"the record marks this line {match[1]!r}, and nothing "
+                                           f"says so aloud: either say it is attributed, or narrate "
+                                           f"the position instead of reading it as their words"))
 
     # H-09 is the reason this catalogue is worth making. Void's claim is that
     # it shows every side; an episode that quietly drops one is the single

@@ -69,7 +69,7 @@ N: The second account belongs to the institution that was printing's first custo
 N: The Church welcomed the press. Hand copying introduced errors, and every diocese had drifted; a printed missal was the same in Mainz and in Marseilles. The earliest print runs in Europe were indulgences, psalters and Bibles.
 N: Then the arithmetic turned. Manuscript culture could be policed, because a heretical text could be found and burned before it travelled. A single press run could put five hundred copies into circulation in a week, and confiscating a book in one city meant nothing when it was being set in type in another.
 N: The response came in stages. In fifteen oh one a papal bull required every printed work to have a bishop's approval. The Fifth Lateran Council reinforced it in fifteen fifteen. The Index of Forbidden Books was established in fifteen fifty nine.
-N: A Dominican friar at the Council of Trent put the problem in one sentence.
+N: A line attributed to a Dominican friar at the Council of Trent puts the problem in one sentence.
 M: Let us break their bonds asunder and cast away their yokes from us, now the common people have the Bible, and the heretics will cite texts.
 
 ## REST | short
