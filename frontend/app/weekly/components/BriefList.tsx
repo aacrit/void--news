@@ -16,27 +16,26 @@
    across, so every item rendered unlabelled.
    --------------------------------------------------------------------------- */
 
-import { useState } from "react";
 import type React from "react";
 import type { WeeklyRecapStory } from "../types";
 import { DepartmentPlate } from "./furniture";
-import { useScrollReveal } from "../hooks";
+import { useImageStatus, useScrollReveal } from "../hooks";
 
 function Thumb({ story }: { story: WeeklyRecapStory }) {
-  const [loaded, setLoaded] = useState(false);
-  const [error, setError] = useState(false);
-  if (!story.image_url || error) return null;
+  const img = useImageStatus(story.image_url);
+  if (!story.image_url || img.failed) return null;
   return (
     <div className="wk-brief__thumb">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
+        ref={img.ref}
         src={story.image_url}
         alt=""
-        className={`wk-brief__thumb-img${loaded ? " wk-brief__thumb-img--loaded" : ""}`}
+        className={`wk-brief__thumb-img${img.loaded ? " wk-brief__thumb-img--loaded" : ""}`}
         loading="lazy"
         decoding="async"
-        onLoad={() => setLoaded(true)}
-        onError={() => setError(true)}
+        onLoad={img.onLoad}
+        onError={img.onError}
       />
     </div>
   );

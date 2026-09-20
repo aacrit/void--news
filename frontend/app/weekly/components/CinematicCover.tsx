@@ -14,9 +14,9 @@
    turn its own page; the scroll cue is the invitation, and the reader decides.
    --------------------------------------------------------------------------- */
 
-import { useState } from "react";
 import type React from "react";
 import { ImgCaption } from "./furniture";
+import { useImageStatus } from "../hooks";
 
 export default function CinematicCover({
   nameplate,
@@ -35,9 +35,11 @@ export default function CinematicCover({
   imageCaption?: string | null;
   imageAttribution?: string | null;
 }) {
-  const [imgLoaded, setImgLoaded] = useState(false);
-  const [imgError, setImgError] = useState(false);
-  const hasImage = !!imageUrl && !imgError;
+  // `onError` alone misses a prerendered image that failed before hydration,
+  // which left the cover in its image variant with near-white furniture over a
+  // scrim covering nothing, under a credit for a picture that was not there.
+  const img = useImageStatus(imageUrl);
+  const hasImage = !!imageUrl && !img.failed;
 
   const scrollToPageOne = () => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -49,20 +51,21 @@ export default function CinematicCover({
   return (
     <section
       className={`wk-cover${hasImage ? " wk-cover--has-image" : " wk-cover--type"}`}
-      aria-label="Cover"
+      aria-labelledby="wk-cover-headline"
     >
       {hasImage && (
         <div className="wk-cover__media" aria-hidden="true">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
+            ref={img.ref}
             src={imageUrl!}
             alt=""
-            className={`wk-cover__img${imgLoaded ? " wk-cover__img--loaded" : ""}`}
+            className={`wk-cover__img${img.loaded ? " wk-cover__img--loaded" : ""}`}
             loading="eager"
             fetchPriority="high"
             decoding="async"
-            onLoad={() => setImgLoaded(true)}
-            onError={() => setImgError(true)}
+            onLoad={img.onLoad}
+            onError={img.onError}
           />
           <div className="wk-cover__scrim" />
         </div>
@@ -75,7 +78,12 @@ export default function CinematicCover({
         </div>
 
         <div className="wk-cover__bottom">
-          <p className="wk-cover__headline">{headline}</p>
+          {/* The largest text on the page, and it was a <p>. It is the issue's
+              <h1>: the cover headline is the top of the document, every
+              department plate below it is an h2, and each piece's own headline
+              is an h3. It also names this section through aria-labelledby, so
+              the cover is a landmark rather than content outside one. */}
+          <h1 id="wk-cover-headline" className="wk-cover__headline">{headline}</h1>
 
           {coverlines.length > 0 && (
             <div className="wk-cover__coverlines">

@@ -43,12 +43,13 @@ import CinematicCover from "./components/CinematicCover";
 import Contents, { type ContentsEntry } from "./components/Contents";
 import CoverOpening from "./components/CoverOpening";
 import Feature from "./components/Feature";
-import { TheArgument, MoreLenses } from "./components/Perspectives";
+import { TheArgument, MoreLenses, findPair } from "./components/Perspectives";
 import DepartmentEssay from "./components/DepartmentEssay";
 import Editorial from "./components/Editorial";
 import BiasReport from "./components/BiasReport";
 import BriefList from "./components/BriefList";
 import BackIssues from "./components/BackIssues";
+import IssueUtilities from "./components/IssueUtilities";
 
 /** Every opinion, whichever vintage of the data this issue was written with. */
 function allOpinions(issue: WeeklyDigestData): WeeklyOpinion[] {
@@ -107,8 +108,24 @@ export default function WeeklyIssue({
   const second = covers[1];
   const departments = issue.departments || [];
   const opinions = allOpinions(issue);
-  const hasArgument = opinions.some((o) => o.paired) || opinions.length >= 2;
+  /* Ask the SAME function the section itself asks. The old test was
+     `opinions.some(o => o.paired) || opinions.length >= 2`, whose second clause
+     is true on length alone — so a snapshot with no pair spent a contents row
+     and a folio on The Argument, then rendered nothing: a dead anchor, and
+     every folio after it off by one against the plates it is meant to match. */
+  const hasArgument = findPair(opinions) !== null;
   const issueNo = weeklyDisplayNo(issue.issue_number);
+
+  /* Every word of prose the issue actually prints, which is what a reading
+     time has to be measured from. Counted here rather than in the strip so it
+     tracks the running order instead of the row. */
+  const issueWords = [
+    ...covers.map((c) => c.text || ""),
+    ...opinions.map((o) => o.text || ""),
+    ...departments.map((d) => d.text || ""),
+    issue.opinion_text || "",
+    ...(issue.recap_stories || []).map((r) => r.summary || ""),
+  ].reduce((n, t) => n + (t.trim() ? t.trim().split(/\s+/).length : 0), 0);
 
   const coverHeadline = issue.cover_headline || lead?.headline || "";
   /* The deck: the lede's first sentence, set in italic serif under the
@@ -157,6 +174,9 @@ export default function WeeklyIssue({
   if (editorialPage) contents.push({ label: "The Editorial", title: issue.opinion_headline || "", href: "#wk-editorial", page: editorialPage });
   if (biasPage) contents.push({ label: "The Week in Bias", title: "The week's coverage, measured", href: "#wk-bias", page: biasPage });
   if (briefPage) contents.push({ label: "Week in Brief", title: `${issue.recap_stories.length} stories in short`, href: "#wk-brief", page: briefPage });
+  /* Back Issues takes a folio, so it belongs in the contents. Without this row
+     the contents claimed the issue ended one section early. */
+  if (archivePage) contents.push({ label: "Back Issues", title: `${archive.length - 1} earlier issues`, href: "#wk-archive", page: archivePage });
 
   return (
     <div className="wk-page">
@@ -173,16 +193,18 @@ export default function WeeklyIssue({
       <div id="wk-page-1" className="wk-page-anchor" aria-hidden="true" />
 
       {/* Compact sticky three-zone topbar, matching void --history:
-          back-to-parent mark, centred product logo, theme toggle. */}
-      <div className="wk-topbar">
-        <div className="wk-topbar__left">
+          back-to-parent mark, centred product logo, theme toggle. A <header>
+          outside <main> is the page's banner landmark; it was a bare <div>,
+          so a screen reader had no way to reach or skip it. */}
+      <header className="wk-topbar">
+        <nav className="wk-topbar__left" aria-label="Section">
           <Link href="/" className="wk-back" aria-label="Back to Void News">
             <span className="wk-back__arrow" aria-hidden="true">&larr;</span>
             <span className="wk-back__word">
               <SigilWordmark product="NEWS" height={14} />
             </span>
           </Link>
-        </div>
+        </nav>
         <Link href="/weekly" className="wk-topbar__brand" aria-label="Void Weekly home">
           <span className="wk-topbar__brand-lg">
             <SigilWordmark product="WEEKLY" height={26} accent="var(--palette-weekly)" />
@@ -194,10 +216,17 @@ export default function WeeklyIssue({
         <div className="wk-topbar__actions">
           <ThemeToggle />
         </div>
-      </div>
+      </header>
 
       <main id="main-content" className="wk-main">
         <Contents entries={contents} issueNumber={issue.issue_number} />
+
+        <IssueUtilities
+          words={issueWords}
+          shareTitle={`Void Weekly · Issue #${issueNo}`}
+          weekStart={issue.week_start}
+          archive={archive}
+        />
 
         {lead && (
           <>

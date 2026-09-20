@@ -156,9 +156,11 @@ export default function BiasReport({
 
       {polarized.length > 0 && (
         <div className="wk-bias__polarized">
-          <h4 className="wk-bias__polarized-label">
+          {/* h3, not h4: the plate above is an h2 and a document must not skip
+              a level. */}
+          <h3 className="wk-bias__polarized-label">
             Where the sources disagreed most
-          </h4>
+          </h3>
           <ol className="wk-bias__polarized-list">
             {polarized.slice(0, 5).map((p, i) => (
               <li key={i} className="wk-bias__polarized-item">
