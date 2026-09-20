@@ -143,14 +143,30 @@ which is evidence rather than a competing version of events.
 - **No dashes** in spoken copy. Two sentences, or a comma.
 - **One idea per line.** The line is the unit of synthesis.
 - **Attribution before the claim**, always: name the speaker, then the quote.
-- **1,500-1,950 words. This is a hard gate, not a target.** `H-07` fails the
-  script outside 8-15 minutes, and the arithmetic is `words / 145 + 1.1`, so
-  2,015 words is the ceiling and anything above it does not render at all.
-  The first two delegated drafts both came in near 2,350 because the event
-  records are rich and every fact earns its place on the page. They do not
-  all earn their place in the ear. **Count the words before you run the
-  gate**, and if you are over, cut whole lines rather than trimming clauses:
-  a scene with four lines is a scene, a scene with six is a summary.
+- **Your word budget depends on who is reading. This is a hard gate, not a
+  target.** `H-07` fails the script outside 8-15 minutes, and the runtime is
+  `words / <the cast narrator's wpm> + 1.1`. Casting is deterministic from the
+  event, so the number is knowable before you write a line:
+
+  | narrator | cast by | wpm | ceiling |
+  |---|---|---|---|
+  | `am_michael` | catastrophic non-mass-death, critical mass-death | 140 | 1,946 |
+  | `bm_george`  | everything else | 145 | 2,015 |
+  | `bm_lewis`   | catastrophic genocide / war / disaster / independence | 148 | 2,057 |
+  | `bm_daniel`  | cultural | 168 | 2,335 |
+
+  Run the validator, which prints the rate it used: `1959 words is 15.1 min at
+  am_michael's 140 wpm`. Do not size against 145 and hope. `bm_daniel` reads a
+  fifth faster than `am_michael`, which is two minutes at episode length, and a
+  script written to the average sails through H-07 and then renders over the
+  ceiling.
+
+  Aim for the middle of your voice's range, not its edge. The first two
+  delegated drafts both came in near 2,350 because the event records are rich
+  and every fact earns its place on the page. They do not all earn their place
+  in the ear. **Count the words before you run the gate**, and if you are over,
+  cut whole lines rather than trimming clauses: a scene with four lines is a
+  scene, a scene with six is a summary.
 - **`## SAY`**: a respelling for every proper noun a synthesiser will mangle.
   `Tenochtitlan = ten-och-TEET-lan`. Generous is better than sparse.
 - **`## REST`** four to seven times, where the listener needs somewhere to put
