@@ -1,0 +1,240 @@
+#!/usr/bin/env python3
+"""Gates for "The Argument", the void --weekly audio edition.
+
+Pure: no DB, no LLM key, no network, no audio rendering.
+
+The fixture is not hand-written prose. It is BUILT from the real published
+Issue #26 — the same columns the live page renders — so W-01, the rule that
+makes the show's content unfabricatable, is exercised against the actual data
+rather than against a sentence invented to satisfy it. Every assertion after
+the clean run plants exactly one defect, which is how History's validators
+caught H-04 shipping weak: the rule matched "king" inside "striking", and only
+a planted case found it.
+"""
+
+import json
+import re
+import sys
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "pipeline"))
+
+from briefing.weekly_script import (  # noqa: E402
+    OVERLAP_FLOOR, TARGET_MINUTES, estimated_minutes, overlap,
+    parse_script, validate_script, _bench_columns,
+)
+
+ISSUES = ROOT / "frontend" / "build-data" / "weekly-issues.json"
+_failures = []
+
+
+def check(name, ok, detail=""):
+    print(f"  [{'ok' if ok else 'FAIL'}] {name}" + (f" — {detail}" if detail else ""))
+    if not ok:
+        _failures.append(name)
+
+
+def _issue():
+    rows = json.loads(ISSUES.read_text(encoding="utf-8"))
+    return max((r for r in rows if isinstance(r, dict)),
+               key=lambda r: r.get("issue_number") or 0)
+
+
+def _sentences(text, n, budget):
+    """Real sentences off a published column, to a word budget."""
+    out, words = [], 0
+    for s in re.split(r"(?<=[.!?])\s+", (text or "").strip()):
+        s = s.strip()
+        if len(s.split()) < 6:
+            continue
+        out.append(s)
+        words += len(s.split())
+        if len(out) >= n or words >= budget:
+            break
+    return out
+
+
+def _filler(voice, words):
+    """Editor copy at a known length. The Editor invents nothing a validator
+    checks, so this can be generated; the BENCH never can."""
+    body = ("The week ran long and the record is public. "
+            "Void scored every article it could reach and published the count. ")
+    text, n = "", 0
+    while n < words:
+        text += body
+        n = len(text.split())
+    return [f"{voice}: {text.strip()}"]
+
+
+def build_clean(issue):
+    """A rundown that passes every validator, built from the real issue."""
+    cols = _bench_columns(issue.get("opinions") or [])
+    stats = ((issue.get("bias_report_data") or {}).get("stats") or {})
+    # The bench SELECTS: these lines exist verbatim in the published columns.
+    left = _sentences(cols["L"], 8, 230)
+    right = _sentences(cols["R"], 8, 230)
+    # Within W-03's 1.35x airtime band, which is the point of trimming both.
+    lw, rw = sum(len(l.split()) for l in left), sum(len(r.split()) for r in right)
+    while rw / max(lw, 1) > 1.20 and len(right) > 2:
+        rw -= len(right.pop().split())
+    while lw / max(rw, 1) > 1.20 and len(left) > 2:
+        lw -= len(left.pop().split())
+
+    # The turn engages BOTH columns, so it is built from both.
+    turn = _sentences(cols["L"], 3, 60) + _sentences(cols["R"], 3, 60)
+
+    lines = ["## OPEN"] + _filler("E", 90)
+    lines += ["## CONTENTS", "E: Inside this week.", "E: The Arctic, contested.",
+              "E: Two columnists, one story.", "E: The week, measured."]
+    lines += ["## COVER"] + _filler("E", 700)
+    lines += ["## DATELINE", "E: Tuesday. Thirteen sources."]
+    lines += ["## COVER"] + _filler("E", 250)
+    lines += ["## TOPIC", "E: The two columns below argue about the same agreement."]
+    lines += ["## LEFT"] + [f"L: {s}" for s in left]
+    lines += ["## RIGHT"] + [f"R: {s}" for s in right]
+    lines += ["## REST"]
+    lines += ["## TURN"] + [f"E: {s}" for s in turn]
+    lines += ["## SECOND"] + _filler("E", 420)
+    lines += ["## DEPARTMENT | Technology"] + _filler("E", 200)
+    lines += ["## NUMBERS",
+              f"E: Void scored more than three thousand articles this week.",
+              f"E: Coverage sat at {stats.get('avg_lean', 51.2)} on a hundred point scale.",
+              f"E: The spread was {stats.get('lean_std', 14.9)}."]
+    lines += ["## EDITORIAL"] + _filler("E", 620)
+    lines += ["## CLOSE", "E: Who decides what a territory is worth?"]
+    lines += ["## SAY", "Nuuk = NOOK"]
+    return "\n".join(lines)
+
+
+def test_clean():
+    print("\nWA-01  a rundown built from the real issue passes every validator")
+    issue = _issue()
+    script = parse_script(build_clean(issue))
+    findings = validate_script(script, issue)
+    fails = [f for f in findings if f.level == "fail"]
+    for f in findings:
+        print(f"         {f.id} {f.level:4} [{f.segment}] {f.detail[:100]}")
+    check("no failures on a clean rundown", not fails,
+          "; ".join(f"{f.id}:{f.segment}" for f in fails))
+    minutes, wpm = estimated_minutes(script)
+    lo, hi = TARGET_MINUTES
+    check("inside the 18-22 minute band", lo <= minutes <= hi,
+          f"{minutes:.1f} min, {script.words} words")
+    return issue
+
+
+def _fails(issue, text, rule):
+    findings = validate_script(parse_script(text), issue)
+    return [f for f in findings if f.level == "fail" and f.id == rule]
+
+
+def test_planted(issue):
+    print("\nWA-02  one planted defect per validator")
+    clean = build_clean(issue)
+
+    # W-01 — THE MOAT. A bench line the column does not contain.
+    bad = clean.replace(
+        "## LEFT\n",
+        "## LEFT\nL: The agreement hands the entire northern shelf to a foreign "
+        "navy and every serious analyst has said so repeatedly this week.\n", 1)
+    check("W-01 catches a bench line that is not in the column",
+          _fails(issue, bad, "W-01"))
+    check("W-01 leaves a genuinely selected line alone",
+          not _fails(issue, clean, "W-01"))
+
+    # A real column sentence with three words trimmed must still pass: cutting
+    # for the ear is the whole allowance.
+    cols = _bench_columns(issue.get("opinions") or [])
+    src = _sentences(cols["L"], 1, 40)[0]
+    trimmed = " ".join(src.split()[:-3])
+    check("W-01 allows a line trimmed for the ear",
+          overlap(trimmed, cols["L"]) >= OVERLAP_FLOOR,
+          f"{overlap(trimmed, cols['L']):.0%}")
+
+    # W-02 — a bench voice outside the argument.
+    check("W-02 catches the bench speaking outside its column",
+          _fails(issue, clean.replace("## CLOSE\nE:", "## CLOSE\nL:", 1), "W-02"))
+    check("W-02 catches the Editor inside a bench column",
+          _fails(issue, clean.replace("## RIGHT\nR:", "## RIGHT\nE:", 1), "W-02"))
+
+    # W-03 — one side given materially more airtime than the other.
+    lop = clean.replace("## RIGHT\n", "## RIGHT\n" + "\n".join(
+        f"R: {s}" for s in _sentences(cols["R"], 12, 400)) + "\n", 1)
+    check("W-03 catches a lopsided bench", _fails(issue, lop, "W-03"))
+
+    # W-04 — a turn that reckons with one side only.
+    one = re.sub(r"## TURN\n(?:E: .*\n)+",
+                 "## TURN\n" + "\n".join(f"E: {s}" for s in _sentences(cols["L"], 6, 140))
+                 + "\n", clean, count=1)
+    check("W-04 catches a turn that engages one column",
+          _fails(issue, one, "W-04"))
+    check("W-04 catches a turn too short to reckon with two positions",
+          _fails(issue, re.sub(r"## TURN\n(?:E: .*\n)+", "## TURN\nE: Both sides miss it.\n",
+                               clean, count=1), "W-04"))
+
+    # W-05 — the programme's shape.
+    check("W-05 catches a missing movement",
+          _fails(issue, clean.replace("## NUMBERS", "## NOTES", 1), "W-05"))
+
+    # W-06 — the dateline beat.
+    check("W-06 catches a missing dateline",
+          _fails(issue, clean.replace("## DATELINE\nE: Tuesday. Thirteen sources.\n", "", 1),
+                 "W-06"))
+
+    # W-07 — length.
+    short = "\n".join(l for l in clean.splitlines()
+                      if not l.startswith("E: The week ran long"))
+    check("W-07 catches a programme far under the band",
+          _fails(issue, short, "W-07"))
+
+    # W-08 — borrowed radio furniture.
+    check("W-08 catches a borrowed catchphrase",
+          _fails(issue, clean.replace("## OPEN\n", "## OPEN\nE: Up first, the Arctic.\n", 1),
+                 "W-08"))
+
+    # W-09 — a figure read aloud that the issue does not carry.
+    check("W-09 catches an invented figure",
+          _fails(issue, clean.replace("E: The spread was",
+                                      "E: Void scored 8412 articles and the spread was", 1),
+                 "W-09"))
+
+
+def test_columns_match_the_page(issue):
+    """The programme and the page must agree on WHICH two essays are the argument.
+
+    `_bench_columns` mirrors `findPair` in Perspectives.tsx. If they diverged,
+    the show would stage a debate the reader cannot find on the page it is
+    supposedly reading from.
+    """
+    print("\nWA-03  the bench is the page's pair")
+    cols = _bench_columns(issue.get("opinions") or [])
+    check("a pair was found", set(cols) == {"L", "R"}, str(sorted(cols)))
+    paired = [o for o in issue["opinions"] if o.get("paired")]
+    check("the pair is the flagged pair", len(paired) == 2, str(len(paired)))
+    check("left is left", (paired[0].get("lean") or "").startswith("left")
+          or cols["L"] == (paired[0].get("text") or ""))
+    check("both columns carry text", all(len(v.split()) > 50 for v in cols.values()))
+
+    # The same source used by the frontend reader, so a refactor that drops
+    # `pair_id` on one side is caught here rather than on Sunday.
+    tsx = (ROOT / "frontend" / "app" / "weekly" / "components" / "Perspectives.tsx").read_text()
+    for token in ("pair_id", "paired", "lean"):
+        check(f"findPair still keys on {token}", token in tsx)
+
+
+def main():
+    print("void --weekly audio gates (The Argument)")
+    issue = test_clean()
+    test_planted(issue)
+    test_columns_match_the_page(issue)
+    print()
+    if _failures:
+        print(f"FAILED ({len(_failures)}): " + ", ".join(_failures))
+        return 1
+    print("All weekly-audio script gates passed.")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

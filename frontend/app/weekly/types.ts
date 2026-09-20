@@ -20,7 +20,7 @@
      component, which had no CSS either.
    --------------------------------------------------------------------------- */
 
-import type { OpinionLean } from "../lib/types";
+import type { AudioChapter, OpinionLean } from "../lib/types";
 
 export interface WeeklyCoverStory {
   headline: string;
@@ -151,6 +151,9 @@ export interface WeeklyDigestData {
   opinion_start_seconds: number | null;
   audio_voice: string | null;
   audio_voice_label: string | null;
+  /* "The Argument" chapter rail. Null on issues rendered by the legacy
+     two-voice path, which the player falls back to gracefully. */
+  audio_chapters: AudioChapter[] | null;
   total_articles: number | null;
   total_clusters: number | null;
   created_at: string;
