@@ -49,6 +49,10 @@ if _SQLITE_PATH:
                 "audio_chapters": "TEXT",       # radio show chapters (JSON), 2026-09-18
                 "news_start_seconds": "REAL",   # where STORY 1 begins, 2026-09-18
             },
+            "weekly_digests": {
+                "departments": "TEXT",   # front-of-book essays (JSON), 2026-09-20
+                "opinions": "TEXT",      # flat opinion array w/ lean+pair_id, 2026-09-20
+            },
         }
         for _table, _cols in _ADDITIVE_COLUMNS.items():
             try:

@@ -35,7 +35,8 @@ load_dotenv()
 
 from utils.supabase_client import supabase
 from briefing.weekly_parse import (  # pure: no DB, no LLM, no network
-    clean_headline, parse_essay, parse_recap, looks_like_headline, weekly_window,
+    build_weekly_row, clean_headline, parse_essay, parse_recap,
+    looks_like_headline, weekly_window,
 )
 from summarizer.gemini_client import (
     generate_json as gemini_generate_json,
@@ -1757,65 +1758,33 @@ def generate_weekly_digest(editions=None, week_offset=0):
                     print(f"    story image ({found['source']}): {found['url'][:70]}")
             return item
 
-        row = {
-            "edition": edition,
-            "week_start": week_start.strftime("%Y-%m-%d"),
-            "week_end": week_end.strftime("%Y-%m-%d"),
-            "issue_number": issue_number,
-            # Cover
-            "cover_headline": covers[0].get("headline", "") if covers else "",
-            "cover_text": json.dumps([_cover_item(c) for c in covers]),
-            "cover_numbers": json.dumps(covers[0].get("numbers", []) if covers else []),
-            "cover_timelines": json.dumps([
-                {"story_index": i, "entries": c.get("timeline", [])}
-                for i, c in enumerate(covers)
-            ]),
-            # Recap
-            "recap_stories": json.dumps(recap.get("stories", []) if recap else []),
-            # Opinions (store as JSONB array instead of separate columns)
-            "opinion_left": json.dumps([o for o in opinions if o.get("lean") == "left"]),
-            "opinion_center": json.dumps([o for o in opinions if o.get("lean") in ("center", "center-left", "center-right")]),
-            "opinion_right": json.dumps([o for o in opinions if o.get("lean") == "right"]),
-            "opinion_headlines": json.dumps({o.get("topic", f"topic-{i}"): {"headline": o.get("headline", ""), "lean": o.get("lean", "")} for i, o in enumerate(opinions)}),
-            "opinion_topic": ", ".join(o.get("topic", "") for o in opinions[:3]),
-            # Bias report
-            "bias_report_text": bias_text,
-            "bias_report_data": json.dumps(bias_data),
-            # Tech + Sports (store in cover_text JSON alongside covers)
-            # Audio (fixed weekly pair: Editor + Correspondent)
-            "audio_script": audio_script,
-            "audio_url": audio_url,
-            "audio_duration_seconds": audio_duration,
-            "audio_file_size": audio_size,
-            # Weekly editorial (one argued week-in-review column + monologue)
-            "opinion_text": weekly_opinion.get("opinion_text") if weekly_opinion else None,
-            "opinion_headline": weekly_opinion.get("opinion_headline") if weekly_opinion else None,
-            "opinion_lean": weekly_opinion.get("opinion_lean") if weekly_opinion else None,
-            "opinion_audio_script": weekly_opinion.get("opinion_audio_script") if weekly_opinion else None,
-            "opinion_start_seconds": opinion_start,
-            # Broadcast desk voices (news pair drives player host chips + label)
-            "audio_voice": (
-                f"{WEEKLY_VOICE_PAIR['host_a']['id']}+{WEEKLY_VOICE_PAIR['host_b']['id']}"
-                if audio_url else None
-            ),
-            "audio_voice_label": (
-                f"{WEEKLY_VOICE_PAIR['host_a']['name']} & {WEEKLY_VOICE_PAIR['host_b']['name']}"
-                if audio_url else None
-            ),
-            # Cover image
-            "cover_image_url": cover_image["url"] if cover_image else None,
-            "cover_image_attribution": cover_image["attribution"] if cover_image else None,
-            "cover_image_source": cover_image["source"] if cover_image else None,
-            # Stats
-            "total_articles": sum(c.get("source_count", 0) for c in clusters),
-            "total_clusters": len(clusters),
-            "generator": "gemini-flash",
-            "gemini_calls_used": total_calls,
-            "generation_duration_seconds": round(elapsed, 1),
-        }
-
-        recap_data = recap.get("stories", []) if recap else []
-        row["recap_stories"] = json.dumps(recap_data)
+        row = build_weekly_row(
+            edition=edition,
+            week_start=week_start.strftime("%Y-%m-%d"),
+            week_end=week_end.strftime("%Y-%m-%d"),
+            issue_number=issue_number,
+            cover_items=[_cover_item(c) for c in covers],
+            opinions=opinions,
+            tech=tech,
+            sports=sports,
+            recap_stories=recap.get("stories", []) if recap else [],
+            bias_text=bias_text,
+            bias_data=bias_data,
+            weekly_opinion=weekly_opinion,
+            audio={
+                "script": audio_script,
+                "audio_url": audio_url,
+                "duration_seconds": audio_duration,
+                "file_size": audio_size,
+                "opinion_start_seconds": opinion_start,
+            },
+            cover_image=cover_image,
+            total_articles=sum(c.get("source_count", 0) for c in clusters),
+            total_clusters=len(clusters),
+            gemini_calls=total_calls,
+            elapsed=elapsed,
+            voice_pair=WEEKLY_VOICE_PAIR,
+        )
 
         try:
             supabase.table("weekly_digests").upsert(

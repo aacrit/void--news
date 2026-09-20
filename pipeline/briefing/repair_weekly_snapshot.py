@@ -32,7 +32,7 @@ REPO = Path(__file__).resolve().parents[2]
 if str(REPO / "pipeline") not in sys.path:
     sys.path.insert(0, str(REPO / "pipeline"))
 
-from briefing.weekly_parse import looks_like_headline  # noqa: E402
+from briefing.weekly_parse import _opinion_items, looks_like_headline  # noqa: E402
 
 WEEKLY = REPO / "frontend" / "public" / "data" / "weekly.json"
 
@@ -86,6 +86,67 @@ def repair(data) -> list[str]:
     return changes
 
 
+# Fields the exporter parses out of the DB's TEXT columns. A snapshot written
+# before these were added carries them as raw JSON strings.
+_JSON_FIELDS = ("cover_text", "cover_timelines", "cover_numbers", "recap_stories",
+                "departments", "opinions", "opinion_left", "opinion_center",
+                "opinion_right", "bias_report_data")
+
+# TTS source and a derivable map, rendered nowhere, ~15 KB per page load.
+_DROPPED = ("audio_script", "opinion_audio_script", "opinion_headlines")
+
+
+def normalize(data) -> list[str]:
+    """Bring a published snapshot in line with what the exporter now emits."""
+    changes = []
+
+    for k in _JSON_FIELDS:
+        if isinstance(data.get(k), str):
+            try:
+                data[k] = json.loads(data[k])
+            except ValueError:
+                continue
+            changes.append(f"{k}: parsed (was shipping to browsers as a raw JSON string)")
+
+    for k in _DROPPED:
+        if k in data:
+            n = len(data[k] or "") if isinstance(data.get(k), str) else 0
+            data.pop(k)
+            changes.append(f"{k}: dropped from the browser payload"
+                           + (f" ({n:,} chars)" if n else ""))
+
+    # The flat opinion array, recovered from the three lean buckets. The
+    # generator writes it from 2026-09-20 on; rebuilding it here means the
+    # PUBLISHED issue gets its left-vs-right dialectic back now rather than on
+    # Monday. Bucket order is left, center, right, so `position` is restored
+    # from the stored `paired` flag rather than from the original index.
+    if not data.get("opinions"):
+        merged = []
+        for k in ("opinion_left", "opinion_center", "opinion_right"):
+            merged.extend(data.get(k) or [])
+        if merged:
+            merged.sort(key=lambda o: (not o.get("paired"), o.get("lean", "")))
+            data["opinions"] = _opinion_items(merged, data.get("issue_number") or 0)
+            paired = sum(1 for o in data["opinions"] if o["paired"])
+            changes.append(f"opinions: rebuilt {len(merged)} essays from the lean "
+                           f"buckets ({paired} paired)")
+
+    # Shipping the flat array AND the three buckets duplicates every essay.
+    if data.get("opinions"):
+        for k in ("opinion_left", "opinion_center", "opinion_right"):
+            if k in data:
+                data.pop(k)
+                changes.append(f"{k}: dropped (superseded by `opinions`)")
+
+    # Departments are text that was never written; an empty list is the honest
+    # answer until the next run generates and stores them.
+    if data.get("departments") is None:
+        data["departments"] = []
+        changes.append("departments: [] (this issue predates them being persisted)")
+
+    return changes
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--dry-run", action="store_true", help="report without writing")
@@ -98,9 +159,9 @@ def main() -> int:
     data = json.loads(WEEKLY.read_text(encoding="utf-8"))
     print(f"issue #{data.get('issue_number')} ({data.get('week_start')})")
 
-    changes = repair(data)
+    changes = repair(data) + normalize(data)
     if not changes:
-        print("  every headline already reads as a headline; nothing to repair")
+        print("  snapshot already matches what the exporter emits")
         return 0
     for line in changes:
         print(f"  {line}")
