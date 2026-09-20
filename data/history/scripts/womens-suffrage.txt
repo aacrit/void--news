@@ -1,0 +1,144 @@
+## OPEN
+N: Picture the order these countries came in. You will probably get it backwards.
+N: The most powerful woman on earth, Queen Victoria, spent her whole reign fighting the idea that women should vote at all.
+N: The first country where they actually could was not Britain or the United States. It was New Zealand, a farming colony, in eighteen ninety three.
+N: The last place in Europe did not choose to include women. In nineteen ninety, a court had to make it.
+
+## TITLE
+N: The Global Struggle for Women's Suffrage. Eighteen forty eight to nineteen seventy one.
+
+## SCENE 1 | A chapel in Seneca Falls, 1848
+N: July nineteenth, eighteen forty eight. Three hundred people packed into the Wesleyan Chapel in Seneca Falls, New York.
+N: Elizabeth Cady Stanton stands up with a document modeled on the Declaration of Independence. Eighteen grievances, in the same cadence as the one everyone already knows.
+N: Eleven resolutions follow. Only the ninth, demanding the vote itself, draws an argument.
+N: Frederick Douglass speaks in favor. It passes, narrowly.
+N: By morning, sixty eight women and thirty two men have signed their names to it.
+
+## DOCUMENT | Elizabeth Cady Stanton | Declaration of Sentiments | July 19, 1848
+N: The document Stanton read out loud that day said this about what marriage did to a woman under the law.
+F: He has never permitted her to exercise her inalienable right to the elective franchise. He has compelled her, if married, to be in the law civilly dead.
+
+## ASIDE
+N: Civilly dead meant exactly that. A married woman could not own property, sign a contract, or claim custody of her own children. The law had stopped treating her as a separate person.
+
+## REST
+
+## SCENE 2 | Akron, three years later
+N: Eighteen fifty one, the Ohio Women's Rights Convention in Akron. Men in the audience have argued that women are too weak and too irrational for the vote.
+
+## DOCUMENT | Sojourner Truth | Speech at the Ohio Women's Rights Convention, Akron | May 29, 1851
+N: A formerly enslaved woman named Sojourner Truth stands to answer them, and not in the abstract.
+F: That man over there says that women need to be helped into carriages, and lifted over ditches, and to have the best place everywhere. Nobody ever helps me into carriages, or over mud puddles, or gives me any best place! And ain't I a woman?
+
+## SCENE 3 | A petition two hundred and seventy meters long
+N: New Zealand, eighteen ninety three. Kate Sheppard has spent six years building support for a suffrage bill, and Parliament has turned her down three times.
+N: Her petition this time runs two hundred and seventy meters of pasted signature sheets.
+N: It carries thirty one thousand eight hundred and seventy two names, roughly one adult woman in every four in the country.
+N: On September nineteenth, Governor Lord Glasgow signs the Electoral Act. New Zealand becomes the first self-governing nation where women can vote in national elections.
+
+## REST
+
+## SCENE 4 | Deeds, not words
+N: Britain split over method. Millicent Fawcett led the National Union of Women's Suffrage Societies: petitions, lobbying, constitutional pressure.
+N: In nineteen oh three, Emmeline Pankhurst and her daughters Christabel and Sylvia founded a different organization. Its motto: deeds, not words.
+N: Its members smashed windows on Oxford Street, slashed a painting in the National Gallery, and chained themselves to the railings outside ten Downing Street.
+N: Arrested suffragettes went on hunger strike. More than a thousand were force-fed, a rubber tube through the nostril or between the teeth while warders held the woman down, between nineteen oh nine and nineteen fourteen.
+
+## DOCUMENT | Emmeline Pankhurst | Speech delivered in court, London | October 21, 1908
+N: In a London courtroom, Pankhurst explained why she kept breaking the law.
+F: We are here, not because we are law-breakers; we are here in our efforts to become law-makers.
+N: On June fourth, nineteen thirteen, at the Epsom Derby, Emily Wilding Davison stepped onto the track as the King's horse came round. The horse, Anmer, struck her. She died four days later.
+N: Six thousand suffragettes marched behind her coffin in white. Sewn into her coat's lining: a return train ticket and a flag in purple, white, and green.
+
+## REST
+
+## SCENE 5 | One vote in Tennessee
+N: The First World War changed the argument. One point six million women went into British munitions factories, and the claim that women were unfit for public life got harder to make.
+N: Parliament gave the vote in nineteen eighteen to women over thirty with a property qualification. Equal suffrage came a decade later. Pankhurst died eighteen days before it took effect.
+N: In the United States the amendment needed one more state, and Tennessee's legislature was tied, forty eight to forty eight. Harry Burn, twenty four, had a letter in his pocket from his mother, telling him not to forget to be a good boy. He voted aye. The amendment passed by one vote, seventy two years after Seneca Falls.
+N: It enfranchised women on paper. In the South, poll taxes, literacy tests, and violence kept most Black women from the polls for another forty five years.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts of the same hundred and twenty three years.
+
+## PERSPECTIVE | The suffrage movement | victor
+N: The first account is the movement's own: organization outlasting refusal.
+N: Susan B. Anthony was arrested for voting in Rochester in eighteen seventy two, fined one hundred dollars, and refused to pay. An amendment giving women the vote was introduced in Congress in eighteen seventy eight. It was defeated or tabled every session for forty two years, then ratified, in the same eighteen words, as the nineteenth Amendment.
+N: In Britain the militant wing escalated when lobbying stalled. On March tenth, nineteen fourteen, Mary Richardson walked into the National Gallery and took a meat cleaver to a painting of a nude woman.
+F: I have tried to destroy the picture of the most beautiful woman in mythological history as a protest against the Government for destroying Mrs. Pankhurst, who is the most beautiful character in modern history.
+N: Eleanor Flexner's Century of Struggle laid out the machinery behind it: state campaigns, petition drives, the same legislators lobbied year after year. The vote, this account insists, was not given. It was extracted.
+
+## PERSPECTIVE | Socialist feminism | revisionist
+N: The second account says the first one asked the wrong question. The problem was never who could vote. It was what they would vote for.
+N: Alexandra Kollontai published The Social Basis of the Woman Question in nineteen oh nine, arguing that a factory worker doing twelve hours a day had no use for a ballot that left the factory untouched.
+F: For the bourgeois woman, her liberation is always connected with winning political rights for her own class.
+N: Clara Zetkin organized the first International Women's Day in nineteen eleven. Over one million marched in Germany, Austria, Denmark, and Switzerland, demanding the vote alongside the eight hour day and equal pay.
+N: The Soviet Union gave women full suffrage in nineteen seventeen, two years before the United States. Kollontai, as Commissar for Social Welfare, legalized divorce and decriminalized abortion. Stalin reversed both within twenty years, and by nineteen seventy Soviet women were fifty one per cent of the workforce and under five per cent of the party's leadership.
+
+## REST | short
+
+## PERSPECTIVE | The non-Western movements | revisionist
+N: The third account rejects the map the first two are drawn on, the one where the idea starts in Seneca Falls or London and radiates outward.
+N: On May fifteenth, nineteen twenty three, Huda Sha'arawi stepped off a train in Cairo, returning from a congress in Rome, and in front of a crowd that had come to meet her, removed her face veil. She never wore it again.
+F: I felt a strange sense of freedom, of casting off something restrictive and burdensome.
+N: Turkey gave women full suffrage in nineteen thirty four, before France and Switzerland both, building on a decade of Ottoman era organizing. In Nigeria, Funmilayo Ransome Kuti's Abeokuta Women's Union grew to twenty thousand members and forced a colonial ruler to flee his own palace over a tax on market women.
+N: This account's complaint is specific. British women could vote in nineteen eighteen. Indian women, under the same government, could not.
+
+## PERSPECTIVE | Anti-suffrage conservatism | bystander
+N: The fourth account is the one that lost, and it insisted this was never about superiority, only about difference.
+N: Queen Victoria wrote privately in eighteen seventy that she wanted every writer she could enlist to help her check what she called this mad, wicked folly.
+F: The Queen is most anxious to enlist every one who can speak or write to join in checking this mad, wicked folly of Woman's Rights, with all its attendant horrors.
+N: In the United States, Josephine Dodge founded the National Association Opposed to Woman Suffrage in nineteen eleven. Its state chapters, in Massachusetts, New York, Illinois, and Ohio, were led by women.
+N: The prediction at the center of the argument never came true. New Zealand did not dissolve after eighteen ninety three. In the Swiss canton of Appenzell Innerrhoden, men kept voting no at their open air assembly until a federal court overruled them, in nineteen ninety.
+
+## PERSPECTIVE | Black women's suffrage | vanquished
+N: The fifth account says the first four are telling a story about a movement that excluded the women telling this one.
+N: In eighteen sixty nine, opposing an amendment that barred denying the vote by race but not by sex, Elizabeth Cady Stanton wrote that she would cut off her right arm before demanding the ballot for the Negro and not the woman. Her own wing later courted white Southern support by accepting segregation within its ranks.
+N: Black women organized anyway. Ida B. Wells founded the Alpha Suffrage Club in Chicago in nineteen thirteen. When that year's Washington suffrage parade told Black women to march at the back, she waited on the sidewalk and stepped into the Illinois delegation as it passed.
+N: The nineteenth Amendment enfranchised Black women in the South on paper only. Fannie Lou Hamer, who had picked cotton since she was six, tried to register in Indianola, Mississippi, in nineteen sixty two, and was fired the same day. The next year, in Winona, police ordered other prisoners to beat her with a blackjack.
+N: She testified to the Democratic National Convention in August nineteen sixty four. The President called a press conference at that exact hour to pull the cameras away from her.
+F: Is this America, the land of the free and the home of the brave, where we have to sleep with our telephones off the hooks because our lives be threatened daily, because we want to live as decent human beings?
+
+## REST
+
+## TURN | What each one leaves out
+N: What each account leaves out.
+N: The movement's own story is a story about the vote. It says less about the property rules that kept working class British women waiting ten more years than their war work earned them, or about the suffrage movements outside Europe and America it barely mentions.
+N: The socialist account can explain why a ballot without economic change is not enough. It says far less about what its own hero, Kollontai, actually lost: her divorce law, her legalized abortion, her Women's Department, reversed within Stalin's first decade.
+N: The non-Western account is right that the idea did not radiate outward from two capitals. It says less about the patriarchal structures inside its own societies that its own reformers were also fighting.
+N: The conservative account calls its worldview considered, not prejudiced. It has nothing to say about the force-feeding, the imprisonment, or the coverture laws that made the case for change in the first place.
+N: And the account of the excluded has its own gap. It says less about the white suffragists who kept their abolitionist alliances, and about the political power Black women had already built in Northern cities before nineteen sixty five arrived.
+
+## REST
+
+## CLOSE
+N: Appenzell Innerrhoden is the smallest canton in Switzerland, the last place in Europe where women could not vote.
+N: Its citizens decide things the old way, gathered outdoors, voting by raising their hands. On April twenty ninth, nineteen ninety, about three thousand men raised their hands against admitting women, the same gesture their fathers and grandfathers had made.
+N: Seven months later, on November twenty seventh, the Federal Supreme Court overruled them.
+N: Nobody in Appenzell Innerrhoden ever voted women's suffrage in. A court ordered it, and the hands went down.
+
+## SAY
+Seneca = SEN-ih-kah
+Wesleyan = WES-lee-an
+Cady = KAY-dee
+Sojourner = soh-JUR-ner
+Akron = AK-ron
+Sheppard = SHEP-erd
+Glasgow = GLAZ-goh
+Fawcett = FAW-set
+Pankhurst = PANK-hurst
+Christabel = KRIS-tuh-bel
+Epsom = EP-sum
+Anmer = AN-mer
+Kollontai = KOL-on-tie
+Zetkin = ZET-kin
+Sha'arawi = shah-ah-RAH-wee
+Ransome = RAN-sum
+Abeokuta = ah-bay-OH-koo-tah
+Appenzell = AP-en-zel
+Innerrhoden = IN-er-ROH-den
+Indianola = in-dee-an-OH-lah
+Winona = wih-NOH-nah
+Hamer = HAY-mer
