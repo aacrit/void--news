@@ -1,5 +1,22 @@
 # void --news Pipeline Brain
 
+> **⚠ STALE IN PARTS — read this first (added 2026-09-20).**
+> Last revised 2026-05-18, so it predates four structural changes. Trust the
+> code and `CLAUDE.md` over this file where they disagree:
+> - **There is no Supabase.** Every "store in Supabase" step is now SQLite
+>   (`VOID_SQLITE_PATH`) plus static JSON on the CDN. See `migration/PORT_NOTES.md`.
+> - **Step 7b no longer exists.** Summarization was restructured into Stage 2
+>   (rev 64): one batched flash pass over a 35-cluster bench. See
+>   `pipeline/editorial/stage2.py`.
+> - **5 clustering phases are live, not 7.** Phases 2.5 / 2.55 / 2.6 are parked
+>   behind `enable_anchor_merge=False` with no production caller.
+> - **The feed is 20 stories, not 50** (CEO, 2026-09-07). Sizes live in
+>   `frontend/config/feed.json`.
+> - Groq was removed 2026-06-24; Claude retired 2026-06-22.
+>
+> Still accurate and worth reading: the bias axes, the ranking signals, and the
+> clustering phase mechanics themselves.
+
 Last updated: 2026-05-18 (rev 7, 7-phase clustering hardened against production-scale over-merges: Phase 2.6 anchor thresholds retuned for N≈200, `MERGE_HARD_CEILING = 120` blocks all merge passes, Phase 5 sanity guard uses `avg_articles_per_sub < 1.5`, ranker applies 0.65x penalty on `mega_cluster_capped`, rerank no longer writes `source_count`)
 
 Reference for every intelligent system in the pipeline: bias, clustering, ranking, summarization, editorial triage, memory, audio.

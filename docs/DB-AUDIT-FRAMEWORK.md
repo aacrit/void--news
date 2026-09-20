@@ -1,5 +1,8 @@
 # Database Quality Audit Framework
 
+> **⚠ PRE-MIGRATION (added 2026-09-20).** Describes the retired Postgres
+> schema. There is no Supabase. See `migration/PORT_NOTES.md`.
+
 Last updated: 2026-04-28 (rev 1)
 
 **Last Updated:** 2026-03-31

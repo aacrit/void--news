@@ -1,5 +1,13 @@
 # void --news Deployment Runbook
 
+> **⚠ STALE — the data plane described below is gone (added 2026-09-20).**
+> The Cloudflare Pages deploy mechanics are still correct. The data flow is not:
+> - The pipeline does **not** write Supabase, and the site does **not** poll a
+>   database. The pipeline writes SQLite, emits static JSON, and commits it.
+> - The auto-merge flow no longer applies Supabase migrations.
+>
+> Trust the Architecture section of `CLAUDE.md` for how data reaches the page.
+
 **Last updated**: 2026-08-01 (rev 4 — Cloudflare-Pages-only reality; GitHub Pages removed; staging/preview split + branch protection documented)
 **Status**: Single production surface, live at https://news.voidvision.org (Cloudflare Pages, root basePath). The Cloudflare Pages origin remains `void-news.pages.dev`; the custom domain `news.voidvision.org` sits on top of it (added in the CF Pages dashboard → Custom domains). PWA installable. Capacitor iOS/Android shells initialized, awaiting signing. GitHub Pages retired (the old `deploy.yml` no longer exists).
 
