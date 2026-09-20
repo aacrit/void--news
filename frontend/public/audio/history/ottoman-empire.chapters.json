@@ -1,0 +1,77 @@
+{
+ "version": "1.2.0",
+ "title": "The Ottoman Empire",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 47.178
+  },
+  {
+   "startTime": 47.178,
+   "title": "The border smaller than Belgium",
+   "endTime": 92.646
+  },
+  {
+   "startTime": 92.646,
+   "title": "A capital of three faiths",
+   "endTime": 190.398
+  },
+  {
+   "startTime": 190.398,
+   "title": "The sultan's death kept secret",
+   "endTime": 253.645
+  },
+  {
+   "startTime": 253.645,
+   "title": "A sequence of amputations",
+   "endTime": 337.78
+  },
+  {
+   "startTime": 337.78,
+   "title": "The suitcase and the warship",
+   "endTime": 378.277
+  },
+  {
+   "startTime": 378.277,
+   "title": "Five accounts",
+   "endTime": 386.92
+  },
+  {
+   "startTime": 386.92,
+   "title": "Turkish Republican / Kemalist",
+   "endTime": 474.323
+  },
+  {
+   "startTime": 474.323,
+   "title": "Arab Nationalist",
+   "endTime": 550.16
+  },
+  {
+   "startTime": 550.16,
+   "title": "Balkan / Orthodox Christian",
+   "endTime": 632.184
+  },
+  {
+   "startTime": 632.184,
+   "title": "Revisionist / Pluralist",
+   "endTime": 711.051
+  },
+  {
+   "startTime": 711.051,
+   "title": "Postcolonial / Dissolution Consequences",
+   "endTime": 809.191
+  },
+  {
+   "startTime": 809.191,
+   "title": "What each one leaves out",
+   "endTime": 894.39
+  },
+  {
+   "startTime": 894.39,
+   "title": "Legacy",
+   "endTime": 925.023
+  }
+ ]
+}

@@ -1,0 +1,82 @@
+{
+ "version": "1.2.0",
+ "title": "The Spanish Civil War",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 65.142
+  },
+  {
+   "startTime": 65.142,
+   "title": "Madrid, July 19, 1936",
+   "endTime": 132.692
+  },
+  {
+   "startTime": 132.692,
+   "title": "The powers arrive, 1936",
+   "endTime": 173.774
+  },
+  {
+   "startTime": 173.774,
+   "title": "The University of Salamanca, October 12, 1936",
+   "endTime": 225.526
+  },
+  {
+   "startTime": 225.526,
+   "title": "Guernica, April 26, 1937",
+   "endTime": 300.203
+  },
+  {
+   "startTime": 300.203,
+   "title": "Barcelona, May 3 to May 8, 1937",
+   "endTime": 335.182
+  },
+  {
+   "startTime": 335.182,
+   "title": "The end, October 1938 to April 1939",
+   "endTime": 423.749
+  },
+  {
+   "startTime": 423.749,
+   "title": "Five accounts",
+   "endTime": 432.562
+  },
+  {
+   "startTime": 432.562,
+   "title": "Republican Spain",
+   "endTime": 494.896
+  },
+  {
+   "startTime": 494.896,
+   "title": "Nationalist Spain",
+   "endTime": 563.465
+  },
+  {
+   "startTime": 563.465,
+   "title": "International Volunteers and the Great Powers",
+   "endTime": 627.639
+  },
+  {
+   "startTime": 627.639,
+   "title": "The Catholic Church and Rural Spain",
+   "endTime": 696.827
+  },
+  {
+   "startTime": 696.827,
+   "title": "Memory and the Historians' War",
+   "endTime": 762.894
+  },
+  {
+   "startTime": 762.894,
+   "title": "What each one leaves out",
+   "endTime": 842.716
+  },
+  {
+   "startTime": 842.716,
+   "title": "Legacy",
+   "endTime": 877.908
+  }
+ ]
+}

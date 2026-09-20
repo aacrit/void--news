@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-20T19:09:40+00:00",
+ "generatedAt": "2026-09-20T19:26:02+00:00",
  "episodes": {
   "alexanders-conquests": {
    "url": "/audio/history/alexanders-conquests.mp3?v=21d3017c",
@@ -3607,6 +3607,106 @@
    ],
    "publishedAt": "2026-09-20T02:54:35+00:00"
   },
+  "iran-iraq-war": {
+   "url": "/audio/history/iran-iraq-war.mp3?v=09aa663c",
+   "chaptersUrl": "/audio/history/iran-iraq-war.chapters.json?v=09aa663c",
+   "title": "The Iran-Iraq War",
+   "durationSeconds": 875.154,
+   "bytes": 14019887,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 45.771
+    },
+    {
+     "startTime": 45.771,
+     "title": "Khuzestan, September 22, 1980",
+     "kind": "segment",
+     "endTime": 114.592
+    },
+    {
+     "startTime": 114.592,
+     "title": "Khorramshahr, October 1980 - May 1982",
+     "kind": "segment",
+     "endTime": 159.11
+    },
+    {
+     "startTime": 159.11,
+     "title": "The trenches, 1982-1987",
+     "kind": "segment",
+     "endTime": 193.309
+    },
+    {
+     "startTime": 193.309,
+     "title": "Halabja, March 16, 1988",
+     "kind": "segment",
+     "endTime": 265.013
+    },
+    {
+     "startTime": 265.013,
+     "title": "The Gulf, July 3, 1988",
+     "kind": "segment",
+     "endTime": 301.26
+    },
+    {
+     "startTime": 301.26,
+     "title": "The ceasefire, July 1987 - August 1988",
+     "kind": "segment",
+     "endTime": 384.393
+    },
+    {
+     "startTime": 384.393,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 391.606
+    },
+    {
+     "startTime": 391.606,
+     "title": "Iranian Revolutionary / Sacred Defense",
+     "kind": "segment",
+     "endTime": 458.306
+    },
+    {
+     "startTime": 458.306,
+     "title": "Iraqi Ba'athist",
+     "kind": "segment",
+     "endTime": 527.053
+    },
+    {
+     "startTime": 527.053,
+     "title": "Kurdish / Halabja and the Anfal",
+     "kind": "segment",
+     "endTime": 590.064
+    },
+    {
+     "startTime": 590.064,
+     "title": "Great-Power Double-Dealing",
+     "kind": "segment",
+     "endTime": 666.471
+    },
+    {
+     "startTime": 666.471,
+     "title": "Regional Legacy / Later Scholarship",
+     "kind": "segment",
+     "endTime": 749.013
+    },
+    {
+     "startTime": 749.013,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 827.0
+    },
+    {
+     "startTime": 827.0,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 875.128
+    }
+   ],
+   "publishedAt": "2026-09-20T19:26:02+00:00"
+  },
   "iranian-revolution": {
    "url": "/audio/history/iranian-revolution.mp3?v=4efd0e29",
    "chaptersUrl": "/audio/history/iranian-revolution.chapters.json?v=4efd0e29",
@@ -3694,6 +3794,100 @@
     }
    ],
    "publishedAt": "2026-09-20T00:21:56+00:00"
+  },
+  "kingdom-of-kongo": {
+   "url": "/audio/history/kingdom-of-kongo.mp3?v=a56c05f7",
+   "chaptersUrl": "/audio/history/kingdom-of-kongo.chapters.json?v=a56c05f7",
+   "title": "The Kingdom of Kongo",
+   "durationSeconds": 861.048,
+   "bytes": 13793837,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 45.095
+    },
+    {
+     "startTime": 45.095,
+     "title": "Mbanza Kongo, 1491",
+     "kind": "segment",
+     "endTime": 109.21
+    },
+    {
+     "startTime": 109.21,
+     "title": "Mbanza Kongo, 1509",
+     "kind": "segment",
+     "endTime": 155.149
+    },
+    {
+     "startTime": 155.149,
+     "title": "Mbanza Kongo, 1526",
+     "kind": "segment",
+     "endTime": 241.027
+    },
+    {
+     "startTime": 241.027,
+     "title": "Sao Tome and the Kongolese provinces, 1530",
+     "kind": "segment",
+     "endTime": 270.373
+    },
+    {
+     "startTime": 270.373,
+     "title": "The Ulanga River, October 29, 1665",
+     "kind": "segment",
+     "endTime": 320.641
+    },
+    {
+     "startTime": 320.641,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 327.406
+    },
+    {
+     "startTime": 327.406,
+     "title": "Kongolese Royal / Manikongo",
+     "kind": "segment",
+     "endTime": 398.948
+    },
+    {
+     "startTime": 398.948,
+     "title": "Portuguese Colonial / Commercial",
+     "kind": "segment",
+     "endTime": 471.166
+    },
+    {
+     "startTime": 471.166,
+     "title": "Catholic Missionary / Theological",
+     "kind": "segment",
+     "endTime": 561.83
+    },
+    {
+     "startTime": 561.83,
+     "title": "Pan-African / Diasporic",
+     "kind": "segment",
+     "endTime": 630.515
+    },
+    {
+     "startTime": 630.515,
+     "title": "Revisionist / Thornton-Heywood School",
+     "kind": "segment",
+     "endTime": 715.618
+    },
+    {
+     "startTime": 715.618,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 812.976
+    },
+    {
+     "startTime": 812.976,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 861.019
+    }
+   ],
+   "publishedAt": "2026-09-20T19:26:02+00:00"
   },
   "korean-war": {
    "url": "/audio/history/korean-war.mp3?v=d36fe089",
@@ -4159,6 +4353,100 @@
    ],
    "publishedAt": "2026-09-20T03:41:26+00:00"
   },
+  "mughal-empire": {
+   "url": "/audio/history/mughal-empire.mp3?v=efbb4034",
+   "chaptersUrl": "/audio/history/mughal-empire.chapters.json?v=efbb4034",
+   "title": "The Mughal Empire",
+   "durationSeconds": 841.012,
+   "bytes": 13473117,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 50.486
+    },
+    {
+     "startTime": 50.486,
+     "title": "Panipat, April fifteen twenty six",
+     "kind": "segment",
+     "endTime": 131.826
+    },
+    {
+     "startTime": 131.826,
+     "title": "Fatehpur Sikri, fifteen seventy five to fifteen eighty two",
+     "kind": "segment",
+     "endTime": 234.521
+    },
+    {
+     "startTime": 234.521,
+     "title": "The Mughal court, sixteen sixteen to sixteen fifty eight",
+     "kind": "segment",
+     "endTime": 326.334
+    },
+    {
+     "startTime": 326.334,
+     "title": "The Deccan, sixteen eighty one to seventeen oh seven",
+     "kind": "segment",
+     "endTime": 408.513
+    },
+    {
+     "startTime": 408.513,
+     "title": "Bengal, sixteen oh eight to eighteen fifty seven",
+     "kind": "segment",
+     "endTime": 469.386
+    },
+    {
+     "startTime": 469.386,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 481.485
+    },
+    {
+     "startTime": 481.485,
+     "title": "Mughal Imperial court",
+     "kind": "segment",
+     "endTime": 529.959
+    },
+    {
+     "startTime": 529.959,
+     "title": "Hindu Nationalist revisionism",
+     "kind": "segment",
+     "endTime": 584.875
+    },
+    {
+     "startTime": 584.875,
+     "title": "British Colonial administration",
+     "kind": "segment",
+     "endTime": 629.807
+    },
+    {
+     "startTime": 629.807,
+     "title": "Subaltern and peasant",
+     "kind": "segment",
+     "endTime": 697.559
+    },
+    {
+     "startTime": 697.559,
+     "title": "Postcolonial historiography",
+     "kind": "segment",
+     "endTime": 757.115
+    },
+    {
+     "startTime": 757.115,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 814.384
+    },
+    {
+     "startTime": 814.384,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 840.964
+    }
+   ],
+   "publishedAt": "2026-09-20T19:26:02+00:00"
+  },
   "nanjing-massacre": {
    "url": "/audio/history/nanjing-massacre.mp3?v=1a5faf65",
    "chaptersUrl": "/audio/history/nanjing-massacre.chapters.json?v=1a5faf65",
@@ -4335,6 +4623,100 @@
    ],
    "publishedAt": "2026-09-20T01:47:18+00:00"
   },
+  "ottoman-empire": {
+   "url": "/audio/history/ottoman-empire.mp3?v=a7b5bb65",
+   "chaptersUrl": "/audio/history/ottoman-empire.chapters.json?v=a7b5bb65",
+   "title": "The Ottoman Empire",
+   "durationSeconds": 925.074,
+   "bytes": 14819286,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 47.178
+    },
+    {
+     "startTime": 47.178,
+     "title": "The border smaller than Belgium",
+     "kind": "segment",
+     "endTime": 92.646
+    },
+    {
+     "startTime": 92.646,
+     "title": "A capital of three faiths",
+     "kind": "segment",
+     "endTime": 190.398
+    },
+    {
+     "startTime": 190.398,
+     "title": "The sultan's death kept secret",
+     "kind": "segment",
+     "endTime": 253.645
+    },
+    {
+     "startTime": 253.645,
+     "title": "A sequence of amputations",
+     "kind": "segment",
+     "endTime": 337.78
+    },
+    {
+     "startTime": 337.78,
+     "title": "The suitcase and the warship",
+     "kind": "segment",
+     "endTime": 378.277
+    },
+    {
+     "startTime": 378.277,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 386.92
+    },
+    {
+     "startTime": 386.92,
+     "title": "Turkish Republican / Kemalist",
+     "kind": "segment",
+     "endTime": 474.323
+    },
+    {
+     "startTime": 474.323,
+     "title": "Arab Nationalist",
+     "kind": "segment",
+     "endTime": 550.16
+    },
+    {
+     "startTime": 550.16,
+     "title": "Balkan / Orthodox Christian",
+     "kind": "segment",
+     "endTime": 632.184
+    },
+    {
+     "startTime": 632.184,
+     "title": "Revisionist / Pluralist",
+     "kind": "segment",
+     "endTime": 711.051
+    },
+    {
+     "startTime": 711.051,
+     "title": "Postcolonial / Dissolution Consequences",
+     "kind": "segment",
+     "endTime": 809.191
+    },
+    {
+     "startTime": 809.191,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 894.39
+    },
+    {
+     "startTime": 894.39,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 925.023
+    }
+   ],
+   "publishedAt": "2026-09-20T19:26:02+00:00"
+  },
   "partition-of-india": {
    "url": "/audio/history/partition-of-india.mp3?v=d8377c14",
    "chaptersUrl": "/audio/history/partition-of-india.chapters.json?v=d8377c14",
@@ -4434,6 +4816,112 @@
     }
    ],
    "publishedAt": "2026-09-19T23:09:20+00:00"
+  },
+  "peloponnesian-war": {
+   "url": "/audio/history/peloponnesian-war.mp3?v=f7438351",
+   "chaptersUrl": "/audio/history/peloponnesian-war.chapters.json?v=f7438351",
+   "title": "The Peloponnesian War",
+   "durationSeconds": 912.536,
+   "bytes": 14618810,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 52.242
+    },
+    {
+     "startTime": 52.242,
+     "title": "Plataea, summer of four thirty one BCE",
+     "kind": "segment",
+     "endTime": 83.482
+    },
+    {
+     "startTime": 83.482,
+     "title": "Behind the Long Walls",
+     "kind": "segment",
+     "endTime": 136.369
+    },
+    {
+     "startTime": 136.369,
+     "title": "The winter of four thirty one",
+     "kind": "segment",
+     "endTime": 176.897
+    },
+    {
+     "startTime": 176.897,
+     "title": "The plague",
+     "kind": "segment",
+     "endTime": 251.822
+    },
+    {
+     "startTime": 251.822,
+     "title": "Melos, four sixteen BCE",
+     "kind": "segment",
+     "endTime": 313.813
+    },
+    {
+     "startTime": 313.813,
+     "title": "The Great Harbor, four thirteen BCE",
+     "kind": "segment",
+     "endTime": 362.253
+    },
+    {
+     "startTime": 362.253,
+     "title": "Aegospotami, four oh five BCE",
+     "kind": "segment",
+     "endTime": 408.41
+    },
+    {
+     "startTime": 408.41,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 415.73
+    },
+    {
+     "startTime": 415.73,
+     "title": "Athenian / Democratic-Imperial",
+     "kind": "segment",
+     "endTime": 486.948
+    },
+    {
+     "startTime": 486.948,
+     "title": "Spartan / Peloponnesian League",
+     "kind": "segment",
+     "endTime": 552.224
+    },
+    {
+     "startTime": 552.224,
+     "title": "Subject Peoples / The Melian Position",
+     "kind": "segment",
+     "endTime": 640.566
+    },
+    {
+     "startTime": 640.566,
+     "title": "Modern Realist / International Relations Theory",
+     "kind": "segment",
+     "endTime": 700.345
+    },
+    {
+     "startTime": 700.345,
+     "title": "Non-Athenian Greek Cities / Subject Allies",
+     "kind": "segment",
+     "endTime": 778.336
+    },
+    {
+     "startTime": 778.336,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 870.468
+    },
+    {
+     "startTime": 870.468,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 912.501
+    }
+   ],
+   "publishedAt": "2026-09-20T19:26:02+00:00"
   },
   "rise-of-islam": {
    "url": "/audio/history/rise-of-islam.mp3?v=f1dc14d6",
@@ -4793,6 +5281,112 @@
    ],
    "publishedAt": "2026-09-20T01:47:18+00:00"
   },
+  "september-11-attacks": {
+   "url": "/audio/history/september-11-attacks.mp3?v=9dc4df06",
+   "chaptersUrl": "/audio/history/september-11-attacks.chapters.json?v=9dc4df06",
+   "title": "September 11 and the War on Terror",
+   "durationSeconds": 882.39,
+   "bytes": 14135783,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 38.673
+    },
+    {
+     "startTime": 38.673,
+     "title": "Eight forty six",
+     "kind": "segment",
+     "endTime": 95.173
+    },
+    {
+     "startTime": 95.173,
+     "title": "Nineteen men",
+     "kind": "segment",
+     "endTime": 148.296
+    },
+    {
+     "startTime": 148.296,
+     "title": "Twenty six days",
+     "kind": "segment",
+     "endTime": 163.991
+    },
+    {
+     "startTime": 163.991,
+     "title": "The case for Iraq",
+     "kind": "segment",
+     "endTime": 216.622
+    },
+    {
+     "startTime": 216.622,
+     "title": "Baghdad",
+     "kind": "segment",
+     "endTime": 240.63
+    },
+    {
+     "startTime": 240.63,
+     "title": "Nine hundred thousand",
+     "kind": "segment",
+     "endTime": 273.321
+    },
+    {
+     "startTime": 273.321,
+     "title": "At home",
+     "kind": "segment",
+     "endTime": 334.053
+    },
+    {
+     "startTime": 334.053,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 339.389
+    },
+    {
+     "startTime": 339.389,
+     "title": "American Establishment",
+     "kind": "segment",
+     "endTime": 406.117
+    },
+    {
+     "startTime": 406.117,
+     "title": "Afghan and Iraqi Civilian",
+     "kind": "segment",
+     "endTime": 502.186
+    },
+    {
+     "startTime": 502.186,
+     "title": "Intelligence Community: The Blowback Thesis",
+     "kind": "segment",
+     "endTime": 592.566
+    },
+    {
+     "startTime": 592.566,
+     "title": "Muslim Diaspora: Under Suspicion",
+     "kind": "segment",
+     "endTime": 671.169
+    },
+    {
+     "startTime": 671.169,
+     "title": "Global South: The Unipolar Fracture",
+     "kind": "segment",
+     "endTime": 748.178
+    },
+    {
+     "startTime": 748.178,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 849.903
+    },
+    {
+     "startTime": 849.903,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 882.364
+    }
+   ],
+   "publishedAt": "2026-09-20T19:26:02+00:00"
+  },
   "silk-road": {
    "url": "/audio/history/silk-road.mp3?v=1bb2e73b",
    "chaptersUrl": "/audio/history/silk-road.chapters.json?v=1bb2e73b",
@@ -4875,6 +5469,288 @@
    ],
    "publishedAt": "2026-09-20T00:04:51+00:00"
   },
+  "six-day-war": {
+   "url": "/audio/history/six-day-war.mp3?v=d1b9c5a4",
+   "chaptersUrl": "/audio/history/six-day-war.chapters.json?v=d1b9c5a4",
+   "title": "The Six-Day War",
+   "durationSeconds": 837.982,
+   "bytes": 13424172,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 67.296
+    },
+    {
+     "startTime": 67.296,
+     "title": "Nineteen days",
+     "kind": "segment",
+     "endTime": 123.184
+    },
+    {
+     "startTime": 123.184,
+     "title": "The waiting",
+     "kind": "segment",
+     "endTime": 206.551
+    },
+    {
+     "startTime": 206.551,
+     "title": "Three fronts",
+     "kind": "segment",
+     "endTime": 253.849
+    },
+    {
+     "startTime": 253.849,
+     "title": "What it cost",
+     "kind": "segment",
+     "endTime": 304.341
+    },
+    {
+     "startTime": 304.341,
+     "title": "The morning after",
+     "kind": "segment",
+     "endTime": 363.416
+    },
+    {
+     "startTime": 363.416,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 377.221
+    },
+    {
+     "startTime": 377.221,
+     "title": "The Israeli account",
+     "kind": "segment",
+     "endTime": 439.548
+    },
+    {
+     "startTime": 439.548,
+     "title": "The Nasserist account",
+     "kind": "segment",
+     "endTime": 502.927
+    },
+    {
+     "startTime": 502.927,
+     "title": "The Palestinian account",
+     "kind": "segment",
+     "endTime": 557.921
+    },
+    {
+     "startTime": 557.921,
+     "title": "The revisionist account",
+     "kind": "segment",
+     "endTime": 619.657
+    },
+    {
+     "startTime": 619.657,
+     "title": "The diplomatic account",
+     "kind": "segment",
+     "endTime": 694.05
+    },
+    {
+     "startTime": 694.05,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 787.825
+    },
+    {
+     "startTime": 787.825,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 837.937
+    }
+   ],
+   "publishedAt": "2026-09-20T19:26:02+00:00"
+  },
+  "soviet-union-collapse": {
+   "url": "/audio/history/soviet-union-collapse.mp3?v=2b0ecd00",
+   "chaptersUrl": "/audio/history/soviet-union-collapse.chapters.json?v=2b0ecd00",
+   "title": "The Collapse of the Soviet Union",
+   "durationSeconds": 847.047,
+   "bytes": 13569386,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 50.662
+    },
+    {
+     "startTime": 50.662,
+     "title": "Twelve minutes on television",
+     "kind": "segment",
+     "endTime": 129.89
+    },
+    {
+     "startTime": 129.89,
+     "title": "Tanks in Moscow",
+     "kind": "segment",
+     "endTime": 210.703
+    },
+    {
+     "startTime": 210.703,
+     "title": "A referendum and a forest",
+     "kind": "segment",
+     "endTime": 279.434
+    },
+    {
+     "startTime": 279.434,
+     "title": "Nothing left to govern",
+     "kind": "segment",
+     "endTime": 314.328
+    },
+    {
+     "startTime": 314.328,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 319.707
+    },
+    {
+     "startTime": 319.707,
+     "title": "Western Triumph",
+     "kind": "segment",
+     "endTime": 416.98
+    },
+    {
+     "startTime": 416.98,
+     "title": "Russian Statist",
+     "kind": "segment",
+     "endTime": 493.524
+    },
+    {
+     "startTime": 493.524,
+     "title": "The Newly Independent Republics",
+     "kind": "segment",
+     "endTime": 574.015
+    },
+    {
+     "startTime": 574.015,
+     "title": "The Ordinary Citizen",
+     "kind": "segment",
+     "endTime": 656.683
+    },
+    {
+     "startTime": 656.683,
+     "title": "Scholarship on Causes",
+     "kind": "segment",
+     "endTime": 736.134
+    },
+    {
+     "startTime": 736.134,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 796.329
+    },
+    {
+     "startTime": 796.329,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 847.017
+    }
+   ],
+   "publishedAt": "2026-09-20T19:26:02+00:00"
+  },
+  "spanish-civil-war": {
+   "url": "/audio/history/spanish-civil-war.mp3?v=6c32c828",
+   "chaptersUrl": "/audio/history/spanish-civil-war.chapters.json?v=6c32c828",
+   "title": "The Spanish Civil War",
+   "durationSeconds": 877.949,
+   "bytes": 14064680,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 65.142
+    },
+    {
+     "startTime": 65.142,
+     "title": "Madrid, July 19, 1936",
+     "kind": "segment",
+     "endTime": 132.692
+    },
+    {
+     "startTime": 132.692,
+     "title": "The powers arrive, 1936",
+     "kind": "segment",
+     "endTime": 173.774
+    },
+    {
+     "startTime": 173.774,
+     "title": "The University of Salamanca, October 12, 1936",
+     "kind": "segment",
+     "endTime": 225.526
+    },
+    {
+     "startTime": 225.526,
+     "title": "Guernica, April 26, 1937",
+     "kind": "segment",
+     "endTime": 300.203
+    },
+    {
+     "startTime": 300.203,
+     "title": "Barcelona, May 3 to May 8, 1937",
+     "kind": "segment",
+     "endTime": 335.182
+    },
+    {
+     "startTime": 335.182,
+     "title": "The end, October 1938 to April 1939",
+     "kind": "segment",
+     "endTime": 423.749
+    },
+    {
+     "startTime": 423.749,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 432.562
+    },
+    {
+     "startTime": 432.562,
+     "title": "Republican Spain",
+     "kind": "segment",
+     "endTime": 494.896
+    },
+    {
+     "startTime": 494.896,
+     "title": "Nationalist Spain",
+     "kind": "segment",
+     "endTime": 563.465
+    },
+    {
+     "startTime": 563.465,
+     "title": "International Volunteers and the Great Powers",
+     "kind": "segment",
+     "endTime": 627.639
+    },
+    {
+     "startTime": 627.639,
+     "title": "The Catholic Church and Rural Spain",
+     "kind": "segment",
+     "endTime": 696.827
+    },
+    {
+     "startTime": 696.827,
+     "title": "Memory and the Historians' War",
+     "kind": "segment",
+     "endTime": 762.894
+    },
+    {
+     "startTime": 762.894,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 842.716
+    },
+    {
+     "startTime": 842.716,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 877.908
+    }
+   ],
+   "publishedAt": "2026-09-20T19:26:02+00:00"
+  },
   "spanish-flu-1918": {
    "url": "/audio/history/spanish-flu-1918.mp3?v=10164fc5",
    "chaptersUrl": "/audio/history/spanish-flu-1918.chapters.json?v=10164fc5",
@@ -4956,6 +5832,100 @@
     }
    ],
    "publishedAt": "2026-09-20T03:41:27+00:00"
+  },
+  "srebrenica-genocide": {
+   "url": "/audio/history/srebrenica-genocide.mp3?v=2bb75ca8",
+   "chaptersUrl": "/audio/history/srebrenica-genocide.chapters.json?v=2bb75ca8",
+   "title": "The Srebrenica Genocide and the Bosnian War",
+   "durationSeconds": 869.198,
+   "bytes": 13924526,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 49.739
+    },
+    {
+     "startTime": 49.739,
+     "title": "A war three years old",
+     "kind": "segment",
+     "endTime": 103.735
+    },
+    {
+     "startTime": 103.735,
+     "title": "Potocari, July eleventh",
+     "kind": "segment",
+     "endTime": 177.857
+    },
+    {
+     "startTime": 177.857,
+     "title": "The factory, then the fields",
+     "kind": "segment",
+     "endTime": 263.257
+    },
+    {
+     "startTime": 263.257,
+     "title": "The forest",
+     "kind": "segment",
+     "endTime": 299.327
+    },
+    {
+     "startTime": 299.327,
+     "title": "The second grave",
+     "kind": "segment",
+     "endTime": 371.684
+    },
+    {
+     "startTime": 371.684,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 390.375
+    },
+    {
+     "startTime": 390.375,
+     "title": "Bosniak Survivors and the Legal Record",
+     "kind": "segment",
+     "endTime": 457.216
+    },
+    {
+     "startTime": 457.216,
+     "title": "The UN Safe Area and the Dutch Peacekeepers",
+     "kind": "segment",
+     "endTime": 512.409
+    },
+    {
+     "startTime": 512.409,
+     "title": "Genocide Denial versus the International Juridical Finding",
+     "kind": "segment",
+     "endTime": 585.636
+    },
+    {
+     "startTime": 585.636,
+     "title": "The Mothers of Srebrenica",
+     "kind": "segment",
+     "endTime": 660.294
+    },
+    {
+     "startTime": 660.294,
+     "title": "Scholarship on Ethnic Cleansing in the Yugoslav Wars",
+     "kind": "segment",
+     "endTime": 767.199
+    },
+    {
+     "startTime": 767.199,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 847.406
+    },
+    {
+     "startTime": 847.406,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 869.165
+    }
+   ],
+   "publishedAt": "2026-09-20T19:26:02+00:00"
   },
   "the-crusades": {
    "url": "/audio/history/the-crusades.mp3?v=07df501f",
