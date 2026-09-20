@@ -214,14 +214,35 @@ if want("weekly"):
     weekly = None
     if w:
         weekly = {k: w[k] for k in w.keys()}
-        for k in ("cover_text", "recap_stories", "opinion_left", "opinion_center",
-                  "opinion_right", "opinion_headlines", "bias_report_data"):
+        # Every JSON column must be parsed here AND in the frontend reader's
+        # mirror list (frontend/app/lib/supabase.ts). The two drifted apart and
+        # nothing compared them, which is why `cover_timelines` and
+        # `cover_numbers` shipped to browsers as raw JSON strings.
+        # tests/test_weekly.py W-T03 now asserts the two lists are identical.
+        for k in ("cover_text", "cover_timelines", "cover_numbers", "recap_stories",
+                  "departments", "opinions",
+                  "opinion_left", "opinion_center", "opinion_right",
+                  "bias_report_data"):
             if k in weekly:
                 weekly[k] = pjson(w[k])
         for k in ("audio_duration_seconds", "opinion_start_seconds", "issue_number",
                   "total_articles", "total_clusters"):
             if k in weekly:
                 weekly[k] = pnum(w[k])
+        # TTS source, rendered nowhere: ~15 KB on every /weekly page load.
+        # AudioProvider explicitly nulls audio_script when mapping a weekly
+        # digest, so nothing downstream loses anything. `opinion_headlines` is
+        # derivable from `opinions` and was never rendered.
+        for k in ("audio_script", "opinion_audio_script", "opinion_headlines"):
+            weekly.pop(k, None)
+        # `opinions` is the real shape and the three lean buckets are a lossy
+        # partition of it, so shipping both duplicates every essay's text. The
+        # DB keeps all four; a browser needs one. Snapshots written before
+        # `opinions` existed still carry the buckets, and the frontend falls
+        # back to them, so both vintages render.
+        if weekly.get("opinions"):
+            for k in ("opinion_left", "opinion_center", "opinion_right"):
+                weekly.pop(k, None)
     wj(PUBLIC_DIR / "weekly.json", weekly)
     print(f"weekly.json: {'ok' if weekly else 'MISSING'}")
 

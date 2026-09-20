@@ -62,6 +62,7 @@ jobs:
           python pipeline/validation/test_disaster_severity.py
           python tests/test_radio_script.py
           python tests/test_history_audio.py
+          python tests/test_weekly.py
           pip install --quiet pyyaml
           python tests/test_history_script.py
 

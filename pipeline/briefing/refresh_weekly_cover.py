@@ -124,8 +124,9 @@ def main() -> int:
     data["cover_image_url"] = chosen["url"] if chosen else None
     data["cover_image_attribution"] = chosen["attribution"] if chosen else None
     data["cover_image_source"] = chosen["source"] if chosen else None
-    WEEKLY.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")),
-                      encoding="utf-8")
+    # Match export_static.wj() exactly (json.dump defaults, ensure_ascii=False),
+    # so re-picking a cover is a three-key diff and not a whole-file reformat.
+    WEEKLY.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
     print("  written")
     return 0
 
