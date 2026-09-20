@@ -16,11 +16,6 @@ N: Not a Belgian colony. His.
 N: Leopold tells the association what it exists to do.
 M: Our only programme is the moral and material regeneration of the country.
 
-## ASIDE
-N: Regeneration of a country Leopold has never visited. What he names instead, years earlier, in a private letter to his own ambassador, is closer to the plan.
-M: I do not want to miss a good chance of getting us a slice of this magnificent African cake.
-N: A slice of cake is an appetite. What it becomes is a system built on one product: wild rubber.
-
 ## REST
 
 ## SCENE 2 | The Congo interior, 1890
@@ -30,9 +25,6 @@ N: He is the first outsider to write down what he finds: forced labor, land thef
 ## DOCUMENT | George Washington Williams | An Open Letter to His Serene Majesty Leopold II | July 18, 1890
 N: Williams writes his open letter to Leopold himself.
 M: Your Majesty's Government is engaged in the slave trade, wholesale and retail. It buys and sells and steals slaves. The naturals are compelled to furnish him with rubber and provisions. They receive nothing for their labor.
-
-## ASIDE
-N: Williams dies the following year. His letter is ignored for a decade: a journalist's word against a king's, with no photograph yet to settle it.
 
 ## REST
 
@@ -47,9 +39,6 @@ M: The white men told us we must collect rubber. If we did not bring enough, the
 N: In nineteen oh four, in the Nsongo district, a man named Nsala sits on a mission veranda. On the ground in front of him are a small hand and a small foot, belonging to his five year old daughter, Boali, killed with her mother by soldiers of the Anglo-Belgian India Rubber Company when his village missed its quota.
 N: The missionary Alice Seeley Harris photographs him looking at what is left of her.
 
-## ASIDE
-N: A severed hand was never a punishment. It was a receipt. A photograph of a father staring at his daughter's hand did what no report had managed: it made the arithmetic impossible to look away from.
-
 ## REST
 
 ## SCENE 4 | Liverpool to Brussels, 1900 to 1908
@@ -59,15 +48,11 @@ N: Morel resigns his job, founds the Congo Reform Association in nineteen oh fou
 ## DOCUMENT | Roger Casement | Casement Report to the Foreign Office | 1904
 N: Casement's report describes the collection system directly.
 M: Each town in the district is forced to bring a certain quantity to the headquarters of the commissaire every Sunday. It is collected by force. If they will not go for rubber, the sentries kill them. I have seen this done.
-N: Leopold's own Commission of Inquiry, set up expecting to clear him, confirms the charges instead.
 
 ## DOCUMENT | Mark Twain | King Leopold's Soliloquy | 1905
 N: In nineteen oh five, Mark Twain publishes a satire imagining what Leopold would say if he had to answer the photographs.
 M: The kodak has been a sore calamity to us. The most powerful enemy that has confronted us. When the kodak came, all the harmony went to ruin.
 N: In nineteen oh eight, under that pressure, the Belgian parliament annexes the Congo. Leopold takes fifty million francs in compensation, and before the transfer, burns his own Congo archives. The furnaces in Brussels burn for eight days.
-
-## ASIDE
-N: A king who believed his own story does not need eight days of furnaces.
 
 ## REST
 
