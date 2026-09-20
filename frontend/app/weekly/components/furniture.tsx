@@ -84,12 +84,17 @@ export function DepartmentPlate({
   edition = "World",
   page,
   id,
+  folio,
 }: {
   label: string;
-  issueNumber: number;
+  issueNumber?: number;
   edition?: string;
   page?: number;
   id?: string;
+  /** Replaces the issue/edition/page folio outright. The issue index is not
+      IN an issue, so "Issue 08 · World · 07" would be a folio for a page that
+      does not exist. */
+  folio?: string;
 }) {
   return (
     <div className="wk-plate">
@@ -98,13 +103,17 @@ export function DepartmentPlate({
       </h2>
       <span className="wk-plate__rule" aria-hidden="true" />
       <span className="wk-plate__folio" aria-hidden="true">
-        Issue {issueFolio(issueNumber)}
-        <span className="wk-plate__dot"> · </span>
-        {edition}
-        {page !== undefined && (
+        {folio ?? (
           <>
+            Issue {issueFolio(issueNumber ?? 0)}
             <span className="wk-plate__dot"> · </span>
-            {String(page).padStart(2, "0")}
+            {edition}
+            {page !== undefined && (
+              <>
+                <span className="wk-plate__dot"> · </span>
+                {String(page).padStart(2, "0")}
+              </>
+            )}
           </>
         )}
       </span>

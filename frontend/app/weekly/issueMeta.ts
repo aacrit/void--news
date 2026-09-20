@@ -2,7 +2,7 @@
    Server-only: imported by the two page modules' generateMetadata. */
 
 import type { Metadata } from "next";
-import { OG_IMAGE, OG_IMAGE_URL, SITE_URL, pageMetadata } from "../lib/siteMeta";
+import { SITE_URL, pageMetadata } from "../lib/siteMeta";
 import type { WeeklyDigestData } from "./types";
 import { clip, essayParagraphs, formatWeekRange, weeklyDisplayNo } from "./format";
 
@@ -32,15 +32,23 @@ export function issueMetadata(issue: WeeklyDigestData, path: string): Metadata {
     : `Void Weekly, issue #${no}, covering ${range}.`;
 
   const base = pageMetadata({ title, description, path });
-  const cover = issue.cover_image_url;
-  if (!cover) return base;
 
-  const image = { url: cover, alt: headline || `Void Weekly issue ${no}` };
-  return {
-    ...base,
-    openGraph: { ...base.openGraph, images: [image, OG_IMAGE] },
-    twitter: { ...base.twitter, images: [cover, OG_IMAGE_URL] },
-  };
+  /* IMAGES ARE DELIBERATELY DELETED HERE so the `opengraph-image.tsx` file
+     convention can supply them. Next uses the file only when the route does
+     not declare `openGraph.images` itself, and `pageMetadata` declares the
+     site-wide card for every route — which is exactly why an issue's card was
+     the site card before rev 71 and the raw cover photograph after it.
+
+     The composed card (see ogCard.tsx) beats both. It is a real PNG emitted at
+     build, it names the issue, and it needs no second cross-origin fetch: the
+     cover photo is a hotlinked Wikimedia URL that a scraper may 404 or
+     rate-limit, and when it does the share falls back to nothing. */
+  const og = { ...base.openGraph } as Record<string, unknown>;
+  delete og.images;
+  const tw = { ...base.twitter } as Record<string, unknown>;
+  delete tw.images;
+
+  return { ...base, openGraph: og, twitter: tw } as Metadata;
 }
 
 export { SITE_URL };

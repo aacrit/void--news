@@ -57,6 +57,7 @@ if _SQLITE_PATH:
                 # against the cached DB that CI restores, so a column added
                 # only to the schema file never reaches production.
                 "audio_chapters": "TEXT",
+                "week_days": "TEXT",   # day-by-day rail (JSON), 2026-09-20
             },
         }
         for _table, _cols in _ADDITIVE_COLUMNS.items():

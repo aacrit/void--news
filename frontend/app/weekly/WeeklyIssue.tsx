@@ -32,6 +32,7 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import type { WeeklyDigestData, WeeklyIssueSummary, WeeklyOpinion } from "./types";
+import type { WeeklyCorrection } from "../lib/weeklyIssues";
 import { AUDIO_ENABLED } from "../lib/audioGate";
 import { useAudio, type EpisodeMeta } from "../components/AudioProvider";
 import Footer from "../components/Footer";
@@ -50,6 +51,10 @@ import BiasReport from "./components/BiasReport";
 import BriefList from "./components/BriefList";
 import BackIssues from "./components/BackIssues";
 import IssueUtilities from "./components/IssueUtilities";
+import WeekRail from "./components/WeekRail";
+import WeekDelta from "./components/WeekDelta";
+import Corrections from "./components/Corrections";
+import Colophon from "./components/Colophon";
 
 /** Every opinion, whichever vintage of the data this issue was written with. */
 function allOpinions(issue: WeeklyDigestData): WeeklyOpinion[] {
@@ -67,9 +72,16 @@ function allOpinions(issue: WeeklyDigestData): WeeklyOpinion[] {
 export default function WeeklyIssue({
   issue,
   archive,
+  previous,
+  corrections = [],
 }: {
   issue: WeeklyDigestData;
   archive: WeeklyIssueSummary[];
+  /* The issue published BEFORE this one, for the week-over-week delta. Read at
+     build by the page; passed as a prop so this stays a client component with
+     no data access of its own. */
+  previous?: Pick<WeeklyDigestData, "bias_report_data" | "week_start" | "week_end"> | null;
+  corrections?: WeeklyCorrection[];
 }) {
   const { playWeekly } = useAudio();
 
@@ -317,9 +329,20 @@ export default function WeeklyIssue({
               totalClusters={issue.total_clusters}
               issueNumber={issue.issue_number}
               page={biasPage}
+              delta={
+                <WeekDelta
+                  now={issue.bias_report_data?.stats}
+                  previous={previous?.bias_report_data?.stats}
+                  previousWeekStart={previous?.week_start}
+                  previousWeekEnd={previous?.week_end}
+                />
+              }
             />
           </>
         )}
+
+        {/* The week, day by day: the shape a daily reader could not see. */}
+        {!!issue.week_days?.length && <WeekRail days={issue.week_days} />}
 
         {briefPage > 0 && (
           <>
@@ -343,6 +366,11 @@ export default function WeeklyIssue({
             />
           </>
         )}
+
+        <div className="wk-endmatter">
+          <Corrections entries={corrections} />
+          <Colophon issue={issue} />
+        </div>
       </main>
 
       <Footer />

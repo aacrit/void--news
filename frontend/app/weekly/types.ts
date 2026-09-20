@@ -156,7 +156,26 @@ export interface WeeklyDigestData {
   audio_chapters: AudioChapter[] | null;
   total_articles: number | null;
   total_clusters: number | null;
+  /* The colophon. Every figure was already stored and rendered nowhere; a
+     magazine that measures other people's coverage should print the cost of
+     its own. */
+  gemini_calls_used?: number | null;
+  generation_duration_seconds?: number | null;
+  generator?: string | null;
+  /* The week, day by day. Built from the daily_briefs rows the generator
+     already fetches twice as prompt context and then discards. */
+  week_days?: WeeklyDay[] | null;
   created_at: string;
+}
+
+/** One day of the week, as the daily brief recorded it. */
+export interface WeeklyDay {
+  /** ISO date, Monday first. */
+  date: string;
+  /** The daily brief's own headline for that day. */
+  headline: string;
+  /** The lens that day's Opinion argued from, when it ran one. */
+  lean?: string | null;
 }
 
 /* One row of the back-issue index (public/data/weekly-archive.json). */

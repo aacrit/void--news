@@ -248,7 +248,7 @@ export async function fetchWeeklyDigest(_edition: string): Promise<any | null> {
   // Belt-and-suspenders: parse any JSONB field that arrived as a string.
   // MIRROR of the parse list in pipeline/export_static.py's weekly block.
   // tests/test_weekly.py W-T03 fails if the two ever drift apart again.
-  const jsonFields = ['cover_text', 'cover_timelines', 'cover_numbers', 'recap_stories', 'departments', 'opinions', 'audio_chapters', 'opinion_left', 'opinion_center', 'opinion_right', 'bias_report_data'];
+  const jsonFields = ['cover_text', 'cover_timelines', 'cover_numbers', 'recap_stories', 'departments', 'opinions', 'audio_chapters', 'week_days', 'opinion_left', 'opinion_center', 'opinion_right', 'bias_report_data'];
   for (const field of jsonFields) {
     if (typeof d[field] === 'string') {
       try { d[field] = JSON.parse(d[field]); } catch { d[field] = null; }

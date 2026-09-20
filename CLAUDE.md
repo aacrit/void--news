@@ -183,6 +183,7 @@ back-issue archive lives in the deploy tree instead.
 | **History audio**: format, casting, H-01..H-11 | `docs/HISTORY-AUDIO.md`, `docs/HISTORY-SCRIPT-BRIEF.md` |
 | Weekly magazine: running order, the measure, the grid | `frontend/app/weekly/`, `frontend/app/styles/weekly.css` |
 | Weekly's pure core (testable with no key) | `pipeline/briefing/weekly_parse.py` |
+| Weekly end matter (colophon, week-over-week, day-by-day, corrections, OG card, issue index) | `frontend/app/weekly/components/{Colophon,WeekDelta,WeekRail,Corrections}.tsx`, `app/weekly/ogCard.tsx` |
 | What Postgres did that SQLite cannot | `migration/PORT_NOTES.md` (authoritative) |
 | Agents, workflows, slash commands | `docs/AGENT-TEAM.md` |
 | **Why a thing is the way it is** | `docs/CHANGELOG.md` |
