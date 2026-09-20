@@ -137,8 +137,65 @@ def test_licence_and_floor():
     check("but still above any weekly render slot", SUBJECT_MIN_WIDTH >= 400)
 
 
+def test_not_a_diagram():
+    """SUB-03  a map, flag or chart is not an illustration.
+
+    Every technical gate passed and the result was still wrong. The Ed Sheeran
+    feature (a musician apologising over a Macklemore controversy, calling
+    Gaza "unjustifiable") resolved to the Gaza war territorial-control map:
+    front lines, destroyed buildings, evacuation zones. Correctly licensed,
+    correctly captioned, genuine word overlap on "Gaza", and a war map printed
+    under a celebrity apology.
+
+    Commons SVGs are overwhelmingly maps, flags, logos and charts. They are
+    reference artefacts; a news magazine illustrates with photographs. A map
+    also carries framing that printing it endorses, which is the one thing
+    this section exists not to do silently.
+    """
+    print("\nSUB-03  diagrams are not illustrations")
+    from briefing.backfill_weekly_images import _is_diagram  # noqa: E402
+
+    for u, why in [
+        ("https://thumb.wikimedia.org/x/October_2023_Gaza-Israel_conflict.svg/1280px-a.svg.png",
+         "the Gaza war control map, under an Ed Sheeran feature"),
+        ("https://thumb.wikimedia.org/x/Map_with_Greenland_and_the_United_States_highlighted.svg/1280px-b.svg.png",
+         "a schematic world map as a full-screen cover"),
+        ("https://thumb.wikimedia.org/x/North_Korea_nuclear.svg/1280px-c.svg.png",
+         "a flag composite on a missile-test brief"),
+    ]:
+        check(f"rejects {why}", _is_diagram(u))
+
+    for u in ("https://thumb.wikimedia.org/x/Kennedy_Center.jpg/1280px-d.jpg",
+              "https://thumb.wikimedia.org/x/Imran_Khan_2019.png/1280px-e.png"):
+        check(f"keeps the photograph {u.rsplit('/', 1)[-1]}", not _is_diagram(u))
+    check("an absent image is not a diagram", not _is_diagram(""))
+
+
+def test_no_repeats():
+    """SUB-04  nothing appears twice in one issue."""
+    print("\nSUB-04  no image repeats")
+    from briefing.backfill_weekly_images import _used  # noqa: E402
+
+    # The cover is resolved FROM the lead feature, so they collide by
+    # construction. Vol. I, No. 1 came out of a backfill with the same
+    # Greenland map as its full-screen cover AND its lead feature one screen
+    # below.
+    row = {
+        "cover_image_url": "https://x/a.jpg?v=1",
+        "cover_text": [{"image_url": "https://x/a.jpg?v=2"},
+                       {"image_url": "https://x/b.jpg"}],
+        "departments": [], "recap_stories": [],
+    }
+    used = _used(row)
+    check("the cover's image counts as used", "https://x/a.jpg" in used)
+    check("a query string does not make it a different image",
+          len(used) == 2, sorted(used))
+
+
 if __name__ == "__main__":
     test_guard()
     test_licence_and_floor()
+    test_not_a_diagram()
+    test_no_repeats()
     print("\n" + ("All subject-image gates passed." if ok else "FAILURES above."))
     sys.exit(0 if ok else 1)

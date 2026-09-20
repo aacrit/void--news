@@ -96,7 +96,15 @@ def cover_image(row, *, dry_run=False) -> list[str]:
     Resolved from the lead feature, because that is what the cover is ABOUT:
     its headline first, then the reported titles its timeline carries.
     """
-    if row.get("cover_image_url"):
+    cur = row.get("cover_image_url") or ""
+    # The cover is repaired on the same terms as any other slot. Returning
+    # early whenever one existed would have left the diagram already attached
+    # in place, on the largest surface in the issue, which is the one place
+    # "already has an image" is least like "is fine".
+    stale = bool(cur) and (
+        _is_diagram(cur) or not (row.get("cover_image_caption") or "").strip()
+    )
+    if cur and not stale:
         return []
     covers, _ = _load(row, "cover_text")
     lead = covers[0] if covers and isinstance(covers[0], dict) else {}
@@ -110,6 +118,14 @@ def cover_image(row, *, dry_run=False) -> list[str]:
     except Exception as e:
         return [f"cover image lookup failed: {e}"]
     if not found:
+        if stale and not dry_run:
+            # Nothing better resolved, so the diagram goes. A cover with no
+            # photograph is a typographic cover, which this design already
+            # has; a cover with the wrong photograph is a claim.
+            for k in ("cover_image_url", "cover_image_attribution",
+                      "cover_image_caption", "cover_image_source"):
+                row.pop(k, None)
+            return ["cover: DROPPED a diagram; nothing better resolved"]
         return [f"cover: no licensed subject for {head[:44]!r}"]
     if not dry_run:
         row["cover_image_url"] = found["url"]
@@ -122,9 +138,32 @@ def cover_image(row, *, dry_run=False) -> list[str]:
     return [f"cover -> {found.get('caption')}"]
 
 
+def _is_diagram(url: str) -> bool:
+    """A Commons SVG render. Maps, flags, logos and charts, not photographs."""
+    return ".svg" in (url or "").lower()
+
+
+def _used(row) -> set:
+    """Every image URL the issue already carries, so nothing repeats.
+
+    The cover is resolved FROM the lead feature, so without this they collide
+    by construction: Vol. I, No. 1 came out of the backfill with the same
+    Greenland map as its full-screen cover AND its lead feature one screen
+    below. No magazine prints the same picture twice in one issue.
+    """
+    urls = {(row.get("cover_image_url") or "").split("?")[0]} - {""}
+    for key, _ in SLOTS:
+        items, _ = _load(row, key)
+        for x in items:
+            if isinstance(x, dict) and x.get("image_url"):
+                urls.add(x["image_url"].split("?")[0])
+    return urls
+
+
 def illustrate(row, *, dry_run=False) -> list[str]:
     """Attach art to one issue row. Returns one line per change."""
     out = cover_image(row, dry_run=dry_run)
+    seen = _used(row)
     for key, cap in SLOTS:
         items, was_str = _load(row, key)
         if not isinstance(items, list) or not items:
@@ -147,7 +186,14 @@ def illustrate(row, *, dry_run=False) -> list[str]:
             # licensed, matched on the word "missile", with nothing on the page
             # saying what it was. A reader cannot tell a file photograph from
             # event coverage unless we say so.
-            stale = bool(item.get("image_url")) and not (item.get("image_caption") or "").strip()
+            cur = item.get("image_url") or ""
+            # Repair, not skip: an image already attached can still be wrong.
+            # Missing caption (predates captions) or a diagram (the Gaza war
+            # control map under a celebrity-apology feature) both need
+            # re-resolving, and dropping if nothing better passes.
+            stale = bool(cur) and (
+                not (item.get("image_caption") or "").strip() or _is_diagram(cur)
+            )
             if item.get("image_url") and not stale:
                 continue                      # already illustrated and labelled
             try:
@@ -178,6 +224,16 @@ def illustrate(row, *, dry_run=False) -> list[str]:
                     item["image_attribution"] = found["attribution"]
                 if found.get("caption"):
                     item["image_caption"] = found["caption"]
+            # Nothing appears twice in one issue.
+            u = (found.get("url") or "").split("?")[0]
+            if u in seen:
+                if stale and not dry_run:
+                    for k in ("image_url", "image_attribution", "image_caption"):
+                        item.pop(k, None)
+                    changed = True
+                out.append(f"{key}[{i}] skipped: would repeat {found.get('caption')}")
+                continue
+            seen.add(u)
             changed = True
             verb = "re-resolved" if stale else "->"
             out.append(f"{key}[{i}] {verb} {found.get('caption')}")

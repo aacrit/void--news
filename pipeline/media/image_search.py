@@ -738,8 +738,24 @@ def find_subject_image(headline: str, *alternates: str) -> dict | None:
     # subjects: "2026 Afghanistan-Pakistan war" and "Criticism of Jehovah's
     # Witnesses" both resolved and both were thrown away over pixel count.
     # An SVG has no meaningful intrinsic width and scales without loss.
-    is_vector = sub["file"].lower().endswith(".svg")
-    if not is_vector and lic["width"] and lic["width"] < SUBJECT_MIN_WIDTH:
+    # A DIAGRAM IS NOT AN ILLUSTRATION. Commons SVGs are overwhelmingly maps,
+    # flags, logos and charts: reference artefacts, not photographs, and a news
+    # magazine illustrates with photographs.
+    #
+    # This is not a taste rule, it is an accuracy one. The Ed Sheeran feature
+    # (a musician apologising over a Macklemore controversy, calling Gaza
+    # "unjustifiable") resolved to the Gaza war territorial-control map, with
+    # front lines, destroyed buildings and evacuation zones. Correctly
+    # licensed, correctly captioned, real word overlap on "Gaza", and a war map
+    # under a celebrity apology. The same rule drops the North Korean flag
+    # composite and the Canada orthographic projection.
+    #
+    # A map also carries framing Void would be endorsing by printing it, which
+    # is the one thing this section exists not to do silently.
+    if sub["file"].lower().endswith(".svg"):
+        print(f"  [media] {sub['subject']}: lead image is a diagram, not a photograph")
+        return None
+    if lic["width"] and lic["width"] < SUBJECT_MIN_WIDTH:
         print(f"  [media] {sub['subject']}: {lic['width']}px is below the "
               f"{SUBJECT_MIN_WIDTH}px subject floor")
         return None
@@ -814,6 +830,8 @@ def find_cover_image_for_cluster(
         # megabytes; hotlinking it puts that on the cover of every weekly page
         # load. `iiurlwidth` is requested precisely so `thumburl` exists, and it
         # was being computed and then discarded here.
+        if (best.url or "").lower().endswith(".svg"):
+            continue      # same rule as the subject path: no diagrams
         url = best.thumbnail_url or best.url
         # A caption naming the picture is not optional. Without one the reader
         # has no way to tell a file photograph from event coverage, which is
