@@ -137,7 +137,23 @@ def fetch(out_dir: Path, tag: str = TAG, slugs: list[str] | None = None) -> int:
         try:
             # curl follows the signed redirect and is already present on the
             # runner; urllib would need redirect handling for the same result.
-            subprocess.run(["curl", "-sSfL", url, "-o", str(dest)], check=True)
+            #
+            # RETRIES, because one reset connection failed a whole deploy.
+            # 45 of 49 episodes fetched and four came back with curl exit 35,
+            # "Recv failure: Connection reset by peer", against a CDN serving
+            # ~13 MB per file. There was no retry, so a single transient reset
+            # took the site's deploy down with it and the three runs behind it
+            # were skipped by concurrency, leaving production on a stale build
+            # with nothing saying why.
+            #
+            # `--retry-all-errors` is the part that matters: plain `--retry`
+            # does not cover a mid-transfer reset, which is exactly the error
+            # seen here.
+            subprocess.run(
+                ["curl", "-sSfL", "--retry", "4", "--retry-delay", "2",
+                 "--retry-all-errors", url, "-o", str(dest)],
+                check=True,
+            )
             size = dest.stat().st_size
             if size < 100_000:
                 raise ValueError(f"{size} bytes is too small to be an episode")

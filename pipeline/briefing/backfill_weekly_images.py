@@ -96,7 +96,15 @@ def cover_image(row, *, dry_run=False) -> list[str]:
     Resolved from the lead feature, because that is what the cover is ABOUT:
     its headline first, then the reported titles its timeline carries.
     """
-    if row.get("cover_image_url"):
+    cur = row.get("cover_image_url") or ""
+    # The cover is repaired on the same terms as any other slot. Returning
+    # early whenever one existed would have left the diagram already attached
+    # in place, on the largest surface in the issue, which is the one place
+    # "already has an image" is least like "is fine".
+    stale = bool(cur) and (
+        _is_diagram(cur) or not (row.get("cover_image_caption") or "").strip()
+    )
+    if cur and not stale:
         return []
     covers, _ = _load(row, "cover_text")
     lead = covers[0] if covers and isinstance(covers[0], dict) else {}
@@ -110,6 +118,14 @@ def cover_image(row, *, dry_run=False) -> list[str]:
     except Exception as e:
         return [f"cover image lookup failed: {e}"]
     if not found:
+        if stale and not dry_run:
+            # Nothing better resolved, so the diagram goes. A cover with no
+            # photograph is a typographic cover, which this design already
+            # has; a cover with the wrong photograph is a claim.
+            for k in ("cover_image_url", "cover_image_attribution",
+                      "cover_image_caption", "cover_image_source"):
+                row.pop(k, None)
+            return ["cover: DROPPED a diagram; nothing better resolved"]
         return [f"cover: no licensed subject for {head[:44]!r}"]
     if not dry_run:
         row["cover_image_url"] = found["url"]
@@ -122,9 +138,32 @@ def cover_image(row, *, dry_run=False) -> list[str]:
     return [f"cover -> {found.get('caption')}"]
 
 
+def _is_diagram(url: str) -> bool:
+    """A Commons SVG render. Maps, flags, logos and charts, not photographs."""
+    return ".svg" in (url or "").lower()
+
+
+def _claimed(row) -> set:
+    """The image urls already spoken for when the walk starts: the cover's.
+
+    ONLY the cover. An earlier version pre-seeded this with every slot's url
+    too, which made each slot a repeat of ITSELF: the first item examined
+    found its own image already "claimed", treated it as a duplicate, and
+    dropped a perfectly good distinct photograph. The rest of the set is
+    claimed as the walk goes, which is what makes "an earlier slot used it"
+    the actual test rather than "it exists somewhere in the issue".
+
+    The cover is seeded because it is resolved FROM the lead feature and so
+    collides with it by construction, and because it is the larger surface and
+    should win.
+    """
+    return {(row.get("cover_image_url") or "").split("?")[0]} - {""}
+
+
 def illustrate(row, *, dry_run=False) -> list[str]:
     """Attach art to one issue row. Returns one line per change."""
     out = cover_image(row, dry_run=dry_run)
+    seen = _claimed(row)
     for key, cap in SLOTS:
         items, was_str = _load(row, key)
         if not isinstance(items, list) or not items:
@@ -147,9 +186,27 @@ def illustrate(row, *, dry_run=False) -> list[str]:
             # licensed, matched on the word "missile", with nothing on the page
             # saying what it was. A reader cannot tell a file photograph from
             # event coverage unless we say so.
-            stale = bool(item.get("image_url")) and not (item.get("image_caption") or "").strip()
-            if item.get("image_url") and not stale:
-                continue                      # already illustrated and labelled
+            cur = item.get("image_url") or ""
+            # Repair, not skip: an image already attached can still be wrong.
+            # Missing caption (predates captions) or a diagram (the Gaza war
+            # control map under a celebrity-apology feature) both need
+            # re-resolving, and dropping if nothing better passes.
+            # A slot ALREADY CARRYING the cover's photograph was never
+            # re-examined: it had an image and a caption, so it was neither
+            # new nor stale, and the loop skipped it. Preventing new
+            # duplicates did nothing about the one already on the page.
+            # `seen` is claimed as we go, so this is "an earlier slot already
+            # used it", not "it appears somewhere in the issue".
+            dupe = bool(cur) and cur.split("?")[0] in seen
+            stale = bool(cur) and (
+                not (item.get("image_caption") or "").strip()
+                or _is_diagram(cur)
+                or dupe
+            )
+            if cur and not stale:
+                # Kept. It claims its url so a later slot cannot repeat it.
+                seen.add(cur.split("?")[0])
+                continue
             try:
                 found = find_cover_image_for_cluster(
                     item.get("cluster_id") or "", head,
@@ -167,17 +224,37 @@ def illustrate(row, *, dry_run=False) -> list[str]:
                         for k in ("image_url", "image_attribution", "image_caption"):
                             item.pop(k, None)
                         changed = True
-                    out.append(f"{key}[{i}] DROPPED an uncaptioned image "
+                    why = ("a repeat of another slot" if dupe
+                           else "a diagram" if _is_diagram(cur)
+                           else "an uncaptioned image")
+                    out.append(f"{key}[{i}] DROPPED {why} "
                                f"({head[:38]!r} resolved to nothing better)")
                 else:
                     out.append(f"{key}[{i}] no licensed subject for {head[:42]!r}")
                 continue
+            # NOTHING APPEARS TWICE, decided BEFORE the write. This block sat
+            # after the assignment, so a duplicate was attached, then detected,
+            # then reported as "skipped" while staying on the page. The cover
+            # and its lead feature shipped the same photograph under a log line
+            # saying they had not.
+            u = (found.get("url") or "").split("?")[0]
+            if u in seen:
+                if stale and not dry_run:
+                    # It had an image, the replacement duplicates something
+                    # else, so it keeps nothing.
+                    for k in ("image_url", "image_attribution", "image_caption"):
+                        item.pop(k, None)
+                    changed = True
+                out.append(f"{key}[{i}] skipped: would repeat {found.get('caption')}")
+                continue
+
             if not dry_run:
                 item["image_url"] = found["url"]
                 if found.get("attribution"):
                     item["image_attribution"] = found["attribution"]
                 if found.get("caption"):
                     item["image_caption"] = found["caption"]
+            seen.add(u)
             changed = True
             verb = "re-resolved" if stale else "->"
             out.append(f"{key}[{i}] {verb} {found.get('caption')}")
