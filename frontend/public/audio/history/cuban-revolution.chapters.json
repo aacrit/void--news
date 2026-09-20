@@ -1,0 +1,77 @@
+{
+ "version": "1.2.0",
+ "title": "The Cuban Revolution",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 57.61
+  },
+  {
+   "startTime": 57.61,
+   "title": "Moncada",
+   "endTime": 150.414
+  },
+  {
+   "startTime": 150.414,
+   "title": "The Granma",
+   "endTime": 180.624
+  },
+  {
+   "startTime": 180.624,
+   "title": "The reporter and the crackdown",
+   "endTime": 230.736
+  },
+  {
+   "startTime": 230.736,
+   "title": "The fall",
+   "endTime": 255.0
+  },
+  {
+   "startTime": 255.0,
+   "title": "Two years on",
+   "endTime": 317.929
+  },
+  {
+   "startTime": 317.929,
+   "title": "Five accounts",
+   "endTime": 328.876
+  },
+  {
+   "startTime": 328.876,
+   "title": "Revolutionary Vanguard / Anti-Imperial Liberation",
+   "endTime": 411.519
+  },
+  {
+   "startTime": 411.519,
+   "title": "Cuban Exile / Miami",
+   "endTime": 501.301
+  },
+  {
+   "startTime": 501.301,
+   "title": "Campesino / Social Gains",
+   "endTime": 568.861
+  },
+  {
+   "startTime": 568.861,
+   "title": "United States / Cold War Washington",
+   "endTime": 649.661
+  },
+  {
+   "startTime": 649.661,
+   "title": "Revisionist Scholarship / Gains Weighed Against Authoritarianism",
+   "endTime": 753.467
+  },
+  {
+   "startTime": 753.467,
+   "title": "What each one leaves out",
+   "endTime": 811.806
+  },
+  {
+   "startTime": 811.806,
+   "title": "Legacy",
+   "endTime": 859.492
+  }
+ ]
+}
