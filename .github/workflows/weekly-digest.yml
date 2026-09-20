@@ -125,9 +125,18 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          # Scoped deliberately: this job owns the weekly snapshot and the weekly
-          # audio, nothing else under public/data.
-          git add frontend/public/data/weekly.json frontend/public/audio/weekly-* || true
+          # Scoped deliberately: this job owns the weekly snapshot, the weekly
+          # back-issue archive and the weekly audio, nothing else.
+          #
+          # The archive files are NOT optional. This job restores the Actions
+          # cache and never saves it back (see the restore step's comment), so
+          # the row it writes dies with the container and the deploy tree is the
+          # only durable record a past issue has. Anything export_static emits
+          # outside this glob is generated in CI and thrown away.
+          git add frontend/public/data/weekly.json \
+                  frontend/public/data/weekly-archive.json \
+                  frontend/build-data/weekly-issues.json \
+                  frontend/public/audio/weekly-* || true
           if git diff --cached --quiet; then
             echo "No weekly changes to commit."
             exit 0

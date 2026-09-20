@@ -162,8 +162,22 @@ def _reader_json_fields():
     return set(re.findall(r"'([^']+)'", m.group(1))) if m else set()
 
 
+VERIFY_PY = ROOT / "scripts" / "verify_sections.py"
+
+
+def test_constant_parity():
+    """verify_sections runs against the live site and cannot import the repo,
+    so it carries its own copy of MAX_HEADLINE_CHARS. Copies drift."""
+    m = re.search(r"^MAX_HEADLINE_CHARS = (\d+)", VERIFY_PY.read_text(), re.M)
+    check("verify_sections declares MAX_HEADLINE_CHARS", bool(m))
+    if m:
+        check("the two MAX_HEADLINE_CHARS agree", int(m.group(1)) == MAX_HEADLINE_CHARS,
+              f"verify_sections {m.group(1)} vs weekly_parse {MAX_HEADLINE_CHARS}")
+
+
 def test_export_reader_parity():
     print("\nW-T03  export/reader JSON-field parity")
+    test_constant_parity()
     exp, rdr = _weekly_pjson_fields(), _reader_json_fields()
     check("exporter field list found", bool(exp), f"{len(exp)} fields")
     check("reader field list found", bool(rdr), f"{len(rdr)} fields")
@@ -291,6 +305,150 @@ def test_build_weekly_row():
           "the exporter drops it from the browser payload, not from storage")
 
 
+
+# ---------------------------------------------------------------------------
+# W-T06  CSS class parity
+# ---------------------------------------------------------------------------
+WEEKLY_CSS = ROOT / "frontend" / "app" / "styles" / "weekly.css"
+WEEKLY_TSX = ROOT / "frontend" / "app" / "weekly"
+
+# Nothing is exempt. The extractor reads template literals inside className, so
+# a state class applied conditionally is still seen at its use site; if this
+# ever needs an entry, the class is probably dead.
+# The only two classes the extractor genuinely cannot see: they are built as
+# `wk-opinion--${side}`, so the name never appears whole in the source. Every
+# other state class is written out inside a template literal and IS seen, which
+# is why this list is two entries and not thirty.
+_COMPOSED = {"wk-opinion--left", "wk-opinion--right"}
+def _css_classes():
+    return set(re.findall(r"\.(wk-[A-Za-z0-9_-]+)", WEEKLY_CSS.read_text()))
+
+
+def _class_expressions(src):
+    """Yield the text of every className={...} / className="..." expression.
+
+    Only className is read. A bare "wk-..." string literal elsewhere in the
+    file is an element id or an aria-labelledby target — a jump anchor, which
+    needs no CSS rule — and counting those as classes made the gate demand
+    rules for things like wk-bias-heading.
+    """
+    for m in re.finditer(r"className=", src):
+        i = m.end()
+        if src[i] == '"':
+            j = src.index('"', i + 1)
+            yield src[i + 1:j]
+        elif src[i] == "{":
+            depth, j = 0, i
+            while j < len(src):
+                if src[j] == "{":
+                    depth += 1
+                elif src[j] == "}":
+                    depth -= 1
+                    if depth == 0:
+                        break
+                j += 1
+            yield src[i + 1:j]
+
+
+def _markup_classes():
+    used = set()
+    for f in sorted(WEEKLY_TSX.rglob("*.tsx")):
+        for expr in _class_expressions(f.read_text()):
+            used.update(re.findall(r"wk-[A-Za-z0-9_-]*[A-Za-z0-9]", expr))
+    return used
+
+
+def test_class_parity():
+    """Catch both halves of the dead-code problem in one comparison.
+
+    Before this gate, 44 of 142 `.wk-` classes had CSS and no markup (~400
+    lines: a masthead, a timeline UI and an inline audio player, all deleted
+    with their components left behind) while all 8 `.wk-contested__*` classes
+    had markup and NO CSS — a section that would have rendered unstyled had its
+    data ever existed. Nothing compared the two lists, so neither was noticed.
+    """
+    print("\nW-T06  CSS class parity")
+    css, markup = _css_classes(), _markup_classes()
+    undefined = sorted(markup - css)
+    unused = sorted(css - markup - _COMPOSED)
+    check("every class in the markup has a rule", not undefined,
+          ", ".join(undefined))
+    check("every rule in weekly.css has markup", not unused,
+          ", ".join(unused))
+
+
+# ---------------------------------------------------------------------------
+# W-T07  The back-issue archive
+# ---------------------------------------------------------------------------
+ISSUES_JSON = ROOT / "frontend" / "build-data" / "weekly-issues.json"
+ARCHIVE_JSON = ROOT / "frontend" / "public" / "data" / "weekly-archive.json"
+AUDIO_DIR = ROOT / "frontend" / "public" / "audio"
+
+
+def test_archive():
+    """The archive is the ONLY durable record a past issue has.
+
+    The weekly job restores the Actions cache and never saves it back (the
+    daily pipeline is usually still running at 12:00 UTC and a save would lose
+    a day), so the row it writes dies with the container. If an append-merge
+    bug drops an issue here, that issue is gone.
+    """
+    print("\nW-T07  back-issue archive")
+    if not ISSUES_JSON.exists():
+        check("weekly-issues.json exists", False, str(ISSUES_JSON))
+        return
+    issues = json.loads(ISSUES_JSON.read_text())
+    check("archive is a non-empty list", isinstance(issues, list) and bool(issues),
+          f"{len(issues) if isinstance(issues, list) else '?'} issue(s)")
+
+    from datetime import date
+    keys = [(i.get("edition"), i.get("week_start")) for i in issues]
+    check("every (edition, week) is unique", len(keys) == len(set(keys)))
+    bad_days = [k[1] for k in keys
+                if not k[1] or date.fromisoformat(str(k[1])[:10]).weekday() != 0]
+    check("every week_start is a Monday", not bad_days, str(bad_days))
+
+    mismatched = [i["week_start"] for i in issues
+                  if i.get("issue_number") != weekly_window(
+                      __import__("datetime").datetime.fromisoformat(
+                          i["week_start"] + "T12:00:00+00:00")
+                      + __import__("datetime").timedelta(days=7))[2]]
+    check("every issue_number matches its week", not mismatched, str(mismatched))
+
+    over = [(i["week_start"], len(c.get("headline") or ""))
+            for i in issues for c in (i.get("cover_text") or [])
+            if isinstance(c, dict) and len(c.get("headline") or "") > MAX_HEADLINE_CHARS]
+    check("no archived cover headline is a paragraph", not over, str(over))
+
+    # The newest archived issue and the published snapshot are the same issue.
+    if WEEKLY_JSON.exists():
+        live = json.loads(WEEKLY_JSON.read_text())
+        newest = issues[0] if issues else {}
+        check("newest archive entry matches weekly.json",
+              newest.get("week_start") == live.get("week_start"),
+              f"archive {newest.get('week_start')} vs live {live.get('week_start')}")
+
+    # Every claimed enclosure has a committed file. Dead audio in the playlist
+    # is worse than no audio: Supabase-hosted URLs from before the
+    # decommission are cleared rather than carried.
+    if ARCHIVE_JSON.exists():
+        index = json.loads(ARCHIVE_JSON.read_text())
+        check("archive index matches the issue list", len(index) == len(issues),
+              f"{len(index)} vs {len(issues)}")
+        missing = []
+        for row in index:
+            url = str(row.get("audio_url") or "")
+            if not url.startswith("/audio/"):
+                if url:
+                    missing.append(f"{row.get('week_start')}: not a local path")
+                continue
+            path = AUDIO_DIR / url.split("?")[0][len("/audio/"):]
+            if not path.exists():
+                missing.append(f"{row.get('week_start')}: {path.name} not committed")
+        check("every archived audio_url has a committed file", not missing,
+              "; ".join(missing))
+
+
 def main():
     print("void --weekly gates")
     test_headline_guard()
@@ -298,6 +456,8 @@ def main():
     test_export_reader_parity()
     test_committed_snapshot()
     test_build_weekly_row()
+    test_class_parity()
+    test_archive()
     print()
     if _failures:
         print(f"FAILED ({len(_failures)}): " + ", ".join(_failures))

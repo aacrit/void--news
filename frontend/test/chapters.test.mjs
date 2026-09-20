@@ -25,7 +25,7 @@
  * Run: node test/chapters.test.mjs   (compiles the TS it needs first)
  */
 import { execFileSync } from "node:child_process";
-import { mkdtempSync, rmSync } from "node:fs";
+import { mkdtempSync, readdirSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
@@ -45,7 +45,31 @@ execFileSync("npx", ["tsc", "app/lib/chapters.ts",
   "--moduleResolution", "bundler", "--skipLibCheck"],
   { cwd: ROOT, stdio: "pipe" });
 
-const ch = await import(pathToFileURL(join(out, "chapters.js")).href);
+/* tsc puts the output at a path relative to the COMMON ROOT of everything it
+   pulled in, so chapters.js lands at the top of outDir only while every import
+   chain stays inside app/lib. It does not: lib/types.ts re-exports the weekly
+   types from app/weekly/types.ts, which moves the common root to app/ and the
+   emitted file to <out>/lib/chapters.js. This test asserts what chapters.ts
+   DOES, not where tsc happens to put it, so it finds the file. */
+function findEmitted(dir, name) {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) {
+      const hit = findEmitted(path, name);
+      if (hit) return hit;
+    } else if (entry.name === name) {
+      return path;
+    }
+  }
+  return null;
+}
+
+const emitted = findEmitted(out, "chapters.js");
+if (!emitted) {
+  console.log("FAIL  tsc emitted no chapters.js");
+  process.exit(1);
+}
+const ch = await import(pathToFileURL(emitted).href);
 
 /* A realistic running order: ident and sign-on run to 0:18, then the menu,
    five stories, the briefs, the closer, the editorial. */
