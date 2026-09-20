@@ -1,0 +1,129 @@
+## OPEN
+N: Five hundred Spaniards took an empire of millions. That is the sentence, and it has never added up.
+N: At the siege that ended it, the Spanish force was maybe nine hundred men. Standing with them were somewhere between seventy five thousand and two hundred thousand indigenous soldiers, who had their own reasons, their own commanders, and their own terms.
+N: And the other half of the story, the one about a king who mistook a Spanish captain for a returning god and handed over his empire, does not appear in a single Nahuatl source written before the conquest. It was assembled afterwards, to explain something that otherwise needed explaining.
+
+## TITLE
+N: The fall of Tenochtitlan. Fifteen nineteen to fifteen twenty one.
+
+## SCENE 1 | No way home
+N: August, fifteen nineteen. On the coast at Veracruz, Hernan Cortes destroys his own ships. Burned or scuttled, the accounts differ. The effect is that five hundred men, sixteen horses and a few cannon cannot leave.
+N: They march inland toward a city none of them has seen, on reports from coastal people who say it is bigger than anything in Spain.
+N: It was. Tenochtitlan sat on an island in a lake, joined to the shore by three causeways, with somewhere between two and three hundred thousand people in it. Seville, the largest city in Spain, had sixty thousand.
+
+## DOCUMENT | Bernal Diaz del Castillo | The True History of the Conquest of New Spain | 1568
+N: One of the soldiers, Bernal Diaz, wrote his account almost fifty years later, as an old man, and he could still recall arriving at the edge of it.
+M: We were amazed and said that it was like the enchantments they tell of in the legend of Amadis, on account of the great towers and temples and buildings rising from the water, and all built of masonry.
+
+## SCENE 2 | The people who fought him first
+N: On the way, in September, the Spaniards enter the territory of Tlaxcala, and the Tlaxcalans attack them. Four battles in two weeks.
+N: Then the Tlaxcalan senate does something else. It stops, and it negotiates.
+N: This is not naivety and it is not awe. Tlaxcala had been at war with the Aztec alliance for decades, blockaded out of salt and cotton and cacao, and bled by ritual wars whose purpose was to take its people for sacrifice.
+N: Their leading general argued for fighting on and was overruled. The senate decided that these strangers were the instrument that could end the thing strangling them.
+N: From that point the army marching on Tenochtitlan is overwhelmingly Tlaxcalan.
+
+## SCENE 3 | The eighth of November
+N: Moctezuma receives Cortes on the southern causeway and takes him into the city as a guest.
+N: What was happening in that meeting is contested by every source that describes it. The Spanish version has Moctezuma conceding his empire on the spot.
+N: The likelier reading is that he was buying time. He housed them in a palace, fed them, watched them, and tried to work out what they were and how many more were coming.
+
+## SCENE 4 | The festival
+N: In June fifteen twenty, Cortes leaves the city to deal with a Spanish force sent to arrest him, because he is operating without authorisation and the governor of Cuba wants him in chains.
+N: The officer he leaves in command attacks a religious festival and kills the Aztec nobility attending it.
+N: The city rises. Moctezuma dies, by Spanish hands or by stones thrown from his own people depending on which account you read.
+N: On the thirtieth of June the Spaniards fight their way out along a causeway at night, losing six hundred of their own men and a great many allies. They called it the night of sorrows.
+
+## DOCUMENT | Anonymous Nahua informants | Florentine Codex | c. 1577
+N: This is how Nahua informants, decades later, described what the newcomers were like around gold.
+M: They seized the gold as if they were monkeys, their faces flushed. Like hungry pigs they craved that gold.
+
+## REST
+
+## SCENE 5 | What actually took the city
+N: They came back the following year with more allies and a fleet of small ships built in pieces and carried over the mountains, and they cut the causeways and the fresh water.
+N: But the thing that decided it had already arrived. Smallpox came ashore with the expedition sent to arrest Cortes, carried by an enslaved African man in its ranks, and it went through Tenochtitlan between October and January.
+N: It killed the emperor who had replaced Moctezuma, eighty days into his reign. It killed commanders, priests, and the people who knew how the city was run, in the months when the city most needed them.
+N: The siege lasted about three months. More than two hundred and forty thousand people died in it.
+
+## DOCUMENT | Bernal Diaz del Castillo | The True History of the Conquest of New Spain | 1568
+N: Bernal Diaz again, on the end of it.
+M: The people of the city had to walk upon their dead while others swam or drowned in the waters of that wide lake. So great was the suffering that it was beyond understanding.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts of two years.
+
+## PERSPECTIVE | The conquistadors | victor
+N: The first is the one that reached Europe, and it was written by a man who needed a pardon.
+N: Cortes had no authority to conquer anything. He had been sent to trade and explore. He solved that by founding a town on the coast, having its council, which was made up of his own men, appoint him captain general, and then writing directly to the king over the head of the governor who had commissioned him.
+N: His five letters to Charles the Fifth are the foundation of every Spanish account of the conquest, and they are also a legal brief. They are arguing that what he did was lawful, necessary, and owed to the crown.
+N: A man in that position needs the empire to have surrendered rather than been taken, and he needs the natives who did most of the fighting to be an auxiliary detail.
+
+## PERSPECTIVE | The Mexica | vanquished
+N: The second account is the one from inside the city, and it reaches us through an unusual route.
+N: A Franciscan friar spent decades interviewing Nahua elders and scribes, in Nahuatl, and produced an enormous encyclopedia of their world, including their account of the war.
+N: So the defeated side's version survives because a member of the institution that had just destroyed them sat down and wrote it out in their own language.
+N: It is not a pure source and it does not claim to be. It was collected a generation later, in a colony, from people who had lived through the loss. The omens it opens with, the fire in the sky, the burning temple, are almost certainly added afterwards, the way people rebuild a catastrophe into a story with warnings in it.
+N: What it records without any of that framing is concrete. The starvation in the siege. The smell. The water.
+
+## REST | short
+
+## PERSPECTIVE | Tlaxcala | indigenous
+N: The third account was suppressed for four hundred years, and it belongs to the people who supplied most of the army.
+N: The Tlaxcalans did not think they had joined a Spanish conquest. They thought they had recruited a Spanish contingent into a Tlaxcalan war, and the terms they negotiated said so.
+N: They recorded it themselves, in a painted history made in their own city, showing their commanders leading, their soldiers fighting, and the Spaniards present as part of a combined force.
+N: For most of the next four centuries the Spanish narrative had no room for that, and the Mexican national story that came later had less. In it the Tlaxcalans stop being an independent state defending itself and become traitors to a nation that did not exist yet.
+
+## PERSPECTIVE | The Catholic mission | bystander
+N: The fourth account belongs to the friars, and it contains the sharpest contradiction in the whole episode.
+N: The first twelve Franciscans walked barefoot from the coast in fifteen twenty four. Cortes knelt to them in public, which astonished Aztec nobles who had never seen him kneel to anything.
+N: Their project was total conversion, and they went at it at industrial speed. One of them recorded baptising fourteen thousand people in a single day.
+N: They pulled down the temples and burned the books. Of the thousands of Aztec codices that existed before the conquest, perhaps fifteen or twenty survive. A Franciscan bishop further south burned every Maya book he could find in a single afternoon in fifteen sixty two, and four of those are left.
+N: And the single greatest surviving record of that civilisation is a two thousand four hundred page encyclopedia compiled over forty years by one of the same order. The institution that erased it is the institution that preserved it.
+N: The order also produced the other argument. A Dominican who had watched the Caribbean population destroyed published a catalogue of Spanish atrocities in fifteen fifty two and then argued, in a formal debate before the crown, that indigenous people were rational beings with rights. The man arguing against him held that they were natural slaves.
+
+## PERSPECTIVE | Modern Mexico | academic
+N: The fifth account is about a country living on top of the evidence.
+N: In seventeen ninety, workers digging drainage under the main square of Mexico City hit a carved stone twelve feet across and twenty four tons in weight. It was the Aztec sun stone, buried after the conquest. They propped it against the cathedral wall and left it there for decades.
+N: The cathedral is built with stones from the great temple. The main square is the Aztec ceremonial precinct. The national museum is in a park where the aqueducts began.
+N: And the modern national story takes the empire that lost as the ancestor, which is a choice about which indigenous past counts, made by a state that spent centuries not making it.
+
+## REST
+
+## TURN | What each one leaves out
+N: What each account has to leave out.
+N: The conquistadors' account leaves out the size of the army it commanded. Five hundred is the number of Spaniards, not the number of soldiers, and the god story does the work of explaining a victory the arithmetic will not.
+N: The Mexica account is a translation twice over: collected decades late, through a friar, from people living under the people who beat them. It is the only version of their side that exists, and its conditions are written into every page.
+N: The Tlaxcalan account is right that they chose, and it is quieter about the fact that the choice was made by a state under blockade by an empire that took its people for sacrifice. A decision under those conditions is still a decision, and it is not a free one.
+N: The friars' account is unusable as a moral position and indispensable as a source, and it cannot hold both of those at once.
+N: And the modern account is a national identity assembled out of ruins. It puts the sun stone at the centre of the national museum and it has never settled what to do with the Tlaxcalans, or with the woman who translated for Cortes, who is a traitor and a mother of a nation in the same breath.
+
+## REST
+
+## CLOSE
+N: The city fell on the thirteenth of August, fifteen twenty one.
+N: Within a century, the population of central Mexico had gone from about twenty five million people to about one million. Most of that was disease, and disease is not a policy, and the conquest is what put it into a population with no immunity to any of it.
+N: Mexico City was built directly on top of the wreckage, using its stone.
+N: And in nineteen seventy eight, electrical workers digging behind that cathedral hit another carved stone. It was the great temple. It had been eight feet under the traffic the entire time.
+
+## SAY
+Tenochtitlan = ten-och-TEET-lan
+Cortes = kor-TEZ
+Hernan = er-NAHN
+Veracruz = ve-rah-KROOZ
+Seville = seh-VIL
+Texcoco = tesh-KOH-koh
+Tlaxcala = tlash-KAH-lah
+Tlaxcalans = tlash-KAH-lanz
+Tlaxcalan = tlash-KAH-lan
+Moctezuma = mok-teh-ZOO-mah
+Nahuatl = NAH-wah-tul
+Nahua = NAH-wah
+Mexica = meh-SHEE-kah
+Bernal Diaz = ber-NAL DEE-az
+Amadis = ah-mah-DEES
+Florentine = FLOR-en-tine
+Xochimilco = so-chee-MEEL-koh
+Coyolxauhqui = koy-ol-SHOW-kee
+cacao = kah-KOW
