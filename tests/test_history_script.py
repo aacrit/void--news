@@ -22,7 +22,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "pipeline"))
 
-from history.script_format import parse_script, validate_script   # noqa: E402
+from history.script_format import (  # noqa: E402
+    parse_script, validate_script, _overhead_minutes,
+)
 
 failures: list[str] = []
 
@@ -99,11 +101,32 @@ def fails(script_text: str, event=None) -> set[str]:
     return {f.id for f in validate_script(sc, event or EVENT) if f.level == "fail"}
 
 
+def pad_to_words(text: str, words: int) -> str:
+    """Pad to an exact spoken-word count, for tests that need to straddle a
+    threshold. Runtime-targeted padding cannot do that: the filler is added in
+    blocks and the block rounding moves the result by tens of words, which is
+    more than the gap between two narrators' runtimes."""
+    from history.script_format import parse_script
+    need = words - parse_script(text, "pad").words
+    if need <= 0:
+        return text
+    filler = "\n".join("N: " + " ".join(["filler"] * 12) for _ in range(need // 12))
+    rem = need % 12
+    if rem:
+        filler += "\nN: " + " ".join(["filler"] * rem)
+    return text.replace("## REST\n", "## REST\n\n## SCENE 2 | Filler\n" + filler + "\n", 1)
+
+
 def pad(text: str, minutes: float = 9.0) -> str:
     """H-07 measures length, so a fixture must be long enough to be legal or
     every other assertion drowns in a length failure."""
-    from history.script_format import WPM, MUSIC_MINUTES
-    need = int((minutes - MUSIC_MINUTES) * WPM) - len(text.split())
+    from history.script_format import WPM, _overhead_minutes, parse_script
+    # Size against the SAME model the validator uses, including this script's
+    # own segment count, and including the one SCENE this function adds below.
+    # Sizing against a flat music constant made every length fixture a lie the
+    # moment overhead stopped being flat.
+    segs = len(parse_script(text, "pad").segments) + 1
+    need = int((minutes - _overhead_minutes(segs)) * WPM) - len(text.split())
     if need <= 0:
         return text
     filler = "\n".join("N: " + " ".join(["filler"] * 12) for _ in range(need // 12 + 1))
@@ -197,18 +220,24 @@ check("the slower narrator is the longer runtime", slow > fast, f"{slow:.2f} vs 
 
 # The failure this exists for: a script sized to the average that renders over
 # the ceiling because the slow voice was cast.
-long_script = pad(CLEAN, 15.2)   # 1,980 words: 14.8 min at the average, 15.2 at am_michael
+# Straddle deliberately: under the 15.5 audio gate at the catalogue average,
+# over it when the slow voice is cast. That gap is ~0.5 min at this length, so
+# the word count has to be exact.
+long_script = pad_to_words(CLEAN, 2123)
 mins_avg, _, _ = estimated_minutes(parse_script(long_script, "t"), None)
 check("a script legal at the average rate is caught when the slow voice reads it",
-      mins_avg <= 15.0 and "H-07" in fails(long_script, {**EVENT, **SLOW_EVENT}),
+      mins_avg <= 15.5 and "H-07" in fails(long_script, {**EVENT, **SLOW_EVENT}),
       f"avg {mins_avg:.2f} min, findings {fails(long_script, {**EVENT, **SLOW_EVENT})}")
 check("the same script passes when the fast voice reads it",
       "H-07" not in fails(long_script, {**EVENT, **FAST_EVENT}),
       str(fails(long_script, {**EVENT, **FAST_EVENT})))
 
 generic, rate, who = estimated_minutes(parse_script(_len, "t"), None)
+_n_segs = len(parse_script(_len, "t").segments)
+_overhead = _overhead_minutes(_n_segs)
 check("estimated_minutes falls back to the catalogue average with no event",
-      who == "the cast" and abs(generic - (_words / 145.0 + 1.1)) < 1e-9, f"{who} {rate}")
+      who == "the cast" and abs(generic - (_words / 145.0 + _overhead)) < 1e-9,
+      f"{who} {rate}")
 unknown, rate, _ = estimated_minutes(parse_script(_len, "t"), {"category": "x", "severity": "y"})
 check("an unmeasured narrator degrades to the average rather than raising",
       rate in set(NARRATOR_WPM.values()) | {145.0}, str(rate))
@@ -335,5 +364,41 @@ def test_check_script_prints_findings():
     print("PASS  check_script prints findings instead of crashing on them")
 
 
+def test_quote_matches_its_best_source_not_its_first():
+    """A weaker match earlier in the event file must not win.
+
+    H-04 looks the speaker up by matching the quote, so taking the first source
+    over the 0.6 threshold attributes the line to whoever happens to appear
+    first. Both cases below are real, found by drafters on real event data, and
+    both scored 1.000 against their true source and 0.667 against an earlier
+    unrelated one.
+    """
+    import sys, pathlib as _p
+    sys.path.insert(0, str(_p.Path(__file__).resolve().parents[1] / "pipeline"))
+    from history.script_format import _best_source, _norm
+
+    said = _norm("Both sides declared victory over a war that returned them "
+                 "to the border where it began")
+    sourced = [
+        (_norm("War, war until victory."), "Ruhollah Khomeini"),          # earlier, weaker
+        (_norm("Both sides declared victory over a war that returned them "
+               "to the border where it began"), "Scholarly consensus"),   # later, exact
+    ]
+    assert _best_source(said, sourced)[1] == "Scholarly consensus"
+
+    said = _norm("To the strongest")
+    sourced = [
+        (_norm("When Alexander saw the breadth of his domain, he wept, for "
+               "there were no more worlds to conquer"), "Plutarch"),      # earlier, weaker
+        (_norm("To the strongest."), "Alexander"),                        # later, exact
+    ]
+    assert _best_source(said, sourced)[1] == "Alexander"
+
+    # And a quote with no real source still finds nothing.
+    assert _best_source(_norm("a line nobody ever wrote down"), sourced) is None
+    print("PASS  a quote resolves to its best source, not its first")
+
+
 if __name__ == "__main__":
     test_check_script_prints_findings()
+    test_quote_matches_its_best_source_not_its_first()
