@@ -1,0 +1,149 @@
+## OPEN
+N: You have seen the storming of the Winter Palace. Soldiers pouring over the gates, rifles raised, a fortress taken by force.
+N: That footage is real film, shot in nineteen twenty, three years after the fact, staged for the cameras.
+N: The actual night had fewer than twenty casualties and no storming at all.
+N: The myth became more real than the event it was pretending to show.
+
+## TITLE
+N: The Russian Revolution. February to October, nineteen seventeen.
+
+## SCENE 1 | Vyborg, February
+N: The twenty third of February, nineteen seventeen, by the old calendar. Women textile workers in the Vyborg district of Petrograd walk off their jobs. It is International Women's Day.
+N: Bread lines have wrapped around the block for weeks. The capital is getting only half its normal grain that winter.
+N: By afternoon, one hundred thousand workers have joined them. Two days later the whole city is paralyzed.
+N: Tsar Nicholas the Second is four hundred miles away at his military headquarters. He sends a telegram to the Petrograd garrison commander.
+
+## DOCUMENT | Tsar Nicholas II | Telegram to General Khabalov | February 25, 1917
+N: The telegram survives, in the Tsar's own words, sent to General Khabalov.
+M: I order that the disorders in the capital shall be ended tomorrow.
+N: The troops open fire the next day. Roughly forty demonstrators die on Nevsky Prospect. The day after that, the Volynsky Regiment mutinies, and seventy thousand soldiers join the crowds within twenty four hours.
+
+## ASIDE
+N: A telegram like that only works while soldiers still take orders. Once one regiment decides it will not, the government has no force left to command. That is the week Nicholas actually loses.
+
+## REST
+
+## SCENE 2 | A pen for routine correspondence
+N: The second of March, nineteen seventeen. In a railway car at Pskov, Nicholas signs his abdication. He uses the same pen he uses for routine correspondence.
+N: His brother, Grand Duke Michael, refuses the throne the next day. Three hundred years of Romanov rule end inside one week.
+N: No organized party led any of this. The Bolsheviks have twenty four thousand members in a country of one hundred and seventy million. Lenin is in Zurich, reading about it in the newspapers.
+
+## DOCUMENT | Tsar Nicholas II | Diary entry | March 2, 1917
+N: Nicholas wrote in his diary that same day.
+M: All around me are betrayal, cowardice, and deceit.
+
+## REST
+
+## SCENE 3 | Two governments, one man in both
+N: Within days, two authorities claim to run Russia. The Provisional Government forms out of Duma liberals and promises a constituent assembly, civil liberties, and continuing the war.
+N: The Petrograd Soviet of Workers' and Soldiers' Deputies is elected straight from the factories and the barracks. On the first of March, before Nicholas has even abdicated, it declares soldiers need obey their officers only when the Soviet's own orders do not contradict them.
+N: The Provisional Government governs on paper. The Soviet controls the garrison.
+N: One man, Alexander Kerensky, sits in both bodies. He is the only one who does.
+
+## SCENE 4 | The sealed train
+N: The third of April, nineteen seventeen. Lenin arrives at the Finland Station in a sealed train, provided by the German General Staff, who calculate a Bolshevik revolution would take Russia out of the war.
+N: His April Theses reject any support for the Provisional Government and demand immediate peace, land for the peasants, all power to the Soviets. His own party thinks he has gone mad. Kamenev and Zinoviev publish their dissent in print.
+N: Between April and October the Provisional Government destroys itself. Kerensky's June Offensive costs two hundred thousand casualties and mass desertions.
+N: In August, General Kornilov marches troops on Petrograd in a bungled coup. It drives moderate officers into exile, and arms the Bolsheviks with forty thousand rifles.
+
+## REST
+
+## SCENE 5 | The night of the twenty fifth
+N: Bolshevik Red Guards and sympathetic soldiers occupy the telephone exchange, the telegraph office, the State Bank, and the railway stations.
+N: At nine forty in the evening, the cruiser Aurora fires one blank round at the Winter Palace.
+N: The ministers of the Provisional Government are arrested in the Malachite Room at ten past two in the morning. Kerensky left that morning in a car borrowed from the American Embassy.
+N: While the palace is still being taken, the Second All Russian Congress of Soviets convenes at the Smolny Institute.
+
+## DOCUMENT | Vladimir Lenin | Address to the Second All-Russian Congress of Soviets | October 26, 1917
+N: Lenin rose and told the delegates what came next.
+M: We shall now proceed to construct the socialist order.
+
+## DOCUMENT | Leon Trotsky | Address to departing Mensheviks at the Second Congress of Soviets | October 25, 1917
+N: The Mensheviks and the Right Socialist Revolutionaries walked out in protest. Trotsky told them where they were going.
+M: Go where you belong. Into the dustbin of history.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts of the same thirteen months.
+
+## PERSPECTIVE | The Bolsheviks | victor
+N: The first account is the winner's, and it starts with a number. Russia's industrial working class was three point six million people in a country of one hundred and seventy million, packed into enormous factories. The Putilov Works in Petrograd alone employed thirty thousand workers.
+N: Those factories worked like political schools. Strike committees became soviets. The Bolsheviks grew from twenty four thousand members in February to two hundred thousand by August, in this account, because their program of peace, land, bread, and all power to the soviets matched what workers already wanted.
+N: The October operation itself was precise. The Military Revolutionary Committee, chaired by Trotsky, took the city's infrastructure in forty eight hours, and by this account perhaps six people died taking the Winter Palace.
+N: Lenin's own case for seizing power, made before it happened, was blunt.
+M: History will not forgive us if we do not assume power now.
+N: The Decrees on Peace, Land, and Workers' Control that followed were not ideology handed down from above. They ratified what the base of the revolution had already started doing for itself.
+
+## PERSPECTIVE | The Whites | vanquished
+N: The second account starts with a number the winners do not like to say. Russia in nineteen thirteen was the world's fifth largest economy. Stolypin's reforms had created a class of independent peasant farmers, and the Trans Siberian Railway, finished in nineteen sixteen, was the longest railway in the world.
+N: What this account mourns is not a political system. It is, in its own word, a civilization, destroyed not by inevitable historical force but by the weakness of one Tsar and the ruthlessness of one party.
+N: The Constituent Assembly election of November nineteen seventeen proves the point, in this telling. The Bolsheviks won twenty four per cent of the vote. The Socialist Revolutionaries won forty. Lenin dissolved the Assembly after one day.
+N: The White armies that formed in nineteen eighteen were never one army. Admiral Kolchak in Siberia, General Denikin in the south, General Yudenich near Petrograd, Baron Wrangel in the Crimea, four separate campaigns united only by opposition to the Bolsheviks.
+N: Patriarch Tikhon, addressing that same defeat, put it to his own side.
+M: The Lord God has not granted success to the White armies because of their sins. Their leaders were guided by ambition and vanity and lived in dissipation.
+
+## PERSPECTIVE | The peasants and the soldiers | indigenous
+N: The third account has the least to do with any party's program. In nineteen fourteen a pound of bread cost twelve kopecks. By January nineteen seventeen it cost thirty two kopecks, when it could be found at all, and workers' wives spent entire nights in the bread lines.
+N: The women who walked out of the Vyborg mills were not carrying a revolutionary program. In this account, they wanted bread, and their own words survive.
+F: Give us bread! Our children are starving!
+N: From April onward, village communes began seizing gentry land on their own, cutting timber, dividing fields, redistributing by household. By October, much of European Russia's farmland had already changed hands by peasant action, and the Decree on Land mostly ratified what had already happened.
+N: Fifteen million men had been mobilized, roughly half the male agricultural workforce. Desertion rose from about thirty four thousand a month in nineteen sixteen to two hundred thousand a month by September. A soldier who deserted went home to his village, and usually brought his rifle.
+
+## PERSPECTIVE | The Western powers | bystander
+N: The fourth account starts with what Russia's exit from the war cost the Allies. The Treaty of Brest Litovsk, in March nineteen eighteen, handed Germany Poland, the Baltic states, Ukraine, and Finland, about a third of Russia's farmland and eighty per cent of its coal and iron. Germany moved fifty divisions west, enabling a Spring Offensive that nearly broke the Allied line before the Americans arrived.
+N: The Allied intervention that followed could not agree on its own purpose. Britain sent forty thousand troops. Japan landed seventy two thousand in Vladivostok, the largest contingent of anyone, and stayed on in Siberia pursuing its own territorial aims. The United States sent thirteen thousand, and two hundred and thirty five Americans died fighting Bolshevik forces near Archangel that winter.
+N: It failed on every count the account names. The White armies collapsed, the war material was mostly lost, and the intervention handed the Bolsheviks a propaganda story about capitalist encirclement that outlasted every man who ordered it.
+N: Winston Churchill, the most aggressive advocate for that intervention, wrote afterward what the Allies had tried and failed to do.
+M: We must strangle Bolshevism in its cradle.
+
+## PERSPECTIVE | The revisionist historians | academic
+N: The fifth account, built decades later by historians reading factory minutes and village records instead of party manifestos, asks a different question. What did ordinary people actually do, and how much of the outcome did any party truly control.
+N: Petrograd's metalworkers, two hundred and fifty thousand of them in a city of two point four million, radicalized in stages. In February they wanted bread and an end to the war. By April they wanted the right to inspect the books and veto firings. By September, many had concluded that only the soviets taking power could guarantee it.
+N: The Kornilov Affair, in this account, is the hinge nobody planned. Railway workers refused to move his trains, his own troops were talked into disobeying him, and the collapse handed the Bolsheviks forty thousand rifles and, within weeks, majorities in the Petrograd and Moscow soviets. Without it, October might not have happened at all.
+N: Orlando Figes gave the account its harshest line about the party it studies.
+M: The tragedy of the Russian Revolution was that the Bolsheviks were the only party willing to pick up power from the gutter, and they picked it up with dirty hands.
+
+## REST | short
+
+## TURN | What each one leaves out
+N: And here is what each account cannot afford to say.
+N: The Bolshevik account calls its growth organic and leaves out the forty thousand rifles a coup it did not stage handed it, and the Constituent Assembly it dissolved after a single day.
+N: The White account is right that October was a minority seizure, and leaves out that the minority inherited a state the Whites had spent three centuries running by autocracy, censorship, and exile.
+N: The peasant account is right that the land was seized before any decree, and leaves out that the party issuing that decree would spend the next four years taking the grain back at gunpoint.
+N: The Western account explains why the Allies were furious and never asks why an intervention meant to smother Bolshevism handed it its founding grievance for free.
+N: And the academic account, which spares no one else, is least willing to say plainly that a revolution made from below can still end up in a single party's hands.
+
+## REST
+
+## CLOSE
+N: The Kronstadt sailors who helped bring the Bolsheviks to power in nineteen seventeen rose against them in March nineteen twenty one. Trotsky's forces crossed the ice of the frozen bay to put them down.
+N: The Constituent Assembly the Socialist Revolutionaries had actually won sat for twelve hours before Red Guards cleared the hall.
+N: The bodies of Nicholas, Alexandra, and their five children were driven to an abandoned mineshaft, doused in acid, and buried under a forest road. Nobody found them until nineteen ninety one.
+
+## SAY
+Petrograd = PET-roh-grad
+Vyborg = VEE-borg
+Pskov = puh-SKOF
+Nevsky = NEV-skee
+Volynsky = voh-LIN-skee
+Romanov = roh-MAH-noff
+Bolsheviks = BOHL-sheh-viks
+Bolshevism = BOHL-sheh-vih-zm
+Kerensky = keh-REN-skee
+Kornilov = kor-NEE-lof
+Kamenev = KAH-meh-nyef
+Zinoviev = zih-NOH-vyev
+Trotsky = TROT-skee
+Putilov = poo-TEE-lof
+Stolypin = stoh-LIH-pin
+Kolchak = kol-CHAK
+Denikin = deh-NEE-kin
+Yudenich = yoo-DEN-ich
+Wrangel = VRAHN-gel
+Tikhon = TEE-khon
+Smolny = SMOHL-nee
+Kronstadt = KRON-shtat
+Figes = FY-jiz
+Duma = DOO-mah
+Khabalov = kah-BAH-lof
