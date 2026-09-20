@@ -7,14 +7,19 @@ produces a Listen button that 404s, on a page where the audio IS the feature.
 
 So this asserts the manifest against the repository it ships with:
 
-1. Every entry's MP3 exists in the deploy tree, at the size and duration the
-   manifest claims, and under the Cloudflare Pages per-file limit.
-2. Every entry names a real event (a slug with a YAML file), because an
+1. Every entry names a real event (a slug with a YAML file), because an
    episode the catalogue cannot reach is invisible.
+2. Every entry has its chapter sidecar committed. The MP3s are NOT in git any
+   more (they live in a GitHub Release and the deploy pulls them into the
+   publish directory), so the sidecar is the in-repo proof that an episode was
+   really published, and a missing MP3 is caught at deploy time instead: the
+   fetch step fails the deploy rather than shipping a Listen button that 404s.
 3. The chapters are ordered, start at zero and stay inside the episode, which
    is what the player's rail arithmetic assumes.
-4. Nothing published is missing from the manifest: an MP3 sitting in
-   public/audio/history with no entry is weight in git that no page serves.
+4. Where an MP3 IS present (the render job, before it uploads), its size and
+   duration match what the manifest claims and it is under the Cloudflare
+   Pages per-file limit; and nothing sitting in public/audio/history is
+   missing from the manifest.
 
 Run: python tests/test_history_audio.py
 """
@@ -70,27 +75,37 @@ def main() -> int:
         check(f"{slug}: url is site-relative", url.startswith("/audio/history/"), url)
         check(f"{slug}: url carries a cache fingerprint", "?v=" in url, url)
 
-        mp3 = AUDIO / f"{slug}.mp3"
-        check(f"{slug}: mp3 is committed", mp3.exists(), str(mp3))
-        if not mp3.exists():
-            continue
-
-        size = mp3.stat().st_size
-        check(f"{slug}: manifest byte count matches the file",
-              ep.get("bytes") == size, f"{ep.get('bytes')} vs {size}")
-        check(f"{slug}: under the Pages per-file limit", size <= MAX_BYTES,
-              f"{size/1048576:.1f} MB")
+        sidecar = AUDIO / f"{slug}.chapters.json"
+        check(f"{slug}: chapter sidecar is committed", sidecar.exists(), str(sidecar))
 
         claimed = ep.get("durationSeconds")
         check(f"{slug}: duration recorded", isinstance(claimed, (int, float)) and claimed > 0)
-        real = duration_of(mp3)
-        if real is not None and isinstance(claimed, (int, float)):
-            check(f"{slug}: duration matches the file", abs(real - claimed) < 1.0,
-                  f"{claimed} vs {real:.1f}")
-            # The format is an 8-15 minute documentary (H-07 polices the script;
-            # this polices what was actually rendered from it).
-            check(f"{slug}: runs 8-15 minutes", 7.5 * 60 <= real <= 15.5 * 60,
-                  f"{real/60:.1f} min")
+        check(f"{slug}: byte count recorded",
+              isinstance(ep.get("bytes"), int) and ep["bytes"] > 0, str(ep.get("bytes")))
+        check(f"{slug}: under the Pages per-file limit",
+              isinstance(ep.get("bytes"), int) and ep["bytes"] <= MAX_BYTES,
+              f"{(ep.get('bytes') or 0)/1048576:.1f} MB")
+
+        # The MP3 itself is only on disk in the render job. Everywhere else
+        # (a fresh clone, CI, a reviewer's machine) it lives in the release,
+        # and the deploy's fetch step is what proves it is there. The manifest
+        # checks above and the chapter checks below do not depend on it.
+        mp3 = AUDIO / f"{slug}.mp3"
+        if mp3.exists():
+            size = mp3.stat().st_size
+            check(f"{slug}: manifest byte count matches the file",
+                  ep.get("bytes") == size, f"{ep.get('bytes')} vs {size}")
+            real = duration_of(mp3)
+            if real is not None and isinstance(claimed, (int, float)):
+                check(f"{slug}: duration matches the file", abs(real - claimed) < 1.0,
+                      f"{claimed} vs {real:.1f}")
+
+        # The format is an 8-15 minute documentary (H-07 polices the script;
+        # this polices what was actually rendered from it), measured from the
+        # duration the render recorded so it holds without the file present.
+        if isinstance(claimed, (int, float)):
+            check(f"{slug}: runs 8-15 minutes", 7.5 * 60 <= claimed <= 15.5 * 60,
+                  f"{claimed/60:.1f} min")
 
         chapters = ep.get("chapters") or []
         check(f"{slug}: has chapters", len(chapters) >= 3, str(len(chapters)))
@@ -120,7 +135,9 @@ def main() -> int:
         print("\n".join(f"FAIL  {f}" for f in failures))
         print(f"\n{len(failures)} History audio failure(s)")
         return 1
-    print(f"PASS  {len(episodes)} History episode(s): files, durations, chapters, coverage")
+    on_disk = sum(1 for slug in episodes if (AUDIO / f"{slug}.mp3").exists())
+    print(f"PASS  {len(episodes)} History episode(s): events, sidecars, chapters "
+          f"({on_disk} with the MP3 on disk)")
     return 0
 
 

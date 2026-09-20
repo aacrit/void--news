@@ -1,0 +1,77 @@
+{
+ "version": "1.2.0",
+ "title": "The Russian Revolution",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 43.723
+  },
+  {
+   "startTime": 43.723,
+   "title": "Vyborg, February",
+   "endTime": 134.242
+  },
+  {
+   "startTime": 134.242,
+   "title": "A pen for routine correspondence",
+   "endTime": 185.672
+  },
+  {
+   "startTime": 185.672,
+   "title": "Two governments, one man in both",
+   "endTime": 235.053
+  },
+  {
+   "startTime": 235.053,
+   "title": "The sealed train",
+   "endTime": 300.681
+  },
+  {
+   "startTime": 300.681,
+   "title": "The night of the twenty fifth",
+   "endTime": 368.4
+  },
+  {
+   "startTime": 368.4,
+   "title": "Five accounts",
+   "endTime": 373.053
+  },
+  {
+   "startTime": 373.053,
+   "title": "The Bolsheviks",
+   "endTime": 457.213
+  },
+  {
+   "startTime": 457.213,
+   "title": "The Whites",
+   "endTime": 548.383
+  },
+  {
+   "startTime": 548.383,
+   "title": "The peasants and the soldiers",
+   "endTime": 625.254
+  },
+  {
+   "startTime": 625.254,
+   "title": "The Western powers",
+   "endTime": 711.374
+  },
+  {
+   "startTime": 711.374,
+   "title": "The revisionist historians",
+   "endTime": 796.791
+  },
+  {
+   "startTime": 796.791,
+   "title": "What each one leaves out",
+   "endTime": 870.597
+  },
+  {
+   "startTime": 870.597,
+   "title": "Legacy",
+   "endTime": 922.231
+  }
+ ]
+}

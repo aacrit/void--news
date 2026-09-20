@@ -1,0 +1,77 @@
+{
+ "version": "1.2.0",
+ "title": "The Fall of Tenochtitlan",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 62.098
+  },
+  {
+   "startTime": 62.098,
+   "title": "No way home",
+   "endTime": 128.599
+  },
+  {
+   "startTime": 128.599,
+   "title": "The people who fought him first",
+   "endTime": 183.628
+  },
+  {
+   "startTime": 183.628,
+   "title": "The eighth of November",
+   "endTime": 216.846
+  },
+  {
+   "startTime": 216.846,
+   "title": "The festival",
+   "endTime": 283.033
+  },
+  {
+   "startTime": 283.033,
+   "title": "What actually took the city",
+   "endTime": 352.399
+  },
+  {
+   "startTime": 352.399,
+   "title": "Five accounts",
+   "endTime": 356.434
+  },
+  {
+   "startTime": 356.434,
+   "title": "The conquistadors",
+   "endTime": 410.902
+  },
+  {
+   "startTime": 410.902,
+   "title": "The Mexica",
+   "endTime": 476.317
+  },
+  {
+   "startTime": 476.317,
+   "title": "Tlaxcala",
+   "endTime": 530.231
+  },
+  {
+   "startTime": 530.231,
+   "title": "The Catholic mission",
+   "endTime": 624.557
+  },
+  {
+   "startTime": 624.557,
+   "title": "Modern Mexico",
+   "endTime": 681.545
+  },
+  {
+   "startTime": 681.545,
+   "title": "What each one leaves out",
+   "endTime": 771.928
+  },
+  {
+   "startTime": 771.928,
+   "title": "Legacy",
+   "endTime": 827.096
+  }
+ ]
+}

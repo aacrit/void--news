@@ -1,0 +1,154 @@
+## OPEN
+N: You think of a colony as a country's project: a budget line, a cabinet answering to a parliament back home.
+N: The Congo Free State was none of that. It answered to no parliament, sat on no Belgian budget. It was owned, personally, by one man.
+N: Leopold the Second of Belgium never set foot in the land he owned for twenty three years.
+N: He ran an area seventy six times the size of his own small country from an office in Brussels, and called it free.
+
+## TITLE
+N: The Congo Free State. Eighteen eighty five to nineteen oh eight.
+
+## SCENE 1 | Brussels, 1878 to 1885
+N: Leopold has spent years building toward this, through an organization he calls the International Association of the Congo, its stated purpose the suppression of the slave trade and the extension of civilization, commerce, and Christianity to Central Africa.
+N: At the Berlin Conference, presented as philanthropy with free trade attached, the powers recognize his personal sovereignty over nine hundred five thousand square miles of the Congo basin.
+N: Not a Belgian colony. His.
+
+## DOCUMENT | Leopold II | Address to the International Association of the Congo | 1884
+N: Leopold tells the association what it exists to do.
+M: Our only programme is the moral and material regeneration of the country.
+
+## ASIDE
+N: Regeneration of a country Leopold has never visited. What he names instead, years earlier, in a private letter to his own ambassador, is closer to the plan.
+M: I do not want to miss a good chance of getting us a slice of this magnificent African cake.
+N: A slice of cake is an appetite. What it becomes is a system built on one product: wild rubber.
+
+## REST
+
+## SCENE 2 | The Congo interior, 1890
+N: George Washington Williams, an African American journalist and Civil War veteran, travels to the Congo in eighteen ninety, five years into Leopold's rule.
+N: He is the first outsider to write down what he finds: forced labor, land theft, none of the humanitarian promises kept. He addresses his findings directly to the king who owns the place.
+
+## DOCUMENT | George Washington Williams | An Open Letter to His Serene Majesty Leopold II | July 18, 1890
+N: Williams writes his open letter to Leopold himself.
+M: Your Majesty's Government is engaged in the slave trade, wholesale and retail. It buys and sells and steals slaves. The naturals are compelled to furnish him with rubber and provisions. They receive nothing for their labor.
+
+## ASIDE
+N: Williams dies the following year. His letter is ignored for a decade: a journalist's word against a king's, with no photograph yet to settle it.
+
+## REST
+
+## SCENE 3 | Kasai and Nsongo districts, 1899 to 1904
+N: Every village is set a rubber quota, collected by the Force Publique, a private army of African soldiers under European officers. The vines grow a two day walk away; men climb them and let the sap dry on their own skin to peel into sheets.
+N: A village that falls short loses its women and children, held hostage at the post until the men buy them back with rubber. In the Kasai district in eighteen ninety nine, forty five women hostages die of starvation at a single post, in one month.
+N: Soldiers are issued a limited number of cartridges and must account for each with a severed right hand, proof the bullet found its target rather than game. When it was spent on game, the hand comes from someone still alive.
+
+## DOCUMENT | Congolese testimony | recorded by Roger Casement | 1903
+N: Roger Casement records a piece of Congolese testimony, a voice with no name attached to it in his own notes.
+M: The white men told us we must collect rubber. If we did not bring enough, they took our women. If we still did not bring enough, they cut off our hands.
+N: In nineteen oh four, in the Nsongo district, a man named Nsala sits on a mission veranda. On the ground in front of him are a small hand and a small foot, belonging to his five year old daughter, Boali, killed with her mother by soldiers of the Anglo-Belgian India Rubber Company when his village missed its quota.
+N: The missionary Alice Seeley Harris photographs him looking at what is left of her.
+
+## ASIDE
+N: A severed hand was never a punishment. It was a receipt. A photograph of a father staring at his daughter's hand did what no report had managed: it made the arithmetic impossible to look away from.
+
+## REST
+
+## SCENE 4 | Liverpool to Brussels, 1900 to 1908
+N: In Liverpool, a twenty seven year old shipping clerk named E.D. Morel notices something in his own company's cargo manifests. Ships come back from the Congo loaded with rubber and ivory worth millions of francs. They go out carrying nothing but guns, chains, and ammunition, no goods of matching value. In a functioning trade, imports and exports balance. Here they do not.
+N: Morel resigns his job, founds the Congo Reform Association in nineteen oh four, and recruits Roger Casement, the British consul, who investigates and reports directly to the Foreign Office.
+
+## DOCUMENT | Roger Casement | Casement Report to the Foreign Office | 1904
+N: Casement's report describes the collection system directly.
+M: Each town in the district is forced to bring a certain quantity to the headquarters of the commissaire every Sunday. It is collected by force. If they will not go for rubber, the sentries kill them. I have seen this done.
+N: Leopold's own Commission of Inquiry, set up expecting to clear him, confirms the charges instead.
+
+## DOCUMENT | Mark Twain | King Leopold's Soliloquy | 1905
+N: In nineteen oh five, Mark Twain publishes a satire imagining what Leopold would say if he had to answer the photographs.
+M: The kodak has been a sore calamity to us. The most powerful enemy that has confronted us. When the kodak came, all the harmony went to ruin.
+N: In nineteen oh eight, under that pressure, the Belgian parliament annexes the Congo. Leopold takes fifty million francs in compensation, and before the transfer, burns his own Congo archives. The furnaces in Brussels burn for eight days.
+
+## ASIDE
+N: A king who believed his own story does not need eight days of furnaces.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts of the same twenty three years. One from the man who owned it, one from the villages that paid for it, one from the men who campaigned to end it, and two, decades apart, still arguing about what it built.
+
+## PERSPECTIVE | Leopold's private empire | victor
+N: The Belgian case starts with a small nation and a big ambition. Belgium has no overseas empire and a population of six million, and Leopold believes a nation without a colony cannot be a great one.
+N: His International Association frames the venture as suppressing the Arab slave trade and bringing civilization, commerce, and Christianity to a region Europeans call the Dark Continent.
+N: The economics are framed as legitimate commerce: trading stations, ivory first, then rubber once the bicycle and automobile industries make it valuable, roads and railways built for what the administration calls mutual benefit.
+N: When the atrocity reports arrive, from Williams, then Casement, then Morel, the Belgian establishment first calls them British commercial propaganda, aimed at a rival colonial power.
+N: The case rests, above everything, on a private letter written years before any of it: getting Belgium its slice of the cake.
+
+## PERSPECTIVE | The Congolese village | vanquished
+N: The rubber quota arrives at a village like a sentence: a weight due every two weeks, collected by force.
+N: The hostage system is the engine of it. Force Publique soldiers seize women and children from villages that fall behind and hold them in chains until the quota is met. Sexual violence in the camps is documented by missionaries as endemic.
+N: Crop rotation, land management, and food storage cannot survive when half a village's labor is gone into hostage camps and rubber forests. Famine follows. Birth rates collapse.
+N: The system does not end with Leopold in nineteen oh eight. The Belgian state replaces rubber quotas with mineral extraction and compulsory cultivation of cash crops. The chicotte, a whip cut from hippopotamus hide, stays legal until nineteen fifty five.
+N: In nineteen sixty, at the independence ceremony in Leopoldville, with the Belgian king in the room, Patrice Lumumba departs from his prepared script.
+M: We have known ironies, insults, blows that we endured morning, noon, and night because we are negroes.
+
+## PERSPECTIVE | The reformers' ledger | bystander
+N: Morel's case is arithmetic before it is outrage. A trade that sends weapons in one direction and wealth in the other is not a trade. It is extraction, and the shipping manifests prove it.
+N: The Congo Reform Association pioneers the toolkit every human rights organization after it will use: field investigation, photographic documentation, parliamentary lobbying, public meetings, celebrity supporters, its membership eventually including the Archbishop of Canterbury and the writers Arthur Conan Doyle and Mark Twain.
+N: Casement's own report is the proof of method: interviews with workers, missionaries, and company agents, thousands of words of firsthand testimony submitted to the Foreign Office.
+N: Leopold spends an estimated five million francs on lobbying to discredit them. His own Commission of Inquiry, meant to clear him, confirms them instead.
+N: Casement's later career complicates the case. He is knighted in nineteen eleven, then hanged for treason in nineteen sixteen for seeking German arms for the Irish Easter Rising.
+
+## REST | short
+
+## PERSPECTIVE | The postcolonial reckoning | revisionist
+N: The academic case says the Congo Free State was not an aberration. It was colonialism's logic, made visible because Leopold had no metropolitan government to hide behind. The French, the Portuguese, the Germans ran the same forced-labor systems, with enough distance to obscure the violence.
+N: Adam Hochschild's King Leopold's Ghost sells over a million copies and brings the story to a mass readership. But scholars note it centers the white reformers and reproduces the paternalism it critiques: Congolese people as victims awaiting European rescue.
+N: The population falls by roughly half between eighteen eighty five and nineteen twenty, a catastrophe scholars compare in proportional terms to the Black Death.
+N: The Congo's cobalt reserves, seventy percent of the global supply, are documented by Amnesty International as involving child labor today, a structure scholars trace directly to what Leopold built.
+M: The great forgetting began immediately. Leopold ordered the archives of the Congo Free State destroyed. Furnaces in Brussels burned for eight days.
+
+## PERSPECTIVE | The resistance the record kept | vanquished
+N: The standard account ends with European reformers arriving to save Congolese victims. This account starts before they arrive, and it is armed.
+N: The Yaka people of the Kwango River region fight the Force Publique for eleven years, from eighteen ninety five to nineteen oh six. In Kasai, the Luba chief Mulume Niama leads an armed resistance that takes a full military campaign to suppress.
+N: Resistance is not only military. Villages near mission stations cultivate relationships with missionaries as protective witnesses, and Congolese informants guide outside investigators to evidence the rubber companies try to hide.
+N: The historian Nancy Rose Hunt reads the same Force Publique reports and missionary letters differently: women as the hostage system's primary target, and also as its resistance, in escapes, uprisings, and intelligence between captive camps.
+F: These people are not sitting waiting to be saved. They are fighting, hiding, running, rebuilding. They have been doing this for decades before any European reformer arrives.
+
+## REST
+
+## TURN | What each one leaves out
+N: Each of these accounts is carrying something, and each one leaves something behind.
+N: The Belgian case leaves out the forced labor, the hostage-taking, and the mutilation its commerce ran on, and the roughly ten million who did not live to see it end.
+N: The Congolese village account leaves out that some Congolese served in the Force Publique itself, and that slavery and tribute existed in Congolese kingdoms before Leopold arrived.
+N: The reformers' ledger leaves out its own paternalism, and that the Congo Reform Association, having won its fight, never campaigned against the forced labor that continued under Belgian state rule.
+N: The postcolonial reckoning leaves out the reform movement's own achievements, and the Belgians who opposed the system from inside it.
+N: And the resistance account leaves out that some Congolese communities fought each other as readily as they fought the Force Publique, and that ending Leopold's personal rule was also something the reformers accomplished.
+
+## REST
+
+## CLOSE
+N: Leopold received fifty million francs for a colony he had personally owned for twenty three years and never once visited.
+N: The Royal Palace at Laeken and the Cinquantenaire Park still stand in Brussels, built on the two hundred twenty million francs his rubber years produced.
+N: The archives that could have told the rest of it burned for eight days before anyone else could read them.
+
+## SAY
+Leopold = LEE-oh-pold
+Belgium = BEL-jum
+Brussels = BRUS-suls
+Congo = KONG-goh
+Publique = poo-BLEEK
+Nsongo = en-SONG-oh
+Nsala = en-SAH-lah
+Boali = boh-AH-lee
+Kasai = kah-SY
+Kwango = KWAHN-goh
+Yaka = YAH-kah
+Mulume = moo-LOO-may
+Niama = nee-AH-mah
+Morel = mo-REL
+Casement = KAYS-ment
+Hochschild = HOKE-shild
+Lumumba = loo-MOOM-bah
+Leopoldville = LEE-oh-pold-vil
+Laeken = LAH-ken
+Cinquantenaire = san-kahn-teh-NAIR
+chicotte = shee-KOT
+kodak = KOH-dak

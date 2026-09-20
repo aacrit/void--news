@@ -44,6 +44,15 @@ EVENT = {
          "author": "Martin Luther King Jr.", "work": "A Letter", "date": "1961"},
         {"text": "We were told the water would never reach the second floor.",
          "author": "Amara Okonjo", "work": "Testimony", "date": "1962"},
+        # The record's own speaker field says these are NOT the admiral's words.
+        {"text": "The tables were right and the messengers were slow.",
+         "author": "Admiral Rosa Vane (paraphrased)", "work": "Summary", "date": "1962"},
+        # Secondhand: the record names who wrote it down, not who said it.
+        {"text": "The horizon went white before the sound arrived.",
+         "author": "A keeper, as reported by Silvia Vane", "work": "History", "date": "1970"},
+        # NOT secondhand: "via" is inside "Silvia", and she is a real witness.
+        {"text": "The boats were gone before anyone counted them.",
+         "author": "Silvia Vane", "work": "History", "date": "1970"},
     ],
 }
 
@@ -164,6 +173,99 @@ check("H-06 catches an episode with no TURN", "H-06" in fails(no_turn), str(fail
 # ---- H-07 length ---------------------------------------------------------
 check("H-07 catches a script that is too short", "H-07" in fails(CLEAN), str(fails(CLEAN)))
 
+# ---- H-07 measures the episode at the voice that will read it -----------
+# One rate for four narrators is a two minute error at episode length, in
+# opposite directions: bm_daniel reads a fifth faster than am_michael. A
+# script sized against the average renders over the ceiling when the slow
+# voice is cast, and nine minutes of rendering is the only other way to find
+# out. cast() is deterministic from the event, so the rate is knowable up front.
+from history.script_format import estimated_minutes, NARRATOR_WPM
+
+_len = pad(CLEAN, 12.0)
+_words = parse_script(_len, "t").words
+# cast(): critical + a mass-death category -> am_michael (the slowest read);
+# cultural -> bm_daniel (the fastest).
+SLOW_EVENT = {"category": "genocide", "severity": "critical"}
+FAST_EVENT = {"category": "cultural", "severity": "moderate"}
+slow, slow_rate, slow_who = estimated_minutes(parse_script(_len, "t"), SLOW_EVENT)
+fast, fast_rate, fast_who = estimated_minutes(parse_script(_len, "t"), FAST_EVENT)
+check("the two events really do cast different narrators",
+      slow_who == "am_michael" and fast_who == "bm_daniel", f"{slow_who} / {fast_who}")
+check("H-07 gives the same script different runtimes for different narrators",
+      abs(slow - fast) > 0.4, f"{slow:.2f} vs {fast:.2f}")
+check("the slower narrator is the longer runtime", slow > fast, f"{slow:.2f} vs {fast:.2f}")
+
+# The failure this exists for: a script sized to the average that renders over
+# the ceiling because the slow voice was cast.
+long_script = pad(CLEAN, 15.2)   # 1,980 words: 14.8 min at the average, 15.2 at am_michael
+mins_avg, _, _ = estimated_minutes(parse_script(long_script, "t"), None)
+check("a script legal at the average rate is caught when the slow voice reads it",
+      mins_avg <= 15.0 and "H-07" in fails(long_script, {**EVENT, **SLOW_EVENT}),
+      f"avg {mins_avg:.2f} min, findings {fails(long_script, {**EVENT, **SLOW_EVENT})}")
+check("the same script passes when the fast voice reads it",
+      "H-07" not in fails(long_script, {**EVENT, **FAST_EVENT}),
+      str(fails(long_script, {**EVENT, **FAST_EVENT})))
+
+generic, rate, who = estimated_minutes(parse_script(_len, "t"), None)
+check("estimated_minutes falls back to the catalogue average with no event",
+      who == "the cast" and abs(generic - (_words / 145.0 + 1.1)) < 1e-9, f"{who} {rate}")
+unknown, rate, _ = estimated_minutes(parse_script(_len, "t"), {"category": "x", "severity": "y"})
+check("an unmeasured narrator degrades to the average rather than raising",
+      rate in set(NARRATOR_WPM.values()) | {145.0}, str(rate))
+
+
+# ---- H-11 a paraphrase is never read in the document voice --------------
+# The failure this exists for reached a finished script: the record carried a
+# line marked "(paraphrased)", H-01 was satisfied because the text really is in
+# the data, and the episode introduced it with "her own summary was blunt" and
+# read it aloud. That puts sentences in a real person's mouth. The rule asks
+# only that the hedge be SAID, in the marker or in the narration.
+paraphrase_as_speech = pad(CLEAN.replace("""## CLOSE""", """## DOCUMENT | Admiral Rosa Vane | Summary | 1962
+N: Admiral Vane put it bluntly.
+F: The tables were right and the messengers were slow.
+
+## CLOSE"""))
+check("H-11 catches a paraphrase read as the speaker's own words",
+      "H-11" in fails(paraphrase_as_speech), str(fails(paraphrase_as_speech)))
+
+spoken_hedge = pad(CLEAN.replace("""## CLOSE""", """## DOCUMENT | Admiral Rosa Vane | Summary | 1962
+N: A line attributed to Admiral Vane puts it bluntly.
+F: The tables were right and the messengers were slow.
+
+## CLOSE"""))
+check("H-11 accepts the same line when the narration says it is attributed",
+      "H-11" not in fails(spoken_hedge), str(fails(spoken_hedge)))
+
+marker_hedge = pad(CLEAN.replace("""## CLOSE""", """## DOCUMENT | Admiral Rosa Vane | Attributed summary | 1962
+N: Admiral Vane put it bluntly.
+F: The tables were right and the messengers were slow.
+
+## CLOSE"""))
+check("H-11 accepts the hedge in the DOCUMENT marker",
+      "H-11" not in fails(marker_hedge), str(fails(marker_hedge)))
+
+check("H-11 leaves an ordinary sourced quote alone", "H-11" not in fails(pad(CLEAN)),
+      str(fails(pad(CLEAN))))
+
+secondhand = pad(CLEAN.replace("""## CLOSE""", """## DOCUMENT | A keeper | History | 1970
+N: The keeper said it plainly.
+M: The horizon went white before the sound arrived.
+
+## CLOSE"""))
+check("H-11 catches a secondhand line read as the speaker's own",
+      "H-11" in fails(secondhand), str(fails(secondhand)))
+
+# The trap: matching the hedge as a raw substring makes "via" fire inside
+# "Silvia", exactly as "king" once fired inside "striking" for H-04.
+silvia = pad(CLEAN.replace("""## CLOSE""", """## DOCUMENT | Silvia Vane | History | 1970
+N: Silvia Vane counted them herself.
+F: The boats were gone before anyone counted them.
+
+## CLOSE"""))
+check("H-11 does not read 'via' inside 'Silvia' as a secondhand marker",
+      "H-11" not in fails(silvia), str(fails(silvia)))
+
+
 # ---- H-09 every account gets its own case -------------------------------
 dropped = CLEAN_LEGAL.replace("## PERSPECTIVE | The Fishing Villages | vanquished",
                               "## ASIDE")
@@ -209,4 +311,4 @@ if failures:
     print("\n".join(f"FAIL  {f}" for f in failures))
     print(f"\n{len(failures)} History script failure(s)")
     raise SystemExit(1)
-print(f"PASS  H-01..H-09 against planted defects, and {len(scripts)} committed scripts")
+print(f"PASS  H-01..H-11 against planted defects, and {len(scripts)} committed scripts")

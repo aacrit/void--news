@@ -24,6 +24,48 @@ When it fires, you have three honest answers: it is in the file and the
 warning is noise, or you can rewrite the line without the name, or you cut
 the claim. "I'm confident it's true" is not one of them.
 
+A silent H-10 is not proof, either. It matches six-character roots against the
+whole document, so a spelled-out regnal number can pass because the record
+happens to use that number for something else: "Alfonso the Thirteenth" cleared
+the check against a sentence about a thirteen-week death toll. Glance at a name
+yourself even when the gate says nothing.
+
+### A speaker the record does not name
+
+Sometimes the only witness an account has is "Anonymous Afghan villager" or
+"an anonymous Laotian farmer". Two drafters hit this and resolved it opposite
+ways, so the brief was the thing at fault:
+
+- **If the account has another sourced witness, use that one.** The Vietnam
+  drafter dropped an unnamed farmer for a named, sourced speaker, and was
+  right to.
+- **If it does not, read the quote anyway.** Dropping it silences the account,
+  and `H-09` exists because silencing an account is the one failure that makes
+  Void's claim false. But say in the narration that the record does not name
+  them ("An Afghan villager, unnamed in the record, quoted in..."), so the
+  episode asserts no identity it cannot support.
+
+Some voice has to read it, and a voice carries a sex whatever you pick. That
+is a production necessity, not a claim, and the narration saying "unnamed" is
+what keeps it from becoming one. Do not pick the voice to balance the episode:
+the balance of M and F across a script is a property of whose words survived,
+and it is not yours to even out.
+
+### The document voice means "these are the words they said"
+
+That is its whole job, and it is why a different voice reads it. So the record
+sometimes carries a line its OWN speaker field disclaims: `Patricia Crone
+(paraphrased)`, `Attributed to Genghis Khan`, a reconstructed address. The text
+really is in the file, so `H-01` is satisfied, and an episode shipped reading
+one of those aloud under the introduction "her own summary was blunt". That is
+a real person being quoted saying something nobody recorded her saying.
+
+`H-11` blocks it, and asks for very little: say the hedge where the listener
+will hear it. Either the DOCUMENT marker carries it (`Attributed last words`)
+or the narration does ("a line attributed to a Dominican friar at Trent").
+If neither fits the line you want, put the substance in narration, which states
+a position rather than quoting one. You lose nothing but the voice change.
+
 ## The shape
 
 ```
@@ -122,7 +164,30 @@ which is evidence rather than a competing version of events.
 - **No dashes** in spoken copy. Two sentences, or a comma.
 - **One idea per line.** The line is the unit of synthesis.
 - **Attribution before the claim**, always: name the speaker, then the quote.
-- **1,500-1,950 words.** That is 11-14 minutes. `H-07` fails outside 8-15.
+- **Your word budget depends on who is reading. This is a hard gate, not a
+  target.** `H-07` fails the script outside 8-15 minutes, and the runtime is
+  `words / <the cast narrator's wpm> + 1.1`. Casting is deterministic from the
+  event, so the number is knowable before you write a line:
+
+  | narrator | cast by | wpm | ceiling |
+  |---|---|---|---|
+  | `am_michael` | catastrophic non-mass-death, critical mass-death | 140 | 1,946 |
+  | `bm_george`  | everything else | 145 | 2,015 |
+  | `bm_lewis`   | catastrophic genocide / war / disaster / independence | 148 | 2,057 |
+  | `bm_daniel`  | cultural | 168 | 2,335 |
+
+  Run the validator, which prints the rate it used: `1959 words is 15.1 min at
+  am_michael's 140 wpm`. Do not size against 145 and hope. `bm_daniel` reads a
+  fifth faster than `am_michael`, which is two minutes at episode length, and a
+  script written to the average sails through H-07 and then renders over the
+  ceiling.
+
+  Aim for the middle of your voice's range, not its edge. The first two
+  delegated drafts both came in near 2,350 because the event records are rich
+  and every fact earns its place on the page. They do not all earn their place
+  in the ear. **Count the words before you run the gate**, and if you are over,
+  cut whole lines rather than trimming clauses: a scene with four lines is a
+  scene, a scene with six is a summary.
 - **`## SAY`**: a respelling for every proper noun a synthesiser will mangle.
   `Tenochtitlan = ten-och-TEET-lan`. Generous is better than sparse.
 - **`## REST`** four to seven times, where the listener needs somewhere to put

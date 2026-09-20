@@ -41,7 +41,40 @@ KINDS = ("OPEN", "TITLE", "SCENE", "DOCUMENT", "PERSPECTIVE", "ASIDE", "TURN",
 # Segments in which the document voice may speak: a primary source, or a
 # perspective quoting its own witness.
 QUOTING = ("DOCUMENT", "PERSPECTIVE", "ASIDE")
-WPM = 145.0                      # measured on the On Air cast, including pauses
+WPM = 145.0                      # the catalogue average, used when the cast is unknown
+# Narrators do NOT read at one rate, and casting is deterministic from the
+# event, so the difference is predictable rather than noise. Measured over all
+# 39 rendered episodes as words / (rendered minutes - MUSIC_MINUTES):
+#
+#   am_michael  n=15  139.4 wpm (sd 4.2)      bm_lewis   n=12  146.1 (sd 4.0)
+#   bm_george   n= 9  145.0 wpm (sd 4.4)      bm_daniel  n= 3  168.4 (sd 4.6)
+#
+# bm_lewis was 148.0 at n=9 and settled to 146.1 as three more of its episodes
+# landed, which is what a small sample does. The others moved by less than a
+# word.
+#
+# bm_daniel reads a fifth faster than am_michael. Against one constant that is
+# a two minute error at episode length, in opposite directions, so an
+# am_michael script written to the top of the band renders OVER the ceiling
+# while a bm_daniel script written the same way comes in two minutes short.
+# Using the cast rate took the worst error, measured on the 33 episodes that
+# existed when the rule was written, from 2.1 minutes to 0.8, and it caught a
+# written but unrendered script that would
+# have come out at 15.1 minutes, before the nine minutes of rendering that
+# would have been the only other way to find out.
+#
+# bm_daniel rests on three episodes and always will: it is cast only for
+# `category: cultural`, all three of those events are already rendered, and
+# none of the events still to be written casts it. So this is not a number
+# waiting for more evidence. It is the number, on three samples, and a
+# cultural event added to the catalogue later is the only thing that would
+# change that.
+NARRATOR_WPM = {
+    "am_michael": 140.0,
+    "bm_george": 145.0,
+    "bm_lewis": 146.0,
+    "bm_daniel": 168.0,
+}
 # An event with five substantial perspectives cannot state all five fairly
 # inside ten minutes, and stating them fairly is the whole point of the
 # catalogue, so the band is wide enough to pay for the moat.
@@ -140,6 +173,24 @@ def _norm(s: str) -> str:
     return re.sub(r"[^a-z0-9 ]+", " ", _fold(s).lower())
 
 
+def estimated_minutes(script: Script, event: dict | None) -> tuple[float, float, str]:
+    """Runtime for THIS script read by the narrator this event casts.
+
+    Returns (minutes, wpm, who). Falls back to the catalogue average when the
+    event is missing or its narrator has no measured rate yet, so a new voice
+    degrades to the old behaviour instead of raising.
+    """
+    who, rate = "the cast", WPM
+    if event:
+        try:
+            from history.casting import cast
+            who = cast(event).get("narrator") or who
+            rate = NARRATOR_WPM.get(who, WPM)
+        except Exception:
+            pass
+    return script.words / rate + MUSIC_MINUTES, rate, who
+
+
 def validate_script(script: Script, event: dict) -> list[Finding]:
     """Check a script against the EVENT DATA it was written from."""
     out: list[Finding] = []
@@ -148,6 +199,39 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
               for q in (p.get("notable_quotes") or [])]
     sourced = [(_norm(e.get("text", "")), e.get("author", "")) for e in excerpts]
     sourced += [(_norm(q.get("text", "")), q.get("speaker", "")) for q in quotes]
+
+    # A source whose own speaker field says the words are not verbatim. The
+    # record marks these; nothing read them before H-11. "summary" is NOT here:
+    # a record that calls its source a "reactor-safety summary" is describing
+    # what the document IS, not hedging whose words it carries.
+    HEDGED = ("paraphras", "attributed", "reconstruct", "apocryph", "legend",
+              # Secondhand: the record names a person who wrote the words down,
+              # not the person who said them. A listener told "Alexander said"
+              # deserves to know Plutarch wrote it four centuries later. Six
+              # such records exist across the 78 events.
+              "recount", "as reported by", "as told to", "quoted in",
+              "quoted by", "via",
+              # Rendered or imagined in someone else's voice. Thucydides
+              # reconstructed the speeches he reports, and five of the eight
+              # such records in the catalogue are his; Mark Twain wrote a
+              # satire in Leopold's voice. Read in the document voice with no
+              # word said, both become a real person's quotation.
+              "(as ", "in the voice of", "imagin", "satir")
+    # The same hedge, said out loud. A script that tells the listener the words
+    # are attributed has done the honest thing, whether it says so in the
+    # DOCUMENT marker or in the narration that introduces the quote.
+    # Said out loud. Every term that marks a record as hedged counts here too:
+    # a script that uses the record's own word for the thing has disclosed it.
+    # Keeping the two lists separate meant three separate occasions where an
+    # honest script failed because the gate did not know the word it chose
+    # ("wrote down what Mellon told him", "a satire imagining what Leopold
+    # would say", "Sima Qian wrote his report down two generations later"), so
+    # the spoken list is now the marked list plus the ways people say it.
+    SPOKEN_HEDGE = tuple(h.strip(" (") for h in HEDGED) + (
+        "said to", "reputed", "tradition holds", "by tradition",
+        "is remembered", "remembered for", "later recorded",
+        "recorded generations", "as reported", "as told", "as recorded",
+        "recorded by", "rendered by", "wrote down", "set down", "records that")
 
     kinds = [s.kind for s in script.segments]
     for required in ("OPEN", "CLOSE"):
@@ -198,11 +282,55 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
             # H-01: the quote must exist in the event's own sources.
             for l in d_lines:
                 said = _norm(l.text)
-                if not any(said in src or src in said or _overlap(said, src) > 0.6
-                           for src, _ in sourced if src):
+                match = next(((src, who) for src, who in sourced
+                               if src and (said in src or src in said
+                                           or _overlap(said, src) > 0.6)), None)
+                if match is None:
                     out.append(Finding("H-01", "fail", label,
                                        f"quotation not found in this event's primary sources: "
                                        f"{l.text[:70]!r}"))
+                    continue
+                # H-11: the record sometimes carries a line whose own speaker
+                # field says it is NOT that person's words: "Patricia Crone
+                # (paraphrased)", an attributed saying, a reconstructed
+                # address. H-01 is satisfied by such a line, because the text
+                # really is in the data. But the document voice is the one
+                # thing in this format that means "these are the words they
+                # said", so reading a paraphrase in it puts sentences in a
+                # real person's mouth, introduced by narration that names
+                # them. That is the worst failure available to this format
+                # and no rule caught it until an episode did it.
+                # The fact itself is never lost: it belongs in narration,
+                # which states a position rather than quoting one.
+                # Matched at the START of a word, so "paraphras" still finds
+                # "paraphrased" and "recount" finds "recounting", but "via"
+                # does not fire inside "Silvia": the historian Silvia Rivera
+                # Cusicanqui is a witness, not a secondhand source. This is the
+                # defect class H-04 shipped with, where "king" inside
+                # "striking" passed for Martin Luther King. Short whole words
+                # need the trailing guard too, or they match half the roster.
+                who = (match[1] or "").lower()
+
+                def _marked(h: str) -> bool:
+                    # Only a short BARE word needs the trailing guard ("via"
+                    # inside "Silvia"). A term carrying its own punctuation or
+                    # space is already bounded, and guarding it would stop
+                    # "(as " ever matching "(as leopold".
+                    tail = "(?![a-z])" if len(h) <= 4 and h.isalpha() else ""
+                    return re.search(rf"(?<![a-z]){re.escape(h)}{tail}", who) is not None
+
+                if any(_marked(h) for h in HEDGED):
+                    # Said out loud, anywhere the listener will hear it before
+                    # the voice reads: the DOCUMENT marker, or the narration.
+                    aloud = " ".join([_norm(seg.author or ""), _norm(seg.title or ""),
+                                      _norm(seg.work or "")]
+                                     + [_norm(x.text) for x in seg.lines
+                                        if x.speaker == "N"])
+                    if not any(h in aloud for h in SPOKEN_HEDGE):
+                        out.append(Finding("H-11", "fail", label,
+                                           f"the record marks this line {match[1]!r}, and nothing "
+                                           f"says so aloud: either say it is attributed, or narrate "
+                                           f"the position instead of reading it as their words"))
 
     # H-09 is the reason this catalogue is worth making. Void's claim is that
     # it shows every side; an episode that quietly drops one is the single
@@ -265,9 +393,11 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
                                    f"event's data: source it or cut it"))
 
     lo, hi = TARGET_MINUTES
-    if not (lo <= script.minutes <= hi):
+    mins, rate, who = estimated_minutes(script, event)
+    if not (lo <= mins <= hi):
         out.append(Finding("H-07", "fail", "TOTAL",
-                           f"{script.words} words is {script.minutes:.1f} min, outside {lo:.0f}-{hi:.0f}"))
+                           f"{script.words} words is {mins:.1f} min at {who}'s {rate:.0f} wpm, "
+                           f"outside {lo:.0f}-{hi:.0f}"))
     for seg in script.segments:
         for l in seg.lines:
             if "—" in l.text or "–" in l.text:
@@ -310,7 +440,15 @@ _NAME_ALLOWED = {
     "seventeen", "eighteen", "nineteen", "twenty", "thirty", "forty", "fifty",
     "sixty", "seventy", "eighty", "ninety", "hundred", "thousand", "million",
     "billion", "first", "second", "third", "fourth", "fifth", "sixth",
-    "seventh", "eighth", "ninth", "tenth", "half", "january", "february",
+    # Ordinals run past "tenth" because REGNAL NUMBERS are spelled out: a
+    # synthesiser reads "Constantine XI" as "Constantine ex eye". The list
+    # stopped at tenth, so every monarch past the tenth of their name drew a
+    # warning on a name the record does carry, in two scripts already. A
+    # recurring false positive is worse than a missing rule, because it
+    # teaches the writer to wave H-10 through.
+    "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth",
+    "thirteenth", "fourteenth", "fifteenth", "sixteenth", "seventeenth",
+    "eighteenth", "nineteenth", "twentieth", "half", "january", "february",
     "march", "april", "may", "june", "july", "august", "september", "october",
     "november", "december", "monday", "tuesday", "wednesday", "thursday",
     "friday", "saturday", "sunday", "void", "news", "on", "air", "history",
