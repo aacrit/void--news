@@ -19,7 +19,12 @@ from urllib.parse import quote_plus
 import requests
 
 _SESSION = requests.Session()
-_SESSION.headers.update({"User-Agent": "void-news/1.0 (media-curator; +https://github.com/void-news)"})
+# Wikimedia asks clients to identify themselves and give a way to reach the
+# operator; a generic agent is throttled first and hardest. The old value named
+# a github url that does not resolve.
+_SESSION.headers.update({
+    "User-Agent": "VoidNews/1.0 (https://news.voidvision.org; aacrit@gmail.com)"
+})
 
 # ---------------------------------------------------------------------------
 # Minimum-resolution gate (shared across APIs)
@@ -31,7 +36,12 @@ MIN_WIDTH = 1200          # Unsplash / Pexels: skip candidates narrower than thi
 MIN_HEIGHT = 600          # paired height floor where a height is known
 WIKI_MIN_WIDTH = 800      # Wikimedia: raised from the old 200x150 floor
 WIKI_MIN_HEIGHT = 600
-WIKI_RENDER_WIDTH = 1600  # iiurlwidth render request (was 800)
+# Wikimedia now serves only a fixed set of thumbnail widths and refuses the
+# rest ("Use thumbnail sizes listed on https://w.wiki/GHai"). 1280 is in that
+# set and verified to return bytes; an off-list width yields a url that 400s
+# when the browser actually fetches it, which is a broken image on the page
+# rather than an error anyone would see here.
+WIKI_RENDER_WIDTH = 1280
 UNSPLASH_RENDER_WIDTH = 2000  # width param appended to the raw URL
 PEXELS_RENDER_WIDTH = 2000    # informational; Pexels 'original' is full-res
 
@@ -59,27 +69,47 @@ class ImageResult:
 # ---------------------------------------------------------------------------
 
 def search_wikimedia(query: str, max_results: int = 5) -> list[ImageResult]:
-    """Search Wikimedia Commons for images. No API key required."""
-    try:
-        resp = _SESSION.get(
-            "https://commons.wikimedia.org/w/api.php",
-            params={
-                "action": "query",
-                "generator": "search",
-                "gsrsearch": f"filetype:bitmap {query}",
-                "gsrnamespace": "6",  # File namespace
-                "gsrlimit": str(min(max_results * 2, 20)),  # fetch extra to filter
-                "prop": "imageinfo",
-                "iiprop": "url|size|extmetadata|mime",
-                "iiurlwidth": str(WIKI_RENDER_WIDTH),
-                "format": "json",
-            },
-            timeout=15,
-        )
-        resp.raise_for_status()
-        data = resp.json()
-    except Exception as e:
-        print(f"  [media] Wikimedia search failed: {e}")
+    """Search Wikimedia Commons for freely licensed images. No API key required.
+
+    Retries through the throttle: Commons returns HTTP 429 readily, and a single
+    failed attempt here used to mean the weekly silently found no cover image
+    and fell through to whatever was next. That is how a wire photograph ended
+    up on Issue #26.
+    """
+    data = None
+    delay = 4.0
+    for attempt in range(4):
+        try:
+            resp = _SESSION.get(
+                "https://commons.wikimedia.org/w/api.php",
+                params={
+                    "action": "query",
+                    "generator": "search",
+                    "gsrsearch": f"filetype:bitmap {query}",
+                    "gsrnamespace": "6",  # File namespace
+                    "gsrlimit": str(min(max_results * 2, 20)),  # fetch extra to filter
+                    "prop": "imageinfo",
+                    "iiprop": "url|size|extmetadata|mime",
+                    "iiurlwidth": str(WIKI_RENDER_WIDTH),
+                    "format": "json",
+                },
+                timeout=20,
+            )
+            if resp.status_code in (429, 503) and attempt < 3:
+                print(f"  [media] Commons throttled ({resp.status_code}); waiting {delay:.0f}s")
+                time.sleep(delay)
+                delay *= 2
+                continue
+            resp.raise_for_status()
+            data = resp.json()
+            break
+        except Exception as e:
+            if attempt == 3:
+                print(f"  [media] Wikimedia search failed: {e}")
+                return []
+            time.sleep(delay)
+            delay *= 2
+    if data is None:
         return []
 
     pages = data.get("query", {}).get("pages", {})
@@ -415,59 +445,28 @@ def find_cover_image_for_cluster(
     cluster_title: str,
     supabase_client=None,
 ) -> dict | None:
-    """Find the best cover image for a weekly cover story.
+    """Find a cover image for a weekly cover story that Void is allowed to publish.
 
-    Strategy:
-    1. Try og:image from cluster's highest-ranked article (publisher-curated, $0)
-    2. Fallback: search Wikimedia Commons (free, no key needed)
-    3. Fallback: search Unsplash/Pexels if keys available
+    Freely licensed sources ONLY, in order: Wikimedia Commons (public domain or
+    permissive CC, keyless), then Unsplash and Pexels if keys are configured.
+    Returns dict with url, attribution, source, or None when nothing licensed
+    fits, which is the correct outcome rather than a fallback.
 
-    Returns dict with url, attribution, source or None.
+    This USED to try the publisher's og:image first and reached the free sources
+    only if that failed. That is backwards, and it shipped: Issue #26 carried an
+    AFP TOPSHOT photograph hotlinked off a Nigerian newspaper's CDN, credited
+    "Image via Punch Nigeria". Wire photographs are the highest-risk images on
+    the internet to republish, and a publisher putting one in an og:image tag
+    grants nothing to anyone who scrapes it. The same reasoning retired the
+    cluster_image_cacher in rev 60. `cluster_id` and `supabase_client` are kept
+    so the call site is unchanged; neither is read any more.
     """
-    if not supabase_client:
+    if not cluster_title:
         return None
 
-    # Step 1: Try og:image from cluster articles
-    try:
-        article_ids_resp = supabase_client.table("cluster_articles").select(
-            "article_id"
-        ).eq("cluster_id", cluster_id).execute()
-
-        article_ids = [r["article_id"] for r in (article_ids_resp.data or [])]
-
-        if article_ids:
-            articles_resp = supabase_client.table("articles").select(
-                "image_url,title,source_id"
-            ).in_("id", article_ids[:20]).not_.is_("image_url", "null").execute()
-
-            for art in (articles_resp.data or []):
-                img_url = art.get("image_url", "")
-                if img_url and _is_valid_og_image(img_url):
-                    # Look up source name for attribution
-                    source_name = ""
-                    if art.get("source_id"):
-                        try:
-                            src_resp = supabase_client.table("sources").select(
-                                "name"
-                            ).eq("id", art["source_id"]).single().execute()
-                            source_name = src_resp.data.get("name", "") if src_resp.data else ""
-                        except Exception:
-                            pass
-
-                    return {
-                        "url": img_url,
-                        # Omit the credit when the publisher is unknown rather
-                        # than showing a placeholder-sounding "Publisher image".
-                        "attribution": f"Image via {source_name}" if source_name else "",
-                        "source": "og_image",
-                    }
-    except Exception as e:
-        print(f"  [media] og:image lookup failed: {e}")
-
-    # Step 2: Wikimedia Commons (free, no key)
-    wiki_results = search_wikimedia(cluster_title, max_results=3)
-    if wiki_results:
-        best = wiki_results[0]
+    # Wikimedia Commons. search_wikimedia already refuses anything that is not
+    # cc0 / public-domain / cc-by / cc-by-sa.
+    for best in search_wikimedia(cluster_title, max_results=3):
         if verify_image(best.url):
             return {
                 "url": best.url,
@@ -475,13 +474,14 @@ def find_cover_image_for_cluster(
                 "source": "wikimedia",
             }
 
-    # Step 3: Unsplash / Pexels (if keys available)
-    for src in ["unsplash", "pexels"]:
+    # Unsplash / Pexels, whose licences permit commercial use. Only reachable
+    # when an API key is configured; both are absent by default.
+    for src in ("unsplash", "pexels"):
         fn = _SEARCH_FNS.get(src)
         if not fn:
             continue
         try:
-            results = fn(cluster_title, per_page=3) if src != "wikimedia" else fn(cluster_title, max_results=3)
+            results = fn(cluster_title, per_page=3)
             if results and verify_image(results[0].url):
                 return {
                     "url": results[0].url,
