@@ -66,6 +66,45 @@ MUSIC_MINUTES = 1.4          # theme, contents bed, two transitions, break, outr
 VOICE_WPM = {"bm_lewis": 172.0, "am_michael": 160.0, "af_heart": 162.0}
 WPM = 163.0                  # the blend, used when the cast is unknown
 
+#: A rundown is asked for the middle of the band, not its edges, so ordinary
+#: variance in how much the Editor carries does not tip a good script out.
+BAND_MARGIN_MINUTES = 0.5
+
+
+def word_budget(voices: dict | None = None) -> tuple[int, int]:
+    """The word range that actually lands inside TARGET_MINUTES.
+
+    This exists because the generator and W-07 used to model the same quantity
+    differently, and the generator lost. Its prompt turned the minute band into
+    words at a flat 163 wpm, while `estimated_minutes` adds MUSIC_MINUTES on
+    top: 1.4 minutes of theme, beds, transitions and outro that nobody speaks
+    over. So the prompt's ceiling was about 228 words too generous, and a
+    rundown could sit inside the range it was given and still fail the band.
+
+    That is not hypothetical. The scheduled run of 2026-09-20 wrote 3,463
+    words, comfortably inside the 2,934-3,586 the prompt asked for, and W-07
+    measured 22.6 minutes against a 22.0 ceiling. The model did as it was told
+    and was rejected for it, and the Weekly fell back to the legacy read.
+
+    One function owns the conversion now, so the two cannot drift again.
+
+    The two edges take OPPOSITE rates, which is the part that is easy to get
+    wrong and which a synthetic script at each edge caught in review. Runtime
+    is words over rate, so to stay under the ceiling at any cast mix the
+    ceiling must assume the SLOWEST voice, and to clear the floor it must
+    assume the FASTEST. Using one blended rate for both puts the floor below
+    the band whenever the Editor, at 172, carries most of the programme, which
+    he always does.
+    """
+    lo, hi = TARGET_MINUTES
+    rates = [VOICE_WPM[v] for v in (voices or {}).values() if v in VOICE_WPM]
+    fastest = max(rates) if rates else WPM
+    slowest = min(rates) if rates else WPM
+    speech_lo = (lo + BAND_MARGIN_MINUTES) - MUSIC_MINUTES
+    speech_hi = (hi - BAND_MARGIN_MINUTES) - MUSIC_MINUTES
+    return int(speech_lo * fastest), int(speech_hi * slowest)
+
+
 #: A line shorter than this is furniture ("Inside this week.") and is exempt
 #: from W-01: it carries no claim to verify.
 MIN_CHECKED_WORDS = 8

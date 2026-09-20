@@ -23,8 +23,14 @@ from __future__ import annotations
 import re
 
 from briefing.weekly_script import (
-    KINDS, TARGET_MINUTES, parse_script, validate_script, estimated_minutes,
+    BORROWED, KINDS, MUSIC_MINUTES, TARGET_MINUTES, estimated_minutes,
+    parse_script, validate_script, word_budget,
 )
+
+#: The cast the Weekly is actually read by. Imported lazily by callers that
+#: have one; this is the fallback so the budget is never computed against an
+#: unknown cast, which would use the blend rate and widen the ceiling again.
+VOICES_DEFAULT = {"editor": "bm_lewis", "left": "am_michael", "right": "af_heart"}
 
 SYSTEM = """You are the editor of Void Weekly, writing the running order for
 The Argument: the magazine's Sunday audio edition, read by three voices.
@@ -87,7 +93,14 @@ E: the question the week leaves open. End on the question mark.
 Nuuk = NOOK
 
 A REST marker carries no lines: it is a held pause the listener needs.
-Target {LO:.0f} to {HI:.0f} minutes, which is about {WORDS_LO} to {WORDS_HI} words."""
+
+Write between {WORDS_LO} and {WORDS_HI} words of spoken lines. That is the real
+budget: the programme runs {LO:.0f} to {HI:.0f} minutes, but {MUSIC:.1f} of those
+minutes are theme, beds, transitions and outro that nobody speaks over, so the
+word count is smaller than the running time suggests. Going over is the one
+failure that cannot be fixed in the edit.
+
+Never use these phrases. They belong to other programmes: {BORROWED}."""
 
 
 def _block(label: str, text: str, limit: int = 6000) -> str:
@@ -127,7 +140,8 @@ def build_prompt(issue: dict) -> str:
     return "".join(parts)
 
 
-def generate(issue: dict, generate_text) -> tuple[str | None, list, int]:
+def generate(issue: dict, generate_text,
+             voices: dict | None = None) -> tuple[str | None, list, int]:
     """Write and validate the rundown. Returns (script_text, findings, calls).
 
     One regeneration NAMING the findings, mirroring the editorial pass and
@@ -135,8 +149,14 @@ def generate(issue: dict, generate_text) -> tuple[str | None, list, int]:
     injected so this module stays importable and testable without a key.
     """
     lo, hi = TARGET_MINUTES
-    system = SYSTEM.format(LO=lo, HI=hi,
-                           WORDS_LO=int(lo * 163), WORDS_HI=int(hi * 163))
+    # The budget comes from weekly_script, which is also what W-07 measures
+    # with. A flat 163 wpm here ignored MUSIC_MINUTES and asked for up to 3,586
+    # words when 3,216 is the real ceiling, so a rundown could obey the prompt
+    # and still be rejected. That is what sent 2026-09-20 to the legacy read.
+    words_lo, words_hi = word_budget(voices or VOICES_DEFAULT)
+    system = SYSTEM.format(LO=lo, HI=hi, MUSIC=MUSIC_MINUTES,
+                           WORDS_LO=words_lo, WORDS_HI=words_hi,
+                           BORROWED=", ".join(f'"{b}"' for b in BORROWED))
     prompt = build_prompt(issue)
     best, best_fails, calls = None, None, 0
 
@@ -181,6 +201,6 @@ def _retry(findings) -> str:
               "word for word, cut but never reworded.")
 
 
-def word_target() -> tuple[int, int]:
-    lo, hi = TARGET_MINUTES
-    return int(lo * 163), int(hi * 163)
+def word_target(voices: dict | None = None) -> tuple[int, int]:
+    """Kept as the public name; weekly_script owns the arithmetic."""
+    return word_budget(voices or VOICES_DEFAULT)
