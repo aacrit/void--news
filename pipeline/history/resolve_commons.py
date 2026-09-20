@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 import time
 import urllib.error
@@ -237,7 +238,13 @@ def event_search_terms(doc: dict, commons: dict) -> list[str]:
     the fallback, and the subject line is dropped because it is written to be
     evocative rather than descriptive.
     """
-    terms = []
+    # The event title goes FIRST. It is the one term guaranteed to name the
+    # subject, and putting it last meant it was cut off by the term limit on
+    # events with several unresolved pictures: searching Tiananmen by its
+    # curated captions ("Tank Man, Chang'an Avenue, June 5, 1989") returned a
+    # California ghost town, while searching "Tiananmen Square" returns the
+    # square.
+    terms = [(doc.get("title") or "").strip()]
     for m in doc.get("media") or []:
         name = commons_filename(m.get("source_url"))
         if name and name in commons:
@@ -245,7 +252,6 @@ def event_search_terms(doc: dict, commons: dict) -> list[str]:
         title = (m.get("title") or "").strip()
         if title and len(title) > 6:
             terms.append(title)
-    terms.append((doc.get("title") or "").strip())
     seen, out = set(), []
     for t in terms:
         k = t.lower()
@@ -261,7 +267,57 @@ def verify_names(names: list[str]) -> dict:
     return resolved
 
 
-def backfill(docs: list[dict], commons: dict, target: int) -> dict:
+# Words that make a title a title rather than a subject a photograph can show.
+_ANCHOR_STOP = {
+    "the", "of", "and", "a", "an", "in", "on", "at", "to", "for",
+    "war", "era", "age", "empire", "great", "first", "second", "new",
+    "world", "history", "conference", "movement", "revolution", "crisis",
+    "massacre", "genocide", "rise", "fall",
+}
+# What a naive Commons search returns most readily, and what none of it is: a
+# photograph of the event. The Internet Archive book scans are the worst of it,
+# because they are real, free, and completely unillustrative.
+_JUNK_MARKERS = (
+    "logo", "icon", "flag of", "coat of arms", "emblem", "seal of", "crest",
+    "(ia ", "(ia_", ".djvu", ".pdf", " vol ", "microform", "barnstar", "userbox",
+)
+
+
+def anchors(slug: str, title: str) -> set[str]:
+    """Distinctive word-prefixes an image of this event should mention.
+
+    Prefixes rather than whole words, because Commons names the picture in
+    whatever language and inflection its uploader used: the anchor `crusad`
+    finds "Taking_of_Jerusalem_by_the_Crusaders" where `crusades` would not.
+    """
+    out = set()
+    for word in re.split(r"[^a-z0-9]+", f"{slug} {title}".lower()):
+        if len(word) >= 5 and word not in _ANCHOR_STOP:
+            out.add(word[:6])
+    return out
+
+
+def is_relevant(name: str, mime: str, anchor_set: set[str]) -> bool:
+    """Whether a search hit is plausibly a picture OF this event.
+
+    Commons search is keyword matching over file descriptions, and left
+    unchecked it is confidently wrong: searching the Tiananmen entries returned
+    a photograph of a California ghost town, and the Bandung Conference returned
+    four scanned reports on Chinese soft power. An event that comes up with
+    nothing gets nothing; a page with fewer pictures is recoverable, a page
+    illustrated with the wrong ones is not.
+    """
+    low = name.lower()
+    spaced = low.replace("_", " ")
+    if any(j in spaced or j in low for j in _JUNK_MARKERS):
+        return False
+    if not str(mime or "").startswith("image/"):
+        return False
+    return any(a in spaced for a in anchor_set)
+
+
+def backfill(docs: list[dict], commons: dict, target: int,
+             only: set[str] | None = None) -> dict:
     """Find real Commons files for events that came up short.
 
     Roughly a third of the catalogue's image references name files that are not
@@ -279,6 +335,8 @@ def backfill(docs: list[dict], commons: dict, target: int) -> dict:
             1 for m in (doc.get("media") or [])
             if (n := commons_filename(m.get("source_url"))) and n in commons
         )
+        if only and slug not in only:
+            continue
         if have >= target:
             continue
 
@@ -300,16 +358,12 @@ def backfill(docs: list[dict], commons: dict, target: int) -> dict:
             continue
 
         verified = verify_names(candidates[:need * 4])
+        anchor_set = anchors(slug, doc.get("title", ""))
         picked = []
         for name, rec in verified.items():
             if name in already:
                 continue
-            # Skip obvious non-photographs: icons, flags and logos are what a
-            # naive Commons search returns most readily, and they do not make a
-            # history page feel alive.
-            low = name.lower()
-            if any(w in low for w in ("flag_of", "logo", "icon", "coat_of_arms",
-                                      "map_of_the_world", "blank_", "symbol")):
+            if not is_relevant(name, rec.get("mime", ""), anchor_set):
                 continue
             picked.append({"name": name, **rec})
             already.add(name)
@@ -331,6 +385,10 @@ def main() -> int:
                     help="re-query every file instead of only the unresolved ones")
     ap.add_argument("--backfill", type=int, metavar="N", default=0,
                     help="search Commons so every event reaches N verified images")
+    ap.add_argument("--only", type=str, default="",
+                    help="comma-separated slugs to backfill (default: every short event)")
+    ap.add_argument("--prune", action="store_true",
+                    help="re-apply the relevance rule to the stored backfill, no queries")
     args = ap.parse_args()
 
     used = collect_filenames()
@@ -342,7 +400,12 @@ def main() -> int:
         cache.setdefault("files", {})
         cache.setdefault("refused", {})
 
-    pending = [n for n in sorted(used) if n not in cache["files"]]
+    # Already-refused names are not retried: the refusal is a fact about the
+    # file (not on Commons, or not freely licensed), re-asking only spends the
+    # rate limit, and a throttled retry is exactly how a real image would get
+    # mislabelled as missing. --refresh re-asks everything.
+    pending = [n for n in sorted(used)
+               if n not in cache["files"] and n not in cache["refused"]]
     if args.refresh:
         pending = sorted(used)
         cache = {"files": {}, "refused": {}}
@@ -354,12 +417,36 @@ def main() -> int:
         for name, why in refused:
             cache["refused"][name] = why
 
+    if args.prune:
+        docs = {}
+        for path in sorted(EVENTS.glob("*.yaml")):
+            d = yaml.safe_load(path.read_text(encoding="utf-8"))
+            if d and d.get("slug"):
+                docs[d["slug"]] = d
+        before = sum(len(v) for v in (cache.get("backfill") or {}).values())
+        pruned = {}
+        for slug, items in (cache.get("backfill") or {}).items():
+            a = anchors(slug, (docs.get(slug) or {}).get("title", ""))
+            keep = [r for r in items if is_relevant(r.get("name", ""), r.get("mime", ""), a)]
+            if keep:
+                pruned[slug] = keep
+        cache["backfill"] = pruned
+        after = sum(len(v) for v in pruned.values())
+        print(f"pruned backfill: {before} -> {after} across {len(pruned)} event(s)")
+
     if args.backfill:
         docs = [yaml.safe_load(p.read_text(encoding="utf-8"))
                 for p in sorted(EVENTS.glob("*.yaml"))]
         docs = [d for d in docs if d and d.get("slug")]
-        print(f"\nbackfilling to {args.backfill} image(s) per event")
-        cache["backfill"] = backfill(docs, cache["files"], args.backfill)
+        only = {x.strip() for x in args.only.split(",") if x.strip()} or None
+        print(f"\nbackfilling to {args.backfill} image(s) per event"
+              + (f" (only {len(only)} slug(s))" if only else ""))
+        found = backfill(docs, cache["files"], args.backfill, only=only)
+        # A targeted run adds to what is stored; a full run replaces it.
+        if only:
+            cache.setdefault("backfill", {}).update(found)
+        else:
+            cache["backfill"] = found
 
     # Drop cache entries the catalogue no longer references.
     cache["files"] = {k: v for k, v in cache["files"].items() if k in used}

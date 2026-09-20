@@ -77,8 +77,10 @@ def search_wikimedia(query: str, max_results: int = 5) -> list[ImageResult]:
     up on Issue #26.
     """
     data = None
-    delay = 4.0
-    for attempt in range(4):
+    delay = 5.0
+    # Five attempts (5s, 10s, 20s, 40s) because Commons' throttle window is
+    # measured in tens of seconds, not the couple this used to allow.
+    for attempt in range(5):
         try:
             resp = _SESSION.get(
                 "https://commons.wikimedia.org/w/api.php",
@@ -95,7 +97,7 @@ def search_wikimedia(query: str, max_results: int = 5) -> list[ImageResult]:
                 },
                 timeout=20,
             )
-            if resp.status_code in (429, 503) and attempt < 3:
+            if resp.status_code in (429, 503) and attempt < 4:
                 print(f"  [media] Commons throttled ({resp.status_code}); waiting {delay:.0f}s")
                 time.sleep(delay)
                 delay *= 2
@@ -104,7 +106,7 @@ def search_wikimedia(query: str, max_results: int = 5) -> list[ImageResult]:
             data = resp.json()
             break
         except Exception as e:
-            if attempt == 3:
+            if attempt == 4:
                 print(f"  [media] Wikimedia search failed: {e}")
                 return []
             time.sleep(delay)
