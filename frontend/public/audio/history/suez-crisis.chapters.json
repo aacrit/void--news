@@ -1,0 +1,82 @@
+{
+ "version": "1.2.0",
+ "title": "The Suez Crisis",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 51.936
+  },
+  {
+   "startTime": 51.936,
+   "title": "Alexandria, the twenty sixth of July",
+   "endTime": 132.813
+  },
+  {
+   "startTime": 132.813,
+   "title": "London",
+   "endTime": 170.418
+  },
+  {
+   "startTime": 170.418,
+   "title": "Sevres",
+   "endTime": 218.574
+  },
+  {
+   "startTime": 218.574,
+   "title": "The invasion",
+   "endTime": 264.767
+  },
+  {
+   "startTime": 264.767,
+   "title": "Washington",
+   "endTime": 348.577
+  },
+  {
+   "startTime": 348.577,
+   "title": "The ceasefire",
+   "endTime": 377.796
+  },
+  {
+   "startTime": 377.796,
+   "title": "Five accounts",
+   "endTime": 390.599
+  },
+  {
+   "startTime": 390.599,
+   "title": "British and French Imperial",
+   "endTime": 457.181
+  },
+  {
+   "startTime": 457.181,
+   "title": "Egyptian and Arab Nationalist",
+   "endTime": 525.586
+  },
+  {
+   "startTime": 525.586,
+   "title": "Israeli Strategic",
+   "endTime": 604.647
+  },
+  {
+   "startTime": 604.647,
+   "title": "American Cold War Management",
+   "endTime": 673.511
+  },
+  {
+   "startTime": 673.511,
+   "title": "Later Scholarship and the End of Empire",
+   "endTime": 743.829
+  },
+  {
+   "startTime": 743.829,
+   "title": "What each one leaves out",
+   "endTime": 823.495
+  },
+  {
+   "startTime": 823.495,
+   "title": "Legacy",
+   "endTime": 857.386
+  }
+ ]
+}

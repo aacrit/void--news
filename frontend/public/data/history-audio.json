@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-20T19:26:02+00:00",
+ "generatedAt": "2026-09-20T20:13:08+00:00",
  "episodes": {
   "alexanders-conquests": {
    "url": "/audio/history/alexanders-conquests.mp3?v=21d3017c",
@@ -5927,6 +5927,300 @@
    ],
    "publishedAt": "2026-09-20T19:26:02+00:00"
   },
+  "suez-crisis": {
+   "url": "/audio/history/suez-crisis.mp3?v=409a35de",
+   "chaptersUrl": "/audio/history/suez-crisis.chapters.json?v=409a35de",
+   "title": "The Suez Crisis",
+   "durationSeconds": 857.417,
+   "bytes": 13735614,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 51.936
+    },
+    {
+     "startTime": 51.936,
+     "title": "Alexandria, the twenty sixth of July",
+     "kind": "segment",
+     "endTime": 132.813
+    },
+    {
+     "startTime": 132.813,
+     "title": "London",
+     "kind": "segment",
+     "endTime": 170.418
+    },
+    {
+     "startTime": 170.418,
+     "title": "Sevres",
+     "kind": "segment",
+     "endTime": 218.574
+    },
+    {
+     "startTime": 218.574,
+     "title": "The invasion",
+     "kind": "segment",
+     "endTime": 264.767
+    },
+    {
+     "startTime": 264.767,
+     "title": "Washington",
+     "kind": "segment",
+     "endTime": 348.577
+    },
+    {
+     "startTime": 348.577,
+     "title": "The ceasefire",
+     "kind": "segment",
+     "endTime": 377.796
+    },
+    {
+     "startTime": 377.796,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 390.599
+    },
+    {
+     "startTime": 390.599,
+     "title": "British and French Imperial",
+     "kind": "segment",
+     "endTime": 457.181
+    },
+    {
+     "startTime": 457.181,
+     "title": "Egyptian and Arab Nationalist",
+     "kind": "segment",
+     "endTime": 525.586
+    },
+    {
+     "startTime": 525.586,
+     "title": "Israeli Strategic",
+     "kind": "segment",
+     "endTime": 604.647
+    },
+    {
+     "startTime": 604.647,
+     "title": "American Cold War Management",
+     "kind": "segment",
+     "endTime": 673.511
+    },
+    {
+     "startTime": 673.511,
+     "title": "Later Scholarship and the End of Empire",
+     "kind": "segment",
+     "endTime": 743.829
+    },
+    {
+     "startTime": 743.829,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 823.495
+    },
+    {
+     "startTime": 823.495,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 857.386
+    }
+   ],
+   "publishedAt": "2026-09-20T20:13:08+00:00"
+  },
+  "sykes-picot-agreement": {
+   "url": "/audio/history/sykes-picot-agreement.mp3?v=ac408453",
+   "chaptersUrl": "/audio/history/sykes-picot-agreement.chapters.json?v=ac408453",
+   "title": "The Sykes-Picot Agreement",
+   "durationSeconds": 910.994,
+   "bytes": 14593825,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 53.622
+    },
+    {
+     "startTime": 53.622,
+     "title": "The finger on the map",
+     "kind": "segment",
+     "endTime": 102.327
+    },
+    {
+     "startTime": 102.327,
+     "title": "Coloring the map",
+     "kind": "segment",
+     "endTime": 182.716
+    },
+    {
+     "startTime": 182.716,
+     "title": "The same land, promised twice",
+     "kind": "segment",
+     "endTime": 253.949
+    },
+    {
+     "startTime": 253.949,
+     "title": "A third promise",
+     "kind": "segment",
+     "endTime": 308.104
+    },
+    {
+     "startTime": 308.104,
+     "title": "The secret breaks",
+     "kind": "segment",
+     "endTime": 366.979
+    },
+    {
+     "startTime": 366.979,
+     "title": "The map redrawn, worse",
+     "kind": "segment",
+     "endTime": 440.339
+    },
+    {
+     "startTime": 440.339,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 451.243
+    },
+    {
+     "startTime": 451.243,
+     "title": "British and French Imperial",
+     "kind": "segment",
+     "endTime": 521.309
+    },
+    {
+     "startTime": 521.309,
+     "title": "Arab Nationalist / The Betrayal",
+     "kind": "segment",
+     "endTime": 598.664
+    },
+    {
+     "startTime": 598.664,
+     "title": "Zionist",
+     "kind": "segment",
+     "endTime": 669.859
+    },
+    {
+     "startTime": 669.859,
+     "title": "Peoples of the Levant and Mesopotamia",
+     "kind": "segment",
+     "endTime": 736.479
+    },
+    {
+     "startTime": 736.479,
+     "title": "Later Scholarship / The Myth and the Line",
+     "kind": "segment",
+     "endTime": 810.644
+    },
+    {
+     "startTime": 810.644,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 878.158
+    },
+    {
+     "startTime": 878.158,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 910.967
+    }
+   ],
+   "publishedAt": "2026-09-20T20:13:08+00:00"
+  },
+  "taiping-rebellion": {
+   "url": "/audio/history/taiping-rebellion.mp3?v=c9d4c3dd",
+   "chaptersUrl": "/audio/history/taiping-rebellion.chapters.json?v=c9d4c3dd",
+   "title": "The Taiping Rebellion",
+   "durationSeconds": 872.333,
+   "bytes": 13974521,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 59.424
+    },
+    {
+     "startTime": 59.424,
+     "title": "Jintian village, January 1851",
+     "kind": "segment",
+     "endTime": 146.652
+    },
+    {
+     "startTime": 146.652,
+     "title": "Nanjing, March 1853",
+     "kind": "segment",
+     "endTime": 232.97
+    },
+    {
+     "startTime": 232.97,
+     "title": "Nanjing, September 1856",
+     "kind": "segment",
+     "endTime": 292.624
+    },
+    {
+     "startTime": 292.624,
+     "title": "Zeng Guofan's tent, Hunan",
+     "kind": "segment",
+     "endTime": 337.569
+    },
+    {
+     "startTime": 337.569,
+     "title": "Nanjing, July 1864",
+     "kind": "segment",
+     "endTime": 381.822
+    },
+    {
+     "startTime": 381.822,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 394.966
+    },
+    {
+     "startTime": 394.966,
+     "title": "Taiping Heavenly Kingdom",
+     "kind": "segment",
+     "endTime": 459.511
+    },
+    {
+     "startTime": 459.511,
+     "title": "Qing Imperial",
+     "kind": "segment",
+     "endTime": 530.422
+    },
+    {
+     "startTime": 530.422,
+     "title": "Western Missionary / Diplomatic",
+     "kind": "segment",
+     "endTime": 613.904
+    },
+    {
+     "startTime": 613.904,
+     "title": "Marxist / PRC Historiography",
+     "kind": "segment",
+     "endTime": 698.95
+    },
+    {
+     "startTime": 698.95,
+     "title": "Demographic / Humanitarian",
+     "kind": "segment",
+     "endTime": 767.606
+    },
+    {
+     "startTime": 767.606,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 843.077
+    },
+    {
+     "startTime": 843.077,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 872.296
+    }
+   ],
+   "publishedAt": "2026-09-20T20:13:08+00:00"
+  },
   "the-crusades": {
    "url": "/audio/history/the-crusades.mp3?v=07df501f",
    "chaptersUrl": "/audio/history/the-crusades.chapters.json?v=07df501f",
@@ -6479,6 +6773,100 @@
    ],
    "publishedAt": "2026-09-20T00:21:56+00:00"
   },
+  "treaty-of-waitangi": {
+   "url": "/audio/history/treaty-of-waitangi.mp3?v=4df056da",
+   "chaptersUrl": "/audio/history/treaty-of-waitangi.chapters.json?v=4df056da",
+   "title": "The Treaty of Waitangi and the New Zealand Wars",
+   "durationSeconds": 857.809,
+   "bytes": 13742311,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 58.486
+    },
+    {
+     "startTime": 58.486,
+     "title": "Waitangi, the sixth of February, eighteen forty",
+     "kind": "segment",
+     "endTime": 196.713
+    },
+    {
+     "startTime": 196.713,
+     "title": "The debate, the day before",
+     "kind": "segment",
+     "endTime": 233.677
+    },
+    {
+     "startTime": 233.677,
+     "title": "Kororareka, eighteen forty four to eighteen forty five",
+     "kind": "segment",
+     "endTime": 307.898
+    },
+    {
+     "startTime": 307.898,
+     "title": "The Waikato, eighteen sixty three",
+     "kind": "segment",
+     "endTime": 346.79
+    },
+    {
+     "startTime": 346.79,
+     "title": "The Settlements Act, eighteen sixty three to eighteen seventy two",
+     "kind": "segment",
+     "endTime": 390.643
+    },
+    {
+     "startTime": 390.643,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 396.086
+    },
+    {
+     "startTime": 396.086,
+     "title": "Maori Chiefs / Iwi",
+     "kind": "segment",
+     "endTime": 459.381
+    },
+    {
+     "startTime": 459.381,
+     "title": "British Crown / Colonial Administration",
+     "kind": "segment",
+     "endTime": 538.794
+    },
+    {
+     "startTime": 538.794,
+     "title": "Settler / Pakeha",
+     "kind": "segment",
+     "endTime": 616.128
+    },
+    {
+     "startTime": 616.128,
+     "title": "Contemporary Treaty Jurisprudence / Waitangi Tribunal",
+     "kind": "segment",
+     "endTime": 682.71
+    },
+    {
+     "startTime": 682.71,
+     "title": "Colonial Settler / Pakeha Progressive",
+     "kind": "segment",
+     "endTime": 753.667
+    },
+    {
+     "startTime": 753.667,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 820.322
+    },
+    {
+     "startTime": 820.322,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 857.768
+    }
+   ],
+   "publishedAt": "2026-09-20T20:13:08+00:00"
+  },
   "vietnam-war": {
    "url": "/audio/history/vietnam-war.mp3?v=4d8fda7d",
    "chaptersUrl": "/audio/history/vietnam-war.chapters.json?v=4d8fda7d",
@@ -6572,6 +6960,106 @@
     }
    ],
    "publishedAt": "2026-09-20T03:41:27+00:00"
+  },
+  "watergate": {
+   "url": "/audio/history/watergate.mp3?v=56856e19",
+   "chaptersUrl": "/audio/history/watergate.chapters.json?v=56856e19",
+   "title": "The Pentagon Papers and Watergate",
+   "durationSeconds": 809.482,
+   "bytes": 12968102,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 53.649
+    },
+    {
+     "startTime": 53.649,
+     "title": "Presses stopped by court order",
+     "kind": "segment",
+     "endTime": 131.837
+    },
+    {
+     "startTime": 131.837,
+     "title": "A photocopier, over months",
+     "kind": "segment",
+     "endTime": 180.045
+    },
+    {
+     "startTime": 180.045,
+     "title": "Tape over a door latch",
+     "kind": "segment",
+     "endTime": 234.68
+    },
+    {
+     "startTime": 234.68,
+     "title": "The thread",
+     "kind": "segment",
+     "endTime": 276.158
+    },
+    {
+     "startTime": 276.158,
+     "title": "The Saturday Night Massacre",
+     "kind": "segment",
+     "endTime": 329.438
+    },
+    {
+     "startTime": 329.438,
+     "title": "The tape that ends it",
+     "kind": "segment",
+     "endTime": 382.672
+    },
+    {
+     "startTime": 382.672,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 387.197
+    },
+    {
+     "startTime": 387.197,
+     "title": "The Investigative Press and the Leaker",
+     "kind": "segment",
+     "endTime": 440.263
+    },
+    {
+     "startTime": 440.263,
+     "title": "The Executive-Power Defense",
+     "kind": "segment",
+     "endTime": 491.753
+    },
+    {
+     "startTime": 491.753,
+     "title": "The Institutional Rule-of-Law View",
+     "kind": "segment",
+     "endTime": 582.11
+    },
+    {
+     "startTime": 582.11,
+     "title": "The Skeptical Revisionist",
+     "kind": "segment",
+     "endTime": 638.572
+    },
+    {
+     "startTime": 638.572,
+     "title": "The Public and the Loss of Trust",
+     "kind": "segment",
+     "endTime": 696.598
+    },
+    {
+     "startTime": 696.598,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 784.357
+    },
+    {
+     "startTime": 784.357,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 809.444
+    }
+   ],
+   "publishedAt": "2026-09-20T20:13:08+00:00"
   },
   "womens-suffrage": {
    "url": "/audio/history/womens-suffrage.mp3?v=a5c127ce",
