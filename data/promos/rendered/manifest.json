@@ -1,0 +1,128 @@
+{
+ "generatedAt": "2026-09-20T23:20:11+00:00",
+ "voice": "af_kore",
+ "speed": 0.95,
+ "engine": "kokoro",
+ "promos": {
+  "history-01-sides": {
+   "sha": "d1baface8685",
+   "seconds": 9.49,
+   "bytes": 455724
+  },
+  "history-02-documents": {
+   "sha": "1591d1f15907",
+   "seconds": 9.22,
+   "bytes": 442412
+  },
+  "history-03-particular": {
+   "sha": "3570ff9ac5e5",
+   "seconds": 8.32,
+   "bytes": 399404
+  },
+  "history-04-partition": {
+   "sha": "cf7b79a9672a",
+   "seconds": 8.72,
+   "bytes": 418860
+  },
+  "history-05-quarter-hour": {
+   "sha": "485775a56b22",
+   "seconds": 8.6,
+   "bytes": 412716
+  },
+  "history-06-accounts": {
+   "sha": "63ae70430ab8",
+   "seconds": 9.45,
+   "bytes": 453676
+  },
+  "onair-01-ranked": {
+   "sha": "7ad3e9025b6b",
+   "seconds": 8.66,
+   "bytes": 415788
+  },
+  "onair-02-firewall": {
+   "sha": "0b5f76f1ac27",
+   "seconds": 8.19,
+   "bytes": 393260
+  },
+  "onair-03-room-tone": {
+   "sha": "3373e5985561",
+   "seconds": 8.51,
+   "bytes": 408620
+  },
+  "onair-04-front-page": {
+   "sha": "b56a4d7f9dbc",
+   "seconds": 8.53,
+   "bytes": 409644
+  },
+  "onair-05-cold-open": {
+   "sha": "b5c7be4057d0",
+   "seconds": 8.21,
+   "bytes": 394284
+  },
+  "onair-06-twenty-four": {
+   "sha": "65d3db2d4b0d",
+   "seconds": 8.36,
+   "bytes": 401452
+  },
+  "site-01-twenty": {
+   "sha": "0fd59eaa6170",
+   "seconds": 8.72,
+   "bytes": 418860
+  },
+  "site-02-outlets": {
+   "sha": "9382eaf4b134",
+   "seconds": 7.83,
+   "bytes": 375852
+  },
+  "site-03-both": {
+   "sha": "8239fa5537c3",
+   "seconds": 8.21,
+   "bytes": 394284
+  },
+  "site-04-nothing-knows": {
+   "sha": "313a7dbe49a1",
+   "seconds": 8.81,
+   "bytes": 422956
+  },
+  "site-05-nothing-to-sign": {
+   "sha": "4aca37b90737",
+   "seconds": 8.49,
+   "bytes": 407596
+  },
+  "site-06-sources": {
+   "sha": "d9538b17ada9",
+   "seconds": 8.77,
+   "bytes": 420908
+  },
+  "weekly-01-verbatim": {
+   "sha": "d1d3bbef4b9e",
+   "seconds": 8.23,
+   "bytes": 395308
+  },
+  "weekly-02-question": {
+   "sha": "366f699905b8",
+   "seconds": 8.66,
+   "bytes": 415788
+  },
+  "weekly-03-shape": {
+   "sha": "7649c5a4ab98",
+   "seconds": 7.92,
+   "bytes": 379948
+  },
+  "weekly-04-no-host": {
+   "sha": "cafe7ed8772f",
+   "seconds": 9.2,
+   "bytes": 441388
+  },
+  "weekly-05-cover": {
+   "sha": "e62503fe2d98",
+   "seconds": 8.94,
+   "bytes": 429100
+  },
+  "weekly-06-week-in-bias": {
+   "sha": "f3967ad5a743",
+   "seconds": 9.41,
+   "bytes": 451628
+  }
+ }
+}
