@@ -215,25 +215,45 @@ def _fetch_week_clusters(edition, week_start, week_end):
         return []
 
 
+# The Week in Bias prints `total_scored` as a COUNT, so it has to be one. A
+# single .limit(3000) returned exactly 3000 on Issue #26 — a truncated query
+# cap being published as a measurement, in the one section whose whole job is
+# to be honest about measurement. Paged, with a ceiling that is flagged rather
+# than silently applied.
+_BIAS_PAGE = 1000
+_BIAS_MAX = 60000
+
+
 def _fetch_bias_stats(edition, week_start, week_end):
     """Aggregate bias stats for the week."""
     try:
-        result = supabase.table("bias_scores").select(
-            "political_lean,sensationalism,opinion_fact,factual_rigor,framing,confidence"
-        ).gte("analyzed_at", week_start.isoformat()).lte(
-            "analyzed_at", week_end.isoformat()
-        ).limit(3000).execute()
+        scores = []
+        truncated = False
+        while True:
+            page = supabase.table("bias_scores").select(
+                "political_lean,sensationalism,opinion_fact,factual_rigor,framing,confidence"
+            ).gte("analyzed_at", week_start.isoformat()).lte(
+                "analyzed_at", week_end.isoformat()
+            ).range(len(scores), len(scores) + _BIAS_PAGE - 1).execute()
+            rows = page.data or []
+            scores.extend(rows)
+            if len(rows) < _BIAS_PAGE:
+                break
+            if len(scores) >= _BIAS_MAX:
+                truncated = True
+                break
 
-        if not result.data:
+        if not scores:
             return None
-
-        scores = result.data
         leans = [s["political_lean"] for s in scores if s.get("political_lean") is not None]
         sensations = [s["sensationalism"] for s in scores if s.get("sensationalism") is not None]
         rigors = [s["factual_rigor"] for s in scores if s.get("factual_rigor") is not None]
 
         return {
             "total_scored": len(scores),
+            # True only when the ceiling was hit, so the page can say "at least"
+            # instead of stating a cap as a count.
+            "truncated": truncated,
             "avg_lean": round(sum(leans) / max(len(leans), 1), 1),
             "avg_sensationalism": round(sum(sensations) / max(len(sensations), 1), 1),
             "avg_rigor": round(sum(rigors) / max(len(rigors), 1), 1),

@@ -53,6 +53,8 @@ def repair(data) -> list[str]:
     changes = []
 
     for i, story in enumerate(data.get("cover_text") or []):
+        if not isinstance(story, dict):
+            continue
         head = (story.get("headline") or "").strip()
         if not head or looks_like_headline(head):
             continue
@@ -66,6 +68,8 @@ def repair(data) -> list[str]:
         )
 
     for i, story in enumerate(data.get("recap_stories") or []):
+        if not isinstance(story, dict):
+            continue
         head = (story.get("headline") or "").strip()
         if not head or looks_like_headline(head):
             continue
@@ -76,7 +80,7 @@ def repair(data) -> list[str]:
 
     # cover_headline is copied from covers[0] at write time, so it inherits the
     # same defect and must follow the same repair.
-    covers = data.get("cover_text") or []
+    covers = [c for c in (data.get("cover_text") or []) if isinstance(c, dict)]
     top = (data.get("cover_headline") or "").strip()
     if top and not looks_like_headline(top):
         new = (covers[0].get("headline") if covers else "") or ""
@@ -138,6 +142,17 @@ def normalize(data) -> list[str]:
                 data.pop(k)
                 changes.append(f"{k}: dropped (superseded by `opinions`)")
 
+    # `total_scored` was capped at exactly 3000 by a single .limit(3000), so a
+    # snapshot sitting on that number is a truncated query reported as a count
+    # — in the one section whose job is to be honest about measurement. The
+    # generator pages the query now; an already-published issue can only be
+    # flagged, so the page says "more than" rather than stating the cap.
+    stats = (data.get("bias_report_data") or {}).get("stats")
+    if isinstance(stats, dict) and stats.get("total_scored") == 3000 \
+            and "truncated" not in stats:
+        stats["truncated"] = True
+        changes.append("bias stats: total_scored 3000 marked truncated (it was a query cap)")
+
     # Departments are text that was never written; an empty list is the honest
     # answer until the next run generates and stores them.
     if data.get("departments") is None:
@@ -159,7 +174,8 @@ def main() -> int:
     data = json.loads(WEEKLY.read_text(encoding="utf-8"))
     print(f"issue #{data.get('issue_number')} ({data.get('week_start')})")
 
-    changes = repair(data) + normalize(data)
+    # normalize first: it parses the JSON columns that repair walks.
+    changes = normalize(data) + repair(data)
     if not changes:
         print("  snapshot already matches what the exporter emits")
         return 0

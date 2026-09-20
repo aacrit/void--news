@@ -246,6 +246,42 @@ if want("weekly"):
     wj(PUBLIC_DIR / "weekly.json", weekly)
     print(f"weekly.json: {'ok' if weekly else 'MISSING'}")
 
+    # ── The back-issue archive ──
+    # The weekly job restores the Actions cache and NEVER saves it back, on
+    # purpose: the daily pipeline is usually still running at 12:00 UTC and a
+    # save would push a pre-run copy under a newer key and lose a day. So the
+    # weekly row is written to a database that is discarded when the job ends,
+    # and next week's job restores a cache that never contained it. Raising the
+    # SELECT's LIMIT would yield one row forever.
+    #
+    # The deploy tree is therefore the archive of record, exactly as it already
+    # is for the daily side (printed_stories -> build-data/archive.json ->
+    # lib/archive.ts -> prerendered /story/<id>). This merge is append-only on
+    # (edition, week_start): a re-run of the same week replaces its own entry
+    # and every other issue survives.
+    if weekly:
+        issues_path = BUILD_DIR / "weekly-issues.json"
+        existing = []
+        if issues_path.exists():
+            try:
+                existing = json.loads(issues_path.read_text(encoding="utf-8")) or []
+            except ValueError:
+                existing = []
+        key = (weekly.get("edition"), weekly.get("week_start"))
+        merged = [i for i in existing if (i.get("edition"), i.get("week_start")) != key]
+        merged.append(weekly)
+        merged.sort(key=lambda i: str(i.get("week_start") or ""), reverse=True)
+        wj(issues_path, merged)
+
+        # A slim index for the browser: enough to list the back issues and fill
+        # the audio playlist, without shipping every past issue's prose.
+        INDEX_COLS = ("id", "issue_number", "edition", "week_start", "week_end",
+                      "cover_headline", "cover_image_url", "audio_url",
+                      "audio_duration_seconds", "created_at")
+        wj(PUBLIC_DIR / "weekly-archive.json",
+           [{k: i.get(k) for k in INDEX_COLS} for i in merged])
+        print(f"weekly-issues.json: {len(merged)} issue(s)")
+
 if want("archive"):
     # ── archive.json + archiveMap.json ──
     prows = c.execute(
