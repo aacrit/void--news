@@ -75,10 +75,9 @@ key_figures:
   role: Qing Emperor who ordered the opium suppression campaign
 - name: Lord Elgin
   role: British High Commissioner who ordered the burning of the Yuanmingyuan (Old Summer Palace)
-  wikidata: Q335098
-  born: 1766
-  died: 1841
-  wikipedia: https://en.wikipedia.org/wiki/Thomas_Bruce,_7th_Earl_of_Elgin
+  born: 1811
+  died: 1863
+  wikipedia: https://en.wikipedia.org/wiki/James_Bruce,_8th_Earl_of_Elgin
 - name: Charles Elliot
   role: British Superintendent of Trade in Canton, negotiated initial terms
   wikidata: Q184780

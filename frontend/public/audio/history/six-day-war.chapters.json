@@ -1,0 +1,77 @@
+{
+ "version": "1.2.0",
+ "title": "The Six-Day War",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 67.296
+  },
+  {
+   "startTime": 67.296,
+   "title": "Nineteen days",
+   "endTime": 123.184
+  },
+  {
+   "startTime": 123.184,
+   "title": "The waiting",
+   "endTime": 206.551
+  },
+  {
+   "startTime": 206.551,
+   "title": "Three fronts",
+   "endTime": 253.849
+  },
+  {
+   "startTime": 253.849,
+   "title": "What it cost",
+   "endTime": 304.341
+  },
+  {
+   "startTime": 304.341,
+   "title": "The morning after",
+   "endTime": 363.416
+  },
+  {
+   "startTime": 363.416,
+   "title": "Five accounts",
+   "endTime": 377.221
+  },
+  {
+   "startTime": 377.221,
+   "title": "The Israeli account",
+   "endTime": 439.548
+  },
+  {
+   "startTime": 439.548,
+   "title": "The Nasserist account",
+   "endTime": 502.927
+  },
+  {
+   "startTime": 502.927,
+   "title": "The Palestinian account",
+   "endTime": 557.921
+  },
+  {
+   "startTime": 557.921,
+   "title": "The revisionist account",
+   "endTime": 619.657
+  },
+  {
+   "startTime": 619.657,
+   "title": "The diplomatic account",
+   "endTime": 694.05
+  },
+  {
+   "startTime": 694.05,
+   "title": "What each one leaves out",
+   "endTime": 787.825
+  },
+  {
+   "startTime": 787.825,
+   "title": "Legacy",
+   "endTime": 837.937
+  }
+ ]
+}

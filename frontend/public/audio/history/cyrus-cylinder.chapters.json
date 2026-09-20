@@ -1,0 +1,72 @@
+{
+ "version": "1.2.0",
+ "title": "The Cyrus Cylinder",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 54.197
+  },
+  {
+   "startTime": 54.197,
+   "title": "Babylon, the twelfth of October",
+   "endTime": 118.014
+  },
+  {
+   "startTime": 118.014,
+   "title": "The Esagila foundations, 1879",
+   "endTime": 221.626
+  },
+  {
+   "startTime": 221.626,
+   "title": "What the stone claims",
+   "endTime": 304.738
+  },
+  {
+   "startTime": 304.738,
+   "title": "New York, 1971",
+   "endTime": 348.666
+  },
+  {
+   "startTime": 348.666,
+   "title": "Five accounts",
+   "endTime": 358.802
+  },
+  {
+   "startTime": 358.802,
+   "title": "Persian Imperial Achaemenid case",
+   "endTime": 417.362
+  },
+  {
+   "startTime": 417.362,
+   "title": "The Assyriological revision",
+   "endTime": 483.771
+  },
+  {
+   "startTime": 483.771,
+   "title": "The Iranian nationalist case",
+   "endTime": 547.537
+  },
+  {
+   "startTime": 547.537,
+   "title": "The Babylonian population",
+   "endTime": 622.29
+  },
+  {
+   "startTime": 622.29,
+   "title": "The Museum repatriation case",
+   "endTime": 721.573
+  },
+  {
+   "startTime": 721.573,
+   "title": "What each one leaves out",
+   "endTime": 807.56
+  },
+  {
+   "startTime": 807.56,
+   "title": "Legacy",
+   "endTime": 865.395
+  }
+ ]
+}

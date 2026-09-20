@@ -6,20 +6,6 @@ N: Independence had more than one author, and some of them never renounced viole
 ## TITLE
 N: The Indian Independence Movement. Ninety years, eighteen fifty seven to nineteen forty seven.
 
-## SCENE 1 | Bombay, 1908
-N: Nineteen oh eight. A courtroom in Bombay. A sedition trial.
-N: Bal Gangadhar Tilak stands to answer the charge, an early nationalist leader who has spent years arguing that Indians should govern themselves.
-N: He does not apologize.
-
-## DOCUMENT | Bal Gangadhar Tilak | Speech during sedition trial, Bombay | 1908
-N: Tilak told the court what governing himself meant to him.
-M: Swaraj is my birthright, and I shall have it.
-
-## ASIDE
-N: Swaraj. Self rule. Eleven years before the massacre that turns this into a movement the whole country joins, one man was already saying the word out loud, in a courtroom, to the people trying him for it.
-
-## REST
-
 ## SCENE 2 | Amritsar, April 1919
 N: April thirteenth, nineteen nineteen. An enclosed garden in Amritsar called Jallianwala Bagh. Fifteen to twenty thousand unarmed people have gathered inside it.
 N: Brigadier General Reginald Dyer marches fifty soldiers in. He gives no warning.
@@ -27,9 +13,6 @@ N: His men fire for ten minutes. They expend one thousand six hundred fifty roun
 N: The official inquiry counts three hundred seventy nine dead and twelve hundred wounded. Indian estimates put the toll past a thousand.
 N: Dyer told the Hunter Commission afterward that he meant to produce, in his own words, a sufficient moral effect on the Punjab.
 N: The walls of Jallianwala Bagh still carry the bullet holes.
-
-## ASIDE
-N: Rabindranath Tagore returned his knighthood. Gandhi, who had recruited Indian soldiers for Britain in the First World War, abandoned cooperation with the empire entirely.
 
 ## REST
 
@@ -46,9 +29,6 @@ N: March twelfth, nineteen thirty. Gandhi sets out from Sabarmati Ashram with se
 N: Before he left, Gandhi told his followers what he wanted from the walk.
 M: I want world sympathy in this battle of right against might.
 
-## ASIDE
-N: Two hundred forty miles. Twenty four days. A tax that made it illegal for an Indian to make or sell their own salt, and a man walking to the sea to break it in public.
-
 ## SCENE 5 | Dandi and Dharasana
 N: By the time Gandhi reaches the coast on April sixth and picks up a lump of natural salt, the march has swelled to thousands.
 N: Within weeks, sixty thousand Indians are arrested for making or selling salt.
@@ -57,9 +37,6 @@ N: On May twenty first, at the Dharasana Salt Works, twenty five hundred volunte
 ## DOCUMENT | Webb Miller | United Press International dispatch from Dharasana Salt Works | May 21, 1930
 N: Webb Miller of United Press International watched it happen and filed a dispatch that ran in thirteen hundred fifty newspapers.
 M: Not one of the marchers even raised an arm to fend off the blows.
-
-## ASIDE
-N: That one sentence did more damage to British prestige than the beating itself.
 
 ## REST
 
@@ -71,9 +48,6 @@ N: On April eighth, nineteen twenty nine, Bhagat Singh, twenty three years old, 
 N: Bhagat Singh threw leaflets down after the bomb, and they read like this.
 M: It takes a loud voice to make the deaf hear.
 
-## ASIDE
-N: He was hanged on March twenty third, nineteen thirty one, with Rajguru and Sukhdev. Tens of thousands came to his funeral procession.
-
 ## SCENE 7 | Berlin, Tokyo, and the mutiny
 N: Subhas Chandra Bose was elected Congress president twice. In nineteen thirty nine he broke with Gandhi and escaped British surveillance, reaching first Berlin, then Tokyo.
 N: He raised the Indian National Army from forty five thousand Indian prisoners of war held by Japan, and invaded northeast India in nineteen forty four. The invasion failed.
@@ -82,7 +56,6 @@ N: But when the British put its officers on trial, the sympathy it produced acro
 ## REST
 
 ## SCENE 8 | The famine and the reckoning
-N: India sent two and a half million soldiers to fight the Second World War for Britain. The largest volunteer army in history. It received no political concessions in return.
 N: In nineteen forty three, the Bengal Famine killed an estimated three million people while Churchill diverted food supplies to European stockpiles. Informed of the famine, Churchill asked why Gandhi had not yet died.
 N: In August nineteen forty two, Quit India brought the largest mass arrests in Indian history. Over one hundred thousand were detained, including the entire Congress leadership. Britain could not govern India without Indian consent, and this proved it.
 N: By nineteen forty six the Army and Navy were unreliable, the Civil Service was depleted, and London concluded that withdrawal was inevitable.
@@ -162,8 +135,6 @@ Dandi = DUN-dee
 Dharasana = dah-rah-SAH-nah
 Chauri Chaura = CHOW-ree CHOW-rah
 Bhagat = BUH-gut
-Rajguru = RAHJ-goo-roo
-Sukhdev = SOOK-dave
 Subhas Chandra Bose = soo-BHASH CHUN-drah BOSE
 Ambedkar = am-BED-kar
 Yerwada = yer-WAH-dah
@@ -173,7 +144,5 @@ Ghadar = guh-DAR
 Anushilan = ah-noo-SHEE-lan
 Jugantar = joo-GUN-tar
 Jinnah = JIN-ah
-Tilak = TIL-uk
-Swaraj = swuh-RAHJ
 Khilafat = khih-LAH-fut
 Poona = POO-nah

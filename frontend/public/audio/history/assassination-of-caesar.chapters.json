@@ -1,0 +1,77 @@
+{
+ "version": "1.2.0",
+ "title": "The Assassination of Julius Caesar",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 58.037
+  },
+  {
+   "startTime": 58.037,
+   "title": "The Theatre of Pompey, the fifteenth of March",
+   "endTime": 147.435
+  },
+  {
+   "startTime": 147.435,
+   "title": "The Forum, minutes later",
+   "endTime": 237.87
+  },
+  {
+   "startTime": 237.87,
+   "title": "The Forum, the twentieth of March",
+   "endTime": 313.313
+  },
+  {
+   "startTime": 313.313,
+   "title": "Rome, forty three BCE",
+   "endTime": 367.494
+  },
+  {
+   "startTime": 367.494,
+   "title": "Actium, the second of September, thirty one BCE",
+   "endTime": 402.351
+  },
+  {
+   "startTime": 402.351,
+   "title": "Five accounts",
+   "endTime": 416.924
+  },
+  {
+   "startTime": 416.924,
+   "title": "Republican: The Last Defenders of Libertas",
+   "endTime": 484.571
+  },
+  {
+   "startTime": 484.571,
+   "title": "Caesarian: The Reformer and His Oligarchs",
+   "endTime": 565.829
+  },
+  {
+   "startTime": 565.829,
+   "title": "Roman Plebeian: The People's Grief",
+   "endTime": 636.859
+  },
+  {
+   "startTime": 636.859,
+   "title": "Provincial: The Conquered Peoples",
+   "endTime": 712.869
+  },
+  {
+   "startTime": 712.869,
+   "title": "Shakespeare vs. History: The Play That Shaped Political Imagination",
+   "endTime": 791.832
+  },
+  {
+   "startTime": 791.832,
+   "title": "What each one leaves out",
+   "endTime": 860.39
+  },
+  {
+   "startTime": 860.39,
+   "title": "Legacy",
+   "endTime": 890.185
+  }
+ ]
+}
