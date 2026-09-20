@@ -105,7 +105,10 @@ export function DepartmentPlate({
       <span className="wk-plate__folio" aria-hidden="true">
         {folio ?? (
           <>
-            Issue {issueFolio(issueNumber ?? 0)}
+            {/* The folio is "I.01", not "Issue 08": a volume and a number,
+                set the way a periodical sets them. A pilot has neither, and
+                "Issue Pilot" reads like a typo, so the word goes. */}
+            {issueFolio(issueNumber)}
             <span className="wk-plate__dot"> · </span>
             {edition}
             {page !== undefined && (
