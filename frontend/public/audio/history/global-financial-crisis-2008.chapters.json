@@ -1,0 +1,77 @@
+{
+ "version": "1.2.0",
+ "title": "The 2008 Global Financial Crisis",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 63.263
+  },
+  {
+   "startTime": 63.263,
+   "title": "A Manhattan courtroom, one forty five in the morning",
+   "endTime": 108.569
+  },
+  {
+   "startTime": 108.569,
+   "title": "The machine, ten years in the building",
+   "endTime": 181.126
+  },
+  {
+   "startTime": 181.126,
+   "title": "Eighteen months of dominoes",
+   "endTime": 240.385
+  },
+  {
+   "startTime": 240.385,
+   "title": "Washington, September 29, 2008",
+   "endTime": 299.911
+  },
+  {
+   "startTime": 299.911,
+   "title": "Reykjavik and beyond",
+   "endTime": 375.178
+  },
+  {
+   "startTime": 375.178,
+   "title": "Five accounts",
+   "endTime": 383.863
+  },
+  {
+   "startTime": 383.863,
+   "title": "The Deregulation Account",
+   "endTime": 461.23
+  },
+  {
+   "startTime": 461.23,
+   "title": "The Firefighters",
+   "endTime": 529.082
+  },
+  {
+   "startTime": 529.082,
+   "title": "Main Street and Occupy",
+   "endTime": 596.485
+  },
+  {
+   "startTime": 596.485,
+   "title": "The Global Periphery",
+   "endTime": 672.061
+  },
+  {
+   "startTime": 672.061,
+   "title": "The Causes Debate",
+   "endTime": 740.233
+  },
+  {
+   "startTime": 740.233,
+   "title": "What each one leaves out",
+   "endTime": 822.36
+  },
+  {
+   "startTime": 822.36,
+   "title": "Legacy",
+   "endTime": 851.337
+  }
+ ]
+}

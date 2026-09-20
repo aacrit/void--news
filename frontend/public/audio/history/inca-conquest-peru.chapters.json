@@ -1,0 +1,82 @@
+{
+ "version": "1.2.0",
+ "title": "The Inca Empire and the Spanish Conquest",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 55.648
+  },
+  {
+   "startTime": 55.648,
+   "title": "The empire built in a lifetime",
+   "endTime": 142.413
+  },
+  {
+   "startTime": 142.413,
+   "title": "The plague that got there first",
+   "endTime": 186.845
+  },
+  {
+   "startTime": 186.845,
+   "title": "Cajamarca",
+   "endTime": 272.118
+  },
+  {
+   "startTime": 272.118,
+   "title": "The room",
+   "endTime": 331.568
+  },
+  {
+   "startTime": 331.568,
+   "title": "The siege that did not end it",
+   "endTime": 376.341
+  },
+  {
+   "startTime": 376.341,
+   "title": "The plaza, again",
+   "endTime": 413.335
+  },
+  {
+   "startTime": 413.335,
+   "title": "Five accounts",
+   "endTime": 420.868
+  },
+  {
+   "startTime": 420.868,
+   "title": "The Inca Record",
+   "endTime": 487.118
+  },
+  {
+   "startTime": 487.118,
+   "title": "The Conquistadors' Case",
+   "endTime": 560.682
+  },
+  {
+   "startTime": 560.682,
+   "title": "The Resistance",
+   "endTime": 642.821
+  },
+  {
+   "startTime": 642.821,
+   "title": "The Epidemic That Beat Him There",
+   "endTime": 699.609
+  },
+  {
+   "startTime": 699.609,
+   "title": "The Andean Present",
+   "endTime": 770.839
+  },
+  {
+   "startTime": 770.839,
+   "title": "What each one leaves out",
+   "endTime": 833.019
+  },
+  {
+   "startTime": 833.019,
+   "title": "Legacy",
+   "endTime": 862.089
+  }
+ ]
+}

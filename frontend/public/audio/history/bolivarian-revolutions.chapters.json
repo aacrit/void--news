@@ -1,0 +1,82 @@
+{
+ "version": "1.2.0",
+ "title": "The Bolivarian Revolutions",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 57.056
+  },
+  {
+   "startTime": 57.056,
+   "title": "The earthquake",
+   "endTime": 109.052
+  },
+  {
+   "startTime": 109.052,
+   "title": "The condition",
+   "endTime": 181.596
+  },
+  {
+   "startTime": 181.596,
+   "title": "The decree and the war to the death",
+   "endTime": 241.002
+  },
+  {
+   "startTime": 241.002,
+   "title": "Boyaca",
+   "endTime": 287.714
+  },
+  {
+   "startTime": 287.714,
+   "title": "The Congress of Panama",
+   "endTime": 322.916
+  },
+  {
+   "startTime": 322.916,
+   "title": "The house in Santa Marta",
+   "endTime": 384.758
+  },
+  {
+   "startTime": 384.758,
+   "title": "Five accounts",
+   "endTime": 392.441
+  },
+  {
+   "startTime": 392.441,
+   "title": "Bolivarian / Creole Elite",
+   "endTime": 475.983
+  },
+  {
+   "startTime": 475.983,
+   "title": "Spanish Colonial / Royalist",
+   "endTime": 562.525
+  },
+  {
+   "startTime": 562.525,
+   "title": "Indigenous / Afro-Latin American",
+   "endTime": 640.705
+  },
+  {
+   "startTime": 640.705,
+   "title": "Monroe Doctrine / U.S. Perspective",
+   "endTime": 716.573
+  },
+  {
+   "startTime": 716.573,
+   "title": "Indigenous / Andean Peoples",
+   "endTime": 796.884
+  },
+  {
+   "startTime": 796.884,
+   "title": "What each one leaves out",
+   "endTime": 862.812
+  },
+  {
+   "startTime": 862.812,
+   "title": "Legacy",
+   "endTime": 889.371
+  }
+ ]
+}

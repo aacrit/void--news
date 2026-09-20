@@ -1,0 +1,77 @@
+{
+ "version": "1.2.0",
+ "title": "The Bandung Conference",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 53.948
+  },
+  {
+   "startTime": 53.948,
+   "title": "Gedung Merdeka, the morning of April 18",
+   "endTime": 163.845
+  },
+  {
+   "startTime": 163.845,
+   "title": "The bomb and the diplomat",
+   "endTime": 240.669
+  },
+  {
+   "startTime": 240.669,
+   "title": "The Ten Principles",
+   "endTime": 318.801
+  },
+  {
+   "startTime": 318.801,
+   "title": "Washington and Moscow",
+   "endTime": 362.45
+  },
+  {
+   "startTime": 362.45,
+   "title": "After Bandung",
+   "endTime": 417.823
+  },
+  {
+   "startTime": 417.823,
+   "title": "Five accounts",
+   "endTime": 436.912
+  },
+  {
+   "startTime": 436.912,
+   "title": "Third Worldist / Anti-Colonial",
+   "endTime": 503.259
+  },
+  {
+   "startTime": 503.259,
+   "title": "Cold War / Western Realist",
+   "endTime": 567.255
+  },
+  {
+   "startTime": 567.255,
+   "title": "Chinese / Zhou Enlai",
+   "endTime": 633.331
+  },
+  {
+   "startTime": 633.331,
+   "title": "Pan-African / Nkrumah",
+   "endTime": 704.581
+  },
+  {
+   "startTime": 704.581,
+   "title": "Feminist / Women at the Margins",
+   "endTime": 779.498
+  },
+  {
+   "startTime": 779.498,
+   "title": "What each one leaves out",
+   "endTime": 857.252
+  },
+  {
+   "startTime": 857.252,
+   "title": "Legacy",
+   "endTime": 886.642
+  }
+ ]
+}
