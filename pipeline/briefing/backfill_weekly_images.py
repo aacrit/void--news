@@ -71,11 +71,21 @@ def illustrate(row, *, dry_run=False) -> list[str]:
                 continue
             if cap is not None and i >= cap:
                 break
-            if item.get("image_url"):
-                continue                      # already illustrated; leave it
             head = (item.get("headline") or item.get("label") or "").strip()
             if not head:
                 continue
+
+            # AN IMAGE WITH NO CAPTION IS REPAIRED OR REMOVED, never left.
+            # Slots illustrated before captions existed carry a picture and no
+            # label, which is the exact failure this design exists to prevent:
+            # Vol. I, No. 1 shipped a photograph of a US-Japan air formation
+            # over the Pacific on a North Korean missile-test brief, correctly
+            # licensed, matched on the word "missile", with nothing on the page
+            # saying what it was. A reader cannot tell a file photograph from
+            # event coverage unless we say so.
+            stale = bool(item.get("image_url")) and not (item.get("image_caption") or "").strip()
+            if item.get("image_url") and not stale:
+                continue                      # already illustrated and labelled
             try:
                 found = find_cover_image_for_cluster(
                     item.get("cluster_id") or "", head,
@@ -85,7 +95,18 @@ def illustrate(row, *, dry_run=False) -> list[str]:
                 out.append(f"{key}[{i}] lookup failed: {e}")
                 continue
             if not found:
-                out.append(f"{key}[{i}] no licensed subject for {head[:42]!r}")
+                if stale:
+                    # Nothing better resolved, so the unlabelled picture goes.
+                    # No photograph is the honest outcome; an unexplained one
+                    # asserts something we cannot stand behind.
+                    if not dry_run:
+                        for k in ("image_url", "image_attribution", "image_caption"):
+                            item.pop(k, None)
+                        changed = True
+                    out.append(f"{key}[{i}] DROPPED an uncaptioned image "
+                               f"({head[:38]!r} resolved to nothing better)")
+                else:
+                    out.append(f"{key}[{i}] no licensed subject for {head[:42]!r}")
                 continue
             if not dry_run:
                 item["image_url"] = found["url"]
@@ -94,7 +115,8 @@ def illustrate(row, *, dry_run=False) -> list[str]:
                 if found.get("caption"):
                     item["image_caption"] = found["caption"]
             changed = True
-            out.append(f"{key}[{i}] -> {found.get('caption')}")
+            verb = "re-resolved" if stale else "->"
+            out.append(f"{key}[{i}] {verb} {found.get('caption')}")
         if changed and not dry_run:
             # Written back in the shape it arrived in, or the exporter's own
             # parse of this column changes meaning underneath the frontend.
