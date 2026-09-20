@@ -37,11 +37,14 @@ WEEKLY = REPO / "frontend" / "public" / "data" / "weekly.json"
 ISSUES = REPO / "frontend" / "build-data" / "weekly-issues.json"
 ARCHIVE = REPO / "frontend" / "public" / "data" / "weekly-archive.json"
 
-#: Which collections carry art, and how many of each to illustrate. The briefs
-#: are capped because they render as small thumbnails in a three-column block
-#: and each one costs a network round trip; the cap matches BRIEF_THUMB_COUNT
-#: in the generator so a backfilled issue and a generated one agree.
-SLOTS = (("cover_text", None), ("departments", None), ("recap_stories", 3))
+#: Which collections carry art. NOTHING IS CAPPED. The generator caps brief
+#: thumbnails at three because every lookup is a network round trip inside a
+#: run that is already the slowest job in the repo. A backfill is not on that
+#: clock, and `BriefList` renders a thumbnail for any item that has one, so a
+#: cap here only means fewer pictures for no saving. The first run capped at
+#: three and illustrated three slots on an issue where the coverage probe,
+#: uncapped, resolved nine.
+SLOTS = (("cover_text", None), ("departments", None), ("recap_stories", None))
 
 
 def _load(row, key):

@@ -87,6 +87,25 @@ def test_guard():
                    "Criticism of Jehovah's Witnesses"))
 
     # Stopwords cannot carry a match on their own.
+    # A length filter of >2 discarded AI, US, EU and UN: the highest-signal
+    # tokens a news headline carries. "A New Front in the AI Race" reduced to
+    # {front, race} and matched its article only by coincidence on "race".
+    check("an acronym survives tokenizing",
+          "ai" in _subject_words("A New Front in the AI Race"))
+    check("so does a country acronym", "us" in _subject_words("US Military Strikes"))
+    check("but the pronoun 'us' does not",
+          "us" not in _subject_words("Give it back to us"),
+          "case is read before lowercasing, which is the only place it can be")
+
+    # `[A-Za-z']+` split on the accent: "Erdogan" with its breve tokenized to
+    # "erdo". It still matched because the Wikipedia title breaks the same way,
+    # but a prefix matching a prefix is a coincidence, not a rule.
+    check("an accented name survives whole",
+          "erdo\u011fan" in _subject_words("Erdo\u011fan Attends UNGA"),
+          str(sorted(_subject_words("Erdo\u011fan Attends UNGA"))))
+    check("and still matches its article",
+          overlaps("Erdo\u011fan Attends UNGA, Focuses on Gaza", "Recep Tayyip Erdo\u011fan"))
+
     check("a shared stopword is not a match",
           not overlaps("The New Front on the Border", "The New Deal"),
           "'the'/'new' are stopwords; nothing real is shared")

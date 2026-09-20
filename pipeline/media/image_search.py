@@ -563,9 +563,28 @@ def _subject_words(text):
     """
     import re
     out = set()
-    for w in re.findall(r"[A-Za-z']+", (text or "").lower()):
-        w = re.sub(r"'s$", "", w).replace("'", "")
-        if len(w) > 2 and w not in _SUBJECT_STOPWORDS:
+    # `[A-Za-z']+` SPLIT ON THE ACCENT: "Erdoğan" tokenized to "erdo", and
+    # "Lukašenka", "Ørsted" and "José" fare the same. It happened to still
+    # match here because the Wikipedia title breaks identically, but a prefix
+    # matching a prefix is a coincidence, not a rule, and this is a product
+    # with sources in 158 countries. `[^\W\d_]` is every Unicode letter and
+    # nothing else.
+    for raw in re.findall(r"[^\W\d_']+(?:'[^\W\d_]+)*", text or "", re.UNICODE):
+        # CASE IS READ BEFORE LOWERCASING, and that is the whole point. A
+        # length filter of >2 silently discarded AI, US, EU and UN, which are
+        # the highest-signal tokens a news headline carries: "A New Front in
+        # the AI Race" reduced to {front, race} and matched "Artificial
+        # intelligence arms race" only by coincidence on "race". An ALL-CAPS
+        # token in a Title Case headline is an acronym, not a short word, and
+        # "US" the country is distinguishable from "us" the pronoun here and
+        # nowhere later.
+        is_acronym = raw.isupper() and len(raw) >= 2
+        w = re.sub(r"'s$", "", raw.lower()).replace("'", "")
+        if not w:
+            continue
+        if is_acronym:
+            out.add(w)
+        elif len(w) > 2 and w not in _SUBJECT_STOPWORDS:
             out.add(w)
     return out
 
