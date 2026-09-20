@@ -51,6 +51,17 @@ what keeps it from becoming one. Do not pick the voice to balance the episode:
 the balance of M and F across a script is a property of whose words survived,
 and it is not yours to even out.
 
+**An institution is not a person.** A UN report, a party resolution, a court
+judgment, a state news agency has no speaker sex to match, so reading it is a
+production choice and no claim about anybody. Use **M**, which is what the
+catalogue already does (a Soviet state line in Chernobyl, a government
+statement in Vietnam), so the same kind of document does not arrive in a
+different voice from one episode to the next. The exception is a document with
+a named author: then match the author. And never pick the voice to even out
+the episode here either, which is the reason a Srebrenica draft put a
+Secretary-General's report and a commission chaired by Cherif Bassiouni into
+the F voice, one line after the narration had named a man in both cases.
+
 ### The document voice means "these are the words they said"
 
 That is its whole job, and it is why a different voice reads it. So the record
