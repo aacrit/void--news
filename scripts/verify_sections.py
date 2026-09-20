@@ -14,10 +14,14 @@ Checks, against the LIVE site (stdlib only, like verify_production.py):
   H-01  /history/ and /weekly/ resolve (HTTP 200, not a redirect to home)
   H-02  data/history.json is a real catalog: >= 70 events, each with a slug,
         title and at least one perspective
-  H-03  no event image points at Supabase Storage (that bucket is deleted; the
-        originals are public-domain Wikimedia and must be hotlinked)
+  H-03  every event image is a Wikimedia CDN url carrying a free licence, and
+        a sample of them actually returns image bytes. Two real failures live
+        here: images pointed at Special:Redirect, which answers HTTP 429 and
+        rendered the archive pictureless, and six were licensed fair-use.
   H-04  every /history/<slug>/ in the catalog is actually prerendered
   W-01  data/weekly.json carries an issue number and a Monday-to-Sunday week
+  W-03  the cover image, if present, comes from a freely licensed source.
+        Issue #26 shipped an AFP wire photograph hotlinked off a publisher CDN.
   W-02  the issue is not stale: three consecutive missed Mondays means the
         weekly job is broken, not merely late
 
@@ -93,19 +97,46 @@ def main(site: str) -> int:
            f"{len(events)} events (floor {MIN_EVENTS})"
            + (f"; {len(thin)} incomplete: {thin[:5]}" if thin else ""))
 
-    dead = [
-        m.get("source_url")
-        for e in events
-        for m in (e.get("media") or [])
-        if "supabase.co" in str(m.get("source_url") or "")
+    # Every image url must be a Wikimedia CDN path. Special:Redirect is the one
+    # that looks right and fails: it is a MediaWiki special page, throttled to
+    # HTTP 429, and it is what made the archive render with no pictures at all.
+    OK_HOSTS = ("upload.wikimedia.org", "thumb.wikimedia.org")
+    all_imgs = [
+        (e.get("slug"), m.get("source_url"), m.get("license"))
+        for e in events for m in (e.get("media") or [])
     ] + [
-        e.get("hero_image_url")
-        for e in events
-        if "supabase.co" in str(e.get("hero_image_url") or "")
+        (e.get("slug"), e.get("hero_image_url"), "hero")
+        for e in events if e.get("hero_image_url")
     ]
-    report("H-03", not dead,
-           "no Supabase Storage image URLs" if not dead
-           else f"{len(dead)} image(s) still point at the deleted bucket: {dead[:3]}")
+    bad_host = [u for _, u, _ in all_imgs
+                if not any(h in str(u or "") for h in OK_HOSTS)]
+    NONFREE = ("fair", "-nc", "-nd", "noncommercial", "non-free", "nonfree")
+    nonfree = [(s_, str(lic)) for s_, _, lic in all_imgs
+               if lic != "hero" and any(n in str(lic or "").lower() for n in NONFREE)]
+    unlicensed = [s_ for s_, _, lic in all_imgs if lic != "hero" and not lic]
+
+    problems = []
+    if bad_host:
+        problems.append(f"{len(bad_host)} image(s) not on a Wikimedia CDN host: {bad_host[:2]}")
+    if nonfree:
+        problems.append(f"{len(nonfree)} image(s) carry a non-free licence: {nonfree[:3]}")
+    if unlicensed:
+        problems.append(f"{len(unlicensed)} image(s) carry no licence: {unlicensed[:3]}")
+
+    # A correct-looking url still has to return an image.
+    sampled = [u for _, u, _ in all_imgs if u][:: max(1, len(all_imgs) // 5)][:5]
+    for u in sampled:
+        try:
+            status, _, _ = fetch(u, head=True)
+            if status != 200:
+                problems.append(f"image returned {status}: {str(u)[:80]}")
+        except Exception as e:
+            problems.append(f"image failed ({type(e).__name__}): {str(u)[:80]}")
+
+    report("H-03", not problems,
+           f"{len(all_imgs)} images, all Wikimedia CDN + free-licensed, "
+           f"{len(sampled)} sampled and serving"
+           if not problems else "; ".join(problems))
 
     # Spot-check that the catalog's slugs were actually prerendered. A catalog
     # that grows without generateStaticParams picking it up gives a 404 on a
@@ -142,6 +173,22 @@ def main(site: str) -> int:
     report("W-01", bool(issue) and start is not None and start.weekday() == 0,
            f"issue #{issue}, week starting {start_raw or '(none)'}"
            + ("" if start and start.weekday() == 0 else " (week_start is not a Monday)"))
+
+    # W-03 — the cover image is Void's to publish, or there is none.
+    cover = str(weekly.get("cover_image_url") or "")
+    src = str(weekly.get("cover_image_source") or "")
+    if not cover:
+        report("W-03", True, "no cover image (acceptable; better than an unlicensed one)")
+    else:
+        licensed_host = any(h in cover for h in (
+            "upload.wikimedia.org", "thumb.wikimedia.org",
+            "images.unsplash.com", "images.pexels.com",
+        ))
+        report("W-03", licensed_host and src != "og_image",
+               f"cover from {src or 'unknown'}: {cover[:80]}"
+               + ("" if licensed_host and src != "og_image"
+                  else "  <- not a freely licensed source; a scraped publisher"
+                       " og:image is usually a wire photograph"))
 
     if start is None:
         report("W-02", False, "skipped (no week_start)")

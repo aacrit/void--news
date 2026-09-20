@@ -1642,7 +1642,7 @@ def generate_weekly_digest(editions=None, week_offset=0):
             if c.get("cluster_id"):
                 used_ids.add(c["cluster_id"])
 
-        # Cover image: try og:image from lead cover story, fallback to free APIs
+        # Cover image: freely licensed sources only (Wikimedia Commons first).
         cover_image = None
         if covers and covers[0].get("cluster_id"):
             print(f"\n  ── COVER IMAGE ──")
@@ -1653,38 +1653,6 @@ def generate_weekly_digest(editions=None, week_offset=0):
             )
             if cover_image:
                 print(f"    ✓ {cover_image['source']}: {cover_image['url'][:80]}...")
-                # Cache the cover image to Supabase Storage instead of hotlinking
-                # a third-party CDN. find_cover_image_for_cluster can return a raw
-                # publisher URL (e.g. commondreams.org) that later 403s or dies,
-                # breaking the magazine hero. Route it through the SAME cacher the
-                # daily pipeline uses (download → WebP q82 → cluster-images bucket).
-                # Distinct "weekly-cover-" key so it never collides with the daily
-                # cluster image at "{cluster_id}.webp". Attribution is preserved.
-                try:
-                    from media.cluster_image_cacher import (
-                        _download as _cache_download,
-                        _init_bucket as _cache_init_bucket,
-                        _upload as _cache_upload,
-                    )
-                    _cache_init_bucket(supabase)
-                    _dl = _cache_download(cover_image["url"])
-                    if _dl:
-                        _img_bytes, _img_ct = _dl
-                        _cached_url = _cache_upload(
-                            supabase,
-                            f"weekly-cover-{covers[0]['cluster_id']}",
-                            _img_bytes,
-                            _img_ct,
-                        )
-                        if _cached_url:
-                            print(f"    ✓ cached → {_cached_url[:80]}...")
-                            cover_image["url"] = _cached_url
-                        else:
-                            print("    [warn] cover-image cache upload failed; keeping original URL")
-                    else:
-                        print("    [warn] cover-image download failed; keeping original URL")
-                except Exception as _cover_cache_err:
-                    print(f"    [warn] cover-image cache error ({_cover_cache_err}); keeping original URL")
             else:
                 print(f"    No suitable cover image found")
 
@@ -1804,14 +1772,21 @@ def generate_weekly_digest(editions=None, week_offset=0):
                 "numbers": c.get("numbers", []),
                 "cluster_id": c.get("cluster_id"),
             }
-            cluster = _cluster_by_id.get(c.get("cluster_id"))
-            if cluster:
-                img = cluster.get("cached_image_url")
-                if img:
-                    item["image_url"] = img
-                    attribution = cluster.get("cached_image_attribution")
-                    if attribution:
-                        item["image_attribution"] = attribution
+            # Each cover essay gets its own picture, from a freely licensed
+            # source. This used to read `cached_image_url`, written by the
+            # cluster_image_cacher that rev 60 RETIRED on copyright grounds, so
+            # the column has been null on every row since and the weekly has
+            # carried one image instead of three.
+            headline = (c.get("headline") or "").strip()
+            if headline:
+                found = find_cover_image_for_cluster(
+                    c.get("cluster_id") or "", headline, supabase_client=supabase,
+                )
+                if found:
+                    item["image_url"] = found["url"]
+                    if found.get("attribution"):
+                        item["image_attribution"] = found["attribution"]
+                    print(f"    story image ({found['source']}): {found['url'][:70]}")
             return item
 
         row = {
