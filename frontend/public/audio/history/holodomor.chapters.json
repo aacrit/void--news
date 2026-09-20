@@ -1,0 +1,72 @@
+{
+ "version": "1.2.0",
+ "title": "The Holodomor",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 63.968
+  },
+  {
+   "startTime": 63.968,
+   "title": "The walking tour",
+   "endTime": 163.085
+  },
+  {
+   "startTime": 163.085,
+   "title": "The grain itself was the point",
+   "endTime": 204.73
+  },
+  {
+   "startTime": 204.73,
+   "title": "The law and the number",
+   "endTime": 274.079
+  },
+  {
+   "startTime": 274.079,
+   "title": "The count",
+   "endTime": 329.388
+  },
+  {
+   "startTime": 329.388,
+   "title": "Five accounts",
+   "endTime": 351.791
+  },
+  {
+   "startTime": 351.791,
+   "title": "The Soviet state",
+   "endTime": 402.094
+  },
+  {
+   "startTime": 402.094,
+   "title": "The Ukrainian survivor",
+   "endTime": 474.494
+  },
+  {
+   "startTime": 474.494,
+   "title": "The Western press corps",
+   "endTime": 541.317
+  },
+  {
+   "startTime": 541.317,
+   "title": "The Ukrainian national account",
+   "endTime": 649.065
+  },
+  {
+   "startTime": 649.065,
+   "title": "The archival record",
+   "endTime": 744.925
+  },
+  {
+   "startTime": 744.925,
+   "title": "What each one leaves out",
+   "endTime": 829.655
+  },
+  {
+   "startTime": 829.655,
+   "title": "Legacy",
+   "endTime": 872.52
+  }
+ ]
+}

@@ -73,7 +73,7 @@ M: These are truly scenes from hell, written on the darkest pages of human histo
 N: Resolution eight nineteen declared Srebrenica a safe area in April of nineteen ninety three, but sent no army capable of defending it. The task fell to Dutchbat, roughly six hundred lightly armed peacekeepers, holding a mandate written for peacekeeping, not war.
 N: Some twenty thousand to twenty five thousand civilians fled to the Dutch compound at Potocari, with shelter and food for only a fraction of them.
 N: In nineteen ninety nine, the Secretary-General's own report on the fall of Srebrenica said this.
-F: Through error, misjudgement and an inability to recognize the scope of the evil confronting us, we failed to do our part to help save the people of Srebrenica from the Serb campaign of mass murder.
+M: Through error, misjudgement and an inability to recognize the scope of the evil confronting us, we failed to do our part to help save the people of Srebrenica from the Serb campaign of mass murder.
 
 ## REST | short
 
@@ -99,7 +99,7 @@ N: The method ran across Bosnia from the war's first weeks, well before Srebreni
 N: In Visegrad, families were locked in houses on the Drina and burned alive. In Foca, rape was organized as an instrument of war; the tribunal's Kunarac judgment in two thousand one first defined rape as a crime against humanity in international law.
 N: In two thousand seven, the International Court of Justice applied the strict legal definition and found that only the killings at Srebrenica crossed the threshold of genocide, while it ruled the broader campaign was ethnic cleansing that did not.
 N: A United Nations commission chaired by Cherif Bassiouni catalogued the pattern in nineteen ninety four and gave ethnic cleansing its working definition.
-F: Ethnic cleansing is a purposeful policy designed by one ethnic or religious group to remove by violent and terror-inspiring means the civilian population of another ethnic or religious group from certain geographic areas.
+M: Ethnic cleansing is a purposeful policy designed by one ethnic or religious group to remove by violent and terror-inspiring means the civilian population of another ethnic or religious group from certain geographic areas.
 
 ## REST
 

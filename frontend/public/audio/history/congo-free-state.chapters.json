@@ -1,0 +1,72 @@
+{
+ "version": "1.2.0",
+ "title": "The Congo Free State",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 49.184
+  },
+  {
+   "startTime": 49.184,
+   "title": "Brussels, 1878 to 1885",
+   "endTime": 129.36
+  },
+  {
+   "startTime": 129.36,
+   "title": "The Congo interior, 1890",
+   "endTime": 192.096
+  },
+  {
+   "startTime": 192.096,
+   "title": "Kasai and Nsongo districts, 1899 to 1904",
+   "endTime": 309.176
+  },
+  {
+   "startTime": 309.176,
+   "title": "Liverpool to Brussels, 1900 to 1908",
+   "endTime": 427.759
+  },
+  {
+   "startTime": 427.759,
+   "title": "Five accounts",
+   "endTime": 443.954
+  },
+  {
+   "startTime": 443.954,
+   "title": "Leopold's private empire",
+   "endTime": 510.468
+  },
+  {
+   "startTime": 510.468,
+   "title": "The Congolese village",
+   "endTime": 584.144
+  },
+  {
+   "startTime": 584.144,
+   "title": "The reformers' ledger",
+   "endTime": 660.269
+  },
+  {
+   "startTime": 660.269,
+   "title": "The postcolonial reckoning",
+   "endTime": 737.45
+  },
+  {
+   "startTime": 737.45,
+   "title": "The resistance the record kept",
+   "endTime": 816.991
+  },
+  {
+   "startTime": 816.991,
+   "title": "What each one leaves out",
+   "endTime": 888.857
+  },
+  {
+   "startTime": 888.857,
+   "title": "Legacy",
+   "endTime": 927.669
+  }
+ ]
+}

@@ -1,0 +1,77 @@
+{
+ "version": "1.2.0",
+ "title": "The Great Depression",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 53.963
+  },
+  {
+   "startTime": 53.963,
+   "title": "Wall Street, October 29, 1929",
+   "endTime": 81.826
+  },
+  {
+   "startTime": 81.826,
+   "title": "What the crash left behind",
+   "endTime": 141.596
+  },
+  {
+   "startTime": 141.596,
+   "title": "Austria, May 1931",
+   "endTime": 224.633
+  },
+  {
+   "startTime": 224.633,
+   "title": "Germany, the winter of 1932",
+   "endTime": 258.896
+  },
+  {
+   "startTime": 258.896,
+   "title": "Washington, March 1933",
+   "endTime": 301.393
+  },
+  {
+   "startTime": 301.393,
+   "title": "Five accounts",
+   "endTime": 310.121
+  },
+  {
+   "startTime": 310.121,
+   "title": "The Keynesian Account",
+   "endTime": 379.985
+  },
+  {
+   "startTime": 379.985,
+   "title": "The Monetarist and Austrian Account",
+   "endTime": 449.033
+  },
+  {
+   "startTime": 449.033,
+   "title": "The Unemployed",
+   "endTime": 522.474
+  },
+  {
+   "startTime": 522.474,
+   "title": "The Global Periphery",
+   "endTime": 606.689
+  },
+  {
+   "startTime": 606.689,
+   "title": "The Political Crisis",
+   "endTime": 681.353
+  },
+  {
+   "startTime": 681.353,
+   "title": "What each one leaves out",
+   "endTime": 766.914
+  },
+  {
+   "startTime": 766.914,
+   "title": "Legacy",
+   "endTime": 798.074
+  }
+ ]
+}
