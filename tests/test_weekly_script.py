@@ -223,11 +223,54 @@ def test_columns_match_the_page(issue):
         check(f"findPair still keys on {token}", token in tsx)
 
 
+def test_committed_scripts():
+    """Every AUTHORED rundown, against the issue it was written from.
+
+    History's scripts are committed and validated the same way, for the same
+    reason: flash is capped at 20 requests a DAY shared with the daily
+    pipeline, so generating a 3,000 word script is a cost that buys worse
+    prose than a person writes. The trade is that a committed script can drift
+    from its issue silently, which is exactly what this catches.
+
+    W-01 is the one that matters here. A bench line must exist in that
+    columnist's PUBLISHED column, so if an issue is ever repaired or
+    regenerated and a column changes, the script that quotes it stops being
+    true and stops rendering.
+    """
+    print("\nWA-04  committed rundowns")
+    scripts = sorted((ROOT / "data" / "weekly" / "scripts").glob("*.txt"))
+    if not scripts:
+        print("  (none committed yet)")
+        return
+
+    rows = json.loads(ISSUES.read_text(encoding="utf-8"))
+    by_week = {r["week_start"]: r for r in rows if isinstance(r, dict) and r.get("week_start")}
+
+    for path in scripts:
+        week = path.stem
+        issue = by_week.get(week)
+        check(f"{week}: its issue is published", issue is not None)
+        if not issue:
+            continue
+        script = parse_script(path.read_text(encoding="utf-8"))
+        findings = validate_script(script, issue)
+        fails = [f for f in findings if f.level == "fail"]
+        for f in fails:
+            print(f"         {f.id} [{f.segment}] {f.detail[:100]}")
+        check(f"{week}: renders clean", not fails,
+              "; ".join(f"{f.id}" for f in fails))
+        minutes, wpm = estimated_minutes(script)
+        lo, hi = TARGET_MINUTES
+        check(f"{week}: inside the band", lo <= minutes <= hi,
+              f"{minutes:.1f} min, {script.words} words")
+
+
 def main():
     print("void --weekly audio gates (The Argument)")
     issue = test_clean()
     test_planted(issue)
     test_columns_match_the_page(issue)
+    test_committed_scripts()
     print()
     if _failures:
         print(f"FAILED ({len(_failures)}): " + ", ".join(_failures))

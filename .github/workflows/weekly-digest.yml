@@ -39,6 +39,12 @@ on:
         description: 'Weeks back from the week that closes this Sunday. 0=this week (Mon to Sun), 1=the week before, -1=the week still running'
         required: false
         default: '0'
+      mode:
+        description: 'full = generate the issue and its audio. audio-only = re-render The Argument from the COMMITTED script and the PUBLISHED issue, with no Gemini call at all.'
+        required: false
+        default: 'full'
+        type: choice
+        options: [full, audio-only]
 
 concurrency:
   group: weekly-digest
@@ -131,7 +137,23 @@ jobs:
             exit 1
           fi
 
+      # ── audio-only: re-render the show, spend nothing ──
+      # flash is capped at 20 requests a DAY and the daily pipeline spends ~13,
+      # so re-running the generator to fix the SHOW would rewrite every essay
+      # that was already correct, at full cost, to change nothing a reader
+      # sees. The rundown is AUTHORED and committed (as History's scripts are,
+      # for the same reason), so the audio has its own entry point.
+      - name: Render The Argument from the committed script
+        if: inputs.mode == 'audio-only'
+        env:
+          PYTHONUNBUFFERED: "1"
+          VOID_SQLITE_PATH: pipeline_state.db
+          VOID_TTS_ENGINE: kokoro
+          VOID_KOKORO_PYTHON: .venv-tts/bin/python
+        run: python -m pipeline.briefing.render_weekly_audio
+
       - name: Generate weekly digest
+        if: inputs.mode != 'audio-only'
         env:
           PYTHONUNBUFFERED: "1"
           VOID_SQLITE_PATH: pipeline_state.db
@@ -158,6 +180,7 @@ jobs:
       # here would rewrite feed.json and archive.json from stale rows and the
       # commit below would publish yesterday's front page.
       - name: Export weekly snapshot
+        if: inputs.mode != 'audio-only'
         env:
           VOID_SQLITE_PATH: pipeline_state.db
           VOID_EXPORT_ONLY: weekly
