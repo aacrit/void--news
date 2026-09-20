@@ -246,7 +246,7 @@ back-issue archive lives in the deploy tree instead.
 | **Weekly** | Live, rebuilt rev 71-72. First post-rebuild run Monday 12:00 UTC is **unverified end to end**. |
 | **Weekly audio** ("The Argument") | Built rev 72, **first episode never heard**. |
 | **History** | Live, 78 events, static JSON since rev 69. |
-| **History audio** | **62/78 scripts written, 49/78 rendered.** Register: `docs/data/history-episodes.csv`, regenerate with `python3 pipeline/history/episode_report.py`. |
+| **History audio** | **78/78 scripts written, 78/78 rendered.** Register: `docs/data/history-episodes.csv`, regenerate with `python3 pipeline/history/episode_report.py`. |
 | **Revolt** | 301-hidden, serves MOCK data. Cannot be un-hidden until it reads static JSON. |
 | **Ship / Feedback** | Live on the Worker + D1. |
 | **Paper, Games** | 301-hidden. |
@@ -299,7 +299,7 @@ frontend/
   public/audio/ MP3s on the CDN, committed each run
 worker/         Cloudflare Worker + D1 — the ONLY live database
 migration/      PORT_NOTES.md is authoritative
-data/           sources.json (1,016) · history/events (78) · history/scripts (62)
+data/           sources.json (1,016) · history/events (78) · history/scripts (78)
 tests/          editorial stage, weekly, radio, history script + audio, gates
 docs/           CHANGELOG.md · OPEN-ITEMS.md · 45 reference docs
 ```
