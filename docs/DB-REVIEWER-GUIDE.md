@@ -1,5 +1,8 @@
 # DB Reviewer Guide — Data Quality Auditor
 
+> **⚠ PRE-MIGRATION (added 2026-09-20).** Describes the retired Postgres
+> schema. There is no Supabase. See `migration/PORT_NOTES.md`.
+
 Last updated: 2026-05-18 (rev 2 — added mega_cluster_capped diagnostic query for the 2026-05-18 clustering regression fix)
 
 ## Overview
