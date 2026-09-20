@@ -589,18 +589,24 @@ def _subject_words(text):
     return out
 
 
-def resolve_subject(headline: str, max_candidates: int = 4) -> dict | None:
-    """The Wikipedia article a headline is ABOUT, or None when unsure.
+def resolve_subjects(headline: str, max_candidates: int = 6) -> list[dict]:
+    """Every article a headline is plausibly about, best overlap first.
 
-    Returns {"subject", "file", "url"} for the best-overlapping article that
-    carries a lead image. None means no candidate shared a content word with
-    the headline, which is the correct answer rather than a guess.
+    Returns [{"subject", "file", "url"}], empty when nothing shared a content
+    word with the headline, which is the correct answer rather than a guess.
+
+    A LIST, not one answer, because suitability is judged AFTER resolution and
+    the first version could not act on the judgement. Resolution would pick
+    the single best-overlapping article, the diagram rule would reject its
+    lead image, and the slot was dropped with five other candidates sitting
+    unexamined. That took the issue from twelve illustrations to six: the rule
+    was right and giving up on it was not.
     """
     if not headline:
-        return None
+        return []
     hw = _subject_words(headline)
     if not hw:
-        return None
+        return []
 
     data = None
     delay = 5.0
@@ -626,10 +632,10 @@ def resolve_subject(headline: str, max_candidates: int = 4) -> dict | None:
         except Exception as e:
             if attempt == 2:
                 print(f"  [media] Wikipedia subject lookup failed: {e}")
-                return None
+                return []
             time.sleep(delay); delay *= 2
     if not data:
-        return None
+        return []
 
     pages = (data.get("query") or {}).get("pages") or {}
     scored = []
@@ -646,10 +652,9 @@ def resolve_subject(headline: str, max_candidates: int = 4) -> dict | None:
 
     if not scored:
         print(f"  [media] no Wikipedia subject overlaps {headline!r}")
-        return None
+        return []
     scored.sort(reverse=True)
-    _, _, title, fname, img = scored[0]
-    return {"subject": title, "file": fname, "url": img}
+    return [{"subject": t, "file": f, "url": u} for _, _, t, f, u in scored]
 
 
 def commons_file_license(filename: str) -> dict | None:
@@ -719,55 +724,38 @@ def find_subject_image(headline: str, *alternates: str) -> dict | None:
     photograph of the event itself is the thing rev 60 retired the image cacher
     to stop republishing.
     """
-    sub = None
+    # Walk every candidate of every query. Each rejection below is a
+    # SUITABILITY judgement made after resolution, so judging only the
+    # best-overlapping article and stopping threw away the five behind it.
+    tried = 0
     for q in (headline, *alternates):
         if not q:
             continue
-        sub = resolve_subject(q)
-        if sub:
-            break
-    if not sub:
-        return None
-    lic = commons_file_license(sub["file"])
-    if not lic or not lic.get("url"):
-        return None
-    # A LOWER FLOOR THAN THE SEARCH PATH, deliberately. WIKI_MIN_WIDTH is 800
-    # because History renders its images full-bleed in a Lightbox that never
-    # upscales. A weekly department plate or a Week in Brief thumbnail is a
-    # fraction of that, and the 800 floor was rejecting correctly-resolved
-    # subjects: "2026 Afghanistan-Pakistan war" and "Criticism of Jehovah's
-    # Witnesses" both resolved and both were thrown away over pixel count.
-    # An SVG has no meaningful intrinsic width and scales without loss.
-    # A DIAGRAM IS NOT AN ILLUSTRATION. Commons SVGs are overwhelmingly maps,
-    # flags, logos and charts: reference artefacts, not photographs, and a news
-    # magazine illustrates with photographs.
-    #
-    # This is not a taste rule, it is an accuracy one. The Ed Sheeran feature
-    # (a musician apologising over a Macklemore controversy, calling Gaza
-    # "unjustifiable") resolved to the Gaza war territorial-control map, with
-    # front lines, destroyed buildings and evacuation zones. Correctly
-    # licensed, correctly captioned, real word overlap on "Gaza", and a war map
-    # under a celebrity apology. The same rule drops the North Korean flag
-    # composite and the Canada orthographic projection.
-    #
-    # A map also carries framing Void would be endorsing by printing it, which
-    # is the one thing this section exists not to do silently.
-    if sub["file"].lower().endswith(".svg"):
-        print(f"  [media] {sub['subject']}: lead image is a diagram, not a photograph")
-        return None
-    if lic["width"] and lic["width"] < SUBJECT_MIN_WIDTH:
-        print(f"  [media] {sub['subject']}: {lic['width']}px is below the "
-              f"{SUBJECT_MIN_WIDTH}px subject floor")
-        return None
-    if not verify_image(lic["url"]):
-        return None
-    return {
-        "url": lic["url"],
-        "attribution": lic["attribution"],
-        "caption": sub["subject"],
-        "subject": sub["subject"],
-        "source": "wikimedia",
-    }
+        for sub in resolve_subjects(q):
+            if tried >= 8:        # bounded: every candidate costs a request
+                break
+            tried += 1
+
+            # A DIAGRAM IS NOT AN ILLUSTRATION. Checked before the licence
+            # lookup because it needs no network call to decide.
+            if sub["file"].lower().endswith(".svg"):
+                continue
+
+            lic = commons_file_license(sub["file"])
+            if not lic or not lic.get("url"):
+                continue
+            if lic["width"] and lic["width"] < SUBJECT_MIN_WIDTH:
+                continue
+            if not verify_image(lic["url"]):
+                continue
+            return {
+                "url": lic["url"],
+                "attribution": lic["attribution"],
+                "caption": sub["subject"],
+                "subject": sub["subject"],
+                "source": "wikimedia",
+            }
+    return None
 
 
 def find_cover_image_for_cluster(
