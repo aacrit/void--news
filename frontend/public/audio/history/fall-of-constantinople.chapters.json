@@ -1,0 +1,77 @@
+{
+ "version": "1.2.0",
+ "title": "The Fall of Constantinople",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 57.596
+  },
+  {
+   "startTime": 57.596,
+   "title": "The engineer he could not afford",
+   "endTime": 122.621
+  },
+  {
+   "startTime": 122.621,
+   "title": "The hill behind Galata",
+   "endTime": 184.253
+  },
+  {
+   "startTime": 184.253,
+   "title": "The last liturgy",
+   "endTime": 231.652
+  },
+  {
+   "startTime": 231.652,
+   "title": "The gate",
+   "endTime": 311.355
+  },
+  {
+   "startTime": 311.355,
+   "title": "The nave",
+   "endTime": 361.4
+  },
+  {
+   "startTime": 361.4,
+   "title": "Five accounts",
+   "endTime": 370.0
+  },
+  {
+   "startTime": 370.0,
+   "title": "The Ottoman and Turkish account",
+   "endTime": 451.156
+  },
+  {
+   "startTime": 451.156,
+   "title": "The Byzantine and Greek Orthodox account",
+   "endTime": 535.989
+  },
+  {
+   "startTime": 535.989,
+   "title": "The Western European and Latin Christian account",
+   "endTime": 599.562
+  },
+  {
+   "startTime": 599.562,
+   "title": "The Balkan Christian account",
+   "endTime": 682.653
+  },
+  {
+   "startTime": 682.653,
+   "title": "The Venetian and Genoese merchants",
+   "endTime": 772.977
+  },
+  {
+   "startTime": 772.977,
+   "title": "What each one leaves out",
+   "endTime": 858.006
+  },
+  {
+   "startTime": 858.006,
+   "title": "Legacy",
+   "endTime": 891.263
+  }
+ ]
+}
