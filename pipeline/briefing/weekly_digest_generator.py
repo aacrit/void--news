@@ -34,6 +34,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from utils.supabase_client import supabase
+from briefing.weekly_parse import (  # pure: no DB, no LLM, no network
+    clean_headline, parse_essay, parse_recap, looks_like_headline, weekly_window,
+)
 from summarizer.gemini_client import (
     generate_json as gemini_generate_json,
     generate_text as gemini_generate_text,
@@ -71,6 +74,7 @@ from media.image_search import find_cover_image_for_cluster
 # fetch-0-and-skip passes per weekly run.
 EDITIONS = ["world"]
 WEEK_RECAP_COUNT = 10
+BRIEF_THUMB_COUNT = 3   # Commons lookups for Week in Brief thumbnails
 OPINION_COUNT = 6
 COVER_STORIES = 2
 COVER_MIN_WORDS = 800
@@ -169,53 +173,11 @@ def _smart_generate_text(prompt, system_instruction=None, max_output_tokens=8192
 # No JSON, so prose with any punctuation is safe; no extra LLM calls.
 # ---------------------------------------------------------------------------
 
-def _clean_headline(line):
-    """Strip an optional 'HEADLINE:'/'TITLE:' label and Markdown chars off a line.
-
-    The label is only stripped when followed by a colon, so a real headline that
-    happens to start with the word "Headline" (e.g. "Headline inflation") is kept.
-    """
-    line = re.sub(r"^\s*#{0,3}\s*(?:HEADLINE|TITLE)\s*:\s*", "", line, flags=re.IGNORECASE)
-    return line.strip().strip("*_#").strip()
-
-
-def _parse_essay(raw, want_numbers=False):
-    """Parse a plain-text essay into {headline, text[, numbers]} or None.
-
-    Layout: first non-empty line is the headline, the rest is the body. If
-    want_numbers, a trailing line "NUMBERS" splits off a block of
-    "value | context" lines parsed into [{"stat", "context"}].
-    """
-    if not raw or not raw.strip():
-        return None
-    text = raw.strip()
-    numbers = []
-    if want_numbers:
-        parts = re.split(r"\n\s*#{0,3}\s*NUMBERS\s*:?\s*\n", text, maxsplit=1, flags=re.IGNORECASE)
-        if len(parts) == 2:
-            text, num_block = parts[0].strip(), parts[1]
-            for ln in num_block.splitlines():
-                ln = ln.strip().lstrip("-*•").strip()
-                if "|" not in ln:
-                    continue
-                value, _, context = ln.partition("|")
-                value = value.strip()
-                if value:
-                    numbers.append({"stat": value, "context": context.strip()})
-
-    lines = text.splitlines()
-    idx = next((k for k, ln in enumerate(lines) if ln.strip()), None)
-    if idx is None:
-        return None
-    headline = _clean_headline(lines[idx])
-    body = "\n".join(lines[idx + 1:]).strip()
-    if not body:
-        # Single-block output: no separable headline; keep it all as text.
-        body, headline = headline, ""
-    result = {"headline": headline, "text": body}
-    if want_numbers:
-        result["numbers"] = numbers
-    return result
+# _clean_headline / _parse_essay / _parse_recap now live in weekly_parse, which
+# imports re + datetime and nothing else, so tests can reach them without the
+# supabase_client import wall. The names are aliased so callers are unchanged.
+_clean_headline = clean_headline
+_parse_essay = parse_essay
 
 
 def _gen_essay(prompt, system, model=None, max_output_tokens=4096, want_numbers=False):
@@ -227,29 +189,7 @@ def _gen_essay(prompt, system, model=None, max_output_tokens=4096, want_numbers=
     return _parse_essay(raw, want_numbers=want_numbers)
 
 
-def _parse_recap(raw):
-    """Parse a plain-text recap batch into {stories: [{headline, summary}]}.
-
-    Stories are separated by a line that is just "###" (optionally "### STORY").
-    Within each block, the first non-empty line is the headline, the rest is the
-    summary. Returns None if nothing parseable.
-    """
-    if not raw or not raw.strip():
-        return None
-    blocks = re.split(r"\n\s*#{2,}(?:\s*STORY\s*\d*)?\s*\n", "\n" + raw.strip())
-    stories = []
-    for block in blocks:
-        lines = block.strip().splitlines()
-        idx = next((k for k, ln in enumerate(lines) if ln.strip()), None)
-        if idx is None:
-            continue
-        headline = _clean_headline(lines[idx])
-        summary = " ".join(ln.strip() for ln in lines[idx + 1:] if ln.strip()).strip()
-        if not summary:
-            summary, headline = headline, ""
-        if headline or summary:
-            stories.append({"headline": headline, "summary": summary})
-    return {"stories": stories} if stories else None
+_parse_recap = parse_recap
 
 
 # ---------------------------------------------------------------------------
@@ -342,7 +282,11 @@ OUTPUT FORMAT — plain text only, no JSON, no Markdown:
 - Then a blank line.
 - Then the 800-1200 word essay in flowing prose paragraphs separated by blank
   lines. No bulleted or numbered lists, no "TIMELINE" section, no headings,
-  no asterisks or bold/italic markers."""
+  no asterisks or bold/italic markers.
+- Then a line containing only NUMBERS, then 3 to 5 lines of "value | context",
+  each a figure that already appears in the essay above. The value is the
+  figure alone ("15 million", "$4.2 billion", "446 of 495"); the context is a
+  short phrase naming what it counts. No sentences, no other text."""
 
 
 # ---------------------------------------------------------------------------
@@ -610,9 +554,15 @@ def _generate_cover_stories(threads, edition):
             f"timeline, a section titled TIMELINE, lists, or any Markdown headings."
         )
 
-        result = _gen_essay(prompt, COVER_SYSTEM, model=_FLASH_MODEL, max_output_tokens=8192)
+        result = _gen_essay(prompt, COVER_SYSTEM, model=_FLASH_MODEL,
+                            max_output_tokens=8192, want_numbers=True)
         calls += 1
         if result and isinstance(result, dict):
+            # parse_essay leaves the headline empty when line 1 was prose, so
+            # the essay keeps its lede. Name the feature from the cluster
+            # rather than setting a paragraph at display size.
+            if not result.get("headline"):
+                result["headline"] = lead.get("title", "")
             result["cluster_id"] = lead.get("id")
             result["timeline"] = timeline
             result["thread_cluster_ids"] = [c.get("id") for c in thread["clusters"]]
@@ -715,6 +665,8 @@ def _generate_opinions(top_threads, all_threads, edition):
         calls += 1
 
         if result and isinstance(result, dict):
+            if not result.get("headline"):
+                result["headline"] = cluster.get("title", "")
             result["lean"] = lean
             result["topic"] = cluster.get("title", "")
             result["cluster_id"] = cluster.get("id")
@@ -766,6 +718,8 @@ def _generate_tech_brief(clusters, edition):
 
     result = _gen_essay(prompt, TECH_SYSTEM, max_output_tokens=4096)
     if result:
+        if not result.get("headline"):
+            result["headline"] = top_tech.get("title", "")
         result["cluster_id"] = top_tech.get("id")
     return result, 1
 
@@ -808,6 +762,8 @@ def _generate_sports(clusters, edition):
 
     result = _gen_essay(prompt, SPORTS_SYSTEM, max_output_tokens=4096)
     if result:
+        if not result.get("headline"):
+            result["headline"] = top.get("title", "")
         result["cluster_id"] = top.get("id")
     return result, 1
 
@@ -844,8 +800,12 @@ def _generate_bias_report(clusters, bias_stats, edition):
 
 # ── SECTION 6: WEEK IN BRIEF (8-10 additional stories) ──
 
-RECAP_SYSTEM = """You are an editor for void --weekly. Write concise 150-200 word recaps.
-Focus on what happened and what it means. Use specific facts.
+RECAP_SYSTEM = """You are an editor for void --weekly. Write 55-75 word briefs.
+
+Two or three sentences: what happened, and the one thing it changes. This is a
+Week in Brief column, not a second feature well — if it needs a fourth sentence
+it belongs elsewhere in the issue. Lead with the concrete fact. Use specific
+names and numbers.
 
 BANNED: "notable", "significant", "it should be noted", "interestingly".
 
@@ -853,7 +813,7 @@ OUTPUT FORMAT — plain text only, no JSON, no Markdown. For EACH story, output 
 block in this exact shape:
 ###
 <headline on one line>
-<150-200 word summary in flowing prose>
+<55-75 word brief in flowing prose>
 
 Separate every story with a line containing only ### before it. No other
 headings, labels, or Markdown."""
@@ -875,7 +835,7 @@ def _generate_week_recap(clusters, edition, skip_ids=None):
         for i, c in enumerate(remaining)
     )
 
-    prompt = f"Write 150-200 word recaps for these {len(remaining)} stories ({edition} edition):\n\n{stories_text}"
+    prompt = f"Write 55-75 word briefs for these {len(remaining)} stories ({edition} edition):\n\n{stories_text}"
     raw = _smart_generate_text(prompt, system_instruction=RECAP_SYSTEM, model=_FLASH_MODEL)
     parsed = _parse_recap(raw)
     # Re-attach the cluster identity that _parse_recap drops so each recap story
@@ -883,13 +843,27 @@ def _generate_week_recap(clusters, edition, skip_ids=None):
     # follow the same order as `remaining`; zip stops at the shortest, so a
     # count mismatch (e.g. the model merged or dropped a block) is safe.
     if parsed and parsed.get("stories"):
-        for story, cluster in zip(parsed["stories"], remaining):
-            img = cluster.get("cached_image_url")
-            if img:
-                story["image_url"] = img
-                attribution = cluster.get("cached_image_attribution")
-                if attribution:
-                    story["image_attribution"] = attribution
+        for i, (story, cluster) in enumerate(zip(parsed["stories"], remaining)):
+            if not story.get("headline"):
+                story["headline"] = cluster.get("title", "")
+            # Department kicker. The cluster already carries a category and the
+            # frontend type already declares `section`; nothing ever copied it
+            # across, so every brief item rendered unlabelled.
+            if cluster.get("category"):
+                story["section"] = cluster["category"]
+            # Thumbnails for the top 3 only. This used to read
+            # `cached_image_url`, written by the cluster_image_cacher that rev
+            # 60 RETIRED on copyright grounds, so it has been null on every row
+            # since and .wk-brief__thumb has never rendered. Ten Commons
+            # round-trips for ten thumbnails is not worth the run time.
+            if i < BRIEF_THUMB_COUNT and cluster.get("id"):
+                found = find_cover_image_for_cluster(
+                    cluster["id"], story.get("headline", ""), supabase_client=supabase,
+                )
+                if found:
+                    story["image_url"] = found["url"]
+                    if found.get("attribution"):
+                        story["image_attribution"] = found["attribution"]
     return parsed, 1
 
 
@@ -1584,13 +1558,7 @@ def generate_weekly_digest(editions=None, week_offset=0):
     # the cron comment and the --week-offset help both claimed it covered the
     # week that had just ended. Issue #23 (week of 2026-08-24, generated
     # 2026-08-24 12:48) is the last one that shipped that way.
-    week_end = now - timedelta(days=now.weekday() + 1 + (week_offset * 7))
-    week_start = week_end - timedelta(days=6)
-    week_start = week_start.replace(hour=0, minute=0, second=0, microsecond=0)
-    week_end = week_end.replace(hour=23, minute=59, second=59, microsecond=0)
-
-    epoch = datetime(2026, 3, 22, tzinfo=timezone.utc)
-    issue_number = max(1, int((week_start - epoch).days / 7) + 1)
+    week_start, week_end, issue_number = weekly_window(now, week_offset)
 
     print("=" * 60)
     print(f"void --weekly Issue #{issue_number}")
