@@ -1,0 +1,72 @@
+{
+ "version": "1.2.0",
+ "title": "The Fall of the Berlin Wall",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 48.572
+  },
+  {
+   "startTime": 48.572,
+   "title": "Six fifty three",
+   "endTime": 94.891
+  },
+  {
+   "startTime": 94.891,
+   "title": "Half past eleven",
+   "endTime": 165.018
+  },
+  {
+   "startTime": 165.018,
+   "title": "What he was standing in",
+   "endTime": 219.93
+  },
+  {
+   "startTime": 219.93,
+   "title": "The year it was already losing",
+   "endTime": 286.452
+  },
+  {
+   "startTime": 286.452,
+   "title": "Five accounts",
+   "endTime": 292.087
+  },
+  {
+   "startTime": 292.087,
+   "title": "The West German account",
+   "endTime": 354.131
+  },
+  {
+   "startTime": 354.131,
+   "title": "The East German dissidents",
+   "endTime": 409.265
+  },
+  {
+   "startTime": 409.265,
+   "title": "The Soviet view",
+   "endTime": 461.066
+  },
+  {
+   "startTime": 461.066,
+   "title": "The reunification critics",
+   "endTime": 513.848
+  },
+  {
+   "startTime": 513.848,
+   "title": "The global south",
+   "endTime": 575.437
+  },
+  {
+   "startTime": 575.437,
+   "title": "What each one leaves out",
+   "endTime": 656.667
+  },
+  {
+   "startTime": 656.667,
+   "title": "Legacy",
+   "endTime": 702.49
+  }
+ ]
+}
