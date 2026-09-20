@@ -30,6 +30,7 @@ if str(REPO / "pipeline") not in sys.path:
     sys.path.insert(0, str(REPO / "pipeline"))
 from utils.feed_config import CANDIDATES, MIN_DISPLAYABLE  # noqa: E402
 from utils.display_window import is_displayable  # noqa: E402
+from editorial import grounding  # noqa: E402
 DB = (
     sys.argv[1]
     if len(sys.argv) > 1
@@ -317,12 +318,17 @@ if want("archive"):
 if want("feed"):
     # ── deepdive/<cluster>.json for displayed clusters (typed DB is indexed -> fast) ──
     dd = 0
+    gr = 0
     for cid in [d["id"] for d in clusters]:
         links = c.execute("SELECT article_id FROM cluster_articles WHERE cluster_id=?", (cid,)).fetchall()
         out_rows = []
+        # The text the card was written from, kept so E-13 and E-14 can still
+        # be run against it after the run's database is gone. Not served.
+        grounding_rows = []
         for lk in links:
             a = c.execute(
-                "SELECT id,title,url,summary,published_at,image_url,source_id FROM articles WHERE id=?",
+                "SELECT id,title,url,summary,published_at,image_url,source_id,full_text "
+                "FROM articles WHERE id=?",
                 (lk["article_id"],),
             ).fetchone()
             if not a:
@@ -348,6 +354,10 @@ if want("feed"):
                     "confidence": pnum(bs["confidence"]),
                     "rationale": pjson(bs["rationale"]) if (bs["rationale"] and str(bs["rationale"]).lstrip()[:1] == "{") else bs["rationale"],
                 }
+            grounding_rows.append({
+                "id": a["id"], "url": a["url"], "title": a["title"],
+                "summary": a["summary"], "full_text": a["full_text"],
+            })
             out_rows.append({
                 "article": {
                     "id": a["id"], "title": a["title"], "url": a["url"],
@@ -359,7 +369,12 @@ if want("feed"):
         if out_rows:
             wj(PUBLIC_DIR / "deepdive" / f"{cid}.json", out_rows)
             dd += 1
+        if grounding_rows:
+            grounding.write_record(
+                BUILD_DIR, grounding.build_record(cid, grounding_rows))
+            gr += 1
     print(f"deepdive/: {dd} cluster files")
+    print(f"grounding/: {gr} cluster files (build-data, not served)")
 
 if want("methodology"):
     # ── methodology.json ──

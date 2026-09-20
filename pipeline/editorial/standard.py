@@ -636,6 +636,59 @@ def e13_numbers_are_sourced(title: str, summary: str, sources: str) -> list[Find
     return findings
 
 
+# E-14: a quotation in the card must be verbatim in the source articles.
+#
+# L-02 has always said "every quotation is verbatim, pronouns included", but it
+# lived in the critique pass, which is an LLM judging an LLM and is capped at
+# 20 flash requests a day. A quotation is the one thing a reader is entitled to
+# treat as literal, so it is worth a deterministic check at write time. This is
+# the second grounded rule, and it reads the same source text E-13 does.
+#
+# Narrow, because scare quotes and single words are not quotations:
+#   - only spans of four words or more, so "reform", "special operation" and
+#     quoted titles are out of scope;
+#   - matching ignores case, whitespace and the difference between a curly and
+#     a straight apostrophe, all of which the summarizer changes freely;
+#   - an elided quote is checked segment by segment around the ellipsis, since
+#     the sources never contain the ellipsis itself.
+# Anything that survives all of that and still does not appear is a line the
+# card puts in someone's mouth that they did not say.
+_QUOTE_RE = re.compile(r"[\u201c\"]([^\u201c\u201d\"]{8,400})[\u201d\"]")
+_ELLIPSIS_RE = re.compile(r"\.\.\.|\u2026")
+
+
+def _fold_quote(text: str) -> str:
+    """Lowercase, straighten the punctuation the summarizer rewrites, collapse."""
+    t = (text or "").lower()
+    for curly, plain in (("\u2018", "'"), ("\u2019", "'"), ("\u201c", '"'),
+                         ("\u201d", '"'), ("\u2013", "-"), ("\u2014", "-")):
+        t = t.replace(curly, plain)
+    return re.sub(r"\s+", " ", t).strip()
+
+
+def e14_quotes_are_verbatim(title: str, summary: str, sources: str) -> list[Finding]:
+    """Every quotation of four words or more appears verbatim in the sources."""
+    haystack = _fold_quote(sources)
+    findings: list[Finding] = []
+    for field, text in (("headline", title), ("summary", summary)):
+        for raw in _QUOTE_RE.findall(text or ""):
+            if len(raw.split()) < 4:
+                continue
+            segments = [seg for seg in _ELLIPSIS_RE.split(raw) if len(seg.split()) >= 3]
+            if not segments:
+                segments = [raw]
+            missing = [seg for seg in segments
+                       if _fold_quote(seg).strip(" ,.;:!?-") not in haystack]
+            if missing:
+                shown = _fold_quote(missing[0])[:70]
+                findings.append(Finding(
+                    "E-14",
+                    f"{field} quotes \"{shown}\", which appears in none of the "
+                    f"source articles: quote it as written or paraphrase it",
+                ))
+    return findings
+
+
 class Validator(NamedTuple):
     id: str
     name: str
@@ -661,6 +714,7 @@ VALIDATORS: list[Validator] = [
     Validator("E-11", "no second-person pronoun outside quotes", ADVISORY, e11_second_person_outside_quotes, "summary"),
     Validator("E-12", "no sentence isolated from the rest of the summary", ADVISORY, e12_isolated_sentence, "summary"),
     Validator("E-13", "every number in the card appears in its sources", ENFORCED, e13_numbers_are_sourced, "grounded"),
+    Validator("E-14", "every quotation in the card is verbatim in its sources", ENFORCED, e14_quotes_are_verbatim, "grounded"),
 ]
 
 VALIDATORS_BY_ID = {v.id: v for v in VALIDATORS}
@@ -668,6 +722,8 @@ VALIDATORS_BY_ID = {v.id: v for v in VALIDATORS}
 # Declared, implemented in the Block 2 critique pass (see the standard doc).
 LLM_RULES = {
     # GROUNDED: judged against the source articles.
+    # Also enforced deterministically at write time by E-14, which catches the
+    # invented quotation; the critique pass still judges pronouns and tense.
     "L-02": "every quotation is verbatim, pronouns included",
     "L-05": "no internal contradiction; ages, titles and numbers are sourced",
     "L-06": "criticism of a named living person carries their response",

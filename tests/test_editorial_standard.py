@@ -108,6 +108,25 @@ CASES = [
                   "The Colombian embassy did not respond to a request for comment about "
                   "the gun law change.")},
      "a sentence that belongs to a different story"),
+    # L-02 has said "every quotation is verbatim" since the standard was
+    # written, but only an LLM ever judged it, and the critique pass is capped
+    # at 20 flash requests a day. A quotation is the one thing a reader may
+    # treat as literal. E-14 checks it deterministically, at write time.
+    ("E-14", {"title": "Minister Rejects Findings of Water Safety Review",
+              "summary": (
+                  "Environment Minister Dela Whitcombe rejected the review's findings on "
+                  "Thursday, telling reporters outside the ministry, \u201cThis report was "
+                  "written by people who have never set foot in the catchment and it is "
+                  "worthless.\u201d The review found lead concentrations above the national "
+                  "limit at 11 of 40 sampling points. The ministry has not said whether it "
+                  "will commission a second review, and the minister declined to take "
+                  "further questions on the testing programme itself."),
+              "source_text": (
+                  "Environment Minister Dela Whitcombe dismissed the review on Thursday. "
+                  "\u201cI have real questions about the methodology here,\u201d she told "
+                  "reporters outside the ministry. The review found lead above the national "
+                  "limit at 11 of 40 sampling points.")},
+     "a quotation the source never contains"),
 ]
 
 
@@ -247,5 +266,43 @@ def test_e13_catches_a_fabricated_number():
     print("PASS  E-13 catches a fabricated number and spares a sourced one")
 
 
+def test_e14_catches_an_invented_quotation() -> None:
+    """A quotation must be in the sources; scare quotes and elisions must not fire."""
+    sources = (
+        "Environment Minister Dela Whitcombe dismissed the review on Thursday. "
+        "\u201cI have real questions about the methodology here, and I have said so to "
+        "the department,\u201d she told reporters outside the ministry. She called the "
+        "sampling regime a \u201cwork in progress\u201d."
+    )
+    filler = "Filler sentence for length. " * 20
+
+    bad = {"title": "Minister Rejects Water Review",
+           "summary": ('She said, "This report was written by people who have never set '
+                       'foot in the catchment." ') + filler,
+           "source_text": sources}
+    assert "E-14" in [f.id for f in validate_candidate(bad)], "invented quotation not caught"
+
+    # Verbatim, with the curly quotes the summarizer straightens on the way out.
+    good = dict(bad, summary=('She said, "I have real questions about the methodology '
+                              'here, and I have said so to the department." ') + filler)
+    assert "E-14" not in [f.id for f in validate_candidate(good)], "verbatim quote failed"
+
+    # An elided quote is checked around the ellipsis, which no source contains.
+    assert "E-14" not in [f.id for f in validate_candidate(
+        dict(bad, summary='She said, "I have real questions about the methodology ... '
+                          'I have said so to the department." ' + filler))]
+
+    # Three words or fewer is a scare quote or a title, not a quotation.
+    assert "E-14" not in [f.id for f in validate_candidate(
+        dict(bad, summary='She called it a "work in progress" and left. ' + filler))]
+
+    # No source text: skip rather than accuse, exactly as E-13 does.
+    assert "E-14" not in [f.id for f in validate_candidate(
+        {"title": "Minister Rejects Water Review",
+         "summary": 'She said, "Nobody in this ministry believes that number." ' + filler})]
+    print("PASS  E-14 catches an invented quotation and spares a verbatim one")
+
+
 if __name__ == "__main__":
     test_e13_catches_a_fabricated_number()
+    test_e14_catches_an_invented_quotation()
