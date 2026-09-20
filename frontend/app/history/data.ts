@@ -23,6 +23,7 @@ import { BASE_PATH } from "../lib/utils";
 import type {
   HistoricalEvent,
   Perspective,
+  PrimarySource,
   MediaItem,
   EventConnection,
   RedactedEvent,
@@ -63,6 +64,35 @@ const MEDIA_TYPES: Record<string, MediaItem["type"]> = {
 /* ── Perspective color assignment ── */
 const COLORS: PerspectiveColor[] = ["a", "b", "c", "d", "e"];
 
+/* ── String lists that are not all strings ──
+   Seven entries across the 78 event records contain ": " in an unquoted YAML
+   scalar, so the loader parsed them as a one-key map rather than a line of
+   text: "Caesar's genocide in Gaul (his own count: 1 million killed, 1 million
+   enslaved)" arrives as { "Caesar's genocide in Gaul (his own count":
+   "1 million killed, 1 million enslaved)" }.
+
+   The old page only ever rendered these inside a client modal, so a React
+   "Objects are not valid as a React child" crash was invisible. The Hearing
+   renders them at build, where the same value fails the whole export.
+
+   Rejoining key and value with ": " restores the authored line verbatim, which
+   is the only acceptable repair: dropping the entry would delete a fact from
+   the record. The underlying quoting defect belongs in the YAML. */
+function textList(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((item) => {
+      if (typeof item === "string") return item;
+      if (item && typeof item === "object") {
+        return Object.entries(item as Record<string, unknown>)
+          .map(([k, v]) => `${k}: ${v}`)
+          .join("; ");
+      }
+      return item == null ? "" : String(item);
+    })
+    .filter(Boolean);
+}
+
 /* ── Static snapshot loader ──
    One fetch per page load, memoised: the landing, era, region and event pages
    all read the same file. A failed or empty fetch falls back to mock data so a
@@ -85,7 +115,7 @@ function loadSnapshot(): Promise<HistoryRow[] | null> {
 
 /* Rows arrive with their relations nested; mapEventWithRelations wants them
    passed separately, exactly as the four Supabase queries returned them. */
-function mapRow(row: HistoryRow, allRows: HistoryRow[]): HistoricalEvent {
+export function mapRow(row: HistoryRow, allRows: HistoryRow[]): HistoricalEvent {
   return mapEventWithRelations(
     row,
     row.perspectives ?? [],
@@ -164,8 +194,8 @@ function mapEventWithRelations(
     temporalAnchor: p.region_origin ?? "",
     geographicAnchor: p.region_origin ?? "",
     narrative: p.narrative,
-    keyNarratives: Array.isArray(p.emphasized) ? p.emphasized : [],
-    omissions: Array.isArray(p.omitted) ? p.omitted : [],
+    keyNarratives: textList(p.emphasized),
+    omissions: textList(p.omitted),
     disputed: [],
     primarySources: Array.isArray(p.notable_quotes)
       ? p.notable_quotes.map((q: { text: string; speaker: string; context: string }) => ({
@@ -175,6 +205,8 @@ function mapEventWithRelations(
           date: "",
         }))
       : [],
+    keyArguments: textList(p.key_arguments),
+    sources: Array.isArray(p.sources) ? p.sources : [],
   }));
 
   /* A stock "Landscape orientation, 6000x4000px" dimension string is not a
@@ -251,8 +283,11 @@ function mapEventWithRelations(
     heroAttribution: row.hero_image_attribution ?? undefined,
     contextNarrative: row.summary ?? "",
     significance: row.significance ?? undefined,
-    legacyPoints: Array.isArray(row.legacy_points) ? row.legacy_points as string[] : undefined,
+    legacyPoints: Array.isArray(row.legacy_points) ? textList(row.legacy_points) : undefined,
     keyFigures,
+    primarySources: Array.isArray(row.primary_source_excerpts)
+      ? (row.primary_source_excerpts as PrimarySource[])
+      : undefined,
     deathToll: row.death_toll ?? undefined,
     displaced: row.affected_population ?? undefined,
     duration: row.duration ?? undefined,

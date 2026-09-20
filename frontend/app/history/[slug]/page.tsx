@@ -1,12 +1,30 @@
 import type { Metadata } from "next";
 import { MOCK_EVENTS } from "../mockData";
 import { HOOKS } from "../hooks";
-import { getHistoryEntry, getHistorySlugs } from "../../lib/historyCatalog";
-import EventPageClient from "./EventPageClient";
+import {
+  getHistoryEntry,
+  getHistoryRow,
+  getHistoryRows,
+  getHistorySlugs,
+} from "../../lib/historyCatalog";
+import { getHistoryScript } from "../../lib/historyScript";
+import { mapRow } from "../data";
+import { buildHearing } from "../hearing";
+import Hearing from "../components/Hearing";
 
 /* ===========================================================================
-   /history/[slug] — Individual event detail page
-   generateStaticParams for static export. Client component handles data.
+   /history/[slug] — one event, as The Hearing.
+
+   A SERVER component. It used to render EventPageClient, which fetched
+   /data/history.json in a useEffect, so the served HTML said "Retrieving
+   archival record..." and nothing else: no open, no accounts, no turn. The
+   weekly was prerendered in rev 71 for exactly this reason.
+
+   Now the event row and the parsed script are both read at build time and the
+   page is markup. Three client islands remain, and each is one because it
+   needs browser state that cannot exist at build: the rail (where the reader
+   is), the Listen button (the shared player's queue), and the gallery's
+   lightbox (an overlay with a focus trap).
    =========================================================================== */
 
 export function generateStaticParams() {
@@ -30,6 +48,37 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
-export default function EventPage({ params }: { params: Promise<{ slug: string }> }) {
-  return <EventPageClient slugPromise={params} />;
+export default async function EventPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+
+  const row = getHistoryRow(slug);
+  const event = row
+    ? mapRow(row, getHistoryRows())
+    : MOCK_EVENTS.find((e) => e.slug === slug) ?? null;
+
+  if (!event) {
+    return (
+      <div className="hist-main hist-not-found">
+        <h1>Record Not Found</h1>
+        <p>This archival record has not been declassified or does not exist.</p>
+      </div>
+    );
+  }
+
+  /* No script exported for this slug yet: the hero and the record still render.
+     A missing export should look like a page without a spine, not a failure. */
+  const script = getHistoryScript(slug);
+  const hearing = script ? buildHearing(script, event) : null;
+
+  /* Chronologically next, for the exit. Read from the same rows, so it does not
+     cost a second pass over the catalog. */
+  const rows = getHistoryRows();
+  const ordered = [...rows].sort((a, b) => (a.date_sort ?? 0) - (b.date_sort ?? 0));
+  const at = ordered.findIndex((r) => r.slug === slug);
+  const next =
+    at >= 0 && at < ordered.length - 1
+      ? { slug: String(ordered[at + 1].slug), title: String(ordered[at + 1].title ?? "") }
+      : null;
+
+  return <Hearing event={event} hearing={hearing} nextEvent={next} />;
 }
