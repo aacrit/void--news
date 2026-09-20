@@ -65,6 +65,7 @@ jobs:
           python tests/test_weekly.py
           python tests/test_weekly_script.py
           python tests/test_weekly_assembly.py
+          python tests/test_history_meta.py
           pip install --quiet pyyaml
           python tests/test_history_script.py
 
