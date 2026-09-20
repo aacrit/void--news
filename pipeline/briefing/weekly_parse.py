@@ -150,6 +150,111 @@ def parse_recap(raw):
 # ---------------------------------------------------------------------------
 
 # Issue #1 is the week beginning Sunday 2026-03-22.
+# ---------------------------------------------------------------------------
+# The editorial spec, enforced
+#
+# The prompts have always CLAIMED enforcement. COVER_SYSTEM asks for 800-1200
+# words; OPINION_SYSTEM says an output containing "notable" or "crucially" is
+# REJECTED. Nothing rejected. The check existed at exactly one site in the
+# whole file, inside `_generate_weekly_opinion`, so five of six sections were
+# written against a spec nobody measured, and the published issue carries nine
+# banned terms and three em dashes in the opinion columns alone.
+#
+# A model is free to ignore an instruction. That makes the CHECK the fix, the
+# same argument that moved the headline guard out of COVER_SYSTEM and into
+# `looks_like_headline`. This lives here, with the other pure functions, so it
+# is testable without a key: the generator cannot be imported without one.
+# ---------------------------------------------------------------------------
+
+#: Told-not-shown tells. A word here is banned because it ASSERTS significance
+#: instead of showing it, which is the cardinal rule in CLAUDE.md.
+PROHIBITED_TERMS = (
+    # "crucial" as well as "crucially": the bare adjective is four of the nine
+    # hits on the published issue, and the bounded check would have missed it.
+    "notable", "notably", "significant", "significantly", "crucial",
+    "it should be noted",
+    "interestingly", "crucially", "it is worth noting", "it's worth noting",
+    "it bears mentioning", "noteworthy", "what you need to know",
+    "here's what", "here is what", "let's break down", "let's dive",
+    "in conclusion", "to summarize", "all things considered",
+    "a testament to", "should chill", "game-changing", "revolutionary",
+)
+
+_TERM_RE = {
+    t: re.compile(r"(?<![a-z])" + re.escape(t) + r"(?![a-z])", re.I)
+    for t in PROHIBITED_TERMS
+}
+
+
+def word_count(text) -> int:
+    t = (text or "").strip()
+    return len(t.split()) if t else 0
+
+
+def banned_terms(text):
+    """Every prohibited term present, word-bounded.
+
+    Bounded deliberately: a raw substring test flags "signify" for
+    "significant" and, more to the point, cannot tell a quoted source saying
+    "crucial" from our own prose. The bound is the cheap half of that; the
+    quote case is left alone rather than guessed at.
+    """
+    low = (text or "")
+    return [t for t, rx in _TERM_RE.items() if rx.search(low)]
+
+
+def strip_dashes(text):
+    """Em and en dashes out of editorial prose, deterministically.
+
+    CLAUDE.md bans both as an AI tell. This runs whether or not the model
+    complied, because a rewrite the reader never sees is worth more than a
+    finding in a log. Audio scripts are exempt and never passed here: there the
+    dash is a breath mark for the synthesiser.
+    """
+    if not text:
+        return text
+    out = text.replace(" — ", ", ").replace(" – ", ", ")
+    out = out.replace("—", ", ").replace("–", "-")
+    # ", ," is what two adjacent dashes leave behind.
+    return re.sub(r",\s*,", ",", out)
+
+
+def enforce(text, *, min_words=0, max_words=0):
+    """Findings against the spec, in the words the retry prompt will use.
+
+    Returns [] when the piece is clean. The caller regenerates once naming
+    these, then ships the better attempt: a second failure means the model will
+    not comply, and a missing department reads worse than a long one.
+    """
+    findings = []
+    n = word_count(text)
+    if min_words and n < min_words:
+        findings.append(f"it runs {n} words against a {min_words}-{max_words or min_words} word brief; it is too short")
+    elif max_words and n > max_words:
+        findings.append(f"it runs {n} words against a {min_words}-{max_words} word brief; it is too long")
+    found = banned_terms(text)
+    if found:
+        findings.append("it uses " + ", ".join(f'"{t}"' for t in sorted(found))
+                        + ", which announces that a fact matters instead of showing it; "
+                          "give the fact and let it land")
+    if "—" in (text or "") or "–" in (text or ""):
+        findings.append("it uses a dash where a full stop or a comma belongs")
+    return findings
+
+
+def retry_suffix(findings):
+    """The findings, named, appended to the original prompt for one retry.
+
+    Naming them is the whole point. Stage 2's validator pass established the
+    pattern: a bare "try again" gets a reworded version of the same defect.
+    """
+    return (
+        "\n\nYour previous attempt was rejected. "
+        + " ".join(f"({i + 1}) {f}." for i, f in enumerate(findings))
+        + " Rewrite it in full, fixing every point. Do not acknowledge this note."
+    )
+
+
 ISSUE_EPOCH = datetime(2026, 3, 22, tzinfo=timezone.utc)
 
 

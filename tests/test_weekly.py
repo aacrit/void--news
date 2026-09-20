@@ -28,7 +28,11 @@ sys.path.insert(0, str(ROOT / "pipeline"))
 
 from briefing.weekly_parse import (  # noqa: E402
     MAX_HEADLINE_CHARS,
+    banned_terms,
     clean_headline,
+    enforce,
+    retry_suffix,
+    strip_dashes,
     looks_like_headline,
     parse_essay,
     parse_recap,
@@ -378,6 +382,97 @@ def test_class_parity():
 
 
 # ---------------------------------------------------------------------------
+# W-T09  The editorial spec is enforced, not merely stated
+# ---------------------------------------------------------------------------
+def test_enforcement():
+    """Every prompt CLAIMED enforcement; one site out of six actually checked.
+
+    COVER_SYSTEM asks for 800-1200 words and the published covers run 623 and
+    700. OPINION_SYSTEM says an output containing "crucially" is REJECTED and
+    four of five published opinions contain it. The check lived inside
+    `_generate_weekly_opinion` alone, so five sections were measured by nobody.
+
+    Each assertion below is a planted defect: the real published prose that
+    slipped through.
+    """
+    print("\nW-T09  editorial enforcement")
+
+    # The live text, verbatim from the published Issue #26 opinion columns.
+    live = ('The agreement\u2019s details\u2014the extent of the U.S. military '
+            'presence\u2014remain crucially undefined.')
+    f = enforce(live)
+    check("flags the live banned term", any("crucially" in x for x in f), str(f))
+    check("flags the live em dash", any("dash" in x for x in f), str(f))
+
+    check("word-bounded, so 'signify' is not 'significant'",
+          banned_terms("signify what the signal means") == [])
+    check("catches the term it is meant to catch",
+          banned_terms("a significant shift") == ["significant"])
+
+    short, long_ = "word " * 300, "word " * 1300
+    check("flags a cover 300 words short",
+          any("too short" in x for x in enforce(short, min_words=800, max_words=1200)))
+    check("flags a cover 100 words long",
+          any("too long" in x for x in enforce(long_, min_words=800, max_words=1200)))
+    check("passes a cover inside its brief",
+          enforce("word " * 1000, min_words=800, max_words=1200) == [])
+
+    # The dash strip must be deterministic and must not leave debris.
+    check("em dash becomes a comma",
+          strip_dashes("the deal \u2014 as written \u2014 fails")
+          == "the deal, as written, fails")
+    check("en dash in a range becomes a hyphen",
+          strip_dashes("Sep 14\u201320") == "Sep 14-20")
+    check("no doubled comma left behind",
+          ",," not in strip_dashes("one \u2014, two"))
+    check("nothing to strip is left alone",
+          strip_dashes("a well-made point.") == "a well-made point.")
+
+    # The retry has to NAME the findings. Stage 2's lesson was that a bare
+    # "try again" returns the same defect in different words.
+    suffix = retry_suffix(enforce(live))
+    check("the retry names the offending term", "crucially" in suffix)
+    check("the retry names the dash", "dash" in suffix)
+
+
+# ---------------------------------------------------------------------------
+# W-T10  The Week in Brief contains a week
+# ---------------------------------------------------------------------------
+def test_week_spread():
+    """The section whose entire premise is THE WEEK was one day of it.
+
+    `_generate_week_recap` took `clusters[:10]` off a query sorted by
+    `headline_rank DESC`, and all ten published items matched daily-feed
+    headlines from a single date: Saturday's front page, re-summarised.
+    """
+    print("\nW-T10  week in brief spans the week")
+    # The generator cannot be imported without a DB, so the pure helper is
+    # re-read as source and exec'd alone. This is the seam weekly_parse exists
+    # to remove; `_spread_over_week` is next in line to move there.
+    src = (ROOT / "pipeline" / "briefing" / "weekly_digest_generator.py").read_text()
+    body = src[src.index("def _spread_over_week"):src.index("def _generate_week_recap")]
+    ns = {}
+    exec(compile(body, "weekly_digest_generator.py", "exec"), ns)
+    spread = ns["_spread_over_week"]
+
+    # Six days, five stories a day, ranked: the old slice returns Monday five
+    # times over.
+    week = [{"id": f"{d}-{r}", "first_published": f"2026-09-{14 + d}T08:00:00Z"}
+            for d in range(6) for r in range(5)]
+    picked = spread(week, 10)
+    days = {c["first_published"][:10] for c in picked}
+    check("ten items cover six days", len(days) == 6, f"{len(days)} day(s)")
+    check("strongest of each day comes first",
+          picked[0]["id"].endswith("-0") and picked[1]["id"].endswith("-0"))
+    check("takes exactly what it was asked for", len(picked) == 10, str(len(picked)))
+
+    one_day = [{"id": str(i), "first_published": "2026-09-14T08:00:00Z"} for i in range(20)]
+    check("a one-day week degrades to rank order",
+          [c["id"] for c in spread(one_day, 3)] == ["0", "1", "2"])
+    check("undated rows do not crash", len(spread([{"id": "a"}, {"id": "b"}], 5)) == 2)
+
+
+# ---------------------------------------------------------------------------
 # W-T08  Document structure: one h1, no skipped level, no dead contents anchor
 # ---------------------------------------------------------------------------
 def _strip_comments(src):
@@ -509,6 +604,8 @@ def main():
     test_committed_snapshot()
     test_build_weekly_row()
     test_class_parity()
+    test_enforcement()
+    test_week_spread()
     test_document_structure()
     test_archive()
     print()

@@ -40,15 +40,17 @@ export function formatWeekRange(start: string, end: string): string {
   return `${MONTHS[am - 1]} ${ad}, ${ay} to ${MONTHS[bm - 1]} ${bd}, ${by}`;
 }
 
-/** "Sep 14 – 20" for the compact back-issue list. */
+/** "Sep 14 to 20" for the compact back-issue list. No en dash: the
+    dash ban in CLAUDE.md covers frontend microcopy, and this string renders
+    in every Back Issues row. */
 export function formatArchiveRange(start: string, end: string): string {
   const a = parts(start);
   const b = parts(end);
   if (!a || !b) return "";
   const [, am, ad] = a;
   const [, bm, bd] = b;
-  if (am === bm) return `${MONTHS_SHORT[am - 1]} ${ad} – ${bd}`;
-  return `${MONTHS_SHORT[am - 1]} ${ad} – ${MONTHS_SHORT[bm - 1]} ${bd}`;
+  if (am === bm) return `${MONTHS_SHORT[am - 1]} ${ad} to ${bd}`;
+  return `${MONTHS_SHORT[am - 1]} ${ad} to ${MONTHS_SHORT[bm - 1]} ${bd}`;
 }
 
 /* The DB issue number counts from the generator's 2026-03-22 epoch, but the
@@ -126,7 +128,7 @@ export function pickPullQuote(text: string): string {
 
 /** A number the way a magazine sets one: "2,637". */
 export function groupDigits(n: number | null | undefined): string {
-  if (n === null || n === undefined || !Number.isFinite(n)) return "—";
+  if (n === null || n === undefined || !Number.isFinite(n)) return "n/a";
   return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
