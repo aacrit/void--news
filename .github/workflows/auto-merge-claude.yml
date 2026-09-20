@@ -103,6 +103,15 @@ jobs:
       # temp file, which nobody had tried.
       - name: Weekly generator (imports the real module)
         run: python tests/test_weekly_generator.py
+      # Runs HERE, not in the light job, because image_search imports requests
+      # and the light job installs only nltk: there it would print SKIP forever
+      # and gate nothing. IMG-02 re-checks every image already on the site, so
+      # a licence this rule rejects fails the build rather than arriving as a
+      # takedown.
+      - name: Image licences (gate + everything published)
+        run: python tests/test_image_license.py
+      - name: Subject image resolution (the guard, the licence, the floor)
+        run: python tests/test_subject_image.py
       - name: Run editorial-stage harness
         run: python tests/test_editorial_stage.py
 

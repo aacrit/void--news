@@ -155,10 +155,14 @@ describe Supabase reads that are now `readFileSync`. `pipeline/main.py` prints a
 `frontend/app/components/HomeContent.tsx` carries a dead Supabase feed query that can never fire.
 `docs/DEPLOYMENT.md` and `docs/PIPELINE-BRAIN.md` both predate the migration.
 
-**`.github/workflows/weekly-digest.yml` restores the state cache and never saves it back.** This
-is deliberate (the daily pipeline is usually still running at 12:00 and a save
-would lose a day), which is why the weekly row dies with the container and the
-back-issue archive lives in the deploy tree instead.
+**`.github/workflows/weekly-digest.yml` restores the state cache and never saves it back.**
+The weekly row therefore dies with the container, which is why the back-issue
+archive lives in the deploy tree (`build-data/weekly-issues.json`) instead. On
+the old Monday 12:00 slot restore-only was a hard requirement, because the
+daily pipeline was usually still running and a save would have pushed a pre-run
+copy of the state under a newer key. The cron is now **Sunday 18:00**, after the
+daily has finished, so that race is gone; restore-only stays because the weekly
+adds nothing to the state that anything reads back.
 
 ---
 
@@ -198,7 +202,7 @@ back-issue archive lives in the deploy tree instead.
 | **News** (daily feed) | Live. Top 20, two-stage pipeline, 35-cluster bench. |
 | **On Air** (daily radio) | Live. Kokoro three voices, chapters, mastered to -16 LUFS. |
 | **The Brief** (TL;DR + Opinion) | Live. One story per paragraph. |
-| **Weekly** | Live, rebuilt rev 71-72. First post-rebuild run Monday 12:00 UTC is **unverified end to end**. |
+| **Weekly** | Live. **Vol. I, No. 1 published 2026-09-20**, the first issue on the Sunday cadence and the first ever to carry departments. Aug 24-30 is kept as the pilot. |
 | **Weekly audio** ("The Argument") | Built rev 72, **first episode never heard**. |
 | **History** | Live, 78 events, static JSON since rev 69. |
 | **History audio** | **62/78 scripts written, 49/78 rendered.** Register: `docs/data/history-episodes.csv`, regenerate with `python3 pipeline/history/episode_report.py`. |
