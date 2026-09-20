@@ -38,7 +38,7 @@ from utils.supabase_client import supabase
 from briefing.weekly_parse import (  # pure: no DB, no LLM, no network
     build_weekly_row, clean_headline, parse_essay, parse_recap,
     looks_like_headline, weekly_window,
-    banned_terms, enforce, retry_suffix, strip_dashes,
+    banned_terms, enforce, enforce_recap, retry_suffix, strip_dashes,
     word_count,
 )
 from summarizer.gemini_client import (
@@ -969,10 +969,11 @@ def _generate_bias_report(clusters, bias_stats, edition):
 
 RECAP_SYSTEM = """You are an editor for void --weekly. Write 55-75 word briefs.
 
-Two or three sentences: what happened, and the one thing it changes. This is a
-Week in Brief column, not a second feature well — if it needs a fourth sentence
-it belongs elsewhere in the issue. Lead with the concrete fact. Use specific
-names and numbers.
+Three sentences: what happened, who it lands on, and the one thing it changes.
+This is a Week in Brief column, not a second feature well. A fourth sentence
+belongs elsewhere in the issue; two sentences is a headline with a comma in it,
+and any brief under 55 words is carrying one fact where it owes three. Lead
+with the concrete fact. Use specific names and numbers.
 
 BANNED: "notable", "significant", "it should be noted", "interestingly".
 
@@ -1072,22 +1073,12 @@ def _generate_week_recap(clusters, edition, skip_ids=None):
             story["summary"] = strip_dashes(story.get("summary", ""))
             story["headline"] = strip_dashes(story.get("headline", ""))
 
-        cap = ESSAY_SPECS["brief"]["max_words"]
-        long_ones = [word_count(x.get("summary")) for x in items]
-        over = [n for n in long_ones if n > cap * 1.3]
-        banned = sorted({t for x in items for t in banned_terms(x.get("summary"))})
-
-        findings = []
-        if over:
-            findings.append(
-                f"{len(over)} of {len(items)} briefs run past {cap} words "
-                f"(the longest is {max(over)}); two or three sentences each, no more"
-            )
-        if banned:
-            findings.append(
-                "the column uses " + ", ".join(f'"{t}"' for t in banned)
-                + " — give the fact, not a label announcing that it matters"
-            )
+        # The band lives in `weekly_parse`, the pure core, so it is reachable
+        # from a test that does not import this module. That is the whole
+        # reason the core exists: the length rule that shipped nine of ten
+        # briefs under the floor was unreachable from any gate while it sat
+        # inline here.
+        findings = enforce_recap(items, **ESSAY_SPECS["brief"])
         if not findings:
             if attempt:
                 print("    [brief] clean on regeneration")
