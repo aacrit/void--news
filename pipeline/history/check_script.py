@@ -40,9 +40,9 @@ def check(slug: str) -> bool:
           f"{sum(1 for s in sc.segments if s.kind=='DOCUMENT')} documents, "
           f"{sum(1 for s in sc.segments if s.kind=='PERSPECTIVE')} accounts")
     for f in fails:
-        print(f"  FAIL {f.id}: {f.message}")
+        print(f"  FAIL {f.id}: {f.detail}")
     for f in warns:
-        print(f"  warn {f.id}: {f.message}")
+        print(f"  warn {f.id}: {f.detail}")
     if not findings:
         print("  clean")
     return not fails
