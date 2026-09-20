@@ -218,21 +218,28 @@ def illustrate(row, *, dry_run=False) -> list[str]:
                 else:
                     out.append(f"{key}[{i}] no licensed subject for {head[:42]!r}")
                 continue
+            # NOTHING APPEARS TWICE, decided BEFORE the write. This block sat
+            # after the assignment, so a duplicate was attached, then detected,
+            # then reported as "skipped" while staying on the page. The cover
+            # and its lead feature shipped the same photograph under a log line
+            # saying they had not.
+            u = (found.get("url") or "").split("?")[0]
+            if u in seen:
+                if stale and not dry_run:
+                    # It had an image, the replacement duplicates something
+                    # else, so it keeps nothing.
+                    for k in ("image_url", "image_attribution", "image_caption"):
+                        item.pop(k, None)
+                    changed = True
+                out.append(f"{key}[{i}] skipped: would repeat {found.get('caption')}")
+                continue
+
             if not dry_run:
                 item["image_url"] = found["url"]
                 if found.get("attribution"):
                     item["image_attribution"] = found["attribution"]
                 if found.get("caption"):
                     item["image_caption"] = found["caption"]
-            # Nothing appears twice in one issue.
-            u = (found.get("url") or "").split("?")[0]
-            if u in seen:
-                if stale and not dry_run:
-                    for k in ("image_url", "image_attribution", "image_caption"):
-                        item.pop(k, None)
-                    changed = True
-                out.append(f"{key}[{i}] skipped: would repeat {found.get('caption')}")
-                continue
             seen.add(u)
             changed = True
             verb = "re-resolved" if stale else "->"

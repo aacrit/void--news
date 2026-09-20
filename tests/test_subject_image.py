@@ -192,10 +192,51 @@ def test_no_repeats():
           len(used) == 2, sorted(used))
 
 
+def test_skip_means_not_written():
+    """SUB-05  a slot reported as skipped must not carry the image.
+
+    The dedup check sat AFTER the assignment, so a duplicate was attached,
+    then detected, then reported as "skipped" while staying on the page. The
+    issue shipped the same Greenland protest photograph as its full-screen
+    cover AND its lead feature, under a log line saying it had not.
+
+    That is the worst shape a bug can take: the log is not merely wrong, it
+    reports the opposite of what happened, so reading it is worse than not
+    looking. Asserted against a fake lookup, so it needs no network.
+    """
+    print("\nSUB-05  a skipped duplicate is not written")
+    import briefing.backfill_weekly_images as B
+
+    real = B.find_cover_image_for_cluster
+    B.find_cover_image_for_cluster = lambda *a, **k: {
+        "url": "https://x/same.jpg?v=9", "attribution": "A", "caption": "Same Subject"}
+    try:
+        row = {
+            "cover_image_url": "https://x/same.jpg?v=1",
+            "cover_image_caption": "Same Subject",
+            "cover_text": [{"headline": "One"}, {"headline": "Two"}],
+            "departments": [], "recap_stories": [],
+        }
+        lines = B.illustrate(row)
+        urls = [c.get("image_url") for c in row["cover_text"]]
+        check("both features report skipped",
+              sum("skipped" in l for l in lines) == 2, "; ".join(lines))
+        check("and NEITHER carries the image", urls == [None, None], str(urls))
+        check("no caption is left behind either",
+              all(not c.get("image_caption") for c in row["cover_text"]))
+
+        # A query string is not a different image: the cover's ?v= differs
+        # from the lookup's by construction.
+        check("the cover kept its own image", row["cover_image_url"].endswith("v=1"))
+    finally:
+        B.find_cover_image_for_cluster = real
+
+
 if __name__ == "__main__":
     test_guard()
     test_licence_and_floor()
     test_not_a_diagram()
     test_no_repeats()
+    test_skip_means_not_written()
     print("\n" + ("All subject-image gates passed." if ok else "FAILURES above."))
     sys.exit(0 if ok else 1)
