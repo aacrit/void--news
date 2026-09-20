@@ -855,9 +855,17 @@ export default function WeeklyDigest({ edition }: WeeklyDigestProps) {
       ...(digest.cover_text ?? []).slice(1).map((s) => s.headline),
       ...(digest.recap_stories ?? []).map((s) => s.headline),
     ];
+    /* A coverline is a headline, and the slot is sized for one: ~34ch, three
+       lines. Issue #26's second cover essay arrived with a 300-character
+       paragraph where its headline should be (the generator took the essay's
+       first line regardless of whether it read like a headline), and it
+       rendered as a narrow ransom-note column under "Also inside". The
+       generator rejects that now; this guard keeps an already-published issue
+       from showing it. */
+    const isCoverline = (t: string) => t.length <= 120 && !/[.!?]\s+[A-Z]/.test(t);
     for (const c of candidates) {
       const t = (c ?? "").trim();
-      if (!t || seen.has(norm(t))) continue;
+      if (!t || seen.has(norm(t)) || !isCoverline(t)) continue;
       seen.add(norm(t));
       coverlines.push(t);
       if (coverlines.length >= 3) break;

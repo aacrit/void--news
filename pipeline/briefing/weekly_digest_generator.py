@@ -179,6 +179,22 @@ def _clean_headline(line):
     return line.strip().strip("*_#").strip()
 
 
+# A headline is short and is one thing. Prose opening an essay is neither, and
+# it reaches the page in a slot sized for four or five words.
+_SENTENCE_BREAK = re.compile(r"[.!?]\s+[A-Z]")
+
+
+def _looks_like_headline(line: str) -> bool:
+    text = (line or "").strip()
+    if not text or len(text) > 120:
+        return False
+    if _SENTENCE_BREAK.search(text):
+        return False
+    # A single trailing period is ordinary in a headline; a sentence that ends
+    # mid-thought with a comma-spliced clause is not.
+    return text.count(",") <= 3
+
+
 def _parse_essay(raw, want_numbers=False):
     """Parse a plain-text essay into {headline, text[, numbers]} or None.
 
@@ -212,6 +228,14 @@ def _parse_essay(raw, want_numbers=False):
     if not body:
         # Single-block output: no separable headline; keep it all as text.
         body, headline = headline, ""
+    elif not _looks_like_headline(headline):
+        # The model opened with prose instead of a headline. Taking the first
+        # line regardless is how Issue #26's second cover essay ended up with a
+        # 300-character "headline" that the cover rendered as a 34ch ransom-note
+        # column under "Also inside". Better no headline than a paragraph in its
+        # place: the caller and the frontend both already skip an empty one.
+        body = f"{headline}\n{body}".strip()
+        headline = ""
     result = {"headline": headline, "text": body}
     if want_numbers:
         result["numbers"] = numbers

@@ -11,9 +11,12 @@ call, no database, no regeneration of a single word of the issue. It searches
 Wikimedia Commons for the cover headline and its topic words, and writes the
 result into frontend/public/data/weekly.json.
 
-When nothing licensed fits, the image is CLEARED rather than left. A weekly with
-no cover photograph is a design compromise; a weekly with someone else's wire
-photograph is a legal one.
+When a search runs and nothing licensed fits, the image is CLEARED rather than
+left: a weekly with no cover photograph is a design compromise, a weekly with
+someone else's wire photograph is a legal one. When Commons cannot be REACHED at
+all, the cover is left exactly as it is and the exit code is 2. Those two look
+identical from the outside and mean opposite things, and conflating them is how
+this tool twice deleted its own good result the moment Wikimedia throttled it.
 
     python -m pipeline.briefing.refresh_weekly_cover            # apply
     python -m pipeline.briefing.refresh_weekly_cover --dry-run  # show only
@@ -78,21 +81,35 @@ def search_terms(headline: str, cover_text) -> list[str]:
     return out
 
 
-def pick(headline: str, cover_text) -> dict | None:
+def pick(headline: str, cover_text) -> tuple[dict | None, bool]:
+    """(chosen image or None, whether any search actually completed).
+
+    The second value matters: "searched and found nothing licensed" and "could
+    not reach Commons" look identical from the outside and mean opposite things.
+    Treating a throttled request as the former wipes a perfectly good cover, as
+    this tool did to its own result twice before the distinction existed.
+    """
+    reached = False
     for term in search_terms(headline, cover_text):
         try:
             results = search_wikimedia(term, max_results=4)
         except Exception as e:
             print(f"  [warn] search failed for {term!r}: {e}")
             continue
+        # search_wikimedia swallows its own failures and returns [], so an empty
+        # list is only evidence of "reached" when something else came back.
+        if results:
+            reached = True
         for r in results:
-            low = r.url.lower()
+            # The rendered thumbnail, not the multi-megabyte original.
+            url = r.thumbnail_url or r.url
+            low = url.lower()
             if any(w in low for w in ("logo", "icon", "flag_of", "coat_of_arms", "symbol")):
                 continue
-            if verify_image(r.url):
+            if verify_image(url):
                 print(f"  matched on {term!r}")
-                return {"url": r.url, "attribution": r.attribution, "source": "wikimedia"}
-    return None
+                return {"url": url, "attribution": r.attribution, "source": "wikimedia"}, True
+    return None, reached
 
 
 def main() -> int:
@@ -111,10 +128,13 @@ def main() -> int:
     print(f"  credit : {data.get('cover_image_attribution')!r} "
           f"(source {data.get('cover_image_source')!r})")
 
-    chosen = pick(data.get("cover_headline", ""), data.get("cover_text"))
+    chosen, reached = pick(data.get("cover_headline", ""), data.get("cover_text"))
     if chosen:
         print(f"  new    : {chosen['url'][:96]}")
         print(f"  credit : {chosen['attribution']}")
+    elif not reached:
+        print("  could NOT reach Commons; leaving the cover exactly as it is")
+        return 2
     else:
         print("  nothing freely licensed matched; clearing the cover image")
 

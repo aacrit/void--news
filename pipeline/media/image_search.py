@@ -469,9 +469,13 @@ def find_cover_image_for_cluster(
     # Wikimedia Commons. search_wikimedia already refuses anything that is not
     # cc0 / public-domain / cc-by / cc-by-sa.
     for best in search_wikimedia(cluster_title, max_results=3):
-        if verify_image(best.url):
+        # The RENDERED thumbnail, not the original. `url` is the full-size file,
+        # which on Commons routinely runs to several megabytes; putting that
+        # behind a magazine hero is the same mistake History's images made.
+        url = best.thumbnail_url or best.url
+        if verify_image(url):
             return {
-                "url": best.url,
+                "url": url,
                 "attribution": best.attribution,
                 "source": "wikimedia",
             }
@@ -484,9 +488,12 @@ def find_cover_image_for_cluster(
             continue
         try:
             results = fn(cluster_title, per_page=3)
-            if results and verify_image(results[0].url):
+            if not results:
+                continue
+            url = results[0].thumbnail_url or results[0].url
+            if verify_image(url):
                 return {
-                    "url": results[0].url,
+                    "url": url,
                     "attribution": results[0].attribution,
                     "source": src,
                 }
