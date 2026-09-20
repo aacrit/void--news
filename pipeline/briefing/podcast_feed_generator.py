@@ -38,6 +38,22 @@ SITE_URL = os.environ.get(
 ).rstrip("/")
 
 SHOW_META = {
+    "weekly": {
+        "title": "Void Weekly: The Argument",
+        # A weekly magazine listed under "Daily News" is wrong in a public
+        # directory, and the subcategory was a single shared constant.
+        "subcategory": "News Commentary",
+        # Falls back to the world art until a weekly cover is drawn, because a
+        # feed pointing at a 404 is rejected by Apple outright.
+        "cover": "podcast-cover-world.jpg",
+        "description": (
+            "The Sunday edition of Void News, read by three voices. The week's "
+            "cover story, then the two columnists who disagree about it, "
+            "reading their own published words at each other across a held "
+            "pause. Then what each of them leaves out, the week's coverage "
+            "measured, and the question it leaves open. No ads. No paywall."
+        ),
+    },
     "world": {
         "title": "Void News: On Air",
         "description": (
@@ -150,11 +166,12 @@ def _build_feed(edition: str, episodes: list[dict]) -> bytes:
     SubElement(owner, f"{{{ITUNES_NS}}}name").text = AUTHOR
     SubElement(owner, f"{{{ITUNES_NS}}}email").text = CONTACT_EMAIL
 
-    cover_url = f"{SITE_URL}/podcast-cover-{edition}.jpg"
-    SubElement(channel, f"{{{ITUNES_NS}}}image", {"href": cover_url})
+    cover = meta.get("cover") or f"podcast-cover-{edition}.jpg"
+    SubElement(channel, f"{{{ITUNES_NS}}}image", {"href": f"{SITE_URL}/{cover}"})
 
     cat = SubElement(channel, f"{{{ITUNES_NS}}}category", {"text": CATEGORY})
-    SubElement(cat, f"{{{ITUNES_NS}}}category", {"text": SUBCATEGORY})
+    SubElement(cat, f"{{{ITUNES_NS}}}category",
+               {"text": meta.get("subcategory") or SUBCATEGORY})
 
     SubElement(channel, f"{{{ITUNES_NS}}}explicit").text = "false"
     SubElement(channel, f"{{{ITUNES_NS}}}type").text = "episodic"
@@ -281,12 +298,83 @@ def generate_podcast_feeds(editions: list[str] | None = None) -> dict[str, str]:
 
 
 # ---------------------------------------------------------------------------
+# The weekly feed
+#
+# It reads the DEPLOY TREE, not the database, and that is not a shortcut.
+# `weekly-digest.yml` restores the state DB and never saves it back (the daily
+# pipeline is usually still running at 12:00 UTC and a save would lose a day),
+# so the weekly row is written into a database that is discarded when the job
+# ends. `build-data/weekly-issues.json` is the archive of record — the same
+# file the prerendered /weekly/<week> pages read — which makes it the only
+# place a back catalogue of episodes actually exists.
+#
+# `audio_url`, duration, file size, cover and `created_at` were already every
+# field an <enclosure> needs, sitting in that file, with nothing reading them.
+# ---------------------------------------------------------------------------
+
+WEEKLY_ISSUES = (Path(__file__).parent.parent.parent
+                 / "frontend" / "build-data" / "weekly-issues.json")
+
+
+def _weekly_episode(issue: dict) -> dict:
+    """Map an issue onto the episode shape `_build_feed` already consumes."""
+    no = issue.get("issue_number")
+    headline = (issue.get("cover_headline") or "").strip()
+    week = issue.get("week_start") or ""
+    title = f"Issue #{no}: {headline}" if headline else f"Issue #{no}"
+    body = (issue.get("opinion_text") or "").strip()
+    covers = [c for c in (issue.get("cover_text") or []) if isinstance(c, dict)]
+    if covers and covers[0].get("text"):
+        body = covers[0]["text"].strip()
+    return {
+        "id": issue.get("id"),
+        "edition": "weekly",
+        "created_at": issue.get("created_at") or f"{week}T12:00:00+00:00",
+        "tldr_headline": title,
+        "tldr_text": body,
+        "audio_url": issue.get("audio_url"),
+        "audio_duration_seconds": issue.get("audio_duration_seconds"),
+        "audio_file_size": issue.get("audio_file_size"),
+        "audio_voice_label": issue.get("audio_voice_label"),
+        "audio_chapters": issue.get("audio_chapters"),
+    }
+
+
+def generate_weekly_podcast_feed() -> str | None:
+    """Write frontend/public/podcast-weekly.xml from the archive of record."""
+    if not WEEKLY_ISSUES.exists():
+        print("  [podcast] no weekly archive — skipping the Sunday feed")
+        return None
+    try:
+        rows = json.loads(WEEKLY_ISSUES.read_text(encoding="utf-8"))
+    except Exception as e:
+        print(f"  [warn][podcast] weekly archive unreadable: {e}")
+        return None
+    issues = [r for r in rows if isinstance(r, dict) and r.get("audio_url")]
+    if not issues:
+        print("  [podcast] no weekly issue carries audio yet — skipping")
+        return None
+    issues.sort(key=lambda r: r.get("week_start") or "", reverse=True)
+    episodes = [_weekly_episode(i) for i in issues[:EPISODES_PER_FEED]]
+
+    out_dir = Path(__file__).parent.parent.parent / "frontend" / "public"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out = out_dir / "podcast-weekly.xml"
+    out.write_bytes(_build_feed("weekly", episodes))
+    print(f"  [podcast] weekly: {len(episodes)} episodes -> {out.name}")
+    return str(out)
+
+
+# ---------------------------------------------------------------------------
 # CLI entry point
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
     print("Generating podcast feeds...")
     results = generate_podcast_feeds()
+    weekly = generate_weekly_podcast_feed()
+    if weekly:
+        results["weekly"] = weekly
     for ed, path in results.items():
         print(f"  {ed}: {path}")
     if not results:

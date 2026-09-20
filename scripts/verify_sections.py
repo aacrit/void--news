@@ -19,6 +19,8 @@ Checks, against the LIVE site (stdlib only, like verify_production.py):
         here: images pointed at Special:Redirect, which answers HTTP 429 and
         rendered the archive pictureless, and six were licensed fair-use.
   H-04  every /history/<slug>/ in the catalog is actually prerendered
+  W-08  the served /weekly carries no em or en dash outside its <title>.
+  W-09  the audio edition ships an ordered chapter rail and its sidecar.
   W-01  data/weekly.json carries an issue number and a Monday-to-Sunday week
   W-03  the cover image, if present, comes from a freely licensed source.
         Issue #26 shipped an AFP wire photograph hotlinked off a publisher CDN.
@@ -31,6 +33,7 @@ Exit 1 on any failure; prints one line per check. Run by verify-production.yml.
 from __future__ import annotations
 
 import datetime as dt
+import re
 import json
 import sys
 import urllib.error
@@ -275,6 +278,53 @@ def main(site: str) -> int:
            "payload is clean"
            if not leaked and not stringly
            else f"unrendered TTS source: {leaked}; shipped as raw strings: {stringly}")
+
+    # W-08 — no em or en dash in the SERVED prose. CLAUDE.md bans both in
+    # generated copy AND frontend microcopy, and until 2026-09-20 exactly one
+    # of six weekly generators enforced anything, so the live page carried
+    # seven. The title is excluded because a <title> is chrome, not copy, and
+    # the JSON payload because a raw data blob is not prose a reader sees.
+    try:
+        status, _, whtml = fetch(f"{base}/weekly/")
+        # The whole <head> goes, not just <title>: og:title and og:description
+        # are chrome in the same way a tab label is, and a page name reading
+        # "Issue #8: ... — Void Weekly" is not prose a reader is shown.
+        body = re.sub(r"<head\b.*?</head>", "", whtml, flags=re.S)
+        body = re.sub(r"<script.*?</script>", "", body, flags=re.S)
+        dashes = body.count("\u2014") + body.count("\u2013")
+        sample = ""
+        m = re.search(r".{50}[\u2014\u2013].{50}", body)
+        if m:
+            sample = ": ..." + m.group().replace("\n", " ")
+        report("W-08", dashes == 0,
+               "no dash in the served prose" if dashes == 0
+               else f"{dashes} dash(es) in served prose{sample}")
+    except Exception as e:
+        report("W-08", False, f"could not fetch /weekly/: {type(e).__name__}: {e}")
+
+    # W-09 — the Sunday audio edition, if the issue has one, ships its chapter
+    # sidecar and the rail is ordered from zero. A chapter rail that starts
+    # late or runs backwards is a player that jumps to the wrong movement, and
+    # it is invisible until someone uses it.
+    chs = weekly.get("audio_chapters")
+    if not weekly.get("audio_url"):
+        report("W-09", True, "this issue has no audio (acceptable)")
+    elif isinstance(chs, str):
+        report("W-09", False, "audio_chapters shipped as a raw JSON string")
+    elif not chs:
+        report("W-09", True, "legacy two-voice read, no chapter rail (acceptable)")
+    else:
+        times = [c.get("startTime") for c in chs if isinstance(c, dict)]
+        ordered = times == sorted(times) and times and times[0] == 0
+        sidecar = weekly["audio_url"].split("?")[0].rsplit(".", 1)[0] + ".chapters.json"
+        try:
+            sstatus, _, _ = fetch(base.rstrip("/") + sidecar)
+        except Exception:
+            sstatus = 0
+        report("W-09", bool(ordered) and sstatus == 200,
+               f"{len(chs)} chapters, ordered from zero, sidecar {sstatus}"
+               if ordered and sstatus == 200
+               else f"chapters ordered={bool(ordered)}, sidecar returned {sstatus}")
 
     return 0 if ok else 1
 
