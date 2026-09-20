@@ -34,6 +34,7 @@ from briefing.weekly_parse import (  # noqa: E402
     parse_recap,
     weekly_window,
 )
+from briefing.weekly_parse import build_weekly_row  # noqa: E402
 
 FIXTURES = Path(__file__).parent / "fixtures"
 WEEKLY_JSON = ROOT / "frontend" / "public" / "data" / "weekly.json"
@@ -224,12 +225,79 @@ def test_committed_snapshot():
         check("cover image absent (acceptable)", True, "better than an unlicensed one")
 
 
+
+# ---------------------------------------------------------------------------
+# W-T05  The persistence contract
+# ---------------------------------------------------------------------------
+def test_build_weekly_row():
+    print("\nW-T05  build_weekly_row")
+    fx = json.loads((FIXTURES / "weekly_inputs.json").read_text())
+    row = build_weekly_row(**{k: v for k, v in fx.items() if not k.startswith("_")})
+
+    # The headline defect: these two departments were generated every week and
+    # the row had only a comment where the write should have been.
+    depts = json.loads(row["departments"])
+    check("departments persisted", len(depts) == 2, f"{len(depts)} department(s)")
+    check("departments are ordered tech then sports",
+          [d["slug"] for d in depts] == ["tech", "sports"], str([d["slug"] for d in depts]))
+    check("every department is complete",
+          all(d.get("slug") and d.get("label") and d.get("headline") and d.get("text")
+              for d in depts))
+
+    ops = json.loads(row["opinions"])
+    check("all five opinions persisted", len(ops) == 5, f"{len(ops)}")
+    check("every opinion carries a lean", all(o.get("lean") for o in ops))
+
+    paired = [o for o in ops if o.get("paired")]
+    check("exactly two opinions are paired", len(paired) == 2, f"{len(paired)}")
+    check("the paired two share one pair_id",
+          len({o.get("pair_id") for o in paired}) == 1,
+          str([o.get("pair_id") for o in paired]))
+    check("the paired two argue opposite sides",
+          {o["lean"] for o in paired} == {"left", "right"},
+          str(sorted(o["lean"] for o in paired)))
+    check("the paired two argue the SAME story",
+          len({o.get("cluster_id") for o in paired}) == 1)
+
+    # The legacy buckets must be a PARTITION of the flat array. This is the
+    # assertion that catches a refactor silently dropping an essay — which is
+    # exactly what the page did: it read [0] of each of three buckets, and the
+    # two extra center essays were never rendered by anything.
+    buckets = []
+    for k in ("opinion_left", "opinion_center", "opinion_right"):
+        buckets.extend(json.loads(row[k]))
+    check("buckets and flat array have the same count",
+          len(buckets) == len(ops), f"{len(buckets)} vs {len(ops)}")
+    key = lambda o: (o.get("position"), o.get("headline"))
+    check("buckets are a partition of the flat array",
+          sorted(map(key, buckets)) == sorted(map(key, ops)))
+
+    # Everything the exporter parses must be valid JSON coming out of here.
+    for k in sorted(_weekly_pjson_fields()):
+        if k in row and row[k] is not None:
+            try:
+                json.loads(row[k])
+                ok, why = True, ""
+            except (TypeError, ValueError) as e:
+                ok, why = False, str(e)
+            check(f"row[{k}] is valid JSON", ok, why)
+
+    # No cover headline may be a paragraph, at the moment of writing.
+    covers = json.loads(row["cover_text"])
+    check("no cover headline written as a paragraph",
+          all(len(c.get("headline") or "") <= MAX_HEADLINE_CHARS for c in covers))
+
+    check("audio_script is still written to the DB", row["audio_script"] is not None,
+          "the exporter drops it from the browser payload, not from storage")
+
+
 def main():
     print("void --weekly gates")
     test_headline_guard()
     test_weekly_window()
     test_export_reader_parity()
     test_committed_snapshot()
+    test_build_weekly_row()
     print()
     if _failures:
         print(f"FAILED ({len(_failures)}): " + ", ".join(_failures))
