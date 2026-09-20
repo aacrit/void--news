@@ -100,7 +100,7 @@ N: This account starts from a different question than any of the others. Not who
 N: Venice had held commercial quarters in Constantinople since ten eighty two. Genoa held the district of Pera across the Golden Horn under a treaty from twelve sixty one. Both republics had more money invested in that trade than in any crusade, and pepper, cinnamon, and cloves moved through the city on their ships.
 N: Individual Venetians and Genoese fought and died at the walls, Giovanni Giustiniani's seven hundred among them. Genoa's own colony at Pera stayed formally neutral through the siege, then surrendered peacefully once it was over.
 N: Both cities negotiated trade treaties with Mehmed within a year of the conquest, Genoa in fourteen fifty three, Venice in fourteen fifty four. The overland spice routes now ran through Ottoman territory and Ottoman tariffs, and the far more expensive gamble of sailing around Africa began to look rational.
-N: Within forty years Bartolomeu Dias rounded the Cape of Good Hope, and Vasco da Gama reached Calicut and sailed home with a cargo of pepper that alone repaid sixty times the cost of the voyage.
+N: Within half a century of the conquest Bartolomeu Dias had rounded the Cape of Good Hope, and Vasco da Gama had reached Calicut and sailed home with a cargo of pepper that alone repaid sixty times the cost of the voyage.
 
 ## TURN | What each one leaves out
 N: And here is what none of the five fully accounts for.
