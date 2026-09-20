@@ -50,6 +50,13 @@ export default function BackIssues({
         page={page}
         id="wk-archive-heading"
       />
+      {/* The stable URL for the back catalogue. This strip shows every issue
+          today, because there are few; the index is where it goes when there
+          are fifty, and it is what to link when you mean "the magazine"
+          rather than "this week". */}
+      <Link className="wk-archive__all" href="/weekly/archive">
+        Every issue <span aria-hidden="true">&rarr;</span>
+      </Link>
       <ul className="wk-archive__list">
         {entries.map((entry) => {
           const current = entry.week_start === currentWeek;

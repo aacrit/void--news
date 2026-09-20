@@ -65,11 +65,16 @@ export default function BiasReport({
   totalClusters,
   issueNumber,
   page,
+  delta,
 }: {
   data: WeeklyBiasReportData | null;
   totalClusters: number | null;
   issueNumber: number;
   page: number;
+  /* The week-over-week comparison, rendered by the page because only the page
+     can read the previous issue. It belongs INSIDE this section: it is a
+     second reading of the same numbers, not a second section. */
+  delta?: React.ReactNode;
 }) {
   const [ref, visible] = useScrollReveal(0.1);
   const stats = data?.stats;
@@ -179,6 +184,8 @@ export default function BiasReport({
           </ol>
         </div>
       )}
+
+      {delta}
     </section>
   );
 }

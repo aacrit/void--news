@@ -38,6 +38,21 @@
   Strict-Transport-Security: max-age=31536000; includeSubDomains
   Content-Security-Policy: default-src 'self'; img-src 'self' https: data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com; font-src 'self' data:; connect-src 'self' https://void-api.aacrit.workers.dev https://cloudflareinsights.com; media-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'
 
+# ── Per-issue share cards ───────────────────────────────────────────────
+# Next's `opengraph-image` file convention emits the PNG at an EXTENSIONLESS
+# path (/weekly/opengraph-image). Cloudflare Pages infers Content-Type from
+# the extension, so without this rule it serves application/octet-stream —
+# and the global `X-Content-Type-Options: nosniff` above then forbids every
+# scraper from treating it as an image. The card would render nowhere, and
+# nothing in the build would say so.
+/weekly/opengraph-image
+  Content-Type: image/png
+  Cache-Control: public, max-age=3600, s-maxage=86400
+
+/weekly/*/opengraph-image
+  Content-Type: image/png
+  Cache-Control: public, max-age=3600, s-maxage=86400
+
 # ── Hashed static assets — long-lived, immutable ────────────────────────
 # Next.js writes /_next/static/* with content-hashed filenames; safe to
 # cache effectively forever. This is the rule GH Pages can't match
