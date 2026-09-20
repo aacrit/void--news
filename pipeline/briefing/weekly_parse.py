@@ -261,17 +261,28 @@ ISSUE_EPOCH = datetime(2026, 3, 22, tzinfo=timezone.utc)
 def weekly_window(now, week_offset=0):
     """-> (week_start, week_end, issue_number) for a Monday-to-Sunday week.
 
-    `week_offset` counts weeks BACK from the most recently COMPLETED week: 0 is
-    the week that just ended, 1 the week before it, and -1 the current
-    in-progress week (partial data, for a mid-week refresh).
+    `week_offset` counts weeks BACK from the week that most recently closed: 0
+    is that week, 1 the week before it, and -1 the week still in progress
+    (partial data, for a mid-week refresh).
+
+    THE WEEK CLOSES ON SUNDAY NIGHT, AND SUNDAY IS INSIDE IT. Void Weekly
+    publishes on Sunday evening, so the issue covers the week the reader has
+    just lived through, Monday to that same Sunday. The modulo is what makes
+    that true: `weekday() + 1` walks back to the PREVIOUS Sunday from every
+    day including Sunday itself, which on a Sunday means skipping the week
+    that is closing as the issue goes out. `% 7` sends Sunday to zero and
+    leaves every other weekday exactly where it was, so a run on any other day
+    still resolves to the last completed week and the 52-Monday test is
+    unchanged by this.
 
     `now` is injected rather than read from the clock precisely because this
-    sign was inverted until 2026-09-19 and could only be caught in production:
-    offset 0 resolved to the week CONTAINING today, so the Monday 12:00 UTC
-    cron generated the week that had just STARTED. Issue #23 (week of
-    2026-08-24, generated 2026-08-24 12:48) is the last one that shipped so.
+    arithmetic was WRONG IN THE OTHER DIRECTION until 2026-09-19 and could
+    only be caught in production: offset 0 resolved to the week CONTAINING
+    today on every weekday, so the Monday cron generated the week that had
+    just STARTED. Issue #23 (week of 2026-08-24, generated 2026-08-24 12:48)
+    is the last one that shipped that way.
     """
-    week_end = now - timedelta(days=now.weekday() + 1 + (week_offset * 7))
+    week_end = now - timedelta(days=((now.weekday() + 1) % 7) + (week_offset * 7))
     week_start = week_end - timedelta(days=6)
     week_start = week_start.replace(hour=0, minute=0, second=0, microsecond=0)
     week_end = week_end.replace(hour=23, minute=59, second=59, microsecond=0)

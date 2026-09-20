@@ -38,7 +38,7 @@ import { useAudio, type EpisodeMeta } from "../components/AudioProvider";
 import Footer from "../components/Footer";
 import ThemeToggle from "../components/ThemeToggle";
 import SigilWordmark from "../components/SigilWordmark";
-import { formatWeekRange, weeklyDisplayNo, clip, essayParagraphs } from "./format";
+import { formatWeekRange, issueLabel, clip, essayParagraphs } from "./format";
 import { InkRule, RevealFlourish } from "./components/furniture";
 import CinematicCover from "./components/CinematicCover";
 import Contents, { type ContentsEntry } from "./components/Contents";
@@ -126,7 +126,7 @@ export default function WeeklyIssue({
      and a folio on The Argument, then rendered nothing: a dead anchor, and
      every folio after it off by one against the plates it is meant to match. */
   const hasArgument = findPair(opinions) !== null;
-  const issueNo = weeklyDisplayNo(issue.issue_number);
+  const issueName = issueLabel(issue.issue_number);
 
   /* Every word of prose the issue actually prints, which is what a reading
      time has to be measured from. Counted here rather than in the strip so it
@@ -194,7 +194,7 @@ export default function WeeklyIssue({
     <div className="wk-page">
       <CinematicCover
         nameplate={<SigilWordmark product="WEEKLY" height={44} accent="var(--palette-weekly)" />}
-        issueLine={`Issue #${issueNo} · ${weekRange}`}
+        issueLine={`${issueName} · ${weekRange}`}
         headline={coverHeadline}
         coverlines={coverlines}
         imageUrl={issue.cover_image_url}
@@ -235,7 +235,7 @@ export default function WeeklyIssue({
 
         <IssueUtilities
           words={issueWords}
-          shareTitle={`Void Weekly · Issue #${issueNo}`}
+          shareTitle={`Void Weekly · ${issueName}`}
           weekStart={issue.week_start}
           archive={archive}
         />
