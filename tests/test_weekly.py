@@ -451,6 +451,18 @@ def test_image_captions():
             if isinstance(x, dict) and x.get("image_url"):
                 imgs.append((f"{key}[{i}]", x))
 
+    # THE COVER IS A TOP-LEVEL FIELD, and was outside this check for the same
+    # reason it was outside the backfill: `cover_image_url` does not live in
+    # `cover_text`. The largest picture in the issue was the one nothing
+    # looked at. Normalised into the same shape so it is held to the same
+    # three rules.
+    if d.get("cover_image_url"):
+        imgs.append(("cover", {
+            "image_url": d.get("cover_image_url"),
+            "image_caption": d.get("cover_image_caption"),
+            "image_attribution": d.get("cover_image_attribution"),
+        }))
+
     uncaptioned = [n for n, x in imgs if not (x.get("image_caption") or "").strip()]
     check("every published image names what it is", not uncaptioned,
           ", ".join(uncaptioned) or f"{len(imgs)} image(s) checked")

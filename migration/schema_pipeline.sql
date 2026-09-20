@@ -400,6 +400,7 @@ CREATE TABLE IF NOT EXISTS weekly_digests (
   cover_image_url           TEXT,                -- 040
   cover_image_attribution   TEXT,                -- 040
   cover_image_source        TEXT,                -- 040
+  cover_image_caption       TEXT,                -- what the cover photo IS, 2026-09-20
   -- 064 weekly editorial opinion (distinct from the three-lens Perspectives)
   opinion_text              TEXT,
   opinion_headline          TEXT,
