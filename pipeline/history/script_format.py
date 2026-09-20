@@ -194,13 +194,25 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
     # record marks these; nothing read them before H-11. "summary" is NOT here:
     # a record that calls its source a "reactor-safety summary" is describing
     # what the document IS, not hedging whose words it carries.
-    HEDGED = ("paraphras", "attributed", "reconstruct", "apocryph", "legend")
+    HEDGED = ("paraphras", "attributed", "reconstruct", "apocryph", "legend",
+              # Secondhand: the record names a person who wrote the words down,
+              # not the person who said them. A listener told "Alexander said"
+              # deserves to know Plutarch wrote it four centuries later. Six
+              # such records exist across the 78 events.
+              "recount", "as reported by", "as told to", "quoted in",
+              "quoted by", "via")
     # The same hedge, said out loud. A script that tells the listener the words
     # are attributed has done the honest thing, whether it says so in the
     # DOCUMENT marker or in the narration that introduces the quote.
     SPOKEN_HEDGE = ("attribut", "paraphras", "said to", "reputed", "apocryph",
                     "legend", "tradition holds", "by tradition", "is remembered",
-                    "remembered for", "later recorded", "recorded generations")
+                    "remembered for", "later recorded", "recorded generations",
+                    # Secondhand, said out loud. The Great Depression script
+                    # wrote "Hoover later wrote down what Mellon told him",
+                    # which is exactly the disclosure this rule wants, in
+                    # words the first list did not know.
+                    "recount", "as reported", "as told", "quoted in",
+                    "quoted by", "wrote down what", "set down", "records that")
 
     kinds = [s.kind for s in script.segments]
     for required in ("OPEN", "CLOSE"):
@@ -271,8 +283,20 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
                 # and no rule caught it until an episode did it.
                 # The fact itself is never lost: it belongs in narration,
                 # which states a position rather than quoting one.
+                # Matched at the START of a word, so "paraphras" still finds
+                # "paraphrased" and "recount" finds "recounting", but "via"
+                # does not fire inside "Silvia": the historian Silvia Rivera
+                # Cusicanqui is a witness, not a secondhand source. This is the
+                # defect class H-04 shipped with, where "king" inside
+                # "striking" passed for Martin Luther King. Short whole words
+                # need the trailing guard too, or they match half the roster.
                 who = (match[1] or "").lower()
-                if any(h in who for h in HEDGED):
+
+                def _marked(h: str) -> bool:
+                    tail = "(?![a-z])" if len(h) <= 4 else ""
+                    return re.search(rf"(?<![a-z]){re.escape(h)}{tail}", who) is not None
+
+                if any(_marked(h) for h in HEDGED):
                     # Said out loud, anywhere the listener will hear it before
                     # the voice reads: the DOCUMENT marker, or the narration.
                     aloud = " ".join([_norm(seg.author or ""), _norm(seg.title or ""),
@@ -393,7 +417,15 @@ _NAME_ALLOWED = {
     "seventeen", "eighteen", "nineteen", "twenty", "thirty", "forty", "fifty",
     "sixty", "seventy", "eighty", "ninety", "hundred", "thousand", "million",
     "billion", "first", "second", "third", "fourth", "fifth", "sixth",
-    "seventh", "eighth", "ninth", "tenth", "half", "january", "february",
+    # Ordinals run past "tenth" because REGNAL NUMBERS are spelled out: a
+    # synthesiser reads "Constantine XI" as "Constantine ex eye". The list
+    # stopped at tenth, so every monarch past the tenth of their name drew a
+    # warning on a name the record does carry, in two scripts already. A
+    # recurring false positive is worse than a missing rule, because it
+    # teaches the writer to wave H-10 through.
+    "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth",
+    "thirteenth", "fourteenth", "fifteenth", "sixteenth", "seventeenth",
+    "eighteenth", "nineteenth", "twentieth", "half", "january", "february",
     "march", "april", "may", "june", "july", "august", "september", "october",
     "november", "december", "monday", "tuesday", "wednesday", "thursday",
     "friday", "saturday", "sunday", "void", "news", "on", "air", "history",
