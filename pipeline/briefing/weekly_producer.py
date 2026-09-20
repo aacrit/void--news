@@ -455,6 +455,13 @@ def produce(script_text: str, issue: dict, out_dir: Path,
     print(f"  [weekly-audio] music: { {k: v for k, v in used.items() if k != 'bed'} }")
 
     mix = rp._silent(tl.total_ms, channels=2).overlay(e).overlay(l).overlay(r).overlay(music)
+    # House promo under the outro, after the open question. Not a script
+    # marker (W-05 would fail the rundown), a producer-level post-roll.
+    from briefing import house_promos
+    promo_key = f"weekly:{edition}:{issue.get('week_start') or stem}"
+    mix, promo_info = house_promos.post_roll(
+        mix, outro_at_ms=tl.outro_at_ms, last_word_ms=tl.cues[-1].end_ms if tl.cues else None,
+        plays_in="weekly", key=promo_key, work=work)
     raw = work / "mix.wav"
     mix.export(str(raw), format="wav")
     mastered = work / "master.wav"
@@ -480,6 +487,9 @@ def produce(script_text: str, issue: dict, out_dir: Path,
         print("  [weekly-audio] still over cap at the lowest rung; shipping whole")
 
     chs = chapters(tl)
+    if promo_info:
+        chs = house_promos.append_promo_chapter(
+            chs, house_promos.select("weekly", promo_key), promo_info["at_ms"], tl.total_ms, kind="promo")
     title = issue.get("cover_headline") or "Void Weekly"
     rp.write_id3_chapters(mp3, chs, title, issue.get("week_start") or "")
     (out_dir / f"{stem}.chapters.json").write_bytes(rp.chapters_sidecar(chs, title))

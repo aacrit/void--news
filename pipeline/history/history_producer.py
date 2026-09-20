@@ -12,6 +12,7 @@ documentary has a different grammar and gets its own.
 from __future__ import annotations
 
 import argparse
+import json
 import sys
 import tempfile
 import time
@@ -296,6 +297,13 @@ def produce(slug: str, out_dir: Path) -> dict | None:
         music, used = music_bus(tl, assets)
         print(f"  [history] music: {used}")
         mix = rp._silent(tl.total_ms, channels=2).overlay(n).overlay(dm).overlay(df).overlay(music)
+        # House promo under the outro, after the close ends on its particular.
+        # The length does not change, so H-07's gate is untouched.
+        from briefing import house_promos
+        promo_key = f"history:{slug}"
+        mix, promo_info = house_promos.post_roll(
+            mix, outro_at_ms=tl.outro_at_ms, last_word_ms=tl.cues[-1].end_ms if tl.cues else None,
+            plays_in="history", key=promo_key, work=work)
         raw = work / "mix.wav"
         mix.export(str(raw), format="wav")
         mastered = work / "master.wav"
@@ -309,6 +317,15 @@ def produce(slug: str, out_dir: Path) -> dict | None:
             print("  [history] encode failed")
             return None
         chs = chapters(tl, script)
+        if promo_info:
+            # "segment" is the only kind the history rail draws without a
+            # radio badge; the title says what it is.
+            chs = house_promos.append_promo_chapter(
+                chs, house_promos.select("history", promo_key), promo_info["at_ms"], tl.total_ms,
+                kind="segment", title=house_promos.HISTORY_PROMO_CHAPTER_TITLE)
+            (out_dir / f"{slug}.promo.json").write_text(json.dumps({
+                "id": promo_info["id"], "sha": promo_info["sha"], "voice": promo_info["voice"],
+                "startTime": round(promo_info["at_ms"] / 1000.0, 3)}, indent=1) + "\n")
         rp.write_id3_chapters(mp3, chs, event["title"], event.get("date_display", ""))
         (out_dir / f"{slug}.chapters.json").write_bytes(rp.chapters_sidecar(chs, event["title"]))
         size = mp3.stat().st_size
