@@ -473,6 +473,87 @@ def test_week_spread():
 
 
 # ---------------------------------------------------------------------------
+# W-T11  End matter: the colophon, the delta, the corrections, the week rail
+# ---------------------------------------------------------------------------
+def test_end_matter():
+    """The four things an issue can print that cost nothing to produce.
+
+    Every figure here was already stored on the row and rendered nowhere, or
+    already fetched and thrown away. The assertions are about the CONTRACT
+    between the generator and the page: a field the colophon prints must
+    survive `build_weekly_row`, and a JSON column must leave it as a STRING.
+
+    That last one is not hypothetical. `audio_chapters` shipped as a raw Python
+    list for one commit, which the SQLite shim cannot bind: the first run that
+    rendered an audio edition would have failed its upsert entirely. The
+    fixture carries chapters now so the JSON-column loop in W-T05 exercises it.
+    """
+    print("\nW-T11  end matter")
+    fx = json.loads((FIXTURES / "weekly_inputs.json").read_text())
+    row = build_weekly_row(**{k: v for k, v in fx.items() if not k.startswith("_")})
+
+    # The colophon prints these. A colophon that says "assembled from null
+    # articles" is worse than no colophon, so the row has to carry them.
+    for field in ("total_articles", "total_clusters", "gemini_calls_used",
+                  "generation_duration_seconds"):
+        check(f"the colophon can read {field}", row.get(field) is not None,
+              repr(row.get(field)))
+
+    days = json.loads(row["week_days"])
+    check("the week rail persisted", len(days) >= 3, f"{len(days)} day(s)")
+    check("every day carries a date and a headline",
+          all(d.get("date") and d.get("headline") for d in days))
+    check("the days are in order",
+          [d["date"] for d in days] == sorted(d["date"] for d in days))
+
+    # Every JSON column is a string. The loop in W-T05 asserts they PARSE;
+    # this asserts the type directly, because a list that happens to be empty
+    # parses as nothing and slips through.
+    from briefing.weekly_parse import build_weekly_row as _b  # noqa: F401
+    for k in sorted(_weekly_pjson_fields()):
+        if k in row and row[k] is not None:
+            check(f"row[{k}] is a string, not a Python object",
+                  isinstance(row[k], str), type(row[k]).__name__)
+
+
+def test_end_matter_frontend():
+    """The components exist, are wired, and nothing prints a figure it lacks."""
+    print("\nW-T11b end matter, on the page")
+    issue = (WEEKLY_TSX / "WeeklyIssue.tsx").read_text()
+    for name in ("Colophon", "WeekDelta", "Corrections", "WeekRail"):
+        check(f"{name} is rendered by the issue", f"<{name}" in issue)
+
+    # The delta must never say "last week". The archive has gaps: the two
+    # published issues are three weeks apart, and a comparison labelled from a
+    # week it did not read is exactly the unearned claim the section exists to
+    # catch.
+    # Comments stripped: the file DISCUSSES the phrase it must not render, and
+    # a gate that fails on its own explanation teaches people to delete the
+    # explanation.
+    delta = _strip_comments((WEEKLY_TSX / "components" / "WeekDelta.tsx").read_text())
+    check("the delta names the week it compared against",
+          "formatArchiveRange" in delta, "")
+    check("the delta never claims to compare against last week",
+          "last week" not in delta.lower())
+
+    # A correction is an editorial act, so the box must not read from the live
+    # feedback store even if one became reachable at build.
+    corr = (WEEKLY_TSX / "components" / "Corrections.tsx").read_text()
+    check("corrections render even when empty", "Nothing corrected" in corr)
+    check("corrections point a reader at /feedback", "/feedback/" in corr)
+
+    # The composed share card, which replaced the hotlinked cover photograph.
+    meta = (WEEKLY_TSX / "issueMeta.ts").read_text()
+    check("issueMeta yields to the opengraph-image file",
+          "delete og.images" in meta)
+    check("the card exists", (WEEKLY_TSX / "ogCard.tsx").exists())
+    for route in ("opengraph-image.tsx", "[week]/opengraph-image.tsx"):
+        path = WEEKLY_TSX / route
+        check(f"{route} is force-static", path.exists()
+              and 'dynamic = "force-static"' in path.read_text())
+
+
+# ---------------------------------------------------------------------------
 # W-T08  Document structure: one h1, no skipped level, no dead contents anchor
 # ---------------------------------------------------------------------------
 def _strip_comments(src):
@@ -606,6 +687,8 @@ def main():
     test_class_parity()
     test_enforcement()
     test_week_spread()
+    test_end_matter()
+    test_end_matter_frontend()
     test_document_structure()
     test_archive()
     print()

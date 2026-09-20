@@ -8,7 +8,12 @@
    --------------------------------------------------------------------------- */
 
 import type { Metadata } from "next";
-import { getLatestWeeklyIssue, getWeeklyArchiveIndex } from "../lib/weeklyIssues";
+import {
+  getLatestWeeklyIssue,
+  getWeeklyArchiveIndex,
+  getWeeklyCorrections,
+  getPreviousWeeklyIssue,
+} from "../lib/weeklyIssues";
 import { issueMetadata } from "./issueMeta";
 import WeeklyIssue from "./WeeklyIssue";
 
@@ -19,10 +24,13 @@ export function generateMetadata(): Metadata {
 }
 
 export default function WeeklyPage() {
+  const issue = getLatestWeeklyIssue();
   return (
     <WeeklyIssue
-      issue={getLatestWeeklyIssue()}
+      issue={issue}
       archive={getWeeklyArchiveIndex()}
+      previous={getPreviousWeeklyIssue(issue.week_start)}
+      corrections={getWeeklyCorrections(issue.week_start)}
     />
   );
 }

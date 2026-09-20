@@ -16,6 +16,10 @@ const ROUTES: { path: string; changeFrequency: MetadataRoute.Sitemap[number]["ch
   { path: "/onair/", changeFrequency: "daily", priority: 0.7 },
   { path: "/history/", changeFrequency: "monthly", priority: 0.8 },
   { path: "/weekly/", changeFrequency: "weekly", priority: 0.7 },
+  // The issue index. /weekly is the CURRENT issue; this is the back catalogue,
+  // and it is the stable URL to link when you mean "the magazine" rather than
+  // "this week".
+  { path: "/weekly/archive/", changeFrequency: "weekly", priority: 0.5 },
   // /paper and /games are 301-redirected to home in public/_redirects (hidden
   // for launch), so they are deliberately NOT listed here: a sitemap must not
   // advertise redirecting URLs. Restore them when those sections go live.
