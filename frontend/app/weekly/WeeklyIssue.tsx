@@ -198,7 +198,11 @@ export default function WeeklyIssue({
         headline={coverHeadline}
         coverlines={coverlines}
         imageUrl={issue.cover_image_url}
-        imageCaption={lead?.image_caption}
+        /* The cover's OWN caption. This read `lead?.image_caption`, which
+           describes the lead FEATURE's picture: a different image
+           whenever the lead carries its own art, so the cover could
+           caption one photograph with the description of another. */
+        imageCaption={issue.cover_image_caption ?? lead?.image_caption}
         imageAttribution={issue.cover_image_attribution}
       />
 

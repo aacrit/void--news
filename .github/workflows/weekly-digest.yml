@@ -44,7 +44,7 @@ on:
         required: false
         default: 'full'
         type: choice
-        options: [full, audio-only]
+        options: [full, audio-only, image-probe, backfill-images]
 
 concurrency:
   group: weekly-digest
@@ -147,6 +147,28 @@ jobs:
       # that was already correct, at full cost, to change nothing a reader
       # sees. The rundown is AUTHORED and committed (as History's scripts are,
       # for the same reason), so the audio has its own entry point.
+      # Reports how much of the PUBLISHED issue the image lookup can
+      # illustrate, running from a clean IP. Wikimedia rate-limits shared
+      # developer egress hard enough that a local run measures the proxy
+      # rather than the code, which is why this exists as a job. No Gemini
+      # call, no database write, nothing committed.
+      - name: Probe image coverage for the published issue
+        if: inputs.mode == 'image-probe'
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: python -m pipeline.media.probe_issue_images
+
+      # Illustrates the ALREADY PUBLISHED issue in place. Images are attached
+      # at generation time, so fixing the lookup does nothing for an issue
+      # that has shipped; this is the same move repair_weekly_snapshot makes
+      # for prose. No Gemini call, no regeneration, and only images that
+      # passed the overlap guard, the licence allowlist and the size floor.
+      - name: Backfill images into the published issue
+        if: inputs.mode == 'backfill-images'
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: python -m pipeline.briefing.backfill_weekly_images
+
       - name: Render The Argument from the committed script
         if: inputs.mode == 'audio-only'
         env:
@@ -157,7 +179,10 @@ jobs:
         run: python -m pipeline.briefing.render_weekly_audio
 
       - name: Generate weekly digest
-        if: inputs.mode != 'audio-only'
+        # inputs.mode is EMPTY on the schedule event (defaults apply to
+        # workflow_dispatch only), so this must be written as exclusions: an
+        # equality test against 'full' skips generation on every Sunday cron.
+        if: inputs.mode != 'audio-only' && inputs.mode != 'image-probe' && inputs.mode != 'backfill-images'
         env:
           PYTHONUNBUFFERED: "1"
           VOID_SQLITE_PATH: pipeline_state.db
@@ -184,13 +209,18 @@ jobs:
       # here would rewrite feed.json and archive.json from stale rows and the
       # commit below would publish yesterday's front page.
       - name: Export weekly snapshot
-        if: inputs.mode != 'audio-only'
+        if: inputs.mode != 'audio-only' && inputs.mode != 'image-probe' && inputs.mode != 'backfill-images'
         env:
           VOID_SQLITE_PATH: pipeline_state.db
           VOID_EXPORT_ONLY: weekly
         run: python pipeline/export_static.py
 
+      # image-probe is READ ONLY. Left unguarded the export above would
+      # regenerate weekly.json from the restored state DB and this step would
+      # commit it, so a job whose whole purpose is to measure the published
+      # issue would have replaced it.
       - name: Commit refreshed weekly data
+        if: inputs.mode != 'image-probe'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"

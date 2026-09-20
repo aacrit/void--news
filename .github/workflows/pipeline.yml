@@ -156,6 +156,25 @@ jobs:
       - name: Export static snapshots
         env:
           VOID_SQLITE_PATH: pipeline_state.db
+          # EVERY SECTION EXCEPT WEEKLY. export_static's own comment states the
+          # rule ("a job that owns only one surface narrows this so it cannot
+          # overwrite another's output from a state DB that may be a day
+          # behind") and the weekly job obeys it; this one did not, and it is
+          # the job holding the stale weekly row.
+          #
+          # The weekly job restores the state cache and NEVER saves it back, so
+          # this pipeline's DB carries whatever weekly row it last happened to
+          # see. Running the weekly export from here regenerated weekly.json,
+          # weekly-issues.json and weekly-archive.json from those stale rows and
+          # committed them over the published issue. On 2026-09-20 it reverted
+          # Vol. I, No. 1 from nine illustrations and the three-voice Kokoro
+          # episode back to no images and the legacy edge-tts read, eleven
+          # minutes after they merged.
+          #
+          # It also silently undid every in-place repair tool: the deploy tree
+          # is the weekly's archive of record, and repair_weekly_snapshot and
+          # backfill_weekly_images both write there and nowhere else.
+          VOID_EXPORT_ONLY: feed,brief,archive,methodology,history
         run: python pipeline/export_static.py
 
       - name: Commit refreshed static data to main

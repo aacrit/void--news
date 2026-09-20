@@ -709,6 +709,10 @@ def _generate_cover_stories(threads, edition):
             if not result.get("headline"):
                 result["headline"] = lead.get("title", "")
             result["cluster_id"] = lead.get("id")
+            # The reported headline, kept beside the editorial one. The image
+            # lookup needs a subject an encyclopedia indexes, and a cover
+            # headline is written to be read rather than searched.
+            result["cluster_title"] = lead.get("title", "")
             result["timeline"] = timeline
             result["thread_cluster_ids"] = [c.get("id") for c in thread["clusters"]]
             # The threading engine computes these over 500 clusters and then
@@ -733,6 +737,7 @@ def _generate_cover_stories(threads, edition):
                 "timeline": [],
                 "numbers": [],
                 "cluster_id": lead.get("id"),
+                "cluster_title": lead.get("title", ""),
             })
         time.sleep(3)
 
@@ -859,6 +864,11 @@ def _attach_art(essay, cluster):
     try:
         found = find_cover_image_for_cluster(
             cluster["id"], essay.get("headline", ""), supabase_client=supabase,
+            # The essay headline is written to be read; the cluster title is the
+            # plain news headline the story was reported under and is what an
+            # encyclopedia actually indexes. Try the first, fall back to the
+            # second.
+            alt_title=cluster.get("title", ""),
         )
     except Exception as e:
         print(f"    [weekly] department art lookup failed: {e}")
@@ -867,6 +877,8 @@ def _attach_art(essay, cluster):
         essay["image_url"] = found["url"]
         if found.get("attribution"):
             essay["image_attribution"] = found["attribution"]
+        if found.get("caption"):
+            essay["image_caption"] = found["caption"]
 
 
 # ── SECTION 3: TECH BRIEF ──
@@ -1253,11 +1265,14 @@ def _generate_week_recap(clusters, edition, skip_ids=None):
             if i < BRIEF_THUMB_COUNT and cluster.get("id"):
                 found = find_cover_image_for_cluster(
                     cluster["id"], story.get("headline", ""), supabase_client=supabase,
+                    alt_title=cluster.get("title", ""),
                 )
                 if found:
                     story["image_url"] = found["url"]
                     if found.get("attribution"):
                         story["image_attribution"] = found["attribution"]
+                    if found.get("caption"):
+                        story["image_caption"] = found["caption"]
     return parsed, calls
 
 
@@ -1301,6 +1316,11 @@ def _cover_core(c):
         "timeline": c.get("timeline", []),
         "numbers": c.get("numbers", []),
         "cluster_id": c.get("cluster_id"),
+        # The plain news headline the story was reported under, kept beside the
+        # editorial one because the image lookup needs a searchable subject and
+        # a cover headline is written to be read. "Greenland's Arctic Calculus"
+        # names no subject any encyclopedia indexes.
+        "cluster_title": c.get("cluster_title") or c.get("title", ""),
         "days_active": c.get("days_active"),
         "week_sources": c.get("week_sources"),
     }
@@ -1375,7 +1395,12 @@ def _produce_argument(issue: dict, edition: str):
     sidecar = Path(rendered["sidecar"])
     url = _write_audio_static(
         mp3.read_bytes(), f"weekly-{edition}",
-        sidecars={sidecar.name: sidecar.read_bytes()},
+        # The key is a SUFFIX, not a filename: `_write_audio_static`
+        # writes f"{stem}{suffix}", so passing `sidecar.name` here
+        # produced `2026-09-20-pmweekly.chapters.json` and a
+        # `latestweekly.chapters.json` beside it. Every other caller
+        # passes the suffix (radio_producer.py:1195).
+        sidecars={".chapters.json": sidecar.read_bytes()},
     )
     if not url:
         print("    [weekly-audio] could not write the file into the deploy tree")
@@ -2141,6 +2166,7 @@ def generate_weekly_digest(editions=None, week_offset=0):
                 covers[0]["cluster_id"],
                 covers[0].get("headline", ""),
                 supabase_client=supabase,
+                alt_title=covers[0].get("cluster_title", ""),
             )
             if cover_image:
                 print(f"    ✓ {cover_image['source']}: {cover_image['url'][:80]}...")
@@ -2294,11 +2320,14 @@ def generate_weekly_digest(editions=None, week_offset=0):
             if headline:
                 found = find_cover_image_for_cluster(
                     c.get("cluster_id") or "", headline, supabase_client=supabase,
+                    alt_title=c.get("cluster_title", ""),
                 )
                 if found:
                     item["image_url"] = found["url"]
                     if found.get("attribution"):
                         item["image_attribution"] = found["attribution"]
+                    if found.get("caption"):
+                        item["image_caption"] = found["caption"]
                     print(f"    story image ({found['source']}): {found['url'][:70]}")
             return item
 

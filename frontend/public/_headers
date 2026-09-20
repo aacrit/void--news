@@ -53,6 +53,15 @@
   Content-Type: image/png
   Cache-Control: public, max-age=3600, s-maxage=86400
 
+# Same rule, same reason, for History: the landing card and one per event.
+/history/opengraph-image
+  Content-Type: image/png
+  Cache-Control: public, max-age=3600, s-maxage=86400
+
+/history/*/opengraph-image
+  Content-Type: image/png
+  Cache-Control: public, max-age=3600, s-maxage=86400
+
 # ── Hashed static assets — long-lived, immutable ────────────────────────
 # Next.js writes /_next/static/* with content-hashed filenames; safe to
 # cache effectively forever. This is the rule GH Pages can't match

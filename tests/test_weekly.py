@@ -416,6 +416,72 @@ def test_class_parity():
 # ---------------------------------------------------------------------------
 # W-T09  The editorial spec is enforced, not merely stated
 # ---------------------------------------------------------------------------
+def test_image_captions():
+    """W-T12  no published image is unlabelled, and none is off-Commons.
+
+    The weekly illustrates with FILE photography: a picture of the subject,
+    not of the event. That is honest only while the page says which it is.
+    Vol. I, No. 1 shipped a photograph of a US-Japan air formation over the
+    Pacific on a North Korean missile-test brief, correctly licensed, matched
+    on the word "missile", with nothing naming it. A reader has no way to tell
+    that from event coverage.
+
+    Also enforces the rev 60 decision: images are hotlinked from Wikimedia,
+    never re-hosted and never scraped from a publisher, so anything served
+    from another origin is a defect however good it looks.
+    """
+    print("\nW-T12  image captions and provenance")
+    snap = ROOT / "frontend/public/data/weekly.json"
+    if not snap.exists():
+        check("weekly.json present", False)
+        return
+    d = json.loads(snap.read_text())
+
+    def col(k):
+        v = d.get(k)
+        if isinstance(v, str):
+            try:
+                return json.loads(v)
+            except ValueError:
+                return []
+        return v or []
+
+    imgs = []
+    for key in ("cover_text", "departments", "recap_stories"):
+        for i, x in enumerate(col(key)):
+            if isinstance(x, dict) and x.get("image_url"):
+                imgs.append((f"{key}[{i}]", x))
+
+    # THE COVER IS A TOP-LEVEL FIELD, and was outside this check for the same
+    # reason it was outside the backfill: `cover_image_url` does not live in
+    # `cover_text`. The largest picture in the issue was the one nothing
+    # looked at. Normalised into the same shape so it is held to the same
+    # three rules.
+    if d.get("cover_image_url"):
+        imgs.append(("cover", {
+            "image_url": d.get("cover_image_url"),
+            "image_caption": d.get("cover_image_caption"),
+            "image_attribution": d.get("cover_image_attribution"),
+        }))
+
+    uncaptioned = [n for n, x in imgs if not (x.get("image_caption") or "").strip()]
+    check("every published image names what it is", not uncaptioned,
+          ", ".join(uncaptioned) or f"{len(imgs)} image(s) checked")
+
+    uncredited = [n for n, x in imgs if not (x.get("image_attribution") or "").strip()]
+    check("every published image is credited", not uncredited,
+          ", ".join(uncredited) or "all credited")
+
+    offsite = [n for n, x in imgs
+               if "wikimedia.org" not in (x.get("image_url") or "")
+               and "wikipedia.org" not in (x.get("image_url") or "")]
+    check("nothing is served off Wikimedia", not offsite,
+          ", ".join(offsite) or "all Commons")
+
+    multiline = [n for n, x in imgs if "\n" in (x.get("image_attribution") or "")]
+    check("no credit is a multi-line blob", not multiline, ", ".join(multiline) or "all flat")
+
+
 def test_enforcement():
     """Every prompt CLAIMED enforcement; one site out of six actually checked.
 
@@ -808,6 +874,7 @@ def main():
     test_build_weekly_row()
     test_class_parity()
     test_enforcement()
+    test_image_captions()
     test_week_spread()
     test_end_matter()
     test_end_matter_frontend()

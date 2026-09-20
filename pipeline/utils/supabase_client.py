@@ -58,6 +58,11 @@ if _SQLITE_PATH:
                 # only to the schema file never reaches production.
                 "audio_chapters": "TEXT",
                 "week_days": "TEXT",   # day-by-day rail (JSON), 2026-09-20
+                # What the cover photograph IS. The cover image is a
+                # top-level field, so it had no caption of its own and the page
+                # borrowed the lead feature's, which describes a DIFFERENT
+                # picture whenever the lead carries its own art. 2026-09-20.
+                "cover_image_caption": "TEXT",
             },
         }
         for _table, _cols in _ADDITIVE_COLUMNS.items():
