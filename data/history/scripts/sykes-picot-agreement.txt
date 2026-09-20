@@ -30,9 +30,7 @@ M: France and Great Britain are prepared to recognize and protect an independent
 N: Paul Cambon sends the terms to Sir Edward Grey on May ninth. Grey confirms them on May sixteenth.
 
 ## ASIDE
-N: An independent Arab state, under an Arab chief, inside a zone France and Britain had already colored their own. The promise and the map were signed by the same two men, on the same page.
-
-## REST
+N: An independent Arab state, under an Arab chief, inside a zone France and Britain had already colored their own. Signed by the same two men, on the same page.
 
 ## SCENE 3 | The same land, promised twice
 N: A year earlier, in letters running from July nineteen fifteen to January nineteen sixteen, Sir Henry McMahon had already told Sharif Hussein of Mecca that Britain was prepared to recognize and support the independence of the Arabs, if the Arabs rose against the Ottomans.
@@ -43,7 +41,7 @@ M: The two districts of Mersina and Alexandretta and portions of Syria lying to 
 N: Hussein's sons launch the Arab Revolt in June nineteen sixteen, one month after Sykes and Picot finished dividing that reward away.
 
 ## ASIDE
-N: Damascus, Homs, Hama, and Aleppo, the four cities McMahon's own letter treats as Arab, sit inside or beside the zone Sykes and Picot had already colored French.
+N: Damascus, Homs, Hama, and Aleppo, the four cities McMahon's letter treats as Arab, sit inside or beside the zone Sykes and Picot had already colored French.
 
 ## REST
 
@@ -54,8 +52,6 @@ N: On November second, nineteen seventeen, Arthur James Balfour adds a third cla
 N: Balfour writes to Lord Rothschild, on behalf of his government.
 M: His Majesty's Government view with favour the establishment in Palestine of a national home for the Jewish people, and will use their best endeavours to facilitate the achievement of this object, it being clearly understood that nothing shall be done which may prejudice the civil and religious rights of existing non-Jewish communities in Palestine.
 N: Independence to the Arabs. Partition between France and Britain. A national home for the Jewish people. One piece of land, three governments' worth of promises, inside two years.
-
-## REST
 
 ## SCENE 5 | The secret breaks
 N: The secret holds eighteen months. In November nineteen seventeen the Bolsheviks find the treaty and publish it. The Manchester Guardian prints it on November twenty sixth.
@@ -79,7 +75,7 @@ N: A century after two men colored a map in five weeks, a militia bulldozes the 
 M: This blessed advance will not stop until we hit the last nail in the coffin of the Sykes-Picot conspiracy.
 
 ## ASIDE
-N: The border in that video was never the line Sykes and Picot agreed to. Palestine was to be an international zone. It became a British mandate instead.
+N: The border in that video was never the line Sykes and Picot agreed to. Palestine was to be international. It became a British mandate instead.
 
 ## REST
 
@@ -100,8 +96,6 @@ N: Damascus, Homs, Hama, and Aleppo, the same cities McMahon's own letter had ca
 N: George Antonius, the movement's first great historian, gave the agreement a name.
 M: A shocking document. It is not only the product of greed at its worst, that is to say, of greed allied to suspicion and so leading to stupidity: it also stands out as a startling piece of double-dealing.
 N: Hussein learned the treaty existed from his own enemy's press, and kept fighting anyway.
-
-## REST | short
 
 ## PERSPECTIVE | Zionist | victor
 N: For the Zionist movement the decisive document was not the secret map but the public letter that followed it. Sykes-Picot had consigned Palestine to a murky international zone that gave the Jewish national project nothing.
@@ -139,7 +133,7 @@ N: And the revisionist case, fluent in how the map was redrawn twice before anyo
 ## REST
 
 ## CLOSE
-N: Faisal had led the Arab Revolt, been crowned king of an independent Syria, and watched Maysalun burn that kingdom down. Britain later installed him instead as king of Iraq: a country assembled from three Ottoman provinces, whose borders he had not drawn and whose peoples he barely knew.
+N: Faisal had led the Arab Revolt, been crowned king of an independent Syria, and watched Maysalun burn that kingdom down. Britain installed him instead as king of Iraq: a country assembled from three Ottoman provinces, whose borders he had not drawn and whose peoples he barely knew.
 
 ## SAY
 Mark Sykes = mark syks
@@ -150,7 +144,6 @@ Kitchener = KICH-en-er
 Cilicia = sih-LISH-ee-ah
 Mesopotamia = mess-oh-poh-TAY-mee-ah
 Cambon = kahm-BOHN
-Constantinople = kon-stan-tin-OH-pul
 Sharif Hussein bin Ali = shah-REEF hoo-SAYN bin AH-lee
 McMahon = mik-MAH-un
 Mersina = mer-SEE-nah
@@ -162,7 +155,6 @@ Rothschild = ROTHS-cheeld
 Faisal = FY-sal
 Yusuf al-Azma = YOO-suf al-AHZ-mah
 Maysalun = my-sah-LOON
-Transjordan = trans-JOR-dan
 Abu Bakr al-Baghdadi = AH-boo BAH-kur al-bahg-DAH-dee
 Fashoda = fah-SHOH-dah
 Levantine = LEV-an-teen
