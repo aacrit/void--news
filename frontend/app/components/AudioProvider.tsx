@@ -618,9 +618,11 @@ export default function AudioProvider({
         audio_voice_label: digest.audio_voice_label ?? null,
         audio_voice: digest.audio_voice ?? null,
         audio_script: null,
-        // Weekly is one continuous read: no chapter rail, so the player keeps
-        // the original News / Opinion transport.
-        audio_chapters: null,
+        // The Sunday edition is a scored programme with movements, not one
+        // continuous read, so it gets the same rail On Air and History have.
+        // Issues rendered on the legacy two-voice path carry no chapters and
+        // fall back to the News / Opinion transport, exactly as before.
+        audio_chapters: coerceChapters(digest.audio_chapters ?? null),
         news_start_seconds: null,
         top_cluster_ids: null,
         created_at: digest.created_at,

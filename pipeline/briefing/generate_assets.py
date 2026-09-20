@@ -710,6 +710,12 @@ RADIO_ASSETS = [
     "radio_close_bed.wav",
     "radio_outro.wav",
     "radio_room_tone.wav",
+    # The Sunday set: the same motif at half the tempo (see WEEKLY_PULSE_S).
+    "weekly_theme.wav",
+    "weekly_transition.wav",
+    "weekly_break.wav",
+    "weekly_bed.wav",
+    "weekly_outro.wav",
 ]
 
 # Same D major / B minor palette as the pydub set above, extended down to D2
@@ -718,10 +724,14 @@ RADIO_ASSETS = [
 # committing to a melody.
 _NOTE = {
     "D2":  73.416,
+    # G2/G3: the suspended fourth over the D root. The Sunday cues open on it
+    # and only resolve at the outro, because the programme is an argument.
+    "G2":  97.999,
     "A2": 110.000,
     "B2": 123.471,
     "D3": 146.832,
     "F#3": 184.997,
+    "G3": 195.998,
     "A3": 220.000,
     "B3": 246.942,
     "D4": 293.665,
@@ -1514,6 +1524,190 @@ def generate_radio_opinion_theme():
     sig = _edge_fade(sig, 2.0, 40.0)
     sig = _norm_peak(sig, -13.0)
     _write_radio_wav("radio_opinion_theme.wav", sig, "Void Opinion entrance, minor shading")
+
+
+# ---------------------------------------------------------------------------
+# The Sunday set — void --weekly, "The Argument"
+#
+# The same motif at HALF THE TEMPO. `_theme_figure` is fully parameterised, so
+# the weekly cue family is a parameter set rather than new synthesis: one
+# publication, one identity, and a listener who knows On Air recognises the
+# house before the first word. What separates them is pace. A bulletin is
+# racing the clock; a magazine is not, so `period_s = 1.0` against the radio's
+# 0.50, which is 60 bpm.
+#
+# The harmony shifts too. The Sunday cues open on the SUSPENDED fourth (G3
+# against the D root) and only resolve at the close, because the programme's
+# whole shape is an argument that is not settled until the editorial.
+# ---------------------------------------------------------------------------
+WEEKLY_PULSE_S = 1.00                                   # 60 bpm, half the radio tempo
+WEEKLY_CELL = ("D3", "G3", "D3", "A3")                  # the sus4 colour
+WEEKLY_BASS = ("D2", "D2", "G2", "D2")
+WEEKLY_PAD = (("D3", 0.20, 0.07, 0.30, 0.0),
+              ("A3", 0.15, 0.06, 0.35, 2.2),
+              ("D4", 0.07, 0.09, 0.45, 4.1))
+
+
+def generate_weekly_theme():
+    """10.0s opening theme. Peak -13 dBFS.
+
+    Five bars at 60 bpm, opening on the suspended fourth and NOT resolving:
+    the last chord is D + G + A, which wants somewhere to go. The open of a
+    programme whose subject is a disagreement should not sound settled.
+    """
+    t = _time(10.0)
+    pad_env = _swell(t, 0.0, 0.40, 6.0, 3.0)
+    sig = _theme_figure(t, period_s=WEEKLY_PULSE_S, cell=WEEKLY_CELL,
+                        bass=WEEKLY_BASS, pad=WEEKLY_PAD,
+                        max_beats=10, bass_beats=5, pad_env=pad_env)
+    for note, amp, dec in (("D2", 0.50, 2.10), ("G2", 0.30, 1.80), ("A3", 0.22, 1.60)):
+        sig += amp * _pluck(t, 8.0, 0.025, dec) * _tone(t, _NOTE[note])
+    sig *= _swell(t, 0.0, 0.35, 6.4, 3.2)
+    sig = _edge_fade(sig, 3.0, 40.0)
+    sig = _norm_peak(sig, -13.0)
+    _write_radio_wav("weekly_theme.wav", sig, "weekly open, sus4, unresolved")
+
+
+def generate_weekly_transition():
+    """3.5s seam between movements. Peak -13 dBFS.
+
+    The theme's cell at the weekly tempo, four beats and a landing. Plays in
+    the clear, the way the radio transition does.
+    """
+    t = _time(3.5)
+    sig = _theme_figure(t, period_s=WEEKLY_PULSE_S, cell=WEEKLY_CELL,
+                        bass=("D2", "G2"), pad=(), max_beats=3, bass_beats=2)
+    sig += 0.44 * _pluck(t, 2.6, 0.006, 0.80) * (
+        _tone(t, _NOTE["D3"]) + 0.28 * _tone(t, _NOTE["D3"] * 2.0))
+    sig += 0.30 * _pluck(t, 2.6, 0.014, 1.05) * _tone(t, _NOTE["D2"])
+    sig *= _swell(t, 0.0, 0.02, 2.6, 0.85)
+    sig = _edge_fade(sig, 2.0, 40.0)
+    sig = _norm_peak(sig, -13.0)
+    _write_radio_wav("weekly_transition.wav", sig, "weekly seam, the cell at 60 bpm")
+
+
+def generate_weekly_break():
+    """9.0s break before the numbers. Peak -13 dBFS.
+
+    Four bars at the weekly tempo with the pad blooming across the middle two.
+    It sits where the programme turns from the argument to the measurement,
+    which is the one seam in the running order that changes the KIND of thing
+    being said, not merely the subject.
+    """
+    t = _time(9.0)
+    pad_env = _swell(t, 1.5, 2.5, 1.5, 2.5)
+    sig = _theme_figure(t, period_s=WEEKLY_PULSE_S, cell=WEEKLY_CELL,
+                        bass=WEEKLY_BASS, pad=WEEKLY_PAD,
+                        max_beats=8, bass_beats=4, pad_env=pad_env)
+    sig += 0.42 * _pluck(t, 8.0, 0.008, 0.85) * (
+        _tone(t, _NOTE["D3"]) + 0.26 * _tone(t, _NOTE["D3"] * 2.0))
+    sig *= _swell(t, 0.0, 0.03, 8.0, 0.90)
+    sig = _edge_fade(sig, 2.0, 40.0)
+    sig = _norm_peak(sig, -13.0)
+    _write_radio_wav("weekly_break.wav", sig, "weekly break, four bars")
+
+
+def generate_weekly_bed():
+    """24.0s loopable bed. RMS -38 dBFS, exact seam.
+
+    Under the OPEN, the CONTENTS, the NUMBERS, the EDITORIAL and the CLOSE
+    only. The argument itself is DRY, which is the format's one strong sonic
+    decision: two people disagreeing over a bed is a talk show, and naked voice
+    with a held pause between the sides is a courtroom.
+
+    Every partial and LFO is snapped with `_lock`, so this repeats
+    sample-exactly and is looped with NO crossfade (see LOCKED_LOOPS): a
+    crossfade shortens each cycle and walks the pulse off the theme's grid.
+    """
+    dur = 24.0
+    t = _time(dur)
+    sig = np.zeros_like(t)
+    # A slow root-and-fifth motion under a breathing pad. Motion, no melody:
+    # a bed with a tune competes with the sentence on top of it.
+    for note, amp, rate, depth, phase in (("D2", 0.34, 0.05, 0.25, 0.0),
+                                          ("A2", 0.22, 0.04, 0.30, 1.7),
+                                          ("D3", 0.16, 0.06, 0.35, 3.1),
+                                          ("G3", 0.09, 0.03, 0.40, 4.6)):
+        sig += amp * _breath(t, _lock(rate, dur), depth, phase) * \
+            _tone(t, _lock(_NOTE[note], dur), phase)
+    sig += 0.10 * _pulse(t, dur / 12.0, ("D3", "A3"), 1.60, 12)
+    sig = _norm_rms(sig, -38.0)
+    _write_radio_wav("weekly_bed.wav", sig, "weekly bed, 24s exact loop", loopable=True)
+
+
+def generate_weekly_outro():
+    """14.0s close, falling to TRUE digital silence. Peak -13 dBFS.
+
+    The resolution the theme withheld: the suspended fourth finally moves to
+    the third, the programme lands on D major, and then it leaves. The last
+    200ms are asserted silent at render time, the same guard the radio outro
+    carries, because "fading to oblivion" has to mean zero and not a small
+    number that a listener's amplifier will find.
+    """
+    t = _time(14.0)
+    sig = _theme_figure(t, period_s=WEEKLY_PULSE_S,
+                        cell=("D3", "G3", "D3", "F#3"),   # sus4 resolving to the third
+                        bass=WEEKLY_BASS, pad=WEEKLY_PAD,
+                        max_beats=8, bass_beats=4)
+    for note, det, amp, atk, dec in (("D2", 0.0, 0.60, 0.030, 2.60),
+                                     ("D2", 0.8, 0.22, 0.035, 2.40),
+                                     ("F#3", 0.0, 0.34, 0.022, 2.00),
+                                     ("A3", 0.0, 0.26, 0.020, 1.90)):
+        sig += amp * _pluck(t, 8.0, atk, dec) * _tone(t, _NOTE[note] + det)
+    sig = _reverberate(sig, 0.20, _reverb_ir(0.95, 0.28, 3000.0, seed=808))
+    sig *= _swell(t, 0.0, 0.30, 8.0, 5.5)
+    sig = _edge_fade(sig, 3.0, 0.0)
+    sig = _norm_peak(sig, -13.0)
+    tail_rms = _rms_dbfs(sig[-int(0.2 * SAMPLE_RATE):])
+    if tail_rms > -80.0:
+        raise AssertionError(f"weekly outro does not end in silence: {tail_rms:.1f} dBFS")
+    _write_radio_wav("weekly_outro.wav", sig, "weekly close, sus4 resolved, to silence")
+
+
+def weekly_spectrum(mean_lean: float, spread: float, duration_s: float = 22.0):
+    """Void reading its own scorecard, as a sound. Returns a numpy buffer.
+
+    Held under THE NUMBERS at -40 dBFS, well beneath the read. Pitch carries
+    the week's mean lean: the root D at centre, rising a fifth toward the right
+    edge and falling a fifth toward the left. Detuning width carries the
+    SPREAD, so a balanced-but-contested week beats audibly while a genuine
+    consensus sits still — the same distinction the Sigil's divergence fan
+    makes on the page, in the one medium where a fan cannot be drawn.
+
+    Not written to disk: it is different every week, by construction.
+    """
+    t = _time(duration_s)
+    # lean 0..100 -> -1..+1 of a fifth (7 semitones).
+    semis = ((max(0.0, min(100.0, mean_lean)) - 50.0) / 50.0) * 7.0
+    root = _NOTE["D3"] * (2.0 ** (semis / 12.0))
+    # sd 0 -> no beating; sd 40 -> ~6 Hz, which is a clear wobble and not a
+    # second pitch.
+    width = min(6.0, max(0.0, spread) / 40.0 * 6.0)
+    sig = 0.50 * _tone(t, root)
+    sig += 0.34 * _tone(t, root + width, 1.1)
+    sig += 0.34 * _tone(t, max(1.0, root - width), 2.3)
+    sig += 0.12 * _tone(t, root * 2.0, 0.7)
+    sig *= _breath(t, 0.08, 0.18, 0.0)
+    sig *= _swell(t, 0.0, 2.5, max(0.5, duration_s - 6.0), 3.5)
+    return _norm_rms(sig, -40.0)
+
+
+def render_weekly_assets():
+    """Render the five Sunday cues into ASSETS_DIR.
+
+    Independent of the radio set: nothing here overwrites a radio_*.wav.
+    `radio_room_tone.wav` is reused as-is, because a studio floor is a studio
+    floor and there is no Sunday version of one.
+    """
+    if np is None:  # pragma: no cover
+        raise RuntimeError("numpy is required to render the weekly set")
+    ASSETS_DIR.mkdir(parents=True, exist_ok=True)
+    print("Generating void --weekly Sunday set (2026-09):")
+    generate_weekly_theme()
+    generate_weekly_transition()
+    generate_weekly_break()
+    generate_weekly_bed()
+    generate_weekly_outro()
 
 
 def render_radio_assets():

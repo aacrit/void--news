@@ -220,7 +220,7 @@ if want("weekly"):
         # `cover_numbers` shipped to browsers as raw JSON strings.
         # tests/test_weekly.py W-T03 now asserts the two lists are identical.
         for k in ("cover_text", "cover_timelines", "cover_numbers", "recap_stories",
-                  "departments", "opinions",
+                  "departments", "opinions", "audio_chapters",
                   "opinion_left", "opinion_center", "opinion_right",
                   "bias_report_data"):
             if k in weekly:

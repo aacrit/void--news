@@ -405,13 +405,22 @@ def build_weekly_row(*, edition, week_start, week_end, issue_number, cover_items
         "opinion_audio_script": weekly_opinion.get("opinion_audio_script"),
         "opinion_start_seconds": audio.get("opinion_start_seconds"),
         # Broadcast desk voices (news pair drives player host chips + label)
+        # The chapter rail. `chapters.ts` renders any `kind` and already
+        # guards an empty label, which is what lets a new format's rail work
+        # with no frontend change — the same reason History's episodes got one.
+        "audio_chapters": audio.get("chapters"),
+        # An engine string, as On Air writes it, not a pair of display names.
+        # "The Editor" and "The Correspondent" were a label over an identical
+        # signal chain: both mapped to the same two edge voices.
         "audio_voice": (
-            f"{voice_pair['host_a']['id']}+{voice_pair['host_b']['id']}"
-            if audio_url and voice_pair else None
+            audio.get("voice")
+            or (f"{voice_pair['host_a']['id']}+{voice_pair['host_b']['id']}"
+                if audio_url and voice_pair else None)
         ),
         "audio_voice_label": (
-            f"{voice_pair['host_a']['name']} & {voice_pair['host_b']['name']}"
-            if audio_url and voice_pair else None
+            audio.get("voice_label")
+            or (f"{voice_pair['host_a']['name']} & {voice_pair['host_b']['name']}"
+                if audio_url and voice_pair else None)
         ),
         # Cover image
         "cover_image_url": cover_image["url"] if cover_image else None,

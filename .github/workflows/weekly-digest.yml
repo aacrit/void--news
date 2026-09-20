@@ -58,6 +58,27 @@ jobs:
           pip install -r pipeline/requirements.txt
           python -m spacy download en_core_web_sm
 
+      # ── The Argument: three Kokoro voices in their own venv (numpy 2) ──
+      # This job installed ffmpeg and nothing else, which is why the weekly was
+      # the last edition still on edge-tts. Same cache keys as the daily
+      # pipeline, so the model files and the venv are usually already warm.
+      - name: Cache Kokoro model files
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/void-kokoro
+          key: kokoro-${{ hashFiles('pipeline/briefing/kokoro.lock.json') }}
+      - name: Cache TTS venv
+        id: tts-venv
+        uses: actions/cache@v4
+        with:
+          path: .venv-tts
+          key: venv-tts-py3.11-${{ hashFiles('pipeline/requirements-tts.txt') }}
+      - name: Build TTS venv (cache miss)
+        if: steps.tts-venv.outputs.cache-hit != 'true'
+        run: python -m venv .venv-tts && .venv-tts/bin/pip install -q -r pipeline/requirements-tts.txt
+      - name: Fetch Kokoro model files (verified against kokoro.lock.json)
+        run: python pipeline/briefing/kokoro_assets.py
+
       # ── Pipeline state DB (SQLite) — RESTORE ONLY ──
       # The weekly reads the week's clusters, bias scores and daily briefs out of
       # the same state DB the daily pipeline writes. It restores the newest
@@ -102,10 +123,16 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           # $0 posture: Gemini Flash handles the digest (Groq retired); Claude off.
           DISABLE_ANTHROPIC: "1"
-          # Weekly On Air audio (edge-tts, $0). With VOID_SQLITE_PATH set,
-          # audio_producer writes the MP3 into frontend/public/audio/ for the
-          # Pages CDN instead of the decommissioned Supabase bucket. "1" re-parks.
+          # "The Argument" (2026-09-20): three Kokoro voices, a validated
+          # rundown, a scored timeline and a chapter rail. With VOID_SQLITE_PATH
+          # set, the MP3 and its sidecar are written into frontend/public/audio/
+          # for the Pages CDN. "1" re-parks audio entirely;
+          # VOID_WEEKLY_AUDIO_FORMAT=0 keeps audio but falls back to the legacy
+          # two-voice edge-tts read; VOID_TTS_ENGINE=edge keeps the new format
+          # on edge voices.
           DISABLE_AUDIO: "0"
+          VOID_TTS_ENGINE: kokoro
+          VOID_KOKORO_PYTHON: .venv-tts/bin/python
         run: |
           OFFSET="${{ inputs.week_offset }}"
           python -m pipeline.briefing.weekly_digest_generator \

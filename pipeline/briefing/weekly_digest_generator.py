@@ -21,6 +21,7 @@ Budget: ~25-30 Gemini calls per edition, well within 1500 RPD.
 Schedule: Sunday 6 AM CST (12:00 UTC).
 """
 
+import os
 import json
 import re
 import sys
@@ -1093,7 +1094,104 @@ def _generate_week_recap(clusters, edition, skip_ids=None):
 
 
 
-# ── SECTION 7: AUDIO ──
+# ── SECTION 7: AUDIO — "The Argument", the Sunday edition ──
+
+# The weekly was the last thing in the product still on the 2026-06 stack: one
+# Gemini call writing free A:/B: dialogue into the legacy edge-tts path, two
+# voices that every other edition also uses, no voice chain, no limiter, no
+# loudnorm, UNMASTERED MONO, no chapters, no sidecar, not in the podcast feed
+# and no validators. Three things in it were inert rather than merely dated:
+# `_WEEKLY_TTS_PREAMBLE` (23 lines of pacing instructions) is assigned and read
+# only by the PARKED Gemini TTS path; `WEEKLY_VOICE_PAIR` maps "The Editor" and
+# "The Correspondent" through `_GEMINI_TO_EDGE_VOICE` to the same two edge
+# voices, a label over an identical signal chain; and the prompt FORBADE
+# segment markers ("NO [SEGMENT] headers. Raw dialogue only."), which is the
+# single line that made a timeline, chapters and per-segment music impossible.
+#
+# All of that is kept, unchanged, as the fallback. A weekly that cannot be
+# validated still ships a show.
+
+
+def _issue_view(edition, week_start, week_end, issue_number, covers, opinions,
+                tech, sports, recap, bias_data, weekly_opinion):
+    """The issue as the PAGE will carry it, built before the row is written.
+
+    The rundown and its validators read the published shape, not the
+    generator's locals, so the programme is checked against the same object a
+    reader gets. `_opinion_items` is what gives the bench its `pair_id`, and
+    W-01 cannot check a column it cannot find.
+    """
+    from briefing.weekly_parse import DEPARTMENTS, _department_item, _opinion_items
+    essays = {"tech": tech, "sports": sports}
+    departments = [d for d in (_department_item(slug, label, essays.get(slug))
+                               for slug, label in DEPARTMENTS) if d]
+    return {
+        "edition": edition,
+        "issue_number": issue_number,
+        "week_start": week_start.strftime("%Y-%m-%d") if hasattr(week_start, "strftime") else week_start,
+        "week_end": week_end.strftime("%Y-%m-%d") if hasattr(week_end, "strftime") else week_end,
+        "cover_headline": (covers[0].get("headline") if covers else "") or "",
+        "cover_text": [_cover_item(c) for c in covers],
+        "opinions": _opinion_items(opinions, issue_number),
+        "departments": departments or [],
+        "recap_stories": (recap or {}).get("stories", []),
+        "bias_report_data": bias_data or {},
+        "opinion_text": (weekly_opinion or {}).get("opinion_text"),
+        "opinion_headline": (weekly_opinion or {}).get("opinion_headline"),
+    }
+
+
+def _produce_argument(issue: dict, edition: str):
+    """Render the Sunday edition. Returns (result, calls) or (None, calls).
+
+    Returns None on ANY failure, including a validator failure, and the caller
+    falls back to the legacy path. That asymmetry is deliberate: an essay that
+    runs forty words long is worth shipping, but a bench line the published
+    column does not contain is words put in a columnist's mouth.
+    """
+    if os.environ.get("VOID_WEEKLY_AUDIO_FORMAT", "1").strip() == "0":
+        print("    [weekly-audio] VOID_WEEKLY_AUDIO_FORMAT=0; legacy path")
+        return None, 0
+    try:
+        from briefing import weekly_rundown
+        from briefing.weekly_producer import produce as produce_argument
+        from briefing.audio_producer import _write_audio_static
+    except Exception as e:
+        print(f"    [weekly-audio] unavailable ({e}); legacy path")
+        return None, 0
+
+    script_text, findings, calls = weekly_rundown.generate(issue, _smart_generate_text)
+    if not script_text:
+        for f in findings:
+            print(f"    [weekly-audio] {f.id} {f.segment}: {f.detail[:110]}")
+        print("    [weekly-audio] rundown rejected; legacy path")
+        return None, calls
+
+    import tempfile
+    out = Path(tempfile.mkdtemp(prefix="void-weekly-audio-"))
+    try:
+        rendered = produce_argument(script_text, issue, out, stem="weekly")
+    except Exception as e:
+        print(f"    [weekly-audio] render failed: {e}")
+        return None, calls
+    if not rendered:
+        return None, calls
+
+    mp3 = Path(rendered["path"])
+    sidecar = Path(rendered["sidecar"])
+    url = _write_audio_static(
+        mp3.read_bytes(), f"weekly-{edition}",
+        sidecars={sidecar.name: sidecar.read_bytes()},
+    )
+    if not url:
+        print("    [weekly-audio] could not write the file into the deploy tree")
+        return None, calls
+    rendered["audio_url"] = url
+    rendered["script"] = script_text
+    return rendered, calls
+
+
+# ── SECTION 7b: the legacy two-voice read (fallback only) ──
 
 # ---------------------------------------------------------------------------
 # Weekly-specific voice pair — fixed for gravitas and reflective authority.
@@ -1909,21 +2007,47 @@ def generate_weekly_digest(editions=None, week_offset=0):
         )
         total_calls += calls
 
-        # Section 7: Audio — weekly uses fixed voice pair + richer context
+        # Section 7: Audio.
         print(f"\n  ── AUDIO ──")
-        audio_result, calls = _generate_audio(
-            covers, opinions, tech, sports, recap, bias_data,
-            edition, week_start=week_start, week_end=week_end,
-        )
-        total_calls += calls
-        audio_script = audio_result.get("script", "") if audio_result else None
-
-        # Produce audio TTS — weekly uses fixed Editor+Correspondent pair
         audio_url = None
         audio_duration = None
         audio_size = None
         opinion_start = None
-        if audio_script and len(audio_script) > 100:
+        audio_chapters = None
+        audio_voice = None
+        audio_script = None
+
+        argument, calls = _produce_argument(
+            _issue_view(edition, week_start, week_end, issue_number, covers,
+                        opinions, tech, sports, recap, bias_data, weekly_opinion),
+            edition,
+        )
+        total_calls += calls
+        if argument:
+            audio_url = argument["audio_url"]
+            audio_duration = argument["seconds"]
+            audio_size = argument["bytes"]
+            audio_chapters = argument["chapters"]
+            audio_script = argument["script"]
+            v = argument["voices"]
+            audio_voice = f"kokoro:{v['editor']}+{v['left']}+{v['right']}"
+            # The Editor reads the editorial, so the opinion is a CHAPTER
+            # rather than a seek offset. The rail supersedes the two-tab split.
+            ed = next((c for c in audio_chapters if c["kind"] == "editorial"), None)
+            opinion_start = ed["startTime"] if ed else None
+            print(f"    The Argument: {audio_duration:.0f}s, {len(audio_chapters)} chapters, "
+                  f"{audio_size/1e6:.1f} MB")
+
+        legacy_result, calls = (None, 0) if argument else _generate_audio(
+            covers, opinions, tech, sports, recap, bias_data,
+            edition, week_start=week_start, week_end=week_end,
+        )
+        total_calls += calls
+        if not argument:
+            audio_script = legacy_result.get("script", "") if legacy_result else None
+
+        # The legacy two-voice read, only when the Sunday edition did not render.
+        if not argument and audio_script and len(audio_script) > 100:
             print(f"    Producing audio ({len(audio_script.split())} words)...")
             try:
                 # Weekly uses WEEKLY_VOICE_PAIR (fixed) instead of daily rotation
@@ -2007,6 +2131,9 @@ def generate_weekly_digest(editions=None, week_offset=0):
                 "duration_seconds": audio_duration,
                 "file_size": audio_size,
                 "opinion_start_seconds": opinion_start,
+                "chapters": audio_chapters,
+                "voice": audio_voice,
+                "voice_label": "Three voices" if audio_chapters else None,
             },
             cover_image=cover_image,
             total_articles=sum(c.get("source_count", 0) for c in clusters),

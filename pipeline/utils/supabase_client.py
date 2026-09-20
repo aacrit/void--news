@@ -52,6 +52,11 @@ if _SQLITE_PATH:
             "weekly_digests": {
                 "departments": "TEXT",   # front-of-book essays (JSON), 2026-09-20
                 "opinions": "TEXT",      # flat opinion array w/ lean+pair_id, 2026-09-20
+                # "The Argument" chapter rail (JSON), 2026-09-20. The ALTER is
+                # the one that matters: CREATE TABLE IF NOT EXISTS is a no-op
+                # against the cached DB that CI restores, so a column added
+                # only to the schema file never reaches production.
+                "audio_chapters": "TEXT",
             },
         }
         for _table, _cols in _ADDITIVE_COLUMNS.items():

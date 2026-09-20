@@ -63,6 +63,8 @@ jobs:
           python tests/test_radio_script.py
           python tests/test_history_audio.py
           python tests/test_weekly.py
+          python tests/test_weekly_script.py
+          python tests/test_weekly_assembly.py
           pip install --quiet pyyaml
           python tests/test_history_script.py
 
@@ -129,7 +131,9 @@ jobs:
       - name: Fetch Kokoro model files (verified against kokoro.lock.json)
         run: python pipeline/briefing/kokoro_assets.py
       - name: Assembly harness (fake engine)
-        run: python tests/test_radio_assembly.py
+        run: |
+          python tests/test_radio_assembly.py
+          python tests/test_weekly_assembly.py
       - name: Kokoro timing bench
         env:
           VOID_TTS_ENGINE: kokoro-only
