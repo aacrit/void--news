@@ -122,7 +122,14 @@ which is evidence rather than a competing version of events.
 - **No dashes** in spoken copy. Two sentences, or a comma.
 - **One idea per line.** The line is the unit of synthesis.
 - **Attribution before the claim**, always: name the speaker, then the quote.
-- **1,500-1,950 words.** That is 11-14 minutes. `H-07` fails outside 8-15.
+- **1,500-1,950 words. This is a hard gate, not a target.** `H-07` fails the
+  script outside 8-15 minutes, and the arithmetic is `words / 145 + 1.1`, so
+  2,015 words is the ceiling and anything above it does not render at all.
+  The first two delegated drafts both came in near 2,350 because the event
+  records are rich and every fact earns its place on the page. They do not
+  all earn their place in the ear. **Count the words before you run the
+  gate**, and if you are over, cut whole lines rather than trimming clauses:
+  a scene with four lines is a scene, a scene with six is a summary.
 - **`## SAY`**: a respelling for every proper noun a synthesiser will mangle.
   `Tenochtitlan = ten-och-TEET-lan`. Generous is better than sparse.
 - **`## REST`** four to seven times, where the listener needs somewhere to put
