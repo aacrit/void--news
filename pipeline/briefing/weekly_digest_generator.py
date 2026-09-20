@@ -1772,14 +1772,21 @@ def generate_weekly_digest(editions=None, week_offset=0):
                 "numbers": c.get("numbers", []),
                 "cluster_id": c.get("cluster_id"),
             }
-            cluster = _cluster_by_id.get(c.get("cluster_id"))
-            if cluster:
-                img = cluster.get("cached_image_url")
-                if img:
-                    item["image_url"] = img
-                    attribution = cluster.get("cached_image_attribution")
-                    if attribution:
-                        item["image_attribution"] = attribution
+            # Each cover essay gets its own picture, from a freely licensed
+            # source. This used to read `cached_image_url`, written by the
+            # cluster_image_cacher that rev 60 RETIRED on copyright grounds, so
+            # the column has been null on every row since and the weekly has
+            # carried one image instead of three.
+            headline = (c.get("headline") or "").strip()
+            if headline:
+                found = find_cover_image_for_cluster(
+                    c.get("cluster_id") or "", headline, supabase_client=supabase,
+                )
+                if found:
+                    item["image_url"] = found["url"]
+                    if found.get("attribution"):
+                        item["image_attribution"] = found["attribution"]
+                    print(f"    story image ({found['source']}): {found['url'][:70]}")
             return item
 
         row = {

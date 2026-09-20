@@ -19,7 +19,12 @@ from urllib.parse import quote_plus
 import requests
 
 _SESSION = requests.Session()
-_SESSION.headers.update({"User-Agent": "void-news/1.0 (media-curator; +https://github.com/void-news)"})
+# Wikimedia asks clients to identify themselves and give a way to reach the
+# operator; a generic agent is throttled first and hardest. The old value named
+# a github url that does not resolve.
+_SESSION.headers.update({
+    "User-Agent": "VoidNews/1.0 (https://news.voidvision.org; aacrit@gmail.com)"
+})
 
 # ---------------------------------------------------------------------------
 # Minimum-resolution gate (shared across APIs)
@@ -31,7 +36,12 @@ MIN_WIDTH = 1200          # Unsplash / Pexels: skip candidates narrower than thi
 MIN_HEIGHT = 600          # paired height floor where a height is known
 WIKI_MIN_WIDTH = 800      # Wikimedia: raised from the old 200x150 floor
 WIKI_MIN_HEIGHT = 600
-WIKI_RENDER_WIDTH = 1600  # iiurlwidth render request (was 800)
+# Wikimedia now serves only a fixed set of thumbnail widths and refuses the
+# rest ("Use thumbnail sizes listed on https://w.wiki/GHai"). 1280 is in that
+# set and verified to return bytes; an off-list width yields a url that 400s
+# when the browser actually fetches it, which is a broken image on the page
+# rather than an error anyone would see here.
+WIKI_RENDER_WIDTH = 1280
 UNSPLASH_RENDER_WIDTH = 2000  # width param appended to the raw URL
 PEXELS_RENDER_WIDTH = 2000    # informational; Pexels 'original' is full-res
 
@@ -59,27 +69,47 @@ class ImageResult:
 # ---------------------------------------------------------------------------
 
 def search_wikimedia(query: str, max_results: int = 5) -> list[ImageResult]:
-    """Search Wikimedia Commons for images. No API key required."""
-    try:
-        resp = _SESSION.get(
-            "https://commons.wikimedia.org/w/api.php",
-            params={
-                "action": "query",
-                "generator": "search",
-                "gsrsearch": f"filetype:bitmap {query}",
-                "gsrnamespace": "6",  # File namespace
-                "gsrlimit": str(min(max_results * 2, 20)),  # fetch extra to filter
-                "prop": "imageinfo",
-                "iiprop": "url|size|extmetadata|mime",
-                "iiurlwidth": str(WIKI_RENDER_WIDTH),
-                "format": "json",
-            },
-            timeout=15,
-        )
-        resp.raise_for_status()
-        data = resp.json()
-    except Exception as e:
-        print(f"  [media] Wikimedia search failed: {e}")
+    """Search Wikimedia Commons for freely licensed images. No API key required.
+
+    Retries through the throttle: Commons returns HTTP 429 readily, and a single
+    failed attempt here used to mean the weekly silently found no cover image
+    and fell through to whatever was next. That is how a wire photograph ended
+    up on Issue #26.
+    """
+    data = None
+    delay = 4.0
+    for attempt in range(4):
+        try:
+            resp = _SESSION.get(
+                "https://commons.wikimedia.org/w/api.php",
+                params={
+                    "action": "query",
+                    "generator": "search",
+                    "gsrsearch": f"filetype:bitmap {query}",
+                    "gsrnamespace": "6",  # File namespace
+                    "gsrlimit": str(min(max_results * 2, 20)),  # fetch extra to filter
+                    "prop": "imageinfo",
+                    "iiprop": "url|size|extmetadata|mime",
+                    "iiurlwidth": str(WIKI_RENDER_WIDTH),
+                    "format": "json",
+                },
+                timeout=20,
+            )
+            if resp.status_code in (429, 503) and attempt < 3:
+                print(f"  [media] Commons throttled ({resp.status_code}); waiting {delay:.0f}s")
+                time.sleep(delay)
+                delay *= 2
+                continue
+            resp.raise_for_status()
+            data = resp.json()
+            break
+        except Exception as e:
+            if attempt == 3:
+                print(f"  [media] Wikimedia search failed: {e}")
+                return []
+            time.sleep(delay)
+            delay *= 2
+    if data is None:
         return []
 
     pages = data.get("query", {}).get("pages", {})
