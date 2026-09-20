@@ -76,6 +76,24 @@ CASES = [
      "second-person pronoun outside quotes"),
     # Verbatim from the 2026-09-10 Colombia gun-permit card, where this
     # sentence sat between a Rubio quote and the request for comment.
+    # The live defect of 2026-09-20: a headline death toll no source contained.
+    # 22 source articles carried 23 mentions of 16, two of 21, and no 31.
+    ("E-13", {"title": "Funerals Held After Suicide Attack Kills 31 at Pakistan Mosque",
+              "summary": (
+                  "Funerals are underway in Kohat, Pakistan, following a suicide attack "
+                  "on Friday that killed at least 31 people. A suicide attacker rammed an "
+                  "explosives-laden car into a mosque near a police compound as seven "
+                  "gunmen attempted to enter the facility. Other reports state at least "
+                  "21 people died, while some outlets reported 16 fatalities. Five police "
+                  "officers were among those killed. The attack also injured 57 people. "
+                  "The incident occurred during Friday prayers, with officers and their "
+                  "families inside the mosque near police headquarters."),
+              "source_text": (
+                  "16 killed in twin suicide attack in NW Pakistan. At least 16 killed in "
+                  "Pakistan car bomb attack near mosque. Suicide attack kills 16 near "
+                  "mosque in northwest Pakistan police compound. Pakistan mosque bombing "
+                  "kills 16, wounds 57. Some outlets put the toll at 21.")},
+     "a death toll in the headline that appears in none of the sources"),
     ("E-12", {"title": "Colombian President Lifts Gun Carry Ban",
               "summary": (
                   "Colombian President Abelardo de la Espriella signed an order on Tuesday "
@@ -182,3 +200,52 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
+
+
+def test_e13_catches_a_fabricated_number():
+    """A number in the card that no source article contains.
+
+    Taken verbatim from the live feed of 2026-09-20. The card headlined
+    "Suicide Attack Kills 31 at Pakistan Mosque"; across its 22 sources there
+    were 23 mentions of 16, two of 21, and none of 31. The summary said "Other
+    reports state at least 21 people died" one sentence later, so the card knew
+    the sources disagreed and asserted a third number anyway.
+
+    Every other rule in the standard reads the card alone. This is the first
+    that reads it against what it was written from.
+    """
+    import sys, pathlib
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[1] / "pipeline"))
+    from editorial.standard import validate_candidate
+
+    sources = ("16 killed in twin suicide attack in NW Pakistan. At least 16 killed in "
+               "Pakistan car bomb attack near mosque. Pakistan mosque bombing kills 16, "
+               "wounds 57. Some reports put the toll at 21.")
+
+    bad = {"title": "Funerals Held After Suicide Attack Kills 31 at Pakistan Mosque",
+           "summary": "Funerals are underway in Kohat following an attack that killed at "
+                      "least 31 people. Other reports state at least 21 people died, "
+                      "while some outlets reported 16 fatalities. " + "Filler. " * 40,
+           "source_text": sources}
+    ids = [f.id for f in validate_candidate(bad)]
+    assert "E-13" in ids, f"fabricated number not caught: {ids}"
+
+    good = dict(bad,
+                title="Funerals Held After Suicide Attack at Pakistan Mosque Kills 16",
+                summary="Most outlets report 16 killed; some report at least 21. "
+                        "Reported injuries reach 57. " + "Filler. " * 40)
+    assert "E-13" not in [f.id for f in validate_candidate(good)], "correct card failed"
+
+    # 21 and 57 are in the sources and must not fire; nor may a one-digit number.
+    assert "E-13" not in [f.id for f in validate_candidate(
+        dict(good, summary="Five officers died; 21 hurt, 57 wounded. " + "Filler. " * 40))]
+
+    # No source text: skip rather than accuse. A rule that cannot see the
+    # evidence must not claim the card is wrong.
+    assert "E-13" not in [f.id for f in validate_candidate(
+        {"title": "Kills 31", "summary": "31 died. " + "Filler. " * 40})]
+    print("PASS  E-13 catches a fabricated number and spares a sourced one")
+
+
+if __name__ == "__main__":
+    test_e13_catches_a_fabricated_number()

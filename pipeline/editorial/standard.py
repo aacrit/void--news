@@ -589,6 +589,53 @@ def f04_count_match(header_count: int | None, rendered: int,
 # ---------------------------------------------------------------------------
 # Registry
 # ---------------------------------------------------------------------------
+# E-13: a number in the card must exist in the source articles.
+#
+# On 2026-09-20 a live card headlined "Suicide Attack Kills 31 at Pakistan
+# Mosque". Across its 22 source articles there were 23 mentions of 16, two of
+# 21, and none of 31. The figure was invented, in a headline, about a death
+# toll, and the card's own summary said "Other reports state at least 21 people
+# died" a sentence later: it knew the sources disagreed and asserted a third
+# number anyway.
+#
+# Nothing caught it. Every other rule here reads the card alone; this is the
+# first that reads the card against what it was written from, which is why it
+# is the one that catches a fabrication rather than a malformation.
+#
+# Deliberately narrow, because a false positive here blocks a true story:
+#   - only integers of two digits or more, so "five officers" and years are out
+#     of scope and ordinary prose numbers do not trip it;
+#   - a number is grounded if it appears anywhere in any source, with or
+#     without a thousands separator, so a reformatted 1,200 still matches;
+#   - percentages and money keep their digits and are checked the same way.
+# The headline is checked with the summary because the headline is the claim a
+# reader carries away, and this one was wrong there first.
+_NUM_RE = re.compile(r"\b\d[\d,]*\b")
+
+
+def _numbers(text: str) -> set[str]:
+    out = set()
+    for m in _NUM_RE.finditer(text or ""):
+        raw = m.group(0).replace(",", "")
+        if raw.isdigit() and len(raw) >= 2:
+            out.add(raw.lstrip("0") or "0")
+    return out
+
+
+def e13_numbers_are_sourced(title: str, summary: str, sources: str) -> list[Finding]:
+    """Every multi-digit number in the card appears in its source articles."""
+    grounded = _numbers(sources)
+    findings: list[Finding] = []
+    for field, text in (("headline", title), ("summary", summary)):
+        for n in sorted(_numbers(text) - grounded, key=int):
+            findings.append(Finding(
+                "E-13",
+                f"{field} states {n}, which appears in none of the source articles: "
+                f"source it or cut it",
+            ))
+    return findings
+
+
 class Validator(NamedTuple):
     id: str
     name: str
@@ -613,6 +660,7 @@ VALIDATORS: list[Validator] = [
     Validator("E-09", "not mostly absence of information", ADVISORY, e09_absence_of_information, "summary"),
     Validator("E-11", "no second-person pronoun outside quotes", ADVISORY, e11_second_person_outside_quotes, "summary"),
     Validator("E-12", "no sentence isolated from the rest of the summary", ADVISORY, e12_isolated_sentence, "summary"),
+    Validator("E-13", "every number in the card appears in its sources", ENFORCED, e13_numbers_are_sourced, "grounded"),
 ]
 
 VALIDATORS_BY_ID = {v.id: v for v in VALIDATORS}
@@ -645,6 +693,10 @@ def validate_candidate(candidate: dict, include_advisory: bool = True) -> list[F
     title = candidate.get("title") or ""
     summary = candidate.get("summary") or ""
     href = candidate.get("href")
+    # The text the card was written from. Absent when the caller has no source
+    # text to hand, in which case the grounded rules skip rather than fail: a
+    # rule that cannot see the evidence must not claim the card is wrong.
+    sources = candidate.get("source_text")
     out: list[Finding] = []
     for v in VALIDATORS:
         if v.status == ADVISORY and not include_advisory:
@@ -658,6 +710,9 @@ def validate_candidate(candidate: dict, include_advisory: bool = True) -> list[F
             out.extend(v.fn(title, summary))
         elif v.scope == "text":
             out.extend(v.fn(f"{title} {summary}"))
+        elif v.scope == "grounded":
+            if sources:
+                out.extend(v.fn(title, summary, sources))
     return out
 
 
