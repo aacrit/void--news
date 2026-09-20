@@ -18,7 +18,9 @@
    render boundary). Same rows in, same Story out.
    --------------------------------------------------------------------------- */
 
-import { readFileSync } from "fs";
+import { readFileSync, writeFileSync } from "fs";
+import { tmpdir } from "os";
+import { createHash } from "crypto";
 import { join } from "path";
 import {
   parseBiasDiversity,
@@ -95,6 +97,11 @@ export function getArchiveRows(): Promise<PrintedStoryRow[]> {
     // emitted as build-data/archive.json by the pipeline (was a paginated
     // Supabase read). Read the whole file once; callers share this in-memory
     // copy. An unavailable file resolves to [] (no /story pages), never throws.
+    // The archive is either committed (build-data/archive.json) or on R2, with
+    // build-data/archive.pointer.json naming where. It is 20 MB rewritten every
+    // run, which is the single biggest source of git churn in the repo, so the
+    // pointer is the destination; the local file stays supported so a build
+    // works either way and during the migration.
     try {
       const raw = readFileSync(
         join(process.cwd(), "build-data", "archive.json"),
@@ -102,12 +109,72 @@ export function getArchiveRows(): Promise<PrintedStoryRow[]> {
       );
       const rows = JSON.parse(raw) as PrintedStoryRow[];
       return Array.isArray(rows) ? rows : [];
-    } catch (e) {
+    } catch {
+      // No local file. A pointer means the rows exist and are reachable.
+    }
+
+    let pointer: { url?: string; rows?: number } | null = null;
+    try {
+      pointer = JSON.parse(
+        readFileSync(join(process.cwd(), "build-data", "archive.pointer.json"), "utf-8"),
+      );
+    } catch {
       console.warn(
-        `[archive] build-data/archive.json unavailable at build time (${e}); no /story pages will be generated.`,
+        "[archive] neither build-data/archive.json nor archive.pointer.json is present; no /story pages will be generated.",
       );
       return [];
     }
+
+    if (!pointer?.url) {
+      console.warn("[archive] archive.pointer.json carries no url; no /story pages.");
+      return [];
+    }
+
+    // A pointer that cannot be fetched THROWS. Returning [] here would silently
+    // drop every /story page and every archive url from the sitemap while the
+    // build still reported success, which is exactly the class of quiet
+    // degradation this codebase keeps getting bitten by. A failed build is
+    // recoverable; a deploy that erases 1,500 permalinks is not.
+    // Next runs generateStaticParams, generateMetadata and the page render in
+    // SEPARATE worker processes, so the module-level promise above memoizes
+    // within a worker but not across them: a build fetched this 20 MB file four
+    // times. One disk cache per build, keyed by the url, makes it one fetch.
+    const cacheFile = join(
+      tmpdir(),
+      `void-archive-${createHash("sha1").update(pointer.url).digest("hex").slice(0, 16)}.json`,
+    );
+    try {
+      const cached = JSON.parse(readFileSync(cacheFile, "utf-8")) as PrintedStoryRow[];
+      if (Array.isArray(cached) && cached.length > 0) {
+        return cached;
+      }
+    } catch {
+      // No cache yet in this build; fetch it.
+    }
+
+    const res = await fetch(pointer.url, { cache: "no-store" });
+    if (!res.ok) {
+      throw new Error(
+        `[archive] ${pointer.url} returned ${res.status}. The archive is the source of ` +
+          `every /story permalink, so the build stops rather than publishing without them.`,
+      );
+    }
+    const rows = (await res.json()) as PrintedStoryRow[];
+    if (!Array.isArray(rows)) {
+      throw new Error(`[archive] ${pointer.url} did not contain an array of rows.`);
+    }
+    if (typeof pointer.rows === "number" && rows.length !== pointer.rows) {
+      console.warn(
+        `[archive] pointer claims ${pointer.rows} rows but ${rows.length} arrived.`,
+      );
+    }
+    try {
+      writeFileSync(cacheFile, JSON.stringify(rows));
+    } catch {
+      // A read-only temp dir just means the other workers fetch it too.
+    }
+    console.log(`[archive] ${rows.length} rows fetched from ${pointer.url}`);
+    return rows;
   })();
   return _rowsPromise;
 }

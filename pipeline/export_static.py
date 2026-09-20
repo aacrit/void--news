@@ -29,6 +29,7 @@ REPO = Path(__file__).resolve().parents[1]
 if str(REPO / "pipeline") not in sys.path:
     sys.path.insert(0, str(REPO / "pipeline"))
 from utils.feed_config import CANDIDATES, MIN_DISPLAYABLE  # noqa: E402
+from utils import media  # noqa: E402
 from utils.display_window import is_displayable  # noqa: E402
 DB = (
     sys.argv[1]
@@ -242,9 +243,40 @@ if want("archive"):
             if k in d:
                 d[k] = pnum(r[k])
         archive.append(d)
-    wj(BUILD_DIR / "archive.json", archive)
 
-    latest = c.execute("SELECT printed_on FROM printed_stories ORDER BY printed_on DESC LIMIT 1").fetchone()
+    latest = c.execute(
+        "SELECT printed_on FROM printed_stories ORDER BY printed_on DESC LIMIT 1"
+    ).fetchone()
+    latest_printed = latest["printed_on"] if latest else None
+    # archive.json is ~20 MB and is rewritten EVERY run, which makes it the
+    # single biggest source of git churn in the repo. On R2 it becomes a pointer
+    # the build fetches; the local file is only written when R2 is off, so a
+    # repo without the bucket configured behaves exactly as before.
+    _pointer = BUILD_DIR / "archive.pointer.json"
+    if media.enabled():
+        _payload = json.dumps(archive, ensure_ascii=False, separators=(",", ":")).encode()
+        _key = f"data/archive/{latest_printed or 'latest'}.json"
+        try:
+            _url = media.put(_key, _payload, "application/json",
+                             cache_control=media.IMMUTABLE, skip_if_present=False)
+            # A stable url the build can always reach, alongside the dated one.
+            media.put("data/archive/latest.json", _payload, "application/json",
+                      cache_control=media.DAILY)
+            wj(_pointer, {"url": media.url("data/archive/latest.json"),
+                          "dated": _url, "rows": len(archive),
+                          "bytes": len(_payload)})
+            (BUILD_DIR / "archive.json").unlink(missing_ok=True)
+            print(f"archive.json: {len(archive)} rows -> R2 ({len(_payload)//1048576} MB), "
+                  f"pointer written")
+        except Exception as e:
+            # Keep the committed file rather than publish a pointer to nothing.
+            print(f"[warn] archive upload failed ({e}); writing archive.json locally")
+            wj(BUILD_DIR / "archive.json", archive)
+            _pointer.unlink(missing_ok=True)
+    else:
+        wj(BUILD_DIR / "archive.json", archive)
+        _pointer.unlink(missing_ok=True)
+
     amap = {}
     if latest:
         for r in c.execute(

@@ -31,6 +31,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT / "pipeline") not in sys.path:
+    sys.path.insert(0, str(ROOT / "pipeline"))
+
+from utils import media  # noqa: E402
 EVENTS = ROOT / "data" / "history" / "events"
 AUDIO_DIR = ROOT / "frontend" / "public" / "audio" / "history"
 MANIFEST = ROOT / "frontend" / "public" / "data" / "history-audio.json"
@@ -69,16 +73,21 @@ def publish(slug: str, src_dir: Path, manifest: dict) -> dict:
             raise FileNotFoundError(str(f))
 
     payload = mp3.read_bytes()
-    if len(payload) > MAX_BYTES:
+    # The 25 MiB ceiling is a Cloudflare PAGES per-file limit. R2 has no such
+    # limit, so it only binds while episodes ship inside the deploy.
+    to_r2 = media.enabled()
+    if not to_r2 and len(payload) > MAX_BYTES:
         raise ValueError(f"{slug}: {len(payload)/1048576:.1f} MB exceeds the "
                          f"{MAX_BYTES/1048576:.0f} MB Pages per-file limit")
 
-    AUDIO_DIR.mkdir(parents=True, exist_ok=True)
-    (AUDIO_DIR / f"{slug}.mp3").write_bytes(payload)
+    if not to_r2:
+        AUDIO_DIR.mkdir(parents=True, exist_ok=True)
+        (AUDIO_DIR / f"{slug}.mp3").write_bytes(payload)
 
     chapters: list[dict] = []
     if sidecar.exists():
-        shutil.copyfile(sidecar, AUDIO_DIR / f"{slug}.chapters.json")
+        if not to_r2:
+            shutil.copyfile(sidecar, AUDIO_DIR / f"{slug}.chapters.json")
         for c in json.loads(sidecar.read_text()).get("chapters", []):
             entry = {"startTime": c["startTime"], "title": c.get("title", ""),
                      # History segments are not radio segments. "segment" is the
@@ -99,9 +108,26 @@ def publish(slug: str, src_dir: Path, manifest: dict) -> dict:
             title = line.split(":", 1)[1].strip().strip('"\'')
             break
 
+    if to_r2:
+        # An episode is permanent content, so its key is stable per slug and the
+        # fingerprint in the query string is what moves a re-render past caches.
+        base = media.put(f"audio/history/{slug}.mp3", payload, "audio/mpeg",
+                         cache_control=media.IMMUTABLE)
+        chapters_url = None
+        if sidecar.exists():
+            chapters_url = media.put(f"audio/history/{slug}.chapters.json",
+                                     sidecar.read_bytes(), "application/json",
+                                     cache_control=media.IMMUTABLE)
+        url = f"{base}?v={fp}"
+        chapters_url = f"{chapters_url}?v={fp}" if chapters_url else ""
+        print(f"    uploaded to R2 ({len(payload)//1024} KB)")
+    else:
+        url = f"/audio/history/{slug}.mp3?v={fp}"
+        chapters_url = f"/audio/history/{slug}.chapters.json?v={fp}"
+
     entry = {
-        "url": f"/audio/history/{slug}.mp3?v={fp}",
-        "chaptersUrl": f"/audio/history/{slug}.chapters.json?v={fp}",
+        "url": url,
+        "chaptersUrl": chapters_url,
         "title": title or slug,
         "durationSeconds": _duration_seconds(mp3),
         "bytes": len(payload),

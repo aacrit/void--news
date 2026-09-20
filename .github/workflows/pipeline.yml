@@ -125,6 +125,14 @@ jobs:
           PYTHONUNBUFFERED: "1"
           VOID_SQLITE_PATH: pipeline_state.db
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # Cloudflare R2 (media). When these are absent every media path
+          # falls back to committed files, so this is safe before the bucket
+          # exists. See pipeline/utils/media.py and docs/MEDIA-R2.md.
+          VOID_MEDIA_BASE: ${{ vars.VOID_MEDIA_BASE }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           DISABLE_GEMINI_REASONING: "1"
           DISABLE_EDITORIAL_TRIAGE: "1"
           # Audio ON: edge-tts synthesizes the brief, written to the static site
@@ -156,6 +164,14 @@ jobs:
       - name: Export static snapshots
         env:
           VOID_SQLITE_PATH: pipeline_state.db
+          # Cloudflare R2 (media). When these are absent every media path
+          # falls back to committed files, so this is safe before the bucket
+          # exists. See pipeline/utils/media.py and docs/MEDIA-R2.md.
+          VOID_MEDIA_BASE: ${{ vars.VOID_MEDIA_BASE }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
         run: python pipeline/export_static.py
 
       - name: Commit refreshed static data to main

@@ -61,6 +61,8 @@ jobs:
           python tests/test_summary_hygiene_parity.py
           python pipeline/validation/test_disaster_severity.py
           python tests/test_radio_script.py
+          pip install -q boto3 'moto[s3]' 2>/dev/null || true
+          python tests/test_media_r2.py
           python tests/test_history_audio.py
 
   # End-to-end run of the editorial half of the pipeline (8c through 8f plus

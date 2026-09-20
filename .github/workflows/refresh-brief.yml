@@ -101,6 +101,11 @@ jobs:
       - name: Refresh Daily Brief
         env:
           VOID_SQLITE_PATH: pipeline_state.db
+          VOID_MEDIA_BASE: ${{ vars.VOID_MEDIA_BASE }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           # $0 posture: Gemini Flash handles the brief (Groq retired 2026-06-24).
@@ -151,6 +156,11 @@ jobs:
       - name: Re-emit static JSON
         env:
           VOID_SQLITE_PATH: pipeline_state.db
+          VOID_MEDIA_BASE: ${{ vars.VOID_MEDIA_BASE }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
         run: python pipeline/export_static.py
 
       - name: Commit refreshed brief

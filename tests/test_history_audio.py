@@ -67,10 +67,26 @@ def main() -> int:
         check(f"{slug}: event exists", (EVENTS / f"{slug}.yaml").exists())
 
         url = ep.get("url", "")
-        check(f"{slug}: url is site-relative", url.startswith("/audio/history/"), url)
+        # An episode lives EITHER in the deploy (site-relative) or in R2
+        # (absolute). Both are valid, and a mixed manifest is expected while the
+        # catalogue migrates; what is never valid is a third shape.
+        on_r2 = url.startswith("https://")
+        check(f"{slug}: url is site-relative or an absolute media url",
+              on_r2 or url.startswith("/audio/history/"), url)
         check(f"{slug}: url carries a cache fingerprint", "?v=" in url, url)
 
         mp3 = AUDIO / f"{slug}.mp3"
+        if on_r2:
+            # The bytes are in the bucket, so there is nothing here to weigh or
+            # measure. This test cannot reach R2 and does not pretend to: the
+            # served gate (scripts/verify_sections.py) is what confirms an R2
+            # url actually returns an episode.
+            check(f"{slug}: not also committed to the repo", not mp3.exists(),
+                  "an episode on R2 that is ALSO in git is the migration half-done")
+            check(f"{slug}: byte count recorded", isinstance(ep.get("bytes"), int)
+                  and ep["bytes"] > 0)
+            continue
+
         check(f"{slug}: mp3 is committed", mp3.exists(), str(mp3))
         if not mp3.exists():
             continue
@@ -78,6 +94,8 @@ def main() -> int:
         size = mp3.stat().st_size
         check(f"{slug}: manifest byte count matches the file",
               ep.get("bytes") == size, f"{ep.get('bytes')} vs {size}")
+        # A Cloudflare PAGES per-file limit, so it binds only while the episode
+        # ships inside the deploy. R2 has no such ceiling.
         check(f"{slug}: under the Pages per-file limit", size <= MAX_BYTES,
               f"{size/1048576:.1f} MB")
 

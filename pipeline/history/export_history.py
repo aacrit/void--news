@@ -113,6 +113,18 @@ def _caption_from_filename(name: str) -> str:
     return stem[:1].upper() + stem[1:] if stem else "Archival image"
 
 
+def image_src(rec: dict) -> str:
+    """Where the browser should fetch this picture.
+
+    R2 when it has been mirrored there, the Wikimedia CDN otherwise. Both are
+    correct; R2 is preferred because upload.wikimedia.org rate-limits per client
+    IP and answers 429, which is the failure that left this archive pictureless
+    in the first place. Falling back rather than failing means the catalogue
+    keeps working at every stage of the migration, including half-way through.
+    """
+    return rec.get("cdn") or rec["url"]
+
+
 def resolved_image(url, commons: dict) -> dict | None:
     """The verified record for a source url, or None if it is not usable.
 
@@ -195,8 +207,8 @@ def build_rows(docs: list[dict]) -> list[dict]:
                 "title": m.get("title", ""),
                 "description": m.get("description"),
                 # Wikimedia's own CDN thumbnail, not the YAML's source url.
-                "source_url": rec["url"],
-                "thumbnail_url": rec["url"],
+                "source_url": image_src(rec),
+                "thumbnail_url": image_src(rec),
                 # Credit and licence as Wikimedia reports them. The YAML's own
                 # fields are a curator's note and have drifted from the file.
                 "attribution": _credit(rec, m.get("attribution")),
@@ -225,8 +237,8 @@ def build_rows(docs: list[dict]) -> list[dict]:
                 "media_type": "image",
                 "title": _caption_from_filename(rec.get("name", "")),
                 "description": None,
-                "source_url": rec["url"],
-                "thumbnail_url": rec["url"],
+                "source_url": image_src(rec),
+                "thumbnail_url": image_src(rec),
                 "attribution": _credit(rec, None),
                 "license": rec.get("licence"),
                 "creator": rec.get("artist"),
@@ -245,7 +257,7 @@ def build_rows(docs: list[dict]) -> list[dict]:
         # hero; the page already renders without one.
         hero_rec = resolved_image(row.get("hero_image_url"), commons)
         if hero_rec:
-            row["hero_image_url"] = hero_rec["url"]
+            row["hero_image_url"] = image_src(hero_rec)
             row["hero_image_attribution"] = _credit(hero_rec, row.get("hero_image_attribution"))
         elif row["media"]:
             first = row["media"][0]

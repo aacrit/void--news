@@ -19,3 +19,8 @@ mutagen~=1.48.1   # ID3v2 chapter frames for the On Air MP3 (radio_producer)
 anthropic>=0.40.0,<1.0.0
 Pillow~=11.0.0
 atproto>=0.0.50,<1.0.0
+
+# Cloudflare R2 is S3-compatible; boto3 is the client Cloudflare documents.
+# Only imported when R2 is configured (pipeline/utils/media.py), so a run
+# without the bucket never touches it.
+boto3~=1.35

@@ -771,12 +771,25 @@ def _write_audio_static(audio_bytes: bytes, edition: str,
 
     Keeps a date-stamped file (podcast-friendly) + latest.mp3, and rotates so the
     working tree holds only the last few days. Returns a site-relative URL for
-    daily_briefs.audio_url. (Follow-up: move this + archive.json to R2 to keep
-    binaries out of git history.)"""
+    daily_briefs.audio_url.
+
+    When R2 is configured the episode goes to the bucket instead and the url is
+    absolute. That is the move the repo has needed for a while: the audio
+    directory alone is 71 MB in the working tree, every run adds another
+    episode, and git binaries cannot be un-committed cleanly."""
     import os
     from pathlib import Path
     from datetime import datetime, timezone
     import hashlib
+
+    from utils import media
+
+    if media.enabled():
+        r2_url = _write_audio_r2(audio_bytes, edition, sidecars)
+        if r2_url:
+            return r2_url
+        # R2 was configured but the upload failed. Fall through and write the
+        # episode into the repo: a heavier repo beats a brief with no audio.
 
     try:
         now = datetime.now(timezone.utc)
@@ -809,6 +822,46 @@ def _write_audio_static(audio_bytes: bytes, edition: str,
         return f"/audio/{edition}/{fname}?v={fp}"
     except Exception as e:
         print(f"  [warn][audio] static audio write failed for {edition}: {e}")
+        return None
+
+
+def _write_audio_r2(audio_bytes: bytes, edition: str,
+                    sidecars: dict[str, bytes] | None = None) -> Optional[str]:
+    """Publish an episode to R2 and return its absolute url.
+
+    Date-stamped so a podcast enclosure stays valid forever, plus latest.mp3 for
+    the web player. There is no rotation: the bucket is where the back catalogue
+    is SUPPOSED to accumulate, which is the whole reason for moving off git.
+    """
+    from datetime import datetime, timezone
+    import hashlib
+
+    from utils import media
+
+    try:
+        now = datetime.now(timezone.utc)
+        slot = "am" if now.hour < 12 else "pm"
+        stem = f"{now.strftime('%Y-%m-%d')}-{slot}"
+        prefix = f"audio/{edition}"
+
+        url = media.put(f"{prefix}/{stem}.mp3", audio_bytes, "audio/mpeg",
+                        cache_control=media.IMMUTABLE)
+        # latest.mp3 is a moving pointer, so it must NOT be cached immutably.
+        media.put(f"{prefix}/latest.mp3", audio_bytes, "audio/mpeg",
+                  cache_control=media.DAILY)
+
+        for suffix, data in (sidecars or {}).items():
+            ctype = "application/json" if suffix.endswith(".json") else "application/octet-stream"
+            media.put(f"{prefix}/{stem}{suffix}", data, ctype, cache_control=media.IMMUTABLE)
+            media.put(f"{prefix}/latest{suffix}", data, ctype, cache_control=media.DAILY)
+
+        fp = hashlib.md5(audio_bytes[:1024]).hexdigest()[:8]
+        print(f"  [audio] uploaded {prefix}/{stem}.mp3 ({len(audio_bytes)//1024} KB) to R2")
+        return f"{url}?v={fp}"
+    except Exception as e:
+        # Fall through to the committed-file path rather than shipping a brief
+        # with no audio: a heavier repo beats a silent episode.
+        print(f"  [warn][audio] R2 upload failed for {edition}: {e}; writing to the repo instead")
         return None
 
 

@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import datetime as dt
 import json
+import os
 import sys
 import urllib.error
 import urllib.request
@@ -100,7 +101,18 @@ def main(site: str) -> int:
     # Every image url must be a Wikimedia CDN path. Special:Redirect is the one
     # that looks right and fails: it is a MediaWiki special page, throttled to
     # HTTP 429, and it is what made the archive render with no pictures at all.
-    OK_HOSTS = ("upload.wikimedia.org", "thumb.wikimedia.org")
+    # Wikimedia while images are hotlinked, plus Void's own media host once they
+    # are mirrored to R2. Both are legitimate; a mixed state is expected during
+    # the migration and is not a failure.
+    OK_HOSTS = ["upload.wikimedia.org", "thumb.wikimedia.org"]
+    _media_host = os.environ.get("VOID_MEDIA_BASE", "")
+    if _media_host:
+        OK_HOSTS.append(_media_host.split("//")[-1].strip("/"))
+    else:
+        # The gate runs without the pipeline's env, so accept the conventional
+        # media subdomain of the site being checked rather than failing a
+        # correctly-migrated catalogue.
+        OK_HOSTS.append("media." + base.split("//")[-1].split("/")[0].replace("news.", ""))
     all_imgs = [
         (e.get("slug"), m.get("source_url"), m.get("license"))
         for e in events for m in (e.get("media") or [])
@@ -180,8 +192,7 @@ def main(site: str) -> int:
     if not cover:
         report("W-03", True, "no cover image (acceptable; better than an unlicensed one)")
     else:
-        licensed_host = any(h in cover for h in (
-            "upload.wikimedia.org", "thumb.wikimedia.org",
+        licensed_host = any(h in cover for h in tuple(OK_HOSTS) + (
             "images.unsplash.com", "images.pexels.com",
         ))
         report("W-03", licensed_host and src != "og_image",
