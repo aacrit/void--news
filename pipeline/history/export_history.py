@@ -17,21 +17,41 @@ frontend uses them only as React keys and for connection lookups. Connections
 are emitted on BOTH endpoints, matching the forward+reverse pair of queries the
 Supabase path issued, and dropped when the target slug has no event file.
 
-Media URLs come from `source_url`, never `supabase_url`: the latter points into
-the decommissioned storage bucket and every one of those objects is gone.
+Images do not come from the YAML's urls at all. They come from
+data/history/commons_media.json, which pipeline/history/resolve_commons.py
+builds by asking Wikimedia for each file's canonical thumbnail url AND its
+licence. The YAML's `source_url` is only the key into that record, and its
+`license` field is a curator's note rather than the authority.
+
+That indirection is what makes the pictures both legal and visible:
+
+  * A file Wikimedia does not confirm as public domain or permissively licensed
+    never reaches the page. The six `fair-use` entries (Napalm Girl, Tank Man,
+    Hector Pieterson among them) drop out here without needing a special case.
+  * The url is Wikimedia's own CDN thumbnail. The frontend used to point at
+    `Special:Redirect/file/`, a MediaWiki special page that answers real traffic
+    with HTTP 429, so History rendered with no images at all.
+
+An unresolved file is dropped rather than guessed at, so a resolution failure
+costs a picture and never ships a broken one. `supabase_url` is ignored
+entirely: that bucket was decommissioned and every object in it is gone.
 
 Usage:
     python -m pipeline.history.export_history
 """
 import json
 import os
+import re
 import sys
 from pathlib import Path
 
 import yaml
 
+from .resolve_commons import commons_filename
+
 REPO = Path(__file__).resolve().parents[2]
 DATA_DIR = REPO / "data" / "history" / "events"
+COMMONS_CACHE = REPO / "data" / "history" / "commons_media.json"
 PUBLIC_DIR = Path(
     os.environ.get("VOID_EXPORT_PUBLIC_DIR") or REPO / "frontend" / "public" / "data"
 )
@@ -65,28 +85,72 @@ def load_events() -> list[dict]:
     return docs
 
 
-def is_renderable(url) -> bool:
-    """True when the url resolves to an actual image the browser can load.
+def load_commons() -> tuple[dict, dict]:
+    """The verified Wikimedia records: (files by name, backfill by slug).
 
-    A commons File: page is rewritten to Special:Redirect/file/ by the frontend
-    and served by Wikimedia; an upload.wikimedia.org path is already direct.
-    Everything else here is a landing page (unsplash.com/photos/..., a pexels
-    gallery, an en.wikipedia article anchor, a doi.org record) or a dead
-    Supabase Storage object.
+    Empty if the cache was never built, in which case no images are emitted at
+    all. That is the intended failure: a missing cache means nothing has been
+    licence-checked, and shipping unchecked pictures is the thing this whole
+    path exists to prevent.
     """
-    u = str(url or "")
-    return (
-        u.startswith("https://commons.wikimedia.org/wiki/File:")
-        or u.startswith("https://upload.wikimedia.org/")
-    )
+    if not COMMONS_CACHE.exists():
+        print("  [warn] no commons_media.json; run pipeline.history.resolve_commons. "
+              "No images will be emitted.")
+        return {}, {}
+    data = json.loads(COMMONS_CACHE.read_text(encoding="utf-8"))
+    return (data.get("files") or {}), (data.get("backfill") or {})
+
+
+def _caption_from_filename(name: str) -> str:
+    """A readable caption from a Commons file name.
+
+    Backfilled pictures have no curator's caption, so the file name is what
+    there is: "Trail_of_Tears_map.jpg" reads as "Trail of Tears map".
+    """
+    stem = re.sub(r"\.[A-Za-z0-9]{2,4}$", "", name or "")
+    stem = stem.replace("_", " ").replace("-", " ")
+    stem = re.sub(r"\s+", " ", stem).strip()
+    return stem[:1].upper() + stem[1:] if stem else "Archival image"
+
+
+def resolved_image(url, commons: dict) -> dict | None:
+    """The verified record for a source url, or None if it is not usable.
+
+    None covers every way an image fails to be publishable: the url is not a
+    Commons reference at all (an Unsplash or Pexels landing page, a doi.org
+    record, a dead Supabase object), the file is not hosted on Commons, or
+    Wikimedia does not report a free licence for it.
+    """
+    name = commons_filename(url)
+    if not name:
+        return None
+    return commons.get(name)
+
+
+def _credit(rec: dict, fallback) -> str:
+    """One credit line for an image: author, licence, and where it is hosted.
+
+    CC BY and CC BY-SA are usable precisely BECAUSE the credit is rendered, so
+    this is a licence condition rather than a nicety. Falls back to the curated
+    attribution when Wikimedia reports no author (common on old public-domain
+    scans, where there is genuinely no one to name)."""
+    artist = (rec.get("artist") or "").strip()
+    licence = (rec.get("licence") or "").strip()
+    if artist and licence:
+        return f"{artist}, {licence}, via Wikimedia Commons"
+    if licence:
+        return f"{licence}, via Wikimedia Commons"
+    return str(fallback or "via Wikimedia Commons")
 
 
 def build_rows(docs: list[dict]) -> list[dict]:
+    commons, backfilled = load_commons()
     known = {d["slug"] for d in docs}
     rows: dict[str, dict] = {}
     dropped_media: dict[str, int] = {}
     heroes_substituted: list[str] = []
     heroes_missing: list[str] = []
+    backfill_added: dict[str, int] = {}
 
     for doc in docs:
         slug = doc["slug"]
@@ -116,8 +180,13 @@ def build_rows(docs: list[dict]) -> list[dict]:
             for i, p in enumerate(doc.get("perspectives") or [])
         ]
 
-        kept = [m for m in (doc.get("media") or []) if is_renderable(m.get("source_url"))]
+        kept = []
+        for m in doc.get("media") or []:
+            rec = resolved_image(m.get("source_url"), commons)
+            if rec:
+                kept.append((m, rec))
         dropped_media[slug] = len(doc.get("media") or []) - len(kept)
+
         row["media"] = [
             {
                 "id": f"{event_id(slug)}-m{i}",
@@ -125,34 +194,68 @@ def build_rows(docs: list[dict]) -> list[dict]:
                 "media_type": m.get("media_type", "image"),
                 "title": m.get("title", ""),
                 "description": m.get("description"),
-                # source_url ONLY. supabase_url points into the deleted bucket.
-                "source_url": m.get("source_url"),
-                "thumbnail_url": m.get("thumbnail_url"),
-                "attribution": m.get("attribution", ""),
-                "license": m.get("license", "public-domain"),
-                "creator": m.get("creator"),
+                # Wikimedia's own CDN thumbnail, not the YAML's source url.
+                "source_url": rec["url"],
+                "thumbnail_url": rec["url"],
+                # Credit and licence as Wikimedia reports them. The YAML's own
+                # fields are a curator's note and have drifted from the file.
+                "attribution": _credit(rec, m.get("attribution")),
+                "license": rec.get("licence") or m.get("license"),
+                "creator": rec.get("artist") or m.get("creator"),
                 "creation_date": m.get("creation_date"),
                 "display_order": m.get("display_order", i),
-                "width": m.get("width"),
-                "height": m.get("height"),
+                "width": rec.get("width") or m.get("width"),
+                "height": rec.get("height") or m.get("height"),
                 "location": m.get("location"),
                 "embed_url": m.get("embed_url"),
             }
-            for i, m in enumerate(kept)
+            for i, (m, rec) in enumerate(kept)
         ]
 
-        # Hero: keep a live one, else adopt the first surviving media item and
-        # its credit. Events with no Wikimedia media at all keep no hero; the
-        # page already renders without one.
-        if not is_renderable(row.get("hero_image_url")):
-            if kept:
-                row["hero_image_url"] = kept[0].get("source_url")
-                row["hero_image_attribution"] = kept[0].get("attribution", "")
-                heroes_substituted.append(slug)
-            else:
-                row["hero_image_url"] = None
-                row["hero_image_attribution"] = None
-                heroes_missing.append(slug)
+        # Roughly a third of the catalogue's curated image references name files
+        # that are not on Commons at all, so verifying the list is not enough to
+        # put pictures on a page. resolve_commons --backfill searched Commons for
+        # each missing picture by the caption its curator wrote and recorded what
+        # it found; those go after the curated ones, which keep their order.
+        extra = backfilled.get(slug) or []
+        for j, rec in enumerate(extra):
+            row["media"].append({
+                "id": f"{event_id(slug)}-b{j}",
+                "event_id": event_id(slug),
+                "media_type": "image",
+                "title": _caption_from_filename(rec.get("name", "")),
+                "description": None,
+                "source_url": rec["url"],
+                "thumbnail_url": rec["url"],
+                "attribution": _credit(rec, None),
+                "license": rec.get("licence"),
+                "creator": rec.get("artist"),
+                "creation_date": None,
+                "display_order": len(row["media"]) + j,
+                "width": rec.get("width"),
+                "height": rec.get("height"),
+                "location": None,
+                "embed_url": None,
+            })
+        backfill_added[slug] = len(extra)
+
+        # Hero: use the stored one when it verifies, else adopt the event's first
+        # surviving image and ITS credit, so the caption always describes the
+        # picture actually on screen. An event with nothing verified keeps no
+        # hero; the page already renders without one.
+        hero_rec = resolved_image(row.get("hero_image_url"), commons)
+        if hero_rec:
+            row["hero_image_url"] = hero_rec["url"]
+            row["hero_image_attribution"] = _credit(hero_rec, row.get("hero_image_attribution"))
+        elif row["media"]:
+            first = row["media"][0]
+            row["hero_image_url"] = first["source_url"]
+            row["hero_image_attribution"] = first["attribution"]
+            heroes_substituted.append(slug)
+        else:
+            row["hero_image_url"] = None
+            row["hero_image_attribution"] = None
+            heroes_missing.append(slug)
 
         row["connections"] = []
         rows[slug] = row
@@ -187,7 +290,12 @@ def build_rows(docs: list[dict]) -> list[dict]:
         print(f"  {dropped} connection(s) dropped: target has no event file")
     total_dropped = sum(dropped_media.values())
     if total_dropped:
-        print(f"  {total_dropped} media item(s) dropped: no directly renderable image url")
+        print(f"  {total_dropped} media item(s) dropped: not a verified free-licence "
+              f"Wikimedia file")
+    added = sum(backfill_added.values())
+    if added:
+        print(f"  {added} image(s) backfilled from Commons search across "
+              f"{sum(1 for v in backfill_added.values() if v)} event(s)")
     if heroes_substituted:
         print(f"  {len(heroes_substituted)} hero(es) adopted from the event's own gallery")
     if heroes_missing:

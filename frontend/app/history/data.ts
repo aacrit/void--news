@@ -10,26 +10,14 @@
    in the Cloudflare build, so the old query path resolved to null on every call
    and silently served MOCK_EVENTS; mock data is now only the last-resort
    fallback for a missing or unparseable snapshot.
-   =========================================================================== */
 
-/* ── Wikimedia Commons page URL → direct upload URL ──
-   Converts https://commons.wikimedia.org/wiki/File:X.jpg
-   to       https://upload.wikimedia.org/wikipedia/commons/{a}/{ab}/X.jpg
-   using the MD5-based path algorithm that Wikimedia uses for file storage. */
-function resolveMediaUrl(url: string): string {
-  if (!url) return url;
-  const match = url.match(/commons\.wikimedia\.org\/wiki\/File:(.+)$/);
-  if (!match) return url;
-  const filename = decodeURIComponent(match[1]).replace(/ /g, "_");
-  // MD5 hash of the filename (browser-compatible via subtle crypto is async,
-  // so we use the deterministic lookup table Wikimedia publishes: first two
-  // hex chars of md5(filename) give the two-level path prefix).
-  // We pre-compute via a simple inline lookup for known files, otherwise
-  // fall through to a Wikimedia API thumb URL which works without hash.
-  const encoded = encodeURIComponent(filename);
-  // Use Special:Redirect as a universal fallback — always works for valid files
-  return `https://commons.wikimedia.org/wiki/Special:Redirect/file/${encoded}`;
-}
+   Image urls arrive ready to render. This module used to rewrite a Commons
+   File: page into `Special:Redirect/file/<name>`, which is a MediaWiki special
+   page rather than a CDN path: Wikimedia answers it with HTTP 429 under real
+   traffic, so every History page rendered with no pictures. The emitter now
+   asks Wikimedia for the canonical thumbnail url and ships that, so there is
+   nothing left to rewrite here.
+   =========================================================================== */
 
 import { BASE_PATH } from "../lib/utils";
 import type {
@@ -208,7 +196,7 @@ function mapEventWithRelations(
     return {
       id: m.id,
       type: MEDIA_TYPES[m.media_type as string] ?? "image",
-      url: resolveMediaUrl(m.source_url),
+      url: m.source_url,
       caption,
       attribution: m.attribution,
       year: m.creation_date ?? undefined,
@@ -258,7 +246,7 @@ function mapEventWithRelations(
     dateSort: row.date_sort,
     dateRange: row.duration ?? row.date_display,
     location: row.country ?? "",
-    heroImage: row.hero_image_url ? resolveMediaUrl(row.hero_image_url) : undefined,
+    heroImage: row.hero_image_url || undefined,
     heroCaption: row.subtitle ?? undefined,
     heroAttribution: row.hero_image_attribution ?? undefined,
     contextNarrative: row.summary ?? "",
