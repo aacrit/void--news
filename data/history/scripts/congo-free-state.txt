@@ -67,7 +67,7 @@ M: The kodak has been a sore calamity to us. The most powerful enemy that has co
 N: In nineteen oh eight, under that pressure, the Belgian parliament annexes the Congo. Leopold takes fifty million francs in compensation, and before the transfer, burns his own Congo archives. The furnaces in Brussels burn for eight days.
 
 ## ASIDE
-N: A king who believed his own humanitarian story does not need eight days of furnaces.
+N: A king who believed his own story does not need eight days of furnaces.
 
 ## REST
 
@@ -143,7 +143,6 @@ Kwango = KWAHN-goh
 Yaka = YAH-kah
 Mulume = moo-LOO-may
 Niama = nee-AH-mah
-Budja = BOOJ-ah
 Morel = mo-REL
 Casement = KAYS-ment
 Hochschild = HOKE-shild
