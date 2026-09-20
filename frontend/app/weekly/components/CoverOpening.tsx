@@ -36,10 +36,11 @@ export default function CoverOpening({
       className={`wk-opening wk-reveal${visible ? " wk-reveal--visible" : ""}`}
     >
       <p className="wk-opening__kicker">{kicker}</p>
-      {/* The page's primary heading. UAT 2026-05-13 P0-5 found /weekly had no
-          <h1> at all; it now sits on the opening spread, where a magazine puts
-          the feature's title, rather than on a repeated cover. */}
-      <h1 className="wk-opening__headline">{headline}</h1>
+      {/* An h2, not an h1. This component is rendered once per cover feature,
+          so hard-coding h1 gave the document two of them. The issue's h1 is the
+          cover headline; a feature opening sits at the same level as the
+          department plates. */}
+      <h2 className="wk-opening__headline">{headline}</h2>
       {deck && <p className="wk-opening__deck">{deck}</p>}
       <div className="wk-opening__meta">
         <span className="wk-opening__dateline">{dateline}</span>

@@ -30,12 +30,11 @@
    height when nothing is placed in them.
    --------------------------------------------------------------------------- */
 
-import { useState } from "react";
 import type React from "react";
 import type { WeeklyCoverStory } from "../types";
 import { essayParagraphs, pickPullQuote } from "../format";
 import { ImgCaption } from "./furniture";
-import { useScrollReveal } from "../hooks";
+import { useImageStatus, useScrollReveal } from "../hooks";
 
 function FeatureImage({
   imageUrl,
@@ -48,22 +47,24 @@ function FeatureImage({
   caption?: string | null;
   eager?: boolean;
 }) {
-  const [loaded, setLoaded] = useState(false);
-  const [error, setError] = useState(false);
-  if (error) return null;
+  const img = useImageStatus(imageUrl);
+  // No picture means no figure and no credit, rather than a caption for
+  // something the reader cannot see.
+  if (img.failed) return null;
   return (
     <figure className="wk-feature__figure">
       <div className="wk-feature__image-wrap">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
+          ref={img.ref}
           src={imageUrl}
           alt=""
-          className={`wk-feature__image${loaded ? " wk-feature__image--loaded" : ""}`}
+          className={`wk-feature__image${img.loaded ? " wk-feature__image--loaded" : ""}`}
           loading={eager ? "eager" : "lazy"}
           fetchPriority={eager ? "high" : undefined}
           decoding="async"
-          onLoad={() => setLoaded(true)}
-          onError={() => setError(true)}
+          onLoad={img.onLoad}
+          onError={img.onError}
         />
       </div>
       <ImgCaption caption={caption} credit={attribution} />

@@ -16,12 +16,11 @@
    a page read as a page rather than as a post.
    --------------------------------------------------------------------------- */
 
-import { useState } from "react";
 import type React from "react";
 import type { WeeklyDepartment } from "../types";
 import { essayParagraphs } from "../format";
 import { DepartmentPlate, ImgCaption } from "./furniture";
-import { useScrollReveal } from "../hooks";
+import { useImageStatus, useScrollReveal } from "../hooks";
 
 export default function DepartmentEssay({
   department,
@@ -33,13 +32,12 @@ export default function DepartmentEssay({
   page: number;
 }) {
   const [ref, visible] = useScrollReveal(0.08);
-  const [imgLoaded, setImgLoaded] = useState(false);
-  const [imgError, setImgError] = useState(false);
+  const img = useImageStatus(department.image_url);
   const paras = essayParagraphs(department.text || "");
   if (paras.length === 0) return null;
 
   const headingId = `wk-dept-${department.slug}-heading`;
-  const showImage = !!department.image_url && !imgError;
+  const showImage = !!department.image_url && !img.failed;
 
   return (
     <section
@@ -60,13 +58,14 @@ export default function DepartmentEssay({
           <div className="wk-department__image-wrap">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
+              ref={img.ref}
               src={department.image_url!}
               alt=""
-              className={`wk-department__image${imgLoaded ? " wk-department__image--loaded" : ""}`}
+              className={`wk-department__image${img.loaded ? " wk-department__image--loaded" : ""}`}
               loading="lazy"
               decoding="async"
-              onLoad={() => setImgLoaded(true)}
-              onError={() => setImgError(true)}
+              onLoad={img.onLoad}
+              onError={img.onError}
             />
           </div>
           <ImgCaption
