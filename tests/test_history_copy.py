@@ -121,6 +121,21 @@ def walk(node, path="", key=None):
             yield from walk(v, f"{path}[{i}]", key)
 
 
+def prose_lists(node, field, path=""):
+    """Every entry of a named prose list, anywhere in the event."""
+    if isinstance(node, dict):
+        for k, v in node.items():
+            here = f"{path}.{k}" if path else k
+            if k == field and isinstance(v, list):
+                for i, item in enumerate(v):
+                    yield f"{here}[{i}]", item
+            else:
+                yield from prose_lists(v, field, here)
+    elif isinstance(node, list):
+        for i, v in enumerate(node):
+            yield from prose_lists(v, field, f"{path}[{i}]")
+
+
 def quotations(ev):
     """Every quotation entry in an event, with where it came from."""
     for i, q in enumerate(ev.get("primary_source_excerpts") or []):
@@ -162,6 +177,31 @@ for path in EVENTS:
                 idx = max(snippet.find(EM), snippet.find(EN))
                 check(f"{slug} {field}", False,
                       f"...{snippet[max(0, idx - 45):idx + 45]}...")
+
+    # ------------------------------------------ prose that parsed as a map
+    # A line of prose containing ": " must be quoted, or YAML reads it as a
+    # one-key mapping and the sentence stops being a sentence. Twelve entries
+    # carried this, among them "Four empires collapsed within four years: the
+    # German, Austro-Hungarian, Russian, and Ottoman", which parsed as a key
+    # "Four empires collapsed within four years" holding the rest as its value.
+    #
+    # The old page rendered these only inside a client modal, where React threw
+    # "Objects are not valid as a React child" into a console nobody read. The
+    # Hearing renders at build, where the same value killed the static export
+    # of /history/assassination-of-caesar. It was invisible for as long as it
+    # was only wrong.
+    # `connections` is deliberately absent: it is a real list of mappings with
+    # schema keys, and an early draft of this rule flagged every `target_slug`
+    # in the catalogue. What marks an accident is a SINGLE key holding a phrase
+    # rather than a field name, so that is what it looks for.
+    for field in ("omitted", "emphasized", "key_arguments", "legacy_points"):
+        for where, entry in prose_lists(ev, field):
+            if isinstance(entry, dict) and len(entry) == 1:
+                k = str(next(iter(entry), ""))
+                if " " in k:
+                    check(f"{slug} {where}", False,
+                          f"prose parsed as a mapping; quote the scalar: "
+                          f"{k[:60]!r}")
 
     # -------------------------------------------------- speaker-shape gate
     for where, q in quotations(ev):
