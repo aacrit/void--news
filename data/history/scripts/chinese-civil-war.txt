@@ -1,0 +1,137 @@
+## OPEN
+N: You think of the Chinese Civil War as one war, fought without a break for twenty two years.
+N: It was two wars, with an eight year gap between them. From nineteen twenty seven to nineteen thirty seven, two Chinese armies tried to destroy each other. Then, for eight years, those same two armies fought as allies, against Japan.
+N: When the freeze broke in nineteen forty six, one side held the cities, the tanks, and backing from the United States. The other side held the villages.
+N: The side with the cities lost.
+
+## TITLE
+N: The Chinese Civil War and the Founding of the People's Republic. Nineteen twenty seven to nineteen forty nine.
+
+## SCENE 1 | Shanghai, before dawn
+N: April the twelfth, nineteen twenty seven, Shanghai, before dawn. Gunmen of the Green Gang move through the workers' districts alongside soldiers loyal to Chiang Kai-shek. Union halls are surrounded.
+N: Within days, between five thousand and ten thousand Communists, labor organizers, and suspected sympathizers are shot, beheaded, or thrown into the Huangpu River.
+N: The First United Front, the alliance that had just helped the Nationalists and the Communists reunify much of China, is finished. The two parties will fight, on and off, for the next twenty two years.
+
+## SCENE 2 | Five campaigns
+N: Chiang Kai-shek spends the next years trying to finish what Shanghai started: five encirclement campaigns against the Communist base in the Jiangxi hills.
+N: Not every Nationalist stands with him. Wang Jingwei leads a rival Kuomintang government of the party's left, at Wuhan.
+
+## DOCUMENT | Chiang Kai-shek | Statement on strategic priorities | 1934
+N: In nineteen thirty four, Chiang Kai-shek explained why the Communists, not the Japanese army already inside China, came first.
+M: The Japanese are a disease of the skin. The Communists are a disease of the heart.
+
+## ASIDE
+N: A disease of the skin can wait. A disease of the heart cannot. That is the order of priorities that gives Japan eight years unopposed by the man who could have opposed it.
+
+## REST
+
+## SCENE 3 | The Long March
+N: October nineteen thirty four. The fifth encirclement campaign closes on Jiangxi, and roughly eighty six thousand Red Army soldiers break out, beginning a fighting retreat of some six thousand miles.
+N: At the Xiang River, forty thousand of them die crossing in a single stretch of the retreat.
+N: In January nineteen thirty five, at a conference in the town of Zunyi, Mao Zedong takes control of the party. Zhu De, commander-in-chief of the Red Army, and Peng Dehuai lead the march itself.
+N: Fewer than ten thousand reach the loess caves of Yan'an in the northwest, a year after they set out. The survivors become the founding generation of a state.
+
+## REST
+
+## SCENE 4 | The freeze and the villages
+N: The war against Japan, nineteen thirty seven to nineteen forty five, forces a Second United Front and freezes the civil war. Chiang Kai-shek's best divisions bleed at Shanghai and Nanjing while the Communists rebuild in the rural interior.
+N: When Japan surrenders, the freeze breaks.
+N: From nineteen forty six the Nationalist armies, better armed and backed by the United States, hold the cities. The Communists, backed by a land reform that hands peasants the fields of their landlords, hold the villages.
+
+## SCENE 5 | Three campaigns
+N: In nineteen forty eight and nineteen forty nine, three campaigns decide the war. Liaoshen, in Manchuria, where PLA general Lin Biao's forces prevail. Huaihai, around Xuzhou, where five hundred fifty thousand Nationalist troops are destroyed. Pingjin, at Beijing and Tianjin.
+N: In under a year, the People's Liberation Army destroys roughly one point five million Nationalist soldiers.
+
+## REST
+
+## SCENE 6 | The gate
+N: September the twenty first, nineteen forty nine, Beijing. Mao Zedong opens the Chinese People's Political Consultative Conference.
+N: Chiang Kai-shek, his government, some two million soldiers and civilians, and the gold reserves of the central bank have already begun crossing the strait to Taiwan.
+
+## DOCUMENT | Mao Zedong | Proclamation from the Gate of Heavenly Peace, Tiananmen Square | October 1, 1949
+N: On October the first, from the Gate of Heavenly Peace above Tiananmen Square, Mao Zedong proclaims the new state.
+M: The Central People's Government of the People's Republic of China is today established.
+
+## ASIDE
+N: The government he replaces does not dissolve. Its capital moves to Taipei that December, and it keeps China's seat at the United Nations until nineteen seventy one.
+N: The dead of the twenty two years were never fully counted. Estimates for the whole conflict run past six million, with between one point eight and three point five million attributed to atrocities against civilians.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts of the same founding, and the disagreement is not that the People's Republic was proclaimed on October the first. It is who is to blame for the outcome, why the Nationalists lost, and what the victory cost.
+
+## PERSPECTIVE | CCP / Maoist Liberation | victor
+N: In the official history, nineteen forty nine is Liberation, closing a century of foreign humiliation and warlord chaos that began with the Opium Wars.
+N: The Long March is remembered not as a defeat but as a seeding, cadres scattered across eleven provinces, forging the leaders who would run the country for the next half century.
+N: In the liberated areas, the party redistributed land, cut rents, taught literacy, and disciplined its soldiers under rules that forbade looting. The Nationalist regime, by contrast, rotted from corruption and hyperinflation that reached over one thousand percent.
+N: Song Qingling, the widow of Sun Yat-sen, broke with Chiang Kai-shek's Kuomintang and stood with the party that founded the new republic instead, becoming one of its vice chairs.
+N: Mao Zedong supplied the framing that still defines the state.
+M: The Chinese people, comprising one quarter of humanity, have now stood up.
+
+## PERSPECTIVE | Kuomintang / Republic of China | vanquished
+N: From Taipei, this is not a liberation but a catastrophe with foreign fingerprints. The Republic of China, founded in nineteen twelve, considers itself the legitimate government, driven from the mainland but never dissolved.
+N: In this account, Chiang Kai-shek's government carried the main burden of the war against Japan, losing an estimated three million soldiers, while the Communists conserved their strength in the rural northwest.
+N: When Japan surrendered, the Nationalists were exhausted and financially ruined, governing a devastated country while the Soviet Union handed the Communists the arsenals of the defeated Japanese army in Manchuria.
+N: General George Marshall's mediation mission of nineteen forty six imposed a ceasefire and an arms embargo on the Nationalists at the moment their military position was strongest, then blamed both sides when it failed.
+N: Chiang argued for the rest of his life that he lost the mainland less to Mao Zedong than to Moscow's aid and Washington's abandonment. Taiwan's founding vow became the answer.
+M: Counterattack the mainland.
+
+## PERSPECTIVE | Peasant Experience of Land Reform | vanquished
+N: William Hinton arrived in Long Bow village in Shanxi in the spring of nineteen forty eight and stayed to watch land reform happen house by house.
+N: Below the campaigns and the generals, the war was decided in tens of thousands of villages like it. Peasants were gathered to voice, out loud, the humiliations of rent, debt, and hunger, and the land of the landlords was divided among them.
+N: For families who had eaten bark in famine years, this was the moment the revolution became real, and worth fighting for. It is why the People's Liberation Army's ranks swelled with recruits who now had a stake in a Communist victory.
+N: Across the country, land reform would eventually redistribute the fields of an estimated ten percent of the rural population to families who had never owned ground before.
+N: Hinton titled his account after the word peasants used for what was happening to them.
+M: Every revolution creates new words. A most important word was fanshen. Literally, it means to turn the body, or to turn over.
+
+## PERSPECTIVE | Western Cold War / Loss of China | bystander
+N: In the United States, nineteen forty nine was not a founding. It was the loss of China, and it set off a political crisis at home.
+N: Washington had poured some three billion dollars into Chiang Kai-shek's government. The China White Paper of August nineteen forty nine argued that no amount of American aid could have saved a regime that would not save itself.
+N: Secretary of State Dean Acheson wrote the paper's own defense.
+M: The unfortunate but inescapable fact is that the ominous result of the civil war in China was beyond the control of the government of the United States.
+N: Critics read the same document as an alibi for abandonment. The backlash created what was called the China Lobby, and the search for who was to blame reached into the State Department itself.
+
+## PERSPECTIVE | Revisionist Scholarship | revisionist
+N: A later generation of historians, working in newly opened Chinese archives, asked what Liberation actually meant for those who lived through it.
+N: Frank Dikotter's provincial archive research reconstructed the years around nineteen forty nine as a period of land reform killings and urban campaigns against counterrevolutionaries, carried out under official death quotas.
+N: In his account, the first decade of the People's Republic sent at least five million civilians to early graves.
+M: An era of calculated terror and systematic violence.
+N: Other historians in this school resist reducing the revolution to a body count. Diana Lary's social history maps that toll instead in displacement, famine, and shattered families across the whole society, Nationalist and Communist alike.
+N: Odd Arne Westad argues the Communist victory was neither inevitable nor purely popular, but the product of specific choices and Nationalist blunders. Suzanne Pepper traced how Nationalist misrule in the recovered cities squandered the goodwill of nineteen forty five.
+
+## REST | short
+
+## TURN | What each one leaves out
+N: What each account cannot see from where it stands.
+N: The official history calls nineteen forty nine Liberation, and says less about the coercion inside its own land reform meetings, a process that by one estimate cost hundreds of thousands of landlords their lives, the Soviet arms that reached Manchuria, or what the same leadership did to the country in the decades after this speech.
+N: The Kuomintang account of betrayal by Moscow and Washington says less about the corruption and the hyperinflation that emptied its own cities, or about the martial law it would impose on Taiwan afterward.
+N: The peasant account has the clearest claim to have witnessed the war firsthand, and it says almost nothing about the diplomacy in Washington and Moscow, or the campaigns the generals were fighting above the villages.
+N: The American account measures the outcome in Washington's failures, and says little about the internal causes of the revolution, or about the Chinese peasants and soldiers who actually lived it.
+N: And the revisionists, so careful with the archives, spend less time on the land reform that gave millions of the rural poor a title and a plot for the first time in their lives.
+
+## REST
+
+## CLOSE
+N: Two governments emerged in nineteen forty nine. Each still claims to be China.
+N: The party that won has governed without interruption ever since, longer now than the Soviet Communist Party ever lasted.
+N: One question left open that year is still open in twenty twenty six.
+
+## SAY
+Zedong = zuh-DUNG
+Kai-shek = ky-SHEK
+Jiangxi = jyahng-SHEE
+Zunyi = dzun-YEE
+Yan'an = yahn-AHN
+Huangpu = hwahng-POO
+Liaoshen = lyaow-SHUN
+Huaihai = hwy-HY
+Xuzhou = shoo-JOH
+Pingjin = ping-JIN
+Tianjin = tyen-JIN
+Dikotter = dih-KUR-ter
+Hinton = HIN-tun
+Acheson = ATCH-uh-sun
+Shanxi = SHAHN-shee
+Taipei = ty-PAY
+Kuomintang = kwoh-min-TAHNG
