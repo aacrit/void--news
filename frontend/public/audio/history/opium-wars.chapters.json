@@ -1,0 +1,72 @@
+{
+ "version": "1.2.0",
+ "title": "The Opium Wars",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 47.243
+  },
+  {
+   "startTime": 47.243,
+   "title": "Canton, June 1839",
+   "endTime": 133.41
+  },
+  {
+   "startTime": 133.41,
+   "title": "The Nemesis",
+   "endTime": 191.848
+  },
+  {
+   "startTime": 191.848,
+   "title": "Nanjing, August 1842",
+   "endTime": 237.027
+  },
+  {
+   "startTime": 237.027,
+   "title": "The Old Summer Palace",
+   "endTime": 320.915
+  },
+  {
+   "startTime": 320.915,
+   "title": "Five accounts",
+   "endTime": 325.675
+  },
+  {
+   "startTime": 325.675,
+   "title": "The British ledger",
+   "endTime": 393.956
+  },
+  {
+   "startTime": 393.956,
+   "title": "The Qing court",
+   "endTime": 456.965
+  },
+  {
+   "startTime": 456.965,
+   "title": "The nation's rebirth",
+   "endTime": 528.401
+  },
+  {
+   "startTime": 528.401,
+   "title": "The trade across three continents",
+   "endTime": 616.512
+  },
+  {
+   "startTime": 616.512,
+   "title": "The fields of Bengal",
+   "endTime": 687.594
+  },
+  {
+   "startTime": 687.594,
+   "title": "What each one leaves out",
+   "endTime": 761.913
+  },
+  {
+   "startTime": 761.913,
+   "title": "Legacy",
+   "endTime": 803.967
+  }
+ ]
+}

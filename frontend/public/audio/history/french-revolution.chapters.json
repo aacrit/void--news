@@ -1,0 +1,72 @@
+{
+ "version": "1.2.0",
+ "title": "The French Revolution",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 49.996
+  },
+  {
+   "startTime": 49.996,
+   "title": "The fourteenth of July",
+   "endTime": 85.788
+  },
+  {
+   "startTime": 85.788,
+   "title": "Eighty eight per cent",
+   "endTime": 162.066
+  },
+  {
+   "startTime": 162.066,
+   "title": "The acceleration",
+   "endTime": 218.759
+  },
+  {
+   "startTime": 218.759,
+   "title": "The Terror",
+   "endTime": 321.137
+  },
+  {
+   "startTime": 321.137,
+   "title": "Five accounts",
+   "endTime": 325.193
+  },
+  {
+   "startTime": 325.193,
+   "title": "The republicans",
+   "endTime": 377.272
+  },
+  {
+   "startTime": 377.272,
+   "title": "The royalists",
+   "endTime": 425.841
+  },
+  {
+   "startTime": 425.841,
+   "title": "The enslaved",
+   "endTime": 486.851
+  },
+  {
+   "startTime": 486.851,
+   "title": "The colonies",
+   "endTime": 536.577
+  },
+  {
+   "startTime": 536.577,
+   "title": "Modern scholarship",
+   "endTime": 599.453
+  },
+  {
+   "startTime": 599.453,
+   "title": "What each one leaves out",
+   "endTime": 683.179
+  },
+  {
+   "startTime": 683.179,
+   "title": "Legacy",
+   "endTime": 734.165
+  }
+ ]
+}
