@@ -1,53 +1,20 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import type { HistoricalEvent, RedactedEvent } from "./types";
-import { fetchHistoryEvents, fetchRedactedEvents } from "./data";
-import HistoryLanding from "./components/HistoryLanding";
-
 /* ===========================================================================
-   /history — Landing page for void --history
-   Fetches all events and redacted stubs, renders HistoryLanding.
+   /history — the route. Server Component, so it can own its metadata.
+
+   The whole landing was a Client Component, which cannot export metadata at
+   all; that is why every History share showed the generic site title and card.
+   The interactive tree is unchanged, one level down.
    =========================================================================== */
 
+import type { Metadata } from "next";
+import { getHistoryCatalog } from "../lib/historyCatalog";
+import { landingMetadata } from "./historyMeta";
+import HistoryClient from "./HistoryClient";
+
+export function generateMetadata(): Metadata {
+  return landingMetadata(getHistoryCatalog().length);
+}
+
 export default function HistoryPage() {
-  const [events, setEvents] = useState<HistoricalEvent[]>([]);
-  const [redacted, setRedacted] = useState<RedactedEvent[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function load() {
-      const [evts, red] = await Promise.all([
-        fetchHistoryEvents(),
-        fetchRedactedEvents(),
-      ]);
-      if (!cancelled) {
-        setEvents(evts);
-        setRedacted(red);
-        setLoading(false);
-      }
-    }
-
-    load();
-    return () => { cancelled = true; };
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="hist-main" style={{ paddingTop: "var(--space-7)", textAlign: "center" }}>
-        <p style={{
-          fontFamily: "var(--font-data)",
-          fontSize: "var(--text-sm)",
-          color: "var(--hist-ink-muted)",
-          fontStyle: "italic",
-        }}>
-          Opening the archive...
-        </p>
-      </div>
-    );
-  }
-
-  return <HistoryLanding events={events} redacted={redacted} />;
+  return <HistoryClient />;
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { MOCK_EVENTS } from "../mockData";
 import { HOOKS } from "../hooks";
 import { getHistoryEntry, getHistorySlugs } from "../../lib/historyCatalog";
+import { eventMetadata } from "../historyMeta";
 import EventPageClient from "./EventPageClient";
 
 /* ===========================================================================
@@ -24,10 +25,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const event = getHistoryEntry(slug) ?? MOCK_EVENTS.find((e) => e.slug === slug);
   const title = event?.title || slug.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
   const description = HOOKS[slug] || event?.subtitle || `One event. Every side. Decide for yourself.`;
-  return {
-    title: `${title} | History`,
-    description,
-  };
+  /* Was a bare {title, description}: no canonical, no openGraph, no twitter
+     card, so every event page fell back to the root layout's site-wide image.
+     `eventMetadata` adds those AND removes the inherited image so the
+     per-event `opengraph-image.tsx` beside this file is the one that wins. */
+  return eventMetadata({ title, description, slug });
 }
 
 export default function EventPage({ params }: { params: Promise<{ slug: string }> }) {
