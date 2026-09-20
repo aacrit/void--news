@@ -37,9 +37,24 @@ claims about its own confidence. It needs a decision, not a tweak.
 
 ## Known defects, not yet fixed
 
-**Four live History episodes run over the 15 minute format ceiling.** Congo
-Free State 15.46, Rise of Islam 15.43, Indian Independence 15.36, Peloponnesian
-War 15.2. All sit under the audio gate's 15.5, so they shipped and still serve.
+**Two live episodes serve audio that contradicts their own script.**
+`great-leap-forward` presents a secondhand Mao remark, and
+`gutenberg-printing-press` an attributed line from a Dominican friar, as
+verbatim speech. Both scripts were corrected for H-11 and neither was
+re-rendered. `tests/test_history_audio.py` now fails on exactly this and stays
+red until both are re-rendered. No script work needed; the fix is a render.
+
+**Live History episodes that run over the 15 minute format ceiling.** Congo
+Free State 15.46, Rise of Islam 15.43, Russian Revolution 15.37, Indian
+Independence 15.36. All sit under the audio gate's 15.5, so they shipped and
+still serve. Peloponnesian War renders at about 15.2 and joins this list when
+it publishes.
+
+(An earlier version of this entry named Peloponnesian War instead of Russian
+Revolution. Peloponnesian War's 15.2 came from a render log, not the manifest:
+that run was rejected at publish over a different episode, so it never went
+live. Read the manifest for what is serving, not a render log for what was
+made.)
 
 This is not a regression. The runtime estimator modelled non-speech time as a
 flat 1.1 minutes, so it could not see them; it now spends silence per segment
