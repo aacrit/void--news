@@ -93,8 +93,13 @@ def build_rows(docs: list[dict]) -> list[dict]:
         row = {f: doc.get(f) for f in EVENT_FIELDS if f in doc}
         row["id"] = event_id(slug)
         row["is_published"] = True
-        # No history audio has been generated since the migration; the frontend
-        # treats null as "not yet generated" and hides the player.
+        # The audio edition is NOT carried here. Which events have a produced
+        # episode is recorded in frontend/public/data/history-audio.json by
+        # pipeline/history/publish_audio.py, and the frontend attaches it in
+        # history/audio.ts (withHistoryAudio), because the manifest is the
+        # record of what actually reached the CDN and a YAML field is not.
+        # These two stay for any event whose YAML still carries them; null
+        # means "no episode", and the frontend hides the player.
         row["audio_url"] = doc.get("audio_url")
         row["audio_duration_seconds"] = doc.get("audio_duration_seconds")
 
