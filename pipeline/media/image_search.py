@@ -178,9 +178,27 @@ def search_wikimedia(query: str, max_results: int = 5) -> list[ImageResult]:
 
 
 def _extract_wiki_text(html_str: str) -> str:
-    """Strip HTML tags from Wikimedia metadata values."""
+    """Strip HTML tags from a Commons metadata value and flatten it to one line.
+
+    The whitespace collapse is not cosmetic. Commons `Artist` is free-form HTML
+    and on a composite file it is several stacked credits; stripping the tags
+    alone leaves the newlines, so the probe's credit for the North Korean
+    missile-tests illustration came back as:
+
+        Flag of North Korea
+        User:Zscout370
+        Radiation warning symbol
+        ...
+
+    A CC BY or CC BY-SA image must carry a usable credit, and a multi-line
+    blob rendered into a one-line caption slot is not one. Collapsed and
+    capped, matching the cap `search_wikimedia` already applied and
+    `commons_file_license` did not.
+    """
     import re
-    return re.sub(r"<[^>]+>", "", html_str).strip()
+    txt = re.sub(r"<[^>]+>", " ", html_str or "")
+    txt = re.sub(r"\s+", " ", txt).strip()
+    return txt
 
 
 #: License fragments that make an image unpublishable HERE, whatever else the
@@ -651,7 +669,8 @@ def commons_file_license(filename: str) -> dict | None:
         if key not in ("cc0", "public-domain", "cc-by", "cc-by-sa"):
             print(f"  [media] {filename}: licence {short!r} is not publishable")
             return None
-        artist = _extract_wiki_text(ext.get("Artist", {}).get("value", "Unknown"))
+        artist = _extract_wiki_text(ext.get("Artist", {}).get("value", "")) or "Unknown"
+        artist = artist[:100]
         return {
             "url": info.get("thumburl") or info.get("url"),
             "attribution": f"{artist}, {short}, via Wikimedia Commons",

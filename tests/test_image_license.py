@@ -31,7 +31,9 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "pipeline"))
 
 try:
-    from media.image_search import _normalize_wiki_license  # noqa: E402
+    from media.image_search import (  # noqa: E402
+        _normalize_wiki_license, _extract_wiki_text,
+    )
 except ImportError as e:
     # `image_search` imports `requests` at module scope and the light CI job
     # installs only nltk. A missing third-party wheel SKIPS; a missing module
@@ -77,6 +79,31 @@ def test_gate():
     # the most permissive key in the table.
     check("a stray 'pd' is not public domain", not accepted("Updated license"))
     check("an empty license is not free", not accepted(""))
+
+
+def test_attribution_shape():
+    """IMG-03  a credit has to be usable in a one-line caption slot.
+
+    Commons `Artist` is free-form HTML, and on a composite file it is several
+    stacked credits. Stripping tags alone left the newlines, so the credit for
+    the North Korean missile-tests illustration came back as four lines. A CC
+    BY / CC BY-SA image must carry a usable credit; a multi-line blob in a
+    caption slot is not one.
+    """
+    print("\nIMG-03  attribution shape")
+    messy = ('<a href="x">Flag of North Korea</a>\n<a>User:Zscout370</a>\n\n'
+             '  Radiation warning symbol  ')
+    got = _extract_wiki_text(messy)
+    check("newlines are collapsed", "\n" not in got, repr(got[:60]))
+    check("no double spaces", "  " not in got)
+    check("the credit survives", "Zscout370" in got)
+    check("tags are gone", "<" not in got and ">" not in got)
+    check("a clean credit is unchanged",
+          _extract_wiki_text("<span>Carol M. Highsmith</span>") == "Carol M. Highsmith")
+    check("empty stays empty", _extract_wiki_text("") == "")
+    check("adjacent tags do not fuse words",
+          _extract_wiki_text("<b>Ansel</b><i>Adams</i>") == "Ansel Adams",
+          "stripping to '' would have produced 'AnselAdams'")
 
 
 def test_published():
@@ -125,6 +152,7 @@ def test_published():
 
 if __name__ == "__main__":
     test_gate()
+    test_attribution_shape()
     test_published()
     print("\n" + ("All image license gates passed." if ok else "FAILURES above."))
     sys.exit(0 if ok else 1)
