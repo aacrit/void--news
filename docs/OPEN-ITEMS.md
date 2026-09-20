@@ -37,6 +37,22 @@ claims about its own confidence. It needs a decision, not a tweak.
 
 ## Known defects, not yet fixed
 
+**Four live History episodes run over the 15 minute format ceiling.** Congo
+Free State 15.46, Rise of Islam 15.43, Indian Independence 15.36, Peloponnesian
+War 15.2. All sit under the audio gate's 15.5, so they shipped and still serve.
+
+This is not a regression. The runtime estimator modelled non-speech time as a
+flat 1.1 minutes, so it could not see them; it now spends silence per segment
+(2026-09-20) and H-07 warns on each. The warning is the first honest report of
+a condition that was already live.
+
+Each is a re-cut of roughly 100-200 words followed by a re-render, in the
+manner of `september-11-attacks`: drop whole lines that repeat a fact the
+script tells better elsewhere, never trim clauses, and protect the cold open,
+the closing turn, every perspective's strongest fact and witness, and the
+close. Left alone for now because they are live and serving, and four re-cuts
+is its own piece of work rather than a footnote to another one.
+
 **The Sigil disagrees with its own caption.** It paints a direction, and
 sometimes consensus-green, on cards whose caption reads "Flat".
 
