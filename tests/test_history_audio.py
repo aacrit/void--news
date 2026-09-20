@@ -141,7 +141,22 @@ def main() -> int:
     # the comparison was always available.
     import subprocess
     from datetime import datetime
-    for slug, meta in sorted(episodes.items()):
+
+    # A SHALLOW clone has one commit, so `git log -1 -- <file>` returns that
+    # commit's date for EVERY file, and every script looks newer than every
+    # episode. actions/checkout defaults to fetch-depth 1, so the first CI run
+    # after this check shipped reported all 49 episodes stale and failed the
+    # publish job, discarding ten good renders. The guard for this was written
+    # as "no output, skip", which is the one thing a shallow clone never does.
+    shallow = subprocess.run(["git", "rev-parse", "--is-shallow-repository"],
+                             capture_output=True, text=True, cwd=ROOT).stdout.strip()
+    if shallow == "true":
+        print("note: shallow clone, skipping the script-newer-than-audio check")
+        episodes_to_date = {}
+    else:
+        episodes_to_date = episodes
+
+    for slug, meta in sorted(episodes_to_date.items()):
         script = ROOT / f"data/history/scripts/{slug}.txt"
         published = meta.get("publishedAt")
         if not script.exists() or not published:
