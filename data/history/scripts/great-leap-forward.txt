@@ -19,7 +19,7 @@ N: Some claim ten thousand catties per mu, on land that yields a few hundred. Th
 N: When the real harvest cannot meet the fictional one, work teams go from house to house. They search homes, dig up floors, and beat peasants to find grain that does not exist.
 
 ## DOCUMENT | Mao Zedong | Remark at a Shanghai party conference | March 1959
-N: In March of nineteen fifty nine, Mao Zedong told a party conference in Shanghai what the shortage meant to him.
+N: In March of nineteen fifty nine, Mao Zedong told a party conference in Shanghai what the shortage meant to him. The remark survives as quoted in Dikotter's history of the famine, not as a transcript.
 M: When there is not enough to eat, people starve to death. It is better to let half of the people die so that the other half can eat their fill.
 
 ## ASIDE
