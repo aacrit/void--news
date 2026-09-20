@@ -364,5 +364,41 @@ def test_check_script_prints_findings():
     print("PASS  check_script prints findings instead of crashing on them")
 
 
+def test_quote_matches_its_best_source_not_its_first():
+    """A weaker match earlier in the event file must not win.
+
+    H-04 looks the speaker up by matching the quote, so taking the first source
+    over the 0.6 threshold attributes the line to whoever happens to appear
+    first. Both cases below are real, found by drafters on real event data, and
+    both scored 1.000 against their true source and 0.667 against an earlier
+    unrelated one.
+    """
+    import sys, pathlib as _p
+    sys.path.insert(0, str(_p.Path(__file__).resolve().parents[1] / "pipeline"))
+    from history.script_format import _best_source, _norm
+
+    said = _norm("Both sides declared victory over a war that returned them "
+                 "to the border where it began")
+    sourced = [
+        (_norm("War, war until victory."), "Ruhollah Khomeini"),          # earlier, weaker
+        (_norm("Both sides declared victory over a war that returned them "
+               "to the border where it began"), "Scholarly consensus"),   # later, exact
+    ]
+    assert _best_source(said, sourced)[1] == "Scholarly consensus"
+
+    said = _norm("To the strongest")
+    sourced = [
+        (_norm("When Alexander saw the breadth of his domain, he wept, for "
+               "there were no more worlds to conquer"), "Plutarch"),      # earlier, weaker
+        (_norm("To the strongest."), "Alexander"),                        # later, exact
+    ]
+    assert _best_source(said, sourced)[1] == "Alexander"
+
+    # And a quote with no real source still finds nothing.
+    assert _best_source(_norm("a line nobody ever wrote down"), sourced) is None
+    print("PASS  a quote resolves to its best source, not its first")
+
+
 if __name__ == "__main__":
     test_check_script_prints_findings()
+    test_quote_matches_its_best_source_not_its_first()

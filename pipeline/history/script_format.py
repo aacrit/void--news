@@ -224,6 +224,40 @@ def estimated_minutes(script: Script, event: dict | None) -> tuple[float, float,
     return script.words / rate + _overhead_minutes(len(script.segments)), rate, who
 
 
+def _best_source(said: str, sourced) -> tuple[str, str] | None:
+    """The source this quote matches BEST, not the first one over the line.
+
+    Taking the first match above threshold misattributes a quote whenever a
+    weaker match happens to sit earlier in the event file, and H-04 then checks
+    the narration against the wrong speaker. Two drafters hit this
+    independently on real data:
+
+      "Both sides declared victory over a war that returned them to the
+       border where it began"
+          1.000 against its true source
+          0.667 against Khomeini's "War, war until victory", which is earlier
+                and shares only "war" and "victory"
+
+      "To the strongest"
+          1.000 against its true source
+          0.667 against an unrelated Plutarch paraphrase, which is earlier
+
+    Both were silently resolved to the wrong speaker. Scoring every candidate
+    and keeping the highest costs one pass over a handful of quotes.
+    """
+    best, best_score = None, 0.0
+    for src, who in sourced:
+        if not src:
+            continue
+        if said in src or src in said:
+            score = 1.0
+        else:
+            score = _overlap(said, src)
+        if score > 0.6 and score > best_score:
+            best, best_score = (src, who), score
+    return best
+
+
 def validate_script(script: Script, event: dict) -> list[Finding]:
     """Check a script against the EVENT DATA it was written from."""
     out: list[Finding] = []
@@ -291,8 +325,8 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
                 if l.speaker not in QUOTE_SPEAKERS:
                     continue
                 said = _norm(l.text)
-                speaker = next((who for src, who in sourced
-                                if src and (said in src or src in said or _overlap(said, src) > 0.6)), None)
+                _m = _best_source(said, sourced)
+                speaker = _m[1] if _m else None
                 before = " ".join(_norm(x.text) for x in seg.lines[:i] if x.speaker == "N")
                 if not before:
                     out.append(Finding("H-04", "fail", label,
@@ -315,9 +349,7 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
             # H-01: the quote must exist in the event's own sources.
             for l in d_lines:
                 said = _norm(l.text)
-                match = next(((src, who) for src, who in sourced
-                               if src and (said in src or src in said
-                                           or _overlap(said, src) > 0.6)), None)
+                match = _best_source(said, sourced)
                 if match is None:
                     out.append(Finding("H-01", "fail", label,
                                        f"quotation not found in this event's primary sources: "
