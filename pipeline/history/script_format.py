@@ -20,6 +20,7 @@ structurally impossible by checking every D: line against the event's own
 from __future__ import annotations
 
 import re
+import unicodedata
 from dataclasses import dataclass, field
 
 # N narrates. M and F read quoted speech, matched to the SPEAKER'S SEX: a
@@ -127,8 +128,16 @@ def parse_script(raw: str, slug: str = "") -> Script:
     return script
 
 
+def _fold(s: str) -> str:
+    """Strip accents. The event records spell names as the sources do
+    (Hernan Cortes is Hernán Cortés there); the scripts spell them for a
+    speech synthesiser. They are the same name and must compare equal."""
+    return "".join(c for c in unicodedata.normalize("NFD", s or "")
+                   if unicodedata.category(c) != "Mn")
+
+
 def _norm(s: str) -> str:
-    return re.sub(r"[^a-z0-9 ]+", " ", (s or "").lower())
+    return re.sub(r"[^a-z0-9 ]+", " ", _fold(s).lower())
 
 
 def validate_script(script: Script, event: dict) -> list[Finding]:
@@ -215,6 +224,46 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
         out.append(Finding("H-09", "fail", "PERSPECTIVE",
                            f"{heard} of {len(event['perspectives'])} accounts given their own case"))
 
+    # H-10: every proper name the script speaks aloud must come from the
+    # event's own record. This is the rule that makes DELEGATED drafting
+    # safe. H-01 already makes a fabricated quotation impossible, but the
+    # likelier failure by far is a confident, checkable, unsourced FACT: a
+    # name, a place, an institution that the writer knows from somewhere
+    # else and the event data does not contain. I introduced exactly that
+    # twice by hand (an East India Company official who deciphered the
+    # Ashokan script, and a leaning cathedral in Mexico City), caught both
+    # only by grepping the YAML afterwards, and a drafting fleet will make
+    # the same move far more often than one writer does.
+    #
+    # Matching is deliberately loose in the writer's favour: six-character
+    # prefixes, case-insensitive, against the whole event document, so
+    # "Ottomans" matches "Ottoman" and "Mande" matches "Mande". What it
+    # catches is a name with no root anywhere in the record at all.
+    haystack = _norm(_event_text(event))
+    hay_words = set(haystack.split())
+    hay_roots = {w[:6] for w in hay_words if len(w) > 3}
+    for seg in script.segments:
+        if seg.kind == "SAY":
+            continue
+        for l in seg.lines:
+            for tok in _proper_names(l.text):
+                low = _fold(tok).lower()
+                if low in _NAME_ALLOWED or low in hay_words:
+                    continue
+                # A possessive or a hyphenated name is several words to the
+                # record: Ben-Gurion is "ben gurion" there, Musa's is "musa".
+                # Match on the PARTS, and treat the name as sourced when any
+                # part of it is, which is the writer-favouring direction.
+                parts = [x for x in re.split(r"[^a-z0-9]+", low) if len(x) > 2]
+                if not parts or all(x in _NAME_ALLOWED for x in parts):
+                    continue
+                if any(x in hay_words or (x[:6] in hay_roots) or
+                       any(x[:6] in w for w in hay_words) for x in parts):
+                    continue
+                out.append(Finding("H-10", "warn", f"{seg.kind}{' ' + seg.title if seg.title else ''}",
+                                   f"{tok!r} is spoken in the script and appears nowhere in this "
+                                   f"event's data: source it or cut it"))
+
     lo, hi = TARGET_MINUTES
     if not (lo <= script.minutes <= hi):
         out.append(Finding("H-07", "fail", "TOTAL",
@@ -225,6 +274,79 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
                 out.append(Finding("H-08", "warn", seg.kind, "dash in spoken copy"))
                 break
     return out
+
+
+def _event_text(event: dict) -> str:
+    """Every word of the event record, flattened, as the sourcing haystack."""
+    parts: list[str] = []
+    def walk(v):
+        if isinstance(v, dict):
+            for x in v.values():
+                walk(x)
+        elif isinstance(v, list):
+            for x in v:
+                walk(x)
+        elif isinstance(v, str):
+            parts.append(v)
+        elif v is not None:
+            parts.append(str(v))
+    walk(event)
+    return " ".join(parts)
+
+
+# Words that are capitalised in ordinary prose and are not claims about the
+# world: sentence openers, months and weekdays, the house name, and the
+# spoken-number vocabulary the format requires (numbers are written as words,
+# and a sentence can legitimately open "Twenty thousand men were lost").
+_NAME_ALLOWED = {
+    "the", "a", "an", "and", "but", "or", "so", "then", "now", "here", "there",
+    "this", "that", "these", "those", "it", "its", "he", "she", "they", "them",
+    "his", "her", "their", "we", "you", "i", "in", "on", "at", "by", "for",
+    "from", "of", "to", "with", "within", "without", "after", "before", "when",
+    "what", "which", "who", "whom", "whose", "why", "how", "if", "not", "no",
+    "nobody", "none", "nothing", "every", "everything", "all", "both", "each",
+    "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+    "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen",
+    "seventeen", "eighteen", "nineteen", "twenty", "thirty", "forty", "fifty",
+    "sixty", "seventy", "eighty", "ninety", "hundred", "thousand", "million",
+    "billion", "first", "second", "third", "fourth", "fifth", "sixth",
+    "seventh", "eighth", "ninth", "tenth", "half", "january", "february",
+    "march", "april", "may", "june", "july", "august", "september", "october",
+    "november", "december", "monday", "tuesday", "wednesday", "thursday",
+    "friday", "saturday", "sunday", "void", "news", "on", "air", "history",
+    "read", "listen", "look", "take", "put", "let", "say", "said", "there's",
+    "god", "europe", "european", "west", "western", "east", "eastern",
+    "north", "northern", "south", "southern",
+    # Capitalised only because they open a sentence. Found by running the
+    # rule over twenty one hand-written scripts and reading every flag.
+    "about", "above", "across", "against", "almost", "along", "already",
+    "also", "although", "among", "another", "any", "around", "as", "because",
+    "behind", "being", "below", "beside", "besides", "between", "beyond",
+    "can", "council", "did", "do", "does", "during", "either", "enough",
+    "even", "ever", "everybody", "everyone", "everything", "except", "far",
+    "few", "finally", "getting", "given", "going", "had", "has", "have",
+    "health", "hold", "instead", "into", "inside", "is", "it's", "just",
+    "keep", "kept", "know", "known", "later", "left", "legally", "less",
+    "like", "long", "made", "make", "making", "many", "meanwhile", "might",
+    "modelled", "more", "most", "much", "must", "near", "nearly", "neither",
+    "never", "next", "nine", "nobody's", "once", "only", "other", "others",
+    "out", "outside", "over", "own", "people", "perhaps", "property", "put",
+    "rather", "read", "reading", "remember", "roughly", "same", "saying",
+    "several", "shall", "should", "since", "small", "some", "somebody",
+    "someone", "something", "somewhere", "still", "such", "tear", "tell",
+    "than", "that's", "their", "think", "those", "though", "through",
+    "throughout", "thus", "together", "toward", "towards", "under", "until",
+    "up", "upon", "used", "very", "was", "were", "whatever", "whenever",
+    "wherever", "whether", "while", "whole", "will", "with", "within",
+    "worth", "would", "writers", "yet", "you're",
+}
+
+_NAME_RE = re.compile(r"\b([A-Z][a-zA-Z'\u2019-]{2,})")
+
+
+def _proper_names(text: str) -> list[str]:
+    """Capitalised words in a spoken line, as candidate factual claims."""
+    return [m.group(1).strip("'\u2019-") for m in _NAME_RE.finditer(text or "")]
 
 
 def _overlap(a: str, b: str) -> float:
