@@ -312,3 +312,28 @@ if failures:
     print(f"\n{len(failures)} History script failure(s)")
     raise SystemExit(1)
 print(f"PASS  H-01..H-11 against planted defects, and {len(scripts)} committed scripts")
+
+
+def test_check_script_prints_findings():
+    """The checker must PRINT a finding, not crash on it.
+
+    It shipped reading `Finding.message`, a field that does not exist, so it
+    raised AttributeError on any script that carried even one finding. The exit
+    code was still non-zero, so nothing passed that should not have, but the
+    tool went mute exactly when it had something to say and handed a drafter a
+    traceback instead of the reason. A drafter caught it, not a test.
+    """
+    import io, contextlib, subprocess, sys, pathlib
+    root = pathlib.Path(__file__).resolve().parents[1]
+    # apollo-11 carries a real H-10 warning, so it exercises the print path.
+    out = subprocess.run(
+        [sys.executable, str(root / "pipeline/history/check_script.py"), "apollo-11-moon-landing"],
+        capture_output=True, text=True, cwd=root,
+    )
+    assert "Traceback" not in out.stderr, f"checker crashed:\n{out.stderr}"
+    assert "warn H-10" in out.stdout, f"finding was not printed:\n{out.stdout}"
+    print("PASS  check_script prints findings instead of crashing on them")
+
+
+if __name__ == "__main__":
+    test_check_script_prints_findings()
