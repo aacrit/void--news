@@ -135,6 +135,7 @@ Anmer = AN-mer
 Kollontai = KOL-on-tie
 Zetkin = ZET-kin
 Sha'arawi = shah-ah-RAH-wee
+Funmilayo = foon-mee-LAH-yoh
 Ransome = RAN-sum
 Abeokuta = ah-bay-OH-koo-tah
 Appenzell = AP-en-zel

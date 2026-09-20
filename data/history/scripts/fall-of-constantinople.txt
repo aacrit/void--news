@@ -64,7 +64,7 @@ N: Five accounts of the same siege, and only two of them are the two sides most 
 ## PERSPECTIVE | The Ottoman and Turkish account | victor
 N: This account starts with a hadith recorded generations earlier, in the Musnad of Ahmad ibn Hanbal, attributed to the Prophet Muhammad himself.
 M: Verily you shall conquer Constantinople. What a wonderful leader will he be, and what a wonderful army will that army be.
-N: Seven earlier sieges, by Arab and by Ottoman armies, had failed. Mehmed the Second succeeded at twenty one, after building the fortress of Rumeli Hisari across the strait in four months and nineteen days and studying Byzantine siege tactics from Greek texts.
+N: Seven earlier sieges, by Arab and by Ottoman armies, had failed. Mehmed the Second succeeded at twenty one, after building the fortress of Rumeli Hisari across the strait in four months and nineteen days.
 N: He conceived of the city not as a replacement for Christian Constantinople but as a universal capital inheriting Rome. He called himself Kayser i Rum, Caesar of Rome. He spoke Greek, Persian, Arabic, and Turkish.
 N: Within weeks he issued a firman inviting the Greek population home.
 M: Let them return to their homes and their property. Let no one harm them.
@@ -72,7 +72,7 @@ N: He personally handed the new Ecumenical Patriarch, Gennadios the Second, the 
 
 ## PERSPECTIVE | The Byzantine and Greek Orthodox account | vanquished
 N: This account does not open with a battle. It opens with a number: eleven hundred and twenty three years, from Constantine the First's founding of the city in the year three thirty to Constantine's death on the walls.
-N: They did not call themselves Byzantine. That word was coined by a German historian, Hieronymus Wolf, in fifteen fifty seven. They called themselves Romaioi, Romans, and on the twenty ninth of May, fourteen fifty three, Rome finally ended.
+N: They did not call themselves Byzantine. That word was coined by a German historian a century later. They called themselves Romaioi, Romans, and on the twenty ninth of May, fourteen fifty three, Rome finally ended.
 N: Fourteen years earlier, at the Council of Florence, the previous emperor, John the Eighth Palaiologos, had accepted the Pope's authority in exchange for Western soldiers who never came.
 N: Loukas Notaras, the empire's last grand admiral, is said to have preferred the alternative.
 M: I would rather see the Turkish turban in the midst of the city than the Latin mitre.
@@ -81,7 +81,7 @@ N: The legend that followed, the Marmoromenon Vasilias, the Marble King, held th
 ## REST | short
 
 ## PERSPECTIVE | The Western European and Latin Christian account | bystander
-N: This account's strongest claim is that the real damage was already two hundred and forty nine years old. In twelve hundred and four, the Fourth Crusade, meant for Jerusalem and diverted instead against Constantinople, sacked the city for three days and set up a Latin Empire that lasted until Michael the Eighth Palaiologos took it back in twelve sixty one.
+N: This account's strongest claim is that the real damage was already two hundred and forty nine years old. In twelve hundred and four, the Fourth Crusade, meant for Jerusalem, sacked the city for three days and set up a Latin Empire that lasted until Michael the Eighth Palaiologos retook it in twelve sixty one.
 N: Byzantium never recovered the treasury, the fleet, or the fortified provinces that had made it defensible. By fourteen fifty three the walls were mostly intact. There were simply not enough people left to man them.
 N: When the city finally fell, the West's grief was genuine. France and England were finishing the Hundred Years War that very year.
 N: Pope Nicholas the Fifth wrote to every court in Christendom.
@@ -94,7 +94,6 @@ N: What followed was the devshirme, a child levy that took Christian boys, usual
 N: The same legend of the marble emperor beneath the Golden Gate passed into Serbian and Bulgarian tradition too, alongside Serbia's own story of Prince Lazar choosing a heavenly kingdom over an earthly one at Kosovo. It sustained five centuries of identity under Ottoman rule.
 N: It kept working. In nineteen eighty nine, on the six hundredth anniversary of that battle, Slobodan Milosevic stood at Kosovo Polje and used it to gather a crowd of one million.
 M: Six centuries later, we are again in battles and quarrels. They are not armed battles, though such things should not be excluded yet.
-N: The wars that followed in Bosnia and Kosovo through the nineteen nineties drew on the same medieval memory.
 
 ## PERSPECTIVE | The Venetian and Genoese merchants | bystander
 N: This account starts from a different question than any of the others. Not who should rule the city, but what happens to the trade running through it.
@@ -132,7 +131,6 @@ Kayser i Rum = KAI-zer ee ROOM
 Barbaro = BAR-bah-roh
 Notaras = noh-TAH-rahs
 Romaioi = roh-MY-oy
-Hieronymus = hy-RON-ih-mus
 Gennadios = geh-NAH-dee-os
 Marmoromenon Vasilias = mar-mo-ro-MEH-non vah-see-LEE-as
 Kosovo Polje = KOH-soh-voh POL-yeh
