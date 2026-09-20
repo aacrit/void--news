@@ -1,0 +1,72 @@
+{
+ "version": "1.2.0",
+ "title": "The Nanjing Massacre",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 66.024
+  },
+  {
+   "startTime": 66.024,
+   "title": "The checkpoints",
+   "endTime": 112.247
+  },
+  {
+   "startTime": 112.247,
+   "title": "A newspaper kept score",
+   "endTime": 207.248
+  },
+  {
+   "startTime": 207.248,
+   "title": "The gate",
+   "endTime": 263.007
+  },
+  {
+   "startTime": 263.007,
+   "title": "The tribunals",
+   "endTime": 326.083
+  },
+  {
+   "startTime": 326.083,
+   "title": "Five accounts",
+   "endTime": 359.978
+  },
+  {
+   "startTime": 359.978,
+   "title": "Chinese National Memory",
+   "endTime": 430.801
+  },
+  {
+   "startTime": 430.801,
+   "title": "Western Witnesses and the Safety Zone",
+   "endTime": 498.914
+  },
+  {
+   "startTime": 498.914,
+   "title": "Japanese Historiography and Memory",
+   "endTime": 584.814
+  },
+  {
+   "startTime": 584.814,
+   "title": "Survivor Testimony",
+   "endTime": 644.202
+  },
+  {
+   "startTime": 644.202,
+   "title": "The Legal Record and Command Responsibility",
+   "endTime": 700.208
+  },
+  {
+   "startTime": 700.208,
+   "title": "What each one leaves out",
+   "endTime": 776.83
+  },
+  {
+   "startTime": 776.83,
+   "title": "Legacy",
+   "endTime": 809.904
+  }
+ ]
+}

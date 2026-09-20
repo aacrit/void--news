@@ -24,6 +24,27 @@ When it fires, you have three honest answers: it is in the file and the
 warning is noise, or you can rewrite the line without the name, or you cut
 the claim. "I'm confident it's true" is not one of them.
 
+A silent H-10 is not proof, either. It matches six-character roots against the
+whole document, so a spelled-out regnal number can pass because the record
+happens to use that number for something else: "Alfonso the Thirteenth" cleared
+the check against a sentence about a thirteen-week death toll. Glance at a name
+yourself even when the gate says nothing.
+
+### The document voice means "these are the words they said"
+
+That is its whole job, and it is why a different voice reads it. So the record
+sometimes carries a line its OWN speaker field disclaims: `Patricia Crone
+(paraphrased)`, `Attributed to Genghis Khan`, a reconstructed address. The text
+really is in the file, so `H-01` is satisfied, and an episode shipped reading
+one of those aloud under the introduction "her own summary was blunt". That is
+a real person being quoted saying something nobody recorded her saying.
+
+`H-11` blocks it, and asks for very little: say the hedge where the listener
+will hear it. Either the DOCUMENT marker carries it (`Attributed last words`)
+or the narration does ("a line attributed to a Dominican friar at Trent").
+If neither fits the line you want, put the substance in narration, which states
+a position rather than quoting one. You lose nothing but the voice change.
+
 ## The shape
 
 ```

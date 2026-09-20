@@ -1,0 +1,72 @@
+{
+ "version": "1.2.0",
+ "title": "The Industrial Revolution",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 55.67
+  },
+  {
+   "startTime": 55.67,
+   "title": "The instrument maker's repair",
+   "endTime": 123.625
+  },
+  {
+   "startTime": 123.625,
+   "title": "The rules on the wall",
+   "endTime": 187.698
+  },
+  {
+   "startTime": 187.698,
+   "title": "Nothing left to sell but time",
+   "endTime": 302.341
+  },
+  {
+   "startTime": 302.341,
+   "title": "Seventeen hanged at York",
+   "endTime": 369.505
+  },
+  {
+   "startTime": 369.505,
+   "title": "Five accounts",
+   "endTime": 377.337
+  },
+  {
+   "startTime": 377.337,
+   "title": "The Whig account",
+   "endTime": 462.827
+  },
+  {
+   "startTime": 462.827,
+   "title": "The Marxist account",
+   "endTime": 531.89
+  },
+  {
+   "startTime": 531.89,
+   "title": "The Great Divergence account",
+   "endTime": 607.243
+  },
+  {
+   "startTime": 607.243,
+   "title": "The Fossil Capital account",
+   "endTime": 669.827
+  },
+  {
+   "startTime": 669.827,
+   "title": "The Subaltern account",
+   "endTime": 748.999
+  },
+  {
+   "startTime": 748.999,
+   "title": "What each one leaves out",
+   "endTime": 828.522
+  },
+  {
+   "startTime": 828.522,
+   "title": "Legacy",
+   "endTime": 876.892
+  }
+ ]
+}

@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-20T01:47:18+00:00",
+ "generatedAt": "2026-09-20T02:54:36+00:00",
  "episodes": {
   "apartheid": {
    "url": "/audio/history/apartheid.mp3?v=836de3b2",
@@ -887,6 +887,100 @@
    ],
    "publishedAt": "2026-09-20T00:21:56+00:00"
   },
+  "fall-of-constantinople": {
+   "url": "/audio/history/fall-of-constantinople.mp3?v=fc20c10f",
+   "chaptersUrl": "/audio/history/fall-of-constantinople.chapters.json?v=fc20c10f",
+   "title": "The Fall of Constantinople",
+   "durationSeconds": 891.298,
+   "bytes": 14278312,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 57.596
+    },
+    {
+     "startTime": 57.596,
+     "title": "The engineer he could not afford",
+     "kind": "segment",
+     "endTime": 122.621
+    },
+    {
+     "startTime": 122.621,
+     "title": "The hill behind Galata",
+     "kind": "segment",
+     "endTime": 184.253
+    },
+    {
+     "startTime": 184.253,
+     "title": "The last liturgy",
+     "kind": "segment",
+     "endTime": 231.652
+    },
+    {
+     "startTime": 231.652,
+     "title": "The gate",
+     "kind": "segment",
+     "endTime": 311.355
+    },
+    {
+     "startTime": 311.355,
+     "title": "The nave",
+     "kind": "segment",
+     "endTime": 361.4
+    },
+    {
+     "startTime": 361.4,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 370.0
+    },
+    {
+     "startTime": 370.0,
+     "title": "The Ottoman and Turkish account",
+     "kind": "segment",
+     "endTime": 451.156
+    },
+    {
+     "startTime": 451.156,
+     "title": "The Byzantine and Greek Orthodox account",
+     "kind": "segment",
+     "endTime": 535.989
+    },
+    {
+     "startTime": 535.989,
+     "title": "The Western European and Latin Christian account",
+     "kind": "segment",
+     "endTime": 599.562
+    },
+    {
+     "startTime": 599.562,
+     "title": "The Balkan Christian account",
+     "kind": "segment",
+     "endTime": 682.653
+    },
+    {
+     "startTime": 682.653,
+     "title": "The Venetian and Genoese merchants",
+     "kind": "segment",
+     "endTime": 772.977
+    },
+    {
+     "startTime": 772.977,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 858.006
+    },
+    {
+     "startTime": 858.006,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 891.263
+    }
+   ],
+   "publishedAt": "2026-09-20T02:54:35+00:00"
+  },
   "fall-of-tenochtitlan": {
    "url": "/audio/history/fall-of-tenochtitlan.mp3?v=41cbb5c8",
    "chaptersUrl": "/audio/history/fall-of-tenochtitlan.chapters.json?v=41cbb5c8",
@@ -1333,6 +1427,94 @@
    ],
    "publishedAt": "2026-09-20T00:04:51+00:00"
   },
+  "industrial-revolution": {
+   "url": "/audio/history/industrial-revolution.mp3?v=4f3987e0",
+   "chaptersUrl": "/audio/history/industrial-revolution.chapters.json?v=4f3987e0",
+   "title": "The Industrial Revolution",
+   "durationSeconds": 876.931,
+   "bytes": 14048023,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 55.67
+    },
+    {
+     "startTime": 55.67,
+     "title": "The instrument maker's repair",
+     "kind": "segment",
+     "endTime": 123.625
+    },
+    {
+     "startTime": 123.625,
+     "title": "The rules on the wall",
+     "kind": "segment",
+     "endTime": 187.698
+    },
+    {
+     "startTime": 187.698,
+     "title": "Nothing left to sell but time",
+     "kind": "segment",
+     "endTime": 302.341
+    },
+    {
+     "startTime": 302.341,
+     "title": "Seventeen hanged at York",
+     "kind": "segment",
+     "endTime": 369.505
+    },
+    {
+     "startTime": 369.505,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 377.337
+    },
+    {
+     "startTime": 377.337,
+     "title": "The Whig account",
+     "kind": "segment",
+     "endTime": 462.827
+    },
+    {
+     "startTime": 462.827,
+     "title": "The Marxist account",
+     "kind": "segment",
+     "endTime": 531.89
+    },
+    {
+     "startTime": 531.89,
+     "title": "The Great Divergence account",
+     "kind": "segment",
+     "endTime": 607.243
+    },
+    {
+     "startTime": 607.243,
+     "title": "The Fossil Capital account",
+     "kind": "segment",
+     "endTime": 669.827
+    },
+    {
+     "startTime": 669.827,
+     "title": "The Subaltern account",
+     "kind": "segment",
+     "endTime": 748.999
+    },
+    {
+     "startTime": 748.999,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 828.522
+    },
+    {
+     "startTime": 828.522,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 876.892
+    }
+   ],
+   "publishedAt": "2026-09-20T02:54:35+00:00"
+  },
   "iranian-revolution": {
    "url": "/audio/history/iranian-revolution.mp3?v=4efd0e29",
    "chaptersUrl": "/audio/history/iranian-revolution.chapters.json?v=4efd0e29",
@@ -1603,6 +1785,94 @@
    ],
    "publishedAt": "2026-09-20T01:47:18+00:00"
   },
+  "nanjing-massacre": {
+   "url": "/audio/history/nanjing-massacre.mp3?v=1a5faf65",
+   "chaptersUrl": "/audio/history/nanjing-massacre.chapters.json?v=1a5faf65",
+   "title": "The Nanjing Massacre",
+   "durationSeconds": 809.953,
+   "bytes": 12975284,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 66.024
+    },
+    {
+     "startTime": 66.024,
+     "title": "The checkpoints",
+     "kind": "segment",
+     "endTime": 112.247
+    },
+    {
+     "startTime": 112.247,
+     "title": "A newspaper kept score",
+     "kind": "segment",
+     "endTime": 207.248
+    },
+    {
+     "startTime": 207.248,
+     "title": "The gate",
+     "kind": "segment",
+     "endTime": 263.007
+    },
+    {
+     "startTime": 263.007,
+     "title": "The tribunals",
+     "kind": "segment",
+     "endTime": 326.083
+    },
+    {
+     "startTime": 326.083,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 359.978
+    },
+    {
+     "startTime": 359.978,
+     "title": "Chinese National Memory",
+     "kind": "segment",
+     "endTime": 430.801
+    },
+    {
+     "startTime": 430.801,
+     "title": "Western Witnesses and the Safety Zone",
+     "kind": "segment",
+     "endTime": 498.914
+    },
+    {
+     "startTime": 498.914,
+     "title": "Japanese Historiography and Memory",
+     "kind": "segment",
+     "endTime": 584.814
+    },
+    {
+     "startTime": 584.814,
+     "title": "Survivor Testimony",
+     "kind": "segment",
+     "endTime": 644.202
+    },
+    {
+     "startTime": 644.202,
+     "title": "The Legal Record and Command Responsibility",
+     "kind": "segment",
+     "endTime": 700.208
+    },
+    {
+     "startTime": 700.208,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 776.83
+    },
+    {
+     "startTime": 776.83,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 809.904
+    }
+   ],
+   "publishedAt": "2026-09-20T02:54:36+00:00"
+  },
   "opium-wars": {
    "url": "/audio/history/opium-wars.mp3?v=17606953",
    "chaptersUrl": "/audio/history/opium-wars.chapters.json?v=17606953",
@@ -1790,6 +2060,100 @@
     }
    ],
    "publishedAt": "2026-09-19T23:09:20+00:00"
+  },
+  "russian-revolution": {
+   "url": "/audio/history/russian-revolution.mp3?v=5b8eb932",
+   "chaptersUrl": "/audio/history/russian-revolution.chapters.json?v=5b8eb932",
+   "title": "The Russian Revolution",
+   "durationSeconds": 922.279,
+   "bytes": 14774400,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 43.723
+    },
+    {
+     "startTime": 43.723,
+     "title": "Vyborg, February",
+     "kind": "segment",
+     "endTime": 134.242
+    },
+    {
+     "startTime": 134.242,
+     "title": "A pen for routine correspondence",
+     "kind": "segment",
+     "endTime": 185.672
+    },
+    {
+     "startTime": 185.672,
+     "title": "Two governments, one man in both",
+     "kind": "segment",
+     "endTime": 235.053
+    },
+    {
+     "startTime": 235.053,
+     "title": "The sealed train",
+     "kind": "segment",
+     "endTime": 300.681
+    },
+    {
+     "startTime": 300.681,
+     "title": "The night of the twenty fifth",
+     "kind": "segment",
+     "endTime": 368.4
+    },
+    {
+     "startTime": 368.4,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 373.053
+    },
+    {
+     "startTime": 373.053,
+     "title": "The Bolsheviks",
+     "kind": "segment",
+     "endTime": 457.213
+    },
+    {
+     "startTime": 457.213,
+     "title": "The Whites",
+     "kind": "segment",
+     "endTime": 548.383
+    },
+    {
+     "startTime": 548.383,
+     "title": "The peasants and the soldiers",
+     "kind": "segment",
+     "endTime": 625.254
+    },
+    {
+     "startTime": 625.254,
+     "title": "The Western powers",
+     "kind": "segment",
+     "endTime": 711.374
+    },
+    {
+     "startTime": 711.374,
+     "title": "The revisionist historians",
+     "kind": "segment",
+     "endTime": 796.791
+    },
+    {
+     "startTime": 796.791,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 870.597
+    },
+    {
+     "startTime": 870.597,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 922.231
+    }
+   ],
+   "publishedAt": "2026-09-20T02:54:36+00:00"
   },
   "rwandan-genocide": {
    "url": "/audio/history/rwandan-genocide.mp3?v=40afc39b",
@@ -2313,6 +2677,100 @@
    ],
    "publishedAt": "2026-09-20T01:47:18+00:00"
   },
+  "trail-of-tears": {
+   "url": "/audio/history/trail-of-tears.mp3?v=f90a4d22",
+   "chaptersUrl": "/audio/history/trail-of-tears.chapters.json?v=f90a4d22",
+   "title": "The Trail of Tears",
+   "durationSeconds": 823.353,
+   "bytes": 13190012,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 71.393
+    },
+    {
+     "startTime": 71.393,
+     "title": "The crossing at Memphis",
+     "kind": "segment",
+     "endTime": 144.847
+    },
+    {
+     "startTime": 144.847,
+     "title": "A manufactured crisis",
+     "kind": "segment",
+     "endTime": 178.27
+    },
+    {
+     "startTime": 178.27,
+     "title": "A nation on paper",
+     "kind": "segment",
+     "endTime": 256.281
+    },
+    {
+     "startTime": 256.281,
+     "title": "General Order Number Twenty Five",
+     "kind": "segment",
+     "endTime": 292.655
+    },
+    {
+     "startTime": 292.655,
+     "title": "The trail",
+     "kind": "segment",
+     "endTime": 351.087
+    },
+    {
+     "startTime": 351.087,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 355.484
+    },
+    {
+     "startTime": 355.484,
+     "title": "The Jacksonian case",
+     "kind": "segment",
+     "endTime": 410.381
+    },
+    {
+     "startTime": 410.381,
+     "title": "The Cherokee Nation",
+     "kind": "segment",
+     "endTime": 464.619
+    },
+    {
+     "startTime": 464.619,
+     "title": "The Georgia settlers",
+     "kind": "segment",
+     "endTime": 530.153
+    },
+    {
+     "startTime": 530.153,
+     "title": "The settler colonial reading",
+     "kind": "segment",
+     "endTime": 594.097
+    },
+    {
+     "startTime": 594.097,
+     "title": "Indigenous sovereignty today",
+     "kind": "segment",
+     "endTime": 683.788
+    },
+    {
+     "startTime": 683.788,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 772.038
+    },
+    {
+     "startTime": 772.038,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 823.302
+    }
+   ],
+   "publishedAt": "2026-09-20T02:54:36+00:00"
+  },
   "transatlantic-slave-trade": {
    "url": "/audio/history/transatlantic-slave-trade.mp3?v=32def9ec",
    "chaptersUrl": "/audio/history/transatlantic-slave-trade.chapters.json?v=32def9ec",
@@ -2400,6 +2858,100 @@
     }
    ],
    "publishedAt": "2026-09-20T00:21:56+00:00"
+  },
+  "womens-suffrage": {
+   "url": "/audio/history/womens-suffrage.mp3?v=a5c127ce",
+   "chaptersUrl": "/audio/history/womens-suffrage.chapters.json?v=a5c127ce",
+   "title": "The Global Struggle for Women's Suffrage",
+   "durationSeconds": 777.744,
+   "bytes": 12459679,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 43.744
+    },
+    {
+     "startTime": 43.744,
+     "title": "A chapel in Seneca Falls, 1848",
+     "kind": "segment",
+     "endTime": 112.199
+    },
+    {
+     "startTime": 112.199,
+     "title": "Akron, three years later",
+     "kind": "segment",
+     "endTime": 144.409
+    },
+    {
+     "startTime": 144.409,
+     "title": "A petition two hundred and seventy meters long",
+     "kind": "segment",
+     "endTime": 183.243
+    },
+    {
+     "startTime": 183.243,
+     "title": "Deeds, not words",
+     "kind": "segment",
+     "endTime": 262.791
+    },
+    {
+     "startTime": 262.791,
+     "title": "One vote in Tennessee",
+     "kind": "segment",
+     "endTime": 318.457
+    },
+    {
+     "startTime": 318.457,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 324.134
+    },
+    {
+     "startTime": 324.134,
+     "title": "The suffrage movement",
+     "kind": "segment",
+     "endTime": 388.503
+    },
+    {
+     "startTime": 388.503,
+     "title": "Socialist feminism",
+     "kind": "segment",
+     "endTime": 452.69
+    },
+    {
+     "startTime": 452.69,
+     "title": "The non-Western movements",
+     "kind": "segment",
+     "endTime": 508.974
+    },
+    {
+     "startTime": 508.974,
+     "title": "Anti-suffrage conservatism",
+     "kind": "segment",
+     "endTime": 566.048
+    },
+    {
+     "startTime": 566.048,
+     "title": "Black women's suffrage",
+     "kind": "segment",
+     "endTime": 652.687
+    },
+    {
+     "startTime": 652.687,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 729.587
+    },
+    {
+     "startTime": 729.587,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 777.715
+    }
+   ],
+   "publishedAt": "2026-09-20T02:54:36+00:00"
   }
  }
 }
