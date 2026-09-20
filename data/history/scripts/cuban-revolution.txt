@@ -1,0 +1,140 @@
+## OPEN
+N: The ending, first: guerrillas marching into Havana, the dictator's palace empty, a revolution won by force of arms.
+N: The record says the capital fell without a single shot. Fulgencio Batista had already boarded a plane before dawn.
+N: And the army that is supposed to have won that war had, three years earlier, been reduced from eighty one men to about a dozen inside three days.
+N: A failed barracks raid became the government that outlasted ten American presidents. Between those two facts is where this story actually happened.
+
+## TITLE
+N: The Cuban Revolution. July twenty sixth, nineteen fifty three, to January first, nineteen fifty nine.
+
+## SCENE 1 | Moncada
+N: Santiago de Cuba, before dawn on July twenty sixth, nineteen fifty three.
+N: About one hundred thirty five young men move on the Moncada barracks, the second largest army garrison in the country.
+N: The plan is to seize the weapons inside and spark a national uprising against Fulgencio Batista, who cancelled the nineteen fifty two elections in a bloodless coup rather than risk losing them.
+N: The attack collapses within minutes. More than half the attackers are captured. Many are tortured. Many are executed.
+N: One of them is a twenty six year old lawyer named Fidel Castro. At his trial he is given the floor, and he speaks for nearly four hours.
+
+## DOCUMENT | Fidel Castro | History Will Absolve Me, defense speech at the Moncada trial, Santiago de Cuba | October 16, 1953
+N: Fidel Castro closed that speech with the line that outlived the government that jailed him.
+M: Condemn me, it does not matter. History will absolve me.
+
+## ASIDE
+N: The speech is smuggled out of prison and printed as a pamphlet. It becomes the movement's founding document before the movement has a name.
+N: Castro is sentenced to fifteen years. He serves twenty two months, freed in May nineteen fifty five by a public amnesty campaign.
+N: In Mexico he meets an Argentine doctor named Ernesto Guevara.
+
+## REST
+
+## SCENE 2 | The Granma
+N: December second, nineteen fifty six. A leaking sixty foot yacht called the Granma lands eighty one men on the Cuban coast.
+N: Batista's army is waiting. Within three days most of the force is dead or captured.
+N: Roughly a dozen survivors, Castro and Guevara among them, scatter into the Sierra Maestra mountains and start again from there.
+
+## SCENE 3 | The reporter and the crackdown
+N: For two years the twenty sixth of July Movement fights a guerrilla war in the mountains, while an urban underground led by Frank Pais strikes inside the cities. Pais is killed by police in Santiago in July nineteen fifty seven.
+N: In February that same year, New York Times correspondent Herbert Matthews hikes into the Sierra Maestra and reports that Castro is alive and growing stronger, puncturing Batista's own claim that the rebels had been wiped out.
+N: Batista answers with mass arrests, torture, and killings. It does not put the insurgency down. It pushes the middle class, and much of his own officer corps, toward the rebels.
+
+## REST | short
+
+## SCENE 4 | The fall
+N: Before dawn on January first, nineteen fifty nine, Fulgencio Batista boards a plane for the Dominican Republic.
+N: Castro's columns, led into Havana by Che Guevara and Camilo Cienfuegos, take the capital without a battle. There is nothing left to fight.
+
+## SCENE 5 | Two years on
+N: In nineteen fifty nine, revolutionary tribunals try and execute hundreds of Batista's police and army officers, drawing protest abroad. The Agrarian Reform Law seizes the great estates, including U.S. corporate holdings.
+N: In nineteen sixty, Cuba nationalizes American oil refineries, sugar mills, banks, and utilities. Washington cuts the sugar quota, then on October nineteenth imposes a trade embargo.
+N: In April nineteen sixty one, the CIA lands one thousand four hundred Cuban exiles at the Bay of Pigs. Cuban forces defeat them in three days.
+
+## DOCUMENT | Fidel Castro | Televised national address | December 2, 1961
+N: Eight months after that invasion failed, Fidel Castro said this on national television.
+M: I am a Marxist-Leninist and shall be one until the end of my life.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts of the same eleven years, and the argument split Cuba into two countries: one on the island, one in Miami.
+
+## PERSPECTIVE | Revolutionary Vanguard / Anti-Imperial Liberation | victor
+N: This account starts in eighteen ninety eight, when the United States wrote itself the right to invade Cuba, and to keep a naval base at Guantanamo, into the new republic's own constitution.
+N: By the nineteen fifties, American investors controlled the sugar, the utilities, and the mines, and Havana had become a casino town run in partnership with organized crime. Batista's coup, welcomed in Washington, confirmed that elections would be allowed only when they produced the right result.
+N: The Moncada attack you just heard was the spark. The twenty sixth of July Movement that grew from it was a broad national front against a torturer, not a Soviet plot, and Che Guevara's theory of a small guerrilla band igniting a whole country was proof the conditions were ripe.
+N: The embargo and the invasion at the Bay of Pigs are read here as an empire trying to take back what it had already lost, and the alliance with Moscow as the consequence of that hostility, not its cause. Cuban troops later fought at Cuito Cuanavale in Angola, and Cuban doctors went to dozens of countries. Here is how Che Guevara put the case for the fighter himself.
+M: The true revolutionary is guided by great feelings of love.
+
+## PERSPECTIVE | Cuban Exile / Miami | vanquished
+N: This account holds that the revolution was stolen. Many of the people who fought Batista, and many more who cheered his fall, wanted the nineteen forty constitution restored and free elections held.
+N: Instead, Castro postponed those elections indefinitely and absorbed or crushed the other factions that had fought beside him. The judge he installed as president, Manuel Urrutia, was forced out within seven months.
+N: In nineteen fifty nine, revolutionary tribunals sent hundreds of Batista's police and soldiers to the wall, many after summary trials broadcast as spectacle, the executions at La Cabana fortress overseen by Che Guevara. Property was seized without compensation. Independent newspapers were shut.
+N: Then came the departures. Fourteen thousand children flown out alone under Operation Pedro Pan. A hundred twenty five thousand people crossing the Florida Straits from the port of Mariel in nineteen eighty. Each wave, in this account, is the population voting with its own body.
+N: Armando Valladares spent twenty two years in a Cuban prison for his beliefs. This is how his own memoir opens.
+M: I had spent twenty-two years in prison, and I had not signed a single document renouncing my beliefs.
+
+## REST | short
+
+## PERSPECTIVE | Campesino / Social Gains | victor
+N: For the rural poor of eastern Cuba, the revolution is measured by what arrived after nineteen fifty nine. Before it, roughly forty percent of adults in the countryside could not read, and the great estates holding the best land were owned in large part by American corporations.
+N: The Agrarian Reform Law gave title to roughly two hundred thousand peasant families. Then, in nineteen sixty one, the government suspended the school year and sent more than two hundred fifty thousand volunteers into the mountains and cane fields with lanterns and primers, cutting illiteracy toward the single digits in eight months.
+N: Cuba built rural clinics and a national health service and trained doctors by the tens of thousands. By some measures, infant mortality fell below the United States.
+N: Here is what one volunteer in that literacy campaign, unnamed in the record, remembered being taught.
+F: Before the revolution I signed my name with a cross. The brigadista taught me to write it with letters.
+
+## PERSPECTIVE | United States / Cold War Washington | bystander
+N: From Washington, this is the story of a Soviet foothold ninety miles from Florida. The United States had backed Batista, then recognized Castro's government within days of his victory, largely accepting Herbert Matthews's portrait of a democratic reformer.
+N: The disillusion came fast: the executions of nineteen fifty nine, the postponed elections, and the seizure of an estimated one billion dollars in American owned property in nineteen sixty, without the compensation international law required.
+N: When Cuba signed with the Soviet Union and Washington cut the sugar quota, Havana nationalized the American refineries that refused to process Soviet crude. The embargo followed in October. The Bay of Pigs followed in April.
+N: John Kennedy had already named the threat on the campaign trail, a year before he had to answer for it.
+M: A Communist menace that has been permitted to arise under our very noses, only ninety miles from our shores.
+N: Eighteen months after that failed invasion, Soviet missiles were found on the island, and that is a different broadcast.
+
+## REST | short
+
+## PERSPECTIVE | Revisionist Scholarship / Gains Weighed Against Authoritarianism | academic
+N: Academic scholarship since the nineteen nineties tries to hold both ledgers open at once. Marifeli Perez-Stable locates the revolution's roots in Cuba's dependent sugar economy, and argues its radicalism was real and popular before it hardened into a Soviet dependent state.
+N: Samuel Farber argues the authoritarian outcome was a choice made by the leadership, not simply a reaction to American pressure. Louis Perez places the whole story inside a century of asymmetry between the two countries, running back to that same eighteen ninety eight intervention.
+N: Aviva Chomsky sets the gains, literacy, health care, and the UMAP labor camps that interned gay men and religious believers, side by side, and argues that neither cancels the other.
+N: Human Rights Watch documented the same period from the outside. By twenty twenty five, independent monitors counted more than one thousand political prisoners still on the island.
+N: The scholars also note that Cuba in nineteen fifty nine was not the poorest country in Latin America. It already had high literacy and health numbers for the region, which complicates the purest version of both stories.
+N: Marifeli Perez-Stable put the core of her own argument this way.
+F: Radical nationalism, the defense of sovereignty and social justice, was the revolution's legitimate core; its Soviet dependence was its undoing.
+
+## REST
+
+## TURN | What each one leaves out
+N: And here is what each of them leaves out.
+N: The vanguard account leaves out the labor camps it built for gay men and dissidents in nineteen sixty five, and treats one point four million people leaving as noise instead of a verdict.
+N: The exile account leaves out the dictatorship it is answering, and the clinics and classrooms built by the government it condemns.
+N: The campesino account leaves out who controlled the classroom, and what happened to those clinics once the Soviet subsidy that paid for them was gone.
+N: Washington's account leaves out twenty six years of backing the man this revolution overthrew, and the assassination plots its own Church Committee later confirmed.
+N: And the scholars' account leaves out the verdict. It was built to.
+
+## REST
+
+## CLOSE
+N: Camilo Cienfuegos, who led one of the two columns into Havana, disappeared over the sea in a small plane that October. The wreck was never found.
+N: Fidel Castro's brother Raul, a guerrilla commander in this same war, governed Cuba himself from two thousand eight to two thousand eighteen.
+N: On October nineteenth, nineteen sixty, the United States imposed a trade embargo on Cuba. It has never been lifted. In twenty twenty six, sixty six years later, it is still the law.
+
+## SAY
+Fidel = fi-DEL
+Castro = KAS-troh
+Moncada = mohn-KAH-dah
+Fulgencio = fool-HEN-see-oh
+Batista = bah-TEES-tah
+Guevara = geh-VAH-rah
+Ernesto = er-NES-toh
+Granma = GRAHN-mah
+Sierra Maestra = see-EH-rah my-ES-trah
+Camilo = kah-MEE-loh
+Cienfuegos = see-en-FWAY-gohs
+Pais = pah-EES
+Urrutia = oo-roo-TEE-ah
+La Cabana = lah kah-BAH-nyah
+Mariel = mah-ree-EL
+Valladares = vah-yah-DAH-rehs
+Perez-Stable = PEH-rez STAY-bul
+Farber = FAR-ber
+Chomsky = CHOM-skee
+Guantanamo = gwahn-TAH-nah-moh
+Cuito Cuanavale = KWEE-toh kwah-nah-VAH-leh
+Raul = rah-OOL
