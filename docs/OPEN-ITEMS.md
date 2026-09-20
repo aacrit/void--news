@@ -115,7 +115,10 @@ render whose sha matches the pool; otherwise they ship exactly as before.
 The 73 published History episodes are **not stitched yet**: dispatch
 `.github/workflows/stitch-promos.yml` (render: false if the committed
 renders are the ones wanted), outside 11:00-17:00 UTC, and read the guard
-numbers it prints per episode. First daily run after this lands: confirm the
+numbers it prints per episode. A dry run on three live episodes (ottoman-empire,
+partition-of-india, algerian-war, pulled from the site with `--from-site`)
+passed every guard: integrated loudness unchanged at -16.4 LUFS, true peak
+-1.3 to -1.5 dBTP, promo window within 1.7 dB of the closing speech. First daily run after this lands: confirm the
 served On Air MP3's last chapter is kind `promo` and A-04 still passes.
 
 **Podcast channel.** `podcast-history.xml` (73 items) and `podcast-weekly.xml`

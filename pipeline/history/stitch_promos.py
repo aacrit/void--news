@@ -134,14 +134,28 @@ def _event_meta(slug: str) -> tuple[str, str]:
     return title, date_display
 
 
-def ensure_clean_master(slug: str, work: Path, *, upload: bool) -> Path:
+SITE_URL = rp.SITE_URL
+
+
+def ensure_clean_master(slug: str, work: Path, *, upload: bool, from_site: bool = False) -> Path:
     """The un-stitched master for a slug, fetched from the clean tag when it
     is there, otherwise from the live tag (and parked under the clean tag so
-    the next copy change starts from the same bytes)."""
+    the next copy change starts from the same bytes).
+
+    `from_site` pulls the bytes the CDN serves instead, for a dry run on a
+    machine that cannot reach the GitHub API. They are the same bytes the
+    deploy fetched from the release; the marker check below still refuses a
+    copy that already carries a promo."""
     clean_dir = work / "clean"
     clean_dir.mkdir(parents=True, exist_ok=True)
     dest = clean_dir / f"{slug}.mp3"
     if dest.exists() and dest.stat().st_size > 100_000:
+        return dest
+    if from_site:
+        subprocess.run(["curl", "-sSfL", f"{SITE_URL}/audio/history/{slug}.mp3", "-o", str(dest)],
+                       check=True)
+        if _promo_marker(dest):
+            raise StitchError(f"{slug}: the served file already carries a promo; use the release")
         return dest
     if release_store.has_asset(f"{slug}.mp3", tag=CLEAN_TAG):
         release_store.fetch(clean_dir, tag=CLEAN_TAG, slugs=[slug])
@@ -157,7 +171,7 @@ def ensure_clean_master(slug: str, work: Path, *, upload: bool) -> Path:
 
 
 def stitch_one(slug: str, manifest: dict, work: Path, *, upload: bool, force: bool,
-               dry_run: bool) -> dict | None:
+               dry_run: bool, from_site: bool = False) -> dict | None:
     entry = manifest["episodes"].get(slug)
     if not entry:
         raise StitchError(f"{slug} is not in the manifest")
@@ -173,7 +187,7 @@ def stitch_one(slug: str, manifest: dict, work: Path, *, upload: bool, force: bo
     if raw is None:
         raise StitchError(f"{slug}: no render for {promo.id} (run the render job first)")
 
-    src = ensure_clean_master(slug, work, upload=upload)
+    src = ensure_clean_master(slug, work, upload=upload, from_site=from_site)
     ep_dir = work / slug
     ep_dir.mkdir(parents=True, exist_ok=True)
     audio = _decode(src, ep_dir / "orig.wav")
@@ -251,8 +265,12 @@ def main() -> int:
     ap.add_argument("--dry-run", action="store_true", help="stitch and measure, publish nothing")
     ap.add_argument("--force", action="store_true", help="re-stitch even if the promo matches")
     ap.add_argument("--no-upload", action="store_true", help="never touch the release store")
+    ap.add_argument("--from-site", action="store_true",
+                    help="dry runs only: fetch the master from the live site, not the release")
     a = ap.parse_args()
 
+    if a.from_site and not (a.dry_run and a.no_upload):
+        ap.error("--from-site is for dry runs: add --dry-run --no-upload")
     manifest = publish_audio._load_manifest()
     slugs = sorted(manifest["episodes"]) if a.all else [s.strip() for s in a.slugs.split(",") if s.strip()]
     work = Path(a.work) if a.work else Path(tempfile.mkdtemp(prefix="void-stitch-"))
@@ -260,7 +278,7 @@ def main() -> int:
     for slug in slugs:
         try:
             if stitch_one(slug, manifest, work, upload=not a.no_upload, force=a.force,
-                          dry_run=a.dry_run):
+                          dry_run=a.dry_run, from_site=a.from_site):
                 done += 1
         except Exception as e:  # one bad episode must not stop the catalogue
             failed.append(f"{slug}: {e}")
