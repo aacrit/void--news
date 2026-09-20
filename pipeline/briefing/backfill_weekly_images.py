@@ -143,27 +143,27 @@ def _is_diagram(url: str) -> bool:
     return ".svg" in (url or "").lower()
 
 
-def _used(row) -> set:
-    """Every image URL the issue already carries, so nothing repeats.
+def _claimed(row) -> set:
+    """The image urls already spoken for when the walk starts: the cover's.
 
-    The cover is resolved FROM the lead feature, so without this they collide
-    by construction: Vol. I, No. 1 came out of the backfill with the same
-    Greenland map as its full-screen cover AND its lead feature one screen
-    below. No magazine prints the same picture twice in one issue.
+    ONLY the cover. An earlier version pre-seeded this with every slot's url
+    too, which made each slot a repeat of ITSELF: the first item examined
+    found its own image already "claimed", treated it as a duplicate, and
+    dropped a perfectly good distinct photograph. The rest of the set is
+    claimed as the walk goes, which is what makes "an earlier slot used it"
+    the actual test rather than "it exists somewhere in the issue".
+
+    The cover is seeded because it is resolved FROM the lead feature and so
+    collides with it by construction, and because it is the larger surface and
+    should win.
     """
-    urls = {(row.get("cover_image_url") or "").split("?")[0]} - {""}
-    for key, _ in SLOTS:
-        items, _ = _load(row, key)
-        for x in items:
-            if isinstance(x, dict) and x.get("image_url"):
-                urls.add(x["image_url"].split("?")[0])
-    return urls
+    return {(row.get("cover_image_url") or "").split("?")[0]} - {""}
 
 
 def illustrate(row, *, dry_run=False) -> list[str]:
     """Attach art to one issue row. Returns one line per change."""
     out = cover_image(row, dry_run=dry_run)
-    seen = _used(row)
+    seen = _claimed(row)
     for key, cap in SLOTS:
         items, was_str = _load(row, key)
         if not isinstance(items, list) or not items:
@@ -191,11 +191,22 @@ def illustrate(row, *, dry_run=False) -> list[str]:
             # Missing caption (predates captions) or a diagram (the Gaza war
             # control map under a celebrity-apology feature) both need
             # re-resolving, and dropping if nothing better passes.
+            # A slot ALREADY CARRYING the cover's photograph was never
+            # re-examined: it had an image and a caption, so it was neither
+            # new nor stale, and the loop skipped it. Preventing new
+            # duplicates did nothing about the one already on the page.
+            # `seen` is claimed as we go, so this is "an earlier slot already
+            # used it", not "it appears somewhere in the issue".
+            dupe = bool(cur) and cur.split("?")[0] in seen
             stale = bool(cur) and (
-                not (item.get("image_caption") or "").strip() or _is_diagram(cur)
+                not (item.get("image_caption") or "").strip()
+                or _is_diagram(cur)
+                or dupe
             )
-            if item.get("image_url") and not stale:
-                continue                      # already illustrated and labelled
+            if cur and not stale:
+                # Kept. It claims its url so a later slot cannot repeat it.
+                seen.add(cur.split("?")[0])
+                continue
             try:
                 found = find_cover_image_for_cluster(
                     item.get("cluster_id") or "", head,
@@ -213,7 +224,10 @@ def illustrate(row, *, dry_run=False) -> list[str]:
                         for k in ("image_url", "image_attribution", "image_caption"):
                             item.pop(k, None)
                         changed = True
-                    out.append(f"{key}[{i}] DROPPED an uncaptioned image "
+                    why = ("a repeat of another slot" if dupe
+                           else "a diagram" if _is_diagram(cur)
+                           else "an uncaptioned image")
+                    out.append(f"{key}[{i}] DROPPED {why} "
                                f"({head[:38]!r} resolved to nothing better)")
                 else:
                     out.append(f"{key}[{i}] no licensed subject for {head[:42]!r}")

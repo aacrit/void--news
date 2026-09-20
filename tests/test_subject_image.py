@@ -174,7 +174,7 @@ def test_not_a_diagram():
 def test_no_repeats():
     """SUB-04  nothing appears twice in one issue."""
     print("\nSUB-04  no image repeats")
-    from briefing.backfill_weekly_images import _used  # noqa: E402
+    from briefing.backfill_weekly_images import _claimed  # noqa: E402
 
     # The cover is resolved FROM the lead feature, so they collide by
     # construction. Vol. I, No. 1 came out of a backfill with the same
@@ -186,10 +186,32 @@ def test_no_repeats():
                        {"image_url": "https://x/b.jpg"}],
         "departments": [], "recap_stories": [],
     }
-    used = _used(row)
-    check("the cover's image counts as used", "https://x/a.jpg" in used)
-    check("a query string does not make it a different image",
-          len(used) == 2, sorted(used))
+    used = _claimed(row)
+    check("the cover's image is claimed up front", "https://x/a.jpg" in used)
+    # ONLY the cover. Seeding this with every slot's url made each slot a
+    # repeat of ITSELF, and the first item examined dropped its own perfectly
+    # good distinct photograph.
+    check("no other slot is pre-claimed", used == {"https://x/a.jpg"}, sorted(used))
+
+    # A pre-existing duplicate is removed; a distinct image beside it is not.
+    import briefing.backfill_weekly_images as B
+    real = B.find_cover_image_for_cluster
+    B.find_cover_image_for_cluster = lambda *a, **k: None   # nothing better
+    try:
+        r = {"cover_image_url": "https://x/a.jpg?v=1", "cover_image_caption": "S",
+             "cover_text": [
+                 {"headline": "One", "image_url": "https://x/a.jpg?v=2",
+                  "image_caption": "S", "image_attribution": "A"},
+                 {"headline": "Two", "image_url": "https://x/b.jpg",
+                  "image_caption": "O", "image_attribution": "B"}],
+             "departments": [], "recap_stories": []}
+        B.illustrate(r)
+        check("a slot repeating the cover is cleared",
+              r["cover_text"][0].get("image_url") is None)
+        check("a distinct image beside it survives",
+              bool(r["cover_text"][1].get("image_url")))
+    finally:
+        B.find_cover_image_for_cluster = real
 
 
 def test_skip_means_not_written():
