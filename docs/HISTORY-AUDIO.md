@@ -1,6 +1,7 @@
 # History: the audio edition
 
-Status: PLAN, 2026-09-19. Nothing here is built yet.
+Status: BUILT, 2026-09-20. Stages 1 and 2 are shipped and live; stage 3 is
+in flight. What follows describes what exists, not what is intended.
 
 Every one of the 78 History events becomes an 8-12 minute produced audio piece:
 written for the ear, cast by the event's own mood, scored per scene, and
@@ -212,16 +213,37 @@ enough range. The five are deliberately chosen to span severity, era and
 category (e.g. a genocide, a cultural moment, an ancient empire, a disaster, a
 revolution).
 
-**Throughput is the binding constraint, not Gemini.** 78 x 10 min is ~13 hours
-of audio; at the measured Kokoro rtf (~1.1 with two workers) that is ~14 hours
-of CPU. Options, to be decided at stage 3 when the real per-episode cost is
-known: an overnight local run, or a GitHub Actions matrix rendering in parallel
-shards. Stage 3 exists to measure this.
+**Throughput was the binding constraint, and it is solved.** 78 x 12 min is
+~15 hours of audio, and rendering them one after another is about that long in
+wall clock. `.github/workflows/render-history-audio.yml` fans them out instead:
+one slug per matrix shard, ten at a time, each uploading its episode, then a
+single publish job folds everything into the site in ONE commit (ten jobs each
+committing to the same branch is a race, and the manifest is one file).
+
+Measured on the first real runs: a 1,584-word episode took **8m40s end to end**
+on a GitHub runner, including checkout, dependencies and mastering, with the
+Kokoro venv and model files coming from cache. At ten wide that puts the whole
+catalogue at roughly ninety minutes.
+
+Dispatch it with an explicit list of slugs, or with `auto` to take the next N
+scripts that have no published episode. "What is left to make" is answered by
+the manifest (`publish_audio.py --pending N`) rather than by a list somebody
+maintains by hand, so the workflow cannot drift from what has actually shipped.
+The publish job runs on `always()`, so nine good episodes do not wait on a
+tenth that failed, and it runs the manifest gate before it commits.
 
 ## Verification
 
 - Script gates (`pipeline/history/script_format.py`), each verified against a
-  planted defect rather than merely written:
+  planted defect in `tests/test_history_script.py` rather than merely written.
+  That file exists because H-04 was silently weak: it matched the speaker's
+  name as a RAW SUBSTRING of the preceding narration, and "king" is inside
+  "striking", so a civil rights script that never named Martin Luther King
+  passed the gate on the strength of the phrase "without striking back". The
+  rule now matches on words, with a leading-edge match in both directions so a
+  possessive still names its speaker. Re-running all fifteen committed scripts
+  against the tightened rule found exactly one defect, the one that exposed it.
+  The rules:
   - `H-01` every quote exists in the event's own `primary_source_excerpts` or
     `notable_quotes`, by word overlap so trimming for the ear is allowed and
     inventing is not. A fabricated quotation is the one unrecoverable failure
@@ -236,5 +258,9 @@ shards. Stage 3 exists to measure this.
   - `H-06` the episode carries a TURN. `H-07` length inside 8-15 minutes.
 - Render gates: reuse the On Air assertions (gaps, arcs, fades landing under
   speech, loudness within tolerance, TP and LRA, chapters exact).
-- Served: episodes reachable from R2, chapters render, player resumes.
+- `tests/test_history_audio.py` holds the published catalogue to its manifest:
+  every entry's MP3 committed at the size and duration claimed, under the
+  25 MiB Cloudflare Pages per-file limit, naming a real event, chapters ordered
+  from zero, and no MP3 in the deploy tree that no page serves.
+- Served: episodes reachable from the CDN, chapters render, player resumes.
 - Ear test per stage, by the CEO, before the next stage starts.

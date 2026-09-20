@@ -1,0 +1,72 @@
+{
+ "version": "1.2.0",
+ "title": "The Holocaust",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 41.916
+  },
+  {
+   "startTime": 41.916,
+   "title": "Ninety minutes at Wannsee",
+   "endTime": 118.382
+  },
+  {
+   "startTime": 118.382,
+   "title": "Before the camps",
+   "endTime": 171.715
+  },
+  {
+   "startTime": 171.715,
+   "title": "Six hundred metres by four hundred",
+   "endTime": 211.796
+  },
+  {
+   "startTime": 211.796,
+   "title": "The supply chain",
+   "endTime": 298.968
+  },
+  {
+   "startTime": 298.968,
+   "title": "Five accounts",
+   "endTime": 320.319
+  },
+  {
+   "startTime": 320.319,
+   "title": "The survivors",
+   "endTime": 391.713
+  },
+  {
+   "startTime": 391.713,
+   "title": "The bureaucracy",
+   "endTime": 469.439
+  },
+  {
+   "startTime": 469.439,
+   "title": "The bystander nations",
+   "endTime": 569.862
+  },
+  {
+   "startTime": 569.862,
+   "title": "The Zionist answer",
+   "endTime": 646.297
+  },
+  {
+   "startTime": 646.297,
+   "title": "The Roma",
+   "endTime": 740.967
+  },
+  {
+   "startTime": 740.967,
+   "title": "What each one leaves out",
+   "endTime": 820.833
+  },
+  {
+   "startTime": 820.833,
+   "title": "Legacy",
+   "endTime": 871.18
+  }
+ ]
+}
