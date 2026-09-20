@@ -222,6 +222,44 @@ def normalize(data) -> list[str]:
         stats["truncated"] = True
         changes.append("bias stats: total_scored 3000 marked truncated (it was a query cap)")
 
+    # `total_clusters` was capped at exactly 500 by a bare .limit(500) on the
+    # cluster query, and BOTH archived issues sit on that number (#23: 500 /
+    # 2109, #26: 500 / 2355). `total_articles` is summed over those same capped
+    # rows, so the colophon's whole line, "Assembled from 2,355 articles in 500
+    # story clusters", was two floors printed as exact counts. The generator
+    # pages the query now; an already-published issue can only be flagged, so
+    # the page reads both numbers out as "more than".
+    if data.get("total_clusters") == 500:
+        brd = data.get("bias_report_data")
+        if not isinstance(brd, dict):
+            brd = {}
+            data["bias_report_data"] = brd
+        if "clusters_truncated" not in brd:
+            brd["clusters_truncated"] = True
+            changes.append("clusters: total_clusters 500 marked truncated "
+                           "(it was a query cap, and total_articles sums the same rows)")
+
+    # `bias_report_text` renders nowhere, but the exporter does not drop it, so
+    # it is in the JSON every browser downloads and it states both ceilings as
+    # counts in one sentence. Hedge the sentence rather than delete the field.
+    text = data.get("bias_report_text")
+    if isinstance(text, str) and text:
+        stats = (data.get("bias_report_data") or {}).get("stats") or {}
+        before = text
+        scored = stats.get("total_scored")
+        if stats.get("truncated") and isinstance(scored, int):
+            text = text.replace(f"processed {scored} articles",
+                                f"processed more than {scored} articles", 1)
+        clusters = data.get("total_clusters")
+        if (data.get("bias_report_data") or {}).get("clusters_truncated") \
+                and isinstance(clusters, int):
+            text = text.replace(f"across {clusters} story clusters",
+                                f"across more than {clusters} story clusters", 1)
+        if text != before:
+            data["bias_report_text"] = text
+            changes.append("bias_report_text: the two capped counts now read "
+                           "'more than'")
+
     # Text that was never written for these issues. An empty list is the honest
     # answer until the next run generates and stores it, and it keeps the
     # exporter's parse list and the snapshot in agreement.

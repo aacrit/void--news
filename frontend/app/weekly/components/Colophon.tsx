@@ -13,6 +13,13 @@
    "more than 3,000 articles" when the scorer hit its page ceiling; the
    colophon says how many the WEEK actually carried, which is a different
    number and a smaller one.
+
+   That second number had a ceiling of its own. Issues #23 and #26 both printed
+   exactly "500 story clusters", because the cluster query was a bare
+   .limit(500), and `total_articles` is summed over those same capped rows, so
+   BOTH figures on this line were floors printed as counts. The generator pages
+   the query now and sets `clusters_truncated` when even the paged read stops
+   short; when it is set, both numbers are read out as "more than".
    --------------------------------------------------------------------------- */
 
 import type React from "react";
@@ -43,6 +50,9 @@ export default function Colophon({ issue }: { issue: WeeklyDigestData }) {
 
   const articles = issue.total_articles;
   const clusters = issue.total_clusters;
+  // One flag governs both figures: the article total is the sum of
+  // `source_count` over exactly the clusters that were read.
+  const atLeast = issue.bias_report_data?.clusters_truncated ? "more than " : "";
   const calls = issue.gemini_calls_used;
   const took = duration(issue.generation_duration_seconds);
   const read = voices(issue.audio_voice);
@@ -61,9 +71,14 @@ export default function Colophon({ issue }: { issue: WeeklyDigestData }) {
       <p className="wk-colophon__line">
         {!!articles && (
           <>
-            Assembled from <strong>{groupDigits(articles)}</strong> articles
+            Assembled from {atLeast}
+            <strong>{groupDigits(articles)}</strong> articles
             {!!clusters && (
-              <> in <strong>{groupDigits(clusters)}</strong> story clusters</>
+              <>
+                {" "}
+                in {atLeast}
+                <strong>{groupDigits(clusters)}</strong> story clusters
+              </>
             )}
             .{" "}
           </>

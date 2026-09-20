@@ -43,6 +43,7 @@ from briefing.weekly_parse import build_weekly_row  # noqa: E402
 
 FIXTURES = Path(__file__).parent / "fixtures"
 WEEKLY_JSON = ROOT / "frontend" / "public" / "data" / "weekly.json"
+ISSUES_JSON = ROOT / "frontend" / "build-data" / "weekly-issues.json"
 EXPORT_PY = ROOT / "pipeline" / "export_static.py"
 READER_TS = ROOT / "frontend" / "app" / "lib" / "supabase.ts"
 
@@ -740,6 +741,64 @@ def test_archive():
               "; ".join(missing))
 
 
+# ---------------------------------------------------------------------------
+# W-T12  No published count may be a query cap
+# ---------------------------------------------------------------------------
+# Two issues shipped "500 story clusters" and one shipped "3,000 articles
+# scored". Neither was a measurement: each was the ceiling of a bare .limit(),
+# printed on the page as an exact number. A count that lands exactly on a round
+# ceiling is a claim nobody made, so it has to be flagged or it has to go.
+#
+# These are the ceilings the weekly's queries have ever used. A published count
+# sitting on one is guilty until the row says it was truncated.
+QUERY_CAPS = {500, 1000, 3000, 5000, 20000, 60000}
+
+
+def _cap_findings(row):
+    """(field, value) for every count on this row that is a bare query cap."""
+    brd = row.get("bias_report_data") or {}
+    if isinstance(brd, str):
+        brd = json.loads(brd)
+    stats = brd.get("stats") or {}
+
+    found = []
+    if row.get("total_clusters") in QUERY_CAPS and not brd.get("clusters_truncated"):
+        found.append(("total_clusters", row["total_clusters"]))
+    if stats.get("total_scored") in QUERY_CAPS and not stats.get("truncated"):
+        found.append(("bias_report_data.stats.total_scored", stats["total_scored"]))
+    return found
+
+
+def test_no_cap_published_as_count():
+    print("\nW-T12  no published count is a query cap")
+    seen = 0
+    for path in (WEEKLY_JSON, ISSUES_JSON):
+        if not path.exists():
+            check(f"{path.name} exists", False, str(path))
+            continue
+        blob = json.loads(path.read_text())
+        rows = blob if isinstance(blob, list) else [blob]
+        for row in rows:
+            if not isinstance(row, dict):
+                continue
+            seen += 1
+            bad = _cap_findings(row)
+            check(f"{path.name} #{row.get('issue_number')} publishes counts, not caps",
+                  not bad,
+                  "; ".join(f"{f} == {v}, unflagged" for f, v in bad))
+    check("there was something to check", seen > 0, f"{seen} issue row(s)")
+
+    # The flag itself has to reach the two components that print the number.
+    colophon = (ROOT / "frontend" / "app" / "weekly" / "components" / "Colophon.tsx").read_text()
+    bias = (ROOT / "frontend" / "app" / "weekly" / "components" / "BiasReport.tsx").read_text()
+    check("the colophon reads clusters_truncated",
+          "clusters_truncated" in colophon)
+    check("the colophon hedges both of its figures",
+          colophon.count("{atLeast}") >= 2, f"{colophon.count('{atLeast}')} hedge(s)")
+    check("The Week in Bias reads clusters_truncated",
+          "clusters_truncated" in bias)
+
+
 def main():
     print("void --weekly gates")
     test_headline_guard()
@@ -754,6 +813,7 @@ def main():
     test_end_matter_frontend()
     test_document_structure()
     test_archive()
+    test_no_cap_published_as_count()
     print()
     if _failures:
         print(f"FAILED ({len(_failures)}): " + ", ".join(_failures))

@@ -262,23 +262,51 @@ _parse_recap = parse_recap
 # ---------------------------------------------------------------------------
 # Data
 # ---------------------------------------------------------------------------
+# The colophon prints `total_clusters` as a COUNT ("in 500 story clusters") and
+# The Week in Bias prints it again ("across 500 stories this week"), so it has
+# to be one. A single .limit(500) returned exactly 500 on BOTH archived issues
+# (#23: 500/2109, #26: 500/2355) — a query cap published as a measurement, two
+# for two. `total_articles` is summed over those same capped rows, so that
+# number was a floor too. Paged now, with a ceiling that is FLAGGED rather than
+# silently applied, which is the shape `_fetch_bias_stats` was given in rev 71
+# and this query was missed.
+_CLUSTER_PAGE = 500
+_CLUSTER_MAX = 20000
+
+
 def _fetch_week_clusters(edition, week_start, week_end):
-    """Fetch clusters for the edition within date range, sorted by importance."""
+    """Fetch clusters for the edition within date range, sorted by importance.
+
+    Returns `(clusters, truncated)`. `truncated` is True only when the read
+    stopped short of the week, so the page can say "more than" instead of
+    printing a ceiling as a count.
+    """
+    clusters = []
     try:
-        result = supabase.table("story_clusters").select(
-            "id,title,summary,consensus_points,divergence_points,"
-            "category,source_count,headline_rank,divergence_score,bias_diversity,"
-            "sections,created_at,first_published,last_updated,"
-            "cached_image_url,cached_image_attribution"
-        ).contains("sections", [edition]).gte(
-            "created_at", week_start.isoformat()
-        ).lte(
-            "created_at", week_end.isoformat()
-        ).order("headline_rank", desc=True).limit(500).execute()
-        return result.data or []
+        while True:
+            page = supabase.table("story_clusters").select(
+                "id,title,summary,consensus_points,divergence_points,"
+                "category,source_count,headline_rank,divergence_score,bias_diversity,"
+                "sections,created_at,first_published,last_updated,"
+                "cached_image_url,cached_image_attribution"
+            ).contains("sections", [edition]).gte(
+                "created_at", week_start.isoformat()
+            ).lte(
+                "created_at", week_end.isoformat()
+            ).order("headline_rank", desc=True).range(
+                len(clusters), len(clusters) + _CLUSTER_PAGE - 1
+            ).execute()
+            rows = page.data or []
+            clusters.extend(rows)
+            if len(rows) < _CLUSTER_PAGE:
+                return clusters, False
+            if len(clusters) >= _CLUSTER_MAX:
+                return clusters, True
     except Exception as e:
         print(f"  [weekly:{edition}] cluster query failed: {e}")
-        return []
+        # A read that died part-way is a floor, not a count. Only an empty
+        # result is honestly empty.
+        return clusters, bool(clusters)
 
 
 # The Week in Bias prints `total_scored` as a COUNT, so it has to be one. A
@@ -902,20 +930,115 @@ Line 1 is the headline only (no label, no quotes). Then a blank line. Then the
 piece in flowing prose."""
 
 
+# THE CATEGORY LABEL IS NOT EVIDENCE. Issue #26 filed a German federal election
+# under Sports & Culture: the cluster carried the label, `_generate_sports` read
+# the label and nothing else, and a correspondent was told to write about it
+# through "the lens of culture, politics, or economics" — which it duly did, at
+# 500 words, on a page headed Sports & Culture. The label comes from a
+# categorizer that can be wrong; the cluster's own words cannot be wrong about
+# what the cluster says. So the words decide, and the label only nominates.
+_SPORT_TERMS = (
+    "nba", "nfl", "nhl", "mlb", "fifa", "uefa", "ioc", "olympic", "olympics",
+    "paralympic", "world cup", "premier league", "champions league", "la liga",
+    "serie a", "bundesliga", "formula 1", "formula one", "grand prix",
+    "wimbledon", "us open", "french open", "australian open", "ryder cup",
+    "super bowl", "world series", "ashes", "ipl",
+    "football", "soccer", "basketball", "baseball", "cricket", "rugby",
+    "tennis", "golf", "boxing", "mma", "ufc", "hockey", "cycling", "marathon",
+    "athletics", "swimming", "gymnastics", "skiing", "surfing", "esports",
+    "athlete", "athletes", "footballer", "striker", "goalkeeper", "midfielder",
+    "quarterback", "batsman", "bowler", "sprinter", "boxer", "wrestler",
+    "coach", "manager", "squad", "roster", "lineup", "dugout", "bench",
+    "stadium", "arena", "pitch", "dressing room", "locker room",
+    "tournament", "championship", "playoff", "playoffs", "semi-final",
+    "semifinal", "quarter-final", "quarterfinal", "knockout", "league title",
+    "medal", "medals", "gold medal", "podium", "doping", "transfer fee",
+    "matchday", "fixture", "kick-off", "kickoff", "halftime", "full-time",
+)
+_CULTURE_TERMS = (
+    "film", "films", "movie", "movies", "cinema", "box office", "screenplay",
+    "documentary", "director", "filmmaker", "actor", "actress", "cast",
+    "premiere", "festival", "cannes", "sundance", "venice film", "berlinale",
+    "oscar", "oscars", "academy award", "bafta", "golden globe", "emmy",
+    "album", "albums", "single", "song", "songs", "band", "singer",
+    "songwriter", "rapper", "concert", "tour dates", "grammy", "grammys",
+    "billboard", "streaming chart", "record label", "symphony", "orchestra",
+    "opera", "ballet", "choreograph",
+    "novel", "novels", "author", "novelist", "poet", "poetry", "memoir",
+    "bestseller", "publisher", "booker prize", "pulitzer", "nobel prize in literature",
+    "museum", "gallery", "exhibition", "curator", "painting", "sculpture",
+    "biennale", "retrospective",
+    "theatre", "theater", "broadway", "west end", "playwright", "stage play",
+    "television series", "tv series", "sitcom", "miniseries", "season finale",
+    "video game", "comic book", "fashion week", "couture", "runway show",
+)
+# A title that announces hard news is hard news, whatever the categorizer said.
+# This only blocks the WEAKER evidence (terms found in the summary alone); a
+# sport or culture term in the title still wins, so "Olympic boycott clears
+# parliament" is still eligible.
+_HARD_NEWS_TERMS = (
+    "election", "elections", "electoral", "referendum", "parliament",
+    "parliamentary", "chancellor", "president", "prime minister", "cabinet",
+    "coalition", "ballot", "voters", "polls close", "impeach", "indictment",
+    "coup", "airstrike", "air strike", "missile", "ceasefire", "troops",
+    "invasion", "war", "genocide", "hostages", "sanctions", "tariff",
+    "tariffs", "inflation", "interest rate", "central bank", "earthquake",
+    "hurricane", "wildfire", "outbreak", "pandemic", "shooting", "bombing",
+    "far-right", "far right",
+)
+
+
+def _term_hits(text, terms):
+    """Distinct terms present in `text`, matched on word boundaries.
+
+    Substring matching would score "war" inside "warm-up" and "ipl" inside
+    "multiple". Every term here is whole-word or whole-phrase.
+    """
+    low = f" {(text or '').lower()} "
+    for ch in "\n\t\r":
+        low = low.replace(ch, " ")
+    for ch in ".,;:!?()[]{}\"'“”‘’/\\|":
+        low = low.replace(ch, " ")
+    low = " ".join(low.split())
+    low = f" {low} "
+    return {t for t in terms if f" {t} " in low}
+
+
+def _is_sport_or_culture(cluster):
+    """Does this cluster's OWN TEXT say it is about sport or culture?
+
+    Title evidence is decisive. Summary-only evidence needs two distinct terms,
+    and is refused outright when the headline is plainly hard news, because one
+    stray mention of "war" or "stadium" inside a political summary is not a
+    sports page.
+    """
+    title = cluster.get("title") or ""
+    summary = cluster.get("summary") or ""
+    terms = _SPORT_TERMS + _CULTURE_TERMS
+
+    if _term_hits(title, terms):
+        return True
+    if _term_hits(title, _HARD_NEWS_TERMS):
+        return False
+    return len(_term_hits(summary, terms)) >= 2
+
+
 def _generate_sports(clusters, edition):
     """Find the top sports story and write a culture piece."""
-    sports_clusters = [c for c in clusters if c.get("category") in {"Sports", "Culture"}]
+    labelled = [c for c in clusters if c.get("category") in {"Sports", "Culture"}]
+    labelled_ids = {id(c) for c in labelled}
+    sports_clusters = [c for c in labelled if _is_sport_or_culture(c)]
 
     if not sports_clusters:
-        sports_clusters = [
-            c for c in clusters
-            if any(kw in (c.get("title", "") or "").lower()
-                   for kw in ["nba", "nfl", "fifa", "olympic", "world cup", "tennis",
-                              "cricket", "formula", "premier league", "champions league",
-                              "baseball", "athlete", "stadium", "tournament"])
-        ]
+        sports_clusters = [c for c in clusters
+                           if id(c) not in labelled_ids and _is_sport_or_culture(c)]
 
     if not sports_clusters:
+        # Silence beats a plausible-looking wrong answer. A week with no sport
+        # and no culture in it runs without the department.
+        if labelled:
+            print(f"    {len(labelled)} cluster(s) carried the label and failed "
+                  f"the content gate, so no Sports & Culture piece this week")
         return None, 0
 
     top = sports_clusters[0]
@@ -937,19 +1060,33 @@ def _generate_sports(clusters, edition):
 
 # ── SECTION 5: BIAS REPORT (rule-based, $0) ──
 
-def _generate_bias_report(clusters, bias_stats, edition):
-    """Rule-based bias report from aggregate data."""
+def _generate_bias_report(clusters, bias_stats, edition, clusters_truncated=False):
+    """Rule-based bias report from aggregate data.
+
+    `clusters_truncated` rides on the returned dict rather than inside `stats`,
+    because it is true independently of whether the bias scorer returned
+    anything, and a half-built `stats` object would render as NaN on the page.
+    """
     if not clusters or not bias_stats:
-        return "Insufficient data for this week's bias report.", {}
+        # Even with no bias stats the colophon still prints the cluster and
+        # article counts, so the flag has to survive this exit.
+        return ("Insufficient data for this week's bias report.",
+                {"clusters_truncated": True} if clusters_truncated else {})
 
     polarized = sorted(clusters, key=lambda c: c.get("divergence_score", 0), reverse=True)[:5]
+    scored_hedge = "more than " if bias_stats.get("truncated") else ""
+    cluster_hedge = "more than " if clusters_truncated else ""
 
     lines = [
-        f"This week's {edition} edition processed {bias_stats['total_scored']} articles across {len(clusters)} story clusters.",
+        f"This week's {edition} edition processed {scored_hedge}{bias_stats['total_scored']} "
+        f"articles across {cluster_hedge}{len(clusters)} story clusters.",
         "",
         f"Coverage lean: {bias_stats['avg_lean']}/100 "
         f"({'left-of-center' if bias_stats['avg_lean'] < 45 else 'center' if bias_stats['avg_lean'] < 55 else 'right-of-center'}).",
-        f"Lean spread: {bias_stats['lean_std']} — "
+        # The dash ban applies to this file's prose too. `repair_weekly_snapshot`
+        # has been stripping this one em dash out of every published issue and
+        # the next run put it straight back.
+        f"Lean spread: {bias_stats['lean_std']}, "
         f"{'tight consensus' if bias_stats['lean_std'] < 15 else 'healthy diversity' if bias_stats['lean_std'] < 25 else 'deep polarization'}.",
         f"Factual rigor: {bias_stats['avg_rigor']}/100.",
         f"Sensationalism: {bias_stats['avg_sensationalism']}/100.",
@@ -962,6 +1099,10 @@ def _generate_bias_report(clusters, bias_stats, edition):
     return "\n".join(lines), {
         "most_polarized": [{"title": c.get("title"), "divergence": c.get("divergence_score", 0)} for c in polarized[:5]],
         "stats": bias_stats,
+        # True only when the cluster read stopped short of the week. The page
+        # then says "more than" for the story count and for the article total
+        # summed from those same rows.
+        "clusters_truncated": clusters_truncated,
     }
 
 
@@ -1956,8 +2097,8 @@ def generate_weekly_digest(editions=None, week_offset=0):
         print(f"{'─' * 50}")
 
         # Fetch data
-        clusters = _fetch_week_clusters(edition, week_start, week_end)
-        print(f"  Clusters: {len(clusters)}")
+        clusters, clusters_truncated = _fetch_week_clusters(edition, week_start, week_end)
+        print(f"  Clusters: {'more than ' if clusters_truncated else ''}{len(clusters)}")
         if len(clusters) < 3:
             print(f"  Insufficient data — skipping")
             continue
@@ -2038,7 +2179,8 @@ def generate_weekly_digest(editions=None, week_offset=0):
 
         # Section 5: Bias report (rule-based, 0 calls)
         print(f"\n  ── BIAS REPORT ──")
-        bias_text, bias_data = _generate_bias_report(clusters, bias_stats, edition)
+        bias_text, bias_data = _generate_bias_report(
+            clusters, bias_stats, edition, clusters_truncated=clusters_truncated)
 
         # Section 6: Week in brief (remaining stories)
         print(f"\n  ── WEEK IN BRIEF ──")
