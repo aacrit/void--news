@@ -22,12 +22,18 @@ export default function CoverOpening({
   deck,
   dateline,
   sources,
+  days,
 }: {
   kicker: string;
   headline: string;
   deck?: string;
   dateline: string;
+  /* Distinct outlets that carried this story across the WEEK, from the
+     threading engine. The old figure summed the timeline's per-day source
+     counts, which double-counts any outlet that covered the story twice. */
   sources?: number | null;
+  /** Days the story ran. The one stat a weekly can print and a daily cannot. */
+  days?: number | null;
 }) {
   const [ref, visible] = useScrollReveal(0.05);
   return (
@@ -44,6 +50,14 @@ export default function CoverOpening({
       {deck && <p className="wk-opening__deck">{deck}</p>}
       <div className="wk-opening__meta">
         <span className="wk-opening__dateline">{dateline}</span>
+        {!!days && (
+          <>
+            <span className="wk-opening__sep" aria-hidden="true"> · </span>
+            <span className="wk-opening__sources">
+              {days} {days === 1 ? "day" : "days"}
+            </span>
+          </>
+        )}
         {!!sources && (
           <>
             <span className="wk-opening__sep" aria-hidden="true"> · </span>

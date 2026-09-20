@@ -103,7 +103,7 @@ export default function BiasReport({
         {groupDigits(stats.total_scored)} articles across{" "}
         {groupDigits(totalClusters)} stories this week. Coverage sat{" "}
         {leanWord(stats.avg_lean)}, at {stats.avg_lean.toFixed(1)} on a
-        hundred-point scale, with a spread of {stats.lean_std.toFixed(1)} —{" "}
+        hundred-point scale, with a spread of {stats.lean_std.toFixed(1)},{" "}
         {spreadWord(stats.lean_std)}.
       </p>
 

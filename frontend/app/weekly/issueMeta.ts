@@ -25,8 +25,8 @@ export function issueMetadata(issue: WeeklyDigestData, path: string): Metadata {
   const lede = essayParagraphs(issue.cover_text?.[0]?.text || "")[0] || "";
 
   const title = headline
-    ? `Issue #${no}: ${headline} — Void Weekly`
-    : `Issue #${no} — Void Weekly`;
+    ? `Issue #${no}: ${headline} · Void Weekly`
+    : `Issue #${no} · Void Weekly`;
   const description = lede
     ? clip(lede, 160)
     : `Void Weekly, issue #${no}, covering ${range}.`;

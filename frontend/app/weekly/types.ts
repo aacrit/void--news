@@ -35,6 +35,12 @@ export interface WeeklyCoverStory {
   image_attribution?: string;
   image_caption?: string;
   cluster_id?: string;
+  /* How the week actually ran for this story, from the threading engine.
+     These were computed over 500 clusters, used to pick two headlines, and
+     garbage-collected. "Six days, 47 sources" is the standfirst stat a WEEKLY
+     can print that a daily structurally cannot. */
+  days_active?: number;
+  week_sources?: number;
 }
 
 export interface WeeklyTimelineDay {
