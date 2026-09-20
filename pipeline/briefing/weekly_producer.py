@@ -41,7 +41,7 @@ from briefing.spoken_text import normalize_for_speech                        # n
 from briefing.tts_engines import TurnSpec, KokoroEngine, EdgeTtsEngine, \
     synthesize_with_fallback                                                  # noqa: E402
 from briefing.weekly_script import parse_script, validate_script, \
-    estimated_minutes                                                         # noqa: E402
+    estimated_minutes, TARGET_MINUTES, MUSIC_MINUTES                          # noqa: E402
 
 # Engine roles. The script speaks in E/L/R; the mixer thinks in A/B/C.
 EDITOR, LEFT, RIGHT = "A", "B", "C"
@@ -54,6 +54,12 @@ ROLE_FOR = {"E": EDITOR, "L": LEFT, "R": RIGHT}
 #: decision about the programme, which the doctrine permits.
 VOICES = {"editor": "bm_lewis", "left": "am_michael", "right": "af_heart"}
 SPEED = 0.92
+
+#: Measured Kokoro real-time factor on a four-core runner (CLAUDE.md rev 67).
+KOKORO_RTF = 1.4
+#: Headroom for a cold or contended machine. The cost of being wrong high is
+#: waiting; the cost of being wrong low is losing a finished programme.
+DEADLINE_MARGIN = 1.35
 
 WEEKLY_ASSETS = {
     "theme": "weekly_theme.wav",
@@ -390,8 +396,23 @@ def produce(script_text: str, issue: dict, out_dir: Path,
     turns = build_turns(script)
     vmap = {EDITOR: VOICES["editor"], LEFT: VOICES["left"], RIGHT: VOICES["right"]}
     t0 = time.time()
+
+    # THE DEADLINE HAS TO BE SIZED TO THE BAND, and the default is not.
+    # `synthesize_with_fallback` defaults to 1500 s, which was chosen for On
+    # Air (10-12 min) and fits History (8-15 min) comfortably. This programme
+    # runs 18-22 minutes: at the measured Kokoro rtf of 1.4 on a four-core
+    # runner, 22 minutes of programme is about 20.6 minutes of speech and
+    # therefore ~1,730 s of synthesis. Even the 19-minute launch issue lands at
+    # ~1,478 s, a 1.5% margin against a deadline it would cross on any slower
+    # runner. Derived from the band rather than guessed, with a third again for
+    # a cold or contended machine.
+    speech_s = (max(TARGET_MINUTES) - MUSIC_MINUTES) * 60.0
+    deadline = round(speech_s * KOKORO_RTF * DEADLINE_MARGIN)
+    print(f"  [weekly-audio] synthesis deadline {deadline}s "
+          f"({max(TARGET_MINUTES):.0f} min band at rtf {KOKORO_RTF})")
     res = synthesize_with_fallback([s for s, _ in turns],
-                                   engines=[KokoroEngine(voices=vmap), EdgeTtsEngine()])
+                                   engines=[KokoroEngine(voices=vmap), EdgeTtsEngine()],
+                                   deadline_s=deadline)
     if res is None:
         print("  [weekly-audio] every engine failed")
         return None
