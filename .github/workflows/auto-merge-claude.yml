@@ -110,6 +110,8 @@ jobs:
       # takedown.
       - name: Image licences (gate + everything published)
         run: python tests/test_image_license.py
+      - name: Subject image resolution (the guard, the licence, the floor)
+        run: python tests/test_subject_image.py
       - name: Run editorial-stage harness
         run: python tests/test_editorial_stage.py
 
