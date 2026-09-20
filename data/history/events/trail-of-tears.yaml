@@ -61,10 +61,9 @@ key_figures:
   wikipedia: https://en.wikipedia.org/wiki/Andrew_Jackson
 - name: John Ross
   role: Principal Chief of the Cherokee Nation, opposed removal for two decades
-  wikidata: Q456083
-  born: 1777
-  died: 1856
-  wikipedia: https://en.wikipedia.org/wiki/John_Ross_(Royal_Navy_officer)
+  born: 1790
+  died: 1866
+  wikipedia: https://en.wikipedia.org/wiki/John_Ross_(Cherokee_chief)
 - name: Winfield Scott
   role: U.S. Army General, commanded the 1838 Cherokee roundup and removal
   wikidata: Q354759
