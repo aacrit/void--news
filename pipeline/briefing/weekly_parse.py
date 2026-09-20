@@ -242,6 +242,54 @@ def enforce(text, *, min_words=0, max_words=0):
     return findings
 
 
+def enforce_recap(items, *, min_words, max_words):
+    """Findings for a Week in Brief COLUMN, which is measured per item.
+
+    Separate from `enforce` because the column is one generation covering ten
+    briefs: a caller that concatenated them and measured once would compare a
+    460-word blob against a 55-word spec and be wrong in both directions at
+    the same time.
+
+    It reports a BAND. The first version of this check tested only
+    `n > max_words * 1.3`, which could catch a column running long and nothing
+    else, because running long was the failure in front of it: RECAP_SYSTEM
+    asked for 150-200 words and every published brief ran ~140. Tightening the
+    spec to 55-75 fixed that and uncovered the opposite failure, invisible to a
+    one-sided test. Vol. I, No. 1 shipped nine of ten briefs BELOW the floor,
+    at 40 to 49 words, and the column passed clean on length.
+
+    The ceiling keeps its 1.3 tolerance and the floor does not. Running a
+    little long costs column inches; running short means the brief is missing a
+    fact, and there is no such thing as being usefully under-informed.
+    """
+    counts = [word_count(i.get("summary")) for i in (items or [])]
+    if not counts:
+        return []
+    over = [n for n in counts if n > max_words * 1.3]
+    under = [n for n in counts if n < min_words]
+    banned = sorted({t for i in items for t in banned_terms(i.get("summary"))})
+
+    findings = []
+    if over:
+        findings.append(
+            f"{len(over)} of {len(counts)} briefs run past {max_words} words "
+            f"(the longest is {max(over)}); two or three sentences each, no more"
+        )
+    if under:
+        findings.append(
+            f"{len(under)} of {len(counts)} briefs run under {min_words} words "
+            f"(the shortest is {min(under)}); each one needs {min_words} to "
+            f"{max_words}, so give every story a second fact rather than a "
+            f"second clause"
+        )
+    if banned:
+        findings.append(
+            "the column uses " + ", ".join(f'"{t}"' for t in banned)
+            + ". Give the fact, not a label announcing that it matters"
+        )
+    return findings
+
+
 def retry_suffix(findings):
     """The findings, named, appended to the original prompt for one retry.
 
@@ -261,17 +309,28 @@ ISSUE_EPOCH = datetime(2026, 3, 22, tzinfo=timezone.utc)
 def weekly_window(now, week_offset=0):
     """-> (week_start, week_end, issue_number) for a Monday-to-Sunday week.
 
-    `week_offset` counts weeks BACK from the most recently COMPLETED week: 0 is
-    the week that just ended, 1 the week before it, and -1 the current
-    in-progress week (partial data, for a mid-week refresh).
+    `week_offset` counts weeks BACK from the week that most recently closed: 0
+    is that week, 1 the week before it, and -1 the week still in progress
+    (partial data, for a mid-week refresh).
+
+    THE WEEK CLOSES ON SUNDAY NIGHT, AND SUNDAY IS INSIDE IT. Void Weekly
+    publishes on Sunday evening, so the issue covers the week the reader has
+    just lived through, Monday to that same Sunday. The modulo is what makes
+    that true: `weekday() + 1` walks back to the PREVIOUS Sunday from every
+    day including Sunday itself, which on a Sunday means skipping the week
+    that is closing as the issue goes out. `% 7` sends Sunday to zero and
+    leaves every other weekday exactly where it was, so a run on any other day
+    still resolves to the last completed week and the 52-Monday test is
+    unchanged by this.
 
     `now` is injected rather than read from the clock precisely because this
-    sign was inverted until 2026-09-19 and could only be caught in production:
-    offset 0 resolved to the week CONTAINING today, so the Monday 12:00 UTC
-    cron generated the week that had just STARTED. Issue #23 (week of
-    2026-08-24, generated 2026-08-24 12:48) is the last one that shipped so.
+    arithmetic was WRONG IN THE OTHER DIRECTION until 2026-09-19 and could
+    only be caught in production: offset 0 resolved to the week CONTAINING
+    today on every weekday, so the Monday cron generated the week that had
+    just STARTED. Issue #23 (week of 2026-08-24, generated 2026-08-24 12:48)
+    is the last one that shipped that way.
     """
-    week_end = now - timedelta(days=now.weekday() + 1 + (week_offset * 7))
+    week_end = now - timedelta(days=((now.weekday() + 1) % 7) + (week_offset * 7))
     week_start = week_end - timedelta(days=6)
     week_start = week_start.replace(hour=0, minute=0, second=0, microsecond=0)
     week_end = week_end.replace(hour=23, minute=59, second=59, microsecond=0)

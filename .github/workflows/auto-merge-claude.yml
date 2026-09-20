@@ -94,6 +94,15 @@ jobs:
       - name: Download spaCy model
         if: steps.spacy-cache.outputs.cache-hit != 'true'
         run: python -m spacy download en_core_web_sm
+      # Imports the REAL weekly generator against a throwaway state DB and
+      # calls the functions a run reaches. The first launch run of Vol. I,
+      # No. 1 wrote every essay, spent every model call, passed every
+      # validator and then died on a NameError one line before persistence,
+      # because every other weekly gate goes through `weekly_parse` to avoid
+      # importing this module. It only needs VOID_SQLITE_PATH pointed at a
+      # temp file, which nobody had tried.
+      - name: Weekly generator (imports the real module)
+        run: python tests/test_weekly_generator.py
       - name: Run editorial-stage harness
         run: python tests/test_editorial_stage.py
 

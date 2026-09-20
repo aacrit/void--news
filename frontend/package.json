@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node test/labels.test.mjs && node test/chapters.test.mjs"
+    "test": "node test/labels.test.mjs && node test/chapters.test.mjs && node test/volume.test.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.3.1",

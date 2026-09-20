@@ -38,7 +38,7 @@ from utils.supabase_client import supabase
 from briefing.weekly_parse import (  # pure: no DB, no LLM, no network
     build_weekly_row, clean_headline, parse_essay, parse_recap,
     looks_like_headline, weekly_window,
-    banned_terms, enforce, retry_suffix, strip_dashes,
+    banned_terms, enforce, enforce_recap, retry_suffix, strip_dashes,
     word_count,
 )
 from summarizer.gemini_client import (
@@ -969,10 +969,11 @@ def _generate_bias_report(clusters, bias_stats, edition):
 
 RECAP_SYSTEM = """You are an editor for void --weekly. Write 55-75 word briefs.
 
-Two or three sentences: what happened, and the one thing it changes. This is a
-Week in Brief column, not a second feature well — if it needs a fourth sentence
-it belongs elsewhere in the issue. Lead with the concrete fact. Use specific
-names and numbers.
+Three sentences: what happened, who it lands on, and the one thing it changes.
+This is a Week in Brief column, not a second feature well. A fourth sentence
+belongs elsewhere in the issue; two sentences is a headline with a comma in it,
+and any brief under 55 words is carrying one fact where it owes three. Lead
+with the concrete fact. Use specific names and numbers.
 
 BANNED: "notable", "significant", "it should be noted", "interestingly".
 
@@ -1050,9 +1051,17 @@ def _generate_week_recap(clusters, edition, skip_ids=None):
     # ~1,000 characters in a three-column block designed for 65-word items.
     parsed, calls, findings = None, 0, []
     for attempt in range(2):
+        # FLASH-LITE, not flash, and this is an improvement rather than a
+        # concession. Sharing Sunday with the daily pipeline leaves ~7 of the
+        # 20-a-day flash cap, and the flagship work is the two cover essays
+        # plus the editorial. The recap is ten 55-to-75 word briefs, which is
+        # exactly the shape flash-lite is good at — and because flash-lite has
+        # a high RPD, the enforcement pass below can regenerate freely instead
+        # of drawing on a budget of two. More retries on the smaller model
+        # beats one retry on the larger one for copy this short.
         raw = _smart_generate_text(
             prompt if attempt == 0 else prompt + retry_suffix(findings),
-            system_instruction=RECAP_SYSTEM, model=_FLASH_MODEL,
+            system_instruction=RECAP_SYSTEM,
         )
         calls += 1
         parsed = _parse_recap(raw)
@@ -1064,27 +1073,17 @@ def _generate_week_recap(clusters, edition, skip_ids=None):
             story["summary"] = strip_dashes(story.get("summary", ""))
             story["headline"] = strip_dashes(story.get("headline", ""))
 
-        cap = ESSAY_SPECS["brief"]["max_words"]
-        long_ones = [word_count(x.get("summary")) for x in items]
-        over = [n for n in long_ones if n > cap * 1.3]
-        banned = sorted({t for x in items for t in banned_terms(x.get("summary"))})
-
-        findings = []
-        if over:
-            findings.append(
-                f"{len(over)} of {len(items)} briefs run past {cap} words "
-                f"(the longest is {max(over)}); two or three sentences each, no more"
-            )
-        if banned:
-            findings.append(
-                "the column uses " + ", ".join(f'"{t}"' for t in banned)
-                + " — give the fact, not a label announcing that it matters"
-            )
+        # The band lives in `weekly_parse`, the pure core, so it is reachable
+        # from a test that does not import this module. That is the whole
+        # reason the core exists: the length rule that shipped nine of ten
+        # briefs under the floor was unreachable from any gate while it sat
+        # inline here.
+        findings = enforce_recap(items, **ESSAY_SPECS["brief"])
         if not findings:
             if attempt:
                 print("    [brief] clean on regeneration")
             break
-        if attempt == 1 or not _may_retry(_FLASH_MODEL):
+        if attempt == 1:
             print(f"    [brief] shipped with: {'; '.join(findings)}")
             break
         print(f"    [brief] rejected: {'; '.join(findings)} — regenerating")
@@ -1140,6 +1139,32 @@ def _generate_week_recap(clusters, edition, skip_ids=None):
 # validated still ships a show.
 
 
+def _cover_core(c):
+    """A cover feature's TEXT and structure, with no picture and no network.
+
+    Split out because `_issue_view` needs the cover shape to build the audio
+    rundown, and the only function that produced it was nested inside
+    `generate_weekly_digest` — defined 960 lines below the module-level
+    function calling it, and below the call site too. That is the
+    `NameError: name '_cover_item' is not defined` that killed the first
+    launch run AFTER every essay had been written and paid for.
+
+    Keeping the image lookup out of here is the other half of the fix: it
+    makes a network call per feature, and the rundown does not read images,
+    so sharing `_cover_item` would have doubled those lookups to produce
+    fields nothing downstream uses.
+    """
+    return {
+        "headline": c.get("headline", ""),
+        "text": c.get("text", ""),
+        "timeline": c.get("timeline", []),
+        "numbers": c.get("numbers", []),
+        "cluster_id": c.get("cluster_id"),
+        "days_active": c.get("days_active"),
+        "week_sources": c.get("week_sources"),
+    }
+
+
 def _issue_view(edition, week_start, week_end, issue_number, covers, opinions,
                 tech, sports, recap, bias_data, weekly_opinion):
     """The issue as the PAGE will carry it, built before the row is written.
@@ -1159,7 +1184,7 @@ def _issue_view(edition, week_start, week_end, issue_number, covers, opinions,
         "week_start": week_start.strftime("%Y-%m-%d") if hasattr(week_start, "strftime") else week_start,
         "week_end": week_end.strftime("%Y-%m-%d") if hasattr(week_end, "strftime") else week_end,
         "cover_headline": (covers[0].get("headline") if covers else "") or "",
-        "cover_text": [_cover_item(c) for c in covers],
+        "cover_text": [_cover_core(c) for c in covers],
         "opinions": _opinion_items(opinions, issue_number),
         "departments": departments or [],
         "recap_stories": (recap or {}).get("stories", []),
@@ -2115,19 +2140,9 @@ def generate_weekly_digest(editions=None, week_offset=0):
         # Store
         elapsed = time.time() - t0
 
-        # Surface the daily pipeline's already-cached WebP on each cover item by
-        # matching the cover's cluster_id back to the fetched week clusters. No
-        # new image API calls; the keys are omitted when a cluster has no cache.
-        _cluster_by_id = {c["id"]: c for c in clusters if c.get("id")}
-
         def _cover_item(c):
-            item = {
-                "headline": c.get("headline", ""),
-                "text": c.get("text", ""),
-                "timeline": c.get("timeline", []),
-                "numbers": c.get("numbers", []),
-                "cluster_id": c.get("cluster_id"),
-            }
+            """The persisted cover item: the shared core, plus its picture."""
+            item = _cover_core(c)
             # Each cover essay gets its own picture, from a freely licensed
             # source. This used to read `cached_image_url`, written by the
             # cluster_image_cacher that rev 60 RETIRED on copyright grounds, so

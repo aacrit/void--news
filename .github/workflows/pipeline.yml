@@ -173,13 +173,45 @@ jobs:
           # clean working tree. Only the committed data dirs matter; untracked
           # files (pipeline_state.db) are left alone and do not block rebase.
           git checkout -- . 2>/dev/null || true
-          # main can advance (an auto-merge landing) during the ~1h run, so a plain
-          # push would be a non-fast-forward reject. Rebase onto the latest main and
-          # retry. The data commit only touches build-data/public, so it never
-          # conflicts with code merges and the rebase is clean.
+          # Generated data has no merge semantics. Two runs that both export
+          # it will always conflict on a rebase, and the right resolution is
+          # never a merge: it is "whichever run produced this from the newest
+          # state wins". Today's daily run died exactly here, on
+          # weekly.json and weekly-issues.json, because a parallel commit had
+          # touched the same generated files. The comment this replaces
+          # claimed the data commit "never conflicts with code merges", which
+          # was true and beside the point.
+          #
+          # Mid-rebase, --theirs is the commit being REPLAYED, i.e. this run's
+          # fresh export; --ours would be the older copy already on the
+          # branch. A conflict outside the paths this job owns is a real one
+          # and still aborts.
+          resolve_generated() {
+            local conflicted f
+            conflicted=$(git diff --name-only --diff-filter=U)
+            [ -n "$conflicted" ] || return 1
+            while IFS= read -r f; do
+              [ -n "$f" ] || continue
+              case "$f" in
+                frontend/build-data/*|frontend/public/data/*|frontend/public/audio/*) ;;
+                *) echo "conflict outside generated data: $f"; return 1 ;;
+              esac
+            done <<< "$conflicted"
+            while IFS= read -r f; do
+              [ -n "$f" ] || continue
+              git checkout --theirs -- "$f" 2>/dev/null || git rm -q -- "$f" 2>/dev/null || true
+              git add -- "$f" 2>/dev/null || true
+            done <<< "$conflicted"
+            echo "resolved $(echo "$conflicted" | wc -l) generated file(s) in favour of this run"
+            GIT_EDITOR=true git rebase --continue
+          }
+          # main can advance (an auto-merge landing) during the ~1h run, so a
+          # plain push would be a non-fast-forward reject. Rebase onto the
+          # latest main and retry.
           for attempt in 1 2 3 4 5; do
             git fetch origin main
-            git rebase origin/main || { git rebase --abort 2>/dev/null || true; echo "rebase failed"; exit 1; }
+            git rebase origin/main || resolve_generated || {
+              git rebase --abort 2>/dev/null || true; echo "rebase failed"; exit 1; }
             if git push origin HEAD:main; then echo "pushed on attempt $attempt"; exit 0; fi
             echo "push rejected (attempt $attempt); refetching and retrying"
             sleep 5
