@@ -484,6 +484,24 @@ export default function EventDetail({ event, allEvents }: EventDetailProps) {
                 <span className="hist-hero-listen__meta">{event.perspectives.length} perspectives · {formatClock(event.audioDuration ?? 0)}</span>
               </button>
             )}
+            {/* Every event gets an audio edition eventually, and until this one
+                has its own, the hero says so rather than leaving a silence the
+                reader has to interpret. Deliberately NOT a disabled button: a
+                button shape invites a click that cannot do anything. */}
+            {!event.audioUrl && (
+              <p className="hist-hero-pending">
+                <svg width="14" height="10" viewBox="0 0 14 10" aria-hidden="true" focusable="false" className="hist-hero-pending__icon">
+                  <g fill="currentColor">
+                    <rect x="0" y="4" width="1.5" height="2" rx="0.75" />
+                    <rect x="3" y="3" width="1.5" height="4" rx="0.75" />
+                    <rect x="6" y="4" width="1.5" height="2" rx="0.75" />
+                    <rect x="9" y="3" width="1.5" height="4" rx="0.75" />
+                    <rect x="12" y="4" width="1.5" height="2" rx="0.75" />
+                  </g>
+                </svg>
+                <span>Audio edition in production</span>
+              </p>
+            )}
           </div>
           {event.heroAttribution && (
             <span className="hist-stage__attribution">{event.heroAttribution}</span>
