@@ -1035,9 +1035,22 @@ def _get_previous_cluster_info(edition: str) -> tuple[set[str], list[set[str]]]:
             res = supabase.table("story_clusters").select(
                 "id,title"
             ).in_("id", list(ids)).execute()
+            rows = res.data or []
+            if not rows:
+                # The brief now runs AFTER the day's dedup/retention has
+                # replaced yesterday's cluster rows (rev 64 reorder), so the
+                # story_clusters lookup comes back empty and every story read
+                # [NEW] (2026-09-20 log: "10 cluster ids, 0 titles fetched"
+                # while the print archive counted 8 continuing threads). The
+                # permanent print archive preserves the id -> title mapping,
+                # so read the previous brief's titles from there.
+                res = supabase.table("printed_stories").select(
+                    "source_cluster_id,title"
+                ).in_("source_cluster_id", list(ids)).execute()
+                rows = res.data or []
             kw_sets = [
                 k for k in (
-                    _brief_title_keywords(r.get("title", "")) for r in (res.data or [])
+                    _brief_title_keywords(r.get("title", "")) for r in rows
                 ) if len(k) >= 2
             ]
             # Diagnosability: 0 fetched titles means every story reads [NEW]
