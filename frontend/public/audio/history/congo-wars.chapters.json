@@ -1,0 +1,77 @@
+{
+ "version": "1.2.0",
+ "title": "The Congo Wars",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 55.953
+  },
+  {
+   "startTime": 55.953,
+   "title": "Eastern Zaire, October 1996",
+   "endTime": 141.364
+  },
+  {
+   "startTime": 141.364,
+   "title": "Kinshasa and eastern Congo, August 1998",
+   "endTime": 216.501
+  },
+  {
+   "startTime": 216.501,
+   "title": "Kinshasa, January 2001",
+   "endTime": 263.464
+  },
+  {
+   "startTime": 263.464,
+   "title": "Kiwanja, North Kivu, November 2008",
+   "endTime": 311.386
+  },
+  {
+   "startTime": 311.386,
+   "title": "Bukavu, South Kivu, 1999 to 2018",
+   "endTime": 389.049
+  },
+  {
+   "startTime": 389.049,
+   "title": "Five accounts",
+   "endTime": 399.356
+  },
+  {
+   "startTime": 399.356,
+   "title": "The Rwandan Security Case",
+   "endTime": 466.17
+  },
+  {
+   "startTime": 466.17,
+   "title": "The Congolese Account",
+   "endTime": 547.042
+  },
+  {
+   "startTime": 547.042,
+   "title": "Resource and Supply Chain",
+   "endTime": 629.813
+  },
+  {
+   "startTime": 629.813,
+   "title": "The Peacekeepers' Failure",
+   "endTime": 694.834
+  },
+  {
+   "startTime": 694.834,
+   "title": "The Women of Panzi Hospital",
+   "endTime": 759.77
+  },
+  {
+   "startTime": 759.77,
+   "title": "What each one leaves out",
+   "endTime": 844.351
+  },
+  {
+   "startTime": 844.351,
+   "title": "Legacy",
+   "endTime": 892.785
+  }
+ ]
+}

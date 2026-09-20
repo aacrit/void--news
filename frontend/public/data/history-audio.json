@@ -1,6 +1,306 @@
 {
- "generatedAt": "2026-09-20T18:52:20+00:00",
+ "generatedAt": "2026-09-20T19:09:40+00:00",
  "episodes": {
+  "alexanders-conquests": {
+   "url": "/audio/history/alexanders-conquests.mp3?v=21d3017c",
+   "chaptersUrl": "/audio/history/alexanders-conquests.chapters.json?v=21d3017c",
+   "title": "The Conquests of Alexander",
+   "durationSeconds": 867.84,
+   "bytes": 13903237,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 55.094
+    },
+    {
+     "startTime": 55.094,
+     "title": "Thebes, before the crossing",
+     "kind": "segment",
+     "endTime": 84.405
+    },
+    {
+     "startTime": 84.405,
+     "title": "Anatolia, three thirty four to three thirty three before the common era",
+     "kind": "segment",
+     "endTime": 135.302
+    },
+    {
+     "startTime": 135.302,
+     "title": "Tyre, Gaza, and Egypt, three hundred and thirty two before the common era",
+     "kind": "segment",
+     "endTime": 196.07
+    },
+    {
+     "startTime": 196.07,
+     "title": "Gaugamela, the first of October, three hundred and thirty one before the common era",
+     "kind": "segment",
+     "endTime": 235.09
+    },
+    {
+     "startTime": 235.09,
+     "title": "Maracanda, three hundred and twenty seven before the common era",
+     "kind": "segment",
+     "endTime": 305.926
+    },
+    {
+     "startTime": 305.926,
+     "title": "The Hyphasis, and the road home, three hundred and twenty six to three hundred and twenty three before the common era",
+     "kind": "segment",
+     "endTime": 361.791
+    },
+    {
+     "startTime": 361.791,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 376.642
+    },
+    {
+     "startTime": 376.642,
+     "title": "Greco-Macedonian",
+     "kind": "segment",
+     "endTime": 449.101
+    },
+    {
+     "startTime": 449.101,
+     "title": "Persian / Achaemenid",
+     "kind": "segment",
+     "endTime": 527.086
+    },
+    {
+     "startTime": 527.086,
+     "title": "Indian / Paurava",
+     "kind": "segment",
+     "endTime": 599.562
+    },
+    {
+     "startTime": 599.562,
+     "title": "Modern Central Asian",
+     "kind": "segment",
+     "endTime": 661.426
+    },
+    {
+     "startTime": 661.426,
+     "title": "Revisionist / Anti-Heroic",
+     "kind": "segment",
+     "endTime": 743.495
+    },
+    {
+     "startTime": 743.495,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 831.383
+    },
+    {
+     "startTime": 831.383,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 867.812
+    }
+   ],
+   "publishedAt": "2026-09-20T19:09:39+00:00"
+  },
+  "algerian-war": {
+   "url": "/audio/history/algerian-war.mp3?v=86517d93",
+   "chaptersUrl": "/audio/history/algerian-war.chapters.json?v=86517d93",
+   "title": "The Algerian War of Independence",
+   "durationSeconds": 899.84,
+   "bytes": 14415258,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 56.978
+    },
+    {
+     "startTime": 56.978,
+     "title": "Three in the morning",
+     "kind": "segment",
+     "endTime": 121.163
+    },
+    {
+     "startTime": 121.163,
+     "title": "Setif, 1945",
+     "kind": "segment",
+     "endTime": 157.507
+    },
+    {
+     "startTime": 157.507,
+     "title": "Algiers, 1957",
+     "kind": "segment",
+     "endTime": 226.565
+    },
+    {
+     "startTime": 226.565,
+     "title": "Algiers, June 1958",
+     "kind": "segment",
+     "endTime": 265.317
+    },
+    {
+     "startTime": 265.317,
+     "title": "Paris, then Evian",
+     "kind": "segment",
+     "endTime": 298.299
+    },
+    {
+     "startTime": 298.299,
+     "title": "The dead were never agreed upon",
+     "kind": "segment",
+     "endTime": 342.089
+    },
+    {
+     "startTime": 342.089,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 354.294
+    },
+    {
+     "startTime": 354.294,
+     "title": "Algerian National Liberation (FLN)",
+     "kind": "segment",
+     "endTime": 444.009
+    },
+    {
+     "startTime": 444.009,
+     "title": "French State and the Pied-Noir Settlers",
+     "kind": "segment",
+     "endTime": 533.016
+    },
+    {
+     "startTime": 533.016,
+     "title": "The Harkis, Caught Between",
+     "kind": "segment",
+     "endTime": 607.417
+    },
+    {
+     "startTime": 607.417,
+     "title": "Anti-War Dissent and the Torture Debate",
+     "kind": "segment",
+     "endTime": 701.402
+    },
+    {
+     "startTime": 701.402,
+     "title": "Memory Scholarship and France's Reckoning",
+     "kind": "segment",
+     "endTime": 798.628
+    },
+    {
+     "startTime": 798.628,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 870.529
+    },
+    {
+     "startTime": 870.529,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 899.79
+    }
+   ],
+   "publishedAt": "2026-09-20T19:09:39+00:00"
+  },
+  "angkor-khmer-empire": {
+   "url": "/audio/history/angkor-khmer-empire.mp3?v=2774c424",
+   "chaptersUrl": "/audio/history/angkor-khmer-empire.chapters.json?v=2774c424",
+   "title": "The Khmer Empire",
+   "durationSeconds": 885.969,
+   "bytes": 14193124,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 52.383
+    },
+    {
+     "startTime": 52.383,
+     "title": "Phnom Kulen, eight oh two",
+     "kind": "segment",
+     "endTime": 137.234
+    },
+    {
+     "startTime": 137.234,
+     "title": "Angkor Wat, eleven thirteen",
+     "kind": "segment",
+     "endTime": 176.949
+    },
+    {
+     "startTime": 176.949,
+     "title": "Angkor Thom, after eleven seventy seven",
+     "kind": "segment",
+     "endTime": 252.607
+    },
+    {
+     "startTime": 252.607,
+     "title": "Angkor, twelve ninety six",
+     "kind": "segment",
+     "endTime": 318.948
+    },
+    {
+     "startTime": 318.948,
+     "title": "Drought, thirteen sixty two to fourteen thirty one",
+     "kind": "segment",
+     "endTime": 373.355
+    },
+    {
+     "startTime": 373.355,
+     "title": "Le Tour du Monde, eighteen sixty three",
+     "kind": "segment",
+     "endTime": 422.594
+    },
+    {
+     "startTime": 422.594,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 442.899
+    },
+    {
+     "startTime": 442.899,
+     "title": "The Khmer Court",
+     "kind": "segment",
+     "endTime": 510.296
+    },
+    {
+     "startTime": 510.296,
+     "title": "The French Discovery",
+     "kind": "segment",
+     "endTime": 560.483
+    },
+    {
+     "startTime": 560.483,
+     "title": "The Cambodian Nationalists",
+     "kind": "segment",
+     "endTime": 606.658
+    },
+    {
+     "startTime": 606.658,
+     "title": "The Thai Successor State",
+     "kind": "segment",
+     "endTime": 677.171
+    },
+    {
+     "startTime": 677.171,
+     "title": "The Hydraulic Archaeologists",
+     "kind": "segment",
+     "endTime": 764.786
+    },
+    {
+     "startTime": 764.786,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 843.276
+    },
+    {
+     "startTime": 843.276,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 885.928
+    }
+   ],
+   "publishedAt": "2026-09-20T19:09:39+00:00"
+  },
   "apartheid": {
    "url": "/audio/history/apartheid.mp3?v=836de3b2",
    "chaptersUrl": "/audio/history/apartheid.chapters.json?v=836de3b2",
@@ -447,6 +747,194 @@
    ],
    "publishedAt": "2026-09-20T00:21:56+00:00"
   },
+  "assassination-of-caesar": {
+   "url": "/audio/history/assassination-of-caesar.mp3?v=0ace5b85",
+   "chaptersUrl": "/audio/history/assassination-of-caesar.chapters.json?v=0ace5b85",
+   "title": "The Assassination of Julius Caesar",
+   "durationSeconds": 890.227,
+   "bytes": 14261431,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 58.037
+    },
+    {
+     "startTime": 58.037,
+     "title": "The Theatre of Pompey, the fifteenth of March",
+     "kind": "segment",
+     "endTime": 147.435
+    },
+    {
+     "startTime": 147.435,
+     "title": "The Forum, minutes later",
+     "kind": "segment",
+     "endTime": 237.87
+    },
+    {
+     "startTime": 237.87,
+     "title": "The Forum, the twentieth of March",
+     "kind": "segment",
+     "endTime": 313.313
+    },
+    {
+     "startTime": 313.313,
+     "title": "Rome, forty three BCE",
+     "kind": "segment",
+     "endTime": 367.494
+    },
+    {
+     "startTime": 367.494,
+     "title": "Actium, the second of September, thirty one BCE",
+     "kind": "segment",
+     "endTime": 402.351
+    },
+    {
+     "startTime": 402.351,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 416.924
+    },
+    {
+     "startTime": 416.924,
+     "title": "Republican: The Last Defenders of Libertas",
+     "kind": "segment",
+     "endTime": 484.571
+    },
+    {
+     "startTime": 484.571,
+     "title": "Caesarian: The Reformer and His Oligarchs",
+     "kind": "segment",
+     "endTime": 565.829
+    },
+    {
+     "startTime": 565.829,
+     "title": "Roman Plebeian: The People's Grief",
+     "kind": "segment",
+     "endTime": 636.859
+    },
+    {
+     "startTime": 636.859,
+     "title": "Provincial: The Conquered Peoples",
+     "kind": "segment",
+     "endTime": 712.869
+    },
+    {
+     "startTime": 712.869,
+     "title": "Shakespeare vs. History: The Play That Shaped Political Imagination",
+     "kind": "segment",
+     "endTime": 791.832
+    },
+    {
+     "startTime": 791.832,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 860.39
+    },
+    {
+     "startTime": 860.39,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 890.185
+    }
+   ],
+   "publishedAt": "2026-09-20T19:09:39+00:00"
+  },
+  "bandung-conference": {
+   "url": "/audio/history/bandung-conference.mp3?v=c18809b2",
+   "chaptersUrl": "/audio/history/bandung-conference.chapters.json?v=c18809b2",
+   "title": "The Bandung Conference",
+   "durationSeconds": 886.674,
+   "bytes": 14204220,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 53.948
+    },
+    {
+     "startTime": 53.948,
+     "title": "Gedung Merdeka, the morning of April 18",
+     "kind": "segment",
+     "endTime": 163.845
+    },
+    {
+     "startTime": 163.845,
+     "title": "The bomb and the diplomat",
+     "kind": "segment",
+     "endTime": 240.669
+    },
+    {
+     "startTime": 240.669,
+     "title": "The Ten Principles",
+     "kind": "segment",
+     "endTime": 318.801
+    },
+    {
+     "startTime": 318.801,
+     "title": "Washington and Moscow",
+     "kind": "segment",
+     "endTime": 362.45
+    },
+    {
+     "startTime": 362.45,
+     "title": "After Bandung",
+     "kind": "segment",
+     "endTime": 417.823
+    },
+    {
+     "startTime": 417.823,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 436.912
+    },
+    {
+     "startTime": 436.912,
+     "title": "Third Worldist / Anti-Colonial",
+     "kind": "segment",
+     "endTime": 503.259
+    },
+    {
+     "startTime": 503.259,
+     "title": "Cold War / Western Realist",
+     "kind": "segment",
+     "endTime": 567.255
+    },
+    {
+     "startTime": 567.255,
+     "title": "Chinese / Zhou Enlai",
+     "kind": "segment",
+     "endTime": 633.331
+    },
+    {
+     "startTime": 633.331,
+     "title": "Pan-African / Nkrumah",
+     "kind": "segment",
+     "endTime": 704.581
+    },
+    {
+     "startTime": 704.581,
+     "title": "Feminist / Women at the Margins",
+     "kind": "segment",
+     "endTime": 779.498
+    },
+    {
+     "startTime": 779.498,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 857.252
+    },
+    {
+     "startTime": 857.252,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 886.642
+    }
+   ],
+   "publishedAt": "2026-09-20T19:09:39+00:00"
+  },
   "black-death": {
    "url": "/audio/history/black-death.mp3?v=0887b759",
    "chaptersUrl": "/audio/history/black-death.chapters.json?v=0887b759",
@@ -540,6 +1028,106 @@
     }
    ],
    "publishedAt": "2026-09-20T01:47:17+00:00"
+  },
+  "bolivarian-revolutions": {
+   "url": "/audio/history/bolivarian-revolutions.mp3?v=dffb3eb4",
+   "chaptersUrl": "/audio/history/bolivarian-revolutions.chapters.json?v=dffb3eb4",
+   "title": "The Bolivarian Revolutions",
+   "durationSeconds": 889.417,
+   "bytes": 14248275,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 57.056
+    },
+    {
+     "startTime": 57.056,
+     "title": "The earthquake",
+     "kind": "segment",
+     "endTime": 109.052
+    },
+    {
+     "startTime": 109.052,
+     "title": "The condition",
+     "kind": "segment",
+     "endTime": 181.596
+    },
+    {
+     "startTime": 181.596,
+     "title": "The decree and the war to the death",
+     "kind": "segment",
+     "endTime": 241.002
+    },
+    {
+     "startTime": 241.002,
+     "title": "Boyaca",
+     "kind": "segment",
+     "endTime": 287.714
+    },
+    {
+     "startTime": 287.714,
+     "title": "The Congress of Panama",
+     "kind": "segment",
+     "endTime": 322.916
+    },
+    {
+     "startTime": 322.916,
+     "title": "The house in Santa Marta",
+     "kind": "segment",
+     "endTime": 384.758
+    },
+    {
+     "startTime": 384.758,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 392.441
+    },
+    {
+     "startTime": 392.441,
+     "title": "Bolivarian / Creole Elite",
+     "kind": "segment",
+     "endTime": 475.983
+    },
+    {
+     "startTime": 475.983,
+     "title": "Spanish Colonial / Royalist",
+     "kind": "segment",
+     "endTime": 562.525
+    },
+    {
+     "startTime": 562.525,
+     "title": "Indigenous / Afro-Latin American",
+     "kind": "segment",
+     "endTime": 640.705
+    },
+    {
+     "startTime": 640.705,
+     "title": "Monroe Doctrine / U.S. Perspective",
+     "kind": "segment",
+     "endTime": 716.573
+    },
+    {
+     "startTime": 716.573,
+     "title": "Indigenous / Andean Peoples",
+     "kind": "segment",
+     "endTime": 796.884
+    },
+    {
+     "startTime": 796.884,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 862.812
+    },
+    {
+     "startTime": 862.812,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 889.371
+    }
+   ],
+   "publishedAt": "2026-09-20T19:09:40+00:00"
   },
   "cambodian-genocide": {
    "url": "/audio/history/cambodian-genocide.mp3?v=4f940e55",
@@ -716,6 +1304,106 @@
     }
    ],
    "publishedAt": "2026-09-19T23:38:03+00:00"
+  },
+  "chinese-civil-war": {
+   "url": "/audio/history/chinese-civil-war.mp3?v=17c13926",
+   "chaptersUrl": "/audio/history/chinese-civil-war.chapters.json?v=17c13926",
+   "title": "The Chinese Civil War and the Founding of the People's Republic",
+   "durationSeconds": 854.753,
+   "bytes": 13693198,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 56.225
+    },
+    {
+     "startTime": 56.225,
+     "title": "Shanghai, before dawn",
+     "kind": "segment",
+     "endTime": 102.455
+    },
+    {
+     "startTime": 102.455,
+     "title": "Five campaigns",
+     "kind": "segment",
+     "endTime": 160.007
+    },
+    {
+     "startTime": 160.007,
+     "title": "The Long March",
+     "kind": "segment",
+     "endTime": 215.267
+    },
+    {
+     "startTime": 215.267,
+     "title": "The freeze and the villages",
+     "kind": "segment",
+     "endTime": 256.229
+    },
+    {
+     "startTime": 256.229,
+     "title": "Three campaigns",
+     "kind": "segment",
+     "endTime": 293.859
+    },
+    {
+     "startTime": 293.859,
+     "title": "The gate",
+     "kind": "segment",
+     "endTime": 365.272
+    },
+    {
+     "startTime": 365.272,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 382.491
+    },
+    {
+     "startTime": 382.491,
+     "title": "CCP / Maoist Liberation",
+     "kind": "segment",
+     "endTime": 448.507
+    },
+    {
+     "startTime": 448.507,
+     "title": "Kuomintang / Republic of China",
+     "kind": "segment",
+     "endTime": 526.428
+    },
+    {
+     "startTime": 526.428,
+     "title": "Peasant Experience of Land Reform",
+     "kind": "segment",
+     "endTime": 597.16
+    },
+    {
+     "startTime": 597.16,
+     "title": "Western Cold War / Loss of China",
+     "kind": "segment",
+     "endTime": 652.762
+    },
+    {
+     "startTime": 652.762,
+     "title": "Revisionist Scholarship",
+     "kind": "segment",
+     "endTime": 733.391
+    },
+    {
+     "startTime": 733.391,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 821.919
+    },
+    {
+     "startTime": 821.919,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 854.715
+    }
+   ],
+   "publishedAt": "2026-09-20T19:09:40+00:00"
   },
   "chinese-cultural-revolution": {
    "url": "/audio/history/chinese-cultural-revolution.mp3?v=c0e5a8d4",
@@ -1081,6 +1769,100 @@
    ],
    "publishedAt": "2026-09-20T18:52:19+00:00"
   },
+  "congo-wars": {
+   "url": "/audio/history/congo-wars.mp3?v=77826dc8",
+   "chaptersUrl": "/audio/history/congo-wars.chapters.json?v=77826dc8",
+   "title": "The Congo Wars",
+   "durationSeconds": 892.813,
+   "bytes": 14302583,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 55.953
+    },
+    {
+     "startTime": 55.953,
+     "title": "Eastern Zaire, October 1996",
+     "kind": "segment",
+     "endTime": 141.364
+    },
+    {
+     "startTime": 141.364,
+     "title": "Kinshasa and eastern Congo, August 1998",
+     "kind": "segment",
+     "endTime": 216.501
+    },
+    {
+     "startTime": 216.501,
+     "title": "Kinshasa, January 2001",
+     "kind": "segment",
+     "endTime": 263.464
+    },
+    {
+     "startTime": 263.464,
+     "title": "Kiwanja, North Kivu, November 2008",
+     "kind": "segment",
+     "endTime": 311.386
+    },
+    {
+     "startTime": 311.386,
+     "title": "Bukavu, South Kivu, 1999 to 2018",
+     "kind": "segment",
+     "endTime": 389.049
+    },
+    {
+     "startTime": 389.049,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 399.356
+    },
+    {
+     "startTime": 399.356,
+     "title": "The Rwandan Security Case",
+     "kind": "segment",
+     "endTime": 466.17
+    },
+    {
+     "startTime": 466.17,
+     "title": "The Congolese Account",
+     "kind": "segment",
+     "endTime": 547.042
+    },
+    {
+     "startTime": 547.042,
+     "title": "Resource and Supply Chain",
+     "kind": "segment",
+     "endTime": 629.813
+    },
+    {
+     "startTime": 629.813,
+     "title": "The Peacekeepers' Failure",
+     "kind": "segment",
+     "endTime": 694.834
+    },
+    {
+     "startTime": 694.834,
+     "title": "The Women of Panzi Hospital",
+     "kind": "segment",
+     "endTime": 759.77
+    },
+    {
+     "startTime": 759.77,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 844.351
+    },
+    {
+     "startTime": 844.351,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 892.785
+    }
+   ],
+   "publishedAt": "2026-09-20T19:09:40+00:00"
+  },
   "creation-of-israel-nakba": {
    "url": "/audio/history/creation-of-israel-nakba.mp3?v=96d54c81",
    "chaptersUrl": "/audio/history/creation-of-israel-nakba.chapters.json?v=96d54c81",
@@ -1350,6 +2132,94 @@
     }
    ],
    "publishedAt": "2026-09-20T14:52:53+00:00"
+  },
+  "cyrus-cylinder": {
+   "url": "/audio/history/cyrus-cylinder.mp3?v=77a1e6eb",
+   "chaptersUrl": "/audio/history/cyrus-cylinder.chapters.json?v=77a1e6eb",
+   "title": "The Cyrus Cylinder",
+   "durationSeconds": 865.437,
+   "bytes": 13863976,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 54.197
+    },
+    {
+     "startTime": 54.197,
+     "title": "Babylon, the twelfth of October",
+     "kind": "segment",
+     "endTime": 118.014
+    },
+    {
+     "startTime": 118.014,
+     "title": "The Esagila foundations, 1879",
+     "kind": "segment",
+     "endTime": 221.626
+    },
+    {
+     "startTime": 221.626,
+     "title": "What the stone claims",
+     "kind": "segment",
+     "endTime": 304.738
+    },
+    {
+     "startTime": 304.738,
+     "title": "New York, 1971",
+     "kind": "segment",
+     "endTime": 348.666
+    },
+    {
+     "startTime": 348.666,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 358.802
+    },
+    {
+     "startTime": 358.802,
+     "title": "Persian Imperial Achaemenid case",
+     "kind": "segment",
+     "endTime": 417.362
+    },
+    {
+     "startTime": 417.362,
+     "title": "The Assyriological revision",
+     "kind": "segment",
+     "endTime": 483.771
+    },
+    {
+     "startTime": 483.771,
+     "title": "The Iranian nationalist case",
+     "kind": "segment",
+     "endTime": 547.537
+    },
+    {
+     "startTime": 547.537,
+     "title": "The Babylonian population",
+     "kind": "segment",
+     "endTime": 622.29
+    },
+    {
+     "startTime": 622.29,
+     "title": "The Museum repatriation case",
+     "kind": "segment",
+     "endTime": 721.573
+    },
+    {
+     "startTime": 721.573,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 807.56
+    },
+    {
+     "startTime": 807.56,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 865.395
+    }
+   ],
+   "publishedAt": "2026-09-20T19:09:40+00:00"
   },
   "fall-of-berlin-wall": {
    "url": "/audio/history/fall-of-berlin-wall.mp3?v=cc288558",
@@ -1808,6 +2678,100 @@
     }
    ],
    "publishedAt": "2026-09-20T01:47:18+00:00"
+  },
+  "global-financial-crisis-2008": {
+   "url": "/audio/history/global-financial-crisis-2008.mp3?v=55dd3921",
+   "chaptersUrl": "/audio/history/global-financial-crisis-2008.chapters.json?v=55dd3921",
+   "title": "The 2008 Global Financial Crisis",
+   "durationSeconds": 851.383,
+   "bytes": 13639053,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 63.263
+    },
+    {
+     "startTime": 63.263,
+     "title": "A Manhattan courtroom, one forty five in the morning",
+     "kind": "segment",
+     "endTime": 108.569
+    },
+    {
+     "startTime": 108.569,
+     "title": "The machine, ten years in the building",
+     "kind": "segment",
+     "endTime": 181.126
+    },
+    {
+     "startTime": 181.126,
+     "title": "Eighteen months of dominoes",
+     "kind": "segment",
+     "endTime": 240.385
+    },
+    {
+     "startTime": 240.385,
+     "title": "Washington, September 29, 2008",
+     "kind": "segment",
+     "endTime": 299.911
+    },
+    {
+     "startTime": 299.911,
+     "title": "Reykjavik and beyond",
+     "kind": "segment",
+     "endTime": 375.178
+    },
+    {
+     "startTime": 375.178,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 383.863
+    },
+    {
+     "startTime": 383.863,
+     "title": "The Deregulation Account",
+     "kind": "segment",
+     "endTime": 461.23
+    },
+    {
+     "startTime": 461.23,
+     "title": "The Firefighters",
+     "kind": "segment",
+     "endTime": 529.082
+    },
+    {
+     "startTime": 529.082,
+     "title": "Main Street and Occupy",
+     "kind": "segment",
+     "endTime": 596.485
+    },
+    {
+     "startTime": 596.485,
+     "title": "The Global Periphery",
+     "kind": "segment",
+     "endTime": 672.061
+    },
+    {
+     "startTime": 672.061,
+     "title": "The Causes Debate",
+     "kind": "segment",
+     "endTime": 740.233
+    },
+    {
+     "startTime": 740.233,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 822.36
+    },
+    {
+     "startTime": 822.36,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 851.337
+    }
+   ],
+   "publishedAt": "2026-09-20T19:09:40+00:00"
   },
   "great-depression": {
    "url": "/audio/history/great-depression.mp3?v=62a9a06a",
