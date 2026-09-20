@@ -1,0 +1,153 @@
+## OPEN
+N: You picture the slave trade landing on a coast with no state to answer to.
+N: In one kingdom, the man in charge was baptised, literate in Portuguese, and wrote directly to the king of Portugal, one Christian monarch to another.
+N: He asked him, in writing, on two separate occasions in the same year, to stop it. The letters survive. So does the fact that nothing in them changed what happened next.
+
+## TITLE
+N: The Kingdom of Kongo. Fourteen ninety one to seventeen oh six.
+
+## SCENE 1 | Mbanza Kongo, 1491
+N: Fourteen ninety one, the capital of a kingdom called Kongo, south of the Congo River.
+N: Portuguese priests have been at the court for months. The king, Nzinga a Nkuwu, listens, and decides.
+N: He accepts baptism and takes the name Joao the First.
+N: His capital, Mbanza Kongo, holds an estimated hundred thousand people, more than Lisbon at the time.
+N: The kingdom runs its own currency, nzimbu shells gathered from the island of Luanda, and its provinces answer to governors the king appoints, not to hereditary lords.
+N: It has an army and trade networks reaching deep into the interior, and it was already a century old when the first Portuguese ships arrived.
+N: Nobody has landed on an empty coast. They have landed in a functioning state, and its king has just made a choice.
+
+## REST
+
+## SCENE 2 | Mbanza Kongo, 1509
+N: The king's son takes the throne around fifteen oh nine, after defeating his own brother in a fight over the succession.
+N: He takes the name Afonso the First and rules for thirty four years.
+N: He builds churches. He opens schools with Portuguese teachers. He sends Kongolese boys to Lisbon and to Rome.
+N: In fifteen eighteen his own son Henrique is ordained a bishop by the Pope, the first sub Saharan African bishop in the history of the Church.
+N: Afonso writes to the Portuguese crown the way one king writes to another, citing scripture, expecting a reply in kind.
+
+## SCENE 3 | Mbanza Kongo, 1526
+N: By fifteen twenty six the thing Afonso built has a wound in it, and he puts it in writing twice in one year.
+
+## DOCUMENT | Afonso I (Mvemba a Nzinga), Manikongo | Letter to King Joao III of Portugal | July 6, 1526
+N: Afonso the First, Manikongo of Kongo, writes to King Joao the Third of Portugal, on July the sixth, fifteen twenty six.
+M: Each day the traders are kidnapping our people, children of this country, sons of our nobles and vassals, even people of our own family. This corruption and depravity are so widespread that our land is entirely depopulated.
+
+## DOCUMENT | Afonso I (Mvemba a Nzinga), Manikongo | Letter to King Joao III of Portugal | October 18, 1526
+N: Three months later Afonso writes again, on October the eighteenth, to the same king.
+M: In our kingdoms there is another great inconvenience which is of little service to God, and this is that many of our people, keenly desirous as they are of the wares and things of your kingdoms, seize many of our people, freed and exempt men.
+
+## ASIDE
+N: This is not a subject petitioning a distant crown. It is one sovereign telling another that his own nobility is being carried off.
+N: Afonso is not asking Portugal to leave. He is asking it to keep the bargain it arrived with: priests and teachers, not traders.
+
+## REST
+
+## SCENE 4 | Sao Tome and the Kongolese provinces, 1530
+N: Joao the Third does not answer either letter. The ships keep coming.
+N: By fifteen thirty, traders working out of the island of Sao Tome have stopped dealing with the Manikongo at all. They buy directly from provincial chiefs and warlords willing to sell.
+N: The court that negotiated as an equal has become optional.
+
+## REST
+
+## SCENE 5 | The Ulanga River, October 29, 1665
+N: October the twenty ninth, sixteen sixty five, at the Ulanga River.
+N: A Portuguese-supported force out of Angola meets the army of Manikongo Antonio the First. The Kongolese field an estimated twenty thousand troops. The Portuguese alliance, with Imbangala mercenaries and musketeers, has perhaps fifteen thousand.
+N: Antonio the First is killed on the field. The victors cut off his head and carry it to Luanda, to be buried in the chapel of Our Lady of Nazareth.
+N: Without a king, the kingdom splits into two rival lineages, the Kimpanzu and the Kinlaza, and it never reunites.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts of one sovereign kingdom, and how it stopped being one.
+
+## PERSPECTIVE | Kongolese Royal / Manikongo | victor
+N: The first account starts with the fact every other one obscures. Nobody conquered the Manikongo into Christianity. He chose it.
+N: Afonso built that choice into a state: churches, a school system, a son ordained bishop in Rome. He corresponded with Lisbon as a fellow monarch, expecting the reply to match the letter.
+N: The betrayal, in this account, was not superior weapons. It was bad faith. Portugal took the trade and the diplomacy Afonso offered, and kept only the trade.
+N: His letters are the earliest surviving body of sub Saharan African diplomatic correspondence with any European state.
+N: In fifteen twenty six Afonso is still asking for exactly what he asked for at the start.
+M: We beg of Your Highness not to credit their calumnies, for these are the very people who traffic in our country and sell our free and exempt persons. We beg of Your Highness to send us two physicians and two apothecaries and one surgeon, so that they may come with their pharmacies and all the necessary things to stay in our kingdom.
+
+## PERSPECTIVE | Portuguese Colonial / Commercial | bystander
+N: The second account is Lisbon's, and in it Kongo is one node in a network already reaching from Brazil to Macau.
+N: A Christian king who cooperated was rare on that coast, so the crown invested: priests, protocol, literacy in Portuguese.
+N: The Church and the trade ran through the same office. Missionaries baptised kings and brokered cargo on the same visit, under a system that made the Church a branch of the state.
+N: Jesuit missionaries who arrived in the sixteenth century ran their own plantations in Angola, worked by enslaved labor. The contradiction was not invisible to Lisbon. It was structural.
+N: Sao Tome's sugar needed a constant supply of labor, and Kongo was the nearest source. By the middle of the century, Angola, south of Kongo, had become Portugal's main slaving colony, with Luanda as its capital.
+N: The governor's office in Angola put it to Lisbon without apology.
+M: The slave trade is the principal commerce of these regions and the source of the revenue of the colony.
+
+## PERSPECTIVE | Catholic Missionary / Theological | bystander
+N: The third account is that Kongolese Christianity was never a shell. Within two generations the kingdom had its own catechists, its own churches, its own bishop.
+N: Capuchin missionaries arriving in the sixteen hundreds found something they had not expected: crucifixes treated as nkisi, power objects mediating with ancestors, kept alongside mass and prayers in Latin.
+N: In Kongolese cosmology there was no contradiction to resolve. The saints and the ancestors occupied the same continuum.
+N: That tradition produced its own crisis. Dona Beatriz Kimpa Vita, a young noblewoman, said she was possessed by Saint Anthony and taught that Jesus had been born in Mbanza Kongo.
+N: She occupied the ruins of Mbanza Kongo, abandoned since the civil wars, and gathered followers in the thousands.
+N: None of Beatriz's own words survive on their own terms. What is preserved is the account written down by the Capuchin missionaries she was defying, and even they kept this line.
+F: Jesus Christ was born in Mbanza Kongo, which is the real Bethlehem. Mary, His mother, was a Kongolese woman.
+N: She was burned at the stake in seventeen oh six, at twenty two years old.
+
+## REST | short
+
+## PERSPECTIVE | Pan-African / Diasporic | revisionist
+N: The fourth account starts from the ships. Between fifteen hundred and eighteen hundred, an estimated four million people were shipped from ports in the greater Kongo region, the single largest source zone in the whole trade.
+N: They carried the language and the cosmology with them. The Kikongo word for a spirit object, nkisi, became inquice in Brazilian Candomble, and the prenda of Cuban Palo Monte descends from the same object.
+N: On September the ninth, seventeen thirty nine, a rising near the Stono River in South Carolina, the largest slave uprising in British North America before the Revolution, was led by a man believed to be Kongolese, and many of the rebels were literate and Catholic, skills carried from home.
+N: About eighty of them marched toward Spanish Florida, where the Spanish crown had promised freedom to escaped British slaves. They carried banners and beat drums.
+N: The record does not name which of them shouted it, but it kept the word.
+M: Liberty!
+
+## PERSPECTIVE | Revisionist / Thornton-Heywood School | revisionist
+N: The fifth account insists on an uncomfortable fact. The Kongolese were not only victims of the trade. They were participants too.
+N: Kongo had slavery before Portuguese contact: war captives, debtors, judicial offenders. The Manikongo collected duties on slave exports, and provincial governors sold captives from their own territories.
+N: Afonso's letters protest the kidnapping of his own subjects. They do not protest the institution itself. He kept selling war captives taken at the kingdom's borders through his own reign.
+N: The Battle of Mbwila was not a simple Portuguese conquest either. Antonio the First was fighting a coalition that included rival Kongolese lineages, and the fragmentation after it was driven as much by that succession dispute as by Portugal.
+N: Historian John Thornton's argument, condensed into one line by a paraphrase of his own long case, runs like this.
+M: We must acknowledge that Africans were not simply victims of the slave trade but active participants in the Atlantic system, making choices within constraints that were often brutally narrow.
+
+## REST
+
+## TURN | What each one leaves out
+N: Every one of these is true, and each one needs the others to stay honest.
+N: The Manikongo's account leaves out that his own court sold captives too, that provincial chiefs and warlords profited from the trade with or without his blessing, and that the kingdom's own slave holding predated Portuguese contact.
+N: Lisbon's account leaves out the four million people the system actually took, that undermining the Manikongo's own authority was not incidental to that trade but the method, and it never credits Kongolese achievement built independent of Portugal.
+N: The missionary account leaves out that the Church which prized Beatriz's theology is the same Church whose pressure put her on the pyre, and it reports her execution without naming what its own institution did or the economic motive inside its own mission.
+N: The diaspora's account leaves out that Kongolese elites profited from the same trade that scattered their descendants across the Atlantic, and it does not say how much of what it calls Kongolese had already changed by the time it crossed the ocean.
+N: And the account that insists on Kongolese agency, the most recent of the five, leaves out the arithmetic. Agency inside an asymmetric system is not the same as equal responsibility for what that system did to four million people.
+
+## REST
+
+## CLOSE
+N: Antonio the First's head was carried to Luanda and buried in the chapel of Our Lady of Nazareth.
+N: Afonso's letters were filed in the Arquivo Nacional da Torre do Tombo in Lisbon. They went unread by historians until the twentieth century.
+N: After the Stono Rebellion, South Carolina passed the Negro Act of seventeen forty, barring enslaved people from learning to read, assembling in groups, or earning money.
+N: The provisions stayed in force until eighteen sixty five.
+
+## SAY
+Kongo = KON-go
+Kongolese = kon-go-LEEZ
+Nzinga = en-ZING-ah
+Nkuwu = en-KOO-woo
+Manikongo = mah-nee-KON-go
+Mbanza = mm-BAHN-zah
+Afonso = ah-FON-so
+Joao = zhoo-OW
+Henrique = en-REE-keh
+nzimbu = en-ZEEM-boo
+Sao = SOW
+Tome = toh-MAY
+Luanda = loo-AHN-dah
+Imbangala = im-bahn-GAH-lah
+Ulanga = oo-LAHN-gah
+Mbwila = mm-BWEE-lah
+Kimpanzu = kim-PAHN-zoo
+Kinlaza = kin-LAH-zah
+Beatriz = bee-ah-TREES
+Kimpa = KIM-pah
+Vita = VEE-tah
+nkisi = en-KEE-see
+Candomble = kahn-dohm-BLAY
+inquice = in-KEE-say
+Palo = PAH-loh
+prenda = PREN-dah
+Stono = STOH-noh
+Thornton = THORN-ton

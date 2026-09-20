@@ -1,5 +1,46 @@
 # History: the audio edition
 
+
+## Catalogue state
+
+**62 of 78 scripts written. 49 of 78 episodes rendered and live.**
+(Snapshot taken 2026-09-20. It goes stale; the register below regenerates.)
+
+The one-stop record of every episode is `docs/data/history-episodes.csv`
+(33 columns, one row per event) plus a narrower `history-episodes-sheet.csv`
+for sharing. Both regenerate from the event YAML, the committed scripts, the
+audio manifest and git history:
+
+```
+python3 pipeline/history/episode_report.py
+```
+
+It answers, per event: what to review and why, the cast anchor and the rule
+that chose it, the cold open's misconception, the shape (scenes, rests,
+documents, accounts), estimated against rendered runtime, and **which rules a
+script predates** — derived by comparing the script's first commit against the
+commits that introduced each rule, so a script written before H-11 is flagged
+without anyone remembering to flag it.
+
+Two things that register currently surfaces:
+
+- **Four rendered episodes exceed the 15.0 minute format ceiling** (Congo Free
+  State 15.46, Rise of Islam 15.43, Russian Revolution 15.37, Indian
+  Independence 15.36). All sit under the audio gate's 15.5, so they shipped.
+  They are a re-cut or an accepted exception, not a defect.
+- **39 of the written scripts predate H-11.** They are not known to be wrong;
+  they were never checked against that rule.
+
+To ask what is left to make, ask the manifest rather than a list:
+
+```
+python3 pipeline/history/publish_audio.py --pending 99
+```
+
+The catalogue is complete when that returns `[]` and the live manifest carries
+78 episodes.
+
+---
 Status: BUILT, 2026-09-20. Stages 1 and 2 are shipped and live; stage 3 is
 in flight. What follows describes what exists, not what is intended.
 
@@ -176,14 +217,18 @@ playing Listen button is three things, and only the first is audio:
    History chapter carries `kind: "segment"`, which draws the title alone with
    no "No. 3" or "Opinion" badge beside it.
 
-**The staged catalogue ships on the Pages CDN, not R2.** R2 is still the right
-answer for 78 episodes (~750 MB cannot be un-committed from git), but the
-bucket is not provisioned, and holding the finished episodes back until it is
-would mean a History page with no audio on it. Ten episodes is ~110 MB, which
-git carries. The manifest is what keeps that decision cheap: every consumer
-reads its `url`, so moving to R2 changes the strings `publish_audio.py` writes
-and nothing else. **Make the move before stage 4** — that is the point where
-committing is no longer reversible.
+**The catalogue lives in a GitHub Release, not in git and not on R2**
+(changed 2026-09-20; this section previously said the Pages CDN, and that is no
+longer true). Committing ~750 MB of MP3 could not be undone, and the R2 bucket
+is still not provisioned, so the episodes are uploaded to a Release and the
+Cloudflare deploy pulls them into `frontend/out/audio/history` at build time
+via `pipeline/history/release_store.py fetch`. The deploy **fails loudly** if
+the manifest names a file the Release does not have, so a page can never ship
+pointing at audio that does not exist.
+
+The manifest is what kept that change cheap, and still does: every consumer
+reads its `url`, so moving to R2 later is a change to the strings
+`publish_audio.py` writes and nothing else.
 
 `tests/test_history_audio.py` is the gate (in `auto-merge-claude.yml`): every
 manifest entry has its MP3 committed at the size and duration claimed, under
@@ -255,11 +300,27 @@ tenth that failed, and it runs the manifest gate before it commits.
     catches crediting the wrong person.
   - `H-09` every perspective in the data is given its own case.
   - `H-02` the document voice speaks only where a quote belongs.
-  - `H-06` the episode carries a TURN. `H-07` length inside 8-15 minutes.
+  - `H-06` the episode carries a TURN.
+  - `H-07` length inside 8-15 minutes, measured **at the cast narrator's own
+    speech rate**, not one average. The rates differ enough to matter
+    (`bm_daniel` 168 wpm against `am_michael` 140), so a script legal at the
+    average runs long when the slow voice reads it. `NARRATOR_WPM` carries the
+    measured rates; `estimated_minutes()` looks up the anchor from the event.
+  - `H-10` (advisory) spelled-out ordinals and numbers, since a digit read
+    aloud is a defect an ear catches and a validator should catch first. A
+    silent H-10 is not proof: it matches on a six-character root.
+  - `H-11` a line the record itself disclaims — a paraphrase, a reconstruction,
+    a secondhand account, a speech written in someone else's voice — may only
+    be read in the DOCUMENT voice if the marker or the narration says so out
+    loud. Without it, the programme puts words in a real person's mouth and
+    presents them as that person's own. It fired on a Patricia Crone
+    paraphrase about to be voiced as her words.
 - Render gates: reuse the On Air assertions (gaps, arcs, fades landing under
   speech, loudness within tolerance, TP and LRA, chapters exact).
-- `tests/test_history_audio.py` holds the published catalogue to its manifest:
-  every entry's MP3 committed at the size and duration claimed, under the
+- `tests/test_history_audio.py` holds the published catalogue to its manifest.
+  Since the MP3s moved to a Release they are no longer in a clean checkout, so
+  the **sidecar is the in-repo proof** and the size and duration checks read
+  the recorded values: every entry at the size and duration claimed, under the
   25 MiB Cloudflare Pages per-file limit, naming a real event, chapters ordered
   from zero, and no MP3 in the deploy tree that no page serves.
 - Served: episodes reachable from the CDN, chapters render, player resumes.

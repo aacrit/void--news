@@ -79,7 +79,40 @@ NARRATOR_WPM = {
 # inside ten minutes, and stating them fairly is the whole point of the
 # catalogue, so the band is wide enough to pay for the moat.
 TARGET_MINUTES = (8.0, 15.0)
+AUDIO_GATE_MINUTES = 15.5        # what tests/test_history_audio.py rejects
 MUSIC_MINUTES = 1.1              # theme, scene stings, outro
+
+# Non-speech time is NOT a constant. The silence grammar in history_producer
+# spends its gaps PER SEGMENT (scene 1600 ms, to_perspective 2200, to_turn
+# 2400, a REST longer still), so a 35-segment episode carries far more silence
+# than a 20-segment one carrying the same words. Treating it as a constant is
+# why four episodes shipped over the 15 minute format ceiling while estimating
+# comfortably under it, and why september-11-attacks estimated 14.5 and
+# rendered 15.9, failing the audio gate after nine minutes of rendering.
+#
+# Measured across 49 rendered episodes: corr(error, segment count) = +0.63,
+# slope 5.3 s per segment. Anchoring the correction at the catalogue's mean
+# segment count keeps the constant physical; the equivalent y-intercept is
+# negative, which is an artefact of fitting inside a 20-35 segment range and
+# is never used directly.
+#
+# Mean absolute error 0.35 -> 0.26 min, worst 1.07 -> 0.89, and episodes
+# landing within half a minute of their real runtime 39/49 -> 43/49.
+SEGMENT_MINUTES = 0.0883         # 5.3 s of silence per segment
+SEGMENT_REFERENCE = 24.5         # catalogue mean; correction is zero here
+MIN_OVERHEAD_MINUTES = 0.6       # the theme and the outro play at any length
+
+
+def _overhead_minutes(n_segments: int) -> float:
+    """Non-speech minutes for a script with this many segments.
+
+    Linear in segment count, anchored at the catalogue mean so the constant
+    stays physical. Floored, because the fit is only observed between 20 and 35
+    segments and extrapolating below that goes negative, which would let a
+    short script claim a runtime shorter than its own theme music.
+    """
+    return max(MIN_OVERHEAD_MINUTES,
+               MUSIC_MINUTES + SEGMENT_MINUTES * (n_segments - SEGMENT_REFERENCE))
 
 
 @dataclass
@@ -114,7 +147,7 @@ class Script:
 
     @property
     def minutes(self) -> float:
-        return self.words / WPM + MUSIC_MINUTES
+        return self.words / WPM + _overhead_minutes(len(self.segments))
 
 
 @dataclass
@@ -188,7 +221,41 @@ def estimated_minutes(script: Script, event: dict | None) -> tuple[float, float,
             rate = NARRATOR_WPM.get(who, WPM)
         except Exception:
             pass
-    return script.words / rate + MUSIC_MINUTES, rate, who
+    return script.words / rate + _overhead_minutes(len(script.segments)), rate, who
+
+
+def _best_source(said: str, sourced) -> tuple[str, str] | None:
+    """The source this quote matches BEST, not the first one over the line.
+
+    Taking the first match above threshold misattributes a quote whenever a
+    weaker match happens to sit earlier in the event file, and H-04 then checks
+    the narration against the wrong speaker. Two drafters hit this
+    independently on real data:
+
+      "Both sides declared victory over a war that returned them to the
+       border where it began"
+          1.000 against its true source
+          0.667 against Khomeini's "War, war until victory", which is earlier
+                and shares only "war" and "victory"
+
+      "To the strongest"
+          1.000 against its true source
+          0.667 against an unrelated Plutarch paraphrase, which is earlier
+
+    Both were silently resolved to the wrong speaker. Scoring every candidate
+    and keeping the highest costs one pass over a handful of quotes.
+    """
+    best, best_score = None, 0.0
+    for src, who in sourced:
+        if not src:
+            continue
+        if said in src or src in said:
+            score = 1.0
+        else:
+            score = _overlap(said, src)
+        if score > 0.6 and score > best_score:
+            best, best_score = (src, who), score
+    return best
 
 
 def validate_script(script: Script, event: dict) -> list[Finding]:
@@ -197,8 +264,27 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
     excerpts = event.get("primary_source_excerpts") or []
     quotes = [q for p in (event.get("perspectives") or [])
               for q in (p.get("notable_quotes") or [])]
+    # The hedge is not always in the speaker field. Four drafters, on four
+    # unrelated events, found a record whose speaker reads as a clean name
+    # while its CONTEXT or WORK field carries the disclaimer: "Reported by
+    # Anthony Nutting in No End of a Lesson", "as recorded by Capuchin
+    # missionaries", "Paraphrased from scholarship", "Attributed". H-11 read
+    # only the speaker, so each of those would have passed the gate as direct
+    # speech. Every one was caught by a writer reading the data instead, which
+    # is not a control. Carry all three fields and hedge on any of them.
+    # H-04 needs the speaker's NAME and nothing else, so it stays clean here.
+    # H-11 needs everything the record says ABOUT the attribution, so it gets a
+    # parallel lookup. Folding both into one string broke H-04, which then
+    # demanded the narration say "Anonymous Gesta Francorum (Deeds of the
+    # Franks)" out loud.
     sourced = [(_norm(e.get("text", "")), e.get("author", "")) for e in excerpts]
     sourced += [(_norm(q.get("text", "")), q.get("speaker", "")) for q in quotes]
+
+    def _attrib(d: dict, name_key: str) -> str:
+        return " ".join(str(d.get(k) or "") for k in (name_key, "context", "work"))
+
+    ATTRIBUTION = {_norm(e.get("text", "")): _attrib(e, "author") for e in excerpts}
+    ATTRIBUTION.update({_norm(q.get("text", "")): _attrib(q, "speaker") for q in quotes})
 
     # A source whose own speaker field says the words are not verbatim. The
     # record marks these; nothing read them before H-11. "summary" is NOT here:
@@ -258,8 +344,8 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
                 if l.speaker not in QUOTE_SPEAKERS:
                     continue
                 said = _norm(l.text)
-                speaker = next((who for src, who in sourced
-                                if src and (said in src or src in said or _overlap(said, src) > 0.6)), None)
+                _m = _best_source(said, sourced)
+                speaker = _m[1] if _m else None
                 before = " ".join(_norm(x.text) for x in seg.lines[:i] if x.speaker == "N")
                 if not before:
                     out.append(Finding("H-04", "fail", label,
@@ -282,9 +368,7 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
             # H-01: the quote must exist in the event's own sources.
             for l in d_lines:
                 said = _norm(l.text)
-                match = next(((src, who) for src, who in sourced
-                               if src and (said in src or src in said
-                                           or _overlap(said, src) > 0.6)), None)
+                match = _best_source(said, sourced)
                 if match is None:
                     out.append(Finding("H-01", "fail", label,
                                        f"quotation not found in this event's primary sources: "
@@ -309,7 +393,7 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
                 # defect class H-04 shipped with, where "king" inside
                 # "striking" passed for Martin Luther King. Short whole words
                 # need the trailing guard too, or they match half the roster.
-                who = (match[1] or "").lower()
+                who = (ATTRIBUTION.get(match[0]) or match[1] or "").lower()
 
                 def _marked(h: str) -> bool:
                     # Only a short BARE word needs the trailing guard ("via"
@@ -327,8 +411,9 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
                                      + [_norm(x.text) for x in seg.lines
                                         if x.speaker == "N"])
                     if not any(h in aloud for h in SPOKEN_HEDGE):
+                        marked = (ATTRIBUTION.get(match[0]) or match[1] or "").strip()
                         out.append(Finding("H-11", "fail", label,
-                                           f"the record marks this line {match[1]!r}, and nothing "
+                                           f"the record marks this line {marked!r}, and nothing "
                                            f"says so aloud: either say it is attributed, or narrate "
                                            f"the position instead of reading it as their words"))
 
@@ -392,12 +477,28 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
                                    f"{tok!r} is spoken in the script and appears nowhere in this "
                                    f"event's data: source it or cut it"))
 
+    # H-07 used to FAIL at the format target of 15.0 while the audio gate in
+    # tests/test_history_audio.py fails at 15.5. Two gates measuring the same
+    # thing at different thresholds means a script can pass the cheap one and
+    # fail the expensive one, which is exactly what happened to
+    # september-11-attacks: it passed here, rendered for nine minutes, and was
+    # rejected at publish, taking nine good episodes down with it.
+    #
+    # The hard failure now matches the gate that actually blocks publishing.
+    # Overrunning the 15.0 format target is a WARNING, because an episode a few
+    # seconds over is an editorial call and an episode over 15.5 is not
+    # shippable at all.
     lo, hi = TARGET_MINUTES
     mins, rate, who = estimated_minutes(script, event)
-    if not (lo <= mins <= hi):
+    if mins < lo or mins > AUDIO_GATE_MINUTES:
         out.append(Finding("H-07", "fail", "TOTAL",
                            f"{script.words} words is {mins:.1f} min at {who}'s {rate:.0f} wpm, "
-                           f"outside {lo:.0f}-{hi:.0f}"))
+                           f"outside {lo:.0f}-{AUDIO_GATE_MINUTES:.1f}"))
+    elif mins > hi:
+        out.append(Finding("H-07", "warn", "TOTAL",
+                           f"{script.words} words is {mins:.1f} min at {who}'s {rate:.0f} wpm, "
+                           f"over the {hi:.0f} min format target (renders below the "
+                           f"{AUDIO_GATE_MINUTES:.1f} gate, so it ships)"))
     for seg in script.segments:
         for l in seg.lines:
             if "—" in l.text or "–" in l.text:

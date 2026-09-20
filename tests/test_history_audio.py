@@ -131,6 +131,32 @@ def main() -> int:
             check(f"{mp3.name}: published file is in the manifest",
                   mp3.stem in episodes)
 
+    # An episode whose SCRIPT changed after it was rendered is serving audio
+    # that no longer matches its own source of truth. This is not hypothetical:
+    # two H-11 disclosure fixes (great-leap-forward's secondhand Mao quote,
+    # gutenberg's attributed friar) were corrected in the scripts and left
+    # uncorrected in the published MP3s, so the page kept presenting both lines
+    # as verbatim speech. Nobody noticed until this check was written; the
+    # manifest carries publishedAt and git carries the script's commit date, so
+    # the comparison was always available.
+    import subprocess
+    from datetime import datetime
+    for slug, meta in sorted(episodes.items()):
+        script = ROOT / f"data/history/scripts/{slug}.txt"
+        published = meta.get("publishedAt")
+        if not script.exists() or not published:
+            continue
+        iso = subprocess.run(["git", "log", "-1", "--format=%cI", "--", str(script)],
+                             capture_output=True, text=True, cwd=ROOT).stdout.strip()
+        if not iso:
+            continue          # untracked or shallow clone: nothing to compare
+        changed = datetime.fromisoformat(iso)
+        rendered = datetime.fromisoformat(published.replace("Z", "+00:00"))
+        check(f"{slug}: published audio is not older than its script",
+              changed <= rendered,
+              f"script changed {changed:%Y-%m-%d %H:%M}, audio rendered "
+              f"{rendered:%Y-%m-%d %H:%M}: re-render it")
+
     if failures:
         print("\n".join(f"FAIL  {f}" for f in failures))
         print(f"\n{len(failures)} History audio failure(s)")

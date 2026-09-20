@@ -1,5 +1,10 @@
 # void --news — Editorial LLM & Voice Plan
 
+> **⚠ STALE HEADER (added 2026-09-20).** This file says "Sonnet 4.6 primary";
+> Claude was retired 2026-06-22 and Gemini is the sole LLM. Its §10 describes
+> the pre-radio edge-tts show, which is now only the FALLBACK — the production
+> daily show is `docs/ON-AIR-RADIO.md`.
+
 > **2026-09-18: superseded for the daily show.** On Air is now the radio format in `docs/ON-AIR-RADIO.md` (Kokoro voices, separate rundown, chapters). Section 10 below describes the edge-tts path, which remains only as the automatic fallback (`VOID_RADIO_FORMAT=0` / `VOID_TTS_ENGINE=edge`).
 
 Last updated: 2026-04-29 (rev 2 — Sonnet 4.6 primary)

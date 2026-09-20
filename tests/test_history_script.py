@@ -22,7 +22,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "pipeline"))
 
-from history.script_format import parse_script, validate_script   # noqa: E402
+from history.script_format import (  # noqa: E402
+    parse_script, validate_script, _overhead_minutes,
+)
 
 failures: list[str] = []
 
@@ -99,11 +101,32 @@ def fails(script_text: str, event=None) -> set[str]:
     return {f.id for f in validate_script(sc, event or EVENT) if f.level == "fail"}
 
 
+def pad_to_words(text: str, words: int) -> str:
+    """Pad to an exact spoken-word count, for tests that need to straddle a
+    threshold. Runtime-targeted padding cannot do that: the filler is added in
+    blocks and the block rounding moves the result by tens of words, which is
+    more than the gap between two narrators' runtimes."""
+    from history.script_format import parse_script
+    need = words - parse_script(text, "pad").words
+    if need <= 0:
+        return text
+    filler = "\n".join("N: " + " ".join(["filler"] * 12) for _ in range(need // 12))
+    rem = need % 12
+    if rem:
+        filler += "\nN: " + " ".join(["filler"] * rem)
+    return text.replace("## REST\n", "## REST\n\n## SCENE 2 | Filler\n" + filler + "\n", 1)
+
+
 def pad(text: str, minutes: float = 9.0) -> str:
     """H-07 measures length, so a fixture must be long enough to be legal or
     every other assertion drowns in a length failure."""
-    from history.script_format import WPM, MUSIC_MINUTES
-    need = int((minutes - MUSIC_MINUTES) * WPM) - len(text.split())
+    from history.script_format import WPM, _overhead_minutes, parse_script
+    # Size against the SAME model the validator uses, including this script's
+    # own segment count, and including the one SCENE this function adds below.
+    # Sizing against a flat music constant made every length fixture a lie the
+    # moment overhead stopped being flat.
+    segs = len(parse_script(text, "pad").segments) + 1
+    need = int((minutes - _overhead_minutes(segs)) * WPM) - len(text.split())
     if need <= 0:
         return text
     filler = "\n".join("N: " + " ".join(["filler"] * 12) for _ in range(need // 12 + 1))
@@ -197,18 +220,24 @@ check("the slower narrator is the longer runtime", slow > fast, f"{slow:.2f} vs 
 
 # The failure this exists for: a script sized to the average that renders over
 # the ceiling because the slow voice was cast.
-long_script = pad(CLEAN, 15.2)   # 1,980 words: 14.8 min at the average, 15.2 at am_michael
+# Straddle deliberately: under the 15.5 audio gate at the catalogue average,
+# over it when the slow voice is cast. That gap is ~0.5 min at this length, so
+# the word count has to be exact.
+long_script = pad_to_words(CLEAN, 2123)
 mins_avg, _, _ = estimated_minutes(parse_script(long_script, "t"), None)
 check("a script legal at the average rate is caught when the slow voice reads it",
-      mins_avg <= 15.0 and "H-07" in fails(long_script, {**EVENT, **SLOW_EVENT}),
+      mins_avg <= 15.5 and "H-07" in fails(long_script, {**EVENT, **SLOW_EVENT}),
       f"avg {mins_avg:.2f} min, findings {fails(long_script, {**EVENT, **SLOW_EVENT})}")
 check("the same script passes when the fast voice reads it",
       "H-07" not in fails(long_script, {**EVENT, **FAST_EVENT}),
       str(fails(long_script, {**EVENT, **FAST_EVENT})))
 
 generic, rate, who = estimated_minutes(parse_script(_len, "t"), None)
+_n_segs = len(parse_script(_len, "t").segments)
+_overhead = _overhead_minutes(_n_segs)
 check("estimated_minutes falls back to the catalogue average with no event",
-      who == "the cast" and abs(generic - (_words / 145.0 + 1.1)) < 1e-9, f"{who} {rate}")
+      who == "the cast" and abs(generic - (_words / 145.0 + _overhead)) < 1e-9,
+      f"{who} {rate}")
 unknown, rate, _ = estimated_minutes(parse_script(_len, "t"), {"category": "x", "severity": "y"})
 check("an unmeasured narrator degrades to the average rather than raising",
       rate in set(NARRATOR_WPM.values()) | {145.0}, str(rate))
@@ -312,3 +341,111 @@ if failures:
     print(f"\n{len(failures)} History script failure(s)")
     raise SystemExit(1)
 print(f"PASS  H-01..H-11 against planted defects, and {len(scripts)} committed scripts")
+
+
+def test_check_script_prints_findings():
+    """The checker must PRINT a finding, not crash on it.
+
+    It shipped reading `Finding.message`, a field that does not exist, so it
+    raised AttributeError on any script that carried even one finding. The exit
+    code was still non-zero, so nothing passed that should not have, but the
+    tool went mute exactly when it had something to say and handed a drafter a
+    traceback instead of the reason. A drafter caught it, not a test.
+    """
+    import io, contextlib, subprocess, sys, pathlib
+    root = pathlib.Path(__file__).resolve().parents[1]
+    # apollo-11 carries a real H-10 warning, so it exercises the print path.
+    out = subprocess.run(
+        [sys.executable, str(root / "pipeline/history/check_script.py"), "apollo-11-moon-landing"],
+        capture_output=True, text=True, cwd=root,
+    )
+    assert "Traceback" not in out.stderr, f"checker crashed:\n{out.stderr}"
+    assert "warn H-10" in out.stdout, f"finding was not printed:\n{out.stdout}"
+    print("PASS  check_script prints findings instead of crashing on them")
+
+
+def test_quote_matches_its_best_source_not_its_first():
+    """A weaker match earlier in the event file must not win.
+
+    H-04 looks the speaker up by matching the quote, so taking the first source
+    over the 0.6 threshold attributes the line to whoever happens to appear
+    first. Both cases below are real, found by drafters on real event data, and
+    both scored 1.000 against their true source and 0.667 against an earlier
+    unrelated one.
+    """
+    import sys, pathlib as _p
+    sys.path.insert(0, str(_p.Path(__file__).resolve().parents[1] / "pipeline"))
+    from history.script_format import _best_source, _norm
+
+    said = _norm("Both sides declared victory over a war that returned them "
+                 "to the border where it began")
+    sourced = [
+        (_norm("War, war until victory."), "Ruhollah Khomeini"),          # earlier, weaker
+        (_norm("Both sides declared victory over a war that returned them "
+               "to the border where it began"), "Scholarly consensus"),   # later, exact
+    ]
+    assert _best_source(said, sourced)[1] == "Scholarly consensus"
+
+    said = _norm("To the strongest")
+    sourced = [
+        (_norm("When Alexander saw the breadth of his domain, he wept, for "
+               "there were no more worlds to conquer"), "Plutarch"),      # earlier, weaker
+        (_norm("To the strongest."), "Alexander"),                        # later, exact
+    ]
+    assert _best_source(said, sourced)[1] == "Alexander"
+
+    # And a quote with no real source still finds nothing.
+    assert _best_source(_norm("a line nobody ever wrote down"), sourced) is None
+    print("PASS  a quote resolves to its best source, not its first")
+
+
+def test_h11_reads_the_hedge_wherever_the_record_puts_it():
+    """A clean speaker name with a hedge in context/work must still fire H-11.
+
+    Four drafters, on four unrelated events, found records shaped exactly like
+    this: the speaker reads as a plain name while the disclaimer sits in the
+    context or work field. H-11 read only the speaker, so every one of them
+    would have passed as direct speech. Each was caught by a writer reading the
+    data by hand, which is not a control.
+
+    The live example this test was written from: great-leap-forward voiced
+    "It is better to let half of the people die..." as Mao's own words. The
+    record's work field says "quoted in Dikotter, Mao's Great Famine" - a
+    historian's book, not a transcript - and the episode had already shipped.
+    """
+    import sys, pathlib as _p
+    sys.path.insert(0, str(_p.Path(__file__).resolve().parents[1] / "pipeline"))
+    from history.script_format import parse_script, validate_script
+
+    event = {
+        "title": "T", "summary": "s",
+        "perspectives": [{"title": f"P{i}", "summary": "x"} for i in range(1, 6)],
+        "primary_source_excerpts": [{
+            "text": "It is better to let half of the people die.",
+            "author": "Mao Zedong",                       # clean name
+            "work": "Remark, quoted in Dikotter",         # hedge lives HERE
+        }],
+    }
+    body = ("## OPEN\nN: open.\n\n## SCENE 1 | s\n"
+            "N: In Shanghai, Mao Zedong told a party conference what he meant.\n"
+            "## DOCUMENT | Mao Zedong | Remark | 1959\n"
+            "N: Mao Zedong said this.\n"
+            "M: It is better to let half of the people die.\n\n"
+            "## TURN\nN: t.\n\n"
+            + "".join(f"## PERSPECTIVE | P{i} | academic\nN: case {i}.\n\n" for i in range(1, 6))
+            + "## CLOSE\nN: close.\n")
+    ids = {f.id for f in validate_script(parse_script(body, "t"), event)}
+    assert "H-11" in ids, f"hedge in work field not caught: {ids}"
+
+    # Saying it aloud clears it.
+    said = body.replace("N: Mao Zedong said this.",
+                        "N: Mao Zedong said this, in a remark quoted in Dikotter's history.")
+    ids = {f.id for f in validate_script(parse_script(said, "t"), event)}
+    assert "H-11" not in ids, f"disclosure did not clear H-11: {ids}"
+    print("PASS  H-11 reads the hedge in context and work, not only in speaker")
+
+
+if __name__ == "__main__":
+    test_check_script_prints_findings()
+    test_h11_reads_the_hedge_wherever_the_record_puts_it()
+    test_quote_matches_its_best_source_not_its_first()
