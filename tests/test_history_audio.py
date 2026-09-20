@@ -141,15 +141,47 @@ def main() -> int:
     # the comparison was always available.
     import subprocess
     from datetime import datetime
+
+    # A TRUNCATED LOG ANSWERS THIS WRONGLY RATHER THAN REFUSING TO ANSWER.
+    # `actions/checkout@v4` fetches depth 1 by default, so the log holds one
+    # commit and `git log -1 -- <file>` returns THAT commit for every path.
+    # Every script then reports the branch tip as its change time, and any
+    # branch that pushes a commit without also re-rendering all 49 episodes
+    # fails forever. It blocked an unrelated branch's merges all afternoon;
+    # this branch passed only because its own runs re-render after each push.
+    #
+    # The `if not iso: continue` guard below was written for this case and
+    # cannot catch it, because a truncated log returns a date rather than
+    # nothing.
+    #
+    # Shallowness alone is the wrong test: a depth-299 clone is shallow and
+    # still dates a recent file correctly. What cannot be trusted is a file
+    # whose last-touching commit is the GRAFT BOUNDARY, where history was cut
+    # and the real edit may be older, or a log with a single commit. Both are
+    # skipped per file and counted, so an inert check says so instead of
+    # looking like it ran.
+    boundary = set()
+    shallow_file = ROOT / ".git" / "shallow"
+    if shallow_file.exists():
+        boundary = {ln.strip() for ln in shallow_file.read_text().split() if ln.strip()}
+    depth = subprocess.run(["git", "rev-list", "--count", "HEAD"],
+                           capture_output=True, text=True, cwd=ROOT).stdout.strip()
+    single_commit = depth == "1"
+    untrusted = 0
+
     for slug, meta in sorted(episodes.items()):
         script = ROOT / f"data/history/scripts/{slug}.txt"
         published = meta.get("publishedAt")
         if not script.exists() or not published:
             continue
-        iso = subprocess.run(["git", "log", "-1", "--format=%cI", "--", str(script)],
+        out = subprocess.run(["git", "log", "-1", "--format=%cI %H", "--", str(script)],
                              capture_output=True, text=True, cwd=ROOT).stdout.strip()
-        if not iso:
-            continue          # untracked or shallow clone: nothing to compare
+        if not out:
+            continue          # untracked: nothing to compare
+        iso, _, sha = out.partition(" ")
+        if single_commit or sha.strip() in boundary:
+            untrusted += 1    # the log was cut here; the real edit may be older
+            continue
         changed = datetime.fromisoformat(iso)
         rendered = datetime.fromisoformat(published.replace("Z", "+00:00"))
         check(f"{slug}: published audio is not older than its script",
@@ -157,6 +189,10 @@ def main() -> int:
               f"script changed {changed:%Y-%m-%d %H:%M}, audio rendered "
               f"{rendered:%Y-%m-%d %H:%M}: re-render it")
 
+    if untrusted:
+        print(f"  [skip] script-vs-audio freshness for {untrusted} episode(s): "
+              f"the log is truncated at their last commit "
+              f"(set fetch-depth: 0 to check them)")
     if failures:
         print("\n".join(f"FAIL  {f}" for f in failures))
         print(f"\n{len(failures)} History audio failure(s)")
