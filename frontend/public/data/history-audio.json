@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-20T02:54:36+00:00",
+ "generatedAt": "2026-09-20T03:41:27+00:00",
  "episodes": {
   "apartheid": {
    "url": "/audio/history/apartheid.mp3?v=836de3b2",
@@ -1785,6 +1785,100 @@
    ],
    "publishedAt": "2026-09-20T01:47:18+00:00"
   },
+  "mongol-empire": {
+   "url": "/audio/history/mongol-empire.mp3?v=3f674848",
+   "chaptersUrl": "/audio/history/mongol-empire.chapters.json?v=3f674848",
+   "title": "The Mongol Empire",
+   "durationSeconds": 788.48,
+   "bytes": 12631377,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 69.686
+    },
+    {
+     "startTime": 69.686,
+     "title": "The cangue",
+     "kind": "segment",
+     "endTime": 131.986
+    },
+    {
+     "startTime": 131.986,
+     "title": "The Onon river, 1206",
+     "kind": "segment",
+     "endTime": 202.02
+    },
+    {
+     "startTime": 202.02,
+     "title": "Otrar, 1219",
+     "kind": "segment",
+     "endTime": 272.63
+    },
+    {
+     "startTime": 272.63,
+     "title": "Karakorum, 1254",
+     "kind": "segment",
+     "endTime": 318.176
+    },
+    {
+     "startTime": 318.176,
+     "title": "Yamen, 1279",
+     "kind": "segment",
+     "endTime": 349.421
+    },
+    {
+     "startTime": 349.421,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 358.81
+    },
+    {
+     "startTime": 358.81,
+     "title": "The Mongol court",
+     "kind": "segment",
+     "endTime": 423.063
+    },
+    {
+     "startTime": 423.063,
+     "title": "The Chinese court",
+     "kind": "segment",
+     "endTime": 489.109
+    },
+    {
+     "startTime": 489.109,
+     "title": "The Persian world",
+     "kind": "segment",
+     "endTime": 544.957
+    },
+    {
+     "startTime": 544.957,
+     "title": "The Russian principalities",
+     "kind": "segment",
+     "endTime": 603.407
+    },
+    {
+     "startTime": 603.407,
+     "title": "The revisionist argument",
+     "kind": "segment",
+     "endTime": 655.152
+    },
+    {
+     "startTime": 655.152,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 736.308
+    },
+    {
+     "startTime": 736.308,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 788.447
+    }
+   ],
+   "publishedAt": "2026-09-20T03:41:26+00:00"
+  },
   "nanjing-massacre": {
    "url": "/audio/history/nanjing-massacre.mp3?v=1a5faf65",
    "chaptersUrl": "/audio/history/nanjing-massacre.chapters.json?v=1a5faf65",
@@ -2060,6 +2154,106 @@
     }
    ],
    "publishedAt": "2026-09-19T23:09:20+00:00"
+  },
+  "rise-of-islam": {
+   "url": "/audio/history/rise-of-islam.mp3?v=c2cc5aa6",
+   "chaptersUrl": "/audio/history/rise-of-islam.chapters.json?v=c2cc5aa6",
+   "title": "The Rise of Islam",
+   "durationSeconds": 925.936,
+   "bytes": 14833114,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 53.97
+    },
+    {
+     "startTime": 53.97,
+     "title": "The cave on Mount Hira",
+     "kind": "segment",
+     "endTime": 146.31
+    },
+    {
+     "startTime": 146.31,
+     "title": "Twelve years, and a road north",
+     "kind": "segment",
+     "endTime": 182.812
+    },
+    {
+     "startTime": 182.812,
+     "title": "The empire with no successor",
+     "kind": "segment",
+     "endTime": 246.915
+    },
+    {
+     "startTime": 246.915,
+     "title": "Fifteen years",
+     "kind": "segment",
+     "endTime": 339.785
+    },
+    {
+     "startTime": 339.785,
+     "title": "Three funerals",
+     "kind": "segment",
+     "endTime": 426.955
+    },
+    {
+     "startTime": 426.955,
+     "title": "The largest empire the world had seen",
+     "kind": "segment",
+     "endTime": 456.115
+    },
+    {
+     "startTime": 456.115,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 468.512
+    },
+    {
+     "startTime": 468.512,
+     "title": "The Sunni tradition",
+     "kind": "segment",
+     "endTime": 541.898
+    },
+    {
+     "startTime": 541.898,
+     "title": "The Shia tradition",
+     "kind": "segment",
+     "endTime": 624.725
+    },
+    {
+     "startTime": 624.725,
+     "title": "Byzantium and Persia",
+     "kind": "segment",
+     "endTime": 678.812
+    },
+    {
+     "startTime": 678.812,
+     "title": "The Western revisionists",
+     "kind": "segment",
+     "endTime": 748.786
+    },
+    {
+     "startTime": 748.786,
+     "title": "The Islamicate civilization",
+     "kind": "segment",
+     "endTime": 811.131
+    },
+    {
+     "startTime": 811.131,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 878.581
+    },
+    {
+     "startTime": 878.581,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 925.89
+    }
+   ],
+   "publishedAt": "2026-09-20T03:41:26+00:00"
   },
   "russian-revolution": {
    "url": "/audio/history/russian-revolution.mp3?v=5b8eb932",
@@ -2401,6 +2595,88 @@
    ],
    "publishedAt": "2026-09-20T00:04:51+00:00"
   },
+  "spanish-flu-1918": {
+   "url": "/audio/history/spanish-flu-1918.mp3?v=10164fc5",
+   "chaptersUrl": "/audio/history/spanish-flu-1918.chapters.json?v=10164fc5",
+   "title": "The 1918 Influenza Pandemic",
+   "durationSeconds": 736.81,
+   "bytes": 11804038,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 43.957
+    },
+    {
+     "startTime": 43.957,
+     "title": "Camp Funston, Kansas, March nineteen eighteen",
+     "kind": "segment",
+     "endTime": 95.854
+    },
+    {
+     "startTime": 95.854,
+     "title": "Camp Devens, Massachusetts, late September nineteen eighteen",
+     "kind": "segment",
+     "endTime": 191.511
+    },
+    {
+     "startTime": 191.511,
+     "title": "Philadelphia, September twenty eighth, nineteen eighteen",
+     "kind": "segment",
+     "endTime": 238.081
+    },
+    {
+     "startTime": 238.081,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 250.798
+    },
+    {
+     "startTime": 250.798,
+     "title": "Wartime Governments and Censorship",
+     "kind": "segment",
+     "endTime": 315.77
+    },
+    {
+     "startTime": 315.77,
+     "title": "Public Health and Medicine",
+     "kind": "segment",
+     "endTime": 377.755
+    },
+    {
+     "startTime": 377.755,
+     "title": "Colonial and Global South Populations",
+     "kind": "segment",
+     "endTime": 456.269
+    },
+    {
+     "startTime": 456.269,
+     "title": "Pacific and Indigenous Peoples",
+     "kind": "segment",
+     "endTime": 543.823
+    },
+    {
+     "startTime": 543.823,
+     "title": "Epidemiology and Historical Memory",
+     "kind": "segment",
+     "endTime": 632.894
+    },
+    {
+     "startTime": 632.894,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 700.665
+    },
+    {
+     "startTime": 700.665,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 736.767
+    }
+   ],
+   "publishedAt": "2026-09-20T03:41:27+00:00"
+  },
   "the-crusades": {
    "url": "/audio/history/the-crusades.mp3?v=07df501f",
    "chaptersUrl": "/audio/history/the-crusades.chapters.json?v=07df501f",
@@ -2582,6 +2858,100 @@
     }
    ],
    "publishedAt": "2026-09-20T00:04:51+00:00"
+  },
+  "the-reformation": {
+   "url": "/audio/history/the-reformation.mp3?v=053b4c98",
+   "chaptersUrl": "/audio/history/the-reformation.chapters.json?v=053b4c98",
+   "title": "The Protestant Reformation",
+   "durationSeconds": 797.492,
+   "bytes": 12775805,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 54.047
+    },
+    {
+     "startTime": 54.047,
+     "title": "The debate that got away",
+     "kind": "segment",
+     "endTime": 147.411
+    },
+    {
+     "startTime": 147.411,
+     "title": "Worms",
+     "kind": "segment",
+     "endTime": 206.919
+    },
+    {
+     "startTime": 206.919,
+     "title": "Frankenhausen",
+     "kind": "segment",
+     "endTime": 257.473
+    },
+    {
+     "startTime": 257.473,
+     "title": "The fracture",
+     "kind": "segment",
+     "endTime": 285.819
+    },
+    {
+     "startTime": 285.819,
+     "title": "The treaty and the war",
+     "kind": "segment",
+     "endTime": 318.536
+    },
+    {
+     "startTime": 318.536,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 326.155
+    },
+    {
+     "startTime": 326.155,
+     "title": "The Lutheran Reformers",
+     "kind": "segment",
+     "endTime": 402.347
+    },
+    {
+     "startTime": 402.347,
+     "title": "The Catholic Church",
+     "kind": "segment",
+     "endTime": 475.328
+    },
+    {
+     "startTime": 475.328,
+     "title": "The Radical Reformation and the Peasants",
+     "kind": "segment",
+     "endTime": 552.938
+    },
+    {
+     "startTime": 552.938,
+     "title": "The Princes and Sovereignty",
+     "kind": "segment",
+     "endTime": 623.387
+    },
+    {
+     "startTime": 623.387,
+     "title": "Print and the Modern World",
+     "kind": "segment",
+     "endTime": 704.782
+    },
+    {
+     "startTime": 704.782,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 765.81
+    },
+    {
+     "startTime": 765.81,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 797.461
+    }
+   ],
+   "publishedAt": "2026-09-20T03:41:27+00:00"
   },
   "tiananmen-square": {
    "url": "/audio/history/tiananmen-square.mp3?v=be29cab3",
@@ -2859,6 +3229,100 @@
    ],
    "publishedAt": "2026-09-20T00:21:56+00:00"
   },
+  "vietnam-war": {
+   "url": "/audio/history/vietnam-war.mp3?v=4d8fda7d",
+   "chaptersUrl": "/audio/history/vietnam-war.chapters.json?v=4d8fda7d",
+   "title": "The Vietnam War",
+   "durationSeconds": 808.725,
+   "bytes": 12955789,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 50.698
+    },
+    {
+     "startTime": 50.698,
+     "title": "The night the sonar lied",
+     "kind": "segment",
+     "endTime": 122.467
+    },
+    {
+     "startTime": 122.467,
+     "title": "A borrowed sentence",
+     "kind": "segment",
+     "endTime": 184.471
+    },
+    {
+     "startTime": 184.471,
+     "title": "Sixteen thousand men in a valley",
+     "kind": "segment",
+     "endTime": 217.133
+    },
+    {
+     "startTime": 217.133,
+     "title": "Stalemate",
+     "kind": "segment",
+     "endTime": 288.624
+    },
+    {
+     "startTime": 288.624,
+     "title": "Six weeks later",
+     "kind": "segment",
+     "endTime": 342.661
+    },
+    {
+     "startTime": 342.661,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 357.81
+    },
+    {
+     "startTime": 357.81,
+     "title": "American Cold War / Containment",
+     "kind": "segment",
+     "endTime": 420.074
+    },
+    {
+     "startTime": 420.074,
+     "title": "Vietnamese Revolutionary / Anti-Colonial",
+     "kind": "segment",
+     "endTime": 476.995
+    },
+    {
+     "startTime": 476.995,
+     "title": "Anti-War / Pentagon Papers",
+     "kind": "segment",
+     "endTime": 546.176
+    },
+    {
+     "startTime": 546.176,
+     "title": "Laotian and Cambodian / Spillover",
+     "kind": "segment",
+     "endTime": 610.466
+    },
+    {
+     "startTime": 610.466,
+     "title": "Postcolonial / Global South",
+     "kind": "segment",
+     "endTime": 687.347
+    },
+    {
+     "startTime": 687.347,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 783.294
+    },
+    {
+     "startTime": 783.294,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 808.694
+    }
+   ],
+   "publishedAt": "2026-09-20T03:41:27+00:00"
+  },
   "womens-suffrage": {
    "url": "/audio/history/womens-suffrage.mp3?v=a5c127ce",
    "chaptersUrl": "/audio/history/womens-suffrage.chapters.json?v=a5c127ce",
@@ -2952,6 +3416,100 @@
     }
    ],
    "publishedAt": "2026-09-20T02:54:36+00:00"
+  },
+  "world-war-i": {
+   "url": "/audio/history/world-war-i.mp3?v=6da90e5c",
+   "chaptersUrl": "/audio/history/world-war-i.chapters.json?v=6da90e5c",
+   "title": "World War I",
+   "durationSeconds": 834.508,
+   "bytes": 13368754,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 58.934
+    },
+    {
+     "startTime": 58.934,
+     "title": "Belgium, August 4, 1914",
+     "kind": "segment",
+     "endTime": 119.7
+    },
+    {
+     "startTime": 119.7,
+     "title": "The Somme, July 1, 1916",
+     "kind": "segment",
+     "endTime": 168.783
+    },
+    {
+     "startTime": 168.783,
+     "title": "A world war",
+     "kind": "segment",
+     "endTime": 215.979
+    },
+    {
+     "startTime": 215.979,
+     "title": "A joint session of Congress, April 2, 1917",
+     "kind": "segment",
+     "endTime": 267.387
+    },
+    {
+     "startTime": 267.387,
+     "title": "Versailles, June 28, 1919",
+     "kind": "segment",
+     "endTime": 351.103
+    },
+    {
+     "startTime": 351.103,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 361.452
+    },
+    {
+     "startTime": 361.452,
+     "title": "The Entente and the Allied victors",
+     "kind": "segment",
+     "endTime": 441.302
+    },
+    {
+     "startTime": 441.302,
+     "title": "Germany and the Central Powers",
+     "kind": "segment",
+     "endTime": 511.729
+    },
+    {
+     "startTime": 511.729,
+     "title": "The soldiers and the frontline experience",
+     "kind": "segment",
+     "endTime": 577.107
+    },
+    {
+     "startTime": 577.107,
+     "title": "The colonial world and the Global South",
+     "kind": "segment",
+     "endTime": 641.364
+    },
+    {
+     "startTime": 641.364,
+     "title": "Revisionist historiography",
+     "kind": "segment",
+     "endTime": 714.604
+    },
+    {
+     "startTime": 714.604,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 790.097
+    },
+    {
+     "startTime": 790.097,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 834.477
+    }
+   ],
+   "publishedAt": "2026-09-20T03:41:27+00:00"
   }
  }
 }
