@@ -17,16 +17,26 @@ permissions:
 
 on:
   schedule:
-    # Monday 12:00 UTC. Covers the week that just ended (Mon-Sun), which is what
-    # --week-offset 0 now means; before 2026-09-19 the offset sign was inverted
-    # and this cron generated the week that had just STARTED, off half a day of
-    # coverage. Sunday flash budget is not a concern on Monday: ~13 daily + ~4
-    # weekly stays under the shared 20 req/day flash cap.
-    - cron: '0 12 * * 1'
+    # SUNDAY 18:00 UTC. Void Weekly is a Sunday magazine: the issue covers the
+    # week the reader has just lived through, Monday to that same Sunday, which
+    # is what --week-offset 0 means since `weekly_window` started counting
+    # Sunday as inside its own week.
+    #
+    # 18:00 is chosen against the daily pipeline rather than arbitrarily. The
+    # daily cron is 11:00 but GitHub's scheduler lags badly: the 2026-09-20 run
+    # STARTED at 14:37 and finished at 15:51. 18:00 leaves the state DB written
+    # and cached before this job restores it.
+    #
+    # Sharing a day with the daily pipeline costs flash budget, which is the
+    # real constraint: 20 requests a DAY, shared, and the daily spends ~13. The
+    # weekly's flagship work is the two cover essays plus the editorial; the
+    # week recap moved to flash-lite for exactly this reason, so a Sunday lands
+    # near 16-17 of 20 rather than 19.
+    - cron: '0 18 * * 0'
   workflow_dispatch:
     inputs:
       week_offset:
-        description: 'Weeks back from the week that just ended. 0=completed week, 1=the one before, -1=current partial week'
+        description: 'Weeks back from the week that closes this Sunday. 0=this week (Mon to Sun), 1=the week before, -1=the week still running'
         required: false
         default: '0'
 
@@ -82,11 +92,16 @@ jobs:
       # ── Pipeline state DB (SQLite) — RESTORE ONLY ──
       # The weekly reads the week's clusters, bias scores and daily briefs out of
       # the same state DB the daily pipeline writes. It restores the newest
-      # cached copy and never saves one back: the daily pipeline (11:00 UTC,
-      # 1.5-2h) is usually still running at 12:00, and a save here would push a
-      # pre-run copy of the state under a newer cache key and lose a day of work.
-      # Nothing is lost by not saving, because issue_number is derived from the
-      # week's date, not from the rows already stored.
+      # cached copy and never saves one back.
+      #
+      # On the old Monday 12:00 slot that was a hard requirement: the daily was
+      # usually still running, and a save would have pushed a pre-run copy of
+      # the state under a newer cache key and lost a day of work. At Sunday
+      # 18:00 the daily has finished, so that race is gone. Restore-only stays
+      # anyway, because the weekly adds nothing to the state that anything
+      # reads back: the issue is made durable by the deploy tree
+      # (build-data/weekly-issues.json), and issue_number is derived from the
+      # week's date rather than from the rows already stored.
       - name: Restore pipeline state DB
         uses: actions/cache/restore@v4
         with:

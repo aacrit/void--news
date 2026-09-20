@@ -23,7 +23,7 @@
 
 import { ImageResponse } from "next/og";
 import type { WeeklyDigestData } from "./types";
-import { formatArchiveRange, weeklyDisplayNo } from "./format";
+import { formatArchiveRange, issueLabel } from "./format";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -72,10 +72,9 @@ function clipHeadline(text: string, max = 92): string {
 }
 
 export async function issueCard(issue: WeeklyDigestData): Promise<ImageResponse> {
-  const no = weeklyDisplayNo(issue.issue_number);
   const headline = clipHeadline(issue.cover_headline || issue.cover_text?.[0]?.headline || "");
   const week = formatArchiveRange(issue.week_start, issue.week_end);
-  const kicker = `Issue No. ${no}  ·  ${week}`;
+  const kicker = `${issueLabel(issue.issue_number)}  ·  ${week}`;
 
   // EVERY glyph the card sets, or satori falls back mid-sentence: the subset
   // is built from the requested text, so a tagline whose letters the headline

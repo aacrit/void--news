@@ -147,6 +147,36 @@ def test_weekly_window():
            if weekly_window(d, 0)[0].weekday() != 0]
     check("52 Mondays all resolve to a Monday start", not bad, f"{len(bad)} bad")
 
+    # ── Sunday, the publication day ─────────────────────────────────────────
+    # Void Weekly ships Sunday evening and the issue covers the week the reader
+    # has just lived through. `weekday() + 1` walks back to the PREVIOUS Sunday
+    # from every day INCLUDING Sunday, which on publication day would skip the
+    # week that is closing as the issue goes out; `% 7` sends Sunday to zero
+    # and leaves every other weekday untouched.
+    sun = datetime(2026, 9, 20, 18, 0, tzinfo=timezone.utc)
+    s0, e0, i0 = weekly_window(sun, 0)
+    check("Sunday closes its own week",
+          s0.strftime("%Y-%m-%d") == "2026-09-14" and e0.strftime("%Y-%m-%d") == "2026-09-20",
+          f"{s0:%Y-%m-%d} to {e0:%Y-%m-%d}")
+    check("the launch Sunday is issue 26", i0 == 26, f"got {i0}")
+    check("the week ends on the Sunday it publishes", e0.weekday() == 6)
+
+    # And no other weekday moved. Saturday must still reach back a full week,
+    # or a mid-week dispatch would silently publish a partial one as complete.
+    for day, name in ((19, "Saturday"), (21, "Monday"), (17, "Thursday")):
+        d = datetime(2026, 9, day, 18, 0, tzinfo=timezone.utc)
+        st, en, _ = weekly_window(d, 0)
+        check(f"{name} still resolves to a completed week",
+              en.date() < d.date() and st.weekday() == 0,
+              f"{st:%Y-%m-%d} to {en:%Y-%m-%d}")
+
+    # Every Sunday of a year lands on a Monday start and a Sunday end.
+    bad_sun = [d for d in (datetime(2026, 1, 4, 18, tzinfo=timezone.utc) + timedelta(weeks=w)
+                           for w in range(52))
+               if weekly_window(d, 0)[0].weekday() != 0
+               or weekly_window(d, 0)[1].date() != d.date()]
+    check("52 Sundays each close their own week", not bad_sun, f"{len(bad_sun)} bad")
+
 
 # ---------------------------------------------------------------------------
 # W-T03  Export and reader must parse the same JSON fields

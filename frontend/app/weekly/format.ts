@@ -53,17 +53,93 @@ export function formatArchiveRange(start: string, end: string): string {
   return `${MONTHS_SHORT[am - 1]} ${ad} to ${MONTHS_SHORT[bm - 1]} ${bd}`;
 }
 
-/* The DB issue number counts from the generator's 2026-03-22 epoch, but the
-   section only launched publicly at issue 19, so #19 is the reader's #1. */
-export const WEEKLY_LAUNCH_ISSUE = 19;
+/* ---------------------------------------------------------------------------
+   Volume and number.
 
-export function weeklyDisplayNo(n: number): number {
-  return Math.max(1, (n ?? 0) - WEEKLY_LAUNCH_ISSUE + 1);
+   The DB `issue_number` counts weeks from the generator's 2026-03-22 epoch and
+   is the sort key. It is NOT what a reader sees.
+
+   Weekly launched as a Sunday magazine on 2026-09-20 with the week of
+   September 14, which is epoch issue 26. That issue is Vol. I, No. 1. A volume
+   is a year of publication, so numbers run 1 to 52 inside it and the volume
+   turns over rather than the number climbing to 147.
+
+   Issues published BEFORE the launch are pilots. They are kept and readable —
+   the work was real and the archive should not lie about what exists — but
+   they sit outside the volume numbering, because pretending the run started
+   earlier than it did would be the same kind of unearned claim the section
+   exists to catch. The old `weeklyDisplayNo` clamped with Math.max(1, ...),
+   which would have collapsed every pilot onto No. 1 alongside the launch.
+   --------------------------------------------------------------------------- */
+
+/** Epoch issue number of Vol. I, No. 1: the week of 2026-09-14. */
+export const WEEKLY_LAUNCH_ISSUE = 26;
+export const WEEKS_PER_VOLUME = 52;
+
+export interface IssueRef {
+  /** Published before the volume system began. */
+  pilot: boolean;
+  /** 1-based volume; 0 for a pilot. */
+  volume: number;
+  /** 1-based number within the volume; 0 for a pilot. */
+  number: number;
+  /** Position in the whole run, 1-based; 0 for a pilot. Sorting only. */
+  serial: number;
 }
 
-/** "08" — the folio number on every department plate. */
-export function issueFolio(n: number): string {
-  return String(weeklyDisplayNo(n)).padStart(2, "0");
+export function issueRef(raw: number | null | undefined): IssueRef {
+  // `NaN < 1` is false, so a non-finite issue number would fall through to the
+  // volume branch and print "Vol. NaN, No. NaN" on a cover. Checked first.
+  const n = Number(raw);
+  if (!Number.isFinite(n)) return { pilot: true, volume: 0, number: 0, serial: 0 };
+  const serial = n - WEEKLY_LAUNCH_ISSUE + 1;
+  if (serial < 1) return { pilot: true, volume: 0, number: 0, serial: 0 };
+  return {
+    pilot: false,
+    volume: Math.floor((serial - 1) / WEEKS_PER_VOLUME) + 1,
+    number: ((serial - 1) % WEEKS_PER_VOLUME) + 1,
+    serial,
+  };
+}
+
+const ROMAN: Array<[number, string]> = [
+  [1000, "M"], [900, "CM"], [500, "D"], [400, "CD"], [100, "C"], [90, "XC"],
+  [50, "L"], [40, "XL"], [10, "X"], [9, "IX"], [5, "V"], [4, "IV"], [1, "I"],
+];
+
+/** Volumes are set in roman, numbers in arabic. That is the convention, and it
+    is also what stops "Vol. 1, No. 1" from reading as a version string. */
+export function romanNumeral(n: number): string {
+  if (!Number.isFinite(n) || n < 1) return "";
+  let out = "";
+  let left = Math.floor(n);
+  for (const [v, sym] of ROMAN) {
+    while (left >= v) {
+      out += sym;
+      left -= v;
+    }
+  }
+  return out;
+}
+
+/** "Vol. I, No. 1" — the full label, for the cover and the share card. */
+export function issueLabel(raw: number | null | undefined): string {
+  const r = issueRef(raw);
+  if (r.pilot) return "Pilot issue";
+  return `Vol. ${romanNumeral(r.volume)}, No. ${r.number}`;
+}
+
+/** "I.01" — the folio on every department plate, where space is one line. */
+export function issueFolio(raw: number | null | undefined): string {
+  const r = issueRef(raw);
+  if (r.pilot) return "Pilot";
+  return `${romanNumeral(r.volume)}.${String(r.number).padStart(2, "0")}`;
+}
+
+/** "No. 1" / "Pilot" — the compact form for an index row or a back-issue line. */
+export function issueShort(raw: number | null | undefined): string {
+  const r = issueRef(raw);
+  return r.pilot ? "Pilot" : `No. ${r.number}`;
 }
 
 /* The three lenses, named the way the section names them. */

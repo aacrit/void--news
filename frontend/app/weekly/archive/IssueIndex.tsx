@@ -12,7 +12,7 @@
 import Link from "next/link";
 import type React from "react";
 import type { WeeklyDigestData } from "../types";
-import { formatArchiveRange, weeklyDisplayNo, essayParagraphs, clip } from "../format";
+import { formatArchiveRange, issueFolio, issueLabel, essayParagraphs, clip } from "../format";
 import { readingMinutes } from "../components/IssueUtilities";
 import { DepartmentPlate, InkRule } from "../components/furniture";
 import { useScrollReveal } from "../hooks";
@@ -33,7 +33,7 @@ function words(issue: WeeklyDigestData): number {
 }
 
 function Row({ issue }: { issue: WeeklyDigestData }) {
-  const no = weeklyDisplayNo(issue.issue_number);
+  const name = issueLabel(issue.issue_number);
   const lede = essayParagraphs(issue.cover_text?.[0]?.text || "")[0];
   const mins = readingMinutes(words(issue));
 
@@ -41,14 +41,16 @@ function Row({ issue }: { issue: WeeklyDigestData }) {
     <li className="wk-index__item">
       <Link className="wk-index__link" href={`/weekly/${issue.week_start}`}>
         <span className="wk-index__no" aria-hidden="true">
-          {String(no).padStart(2, "0")}
+          {issueFolio(issue.issue_number)}
         </span>
         <span className="wk-index__body">
           <span className="wk-index__week">
+            {name}
+            <span aria-hidden="true"> · </span>
             {formatArchiveRange(issue.week_start, issue.week_end)}
           </span>
           <span className="wk-index__headline">
-            {issue.cover_headline || `Issue #${no}`}
+            {issue.cover_headline || name}
           </span>
           {lede && <span className="wk-index__deck">{clip(lede, 150)}</span>}
           <span className="wk-index__meta">

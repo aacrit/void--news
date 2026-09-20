@@ -20,7 +20,7 @@ import Link from "next/link";
 import type React from "react";
 import type { WeeklyIssueSummary } from "../types";
 import { DepartmentPlate } from "./furniture";
-import { formatArchiveRange, weeklyDisplayNo } from "../format";
+import { formatArchiveRange, issueShort } from "../format";
 import { useScrollReveal } from "../hooks";
 
 export default function BackIssues({
@@ -63,7 +63,7 @@ export default function BackIssues({
           const inner = (
             <>
               <span className="wk-archive__issue">
-                #{weeklyDisplayNo(entry.issue_number)}
+                {issueShort(entry.issue_number)}
               </span>
               <span className="wk-archive__body">
                 <span className="wk-archive__range">

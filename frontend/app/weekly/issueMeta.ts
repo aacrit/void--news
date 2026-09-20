@@ -4,7 +4,7 @@
 import type { Metadata } from "next";
 import { SITE_URL, pageMetadata } from "../lib/siteMeta";
 import type { WeeklyDigestData } from "./types";
-import { clip, essayParagraphs, formatWeekRange, weeklyDisplayNo } from "./format";
+import { clip, essayParagraphs, formatWeekRange, issueLabel } from "./format";
 
 /**
  * Build the share card for one issue.
@@ -24,17 +24,17 @@ import { clip, essayParagraphs, formatWeekRange, weeklyDisplayNo } from "./forma
  * wire photograph and grants nothing to whoever scrapes it.
  */
 export function issueMetadata(issue: WeeklyDigestData, path: string): Metadata {
-  const no = weeklyDisplayNo(issue.issue_number);
+  const name = issueLabel(issue.issue_number);
   const range = formatWeekRange(issue.week_start, issue.week_end);
   const headline = issue.cover_headline || issue.cover_text?.[0]?.headline || "";
   const lede = essayParagraphs(issue.cover_text?.[0]?.text || "")[0] || "";
 
   const title = headline
-    ? `Issue #${no}: ${headline} · Weekly · Void News`
-    : `Issue #${no} · Weekly · Void News`;
+    ? `${name}: ${headline} · Weekly · Void News`
+    : `${name} · Weekly · Void News`;
   const description = lede
     ? clip(lede, 160)
-    : `Void News Weekly, issue #${no}, covering ${range}.`;
+    : `Void News Weekly, ${name}, covering ${range}.`;
 
   const base = pageMetadata({ title, description, path });
 

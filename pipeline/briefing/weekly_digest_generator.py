@@ -1050,9 +1050,17 @@ def _generate_week_recap(clusters, edition, skip_ids=None):
     # ~1,000 characters in a three-column block designed for 65-word items.
     parsed, calls, findings = None, 0, []
     for attempt in range(2):
+        # FLASH-LITE, not flash, and this is an improvement rather than a
+        # concession. Sharing Sunday with the daily pipeline leaves ~7 of the
+        # 20-a-day flash cap, and the flagship work is the two cover essays
+        # plus the editorial. The recap is ten 55-to-75 word briefs, which is
+        # exactly the shape flash-lite is good at — and because flash-lite has
+        # a high RPD, the enforcement pass below can regenerate freely instead
+        # of drawing on a budget of two. More retries on the smaller model
+        # beats one retry on the larger one for copy this short.
         raw = _smart_generate_text(
             prompt if attempt == 0 else prompt + retry_suffix(findings),
-            system_instruction=RECAP_SYSTEM, model=_FLASH_MODEL,
+            system_instruction=RECAP_SYSTEM,
         )
         calls += 1
         parsed = _parse_recap(raw)
@@ -1084,7 +1092,7 @@ def _generate_week_recap(clusters, edition, skip_ids=None):
             if attempt:
                 print("    [brief] clean on regeneration")
             break
-        if attempt == 1 or not _may_retry(_FLASH_MODEL):
+        if attempt == 1:
             print(f"    [brief] shipped with: {'; '.join(findings)}")
             break
         print(f"    [brief] rejected: {'; '.join(findings)} — regenerating")
