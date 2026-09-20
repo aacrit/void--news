@@ -399,6 +399,53 @@ def test_quote_matches_its_best_source_not_its_first():
     print("PASS  a quote resolves to its best source, not its first")
 
 
+def test_h11_reads_the_hedge_wherever_the_record_puts_it():
+    """A clean speaker name with a hedge in context/work must still fire H-11.
+
+    Four drafters, on four unrelated events, found records shaped exactly like
+    this: the speaker reads as a plain name while the disclaimer sits in the
+    context or work field. H-11 read only the speaker, so every one of them
+    would have passed as direct speech. Each was caught by a writer reading the
+    data by hand, which is not a control.
+
+    The live example this test was written from: great-leap-forward voiced
+    "It is better to let half of the people die..." as Mao's own words. The
+    record's work field says "quoted in Dikotter, Mao's Great Famine" - a
+    historian's book, not a transcript - and the episode had already shipped.
+    """
+    import sys, pathlib as _p
+    sys.path.insert(0, str(_p.Path(__file__).resolve().parents[1] / "pipeline"))
+    from history.script_format import parse_script, validate_script
+
+    event = {
+        "title": "T", "summary": "s",
+        "perspectives": [{"title": f"P{i}", "summary": "x"} for i in range(1, 6)],
+        "primary_source_excerpts": [{
+            "text": "It is better to let half of the people die.",
+            "author": "Mao Zedong",                       # clean name
+            "work": "Remark, quoted in Dikotter",         # hedge lives HERE
+        }],
+    }
+    body = ("## OPEN\nN: open.\n\n## SCENE 1 | s\n"
+            "N: In Shanghai, Mao Zedong told a party conference what he meant.\n"
+            "## DOCUMENT | Mao Zedong | Remark | 1959\n"
+            "N: Mao Zedong said this.\n"
+            "M: It is better to let half of the people die.\n\n"
+            "## TURN\nN: t.\n\n"
+            + "".join(f"## PERSPECTIVE | P{i} | academic\nN: case {i}.\n\n" for i in range(1, 6))
+            + "## CLOSE\nN: close.\n")
+    ids = {f.id for f in validate_script(parse_script(body, "t"), event)}
+    assert "H-11" in ids, f"hedge in work field not caught: {ids}"
+
+    # Saying it aloud clears it.
+    said = body.replace("N: Mao Zedong said this.",
+                        "N: Mao Zedong said this, in a remark quoted in Dikotter's history.")
+    ids = {f.id for f in validate_script(parse_script(said, "t"), event)}
+    assert "H-11" not in ids, f"disclosure did not clear H-11: {ids}"
+    print("PASS  H-11 reads the hedge in context and work, not only in speaker")
+
+
 if __name__ == "__main__":
     test_check_script_prints_findings()
+    test_h11_reads_the_hedge_wherever_the_record_puts_it()
     test_quote_matches_its_best_source_not_its_first()

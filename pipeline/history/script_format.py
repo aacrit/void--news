@@ -264,8 +264,27 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
     excerpts = event.get("primary_source_excerpts") or []
     quotes = [q for p in (event.get("perspectives") or [])
               for q in (p.get("notable_quotes") or [])]
+    # The hedge is not always in the speaker field. Four drafters, on four
+    # unrelated events, found a record whose speaker reads as a clean name
+    # while its CONTEXT or WORK field carries the disclaimer: "Reported by
+    # Anthony Nutting in No End of a Lesson", "as recorded by Capuchin
+    # missionaries", "Paraphrased from scholarship", "Attributed". H-11 read
+    # only the speaker, so each of those would have passed the gate as direct
+    # speech. Every one was caught by a writer reading the data instead, which
+    # is not a control. Carry all three fields and hedge on any of them.
+    # H-04 needs the speaker's NAME and nothing else, so it stays clean here.
+    # H-11 needs everything the record says ABOUT the attribution, so it gets a
+    # parallel lookup. Folding both into one string broke H-04, which then
+    # demanded the narration say "Anonymous Gesta Francorum (Deeds of the
+    # Franks)" out loud.
     sourced = [(_norm(e.get("text", "")), e.get("author", "")) for e in excerpts]
     sourced += [(_norm(q.get("text", "")), q.get("speaker", "")) for q in quotes]
+
+    def _attrib(d: dict, name_key: str) -> str:
+        return " ".join(str(d.get(k) or "") for k in (name_key, "context", "work"))
+
+    ATTRIBUTION = {_norm(e.get("text", "")): _attrib(e, "author") for e in excerpts}
+    ATTRIBUTION.update({_norm(q.get("text", "")): _attrib(q, "speaker") for q in quotes})
 
     # A source whose own speaker field says the words are not verbatim. The
     # record marks these; nothing read them before H-11. "summary" is NOT here:
@@ -374,7 +393,7 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
                 # defect class H-04 shipped with, where "king" inside
                 # "striking" passed for Martin Luther King. Short whole words
                 # need the trailing guard too, or they match half the roster.
-                who = (match[1] or "").lower()
+                who = (ATTRIBUTION.get(match[0]) or match[1] or "").lower()
 
                 def _marked(h: str) -> bool:
                     # Only a short BARE word needs the trailing guard ("via"
@@ -392,8 +411,9 @@ def validate_script(script: Script, event: dict) -> list[Finding]:
                                      + [_norm(x.text) for x in seg.lines
                                         if x.speaker == "N"])
                     if not any(h in aloud for h in SPOKEN_HEDGE):
+                        marked = (ATTRIBUTION.get(match[0]) or match[1] or "").strip()
                         out.append(Finding("H-11", "fail", label,
-                                           f"the record marks this line {match[1]!r}, and nothing "
+                                           f"the record marks this line {marked!r}, and nothing "
                                            f"says so aloud: either say it is attributed, or narrate "
                                            f"the position instead of reading it as their words"))
 
