@@ -64,6 +64,11 @@ jobs:
           pip install -q boto3 'moto[s3]' 2>/dev/null || true
           python tests/test_media_r2.py
           python tests/test_history_audio.py
+          python tests/test_weekly.py
+          python tests/test_weekly_script.py
+          python tests/test_weekly_assembly.py
+          pip install --quiet pyyaml
+          python tests/test_history_script.py
 
   # End-to-end run of the editorial half of the pipeline (8c through 8f plus
   # the static export) against a synthetic state DB built from the committed
@@ -128,7 +133,9 @@ jobs:
       - name: Fetch Kokoro model files (verified against kokoro.lock.json)
         run: python pipeline/briefing/kokoro_assets.py
       - name: Assembly harness (fake engine)
-        run: python tests/test_radio_assembly.py
+        run: |
+          python tests/test_radio_assembly.py
+          python tests/test_weekly_assembly.py
       - name: Kokoro timing bench
         env:
           VOID_TTS_ENGINE: kokoro-only

@@ -410,6 +410,19 @@ CREATE TABLE IF NOT EXISTS weekly_digests (
   audio_voice_label         TEXT,
   -- 065 editor's note
   editor_note               TEXT,
+  -- 2026-09-20 magazine rebuild. `departments` carries the front-of-book
+  -- essays (Technology, Sports & Culture) that were GENERATED every week and
+  -- never persisted; one ordered JSON array rather than a column per
+  -- department, because front-of-book order is editorial data and because
+  -- adding a column here costs five edits in five files and this table has
+  -- already lost two of them (cover_timelines and cover_numbers are missing
+  -- from the exporter's parse list). `opinions` is the flat array that keeps
+  -- the LEFT/RIGHT dialectic intact; the three lean buckets are still written
+  -- beside it for back-compat and are a partition of it.
+  departments               TEXT,
+  opinions                  TEXT,
+  -- "The Argument" chapter rail (JSON array), 2026-09-20.
+  audio_chapters            TEXT,
   UNIQUE(edition, week_start)
 );
 CREATE INDEX IF NOT EXISTS idx_weekly_digests_edition_created ON weekly_digests(edition, created_at DESC);

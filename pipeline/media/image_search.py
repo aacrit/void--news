@@ -469,9 +469,11 @@ def find_cover_image_for_cluster(
     # Wikimedia Commons. search_wikimedia already refuses anything that is not
     # cc0 / public-domain / cc-by / cc-by-sa.
     for best in search_wikimedia(cluster_title, max_results=3):
-        # The RENDERED thumbnail, not the original. `url` is the full-size file,
-        # which on Commons routinely runs to several megabytes; putting that
-        # behind a magazine hero is the same mistake History's images made.
+        # Serve the WIKI_RENDER_WIDTH render, not the Commons original. The
+        # original is the camera's full-resolution file and is routinely tens of
+        # megabytes; hotlinking it puts that on the cover of every weekly page
+        # load. `iiurlwidth` is requested precisely so `thumburl` exists, and it
+        # was being computed and then discarded here.
         url = best.thumbnail_url or best.url
         if verify_image(url):
             return {

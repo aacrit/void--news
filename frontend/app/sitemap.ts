@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { SITE_URL } from "./lib/siteMeta";
 import { getArchiveRows, storyHref } from "./lib/archive";
 import { getHistorySlugs } from "./lib/historyCatalog";
+import { getWeeklyIssues } from "./lib/weeklyIssues";
 
 /* Static sitemap, emitted at build time as /sitemap.xml. Compatible with
    output:"export" (runs once at build, no request-time work). */
@@ -62,5 +63,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.5,
   }));
 
-  return [...staticEntries, ...historyEntries, ...storyEntries];
+  // Every back issue: /weekly/<week_start>/. A published issue is permanent
+  // and does not change after its Monday, so the newest decays weekly and the
+  // rest monthly — the same shape the story archive uses.
+  const issues = getWeeklyIssues();
+  const weeklyEntries: MetadataRoute.Sitemap = issues.map((issue, i) => ({
+    url: `${SITE_URL}/weekly/${issue.week_start}/`,
+    lastModified: issue.created_at ? new Date(issue.created_at) : undefined,
+    changeFrequency: i === 0 ? ("weekly" as const) : ("monthly" as const),
+    priority: i === 0 ? 0.7 : 0.4,
+  }));
+
+  return [...staticEntries, ...weeklyEntries, ...historyEntries, ...storyEntries];
 }

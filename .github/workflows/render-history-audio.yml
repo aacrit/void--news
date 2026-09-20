@@ -1,0 +1,184 @@
+name: "History: render audio editions"
+
+# Renders History scripts into finished audio documentaries, in parallel.
+#
+# One episode is ~10 minutes of wall clock on a 4-core runner (Kokoro's rtf is
+# near 1.0 with two workers, plus mastering), so the 78-event catalogue is
+# about thirteen hours in a straight line. Fanning out over the matrix turns
+# that into batches: ten at a time is roughly ninety minutes for the lot.
+#
+# Each shard renders ONE slug and uploads it. A single publish job then folds
+# every shard's output into the site in one commit, because ten jobs each
+# committing to the same branch is a race, and the manifest is one file.
+#
+#   slugs: "partition-of-india,apollo-11-moon-landing"  — render exactly these
+#   slugs: "auto"                                        — the next `count`
+#                                                          scripts with no
+#                                                          published episode
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+    inputs:
+      slugs:
+        description: 'Comma-separated event slugs, or "auto"'
+        required: false
+        default: 'auto'
+        type: string
+      count:
+        description: 'How many to take when slugs is "auto"'
+        required: false
+        default: '10'
+        type: string
+      publish:
+        description: 'Commit the rendered episodes to this branch'
+        required: false
+        default: true
+        type: boolean
+
+concurrency:
+  group: history-audio-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      slugs: ${{ steps.pick.outputs.slugs }}
+      count: ${{ steps.pick.outputs.count }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - id: pick
+        env:
+          SLUGS: ${{ inputs.slugs }}
+          COUNT: ${{ inputs.count }}
+        run: |
+          python - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, os, subprocess, sys
+          raw = (os.environ.get("SLUGS") or "auto").strip()
+          if raw.lower() == "auto":
+              n = int(os.environ.get("COUNT") or 10)
+              out = subprocess.run([sys.executable, "pipeline/history/publish_audio.py",
+                                    "--pending", str(n)],
+                                   capture_output=True, text=True, check=True).stdout
+              slugs = json.loads(out)
+          else:
+              slugs = [s.strip() for s in raw.split(",") if s.strip()]
+          if not slugs:
+              raise SystemExit("nothing to render: every script already has an episode")
+          print(f"slugs={json.dumps(slugs)}")
+          print(f"count={len(slugs)}")
+          PY
+      - run: echo "Rendering ${{ steps.pick.outputs.count }} episode(s) - ${{ steps.pick.outputs.slugs }}"
+
+  render:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      max-parallel: 10
+      matrix:
+        slug: ${{ fromJson(needs.plan.outputs.slugs) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg espeak-ng
+      - name: Install audio dependencies
+        run: pip install --quiet "numpy~=1.26.4" pydub mutagen pyyaml "edge-tts>=6.1.0"
+      # Same Kokoro setup as the radio-audio gate: own venv (numpy 2 against the
+      # pipeline's 1.26) and sha256-pinned model files.
+      - name: Cache Kokoro model files
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/void-kokoro
+          key: kokoro-${{ hashFiles('pipeline/briefing/kokoro.lock.json') }}
+      - name: Cache TTS venv
+        id: tts-venv
+        uses: actions/cache@v4
+        with:
+          path: .venv-tts
+          key: venv-tts-py3.11-${{ hashFiles('pipeline/requirements-tts.txt') }}
+      - name: Build TTS venv (cache miss)
+        if: steps.tts-venv.outputs.cache-hit != 'true'
+        run: python -m venv .venv-tts && .venv-tts/bin/pip install -q -r pipeline/requirements-tts.txt
+      - name: Fetch Kokoro model files
+        run: python pipeline/briefing/kokoro_assets.py
+      # The sound bed is committed (pipeline/briefing/assets), rendered
+      # deterministically by generate_assets.py. No other workflow regenerates
+      # it, and this one must not either: an episode should carry the same
+      # music as the show it sits beside.
+      - name: Render ${{ matrix.slug }}
+        env:
+          VOID_TTS_ENGINE: kokoro-only
+          VOID_KOKORO_PYTHON: .venv-tts/bin/python
+        run: python pipeline/history/history_producer.py "${{ matrix.slug }}" --out out-audio
+      - uses: actions/upload-artifact@v4
+        with:
+          name: history-episode-${{ matrix.slug }}
+          path: out-audio/
+          retention-days: 3
+          if-no-files-found: error
+
+  publish:
+    needs: [plan, render]
+    # Publish whatever rendered, even if a shard failed: nine good episodes
+    # should not wait on the tenth, and the tenth can be re-dispatched alone.
+    if: ${{ always() && inputs.publish }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install ffprobe
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: history-episode-*
+          merge-multiple: true
+          path: rendered
+      - name: Publish into the site
+        run: |
+          set -e
+          ls -la rendered/ || { echo "nothing rendered"; exit 1; }
+          SLUGS=$(cd rendered && ls *.mp3 2>/dev/null | sed 's/\.mp3$//' | tr '\n' ' ')
+          [ -n "$SLUGS" ] || { echo "no episodes to publish"; exit 1; }
+          echo "publishing: $SLUGS"
+          python pipeline/history/publish_audio.py $SLUGS --from rendered
+          python tests/test_history_audio.py
+      - name: Store the audio outside git
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python pipeline/history/release_store.py upload \
+            frontend/public/audio/history/*.mp3
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # The MP3s are gitignored and live in the release; this commits the
+          # manifest and the chapter sidecars, which are a few KB in total.
+          git add -A frontend/public/audio/history frontend/public/data/history-audio.json
+          if git diff --cached --quiet; then
+            echo "no change"; exit 0
+          fi
+          git commit -m "History: publish rendered audio editions" \
+                     -m "Rendered by .github/workflows/render-history-audio.yml."
+          for i in 1 2 3 4; do
+            git pull --rebase origin "${{ github.ref_name }}" && \
+              git push origin HEAD:"${{ github.ref_name }}" && break
+            sleep $((2 ** i))
+          done

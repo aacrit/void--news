@@ -1,0 +1,72 @@
+{
+ "version": "1.2.0",
+ "title": "The Gutenberg Revolution",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 53.01
+  },
+  {
+   "startTime": 53.01,
+   "title": "The judgement",
+   "endTime": 115.961
+  },
+  {
+   "startTime": 115.961,
+   "title": "The system",
+   "endTime": 204.451
+  },
+  {
+   "startTime": 204.451,
+   "title": "Fifty years",
+   "endTime": 248.983
+  },
+  {
+   "startTime": 248.983,
+   "title": "Wittenberg",
+   "endTime": 311.153
+  },
+  {
+   "startTime": 311.153,
+   "title": "Five accounts",
+   "endTime": 317.897
+  },
+  {
+   "startTime": 317.897,
+   "title": "The printers",
+   "endTime": 361.378
+  },
+  {
+   "startTime": 361.378,
+   "title": "The Catholic Church",
+   "endTime": 431.15
+  },
+  {
+   "startTime": 431.15,
+   "title": "The Chinese and Korean precedent",
+   "endTime": 491.413
+  },
+  {
+   "startTime": 491.413,
+   "title": "The pamphlet war",
+   "endTime": 535.449
+  },
+  {
+   "startTime": 535.449,
+   "title": "The information theorists",
+   "endTime": 594.969
+  },
+  {
+   "startTime": 594.969,
+   "title": "What each one leaves out",
+   "endTime": 658.493
+  },
+  {
+   "startTime": 658.493,
+   "title": "Legacy",
+   "endTime": 700.882
+  }
+ ]
+}

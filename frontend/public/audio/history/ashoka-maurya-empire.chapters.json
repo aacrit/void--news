@@ -1,0 +1,67 @@
+{
+ "version": "1.2.0",
+ "title": "Ashoka and the Maurya Empire",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 50.088
+  },
+  {
+   "startTime": 50.088,
+   "title": "Kalinga",
+   "endTime": 134.564
+  },
+  {
+   "startTime": 134.564,
+   "title": "The machine he inherited",
+   "endTime": 193.982
+  },
+  {
+   "startTime": 193.982,
+   "title": "What he did with it",
+   "endTime": 272.158
+  },
+  {
+   "startTime": 272.158,
+   "title": "Five accounts",
+   "endTime": 279.926
+  },
+  {
+   "startTime": 279.926,
+   "title": "Ashoka's own account",
+   "endTime": 323.834
+  },
+  {
+   "startTime": 323.834,
+   "title": "Kalinga",
+   "endTime": 369.538
+  },
+  {
+   "startTime": 369.538,
+   "title": "The Buddhist tradition",
+   "endTime": 417.414
+  },
+  {
+   "startTime": 417.414,
+   "title": "The Ambedkarite reading",
+   "endTime": 483.844
+  },
+  {
+   "startTime": 483.844,
+   "title": "The southern kingdoms",
+   "endTime": 540.869
+  },
+  {
+   "startTime": 540.869,
+   "title": "What each one leaves out",
+   "endTime": 615.379
+  },
+  {
+   "startTime": 615.379,
+   "title": "Legacy",
+   "endTime": 678.867
+  }
+ ]
+}

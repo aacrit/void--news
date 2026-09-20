@@ -1,0 +1,77 @@
+{
+ "version": "1.2.0",
+ "title": "The Crusades",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 55.783
+  },
+  {
+   "startTime": 55.783,
+   "title": "God wills it",
+   "endTime": 102.641
+  },
+  {
+   "startTime": 102.641,
+   "title": "Speyer, Worms, Mainz",
+   "endTime": 168.477
+  },
+  {
+   "startTime": 168.477,
+   "title": "The fifteenth of July, ten ninety nine",
+   "endTime": 241.449
+  },
+  {
+   "startTime": 241.449,
+   "title": "Eighty eight years later",
+   "endTime": 296.051
+  },
+  {
+   "startTime": 296.051,
+   "title": "The wrong city",
+   "endTime": 355.247
+  },
+  {
+   "startTime": 355.247,
+   "title": "Five accounts",
+   "endTime": 363.783
+  },
+  {
+   "startTime": 363.783,
+   "title": "The Latin crusaders",
+   "endTime": 436.506
+  },
+  {
+   "startTime": 436.506,
+   "title": "The Muslim world",
+   "endTime": 503.767
+  },
+  {
+   "startTime": 503.767,
+   "title": "Byzantium",
+   "endTime": 572.606
+  },
+  {
+   "startTime": 572.606,
+   "title": "The modern historians",
+   "endTime": 641.688
+  },
+  {
+   "startTime": 641.688,
+   "title": "The Rhineland",
+   "endTime": 703.434
+  },
+  {
+   "startTime": 703.434,
+   "title": "What each one leaves out",
+   "endTime": 781.806
+  },
+  {
+   "startTime": 781.806,
+   "title": "Legacy",
+   "endTime": 841.156
+  }
+ ]
+}

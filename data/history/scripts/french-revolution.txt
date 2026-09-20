@@ -1,0 +1,126 @@
+## OPEN
+N: The founding act of the French revolution was the storming of a fortress that held seven prisoners.
+N: Four forgers, two men who were insane, and one young aristocrat whose family had put him there for bad behaviour.
+N: What the crowd took that day was not a population of captives. It was a building, and everybody involved understood that was the point.
+N: Four years later they executed the king. Eighteen months after that they were executing the men who had voted to execute the king.
+
+## TITLE
+N: The French revolution. Seventeen eighty nine to seventeen ninety nine.
+
+## SCENE 1 | The fourteenth of July
+N: About a thousand Parisians come to the Bastille on the morning of the fourteenth of July, seventeen eighty nine, wanting the gunpowder stored inside it.
+N: It is defended by eighty two retired soldiers and thirty two Swiss guards. They hold out for four hours and surrender.
+N: The crowd kills the governor and carries his head through the streets on a pike.
+N: The prison itself was nearly empty and was already scheduled for demolition on grounds of cost.
+
+## SCENE 2 | Eighty eight per cent
+N: The reason a crowd was on the street at all is in the household accounts.
+N: France had helped the American colonies win their war and had bankrupted itself doing it. The national debt stood at four and a half billion livres.
+N: Then a decade of bad harvests put bread at its highest price in thirty years. By seventeen eighty nine a labourer in Paris was spending eighty eight per cent of his wages on bread.
+N: In May the king convened the Estates General, the old assembly of the three orders, for the first time since sixteen fourteen. The third estate, which was ninety eight per cent of the population, demanded that votes be counted by head rather than by order, which would have given them a majority.
+N: The king refused. On the twentieth of June they locked themselves in a tennis court and swore not to disperse until France had a constitution.
+
+## DOCUMENT | National Assembly of France | Declaration of the Rights of Man and of the Citizen | August 26, 1789
+N: Six weeks after the Bastille, the National Assembly published seventeen articles, and this is the first one.
+M: Men are born and remain free and equal in rights. Social distinctions may be based only upon general usefulness.
+
+## SCENE 3 | The acceleration
+N: In two years the assembly abolishes feudal privilege, confiscates the property of the church, and writes a constitutional monarchy.
+N: In April seventeen ninety two it declares war on Austria, which begins twenty three years of European war.
+N: In September the monarchy is abolished altogether. The king is tried for treason.
+
+## DOCUMENT | Maximilien Robespierre | Speech to the Convention | December 3, 1792
+N: Maximilien Robespierre, a provincial lawyer who had once campaigned against the death penalty, made the argument for killing him.
+M: It is with regret that I pronounce the fatal truth. Louis must die so that the country may live.
+N: He was executed on the twenty first of January, seventeen ninety three. The queen followed in October.
+
+## REST
+
+## SCENE 4 | The Terror
+N: From September seventeen ninety three the Committee of Public Safety governs France, with Robespierre at its centre, and the machinery of the revolution turns inward.
+N: The revolutionary tribunal sends about sixteen and a half thousand people to the guillotine. Across the whole country the executions reach roughly forty thousand.
+N: And in the Vendee, in the west, where a rural population rose against conscription and the attack on the church, the republic fought a civil war that killed somewhere between a hundred and seventy and two hundred and fifty thousand people.
+N: In the first week of November seventeen ninety three the tribunal executed Olympe de Gouges, who had written a declaration of the rights of woman arguing that the seventeen articles should apply to her too, and five days later it executed a woman who had run one of the revolution's own political salons.
+
+## DOCUMENT | Madame Roland | Words at the scaffold | November 8, 1793
+N: What Madame Roland is recorded as saying, looking at a statue of Liberty beside the guillotine, is the line the whole decade is remembered by.
+F: O liberty! What crimes are committed in thy name!
+
+## DOCUMENT | Maximilien Robespierre | Speech to the Convention | February 5, 1794
+N: Three months later Robespierre set out the doctrine to the Convention, and he was not hiding anything.
+M: If the basis of popular government in peacetime is virtue, the basis of popular government during a revolution is both virtue and terror.
+N: He was guillotined in July.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts of ten years.
+
+## PERSPECTIVE | The republicans | victor
+N: The first says this is where the modern world starts, and the claim is specific.
+N: Before seventeen eighty nine, authority in France came down from God through a king. After the declaration, sovereignty is stated to reside in the nation. That is not a reform of the old arrangement. It is a replacement of it.
+N: Everything that followed in Europe for a century and a half argued inside the vocabulary invented in those ten years. Citizen. Republic. Nation. Left and right, which are literally where people sat in the assembly.
+N: On the Terror the republican account does not deny the killing. It points at the situation: foreign armies on French soil, a civil war in the west, and a government three years old.
+
+## PERSPECTIVE | The royalists | vanquished
+N: The second account was published in London in seventeen ninety, and its force comes from its date.
+N: Edmund Burke wrote his attack on the revolution before the Terror, before the king was killed, before the wars. He predicted the sequence.
+N: His argument was not that the old order was just. It was that a society is held up by things nobody designed. Church, guild, province, custom, rank. Tear all of them out at once in the name of reason, and you have not freed the individual. You have left him alone in a room with the state.
+N: What he predicted specifically was that this would end with a general. In November seventeen ninety nine it did.
+
+## REST | short
+
+## PERSPECTIVE | The enslaved | revisionist
+N: The third account tested the first article of the declaration within eighteen months, and it did not test it in France.
+N: Saint-Domingue, the French colony on Hispaniola, produced forty per cent of the world's sugar and sixty per cent of its coffee, worked by about five hundred thousand enslaved people.
+N: When the declaration arrived, the colony's forty thousand white colonists and thirty thousand free people of colour began a legal argument about who exactly counted as a man born free and equal in rights.
+N: On the twenty second of August seventeen ninety one, while that argument was still going on, the enslaved answered it themselves, in a coordinated rising across the northern plain.
+N: Men are born and remain free and equal in rights was written in Paris. It was enforced, first, by people the men who wrote it did not have in mind.
+
+## PERSPECTIVE | The colonies | vanquished
+N: The fourth account is about what Paris did next, and the dates are the argument.
+N: In August seventeen ninety three a French commissioner in Saint-Domingue proclaimed emancipation there, without authority from home, because he needed soldiers against a Spanish invasion.
+N: In February seventeen ninety four the Convention in Paris abolished slavery in all French colonies, and it was the first colonial power to do it.
+N: It was ratifying a situation. The enslaved had taken the colony and the republic needed them on its side.
+N: Eight years later Napoleon restored slavery in the French empire. Which tells you what the vote in seventeen ninety four had actually been.
+
+## PERSPECTIVE | Modern scholarship | academic
+N: The fifth account is the argument about the other four, and it has been running for two hundred years.
+N: For most of the twentieth century the dominant reading was a class one. A rising commercial middle class overthrew a feudal aristocracy and built property relations that suited it, and the crowd in the street was the instrument.
+N: Then that was picked apart. The people who made the revolution turn out to be lawyers, officials and professionals more than merchants, and plenty of nobles were in it.
+N: What survives the argument is that no single frame holds it. It was a fiscal crisis, a food crisis, a constitutional revolution, a religious war in the west, a colonial revolution in the Caribbean and a European war, all inside one decade, and historians pick which of those is the spine.
+
+## REST
+
+## TURN | What each one leaves out
+N: And what each of them sets aside.
+N: The republican account treats the Terror as circumstance. The emergency was real and the guillotine kept working after the emergency receded, and the republic that proclaimed the rights of man executed a woman in November seventeen ninety three for writing that they should include women.
+N: The royalist account was right about the outcome and is silent about the starting conditions. Burke had nothing to say about a labourer spending nearly nine tenths of his wages on bread, and an order that produces that is not being held up by custom. It is being held up by hunger.
+N: The account from Saint-Domingue is the strongest reading of the declaration and it is not a reading the declaration's authors would have accepted, which is exactly why it matters and why France spent two centuries filing it elsewhere.
+N: The colonial account can turn the abolition of seventeen ninety four into pure cynicism. It was cynical and it was also a law, and the enslaved who forced it used it.
+N: And the scholarly account has the luxury of not needing a verdict. Everyone who lived through it needed one.
+
+## REST
+
+## CLOSE
+N: The Declaration of the Rights of Man is the direct ancestor of every modern human rights instrument, and it was written by an assembly that within four years was executing its own members in batches.
+N: Both of those are the same document and the same decade.
+N: The revolution ended in November seventeen ninety nine, when an artillery officer from Corsica took power in a coup, exactly as Burke had said it would.
+N: And the fortress that started it was taken apart for building material. Its stones were carved into souvenirs and sold.
+
+## SAY
+Bastille = bas-TEEL
+livres = LEEV-ruh
+Estates General = es-TAYTS JEN-er-al
+Robespierre = ROHBZ-pee-air
+Maximilien = mak-see-mee-LYEN
+Vendee = von-DAY
+Olympe de Gouges = oh-LAMP duh GOOZH
+Roland = roh-LAHN
+Saint-Domingue = san doh-MANG
+Hispaniola = his-pan-YOH-lah
+Convention = kon-VEN-shun
+Napoleon = nah-POH-lee-on
+Corsica = KOR-sik-ah
+Burke = BURK
+guillotine = GIL-oh-teen

@@ -1,0 +1,72 @@
+{
+ "version": "1.2.0",
+ "title": "The Transatlantic Slave Trade",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 55.754
+  },
+  {
+   "startTime": 55.754,
+   "title": "The Zong",
+   "endTime": 141.182
+  },
+  {
+   "startTime": 141.182,
+   "title": "Six feet by sixteen inches",
+   "endTime": 234.599
+  },
+  {
+   "startTime": 234.599,
+   "title": "The triangle",
+   "endTime": 295.899
+  },
+  {
+   "startTime": 295.899,
+   "title": "Four hundred and ninety three",
+   "endTime": 355.633
+  },
+  {
+   "startTime": 355.633,
+   "title": "Five accounts",
+   "endTime": 361.225
+  },
+  {
+   "startTime": 361.225,
+   "title": "The European ledger",
+   "endTime": 425.571
+  },
+  {
+   "startTime": 425.571,
+   "title": "The diaspora",
+   "endTime": 502.105
+  },
+  {
+   "startTime": 502.105,
+   "title": "The African continent",
+   "endTime": 565.569
+  },
+  {
+   "startTime": 565.569,
+   "title": "The abolitionists",
+   "endTime": 650.237
+  },
+  {
+   "startTime": 650.237,
+   "title": "The African states that sold",
+   "endTime": 721.149
+  },
+  {
+   "startTime": 721.149,
+   "title": "What each one leaves out",
+   "endTime": 792.971
+  },
+  {
+   "startTime": 792.971,
+   "title": "Legacy",
+   "endTime": 857.71
+  }
+ ]
+}

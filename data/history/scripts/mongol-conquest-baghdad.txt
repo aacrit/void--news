@@ -1,0 +1,162 @@
+## OPEN
+N: You think you know this one. Mongol riders swept out of the steppe and destroyed the capital of the Islamic world, alone.
+N: The force that surrounded Baghdad's walls in twelve fifty eight ran to somewhere between one hundred twenty thousand and one hundred fifty thousand troops, and it was not only Mongol. Chinese siege engineers rode with it. So did Georgian Christian cavalry, and Armenian troops.
+N: Behind the walls stood twenty thousand men under the last Abbasid caliph, many of them demoralized, many unpaid.
+N: This was not two civilizations meeting on a battlefield. It was a coalition, arriving at a caliphate that had already stopped being able to defend itself.
+
+## TITLE
+N: The Mongol Conquest of Baghdad. January twenty ninth to February tenth, twelve fifty eight.
+
+## SCENE 1 | The ultimatum, 1257
+N: A year earlier, Hulagu Khan had sent envoys to the caliph with three demands. Submit. Dismantle Baghdad's fortifications. Come in person to the Mongol court.
+N: This was not empty theater. Cities that took the offer kept their populations and their governments. Mosul had already submitted, and Mosul was spared.
+N: Inside the caliph's court, his vizier, Ibn al-Alqami, a Shia Muslim serving a Sunni caliph, is said to have urged him to reduce his army and negotiate rather than fight.
+N: Al-Musta'sim refused the ultimatum, and kept his army as it was.
+
+## DOCUMENT | Attributed to Hulagu Khan | message to Caliph al-Musta'sim | 1257
+N: The message Hulagu is said to have sent, attributed to him by the Mongol court's own historians, was blunt.
+M: God is the lord of the whole earth. He has given us a commandment to conquer the world.
+
+## ASIDE
+N: An offer like this was never rhetorical. Mosul had proven it. Baghdad's refusal was a wager the caliph's own army could not back up.
+
+## REST
+
+## SCENE 2 | The walls, January 29 to February 10, 1258
+N: The siege lasted thirteen days, from January the twenty ninth to February the tenth. Twenty thousand men, many demoralized, many unpaid, held Baghdad's walls against the coalition now waiting outside them.
+N: On February the tenth, the walls gave way.
+N: Baghdad's population before the siege had stood at one to two million people.
+
+## DOCUMENT | Ibn Kathir | Al-Bidaya wa'l-Nihaya | c. 1350
+N: Writing nearly a century later, the historian Ibn Kathir described what the army did once it was inside.
+M: They swept through the city like hungry falcons attacking a flock of doves, or like raging wolves attacking sheep, with loose reins and shameless faces, murdering and spreading terror.
+
+## REST
+
+## SCENE 3 | The killing
+N: The killing that followed was not chaos. It was organized: the army divided into units, and every unit given a target.
+N: Accounts of how long it lasted disagree. Some say seven days. Others count forty.
+N: Al-Musta'sim was captured alive. Mongol custom held that royal blood must never touch bare ground, or it would offend the Eternal Blue Sky, Tengri. So the last Abbasid caliph was rolled inside a carpet and trampled by horses. Some sources say he was made to watch his sons killed first.
+
+## DOCUMENT | Rashid al-Din Hamadani | Jami al-Tawarikh | c. 1307
+N: Rashid al-Din served the Mongol Ilkhanid court and had access to its own military records. He put a number on every unit's target.
+M: The people of Baghdad were divided into groups, and each Mongol horseman was allotted a certain number to kill. Some were allotted twenty, some thirty, some fifty.
+
+## ASIDE
+N: Organized killing on a quota system is not a mob's fury. It is bureaucracy applied to slaughter, and the precision is what later chroniclers could not stop repeating.
+
+## REST | short
+
+## SCENE 4 | The House of Wisdom
+N: Baghdad's House of Wisdom had been founded under Caliph al-Ma'mun in the early ninth century, and it held one of the largest libraries anywhere in the world.
+N: Scholars there had translated Aristotle, Galen, Euclid and Ptolemy out of Greek and into Arabic. Mathematicians developed algebra there, named for al-Khwarizmi's ninth century treatise, and refined the Hindu numeral system into what the world now calls Arabic numerals.
+N: Multiple Arabic sources report that the Mongols threw the library's books into the Tigris, and that the river ran black with ink for days. Whether that happened literally or only in memory is debated.
+N: What is not debated: the House of Wisdom was destroyed, and its contents were lost.
+
+## DOCUMENT | Ata-Malik Juvayni | Tarikh-i Jahangushay | c. 1260
+N: Juvayni, writing for the Mongol court a few years after the fact, described what that destruction looked like.
+M: With one stroke, a world which billowed with fertility was laid desolate, and the regions thereof became a desert, and the greater part of the living dead, and their skin and bones crumbling dust.
+
+## REST
+
+## SCENE 5 | The observatory
+N: Hulagu had brought the Persian polymath Nasir al-Din al-Tusi with him. Al-Tusi had been held at the Ismaili fortress of Alamut, which the Mongols destroyed in twelve fifty six, and he joined Hulagu's retinue afterward, whether as a willing collaborator or a captive making the best of it remains unclear.
+N: After Baghdad fell, Hulagu commissioned al-Tusi to build the Maragheh Observatory in northwestern Persia, the most advanced astronomical facility in the world, stocked with books, instruments and scholars salvaged from the very cities the Mongols had sacked.
+N: A mathematical device developed there for resolving circular planetary motion, the Tusi couple, later appeared in Copernicus's De Revolutionibus, in fifteen forty three.
+
+## ASIDE
+N: The same campaign that destroyed one center of learning built another.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts of the same thirteen days, and no two of them agree on what mattered most.
+
+## PERSPECTIVE | Mongol Imperial | victor
+N: Hulagu's own court historians do not open with slaughter. They open with the offer already described here: submit and live, or resist and be destroyed. Mosul chose the first path and kept its walls. Al-Musta'sim chose the second.
+N: In this telling the caliph's court, split by Sunni and Shia tension, had become militarily impotent and internally divided long before Hulagu arrived; the Mongols did not destroy a functioning civilization.
+N: The court historian Ata-Malik Juvayni served the rulers he described, and drew the plainest possible contrast.
+M: In the Muslim ones there was fighting and bloodshed, and in the Mongol ones there was feasting and joy.
+N: Afterward, Hulagu founded the Ilkhanate. Its later vizier, Rashid al-Din, wrote the first history that tried to hold the Mongols, the Chinese, the Indians, the Franks, the Jews and the Muslims inside one book.
+
+## PERSPECTIVE | Abbasid and Islamic Civilization | vanquished
+N: For this account Baghdad was not a city that fell. It was the center of Sunni Islam for five hundred and eight years, ended.
+N: Its House of Wisdom, even diminished from its ninth century peak, still held Aristotle, Galen, Hippocrates, Euclid and Ptolemy in translations that existed nowhere else on earth.
+N: Ibn al-Athir, a historian from Mosul who had already spent years chronicling the Mongol advance, could barely make himself write this part of it.
+M: For several years I put off reporting this event. I found it terrifying and felt revulsion at recording it and therefore hesitated again and again.
+N: And in this account, the caliph's own Shia vizier, Ibn al-Alqami, is named as the man who opened the door. Sunni chroniclers have repeated the charge for eight centuries, because it is easier to blame treachery than to ask why God allowed it.
+
+## PERSPECTIVE | Chinese and East Asian | bystander
+N: From the Yuan capital at Dadu, Baghdad's fall was one campaign inside a single imperial project.
+N: The Great Khan Mongke authorized Hulagu's western campaign at the same time he commanded the war against the Southern Song dynasty in China. Chinese siege engineers travelled with Hulagu's army and took part in breaching Baghdad's walls, the same exchange that later sent Muslim engineers east to help reduce the Song fortress of Xiangyang.
+N: Chinese historians of the Yuan period did not treat this as civilizational catastrophe. The Southern Song had sixty million people, paper currency, movable type printing and gunpowder weapons: a far larger target.
+N: In Chinese memory, it is the fall of the Song capital, Lin'an, in twelve seventy six, and the drowning of the last Song emperor three years later, that mark the era's turning point. Not Baghdad.
+
+## PERSPECTIVE | The Revisionist Argument | revisionist
+N: Jack Weatherford's case starts from a complaint: that the standard history of Mongol conquest was written by the people the Mongols conquered, and has been accepted uncritically for centuries.
+N: His evidence is institutional. At its height the empire governed some hundred million people across twelve million square miles under one law code, the Yasa, which guaranteed religious freedom, promoted by merit over birth, and abolished torture for extracting confessions.
+N: On the death toll, he argues the numbers were inflated by hostile sources. Two million dead would require the Mongols to have killed more people than Baghdad contained. Ninety thousand, the figure from Nasir al-Din al-Tusi, who was present, is more plausible, if still imprecise.
+N: Weatherford put the larger case in one line.
+M: The Mongols made no technological breakthroughs, founded no new religions, wrote few books or dramas. Yet, as their empires grew, they blazed new links among civilizations.
+
+## PERSPECTIVE | The Surviving Scholars | academic
+N: Not every book went into the river, and not every scholar died in the sack. This account follows where the rest went.
+N: Cairo took the largest share. Two years after Baghdad fell, the Mamluk sultan Qutuz defeated the Mongols at Ain Jalut, and the Mamluk state that followed installed a shadow Abbasid caliph in Cairo and absorbed the scholars and physicians fleeing Iraq. Ibn Khaldun's Muqaddimah, the founding text of historical sociology, was written in North Africa under Mamluk patronage more than a century later.
+N: A family fleeing the Mongol advance out of Balkh settled in Konya, in Anatolia. The son, known to history as Rumi, composed the Masnavi there. His poetry, born of that flight, is now the best selling poetry in the United States.
+N: Even the conquerors became heirs. Hulagu's own successor, Ghazan Khan, converted to Islam in twelve ninety five, and the Ilkhanid court patronized the same Nasir al-Din al-Tusi whose observatory the sack had made possible.
+N: The historian Ahmad Dallal frames the whole pattern in one line.
+M: Geography is the condition of civilization. When the center falls, the margins inherit.
+
+## REST | short
+
+## TURN | What each one leaves out
+N: And here is what each one cannot hold at the same time as its own case.
+N: The Mongol court's account calls the caliphate hollow and the offer genuine, and says nothing about the quota system that followed the walls falling, or the two hundred thousand people that quota could have reached.
+N: The Abbasid account's grief is not in question, and it still needs a traitor to explain a catastrophe, which is why Ibn al-Alqami's guilt was never something Sunni chroniclers investigated so much as required.
+N: The Chinese account is honest that Baghdad barely registers next to the Song, and that honesty is itself a kind of erasure: a city of a million people, filed under a different empire's footnote.
+N: The revisionist case rests on Nasir al-Din al-Tusi's ninety thousand, and al-Tusi was travelling with the army that did the killing.
+N: And the account of the scholars who scattered and rebuilt cannot answer for the ones who did not scatter. The texts that went into the river do not have a diaspora.
+
+## CLOSE
+N: Thirty one years before the sack, Caliph al-Mustansir founded a school in Baghdad known as the Mustansiriya Madrasa. It served all four Sunni schools of law and housed one of the city's own libraries.
+N: It is one of the only Abbasid era buildings still standing in Baghdad today.
+
+## SAY
+Hulagu = hoo-LAH-goo
+Musta'sim = moo-STAH-sim
+Alqami = al-KAH-mee
+Tusi = TOO-see
+Alamut = ah-lah-MOOT
+Maragheh = mah-rah-GEH
+Juvayni = joo-vay-NEE
+Jahangushay = jah-han-goo-SHY
+Kathir = kah-THEER
+Bidaya = bee-DAH-yah
+Nihaya = nee-HAH-yah
+Rashid al-Din = rah-SHEED al-DEEN
+Hamadani = hah-mah-DAH-nee
+Tawarikh = tah-wah-REEKH
+Ilkhanate = il-KAH-nayt
+Ilkhanid = il-KAH-nid
+Ibn al-Athir = IB-un al-ah-THEER
+Mosul = moh-SOOL
+Khwarizmi = kwah-REZ-mee
+Tigris = TY-griss
+Tengri = TENG-ree
+Mongke = MUNG-keh
+Dadu = DAH-doo
+Xiangyang = shee-AHNG-yahng
+Lin'an = LIN-ahn
+Weatherford = WETH-er-ford
+Yasa = YAH-sah
+Ain Jalut = AYN jah-LOOT
+Qutuz = koo-TOOZ
+Ghazan = GAH-zahn
+Khaldun = khal-DOON
+Muqaddimah = moo-kah-DEE-mah
+Konya = KOHN-yah
+Balkh = BAHLKH
+Masnavi = MAHS-nah-vee
+Dallal = dah-LAHL
+Mustansiriya = moos-tan-see-REE-yah
+Mustansir = moos-tan-SEER

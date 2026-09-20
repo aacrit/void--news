@@ -1,0 +1,72 @@
+{
+ "version": "1.2.0",
+ "title": "The Atomic Bombings of Hiroshima and Nagasaki",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 52.605
+  },
+  {
+   "startTime": 52.605,
+   "title": "Fifteen minutes past eight",
+   "endTime": 140.396
+  },
+  {
+   "startTime": 140.396,
+   "title": "The second one was aimed somewhere else",
+   "endTime": 201.942
+  },
+  {
+   "startTime": 201.942,
+   "title": "The illness with no name yet",
+   "endTime": 251.38
+  },
+  {
+   "startTime": 251.38,
+   "title": "A voice nobody had heard",
+   "endTime": 298.551
+  },
+  {
+   "startTime": 298.551,
+   "title": "Five accounts",
+   "endTime": 312.058
+  },
+  {
+   "startTime": 312.058,
+   "title": "The American case",
+   "endTime": 406.484
+  },
+  {
+   "startTime": 406.484,
+   "title": "The hibakusha",
+   "endTime": 477.489
+  },
+  {
+   "startTime": 477.489,
+   "title": "The scientists",
+   "endTime": 565.141
+  },
+  {
+   "startTime": 565.141,
+   "title": "The revisionists",
+   "endTime": 636.392
+  },
+  {
+   "startTime": 636.392,
+   "title": "The Korean dead",
+   "endTime": 715.069
+  },
+  {
+   "startTime": 715.069,
+   "title": "What each one leaves out",
+   "endTime": 795.809
+  },
+  {
+   "startTime": 795.809,
+   "title": "Legacy",
+   "endTime": 850.251
+  }
+ ]
+}

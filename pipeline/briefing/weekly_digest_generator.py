@@ -21,6 +21,7 @@ Budget: ~25-30 Gemini calls per edition, well within 1500 RPD.
 Schedule: Sunday 6 AM CST (12:00 UTC).
 """
 
+import os
 import json
 import re
 import sys
@@ -34,6 +35,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from utils.supabase_client import supabase
+from briefing.weekly_parse import (  # pure: no DB, no LLM, no network
+    build_weekly_row, clean_headline, parse_essay, parse_recap,
+    looks_like_headline, weekly_window,
+    banned_terms, enforce, retry_suffix, strip_dashes,
+    word_count,
+)
 from summarizer.gemini_client import (
     generate_json as gemini_generate_json,
     generate_text as gemini_generate_text,
@@ -71,6 +78,7 @@ from media.image_search import find_cover_image_for_cluster
 # fetch-0-and-skip passes per weekly run.
 EDITIONS = ["world"]
 WEEK_RECAP_COUNT = 10
+BRIEF_THUMB_COUNT = 3   # Commons lookups for Week in Brief thumbnails
 OPINION_COUNT = 6
 COVER_STORIES = 2
 COVER_MIN_WORDS = 800
@@ -106,13 +114,36 @@ OPINION_VOICE_CONFIGS = {
     },
 }
 
-PROHIBITED_TERMS = frozenset({
-    "notable", "notably", "significant", "significantly", "it should be noted",
-    "interestingly", "crucially", "it is worth noting", "it's worth noting",
-    "it bears mentioning", "noteworthy", "what you need to know",
-    "here's what", "here is what", "let's break down", "let's dive",
-    "in conclusion", "to summarize", "all things considered",
-})
+# PROHIBITED_TERMS moved to weekly_parse, alongside the check that enforces it.
+# It was defined here, checked at exactly ONE of six generation sites, and the
+# other five prompts told the model its output would be "REJECTED" by nothing.
+
+#: Every essay section's word brief, in one place, so the prompt and the check
+#: cannot drift. `COVER_MIN_WORDS = 800` already existed and was read by nothing.
+ESSAY_SPECS = {
+    "cover":     {"min_words": COVER_MIN_WORDS, "max_words": 1200},
+    "opinion":   {"min_words": 400, "max_words": 600},
+    "tech":      {"min_words": 500, "max_words": 700},
+    "sports":    {"min_words": 400, "max_words": 600},
+    "editorial": {"min_words": 450, "max_words": 650},
+    "brief":     {"min_words": 55,  "max_words": 75},
+}
+
+# Flash has a shared 20-requests-a-DAY free cap and the daily pipeline already
+# spends ~13 of it. A regeneration is one more request, so the flash sections
+# draw from a budget while flash-lite (high RPD) retries freely. Without this a
+# bad Sunday could spend four extra flash calls and silently fail the daily
+# brief the next morning.
+_FLASH_RETRY_BUDGET = [2]
+
+
+def _may_retry(model):
+    if model != _FLASH_MODEL:
+        return True
+    if _FLASH_RETRY_BUDGET[0] <= 0:
+        return False
+    _FLASH_RETRY_BUDGET[0] -= 1
+    return True
 
 # ---------------------------------------------------------------------------
 # LLM call
@@ -169,111 +200,63 @@ def _smart_generate_text(prompt, system_instruction=None, max_output_tokens=8192
 # No JSON, so prose with any punctuation is safe; no extra LLM calls.
 # ---------------------------------------------------------------------------
 
-def _clean_headline(line):
-    """Strip an optional 'HEADLINE:'/'TITLE:' label and Markdown chars off a line.
+# _clean_headline / _parse_essay / _parse_recap now live in weekly_parse, which
+# imports re + datetime and nothing else, so tests can reach them without the
+# supabase_client import wall. The names are aliased so callers are unchanged.
+_clean_headline = clean_headline
+_parse_essay = parse_essay
 
-    The label is only stripped when followed by a colon, so a real headline that
-    happens to start with the word "Headline" (e.g. "Headline inflation") is kept.
+
+def _gen_essay(prompt, system, model=None, max_output_tokens=4096,
+               want_numbers=False, spec=None, label="essay"):
+    """Generate a {headline, text[, numbers]} essay, measured against its spec.
+
+    Returns (result_or_None, calls_made). The spec is checked, ONE regeneration
+    is attempted naming the findings, and whichever attempt is cleaner ships —
+    a missing department reads worse than a long one, so this never drops a
+    piece. The prose is dash-stripped either way.
     """
-    line = re.sub(r"^\s*#{0,3}\s*(?:HEADLINE|TITLE)\s*:\s*", "", line, flags=re.IGNORECASE)
-    return line.strip().strip("*_#").strip()
+    spec = spec or {}
+    best, best_findings, calls = None, None, 0
 
-
-# A headline is short and is one thing. Prose opening an essay is neither, and
-# it reaches the page in a slot sized for four or five words.
-_SENTENCE_BREAK = re.compile(r"[.!?]\s+[A-Z]")
-
-
-def _looks_like_headline(line: str) -> bool:
-    text = (line or "").strip()
-    if not text or len(text) > 120:
-        return False
-    if _SENTENCE_BREAK.search(text):
-        return False
-    # A single trailing period is ordinary in a headline; a sentence that ends
-    # mid-thought with a comma-spliced clause is not.
-    return text.count(",") <= 3
-
-
-def _parse_essay(raw, want_numbers=False):
-    """Parse a plain-text essay into {headline, text[, numbers]} or None.
-
-    Layout: first non-empty line is the headline, the rest is the body. If
-    want_numbers, a trailing line "NUMBERS" splits off a block of
-    "value | context" lines parsed into [{"stat", "context"}].
-    """
-    if not raw or not raw.strip():
-        return None
-    text = raw.strip()
-    numbers = []
-    if want_numbers:
-        parts = re.split(r"\n\s*#{0,3}\s*NUMBERS\s*:?\s*\n", text, maxsplit=1, flags=re.IGNORECASE)
-        if len(parts) == 2:
-            text, num_block = parts[0].strip(), parts[1]
-            for ln in num_block.splitlines():
-                ln = ln.strip().lstrip("-*•").strip()
-                if "|" not in ln:
-                    continue
-                value, _, context = ln.partition("|")
-                value = value.strip()
-                if value:
-                    numbers.append({"stat": value, "context": context.strip()})
-
-    lines = text.splitlines()
-    idx = next((k for k, ln in enumerate(lines) if ln.strip()), None)
-    if idx is None:
-        return None
-    headline = _clean_headline(lines[idx])
-    body = "\n".join(lines[idx + 1:]).strip()
-    if not body:
-        # Single-block output: no separable headline; keep it all as text.
-        body, headline = headline, ""
-    elif not _looks_like_headline(headline):
-        # The model opened with prose instead of a headline. Taking the first
-        # line regardless is how Issue #26's second cover essay ended up with a
-        # 300-character "headline" that the cover rendered as a 34ch ransom-note
-        # column under "Also inside". Better no headline than a paragraph in its
-        # place: the caller and the frontend both already skip an empty one.
-        body = f"{headline}\n{body}".strip()
-        headline = ""
-    result = {"headline": headline, "text": body}
-    if want_numbers:
-        result["numbers"] = numbers
-    return result
-
-
-def _gen_essay(prompt, system, model=None, max_output_tokens=4096, want_numbers=False):
-    """Generate a {headline, text[, numbers]} essay as plain text (no JSON)."""
-    raw = _smart_generate_text(
-        prompt, system_instruction=system,
-        max_output_tokens=max_output_tokens, model=model,
-    )
-    return _parse_essay(raw, want_numbers=want_numbers)
-
-
-def _parse_recap(raw):
-    """Parse a plain-text recap batch into {stories: [{headline, summary}]}.
-
-    Stories are separated by a line that is just "###" (optionally "### STORY").
-    Within each block, the first non-empty line is the headline, the rest is the
-    summary. Returns None if nothing parseable.
-    """
-    if not raw or not raw.strip():
-        return None
-    blocks = re.split(r"\n\s*#{2,}(?:\s*STORY\s*\d*)?\s*\n", "\n" + raw.strip())
-    stories = []
-    for block in blocks:
-        lines = block.strip().splitlines()
-        idx = next((k for k, ln in enumerate(lines) if ln.strip()), None)
-        if idx is None:
+    for attempt in range(2):
+        raw = _smart_generate_text(
+            prompt if attempt == 0 else prompt + retry_suffix(best_findings),
+            system_instruction=system,
+            max_output_tokens=max_output_tokens, model=model,
+        )
+        calls += 1
+        result = _parse_essay(raw, want_numbers=want_numbers)
+        if not (result and isinstance(result, dict) and result.get("text")):
+            if attempt == 1 or not _may_retry(model):
+                break
+            best_findings = ["it returned nothing usable"]
             continue
-        headline = _clean_headline(lines[idx])
-        summary = " ".join(ln.strip() for ln in lines[idx + 1:] if ln.strip()).strip()
-        if not summary:
-            summary, headline = headline, ""
-        if headline or summary:
-            stories.append({"headline": headline, "summary": summary})
-    return {"stories": stories} if stories else None
+
+        result["text"] = strip_dashes(result["text"])
+        if result.get("headline"):
+            result["headline"] = strip_dashes(result["headline"])
+        findings = enforce(result["text"], **spec)
+
+        if not findings:
+            if attempt:
+                print(f"    [{label}] clean on regeneration")
+            return result, calls
+        if best is None or len(findings) < len(best_findings):
+            best, best_findings = result, findings
+        if attempt == 1:
+            break
+        if not _may_retry(model):
+            print(f"    [{label}] {best_findings[0]} — no flash budget to regenerate")
+            break
+        print(f"    [{label}] rejected: {'; '.join(findings)} — regenerating")
+
+    if best is not None and best_findings:
+        print(f"    [{label}] shipped with {len(best_findings)} finding(s): {'; '.join(best_findings)}")
+    return best, calls
+
+
+_parse_recap = parse_recap
 
 
 # ---------------------------------------------------------------------------
@@ -298,25 +281,45 @@ def _fetch_week_clusters(edition, week_start, week_end):
         return []
 
 
+# The Week in Bias prints `total_scored` as a COUNT, so it has to be one. A
+# single .limit(3000) returned exactly 3000 on Issue #26 — a truncated query
+# cap being published as a measurement, in the one section whose whole job is
+# to be honest about measurement. Paged, with a ceiling that is flagged rather
+# than silently applied.
+_BIAS_PAGE = 1000
+_BIAS_MAX = 60000
+
+
 def _fetch_bias_stats(edition, week_start, week_end):
     """Aggregate bias stats for the week."""
     try:
-        result = supabase.table("bias_scores").select(
-            "political_lean,sensationalism,opinion_fact,factual_rigor,framing,confidence"
-        ).gte("analyzed_at", week_start.isoformat()).lte(
-            "analyzed_at", week_end.isoformat()
-        ).limit(3000).execute()
+        scores = []
+        truncated = False
+        while True:
+            page = supabase.table("bias_scores").select(
+                "political_lean,sensationalism,opinion_fact,factual_rigor,framing,confidence"
+            ).gte("analyzed_at", week_start.isoformat()).lte(
+                "analyzed_at", week_end.isoformat()
+            ).range(len(scores), len(scores) + _BIAS_PAGE - 1).execute()
+            rows = page.data or []
+            scores.extend(rows)
+            if len(rows) < _BIAS_PAGE:
+                break
+            if len(scores) >= _BIAS_MAX:
+                truncated = True
+                break
 
-        if not result.data:
+        if not scores:
             return None
-
-        scores = result.data
         leans = [s["political_lean"] for s in scores if s.get("political_lean") is not None]
         sensations = [s["sensationalism"] for s in scores if s.get("sensationalism") is not None]
         rigors = [s["factual_rigor"] for s in scores if s.get("factual_rigor") is not None]
 
         return {
             "total_scored": len(scores),
+            # True only when the ceiling was hit, so the page can say "at least"
+            # instead of stating a cap as a count.
+            "truncated": truncated,
             "avg_lean": round(sum(leans) / max(len(leans), 1), 1),
             "avg_sensationalism": round(sum(sensations) / max(len(sensations), 1), 1),
             "avg_rigor": round(sum(rigors) / max(len(rigors), 1), 1),
@@ -366,7 +369,11 @@ OUTPUT FORMAT — plain text only, no JSON, no Markdown:
 - Then a blank line.
 - Then the 800-1200 word essay in flowing prose paragraphs separated by blank
   lines. No bulleted or numbered lists, no "TIMELINE" section, no headings,
-  no asterisks or bold/italic markers."""
+  no asterisks or bold/italic markers.
+- Then a line containing only NUMBERS, then 3 to 5 lines of "value | context",
+  each a figure that already appears in the essay above. The value is the
+  figure alone ("15 million", "$4.2 billion", "446 of 495"); the context is a
+  short phrase naming what it counts. No sentences, no other text."""
 
 
 # ---------------------------------------------------------------------------
@@ -634,12 +641,29 @@ def _generate_cover_stories(threads, edition):
             f"timeline, a section titled TIMELINE, lists, or any Markdown headings."
         )
 
-        result = _gen_essay(prompt, COVER_SYSTEM, model=_FLASH_MODEL, max_output_tokens=8192)
-        calls += 1
+        result, used = _gen_essay(
+            prompt, COVER_SYSTEM, model=_FLASH_MODEL, max_output_tokens=8192,
+            want_numbers=True, spec=ESSAY_SPECS["cover"], label=f"cover {i+1}",
+        )
+        calls += used
         if result and isinstance(result, dict):
+            # parse_essay leaves the headline empty when line 1 was prose, so
+            # the essay keeps its lede. Name the feature from the cluster
+            # rather than setting a paragraph at display size.
+            if not result.get("headline"):
+                result["headline"] = lead.get("title", "")
             result["cluster_id"] = lead.get("id")
             result["timeline"] = timeline
             result["thread_cluster_ids"] = [c.get("id") for c in thread["clusters"]]
+            # The threading engine computes these over 500 clusters and then
+            # drops them on the floor: they picked two headlines and were
+            # garbage-collected. "This story ran 6 days across 47 sources" is
+            # the one standfirst stat a WEEKLY can print that a daily cannot,
+            # and `CoverOpening` already has a slot that today sums the
+            # timeline's source counts instead, double-counting an outlet that
+            # covered the story twice.
+            result["days_active"] = thread.get("daily_appearances")
+            result["week_sources"] = thread.get("cumulative_sources")
             covers.append(result)
             print(f"    Cover {i+1}: {result.get('headline', '?')[:60]}... ({len(result.get('text','').split())} words)")
         else:
@@ -694,6 +718,7 @@ def _generate_opinions(top_threads, all_threads, edition):
     """
     opinions = []
     calls = 0
+    openers = []
 
     # Build opinion plan: 2 opposing on #1, then 3 on other stories
     plan = []  # list of (cluster_dict, lean_str)
@@ -734,11 +759,26 @@ def _generate_opinions(top_threads, all_threads, edition):
             f"Key points: {json.dumps(cluster.get('consensus_points', []))}\n"
             f"Disagreements: {json.dumps(cluster.get('divergence_points', []))}\n"
         )
+        # The five opinion calls run in isolation, with no idea what the others
+        # wrote, which is how "The ink is barely dry" came to open two
+        # different essays in one issue.
+        if openers:
+            prompt += (
+                "\nColumns already written for this issue open with:\n"
+                + "\n".join(f"  {o}..." for o in openers)
+                + "\nOpen differently. Do not reuse their first move.\n"
+            )
 
-        result = _gen_essay(prompt, system, max_output_tokens=4096)
-        calls += 1
+        result, used = _gen_essay(
+            prompt, system, max_output_tokens=4096,
+            spec=ESSAY_SPECS["opinion"], label=f"opinion {i+1} ({lean})",
+        )
+        calls += used
 
         if result and isinstance(result, dict):
+            if not result.get("headline"):
+                result["headline"] = cluster.get("title", "")
+            openers.append(" ".join((result.get("text") or "").split()[:14]))
             result["lean"] = lean
             result["topic"] = cluster.get("title", "")
             result["cluster_id"] = cluster.get("id")
@@ -748,6 +788,29 @@ def _generate_opinions(top_threads, all_threads, edition):
         time.sleep(2)
 
     return opinions, calls
+
+
+def _attach_art(essay, cluster):
+    """One freely-licensed picture per department.
+
+    The departments carry `image_url`, `image_caption` and `image_attribution`
+    in the schema and in the component, and nothing ever called a lookup for
+    them — so a 164 KB magazine shipped with exactly one photograph in it. The
+    lookup is the same one Week in Brief uses.
+    """
+    if not cluster.get("id"):
+        return
+    try:
+        found = find_cover_image_for_cluster(
+            cluster["id"], essay.get("headline", ""), supabase_client=supabase,
+        )
+    except Exception as e:
+        print(f"    [weekly] department art lookup failed: {e}")
+        return
+    if found:
+        essay["image_url"] = found["url"]
+        if found.get("attribution"):
+            essay["image_attribution"] = found["attribution"]
 
 
 # ── SECTION 3: TECH BRIEF ──
@@ -788,10 +851,14 @@ def _generate_tech_brief(clusters, edition):
         f"Sources: {top_tech.get('source_count', 0)}\n"
     )
 
-    result = _gen_essay(prompt, TECH_SYSTEM, max_output_tokens=4096)
+    result, calls = _gen_essay(prompt, TECH_SYSTEM, max_output_tokens=4096,
+                               spec=ESSAY_SPECS["tech"], label="tech")
     if result:
+        if not result.get("headline"):
+            result["headline"] = top_tech.get("title", "")
         result["cluster_id"] = top_tech.get("id")
-    return result, 1
+        _attach_art(result, top_tech)
+    return result, calls
 
 
 # ── SECTION 4: SPORTS PAGE ──
@@ -830,10 +897,14 @@ def _generate_sports(clusters, edition):
         f"Summary: {top.get('summary', '')}\n"
     )
 
-    result = _gen_essay(prompt, SPORTS_SYSTEM, max_output_tokens=4096)
+    result, calls = _gen_essay(prompt, SPORTS_SYSTEM, max_output_tokens=4096,
+                               spec=ESSAY_SPECS["sports"], label="sports")
     if result:
+        if not result.get("headline"):
+            result["headline"] = top.get("title", "")
         result["cluster_id"] = top.get("id")
-    return result, 1
+        _attach_art(result, top)
+    return result, calls
 
 
 # ── SECTION 5: BIAS REPORT (rule-based, $0) ──
@@ -868,8 +939,12 @@ def _generate_bias_report(clusters, bias_stats, edition):
 
 # ── SECTION 6: WEEK IN BRIEF (8-10 additional stories) ──
 
-RECAP_SYSTEM = """You are an editor for void --weekly. Write concise 150-200 word recaps.
-Focus on what happened and what it means. Use specific facts.
+RECAP_SYSTEM = """You are an editor for void --weekly. Write 55-75 word briefs.
+
+Two or three sentences: what happened, and the one thing it changes. This is a
+Week in Brief column, not a second feature well — if it needs a fourth sentence
+it belongs elsewhere in the issue. Lead with the concrete fact. Use specific
+names and numbers.
 
 BANNED: "notable", "significant", "it should be noted", "interestingly".
 
@@ -877,19 +952,59 @@ OUTPUT FORMAT — plain text only, no JSON, no Markdown. For EACH story, output 
 block in this exact shape:
 ###
 <headline on one line>
-<150-200 word summary in flowing prose>
+<55-75 word brief in flowing prose>
 
 Separate every story with a line containing only ### before it. No other
 headings, labels, or Markdown."""
 
 
+def _spread_over_week(clusters, count):
+    """Pick `count` stories that span the week, not the loudest single day.
+
+    THE SECTION WHOSE PREMISE IS THE WEEK CONTAINED NO WEEK. The old line was
+    `clusters[:count]` off a query sorted by `headline_rank DESC`, and all ten
+    published items matched daily-feed headlines from ONE date. A weekly recap
+    that is Saturday's front page re-summarised is the largest "duplicates the
+    daily feed" defect in the product.
+
+    Round-robin by day, strongest first within each day, so a quiet Tuesday is
+    represented before a loud Saturday gets its third slot. Falls back to plain
+    rank order when the rows carry no usable dates.
+    """
+    by_day = {}
+    for c in clusters:
+        day = (c.get("first_published") or c.get("created_at") or "")[:10]
+        by_day.setdefault(day, []).append(c)
+    if len(by_day) <= 1:
+        return clusters[:count]
+
+    picked, days = [], sorted(by_day)
+    while len(picked) < count:
+        took = False
+        for d in days:
+            if by_day[d]:
+                picked.append(by_day[d].pop(0))
+                took = True
+                if len(picked) == count:
+                    break
+        if not took:
+            break
+    return picked
+
+
 def _generate_week_recap(clusters, edition, skip_ids=None):
     """Generate recap for remaining stories not covered elsewhere."""
     skip = set(skip_ids or [])
-    remaining = [c for c in clusters if c.get("id") not in skip][:WEEK_RECAP_COUNT]
+    remaining = _spread_over_week(
+        [c for c in clusters if c.get("id") not in skip], WEEK_RECAP_COUNT,
+    )
 
     if not remaining:
         return None, 0
+
+    days = sorted({(c.get("first_published") or c.get("created_at") or "")[:10]
+                   for c in remaining} - {""})
+    print(f"    [brief] {len(remaining)} stories across {len(days)} day(s) of the week")
 
     stories_text = "\n".join(
         f"--- Story {i+1} ---\n"
@@ -899,25 +1014,184 @@ def _generate_week_recap(clusters, edition, skip_ids=None):
         for i, c in enumerate(remaining)
     )
 
-    prompt = f"Write 150-200 word recaps for these {len(remaining)} stories ({edition} edition):\n\n{stories_text}"
-    raw = _smart_generate_text(prompt, system_instruction=RECAP_SYSTEM, model=_FLASH_MODEL)
-    parsed = _parse_recap(raw)
+    prompt = f"Write 55-75 word briefs for these {len(remaining)} stories ({edition} edition):\n\n{stories_text}"
+
+    # One retry for the whole column: it is a single call covering ten items,
+    # and the spec was itself the bug here. RECAP_SYSTEM asked for 150-200 words
+    # and the model obeyed exactly, which is why every published brief runs
+    # ~1,000 characters in a three-column block designed for 65-word items.
+    parsed, calls, findings = None, 0, []
+    for attempt in range(2):
+        raw = _smart_generate_text(
+            prompt if attempt == 0 else prompt + retry_suffix(findings),
+            system_instruction=RECAP_SYSTEM, model=_FLASH_MODEL,
+        )
+        calls += 1
+        parsed = _parse_recap(raw)
+        items = (parsed or {}).get("stories") or []
+        if not items:
+            break
+
+        for story in items:
+            story["summary"] = strip_dashes(story.get("summary", ""))
+            story["headline"] = strip_dashes(story.get("headline", ""))
+
+        cap = ESSAY_SPECS["brief"]["max_words"]
+        long_ones = [word_count(x.get("summary")) for x in items]
+        over = [n for n in long_ones if n > cap * 1.3]
+        banned = sorted({t for x in items for t in banned_terms(x.get("summary"))})
+
+        findings = []
+        if over:
+            findings.append(
+                f"{len(over)} of {len(items)} briefs run past {cap} words "
+                f"(the longest is {max(over)}); two or three sentences each, no more"
+            )
+        if banned:
+            findings.append(
+                "the column uses " + ", ".join(f'"{t}"' for t in banned)
+                + " — give the fact, not a label announcing that it matters"
+            )
+        if not findings:
+            if attempt:
+                print("    [brief] clean on regeneration")
+            break
+        if attempt == 1 or not _may_retry(_FLASH_MODEL):
+            print(f"    [brief] shipped with: {'; '.join(findings)}")
+            break
+        print(f"    [brief] rejected: {'; '.join(findings)} — regenerating")
+
     # Re-attach the cluster identity that _parse_recap drops so each recap story
     # can surface the daily pipeline's already-cached WebP. The parsed stories
     # follow the same order as `remaining`; zip stops at the shortest, so a
     # count mismatch (e.g. the model merged or dropped a block) is safe.
     if parsed and parsed.get("stories"):
-        for story, cluster in zip(parsed["stories"], remaining):
-            img = cluster.get("cached_image_url")
-            if img:
-                story["image_url"] = img
-                attribution = cluster.get("cached_image_attribution")
-                if attribution:
-                    story["image_attribution"] = attribution
-    return parsed, 1
+        for i, (story, cluster) in enumerate(zip(parsed["stories"], remaining)):
+            if not story.get("headline"):
+                story["headline"] = cluster.get("title", "")
+            # Department kicker. The cluster already carries a category and the
+            # frontend type already declares `section`; nothing ever copied it
+            # across, so every brief item rendered unlabelled.
+            if cluster.get("category"):
+                story["section"] = cluster["category"]
+            # The identity is in hand at exactly this line and was dropped, so
+            # no brief item could ever link to its own /story/<id>/ page.
+            story["cluster_id"] = cluster.get("id")
+            # Thumbnails for the top 3 only. This used to read
+            # `cached_image_url`, written by the cluster_image_cacher that rev
+            # 60 RETIRED on copyright grounds, so it has been null on every row
+            # since and .wk-brief__thumb has never rendered. Ten Commons
+            # round-trips for ten thumbnails is not worth the run time.
+            if i < BRIEF_THUMB_COUNT and cluster.get("id"):
+                found = find_cover_image_for_cluster(
+                    cluster["id"], story.get("headline", ""), supabase_client=supabase,
+                )
+                if found:
+                    story["image_url"] = found["url"]
+                    if found.get("attribution"):
+                        story["image_attribution"] = found["attribution"]
+    return parsed, calls
 
 
-# ── SECTION 7: AUDIO ──
+
+# ── SECTION 7: AUDIO — "The Argument", the Sunday edition ──
+
+# The weekly was the last thing in the product still on the 2026-06 stack: one
+# Gemini call writing free A:/B: dialogue into the legacy edge-tts path, two
+# voices that every other edition also uses, no voice chain, no limiter, no
+# loudnorm, UNMASTERED MONO, no chapters, no sidecar, not in the podcast feed
+# and no validators. Three things in it were inert rather than merely dated:
+# `_WEEKLY_TTS_PREAMBLE` (23 lines of pacing instructions) is assigned and read
+# only by the PARKED Gemini TTS path; `WEEKLY_VOICE_PAIR` maps "The Editor" and
+# "The Correspondent" through `_GEMINI_TO_EDGE_VOICE` to the same two edge
+# voices, a label over an identical signal chain; and the prompt FORBADE
+# segment markers ("NO [SEGMENT] headers. Raw dialogue only."), which is the
+# single line that made a timeline, chapters and per-segment music impossible.
+#
+# All of that is kept, unchanged, as the fallback. A weekly that cannot be
+# validated still ships a show.
+
+
+def _issue_view(edition, week_start, week_end, issue_number, covers, opinions,
+                tech, sports, recap, bias_data, weekly_opinion):
+    """The issue as the PAGE will carry it, built before the row is written.
+
+    The rundown and its validators read the published shape, not the
+    generator's locals, so the programme is checked against the same object a
+    reader gets. `_opinion_items` is what gives the bench its `pair_id`, and
+    W-01 cannot check a column it cannot find.
+    """
+    from briefing.weekly_parse import DEPARTMENTS, _department_item, _opinion_items
+    essays = {"tech": tech, "sports": sports}
+    departments = [d for d in (_department_item(slug, label, essays.get(slug))
+                               for slug, label in DEPARTMENTS) if d]
+    return {
+        "edition": edition,
+        "issue_number": issue_number,
+        "week_start": week_start.strftime("%Y-%m-%d") if hasattr(week_start, "strftime") else week_start,
+        "week_end": week_end.strftime("%Y-%m-%d") if hasattr(week_end, "strftime") else week_end,
+        "cover_headline": (covers[0].get("headline") if covers else "") or "",
+        "cover_text": [_cover_item(c) for c in covers],
+        "opinions": _opinion_items(opinions, issue_number),
+        "departments": departments or [],
+        "recap_stories": (recap or {}).get("stories", []),
+        "bias_report_data": bias_data or {},
+        "opinion_text": (weekly_opinion or {}).get("opinion_text"),
+        "opinion_headline": (weekly_opinion or {}).get("opinion_headline"),
+    }
+
+
+def _produce_argument(issue: dict, edition: str):
+    """Render the Sunday edition. Returns (result, calls) or (None, calls).
+
+    Returns None on ANY failure, including a validator failure, and the caller
+    falls back to the legacy path. That asymmetry is deliberate: an essay that
+    runs forty words long is worth shipping, but a bench line the published
+    column does not contain is words put in a columnist's mouth.
+    """
+    if os.environ.get("VOID_WEEKLY_AUDIO_FORMAT", "1").strip() == "0":
+        print("    [weekly-audio] VOID_WEEKLY_AUDIO_FORMAT=0; legacy path")
+        return None, 0
+    try:
+        from briefing import weekly_rundown
+        from briefing.weekly_producer import produce as produce_argument
+        from briefing.audio_producer import _write_audio_static
+    except Exception as e:
+        print(f"    [weekly-audio] unavailable ({e}); legacy path")
+        return None, 0
+
+    script_text, findings, calls = weekly_rundown.generate(issue, _smart_generate_text)
+    if not script_text:
+        for f in findings:
+            print(f"    [weekly-audio] {f.id} {f.segment}: {f.detail[:110]}")
+        print("    [weekly-audio] rundown rejected; legacy path")
+        return None, calls
+
+    import tempfile
+    out = Path(tempfile.mkdtemp(prefix="void-weekly-audio-"))
+    try:
+        rendered = produce_argument(script_text, issue, out, stem="weekly")
+    except Exception as e:
+        print(f"    [weekly-audio] render failed: {e}")
+        return None, calls
+    if not rendered:
+        return None, calls
+
+    mp3 = Path(rendered["path"])
+    sidecar = Path(rendered["sidecar"])
+    url = _write_audio_static(
+        mp3.read_bytes(), f"weekly-{edition}",
+        sidecars={sidecar.name: sidecar.read_bytes()},
+    )
+    if not url:
+        print("    [weekly-audio] could not write the file into the deploy tree")
+        return None, calls
+    rendered["audio_url"] = url
+    rendered["script"] = script_text
+    return rendered, calls
+
+
+# ── SECTION 7b: the legacy two-voice read (fallback only) ──
 
 # ---------------------------------------------------------------------------
 # Weekly-specific voice pair — fixed for gravitas and reflective authority.
@@ -1448,13 +1722,6 @@ End with exactly: "This was void opinion." End on the unresolved question, not a
 """
 
 
-_WEEKLY_OPINION_RETRY_SUFFIX = (
-    "\n\nCRITICAL RETRY: your previous attempt used banned scaffolding or slop "
-    "adjectives. Start every sentence with a fact or a name. Show, do not assert. "
-    "No em dashes in opinion_text or opinion_headline."
-)
-
-
 def _generate_weekly_opinion(covers, top_threads, recap, bias_data, daily_opinions,
                              lean, week_label, edition):
     """Generate the weekly editorial — one argued week-in-review column.
@@ -1527,32 +1794,44 @@ def _generate_weekly_opinion(covers, top_threads, recap, bias_data, daily_opinio
         DAILY_OPINIONS=daily_block,
     )
 
-    # --- Call 1: opinion headline + text (flash, JSON, 1 retry on banned terms) ---
+    # --- Call 1: opinion headline + text (flash, JSON, 1 regeneration) ---
+    #
+    # This was the ONLY site in the file that checked anything, and it checked
+    # by raw substring against a word budget it did not measure. It now asks
+    # the same `enforce` every other section asks, so the editorial and the
+    # columns beside it are held to one standard.
     headline, text = None, None
+    findings = []
     for attempt in range(2):
         calls += 1
         result, gen = _smart_generate(
-            prompt if attempt == 0 else prompt + _WEEKLY_OPINION_RETRY_SUFFIX,
+            prompt if attempt == 0 else prompt + retry_suffix(findings),
             system_instruction=system, model=_FLASH_MODEL,
         )
         if not (result and isinstance(result, dict)):
+            findings = ["it returned nothing usable"]
             continue
-        cand_text = (result.get("opinion_text") or "").strip()
-        cand_head = (result.get("opinion_headline") or "").strip()
-        if not cand_text or len(cand_text.split()) < 150:
+        cand_text = strip_dashes((result.get("opinion_text") or "").strip())
+        cand_head = strip_dashes((result.get("opinion_headline") or "").strip())
+        if not cand_text or word_count(cand_text) < 150:
             print("    [weekly-opinion] Text too short or empty — discarding")
+            findings = ["it returned almost nothing; write the full column"]
             continue
-        found = [t for t in PROHIBITED_TERMS if t in cand_text.lower()]
-        if found and attempt == 0:
-            print(f"    [weekly-opinion] Prohibited terms {found} — retrying")
-            continue
-        # Defensive: prose must be dash-free even if the model slipped.
-        cand_text = cand_text.replace(" — ", ", ").replace("—", ", ").replace("–", "-")
-        headline, text = (cand_head or None), cand_text
-        print(f"    [weekly-opinion] {lean_upper} editorial: {len(text.split())} words"
-              f"{', headline: ' + repr(headline[:50]) if headline else ''}"
-              f"{' (retry)' if attempt else ''}")
-        break
+
+        findings = enforce(cand_text, **ESSAY_SPECS["editorial"])
+        # Keep the best attempt either way: an editorial that runs 40 words
+        # long reads better than no editorial at all.
+        if not findings or text is None:
+            headline, text = (cand_head or None), cand_text
+        if not findings:
+            print(f"    [weekly-opinion] {lean_upper} editorial: {word_count(text)} words"
+                  f"{', headline: ' + repr(headline[:50]) if headline else ''}"
+                  f"{' (regenerated)' if attempt else ''}")
+            break
+        if attempt == 1 or not _may_retry(_FLASH_MODEL):
+            print(f"    [weekly-opinion] shipped with: {'; '.join(findings)}")
+            break
+        print(f"    [weekly-opinion] rejected: {'; '.join(findings)} — regenerating")
 
     if not text:
         print("    [weekly-opinion] Editorial generation failed")
@@ -1608,13 +1887,7 @@ def generate_weekly_digest(editions=None, week_offset=0):
     # the cron comment and the --week-offset help both claimed it covered the
     # week that had just ended. Issue #23 (week of 2026-08-24, generated
     # 2026-08-24 12:48) is the last one that shipped that way.
-    week_end = now - timedelta(days=now.weekday() + 1 + (week_offset * 7))
-    week_start = week_end - timedelta(days=6)
-    week_start = week_start.replace(hour=0, minute=0, second=0, microsecond=0)
-    week_end = week_end.replace(hour=23, minute=59, second=59, microsecond=0)
-
-    epoch = datetime(2026, 3, 22, tzinfo=timezone.utc)
-    issue_number = max(1, int((week_start - epoch).days / 7) + 1)
+    week_start, week_end, issue_number = weekly_window(now, week_offset)
 
     print("=" * 60)
     print(f"void --weekly Issue #{issue_number}")
@@ -1734,21 +2007,47 @@ def generate_weekly_digest(editions=None, week_offset=0):
         )
         total_calls += calls
 
-        # Section 7: Audio — weekly uses fixed voice pair + richer context
+        # Section 7: Audio.
         print(f"\n  ── AUDIO ──")
-        audio_result, calls = _generate_audio(
-            covers, opinions, tech, sports, recap, bias_data,
-            edition, week_start=week_start, week_end=week_end,
-        )
-        total_calls += calls
-        audio_script = audio_result.get("script", "") if audio_result else None
-
-        # Produce audio TTS — weekly uses fixed Editor+Correspondent pair
         audio_url = None
         audio_duration = None
         audio_size = None
         opinion_start = None
-        if audio_script and len(audio_script) > 100:
+        audio_chapters = None
+        audio_voice = None
+        audio_script = None
+
+        argument, calls = _produce_argument(
+            _issue_view(edition, week_start, week_end, issue_number, covers,
+                        opinions, tech, sports, recap, bias_data, weekly_opinion),
+            edition,
+        )
+        total_calls += calls
+        if argument:
+            audio_url = argument["audio_url"]
+            audio_duration = argument["seconds"]
+            audio_size = argument["bytes"]
+            audio_chapters = argument["chapters"]
+            audio_script = argument["script"]
+            v = argument["voices"]
+            audio_voice = f"kokoro:{v['editor']}+{v['left']}+{v['right']}"
+            # The Editor reads the editorial, so the opinion is a CHAPTER
+            # rather than a seek offset. The rail supersedes the two-tab split.
+            ed = next((c for c in audio_chapters if c["kind"] == "editorial"), None)
+            opinion_start = ed["startTime"] if ed else None
+            print(f"    The Argument: {audio_duration:.0f}s, {len(audio_chapters)} chapters, "
+                  f"{audio_size/1e6:.1f} MB")
+
+        legacy_result, calls = (None, 0) if argument else _generate_audio(
+            covers, opinions, tech, sports, recap, bias_data,
+            edition, week_start=week_start, week_end=week_end,
+        )
+        total_calls += calls
+        if not argument:
+            audio_script = legacy_result.get("script", "") if legacy_result else None
+
+        # The legacy two-voice read, only when the Sunday edition did not render.
+        if not argument and audio_script and len(audio_script) > 100:
             print(f"    Producing audio ({len(audio_script.split())} words)...")
             try:
                 # Weekly uses WEEKLY_VOICE_PAIR (fixed) instead of daily rotation
@@ -1813,65 +2112,36 @@ def generate_weekly_digest(editions=None, week_offset=0):
                     print(f"    story image ({found['source']}): {found['url'][:70]}")
             return item
 
-        row = {
-            "edition": edition,
-            "week_start": week_start.strftime("%Y-%m-%d"),
-            "week_end": week_end.strftime("%Y-%m-%d"),
-            "issue_number": issue_number,
-            # Cover
-            "cover_headline": covers[0].get("headline", "") if covers else "",
-            "cover_text": json.dumps([_cover_item(c) for c in covers]),
-            "cover_numbers": json.dumps(covers[0].get("numbers", []) if covers else []),
-            "cover_timelines": json.dumps([
-                {"story_index": i, "entries": c.get("timeline", [])}
-                for i, c in enumerate(covers)
-            ]),
-            # Recap
-            "recap_stories": json.dumps(recap.get("stories", []) if recap else []),
-            # Opinions (store as JSONB array instead of separate columns)
-            "opinion_left": json.dumps([o for o in opinions if o.get("lean") == "left"]),
-            "opinion_center": json.dumps([o for o in opinions if o.get("lean") in ("center", "center-left", "center-right")]),
-            "opinion_right": json.dumps([o for o in opinions if o.get("lean") == "right"]),
-            "opinion_headlines": json.dumps({o.get("topic", f"topic-{i}"): {"headline": o.get("headline", ""), "lean": o.get("lean", "")} for i, o in enumerate(opinions)}),
-            "opinion_topic": ", ".join(o.get("topic", "") for o in opinions[:3]),
-            # Bias report
-            "bias_report_text": bias_text,
-            "bias_report_data": json.dumps(bias_data),
-            # Tech + Sports (store in cover_text JSON alongside covers)
-            # Audio (fixed weekly pair: Editor + Correspondent)
-            "audio_script": audio_script,
-            "audio_url": audio_url,
-            "audio_duration_seconds": audio_duration,
-            "audio_file_size": audio_size,
-            # Weekly editorial (one argued week-in-review column + monologue)
-            "opinion_text": weekly_opinion.get("opinion_text") if weekly_opinion else None,
-            "opinion_headline": weekly_opinion.get("opinion_headline") if weekly_opinion else None,
-            "opinion_lean": weekly_opinion.get("opinion_lean") if weekly_opinion else None,
-            "opinion_audio_script": weekly_opinion.get("opinion_audio_script") if weekly_opinion else None,
-            "opinion_start_seconds": opinion_start,
-            # Broadcast desk voices (news pair drives player host chips + label)
-            "audio_voice": (
-                f"{WEEKLY_VOICE_PAIR['host_a']['id']}+{WEEKLY_VOICE_PAIR['host_b']['id']}"
-                if audio_url else None
-            ),
-            "audio_voice_label": (
-                f"{WEEKLY_VOICE_PAIR['host_a']['name']} & {WEEKLY_VOICE_PAIR['host_b']['name']}"
-                if audio_url else None
-            ),
-            # Cover image
-            "cover_image_url": cover_image["url"] if cover_image else None,
-            "cover_image_attribution": cover_image["attribution"] if cover_image else None,
-            "cover_image_source": cover_image["source"] if cover_image else None,
-            # Stats
-            "total_articles": sum(c.get("source_count", 0) for c in clusters),
-            "total_clusters": len(clusters),
-            "generator": "gemini-flash",
-            "gemini_calls_used": total_calls,
-            "generation_duration_seconds": round(elapsed, 1),
-        }
-
-        recap_data = recap.get("stories", []) if recap else []
-        row["recap_stories"] = json.dumps(recap_data)
+        row = build_weekly_row(
+            edition=edition,
+            week_start=week_start.strftime("%Y-%m-%d"),
+            week_end=week_end.strftime("%Y-%m-%d"),
+            issue_number=issue_number,
+            cover_items=[_cover_item(c) for c in covers],
+            opinions=opinions,
+            tech=tech,
+            sports=sports,
+            recap_stories=recap.get("stories", []) if recap else [],
+            bias_text=bias_text,
+            bias_data=bias_data,
+            weekly_opinion=weekly_opinion,
+            audio={
+                "script": audio_script,
+                "audio_url": audio_url,
+                "duration_seconds": audio_duration,
+                "file_size": audio_size,
+                "opinion_start_seconds": opinion_start,
+                "chapters": audio_chapters,
+                "voice": audio_voice,
+                "voice_label": "Three voices" if audio_chapters else None,
+            },
+            cover_image=cover_image,
+            total_articles=sum(c.get("source_count", 0) for c in clusters),
+            total_clusters=len(clusters),
+            gemini_calls=total_calls,
+            elapsed=elapsed,
+            voice_pair=WEEKLY_VOICE_PAIR,
+        )
 
         try:
             supabase.table("weekly_digests").upsert(

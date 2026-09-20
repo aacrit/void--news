@@ -19,6 +19,8 @@ Checks, against the LIVE site (stdlib only, like verify_production.py):
         here: images pointed at Special:Redirect, which answers HTTP 429 and
         rendered the archive pictureless, and six were licensed fair-use.
   H-04  every /history/<slug>/ in the catalog is actually prerendered
+  W-08  the served /weekly carries no em or en dash outside its <title>.
+  W-09  the audio edition ships an ordered chapter rail and its sidecar.
   W-01  data/weekly.json carries an issue number and a Monday-to-Sunday week
   W-03  the cover image, if present, comes from a freely licensed source.
         Issue #26 shipped an AFP wire photograph hotlinked off a publisher CDN.
@@ -31,6 +33,7 @@ Exit 1 on any failure; prints one line per check. Run by verify-production.yml.
 from __future__ import annotations
 
 import datetime as dt
+import re
 import json
 import os
 import sys
@@ -40,6 +43,10 @@ import urllib.request
 MIN_EVENTS = 70          # the catalog is 78; a real regression drops it far below
 MAX_WEEKLY_AGE_DAYS = 21  # three missed Mondays
 SAMPLE_SLUGS = 8          # H-04 spot-checks rather than fetching all 78
+# Mirrors weekly_parse.MAX_HEADLINE_CHARS. Duplicated rather than imported
+# because this script is stdlib-only and runs against the LIVE site with no
+# repo on the path; tests/test_weekly.py asserts the two agree.
+MAX_HEADLINE_CHARS = 120
 
 ok = True
 
@@ -182,9 +189,19 @@ def main(site: str) -> int:
         start = dt.date.fromisoformat(start_raw[:10])
     except ValueError:
         start = None
-    report("W-01", bool(issue) and start is not None and start.weekday() == 0,
+    # A cover "headline" longer than a headline means `parse_essay` ate an
+    # essay's lede again. Issue #26 shipped a 698-character paragraph set as a
+    # display-size red <h2>; the parser guards against it now, and this is the
+    # production lock on that guard.
+    long_heads = [len(c.get("headline") or "")
+                  for c in (weekly.get("cover_text") or [])
+                  if isinstance(c, dict) and len(c.get("headline") or "") > MAX_HEADLINE_CHARS]
+    report("W-01",
+           bool(issue) and start is not None and start.weekday() == 0 and not long_heads,
            f"issue #{issue}, week starting {start_raw or '(none)'}"
-           + ("" if start and start.weekday() == 0 else " (week_start is not a Monday)"))
+           + ("" if start and start.weekday() == 0 else " (week_start is not a Monday)")
+           + ("" if not long_heads
+              else f"  <- {len(long_heads)} cover headline(s) are paragraphs: {long_heads}"))
 
     # W-03 — the cover image is Void's to publish, or there is none.
     cover = str(weekly.get("cover_image_url") or "")
@@ -210,7 +227,130 @@ def main(site: str) -> int:
                + ("fresh" if age <= MAX_WEEKLY_AGE_DAYS
                   else "the Monday weekly job has not landed in three weeks"))
 
+    # W-04 — /weekly actually PRERENDERS. The page was a client shell that
+    # fetched weekly.json in a useEffect, so the served HTML carried no issue
+    # content and every issue shared one OG card. Grepping the cover headline
+    # out of the served markup is the only check that proves it is fixed.
+    head = str(weekly.get("cover_headline") or "").strip()
+    try:
+        _, _, html = fetch(f"{base}/weekly/")
+        needle = html_escape_variants(head[:60])
+        report("W-04", bool(head) and any(n in html for n in needle),
+               f"served /weekly/ is {len(html):,} bytes and "
+               + ("carries the cover headline" if any(n in html for n in needle)
+                  else "does NOT carry the cover headline  <- client-only shell?"))
+    except Exception as e:
+        report("W-04", False, f"could not fetch /weekly/: {type(e).__name__}: {e}")
+
+    # W-05/W-06 — the back-issue archive. The weekly job restores the Actions
+    # cache and never saves it back, so the deploy tree is the ONLY durable
+    # record a past issue has: a broken append silently loses an issue forever.
+    try:
+        _, _, raw = fetch(f"{base}/data/weekly-archive.json")
+        index = json.loads(raw) or []
+    except Exception as e:
+        report("W-05", False, f"could not read data/weekly-archive.json: {type(e).__name__}: {e}")
+        report("W-06", False, "skipped (no archive)")
+        index = []
+
+    if index:
+        newest = index[0]
+        report("W-05",
+               len(index) >= 1 and newest.get("issue_number") == issue,
+               f"{len(index)} issue(s); newest is #{newest.get('issue_number')} "
+               + ("matching weekly.json" if newest.get("issue_number") == issue
+                  else f"but weekly.json says #{issue}  <- archive append is broken"))
+
+        # The previous issue's permalink must be a real page, not just a row in
+        # a list. This is what proves the archive is reachable.
+        prev = next((r for r in index[1:] if r.get("week_start")), None)
+        if not prev:
+            report("W-06", True, "only one issue published so far; nothing to link back to")
+        else:
+            try:
+                status, _, phtml = fetch(f"{base}/weekly/{prev['week_start']}/")
+                ph = str(prev.get("cover_headline") or "").strip()[:60]
+                has = bool(ph) and any(n in phtml for n in html_escape_variants(ph))
+                report("W-06", status == 200 and has,
+                       f"/weekly/{prev['week_start']}/ returned {status}"
+                       + ("" if has else " and does not carry its own headline"))
+            except Exception as e:
+                report("W-06", False,
+                       f"/weekly/{prev['week_start']}/ failed: {type(e).__name__}: {e}")
+
+    # W-07 — the browser payload carries what a browser needs and nothing else.
+    # audio_script is ~12 KB of TTS source rendered nowhere; cover_timelines and
+    # cover_numbers shipped as raw JSON STRINGS because the exporter's parse
+    # list and the frontend reader's mirror list had drifted apart.
+    leaked = [k for k in ("audio_script", "opinion_audio_script") if weekly.get(k)]
+    stringly = [k for k in ("cover_timelines", "cover_numbers", "departments", "opinions")
+                if isinstance(weekly.get(k), str)]
+    report("W-07", not leaked and not stringly,
+           "payload is clean"
+           if not leaked and not stringly
+           else f"unrendered TTS source: {leaked}; shipped as raw strings: {stringly}")
+
+    # W-08 — no em or en dash in the SERVED prose. CLAUDE.md bans both in
+    # generated copy AND frontend microcopy, and until 2026-09-20 exactly one
+    # of six weekly generators enforced anything, so the live page carried
+    # seven. The title is excluded because a <title> is chrome, not copy, and
+    # the JSON payload because a raw data blob is not prose a reader sees.
+    try:
+        status, _, whtml = fetch(f"{base}/weekly/")
+        # The whole <head> goes, not just <title>: og:title and og:description
+        # are chrome in the same way a tab label is, and a page name reading
+        # "Issue #8: ... — Void Weekly" is not prose a reader is shown.
+        body = re.sub(r"<head\b.*?</head>", "", whtml, flags=re.S)
+        body = re.sub(r"<script.*?</script>", "", body, flags=re.S)
+        dashes = body.count("\u2014") + body.count("\u2013")
+        sample = ""
+        m = re.search(r".{50}[\u2014\u2013].{50}", body)
+        if m:
+            sample = ": ..." + m.group().replace("\n", " ")
+        report("W-08", dashes == 0,
+               "no dash in the served prose" if dashes == 0
+               else f"{dashes} dash(es) in served prose{sample}")
+    except Exception as e:
+        report("W-08", False, f"could not fetch /weekly/: {type(e).__name__}: {e}")
+
+    # W-09 — the Sunday audio edition, if the issue has one, ships its chapter
+    # sidecar and the rail is ordered from zero. A chapter rail that starts
+    # late or runs backwards is a player that jumps to the wrong movement, and
+    # it is invisible until someone uses it.
+    chs = weekly.get("audio_chapters")
+    if not weekly.get("audio_url"):
+        report("W-09", True, "this issue has no audio (acceptable)")
+    elif isinstance(chs, str):
+        report("W-09", False, "audio_chapters shipped as a raw JSON string")
+    elif not chs:
+        report("W-09", True, "legacy two-voice read, no chapter rail (acceptable)")
+    else:
+        times = [c.get("startTime") for c in chs if isinstance(c, dict)]
+        ordered = times == sorted(times) and times and times[0] == 0
+        sidecar = weekly["audio_url"].split("?")[0].rsplit(".", 1)[0] + ".chapters.json"
+        try:
+            sstatus, _, _ = fetch(base.rstrip("/") + sidecar)
+        except Exception:
+            sstatus = 0
+        report("W-09", bool(ordered) and sstatus == 200,
+               f"{len(chs)} chapters, ordered from zero, sidecar {sstatus}"
+               if ordered and sstatus == 200
+               else f"chapters ordered={bool(ordered)}, sidecar returned {sstatus}")
+
     return 0 if ok else 1
+
+
+def html_escape_variants(text):
+    """The same text as it may appear in served HTML.
+
+    React escapes quotes and ampersands in text nodes, so a headline carrying
+    an apostrophe never matches raw. Checking both spellings keeps W-04 from
+    failing on punctuation.
+    """
+    out = [text]
+    out.append(text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"))
+    out.append(text.replace("'", "&#x27;").replace('"', "&quot;"))
+    return out
 
 
 if __name__ == "__main__":

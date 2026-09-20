@@ -3169,7 +3169,27 @@
   position: sticky;
   top: 0;
   width: 100%;
-  min-height: 100vh;
+  /* The hero is sticky at top:0 but it does NOT start at the top of the
+     screen: the history topbar sits above it (and, before it scrolls away,
+     the experimental banner). A full 100vh therefore puts the hero's bottom
+     one chrome-height BELOW the fold, and everything anchored down there
+     goes with it, because the content is justify-content: flex-end.
+     That is how the Listen button came to be invisible on every desktop
+     size while rendering perfectly in the DOM: measured on the deployed
+     build at 1440x760, the button ran 755 to 799 against a 760 fold, and
+     the scroll hint below it was entirely off-screen.
+     Subtracting the topbar leaves the hero the room it actually has. The
+     scroll hint's ~94px then acts as the buffer that keeps the CTA clear
+     even in the moment before the banner scrolls away. */
+  min-height: calc(100vh - var(--hist-topbar-height));
+  min-height: calc(100svh - var(--hist-topbar-height));
+  /* And a reserved strip at the hero's own bottom edge. The content is
+     flex-end, so this lifts the whole stack rather than padding a box: it
+     is what keeps the CTA clear in the first moments of a visit, while the
+     experimental banner is still on screen and stealing another 35px.
+     Without it the clearance measured 7px on a tablet, which is not a
+     margin, it is a coincidence. */
+  padding-bottom: var(--space-4);
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -3311,6 +3331,45 @@
   font-size: var(--text-xxs);
   opacity: 0.6;
   letter-spacing: 0.02em;
+}
+
+/* Audio edition not made yet. The same hero slot as the Listen button, but
+   deliberately not a button: no border, no fill, no hover, nothing to click.
+   It states a fact about the catalogue and gets out of the way. */
+.hist-hero-pending {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: var(--space-4);
+  padding: 0;
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: var(--hist-paper-fixed, #F2EDE0);
+  opacity: 0.45;
+}
+
+.hist-hero-pending__icon {
+  flex-shrink: 0;
+  opacity: 0.8;
+}
+
+/* Audio-available mark on an archive card. Sits at the end of the meta row and
+   reads as a property of the card, not an action on it. */
+.hist-event-card__audio {
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
+  color: var(--hist-brass);
+  opacity: 0.55;
+  transition: opacity 250ms var(--ease-cinematic);
+}
+
+.hist-event-card:hover .hist-event-card__audio,
+.hist-event-card:focus-visible .hist-event-card__audio {
+  opacity: 0.9;
 }
 
 /* Scroll indicator — thin animated line */

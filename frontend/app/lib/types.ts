@@ -315,7 +315,15 @@ export interface AudioChapter {
   title: string;
   /** "segment" is a History documentary chapter: it carries a title and
    *  nothing else, so the rail draws no kind badge beside it. */
-  kind: "headlines" | "story" | "briefs" | "finally" | "opinion" | "editorial" | "segment";
+  /* On Air: headlines / story / briefs / finally / opinion (legacy: editorial).
+     History: segment. The Sunday weekly edition, "The Argument", adds its own
+     movements — the rail renders any kind and already guards an empty label,
+     which is exactly what lets a new format arrive without a player change. */
+  kind:
+    | "headlines" | "story" | "briefs" | "finally" | "opinion" | "editorial"
+    | "segment"
+    | "open" | "contents" | "cover" | "topic" | "second" | "department"
+    | "numbers" | "close";
   /** story_clusters.id when kind is "story" or "finally" */
   cluster_id?: string;
   /** Feed rank when kind is "story" */
@@ -429,112 +437,21 @@ export const LEAN_RANGES: Record<LeanChip, { min: number; max: number } | null> 
 
 /* ---------------------------------------------------------------------------
    Weekly Digest types — void --weekly
+
+   These live in app/weekly/types.ts now, alongside the section that owns them
+   (mirroring app/history/). Re-exported here so AudioProvider and DailyBrief
+   keep importing them from the shared module.
    --------------------------------------------------------------------------- */
 
-export interface WeeklyCoverStory {
-  headline: string;
-  text: string;
-  timeline?: WeeklyTimelineDay[];
-  numbers?: WeeklyCoverNumber[];
-  /* Optional illustration embedded by the backend into the weekly JSON.
-     cluster_id is stored in the DB row and now surfaced for image lookup. */
-  image_url?: string;
-  image_attribution?: string;
-  /* Optional magazine caption describing the image (generated backend-side,
-     populates later). Rendered as an italic serif line beside the credit;
-     degrades to credit-only when absent. */
-  image_caption?: string;
-  cluster_id?: string;
-}
+export type {
+  WeeklyCoverStory,
+  WeeklyTimelineDay,
+  WeeklyCoverNumber,
+  WeeklyRecapStory,
+  WeeklyOpinion,
+  WeeklyDepartment,
+  WeeklyBiasReportData,
+  WeeklyDigestData,
+  WeeklyIssueSummary,
+} from "../weekly/types";
 
-export interface WeeklyTimelineDay {
-  day?: string;      // legacy: "Monday"
-  date?: string;     // new: "Mon Mar 31"
-  note?: string;     // legacy
-  event?: string;    // new: concrete event description
-  development?: string;  // legacy from Gemini v1
-}
-
-export interface WeeklyCoverNumber {
-  // Generator emits {stat, context}; older rows used {value, label}.
-  // Renderer normalizes: value ?? stat / label ?? context.
-  value?: string;
-  label?: string;
-  stat?: string;
-  context?: string;
-}
-
-export interface WeeklyRecapStory {
-  headline: string;
-  summary: string;
-  section?: string;
-  /* Optional thumbnail embedded by the backend into the weekly JSON. */
-  image_url?: string;
-  image_attribution?: string;
-  /* Optional magazine caption describing the thumbnail (see WeeklyCoverStory). */
-  image_caption?: string;
-}
-
-export interface WeeklyOpinion {
-  headline: string;
-  text: string;
-  lean: string;
-  topic?: string;
-}
-
-export interface WeeklyBiasReportData {
-  most_polarized?: Array<{
-    headline: string;
-    lean_spread: number;
-    avg_lean: number;
-  }>;
-  aggregate?: {
-    avg_lean: number;
-    avg_rigor: number;
-    avg_sensationalism: number;
-    total_articles: number;
-  };
-}
-
-export interface WeeklyContestedStory {
-  id: string;
-  title: string;
-  claim_consensus: ClaimConsensus;
-}
-
-export interface WeeklyDigestData {
-  id: string;
-  edition: string;
-  week_start: string;
-  week_end: string;
-  issue_number: number;
-  cover_headline: string;
-  cover_image_url: string | null;
-  cover_image_attribution: string | null;
-  cover_image_source: string | null;
-  cover_text: WeeklyCoverStory[];
-  cover_numbers: WeeklyCoverNumber[] | null;
-  recap_stories: WeeklyRecapStory[];
-  opinion_left: WeeklyOpinion[] | null;
-  opinion_center: WeeklyOpinion[] | null;
-  opinion_right: WeeklyOpinion[] | null;
-  opinion_headlines: string[] | null;
-  opinion_topic: string | null;
-  bias_report_text: string | null;
-  bias_report_data: WeeklyBiasReportData | null;
-  audio_url: string | null;
-  audio_duration_seconds: number | null;
-  // Weekly editorial (one argued week-in-review column; migration 064).
-  // Distinct from the three-lens opinion_left/center/right "Perspectives".
-  opinion_text: string | null;
-  opinion_headline: string | null;
-  opinion_lean: OpinionLean | null;
-  opinion_audio_script: string | null;
-  opinion_start_seconds: number | null;
-  audio_voice: string | null;
-  audio_voice_label: string | null;
-  total_articles: number | null;
-  total_clusters: number | null;
-  contested_stories?: WeeklyContestedStory[] | null;
-  created_at: string;
-}

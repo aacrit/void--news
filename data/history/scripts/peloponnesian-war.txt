@@ -1,0 +1,148 @@
+## OPEN
+N: Say the Peloponnesian War and people picture two armies settling it with spears. Athens against Sparta, one winner left standing.
+N: The record does not show that. Sparta burned Athenian farmland almost every summer for years, and Athens simply would not come out to fight.
+N: What finally broke Athens was not a battle at all. And when Sparta won, it did not win as the better army. It won with Persian gold, from the same power the two of them had once united to drive out of Greece.
+
+## TITLE
+N: The Peloponnesian War. Four thirty one to four oh four BCE.
+
+## SCENE 1 | Plataea, summer of four thirty one BCE
+N: Three hundred men from Thebes slip into the city of Plataea at night, let in by a faction inside the walls. The Plataeans wake, realize how few of them there are, and by morning have killed or captured a hundred eighty.
+N: Thebes is Sparta's ally. Plataea is Athens's ally. In a Greek world of hundreds of independent cities, that is now a reason for everyone else to go to war.
+
+## SCENE 2 | Behind the Long Walls
+N: Athens controls the sea: three hundred warships, each needing a hundred seventy rowers, and an empire of about a hundred fifty tribute paying cities. Sparta controls the land, with eight to ten thousand citizens trained from age seven, the most feared infantry in Greece.
+N: So each side attacks where the other is weak. Sparta burns Athenian farmland every year, and Athens does not march out to meet them.
+N: Instead Athens shelters behind two long walls connecting the city to its port five miles away and imports its grain by ship. Pericles, the statesman running the strategy, has calculated that the city can outlast Sparta's invasions as long as it never risks a pitched battle on land.
+
+## SCENE 3 | The winter of four thirty one
+N: The first year's war dead are buried, and Pericles gives the funeral speech.
+N: He tells the crowd that Athens copies no one, that it is a pattern for others rather than an imitator of anyone.
+N: To the widows in the crowd he adds one instruction: a woman's greatest glory is to be talked about by men as little as possible, for praise or for blame.
+N: The speech survives only because Thucydides wrote it up himself, decades afterward, in his own words rather than a record of what was actually said that day.
+
+## SCENE 4 | The plague
+N: A year later, in four thirty BCE, disease breaks out in the overcrowded city. It is still debated whether it was typhoid fever or smallpox.
+N: Over four years it kills an estimated one quarter of the population. Pericles himself dies of it in four twenty nine BCE.
+N: Thucydides catches the plague too, and survives. He writes down what he saw with the same precision he uses for battles.
+
+## DOCUMENT | Thucydides | History of the Peloponnesian War, Book 2.52 | c. 400 BCE
+N: This is Thucydides describing the city during the outbreak.
+M: The city was full of dead bodies lying where they died, one upon another, and half-dead creatures reeling about the streets and gathering round all the fountains in their longing for water.
+
+## ASIDE
+N: Pericles's plan was never beaten in the field. It was beaten by a fever, and it took the man who designed it along with a quarter of the city.
+N: What Thucydides wrote down that year is the oldest detailed account of an epidemic in Western literature.
+
+## REST
+
+## SCENE 5 | Melos, four sixteen BCE
+N: Athens sends thirty eight ships, three thousand hoplites and three hundred archers to a small neutral island called Melos, and tells it to submit or be destroyed.
+N: Melos is a colony of Sparta, but it has stayed neutral the whole war. The Melians say they have harmed no one, that neutrality is their right, and that the gods and Sparta will protect them.
+
+## DOCUMENT | Thucydides | History of the Peloponnesian War, Book 5, the Melian Dialogue | Written around four hundred BCE, describing events of four sixteen BCE
+N: Thucydides was not in the room for this negotiation. He reconstructed it afterward as a dialogue, and gives the Athenian envoys this answer.
+M: The strong do what they can; the weak suffer what they must.
+
+## ASIDE
+N: Sparta never comes. The Melians refuse anyway, and Athens takes the island.
+N: What follows is not a battle Athens lost. It is a policy Athens carried out, calculated in advance, against an island that had attacked no one.
+
+## REST | short
+
+## SCENE 6 | The Great Harbor, four thirteen BCE
+N: A year after Melos, Athens launches the largest operation in Greek history, a hundred thirty four ships and about thirty thousand men, to conquer Syracuse.
+N: Its champion, Alcibiades, is recalled on the way to face charges of sacrilege and defects to Sparta instead. Without him the campaign stalls, and Syracuse, reinforced by a Spartan general, destroys the Athenian fleet in the harbor and wipes out the retreating army at a river.
+N: Of the forty thousand who sailed, a few thousand come home. The captured die of disease and exposure in stone quarries.
+
+## REST
+
+## SCENE 7 | Aegospotami, four oh five BCE
+N: Athens fights on nine more years, rebuilding its navy twice, but it cannot outlast what Sparta finds next. Sparta takes gold from Persia and pays for it by handing the Greek cities of Ionia back to Persian control.
+N: Lysander, Sparta's most effective admiral, uses that money to build the fleet that destroys Athens's last ships at Aegospotami.
+N: Athens surrenders the following year. Sparta tears down the Long Walls and installs a regime that executes fifteen hundred Athenians in eight months before it is overthrown.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts survive this war, and none of them agree on what it was actually for.
+
+## PERSPECTIVE | Athenian / Democratic-Imperial | vanquished
+N: Athens's own case starts with what the empire paid for. Tribute from about a hundred fifty allied cities paid the rowers of the fleet, and those rowers were the poorer citizens whose vote made Athens a democracy. Take away the empire and the base under that democracy goes with it.
+N: Pericles did not pretend the empire was innocent. This is a speech he gave to the assembly, as rendered by Thucydides, not a transcript of his exact words.
+M: Your empire is now like a tyranny. It may have been wrong to take it; it is certainly dangerous to let it go.
+N: On this account the plague broke a sound plan, not a strategic mistake, and Sicily was not inevitable either. The assembly voted for that war on a wave of enthusiasm with no institution able to slow it down.
+N: Even after Sicily, Athens rebuilt its fleet twice and kept winning battles for nine more years. It was also the only Greek city that restored its own democracy after the Thirty Tyrants fell.
+
+## PERSPECTIVE | Spartan / Peloponnesian League | victor
+N: Sparta's case is that this was a war to restore the balance of power, not one of conquest. Corinth and Megara complained that Athens was strangling their trade, and the Spartan assembly voted for war on a single argument: Athens had grown too powerful.
+N: Thucydides himself agreed that was the real reason underneath the official one.
+M: The growth of Athenian power and the fear which this caused in Sparta made war inevitable.
+N: Spartan strength came from a system built to produce nothing else: boys entered training at seven and lived in barracks until thirty, while a subject population, the helots, worked the land so Spartan men never had to.
+N: Victory came at a price Sparta paid quietly: it needed Persian gold to finish the job, and Persian gold meant handing Ionia's Greek cities back to the empire Sparta had once helped drive out.
+
+## REST | short
+
+## PERSPECTIVE | Subject Peoples / The Melian Position | vanquished
+N: Most of the Greek world was neither Athens nor Sparta. Something like seven hundred fifty independent cities, most with fewer than five thousand people, left almost no record of what this war did to them.
+N: Melos survives because Thucydides chose to write it down, reconstructing the negotiation as a dialogue between the Athenian envoys and the Melians.
+M: Of the gods we believe, and of men we know, that by a necessary law of their nature they rule wherever they can.
+N: Melos was not the only case. Mytilene revolted in four twenty eight BCE, and the assembly voted to execute every man and enslave the rest, then reconsidered a day later, though a thousand judged ringleaders were still executed. Scione got no second vote at all.
+N: Sparta was no kinder to the cities it captured. At Plataea, captured survivors were asked one question each: had they helped Sparta in the war. When the answer was no, as it always was after a siege, the man was executed. Two hundred Plataeans and twenty five Athenians died that way, and Thebes tore the city down afterward.
+N: For the small cities caught between them, the lesson was the same whichever side you asked: neither great power respected the independence of the weak.
+
+## PERSPECTIVE | Modern Realist / International Relations Theory | academic
+N: Thucydides did not just record this war. He built a framework for reading power politics that outlived him by thousands of years. Graham Allison's two thousand seventeen book named the pattern the Thucydides Trap: in sixteen historical cases where a rising power challenged a ruling one, war followed in twelve of them. By the twenty tens, Allison's framing had made Thucydides the most cited ancient author in Pentagon briefings.
+N: The Melian Dialogue is the proof text realists still teach, because Thucydides refuses to editorialize. He lays out the Melian argument and the Athenian argument side by side and lets the destruction of Melos answer the question itself.
+N: Thucydides said what he was doing, in his own words, about his own book.
+M: My work is not a piece of writing designed to meet the taste of an immediate public, but was done to last for ever.
+
+## PERSPECTIVE | Non-Athenian Greek Cities / Subject Allies | vanquished
+N: The Delian League started in four seventy eight BCE as a voluntary alliance against Persia. By the fourteen fifties it was an Athenian empire in every way that mattered. Athens moved the League's treasury from Delos to the Acropolis and spent the tribute, six hundred talents a year from about a hundred fifty cities, on the Parthenon.
+N: Cities that tried to leave were crushed. Naxos was besieged and forced back around four seventy BCE. Thasos revolted in four sixty five and lost its gold mines. Samos rebelled in four forty, and Pericles personally led the nine month siege that broke it.
+N: Thucydides recorded exactly what Athens did at Melos when it was finished with the island.
+M: The Athenians took the city, put to death all the grown men whom they took, and sold the women and children for slaves. They then colonized Melos with five hundred settlers of their own.
+N: The allies paid for the ships, rowed the ships, and died on campaigns from Egypt to Sicily, with no vote in the assembly that decided how any of it was spent.
+
+## REST | short
+
+## TURN | What each one leaves out
+N: Each account leaves out what would complicate it.
+N: The Athenian account explains the democracy the empire funded, and says far less about Naxos, Thasos and Samos, the allied cities crushed for trying to leave that same empire.
+N: The Spartan account calls this a war of liberation, and says less about the helots enslaved at home to make that liberation army possible, or about the Persian gold it needed to finally win.
+N: The Melian account is the clearest indictment of great power politics in the whole record, and it says nothing about how small cities also formed alliances and played Athens and Sparta against each other when it suited them.
+N: The realist account treats the Melian Dialogue as timeless proof, and skips past the fact that Thucydides wrote both sides of it, an exiled Athenian aristocrat choosing which words went where. He gives Pericles better speeches than any Spartan, and women appear twice in the whole Funeral Oration: as mothers of the dead, and as widows told to stay quiet.
+N: And the allied account, which names the massacres in the most detail, still passes over the times allied cities preferred Athenian protection to the alternative, or benefited from choosing a side at all.
+
+## REST
+
+## CLOSE
+N: In four eleven BCE, twenty years into a war that would run seven more, the playwright Aristophanes staged a comedy about ending it.
+N: In it, the women of Athens and Sparta seize the treasury on the Acropolis and refuse their husbands until the men agree to make peace.
+N: It was a comedy. Households across the city really were collapsing, and it still took Athens another seven years to stop.
+
+## SAY
+Peloponnesian = pel-oh-puh-NEE-zhun
+Thucydides = thoo-SID-ih-deez
+Pericles = PER-ih-kleez
+Plataea = pluh-TEE-uh
+Aegean = ee-JEE-un
+Delian = DEE-lee-un
+Acropolis = uh-KROP-oh-lis
+Melos = MEE-los
+Melian = MEE-lee-un
+Mytilene = mit-ih-LEE-nee
+Scione = sky-OH-nee
+Aegospotami = ee-goss-POT-uh-my
+Lysander = lie-SAN-der
+Alcibiades = al-sih-BY-uh-deez
+Syracuse = SEER-uh-kyooz
+Nicias = NISH-ee-us
+Brasidas = BRASS-ih-dus
+Naxos = NAK-sos
+Thasos = THAH-sos
+Samos = SAY-mos
+Ionia = eye-OH-nee-uh
+Megara = MEG-uh-ruh
+Aristophanes = air-ih-STOF-uh-neez
+Helots = HEL-uts

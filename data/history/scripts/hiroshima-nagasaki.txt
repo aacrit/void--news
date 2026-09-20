@@ -1,0 +1,136 @@
+## OPEN
+N: It is almost always posed as two options. Drop the bomb, or invade. A quarter of a million American dead, or a hundred and forty thousand Japanese ones.
+N: The documents from that summer have more than two things in them. There is an invasion plan. There are two bombs. There is a Soviet army about to enter the war, and there is one word about the emperor that nobody would say out loud until after it was over.
+N: The argument since has not been about what happened. It has been about which of those four was doing the work.
+
+## TITLE
+N: Hiroshima and Nagasaki. The sixth and ninth of August, nineteen forty five.
+
+## SCENE 1 | Fifteen minutes past eight
+N: A quarter past eight in the morning, the sixth of August. A clear day over Hiroshima.
+N: A single B twenty nine releases a uranium bomb from thirty one thousand feet. It falls for forty three seconds and detonates about nineteen hundred feet in the air, above a surgical clinic, roughly eight hundred feet from where it was aimed.
+N: The yield is around fifteen thousand tonnes of conventional explosive. At the centre of the fireball the temperature passes a million degrees.
+N: Inside one second, everything within half a mile is vaporised or carbonised. The blast wave flattens sixty nine per cent of the buildings in the city.
+N: Of three hundred and fifty thousand people in Hiroshima that morning, between seventy and eighty thousand die immediately. By December the count is around a hundred and forty thousand.
+
+## DOCUMENT | Dr. Michihiko Hachiya | Hiroshima Diary | August 6, 1945
+N: Michihiko Hachiya was the director of the Hiroshima Communications Hospital. He was at home, injured by his own collapsing house, and he began writing that day.
+M: Those who were in the stone building came out with blood streaming from their heads, their faces completely altered, burning and blackened, with ragged clothes.
+
+## REST
+
+## SCENE 2 | The second one was aimed somewhere else
+N: Three days later a second aircraft carries a plutonium bomb toward the city of Kokura.
+N: Kokura is under cloud. The crew makes three passes, cannot see the aiming point, and turns for the secondary target.
+N: At two minutes past eleven the bomb detonates over the Urakami valley in Nagasaki. It is the bigger of the two weapons, about twenty one thousand tonnes, but the hills around the valley hold the blast in.
+N: Between forty and seventy thousand people are dead by the end of the year.
+N: Urakami Cathedral was the largest Christian church in East Asia. It was destroyed with its congregation inside. About a third of the twelve thousand Catholics in Nagasaki were killed.
+
+## ASIDE
+N: Kokura was saved by weather. Nobody in Kokura knew that for years.
+
+## REST
+
+## SCENE 3 | The illness with no name yet
+N: Then something started happening that no doctor had seen.
+N: People who had walked out of it, who had been triaged as uninjured, began to collapse a week later. Bleeding gums. Hair coming out in handfuls. Internal haemorrhage. Organ failure.
+N: Hachiya recorded it as it happened, patients who seemed well on the first day and were dead within a fortnight, and he had no name for what he was watching.
+N: For hours after both blasts a heavy black rain fell, fallout carried up in the column and brought down in the condensation. People drank it, because they were burned and there was nothing else.
+N: About one in five of the people who survived the initial blast died in the weeks that followed.
+
+## SCENE 4 | A voice nobody had heard
+N: Japan accepted the Potsdam terms on the fifteenth of August, six days after Nagasaki.
+N: The emperor recorded a radio address. It was the first time most of his subjects had ever heard his voice, and he spoke in a formal court Japanese that many listeners could not fully follow.
+
+## DOCUMENT | Emperor Hirohito | Gyokuon-hoso | August 15, 1945
+N: What Hirohito gave as the reason was not defeat, and it was not the Soviet declaration of war that had come six days earlier. It was the weapon.
+M: The enemy has begun to employ a new and most cruel bomb, the power of which to do damage is, indeed, incalculable.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts, and this is the event in the catalogue where the accounts are furthest apart, because the disagreement is not about the facts. All five of them accept the same facts.
+
+## PERSPECTIVE | The American case | victor
+N: The first is the case the decision was made on, and it is an argument about arithmetic.
+N: An invasion was planned and scheduled. Kyushu in November nineteen forty five, then the main island in March nineteen forty six. The estimates of American casualties ran from a quarter of a million to a million, depending on what you assumed about how hard the defence would fight. Japanese casualties were projected in the millions.
+N: The committee that Secretary of War Henry Stimson convened in the early summer concluded the weapon should be used against a military and industrial target, and without prior warning.
+N: Behind that sat eight months of conventional bombing that had already burned sixty seven Japanese cities without producing a surrender.
+N: The Potsdam Declaration of the twenty sixth of July demanded unconditional surrender and promised prompt and utter destruction. Japan's prime minister answered with a word, mokusatsu, which was translated for Washington as treat with silent contempt, and which can also mean withhold comment. Nobody asked which one he meant.
+N: Harry Truman had been President for under four months and had learned the weapon existed after he took office. Sixteen hours after Hiroshima he went on the radio and made the case in one sentence.
+M: If they do not now accept our terms, they may expect a rain of ruin from the air, the like of which has never been seen on this earth.
+
+## PERSPECTIVE | The hibakusha | vanquished
+N: The second account belongs to the people underneath it, and what it contributes is scale of a different kind.
+N: Sunao Tsuboi was a twenty year old engineering student walking to class, about a kilometre from the point below the detonation. He described the flash first, a white light that turned the street into a photographic negative. Then the heat took his exposed skin. Then the blast threw him ten metres.
+N: When he stood up, the city was not damaged. It was gone. People walked past him with their skin hanging from their arms in sheets. A woman was carrying an infant with no head. The river was full of bodies.
+N: In nineteen forty six the New Yorker gave an entire issue to John Hersey's account of six survivors. It is written flat, without a single raised voice, and it sold out in hours.
+N: The Japanese registry counts about six hundred and fifty thousand hibakusha, which means explosion affected people. It is a category, with paperwork, and it has governed their medical care for eighty years.
+
+## REST | short
+
+## PERSPECTIVE | The scientists | bystander
+N: The third account comes from the people who built it, and most of it was written before the bombs fell.
+N: In June nineteen forty five a committee of Manhattan Project physicists in Chicago, led by James Franck, recommended demonstrating the weapon on an uninhabited island first. Their argument was not only moral. They predicted that a surprise attack on a city would cost the United States the moral standing to control what came next, and that an arms race would follow.
+N: Stimson's committee considered it and rejected it. A demonstration that failed would stiffen Japanese resolve, and no test could produce the shock that a city could.
+N: Leo Szilard, whose letter to Einstein had started American atomic research in the first place, circulated a petition signed by seventy scientists asking Truman not to use it without an offer of terms. It reached the President's desk after Nagasaki.
+N: Robert Oppenheimer, who had directed the work, gave his own verdict on the Trinity test in the New Mexico desert three weeks earlier by quoting Hindu scripture.
+M: Now I am become Death, the destroyer of worlds.
+N: Three months after Hiroshima he told Truman he felt he had blood on his hands, and Truman told a colleague afterwards that he never wanted to see him again.
+
+## PERSPECTIVE | The revisionists | revisionist
+N: The fourth account says the bombs were aimed at Moscow.
+N: By July nineteen forty five Japan's Supreme War Council was split. The foreign minister was approaching the Soviet Union through his ambassador there, looking for mediation toward a negotiated peace. Washington was reading those cables, decrypted, on the President's desk, daily.
+N: What the military faction insisted on was conditions. No occupation, no war crimes trials, no disarmament, and the emperor kept.
+N: And here is the fact the revisionist case turns on. The terms Japan accepted on the fifteenth of August did leave the emperor in place. That was the condition the Japanese had been exploring all along, and the Potsdam Declaration had refused to say it.
+N: Meanwhile Stalin had promised at Yalta to enter the war against Japan three months after Germany fell. He did, on the eighth of August, between the two bombs. The revisionist reading is that a war ending on Soviet terms, in a Soviet occupation zone, was the outcome Washington was actually racing.
+
+## PERSPECTIVE | The Korean dead | vanquished
+N: The fifth account is the one that is usually missing from both sides of the argument.
+N: Between twenty and forty thousand of the people killed at Hiroshima were Korean.
+N: Korea had been annexed by Japan in nineteen ten. Under the mobilisation laws, hundreds of thousands of Koreans were shipped to Japan to work in mines, factories and military yards. By August nineteen forty five there were about two point four million Koreans in Japan, roughly six hundred thousand of them conscripted labour.
+N: In Hiroshima they were concentrated in the industrial districts. At the Mitsubishi yards in Nagasaki they worked alongside Japanese civilians and Allied prisoners of war. When the bombs fell they died beside the people who had brought them there.
+N: And then they did not fit anywhere. Japanese survivor identity was built as a national story about Japanese suffering, and Korean survivors were not admitted to the hibakusha framework until a court ruling in nineteen seventy eight. Those who had gone home to Korea got nothing from Japan until two thousand and three.
+
+## REST
+
+## TURN | What each one leaves out
+N: What each of them has to leave out to hold its shape.
+N: The American case rests on a casualty estimate with a range of four to one, which is wide enough to support whatever conclusion you brought to it. And the same planners had already burned sixty seven cities without a surrender, which is an argument against the assumption that one more city would be decisive.
+N: The hibakusha account, told as a national story, is how the Korean dead fell out of it. And told alone it can detach the bombing from the empire that conscripted them.
+N: The scientists' account is partly a document of absolution, written by people with a stake in it, and the petition that is always cited arrived too late to be a choice anybody faced.
+N: The revisionist account leans on a counterfactual. The war council was split, and the faction demanding conditions had not lost the argument. What Japan might have done is not evidence in the way that what Japan did is evidence.
+N: And the Korean account is a claim about recognition, not about causation. It tells you who was in the city. It does not tell you whether the bomb should have been dropped on it.
+
+## REST
+
+## CLOSE
+N: The survivors have been medically tracked for eighty years, first by an American commission and then by a joint foundation, and almost everything the world knows about long term radiation exposure in humans comes from their bodies.
+N: About a hundred and six thousand of them were still alive in twenty twenty four. Their average age is over eighty five.
+N: One building was left standing near the hypocenter with its dome frame intact, and Japan argued for decades about whether to pull it down. It is a World Heritage site now.
+N: And in a case in the museum there is a wristwatch that stopped at fifteen minutes past eight.
+
+## SAY
+Hiroshima = hee-roh-SHEE-mah
+Nagasaki = nah-gah-SAH-kee
+Kokura = koh-KOO-rah
+Urakami = oo-rah-KAH-mee
+Kyushu = KYOO-shoo
+Michihiko = mee-chee-HEE-koh
+Hachiya = hah-CHEE-yah
+Hirohito = hee-roh-HEE-toh
+Gyokuon-hoso = gyoh-koo-ON hoh-SOH
+Potsdam = POTS-dam
+mokusatsu = moh-koo-SAT-soo
+Stimson = STIM-son
+hibakusha = hee-bah-KOO-shah
+Sunao = soo-NOW
+Tsuboi = tsoo-BOY
+Hersey = HER-see
+Szilard = SIL-ard
+Einstein = INE-styne
+Oppenheimer = OP-en-hy-mer
+Trinity = TRIN-i-tee
+Yalta = YAL-tah
+Mitsubishi = mit-soo-BEE-shee
+hypocenter = HY-poh-sen-ter
