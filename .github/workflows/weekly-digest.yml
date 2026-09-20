@@ -190,9 +190,40 @@ jobs:
           # unreviewed commits onto the default branch.
           BRANCH="${{ github.ref_name }}"
           echo "committing to $BRANCH"
+          # Generated data has no merge semantics: two runs that both export it
+          # will conflict on a rebase, and the right resolution is never a
+          # merge but "whichever run produced this from the newest state
+          # wins". The daily pipeline died exactly here on 2026-09-20, on
+          # weekly.json and weekly-issues.json, because a parallel commit had
+          # touched the same generated files.
+          #
+          # Mid-rebase, --theirs is the commit being REPLAYED, i.e. this run's
+          # fresh issue; --ours would be the older copy already on the branch.
+          # A conflict outside the paths this job owns is a real one and still
+          # aborts.
+          resolve_generated() {
+            local conflicted f
+            conflicted=$(git diff --name-only --diff-filter=U)
+            [ -n "$conflicted" ] || return 1
+            while IFS= read -r f; do
+              [ -n "$f" ] || continue
+              case "$f" in
+                frontend/public/data/weekly*.json|frontend/build-data/weekly-issues.json|frontend/public/audio/weekly-*) ;;
+                *) echo "conflict outside the weekly data: $f"; return 1 ;;
+              esac
+            done <<< "$conflicted"
+            while IFS= read -r f; do
+              [ -n "$f" ] || continue
+              git checkout --theirs -- "$f" 2>/dev/null || git rm -q -- "$f" 2>/dev/null || true
+              git add -- "$f" 2>/dev/null || true
+            done <<< "$conflicted"
+            echo "resolved $(echo "$conflicted" | wc -l) generated file(s) in favour of this run"
+            GIT_EDITOR=true git rebase --continue
+          }
           for attempt in 1 2 3 4 5; do
             git fetch origin "$BRANCH"
-            git rebase "origin/$BRANCH" || { git rebase --abort 2>/dev/null || true; echo "rebase failed"; exit 1; }
+            git rebase "origin/$BRANCH" || resolve_generated || {
+              git rebase --abort 2>/dev/null || true; echo "rebase failed"; exit 1; }
             if git push origin "HEAD:$BRANCH"; then echo "pushed on attempt $attempt"; exit 0; fi
             echo "push rejected (attempt $attempt); refetching and retrying"
             sleep 5
