@@ -77,6 +77,27 @@ export default function EventCard({ event }: EventCardProps) {
           {eraInfo && (
             <span className="hist-event-card__date">{eraInfo.label}</span>
           )}
+          {/* A waveform, not a play triangle: the card links to the event, it
+              does not start audio, and a triangle would promise a control that
+              is not here. Carries a title + screen-reader label because on its
+              own it is decoration. */}
+          {event.audioUrl && (
+            <span
+              className="hist-event-card__audio"
+              title="Audio edition available"
+            >
+              <svg width="14" height="10" viewBox="0 0 14 10" aria-hidden="true" focusable="false">
+                <g fill="currentColor">
+                  <rect x="0" y="4" width="1.5" height="2" rx="0.75" />
+                  <rect x="3" y="2" width="1.5" height="6" rx="0.75" />
+                  <rect x="6" y="0" width="1.5" height="10" rx="0.75" />
+                  <rect x="9" y="2.5" width="1.5" height="5" rx="0.75" />
+                  <rect x="12" y="4" width="1.5" height="2" rx="0.75" />
+                </g>
+              </svg>
+              <span className="sr-only">Audio edition available</span>
+            </span>
+          )}
         </div>
       </div>
     </Link>
