@@ -13,7 +13,8 @@ ROOT = pathlib.Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "pipeline"))
 
 from history.script_format import (  # noqa: E402
-    parse_script, validate_script, estimated_minutes, NARRATOR_WPM, WPM, MUSIC_MINUTES,
+    parse_script, validate_script, estimated_minutes, NARRATOR_WPM, WPM,
+    MUSIC_MINUTES, SEGMENT_MINUTES, SEGMENT_REFERENCE,
 )
 from history.casting import cast  # noqa: E402
 
@@ -27,7 +28,10 @@ def check(slug: str) -> bool:
     sc = parse_script(path.read_text(), slug)
     findings = validate_script(sc, ev)
     mins, wpm, who = estimated_minutes(sc, ev)
-    ceiling = int((15.0 - MUSIC_MINUTES) * NARRATOR_WPM.get(who, WPM))
+    # The ceiling depends on this script's OWN segment count, because silence
+    # is spent per segment. A structurally busy episode can afford fewer words.
+    overhead = MUSIC_MINUTES + SEGMENT_MINUTES * (len(sc.segments) - SEGMENT_REFERENCE)
+    ceiling = int((15.0 - overhead) * NARRATOR_WPM.get(who, WPM))
 
     fails = [f for f in findings if f.level == "fail"]
     warns = [f for f in findings if f.level != "fail"]
