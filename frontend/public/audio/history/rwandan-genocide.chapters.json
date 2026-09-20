@@ -1,0 +1,67 @@
+{
+ "version": "1.2.0",
+ "title": "The Rwandan Genocide",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 59.624
+  },
+  {
+   "startTime": 59.624,
+   "title": "One hour",
+   "endTime": 106.076
+  },
+  {
+   "startTime": 106.076,
+   "title": "The prime minister",
+   "endTime": 180.206
+  },
+  {
+   "startTime": 180.206,
+   "title": "A hundred days",
+   "endTime": 280.79
+  },
+  {
+   "startTime": 280.79,
+   "title": "Five accounts",
+   "endTime": 285.379
+  },
+  {
+   "startTime": 285.379,
+   "title": "The survivors",
+   "endTime": 342.785
+  },
+  {
+   "startTime": 342.785,
+   "title": "The peacekeepers",
+   "endTime": 408.098
+  },
+  {
+   "startTime": 408.098,
+   "title": "The United Nations",
+   "endTime": 469.486
+  },
+  {
+   "startTime": 469.486,
+   "title": "The pan-African reading",
+   "endTime": 545.402
+  },
+  {
+   "startTime": 545.402,
+   "title": "Rwanda after",
+   "endTime": 621.178
+  },
+  {
+   "startTime": 621.178,
+   "title": "What each one leaves out",
+   "endTime": 689.949
+  },
+  {
+   "startTime": 689.949,
+   "title": "Legacy",
+   "endTime": 755.562
+  }
+ ]
+}

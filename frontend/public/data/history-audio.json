@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-20T00:04:51+00:00",
+ "generatedAt": "2026-09-20T00:21:56+00:00",
  "episodes": {
   "apollo-11-moon-landing": {
    "url": "/audio/history/apollo-11-moon-landing.mp3?v=70d51e2f",
@@ -89,6 +89,88 @@
    ],
    "publishedAt": "2026-09-19T23:09:20+00:00"
   },
+  "ashoka-maurya-empire": {
+   "url": "/audio/history/ashoka-maurya-empire.mp3?v=705bcb02",
+   "chaptersUrl": "/audio/history/ashoka-maurya-empire.chapters.json?v=705bcb02",
+   "title": "Ashoka and the Maurya Empire",
+   "durationSeconds": 678.896,
+   "bytes": 10876140,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 50.088
+    },
+    {
+     "startTime": 50.088,
+     "title": "Kalinga",
+     "kind": "segment",
+     "endTime": 134.564
+    },
+    {
+     "startTime": 134.564,
+     "title": "The machine he inherited",
+     "kind": "segment",
+     "endTime": 193.982
+    },
+    {
+     "startTime": 193.982,
+     "title": "What he did with it",
+     "kind": "segment",
+     "endTime": 272.158
+    },
+    {
+     "startTime": 272.158,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 279.926
+    },
+    {
+     "startTime": 279.926,
+     "title": "Ashoka's own account",
+     "kind": "segment",
+     "endTime": 323.834
+    },
+    {
+     "startTime": 323.834,
+     "title": "Kalinga",
+     "kind": "segment",
+     "endTime": 369.538
+    },
+    {
+     "startTime": 369.538,
+     "title": "The Buddhist tradition",
+     "kind": "segment",
+     "endTime": 417.414
+    },
+    {
+     "startTime": 417.414,
+     "title": "The Ambedkarite reading",
+     "kind": "segment",
+     "endTime": 483.844
+    },
+    {
+     "startTime": 483.844,
+     "title": "The southern kingdoms",
+     "kind": "segment",
+     "endTime": 540.869
+    },
+    {
+     "startTime": 540.869,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 615.379
+    },
+    {
+     "startTime": 615.379,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 678.867
+    }
+   ],
+   "publishedAt": "2026-09-20T00:21:56+00:00"
+  },
   "chernobyl-disaster": {
    "url": "/audio/history/chernobyl-disaster.mp3?v=46469463",
    "chaptersUrl": "/audio/history/chernobyl-disaster.chapters.json?v=46469463",
@@ -176,6 +258,358 @@
     }
    ],
    "publishedAt": "2026-09-19T23:38:03+00:00"
+  },
+  "civil-rights-movement": {
+   "url": "/audio/history/civil-rights-movement.mp3?v=3da41ec7",
+   "chaptersUrl": "/audio/history/civil-rights-movement.chapters.json?v=3da41ec7",
+   "title": "The American Civil Rights Movement",
+   "durationSeconds": 757.473,
+   "bytes": 12134736,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 54.46
+    },
+    {
+     "startTime": 54.46,
+     "title": "Fifty two thousand leaflets",
+     "kind": "segment",
+     "endTime": 110.341
+    },
+    {
+     "startTime": 110.341,
+     "title": "The crack in the law",
+     "kind": "segment",
+     "endTime": 183.087
+    },
+    {
+     "startTime": 183.087,
+     "title": "Project C",
+     "kind": "segment",
+     "endTime": 248.014
+    },
+    {
+     "startTime": 248.014,
+     "title": "Eighteen days",
+     "kind": "segment",
+     "endTime": 306.483
+    },
+    {
+     "startTime": 306.483,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 311.2
+    },
+    {
+     "startTime": 311.2,
+     "title": "The movement",
+     "kind": "segment",
+     "endTime": 379.905
+    },
+    {
+     "startTime": 379.905,
+     "title": "Black Power",
+     "kind": "segment",
+     "endTime": 463.629
+    },
+    {
+     "startTime": 463.629,
+     "title": "White southern resistance",
+     "kind": "segment",
+     "endTime": 515.899
+    },
+    {
+     "startTime": 515.899,
+     "title": "The federal government",
+     "kind": "segment",
+     "endTime": 572.884
+    },
+    {
+     "startTime": 572.884,
+     "title": "The global view",
+     "kind": "segment",
+     "endTime": 632.944
+    },
+    {
+     "startTime": 632.944,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 707.369
+    },
+    {
+     "startTime": 707.369,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 757.438
+    }
+   ],
+   "publishedAt": "2026-09-20T00:21:56+00:00"
+  },
+  "cuban-missile-crisis": {
+   "url": "/audio/history/cuban-missile-crisis.mp3?v=9ac5122b",
+   "chaptersUrl": "/audio/history/cuban-missile-crisis.chapters.json?v=9ac5122b",
+   "title": "The Cuban Missile Crisis",
+   "durationSeconds": 785.136,
+   "bytes": 12577746,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 55.996
+    },
+    {
+     "startTime": 55.996,
+     "title": "Thirteen minutes",
+     "kind": "segment",
+     "endTime": 102.988
+    },
+    {
+     "startTime": 102.988,
+     "title": "The word",
+     "kind": "segment",
+     "endTime": 157.724
+    },
+    {
+     "startTime": 157.724,
+     "title": "Black Saturday",
+     "kind": "segment",
+     "endTime": 270.188
+    },
+    {
+     "startTime": 270.188,
+     "title": "The part that was not announced",
+     "kind": "segment",
+     "endTime": 337.179
+    },
+    {
+     "startTime": 337.179,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 345.566
+    },
+    {
+     "startTime": 345.566,
+     "title": "The American room",
+     "kind": "segment",
+     "endTime": 389.755
+    },
+    {
+     "startTime": 389.755,
+     "title": "The Soviet calculation",
+     "kind": "segment",
+     "endTime": 452.295
+    },
+    {
+     "startTime": 452.295,
+     "title": "The Cubans",
+     "kind": "segment",
+     "endTime": 531.115
+    },
+    {
+     "startTime": 531.115,
+     "title": "The deterrence theorists",
+     "kind": "segment",
+     "endTime": 588.007
+    },
+    {
+     "startTime": 588.007,
+     "title": "The declassified record",
+     "kind": "segment",
+     "endTime": 655.87
+    },
+    {
+     "startTime": 655.87,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 728.097
+    },
+    {
+     "startTime": 728.097,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 785.099
+    }
+   ],
+   "publishedAt": "2026-09-20T00:21:56+00:00"
+  },
+  "fall-of-berlin-wall": {
+   "url": "/audio/history/fall-of-berlin-wall.mp3?v=cc288558",
+   "chaptersUrl": "/audio/history/fall-of-berlin-wall.chapters.json?v=cc288558",
+   "title": "The Fall of the Berlin Wall",
+   "durationSeconds": 702.537,
+   "bytes": 11254898,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 48.572
+    },
+    {
+     "startTime": 48.572,
+     "title": "Six fifty three",
+     "kind": "segment",
+     "endTime": 94.891
+    },
+    {
+     "startTime": 94.891,
+     "title": "Half past eleven",
+     "kind": "segment",
+     "endTime": 165.018
+    },
+    {
+     "startTime": 165.018,
+     "title": "What he was standing in",
+     "kind": "segment",
+     "endTime": 219.93
+    },
+    {
+     "startTime": 219.93,
+     "title": "The year it was already losing",
+     "kind": "segment",
+     "endTime": 286.452
+    },
+    {
+     "startTime": 286.452,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 292.087
+    },
+    {
+     "startTime": 292.087,
+     "title": "The West German account",
+     "kind": "segment",
+     "endTime": 354.131
+    },
+    {
+     "startTime": 354.131,
+     "title": "The East German dissidents",
+     "kind": "segment",
+     "endTime": 409.265
+    },
+    {
+     "startTime": 409.265,
+     "title": "The Soviet view",
+     "kind": "segment",
+     "endTime": 461.066
+    },
+    {
+     "startTime": 461.066,
+     "title": "The reunification critics",
+     "kind": "segment",
+     "endTime": 513.848
+    },
+    {
+     "startTime": 513.848,
+     "title": "The global south",
+     "kind": "segment",
+     "endTime": 575.437
+    },
+    {
+     "startTime": 575.437,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 656.667
+    },
+    {
+     "startTime": 656.667,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 702.49
+    }
+   ],
+   "publishedAt": "2026-09-20T00:21:56+00:00"
+  },
+  "gutenberg-printing-press": {
+   "url": "/audio/history/gutenberg-printing-press.mp3?v=b69910fa",
+   "chaptersUrl": "/audio/history/gutenberg-printing-press.chapters.json?v=b69910fa",
+   "title": "The Gutenberg Revolution",
+   "durationSeconds": 700.918,
+   "bytes": 11228864,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 53.01
+    },
+    {
+     "startTime": 53.01,
+     "title": "The judgement",
+     "kind": "segment",
+     "endTime": 115.961
+    },
+    {
+     "startTime": 115.961,
+     "title": "The system",
+     "kind": "segment",
+     "endTime": 204.451
+    },
+    {
+     "startTime": 204.451,
+     "title": "Fifty years",
+     "kind": "segment",
+     "endTime": 248.983
+    },
+    {
+     "startTime": 248.983,
+     "title": "Wittenberg",
+     "kind": "segment",
+     "endTime": 311.153
+    },
+    {
+     "startTime": 311.153,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 317.897
+    },
+    {
+     "startTime": 317.897,
+     "title": "The printers",
+     "kind": "segment",
+     "endTime": 361.378
+    },
+    {
+     "startTime": 361.378,
+     "title": "The Catholic Church",
+     "kind": "segment",
+     "endTime": 431.15
+    },
+    {
+     "startTime": 431.15,
+     "title": "The Chinese and Korean precedent",
+     "kind": "segment",
+     "endTime": 491.413
+    },
+    {
+     "startTime": 491.413,
+     "title": "The pamphlet war",
+     "kind": "segment",
+     "endTime": 535.449
+    },
+    {
+     "startTime": 535.449,
+     "title": "The information theorists",
+     "kind": "segment",
+     "endTime": 594.969
+    },
+    {
+     "startTime": 594.969,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 658.493
+    },
+    {
+     "startTime": 658.493,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 700.882
+    }
+   ],
+   "publishedAt": "2026-09-20T00:21:56+00:00"
   },
   "haitian-revolution": {
    "url": "/audio/history/haitian-revolution.mp3?v=710d4eeb",
@@ -352,6 +786,94 @@
     }
    ],
    "publishedAt": "2026-09-20T00:04:51+00:00"
+  },
+  "iranian-revolution": {
+   "url": "/audio/history/iranian-revolution.mp3?v=4efd0e29",
+   "chaptersUrl": "/audio/history/iranian-revolution.chapters.json?v=4efd0e29",
+   "title": "The Iranian Revolution",
+   "durationSeconds": 766.851,
+   "bytes": 12284911,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 44.369
+    },
+    {
+     "startTime": 44.369,
+     "title": "Forty days",
+     "kind": "segment",
+     "endTime": 108.906
+    },
+    {
+     "startTime": 108.906,
+     "title": "Where the money went",
+     "kind": "segment",
+     "endTime": 168.405
+    },
+    {
+     "startTime": 168.405,
+     "title": "A man with cassettes",
+     "kind": "segment",
+     "endTime": 223.994
+    },
+    {
+     "startTime": 223.994,
+     "title": "The eleven days",
+     "kind": "segment",
+     "endTime": 284.346
+    },
+    {
+     "startTime": 284.346,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 288.679
+    },
+    {
+     "startTime": 288.679,
+     "title": "The Islamic Republic",
+     "kind": "segment",
+     "endTime": 351.14
+    },
+    {
+     "startTime": 351.14,
+     "title": "The secular left",
+     "kind": "segment",
+     "endTime": 424.588
+    },
+    {
+     "startTime": 424.588,
+     "title": "The American account",
+     "kind": "segment",
+     "endTime": 486.623
+    },
+    {
+     "startTime": 486.623,
+     "title": "The monarchists",
+     "kind": "segment",
+     "endTime": 548.061
+    },
+    {
+     "startTime": 548.061,
+     "title": "Women's rights, given and taken",
+     "kind": "segment",
+     "endTime": 618.561
+    },
+    {
+     "startTime": 618.561,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 710.031
+    },
+    {
+     "startTime": 710.031,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 766.82
+    }
+   ],
+   "publishedAt": "2026-09-20T00:21:56+00:00"
   },
   "mali-empire-mansa-musa": {
    "url": "/audio/history/mali-empire-mansa-musa.mp3?v=b583f053",
@@ -540,6 +1062,88 @@
     }
    ],
    "publishedAt": "2026-09-19T23:09:20+00:00"
+  },
+  "rwandan-genocide": {
+   "url": "/audio/history/rwandan-genocide.mp3?v=40afc39b",
+   "chaptersUrl": "/audio/history/rwandan-genocide.chapters.json?v=40afc39b",
+   "title": "The Rwandan Genocide",
+   "durationSeconds": 755.592,
+   "bytes": 12104390,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 59.624
+    },
+    {
+     "startTime": 59.624,
+     "title": "One hour",
+     "kind": "segment",
+     "endTime": 106.076
+    },
+    {
+     "startTime": 106.076,
+     "title": "The prime minister",
+     "kind": "segment",
+     "endTime": 180.206
+    },
+    {
+     "startTime": 180.206,
+     "title": "A hundred days",
+     "kind": "segment",
+     "endTime": 280.79
+    },
+    {
+     "startTime": 280.79,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 285.379
+    },
+    {
+     "startTime": 285.379,
+     "title": "The survivors",
+     "kind": "segment",
+     "endTime": 342.785
+    },
+    {
+     "startTime": 342.785,
+     "title": "The peacekeepers",
+     "kind": "segment",
+     "endTime": 408.098
+    },
+    {
+     "startTime": 408.098,
+     "title": "The United Nations",
+     "kind": "segment",
+     "endTime": 469.486
+    },
+    {
+     "startTime": 469.486,
+     "title": "The pan-African reading",
+     "kind": "segment",
+     "endTime": 545.402
+    },
+    {
+     "startTime": 545.402,
+     "title": "Rwanda after",
+     "kind": "segment",
+     "endTime": 621.178
+    },
+    {
+     "startTime": 621.178,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 689.949
+    },
+    {
+     "startTime": 689.949,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 755.562
+    }
+   ],
+   "publishedAt": "2026-09-20T00:21:56+00:00"
   },
   "silk-road": {
    "url": "/audio/history/silk-road.mp3?v=1bb2e73b",
@@ -804,6 +1408,94 @@
     }
    ],
    "publishedAt": "2026-09-20T00:04:51+00:00"
+  },
+  "transatlantic-slave-trade": {
+   "url": "/audio/history/transatlantic-slave-trade.mp3?v=32def9ec",
+   "chaptersUrl": "/audio/history/transatlantic-slave-trade.chapters.json?v=32def9ec",
+   "title": "The Transatlantic Slave Trade",
+   "durationSeconds": 857.757,
+   "bytes": 13740868,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 55.754
+    },
+    {
+     "startTime": 55.754,
+     "title": "The Zong",
+     "kind": "segment",
+     "endTime": 141.182
+    },
+    {
+     "startTime": 141.182,
+     "title": "Six feet by sixteen inches",
+     "kind": "segment",
+     "endTime": 234.599
+    },
+    {
+     "startTime": 234.599,
+     "title": "The triangle",
+     "kind": "segment",
+     "endTime": 295.899
+    },
+    {
+     "startTime": 295.899,
+     "title": "Four hundred and ninety three",
+     "kind": "segment",
+     "endTime": 355.633
+    },
+    {
+     "startTime": 355.633,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 361.225
+    },
+    {
+     "startTime": 361.225,
+     "title": "The European ledger",
+     "kind": "segment",
+     "endTime": 425.571
+    },
+    {
+     "startTime": 425.571,
+     "title": "The diaspora",
+     "kind": "segment",
+     "endTime": 502.105
+    },
+    {
+     "startTime": 502.105,
+     "title": "The African continent",
+     "kind": "segment",
+     "endTime": 565.569
+    },
+    {
+     "startTime": 565.569,
+     "title": "The abolitionists",
+     "kind": "segment",
+     "endTime": 650.237
+    },
+    {
+     "startTime": 650.237,
+     "title": "The African states that sold",
+     "kind": "segment",
+     "endTime": 721.149
+    },
+    {
+     "startTime": 721.149,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 792.971
+    },
+    {
+     "startTime": 792.971,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 857.71
+    }
+   ],
+   "publishedAt": "2026-09-20T00:21:56+00:00"
   }
  }
 }
