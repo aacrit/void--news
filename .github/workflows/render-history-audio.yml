@@ -139,6 +139,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          # The staleness check compares each script's last commit against
+          # its episode's publishedAt. At the default depth of 1 there is one
+          # commit and git reports it for EVERY file, so every script looks
+          # newer than every episode: that failed all 49 and discarded ten
+          # good renders. With real depth, a file untouched in the window
+          # returns nothing and the check skips it, which is the correct
+          # answer. 200 covers far more than a script ever sits unrendered.
+          fetch-depth: 200
           ref: ${{ github.ref_name }}
       - uses: actions/setup-python@v5
         with:
