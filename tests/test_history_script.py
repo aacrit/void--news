@@ -47,6 +47,12 @@ EVENT = {
         # The record's own speaker field says these are NOT the admiral's words.
         {"text": "The tables were right and the messengers were slow.",
          "author": "Admiral Rosa Vane (paraphrased)", "work": "Summary", "date": "1962"},
+        # Secondhand: the record names who wrote it down, not who said it.
+        {"text": "The horizon went white before the sound arrived.",
+         "author": "A keeper, as reported by Silvia Vane", "work": "History", "date": "1970"},
+        # NOT secondhand: "via" is inside "Silvia", and she is a real witness.
+        {"text": "The boats were gone before anyone counted them.",
+         "author": "Silvia Vane", "work": "History", "date": "1970"},
     ],
 }
 
@@ -240,6 +246,24 @@ check("H-11 accepts the hedge in the DOCUMENT marker",
 
 check("H-11 leaves an ordinary sourced quote alone", "H-11" not in fails(pad(CLEAN)),
       str(fails(pad(CLEAN))))
+
+secondhand = pad(CLEAN.replace("""## CLOSE""", """## DOCUMENT | A keeper | History | 1970
+N: The keeper said it plainly.
+M: The horizon went white before the sound arrived.
+
+## CLOSE"""))
+check("H-11 catches a secondhand line read as the speaker's own",
+      "H-11" in fails(secondhand), str(fails(secondhand)))
+
+# The trap: matching the hedge as a raw substring makes "via" fire inside
+# "Silvia", exactly as "king" once fired inside "striking" for H-04.
+silvia = pad(CLEAN.replace("""## CLOSE""", """## DOCUMENT | Silvia Vane | History | 1970
+N: Silvia Vane counted them herself.
+F: The boats were gone before anyone counted them.
+
+## CLOSE"""))
+check("H-11 does not read 'via' inside 'Silvia' as a secondhand marker",
+      "H-11" not in fails(silvia), str(fails(silvia)))
 
 
 # ---- H-09 every account gets its own case -------------------------------

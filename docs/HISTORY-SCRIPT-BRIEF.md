@@ -30,6 +30,27 @@ happens to use that number for something else: "Alfonso the Thirteenth" cleared
 the check against a sentence about a thirteen-week death toll. Glance at a name
 yourself even when the gate says nothing.
 
+### A speaker the record does not name
+
+Sometimes the only witness an account has is "Anonymous Afghan villager" or
+"an anonymous Laotian farmer". Two drafters hit this and resolved it opposite
+ways, so the brief was the thing at fault:
+
+- **If the account has another sourced witness, use that one.** The Vietnam
+  drafter dropped an unnamed farmer for a named, sourced speaker, and was
+  right to.
+- **If it does not, read the quote anyway.** Dropping it silences the account,
+  and `H-09` exists because silencing an account is the one failure that makes
+  Void's claim false. But say in the narration that the record does not name
+  them ("An Afghan villager, unnamed in the record, quoted in..."), so the
+  episode asserts no identity it cannot support.
+
+Some voice has to read it, and a voice carries a sex whatever you pick. That
+is a production necessity, not a claim, and the narration saying "unnamed" is
+what keeps it from becoming one. Do not pick the voice to balance the episode:
+the balance of M and F across a script is a property of whose words survived,
+and it is not yours to even out.
+
 ### The document voice means "these are the words they said"
 
 That is its whole job, and it is why a different voice reads it. So the record
