@@ -159,11 +159,19 @@ jobs:
           echo "publishing: $SLUGS"
           python pipeline/history/publish_audio.py $SLUGS --from rendered
           python tests/test_history_audio.py
+      - name: Store the audio outside git
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python pipeline/history/release_store.py upload \
+            frontend/public/audio/history/*.mp3
       - name: Commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add frontend/public/audio/history frontend/public/data/history-audio.json
+          # The MP3s are gitignored and live in the release; this commits the
+          # manifest and the chapter sidecars, which are a few KB in total.
+          git add -A frontend/public/audio/history frontend/public/data/history-audio.json
           if git diff --cached --quiet; then
             echo "no change"; exit 0
           fi
