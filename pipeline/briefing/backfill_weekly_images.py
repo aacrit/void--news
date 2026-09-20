@@ -47,6 +47,31 @@ ARCHIVE = REPO / "frontend" / "public" / "data" / "weekly-archive.json"
 SLOTS = (("cover_text", None), ("departments", None), ("recap_stories", None))
 
 
+def _alt_titles(item) -> list[str]:
+    """Searchable names for a feature, best first.
+
+    A cover headline is written to be read: "Greenland\u2019s Arctic Calculus"
+    names no subject any encyclopedia indexes, and the overlap guard correctly
+    refuses everything it resolves to. `cluster_title` carries the reported
+    headline, but only on issues generated after that field existed, and the
+    published Vol. I, No. 1 has None.
+
+    Its TIMELINE does not. Each entry is a real cluster title, which is the
+    same observation `repair_weekly_snapshot.title_from_timeline` is built on.
+    "Denmark Affirms Sovereignty After US-Greenland Security Deal" resolves
+    where the coinage above never will.
+    """
+    out = []
+    ct = (item.get("cluster_title") or "").strip()
+    if ct:
+        out.append(ct)
+    for e in (item.get("timeline") or []):
+        t = (e.get("title") or "").strip() if isinstance(e, dict) else ""
+        if t and t not in out:
+            out.append(t)
+    return out[:4]      # four network round trips is already generous
+
+
 def _load(row, key):
     """The JSON columns ship as strings on some rows and as lists on others."""
     v = row.get(key)
@@ -58,9 +83,48 @@ def _load(row, key):
     return (v or []), False
 
 
+def cover_image(row, *, dry_run=False) -> list[str]:
+    """The MAGAZINE COVER, which is a top-level field and was being skipped.
+
+    `cover_image_url` sits on the row, not inside `cover_text`, so the first
+    version of this tool walked right past the largest picture in the issue
+    while illustrating its thumbnails. Vol. I, No. 1 came out of generation
+    with no cover photograph (correctly: the only candidate was an AFP wire
+    image, which rev 60 retired the cacher to stop republishing) and kept none
+    through three backfills.
+
+    Resolved from the lead feature, because that is what the cover is ABOUT:
+    its headline first, then the reported titles its timeline carries.
+    """
+    if row.get("cover_image_url"):
+        return []
+    covers, _ = _load(row, "cover_text")
+    lead = covers[0] if covers and isinstance(covers[0], dict) else {}
+    head = (row.get("cover_headline") or lead.get("headline") or "").strip()
+    if not head:
+        return []
+    try:
+        found = find_cover_image_for_cluster(
+            lead.get("cluster_id") or "", head, alt_titles=_alt_titles(lead),
+        )
+    except Exception as e:
+        return [f"cover image lookup failed: {e}"]
+    if not found:
+        return [f"cover: no licensed subject for {head[:44]!r}"]
+    if not dry_run:
+        row["cover_image_url"] = found["url"]
+        row["cover_image_attribution"] = found.get("attribution") or ""
+        # Names the provenance honestly. The field previously read "og_image"
+        # on an issue carrying a hotlinked wire photograph, which is the
+        # labelling W-03 exists to catch.
+        row["cover_image_source"] = "wikimedia-subject"
+        row["cover_image_caption"] = found.get("caption") or ""
+    return [f"cover -> {found.get('caption')}"]
+
+
 def illustrate(row, *, dry_run=False) -> list[str]:
     """Attach art to one issue row. Returns one line per change."""
-    out = []
+    out = cover_image(row, dry_run=dry_run)
     for key, cap in SLOTS:
         items, was_str = _load(row, key)
         if not isinstance(items, list) or not items:
@@ -89,7 +153,7 @@ def illustrate(row, *, dry_run=False) -> list[str]:
             try:
                 found = find_cover_image_for_cluster(
                     item.get("cluster_id") or "", head,
-                    alt_title=item.get("cluster_title", ""),
+                    alt_titles=_alt_titles(item),
                 )
             except Exception as e:
                 out.append(f"{key}[{i}] lookup failed: {e}")

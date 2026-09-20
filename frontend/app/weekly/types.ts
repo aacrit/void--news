@@ -126,6 +126,7 @@ export interface WeeklyDigestData {
   cover_image_url: string | null;
   cover_image_attribution: string | null;
   cover_image_source: string | null;
+  cover_image_caption: string | null;
   cover_text: WeeklyCoverStory[];
   cover_numbers: WeeklyCoverNumber[] | null;
   recap_stories: WeeklyRecapStory[];
