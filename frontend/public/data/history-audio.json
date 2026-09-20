@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-20T03:41:27+00:00",
+ "generatedAt": "2026-09-20T14:52:53+00:00",
  "episodes": {
   "apartheid": {
    "url": "/audio/history/apartheid.mp3?v=836de3b2",
@@ -447,6 +447,94 @@
    ],
    "publishedAt": "2026-09-20T01:47:17+00:00"
   },
+  "cambodian-genocide": {
+   "url": "/audio/history/cambodian-genocide.mp3?v=4f940e55",
+   "chaptersUrl": "/audio/history/cambodian-genocide.chapters.json?v=4f940e55",
+   "title": "The Cambodian Genocide",
+   "durationSeconds": 818.521,
+   "bytes": 13112443,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 54.077
+    },
+    {
+     "startTime": 54.077,
+     "title": "Forty eight hours",
+     "kind": "segment",
+     "endTime": 133.686
+    },
+    {
+     "startTime": 133.686,
+     "title": "A dam with no engineers",
+     "kind": "segment",
+     "endTime": 194.703
+    },
+    {
+     "startTime": 194.703,
+     "title": "Fourteen thousand faces",
+     "kind": "segment",
+     "endTime": 250.558
+    },
+    {
+     "startTime": 250.558,
+     "title": "Thirteen days",
+     "kind": "segment",
+     "endTime": 303.865
+    },
+    {
+     "startTime": 303.865,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 314.044
+    },
+    {
+     "startTime": 314.044,
+     "title": "The Khmer Rouge",
+     "kind": "segment",
+     "endTime": 399.015
+    },
+    {
+     "startTime": 399.015,
+     "title": "The Survivors",
+     "kind": "segment",
+     "endTime": 472.712
+    },
+    {
+     "startTime": 472.712,
+     "title": "Vietnamese Liberation",
+     "kind": "segment",
+     "endTime": 556.794
+    },
+    {
+     "startTime": 556.794,
+     "title": "The Tribunal",
+     "kind": "segment",
+     "endTime": 638.122
+    },
+    {
+     "startTime": 638.122,
+     "title": "Regional Intervention",
+     "kind": "segment",
+     "endTime": 722.441
+    },
+    {
+     "startTime": 722.441,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 789.08
+    },
+    {
+     "startTime": 789.08,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 818.491
+    }
+   ],
+   "publishedAt": "2026-09-20T14:52:53+00:00"
+  },
   "chernobyl-disaster": {
    "url": "/audio/history/chernobyl-disaster.mp3?v=46469463",
    "chaptersUrl": "/audio/history/chernobyl-disaster.chapters.json?v=46469463",
@@ -623,6 +711,188 @@
    ],
    "publishedAt": "2026-09-20T00:21:56+00:00"
   },
+  "columbian-exchange": {
+   "url": "/audio/history/columbian-exchange.mp3?v=39411e9e",
+   "chaptersUrl": "/audio/history/columbian-exchange.chapters.json?v=39411e9e",
+   "title": "Columbus and the Columbian Exchange",
+   "durationSeconds": 794.018,
+   "bytes": 12720340,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 67.872
+    },
+    {
+     "startTime": 67.872,
+     "title": "Guanahani, October fourteen ninety two",
+     "kind": "segment",
+     "endTime": 132.646
+    },
+    {
+     "startTime": 132.646,
+     "title": "The document nobody could hear",
+     "kind": "segment",
+     "endTime": 213.776
+    },
+    {
+     "startTime": 213.776,
+     "title": "The thing that arrived first",
+     "kind": "segment",
+     "endTime": 268.972
+    },
+    {
+     "startTime": 268.972,
+     "title": "What went the other way",
+     "kind": "segment",
+     "endTime": 320.131
+    },
+    {
+     "startTime": 320.131,
+     "title": "The mountain that ate people",
+     "kind": "segment",
+     "endTime": 378.385
+    },
+    {
+     "startTime": 378.385,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 386.302
+    },
+    {
+     "startTime": 386.302,
+     "title": "Spanish Imperial",
+     "kind": "segment",
+     "endTime": 436.548
+    },
+    {
+     "startTime": 436.548,
+     "title": "Taino / Indigenous Caribbean",
+     "kind": "segment",
+     "endTime": 485.21
+    },
+    {
+     "startTime": 485.21,
+     "title": "Ecological / Biological",
+     "kind": "segment",
+     "endTime": 550.256
+    },
+    {
+     "startTime": 550.256,
+     "title": "World-Systems / Capitalist Origins",
+     "kind": "segment",
+     "endTime": 604.065
+    },
+    {
+     "startTime": 604.065,
+     "title": "African Diasporic",
+     "kind": "segment",
+     "endTime": 679.609
+    },
+    {
+     "startTime": 679.609,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 751.474
+    },
+    {
+     "startTime": 751.474,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 793.977
+    }
+   ],
+   "publishedAt": "2026-09-20T14:52:53+00:00"
+  },
+  "congo-free-state": {
+   "url": "/audio/history/congo-free-state.mp3?v=a7d12541",
+   "chaptersUrl": "/audio/history/congo-free-state.chapters.json?v=a7d12541",
+   "title": "The Congo Free State",
+   "durationSeconds": 927.713,
+   "bytes": 14861421,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 49.184
+    },
+    {
+     "startTime": 49.184,
+     "title": "Brussels, 1878 to 1885",
+     "kind": "segment",
+     "endTime": 129.36
+    },
+    {
+     "startTime": 129.36,
+     "title": "The Congo interior, 1890",
+     "kind": "segment",
+     "endTime": 192.096
+    },
+    {
+     "startTime": 192.096,
+     "title": "Kasai and Nsongo districts, 1899 to 1904",
+     "kind": "segment",
+     "endTime": 309.176
+    },
+    {
+     "startTime": 309.176,
+     "title": "Liverpool to Brussels, 1900 to 1908",
+     "kind": "segment",
+     "endTime": 427.759
+    },
+    {
+     "startTime": 427.759,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 443.954
+    },
+    {
+     "startTime": 443.954,
+     "title": "Leopold's private empire",
+     "kind": "segment",
+     "endTime": 510.468
+    },
+    {
+     "startTime": 510.468,
+     "title": "The Congolese village",
+     "kind": "segment",
+     "endTime": 584.144
+    },
+    {
+     "startTime": 584.144,
+     "title": "The reformers' ledger",
+     "kind": "segment",
+     "endTime": 660.269
+    },
+    {
+     "startTime": 660.269,
+     "title": "The postcolonial reckoning",
+     "kind": "segment",
+     "endTime": 737.45
+    },
+    {
+     "startTime": 737.45,
+     "title": "The resistance the record kept",
+     "kind": "segment",
+     "endTime": 816.991
+    },
+    {
+     "startTime": 816.991,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 888.857
+    },
+    {
+     "startTime": 888.857,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 927.669
+    }
+   ],
+   "publishedAt": "2026-09-20T14:52:53+00:00"
+  },
   "creation-of-israel-nakba": {
    "url": "/audio/history/creation-of-israel-nakba.mp3?v=96d54c81",
    "chaptersUrl": "/audio/history/creation-of-israel-nakba.chapters.json?v=96d54c81",
@@ -798,6 +1068,100 @@
     }
    ],
    "publishedAt": "2026-09-20T00:21:56+00:00"
+  },
+  "cuban-revolution": {
+   "url": "/audio/history/cuban-revolution.mp3?v=567773b6",
+   "chaptersUrl": "/audio/history/cuban-revolution.chapters.json?v=567773b6",
+   "title": "The Cuban Revolution",
+   "durationSeconds": 859.533,
+   "bytes": 13769523,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 57.61
+    },
+    {
+     "startTime": 57.61,
+     "title": "Moncada",
+     "kind": "segment",
+     "endTime": 150.414
+    },
+    {
+     "startTime": 150.414,
+     "title": "The Granma",
+     "kind": "segment",
+     "endTime": 180.624
+    },
+    {
+     "startTime": 180.624,
+     "title": "The reporter and the crackdown",
+     "kind": "segment",
+     "endTime": 230.736
+    },
+    {
+     "startTime": 230.736,
+     "title": "The fall",
+     "kind": "segment",
+     "endTime": 255.0
+    },
+    {
+     "startTime": 255.0,
+     "title": "Two years on",
+     "kind": "segment",
+     "endTime": 317.929
+    },
+    {
+     "startTime": 317.929,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 328.876
+    },
+    {
+     "startTime": 328.876,
+     "title": "Revolutionary Vanguard / Anti-Imperial Liberation",
+     "kind": "segment",
+     "endTime": 411.519
+    },
+    {
+     "startTime": 411.519,
+     "title": "Cuban Exile / Miami",
+     "kind": "segment",
+     "endTime": 501.301
+    },
+    {
+     "startTime": 501.301,
+     "title": "Campesino / Social Gains",
+     "kind": "segment",
+     "endTime": 568.861
+    },
+    {
+     "startTime": 568.861,
+     "title": "United States / Cold War Washington",
+     "kind": "segment",
+     "endTime": 649.661
+    },
+    {
+     "startTime": 649.661,
+     "title": "Revisionist Scholarship / Gains Weighed Against Authoritarianism",
+     "kind": "segment",
+     "endTime": 753.467
+    },
+    {
+     "startTime": 753.467,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 811.806
+    },
+    {
+     "startTime": 811.806,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 859.492
+    }
+   ],
+   "publishedAt": "2026-09-20T14:52:53+00:00"
   },
   "fall-of-berlin-wall": {
    "url": "/audio/history/fall-of-berlin-wall.mp3?v=cc288558",
@@ -981,6 +1345,100 @@
    ],
    "publishedAt": "2026-09-20T02:54:35+00:00"
   },
+  "fall-of-rome": {
+   "url": "/audio/history/fall-of-rome.mp3?v=18c26814",
+   "chaptersUrl": "/audio/history/fall-of-rome.chapters.json?v=18c26814",
+   "title": "Fall of the Western Roman Empire",
+   "durationSeconds": 824.712,
+   "bytes": 13211941,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 46.56
+    },
+    {
+     "startTime": 46.56,
+     "title": "Piacenza, the twenty eighth of August",
+     "kind": "segment",
+     "endTime": 74.444
+    },
+    {
+     "startTime": 74.444,
+     "title": "Ravenna, the fourth of September",
+     "kind": "segment",
+     "endTime": 104.672
+    },
+    {
+     "startTime": 104.672,
+     "title": "The little Augustus",
+     "kind": "segment",
+     "endTime": 188.714
+    },
+    {
+     "startTime": 188.714,
+     "title": "The gift to Constantinople",
+     "kind": "segment",
+     "endTime": 232.534
+    },
+    {
+     "startTime": 232.534,
+     "title": "The morning after",
+     "kind": "segment",
+     "endTime": 272.469
+    },
+    {
+     "startTime": 272.469,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 283.074
+    },
+    {
+     "startTime": 283.074,
+     "title": "Late Roman / Imperial",
+     "kind": "segment",
+     "endTime": 357.071
+    },
+    {
+     "startTime": 357.071,
+     "title": "Germanic Successor Kingdoms",
+     "kind": "segment",
+     "endTime": 447.008
+    },
+    {
+     "startTime": 447.008,
+     "title": "Eastern Roman / Byzantine",
+     "kind": "segment",
+     "endTime": 525.772
+    },
+    {
+     "startTime": 525.772,
+     "title": "Modern Historiographic Debate: Fall vs. Transformation",
+     "kind": "segment",
+     "endTime": 615.756
+    },
+    {
+     "startTime": 615.756,
+     "title": "North African / Berber",
+     "kind": "segment",
+     "endTime": 712.4
+    },
+    {
+     "startTime": 712.4,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 793.205
+    },
+    {
+     "startTime": 793.205,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 824.664
+    }
+   ],
+   "publishedAt": "2026-09-20T14:52:53+00:00"
+  },
   "fall-of-tenochtitlan": {
    "url": "/audio/history/fall-of-tenochtitlan.mp3?v=41cbb5c8",
    "chaptersUrl": "/audio/history/fall-of-tenochtitlan.chapters.json?v=41cbb5c8",
@@ -1162,6 +1620,194 @@
     }
    ],
    "publishedAt": "2026-09-20T01:47:18+00:00"
+  },
+  "great-depression": {
+   "url": "/audio/history/great-depression.mp3?v=62a9a06a",
+   "chaptersUrl": "/audio/history/great-depression.chapters.json?v=62a9a06a",
+   "title": "The Great Depression",
+   "durationSeconds": 798.119,
+   "bytes": 12785864,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 53.963
+    },
+    {
+     "startTime": 53.963,
+     "title": "Wall Street, October 29, 1929",
+     "kind": "segment",
+     "endTime": 81.826
+    },
+    {
+     "startTime": 81.826,
+     "title": "What the crash left behind",
+     "kind": "segment",
+     "endTime": 141.596
+    },
+    {
+     "startTime": 141.596,
+     "title": "Austria, May 1931",
+     "kind": "segment",
+     "endTime": 224.633
+    },
+    {
+     "startTime": 224.633,
+     "title": "Germany, the winter of 1932",
+     "kind": "segment",
+     "endTime": 258.896
+    },
+    {
+     "startTime": 258.896,
+     "title": "Washington, March 1933",
+     "kind": "segment",
+     "endTime": 301.393
+    },
+    {
+     "startTime": 301.393,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 310.121
+    },
+    {
+     "startTime": 310.121,
+     "title": "The Keynesian Account",
+     "kind": "segment",
+     "endTime": 379.985
+    },
+    {
+     "startTime": 379.985,
+     "title": "The Monetarist and Austrian Account",
+     "kind": "segment",
+     "endTime": 449.033
+    },
+    {
+     "startTime": 449.033,
+     "title": "The Unemployed",
+     "kind": "segment",
+     "endTime": 522.474
+    },
+    {
+     "startTime": 522.474,
+     "title": "The Global Periphery",
+     "kind": "segment",
+     "endTime": 606.689
+    },
+    {
+     "startTime": 606.689,
+     "title": "The Political Crisis",
+     "kind": "segment",
+     "endTime": 681.353
+    },
+    {
+     "startTime": 681.353,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 766.914
+    },
+    {
+     "startTime": 766.914,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 798.074
+    }
+   ],
+   "publishedAt": "2026-09-20T14:52:53+00:00"
+  },
+  "great-leap-forward": {
+   "url": "/audio/history/great-leap-forward.mp3?v=22bddeae",
+   "chaptersUrl": "/audio/history/great-leap-forward.chapters.json?v=22bddeae",
+   "title": "The Great Leap Forward and the Great Chinese Famine",
+   "durationSeconds": 795.037,
+   "bytes": 12736517,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 66.143
+    },
+    {
+     "startTime": 66.143,
+     "title": "The commune",
+     "kind": "segment",
+     "endTime": 124.121
+    },
+    {
+     "startTime": 124.121,
+     "title": "The ledger",
+     "kind": "segment",
+     "endTime": 192.524
+    },
+    {
+     "startTime": 192.524,
+     "title": "Xinyang",
+     "kind": "segment",
+     "endTime": 228.969
+    },
+    {
+     "startTime": 228.969,
+     "title": "Lushan",
+     "kind": "segment",
+     "endTime": 277.715
+    },
+    {
+     "startTime": 277.715,
+     "title": "Yang Jisheng's father",
+     "kind": "segment",
+     "endTime": 352.348
+    },
+    {
+     "startTime": 352.348,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 371.337
+    },
+    {
+     "startTime": 371.337,
+     "title": "The Party's Own Account",
+     "kind": "segment",
+     "endTime": 439.083
+    },
+    {
+     "startTime": 439.083,
+     "title": "The Historians' Verdict",
+     "kind": "segment",
+     "endTime": 506.268
+    },
+    {
+     "startTime": 506.268,
+     "title": "The Peasants Who Starved",
+     "kind": "segment",
+     "endTime": 559.33
+    },
+    {
+     "startTime": 559.33,
+     "title": "The Contested Toll",
+     "kind": "segment",
+     "endTime": 627.966
+    },
+    {
+     "startTime": 627.966,
+     "title": "The Purged Reformers",
+     "kind": "segment",
+     "endTime": 676.943
+    },
+    {
+     "startTime": 676.943,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 766.378
+    },
+    {
+     "startTime": 766.378,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 794.999
+    }
+   ],
+   "publishedAt": "2026-09-20T14:52:53+00:00"
   },
   "gutenberg-printing-press": {
    "url": "/audio/history/gutenberg-printing-press.mp3?v=b69910fa",
@@ -1427,6 +2073,206 @@
    ],
    "publishedAt": "2026-09-20T00:04:51+00:00"
   },
+  "holodomor": {
+   "url": "/audio/history/holodomor.mp3?v=a627a96e",
+   "chaptersUrl": "/audio/history/holodomor.chapters.json?v=a627a96e",
+   "title": "The Holodomor",
+   "durationSeconds": 872.568,
+   "bytes": 13978087,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 63.968
+    },
+    {
+     "startTime": 63.968,
+     "title": "The walking tour",
+     "kind": "segment",
+     "endTime": 163.085
+    },
+    {
+     "startTime": 163.085,
+     "title": "The grain itself was the point",
+     "kind": "segment",
+     "endTime": 204.73
+    },
+    {
+     "startTime": 204.73,
+     "title": "The law and the number",
+     "kind": "segment",
+     "endTime": 274.079
+    },
+    {
+     "startTime": 274.079,
+     "title": "The count",
+     "kind": "segment",
+     "endTime": 329.388
+    },
+    {
+     "startTime": 329.388,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 351.791
+    },
+    {
+     "startTime": 351.791,
+     "title": "The Soviet state",
+     "kind": "segment",
+     "endTime": 402.094
+    },
+    {
+     "startTime": 402.094,
+     "title": "The Ukrainian survivor",
+     "kind": "segment",
+     "endTime": 474.494
+    },
+    {
+     "startTime": 474.494,
+     "title": "The Western press corps",
+     "kind": "segment",
+     "endTime": 541.317
+    },
+    {
+     "startTime": 541.317,
+     "title": "The Ukrainian national account",
+     "kind": "segment",
+     "endTime": 649.065
+    },
+    {
+     "startTime": 649.065,
+     "title": "The archival record",
+     "kind": "segment",
+     "endTime": 744.925
+    },
+    {
+     "startTime": 744.925,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 829.655
+    },
+    {
+     "startTime": 829.655,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 872.52
+    }
+   ],
+   "publishedAt": "2026-09-20T14:52:53+00:00"
+  },
+  "indian-independence-movement": {
+   "url": "/audio/history/indian-independence-movement.mp3?v=9a10d4f2",
+   "chaptersUrl": "/audio/history/indian-independence-movement.chapters.json?v=9a10d4f2",
+   "title": "The Indian Independence Movement",
+   "durationSeconds": 921.861,
+   "bytes": 14768123,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 55.356
+    },
+    {
+     "startTime": 55.356,
+     "title": "Bombay, 1908",
+     "kind": "segment",
+     "endTime": 105.392
+    },
+    {
+     "startTime": 105.392,
+     "title": "Amritsar, April 1919",
+     "kind": "segment",
+     "endTime": 174.25
+    },
+    {
+     "startTime": 174.25,
+     "title": "Non-cooperation, 1920 to 1922",
+     "kind": "segment",
+     "endTime": 220.367
+    },
+    {
+     "startTime": 220.367,
+     "title": "The road to Dandi, 1930",
+     "kind": "segment",
+     "endTime": 257.689
+    },
+    {
+     "startTime": 257.689,
+     "title": "Dandi and Dharasana",
+     "kind": "segment",
+     "endTime": 310.86
+    },
+    {
+     "startTime": 310.86,
+     "title": "The other track",
+     "kind": "segment",
+     "endTime": 354.257
+    },
+    {
+     "startTime": 354.257,
+     "title": "Berlin, Tokyo, and the mutiny",
+     "kind": "segment",
+     "endTime": 399.838
+    },
+    {
+     "startTime": 399.838,
+     "title": "The famine and the reckoning",
+     "kind": "segment",
+     "endTime": 472.968
+    },
+    {
+     "startTime": 472.968,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 494.931
+    },
+    {
+     "startTime": 494.931,
+     "title": "Gandhian / Indian National Congress",
+     "kind": "segment",
+     "endTime": 552.743
+    },
+    {
+     "startTime": 552.743,
+     "title": "Revolutionary / Armed Resistance",
+     "kind": "segment",
+     "endTime": 612.935
+    },
+    {
+     "startTime": 612.935,
+     "title": "British Colonial",
+     "kind": "segment",
+     "endTime": 673.499
+    },
+    {
+     "startTime": 673.499,
+     "title": "Dalit / Ambedkarite",
+     "kind": "segment",
+     "endTime": 742.097
+    },
+    {
+     "startTime": 742.097,
+     "title": "Muslim League",
+     "kind": "segment",
+     "endTime": 814.809
+    },
+    {
+     "startTime": 814.809,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 876.407
+    },
+    {
+     "startTime": 876.407,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 921.833
+    }
+   ],
+   "publishedAt": "2026-09-20T14:52:53+00:00"
+  },
   "industrial-revolution": {
    "url": "/audio/history/industrial-revolution.mp3?v=4f3987e0",
    "chaptersUrl": "/audio/history/industrial-revolution.chapters.json?v=4f3987e0",
@@ -1602,6 +2448,100 @@
     }
    ],
    "publishedAt": "2026-09-20T00:21:56+00:00"
+  },
+  "korean-war": {
+   "url": "/audio/history/korean-war.mp3?v=d36fe089",
+   "chaptersUrl": "/audio/history/korean-war.chapters.json?v=d36fe089",
+   "title": "The Korean War",
+   "durationSeconds": 883.54,
+   "bytes": 14154007,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 48.458
+    },
+    {
+     "startTime": 48.458,
+     "title": "Thirty minutes and a map",
+     "kind": "segment",
+     "endTime": 91.111
+    },
+    {
+     "startTime": 91.111,
+     "title": "The bridges",
+     "kind": "segment",
+     "endTime": 172.515
+    },
+    {
+     "startTime": 172.515,
+     "title": "Inchon",
+     "kind": "segment",
+     "endTime": 222.601
+    },
+    {
+     "startTime": 222.601,
+     "title": "The river at night",
+     "kind": "segment",
+     "endTime": 312.189
+    },
+    {
+     "startTime": 312.189,
+     "title": "The wrong war",
+     "kind": "segment",
+     "endTime": 382.064
+    },
+    {
+     "startTime": 382.064,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 409.004
+    },
+    {
+     "startTime": 409.004,
+     "title": "American / UN Coalition",
+     "kind": "segment",
+     "endTime": 465.691
+    },
+    {
+     "startTime": 465.691,
+     "title": "North Korean / DPRK, Fatherland Liberation War",
+     "kind": "segment",
+     "endTime": 547.928
+    },
+    {
+     "startTime": 547.928,
+     "title": "South Korean / ROK, 6.25 War",
+     "kind": "segment",
+     "endTime": 629.483
+    },
+    {
+     "startTime": 629.483,
+     "title": "Chinese, War to Resist American Aggression and Aid Korea",
+     "kind": "segment",
+     "endTime": 714.076
+    },
+    {
+     "startTime": 714.076,
+     "title": "Civilian, Divided Families",
+     "kind": "segment",
+     "endTime": 798.95
+    },
+    {
+     "startTime": 798.95,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 855.583
+    },
+    {
+     "startTime": 855.583,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 883.507
+    }
+   ],
+   "publishedAt": "2026-09-20T14:52:53+00:00"
   },
   "mali-empire-mansa-musa": {
    "url": "/audio/history/mali-empire-mansa-musa.mp3?v=b583f053",

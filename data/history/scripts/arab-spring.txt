@@ -1,7 +1,7 @@
 ## OPEN
 N: You think you know how this one starts. A vendor sets himself on fire to protest a dictatorship, and the dictatorship falls.
 N: That is not quite what happened. Mohamed Bouazizi did not stand outside a palace or a parliament. He stood outside the local governor's office, in a town of forty thousand people, after an inspector took his fruit cart and his scale, worth about two hundred dollars, and refused to let him inside to complain.
-N: Two more presidents fell within the year that followed, in three completely different ways, and of the six countries this shook, exactly one became a democracy.
+N: Two more presidents fell within the year that followed, in three different ways, and of the six countries this shook, exactly one became a democracy.
 
 ## TITLE
 N: The Arab Spring. Two thousand ten to two thousand twelve.
@@ -39,7 +39,7 @@ N: Hosni Mubarak, who has ruled Egypt for thirty years, addresses the nation on 
 N: Libya's uprising begins February the fifteenth. Muammar Gaddafi, in power for forty two years, promises to hunt protesters alley by alley, house by house.
 
 ## DOCUMENT | Muammar Gaddafi | Televised address from Bab al-Azizia, Tripoli | February 22, 2011
-N: A week later, Gaddafi says this, on television, from his own compound.
+N: A week later, Gaddafi says this, on television, from his compound.
 M: I will fight on to the last drop of my blood. Muammar Gaddafi is the leader of the revolution. I am the glory of Libya, I am the glory of Africa.
 N: NATO intervenes on March the nineteenth. Seven thousand seven hundred air strikes follow over seven months. On October the twentieth, rebel fighters drag Gaddafi from a drainage pipe outside Sirte, beat him, and shoot him.
 N: Three dictators. Two hundred eighty one days.
