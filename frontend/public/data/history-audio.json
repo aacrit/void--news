@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-19T23:59:58+00:00",
+ "generatedAt": "2026-09-20T00:04:51+00:00",
  "episodes": {
   "apollo-11-moon-landing": {
    "url": "/audio/history/apollo-11-moon-landing.mp3?v=70d51e2f",
@@ -265,6 +265,94 @@
    ],
    "publishedAt": "2026-09-19T23:38:03+00:00"
   },
+  "hiroshima-nagasaki": {
+   "url": "/audio/history/hiroshima-nagasaki.mp3?v=937efc9d",
+   "chaptersUrl": "/audio/history/hiroshima-nagasaki.chapters.json?v=937efc9d",
+   "title": "The Atomic Bombings of Hiroshima and Nagasaki",
+   "durationSeconds": 850.286,
+   "bytes": 13621317,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 52.605
+    },
+    {
+     "startTime": 52.605,
+     "title": "Fifteen minutes past eight",
+     "kind": "segment",
+     "endTime": 140.396
+    },
+    {
+     "startTime": 140.396,
+     "title": "The second one was aimed somewhere else",
+     "kind": "segment",
+     "endTime": 201.942
+    },
+    {
+     "startTime": 201.942,
+     "title": "The illness with no name yet",
+     "kind": "segment",
+     "endTime": 251.38
+    },
+    {
+     "startTime": 251.38,
+     "title": "A voice nobody had heard",
+     "kind": "segment",
+     "endTime": 298.551
+    },
+    {
+     "startTime": 298.551,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 312.058
+    },
+    {
+     "startTime": 312.058,
+     "title": "The American case",
+     "kind": "segment",
+     "endTime": 406.484
+    },
+    {
+     "startTime": 406.484,
+     "title": "The hibakusha",
+     "kind": "segment",
+     "endTime": 477.489
+    },
+    {
+     "startTime": 477.489,
+     "title": "The scientists",
+     "kind": "segment",
+     "endTime": 565.141
+    },
+    {
+     "startTime": 565.141,
+     "title": "The revisionists",
+     "kind": "segment",
+     "endTime": 636.392
+    },
+    {
+     "startTime": 636.392,
+     "title": "The Korean dead",
+     "kind": "segment",
+     "endTime": 715.069
+    },
+    {
+     "startTime": 715.069,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 795.809
+    },
+    {
+     "startTime": 795.809,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 850.251
+    }
+   ],
+   "publishedAt": "2026-09-20T00:04:51+00:00"
+  },
   "mali-empire-mansa-musa": {
    "url": "/audio/history/mali-empire-mansa-musa.mp3?v=b583f053",
    "chaptersUrl": "/audio/history/mali-empire-mansa-musa.chapters.json?v=b583f053",
@@ -452,6 +540,270 @@
     }
    ],
    "publishedAt": "2026-09-19T23:09:20+00:00"
+  },
+  "silk-road": {
+   "url": "/audio/history/silk-road.mp3?v=1bb2e73b",
+   "chaptersUrl": "/audio/history/silk-road.chapters.json?v=1bb2e73b",
+   "title": "The Silk Road",
+   "durationSeconds": 789.969,
+   "bytes": 12655018,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 45.585
+    },
+    {
+     "startTime": 45.585,
+     "title": "A failed diplomat",
+     "kind": "segment",
+     "endTime": 162.442
+    },
+    {
+     "startTime": 162.442,
+     "title": "What actually moved",
+     "kind": "segment",
+     "endTime": 193.265
+    },
+    {
+     "startTime": 193.265,
+     "title": "Paper, powder, and the compass",
+     "kind": "segment",
+     "endTime": 278.94
+    },
+    {
+     "startTime": 278.94,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 286.217
+    },
+    {
+     "startTime": 286.217,
+     "title": "The Chinese court",
+     "kind": "segment",
+     "endTime": 354.204
+    },
+    {
+     "startTime": 354.204,
+     "title": "The Sogdians",
+     "kind": "segment",
+     "endTime": 439.368
+    },
+    {
+     "startTime": 439.368,
+     "title": "The Buddhist transmission",
+     "kind": "segment",
+     "endTime": 510.042
+    },
+    {
+     "startTime": 510.042,
+     "title": "The Islamic golden age",
+     "kind": "segment",
+     "endTime": 575.085
+    },
+    {
+     "startTime": 575.085,
+     "title": "The disease road",
+     "kind": "segment",
+     "endTime": 649.552
+    },
+    {
+     "startTime": 649.552,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 736.342
+    },
+    {
+     "startTime": 736.342,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 789.931
+    }
+   ],
+   "publishedAt": "2026-09-20T00:04:51+00:00"
+  },
+  "the-crusades": {
+   "url": "/audio/history/the-crusades.mp3?v=07df501f",
+   "chaptersUrl": "/audio/history/the-crusades.chapters.json?v=07df501f",
+   "title": "The Crusades",
+   "durationSeconds": 841.195,
+   "bytes": 13475679,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 55.783
+    },
+    {
+     "startTime": 55.783,
+     "title": "God wills it",
+     "kind": "segment",
+     "endTime": 102.641
+    },
+    {
+     "startTime": 102.641,
+     "title": "Speyer, Worms, Mainz",
+     "kind": "segment",
+     "endTime": 168.477
+    },
+    {
+     "startTime": 168.477,
+     "title": "The fifteenth of July, ten ninety nine",
+     "kind": "segment",
+     "endTime": 241.449
+    },
+    {
+     "startTime": 241.449,
+     "title": "Eighty eight years later",
+     "kind": "segment",
+     "endTime": 296.051
+    },
+    {
+     "startTime": 296.051,
+     "title": "The wrong city",
+     "kind": "segment",
+     "endTime": 355.247
+    },
+    {
+     "startTime": 355.247,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 363.783
+    },
+    {
+     "startTime": 363.783,
+     "title": "The Latin crusaders",
+     "kind": "segment",
+     "endTime": 436.506
+    },
+    {
+     "startTime": 436.506,
+     "title": "The Muslim world",
+     "kind": "segment",
+     "endTime": 503.767
+    },
+    {
+     "startTime": 503.767,
+     "title": "Byzantium",
+     "kind": "segment",
+     "endTime": 572.606
+    },
+    {
+     "startTime": 572.606,
+     "title": "The modern historians",
+     "kind": "segment",
+     "endTime": 641.688
+    },
+    {
+     "startTime": 641.688,
+     "title": "The Rhineland",
+     "kind": "segment",
+     "endTime": 703.434
+    },
+    {
+     "startTime": 703.434,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 781.806
+    },
+    {
+     "startTime": 781.806,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 841.156
+    }
+   ],
+   "publishedAt": "2026-09-20T00:04:51+00:00"
+  },
+  "the-holocaust": {
+   "url": "/audio/history/the-holocaust.mp3?v=f585d52c",
+   "chaptersUrl": "/audio/history/the-holocaust.chapters.json?v=f585d52c",
+   "title": "The Holocaust",
+   "durationSeconds": 871.21,
+   "bytes": 13956289,
+   "chapters": [
+    {
+     "startTime": 0.0,
+     "title": "Opening",
+     "kind": "segment",
+     "endTime": 41.916
+    },
+    {
+     "startTime": 41.916,
+     "title": "Ninety minutes at Wannsee",
+     "kind": "segment",
+     "endTime": 118.382
+    },
+    {
+     "startTime": 118.382,
+     "title": "Before the camps",
+     "kind": "segment",
+     "endTime": 171.715
+    },
+    {
+     "startTime": 171.715,
+     "title": "Six hundred metres by four hundred",
+     "kind": "segment",
+     "endTime": 211.796
+    },
+    {
+     "startTime": 211.796,
+     "title": "The supply chain",
+     "kind": "segment",
+     "endTime": 298.968
+    },
+    {
+     "startTime": 298.968,
+     "title": "Five accounts",
+     "kind": "segment",
+     "endTime": 320.319
+    },
+    {
+     "startTime": 320.319,
+     "title": "The survivors",
+     "kind": "segment",
+     "endTime": 391.713
+    },
+    {
+     "startTime": 391.713,
+     "title": "The bureaucracy",
+     "kind": "segment",
+     "endTime": 469.439
+    },
+    {
+     "startTime": 469.439,
+     "title": "The bystander nations",
+     "kind": "segment",
+     "endTime": 569.862
+    },
+    {
+     "startTime": 569.862,
+     "title": "The Zionist answer",
+     "kind": "segment",
+     "endTime": 646.297
+    },
+    {
+     "startTime": 646.297,
+     "title": "The Roma",
+     "kind": "segment",
+     "endTime": 740.967
+    },
+    {
+     "startTime": 740.967,
+     "title": "What each one leaves out",
+     "kind": "segment",
+     "endTime": 820.833
+    },
+    {
+     "startTime": 820.833,
+     "title": "Legacy",
+     "kind": "segment",
+     "endTime": 871.18
+    }
+   ],
+   "publishedAt": "2026-09-20T00:04:51+00:00"
   }
  }
 }
