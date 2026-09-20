@@ -759,6 +759,7 @@ def find_cover_image_for_cluster(
     cluster_title: str,
     supabase_client=None,
     alt_title: str = "",
+    alt_titles=(),
 ) -> dict | None:
     """Find a cover image for a weekly cover story that Void is allowed to publish.
 
@@ -785,7 +786,13 @@ def find_cover_image_for_cluster(
     # headline to the Wikipedia article it actually names, guarded by word
     # overlap so a confident wrong answer is refused, and returns that
     # article's lead image with a caption saying what it is.
-    subject = find_subject_image(cluster_title, alt_title)
+    # Alternates in order of how well they name a subject: the reported
+    # cluster title first, then any headline the feature's own timeline
+    # carries. A published feature predating `cluster_title` has only the
+    # timeline, and it is enough: "Greenland's Arctic Calculus" names nothing
+    # an encyclopedia indexes, while its timeline says "Denmark Affirms
+    # Sovereignty After US-Greenland Security Deal".
+    subject = find_subject_image(cluster_title, alt_title, *alt_titles)
     if subject:
         print(f"  [media] {cluster_title[:40]!r} -> {subject['subject']}")
         return subject

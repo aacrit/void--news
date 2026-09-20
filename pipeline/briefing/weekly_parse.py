@@ -492,6 +492,10 @@ def build_weekly_row(*, edition, week_start, week_end, issue_number, cover_items
         "cover_image_url": cover_image["url"] if cover_image else None,
         "cover_image_attribution": cover_image["attribution"] if cover_image else None,
         "cover_image_source": cover_image["source"] if cover_image else None,
+        # Names what the picture is. The weekly illustrates with FILE
+        # photography, a picture of the subject rather than the event, and
+        # that is honest only while the page says which it is.
+        "cover_image_caption": cover_image.get("caption") if cover_image else None,
         # Stats
         "total_articles": total_articles,
         # The week, day by day. Computed from rows the generator already had
