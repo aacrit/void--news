@@ -141,3 +141,60 @@ for r in sorted(rows, key=key):
 pathlib.Path('docs/data/history-episodes.csv').write_text(buf.getvalue())
 print('rows', len(rows))
 print('written', sum(1 for r in rows if r['Script']=='written'), 'rendered', sum(1 for r in rows if r['Episode']=='rendered'))
+
+# ---------------------------------------------------------------------------
+# A second, narrower file for the shared sheet. The full register above is the
+# record; this is the view a person actually scans. The two verbose derived
+# columns become tokens, because the same three sentences repeated on 39 rows
+# were half the file and nobody reads a sentence they have already read 38
+# times. The legend for the tokens lives in the Legend tab / the commit message.
+RULE_TOKEN = [
+    ('per-voice', 'H07-voice'),
+    ('H-11 paraphrase', 'H11-para'),
+    ('H-11 secondhand', 'H11-2nd'),
+    ('unnamed-witness', 'unnamed'),
+    ('institutional', 'inst-voice'),
+]
+
+def _tokens(missing: str) -> str:
+    return ','.join(tok for needle, tok in RULE_TOKEN if needle in missing)
+
+def _action(r: dict) -> str:
+    if r['Script'] != 'written':
+        return 'write script'
+    if r['Episode'] != 'rendered':
+        return 'render'
+    rendered = r.get('Rendered minutes') or 0
+    if rendered and float(rendered) > 15.0:
+        return f'OVER 15 min ({rendered})'
+    return ''
+
+def _clip(s: str, n: int) -> str:
+    s = (s or '').strip()
+    return s if len(s) <= n else s[:n].rsplit(' ', 1)[0] + '...'
+
+SHEET = ['Event','Script','Episode','Action','Rules it predates','Anchor','Why this anchor',
+         'Words','Est min','Rendered min','Drift','Gate','Shape','Voices',
+         'Cold open (what it refuses)','Chapters','Listen','Page','Slug']
+
+sbuf = io.StringIO()
+sw = csv.DictWriter(sbuf, fieldnames=SHEET, extrasaction='ignore')
+sw.writeheader()
+for r in sorted(rows, key=key):
+    sw.writerow({
+        'Event': r['Event'], 'Script': r['Script'], 'Episode': r.get('Episode',''),
+        'Action': _action(r),
+        'Rules it predates': _tokens(r.get('Written before these rules existed','')),
+        'Anchor': r['Anchor (narrator)'], 'Why this anchor': r['Why this anchor'],
+        'Words': r.get('Words',''), 'Est min': r.get('Est. minutes',''),
+        'Rendered min': r.get('Rendered minutes',''), 'Drift': r.get('Drift vs estimate (min)',''),
+        'Gate': r.get('Gate',''),
+        'Shape': (f"{r['Scenes']} scenes, {r['Rests']} rests, {r['Documents read aloud']} docs, "
+                  f"{r['Perspectives']} accounts") if r['Script'] == 'written' else '',
+        'Voices': r.get('Voices in script',''),
+        'Cold open (what it refuses)': _clip(r.get('Cold open (the misconception it refuses)',''), 170),
+        'Chapters': r.get('Chapters',''), 'Listen': r.get('Listen',''),
+        'Page': r['Event page'], 'Slug': r['Slug'],
+    })
+pathlib.Path('docs/data/history-episodes-sheet.csv').write_text(sbuf.getvalue())
+print('sheet bytes', len(sbuf.getvalue()))
