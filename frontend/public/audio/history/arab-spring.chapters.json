@@ -1,0 +1,77 @@
+{
+ "version": "1.2.0",
+ "title": "The Arab Spring",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 57.382
+  },
+  {
+   "startTime": 57.382,
+   "title": "Sidi Bouzid",
+   "endTime": 161.755
+  },
+  {
+   "startTime": 161.755,
+   "title": "The square",
+   "endTime": 232.96
+  },
+  {
+   "startTime": 232.96,
+   "title": "The pipe",
+   "endTime": 289.702
+  },
+  {
+   "startTime": 289.702,
+   "title": "Everyone else",
+   "endTime": 369.107
+  },
+  {
+   "startTime": 369.107,
+   "title": "The fork",
+   "endTime": 414.652
+  },
+  {
+   "startTime": 414.652,
+   "title": "Five accounts",
+   "endTime": 420.82
+  },
+  {
+   "startTime": 420.82,
+   "title": "The revolutionaries",
+   "endTime": 478.779
+  },
+  {
+   "startTime": 478.779,
+   "title": "The regime",
+   "endTime": 546.939
+  },
+  {
+   "startTime": 546.939,
+   "title": "The Muslim Brotherhood",
+   "endTime": 612.731
+  },
+  {
+   "startTime": 612.731,
+   "title": "The realists",
+   "endTime": 683.442
+  },
+  {
+   "startTime": 683.442,
+   "title": "Women's experience",
+   "endTime": 760.494
+  },
+  {
+   "startTime": 760.494,
+   "title": "What each one leaves out",
+   "endTime": 849.378
+  },
+  {
+   "startTime": 849.378,
+   "title": "Legacy",
+   "endTime": 875.93
+  }
+ ]
+}
