@@ -31,6 +31,7 @@ from briefing.weekly_parse import (  # noqa: E402
     banned_terms,
     clean_headline,
     enforce,
+    enforce_recap,
     retry_suffix,
     strip_dashes,
     looks_like_headline,
@@ -463,6 +464,38 @@ def test_enforcement():
     suffix = retry_suffix(enforce(live))
     check("the retry names the offending term", "crucially" in suffix)
     check("the retry names the dash", "dash" in suffix)
+
+    # THE COLUMN IS MEASURED PER ITEM, AND IN BOTH DIRECTIONS.
+    # The brief check tested `n > max * 1.3` and nothing else, because running
+    # long was the failure in front of it: the spec asked for 150-200 words and
+    # every published brief ran ~140. Tightening it to 55-75 fixed that and
+    # uncovered the opposite failure, which a one-sided test cannot see.
+    # These ten counts are Vol. I, No. 1's real column. It passed clean.
+    live_column = [{"summary": "word " * n} for n in
+                   (60, 44, 42, 45, 47, 40, 47, 49, 47, 46)]
+    f = enforce_recap(live_column, min_words=55, max_words=75)
+    check("flags the nine live briefs under the floor",
+          any("under 55 words" in x for x in f), str(f))
+    check("names how many and how short", any("9 of 10" in x and "40" in x for x in f), str(f))
+
+    check("a column inside the band is clean",
+          enforce_recap([{"summary": "word " * 65}] * 10,
+                        min_words=55, max_words=75) == [])
+    check("still flags a column running long",
+          any("past 75" in x for x in
+              enforce_recap([{"summary": "word " * 140}] * 10,
+                            min_words=55, max_words=75)))
+    check("measures per item, not the concatenated column",
+          enforce_recap([{"summary": "word " * 65}] * 10,
+                        min_words=55, max_words=75) == [],
+          "ten in-band briefs total 650 words and must not read as one long piece")
+    check("a banned term anywhere in the column is named",
+          any("significant" in x for x in
+              enforce_recap([{"summary": "word " * 65},
+                             {"summary": "a significant shift " + "word " * 60}],
+                            min_words=55, max_words=75)))
+    check("an empty column abstains rather than inventing a finding",
+          enforce_recap([], min_words=55, max_words=75) == [])
 
 
 # ---------------------------------------------------------------------------

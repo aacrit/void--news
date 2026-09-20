@@ -242,6 +242,54 @@ def enforce(text, *, min_words=0, max_words=0):
     return findings
 
 
+def enforce_recap(items, *, min_words, max_words):
+    """Findings for a Week in Brief COLUMN, which is measured per item.
+
+    Separate from `enforce` because the column is one generation covering ten
+    briefs: a caller that concatenated them and measured once would compare a
+    460-word blob against a 55-word spec and be wrong in both directions at
+    the same time.
+
+    It reports a BAND. The first version of this check tested only
+    `n > max_words * 1.3`, which could catch a column running long and nothing
+    else, because running long was the failure in front of it: RECAP_SYSTEM
+    asked for 150-200 words and every published brief ran ~140. Tightening the
+    spec to 55-75 fixed that and uncovered the opposite failure, invisible to a
+    one-sided test. Vol. I, No. 1 shipped nine of ten briefs BELOW the floor,
+    at 40 to 49 words, and the column passed clean on length.
+
+    The ceiling keeps its 1.3 tolerance and the floor does not. Running a
+    little long costs column inches; running short means the brief is missing a
+    fact, and there is no such thing as being usefully under-informed.
+    """
+    counts = [word_count(i.get("summary")) for i in (items or [])]
+    if not counts:
+        return []
+    over = [n for n in counts if n > max_words * 1.3]
+    under = [n for n in counts if n < min_words]
+    banned = sorted({t for i in items for t in banned_terms(i.get("summary"))})
+
+    findings = []
+    if over:
+        findings.append(
+            f"{len(over)} of {len(counts)} briefs run past {max_words} words "
+            f"(the longest is {max(over)}); two or three sentences each, no more"
+        )
+    if under:
+        findings.append(
+            f"{len(under)} of {len(counts)} briefs run under {min_words} words "
+            f"(the shortest is {min(under)}); each one needs {min_words} to "
+            f"{max_words}, so give every story a second fact rather than a "
+            f"second clause"
+        )
+    if banned:
+        findings.append(
+            "the column uses " + ", ".join(f'"{t}"' for t in banned)
+            + ". Give the fact, not a label announcing that it matters"
+        )
+    return findings
+
+
 def retry_suffix(findings):
     """The findings, named, appended to the original prompt for one retry.
 
