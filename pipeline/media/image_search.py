@@ -178,10 +178,41 @@ def _extract_wiki_text(html_str: str) -> str:
     return re.sub(r"<[^>]+>", "", html_str).strip()
 
 
+#: License fragments that make an image unpublishable HERE, whatever else the
+#: string says. Checked BEFORE the permissive patterns, because every one of
+#: them contains a permissive pattern as a substring.
+_NON_FREE_MARKERS = ("-nc", " nc", "noncommercial", "non-commercial",
+                     "-nd", " nd", "noderiv", "no-deriv",
+                     "fair use", "non-free", "all rights reserved")
+
+
 def _normalize_wiki_license(license_str: str) -> str:
-    """Normalize Wikimedia license strings to our standard keys."""
-    ls = license_str.lower()
-    if "public domain" in ls or "pd" in ls:
+    """Normalize a Commons LicenseShortName to one of our standard keys.
+
+    Anything this does not recognise falls through as the raw string, which the
+    caller's allowlist then rejects. That fail-closed default is the design and
+    it held, but two patterns were slipping THROUGH it in the accepting
+    direction, which is the only direction that costs anything:
+
+      "CC BY-NC 4.0"  ->  "cc-by"  ->  ACCEPTED   (NonCommercial)
+      "CC BY-ND 4.0"  ->  "cc-by"  ->  ACCEPTED   (NoDerivatives)
+
+    because `"cc by" in "cc by-nc 4.0"` is true. NonCommercial forbids exactly
+    what Void does with it, and NoDerivatives is at best arguable once the
+    image is re-rendered at WIKI_RENDER_WIDTH. Both are now rejected outright,
+    before any permissive pattern is tested.
+
+    The public-domain test was `"pd" in ls`, a two-letter substring that any
+    license string could contain by accident, returning the single most
+    permissive key we have. It is anchored to the real PD template prefixes
+    now. Publishing a copyrighted photograph under a public-domain claim is
+    the DMCA 1202(b) exposure that retired the cluster_image_cacher in rev 60;
+    the cost of being wrong here is not a broken image, it is a takedown.
+    """
+    ls = license_str.lower().strip()
+    if any(m in ls for m in _NON_FREE_MARKERS):
+        return f"non-free:{ls}"
+    if "public domain" in ls or ls == "pd" or ls.startswith("pd-"):
         return "public-domain"
     if "cc0" in ls:
         return "cc0"
@@ -189,7 +220,7 @@ def _normalize_wiki_license(license_str: str) -> str:
         return "cc-by-sa"
     if "cc-by" in ls or "cc by" in ls:
         return "cc-by"
-    return ls  # return raw if unrecognized
+    return ls  # unrecognized: the caller's allowlist rejects it
 
 
 # ---------------------------------------------------------------------------

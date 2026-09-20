@@ -1234,7 +1234,12 @@ def _produce_argument(issue: dict, edition: str):
     sidecar = Path(rendered["sidecar"])
     url = _write_audio_static(
         mp3.read_bytes(), f"weekly-{edition}",
-        sidecars={sidecar.name: sidecar.read_bytes()},
+        # The key is a SUFFIX, not a filename: `_write_audio_static`
+        # writes f"{stem}{suffix}", so passing `sidecar.name` here
+        # produced `2026-09-20-pmweekly.chapters.json` and a
+        # `latestweekly.chapters.json` beside it. Every other caller
+        # passes the suffix (radio_producer.py:1195).
+        sidecars={".chapters.json": sidecar.read_bytes()},
     )
     if not url:
         print("    [weekly-audio] could not write the file into the deploy tree")
