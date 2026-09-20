@@ -1,0 +1,62 @@
+{
+ "version": "1.2.0",
+ "title": "Greenland's Arctic Calculus",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "The week",
+   "endTime": 45.357
+  },
+  {
+   "startTime": 45.357,
+   "title": "Inside this week",
+   "endTime": 63.17
+  },
+  {
+   "startTime": 63.17,
+   "title": "The cover",
+   "endTime": 209.901
+  },
+  {
+   "startTime": 209.901,
+   "title": "The cover",
+   "endTime": 370.057
+  },
+  {
+   "startTime": 370.057,
+   "title": "The Argument",
+   "endTime": 736.058
+  },
+  {
+   "startTime": 736.058,
+   "title": "Second feature",
+   "endTime": 839.18
+  },
+  {
+   "startTime": 839.18,
+   "title": "Technology",
+   "endTime": 918.286
+  },
+  {
+   "startTime": 918.286,
+   "title": "Sports and Culture",
+   "endTime": 1032.74
+  },
+  {
+   "startTime": 1032.74,
+   "title": "The Week in Bias",
+   "endTime": 1152.101
+  },
+  {
+   "startTime": 1152.101,
+   "title": "Opinion",
+   "endTime": 1307.327
+  },
+  {
+   "startTime": 1307.327,
+   "title": "The open question",
+   "endTime": 1349.668
+  }
+ ]
+}
