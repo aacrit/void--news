@@ -1,0 +1,147 @@
+## OPEN
+N: Two countries paid for what happened that morning. Neither one attacked it.
+N: Fifteen of the nineteen hijackers were Saudi citizens. None were Iraqi. None were Afghan.
+N: Eighteen months after the towers fell, the United States invaded a country with no hijackers in it, on a case that fell apart.
+
+## TITLE
+N: September eleven and the war on terror. September the eleventh, two thousand one.
+
+## SCENE 1 | Eight forty six
+N: Eight forty six in the morning, Eastern time. American Airlines Flight Eleven strikes the North Tower of the World Trade Center.
+N: Seventeen minutes later, United Airlines Flight One Seventy Five hits the South Tower.
+N: At nine thirty seven, American Airlines Flight Seventy Seven strikes the Pentagon. At ten oh three, United Airlines Flight Ninety Three crashes into a field in Shanksville, Pennsylvania, after its passengers storm the cockpit, having learned by phone what has already happened in New York.
+N: The South Tower falls at nine fifty nine. The North Tower follows at ten twenty eight.
+N: Two thousand nine hundred seventy seven people are dead: two thousand seven hundred fifty three in New York, one hundred eighty four at the Pentagon, forty in Pennsylvania.
+
+## SCENE 2 | Nineteen men
+N: The hijackers are members of al-Qaeda, an organization Osama bin Laden built in the late nineteen eighties. Bin Laden is a Saudi millionaire who fought the Soviet occupation of Afghanistan alongside CIA funded mujahideen.
+N: Khalid Sheikh Mohammed conceives the operation in nineteen ninety six. The operational cell trains at flight schools in Florida and Arizona.
+N: A year and a half before the attack, the CIA tracks two of the hijackers to a meeting in Kuala Lumpur. It does not share what it knows with the FBI.
+
+## DOCUMENT | George W. Bush | Address to Joint Session of Congress | September 20, 2001
+N: Nine days after the attacks, President George W. Bush addresses a joint session of Congress and sets the terms for what comes next.
+M: Every nation, in every region, now has a decision to make. Either you are with us, or you are with the terrorists.
+
+## ASIDE
+N: That line becomes the standard the whole response is measured against. Every nation on earth is sorted into one of two categories, with nothing in between.
+
+## REST
+
+## SCENE 3 | Twenty six days
+N: Within twenty six days, the United States invades Afghanistan. The Taliban government, which had sheltered bin Laden, falls by December two thousand one.
+N: Bin Laden escapes into Pakistan at Tora Bora. He will live another decade.
+
+## SCENE 4 | The case for Iraq
+N: Eighteen months later, the case for a second war rests on the claim that Saddam Hussein possesses weapons of mass destruction.
+
+## DOCUMENT | Colin Powell | Presentation to the UN Security Council | February 5, 2003
+N: On February the fifth, two thousand three, Secretary of State Colin Powell presents that case to the UN Security Council himself.
+M: My colleagues, every statement I make today is backed up by sources, solid sources. These are not assertions. What we are giving you are facts and conclusions based on solid intelligence.
+
+## ASIDE
+N: No such weapons are ever found. The Senate Intelligence Committee later concludes that every major claim in that presentation was unsupported by the underlying intelligence.
+
+## REST
+
+## SCENE 5 | Baghdad
+N: The invasion begins March the twentieth. Baghdad falls on April the ninth.
+N: On May the first, Bush declares major combat operations over aboard the USS Abraham Lincoln, beneath a banner reading Mission Accomplished. The insurgency that follows lasts eight years.
+
+## SCENE 6 | Nine hundred thousand
+N: The wars metastasize. By two thousand twenty one, the Brown University Costs of War Project estimates nine hundred thousand to nine hundred twenty nine thousand people killed directly in post-nine eleven war zones across Afghanistan, Iraq, Pakistan, Syria, Yemen, Somalia, and Libya.
+N: Thirty seven million people are displaced. The financial cost to the United States exceeds eight trillion dollars.
+
+## SCENE 7 | At home
+N: The attacks restructure American governance. The USA PATRIOT Act, signed October the twenty sixth, two thousand one, expands surveillance authority across federal agencies.
+N: The Department of Homeland Security, created in two thousand two, consolidates twenty two agencies into the third largest federal department.
+N: The NSA's warrantless wiretapping program, revealed by the New York Times in two thousand five, collects the phone records and internet communications of millions of Americans without court orders.
+N: Guantanamo Bay detention camp opens in January two thousand two. It holds seven hundred eighty detainees. As of two thousand twenty five, it still holds fifteen.
+
+## DOCUMENT | The 9/11 Commission | The 9/11 Commission Report, final page | 2004
+N: Three years later, the Commission that investigated the attacks delivers its final verdict, on the last page of its report.
+M: They came to slaughter as many Americans as possible, and we, too, are at war, on the battlefield and in our souls.
+
+## REST
+
+## TURN | Five accounts
+N: Five accounts of the two decades that followed.
+
+## PERSPECTIVE | American Establishment | victor
+N: The first account is written into law within hours. By nightfall, Congress authorizes all necessary and appropriate force against whoever planned or aided the attacks. The vote is ninety eight to nothing in the Senate, four hundred twenty to one in the House.
+N: The sole dissenter is Representative Barbara Lee of California, who warns the authorization is too broad. Twenty years later it remains the legal basis for military operations in at least seven countries.
+N: Afghanistan falls in weeks. The Taliban regime that sheltered bin Laden is replaced by a transitional government under Hamid Karzai, installed at the Bonn Conference that December.
+N: The intelligence apparatus built afterward disrupts dozens of plots, and bin Laden himself is killed by SEAL Team Six in Abbottabad, Pakistan, on May the second, two thousand eleven. No second major attack reaches the American homeland in twenty years.
+N: Three days after the attack, bullhorn in hand on the rubble at Ground Zero, Bush tells the rescue workers.
+M: I can hear you! The rest of the world hears you! And the people who knocked these buildings down will hear all of us soon!
+
+## PERSPECTIVE | Afghan and Iraqi Civilian | vanquished
+N: The second account begins on October the seventh, two thousand one, when American bombs start falling on Kabul, a city that had already survived the Soviet invasion, a civil war, and the Taliban's takeover.
+N: The Americans have come for a Saudi fugitive. Within weeks he slips across the border into Pakistan with a small escort and lives another decade. The Afghans stay under the bombs.
+N: The Afghanistan Independent Human Rights Commission counts over thirty one thousand civilian deaths between two thousand one and two thousand twenty one. In Iraq, the Iraq Body Count project counts over two hundred thousand civilian deaths between two thousand three and two thousand twenty three.
+N: Coalition Provisional Authority Order Number One, signed that May by L. Paul Bremer, dissolves the four hundred thousand member Iraqi army and dismisses thirty to fifty thousand Sunni civil servants. Those men, stripped of income, become the recruiting base for the insurgency, and later, for the Islamic State.
+N: By August two thousand twenty one the Afghan government the United States spent two point three trillion dollars building dissolves without a fight, and President Ashraf Ghani flees the country.
+N: An Afghan villager, unnamed in the record, quoted in Dexter Filkins' book The Forever War, on a wedding struck from the air.
+F: They bombed the wedding. They said it was a mistake. They always say it is a mistake.
+
+## PERSPECTIVE | Intelligence Community: The Blowback Thesis | revisionist
+N: The third account starts in nineteen seventy nine, when the CIA launches Operation Cyclone: three billion dollars in arms and training for Afghan mujahideen fighting the Soviet occupation, the largest covert operation in CIA history, run through Pakistan's Inter-Services Intelligence.
+N: The CIA did not directly fund bin Laden himself. But it armed and empowered the ecosystem he built al-Qaeda inside.
+N: Bin Laden's own nineteen ninety six fatwa names three grievances: American troops stationed in Saudi Arabia, American support for Israel's occupation of Palestinian territory, and sanctions on Iraq that the United Nations estimated had contributed to the deaths of five hundred thousand Iraqi children.
+N: The failures were institutional. The CIA knew Khalid al-Mihdhar had a US visa and had met suspected al-Qaeda operatives in Kuala Lumpur. It did not tell the FBI until August the twenty third, two thousand one, nineteen days before the attacks.
+N: Richard Clarke, the White House counterterrorism coordinator, testified he had warned National Security Adviser Condoleezza Rice in January two thousand one that al-Qaeda was an existential threat.
+M: Your government failed you, those entrusted with protecting you failed you, and I failed you.
+
+## PERSPECTIVE | Muslim Diaspora: Under Suspicion | bystander
+N: The fourth account begins the day after the attacks, when Balbir Singh Sodhi, a Sikh gas station owner in Mesa, Arizona, is shot dead by a man who told friends he wanted to kill a towelhead. Sodhi was not Muslim. He was wearing a turban.
+N: In the following twelve months, the FBI records a one thousand six hundred seventeen percent increase in anti-Muslim hate crimes, from twenty eight incidents in the prior year to four hundred eighty one.
+N: The USA PATRIOT Act lets the government detain non-citizens on the attorney general's certification alone. Eighty three thousand men from Muslim-majority countries register with immigration authorities. Thirteen thousand are placed in deportation proceedings. None are charged with terrorism.
+N: The NYPD's Demographics Unit infiltrates Muslim student organizations and maps every mosque in the northeastern United States. In fourteen years it produces zero terrorism leads.
+N: A Muslim American student, unnamed in the record, quoted in a report on that surveillance, put it this way.
+F: I am not the enemy. I am a citizen. But my government treats me like a suspect.
+
+## PERSPECTIVE | Global South: The Unipolar Fracture | academic
+N: The fifth account starts the day after the attacks too, when the UN Security Council passes Resolution thirteen sixty eight unanimously and NATO invokes Article Five for the first time in its history. For a moment the world aligns behind the United States.
+N: Within eighteen months that alignment shatters. The United States invades Iraq without Security Council authorization. France, Germany, and Russia oppose it. French Foreign Minister Dominique de Villepin argues to the Council that inspections should continue, and receives a standing ovation, an extraordinary breach of protocol.
+N: A year later, Kofi Annan, the UN Secretary-General, gives his own verdict, in a BBC interview.
+M: From the standpoint of the charter of the United Nations, the war was illegal.
+N: The doctrine behind the invasion, that the United States could strike any nation it judged a threat, based on its own intelligence, without Security Council authorization, becomes a precedent. Russia later cites the same logic invading Georgia, and Ukraine.
+N: The CIA kidnaps suspects from the streets of Milan, Stockholm, and Islamabad and flies them to allied countries that practice torture. Italy convicts twenty three CIA agents in absentia for one such kidnapping, from a Milan street, in two thousand three.
+
+## REST | short
+
+## TURN | What each one leaves out
+N: And here is what each account cannot afford to say.
+N: The establishment's account counts twenty years without a second homeland attack, and says nothing about Abu Ghraib, the failed hunt for weapons of mass destruction, or two decades spent failing to build a government in Kabul that could survive without American troops.
+N: The Afghan and Iraqi account documents the dead in exact numbers, and says far less about what the Taliban and Saddam Hussein's own government had already done to those same populations before the bombs arrived.
+N: The blowback account traces the fatwa to real grievances, and says little about al-Qaeda's own agency: the choice to fly four airliners into buildings was made by men, not by policy alone.
+N: The diaspora account documents the surveillance in exact figures, and says less about the plots that same apparatus genuinely disrupted along the way.
+N: The Global South account calls the Iraq invasion illegal under a charter its own coalition had just watched hold. It says little about the counter-terrorism abuses of its own governments that came before this one.
+N: And zoom out past all five accounts, and the day marks a hinge point on its own terms. It closes twelve years since the Berlin Wall fell, in which American military power looked unchallenged, and opens two decades of asymmetric warfare, indefinite detention, and preemptive invasion.
+
+## REST
+
+## CLOSE
+N: On August the thirtieth, two thousand twenty one, the last American soldier left Afghanistan.
+N: The Taliban had already retaken Kabul, eleven days before the final withdrawal. The twenty year war ended exactly where it began: with the Taliban in Kabul.
+
+## SAY
+al-Qaeda = al-KY-duh
+Taliban = TAL-ih-ban
+Tora Bora = TOR-uh BOR-uh
+Abbottabad = uh-BOT-uh-bahd
+Guantanamo = gwahn-TAH-nuh-moh
+Kabul = KAH-bul
+Shanksville = SHANKS-vil
+Karzai = kar-ZY
+Bonn = BON
+Kuala Lumpur = KWAH-lah loom-POOR
+Mihdhar = MEE-dar
+Khalid Sheikh Mohammed = KAH-lid sheek moh-HAH-med
+Villepin = veel-PAN
+Annan = AH-nuhn
+Sodhi = SOH-dee
+Xinjiang = shin-jyahng
+Bremer = BREH-mer
+Baghdad = BAG-dad
+Condoleezza Rice = kahn-duh-LEE-zuh RYSE
+Ghani = GAH-nee
