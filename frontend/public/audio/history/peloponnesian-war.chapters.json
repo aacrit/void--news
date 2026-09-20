@@ -1,0 +1,87 @@
+{
+ "version": "1.2.0",
+ "title": "The Peloponnesian War",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 52.242
+  },
+  {
+   "startTime": 52.242,
+   "title": "Plataea, summer of four thirty one BCE",
+   "endTime": 83.482
+  },
+  {
+   "startTime": 83.482,
+   "title": "Behind the Long Walls",
+   "endTime": 136.369
+  },
+  {
+   "startTime": 136.369,
+   "title": "The winter of four thirty one",
+   "endTime": 176.897
+  },
+  {
+   "startTime": 176.897,
+   "title": "The plague",
+   "endTime": 251.822
+  },
+  {
+   "startTime": 251.822,
+   "title": "Melos, four sixteen BCE",
+   "endTime": 313.813
+  },
+  {
+   "startTime": 313.813,
+   "title": "The Great Harbor, four thirteen BCE",
+   "endTime": 362.253
+  },
+  {
+   "startTime": 362.253,
+   "title": "Aegospotami, four oh five BCE",
+   "endTime": 408.41
+  },
+  {
+   "startTime": 408.41,
+   "title": "Five accounts",
+   "endTime": 415.73
+  },
+  {
+   "startTime": 415.73,
+   "title": "Athenian / Democratic-Imperial",
+   "endTime": 486.948
+  },
+  {
+   "startTime": 486.948,
+   "title": "Spartan / Peloponnesian League",
+   "endTime": 552.224
+  },
+  {
+   "startTime": 552.224,
+   "title": "Subject Peoples / The Melian Position",
+   "endTime": 640.566
+  },
+  {
+   "startTime": 640.566,
+   "title": "Modern Realist / International Relations Theory",
+   "endTime": 700.345
+  },
+  {
+   "startTime": 700.345,
+   "title": "Non-Athenian Greek Cities / Subject Allies",
+   "endTime": 778.336
+  },
+  {
+   "startTime": 778.336,
+   "title": "What each one leaves out",
+   "endTime": 870.468
+  },
+  {
+   "startTime": 870.468,
+   "title": "Legacy",
+   "endTime": 912.501
+  }
+ ]
+}

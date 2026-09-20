@@ -1,0 +1,82 @@
+{
+ "version": "1.2.0",
+ "title": "The Iran-Iraq War",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 45.771
+  },
+  {
+   "startTime": 45.771,
+   "title": "Khuzestan, September 22, 1980",
+   "endTime": 114.592
+  },
+  {
+   "startTime": 114.592,
+   "title": "Khorramshahr, October 1980 - May 1982",
+   "endTime": 159.11
+  },
+  {
+   "startTime": 159.11,
+   "title": "The trenches, 1982-1987",
+   "endTime": 193.309
+  },
+  {
+   "startTime": 193.309,
+   "title": "Halabja, March 16, 1988",
+   "endTime": 265.013
+  },
+  {
+   "startTime": 265.013,
+   "title": "The Gulf, July 3, 1988",
+   "endTime": 301.26
+  },
+  {
+   "startTime": 301.26,
+   "title": "The ceasefire, July 1987 - August 1988",
+   "endTime": 384.393
+  },
+  {
+   "startTime": 384.393,
+   "title": "Five accounts",
+   "endTime": 391.606
+  },
+  {
+   "startTime": 391.606,
+   "title": "Iranian Revolutionary / Sacred Defense",
+   "endTime": 458.306
+  },
+  {
+   "startTime": 458.306,
+   "title": "Iraqi Ba'athist",
+   "endTime": 527.053
+  },
+  {
+   "startTime": 527.053,
+   "title": "Kurdish / Halabja and the Anfal",
+   "endTime": 590.064
+  },
+  {
+   "startTime": 590.064,
+   "title": "Great-Power Double-Dealing",
+   "endTime": 666.471
+  },
+  {
+   "startTime": 666.471,
+   "title": "Regional Legacy / Later Scholarship",
+   "endTime": 749.013
+  },
+  {
+   "startTime": 749.013,
+   "title": "What each one leaves out",
+   "endTime": 827.0
+  },
+  {
+   "startTime": 827.0,
+   "title": "Legacy",
+   "endTime": 875.128
+  }
+ ]
+}
