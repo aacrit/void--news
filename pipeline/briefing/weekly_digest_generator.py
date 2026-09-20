@@ -1148,6 +1148,32 @@ def _generate_week_recap(clusters, edition, skip_ids=None):
 # validated still ships a show.
 
 
+def _cover_core(c):
+    """A cover feature's TEXT and structure, with no picture and no network.
+
+    Split out because `_issue_view` needs the cover shape to build the audio
+    rundown, and the only function that produced it was nested inside
+    `generate_weekly_digest` — defined 960 lines below the module-level
+    function calling it, and below the call site too. That is the
+    `NameError: name '_cover_item' is not defined` that killed the first
+    launch run AFTER every essay had been written and paid for.
+
+    Keeping the image lookup out of here is the other half of the fix: it
+    makes a network call per feature, and the rundown does not read images,
+    so sharing `_cover_item` would have doubled those lookups to produce
+    fields nothing downstream uses.
+    """
+    return {
+        "headline": c.get("headline", ""),
+        "text": c.get("text", ""),
+        "timeline": c.get("timeline", []),
+        "numbers": c.get("numbers", []),
+        "cluster_id": c.get("cluster_id"),
+        "days_active": c.get("days_active"),
+        "week_sources": c.get("week_sources"),
+    }
+
+
 def _issue_view(edition, week_start, week_end, issue_number, covers, opinions,
                 tech, sports, recap, bias_data, weekly_opinion):
     """The issue as the PAGE will carry it, built before the row is written.
@@ -1167,7 +1193,7 @@ def _issue_view(edition, week_start, week_end, issue_number, covers, opinions,
         "week_start": week_start.strftime("%Y-%m-%d") if hasattr(week_start, "strftime") else week_start,
         "week_end": week_end.strftime("%Y-%m-%d") if hasattr(week_end, "strftime") else week_end,
         "cover_headline": (covers[0].get("headline") if covers else "") or "",
-        "cover_text": [_cover_item(c) for c in covers],
+        "cover_text": [_cover_core(c) for c in covers],
         "opinions": _opinion_items(opinions, issue_number),
         "departments": departments or [],
         "recap_stories": (recap or {}).get("stories", []),
@@ -2123,19 +2149,9 @@ def generate_weekly_digest(editions=None, week_offset=0):
         # Store
         elapsed = time.time() - t0
 
-        # Surface the daily pipeline's already-cached WebP on each cover item by
-        # matching the cover's cluster_id back to the fetched week clusters. No
-        # new image API calls; the keys are omitted when a cluster has no cache.
-        _cluster_by_id = {c["id"]: c for c in clusters if c.get("id")}
-
         def _cover_item(c):
-            item = {
-                "headline": c.get("headline", ""),
-                "text": c.get("text", ""),
-                "timeline": c.get("timeline", []),
-                "numbers": c.get("numbers", []),
-                "cluster_id": c.get("cluster_id"),
-            }
+            """The persisted cover item: the shared core, plus its picture."""
+            item = _cover_core(c)
             # Each cover essay gets its own picture, from a freely licensed
             # source. This used to read `cached_image_url`, written by the
             # cluster_image_cacher that rev 60 RETIRED on copyright grounds, so
