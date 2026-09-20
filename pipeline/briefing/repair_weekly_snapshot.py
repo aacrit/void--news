@@ -162,8 +162,8 @@ def repair(data) -> list[str]:
 # Fields the exporter parses out of the DB's TEXT columns. A snapshot written
 # before these were added carries them as raw JSON strings.
 _JSON_FIELDS = ("cover_text", "cover_timelines", "cover_numbers", "recap_stories",
-                "departments", "opinions", "opinion_left", "opinion_center",
-                "opinion_right", "bias_report_data")
+                "departments", "opinions", "week_days", "opinion_left",
+                "opinion_center", "opinion_right", "bias_report_data")
 
 # TTS source and a derivable map, rendered nowhere, ~15 KB per page load.
 _DROPPED = ("audio_script", "opinion_audio_script", "opinion_headlines")
@@ -222,11 +222,13 @@ def normalize(data) -> list[str]:
         stats["truncated"] = True
         changes.append("bias stats: total_scored 3000 marked truncated (it was a query cap)")
 
-    # Departments are text that was never written; an empty list is the honest
-    # answer until the next run generates and stores them.
-    if data.get("departments") is None:
-        data["departments"] = []
-        changes.append("departments: [] (this issue predates them being persisted)")
+    # Text that was never written for these issues. An empty list is the honest
+    # answer until the next run generates and stores it, and it keeps the
+    # exporter's parse list and the snapshot in agreement.
+    for key in ("departments", "week_days"):
+        if data.get(key) is None:
+            data[key] = []
+            changes.append(f"{key}: [] (this issue predates it being persisted)")
 
     return changes
 

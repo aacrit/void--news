@@ -423,6 +423,8 @@ CREATE TABLE IF NOT EXISTS weekly_digests (
   opinions                  TEXT,
   -- "The Argument" chapter rail (JSON array), 2026-09-20.
   audio_chapters            TEXT,
+  -- The week, day by day (JSON array), 2026-09-20.
+  week_days                 TEXT,
   UNIQUE(edition, week_start)
 );
 CREATE INDEX IF NOT EXISTS idx_weekly_digests_edition_created ON weekly_digests(edition, created_at DESC);

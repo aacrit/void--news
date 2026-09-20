@@ -17,7 +17,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
+  getPreviousWeeklyIssue,
   getWeeklyArchiveIndex,
+  getWeeklyCorrections,
   getWeeklyIssueByWeek,
   getWeeklyIssues,
 } from "../../lib/weeklyIssues";
@@ -48,5 +50,12 @@ export default async function WeeklyArchivedIssuePage(
   const { week } = await params;
   const issue = getWeeklyIssueByWeek(week);
   if (!issue) notFound();
-  return <WeeklyIssue issue={issue} archive={getWeeklyArchiveIndex()} />;
+  return (
+    <WeeklyIssue
+      issue={issue}
+      archive={getWeeklyArchiveIndex()}
+      previous={getPreviousWeeklyIssue(issue.week_start)}
+      corrections={getWeeklyCorrections(issue.week_start)}
+    />
+  );
 }

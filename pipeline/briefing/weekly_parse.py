@@ -365,6 +365,7 @@ def index_rows(issues):
 def build_weekly_row(*, edition, week_start, week_end, issue_number, cover_items,
                      opinions, tech, sports, recap_stories, bias_text, bias_data,
                      weekly_opinion, audio, cover_image, total_articles,
+                     week_days=None,
                      total_clusters, gemini_calls, elapsed, voice_pair=None):
     """Assemble the weekly_digests row. Pure: dict in, dict out.
 
@@ -427,7 +428,13 @@ def build_weekly_row(*, edition, week_start, week_end, issue_number, cover_items
         # The chapter rail. `chapters.ts` renders any `kind` and already
         # guards an empty label, which is what lets a new format's rail work
         # with no frontend change — the same reason History's episodes got one.
-        "audio_chapters": audio.get("chapters"),
+        # json.dumps, not the list: these are TEXT columns, and the SQLite
+        # shim binds what it is given. A list reaches sqlite3 as an
+        # unsupported type and takes the whole upsert down with it, which is
+        # exactly what would have happened on the first run that rendered an
+        # audio edition. W-T05 catches it because it loads every column the
+        # exporter parses.
+        "audio_chapters": json.dumps(audio["chapters"]) if audio.get("chapters") else None,
         # An engine string, as On Air writes it, not a pair of display names.
         # "The Editor" and "The Correspondent" were a label over an identical
         # signal chain: both mapped to the same two edge voices.
@@ -447,6 +454,10 @@ def build_weekly_row(*, edition, week_start, week_end, issue_number, cover_items
         "cover_image_source": cover_image["source"] if cover_image else None,
         # Stats
         "total_articles": total_articles,
+        # The week, day by day. Computed from rows the generator already had
+        # and threw away; the shape of the week is the one thing only a weekly
+        # can show.
+        "week_days": json.dumps(week_days or []),
         "total_clusters": total_clusters,
         "generator": "gemini-flash",
         "gemini_calls_used": gemini_calls,

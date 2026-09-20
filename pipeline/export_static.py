@@ -221,13 +221,14 @@ if want("weekly"):
         # `cover_numbers` shipped to browsers as raw JSON strings.
         # tests/test_weekly.py W-T03 now asserts the two lists are identical.
         for k in ("cover_text", "cover_timelines", "cover_numbers", "recap_stories",
-                  "departments", "opinions", "audio_chapters",
+                  "departments", "opinions", "audio_chapters", "week_days",
                   "opinion_left", "opinion_center", "opinion_right",
                   "bias_report_data"):
             if k in weekly:
                 weekly[k] = pjson(w[k])
         for k in ("audio_duration_seconds", "opinion_start_seconds", "issue_number",
-                  "total_articles", "total_clusters"):
+                  "total_articles", "total_clusters", "gemini_calls_used",
+                  "generation_duration_seconds"):
             if k in weekly:
                 weekly[k] = pnum(w[k])
         # TTS source, rendered nowhere: ~15 KB on every /weekly page load.

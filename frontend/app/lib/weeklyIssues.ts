@@ -28,6 +28,7 @@ import { join } from "path";
 import type { WeeklyDigestData } from "../weekly/types";
 
 let _issues: WeeklyDigestData[] | null = null;
+let _corrections: WeeklyCorrection[] | null = null;
 
 function read(file: string): unknown {
   return JSON.parse(readFileSync(join(process.cwd(), "build-data", file), "utf8"));
@@ -114,4 +115,62 @@ export function getWeeklyArchiveIndex() {
     audio_duration_seconds: i.audio_duration_seconds ?? null,
     created_at: i.created_at ?? null,
   }));
+}
+
+/**
+ * The issue published BEFORE this one, for the week-over-week delta.
+ *
+ * "Before this one in the archive", never "last week": the archive has gaps
+ * (issues 23 and 26 are the only two published, three weeks apart), so a
+ * comparison labelled "since last week" would be a lie about its own data.
+ * The caller renders the week it actually compared against.
+ */
+export function getPreviousWeeklyIssue(week: string): WeeklyDigestData | null {
+  const all = getWeeklyIssues();          // newest first
+  const i = all.findIndex((x) => x.week_start === week);
+  return i >= 0 ? (all[i + 1] ?? null) : null;
+}
+
+/* ---------------------------------------------------------------------------
+   Corrections.
+
+   A correction is an EDITORIAL ACT, not a user submission. Reader reports
+   arrive through /feedback into D1, behind the Worker, which the build cannot
+   reach and should not: publishing unvetted reader text under the masthead as
+   a correction would be worse than having no corrections box at all.
+
+   So the file is hand-maintained, and the box tells readers where to send one.
+   For a publication whose thesis is measured honesty, admitting what it got
+   wrong is the most on-brand thing it can print, and an empty box that says
+   "nothing corrected this week" is itself a claim worth making.
+   --------------------------------------------------------------------------- */
+
+export interface WeeklyCorrection {
+  /** The issue this belongs to, by week_start. */
+  week_start: string;
+  /** ISO date the correction was published. */
+  corrected_on: string;
+  /** Where the error was: "The Cover", "Week in Brief", ... */
+  section: string;
+  /** What was wrong and what is right. Plain prose, no dashes. */
+  text: string;
+}
+
+export function getWeeklyCorrections(week: string): WeeklyCorrection[] {
+  if (!_corrections) {
+    try {
+      const rows = read("weekly-corrections.json");
+      _corrections = Array.isArray(rows)
+        ? (rows as WeeklyCorrection[]).filter(
+            (c) => c && typeof c.week_start === "string" && typeof c.text === "string"
+          )
+        : [];
+    } catch {
+      // No file is the normal state: nothing has needed correcting.
+      _corrections = [];
+    }
+  }
+  return _corrections
+    .filter((c) => c.week_start === week)
+    .sort((a, b) => (a.corrected_on || "").localeCompare(b.corrected_on || ""));
 }

@@ -585,25 +585,53 @@ def _fetch_brief_signals(edition, week_start, week_end):
 
 
 def _fetch_daily_opinions(edition, week_start, week_end):
-    """Fetch the week's daily void --opinion editorials.
+    """Fetch the week's daily brief rows, oldest first.
 
-    The weekly editorial must NOT restate any of these — it argues the
-    week-length through-line the daily columns could not see. Returns a list of
-    {opinion_headline, opinion_text, opinion_lean, created_at}, oldest first.
+    TWO consumers, one query. The weekly editorial reads the days that ARGUED
+    something (it must not restate any of them; it argues the week-length
+    through-line no single day could see), and `_week_days` reads every day
+    that ran a brief at all, for the day-by-day rail. Filtering here would have
+    cost a second query to get the days back.
     """
     try:
         result = supabase.table("daily_briefs").select(
-            "opinion_headline,opinion_text,opinion_lean,created_at"
+            "tldr_headline,opinion_headline,opinion_text,opinion_lean,created_at"
         ).eq("edition", edition).gte(
             "created_at", week_start.isoformat()
         ).lte(
             "created_at", week_end.isoformat()
         ).order("created_at", desc=False).execute()
-        # Keep only rows that actually carried an editorial.
-        return [r for r in (result.data or []) if (r.get("opinion_text") or "").strip()]
+        return list(result.data or [])
     except Exception as e:
         print(f"  [weekly:{edition}] daily opinion query failed: {e}")
         return []
+
+
+def _week_days(daily_rows, week_start, week_end):
+    """The week, day by day, from rows already in hand.
+
+    These `daily_briefs` rows are fetched as prompt context for the weekly
+    editorial and then discarded. Keeping one line per day costs nothing and
+    gives the issue the one piece of furniture only a weekly can print: the
+    SHAPE of the week, seven headlines in order, rather than seven separate
+    front pages the reader has to remember.
+
+    One row per calendar day, the first brief of that day, so a day with a
+    morning and an evening edition does not take two slots.
+    """
+    seen, out = set(), []
+    for r in daily_rows or []:
+        day = (r.get("created_at") or "")[:10]
+        headline = (r.get("tldr_headline") or "").strip()
+        if not day or not headline or day in seen:
+            continue
+        seen.add(day)
+        out.append({
+            "date": day,
+            "headline": strip_dashes(headline),
+            "lean": r.get("opinion_lean"),
+        })
+    return sorted(out, key=lambda d: d["date"])
 
 
 def _generate_cover_stories(threads, edition):
@@ -1997,7 +2025,12 @@ def generate_weekly_digest(editions=None, week_offset=0):
         # Section 6.5: Weekly editorial — one argued week-in-review column,
         # distinct from every daily opinion this week (fed in below).
         print(f"\n  ── WEEKLY EDITORIAL ──")
-        daily_opinions = _fetch_daily_opinions(edition, week_start, week_end)
+        daily_rows = _fetch_daily_opinions(edition, week_start, week_end)
+        # The rail wants every day that ran a brief; the editorial prompt wants
+        # only the days that argued something. One query, two consumers.
+        week_days = _week_days(daily_rows, week_start, week_end)
+        daily_opinions = [r for r in daily_rows if (r.get("opinion_text") or "").strip()]
+        print(f"    {len(week_days)} day(s) of the week recorded for the rail")
         week_lean = _get_week_lean(issue_number)
         week_label = f"{week_start.strftime('%B %d')} through {week_end.strftime('%B %d, %Y')}"
         print(f"    {len(daily_opinions)} daily columns to differ from; lens: {week_lean}")
@@ -2137,6 +2170,7 @@ def generate_weekly_digest(editions=None, week_offset=0):
             },
             cover_image=cover_image,
             total_articles=sum(c.get("source_count", 0) for c in clusters),
+            week_days=week_days,
             total_clusters=len(clusters),
             gemini_calls=total_calls,
             elapsed=elapsed,
