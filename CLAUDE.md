@@ -52,6 +52,51 @@ Gemini 2.5 via google-genai, Kokoro-82M TTS (Apache-2.0, CPU, own venv
 
 ## Rules in force
 
+### Rule 1: zero factual error
+
+**Nothing Void publishes may contain a factual error. This outranks every
+other rule in this file.** If show-don't-tell, the dash ban, a word budget or a
+deadline conflicts with getting a fact right, the fact wins and the other rule
+yields.
+
+This is a standard, not a hope, so it is stated as behaviour:
+
+- **Every factual claim traces to a source in the data.** Not to model
+  knowledge, however certain. If the source does not carry it, it does not
+  ship. This is already enforced for History scripts by H-01 and H-10, and for
+  every LLM prompt by the grounding line.
+- **Silence beats a plausible reconstruction.** A claim that cannot be sourced
+  is cut, not softened, not hedged into place. Where a quote is attributed,
+  paraphrased or secondhand, say so out loud or do not use it.
+- **Where two sources genuinely disagree, publish the disagreement.** Do not
+  pick one and present it as settled, and do not average them. An unreconciled
+  range is honest; a false precision is not.
+- **A number that goes stale is a future error.** Do not publish a count that
+  changes with time ("ten presidents", "sixty-five years on") when a durable
+  formulation exists.
+- **Check the convention before calling something a defect.** Two reported
+  errors in the 2026-09-20 audit were refutations: a population figure another
+  field licensed, and a sort year that seventeen events share. Acting on an
+  unverified finding introduces an error while claiming to remove one.
+- **Verify, then report.** Never state that something is fixed, committed or
+  passing without reading back the thing itself. A chained command that echoes
+  success is not evidence.
+
+**Controls, because a rule nobody can fail is not enforced.** Every class of
+factual error found in production gets a check that makes it structurally
+impossible, not a note asking people to be careful:
+
+| Check | Catches |
+|---|---|
+| `tests/test_history_data.py` | figure identity against its own link, impossible lifespans, malformed attribution |
+| `tests/test_history_script.py` (H-01..H-11) | a quote not in the sources, a hedge not said aloud, a speaker not named |
+| `tests/test_history_audio.py` | audio that no longer matches its corrected script |
+| `pipeline/editorial/standard.py` | the daily feed's editorial rules, run at write time and against served HTML |
+| `scripts/verify_production.py` | what the live page actually serves |
+
+When a factual error reaches production, the fix is not complete until a check
+exists that would have caught it. Add the check in the same commit.
+
 ### Show, don't tell
 Never assert significance. Juxtapose concrete facts so the reader sees the
 pattern. Banned: "notable", "significant", "it should be noted",
