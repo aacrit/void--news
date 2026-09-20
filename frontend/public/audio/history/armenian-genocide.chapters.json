@@ -1,0 +1,72 @@
+{
+ "version": "1.2.0",
+ "title": "The Armenian Genocide",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 53.771
+  },
+  {
+   "startTime": 53.771,
+   "title": "The twenty fourth of April",
+   "endTime": 98.026
+  },
+  {
+   "startTime": 98.026,
+   "title": "Disarmed first",
+   "endTime": 141.917
+  },
+  {
+   "startTime": 141.917,
+   "title": "The law and the road",
+   "endTime": 203.447
+  },
+  {
+   "startTime": 203.447,
+   "title": "The end of the road",
+   "endTime": 258.163
+  },
+  {
+   "startTime": 258.163,
+   "title": "Five accounts",
+   "endTime": 284.399
+  },
+  {
+   "startTime": 284.399,
+   "title": "The Ottoman government",
+   "endTime": 341.107
+  },
+  {
+   "startTime": 341.107,
+   "title": "The survivors and the diaspora",
+   "endTime": 406.224
+  },
+  {
+   "startTime": 406.224,
+   "title": "The witnesses",
+   "endTime": 468.63
+  },
+  {
+   "startTime": 468.63,
+   "title": "Genocide studies",
+   "endTime": 524.819
+  },
+  {
+   "startTime": 524.819,
+   "title": "The Convention",
+   "endTime": 584.402
+  },
+  {
+   "startTime": 584.402,
+   "title": "What each one leaves out",
+   "endTime": 671.265
+  },
+  {
+   "startTime": 671.265,
+   "title": "Legacy",
+   "endTime": 733.601
+  }
+ ]
+}

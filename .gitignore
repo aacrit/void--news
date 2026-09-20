@@ -93,3 +93,10 @@ void_local.db
 
 # Kokoro TTS worker virtualenv (numpy 2; built by the workflows, see pipeline/requirements-tts.txt)
 .venv-tts/
+
+# History audio editions live in a GitHub Release, not in git: the finished
+# catalogue is ~900 MB and git keeps every byte of every re-render forever.
+# The deploy workflow pulls them into frontend/out before publishing, so the
+# reader still fetches them same-origin from news.voidvision.org.
+# See pipeline/history/release_store.py.
+frontend/public/audio/history/*.mp3

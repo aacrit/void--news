@@ -1,0 +1,77 @@
+{
+ "version": "1.2.0",
+ "title": "The Black Death",
+ "author": "Void News",
+ "chapters": [
+  {
+   "startTime": 0.0,
+   "title": "Opening",
+   "endTime": 45.962
+  },
+  {
+   "startTime": 45.962,
+   "title": "Messina, October thirteen forty seven",
+   "endTime": 115.842
+  },
+  {
+   "startTime": 115.842,
+   "title": "The arithmetic",
+   "endTime": 174.221
+  },
+  {
+   "startTime": 174.221,
+   "title": "Paris, October thirteen forty eight",
+   "endTime": 216.2
+  },
+  {
+   "startTime": 216.2,
+   "title": "Chillon, and what was copied out of it",
+   "endTime": 279.1
+  },
+  {
+   "startTime": 279.1,
+   "title": "One to two pence a day",
+   "endTime": 338.13
+  },
+  {
+   "startTime": 338.13,
+   "title": "Five accounts",
+   "endTime": 349.333
+  },
+  {
+   "startTime": 349.333,
+   "title": "The Christian west",
+   "endTime": 404.499
+  },
+  {
+   "startTime": 404.499,
+   "title": "Islamic medicine",
+   "endTime": 485.174
+  },
+  {
+   "startTime": 485.174,
+   "title": "The Jewish communities",
+   "endTime": 549.58
+  },
+  {
+   "startTime": 549.58,
+   "title": "The peasants and laborers",
+   "endTime": 612.379
+  },
+  {
+   "startTime": 612.379,
+   "title": "The Mongol road",
+   "endTime": 704.645
+  },
+  {
+   "startTime": 704.645,
+   "title": "What each one leaves out",
+   "endTime": 804.798
+  },
+  {
+   "startTime": 804.798,
+   "title": "Legacy",
+   "endTime": 841.924
+  }
+ ]
+}

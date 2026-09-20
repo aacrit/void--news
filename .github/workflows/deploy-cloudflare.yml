@@ -146,6 +146,24 @@ jobs:
           NEXT_PUBLIC_DISABLE_AUDIO: "0"
         run: cd frontend && npm run build
 
+      # History audio is NOT in git. The finished catalogue is ~900 MB of MP3
+      # and git keeps every byte of every re-render forever, so the episodes
+      # live in a GitHub Release and are pulled into the publish directory
+      # here, after the build and before the upload.
+      #
+      # They are NOT served from the release. GitHub hands those assets over
+      # as application/octet-stream behind a signed redirect that expires in
+      # an hour, which plays in Chrome and fails in iOS Safari. Pulling them
+      # in means the reader still fetches /audio/history/<slug>.mp3 from
+      # news.voidvision.org: same origin, correct MIME, no redirect.
+      #
+      # This step FAILS the deploy if an episode in the manifest is missing.
+      # A site whose every Listen button 404s is worse than a deploy that
+      # does not happen.
+      - name: Pull History audio into the publish directory
+        if: steps.guard.outputs.skip != 'true'
+        run: python3 pipeline/history/release_store.py fetch --out frontend/out/audio/history
+
       # wrangler 3.x in non-TTY mode does NOT auto-create Pages projects;
       # `pages deploy` errors with code 8000007 if the project is missing.
       # Pre-create it idempotently — `continue-on-error` swallows the
