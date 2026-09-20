@@ -315,7 +315,15 @@ export interface AudioChapter {
   title: string;
   /** "segment" is a History documentary chapter: it carries a title and
    *  nothing else, so the rail draws no kind badge beside it. */
-  kind: "headlines" | "story" | "briefs" | "finally" | "opinion" | "editorial" | "segment";
+  /* On Air: headlines / story / briefs / finally / opinion (legacy: editorial).
+     History: segment. The Sunday weekly edition, "The Argument", adds its own
+     movements — the rail renders any kind and already guards an empty label,
+     which is exactly what lets a new format arrive without a player change. */
+  kind:
+    | "headlines" | "story" | "briefs" | "finally" | "opinion" | "editorial"
+    | "segment"
+    | "open" | "contents" | "cover" | "topic" | "second" | "department"
+    | "numbers" | "close";
   /** story_clusters.id when kind is "story" or "finally" */
   cluster_id?: string;
   /** Feed rank when kind is "story" */

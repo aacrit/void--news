@@ -194,6 +194,25 @@ export function chapterKindLabel(c: AudioChapter): string {
     // Explicit rather than left to the default, so the silence is a decision.
     case "segment":
       return "";
+    // "The Argument", the weekly edition. The badge names the MOVEMENT, which
+    // is what a magazine's reader is navigating by; the chapter's own title
+    // carries the subject. "topic" is the argument itself, badged as such,
+    // because it is the one movement a listener comes back for.
+    case "topic":
+      return "The Argument";
+    case "cover":
+      return "Cover";
+    case "second":
+      return "Feature";
+    case "department":
+      return "Department";
+    case "numbers":
+      return "Measured";
+    case "contents":
+      return "Contents";
+    case "open":
+    case "close":
+      return "";
     default:
       return "";
   }
