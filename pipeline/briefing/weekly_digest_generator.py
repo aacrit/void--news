@@ -1358,27 +1358,38 @@ def _issue_view(edition, week_start, week_end, issue_number, covers, opinions,
 def _produce_argument(issue: dict, edition: str):
     """Render the Sunday edition. Returns (result, calls) or (None, calls).
 
-    Returns None on ANY failure, including a validator failure, and the caller
-    falls back to the legacy path. That asymmetry is deliberate: an essay that
-    runs forty words long is worth shipping, but a bench line the published
-    column does not contain is words put in a columnist's mouth.
+    Returns None on ANY failure. There is no longer a fallback: the caller
+    raises. The reasoning for rejecting a bad rundown stands, and is why this
+    still refuses rather than shipping it: an essay that runs forty words long
+    is worth shipping, but a bench line the published column does not contain
+    is words put in a columnist's mouth.
+
+    What changed is what happens next. The legacy two-voice read used to run
+    silently in its place, so a format that had never once produced a scheduled
+    episode looked like a format that worked, and the published row said "Three
+    voices" over a mono 24 kHz file nobody had mastered. A degraded artifact
+    published as the real one is worse than no artifact.
+
+    Every return below names its own cause. An import error, a rejected
+    rundown and a render crash are three different problems and must not
+    collapse into one line in a log nobody reads.
     """
     if os.environ.get("VOID_WEEKLY_AUDIO_FORMAT", "1").strip() == "0":
-        print("    [weekly-audio] VOID_WEEKLY_AUDIO_FORMAT=0; legacy path")
+        print("    [weekly-audio] VOID_WEEKLY_AUDIO_FORMAT=0; audio parked by kill switch")
         return None, 0
     try:
         from briefing import weekly_rundown
         from briefing.weekly_producer import produce as produce_argument
         from briefing.audio_producer import _write_audio_static
     except Exception as e:
-        print(f"    [weekly-audio] unavailable ({e}); legacy path")
+        print(f"    [weekly-audio] IMPORT FAILED: {e}")
         return None, 0
 
     script_text, findings, calls = weekly_rundown.generate(issue, _smart_generate_text)
     if not script_text:
         for f in findings:
             print(f"    [weekly-audio] {f.id} {f.segment}: {f.detail[:110]}")
-        print("    [weekly-audio] rundown rejected; legacy path")
+        print("    [weekly-audio] RUNDOWN REJECTED by the validators above")
         return None, calls
 
     import tempfile
@@ -1386,7 +1397,7 @@ def _produce_argument(issue: dict, edition: str):
     try:
         rendered = produce_argument(script_text, issue, out, stem="weekly")
     except Exception as e:
-        print(f"    [weekly-audio] render failed: {e}")
+        print(f"    [weekly-audio] RENDER FAILED: {e}")
         return None, calls
     if not rendered:
         return None, calls
@@ -2264,46 +2275,25 @@ def generate_weekly_digest(editions=None, week_offset=0):
             print(f"    The Argument: {audio_duration:.0f}s, {len(audio_chapters)} chapters, "
                   f"{audio_size/1e6:.1f} MB")
 
-        legacy_result, calls = (None, 0) if argument else _generate_audio(
-            covers, opinions, tech, sports, recap, bias_data,
-            edition, week_start=week_start, week_end=week_end,
-        )
-        total_calls += calls
+        # No fallback. The Argument renders or the Weekly ships without audio.
+        #
+        # Until 2026-09-20 a failure here silently ran the legacy two-voice
+        # edge-tts read instead. The consequence was not a quieter episode, it
+        # was a false one: the row kept saying "Three voices" and
+        # kokoro:bm_lewis+am_michael+af_heart over a 96k mono 24 kHz file that
+        # no loudnorm had touched, and every scheduled run since the format
+        # shipped had taken that path without anyone noticing. A degraded
+        # artifact published as the real one is worse than no artifact.
+        #
+        # VOID_WEEKLY_AUDIO_FORMAT=0 is now the only way to get the legacy
+        # read, and it parks audio rather than substituting for it.
         if not argument:
-            audio_script = legacy_result.get("script", "") if legacy_result else None
-
-        # The legacy two-voice read, only when the Sunday edition did not render.
-        if not argument and audio_script and len(audio_script) > 100:
-            print(f"    Producing audio ({len(audio_script.split())} words)...")
-            try:
-                # Weekly uses WEEKLY_VOICE_PAIR (fixed) instead of daily rotation
-                # and overrides the TTS preamble for magazine pace. The editorial
-                # monologue uses the female desk voice (host_b -> Ava), mirroring
-                # the daily TL;DR-male / opinion-female split.
-                weekly_voices = {
-                    "host_a": WEEKLY_VOICE_PAIR["host_a"],
-                    "host_b": WEEKLY_VOICE_PAIR["host_b"],
-                    "opinion": {"id": WEEKLY_VOICE_PAIR["host_b"]["id"]},
-                }
-                # Use "weekly-{edition}" path to avoid overwriting daily audio.
-                # Pass the editorial monologue so produce_audio appends it after
-                # the news read and reports where it starts (opinion seek tab).
-                result = produce_audio(
-                    audio_script, weekly_voices, f"weekly-{edition}",
-                    opinion_audio_script=(weekly_opinion or {}).get("opinion_audio_script"),
-                    opinion_lean=(weekly_opinion or {}).get("opinion_lean"),
-                    tts_preamble_override=_WEEKLY_TTS_PREAMBLE,
-                )
-                if result and isinstance(result, dict):
-                    audio_url = result.get("audio_url")
-                    audio_duration = result.get("duration_seconds")
-                    audio_size = result.get("file_size")
-                    opinion_start = result.get("opinion_start_seconds")
-                    print(f"    Audio: {audio_duration:.0f}s uploaded" if audio_duration else "    Audio: uploaded")
-            except Exception as e:
-                print(f"    [warn] Audio failed: {e}")
-        else:
-            print(f"    No audio script generated")
+            raise RuntimeError(
+                "The Argument did not render, and there is no fallback. The "
+                "cause is the [weekly-audio] line above. Fix the rundown, or "
+                "render from a committed script with "
+                "`python -m pipeline.briefing.render_weekly_audio`."
+            )
 
         # Store
         elapsed = time.time() - t0

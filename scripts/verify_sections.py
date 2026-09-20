@@ -312,7 +312,13 @@ def main(site: str) -> int:
     elif isinstance(chs, str):
         report("W-09", False, "audio_chapters shipped as a raw JSON string")
     elif not chs:
-        report("W-09", True, "legacy two-voice read, no chapter rail (acceptable)")
+        # Was: report(..., True, "legacy two-voice read, no chapter rail
+        # (acceptable)"). It was not acceptable, and hard-coding it to pass is
+        # how the section shipped every scheduled week on the legacy read while
+        # a gate named W-09 reported green. There is no legacy read any more.
+        report("W-09", False,
+               "audio with no chapter rail: The Argument always emits one, so "
+               "this is a legacy or partial render")
     else:
         times = [c.get("startTime") for c in chs if isinstance(c, dict)]
         ordered = times == sorted(times) and times and times[0] == 0
