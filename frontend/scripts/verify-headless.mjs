@@ -173,13 +173,14 @@ async function shot(page, name) {
 const DASH = /[–—]/;
 
 /* ── A page with its console, its network and its colour mode wired ── */
-async function openPage(browser, { width, scheme, route, storage = {}, session = {}, reducedMotion = "no-preference" }) {
+async function openPage(browser, { width, scheme, route, storage = {}, session = {}, reducedMotion = "no-preference", permissions = [] }) {
   const context = await browser.newContext({
     viewport: { width, height: width < 768 ? 844 : 900 },
     colorScheme: scheme,
     reducedMotion,
     isMobile: width < 768,
     hasTouch: width < 768,
+    permissions,
   });
   /* The theme is decided before first paint by the inline script in
      app/layout.tsx from localStorage.void-news-theme, so the mode is set the
@@ -642,7 +643,104 @@ async function scenarios(browser) {
     assert(uniqueHome.length >= 20 && p.every((t, i) => t === uniqueHome[i]), "paper-order", p.every((t, i) => t === uniqueHome[i]) ? "same twenty, same order" : `first divergence at ${p.findIndex((t, i) => t !== uniqueHome[i])}`);
   } catch (e) { fail("paper-parity", String(e?.message ?? e)); }
 
+  await journeys(browser);
   await brandChecks(browser);
+}
+
+/* ── Journeys, round two: the elements the first round did not touch. ── */
+async function journeys(browser) {
+  /* Search, to the end: type, get results, choose one, read it. */
+  await withPage(browser, { width: 1440, route: "/" }, "search-select", async (page) => {
+    const word = await page.evaluate(() => (document.querySelector(".lead-headline__text, .lead-story__headline-text, .story-card__headline-text")?.textContent ?? "").trim().split(/\s+/).find((w) => w.length > 4) ?? "");
+    if (!word) { skip("search-select", "no headline word to search for"); return; }
+    await page.keyboard.press("Control+k");
+    await page.locator(".search-overlay__input").waitFor({ state: "visible", timeout: 3000 });
+    await page.locator(".search-overlay__input").fill(word);
+    await page.waitForTimeout(600);
+    const n = await page.locator(".search-overlay__result").count();
+    if (!assert(n > 0, "search-results", `"${word}" returns ${n} result(s)`)) return;
+    await page.keyboard.press("Enter");
+    await page.waitForTimeout(800);
+    const opened = await page.evaluate(() => ({ overlay: !!document.querySelector(".search-overlay"), inline: !!document.querySelector(".inline-dd"), page: !!document.querySelector(".dd-page") }));
+    assert(!opened.overlay && (opened.inline || opened.page), "search-select-opens", `Enter on the first result: overlay ${opened.overlay ? "still open" : "closed"}, Deep Dive ${opened.inline ? "inline" : opened.page ? "page" : "absent"}`);
+  });
+  /* Share from the phone Deep Dive falls back to the clipboard with the permalink. */
+  await withPage(browser, { width: 390, route: "/", permissions: ["clipboard-read", "clipboard-write"] }, "deep-dive-share", async (page) => {
+    await page.locator("[data-story-index='0'] .story-card__stretch-link, .story-card__stretch-link").first().click();
+    await page.locator(".dd-page").first().waitFor({ state: "visible", timeout: 5000 }).catch(() => {});
+    if (await page.locator(".dd-page__share").count() === 0) { skip("deep-dive-share", "no share button on this page"); return; }
+    await page.locator(".dd-page__share").first().click();
+    await page.waitForTimeout(500);
+    const text = await page.evaluate(() => navigator.clipboard.readText().catch(() => ""));
+    assert(/\/story\/[0-9a-f-]+/.test(text), "deep-dive-share", `clipboard: ${JSON.stringify(text.slice(0, 80))}`);
+  });
+  /* History: the landing's long-view toggle, and the event's Listen island. */
+  await withPage(browser, { width: 1440, route: "/history/" }, "history-longview", async (page) => {
+    const btns = page.locator(".hist-longview-toggle__btn");
+    if (await btns.count() < 2) { skip("history-longview", "no toggle on the landing"); return; }
+    await btns.nth(1).click();
+    await page.waitForTimeout(500);
+    const state = await page.evaluate(() => [...document.querySelectorAll(".hist-longview-toggle__btn")].map((b) => b.classList.contains("hist-longview-toggle__btn--active")));
+    assert(state[1] === true && state[0] === false, "history-longview", `active after clicking the second: ${state.join(",")}`);
+  });
+  await withPage(browser, { width: 1440, route: "/history/partition-of-india/" }, "hearing-listen", async (page) => {
+    if (await page.locator(".hist-hero-listen").count() === 0) { skip("hearing-listen", "no Listen island on this event"); return; }
+    await page.locator(".hist-hero-listen").first().click();
+    await page.waitForTimeout(1200);
+    const title = await page.evaluate(() => document.querySelector(".fp__title")?.textContent?.trim() ?? null);
+    assert(title === "History", "hearing-listen", `player title after Listen: ${title}`);
+  });
+  /* Weekly loads The Argument into the shared player on arrival. */
+  await withPage(browser, { width: 1440, route: "/weekly/" }, "weekly-argument", async (page) => {
+    await page.waitForTimeout(1200);
+    const title = await page.evaluate(() => document.querySelector(".fp__title")?.textContent?.trim() ?? null);
+    assert(title === "Weekly", "weekly-argument-loaded", `player title on the issue: ${title}`);
+  });
+  /* Sources: the picker and the six-axis dots. */
+  await withPage(browser, { width: 1440, route: "/sources/" }, "sources-picker", async (page) => {
+    const rows = page.locator(".meth-picker__row");
+    if (await rows.count() < 2) { skip("sources-picker", "fewer than two picker rows"); return; }
+    await rows.nth(1).click();
+    await page.waitForTimeout(500);
+    assert(await rows.nth(1).evaluate((el) => el.classList.contains("meth-picker__row--active")), "sources-picker-select", "the second row becomes active");
+    const dot = page.locator(".meth-dot").first();
+    await dot.click();
+    await page.waitForTimeout(500);
+    const d = await page.evaluate(() => { const b = document.querySelector(".meth-dot"); const id = b?.getAttribute("aria-controls"); return { expanded: b?.getAttribute("aria-expanded"), open: !!document.querySelector(".meth-dot-detail--open"), resolves: !!(id && document.getElementById(id)) }; });
+    assert(d.expanded === "true" && d.open && d.resolves, "sources-dot-detail", `aria-expanded ${d.expanded}, detail open ${d.open}, aria-controls resolves ${d.resolves}`);
+  });
+  /* About: the Sigil demo answers its sliders. */
+  await withPage(browser, { width: 1440, route: "/about/" }, "about-demo", async (page) => {
+    const slider = page.locator("input[aria-label='Political lean']");
+    if (await slider.count() === 0) { skip("about-demo", "no lean slider"); return; }
+    const before = await page.evaluate(() => document.querySelector(".sigdemo__readout dd")?.textContent ?? "");
+    await slider.evaluate((el) => { const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set; set.call(el, "12"); el.dispatchEvent(new Event("input", { bubbles: true })); el.dispatchEvent(new Event("change", { bubbles: true })); });
+    await page.waitForTimeout(400);
+    const after = await page.evaluate(() => document.querySelector(".sigdemo__readout dd")?.textContent ?? "");
+    assert(after !== before && after.length > 0, "about-demo", `lean readout ${JSON.stringify(before)} -> ${JSON.stringify(after)}`);
+  });
+  /* Feedback: an empty submit is refused in the page, not on the wire. */
+  await withPage(browser, { width: 1440, route: "/ship/" }, "feedback-empty-submit", async (page, log) => {
+    if (await page.locator(".fb-submit").count() === 0) { skip("feedback-empty-submit", "no form on /ship/"); return; }
+    const posts = [];
+    page.on("request", (r) => { if (r.method() === "POST") posts.push(r.url()); });
+    await page.locator(".fb-submit").first().click();
+    await page.waitForTimeout(600);
+    const errors = await page.locator(".fb-field-error:visible").count();
+    assert(errors >= 1 && posts.length === 0, "feedback-empty-submit", `${errors} field error(s) shown, ${posts.length} POST(s) sent`);
+  });
+  /* The files an app or a crawler asks for by name. */
+  ctx("/", 0, "fs");
+  console.log(`\nscenario: static-files`);
+  for (const f of ["podcast-world.xml", "podcast-weekly.xml", "podcast-history.xml"]) {
+    const path = join(OUT, f);
+    const head = existsSync(path) ? readFileSync(path, "utf8").slice(0, 400) : "";
+    assert(/<rss[\s>]/.test(head) && /<channel>/.test(head), `static-${f}`, existsSync(path) ? "rss with a channel" : "missing");
+  }
+  try { const m = JSON.parse(readFileSync(join(OUT, "manifest.json"), "utf8")); assert(!!m.name && Array.isArray(m.icons) && m.icons.length > 0, "static-manifest", `${m.name}, ${m.icons?.length ?? 0} icon(s)`); } catch (e) { fail("static-manifest", String(e?.message ?? e)); }
+  assert(existsSync(join(OUT, "sw.js")) && existsSync(join(OUT, "offline.html")), "static-sw", "sw.js and offline.html present");
+  const robots = existsSync(join(OUT, "robots.txt")) ? readFileSync(join(OUT, "robots.txt"), "utf8") : "";
+  assert(/Sitemap:/.test(robots) && /Disallow: \/admin/.test(robots), "static-robots", "sitemap named, /admin disallowed");
 }
 
 /* ── Brand checks: the subtle layer, each one a token-driven touch a reader

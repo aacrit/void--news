@@ -696,8 +696,16 @@ vitrine makes you lean in. Connection types are drawn as glyphs, not labels:
   three routes, the theme toggle and both `theme-color` metas, the drawer's
   focus trap, the Sigil's popup, the shortcuts overlay telling the truth,
   the banner's second-visit rule, the player's presence per route, Paper
-  parity, and the brand layer above. `--quick` runs in CI; the full grid by
-  hand before a release. Its first run found six contrast failures (the
+  parity, and the brand layer above; then the journeys: search typed to a
+  result and Enter into the story, the phone Deep Dive's share landing the
+  permalink on the clipboard, the Audio hub loading each programme into the
+  one player, History's long-view toggle and the event's Listen island,
+  Weekly loading The Argument on arrival, the Sources picker and the axis
+  dots opening their detail, the About demo answering its sliders, an empty
+  feedback submit refused in the page with nothing sent, every client-side
+  navigation landing at scrollY 0 below the masthead, and the podcast feeds,
+  manifest, service worker and robots file present. `--quick` runs in CI;
+  the full grid by hand before a release. Its first run found six contrast failures (the
   dateline's stacked opacities, the player clock and chapter title, the
   History nameplate in dark, the long-view toggle), a control nested in a
   control (the player pill), a focusable row under `aria-hidden` (the year
