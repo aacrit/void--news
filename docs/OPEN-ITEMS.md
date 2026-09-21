@@ -108,8 +108,8 @@ treatment `history/data.ts` got in rev 69 before the 301 comes off.
 ## Watch on the next run
 
 **House promos (2026-09-20).** The pool (`data/promos/house.yaml`, 24 promos)
-validates and is rendered in `af_kore`; the CEO ear test has not happened.
-`bf_emma` is the alternate (`VOID_PROMO_VOICE`). On Air, Weekly and History
+validates and is rendered in `af_kore` (American, CEO: "prefer American voice");
+`af_sarah` is the alternate (`VOID_PROMO_VOICE`). On Air, Weekly and History
 pick a promo up at render time only when `data/promos/rendered/` carries a
 render whose sha matches the pool; otherwise they ship exactly as before.
 The 73 published History episodes are **not stitched yet**: dispatch
@@ -126,8 +126,8 @@ now generate and are linked from `/listen` and `layout.tsx`. Not submitted to
 Apple Podcasts or Spotify (`docs/PODCAST-DISTRIBUTION.md` has the checklist;
 the owner mailbox must be monitored for Apple's verification mail). Weekly
 and History covers exist as SVG only; the JPGs need the brand render step.
-`frontend/public/podcast-us.xml` still points at the dead Supabase host and
-nothing regenerates it; delete it or re-point it, CEO's call. The world feed
+`frontend/public/podcast-us.xml` was deleted (dead Supabase host, nothing
+regenerated it); the US edition gets a feed again when it renders again. The world feed
 was cut from 9 items to the episodes whose MP3s exist (7 of 9 enclosures
 returned 404 because audio retention keeps two dated files).
 

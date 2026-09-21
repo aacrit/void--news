@@ -104,12 +104,25 @@ def upload(paths: list[Path], tag: str = TAG, replace: bool = True) -> int:
             # The clean-master tag keeps its first copy forever.
             print(f"  [keep] {p.name} already under {tag}")
             continue
-        # A re-render replaces the asset: same name, new bytes.
-        if p.name in existing:
-            _req(f"{API}/releases/assets/{existing[p.name]}", method="DELETE", token=token)
         data = p.read_bytes()
-        _req(f"{UPLOADS}/releases/{rel['id']}/assets?name={p.name}",
-             method="POST", data=data, ctype="audio/mpeg", token=token, raw=True)
+        if p.name in existing:
+            # A re-render replaces the asset: same name, new bytes. Upload
+            # under a temporary name first, then delete the old one and
+            # rename, so a deploy fetching mid-replacement sees the name
+            # missing for well under a second rather than for the whole
+            # upload of a 14 MB file.
+            tmp = f"{p.name}.incoming"
+            for a in rel.get("assets", []):
+                if a.get("name") == tmp:
+                    _req(f"{API}/releases/assets/{a['id']}", method="DELETE", token=token)
+            new = _req(f"{UPLOADS}/releases/{rel['id']}/assets?name={tmp}",
+                       method="POST", data=data, ctype="audio/mpeg", token=token)
+            _req(f"{API}/releases/assets/{existing[p.name]}", method="DELETE", token=token)
+            _req(f"{API}/releases/assets/{new['id']}", method="PATCH",
+                 data=json.dumps({"name": p.name}).encode(), ctype="application/json", token=token)
+        else:
+            _req(f"{UPLOADS}/releases/{rel['id']}/assets?name={p.name}",
+                 method="POST", data=data, ctype="audio/mpeg", token=token, raw=True)
         print(f"  [store] {p.name} ({len(data)//1024} KB){'' if tag == TAG else f' under {tag}'}")
     return 0
 

@@ -63,7 +63,7 @@ SECTION_NAMES = {"onair": "On Air", "weekly": "Weekly", "history": "History",
 # in casting.py. A voice the listener has not heard for the last quarter of an
 # hour is what makes the promo read as the station rather than the presenter
 # coming back. af_kore is on the ear-tested alternates list in
-# docs/ON-AIR-RADIO.md; bf_emma is the alternate for the CEO ear test.
+# docs/ON-AIR-RADIO.md; af_sarah (also American) is the alternate.
 HOUSE_VOICE = os.environ.get("VOID_PROMO_VOICE", "af_kore")
 HOUSE_SPEED = float(os.environ.get("VOID_PROMO_SPEED", "0.95") or 0.95)
 HOUSE_WPM = 181.0 * HOUSE_SPEED   # af_kore's measured natural rate, house pace
