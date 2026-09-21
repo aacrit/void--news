@@ -34,8 +34,27 @@ const read = (p) => readFileSync(p, "utf8");
 
 // 1. No component may restate the feed size as a literal in prose. The numbers
 //    that drifted were always the ones written out by hand.
-const stale = files.filter((p) =>
-  /\b(?:50|fifty)\s+stories\b|\btop\s+50\b/i.test(read(p)));
+//
+//    The first regex here matched "50 stories" and "top 50" only, and the press
+//    page kept "<div>50</div> <div>Stories in one daily edition</div>" and "The
+//    fifty most important stories" for two weeks under a heading telling
+//    journalists to copy it as written (brand audit 2026-09-21, F-01). On the
+//    pages whose job is to describe the site, the old values may not appear
+//    within reach of "stories" at all, across tags and line breaks. Comments
+//    are stripped first: a stale comment is a lie to the next engineer, not to
+//    a reader, and belongs to a different check.
+const OLD_FEED_SIZES = "50|fifty";
+const SELF_DESCRIBING = ["app/press", "app/about", "app/components/about",
+                         "app/layout.tsx", "app/page.tsx"].map((d) => join(ROOT, d));
+const uncommented = (txt) =>
+  txt.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+const stale = files.filter((p) => {
+  const txt = uncommented(read(p));
+  if (new RegExp(`\\b(?:${OLD_FEED_SIZES})\\s+stories\\b|\\btop\\s+(?:${OLD_FEED_SIZES})\\b`, "i").test(txt)) return true;
+  if (!SELF_DESCRIBING.some((d) => p === d || p.startsWith(d + "/"))) return false;
+  return new RegExp(`\\b(?:${OLD_FEED_SIZES})\\b[\\s\\S]{0,120}?\\bstories\\b`, "i").test(txt)
+      || new RegExp(`\\bstories\\b[\\s\\S]{0,60}?\\b(?:${OLD_FEED_SIZES})\\b`, "i").test(txt);
+});
 ok("no component restates the feed size in prose",
    stale.length === 0, stale.map((p) => p.replace(ROOT, "")).join(", "));
 

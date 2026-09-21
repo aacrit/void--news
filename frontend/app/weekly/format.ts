@@ -72,7 +72,9 @@ export function formatArchiveRange(start: string, end: string): string {
    which would have collapsed every pilot onto No. 1 alongside the launch.
    --------------------------------------------------------------------------- */
 
-/** Epoch issue number of Vol. I, No. 1: the week of 2026-09-14. */
+/** Epoch issue number of Vol. I, No. 1: the week of 2026-09-14. The podcast
+    feed sets the same label from pipeline/briefing/weekly_parse.py, whose
+    WEEKLY_LAUNCH_ISSUE must equal this one (tests/test_podcast_feed.py). */
 export const WEEKLY_LAUNCH_ISSUE = 26;
 export const WEEKS_PER_VOLUME = 52;
 

@@ -357,6 +357,28 @@
   color: var(--fg-tertiary);
 }
 
+/* Programmes: one card per show, full width, the feed address set in the
+   data face under two actions. */
+.press-axes--programmes {
+  grid-template-columns: 1fr;
+}
+
+.press-programme__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.press-programme__feed {
+  font-family: var(--font-data);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--fg-tertiary);
+  overflow-wrap: anywhere;
+  margin: 8px 0 0;
+}
+
 /* ── Organization statement ─────────────────────────────────────────────── */
 .press-org.press-org {
   font-family: var(--font-editorial);

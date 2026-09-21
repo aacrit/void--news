@@ -77,7 +77,7 @@ export const metadata: Metadata = {
     types: {
       "application/rss+xml": [
         { url: "/podcast-world.xml", title: "Void News: On Air" },
-        { url: "/podcast-weekly.xml", title: "Void Weekly: The Argument" },
+        { url: "/podcast-weekly.xml", title: "Void News: The Argument" },
         { url: "/podcast-history.xml", title: "Void News: History" },
       ],
     },

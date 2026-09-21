@@ -8,11 +8,16 @@ podcast app that polls the feed gets the episode straight from
 | Show | Feed | Cadence | Written by |
 |---|---|---|---|
 | Void News: On Air | https://news.voidvision.org/podcast-world.xml | Daily | `pipeline/main.py`, from `daily_briefs` through the SQLite shim, committed by `pipeline.yml` |
-| Void Weekly: The Argument | https://news.voidvision.org/podcast-weekly.xml | Sundays | `weekly-digest.yml`, from `frontend/build-data/weekly-issues.json` |
+| Void News: The Argument | https://news.voidvision.org/podcast-weekly.xml | Sundays | `weekly-digest.yml`, from `frontend/build-data/weekly-issues.json` |
 | Void News: History | https://news.voidvision.org/podcast-history.xml | When an episode is rendered | `render-history-audio.yml` (publish job) and again on every daily run, from `frontend/public/data/history-audio.json` plus `data/history/events/<slug>.yaml` |
 
-All three come from `pipeline/briefing/podcast_feed_generator.py`. The
-weekly and history feeds need no database:
+All three come from `pipeline/briefing/podcast_feed_generator.py`, and all
+three are titled `Void News: <programme>`: On Air, The Argument and History
+are programmes of Void News, not brands of their own (the weekly channel was
+"Void Weekly: The Argument" under an author of "Void News" until 2026-09-21).
+`tests/test_podcast_feed.py` holds the committed XML, JPG and SVG to that and
+to everything under "What each feed carries"; run it directly, no key, no
+database. The weekly and history feeds need no database:
 
 ```
 python3 pipeline/briefing/podcast_feed_generator.py --history --weekly
@@ -46,17 +51,38 @@ The manifest `publish_audio.py` writes is, and every entry in it was uploaded
 before it was written.
 
 `podcast-us.xml` pointed at the decommissioned Supabase host. The `us`
-edition is no longer generated; the stale file should be deleted from
-`frontend/public/` (not done in this change, which touched no git state).
+edition is no longer generated; the feed and its covers are gone from
+`frontend/public/`.
+
+## The stale weekly item, fixed 2026-09-21
+
+The served `podcast-weekly.xml` said "Issue #26: Trump Mocks Banned
+Reporters" while `/weekly/` said "Vol. I, No. 1: Greenland's Arctic
+Calculus". Two defects. The label: the page computes volume and number from
+`WEEKLY_LAUNCH_ISSUE` in `frontend/app/weekly/format.ts`; the feed printed
+the raw epoch count. `weekly_parse.issue_label` is now the Python twin and
+the item title reads `Vol. I, No. 1: <cover headline>: The Argument, <date>`;
+the test asserts the two constants agree. The headline: the XML was committed
+by hand from a working tree whose archive still carried the earlier cover,
+and the next `weekly-digest` run (audio-only dispatch, 2026-09-21 00:39)
+checked out a ref whose workflow did not yet carry the "Generate weekly
+podcast feed" step, so it refreshed the archive and left the feed alone. The
+feed is derived from `build-data/weekly-issues.json` and is never edited;
+`tests/test_podcast_feed.py` now fails whenever the committed XML's first
+item is not what the committed archive produces, so the two cannot drift
+again in silence.
 
 ## What each feed carries
 
 - Channel: title, `<link>` to the section page (`/onair/`, `/weekly/`,
-  `/history/`), description, `itunes:author` and `itunes:owner` "Void News",
-  `itunes:image`, category, `itunes:explicit` false, `itunes:type` episodic,
-  `podcast:locked` no.
+  `/history/`), description, RSS `<image>` and `itunes:image` (the same
+  file), `itunes:author` and `itunes:owner` "Void News", category,
+  `itunes:explicit` false, `itunes:type` episodic, `podcast:locked` no.
 - Item: title, description (the shared editorial sanitiser is applied, so no
-  em dashes and no significance words), `<enclosure>` with the absolute URL,
+  em dashes and no significance words, and every description ends a
+  sentence: a History subtitle without a full stop is closed before it is
+  joined to the summary, and S-03 fails the build otherwise), `<enclosure>`
+  with the absolute URL,
   the byte length and `audio/mpeg`, a GUID with `isPermaLink="false"`,
   `pubDate` in RFC 2822, `itunes:duration`, `itunes:episodeType` full, and
   `<podcast:chapters>` pointing at the JSON sidecar next to the MP3.
@@ -69,35 +95,34 @@ edition is no longer generated; the stale file should be deleted from
 ## Artwork
 
 Apple and Spotify want a square JPG or PNG between 1400 and 3000 px, RGB,
-under 512 KB. `frontend/public/podcast-cover-world.jpg` is 3000x3000 and
-about 324 KB.
+under 512 KB. Each show has its own: `frontend/public/podcast-cover-world.jpg`
+(On Air), `-weekly.jpg` (The Argument) and `-history.jpg` (History), each
+3000x3000, rendered 2026-09-21 from the SVG beside it. Every cover reads
+"VOID NEWS", the programme's name and its cadence, in the house faces, and
+nothing else: no edition name, no source count, no `--` wordmark. Until that
+render all three feeds pointed at one cover, and it was a pre-rebrand raster
+reading "void --onair", "WORLD BRIEF", "409 sources".
 
-`podcast-cover-weekly.svg` and `podcast-cover-history.svg` exist next to the
-world SVG (same 3000x3000 viewBox, only the wordmark, kicker and tagline
-changed) but have not been rendered: the sandbox that drew them has no
-browser, no brand fonts and no image library. Until their JPGs exist,
-`_cover_for` in the generator points both feeds at the world cover, so no
-feed advertises a 404.
+`_cover_for` in the generator has no fallback. A feed whose JPG is missing
+raises, because a feed fronting another show's art is a wrong fact on a
+directory page. `tests/test_podcast_feed.py` checks each JPG exists, is
+square, sits between 1400 and 3000 px and under 512 KB, and that its SVG
+twin's text carries none of the retired strings.
 
-To render, with Playwright browsers installed under `frontend/`:
+To re-render after editing an SVG (Playwright under `frontend/`, and Playfair
+Display, IBM Plex Mono and Barlow Condensed installed as system fonts, or
+the wordmark falls back to Georgia):
 
 ```
 cat > /tmp/covers.json <<'EOF'
-[
-  {"svg": "/abs/path/frontend/public/podcast-cover-weekly.svg",
-   "out": "/abs/path/frontend/public/podcast-cover-weekly.png", "width": 3000},
-  {"svg": "/abs/path/frontend/public/podcast-cover-history.svg",
-   "out": "/abs/path/frontend/public/podcast-cover-history.png", "width": 3000}
-]
+[{"svg": "/abs/frontend/public/podcast-cover-world.svg",   "out": "/tmp/world.png",   "width": 3000},
+ {"svg": "/abs/frontend/public/podcast-cover-weekly.svg",  "out": "/tmp/weekly.png",  "width": 3000},
+ {"svg": "/abs/frontend/public/podcast-cover-history.svg", "out": "/tmp/history.png", "width": 3000}]
 EOF
 node brand/ci/render_svg.mjs /tmp/covers.json
+python3 -c "from PIL import Image; [Image.open(f'/tmp/{e}.png').convert('RGB').save(f'frontend/public/podcast-cover-{e}.jpg', quality=85, optimize=True, progressive=True) for e in ('world','weekly','history')]"
+python3 tests/test_podcast_feed.py
 ```
-
-Then convert each PNG to a JPG under 512 KB (quality 80 to 85 is enough at
-this size), drop the JPGs in `frontend/public/`, and regenerate the feeds.
-The generator picks up `podcast-cover-<edition>.jpg` by presence; nothing
-else changes. Render where Playfair Display, IBM Plex Mono and Barlow
-Condensed are installed (CI has them), or the wordmark falls back to Georgia.
 
 ## Validation, before every submission
 
@@ -166,9 +191,6 @@ and YouTube Music each have their own submission form and can wait.
 
 - Creating the Apple and Spotify accounts and submitting the three feeds.
 - Watching the `PODCAST_EMAIL` inbox for the verification mails.
-- Rendering the weekly and history cover JPGs (see Artwork) and dropping
-  them in `frontend/public/`.
-- Deleting the stale `frontend/public/podcast-us.xml`.
 - Deciding whether the daily audio retention window (two dated files) is the
   back catalogue On Air should offer.
 - Recording the Apple and Spotify show URLs in this file once listed.
