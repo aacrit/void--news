@@ -39,7 +39,15 @@ import { readFile, stat } from "node:fs/promises";
 import { join, extname, resolve } from "node:path";
 
 const OUT = resolve(new URL("../out", import.meta.url).pathname);
-const BASE = "/void--news";
+/* The base path is NOT fixed. Local builds use /void--news; CI's build-check
+   sets NEXT_PUBLIC_BASE_PATH to "". Hardcoding it would make this gate serve
+   404s in CI and measure an unstyled page, which is the same failure the
+   file:// trap produces and just as quiet. Read it back off the built HTML. */
+const BASE = await (async () => {
+  const html = await readFile(join(OUT, "index.html"), "utf8");
+  const href = html.match(/href="([^"]*)\/_next\/static\//)?.[1] ?? "";
+  return href;
+})();
 const PORT = 8899;
 const WIDTHS = [390, 768, 1024, 1440];
 
