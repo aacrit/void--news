@@ -18,39 +18,95 @@ export type LeanCategory =
   | "right"
   | "far-right";
 
+/** The seven outlet baselines the analyzer anchors to, from
+ *  `pipeline/analyzers/political_lean.py` BASELINE_MAP. A rung of this ladder
+ *  is not an arbitrary number: it is what an outlet of that rating scores when
+ *  its article's wording is unremarkable, which is most articles. Measured on
+ *  the 2026-09-21 feed, 74% of all 668 measured articles sit EXACTLY on one of
+ *  these seven values and 87% are within two points of one. The distribution
+ *  is seven spikes, not a spread. */
+export const LEAN_BASELINES: ReadonlyArray<readonly [LeanCategory, number]> = [
+  ["far-left", 10], ["left", 20], ["center-left", 35], ["center", 50],
+  ["center-right", 65], ["right", 80], ["far-right", 90],
+] as const;
+
+/** A score belongs to the baseline it is NEAREST. That places every boundary
+ *  at the midpoint between two rungs (15, 27.5, 42.5, 57.5, 72.5, 85) without
+ *  writing any of them down, and it makes the tie rule sayable: a score
+ *  exactly between two rungs takes the one nearer the centre.
+ *
+ *  The tie rule has to be expressed in DISTANCE FROM CENTRE, not in score.
+ *  Resolving a tie "upward" in score sends it toward the centre on the left of
+ *  the ladder and away from it on the right, which is the same asymmetry this
+ *  function was just fixed for: 15 landed on `left` while its mirror 85 landed
+ *  on `far-right`. Caught by the symmetry check in test/labels.test.mjs. */
+
 /**
  * Unified lean boundaries — identical for bucket placement AND labels.
- * 0-20: Far Left, 21-35: Left, 36-45: Center-Left, 46-55: Center,
- * 56-65: Center-Right, 66-80: Right, 81-100: Far Right.
+ *
+ * THE BOUNDARIES WERE WRONG UNTIL 2026-09-21, ASYMMETRICALLY.
+ *
+ * They were `<=20, <=35, <=45, <=55, <=65, <=80`, which put four of the seven
+ * baselines on a bucket's upper EDGE. On the right that lands in the
+ * correctly-named bucket by luck; on the left the upper edge of a bucket is
+ * its LEAST extreme end, so it lands one rung too far out:
+ *
+ *     roster `left`        scores 20  ->  the page said FAR LEFT
+ *     roster `center-left` scores 35  ->  the page said LEFT
+ *
+ * Both errors ran leftward, and the right-hand rungs were correct, so a
+ * left-leaning outlet was displayed as more extreme than this product's own
+ * roster rates it while a right-leaning one was not. For a product whose
+ * whole claim is even-handed measurement that is the worst available bug.
+ * `center-left` also held no baseline at all: it was a ten-point gap
+ * populated only by the skirt of the 35 spike.
+ *
+ * Binning on the baselines fixes it and evens the widths (15/12.5/15/15/15/
+ * 12.5/15, against 21/15/10/10/10/15/20). It moves 156 of 668 articles
+ * (23.4%) into a different bucket, and only 11 of those (1.6%) change their
+ * left/centre/right group, so cluster-level shape is barely touched.
  */
 export function leanToBucket(v: number): LeanCategory {
-  if (v <= 20) return "far-left";
-  if (v <= 35) return "left";
-  if (v <= 45) return "center-left";
-  if (v <= 55) return "center";
-  if (v <= 65) return "center-right";
-  if (v <= 80) return "right";
-  return "far-right";
+  let best: LeanCategory = "center";
+  let bestGap = Infinity;
+  let bestPull = Infinity;
+  for (const [name, base] of LEAN_BASELINES) {
+    const gap = Math.abs(v - base);
+    const pull = Math.abs(base - 50); // how extreme this rung is
+    if (gap < bestGap - 1e-9 || (Math.abs(gap - bestGap) < 1e-9 && pull < bestPull)) {
+      best = name;
+      bestGap = gap;
+      bestPull = pull;
+    }
+  }
+  return best;
 }
 
+const LEAN_LABEL_TEXT: Record<LeanCategory, string> = {
+  "far-left": "Far Left",
+  left: "Left",
+  "center-left": "Center-Left",
+  center: "Center",
+  "center-right": "Center-Right",
+  right: "Right",
+  "far-right": "Far Right",
+};
+
+/** The label and the bucket can never disagree: one derives from the other. */
 export function leanLabel(v: number): string {
-  if (v <= 20) return "Far Left";
-  if (v <= 35) return "Left";
-  if (v <= 45) return "Center-Left";
-  if (v <= 55) return "Center";
-  if (v <= 65) return "Center-Right";
-  if (v <= 80) return "Right";
-  return "Far Right";
+  return LEAN_LABEL_TEXT[leanToBucket(v)];
 }
 
+const LEAN_ABBR: Record<LeanCategory, string> = {
+  "far-left": "FL", left: "L", "center-left": "CL", center: "C",
+  "center-right": "CR", right: "R", "far-right": "FR",
+};
+
+/** Third consumer of the one ladder. It carried its own copy of the
+ *  thresholds until 2026-09-21 and so inherited the same asymmetry; deriving
+ *  it from the bucket is what makes "one ladder" true rather than asserted. */
 export function leanLabelAbbr(v: number): string {
-  if (v <= 20) return "FL";
-  if (v <= 35) return "L";
-  if (v <= 45) return "CL";
-  if (v <= 55) return "C";
-  if (v <= 65) return "CR";
-  if (v <= 80) return "R";
-  return "FR";
+  return LEAN_ABBR[leanToBucket(v)];
 }
 
 export function senseLabel(v: number): string {

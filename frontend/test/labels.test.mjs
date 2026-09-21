@@ -50,14 +50,25 @@ const hygiene = await import(pathToFileURL(join(out, "summaryHygiene.js")).href)
 
 /* ---- 1. one ladder ---------------------------------------------------- */
 
+/* The bands are the midpoints between the seven outlet baselines
+   (10, 20, 35, 50, 65, 80, 90), so every baseline sits inside the bucket that
+   bears its own name. A score exactly on a boundary takes the rung nearer the
+   centre, which is why 15 is `left` rather than `far-left` and its mirror 85
+   is `right` rather than `far-right`.
+
+   Until 2026-09-21 these were 0-20 / 21-35 / 36-45 / 46-55 / 56-65 / 66-80 /
+   81-100, which put the `left` baseline (20) in FAR LEFT and the
+   `center-left` baseline (35) in LEFT, while the right-hand rungs landed
+   correctly. The table below is the fix; the assertions under it are what
+   stop it regressing. */
 const BANDS = [
-  [0, 20, "far-left", "Far Left", "FL"],
-  [21, 35, "left", "Left", "L"],
-  [36, 45, "center-left", "Center-Left", "CL"],
-  [46, 55, "center", "Center", "C"],
-  [56, 65, "center-right", "Center-Right", "CR"],
-  [66, 80, "right", "Right", "R"],
-  [81, 100, "far-right", "Far Right", "FR"],
+  [0,  14,  "far-left",     "Far Left",     "FL"],
+  [15, 27,  "left",         "Left",         "L"],
+  [28, 42,  "center-left",  "Center-Left",  "CL"],
+  [43, 57,  "center",       "Center",       "C"],
+  [58, 72,  "center-right", "Center-Right", "CR"],
+  [73, 85,  "right",        "Right",        "R"],
+  [86, 100, "far-right",    "Far Right",    "FR"],
 ];
 
 for (const [lo, hi, bucket, label, abbr] of BANDS) {
@@ -84,6 +95,52 @@ for (let v = 0; v <= 100; v++) {
   if (LEFTISH.has(b)) check(`tiltDescriptor(${v}) says left`, d.includes("left"), d);
   else if (RIGHTISH.has(b)) check(`tiltDescriptor(${v}) says right`, d.includes("right"), d);
   else check(`tiltDescriptor(${v}) says balanced`, d.includes("balanced"), d);
+}
+
+/* ---- the ladder is anchored to the roster's own baselines -------------- */
+/*
+   The boundaries were `<=20, <=35, <=45, <=55, <=65, <=80` until 2026-09-21,
+   which put four baselines on a bucket's upper edge. On the left that edge is
+   the LEAST extreme end of the bucket, so the rung landed one step too far out
+   and the error only ran one way:
+
+       roster `left`        scores 20  ->  the page said FAR LEFT
+       roster `center-left` scores 35  ->  the page said LEFT
+
+   A left-leaning outlet was shown as more extreme than this product's own
+   roster rates it, while the right-hand rungs were correct. This is the check
+   that makes that impossible: every baseline must land in the bucket that
+   bears its own name.
+*/
+for (const [name, score] of bias.LEAN_BASELINES) {
+  check(`an outlet rated ${name} (scores ${score}) is called ${name}`,
+    bias.leanToBucket(score) === name,
+    `leanToBucket(${score}) = ${bias.leanToBucket(score)}`);
+}
+
+/* The label and the bucket are one decision, so they cannot drift apart. */
+for (let v = 0; v <= 100; v += 1) {
+  const b = bias.leanToBucket(v);
+  const l = bias.leanLabel(v).toLowerCase().replace(/\s+/g, "-");
+  check(`label agrees with bucket at ${v}`, l === b, `${l} vs ${b}`);
+}
+
+/* Monotone: the ladder may never step back toward the centre as v rises. */
+const ORDER = ["far-left","left","center-left","center","center-right","right","far-right"];
+let prevIdx = 0;
+for (let v = 0; v <= 100; v += 1) {
+  const i = ORDER.indexOf(bias.leanToBucket(v));
+  check(`ladder never steps backwards at ${v}`, i >= prevIdx, `${i} after ${prevIdx}`);
+  prevIdx = i;
+}
+
+/* Symmetry: a score N points left of centre must sit as many rungs from the
+   middle as the same distance right of it. The old boundaries failed this. */
+for (const d of [5, 10, 15, 20, 25, 30, 35, 40]) {
+  const li = ORDER.indexOf(bias.leanToBucket(50 - d));
+  const ri = ORDER.indexOf(bias.leanToBucket(50 + d));
+  check(`symmetric at +/-${d}`, (3 - li) === (ri - 3),
+    `${bias.leanToBucket(50 - d)} vs ${bias.leanToBucket(50 + d)}`);
 }
 
 /* ---- storyLeanLabel is the gate AND the ladder ------------------------- */
