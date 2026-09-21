@@ -7,26 +7,32 @@
    a hotlinked Wikimedia URL that a third-party scraper may 404 or rate-limit,
    carrying no headline even when it loads.
 
-   The composition itself now lives in `app/lib/ogCard.tsx`, shared with
-   History. What stays here is the only part that is about a weekly ISSUE:
-   which line is the headline, and how the issue names itself.
+   The composition itself lives in `app/lib/ogCard.tsx`, the one composer every
+   Void card is drawn by. What stays here is the only part that is about a
+   weekly ISSUE: which line is the headline, and how the issue names itself.
+
+   Weekly is a SECTION of Void News, so the card carries the VOID NEWS lockup
+   and a Weekly nameplate in the section's red. It used to set a letter-spaced
+   "VOID WEEKLY" wordmark, which named a publication that does not exist.
    --------------------------------------------------------------------------- */
 
 import type { WeeklyDigestData } from "./types";
 import { formatArchiveRange, issueLabel } from "./format";
-import { sectionCard, size, contentType, ACCENT_WEEKLY } from "../lib/ogCard";
+import { voidCard, size, contentType, ACCENT_WEEKLY } from "../lib/ogCard";
 
 export { size, contentType };
 
 const TAGLINE = "Every source, every story, scored for bias.";
 
 export function issueCard(issue: WeeklyDigestData) {
-  const week = formatArchiveRange(issue.week_start, issue.week_end);
-  return sectionCard({
-    wordmark: "VOID WEEKLY",
-    kicker: `${issueLabel(issue.issue_number)}  ·  ${week}`,
-    headline: issue.cover_headline || issue.cover_text?.[0]?.headline || "",
-    tagline: TAGLINE,
+  return voidCard({
+    section: "Weekly",
     accent: ACCENT_WEEKLY,
+    title: issue.cover_headline || issue.cover_text?.[0]?.headline || "",
+    meta: [
+      issueLabel(issue.issue_number),
+      formatArchiveRange(issue.week_start, issue.week_end),
+    ],
+    tagline: TAGLINE,
   });
 }
