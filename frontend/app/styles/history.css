@@ -35,6 +35,8 @@
   --hist-persp-d: #7D5A6E;
   --hist-persp-e: #8B7638;
   --hist-persp-f: #6E5242; /* THE COLD WAR — deep iron red */
+
+  /* Surfaces */
   --hist-bg: #F2EDE0;
   --hist-bg-card: #F7F2E8;
   --hist-bg-elevated: #FAF6EE;
@@ -43,8 +45,17 @@
   --hist-divider: #CCC3B2;
   --hist-shadow-tint: rgba(44, 36, 24, 0.12);
   --hist-doc-edge:
+    inset 0 0 0 1px rgba(92, 64, 51, 0.06),
+    2px 3px 6px rgba(44, 36, 24, 0.06),
+    3px 5px 12px rgba(44, 36, 24, 0.04);
   --hist-doc-edge-hover:
+    inset 0 0 0 1px rgba(92, 64, 51, 0.10),
+    3px 5px 10px rgba(44, 36, 24, 0.08),
+    4px 8px 20px rgba(44, 36, 24, 0.06);
   --hist-doc-edge-lifted:
+    inset 0 0 0 1px rgba(92, 64, 51, 0.08),
+    4px 6px 16px rgba(44, 36, 24, 0.12),
+    6px 10px 32px rgba(44, 36, 24, 0.08);
   --hist-topbar-height: var(--nav-height); /* the shared masthead; History has no topbar of its own */
   --hist-mobile-chrome-height: 52px;
 }
@@ -75,18 +86,7 @@
 
   /* Perspective colors — warmed to belong in the archival palette */
 
-  /* Surfaces */
-
   /* Document edge shadow — key light from top-left, directional */
-    inset 0 0 0 1px rgba(92, 64, 51, 0.06),
-    2px 3px 6px rgba(44, 36, 24, 0.06),
-    3px 5px 12px rgba(44, 36, 24, 0.04);
-    inset 0 0 0 1px rgba(92, 64, 51, 0.10),
-    3px 5px 10px rgba(44, 36, 24, 0.08),
-    4px 8px 20px rgba(44, 36, 24, 0.06);
-    inset 0 0 0 1px rgba(92, 64, 51, 0.08),
-    4px 6px 16px rgba(44, 36, 24, 0.12),
-    6px 10px 32px rgba(44, 36, 24, 0.08);
 
   /* Spring presets (CSS approximations) */
   --ease-archive-snap: cubic-bezier(0.22, 1.4, 0.36, 1);
@@ -125,6 +125,7 @@
   --hist-persp-d: #A07A90;
   --hist-persp-e: #C4A554;
   --hist-persp-f: #A07060; /* THE COLD WAR dark mode */
+
   --hist-bg-secondary: #232018;
   --hist-bg-inset: #1E1A14;
   --hist-bg: #1A1612;
@@ -135,8 +136,17 @@
   --hist-divider: #342E26;
   --hist-shadow-tint: rgba(0, 0, 0, 0.30);
   --hist-doc-edge:
+    inset 0 0 0 1px rgba(142, 106, 86, 0.08),
+    2px 3px 6px rgba(0, 0, 0, 0.20),
+    3px 5px 12px rgba(0, 0, 0, 0.16);
   --hist-doc-edge-hover:
+    inset 0 0 0 1px rgba(142, 106, 86, 0.14),
+    3px 5px 10px rgba(0, 0, 0, 0.24),
+    4px 8px 20px rgba(0, 0, 0, 0.20);
   --hist-doc-edge-lifted:
+    inset 0 0 0 1px rgba(142, 106, 86, 0.10),
+    4px 6px 16px rgba(0, 0, 0, 0.24),
+    6px 10px 32px rgba(0, 0, 0, 0.20);
 }
 
 :root[data-mode="dark"] .hist-page {
@@ -145,16 +155,6 @@
 
 
 
-
-    inset 0 0 0 1px rgba(142, 106, 86, 0.08),
-    2px 3px 6px rgba(0, 0, 0, 0.20),
-    3px 5px 12px rgba(0, 0, 0, 0.16);
-    inset 0 0 0 1px rgba(142, 106, 86, 0.14),
-    3px 5px 10px rgba(0, 0, 0, 0.24),
-    4px 8px 20px rgba(0, 0, 0, 0.20);
-    inset 0 0 0 1px rgba(142, 106, 86, 0.10),
-    4px 6px 16px rgba(0, 0, 0, 0.24),
-    6px 10px 32px rgba(0, 0, 0, 0.20);
 
   background-color: var(--hist-bg);
   color: var(--hist-ink);
