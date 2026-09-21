@@ -11,6 +11,7 @@ import {
   tiltDescriptor,
   storyLeanLabel,
   leanShape,
+  leanShapeColor,
   leanShapeLabel,
   leanToDisplayPos,
   lerpColor as lerp,
@@ -743,7 +744,10 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
 
       {/* The one line under it. The roster's own word, not a gated mean. */}
       <span className="sigil__lean-label" style={{
-        color: displayLabel.color,
+        /* The register's word and the register's colour, one rule. See
+           leanShapeColor: displayLabel.color is the old gated ramp, and it
+           disagreed with the word printed over it. */
+        color: unscored ? "var(--fg-muted)" : leanShapeColor(data.biasSpread),
         opacity: mounted ? 1 : 0,
       }}>
         {leanShapeLabel(data.biasSpread)}

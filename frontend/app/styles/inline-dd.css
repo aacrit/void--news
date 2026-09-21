@@ -198,16 +198,16 @@
 
 .inline-dd__spectrum {
   width: 100%;
-  /* Hold the band height from the first paint so the placeholder -> chart swap
-     does not shove the agree/dispute panel below. Matches a ~1-row chart
-     (svg + tilt row + axis + one pin row). */
-  min-height: 132px;
+  /* Hold the band height from the first paint so the placeholder -> Bench swap
+     does not shove the agree/dispute panel below. Matches the Bench's own
+     frame: head, the 176px stack box, tally, rule and anchors. */
+  min-height: 250px;
 }
 
-/* Soft in-place arrival for the chart — opacity only, no transform or layout
-   shift, so it reads as a calm settle rather than a pop-in beat. The chart
+/* Soft in-place arrival for the Bench — opacity only, no transform or layout
+   shift, so it reads as a calm settle rather than a pop-in beat. The Bench
    mounts already-drawn via the `settled` prop; this fade is the sole motion. */
-.inline-dd__spectrum > .dd-sv {
+.inline-dd__spectrum > .bench {
   animation: fadeIn 200ms var(--ease-cinematic) both;
 }
 
@@ -216,7 +216,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 132px;
+  min-height: 250px;
   margin: 0;
   font-family: var(--font-data);
   font-size: var(--text-xs);
@@ -225,27 +225,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .inline-dd__spectrum > .dd-sv { animation: none; }
-}
-
-/* The SVG scales uniformly to the band width (~2.7x at full width). Keep the
-   fixed-dash contour / needle + the dots crisp via non-scaling-stroke. The CURVE
-   stroke is excluded on purpose: it draws on via a getTotalLength() dasharray
-   animation, and non-scaling-stroke reinterprets that user-unit length in screen
-   px, which gaps the center. Let it scale normally (continuous) + trim its weight. */
-.inline-dd__spectrum .dd-sv-view__contour,
-.inline-dd__spectrum .dd-sv-view__mean{
-  vector-effect: non-scaling-stroke;
-}
-.inline-dd__spectrum .dd-sv-view__stroke {
-  stroke-width: 0.8;   /* user units → ~2px at the band scale, continuous */
-}
-
-/* PERF: drop the ink-wash SVG filter (feTurbulence + feDisplacementMap) in the
-   full-width band. It scales with area, so at ~1088px it processes ~7x the
-   pixels of the modal float for a texture that barely reads at this size. */
-.inline-dd__spectrum .dd-sv-view__fill {
-  filter: none;
+  .inline-dd__spectrum > .bench { animation: none; }
 }
 
 /* Reduced motion: the caret nudge is the only motion in this stage; disable it. */

@@ -417,6 +417,19 @@ async function auditPage(browser, route, width, scheme, axeSource) {
 
     /* 12. axe-core, WCAG 2.1 AA, at the two widths that matter most. */
     if (axeSource && (width === 390 || width === 1440)) {
+      /* Let the entrances land first. Every feed card fades in from opacity 0
+         over 260ms, and axe measures whatever opacity it catches: it read a
+         lean label mid-entrance as #CB5A4F on #1C1A17, 4.22:1, when the label
+         renders #EA6559 at 5.4:1 the moment the card settles. That is the
+         animation, not the palette, and any coloured text on any fading card
+         would report it. Finite animations only, or the wordmark's beam and
+         the unscored pulse never resolve. */
+      await page.evaluate(() => Promise.race([
+        Promise.all(document.getAnimations()
+          .filter((a) => a.effect?.getTiming?.().iterations !== Infinity)
+          .map((a) => a.finished.catch(() => {}))),
+        new Promise((r) => setTimeout(r, 2500)),
+      ])).catch(() => {});
       await page.addScriptTag({ content: axeSource });
       const raw = await page.evaluate(async () => {
         const r = await window.axe.run(document, { runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"] }, resultTypes: ["violations"] });
@@ -477,6 +490,181 @@ async function scenarios(browser) {
     assert(await inline.count() > 0, "deep-dive-inline-opens", "click on the first card renders .inline-dd");
     assert(await page.locator(".dd-page").count() === 0, "deep-dive-inline-not-page", "no full-page Deep Dive at 1440");
   });
+  /* The Bench: the Deep Dive's lean panel. One mark per source, seated in the
+     column of its lean rung, and the HEIGHT of a column is the count in that
+     bucket. That last claim is the only one the panel makes, and the first
+     draft of the packing broke it (a bucket of 1, 2, 3, 4 and 5 all drew one
+     row), so it is asserted here against the served page as well as in
+     test/bench.test.mjs against the arithmetic. */
+  for (const width of [1440, 390]) {
+    await withPage(browser, { width, route: "/" }, `bench @${width}`, async (page) => {
+      await page.locator("[data-story-index='0'] .story-card__stretch-link, .lead-story a.story-card__stretch-link, .story-card__stretch-link").first().click();
+      const bench = page.locator(".bench").first();
+      await bench.waitFor({ state: "visible", timeout: 8000 }).catch(() => {});
+      if (!assert(await page.locator(".bench").count() > 0, `bench-renders`, "the Deep Dive draws a Bench")) return;
+      /* The columns rise off the rule on a 40ms stagger, so the last one is
+         still moving ~240ms in. Measuring or hovering through that reads a
+         mark where it is passing rather than where it lands. */
+      await page.waitForTimeout(800);
+      const read = await page.evaluate(() => {
+        const b = document.querySelector(".bench");
+        const cols = [...b.querySelectorAll(".bench__col")];
+        const colOf = (c) => {
+          const rows = [...c.querySelectorAll(".bench__row")];
+          if (!rows.length) return 0;
+          const top = Math.min(...rows.map((r) => r.getBoundingClientRect().top));
+          const bot = Math.max(...rows.map((r) => r.getBoundingClientRect().bottom));
+          return Math.round(bot - top);
+        };
+        const disc = b.querySelector(".bench__disc");
+        const d = disc ? disc.getBoundingClientRect() : null;
+        return {
+          columns: cols.length,
+          tallies: cols.map((c) => Number(c.querySelector(".bench__tally").textContent)),
+          drawn: cols.map((c) => c.querySelectorAll(".bench__mark").length),
+          more: cols.map((c) => {
+            const m = c.querySelector(".bench__more");
+            return m ? Number(m.textContent.replace("+", "")) : 0;
+          }),
+          heights: cols.map(colOf),
+          shape: b.querySelector(".bench__shape")?.textContent ?? "",
+          count: b.querySelector(".bench__count")?.textContent ?? "",
+          markBox: d ? [Math.round(d.width), Math.round(d.height)] : null,
+          markRadius: disc ? getComputedStyle(disc).borderRadius : "",
+          markSizes: [...b.querySelectorAll(".bench__disc")].map((e) => Math.round(e.getBoundingClientRect().width)),
+          overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        };
+      });
+      assert(read.columns === 7, "bench-seven-columns", `${read.columns} columns, one per lean rung`);
+      /* Nothing is dropped without saying so: every source is either drawn or
+         counted in its column's overflow chip. */
+      const accounted = read.tallies.every((t, i) => read.drawn[i] + read.more[i] === t);
+      assert(accounted, "bench-nothing-dropped", `tallies ${read.tallies.join("/")} vs drawn ${read.drawn.join("/")} + more ${read.more.join("/")}`);
+      /* The headline claim. Sort the columns by count and require the heights
+         to rise with them: a bigger bucket is never a shorter column, and the
+         busiest bucket is strictly taller than the emptiest non-zero one. */
+      const pairs = read.tallies.map((t, i) => [t, read.heights[i]]).sort((a, b) => a[0] - b[0]);
+      assert(pairs.every((p, i) => i === 0 || p[1] >= pairs[i - 1][1]), "bench-height-is-the-count",
+        `counts ${pairs.map((p) => p[0]).join("/")} -> heights ${pairs.map((p) => p[1]).join("/")}`);
+      const nonzero = pairs.filter((p) => p[0] > 0);
+      if (nonzero.length > 1 && nonzero[nonzero.length - 1][0] > nonzero[0][0]) {
+        assert(nonzero[nonzero.length - 1][1] > nonzero[0][1], "bench-busiest-stands-tallest",
+          `${nonzero[0][0]} -> ${nonzero[0][1]}px, ${nonzero[nonzero.length - 1][0]} -> ${nonzero[nonzero.length - 1][1]}px`);
+      }
+      /* One mark size for the whole story, or the heights are not comparable. */
+      assert(new Set(read.markSizes).size === 1, "bench-one-mark-size", `sizes ${[...new Set(read.markSizes)].join(",")}`);
+      assert(read.markBox && read.markBox[0] === read.markBox[1] && read.markRadius.startsWith("50%"),
+        "bench-marks-are-circles", `${read.markBox?.join("x")} radius ${read.markRadius}`);
+      /* The panel counts what it seated, and says out loud what it held back. */
+      const placed = Number((read.count.match(/^(\d+)/) ?? [])[1] ?? -1);
+      assert(placed === read.tallies.reduce((a, b) => a + b, 0), "bench-count-agrees",
+        `"${read.count}" vs tallies summing to ${read.tallies.reduce((a, b) => a + b, 0)}`);
+      assert(read.overflow <= 0, "bench-no-overflow", `${read.overflow}px past the viewport`);
+      /* A mark names its source. On a phone the marks are buttons, so press;
+         on a desktop they are links, so hover. */
+      const mark = page.locator(".bench__mark").first();
+      const label = await mark.getAttribute("aria-label");
+      await mark.scrollIntoViewIfNeeded();
+      await page.waitForTimeout(200);
+      if (width === 390) await mark.click(); else await mark.hover();
+      await page.waitForTimeout(500);
+      const card = await page.evaluate(() => {
+        const c = document.querySelector(".bench__card");
+        if (!c) return null;
+        const r = c.getBoundingClientRect();
+        const sib = [...document.querySelectorAll(".bench__mark")].find((m) => m.dataset.focused !== "true");
+        return {
+          name: c.querySelector(".bench__card-name")?.textContent ?? "",
+          text: c.innerText,
+          onscreen: r.left >= -1 && r.top >= -1 && r.right <= innerWidth + 1,
+          siblingOpacity: sib ? Number(getComputedStyle(sib).opacity) : 1,
+        };
+      });
+      if (assert(card != null, "bench-mark-names-its-source", "a card appears")) {
+        assert(label.startsWith(card.name), "bench-card-is-that-mark", `"${card.name}" vs aria-label "${label}"`);
+        assert(/Open article/.test(card.text), "bench-card-opens-the-article", card.text.replace(/\n/g, " | ").slice(0, 120));
+        assert(card.onscreen, "bench-card-onscreen", "the card sits inside the viewport");
+        assert(card.siblingOpacity < 0.6, "bench-rack-focus", `siblings at ${card.siblingOpacity}`);
+      }
+    });
+  }
+  /* Every lean label on the feed clears AA against the paper it sits on.
+     The bias tokens are tuned to clear it at FULL strength and nothing more
+     (--bias-far-right is 4.7:1 on the dark paper), so any opacity fade on the
+     label spends the whole margin: at 0.75 --bias-right rendered #C75F52,
+     4.28:1, and shipped that way until the register started speaking on 30 of
+     35 stories and axe happened to sample a card carrying it. axe samples;
+     this measures all twenty. */
+  for (const scheme of ["dark", "light"]) {
+    await withPage(browser, { width: 1440, route: "/", scheme }, `lean-label-contrast ${scheme}`, async (page) => {
+      /* Settled state only. Every card fades in from opacity 0 over 260ms and
+         a colour measured through that fade is the animation, not the
+         palette. Finite animations only, or the wordmark's beam never ends. */
+      await page.evaluate(() => Promise.race([
+        Promise.all(document.getAnimations()
+          .filter((a) => a.effect?.getTiming?.().iterations !== Infinity)
+          .map((a) => a.finished.catch(() => {}))),
+        new Promise((r) => setTimeout(r, 2500)),
+      ])).catch(() => {});
+      const rows = await page.evaluate(() => {
+        /* getComputedStyle hands back rgb(), rgba() OR color(srgb a b c) here,
+           because the lean colour is a color-mix() of two tokens and Chromium
+           serialises that in the srgb colour space with 0..1 channels. Reading
+           all three shapes with one "first three numbers" regex multiplied
+           every mixed colour by 255 and produced ratios like 1.21:1. */
+        const chan = (str) => {
+          const nums = (str.match(/-?\d*\.?\d+(e[-+]?\d+)?/gi) ?? []).map(Number);
+          if (nums.length < 3) return null;
+          const [a, b, c] = nums;
+          return /^color\(/i.test(str.trim())
+            ? [a * 255, b * 255, c * 255]
+            : [a, b, c];
+        };
+        const lum = (ch) => {
+          const [r, g, b] = ch.map((v) => {
+            const c = Math.min(255, Math.max(0, v)) / 255;
+            return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+          });
+          return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        };
+        const paperOf = (el) => {
+          for (let n = el; n; n = n.parentElement) {
+            const bg = getComputedStyle(n).backgroundColor;
+            const a = bg.match(/-?\d*\.?\d+/g);
+            if (a && (a.length < 4 || Number(a[3]) > 0.9)) return bg;
+          }
+          /* Every ancestor is transparent on the feed, so the paper is the
+             body's. documentElement is not it: it is transparent too, and
+             falling through to it returned the UA default white and read the
+             dark mode as a light one. */
+          const b = getComputedStyle(document.body).backgroundColor;
+          const a = b.match(/-?\d*\.?\d+/g);
+          return a && (a.length < 4 || Number(a[3]) > 0.9)
+            ? b : getComputedStyle(document.documentElement).backgroundColor;
+        };
+        return [...document.querySelectorAll(".sigil__lean-label")].map((el) => {
+          const cs = getComputedStyle(el);
+          const op = Number(cs.opacity);
+          const fg = chan(cs.color);
+          const bg = chan(paperOf(el));
+          if (!fg || !bg) return { text: el.textContent.trim().slice(0, 24), ratio: -1, op, raw: cs.color };
+          /* Flatten the element's own opacity onto its paper, which is what
+             the reader's eye receives. */
+          const mixed = fg.map((c, i) => c * op + bg[i] * (1 - op));
+          const L1 = lum(mixed);
+          const L2 = lum(bg);
+          const ratio = (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05);
+          return { text: el.textContent.trim().slice(0, 24), ratio: Math.round(ratio * 100) / 100, op, raw: cs.color };
+        });
+      });
+      if (!assert(rows.length > 0, "lean-label-present", "the feed carries lean labels")) return;
+      const bad = rows.filter((r) => r.ratio < 4.5);
+      assert(bad.length === 0, "lean-label-contrast",
+        bad.length ? bad.slice(0, 4).map((r) => `"${r.text}" ${r.ratio}:1 (${r.raw}) at opacity ${r.op}`).join("; ")
+                   : `${rows.length} labels, lowest ${Math.min(...rows.map((r) => r.ratio))}:1`);
+    });
+  }
+
   /* Deep Dive, phone: the full page, and Back returns to the feed. */
   await withPage(browser, { width: 390, route: "/" }, "deep-dive-page", async (page) => {
     await page.locator("[data-story-index='0'] .story-card__stretch-link, .story-card__stretch-link").first().click();

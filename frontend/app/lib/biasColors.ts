@@ -436,6 +436,33 @@ export function leanShapeDirection(spread?: WingCounts | null): -1 | 0 | 1 {
   return right > left ? 1 : -1;
 }
 
+/** The colour that word is printed in.
+ *
+ *  It has to come from the SAME rule as the word, and the card shipped for a
+ *  day where it did not: the text came from `leanShapeLabel` while the colour
+ *  still came from `storyLeanLabel`'s confidence-gated ramp, so one feed
+ *  carried "Leans right" in crimson on one card and in muted grey on the next.
+ *
+ *  Five flat tokens, not a continuous ramp. Every one of them is tuned to
+ *  clear AA on both papers on its own; a `color-mix` down the ramp is not,
+ *  and one of its steps rendered 4.28:1 on the dark paper. The MAGNITUDE of
+ *  the tilt is the register's job, drawn in the full seven-colour ramp
+ *  directly above this line. The word only ever says which way. */
+export function leanShapeColor(spread?: WingCounts | null): string {
+  const shape = leanShape(spread);
+  if (shape === "thin") return "var(--fg-muted)";
+  /* Not --sense-high. That token is the sensationalism scale's top stop,
+     drawn as dots and bars where 3:1 is the bar, and as TEXT on the light
+     paper it measures 3.16:1. It had been the Contested label's colour since
+     that label existed. Split is also the one shape with no direction to
+     name, so plain ink is the honest choice as well as the legible one. */
+  if (shape === "split") return "var(--fg-primary)";
+  if (shape === "leans") {
+    return leanShapeDirection(spread) > 0 ? "var(--bias-right)" : "var(--bias-left)";
+  }
+  return "var(--bias-center)";
+}
+
 /** The one line a card prints under the register. */
 export function leanShapeLabel(spread?: WingCounts | null): string {
   const shape = leanShape(spread);
@@ -556,8 +583,11 @@ export function storyLeanLabel(
              color: "var(--fg-muted)", state, suppressed: true };
   }
   if (state === "contested") {
+    /* --fg-primary, not --sense-high: see leanShapeColor. #EF4444 is the
+       sensationalism scale's top stop and measures 3.16:1 as text on the
+       light paper. */
     return { text: CONTESTED_LABEL, abbr: CONTESTED_LABEL,
-             color: "var(--sense-high)", state, suppressed: true };
+             color: "var(--fg-primary)", state, suppressed: true };
   }
   return {
     text: leanLabel(lean),

@@ -20,6 +20,15 @@ us" into "for all of them" — a real person's words, altered, in production.
 `E-07` and `E-08` ship ADVISORY pending this call. Proposal:
 `docs/proposals/EDITORIAL-VOICE-2026-09.md`.
 
+**The lean gate: the CARD no longer depends on it (2026-09-21), but the gate
+still runs and the threshold below is still unreviewed.** The feed card and
+the Sigil now read the roster's SHAPE (`leanShape`), not the gated mean, so
+`LABEL_MIN_CONFIDENCE` no longer decides whether a story says anything: the
+card speaks on 30 of 35 stories against 15. `storyLeanLabel` and
+`leanLabelState` are still live for the Deep Dive's own label and the share
+card, which is where the decision below still bites. Read what follows as
+scoped to those two surfaces, not to the feed.
+
 **The lean gate: the dilution is FIXED 2026-09-21, the thresholds still want a
 read on a post-fix feed.** `leanShareTilt` now divides by the wing coverage
 (left + right) rather than by every analyzed article, with a five-wing floor,
@@ -78,6 +87,26 @@ claims about its own confidence. It needs a decision, not a tweak.
 ---
 
 ## Known defects, not yet fixed
+
+### `--sense-high` is a 3.16:1 colour and is still used as text
+
+`#EF4444` is defined once for both modes. On the dark paper it measures
+4.61:1; on the light paper (#F0EBDD) it measures **3.16:1**, under AA. It was
+the "Contested" label's colour until 2026-09-21, and both that label and the
+Bench's `split` word now use `--fg-primary` instead.
+
+The token itself was not changed, because it is primarily a NON-text colour:
+the sensationalism scale's top stop, drawn as dots and bars, where 3:1 is the
+bar it has to clear. Retuning it would move every sensationalism reading on
+both papers. What is left to do is a sweep of its remaining uses to check that
+none of them is text on the light paper, and the same question for
+`--sense-medium` (#EAB308, which is a yellow and will be worse).
+
+`lean-label-contrast` in `verify-headless.mjs` measures the lean labels in
+both schemes and would catch a regression there; nothing yet measures the
+sensationalism or rigor labels.
+
+
 
 ### Bias centring: DIAGNOSED AND ANSWERED 2026-09-21. Not a calibration problem.
 

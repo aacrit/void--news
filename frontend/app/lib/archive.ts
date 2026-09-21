@@ -186,9 +186,10 @@ export function archiveRowToStory(row: PrintedStoryRow): Story {
 }
 
 /**
- * Build the `DeepDiveSpectrumSource[]` the spectrum + source columns render,
- * from the archive `members` list. Only members that carry a real bias lean are
- * plotted (the spectrum positions by lean). Deterministic order: as stored.
+ * Build the `DeepDiveSpectrumSource[]` the Bench renders, from the archive
+ * `members` list. Every member with a stored lean is carried, `leanUnscored`
+ * included; the Bench decides which of them get a seat. Deterministic order:
+ * as stored.
  */
 export function archiveMembersToSpectrumSources(
   members: PrintedMember[] | null,
@@ -198,9 +199,6 @@ export function archiveMembersToSpectrumSources(
   const out: DeepDiveSpectrumSource[] = [];
   for (const m of members) {
     if (typeof m.lean !== "number" || Number.isNaN(m.lean)) continue;
-    /* An unmeasured lean is stored as 50, so plotting it would put a pin at
-       dead centre for a reading nobody took. Same rule as the live Deep Dive. */
-    if (m.lean_unscored) continue;
     const name = (m.source_name || "").trim();
     if (!name) continue;
     const key = name.toLowerCase();
@@ -215,6 +213,12 @@ export function archiveMembersToSpectrumSources(
       politicalLean: m.lean,
       factualRigor: typeof m.rigor === "number" ? m.rigor : undefined,
       confidence: typeof m.confidence === "number" ? m.confidence : undefined,
+      /* Carried, not dropped. An unmeasured lean is stored as 50, so the
+         Bench must not seat it in the centre column; but the source really did
+         cover the story, and the Bench counts what it is holding back out
+         loud. Until 2026-09-21 this row was discarded here, so the archived
+         page silently reported a smaller roster than the live one. */
+      leanUnscored: m.lean_unscored === true,
     });
   }
   return out;

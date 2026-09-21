@@ -504,10 +504,58 @@ Shared between them: `Sigil`, `DeepDiveSpectrum`, `BiasSnapshot`,
 that defers the heavy sections). `verify.css` and `deep-dive-page.css` ship
 with the lazy chunk rather than globally.
 
-`DeepDiveSpectrum` positions each source logo at its exact lean, with three
-toggleable views (Ink Ridge, Witness Line, Terrain Map) remembered in
-`localStorage`. It is the sole source display; the separate source roster was
-removed. The archival cross-link into History renders again.
+### The Bench (2026-09-21)
+
+`DeepDiveSpectrum` is now a filter in front of `components/Bench.tsx`, and the
+Bench is the Deep Dive's lean panel. Seven strict columns, one per rung of the
+lean ladder, far left to far right. One circular mark per source, seated in
+its rung's column and stacked up off the rule, so **the height of a column is
+the count in that bucket**. It is also the sole source display: the separate
+roster was removed in 2026-08-10 and has not come back.
+
+What it replaced, and why, because the old view is still the one most other
+products ship. It was a kernel density estimate over the 0-100 lean axis, drawn
+as an ink wave with favicon pins strung along a line beneath it and an amber
+plumb line at the tier-weighted mean.
+
+- **The distribution is not continuous.** The engine anchors an article on its
+  outlet's baseline and moves it by what the text does, so 74% of measured
+  articles land exactly on one of the seven baselines and 87% within two
+  points. A curve over seven spikes paints hills nothing stands on, and
+  nothing can be counted off it.
+- **The plumb line answered the wrong question.** A mean returns the empty
+  middle of a bimodal roster: 7 left / 2 centre / 8 right and 0 left /
+  11 centre / 2 right both come out near 50.
+- **The pins disagreed with the curve.** They sat at continuous positions on a
+  strip below a smoothed shape, so no part of the panel was a count.
+
+**The mark size is chosen from the data**, in `lib/bench.ts`, and that module
+is the whole of the design decision. Measured on the 2026-09-21 feed (35
+clusters, one entry per source name, unscored rows excluded) the busiest
+bucket in a story runs 2 to 40, median 11, so a fixed 20px mark in a single
+file would need 880px of height for the worst story. `packBench` walks
+`perRow` up from 1 and takes the largest mark that fits at the first width
+that works: **`perRow` is the histogram's resolution**, and marks shrink before
+resolution is given up. Half the feed packs at `perRow` 1, a true single file
+where every count has its own height. Below 13px the mark drops its favicon
+and draws as a plain lean-coloured disc rather than pretending to carry a logo.
+
+The first draft took the widest sub-row the column allowed, which put a bucket
+of 4 and a bucket of 5 in one row each: counts 1 through 5 all drew a column
+one mark high. `test/bench.test.mjs` holds the arithmetic to the corpus (
+regenerate it with `python3 tests/bench_corpus.py`) and the `bench` scenario in
+`verify-headless.mjs` holds the served page to the same claim at 1440 and 390.
+
+A mark names its source: hover on a fine pointer, tap on a coarse one, and the
+card carries the outlet, its tier, its lean label and score, and the article's
+own headline where the surface has one. Its siblings rack-focus back to 0.32
+opacity so the named one is the only subject.
+
+Marks are **circles** because a circle has no direction of its own. A square in
+a row of squares reads as a bar segment, and the bar here is the column, not
+the source.
+
+The archival cross-link into History renders again.
 
 ---
 
