@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-09-21T01:56:24+00:00",
+ "generatedAt": "2026-09-21T05:14:32+00:00",
  "episodes": {
   "alexanders-conquests": {
    "url": "/audio/history/alexanders-conquests.mp3?v=ab0c51b6",
@@ -2635,11 +2635,11 @@
    }
   },
   "fall-of-constantinople": {
-   "url": "/audio/history/fall-of-constantinople.mp3?v=03fc44f2",
-   "chaptersUrl": "/audio/history/fall-of-constantinople.chapters.json?v=03fc44f2",
+   "url": "/audio/history/fall-of-constantinople.mp3?v=9b7697a5",
+   "chaptersUrl": "/audio/history/fall-of-constantinople.chapters.json?v=9b7697a5",
    "title": "The Fall of Constantinople",
-   "durationSeconds": 891.298,
-   "bytes": 14278419,
+   "durationSeconds": 892.865,
+   "bytes": 14303521,
    "chapters": [
     {
      "startTime": 0.0,
@@ -2711,34 +2711,34 @@
      "startTime": 682.653,
      "title": "The Venetian and Genoese merchants",
      "kind": "segment",
-     "endTime": 772.977
+     "endTime": 774.534
     },
     {
-     "startTime": 772.977,
+     "startTime": 774.534,
      "title": "What each one leaves out",
      "kind": "segment",
-     "endTime": 858.006
+     "endTime": 859.563
     },
     {
-     "startTime": 858.006,
+     "startTime": 859.563,
      "title": "Legacy",
      "kind": "segment",
-     "endTime": 878.163
+     "endTime": 879.72
     },
     {
-     "startTime": 878.163,
+     "startTime": 879.72,
      "title": "Also from Void News",
      "kind": "segment",
-     "endTime": 891.263
+     "endTime": 892.82
     }
    ],
-   "renderedAt": "2026-09-20T02:54:35+00:00",
-   "publishedAt": "2026-09-21T01:22:39+00:00",
+   "renderedAt": "2026-09-21T05:14:32+00:00",
+   "publishedAt": "2026-09-21T05:14:32+00:00",
    "promo": {
     "id": "weekly-04-no-host",
     "sha": "537c6d381004",
     "voice": "af_kore",
-    "startTime": 878.163
+    "startTime": 879.72
    }
   },
   "fall-of-rome": {
@@ -4115,11 +4115,11 @@
    }
   },
   "iran-iraq-war": {
-   "url": "/audio/history/iran-iraq-war.mp3?v=d3187805",
-   "chaptersUrl": "/audio/history/iran-iraq-war.chapters.json?v=d3187805",
+   "url": "/audio/history/iran-iraq-war.mp3?v=6f526ad8",
+   "chaptersUrl": "/audio/history/iran-iraq-war.chapters.json?v=6f526ad8",
    "title": "The Iran-Iraq War",
-   "durationSeconds": 875.154,
-   "bytes": 14019994,
+   "durationSeconds": 867.657,
+   "bytes": 13899920,
    "chapters": [
     {
      "startTime": 0.0,
@@ -4179,60 +4179,60 @@
      "startTime": 458.306,
      "title": "Iraqi Ba'athist",
      "kind": "segment",
-     "endTime": 527.053
+     "endTime": 524.351
     },
     {
-     "startTime": 527.053,
+     "startTime": 524.351,
      "title": "Kurdish / Halabja and the Anfal",
      "kind": "segment",
-     "endTime": 590.064
+     "endTime": 587.362
     },
     {
-     "startTime": 590.064,
+     "startTime": 587.362,
      "title": "Great-Power Double-Dealing",
      "kind": "segment",
-     "endTime": 666.471
+     "endTime": 663.769
     },
     {
-     "startTime": 666.471,
+     "startTime": 663.769,
      "title": "Regional Legacy / Later Scholarship",
      "kind": "segment",
-     "endTime": 749.013
+     "endTime": 741.507
     },
     {
-     "startTime": 749.013,
+     "startTime": 741.507,
      "title": "What each one leaves out",
      "kind": "segment",
-     "endTime": 827.0
+     "endTime": 819.494
     },
     {
-     "startTime": 827.0,
+     "startTime": 819.494,
      "title": "Legacy",
      "kind": "segment",
-     "endTime": 862.028
+     "endTime": 854.522
     },
     {
-     "startTime": 862.028,
+     "startTime": 854.522,
      "title": "Also from Void News",
      "kind": "segment",
-     "endTime": 875.128
+     "endTime": 867.622
     }
    ],
-   "renderedAt": "2026-09-20T19:26:02+00:00",
-   "publishedAt": "2026-09-21T01:31:27+00:00",
+   "renderedAt": "2026-09-21T05:14:32+00:00",
+   "publishedAt": "2026-09-21T05:14:32+00:00",
    "promo": {
     "id": "weekly-05-cover",
     "sha": "7857ffcfc989",
     "voice": "af_kore",
-    "startTime": 862.028
+    "startTime": 854.522
    }
   },
   "iranian-revolution": {
-   "url": "/audio/history/iranian-revolution.mp3?v=29060a66",
-   "chaptersUrl": "/audio/history/iranian-revolution.chapters.json?v=29060a66",
+   "url": "/audio/history/iranian-revolution.mp3?v=fb686ce0",
+   "chaptersUrl": "/audio/history/iranian-revolution.chapters.json?v=fb686ce0",
    "title": "The Iranian Revolution",
-   "durationSeconds": 766.851,
-   "bytes": 12285018,
+   "durationSeconds": 773.016,
+   "bytes": 12383755,
    "chapters": [
     {
      "startTime": 0.0,
@@ -4310,22 +4310,22 @@
      "startTime": 710.031,
      "title": "Legacy",
      "kind": "segment",
-     "endTime": 753.72
+     "endTime": 759.886
     },
     {
-     "startTime": 753.72,
+     "startTime": 759.886,
      "title": "Also from Void News",
      "kind": "segment",
-     "endTime": 766.82
+     "endTime": 772.986
     }
    ],
-   "renderedAt": "2026-09-20T00:21:56+00:00",
-   "publishedAt": "2026-09-21T01:32:03+00:00",
+   "renderedAt": "2026-09-21T05:14:32+00:00",
+   "publishedAt": "2026-09-21T05:14:32+00:00",
    "promo": {
     "id": "onair-03-room-tone",
     "sha": "4eec9e37e7a7",
     "voice": "af_kore",
-    "startTime": 753.72
+    "startTime": 759.886
    }
   },
   "kingdom-of-kongo": {
@@ -4751,11 +4751,11 @@
    }
   },
   "mongol-conquest-baghdad": {
-   "url": "/audio/history/mongol-conquest-baghdad.mp3?v=187524ba",
-   "chaptersUrl": "/audio/history/mongol-conquest-baghdad.chapters.json?v=187524ba",
+   "url": "/audio/history/mongol-conquest-baghdad.mp3?v=19884308",
+   "chaptersUrl": "/audio/history/mongol-conquest-baghdad.chapters.json?v=19884308",
    "title": "The Mongol Conquest of Baghdad",
-   "durationSeconds": 855.223,
-   "bytes": 13700564,
+   "durationSeconds": 851.409,
+   "bytes": 13639481,
    "chapters": [
     {
      "startTime": 0.0,
@@ -4779,82 +4779,82 @@
      "startTime": 188.852,
      "title": "The killing",
      "kind": "segment",
-     "endTime": 262.598
+     "endTime": 258.8
     },
     {
-     "startTime": 262.598,
+     "startTime": 258.8,
      "title": "The House of Wisdom",
      "kind": "segment",
-     "endTime": 341.286
+     "endTime": 337.488
     },
     {
-     "startTime": 341.286,
+     "startTime": 337.488,
      "title": "The observatory",
      "kind": "segment",
-     "endTime": 405.619
+     "endTime": 401.821
     },
     {
-     "startTime": 405.619,
+     "startTime": 401.821,
      "title": "Five accounts",
      "kind": "segment",
-     "endTime": 413.131
+     "endTime": 409.333
     },
     {
-     "startTime": 413.131,
+     "startTime": 409.333,
      "title": "Mongol Imperial",
      "kind": "segment",
-     "endTime": 477.778
+     "endTime": 473.98
     },
     {
-     "startTime": 477.778,
+     "startTime": 473.98,
      "title": "Abbasid and Islamic Civilization",
      "kind": "segment",
-     "endTime": 540.249
+     "endTime": 536.451
     },
     {
-     "startTime": 540.249,
+     "startTime": 536.451,
      "title": "Chinese and East Asian",
      "kind": "segment",
-     "endTime": 602.119
+     "endTime": 598.321
     },
     {
-     "startTime": 602.119,
+     "startTime": 598.321,
      "title": "The Revisionist Argument",
      "kind": "segment",
-     "endTime": 670.597
+     "endTime": 666.799
     },
     {
-     "startTime": 670.597,
+     "startTime": 666.799,
      "title": "The Surviving Scholars",
      "kind": "segment",
-     "endTime": 755.452
+     "endTime": 751.654
     },
     {
-     "startTime": 755.452,
+     "startTime": 751.654,
      "title": "What each one leaves out",
      "kind": "segment",
-     "endTime": 821.396
+     "endTime": 817.598
     },
     {
-     "startTime": 821.396,
+     "startTime": 817.598,
      "title": "Legacy",
      "kind": "segment",
-     "endTime": 842.08
+     "endTime": 838.282
     },
     {
-     "startTime": 842.08,
+     "startTime": 838.282,
      "title": "Also from Void News",
      "kind": "segment",
-     "endTime": 855.18
+     "endTime": 851.382
     }
    ],
-   "renderedAt": "2026-09-20T18:52:19+00:00",
-   "publishedAt": "2026-09-21T01:35:23+00:00",
+   "renderedAt": "2026-09-21T05:14:32+00:00",
+   "publishedAt": "2026-09-21T05:14:32+00:00",
    "promo": {
     "id": "onair-05-cold-open",
     "sha": "d2845fcb5ec1",
     "voice": "af_kore",
-    "startTime": 842.08
+    "startTime": 838.282
    }
   },
   "mongol-empire": {
@@ -5274,11 +5274,11 @@
    }
   },
   "ottoman-empire": {
-   "url": "/audio/history/ottoman-empire.mp3?v=087f2d03",
-   "chaptersUrl": "/audio/history/ottoman-empire.chapters.json?v=087f2d03",
+   "url": "/audio/history/ottoman-empire.mp3?v=7ff9dc6f",
+   "chaptersUrl": "/audio/history/ottoman-empire.chapters.json?v=7ff9dc6f",
    "title": "The Ottoman Empire",
-   "durationSeconds": 925.074,
-   "bytes": 14819393,
+   "durationSeconds": 915.696,
+   "bytes": 14669196,
    "chapters": [
     {
      "startTime": 0.0,
@@ -5296,88 +5296,88 @@
      "startTime": 92.646,
      "title": "A capital of three faiths",
      "kind": "segment",
-     "endTime": 190.398
+     "endTime": 181.024
     },
     {
-     "startTime": 190.398,
+     "startTime": 181.024,
      "title": "The sultan's death kept secret",
      "kind": "segment",
-     "endTime": 253.645
+     "endTime": 244.271
     },
     {
-     "startTime": 253.645,
+     "startTime": 244.271,
      "title": "A sequence of amputations",
      "kind": "segment",
-     "endTime": 337.78
+     "endTime": 328.406
     },
     {
-     "startTime": 337.78,
+     "startTime": 328.406,
      "title": "The suitcase and the warship",
      "kind": "segment",
-     "endTime": 378.277
+     "endTime": 368.903
     },
     {
-     "startTime": 378.277,
+     "startTime": 368.903,
      "title": "Five accounts",
      "kind": "segment",
-     "endTime": 386.92
+     "endTime": 377.546
     },
     {
-     "startTime": 386.92,
+     "startTime": 377.546,
      "title": "Turkish Republican / Kemalist",
      "kind": "segment",
-     "endTime": 474.323
+     "endTime": 464.949
     },
     {
-     "startTime": 474.323,
+     "startTime": 464.949,
      "title": "Arab Nationalist",
      "kind": "segment",
-     "endTime": 550.16
+     "endTime": 540.786
     },
     {
-     "startTime": 550.16,
+     "startTime": 540.786,
      "title": "Balkan / Orthodox Christian",
      "kind": "segment",
-     "endTime": 632.184
+     "endTime": 622.81
     },
     {
-     "startTime": 632.184,
+     "startTime": 622.81,
      "title": "Revisionist / Pluralist",
      "kind": "segment",
-     "endTime": 711.051
+     "endTime": 701.677
     },
     {
-     "startTime": 711.051,
+     "startTime": 701.677,
      "title": "Postcolonial / Dissolution Consequences",
      "kind": "segment",
-     "endTime": 809.191
+     "endTime": 799.817
     },
     {
-     "startTime": 809.191,
+     "startTime": 799.817,
      "title": "What each one leaves out",
      "kind": "segment",
-     "endTime": 894.39
+     "endTime": 885.016
     },
     {
-     "startTime": 894.39,
+     "startTime": 885.016,
      "title": "Legacy",
      "kind": "segment",
-     "endTime": 911.923
+     "endTime": 902.549
     },
     {
-     "startTime": 911.923,
+     "startTime": 902.549,
      "title": "Also from Void News",
      "kind": "segment",
-     "endTime": 925.023
+     "endTime": 915.649
     }
    ],
-   "renderedAt": "2026-09-20T19:26:02+00:00",
-   "publishedAt": "2026-09-21T01:38:35+00:00",
+   "renderedAt": "2026-09-21T05:14:32+00:00",
+   "publishedAt": "2026-09-21T05:14:32+00:00",
    "promo": {
     "id": "site-04-nothing-knows",
     "sha": "5c2c800fc41f",
     "voice": "af_kore",
-    "startTime": 911.923
+    "startTime": 902.549
    }
   },
   "partition-of-india": {
