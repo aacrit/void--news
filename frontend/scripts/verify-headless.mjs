@@ -757,11 +757,17 @@ async function brandChecks(browser) {
       });
       const top = await read();
       if (top.content === "none") { fail("reading-progress", `no ::after on the masthead at ${route}`); return; }
-      /* Twice, with a pause: lazy sections below the fold add height after
-         the first scroll, and the timeline covers the document as it is. */
-      for (let i = 0; i < 2; i++) {
-        await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
-        await page.waitForTimeout(500);
+      /* Instant, not smooth (globals.css sets scroll-behavior: smooth, and
+         on the CI runner a smooth scroll was still travelling at 92% when
+         the value was read), and repeated until the page stops growing:
+         lazy sections below the fold add height after the first scroll,
+         and the timeline covers the document as it is. */
+      for (let i = 0; i < 5; i++) {
+        const before = await page.evaluate(() => document.documentElement.scrollHeight);
+        await page.evaluate(() => window.scrollTo({ top: document.documentElement.scrollHeight, left: 0, behavior: "instant" }));
+        await page.waitForTimeout(400);
+        const after = await page.evaluate(() => document.documentElement.scrollHeight);
+        if (after === before && i > 0) break;
       }
       const bottom = await read();
       const ratio = await page.evaluate(() => { const d = document.documentElement; return (d.scrollTop / (d.scrollHeight - d.clientHeight)).toFixed(2); });
