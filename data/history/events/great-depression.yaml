@@ -1,6 +1,6 @@
 slug: great-depression
 title: The Great Depression
-subtitle: In 1929 America had never been richer. Four years later one in four workers had no job and nobody could agree why.
+subtitle: In 1929 America had never been richer. By 1933 one in four workers had no job and nobody could agree why.
 date_display: October 1929 - 1939
 date_sort: 1929
 date_precision: year
@@ -25,9 +25,9 @@ summary: |
 
   Recovery came unevenly and late. In the United States, Franklin Roosevelt's New Deal after 1933 slowed the collapse but did not end it; unemployment was still 14% in 1940. In Germany, 6 million unemployed men helped carry Adolf Hitler from 800,000 votes in 1928 to 13.4 million in July 1932 and into the chancellorship on January 30, 1933. The Soviet Union, sealed off behind its Five-Year Plans, reported no unemployment at all and told the world that capitalism was finished. Economists have argued ever since about what actually caused it.
 significance: |
-  The Great Depression ended the long nineteenth-century faith that free markets self-correct and that the gold standard was sacred. Every major economy that left gold earlier recovered earlier; the ones that clung to it, France chief among them, suffered longest, a pattern Barry Eichengreen called the "golden fetters." The crisis birthed modern macroeconomics through Keynes, modern central banking through the lesson that the Federal Reserve had let the money supply fall by a third, and the modern welfare and regulatory state through the New Deal's Social Security, deposit insurance, and securities regulation, much of which still governs finance in the 2020s.
+  The Great Depression ended the long nineteenth-century faith that free markets self-correct and that the gold standard was sacred. Every major economy that left gold earlier recovered earlier; the ones that clung to it, France chief among them, suffered longest, a pattern Barry Eichengreen called the "golden fetters." The crisis birthed modern macroeconomics through Keynes, modern central banking through the lesson that the Federal Reserve had let the money supply fall by a third, and the modern welfare and regulatory state through the New Deal's Social Security, deposit insurance, and securities regulation.
 
-  It also broke the interwar political order. Mass unemployment discredited liberal democracy across much of Europe and handed openings to fascism and communism alike. The line from Germany's 6 million jobless to the Nazi vote to the Second World War is the most consequential political fact of the century. The Depression is the reference disaster against which every later downturn, including 2008, is measured, and the argument over its causes, demand collapse, monetary contraction, or malinvestment, still divides economists and shapes how governments respond to recessions today.
+  It also broke the interwar political order. Mass unemployment discredited liberal democracy across much of Europe and handed openings to fascism and communism alike. The line from Germany's 6 million jobless to the Nazi vote to the Second World War is the most consequential political fact of the century. The Depression is the reference disaster against which every later downturn, including 2008, is measured, and the argument over its causes, demand collapse, monetary contraction, or malinvestment, still divides economists and shapes how governments respond to recessions.
 key_figures:
 - name: Franklin D. Roosevelt
   role: US President from 1933; launched the New Deal and abandoned the gold standard
@@ -70,7 +70,7 @@ key_figures:
   wikipedia: https://en.wikipedia.org/wiki/Heinrich_Br%C3%BCning
 legacy_points:
 - Produced modern macroeconomics and the Keynesian case for government intervention (The General Theory, 1936)
-- Established deposit insurance, securities regulation, and Social Security through the New Deal, still in force today
+- Established deposit insurance, securities regulation, and Social Security through the New Deal
 - Proved the gold standard transmitted deflation worldwide; countries that left it first recovered first
 - Carried Hitler from 800,000 votes in 1928 to power in 1933 on the back of 6 million German unemployed
 - Remains the benchmark catastrophe against which later crises, including 2008, are measured
