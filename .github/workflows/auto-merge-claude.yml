@@ -98,6 +98,10 @@ jobs:
           python tests/test_truncation_lint.py       # no cap published as a count
           python tests/test_docs_facts.py            # CLAUDE.md's own numbers
 
+          # Brand audit gates (2026-09-21): the served product is what it says.
+          python tests/test_bias_defaults_gate.py    # exported bias rows are measured, not defaults
+          python tests/test_podcast_feed.py          # covers exist and carry no stale text; titles agree
+
   # End-to-end run of the editorial half of the pipeline (8c through 8f plus
   # the static export) against a synthetic state DB built from the committed
   # snapshots. No network, no LLM key, nothing generated. It exists because a
