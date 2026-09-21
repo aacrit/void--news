@@ -74,7 +74,7 @@ export default function PerspectiveReader({ perspective, onClose }: PerspectiveR
       className="hist-reader"
       role="dialog"
       aria-modal="true"
-      aria-label={`${perspective.viewpointName} — full account`}
+      aria-label={`${perspective.viewpointName}, full account`}
       tabIndex={-1}
       onClick={onBackdrop}
     >

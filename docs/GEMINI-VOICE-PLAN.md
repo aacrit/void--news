@@ -1,4 +1,5 @@
 # void --news — Editorial LLM & Voice Plan
+> Historical. Written before the 2026-09-01 Supabase decommission and the Kokoro switch; the current state is CLAUDE.md.
 
 > **⚠ STALE HEADER (added 2026-09-20).** This file says "Sonnet 4.6 primary";
 > Claude was retired 2026-06-22 and Gemini is the sole LLM. Its §10 describes

@@ -1,4 +1,5 @@
 # News Memory Engine — Architecture Diagram
+> Historical. Written before the 2026-09-01 Supabase decommission and the Kokoro switch; the current state is CLAUDE.md.
 
 ## System Overview
 

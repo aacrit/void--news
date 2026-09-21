@@ -17,7 +17,7 @@ export default function PrimarySourceBlock({ source }: PrimarySourceBlockProps) 
       <p className="hist-source-block__text">&ldquo;{source.text}&rdquo;</p>
       <footer className="hist-source-block__citation">
         <span className="hist-source-block__citation-author">{source.author}</span>
-        {" \u2014 "}
+        {", "}
         <cite>{source.work}</cite>
         {source.date && ` (${source.date})`}
       </footer>

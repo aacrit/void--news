@@ -1,4 +1,5 @@
 # Diagnostic Lab — `/diag.html`
+> Historical. Written before the 2026-09-01 Supabase decommission and the Kokoro switch; the current state is CLAUDE.md.
 
 Standalone single-file diagnostic UI for the void --news pipeline. Lives at `frontend/public/diag.html`; deploys with the rest of the static site to `news.voidvision.org/diag.html`.
 

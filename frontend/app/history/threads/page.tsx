@@ -1,64 +1,21 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import type { HistoricalEvent } from "../types";
-import { fetchHistoryEvents } from "../data";
-import { ARC_FEATURES } from "../arc-features";
-import ThreadsLanding from "../components/ThreadsLanding";
+import type { Metadata } from "next";
+import { THREADS } from "../threads";
+import { threadsMetadata } from "../historyMeta";
+import ThreadsPageClient from "./ThreadsPageClient";
 
 /* ===========================================================================
-   /history/threads — Thematic Threads across the archive
-   Shows 5 editorial threads connecting events across centuries.
+   /history/threads — Thematic Threads across the archive.
+
+   A thin server page that owns the metadata; the client tree below keeps the
+   fetch and the feature gate. The route was "use client" and so exported no
+   metadata at all: the served page carried the root layout's title and the
+   site-wide card.
    =========================================================================== */
 
+export function generateMetadata(): Metadata {
+  return threadsMetadata(THREADS.length);
+}
+
 export default function ThreadsPage() {
-  const [events, setEvents] = useState<HistoricalEvent[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function load() {
-      const evts = await fetchHistoryEvents();
-      if (!cancelled) {
-        setEvents(evts);
-        setLoading(false);
-      }
-    }
-
-    load();
-    return () => { cancelled = true; };
-  }, []);
-
-  if (!ARC_FEATURES.LEDGER) {
-    return (
-      <div className="hist-main" style={{ paddingTop: "var(--space-7)", textAlign: "center" }}>
-        <p style={{
-          fontFamily: "var(--font-editorial)",
-          fontSize: "var(--text-lg)",
-          color: "var(--hist-ink-muted)",
-          fontStyle: "italic",
-        }}>
-          Coming soon.
-        </p>
-      </div>
-    );
-  }
-
-  if (loading) {
-    return (
-      <div className="hist-main" style={{ paddingTop: "var(--space-7)", textAlign: "center" }}>
-        <p style={{
-          fontFamily: "var(--font-data)",
-          fontSize: "var(--text-sm)",
-          color: "var(--hist-ink-muted)",
-          fontStyle: "italic",
-        }}>
-          Tracing the threads...
-        </p>
-      </div>
-    );
-  }
-
-  return <ThreadsLanding events={events} />;
+  return <ThreadsPageClient />;
 }

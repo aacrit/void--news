@@ -10677,3 +10677,253 @@ a.hist-record__figure-name:hover {
     transform: none;
   }
 }
+
+/* ===========================================================================
+   THE LANDING, AFTER THE PHYSICS CAME OUT (brand audit M-03, E-11, F-M2)
+
+   HistoryLanding.tsx used to own the scroll: a `wheel` listener with
+   preventDefault turning vertical deltas into horizontal velocity, a rAF
+   friction loop with its own snap-to-card, and a second rAF loop that scrolled
+   the container whenever the pointer came within 60px of a screen edge. The
+   rest of the site scrolls natively. This section is what replaced all of it.
+   =========================================================================== */
+
+/* ---------------------------------------------------------------------------
+   Native snap, desktop only
+
+   Below 768px the timeline is a vertical scroll and `x mandatory` would have
+   nothing to act on, so the rule is scoped up.
+
+   `scroll-snap-align` is CENTER, not start. Every affordance on this page
+   already centers: the focused-index reader measures from
+   `scrollLeft + clientWidth / 2`, and the year ribbon, the era pills and the
+   new prev/next pair all call `scrollIntoView({ inline: "center" })`. With
+   `start` the browser would snap a card flush to the left edge after each of
+   those had just centred it, which is two motions for one gesture, and the
+   card itself is centred on its station, so a start-aligned snap crops its
+   left half against the viewport edge.
+   --------------------------------------------------------------------------- */
+@media (min-width: 768px) {
+  .hist-tl-full {
+    scroll-snap-type: x mandatory;
+  }
+
+  .hist-tl-card {
+    scroll-snap-align: center;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Parallax, where the browser can do it without JavaScript
+
+   The background era bands used to be moved by hand from a scroll listener
+   (`bg.style.transform` on every event). This is the same 0.30 differential as
+   a scroll-driven animation: the layer travels 30% of the distance the cards
+   do, over the container's full inline scroll range. `--tl-total-w` is set on
+   the element by HistoryLanding.tsx and equals the timeline's total width, so
+   (100vw - that) is the negative scroll range.
+
+   No `animation-timeline` support means no parallax at all: the bands simply
+   sit still, which is what a reduced-motion reader gets too.
+   --------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll(nearest inline)) {
+    .hist-tl-full__bg-layer {
+      animation: histTlParallax linear both;
+      animation-timeline: scroll(nearest inline);
+    }
+
+    @keyframes histTlParallax {
+      from { transform: translateX(0); }
+      to   { transform: translateX(calc((100vw - var(--tl-total-w, 100vw)) * 0.30)); }
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Prev / next: the mouse's way through a horizontal scroller
+
+   The pair rides the ends of the track, at the stations' own vertical centre,
+   and each one names the event it will land on. Absolute inside
+   `.hist-tl-wrapper` so `calc(50% + 30px)` is the same arithmetic the stations
+   and the ink path use.
+   --------------------------------------------------------------------------- */
+.hist-tl-step {
+  position: absolute;
+  top: calc(50% + 30px);
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  z-index: 26;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 var(--space-3);
+  pointer-events: none;
+}
+
+.hist-tl-step__btn {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: var(--hist-bg-elevated);
+  border: 1px solid var(--hist-border);
+  border-radius: 2px;
+  color: var(--hist-ink-muted);
+  font-family: var(--font-meta);
+  font-size: var(--text-sm);
+  line-height: 1;
+  cursor: pointer;
+  transition: color 120ms var(--ease-cinematic),
+              border-color 120ms var(--ease-cinematic),
+              background 120ms var(--ease-cinematic);
+}
+
+.hist-tl-step__btn:hover:not(:disabled) {
+  color: var(--hist-accent);
+  border-color: var(--hist-accent);
+  background: var(--hist-accent-ghost);
+}
+
+.hist-tl-step__btn:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
+}
+
+.hist-tl-step__btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* Touch scrolls the vertical timeline natively; the pair is for a mouse. */
+@media (max-width: 767px) {
+  .hist-tl-step {
+    display: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   The masthead: the page's name, and the three ways into the archive
+
+   /history had no <h1> at all, and /history/threads, /history/era/<era> and
+   /history/region/<region> were linked from nothing. The name sits here rather
+   than in the brief because the brief fades on the first scroll.
+
+   Desktop: the bottom-left corner, which is the only quiet one. Top centre is
+   the era header, bottom centre the view toggle, the middle the timeline.
+   --------------------------------------------------------------------------- */
+.hist-tl-masthead {
+  position: fixed;
+  bottom: 2rem;
+  left: var(--space-4);
+  z-index: 26;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  /* The same plate the topbar uses, so the block reads as chrome where a
+     below-card passes behind its corner. */
+  background: color-mix(in srgb, var(--hist-bg) 88%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border: 1px solid var(--hist-border-subtle);
+  border-radius: 2px;
+  /* The view toggle is centred on the same line at `bottom: 2rem` and is
+     about 210px wide, so the plate has to stop short of (50vw - 105px). The
+     second term is that, with a gutter: at 768px it yields 240px, at 1024px
+     and up the 320px cap governs. */
+  max-width: min(320px, calc(50vw - 9rem));
+}
+
+.hist-tl-masthead__title {
+  margin: 0;
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--hist-accent);
+}
+
+.hist-tl-masthead__browse {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 3px var(--space-2);
+}
+
+.hist-tl-masthead__browse-label {
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--hist-ink-muted);
+  opacity: 0.7;
+}
+
+.hist-tl-masthead__link {
+  font-family: var(--font-meta);
+  font-size: var(--text-xxs);
+  letter-spacing: 0.04em;
+  color: var(--hist-ink-secondary);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.hist-tl-masthead__link:hover {
+  color: var(--hist-accent);
+  border-bottom-color: currentColor;
+}
+
+.hist-tl-masthead__link:focus-visible {
+  outline: 2px solid var(--hist-brass);
+  outline-offset: 2px;
+}
+
+.hist-tl-masthead__rule {
+  width: 1px;
+  height: 0.8em;
+  background: var(--hist-border);
+}
+
+/* Phones: the bottom carries two bars already, so the masthead takes the top,
+   under the topbar, as one scrolling line. */
+@media (max-width: 767px) {
+  .hist-tl-masthead {
+    top: calc(var(--hist-topbar-height) + env(safe-area-inset-top, 0px));
+    bottom: auto;
+    border: 0;
+    border-radius: 0;
+    left: 0;
+    right: 0;
+    max-width: none;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-3);
+    background: color-mix(in srgb, var(--hist-bg) 94%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--hist-border-subtle);
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .hist-tl-masthead::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hist-tl-masthead__browse {
+    flex-wrap: nowrap;
+  }
+
+  /* Clear the strip the masthead now occupies. */
+  .hist-tl-full__inner {
+    padding-top: calc(var(--space-4) + 32px);
+  }
+}

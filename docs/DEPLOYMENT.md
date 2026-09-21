@@ -1,4 +1,5 @@
 # void --news Deployment Runbook
+> Historical. Written before the 2026-09-01 Supabase decommission and the Kokoro switch; the current state is CLAUDE.md.
 
 > **⚠ STALE — the data plane described below is gone (added 2026-09-20).**
 > The Cloudflare Pages deploy mechanics are still correct. The data flow is not:

@@ -1,4 +1,5 @@
 # void --news App Build Guide
+> Historical. Written before the 2026-09-01 Supabase decommission and the Kokoro switch; the current state is CLAUDE.md.
 
 Three distribution methods: PWA, iOS App Store, and Android Play Store/APK.
 

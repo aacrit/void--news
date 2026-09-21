@@ -3,6 +3,7 @@ import { SITE_URL } from "./lib/siteMeta";
 import { getArchiveRows, storyHref } from "./lib/archive";
 import { getHistorySlugs } from "./lib/historyCatalog";
 import { getWeeklyIssues } from "./lib/weeklyIssues";
+import { ERAS, REGIONS } from "./history/types";
 
 /* Static sitemap, emitted at build time as /sitemap.xml. Compatible with
    output:"export" (runs once at build, no request-time work). */
@@ -84,5 +85,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: i === 0 ? 0.7 : 0.4,
   }));
 
-  return [...staticEntries, ...weeklyEntries, ...historyEntries, ...storyEntries];
+  // The History browse routes: one per era, one per region (the "global"
+  // region is not generated), and the threads index. Derived from the same
+  // lists generateStaticParams reads, so the sitemap cannot drift from the
+  // routes that exist.
+  const browseEntries: MetadataRoute.Sitemap = [
+    "/history/threads/",
+    ...ERAS.map((e) => `/history/era/${e.id}/`),
+    ...REGIONS.filter((r) => r.id !== "global").map((r) => `/history/region/${r.id}/`),
+  ].map((path) => ({
+    url: `${SITE_URL}${path}`,
+    lastModified,
+    changeFrequency: "monthly" as MetadataRoute.Sitemap[number]["changeFrequency"],
+    priority: 0.4,
+  }));
+
+  return [...staticEntries, ...weeklyEntries, ...historyEntries, ...browseEntries, ...storyEntries];
 }

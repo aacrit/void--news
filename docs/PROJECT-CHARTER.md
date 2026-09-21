@@ -1,4 +1,5 @@
 # void --news — Project Charter
+> Historical. Written before the 2026-09-01 Supabase decommission and the Kokoro switch; the current state is CLAUDE.md.
 
 Last updated: 2026-05-18 (rev 3 — source count synced to 1,016 after 2026-05-13/14 additions)
 
