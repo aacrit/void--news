@@ -27,6 +27,13 @@ import { isUnscoredTilt } from "./biasColors";
 import { cleanFeedSummary, isCSAMTopic } from "./summaryHygiene";
 
 /** Map pipeline category slugs (both fine-grained and desk) to display names. */
+/** bias_diversity.lean_buckets, in ladder order. Far left first, so the
+ *  array index is the bucket index everywhere downstream. */
+const LEAN_BUCKET_KEYS = [
+  "far_left", "left", "center_left", "center",
+  "center_right", "right", "far_right",
+] as const;
+
 export function capitalize(s: string): string {
   if (!s) return s;
   const map: Record<string, string> = {
@@ -168,6 +175,10 @@ export function mapClustersToStories(
           aggregateConfidence: safeNum(bd, "aggregate_confidence", 0),
           analyzedCount: safeNum(bd, "analyzed_count", 0),
           polarization: safeNum(bd, "polarization", 0),
+          // The seven counts, far-left first. Exported on every cluster since
+          // the histogram was written and read by nothing until 2026-09-21.
+          leanBuckets: LEAN_BUCKET_KEYS.map((k) =>
+            safeNum((bd["lean_buckets"] ?? {}) as Record<string, unknown>, k, 0)),
           leanLeftCount: safeNum(bd, "lean_left_count", 0),
           leanCenterCount: safeNum(bd, "lean_center_count", 0),
           leanRightCount: safeNum(bd, "lean_right_count", 0),

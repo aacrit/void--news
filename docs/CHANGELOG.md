@@ -18,6 +18,322 @@ lives in this file.
 
 ---
 
+## rev 81: the lean ladder ran leftward, the card printed a mean over a bimodal roster, and the Deep Dive drew a curve over seven spikes (2026-09-21)
+
+Three defects in the same display layer, found while answering one question:
+if the engine is measuring lean correctly (rev 80 established that it is), why
+does the product look like it never finds one?
+
+### 1. The ladder was asymmetric, and it ran leftward
+
+`leanToBucket` cut 0-100 at `<=20 / <=35 / <=45 / <=55 / <=65 / <=80`. Those
+bands put four of the seven outlet baselines on an upper EDGE: the `left`
+baseline is 20, which fell in FAR LEFT, and the `center_left` baseline is 35,
+which fell in LEFT. The right-hand rungs (65, 80, 90) landed correctly. So an
+outlet the roster rates `left`, publishing copy with nothing remarkable in it,
+was displayed one rung more extreme than its own rating, and its mirror image
+on the right was not.
+
+Rebinned to the midpoints between the baselines (15, 27.5, 42.5, 57.5, 72.5,
+85), with a score exactly on a boundary taking the rung nearer the CENTRE.
+That tie rule is not cosmetic: resolving ties upward in score, which the first
+draft did, put 15 in `left` but 85 in `far-right`, recreating the same
+asymmetry in the other direction. The symmetry assertion caught it.
+
+23.4% of the measured articles on the 2026-09-21 feed change bucket. An
+earlier estimate of 4.6% in this session was computed against assumed bin
+edges rather than the real ones and is wrong.
+
+`pipeline/utils/bias_aggregation.py` carries the same bins for
+`bias_diversity.lean_buckets`, and `tests/test_bias_bins.py` now sweeps 0..100
+in both languages and fails if they ever disagree. `leanLabelAbbr` held a
+THIRD copy of the thresholds; all three now derive from `leanToBucket`.
+
+### 2. The card printed a point estimate it had to keep withholding
+
+The Sigil's caption was a confidence-gated mean. On the 2026-09-21 feed the
+gate suppressed it on 20 of 35 stories: the product's differentiator silent on
+more than half the paper. And where it spoke, it was often the wrong summary,
+because the real distributions are frequently bimodal and a mean returns their
+empty middle. 7 left / 2 centre / 8 right and 0 left / 11 centre / 2 right
+both average to about 50, so a hollow centre and a genuine consensus printed
+the same figure.
+
+A distribution never has to be withheld. The card now carries **the register**
+(`components/RosterStrip.tsx`): seven hairline strokes, one per rung, height
+normalised inside a strip whose overall height comes from the sample size, and
+an empty bucket keeps a faint tick so absence reads as absence. Under it,
+**the roster's shape** (`leanShape` in `lib/biasColors.ts`): Leans left, Leans
+right, Split, Balanced, Consensus, or the article count.
+
+Every word is earned by the evidence that supports THAT word. Consensus is a
+claim about the centre and needs centre mass; Leans and Split are claims about
+the wings and need wing evidence. The first draft fell through to "Balanced"
+and would have called a story with 3 left, 4 centre and ZERO right-of-centre
+articles balanced, which is the exact class of lie the rest of this work
+removes. Measured: the card speaks on 30 of 35 stories against 15, and the
+five it stays quiet on have between 1 and 7 articles.
+
+The Sigil reads the register too. Four states from its existing geometry: a
+tilted beam for `leans`, two opposed arms around a hollow marker for `split`,
+level for `balanced` and `consensus`, dashed and still for `thin`.
+
+`leanShareTilt`'s denominator was fixed in the same pass. It divided by every
+analyzed article, so 40 centre wire items diluted a 14-to-5 split down to
+0.153 against a 0.20 threshold while a nearly identical 16-to-6 story passed.
+It now divides by the wings, with `LABEL_MIN_WING_ARTICLES = 5` as the floor:
+without that floor, one left article out of six reads as a fully lopsided
+roster, which was the shape of five clusters on the 2026-09-20 feed.
+
+### 3. The Deep Dive drew a smoothed curve over a distribution that is spikes
+
+`DeepDiveSpectrum` was a kernel density estimate over the 0-100 axis, drawn as
+an ink wave with favicon pins on a strip beneath it and an amber plumb line at
+the tier-weighted mean. Three things were wrong with it.
+
+The distribution is not continuous. The engine anchors an article on its
+outlet's baseline and moves it by what the text does, so **74% of measured
+articles land exactly on one of the seven baselines and 87% within two
+points**. A curve over seven spikes paints hills nothing stands on.
+
+The plumb line answered the wrong question, for the reason in section 2. And
+the pins were a second, disagreeing view of the same numbers: continuous
+positions under a smoothed shape, so no part of the panel was a count.
+
+Replaced by **the Bench** (`components/Bench.tsx`): seven strict columns, one
+per rung, one circular mark per source, stacked off the rule, so the height of
+a column is the count in that bucket. A mark names its source on hover or tap,
+with its tier, lean label, score and the article's own headline; its siblings
+rack-focus back. Circles, not squares, because a square in a row of squares
+reads as a bar segment and the bar here is the column.
+
+**The mark size is chosen from the data**, which is the whole of the design
+decision and lives in `lib/bench.ts`. The busiest bucket in a story runs 2 to
+40 with a median of 11 (2026-09-21 feed, one entry per source name, unscored
+rows excluded), so a fixed 20px mark in a single file would need 880px of
+height for the worst story and any cap low enough to fit would bite on 22 of
+the 35. `packBench` walks `perRow` up from 1 and takes the largest mark that
+fits at the first width that works.
+
+The first draft took the WIDEST sub-row the column allowed, and that broke the
+only claim the Bench makes: a bucket of 4 and a bucket of 5 each packed into
+one row, so counts 1 through 5 all drew a column one mark high. `perRow` is
+the histogram's resolution, so it is minimised and the mark shrinks first.
+Half the feed packs at `perRow` 1, a true single file. Below 13px a mark drops
+its favicon and draws as a plain lean-coloured disc rather than pretending to
+carry a logo.
+
+The archived story page was carrying a quieter version of the same lie:
+`archiveMembersToSpectrumSources` DISCARDED unscored members, so a permalink
+reported a smaller roster than the live Deep Dive. They are carried now and
+the Bench says out loud how many it is holding back.
+
+### What the same pass turned up on the way
+
+`.sigil__lean-label` inside a card headline faded to `opacity: 0.75`. The bias
+tokens are tuned to clear AA at full strength and nothing more
+(`--bias-far-right` is 4.7:1 on the dark paper), so the fade spent the whole
+margin: `--bias-right` rendered as #C75F52, 4.28:1. It had shipped that way,
+and only surfaced when the register started speaking on 30 stories instead of
+15 and axe happened to sample a card carrying it. The fade is gone, and
+`lean-label-contrast` in the headless sweep now measures every label on the
+feed in both schemes rather than waiting for axe to land on the bad one.
+
+Deleting the KDE view left 44 dead CSS class selectors, which the class-parity
+gate caught the moment they went dead, including `.deep-dive-panel` and its
+110 lines of modal geometry: nothing had rendered that class since the Deep
+Dive became `.dd-page`, and the only reference keeping it alive was a comment
+in the file this rev rewrote.
+
+### Controls, in the same commits
+
+| Check | Catches |
+|---|---|
+| `tests/test_bias_bins.py` | the pipeline's bins and the frontend's disagreeing on any score 0..100, a baseline outside its own rung, an asymmetric ladder |
+| `frontend/test/labels.test.mjs` | the three copies of the thresholds drifting apart; the shape rule calling a story with one empty wing balanced |
+| `frontend/test/bench.test.mjs` | a pack that overflows its box; the height no longer being the count; a source dropped without a `+N` |
+| `tests/bench_corpus.py` | regenerates that test's corpus from the committed exports |
+| `bench` scenario, `verify-headless.mjs` | the served Bench at 1440 and 390: seven columns, nothing dropped, the busiest bucket the tallest column, one mark size, circles, a card that names the mark it came from and stays on screen |
+| `lean-label-contrast` scenario | any lean label on the feed under 4.5:1, in both schemes |
+
+---
+
+## rev 80: the first post-fix run, and a threshold that was asserting the wrong thing (2026-09-21)
+
+Run #375 committed the first export carrying the step 6b fix, which turned on
+the committed-export check written hours earlier in rev 78. It failed, and it
+was right to fail and wrong about why.
+
+**What the run actually produced**, whole-tuple default rows and lean at 50:
+
+| | 2026-09-20 | run #375 |
+|---|---|---|
+| whole default tuple | 540/737 (73.3%) | 186/975 (19.1%) |
+| `political_lean` at exactly 50 | 610/737 (82.8%) | 522/975 (53.5%) |
+
+19.1% against a 10% cap. The obvious readings were that the threshold was too
+tight or that 6b was still broken. Both wrong, and the measurement that
+settles it is one a share can never express:
+
+**All 186 default rows are published 2026-09-20. Not one of the 534 articles
+published 2026-09-21 is a default.** Today's scoring was clean, end to end.
+The residue is the previous day's damage, loaded out of the state DB by step
+6b's own 36h lookback and written back faithfully by
+`existing.get("political_lean", 50)`. It clears itself as those articles leave
+the window, so a share threshold would have failed CI for two days over rows
+that were already handled, and taught everyone to override it.
+
+Corroborating the diagnosis rather than assuming it: the 186 carry the old 6b
+signature exactly, four default axes with a real varying `framing` and a
+framing-only rationale. 135 of them are from RATED outlets, including nine
+Newsmax rows at lean 50 against a `far-right` baseline of 90, which the
+analyzer's own contract makes impossible for anything that was measured.
+
+**So the check now asserts the invariant that protects the reader instead of a
+share: no default-tuple row may be UNMARKED.** A row carrying `lean_unscored`
+is out of the cluster aggregate, off the Deep Dive spectrum and labelled
+Unscored, so its presence in the JSON misleads nobody. An unmarked one is read
+as a measured 50 by every consumer. The share is printed every run, and only a
+run that measured almost nothing (>60%) still fails on it.
+
+The exemption became self-detecting in the same pass. It used to compare
+`feed.json`'s `builtAt` against the 6b fix date, which is a date to maintain;
+it now checks whether any row carries a `lean_unscored` key at all. Run #375
+ran on `adc05f4`, before the field was carried out of the database, so no row
+does and there is nothing to assert about marks. The first export from current
+code turns the assertion on with no edit. Verified by planting the field on
+every row and leaving exactly one default unmarked: one finding, naming the
+count and the consequence.
+
+**The run's own counters, read off the log afterwards, confirm it:**
+
+    Articles analyzed: 10029/10029
+    Lookback articles needing stored scores: 2845; bias rows loaded: 2845
+    Framing re-scored: 7193 articles (7193 DB rows updated in batches)
+    bias defaults: 186/975 per-article rows are the default tuple (19.1%)
+
+Every fetched article was scored. The lookback preload hit 2845 of 2845, so it
+has no gap. And there is no "Framing update skipped" line at all, so
+`framing_no_scores` was 0: not one row was written from defaults. 6b did
+exactly its job, which is to preserve what is stored, and what was stored for
+those 186 was the previous day's default tuple. The `gate fails above 50%` in
+that line is the old cap, which is why the export shipped.
+
+`PER_AXIS_MAX_SHARE` was deliberately not retuned against this run. Lean at 50
+came in at 53.5% against a 40% cap, but that population still contains the
+residue, so fitting the caps to it would be calibrating against contaminated
+data, which is the mistake this pass exists to undo.
+
+Prediction on the record, to be checked against the run of 2026-09-23: near
+zero default rows. If not, something is writing defaults again, and the mark
+assertion will name it.
+
+**Label coverage, re-read on the same export, and the binding gate is not the
+one anybody assumed.** Of 35 clusters: 20 "Not measured", 7 Balanced, 5 a
+direction, 3 Contested; on the front page's twenty, 9 / 4 / 4 / 3. So the
+denominator fix took informative labels from 2 of 35 to 8 of 35, while "Not
+measured" barely moved, 18 to 20.
+
+Of the 20 failures, **14 bind on `aggregate_confidence < 0.5`** and only 2 on
+the measured count this was expected to be about. It is not a small-sample
+problem: the suppressed clusters include the best-covered stories in the feed,
+54 sources and 53 measured articles at confidence 0.43, 46/52 at 0.42, 37/32
+at 0.46. The metric runs min 0.40, median 0.51, max 0.71 across all 35, so the
+threshold sits within a hundredth of its own median and suppresses about half
+the feed by construction; two clusters fail it at 0.499.
+
+Nothing was changed. Moving a threshold that sits on the median of its own
+metric is the CEO decision OPEN-ITEMS already describes, and the honest fix may
+be to the metric rather than the cut point. The numbers are recorded for it.
+
+---
+
+## rev 79: why the unscored are unscored, and the eight that should not have been (2026-09-21)
+
+**CEO: "when we say unscored, why can't we score them?"**
+
+Because `political_lean.py:1057` requires two things to be absent AT ONCE: the
+outlet has no left/right placement, and the article's own words carry no signal
+(2 or fewer distinct partisan terms, all three shifts under 2.0). It is not
+that a number cannot be computed. It is that `baseline 50 + shift 0 = 50`
+computed from two empty inputs is an invention wearing a measurement's
+clothes, which is the Rule 1 line and the difference from Ground News, which
+assigns everything a lean.
+
+**Why both inputs fail together: the axis is US-shaped, and so is everything
+that feeds it.**
+
+- **All 294 unrated outlets were non-anglosphere.** Zero US/UK/CA/AU/NZ/IE
+  outlets lacked a rating, so the roster was not a backlog. There is no
+  AllSides for Pakistan or Kenya.
+- **The 340-term lexicon is US discourse** even where it is not US-referential
+  by name. Only 12 terms name a US institution, but the "universal" vocabulary
+  is `systemic racism`, `intersectionality`, `white privilege`, `build the
+  wall`, `anchor baby`, `catch and release`. An article in Dawn about Pakistani
+  politics has framing, in a vocabulary this lexicon has never heard of.
+
+Measured share: 194 of 737 rows (26.3%) come from unrated outlets. That is a
+CEILING, not the unscored figure: it still contains step-6b-damaged rows that
+cannot be separated on this export.
+
+**Eight outlets were unscored because the roster disagreed with itself.** Not
+a limit of the engine. Tagesschau (Germany, ARD, public broadcaster) carried
+`center`; Deutsche Welle (Germany, federal-tax-funded public international
+broadcaster) carried `unrated`. Likewise NRK against Swissinfo, RTP against
+Radio Prague, and Ghana News Agency against two Ghanaian state-owned dailies
+in the same country. Now placed at `center`: Deutsche Welle, DW Europe,
+France 24, SWI Swissinfo.ch, Radio Prague International, Radio Free Europe /
+Radio Liberty, Ghanaian Times, Daily Graphic. 25 of 737 rows (3.4%) on the
+measured export, and 294 unplaced falls to 286.
+
+3.4%, not the 8% estimated before measuring: that estimate counted every
+Europe/international-broadcaster row, including Straits Times ("operates within
+Singapore's press framework"), SCMP ("editorial independence under scrutiny")
+and Cyprus Mail, which are deliberately NOT placed. Filing those at centre to
+reduce a count would be the invention this whole pass removes.
+
+**A refutation worth keeping, because it was nearly shipped.** The roster check
+was first written to assert that any outlet its notes describe as publicly
+funded must carry `state_affiliated`. It ran, and flagged 25 outlets including
+the BBC, CBC, NPR, Yle, AFP and Voice of America. Following it would have
+changed how the BBC is scored on an inference nobody had checked.
+
+Reading the rows instead of guessing: the roster's dominant convention is that
+state-FUNDED but editorially independent gets a real baseline and NO flag.
+Voice of America, note and all ("US federal government international
+broadcaster operated by USAGM"), is `center` with no flag; so are the BBC,
+CBC, Yle, NPR, AFP, DPA. The flag is for state media whose alignment is the
+dominant editorial signal, plus six democratic public broadcasters (SVT, NRK,
+RTP, Tagesschau, SABC, Agencia Brasil) that sit on the wrong side of that line.
+
+So the assertion was downgraded to a report, and the inconsistency went to
+`docs/OPEN-ITEMS.md` as a CEO decision: does the flag mean state-funded (the
+BBC needs it) or state-aligned (SVT should lose it)? It is not cosmetic;
+`_delta_max_for` gives a flagged outlet a text delta of 8 instead of the
+default, and `unscored` excludes a state-affiliated outlet outright. Of the
+eight placed above, only the two Ghanaian state-OWNED dailies took the flag,
+matching Ghana News Agency in the same country.
+
+**The control:** `tests/test_source_roster.py`, in CI. An outlet its own notes
+call state-owned or a public broadcaster may not sit at `unrated`; nothing
+carries the flag without a placement; every baseline is a rung `BASELINE_MAP`
+knows (a typo resolves to 50 silently, indistinguishable from assessed
+centrism); and the remaining 286 unplaced rows are asserted to be the axis's
+edge rather than a backlog, by requiring that no outlet in a country whose
+politics runs on this axis is left unplaced. Verified to fail by returning
+Deutsche Welle to `unrated`.
+
+**Still open**, and both were authorised but not started here: per-market
+English lexicons (Indian, Pakistani, Nigerian and Kenyan English political
+discourse is highly placeable, and the trap is documented in the code, where
+`fossil fuel`, `diversity`, `equity` and `housing crisis` were all REMOVED for
+firing on neutral reporting), and a second axis for politics that does not run
+left/right at all (India's cleavage is secular/Hindutva, Kenya's is
+ethnic-regional; no lexicon fixes a category error, and the 6-axis model is a
+locked decision).
+
+---
+
 ## rev 78: the bias engine was not the problem (2026-09-21)
 
 **CEO: "do we need to recalibrate the bias scores for the outlets? And do we

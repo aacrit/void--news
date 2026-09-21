@@ -20,6 +20,15 @@ us" into "for all of them" — a real person's words, altered, in production.
 `E-07` and `E-08` ship ADVISORY pending this call. Proposal:
 `docs/proposals/EDITORIAL-VOICE-2026-09.md`.
 
+**The lean gate: the CARD no longer depends on it (2026-09-21), but the gate
+still runs and the threshold below is still unreviewed.** The feed card and
+the Sigil now read the roster's SHAPE (`leanShape`), not the gated mean, so
+`LABEL_MIN_CONFIDENCE` no longer decides whether a story says anything: the
+card speaks on 30 of 35 stories against 15. `storyLeanLabel` and
+`leanLabelState` are still live for the Deep Dive's own label and the share
+card, which is where the decision below still bites. Read what follows as
+scoped to those two surfaces, not to the feed.
+
 **The lean gate: the dilution is FIXED 2026-09-21, the thresholds still want a
 read on a post-fix feed.** `leanShareTilt` now divides by the wing coverage
 (left + right) rather than by every analyzed article, with a five-wing floor,
@@ -28,11 +37,39 @@ denominator. Measured against the 2026-09-20 feed that moves 2 of 35 cards,
 both Balanced to a direction, both real (12 left vs 5 right across 72 sources;
 0 left vs 6 right across 24). The old denominator was failing in BOTH
 directions at once: it diluted a real 14:5 split to 0.153, and it also cleared
-0.20 on two left articles out of nine. What is still open is below, because 18
-of 35 cards read "Not measured" for want of `LABEL_MIN_MEASURED` articles, and
-that count is dominated by the step 6b damage. Re-read label coverage on the
-first post-fix export before touching `LABEL_MIN_SOURCES` (8),
-`LABEL_MIN_CONFIDENCE` (0.5) or `LABEL_MIN_MEASURED` (10).
+0.20 on two left articles out of nine. **Label coverage re-read on the post-fix export (run #375), and the binding
+gate is not the one this note assumed.** Of 35 clusters: 20 read "Not
+measured", 7 Balanced, 5 a direction, 3 Contested. On the front page's twenty:
+9 Not measured, 4 Balanced, 4 a direction, 3 Contested. So informative labels
+went from 2 of 35 to 8 of 35 with the denominator fix, but "Not measured"
+barely moved (18 to 20).
+
+Which gate binds, across the 20 failures:
+
+| binding gate | clusters |
+|---|---|
+| `aggregate_confidence < 0.5` | **14** |
+| `lean_measured_count < 10` | 2 |
+| both confidence and measured | 2 |
+| sources and measured | 2 |
+
+**`LABEL_MIN_CONFIDENCE` is the gate, and it is not a small-sample problem.**
+The suppressed clusters include the best-covered stories in the feed: 54
+sources / 53 measured articles at confidence 0.43; 46 / 52 at 0.42; 37 / 32 at
+0.46; 34 / 42 at 0.47; 25 / 28 at 0.47. Thin evidence is not what silenced
+them.
+
+The reason is the shape of the metric: `aggregate_confidence` across all 35
+clusters runs **min 0.40, median 0.51, max 0.71**. The threshold sits within a
+hundredth of the median, so it suppresses about half the feed by construction,
+and two clusters fail it at 0.499. Either the metric is compressed (0.40-0.71
+is a narrow band for something documented as 0-1) or the threshold was chosen
+against a different distribution.
+
+**Nothing was changed.** Moving a threshold that sits on the median of its own
+metric is exactly the decision this file already says needs a CEO call rather
+than a tweak, and the honest fix may be to the metric rather than the cut
+point. The numbers above are what that decision needs.
 
 **The original report, for the record.** On 09-09 it emitted ZERO
 directional labels: 12 of 20 cards read "Flat". Suppressors, in order of how
@@ -50,6 +87,26 @@ claims about its own confidence. It needs a decision, not a tweak.
 ---
 
 ## Known defects, not yet fixed
+
+### `--sense-high` is a 3.16:1 colour and is still used as text
+
+`#EF4444` is defined once for both modes. On the dark paper it measures
+4.61:1; on the light paper (#F0EBDD) it measures **3.16:1**, under AA. It was
+the "Contested" label's colour until 2026-09-21, and both that label and the
+Bench's `split` word now use `--fg-primary` instead.
+
+The token itself was not changed, because it is primarily a NON-text colour:
+the sensationalism scale's top stop, drawn as dots and bars, where 3:1 is the
+bar it has to clear. Retuning it would move every sensationalism reading on
+both papers. What is left to do is a sweep of its remaining uses to check that
+none of them is text on the light paper, and the same question for
+`--sense-medium` (#EAB308, which is a yellow and will be worse).
+
+`lean-label-contrast` in `verify-headless.mjs` measures the lean labels in
+both schemes and would catch a regression there; nothing yet measures the
+sensationalism or rigor labels.
+
+
 
 ### Bias centring: DIAGNOSED AND ANSWERED 2026-09-21. Not a calibration problem.
 
@@ -155,35 +212,107 @@ treatment `history/data.ts` got in rev 69 before the 301 comes off.
 
 ---
 
+## The roster's `state_affiliated` flag is not applied consistently (CEO call)
+
+Found 2026-09-21 while answering "why can't we score the unscored". **Not
+acted on**, because acting on it either way changes how ~25 major outlets are
+scored and that is an editorial decision about what Void asserts.
+
+`tests/test_source_roster.py` reports the split every run:
+
+- **48 outlets carry `state_affiliated`.** Mostly state media whose alignment
+  is the dominant editorial signal (RT, CGTN, Xinhua, TASS, Global Times, Gulf
+  and Saudi state press), plus six democratic public broadcasters: SVT, NRK,
+  RTP, Tagesschau, SABC, Agencia Brasil.
+- **30 more are described in their own notes as publicly funded and carry no
+  flag.** Among them the BBC ("charter requires impartiality"), CBC ("funded
+  by parliamentary appropriation"), NPR, Yle, AFP, DPA, and **Voice of
+  America**, whose note reads "US federal government international broadcaster
+  operated by USAGM".
+
+The two groups are the same class of outlet under two different conventions.
+SVT is flagged; Yle is not. Tagesschau is flagged; the BBC is not.
+
+**Why it matters, concretely:** `_delta_max_for` gives a flagged outlet a text
+delta of 8 instead of the default, so its own words move its score far less
+and the baseline anchors harder. And `political_lean.py`'s `unscored` rule
+excludes a state-affiliated outlet outright. So the flag is not cosmetic; it
+changes both the number and whether the article counts.
+
+**The decision:** does `state_affiliated` mean *state-funded* (then the BBC,
+CBC, NPR, Yle, AFP and VOA all need it, and their scores tighten) or
+*state-aligned editorial control* (then SVT, NRK, RTP, Tagesschau, SABC and
+Agencia Brasil should lose it)? Either answer is defensible; picking one by
+inference is not, which is why nothing was changed.
+
+Recorded because an assertion demanding the first reading was written, ran, and
+flagged the BBC. It was downgraded to a report before it could be committed:
+"fixing" 25 rows on an unchecked inference would have introduced error while
+claiming to remove one.
+
+---
+
 ## Watch on the next run
 
-**Bias defaults after the step 6b fix (2026-09-21).** Step 6b used to rebuild
-every row in a multi-article cluster from `article_bias_map.get(art_id, {})`,
-and the 36h lookback articles were never in that map, so their measured scores
-were replaced with 50/10/25/50/0.7 plus a framing-only rationale. It now loads
-the stored `bias_scores` rows for those articles before it re-scores framing,
-and writes no row at all for an article it has nothing measured for.
+**Bias defaults after the step 6b fix: MEASURED 2026-09-21, and the fix works.**
+Run #375 (built 2026-09-21T18:18, the first scheduled run carrying the fix)
+against the export it committed:
 
-On the first run after this lands, read the export's own line in the run log:
+| | before (2026-09-20) | after (run #375) |
+|---|---|---|
+| whole default tuple | 540/737 (73.3%) | 186/975 (**19.1%**) |
+| `political_lean` at exactly 50 | 610/737 (82.8%) | 522/975 (53.5%) |
+| `sensationalism` at 10 | 637/737 (86.4%) | 657/975 (67.4%) |
 
-    bias defaults: N/M per-article rows are the default tuple (X%; ...)
+19.1% is not the low single digits this note used to predict, and the reason
+is the one a share cannot express: **all 186 default rows are published
+2026-09-20. Not one of the 534 articles published 2026-09-21 is a default.**
+Today's scoring was clean. The residue is the previous day's damage, loaded
+out of the state DB by step 6b's own 36h lookback and written back faithfully
+by `existing.get("political_lean", 50)`.
 
-Before the fix that share was 73.4% (540 of 737 rows in
-`frontend/public/data/deepdive/`). It should now fall well below 0.5; a real
-corpus should land in the low single digits, since only an article with no
-`bias_scores` row at all can still read as defaults. The export raises and
-ships nothing above 0.5 over 100 rows
-(`DEFAULT_TUPLE_MAX_SHARE`, `pipeline/validation/bias_defaults.py`), so a
-regression stops the run instead of reaching the page. Also worth reading in
-the same log: 6b's two new lines, how many lookback articles needed stored
-scores against how many rows came back, and how many framing updates were
-skipped for want of a measured row.
+**Confirmed from run #375's own counters**, not inferred from the export:
 
-`VOID_BIAS_DEFAULTS_GATE=warn` is **gone** (2026-09-21): it existed only
-because the export used to refuse a mostly-default run, and the export degrades
-now. The threshold moved to `tests/test_bias_defaults_gate.py`, which asserts
-the committed export and exempts itself only while that export predates the 6b
-fix, so it starts biting on the first post-fix feed with no edit.
+    Articles analyzed: 10029/10029
+    Lookback articles needing stored scores: 2845; bias rows loaded: 2845
+    Framing re-scored: 7193 articles (7193 DB rows updated in batches)
+    bias defaults: 186/975 per-article rows are the default tuple (19.1%)
+
+Every article the run fetched was scored. The lookback preload hit **2845 of
+2845**, so it has no gap. And there is **no "Framing update skipped" line at
+all**, meaning `framing_no_scores` was 0: not one row was written from
+defaults. 6b did precisely its job, which is to preserve what is stored, and
+what was stored for those 186 was already the previous day's default tuple.
+
+So it is not a live defect and it clears itself: those articles leave the 36h
+window within about a day and a half. **Prediction to check on the run of
+2026-09-23: near zero.** If it is not, something is writing defaults again and
+the mark assertion below will say so.
+
+**`PER_AXIS_MAX_SHARE` was deliberately NOT retuned against this run.** Lean
+at 50 came in at 53.5% against a 40% cap, but that population still contains
+the carried-forward residue, so tightening or loosening to fit it would be
+calibrating against contaminated data, which is the mistake this whole pass
+exists to undo. The caps only drive the printed `OVER` marker now, not a
+failure. Retune them against the 2026-09-23 run.
+
+The rows are recognisable: four default axes, a real varying `framing` score
+and a framing-only rationale, which is the old 6b signature. 135 of the 186
+come from RATED outlets, including nine Newsmax rows at lean 50 against a
+`far-right` baseline of 90, which the analyzer's own contract makes impossible
+for a measured article.
+
+`tests/test_bias_defaults_gate.py` asserts the invariant that actually
+protects the reader, not the share: **no default-tuple row may be unmarked.**
+A marked row is out of the cluster aggregate, off the Deep Dive spectrum and
+labelled Unscored, so it misleads nobody; an unmarked one is read as a
+measured 50 everywhere. The share is printed every run, and only a run that
+measured almost nothing (>60%) fails on it.
+
+The check exempts itself, self-detectingly, while the committed export carries
+no `lean_unscored` key on any row, which is true of run #375 because it ran on
+`adc05f4`, before the field was carried out of the database. The first export
+from current code turns the assertion on with no edit.
 
 **House promos: DISCHARGED 2026-09-21.** All 78 published History episodes
 carry a promo under their outro, stitched without re-rendering a single line
@@ -285,6 +414,56 @@ read static JSON.
 **`.msc__modal-backdrop` carries `z-index: 1000`**, off the token scale
 (`--z-modal` is 100). It happens to sit above everything and so works; it is
 the one place a layer is decided by a literal rather than by the scale.
+
+---
+
+## Scoring the unscored: two items authorised 2026-09-21, both blocked on ground truth
+
+The CEO authorised all three answers to "why can't we score them". The first
+(rate the chartered broadcasters) shipped in rev 79: eight outlets placed,
+3.4% of article volume recovered. These two did not, and the reason is the
+same for both.
+
+### 1. Per-market English lexicons
+
+India (24 outlets), Pakistan, Nigeria, Kenya, Bangladesh and Sri Lanka publish
+in English, and their political discourse is highly placeable: Hindutva /
+secular, communal, reservation, Dalit, anti-national for India; comparable
+vocabularies elsewhere. Adding them would move real articles off 50 for real
+reasons, which is the largest single reduction available in the 26% unscored
+population.
+
+**Blocked on:** all 43 fixtures in `pipeline/validation/fixtures.py` are US or
+Western outlets (AP, Reuters, NYT, Fox, Jacobin, ProPublica, Bellingcat,
+Intercept, Mother Jones, Breitbart, Daily Wire, Newsmax, RT, CGTN, Sputnik,
+NPR). There is **no** Indian, Pakistani, Nigerian or Kenyan fixture. So
+running the suite after a lexicon change proves only that US scoring still
+works. It cannot show that the new terms score an Indian article correctly,
+and it cannot show they do not misfire on Indian NEUTRAL reporting, which is
+the failure mode `political_lean.py` already documents three times over:
+`fossil fuel`, `renewable energy`, `carbon neutral`, `diversity`, `equity`,
+`inclusivity` and `housing crisis` were all REMOVED for firing on neutral
+copy, each costing 20-30 points of false lean.
+
+**First step is a corpus, not code:** real articles from those outlets with
+expected lean ranges, the way the 43 existing fixtures are built. That is
+research (`linguist` and `bias-auditor` exist for it), and until it exists a
+lexicon expansion ships unvalidated keyword changes straight into production
+bias scores.
+
+### 2. A second axis for politics that does not run left/right
+
+The deeper answer, and the one no lexicon reaches. India's main cleavage is
+secular / Hindutva. Kenya's is ethnic-regional. Scoring those on a left/right
+axis is a category error however good the vocabulary, which is why 234 of the
+287 still-unplaced outlets are in countries of exactly that kind.
+
+**Blocked on two things.** It needs the same ground truth as item 1, and it
+changes a **locked decision**: the 6-axis bias model is on the CEO's locked
+list, and this is either a 7th axis or a per-region axis with its own labels,
+ladder, colours and public methodology copy. Worth a written proposal before
+any code, since it touches `/about`, `/sources#methodology`, the Sigil and
+every card.
 
 ---
 

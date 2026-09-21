@@ -145,6 +145,7 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
           politicalLean: src.biasScores?.politicalLean ?? 50,
           factualRigor: src.biasScores?.factualRigor,
           confidence: src.confidence,
+          headline: src.articleTitle,
           leanUnscored: src.leanUnscored,
         })),
     [sources],
@@ -639,7 +640,7 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
             <h3 className="dd-section-label text-meta" style={{ marginBottom: "var(--space-3)" }}>The Spread</h3>
             <div className="inline-dd__spectrum">
               {spectrumSources.length > 0 ? (
-                <DeepDiveSpectrum sources={spectrumSources} settled aggregateLean={story.sigilData?.politicalLean} />
+                <DeepDiveSpectrum sources={spectrumSources} settled />
               ) : (
                 <p className="inline-dd__spectrum-loading" role="status">
                   Gathering the full source list

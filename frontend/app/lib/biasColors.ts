@@ -18,39 +18,95 @@ export type LeanCategory =
   | "right"
   | "far-right";
 
+/** The seven outlet baselines the analyzer anchors to, from
+ *  `pipeline/analyzers/political_lean.py` BASELINE_MAP. A rung of this ladder
+ *  is not an arbitrary number: it is what an outlet of that rating scores when
+ *  its article's wording is unremarkable, which is most articles. Measured on
+ *  the 2026-09-21 feed, 74% of all 668 measured articles sit EXACTLY on one of
+ *  these seven values and 87% are within two points of one. The distribution
+ *  is seven spikes, not a spread. */
+export const LEAN_BASELINES: ReadonlyArray<readonly [LeanCategory, number]> = [
+  ["far-left", 10], ["left", 20], ["center-left", 35], ["center", 50],
+  ["center-right", 65], ["right", 80], ["far-right", 90],
+] as const;
+
+/** A score belongs to the baseline it is NEAREST. That places every boundary
+ *  at the midpoint between two rungs (15, 27.5, 42.5, 57.5, 72.5, 85) without
+ *  writing any of them down, and it makes the tie rule sayable: a score
+ *  exactly between two rungs takes the one nearer the centre.
+ *
+ *  The tie rule has to be expressed in DISTANCE FROM CENTRE, not in score.
+ *  Resolving a tie "upward" in score sends it toward the centre on the left of
+ *  the ladder and away from it on the right, which is the same asymmetry this
+ *  function was just fixed for: 15 landed on `left` while its mirror 85 landed
+ *  on `far-right`. Caught by the symmetry check in test/labels.test.mjs. */
+
 /**
  * Unified lean boundaries — identical for bucket placement AND labels.
- * 0-20: Far Left, 21-35: Left, 36-45: Center-Left, 46-55: Center,
- * 56-65: Center-Right, 66-80: Right, 81-100: Far Right.
+ *
+ * THE BOUNDARIES WERE WRONG UNTIL 2026-09-21, ASYMMETRICALLY.
+ *
+ * They were `<=20, <=35, <=45, <=55, <=65, <=80`, which put four of the seven
+ * baselines on a bucket's upper EDGE. On the right that lands in the
+ * correctly-named bucket by luck; on the left the upper edge of a bucket is
+ * its LEAST extreme end, so it lands one rung too far out:
+ *
+ *     roster `left`        scores 20  ->  the page said FAR LEFT
+ *     roster `center-left` scores 35  ->  the page said LEFT
+ *
+ * Both errors ran leftward, and the right-hand rungs were correct, so a
+ * left-leaning outlet was displayed as more extreme than this product's own
+ * roster rates it while a right-leaning one was not. For a product whose
+ * whole claim is even-handed measurement that is the worst available bug.
+ * `center-left` also held no baseline at all: it was a ten-point gap
+ * populated only by the skirt of the 35 spike.
+ *
+ * Binning on the baselines fixes it and evens the widths (15/12.5/15/15/15/
+ * 12.5/15, against 21/15/10/10/10/15/20). It moves 156 of 668 articles
+ * (23.4%) into a different bucket, and only 11 of those (1.6%) change their
+ * left/centre/right group, so cluster-level shape is barely touched.
  */
 export function leanToBucket(v: number): LeanCategory {
-  if (v <= 20) return "far-left";
-  if (v <= 35) return "left";
-  if (v <= 45) return "center-left";
-  if (v <= 55) return "center";
-  if (v <= 65) return "center-right";
-  if (v <= 80) return "right";
-  return "far-right";
+  let best: LeanCategory = "center";
+  let bestGap = Infinity;
+  let bestPull = Infinity;
+  for (const [name, base] of LEAN_BASELINES) {
+    const gap = Math.abs(v - base);
+    const pull = Math.abs(base - 50); // how extreme this rung is
+    if (gap < bestGap - 1e-9 || (Math.abs(gap - bestGap) < 1e-9 && pull < bestPull)) {
+      best = name;
+      bestGap = gap;
+      bestPull = pull;
+    }
+  }
+  return best;
 }
 
+const LEAN_LABEL_TEXT: Record<LeanCategory, string> = {
+  "far-left": "Far Left",
+  left: "Left",
+  "center-left": "Center-Left",
+  center: "Center",
+  "center-right": "Center-Right",
+  right: "Right",
+  "far-right": "Far Right",
+};
+
+/** The label and the bucket can never disagree: one derives from the other. */
 export function leanLabel(v: number): string {
-  if (v <= 20) return "Far Left";
-  if (v <= 35) return "Left";
-  if (v <= 45) return "Center-Left";
-  if (v <= 55) return "Center";
-  if (v <= 65) return "Center-Right";
-  if (v <= 80) return "Right";
-  return "Far Right";
+  return LEAN_LABEL_TEXT[leanToBucket(v)];
 }
 
+const LEAN_ABBR: Record<LeanCategory, string> = {
+  "far-left": "FL", left: "L", "center-left": "CL", center: "C",
+  "center-right": "CR", right: "R", "far-right": "FR",
+};
+
+/** Third consumer of the one ladder. It carried its own copy of the
+ *  thresholds until 2026-09-21 and so inherited the same asymmetry; deriving
+ *  it from the bucket is what makes "one ladder" true rather than asserted. */
 export function leanLabelAbbr(v: number): string {
-  if (v <= 20) return "FL";
-  if (v <= 35) return "L";
-  if (v <= 45) return "CL";
-  if (v <= 55) return "C";
-  if (v <= 65) return "CR";
-  if (v <= 80) return "R";
-  return "FR";
+  return LEAN_ABBR[leanToBucket(v)];
 }
 
 export function senseLabel(v: number): string {
@@ -260,7 +316,12 @@ export const CONTESTED_MIN_POLARIZATION = 50;
 
 export type LeanLabelState = "confident" | "contested" | "balanced" | "unmeasured";
 
-interface WingCounts {
+export interface WingCounts {
+  /** The seven bucket counts, far-left first. Already exported on every
+   *  cluster as bias_diversity.lean_buckets and, until 2026-09-21, read by
+   *  nothing. The register on the card and the bench in Deep Dive are both
+   *  drawn from it. Sums to leanMeasuredCount. */
+  leanBuckets?: readonly number[];
   leanLeftCount?: number;
   leanCenterCount?: number;
   leanRightCount?: number;
@@ -312,6 +373,109 @@ export function leanShareTilt(spread?: WingCounts | null): number {
   const wings = left + right;
   if (wings < LABEL_MIN_WING_ARTICLES) return 0;
   return (right - left) / wings;
+}
+
+/* ── The shape of the roster ───────────────────────────────────────────────
+   A point estimate has to be withheld when it is uncertain, which is why the
+   old gate went quiet on 20 of 35 stories: it asked "which way does this
+   lean" and suppressed the answer whenever the mean was not confident. A
+   DISTRIBUTION never has to be withheld. If there is coverage there is a
+   shape, and the shape is honest at any sample size.
+
+   So the card reads the roster, not the mean. Five states, and every word is
+   earned by the evidence that supports THAT word: Consensus is a claim about
+   the centre and needs centre mass; Leans and Split are claims about the
+   wings and need wing evidence. When neither is there the card states the
+   count, which is true, rather than calling the story balanced.
+
+   Measured on the 2026-09-21 feed: this speaks on 30 of 35 stories against
+   15 of 35, and the five it stays quiet on have between 1 and 7 articles.
+
+   A NOTE ON THE FALL-THROUGH, because the first draft of this rule got it
+   wrong and would have shipped the exact lie the rest of this file removes.
+   Falling through to "Balanced" labelled a story with 3 left, 4 centre and
+   ZERO right-of-centre articles as balanced. Balanced is a finding, so it
+   needs both wings present and enough of them to see.                      ── */
+
+export type LeanShape = "leans" | "split" | "balanced" | "consensus" | "thin";
+
+/** Articles that must have taken a side before the roster can be called
+ *  lopsided or split. Same floor as LABEL_MIN_WING_ARTICLES, and for the same
+ *  reason: a proportion of two articles is not a roster. */
+export const SHAPE_MIN_WINGS = 5;
+/** Total measured articles before any shape word is earned. */
+export const SHAPE_MIN_TOTAL = 6;
+/** Share of the roster in the centre bucket that counts as everyone agreeing. */
+export const SHAPE_CONSENSUS_SHARE = 0.75;
+
+export function leanShape(spread?: WingCounts | null): LeanShape {
+  const left = spread?.leanLeftCount ?? 0;
+  const center = spread?.leanCenterCount ?? 0;
+  const right = spread?.leanRightCount ?? 0;
+  const total = left + center + right;
+  const wings = left + right;
+
+  if (total < SHAPE_MIN_TOTAL) return "thin";
+  if (center / total >= SHAPE_CONSENSUS_SHARE && total >= 8) return "consensus";
+  if (wings < SHAPE_MIN_WINGS) return "thin";
+
+  const tilt = (right - left) / wings;
+  if (Math.abs(tilt) >= LABEL_MIN_SHARE_TILT) return "leans";
+  // Both wings genuinely present, so "even" is a reading rather than an
+  // absence. Whether the centre holds the mass is what separates a story the
+  // coverage agrees on from one it has divided over.
+  if (Math.min(left, right) >= 2) return center / total >= 0.5 ? "balanced" : "split";
+  return "thin";
+}
+
+/** Which way a `leans` roster leans. Zero when the shape is not `leans`. */
+export function leanShapeDirection(spread?: WingCounts | null): -1 | 0 | 1 {
+  if (leanShape(spread) !== "leans") return 0;
+  const left = spread?.leanLeftCount ?? 0;
+  const right = spread?.leanRightCount ?? 0;
+  return right > left ? 1 : -1;
+}
+
+/** The colour that word is printed in.
+ *
+ *  It has to come from the SAME rule as the word, and the card shipped for a
+ *  day where it did not: the text came from `leanShapeLabel` while the colour
+ *  still came from `storyLeanLabel`'s confidence-gated ramp, so one feed
+ *  carried "Leans right" in crimson on one card and in muted grey on the next.
+ *
+ *  Five flat tokens, not a continuous ramp. Every one of them is tuned to
+ *  clear AA on both papers on its own; a `color-mix` down the ramp is not,
+ *  and one of its steps rendered 4.28:1 on the dark paper. The MAGNITUDE of
+ *  the tilt is the register's job, drawn in the full seven-colour ramp
+ *  directly above this line. The word only ever says which way. */
+export function leanShapeColor(spread?: WingCounts | null): string {
+  const shape = leanShape(spread);
+  if (shape === "thin") return "var(--fg-muted)";
+  /* Not --sense-high. That token is the sensationalism scale's top stop,
+     drawn as dots and bars where 3:1 is the bar, and as TEXT on the light
+     paper it measures 3.16:1. It had been the Contested label's colour since
+     that label existed. Split is also the one shape with no direction to
+     name, so plain ink is the honest choice as well as the legible one. */
+  if (shape === "split") return "var(--fg-primary)";
+  if (shape === "leans") {
+    return leanShapeDirection(spread) > 0 ? "var(--bias-right)" : "var(--bias-left)";
+  }
+  return "var(--bias-center)";
+}
+
+/** The one line a card prints under the register. */
+export function leanShapeLabel(spread?: WingCounts | null): string {
+  const shape = leanShape(spread);
+  if (shape === "thin") {
+    const n = (spread?.leanLeftCount ?? 0) + (spread?.leanCenterCount ?? 0)
+      + (spread?.leanRightCount ?? 0);
+    return `${n} ${n === 1 ? "article" : "articles"}`;
+  }
+  if (shape === "leans") {
+    return leanShapeDirection(spread) > 0 ? "Leans right" : "Leans left";
+  }
+  return shape === "split" ? "Split"
+    : shape === "consensus" ? "Consensus" : "Balanced";
 }
 
 /**
@@ -419,8 +583,11 @@ export function storyLeanLabel(
              color: "var(--fg-muted)", state, suppressed: true };
   }
   if (state === "contested") {
+    /* --fg-primary, not --sense-high: see leanShapeColor. #EF4444 is the
+       sensationalism scale's top stop and measures 3.16:1 as text on the
+       light paper. */
     return { text: CONTESTED_LABEL, abbr: CONTESTED_LABEL,
-             color: "var(--sense-high)", state, suppressed: true };
+             color: "var(--fg-primary)", state, suppressed: true };
   }
   return {
     text: leanLabel(lean),

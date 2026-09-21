@@ -193,6 +193,7 @@ export default function DeepDive({
           politicalLean: src.biasScores?.politicalLean ?? 50,
           factualRigor: src.biasScores?.factualRigor,
           confidence: src.confidence,
+          headline: src.articleTitle,
           leanUnscored: src.leanUnscored,
         })),
     [sources],
@@ -576,7 +577,7 @@ export default function DeepDive({
 
               {spectrumSources.length > 0 && (
                 <div className="dd-analysis-block__spectrum">
-                  <DeepDiveSpectrum sources={spectrumSources} aggregateLean={story.sigilData?.politicalLean} />
+                  <DeepDiveSpectrum sources={spectrumSources} />
                 </div>
               )}
             </section>

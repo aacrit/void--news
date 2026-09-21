@@ -82,15 +82,33 @@ def compute_lean_histogram(pl_values: Sequence[float]) -> dict:
         polarization.
     """
     count = len(pl_values)
-    lean_buckets = {
-        "far_left": sum(1 for v in pl_values if v <= 20),
-        "left": sum(1 for v in pl_values if 20 < v <= 35),
-        "center_left": sum(1 for v in pl_values if 35 < v <= 45),
-        "center": sum(1 for v in pl_values if 45 < v <= 55),
-        "center_right": sum(1 for v in pl_values if 55 < v <= 65),
-        "right": sum(1 for v in pl_values if 65 < v <= 80),
-        "far_right": sum(1 for v in pl_values if v > 80),
-    }
+    # Bins centred on the seven outlet baselines from
+    # `analyzers/political_lean.py` BASELINE_MAP, boundaries at the midpoints
+    # between them (15, 27.5, 42.5, 57.5, 72.5, 85). A score on a boundary
+    # takes the rung nearer the centre.
+    #
+    # These were `<=20, <=35, <=45, <=55, <=65, <=80` until 2026-09-21, which
+    # put the `left` baseline (20) in FAR LEFT and the `center-left` baseline
+    # (35) in LEFT while the right-hand rungs landed correctly, so a
+    # left-leaning outlet publishing unremarkable copy was binned one rung
+    # more extreme than the roster rates it and a right-leaning one was not.
+    # Mirrored EXACTLY by `leanToBucket` in frontend/app/lib/biasColors.ts;
+    # tests/test_bias_bins.py asserts the two agree on every score 0..100.
+    _BASELINES = (("far_left", 10), ("left", 20), ("center_left", 35),
+                  ("center", 50), ("center_right", 65), ("right", 80),
+                  ("far_right", 90))
+
+    def _bin(v):
+        best, best_gap, best_pull = "center", float("inf"), float("inf")
+        for name, base in _BASELINES:
+            gap, pull = abs(v - base), abs(base - 50)
+            if gap < best_gap - 1e-9 or (abs(gap - best_gap) < 1e-9 and pull < best_pull):
+                best, best_gap, best_pull = name, gap, pull
+        return best
+
+    lean_buckets = {name: 0 for name, _ in _BASELINES}
+    for v in pl_values:
+        lean_buckets[_bin(v)] += 1
     lean_left_count = (
         lean_buckets["far_left"] + lean_buckets["left"] + lean_buckets["center_left"]
     )

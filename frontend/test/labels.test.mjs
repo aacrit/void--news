@@ -50,14 +50,25 @@ const hygiene = await import(pathToFileURL(join(out, "summaryHygiene.js")).href)
 
 /* ---- 1. one ladder ---------------------------------------------------- */
 
+/* The bands are the midpoints between the seven outlet baselines
+   (10, 20, 35, 50, 65, 80, 90), so every baseline sits inside the bucket that
+   bears its own name. A score exactly on a boundary takes the rung nearer the
+   centre, which is why 15 is `left` rather than `far-left` and its mirror 85
+   is `right` rather than `far-right`.
+
+   Until 2026-09-21 these were 0-20 / 21-35 / 36-45 / 46-55 / 56-65 / 66-80 /
+   81-100, which put the `left` baseline (20) in FAR LEFT and the
+   `center-left` baseline (35) in LEFT, while the right-hand rungs landed
+   correctly. The table below is the fix; the assertions under it are what
+   stop it regressing. */
 const BANDS = [
-  [0, 20, "far-left", "Far Left", "FL"],
-  [21, 35, "left", "Left", "L"],
-  [36, 45, "center-left", "Center-Left", "CL"],
-  [46, 55, "center", "Center", "C"],
-  [56, 65, "center-right", "Center-Right", "CR"],
-  [66, 80, "right", "Right", "R"],
-  [81, 100, "far-right", "Far Right", "FR"],
+  [0,  14,  "far-left",     "Far Left",     "FL"],
+  [15, 27,  "left",         "Left",         "L"],
+  [28, 42,  "center-left",  "Center-Left",  "CL"],
+  [43, 57,  "center",       "Center",       "C"],
+  [58, 72,  "center-right", "Center-Right", "CR"],
+  [73, 85,  "right",        "Right",        "R"],
+  [86, 100, "far-right",    "Far Right",    "FR"],
 ];
 
 for (const [lo, hi, bucket, label, abbr] of BANDS) {
@@ -84,6 +95,52 @@ for (let v = 0; v <= 100; v++) {
   if (LEFTISH.has(b)) check(`tiltDescriptor(${v}) says left`, d.includes("left"), d);
   else if (RIGHTISH.has(b)) check(`tiltDescriptor(${v}) says right`, d.includes("right"), d);
   else check(`tiltDescriptor(${v}) says balanced`, d.includes("balanced"), d);
+}
+
+/* ---- the ladder is anchored to the roster's own baselines -------------- */
+/*
+   The boundaries were `<=20, <=35, <=45, <=55, <=65, <=80` until 2026-09-21,
+   which put four baselines on a bucket's upper edge. On the left that edge is
+   the LEAST extreme end of the bucket, so the rung landed one step too far out
+   and the error only ran one way:
+
+       roster `left`        scores 20  ->  the page said FAR LEFT
+       roster `center-left` scores 35  ->  the page said LEFT
+
+   A left-leaning outlet was shown as more extreme than this product's own
+   roster rates it, while the right-hand rungs were correct. This is the check
+   that makes that impossible: every baseline must land in the bucket that
+   bears its own name.
+*/
+for (const [name, score] of bias.LEAN_BASELINES) {
+  check(`an outlet rated ${name} (scores ${score}) is called ${name}`,
+    bias.leanToBucket(score) === name,
+    `leanToBucket(${score}) = ${bias.leanToBucket(score)}`);
+}
+
+/* The label and the bucket are one decision, so they cannot drift apart. */
+for (let v = 0; v <= 100; v += 1) {
+  const b = bias.leanToBucket(v);
+  const l = bias.leanLabel(v).toLowerCase().replace(/\s+/g, "-");
+  check(`label agrees with bucket at ${v}`, l === b, `${l} vs ${b}`);
+}
+
+/* Monotone: the ladder may never step back toward the centre as v rises. */
+const ORDER = ["far-left","left","center-left","center","center-right","right","far-right"];
+let prevIdx = 0;
+for (let v = 0; v <= 100; v += 1) {
+  const i = ORDER.indexOf(bias.leanToBucket(v));
+  check(`ladder never steps backwards at ${v}`, i >= prevIdx, `${i} after ${prevIdx}`);
+  prevIdx = i;
+}
+
+/* Symmetry: a score N points left of centre must sit as many rungs from the
+   middle as the same distance right of it. The old boundaries failed this. */
+for (const d of [5, 10, 15, 20, 25, 30, 35, 40]) {
+  const li = ORDER.indexOf(bias.leanToBucket(50 - d));
+  const ri = ORDER.indexOf(bias.leanToBucket(50 + d));
+  check(`symmetric at +/-${d}`, (3 - li) === (ri - 3),
+    `${bias.leanToBucket(50 - d)} vs ${bias.leanToBucket(50 + d)}`);
 }
 
 /* ---- storyLeanLabel is the gate AND the ladder ------------------------- */
@@ -123,6 +180,54 @@ check("a suppressed label withholds the score",
   bias.storyLeanLabel(50, { leanLeftCount: 0, leanCenterCount: 5, leanRightCount: 0,
                             polarization: 0, aggregateConfidence: 0.9,
                             leanMeasuredCount: 20 }, 20).suppressed === true);
+
+/* ---- the shape of the roster ------------------------------------------ */
+/*
+   The card reads the roster, not the mean. A point estimate must be withheld
+   when it is uncertain, which is why the old gate went quiet on 20 of 35
+   stories; a distribution never has to be. Every case below is a real story
+   from the 2026-09-21 feed, and the last three are the ones that make the
+   rule honest rather than merely talkative.
+*/
+const shape = (L, C, R) =>
+  bias.leanShapeLabel({ leanLeftCount: L, leanCenterCount: C, leanRightCount: R });
+
+for (const [L, C, R, want, why] of [
+  [7, 2, 8, "Split", "hollow centre: seven left, eight right, two in the middle"],
+  [19, 26, 14, "Split", "bimodal with a fat centre; the mean of this is 51"],
+  [0, 11, 2, "Consensus", "eleven of thirteen in the centre bucket"],
+  [4, 7, 13, "Leans right", "thirteen right against four left"],
+  [14, 39, 9, "Balanced", "centre holds the mass and the wings are even"],
+  /* The fall-through cases. A first draft of this rule called the next one
+     Balanced, on a story with NO right-of-centre coverage at all. */
+  [3, 4, 0, "7 articles", "zero right-of-centre coverage is not balance"],
+  [1, 5, 0, "6 articles", "one wing article is not a roster"],
+  [2, 0, 1, "3 articles", "too little coverage to say anything"],
+]) {
+  check(`roster ${L}/${C}/${R} reads "${want}" (${why})`, shape(L, C, R) === want,
+    `got "${shape(L, C, R)}"`);
+}
+
+/* Symmetry again, one layer up: mirroring a roster must mirror the word. */
+for (const [L, C, R] of [[4, 7, 13], [7, 2, 8], [12, 5, 3], [1, 20, 6]]) {
+  const a = shape(L, C, R), b = shape(R, C, L);
+  const mirrored = a.replace("right", "LR").replace("left", "right").replace("LR", "left");
+  check(`mirroring ${L}/${C}/${R} mirrors the word`, mirrored === b, `${a} vs ${b}`);
+}
+
+/* A shape word is never printed without the evidence for THAT word. */
+for (let L = 0; L <= 12; L++) for (let R = 0; R <= 12; R++) for (const C of [0, 3, 9, 30]) {
+  const w = shape(L, C, R);
+  if (w === "Split" || w === "Balanced") {
+    check(`"${w}" needs both wings at ${L}/${C}/${R}`, L >= 2 && R >= 2, `${L} left, ${R} right`);
+    check(`"${w}" needs ${bias.SHAPE_MIN_WINGS} wing articles at ${L}/${C}/${R}`,
+      L + R >= bias.SHAPE_MIN_WINGS, `${L + R} wing articles`);
+  }
+  if (w.startsWith("Leans")) {
+    check(`"Leans" needs wing evidence at ${L}/${C}/${R}`,
+      L + R >= bias.SHAPE_MIN_WINGS, `${L + R} wing articles`);
+  }
+}
 
 /* ---- leanShareTilt: wings only, and enough of them -------------------- */
 /*
