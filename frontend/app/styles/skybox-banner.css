@@ -1054,3 +1054,13 @@
     margin-left: auto;
   }
 }
+@media (min-width: 768px) {
+  /* Full width now, so two lines carry as much as the old column's four;
+     the first headline moves up a row. */
+  .skb__compact-preview--tldr {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}

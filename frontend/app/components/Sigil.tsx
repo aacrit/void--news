@@ -120,7 +120,14 @@ function DataMark({ data, size, mounted }: {
   // Color = lean (expanded), EXCEPT a balanced-but-divergent standoff drops the
   // green for a neutral slate — green is reserved for genuine consensus
   // (balanced AND agreed). See getSigilLeanColor.
-  const beamCol = !measured ? "var(--fg-tertiary)" : getSigilLeanColor(lean, leanSpread, conf);
+  // Colour follows the gate too: a balanced or contested story takes the
+  // centre colour (green when agreed, slate when split), never a hue that
+  // hints at a direction the caption withholds.
+  const beamCol = !measured
+    ? "var(--fg-tertiary)"
+    : gate === "confident"
+      ? getSigilLeanColor(lean, leanSpread, conf)
+      : getSigilLeanColor(50, leanSpread, conf);
 
   // Divergence fan — agreed vs divergent, shown in the mark itself. The beam
   // half-angle scales with how spread the source leans are (leanSpread): a
