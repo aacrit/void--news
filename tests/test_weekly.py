@@ -865,6 +865,74 @@ def test_no_cap_published_as_count():
           "clusters_truncated" in bias)
 
 
+# The ten columns export_static.py:280 projects onto. Kept here verbatim so a
+# change to either side shows up as a test failure rather than as a silent
+# divergence between the index and the issues it indexes.
+INDEX_COLS = ("id", "issue_number", "edition", "week_start", "week_end",
+              "cover_headline", "cover_image_url", "audio_url",
+              "audio_duration_seconds", "created_at")
+
+
+def test_archive_is_derived():
+    """weekly-archive.json is a projection of weekly-issues.json, not a peer.
+
+    On 2026-09-20 the two disagreed about what issue #26 WAS. The cover page
+    served "Greenland's Arctic Calculus", generated 17:52, while the back-issue
+    index served "Trump Mocks Banned Reporters", generated 20:44. Same number,
+    two different issues, both live.
+
+    The scheduled run regenerated #26 and committed all three files. A branch
+    whose checkout predated that then ran a backfill against the older copy and
+    touched only weekly.json and weekly-issues.json, and the auto-merge put
+    those two back while the archive kept the newer row. The workflow's own
+    conflict guard is scoped to one run's push and never saw it.
+
+    The archive is DERIVED, so the invariant is not "these three happen to
+    agree" but "the index is the projection of the issues". Asserting the
+    derivation catches any future writer that updates one file and not its
+    siblings, which is the actual failure mode, rather than this one instance.
+    """
+    print("\nW-T13  the archive index is derived from the issues, not written beside them")
+    if not (ISSUES_JSON.exists() and ARCHIVE_JSON.exists()):
+        check("both files exist", False,
+              f"issues={ISSUES_JSON.exists()} archive={ARCHIVE_JSON.exists()}")
+        return
+
+    issues = json.loads(ISSUES_JSON.read_text())
+    archive = json.loads(ARCHIVE_JSON.read_text())
+    issues = issues if isinstance(issues, list) else [issues]
+    archive = archive if isinstance(archive, list) else [archive]
+
+    check("the index has a row per issue", len(archive) == len(issues),
+          f"{len(archive)} index row(s) for {len(issues)} issue(s)")
+
+    by_number = {i.get("issue_number"): i for i in issues}
+    for row in archive:
+        num = row.get("issue_number")
+        issue = by_number.get(num)
+        if issue is None:
+            check(f"index row #{num} has an issue", False, "no such issue")
+            continue
+        drift = [c for c in INDEX_COLS if row.get(c) != issue.get(c)]
+        check(f"index row #{num} is the projection of its issue",
+              not drift,
+              "; ".join(f"{c}: index {row.get(c)!r} vs issue {issue.get(c)!r}"
+                        for c in drift[:3]))
+
+    # And the cover page must be the newest issue the archive knows about.
+    if WEEKLY_JSON.exists() and issues:
+        blob = json.loads(WEEKLY_JSON.read_text())
+        current = blob if isinstance(blob, dict) else blob[0]
+        newest = max(issues, key=lambda i: str(i.get("week_start") or ""))
+        check("the cover page is the newest issue",
+              current.get("issue_number") == newest.get("issue_number")
+              and current.get("created_at") == newest.get("created_at"),
+              f"cover #{current.get('issue_number')} at "
+              f"{str(current.get('created_at'))[:19]} vs newest "
+              f"#{newest.get('issue_number')} at "
+              f"{str(newest.get('created_at'))[:19]}")
+
+
 def main():
     print("void --weekly gates")
     test_headline_guard()
@@ -881,6 +949,7 @@ def main():
     test_document_structure()
     test_archive()
     test_no_cap_published_as_count()
+    test_archive_is_derived()
     print()
     if _failures:
         print(f"FAILED ({len(_failures)}): " + ", ".join(_failures))
