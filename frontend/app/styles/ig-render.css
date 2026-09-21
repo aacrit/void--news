@@ -372,6 +372,7 @@ body:has(.ig-canvas) {
   background: var(--ig-terracotta);
   color: #FBF8F0;
   padding: 2px 8px;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 3px;
   font-style: normal;
 }
@@ -381,7 +382,7 @@ body:has(.ig-canvas) {
 .ig-chip__track {
   position: relative;
   height: 16px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: linear-gradient(
     90deg,
     var(--bias-far-left) 0%,
@@ -522,7 +523,7 @@ body:has(.ig-canvas) {
   width: 3px;
   height: 14px;
   transform: translateX(-50%);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
 }
 .ig-example__ridge-tilt-label {
   position: absolute;

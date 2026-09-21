@@ -121,6 +121,7 @@
   left: 0;
   right: 0;
   border-top: 1px solid var(--border-subtle);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 12px 12px 0 0;
   max-height: 80vh;
   overflow-y: auto;
@@ -131,7 +132,7 @@
   position: fixed;
   width: 280px;
   border: 1px solid var(--border-subtle);
-  transition: opacity 250ms var(--ease-cinematic), transform 300ms var(--spring);
+  transition: opacity 250ms var(--ease-cinematic), transform var(--dur-normal) var(--spring);
 }
 
 /* Sigil popup sections — extracted from inline styles (F02) */
@@ -155,7 +156,7 @@
   cursor: pointer;
   position: relative;
   min-height: 44px;
-  transition: opacity 300ms var(--ease-cinematic), filter 300ms var(--ease-cinematic);
+  transition: opacity var(--dur-normal) var(--ease-cinematic), filter var(--dur-normal) var(--ease-cinematic);
 }
 
 .sigil--sm  { gap: 7px; }
@@ -186,7 +187,7 @@
      signal — `both` fill kept it invisible for nearly half a second on
      every card mount. The beam-settle → stamp L-cut survives at 120ms. */
   animation: tiltLabelStamp 250ms var(--spring-snappy) 120ms both;
-  transition: color 400ms var(--ease-cinematic);
+  transition: color var(--dur-morph) var(--ease-cinematic);
 }
 
 /* Unscored beam: dashed stroke + idle pulse */
@@ -270,7 +271,7 @@
   top: 4px;
   width: 2px;
   height: 32px;
-  border-radius: 1px;
+  border-radius: var(--radius-sm);
   opacity: 0.4;
 }
 
@@ -329,7 +330,7 @@
   font-size: var(--text-xs);
   padding: 1px 5px;
   border: 1px solid var(--border-subtle);
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   color: var(--fg-tertiary);
 }
 
@@ -490,7 +491,7 @@
   flex-shrink: 0;
   margin-top: 0.15em;
   color: var(--fg-muted);
-  transition: transform 300ms var(--spring-snappy), opacity 200ms var(--ease-cinematic);
+  transition: transform var(--dur-normal) var(--spring-snappy), opacity 200ms var(--ease-cinematic);
   opacity: 0.5;
 }
 
@@ -523,7 +524,7 @@
 .story-card__family-dot {
   width: 5px;
   height: 5px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: currentColor;
   opacity: 0.55;
 }
@@ -551,7 +552,7 @@
   width: 2px;
   background: var(--ink-quiet, #6b6258);
   opacity: 0.22;
-  border-radius: 1px;
+  border-radius: var(--radius-sm);
   pointer-events: none;
 }
 
@@ -611,6 +612,7 @@
   flex: 1 1 auto;
   display: flex;
   height: 6px;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 3px;
   overflow: hidden;
   background: var(--bg-subtle, rgba(127, 127, 127, 0.12));
@@ -652,7 +654,7 @@
      hover-capable devices only, ensuring smooth interpolation there. */
   filter: var(--cin-warmth-near);
   transition:
-    box-shadow 300ms 30ms var(--ease-cinematic),
+    box-shadow var(--dur-normal) 30ms var(--ease-cinematic),
     transform  320ms var(--spring-snappy);
 }
 
@@ -730,7 +732,7 @@
   overflow-wrap: break-word;
   word-break: break-word;
   text-shadow: 0 0 0 transparent;
-  transition: text-shadow 300ms var(--ease-cinematic);
+  transition: text-shadow var(--dur-normal) var(--ease-cinematic);
 }
 
 .lead-story__headline-text {
@@ -1021,13 +1023,6 @@
   transition: transform var(--dur-settle, 240ms) var(--ease-rack, ease-in-out);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .nav-inner,
-  .nav-logo{
-    transition: none;
-  }
-}
-
 /* ===========================================================================
    Sigil Wordmark — "V[Sigil-O]ID  NEWS" brand lockup (SigilWordmark.tsx)
    Letters inherit currentColor; the Sigil-O ring + beam render in brass.
@@ -1304,8 +1299,8 @@ button:focus-visible .sigil-word__beam {
   cursor: pointer;
   border-radius: var(--radius-sm);
   transition:
-    color 150ms var(--ease-cinematic),
-    background-color 150ms var(--ease-cinematic);
+    color var(--dur-fast) var(--ease-cinematic),
+    background-color var(--dur-fast) var(--ease-cinematic);
 }
 
 .nav-search-btn:hover {
@@ -1470,7 +1465,7 @@ button:focus-visible .sigil-word__beam {
   justify-content: center;
   transition:
     opacity 200ms var(--ease-cinematic),
-    transform 300ms var(--spring-bouncy);
+    transform var(--dur-normal) var(--spring-bouncy);
 }
 
 .theme-toggle__icon--hidden {
@@ -2247,7 +2242,7 @@ button:focus-visible .sigil-word__beam {
 .dd-history-context__link:focus-visible {
   outline: 2px solid var(--fg-primary);
   outline-offset: 2px;
-  border-radius: 2px;
+  border-radius: var(--radius-md);
 }
 
 .dd-history-context__arrow {
@@ -2299,15 +2294,6 @@ button:focus-visible .sigil-word__beam {
     width: 100%;
     padding-left: calc(var(--space-2) + 1em); /* align under title, after arrow */
     white-space: normal;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .dd-history-context__arrow {
-    transition: none;
-  }
-  .dd-history-context__link {
-    transition: none;
   }
 }
 
@@ -2557,7 +2543,7 @@ button:focus-visible .sigil-word__beam {
 }
 
 .comp-view__favicon {
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   flex-shrink: 0;
 }
 
@@ -2659,12 +2645,6 @@ button:focus-visible .sigil-word__beam {
   animation: dd-methodology-reveal var(--dur-normal) var(--spring-gentle) both;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .comp-view__insights-content {
-    animation: none;
-  }
-}
-
 .comp-view__insight-item {
   display: flex;
   align-items: flex-start;
@@ -2729,18 +2709,6 @@ button:focus-visible .sigil-word__beam {
 
   .comp-view__item--wire {
     padding: 2px 0;
-  }
-}
-
-/* ---- Reduced motion ---- */
-@media (prefers-reduced-motion: reduce) {
-  .comp-view__col,
-  .comp-view__item {
-    transition: none;
-  }
-
-  .comp-view__wire-arrow {
-    transition: none;
   }
 }
 
@@ -2948,6 +2916,7 @@ button:focus-visible .sigil-word__beam {
 .kbd-overlay__panel {
   background-color: var(--bg-card);
   border: 1px solid var(--border-subtle);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 12px;
   padding: var(--space-5) var(--space-6);
   box-shadow: var(--shadow-e3);
@@ -2995,6 +2964,7 @@ button:focus-visible .sigil-word__beam {
   color: var(--fg-primary);
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-strong);
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 4px;
   padding: 2px 8px;
   min-width: 28px;
@@ -3152,7 +3122,7 @@ button:focus-visible .sigil-word__beam {
 .page-main,
 .nav-header {
   filter: var(--cin-grade);
-  transition: filter 400ms var(--ease-cinematic);
+  transition: filter var(--dur-morph) var(--ease-cinematic);
 }
 
 /* ── Vignette ── */
@@ -3278,7 +3248,7 @@ button:focus-visible .sigil-word__beam {
   .skb:has(.skb__onair-pill--active) {
     background-color: var(--cin-practical-warmth);
     transition:
-      background-color 300ms var(--ease-cinematic),
+      background-color var(--dur-normal) var(--ease-cinematic),
       border-color 200ms var(--ease-cinematic);
   }
 }
@@ -3308,7 +3278,7 @@ button:focus-visible .sigil-word__beam {
   .skb,
   .site-footer {
     transition:
-      background-color var(--dissolve-surface-dur, 300ms) var(--ease-cinematic),
+      background-color var(--dissolve-surface-dur, var(--dur-normal)) var(--ease-cinematic),
       color var(--dissolve-ink-dur, 200ms) var(--ease-cinematic),
       border-color var(--dissolve-border-dur, 250ms) var(--ease-cinematic),
       box-shadow var(--dissolve-shadow-dur, 200ms) var(--ease-cinematic);
@@ -3316,7 +3286,7 @@ button:focus-visible .sigil-word__beam {
   .page-main,
   .nav-header {
     transition:
-      background-color var(--dissolve-surface-dur, 300ms) var(--ease-cinematic),
+      background-color var(--dissolve-surface-dur, var(--dur-normal)) var(--ease-cinematic),
       color var(--dissolve-ink-dur, 200ms) var(--ease-cinematic),
       border-color var(--dissolve-border-dur, 250ms) var(--ease-cinematic),
       box-shadow var(--dissolve-shadow-dur, 200ms) var(--ease-cinematic),
@@ -3326,7 +3296,7 @@ button:focus-visible .sigil-word__beam {
      layer theme dissolve underneath */
   .story-card {
     transition:
-      background-color var(--dissolve-surface-dur, 300ms) var(--ease-cinematic),
+      background-color var(--dissolve-surface-dur, var(--dur-normal)) var(--ease-cinematic),
       color var(--dissolve-ink-dur, 200ms) var(--ease-cinematic),
       border-color var(--dissolve-border-dur, 250ms) var(--ease-cinematic),
       box-shadow 120ms var(--ease-cinematic),
@@ -3334,10 +3304,10 @@ button:focus-visible .sigil-word__beam {
   }
   .lead-story {
     transition:
-      background-color var(--dissolve-surface-dur, 300ms) var(--ease-cinematic),
+      background-color var(--dissolve-surface-dur, var(--dur-normal)) var(--ease-cinematic),
       color var(--dissolve-ink-dur, 200ms) var(--ease-cinematic),
       border-color var(--dissolve-border-dur, 250ms) var(--ease-cinematic),
-      box-shadow 300ms var(--shadow-lag, 30ms) var(--ease-cinematic);
+      box-shadow var(--dur-normal) var(--shadow-lag, 30ms) var(--ease-cinematic);
   }
 }
 
@@ -3764,7 +3734,7 @@ button:focus-visible .sigil-word__beam {
   appearance: none;
   background: transparent;
   border: 1px solid var(--border-subtle);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   padding: 10px 22px;
   min-height: 44px;
   font-family: var(--font-structural);
@@ -3875,7 +3845,7 @@ button:focus-visible .sigil-word__beam {
   pointer-events: none;
   z-index: 1;
   opacity: 0;
-  transition: opacity 300ms var(--ease-cinematic);
+  transition: opacity var(--dur-normal) var(--ease-cinematic);
 }
 .deep-dive-panel[data-settled]::before {
   opacity: 1;
@@ -3927,6 +3897,7 @@ button:focus-visible .sigil-word__beam {
     height: 80vh;
     max-height: 80vh;
     min-height: 0;
+    /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
     border-radius: 6px;
     border: 1px solid var(--border-subtle);
     background-color: var(--bg-primary);
@@ -3953,7 +3924,7 @@ button:focus-visible .sigil-word__beam {
     width: 100%;
     max-width: 100%;
     max-height: 92vh;
-    border-radius: 16px 16px 0 0;
+    border-radius: var(--radius-sheet);
     border: none;
     background: var(--bg-primary);
     backdrop-filter: none;
@@ -3973,13 +3944,6 @@ button:focus-visible .sigil-word__beam {
   }
   .deep-dive-panel::-webkit-scrollbar { display: none; }
   .dd-headline { font-size: clamp(1.25rem, 5vw, 1.5rem); }
-}
-
-/* ── Reduced motion: no rack, no reveal, no grade transition ── */
-@media (prefers-reduced-motion: reduce) {
-  .deep-dive-panel::before{
-    transition: none;
-  }
 }
 
 /* ===========================================================================

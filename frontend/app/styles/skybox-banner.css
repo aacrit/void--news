@@ -307,6 +307,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 4px;
   border: none;
   background: transparent;
@@ -351,6 +352,7 @@
   color: var(--accent-warm);
   opacity: 0.6;
   cursor: pointer;
+  /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 4px;
   transition: opacity 200ms var(--ease-cinematic), transform 200ms var(--spring-snappy);
 }
@@ -393,7 +395,7 @@
      banner's height morph (useHeightMorph in SkyboxBanner) — one continuous
      unfold, not a jump followed by a fade. Mirrors skbCompactRestore (280ms)
      on the refold side. */
-  animation: skbFadeIn 260ms var(--ease-cinematic) both;
+  animation: skbFadeIn var(--dur-step) var(--ease-cinematic) both;
 }
 
 @keyframes skbSwapFromRight {
@@ -572,7 +574,7 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   padding: 1px 8px;
-  border-radius: 2px;
+  border-radius: var(--radius-md);
   border: 1px solid;
   white-space: nowrap;
 }
@@ -665,7 +667,7 @@
   .skb--show-opinion .skb__section-content,
   .skb--show-tldr .skb__section-content {
     animation-name: skbElementIn;
-    animation-duration: 300ms;
+    animation-duration: var(--dur-normal);
   }
 
 }
