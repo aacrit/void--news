@@ -67,62 +67,45 @@
   <!-- Amber accent divider below icon -->
   <rect x="900" y="1340" width="1200" height="2" fill="url(#ruleGlow)" rx="1"/>
 
-  <!-- "void": Playfair Display, editorial weight -->
+  <!-- Lockup, line 1: the parent brand in the editorial face -->
   <text
-    x="1500" y="1600"
+    x="1500" y="1620"
     font-family="'Playfair Display', Georgia, 'Times New Roman', serif"
     font-weight="700"
-    font-size="320"
+    font-size="230"
     fill="#EDE8E0"
     text-anchor="middle"
-    letter-spacing="12"
+    letter-spacing="34"
     filter="url(#textShadow)"
-  >void</text>
-
-  <!-- "history": monospace data voice, amber accent -->
-  <text
-    x="1500" y="1870"
-    font-family="'IBM Plex Mono', 'JetBrains Mono', Menlo, Consolas, monospace"
-    font-weight="400"
-    font-size="220"
-    fill="#D4A574"
-    text-anchor="middle"
-    letter-spacing="8"
-    filter="url(#textShadow)"
-  >history</text>
+  >VOID NEWS</text>
 
   <!-- Second horizontal rule -->
-  <rect x="1050" y="1960" width="900" height="1.5" fill="url(#ruleGlow)" rx="1"/>
+  <rect x="1050" y="1730" width="900" height="1.5" fill="url(#ruleGlow)" rx="1"/>
 
-  <!-- "HISTORY": Barlow Condensed meta voice, all caps -->
+  <!-- Lockup, line 2: the programme, amber, the largest line on the cover -->
   <text
-    x="1500" y="2140"
+    x="1500" y="2070"
+    font-family="'Playfair Display', Georgia, 'Times New Roman', serif"
+    font-weight="700"
+    font-size="360"
+    fill="#D4A574"
+    text-anchor="middle"
+    letter-spacing="6"
+    filter="url(#textShadow)"
+  >History</text>
+
+  <!-- Cadence: Barlow Condensed meta voice, all caps. A durable fact only:
+       no edition name, no source count, nothing that goes stale. -->
+  <text
+    x="1500" y="2330"
     font-family="'Barlow Condensed', 'Franklin Gothic Medium', 'Arial Narrow', sans-serif"
     font-weight="600"
-    font-size="160"
+    font-size="110"
     fill="#B8B0A5"
     text-anchor="middle"
-    letter-spacing="48"
+    letter-spacing="40"
     filter="url(#textShadow)"
-  >HISTORY</text>
-
-  <!-- Tagline: small, bottom -->
-  <text
-    x="1500" y="2560"
-    font-family="'Barlow Condensed', 'Franklin Gothic Medium', 'Arial Narrow', sans-serif"
-    font-weight="400"
-    font-size="72"
-    fill="#8A847B"
-    text-anchor="middle"
-    letter-spacing="12"
-  >One event per episode.</text>
-
-  <!-- Edition marker: minimal globe (circle + meridian + equator) -->
-  <g transform="translate(1500,2340)" fill="none" stroke="#D4A574" stroke-width="1.5" stroke-opacity="0.35">
-    <circle cx="0" cy="0" r="24"/>
-    <ellipse cx="0" cy="0" rx="10" ry="24"/>
-    <line x1="-24" y1="0" x2="24" y2="0"/>
-  </g>
+  >ONE EVENT PER EPISODE</text>
 
   <!-- Vignette overlay: cinematic edge darkening -->
   <rect width="3000" height="3000" fill="url(#vignette)"/>

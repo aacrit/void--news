@@ -6,16 +6,14 @@ import "../styles/spectrum.css";
 
 import { useState, useEffect, useMemo, useCallback } from "react";
 import Link from "next/link";
-import { supabase, supabaseError, fetchMethodologyArticles, fetchLastPipelineRun } from "../lib/supabase";
+import { supabase, supabaseError, fetchMethodologyArticles } from "../lib/supabase";
 import {
   leanLabel,
   senseLabel,
   rigorLabel,
 } from "../lib/biasColors";
 import SpectrumChart, { type SpectrumSource, normalizeLean } from "../components/SpectrumChart";
-import NavBar from "../components/NavBar";
 import LogoIcon from "../components/LogoIcon";
-import Footer from "../components/Footer";
 // Canonical curated-source total (data/sources.json — verified). Single source
 // of truth so the /sources header, the finale hero, and the About page can't
 // drift apart (F9). Live DB row count can include inactive/duplicate rows.
@@ -805,21 +803,6 @@ function SourcesPageInner({ initialSources }: { initialSources: SpectrumSource[]
   const [isLoading, setIsLoading] = useState(!hasInitial);
   const [error, setError] = useState<string | null>(null);
 
-  // Edition build time (pipeline completed_at) — drives the NavBar masthead
-  // "as of" dateline so it shows the same edition time as the home feed. NavBar
-  // formats the DATE in UTC and the TIME in the viewer's LOCAL zone after mount
-  // (getEditionTimestampLocal), so every surface agrees on the same instant.
-  const [editionBuiltAt, setEditionBuiltAt] = useState<string | null>(null);
-  useEffect(() => {
-    let alive = true;
-    fetchLastPipelineRun().then((run) => {
-      if (alive && run?.completed_at) setEditionBuiltAt(run.completed_at as string);
-    });
-    return () => {
-      alive = false;
-    };
-  }, []);
-
   useEffect(() => {
     const controller = new AbortController();
 
@@ -884,8 +867,6 @@ function SourcesPageInner({ initialSources }: { initialSources: SpectrumSource[]
       </Link>
       {/* Shared masthead — identical top chrome to the home feed (tagline,
           edition timestamp, experimental badge, page links, theme toggle). */}
-      <NavBar editionBuiltAt={editionBuiltAt} />
-
       <main id="main-content" className="page-main sources-page">
         {/* ---- Toolbar: title ---- */}
         <div className="sources-toolbar">
@@ -965,7 +946,6 @@ function SourcesPageInner({ initialSources }: { initialSources: SpectrumSource[]
         <Methodology sources={sources} />
       </main>
 
-      <Footer />
     </div>
   );
 }

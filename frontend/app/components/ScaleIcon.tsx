@@ -3,7 +3,7 @@
 import { useRef, useEffect } from "react";
 
 /* ---------------------------------------------------------------------------
-   ScaleIcon — the Sigil-O brand glyph
+   ScaleIcon: the Sigil-O brand glyph
 
    The FULL standalone Sigil: the same coverage ring (the analytical lens) with
    a level balance beam + end ticks as the wordmark's "O", now carrying the
@@ -49,21 +49,21 @@ export interface ScaleIconProps {
 const STYLES = `
 /* === ScaleIcon (Sigil-O) keyframes === */
 
-/* idle — gentle level settle */
+/* idle: gentle level settle */
 @keyframes si-idle {
   0%, 100% { transform: rotate(0deg); }
   25% { transform: rotate(1.2deg); }
   75% { transform: rotate(-1.2deg); }
 }
 
-/* loading — dramatic tipping */
+/* loading: dramatic tipping */
 @keyframes si-loading {
   0%, 100% { transform: rotate(0deg); }
   25% { transform: rotate(8deg); }
   75% { transform: rotate(-8deg); }
 }
 
-/* hover — snappy single tip and return */
+/* hover: snappy single tip and return */
 @keyframes si-hover {
   0% { transform: rotate(0deg); }
   35% { transform: rotate(-5deg); }
@@ -71,7 +71,7 @@ const STYLES = `
   100% { transform: rotate(0deg); }
 }
 
-/* analyzing — deliberate read: tip left, pause, tip right, pause, settle */
+/* analyzing: deliberate read: tip left, pause, tip right, pause, settle */
 @keyframes si-analyzing {
   0% { transform: rotate(0deg); }
   15% { transform: rotate(6deg); }
@@ -82,7 +82,7 @@ const STYLES = `
   100% { transform: rotate(0deg); }
 }
 
-/* balanced — spring settle from tipped to level */
+/* balanced: spring settle from tipped to level */
 @keyframes si-balanced {
   0% { transform: rotate(8deg); }
   40% { transform: rotate(-2deg); }
@@ -91,7 +91,7 @@ const STYLES = `
   100% { transform: rotate(0deg); }
 }
 
-/* broadcast — VU meter needle oscillation, asymmetric amplitude */
+/* broadcast: VU meter needle oscillation, asymmetric amplitude */
 @keyframes si-broadcast {
   0%, 100% { transform: rotate(0deg); }
   15% { transform: rotate(4deg); }
@@ -100,7 +100,7 @@ const STYLES = `
   75% { transform: rotate(-2deg); }
 }
 
-/* pulse — whole-icon scale pulse */
+/* pulse: whole-icon scale pulse */
 @keyframes si-pulse {
   0% { transform: scale(1); }
   30% { transform: scale(0.95); }
@@ -108,20 +108,20 @@ const STYLES = `
   100% { transform: scale(1); }
 }
 
-/* draw — stroke reveal */
+/* draw: stroke reveal */
 @keyframes si-draw {
   from { stroke-dashoffset: var(--si-len); }
   to { stroke-dashoffset: 0; }
 }
 
-/* ring-pulse — subtle lens activation on hover */
+/* ring-pulse: subtle lens activation on hover */
 @keyframes si-void-pulse {
   0% { transform: scale(1); opacity: 1; }
   40% { transform: scale(1.06); opacity: 0.75; }
   100% { transform: scale(1); opacity: 1; }
 }
 
-/* === Animation classes — beam pivots around the ring center (50,50) === */
+/* === Animation classes: beam pivots around the ring center (50,50) === */
 
 .si-beam--idle {
   transform-origin: 50px 40px;
@@ -157,7 +157,7 @@ const STYLES = `
   animation: si-pulse 300ms linear(0, 0.006, 0.025 2.8%, 0.101 6.1%, 0.539 18.9%, 0.721 25.3%, 0.849 31.5%, 0.937 38.1%, 0.968 41.8%, 0.991 45.7%, 1.006 50.1%, 1.015 55%, 1.017 63.9%, 1.001 85.6%, 1) forwards;
 }
 
-/* === Hover — activated by .si-hoverable ancestor === */
+/* === Hover: activated by .si-hoverable ancestor === */
 .si-void { transform-origin: 50px 40px; }
 
 .si-hoverable:hover .si-beam--idle {
@@ -168,7 +168,7 @@ const STYLES = `
   animation: si-void-pulse 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* === Draw animation — staggered per element === */
+/* === Draw animation: staggered per element === */
 .si-draw-void {
   --si-len: 189;
   stroke-dasharray: 189;
@@ -274,7 +274,7 @@ export function ScaleIcon({
   const rootClass = animation === "pulse" ? "si-root--pulse" : undefined;
   const isDraw = animation === "draw";
 
-  /* The full footed Sigil renders in every state — ring + beam + ticks + foot.
+  /* The full footed Sigil renders in every state: ring + beam + ticks + foot.
      animation="none" simply applies no animation class, leaving the mark static
      (the complete favicon-style mark, not a bare ring). */
 
@@ -296,7 +296,7 @@ export function ScaleIcon({
         ...style,
       }}
     >
-      {/* Coverage ring — the analytical lens, the void. Hollow, no fill.
+      {/* Coverage ring: the analytical lens, the void. Hollow, no fill.
           Lifted to cy40 / r30 so the foot fits below within the square box. */}
       <circle
         cx="50"
@@ -306,7 +306,7 @@ export function ScaleIcon({
         className={isDraw ? "si-draw-void" : "si-void"}
       />
 
-      {/* Balance beam + weight ticks — level at rest, tips on animation.
+      {/* Balance beam + weight ticks: level at rest, tips on animation.
           The ring is the fulcrum; the group pivots around (50,40). */}
       <g className={beamClass}>
         <line
@@ -326,7 +326,7 @@ export function ScaleIcon({
         />
       </g>
 
-      {/* Scale foot — post + base. Static: it is the ground the scale stands on
+      {/* Scale foot: post + base. Static: it is the ground the scale stands on
           and never tips with the beam. Outside the beam group by design. */}
       <line x1="50" y1="70" x2="50" y2="86" strokeWidth={6} strokeLinecap="round" />
       <path d="M36 93 C44 88 56 88 64 93" fill="none" strokeWidth={6} strokeLinecap="round" />

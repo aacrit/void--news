@@ -8,6 +8,58 @@
 /* ---------------------------------------------------------------------------
    Page Container — Archival palette + cinematic post-processing
    --------------------------------------------------------------------------- */
+/* The section's palette lives on :root while a History page is mounted, so the shared masthead and footer can wear it too (they sit outside .hist-page). */
+:root:has(.hist-page) {
+  --hist-accent: #5C4033;
+  --hist-accent-bright: #6D4E3F;
+  --hist-accent-dim: #4A3328;
+  --hist-accent-ghost: rgba(92, 64, 51, 0.06);
+  --hist-accent-wash: rgba(92, 64, 51, 0.14);
+  --hist-accent-ink: rgba(92, 64, 51, 0.22);
+  --hist-brass: #9B7A2F;
+  --hist-brass-bright: #B08D3A;
+  --hist-brass-dim: #836722;
+  --hist-brass-ghost: rgba(155, 122, 47, 0.08);
+  --hist-brass-wash: rgba(155, 122, 47, 0.15);
+  --hist-paper: #F2EDE0;
+  --hist-paper-deep: #E8E0CF;
+  --hist-ink: #2C2418;
+  --hist-ink-secondary: #544A3A;
+  --hist-ink-muted: #655C4E;
+  --hist-paper-fixed: #F2EDE0;
+  --hist-bg-secondary: #E9E3D4;
+  --hist-bg-inset: #EDE8D8;
+  --hist-persp-a: #4A6E85;
+  --hist-persp-b: #8E5B42;
+  --hist-persp-c: #5D7748;
+  --hist-persp-d: #7D5A6E;
+  --hist-persp-e: #8B7638;
+  --hist-persp-f: #6E5242; /* THE COLD WAR — deep iron red */
+
+  /* Surfaces */
+  --hist-bg: #F2EDE0;
+  --hist-bg-card: #F7F2E8;
+  --hist-bg-elevated: #FAF6EE;
+  --hist-border: #D4CBBA;
+  --hist-border-subtle: #E0D9CA;
+  --hist-divider: #CCC3B2;
+  --hist-shadow-tint: rgba(44, 36, 24, 0.12);
+  --hist-doc-edge:
+    inset 0 0 0 1px rgba(92, 64, 51, 0.06),
+    2px 3px 6px rgba(44, 36, 24, 0.06),
+    3px 5px 12px rgba(44, 36, 24, 0.04);
+  --hist-doc-edge-hover:
+    inset 0 0 0 1px rgba(92, 64, 51, 0.10),
+    3px 5px 10px rgba(44, 36, 24, 0.08),
+    4px 8px 20px rgba(44, 36, 24, 0.06);
+  --hist-doc-edge-lifted:
+    inset 0 0 0 1px rgba(92, 64, 51, 0.08),
+    4px 6px 16px rgba(44, 36, 24, 0.12),
+    6px 10px 32px rgba(44, 36, 24, 0.08);
+  --hist-topbar-height: var(--nav-height); /* the shared masthead; History has no topbar of its own */
+  --hist-mobile-chrome-height: 52px;
+}
+
 .hist-page {
   min-height: 100vh;
   display: flex;
@@ -25,62 +77,16 @@
   width: 100%;
 
   /* ── Archival Palette — Light: Foxed Vellum ── */
-  --hist-accent: #5C4033;
-  --hist-accent-bright: #6D4E3F;
-  --hist-accent-dim: #4A3328;
-  --hist-accent-ghost: rgba(92, 64, 51, 0.06);
-  --hist-accent-wash: rgba(92, 64, 51, 0.14);
-  --hist-accent-ink: rgba(92, 64, 51, 0.22);
 
-  --hist-brass: #9B7A2F;
-  --hist-brass-bright: #B08D3A;
-  --hist-brass-dim: #836722;
-  --hist-brass-ghost: rgba(155, 122, 47, 0.08);
-  --hist-brass-wash: rgba(155, 122, 47, 0.15);
 
-  --hist-paper: #F2EDE0;
-  --hist-paper-deep: #E8E0CF;
-  --hist-ink: #2C2418;
-  --hist-ink-secondary: #544A3A;
-  --hist-ink-muted: #655C4E;
 
   /* Fixed light paper — does not flip in dark mode, used on forced-dark backdrops */
-  --hist-paper-fixed: #F2EDE0;
 
   /* Secondary surfaces */
-  --hist-bg-secondary: #E9E3D4;
-  --hist-bg-inset: #EDE8D8;
 
   /* Perspective colors — warmed to belong in the archival palette */
-  --hist-persp-a: #4A6E85;
-  --hist-persp-b: #8E5B42;
-  --hist-persp-c: #5D7748;
-  --hist-persp-d: #7D5A6E;
-  --hist-persp-e: #8B7638;
-  --hist-persp-f: #6E5242; /* THE COLD WAR — deep iron red */
-
-  /* Surfaces */
-  --hist-bg: #F2EDE0;
-  --hist-bg-card: #F7F2E8;
-  --hist-bg-elevated: #FAF6EE;
-  --hist-border: #D4CBBA;
-  --hist-border-subtle: #E0D9CA;
-  --hist-divider: #CCC3B2;
-  --hist-shadow-tint: rgba(44, 36, 24, 0.12);
 
   /* Document edge shadow — key light from top-left, directional */
-  --hist-doc-edge:
-    inset 0 0 0 1px rgba(92, 64, 51, 0.06),
-    2px 3px 6px rgba(44, 36, 24, 0.06),
-    3px 5px 12px rgba(44, 36, 24, 0.04);
-  --hist-doc-edge-hover:
-    inset 0 0 0 1px rgba(92, 64, 51, 0.10),
-    3px 5px 10px rgba(44, 36, 24, 0.08),
-    4px 8px 20px rgba(44, 36, 24, 0.06);
-  --hist-doc-edge-lifted:
-    inset 0 0 0 1px rgba(92, 64, 51, 0.08),
-    4px 6px 16px rgba(44, 36, 24, 0.12),
-    6px 10px 32px rgba(44, 36, 24, 0.08);
 
   /* Spring presets (CSS approximations) */
   --ease-archive-snap: cubic-bezier(0.22, 1.4, 0.36, 1);
@@ -89,34 +95,30 @@
   --ease-unfold: cubic-bezier(0.14, 0.8, 0.26, 1);
 
   /* Mobile navigation tokens */
-  --hist-topbar-height: 56px;
-  --hist-mobile-chrome-height: 52px;
 
   background-color: var(--hist-bg);
   color: var(--hist-ink);
 }
 
 /* ── Dark Mode — Museum Case ── */
-:root[data-mode="dark"] .hist-page {
+/* Dark palette, same scope rule as above. */
+:root[data-mode="dark"]:has(.hist-page) {
   --hist-accent: #8E6A56;
   --hist-accent-bright: #A37A66;
   --hist-accent-dim: #6D5040;
   --hist-accent-ghost: rgba(142, 106, 86, 0.08);
   --hist-accent-wash: rgba(142, 106, 86, 0.18);
   --hist-accent-ink: rgba(142, 106, 86, 0.25);
-
   --hist-brass: #C4A04A;
   --hist-brass-bright: #D4B05A;
   --hist-brass-dim: #A88A3A;
   --hist-brass-ghost: rgba(196, 160, 74, 0.08);
   --hist-brass-wash: rgba(196, 160, 74, 0.15);
-
   --hist-paper: #1A1612;
   --hist-paper-deep: #14110E;
   --hist-ink: #D9CFC0;
   --hist-ink-secondary: #B0A898;
   --hist-ink-muted: #A09888;
-
   --hist-persp-a: #6498B8;
   --hist-persp-b: #C47D5E;
   --hist-persp-c: #7A9E62;
@@ -126,7 +128,6 @@
 
   --hist-bg-secondary: #232018;
   --hist-bg-inset: #1E1A14;
-
   --hist-bg: #1A1612;
   --hist-bg-card: #221E18;
   --hist-bg-elevated: #2A2520;
@@ -134,7 +135,6 @@
   --hist-border-subtle: #302A22;
   --hist-divider: #342E26;
   --hist-shadow-tint: rgba(0, 0, 0, 0.30);
-
   --hist-doc-edge:
     inset 0 0 0 1px rgba(142, 106, 86, 0.08),
     2px 3px 6px rgba(0, 0, 0, 0.20),
@@ -147,6 +147,14 @@
     inset 0 0 0 1px rgba(142, 106, 86, 0.10),
     4px 6px 16px rgba(0, 0, 0, 0.24),
     6px 10px 32px rgba(0, 0, 0, 0.20);
+}
+
+:root[data-mode="dark"] .hist-page {
+
+
+
+
+
 
   background-color: var(--hist-bg);
   color: var(--hist-ink);
@@ -202,214 +210,12 @@
   filter: contrast(1.04) saturate(0.82) sepia(0.04) brightness(0.98);
 }
 
-/* ---------------------------------------------------------------------------
-   Topbar — Sticky navigation bar
-   --------------------------------------------------------------------------- */
-.hist-topbar {
-  position: sticky;
-  top: 0;
-  z-index: 50;
-  /* Three zones: small back-mark (left) | large product logo (dead-center) |
-     actions (right). Equal 1fr side columns keep the centered logo optically
-     centered regardless of the side zones' differing widths. */
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-5);
-  padding-top: calc(var(--space-2) + env(safe-area-inset-top, 0px));
-  background-color: color-mix(in srgb, var(--hist-bg) 88%, transparent);
-  backdrop-filter: blur(10px) saturate(0.9);
-  -webkit-backdrop-filter: blur(10px) saturate(0.9);
-  border-bottom: 1px solid var(--hist-border-subtle);
-  transition: background-color var(--dur-morph) var(--ease-cinematic);
-}
 
-/* LEFT zone — the compact back-to-parent mark, left-aligned. */
-.hist-topbar__left {
-  justify-self: start;
-  display: flex;
-  align-items: center;
-  min-width: 0;
-}
-
-/* CENTER zone — the large VOID HISTORY product logo, the page hero. */
-.hist-topbar__brand {
-  justify-self: center;
-  display: inline-flex;
-  align-items: center;
-  flex-shrink: 0;
-  text-decoration: none;
-  color: var(--hist-ink);
-  min-height: 44px;
-}
-.hist-topbar__brand-lg,
-.hist-topbar__brand-sm {
-  display: inline-flex;
-  align-items: center;
-}
-/* Show the compact hero on narrow phones so the three zones fit without
-   horizontal overflow; the full-size hero returns at 600px+. */
-.hist-topbar__brand-sm {
-  display: none;
-}
-.hist-topbar__back-word {
-  display: inline-flex;
-  align-items: center;
-}
-@media (max-width: 599px) {
-  .hist-topbar {
-    gap: var(--space-1);
-    padding-left: var(--space-4);
-    padding-right: var(--space-4);
-  }
-  .hist-topbar__brand-lg {
-    display: none;
-  }
-  .hist-topbar__brand-sm {
-    display: inline-flex;
-  }
-}
-/* Phones (symmetric grid columns leave the back mark too little room beside a
-   prominent centered logo): collapse the back mark to arrow-only. The arrow
-   still links to `/` with the "Back to Void News" label. */
-@media (max-width: 419px) {
-  .hist-topbar__back-word {
-    display: none;
-  }
-  .hist-topbar__back {
-    min-width: 44px;
-  }
-}
-
-@media (min-width: 768px) {
-  .hist-topbar {
-    padding: var(--space-2) var(--space-6);
-  }
-}
-
-.hist-topbar__back {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  text-decoration: none;
-  color: var(--hist-ink-secondary);
-  transition: color 200ms var(--ease-cinematic), transform 200ms var(--ease-cinematic);
-}
-
-.hist-topbar__back:hover {
-  color: var(--hist-accent);
-  transform: translateX(-2px);
-}
-
-.hist-topbar__arrow {
-  font-size: var(--text-base);
-  line-height: 1;
-}
-
-/* Logo icon in topbar — the void brand mark */
-.hist-topbar__logo {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  color: var(--hist-accent);
-  transition: color 200ms var(--ease-cinematic);
-}
-
-.hist-topbar__back:hover .hist-topbar__logo {
-  color: var(--hist-brass);
-}
-
-.hist-topbar__title {
-  font-family: var(--font-editorial);
-  font-size: var(--text-base);
-  font-weight: 700;
-  font-style: italic;
-  color: var(--hist-ink);
-  letter-spacing: 0.01em;
-}
-
-/* "history" label after logo — structural voice */
-.hist-topbar__section {
-  font-family: var(--font-data);
-  font-size: var(--text-sm);
-  font-weight: 400;
-  color: var(--hist-ink-secondary);
-  letter-spacing: 0.04em;
-}
-
-/* Organic ink dot separator between logo and section name */
-.hist-topbar__dot {
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: var(--hist-accent);
-  opacity: 0.4;
-  flex-shrink: 0;
-}
-
-.hist-topbar__subtitle {
-  font-family: var(--font-meta);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--hist-brass);
-  margin-left: var(--space-2);
-}
-
-.hist-topbar__actions {
-  justify-self: end;
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-}
-
-/* Accented entry point into void --revolt from within the history archive.
-   Filled revolt-blue pill (void --revolt's brand color); signals a distinct
-   sibling and stays prominent on the sepia topbar. Theme-aware: deep blue on
-   near-white text in light, bright blue on dark ink in dark.
-   Contrast: #EAF1FF on #1E40AF > 8:1; #0B1B3B on #6AA0FF ~6.7:1 (both AA). */
-.hist-topbar__revolt {
-  --rev-cta: #1E40AF;
-  --rev-cta-hover: #17348C;
-  --rev-cta-fg: #EAF1FF;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4em;
-  padding: 0.34rem 0.72rem;
-  min-height: 36px;
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  letter-spacing: 0.03em;
-  color: var(--rev-cta-fg);
-  background-color: var(--rev-cta);
-  border: 1px solid rgba(0, 0, 0, 0.22);
-  border-radius: var(--radius-sm);
-  text-decoration: none;
-  white-space: nowrap;
-  transition: background-color 160ms ease, transform 140ms var(--ease-cinematic, ease);
-}
 :root[data-mode="dark"] .hist-topbar__revolt {
   --rev-cta: #6AA0FF;
   --rev-cta-hover: #83B2FF;
   --rev-cta-fg: #0B1B3B;
   border-color: rgba(0, 0, 0, 0.28);
-}
-.hist-topbar__revolt:hover {
-  background-color: var(--rev-cta-hover);
-}
-.hist-topbar__revolt:focus-visible {
-  outline: 2px solid var(--rev-cta);
-  outline-offset: 2px;
-}
-.hist-topbar__revolt-arrow { transition: transform 160ms ease; }
-.hist-topbar__revolt:hover .hist-topbar__revolt-arrow { transform: translateX(2px); }
-@media (max-width: 420px) {
-  .hist-topbar__revolt { padding: 0.34rem 0.55rem; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .hist-topbar__revolt, .hist-topbar__revolt-arrow { transition: none; }
 }
 
 /* Sibling-world discovery card — void --revolt callout at the end of the
@@ -756,7 +562,6 @@
 }
 
 /* topbar/content/section: visible immediately, no animation overhead */
-.hist-cold-open--topbar,
 .hist-cold-open--content,
 .hist-cold-open--section {
   opacity: 1;
@@ -4792,75 +4597,11 @@ main:has(.hist-tl-wrapper) + .hist-footer {
   display: none;
 }
 
-/* ---------------------------------------------------------------------------
-   Footer
-   --------------------------------------------------------------------------- */
-.hist-footer {
-  padding: var(--space-5);
-  border-top: none;
-  text-align: center;
-  margin-top: auto;
-  position: relative;
-}
-
-/* Organic ink top border for footer */
-.hist-footer::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: var(--space-5);
-  right: var(--space-5);
-  height: 2px;
-  background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 3' preserveAspectRatio='none'%3E%3Cpath d='M0 1.5C20 0.4 50 2.6 100 1.5S180 0.3 260 1.5S340 2.7 380 1.5C390 1.2 398 1.8 400 1.5' stroke='%23D4CBBA' stroke-width='0.8' fill='none'/%3E%3C/svg%3E")
-    center / 100% 100% no-repeat;
-  opacity: 0.5;
-}
 
 :root[data-mode="dark"] .hist-footer::before {
   background:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 3' preserveAspectRatio='none'%3E%3Cpath d='M0 1.5C20 0.4 50 2.6 100 1.5S180 0.3 260 1.5S340 2.7 380 1.5C390 1.2 398 1.8 400 1.5' stroke='%233A3428' stroke-width='0.8' fill='none'/%3E%3C/svg%3E")
     center / 100% 100% no-repeat;
-}
-
-.hist-footer__brand {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-3);
-  color: var(--hist-ink-secondary);
-}
-
-/* Logo in footer */
-.hist-footer__logo {
-  color: var(--hist-ink-muted);
-  opacity: 0.6;
-  transition: opacity 200ms;
-}
-
-.hist-footer:hover .hist-footer__logo {
-  opacity: 0.8;
-}
-
-.hist-footer__section {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  font-weight: 400;
-  color: var(--hist-ink-muted);
-  letter-spacing: 0.04em;
-}
-
-.hist-footer__link {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  color: var(--hist-ink-muted);
-  text-decoration: none;
-  transition: color 200ms;
-}
-
-.hist-footer__link:hover {
-  color: var(--hist-accent);
 }
 
 /* ---------------------------------------------------------------------------
@@ -4944,10 +4685,9 @@ main:has(.hist-tl-wrapper) + .hist-footer {
     filter: none;
   }
 
-  .hist-cold-open--topbar,
   .hist-cold-open--hero,
-  .hist-cold-open--content,
-  .hist-cold-open--section {
+.hist-cold-open--content,
+.hist-cold-open--section {
     animation: none;
     opacity: 1;
     transform: none;
@@ -5003,10 +4743,6 @@ main:has(.hist-tl-wrapper) + .hist-footer {
   }
 
   .hist-redacted:hover .hist-redacted__reveal {
-    transition: none;
-  }
-
-  .hist-topbar__back {
     transition: none;
   }
 
@@ -5083,11 +4819,6 @@ main:has(.hist-tl-wrapper) + .hist-footer {
   min-height: 44px;
   min-width: 44px;
   justify-content: center;
-}
-
-.hist-topbar__back {
-  min-height: 44px;
-  padding: var(--space-1) 0;
 }
 
 /* Gallery items: add left peek for horizontal scroll hint on mobile */
@@ -5299,19 +5030,6 @@ main:has(.hist-tl-wrapper) + .hist-footer {
   transition: transform 60ms var(--ease-cinematic);
 }
 
-/* ---------------------------------------------------------------------------
-   11. TOPBAR — Simple hover color, arrow slide
-   --------------------------------------------------------------------------- */
-
-/* Back arrow: slide left on hover */
-.hist-topbar__arrow {
-  display: inline-block;
-  transition: transform 200ms var(--ease-cinematic);
-}
-
-.hist-topbar__back:hover .hist-topbar__arrow {
-  transform: translateX(-3px);
-}
 
 /* ---------------------------------------------------------------------------
    12. FOOTER — Simple link hover
@@ -5559,14 +5277,6 @@ main:has(.hist-tl-wrapper) + .hist-footer {
     stroke-dasharray: none;
     stroke-dashoffset: 0;
     transition: none;
-  }
-
-  .hist-topbar__arrow {
-    transition: none;
-  }
-
-  .hist-topbar__back:hover .hist-topbar__arrow {
-    transform: none;
   }
 
   .hist-vocab-unique {

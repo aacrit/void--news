@@ -11,7 +11,7 @@
 
 import type { Metadata } from "next";
 import { getWeeklyIssues } from "../../lib/weeklyIssues";
-import { pageMetadata } from "../../lib/siteMeta";
+import { pageMetadata, sectionTitle } from "../../lib/siteMeta";
 import IssueIndex from "./IssueIndex";
 
 export const dynamic = "force-static";
@@ -19,12 +19,12 @@ export const dynamic = "force-static";
 export function generateMetadata(): Metadata {
   const n = getWeeklyIssues().length;
   return pageMetadata({
-    title: "Every issue · Void Weekly",
+    title: sectionTitle("Every issue", "Weekly"),
     description:
       n > 0
-        ? `All ${n} issues of Void Weekly, the Sunday magazine from Void News. ` +
+        ? `All ${n} issues of Weekly, the Sunday magazine from Void News. ` +
           "Every issue is free, with no advertising and no paywall."
-        : "Void Weekly, the Sunday magazine from Void News.",
+        : "Weekly, the Sunday magazine from Void News.",
     path: "/weekly/archive/",
   });
 }

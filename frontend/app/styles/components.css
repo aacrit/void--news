@@ -2047,7 +2047,7 @@ button:focus-visible .sigil-word__beam {
    tagline + dateline + spinoffs + pages without squeezing the dateline off.
    Below this the dateline (functional) keeps the space; the tagline is
    decorative branding and degrades gracefully by hiding. */
-@media (min-width: 1180px) {
+@media (min-width: 1440px) {
   .nav-tagline {
     display: inline-block;
   }
@@ -2239,109 +2239,6 @@ button:focus-visible .sigil-word__beam {
   outline-offset: 2px;
 }
 
-/* nav-lens__editions / nav-lens__content blocks deleted 2026-05-15 — Row 2
-   was removed in redesign (filters + content shortcuts moved to nav-pages
-   in Row 1). nav-ed remains for the optional mobile edition tabs that
-   still render when MULTI_EDITION is true. */
-
-.nav-ed {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-family: var(--font-editorial);
-  font-size: var(--text-sm);
-  font-weight: 400;
-  color: var(--fg-tertiary);
-  background: none;
-  border: none;
-  border-bottom: 2px solid transparent;
-  padding: var(--space-1) var(--space-3);
-  cursor: pointer;
-  white-space: nowrap;
-  position: relative;
-  transition:
-    color 200ms var(--ease-cinematic),
-    border-color 250ms var(--ease-cinematic);
-}
-
-.nav-ed:hover {
-  color: var(--fg-secondary);
-  border-color: color-mix(in srgb, var(--cin-amber) 30%, transparent);
-}
-
-.nav-ed--active {
-  color: var(--fg-primary);
-  font-weight: 600;
-  border-color: var(--cin-amber);
-}
-
-.nav-ed:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: 3px;
-}
-
-/* The old "Row 2: Weekly" text-label block (--wk-accent, .nav-weekly__rule,
-   .nav-weekly__label + their hover/active/focus/dark rules) was removed
-   2026-08-04: Weekly now renders the VOID WEEKLY Sigil wordmark, matching
-   History. Its layout/active/focus come from the shared .nav-history block; its
-   red focus outline from the .nav-weekly accent override further below. */
-
-/* ── Spinoff product family container — History + Weekly, center-left ──
-   Shown from 768px up. At 768-1023 (iPad portrait) the mobile tab bar (.mtb,
-   <=767 only) is gone, so History/Weekly would otherwise be reachable only via
-   the footer — a tablet nav dead zone. The row has room here: the inline
-   dateline is hidden below 1280 and the tagline/badge below 1180/1320, so the
-   masthead carries only logo + spinoffs + pages + controls (the same proven
-   layout the 1024-1279 range already used). Below 768 the mobile tab bar +
-   side panel carry these destinations. */
-.nav-spinoffs {
-  display: none;
-  align-items: center;
-  gap: var(--space-1);
-}
-
-@media (min-width: 768px) {
-  .nav-spinoffs {
-    display: inline-flex;
-  }
-}
-
-/* ── Vertical hairline — fences the spinoff family off from the masthead /
-   dateline zone to its left, so VOID HISTORY / VOID WEEKLY read as a related
-   pair rather than three competing mastheads. ── */
-.nav-spinoffs__divider {
-  width: 1px;
-  height: 18px;
-  flex-shrink: 0;
-  background-color: var(--border-subtle);
-  margin-right: var(--space-1);
-}
-
-/* ── "Also from Void" eyebrow — the family label. Barlow Condensed, small,
-   letter-spaced, muted; a whisper, not a headline. Hidden below 1200px so the
-   tablet band (768-1023) and narrow desktop keep the two wordmarks + divider
-   without overflow; the size delta vs the 30px masthead already signals
-   "secondary" on its own there. ── */
-.nav-spinoffs__eyebrow {
-  display: none;
-  font-family: var(--font-meta);
-  font-size: 9.5px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.13em;
-  line-height: 1;
-  color: var(--fg-tertiary);
-  white-space: nowrap;
-  margin-right: var(--space-1);
-  user-select: none;
-}
-
-@media (min-width: 1200px) {
-  .nav-spinoffs__eyebrow {
-    display: inline-block;
-  }
-}
-
 /* ── Tablet band (768-1023): make the spinoff row fit ────────────────────────
    Adding History + Weekly to the masthead at 768 would overflow the row: the
    full wordmark (~255px) + spinoffs (~164px) + pages/controls (~373px) exceed
@@ -2373,112 +2270,14 @@ button:focus-visible .sigil-word__beam {
   }
 }
 
-/* ── Spinoff brand links (History + Weekly) — the clickable wrapper around each
-   VOID <PRODUCT> Sigil wordmark. History carries the burnt-umber archival
-   accent; .nav-weekly (below) overrides only the accent to magazine red. The
-   accent now drives the focus ring + the Sigil-O (via the wordmark's `accent`
-   prop); the old italic text label + hairline rule were retired 2026-08-04. ── */
-.nav-history {
-  --hist-nav-accent: #5C4033;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  text-decoration: none;
-  padding: var(--space-1) var(--space-2);
-  position: relative;
-  border-radius: var(--radius-sm);
-  transition: transform 300ms var(--ease-unfold);
-}
-
-.nav-history:active {
-  transform: scale(0.95);
-  transition: transform 60ms var(--ease-cinematic);
-}
-
-.nav-history:focus-visible {
-  outline: 2px solid var(--hist-nav-accent);
-  outline-offset: 2px;
-}
-
-/* ── Deliberate hover/focus cue: an accent-colored underline that draws in from
-   the left, in each link's own product accent (umber for History, red for
-   Weekly via --hist-nav-accent). Signals "distinct destination" without any
-   external-link arrow (these stay internal routes). Sits inside the link's
-   horizontal padding so it underlines the wordmark, not the full hit box. ── */
-.nav-history::after {
-  content: "";
-  position: absolute;
-  left: var(--space-2);
-  right: var(--space-2);
-  bottom: 1px;
-  height: 2px;
-  border-radius: 1px;
-  background: var(--hist-nav-accent);
-  transform: scaleX(0);
-  transform-origin: left center;
-  opacity: 0;
-  transition: transform 260ms var(--ease-unfold), opacity 160ms ease;
-}
-
-.nav-history:hover::after,
-.nav-history:focus-visible::after {
-  transform: scaleX(1);
-  opacity: 1;
-}
-
-/* Hovering anywhere on the link (including its padding) drives the Sigil-O
-   lean-sweep, so the whole tap target reacts, not just the mark glyph. */
-.nav-history:hover .sigil-word__beam {
-  animation: sigil-word-sweep 1.4s var(--ease-rack, ease-in-out) infinite;
-}
 
 :root[data-mode="dark"] .nav-history {
   --hist-nav-accent: #8B7355;
 }
 
-/* ── Weekly link — signature magazine red (matches the weekly masthead
-   --palette-weekly). Reuses the .nav-history structure, overriding only the
-   accent so the FOCUS RING reads red instead of umber (the VOID WEEKLY Sigil-O
-   itself is colored by the wordmark's `accent` prop). Placed after the dark
-   .nav-history block so the dark override below wins on source order. ── */
-.nav-weekly {
-  --hist-nav-accent: var(--palette-weekly);
-}
 
 :root[data-mode="dark"] .nav-weekly {
   --hist-nav-accent: var(--palette-weekly);
-}
-
-/* Coarse pointers (touch tablets ≥768px, where the spinoffs are shown): keep a
-   ≥44px tap target per WCAG 2.5.5. The link is inline-flex + centered, so the
-   min-height grows the hit box without shifting the wordmark. */
-@media (pointer: coarse) {
-  .nav-history {
-    min-height: 44px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .nav-history {
-    transition: none;
-  }
-  /* Underline still appears on hover/focus, but snaps in (no left-to-right
-     draw); the Sigil-O lean-sweep is suppressed (handled by the .sigil-word
-     reduced-motion block above, which also covers this whole-link trigger). */
-  .nav-history::after {
-    transition: opacity 160ms ease;
-    transform: none;
-    transform-origin: left center;
-    opacity: 0;
-  }
-  .nav-history:hover::after,
-  .nav-history:focus-visible::after {
-    transform: none;
-    opacity: 1;
-  }
-  .nav-history:hover .sigil-word__beam {
-    animation: none;
-  }
 }
 
 /* nav-lens__sep / nav-lens__search blocks deleted 2026-05-15 — Row 2 lens
@@ -2534,22 +2333,6 @@ button:focus-visible .sigil-word__beam {
   min-height: 44px;
 }
 
-/* Hidden by default, shown on mobile via responsive.css */
-.nav-logo-mobile {
-  display: none;
-  text-decoration: none;
-  color: var(--fg-primary);
-}
-
-/* Compact wordmark for the 768-1023 tablet / landscape-phone band only.
-   Hidden at every other width; the tablet-band media block above (with its
-   `.nav-left` specificity lift) turns it on. Keeps the >=1024 full mark and
-   the <768 phone mark untouched. */
-.nav-logo-tablet {
-  display: none;
-  text-decoration: none;
-  color: var(--fg-primary);
-}
 
 /* ── Single responsive wordmark (.nav-logo-mark) ──────────────────────────
    Replaces the former three CSS-toggled copies (30 / 22 / 18). The wordmark
@@ -2568,23 +2351,6 @@ button:focus-visible .sigil-word__beam {
 @media (max-width: 767px) {
   .nav-logo-mark {
     font-size: 18px;
-  }
-}
-
-/* ── Spinoff wordmarks (.nav-spinoff-mark) ───────────────────────────────
-   Same mechanism as .nav-logo-mark: SigilWordmark `responsive` leaves the mark
-   em-sized so one node scales per breakpoint. 14px reads clearly secondary
-   against the 30px masthead; the 768-1023 band drops to 11px because that is
-   where the row is tightest (masthead 134 + spinoffs + pages/controls against
-   ~707px of content width). Below 768 the whole row is display:none and the
-   mobile side panel carries both destinations. */
-.nav-spinoff-mark {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) and (max-width: 1023px) {
-  .nav-spinoff-mark {
-    font-size: 11px;
   }
 }
 
@@ -8506,3 +8272,106 @@ a.footer-products__item:hover { color: var(--accent-warm); }
     transition: none;
   }
 }
+
+/* ===========================================================================
+   The one masthead: section nameplate, section links, active state, skins.
+   2026-09-21. NavBar is mounted once in the root layout; History, Weekly and
+   Paper no longer carry a topbar of their own. A section is a nameplate and
+   an accent on the shared bar, the way the floating player is skinned.
+   =========================================================================== */
+.nav-header {
+  --nav-accent: var(--accent-warm);
+}
+
+/* Section nameplate beside the wordmark: the section's name, editorial face,
+   in the section accent. Replaces the retired VOID HISTORY / VOID WEEKLY
+   lockups; VOID NEWS is the only word that gets a lockup. */
+.nav-nameplate {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding-left: var(--space-3);
+  border-left: 1px solid var(--border-subtle);
+  font-family: var(--font-editorial);
+  font-weight: 700;
+  font-size: var(--text-lg);
+  letter-spacing: 0.01em;
+  line-height: 1;
+  color: var(--nav-accent);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.nav-nameplate:hover { color: var(--fg-primary); }
+.nav-nameplate:focus-visible { outline: 2px solid var(--nav-accent); outline-offset: 2px; }
+@media (max-width: 767px) {
+  .nav-nameplate { font-size: var(--text-base); padding-left: var(--space-2); }
+}
+
+/* Section links (On Air, History, Weekly, Listen) sit before the page links.
+   Hidden on phones, where the tab bar and the drawer carry them. */
+.nav-sections {
+  display: none;
+  align-items: center;
+  gap: var(--space-1);
+  padding-right: var(--space-2);
+  margin-right: var(--space-1);
+  border-right: 1px solid var(--border-subtle);
+}
+@media (min-width: 768px) {
+  .nav-sections { display: flex; }
+}
+/* Tablet band: the row is tight, so drop Listen (footer and drawer keep it)
+   and tighten the link padding. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .nav-sections .nav-page[data-section="listen"] { display: none; }
+  .nav-sections .nav-page,
+  .nav-pages .nav-page { padding-left: var(--space-2); padding-right: var(--space-2); }
+}
+
+/* The page the reader is on. An accent rule under the label, no arrow. */
+.nav-page[aria-current="page"] {
+  color: var(--fg-primary);
+}
+.nav-page[aria-current="page"]::before {
+  content: "";
+  position: absolute;
+  left: var(--space-3);
+  right: var(--space-3);
+  bottom: 8px;
+  height: 2px;
+  background: var(--nav-accent);
+}
+.nav-page[aria-current="page"]::after { display: none; }
+.nav-page[aria-current="page"]:hover { transform: none; }
+.nav-sections .nav-page[data-section="history"][aria-current="page"]::before { background: var(--palette-history); }
+.nav-sections .nav-page[data-section="weekly"][aria-current="page"]::before { background: var(--palette-weekly); }
+
+/* Phones: the drawer carries the theme control; the masthead keeps only the
+   wordmark, the nameplate, the dateline and search. (The duplicate toggle
+   was rendering in both places.) */
+@media (max-width: 767px) {
+  .nav-header .theme-toggle { display: none; }
+}
+
+/* Section skins. The section palettes are declared on :root while the
+   section is mounted (history.css, weekly.css), so the masthead and footer,
+   which sit outside the section's own container, can wear the same paper. */
+:root:has(.hist-page) .nav-header,
+:root:has(.hist-page) .site-footer {
+  --nav-accent: var(--palette-history);
+  background-color: var(--hist-bg);
+  border-color: var(--hist-border-subtle);
+  color: var(--hist-ink);
+}
+:root:has(.wk-page) .nav-header,
+:root:has(.wk-page) .site-footer {
+  --nav-accent: var(--palette-weekly);
+  background-color: var(--wk-paper);
+}
+:root:has(.hist-page) body,
+:root:has(.wk-page) body {
+  /* The page ground under the footer matches the section's paper, so the
+     section does not end in a seam of a different colour. */
+  background-color: var(--hist-bg, var(--wk-paper));
+}
+:root:has(.wk-page) body { background-color: var(--wk-paper); }

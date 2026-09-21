@@ -34,8 +34,27 @@ const read = (p) => readFileSync(p, "utf8");
 
 // 1. No component may restate the feed size as a literal in prose. The numbers
 //    that drifted were always the ones written out by hand.
-const stale = files.filter((p) =>
-  /\b(?:50|fifty)\s+stories\b|\btop\s+50\b/i.test(read(p)));
+//
+//    The first regex here matched "50 stories" and "top 50" only, and the press
+//    page kept "<div>50</div> <div>Stories in one daily edition</div>" and "The
+//    fifty most important stories" for two weeks under a heading telling
+//    journalists to copy it as written (brand audit 2026-09-21, F-01). On the
+//    pages whose job is to describe the site, the old values may not appear
+//    within reach of "stories" at all, across tags and line breaks. Comments
+//    are stripped first: a stale comment is a lie to the next engineer, not to
+//    a reader, and belongs to a different check.
+const OLD_FEED_SIZES = "50|fifty";
+const SELF_DESCRIBING = ["app/press", "app/about", "app/components/about",
+                         "app/layout.tsx", "app/page.tsx"].map((d) => join(ROOT, d));
+const uncommented = (txt) =>
+  txt.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+const stale = files.filter((p) => {
+  const txt = uncommented(read(p));
+  if (new RegExp(`\\b(?:${OLD_FEED_SIZES})\\s+stories\\b|\\btop\\s+(?:${OLD_FEED_SIZES})\\b`, "i").test(txt)) return true;
+  if (!SELF_DESCRIBING.some((d) => p === d || p.startsWith(d + "/"))) return false;
+  return new RegExp(`\\b(?:${OLD_FEED_SIZES})\\b[\\s\\S]{0,120}?\\bstories\\b`, "i").test(txt)
+      || new RegExp(`\\bstories\\b[\\s\\S]{0,60}?\\b(?:${OLD_FEED_SIZES})\\b`, "i").test(txt);
+});
 ok("no component restates the feed size in prose",
    stale.length === 0, stale.map((p) => p.replace(ROOT, "")).join(", "));
 
@@ -73,6 +92,111 @@ ok("ranking weights match the engine",
    JSON.stringify([...weights].sort((a, b) => a - b)) ===
    JSON.stringify([...engine].sort((a, b) => a - b)),
    `copy ${[...weights].sort((a,b)=>a-b)} vs engine ${[...engine].sort((a,b)=>a-b)}`);
+
+// 5. No em dash, no en dash, and no kill-list word in anything the frontend
+//    renders. Three live components shipped "Sources disagree significantly",
+//    "differ significantly" and "notably more sensational" for months: the
+//    editorial standard runs on pipeline card text, and verify_production.py
+//    reads the served homepage, where those strings appear only after a click.
+//    Nothing read the source. This does.
+//
+//    Scanned: the source with comments and regex literals removed, which
+//    leaves exactly the two things that reach a reader, JSX text nodes and
+//    string literals, plus identifiers (which never carry a dash anyway).
+//    A comment may say what it likes; a regex that STRIPS dashes has to be
+//    able to spell one (app/lib/summaryHygiene.ts).
+//
+//    TODO: drop "history" from SCAN_SKIP_DIRS once the History landing's era
+//    ranges and the four aria-labels lose their dashes (brand audit F-09).
+const SCAN_SKIP_DIRS = new Set(["games", "revolt", "ig", "history", "node_modules", ".next"]);
+const KILL = [
+  ["em dash (U+2014)", /—/],
+  ["en dash (U+2013)", /–/],
+  ["significantly", /\bsignificantly\b/i],
+  ["notably", /\bnotably\b/i],
+  ["it should be noted", /\bit\s+should\s+be\s+noted\b/i],
+  ["interestingly", /\binterestingly\b/i],
+  ["crucially", /\bcrucially\b/i],
+];
+
+function scanFiles(dir) {
+  return readdirSync(dir).flatMap((f) => {
+    const p = join(dir, f);
+    if (statSync(p).isDirectory()) return SCAN_SKIP_DIRS.has(f) ? [] : scanFiles(p);
+    if (!/\.tsx?$/.test(f)) return [];
+    if (/^mock/i.test(f) || /\.test\./.test(f)) return [];
+    return [p];
+  });
+}
+
+/* Blank out comments and regex literals, keep everything else on its own line
+   so a hit still reports a usable line number. Quote-aware, so a "//" inside a
+   string is not a comment and a "/" after an identifier is division, not the
+   start of a regex. */
+function strippable(src) {
+  let out = "";
+  let prev = "";           // last significant code character
+  let i = 0;
+  while (i < src.length) {
+    const c = src[i];
+    const c2 = src[i + 1];
+    if (c === "/" && c2 === "/") {
+      while (i < src.length && src[i] !== "\n") i++;
+      continue;
+    }
+    if (c === "/" && c2 === "*") {
+      i += 2;
+      while (i < src.length && !(src[i] === "*" && src[i + 1] === "/")) {
+        if (src[i] === "\n") out += "\n";
+        i++;
+      }
+      i += 2;
+      continue;
+    }
+    if (c === '"' || c === "'" || c === "`") {
+      const q = c;
+      out += c;
+      i++;
+      while (i < src.length) {
+        if (src[i] === "\\") { out += src[i] + (src[i + 1] ?? ""); i += 2; continue; }
+        out += src[i];
+        if (src[i] === q) { i++; break; }
+        i++;
+      }
+      prev = q;
+      continue;
+    }
+    // A regex literal, not division: "/" may only open one where a value may
+    // begin. After an identifier, a number, ")" or "]" it is division.
+    if (c === "/" && !/[A-Za-z0-9_$)\]'"`]/.test(prev)) {
+      i++;
+      while (i < src.length && src[i] !== "\n") {
+        if (src[i] === "\\") { i += 2; continue; }
+        if (src[i] === "[") { while (i < src.length && src[i] !== "]" && src[i] !== "\n") i++; }
+        if (src[i] === "/") { i++; break; }
+        i++;
+      }
+      while (i < src.length && /[dgimsuvy]/.test(src[i])) i++;
+      prev = ")";
+      continue;
+    }
+    out += c;
+    if (!/\s/.test(c)) prev = c;
+    i++;
+  }
+  return out;
+}
+
+const dirty = [];
+for (const p of scanFiles(join(ROOT, "app"))) {
+  strippable(read(p)).split("\n").forEach((line, n) => {
+    for (const [label, re] of KILL) {
+      if (re.test(line)) dirty.push(`${p.replace(ROOT, "")}:${n + 1} [${label}] ${line.trim().slice(0, 90)}`);
+    }
+  });
+}
+ok("no dash or kill-list word in frontend source copy", dirty.length === 0,
+   "\n      " + dirty.slice(0, 12).join("\n      "));
 
 if (fail.length) {
   console.error("\n" + fail.map((f) => `FAIL  ${f}`).join("\n"));

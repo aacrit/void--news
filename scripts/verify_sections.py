@@ -26,6 +26,10 @@ Checks, against the LIVE site (stdlib only, like verify_production.py):
         Issue #26 shipped an AFP wire photograph hotlinked off a publisher CDN.
   W-02  the issue is not stale: three consecutive missed Mondays means the
         weekly job is broken, not merely late
+  P-01  /press/ states the feed size the config holds. The press kit said
+        "50" and "fifty" for two weeks after the feed became 20, under a
+        heading telling journalists to copy it as written, and no served gate
+        fetched the one page whose whole job is to be quoted.
 
 Exit 1 on any failure; prints one line per check. Run by verify-production.yml.
 """
@@ -36,6 +40,7 @@ import datetime as dt
 import re
 import json
 import sys
+from pathlib import Path
 import urllib.error
 import urllib.request
 
@@ -83,6 +88,9 @@ def main(site: str) -> int:
             report(f"H-01{path}", False, f"HTTP {e.code}")
         except Exception as e:
             report(f"H-01{path}", False, f"{type(e).__name__}: {e}")
+
+    # P-01 — the press kit says the feed size the config holds.
+    check_press(base)
 
     # H-02/H-03/H-04 — the catalog behind /history.
     events: list[dict] = []
@@ -333,6 +341,86 @@ def main(site: str) -> int:
                else f"chapters ordered={bool(ordered)}, sidecar returned {sstatus}")
 
     return 0 if ok else 1
+
+
+# The feed size the site is configured to show. This script runs against the
+# live site and cannot import the frontend, so it reads the same JSON file
+# feedConfig.ts reads when the checkout is beside it, and otherwise takes the
+# served front page's JSON-LD ItemList, which page.tsx sets from the same
+# constant. Restating the number here would be the drift P-01 exists to catch.
+def _feed_displayed(base: str) -> int | None:
+    cfg = Path(__file__).resolve().parents[1] / "frontend" / "config" / "feed.json"
+    try:
+        return int(json.loads(cfg.read_text(encoding="utf-8"))["displayed"])
+    except Exception:
+        pass
+    try:
+        _, _, home = fetch(f"{base}/")
+        m = re.search(r'"numberOfItems"\s*:\s*(\d+)', home)
+        return int(m.group(1)) if m else None
+    except Exception:
+        return None
+
+
+_ONES = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight",
+         "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen",
+         "sixteen", "seventeen", "eighteen", "nineteen"]
+_TENS = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy",
+         "eighty", "ninety"]
+
+
+def _number_word(n: int) -> str:
+    """The word form press/page.tsx sets for the same number ("twenty")."""
+    if not 0 <= n <= 99:
+        return str(n)
+    if n < 20:
+        return _ONES[n]
+    tens, ones = divmod(n, 10)
+    return _TENS[tens] + (f"-{_ONES[ones]}" if ones else "")
+
+
+def _visible_text(html: str) -> str:
+    """What a reader sees: tags, scripts and styles removed, spacing collapsed.
+    The same reduction verify_production.py makes."""
+    out = re.sub(r"<(script|style)[^>]*>.*?</\1>", " ", html, flags=re.S | re.I)
+    out = re.sub(r"<!--.*?-->", " ", out, flags=re.S)
+    out = re.sub(r"<[^>]+>", " ", out)
+    return re.sub(r"\s+", " ", out).strip()
+
+
+def check_press(base: str) -> None:
+    """P-01: every count of stories on the served /press/ is the configured
+    feed size, as a number or as a word. Any other count next to "stories"
+    is the stale one; "50" survived in a stat ledger where the number and
+    the noun sat in different tags, so the match runs on visible text."""
+    displayed = _feed_displayed(base)
+    if displayed is None:
+        report("P-01", False, "could not determine the configured feed size")
+        return
+    try:
+        status, final, html = fetch(f"{base}/press/")
+    except urllib.error.HTTPError as e:
+        report("P-01", False, f"/press/ returned HTTP {e.code}")
+        return
+    except Exception as e:
+        report("P-01", False, f"/press/ failed: {type(e).__name__}: {e}")
+        return
+    if status != 200 or not final.rstrip("/").endswith("/press"):
+        report("P-01", False, f"/press/ returned {status} at {final}")
+        return
+    text = _visible_text(html)
+    counts = re.findall(
+        r"\b(\d{1,3}|" + "|".join(w for w in _ONES[1:] + _TENS[2:] if w)
+        + r"(?:-(?:one|two|three|four|five|six|seven|eight|nine))?)"
+        r"\s+(?:most important\s+)?stories\b",
+        text, flags=re.I)
+    want = {str(displayed), _number_word(displayed)}
+    wrong = [c for c in counts if c.lower() not in want]
+    report("P-01", bool(counts) and not wrong,
+           f"/press/ counts stories as {sorted(set(c.lower() for c in counts))} "
+           f"(config says {displayed}, {_number_word(displayed)!r})"
+           + ("" if counts else "  <- no story count on the page at all")
+           + ("" if not wrong else f"  <- stale: {sorted(set(wrong))}"))
 
 
 def html_escape_variants(text):

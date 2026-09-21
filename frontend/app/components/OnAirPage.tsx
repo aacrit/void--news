@@ -10,8 +10,6 @@ import {
   findOpinionIndex,
   formatChapterTime,
 } from "../lib/chapters";
-import { fetchLastPipelineRun } from "../lib/supabase";
-import NavBar from "./NavBar";
 import ScaleIcon from "./ScaleIcon";
 
 /* ---------------------------------------------------------------------------
@@ -90,20 +88,6 @@ export default function OnAirPage() {
   const a = useAudio();
   const brief = a.brief;
 
-  // Edition build time (pipeline completed_at) — drives the NavBar masthead
-  // "as of" dateline so it matches Home. Fetched once on mount; NavBar falls
-  // back to the reader's clock when this is null.
-  const [editionBuiltAt, setEditionBuiltAt] = useState<string | null>(null);
-  useEffect(() => {
-    let alive = true;
-    fetchLastPipelineRun().then((run) => {
-      if (alive && run?.completed_at) setEditionBuiltAt(run.completed_at);
-    });
-    return () => {
-      alive = false;
-    };
-  }, []);
-
   const hasAudio = Boolean(brief?.audio_url);
 
   // Prefer the stored episode duration (stable) over the <audio> element's
@@ -167,7 +151,6 @@ export default function OnAirPage() {
           of /onair exactly as it does on Home. Search is omitted here: the
           SearchOverlay searches the loaded story feed, which /onair does not
           carry. NavBar renders fine without onSearchClick. */}
-      <NavBar editionBuiltAt={editionBuiltAt} />
 
       <main className="onair" id="main-content">
         <header className="onair__masthead">

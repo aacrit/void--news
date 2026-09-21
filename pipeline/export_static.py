@@ -319,6 +319,7 @@ if want("feed"):
     # ── deepdive/<cluster>.json for displayed clusters (typed DB is indexed -> fast) ──
     dd = 0
     gr = 0
+    exported_bias_rows = []  # every per-article bias row the deepdive files carry
     for cid in [d["id"] for d in clusters]:
         links = c.execute("SELECT article_id FROM cluster_articles WHERE cluster_id=?", (cid,)).fetchall()
         out_rows = []
@@ -354,6 +355,7 @@ if want("feed"):
                     "confidence": pnum(bs["confidence"]),
                     "rationale": pjson(bs["rationale"]) if (bs["rationale"] and str(bs["rationale"]).lstrip()[:1] == "{") else bs["rationale"],
                 }
+                exported_bias_rows.append(bias)
             grounding_rows.append({
                 "id": a["id"], "url": a["url"], "title": a["title"],
                 "summary": a["summary"], "full_text": a["full_text"],
@@ -375,6 +377,28 @@ if want("feed"):
             gr += 1
     print(f"deepdive/: {dd} cluster files")
     print(f"grounding/: {gr} cluster files (build-data, not served)")
+
+    # The default-tuple gate. A run whose per-article scores are mostly
+    # 50/10/25/50/0.7 did not measure them: that is what step 6b produced for
+    # every 36h-lookback article until 2026-09-21. Print the share every run,
+    # and refuse to ship a run that is mostly unmeasured.
+    # See pipeline/validation/bias_defaults.py.
+    from validation.bias_defaults import (  # noqa: E402
+        BiasDefaultsError, check_default_share, format_summary, default_share,
+    )
+
+    # VOID_BIAS_DEFAULTS_GATE=warn downgrades the raise to a printed warning.
+    # It exists for ONE caller: tests/test_editorial_stage.py, whose DB is
+    # built from the committed 2026-09-20 snapshot, which was written by the
+    # broken step 6b. The daily pipeline never sets it.
+    _gate_mode = os.environ.get("VOID_BIAS_DEFAULTS_GATE", "fail").strip().lower()
+    try:
+        print(check_default_share(exported_bias_rows))
+    except BiasDefaultsError as _bd_err:
+        if _gate_mode != "warn":
+            raise
+        print(f"WARNING (VOID_BIAS_DEFAULTS_GATE=warn): {_bd_err}")
+        print(format_summary(*default_share(exported_bias_rows)))
 
 if want("methodology"):
     # ── methodology.json ──

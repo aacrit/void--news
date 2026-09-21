@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { pageMetadata, SITE_URL } from "../lib/siteMeta";
 import CopyButton from "../press/CopyButton";
-import "../styles/about.css";
+import "../styles/prose-page.css";
 import "../privacy/privacy.css";
 import "../press/press.css";
 import "./listen.css";

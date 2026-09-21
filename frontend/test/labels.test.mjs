@@ -101,6 +101,15 @@ check("confident label is not suppressed", confident.suppressed === false);
 const thin = { ...wide, leanMeasuredCount: bias.LABEL_MIN_MEASURED - 1 };
 check("a lean measured from too few articles is suppressed",
   bias.storyLeanLabel(62, thin, 20).suppressed === true);
+check("... and says so: Not measured, never Balanced",
+  bias.storyLeanLabel(62, thin, 20).text === "Not measured" &&
+  bias.storyLeanLabel(62, thin, 20).state === "unmeasured");
+check("a measured story at the centre reads Balanced",
+  bias.storyLeanLabel(50, { leanLeftCount: 3, leanCenterCount: 6, leanRightCount: 3,
+                            polarization: 5, aggregateConfidence: 0.9,
+                            leanMeasuredCount: 20 }, 20).text === "Balanced");
+check("the word Flat is gone",
+  !Object.values(bias).some((v) => v === "Flat"));
 const atFloor = { ...wide, leanMeasuredCount: bias.LABEL_MIN_MEASURED };
 check("exactly LABEL_MIN_MEASURED is enough",
   bias.storyLeanLabel(62, atFloor, 20).suppressed === false);

@@ -1,23 +1,74 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { FEED_DISPLAYED } from "../lib/feedConfig";
+import { SITE_URL } from "../lib/siteMeta";
 import { BASE_PATH } from "../lib/utils";
 import CopyButton from "./CopyButton";
-import "../styles/about.css";
+import "../styles/prose-page.css";
 import "../privacy/privacy.css";
 import "./press.css";
 
 export const metadata: Metadata = {
   title: "Press | Void News",
   description:
-    "Press room for Void News: an independent daily news reader that shows the lean and character of every story. Boilerplate, facts, brand assets, and contacts for journalists.",
+    "Press room for Void News: an independent daily news reader that shows the lean and character of every story. Boilerplate, facts, programmes, brand assets, and contacts for journalists.",
 };
+
+/* The feed size in prose. The press boilerplate said "fifty" for two weeks
+   after the feed became twenty, under a heading telling journalists to copy
+   it as written. Every count on this page now comes from feed.json; this is
+   the word form of the same number. */
+const ONES = [
+  "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine",
+  "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen",
+  "seventeen", "eighteen", "nineteen",
+];
+const TENS = ["", "", "twenty", "thirty", "forty", "fifty", "sixty", "seventy", "eighty", "ninety"];
+function numberWord(n: number): string {
+  if (!Number.isInteger(n) || n < 0 || n > 99) return String(n);
+  if (n < 20) return ONES[n];
+  const rest = n % 10;
+  return rest ? `${TENS[Math.floor(n / 10)]}-${ONES[rest]}` : TENS[Math.floor(n / 10)];
+}
 
 const BOILER_SHORT =
   `Void News is an independent daily news reader that shows the political lean and editorial character of every story. It gathers reporting from 1,016 sources across 158 countries into one shared edition of ${FEED_DISPLAYED} stories, ranked once a day, the same for every reader.`;
 
 const BOILER_LONG =
-  "Void News is an independent daily news reader. Each day it gathers reporting from more than a thousand outlets across 158 countries, groups the coverage of each event together, and scores every story on six axes: political lean, sensationalism, opinion versus reporting, factual rigor, framing, and how an outlet has covered a subject over time. Every score is produced by a documented, transparent method and carries a written explanation, so a reader sees not only where a story sits but why.\n\nThere are no accounts, no trackers, and no personalized feed. The fifty most important stories are ranked once a day, in the same order for everyone, on the principle that a shared set of facts matters more than an engaging one. Void News is an independent product of Void, with no outside investors, published at news.voidvision.org.";
+  `Void News is an independent daily news reader. Each day it gathers reporting from more than a thousand outlets across 158 countries, groups the coverage of each event together, and scores every story on six axes: political lean, sensationalism, opinion versus reporting, factual rigor, framing, and how an outlet has covered a subject over time. Every score is produced by a documented, transparent method and carries a written explanation, so a reader sees not only where a story sits but why.\n\nThere are no accounts, no trackers, and no personalized feed. The ${numberWord(FEED_DISPLAYED)} most important stories are ranked once a day, in the same order for everyone, on the principle that a shared set of facts matters more than an engaging one. Void News is an independent product of Void, with no outside investors, published at news.voidvision.org.`;
+
+/* The three programmes. Feed addresses are absolute because they are meant
+   to be pasted into a podcast app. The cadence and the shape of each show
+   are the facts here; no episode counts, nothing that goes stale. */
+const PROGRAMMES = [
+  {
+    title: "On Air",
+    cadence: "Daily",
+    line:
+      "The day's top stories read for the ear by three voices, then the editorial, in under fifteen minutes. Every story scored on six axes.",
+    feed: `${SITE_URL}/podcast-world.xml`,
+    href: "/onair",
+    section: "On Air",
+  },
+  {
+    title: "The Argument",
+    cadence: "Sundays",
+    line:
+      "The audio edition of Weekly. The week's cover story, then the two columnists who disagree about it, reading their own published words.",
+    feed: `${SITE_URL}/podcast-weekly.xml`,
+    href: "/weekly",
+    section: "Weekly",
+  },
+  {
+    title: "History",
+    cadence: "One event per episode",
+    line:
+      "What happened, who said what at the time, and how the accounts still differ. Read from the written record, every claim sourced.",
+    feed: `${SITE_URL}/podcast-history.xml`,
+    href: "/history",
+    section: "History",
+  },
+] as const;
 
 export default function PressPage() {
   return (
@@ -77,7 +128,7 @@ export default function PressPage() {
             <div className="press-stat__l">Axes of bias scored on every story</div>
           </div>
           <div className="press-stat">
-            <div className="press-stat__n">50</div>
+            <div className="press-stat__n">{FEED_DISPLAYED}</div>
             <div className="press-stat__l">Stories in one daily edition</div>
           </div>
           <div className="press-stat">
@@ -114,23 +165,11 @@ export default function PressPage() {
             <p className="press-boiler__label">Long</p>
             <CopyButton text={BOILER_LONG} />
           </div>
-          <p>
-            Void News is an independent daily news reader. Each day it gathers
-            reporting from more than a thousand outlets across 158 countries,
-            groups the coverage of each event together, and scores every story
-            on six axes: political lean, sensationalism, opinion versus
-            reporting, factual rigor, framing, and how an outlet has covered a
-            subject over time. Every score is produced by a documented,
-            transparent method and carries a written explanation, so a reader
-            sees not only where a story sits but why.
-          </p>
-          <p>
-            There are no accounts, no trackers, and no personalized feed. The
-            fifty most important stories are ranked once a day, in the same order
-            for everyone, on the principle that a shared set of facts matters
-            more than an engaging one. Void News is an independent product of
-            Void, with no outside investors, published at news.voidvision.org.
-          </p>
+          {/* Rendered from the same string the button copies, so the text on
+              the page and the text on the clipboard cannot disagree. */}
+          {BOILER_LONG.split("\n\n").map((para) => (
+            <p key={para.slice(0, 24)}>{para}</p>
+          ))}
         </div>
       </section>
 
@@ -265,10 +304,43 @@ export default function PressPage() {
         </div>
       </section>
 
+      {/* ── Programmes ───────────────────────────────────────────────────── */}
+      <section className="press-block" aria-labelledby="press-prog-h">
+        <p className="press-kicker">
+          <span className="press-kicker__n">05</span> Listen
+        </p>
+        <h2 id="press-prog-h">Programmes</h2>
+        <p>
+          Void News publishes three audio programmes. Each is a podcast feed
+          that any app can subscribe to, and each plays on its own section of
+          the site. All three are read by synthetic voices from scripts the
+          pipeline writes and checks; the addresses are listed on{" "}
+          <Link href="/listen">/listen</Link>.
+        </p>
+        <div className="press-axes press-axes--programmes">
+          {PROGRAMMES.map((p) => (
+            <div className="press-axis press-programme" key={p.title}>
+              <div className="press-axis__n">{p.cadence}</div>
+              <h3>{p.title}</h3>
+              <p>{p.line}</p>
+              <div className="press-programme__links">
+                <a className="press-kit__dl" href={p.feed}>
+                  Podcast feed
+                </a>
+                <Link className="press-kit__dl" href={p.href}>
+                  {p.section} on the site
+                </Link>
+              </div>
+              <p className="press-programme__feed">{p.feed}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* ── Working with the press ───────────────────────────────────────── */}
       <section className="press-block" aria-labelledby="press-work-h">
         <p className="press-kicker">
-          <span className="press-kicker__n">05</span> Ground rules
+          <span className="press-kicker__n">06</span> Ground rules
         </p>
         <h2 id="press-work-h">Working with the press</h2>
         <ul>
@@ -290,28 +362,29 @@ export default function PressPage() {
       {/* ── The organization ─────────────────────────────────────────────── */}
       <section className="press-block" aria-labelledby="press-org-h">
         <p className="press-kicker">
-          <span className="press-kicker__n">06</span> Independence
+          <span className="press-kicker__n">07</span> Independence
         </p>
         <h2 id="press-org-h">The organization</h2>
         <p className="press-org">
-          Void News is an independent product of Void, the company behind our
-          news and audio work. There are no outside investors and no
-          advertising. It answers to readers, not shareholders, and is built
-          around a single rule: the same stories, in the same order, for
-          everyone.
+          Void News is an independent product of Void, the parent brand. There
+          are no outside investors and no advertising. It answers to readers,
+          not shareholders, and is built around a single rule: the same
+          stories, in the same order, for everyone.
         </p>
       </section>
 
       {/* ── Brand assets ─────────────────────────────────────────────────── */}
       <section className="press-block" aria-labelledby="press-assets-h">
         <p className="press-kicker">
-          <span className="press-kicker__n">07</span> Download
+          <span className="press-kicker__n">08</span> Download
         </p>
         <h2 id="press-assets-h">Brand assets</h2>
         <p className="press-boiler__hint">
           Logos are vector SVG. Use the color version on light grounds and the
           reversed (white) version on dark or photographic grounds. Do not
-          recolor the bias spectrum.
+          recolor the bias spectrum. History and Weekly are sections of Void
+          News; their nameplates are set in the same lockup and are not
+          separate brands.
         </p>
         <ul className="press-kit">
           <li className="press-kit__item">
@@ -365,13 +438,61 @@ export default function PressPage() {
             </a>
           </li>
           <li className="press-kit__item">
-            <span className="press-kit__name">Void Vision logo, horizontal (color)</span>
+            <span className="press-kit__name">History section nameplate, horizontal (color)</span>
             <a
               className="press-kit__dl"
-              href={`${BASE_PATH}/brand/logos/void-vision-horizontal-color.svg`}
+              href={`${BASE_PATH}/brand/logos/void-history-horizontal-color.svg`}
               download
             >
               SVG
+            </a>
+          </li>
+          <li className="press-kit__item">
+            <span className="press-kit__name">History section nameplate, horizontal (reversed)</span>
+            <a
+              className="press-kit__dl"
+              href={`${BASE_PATH}/brand/logos/void-history-horizontal-reversed.svg`}
+              download
+            >
+              SVG
+            </a>
+          </li>
+          <li className="press-kit__item">
+            <span className="press-kit__name">Weekly section nameplate, horizontal (color)</span>
+            <a
+              className="press-kit__dl"
+              href={`${BASE_PATH}/brand/logos/void-weekly-horizontal-color.svg`}
+              download
+            >
+              SVG
+            </a>
+          </li>
+          <li className="press-kit__item">
+            <span className="press-kit__name">Weekly section nameplate, horizontal (reversed)</span>
+            <a
+              className="press-kit__dl"
+              href={`${BASE_PATH}/brand/logos/void-weekly-horizontal-reversed.svg`}
+              download
+            >
+              SVG
+            </a>
+          </li>
+          <li className="press-kit__item">
+            <span className="press-kit__name">Podcast cover, On Air (3000 &times; 3000)</span>
+            <a className="press-kit__dl" href={`${BASE_PATH}/podcast-cover-world.jpg`} download>
+              JPG
+            </a>
+          </li>
+          <li className="press-kit__item">
+            <span className="press-kit__name">Podcast cover, The Argument (3000 &times; 3000)</span>
+            <a className="press-kit__dl" href={`${BASE_PATH}/podcast-cover-weekly.jpg`} download>
+              JPG
+            </a>
+          </li>
+          <li className="press-kit__item">
+            <span className="press-kit__name">Podcast cover, History (3000 &times; 3000)</span>
+            <a className="press-kit__dl" href={`${BASE_PATH}/podcast-cover-history.jpg`} download>
+              JPG
             </a>
           </li>
           <li className="press-kit__item">
@@ -392,7 +513,7 @@ export default function PressPage() {
       {/* ── Reference pages ──────────────────────────────────────────────── */}
       <section className="press-block" aria-labelledby="press-ref-h">
         <p className="press-kicker">
-          <span className="press-kicker__n">08</span> Read more
+          <span className="press-kicker__n">09</span> Read more
         </p>
         <h2 id="press-ref-h">Reference pages</h2>
         <ul className="press-kit press-kit--links">
@@ -414,13 +535,37 @@ export default function PressPage() {
               /sources
             </Link>
           </li>
+          <li className="press-kit__item">
+            <span className="press-kit__name">On Air, the daily radio edition</span>
+            <Link className="press-kit__dl" href="/onair">
+              /onair
+            </Link>
+          </li>
+          <li className="press-kit__item">
+            <span className="press-kit__name">Weekly, the Sunday magazine</span>
+            <Link className="press-kit__dl" href="/weekly">
+              /weekly
+            </Link>
+          </li>
+          <li className="press-kit__item">
+            <span className="press-kit__name">History, one event at a time</span>
+            <Link className="press-kit__dl" href="/history">
+              /history
+            </Link>
+          </li>
+          <li className="press-kit__item">
+            <span className="press-kit__name">Listen, the three podcast feeds</span>
+            <Link className="press-kit__dl" href="/listen">
+              /listen
+            </Link>
+          </li>
         </ul>
       </section>
 
       {/* ── Contact ──────────────────────────────────────────────────────── */}
       <section className="press-block" aria-labelledby="press-contact-h">
         <p className="press-kicker">
-          <span className="press-kicker__n">09</span> Get in touch
+          <span className="press-kicker__n">10</span> Get in touch
         </p>
         <h2 id="press-contact-h">Contact</h2>
         <div className="press-contact">
@@ -467,9 +612,6 @@ export default function PressPage() {
             </a>
           </div>
         </div>
-        <p className="press-contact__note">
-          Response time: we answer within a day.
-        </p>
       </section>
 
       <p className="press__footer">

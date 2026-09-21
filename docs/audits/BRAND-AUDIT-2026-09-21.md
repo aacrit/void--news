@@ -139,7 +139,7 @@ Recommendation: bring it back, but as the **printable edition of the same twenty
 | Ten components never imported (`ShipBoard`, `BiasInspector`, `ShareCard`, `MobileMoreSheet`, `MobileMiniPlayer`, `OpEdPage`, `DivergenceAlerts`, `SixLenses`, `StoryMeta`, `ConsensusBadge`) | 4,087 lines | certain |
 | `lib/mockData.ts` (0 importers), Revolt mocks, History mock fallback | 4,966 lines | certain / conditional |
 | Global tokens never consumed | 109 of 315 | certain |
-| Dependencies with zero imports (`motion`), or dead via the above (`qrcode`), or decommissioned but still bundled (`@supabase/supabase-js`, imported by 14 files) | | certain |
+| Dependencies dead via the above (`qrcode`), or decommissioned but still bundled (`@supabase/supabase-js`, imported by 14 files). Correction 2026-09-21: `motion` is NOT dead; `components/about/useMotion.ts` loads it with a dynamic import for the About page, so the first grep missed it | | certain |
 | Served weight: 330 KB CSS and 959 KB JS on the home page, 507 KB CSS on History | | measured |
 
 Everything in the "certain" rows can be deleted this week with no visible change. The 26% estimate needs a class-parity test first (the other session already recommends porting Weekly's two-directional parity test to `history.css` before deleting anything).
@@ -473,7 +473,7 @@ Edition remnants: `:root[data-edition="us"]` / `"india"` grades (components.css:
 
 **B-03 (P1) Ten components (4,087 lines) are never imported.** `ShipBoard.tsx` 1,431, `BiasInspector.tsx` 1,181, `ShareCard.tsx` 601 (only consumer chain for `lib/shareCardRenderer.ts` and the `qrcode` dependency), `MobileMoreSheet.tsx` 210, `MobileMiniPlayer.tsx` 129, `OpEdPage.tsx` 128, `DivergenceAlerts.tsx` 127, `SixLenses.tsx` 113, `StoryMeta.tsx` 85, `ConsensusBadge.tsx` 82.
 
-**B-04 (P2) Mock data and dead dependencies.** `lib/mockData.ts` 1,074 lines, zero importers; `history/mockData.ts` 610 (last-resort fallback); `revolt/mock*.ts` 3,282 feeding a hidden route. `@supabase/supabase-js` still a dependency, `lib/supabase.ts` imported by 14 files. `motion` 0 imports; `qrcode` dead via B-03.
+**B-04 (P2) Mock data and dead dependencies.** `lib/mockData.ts` 1,074 lines, zero importers; `history/mockData.ts` 610 (last-resort fallback); `revolt/mock*.ts` 3,282 feeding a hidden route. `@supabase/supabase-js` still a dependency, `lib/supabase.ts` imported by 14 files. `qrcode` dead via B-03. (Correction: `motion` is loaded by a dynamic `import("motion")` in `components/about/useMotion.ts`, so it is live; the static grep missed it.)
 
 ## Premium feel
 

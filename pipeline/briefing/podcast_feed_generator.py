@@ -5,7 +5,7 @@ Three shows, three feeds, all written as static XML into ``frontend/public/``
 so the Pages CDN serves them next to the MP3s:
 
   podcast-world.xml    Void News: On Air        daily, from ``daily_briefs``
-  podcast-weekly.xml   Void Weekly: The Argument Sundays, from the deploy tree
+  podcast-weekly.xml   Void News: The Argument  Sundays, from the deploy tree
   podcast-history.xml  Void News: History       one event per episode, from
                                                  the history audio manifest
 
@@ -28,6 +28,7 @@ so ``--history --weekly`` runs without VOID_SQLITE_PATH.
 import argparse
 import json
 import os
+import re
 import sys
 from datetime import datetime, timezone
 from email.utils import formatdate
@@ -69,12 +70,12 @@ GENERATOR = "Void News pipeline"
 LANGUAGE = "en"
 CONTACT_EMAIL = os.environ.get("PODCAST_EMAIL", "void.news.dev@gmail.com")
 
-# Cover art. Apple wants 1400 to 3000 px square JPG or PNG; the world cover
-# is 3000x3000. The weekly and history SVGs exist next to it but this sandbox
-# has no renderer, so until their JPGs are drawn `_cover_for` falls back to
-# the world art (a feed pointing at a 404 is rejected). Render with:
-#   node brand/ci/render_svg.mjs jobs.json   (jobs: {svg, out, width: 3000})
-# then convert the PNG to JPG under 512 KB and drop it in frontend/public/.
+# Cover art. Apple wants 1400 to 3000 px square JPG or PNG. Each show has its
+# own 3000x3000 JPG in frontend/public, rendered from the SVG beside it (see
+# docs/PODCAST-DISTRIBUTION.md, "Artwork"). There is no fallback: until
+# 2026-09-21 `_cover_for` quietly pointed every feed at the world cover, and
+# the world cover was itself a pre-rebrand raster reading "void --onair",
+# "WORLD BRIEF" and "409 sources". A missing cover now stops the build.
 SHOW_META = {
     "world": {
         "title": "Void News: On Air",
@@ -89,7 +90,7 @@ SHOW_META = {
         ),
     },
     "weekly": {
-        "title": "Void Weekly: The Argument",
+        "title": "Void News: The Argument",
         "link": f"{SITE_URL}/weekly/",
         "label": "The Argument",
         "category": "News",
@@ -189,13 +190,30 @@ def _sanitize(text: str) -> str:
         return text
 
 
+def _clip(text: str, limit: int) -> str:
+    """At most `limit` characters, cut at the end of a sentence.
+
+    A hard slice shipped "Rep. Thomas Massie, R-Ky., called" as the last
+    words of an On Air summary. Directories cap a description near 4000
+    characters; the cut lands on the last full stop inside that."""
+    text = (text or "").strip()
+    if len(text) <= limit:
+        return text
+    cut = text[:limit]
+    ends = [m.end() for m in re.finditer(r'[.!?]["\u201d)]?(?=\s|$)', cut)]
+    return cut[:ends[-1]].rstrip() if ends else cut.rstrip()
+
+
 def _cover_for(edition: str) -> str:
-    """Absolute cover URL. Own art when its JPG exists, the world cover
-    otherwise (see the SHOW_META comment for the render step)."""
+    """Absolute URL of this show's own cover. No fallback to another show's
+    art: a feed that fronts On Air's cover on the History listing is a wrong
+    fact on a directory page, so a missing JPG raises instead."""
     own = f"podcast-cover-{edition}.jpg"
-    if (PUBLIC_DIR / own).exists():
-        return f"{SITE_URL}/{own}"
-    return f"{SITE_URL}/podcast-cover-world.jpg"
+    if not (PUBLIC_DIR / own).is_file():
+        raise FileNotFoundError(
+            f"podcast cover missing: {PUBLIC_DIR / own} (render it from "
+            f"podcast-cover-{edition}.svg; see docs/PODCAST-DISTRIBUTION.md)")
+    return f"{SITE_URL}/{own}"
 
 
 def _episode_title(brief: dict) -> str:
@@ -221,8 +239,8 @@ def _episode_description(brief: dict) -> str:
     edition = brief.get("edition", "world")
     link = SHOW_META.get(edition, SHOW_META["world"])["link"]
     # Truncate to ~4000 chars (Apple limit) and add deep-link
-    desc = tldr[:3800] if tldr else "Today's news briefing."
-    desc += f"\n\nFull bias analysis and source spectrum: {link}"
+    desc = _clip(tldr, 3800) if tldr else "Today's news briefing."
+    desc += f"\n\nFull bias analysis and source spectrum: {link}."
     return desc
 
 
@@ -248,6 +266,12 @@ def _channel(edition: str) -> tuple[Element, Element]:
     SubElement(channel, "link").text = meta["link"]
     SubElement(channel, "language").text = LANGUAGE
     SubElement(channel, "description").text = meta["description"]
+    # RSS 2.0's own <image>, beside the itunes one: the two carry the same
+    # file, and a reader that ignores the itunes namespace still gets art.
+    image = SubElement(channel, "image")
+    SubElement(image, "url").text = _cover_for(edition)
+    SubElement(image, "title").text = meta["title"]
+    SubElement(image, "link").text = meta["link"]
     SubElement(channel, "generator").text = GENERATOR
     SubElement(channel, "lastBuildDate").text = _rfc2822(datetime.now(timezone.utc))
 
@@ -337,7 +361,7 @@ def _build_feed(edition: str, episodes: list[dict]) -> bytes:
         SubElement(item, f"{{{ITUNES_NS}}}duration").text = _itunes_duration(duration)
         SubElement(item, f"{{{ITUNES_NS}}}episodeType").text = "full"
         SubElement(item, f"{{{ITUNES_NS}}}summary").text = (
-            (brief.get("tldr_text") or "")[:3999]
+            _clip(brief.get("tldr_text") or "", 3999)
         )
 
         # Podcasting 2.0 chapters: the radio show writes a JSON sidecar next to
@@ -441,11 +465,18 @@ WEEKLY_ISSUES = REPO_ROOT / "frontend" / "build-data" / "weekly-issues.json"
 
 
 def _weekly_episode(issue: dict) -> dict:
-    """Map an issue onto the episode shape `_build_feed` already consumes."""
-    no = issue.get("issue_number")
+    """Map an issue onto the episode shape `_build_feed` already consumes.
+
+    The title carries the label the page prints ("Vol. I, No. 1"), from the
+    same launch constant, not the epoch count ("Issue #26") a reader never
+    sees. The headline is the archive row's cover_headline, which is what
+    /weekly serves; the feed is regenerated from the archive, never edited.
+    """
+    from briefing.weekly_parse import issue_label
+    label = issue_label(issue.get("issue_number"))
     headline = (issue.get("cover_headline") or "").strip()
     week = issue.get("week_start") or ""
-    title = f"Issue #{no}: {headline}" if headline else f"Issue #{no}"
+    title = f"{label}: {headline}" if headline else label
     body = (issue.get("opinion_text") or "").strip()
     covers = [c for c in (issue.get("cover_text") or []) if isinstance(c, dict)]
     if covers and covers[0].get("text"):
@@ -521,20 +552,41 @@ def _history_event(slug: str) -> dict:
 
 
 def _first_paragraph(text: str) -> str:
-    for para in (text or "").split("\n"):
-        para = para.strip()
+    """The first paragraph, wrapped lines rejoined.
+
+    Event summaries are YAML literal blocks and some are hard-wrapped inside
+    a paragraph; splitting on a single newline shipped the Spanish Civil War
+    as "...Within a week the". A paragraph ends at a blank line.
+    """
+    for para in re.split(r"\n\s*\n", text or ""):
+        para = " ".join(para.split())
         if para:
             return para
     return ""
 
 
 def _history_description(event: dict, episode: dict) -> str:
+    """Subtitle, then the summary's first paragraph.
+
+    An event subtitle is a line, not a sentence, and most carry no full stop;
+    joined as written, the Vietnam episode read "...expelled in thirty years
+    On August 4, 1964, the destroyer...". The subtitle is closed before the
+    join, and the composed text is held to S-03 like a feed card.
+    """
     subtitle = (event.get("subtitle") or "").strip()
+    if subtitle and not subtitle.endswith((".", "!", "?")):
+        subtitle += "."
     lead = _first_paragraph(event.get("summary") or "")
     parts = [p for p in (subtitle, lead) if p]
     if not parts:
         parts = [episode.get("title") or ""]
-    return _sanitize("\n\n".join(parts))[:3900]
+    text = _clip(_sanitize("\n\n".join(parts)), 3900)
+    from editorial.standard import s03_terminal_punctuation
+    findings = s03_terminal_punctuation(text)
+    if findings:
+        raise ValueError(f"history podcast description ({episode.get('title') or 'untitled'}): "
+                         + "; ".join(f.message for f in findings))
+    return text
 
 
 def generate_history_podcast_feed() -> str | None:

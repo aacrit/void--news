@@ -10,6 +10,7 @@ import {
   DIVERGENT_SPREAD_MIN,
   tiltDescriptor,
   storyLeanLabel,
+  leanLabelState,
   leanToDisplayPos,
   lerpColor as lerp,
 } from "../lib/biasColors";
@@ -109,11 +110,24 @@ function DataMark({ data, size, mounted }: {
   const conf = data.biasSpread?.aggregateConfidence ?? 1;
   const leanSpread = data.biasSpread?.leanSpread ?? 0;
   const displayLean = leanToDisplayPos(lean, conf);
-  const beamAngle = isUnscored ? 0 : ((displayLean - 50) / 50) * 24;
+  // The mark obeys the same gate as the caption. Only a confident read tilts
+  // the beam; a balanced or contested story sits level; an unmeasured one
+  // sits level in the muted ink. (A beam that tilted under a "Flat" caption
+  // was the mark disagreeing with its own label.)
+  const gate = isUnscored ? "unmeasured" : leanLabelState(lean, data.biasSpread, data.sourceCount);
+  const measured = gate !== "unmeasured";
+  const beamAngle = gate === "confident" ? ((displayLean - 50) / 50) * 24 : 0;
   // Color = lean (expanded), EXCEPT a balanced-but-divergent standoff drops the
   // green for a neutral slate — green is reserved for genuine consensus
   // (balanced AND agreed). See getSigilLeanColor.
-  const beamCol = isUnscored ? "var(--fg-tertiary)" : getSigilLeanColor(lean, leanSpread, conf);
+  // Colour follows the gate too: a balanced or contested story takes the
+  // centre colour (green when agreed, slate when split), never a hue that
+  // hints at a direction the caption withholds.
+  const beamCol = !measured
+    ? "var(--fg-tertiary)"
+    : gate === "confident"
+      ? getSigilLeanColor(lean, leanSpread, conf)
+      : getSigilLeanColor(50, leanSpread, conf);
 
   // Divergence fan — agreed vs divergent, shown in the mark itself. The beam
   // half-angle scales with how spread the source leans are (leanSpread): a
@@ -124,7 +138,7 @@ function DataMark({ data, size, mounted }: {
   // Only open the fan once the lean spread is genuinely divergent (stddev ≥ 10):
   // agreed stories keep a single crisp beam, divergent ones fan wider with more
   // spread (10→40 maps to a 5°→22° half-angle).
-  const showFan = !isUnscored && leanSpread >= DIVERGENT_SPREAD_MIN;
+  const showFan = measured && leanSpread >= DIVERGENT_SPREAD_MIN;
   const coneHalf = showFan
     ? 5 + ((Math.min(leanSpread, 40) - 10) / 30) * 17
     : 0;
@@ -315,7 +329,7 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
   // "Lean measured from 9 of 34 analyzed articles." Shown only when some
   // coverage was genuinely excluded, so the common fully-measured case stays
   // uncluttered. Hidden entirely when nothing was measured — the label is
-  // already "Flat"/"Unscored" there and a "0 of N" line would just be noise.
+  // already "Not measured"/"Unscored" there and a "0 of N" line would just be noise.
   const measured = data.biasSpread?.leanMeasuredCount;
   const measuredTotal = data.biasSpread?.leanTotalCount;
   const measuredNote =
@@ -426,8 +440,10 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
         {/* Contextual descriptor — explains what the score means */}
         {stage >= 2 && (
           <p className="sigil-popup__descriptor">
-            {popupInfo.state === "no-clear-lean"
-              ? "No clear lean in the aggregated coverage"
+            {popupInfo.state === "balanced"
+              ? "Measured, and the aggregated coverage sits at the centre"
+              : popupInfo.state === "unmeasured"
+              ? "Too few measured articles to read a lean"
               : popupInfo.state === "contested"
                 ? "Left and right sources both cover this; coverage is contested"
                 : popupUnscored
@@ -494,8 +510,10 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
         }}>
           {/* Human sentence: what the data actually says */}
           <p className="sigil-popup__compact-sentence">
-            {popupInfo.state === "no-clear-lean"
-              ? `No clear lean across ${data.sourceCount} source${data.sourceCount !== 1 ? "s" : ""}.`
+            {popupInfo.state === "balanced"
+              ? `Balanced coverage across ${data.sourceCount} source${data.sourceCount !== 1 ? "s" : ""}.`
+              : popupInfo.state === "unmeasured"
+              ? `Lean not measured across ${data.sourceCount} source${data.sourceCount !== 1 ? "s" : ""}.`
               : popupInfo.state === "contested"
                 ? `Coverage is contested across ${data.sourceCount} source${data.sourceCount !== 1 ? "s" : ""}.`
                 : popupUnscored
@@ -592,7 +610,7 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
                               data.sourceCount, unscored);
   // Divergence is the card's own annotation ON that label, not a second
   // ladder: a confident direction gains a Split / Agreed suffix, and a
-  // suppressed label ("Contested", "Flat") already says what divergence
+  // suppressed label ("Contested", "Balanced", "Not measured") already says what divergence
   // would have said, so it gains nothing.
   const suffix = info.suppressed
     ? ""
@@ -621,7 +639,7 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
       : "";
 
   const ringTitle = data.divergenceFlag === "divergent"
-    ? "Sources disagree significantly on this story"
+    ? "Sources split on this story"
     : data.divergenceFlag === "consensus"
       ? "Sources largely agree on this story"
       : undefined;

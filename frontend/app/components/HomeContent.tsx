@@ -10,7 +10,7 @@ import { cacheGet, cacheSet } from "../lib/feedCache";
 import { cleanFeedSummary } from "../lib/summaryHygiene";
 import { BASE_PATH } from "../lib/utils";
 import LogoIcon from "./LogoIcon";
-import NavBar from "./NavBar";
+import { SEARCH_EVENT } from "./NavBar";
 import LeadStory from "./LeadStory";
 import StoryCard from "./StoryCard";
 import LeanLabelLegend from "./LeanLabelLegend";
@@ -56,7 +56,6 @@ class DeepDiveErrorBoundary extends Component<
 }
 
 import LoadingSkeleton from "./LoadingSkeleton";
-import Footer from "./Footer";
 import { useDailyBrief } from "./DailyBrief";
 import SkyboxBanner from "./SkyboxBanner";
 // FloatingPlayer is now mounted globally in MobileNav (layout.tsx) so it renders
@@ -120,9 +119,12 @@ function HomeContentInner({
   initialEdition: _initialEdition = "world",
   initialStories,
   initialBuiltAt = null,
-  editionDateline,
+  editionDateline: _editionDateline,
 }: HomeContentProps) {
   void _initialEdition;
+  // The masthead (root layout) now carries the dateline; the prop stays so the
+  // page's prerender contract is unchanged.
+  void _editionDateline;
 
   // Prerendered front page: seed the feed from build-time data so the served
   // HTML (and the client's first paint) render the real top-50 immediately.
@@ -157,6 +159,13 @@ function HomeContentInner({
 
   // Search overlay state
   const [searchOpen, setSearchOpen] = useState(false);
+  // The root-mounted masthead's search button raises this event on the front
+  // page; the overlay lives here with the feed it searches.
+  useEffect(() => {
+    const open = () => setSearchOpen(true);
+    window.addEventListener(SEARCH_EVENT, open);
+    return () => window.removeEventListener(SEARCH_EVENT, open);
+  }, []);
 
   // Scroll-position preservation on Deep Dive open/close: the modal owns its own
   // body scroll-lock + restore; scrollBeforeDeepDive re-asserts it on close.
@@ -793,12 +802,8 @@ function HomeContentInner({
 
   return (
     <div className="page-container">
-      <NavBar
-        onSearchClick={() => setSearchOpen(true)}
-        editionBuiltAt={lastUpdated}
-        editionDateline={editionDateline}
-      />
-
+      {/* The masthead is mounted once in the root layout; it raises
+          SEARCH_EVENT on the front page and this component listens. */}
       <main
         id="main-content"
         className="page-main"
@@ -990,8 +995,6 @@ function HomeContentInner({
         </>
       </main>
 
-      {/* Footer */}
-      {!isLoading && <Footer lastUpdated={lastUpdated} />}
 
       {/* Deep Dive is split by breakpoint (2026-08-09): desktop renders the
            InlineDeepDive inline in the feed above (twin replacement or grid

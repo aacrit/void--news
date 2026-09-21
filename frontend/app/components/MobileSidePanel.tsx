@@ -55,7 +55,7 @@ interface MobileSidePanelProps {
   onClose: () => void;
 }
 
-type NavIcon = "feed" | "onair" | "history" | "weekly" | "sources" | "feedback";
+type NavIcon = "feed" | "onair" | "history" | "weekly" | "listen" | "sources" | "feedback";
 
 interface NavItem {
   href: string;
@@ -77,8 +77,9 @@ interface NavItem {
 const MAIN_ITEMS: NavItem[] = [
   { href: "/", label: "Today’s Feed", desc: `The front page, ${FEED_DISPLAYED} stories.`, accent: "news", icon: "feed", cascade: 2 },
   { href: "/onair", label: "On Air", desc: "The broadcast.", accent: "onair", icon: "onair", cascade: 2 },
-  { href: "/history", label: "History", desc: "78 events, told from every side.", accent: "neutral", icon: "history", cascade: 3 },
+  { href: "/history", label: "History", desc: "One event, told from every side.", accent: "neutral", icon: "history", cascade: 3 },
   { href: "/weekly", label: "Weekly", desc: "The week, in one issue.", accent: "neutral", icon: "weekly", cascade: 3 },
+  { href: "/listen", label: "Listen", desc: "Three programmes, three podcast feeds.", accent: "neutral", icon: "listen", cascade: 3 },
   { href: "/sources", label: "Sources", desc: "1,016 sources, 158 countries.", accent: "neutral", icon: "sources", cascade: 3 },
   { href: "/ship", label: "Feedback", desc: "Tell us what to build or fix.", accent: "neutral", icon: "feedback", cascade: 3 },
 ];
@@ -121,6 +122,16 @@ function NavGlyph({ icon }: { icon: NavIcon }) {
         <path d="M6 22h12" />
         <path d="M6 2v5l6 5 6-5V2" />
         <path d="M6 22v-5l6-5 6 5v5" />
+      </svg>
+    );
+  }
+  if (icon === "listen") {
+    // Headphones: the three podcast feeds.
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M4 14v-2a8 8 0 0 1 16 0v2" />
+        <path d="M4 14h3v5H5a1 1 0 0 1-1-1v-4Z" />
+        <path d="M20 14h-3v5h2a1 1 0 0 0 1-1v-4Z" />
       </svg>
     );
   }

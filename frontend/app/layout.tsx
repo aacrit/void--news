@@ -8,9 +8,12 @@ import {
 import "./globals.css";
 import AudioProvider from "./components/AudioProvider";
 import MobileNav from "./components/MobileNav";
+import NavBar from "./components/NavBar";
+import Footer from "./components/Footer";
 import ExperimentalBanner from "./components/ExperimentalBanner";
 import { BASE_PATH } from "./lib/utils";
 import { getInitialBrief } from "./lib/serverBrief";
+import { fetchInitialFeed } from "./lib/serverFeed";
 
 /* ---------------------------------------------------------------------------
    Four Voices of Type
@@ -58,8 +61,9 @@ const ibmPlexMono = IBM_Plex_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://news.voidvision.org"),
   // Fallback title/description for routes that do not set their own metadata.
-  // The seven primary routes (/, /sources, /about, /ship, /onair, /paper,
-  // /games) each export a DISTINCT title + description + canonical. `keywords`
+  // The primary routes (/, /sources, /about, /ship, /onair, /history,
+  // /weekly, /listen) each export a DISTINCT title + description + canonical.
+  // /paper and /games are 301-hidden and no longer listed here. `keywords`
   // was removed 2026-08-09: search engines have ignored the meta keywords tag
   // for over a decade, so it was dead weight.
   title: "Void News. See through the void.",
@@ -74,7 +78,7 @@ export const metadata: Metadata = {
     types: {
       "application/rss+xml": [
         { url: "/podcast-world.xml", title: "Void News: On Air" },
-        { url: "/podcast-weekly.xml", title: "Void Weekly: The Argument" },
+        { url: "/podcast-weekly.xml", title: "Void News: The Argument" },
         { url: "/podcast-history.xml", title: "Void News: History" },
       ],
     },
@@ -136,6 +140,10 @@ export default async function RootLayout({
   // AudioProvider seeds its state with this and skips the first-mount refetch, so
   // first paint is deterministic (no React #418). Null degrades to client fetch.
   const initialBrief = await getInitialBrief();
+  // The one masthead is mounted here, once, for every route. Its dateline is
+  // the edition's build time, baked at build so server and client agree and
+  // no page ever shows the viewer's clock as "as of".
+  const feed = await fetchInitialFeed().catch(() => null);
   return (
     <html
       lang="en"
@@ -236,9 +244,18 @@ export default async function RootLayout({
         >
           Skip to main content
         </a>
-        <ExperimentalBanner />
         <AudioProvider initialBrief={initialBrief}>
+          {/* One masthead, one footer, every route. Sections skin them by
+              accent (see components.css "Section skins"); they never mount
+              their own. The banner sits BELOW the masthead and only shows
+              from the second visit on. */}
+          <NavBar
+            editionBuiltAt={feed?.builtAt ?? null}
+            editionDateline={feed?.editionDateline}
+          />
+          <ExperimentalBanner />
           {children}
+          <Footer />
           <MobileNav />
         </AudioProvider>
       </body>
