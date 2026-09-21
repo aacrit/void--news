@@ -106,9 +106,13 @@ ok("ranking weights match the engine",
 //    A comment may say what it likes; a regex that STRIPS dashes has to be
 //    able to spell one (app/lib/summaryHygiene.ts).
 //
-//    TODO: drop "history" from SCAN_SKIP_DIRS once the History landing's era
-//    ranges and the four aria-labels lose their dashes (brand audit F-09).
-const SCAN_SKIP_DIRS = new Set(["games", "revolt", "ig", "history", "node_modules", ".next"]);
+//    History is scanned too since 2026-09-21 (its era ranges, hooks and
+//    aria-labels lost their dashes, brand audit F-09).
+const SCAN_SKIP_DIRS = new Set(["games", "revolt", "ig", "node_modules", ".next"]);
+// Files that CONSUME dashes rather than render them: history/stats.ts parses
+// "1914-1918" style ranges through a RegExp built from a template literal, so
+// its character classes have to be able to spell both dashes.
+const SCAN_SKIP_FILES = new Set(["stats.ts"]);
 const KILL = [
   ["em dash (U+2014)", /—/],
   ["en dash (U+2013)", /–/],
@@ -124,7 +128,7 @@ function scanFiles(dir) {
     const p = join(dir, f);
     if (statSync(p).isDirectory()) return SCAN_SKIP_DIRS.has(f) ? [] : scanFiles(p);
     if (!/\.tsx?$/.test(f)) return [];
-    if (/^mock/i.test(f) || /\.test\./.test(f)) return [];
+    if (/^mock/i.test(f) || /\.test\./.test(f) || SCAN_SKIP_FILES.has(f)) return [];
     return [p];
   });
 }

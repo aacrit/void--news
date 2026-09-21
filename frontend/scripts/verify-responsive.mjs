@@ -57,6 +57,7 @@ const WIDTHS = [390, 768, 1024, 1440];
 const PAGES = [
   "/history/partition-of-india/",
   "/history/",
+  "/paper/",
   "/weekly/",
   "/",
 ];
