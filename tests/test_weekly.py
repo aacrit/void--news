@@ -30,6 +30,7 @@ from briefing.weekly_parse import (  # noqa: E402
     MAX_HEADLINE_CHARS,
     banned_terms,
     clean_headline,
+    drop_terms,
     enforce,
     enforce_recap,
     retry_suffix,
@@ -526,6 +527,62 @@ def test_enforcement():
     check("nothing to strip is left alone",
           strip_dashes("a well-made point.") == "a well-made point.")
 
+    # THE SHARED KILL LIST (2026-09-21, brand audit F-03). The weekly's own
+    # tuple knew the significance family and the Vox scaffolding and none of
+    # the VOICE-BRAND VII slop set, so 27 of the 34 kill-list hits on the two
+    # published issues were words the check had never heard of. One planted
+    # case per term; the first block is the live prose, verbatim.
+    planted = [
+        ("underscoring", "appeared in reports from 16 sources on September 19th, underscoring the delicate balance"),
+        ("underscored", "This financial commitment underscored the depth of his conviction."),
+        ("underscores", "This incident underscores the vulnerability of security forces."),
+        ("navigating", "He found himself navigating a highly politicized environment."),
+        ("robust", "Denmark has established robust mechanisms for consultation."),
+        ("nuanced", "Officials fear expressing nuanced opinions."),
+        ("a testament to", "access under a treaty from the 1950s, a testament to a long-standing cooperation"),
+        ("complex interplay", "The divergence highlights the complex interplay of sovereignty and strategy."),
+        ("this isn't just about", "This isn't just about military bases; it's about who holds the power."),
+        # The rest of the set, in the shapes the model actually produces.
+        ("underscore", "The figures underscore the shortfall."),
+        ("robustly", "The ministry defended the plan robustly."),
+        ("navigate", "Ministers must navigate the treaty's terms."),
+        ("navigated", "The council navigated the vote in a single sitting."),
+        ("pivotal", "A pivotal week for the alliance."),
+        ("delve", "We delve into the contract."),
+        ("delves", "The report delves into the contract."),
+        ("delved", "The report delved into the contract."),
+        ("multifaceted", "A multifaceted dispute over sovereignty."),
+        ("tapestry", "A tapestry of competing claims."),
+        ("paves the way", "The vote paves the way for a treaty."),
+        ("sends a clear message", "The ruling sends a clear message to the ministry."),
+        ("sends a clear signal", "The ruling sends a clear signal to the ministry."),
+        ("sheds light on", "The filing sheds light on the contract."),
+        ("marks a significant moment", "The vote marks a significant moment for the alliance."),
+        ("marks a pivotal moment", "The vote marks a pivotal moment for the alliance."),
+        ("marks a key moment", "The vote marks a key moment for the alliance."),
+        ("this is not just about", "This is not just about bases."),
+        ("this isn\u2019t just about", "This isn\u2019t just about bases, with a curly apostrophe."),
+    ]
+    for term, sentence in planted:
+        check(f"kill list catches {term!r}", term in banned_terms(sentence), str(banned_terms(sentence)))
+
+    # What the list must NOT catch: a negated significance word carries a
+    # fact, and the Revolutionary Guard is a proper noun the news carries
+    # every week.
+    check("negated significance is not a hit",
+          banned_terms("Officials reported no significant damage.") == [])
+    check("'Revolutionary Guard' is not a hit",
+          banned_terms("The Islamic Revolutionary Guard Corps said the drill ended.") == [])
+
+    # The two halves of the list: an adjective the sanitizer deletes ships;
+    # a verb, noun or scaffolding opener nothing can delete drops the piece.
+    check("a significance adjective does not drop the piece",
+          drop_terms("a significant shift") == [])
+    check("a slop verb drops the piece",
+          drop_terms("This incident underscores the vulnerability.") == ["underscores"])
+    check("scaffolding drops the piece",
+          drop_terms("This isn't just about bases.") == ["this isn't just about"])
+
     # The retry has to NAME the findings. Stage 2's lesson was that a bare
     # "try again" returns the same defect in different words.
     suffix = retry_suffix(enforce(live))
@@ -563,6 +620,94 @@ def test_enforcement():
                             min_words=55, max_words=75)))
     check("an empty column abstains rather than inventing a finding",
           enforce_recap([], min_words=55, max_words=75) == [])
+
+
+# ---------------------------------------------------------------------------
+# W-T14  A kill-list term that survives the regeneration drops the section
+# ---------------------------------------------------------------------------
+def test_drop_path():
+    """`_gen_essay` regenerated once and shipped the better attempt, whatever
+    the finding. Right for a word count, wrong for "underscores the
+    vulnerability": Vol. I, No. 1 shipped seven "significant" hits that the
+    check had flagged, which proves once-then-ship was the leak (brand audit
+    F-03). The generator cannot be imported without a DB, so the function is
+    re-read as source and exec'd with the model call stubbed, the same seam
+    `test_week_spread` uses."""
+    print("\nW-T14  a kill-list term that survives the regeneration drops the section")
+    from briefing.weekly_parse import parse_essay
+    from utils.prohibited_terms import strip_significance
+
+    src = (ROOT / "pipeline" / "briefing" / "weekly_digest_generator.py").read_text()
+    body = src[src.index("def _gen_essay"):src.index("_parse_recap = parse_recap")]
+    outputs, calls = [], []
+
+    def fake_generate(prompt, system_instruction=None, max_output_tokens=None, model=None):
+        calls.append(prompt)
+        return outputs[min(len(calls) - 1, len(outputs) - 1)]
+
+    ns = {"_smart_generate_text": fake_generate, "_parse_essay": parse_essay,
+          "_may_retry": lambda m: True, "strip_dashes": strip_dashes,
+          "strip_significance": strip_significance, "enforce": enforce,
+          "retry_suffix": retry_suffix, "drop_terms": drop_terms,
+          "print": lambda *a, **k: None}
+    exec(compile(body, "weekly_digest_generator.py", "exec"), ns)
+    gen = ns["_gen_essay"]
+    spec = {"min_words": 50, "max_words": 200}
+    filler = ("The council met on Tuesday and voted. " * 12).strip()
+    clean = "A headline for the piece\n\n" + filler
+    slop = ("A headline for the piece\n\n" + filler
+            + " This incident underscores the vulnerability of security forces. " + filler)
+    long_ = "A headline for the piece\n\n" + ("The council met on Tuesday and voted. " * 60).strip()
+    sig = "A headline for the piece\n\n" + filler + " A significant shift followed. " + filler
+
+    def run(*outs):
+        outputs[:] = outs
+        calls.clear()
+        return gen("prompt", "system", spec=spec, label="t")
+
+    r, n = run(slop, slop)
+    check("still slop after the retry: the section is dropped", r is None and n == 2,
+          f"result={r is not None} calls={n}")
+    r, n = run(slop, clean)
+    check("clean on regeneration ships", r is not None and "underscores" not in r["text"])
+    check("the retry names the term", len(calls) == 2 and "underscores" in calls[1])
+    r, n = run(long_, long_)
+    check("a length finding alone still ships the better attempt", r is not None and n == 2)
+    r, n = run(sig)
+    check("a significance adjective is deleted, not dropped, and ships on one call",
+          r is not None and "significant" not in r["text"].lower() and n == 1,
+          f"result={r is not None} calls={n}")
+
+
+# ---------------------------------------------------------------------------
+# W-T15  verify_sections carries the kill list verbatim (W-10)
+# ---------------------------------------------------------------------------
+def test_kill_list_parity():
+    """verify_sections runs against the live site with no repo on the path,
+    so W-10 carries its own copy of the two patterns. Copies drift; this is
+    the same guard `test_constant_parity` puts on MAX_HEADLINE_CHARS."""
+    print("\nW-T15  verify_sections W-10 kill list")
+    import importlib.util
+    from utils import prohibited_terms as pt
+    spec = importlib.util.spec_from_file_location("verify_sections", VERIFY_PY)
+    vs = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(vs)
+    check("SLOP_PATTERN agrees", vs.SLOP_PATTERN == pt.SLOP_PATTERN)
+    check("SIGNIFICANCE_WORDS agree", vs.SIGNIFICANCE_WORDS == pt.SIGNIFICANCE_WORDS)
+
+    page = ("<html><head><title>Issue \u2014 significant</title></head><body>"
+            "<script>var x = 'robust';</script>"
+            "<p>Denmark has established robust mechanisms for consultation.</p>"
+            "<blockquote>a robust reply, the minister said</blockquote>"
+            "<p>Officials reported no significant damage.</p>"
+            "<q>it underscores nothing</q></body></html>")
+    hits = vs.kill_list_hits(page)
+    check("W-10 catches the hit in Void's prose", len(hits) == 1 and "'robust'" in hits[0], str(hits))
+    check("W-10 ignores head, script, blockquote, q and a negation", len(hits) == 1, str(hits))
+    check("W-10 passes clean prose",
+          vs.kill_list_hits("<p>Two of the five largest banks passed the increase to savers.</p>") == [])
+    check("W-10 catches scaffolding",
+          any("this isn" in h for h in vs.kill_list_hits("<p>This isn&#x27;t just about bases.</p>")))
 
 
 # ---------------------------------------------------------------------------
@@ -942,6 +1087,8 @@ def main():
     test_build_weekly_row()
     test_class_parity()
     test_enforcement()
+    test_drop_path()
+    test_kill_list_parity()
     test_image_captions()
     test_week_spread()
     test_end_matter()

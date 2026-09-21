@@ -51,6 +51,13 @@ CASES = [
     ("E-05", {"title": CLEAN_TITLE,
               "summary": CLEAN_SUMMARY + " Adeyemi was charged with fraud in 2019."},
      "criminal allegation with no attribution"),
+    # The live defect of 2026-09-21: "Defense Department staffers reportedly
+    # likened Jennifer to Yoko Ono" satisfied E-05, because "reportedly" was
+    # in its attribution cues, while attributing the claim to no one (brand
+    # audit F-14). A hedge names nobody. Advisory until the numbers are in.
+    ("E-15", {"title": CLEAN_TITLE,
+              "summary": CLEAN_SUMMARY + " Adeyemi was reportedly charged with fraud in 2019."},
+     "a hedge standing in for attribution on a criminal claim"),
     ("E-07", {"title": CLEAN_TITLE,
               "summary": CLEAN_SUMMARY + " The funds were traced to the Iranian terror regime."},
      "contested terminology in Void's voice"),
@@ -154,6 +161,18 @@ def main() -> int:
             ok = False
     if ok:
         print(f"PASS: S-07 quiet on {len(S07_MUST_STAY_QUIET)} correct constructions")
+
+    # E-15 must stay quiet where the hedge is not the only cover: the same
+    # claim attributed to prosecutors is E-05-clean and E-15-clean alike.
+    hedged_and_named = std.validate_candidate({
+        "title": CLEAN_TITLE,
+        "summary": CLEAN_SUMMARY + " Adeyemi was reportedly charged with fraud in 2019, prosecutors said.",
+    })
+    if any(f.id in ("E-05", "E-15") for f in hedged_and_named):
+        print(f"FAIL: E-15 fired beside a real attribution: {[str(f) for f in hedged_and_named]}")
+        ok = False
+    else:
+        print("PASS: E-15 quiet when the claim is also attributed")
 
     # Clean control: a good card trips nothing.
     clean = std.validate_candidate({

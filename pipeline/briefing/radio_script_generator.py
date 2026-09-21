@@ -40,11 +40,11 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 try:
     from briefing.spoken_text import (
-        has_numerals, has_quotation_marks, spoken_date,
+        has_numerals, has_quotation_marks, spoken_date, strip_quotation_marks,
     )
 except ImportError:  # pragma: no cover - package-relative import
     from pipeline.briefing.spoken_text import (  # type: ignore
-        has_numerals, has_quotation_marks, spoken_date,
+        has_numerals, has_quotation_marks, spoken_date, strip_quotation_marks,
     )
 
 # ---------------------------------------------------------------------------
@@ -108,7 +108,147 @@ BANNED_PHRASES: tuple[str, ...] = (
     "perhaps most significantly", "in a troubling development", "this next one matters",
     "which brings us to", "in a sign of things to come", "it should be noted",
     "interestingly", "crucially", "notably",
+    # The significance family, a hard fail since 2026-09-21: "This attack
+    # marks a significant escalation" reached the air because the sanitizer
+    # that deletes these words is skipped for audio (brand audit F-13).
+    "significant", "significantly", "notable", "importantly", "marks a",
 )
+
+
+# ---------------------------------------------------------------------------
+# R-14 grounded attribution and R-15 no unattributed statement of law
+# (2026-09-21, brand audit F-02). R-01..R-13 are shape rules; nothing compared
+# a rundown line's CLAIM to the summary it was cut from, and the served script
+# had turned "Waltz argues the Supreme Court has protected the right to
+# publish, but not access to any government facility" into "Waltz argues the
+# Supreme Court has protected such actions", then went on in Void's own voice:
+# "The Supreme Court has previously protected the government's right to limit
+# access to facilities."
+# ---------------------------------------------------------------------------
+R14_MIN_OVERLAP = 0.6
+
+_STOP_WORDS = frozenset("""
+a an the and or but of to in on at for by with from as is are was were be been being has have had
+that this these those it its he she they them his her their not no any such all some more most than
+then there here which who whom what when where would could should will can may might do does did so
+if into over under up out about after before also only just very own other says say said argues argued
+states stated describes described calls called according told tells claims claimed contends
+""".split())
+_PRONOUN_SUBJECTS = frozenset({"he", "she", "it", "they", "we", "i", "you", "this", "that", "there"})
+_SPEECH_VERBS = r"says|argues|states|describes|calls"
+_ATTRIBUTED_CLAIM_RE = re.compile(
+    r"^(?P<who>(?:[A-Z][\w'\u2019.-]*\s+){0,5}[A-Z][\w'\u2019.-]*)\s+(?P<verb>" + _SPEECH_VERBS + r")\s+"
+    r"(?:that\s+)?(?P<clause>.+)$"
+)
+_SOURCE_CLAIM_VERBS = (r"says?|said|argues?|argued|states?|stated|describes?|described|calls?|called|"
+                       r"contends?|claims?|claimed|told|tells|maintains?|insists?")
+_ATTRIBUTION_ANY_RE = re.compile(
+    r"\b(?:" + _SOURCE_CLAIM_VERBS + r"|according to|in (?:his|her|their|its) words|warns?|warned|"
+    r"adds?|added|accuses?|accused|denies|denied|announces?|announced)\b", re.I,
+)
+_LEGAL_SUBJECT_RE = re.compile(
+    r"^(?:(?:The|A|An|This|That)\s+)?(?:[\w'\u2019-]+\s+){0,4}?"
+    r"(?P<noun>Supreme Court|court|courts|Constitution|law|laws|act|statute|amendment)\s+"
+    r"(?:(?:also|previously|now|long|already|still|never)\s+)*"
+    r"(?:(?:has|have|had)\s+)?"
+    r"(?:(?:also|previously|now|long|already|still|never)\s+)*"
+    r"(?:protect(?:s|ed)?|prohibit(?:s|ed)?|allow(?:s|ed)?|permit(?:s|ted)?|forbid(?:s|den)?|forbade|"
+    r"bar(?:s|red)?|require(?:s|d)?|guarantee(?:s|d)?|held|holds|upheld|upholds)\b", re.I,
+)
+
+
+def _stem(word: str) -> str:
+    w = word.lower().strip("'\u2019.,;:!?\"()")
+    for poss in ("\u2019s", "'s"):
+        if w.endswith(poss):
+            w = w[:-2]
+    for suf in ("ations", "ation", "ing", "ies", "edly", "ed", "es", "s"):
+        if len(w) > len(suf) + 2 and w.endswith(suf):
+            w = w[:-len(suf)]
+            break
+    if len(w) > 4 and w.endswith("y"):
+        w = w[:-1]
+    return w
+
+
+def _content_stems(text: str) -> set[str]:
+    out = set()
+    for tok in re.findall(r"[A-Za-z][\w'\u2019-]*", text or ""):
+        low = tok.lower()
+        if low in _STOP_WORDS or len(low) < 3:
+            continue
+        out.add(_stem(low))
+    return out
+
+
+def _cluster_text(row: dict) -> str:
+    parts = [str(row.get("title") or ""), str(row.get("summary") or "")]
+    for key in ("consensus_points", "divergence_points"):
+        val = row.get(key) or []
+        if isinstance(val, str):
+            parts.append(val)
+        else:
+            parts.extend(str(x) for x in val)
+    return " ".join(parts)
+
+
+def _rows_for_segment(s: RadioSegment, ctx: RundownContext) -> list[dict]:
+    if s.cluster_id:
+        own = [row for row in ctx.top20
+               if str(row.get("id") or row.get("_db_id") or "").lower() == s.cluster_id.lower()]
+        if own:
+            return own
+    return list(ctx.top20)
+
+
+def attribution_grounding(who: str, clause: str, rows: list[dict]) -> tuple[float, str] | None:
+    """How much of an attributed clause the story it was cut from supports.
+
+    Returns None when the rows carry no summary (nothing to judge against, so
+    the rule abstains rather than accuses), else (score, reason). The score is
+    the share of the clause's content words found in the rows that name the
+    speaker. When the story carries the same speaker's claim, a cut that keeps
+    under R14_MIN_OVERLAP of that claim's words while adding a word the story
+    never used scores its recall instead: cutting is the job, substitution is
+    the defect.
+    """
+    with_summary = [row for row in rows if (row.get("summary") or "").strip()]
+    if not with_summary:
+        return None
+    tokens = who.split()
+    if not tokens or tokens[0].lower() in _PRONOUN_SUBJECTS:
+        return None
+    surname = tokens[-1].strip("'\u2019.,")
+    for poss in ("\u2019s", "'s"):
+        if surname.endswith(poss):
+            surname = surname[:-2]
+    name_re = re.compile(r"\b" + re.escape(surname) + r"\b", re.I)
+    named = [t for t in (_cluster_text(row) for row in rows) if name_re.search(t)]
+    if not named:
+        if len(with_summary) < len(rows):
+            return None  # a row with no summary could have named them: abstain
+        return 0.0, f"{surname} is not named in the story"
+    clause_stems = _content_stems(clause)
+    if not clause_stems:
+        return None
+    pool = " ".join(named)
+    pool_stems = _content_stems(pool)
+    precision = len(clause_stems & pool_stems) / len(clause_stems)
+    if precision < R14_MIN_OVERLAP:
+        return precision, f"only {precision:.0%} of the clause is in the story"
+    if precision < 1.0:
+        source_re = re.compile(
+            name_re.pattern + r"[^.!?]*?\b(?:" + _SOURCE_CLAIM_VERBS + r")\b\s+(?:that\s+)?(?P<c>[^.!?]+)", re.I)
+        recalls = []
+        for m in source_re.finditer(pool):
+            stems = _content_stems(m.group("c"))
+            if stems:
+                recalls.append(len(clause_stems & stems) / len(stems))
+        if recalls and max(recalls) < R14_MIN_OVERLAP:
+            added = sorted(clause_stems - pool_stems)
+            return max(recalls), (f"keeps {max(recalls):.0%} of what {surname} is reported to have said "
+                                  f"and adds {added}, which the story never says")
+    return precision, "grounded"
 
 _HOST_NAME_ADDRESS_RE = re.compile(r"\bthanks?\b(?!\s+to\b)|\bthank you\b", re.IGNORECASE)
 _AMPM_RE = re.compile(r"\b\d{1,2}(?::\d{2})?\s?(?:a\.m\.|p\.m\.|am|pm)(?![\w])", re.IGNORECASE)
@@ -473,11 +613,13 @@ def validate_rundown(r: RadioRundown, ctx: RundownContext) -> ValidationReport:
             all_text_words += t.words
             if s.kind != "MENU" or True:
                 speaker_words[t.speaker] += t.words
-            # R-02 quotation marks
-            # Quote marks never reach the engine (spoken_text strips them),
-            # so this is advisory: the model should still write reported speech.
+            # R-02 quotation marks. Was advisory (the engine strips the marks
+            # anyway) and so changed nothing: the served script of 2026-09-21
+            # carried four. A hard fail spends the retry on reported speech;
+            # if the retry still carries marks, generate_radio_rundown strips
+            # them and re-validates, so punctuation alone never costs the show.
             if has_quotation_marks(t.text):
-                warn("R-02", label, f"quotation marks are never read aloud; use reported speech: {t.text[:70]!r}")
+                fail("R-02", label, f"quotation marks are never read aloud; use reported speech: {t.text[:70]!r}")
             # R-03 numerals (code normalises anyway; warn so the prompt learns)
             if has_numerals(t.text):
                 warn("R-03", label, f"numerals present (will be spoken by the normaliser): {t.text[:70]!r}")
@@ -595,6 +737,25 @@ def validate_rundown(r: RadioRundown, ctx: RundownContext) -> ValidationReport:
     if len(r.say) > 12:
         warn("R-13", "SAY", f"{len(r.say)} respellings; keep to the hard names")
 
+    # R-14 grounded attribution, R-15 no unattributed statement of law
+    for s in r.segments:
+        if s.kind not in ("STORY", "BRIEFS", "FINALLY"):
+            continue
+        label = _seg_label(s)
+        rows = _rows_for_segment(s, ctx)
+        for t in s.turns:
+            attributed_earlier = False
+            for sent in _sentences(t.text):
+                m = _ATTRIBUTED_CLAIM_RE.match(sent)
+                if m:
+                    verdict = attribution_grounding(m.group("who"), m.group("clause"), rows)
+                    if verdict is not None and verdict[0] < R14_MIN_OVERLAP:
+                        fail("R-14", label, f"attributed claim not what the story says ({verdict[1]}): {sent[:90]!r}")
+                attributed_here = bool(_ATTRIBUTION_ANY_RE.search(sent))
+                if _LEGAL_SUBJECT_RE.match(sent) and not attributed_here and not attributed_earlier:
+                    fail("R-15", label, f"a court or a law stated in Void's own voice; say who says so: {sent[:90]!r}")
+                attributed_earlier = attributed_earlier or attributed_here
+
     for w in r.warnings:
         warn("R-00", "PARSE", w)
 
@@ -624,7 +785,8 @@ You write for the EAR, in the manner of a trained radio newsreader, not for the 
 - No a.m. or p.m., no clock times unless they carry the story; say "this morning", "overnight", "on Wednesday".
 - No print datelines. "In Washington," not "WASHINGTON —".
 - Initialisms read as letters are hyphenated: "the F-B-I", "the E-U", "the U-S". Words stay words: NATO, OPEC.
-- Every fact comes from the stories provided. Never supplement from memory. Never invent a number, a name or a quote.
+- Every fact MUST appear in the provided articles. Do not supplement with prior knowledge. Never invent a number, a name or a quote.
+- When you attribute a claim ("X says", "X argues"), the clause after the verb is what the story reports X said: cut it, never reword it. A court, a law or the Constitution never does anything in your own voice; say who says so.
 - Show, don't tell. Never "significant", "notable", "interestingly", "crucially", "it should be noted". Concrete facts, then stop.
 - No editorialising in the news segments. No reactions between the voices ("Wow.", "That's fascinating."). No thanks, no names, no "over to you".
 - Em dashes are allowed only as a spoken pause mark, sparingly.
@@ -837,6 +999,18 @@ def generate_radio_rundown(
         findings = "\n".join(f"- {f.id} [{f.segment}] {f.detail}" for f in report.failures)
 
     if best is not None:
-        print(f"  [radio] no attempt passed; best had {len(best[1].failures)} failures")
-        return None, best[1], "gemini-flash-rejected"
+        rundown, report = best
+        if report.failures and all(f.id == "R-02" for f in report.failures):
+            # The retry was spent asking for reported speech. Once it is gone
+            # the marks are punctuation the engine drops anyway, so strip and
+            # re-validate rather than lose the show to them.
+            for s in rundown.segments:
+                for t in s.turns:
+                    t.text = strip_quotation_marks(t.text)
+            report = validate_rundown(rundown, ctx)
+            if report.passed:
+                print("  [radio] quotation marks stripped after the retry; script accepted")
+                return rundown, report, "gemini-flash"
+        print(f"  [radio] no attempt passed; best had {len(report.failures)} failures")
+        return None, report, "gemini-flash-rejected"
     return None, None, "none"

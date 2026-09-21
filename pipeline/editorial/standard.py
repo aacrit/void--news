@@ -351,22 +351,52 @@ _CRIMINAL_ALLEGATION = re.compile(
     r"pleaded guilty|pled guilty|arrested for|perpetrat(?:ed|or))\b", re.I,
 )
 _ATTRIBUTION_CUE = re.compile(
-    r"\b(accord(?:ing)? to|reported by|as reported|reportedly|said|says|stated|stating|"
+    r"\b(accord(?:ing)? to|reported by|as reported|said|says|stated|stating|"
     r"told\s+[A-Z]|per\s+[A-Z]|alleged by|prosecutors|indictment|police said|"
     r"court (?:documents|filings|records)|lawsuit|complaint|wrote|posted|announced)\b", re.I,
+)
+# A hedge names nobody. "Reportedly" was in the cue list above until
+# 2026-09-21, so "Defense Department staffers reportedly likened Jennifer to
+# Yoko Ono" satisfied E-05 while attributing the claim to no one (brand audit
+# F-14). VOICE-BRAND II: attribute or abstain. A sentence whose only cover is
+# one of these goes to E-15, advisory for now, so the numbers exist before it
+# is made to fail the build.
+_HEDGE_CUE = re.compile(
+    r"\b(reportedly|allegedly|(?:is|are|was|were)\s+said\s+to)\b", re.I,
 )
 _QUOTE_PRESENT = re.compile(r'["“][^"”]{3,}["”]')
 
 
-def e05_reputational_attribution(summary: str) -> list[Finding]:
-    out: list[Finding] = []
+def _bare_reputational_sentences(summary: str):
+    """Sentences carrying a reputational or criminal claim with no real
+    attribution and no quotation, tagged with whether a hedge stands in."""
     for sent in sentences(summary or ""):
         if not (_REPUTATIONAL.search(sent) or _CRIMINAL_ALLEGATION.search(sent)):
             continue
         if _ATTRIBUTION_CUE.search(sent) or _QUOTE_PRESENT.search(sent):
             continue
+        yield sent, bool(_HEDGE_CUE.search(sent))
+
+
+def e05_reputational_attribution(summary: str) -> list[Finding]:
+    out: list[Finding] = []
+    for sent, hedged in _bare_reputational_sentences(summary):
+        if hedged:
+            continue  # E-15 judges these, advisory, until the standard promotes it
         out.append(Finding("E-05",
                            f'reputational or criminal claim with no attribution: "{sent[:110]}"'))
+    return out
+
+
+def e15_hedge_is_not_attribution(summary: str) -> list[Finding]:
+    out: list[Finding] = []
+    for sent, hedged in _bare_reputational_sentences(summary):
+        if not hedged:
+            continue
+        hedge = _HEDGE_CUE.search(sent).group(1)
+        out.append(Finding("E-15",
+                           f'"{hedge}" stands in for attribution on a reputational claim; '
+                           f'name who reports it or cut it: "{sent[:110]}"'))
     return out
 
 
@@ -715,6 +745,7 @@ VALIDATORS: list[Validator] = [
     Validator("E-12", "no sentence isolated from the rest of the summary", ADVISORY, e12_isolated_sentence, "summary"),
     Validator("E-13", "every number in the card appears in its sources", ENFORCED, e13_numbers_are_sourced, "grounded"),
     Validator("E-14", "every quotation in the card is verbatim in its sources", ENFORCED, e14_quotes_are_verbatim, "grounded"),
+    Validator("E-15", "a hedge is not an attribution", ADVISORY, e15_hedge_is_not_attribution, "summary"),
 ]
 
 VALIDATORS_BY_ID = {v.id: v for v in VALIDATORS}

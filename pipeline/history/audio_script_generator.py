@@ -113,7 +113,7 @@ def check_history_prohibited(text: str, slug: str = "") -> list[str]:
 # ---------------------------------------------------------------------------
 
 _HISTORY_SYSTEM_INSTRUCTION = """\
-You are writing a two-host dialogue script for void --history, an archival \
+You are writing a two-host dialogue script for Void History, an archival \
 audio companion to a multi-perspective historical events platform. Your \
 product is the DIVERGENCE between historical perspectives — the places \
 where accounts contradict each other in numbers, causation, or emphasis.
