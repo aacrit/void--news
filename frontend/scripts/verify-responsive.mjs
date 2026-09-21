@@ -36,6 +36,7 @@
 import { chromium } from "playwright";
 import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
+import { existsSync } from "node:fs";
 import { join, extname, resolve } from "node:path";
 
 const OUT = resolve(new URL("../out", import.meta.url).pathname);
@@ -102,10 +103,17 @@ const note = (s) => console.log(s);
 
 const server = serve();
 await new Promise((r) => server.listen(PORT, r));
-const browser = await chromium.launch({
-  executablePath: process.env.VOID_CHROMIUM
-    || "/opt/pw-browsers/chromium-1194/chrome-linux/chrome",
-});
+/* Use an explicit binary ONLY when one is actually there. This container
+   carries Chromium at a fixed path and the bundled Playwright expects a build
+   it does not have, so pointing at it is required locally. CI runs
+   `playwright install`, which puts the browser where Playwright looks by
+   default, and hardcoding the local path there made this gate fail on a
+   binary that does not exist on the runner. Prefer the env var, then the
+   known local path if it is real, then let Playwright resolve. */
+const LOCAL_CHROMIUM = "/opt/pw-browsers/chromium-1194/chrome-linux/chrome";
+const explicit = process.env.VOID_CHROMIUM
+  || (existsSync(LOCAL_CHROMIUM) ? LOCAL_CHROMIUM : undefined);
+const browser = await chromium.launch(explicit ? { executablePath: explicit } : {});
 
 for (const path of PAGES) {
   note(`\n${path}`);
