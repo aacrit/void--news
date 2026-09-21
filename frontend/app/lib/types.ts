@@ -147,6 +147,9 @@ export interface StorySource {
   articleTitle?: string;
   /** Article summary/excerpt from source (for ComparativeView) */
   articleSummary?: string;
+  /** The engine did not measure this article's political lean. Its stored
+   *  value is the 50 default, so no surface may plot or average it. */
+  leanUnscored?: boolean;
 }
 
 /* ---------------------------------------------------------------------------

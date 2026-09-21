@@ -317,6 +317,13 @@ if want("archive"):
 
 if want("feed"):
     # ── deepdive/<cluster>.json for displayed clusters (typed DB is indexed -> fast) ──
+    # See pipeline/validation/bias_defaults.py. Imported before the loop
+    # because the unscored stamp is applied per row as the rows are built.
+    from validation.bias_defaults import (  # noqa: E402
+        default_share, format_per_axis, format_summary,
+        is_default_tuple as _is_default_tuple, per_axis_default_share,
+    )
+
     dd = 0
     gr = 0
     exported_bias_rows = []  # every per-article bias row the deepdive files carry
@@ -340,7 +347,7 @@ if want("feed"):
                 if s:
                     src = {"name": s["name"], "tier": s["tier"], "url": s["url"]}
             bs = c.execute(
-                "SELECT political_lean,sensationalism,opinion_fact,factual_rigor,framing,confidence,rationale "
+                "SELECT political_lean,sensationalism,opinion_fact,factual_rigor,framing,confidence,rationale,lean_unscored "
                 "FROM bias_scores WHERE article_id=?",
                 (a["id"],),
             ).fetchone()
@@ -355,6 +362,20 @@ if want("feed"):
                     "confidence": pnum(bs["confidence"]),
                     "rationale": pjson(bs["rationale"]) if (bs["rationale"] and str(bs["rationale"]).lstrip()[:1] == "{") else bs["rationale"],
                 }
+                # The analyzer's own verdict that this article's lean was not
+                # measurable (an unrated outlet whose copy carried no textual
+                # signal). It has always excluded the row from the cluster
+                # aggregate; until 2026-09-21 it stopped at the database, so
+                # the page plotted the article's dot at 50 as if measured.
+                if bs["lean_unscored"]:
+                    bias["lean_unscored"] = True
+                # A row carrying the whole default tuple is not a measurement
+                # whatever the database says, so it is marked here, before this
+                # cluster's file is written. Marked per row and unconditionally:
+                # the export degrades rather than blocking, so one bad row is
+                # handled exactly as honestly as six hundred.
+                if _is_default_tuple(bias):
+                    bias["lean_unscored"] = True
                 exported_bias_rows.append(bias)
             grounding_rows.append({
                 "id": a["id"], "url": a["url"], "title": a["title"],
@@ -378,27 +399,16 @@ if want("feed"):
     print(f"deepdive/: {dd} cluster files")
     print(f"grounding/: {gr} cluster files (build-data, not served)")
 
-    # The default-tuple gate. A run whose per-article scores are mostly
-    # 50/10/25/50/0.7 did not measure them: that is what step 6b produced for
-    # every 36h-lookback article until 2026-09-21. Print the share every run,
-    # and refuse to ship a run that is mostly unmeasured.
-    # See pipeline/validation/bias_defaults.py.
-    from validation.bias_defaults import (  # noqa: E402
-        BiasDefaultsError, check_default_share, format_summary, default_share,
-    )
-
-    # VOID_BIAS_DEFAULTS_GATE=warn downgrades the raise to a printed warning.
-    # It exists for ONE caller: tests/test_editorial_stage.py, whose DB is
-    # built from the committed 2026-09-20 snapshot, which was written by the
-    # broken step 6b. The daily pipeline never sets it.
-    _gate_mode = os.environ.get("VOID_BIAS_DEFAULTS_GATE", "fail").strip().lower()
-    try:
-        print(check_default_share(exported_bias_rows))
-    except BiasDefaultsError as _bd_err:
-        if _gate_mode != "warn":
-            raise
-        print(f"WARNING (VOID_BIAS_DEFAULTS_GATE=warn): {_bd_err}")
-        print(format_summary(*default_share(exported_bias_rows)))
+    # What the run measured, and what it did not. Every row that carried the
+    # default tuple was marked unscored above, so it is already out of the
+    # cluster aggregate and off the spectrum; these two lines are the record,
+    # and the numbers CI asserts against the committed export
+    # (tests/test_bias_defaults_gate.py). The export itself never raises here:
+    # blocking the daily run would cost readers the newspaper to protect one
+    # axis of one panel, and the degradation has already done the protecting
+    # (CEO, 2026-09-21).
+    print(format_summary(*default_share(exported_bias_rows)))
+    print(format_per_axis(per_axis_default_share(exported_bias_rows)))
 
 if want("methodology"):
     # ── methodology.json ──

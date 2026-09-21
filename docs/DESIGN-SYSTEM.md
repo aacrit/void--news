@@ -304,6 +304,71 @@ paper so the page does not end in a seam of a different colour. Paper
 additionally neutralises the chrome for print. The floating player is the same
 pattern, one variable deep.
 
+### One transport, two mounts
+
+The broadcast console existed twice: once in `FloatingPlayer`'s broadcast view
+and once again as `OnAirPage`'s portal, which `onair.css` admitted in its own
+header ("mirrors `.fp__broadcast`"). At 1440px both were on screen at once,
+showing one episode through two implementations that could disagree.
+
+There is one console now, and two places it mounts. What they are ABOUT
+differs, on purpose:
+
+| Mount | Subject | Why |
+|---|---|---|
+| `/onair` (`OnAirPage`) | **today's broadcast**, whoever owns the element | A page has a subject. One that renamed itself after whatever was loaded is how it came to print "ON AIR, World Edition, 23 min" over a documentary. Another programme in the element is named in one line above the portal instead |
+| `OnAirPanel` | **what is playing** | It is chrome, not a destination: it reports the element |
+
+The pill stands down wherever a fuller transport already has the reader:
+on `/onair`, and while the panel is open.
+
+**Two tiers, not three.** The player used to carry a middle state between the
+pill and the console (`.fp__bar`, a compact transport bar). With the console
+moved out into the panel, that tier had neither a way in nor a purpose, so it
+went with it: `FloatingPlayer.tsx` fell from 813 lines to 158 and is now the
+pill and nothing else. The one gate that would have caught the leftovers is
+`css-parity`, which flagged six classes as dead the moment the branch could no
+longer render.
+
+### The On Air panel (`components/OnAirPanel.tsx`)
+
+Two forms, and only one of them is modal.
+
+| | ≥1024px | <1024px |
+|---|---|---|
+| Geometry | right-anchored pane, `--onair-pane-w` = `clamp(360px, 30vw, 480px)`; the canvas shifts by the same token | bottom sheet, full screen below 768px |
+| Scrim | none | dims the page, `.oap__scrim` |
+| Body scroll | left alone | locked, saved and restored |
+| `aria-modal` | absent | `"true"` |
+| Tab | may leave the panel | trapped |
+
+The split is the honest one: at 1024px and up the page behind stays visible,
+scrollable and readable, so claiming `aria-modal` would tell a screen reader
+the article had gone away while a sighted reader can still use it.
+
+Both forms take `role="dialog"`, an `aria-label` naming the programme and the
+episode, Escape, a pushed history entry so the back gesture closes the panel
+rather than leaving the route, and focus restored to the control that opened
+it. The mechanics are `MobileSidePanel`'s, **including** the reason its close
+goes through `history.back()` rather than calling the close handler directly.
+
+The restore is written as an outcome, not a mechanism: focus lands on a
+control. The opener is usually the pill, which the panel suppresses while it
+is open, so by the time the close effect reads `document.activeElement` that
+button is gone and the answer is `<body>`; the restore therefore falls back to
+the pill or the On Air tab once they are back. Measured before the fix: a
+keyboard reader who pressed Escape landed on `<body>`.
+
+The pane moved from the left edge to the right on 2026-09-21. On the left it
+sat between the reader and the masthead's own wordmark and pushed the canvas
+off the edge the eye starts at; right is where a reader reaches for a
+companion surface, and it matches the nav drawer. The width became one token
+in the same pass: the old `calc(100vw - 1400px - 80px)` resolves below its own
+320px floor at every viewport under 1800px, so a pane that read as responsive
+was a constant that happened to be written as a calculation.
+
+`z-index: var(--z-player)`, with the scrim one below it.
+
 ### The experimental banner
 
 `components/ExperimentalBanner.tsx` sits **below** the masthead and renders
@@ -456,9 +521,11 @@ three zones, a raised centre brand anchor between two side tabs.
 ```
 
 Home is the Sigil mark in the news terracotta, larger than the side tabs,
-punching through the bar. On Air always navigates to `/onair`, with a small
-teal dot for the playing state. Menu opens `MobileSidePanel`, which carries
-the theme control and the destinations the masthead drops.
+punching through the bar. On Air opens the player **panel** over the current
+page, with a small teal dot for the playing state; it used to push `/onair`,
+which cost a reader three screens into a story their place to reach a
+transport that was already on screen as a pill. Menu opens `MobileSidePanel`,
+which carries the theme control and the destinations the masthead drops.
 
 Layout rules below 767px (`styles/responsive.css`, `styles/mobile-feed.css`):
 

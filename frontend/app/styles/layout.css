@@ -50,35 +50,40 @@
   }
 }
 
-/* ---- On-Air Pane — desktop left sidebar pushes canvas right ----------- */
-/* When the broadcast pane is open (data-onair-pane on html), the page
-   container shifts right by the pane width. page-main auto-recenters
-   via margin: 0 auto within the remaining space. */
+/* ---- On-Air Pane — desktop right sidebar pushes canvas left ----------- */
+/* When the On Air panel is open as a desktop pane (data-onair-pane on html),
+   the page container shifts left by the pane width. page-main auto-recenters
+   via margin: 0 auto within the remaining space.
+   The pane moved from the left edge to the right on 2026-09-21: on the left it
+   sat between the reader and the masthead's own wordmark and pushed the canvas
+   off the edge the eye starts at. The width is one token now
+   (--onair-pane-w); the old calc() resolved below its own floor at every
+   viewport under 1800px, so a pane that read as responsive was a constant. */
 @media (min-width: 1024px) {
   html[data-onair-pane] .page-container {
-    padding-left: clamp(320px, calc(100vw - 1400px - 80px), 480px);
-    /* padding-left is a layout property: every transition frame reflows the
+    padding-right: var(--onair-pane-w);
+    /* padding is a layout property: every transition frame reflows the
        document. 250ms (was 420ms + a meaningless will-change) keeps the
        glide but pays 40% fewer thrash frames. A future pass could move the
        push to transform on an inner wrapper. */
-    transition: padding-left 250ms var(--ease-cinematic, ease);
+    transition: padding-right 250ms var(--ease-cinematic, ease);
   }
 
-  /* Smooth return when pane closes */
+  /* Smooth return when the pane closes */
   .page-container {
-    transition: padding-left 250ms var(--ease-cinematic, ease);
+    transition: padding-right 250ms var(--ease-cinematic, ease);
   }
 
   /* /weekly uses .wk-page (not .page-container) as its outer container, so the
-     broadcast sidebar push needs a sibling rule to avoid overlapping the
-     weekly canvas. Mirrors the .page-container values exactly. */
+     pane push needs a sibling rule to avoid overlapping the weekly canvas.
+     Mirrors the .page-container values exactly. */
   html[data-onair-pane] .wk-page {
-    padding-left: clamp(320px, calc(100vw - 1400px - 80px), 480px);
-    transition: padding-left 250ms var(--ease-cinematic, ease);
+    padding-right: var(--onair-pane-w);
+    transition: padding-right 250ms var(--ease-cinematic, ease);
   }
 
   .wk-page {
-    transition: padding-left 250ms var(--ease-cinematic, ease);
+    transition: padding-right 250ms var(--ease-cinematic, ease);
   }
 }
 

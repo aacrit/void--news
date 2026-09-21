@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useAudio, type EpisodeMeta } from "./AudioProvider";
+import { episodeFromBrief, sameEpisode } from "../lib/episode";
 import { hapticLight, hapticMicro } from "../lib/haptics";
 import { splitBriefParagraphs } from "../lib/briefText";
 import {
@@ -88,21 +89,51 @@ export default function OnAirPage() {
   const a = useAudio();
   const brief = a.brief;
 
-  const hasAudio = Boolean(brief?.audio_url);
+  /* THE PAGE'S SUBJECT IS TODAY'S BROADCAST, always. `brief` is the daily
+     edition and no other programme can write it, so this page can no longer
+     announce someone else's episode as its own: it used to print
+     "ON AIR · World Edition · 23 min" over the Weekly's cover headline, and
+     "15 min" over "The Fall of Constantinople" (measured 2026-09-21).
+
+     The transport below is the SHARED one. It is live while today's broadcast
+     is the loaded episode; when another programme owns the player the same
+     controls start today's broadcast instead, and a line above the portal
+     names what is playing. */
+  const episode = useMemo(() => episodeFromBrief(brief), [brief]);
+  const owns = sameEpisode(a.nowPlaying, episode);
+  const playing = owns && a.isPlaying;
+  const elsewhere = !owns && a.nowPlaying ? a.nowPlaying : null;
+
+  const hasAudio = Boolean(episode);
+
+  /** Today's broadcast, from this chapter. Universal: it toggles when the
+   *  daily programme is already loaded and starts it when it is not. */
+  const start = (at?: number) => {
+    if (!episode) return;
+    if (at == null) {
+      if (owns) a.handlePlayPause();
+      else a.play(episode);
+      return;
+    }
+    if (owns) a.seekTo(at);
+    else a.play(episode, { startAt: at });
+  };
 
   // Prefer the stored episode duration (stable) over the <audio> element's
   // reported duration so the portal readouts settle immediately.
-  const displayDuration = brief?.audio_duration_seconds || a.duration || 0;
-  const progress = displayDuration > 0 ? (a.currentTime / displayDuration) * 100 : 0;
+  const displayDuration = episode?.durationSeconds || (owns ? a.duration : 0) || 0;
+  /* The playhead belongs to the loaded episode: showing a Weekly issue's
+     position on today's seek bar would be a second kind of lie. */
+  const currentTime = owns ? a.currentTime : 0;
+  const progress = displayDuration > 0 ? (currentTime / displayDuration) * 100 : 0;
   const durationMin = displayDuration ? Math.ceil(displayDuration / 60) : null;
 
   const opinionStart = brief?.opinion_start_seconds ?? null;
-  const hasOpinion = Boolean(brief?.opinion_text);
   const opinionPct =
     opinionStart != null && displayDuration > 0
       ? Math.min(100, (opinionStart / displayDuration) * 100)
       : null;
-  const inOpinion = opinionStart != null && a.currentTime >= opinionStart;
+  const inOpinion = opinionStart != null && currentTime >= opinionStart;
 
   const episodes = a.previousEpisodes;
   // The stored label is the truth about who read the episode; "Two voices" is
@@ -122,9 +153,11 @@ export default function OnAirPage() {
      A chaptered episode replaces the two-tab News / Opinion group with the
      show's real running order. Legacy episodes (and weekly / history) carry no
      chapters and keep the original tabs untouched. */
-  const chapters = a.chapters;
+  /* Today's running order, off the daily brief, so the page lists its own
+     chapters whoever owns the player. Memoized: it feeds two useMemo deps. */
+  const chapters = useMemo(() => episode?.chapters ?? [], [episode]);
   const hasChapters = chapters.length > 0;
-  const chapIndex = a.currentChapterIndex;
+  const chapIndex = owns ? a.currentChapterIndex : -1;
   const currentChapter = chapIndex >= 0 ? chapters[chapIndex] : null;
   const marks = useMemo(
     () => chapterMarks(chapters, displayDuration),
@@ -155,7 +188,7 @@ export default function OnAirPage() {
       <main className="onair" id="main-content">
         <header className="onair__masthead">
           <span className="onair__kicker">
-            <span className={`onair__dot${a.isPlaying ? " onair__dot--live" : ""}`} aria-hidden="true" />
+            <span className={`onair__dot${playing ? " onair__dot--live" : ""}`} aria-hidden="true" />
             On Air
           </span>
           <h1 className="onair__title">The Broadcast</h1>
@@ -163,6 +196,16 @@ export default function OnAirPage() {
               is the moat. The dateline, headline, and live transport below say
               what this is without a paragraph describing it. */}
         </header>
+
+        {/* Another programme owns the player. The page says so rather than
+            presenting someone else's episode as today's edition, and the
+            transport below starts today's broadcast on a press. */}
+        {elsewhere && (
+          <p className="onair__elsewhere" role="status">
+            <span className="onair__elsewhere-label">{elsewhere.programmeLabel} is loaded</span>
+            <span className="onair__elsewhere-title">{elsewhere.title}</span>
+          </p>
+        )}
 
         {!hasAudio ? (
           <section className="onair__empty">
@@ -173,7 +216,7 @@ export default function OnAirPage() {
           <>
             {/* ── Broadcast portal (hero) ── */}
             <section
-              className={`onair__portal${a.isPlaying ? " onair__portal--live" : ""}`}
+              className={`onair__portal${playing ? " onair__portal--live" : ""}`}
               aria-label="Now playing"
             >
               {/* VU arc motif — decorative broadcast gauge behind header */}
@@ -194,12 +237,12 @@ export default function OnAirPage() {
               {/* Header — brand + live status + speed */}
               <div className="onair__phead">
                 <div className="onair__pbrand">
-                  <ScaleIcon size={22} animation={a.isPlaying ? "broadcast" : "idle"} />
+                  <ScaleIcon size={22} animation={playing ? "broadcast" : "idle"} />
                   <span className="onair__pbrand-void">Void</span>
                   <span className="onair__pbrand-cmd">On Air</span>
-                  <span className={`onair__status${a.isPlaying ? " onair__status--live" : ""}`}>
+                  <span className={`onair__status${playing ? " onair__status--live" : ""}`}>
                     <span className="onair__status-dot" aria-hidden="true" />
-                    <span className="onair__status-label">{a.isPlaying ? "ON AIR" : "On demand"}</span>
+                    <span className="onair__status-label">{playing ? "ON AIR" : "On demand"}</span>
                   </span>
                 </div>
                 <button
@@ -228,7 +271,7 @@ export default function OnAirPage() {
               )}
 
               {/* Hero VU meter — teal phosphor bars, CSS-animated when playing */}
-              <div className={`onair__vu${a.isPlaying ? " onair__vu--active" : ""}`} aria-hidden="true">
+              <div className={`onair__vu${playing ? " onair__vu--active" : ""}`} aria-hidden="true">
                 {vuBars.map((i) => (
                   <span key={i} className="onair__vu-bar" style={{ animationDelay: `${i * 60}ms` }} />
                 ))}
@@ -241,7 +284,7 @@ export default function OnAirPage() {
                   className="onair__tbtn"
                   onClick={() => {
                     hapticMicro();
-                    a.skipBackward();
+                    if (owns) a.skipBackward(); else start(0);
                   }}
                   aria-label="Back 15 seconds"
                 >
@@ -254,14 +297,14 @@ export default function OnAirPage() {
 
                 <button
                   type="button"
-                  className={`onair__play${a.isPlaying ? " onair__play--on" : ""}`}
+                  className={`onair__play${playing ? " onair__play--on" : ""}`}
                   onClick={() => {
                     hapticLight();
-                    a.handlePlayPause();
+                    start();
                   }}
-                  aria-label={a.isPlaying ? "Pause" : "Play"}
+                  aria-label={playing ? "Pause" : "Play"}
                 >
-                  <PlayGlyph playing={a.isPlaying} />
+                  <PlayGlyph playing={playing} />
                 </button>
 
                 <button
@@ -269,7 +312,7 @@ export default function OnAirPage() {
                   className="onair__tbtn"
                   onClick={() => {
                     hapticMicro();
-                    a.skipForward();
+                    if (owns) a.skipForward(); else start(0);
                   }}
                   aria-label="Forward 15 seconds"
                 >
@@ -303,7 +346,11 @@ export default function OnAirPage() {
                       )}
                     </span>
                     <span className="onair__rail-count" aria-label={`Chapter ${chapIndex + 1} of ${chapters.length}`}>
-                      {chapIndex >= 0 ? chapIndex + 1 : "\u2013"} / {chapters.length}
+                      {/* Between chapters, the length of the running order
+                          rather than a dash for the missing index. */}
+                      {chapIndex >= 0
+                        ? `${chapIndex + 1} / ${chapters.length}`
+                        : `${chapters.length} chapters`}
                     </span>
                     {opinionIndex >= 0 && (
                       <button
@@ -311,7 +358,7 @@ export default function OnAirPage() {
                         className={`onair__rail-jump${chapIndex === opinionIndex ? " onair__rail-jump--on" : ""}`}
                         onClick={() => {
                           hapticMicro();
-                          a.seekToChapter(opinionIndex);
+                          start(chapters[opinionIndex]?.startTime ?? 0);
                         }}
                       >
                         Editorial
@@ -326,7 +373,7 @@ export default function OnAirPage() {
                         className={`onair__section${!inOpinion ? " onair__section--on" : ""}`}
                         onClick={() => {
                           hapticMicro();
-                          a.seekTo(0);
+                          start(0);
                         }}
                       >
                         News
@@ -336,7 +383,7 @@ export default function OnAirPage() {
                         className={`onair__section${inOpinion ? " onair__section--on" : ""}`}
                         onClick={() => {
                           hapticMicro();
-                          a.seekTo(opinionStart);
+                          start(opinionStart);
                         }}
                       >
                         Opinion
@@ -366,14 +413,14 @@ export default function OnAirPage() {
                     min={0}
                     max={displayDuration || 0}
                     step={1}
-                    value={Math.min(a.currentTime, displayDuration || 0)}
-                    onChange={(e) => a.seekTo(Number(e.target.value))}
+                    value={Math.min(currentTime, displayDuration || 0)}
+                    onChange={(e) => start(Number(e.target.value))}
                     aria-label="Seek"
-                    aria-valuetext={`${fmt(a.currentTime)} of ${fmt(displayDuration)}`}
+                    aria-valuetext={`${fmt(currentTime)} of ${fmt(displayDuration)}`}
                   />
                 </div>
                 <div className="onair__times">
-                  <span>{fmt(a.currentTime)}</span>
+                  <span>{fmt(currentTime)}</span>
                   <span>{fmt(displayDuration)}</span>
                 </div>
               </div>
@@ -400,7 +447,7 @@ export default function OnAirPage() {
                           className="onair__chap-seek"
                           onClick={() => {
                             hapticMicro();
-                            a.seekToChapter(i);
+                            start(chapters[i]?.startTime ?? 0);
                           }}
                           aria-current={on ? "true" : undefined}
                         >
@@ -468,7 +515,9 @@ export default function OnAirPage() {
                 <p className="onair__archive-date">{day}</p>
                 <ul className="onair__archive-list">
                   {eps.map((ep) => {
-                    const current = brief?.id === ep.id;
+                    /* The row that is really in the element, not the row
+                       whose id matches today's brief. */
+                    const current = !!ep.audio_url && a.nowPlaying?.audioUrl === ep.audio_url;
                     return (
                       <li key={ep.id}>
                         <button

@@ -42,6 +42,10 @@ export interface PrintedMember {
   url?: string | null;
   published_at?: string | null;
   is_wire_copy?: boolean | null;
+  /** The engine did not measure this article's lean; its stored value is the
+   *  50 default, so the archived spectrum withholds its pin exactly as the
+   *  live one does. Absent on rows archived before 2026-09-21. */
+  lean_unscored?: boolean | null;
 }
 
 export interface PrintedStoryRow {
@@ -194,6 +198,9 @@ export function archiveMembersToSpectrumSources(
   const out: DeepDiveSpectrumSource[] = [];
   for (const m of members) {
     if (typeof m.lean !== "number" || Number.isNaN(m.lean)) continue;
+    /* An unmeasured lean is stored as 50, so plotting it would put a pin at
+       dead centre for a reading nobody took. Same rule as the live Deep Dive. */
+    if (m.lean_unscored) continue;
     const name = (m.source_name || "").trim();
     if (!name) continue;
     const key = name.toLowerCase();

@@ -775,6 +775,13 @@
   --z-cinematic: 45;  /* Vignette + film grain layers */
   --z-overlay:  50;
   --z-player:   60;   /* Floating audio player — above overlays, below modals */
+  /* The On Air panel's width as a desktop pane. It used to be
+     calc(100vw - 1400px - 80px), which resolves BELOW its own 320px floor at
+     every viewport up to 1800px: the pane was 320px on a 1440px screen and
+     only reached 480px past 1960px, so the width was in practice a constant
+     that looked like a calculation. A share of the viewport with a readable
+     floor gives the console room where there is room. */
+  --onair-pane-w: clamp(360px, 30vw, 480px);
   --z-modal:    100;
   --z-popup:    150;
 }

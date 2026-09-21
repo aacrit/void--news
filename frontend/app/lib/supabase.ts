@@ -111,6 +111,12 @@ export async function fetchSourceLeans(clusterId: string): Promise<number[]> {
     if (!article) continue;
     const biasRaw = article.bias_scores;
     const bias = Array.isArray(biasRaw) ? biasRaw[0] : biasRaw;
+    /* An article whose lean was never measured contributes no point. Its
+       stored value is 50, so counting it drew a dot at dead centre and the
+       KDE grew a spike there out of nothing: on the 2026-09-20 export 595 of
+       737 rows were unmeasured, which is the whole of the "everything reads
+       as centre" impression the spectrum gave. */
+    if (bias?.lean_unscored) continue;
     const lean = bias?.political_lean as number;
     if (typeof lean === "number") leans.push(lean);
   }

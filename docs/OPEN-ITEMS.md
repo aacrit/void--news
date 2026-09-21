@@ -20,7 +20,21 @@ us" into "for all of them" — a real person's words, altered, in production.
 `E-07` and `E-08` ship ADVISORY pending this call. Proposal:
 `docs/proposals/EDITORIAL-VOICE-2026-09.md`.
 
-**The lean gate went quiet on 60% of the feed.** On 09-09 it emitted ZERO
+**The lean gate: the dilution is FIXED 2026-09-21, the thresholds still want a
+read on a post-fix feed.** `leanShareTilt` now divides by the wing coverage
+(left + right) rather than by every analyzed article, with a five-wing floor,
+and `LABEL_MIN_SHARE_TILT` was re-derived from 0.20 to 0.33 for the new
+denominator. Measured against the 2026-09-20 feed that moves 2 of 35 cards,
+both Balanced to a direction, both real (12 left vs 5 right across 72 sources;
+0 left vs 6 right across 24). The old denominator was failing in BOTH
+directions at once: it diluted a real 14:5 split to 0.153, and it also cleared
+0.20 on two left articles out of nine. What is still open is below, because 18
+of 35 cards read "Not measured" for want of `LABEL_MIN_MEASURED` articles, and
+that count is dominated by the step 6b damage. Re-read label coverage on the
+first post-fix export before touching `LABEL_MIN_SOURCES` (8),
+`LABEL_MIN_CONFIDENCE` (0.5) or `LABEL_MIN_MEASURED` (10).
+
+**The original report, for the record.** On 09-09 it emitted ZERO
 directional labels: 12 of 20 cards read "Flat". Suppressors, in order of how
 often they fired: `margin < 8` (8 cards), `confidence < 0.5` (6),
 `measured < 10` (3). The mechanism worth understanding before anyone touches a
@@ -37,39 +51,51 @@ claims about its own confidence. It needs a decision, not a tweak.
 
 ## Known defects, not yet fixed
 
-### Bias: 83% of served per-article rows carry political lean exactly 50 (2026-09-21)
+### Bias centring: DIAGNOSED AND ANSWERED 2026-09-21. Not a calibration problem.
 
-Measured on the 2026-09-20 export in `frontend/public/data/deepdive/*.json`,
-737 rows across the 35 clusters:
+Kept because the wrong hypothesis was written down here first and acting on it
+would have made things worse.
 
-- 610 rows (83%) have `political_lean` exactly 50; 628 (85%) sit in 45..55;
-  population stdev 9.3.
-- The most common full tuple is `(50, 10, 25, 50, framing)`: four axes at
-  their defaults with only framing varying (160 rows at framing 6, 38 at 12,
-  24 at 17). `pipeline/validation/bias_defaults.py` counts a row as default
-  only when EVERY axis matches, so a varying fifth axis lets these through and
-  the gate reads clean while four axes are unmeasured.
-- The outlet baseline is not in the rows. Of 77 articles from outlets the
-  roster rates `right`, 57 are at exactly 50; of 171 rated `center-left`,
-  127 are at 50; of 26 rated `far-right`, 19 are at 50. The analyzer's own
-  contract ("neutral copy leaves an outlet AT its baseline",
-  `pipeline/analyzers/political_lean.py:13`) makes exactly 50 impossible for
-  a right-rated outlet unless the baseline it was given was "center".
-- What a reader sees: 449 of 558 measured sources (80%) in the centre
-  bucket, 14 of 35 clusters averaging exactly 50, median lean spread 6.8.
+**What this file used to say:** that `pipeline/main.py:2469`,
+`source_map.get(source_slug, {"political_lean_baseline": "center"})`, was
+silently anchoring articles to centre on a slug miss, and that the outlet
+baselines or the article-level analyzer might need recalibrating.
 
-Where to look first: `pipeline/main.py:2469`,
-`source = source_map.get(source_slug, {"political_lean_baseline": "center"})`.
-A slug that misses the map anchors the article to centre silently, and the
-share of rows at exactly 50 is what a mass miss would look like. Confirm by
-logging the miss rate for one run before changing anything.
+**Refuted, measured on the 2026-09-20 export (737 rows, 35 clusters):**
 
-The control that would have caught it: a per-axis default share in
-`bias_defaults.py` (political lean exactly 50 above, say, 40% of measured
-rows fails the export), alongside the whole-tuple share. Not added here
-because the threshold needs calibrating against a healthy run and a failing
-gate blocks the daily export; a CEO call.
+- **Zero** source names in the export failed to match `data/sources.json`. A
+  mass slug miss would have shown up here and did not.
+- On the 142 rows that were genuinely measured, the baseline ladder comes
+  through monotonically: far-left 30.0, left 35.0, centre-left 46.2, centre
+  50.0, centre-right 52.5, right 57.9, far-right 61.0. The anchor is reaching
+  the score.
+- Those 142 rows have stdev **21.2** across the full 10..97 range, with only
+  10.6% at exactly 50. That is a working measurement, not a collapse.
+- The "80% of sources read as centre" figure was **540 rows that were never
+  scored at all** (73.3% carrying the whole default tuple, 610 at lean exactly
+  50), which is the step 6b overwrite, fixed in `1484db4`.
 
+**So neither the outlet baselines nor the article-level analyzer were changed**
+(CEO, 2026-09-21). The article-level score is the differentiator and it is
+working on every row that reached it. What changed is the plumbing that let
+unscored rows read as measured centrism:
+
+- `lean_unscored` is now **exported**. It existed since the analyzer was
+  written and already excluded a row from the cluster aggregate, but it stopped
+  at the database, so the page kept plotting the article's pin at 50. Carried
+  on the live path (`export_static.py`) and the archive path
+  (`archive/print_archive.py`), withheld by `DeepDiveSpectrum`, `fetchSourceLeans`
+  and `archiveMembersToSpectrumSources`.
+- A default-tuple row is stamped unscored at export time, unconditionally.
+- `DEFAULT_TUPLE_MAX_SHARE` 0.5 to 0.10, plus a per-axis cap, asserted in CI
+  against the committed export rather than blocking the daily run.
+
+**What is still open, and it is one number:** the per-axis caps
+(`PER_AXIS_MAX_SHARE`) were set from the damaged export plus judgement, not
+from a healthy run. Read the `bias per-axis defaults:` block in the first
+post-fix run log and tighten them to fit. `sensationalism` at 86.4% on the old
+export is the one to watch: its cap is 60% and a real corpus may well sit far
+below that, in which case 60% is too loose to catch anything.
 
 **Two live episodes serve audio that contradicts their own script.**
 `great-leap-forward` presents a secondhand Mao remark, and
@@ -153,9 +179,11 @@ the same log: 6b's two new lines, how many lookback articles needed stored
 scores against how many rows came back, and how many framing updates were
 skipped for want of a measured row.
 
-Once a post-fix feed is committed, drop `VOID_BIAS_DEFAULTS_GATE=warn` from
-`tests/test_editorial_stage.py`: it is there only because that harness builds
-its DB from the damaged 2026-09-20 snapshot.
+`VOID_BIAS_DEFAULTS_GATE=warn` is **gone** (2026-09-21): it existed only
+because the export used to refuse a mostly-default run, and the export degrades
+now. The threshold moved to `tests/test_bias_defaults_gate.py`, which asserts
+the committed export and exempts itself only while that export predates the 6b
+fix, so it starts biting on the first post-fix feed with no edit.
 
 **House promos: DISCHARGED 2026-09-21.** All 78 published History episodes
 carry a promo under their outro, stitched without re-rendering a single line
@@ -232,6 +260,31 @@ were clean, `14208/14208 re-ranked`, `Errors: 0`, verify-production green):
 - No card in the top 20 should be a listicle, a shopping page or a photo
   gallery, and no headline should carry quotation marks around words no source
   printed.
+
+---
+
+## Left by the audio restructure (rev 77, 2026-09-21)
+
+Three things the two-slot rewrite deliberately did not touch. None of them
+causes the desyncs that rev fixed; each would have widened it.
+
+**The daily archive UI is permanently empty.** `lib/supabase.ts:201-231`
+takes an `edition` argument and ignores it, so the "Previous broadcasts" list
+on `/onair` and in the panel has nothing to show. The whole `edition` axis
+(`world`, `us`, `europe`, `south-asia`) is dead below the label: the pipeline
+writes one edition and the reader has no control that switches it.
+`setEdition` still exists in the provider and now only sets state, having lost
+the ownership claim it used to make. Decide whether the axis comes back or the
+archive, `previousEpisodes`, `loadEpisode` and `setEdition` all go.
+
+**Revolt has its own `<audio>` element.** It can play at the same time as the
+shared player, which no other section can. Revolt is 301-hidden and serves
+MOCK data, so nobody can reach it; the fix belongs with the work that makes it
+read static JSON.
+
+**`.msc__modal-backdrop` carries `z-index: 1000`**, off the token scale
+(`--z-modal` is 100). It happens to sit above everything and so works; it is
+the one place a layer is decided by a literal rather than by the scale.
 
 ---
 

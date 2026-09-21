@@ -9,6 +9,7 @@ import LogoIcon from "./LogoIcon";
 import { hapticLight, hapticConfirm } from "../lib/haptics";
 import { timeAgo } from "../lib/utils";
 import { splitBriefParagraphs } from "../lib/briefText";
+import { episodeFromBrief, sameEpisode } from "../lib/episode";
 import { AUDIO_ENABLED } from "../lib/audioGate";
 
 const PlayIcon = () => (
@@ -44,7 +45,7 @@ function formatMobileEpTime(dateStr: string): string {
 
 export default function MobileBriefPill({ state, className }: { state: DailyBriefState; className?: string }) {
   const {
-    brief, isPlaying, handlePlayPause,
+    brief, isPlaying, play, nowPlaying,
     isPlayerVisible, setPlayerVisible,
     previousEpisodes, loadEpisode,
   } = state;
@@ -90,10 +91,20 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
     .slice(0, 3)
     .join(" ");
 
+  /* The one press, on today's broadcast. It used to be
+     `if (!isPlaying) handlePlayPause()`, so while audio played the control
+     showed a pause icon that did nothing at all, and while ANOTHER programme
+     played it offered to pause audio it did not own. */
+  /* The control speaks for TODAY'S BROADCAST, so it only shows a pause state
+     while that is what is playing. On bare `isPlaying` it announced "Playing"
+     over a History documentary. */
+  const ownsPlayback = isPlaying && sameEpisode(nowPlaying, episodeFromBrief(brief));
+
   const handleOnairClick = () => {
     hapticConfirm();
     setPlayerVisible(true);
-    if (!isPlaying) handlePlayPause();
+    const ep = episodeFromBrief(brief);
+    if (ep) play(ep);
   };
 
   const pillHeadline = brief.tldr_headline || tldrSentences[0] || "Daily Brief";
@@ -159,13 +170,13 @@ export default function MobileBriefPill({ state, className }: { state: DailyBrie
           </button>
           {AUDIO_ENABLED && hasAudio && (
             <button
-              className={`mbp__play${isPlaying ? " mbp__play--active" : ""}`}
+              className={`mbp__play${ownsPlayback ? " mbp__play--active" : ""}`}
               onClick={handleOnairClick}
               type="button"
-              aria-label={isPlaying ? "Now playing" : "Play broadcast"}
+              aria-label={ownsPlayback ? "Pause the broadcast" : "Play broadcast"}
             >
-              {isPlaying ? <PauseIcon /> : <PlayIcon />}
-              <span className="mbp__play-label">{isPlaying ? "Playing" : "Listen"}</span>
+              {ownsPlayback ? <PauseIcon /> : <PlayIcon />}
+              <span className="mbp__play-label">{ownsPlayback ? "Playing" : "Listen"}</span>
             </button>
           )}
         </div>

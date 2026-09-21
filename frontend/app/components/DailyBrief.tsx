@@ -36,8 +36,6 @@ export interface DailyBriefState {
   isPlayerVisible: boolean;
   setPlayerVisible: (v: boolean) => void;
   /** Whether the player is expanded (full panel) */
-  isExpanded: boolean;
-  setExpanded: (v: boolean) => void;
   /** Web Audio API analyser for real-time waveform visualization */
   analyserRef: React.RefObject<AnalyserNode | null>;
   /** Lazily connect Web Audio API analyser — call when viz becomes visible */
@@ -48,6 +46,20 @@ export interface DailyBriefState {
   loadEpisode: (episode: import("./AudioProvider").EpisodeMeta) => void;
   /** Which product owns the player — drives accent theming + labels */
   contentType: "daily" | "weekly" | "history";
+  /** What is loaded in the element, whoever made it. `brief` is always
+   *  TODAY'S edition, so a consumer that needs to know what is playing (to
+   *  label a control, or to avoid claiming a documentary is the brief) reads
+   *  this. Omitting it is what let the mobile pill show a pause icon for
+   *  audio it did not own. */
+  nowPlaying: import("../lib/episode").Episode | null;
+  /** The one press: toggles when it owns that episode, loads and plays when
+   *  it does not. */
+  play: (ep: import("../lib/episode").Episode) => void;
+  /** The loaded episode's chapter rail, so a consumer on this bridge is no
+   *  longer structurally stuck on the pre-chapter transport. */
+  chapters: import("../lib/types").AudioChapter[];
+  currentChapterIndex: number;
+  seekToChapter: (i: number) => void;
   /** Load a weekly issue (+ optional archive playlist) into the shared player */
   playWeekly: (
     digest: import("../lib/types").WeeklyDigestData,
@@ -64,7 +76,10 @@ export interface DailyBriefState {
 export function useDailyBrief(edition: string): DailyBriefState {
   const audio = useAudio();
 
-  // Sync edition to global provider when it changes (edition tabs, URL nav)
+  // Sync edition to global provider when it changes (edition tabs, URL nav).
+  // This used to claim the player for the daily programme as a side effect,
+  // which is why merely opening the front page detached a documentary the
+  // reader was listening to. setEdition sets the edition and nothing else now.
   useEffect(() => {
     audio.setEdition(edition);
   }, [edition]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -92,14 +107,17 @@ export function useDailyBrief(edition: string): DailyBriefState {
     seekTo: audio.seekTo,
     isPlayerVisible: audio.isPlayerVisible,
     setPlayerVisible: audio.setPlayerVisible,
-    isExpanded: audio.isExpanded,
-    setExpanded: audio.setExpanded,
     analyserRef: audio.analyserRef,
     connectAnalyser: audio.connectAnalyser,
     previousEpisodes: audio.previousEpisodes,
     loadEpisode: audio.loadEpisode,
     contentType: audio.contentType,
     playWeekly: audio.playWeekly,
+    nowPlaying: audio.nowPlaying,
+    play: audio.play,
+    chapters: audio.chapters,
+    currentChapterIndex: audio.currentChapterIndex,
+    seekToChapter: audio.seekToChapter,
   };
 }
 

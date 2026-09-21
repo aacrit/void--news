@@ -36,6 +36,9 @@ export interface DeepDiveSpectrumSource {
   factualRigor?: number;
   /** Raw confidence 0-1 from pipeline */
   confidence?: number;
+  /** The engine did not measure this article's lean. Its stored value is 50,
+   *  so it must not be plotted: see the filter in DeepDiveSpectrum. */
+  leanUnscored?: boolean;
 }
 
 // (single organic view — no toggle)
@@ -868,9 +871,20 @@ interface DeepDiveSpectrumProps {
   aggregateLean?: number;
 }
 
-export default function DeepDiveSpectrum({ sources, settled = false, aggregateLean }: DeepDiveSpectrumProps) {
+export default function DeepDiveSpectrum({ sources: allSources, settled = false, aggregateLean }: DeepDiveSpectrumProps) {
   const [tooltip, setTooltip] = useState<TooltipData | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  /* One filter, in the one component that plots the axis. An article whose
+     lean was never measured carries the stored 50, so plotting it put a pin at
+     dead centre for a reading nobody took, and enough of them built a spike
+     there out of nothing: 595 of the 737 rows on the 2026-09-20 export were
+     unmeasured. It is still a source that covered the story, so it keeps its
+     place in the roster, the source count and the tier breakdown; it just does
+     not get a position on a scale it was never placed on. */
+  const sources = useMemo(
+    () => allSources.filter((s) => !s.leanUnscored),
+    [allSources],
+  );
   const mean = useMemo(
     () => aggregateLean ?? weightedMeanLean(sources),
     [sources, aggregateLean],
@@ -886,8 +900,10 @@ export default function DeepDiveSpectrum({ sources, settled = false, aggregateLe
 
   if (sources.length === 0) {
     return (
-      <div className="dd-sv" role="img" aria-label="No sources available for spectrum">
-        <div className="dd-sv__empty">No sources</div>
+      <div className="dd-sv" role="img" aria-label="No measured sources for the spectrum">
+        <div className="dd-sv__empty">
+          {allSources.length > 0 ? "No measured sources" : "No sources"}
+        </div>
       </div>
     );
   }

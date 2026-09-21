@@ -145,6 +145,7 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
           politicalLean: src.biasScores?.politicalLean ?? 50,
           factualRigor: src.biasScores?.factualRigor,
           confidence: src.confidence,
+          leanUnscored: src.leanUnscored,
         })),
     [sources],
   );
@@ -310,6 +311,11 @@ export default function InlineDeepDive({ story, onCollapse }: InlineDeepDiveProp
             confidence,
             articleTitle: (article.title as string) ?? undefined,
             articleSummary: (article.summary as string) ?? undefined,
+            /* Carried, not acted on here: the spectrum is the one component
+               that decides what it plots. The source still counts toward the
+               roster and the tier breakdown, because it really did cover the
+               story; only its position on the lean axis is withheld. */
+            leanUnscored: bias?.lean_unscored === true,
           });
         }
 

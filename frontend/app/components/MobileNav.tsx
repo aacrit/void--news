@@ -18,6 +18,11 @@ const MobileSidePanel = dynamic(() => import("./MobileSidePanel"), { ssr: false 
 // renders on EVERY route — including /weekly — not just the homepage. It hides
 // itself on mobile via CSS, so it is safe alongside the mobile UI below.
 const FloatingPlayer = dynamic(() => import("./FloatingPlayer"), { ssr: false });
+// The On Air console. A dialog opened from the tab bar, the pill or the
+// wordmark, on every route. It is NOT suppressed with the pill below: the pill
+// appears unasked and can cover a hero, while the panel only ever opens on a
+// deliberate press, and a reader who presses On Air on a history event means it.
+const OnAirPanel = dynamic(() => import("./OnAirPanel"), { ssr: false });
 
 /* ---------------------------------------------------------------------------
    MobileNav — Client wrapper that orchestrates MobileTabBar and MobileSidePanel.
@@ -60,6 +65,7 @@ export default function MobileNav() {
           hidden on mobile via CSS. Suppressed on /ship and on /history when the
           daily brief (not history audio) would otherwise be shown. */}
       {AUDIO_ENABLED && !onShip && !suppressNewsChrome && <FloatingPlayer />}
+      {AUDIO_ENABLED && !onShip && <OnAirPanel />}
       <MobileTabBar onMoreTap={handleMoreTap} moreOpen={moreSheetOpen} />
       <MobileSidePanel open={moreSheetOpen} onClose={handleMoreSheetClose} />
     </>
