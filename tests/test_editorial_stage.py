@@ -60,12 +60,6 @@ def main() -> int:
             "DISABLE_ANTHROPIC": "1",
             "VOID_EXPORT_BUILD_DIR": str(tmp / "build-data"),
             "VOID_EXPORT_PUBLIC_DIR": str(tmp / "public-data"),
-            # This DB is built from the committed 2026-09-20 snapshot, which
-            # the broken step 6b wrote: 539 of its 734 per-article bias rows
-            # are the default tuple. The export's defaults gate would refuse
-            # it, so here it warns and the assertion below checks it ran.
-            # Drop this line once a post-fix feed.json has been committed.
-            "VOID_BIAS_DEFAULTS_GATE": "warn",
         }
         env.pop("GEMINI_API_KEY", None)
 
@@ -179,10 +173,15 @@ def main() -> int:
             print(export.stdout[-2000:])
             return 1
 
-        # The defaults gate runs on every export and reports the share of
-        # per-article rows that were never measured (see
-        # pipeline/validation/bias_defaults.py and
-        # tests/test_bias_defaults_gate.py for the pass/fail behaviour).
+        # The export reports the share of per-article rows that were never
+        # measured on every run, and marks each of them unscored. This DB is
+        # built from the committed 2026-09-20 snapshot, which the broken step
+        # 6b wrote, so the share here is high on purpose: what is asserted is
+        # that the line is printed, not that the number is low. The threshold
+        # lives in tests/test_bias_defaults_gate.py, against the committed
+        # export. VOID_BIAS_DEFAULTS_GATE=warn used to be set here because the
+        # export refused such a run; it degrades now, so nothing needs the
+        # escape hatch (2026-09-21).
         gate_line = next((ln for ln in export.stdout.splitlines()
                           if ln.startswith("bias defaults:")), "")
         if not gate_line:

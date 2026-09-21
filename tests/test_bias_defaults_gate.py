@@ -14,6 +14,7 @@ MIN_ROWS_TO_ENFORCE rows, so a small or empty export is checked too.
 
 Run: python tests/test_bias_defaults_gate.py
 """
+import pathlib
 import sys
 from pathlib import Path
 
@@ -24,11 +25,14 @@ from validation.bias_defaults import (  # noqa: E402
     DEFAULT_TUPLE,
     DEFAULT_TUPLE_MAX_SHARE,
     MIN_ROWS_TO_ENFORCE,
+    PER_AXIS_MAX_SHARE,
     BiasDefaultsError,
     bias_rows_from_deepdive,
     check_default_share,
     default_share,
     is_default_tuple,
+    mark_unscored,
+    per_axis_default_share,
 )
 
 
@@ -96,14 +100,35 @@ def check_planted_defect_fails() -> list:
 
 
 def check_clean_export_passes() -> list:
-    rows = bias_rows_from_deepdive(synthetic_export(300, 0.20))
+    """A post-fix run: low single digits, which is what the corpus should give.
+
+    Only an article with no bias_scores row at all can still read as the full
+    tuple once step 6b loads stored scores for the 36h lookback, so a healthy
+    export sits near zero, not near the threshold.
+    """
+    rows = bias_rows_from_deepdive(synthetic_export(300, 0.03))
     try:
         summary = check_default_share(rows)
     except BiasDefaultsError as err:
-        return [f"a 20% defaults export was rejected: {err}"]
-    if "60/300" not in summary:
+        return [f"a 3% defaults export was rejected: {err}"]
+    if "9/300" not in summary:
         return [f"summary does not carry the count: {summary}"]
     return []
+
+
+def check_a_fifth_of_the_feed_now_fails() -> list:
+    """The tightening itself, asserted.
+
+    DEFAULT_TUPLE_MAX_SHARE was 0.5 until 2026-09-21, so a feed with half its
+    per-article rows unmeasured shipped with the gate reading clean. 20% is the
+    share this check used to call acceptable; it is not.
+    """
+    rows = bias_rows_from_deepdive(synthetic_export(300, 0.20))
+    try:
+        check_default_share(rows)
+    except BiasDefaultsError:
+        return []
+    return ["a 20% defaults export still passes; the threshold did not tighten"]
 
 
 def check_boundaries() -> list:
@@ -166,12 +191,177 @@ def check_step_6b_never_writes_defaults() -> list:
     return out
 
 
+def check_per_axis_catches_a_varying_fifth_axis() -> list:
+    """The hole the whole-tuple check cannot see.
+
+    On the 2026-09-20 export 610 rows sat at political_lean exactly 50 but only
+    595 carried the full tuple: 15 had one axis nudged off its default, so a
+    whole-tuple check called them measured while four axes were not. These rows
+    are that shape on purpose.
+    """
+    out = []
+    rows = []
+    for i in range(200):
+        row = dict(DEFAULT_TUPLE)
+        row["framing"] = 6 + (i % 13)
+        # One axis off its default, so is_default_tuple says False.
+        row["sensationalism"] = 11
+        rows.append(row)
+    defaults, total, share = default_share(rows)
+    if defaults != 0:
+        out.append(f"the whole-tuple check saw {defaults} defaults; these rows "
+                   f"each have an axis off its default, which is the point")
+    try:
+        check_default_share(rows)
+    except BiasDefaultsError as err:
+        out.append(f"the whole-tuple check failed rows it cannot see: {err}")
+
+    shares = per_axis_default_share(rows)
+    lean_n, lean_total, lean_share = shares["political_lean"]
+    if lean_share < 0.99:
+        out.append(f"per-axis missed political_lean: {lean_n}/{lean_total} "
+                   f"= {lean_share:.1%}, expected ~100%")
+    if lean_share <= PER_AXIS_MAX_SHARE["political_lean"]:
+        out.append(f"a 100% lean-at-50 population is under the "
+                   f"{PER_AXIS_MAX_SHARE['political_lean']:.0%} cap")
+    sens_n, _, sens_share = shares["sensationalism"]
+    if sens_n != 0:
+        out.append(f"sensationalism was moved off its default on every row, "
+                   f"but per-axis counted {sens_n} at default")
+    return out
+
+
+def check_per_axis_passes_a_healthy_population() -> list:
+    """The 142 genuinely measured rows of the 2026-09-20 export, in shape.
+
+    Measured there: stdev 21.2 over a 10..97 range, 10.6% at exactly 50. A
+    population like that must not trip any axis cap, or the gate would fire on
+    a working run and teach everyone to ignore it.
+    """
+    out = []
+    rows = [measured_row(i) for i in range(200)]
+    shares = per_axis_default_share(rows)
+    for axis, (n, total, share) in shares.items():
+        cap = PER_AXIS_MAX_SHARE[axis]
+        if share > cap:
+            out.append(f"a healthy population tripped {axis}: "
+                       f"{n}/{total} = {share:.1%} over the {cap:.0%} cap")
+    return out
+
+
+def check_defaults_are_marked_unscored() -> list:
+    """The degradation, which is what replaced blocking the export.
+
+    A default row must be marked so every consumer withholds it: out of the
+    cluster aggregate, off the Deep Dive spectrum, "Unscored" on the label.
+    Unconditional, per row: one bad row is degraded as honestly as six hundred.
+    """
+    out = []
+    rows = bias_rows_from_deepdive(synthetic_export(100, 0.30))
+    marked = mark_unscored(rows)
+    if marked != 30:
+        out.append(f"marked {marked} of 30 default rows")
+    for row in rows:
+        if is_default_tuple(row) and row.get("lean_unscored") is not True:
+            out.append("a default row was left unmarked")
+            break
+        if not is_default_tuple(row) and row.get("lean_unscored"):
+            out.append("a measured row was marked unscored")
+            break
+
+    # A single default row in a tiny export is still marked: there is no
+    # threshold under which a non-measurement becomes a measurement.
+    one = [dict(DEFAULT_TUPLE, framing=9), measured_row(1)]
+    if mark_unscored(one) != 1:
+        out.append("a lone default row in a 2-row export was not marked")
+    if one[0].get("lean_unscored") is not True:
+        out.append("the lone default row was not marked")
+
+    # The analyzer's own unscored verdict is never cleared by a second pass.
+    already = [dict(measured_row(3), lean_unscored=True)]
+    mark_unscored(already)
+    if already[0].get("lean_unscored") is not True:
+        out.append("mark_unscored cleared a flag the analyzer had set")
+    return out
+
+
+# The step 6b fix, so the committed-export check knows whether the feed on
+# disk was written before or after it. 2026-09-21 02:39 UTC, commit 1484db4.
+SIX_B_FIX_DATE = "2026-09-21"
+
+
+def check_the_committed_export() -> list:
+    """The share of the feed THIS REPO ships, not a synthetic one.
+
+    This is the check that makes the tightening real: the export degrades
+    rather than blocking (CEO, 2026-09-21), so nothing stops a bad run from
+    shipping a page. What stops a bad run from staying shipped is CI failing
+    here, on the export actually committed.
+
+    It carries ONE exemption, and it clears itself. While the committed
+    feed.json was built before the 6b fix, its rows are the known-damaged
+    2026-09-20 set (540/737 = 73.3%) and failing on them would only say what
+    docs/OPEN-ITEMS.md already says. The moment a post-fix run commits a feed,
+    builtAt moves past SIX_B_FIX_DATE and the assertion starts biting with no
+    further edit. If it then fails, the bias step regressed.
+    """
+    import json
+
+    root = pathlib.Path(__file__).resolve().parents[1]
+    feed = root / "frontend" / "build-data" / "feed.json"
+    deepdive = sorted((root / "frontend" / "public" / "data" / "deepdive").glob("*.json"))
+    if not feed.exists() or not deepdive:
+        return ["no committed export to check: "
+                f"feed.json {'present' if feed.exists() else 'missing'}, "
+                f"{len(deepdive)} deepdive file(s)"]
+
+    try:
+        built = str(json.loads(feed.read_text()).get("builtAt") or "")[:10]
+    except Exception as err:
+        return [f"could not read feed.json builtAt: {err}"]
+
+    rows = []
+    for f in deepdive:
+        try:
+            rows.extend(bias_rows_from_deepdive(json.loads(f.read_text())))
+        except Exception as err:
+            return [f"could not read {f.name}: {err}"]
+
+    defaults, total, share = default_share(rows)
+    axes = per_axis_default_share(rows)
+
+    if built and built < SIX_B_FIX_DATE:
+        print(f"       exempt: committed export built {built}, before the step "
+              f"6b fix ({SIX_B_FIX_DATE}). {defaults}/{total} default rows "
+              f"({share:.1%}); lean at 50 "
+              f"{axes['political_lean'][2]:.1%}. The assertion starts biting "
+              f"on the first post-fix feed, with no edit here.")
+        return []
+
+    out = []
+    if total > MIN_ROWS_TO_ENFORCE and share > DEFAULT_TUPLE_MAX_SHARE:
+        out.append(f"the committed export (built {built}) is {share:.1%} "
+                   f"default rows ({defaults}/{total}), over the "
+                   f"{DEFAULT_TUPLE_MAX_SHARE:.0%} cap")
+    for axis, (n, tot, sh) in sorted(axes.items(), key=lambda kv: -kv[1][2]):
+        cap = PER_AXIS_MAX_SHARE[axis]
+        if tot > MIN_ROWS_TO_ENFORCE and sh > cap:
+            out.append(f"the committed export has {axis} at its default on "
+                       f"{n}/{tot} rows ({sh:.1%}), over the {cap:.0%} cap")
+    return out
+
+
 CHECKS = (
     ("step 6b never writes a defaults row", check_step_6b_never_writes_defaults),
     ("recognises the default tuple", check_recognises_the_tuple),
     ("planted defect: 60% defaults fails", check_planted_defect_fails),
-    ("clean run: 20% defaults passes", check_clean_export_passes),
+    ("clean run: 3% defaults passes", check_clean_export_passes),
+    ("a fifth of the feed unmeasured now fails", check_a_fifth_of_the_feed_now_fails),
     ("thresholds and edge cases", check_boundaries),
+    ("per-axis catches a varying fifth axis", check_per_axis_catches_a_varying_fifth_axis),
+    ("per-axis passes a healthy population", check_per_axis_passes_a_healthy_population),
+    ("defaults are marked unscored", check_defaults_are_marked_unscored),
+    ("the committed export", check_the_committed_export),
 )
 
 

@@ -236,8 +236,21 @@ export const LABEL_STRONG_MARGIN = 18;
  *  a story carried 3:1 by right-leaning outlets can still average 55. The wing
  *  counts are not compressed that way, so they carry the direction the mean
  *  loses. The mean still has to AGREE in sign, so this only ever confirms a
- *  tilt the score already shows; it never invents one. */
-export const LABEL_MIN_SHARE_TILT = 0.2;
+ *  tilt the score already shows; it never invents one.
+ *
+ *  0.20 until 2026-09-21, against a denominator that included every centre
+ *  article. On the wing-only denominator the same number would have called a
+ *  3:2 split lopsided, so it was re-derived rather than carried over: 0.33 is
+ *  roughly 2:1. Measured against the 2026-09-20 feed, the pair of changes
+ *  moves 2 of 35 cards, both from Balanced to a direction, and both are real
+ *  (12 left vs 5 right across 72 sources; 0 left vs 6 right across 24). */
+export const LABEL_MIN_SHARE_TILT = 0.33;
+/** Wing articles (left + right) a share tilt needs before it means anything.
+ *  A proportion of two articles is not a roster. At five, the coarsest tilts
+ *  the arithmetic can produce are 3:2 (0.20, correctly not lopsided), 4:1
+ *  (0.60) and 5:0 (1.00), so the 0.33 threshold above lands between "split"
+ *  and "one-sided" rather than inside rounding noise. */
+export const LABEL_MIN_WING_ARTICLES = 5;
 /** Otherwise a directional label needs genuine left/right divergence: the
  *  coverage's polarization must reach this. */
 export const LABEL_MIN_SUPPORT_POLARIZATION = 35;
@@ -270,18 +283,35 @@ export function bothWingsPresent(spread?: WingCounts | null): boolean {
 }
 
 /**
- * Signed wing-share imbalance in [-1, +1]: negative = coverage roster tilts
- * left, positive = tilts right, 0 = symmetric or all-center. Returns 0 when
- * there are too few analyzed articles to read anything from the split.
+ * Signed wing-share imbalance in [-1, +1]: negative = the coverage roster
+ * tilts left, positive = tilts right, 0 = symmetric, or too little wing
+ * coverage to read a split from.
+ *
+ * The denominator is the WING coverage (left + right), not every analyzed
+ * article. Dividing by left + center + right let neutral wire volume dilute a
+ * real split out of existence: a story carried 14 left to 5 right landed at
+ * 0.153 against a 0.20 threshold purely because 40 centre articles sat in the
+ * denominator, while a nearly identical 16:6 story passed. What the number is
+ * meant to answer is "of the outlets that took a side, how lopsided were
+ * they", and that question does not involve the ones that did not.
+ *
+ * A proportion needs a denominator worth dividing by, so LABEL_MIN_WING_ARTICLES
+ * is the floor. Without it the fix trades one lie for a worse one: measured on
+ * the 2026-09-20 feed, a cluster with ONE left article out of six would have
+ * read as a fully lopsided roster (tilt -1.0) and lit a confident Left label.
+ * Five clusters on that feed had exactly that shape.
  */
 export function leanShareTilt(spread?: WingCounts | null): number {
   if (!spread) return 0;
   const left = spread.leanLeftCount ?? 0;
   const center = spread.leanCenterCount ?? 0;
   const right = spread.leanRightCount ?? 0;
-  const total = left + center + right;
-  if (total < 3) return 0;
-  return (right - left) / total;
+  /* Still gated on the full analyzed count: a three-article cluster has no
+     roster to be lopsided, however its wings fall. */
+  if (left + center + right < 3) return 0;
+  const wings = left + right;
+  if (wings < LABEL_MIN_WING_ARTICLES) return 0;
+  return (right - left) / wings;
 }
 
 /**

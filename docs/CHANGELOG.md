@@ -18,6 +18,114 @@ lives in this file.
 
 ---
 
+## rev 78: the bias engine was not the problem (2026-09-21)
+
+**CEO: "do we need to recalibrate the bias scores for the outlets? And do we
+need to change the bias scoring at the article level? Or do we want to keep the
+article level [scoring] (removes one of the stand out features of void compared
+to competitors we have been claiming)"**
+
+Answer, measured before anything was changed: **neither.** The article-level
+score is the differentiator and it is working. `docs/OPEN-ITEMS.md` had the
+wrong hypothesis written down, and acting on it would have introduced error
+while claiming to remove it.
+
+**What the file said.** That `pipeline/main.py:2469`,
+`source_map.get(source_slug, {"political_lean_baseline": "center"})`, was
+silently anchoring articles to centre on a slug miss, and that the roster or
+the analyzer might need recalibrating.
+
+**Refuted on the 2026-09-20 export, 737 rows across 35 clusters:**
+
+| Measurement | Result |
+|---|---|
+| Export source names with no match in `sources.json` | **0** of 737 rows |
+| Baseline ladder on the genuinely measured rows | far-left 30.0, left 35.0, centre-left 46.2, centre 50.0, centre-right 52.5, right 57.9, far-right 61.0 |
+| Those rows' distribution | stdev **21.2**, range 10..97, only 10.6% at exactly 50 |
+| Rows carrying the whole default tuple | 540 (73.3%) |
+| Rows at `political_lean` exactly 50 | 610 (82.8%) |
+
+A mass slug miss would have shown up in the first row and did not. The anchor
+reaches the score, monotonically, and where the engine actually ran it produced
+a real spread. The entire "80% of sources read as centre" figure was rows that
+were never scored: the step 6b overwrite, fixed the same morning in `1484db4`.
+
+So the outlet baselines and `pipeline/analyzers/political_lean.py` were left
+alone. What changed is the plumbing that let an unscored row read as measured
+centrism, and the controls.
+
+**`lean_unscored` is exported.** It has existed since the analyzer was written
+and already excluded a row from the cluster aggregate, but it **stopped at the
+database**. The page therefore kept plotting the article's pin at 50, and 540
+pins piled on dead centre is the whole of the visual impression the CEO was
+asking about. It is now carried on the live path (`export_static.py`) and the
+archive path (`archive/print_archive.py`), and withheld by `DeepDiveSpectrum`,
+`fetchSourceLeans` and `archiveMembersToSpectrumSources`. On the damaged export
+that is 540 pins removed and 197 measured ones plotted. The article keeps its
+place in the roster, the source count and the tier breakdown, because it really
+did cover the story; only its position on a scale it was never placed on is
+withheld.
+
+**The gate degrades, it does not block (CEO's call).** A default-tuple row is
+stamped unscored at export time, unconditionally, per row: one bad row is
+handled as honestly as six hundred, and there is no threshold under which a
+non-measurement becomes a measurement. Blocking the daily export would have
+cost readers the newspaper to protect one axis of one panel.
+
+**The share moved from the export to CI.** `DEFAULT_TUPLE_MAX_SHARE` 0.5 to
+0.10 (0.5 would have let half a feed ship unmeasured while the gate read
+clean), plus `PER_AXIS_MAX_SHARE`, asserted against the **committed** export so
+a regression fails a merge instead of the newspaper. The per-axis half exists
+because the three counts differ: 540 rows match all five keys of the tuple, 595
+match the four score axes, and 610 sit at lean 50. A whole-tuple check clears
+70 rows whose lean was never measured because one other axis moved.
+`VOID_BIAS_DEFAULTS_GATE=warn` is deleted; it existed only because the export
+used to refuse such a run.
+
+The committed-export check carries one self-clearing exemption: while
+`feed.json`'s `builtAt` predates the 6b fix, it prints the real numbers and
+passes, because failing on the known-damaged snapshot would only restate
+OPEN-ITEMS. It was verified to fail (5 findings) with `builtAt` moved one day
+forward, so it starts biting on the first post-fix feed with no edit.
+
+**`leanShareTilt` divides by the wings.** Separately from the unscored rows, the
+reader-facing suppression gate was silencing the label on 12 of 20 cards on
+09-09. The denominator was left + center + right, so neutral wire volume
+diluted a real split out of existence: a story carried 14 left to 5 right
+landed at 0.153 against a 0.20 threshold purely because 40 centre articles sat
+in the denominator, while a nearly identical 16:6 story passed.
+
+The naive fix is worse, which the measurement caught: on a wings-only
+denominator a cluster with ONE left article out of six reads as a fully
+lopsided roster (tilt -1.0), and five clusters on the 2026-09-20 feed had
+exactly that shape. Hence `LABEL_MIN_WING_ARTICLES = 5`, and
+`LABEL_MIN_SHARE_TILT` re-derived from 0.20 to 0.33 rather than carried over,
+because on the new denominator 0.20 would call a 3:2 split lopsided.
+
+The old denominator was in fact failing in both directions at once: it diluted
+a real 14:5 split, and it also cleared 0.20 on two left articles out of nine.
+Measured end to end against the feed, the pair of changes moves **2 of 35
+cards**, both from Balanced to a direction, and both are real: 12 left vs 5
+right across 72 sources, and 0 left vs 6 right across 24.
+
+**What is deliberately still open**, in OPEN-ITEMS: the per-axis caps were set
+from the damaged export plus judgement, so they want tightening against the
+first healthy run (`sensationalism` at 86.4% against a 60% cap is the loose
+one); and 18 of 35 cards read "Not measured" for want of `LABEL_MIN_MEASURED`
+articles, a count dominated by the 6b damage, so label coverage needs re-reading
+on a post-fix export before anyone touches `LABEL_MIN_SOURCES`,
+`LABEL_MIN_CONFIDENCE` or `LABEL_MIN_MEASURED`.
+
+**Verified, not assumed.** Both new gates were made to fail before they were
+committed: reverting the denominator produces 11 failures in
+`frontend/test/labels.test.mjs`, and moving `builtAt` one day forward produces
+5 in `tests/test_bias_defaults_gate.py`. The export was run end to end against
+the harness DB: it printed both summary lines, marked 540 rows and shipped.
+`tests/test_editorial_stage.py` was already failing `re-rank wrote 0 of 0 rows`
+on `main` before this change and still is; it is not this rev's.
+
+---
+
 ## rev 77: one episode, one truth, one press (2026-09-21)
 
 **CEO: "Check consistency on the on air system. It should always be in sync

@@ -129,7 +129,7 @@ def _build_members_by_cluster(supabase, cluster_ids: list[str],
 
     bias = _fetch_all(
         supabase, "bias_scores",
-        "article_id,political_lean,factual_rigor,confidence",
+        "article_id,political_lean,factual_rigor,confidence,lean_unscored",
         "article_id", article_ids)
     bias_by_art = {b.get("article_id"): b for b in bias}
 
@@ -147,6 +147,11 @@ def _build_members_by_cluster(supabase, cluster_ids: list[str],
             "lean": b.get("political_lean"),
             "rigor": b.get("factual_rigor"),
             "confidence": b.get("confidence"),
+            # Carried so the archived spectrum can withhold a pin the same way
+            # the live one does. Without it a story's /story/<id> page kept
+            # plotting unmeasured articles at 50 after the live Deep Dive had
+            # stopped (2026-09-21). Omitted when false to keep the archive tiny.
+            **({"lean_unscored": True} if b.get("lean_unscored") else {}),
             "url": a.get("url"),
             "published_at": a.get("published_at"),
             "is_wire_copy": bool(a.get("is_wire_copy")),
