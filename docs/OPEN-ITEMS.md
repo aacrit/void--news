@@ -28,11 +28,39 @@ denominator. Measured against the 2026-09-20 feed that moves 2 of 35 cards,
 both Balanced to a direction, both real (12 left vs 5 right across 72 sources;
 0 left vs 6 right across 24). The old denominator was failing in BOTH
 directions at once: it diluted a real 14:5 split to 0.153, and it also cleared
-0.20 on two left articles out of nine. What is still open is below, because 18
-of 35 cards read "Not measured" for want of `LABEL_MIN_MEASURED` articles, and
-that count is dominated by the step 6b damage. Re-read label coverage on the
-first post-fix export before touching `LABEL_MIN_SOURCES` (8),
-`LABEL_MIN_CONFIDENCE` (0.5) or `LABEL_MIN_MEASURED` (10).
+0.20 on two left articles out of nine. **Label coverage re-read on the post-fix export (run #375), and the binding
+gate is not the one this note assumed.** Of 35 clusters: 20 read "Not
+measured", 7 Balanced, 5 a direction, 3 Contested. On the front page's twenty:
+9 Not measured, 4 Balanced, 4 a direction, 3 Contested. So informative labels
+went from 2 of 35 to 8 of 35 with the denominator fix, but "Not measured"
+barely moved (18 to 20).
+
+Which gate binds, across the 20 failures:
+
+| binding gate | clusters |
+|---|---|
+| `aggregate_confidence < 0.5` | **14** |
+| `lean_measured_count < 10` | 2 |
+| both confidence and measured | 2 |
+| sources and measured | 2 |
+
+**`LABEL_MIN_CONFIDENCE` is the gate, and it is not a small-sample problem.**
+The suppressed clusters include the best-covered stories in the feed: 54
+sources / 53 measured articles at confidence 0.43; 46 / 52 at 0.42; 37 / 32 at
+0.46; 34 / 42 at 0.47; 25 / 28 at 0.47. Thin evidence is not what silenced
+them.
+
+The reason is the shape of the metric: `aggregate_confidence` across all 35
+clusters runs **min 0.40, median 0.51, max 0.71**. The threshold sits within a
+hundredth of the median, so it suppresses about half the feed by construction,
+and two clusters fail it at 0.499. Either the metric is compressed (0.40-0.71
+is a narrow band for something documented as 0-1) or the threshold was chosen
+against a different distribution.
+
+**Nothing was changed.** Moving a threshold that sits on the median of its own
+metric is exactly the decision this file already says needs a CEO call rather
+than a tweak, and the honest fix may be to the metric rather than the cut
+point. The numbers above are what that decision needs.
 
 **The original report, for the record.** On 09-09 it emitted ZERO
 directional labels: 12 of 20 cards read "Flat". Suppressors, in order of how
@@ -214,10 +242,30 @@ Today's scoring was clean. The residue is the previous day's damage, loaded
 out of the state DB by step 6b's own 36h lookback and written back faithfully
 by `existing.get("political_lean", 50)`.
 
+**Confirmed from run #375's own counters**, not inferred from the export:
+
+    Articles analyzed: 10029/10029
+    Lookback articles needing stored scores: 2845; bias rows loaded: 2845
+    Framing re-scored: 7193 articles (7193 DB rows updated in batches)
+    bias defaults: 186/975 per-article rows are the default tuple (19.1%)
+
+Every article the run fetched was scored. The lookback preload hit **2845 of
+2845**, so it has no gap. And there is **no "Framing update skipped" line at
+all**, meaning `framing_no_scores` was 0: not one row was written from
+defaults. 6b did precisely its job, which is to preserve what is stored, and
+what was stored for those 186 was already the previous day's default tuple.
+
 So it is not a live defect and it clears itself: those articles leave the 36h
 window within about a day and a half. **Prediction to check on the run of
 2026-09-23: near zero.** If it is not, something is writing defaults again and
 the mark assertion below will say so.
+
+**`PER_AXIS_MAX_SHARE` was deliberately NOT retuned against this run.** Lean
+at 50 came in at 53.5% against a 40% cap, but that population still contains
+the carried-forward residue, so tightening or loosening to fit it would be
+calibrating against contaminated data, which is the mistake this whole pass
+exists to undo. The caps only drive the printed `OVER` marker now, not a
+failure. Retune them against the 2026-09-23 run.
 
 The rows are recognisable: four default axes, a real varying `framing` score
 and a framing-only rationale, which is the old 6b signature. 135 of the 186

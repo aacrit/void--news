@@ -65,9 +65,46 @@ code turns the assertion on with no edit. Verified by planting the field on
 every row and leaving exactly one default unmarked: one finding, naming the
 count and the consequence.
 
+**The run's own counters, read off the log afterwards, confirm it:**
+
+    Articles analyzed: 10029/10029
+    Lookback articles needing stored scores: 2845; bias rows loaded: 2845
+    Framing re-scored: 7193 articles (7193 DB rows updated in batches)
+    bias defaults: 186/975 per-article rows are the default tuple (19.1%)
+
+Every fetched article was scored. The lookback preload hit 2845 of 2845, so it
+has no gap. And there is no "Framing update skipped" line at all, so
+`framing_no_scores` was 0: not one row was written from defaults. 6b did
+exactly its job, which is to preserve what is stored, and what was stored for
+those 186 was the previous day's default tuple. The `gate fails above 50%` in
+that line is the old cap, which is why the export shipped.
+
+`PER_AXIS_MAX_SHARE` was deliberately not retuned against this run. Lean at 50
+came in at 53.5% against a 40% cap, but that population still contains the
+residue, so fitting the caps to it would be calibrating against contaminated
+data, which is the mistake this pass exists to undo.
+
 Prediction on the record, to be checked against the run of 2026-09-23: near
 zero default rows. If not, something is writing defaults again, and the mark
 assertion will name it.
+
+**Label coverage, re-read on the same export, and the binding gate is not the
+one anybody assumed.** Of 35 clusters: 20 "Not measured", 7 Balanced, 5 a
+direction, 3 Contested; on the front page's twenty, 9 / 4 / 4 / 3. So the
+denominator fix took informative labels from 2 of 35 to 8 of 35, while "Not
+measured" barely moved, 18 to 20.
+
+Of the 20 failures, **14 bind on `aggregate_confidence < 0.5`** and only 2 on
+the measured count this was expected to be about. It is not a small-sample
+problem: the suppressed clusters include the best-covered stories in the feed,
+54 sources and 53 measured articles at confidence 0.43, 46/52 at 0.42, 37/32
+at 0.46. The metric runs min 0.40, median 0.51, max 0.71 across all 35, so the
+threshold sits within a hundredth of its own median and suppresses about half
+the feed by construction; two clusters fail it at 0.499.
+
+Nothing was changed. Moving a threshold that sits on the median of its own
+metric is the CEO decision OPEN-ITEMS already describes, and the honest fix may
+be to the metric rather than the cut point. The numbers are recorded for it.
 
 ---
 
