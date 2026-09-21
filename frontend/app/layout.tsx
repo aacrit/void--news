@@ -66,6 +66,19 @@ export const metadata: Metadata = {
   description:
     "An experimental newsroom: free per-article bias analysis across 1,016 sources. Six axes. No paywall. No feed tuned to you. Just the news, dissected.",
   authors: [{ name: "Void News" }],
+  // The three podcast feeds, so a podcast app or a feed reader pointed at
+  // any page discovers them. Resolved against metadataBase. The daily and
+  // weekly XML are written by their pipelines; /listen carries the same
+  // three addresses for people.
+  alternates: {
+    types: {
+      "application/rss+xml": [
+        { url: "/podcast-world.xml", title: "Void News: On Air" },
+        { url: "/podcast-weekly.xml", title: "Void Weekly: The Argument" },
+        { url: "/podcast-history.xml", title: "Void News: History" },
+      ],
+    },
+  },
   openGraph: {
     title: "Void News. See through the void.",
     description:

@@ -184,6 +184,19 @@ exported into `brief.json`, embedded as ID3v2 `CHAP`/`CTOC` frames in the MP3
 `<date>-<slot>.chapters.json` + `latest.chapters.json` next to the MP3,
 referenced by `<podcast:chapters>` in `podcast-world.xml`.
 
+## House promo (post-roll)
+
+After the sign-off tag, a beat into the outro, a two-sentence house promo for
+Weekly, History or the site plays in the house voice under the outro's held
+bars, with the music dipped 8 dB beneath it. It is not a script marker (the
+rundown grammar and R-01..R-13 are untouched) and it never promotes On Air.
+The programme's length does not change, so A-04 holds. It is selected by the
+sha256 of `onair:<edition>:<date>:<slot>` into `data/promos/house.yaml`, so a
+re-render carries the same promo, and it appears as a final chapter, kind
+`promo`, titled "Also from Void". `VOID_HOUSE_PROMOS=0` switches it off; a
+missing render ships the programme without one. Rules and copy:
+`docs/VOICE-BRAND.md`, "House Promos".
+
 ## Operating it
 
 - Daily: step 7d of `pipeline/main.py`. `[radio:world]` log lines carry the

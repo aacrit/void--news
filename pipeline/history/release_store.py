@@ -56,16 +56,17 @@ def _req(url: str, *, method="GET", data=None, ctype=None, token=None, raw=False
     return body if raw else json.loads(body or b"{}")
 
 
-def _release(token: str) -> dict:
-    """The one release that holds the catalogue, created on first use."""
+def _release(token: str | None, tag: str = TAG) -> dict:
+    """The release that holds the catalogue (or, under another tag, the
+    un-stitched masters), created on first use when a token is given."""
     try:
-        return _req(f"{API}/releases/tags/{TAG}", token=token)
+        return _req(f"{API}/releases/tags/{tag}", token=token)
     except urllib.error.HTTPError as e:
-        if e.code != 404:
+        if e.code != 404 or not token:
             raise
     body = json.dumps({
-        "tag_name": TAG,
-        "name": "History audio editions",
+        "tag_name": tag,
+        "name": "History audio editions" if tag == TAG else f"History audio ({tag})",
         "body": ("Rendered episodes of the Void News History audio edition.\n\n"
                  "This release is a STORE, not a CDN. The deploy workflow pulls "
                  "these files into the published directory; readers fetch them "
@@ -76,36 +77,66 @@ def _release(token: str) -> dict:
                 ctype="application/json", token=token)
 
 
-def upload(paths: list[Path]) -> int:
+def has_asset(name: str, tag: str = TAG) -> bool:
+    """Whether the release under `tag` carries an asset of that name. Public
+    on a public repo, so no token is needed to ask."""
+    try:
+        rel = _release(os.environ.get("GITHUB_TOKEN"), tag)
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            return False
+        raise
+    return any(a.get("name") == name for a in rel.get("assets", []))
+
+
+def upload(paths: list[Path], tag: str = TAG, replace: bool = True) -> int:
     token = os.environ.get("GITHUB_TOKEN")
     if not token:
         print("error: GITHUB_TOKEN is required to upload", file=sys.stderr)
         return 1
-    rel = _release(token)
+    rel = _release(token, tag)
     existing = {a["name"]: a["id"] for a in rel.get("assets", [])}
     for p in paths:
         if not p.exists():
             print(f"  [skip] {p.name} does not exist")
             continue
-        # A re-render replaces the asset: same name, new bytes.
-        if p.name in existing:
-            _req(f"{API}/releases/assets/{existing[p.name]}", method="DELETE", token=token)
+        if p.name in existing and not replace:
+            # The clean-master tag keeps its first copy forever.
+            print(f"  [keep] {p.name} already under {tag}")
+            continue
         data = p.read_bytes()
-        _req(f"{UPLOADS}/releases/{rel['id']}/assets?name={p.name}",
-             method="POST", data=data, ctype="audio/mpeg", token=token, raw=True)
-        print(f"  [store] {p.name} ({len(data)//1024} KB)")
+        if p.name in existing:
+            # A re-render replaces the asset: same name, new bytes. Upload
+            # under a temporary name first, then delete the old one and
+            # rename, so a deploy fetching mid-replacement sees the name
+            # missing for well under a second rather than for the whole
+            # upload of a 14 MB file.
+            tmp = f"{p.name}.incoming"
+            for a in rel.get("assets", []):
+                if a.get("name") == tmp:
+                    _req(f"{API}/releases/assets/{a['id']}", method="DELETE", token=token)
+            new = _req(f"{UPLOADS}/releases/{rel['id']}/assets?name={tmp}",
+                       method="POST", data=data, ctype="audio/mpeg", token=token)
+            _req(f"{API}/releases/assets/{existing[p.name]}", method="DELETE", token=token)
+            _req(f"{API}/releases/assets/{new['id']}", method="PATCH",
+                 data=json.dumps({"name": p.name}).encode(), ctype="application/json", token=token)
+        else:
+            _req(f"{UPLOADS}/releases/{rel['id']}/assets?name={p.name}",
+                 method="POST", data=data, ctype="audio/mpeg", token=token, raw=True)
+        print(f"  [store] {p.name} ({len(data)//1024} KB){'' if tag == TAG else f' under {tag}'}")
     return 0
 
 
-def fetch(out_dir: Path) -> int:
-    """Pull every episode the manifest claims into the publish directory.
+def fetch(out_dir: Path, tag: str = TAG, slugs: list[str] | None = None) -> int:
+    """Pull every episode the manifest claims (or just `slugs`) into the
+    publish directory.
 
     Fails loudly on a miss. A deploy that quietly ships a site whose every
     Listen button 404s is worse than a deploy that does not happen.
     """
     manifest = json.loads((ROOT / "frontend" / "public" / "data"
                            / "history-audio.json").read_text())
-    want = sorted(manifest.get("episodes", {}))
+    want = sorted(slugs) if slugs else sorted(manifest.get("episodes", {}))
     if not want:
         print("  [store] manifest lists no episodes, nothing to fetch")
         return 0
@@ -115,7 +146,7 @@ def fetch(out_dir: Path) -> int:
         dest = out_dir / f"{slug}.mp3"
         if dest.exists() and dest.stat().st_size > 0:
             continue
-        url = f"https://github.com/{REPO}/releases/download/{TAG}/{slug}.mp3"
+        url = f"https://github.com/{REPO}/releases/download/{tag}/{slug}.mp3"
         try:
             # curl follows the signed redirect and is already present on the
             # runner; urllib would need redirect handling for the same result.
@@ -147,6 +178,8 @@ def fetch(out_dir: Path) -> int:
         print("error: episodes in the manifest are not in the store:", file=sys.stderr)
         for m in missing:
             print(f"  - {m}", file=sys.stderr)
+        if slugs:
+            raise FileNotFoundError("; ".join(missing))
         return 1
     print(f"  [store] {len(want)} episode(s) ready in {out_dir}")
     return 0
@@ -156,11 +189,13 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
     up = sub.add_parser("upload"); up.add_argument("files", nargs="+")
+    up.add_argument("--tag", default=TAG)
     fe = sub.add_parser("fetch"); fe.add_argument("--out", required=True)
+    fe.add_argument("--tag", default=TAG)
     a = ap.parse_args()
     if a.cmd == "upload":
-        return upload([Path(f) for f in a.files])
-    return fetch(Path(a.out))
+        return upload([Path(f) for f in a.files], tag=a.tag)
+    return fetch(Path(a.out), tag=a.tag)
 
 
 if __name__ == "__main__":

@@ -60,9 +60,20 @@ def _load_manifest() -> dict:
     return {"generatedAt": None, "episodes": {}}
 
 
-def publish(slug: str, src_dir: Path, manifest: dict) -> dict:
+def build_entry(slug: str, src_dir: Path, existing: dict | None = None, *,
+                restitch: bool = False) -> dict:
+    """The manifest entry for a rendered (or re-stitched) episode.
+
+    The fingerprint hashes the WHOLE file. It used to hash the first 1 KB,
+    which is the ID3 header: a re-encode that left the tags alone kept the
+    same `?v=`, so the CDN could serve the old bytes under new chapters for
+    the length of its cache. `renderedAt` is when TTS last ran; `publishedAt`
+    is when the file last changed. The staleness test compares the script's
+    commit date against `renderedAt`.
+    """
     mp3 = src_dir / f"{slug}.mp3"
     sidecar = src_dir / f"{slug}.chapters.json"
+    promo_file = src_dir / f"{slug}.promo.json"
     event_file = EVENTS / f"{slug}.yaml"
     for f in (mp3, event_file):
         if not f.exists():
@@ -73,12 +84,8 @@ def publish(slug: str, src_dir: Path, manifest: dict) -> dict:
         raise ValueError(f"{slug}: {len(payload)/1048576:.1f} MB exceeds the "
                          f"{MAX_BYTES/1048576:.0f} MB Pages per-file limit")
 
-    AUDIO_DIR.mkdir(parents=True, exist_ok=True)
-    (AUDIO_DIR / f"{slug}.mp3").write_bytes(payload)
-
     chapters: list[dict] = []
     if sidecar.exists():
-        shutil.copyfile(sidecar, AUDIO_DIR / f"{slug}.chapters.json")
         for c in json.loads(sidecar.read_text()).get("chapters", []):
             entry = {"startTime": c["startTime"], "title": c.get("title", ""),
                      # History segments are not radio segments. "segment" is the
@@ -92,12 +99,25 @@ def publish(slug: str, src_dir: Path, manifest: dict) -> dict:
     # The filename is stable per slug so a re-render overwrites in place; the
     # fingerprint in the query string is what invalidates the CDN and the
     # browser cache. Same convention as the daily brief.
-    fp = hashlib.md5(payload[:1024]).hexdigest()[:8]
+    fp = hashlib.md5(payload).hexdigest()[:8]
     title = ""
     for line in event_file.read_text().splitlines():
         if line.startswith("title:"):
             title = line.split(":", 1)[1].strip().strip('"\'')
             break
+
+    now = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    promo = None
+    if promo_file.exists():
+        try:
+            promo = json.loads(promo_file.read_text())
+        except json.JSONDecodeError:
+            promo = None
+    existing = existing or {}
+    # A stitch re-publishes a render made earlier and keeps that date; a
+    # fresh render, promo or not, is rendered now.
+    rendered_at = (existing.get("renderedAt") or existing.get("publishedAt") or now) \
+        if restitch else now
 
     entry = {
         "url": f"/audio/history/{slug}.mp3?v={fp}",
@@ -106,10 +126,30 @@ def publish(slug: str, src_dir: Path, manifest: dict) -> dict:
         "durationSeconds": _duration_seconds(mp3),
         "bytes": len(payload),
         "chapters": chapters,
-        "publishedAt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "renderedAt": rendered_at,
+        "publishedAt": now,
     }
+    if promo:
+        entry["promo"] = {k: promo[k] for k in ("id", "sha", "voice", "startTime") if k in promo}
+    return entry
+
+
+def publish(slug: str, src_dir: Path, manifest: dict, *, restitch: bool = False) -> dict:
+    entry = build_entry(slug, src_dir, manifest["episodes"].get(slug), restitch=restitch)
+    AUDIO_DIR.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(src_dir / f"{slug}.mp3", AUDIO_DIR / f"{slug}.mp3")
+    sidecar = src_dir / f"{slug}.chapters.json"
+    if sidecar.exists():
+        shutil.copyfile(sidecar, AUDIO_DIR / f"{slug}.chapters.json")
     manifest["episodes"][slug] = entry
     return entry
+
+
+def write_manifest(manifest: dict) -> None:
+    manifest["generatedAt"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    manifest["episodes"] = dict(sorted(manifest["episodes"].items()))
+    MANIFEST.parent.mkdir(parents=True, exist_ok=True)
+    MANIFEST.write_text(json.dumps(manifest, indent=1, sort_keys=False) + "\n")
 
 
 def pending(limit: int) -> list[str]:
@@ -146,10 +186,7 @@ def main() -> int:
         print(f"  [history] {slug}: {entry['durationSeconds']/60:.1f} min, "
               f"{entry['bytes']//1024} KB, {len(entry['chapters'])} chapters")
 
-    manifest["generatedAt"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
-    manifest["episodes"] = dict(sorted(manifest["episodes"].items()))
-    MANIFEST.parent.mkdir(parents=True, exist_ok=True)
-    MANIFEST.write_text(json.dumps(manifest, indent=1, sort_keys=False) + "\n")
+    write_manifest(manifest)
     total = sum(e["bytes"] for e in manifest["episodes"].values())
     print(f"  [history] manifest: {len(manifest['episodes'])} episode(s), "
           f"{total/1048576:.1f} MB on the CDN")

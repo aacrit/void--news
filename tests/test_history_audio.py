@@ -45,6 +45,36 @@ def check(name: str, cond: bool, detail: str = "") -> None:
         failures.append(f"{name}{': ' + detail if detail else ''}")
 
 
+sys.path.insert(0, str(ROOT / "pipeline"))
+PROMO_CHAPTER_TITLE = "Also from Void News"   # house_promos.HISTORY_PROMO_CHAPTER_TITLE
+try:
+    from briefing import house_promos as hp
+    PROMOS = hp.load_pool()
+    assert hp.HISTORY_PROMO_CHAPTER_TITLE == PROMO_CHAPTER_TITLE
+except Exception as _e:  # pyyaml missing: the promo checks degrade to "no promo entries"
+    hp = None
+    PROMOS = []
+
+
+def promo_marker(path: Path) -> str | None:
+    try:
+        from mutagen.id3 import ID3
+        for f in ID3(str(path)).getall("TXXX"):
+            if f.desc == "VOID_PROMO":
+                return str(f.text[0]) if f.text else ""
+        return ""
+    except Exception:
+        return None   # no mutagen or no tags: skipped
+
+
+def tail_max_dbfs(path: Path, ms: int = 300) -> float | None:
+    try:
+        from pydub import AudioSegment
+        return AudioSegment.from_file(str(path))[-ms:].max_dBFS
+    except Exception:
+        return None
+
+
 def duration_of(path: Path) -> float | None:
     try:
         out = subprocess.run(
@@ -126,6 +156,48 @@ def main() -> int:
         check(f"{slug}: chapters are documentary segments",
               all(c.get("kind") == "segment" for c in chapters))
 
+        # A stitched episode carries the house promo under its outro. The
+        # manifest says which one; the chapters, the file and the pool must
+        # agree with it, and the promo must never be a History promo.
+        promo = ep.get("promo")
+        if promo and hp is None:
+            check(f"{slug}: promo checks need pyyaml (pip install pyyaml)", False)
+        elif promo:
+            pool_ids = {p.id: p for p in PROMOS}
+            check(f"{slug}: promo {promo.get('id')} is in the pool", promo.get("id") in pool_ids)
+            pp = pool_ids.get(promo.get("id"))
+            if pp:
+                check(f"{slug}: promo text unchanged since the stitch", pp.sha == promo.get("sha"),
+                      f"{promo.get('sha')} vs {pp.sha}: re-stitch")
+                check(f"{slug}: promo does not advertise History", pp.promotes != "history")
+                check(f"{slug}: promo is the deterministic pick for this slug",
+                      hp.select("history", f"history:{slug}", PROMOS).id == pp.id)
+            check(f"{slug}: last chapter is the promo",
+                  bool(chapters) and chapters[-1].get("title") == PROMO_CHAPTER_TITLE,
+                  str(chapters[-1].get("title") if chapters else None))
+            if len(chapters) >= 2 and isinstance(claimed, (int, float)):
+                start = chapters[-1].get("startTime")
+                check(f"{slug}: chapter before the promo closes where it starts",
+                      chapters[-2].get("endTime") == start)
+                check(f"{slug}: promo starts under the outro",
+                      isinstance(start, (int, float))
+                      and claimed - 14.6 + 1.0 <= start <= claimed - 14.6 + 3.0,
+                      f"start {start} vs duration {claimed}")
+                check(f"{slug}: promo chapter runs to the end",
+                      abs(float(chapters[-1].get("endTime", -1)) - claimed) <= 0.1)
+            check(f"{slug}: renderedAt recorded", bool(ep.get("renderedAt")))
+            if mp3.exists():
+                marker = promo_marker(mp3)
+                if marker is not None:
+                    check(f"{slug}: file carries the promo marker",
+                          marker == f"{promo.get('id')}@{promo.get('sha')}", marker)
+                tail = tail_max_dbfs(mp3)
+                if tail is not None:
+                    check(f"{slug}: file still ends in silence", tail < -50.0, f"{tail:.1f} dBFS")
+        else:
+            check(f"{slug}: no promo chapter without a promo entry",
+                  not any(c.get("title") == PROMO_CHAPTER_TITLE for c in chapters))
+
     if AUDIO.exists():
         for mp3 in sorted(AUDIO.glob("*.mp3")):
             check(f"{mp3.name}: published file is in the manifest",
@@ -158,7 +230,9 @@ def main() -> int:
 
     for slug, meta in sorted(episodes_to_date.items()):
         script = ROOT / f"data/history/scripts/{slug}.txt"
-        published = meta.get("publishedAt")
+        # A stitch re-publishes without re-rendering, so the date that says
+        # whether the AUDIO matches the script is renderedAt, not publishedAt.
+        published = meta.get("renderedAt") or meta.get("publishedAt")
         if not script.exists() or not published:
             continue
         iso = subprocess.run(["git", "log", "-1", "--format=%cI", "--", str(script)],

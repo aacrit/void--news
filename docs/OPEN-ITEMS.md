@@ -13,6 +13,16 @@ because it sends the next session chasing a fixed bug.
 
 ## Blocked on a CEO decision
 
+**Step 6b overwrites measured bias scores with defaults.** Documented with
+evidence in `docs/proposals/NEXT-LEVEL-2026-09-20.md` (finding 1 and the
+"intentional damper" analysis). Not fixed in any branch: the CEO asked that
+clustering, ranking and bias not be touched without a deliberate decision.
+The fix is small (preload `bias_scores` for the 36h lookback into
+`article_bias_map`; never write a defaults row) and needs a pipeline run to
+prove it before anything is built on the scores.
+
+
+
 **Block 5a — the pronoun scrubber rewrites quoted speech.** It converts
 we/our/us/my and has no rule for "I", so it leaves a sentence in two voices.
 On the live 09-09 feed it turned Ted Cruz's "a traumatic experience for all of
@@ -96,6 +106,32 @@ treatment `history/data.ts` got in rev 69 before the 301 comes off.
 ---
 
 ## Watch on the next run
+
+**House promos (2026-09-20).** The pool (`data/promos/house.yaml`, 24 promos)
+validates and is rendered in `af_kore` (American, CEO: "prefer American voice");
+`af_sarah` is the alternate (`VOID_PROMO_VOICE`). On Air, Weekly and History
+pick a promo up at render time only when `data/promos/rendered/` carries a
+render whose sha matches the pool; otherwise they ship exactly as before.
+The 73 published History episodes are **not stitched yet**: dispatch
+`.github/workflows/stitch-promos.yml` (render: false if the committed
+renders are the ones wanted), outside 11:00-17:00 UTC, and read the guard
+numbers it prints per episode. A dry run on three live episodes (ottoman-empire,
+partition-of-india, algerian-war, pulled from the site with `--from-site`)
+passed every guard: integrated loudness unchanged at -16.4 LUFS, true peak
+-1.3 to -1.5 dBTP, promo window within 1.7 dB of the closing speech. First daily run after this lands: confirm the
+served On Air MP3's last chapter is kind `promo` and A-04 still passes.
+
+**Podcast channel.** `podcast-history.xml` (73 items) and `podcast-weekly.xml`
+now generate and are linked from `/listen` and `layout.tsx`. Not submitted to
+Apple Podcasts or Spotify (`docs/PODCAST-DISTRIBUTION.md` has the checklist;
+the owner mailbox must be monitored for Apple's verification mail). Weekly
+and History covers exist as SVG only; the JPGs need the brand render step.
+`frontend/public/podcast-us.xml` was deleted (dead Supabase host, nothing
+regenerated it); the US edition gets a feed again when it renders again. The world feed
+was cut from 9 items to the episodes whose MP3s exist (7 of 9 enclosures
+returned 404 because audio retention keeps two dated files).
+
+
 
 **Weekly — DISCHARGED 2026-09-20.** Vol. I, No. 1 ran on the new Sunday cadence
 and is live. Everything rev 71/72 left unverified now has evidence:

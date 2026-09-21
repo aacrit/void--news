@@ -189,6 +189,10 @@ export function chapterKindLabel(c: AudioChapter): string {
     case "opinion":
     case "editorial":
       return "Opinion";
+    // The house promo under the outro: "Also from Void", with the promoted
+    // section as its subtitle. A label so the rail does not read it as news.
+    case "promo":
+      return "Promo";
     // A History documentary chapter is named by its title alone ("Twenty five
     // seconds", "The Soviet programme"); a badge beside it would say nothing.
     // Explicit rather than left to the default, so the silence is a decision.

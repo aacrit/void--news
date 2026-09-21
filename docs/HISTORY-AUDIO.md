@@ -241,6 +241,30 @@ Two things this does NOT do, deliberately: it does not lift the `/history/*`
 (still Supabase-or-mock; the static-JSON rewrite is the separate piece of work
 that un-hides the section). The audio is ready and reachable ahead of both.
 
+## House promo (post-roll)
+
+The close ends on its particular, the outro starts, and a beat later the house
+voice reads a two-sentence promo for On Air, Weekly or the site under the
+outro's held bars. The episode's length does not change, so H-07 and the
+15.5 minute gate are untouched, and the outro still falls to silence after
+it. Selected by the sha256 of `history:<slug>`, so every re-render of an
+episode carries the same promo; it appears as a final chapter, kind
+`segment` (the only kind the rail draws without a badge), titled "Also from
+Void News", and the manifest entry records `promo: {id, sha, voice,
+startTime}`.
+
+Episodes rendered before the promo existed are retrofitted without TTS:
+`pipeline/history/stitch_promos.py` fetches the master from the release,
+decodes it, lays the promo in, re-encodes once at 128k, rewrites the chapters
+and the manifest (with a full-file `?v=` fingerprint and `renderedAt` kept
+from the original render), and replaces the release asset. The un-stitched
+master is parked under the release tag `history-audio-clean` so a later copy
+change re-stitches from the original. Guards, measured on every episode:
+integrated loudness within 1 LU of the original, true peak at or below
+-0.8 dBTP, the promo within 3 dB of the last eight seconds of speech, the
+last 300 ms below -50 dBFS, and the outro's fall byte-identical. Workflow:
+`.github/workflows/stitch-promos.yml`.
+
 ## Staging
 
 Each stage answers a different question and must be signed off before the next.
