@@ -316,7 +316,12 @@ export const CONTESTED_MIN_POLARIZATION = 50;
 
 export type LeanLabelState = "confident" | "contested" | "balanced" | "unmeasured";
 
-interface WingCounts {
+export interface WingCounts {
+  /** The seven bucket counts, far-left first. Already exported on every
+   *  cluster as bias_diversity.lean_buckets and, until 2026-09-21, read by
+   *  nothing. The register on the card and the bench in Deep Dive are both
+   *  drawn from it. Sums to leanMeasuredCount. */
+  leanBuckets?: readonly number[];
   leanLeftCount?: number;
   leanCenterCount?: number;
   leanRightCount?: number;
@@ -368,6 +373,82 @@ export function leanShareTilt(spread?: WingCounts | null): number {
   const wings = left + right;
   if (wings < LABEL_MIN_WING_ARTICLES) return 0;
   return (right - left) / wings;
+}
+
+/* ── The shape of the roster ───────────────────────────────────────────────
+   A point estimate has to be withheld when it is uncertain, which is why the
+   old gate went quiet on 20 of 35 stories: it asked "which way does this
+   lean" and suppressed the answer whenever the mean was not confident. A
+   DISTRIBUTION never has to be withheld. If there is coverage there is a
+   shape, and the shape is honest at any sample size.
+
+   So the card reads the roster, not the mean. Five states, and every word is
+   earned by the evidence that supports THAT word: Consensus is a claim about
+   the centre and needs centre mass; Leans and Split are claims about the
+   wings and need wing evidence. When neither is there the card states the
+   count, which is true, rather than calling the story balanced.
+
+   Measured on the 2026-09-21 feed: this speaks on 30 of 35 stories against
+   15 of 35, and the five it stays quiet on have between 1 and 7 articles.
+
+   A NOTE ON THE FALL-THROUGH, because the first draft of this rule got it
+   wrong and would have shipped the exact lie the rest of this file removes.
+   Falling through to "Balanced" labelled a story with 3 left, 4 centre and
+   ZERO right-of-centre articles as balanced. Balanced is a finding, so it
+   needs both wings present and enough of them to see.                      ── */
+
+export type LeanShape = "leans" | "split" | "balanced" | "consensus" | "thin";
+
+/** Articles that must have taken a side before the roster can be called
+ *  lopsided or split. Same floor as LABEL_MIN_WING_ARTICLES, and for the same
+ *  reason: a proportion of two articles is not a roster. */
+export const SHAPE_MIN_WINGS = 5;
+/** Total measured articles before any shape word is earned. */
+export const SHAPE_MIN_TOTAL = 6;
+/** Share of the roster in the centre bucket that counts as everyone agreeing. */
+export const SHAPE_CONSENSUS_SHARE = 0.75;
+
+export function leanShape(spread?: WingCounts | null): LeanShape {
+  const left = spread?.leanLeftCount ?? 0;
+  const center = spread?.leanCenterCount ?? 0;
+  const right = spread?.leanRightCount ?? 0;
+  const total = left + center + right;
+  const wings = left + right;
+
+  if (total < SHAPE_MIN_TOTAL) return "thin";
+  if (center / total >= SHAPE_CONSENSUS_SHARE && total >= 8) return "consensus";
+  if (wings < SHAPE_MIN_WINGS) return "thin";
+
+  const tilt = (right - left) / wings;
+  if (Math.abs(tilt) >= LABEL_MIN_SHARE_TILT) return "leans";
+  // Both wings genuinely present, so "even" is a reading rather than an
+  // absence. Whether the centre holds the mass is what separates a story the
+  // coverage agrees on from one it has divided over.
+  if (Math.min(left, right) >= 2) return center / total >= 0.5 ? "balanced" : "split";
+  return "thin";
+}
+
+/** Which way a `leans` roster leans. Zero when the shape is not `leans`. */
+export function leanShapeDirection(spread?: WingCounts | null): -1 | 0 | 1 {
+  if (leanShape(spread) !== "leans") return 0;
+  const left = spread?.leanLeftCount ?? 0;
+  const right = spread?.leanRightCount ?? 0;
+  return right > left ? 1 : -1;
+}
+
+/** The one line a card prints under the register. */
+export function leanShapeLabel(spread?: WingCounts | null): string {
+  const shape = leanShape(spread);
+  if (shape === "thin") {
+    const n = (spread?.leanLeftCount ?? 0) + (spread?.leanCenterCount ?? 0)
+      + (spread?.leanRightCount ?? 0);
+    return `${n} ${n === 1 ? "article" : "articles"}`;
+  }
+  if (shape === "leans") {
+    return leanShapeDirection(spread) > 0 ? "Leans right" : "Leans left";
+  }
+  return shape === "split" ? "Split"
+    : shape === "consensus" ? "Consensus" : "Balanced";
 }
 
 /**

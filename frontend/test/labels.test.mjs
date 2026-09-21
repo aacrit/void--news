@@ -181,6 +181,54 @@ check("a suppressed label withholds the score",
                             polarization: 0, aggregateConfidence: 0.9,
                             leanMeasuredCount: 20 }, 20).suppressed === true);
 
+/* ---- the shape of the roster ------------------------------------------ */
+/*
+   The card reads the roster, not the mean. A point estimate must be withheld
+   when it is uncertain, which is why the old gate went quiet on 20 of 35
+   stories; a distribution never has to be. Every case below is a real story
+   from the 2026-09-21 feed, and the last three are the ones that make the
+   rule honest rather than merely talkative.
+*/
+const shape = (L, C, R) =>
+  bias.leanShapeLabel({ leanLeftCount: L, leanCenterCount: C, leanRightCount: R });
+
+for (const [L, C, R, want, why] of [
+  [7, 2, 8, "Split", "hollow centre: seven left, eight right, two in the middle"],
+  [19, 26, 14, "Split", "bimodal with a fat centre; the mean of this is 51"],
+  [0, 11, 2, "Consensus", "eleven of thirteen in the centre bucket"],
+  [4, 7, 13, "Leans right", "thirteen right against four left"],
+  [14, 39, 9, "Balanced", "centre holds the mass and the wings are even"],
+  /* The fall-through cases. A first draft of this rule called the next one
+     Balanced, on a story with NO right-of-centre coverage at all. */
+  [3, 4, 0, "7 articles", "zero right-of-centre coverage is not balance"],
+  [1, 5, 0, "6 articles", "one wing article is not a roster"],
+  [2, 0, 1, "3 articles", "too little coverage to say anything"],
+]) {
+  check(`roster ${L}/${C}/${R} reads "${want}" (${why})`, shape(L, C, R) === want,
+    `got "${shape(L, C, R)}"`);
+}
+
+/* Symmetry again, one layer up: mirroring a roster must mirror the word. */
+for (const [L, C, R] of [[4, 7, 13], [7, 2, 8], [12, 5, 3], [1, 20, 6]]) {
+  const a = shape(L, C, R), b = shape(R, C, L);
+  const mirrored = a.replace("right", "LR").replace("left", "right").replace("LR", "left");
+  check(`mirroring ${L}/${C}/${R} mirrors the word`, mirrored === b, `${a} vs ${b}`);
+}
+
+/* A shape word is never printed without the evidence for THAT word. */
+for (let L = 0; L <= 12; L++) for (let R = 0; R <= 12; R++) for (const C of [0, 3, 9, 30]) {
+  const w = shape(L, C, R);
+  if (w === "Split" || w === "Balanced") {
+    check(`"${w}" needs both wings at ${L}/${C}/${R}`, L >= 2 && R >= 2, `${L} left, ${R} right`);
+    check(`"${w}" needs ${bias.SHAPE_MIN_WINGS} wing articles at ${L}/${C}/${R}`,
+      L + R >= bias.SHAPE_MIN_WINGS, `${L + R} wing articles`);
+  }
+  if (w.startsWith("Leans")) {
+    check(`"Leans" needs wing evidence at ${L}/${C}/${R}`,
+      L + R >= bias.SHAPE_MIN_WINGS, `${L + R} wing articles`);
+  }
+}
+
 /* ---- leanShareTilt: wings only, and enough of them -------------------- */
 /*
    The denominator was left + center + right until 2026-09-21, so neutral wire

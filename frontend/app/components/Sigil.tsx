@@ -10,11 +10,13 @@ import {
   DIVERGENT_SPREAD_MIN,
   tiltDescriptor,
   storyLeanLabel,
-  leanLabelState,
+  leanShape,
+  leanShapeLabel,
   leanToDisplayPos,
   lerpColor as lerp,
 } from "../lib/biasColors";
 import MicroSpectrum from "./MicroSpectrum";
+import RosterStrip from "./RosterStrip";
 import { fetchSourceLeans } from "../lib/supabase";
 
 /** Session-level cache: storyId → lean values. Avoids re-fetching on re-hover. */
@@ -114,9 +116,41 @@ function DataMark({ data, size, mounted }: {
   // the beam; a balanced or contested story sits level; an unmeasured one
   // sits level in the muted ink. (A beam that tilted under a "Flat" caption
   // was the mark disagreeing with its own label.)
-  const gate = isUnscored ? "unmeasured" : leanLabelState(lean, data.biasSpread, data.sourceCount);
-  const measured = gate !== "unmeasured";
-  const beamAngle = gate === "confident" ? ((displayLean - 50) / 50) * 24 : 0;
+  /* THE MARK READS THE ROSTER (2026-09-21).
+     It obeyed a confidence gate on the mean before, which tilted the beam on
+     1 story in 35 and left it level and mute on the rest: the brand's most
+     distinctive asset doing nothing on the whole front page. The roster's
+     shape is available on every story that has coverage, so the mark has four
+     states instead of one, and each is a thing the geometry can already say.
+
+       leans      beam tilts, as it always did, now earned by the wings
+       split      the beam PARTS: two arms at the real wing positions, the
+                  centre left hollow. A scale pulled both ways, which is what
+                  a split story is
+       consensus  dead level and crisp, centre marked: everyone framed it alike
+       thin       level and dashed: not a reading, and it does not pretend
+
+     The two arms are not new geometry. The divergence fan below has always
+     drawn them; it was driven by a standard deviation, so it read as
+     decoration. Driven by the real left and right mass it becomes the
+     measurement. */
+  const shape = isUnscored ? "thin" : leanShape(data.biasSpread);
+  const gate = shape === "thin" ? "unmeasured"
+    : shape === "leans" ? "confident"
+    : shape === "split" ? "contested" : "balanced";
+  const measured = shape !== "thin";
+  const beamAngle = shape === "leans" ? ((displayLean - 50) / 50) * 24 : 0;
+  /* Split draws its own arms from the wing counts, so the stdev-driven fan
+     stands down there and the two cannot contradict each other. */
+  const wingL = data.biasSpread?.leanLeftCount ?? 0;
+  const wingR = data.biasSpread?.leanRightCount ?? 0;
+  const wingTotal = wingL + wingR;
+  const splitArms = shape === "split" && wingTotal > 0
+    ? {
+        left: -Math.min(24, 8 + 16 * (wingL / wingTotal)),
+        right: Math.min(24, 8 + 16 * (wingR / wingTotal)),
+      }
+    : null;
   // Color = lean (expanded), EXCEPT a balanced-but-divergent standoff drops the
   // green for a neutral slate — green is reserved for genuine consensus
   // (balanced AND agreed). See getSigilLeanColor.
@@ -138,7 +172,7 @@ function DataMark({ data, size, mounted }: {
   // Only open the fan once the lean spread is genuinely divergent (stddev ≥ 10):
   // agreed stories keep a single crisp beam, divergent ones fan wider with more
   // spread (10→40 maps to a 5°→22° half-angle).
-  const showFan = measured && leanSpread >= DIVERGENT_SPREAD_MIN;
+  const showFan = measured && !splitArms && leanSpread >= DIVERGENT_SPREAD_MIN;
   const coneHalf = showFan
     ? 5 + ((Math.min(leanSpread, 40) - 10) / 30) * 17
     : 0;
@@ -234,7 +268,40 @@ function DataMark({ data, size, mounted }: {
         </>
       )}
 
+      {/* SPLIT: the beam parts. Two arms at the real wing positions with a
+          hollow centre, drawn instead of the single beam. The angles come
+          from the left and right counts, so a 7-to-8 story opens nearly
+          symmetrically and a 12-to-5 one leans as it parts. */}
+      {splitArms && (
+        <g className="sigil__split">
+          <g style={{
+            transformOrigin: "16px 14px",
+            transform: `rotate(${mounted ? splitArms.left : 0}deg)`,
+            transition: "transform var(--beam-tilt-dur, 800ms) var(--spring-beam, var(--spring)) var(--beam-tilt-delay, 60ms)",
+          }}>
+            <line x1="4" y1="14" x2="14" y2="14"
+              stroke="var(--bias-left)" strokeWidth="1.8"
+              opacity={mounted ? 1 : 0.3}
+              style={{ transition: "stroke 500ms var(--ease-rack) 200ms, opacity 500ms" }} />
+          </g>
+          <g style={{
+            transformOrigin: "16px 14px",
+            transform: `rotate(${mounted ? splitArms.right : 0}deg)`,
+            transition: "transform var(--beam-tilt-dur, 800ms) var(--spring-beam, var(--spring)) var(--beam-tilt-delay, 60ms)",
+          }}>
+            <line x1="18" y1="14" x2="28" y2="14"
+              stroke="var(--bias-right)" strokeWidth="1.8"
+              opacity={mounted ? 1 : 0.3}
+              style={{ transition: "stroke 500ms var(--ease-rack) 200ms, opacity 500ms" }} />
+          </g>
+          {/* The hollow itself, stated rather than left blank. */}
+          <line x1="14.6" y1="14" x2="17.4" y2="14"
+            stroke="var(--divider)" strokeWidth="1" opacity={mounted ? 0.55 : 0} />
+        </g>
+      )}
+
       {/* Beam group — pivots around circle center, tilts by lean */}
+      {!splitArms && (
       <g className="sigil__beam-group" style={{
         transformOrigin: "16px 14px",
         transform: `rotate(${mounted ? beamAngle : 0}deg)`,
@@ -270,6 +337,7 @@ function DataMark({ data, size, mounted }: {
           </>
         )}
       </g>
+      )}
 
       {/* Source count — lower semi-circle.
           r=11, cy=14: chord at y=20 = 18.4 viewBox units, inner ≈ 14.8.
@@ -316,6 +384,8 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
 
   const lean = data.politicalLean;
   const popupUnscored = !!data.unscored;
+  /* The popup states the roster, so it needs the same shape the mark does. */
+  const shape = popupUnscored ? "thin" : leanShape(data.biasSpread);
   // False-center band suppression: inside [48,52] a confident lean label + score
   // overstate the signal. "Contested" when both wings are present, else "No clear
   // lean" (and the numeric score is withheld). Outside the band, behavior is
@@ -440,14 +510,14 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
         {/* Contextual descriptor — explains what the score means */}
         {stage >= 2 && (
           <p className="sigil-popup__descriptor">
-            {popupInfo.state === "balanced"
-              ? "Measured, and the aggregated coverage sits at the centre"
-              : popupInfo.state === "unmeasured"
-              ? "Too few measured articles to read a lean"
-              : popupInfo.state === "contested"
-                ? "Left and right sources both cover this; coverage is contested"
-                : popupUnscored
-                  ? "Not enough analytical signal to determine lean"
+            {shape === "consensus"
+              ? "Three quarters of the coverage framed this the same way"
+              : shape === "balanced"
+              ? "Both sides covered this, and neither outweighs the other"
+              : shape === "split"
+                ? "Both sides covered this and the centre does not hold"
+                : shape === "thin"
+                  ? "Too few measured articles to read the coverage"
                   : tiltDescriptor(lean)}
           </p>
         )}
@@ -510,16 +580,20 @@ function SigilPopup({ triggerRef, isOpen, onClose, onMouseEnter, onMouseLeave, i
         }}>
           {/* Human sentence: what the data actually says */}
           <p className="sigil-popup__compact-sentence">
-            {popupInfo.state === "balanced"
-              ? `Balanced coverage across ${data.sourceCount} source${data.sourceCount !== 1 ? "s" : ""}.`
-              : popupInfo.state === "unmeasured"
-              ? `Lean not measured across ${data.sourceCount} source${data.sourceCount !== 1 ? "s" : ""}.`
-              : popupInfo.state === "contested"
-                ? `Coverage is contested across ${data.sourceCount} source${data.sourceCount !== 1 ? "s" : ""}.`
-                : popupUnscored
-                  ? `Balanced coverage across ${data.sourceCount} source${data.sourceCount !== 1 ? "s" : ""}.`
-                  : `Coverage leans ${ll} across ${data.sourceCount} source${data.sourceCount !== 1 ? "s" : ""}.`
-            }
+            {(() => {
+              /* The roster in a sentence. It names the counts rather than a
+                 verdict, so the line is true at any sample size. */
+              const L = data.biasSpread?.leanLeftCount ?? 0;
+              const C = data.biasSpread?.leanCenterCount ?? 0;
+              const R = data.biasSpread?.leanRightCount ?? 0;
+              const n = L + C + R;
+              const of = `${n} measured article${n !== 1 ? "s" : ""}`;
+              if (shape === "thin") return `${of}, too few to read the coverage.`;
+              if (shape === "consensus") return `${C} of ${of} sit in the centre.`;
+              if (shape === "split") return `${L} left and ${R} right, of ${of}.`;
+              if (shape === "balanced") return `${L} left and ${R} right, of ${of}, evenly matched.`;
+              return `${of}: ${L} left, ${C} centre, ${R} right.`;
+            })()}
           </p>
           <span className="sigil-popup__hint">
             Tap story for full analysis
@@ -661,14 +735,18 @@ export default function Sigil({ data, size = "sm", mode = "facts", instant = fal
       {/* The data-encoded brand mark */}
       <DataMark data={data} size={size} mounted={mounted} mode={mode} />
 
-      {/* Combined lean + divergence label — InkUnderline on all sizes.
-          Inside the false-center band the confident label is replaced by
-          "Contested" or "No clear lean" (see leanLabelState). */}
+      {/* The register: the roster's shape, under the mark. Seven strokes, one
+          per bucket. It replaces the printed 0-100 score, which was a mean
+          over a frequently bimodal distribution and was withheld on 20 of 35
+          stories. See components/RosterStrip.tsx. */}
+      <RosterStrip spread={data.biasSpread} className="sigil__roster" />
+
+      {/* The one line under it. The roster's own word, not a gated mean. */}
       <span className="sigil__lean-label" style={{
         color: displayLabel.color,
         opacity: mounted ? 1 : 0,
       }}>
-        {displayLabel.text}
+        {leanShapeLabel(data.biasSpread)}
         {data.divergenceFlag === "divergent" && (
           <InkUnderline variant={(Math.round(Number(data.politicalLean)) || 0) % 3} color="var(--sense-high)" />
         )}

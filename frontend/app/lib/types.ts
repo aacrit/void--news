@@ -24,6 +24,8 @@ export interface BiasSpread {
    *  Reveals the bimodal coverage that the mean lean conceals. */
   polarization?: number;
   /** Source counts collapsed to 3 segments for the coverage bar. */
+  /** The seven bucket counts, far-left first; sums to leanMeasuredCount. */
+  leanBuckets?: readonly number[];
   leanLeftCount?: number;
   leanCenterCount?: number;
   leanRightCount?: number;

@@ -4086,3 +4086,34 @@ html {
   background-color: var(--hist-bg, var(--wk-paper));
 }
 :root:has(.wk-page) body { background-color: var(--wk-paper); }
+
+/* ---------------------------------------------------------------------------
+   The roster strip (components/RosterStrip.tsx)
+
+   Seven hairline strokes on a rule, one per lean bucket. Register marks
+   rather than a chart, so there is no axis, no legend and no rounding. The
+   bar colours are inline because they index the seven lean tokens; only the
+   rule and the empty-bucket tick are styled here.
+   --------------------------------------------------------------------------- */
+.roster {
+  display: block;
+  flex-shrink: 0;
+  shape-rendering: crispEdges;
+  overflow: visible;
+}
+
+.roster__rule {
+  fill: var(--divider);
+}
+
+/* An empty bucket keeps a faint tick, so absence reads as absence. */
+.roster__tick {
+  fill: var(--divider);
+  opacity: 0.85;
+}
+
+/* The register sits directly under the mark, in the slot the printed score
+   used to occupy. */
+.sigil__roster {
+  margin: 4px auto 3px;
+}
