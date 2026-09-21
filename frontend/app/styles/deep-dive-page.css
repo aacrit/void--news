@@ -42,7 +42,7 @@
   background: none;
   border: none;
   color: var(--fg-secondary);
-  font-family: var(--font-structural, var(--font-body));
+  font-family: var(--font-structural);
   font-size: var(--text-sm);
   cursor: pointer;
 }
@@ -112,42 +112,6 @@
 /* Compact segmented switch — a slim underline-pill toggle. Deliberately low,
    nothing like the old full-width tab band. Sticky under the toolbar so the
    reader can flip Story <-> Spread while scrolled into either panel. */
-.dd-seg {
-  display: inline-flex;
-  align-items: stretch;
-  gap: 2px;
-  margin: var(--space-3) 0 var(--space-4);
-  padding: 3px;
-  background: var(--bg-secondary, rgba(127,127,127,0.08));
-  border-radius: 999px;
-  position: sticky;
-  top: 56px;
-  z-index: 3;
-}
-.dd-seg__btn {
-  appearance: none;
-  border: none;
-  background: none;
-  cursor: pointer;
-  min-height: 34px;
-  padding: 0 var(--space-4);
-  border-radius: 999px;
-  font-family: var(--font-structural, var(--font-body));
-  font-size: var(--text-sm);
-  letter-spacing: 0.02em;
-  color: var(--fg-tertiary);
-  transition: color 140ms ease-out, background 140ms ease-out;
-}
-.dd-seg__btn--active {
-  color: var(--fg-primary);
-  background: var(--bg-primary);
-  box-shadow: var(--shadow-e1, 0 1px 2px rgba(0,0,0,0.12));
-  font-weight: 600;
-}
-.dd-seg__btn:focus-visible {
-  outline: 2px solid var(--focus-ring, var(--accent-primary));
-  outline-offset: 2px;
-}
 
 .dd-page__panel { display: block; }
 .dd-page__panel[hidden] { display: none; }
@@ -199,9 +163,6 @@
    only the outlet name (ellipsized) and a compact monospace tier glyph.
    =========================================================================== */
 
-.dd-src-cols-wrap { margin-top: var(--space-4); }
-.dd-src-cols__label { margin-bottom: var(--space-2); }
-.dd-src-cols__count { color: var(--fg-muted); margin-left: var(--space-1); }
 
 /* Three equal tracks. minmax(0, 1fr) lets each column shrink below its content
    width so long names ellipsize instead of forcing page-level x-scroll. */
@@ -212,93 +173,16 @@
   align-items: start;
 }
 
-.dd-src-col {
-  min-width: 0;
-  border: var(--rule-thin);
-  display: flex;
-  flex-direction: column;
-}
 
 /* Header: lean name + count, with a lean-colored accent rule underneath that
    matches the spectrum gradient (blue → green → red). --col-lean is set inline
    from getLeanColor so it stays theme-reactive. */
-.dd-src-col__head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--space-1);
-  padding: var(--space-1) var(--space-2);
-  background: var(--bg-secondary);
-  border-bottom: 2px solid var(--col-lean, var(--fg-muted));
-}
-.dd-src-col__name {
-  color: var(--fg-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-.dd-src-col__count {
-  color: var(--fg-muted);
-  font-size: var(--text-xs);
-}
 
 /* Independently scrollable list — its own scrollbar, contained overscroll so a
    flick inside one column never scrolls the page. */
-.dd-src-col__list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  max-height: 240px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  scrollbar-width: thin;
-  scrollbar-color: var(--scrollbar-thumb) transparent;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-}
 
-.dd-src-col__row { border-bottom: var(--rule-thin); }
-.dd-src-col__row:last-child { border-bottom: none; }
-
-.dd-src-col__link {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--space-1);
-  min-height: 44px; /* WCAG 2.5.5 tap target */
-  padding: var(--space-1) var(--space-2);
-  color: var(--fg-primary);
-  text-decoration: none;
-  transition: background-color var(--dur-fast) var(--ease-cinematic);
-}
-.dd-src-col__link:hover { background-color: var(--bg-secondary); }
-.dd-src-col__link:focus-visible {
-  outline: 2px solid var(--accent-warm);
-  outline-offset: -2px;
-}
-.dd-src-col__link--static { cursor: default; }
-
-.dd-src-col__srcname {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  line-height: 1.3;
-}
-.dd-src-col__tier {
-  color: var(--fg-muted);
-  white-space: nowrap;
-  font-size: var(--text-xs);
-}
 
 /* Empty side — keeps the 3-column alignment instead of collapsing. */
-.dd-src-col__empty {
-  margin: 0;
-  padding: var(--space-3) var(--space-2);
-  color: var(--fg-tertiary);
-  text-align: center;
-}
 
 /* ===========================================================================
    Source Ledger (.dd-ledger) — the full roster as one spectrum-ordered index.
@@ -308,145 +192,18 @@
    row's monogram tile carries the lean color (and the self-hosted outlet logo),
    tying the ledger to the graph above it.
    =========================================================================== */
-.dd-ledger { margin-top: var(--space-4); }
-.dd-ledger__label { margin-bottom: var(--space-3); }
-.dd-ledger__count { color: var(--fg-muted); margin-left: var(--space-1); }
 
 /* Collapsed disclosure (mobile "All N sources") with a lean-distribution teaser */
-.dd-ledger__toggle {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  width: 100%;
-  min-height: 44px;
-  padding: var(--space-2) 0;
-  background: none;
-  border: none;
-  border-top: var(--rule-thin);
-  border-bottom: var(--rule-thin);
-  cursor: pointer;
-  color: var(--fg-secondary);
-  text-align: left;
-}
-.dd-ledger__toggle-label {
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-}
-.dd-ledger__teaser {
-  display: flex;
-  flex: 1;
-  height: 4px;
-  gap: 2px;
-  min-width: 40px;
-  max-width: 160px;
-}
-.dd-ledger__teaser-seg { height: 100%; border-radius: 1px; opacity: 0.85; }
-.dd-ledger__toggle-caret {
-  color: var(--fg-muted);
-  font-size: var(--text-xs);
-  margin-left: auto;
-}
 
-.dd-ledger__bands {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  margin-top: var(--space-3);
-}
 
 /* Desktop: the three bands sit side by side as columns aligned under the
    spectrum's Left / Center / Right thirds (the roster reads under the point on
    the axis, like the Sources page). Full-height, no inner scroll, names wrap
    rather than truncate. Mobile keeps the vertical stack above. */
-@media (min-width: 768px) {
-  .dd-ledger__bands {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--space-5);
-    align-items: start;
-  }
-}
 
 /* Band header: small-caps label + count + a lean-colored full-width hairline */
-.dd-ledger__band-head {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-2);
-  margin-bottom: var(--space-1);
-}
-.dd-ledger__band-name {
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--fg-secondary);
-}
-.dd-ledger__band-count { color: var(--fg-muted); font-size: var(--text-xs); }
-.dd-ledger__band-rule {
-  flex: 1;
-  height: 2px;
-  background: var(--band-lean, var(--fg-muted));
-  opacity: 0.55;
-  border-radius: 1px;
-}
 
-.dd-ledger__list { list-style: none; margin: 0; padding: 0; }
-.dd-ledger__row { border-bottom: var(--rule-thin); }
-.dd-ledger__row:last-child { border-bottom: none; }
-
-.dd-ledger__link {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: 44px; /* WCAG 2.5.5 tap target */
-  padding: var(--space-2) var(--space-1);
-  color: var(--fg-primary);
-  text-decoration: none;
-  transition: background-color var(--dur-fast) var(--ease-cinematic);
-}
-.dd-ledger__link:hover { background-color: var(--bg-secondary); }
-.dd-ledger__link:focus-visible { outline: 2px solid var(--accent-warm); outline-offset: -2px; }
-.dd-ledger__link--static { cursor: default; }
 
 /* Monogram tile: same visual language as the spectrum pins (lean-bordered),
    holding the self-hosted outlet favicon when present, the lean letter when not. */
-.dd-ledger__mono {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 1.5px solid var(--fg-muted);
-  background: var(--bg-card);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  flex-shrink: 0;
-  font-family: var(--font-data);
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 1;
-}
-.dd-ledger__logo { width: 18px; height: 18px; object-fit: contain; display: block; }
-.dd-ledger__mono[data-lean="far-left"]     { border-color: var(--bias-far-left);     color: var(--bias-far-left); }
-.dd-ledger__mono[data-lean="left"]         { border-color: var(--bias-left);         color: var(--bias-left); }
-.dd-ledger__mono[data-lean="center-left"]  { border-color: var(--bias-center-left);  color: var(--bias-center-left); }
-.dd-ledger__mono[data-lean="center"]       { border-color: var(--bias-center);       color: var(--bias-center); }
-.dd-ledger__mono[data-lean="center-right"] { border-color: var(--bias-center-right); color: var(--bias-center-right); }
-.dd-ledger__mono[data-lean="right"]        { border-color: var(--bias-right);        color: var(--bias-right); }
-.dd-ledger__mono[data-lean="far-right"]    { border-color: var(--bias-far-right);    color: var(--bias-far-right); }
 
-.dd-ledger__name {
-  min-width: 0;
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  line-height: 1.3;
-  overflow-wrap: anywhere; /* full name, wraps rather than truncating */
-}
-.dd-ledger__meta {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-2);
-  white-space: nowrap;
-}
-.dd-ledger__tier { color: var(--fg-muted); font-size: var(--text-xs); }
-.dd-ledger__lean { font-size: var(--text-xs); font-weight: 600; }

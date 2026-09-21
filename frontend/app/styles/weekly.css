@@ -448,7 +448,7 @@
 }
 
 .wk-index__headline {
-  font-family: var(--font-display);
+  font-family: var(--font-editorial);
   font-size: var(--text-lg);
   line-height: 1.2;
   color: var(--fg-primary);

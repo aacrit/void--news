@@ -63,13 +63,6 @@
   color: var(--fg-primary);
   margin: 0.4rem 0 0.5rem;
 }
-.onair__sub {
-  font-size: 0.9rem;
-  line-height: 1.5;
-  color: var(--fg-secondary);
-  max-width: 42ch;
-  margin: 0;
-}
 
 /* -- Empty state ---------------------------------------------------------- */
 .onair__empty {

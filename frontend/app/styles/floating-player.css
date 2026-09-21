@@ -455,7 +455,6 @@ body:has(.mms--open) .fp {
   transition: transform 200ms var(--spring-snappy, ease);
 }
 .fp__caret--down { transform: rotate(90deg); }
-.fp__caret--up { transform: rotate(-90deg); }
 .fp__minimize:hover .fp__caret--down { transform: rotate(90deg) translateX(1px); }
 
 /* Detach-to-floating button */
@@ -998,39 +997,6 @@ body:has(.mms--open) .fp {
    METADATA ROW — host pair, edition, duration
    --------------------------------------------------------------------------- */
 
-.fp__meta {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-family: var(--font-data);
-  font-size: var(--text-xxs);
-  color: color-mix(in srgb, var(--fp-accent) 55%, transparent);
-  letter-spacing: 0.02em;
-  flex-wrap: wrap;
-}
-
-.fp__meta-hosts {
-  font-weight: 500;
-  color: color-mix(in srgb, var(--fp-accent) 75%, transparent);
-}
-
-.fp__meta-sep {
-  width: 1px;
-  height: 10px;
-  background: color-mix(in srgb, var(--fp-accent) 20%, transparent);
-}
-
-.fp__meta-edition {
-  font-family: var(--font-meta);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-size: 9px;
-}
-
-.fp__meta-duration {
-  font-variant-numeric: tabular-nums;
-}
 
 /* ---------------------------------------------------------------------------
    EPISODE DETAILS BUTTON
@@ -1980,7 +1946,6 @@ body:has(.mms--open) .fp {
   .fp__minimize:hover, .fp__dismiss:hover { color: color-mix(in srgb, var(--fp-accent) 50%, transparent); background: none; }
   .fp__skip:hover { color: color-mix(in srgb, var(--fp-accent) 50%, transparent); }
   .fp__speed:hover { border-color: color-mix(in srgb, var(--fp-accent) 25%, transparent); }
-  .fp__episode-btn:hover { color: color-mix(in srgb, var(--fp-accent) 50%, transparent); }
 }
 
 /* ---------------------------------------------------------------------------

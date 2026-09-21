@@ -11,8 +11,7 @@
 [data-viewport="mobile"] .edition-line {
   display: none;
 }
-[data-viewport="desktop"] .mf,
-[data-viewport="desktop"] .mob-nav--inline {
+[data-viewport="desktop"] .mf{
   display: none;
 }
 
@@ -164,9 +163,6 @@
 
   /* Filter bar horizontal scroll — proximity snap keeps chips reachable
      without forcing scroll to land exactly on a chip edge */
-  .filter-bar {
-    scroll-snap-type: x proximity;
-  }
 
   /* === NAVIGATION === */
 
@@ -180,27 +176,14 @@
 
   /* [USER REQUEST] Mobile header: show full logo + edition/date.
      Desktop logo hidden; mobile logo (compact LogoFull at 22px) shown. */
-  .nav-logo-desktop {
-    display: none;
-  }
 
-  .nav-logo-mobile {
-    display: block;
-  }
 
   /* Inline dateline: hidden on mobile — edition pills in compact nav-filters row */
-  .nav-dateline-inline {
-    display: none;
-  }
 
   /* Dateline row: hidden on mobile */
-  .nav-dateline-row {
-    display: none;
-  }
 
   /* Mobile dateline: time (with zone) always visible; date appears >=400px.
      display:flex so the sub-spans align; pushed to the right edge of the row. */
-  .nav-dateline-mobile,
   .nav-dateline-line {
     display: flex;
     flex: 1;
@@ -221,7 +204,6 @@
   /* Date shows once the row is wide enough to carry both without squeezing the
      time off the edge (iPhone 14 = 390px shows time only; >=400px adds date). */
   @media (min-width: 400px) {
-    .nav-dateline-mobile__date,
     .nav-dateline-line__date {
       display: inline;
     }
@@ -234,18 +216,7 @@
      wins over its own base rule); frees the row for the wordmark + date/time. */
 
   /* Dateline: show medium variant, hide full */
-  .nav-dateline__full {
-    display: none;
-  }
 
-  .nav-dateline__medium {
-    display: inline;
-  }
-
-  .nav-dateline {
-    border-left: none;
-    padding-left: 0;
-  }
 
   /* Tighter vertical padding + explicit gap */
   .nav-inner {
@@ -269,7 +240,6 @@
     padding-top: var(--space-1);
     padding-bottom: var(--space-1);
   }
-  .nav-header[data-scroll-compact="true"] .nav-dateline-mobile,
   .nav-header[data-scroll-compact="true"] .nav-dateline-line {
     opacity: 0;
     max-width: 0;
@@ -279,12 +249,7 @@
     pointer-events: none;
     overflow: hidden;
   }
-  .nav-header[data-scroll-compact="true"] .nav-lens {
-    padding-top: var(--space-1);
-    padding-bottom: var(--space-1);
-  }
 
-  .nav-dateline-mobile,
   .nav-dateline-line {
     transition:
       opacity var(--dur-settle, 240ms) var(--ease-rack, ease-in-out),
@@ -294,18 +259,12 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .nav-dateline-mobile,
     .nav-dateline-line {
       transition: none;
     }
   }
 
   /* Filter toggle — full touch target on mobile */
-  .filter-toggle {
-    min-height: 44px;
-    padding: var(--space-2) var(--space-4);
-    margin-top: var(--space-2);
-  }
 
   /* === LAYOUT === */
 
@@ -341,17 +300,10 @@
   }
 
   /* Mobile backdrop: reduce blur cost — blur(40px) is expensive on low-end devices */
-  .deep-dive-backdrop {
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-  }
 
   /* Mobile page defocus: halved blur (3px vs 6px desktop) for GPU budget.
      Mobile renders full-screen bottom sheet — the defocus is less critical
      because the Deep Dive covers most of the viewport anyway. */
-  .page-main--deep-dive-open {
-    filter: blur(3px) saturate(0.8) brightness(0.9);
-  }
 
   /* Disable expensive GPU compositing hint on mobile — reduces VRAM pressure
      on low-end devices. Fixed paper texture doesn't scroll on mobile anyway. */
@@ -360,11 +312,6 @@
   }
 
   /* Section header — allow items to wrap on narrow screens */
-  .section-header {
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    align-items: flex-start;
-  }
 
   /* === STORY CARDS === */
 
@@ -380,9 +327,6 @@
     border-bottom: var(--separator-mobile);
   }
 
-  .story-card__meta {
-    margin-bottom: var(--space-1);
-  }
 
   .story-card__headline {
     font-size: var(--text-lg);
@@ -405,25 +349,7 @@
      z-index: var(--z-sticky) keeps it above cards but below nav (--z-nav).
      2026-05-15: lean-bar / MobileBottomNav removed, so section headers dock
      directly below the fixed nav-header. */
-  .section-header {
-    position: sticky;
-    top: var(--nav-height);
-    z-index: var(--z-sticky);
-    /* Solid bg instead of backdrop-filter — sticky elements with blur during
-       scroll force recompositing on every frame on mobile GPUs. */
-    background-color: var(--bg-primary);
-    margin-left: calc(-1 * var(--space-5));
-    margin-right: calc(-1 * var(--space-5));
-    padding-left: var(--space-5);
-    padding-right: var(--space-5);
-    padding-top: var(--space-3);
-    padding-bottom: var(--space-1);
-    margin-bottom: var(--space-1);
-  }
 
-  .section-header__title {
-    font-size: var(--text-sm);
-  }
 
   /* === LEAD STORY === */
 
@@ -436,9 +362,6 @@
     border-bottom: var(--rule-thin);
   }
 
-  .lead-story__meta {
-    margin-bottom: var(--space-2);
-  }
 
   .lead-story__headline {
     font-size: clamp(1.5rem, 5vw, 2rem);
@@ -453,15 +376,8 @@
   }
 
   /* Analysis section: tighter padding and gap on mobile */
-  .dd-analysis-section {
-    padding: var(--space-3) 0;
-    gap: var(--space-2);
-  }
 
   /* Analysis block: stacked vertically on mobile */
-  .dd-analysis-block {
-    gap: var(--space-2);
-  }
 
   .dd-analysis-block__sigil {
     justify-content: flex-start;
@@ -471,22 +387,10 @@
      stay in the DOM; the wrapper's data-lede-view drives which one shows, so
      SSR and first client paint always match (no hydration mismatch). The tab
      bar itself is visible here via its base flex (hidden again >=768px). */
-  .dd-lede[data-lede-view="story"] .dd-lede__spectrum {
-    display: none;
-  }
-  .dd-lede[data-lede-view="spread"] .dd-lede__story {
-    display: none;
-  }
 
   /* Press expand: faster transition on mobile */
-  .dd-press-expand {
-    transition: grid-template-rows 300ms var(--ease-cinematic);
-  }
 
   /* Perspectives: single column on mobile */
-  .dd-perspectives-grid {
-    grid-template-columns: 1fr;
-  }
 
   /* Convergence/divergence — horizontal scroll-snap tabs on mobile */
   .comp-view__insights-content {
@@ -505,11 +409,6 @@
   }
 
   /* [ENHANCEMENT-5] Source rows — better stacking on narrow screens */
-  .source-row {
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    align-items: flex-start;
-  }
 
   /* Simpler, faster section animations on mobile — ease-out instead of spring
      avoids spring overshoot jank on low-frame-rate GPU compositing.
@@ -523,13 +422,6 @@
   }
 
   /* Static story counter — persistent mobile navigation affordance */
-  .dd-story-counter {
-    font-family: var(--font-data);
-    font-size: var(--text-xxs);
-    color: var(--text-muted);
-    letter-spacing: 0.08em;
-    opacity: 0.7;
-  }
 
   /* DD cascade stagger removed 2026-08-09 — sections reveal together. */
   .dd-cascade-1,
@@ -549,14 +441,8 @@
   /* Bottom nav removed — filters are in the nav-header now */
 
   /* Filter chips — pill-toggle feel with sliding indicator */
-  .lean-bar__seg--active {
-    transition: transform 200ms var(--ease-cinematic);
-  }
 
   /* Topic chips — tighter, more native pill feel */
-  .topic-bar__chip--active {
-    font-weight: 600;
-  }
 
   /* Story card — active press only, no hover state */
   .story-card:active {
@@ -573,22 +459,10 @@
   }
 
   /* Filter chip — press feedback only */
-  .filter-chip:active {
-    transform: scale(0.92);
-    transition: transform 50ms var(--ease-cinematic);
-  }
 
   /* Lean bar segments — base hover already stripped, press feedback only */
-  .lean-bar__seg:active {
-    transform: scale(0.95);
-    transition: transform 50ms var(--ease-cinematic);
-  }
 
   /* Topic chip — base hover already stripped, press feedback only */
-  .topic-bar__chip:active {
-    transform: scale(0.92);
-    transition: transform 50ms var(--ease-cinematic);
-  }
 
   /* === PERFORMANCE — DISABLE PAINT-HEAVY EFFECTS === */
 
@@ -622,15 +496,9 @@
   /* These elements already meet WCAG in most cases; this rule is the safety net.
      2026-05-15: nav-lens__lean / nav-lens__trigger / nav-lens__search removed
      with the Row 2 lens; nav-search-btn now ships its own 44px hitbox. */
-  .nav-ed,
   .nav-search-btn,
   .nav-page,
-  .nav-weekly,
-  .filter-chip,
-  .lean-bar__seg,
-  .topic-bar__chip,
-  .theme-toggle,
-  .skb-overlay__close {
+  .theme-toggle{
     min-height: 44px;
     min-width: 44px;
   }
@@ -638,9 +506,7 @@
   /* lean-active-badge__dismiss removed 2026-05-15 — filter UI deleted. */
 
   /* Deep Dive: interactive targets — WCAG 44×44px minimum */
-  .dd-press-trigger,
-  .dd-read-more,
-  .dd-action-btn {
+  .dd-read-more{
     min-height: 44px;
     min-width: 44px;
   }
@@ -648,15 +514,10 @@
   /* === TEXT SELECTION — DISABLE ON INTERACTIVE ELEMENTS === */
 
   /* Native apps don't allow text selection on buttons / cards */
-  .nav-ed,
   .nav-search-btn,
-  .filter-chip,
-  .lean-bar__seg,
-  .topic-bar__chip,
   .story-card,
   .lead-story,
   .nav-page,
-  .nav-weekly,
   .theme-toggle {
     -webkit-user-select: none;
     user-select: none;
@@ -733,19 +594,8 @@
 
   /* === FOOTER — stack product links vertically on mobile === */
 
-  .footer-products {
-    flex-direction: column;
-    gap: var(--space-1);
-  }
-
-  .footer-products__sep {
-    display: none;
-  }
 
   /* Spectrum: fulcrum hidden on mobile (too tight) */
-  .ink-line__fulcrum {
-    display: none;
-  }
 
   /* Footer keyboard shortcut hint — not useful on mobile (no physical keyboard) */
   .footer-kbd-hint {
@@ -755,19 +605,6 @@
 
 /* ---- Feature 3: DivergenceAlerts — mobile layout ---- */
 
-@media (max-width: 767px) {
-  /* Lean bar: sticky on mobile — thumb-reachable at scroll top.
-     top: var(--nav-height) clears the fixed nav-header (53px) so the bar
-     doesn't slide under the header chrome when the user scrolls. */
-  .lean-bar {
-    position: sticky;
-    top: var(--nav-height);
-    z-index: var(--z-sticky);
-    background-color: var(--bg-primary);
-  }
-
-  /* DivergenceAlerts removed from homepage — CSS kept for reference */
-}
 
 /* ---- Cinematic Mobile Degradation --------------------------------------
    Mobile devices: battery + GPU budget is limited. Cinematic layers are
@@ -781,14 +618,15 @@
    Layer 6 (Light):     Unchanged (practical light is CSS box-shadow, cheap) */
 
 @media (max-width: 767px) {
-  /* Color grade: DISABLED on mobile — forces recomposite of entire scrollable
-     content on every scroll frame. The micro-adjustments (contrast 1.05, saturate
-     0.90, sepia 0.04) are imperceptible on 5-6" screens. Biggest single scroll
-     jank source identified in perf audit 2026-04-02. */
-  .page-main,
-  .nav-header {
-    filter: none;
-  }
+  /* The mobile color-grade kill (.page-main, .nav-header { filter: none })
+     used to be stated here as well as in components.css. It is stated once
+     now, in components.css, which owns the masthead; nothing between the two
+     files sets `filter` on either selector.
+
+     The two declarations below stay in this file on purpose. Both are
+     overrides of animations.css rules, and animations.css is imported after
+     components.css, so folding them into components.css would hand the
+     reduced-motion block the win and change what a phone renders. */
   /* Film grain: STATIC on mobile — drift disabled to save GPU budget.
      Only the entrance animation plays; no perpetual drift translate.
      Half-rate drift (16s) is allowed on tablet (768px+) via separate rule. */
@@ -803,47 +641,6 @@
 
 /* ---- Ultra-narrow (max-width: 375px) ----------------------------------- */
 
-@media (max-width: 375px) {
-  /* Lean bar — tighter segments on iPhone SE.
-     min-height: 44px re-stated explicitly (WCAG 2.1 AA) — the reduced
-     padding in this block would otherwise shrink the visual hit area even
-     though the max-width: 767px rule already sets it. Explicit override
-     guards against cascade order surprises. */
-  .lean-bar__seg {
-    padding: var(--space-2) var(--space-1);
-    font-size: clamp(0.5rem, 0.45rem + 0.2vw, 0.5625rem);
-    gap: 4px;
-    min-height: 44px;
-  }
-
-  .lean-bar__dot {
-    width: 6px;
-    height: 6px;
-  }
-
-  /* Topic chips — compact but WCAG 44px touch target */
-  .topic-bar__chip {
-    padding: 3px 6px;
-    font-size: clamp(0.5rem, 0.45rem + 0.2vw, 0.5625rem);
-    min-height: 44px;
-  }
-
-  /* Legacy filter-chip — tighter on ultra-narrow */
-  .filter-chip {
-    padding: var(--space-2);
-    font-size: clamp(0.5rem, 0.45rem + 0.2vw, 0.5625rem);
-  }
-
-  .filter-chip__icon {
-    display: none;
-  }
-
-  .filter-toggle {
-    font-size: clamp(0.5rem, 0.45rem + 0.2vw, 0.5625rem);
-    padding: var(--space-2);
-  }
-
-}
 
 /* ---- Standalone PWA (installed to home screen) -------------------------- */
 
@@ -890,15 +687,6 @@
 
 /* Cross-fade with subtle slide — mobile route transitions */
 @media (prefers-reduced-motion: no-preference) {
-  html.is-transitioning .page-main {
-    view-transition-name: main-content;
-  }
-  html.is-transitioning .nav-header {
-    view-transition-name: nav-header;
-  }
-  html.is-transitioning .mtb {
-    view-transition-name: tab-bar;
-  }
 
   ::view-transition-old(main-content) {
     animation: vtSlideOut 200ms var(--ease-cinematic) both;

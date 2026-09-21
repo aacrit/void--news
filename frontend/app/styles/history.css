@@ -79,7 +79,6 @@
   /* ── Archival Palette — Light: Foxed Vellum ── */
 
 
-
   /* Fixed light paper — does not flip in dark mode, used on forced-dark backdrops */
 
   /* Secondary surfaces */
@@ -152,10 +151,6 @@
 :root[data-mode="dark"] .hist-page {
 
 
-
-
-
-
   background-color: var(--hist-bg);
   color: var(--hist-ink);
 }
@@ -211,76 +206,9 @@
 }
 
 
-:root[data-mode="dark"] .hist-topbar__revolt {
-  --rev-cta: #6AA0FF;
-  --rev-cta-hover: #83B2FF;
-  --rev-cta-fg: #0B1B3B;
-  border-color: rgba(0, 0, 0, 0.28);
-}
-
 /* Sibling-world discovery card — void --revolt callout at the end of the
    threads flow. A distinct blue-framed card on the sepia archive page.
    Theme-aware: deep blue in light, bright blue in dark. */
-.hist-revolt-card {
-  --rev-blue: #1E40AF;
-  display: block;
-  position: relative;
-  max-width: 640px;
-  margin: var(--space-7) auto var(--space-6);
-  padding: var(--space-5) var(--space-6);
-  border: 1px solid color-mix(in srgb, var(--rev-blue) 45%, transparent);
-  border-left: 4px solid var(--rev-blue);
-  border-radius: var(--radius-md);
-  background: color-mix(in srgb, var(--rev-blue) 6%, var(--hist-bg));
-  text-decoration: none;
-  transition: transform 180ms var(--ease-cinematic, ease), box-shadow 180ms ease, border-color 180ms ease;
-}
-:root[data-mode="dark"] .hist-revolt-card { --rev-blue: #6AA0FF; }
-.hist-revolt-card:hover {
-  transform: translateY(-3px);
-  border-color: var(--rev-blue);
-  box-shadow: 0 8px 26px color-mix(in srgb, var(--rev-blue) 24%, transparent);
-}
-.hist-revolt-card:focus-visible {
-  outline: 2px solid var(--rev-blue);
-  outline-offset: 3px;
-}
-.hist-revolt-card__kicker {
-  display: block;
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  color: var(--rev-blue);
-  margin-bottom: var(--space-2);
-}
-.hist-revolt-card__name {
-  display: block;
-  font-family: var(--font-editorial);
-  font-size: var(--text-xl);
-  color: var(--rev-blue);
-  margin-bottom: var(--space-1);
-}
-.hist-revolt-card__desc {
-  display: block;
-  font-family: var(--font-structural);
-  font-size: var(--text-base);
-  color: var(--hist-ink-secondary);
-  max-width: 46ch;
-}
-.hist-revolt-card__arrow {
-  position: absolute;
-  right: var(--space-5);
-  bottom: var(--space-5);
-  font-size: var(--text-xl);
-  color: var(--rev-blue);
-  transition: transform 160ms ease;
-}
-.hist-revolt-card:hover .hist-revolt-card__arrow { transform: translateX(3px); }
-@media (prefers-reduced-motion: reduce) {
-  .hist-revolt-card, .hist-revolt-card__arrow { transition: none; }
-  .hist-revolt-card:hover { transform: none; }
-}
 
 /* ---------------------------------------------------------------------------
    Main Content Area
@@ -318,55 +246,14 @@
 /* ---------------------------------------------------------------------------
    Section Labels — Barlow Condensed, editorial wayfinding
    --------------------------------------------------------------------------- */
-.hist-section-label {
-  font-family: var(--font-meta);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--hist-accent);
-  margin-bottom: var(--space-3);
-  padding-bottom: var(--space-2);
-  position: relative;
-}
 
 /* Organic ink underline instead of geometric gradient */
-.hist-section-label::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 20%;
-  bottom: 0;
-  height: 1.5px;
-  background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 3' preserveAspectRatio='none'%3E%3Cpath d='M0 1.5C12 0.8 28 2.2 56 1.5S100 0.4 140 1.5S190 2.6 230 1.5S280 0.3 320 1.5S370 2.4 400 1.5' stroke='%235C4033' stroke-width='1.2' fill='none' opacity='0.5'/%3E%3C/svg%3E")
-    center / 100% 100% no-repeat;
-  opacity: 0.4;
-}
 
-:root[data-mode="dark"] .hist-section-label::after {
-  background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 3' preserveAspectRatio='none'%3E%3Cpath d='M0 1.5C12 0.8 28 2.2 56 1.5S100 0.4 140 1.5S190 2.6 230 1.5S280 0.3 320 1.5S370 2.4 400 1.5' stroke='%238E6A56' stroke-width='1.2' fill='none' opacity='0.5'/%3E%3C/svg%3E")
-    center / 100% 100% no-repeat;
-}
 
 /* ---------------------------------------------------------------------------
    Hero Section — Full-bleed with Ken Burns
    --------------------------------------------------------------------------- */
-.hist-hero {
-  position: relative;
-  width: 100%;
-  min-height: 50vh;
-  overflow: hidden;
-  background-color: var(--hist-bg-card);
-  margin-bottom: var(--space-6);
-}
 
-@media (min-width: 768px) {
-  .hist-hero {
-    min-height: 60vh;
-  }
-}
 
 .hist-hero__image {
   position: absolute;
@@ -382,108 +269,9 @@
 }
 
 /* Static hero variant — no Ken Burns / dolly-in animation */
-.hist-hero__image--static {
-  animation: none;
-  transform: none;
-}
 
 /* Hero depth — recedes as user scrolls past into content */
-.hist-hero {
-  transition: filter 600ms var(--ease-cinematic);
-}
 
-.hist-hero--receded .hist-hero__image {
-  filter: var(--img-grade-history-receded);
-  transition: filter 600ms var(--ease-cinematic);
-}
-
-.hist-hero__overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(44, 36, 24, 0.10) 0%,
-    rgba(44, 36, 24, 0.50) 60%,
-    rgba(44, 36, 24, 0.85) 100%
-  );
-}
-
-:root[data-mode="dark"] .hist-hero__overlay {
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 0.15) 0%,
-    rgba(0, 0, 0, 0.55) 60%,
-    rgba(0, 0, 0, 0.88) 100%
-  );
-}
-
-.hist-hero__content {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  min-height: 50vh;
-  padding: var(--space-6) var(--space-4);
-  color: var(--hist-paper-fixed);
-}
-
-@media (min-width: 768px) {
-  .hist-hero__content {
-    min-height: 60vh;
-    padding: var(--space-7) var(--space-6);
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
-  }
-}
-
-.hist-hero__era {
-  font-family: var(--font-meta);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--hist-brass-bright);
-  margin-bottom: var(--space-2);
-}
-
-.hist-hero__title {
-  font-family: var(--font-editorial);
-  font-size: clamp(1.75rem, 1.4rem + 1.5vw, 3.5rem);
-  font-weight: 700;
-  line-height: 1.1;
-  margin-bottom: var(--space-2);
-  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
-}
-
-.hist-hero__subtitle {
-  font-family: var(--font-structural);
-  font-size: var(--text-lg);
-  font-weight: 400;
-  line-height: 1.4;
-  opacity: 0.9;
-  max-width: 600px;
-}
-
-.hist-hero__date {
-  font-family: var(--font-data);
-  font-size: var(--text-sm);
-  font-weight: 400;
-  margin-top: var(--space-3);
-  opacity: 0.7;
-  letter-spacing: 0.02em;
-}
-
-.hist-hero__caption {
-  position: absolute;
-  bottom: var(--space-2);
-  right: var(--space-3);
-  font-family: var(--font-data);
-  font-size: var(--text-xxs);
-  color: rgba(242, 237, 224, 0.5);
-  z-index: 3;
-}
 
 /* ---------------------------------------------------------------------------
    Ken Burns Keyframes — Slow zoom + pan, 8-12s
@@ -562,16 +350,8 @@
 }
 
 /* topbar/content/section: visible immediately, no animation overhead */
-.hist-cold-open--content,
-.hist-cold-open--section {
-  opacity: 1;
-}
 
 /* hero only: 150ms fade, no delay, no scale or translateY */
-.hist-cold-open--hero {
-  opacity: 0;
-  animation: histColdOpenFade 150ms var(--ease-cinematic) both;
-}
 
 /* ---------------------------------------------------------------------------
    Scroll Reveal
@@ -584,10 +364,6 @@
     transform 300ms var(--ease-cinematic);
 }
 
-.hist-reveal--visible {
-  opacity: 1;
-  transform: translateY(0);
-}
 
 /* ---------------------------------------------------------------------------
    Event Card — Archive document card
@@ -731,58 +507,10 @@
 /* ---------------------------------------------------------------------------
    Context Panel — "What Happened" neutral fact block
    --------------------------------------------------------------------------- */
-.hist-context {
-  font-family: var(--font-structural);
-  font-size: var(--text-base);
-  font-weight: 400;
-  line-height: 1.75;
-  color: var(--hist-ink);
-  text-align: justify;
-  hyphens: auto;
-  max-width: 720px;
-  margin: 0 auto;
-  padding: var(--space-5) 0;
-}
 
-.hist-context p {
-  margin-bottom: var(--space-4);
-}
 
 /* Context toggle — "Read more" / "Show less" */
-.hist-context-toggle {
-  font-family: var(--font-meta);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--hist-accent);
-  background: none;
-  border: none;
-  border-bottom: 1px dotted var(--hist-accent);
-  cursor: pointer;
-  padding: var(--space-1) 0;
-  margin-top: calc(-1 * var(--space-2));
-  max-width: 720px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-  transition: color 200ms;
-  min-height: 44px;
-  line-height: 44px;
-}
 
-.hist-context-toggle:hover {
-  color: var(--hist-accent-bright);
-}
-
-.hist-context-toggle:active {
-  transform: scale(0.97);
-}
-
-.hist-context-toggle:focus-visible {
-  outline: 2px solid var(--hist-brass);
-  outline-offset: 2px;
-}
 
 /* ---------------------------------------------------------------------------
    Key Facts — Structured IBM Plex Mono block
@@ -1910,12 +1638,6 @@
 }
 
 /* Story-active state: wrapper becomes scrollable column */
-.hist-tl-wrapper--story-active {
-  height: auto;
-  min-height: 100vh;
-  min-height: 100dvh;
-  overflow: visible;
-}
 
 /* Threads-active state: wrapper expands for vertical thread groups */
 .hist-tl-wrapper--threads-active {
@@ -2058,28 +1780,7 @@
 }
 
 /* ── Year label — single, below the entire station ── */
-.hist-tl-full__year {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: -24px;
-  font-family: var(--font-data);
-  font-size: 0.6rem;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  pointer-events: none;
-  letter-spacing: 0.04em;
-  color: var(--hist-brass);
-  opacity: calc(0.6 - var(--card-dist, 0) * 0.08);
-  transition: opacity 300ms var(--ease-cinematic);
-}
 
-.hist-tl-full__year--focused {
-  font-weight: 600;
-  font-size: 0.7rem;
-  color: var(--hist-accent);
-  opacity: 0.9;
-}
 
 /* ── Dot on the track ── */
 .hist-tl-full__dot {
@@ -2319,15 +2020,6 @@
 }
 
 /* ── Date — inside expand block ── */
-.hist-tl-card__date {
-  display: block;
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  font-weight: 400;
-  color: var(--hist-brass);
-  letter-spacing: 0.04em;
-  margin-bottom: var(--space-1);
-}
 
 /* ── THE HOOK — arrive late, leave early ── */
 .hist-tl-card__hook {
@@ -2534,169 +2226,22 @@
 /* ===========================================================================
    STATE B: Compressed Strip + Inline Story
    =========================================================================== */
-.hist-tl-strip {
-  position: sticky;
-  top: 0;
-  z-index: 30;
-  height: 56px;
-  background: var(--hist-bg-elevated);
-  border-bottom: 1px solid var(--hist-border);
-  display: flex;
-  align-items: center;
-  padding: 0 var(--space-4);
-  backdrop-filter: blur(10px) saturate(0.9);
-  -webkit-backdrop-filter: blur(10px) saturate(0.9);
-}
 
-.hist-tl-strip__track-container {
-  flex: 1;
-  position: relative;
-  height: 100%;
-  overflow: hidden;
-}
-
-.hist-tl-strip__track {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  transform: translateY(-50%);
-}
-
-.hist-tl-strip__dot {
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--hist-border);
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  transition: background 200ms var(--ease-cinematic), width 200ms var(--ease-cinematic), height 200ms var(--ease-cinematic),
-              box-shadow 200ms var(--ease-cinematic);
-  /* Touch target */
-  min-width: 44px;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hist-tl-strip__dot::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--hist-border);
-  transition: background 200ms var(--ease-cinematic), width 200ms var(--ease-cinematic), height 200ms var(--ease-cinematic),
-              box-shadow 200ms var(--ease-cinematic);
-  flex-shrink: 0;
-}
-
-.hist-tl-strip__dot--active::before {
-  width: 8px;
-  height: 8px;
-  background: var(--hist-brass);
-  box-shadow: 0 0 6px var(--hist-brass-wash);
-}
 
 /* .hist-tl-strip__dot:hover color change kept — communicates "this is selectable" */
-.hist-tl-strip__dot:hover::before {
-  background: var(--hist-accent);
-}
 
-.hist-tl-strip__dot:focus-visible {
-  outline: 2px solid var(--hist-brass);
-  outline-offset: 2px;
-}
-
-.hist-tl-strip__year {
-  position: absolute;
-  top: calc(50% + 10px);
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: var(--font-data);
-  font-size: 0.5rem;
-  font-weight: 400;
-  color: var(--hist-ink-muted);
-  letter-spacing: 0.04em;
-  white-space: nowrap;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 200ms var(--ease-cinematic);
-}
-
-.hist-tl-strip__dot--active .hist-tl-strip__year {
-  opacity: 1;
-  color: var(--hist-brass);
-  font-weight: 600;
-}
-
-.hist-tl-strip__dot:hover .hist-tl-strip__year {
-  opacity: 0.7;
-}
-
-.hist-tl-strip__close {
-  flex-shrink: 0;
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  color: var(--hist-ink-secondary);
-  transition: color 200ms, background 200ms;
-  border-radius: 50%;
-  margin-left: var(--space-2);
-}
-
-.hist-tl-strip__close:hover {
-  color: var(--hist-accent);
-  background: var(--hist-accent-ghost);
-}
-
-.hist-tl-strip__close:focus-visible {
-  outline: 2px solid var(--hist-brass);
-  outline-offset: 2px;
-}
 
 /* ── Inline story container ── */
 /* ── FLIP Morph Overlay — card → full-screen hero transition ── */
-.hist-flip-morph {
-  will-change: transform, opacity;
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.3);
-}
 
 /* L-cut: EventDetail content fades in during morph, slightly delayed */
-.hist-inline-story-wrap {
-  opacity: 1;
-  transition: opacity 300ms var(--ease-cinematic);
-}
 
-.hist-inline-story-wrap--entering {
-  opacity: 0;
-  animation: histLCutFadeIn 400ms var(--ease-cinematic) 300ms forwards;
-}
 
 @keyframes histLCutFadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
 }
 
-.hist-inline-story {
-  min-height: calc(100vh - 56px);
-  min-height: calc(100dvh - 56px);
-  overflow-y: auto;
-  background: var(--hist-bg);
-  /* Page-level archival grade — matches .hist-grade for film stock consistency.
-     Not an image grade; this is a container-level grade (vfx-artist territory). */
-  filter: contrast(1.02) saturate(0.88) sepia(0.06) brightness(1.01);
-}
 
 /* ===========================================================================
    Reduced Motion — Timeline
@@ -2723,9 +2268,6 @@
     will-change: auto;
   }
 
-  .hist-tl-strip__dot::before {
-    transition: none;
-  }
 }
 
 /* On desktop (≥768px), keep expand content visible for reduced-motion users (no hover available) */
@@ -2807,16 +2349,6 @@
   }
 
   /* Year label below station on mobile */
-  .hist-tl-full__year {
-    position: relative;
-    bottom: auto;
-    left: auto;
-    transform: none;
-    font-size: 0.55rem;
-    opacity: 0.5;
-    margin-top: var(--space-1);
-    display: block;
-  }
 
   /* Dots on the vertical track */
   .hist-tl-full__dot {
@@ -2903,10 +2435,6 @@
     max-height: 200px;
   }
 
-  .hist-tl-view-toggle {
-    min-height: 44px;
-    padding: var(--space-2) var(--space-3);
-  }
 
   /* Brief positioned higher */
   .hist-tl-brief {
@@ -2914,15 +2442,7 @@
   }
 
   /* Strip on mobile */
-  .hist-tl-strip {
-    height: 48px;
-    padding: 0 var(--space-3);
-  }
 
-  .hist-tl-strip__dot {
-    min-width: 48px;
-    min-height: 48px;
-  }
 
   /* Film grain off on mobile (battery) */
   .hist-tl-full::before {
@@ -2930,14 +2450,8 @@
   }
 
   /* Arc lanes — hidden on mobile (vertical layout) */
-  .hist-tl-arc-lane {
-    display: none;
-  }
 
   /* Inline story: full width, no side padding wastage */
-  .hist-inline-story {
-    padding: 0;
-  }
 }
 
 /* ===========================================================================
@@ -2970,17 +2484,6 @@
 }
 
 /* ── Stage label (e.g., "THE PERSPECTIVES") ── */
-.hist-stage__label {
-  font-family: var(--font-meta);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--hist-accent);
-  margin-bottom: var(--space-4);
-  padding-bottom: var(--space-2);
-  border-bottom: 1px solid var(--hist-border-subtle);
-}
 
 /* ─────────────────────────────────────────────
    Stage 1 — THE SCENE (sticky hero, curtain-rise)
@@ -3232,135 +2735,27 @@
 /* ─────────────────────────────────────────────
    Stage 2 — THE CRACK (one blockquote, centered)
    ───────────────────────────────────────────── */
-.hist-stage--crack {
-  padding-top: var(--space-7);
-  padding-bottom: var(--space-7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 40vh;
-}
 
-.hist-crack__text {
-  font-family: var(--font-editorial);
-  font-size: clamp(1.3rem, 1.1rem + 1vw, 2rem);
-  font-weight: 500;
-  font-style: italic;
-  line-height: 1.5;
-  color: var(--hist-accent);
-  max-width: 700px;
-  text-align: center;
-  margin: 0;
-  quotes: none;
-}
 
 /* ─────────────────────────────────────────────
    Stage 2.5 — THE FULL STORY (context narrative)
    No title. Comfortable reading typography.
    ───────────────────────────────────────────── */
-.hist-stage--context {
-  padding-top: var(--space-5);
-  padding-bottom: var(--space-5);
-}
 
-.hist-context__body {
-  font-family: var(--font-structural);
-  font-size: clamp(1rem, 0.95rem + 0.3vw, 1.15rem);
-  font-weight: 400;
-  line-height: 1.7;
-  color: var(--hist-ink);
-  text-align: justify;
-  hyphens: auto;
-  max-width: 100%;
-  margin: 0 auto;
-}
 
 /* ─────────────────────────────────────────────
    Key Facts — Pull Stats + Ledger
    ───────────────────────────────────────────── */
-.hist-stage--keyfacts {
-  padding-top: var(--space-6);
-  padding-bottom: var(--space-4);
-}
 
 /* ─────────────────────────────────────────────
    Key Facts — Pure Ledger
    No card background. Type on page surface.
    All facts as ruled rows — equal weight.
    ───────────────────────────────────────────── */
-.hist-keyfacts {
-  max-width: 800px;
-  margin: 0 auto;
-}
 
-.hist-keyfacts__ledger {
-  margin: 0;
-  padding: 0;
-  border-top: 2px solid var(--hist-accent);
-}
-
-.hist-keyfacts__ledger-row {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-3);
-  padding: var(--space-2) 0;
-  border-bottom: 1px solid var(--hist-border-subtle);
-}
-
-.hist-keyfacts__ledger-row dt {
-  font-family: var(--font-meta);
-  font-size: var(--text-xxs);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--hist-ink-muted);
-  flex: 0 0 7rem;
-  min-width: 0;
-}
-
-.hist-keyfacts__ledger-row dd {
-  font-family: var(--font-data);
-  font-size: var(--text-sm);
-  font-weight: 400;
-  color: var(--hist-ink);
-  margin: 0;
-  min-width: 0;
-  overflow-wrap: break-word;
-}
-
-@media (max-width: 479px) {
-  .hist-keyfacts__ledger-row dt {
-    flex: 0 0 5rem;
-  }
-}
 
 /* Progressive disclosure for full story */
-.hist-context__more-toggle {
-  display: flex;
-  align-items: center;
-  min-height: 44px;
-  margin-top: var(--space-3);
-  font-family: var(--font-meta);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--hist-accent);
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: var(--space-2) var(--space-3);
-  transition: opacity 200ms var(--ease-cinematic);
-}
 
-.hist-context__more-toggle:hover {
-  opacity: 0.7;
-}
-
-.hist-context__extra {
-  margin-top: var(--space-2);
-  animation: histContextExtraReveal 350ms var(--ease-cinematic) both;
-}
 
 @keyframes histContextExtraReveal {
   from { opacity: 0; transform: translateY(6px); }
@@ -3368,718 +2763,86 @@
 }
 
 /* Dossier thread lead — absorbed from standalone thread stage */
-.hist-dossier__thread-lead {
-  font-family: var(--font-editorial);
-  font-style: italic;
-  font-size: clamp(1.05rem, 2.2vw, 1.25rem);
-  line-height: 1.55;
-  color: var(--hist-ink-secondary);
-  border-left: 2px solid var(--hist-accent);
-  padding-left: var(--space-4);
-  margin: 0 auto var(--space-5);
-  max-width: 700px;
-  text-align: left;
-}
 
 /* ─────────────────────────────────────────────
    Key Figures — Name Plate / Brass Plaque
    Standalone section. Playfair name + Mono dates + Inter role.
    Thin ruled separators only. No card background.
    ───────────────────────────────────────────── */
-.hist-stage--figures {
-  padding-top: var(--space-5);
-  padding-bottom: var(--space-5);
-}
 
-.hist-figures {
-  margin-top: var(--space-4);
-  border-top: 1px solid var(--hist-border-subtle);
-}
-
-.hist-figures__plate {
-  padding: var(--space-3) 0;
-  border-bottom: 1px solid var(--hist-border-subtle);
-}
-
-.hist-figures__namerow {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-3);
-  flex-wrap: wrap;
-  margin-bottom: var(--space-1);
-}
-
-.hist-figures__name {
-  font-family: var(--font-editorial);
-  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.2rem);
-  font-weight: 700;
-  font-style: normal;
-  color: var(--hist-ink);
-  text-decoration: none;
-  line-height: 1.2;
-}
 
 /* Wikipedia link — ensure 44px touch target on mobile */
-a.hist-figures__name {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-}
 
-a.hist-figures__name:hover {
-  color: var(--hist-accent);
-  text-decoration: underline;
-  text-decoration-color: var(--hist-accent);
-  text-underline-offset: 3px;
-}
-
-.hist-figures__dates {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  font-weight: 400;
-  color: var(--hist-ink-muted);
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-}
-
-.hist-figures__role {
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  font-weight: 400;
-  color: var(--hist-ink-secondary);
-  line-height: 1.5;
-  margin: 0;
-  overflow-wrap: break-word;
-}
 
 /* Legacy keyfacts selectors — kept for any remaining references */
-.hist-keyfacts__label {
-  font-family: var(--font-meta);
-  font-size: var(--text-xxs);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--hist-ink-muted);
-}
 
 /* ─────────────────────────────────────────────
    Stage 3 — THE PERSPECTIVES (witnesses)
    ───────────────────────────────────────────── */
-.hist-stage--perspectives {
-  padding-top: var(--space-6);
-  padding-bottom: var(--space-6);
-}
 
 /* Witness block — alternating left/right on desktop */
-.hist-witness {
-  margin-bottom: var(--space-5);
-  padding: var(--space-4);
-  background: var(--hist-bg-card);
-  box-shadow: var(--hist-doc-edge);
-  border-radius: 2px;
-  transition:
-    opacity 600ms var(--ease-cinematic),
-    transform 600ms var(--ease-cinematic);
-}
 
-.hist-witness--left {
-  margin-right: auto;
-  max-width: 75%;
-}
-
-.hist-witness--right {
-  margin-left: auto;
-  max-width: 75%;
-}
 
 /* Each witness enters from their side with subtle perspective rotation */
-.hist-witness--left.hist-reveal {
-  transform: translateX(-30px) rotateY(2deg);
-}
 
-.hist-witness--right.hist-reveal {
-  transform: translateX(30px) rotateY(-2deg);
-}
-
-.hist-witness.hist-reveal--visible {
-  transform: translateX(0) rotateY(0deg);
-  opacity: 1;
-  filter: blur(0);
-}
 
 /* Dimmed witnesses — rack focus with blur + subtle rotation away */
-.hist-witness--background {
-  opacity: 0.45;
-  filter: none;
-  transform: rotateY(-1deg);
-  transition: opacity 400ms var(--ease-cinematic),
-              transform 400ms var(--ease-cinematic);
-}
 
 /* Mobile: full width, no alternating */
-@media (max-width: 767px) {
-  .hist-witness--left,
-  .hist-witness--right {
-    max-width: 100%;
-    margin: 0 0 var(--space-4) 0;
-  }
-
-  .hist-witness--left.hist-reveal,
-  .hist-witness--right.hist-reveal {
-    transform: translateY(20px);
-  }
-}
 
 /* Witness identity row */
-.hist-witness__identity {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-3);
-}
 
-.hist-witness__dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.hist-witness__name {
-  font-family: var(--font-meta);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--hist-ink);
-}
-
-.hist-witness__type {
-  font-family: var(--font-data);
-  font-size: var(--text-xxs);
-  font-weight: 400;
-  color: var(--hist-ink-muted);
-  text-transform: capitalize;
-}
 
 /* Key arguments container */
-.hist-witness__arguments {
-  margin-bottom: var(--space-3);
-}
 
 /* Key argument blockquote — prominent, Playfair italic.
    Uses perspective color via CSS var threaded from witness block. */
-.hist-witness__argument {
-  font-family: var(--font-editorial);
-  font-size: clamp(1rem, 0.95rem + 0.25vw, 1.15rem);
-  font-weight: 500;
-  font-style: italic;
-  line-height: 1.5;
-  color: var(--hist-ink);
-  border-left: 3px solid var(--persp-color, var(--hist-accent));
-  padding-left: var(--space-3);
-  margin: 0 0 var(--space-2);
-  quotes: none;
-}
 
-.hist-witness__argument:last-child {
-  margin-bottom: 0;
-}
 
 /* Primary source quote — archival treatment (Plex Mono, brass border) */
-.hist-witness__source {
-  padding: var(--space-3);
-  background: var(--hist-bg-inset);
-  border-radius: 2px;
-  border-left: 2px solid var(--hist-brass);
-  margin-bottom: var(--space-2);
-}
 
-.hist-witness__source:last-of-type {
-  margin-bottom: var(--space-3);
-}
-
-.hist-witness__quote {
-  font-family: var(--font-data);
-  font-size: var(--text-sm);
-  font-style: italic;
-  line-height: 1.7;
-  color: var(--hist-ink);
-  margin: 0 0 var(--space-2);
-}
-
-.hist-witness__cite {
-  font-family: var(--font-meta);
-  font-size: var(--text-xxs);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--hist-ink-muted);
-  font-style: normal;
-}
 
 /* ── Expand toggle — read full perspective ── */
-.hist-witness__expand {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  font-family: var(--font-meta);
-  font-size: var(--text-xxs);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--hist-accent);
-  background: none;
-  border: none;
-  border-bottom: 1px dotted var(--hist-accent-wash);
-  padding: var(--space-1) 0;
-  cursor: pointer;
-  min-height: 44px;
-  transition: color 200ms var(--ease-cinematic);
-}
 
-.hist-witness__expand:hover {
-  color: var(--hist-accent-bright);
-}
-
-.hist-witness__expand:focus-visible {
-  outline: 2px solid var(--hist-brass);
-  outline-offset: 2px;
-}
-
-.hist-witness__expand-arrow {
-  display: inline-block;
-  font-size: 0.8em;
-  transition: transform 200ms var(--ease-cinematic);
-}
-
-.hist-witness__expand-arrow--open {
-  transform: rotate(180deg);
-}
 
 /* ── Full narrative (expanded) ── */
-.hist-witness__full-narrative {
-  margin-top: var(--space-3);
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--hist-border-subtle);
-}
 
-.hist-witness__narrative-text {
-  font-family: var(--font-structural);
-  font-size: clamp(0.9rem, 0.85rem + 0.2vw, 1rem);
-  font-weight: 400;
-  line-height: 1.7;
-  color: var(--hist-ink);
-  text-align: justify;
-  hyphens: auto;
-  margin: 0 0 var(--space-3);
-}
 
 /* Disputed claims within expanded narrative */
-.hist-witness__disputed {
-  padding: var(--space-3);
-  background: var(--hist-accent-ghost);
-  border-radius: 2px;
-  border-left: 2px solid var(--hist-accent-dim);
-}
 
-.hist-witness__disputed-label {
-  display: block;
-  font-family: var(--font-meta);
-  font-size: var(--text-xxs);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--hist-accent);
-  margin-bottom: var(--space-2);
-}
-
-.hist-witness__disputed-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.hist-witness__disputed-list li {
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  line-height: 1.5;
-  color: var(--hist-ink-secondary);
-  padding-left: var(--space-3);
-  position: relative;
-  margin-bottom: var(--space-1);
-}
-
-.hist-witness__disputed-list li::before {
-  content: "?";
-  position: absolute;
-  left: 0;
-  font-family: var(--font-data);
-  font-weight: 700;
-  color: var(--hist-accent);
-}
 
 /* ── Stage label --sm variant (smaller wayfinding) ── */
-.hist-stage__label--sm {
-  font-size: var(--text-xxs);
-  letter-spacing: 0.14em;
-  color: var(--hist-ink-muted);
-  border-bottom-color: var(--hist-border-subtle);
-}
 
 /* ─────────────────────────────────────────────
    Stage 4 — THE OMISSIONS (split panel)
    ───────────────────────────────────────────── */
-.hist-stage--omissions {
-  padding-top: var(--space-6);
-  padding-bottom: var(--space-6);
-}
 
-.hist-omissions-split {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
-
-@media (min-width: 768px) {
-  .hist-omissions-split {
-    flex-direction: row;
-    gap: var(--space-5);
-  }
-}
-
-.hist-omissions-split__panel {
-  flex: 1;
-  padding: var(--space-4);
-  background: var(--hist-bg-card);
-  box-shadow: var(--hist-doc-edge);
-  border-radius: 2px;
-}
 
 /* Emphasized panel enters from left */
-.hist-omissions-split__panel--emphasized.hist-reveal {
-  transform: translateX(-20px);
-}
 
 /* Omitted panel enters from right */
-.hist-omissions-split__panel--omitted.hist-reveal {
-  transform: translateX(20px);
-}
 
-@media (max-width: 767px) {
-  .hist-omissions-split__panel--emphasized.hist-reveal,
-  .hist-omissions-split__panel--omitted.hist-reveal {
-    transform: translateY(20px);
-  }
-}
-
-.hist-omissions-split__heading {
-  font-family: var(--font-meta);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--hist-accent);
-  margin: 0 0 var(--space-3);
-  padding-bottom: var(--space-2);
-  border-bottom: 1px solid var(--hist-border-subtle);
-}
-
-.hist-omissions-split__group {
-  margin-bottom: var(--space-3);
-}
-
-.hist-omissions-split__name {
-  font-family: var(--font-meta);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  display: block;
-  margin-bottom: var(--space-1);
-}
-
-.hist-omissions-split__list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.hist-omissions-split__list li {
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  line-height: 1.5;
-  color: var(--hist-ink);
-  padding: var(--space-1) 0;
-  padding-left: var(--space-3);
-  position: relative;
-}
-
-.hist-omissions-split__list li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 10px;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--hist-accent);
-  opacity: 0.5;
-}
 
 /* Strikethrough for omitted items */
-.hist-omission--struck {
-  text-decoration: line-through;
-  color: var(--hist-ink-muted);
-}
 
-.hist-omission--struck::before {
-  background: var(--hist-ink-muted);
-  opacity: 0.3;
-}
 
 /* ─────────────────────────────────────────────
    Stage 5 — THE EVIDENCE (numbers + images)
    ───────────────────────────────────────────── */
-.hist-stage--evidence {
-  padding-top: var(--space-6);
-  padding-bottom: var(--space-6);
-}
 
 /* Stark numbers row */
-.hist-evidence__numbers {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-5);
-  justify-content: center;
-  margin-bottom: var(--space-6);
-  padding: var(--space-5) 0;
-  border-top: 1px solid var(--hist-border-subtle);
-  border-bottom: 1px solid var(--hist-border-subtle);
-}
 
-.hist-evidence__stat {
-  text-align: center;
-}
-
-.hist-evidence__figure {
-  display: block;
-  font-family: var(--font-data);
-  font-size: clamp(1.1rem, 0.9rem + 0.8vw, 1.5rem);
-  font-weight: 600;
-  color: var(--hist-ink);
-  letter-spacing: 0.01em;
-  line-height: 1.3;
-}
-
-.hist-evidence__unit {
-  display: block;
-  font-family: var(--font-meta);
-  font-size: var(--text-xxs);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--hist-ink-muted);
-  margin-top: 2px;
-}
 
 /* Archival images — vertical, alternating */
-.hist-evidence__gallery {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-5);
-}
 
-.hist-evidence__image {
-  max-width: 80%;
-}
-
-.hist-evidence__image--left {
-  margin-right: auto;
-}
-
-.hist-evidence__image--right {
-  margin-left: auto;
-}
-
-@media (max-width: 767px) {
-  .hist-evidence__image {
-    max-width: 100%;
-  }
-}
-
-.hist-evidence__image img {
-  width: 100%;
-  display: block;
-  filter: var(--img-grade-history-card);
-  border-radius: 2px;
-}
-
-.hist-evidence__caption {
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  line-height: 1.4;
-  color: var(--hist-ink-secondary);
-  margin-top: var(--space-2);
-}
-
-.hist-evidence__image-attribution {
-  font-family: var(--font-data);
-  font-size: var(--text-xxs);
-  color: var(--hist-ink-muted);
-  display: block;
-  margin-top: 2px;
-}
 
 /* ── Archival Video — poster + play overlay → Internet Archive iframe ── */
-.hist-video {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  background: var(--hist-paper-deep);
-  overflow: hidden;
-}
 
-.hist-video--poster {
-  display: block;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-}
-
-.hist-video__poster {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: var(--img-grade-history-card);
-  transition: filter 300ms var(--ease-cinematic);
-}
-
-.hist-video--poster:hover .hist-video__poster {
-  filter: var(--img-grade-history-hover);
-}
-
-.hist-video__play {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  color: var(--hist-paper-fixed, #F2EDE0);
-  opacity: 0.8;
-  transition: opacity 200ms var(--ease-cinematic), transform 200ms var(--ease-cinematic);
-  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
-}
-
-.hist-video--poster:hover .hist-video__play {
-  opacity: 1;
-  transform: translate(-50%, -50%) scale(1.08);
-}
-
-.hist-video__iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-}
 
 /* ─────────────────────────────────────────────
    Stage 6 — YOUR TURN (no summary, just a link)
    ───────────────────────────────────────────── */
-.hist-stage--next {
-  padding-top: var(--space-6);
-  padding-bottom: var(--space-7);
-  text-align: center;
-  /* Darkened band for visual closure */
-  background: linear-gradient(180deg,
-    transparent 0%,
-    color-mix(in srgb, var(--hist-paper-deep, #D6CFBC) 40%, transparent) 30%,
-    color-mix(in srgb, var(--hist-paper-deep, #D6CFBC) 60%, transparent) 70%,
-    transparent 100%
-  );
-}
 
-:root[data-mode="dark"] .hist-stage--next {
-  background: linear-gradient(180deg,
-    transparent 0%,
-    rgba(0, 0, 0, 0.15) 30%,
-    rgba(0, 0, 0, 0.2) 70%,
-    transparent 100%
-  );
-}
-
-.hist-next__cliffhanger {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--space-3);
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.hist-next__thumb-wrap {
-  width: 120px;
-  height: 80px;
-  overflow: hidden;
-  border-radius: 2px;
-  opacity: 0.7;
-  filter: var(--img-grade-history-card);
-  box-shadow: var(--hist-doc-edge);
-}
-
-.hist-next__thumb {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.hist-next__hook {
-  font-family: var(--font-editorial);
-  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.25rem);
-  font-style: italic;
-  font-weight: 500;
-  line-height: 1.5;
-  color: var(--hist-ink);
-  max-width: 500px;
-  margin: 0;
-  opacity: 0.8;
-}
-
-.hist-next__prompt {
-  font-family: var(--font-data);
-  font-size: var(--text-sm);
-  color: var(--hist-ink-muted);
-  margin: 0 0 var(--space-2);
-  letter-spacing: 0.02em;
-}
-
-.hist-next__cta {
-  display: inline-block;
-  font-family: var(--font-meta);
-  font-size: var(--text-sm);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.10em;
-  color: var(--hist-paper-fixed, #F2EDE0);
-  background: var(--hist-accent);
-  padding: var(--space-3) var(--space-5);
-  border: none;
-  cursor: pointer;
-  min-height: 44px;
-  text-decoration: none;
-  transition: background 200ms var(--ease-cinematic), transform 100ms var(--ease-cinematic);
-}
-
-.hist-next__cta:hover {
-  background: var(--hist-accent-bright, #7A5B47);
-}
-
-.hist-next__cta:active {
-  transform: scale(0.98);
-}
-
-.hist-next__cta:focus-visible {
-  outline: 2px solid var(--hist-brass);
-  outline-offset: 2px;
-}
 
 /* ===========================================================================
    Story Overlay — Full-screen with FLIP morph (P2: one surface)
@@ -4135,36 +2898,7 @@ a.hist-figures__name:hover {
 }
 
 /* ── Standalone back button — fixed on direct URL event pages (H07) ── */
-.hist-standalone-back {
-  position: fixed;
-  top: var(--space-3);
-  left: var(--space-3);
-  z-index: 50;
-  width: 44px;
-  height: 44px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: color-mix(in srgb, var(--hist-bg) 80%, transparent);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid var(--hist-border-subtle);
-  border-radius: 50%;
-  cursor: pointer;
-  color: var(--hist-ink-secondary);
-  text-decoration: none;
-  transition: color 200ms, background 200ms;
-}
 
-.hist-standalone-back:hover {
-  color: var(--hist-accent);
-  background: color-mix(in srgb, var(--hist-bg) 95%, transparent);
-}
-
-.hist-standalone-back:focus-visible {
-  outline: 2px solid var(--hist-brass);
-  outline-offset: 2px;
-}
 
 /* Content — L-cut stagger after FLIP morph.
    Morph targets EventDetail's .hist-hero__image via DOM query. */
@@ -4186,186 +2920,25 @@ a.hist-figures__name:hover {
 }
 
 /* ── Classified section divider ── */
-.hist-classified-divider {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  margin: var(--space-6) 0 var(--space-4);
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-}
 
-.hist-classified-divider__line {
-  flex: 1;
-  height: 1px;
-  background: var(--hist-border);
-  opacity: 0.5;
-}
-
-.hist-classified-divider__label {
-  font-family: var(--font-data);
-  font-size: var(--text-xxs);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: var(--hist-ink-muted);
-  white-space: nowrap;
-}
 
 /* ===========================================================================
    Classified Feed — Grid for redacted tiles
    =========================================================================== */
-.hist-classified-feed {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-3);
-  max-width: 800px;
-  margin: 0 auto;
-  padding: var(--space-4) 0;
-}
 
-@media (min-width: 768px) {
-  .hist-classified-feed {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .hist-classified-feed {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
 
 /* ===========================================================================
    Classified Tile — Desaturated, redacted, no navigation (P5: texture)
    =========================================================================== */
-.hist-classified-tile {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  padding: var(--space-4);
-  background: var(--hist-bg-card);
-  border: 1.5px dashed var(--hist-border);
-  filter: grayscale(0.8) opacity(0.5);
-  cursor: pointer;
-  transition:
-    filter 300ms var(--ease-cinematic),
-    border-color 300ms var(--ease-cinematic);
-  overflow: hidden;
-}
 
 /* .hist-classified-tile:hover filter removed — tile sits still */
 
-.hist-classified-tile:focus-visible {
-  outline: 2px solid var(--hist-brass);
-  outline-offset: 2px;
-}
 
 /* Click-revealed state */
-.hist-classified-tile--revealed {
-  filter: grayscale(0) opacity(1);
-  border-style: solid;
-  border-color: var(--hist-accent);
-}
 
-.hist-classified-tile__title {
-  font-family: var(--font-editorial);
-  font-size: clamp(1.05rem, 0.95rem + 0.5vw, 1.4rem);
-  font-weight: 700;
-  line-height: 1.22;
-  color: var(--hist-ink);
-  margin: 0 0 var(--space-2);
-}
-
-.hist-classified-tile__redacted {
-  opacity: 0.12;
-  letter-spacing: -0.02em;
-}
-
-.hist-classified-tile__quote {
-  font-family: var(--font-data);
-  font-size: var(--text-sm);
-  font-style: italic;
-  color: var(--hist-ink-secondary);
-  line-height: 1.45;
-  margin: var(--space-1) 0 0;
-  padding-left: var(--space-3);
-  border-left: 2px solid var(--hist-border);
-}
-
-.hist-classified-tile__quote--b {
-  border-left-color: var(--hist-accent);
-  color: var(--hist-ink);
-}
-
-.hist-classified-tile__meta {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  margin-top: auto;
-  padding-top: var(--space-2);
-}
-
-.hist-classified-tile__date {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  color: var(--hist-ink-muted);
-  letter-spacing: 0.04em;
-}
-
-.hist-classified-tile__badge {
-  font-family: var(--font-data);
-  font-size: 0.6rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  padding: 1px 6px;
-  border: 1px solid var(--hist-brass);
-  color: var(--hist-brass);
-  opacity: 0.7;
-  transform: rotate(-2deg);
-}
 
 /* Flip reveal overlay */
-.hist-classified-tile__reveal {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: var(--space-2);
-  background: var(--hist-bg-card);
-  border: 1px solid var(--hist-accent);
-  opacity: 0;
-  transform: rotateY(90deg);
-  transition:
-    opacity 0.35s var(--ease-cinematic),
-    transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-  pointer-events: none;
-  z-index: 3;
-}
 
-.hist-classified-tile--revealed .hist-classified-tile__reveal {
-  opacity: 1;
-  transform: rotateY(0deg);
-}
-
-.hist-classified-tile__reveal-title {
-  font-family: var(--font-editorial);
-  font-size: clamp(1.1rem, 1rem + 0.5vw, 1.5rem);
-  font-weight: 700;
-  color: var(--hist-accent);
-  text-align: center;
-  padding: var(--space-4);
-}
-
-.hist-classified-tile__reveal-hint {
-  font-family: var(--font-data);
-  font-size: var(--text-xxs);
-  color: var(--hist-ink-muted);
-  letter-spacing: 0.08em;
-}
 
 /* ===========================================================================
    Mobile — Timeline cards: no Ken Burns, no hover effects
@@ -4430,9 +3003,6 @@ a.hist-figures__name:hover {
     opacity: 0.6;
   }
 
-  .hist-tl-strip__dot::before {
-    transition: none;
-  }
 
   .hist-tl-card--classified {
     transition: none;
@@ -4455,49 +3025,6 @@ a.hist-figures__name:hover {
     animation: none;
   }
 
-  .hist-witness {
-    transition: none;
-    opacity: 1;
-    filter: none;
-  }
-
-  .hist-witness--background {
-    opacity: 1;
-    filter: none;
-    transform: none;
-  }
-
-  .hist-witness--left.hist-reveal,
-  .hist-witness--right.hist-reveal {
-    transform: none;
-  }
-
-  .hist-witness__expand-arrow {
-    transition: none;
-  }
-
-  .hist-witness__expand {
-    transition: none;
-  }
-
-  .hist-context__body {
-    opacity: 1;
-    transform: none;
-  }
-
-  .hist-omissions-split__panel.hist-reveal {
-    transform: none;
-  }
-
-  .hist-evidence__image.hist-reveal {
-    transform: none;
-  }
-
-  .hist-next__cta,
-  .hist-next__cta:active {
-    transition: none;
-    transform: none;
-  }
 
   .hist-overlay {
     animation: none;
@@ -4515,106 +3042,20 @@ a.hist-figures__name:hover {
 /* ---------------------------------------------------------------------------
    Connected Events — Link list
    --------------------------------------------------------------------------- */
-.hist-connections {
-  margin: var(--space-5) 0;
-  max-width: 720px;
-  margin-left: auto;
-  margin-right: auto;
-}
 
 /* Organic ink separator between connections */
-.hist-connection {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-3);
-  padding: var(--space-3) 0;
-  border-bottom: none;
-  text-decoration: none;
-  color: var(--hist-ink);
-  transition: color 200ms, filter 300ms var(--ease-cinematic);
-  position: relative;
-}
 
-.hist-connection::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 1.5px;
-  background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 3' preserveAspectRatio='none'%3E%3Cpath d='M0 1.5C18 0.7 42 2.3 80 1.5S130 0.5 200 1.5S300 2.5 360 1.5C380 1 395 2 400 1.5' stroke='%23E0D9CA' stroke-width='0.8' fill='none'/%3E%3C/svg%3E")
-    center / 100% 100% no-repeat;
-  opacity: 0.5;
-}
-
-:root[data-mode="dark"] .hist-connection::after {
-  background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 3' preserveAspectRatio='none'%3E%3Cpath d='M0 1.5C18 0.7 42 2.3 80 1.5S130 0.5 200 1.5S300 2.5 360 1.5C380 1 395 2 400 1.5' stroke='%23302A22' stroke-width='0.8' fill='none'/%3E%3C/svg%3E")
-    center / 100% 100% no-repeat;
-}
 
 /* .hist-connection:hover color removed — connection is not a button */
 
-.hist-connection:last-child::after {
-  display: none;
-}
-
-.hist-connection__type {
-  font-family: var(--font-meta);
-  font-size: var(--text-xxs);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--hist-brass);
-  min-width: 80px;
-  flex-shrink: 0;
-  padding-top: 2px;
-}
-
-.hist-connection__body {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.hist-connection__title {
-  font-family: var(--font-editorial);
-  font-size: var(--text-base);
-  font-weight: 600;
-}
-
-.hist-connection__desc {
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  color: var(--hist-ink-secondary);
-  line-height: 1.5;
-}
 
 /* Hide footer on landing page — wrapper overflow:hidden makes it invisible anyway;
    this prevents layout shift. Topbar provides back-to-void-news navigation. */
-main:has(.hist-tl-wrapper) + .hist-footer {
-  display: none;
-}
 
-
-:root[data-mode="dark"] .hist-footer::before {
-  background:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 3' preserveAspectRatio='none'%3E%3Cpath d='M0 1.5C20 0.4 50 2.6 100 1.5S180 0.3 260 1.5S340 2.7 380 1.5C390 1.2 398 1.8 400 1.5' stroke='%233A3428' stroke-width='0.8' fill='none'/%3E%3C/svg%3E")
-    center / 100% 100% no-repeat;
-}
 
 /* ---------------------------------------------------------------------------
    Ink Divider — Organic SVG rule with atmosphere
    --------------------------------------------------------------------------- */
-.hist-ink-rule {
-  display: block;
-  width: 100%;
-  height: 4px;
-  color: var(--hist-accent);
-  opacity: 0.3;
-  margin: var(--space-5) 0;
-}
 
 /* Section Haze, Cinematic Exit — REMOVED (dead code, Round 7 cleanup) */
 
@@ -4629,38 +3070,9 @@ main:has(.hist-tl-wrapper) + .hist-footer {
 /* ---------------------------------------------------------------------------
    Comparison Mode Toggle
    --------------------------------------------------------------------------- */
-.hist-compare-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-family: var(--font-meta);
-  font-size: var(--text-xs);
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--hist-ink-secondary);
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--hist-border);
-  border-radius: 2px;
-  cursor: pointer;
-  transition:
-    background 200ms,
-    border-color 200ms,
-    color 200ms;
-}
 
 /* .hist-compare-toggle:hover removed — active state is the signal */
 
-.hist-compare-toggle--active {
-  background: var(--hist-accent);
-  color: var(--hist-paper);
-  border-color: var(--hist-accent);
-}
-
-.hist-compare-toggle:focus-visible {
-  outline: 2px solid var(--hist-brass);
-  outline-offset: 2px;
-}
 
 /* ---------------------------------------------------------------------------
    Rack Focus — Depth-of-field effect for event cards
@@ -4685,19 +3097,6 @@ main:has(.hist-tl-wrapper) + .hist-footer {
     filter: none;
   }
 
-  .hist-cold-open--hero,
-.hist-cold-open--content,
-.hist-cold-open--section {
-    animation: none;
-    opacity: 1;
-    transform: none;
-  }
-
-  .hist-brief {
-    animation: none;
-    opacity: 1;
-    transform: none;
-  }
 
   .hist-reveal {
     opacity: 1;
@@ -4750,18 +3149,12 @@ main:has(.hist-tl-wrapper) + .hist-footer {
     transition: none;
   }
 
-  .hist-compare-toggle {
-    transition: none;
-  }
 
   .hist-map__region,
   .hist-map__pin {
     transition: none;
   }
 
-  .hist-connection {
-    transition: none;
-  }
 
   .hist-gallery__image {
     transition: none;
@@ -4784,19 +3177,12 @@ main:has(.hist-tl-wrapper) + .hist-footer {
 }
 
 /* Word-wrap safety on all headline elements */
-.hist-hero__title,
 .hist-event-card__title,
 .hist-tl-card__title,
 .hist-stage__title,
 .hist-persp-tab__name,
 .hist-comparison__header,
-.hist-connection__title,
-.hist-compact-timeline__title,
-.hist-keyfacts__value,
-.hist-crack__text,
-.hist-witness__argument,
-.hist-witness__quote,
-.hist-dossier__card-hook {
+.hist-compact-timeline__title{
   overflow-wrap: break-word;
   word-break: break-word;
 }
@@ -4807,9 +3193,6 @@ main:has(.hist-tl-wrapper) + .hist-footer {
   min-height: 44px;
 }
 
-.hist-compare-toggle {
-  min-height: 44px;
-}
 
 .hist-era-drawer__header {
   min-height: 56px; /* already >= 44px */
@@ -4936,10 +3319,6 @@ main:has(.hist-tl-wrapper) + .hist-footer {
    --------------------------------------------------------------------------- */
 
 /* Click press on classified tiles */
-.hist-classified-tile:active {
-  transform: scale(0.97);
-  transition: transform 80ms var(--ease-cinematic);
-}
 
 /* ---------------------------------------------------------------------------
    2. PERSPECTIVE TABS — Spotlight lighting model
@@ -4994,10 +3373,6 @@ main:has(.hist-tl-wrapper) + .hist-footer {
    --------------------------------------------------------------------------- */
 
 /* Compare toggle: simple click feedback */
-.hist-compare-toggle:active {
-  transform: scale(0.97);
-  transition: transform 60ms var(--ease-cinematic);
-}
 
 /* Vocabulary highlights: instant, no stagger delay */
 .hist-vocab-unique {
@@ -5040,16 +3415,7 @@ main:has(.hist-tl-wrapper) + .hist-footer {
    --------------------------------------------------------------------------- */
 
 /* Ink rule SVG: draw-in on scroll reveal */
-.hist-ink-rule path {
-  stroke-dasharray: 800;
-  stroke-dashoffset: 800;
-  transition: stroke-dashoffset 1.2s var(--ease-cinematic);
-}
 
-.hist-reveal--visible .hist-ink-rule path,
-.hist-ink-rule.hist-micro-drawn path {
-  stroke-dashoffset: 0;
-}
 
 /* ---------------------------------------------------------------------------
    14. ERA/REGION PAGES — Simple hover + click feedback
@@ -5093,15 +3459,6 @@ main:has(.hist-tl-wrapper) + .hist-footer {
    21. CONTEXT PANEL — First paragraph drop cap feel
    --------------------------------------------------------------------------- */
 
-.hist-context__body > p:first-of-type::first-letter {
-  font-family: var(--font-editorial);
-  font-size: 2.2em;
-  float: left;
-  line-height: 0.85;
-  margin-right: 4px;
-  margin-top: 4px;
-  color: var(--hist-accent);
-}
 
 /* ---------------------------------------------------------------------------
    22. TIMELINE DOTS — Simple hover
@@ -5119,117 +3476,21 @@ main:has(.hist-tl-wrapper) + .hist-footer {
    --------------------------------------------------------------------------- */
 
 /* ── Context figure — full-width evidence in narrative flow ── */
-.hist-context__figure {
-  margin: var(--space-5) 0;
-  width: 100%;
-}
 
-.hist-context__figure img {
-  width: 100%;
-  display: block;
-  filter: var(--img-grade-history-card);
-  border-radius: 2px;
-}
-
-.hist-context__figure figcaption {
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  line-height: 1.4;
-  color: var(--hist-ink-secondary, var(--hist-ink-muted));
-  margin-top: var(--space-2);
-}
-
-.hist-context__figure-attr {
-  display: block;
-  font-family: var(--font-data);
-  font-size: var(--text-xxs);
-  color: var(--hist-ink-muted);
-  margin-top: 2px;
-}
 
 /* ── Documentary intercut — evidence exhibit between testimonies ── */
-.hist-intercut {
-  margin: var(--space-6) 0;
-  padding: var(--space-4) 0;
-  border-top: 1px solid var(--hist-border);
-  border-bottom: 1px solid var(--hist-border);
-  width: 100%;
-}
 
-.hist-intercut img {
-  width: 100%;
-  display: block;
-  filter: var(--img-grade-history-card);
-  border-radius: 2px;
-}
-
-.hist-intercut figcaption {
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  line-height: 1.4;
-  color: var(--hist-ink-secondary, var(--hist-ink-muted));
-  margin-top: var(--space-2);
-}
-
-.hist-intercut__attribution {
-  font-family: var(--font-data);
-  font-size: var(--text-xxs);
-  color: var(--hist-ink-muted);
-  display: block;
-  margin-top: 2px;
-}
 
 /* ── Omission intercut — inside flex split, must span full width ──
    On mobile (column): natural flow.
    On desktop (row): forces a full-width break between panels via grid fallback. */
-.hist-omissions-split > .hist-intercut--omission {
-  margin: var(--space-4) 0;
-}
 
-@media (min-width: 768px) {
-  /* Upgrade to grid when intercut is present, so image spans both columns */
-  .hist-omissions-split:has(.hist-intercut--omission) {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: var(--space-5);
-  }
-
-  .hist-omissions-split:has(.hist-intercut--omission) > .hist-omissions-split__panel--emphasized {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  .hist-omissions-split:has(.hist-intercut--omission) > .hist-omissions-split__panel--omitted {
-    grid-column: 2;
-    grid-row: 1;
-  }
-
-  .hist-omissions-split:has(.hist-intercut--omission) > .hist-intercut--omission {
-    grid-column: 1 / -1;
-    grid-row: 2;
-  }
-}
 
 /* ===========================================================================
    REDUCED MOTION — Override remaining interactions
    =========================================================================== */
 @media (prefers-reduced-motion: reduce) {
-  .hist-context__figure,
-  .hist-intercut {
-    opacity: 1;
-    transform: none;
-    filter: none;
-    transition: none;
-  }
 
-  .hist-classified-tile,
-  .hist-classified-tile:hover,
-  .hist-classified-tile:active {
-    transform: none;
-    transition: none;
-    animation: none;
-    filter: none;
-  }
 
   .hist-persp-tab,
   .hist-persp-tab:hover,
@@ -5246,11 +3507,6 @@ main:has(.hist-tl-wrapper) + .hist-footer {
     transform: none;
   }
 
-  .hist-compare-toggle,
-  .hist-compare-toggle:active {
-    transition: none;
-    transform: none;
-  }
 
   .hist-compact-timeline__link,
   .hist-compact-timeline__link:active {
@@ -5273,11 +3529,6 @@ main:has(.hist-tl-wrapper) + .hist-footer {
     transform: none;
   }
 
-  .hist-ink-rule path {
-    stroke-dasharray: none;
-    stroke-dashoffset: 0;
-    transition: none;
-  }
 
   .hist-vocab-unique {
     transition: none;
@@ -5311,13 +3562,6 @@ main:has(.hist-tl-wrapper) + .hist-footer {
   gap: var(--space-2);
 }
 
-.hist-compare-label {
-  font-family: var(--font-meta);
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--hist-ink-muted);
-}
 
 .hist-compare-option {
   font-family: var(--font-meta);
@@ -5427,22 +3671,10 @@ main:has(.hist-tl-wrapper) + .hist-footer {
 /* ---------------------------------------------------------------------------
    Hero Fallback (H08) — Gradient background when no hero image
    --------------------------------------------------------------------------- */
-.hist-hero__fallback {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, var(--hist-paper-deep) 0%, var(--hist-bg) 50%, var(--hist-paper-deep) 100%);
-}
 
 /* ---------------------------------------------------------------------------
    Connection "Coming" Badge (H01)
    --------------------------------------------------------------------------- */
-.hist-connection__coming {
-  font-family: var(--font-meta);
-  font-size: var(--text-xxs);
-  font-style: italic;
-  color: var(--hist-ink-muted);
-  margin-left: var(--space-1);
-}
 
 /* ===========================================================================
    TIMELINE POLISH — Era header, fun facts, back CTA, cinematic motion
@@ -5767,51 +3999,17 @@ main:has(.hist-tl-wrapper) + .hist-footer {
 /* ---------------------------------------------------------------------------
    View Toggle — [globe] / [eras] bracket-notation button
    --------------------------------------------------------------------------- */
-.hist-tl-view-toggle {
-  font-family: var(--font-data);
-  font-size: 0.6rem;
-  color: var(--hist-ink-muted);
-  background: none;
-  border: none;
-  border-bottom: 1px dotted transparent;
-  padding: 2px 6px;
-  cursor: pointer;
-  pointer-events: auto;
-  transition: color 200ms var(--ease-cinematic), border-color 200ms var(--ease-cinematic);
-  white-space: nowrap;
-  margin-top: 2px;
-}
 
-.hist-tl-view-toggle:hover {
-  color: var(--hist-brass);
-  border-bottom-color: var(--hist-brass);
-}
-
-.hist-tl-view-toggle:focus-visible {
-  outline: 2px solid var(--hist-brass);
-  outline-offset: 2px;
-}
 
 /* ---------------------------------------------------------------------------
    Ghost Filtering — Dim non-matching events when region filter is active
    --------------------------------------------------------------------------- */
-.hist-tl-full__station--ghosted {
-  opacity: 0.12;
-  filter: blur(1px) saturate(0.3);
-  pointer-events: none;
-  transition: opacity 400ms var(--ease-cinematic, ease),
-              filter 400ms var(--ease-cinematic, ease);
-}
 
 @media (prefers-reduced-motion: reduce) {
   .hist-tl-full__station {
     filter: none;
     opacity: 1;
     transition: none;
-  }
-  .hist-tl-full__station--ghosted {
-    transition: none;
-    filter: saturate(0.3);
   }
   .hist-carto-strip__pin--focused {
     animation: none;
@@ -5822,145 +4020,13 @@ main:has(.hist-tl-wrapper) + .hist-footer {
    Arc Lanes — thematic threads connecting events across the timeline
    Positioned below the ink track. Prominent but not overwhelming.
    --------------------------------------------------------------------------- */
-.hist-tl-arc-lane {
-  position: absolute;
-  top: calc(50% + 350px); /* Well below tallest below-cards (accounts for 30px track offset) */
-  height: 36px;
-  z-index: 3;
-}
 
-.hist-tl-arc-lane__thread {
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 1.5px;
-  background: var(--arc-color, #B44C00);
-  opacity: 0.30;
-  transform: translateY(-50%);
-  /* Organic ink feel: slight waviness via clip-path wouldn't work,
-     so use a softer continuous line with glow instead of dashes */
-  filter: blur(0.3px);
-  box-shadow: 0 0 4px color-mix(in srgb, var(--arc-color, #B44C00) 20%, transparent);
-}
-
-.hist-tl-arc-lane__label {
-  position: absolute;
-  top: 100%; /* Below the lane, not above */
-  left: 0;
-  margin-top: 4px;
-  display: flex;
-  flex-direction: column;
-  white-space: nowrap;
-}
-
-.hist-tl-arc-lane__title {
-  font-family: var(--font-editorial);
-  font-size: 0.65rem;
-  font-weight: 500;
-  font-style: italic;
-  letter-spacing: 0.02em;
-  color: var(--arc-color, #B44C00);
-  opacity: 0.65;
-}
-
-.hist-tl-arc-lane__subtitle {
-  font-family: var(--font-data);
-  font-size: 0.5rem;
-  color: var(--hist-ink-muted);
-  opacity: 0.4;
-  margin-top: 1px;
-}
-
-.hist-tl-arc-lane__node {
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hist-tl-arc-lane__node-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--arc-color, #B44C00);
-  opacity: 0.45;
-  border: 1px solid var(--hist-bg);
-  box-shadow: 0 0 8px color-mix(in srgb, var(--arc-color, #B44C00) 35%, transparent);
-  transition: transform 200ms var(--ease-archive-snap), opacity 200ms var(--ease-cinematic), box-shadow 200ms var(--ease-cinematic);
-}
-
-.hist-tl-arc-lane__node:hover .hist-tl-arc-lane__node-dot {
-  transform: scale(1.5);
-  opacity: 0.8;
-  box-shadow: 0 0 14px color-mix(in srgb, var(--arc-color, #B44C00) 50%, transparent);
-}
-
-:root[data-mode="dark"] .hist-tl-arc-lane__thread {
-  opacity: 0.20;
-}
-
-:root[data-mode="dark"] .hist-tl-arc-lane__node-dot {
-  opacity: 0.35;
-}
-
-:root[data-mode="dark"] .hist-tl-arc-lane__title {
-  opacity: 0.55;
-}
 
 /* ---------------------------------------------------------------------------
    Back to Timeline — Floating pill CTA on story page
    Slides in from right after 1s delay (CSS transition).
    --------------------------------------------------------------------------- */
-.hist-back-to-timeline {
-  position: fixed;
-  bottom: var(--space-4);
-  right: var(--space-4);
-  z-index: 40;
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-family: var(--font-meta);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--hist-paper-fixed);
-  background: var(--hist-accent);
-  padding: var(--space-2) var(--space-3);
-  border: none;
-  border-radius: 20px;
-  cursor: pointer;
-  min-height: 44px;
-  box-shadow: 2px 3px 12px rgba(0, 0, 0, 0.15);
-  opacity: 0;
-  transform: translateX(20px);
-  transition: opacity 400ms var(--ease-cinematic) 1000ms, transform 400ms var(--ease-cinematic) 1000ms,
-              background 200ms var(--ease-cinematic), box-shadow 200ms var(--ease-cinematic);
-}
 
-.hist-back-to-timeline--visible {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.hist-back-to-timeline:hover {
-  background: var(--hist-accent-bright);
-  box-shadow: 2px 4px 16px rgba(0, 0, 0, 0.20);
-}
-
-.hist-back-to-timeline:focus-visible {
-  outline: 2px solid var(--hist-brass);
-  outline-offset: 2px;
-}
-
-.hist-back-to-timeline:active {
-  transform: translateX(0) scale(0.97);
-}
 
 /* ---------------------------------------------------------------------------
    Card Entrance — fast fade-in on timeline load (no scale, no blur)
@@ -6152,14 +4218,6 @@ main:has(.hist-tl-wrapper) + .hist-footer {
 /* Wide shot (establishing) -> Close-up (intimate) -> Pull-back (exit)
    3-tier system: 100% / 800px / 680px */
 .hist-stage--scene  { max-width: 100%; }
-.hist-stage--crack  { max-width: 800px; margin-left: auto; margin-right: auto; }
-.hist-stage--keyfacts { max-width: 800px; margin-left: auto; margin-right: auto; }
-.hist-stage--figures  { max-width: 800px; margin-left: auto; margin-right: auto; }
-.hist-stage--context  { max-width: 680px; margin-left: auto; margin-right: auto; }
-.hist-stage--perspectives { max-width: 680px; margin-left: auto; margin-right: auto; }
-.hist-stage--omissions { max-width: 680px; margin-left: auto; margin-right: auto; }
-.hist-stage--evidence { max-width: 800px; margin-left: auto; margin-right: auto; }
-.hist-stage--next   { max-width: 900px; margin-left: auto; margin-right: auto; }
 
 /* ---------------------------------------------------------------------------
    Reduced Motion — Disable all new animations
@@ -6216,11 +4274,6 @@ main:has(.hist-tl-wrapper) + .hist-footer {
     transition: none;
   }
 
-  .hist-back-to-timeline {
-    transition: none;
-    opacity: 1;
-    transform: none;
-  }
 
   .hist-tl-card--above.hist-tl-card--catastrophic {
     transform: translateX(-50%);
@@ -6239,10 +4292,6 @@ main:has(.hist-tl-wrapper) + .hist-footer {
   }
 
   /* Back CTA: safe area for iOS home indicator */
-  .hist-back-to-timeline {
-    bottom: calc(var(--space-3) + env(safe-area-inset-bottom, 0px));
-    right: var(--space-3);
-  }
 
   /* No entrance stagger */
   .hist-tl-card--entrance,
@@ -6295,182 +4344,29 @@ main:has(.hist-tl-wrapper) + .hist-footer {
    with staggered delays -- each one a new focal plane sharpening.
    Type indicators use ink-draw animation for caused/consequence borders.
    --------------------------------------------------------------------------- */
-.hist-thread-stage {
-  padding-top: var(--space-5);
-  padding-bottom: var(--space-5);
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: left;
-}
 
 /* Divider: ink draw-in from left to right — a nib crossing the page */
-.hist-thread-stage__divider {
-  border: none;
-  height: 1px;
-  background: var(--hist-border-subtle);
-  margin: 0 0 var(--space-5);
-  transform-origin: left center;
-  transform: scaleX(0);
-  transition: transform 800ms var(--ease-cinematic);
-}
 
-.hist-thread-stage.hist-reveal--visible .hist-thread-stage__divider {
-  transform: scaleX(1);
-}
 
 /* Lead quote: dolly-in from bottom margin with slight scale increase.
    The strongest connection statement arrives with editorial weight --
    like a pull-quote dropped onto the page by a compositor. */
-.hist-thread-stage__lead {
-  font-family: var(--font-editorial);
-  font-size: clamp(1.1rem, 1rem + 0.6vw, 1.4rem);
-  font-style: italic;
-  font-weight: 400;
-  line-height: 1.6;
-  color: var(--hist-ink);
-  margin: 0 0 var(--space-5);
-  padding: 0 var(--space-4);
-  border-left: 3px solid var(--hist-accent-wash);
-  max-width: 720px;
-  /* Entrance: opacity + translateY + border reveal */
-  opacity: 0;
-  transform: translateY(12px);
-  transition:
-    opacity 600ms var(--ease-cinematic) 400ms,
-    transform 600ms var(--ease-cinematic) 400ms;
-}
 
-.hist-thread-stage.hist-reveal--visible .hist-thread-stage__lead {
-  opacity: 1;
-  transform: translateY(0);
-}
 
 /* Connection list: staggered cascade reveal.
    Each item is a new focal plane sharpening, like
    pulling focus through depth layers in a single shot. */
-.hist-thread-stage__list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-}
 
-.hist-thread-stage__item {
-  display: flex;
-  gap: var(--space-3);
-  align-items: flex-start;
-  padding-left: var(--space-2);
-  /* Cascade entrance: each item fades + slides, with per-item delay via inline style */
-  opacity: 0;
-  transform: translateY(8px);
-  transition:
-    opacity 500ms var(--ease-cinematic),
-    transform 500ms var(--ease-cinematic),
-    border-color 400ms var(--ease-cinematic);
-}
-
-.hist-thread-stage__item.hist-reveal--visible {
-  opacity: 1;
-  transform: translateY(0);
-}
 
 /* Connection type indicators — directional arrows with ink-draw reveal */
-.hist-thread-stage__indicator {
-  flex-shrink: 0;
-  width: 1.2rem;
-  font-family: var(--font-data);
-  font-size: var(--text-sm);
-  color: var(--hist-accent);
-  text-align: center;
-  line-height: 1.5;
-  opacity: 0;
-  transform: translateY(4px);
-  transition: opacity 300ms var(--ease-cinematic) 200ms,
-              transform 300ms var(--ease-cinematic) 200ms;
-}
 
-.hist-thread-stage__item.hist-reveal--visible .hist-thread-stage__indicator {
-  opacity: 1;
-  transform: translateY(0);
-}
 
 /* Border-left animates from transparent — ink drawing down the page edge.
    Caused/consequence: solid line, causal chain.
    Influenced: dashed line, indirect ripple.
    Parallel: no border, independent occurrence.
    Response-to: solid, reactive chain. */
-.hist-thread-stage__item--caused,
-.hist-thread-stage__item--consequence {
-  border-left: 2px solid transparent;
-  padding-left: var(--space-3);
-}
 
-.hist-thread-stage__item--caused.hist-reveal--visible,
-.hist-thread-stage__item--consequence.hist-reveal--visible {
-  border-left-color: var(--hist-persp-a);
-}
-
-.hist-thread-stage__item--influenced {
-  border-left: 2px dashed transparent;
-  padding-left: var(--space-3);
-}
-
-.hist-thread-stage__item--influenced.hist-reveal--visible {
-  border-left-color: var(--hist-persp-c);
-}
-
-.hist-thread-stage__item--parallel {
-  border-left: none;
-  padding-left: var(--space-2);
-}
-
-.hist-thread-stage__item--response-to {
-  border-left: 2px solid transparent;
-  padding-left: var(--space-3);
-}
-
-.hist-thread-stage__item--response-to.hist-reveal--visible {
-  border-left-color: var(--hist-persp-d);
-}
-
-.hist-thread-stage__content {
-  display: flex;
-  flex-direction: column;
-  gap: 0.15rem;
-}
-
-.hist-thread-stage__title {
-  font-family: var(--font-editorial);
-  font-size: clamp(0.95rem, 0.9rem + 0.3vw, 1.1rem);
-  font-weight: 600;
-  color: var(--hist-ink);
-  text-decoration: none;
-  line-height: 1.3;
-}
-
-.hist-thread-stage__title:hover {
-  color: var(--hist-accent);
-}
-
-.hist-thread-stage__title:focus-visible {
-  outline: 2px solid var(--hist-brass);
-  outline-offset: 2px;
-}
-
-.hist-thread-stage__date {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  color: var(--hist-ink-muted);
-  letter-spacing: 0.02em;
-}
-
-.hist-thread-stage__desc {
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  color: var(--hist-ink-secondary);
-  line-height: 1.5;
-  margin: 0;
-}
 
 /* ---------------------------------------------------------------------------
    Feature 1: Dossier — Connection-ranked next reads (Stage 6 rewrite)
@@ -6484,153 +4380,23 @@ main:has(.hist-tl-wrapper) + .hist-footer {
    Connection description reveals on hover -- the archivist's penciled note
    on the back of the folder, visible only when you pick it up.
    --------------------------------------------------------------------------- */
-.hist-dossier {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--space-4);
-  max-width: 900px;
-  margin: 0 auto var(--space-4);
-  padding: 0 var(--space-3);
-}
 
-@media (min-width: 640px) {
-  .hist-dossier {
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  }
-}
 
 /* Dossier cards: staggered entrance via per-card delay (inline style).
    Start hidden, reveal with dolly-in (scale 0.97 -> 1, blur 2px -> 0). */
-.hist-dossier__card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  min-height: 240px;
-  overflow: hidden;
-  text-decoration: none;
-  color: var(--hist-paper-fixed, #F2EDE0);
-  border-radius: 2px;
-  box-shadow: var(--hist-doc-edge);
-  /* Entrance: staggered fade + lift */
-  opacity: 0;
-  transform: translateY(12px);
-  transition:
-    opacity 500ms var(--ease-cinematic),
-    transform 500ms var(--ease-cinematic),
-    box-shadow 300ms var(--ease-cinematic);
-}
 
-.hist-dossier__card.hist-reveal--visible {
-  opacity: 1;
-  transform: translateY(0);
-}
 
 /* Hover: archival lift — picking up a document from the desk.
    Shadow deepens from contact to ambient (card rises from surface).
    Subtle translateY(-4px) + scale(1.015) simulates dolly-in. */
-.hist-dossier__card:hover {
-  box-shadow: var(--hist-doc-edge-lifted);
-  transform: translateY(-4px) scale(1.015);
-}
 
-.hist-dossier__card:focus-visible {
-  outline: 2px solid var(--hist-brass);
-  outline-offset: 2px;
-}
 
 /* Hero background image — Ken Burns on hover for subtle life */
-.hist-dossier__card-bg {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-  filter: var(--img-grade-history-dossier);
-  transition: transform 4s linear, filter 600ms var(--ease-cinematic);
-}
 
-.hist-dossier__card:hover .hist-dossier__card-bg {
-  transform: scale(1.04);
-  filter: var(--img-grade-history-hover);
-}
-
-.hist-dossier__card-bg::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(44, 36, 24, 0.15) 0%,
-    rgba(44, 36, 24, 0.75) 60%,
-    rgba(44, 36, 24, 0.92) 100%
-  );
-}
-
-.hist-dossier__card-content {
-  position: relative;
-  z-index: 1;
-  padding: var(--space-4);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-
-.hist-dossier__card-hook {
-  font-family: var(--font-editorial);
-  font-size: clamp(0.9rem, 0.85rem + 0.3vw, 1.05rem);
-  font-style: italic;
-  font-weight: 400;
-  line-height: 1.5;
-  margin: 0;
-  opacity: 0.92;
-}
 
 /* Connection description: the archivist's note.
    Always visible at 0.7 opacity, brightens on hover to signal relevance. */
-.hist-dossier__card-connection {
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  line-height: 1.4;
-  margin: 0;
-  opacity: 0.5;
-  transition: opacity 300ms var(--ease-cinematic);
-}
 
-.hist-dossier__card:hover .hist-dossier__card-connection {
-  opacity: 0.85;
-}
-
-.hist-dossier__card-cta {
-  font-family: var(--font-meta);
-  font-size: var(--text-xs);
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  opacity: 0.85;
-}
-
-.hist-dossier__chrono {
-  text-align: center;
-  margin: 0;
-}
-
-.hist-dossier__chrono a {
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  color: var(--hist-ink-muted);
-  text-decoration: none;
-  border-bottom: 1px solid var(--hist-border-subtle);
-  transition: color 150ms var(--ease-cinematic);
-}
-
-.hist-dossier__chrono a:hover {
-  color: var(--hist-ink);
-}
-
-.hist-dossier__chrono a:focus-visible {
-  outline: 2px solid var(--hist-brass);
-  outline-offset: 2px;
-}
 
 /* ---------------------------------------------------------------------------
    Feature 4: Sidebar — "Elsewhere, Meanwhile"
@@ -6641,174 +4407,21 @@ main:has(.hist-tl-wrapper) + .hist-footer {
 /* Parent layout — no grid offset when sidebar is active.
    Elsewhere renders as a full-width section at the bottom of the page,
    keeping the main content centered on both mobile and desktop. */
-.hist-layout-sidebar {
-  display: block;
-}
 
-.hist-sidebar--elsewhere {
-  position: relative;
-  max-width: 800px;
-  margin: var(--space-8) auto 0;
-  border-top: 1px solid var(--hist-border-subtle);
-  padding-top: var(--space-5);
-}
-
-@media (min-width: 1024px) {
-  .hist-sidebar--elsewhere {
-    display: block;
-  }
-
-  /* Show desktop label, hide mobile toggle */
-  .hist-sidebar--mobile-toggle {
-    display: none;
-  }
-}
 
 /* Mobile accordion trigger */
-.hist-sidebar--mobile-toggle {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  width: 100%;
-  min-height: 44px;
-  background: var(--hist-bg-secondary);
-  border: 1px solid var(--hist-border-subtle);
-  padding: var(--space-3) var(--space-4);
-  cursor: pointer;
-  margin-top: var(--space-4);
-}
 
-@media (min-width: 1024px) {
-  .hist-sidebar--mobile-toggle {
-    display: none;
-  }
-}
-
-.hist-sidebar__eyebrow {
-  font-family: var(--font-meta);
-  font-size: var(--text-xxs);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  color: var(--hist-persp-b);
-}
-
-.hist-sidebar__eyebrow--desktop {
-  display: none;
-  margin-bottom: var(--space-4);
-  padding-bottom: var(--space-2);
-  border-bottom: 1px solid var(--hist-border-subtle);
-}
-
-@media (min-width: 1024px) {
-  .hist-sidebar__eyebrow--desktop {
-    display: block;
-    font-size: var(--text-xs);
-    letter-spacing: 0.14em;
-  }
-}
-
-.hist-sidebar__disclosure {
-  font-size: var(--text-xs);
-  color: var(--hist-ink-muted);
-  transition: transform 200ms var(--ease-cinematic);
-}
-
-.hist-sidebar__disclosure--open {
-  transform: rotate(180deg);
-}
 
 /* Content visibility */
-.hist-sidebar__content {
-  display: none;
-}
 
-.hist-sidebar__content--open {
-  display: block;
-  padding: var(--space-3) var(--space-4);
-  border: 1px solid var(--hist-border-subtle);
-  border-top: none;
-  background: var(--hist-bg-secondary);
-}
 
 /* On desktop, Elsewhere is a bottom section — always show content, no accordion */
-@media (min-width: 1024px) {
-  .hist-sidebar__content {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: var(--space-4);
-  }
-
-  .hist-sidebar__content--open {
-    padding: 0;
-    border: none;
-    background: transparent;
-  }
-}
 
 /* Sidebar entries: section cards at the bottom of the page.
    On desktop they render in a horizontal grid (auto-fill columns).
    On mobile they stack vertically inside the accordion.
    Entrance: fade-up from 12px below. */
-.hist-sidebar__entry {
-  padding: var(--space-3);
-  border: 1px solid var(--hist-border-subtle);
-  background: var(--hist-bg-secondary);
-  opacity: 0;
-  transform: translateY(12px);
-  transition:
-    opacity 500ms var(--ease-cinematic),
-    transform 500ms var(--ease-cinematic);
-}
 
-.hist-sidebar__entry.hist-reveal--visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.hist-sidebar__entry--active {
-  border-left: 2px solid var(--hist-brass);
-}
-
-.hist-sidebar__entry:last-child {
-  border-bottom: 1px solid var(--hist-border-subtle);
-}
-
-.hist-sidebar__entry-year {
-  display: block;
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  color: var(--hist-ink-muted);
-  margin-bottom: 0.15rem;
-}
-
-.hist-sidebar__entry-title {
-  display: block;
-  font-family: var(--font-editorial);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  color: var(--hist-ink);
-  text-decoration: none;
-  line-height: 1.3;
-  margin-bottom: 0.25rem;
-}
-
-.hist-sidebar__entry-title:hover {
-  color: var(--hist-accent);
-}
-
-.hist-sidebar__entry-title:focus-visible {
-  outline: 2px solid var(--hist-brass);
-  outline-offset: 2px;
-}
-
-.hist-sidebar__entry-desc {
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  color: var(--hist-ink-secondary);
-  line-height: 1.4;
-  margin: 0;
-}
 
 /* ---------------------------------------------------------------------------
    Feature 3: Ledger — /history/threads page
@@ -7079,166 +4692,17 @@ main:has(.hist-tl-wrapper) + .hist-footer {
 }
 
 /* ── Story Card (legacy — kept for CSS completeness) ── */
-.hist-threads__card {
-  position: relative;
-  flex: 0 0 220px;
-  height: 280px;
-  scroll-snap-align: start;
-  border-radius: 3px;
-  overflow: hidden;
-  text-decoration: none;
-  color: var(--hist-ink);
-  border: 1px solid var(--hist-border-subtle);
-  display: flex;
-  flex-direction: column;
-  /* Entrance state */
-  opacity: 0;
-  transform: translateX(-12px);
-  transition:
-    opacity 500ms var(--ease-cinematic),
-    transform 500ms var(--ease-cinematic),
-    box-shadow 250ms var(--ease-cinematic);
-  transition-delay: var(--card-delay, 0ms);
-}
 
-.hist-threads__card--visible {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.hist-threads__card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--hist-doc-edge-lifted);
-}
-
-.hist-threads__card--visible:hover {
-  transform: translateY(-4px);
-}
-
-.hist-threads__card:focus-visible {
-  outline: 2px solid var(--hist-brass);
-  outline-offset: 2px;
-}
-
-@media (max-width: 767px) {
-  .hist-threads__card {
-    flex: 0 0 180px;
-    height: 240px;
-  }
-}
 
 /* ── Card background: hero image or gradient fallback ── */
-.hist-threads__card-bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  overflow: hidden;
-}
 
-.hist-threads__card-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: var(--img-grade-history-threads);
-  transition: filter 300ms var(--ease-cinematic);
-}
-
-.hist-threads__card:hover .hist-threads__card-img {
-  filter: var(--img-grade-history-hover);
-}
-
-.hist-threads__card-gradient {
-  width: 100%;
-  height: 100%;
-  background:
-    linear-gradient(135deg,
-      var(--hist-accent-dim) 0%,
-      var(--hist-accent) 40%,
-      var(--hist-brass-dim) 100%
-    );
-  opacity: 0.35;
-}
 
 /* Dark overlay for text legibility */
-.hist-threads__card-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.72) 0%,
-    rgba(0, 0, 0, 0.35) 40%,
-    rgba(0, 0, 0, 0.15) 100%
-  );
-}
 
 /* ── Thread color indicator: 3px left border ── */
-.hist-threads__card-indicator {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 3px;
-  z-index: 2;
-}
 
 /* ── Card content: positioned over image ── */
-.hist-threads__card-content {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  flex: 1;
-  padding: var(--space-3);
-  padding-left: calc(var(--space-3) + 3px); /* offset for left border */
-  gap: 0.25rem;
-}
 
-.hist-threads__card-year {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  color: rgba(255, 255, 255, 0.7);
-  letter-spacing: 0.04em;
-}
-
-.hist-threads__card-title {
-  font-family: var(--font-editorial);
-  font-size: var(--text-sm);
-  font-weight: 600;
-  line-height: 1.3;
-  color: #F5F0E8;
-  margin: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.hist-threads__card-hook {
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  font-style: italic;
-  color: rgba(255, 255, 255, 0.6);
-  line-height: 1.35;
-  margin: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.hist-threads__card-read {
-  font-family: var(--font-meta);
-  font-size: var(--text-xs);
-  color: rgba(255, 255, 255, 0.5);
-  letter-spacing: 0.06em;
-  margin-top: var(--space-1);
-  transition: color 200ms var(--ease-cinematic);
-}
-
-.hist-threads__card:hover .hist-threads__card-read {
-  color: rgba(255, 255, 255, 0.85);
-}
 
 /* ── Divider between strips ── */
 .hist-threads__divider {
@@ -7802,39 +5266,10 @@ main:has(.hist-tl-wrapper) + .hist-footer {
 }
 
 /* Ledger link wrapper — positions the link when outside longview-controls */
-.hist-longview-ledger-wrap {
-  display: flex;
-  justify-content: flex-end;
-  padding: 0 var(--space-5);
-  margin-top: var(--space-2);
-}
 
-@media (max-width: 767px) {
-  .hist-longview-ledger-wrap {
-    justify-content: center;
-    padding: 0 var(--space-4);
-  }
-}
 
 /* Ledger link */
-.hist-longview-ledger-link {
-  font-family: var(--font-structural);
-  font-size: var(--text-xs);
-  color: var(--hist-ink-muted);
-  text-decoration: none;
-  border-bottom: 1px solid var(--hist-border-subtle);
-  margin-left: auto;
-  transition: color 150ms var(--ease-cinematic);
-}
 
-.hist-longview-ledger-link:hover {
-  color: var(--hist-ink);
-}
-
-.hist-longview-ledger-link:focus-visible {
-  outline: 2px solid var(--hist-brass);
-  outline-offset: 2px;
-}
 
 /* ---------------------------------------------------------------------------
    Reduced motion: all arc connection animations collapse to instant state.
@@ -7862,72 +5297,13 @@ main:has(.hist-tl-wrapper) + .hist-footer {
   }
 
   /* Dossier cards: instant visible, no stagger or blur */
-  .hist-dossier__card {
-    transition: none;
-    opacity: 1;
-    transform: none;
-    filter: none;
-  }
 
-  .hist-dossier__card:hover {
-    transform: none;
-  }
-
-  .hist-dossier__card-bg {
-    transition: none;
-  }
-
-  .hist-dossier__card:hover .hist-dossier__card-bg {
-    transform: none;
-  }
 
   /* Thread Stage: instant visible, no ink-draw */
-  .hist-thread-stage__divider {
-    transition: none;
-    transform: scaleX(1);
-  }
 
-  .hist-thread-stage__lead {
-    transition: none;
-    opacity: 1;
-    transform: none;
-  }
-
-  .hist-thread-stage__item {
-    transition: none;
-    opacity: 1;
-    transform: none;
-  }
-
-  .hist-thread-stage__indicator {
-    transition: none;
-    opacity: 1;
-    transform: none;
-  }
-
-  .hist-thread-stage__item--caused,
-  .hist-thread-stage__item--consequence {
-    border-left-color: var(--hist-persp-a);
-  }
-
-  .hist-thread-stage__item--influenced {
-    border-left-color: var(--hist-persp-c);
-  }
-
-  .hist-thread-stage__item--response-to {
-    border-left-color: var(--hist-persp-d);
-  }
 
   /* Sidebar: instant visible, no slide-from-right */
-  .hist-sidebar__entry {
-    transition: none;
-    opacity: 1;
-    transform: none;
-  }
 
-  .hist-sidebar__disclosure {
-    transition: none;
-  }
 
   /* Ledger: instant card/strip reveal, no stagger or ink-draw */
   .hist-threads__strip-header {
@@ -7947,15 +5323,6 @@ main:has(.hist-tl-wrapper) + .hist-footer {
     transform: none;
   }
 
-  .hist-threads__card {
-    transition: none;
-    opacity: 1;
-    transform: none;
-  }
-
-  .hist-threads__card:hover {
-    transform: none;
-  }
 
   .hist-threads__scroll-btn {
     transition: none;
@@ -7992,13 +5359,6 @@ main:has(.hist-tl-wrapper) + .hist-footer {
    Record Block — merged facts + figures
    Aged artifact: excavated, passive, always been here.
    ───────────────────────────────────────────── */
-.hist-stage--record {
-  padding-top: var(--space-6);
-  padding-bottom: var(--space-5);
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-}
 
 .hist-record {
   position: relative;
@@ -8022,62 +5382,10 @@ main:has(.hist-tl-wrapper) + .hist-footer {
   z-index: 0;
 }
 
-.hist-record__ledger {
-  position: relative;
-  z-index: 1;
-  margin: 0;
-  padding: 0;
-  border-top: 2px solid var(--hist-accent);
-}
-
-.hist-record__row {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-3);
-  padding: var(--space-2) 0;
-  border-bottom: 1px solid var(--hist-border-subtle);
-}
-
-.hist-record__row dt {
-  font-family: var(--font-meta);
-  font-size: var(--text-xxs);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.10em;
-  color: var(--hist-ink-muted);
-  flex: 0 0 6rem;
-  min-width: 0;
-}
-
-.hist-record__row dd {
-  font-family: var(--font-data);
-  font-size: var(--text-sm);
-  font-weight: 400;
-  color: var(--hist-ink);
-  margin: 0;
-  min-width: 0;
-  overflow-wrap: break-word;
-}
 
 /* Mid-rule between facts and figures */
-.hist-record__divider {
-  position: relative;
-  z-index: 1;
-  height: 0;
-  border-top: 1px solid var(--hist-accent);
-  margin: var(--space-2) 0;
-  opacity: 0.5;
-}
 
 /* Figures ledger — same layout, name in Playfair */
-.hist-record__row--figure dt {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  flex: 0 0 auto;
-  min-width: 10rem;
-  max-width: 14rem;
-}
 
 .hist-record__figure-name {
   font-family: var(--font-editorial);
@@ -8098,14 +5406,6 @@ a.hist-record__figure-name:hover {
   text-underline-offset: 3px;
 }
 
-.hist-record__figure-dates {
-  font-family: var(--font-data);
-  font-size: var(--text-xxs);
-  font-weight: 400;
-  color: var(--hist-accent-dim);
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-}
 
 /* Dark mode adjustments */
 :root[data-mode="dark"] .hist-record {
@@ -8125,164 +5425,37 @@ a.hist-record__figure-name:hover {
   .hist-record {
     padding: var(--space-3) var(--space-3);
   }
-  .hist-record__row dt {
-    flex: 0 0 5rem;
-  }
-  .hist-record__row--figure dt {
-    min-width: 8rem;
-    max-width: 11rem;
-  }
 }
 
 /* ─────────────────────────────────────────────
    Context — significance pull quote + legacy list
    ───────────────────────────────────────────── */
-.hist-context__significance {
-  font-family: var(--font-editorial);
-  font-style: italic;
-  font-size: clamp(1rem, 0.9rem + 0.5vw, 1.15rem);
-  line-height: 1.6;
-  color: var(--hist-ink-secondary);
-  border-left: 2px solid var(--hist-border);
-  padding-left: var(--space-4);
-  margin: var(--space-5) 0;
-}
 
-.hist-context__legacy {
-  margin: var(--space-4) 0 0 0;
-  padding: 0 0 0 var(--space-4);
-  border-left: 1px solid var(--hist-border-subtle);
-}
-
-.hist-context__legacy li {
-  font-family: var(--font-structural);
-  font-size: var(--text-sm);
-  color: var(--hist-ink-secondary);
-  line-height: 1.6;
-  margin-bottom: var(--space-2);
-}
 
 /* ─────────────────────────────────────────────
    Omissions toggle bar — mobile only
    Flip the card: stressed ↔ ignored
    ───────────────────────────────────────────── */
-.hist-omissions__toggle-bar {
-  display: none; /* hidden on desktop — both panels visible */
-  align-items: center;
-  gap: var(--space-2);
-  margin-bottom: var(--space-4);
-}
 
-.hist-omissions__toggle-btn {
-  font-family: var(--font-meta);
-  font-size: var(--text-xxs);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.10em;
-  color: var(--hist-ink-muted);
-  background: none;
-  border: none;
-  padding: var(--space-1) 0;
-  cursor: pointer;
-  min-height: 44px;
-  transition: color 200ms;
-}
-
-.hist-omissions__toggle-btn--active {
-  color: var(--hist-accent);
-  border-bottom: 1px solid var(--hist-accent);
-}
-
-.hist-omissions__toggle-sep {
-  color: var(--hist-border);
-  font-size: var(--text-sm);
-}
-
-@media (max-width: 767px) {
-  .hist-omissions__toggle-bar {
-    display: flex;
-  }
-  /* Hide non-active panel on mobile */
-  .hist-omissions-split__panel {
-    display: none;
-  }
-  .hist-omissions-split__panel--mobile-visible {
-    display: block;
-  }
-}
 
 /* ─────────────────────────────────────────────
    Witness — vitrine model (one argument default)
    ───────────────────────────────────────────── */
 
 /* Secondary arguments (revealed on expand) — slightly quieter */
-.hist-witness__argument--secondary {
-  opacity: 0.85;
-}
 
 /* Expand button — minimal, just arrow + count */
-.hist-witness__expand {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  background: none;
-  border: none;
-  padding: var(--space-2) 0;
-  cursor: pointer;
-  min-height: 44px;
-  margin-top: var(--space-2);
-}
 
-.hist-witness__expand-arrow {
-  font-size: var(--text-xs);
-  color: var(--hist-accent);
-  transition: transform 200ms;
-  display: inline-block;
-}
-
-.hist-witness__expand-arrow--open {
-  transform: rotate(180deg);
-}
-
-.hist-witness__expand-count {
-  font-family: var(--font-data);
-  font-size: var(--text-xxs);
-  color: var(--hist-ink-muted);
-  letter-spacing: 0.04em;
-}
 
 /* Dossier card — connection glyph */
-.hist-dossier__card-glyph {
-  font-family: var(--font-data);
-  font-size: var(--text-xs);
-  color: var(--hist-ink-muted);
-  display: block;
-  margin-bottom: var(--space-1);
-  opacity: 0.6;
-}
 
 /* Dossier cards — archivist sliding folders: 0.75 rest → 1.0 hover */
-.hist-dossier__card {
-  opacity: 0.78;
-  transition: opacity 250ms var(--ease-cinematic), box-shadow 250ms var(--ease-cinematic), transform 250ms var(--ease-cinematic);
-}
 
-.hist-dossier__card:hover,
-.hist-dossier__card:focus-visible {
-  opacity: 1;
-}
 
 /* prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
   .hist-record::before {
     display: none;
-  }
-  .hist-witness__expand-arrow {
-    transition: none;
-  }
-  .hist-dossier__card {
-    transition: none;
-    opacity: 1;
   }
 }
 
@@ -8298,76 +5471,12 @@ a.hist-record__figure-name:hover {
    Feels like a museum placard pinned to the dossier.
    --------------------------------------------------------------------------- */
 
-.hist-audio-cue {
-  position: relative;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 18px 24px;
-
-  /* Dashed rules — document annotation framing */
-  border-top: 1px dashed var(--hist-border-subtle);
-  border-bottom: 1px dashed var(--hist-border-subtle);
-
-  /* Breathing room from the hero above and The Crack below */
-  margin-top: 8px;
-  margin-bottom: 0;
-
-  transition: border-color 0.3s var(--ease-cinematic);
-}
-
-.hist-audio-cue[data-playing="true"] {
-  border-color: var(--hist-border);
-}
 
 /* Play button — brass circle */
-.hist-audio-cue__play {
-  position: relative;
-  flex-shrink: 0;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 1.5px solid var(--hist-brass);
-  background: transparent;
-  color: var(--hist-brass);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s var(--ease-cinematic), border-color 0.2s var(--ease-cinematic), transform 0.15s var(--ease-cinematic);
-  padding: 0;
-  line-height: 1;
-}
 
-.hist-audio-cue__play:hover {
-  background: var(--hist-brass-ghost);
-  border-color: var(--hist-brass-bright);
-}
-
-.hist-audio-cue__play:active {
-  transform: scale(0.93);
-}
-
-.hist-audio-cue__play:disabled {
-  opacity: 0.35;
-  cursor: not-allowed;
-}
 
 /* Pulsing ring when playing */
-.hist-audio-cue__play-ring {
-  position: absolute;
-  inset: -4px;
-  border-radius: 50%;
-  border: 1px solid var(--hist-brass);
-  opacity: 0;
-  pointer-events: none;
-}
 
-[data-playing="true"] .hist-audio-cue__play-ring {
-  animation: hist-ring-pulse 2.4s var(--ease-rack) infinite;
-}
 
 @keyframes hist-ring-pulse {
   0%, 100% { opacity: 0; transform: scale(1); }
@@ -8376,129 +5485,25 @@ a.hist-record__figure-name:hover {
 }
 
 /* Loading spinner */
-.hist-audio-cue__spinner {
-  width: 12px;
-  height: 12px;
-  border: 1.5px solid transparent;
-  border-top-color: var(--hist-brass);
-  border-radius: 50%;
-  animation: hist-spin 0.8s linear infinite;
-}
 
 @keyframes hist-spin {
   to { transform: rotate(360deg); }
 }
 
 /* Meta block: label + perspective dots */
-.hist-audio-cue__meta {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  min-width: 0;
-}
 
-.hist-audio-cue__label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: 'IBM Plex Mono', 'Courier New', monospace;
-  font-size: 0.72rem;
-  font-weight: 400;
-  color: var(--hist-ink-secondary);
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
-}
-
-.hist-audio-cue__label svg {
-  opacity: 0.7;
-  flex-shrink: 0;
-}
 
 /* Perspective dots */
-.hist-audio-cue__persp {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
 
-.hist-audio-cue__dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.hist-audio-cue__dot--a { background: var(--hist-persp-a); }
-.hist-audio-cue__dot--b { background: var(--hist-persp-b); }
-.hist-audio-cue__dot--c { background: var(--hist-persp-c); }
-.hist-audio-cue__dot--d { background: var(--hist-persp-d); }
-.hist-audio-cue__dot--e { background: var(--hist-persp-e); }
-
-.hist-audio-cue__persp-count {
-  font-family: 'Barlow Condensed', 'Arial Narrow', sans-serif;
-  font-size: 0.65rem;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.07em;
-  color: var(--hist-ink-muted);
-  margin-left: 2px;
-}
 
 /* Duration — right-aligned mono */
-.hist-audio-cue__duration {
-  flex-shrink: 0;
-  font-family: 'IBM Plex Mono', 'Courier New', monospace;
-  font-size: 0.72rem;
-  font-weight: 300;
-  color: var(--hist-ink-muted);
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-}
 
 /* Thin progress strip — appears inside the cue once started */
-.hist-audio-cue__progress {
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--hist-border-subtle);
-  overflow: hidden;
-}
 
-.hist-audio-cue__progress-fill {
-  height: 100%;
-  background: var(--hist-brass);
-  transition: width 0.5s linear;
-}
 
 /* Hover state on the entire cue strip */
-.hist-audio-cue:hover {
-  background: var(--hist-accent-ghost);
-}
 
 /* Mobile: compact layout */
-@media (max-width: 767px) {
-  .hist-audio-cue {
-    gap: 12px;
-    padding: 14px 16px;
-    margin: 0 0;
-  }
-
-  .hist-audio-cue__play {
-    width: 36px;
-    height: 36px;
-  }
-
-  .hist-audio-cue__label {
-    font-size: 0.68rem;
-  }
-
-  .hist-audio-cue__duration {
-    font-size: 0.68rem;
-  }
-}
 
 
 /* ---------------------------------------------------------------------------
@@ -8506,21 +5511,6 @@ a.hist-record__figure-name:hover {
    Slides up from bottom of viewport. Archival dark treatment.
    --------------------------------------------------------------------------- */
 
-.hist-audio-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 80;
-
-  /* Archival dark base — foxed charcoal */
-  background: #1A1410;
-  border-top: 1px solid var(--hist-brass-dim);
-
-  /* Slide-in from below */
-  animation: hist-bar-enter 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
-  transform-origin: bottom center;
-}
 
 @keyframes hist-bar-enter {
   from {
@@ -8533,113 +5523,20 @@ a.hist-record__figure-name:hover {
   }
 }
 
-.hist-audio-bar__inner {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0 20px;
-  height: 48px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
 
 /* Brand mark */
-.hist-audio-bar__brand {
-  font-family: 'IBM Plex Mono', 'Courier New', monospace;
-  font-size: 0.62rem;
-  font-weight: 400;
-  color: rgba(232, 224, 207, 0.45);
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
 
-.hist-audio-bar__brand-cmd {
-  color: var(--hist-brass);
-  opacity: 0.8;
-}
 
 /* Transport button */
-.hist-audio-bar__play {
-  flex-shrink: 0;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: 1px solid rgba(155, 122, 47, 0.5);
-  background: transparent;
-  color: var(--hist-brass);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
-  transition: background 0.15s var(--ease-cinematic), border-color 0.15s var(--ease-cinematic);
-}
 
-.hist-audio-bar__play:hover {
-  background: var(--hist-brass-ghost);
-  border-color: var(--hist-brass);
-}
-
-.hist-audio-bar__play:active {
-  transform: scale(0.92);
-}
 
 /* Progress strip — fills remaining space, clickable */
-.hist-audio-bar__progress {
-  flex: 1;
-  height: 3px;
-  background: rgba(232, 224, 207, 0.12);
-  border-radius: 2px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  min-width: 60px;
-}
 
-.hist-audio-bar__progress:hover {
-  height: 5px;
-}
-
-.hist-audio-bar__fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--hist-brass-dim) 0%, var(--hist-brass-bright) 100%);
-  border-radius: 2px;
-  transition: width 0.5s linear;
-  pointer-events: none;
-}
 
 /* Time display */
-.hist-audio-bar__time {
-  font-family: 'IBM Plex Mono', 'Courier New', monospace;
-  font-size: 0.62rem;
-  font-weight: 300;
-  color: rgba(232, 224, 207, 0.5);
-  white-space: nowrap;
-  flex-shrink: 0;
-  letter-spacing: 0.03em;
-}
 
-.hist-audio-bar__sep {
-  opacity: 0.4;
-}
-
-.hist-audio-bar__total {
-  opacity: 0.5;
-}
 
 /* VU pulse: thin glow on bar top when playing */
-.hist-audio-bar[data-playing="true"]::before {
-  content: '';
-  position: absolute;
-  top: -1px;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--hist-brass);
-  opacity: 0.5;
-  animation: hist-bar-glow 2s var(--ease-rack) infinite;
-}
 
 @keyframes hist-bar-glow {
   0%, 100% { opacity: 0.2; }
@@ -8647,45 +5544,14 @@ a.hist-record__figure-name:hover {
 }
 
 /* Mobile: tighter layout */
-@media (max-width: 767px) {
-  .hist-audio-bar__inner {
-    padding: 0 14px;
-    gap: 10px;
-  }
-
-  .hist-audio-bar__brand {
-    display: none; /* space is too tight on narrow screens */
-  }
-
-  .hist-audio-bar__play {
-    width: 34px;
-    height: 34px;
-  }
-}
 
 
 /* ---------------------------------------------------------------------------
    Dark mode — archival charcoal palette
    --------------------------------------------------------------------------- */
-.hist-page.dark .hist-audio-cue,
-[data-theme="dark"] .hist-audio-cue,
-.dark .hist-page .hist-audio-cue {
-  border-color: rgba(168, 128, 108, 0.2);
-}
 
-.hist-page.dark .hist-audio-cue:hover,
-[data-theme="dark"] .hist-audio-cue:hover,
-.dark .hist-page .hist-audio-cue:hover {
-  background: rgba(168, 128, 108, 0.05);
-}
 
 /* Dark mode audio bar stays dark regardless */
-.hist-audio-bar {
-  --hist-brass: #A8806C;
-  --hist-brass-bright: #B89070;
-  --hist-brass-dim: #8A6A56;
-  --hist-brass-ghost: rgba(168, 128, 108, 0.08);
-}
 
 /* ===========================================================================
    STORY PAGE — "The Testimony Reel"
