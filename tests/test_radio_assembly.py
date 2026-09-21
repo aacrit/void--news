@@ -258,14 +258,20 @@ def main() -> None:
     promo_render = Sine(330).to_audio_segment(duration=6000).apply_gain(-12)
     hp.load_render = lambda promo, render_dir=hp.RENDER_DIR: promo_render
     bed = Sine(110).to_audio_segment(duration=20000).apply_gain(-20).set_channels(2)
-    stitched, at = hp.stitch_post_roll(bed, 4000, promo_render, last_word_ms=4500)
+    promo_bed = hp.load_bed()
+    check(promo_bed is not None and 12000 <= len(promo_bed) <= 14000, "the promo bed asset is present")
+    stitched, at = hp.stitch_post_roll(bed, 4000, promo_render, last_word_ms=4500, bed=promo_bed)
     check(len(stitched) == len(bed), f"stitch keeps the length ({len(stitched)} vs {len(bed)})")
     check(at == 4500 + hp.LEAD_MS, f"promo placed a beat after the last word ({at})")
     ducked_only = hp._duck_window(bed, at, at + 6000, hp.DUCK_DB, hp.RAMP_MS)
     drop = bed[at + 500:at + 5500].dBFS - ducked_only[at + 500:at + 5500].dBFS
     check(abs(drop - (-hp.DUCK_DB)) < 0.5, f"music under the promo is dipped by {drop:.1f} dB")
-    check(bed[:at - hp.RAMP_MS - 10].raw_data == stitched[:at - hp.RAMP_MS - 10].raw_data,
-          "nothing before the promo is touched")
+    untouched = at - hp.BED_LEAD_MS - hp.RAMP_MS - 10
+    check(bed[:untouched].raw_data == stitched[:untouched].raw_data,
+          "nothing before the bed is touched")
+    ducked_lead = hp._duck_window(bed, at - hp.BED_LEAD_MS, at + 6000, hp.DUCK_DB, hp.RAMP_MS)
+    check(stitched[at - 600:at].dBFS > ducked_lead[at - 600:at].dBFS + 1.0,
+          "the promo bed is audible over the ducked music before the first word")
     try:
         hp.stitch_post_roll(bed, 4000, Sine(330).to_audio_segment(duration=12000), last_word_ms=4500)
         check(False, "a 12 s promo is refused")

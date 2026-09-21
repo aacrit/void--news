@@ -187,8 +187,10 @@ referenced by `<podcast:chapters>` in `podcast-world.xml`.
 ## House promo (post-roll)
 
 After the sign-off tag, a beat into the outro, a two-sentence house promo for
-Weekly, History or the site plays in the house voice under the outro's held
-bars, with the music dipped 8 dB beneath it. It is not a script marker (the
+Weekly, History or the site plays in the house voice over its own bed
+(`radio_promo_bed.wav`: the motif at the Sunday tempo over a low D drone,
+with a riser and a landing on the outro's D), while the outro is pulled 12 dB
+down beneath it. It is not a script marker (the
 rundown grammar and R-01..R-13 are untouched) and it never promotes On Air.
 The programme's length does not change, so A-04 holds. It is selected by the
 sha256 of `onair:<edition>:<date>:<slot>` into `data/promos/house.yaml`, so a
