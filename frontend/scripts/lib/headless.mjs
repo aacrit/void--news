@@ -125,17 +125,13 @@ export function measureOverflow(page) {
     for (const el of [document.documentElement, document.body,
                       ...document.querySelectorAll("main, .hist-page, #main-content, .hist-event-detail, .page-container")]) {
       el.style.setProperty("overflow", "visible", "important");
-      /* A flex or grid item's `min-width: auto` is 0 while its container
-         clips and min-content once it does not. Un-clipping .page-container
-         (a flex column) therefore let /sources grow to the min-content of
-         its seven-column glyph grid, 1,594px at a 390px viewport, which
-         is not what a phone shows. Pin the children to the clip-time value
-         so the measurement is of the layout, not of the neutralisation. */
-      const d = getComputedStyle(el).display;
-      if (/flex|grid/.test(d)) {
-        for (const child of el.children) child.style.setProperty("min-width", "0", "important");
-      }
     }
+    /* Do NOT "pin" flex or grid children to min-width 0 here to quiet a
+       reading: that was tried on 2026-09-21 for /sources at 390, on the
+       theory that un-clipping had grown the layout. It had not. The
+       methodology picker really was 1,594px wide inside a 358px column,
+       cropped by .page-container, and a phone really showed its rows
+       running off the edge. The gate was right; the theory was wrong. */
     const vw = document.documentElement.clientWidth;
     const sw = document.documentElement.scrollWidth;
 

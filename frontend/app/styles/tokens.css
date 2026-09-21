@@ -104,7 +104,7 @@
      News Brief, Editorial). The wordmark's --palette-news (#B26F52) only hits
      ~3.3:1 on cream, which fails WCAG AA at 11px; this ink shade reads as the
      same color to the eye but clears AA. */
-  --palette-news-ink: #9A5638;
+  --palette-news-ink: #8C4C30;  /* 5.2:1 on Paper's #E8E5E0, 5.5 on the news paper; #9A5638 read 4.4 on Paper */
   --palette-weekly: #B91C1C;
   --palette-weekly-paper: #EDE4D0;
   --palette-history: #5C4033;
@@ -382,9 +382,9 @@
   --bias-left:         #6498D8;  /* medium-bright blue — 5.04:1 AA */
   --bias-center-left:  #78AEDE;  /* light periwinkle — 5.48:1 AA */
   --bias-center:       #48B870;  /* vivid sage — 5.22:1 AA — green only */
-  --bias-center-right: #D05C48;  /* warm coral — 4.58:1 AA */
-  --bias-right:        #CC3E34;  /* vivid crimson — 5.10:1 AA */
-  --bias-far-right:    #B02E26;  /* deep-bright crimson — 4.68:1 AA — deepest red */
+  --bias-center-right: #E0705E;  /* warm coral, 5.5:1 on #1C1A17 (was #D05C48, 4.4:1) */
+  --bias-right:        #EA6559;  /* crimson, 5.4:1 on #1C1A17, still 4.9 through a 90% fade (was #CC3E34: the comment said 5.1, it measured 3.6) */
+  --bias-far-right:    #F04A40;  /* the extreme is the most saturated, 4.7:1 on #1C1A17 (was #B02E26, 2.7:1) */
   --type-reporting:    #6490B8;
 
   /* Text — all pass WCAG AA 4.5:1 on --bg-primary (#1C1A17) */

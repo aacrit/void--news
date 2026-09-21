@@ -1020,7 +1020,7 @@
   font-size: var(--text-xxs);
   font-weight: 600;
   letter-spacing: 0.08em;
-  color: var(--accent-warm);
+  color: var(--fg-accent);
   text-transform: uppercase;
 }
 

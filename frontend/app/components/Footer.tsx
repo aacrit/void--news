@@ -49,7 +49,7 @@ export default function Footer({ lastUpdated }: FooterProps) {
           <span className="footer-link__sep" aria-hidden="true">&middot;</span>
           <Link href="/paper" className="footer-link">Paper</Link>
           <span className="footer-link__sep" aria-hidden="true">&middot;</span>
-          <Link href="/listen" className="footer-link">Listen</Link>
+          <Link href="/audio" className="footer-link">Audio</Link>
           <span className="footer-link__sep" aria-hidden="true">&middot;</span>
           <Link href="/about" className="footer-link">About</Link>
           <span className="footer-link__sep" aria-hidden="true">&middot;</span>

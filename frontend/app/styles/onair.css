@@ -16,6 +16,8 @@
      Never invent a new teal: --voice-accent is the shared audio identity used
      by the FloatingPlayer broadcast view. */
   --oa-accent: var(--voice-accent);
+  /* The teal as TEXT: the accent reads 2.2:1 on light paper. */
+  --oa-ink: var(--voice-ink);
   --oa-amber: var(--cin-amber, var(--accent-warm));
 
   max-width: 660px;
@@ -36,7 +38,7 @@
   font-size: 0.72rem;
   letter-spacing: 0.12em;
   text-transform: lowercase;
-  color: var(--oa-accent);
+  color: var(--oa-ink);
 }
 .onair__dot {
   width: 7px;
@@ -654,7 +656,7 @@
   font-family: var(--font-data);
   font-size: 0.6rem;
   letter-spacing: 0.04em;
-  color: var(--oa-accent);
+  color: var(--oa-ink);
   border: 1px solid var(--voice-accent-dim);
   /* stylelint-disable-next-line declaration-property-value-allowed-list -- literal radius, predates the scale */
   border-radius: 4px;
@@ -742,7 +744,7 @@
   color: var(--fg-muted);
   min-width: 3.1ch;
 }
-.onair__chap--on .onair__chap-time { color: var(--oa-accent); }
+.onair__chap--on .onair__chap-time { color: var(--oa-ink); }
 .onair__chap-body {
   flex: 1;
   min-width: 0;

@@ -63,7 +63,7 @@ export function eraMetadata(opts: {
 }): Metadata {
   return yieldToCardFile(
     pageMetadata({
-      title: `${opts.label} | History`,
+      title: sectionTitle(opts.label, "History"),
       description: `${opts.dateRange}. ${opts.description}. Each event told from every side that claimed it.`,
       path: `/history/era/${opts.era}/`,
     })
@@ -73,7 +73,7 @@ export function eraMetadata(opts: {
 export function regionMetadata(opts: { label: string; region: string }): Metadata {
   return yieldToCardFile(
     pageMetadata({
-      title: `${opts.label} | History`,
+      title: sectionTitle(opts.label, "History"),
       description: `Events from ${opts.label}, each told from every side that claimed it. Primary sources, named perspectives, and what each account leaves out.`,
       path: `/history/region/${opts.region}/`,
     })
@@ -83,7 +83,7 @@ export function regionMetadata(opts: { label: string; region: string }): Metadat
 export function threadsMetadata(threadCount: number): Metadata {
   return yieldToCardFile(
     pageMetadata({
-      title: "Threads | History",
+      title: sectionTitle("Threads", "History"),
       description: `${threadCount} threads through the archive, each one following a single argument across centuries.`,
       path: "/history/threads/",
     })

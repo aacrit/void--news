@@ -180,7 +180,7 @@
   }
 
   .mtb__label--home {
-    color: var(--palette-news);
+    color: var(--palette-news-ink);
     font-weight: 700;
   }
 
@@ -200,7 +200,7 @@
   }
 
   .mtb__label--onair {
-    color: var(--voice-accent);
+    color: var(--voice-ink);
     font-weight: 700;
   }
 

@@ -21,8 +21,8 @@ const ROUTES: { path: string; changeFrequency: MetadataRoute.Sitemap[number]["ch
   // and it is the stable URL to link when you mean "the magazine" rather than
   // "this week".
   { path: "/weekly/archive/", changeFrequency: "weekly", priority: 0.5 },
-  // The three podcast feed addresses, for people rather than apps.
-  { path: "/listen/", changeFrequency: "monthly", priority: 0.5 },
+  // Audio: every programme and the three feed addresses, one place.
+  { path: "/audio/", changeFrequency: "daily", priority: 0.7 },
   // Paper: the same twenty as the front page, laid out to print. Back 2026-09-21.
   { path: "/paper/", changeFrequency: "daily", priority: 0.6 },
   // /games is 301-redirected to home in public/_redirects (hidden for launch),

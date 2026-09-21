@@ -35,7 +35,7 @@ export type Section =
   | "weekly"
   | "paper"
   | "onair"
-  | "listen"
+  | "audio"
   | "sources"
   | "ship"
   | "about"
@@ -54,7 +54,9 @@ export function sectionForPath(path: string): Section {
     case "weekly": return "weekly";
     case "paper": return "paper";
     case "onair": return "onair";
-    case "listen": return "listen";
+    /* /listen 301s to /audio at the edge; the section is the same either way. */
+    case "audio":
+    case "listen": return "audio";
     case "sources": return "sources";
     case "ship":
     case "feedback": return "ship";
@@ -71,16 +73,25 @@ const NAMEPLATES: Partial<Record<Section, { href: string; label: string }>> = {
   history: { href: "/history", label: "History" },
   weekly: { href: "/weekly", label: "Weekly" },
   paper: { href: "/paper", label: "Paper" },
+  /* On Air is a programme inside the Audio section, so its page wears the
+     section's nameplate; the nameplate links to the section, not to itself. */
+  audio: { href: "/audio", label: "Audio" },
+  onair: { href: "/audio", label: "Audio" },
 };
 
-/** The section links. Order is the reading order of the product: the daily
- *  broadcast, then the two slower sections, then the feeds. */
+/** The section links. Order is the reading order of the product: the
+ *  programmes, then the two slower sections. Audio replaced On Air and Listen
+ *  on 2026-09-21: On Air is the daily programme's page and Listen was a page
+ *  of feed addresses, two links for one section. */
 const SECTION_LINKS: { href: string; label: string; section: Section }[] = [
-  { href: "/onair", label: "On Air", section: "onair" },
+  { href: "/audio", label: "Audio", section: "audio" },
   { href: "/history", label: "History", section: "history" },
   { href: "/weekly", label: "Weekly", section: "weekly" },
-  { href: "/listen", label: "Listen", section: "listen" },
 ];
+
+/** A section link is current on its own routes and on the routes of the
+ *  programmes it holds: Audio is current on /onair. */
+const HELD_BY: Partial<Record<Section, Section>> = { onair: "audio" };
 
 const PAGE_LINKS: { href: string; label: string; section: Section; title: string }[] = [
   { href: "/sources", label: "Sources", section: "sources", title: "Every outlet Void News reads" },
@@ -212,7 +223,7 @@ export default function NavBar({
                 href={l.href}
                 className="nav-page"
                 data-section={l.section}
-                aria-current={section === l.section ? "page" : undefined}
+                aria-current={section === l.section || HELD_BY[section] === l.section ? "page" : undefined}
               >
                 {l.label}
               </Link>

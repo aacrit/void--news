@@ -80,7 +80,7 @@ const MAIN_ITEMS: NavItem[] = [
   { href: "/history", label: "History", desc: "One event, told from every side.", accent: "neutral", icon: "history", cascade: 3 },
   { href: "/weekly", label: "Weekly", desc: "The week, in one issue.", accent: "neutral", icon: "weekly", cascade: 3 },
   { href: "/paper", label: "Paper", desc: "Today’s front page, laid out to print.", accent: "neutral", icon: "paper", cascade: 3 },
-  { href: "/listen", label: "Listen", desc: "Three programmes, three podcast feeds.", accent: "neutral", icon: "listen", cascade: 3 },
+  { href: "/audio", label: "Audio", desc: "Every programme, one place.", accent: "neutral", icon: "listen", cascade: 3 },
   { href: "/sources", label: "Sources", desc: "1,016 sources, 158 countries.", accent: "neutral", icon: "sources", cascade: 3 },
   { href: "/ship", label: "Feedback", desc: "Tell us what to build or fix.", accent: "neutral", icon: "feedback", cascade: 3 },
 ];

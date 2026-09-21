@@ -47,6 +47,15 @@
   --wk-measure: 36rem;
   --wk-rail: 17ch;
 }
+/* On a wide canvas the 36rem measure used 40% of the width and read as a
+   lonely column; 40rem is still inside the 60-75 character range at the
+   body size, and the rails keep their share. */
+@media (min-width: 1280px) {
+  :root:has(.wk-page) {
+    --wk-measure: 40rem;
+    --wk-rail: 19ch;
+  }
+}
 
 .wk-page {
   min-height: 100vh;
@@ -879,6 +888,31 @@
 }
 
 /* --- The figures rail --- */
+/* The rails sit beside the body on a canvas wide enough to have rails
+   (matching markup order: numbers, body, timeline). Narrower, they take the
+   text column after the body, which the source order also makes natural. */
+@media (min-width: 1024px) {
+  .wk-feature__numbers {
+    grid-column: rail-start / text-start;
+    align-self: start;
+    position: sticky;
+    top: calc(var(--nav-height) + var(--space-5));
+    margin-top: 0;
+  }
+  .wk-feature__timeline {
+    grid-column: text-end / rail-end;
+    align-self: start;
+    position: sticky;
+    top: calc(var(--nav-height) + var(--space-5));
+    margin-top: 0;
+  }
+}
+@media (max-width: 1023px) {
+  .wk-feature__numbers { order: 2; }
+  .wk-feature__timeline { order: 3; }
+  .wk-feature__body { order: 1; }
+  .wk-pullquote { order: 4; }
+}
 .wk-feature__numbers {
   grid-column: text-start / rail-end;
   display: grid;

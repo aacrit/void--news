@@ -4,7 +4,7 @@ import OnAirPage from "../components/OnAirPage";
 import { pageMetadata } from "../lib/siteMeta";
 
 export const metadata: Metadata = pageMetadata({
-  title: "On Air | Void News",
+  title: "On Air | Audio | Void News",
   description:
     "Today's brief, read aloud in two voices. The day in five minutes, then the argument worth having.",
   path: "/onair/",

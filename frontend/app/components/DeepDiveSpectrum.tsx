@@ -893,7 +893,9 @@ export default function DeepDiveSpectrum({ sources, settled = false, aggregateLe
   }
 
   return (
-    <div className="dd-sv" role="img" aria-label="Source political lean spectrum">
+    /* A group, not an image: on a coarse pointer the pins are buttons, and a
+       control inside role="img" is a control nobody can reach. */
+    <div className="dd-sv" role="group" aria-label="Source political lean spectrum">
       <SpectrumView sources={sources} isMobile={isMobile} settled={settled} aggregateLean={aggregateLean} />
       {/* Desktop: mean needle + label (TiltRow). Mobile: TiltRow is too much
           clutter, so show a compact L/C/R source-count readout instead so the

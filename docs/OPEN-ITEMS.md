@@ -37,6 +37,40 @@ claims about its own confidence. It needs a decision, not a tweak.
 
 ## Known defects, not yet fixed
 
+### Bias: 83% of served per-article rows carry political lean exactly 50 (2026-09-21)
+
+Measured on the 2026-09-20 export in `frontend/public/data/deepdive/*.json`,
+737 rows across the 35 clusters:
+
+- 610 rows (83%) have `political_lean` exactly 50; 628 (85%) sit in 45..55;
+  population stdev 9.3.
+- The most common full tuple is `(50, 10, 25, 50, framing)`: four axes at
+  their defaults with only framing varying (160 rows at framing 6, 38 at 12,
+  24 at 17). `pipeline/validation/bias_defaults.py` counts a row as default
+  only when EVERY axis matches, so a varying fifth axis lets these through and
+  the gate reads clean while four axes are unmeasured.
+- The outlet baseline is not in the rows. Of 77 articles from outlets the
+  roster rates `right`, 57 are at exactly 50; of 171 rated `center-left`,
+  127 are at 50; of 26 rated `far-right`, 19 are at 50. The analyzer's own
+  contract ("neutral copy leaves an outlet AT its baseline",
+  `pipeline/analyzers/political_lean.py:13`) makes exactly 50 impossible for
+  a right-rated outlet unless the baseline it was given was "center".
+- What a reader sees: 449 of 558 measured sources (80%) in the centre
+  bucket, 14 of 35 clusters averaging exactly 50, median lean spread 6.8.
+
+Where to look first: `pipeline/main.py:2469`,
+`source = source_map.get(source_slug, {"political_lean_baseline": "center"})`.
+A slug that misses the map anchors the article to centre silently, and the
+share of rows at exactly 50 is what a mass miss would look like. Confirm by
+logging the miss rate for one run before changing anything.
+
+The control that would have caught it: a per-axis default share in
+`bias_defaults.py` (political lean exactly 50 above, say, 40% of measured
+rows fails the export), alongside the whole-tuple share. Not added here
+because the threshold needs calibrating against a healthy run and a failing
+gate blocks the daily export; a CEO call.
+
+
 **Two live episodes serve audio that contradicts their own script.**
 `great-leap-forward` presents a secondhand Mao remark, and
 `gutenberg-printing-press` an attributed line from a Dominican friar, as
@@ -239,11 +273,6 @@ accruing in git history.
   failing). Among them `.dd-page__section`, `.hist-hr-account__type`,
   `.fp__playlist`. Each is either a hook nothing styles yet or a name that
   outlived its CSS; the owner of each component decides which.
-- The section links in the masthead have no hover draw-in; only the nameplate
-  does. The sweep records this as `[skip] section-link-draw`, on purpose: the
-  current-page mark under a section link is a different device and adding a
-  second rule under the same word was judged noise. Revisit if the nameplate
-  rule reads well after a week.
 
 ## History: 70 over-escaped apostrophes reach the reader
 
@@ -275,27 +304,16 @@ the block. Not a regex.
 Worth doing with the tree quiet, since the same five files were being rewritten
 by the dash pass when this was found.
 
-## History audio: five episodes are stale against their scripts
+## History audio: two episodes nobody has ear-checked
 
-Their scripts changed on 2026-09-20 and 2026-09-21 and the rendered MP3 no longer matches:
+The five episodes whose scripts changed on 2026-09-20 and 09-21 were
+re-rendered and published on 2026-09-21 (run 35562858536, after the publish
+job learned to `pip install pyyaml`; the first attempt rendered all five and
+then failed 78 promo checks for want of it). `tests/test_history_audio.py`
+names a stale episode automatically on a **full clone**; at `fetch-depth: 1`
+it skips that check by design.
 
-- `ottoman-empire` — a fabricated Bayezid II quotation removed, the surviving
-  facts folded into SCENE 2 as narration
-- `iran-iraq-war` — two analytical lines that were never utterances removed
-- `iranian-revolution` — the CLOSE dated the Islamic Republic to 11 February
-  1979, when the monarchy fell; it was proclaimed 1 April after a referendum
-- `fall-of-constantinople` — "within forty years" was false for voyages that
-  took 44 and 45; now "within half a century"
-- `mongol-conquest-baghdad` (2026-09-21): "Some sources say he was made to watch
-  his sons killed first" cut from SCENE 3; the record names four chroniclers
-  and attaches the claim to none, so the YAML dropped it the same day
-
-`tests/test_history_audio.py` names these automatically on a **full clone**, by
-comparing each episode's `publishedAt` to its script's last commit. At
-`fetch-depth: 1` it skips that check by design, so the list has to be carried by
-hand until a render runs with full history.
-
-Also pending: `peloponnesian-war` estimates 15.06 minutes against a 15.0 warn
+Still pending: `peloponnesian-war` estimates 15.06 minutes against a 15.0 warn
 line (the hard gate is 15.5, so it ships), and `treaty-of-waitangi` reads a te
 reo Maori passage verbatim and has never been ear-checked. No validator can sign
 off a synthesiser on unfamiliar phonemes.

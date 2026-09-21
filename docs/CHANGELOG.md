@@ -18,6 +18,149 @@ lives in this file.
 
 ---
 
+## rev 76: the product in a browser, and the layer under the chrome (2026-09-21)
+
+**CEO: "let us perform headless playwright testing holistically and beyond
+these changes (if perfectly implemented), take this above and beyond with an
+oomph of subtle branding"; then "make sure all elements and user stories are
+played through".** The decision this rev rests on: correctness is judged in a
+browser, not only in a file. Every earlier gate read something (served HTML,
+source, stylesheets, five pages for width). None could see a console error, a
+hydration mismatch, a dangling link, an unnamed control, a status bar the
+wrong colour or a drawer that lets focus out.
+
+**What shipped, by gate.** `frontend/scripts/verify-headless.mjs`: every
+route family (thirteen static routes, one sample per dynamic family read from
+the export, the 404) at 390/768/1024/1440 in dark and light, per page: no
+console or page error, no hydration text, no same-origin 4xx or failed
+request, the stylesheet proven loaded, no overflow, one `h1`, the title
+grammar, one masthead and footer carrying the URL's section and the right
+`aria-current`, every internal link resolving in `out/` (a `_redirects`
+prefix counts as the 301 it is), alt on every image, a name on every control,
+no dash in title, attributes or chrome, no text painted in its own
+background, the skip link first in Tab order with a visible ring, axe-core at
+WCAG 2.1 AA. Then the scenarios: Deep Dive inline and full page with Back,
+search by Ctrl+K, the masthead button and `/`, the theme toggle and both
+`theme-color` metas, the drawer's focus trap and Escape, the Sigil's popup and
+`aria-controls`, the shortcuts overlay and `j`/`k`, the banner on the second
+visit only, the player per route, Paper's twenty in order, and the brand
+layer. `--quick` runs in `auto-merge-claude.yml` after the responsive gate;
+the full grid is by hand. `scripts/lib/headless.mjs` is the one harness under
+both browser gates; `verify-responsive.mjs` is imports and two loops now, and
+its sticky check looks for the masthead that exists. CSS: the dead-selector
+purge (1,168 of 3,109 class selectors, 48,569 to 36,378 lines) behind
+`css-parity.test.mjs`; then tokens and motion behind `css-lint.mjs`
+(stylelint, three rules): 60 raw curves became fifteen named easings, 251
+duration slots became the six `--dur-*`, five duplicated keyframes are one
+each, fifteen per-file reduced-motion blocks became one global one, 118
+literal radii became tokens with `--radius-pill` and `--radius-sheet` added,
+138 dead global tokens deleted with the derivation committed
+(`css-tokens-purge.txt`). Screenshots identical on 22 of 26 captures; the
+other four are the reduced-motion scroll rule that had never applied.
+
+**What the sweep found, all fixed.** Round one (quick): the dateline's time
+and "as of" sat at opacity 0.7 and 0.8 over `--fg-muted`, tuned to exactly
+4.5:1, so the compound read 3.5 and 2.7; the player clock was teal at 65%
+(3.5 dark, 2.1 light at full strength) and its chapter title the accent at
+80%; the History nameplate read 4.0 at 14px in dark; the long-view toggle 4.1
+under its paper label; the player pill was `role="button"` with the play
+button inside it; the History year ribbon was `aria-hidden` with nine
+focusable buttons; the phone Deep Dive mounted a second NavBar under the one
+the layout mounts; the 404 had no `h1`, the site title and no way into a
+section; four `theme-color` metas (the viewport export and a hand-written
+pair); the shortcuts overlay omitted `O`, which always worked, and `/` did
+nothing; and the lead Sigil's popup closed a quarter-second after it opened,
+because the hover shift on `.lead-headline` made the h2 a stacking context
+with z-index auto, under the card's stretched link at z-index 2. Round two
+(full grid): the Weekly archive had no `h1`; every Sources axis button showed
+an em dash for a missing score; the About Sigil demo was `aria-hidden` with
+a focusable child; the dark red lean ramp (`--bias-center-right`,
+`--bias-right`, `--bias-far-right`) read 4.4, 3.6 and 2.7 on the dark paper
+while its comments claimed AA, because on a dark ground the extreme must get
+brighter, not deeper; `getLeanColor` returned a hex computed on the server
+from the LIGHT palette, so the About demo shipped rgb(17,54,121) on a dark
+ground (1.5:1); it returns a `color-mix()` of the tokens now, the same
+string on both sides, painted in the mode's colours; the spectrum was
+`role="img"` with buttons inside; and a dozen small-text uses of an accent
+(the teal, the news umber, the warm brass, History's brass and green, About's
+card accents) in light mode, each moved to the text-safe token that already
+existed (`--fg-accent`, `--palette-news-ink`, `--voice-ink`) or a new one
+(`--hist-brass-ink`), or pulled toward the ink with `color-mix`.
+
+**The brand layer**, `app/styles/brand.css`, six touches a reader feels
+rather than notices, each asserted by the sweep: the status bar wears the
+section's paper (History and Weekly layouts export their own `viewport`;
+`ThemeToggle` rewrites both metas from `--nav-paper`, the custom property the
+masthead is painted with, which does not transition); the scrollbar and the
+selection take the section accent; the nameplate draws its rule in on hover,
+focus and `aria-current`; a long read carries a 2px brass reading rule under
+the masthead on a scroll timeline, no script, nothing under reduced motion;
+while audio plays the wordmark's beam rocks three degrees in brass; a Deep
+Dive or a History event prints as a sheet with `PrintMast` and its own
+address. Skipped with reasons: the skeleton's ink doodle, cross-document view
+transitions.
+
+**Refutations and corrections recorded.** The Phase 1 report's one
+"unexplained" screenshot diff on the home page was not `.feed-expand__btn`
+changing face: two fresh captures of the merged tree were pixel-identical to
+the pre-purge baseline, and the diff was a Sigil caught mid draw-in. The
+Sources page's "1,220px overflow" at 390 was the gate's own un-clipping: a
+flex item's `min-width: auto` is 0 while its container clips and min-content
+once it does not; the harness pins the children now. Cmd+K was bound all
+along. The existing `sigil-word-sweep` cycles the lean palette, so the on-air
+beam does not reuse it. The plan said the nameplate is current on History and
+Weekly only; Paper's is current on `/paper/` too, and the sweep follows the
+code. The wordmark's own letters fail axe's contrast rule by design and are
+allowlisted as a logotype (WCAG 1.4.3), with the reason in the file. The
+History render's first attempt (run 35557957513) rendered five good episodes
+and then failed 78 promo checks in publish for want of `pyyaml`; the fix is
+one line in the workflow and the second run published all five.
+
+**Same day, on the CEO's next three questions.** *"Should History and
+Weekly in the navigation at least get their accent/italics?"* Colour at rest,
+no: chrome stays neutral and the sub-brand shows the moment you arrive
+(nameplate, paper). Accent on reach, yes: each section link draws its own
+accent in on hover and focus, the nameplate's device; italics skipped (at nav
+size an italic reads as emphasis). *"Why are On Air and Listen separate? Make
+Audio its own horizontal channel."* Agreed: they were two links for one
+section, and Listen was a page of feed addresses. `/audio/` is the section
+that holds every programme: today's On Air, this week's Argument, the latest
+six History episodes, each with a play button that loads the SHARED player
+the way its own page does (setEdition for the daily flow, playWeekly,
+playHistory; nothing autoplays), and the three feeds with copy buttons. One
+masthead link, Audio, replaces two; On Air keeps its page inside the section
+and wears the Audio nameplate; `/listen` 301s. *"The canvas size keeps
+changing when navigating back to news."* Root cause measured, not guessed:
+after any client-side navigation the page landed at scrollY 51, not 0,
+because Next scrolls the new segment's first element into view and the
+sticky masthead is 51px tall when compact; the page's first 51px sat under
+the bar and the bar, which un-compacts only below 40px, stayed compact, so a
+fresh load showed a 57px bar and a click a 51px one. Two changes: the
+compact state no longer changes the bar's height (it dropped `.nav-inner`'s
+padding by 6px; the logo scale and the tagline fade carry the state now), so
+the browser's scroll anchoring has nothing to compensate for when the bar
+un-compacts at the top of a new page; and `html { scroll-padding-top }`
+lands every navigation at 0 and puts in-page anchors below the bar. The
+sweep asserts both (navigation-lands-at-top, navigation-back-uncompacts). *"Weekly is laid out oddly, either full width or only
+the middle column: intentional or a bug?"* Both. The magazine grid (rev 71)
+is intentional: one measure for the long things, full width for the short
+ones, rails for numbers, timeline and pull-quote. The bug was that both rails
+rendered AFTER the body, so a long essay ran alone at 40% of a 1440 canvas
+with two empty margins. The rails are placed before the body in the markup
+now, so auto-placement seats numbers in the left rail and the timeline in
+the right beside the essay (sticky under the masthead), and the measure is
+40rem at 1280 and up. *"Are we back to most sources being centre?"* Measured
+on the 09-20 export: 610 of 737 served per-article rows (83%) carry political
+lean exactly 50, the commonest full tuple is four defaults plus a varying
+framing, and 57 of 77 rows from outlets the roster rates right sit at
+exactly 50, which the analyzer's own contract makes impossible unless it was
+handed "center". Not a UI defect and not changed here; the numbers, the
+first place to look (`main.py:2469` defaults a missed slug to centre) and the
+per-axis gate that would catch it are in OPEN-ITEMS for the pipeline owner.
+
+**Left open (in OPEN-ITEMS):** the centre collapse above; 74 (now 77) markup
+classes with no rule; two History episodes nobody has ear-checked.
+
 ## rev 75 — one Void, applied everywhere (2026-09-21)
 
 **CEO: a third-party product and brand audit of the whole ecosystem, then

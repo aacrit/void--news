@@ -94,6 +94,34 @@ html {
   transform: scaleX(1);
 }
 
+/* The section links reach for their own accent: History draws its rule in
+   umber, Weekly in red, Audio in the teal, on hover and focus only. At rest
+   the masthead stays neutral (colour in chrome is the one rule the system
+   holds), and on the section's own page the current-page mark takes over. */
+.nav-sections .nav-page {
+  position: relative;
+}
+.nav-sections .nav-page::after {
+  content: "";
+  position: absolute;
+  left: var(--space-3);
+  right: var(--space-3);
+  bottom: 8px;
+  height: 1px;
+  background: var(--nav-link-accent, var(--nav-accent));
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--dur-step) var(--ease-unfold);
+  pointer-events: none;
+}
+.nav-sections .nav-page:hover::after,
+.nav-sections .nav-page:focus-visible::after {
+  transform: scaleX(1);
+}
+.nav-sections .nav-page[data-section="history"] { --nav-link-accent: var(--palette-history); }
+.nav-sections .nav-page[data-section="weekly"] { --nav-link-accent: var(--palette-weekly); }
+.nav-sections .nav-page[data-section="audio"] { --nav-link-accent: var(--voice-ink); }
+
 /* ── 3. The reading rule ───────────────────────────────────────────────────
    On a long read only (a Deep Dive page, a History event, the Weekly issue)
    a 2px brass rule under the masthead scales with the document's scroll.

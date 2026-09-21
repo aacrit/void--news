@@ -150,7 +150,7 @@
 /* Branded name: the product renders in its own accent, prefixed with a small
    coverage-ring glyph (the Sigil "O") so the suite reads as one branded family
    rather than a grey word list. */
-.about-x__world-name { display: inline-flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); font-family: var(--font-editorial); font-weight: 600; font-size: var(--text-lg); color: var(--card-accent); }
+.about-x__world-name { display: inline-flex; align-items: center; flex-wrap: wrap; gap: var(--space-2); font-family: var(--font-editorial); font-weight: 600; font-size: var(--text-lg); color: color-mix(in srgb, var(--card-accent) 70%, var(--fg-primary)); }
 .about-x__world-name::before {
   content: "";
   flex: 0 0 auto;
@@ -328,7 +328,7 @@
   box-shadow: 0 6px 18px color-mix(in srgb, var(--card-accent) 22%, transparent);
 }
 .verdict__map-link:focus-visible { outline: 2px solid var(--card-accent); outline-offset: 2px; }
-.verdict__map-name { font-family: var(--font-editorial); font-weight: 600; font-size: var(--text-base); color: var(--card-accent); }
+.verdict__map-name { font-family: var(--font-editorial); font-weight: 600; font-size: var(--text-base); color: color-mix(in srgb, var(--card-accent) 70%, var(--fg-primary)); }
 .verdict__map-sub { font-family: var(--font-structural); font-size: var(--text-xs); color: var(--fg-secondary); line-height: 1.35; }
 .verdict__map-note { font-family: var(--font-structural); font-size: var(--text-xs); color: var(--fg-tertiary); max-width: 34rem; margin: var(--space-3) auto 0; }
 

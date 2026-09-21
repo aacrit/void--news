@@ -17,6 +17,7 @@
   --hist-accent-wash: rgba(92, 64, 51, 0.14);
   --hist-accent-ink: rgba(92, 64, 51, 0.22);
   --hist-brass: #9B7A2F;
+  --hist-brass-ink: #7A5F20;  /* the brass as small text: 5.2:1 on the paper; the brass itself is 3.6 */
   --hist-brass-bright: #B08D3A;
   --hist-brass-dim: #836722;
   --hist-brass-ghost: rgba(155, 122, 47, 0.08);
@@ -31,7 +32,7 @@
   --hist-bg-inset: #EDE8D8;
   --hist-persp-a: #4A6E85;
   --hist-persp-b: #8E5B42;
-  --hist-persp-c: #5D7748;
+  --hist-persp-c: #4E6539;  /* 5.5:1 on the paper as 9px text; #5D7748 read 4.3 */
   --hist-persp-d: #7D5A6E;
   --hist-persp-e: #8B7638;
   --hist-persp-f: #6E5242; /* THE COLD WAR — deep iron red */
@@ -108,6 +109,7 @@
   --hist-accent-wash: rgba(142, 106, 86, 0.18);
   --hist-accent-ink: rgba(142, 106, 86, 0.25);
   --hist-brass: #C4A04A;
+  --hist-brass-ink: var(--hist-brass);  /* 7.3:1 on the dark paper */
   --hist-brass-bright: #D4B05A;
   --hist-brass-dim: #A88A3A;
   --hist-brass-ghost: rgba(196, 160, 74, 0.08);
@@ -460,7 +462,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--hist-brass);
+  color: var(--hist-brass-ink);
 }
 
 .hist-event-card__meta {
@@ -3584,8 +3586,10 @@
 }
 
 .hist-compare-option--active {
-  background: var(--hist-accent);
-  color: var(--hist-paper);
+  /* Same fill as the long-view toggle: the raw accent under paper text read
+     4.1:1 (dark, ink text on it 3.7:1). */
+  background: color-mix(in srgb, var(--hist-accent) 82%, var(--hist-bg));
+  color: var(--hist-paper-fixed, #F2EDE0);
   border-color: var(--hist-accent);
 }
 
@@ -6617,7 +6621,7 @@ a.hist-record__figure-name:hover {
   border-bottom: 1px solid var(--hist-border-subtle);
 }
 .hist-hr-scene__num {
-  color: var(--hist-brass);
+  color: var(--hist-brass-ink);
 }
 .hist-hr-scene__title {
   color: var(--hist-ink);
@@ -6738,7 +6742,9 @@ a.hist-record__figure-name:hover {
   gap: var(--space-2);
   font-size: var(--text-xs);
   letter-spacing: 0.14em;
-  color: var(--hist-account-color, var(--hist-accent));
+  /* The account's own colour, pulled toward the ink: raw, the gold accounts
+     read 3.8:1 as 9px small caps. */
+  color: color-mix(in srgb, var(--hist-account-color, var(--hist-accent)) 72%, var(--hist-ink));
   margin-bottom: var(--space-2);
 }
 .hist-hr-account__sep {
@@ -6890,7 +6896,7 @@ a.hist-record__figure-name:hover {
 .hist-hr-turn__eyebrow {
   font-size: var(--text-xs);
   letter-spacing: 0.2em;
-  color: var(--hist-brass);
+  color: var(--hist-brass-ink);
   margin-bottom: var(--space-4);
 }
 .hist-hr-turn__framing,

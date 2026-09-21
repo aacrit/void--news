@@ -232,7 +232,8 @@ body:has(.mms--open) .fp {
   font-family: var(--font-data);
   font-size: var(--text-xs);
   font-weight: 600;
-  color: var(--fp-accent);
+  /* The programme accent as text, pulled toward the ink: 3.8:1 raw on light. */
+  color: color-mix(in srgb, var(--fp-accent) 70%, var(--fg-primary));
   letter-spacing: 0.02em;
   white-space: nowrap;
 }

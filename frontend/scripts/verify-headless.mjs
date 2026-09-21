@@ -46,10 +46,10 @@ const TAGLINE_TITLE = "Void News. See through the void.";
    the build so the sweep cannot name a page that was not exported. */
 const STATIC_ROUTES = [
   "/", "/onair/", "/history/", "/weekly/", "/weekly/archive/", "/paper/",
-  "/listen/", "/sources/", "/about/", "/ship/", "/press/", "/privacy/",
+  "/audio/", "/sources/", "/about/", "/ship/", "/press/", "/privacy/",
   "/history/threads/",
 ];
-const QUICK_ROUTES = ["/", "/history/", "/weekly/", "/paper/", "/onair/"];
+const QUICK_ROUTES = ["/", "/history/", "/weekly/", "/paper/", "/onair/", "/audio/"];
 
 function firstDir(rel, skip = []) {
   const dir = join(OUT, rel);
@@ -100,7 +100,8 @@ function sectionForPath(path) {
     case "weekly": return "weekly";
     case "paper": return "paper";
     case "onair": return "onair";
-    case "listen": return "listen";
+    case "audio":
+    case "listen": return "audio";
     case "sources": return "sources";
     case "ship":
     case "feedback": return "ship";
@@ -112,9 +113,9 @@ function sectionForPath(path) {
   }
 }
 /* Sections that have a link in the masthead (SECTION_LINKS + PAGE_LINKS). */
-const LINKED_SECTIONS = new Set(["onair", "history", "weekly", "listen", "sources", "ship", "about"]);
+const LINKED_SECTIONS = new Set(["audio", "onair", "history", "weekly", "sources", "ship", "about"]);
 /* Landings whose nameplate is the current page. */
-const NAMEPLATE_LANDINGS = new Set(["/history/", "/weekly/", "/paper/"]);
+const NAMEPLATE_LANDINGS = new Set(["/history/", "/weekly/", "/paper/", "/audio/"]);
 
 /* ── Redirect prefixes from public/_redirects: a link into one of these is a
    301 at the edge, not a dangling link. ── */
@@ -199,6 +200,8 @@ async function openPage(browser, { width, scheme, route, storage = {}, session =
        failures are caught by the response and requestfailed hooks. */
     const at = m.location()?.url ?? "";
     if (/Failed to load resource/.test(m.text()) && at && !at.startsWith(ORIGIN)) return;
+    /* The 404 route's own document is a 404 by definition. */
+    if (/Failed to load resource/.test(m.text()) && route === NOT_FOUND_ROUTE && at.endsWith(route)) return;
     log.console.push(`${m.type()}: ${m.text()}`);
   });
   page.on("pageerror", (e) => log.errors.push(String(e?.message ?? e)));
@@ -414,13 +417,25 @@ async function auditPage(browser, route, width, scheme, axeSource) {
     /* 12. axe-core, WCAG 2.1 AA, at the two widths that matter most. */
     if (axeSource && (width === 390 || width === 1440)) {
       await page.addScriptTag({ content: axeSource });
-      const axe = await page.evaluate(async () => {
+      const raw = await page.evaluate(async () => {
         const r = await window.axe.run(document, { runOnly: { type: "tag", values: ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"] }, resultTypes: ["violations"] });
-        return r.violations.map((v) => ({ id: v.id, impact: v.impact, n: v.nodes.length, target: v.nodes[0]?.target?.join(" ") ?? "", help: v.help }));
+        return r.violations.map((v) => ({ id: v.id, impact: v.impact, help: v.help, nodes: v.nodes.map((n) => ({ target: n.target.join(" "), html: n.html.slice(0, 160), data: n.any?.[0]?.data ?? null })) }));
       });
+      /* The allowlist is applied per NODE, so an exempt logotype beside a
+         real finding hides only itself. */
+      const axe = raw.map((v) => {
+        const nodes = v.nodes.filter((n) => {
+          const a = allowed("axe", route, `${v.id} ${n.target} ${n.html}`);
+          if (a) results.push({ where: current, check: "axe", status: "allowed", detail: `${v.id} ${n.target.slice(0, 80)}`, reason: a.reason });
+          return !a;
+        });
+        const first = nodes[0];
+        const colour = first?.data?.contrastRatio ? ` ${first.data.fgColor} on ${first.data.bgColor} = ${first.data.contrastRatio}` : "";
+        return { id: v.id, impact: v.impact, n: nodes.length, target: (first?.target ?? "") + colour, help: v.help };
+      }).filter((v) => v.n > 0);
       const serious = axe.filter((v) => v.impact === "critical" || v.impact === "serious");
       const lesser = axe.filter((v) => !(v.impact === "critical" || v.impact === "serious"));
-      for (const v of serious) F("axe", `${v.id} (${v.impact}, ${v.n} node${v.n === 1 ? "" : "s"}) ${v.help}; first: ${v.target.slice(0, 80)}`);
+      for (const v of serious) F("axe", `${v.id} (${v.impact}, ${v.n} node${v.n === 1 ? "" : "s"}) ${v.help}; first: ${v.target.slice(0, 220)}`);
       if (!serious.length) ok("axe", `no critical or serious violations${lesser.length ? `, ${lesser.length} lesser` : ""}`);
       for (const v of lesser) warn("axe-lesser", `${v.id} (${v.impact}, ${v.n}) ${v.help}`);
     }
@@ -603,7 +618,7 @@ async function scenarios(browser) {
   });
   /* The floating player: on the news, On Air and Weekly pages; not on Ship,
      not on History (the event page carries its own Listen). */
-  for (const [route, expect] of [["/", true], ["/onair/", true], ["/weekly/", true], ["/ship/", false], ["/history/", false]]) {
+  for (const [route, expect] of [["/", true], ["/onair/", true], ["/audio/", true], ["/weekly/", true], ["/ship/", false], ["/history/", false]]) {
     await withPage(browser, { width: 1440, route }, `floating-player ${route}`, async (page) => {
       await page.waitForTimeout(500);
       const n = await page.locator(".fp").count();
@@ -678,22 +693,54 @@ async function brandChecks(browser) {
        rest; the check is that hover never undraws it and the rule is real. */
     assert(hover.x >= 0.95, "nameplate-drawn-on-hover", `scaleX at rest ${rest.x.toFixed(2)}, on hover ${hover.x.toFixed(2)}`);
   });
-  await withPage(browser, { width: 1440, route: "/" }, "nameplate-draw-off-section", async (page) => {
-    /* On the front page there is no nameplate; the section links carry the
-       same rule and are undrawn until hovered. */
+  await withPage(browser, { width: 1440, route: "/" }, "section-link-draw", async (page) => {
+    /* On the front page no section link is current; each draws its own
+       accent in on hover and is undrawn at rest. */
     const scale = (sel) => page.evaluate((sel) => {
       const el = document.querySelector(sel); if (!el) return null;
-      const cs = getComputedStyle(el, "::before");
+      const cs = getComputedStyle(el, "::after");
       const m = cs.transform.match(/matrix\(([^,]+),/);
-      return { content: cs.content, x: m ? Number(m[1]) : (cs.transform === "none" ? 1 : NaN) };
+      return { content: cs.content, x: m ? Number(m[1]) : (cs.transform === "none" ? 1 : NaN), bg: cs.backgroundColor };
     }, sel);
-    const link = ".nav-sections .nav-page[data-section='history']";
-    const rest = await scale(link);
-    if (!rest || rest.content === "none") { skip("section-link-draw", "no ::before rule on the section link"); return; }
-    await page.locator(link).hover();
-    await page.waitForTimeout(500);
-    const hover = await scale(link);
-    assert(rest.x < 0.05 && hover.x > 0.95, "section-link-draw", `scaleX rest ${rest.x.toFixed(2)} -> hover ${hover.x.toFixed(2)}`);
+    for (const sec of ["history", "weekly", "audio"]) {
+      const link = `.nav-sections .nav-page[data-section='${sec}']`;
+      await page.mouse.move(5, 5);
+      await page.waitForTimeout(350);
+      const rest = await scale(link);
+      if (!rest || rest.content === "none") { fail("section-link-draw", `${sec}: no ::after rule on the section link`); continue; }
+      await page.locator(link).hover();
+      await page.waitForTimeout(500);
+      const hover = await scale(link);
+      assert(rest.x < 0.05 && hover.x > 0.95, "section-link-draw", `${sec}: scaleX rest ${rest.x.toFixed(2)} -> hover ${hover.x.toFixed(2)} in ${hover.bg}`);
+    }
+  });
+  /* Client-side navigation lands at the top, under nothing: the masthead
+     un-compacts and the page's first pixel is below the bar. */
+  await withPage(browser, { width: 1440, route: "/" }, "navigation-lands-at-top", async (page) => {
+    await page.evaluate(() => window.scrollTo(0, 1200));
+    await page.waitForTimeout(400);
+    await page.locator(".nav-sections .nav-page[data-section='history']").click();
+    await page.waitForURL(/\/history\//, { timeout: 10000 });
+    await page.waitForTimeout(800);
+    const h = await page.evaluate(() => ({ y: window.scrollY, compact: document.querySelector(".nav-header").getAttribute("data-scroll-compact"), mainTop: Math.round(document.querySelector("main").getBoundingClientRect().top), navBottom: Math.round(document.querySelector(".nav-header").getBoundingClientRect().bottom) }));
+    assert(h.y === 0 && h.mainTop >= h.navBottom - 1, "navigation-lands-at-top", `/history/: scrollY ${h.y}, main top ${h.mainTop}, masthead bottom ${h.navBottom}, compact ${h.compact}`);
+    await page.locator(".nav-logo").click();
+    await page.waitForURL(/\/$/, { timeout: 10000 });
+    await page.waitForTimeout(800);
+    const back = await page.evaluate(() => ({ y: window.scrollY, compact: document.querySelector(".nav-header").getAttribute("data-scroll-compact"), navH: Math.round(document.querySelector(".nav-header").getBoundingClientRect().height), mainTop: Math.round(document.querySelector("main").getBoundingClientRect().top) }));
+    assert(back.y === 0 && back.compact !== "true" && back.mainTop >= back.navH - 1, "navigation-back-uncompacts", `/: scrollY ${back.y}, compact ${back.compact}, masthead ${back.navH}px, main top ${back.mainTop}`);
+  });
+  /* The Audio section: every programme, one place, each loading into the one
+     shared player. */
+  await withPage(browser, { width: 1440, route: "/audio/" }, "audio-hub", async (page) => {
+    const kinds = await page.evaluate(() => [...document.querySelectorAll(".audio-play")].map((b) => b.getAttribute("data-kind")));
+    assert(kinds.includes("daily") && kinds.includes("weekly") && kinds.includes("history"), "audio-hub-programmes", `play buttons: ${kinds.join(", ")}`);
+    assert(await page.locator(".nav-nameplate[aria-current='page']").count() === 1, "audio-hub-nameplate", "the Audio nameplate is current");
+    assert((await page.locator(".audio-feed__url").allTextContents()).filter((t) => /podcast-(world|weekly|history)\.xml$/.test(t)).length === 3, "audio-hub-feeds", "three feed addresses");
+    await page.locator(".audio-play[data-kind='history']").first().click();
+    await page.waitForTimeout(1200);
+    const fp = await page.evaluate(() => ({ title: document.querySelector(".fp__title")?.textContent?.trim() ?? null, state: document.querySelector(".audio-play[data-kind='history']")?.getAttribute("data-state") }));
+    assert(fp.title === "History" && fp.state !== "idle", "audio-hub-plays-history", `player title ${fp.title}, button state ${fp.state}`);
   });
   /* Reading progress on long reads: a brass rule under the masthead that
      tracks the scroll, with no JavaScript. */

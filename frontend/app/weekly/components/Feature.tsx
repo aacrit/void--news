@@ -147,6 +147,15 @@ export default function Feature({
         />
       )}
 
+      {/* The rails come BEFORE the body in the markup so that grid
+          auto-placement seats them in the same row: numbers in the left
+          rail, the body in the text column, the timeline in the right rail.
+          Until 2026-09-21 both rails rendered after the body, so a long essay
+          ran alone in its measure with two empty margins beside it, and the
+          layout read as "one middle column" rather than as a spread. Below
+          1024px the rails have no width and both fall back into the text
+          column, after the body (weekly.css). */}
+      <NumbersRail story={story} />
       <div className="wk-feature__body">
         {paras.map((para, j) => (
           <p
@@ -157,12 +166,11 @@ export default function Feature({
           </p>
         ))}
       </div>
+      <TimelineRail story={story} />
 
       {pullQuote && paras.length > 2 && (
         <blockquote className="wk-pullquote">{pullQuote}</blockquote>
       )}
-      <NumbersRail story={story} />
-      <TimelineRail story={story} />
     </article>
   );
 }

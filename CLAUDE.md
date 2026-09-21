@@ -108,6 +108,7 @@ impossible, not a note asking people to be careful:
 | `frontend/test/copy-facts.test.mjs` | a stale story count in page copy, and any dash or kill-list word in a frontend string literal or JSX text |
 | `frontend/test/labels.test.mjs` | the one lean ladder; asserts the word "Flat" is gone (a card says Balanced, Not measured, Contested, or a direction) |
 | `frontend/test/css-parity.test.mjs` | a class selector nothing in `app/` references (1,168 of 3,109 were dead on 2026-09-21); prints the reverse direction too |
+| `frontend/test/css-lint.mjs` + `.stylelintrc.json` | a raw `cubic-bezier(` outside `tokens.css`, a `font-family` off the four semantic tokens, a literal radius without a disable and its reason |
 | `frontend/scripts/verify-headless.mjs` | the product in a browser: console and hydration errors, a link to a page the export does not carry, a second `h1` or masthead, a title outside the grammar, a masthead that disagrees with the URL, a control with no name, a dash in chrome, a focus ring that is not there, axe WCAG 2.1 AA; and the scenarios (search, theme, drawer, Sigil, shortcuts, banner, player, Paper parity, the brand layer). `--quick` in CI, the full grid by hand |
 
 Every one of these runs in `auto-merge-claude.yml`. Nine of them did not until
@@ -256,7 +257,7 @@ adds nothing to the state that anything reads back.
 | **History audio**: format, casting, H-01..H-11 | `docs/HISTORY-AUDIO.md`, `docs/HISTORY-SCRIPT-BRIEF.md` |
 | **The Hearing**: `/history/[slug]`, a SERVER component. Three client islands (rail, Listen, lightbox). `omitted` appears in the turn and nowhere else | `frontend/app/history/components/Hearing.tsx`, `hearing.ts`, `docs/proposals/HISTORY-PAGE-REVAMP.md` |
 | **House promos** (post-roll under every outro; pool, rules, retrofit) | `data/promos/house.yaml`, `pipeline/briefing/house_promos.py`, `docs/VOICE-BRAND.md` "House Promos" |
-| **Podcast feeds** (On Air, The Argument, History) and directory submission | `pipeline/briefing/podcast_feed_generator.py`, `docs/PODCAST-DISTRIBUTION.md`, `/listen` |
+| **Podcast feeds** (On Air, The Argument, History) and directory submission | `pipeline/briefing/podcast_feed_generator.py`, `docs/PODCAST-DISTRIBUTION.md`, `/audio` |
 | Weekly magazine: running order, the measure, the grid | `frontend/app/weekly/`, `frontend/app/styles/weekly.css` |
 | Weekly's pure core (testable with no key) | `pipeline/briefing/weekly_parse.py` |
 | Weekly end matter (colophon, week-over-week, day-by-day, corrections, OG card, issue index) | `frontend/app/weekly/components/{Colophon,WeekDelta,WeekRail,Corrections}.tsx`, `app/weekly/ogCard.tsx` |
@@ -280,7 +281,7 @@ adds nothing to the state that anything reads back.
 | **History audio** | **78/78 scripts written, 78/78 rendered**, each carrying a house promo under its outro. Register: `docs/data/history-episodes.csv`, regenerate with `python3 pipeline/history/episode_report.py`. |
 | **Revolt** | 301-hidden, serves MOCK data. Cannot be un-hidden until it reads static JSON. |
 | **Ship / Feedback** | Live on the Worker + D1. |
-| **Podcast feeds** | Generated: `podcast-world.xml`, `podcast-weekly.xml`, `podcast-history.xml` (78). Linked from `/listen` and `layout.tsx`. **Not yet submitted** to Apple or Spotify. Three covers rendered 2026-09-21 from the house lockup (`podcast-cover-{world,weekly,history}.jpg`); `tests/test_podcast_feed.py` gates them. |
+| **Podcast feeds** | Generated: `podcast-world.xml`, `podcast-weekly.xml`, `podcast-history.xml` (78). Linked from `/audio` (the section that holds every programme and its play buttons) and `layout.tsx`. **Not yet submitted** to Apple or Spotify. Three covers rendered 2026-09-21 from the house lockup (`podcast-cover-{world,weekly,history}.jpg`); `tests/test_podcast_feed.py` gates them. |
 | **House promos** | Live. 24 promos, `af_kore` at speed 0.86 over `radio_promo_bed.wav`. **All 78 History episodes stitched 2026-09-21**; On Air and Weekly pick one up on their next render. |
 | **Paper** | **Live 2026-09-21** as the printable twenty: the same 20 stories as the front page, in the same order, read from `build-data/feed.json`, every headline a link to its Deep Dive, print stylesheet, no classifieds, no datelines, no edition route. Gated by P-01..P-04. |
 | **Games** | 301-hidden. |
@@ -306,8 +307,11 @@ adds nothing to the state that anything reads back.
 
 **Void** is the parent brand. **Void News** (this app) is a product; **Void
 Vision** is a coming sibling. Everything else is a SECTION of Void News, in
-title case with plain names: The Brief (tag "TL;DR"), On Air, History, Weekly,
-Paper, Sources, Deep Dive, Opinion, Ship, Games, Revolt.
+title case with plain names: The Brief (tag "TL;DR"), Audio, History, Weekly,
+Paper, Sources, Deep Dive, Opinion, Ship, Games, Revolt. **Audio** (2026-09-21)
+is the section that holds the three programmes; On Air is the daily
+programme's page inside it, The Argument plays from Weekly and from Audio,
+History audio from the event page and from Audio. `/listen` 301s to `/audio`.
 
 **The one-line rule for every surface (CEO, 2026-09-21): `VOID NEWS` is the
 only word that gets a lockup; a section gets a nameplate in its accent; a
