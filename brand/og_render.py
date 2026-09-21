@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
 """
+SUPERSEDED 2026-09-21. Do NOT run this: it overwrites
+frontend/public/og-image.png with the old dark card, which is the drift the
+one-composer rewrite removed. The site card is now drawn by the SAME composer
+as every section card (frontend/app/lib/ogCard.tsx):
+
+    node brand/ci/render_og.mjs
+
+Kept only as the record of what the Pillow card was.
+
 Void News social share card (OpenGraph / Twitter) - 1200x630 PNG.
 
 Deep-ink (walnut) ground, terracotta footed Sigil hero + "VOID NEWS" serif
