@@ -268,7 +268,7 @@ accruing in git history.
   IP_SALT`) — the checked-in value in `worker/wrangler.toml` is a dev
   placeholder. The D1 `database_id` there is genuinely provisioned.
 - iOS/Android signing, first store submission, branch protection.
-- 74 class names are written in markup with no rule behind them (the reverse
+- 77 class names are written in markup with no rule behind them (the reverse
   direction of `frontend/test/css-parity.test.mjs`, printed on every run, not
   failing). Among them `.dd-page__section`, `.hist-hr-account__type`,
   `.fp__playlist`. Each is either a hook nothing styles yet or a name that
